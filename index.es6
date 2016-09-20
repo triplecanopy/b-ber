@@ -97,4 +97,17 @@ let {
       .help('help')
       .wrap(null));
     checkCommands(yargs, argv, 1);
+  })
+  .command('render', 'Render layouts', function (yargs) {
+    ({
+        argv
+      } = yargs.fail(function (msg, err) {
+        console.log(msg);
+        yargs.showHelp();
+      })
+      .usage('\nUsage: $0 render')
+      .alias('h', 'help')
+      .help('help')
+      .wrap(null));
+    checkCommands(yargs, argv, 1);
   });
