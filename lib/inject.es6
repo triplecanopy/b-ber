@@ -2,20 +2,20 @@
 import gulp from 'gulp';
 import inject from 'gulp-inject';
 
-let injectOptions = {
+const injectOptions = {
   ignorePath: ['..', '_output', 'OPS'],
   relative: true,
   selfClosingTag: true
 };
 
-let targets = gulp.src('_output/OPS/text/*.{xhtml,html}');
+const targets = gulp.src('_output/OPS/text/*.{xhtml,html}');
 
-let sources = gulp.src([
+const sources = gulp.src([
   '_output/OPS/javascripts/*.js',
-  '_output/OPS/stylesheets/*.css'
+  '_output/OPS/stylesheets/*.css',
 ], { read: false });
 
-gulp.task('inject', done =>
+gulp.task('inject', () =>
   targets.pipe(inject(sources, injectOptions))
   .pipe(gulp.dest('_output/OPS/text'))
-)
+);

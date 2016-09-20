@@ -6,7 +6,7 @@ const md = MarkdownIt({
   html: true,
   xhtmlOut: true,
   breaks: false,
-  linkify: false
+  linkify: false,
 });
 
 md.use(

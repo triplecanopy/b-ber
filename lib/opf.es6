@@ -1,21 +1,21 @@
 
 import gulp from 'gulp';
 import renderLayouts from 'layouts';
-import templates from './templates';
 import path from 'path';
 import fs from 'fs';
-import mkdirp from 'mkdirp';
 import File from 'vinyl';
 import rrdir from 'recursive-readdir';
+
+import templates from './templates';
 import { topdir, cjoin } from './utils';
 
-let manifest = done =>
+const manifest = done =>
   rrdir('./_output/OPS', (err, files) =>
     files.forEach((file, idx) => {
       files[idx] = {
         fullpath: file,
         toppath: topdir(file),
-        name: path.basename(file)
+        name: path.basename(file),
       };
       if (idx === files.length - 1) {
         done(files);
@@ -23,7 +23,7 @@ let manifest = done =>
     })
   );
 
-let stringify = (files, done) => {
+const stringify = (files, done) => {
   let strings = {
     manifest: [],
     spine: [],
@@ -39,7 +39,7 @@ let stringify = (files, done) => {
   });
 };
 
-let write = (str, done) =>
+const write = (str, done) =>
   fs.writeFile(path.join(
       __dirname,
       '../_output/OPS/',
@@ -49,7 +49,7 @@ let write = (str, done) =>
       done();
   });
 
-let render = (strings, done) => {
+const render = (strings, done) => {
   let opf = renderLayouts(new File({
     path: './.tmp',
     layout: 'opfPackage',
@@ -57,17 +57,17 @@ let render = (strings, done) => {
       renderLayouts(new File({
         path: './.tmp',
         layout: 'opfManifest',
-        contents: new Buffer(cjoin(strings.manifest))
+        contents: new Buffer(cjoin(strings.manifest)),
       }), templates).contents.toString(),
       renderLayouts(new File({
         path: './.tmp',
         layout: 'opfSpine',
-        contents: new Buffer(cjoin(strings.spine))
+        contents: new Buffer(cjoin(strings.spine)),
       }), templates).contents.toString(),
       renderLayouts(new File({
         path: './.tmp',
         layout: 'opfGuide',
-        contents: new Buffer(cjoin(strings.guide))
+        contents: new Buffer(cjoin(strings.guide)),
       }), templates).contents.toString()
     ].join('\n'))
   }), templates).contents.toString();
@@ -76,14 +76,14 @@ let render = (strings, done) => {
 }
 
 gulp.task('opf', done =>
-  manifest(files => {
+  manifest((files) => {
     let allfiles = [];
     files.forEach((file, idx) => {
       allfiles.push(file);
-      if (idx == files.length - 1) {
-        stringify(allfiles, strings => {
-          render(strings, done);
-        });
+      if (idx === files.length - 1) {
+        stringify(allfiles, strings =>
+          render(strings, done)
+        );
       }
     });
   })

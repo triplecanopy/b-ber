@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "babel-node index.es6 --presets es2015,stage-2"
+    "start": "babel-node index.es6 --presets es2015,stage-2",
+    "lint": "./node_modules/.bin/eslint index.es6 lib/**"
   },
   "repository": "https://github.com/triplecanopy/b-ber-creator.git",
   "author": "",
@@ -15,6 +16,11 @@
     "babel-preset-stage-2": "^6.13.0",
     "babel-register": "^6.14.0",
     "del": "^2.2.2",
+    "eslint": "^3.5.0",
+    "eslint-config-airbnb": "^11.1.0",
+    "eslint-plugin-import": "^1.15.0",
+    "eslint-plugin-jsx-a11y": "^2.2.2",
+    "eslint-plugin-react": "^6.3.0",
     "express": "^4.14.0",
     "gulp": "^3.9.1",
     "gulp-autoprefixer": "^3.1.1",

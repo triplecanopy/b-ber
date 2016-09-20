@@ -5,10 +5,9 @@ import path from 'path';
 import mkdirp from 'mkdirp';
 import md from './md';
 
-const tmpdir = path.join(__dirname + '/../.tmp/');
+const tmpdir = path.join(__dirname, '/../.tmp/');
 
-
-let write = (file, data) => {
+const write = (file, data) => {
   fs.writeFile(
     tmpdir + path.basename(file, 'md') + 'html',
     md.render(data),
@@ -18,12 +17,12 @@ let write = (file, data) => {
   );
 };
 
-gulp.task('markit', done => {
+gulp.task('markit', (done) => {
   fs.readdir('./_markdown', (err, files) => {
     if (err) { throw err; }
     files.forEach((file, idx) => {
       fs.readFile(
-        path.join(__dirname + '/../_markdown/', file),
+        path.join(__dirname, '/../_markdown/', file),
         'utf8',
         (err, data) => {
           if (err) { throw err; }

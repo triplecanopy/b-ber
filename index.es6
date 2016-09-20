@@ -1,23 +1,23 @@
 #!/usr/bin/env node
 
-require('require-dir')('lib', { recurse: true });
-
-import config from './.config';
+// import config from './.config';
 import gulp from 'gulp';
 import yargs from 'yargs';
 
-let checkCommands = function (yarg, argv, required, sequence) {
+require('require-dir')('lib', { recurse: true });
+
+const checkCommands = function (yarg, argv, required, sequence) {
   if (argv._.length < required) {
     yarg.showHelp();
   } else {
-    sequence = !sequence || sequence.length < 1 ? sequence = argv._ : sequence;
-    sequence.forEach(function (task, idx) {
+    let seq = !sequence || sequence.length < 1 ? sequence = argv._ : sequence;
+    seq.forEach(function (task, idx) {
       if (!gulp.tasks[task]) {
-        sequence.splice(idx, 1);
+        seq.splice(idx, 1);
         console.log(`Task \`${task}\` does not exist.`);
       }
     });
-    gulp.task('exec', sequence, function() {
+    gulp.task('exec', seq, function () {
       console.log('Done!');
     });
     gulp.start('exec');
@@ -33,7 +33,7 @@ let {
   .usage('\nUsage: $0 <command> [options]')
   .demand(1)
   .example('$0 create [options]')
-  .command('create', 'Create an Epub dir structure', function (yargs) {
+  .command('create', 'Create an Epub dir structure', yargs => {
     ({
         argv
       } = yargs.fail(function (msg, err) {
@@ -46,7 +46,7 @@ let {
       .wrap(null));
     checkCommands(yargs, argv, 1);
   })
-  .command('markit', 'Convert markdown to HTML', function (yargs) {
+  .command('markit', 'Convert markdown to HTML', yargs => {
     ({
         argv
       } = yargs.fail(function (msg, err) {
@@ -59,7 +59,7 @@ let {
       .wrap(null));
     checkCommands(yargs, argv, 1);
   })
-  .command('serve', 'Start a development server', function (yargs) {
+  .command('serve', 'Start a development server', yargs => {
     ({
         argv
       } = yargs.fail(function (msg, err) {
@@ -72,7 +72,7 @@ let {
       .wrap(null));
     checkCommands(yargs, argv, 1);
   })
-  .command('sass', 'Compile the sass', function (yargs) {
+  .command('sass', 'Compile the sass', yargs => {
     ({
         argv
       } = yargs.fail(function (msg, err) {
@@ -85,7 +85,7 @@ let {
       .wrap(null));
     checkCommands(yargs, argv, 1);
   })
-  .command('scripts', 'Compile the scripts', function (yargs) {
+  .command('scripts', 'Compile the scripts', yargs => {
     ({
         argv
       } = yargs.fail(function (msg, err) {
@@ -98,7 +98,7 @@ let {
       .wrap(null));
     checkCommands(yargs, argv, 1);
   })
-  .command('render', 'Render layouts', function (yargs) {
+  .command('render', 'Render layouts', yargs => {
     ({
         argv
       } = yargs.fail(function (msg, err) {
@@ -111,7 +111,7 @@ let {
       .wrap(null));
     checkCommands(yargs, argv, 1);
   })
-  .command('sass', 'Compile SCSS', function (yargs) {
+  .command('sass', 'Compile SCSS', yargs => {
     ({
         argv
       } = yargs.fail(function (msg, err) {
@@ -124,7 +124,7 @@ let {
       .wrap(null));
     checkCommands(yargs, argv, 1);
   })
-  .command('inject', 'Inject scripts and styles', function (yargs) {
+  .command('inject', 'Inject scripts and styles', yargs => {
     ({
         argv
       } = yargs.fail(function (msg, err) {
@@ -137,7 +137,7 @@ let {
       .wrap(null));
     checkCommands(yargs, argv, 1);
   })
-  .command('copy', 'Copy static assets to output dir', function (yargs) {
+  .command('copy', 'Copy static assets to output dir', yargs => {
     ({
         argv
       } = yargs.fail(function (msg, err) {
@@ -150,7 +150,7 @@ let {
       .wrap(null));
     checkCommands(yargs, argv, 1);
   })
-  .command('opf', 'Generate the opf', function (yargs) {
+  .command('opf', 'Generate the opf', yargs => {
     ({
         argv
       } = yargs.fail(function (msg, err) {

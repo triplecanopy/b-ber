@@ -1,11 +1,12 @@
 
 import gulp from 'gulp';
 import renderLayouts from 'layouts';
-import templates from './templates';
 import path from 'path';
 import fs from 'fs';
 import mkdirp from 'mkdirp';
 import File from 'vinyl';
+
+import templates from './templates';
 
 // import browserify from 'browserify';
 // import source from 'vinyl-source-stream';
@@ -14,18 +15,18 @@ import File from 'vinyl';
 const tmpdir = path.join(__dirname, '/../.tmp');
 const output = path.join(__dirname, '/../_output/OPS/text/');
 
-let write = (file, data) =>
+const write = (file, data) =>
   fs.writeFile(
     output + path.basename(file),
     data,
-    err => { if (err) { throw err; } }
+    (err) => { if (err) { throw err; } }
   );
 
-let generateMarkup = (file, data) => {
+const generateMarkup = (file, data) => {
   let markup = renderLayouts(new File({
     path: './.tmp',
     layout: 'page',
-    contents: new Buffer(data)
+    contents: new Buffer(data),
   }), templates).contents.toString();
 
   try {
