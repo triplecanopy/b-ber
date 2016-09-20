@@ -49,7 +49,8 @@ gulp.task('render', done =>
           if (err) { throw err; }
           generateMarkup(file, data);
           if (idx === files.length - 1) { done(); }
-      });
+        }
+      );
     });
   })
 );

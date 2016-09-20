@@ -1,14 +1,21 @@
 {
   "name": "bber",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "version": "0.1.0",
+  "description": "A command line epub maker.",
+  "main": "./lib/cli.es6",
   "scripts": {
-    "start": "babel-node index.es6 --presets es2015,stage-2",
-    "lint": "./node_modules/.bin/eslint index.es6 lib/**"
+    "start": "babel-node ./lib/cli.es6 --presets es2015,stage-2",
+    "lint": "./node_modules/.bin/eslint ./lib/cli.es6 lib/*.es6 lib/**/*.es6",
+    "test": "ava --tap | tap-spec && npm run -s lint"
   },
-  "repository": "https://github.com/triplecanopy/b-ber-creator.git",
-  "author": "",
+  "bin": {
+    "bber": "./lib/cli.es6"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/triplecanopy/b-ber-creator.git"
+  },
+  "author": "Maxwell Simmer",
   "license": "MIT",
   "dependencies": {
     "babel-cli": "^6.14.0",
@@ -16,11 +23,6 @@
     "babel-preset-stage-2": "^6.13.0",
     "babel-register": "^6.14.0",
     "del": "^2.2.2",
-    "eslint": "^3.5.0",
-    "eslint-config-airbnb": "^11.1.0",
-    "eslint-plugin-import": "^1.15.0",
-    "eslint-plugin-jsx-a11y": "^2.2.2",
-    "eslint-plugin-react": "^6.3.0",
     "express": "^4.14.0",
     "gulp": "^3.9.1",
     "gulp-autoprefixer": "^3.1.1",
@@ -43,5 +45,29 @@
     "xmlbuilder": "^8.2.2",
     "yargs": "^5.0.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "ava": "^0.16.0",
+    "eslint": "^3.5.0",
+    "eslint-config-airbnb": "^11.1.0",
+    "eslint-plugin-import": "^1.15.0",
+    "eslint-plugin-jsx-a11y": "^2.2.2",
+    "eslint-plugin-react": "^6.3.0",
+    "tap-spec": "^4.1.1"
+  },
+  "ava": {
+    "files": [
+      "test/*.js"
+    ],
+    "source": [
+      "**/*.{js,jsx,es6}"
+    ],
+    "match": [],
+    "concurrency": 5,
+    "failFast": true,
+    "tap": true,
+    "require": [
+      "babel-register"
+    ],
+    "babel": "inherit"
+  }
 }

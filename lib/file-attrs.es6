@@ -30,9 +30,9 @@ class FileAttrs {
 
   test(file) {
     let attrs = [];
-    if (this.isNav(file))       { attrs.push('nav') }
-    if (this.isScripted(file))  { attrs.push('scripted') }
-    if (this.isSVG(file))       { attrs.push('svg') }
+    if (this.isNav(file))       { attrs.push('nav'); }
+    if (this.isScripted(file))  { attrs.push('scripted'); }
+    if (this.isSVG(file))       { attrs.push('svg'); }
     return attrs.join(',');
   }
 }

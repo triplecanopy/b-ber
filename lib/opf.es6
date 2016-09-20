@@ -10,24 +10,25 @@ import templates from './templates';
 import { topdir, cjoin } from './utils';
 
 const manifest = done =>
-  rrdir('./_output/OPS', (err, files) =>
-    files.forEach((file, idx) => {
-      files[idx] = {
+  rrdir('./_output/OPS', (err, files) => {
+    let filearr = files;
+    filearr.forEach((file, idx) => {
+      filearr[idx] = {
         fullpath: file,
         toppath: topdir(file),
         name: path.basename(file),
       };
-      if (idx === files.length - 1) {
-        done(files);
+      if (idx === filearr.length - 1) {
+        done(filearr);
       }
-    })
-  );
+    });
+  });
 
 const stringify = (files, done) => {
   let strings = {
     manifest: [],
     spine: [],
-    guide: []
+    guide: [],
   };
   files.forEach((file, idx) => {
     strings.manifest.push(templates.item(file));
@@ -44,7 +45,7 @@ const write = (str, done) =>
       __dirname,
       '../_output/OPS/',
       'content.opf'
-    ), str, err => {
+    ), str, (err) => {
       if (err) { throw err; }
       done();
   });
@@ -68,12 +69,12 @@ const render = (strings, done) => {
         path: './.tmp',
         layout: 'opfGuide',
         contents: new Buffer(cjoin(strings.guide)),
-      }), templates).contents.toString()
-    ].join('\n'))
+      }), templates).contents.toString(),
+    ].join('\n')),
   }), templates).contents.toString();
 
   write(opf, done);
-}
+};
 
 gulp.task('opf', done =>
   manifest((files) => {

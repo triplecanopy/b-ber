@@ -9,9 +9,9 @@ const tmpdir = path.join(__dirname, '/../.tmp/');
 
 const write = (file, data) => {
   fs.writeFile(
-    tmpdir + path.basename(file, 'md') + 'html',
+    path.join(tmpdir, path.basename(file, 'md')).concat('html'),
     md.render(data),
-    err => {
+    (err) => {
       if (err) { throw err; }
     }
   );

@@ -2,7 +2,8 @@
 import path from 'path';
 import _ from 'lodash';
 
-function slashit(fpath) {
+function slashit(str) {
+  let fpath = str;
   try {
     if (typeof fpath !== 'string') {
       throw new Error(`Path must be a string. '${typeof fpath}' given.`);
@@ -28,7 +29,7 @@ function cjoin(arr) {
 }
 
 function fileid(str) {
-  return '_' + str.replace(/[\s:,“”‘’]/g, '_');
+  return '_'.concat(str.replace(/[\s:,“”‘’]/g, '_'));
 }
 
 export { slashit, topdir, cjoin, fileid };

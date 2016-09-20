@@ -5,7 +5,7 @@ import inject from 'gulp-inject';
 const injectOptions = {
   ignorePath: ['..', '_output', 'OPS'],
   relative: true,
-  selfClosingTag: true
+  selfClosingTag: true,
 };
 
 const targets = gulp.src('_output/OPS/text/*.{xhtml,html}');

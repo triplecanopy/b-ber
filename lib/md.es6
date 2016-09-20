@@ -2,7 +2,7 @@
 import MarkdownIt from 'markdown-it';
 import mdSpoiler from './md-directives/md-spoiler';
 
-const md = MarkdownIt({
+const md = new MarkdownIt({
   html: true,
   xhtmlOut: true,
   breaks: false,

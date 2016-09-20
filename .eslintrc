@@ -1,3 +1,9 @@
 {
-  "extends": "airbnb"
+  "extends": "airbnb",
+  "rules": {
+    "no-console": 0,
+    "func-names": 0,
+    "import/no-unresolved": 0,
+    "brace-style": [2, "1tbs", { "allowSingleLine": true }]
+  }
 }

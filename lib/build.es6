@@ -13,14 +13,6 @@ export default {
     });
     return dfr.promise;
   },
-  opf() {
-    let dfr = Q.defer();
-    fs.writeFile('./_output/content.opf', 'sample data', (err) => {
-      if (err) { throw err; }
-      dfr.resolve();
-    });
-    return dfr.promise;
-  },
   xml() {
     let dfr = Q.defer();
     dfr.resolve();
