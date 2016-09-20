@@ -17,13 +17,18 @@
     "express": "^4.14.0",
     "gulp": "^3.9.1",
     "gulp-autoprefixer": "^3.1.1",
+    "gulp-jshint": "^2.0.1",
     "gulp-sass": "^2.3.2",
+    "jshint": "^2.9.3",
+    "jshint-stylish": "^2.2.1",
     "markdown-it": "^7.0.1",
     "markdown-it-container": "^2.0.0",
     "mkdirp": "^0.5.1",
     "node-babel": "^0.1.2",
     "q": "^1.4.1",
     "require-dir": "^0.3.0",
+    "xmlbuilder": "^8.2.2",
     "yargs": "^5.0.0"
-  }
+  },
+  "devDependencies": {}
 }

@@ -84,4 +84,17 @@ let {
       .help('help')
       .wrap(null));
     checkCommands(yargs, argv, 1);
+  })
+  .command('scripts', 'Compile the scripts', function (yargs) {
+    ({
+        argv
+      } = yargs.fail(function (msg, err) {
+        console.log(msg);
+        yargs.showHelp();
+      })
+      .usage('\nUsage: $0 scripts')
+      .alias('h', 'help')
+      .help('help')
+      .wrap(null));
+    checkCommands(yargs, argv, 1);
   });

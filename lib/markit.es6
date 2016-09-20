@@ -5,7 +5,7 @@ import path from 'path';
 import mkdirp from 'mkdirp';
 import md from './md';
 
-const textdir = path.join(__dirname + '/../_output/OPS/Text/');
+const textdir = path.join(__dirname + '/../_output/OPS/text/');
 
 
 let write = (file, data) => {
