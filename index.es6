@@ -110,4 +110,56 @@ let {
       .help('help')
       .wrap(null));
     checkCommands(yargs, argv, 1);
+  })
+  .command('sass', 'Compile SCSS', function (yargs) {
+    ({
+        argv
+      } = yargs.fail(function (msg, err) {
+        console.log(msg);
+        yargs.showHelp();
+      })
+      .usage('\nUsage: $0 sass')
+      .alias('h', 'help')
+      .help('help')
+      .wrap(null));
+    checkCommands(yargs, argv, 1);
+  })
+  .command('inject', 'Inject scripts and styles', function (yargs) {
+    ({
+        argv
+      } = yargs.fail(function (msg, err) {
+        console.log(msg);
+        yargs.showHelp();
+      })
+      .usage('\nUsage: $0 inject')
+      .alias('h', 'help')
+      .help('help')
+      .wrap(null));
+    checkCommands(yargs, argv, 1);
+  })
+  .command('copy', 'Copy static assets to output dir', function (yargs) {
+    ({
+        argv
+      } = yargs.fail(function (msg, err) {
+        console.log(msg);
+        yargs.showHelp();
+      })
+      .usage('\nUsage: $0 copy')
+      .alias('h', 'help')
+      .help('help')
+      .wrap(null));
+    checkCommands(yargs, argv, 1);
+  })
+  .command('opf', 'Generate the opf', function (yargs) {
+    ({
+        argv
+      } = yargs.fail(function (msg, err) {
+        console.log(msg);
+        yargs.showHelp();
+      })
+      .usage('\nUsage: $0 opf')
+      .alias('h', 'help')
+      .help('help')
+      .wrap(null));
+    checkCommands(yargs, argv, 1);
   });

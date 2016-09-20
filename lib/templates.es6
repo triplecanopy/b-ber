@@ -1,4 +1,7 @@
 import File from 'vinyl';
+import mime from 'mime-types';
+
+let fileid = str => '_' + str.replace(/[\s:,“”‘’]/g, '_')
 
 export default {
   container() {
@@ -12,7 +15,7 @@ export default {
     mimetype() {
       return 'application/epub+zip';
     },
-    base: new File({
+    page: new File({
       path: 'base.tmpl',
       contents: new Buffer(`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
         <html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xmlns:ibooks="http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0" epub:prefix="ibooks: http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0">
@@ -28,5 +31,46 @@ export default {
           <!-- inject:js -->
           <!-- endinject -->
         </html>`)
-    })
+    }),
+    opfPackage: new File({
+      path: 'opfPackage.tmpl',
+      contents: new Buffer(`<?xml version="1.0" encoding="UTF-8"?>
+        <package
+          version="3.0"
+          xml:lang="en"
+          unique-identifier="uuid"
+          xmlns="http://www.idpf.org/2007/opf"
+          xmlns:dc="http://purl.org/dc/elements/1.1/"
+          xmlns:dcterms="http://purl.org/dc/terms/"
+          prefix="ibooks:
+          http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0/">
+          {% body %}
+          </package>`)
+    }),
+    opfMetadata: new File({
+      path: 'opfMetadata.tmpl',
+      contents: new Buffer(`<metadata>{% body %}</metadata>`)
+    }),
+    opfManifest: new File({
+      path: 'opfManifest.tmpl',
+      contents: new Buffer(`<manifest>{% body %}</manifest>`)
+    }),
+    opfSpine: new File({
+      path: 'opfSpine.tmpl',
+      contents: new Buffer(`<spine>{% body %}</spine>`)
+    }),
+    opfGuide: new File({
+      path: 'opfGuide.tmpl',
+      contents: new Buffer(`<guide>{% body %}</guide>`)
+    }),
+    item(file) {
+      // look for additional attributes here, nav, scripted, etc, in a helper function
+      return `<item id="${fileid(file.name)}" href="${encodeURI(file.toppath)}" media-type="${mime.lookup(file.fullpath)}" attributes=""/>`;
+    },
+    itemref(file) {
+      return `<itemref idref="${fileid(file.name)}" linear="yes"/>`;
+    },
+    reference(file) {
+      return `<reference type="" title="" href="${encodeURI(file.toppath)}"/>`;
+    }
 };

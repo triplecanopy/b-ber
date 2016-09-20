@@ -12,5 +12,5 @@ gulp.task('sass', () =>
   ])
   .pipe(sass(sassOptions))
   .pipe(autoprefixer(autoprefixerOptions))
-  .pipe(gulp.dest('_output'))
+  .pipe(gulp.dest('_output/OPS/stylesheets'))
 );

@@ -1,6 +1,6 @@
 
 import MarkdownIt from 'markdown-it';
-import mdSpoiler from './md-spoiler';
+import mdSpoiler from './md-directives/md-spoiler';
 
 const md = MarkdownIt({
   html: true,
