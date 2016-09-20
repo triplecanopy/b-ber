@@ -24,6 +24,7 @@
     "jshint": "^2.9.3",
     "jshint-stylish": "^2.2.1",
     "layouts": "^0.13.2",
+    "lodash": "^4.16.1",
     "markdown-it": "^7.0.1",
     "markdown-it-container": "^2.0.0",
     "mime-types": "^2.1.12",

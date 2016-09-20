@@ -24,9 +24,9 @@ export default {
   xml() {
     let dfr = Q.defer();
     dfr.resolve();
-    fs.writeFile('./_output/container.xml', tmpl.container(), err => {
+    fs.writeFile('./_output/container.xml', tmpl.container, err => {
       if (err) { throw err; }
-      fs.writeFile('./_output/mimetype', tmpl.mimetype(), err => {
+      fs.writeFile('./_output/mimetype', tmpl.mimetype, err => {
         if (err) {
           throw err;
         }

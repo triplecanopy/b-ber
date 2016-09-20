@@ -9,4 +9,5 @@ metadata:
   contributor: Contributor 2
   contributor: Contributor 3
   identifier: c282f98b794648d1bedc22837b8c4b71
-  cover: _images/cover.jpg
+  cover_file: cover.jpg
+  cover_path: _images/cover.jpg

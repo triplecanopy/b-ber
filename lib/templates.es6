@@ -1,20 +1,19 @@
+
 import File from 'vinyl';
 import mime from 'mime-types';
+import { fileid } from './utils';
+import FileAttrs from './file-attrs';
 
-let fileid = str => '_' + str.replace(/[\s:,“”‘’]/g, '_')
+const fileattrs = new FileAttrs();
 
 export default {
-  container() {
-      return `<?xml version="1.0"?>
-        <container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">
-          <rootfiles>
-            <rootfile full-path="OPS/content.opf" media-type="application/oebps-package+xml"/>
-          </rootfiles>
-        </container>`;
-    },
-    mimetype() {
-      return 'application/epub+zip';
-    },
+  container: `<?xml version="1.0"?>
+    <container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">
+      <rootfiles>
+        <rootfile full-path="OPS/content.opf" media-type="application/oebps-package+xml"/>
+      </rootfiles>
+    </container>`,
+    mimetype: 'application/epub+zip',
     page: new File({
       path: 'base.tmpl',
       contents: new Buffer(`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
@@ -42,10 +41,9 @@ export default {
           xmlns="http://www.idpf.org/2007/opf"
           xmlns:dc="http://purl.org/dc/elements/1.1/"
           xmlns:dcterms="http://purl.org/dc/terms/"
-          prefix="ibooks:
-          http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0/">
+          prefix="ibooks:http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0/">
           {% body %}
-          </package>`)
+        </package>`)
     }),
     opfMetadata: new File({
       path: 'opfMetadata.tmpl',
@@ -64,13 +62,24 @@ export default {
       contents: new Buffer(`<guide>{% body %}</guide>`)
     }),
     item(file) {
-      // look for additional attributes here, nav, scripted, etc, in a helper function
-      return `<item id="${fileid(file.name)}" href="${encodeURI(file.toppath)}" media-type="${mime.lookup(file.fullpath)}" attributes=""/>`;
+      let res = null;
+      if (mime.lookup(file.fullpath) !== 'application/oebps-package+xml') {
+        res = `<item id="${fileid(file.name)}" href="${encodeURI(file.toppath)}" media-type="${mime.lookup(file.fullpath)}" attributes="${fileattrs.test(file)}"/>`;
+      }
+      return res;
     },
     itemref(file) {
-      return `<itemref idref="${fileid(file.name)}" linear="yes"/>`;
+      let res = null;
+      if (mime.lookup(file.fullpath) === 'text/html' || mime.lookup(file.fullpath) === 'application/xhtml+xml') {
+        res = `<itemref idref="${fileid(file.name)}" linear="yes"/>`;
+      }
+      return res;
     },
     reference(file) {
-      return `<reference type="" title="" href="${encodeURI(file.toppath)}"/>`;
+      let res = null;
+      if (mime.lookup(file.fullpath) === 'text/html' || mime.lookup(file.fullpath) === 'application/xhtml+xml') {
+        res = `<reference type="" title="" href="${encodeURI(file.toppath)}"/>`;
+      }
+      return res;
     }
 };
