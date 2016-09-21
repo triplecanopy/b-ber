@@ -15,14 +15,20 @@ import templates from './templates';
 const tmpdir = path.join(__dirname, '/../.tmp');
 const output = path.join(__dirname, '/../_output/OPS/text/');
 
-const write = (file, data) =>
+const write = (file, data, idx, len, done) =>
   fs.writeFile(
     output + path.basename(file),
     data,
-    (err) => { if (err) { throw err; } }
+    (err) => {
+      if (err) { throw err; }
+      if (idx === len) {
+        done();
+        console.log('render done');
+      }
+    }
   );
 
-const generateMarkup = (file, data) => {
+const generateMarkup = (file, data, idx, len, done) => {
   let markup = renderLayouts(new File({
     path: './.tmp',
     layout: 'page',
@@ -31,26 +37,29 @@ const generateMarkup = (file, data) => {
 
   try {
     if (fs.statSync(output)) {
-      write(file, markup);
+      write(file, markup, idx, len, done);
     }
   } catch (e) {
-    mkdirp(output, () => write(file, markup));
+    mkdirp(output, () => write(file, markup, idx, len, done));
   }
 };
 
 gulp.task('render', done =>
   fs.readdir(tmpdir, (err, files) => {
     if (err) { throw err; }
-    files.forEach((file, idx) => {
+    return files.forEach((file, idx) => (
       fs.readFile(
         path.join(__dirname, '../.tmp', file),
         'utf8',
         (err, data) => {
           if (err) { throw err; }
-          generateMarkup(file, data);
-          if (idx === files.length - 1) { done(); }
+          return generateMarkup(file, data, idx, files.length - 1, done);
+          // if (idx === files.length - 1) {
+          //   console.log('render done');
+          //   done();
+          // }
         }
-      );
-    });
+      )
+    ));
   })
 );

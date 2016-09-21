@@ -17,9 +17,7 @@ const checkCommands = (yarg, argv, required, sequence) => {
         console.log(`Task \`${task}\` does not exist.`);
       }
     });
-    gulp.task('exec', seq, () => {
-      console.log('Done!');
-    });
+    gulp.task('exec', seq, _ => _);
     gulp.start('exec');
   }
 };
@@ -147,6 +145,30 @@ let { argv } = yargs.fail((msg, err) => {
       yargs.showHelp();
     })
     .usage('\nUsage: $0 opf')
+    .alias('h', 'help')
+    .help('help')
+    .wrap(null));
+    checkCommands(yargs, argv, 1);
+  })
+  .command('clean', 'Remove the _output dir', (yargs) => {
+    ({ argv } = yargs.fail((msg, err) => {
+      if (err) { throw err; }
+      console.log(msg);
+      yargs.showHelp();
+    })
+    .usage('\nUsage: $0 clean')
+    .alias('h', 'help')
+    .help('help')
+    .wrap(null));
+    checkCommands(yargs, argv, 1);
+  })
+  .command('build', 'Build the _output dir', (yargs) => {
+    ({ argv } = yargs.fail((msg, err) => {
+      if (err) { throw err; }
+      console.log(msg);
+      yargs.showHelp();
+    })
+    .usage('\nUsage: $0 build')
     .alias('h', 'help')
     .help('help')
     .wrap(null));

@@ -20,6 +20,7 @@ const manifest = done =>
       };
       if (idx === filearr.length - 1) {
         done(filearr);
+        console.log('opf done');
       }
     });
   });
@@ -76,13 +77,13 @@ const render = (strings, done) => {
   write(opf, done);
 };
 
-gulp.task('opf', done =>
+gulp.task('opf', ['render'], done =>
   manifest((files) => {
     let allfiles = [];
-    files.forEach((file, idx) => {
+    return files.forEach((file, idx) => {
       allfiles.push(file);
       if (idx === files.length - 1) {
-        stringify(allfiles, strings =>
+        return stringify(allfiles, strings =>
           render(strings, done)
         );
       }

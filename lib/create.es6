@@ -1,5 +1,9 @@
 
 import gulp from 'gulp';
-import build from './build';
+import assets from './assets';
 
-gulp.task('create', () => build.ops().then(build.xml()));
+gulp.task('create', (done) => {
+  assets.ops().then(assets.xml());
+  console.log('create done');
+  done();
+});
