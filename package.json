@@ -44,6 +44,7 @@
     "require-dir": "^0.3.0",
     "vinyl": "^1.2.0",
     "xmlbuilder": "^8.2.2",
+    "yamljs": "^0.2.8",
     "yargs": "^5.0.0"
   },
   "devDependencies": {

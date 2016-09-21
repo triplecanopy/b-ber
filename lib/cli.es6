@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
-// import config from './.config';
 import gulp from 'gulp';
 import yargs from 'yargs';
+import requiredir from 'require-dir';
 
-require('require-dir')('./', { recurse: true });
+requiredir('./', { recurse: true }); // Load gulp tasks
 
 const checkCommands = (yarg, argv, required, sequence) => {
   if (argv._.length < required) {

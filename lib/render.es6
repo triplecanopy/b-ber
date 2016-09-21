@@ -6,6 +6,7 @@ import fs from 'fs';
 import mkdirp from 'mkdirp';
 import File from 'vinyl';
 
+import conf from './config';
 import templates from './templates';
 
 // import browserify from 'browserify';
@@ -13,7 +14,7 @@ import templates from './templates';
 // import buffer from 'vinyl-buffer';
 
 const tmpdir = path.join(__dirname, '/../.tmp');
-const output = path.join(__dirname, '/../_output/OPS/text/');
+const output = path.join(__dirname, `/../${conf.dist}/OPS/text/`);
 
 const write = (file, data, idx, len, done) =>
   fs.writeFile(

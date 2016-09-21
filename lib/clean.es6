@@ -2,9 +2,10 @@
 import gulp from 'gulp';
 import path from 'path';
 import cp from 'child_process';
+import conf from './config';
 
 const exec = cp.exec;
-const dir = path.join(__dirname, '../', '_output');
+const dir = path.join(__dirname, '../', `${conf.dist}`);
 
 gulp.task('clean', (done) => {
   try {

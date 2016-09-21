@@ -6,11 +6,12 @@ import fs from 'fs';
 import File from 'vinyl';
 import rrdir from 'recursive-readdir';
 
+import conf from './config';
 import templates from './templates';
 import { topdir, cjoin } from './utils';
 
 const manifest = done =>
-  rrdir('./_output/OPS', (err, files) => {
+  rrdir(`${conf.dist}/OPS`, (err, files) => {
     let filearr = files;
     filearr.forEach((file, idx) => {
       filearr[idx] = {
@@ -44,7 +45,9 @@ const stringify = (files, done) => {
 const write = (str, done) =>
   fs.writeFile(path.join(
       __dirname,
-      '../_output/OPS/',
+      '../',
+      conf.dist,
+      'OPS/',
       'content.opf'
     ), str, (err) => {
       if (err) { throw err; }

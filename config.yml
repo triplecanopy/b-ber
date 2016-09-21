@@ -1,0 +1,5 @@
+---
+environment: development
+output_path:
+  development: ./_output
+  production: ../../b-ber-boiler/book

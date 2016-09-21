@@ -8,8 +8,8 @@
         xmlns:dcterms="http://purl.org/dc/terms/"
         prefix="ibooks:http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0/">
         <manifest><item id="_cover.jpg" href="images/cover.jpg" media-type="image/jpeg" attributes=""/>
-<item id="_application.js" href="javascripts/application.js" media-type="application/javascript" attributes=""/>
 <item id="_application.css" href="stylesheets/application.css" media-type="text/css" attributes=""/>
+<item id="_application.js" href="javascripts/application.js" media-type="application/javascript" attributes=""/>
 <item id="_chapter-1.html" href="text/chapter-1.html" media-type="text/html" attributes=""/>
 <item id="_chapter-2.html" href="text/chapter-2.html" media-type="text/html" attributes=""/></manifest>
 <spine><itemref idref="_chapter-1.html" linear="yes"/>
