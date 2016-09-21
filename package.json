@@ -35,6 +35,7 @@
     "lodash": "^4.16.1",
     "markdown-it": "^7.0.1",
     "markdown-it-container": "^2.0.0",
+    "markdown-it-footnote": "^3.0.1",
     "mime-types": "^2.1.12",
     "mkdirp": "^0.5.1",
     "node-babel": "^0.1.2",

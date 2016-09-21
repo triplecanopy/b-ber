@@ -1,6 +1,12 @@
 
 import MarkdownIt from 'markdown-it';
-import mdSpoiler from './md-directives/md-spoiler';
+
+// https://www.npmjs.com/package/markdown-it-footnote
+import mdFootnote from 'markdown-it-footnote';
+
+
+import mdSection from './md-directives/md-section';
+import mdImages from './md-directives/md-images';
 
 const md = new MarkdownIt({
   html: true,
@@ -10,9 +16,15 @@ const md = new MarkdownIt({
 });
 
 md.use(
-  mdSpoiler.plugin,
-  mdSpoiler.name,
-  mdSpoiler.methods(md)
+  mdSection.plugin,
+  mdSection.name,
+  mdSection.renderer(md)
+).use(
+  mdFootnote
+).use(
+  mdImages.plugin,
+  mdImages.name,
+  mdImages.renderer(md)
 );
 
 export default md;
