@@ -185,4 +185,16 @@ let { argv } = yargs.fail((msg, err) => {
     .help('help')
     .wrap(null));
     checkCommands(yargs, argv, 1);
+  })
+  .command('init', 'Initalize b-ber', (yargs) => {
+    ({ argv } = yargs.fail((msg, err) => {
+      if (err) { throw err; }
+      console.log(msg);
+      yargs.showHelp();
+    })
+    .usage('\nUsage: $0 init')
+    .alias('h', 'help')
+    .help('help')
+    .wrap(null));
+    checkCommands(yargs, argv, 1);
   });
