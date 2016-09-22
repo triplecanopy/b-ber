@@ -9,6 +9,18 @@ $ git clone https://github.com/triplecanopy/b-ber-creator.git && cd $_
 $ npm install
 ```
 
+## Workflow
+
+If working in a development environment, replace `bber` in the below commands with `npm start --`
+
+```bash
+$ bber init     # Initialize the directory structure for the book
+$ bber create   # Create the epub
+$ bber site     # Download Gomez and install dependencies
+$ bber publish  # Move epub to _site directory
+$ bber deploy   # Upload the site directory to a server
+```
+
 ## Development
 
 ```

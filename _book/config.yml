@@ -1,0 +1,5 @@
+---
+environment: development
+output_path:
+  development: ./_book
+  production: ./book

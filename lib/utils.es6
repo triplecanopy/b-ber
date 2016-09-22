@@ -1,6 +1,18 @@
 
 import path from 'path';
 import _ from 'lodash';
+import fs from 'fs';
+
+function copy(source, target) {
+  return new Promise((resolve, reject) => {
+    let rd = fs.createReadStream(source);
+    rd.on('error', reject);
+    let wr = fs.createWriteStream(target);
+    wr.on('error', reject);
+    wr.on('finish', resolve);
+    return rd.pipe(wr);
+  });
+}
 
 function slashit(str) {
   let fpath = str;
@@ -32,4 +44,10 @@ function fileid(str) {
   return '_'.concat(str.replace(/[\s:,“”‘’]/g, '_'));
 }
 
-export { slashit, topdir, cjoin, fileid };
+export {
+  slashit,
+  topdir,
+  cjoin,
+  fileid,
+  copy,
+};

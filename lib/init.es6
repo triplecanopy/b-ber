@@ -2,27 +2,32 @@
 import gulp from 'gulp';
 import fs from 'fs';
 import mkdirp from 'mkdirp';
+import yargs from 'yargs';
+import path from 'path';
 
-const path = yargs.argv.path;
+gulp.task('init', () => {
 
-const dirs = [
-  `${path}`,
-  `${path}/_images`,
-  `${path}/_javascripts`,
-  `${path}/_stylesheets`,
-  `${path}/.tmp`,
-];
+  const output = yargs.argv.path;
 
-const files = [{
-  name: 'config.yml',
-  content: `---
+  const dirs = [
+    `${output}`,
+    `${output}/_images`,
+    `${output}/_javascripts`,
+    `${output}/_stylesheets`,
+    `${output}/_text`,
+    `${output}/.tmp`,
+  ];
+
+  const files = [{
+    name: 'config.yml',
+    content: `---
 environment: development
 output_path:
-  development: ./${path}
+  development: ${output}
   production: ./book`,
-}, {
-  name: 'metadata.yml',
-  content: `---
+  }, {
+    name: 'metadata.yml',
+    content: `---
 metadata:
   title: Test Book
   creator: First Last
@@ -35,17 +40,16 @@ metadata:
   identifier: c282f98b794648d1bedc22837b8c4b71
   cover_file: cover.jpg
   cover_path: _images/cover.jpg`,
-}, {
-  name: '.jshintrc',
-  content: '',
-}];
+  }, {
+    name: '.jshintrc',
+    content: '',
+  }];
 
-gulp.task('init', () => {
-  dirs.forEach((dir, idx) => {
-    mkdirp(dir, () => {
+  dirs.map((dir, idx) => {
+    mkdirp(path.join(__dirname, '../', dir), () => {
       if (idx === dirs.length - 1) {
         files.map(_ =>
-          fs.writeFile(`path/${_.name}`, _.content, (err) => {
+          fs.writeFile(`${output}/${_.name}`, _.content, (err) => {
             if (err) { throw err; }
           })
         );

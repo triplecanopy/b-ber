@@ -215,4 +215,33 @@ let { argv } = yargs.fail((msg, err) => {
     .help('help')
     .wrap(null));
     checkCommands(yargs, argv, 1);
+  })
+  .command('publish', 'Move book to the _site dir', (yargs) => {
+    ({ argv } = yargs.fail((msg, err) => {
+      if (err) { throw err; }
+      console.log(msg);
+      yargs.showHelp();
+    })
+
+    .options('input', {
+      alias: 'i',
+      demand: false,
+      default: './_book',
+      describe: 'Define the input path',
+      type: 'string',
+    })
+
+    .options('output', {
+      alias: '0',
+      demand: false,
+      default: './_site',
+      describe: 'Define the output path',
+      type: 'string',
+    })
+
+    .usage('\nUsage: $0 publish')
+    .alias('h', 'help')
+    .help('help')
+    .wrap(null));
+    checkCommands(yargs, argv, 1);
   });

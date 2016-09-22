@@ -10,12 +10,13 @@ const settings = (() => {
       res.dist = res.output_path[res.environment];
     }
   } catch (e) {
-    res = {};
+    res = { dist: '_book' };
   }
   return res;
 })();
 
 // settings.gomez = 'https://github.com/triplecanopy/b-ber-boiler/archive/master.zip';
-settings.gomez = 'http://maxwellsimmer.com/foo.zip';
+settings.gomez = 'http://maxwellsimmer.com/b-ber-boiler3.zip';
+// settings.gomez = 'http://maxwellsimmer.com/test.zip';
 
 export default settings;
