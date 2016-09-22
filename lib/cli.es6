@@ -173,4 +173,16 @@ let { argv } = yargs.fail((msg, err) => {
     .help('help')
     .wrap(null));
     checkCommands(yargs, argv, 1);
+  })
+  .command('site', 'Clone Gomez', (yargs) => {
+    ({ argv } = yargs.fail((msg, err) => {
+      if (err) { throw err; }
+      console.log(msg);
+      yargs.showHelp();
+    })
+    .usage('\nUsage: $0 site')
+    .alias('h', 'help')
+    .help('help')
+    .wrap(null));
+    checkCommands(yargs, argv, 1);
   });
