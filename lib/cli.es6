@@ -180,7 +180,16 @@ let { argv } = yargs.fail((msg, err) => {
       console.log(msg);
       yargs.showHelp();
     })
-    .usage('\nUsage: $0 site')
+
+    .options('path', {
+      alias: 'p',
+      demand: false,
+      default: './_site',
+      describe: 'Define the site path',
+      type: 'string',
+    })
+
+    .usage('\nUsage: $0 site [path]')
     .alias('h', 'help')
     .help('help')
     .wrap(null));
@@ -192,6 +201,15 @@ let { argv } = yargs.fail((msg, err) => {
       console.log(msg);
       yargs.showHelp();
     })
+
+    .options('path', {
+      alias: 'p',
+      demand: false,
+      default: './_book',
+      describe: 'Define the book path',
+      type: 'string',
+    })
+
     .usage('\nUsage: $0 init')
     .alias('h', 'help')
     .help('help')

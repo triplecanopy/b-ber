@@ -3,12 +3,14 @@ import gulp from 'gulp';
 import fs from 'fs';
 import mkdirp from 'mkdirp';
 
+const path = yargs.argv.path;
+
 const dirs = [
-  '_images',
-  '_javascripts',
-  '_stylesheets',
-  '_book',
-  '.tmp',
+  `${path}`,
+  `${path}/_images`,
+  `${path}/_javascripts`,
+  `${path}/_stylesheets`,
+  `${path}/.tmp`,
 ];
 
 const files = [{
@@ -16,7 +18,7 @@ const files = [{
   content: `---
 environment: development
 output_path:
-  development: ./_book
+  development: ./${path}
   production: ./book`,
 }, {
   name: 'metadata.yml',
@@ -39,10 +41,15 @@ metadata:
 }];
 
 gulp.task('init', () => {
-  dirs.map(_ => mkdirp(_));
-  files.map(_ =>
-    fs.writeFile(_.name, _.content, (err) => {
-      if (err) { throw err; }
-    })
-  );
+  dirs.forEach((dir, idx) => {
+    mkdirp(dir, () => {
+      if (idx === dirs.length - 1) {
+        files.map(_ =>
+          fs.writeFile(`path/${_.name}`, _.content, (err) => {
+            if (err) { throw err; }
+          })
+        );
+      }
+    });
+  });
 });
