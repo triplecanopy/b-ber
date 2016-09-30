@@ -20,10 +20,11 @@ gulp.task('publish', (done) => {
     `${book}/_text`,
   ];
 
-  mkdirp(output, () => {
-    dirs.forEach(_ => cdir(_, `${slashit(site)}${_}`, (err) => {
+  mkdirp(output, () =>
+    dirs.forEach((dir, idx) => cdir(dir, `${slashit(site)}${dir}`, (err) => {
       if (err) { throw err; }
+      if (idx === dirs.length - 1) { done(); }
     }))
-  });
+  );
 
 });

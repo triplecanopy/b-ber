@@ -1,6 +1,5 @@
 
 import gulp from 'gulp';
-// import request from 'request';
 import unzip from 'unzip2';
 import cp from 'child_process';
 import fs from 'fs';

@@ -232,7 +232,7 @@ let { argv } = yargs.fail((msg, err) => {
     })
 
     .options('output', {
-      alias: '0',
+      alias: 'o',
       demand: false,
       default: './_site',
       describe: 'Define the output path',
