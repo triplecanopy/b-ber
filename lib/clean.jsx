@@ -1,13 +1,16 @@
 
 import path from 'path'
-import del from 'del'
+import fs from 'fs-extra'
 import conf from './config'
 
 const dist = path.join(__dirname, '../', `${conf.dist}`)
 
 const clean = () =>
-  del(dist).then((paths) => {
-    console.log('Deleted files and folders:\n', paths.join('\n'))
-  })
+  new Promise((resolve, reject) =>
+    fs.remove(dist, (err) => {
+      if (err) { throw err }
+      resolve()
+    })
+  )
 
 export default clean

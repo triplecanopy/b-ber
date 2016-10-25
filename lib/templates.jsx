@@ -27,10 +27,10 @@ const page = new File({
       <!-- endinject -->
     </head>
     <body>
-    {% body %}
-    </body>
+      {% body %}
       <!-- inject:js -->
       <!-- endinject -->
+    </body>
     </html>`)
 })
 

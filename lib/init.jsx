@@ -1,7 +1,6 @@
 
 import gulp from 'gulp'
-import fs from 'fs'
-import mkdirp from 'mkdirp'
+import fs from 'fs-extra'
 import yargs from 'yargs'
 import path from 'path'
 import { guid } from './utils'
@@ -47,7 +46,7 @@ metadata:
 
   // TODO: don't rewrite if src dir exists
   dirs.map((dir, idx) =>
-    mkdirp(path.join(__dirname, '../', dir), () => {
+    fs.mkdirs(path.join(__dirname, '../', dir), () => {
       if (idx === dirs.length - 1) {
         files.map(_ =>
           fs.writeFile(`${src}/${_.name}`, _.content, (err2) => {
