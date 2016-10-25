@@ -3,16 +3,17 @@ import gulp from 'gulp'
 import yargs from 'yargs'
 import path from 'path'
 import cdir from 'copy-dir'
-import mkdirp from 'mkdirp'
+import fs from 'fs-extra'
 
-gulp.task('publish', (done) => {
-  const book = yargs.argv.input
-  const dest = path.join(__dirname, yargs.argv.output, book)
+const publish = () =>
+  new Promise((resolve, reject) => {
+    const book = yargs.argv.input
+    const dest = path.join(__dirname, yargs.argv.output, book)
 
-  mkdirp(dest, () =>
-    cdir(book, dest, (err) => {
-      if (err) { throw err }
-      done()
-    })
-  )
-})
+    fs.mkdirs(dest, () =>
+      cdir(book, dest, (err) => {
+        if (err) { throw err }
+        resolve()
+      })
+    )
+  })

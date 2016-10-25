@@ -3,30 +3,20 @@
 /* eslint-disable no-shadow */
 
 import yargs from 'yargs'
+import deps from './deps'
 import * as tasks from './tasks'
+import { delayedPromise, forEachSerial } from './async'
 
-const checkCommands = (yarg, argv, required, sequence) => {
+const checkCommands = (yarg, argv, required) => {
   if (argv._.length < required) { return yarg.showHelp() }
-
-  const seq = !sequence || sequence.length < 1 ? argv._ : sequence
-  seq.map(_ => tasks[_])
-
-  function delayedPromise(time, value) {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => resolve(value), time)
-    })
-  }
-  async function forEachSerial(iterable, asyncBlock) {
-    for (let item of iterable) {
-      await asyncBlock(item)
-    }
-  }
+  const sequence = deps.hasOwnProperty(argv._) ? [argv._, ...deps[argv._] : argv._
 
   async function serial() {
-    await forEachSerial(seq, async (func) => {
-      console.log("Resolved serial: " + await delayedPromise(0, func()))
+    await forEachSerial(sequence, async (func) => {
+      await delayedPromise(0, tasks[func].call(this))
+      console.log(`Resolved serial: ${func}`)
     })
-    console.log("Done with serial!")
+    console.log('Done!')
   }
 
   // bootstrap

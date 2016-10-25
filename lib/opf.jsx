@@ -1,5 +1,4 @@
 
-import gulp from 'gulp'
 import renderLayouts from 'layouts'
 import path from 'path'
 import fs from 'fs'
@@ -12,6 +11,7 @@ import { topdir, cjoin } from './utils'
 
 const manifest = done =>
   rrdir(`${conf.dist}/OPS`, (err, files) => {
+    if (err) { throw err }
     const filearr = files
     filearr.forEach((file, idx) => {
       filearr[idx] = {
@@ -42,19 +42,13 @@ const stringify = (files, done) => {
   })
 }
 
-const write = (str, done) =>
-  fs.writeFile(path.join(
-      __dirname,
-      '../',
-      conf.dist,
-      'OPS/',
-      'content.opf'
-    ), str, (err) => {
-      if (err) { throw err }
-      done()
-    })
+const write = (str, resolve, reject) =>
+  fs.writeFile(path.join(__dirname, '../', conf.dist, 'OPS/', 'content.opf'), str, (err) => {
+    if (err) { reject(err) }
+    resolve()
+  })
 
-const render = (strings, done) => {
+const render = (strings, resolve, reject) => {
   const opf = renderLayouts(new File({
     path: './.tmp',
     layout: 'opfPackage',
@@ -77,19 +71,22 @@ const render = (strings, done) => {
     ].join('\n'))
   }), tmpl).contents.toString()
 
-  write(opf, done)
+  write(opf, resolve, reject)
 }
 
-gulp.task('opf', ['render'], done =>
-  manifest((files) => {
-    const allfiles = []
-    files.forEach((file, idx) => {
-      allfiles.push(file)
-      if (idx === files.length - 1) {
-        return stringify(allfiles, strings =>
-          render(strings, done)
-        )
-      }
+const opf = () =>
+  new Promise((resolve, reject) =>
+    manifest((files) => {
+      const allfiles = []
+      files.forEach((file, idx) => {
+        allfiles.push(file)
+        if (idx === files.length - 1) {
+          return stringify(allfiles, strings =>
+            render(strings, resolve, reject)
+          )
+        }
+      })
     })
-  })
-)
+  )
+
+export default opf

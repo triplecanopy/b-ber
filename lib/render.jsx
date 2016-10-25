@@ -1,9 +1,9 @@
 
-import gulp from 'gulp'
+// TODO: does this need to be wrapped in a promise?
+
 import renderLayouts from 'layouts'
 import path from 'path'
-import fs from 'fs'
-import mkdirp from 'mkdirp'
+import fs from 'fs-extra'
 import File from 'vinyl'
 
 import conf from './config'
@@ -15,17 +15,17 @@ const mddir = path.join(__dirname, `/../${conf.src}/_markdown/`)
 const dest = path.join(__dirname, `/../${conf.dist}/OPS/text/`)
 
 // write files to `dest` dir
-const write = (fname, markup, idx, len, done) =>
+const write = (fname, markup, idx, len, rs, rj) =>
   fs.writeFile(path.join(dest, `${fname}.xhtml`), markup, (err) => {
-    if (err) { throw err }
+    if (err) { throw rj(err) }
     if (idx === len) {
-      done()
       console.log('render done')
+      rs()
     }
   })
 
 // insert compiled XHTML into layouts
-const layout = (fname, data, idx, len, done) => {
+const layout = (fname, data, idx, len, rs, rj) => {
   const markup = renderLayouts(new File({
     path: './.tmp',
     layout: 'page',
@@ -34,27 +34,29 @@ const layout = (fname, data, idx, len, done) => {
 
   try {
     if (fs.statSync(dest)) {
-      write(fname, markup, idx, len, done)
+      write(fname, markup, idx, len, rs, rj)
     }
   } catch (e) {
-    mkdirp(dest, () => write(fname, markup, idx, len, done))
+    fs.mkdirs(dest, () => write(fname, markup, idx, len, rs, rj))
   }
 }
 
 // compile md to XHTML
-const render = (fname, data, idx, len, done) =>
-  layout(fname, md.render(data), idx, len, done)
+const parse = (fname, data, idx, len, rs, rj) =>
+  layout(fname, md.render(data), idx, len, rs, rj)
 
-// get all markdown files
-gulp.task('render', done =>
-  fs.readdir(mddir, (err1, files) => {
-    if (err1) { throw err1 }
-    const len = files.length - 1
-    return files.forEach((file, idx) => (
-      fs.readFile(path.join(mddir, file), 'utf8', (err2, data) => {
-        if (err2) { throw err2 }
-        return render(path.basename(file, '.md'), data, idx, len, done)
-      })
-    ))
+const render = () =>
+  new Promise((resolve, reject) => {
+    fs.readdir(mddir, (err1, files) => {
+      if (err1) { reject(err1) }
+      const len = files.length - 1
+      return files.forEach((file, idx) => (
+        fs.readFile(path.join(mddir, file), 'utf8', (err2, data) => {
+          if (err2) { reject(err2) }
+          return parse(path.basename(file, '.md'), data, idx, len, resolve, reject)
+        })
+      ))
+    })
   })
-)
+
+export default render

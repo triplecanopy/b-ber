@@ -1,5 +1,4 @@
 
-export { default as build } from './build'
 export { default as clean } from './clean'
 export { default as cli } from './cli'
 export { default as config } from './config'

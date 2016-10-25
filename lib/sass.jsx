@@ -1,9 +1,10 @@
 
-import gulp from 'gulp'
+// TODO: does this need to be wrapped in promise? ... probably not
+
 import fs from 'fs'
 import path from 'path'
 import cssnano from 'cssnano'
-import sass from 'node-sass'
+import nsass from 'node-sass'
 import postcss from 'postcss'
 import autoprefixer from 'autoprefixer'
 
@@ -13,19 +14,23 @@ const stylesheet = path.join(__dirname, `../${conf.src}`, '_stylesheets/applicat
 const sassOptions = { file: stylesheet, errLogToConsole: true, outputStyle: 'nested' }
 const autoprefixerOptions = { browsers: ['last 2 versions', '> 2%'], flexbox: 'no-2009' }
 
-gulp.task('sass', () =>
-  sass.render(sassOptions, (err1, result) => {
-    if (err1) { throw err1 }
-    postcss([
-      autoprefixer(autoprefixerOptions),
-      cssnano
-    ])
+const sass = () =>
+  new Promise((resolve, reject) => {
+    nsass.render(sassOptions, (err1, result) => {
+      if (err1) { reject(err1) }
+      postcss([
+        autoprefixer(autoprefixerOptions),
+        cssnano
+      ])
       .process(result.css)
       .then(prefixed =>
         fs.writeFile(`${conf.dist}/OPS/stylesheets.css`, prefixed, (err2) => {
-          if (err2) { throw err2 }
+          if (err2) { reject(err2) }
           console.log('sass done')
+          resolve()
         })
       )
+    })
   })
-)
+
+export default sass

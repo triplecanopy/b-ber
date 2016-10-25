@@ -1,5 +1,4 @@
 
-import gulp from 'gulp'
 import cdir from 'copy-dir'
 import path from 'path'
 import conf from './config'
@@ -9,11 +8,11 @@ import conf from './config'
 const input = path.join(__dirname, `../${conf.src}`, '_images')
 const output = path.join(__dirname, `../${conf.dist}`, 'OPS/images')
 
-gulp.task('copy', (done) => {
-  console.log('start copy')
+const copy = () => {
   cdir(input, output, (err) => {
     if (err) { throw err }
     console.log('copy done')
-    done()
   })
-})
+}
+
+export default copy

@@ -1,6 +1,8 @@
 
+// TODO: remove gulp?
+
 import gulp from 'gulp'
-import inject from 'gulp-inject'
+import gulpinject from 'gulp-inject'
 import conf from './config'
 
 const injectOptions = {
@@ -16,7 +18,8 @@ const sources = gulp.src([
   `${conf.dist}/OPS/stylesheets/*.css`
 ], { read: false })
 
-gulp.task('inject', () =>
-  targets.pipe(inject(sources, injectOptions))
+const inject = () =>
+  targets.pipe(gulpinject(sources, injectOptions))
     .pipe(gulp.dest(`${conf.dist}/OPS/text`))
-)
+
+export default inject
