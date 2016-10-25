@@ -1,6 +1,9 @@
 .DS_Store
-node_modules
-dist
 *.log
 *.map
 .tmp
+
+node_modules
+_site
+dist # used for transpiled JSX
+book # build directory for _book

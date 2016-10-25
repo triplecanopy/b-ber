@@ -1,0 +1,1 @@
+if (console && console.log) { console.log('Hello World!'); }

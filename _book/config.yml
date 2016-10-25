@@ -1,5 +1,4 @@
 ---
 environment: development
-output_path:
-  development: ./_book
-  production: ./book
+src: ./_book
+dist: ./book

@@ -1,13 +1,61 @@
 ---
-metadata:
-  title: Test Book
-  creator: First Last
-  language: en-US
-  rights: © First Last
-  publisher: Publisher Name
-  contributor: Contributor 1
-  contributor: Contributor 2
-  contributor: Contributor 3
-  identifier: c282f98b794648d1bedc22837b8c4b71
-  cover_file: cover.jpg
-  cover_path: _images/cover.jpg
+-
+  term: title
+  value: Headless
+  term_property: title-type
+  term_property_value: main
+-
+  term: title
+  value: Headless
+  term_property: title-type
+  term_property_value: collection
+-
+  term: creator
+  value: K. D.
+  term_property: role
+  term_property_value: aut
+-
+  term: contributor
+  value: John Barlow
+  term_property: role
+  term_property_value: ctb
+-
+  term: contributor
+  value: Provan, Alexander
+  term_property: role
+  term_property_value: aft
+-
+  term: contributor
+  value: b-ber
+  term_property: role
+  term_property_value: mrk
+-
+  term: language
+  value: en-US
+-
+  term: rights
+  value: Headless © 2014 K. D., Triple Canopy, Sternberg Press. Afterword © 2013 Alexander Provan.
+-
+  term: format
+  value: epub+zip
+-
+  term: date
+  value: 2016-07-07
+-
+  term: publisher
+  value: Sternberg, Tensta konsthall, Triple Canopy
+-
+  term: description
+  value: In this murder-mystery, a ghostwriter uncovers a sacrifice-obsessed, Bataille-inspired cabal of global elites who will do anything to maintain power.
+-
+  term: subject
+  value: Mystery, Thriller & Suspense / Mystery
+-
+  term: subject
+  value: shell company
+-
+  term: subject
+  value: shell corporation
+-
+  term: subject
+  value: offshore finance

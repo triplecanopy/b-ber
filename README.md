@@ -5,8 +5,8 @@ A command-line epub maker.
 ## Installation
 
 ```bash
-$ git clone https://github.com/triplecanopy/b-ber-creator.git && cd $_
-$ npm install
+$ git clone https://github.com/triplecanopy/b-ber-creator.git
+$ cd b-ber-creator && npm install
 ```
 
 ## Workflow

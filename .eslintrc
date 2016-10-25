@@ -1,10 +1,21 @@
 {
-  "extends": "airbnb",
+  "parser": "babel-eslint",
+  "extends": ["airbnb"],
+  "presets": ["es2015", "stage-0"],
+  "ecmaFeatures": { "classes": true, "jsx": true },
+  "plugins": ["babel"],
   "rules": {
-    "no-console": 0,
-    "func-names": 0,
-    "import/no-unresolved": 0,
+    // https://github.com/airbnb/javascript/issues/978
+    "react/require-extension": 0,
+    // Disable explicit file extensions when importing
+    "import/extensions": [2, "never"],
     "brace-style": [2, "1tbs", { "allowSingleLine": true }],
-    "max-statements-per-line": [2, { "max": 2 }]
+    "max-statements-per-line": [2, { "max": 2 }],
+    "semi": [2, "never"],
+    "comma-dangle": [1, "never"],
+    "space-before-function-paren": [2, {
+        "anonymous": "always",
+        "named": "never"
+    }]
   }
 }
