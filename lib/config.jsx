@@ -1,6 +1,6 @@
 
 import YAML from 'yamljs'
-import fs from 'fs'
+import fs from 'fs-extra'
 import { extend } from 'lodash'
 
 const settings = (() => {

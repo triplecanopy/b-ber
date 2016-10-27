@@ -13,6 +13,9 @@ const container = `<?xml version="1.0"?>
 
 const mimetype = 'application/epub+zip'
 
+const scriptTag = `<script type="application/javascript" src="{% body %}"></script>`
+const stylesheetTag = `<link type="text/css" href="{% body %}"/>`
+
 const page = new File({
   path: 'base.tmpl',
   contents: new Buffer(`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
@@ -24,12 +27,12 @@ const page = new File({
       <title></title>
       <meta http-equiv="default-style" content="text/html charset=utf-8"/>
       <!-- inject:css -->
-      <!-- endinject -->
+      <!-- end:css -->
     </head>
     <body>
       {% body %}
       <!-- inject:js -->
-      <!-- endinject -->
+      <!-- end:js -->
     </body>
     </html>`)
 })
@@ -37,14 +40,7 @@ const page = new File({
 const opfPackage = new File({
   path: 'opfPackage.tmpl',
   contents: new Buffer(`<?xml version="1.0" encoding="UTF-8"?>
-    <package
-      version="3.0"
-      xml:lang="en"
-      unique-identifier="uuid"
-      xmlns="http://www.idpf.org/2007/opf"
-      xmlns:dc="http://purl.org/dc/elements/1.1/"
-      xmlns:dcterms="http://purl.org/dc/terms/"
-      prefix="ibooks:http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0/">
+    <package version="3.0" xml:lang="en" unique-identifier="uuid" xmlns="http://www.idpf.org/2007/opf" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" prefix="ibooks:http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0/">
       {% body %}
     </package>`)
 })
@@ -72,10 +68,7 @@ const opfGuide = new File({
 function item(file) {
   let res = null
   if (mime.lookup(file.fullpath) !== 'application/oebps-package+xml') {
-    res = `<item id="${fileid(file.name)}"
-      href="${encodeURI(file.toppath)}"
-      media-type="${mime.lookup(file.fullpath)}"
-      attributes="${Attrs.test(file)}"/>`
+    res = `<item id="${fileid(file.name)}" href="${encodeURI(file.toppath)}" media-type="${mime.lookup(file.fullpath)}" attributes="${Attrs.test(file)}"/>`
   }
   return res
 }
@@ -96,7 +89,8 @@ function reference(file) {
   return res
 }
 
-export { container,
+export {
+  container,
   mimetype,
   page,
   opfPackage,
@@ -106,5 +100,7 @@ export { container,
   opfGuide,
   item,
   itemref,
-  reference
+  reference,
+  scriptTag,
+  stylesheetTag
 }

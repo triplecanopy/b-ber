@@ -1,7 +1,7 @@
 
 import renderLayouts from 'layouts'
 import path from 'path'
-import fs from 'fs'
+import fs from 'fs-extra'
 import File from 'vinyl'
 import rrdir from 'recursive-readdir'
 

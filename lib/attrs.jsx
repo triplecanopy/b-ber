@@ -1,6 +1,6 @@
 
 import path from 'path'
-import fs from 'fs'
+import fs from 'fs-extra'
 import mime from 'mime-types'
 
 class Attrs {

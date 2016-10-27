@@ -1,6 +1,4 @@
 
-// TODO: better w/o gulp?
-
 import path from 'path'
 import fs from 'fs-extra'
 import rrdir from 'recursive-readdir'
@@ -27,16 +25,10 @@ const write = (resolve, reject) => {
 
 const scripts = () =>
   new Promise((resolve, reject) => {
-    try {
-      if (fs.statSync(dest)) {
-        write(resolve, reject)
-      }
-    } catch (e) {
-      fs.mkdirs(dest, (err) => {
-        if (err) { reject(err) }
-        write(resolve, reject)
-      })
-    }
+    fs.mkdirs(dest, (err) => {
+      if (err) { reject(err) }
+      write(resolve, reject)
+    })
   })
 
 export default scripts

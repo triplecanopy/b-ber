@@ -9,7 +9,7 @@ import { delayedPromise, forEachSerial } from './async'
 
 const checkCommands = (yarg, argv, required) => {
   if (argv._.length < required) { return yarg.showHelp() }
-  const sequence = deps.hasOwnProperty(argv._) ? [argv._, ...deps[argv._] : argv._
+  const sequence = {}.hasOwnProperty.call(deps, argv._) ? deps[argv._] : [argv._[0]]
 
   async function serial() {
     await forEachSerial(sequence, async (func) => {
