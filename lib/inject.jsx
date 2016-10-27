@@ -1,25 +1,150 @@
 
-// TODO: remove gulp?
+import fs from 'fs-extra'
+import path from 'path'
+import File from 'vinyl'
+import { scriptTag, stylesheetTag } from './templates'
 
-import gulp from 'gulp'
-import gulpinject from 'gulp-inject'
 import conf from './config'
 
-const injectOptions = {
-  ignorePath: ['..', `${conf.dist}`, 'OPS'],
-  relative: true,
-  selfClosingTag: true
+const startTags = {
+  javascripts: new RegExp('<!-- inject:js -->', 'ig'),
+  stylesheets: new RegExp('<!-- inject:css -->', 'ig')
 }
 
-const targets = gulp.src(`${conf.dist}/OPS/text/*.{xhtml,html}`)
+const endTags = {
+  javascripts: new RegExp('<!-- end:js -->', 'ig'),
+  stylesheets: new RegExp('<!-- end:css -->', 'ig')
+}
 
-const sources = gulp.src([
-  `${conf.dist}/OPS/javascripts/*.js`,
-  `${conf.dist}/OPS/stylesheets/*.css`
-], { read: false })
+const getLeadingWhitespace = str => str.match(/^\s*/)[0]
+
+const getSources = () => new Promise((resolve, reject) =>
+  fs.readdir(`${conf.dist}/OPS/text/`, (err, files) => {
+    if (err) { reject(err) }
+    resolve(files)
+  })
+)
+
+const getJavascripts = () => new Promise((resolve, reject) =>
+  fs.readdir(`${conf.dist}/OPS/javascripts/`, (err, javascripts) => {
+    if (err) { reject(err) }
+    resolve({ javascripts })
+  })
+)
+const getStylesheets = () => new Promise((resolve, reject) =>
+  fs.readdir(`${conf.dist}/OPS/stylesheets/`, (err, stylesheets) => {
+    if (err) { reject(err) }
+    resolve({ stylesheets })
+  })
+)
+
+const getContents = source => new Promise((resolve, reject) =>
+  fs.readFile(path.join(__dirname, '../', conf.dist, 'OPS/text', source), (err, data) => {
+    if (err) { reject(err) }
+    resolve(new File({ contents: new Buffer(data) }))
+  })
+)
+
+const ext = str => str.slice(str.indexOf('.') + 1)
+
+const templateify = files =>
+  files.map((file) => {
+    switch (ext(file).toLowerCase()) {
+      case 'js':
+        return scriptTag.replace(/\{% body %\}/, `javascripts/${file}`)
+      case 'css':
+        return stylesheetTag.replace(/\{% body %\}/, `stylesheets/${file}`)
+      default:
+        throw new Error(`Unsupported filetype: ${file}`)
+    }
+  })
+
+
+const injectTags = (content, opt) => {
+
+  const toInject = templateify(opt.tagsToInject.slice())
+  const startTag = opt.startTag
+  const endTag = opt.endTag
+  let startMatch,
+      endMatch
+
+  while ((startMatch = startTag.exec(content)) !== null) {
+    endTag.lastIndex = startTag.lastIndex
+    endMatch = endTag.exec(content)
+    if (!endMatch) { throw new Error(`Missing end tag for start tag: ${startMatch[0]}`) }
+
+    // <everything before startMatch>:
+    let newContents = content.slice(0, startMatch.index)
+
+    toInject.unshift(startMatch[0])
+    toInject.push(endMatch[0])
+
+    const previousInnerContent = content.substring(startTag.lastIndex, endMatch.index)
+    const indent = getLeadingWhitespace(previousInnerContent)
+
+    // <new inner content>:
+    newContents += toInject.join(indent)
+
+    // <everything after endMatch>:
+    newContents += content.slice(endTag.lastIndex)
+
+    // replace old content with new:
+    content = newContents
+  }
+
+  return content
+}
+
+const write = (location, data) =>
+  fs.writeFile(location, data, (err) => {
+    if (err) { throw err }
+  })
+
+
+async function replaceContent(stream, path, startTag, endTag, tagsToInject) { // eslint-disable-line no-shadow
+  return new File({
+    path,
+    contents: new Buffer(
+      injectTags(
+        String(stream.contents),
+        { startTag, endTag, tagsToInject })
+      )
+  })
+}
+
+async function parse() {
+  const sources = await getSources()
+  const { stylesheets } = await getStylesheets()
+  const { javascripts } = await getJavascripts()
+  return sources.map(async (source) => {
+    const stream1 = await getContents(source)
+    replaceContent(
+      stream1,
+      source,
+      startTags.javascripts,
+      endTags.javascripts,
+      javascripts
+    )
+    .then(stream2 =>
+      replaceContent(
+        stream2,
+        source,
+        startTags.stylesheets,
+        endTags.stylesheets,
+        stylesheets
+      )
+    )
+    .then((result) => {
+      write(
+        path.join(__dirname, '../', conf.dist, 'OPS/text', result.path),
+        String(result.contents)
+      )
+    })
+  })
+}
 
 const inject = () =>
-  targets.pipe(gulpinject(sources, injectOptions))
-    .pipe(gulp.dest(`${conf.dist}/OPS/text`))
+  new Promise((resolve, reject) =>
+    parse().then(() => resolve()))
 
 export default inject
