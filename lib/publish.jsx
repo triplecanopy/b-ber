@@ -1,5 +1,4 @@
 
-import gulp from 'gulp'
 import yargs from 'yargs'
 import path from 'path'
 import cdir from 'copy-dir'
@@ -17,3 +16,5 @@ const publish = () =>
       })
     )
   })
+
+export default publish

@@ -1,11 +1,10 @@
 
-import gulp from 'gulp'
 import fs from 'fs-extra'
 import yargs from 'yargs'
 import path from 'path'
 import { guid } from './utils'
 
-gulp.task('init', () => {
+const init = () => {
   const src = yargs.argv.src
   const dist = yargs.argv.dist
 
@@ -56,4 +55,6 @@ metadata:
       }
     })
   )
-})
+}
+
+export default init
