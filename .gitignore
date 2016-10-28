@@ -5,5 +5,9 @@
 
 node_modules
 _site
-dist # used for transpiled JSX
-book # build directory for _book
+
+# used for transpiled JSX
+dist
+
+# build directory for _book
+book
