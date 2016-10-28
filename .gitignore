@@ -1,11 +1,18 @@
 .DS_Store
-*.log
-*.map
 .tmp
 .log
 
+*.log
+*.map
+*.epub
+*.mobi
+*.pdf
+
 node_modules
 _site
+
+# references project symlink
+epubcheck
 
 # used for transpiled JSX
 dist

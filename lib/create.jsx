@@ -4,10 +4,14 @@ import conf from './config'
 import logger from './logger'
 import { container, mimetype } from './templates'
 
-const dest = `${conf.dist}/OPS`
+const dirs = [
+  `${conf.dist}/OPS`,
+  `${conf.dist}/META-INF`
+]
 
-const write = (resolve, reject) =>
-  fs.writeFile(`${conf.dist}/container.xml`, container, (err1) => {
+const write = (resolve, reject) => {
+  console.log('writes')
+  fs.writeFile(`${conf.dist}/META-INF/container.xml`, container, (err1) => {
     if (err1) { reject(err1) }
     return fs.writeFile(`${conf.dist}/mimetype`, mimetype, (err2) => {
       if (err2) { reject(err2) }
@@ -15,21 +19,23 @@ const write = (resolve, reject) =>
       resolve()
     })
   })
+}
+
+async function makedirs() {
+  return new Promise((resolve, reject) =>
+    dirs.map((dir, index) =>
+      fs.mkdirs(dir, (err) => {
+        console.log(index, dirs.length - 1)
+        if (err) { reject(err) }
+        if (index === dirs.length - 1) { resolve() }
+      })
+    )
+  )
+}
 
 const create = () =>
-  new Promise((resolve, reject) => {
-    try {
-      if (fs.statSync(dest)) {
-        logger.info('has dest')
-        write(resolve, reject)
-      }
-    } catch (e) {
-      fs.mkdirs(dest, (err) => {
-        logger.info('no dest')
-        if (err) { reject(err) }
-        write(resolve, reject)
-      })
-    }
+  new Promise(async (resolve, reject) => {
+    await makedirs().then(() => write(resolve, reject))
   })
 
 export default create
