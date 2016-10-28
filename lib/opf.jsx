@@ -78,13 +78,13 @@ const opf = () =>
   new Promise((resolve, reject) =>
     manifest((files) => {
       const allfiles = []
-      files.forEach((file, idx) => {
+      files.forEach((file, index) => {
         allfiles.push(file)
-        if (idx === files.length - 1) {
-          return stringify(allfiles, strings =>
+        return index === files.length - 1 ?
+          stringify(allfiles, strings =>
             render(strings, resolve, reject)
-          )
-        }
+          ) :
+          { file, index }
       })
     })
   )

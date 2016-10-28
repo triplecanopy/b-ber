@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <package version="3.0" xml:lang="en" unique-identifier="uuid" xmlns="http://www.idpf.org/2007/opf" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" prefix="ibooks:http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0/">
+      <manifest><item id="_application.js" href="javascripts/application.js" media-type="application/javascript" attributes=""/>
+<item id="_stylesheets.css" href="stylesheets/stylesheets.css" media-type="text/css" attributes=""/>
+<item id="_ch-1.xhtml" href="text/ch-1.xhtml" media-type="application/xhtml+xml" attributes=""/></manifest>
+<spine><itemref idref="_ch-1.xhtml" linear="yes"/></spine>
+<guide><reference type="" title="" href="text/ch-1.xhtml"/></guide>
+    </package>

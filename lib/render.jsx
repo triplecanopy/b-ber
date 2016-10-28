@@ -1,6 +1,4 @@
 
-// TODO: does this need to be wrapped in a promise?
-
 import renderLayouts from 'layouts'
 import path from 'path'
 import fs from 'fs-extra'

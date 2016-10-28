@@ -31,6 +31,7 @@ const getJavascripts = () => new Promise((resolve, reject) =>
     resolve({ javascripts })
   })
 )
+
 const getStylesheets = () => new Promise((resolve, reject) =>
   fs.readdir(`${conf.dist}/OPS/stylesheets/`, (err, stylesheets) => {
     if (err) { reject(err) }
@@ -59,40 +60,40 @@ const templateify = files =>
     }
   })
 
+function* matchIterator(re, str) {
+  let match
+  while ((match = re.exec(str)) !== null) {
+    yield match
+  }
+}
 
 const injectTags = (content, opt) => {
-
   const toInject = templateify(opt.tagsToInject.slice())
   const startTag = opt.startTag
   const endTag = opt.endTag
-  let startMatch,
-      endMatch
+  let result
+  let endMatch
 
-  while ((startMatch = startTag.exec(content)) !== null) {
+  for (const startMatch of matchIterator(startTag, content)) {
     endTag.lastIndex = startTag.lastIndex
     endMatch = endTag.exec(content)
+
     if (!endMatch) { throw new Error(`Missing end tag for start tag: ${startMatch[0]}`) }
-
-    // <everything before startMatch>:
-    let newContents = content.slice(0, startMatch.index)
-
-    toInject.unshift(startMatch[0])
-    toInject.push(endMatch[0])
 
     const previousInnerContent = content.substring(startTag.lastIndex, endMatch.index)
     const indent = getLeadingWhitespace(previousInnerContent)
 
-    // <new inner content>:
-    newContents += toInject.join(indent)
+    toInject.unshift(startMatch[0])
+    toInject.push(endMatch[0])
 
-    // <everything after endMatch>:
-    newContents += content.slice(endTag.lastIndex)
-
-    // replace old content with new:
-    content = newContents
+    result = [
+      content.slice(0, startMatch.index),
+      toInject.join(indent),
+      content.slice(endTag.lastIndex)
+    ].join('')
   }
 
-  return content
+  return result
 }
 
 const write = (location, data) =>
@@ -101,14 +102,15 @@ const write = (location, data) =>
   })
 
 
-async function replaceContent(stream, path, startTag, endTag, tagsToInject) { // eslint-disable-line no-shadow
+async function replaceContent(stream, fpath, startTag, endTag, tagsToInject) {
   return new File({
-    path,
+    path: fpath,
     contents: new Buffer(
       injectTags(
         String(stream.contents),
-        { startTag, endTag, tagsToInject })
+        { startTag, endTag, tagsToInject }
       )
+    )
   })
 }
 

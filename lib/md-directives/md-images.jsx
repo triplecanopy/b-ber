@@ -14,12 +14,13 @@ export default {
   name: 'image',
   renderer: instance => ({
     validate(params) {
-      return params.trim().match(/^image\s+['"]([^'"]+)['"](?:\s+['"]([^\n'"]+)['"])?$/)
+      return params.trim().match(/^image\s+['"]?([^'"]+)['"]?(?:\s+['"]?([^\n'"]+)['"]?)?$/)
     },
     render(tokens, idx) {
-      const matches = tokens[idx].info.trim().match(/^image\s+['"]([^'"]+)['"](?:\s+([^\n]+))?$/)
-      const alttext = matches && typeof matches[2] !== 'undefined' ? instance.utils.escapeHtml(matches[2]) : ''
-      return `<figure>\n<img src="${instance.utils.escapeHtml(matches[1])}" alt="${alttext}"/></figure>\n`
+      const { escapeHtml } = instance.utils
+      const matches = tokens[idx].info.trim().match(/^image\s+['"]?([^'"]+)['"]?(?:\s+['"]?([^\n'"]+)['"]?)?$/)
+      const alttext = matches && typeof matches[2] !== 'undefined' ? escapeHtml(matches[2]) : ''
+      return `<figure>\n<img src="${escapeHtml(matches[1])}" alt="${alttext}"/>\n</figure>\n`
     }
   })
 }
