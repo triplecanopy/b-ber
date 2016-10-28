@@ -44,6 +44,16 @@ Examples:
 For more information on a command, enter npm start -- <command> --help
 ```
 
+## Commands via `bber`
+
+Run CLI commnads with `bber` rather than `npm`. The `bber` command requires transpiled JSX in the `dist` directory during pre-production phases.
+
+```bash
+$ npm run build   # transpile JSX
+$ npm link        # create simlink to bber/bin/cli
+$ bber init       # `bber` is now available
+```
+
 ## Testing
 
 ```
