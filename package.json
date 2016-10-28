@@ -8,6 +8,7 @@
     "lint": "./node_modules/.bin/eslint ./lib/cli.jsx lib/*.jsx lib/**/*.jsx",
     "test": "ava --tap | tap-spec && npm run -s lint || true",
     "build": "babel --presets es2015,stage-0 -d dist/ lib/",
+    "postinstall": "mkdir -p .log && touch .log/winston.log",
     "prepublish": "npm run build"
   },
   "bin": {
@@ -38,6 +39,7 @@
     "recursive-readdir": "^2.1.0",
     "unzip2": "^0.2.5",
     "vinyl": "^1.2.0",
+    "winston": "^2.2.0",
     "yamljs": "^0.2.8",
     "yargs": "^5.0.0"
   },

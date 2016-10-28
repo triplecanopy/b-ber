@@ -6,6 +6,7 @@ import File from 'vinyl'
 
 import conf from './config'
 import md from './md'
+import logger from './logger'
 
 import { page } from './templates'
 
@@ -17,7 +18,7 @@ const write = (fname, markup, idx, len, rs, rj) =>
   fs.writeFile(path.join(dest, `${fname}.xhtml`), markup, (err) => {
     if (err) { throw rj(err) }
     if (idx === len) {
-      console.log('render done')
+      logger.info('render done')
       rs()
     }
   })

@@ -17,7 +17,6 @@ const createdir = () =>
   new Promise((resolve, reject) =>
     fs.mkdirs(destdir, (err) => {
       if (err) { reject(err) }
-      console.log('resolve')
       resolve(destdir)
     })
   )

@@ -1,6 +1,7 @@
 
 import fs from 'fs-extra'
 import conf from './config'
+import logger from './logger'
 import { container, mimetype } from './templates'
 
 const dest = `${conf.dist}/OPS`
@@ -10,7 +11,7 @@ const write = (resolve, reject) =>
     if (err1) { reject(err1) }
     return fs.writeFile(`${conf.dist}/mimetype`, mimetype, (err2) => {
       if (err2) { reject(err2) }
-      console.log('create done')
+      logger.info('create done')
       resolve()
     })
   })
@@ -19,12 +20,12 @@ const create = () =>
   new Promise((resolve, reject) => {
     try {
       if (fs.statSync(dest)) {
-        console.log('has dest')
+        logger.info('has dest')
         write(resolve, reject)
       }
     } catch (e) {
       fs.mkdirs(dest, (err) => {
-        console.log('no dest')
+        logger.info('no dest')
         if (err) { reject(err) }
         write(resolve, reject)
       })

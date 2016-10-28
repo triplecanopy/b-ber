@@ -6,6 +6,7 @@ import File from 'vinyl'
 import rrdir from 'recursive-readdir'
 
 import conf from './config'
+import logger from './logger'
 import * as tmpl from './templates'
 import { topdir, cjoin } from './utils'
 
@@ -21,7 +22,7 @@ const manifest = done =>
       }
       if (idx === filearr.length - 1) {
         done(filearr)
-        console.log('opf done')
+        logger.info('opf done')
       }
     })
   })

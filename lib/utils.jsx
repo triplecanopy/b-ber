@@ -2,6 +2,7 @@
 import path from 'path'
 import _ from 'lodash'
 import fs from 'fs-extra'
+import logger from './logger'
 
 function copy(source, target) {
   return new Promise((resolve, reject) => {
@@ -21,7 +22,7 @@ function slashit(str) {
       throw new Error(`Path must be a string. '${typeof fpath}' given.`)
     }
   } catch (e) {
-    console.log(e.message)
+    logger.info(e.message)
     process.exit()
   }
 

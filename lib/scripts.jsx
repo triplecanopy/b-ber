@@ -4,6 +4,7 @@ import fs from 'fs-extra'
 import rrdir from 'recursive-readdir'
 
 import conf from './config'
+import logger from './logger'
 import { copy } from './utils'
 
 const src = path.join(__dirname, `../${conf.src}/_javascripts`)
@@ -16,7 +17,7 @@ const write = (resolve, reject) => {
     filearr.forEach((file, idx) => {
       copy(file, `${dest}/${path.basename(file)}`)
       if (idx === filearr.length - 1) {
-        console.log('scripts done')
+        logger.info('scripts done')
         resolve()
       }
     })
