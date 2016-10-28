@@ -2,6 +2,7 @@
 *.log
 *.map
 .tmp
+.log
 
 node_modules
 _site
