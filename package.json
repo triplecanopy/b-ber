@@ -5,8 +5,9 @@
   "main": "./lib/cli.jsx",
   "scripts": {
     "start": "babel-node ./lib/cli.jsx --presets es2015,stage-0",
-    "lint": "./node_modules/.bin/eslint ./lib/cli.jsx lib/*.jsx lib/**/*.jsx",
-    "test": "ava --tap | tap-spec && npm run -s lint || true",
+    "lint": "./node_modules/.bin/eslint ./lib/cli.jsx lib/*.jsx lib/**/*.jsx || true",
+    "ava": "ava || true",
+    "test": "npm run ava && npm run lint",
     "build": "babel --presets es2015,stage-0 -d dist/ lib/",
     "postinstall": "mkdir -p .log && touch .log/winston.log",
     "prepublish": "npm run build"
@@ -22,8 +23,11 @@
   "license": "MIT",
   "dependencies": {
     "autoprefixer": "^6.5.0",
+    "bunyan": "^1.8.4",
+    "bunyan-format": "^0.2.1",
     "copy-dir": "^0.3.0",
     "cssnano": "^3.7.6",
+    "decompress": "^4.0.0",
     "express": "^4.14.0",
     "fs-extra": "^0.30.0",
     "gulp": "^3.9.1",
@@ -37,9 +41,8 @@
     "node-sass": "^3.10.1",
     "postcss": "^5.2.4",
     "recursive-readdir": "^2.1.0",
-    "unzip2": "^0.2.5",
+    "request": "^2.76.0",
     "vinyl": "^1.2.0",
-    "winston": "^2.2.0",
     "yamljs": "^0.2.8",
     "yargs": "^5.0.0"
   },
@@ -71,7 +74,6 @@
     "match": [],
     "concurrency": 5,
     "failFast": true,
-    "tap": true,
     "require": [
       "babel-register"
     ],

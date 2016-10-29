@@ -1,7 +1,8 @@
 
 import path from 'path'
-import _ from 'lodash'
 import fs from 'fs-extra'
+import { compact } from 'lodash'
+
 import logger from './logger'
 
 function copy(source, target) {
@@ -38,7 +39,7 @@ function topdir(file) {
 }
 
 function cjoin(arr) {
-  return _.compact(arr).join('\n')
+  return compact(arr).join('\n')
 }
 
 function fileid(str) {

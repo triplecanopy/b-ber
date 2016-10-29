@@ -16,11 +16,8 @@ const dest = path.join(__dirname, `/../${conf.dist}/OPS/text/`)
 // write files to `dest` dir
 const write = (fname, markup, idx, len, rs, rj) =>
   fs.writeFile(path.join(dest, `${fname}.xhtml`), markup, (err) => {
-    if (err) { throw rj(err) }
-    if (idx === len) {
-      logger.info('render done')
-      rs()
-    }
+    if (err) { rj(err) }
+    if (idx === len) { rs() }
   })
 
 // insert compiled XHTML into layouts

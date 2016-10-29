@@ -1,10 +1,9 @@
 
-import cp from 'child_process'
 import path from 'path'
+import { exec } from 'child_process'
 import logger from './logger'
 import conf from './config'
 
-const exec = cp.exec
 const timestamp = String(Date.now())
 const bookname = `"${timestamp}.epub"`
 
@@ -18,28 +17,33 @@ const compile = [
 // TODO: assumes that epubcheck is symlinked to ./epubcheck
 const validate = `java -jar epubcheck -e ${bookname}` // -e: only show fatal errors
 
-const report = (err, stdout, stderr) => {
+const report = (err, stdout, stderr, reject) => {
   const msg = []
   let error
 
-  if (err) { throw err }
-  if (stdout !== '') { msg.push(stdout) }
-  if (stderr !== '') {
-    msg.push(stderr)
+  if (err) {
     error = true
+    msg.push(err)
+  }
+  if (stdout !== '') {
+    msg.push(stdout)
+  }
+  if (stderr !== '') {
+    error = true
+    msg.push(stderr)
   }
   if (msg.length) { msg.map(_ => logger.info(_)) }
-  if (error) { process.exit() }
+  if (error) { reject(process.exit()) }
 }
 
 const epub = () =>
   new Promise((resolve, reject) =>
     exec(remove, { cwd: './' }, (err1, stdout1, stderr1) => {
-      report(err1, stdout1, stderr1)
+      report(err1, stdout1, stderr1, reject)
       return exec(compile, { cwd: conf.dist }, (err2, stdout2, stderr2) => {
-        report(err2, stdout2, stderr2)
+        report(err2, stdout2, stderr2, reject)
         return exec(validate, { cwd: './' }, (err3, stdout3, stderr3) => {
-          report(err3, stdout3, stderr3)
+          report(err3, stdout3, stderr3, reject)
           resolve()
         })
       })

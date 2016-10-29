@@ -5,6 +5,7 @@ import File from 'vinyl'
 import { scriptTag, stylesheetTag } from './templates'
 
 import conf from './config'
+import logger from './logger'
 
 const startTags = {
   javascripts: new RegExp('<!-- inject:js -->', 'ig'),
@@ -97,9 +98,12 @@ const injectTags = (content, opt) => {
 }
 
 const write = (location, data) =>
-  fs.writeFile(location, data, (err) => {
-    if (err) { throw err }
-  })
+  new Promise((resolve, reject) =>
+    fs.writeFile(location, data, (err) => {
+      if (err) { reject(err) }
+      resolve()
+    })
+  )
 
 
 async function replaceContent(stream, fpath, startTag, endTag, tagsToInject) {
@@ -147,6 +151,8 @@ async function parse() {
 
 const inject = () =>
   new Promise((resolve, reject) =>
-    parse().then(() => resolve()))
+    parse()
+    .catch(err => reject(err))
+    .then(resolve))
 
 export default inject

@@ -1,6 +1,5 @@
 .DS_Store
 .tmp
-.log
 
 *.log
 *.map

@@ -1,1 +1,1 @@
-if (console && console.log) { console.log('Hello World!'); }
+if (console && console.log) { console.log('Hello World!') }

@@ -8,7 +8,7 @@ const dist = path.join(__dirname, '../', `${conf.dist}`)
 const clean = () =>
   new Promise((resolve, reject) =>
     fs.remove(dist, (err) => {
-      if (err) { throw err }
+      if (err) { reject(err) }
       resolve()
     })
   )

@@ -1,61 +1,40 @@
 ---
 -
   term: title
-  value: Headless
+  value: Sample Book
   term_property: title-type
   term_property_value: main
 -
-  term: title
-  value: Headless
-  term_property: title-type
-  term_property_value: collection
--
   term: creator
-  value: K. D.
+  value: Author Name
   term_property: role
   term_property_value: aut
 -
   term: contributor
-  value: John Barlow
+  value: bber
   term_property: role
   term_property_value: ctb
--
-  term: contributor
-  value: Provan, Alexander
-  term_property: role
-  term_property_value: aft
--
-  term: contributor
-  value: b-ber
-  term_property: role
-  term_property_value: mrk
 -
   term: language
   value: en-US
 -
   term: rights
-  value: Headless © 2014 K. D., Triple Canopy, Sternberg Press. Afterword © 2013 Alexander Provan.
+  value: Sample Book © 2016
 -
   term: format
   value: epub+zip
 -
   term: date
-  value: 2016-07-07
+  value: 2016-01-01
 -
   term: publisher
-  value: Sternberg, Tensta konsthall, Triple Canopy
+  value: Triple Canopy
 -
-  term: description
-  value: In this murder-mystery, a ghostwriter uncovers a sacrifice-obsessed, Bataille-inspired cabal of global elites who will do anything to maintain power.
+  term: date-modified
+  value: 2016-01-01
 -
-  term: subject
-  value: Mystery, Thriller & Suspense / Mystery
+  term: identifier
+  value: d731e886c8c7ef7a79a87812a5345560
 -
-  term: subject
-  value: shell company
--
-  term: subject
-  value: shell corporation
--
-  term: subject
-  value: offshore finance
+  term: cover
+  value: _cover.jpg

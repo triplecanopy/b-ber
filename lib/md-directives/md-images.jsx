@@ -9,16 +9,18 @@
 
 import mdInline from '../md-plugins/md-inline'
 
+const regex = /^image\s+['"]?([^'"]+)['"]?(?:\s+['"]?([^\n'"]+)['"]?)?$/
+
 export default {
   plugin: mdInline,
   name: 'image',
   renderer: instance => ({
     validate(params) {
-      return params.trim().match(/^image\s+['"]?([^'"]+)['"]?(?:\s+['"]?([^\n'"]+)['"]?)?$/)
+      return params.trim().match(regex)
     },
     render(tokens, idx) {
       const { escapeHtml } = instance.utils
-      const matches = tokens[idx].info.trim().match(/^image\s+['"]?([^'"]+)['"]?(?:\s+['"]?([^\n'"]+)['"]?)?$/)
+      const matches = tokens[idx].info.trim().match(regex)
       const alttext = matches && typeof matches[2] !== 'undefined' ? escapeHtml(matches[2]) : ''
       return `<figure>\n<img src="${escapeHtml(matches[1])}" alt="${alttext}"/>\n</figure>\n`
     }
