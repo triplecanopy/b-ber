@@ -1,6 +1,6 @@
 
 function delayedPromise(time, value) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve/* , reject */) => {
     setTimeout(() => resolve(value), time)
   })
 }

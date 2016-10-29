@@ -14,6 +14,8 @@
     "comma-dangle": [1, "never"],
     "one-var": [2, "never"],
     "no-cond-assign": [2, "except-parens"],
+    "max-len": [2, 100, { "ignoreComments": true }],
+    "operator-linebreak": [2, "before"],
     "space-before-function-paren": [2, {
         "anonymous": "always",
         "named": "never"

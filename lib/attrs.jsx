@@ -6,10 +6,12 @@ import mime from 'mime-types'
 class Attrs {
   constructor() {
     this.isNav = function isNav(file) {
-      return Boolean(path.basename(file) === 'toc.ncx' || path.basename(file) === 'toc.xhtml')
+      return Boolean(path.basename(file) === 'toc.ncx'
+        || path.basename(file) === 'toc.xhtml')
     }
     this.isScripted = function isScripted(file) {
-      if (mime.lookup(file.fullpath) !== 'text/html' && mime.lookup(file.fullpath) !== 'application/xhtml+xml') {
+      if (mime.lookup(file.fullpath) !== 'text/html'
+        && mime.lookup(file.fullpath) !== 'application/xhtml+xml') {
         return false
       }
 
@@ -18,7 +20,8 @@ class Attrs {
       return Boolean(contents.match(/<script/))
     }
     this.isSVG = function isSVG(file) {
-      if (mime.lookup(file.fullpath) !== 'text/html' && mime.lookup(file.fullpath) !== 'application/xhtml+xml') {
+      if (mime.lookup(file.fullpath) !== 'text/html'
+        && mime.lookup(file.fullpath) !== 'application/xhtml+xml') {
         return false
       }
 

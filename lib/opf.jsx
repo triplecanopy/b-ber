@@ -28,19 +28,13 @@ const manifest = () =>
   )
 
 const stringify = files =>
-  new Promise((resolve, reject) => {
-    const strings = {
-      manifest: [],
-      spine: [],
-      guide: []
-    }
+  new Promise((resolve /* , reject */) => {
+    const strings = { manifest: [], spine: [], guide: [] }
     files.forEach((file, idx) => {
       strings.manifest.push(tmpl.item(file))
       strings.spine.push(tmpl.itemref(file))
       strings.guide.push(tmpl.reference(file))
-      if (idx === files.length - 1) {
-        resolve(strings)
-      }
+      if (idx === files.length - 1) { resolve(strings) }
     })
   })
 
@@ -58,32 +52,35 @@ const write = string =>
       })
   })
 
-const render = strings =>
-  new Promise((resolve, reject) => {
-    const opf = renderLayouts(new File({
-      path: './.tmp',
-      layout: 'opfPackage',
-      contents: new Buffer([
-        renderLayouts(new File({
-          path: './.tmp',
-          layout: 'opfManifest',
-          contents: new Buffer(cjoin(strings.manifest))
-        }), tmpl).contents.toString(),
-        renderLayouts(new File({
-          path: './.tmp',
-          layout: 'opfSpine',
-          contents: new Buffer(cjoin(strings.spine))
-        }), tmpl).contents.toString(),
-        renderLayouts(new File({
-          path: './.tmp',
-          layout: 'opfGuide',
-          contents: new Buffer(cjoin(strings.guide))
-        }), tmpl).contents.toString()
-      ].join('\n'))
-    }), tmpl).contents.toString()
+function dolayouts(strings) {
+  return renderLayouts(new File({
+    path: './.tmp',
+    layout: 'opfPackage',
+    contents: new Buffer([
+      renderLayouts(new File({
+        path: './.tmp',
+        layout: 'opfManifest',
+        contents: new Buffer(cjoin(strings.manifest))
+      }), tmpl).contents.toString(),
+      renderLayouts(new File({
+        path: './.tmp',
+        layout: 'opfSpine',
+        contents: new Buffer(cjoin(strings.spine))
+      }), tmpl).contents.toString(),
+      renderLayouts(new File({
+        path: './.tmp',
+        layout: 'opfGuide',
+        contents: new Buffer(cjoin(strings.guide))
+      }), tmpl).contents.toString()
+    ].join('\n'))
+  }), tmpl)
+  .contents
+  .toString()
+}
 
-    resolve(opf)
-  })
+const render = strings =>
+  new Promise(async resolve/* , reject */ =>
+    resolve(await dolayouts(strings)))
 
 const opf = () =>
   new Promise((resolve, reject) =>

@@ -6,8 +6,6 @@ import File from 'vinyl'
 
 import conf from './config'
 import md from './md'
-import logger from './logger'
-
 import { page } from './templates'
 
 const mddir = path.join(__dirname, `/../${conf.src}/_markdown/`)

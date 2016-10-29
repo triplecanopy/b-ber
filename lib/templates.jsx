@@ -1,4 +1,6 @@
 
+/* eslint-disable max-len  */
+
 import File from 'vinyl'
 import mime from 'mime-types'
 import Attrs from './attrs'

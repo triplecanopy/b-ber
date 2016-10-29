@@ -3,9 +3,7 @@ import fs from 'fs-extra'
 import path from 'path'
 import File from 'vinyl'
 import { scriptTag, stylesheetTag } from './templates'
-
 import conf from './config'
-import logger from './logger'
 
 const startTags = {
   javascripts: new RegExp('<!-- inject:js -->', 'ig'),

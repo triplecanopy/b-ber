@@ -1,7 +1,6 @@
 
 import fs from 'fs-extra'
 import conf from './config'
-import logger from './logger'
 import { container, mimetype } from './templates'
 
 const dirs = [
@@ -9,18 +8,19 @@ const dirs = [
   `${conf.dist}/META-INF`
 ]
 
-const write = (resolve, reject) => {
-  fs.writeFile(`${conf.dist}/META-INF/container.xml`, container, (err1) => {
-    if (err1) { reject(err1) }
-    return fs.writeFile(`${conf.dist}/mimetype`, mimetype, (err2) => {
-      if (err2) { reject(err2) }
-      resolve()
+const write = () =>
+  new Promise((resolve, reject) =>
+    fs.writeFile(`${conf.dist}/META-INF/container.xml`, container, (err1) => {
+      if (err1) { reject(err1) }
+      fs.writeFile(`${conf.dist}/mimetype`, mimetype, (err2) => {
+        if (err2) { reject(err2) }
+        resolve()
+      })
     })
-  })
-}
+  )
 
-async function makedirs() {
-  return new Promise((resolve, reject) =>
+const makedirs = () =>
+  new Promise((resolve, reject) =>
     dirs.map((dir, index) =>
       fs.mkdirs(dir, (err) => {
         if (err) { reject(err) }
@@ -28,11 +28,12 @@ async function makedirs() {
       })
     )
   )
-}
 
 const create = () =>
-  new Promise(async (resolve, reject) => {
-    await makedirs().then(() => write(resolve, reject))
-  })
+  new Promise((resolve, reject) =>
+    makedirs()
+    .then(write)
+    .catch(err => reject(err))
+    .then(resolve))
 
 export default create

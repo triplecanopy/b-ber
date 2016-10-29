@@ -27,7 +27,6 @@ const download = () =>
 
 const install = () =>
   new Promise((resolve, reject) => {
-
     // fs.statSync throws an error if the file doesn't exist, but the Promise
     // will continue to execute. We `exit` the process if the file doesn't
     // exist in `try` block's `catch`, or continue to execute the Promise if
@@ -38,7 +37,7 @@ const install = () =>
         logger.info('Installing package dependencies, this may take a while ...')
       }
     } catch (e) {
-      logger.error(`\`_site/package.json\` does not exist. Try initializing b-ber again with \`b-ber init\`.\n\n${e.message}`)
+      logger.error(`\`_site/package.json\` does not exist. Try initializing b-ber again with \`b-ber init\`.\n\n${e.message}`) // eslint-disable-line max-len
       process.exit()
     }
 
