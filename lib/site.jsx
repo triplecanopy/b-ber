@@ -9,10 +9,10 @@ import { exec } from 'child_process'
 import conf from './config'
 import logger from './logger'
 
-const dest = path.join(__dirname, '../_site')
-
-async function getZipURI() {
-  return yargs.argv.path
+let dest
+const setDest = () => {
+  dest = path.join(__dirname, '../', yargs.argv.path)
+  return dest
 }
 
 const download = () =>
@@ -27,31 +27,42 @@ const download = () =>
 
 const install = () =>
   new Promise((resolve, reject) => {
+
+    // fs.statSync throws an error if the file doesn't exist, but the Promise
+    // will continue to execute. We `exit` the process if the file doesn't
+    // exist in `try` block's `catch`, or continue to execute the Promise if
+    // it does.
+
     try {
       if (fs.statSync(`${dest}/package.json`)) {
-        exec('npm install', { cwd: dest }, (err, stdout, stderr) => {
-          if (err) { throw err }
-          if (stderr !== '') { logger.info(stderr) }
-          if (stdout !== '') { logger.info(stdout) }
-          resolve()
-        })
+        logger.info('Installing package dependencies, this may take a while ...')
       }
     } catch (e) {
-      logger.info(`\n${dest}/package.json does not exist, try initializing b-ber again with \`b-ber init\`.`)
-      logger.info(`e.message\n`)
-      reject()
+      logger.error(`\`_site/package.json\` does not exist. Try initializing b-ber again with \`b-ber init\`.\n\n${e.message}`)
       process.exit()
     }
+
+    exec('npm install', { cwd: dest }, (err, stdout, stderr) => {
+      if (err) { reject(err) }
+      if (stderr !== '') { reject(stderr) }
+      if (stdout !== '') { logger.info(stdout) }
+      resolve()
+    })
   })
 
+async function unzip(data) {
+  return decompress(data, dest)
+}
+
 async function site() {
-  const zipURI = await getZipURI()
+  await setDest()
   return new Promise((resolve, reject) => {
     if (!{}.hasOwnProperty.call(conf, 'gomez')) { reject('No download url.') }
-    download(zipURI)
-      .then(data => decompress(data, dest))
-      .then(install)
-      .then(resolve)
+    download()
+    .then(data => unzip(data))
+    .then(install)
+    .catch(err => logger.error(err))
+    .then(resolve)
   })
 }
 
