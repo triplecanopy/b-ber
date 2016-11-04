@@ -1,7 +1,7 @@
 
 import path from 'path'
 import fs from 'fs-extra'
-import { compact } from 'lodash'
+import { compact } from 'underscore'
 
 import logger from './logger'
 

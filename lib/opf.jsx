@@ -4,7 +4,7 @@ import path from 'path'
 import fs from 'fs-extra'
 import File from 'vinyl'
 import rrdir from 'recursive-readdir'
-import { find } from 'lodash'
+import { find } from 'underscore'
 
 import conf from './config'
 import * as tmpl from './templates'
@@ -42,7 +42,6 @@ async function order(filearr) {
   })
 }
 
-// const depth = 1
 const add = (file, arr, callback) => {
   if (!file.location || file.location.length < 1) {
     callback(`Section number does not exist for ${file}`)
@@ -95,7 +94,7 @@ const makenav = ({ serial, parallel }) =>
 
     const nav = []
     serial.map(_ => add(_, nav, reject))
-    resolve(serial.concat(parallel))
+    resolve({ nav, filearrs: serial.concat(parallel) })
   })
 
 const manifest = () =>
@@ -122,15 +121,10 @@ const stringify = files =>
     })
   })
 
-const write = string =>
+const writeopf = string =>
   new Promise((resolve, reject) => {
     fs.writeFile(
-      path.join(
-        __dirname, '../',
-        conf.dist,
-        'OPS/',
-        'content.opf'
-      ), string, (err) => {
+      path.join(__dirname, '../', conf.dist, 'OPS/', 'content.opf'), string, (err) => {
         if (err) { reject(err) }
         resolve()
       })
@@ -162,6 +156,29 @@ function dolayouts(strings) {
   .toString()
 }
 
+function rendernav({ nav, filearrs }) {
+  const navpoints = tmpl.navPoint(nav)
+  const ncxstring = renderLayouts(new File({
+    path: './.tmp',
+    layout: 'ncxTmpl',
+    contents: new Buffer(navpoints)
+  }), tmpl)
+  .contents
+  .toString()
+
+  return { ncxstring, filearrs }
+}
+
+const writenav = ({ ncxstring, filearrs }) =>
+  new Promise((resolve, reject) => {
+    fs.writeFile(
+      path.join(__dirname, '../', conf.dist, 'OPS/', 'toc.ncx'), ncxstring, (err) => {
+        if (err) { reject(err) }
+        resolve(filearrs)
+      })
+  })
+
+
 const render = strings =>
   new Promise(async resolve/* , reject */ =>
     resolve(await dolayouts(strings)))
@@ -170,9 +187,11 @@ const opf = () =>
   new Promise((resolve, reject) =>
     manifest()
     .then(filearrs => makenav(filearrs))
+    .then(response => rendernav(response))
+    .then(response => writenav(response))
     .then(filearr => stringify(filearr))
     .then(strings => render(strings))
-    .then(opfdata => write(opfdata))
+    .then(opfdata => writeopf(opfdata))
     .catch(err => reject(err))
     .then(resolve)
   )
