@@ -19,15 +19,15 @@ const makedirs = (dirs, files, src) =>
   new Promise((resolve, reject) =>
     dirs.map((dir, idx1) =>
       fs.mkdirs(path.join(__dirname, '../', dir), (err1) => {
-        if (err1) { reject(err1) }
+        if (err1) { reject(new Error(err1)) }
         callback(idx1, dirs, () =>
           files.map((file, idx2) =>
             fs.writeFile(path.join(src, file.relpath), file.content, (err2) => {
-              if (err2) { reject(err2) }
+              if (err2) { reject(new Error(err2)) }
               callback(idx2, files, () => {
                 const buffer = new Buffer(base64CoverImage, 'base64')
                 fs.writeFile(path.join(src, '_images/cover.jpg'), buffer, (err3) => {
-                  if (err3) { reject(err3) }
+                  if (err3) { reject(new Error(err3)) }
                   resolve()
                 })
               })

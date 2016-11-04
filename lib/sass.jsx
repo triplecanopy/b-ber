@@ -16,7 +16,7 @@ const autoprefixerOptions = { browsers: ['last 2 versions', '> 2%'], flexbox: 'n
 const createdir = () =>
   new Promise((resolve, reject) =>
     fs.mkdirs(destdir, (err) => {
-      if (err) { reject(err) }
+      if (err) { reject(new Error(err)) }
       resolve(destdir)
     })
   )
@@ -25,12 +25,12 @@ async function sass() {
   const outputdir = await createdir()
   return new Promise((resolve, reject) => {
     nsass.render(sassOptions, (err1, result) => {
-      if (err1) { reject(err1) }
+      if (err1) { reject(new Error(err1)) }
       postcss([autoprefixer(autoprefixerOptions), cssnano])
         .process(result.css)
         .then(prefixed =>
           fs.writeFile(path.join(outputdir, 'stylesheets.css'), prefixed, (err2) => {
-            if (err2) { reject(err2) }
+            if (err2) { reject(new Error(err2)) }
             resolve()
           })
         )

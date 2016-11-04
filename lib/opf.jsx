@@ -7,6 +7,7 @@ import rrdir from 'recursive-readdir'
 import { find } from 'underscore'
 
 import conf from './config'
+import logger from './logger'
 import * as tmpl from './templates'
 import { topdir, cjoin } from './utils'
 
@@ -100,7 +101,7 @@ const makenav = ({ serial, parallel }) =>
 const manifest = () =>
   new Promise((resolve, reject) =>
     rrdir(`${conf.dist}/OPS`, async (err, filearr) => {
-      if (err) { reject(err) }
+      if (err) { reject(new Error(err)) }
 
       const files = filearr.filter(_ => path.basename(_).charAt(0) !== '.')
       const serial = await order(await parse(files.filter(_ => path.extname(_) === '.xhtml')))
@@ -125,12 +126,12 @@ const writeopf = string =>
   new Promise((resolve, reject) => {
     fs.writeFile(
       path.join(__dirname, '../', conf.dist, 'OPS/', 'content.opf'), string, (err) => {
-        if (err) { reject(err) }
+        if (err) { reject(new Error(err)) }
         resolve()
       })
   })
 
-function dolayouts(strings) {
+function opflayouts(strings) {
   return renderLayouts(new File({
     path: './.tmp',
     layout: 'opfPackage',
@@ -156,7 +157,7 @@ function dolayouts(strings) {
   .toString()
 }
 
-function rendernav({ nav, filearrs }) {
+function navlayouts({ nav, filearrs }) {
   const navpoints = tmpl.navPoint(nav)
   const ncxstring = renderLayouts(new File({
     path: './.tmp',
@@ -173,15 +174,19 @@ const writenav = ({ ncxstring, filearrs }) =>
   new Promise((resolve, reject) => {
     fs.writeFile(
       path.join(__dirname, '../', conf.dist, 'OPS/', 'toc.ncx'), ncxstring, (err) => {
-        if (err) { reject(err) }
+        if (err) { reject(new Error(err)) }
         resolve(filearrs)
-      })
+      }
+    )
   })
 
-
-const render = strings =>
+const rendernav = data =>
   new Promise(async resolve/* , reject */ =>
-    resolve(await dolayouts(strings)))
+    resolve(await navlayouts(data)))
+
+const renderopf = strings =>
+  new Promise(async resolve/* , reject */ =>
+    resolve(await opflayouts(strings)))
 
 const opf = () =>
   new Promise((resolve, reject) =>
@@ -190,9 +195,9 @@ const opf = () =>
     .then(response => rendernav(response))
     .then(response => writenav(response))
     .then(filearr => stringify(filearr))
-    .then(strings => render(strings))
+    .then(strings => renderopf(strings))
     .then(opfdata => writeopf(opfdata))
-    .catch(err => reject(err))
+    .catch(err => logger.error(err))
     .then(resolve)
   )
 

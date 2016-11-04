@@ -42,11 +42,11 @@ const parse = (fname, data, idx, len, rs, rj) =>
 const render = () =>
   new Promise((resolve, reject) => {
     fs.readdir(mddir, (err1, files) => {
-      if (err1) { reject(err1) }
+      if (err1) { reject(new Error(err1)) }
       const len = files.length - 1
       return files.forEach((file, idx) => (
         fs.readFile(path.join(mddir, file), 'utf8', (err2, data) => {
-          if (err2) { reject(err2) }
+          if (err2) { reject(new Error(err2)) }
           return parse(path.basename(file, '.md'), data, idx, len, resolve, reject)
         })
       ))

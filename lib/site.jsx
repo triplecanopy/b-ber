@@ -42,7 +42,7 @@ const install = () =>
     }
 
     exec('npm install', { cwd: dest }, (err, stdout, stderr) => {
-      if (err) { reject(err) }
+      if (err) { reject(new Error(err)) }
       if (stderr !== '') { reject(stderr) }
       if (stdout !== '') { logger.info(stdout) }
       resolve()

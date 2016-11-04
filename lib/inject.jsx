@@ -2,8 +2,10 @@
 import fs from 'fs-extra'
 import path from 'path'
 import File from 'vinyl'
-import { scriptTag, stylesheetTag } from './templates'
+
+import logger from './logger'
 import conf from './config'
+import { scriptTag, stylesheetTag } from './templates'
 
 const startTags = {
   javascripts: new RegExp('<!-- inject:js -->', 'ig'),
@@ -19,28 +21,28 @@ const getLeadingWhitespace = str => str.match(/^\s*/)[0]
 
 const getSources = () => new Promise((resolve, reject) =>
   fs.readdir(`${conf.dist}/OPS/text/`, (err, files) => {
-    if (err) { reject(err) }
+    if (err) { reject(new Error(err)) }
     resolve(files)
   })
 )
 
 const getJavascripts = () => new Promise((resolve, reject) =>
   fs.readdir(`${conf.dist}/OPS/javascripts/`, (err, javascripts) => {
-    if (err) { reject(err) }
+    if (err) { reject(new Error(err)) }
     resolve({ javascripts })
   })
 )
 
 const getStylesheets = () => new Promise((resolve, reject) =>
   fs.readdir(`${conf.dist}/OPS/stylesheets/`, (err, stylesheets) => {
-    if (err) { reject(err) }
+    if (err) { reject(new Error(err)) }
     resolve({ stylesheets })
   })
 )
 
 const getContents = source => new Promise((resolve, reject) =>
   fs.readFile(path.join(__dirname, '../', conf.dist, 'OPS/text', source), (err, data) => {
-    if (err) { reject(err) }
+    if (err) { reject(new Error(err)) }
     resolve(new File({ contents: new Buffer(data) }))
   })
 )
@@ -98,7 +100,7 @@ const injectTags = (content, opt) => {
 const write = (location, data) =>
   new Promise((resolve, reject) =>
     fs.writeFile(location, data, (err) => {
-      if (err) { reject(err) }
+      if (err) { reject(new Error(err)) }
       resolve()
     })
   )
@@ -150,7 +152,7 @@ async function parse() {
 const inject = () =>
   new Promise((resolve, reject) =>
     parse()
-    .catch(err => reject(err))
+    .catch(err => logger.log(err))
     .then(resolve))
 
 export default inject

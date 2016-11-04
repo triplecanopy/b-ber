@@ -11,7 +11,7 @@ const output = path.join(__dirname, `../${conf.dist}`, 'OPS/images')
 const copy = () =>
   new Promise((resolve, reject) =>
     cdir(input, output, (err) => {
-      if (err) { reject(err) }
+      if (err) { reject(new Error(err)) }
       resolve()
     })
   )

@@ -13,20 +13,20 @@ const serve = () =>
     const port = 3000
     const hidden = ['.opf', '.ncx']
     const options = {
-      filter(fname, index, files, dir) { return hidden.indexOf(path.extname(fname)) === -1 }
+      filter(fname) { return hidden.indexOf(path.extname(fname)) === -1 }
     }
 
     fs.readdir(text, (err, files) => {
-      if (err) { reject(err) }
+      if (err) { reject(new Error(err)) }
       if (!files || files.length < 1) { reject(`Cant find any files in ${text}`) }
 
       const app = express()
       app.use(express.static(ops))
       app.use(esindex(ops, options))
 
-      const server = app.listen(port, () => logger.info('server is running at localhost:%s', server.address().port))
+      const server = app.listen(port, () =>
+        logger.info('server is running at localhost:%s', server.address().port))
       resolve()
-
     })
   })
 
