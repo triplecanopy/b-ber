@@ -6,12 +6,13 @@ import conf from './config'
 
 const timestamp = String(Date.now())
 const bookname = `"${timestamp}.epub"`
+const bookpath = path.join(__dirname, '../', bookname)
 
 const remove = 'epubs=`ls -1 *.epub 2>/dev/null | wc -l`; if [ $epubs != 0 ]; then rm *.epub; fi'
 const compile = [
-  `zip -X0 ${path.join(__dirname, '../', bookname)} ./mimetype`,
-  `zip -X9Dr ${path.join(__dirname, '../', bookname)} ./META-INF -x *.DS_Store`,
-  `zip -X9Dr ${path.join(__dirname, '../', bookname)} ./OPS -x *.DS_Store`
+  `zip -X0 ${bookpath} ./mimetype`,
+  `zip -X9Dr ${bookpath} ./META-INF -x *.DS_Store`,
+  `zip -X9Dr ${bookpath} ./OPS -x *.DS_Store`
 ].join(' && ')
 
 // TODO: assumes that epubcheck is symlinked to ./epubcheck
