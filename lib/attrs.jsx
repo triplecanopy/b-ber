@@ -6,8 +6,7 @@ import mime from 'mime-types'
 class Attrs {
   constructor() {
     this.isNav = function isNav(file) {
-      return Boolean(path.basename(file) === 'toc.ncx'
-        || path.basename(file) === 'toc.xhtml')
+      return Boolean(mime.lookup(file.fullpath) === 'application/x-dtbncx+xml')
     }
     this.isScripted = function isScripted(file) {
       if (mime.lookup(file.fullpath) !== 'text/html'
