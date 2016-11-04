@@ -33,7 +33,6 @@
     "gulp": "^3.9.1",
     "jshint": "^2.9.3",
     "layouts": "^0.13.2",
-    "lodash": "^4.16.1",
     "markdown-it": "^7.0.1",
     "markdown-it-container": "^2.0.0",
     "markdown-it-footnote": "^3.0.1",
@@ -42,6 +41,7 @@
     "postcss": "^5.2.4",
     "recursive-readdir": "^2.1.0",
     "request": "^2.76.0",
+    "underscore": "^1.8.3",
     "vinyl": "^1.2.0",
     "yamljs": "^0.2.8",
     "yargs": "^5.0.0"
