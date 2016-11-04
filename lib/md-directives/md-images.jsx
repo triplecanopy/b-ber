@@ -22,7 +22,7 @@ export default {
       const { escapeHtml } = instance.utils
       const matches = tokens[idx].info.trim().match(regex)
       const alttext = matches && typeof matches[2] !== 'undefined' ? escapeHtml(matches[2]) : ''
-      return `<figure>\n<img src="${escapeHtml(matches[1])}" alt="${alttext}"/>\n</figure>\n`
+      return `<figure>\n<img src="../images/${escapeHtml(matches[1])}" alt="${alttext}"/>\n</figure>\n`
     }
   })
 }

@@ -41,6 +41,7 @@
     "postcss": "^5.2.4",
     "recursive-readdir": "^2.1.0",
     "request": "^2.76.0",
+    "serve-index": "^1.8.0",
     "underscore": "^1.8.3",
     "vinyl": "^1.2.0",
     "yamljs": "^0.2.8",

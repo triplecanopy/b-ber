@@ -51,9 +51,9 @@ const templateify = files =>
   files.map((file) => {
     switch (ext(file).toLowerCase()) {
       case 'js':
-        return scriptTag.replace(/\{% body %\}/, `javascripts/${file}`)
+        return scriptTag.replace(/\{% body %\}/, `../javascripts/${file}`)
       case 'css':
-        return stylesheetTag.replace(/\{% body %\}/, `stylesheets/${file}`)
+        return stylesheetTag.replace(/\{% body %\}/, `../stylesheets/${file}`)
       default:
         throw new Error(`Unsupported filetype: ${file}`)
     }
