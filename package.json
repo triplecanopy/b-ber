@@ -6,7 +6,7 @@
   "scripts": {
     "start": "babel-node ./lib/cli.jsx --presets es2015,stage-0",
     "lint": "./node_modules/.bin/eslint ./lib/cli.jsx lib/*.jsx lib/**/*.jsx || true",
-    "ava": "ava || true",
+    "ava": "ava --verbose || true",
     "test": "npm run ava && npm run lint",
     "build": "babel --presets es2015,stage-0 -d dist/ lib/",
     "postinstall": "mkdir -p .log && touch .log/winston.log",
