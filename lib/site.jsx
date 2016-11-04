@@ -43,7 +43,7 @@ const install = () =>
 
     exec('npm install', { cwd: dest }, (err, stdout, stderr) => {
       if (err) { reject(new Error(err)) }
-      if (stderr !== '') { reject(stderr) }
+      if (stderr !== '') { reject(new Error(stderr)) }
       if (stdout !== '') { logger.info(stdout) }
       resolve()
     })
@@ -56,7 +56,7 @@ async function unzip(data) {
 async function site() {
   await setDest()
   return new Promise((resolve, reject) => {
-    if (!{}.hasOwnProperty.call(conf, 'gomez')) { reject('No download url.') }
+    if (!{}.hasOwnProperty.call(conf, 'gomez')) { reject(new Error('No download url.')) }
     download()
     .then(data => unzip(data))
     .then(install)

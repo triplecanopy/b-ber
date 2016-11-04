@@ -34,7 +34,10 @@ const report = (err, stdout, stderr, reject) => {
     msg.push(stderr)
   }
   if (msg.length) { msg.map(_ => logger.info(_)) }
-  if (error) { reject(process.exit()) }
+  if (error) {
+    reject(new Error(error))
+    process.exit()
+  }
 }
 
 const epub = () =>
