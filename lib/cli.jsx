@@ -6,18 +6,27 @@ import yargs from 'yargs'
 import logger from './logger'
 import deps from './deps'
 import * as tasks from './tasks'
+import { rpad, hrtimeformat } from './utils'
 import { delayedPromise, forEachSerial } from './async'
 
 const checkCommands = (yarg, argv, required) => {
   if (argv._.length < required) { return yarg.showHelp() }
   const sequence = {}.hasOwnProperty.call(deps, argv._) ? deps[argv._] : [argv._[0]]
+  const start = process.hrtime()
+  let total
+  let seq
+  let diff
 
   async function serial() {
     await forEachSerial(sequence, async (func) => {
+      seq = process.hrtime()
       await delayedPromise(0, tasks[func].call(this))
-      logger.info(`Resolved serial: ${func}`)
+      diff = process.hrtime(seq)
+      logger.info(`Resolved ${rpad(func, ' ', 8)} ${hrtimeformat(diff)}`)
     })
-    logger.info('Done!')
+    total = process.hrtime(start)
+    logger.info('---')
+    logger.info(`Finished ${rpad(argv._[0], ' ', 8)} ${hrtimeformat(total)}`)
   }
 
   // bootstrap

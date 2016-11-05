@@ -47,14 +47,12 @@ const getContents = source => new Promise((resolve, reject) =>
   })
 )
 
-const ext = str => str.slice(str.indexOf('.') + 1)
-
 const templateify = files =>
   files.map((file) => {
-    switch (ext(file).toLowerCase()) {
-      case 'js':
+    switch (path.extname(file).toLowerCase()) {
+      case '.js':
         return scriptTag.replace(/\{% body %\}/, `../javascripts/${file}`)
-      case 'css':
+      case '.css':
         return stylesheetTag.replace(/\{% body %\}/, `../stylesheets/${file}`)
       default:
         throw new Error(`Unsupported filetype: ${file}`)

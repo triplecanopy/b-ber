@@ -56,4 +56,16 @@ function guid() {
   return `${s4()}${s4()}${s4()}${s4()}${s4()}${s4()}${s4()}${s4()}`
 }
 
-export { slashit, topdir, cjoin, fileid, copy, guid }
+function rpad(s, a, n) {
+  let str = s
+  if (str.length >= n) { return str }
+  while (str.length < n) { str += a }
+  return str
+}
+
+function hrtimeformat(a) {
+  const s = (a[0] * 1000) + (a[1] / 1000000)
+  return `${String(s).slice(0, -3)}ms`
+}
+
+export { slashit, topdir, cjoin, fileid, copy, guid, rpad, hrtimeformat }
