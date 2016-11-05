@@ -36,6 +36,7 @@
     "markdown-it": "^7.0.1",
     "markdown-it-container": "^2.0.0",
     "markdown-it-footnote": "^3.0.1",
+    "markdown-it-front-matter": "^0.1.2",
     "mime-types": "^2.1.12",
     "node-sass": "^3.10.1",
     "postcss": "^5.2.4",

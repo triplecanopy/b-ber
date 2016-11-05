@@ -5,7 +5,7 @@ import fs from 'fs-extra'
 import File from 'vinyl'
 
 import conf from './config'
-import md from './md'
+import MarkIt from './md'
 import { page } from './templates'
 
 const mddir = path.join(__dirname, `/../${conf.src}/_markdown/`)
@@ -37,13 +37,14 @@ const layout = (fname, data, idx, len, rs, rj) => {
 
 // compile md to XHTML
 const parse = (fname, data, idx, len, rs, rj) =>
-  layout(fname, md.render(data), idx, len, rs, rj)
+  layout(fname, MarkIt.render(fname, data), idx, len, rs, rj)
 
 const render = () =>
   new Promise((resolve, reject) => {
-    fs.readdir(mddir, (err1, files) => {
+    fs.readdir(mddir, async (err1, files) => {
       if (err1) { reject(new Error(err1)) }
       const len = files.length - 1
+      await MarkIt.setup()
       return files.forEach((file, idx) => (
         fs.readFile(path.join(mddir, file), 'utf8', (err2, data) => {
           if (err2) { reject(new Error(err2)) }
