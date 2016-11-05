@@ -12,7 +12,7 @@ const dest = path.join(__dirname, `../${conf.dist}/OPS/javascripts`)
 const write = () =>
   new Promise((resolve, reject) =>
     rrdir(src, (err, files) => {
-      if (err) { reject(new Error(err)) }
+      if (err) { reject(err) }
       const filearr = files
       filearr.forEach((file, idx) => {
         copy(file, `${dest}/${path.basename(file)}`)
@@ -26,7 +26,7 @@ const write = () =>
 const scripts = () =>
   new Promise((resolve, reject) => {
     fs.mkdirs(dest, (err) => {
-      if (err) { reject(new Error(err)) }
+      if (err) { reject(err) }
       write().then(resolve)
     })
   })

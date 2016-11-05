@@ -17,7 +17,7 @@ const serve = () =>
     }
 
     fs.readdir(text, (err, files) => {
-      if (err) { reject(new Error(err)) }
+      if (err) { reject(err) }
       if (!files || files.length < 1) { reject(new Error(`Cant find any files in ${text}`)) }
 
       const app = express()

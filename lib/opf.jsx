@@ -11,6 +11,8 @@ import logger from './logger'
 import * as tmpl from './templates'
 import { topdir, cjoin } from './utils'
 
+const navdocs = ['toc.ncx', 'toc.xhtml']
+
 async function parse(arr) {
   const result = []
   arr.forEach((file, idx) => {
@@ -30,22 +32,19 @@ async function parse(arr) {
 
 async function order(filearr) {
   return filearr.sort(async (a, b) => {
-    // name: '0070_5_name.xhtml'
-    // order_section_[file name]
-
     const arrA = a.name.split('_')
     const seqA = arrA[0]
-
     const arrB = b.name.split('_')
     const seqB = arrB[0]
-
     return seqA < seqB ? -1 : seqA > seqB ? 1 : 0 // eslint-disable-line no-nested-ternary
   })
 }
 
-const add = (file, arr, callback) => {
+const add = (file, arr) => {
   if (!file.location || file.location.length < 1) {
-    callback(`Section number does not exist for ${file}`)
+    return navdocs.indexOf(file.name) === -1
+      ? logger.warn(`Section number does not exist for ${file.name}\n`)
+      : '' // Ignore naviagation documents
   }
 
   const current = Number(file.location)
@@ -69,30 +68,6 @@ const add = (file, arr, callback) => {
 
 const makenav = ({ serial, parallel }) =>
   new Promise((resolve, reject) => {
-    // nav = [{
-    //   section: 1,
-    //   filename: 'file1.xhtml',
-    //   title: 'Chapter One',
-    //   children: [{
-    //     section: 1,
-    //     filename: 'file2.xhtml',
-    //     title: 'Chapter One-One',
-    //     children: []
-    //   }, {
-    //     section: 2,
-    //     filename: 'file3.xhtml',
-    //     title: 'Chapter One-Two',
-    //     children: []
-    //   }]
-    // }, {
-    //   section: 2,
-    //   filename: 'file4.xhtml',
-    //   title: 'Chapter Two',
-    //   children: [{
-    //     children: []
-    //   }]
-    // }]
-
     const nav = []
     serial.map(_ => add(_, nav, reject))
     resolve({ nav, filearrs: serial.concat(parallel) })
@@ -101,7 +76,7 @@ const makenav = ({ serial, parallel }) =>
 const manifest = () =>
   new Promise((resolve, reject) =>
     rrdir(`${conf.dist}/OPS`, async (err, filearr) => {
-      if (err) { reject(new Error(err)) }
+      if (err) { reject(err) }
 
       const files = filearr.filter(_ => path.basename(_).charAt(0) !== '.')
       const serial = await order(await parse(files.filter(_ => path.extname(_) === '.xhtml')))
@@ -126,9 +101,10 @@ const writeopf = string =>
   new Promise((resolve, reject) => {
     fs.writeFile(
       path.join(__dirname, '../', conf.dist, 'OPS/', 'content.opf'), string, (err) => {
-        if (err) { reject(new Error(err)) }
+        if (err) { reject(err) }
         resolve()
-      })
+      }
+    )
   })
 
 function opflayouts(strings) {
@@ -136,6 +112,11 @@ function opflayouts(strings) {
     path: './.tmp',
     layout: 'opfPackage',
     contents: new Buffer([
+      renderLayouts(new File({
+        path: './.tmp',
+        layout: 'opfMetadata',
+        contents: ''
+      }), tmpl).contents.toString(),
       renderLayouts(new File({
         path: './.tmp',
         layout: 'opfManifest',
@@ -174,11 +155,28 @@ const writenav = ({ ncxstring, filearrs }) =>
   new Promise((resolve, reject) => {
     fs.writeFile(
       path.join(__dirname, '../', conf.dist, 'OPS/', 'toc.ncx'), ncxstring, (err) => {
-        if (err) { reject(new Error(err)) }
+        if (err) { reject(err) }
         resolve(filearrs)
       }
     )
   })
+
+const clearnav = () =>
+  new Promise((resolve, reject) =>
+    navdocs.forEach((file, idx) =>
+      fs.remove(
+        path.join(__dirname, '../', conf.dist, file), (err1) => {
+          if (err1) { reject(err1) }
+          return fs.writeFile(
+            path.join(__dirname, '../', conf.dist, file), '', (err2) => {
+              if (err2) { reject(err2) }
+              if (idx === navdocs.length - 1) { resolve() }
+            }
+          )
+        }
+      )
+    )
+  )
 
 const rendernav = data =>
   new Promise(async resolve/* , reject */ =>
@@ -189,8 +187,9 @@ const renderopf = strings =>
     resolve(await opflayouts(strings)))
 
 const opf = () =>
-  new Promise((resolve, reject) =>
-    manifest()
+  new Promise(resolve/* , reject */ =>
+    clearnav()
+    .then(manifest)
     .then(filearrs => makenav(filearrs))
     .then(response => rendernav(response))
     .then(response => writenav(response))

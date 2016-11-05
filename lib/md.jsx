@@ -15,7 +15,6 @@ import conf from './config'
 
 class MarkIt {
   constructor() {
-
     const md = new MarkdownIt({
       html: true,
       xhtmlOut: true,
@@ -70,15 +69,14 @@ class MarkIt {
       return new Promise((resolve, reject) => {
         this._set('metapath', path.join(__dirname, '../', conf.src, 'pagemeta.yaml'))
         return fs.remove(this._get('metapath'), (err1) => {
-          if (err1) { reject(new Error(err1)) }
+          if (err1) { reject(err1) }
           fs.writeFile(this._get('metapath'), '---\n', (err2) => {
-            if (err2) { reject(new Error(err2)) }
+            if (err2) { reject(err2) }
             resolve()
           })
         })
       })
     }
-
   }
 }
 

@@ -11,7 +11,7 @@ const publish = () =>
 
     fs.mkdirs(dest, () =>
       cdir(book, dest, (err) => {
-        if (err) { reject(new Error(err)) }
+        if (err) { reject(err) }
         resolve()
       })
     )

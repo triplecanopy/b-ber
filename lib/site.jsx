@@ -42,7 +42,7 @@ const install = () =>
     }
 
     exec('npm install', { cwd: dest }, (err, stdout, stderr) => {
-      if (err) { reject(new Error(err)) }
+      if (err) { reject(err) }
       if (stderr !== '') { reject(new Error(stderr)) }
       if (stdout !== '') { logger.info(stdout) }
       resolve()
@@ -60,7 +60,7 @@ async function site() {
     download()
     .then(data => unzip(data))
     .then(install)
-    .catch(err => logger.error(err))
+    .catch(err => logger.error(new Error(err)))
     .then(resolve)
   })
 }

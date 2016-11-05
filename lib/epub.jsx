@@ -19,25 +19,9 @@ const compile = [
 const validate = `java -jar epubcheck -e ${bookname}` // -e: only show fatal errors
 
 const report = (err, stdout, stderr, reject) => {
-  const msg = []
-  let error
-
-  if (err) {
-    error = true
-    msg.push(err)
-  }
-  if (stdout !== '') {
-    msg.push(stdout)
-  }
-  if (stderr !== '') {
-    error = true
-    msg.push(stderr)
-  }
-  if (msg.length) { msg.map(_ => logger.info(_)) }
-  if (error) {
-    reject(new Error(error))
-    process.exit()
-  }
+  if (err) { reject(err) }
+  if (stderr !== '') { reject(new Error(stderr)) }
+  if (stdout !== '') { logger.info(stdout) }
 }
 
 const epub = () =>

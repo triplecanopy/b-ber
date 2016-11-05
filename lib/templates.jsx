@@ -7,7 +7,7 @@ import YAML from 'yamljs'
 import path from 'path'
 import { findWhere } from 'underscore'
 import conf from './config'
-import Attrs from './attrs'
+import Props from './props'
 import { fileid } from './utils'
 
 const settings = (() => {
@@ -45,7 +45,7 @@ const page = new File({
     <html xmlns="http://www.w3.org/1999/xhtml"
     xmlns:epub="http://www.idpf.org/2007/ops"
     xmlns:ibooks="http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0"
-    epub:prefix="ibooks:http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0">
+    epub:prefix="ibooks: http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0">
     <head>
       <title></title>
       <meta http-equiv="default-style" content="text/html charset=utf-8"/>
@@ -63,7 +63,7 @@ const page = new File({
 const opfPackage = new File({
   path: 'opfPackage.tmpl',
   contents: new Buffer(`<?xml version="1.0" encoding="UTF-8"?>
-    <package version="3.0" xml:lang="en" unique-identifier="uuid" xmlns="http://www.idpf.org/2007/opf" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" prefix="ibooks:http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0/">
+    <package version="3.0" xml:lang="en" unique-identifier="uuid" xmlns="http://www.idpf.org/2007/opf" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" prefix="ibooks: http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0/">
       {% body %}
     </package>`)
 })
@@ -80,7 +80,7 @@ const opfManifest = new File({
 
 const opfSpine = new File({
   path: 'opfSpine.tmpl',
-  contents: new Buffer('<spine>{% body %}</spine>')
+  contents: new Buffer('<spine toc="_toc.ncx">{% body %}</spine>')
 })
 
 const opfGuide = new File({
@@ -142,9 +142,18 @@ function navPoint(list) {
 }
 
 function item(file) {
+  const props = Props.test(file)
   let res = null
   if (mime.lookup(file.fullpath) !== 'application/oebps-package+xml') {
-    res = `<item id="${fileid(file.name)}" href="${encodeURI(file.toppath)}" media-type="${mime.lookup(file.fullpath)}" attributes="${Attrs.test(file)}"/>`
+    res = [
+      `<item id="${fileid(file.name)}"`,
+      `href="${encodeURI(file.toppath)}"`,
+      `media-type="${mime.lookup(file.fullpath)}"`,
+      (props && props.length ? `properties="${props.join(' ')}"` : ''),
+      '/>'
+    ]
+    .filter(Boolean)
+    .join(' ')
   }
   return res
 }

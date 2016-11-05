@@ -16,6 +16,7 @@
     "no-cond-assign": [2, "except-parens"],
     "max-len": [2, 100, { "ignoreComments": true }],
     "operator-linebreak": [2, "before"],
+    "no-underscore-dangle": [2, { "allowAfterThis": true }],
     "space-before-function-paren": [2, {
         "anonymous": "always",
         "named": "never"

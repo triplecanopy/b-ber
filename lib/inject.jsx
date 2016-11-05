@@ -21,28 +21,28 @@ const getLeadingWhitespace = str => str.match(/^\s*/)[0]
 
 const getSources = () => new Promise((resolve, reject) =>
   fs.readdir(`${conf.dist}/OPS/text/`, (err, files) => {
-    if (err) { reject(new Error(err)) }
+    if (err) { reject(err) }
     resolve(files)
   })
 )
 
 const getJavascripts = () => new Promise((resolve, reject) =>
   fs.readdir(`${conf.dist}/OPS/javascripts/`, (err, javascripts) => {
-    if (err) { reject(new Error(err)) }
+    if (err) { reject(err) }
     resolve({ javascripts })
   })
 )
 
 const getStylesheets = () => new Promise((resolve, reject) =>
   fs.readdir(`${conf.dist}/OPS/stylesheets/`, (err, stylesheets) => {
-    if (err) { reject(new Error(err)) }
+    if (err) { reject(err) }
     resolve({ stylesheets })
   })
 )
 
 const getContents = source => new Promise((resolve, reject) =>
   fs.readFile(path.join(__dirname, '../', conf.dist, 'OPS/text', source), (err, data) => {
-    if (err) { reject(new Error(err)) }
+    if (err) { reject(err) }
     resolve(new File({ contents: new Buffer(data) }))
   })
 )
@@ -98,7 +98,7 @@ const injectTags = (content, opt) => {
 const write = (location, data) =>
   new Promise((resolve, reject) =>
     fs.writeFile(location, data, (err) => {
-      if (err) { reject(new Error(err)) }
+      if (err) { reject(err) }
       resolve()
     })
   )
@@ -148,7 +148,7 @@ async function parse() {
 }
 
 const inject = () =>
-  new Promise((resolve, reject) =>
+  new Promise(resolve/* , reject */ =>
     parse()
     .catch(err => logger.log(err))
     .then(resolve))
