@@ -110,7 +110,8 @@ const replaceContent = (stream, fpath, startTag, endTag, tagsToInject) =>
     contents: new Buffer(
       injectTags(
         String(stream.contents),
-        { startTag, endTag, tagsToInject })
+        { startTag, endTag, tagsToInject }
+      )
     )
   })
 

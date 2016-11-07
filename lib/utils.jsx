@@ -23,9 +23,8 @@ function slashit(str) {
     if (typeof fpath !== 'string') {
       throw new Error(`Path must be a string. '${typeof fpath}' given.`)
     }
-  } catch (e) {
-    logger.info(e.message)
-    process.exit()
+  } catch (err) {
+    throw err
   }
 
   if (fpath.substr(-1) !== '/') {
@@ -36,7 +35,7 @@ function slashit(str) {
 }
 
 function topdir(file) {
-  const re = new RegExp(`^${conf.dist}/OPS/`)
+  const re = new RegExp(`^${conf.dist}/OPS/?`)
   return file.replace(re, '')
 }
 

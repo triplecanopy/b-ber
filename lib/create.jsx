@@ -34,7 +34,7 @@ const create = () =>
   new Promise(resolve/* , reject */ =>
     makedirs()
     .then(write)
-    .catch(err => logger.error(new Error(err)))
+    .catch(err => logger.error(err))
     .then(resolve))
 
 export default create

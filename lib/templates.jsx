@@ -91,7 +91,7 @@ const opfGuide = new File({
 
 function ncxHead() {
   return `<head>
-    <meta name="dtb:uid" content="urn:isbn:${getMeta('identifier')}"/>
+    <meta name="dtb:uid" content="${getMeta('identifier')}"/>
     <meta name="dtb:depth" content="1"/>
     <meta name="dtb:totalPageCount" content="1"/>
     <meta name="dtb:maxPageNumber" content="1"/>
@@ -215,10 +215,10 @@ function reference(file) {
 
 function metatag(data) {
   const { term, element } = Props.testMeta(data)
-  const itemid = `_${guid()}`
+  const itemid = element && data.term === 'identifier' ? 'uuid' : `_${guid()}`
   const res = []
   if (term) { res.push(`<meta property="dcterms:${data.term}">${data.value}</meta>`) }
-  if (element) { res.push(`<dc:${data.term} id="${itemid}">${data.value}</dc:title>`) }
+  if (element) { res.push(`<dc:${data.term} id="${itemid}">${data.value}</dc:${data.term}>`) }
   if (term
       && element
       && {}.hasOwnProperty.call(data, 'term_property')
