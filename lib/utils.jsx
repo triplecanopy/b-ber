@@ -3,6 +3,7 @@ import path from 'path'
 import fs from 'fs-extra'
 import { compact } from 'underscore'
 
+import conf from './config'
 import logger from './logger'
 
 function copy(source, target) {
@@ -35,7 +36,8 @@ function slashit(str) {
 }
 
 function topdir(file) {
-  return slashit(path.basename(path.dirname(file))) + path.basename(file)
+  const re = new RegExp(`^${conf.dist}/OPS/`)
+  return file.replace(re, '')
 }
 
 function cjoin(arr) {

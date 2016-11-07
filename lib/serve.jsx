@@ -25,7 +25,8 @@ const serve = () =>
       app.use(esindex(ops, options))
 
       const server = app.listen(port, () =>
-        logger.info('server is running at localhost:%s', server.address().port))
+        logger.info(`Server is running at localhost:${server.address().port}`))
+
       resolve()
     })
   })

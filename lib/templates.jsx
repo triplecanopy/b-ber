@@ -6,9 +6,10 @@ import mime from 'mime-types'
 import YAML from 'yamljs'
 import path from 'path'
 import { findWhere } from 'underscore'
+
 import conf from './config'
 import Props from './props'
-import { fileid } from './utils'
+import { fileid, guid } from './utils'
 
 const settings = (() => {
   const meta = path.join(__dirname, `../${conf.src}`, 'metadata.yml')
@@ -122,6 +123,26 @@ const ncxTmpl = new File({
       </ncx>`)
 })
 
+const tocTmpl = new File({
+  path: 'tocTmpl.tmpl',
+  contents: new Buffer(`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+    <html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:epub="http://www.idpf.org/2007/ops"
+    xmlns:ibooks="http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0"
+    epub:prefix="ibooks: http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0">
+    <head>
+      <title></title>
+      <meta http-equiv="default-style" content="text/html charset=utf-8"/>
+    </head>
+    <body>
+      <nav id="toc" epub:type="toc">
+        <h2>Table of Contents</h2>
+        {% body %}
+      </nav>
+    </body>
+    </html>`)
+})
+
 function navPoint(list) {
   let count = 0
   function render(arr) {
@@ -141,8 +162,26 @@ function navPoint(list) {
   return render(list)
 }
 
+function tocitem(list) {
+  function render(arr) {
+    let res = String('')
+    res += '<ol>'
+    arr.forEach((entry) => {
+      res += '<li>'
+      res += `<a href="text/${entry.filename}">`
+      res += entry.title
+      res += '</a>'
+      if (entry.children.length) { res += render(entry.children) }
+      res += '</li>'
+    })
+    res += '</ol>'
+    return res
+  }
+  return render(list)
+}
+
 function item(file) {
-  const props = Props.test(file)
+  const props = Props.testHTML(file)
   let res = null
   if (mime.lookup(file.fullpath) !== 'application/oebps-package+xml') {
     res = [
@@ -174,6 +213,21 @@ function reference(file) {
   return res
 }
 
+function metatag(data) {
+  const { term, element } = Props.testMeta(data)
+  const itemid = `_${guid()}`
+  const res = []
+  if (term) { res.push(`<meta property="dcterms:${data.term}">${data.value}</meta>`) }
+  if (element) { res.push(`<dc:${data.term} id="${itemid}">${data.value}</dc:title>`) }
+  if (term
+      && element
+      && {}.hasOwnProperty.call(data, 'term_property')
+      && {}.hasOwnProperty.call(data, 'term_property_value')) {
+    res.push(`<meta refines="#${itemid}" property="${data.term_property}">${data.term_property_value}</meta>`)
+  }
+  return res.join('')
+}
+
 export {
   container,
   mimetype,
@@ -189,5 +243,8 @@ export {
   scriptTag,
   stylesheetTag,
   ncxTmpl,
-  navPoint
+  navPoint,
+  metatag,
+  tocitem,
+  tocTmpl
 }

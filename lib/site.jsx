@@ -49,18 +49,14 @@ const install = () =>
     })
   })
 
-async function unzip(data) {
-  return decompress(data, dest)
-}
-
 async function site() {
   await setDest()
   return new Promise((resolve, reject) => {
     if (!{}.hasOwnProperty.call(conf, 'gomez')) { reject(new Error('No download url.')) }
     download()
-    .then(data => unzip(data))
+    .then(data => decompress(data, dest))
     .then(install)
-    .catch(err => logger.error(new Error(err)))
+    .catch(err => logger.error(err))
     .then(resolve)
   })
 }

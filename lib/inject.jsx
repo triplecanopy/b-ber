@@ -104,17 +104,15 @@ const write = (location, data) =>
   )
 
 
-async function replaceContent(stream, fpath, startTag, endTag, tagsToInject) {
-  return new File({
+const replaceContent = (stream, fpath, startTag, endTag, tagsToInject) =>
+  new File({
     path: fpath,
     contents: new Buffer(
       injectTags(
         String(stream.contents),
-        { startTag, endTag, tagsToInject }
-      )
+        { startTag, endTag, tagsToInject })
     )
   })
-}
 
 async function parse() {
   const sources = await getSources()

@@ -4,7 +4,8 @@ import path from 'path'
 import fs from 'fs-extra'
 import File from 'vinyl'
 import rrdir from 'recursive-readdir'
-import { find } from 'underscore'
+import YAML from 'yamljs'
+import { find, findWhere } from 'underscore'
 
 import conf from './config'
 import logger from './logger'
@@ -13,49 +14,60 @@ import { topdir, cjoin } from './utils'
 
 const navdocs = ['toc.ncx', 'toc.xhtml']
 
-async function parse(arr) {
-  const result = []
-  arr.forEach((file, idx) => {
-    const locationArr = path.basename(file).split('_')[1]
-    let location = null
-    if (locationArr) { location = locationArr.split('-') }
-    result[idx] = {
-      location,
-      fullpath: file,
-      toppath: topdir(file),
-      name: path.basename(file),
-      extension: path.extname(file)
-    }
-  })
-  return result
-}
+let bookmeta
+let pagemeta
 
-async function order(filearr) {
-  return filearr.sort(async (a, b) => {
-    const arrA = a.name.split('_')
-    const seqA = arrA[0]
-    const arrB = b.name.split('_')
-    const seqB = arrB[0]
+const loadmeta = () =>
+  new Promise((resolve, reject) => {
+    YAML.load(path.join(__dirname, '../', conf.src, 'metadata.yml'), (resp1) => {
+      bookmeta = resp1
+      YAML.load(path.join(__dirname, '../', conf.src, 'pagemeta.yml'), (resp2) => {
+        pagemeta = resp2
+        resolve()
+      })
+    })
+  })
+
+const parse = arr =>
+  arr.map(file => ({
+    location: path.basename(file).split('_')[1]
+      ? path.basename(file).split('_')[1].split('-')
+      : null,
+    fullpath: file,
+    toppath: topdir(file),
+    name: path.basename(file),
+    extension: path.extname(file)
+  }))
+
+const order = filearr =>
+  filearr.sort((a, b) => {
+    const seqA = a.name.split('_')[0]
+    const seqB = b.name.split('_')[0]
     return seqA < seqB ? -1 : seqA > seqB ? 1 : 0 // eslint-disable-line no-nested-ternary
   })
+
+const getTitle = (file) => {
+  const fname = path.basename(file.name, '.xhtml')
+  const found = findWhere(pagemeta, { filename: fname })
+  return found && {}.hasOwnProperty.call(found, 'section_title') ? found.section_title : fname
 }
 
 const add = (file, arr) => {
   if (!file.location || file.location.length < 1) {
     return navdocs.indexOf(file.name) === -1
       ? logger.warn(`Section number does not exist for ${file.name}\n`)
-      : '' // Ignore naviagation documents
+      : ''
   }
 
   const current = Number(file.location)
   const context = Number(file.location.shift())
-  const parent = find(arr, _ => Number(_.section) === Number(context))
+  const parent = find(arr, _ => Number(_.section) === context)
 
   if (!parent) {
     arr.push({
       section: current,
       filename: file.name,
-      title: path.basename(file.name, '.xhtml'),
+      title: getTitle(file),
       children: []
     })
   } else {
@@ -64,7 +76,6 @@ const add = (file, arr) => {
 
   return arr
 }
-
 
 const makenav = ({ serial, parallel }) =>
   new Promise((resolve, reject) => {
@@ -87,8 +98,12 @@ const manifest = () =>
   )
 
 const stringify = files =>
-  new Promise((resolve /* , reject */) => {
-    const strings = { manifest: [], spine: [], guide: [] }
+  new Promise(async (resolve /* , reject */) => {
+    const strings = { manifest: [], spine: [], guide: [], pagemeta: [], bookmeta: [] }
+
+    strings.bookmeta = bookmeta.map(_ => tmpl.metatag(_)).filter(Boolean)
+    // strings.pagemeta = metadata.pagemeta.map(_ => _).filter(Boolean) // used to create guide and landmarks
+
     files.forEach((file, idx) => {
       strings.manifest.push(tmpl.item(file))
       strings.spine.push(tmpl.itemref(file))
@@ -100,7 +115,7 @@ const stringify = files =>
 const writeopf = string =>
   new Promise((resolve, reject) => {
     fs.writeFile(
-      path.join(__dirname, '../', conf.dist, 'OPS/', 'content.opf'), string, (err) => {
+      path.join(__dirname, '../', conf.dist, 'OPS', 'content.opf'), string, (err) => {
         if (err) { reject(err) }
         resolve()
       }
@@ -115,7 +130,7 @@ function opflayouts(strings) {
       renderLayouts(new File({
         path: './.tmp',
         layout: 'opfMetadata',
-        contents: ''
+        contents: new Buffer(strings.bookmeta.join(''))
       }), tmpl).contents.toString(),
       renderLayouts(new File({
         path: './.tmp',
@@ -138,8 +153,9 @@ function opflayouts(strings) {
   .toString()
 }
 
-function navlayouts({ nav, filearrs }) {
+const navlayouts = ({ nav, filearrs }) => {
   const navpoints = tmpl.navPoint(nav)
+  const tocitems = tmpl.tocitem(nav)
   const ncxstring = renderLayouts(new File({
     path: './.tmp',
     layout: 'ncxTmpl',
@@ -148,15 +164,28 @@ function navlayouts({ nav, filearrs }) {
   .contents
   .toString()
 
-  return { ncxstring, filearrs }
+  const tocstring = renderLayouts(new File({
+    path: './.tmp',
+    layout: 'tocTmpl',
+    contents: new Buffer(tocitems)
+  }), tmpl)
+  .contents
+  .toString()
+
+  return { ncxstring, tocstring, filearrs }
 }
 
-const writenav = ({ ncxstring, filearrs }) =>
+const writenav = ({ ncxstring, tocstring, filearrs }) =>
   new Promise((resolve, reject) => {
     fs.writeFile(
-      path.join(__dirname, '../', conf.dist, 'OPS/', 'toc.ncx'), ncxstring, (err) => {
-        if (err) { reject(err) }
-        resolve(filearrs)
+      path.join(__dirname, '../', conf.dist, 'OPS', 'toc.ncx'), ncxstring, (err1) => {
+        if (err1) { reject(err1) }
+        fs.writeFile(
+          path.join(__dirname, '../', conf.dist, 'OPS', 'toc.xhtml'), tocstring, (err2) => {
+            if (err2) { reject(err2) }
+            resolve(filearrs)
+          }
+        )
       }
     )
   })
@@ -165,10 +194,10 @@ const clearnav = () =>
   new Promise((resolve, reject) =>
     navdocs.forEach((file, idx) =>
       fs.remove(
-        path.join(__dirname, '../', conf.dist, file), (err1) => {
+        path.join(__dirname, '../', conf.dist, 'OPS', file), (err1) => {
           if (err1) { reject(err1) }
           return fs.writeFile(
-            path.join(__dirname, '../', conf.dist, file), '', (err2) => {
+            path.join(__dirname, '../', conf.dist, 'OPS', file), '', (err2) => {
               if (err2) { reject(err2) }
               if (idx === navdocs.length - 1) { resolve() }
             }
@@ -188,7 +217,8 @@ const renderopf = strings =>
 
 const opf = () =>
   new Promise(resolve/* , reject */ =>
-    clearnav()
+    loadmeta()
+    .then(clearnav)
     .then(manifest)
     .then(filearrs => makenav(filearrs))
     .then(response => rendernav(response))
