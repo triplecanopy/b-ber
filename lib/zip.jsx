@@ -36,8 +36,8 @@ const run = (cmd, dir) =>
 const epub = () =>
   new Promise(resolve/* , reject */ =>
     run('remove', './')
-    .then(_ => run('compile', conf.dist))
-    .then(_ => run('validate', './'))
+    .then(() => run('compile', conf.dist))
+    .then(() => run('validate', './'))
     .catch(err => logger.error(err))
     .then(resolve)
   )

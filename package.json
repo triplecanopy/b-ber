@@ -9,7 +9,6 @@
     "ava": "ava --verbose || true",
     "test": "npm run ava && npm run lint",
     "build": "babel --presets es2015,stage-0 -d dist/ lib/",
-    "postinstall": "mkdir -p .log && touch .log/winston.log",
     "prepublish": "npm run build"
   },
   "bin": {
@@ -30,7 +29,6 @@
     "decompress": "^4.0.0",
     "express": "^4.14.0",
     "fs-extra": "^0.30.0",
-    "gulp": "^3.9.1",
     "jshint": "^2.9.3",
     "layouts": "^0.13.2",
     "markdown-it": "^7.0.1",

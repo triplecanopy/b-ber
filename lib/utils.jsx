@@ -1,10 +1,7 @@
 
-import path from 'path'
 import fs from 'fs-extra'
 import { compact } from 'underscore'
-
 import conf from './config'
-import logger from './logger'
 
 function copy(source, target) {
   return new Promise((resolve, reject) => {

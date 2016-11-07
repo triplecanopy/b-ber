@@ -18,7 +18,7 @@ let bookmeta
 let pagemeta
 
 const loadmeta = () =>
-  new Promise((resolve, reject) => {
+  new Promise(resolve/* , reject */ =>
     YAML.load(path.join(__dirname, '../', conf.src, 'metadata.yml'), (resp1) => {
       bookmeta = resp1
       YAML.load(path.join(__dirname, '../', conf.src, 'pagemeta.yml'), (resp2) => {
@@ -26,7 +26,7 @@ const loadmeta = () =>
         resolve()
       })
     })
-  })
+  )
 
 const parse = arr =>
   arr.map(file => ({
