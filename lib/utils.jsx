@@ -1,9 +1,7 @@
 
-import path from 'path'
 import fs from 'fs-extra'
-import { compact } from 'lodash'
-
-import logger from './logger'
+import { compact } from 'underscore'
+import conf from './config'
 
 function copy(source, target) {
   return new Promise((resolve, reject) => {
@@ -22,9 +20,8 @@ function slashit(str) {
     if (typeof fpath !== 'string') {
       throw new Error(`Path must be a string. '${typeof fpath}' given.`)
     }
-  } catch (e) {
-    logger.info(e.message)
-    process.exit()
+  } catch (err) {
+    throw err
   }
 
   if (fpath.substr(-1) !== '/') {
@@ -35,7 +32,8 @@ function slashit(str) {
 }
 
 function topdir(file) {
-  return slashit(path.basename(path.dirname(file))) + path.basename(file)
+  const re = new RegExp(`^${conf.dist}/OPS/?`)
+  return file.replace(re, '')
 }
 
 function cjoin(arr) {
@@ -56,4 +54,16 @@ function guid() {
   return `${s4()}${s4()}${s4()}${s4()}${s4()}${s4()}${s4()}${s4()}`
 }
 
-export { slashit, topdir, cjoin, fileid, copy, guid }
+function rpad(s, a, n) {
+  let str = s
+  if (str.length >= n) { return str }
+  while (str.length < n) { str += a }
+  return str
+}
+
+function hrtimeformat(a) {
+  const s = (a[0] * 1000) + (a[1] / 1000000)
+  return `${String(s).slice(0, -3)}ms`
+}
+
+export { slashit, topdir, cjoin, fileid, copy, guid, rpad, hrtimeformat }

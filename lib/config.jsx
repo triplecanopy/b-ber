@@ -1,7 +1,7 @@
 
 import YAML from 'yamljs'
 import fs from 'fs-extra'
-import { extend } from 'lodash'
+import { extend } from 'underscore'
 
 const settings = (() => {
   const res = { src: '_book', dist: 'book' }

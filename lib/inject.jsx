@@ -2,8 +2,10 @@
 import fs from 'fs-extra'
 import path from 'path'
 import File from 'vinyl'
-import { scriptTag, stylesheetTag } from './templates'
+
+import logger from './logger'
 import conf from './config'
+import { scriptTag, stylesheetTag } from './templates'
 
 const startTags = {
   javascripts: new RegExp('<!-- inject:js -->', 'ig'),
@@ -45,15 +47,13 @@ const getContents = source => new Promise((resolve, reject) =>
   })
 )
 
-const ext = str => str.slice(str.indexOf('.') + 1)
-
 const templateify = files =>
   files.map((file) => {
-    switch (ext(file).toLowerCase()) {
-      case 'js':
-        return scriptTag.replace(/\{% body %\}/, `javascripts/${file}`)
-      case 'css':
-        return stylesheetTag.replace(/\{% body %\}/, `stylesheets/${file}`)
+    switch (path.extname(file).toLowerCase()) {
+      case '.js':
+        return scriptTag.replace(/\{% body %\}/, `../javascripts/${file}`)
+      case '.css':
+        return stylesheetTag.replace(/\{% body %\}/, `../stylesheets/${file}`)
       default:
         throw new Error(`Unsupported filetype: ${file}`)
     }
@@ -104,8 +104,8 @@ const write = (location, data) =>
   )
 
 
-async function replaceContent(stream, fpath, startTag, endTag, tagsToInject) {
-  return new File({
+const replaceContent = (stream, fpath, startTag, endTag, tagsToInject) =>
+  new File({
     path: fpath,
     contents: new Buffer(
       injectTags(
@@ -114,7 +114,6 @@ async function replaceContent(stream, fpath, startTag, endTag, tagsToInject) {
       )
     )
   })
-}
 
 async function parse() {
   const sources = await getSources()
@@ -148,9 +147,9 @@ async function parse() {
 }
 
 const inject = () =>
-  new Promise((resolve, reject) =>
+  new Promise(resolve/* , reject */ =>
     parse()
-    .catch(err => reject(err))
+    .catch(err => logger.log(err))
     .then(resolve))
 
 export default inject

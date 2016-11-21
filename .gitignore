@@ -2,6 +2,7 @@
 .tmp
 
 *.log
+log.*
 *.map
 *.epub
 *.mobi

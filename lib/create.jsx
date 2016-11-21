@@ -1,5 +1,6 @@
 
 import fs from 'fs-extra'
+import logger from './logger'
 import conf from './config'
 import { container, mimetype } from './templates'
 
@@ -30,10 +31,10 @@ const makedirs = () =>
   )
 
 const create = () =>
-  new Promise((resolve, reject) =>
+  new Promise(resolve/* , reject */ =>
     makedirs()
     .then(write)
-    .catch(err => reject(err))
+    .catch(err => logger.error(err))
     .then(resolve))
 
 export default create
