@@ -68,18 +68,6 @@ let { argv } = yargs.fail((msg, err) => {
     .wrap(null))
     checkCommands(yargs, argv, 1)
   })
-  .command('sass', 'Compile the sass', (yargs) => {
-    ({ argv } = yargs.fail((msg, err) => {
-      if (err) { throw err }
-      logger.info(msg)
-      yargs.showHelp()
-    })
-    .usage('\nUsage: $0 sass')
-    .alias('h', 'help')
-    .help('help')
-    .wrap(null))
-    checkCommands(yargs, argv, 1)
-  })
   .command('scripts', 'Compile the scripts', (yargs) => {
     ({ argv } = yargs.fail((msg, err) => {
       if (err) { throw err }
