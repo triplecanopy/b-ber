@@ -223,8 +223,8 @@ function metatag(data) {
       && element
       && {}.hasOwnProperty.call(data, 'term_property')
       && {}.hasOwnProperty.call(data, 'term_property_value')) {
-    res.push(`<meta refines="#${itemid}" property="${data.term_property}">${data.term_property_value}</meta>`)
-  }
+    res.push(`<meta refines="#${itemid}" property="${data.term_property}">${data.term_property_value}</meta>`) }
+  if (!term && !element) { res.push(`<meta name="${data.term}" content="${data.value}"/>`) }
   return res.join('')
 }
 
