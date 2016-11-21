@@ -255,3 +255,16 @@ let { argv } = yargs.fail((msg, err) => {
     .wrap(null))
     checkCommands(yargs, argv, 1)
   })
+  .command('mobi', 'Create a Mobi', (yargs) => {
+    ({ argv } = yargs.fail((msg, err) => {
+      if (err) { throw err }
+      logger.info(msg)
+      yargs.showHelp()
+    })
+    .usage('\nUsage: $0 mobi')
+    .alias('h', 'help')
+    .help('help')
+    .wrap(null))
+    checkCommands(yargs, argv, 1)
+  })
+
