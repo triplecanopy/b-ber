@@ -103,7 +103,7 @@ const stringify = files =>
     strings.bookmeta = bookmeta.map(_ => tmpl.metatag(_)).filter(Boolean)
 
     // going to be a couple more exceptions here, should drop these into `templates.jsx`
-    strings.bookmeta.push(`<meta property="dcterms:modified">${new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')}</meta>`)
+    strings.bookmeta.push(`<meta property="dcterms:modified">${new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')}</meta>`) // eslint-disable-line max-len
     // strings.pagemeta = metadata.pagemeta.map(_ => _).filter(Boolean) // used to create guide and landmarks
 
     files.forEach((file, idx) => {
