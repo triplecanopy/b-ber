@@ -11,30 +11,30 @@ import conf from './config'
 import Props from './props'
 import { fileid, guid } from './utils'
 
-const settings = (() => {
+const settings = () => {
   const meta = path.join(__dirname, `../${conf.src}`, 'metadata.yml')
   try {
     if (meta) {
       return YAML.load(meta)
     }
   } catch (e) {
-    throw new Error(e.message)
+    return {}
   }
   return false
-})()
+}
 
 function getMeta(key) {
-  const res = findWhere(settings, { term: key })
+  const res = findWhere(settings(), { term: key })
   if (res && res.value) { return res.value }
   return false
 }
 
 const container = `<?xml version="1.0"?>
-    <container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">
-      <rootfiles>
-        <rootfile full-path="OPS/content.opf" media-type="application/oebps-package+xml"/>
-      </rootfiles>
-    </container>`
+  <container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">
+    <rootfiles>
+      <rootfile full-path="OPS/content.opf" media-type="application/oebps-package+xml"/>
+    </rootfiles>
+  </container>`
 
 const mimetype = 'application/epub+zip'
 const scriptTag = '<script type="application/javascript" src="{% body %}"></script>'
@@ -223,7 +223,8 @@ function metatag(data) {
       && element
       && {}.hasOwnProperty.call(data, 'term_property')
       && {}.hasOwnProperty.call(data, 'term_property_value')) {
-    res.push(`<meta refines="#${itemid}" property="${data.term_property}">${data.term_property_value}</meta>`) }
+    res.push(`<meta refines="#${itemid}" property="${data.term_property}">${data.term_property_value}</meta>`)
+  }
   if (!term && !element) { res.push(`<meta name="${data.term}" content="${data.value}"/>`) }
   return res.join('')
 }

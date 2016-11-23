@@ -19,7 +19,8 @@ const download = () =>
   new Promise((resolve, reject) => {
     const chunks = []
     return http.get(conf.gomez, (resp) => {
-      resp.on('error', reject)
+      if (resp.statusCode !== 200) { reject('Could not connect to the server') }
+      resp.on('error', err => reject(err))
       resp.on('data', chunk => chunks.push(chunk))
       resp.on('end', () => resolve(Buffer.concat(chunks)))
     })
@@ -49,8 +50,8 @@ const install = () =>
     })
   })
 
-async function site() {
-  await setDest()
+function site() {
+  setDest()
   return new Promise((resolve, reject) => {
     if (!{}.hasOwnProperty.call(conf, 'gomez')) { reject(new Error('No download url.')) }
     download()

@@ -104,11 +104,11 @@ dist: ${dist}`
     relpath: '_stylesheets/application.scss',
     content: 'body { .page { display: flex; } }'
   }, {
-    relpath: '_markdown/chapter-one.md',
+    relpath: '_markdown/0010_1.md',
     content: `
 # Chapter One
 
-::: section "epub" "Chapter One" "section__main"
+::: section "chapter" "Chapter One" "section__main"
 
 It was the best of times, it was the worst of times.
 
