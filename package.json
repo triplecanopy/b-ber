@@ -9,7 +9,10 @@
     "ava": "ava --verbose || true",
     "test": "npm run ava && npm run lint",
     "build": "babel --presets es2015,stage-0 -d dist/ lib/",
-    "prepublish": "npm run build"
+    "prepublish": "npm run build",
+    "preversion": "npm test",
+    "version": "npm run build && git add -A",
+    "postversion": "git push origin master && git push --tags"
   },
   "bin": {
     "bber": "./dist/cli.js"
