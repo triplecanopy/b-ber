@@ -140,7 +140,7 @@ const copyCSSTemplates = () =>
   })
 
 const init = () =>
-  new Promise((resolve, reject) =>
+  new Promise(resolve/* , reject */ =>
     cleanCSSDir()
     .then(copyCSSTemplates)
     .then(makeNewEbookTemplate)

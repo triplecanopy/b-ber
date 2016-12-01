@@ -17,9 +17,9 @@ const endTags = {
   stylesheets: new RegExp('<!-- end:css -->', 'ig')
 }
 
-const getDirContents = path =>
+const getDirContents = dirpath =>
   new Promise((resolve, reject) =>
-    fs.readdir(path, (err, files) => {
+    fs.readdir(dirpath, (err, files) => {
       if (err) { reject(err) }
       resolve(files)
     }))
@@ -89,7 +89,7 @@ const write = (location, data) =>
   )
 
 const promiseToReplace = (prop, data, source, file) =>
-  new Promise(async (resolve, reject) => {
+  new Promise(async (resolve/* , reject */) => {
     const stream = file || await getContents(source)
     const start = startTags[prop]
     const stop = endTags[prop]
@@ -108,7 +108,7 @@ const promiseToReplace = (prop, data, source, file) =>
 
 const mapSources = (stylesheets, javascripts, sources) =>
   new Promise((resolve/* , reject */) => {
-    sources.map(async (source) => {
+    sources.map(source =>
       promiseToReplace('stylesheets', stylesheets, source)
       .then(file => promiseToReplace('javascripts', javascripts, source, file))
       .then(file => write(
@@ -116,8 +116,7 @@ const mapSources = (stylesheets, javascripts, sources) =>
           file.contents.toString('utf8')))
       .catch(err => logger.error(err))
       .then(resolve)
-    })
-    resolve()
+    )
   })
 
 const inject = () =>
