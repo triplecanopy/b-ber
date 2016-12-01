@@ -17,28 +17,12 @@ const endTags = {
   stylesheets: new RegExp('<!-- end:css -->', 'ig')
 }
 
-const getLeadingWhitespace = str => str.match(/^\s*/)[0]
-
-const getSources = () => new Promise((resolve, reject) =>
-  fs.readdir(`${conf.dist}/OPS/text/`, (err, files) => {
-    if (err) { reject(err) }
-    resolve(files)
-  })
-)
-
-const getJavascripts = () => new Promise((resolve, reject) =>
-  fs.readdir(`${conf.dist}/OPS/javascripts/`, (err, javascripts) => {
-    if (err) { reject(err) }
-    resolve({ javascripts })
-  })
-)
-
-const getStylesheets = () => new Promise((resolve, reject) =>
-  fs.readdir(`${conf.dist}/OPS/stylesheets/`, (err, stylesheets) => {
-    if (err) { reject(err) }
-    resolve({ stylesheets })
-  })
-)
+const getDirContents = path =>
+  new Promise((resolve, reject) =>
+    fs.readdir(path, (err, files) => {
+      if (err) { reject(err) }
+      resolve(files)
+    }))
 
 const getContents = source => new Promise((resolve, reject) =>
   fs.readFile(path.join(__dirname, '../', conf.dist, 'OPS/text', source), (err, data) => {
@@ -59,6 +43,8 @@ const templateify = files =>
     }
   })
 
+const getLeadingWhitespace = str => str.match(/^\s*/)[0]
+
 function* matchIterator(re, str) {
   let match
   while ((match = re.exec(str)) !== null) {
@@ -66,20 +52,19 @@ function* matchIterator(re, str) {
   }
 }
 
-const injectTags = (content, opt) => {
-  const toInject = templateify(opt.tagsToInject.slice())
-  const startTag = opt.startTag
-  const endTag = opt.endTag
+const injectTags = (content, args) => {
+  const { data, start, stop } = args
+  const toInject = templateify(data.slice())
   let result
   let endMatch
 
-  for (const startMatch of matchIterator(startTag, content)) {
-    endTag.lastIndex = startTag.lastIndex
-    endMatch = endTag.exec(content)
+  for (const startMatch of matchIterator(start, content)) {
+    stop.lastIndex = start.lastIndex
+    endMatch = stop.exec(content)
 
     if (!endMatch) { throw new Error(`Missing end tag for start tag: ${startMatch[0]}`) }
 
-    const previousInnerContent = content.substring(startTag.lastIndex, endMatch.index)
+    const previousInnerContent = content.substring(start.lastIndex, endMatch.index)
     const indent = getLeadingWhitespace(previousInnerContent)
 
     toInject.unshift(startMatch[0])
@@ -88,7 +73,7 @@ const injectTags = (content, opt) => {
     result = [
       content.slice(0, startMatch.index),
       toInject.join(indent),
-      content.slice(endTag.lastIndex)
+      content.slice(stop.lastIndex)
     ].join('')
   }
 
@@ -103,53 +88,46 @@ const write = (location, data) =>
     })
   )
 
-
-const replaceContent = (stream, fpath, startTag, endTag, tagsToInject) =>
-  new File({
-    path: fpath,
-    contents: new Buffer(
-      injectTags(
-        String(stream.contents),
-        { startTag, endTag, tagsToInject }
-      )
-    )
-  })
-
-async function parse() {
-  const sources = await getSources()
-  const { stylesheets } = await getStylesheets()
-  const { javascripts } = await getJavascripts()
-  return sources.map(async (source) => {
-    const stream1 = await getContents(source)
-    replaceContent(
-      stream1,
-      source,
-      startTags.javascripts,
-      endTags.javascripts,
-      javascripts
-    )
-    .then(stream2 =>
-      replaceContent(
-        stream2,
-        source,
-        startTags.stylesheets,
-        endTags.stylesheets,
-        stylesheets
-      )
-    )
-    .then((result) => {
-      write(
-        path.join(__dirname, '../', conf.dist, 'OPS/text', result.path),
-        String(result.contents)
+const promiseToReplace = (prop, data, source, file) =>
+  new Promise(async (resolve, reject) => {
+    const stream = file || await getContents(source)
+    const start = startTags[prop]
+    const stop = endTags[prop]
+    const result = new File({
+      path: source,
+      contents: new Buffer(
+        injectTags(
+          stream.contents.toString('utf8'),
+          { start, stop, data }
+        )
       )
     })
+
+    resolve(result)
   })
-}
+
+const mapSources = (stylesheets, javascripts, sources) =>
+  new Promise((resolve/* , reject */) => {
+    sources.map(async (source) => {
+      promiseToReplace('stylesheets', stylesheets, source)
+      .then(file => promiseToReplace('javascripts', javascripts, source, file))
+      .then(file => write(
+          path.join(__dirname, '../', conf.dist, 'OPS/text', source),
+          file.contents.toString('utf8')))
+      .catch(err => logger.error(err))
+      .then(resolve)
+    })
+    resolve()
+  })
 
 const inject = () =>
-  new Promise(resolve/* , reject */ =>
-    parse()
+  new Promise(async (resolve/* , reject */) => {
+    const textSources = await getDirContents(`${conf.dist}/OPS/text/`)
+    const stylesheets = await getDirContents(`${conf.dist}/OPS/stylesheets/`)
+    const javascripts = await getDirContents(`${conf.dist}/OPS/javascripts/`)
+    mapSources(stylesheets, javascripts, textSources)
     .catch(err => logger.log(err))
-    .then(resolve))
+    .then(resolve)
+  })
 
 export default inject

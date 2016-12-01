@@ -1,0 +1,141 @@
+/* --------------------------------------------------------------
+
+  Development Styles
+  - This will be merged into `_base.scss` once passed testing
+
+  -------------------------------------------------------------- */
+
+// image styles
+figcaption{
+  @include footnote;
+  @include rhythm(0.2, 0, 0, 0, $text-xs);
+  display: inline-block;
+  a {
+    text-decoration: none;
+  }
+}
+
+.figure-md{
+  text-align: center;
+  page-break-inside: avoid;
+  height: 350px!important;
+  figcaption{
+    text-align: center;
+    width: 100%;
+  }
+}
+.figure-lg{
+  page-break-inside: avoid;
+  text-align: center;
+}
+.figure-xl{
+  page-break-inside: avoid;
+  text-align: center;
+}
+.figure-sm {
+  text-align: center;
+  a{
+    display: block;
+    margin:0 auto;
+  }
+  &.landscape{
+    padding-top:1.35em; //
+    padding-bottom:1.23em; //
+    padding-left:0;
+    padding-right:0;
+    figure, a, img {
+      width: auto;
+      height: 4.3em; // 108px
+    }
+  } //
+  &.portrait{
+    padding-top:1.35em; //
+    padding-bottom:1.23em; //
+    padding-left:0;
+    padding-right:0;
+    figure, a, img {
+      width: auto;
+      height: 6.4em; // 160px
+    }
+  } //
+  + blockquote, + blockquote.dialogue {
+    padding-top: 0;
+  }
+}
+
+.img-wrap{
+  width: 100%;
+  a{
+    text-decoration: none!important;
+  }
+}
+.landscape{
+  width: 100%;
+}
+.portrait{
+  width: 100%;
+}
+p.small{
+  text-align:left;
+  font-size:1em;
+  width:100%;
+}
+.figure-lg div.figcaption {
+  padding-top: 0;
+  padding-bottom: 0;
+  font-size: .68em;
+  line-height: 2.05882em;
+  line-height: 1.33em;
+  display: block;
+  text-align: left;
+  margin-top: .83333em;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 0;
+}
+
+// hiding footnotes on ibooks, since clicking the back-link in a popup causes
+// glitch. see Radar Bug ID# 12551733. a separate mobi:footnotes task removes
+// the inline style altogether when building mobi files
+html:not([__ibooks_internal_theme]) span.ibooks-hidden{
+  display: inline!important;
+}
+
+// carried over from NDBS, not sure if these should be added to core or not
+.end-notes header + p {
+  margin-top:0;
+}
+.epigraph {
+  .figure-md{
+    margin-top: 0!important;
+    padding-top: 0!important;
+    page-break-inside:avoid;
+  }
+  .pull-quote{
+    padding-top: 0;
+    padding-bottom: 1.4em;
+    margin-top: 0;
+    p{
+      margin-top: 0!important;
+      padding-top: 0!important;
+    }
+  }
+
+  .img-wrap{
+    padding-top: 7px;
+  }
+
+}
+
+.unindented{
+  p{
+    text-indent: 0;
+    margin-bottom: 1em;
+
+    + .figure-sm.landscape,
+    + .figure-sm.portrait {
+      padding-top:0.35em; //
+    }
+
+  }
+}

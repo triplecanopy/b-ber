@@ -1,0 +1,11 @@
+// Fonts should all be listed here using the `font-face` mixin in
+// _mixins.scss. Fonts are declared in the following manner:
+//
+// @$font-name: name of the font as it will be referenced in the CSS
+// @$file-name: name of the font file
+// @$family-name: should be the general family name, and match the name of the
+//      folder in `fonts` where the fonts are kept
+// @$category: serif or sans-serif, optional
+//
+// @include font-face($font-name, $file-name, $family-name, $category:"",('ttf','otf','woff'))
+//

@@ -1,0 +1,32 @@
+
+// removes compass dependency
+// https://github.com/zellwk/vertical-rhythms-without-compass/tree/master/vertical-rhythms
+@import 'rhythm/typography-units';
+@import 'rhythm/vertical-rhythms';
+
+// Settings for the baseline grid
+// -- all calculations re: vertical sizing will refer to these
+//
+// Default font size is 25px, declared as 1em. We adjust window's font size to
+// 156.25% since it starts at a default of 16px. Text elements are then set to
+// font size 1em (25px). Text element line-height is 1.4 (35px). Element
+// spacing should then be determined based on divisions of 35 (the line-height
+// of a text-element).
+//
+
+$base-font-size: $text-base;
+$base-line-height: $line-base;
+
+$rhythm-unit: em;
+$rem-with-px-fallback:true;
+$default-rhythm-border-width: 1px;
+$default-rhythm-border-style: solid;
+$round-to-nearest-half-line: true;
+$min-line-padding: 2px;
+
+
+// The leader is the amount of whitespace in a line. The half-leader
+// is the amount of whitespace above and below a line.
+//
+$base-leader: convert-length($base-line-height - $base-font-size, $rhythm-unit, $base-font-size);
+$base-half-leader: $base-leader / 2;
