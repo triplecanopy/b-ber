@@ -38,7 +38,7 @@ const container = `<?xml version="1.0"?>
 
 const mimetype = 'application/epub+zip'
 const scriptTag = '<script type="application/javascript" src="{% body %}"></script>'
-const stylesheetTag = '<link type="text/css" href="{% body %}"/>'
+const stylesheetTag = '<link rel="stylesheet" type="text/css" href="{% body %}"/>'
 
 const page = new File({
   path: 'base.tmpl',
