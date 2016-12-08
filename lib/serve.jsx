@@ -23,8 +23,7 @@ const serve = () =>
       const app = express()
       app.use(express.static(ops))
       app.use(esindex(ops, options))
-
-      logger.info(`Server is running at localhost:${port}`)
+      app.listen(3000, () => logger.info(`Server is running at localhost:${port}`))
 
       resolve()
     })
