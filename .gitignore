@@ -10,6 +10,7 @@ log.*
 
 node_modules
 _site
+_idea
 
 # used for transpiled JSX
 dist
