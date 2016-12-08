@@ -9,8 +9,8 @@ import elements from './dc/elements'
 class Props {
   constructor() {
     this.isHTML = function isHTML(file) {
-      return Boolean(mime.lookup(file.fullpath) !== 'text/html'
-        || mime.lookup(file.fullpath) !== 'application/xhtml+xml')
+      return Boolean(mime.lookup(file.fullpath) === 'text/html'
+        || mime.lookup(file.fullpath) === 'application/xhtml+xml')
     }
     this.isNav = function isNav(file) {
       return Boolean(mime.lookup(file.fullpath) === 'application/xhtml+xml'
