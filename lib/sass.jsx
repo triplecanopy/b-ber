@@ -29,7 +29,7 @@ async function sass() {
       postcss([autoprefixer(autoprefixerOptions), cssnano])
         .process(result.css)
         .then(prefixed =>
-          fs.writeFile(path.join(outputdir, 'stylesheets.css'), prefixed, (err2) => {
+          fs.writeFile(path.join(outputdir, 'application.css'), prefixed, (err2) => {
             if (err2) { reject(err2) }
             resolve()
           })
