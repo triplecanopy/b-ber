@@ -66,4 +66,17 @@ function hrtimeformat(a) {
   return `${String(s).slice(0, -3)}ms`
 }
 
-export { slashit, topdir, cjoin, fileid, copy, guid, rpad, hrtimeformat }
+function hashIt(str) {
+  let hash = 0
+  if (str.length === 0) { return hash }
+  for (let i = 0, len = str.length; i < len; i++) { // eslint-disable-line no-plusplus
+    const chr = str.charCodeAt(i)
+    hash = ((hash << 5) - hash) + chr // eslint-disable-line no-bitwise
+    hash |= 0 // eslint-disable-line no-bitwise
+  }
+  return `_${Math.abs(hash)}`
+}
+
+const regexMap = arr => new RegExp(arr.map(_ => _.source).join(''))
+
+export { slashit, topdir, cjoin, fileid, copy, guid, rpad, hrtimeformat, hashIt, regexMap }
