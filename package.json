@@ -6,14 +6,13 @@
   "scripts": {
     "start": "./node_modules/.bin/babel-node ./lib/cli.jsx --presets es2015,stage-0",
     "lint": "./node_modules/.bin/eslint ./lib/cli.jsx lib/*.jsx lib/**/*.jsx || true",
-    "ava": "ava --verbose || true",
+    "ava": "./node_modules/.bin/ava --verbose || true",
     "test": "npm run ava && npm run lint",
-    "build": "babel --presets es2015,stage-0 -d dist/ lib/",
+    "build": "./node_modules/.bin/babel --presets es2015,stage-0 -d dist/ lib/",
     "prepublish": "npm run build",
     "bump": "npm version prerelease",
     "preversion": "npm test",
-    "version": "npm run build && git add -A",
-    "postversion": "git push origin master && git push --tags"
+    "version": "npm run build && git add -A"
   },
   "bin": {
     "bber": "./dist/cli.js"
