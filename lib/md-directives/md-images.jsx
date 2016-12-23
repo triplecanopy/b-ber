@@ -15,8 +15,6 @@ import logger from '../logger'
 import mdInline from '../md-plugins/md-inline'
 import { hashIt, updateStore } from '../utils'
 
-import store from '../store'
-
 const elemRe = /^image\s\w{3,}\s"["\w]+/
 const attrRe = new RegExp(/(?:(url|alt|caption)\s["]([^"]+)["])/, 'g')
 
