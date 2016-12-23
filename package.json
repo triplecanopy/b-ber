@@ -12,7 +12,8 @@
     "prepublish": "npm run build",
     "bump": "npm version prerelease",
     "preversion": "npm test",
-    "version": "npm run build && git add -A"
+    "version": "npm run build && git add -A",
+    "foo": "echo foo bar baz"
   },
   "bin": {
     "bber": "./dist/cli.js"
@@ -45,6 +46,7 @@
     "mime-types": "^2.1.13",
     "mobi-zipper": "^0.1.2",
     "node-sass": "^3.13.0",
+    "nodemon": "^1.11.0",
     "postcss": "^5.2.6",
     "recursive-readdir": "^2.1.0",
     "request": "^2.79.0",
