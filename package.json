@@ -12,8 +12,7 @@
     "prepublish": "npm run build",
     "bump": "npm version prerelease",
     "preversion": "npm test",
-    "version": "npm run build && git add -A",
-    "foo": "echo foo bar baz"
+    "version": "npm run build && git add -A"
   },
   "bin": {
     "bber": "./dist/cli.js"
