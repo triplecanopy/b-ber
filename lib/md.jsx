@@ -12,6 +12,7 @@ import mdSection from './md-directives/md-section'
 import mdImages from './md-directives/md-images'
 
 import conf from './config'
+import { updateStore } from './utils'
 
 class MarkIt {
   constructor() {
@@ -62,6 +63,7 @@ class MarkIt {
 
     this.render = function render(filename, data) {
       this._set('filename', filename)
+      updateStore('pages', { filename })
       return md.render(data)
     }
 
