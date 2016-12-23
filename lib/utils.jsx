@@ -1,7 +1,8 @@
 
 import fs from 'fs-extra'
-import { compact } from 'underscore'
+import { compact, findWhere } from 'underscore'
 import conf from './config'
+import store from './store'
 
 const copy = (source, target) =>
   new Promise((resolve, reject) => {
@@ -60,4 +61,14 @@ const hashIt = (str) => {
   return `_${Math.abs(hash)}`
 }
 
-export { slashit, topdir, cjoin, fileid, copy, guid, rpad, hrtimeformat, hashIt, regexMap }
+const updateStore = (prop, { ...obj }) => {
+  const { id } = obj
+  if (findWhere(store[prop], { id })) {
+    throw new Error(`The property ${prop} already contains an item with that \`id\`.`)
+  }
+  store[prop].push({ ...obj })
+  return store
+}
+
+export { slashit, topdir, cjoin, fileid, copy, guid, rpad, hrtimeformat, hashIt, regexMap, updateStore }
+
