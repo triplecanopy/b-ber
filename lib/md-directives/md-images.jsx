@@ -11,7 +11,7 @@ import path from 'path'
 import fs from 'fs-extra'
 import imgsize from 'image-size'
 import conf from '../config'
-import logger from '../logger'
+import log from '../log'
 import mdInline from '../md-plugins/md-inline'
 import { hashIt, updateStore, getImageOrientation } from '../utils'
 
@@ -61,7 +61,7 @@ export default {
           </div>`
         }
       } catch (e) {
-        logger.warn(`ENOENT: Could not open ${image}. Check that it exists in the _images directory.`)
+        log.warn(`ENOENT: Could not open ${image}. Check that it exists in the _images directory.`)
         return ''
       }
     }

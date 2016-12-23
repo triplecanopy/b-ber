@@ -1,5 +1,5 @@
 
-import logger from './logger'
+import log from './log'
 
-const deploy = () => logger.info('Todo ...')
+const deploy = () => log.info('Todo ...')
 export default deploy

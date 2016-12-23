@@ -1,7 +1,7 @@
 
 import path from 'path'
 import zipper from 'epub-zipper'
-import logger from './logger'
+import log from './log'
 import conf from './config'
 
 const options = {
@@ -13,7 +13,7 @@ const options = {
 const epub = () =>
   new Promise(resolve/* , reject */ =>
     zipper.create(options)
-    .catch(err => logger.error(err))
+    .catch(err => log.error(err))
     .then(resolve)
   )
 

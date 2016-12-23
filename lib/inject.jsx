@@ -3,7 +3,7 @@ import fs from 'fs-extra'
 import path from 'path'
 import File from 'vinyl'
 
-import logger from './logger'
+import log from './log'
 import conf from './config'
 import { scriptTag, stylesheetTag } from './templates'
 
@@ -114,7 +114,7 @@ const mapSources = (stylesheets, javascripts, sources) =>
       .then(file => write(
           path.join(__dirname, '../', conf.dist, 'OPS/text', source),
           file.contents.toString('utf8')))
-      .catch(err => logger.error(err))
+      .catch(err => log.error(err))
       .then(resolve)
     )
   })
@@ -125,7 +125,7 @@ const inject = () =>
     const stylesheets = await getDirContents(`${conf.dist}/OPS/stylesheets/`)
     const javascripts = await getDirContents(`${conf.dist}/OPS/javascripts/`)
     mapSources(stylesheets, javascripts, textSources)
-    .catch(err => logger.log(err))
+    .catch(err => log.log(err))
     .then(resolve)
   })
 

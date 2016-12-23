@@ -3,7 +3,7 @@ import path from 'path'
 import fs from 'fs-extra'
 import nodemon from 'nodemon'
 import conf from './config'
-import logger from './logger'
+import log from './log'
 
 const serve = () =>
   new Promise((resolve, reject) => {
@@ -20,7 +20,7 @@ const serve = () =>
         ignore: ['node_modules', 'lib'],
         watch: [conf.src]
       }).once('start', () => {
-        logger.info('Starting nodemon 😈')
+        log.info('Starting nodemon 😈')
         resolve()
       })
     })

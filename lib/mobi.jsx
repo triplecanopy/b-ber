@@ -1,7 +1,7 @@
 
 import zipper from 'mobi-zipper'
 import path from 'path'
-import logger from './logger'
+import log from './log'
 import conf from './config'
 
 const options = {
@@ -13,7 +13,7 @@ const options = {
 const mobi = () =>
   new Promise(resolve/* , reject */ =>
     zipper.create(options)
-    .catch(err => logger.error(err))
+    .catch(err => log.error(err))
     .then(resolve)
   )
 

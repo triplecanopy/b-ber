@@ -3,7 +3,7 @@
 /* eslint-disable no-shadow */
 
 import yargs from 'yargs'
-import logger from './logger'
+import log from './log'
 import deps from './deps'
 import * as tasks from './tasks'
 import { rpad, hrtimeformat } from './utils'
@@ -20,11 +20,11 @@ const checkCommands = (yarg, argv, required) => {
       seq = process.hrtime()
       await delayedPromise(0, tasks[func].call(this))
       diff = process.hrtime(seq)
-      logger.info(`Resolved ${rpad(func, ' ', 8)} ${hrtimeformat(diff)}`)
+      log.info(`Resolved ${rpad(func, ' ', 8)} ${hrtimeformat(diff)}`)
     })
     total = process.hrtime(start)
-    logger.info('---')
-    logger.info(`Finished ${rpad(argv._[0], ' ', 8)} ${hrtimeformat(total)}`)
+    log.info('---')
+    log.info(`Finished ${rpad(argv._[0], ' ', 8)} ${hrtimeformat(total)}`)
   }
 
   // bootstrap
@@ -33,7 +33,7 @@ const checkCommands = (yarg, argv, required) => {
 
 let { argv } = yargs.fail((msg, err) => {
   if (err) { throw err }
-  logger.info(msg)
+  log.info(msg)
   yargs.showHelp()
 }).epilog('For more information on a command, enter $0 <command> --help')
   .usage('\nUsage: $0 <command> [options]')
@@ -42,7 +42,7 @@ let { argv } = yargs.fail((msg, err) => {
   .command('create', 'Create an Epub dir structure', (yargs) => {
     ({ argv } = yargs.fail((msg, err) => {
       if (err) { throw err }
-      logger.info(msg)
+      log.info(msg)
       yargs.showHelp()
     })
     .usage('\nUsage: $0 create [options]')
@@ -54,7 +54,7 @@ let { argv } = yargs.fail((msg, err) => {
   .command('markit', 'Convert markdown to HTML', (yargs) => {
     ({ argv } = yargs.fail((msg, err) => {
       if (err) { throw err }
-      logger.info(msg)
+      log.info(msg)
       yargs.showHelp()
     })
     .usage('\nUsage: $0 markit')
@@ -66,7 +66,7 @@ let { argv } = yargs.fail((msg, err) => {
   .command('serve', 'Start a development server', (yargs) => {
     ({ argv } = yargs.fail((msg, err) => {
       if (err) { throw err }
-      logger.info(msg)
+      log.info(msg)
       yargs.showHelp()
     })
     .usage('\nUsage: $0 serve')
@@ -78,7 +78,7 @@ let { argv } = yargs.fail((msg, err) => {
   .command('scripts', 'Compile the scripts', (yargs) => {
     ({ argv } = yargs.fail((msg, err) => {
       if (err) { throw err }
-      logger.info(msg)
+      log.info(msg)
       yargs.showHelp()
     })
     .usage('\nUsage: $0 scripts')
@@ -90,7 +90,7 @@ let { argv } = yargs.fail((msg, err) => {
   .command('render', 'Render layouts', (yargs) => {
     ({ argv } = yargs.fail((msg, err) => {
       if (err) { throw err }
-      logger.info(msg)
+      log.info(msg)
       yargs.showHelp()
     })
     .usage('\nUsage: $0 render')
@@ -102,7 +102,7 @@ let { argv } = yargs.fail((msg, err) => {
   .command('sass', 'Compile SCSS', (yargs) => {
     ({ argv } = yargs.fail((msg, err) => {
       if (err) { throw err }
-      logger.info(msg)
+      log.info(msg)
       yargs.showHelp()
     })
     .usage('\nUsage: $0 sass')
@@ -114,7 +114,7 @@ let { argv } = yargs.fail((msg, err) => {
   .command('inject', 'Inject scripts and styles', (yargs) => {
     ({ argv } = yargs.fail((msg, err) => {
       if (err) { throw err }
-      logger.info(msg)
+      log.info(msg)
       yargs.showHelp()
     })
     .usage('\nUsage: $0 inject')
@@ -126,7 +126,7 @@ let { argv } = yargs.fail((msg, err) => {
   .command('copy', 'Copy static assets to output dir', (yargs) => {
     ({ argv } = yargs.fail((msg, err) => {
       if (err) { throw err }
-      logger.info(msg)
+      log.info(msg)
       yargs.showHelp()
     })
     .usage('\nUsage: $0 copy')
@@ -138,7 +138,7 @@ let { argv } = yargs.fail((msg, err) => {
   .command('opf', 'Generate the opf', (yargs) => {
     ({ argv } = yargs.fail((msg, err) => {
       if (err) { throw err }
-      logger.info(msg)
+      log.info(msg)
       yargs.showHelp()
     })
     .usage('\nUsage: $0 opf')
@@ -150,7 +150,7 @@ let { argv } = yargs.fail((msg, err) => {
   .command('clean', 'Remove the _output dir', (yargs) => {
     ({ argv } = yargs.fail((msg, err) => {
       if (err) { throw err }
-      logger.info(msg)
+      log.info(msg)
       yargs.showHelp()
     })
     .usage('\nUsage: $0 clean')
@@ -162,7 +162,7 @@ let { argv } = yargs.fail((msg, err) => {
   .command('build', 'Build the _output dir', (yargs) => {
     ({ argv } = yargs.fail((msg, err) => {
       if (err) { throw err }
-      logger.info(msg)
+      log.info(msg)
       yargs.showHelp()
     })
     .usage('\nUsage: $0 build')
@@ -174,7 +174,7 @@ let { argv } = yargs.fail((msg, err) => {
   .command('site', 'Clone Gomez', (yargs) => {
     ({ argv } = yargs.fail((msg, err) => {
       if (err) { throw err }
-      logger.info(msg)
+      log.info(msg)
       yargs.showHelp()
     })
 
@@ -195,7 +195,7 @@ let { argv } = yargs.fail((msg, err) => {
   .command('init', 'Initalize b-ber', (yargs) => {
     ({ argv } = yargs.fail((msg, err) => {
       if (err) { throw err }
-      logger.info(msg)
+      log.info(msg)
       yargs.showHelp()
     })
 
@@ -224,7 +224,7 @@ let { argv } = yargs.fail((msg, err) => {
   .command('publish', 'Move book to the _site dir', (yargs) => {
     ({ argv } = yargs.fail((msg, err) => {
       if (err) { throw err }
-      logger.info(msg)
+      log.info(msg)
       yargs.showHelp()
     })
 
@@ -253,7 +253,7 @@ let { argv } = yargs.fail((msg, err) => {
   .command('epub', 'Create an Epub', (yargs) => {
     ({ argv } = yargs.fail((msg, err) => {
       if (err) { throw err }
-      logger.info(msg)
+      log.info(msg)
       yargs.showHelp()
     })
     .usage('\nUsage: $0 epub')
@@ -265,7 +265,7 @@ let { argv } = yargs.fail((msg, err) => {
   .command('mobi', 'Create a Mobi', (yargs) => {
     ({ argv } = yargs.fail((msg, err) => {
       if (err) { throw err }
-      logger.info(msg)
+      log.info(msg)
       yargs.showHelp()
     })
     .usage('\nUsage: $0 mobi')

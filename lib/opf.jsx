@@ -10,7 +10,7 @@ import YAML from 'yamljs'
 import { find, findWhere } from 'underscore'
 
 import conf from './config'
-import logger from './logger'
+import log from './log'
 import * as tmpl from './templates'
 import { topdir, cjoin } from './utils'
 
@@ -56,7 +56,7 @@ const getTitle = (file) => {
 const add = (file, arr) => {
   if (!file.location || file.location.length < 1) {
     return navdocs.indexOf(file.name) === -1
-      ? logger.warn(`Section number does not exist for ${file.name}\n`)
+      ? log.warn(`Section number does not exist for ${file.name}\n`)
       : ''
   }
 
@@ -228,7 +228,7 @@ const opf = () =>
     .then(filearr => stringify(filearr))
     .then(strings => renderopf(strings))
     .then(opfdata => writeopf(opfdata))
-    .catch(err => logger.error(err))
+    .catch(err => log.error(err))
     .then(resolve)
   )
 

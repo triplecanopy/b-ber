@@ -7,7 +7,7 @@ import decompress from 'decompress'
 import { exec } from 'child_process'
 
 import conf from './config'
-import logger from './logger'
+import log from './log'
 
 let dest
 const setDest = () => {
@@ -35,17 +35,17 @@ const install = () =>
 
     try {
       if (fs.statSync(`${dest}/package.json`)) {
-        logger.info('Installing package dependencies, this may take a while ...')
+        log.info('Installing package dependencies, this may take a while ...')
       }
     } catch (e) {
-      logger.error(`\`_site/package.json\` does not exist. Try initializing b-ber again with \`b-ber init\`.\n\n${e.message}`) // eslint-disable-line max-len
+      log.error(`\`_site/package.json\` does not exist. Try initializing b-ber again with \`b-ber init\`.\n\n${e.message}`) // eslint-disable-line max-len
       process.exit()
     }
 
     exec('npm install', { cwd: dest }, (err, stdout, stderr) => {
       if (err) { reject(err) }
       if (stderr !== '') { reject(new Error(stderr)) }
-      if (stdout !== '') { logger.info(stdout) }
+      if (stdout !== '') { log.info(stdout) }
       resolve()
     })
   })
@@ -57,7 +57,7 @@ function site() {
     download()
     .then(data => decompress(data, dest))
     .then(install)
-    .catch(err => logger.error(err))
+    .catch(err => log.error(err))
     .then(resolve)
   })
 }
