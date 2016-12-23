@@ -1,18 +1,17 @@
 
 import YAML from 'yamljs'
 import fs from 'fs-extra'
-import { extend } from 'underscore'
 
+const options = { src: '_book', dist: 'book' }
 const settings = (() => {
-  const res = { src: '_book', dist: 'book' }
   try {
     if (fs.statSync('./config.yml')) {
-      extend(YAML.load('./config.yml'), res)
+      Object.assign(options, YAML.load('./config.yml'))
     }
   } catch (e) {
-    return res
+    return options
   }
-  return res
+  return options
 })()
 
 

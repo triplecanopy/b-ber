@@ -1,4 +1,6 @@
 
+/* eslint-disable operator-linebreak */
+
 import renderLayouts from 'layouts'
 import path from 'path'
 import fs from 'fs-extra'
@@ -14,8 +16,7 @@ import { topdir, cjoin } from './utils'
 
 const navdocs = ['toc.ncx', 'toc.xhtml']
 
-let bookmeta
-let pagemeta
+let bookmeta, pagemeta
 
 const loadmeta = () =>
   new Promise(resolve/* , reject */ =>
@@ -104,7 +105,6 @@ const stringify = files =>
 
     // going to be a couple more exceptions here, should drop these into `templates.jsx`
     strings.bookmeta.push(`<meta property="dcterms:modified">${new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')}</meta>`) // eslint-disable-line max-len
-    // strings.pagemeta = metadata.pagemeta.map(_ => _).filter(Boolean) // used to create guide and landmarks
 
     files.forEach((file, idx) => {
       strings.manifest.push(tmpl.item(file))
