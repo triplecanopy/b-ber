@@ -16,6 +16,7 @@ docs
 # used for transpiled JSX
 dist
 _book/_images
+book/images
 
 # build directory for _book
 book
