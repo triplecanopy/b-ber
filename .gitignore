@@ -11,9 +11,11 @@ log.*
 node_modules
 _site
 _idea
+docs
 
 # used for transpiled JSX
 dist
+_book/_images
 
 # build directory for _book
 book
