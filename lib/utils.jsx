@@ -70,5 +70,20 @@ const updateStore = (prop, { ...obj }) => {
   return store
 }
 
-export { slashit, topdir, cjoin, fileid, copy, guid, rpad, hrtimeformat, hashIt, regexMap, updateStore }
+const getImageOrientation = (h, w) => h > w ? 'portrait' : 'landscape'
+
+export {
+  slashit,
+  topdir,
+  cjoin,
+  fileid,
+  copy,
+  guid,
+  rpad,
+  hrtimeformat,
+  hashIt,
+  regexMap,
+  updateStore,
+  getImageOrientation
+}
 

@@ -13,7 +13,7 @@ import imgsize from 'image-size'
 import conf from '../config'
 import logger from '../logger'
 import mdInline from '../md-plugins/md-inline'
-import { hashIt, updateStore } from '../utils'
+import { hashIt, updateStore, getImageOrientation } from '../utils'
 
 const elemRe = /^image\s\w{3,}\s"["\w]+/
 const attrRe = new RegExp(/(?:(url|alt|caption)\s["]([^"]+)["])/, 'g')
@@ -49,8 +49,10 @@ export default {
       try {
         if (fs.statSync(image)) {
           const { ...dimensions } = imgsize(image)
+          const { height, width } = dimensions
+          const orientation = getImageOrientation(height, width)
           updateStore('images', { seq, ...attrs, ...dimensions })
-          return `<div class="figure-sm portrait">
+          return `<div class="figure-sm ${orientation}">
             <figure id="ref${attrs.id}">
               <a href="${page}#${id}">
                 <img src="../images/${escapeHtml(attrs.url)}" alt="${attrs.alt}"/>
@@ -68,4 +70,3 @@ export default {
 
 // still need:
 // - referring page
-// - image dimensions
