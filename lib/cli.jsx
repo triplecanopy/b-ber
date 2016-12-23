@@ -13,9 +13,7 @@ const checkCommands = (yarg, argv, required) => {
   if (argv._.length < required) { return yarg.showHelp() }
   const sequence = {}.hasOwnProperty.call(deps, argv._) ? deps[argv._] : [argv._[0]]
   const start = process.hrtime()
-  let total
-  let seq
-  let diff
+  let total, seq, diff
 
   async function serial() {
     await forEachSerial(sequence, async (func) => {
