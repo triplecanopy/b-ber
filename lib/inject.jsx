@@ -55,7 +55,7 @@ function* matchIterator(re, str) {
 const injectTags = (content, args) => {
   const { data, start, stop } = args
   const toInject = templateify(data.slice())
-  let result
+  let result = ''
   let endMatch
 
   for (const startMatch of matchIterator(start, content)) {

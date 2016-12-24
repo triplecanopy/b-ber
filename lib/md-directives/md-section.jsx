@@ -29,7 +29,7 @@ export default {
     render(tokens, idx) {
       const { escapeHtml } = instance.utils
       const matches = tokens[idx].info.trim().match(regex)
-      let result
+      let result = ''
 
       if (tokens[idx].nesting === 1) { // opening tag
         const line = tokens[idx].map ? tokens[idx].map[0] : null

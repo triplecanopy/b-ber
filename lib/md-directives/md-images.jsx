@@ -12,7 +12,7 @@ import fs from 'fs-extra'
 import imgsize from 'image-size'
 import conf from '../config'
 import log from '../log'
-import mdInline from '../md-plugins/md-inline'
+import mdInline from '../md-plugins/md-inline-block'
 import { hashIt, updateStore, getImageOrientation } from '../utils'
 
 const elemRe = /^image\s\w{3,}\s"["\w]+/

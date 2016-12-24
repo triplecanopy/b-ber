@@ -1,14 +1,11 @@
 
 import MarkdownIt from 'markdown-it'
-
-// https://www.npmjs.com/package/markdown-it-footnote
 import mdFootnote from 'markdown-it-footnote'
-// https://www.npmjs.com/package/markdown-it-front-matter
 import mdFrontMatter from 'markdown-it-front-matter'
-
 import mdSection from './md-directives/md-section'
 import mdExit from './md-directives/md-exit'
 import mdImages from './md-directives/md-images'
+import mdDialogue from './md-directives/md-dialogue'
 import { updateStore } from './utils'
 
 class MarkIt {
@@ -20,7 +17,8 @@ class MarkIt {
       linkify: false
     })
 
-    md.use(
+    md
+    .use(
       mdSection.plugin,
       mdSection.name,
       mdSection.renderer(md, this))
@@ -34,6 +32,10 @@ class MarkIt {
       mdImages.plugin,
       mdImages.name,
       mdImages.renderer(md, this))
+    .use(
+      mdDialogue.plugin,
+      mdDialogue.name,
+      mdDialogue.renderer(md, this))
     .use(
       mdFrontMatter,
       meta => this.noop())
