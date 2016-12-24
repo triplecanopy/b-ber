@@ -7,7 +7,7 @@
 
 */
 
-import mdInline from '../md-plugins/md-inline'
+import mdInline from '../md-plugins/md-inline-block'
 
 export default {
   plugin: mdInline,
@@ -16,6 +16,6 @@ export default {
     marker: '+',
     minMarkers: 1,
     validate(params) { return params.trim().match(/^exit/) },
-    render() { return '</section>' }
+    render() { return '</section>\n' }
   })
 }
