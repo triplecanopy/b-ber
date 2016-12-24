@@ -21,12 +21,12 @@ export default {
   renderer: (instance, context) => ({
     marker: '+',
     minMarkers: 1,
-    markerOpen: /section\s+id/,
+    markerOpen: /section\s+/,
     markerClose: /exit/,
     validate(params) {
       return params.trim().match(regex)
     },
-    render(tokens, idx, options, env) {
+    render(tokens, idx) {
       const { escapeHtml } = instance.utils
       const matches = tokens[idx].info.trim().match(regex)
       let result
@@ -55,8 +55,6 @@ export default {
           ` class="${classes.join(' ')}"`,
           '>\n'
         ].join('')
-      } else {
-        result = '</section>'
       }
       return result
     }

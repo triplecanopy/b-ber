@@ -16,6 +16,6 @@ export default {
     marker: '+',
     minMarkers: 1,
     validate(params) { return params.trim().match(/^exit/) },
-    render() { return '' }
+    render() { return '</section>' }
   })
 }
