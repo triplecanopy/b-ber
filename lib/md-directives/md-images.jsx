@@ -23,7 +23,7 @@ let seq = 0
 export default {
   plugin: mdInline,
   name: 'image',
-  renderer: instance => ({
+  renderer: (instance, context) => ({
     marker: '+',
     minMarkers: 1,
     validate(params) {
@@ -35,15 +35,12 @@ export default {
       const id = hashIt(Math.random().toString(36).substr(0, 5))
       const page = `loi-${seq + 1000}.xhtml`
       const attrs = { id, page, url: '', alt: '' }
+      const line = tokens[idx].map ? tokens[idx].map[0] : null
       const { escapeHtml } = instance.utils
 
       let matches
-      while ((matches = attrRe.exec(tokens[idx].info.trim())) !== null) {
-        attrs[matches[1]] = matches[2]
-      }
-
-      if (!attrs.url) { throw new Error('Image directives require a `src` attribute.') }
-
+      while ((matches = attrRe.exec(tokens[idx].info.trim())) !== null) { attrs[matches[1]] = matches[2] }
+      if (!attrs.url) { log.error(`[${context._get('filename')}.md: ${line}] <img> Missing \`src\` attribute.`) }
       const image = path.join(__dirname, '../../', conf.src, '_images', attrs.url)
 
       try {
@@ -51,9 +48,9 @@ export default {
           const { ...dimensions } = imgsize(image)
           const { height, width } = dimensions
           const orientation = getImageOrientation(height, width)
-          updateStore('images', { seq, ...attrs, ...dimensions })
+          updateStore('images', { seq, ...attrs, ...dimensions, ref: context._get('filename') })
           return `<div class="figure-sm ${orientation}">
-            <figure id="ref${attrs.id}">
+            <figure id="ref${id}">
               <a href="${page}#${id}">
                 <img src="../images/${escapeHtml(attrs.url)}" alt="${attrs.alt}"/>
               </a>
@@ -61,12 +58,10 @@ export default {
           </div>`
         }
       } catch (e) {
-        log.warn(`ENOENT: Could not open ${image}. Check that it exists in the _images directory.`)
-        return ''
+        log.warn(`[${context._get('filename')}.md: ${line}] <img> \`${path.basename(image)}\` not found.`)
+        return `<!-- Image not found: ${path.basename(image)} -->`
       }
+      return ''
     }
   })
 }
-
-// still need:
-// - referring page
