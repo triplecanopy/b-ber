@@ -1,5 +1,7 @@
 # b-ber-creator
 
+[![Build Status](https://travis-ci.com/triplecanopy/b-ber-creator.svg?token=d5sXqMpXEby4v8y2wENP&branch=master)](https://travis-ci.com/triplecanopy/b-ber-creator)
+
 A command-line epub maker.
 
 ## Installation
