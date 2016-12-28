@@ -22,6 +22,6 @@ const settings = (() => {
 // somewehre. Maybe output from a build task that's then hosted in the bber-
 // boiler repo?
 
-settings.gomez = 'http://maxwellsimmer.com/b-ber-boiler.zip'
+settings.gomez = 'https://codeload.github.com/triplecanopy/b-ber-boiler/zip/master'
 
 export default settings
