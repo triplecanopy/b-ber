@@ -29,7 +29,7 @@ const makedirs = (dirs, files, src) =>
               if (err2) { reject(err2) }
               callback(idx2, files, () => {
                 const buffer = new Buffer(base64CoverImage, 'base64')
-                fs.writeFile(path.join(__dirname, '../', src, '_images/cover.jpg'), buffer, (err3) => {
+                fs.writeFile(path.join(cwd, src, '_images/cover.jpg'), buffer, (err3) => {
                   if (err3) { reject(err3) }
                   resolve()
                 })

@@ -1,4 +1,0 @@
----
-environment: development
-src: ./_book
-dist: ./book
