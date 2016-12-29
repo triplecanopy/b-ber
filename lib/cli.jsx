@@ -202,7 +202,7 @@ let { argv } = yargs.fail((msg, err) => {
     .options('src', {
       alias: 's',
       demand: false,
-      default: './_book',
+      default: '_book',
       describe: 'Define the book\'s src path',
       type: 'string'
     })
@@ -210,7 +210,7 @@ let { argv } = yargs.fail((msg, err) => {
     .options('dist', {
       alias: 'd',
       demand: false,
-      default: './book',
+      default: 'book',
       describe: 'Define the book\'s dist path',
       type: 'string'
     })
