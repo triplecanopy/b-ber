@@ -1,7 +1,6 @@
 
 /* eslint-disable */
 
-
 const container_plugin = (md, name, options = {}) => {
 
   const marker_open = options.markerOpen
@@ -11,8 +10,8 @@ const container_plugin = (md, name, options = {}) => {
   const marker_char = marker_str.charCodeAt(0)
   const marker_len = marker_str.length
   const validate = options.validate
+  const replacementStr = options.replacementStr
   const render = options.render || renderDefault
-  const replacement = options.replacement || '<span class="speaker">$1</span>'
 
   const validateDefault = () =>
     params.trim().split(' ', 2)[0] === name
@@ -21,49 +20,33 @@ const container_plugin = (md, name, options = {}) => {
     self.renderToken(tokens, idx, opts, env, self)
 
 
-  // const validateInlineDelimiter = value => inlineDelimiters.some(_ => _.test(value))
+  const validateInline = (arr, str) =>
+    arr.filter(_ => _.test(str))[0]
 
-  const parseInlineDelimiter = (md, ruleName, tokenType, iteartor) => {
-    const scan = (state) => {
-      let i, blkIdx, inlineTokens
-      for (blkIdx = state.tokens.length - 1; blkIdx >= 0; blkIdx -= 1) {
-        if (state.tokens[blkIdx].type !== 'inline') { continue }
-        inlineTokens = state.tokens[blkIdx].children
-        for (i = inlineTokens.length - 1; i >= 0; i -= 1) {
-          if (inlineTokens[i].type !== tokenType) { continue }
-          iteartor(inlineTokens, i)
-        }
-      }
-    }
-    md.core.ruler.push(ruleName, scan)
+
+  const markerTokenToString = regex =>
+    regex.toString().replace(/[\/\^()]/g, '')
+
+  const stripMarker = str =>
+    str.replace(markerTokenToString(marker_open), '').trim()
+
+  const getInlineDelimitersFromParams = params => {
+    const delims = stripMarker(params).replace(/['"]/g, '')
+    return delims.split(' ').map(_ => new RegExp(`^(${_.trim()})`)).filter(Boolean)
   }
-
-  const initializeInlineDelimiterRule = (ruleName, regExp, replacement) =>
-    parseInlineDelimiter(md, ruleName, 'text', (tokens, idx) => {
-      tokens[idx].content = tokens[idx].content.replace(regExp, replacement)
-    })
-
-  const getInlineDelimitersFromParams = str =>
-    str.split(' ').map(_ => new RegExp(`^${_.trim()}`)).filter(Boolean)
-
-  const registerInlineDelimiterRule = arr =>
-    arr.map(_ => initializeInlineDelimiterRule(String(_), _, inlineReplacement))
 
   const container = (state, startLine, endLine, silent) => {
     const inlineTokens = []
-    let pos, nextLine, marker_count, markup, params, token, old_parent, old_line_max, match
+    let pos, nextLine, marker_count, markup, params, token, old_parent, old_line_max, match, inlineRegExp
     let auto_closed = false
     let start = state.bMarks[startLine] + state.tShift[startLine]
     let max = state.eMarks[startLine]
 
-    // console.log('startLine', startLine) // char position of line start
-    // console.log('state.bMarks', state.bMarks) // line begin offsets for fast jumps
-    // console.log('state.eMarks', state.eMarks) // line end offsets for fast jumps
-    // console.log('state.tShift', state.tShift) // offsets of the first non-space characters (tabs not expanded)
-    // console.log('state.sCount', state.sCount) // indents for each line (tabs expanded)
-
-    // break early if the first char on the line doesn't match the marker
-    if (marker_char !== state.src.charCodeAt(start)) { return false }
+    // startLine - char position of line start
+    // state.bMarks - line begin offsets for fast jumps
+    // state.eMarks - line end offsets for fast jumps
+    // state.tShift - offsets of the first non-space characters (tabs not expanded)
+    // state.sCount - indents for each line (tabs expanded)
 
     // Check out the rest of the marker string, i.e., count the number of markers
     for (pos = start + 1; pos <= max; pos++) {
@@ -86,10 +69,6 @@ const container_plugin = (md, name, options = {}) => {
     // validate params, i.e., test if we should begin rendering the element
     if (!validate(params)) { return false }
 
-    // TODO: parse params and wrap the values in rule sets so that they can be
-    // parsed as inline elements after
-    console.log(params)
-
     // validate in test mode
     if (silent) { return true }
 
@@ -108,8 +87,20 @@ const container_plugin = (md, name, options = {}) => {
 
       // check if we found a nested directive. we're only interested in `exit`
       if (state.src.charCodeAt(start) === marker_char) {
-         // check if it's an `exit` directive
-        if (marker_close.exec(state.src.slice(start + marker_len, max))) { break }
+        // check if it's an `exit` directive
+        if (marker_close.exec(state.src.slice(start + marker_len, max).trim())) { break }
+      }
+
+      // Create regular expressions from paramaters of `dialogue` directive
+      const delims = getInlineDelimitersFromParams(params)
+      const inlineStr = state.src.slice(start, max)
+      if (inlineRegExp = validateInline(delims, inlineStr)) {
+
+        // simple string replace function is executed after the md has been fully processed
+        options.context.nestedStrings.push({
+          find: inlineStr,
+          repl: inlineStr.replace(inlineRegExp, replacementStr),
+        })
       }
 
       // Boilerplate: closing fence should be indented less than 4 spaces
@@ -145,7 +136,7 @@ const container_plugin = (md, name, options = {}) => {
     token.info       = params
     token.map        = [startLine, nextLine]
 
-    token.children = inlineTokens
+    token.children   = inlineTokens
 
     state.md.block.tokenize(state, startLine + 1, nextLine)
 

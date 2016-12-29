@@ -40,6 +40,13 @@ class MarkIt {
       mdFrontMatter,
       meta => this.noop())
 
+    this.nestedStrings = []
+
+    this.postRenderCallback = function(data) {
+      this.nestedStrings.forEach(_ => data = data.replace(_.find, _.repl))
+      return data
+    }
+
     this._set = function _set(key, val) {
       this[key] = val
       return this[key]
@@ -59,8 +66,10 @@ class MarkIt {
 
     this.render = function render(filename, data) {
       this._set('filename', filename)
+      this._set('nestedStrings', [])
       updateStore('pages', { filename })
-      return md.render(data)
+      const content = this.postRenderCallback(md.render(data))
+      return content
     }
 
     this.setup = function setup() {

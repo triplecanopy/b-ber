@@ -45,12 +45,13 @@ const render = () =>
       if (err1) { reject(err1) }
       const len = files.length - 1
       await MarkIt.setup()
-      return files.forEach((file, idx) => (
+      return files.forEach((file, idx) => {
+        if (file.charAt(0) === '.') { return }
         fs.readFile(path.join(mddir, file), 'utf8', (err2, data) => {
           if (err2) { reject(err2) }
           return parse(path.basename(file, '.md'), data, idx, len, resolve, reject)
         })
-      ))
+      })
     })
   })
 
