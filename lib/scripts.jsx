@@ -6,8 +6,10 @@ import rrdir from 'recursive-readdir'
 import conf from './config'
 import { copy } from './utils'
 
-const src = path.join(__dirname, `../${conf.src}/_javascripts`)
-const dest = path.join(__dirname, `../${conf.dist}/OPS/javascripts`)
+const cwd = process.cwd()
+
+const src = path.join(cwd, `${conf.src}/_javascripts`)
+const dest = path.join(cwd, `${conf.dist}/OPS/javascripts`)
 
 const write = () =>
   new Promise((resolve, reject) =>

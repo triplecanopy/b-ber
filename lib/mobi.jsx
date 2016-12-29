@@ -4,9 +4,11 @@ import path from 'path'
 import log from './log'
 import conf from './config'
 
+const cwd = process.cwd()
+
 const options = {
-  input: path.join(__dirname, '../', conf.dist, 'OPS/content.opf'),
-  output: path.join(__dirname, '../'),
+  input: path.join(cwd, conf.dist, 'OPS/content.opf'),
+  output: cwd,
   clean: true
 }
 

@@ -14,15 +14,16 @@ import log from './log'
 import * as tmpl from './templates'
 import { topdir, cjoin } from './utils'
 
+const cwd = process.cwd()
 const navdocs = ['toc.ncx', 'toc.xhtml']
 
 let bookmeta, pagemeta
 
 const loadmeta = () =>
   new Promise(resolve/* , reject */ =>
-    YAML.load(path.join(__dirname, '../', conf.src, 'metadata.yml'), (resp1) => {
+    YAML.load(path.join(cwd, conf.src, 'metadata.yml'), (resp1) => {
       bookmeta = resp1
-      YAML.load(path.join(__dirname, '../', conf.src, 'pagemeta.yml'), (resp2) => {
+      YAML.load(path.join(cwd, conf.src, 'pagemeta.yml'), (resp2) => {
         pagemeta = resp2
         resolve()
       })
@@ -117,7 +118,7 @@ const stringify = files =>
 const writeopf = string =>
   new Promise((resolve, reject) => {
     fs.writeFile(
-      path.join(__dirname, '../', conf.dist, 'OPS', 'content.opf'), string, (err) => {
+      path.join(cwd, conf.dist, 'OPS', 'content.opf'), string, (err) => {
         if (err) { reject(err) }
         resolve()
       }
@@ -180,10 +181,10 @@ const navlayouts = ({ nav, filearrs }) => {
 const writenav = ({ ncxstring, tocstring, filearrs }) =>
   new Promise((resolve, reject) => {
     fs.writeFile(
-      path.join(__dirname, '../', conf.dist, 'OPS', 'toc.ncx'), ncxstring, (err1) => {
+      path.join(cwd, conf.dist, 'OPS', 'toc.ncx'), ncxstring, (err1) => {
         if (err1) { reject(err1) }
         fs.writeFile(
-          path.join(__dirname, '../', conf.dist, 'OPS', 'toc.xhtml'), tocstring, (err2) => {
+          path.join(cwd, conf.dist, 'OPS', 'toc.xhtml'), tocstring, (err2) => {
             if (err2) { reject(err2) }
             resolve(filearrs)
           }
@@ -196,10 +197,10 @@ const clearnav = () =>
   new Promise((resolve, reject) =>
     navdocs.forEach((file, idx) =>
       fs.remove(
-        path.join(__dirname, '../', conf.dist, 'OPS', file), (err1) => {
+        path.join(cwd, conf.dist, 'OPS', file), (err1) => {
           if (err1) { reject(err1) }
           return fs.writeFile(
-            path.join(__dirname, '../', conf.dist, 'OPS', file), '', (err2) => {
+            path.join(cwd, conf.dist, 'OPS', file), '', (err2) => {
               if (err2) { reject(err2) }
               if (idx === navdocs.length - 1) { resolve() }
             }

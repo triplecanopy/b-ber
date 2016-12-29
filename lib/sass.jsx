@@ -8,8 +8,9 @@ import autoprefixer from 'autoprefixer'
 
 import conf from './config'
 
-const destdir = path.join(__dirname, '../', conf.dist, '/OPS/stylesheets')
-const stylesheet = path.join(__dirname, `../${conf.src}`, '_stylesheets/application.scss')
+const cwd = process.cwd()
+const destdir = path.join(cwd, conf.dist, '/OPS/stylesheets')
+const stylesheet = path.join(cwd, conf.src, '_stylesheets/application.scss')
 const sassOptions = { file: stylesheet, errLogToConsole: true, outputStyle: 'nested' }
 const autoprefixerOptions = { browsers: ['last 2 versions', '> 2%'], flexbox: 'no-2009' }
 

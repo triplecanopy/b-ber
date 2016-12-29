@@ -6,6 +6,8 @@ import mime from 'mime-types'
 import terms from './dc/terms'
 import elements from './dc/elements'
 
+const cwd = process.cwd()
+
 class Props {
   constructor() {
     this.isHTML = function isHTML(file) {
@@ -18,13 +20,13 @@ class Props {
     }
     this.isScripted = function isScripted(file) {
       if (!this.isHTML(file)) { return false }
-      const fpath = path.join(__dirname, '../', file.fullpath)
+      const fpath = path.join(cwd, file.fullpath)
       const contents = fs.readFileSync(fpath, 'utf8')
       return Boolean(contents.match(/<script/))
     }
     this.isSVG = function isSVG(file) {
       if (!this.isHTML(file)) { return false }
-      const fpath = path.join(__dirname, '../', file.fullpath)
+      const fpath = path.join(cwd, file.fullpath)
       const contents = fs.readFileSync(fpath, 'utf8')
       return Boolean(contents.match(/<svg/))
     }

@@ -5,9 +5,11 @@ import nodemon from 'nodemon'
 import conf from './config'
 import log from './log'
 
+const cwd = process.cwd()
+
 const serve = () =>
   new Promise((resolve, reject) => {
-    const ops = path.join(__dirname, '../', conf.dist, 'OPS')
+    const ops = path.join(cwd, conf.dist, 'OPS')
     const text = path.join(ops, 'text')
 
     fs.readdir(text, (err, files) => {

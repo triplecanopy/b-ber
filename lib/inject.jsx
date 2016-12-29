@@ -7,6 +7,8 @@ import log from './log'
 import conf from './config'
 import { scriptTag, stylesheetTag } from './templates'
 
+const cwd = process.cwd()
+
 const startTags = {
   javascripts: new RegExp('<!-- inject:js -->', 'ig'),
   stylesheets: new RegExp('<!-- inject:css -->', 'ig')
@@ -25,7 +27,7 @@ const getDirContents = dirpath =>
     }))
 
 const getContents = source => new Promise((resolve, reject) =>
-  fs.readFile(path.join(__dirname, '../', conf.dist, 'OPS/text', source), (err, data) => {
+  fs.readFile(path.join(cwd, conf.dist, 'OPS/text', source), (err, data) => {
     if (err) { reject(err) }
     resolve(new File({ contents: new Buffer(data) }))
   })
@@ -112,7 +114,7 @@ const mapSources = (stylesheets, javascripts, sources) =>
       promiseToReplace('stylesheets', stylesheets, source)
       .then(file => promiseToReplace('javascripts', javascripts, source, file))
       .then(file => write(
-          path.join(__dirname, '../', conf.dist, 'OPS/text', source),
+          path.join(cwd, conf.dist, 'OPS/text', source),
           file.contents.toString('utf8')))
       .catch(err => log.error(err))
       .then(resolve)
