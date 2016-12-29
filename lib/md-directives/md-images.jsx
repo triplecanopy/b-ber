@@ -16,7 +16,7 @@ import mdInline from '../md-plugins/md-inline-block'
 import { hashIt, updateStore, getImageOrientation } from '../utils'
 
 const elemRe = /^image\s\w{3,}\s"["\w]+/
-const attrRe = new RegExp(/(?:(url|alt|caption)\s["]([^"]+)["])/, 'g')
+const attrRe = /(?:(url|alt|caption)\s["]([^"]+)["])/g
 
 let seq = 0
 
