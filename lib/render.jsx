@@ -8,8 +8,10 @@ import conf from './config'
 import MarkIt from './md'
 import { page } from './templates'
 
-const mddir = path.join(__dirname, `/../${conf.src}/_markdown/`)
-const dest = path.join(__dirname, `/../${conf.dist}/OPS/text/`)
+const cwd = process.cwd()
+
+const mddir = path.join(cwd, `${conf.src}/_markdown/`)
+const dest = path.join(cwd, `${conf.dist}/OPS/text/`)
 
 // write files to `dest` dir
 const write = (fname, markup, idx, len, rs, rj) =>
