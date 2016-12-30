@@ -16,7 +16,7 @@ const serve = () =>
       if (err) { reject(err) }
       if (!files || files.length < 1) { reject(new Error(`Cant find any files in ${text}`)) }
       nodemon({
-        script: './lib/server.js',
+        script: path.join(__dirname,'server.js'),
         ext: 'md js css',
         env: { 'NODE_ENV': 'development' },
         ignore: ['node_modules', 'lib'],
