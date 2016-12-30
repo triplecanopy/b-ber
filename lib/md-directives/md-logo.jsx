@@ -11,13 +11,10 @@ import mdInlineBlock from '../md-plugins/md-inline-block'
 
 export default {
   plugin: mdInlineBlock,
-  name: 'image',
+  name: 'logo',
   renderer: (instance, context) => ({
     marker: '+',
     minMarkers: 1,
-    validate(params) {
-      return params.trim().match(/^logo/)
-    },
     render(tokens, idx) {
       return `<figure id="Triple-Canopy" class="logo">
         <img style="width:120px;" alt="Triple Canopy Logo" src="../images/Triple-Canopy-Logo-Small.png"/>

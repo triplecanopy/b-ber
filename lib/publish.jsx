@@ -10,12 +10,15 @@ const publish = () =>
     const book = yargs.argv.input
     const dest = path.join(cwd, yargs.argv.output, book)
 
-    fs.mkdirs(dest, () =>
-      cdir(book, dest, (err) => {
-        if (err) { reject(err) }
-        resolve()
-      })
-    )
+    fs.remove(dest, (err1) => {
+      if (err1) { reject(err1) }
+      fs.mkdirs(dest, () =>
+        cdir(book, dest, (err2) => {
+          if (err2) { reject(err2) }
+          resolve()
+        })
+      )
+    })
   })
 
 export default publish
