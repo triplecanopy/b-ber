@@ -1,6 +1,5 @@
 
 export { default as clean } from './clean'
-export { default as cli } from './cli'
 export { default as config } from './config'
 export { default as copy } from './copy'
 export { default as create } from './create'
@@ -22,3 +21,4 @@ export { default as utils } from './utils'
 export { default as loi } from './loi'
 export { default as epub } from './epub'
 export { default as mobi } from './mobi'
+export { default as watch } from './watch'

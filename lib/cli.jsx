@@ -63,7 +63,19 @@ let { argv } = yargs.fail((msg, err) => {
     .wrap(null))
     checkCommands(yargs, argv, 1)
   })
-  .command('serve', 'Start a development server', (yargs) => {
+  .command('watch', 'Preview a book in the browser', (yargs) => {
+    ({ argv } = yargs.fail((msg, err) => {
+      if (err) { throw err }
+      log.info(msg)
+      yargs.showHelp()
+    })
+    .usage('\nUsage: $0 watch')
+    .alias('h', 'help')
+    .help('help')
+    .wrap(null))
+    checkCommands(yargs, argv, 1)
+  })
+  .command('serve', 'Preview a book in the reader', (yargs) => {
     ({ argv } = yargs.fail((msg, err) => {
       if (err) { throw err }
       log.info(msg)
