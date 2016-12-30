@@ -48,11 +48,13 @@ const createLOI = () =>
   })
 
 const loi = () =>
-  new Promise(async (resolve/* , reject */) => {
-    createLOILeader()
-    .then(createLOI)
-    .catch(err => log.error(err))
-    .then(resolve)
+  new Promise((resolve/* , reject */) => {
+    if (store.images.length) {
+      createLOILeader()
+      .then(createLOI)
+      .catch(err => log.error(err))
+      .then(resolve)
+    } else { resolve() }
   })
 
 export default loi
