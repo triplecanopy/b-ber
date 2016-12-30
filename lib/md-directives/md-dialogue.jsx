@@ -1,23 +1,29 @@
 
 /*
 
-@type: section
+@type: dialogue
+
 @usage:
-  + section <type> <title> [classes]
+  + dialogue "First Second"
     [content]
   + exit
-@output: <section epub:type="chapter" title="The Chapter Title" class="chapter"> ... </section>
+
+@output:
+  <section class="dialogue">
+    <p><span class="speaker">First</span> ... </p>
+    <p><span class="speaker">Second</span> ... </p>
+  </section>
 
 */
 
-import mdSectionTest from '../md-plugins/md-dialogue'
+import mdDialogue from '../md-plugins/md-dialogue'
 import log from '../log'
 
 const markerOpen = /^dialogue/
 const markerClose = /^exit/
 
 export default {
-  plugin: mdSectionTest,
+  plugin: mdDialogue,
   name: 'dialogue',
   renderer: (instance, context) => ({
     context,
