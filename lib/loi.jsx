@@ -26,11 +26,11 @@ const createLOI = () =>
     })
   })
 
-const inject = () =>
+const loi = () =>
   new Promise(async (resolve/* , reject */) => {
     createLOI()
     .catch(err => log.error(err))
     .then(resolve)
   })
 
-export default inject
+export default loi
