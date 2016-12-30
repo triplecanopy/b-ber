@@ -12,6 +12,7 @@ import { find } from 'underscore'
 import conf from './config'
 import log from './log'
 import * as tmpl from './templates'
+import props from './props'
 import { topdir, cjoin, getFrontmatter } from './utils'
 
 const cwd = process.cwd()
@@ -19,6 +20,7 @@ const navdocs = ['toc.ncx', 'toc.xhtml']
 
 let bookmeta
 
+// load book's metdata for use later
 const loadmeta = () =>
   new Promise(resolve/* , reject */ =>
     YAML.load(path.join(cwd, conf.src, 'metadata.yml'), (resp) => {
@@ -27,49 +29,70 @@ const loadmeta = () =>
     })
   )
 
+// break down the file name to extract hierarchy and order:
+//
+// @usage: <level 1>_<level 2>[_ ... level N ]
+//
+// @example:
+// 0000_0000.xhtml: Section 0, Page 0
+// 0000_0001.xhtml: Section 0, Page 1
+//
+// increment as needed:
+// 0000_0000_0000.xhtml: Section 0, Sub-Section 0, Page 0
+// 0000_0000_0000_0000.xhtml: Section 0, Sub-Section 0, Sub-Sub-Section 0, Page 0
+//
 const parse = arr =>
-  arr.map(file => ({
-    location: path.basename(file).split('_')[1]
-      ? path.basename(file).split('_')[1].split('-')
-      : null,
-    fullpath: file,
-    toppath: topdir(file),
-    name: path.basename(file),
-    extension: path.extname(file)
-  }))
+  arr.map((file) => {
+    const children = []
+    const position = path.basename(file, '.xhtml').split('_')
+    const depth = position.length
+    const fullpath = file
+    const toppath = topdir(file)
+    const filename = path.basename(file)
+    const extension = path.extname(file)
 
+    if (!props.isHTML({ fullpath })) { return null }
+    if (navdocs.indexOf(filename) > -1) { return null }
+
+    return { depth, position, fullpath, toppath, filename, extension, children }
+
+  }).filter(Boolean)
+
+// order pages
 const order = filearr =>
   filearr.sort((a, b) => {
-    const seqA = a.name.split('_')[0]
-    const seqB = b.name.split('_')[0]
+    const seqA = a.filename.split('_')[0]
+    const seqB = b.filename.split('_')[0]
     return seqA < seqB ? -1 : seqA > seqB ? 1 : 0 // eslint-disable-line no-nested-ternary
   })
 
+// push files into the root nav object, and recursively into their parent's
+// `children` arrays if needed
+//
 const add = (file, arr) => {
-  if (!file.location || file.location.length < 1) {
-    return navdocs.indexOf(file.name) === -1
-      ? log.warn(`Section number does not exist for ${file.name}`)
-      : ''
-  }
 
-  const current = Number(file.location)
-  const context = Number(file.location.shift())
+  const { filename, position } = file
+
+  const current = Number(position)
+  const context = Number(position.shift())
   const parent = find(arr, _ => Number(_.section) === context)
+
+  console.log(context)
 
   if (!parent) {
     arr.push({
-      section: current,
-      filename: file.name,
-      title: getFrontmatter(file, 'section_title'),
-      children: []
+      filename,
+      title: getFrontmatter(file, 'section_title')
     })
   } else {
     add(file, parent.children)
   }
 
+  // console.log(arr)
   return arr
 }
 
+// add file names to nav list, omit navigation documents (i.e., TOCs)
 const makenav = ({ serial, parallel }) =>
   new Promise((resolve, reject) => {
     const nav = []
@@ -77,6 +100,7 @@ const makenav = ({ serial, parallel }) =>
     resolve({ nav, filearrs: serial.concat(parallel) })
   })
 
+// get opf manifest contents
 const manifest = () =>
   new Promise((resolve, reject) =>
     rrdir(`${conf.dist}/OPS`, async (err, filearr) => {
@@ -90,6 +114,7 @@ const manifest = () =>
     })
   )
 
+//
 const stringify = files =>
   new Promise(async (resolve /* , reject */) => {
     const strings = { manifest: [], spine: [], guide: [], bookmeta: [] }
@@ -106,6 +131,7 @@ const stringify = files =>
     })
   })
 
+// write!
 const writeopf = string =>
   new Promise((resolve, reject) => {
     fs.writeFile(
@@ -116,6 +142,7 @@ const writeopf = string =>
     )
   })
 
+// render elemnts in the opf
 function opflayouts(strings) {
   return renderLayouts(new File({
     path: './.tmp',
@@ -147,6 +174,7 @@ function opflayouts(strings) {
   .toString()
 }
 
+// render the ncx and toc
 const navlayouts = ({ nav, filearrs }) => {
   const navpoints = tmpl.navPoint(nav)
   const tocitems = tmpl.tocitem(nav)
@@ -169,6 +197,7 @@ const navlayouts = ({ nav, filearrs }) => {
   return { ncxstring, tocstring, filearrs }
 }
 
+// write!
 const writenav = ({ ncxstring, tocstring, filearrs }) =>
   new Promise((resolve, reject) => {
     fs.writeFile(
@@ -184,6 +213,7 @@ const writenav = ({ ncxstring, tocstring, filearrs }) =>
     )
   })
 
+//
 const clearnav = () =>
   new Promise((resolve, reject) =>
     navdocs.forEach((file, idx) =>
@@ -201,14 +231,17 @@ const clearnav = () =>
     )
   )
 
+// wait for nav to be rendered before writing
 const rendernav = data =>
   new Promise(async resolve/* , reject */ =>
     resolve(await navlayouts(data)))
 
+// wait for opf to be rendered before writing
 const renderopf = strings =>
   new Promise(async resolve/* , reject */ =>
     resolve(await opflayouts(strings)))
 
+// bootstrap
 const opf = () =>
   new Promise(resolve/* , reject */ =>
     loadmeta()
