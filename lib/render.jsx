@@ -6,7 +6,7 @@ import File from 'vinyl'
 
 import conf from './config'
 import MarkIt from './md'
-import { page } from './templates'
+import { pageBody, pageHead, pageTail } from './templates'
 
 const cwd = process.cwd()
 
@@ -22,11 +22,13 @@ const write = (fname, markup, idx, len, rs, rj) =>
 
 // insert compiled XHTML into layouts
 const layout = (fname, data, idx, len, rs, rj) => {
+  const head = pageHead(fname)
+  const tail = pageTail(fname)
   const markup = renderLayouts(new File({
     path: './.tmp',
-    layout: 'page',
-    contents: new Buffer(data)
-  }), { page }).contents.toString()
+    layout: 'pageBody',
+    contents: new Buffer(`${head}${data}${tail}`)
+  }), { pageBody }).contents.toString()
 
   try {
     if (fs.statSync(dest)) {

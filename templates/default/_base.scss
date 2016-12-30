@@ -71,7 +71,7 @@ p{
   text-indent: rhythm(1.65);
   .frontmatter &,
   .backmatter &,
-  .meta-content &{
+  .book_meta &{
     text-indent: 0;
     @include tc-rhythm-padding($text-sm);
   }
