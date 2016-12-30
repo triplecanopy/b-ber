@@ -32,8 +32,8 @@ const makedirs = () =>
     )
   )
 
-const create = () => {
-  return new Promise((resolve, reject) => {
+const create = () =>
+  new Promise((resolve, reject) => {
     try {
       if (fs.statSync(path.join(cwd, conf.src))) {
         makedirs()
@@ -45,6 +45,5 @@ const create = () => {
       reject(new Error(`${conf.src} directory does not exist.`))
     }
   })
-}
 
 export default create

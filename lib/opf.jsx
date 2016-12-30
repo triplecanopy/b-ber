@@ -7,26 +7,23 @@ import fs from 'fs-extra'
 import File from 'vinyl'
 import rrdir from 'recursive-readdir'
 import YAML from 'yamljs'
-import { find, findWhere } from 'underscore'
+import { find } from 'underscore'
 
 import conf from './config'
 import log from './log'
 import * as tmpl from './templates'
-import { topdir, cjoin } from './utils'
+import { topdir, cjoin, getFrontmatter } from './utils'
 
 const cwd = process.cwd()
 const navdocs = ['toc.ncx', 'toc.xhtml']
 
-let bookmeta, pagemeta
+let bookmeta
 
 const loadmeta = () =>
   new Promise(resolve/* , reject */ =>
-    YAML.load(path.join(cwd, conf.src, 'metadata.yml'), (resp1) => {
-      bookmeta = resp1
-      YAML.load(path.join(cwd, conf.src, 'pagemeta.yml'), (resp2) => {
-        pagemeta = resp2
-        resolve()
-      })
+    YAML.load(path.join(cwd, conf.src, 'metadata.yml'), (resp) => {
+      bookmeta = resp
+      resolve()
     })
   )
 
@@ -48,12 +45,6 @@ const order = filearr =>
     return seqA < seqB ? -1 : seqA > seqB ? 1 : 0 // eslint-disable-line no-nested-ternary
   })
 
-const getTitle = (file) => {
-  const fname = path.basename(file.name, '.xhtml')
-  const found = findWhere(pagemeta, { filename: fname })
-  return found && {}.hasOwnProperty.call(found, 'section_title') ? found.section_title : fname
-}
-
 const add = (file, arr) => {
   if (!file.location || file.location.length < 1) {
     return navdocs.indexOf(file.name) === -1
@@ -69,7 +60,7 @@ const add = (file, arr) => {
     arr.push({
       section: current,
       filename: file.name,
-      title: getTitle(file),
+      title: getFrontmatter(file, 'section_title'),
       children: []
     })
   } else {

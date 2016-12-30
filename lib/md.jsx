@@ -1,4 +1,5 @@
 
+import YAML from 'yamljs'
 import MarkdownIt from 'markdown-it'
 import mdFootnote from 'markdown-it-footnote'
 import mdFrontMatter from 'markdown-it-front-matter'
@@ -38,7 +39,10 @@ class MarkIt {
       mdDialogue.renderer(md, this))
     .use(
       mdFrontMatter,
-      meta => this.noop())
+      (meta) => {
+        const filename = this._get('filename')
+        updateStore('pages', { filename, ...YAML.parse(meta) })
+      })
 
     this.nestedStrings = []
 
@@ -67,13 +71,7 @@ class MarkIt {
     this.render = function render(filename, data) {
       this._set('filename', filename)
       this._set('nestedStrings', [])
-      updateStore('pages', { filename })
-      const content = this.postRenderCallback(md.render(data))
-      return content
-    }
-
-    this.setup = function setup() {
-      return Promise.resolve()
+      return this.postRenderCallback(md.render(data))
     }
   }
 }

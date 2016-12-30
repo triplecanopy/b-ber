@@ -1,5 +1,6 @@
 
 import fs from 'fs-extra'
+import path from 'path'
 import { compact, findWhere } from 'underscore'
 import conf from './config'
 import store from './store'
@@ -70,7 +71,13 @@ const updateStore = (prop, { ...obj }) => {
   return store
 }
 
-const getImageOrientation = (h, w) => h > w ? 'portrait' : 'landscape'
+const getImageOrientation = (h, w) => h > w ? 'portrait' : 'landscape' // eslint-disable-line no-confusing-arrow
+
+const getFrontmatter = (file, prop) => {
+  const filename = path.basename(file.name, '.xhtml')
+  const found = findWhere(store.pages, { filename })
+  return found && {}.hasOwnProperty.call(found, prop) ? found[prop] : null
+}
 
 export {
   slashit,
@@ -84,6 +91,7 @@ export {
   hashIt,
   regexMap,
   updateStore,
-  getImageOrientation
+  getImageOrientation,
+  getFrontmatter
 }
 

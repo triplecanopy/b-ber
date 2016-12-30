@@ -46,7 +46,6 @@ const render = () =>
     fs.readdir(mddir, async (err1, files) => {
       if (err1) { reject(err1) }
       const len = files.length - 1
-      await MarkIt.setup()
       return files.forEach((file, idx) => {
         if (file.charAt(0) === '.') { return }
         fs.readFile(path.join(mddir, file), 'utf8', (err2, data) => {

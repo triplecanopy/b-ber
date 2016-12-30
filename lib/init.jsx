@@ -105,7 +105,7 @@ dist: ${dist}`
   }, {
     relpath: path.join(cwd, src, '_markdown/0010_1.md'),
     content: `---
-page_title: Chapter One
+section_title: Chapter One
 landmark_type: bodymatter
 landmark_title: The Book
 ---

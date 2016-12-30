@@ -9,7 +9,7 @@ import { findWhere } from 'underscore'
 
 import conf from './config'
 import Props from './props'
-import { fileid, guid } from './utils'
+import { fileid, guid, getFrontmatter } from './utils'
 
 const settings = () => {
   const meta = path.join(__dirname, `../${conf.src}`, 'metadata.yml')
@@ -208,7 +208,14 @@ function itemref(file) {
 function reference(file) {
   let res = null
   if (mime.lookup(file.fullpath) === 'text/html' || mime.lookup(file.fullpath) === 'application/xhtml+xml') {
-    res = `<reference type="" title="" href="${encodeURI(file.toppath)}"/>`
+    if (getFrontmatter(file, 'landmark_type')) {
+      res = [
+        '<reference',
+        ` type="${getFrontmatter(file, 'landmark_type')}"`,
+        ` title="${getFrontmatter(file, 'landmark_title')}"`,
+        ` href="${encodeURI(file.toppath)}"/>`
+      ].join('')
+    }
   }
   return res
 }
