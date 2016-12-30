@@ -61,7 +61,7 @@ export default {
         }
       } catch (e) {
         log.warn(`[${context._get('filename')}.md: ${line}] <img> \`${path.basename(image)}\` not found.`)
-        return `<!-- Image not found: ${path.basename(image)} -->`
+        return `<!-- Image not found: ${path.basename(image)} --\n`
       }
       return ''
     }
