@@ -7,6 +7,7 @@ import mdSection from './md-directives/md-section'
 import mdExit from './md-directives/md-exit'
 import mdImages from './md-directives/md-images'
 import mdDialogue from './md-directives/md-dialogue'
+import mdEpigraph from './md-directives/md-epigraph'
 import { updateStore } from './utils'
 
 class MarkIt {
@@ -37,6 +38,10 @@ class MarkIt {
       mdDialogue.plugin,
       mdDialogue.name,
       mdDialogue.renderer(md, this))
+    .use(
+      mdEpigraph.plugin,
+      mdEpigraph.name,
+      mdEpigraph.renderer(md, this))
     .use(
       mdFrontMatter,
       (meta) => {
