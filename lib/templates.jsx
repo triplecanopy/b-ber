@@ -1,5 +1,5 @@
 
-/* eslint-disable max-len  */
+/* eslint-disable max-len, operator-linebreak */
 
 import File from 'vinyl'
 import mime from 'mime-types'
@@ -61,11 +61,85 @@ const page = new File({
     </html>`)
 })
 
-function image(data) {
-  return `<figure>
-    <img alt="${data.alt} src="${data.url}"/>
-    <p class="caption">${data.caption}</p>
-  </figure>`
+const imageTemplates = {
+  epub: {
+    portrait(data) {
+      return `<section epub:type="loi" title="LIST OF ILLUSTRATIONS" class="chapter figures">
+        <div class="figure-lg">
+          <figure id="${data.id}">
+            <div class="img-wrap" style="width: 70%; margin: 0 auto;">
+              <a href="${data.ref}.xhtml#ref${data.id}">
+                <img class="portrait" alt="${data.alt}" src="${data.url}" style="width: 100%; max-width: 100%; height: auto;"/>
+              </a>
+              <div class="figcaption" style="width: 100%; max-width: 100%; height: auto;">
+                <p class="small">${data.caption || ''}</p>
+              </div>
+            </div>
+          </figure>
+        </div>
+      </section>`
+    },
+    landscape(data) {
+      return `<section epub:type="loi" title="LIST OF ILLUSTRATIONS" class="chapter figures">
+        <div class="figure-lg">
+          <figure id="${data.id}">
+            <div class="img-wrap">
+              <a href="${data.ref}.xhtml#ref${data.id}">
+                <img class="landscape" alt="${data.alt}" src="${data.url}" style="max-width: 100%;"/>
+              </a>
+              <div class="figcaption" style="max-width: 100%;">
+                <p class="small">${data.caption || ''}</p>
+              </div>
+            </div>
+          </figure>
+        </div>
+      </section>`
+    },
+    portraitLong(data) {
+      return `<section epub:type="loi" title="LIST OF ILLUSTRATIONS" class="chapter figures">
+        <div class="figure-lg">
+          <figure id="${data.id}">
+            <div class="img-wrap" style="width: 60%; margin: 0 auto;">
+              <a href="${data.ref}.xhtml#ref${data.id}">
+                <img class="portrait-long" alt="${data.alt}" src="${data.url}" style="width: 100%; max-width: 100%; height: auto;"/>
+              </a>
+              <div class="figcaption" style="width: 100%; max-width: 100%; height: auto;">
+                <p class="small">${data.caption || ''}</p>
+              </div>
+            </div>
+          </figure>
+        </div>
+      </section>`
+    },
+    square(data) {
+      return `<section epub:type="loi" title="LIST OF ILLUSTRATIONS" class="chapter figures">
+        <div class="figure-lg">
+          <figure id="${data.id}">
+            <div class="img-wrap" style="width: 85%; margin: 0 auto;">
+              <a href="${data.ref}.xhtml#ref${data.id}">
+                <img class="square" alt="${data.alt}" src="${data.url}" style="width: 100%; max-width: 100%; height: auto;"/>
+              </a>
+              <div class="figcaption" style="width: 100%; max-width: 100%; height: auto;">
+                <p class="small">${data.caption || ''}</p>
+              </div>
+            </div>
+          </figure>
+        </div>
+      </section>`
+    }
+  }
+}
+
+function image(data, env) {
+  const { height, width } = data
+  const format = height > width
+    ? 'portrait'
+    : height < width
+    ? 'landscape'
+    : height === width
+    ? 'square'
+    : null
+  return imageTemplates[env || 'epub'][format](data)
 }
 
 const opfPackage = new File({
