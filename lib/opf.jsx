@@ -92,7 +92,7 @@ const manifest = () =>
 
 const stringify = files =>
   new Promise(async (resolve /* , reject */) => {
-    const strings = { manifest: [], spine: [], guide: [], pagemeta: [], bookmeta: [] }
+    const strings = { manifest: [], spine: [], guide: [], bookmeta: [] }
     strings.bookmeta = bookmeta.map(_ => tmpl.metatag(_)).filter(Boolean)
 
     // going to be a couple more exceptions here, should drop these into `templates.jsx`

@@ -61,6 +61,13 @@ const page = new File({
     </html>`)
 })
 
+function image(data) {
+  return `<figure>
+    <img alt="${data.alt} src="${data.url}"/>
+    <p class="caption">${data.caption}</p>
+  </figure>`
+}
+
 const opfPackage = new File({
   path: 'opfPackage.tmpl',
   contents: new Buffer(`<?xml version="1.0" encoding="UTF-8"?>
@@ -254,5 +261,6 @@ export {
   navPoint,
   metatag,
   tocitem,
-  tocTmpl
+  tocTmpl,
+  image
 }
