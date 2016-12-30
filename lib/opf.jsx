@@ -48,7 +48,7 @@ const order = filearr =>
 const add = (file, arr) => {
   if (!file.location || file.location.length < 1) {
     return navdocs.indexOf(file.name) === -1
-      ? log.warn(`Section number does not exist for ${file.name}\n`)
+      ? log.warn(`Section number does not exist for ${file.name}`)
       : ''
   }
 

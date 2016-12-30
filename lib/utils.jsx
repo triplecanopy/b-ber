@@ -64,6 +64,9 @@ const hashIt = (str) => {
 
 const updateStore = (prop, { ...obj }) => {
   const { id } = obj
+  if (!{}.hasOwnProperty.call(store, prop)) {
+    throw new Error(`\`${prop}\` is not a member of the \`store\` object.`)
+  }
   if (findWhere(store[prop], { id })) {
     throw new Error(`The property ${prop} already contains an item with that \`id\`.`)
   }

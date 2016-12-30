@@ -6,9 +6,30 @@ import File from 'vinyl'
 import log from './log'
 import conf from './config'
 import store from './store'
-import { page, image } from './templates'
+import { updateStore } from './utils'
+import { page, image, loiLeader } from './templates'
 
 const cwd = process.cwd()
+
+const createLOILeader = () =>
+  new Promise((resolve, reject) => {
+    const filename = 'loi-0000'
+    const markup = renderLayouts(new File({
+      path: './.tmp',
+      layout: 'page',
+      contents: new Buffer(loiLeader())
+    }), { page }).contents.toString()
+    fs.writeFile(path.join(cwd, `${conf.dist}/OPS/text/${filename}.xhtml`), markup, 'utf8', (err) => {
+      if (err) { reject(err) }
+      updateStore('pages', {
+        filename,
+        section_title: 'List of Illustrations',
+        landmark_type: 'loi',
+        landmark_title: 'List of Illustrations'
+      })
+      resolve()
+    })
+  })
 
 const createLOI = () =>
   new Promise((resolve, reject) => {
@@ -28,7 +49,8 @@ const createLOI = () =>
 
 const loi = () =>
   new Promise(async (resolve/* , reject */) => {
-    createLOI()
+    createLOILeader()
+    .then(createLOI)
     .catch(err => log.error(err))
     .then(resolve)
   })

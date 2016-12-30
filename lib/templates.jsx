@@ -130,6 +130,7 @@ const imageTemplates = {
   }
 }
 
+
 function image(data, env) {
   const { height, width } = data
   const format = height > width
@@ -141,6 +142,13 @@ function image(data, env) {
     : null
   return imageTemplates[env || 'epub'][format](data)
 }
+
+const loiLeader = () =>
+  `<section epub:type="loi" title="LIST OF ILLUSTRATIONS" class="chapter figures">
+    <header>
+      <h1>Figures</h1>
+    </header>
+  </section>`
 
 const opfPackage = new File({
   path: 'opfPackage.tmpl',
@@ -170,26 +178,23 @@ const opfGuide = new File({
   contents: new Buffer('<guide>{% body %}</guide>')
 })
 
-function ncxHead() {
-  return `<head>
+const ncxHead = () =>
+  `<head>
     <meta name="dtb:uid" content="${getMeta('identifier')}"/>
     <meta name="dtb:depth" content="1"/>
     <meta name="dtb:totalPageCount" content="1"/>
     <meta name="dtb:maxPageNumber" content="1"/>
   </head>`
-}
 
-function ncxTitle() {
-  return `<docTitle>
+const ncxTitle = () =>
+  `<docTitle>
     <text>${getMeta('title')}</text>
   </docTitle>`
-}
 
-function ncxAuthor() {
-  return `<docAuthor>
+const ncxAuthor = () =>
+  `<docAuthor>
     <text>${getMeta('creator')}</text>
   </docAuthor>`
-}
 
 const ncxTmpl = new File({
   path: 'ncxTmpl.tmpl',
@@ -224,7 +229,7 @@ const tocTmpl = new File({
     </html>`)
 })
 
-function navPoint(list) {
+const navPoint = (list) => {
   let count = 0
   function render(arr) {
     let res = String('')
@@ -243,7 +248,7 @@ function navPoint(list) {
   return render(list)
 }
 
-function tocitem(list) {
+const tocitem = (list) => {
   function render(arr) {
     let res = String('')
     res += '<ol>'
@@ -261,7 +266,7 @@ function tocitem(list) {
   return render(list)
 }
 
-function item(file) {
+const item = (file) => {
   const props = Props.testHTML(file)
   let res = null
   if (mime.lookup(file.fullpath) !== 'application/oebps-package+xml') {
@@ -278,7 +283,7 @@ function item(file) {
   return res
 }
 
-function itemref(file) {
+const itemref = (file) => {
   let res = null
   if (mime.lookup(file.fullpath) === 'text/html' || mime.lookup(file.fullpath) === 'application/xhtml+xml') {
     res = `<itemref idref="${fileid(file.name)}" linear="yes"/>`
@@ -286,9 +291,10 @@ function itemref(file) {
   return res
 }
 
-function reference(file) {
+const reference = (file) => {
   let res = null
   if (mime.lookup(file.fullpath) === 'text/html' || mime.lookup(file.fullpath) === 'application/xhtml+xml') {
+    console.log(getFrontmatter(file, 'landmark_type'))
     if (getFrontmatter(file, 'landmark_type')) {
       res = [
         '<reference',
@@ -301,7 +307,7 @@ function reference(file) {
   return res
 }
 
-function metatag(data) {
+const metatag = (data) => {
   const { term, element } = Props.testMeta(data)
   const itemid = element && data.term === 'identifier' ? 'uuid' : `_${guid()}`
   const res = []
@@ -336,5 +342,6 @@ export {
   metatag,
   tocitem,
   tocTmpl,
-  image
+  image,
+  loiLeader
 }
