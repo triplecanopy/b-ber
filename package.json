@@ -41,7 +41,6 @@
     "layouts": "^0.13.2",
     "markdown-it": "^7.0.1",
     "markdown-it-container": "^2.0.0",
-    "markdown-it-footnote": "^3.0.1",
     "markdown-it-front-matter": "^0.1.2",
     "mime-types": "^2.1.13",
     "mobi-zipper": "^0.1.2",

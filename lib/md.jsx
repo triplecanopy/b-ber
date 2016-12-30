@@ -1,9 +1,10 @@
 
 import YAML from 'yamljs'
 import MarkdownIt from 'markdown-it'
-import mdFootnote from 'markdown-it-footnote'
 import mdFrontMatter from 'markdown-it-front-matter'
+import mdFootnote from './md-plugins/md-footnote'
 import mdSection from './md-directives/md-section'
+import mdLogo from './md-directives/md-logo'
 import mdExit from './md-directives/md-exit'
 import mdImages from './md-directives/md-images'
 import mdDialogue from './md-directives/md-dialogue'
@@ -42,6 +43,10 @@ class MarkIt {
       mdEpigraph.plugin,
       mdEpigraph.name,
       mdEpigraph.renderer(md, this))
+    .use(
+      mdLogo.plugin,
+      mdLogo.name,
+      mdLogo.renderer(md, this))
     .use(
       mdFrontMatter,
       (meta) => {
