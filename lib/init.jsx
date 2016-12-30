@@ -104,17 +104,22 @@ dist: ${dist}`
     content: 'if (console && console.log) { console.log(\'Hello World!\') }'
   }, {
     relpath: path.join(cwd, src, '_markdown/0010_1.md'),
-    content: `
+    content: `---
+page_title: Chapter One
+landmark_type: bodymatter
+landmark_title: The Book
+---
+
 # Chapter One
 
-::: section "chapter" "Chapter One" "section__main"
++ section "chapter" "Chapter One" "section__main"
 
 It was the best of times, it was the worst of times.
 
-:::
++ exit
 
-::: image "city-1.jpg" "First City"
-::: image "city-2.jpg" "Second City"
++ image url "city-1.jpg" alt "First City" caption "The First City"
++ image url "city-2.jpg" alt "Second City" caption "The Second City"
 `
   }]
   return makedirs(dirs, files, src)
