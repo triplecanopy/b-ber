@@ -2,12 +2,14 @@
 import path from 'path'
 import fs from 'fs-extra'
 import nodemon from 'nodemon'
+import opn from 'opn'
 import { exec } from 'child_process'
 import conf from './config'
 import log from './log'
 
 const cwd = process.cwd()
 const onRestart = 'npm start -s -- build --invalid'
+const port = 4000
 
 const serve = () =>
   new Promise((resolve, reject) => {
@@ -22,10 +24,11 @@ const serve = () =>
         ext: 'md js css',
         env: { 'NODE_ENV': 'development' },
         ignore: ['node_modules', 'lib'],
-        args: ['--use_socket_server', '--use_hot_reloader', '--port 4000'],
+        args: ['--use_socket_server', '--use_hot_reloader', `--port ${port}`],
         watch: [conf.src]
-      }).on('start', () => {
+      }).once('start', () => {
         log.info('Starting nodemon')
+        opn(`http://localhost:${port}`)
         resolve()
       }).on('restart', (files) => {
         log.info(`Restarting server due to file change:\n:${files}`)
