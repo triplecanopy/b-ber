@@ -4,6 +4,7 @@ import MarkdownIt from 'markdown-it'
 import mdFrontMatter from 'markdown-it-front-matter'
 import mdFootnote from './md-plugins/md-footnote'
 import mdSection from './md-directives/md-section'
+import mdPullQuote from './md-directives/md-pull-quote'
 import mdLogo from './md-directives/md-logo'
 import mdExit from './md-directives/md-exit'
 import mdImages from './md-directives/md-images'
@@ -47,6 +48,10 @@ class MarkIt {
       mdLogo.plugin,
       mdLogo.name,
       mdLogo.renderer(md, this))
+    .use(
+      mdPullQuote.plugin,
+      mdPullQuote.name,
+      mdPullQuote.renderer(md, this))
     .use(
       mdFrontMatter,
       (meta) => {
