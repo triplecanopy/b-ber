@@ -286,4 +286,15 @@ let { argv } = yargs.fail((msg, err) => {
     .wrap(null))
     checkCommands(yargs, argv, 1)
   })
-
+  .command('editor', 'Start web-based editor', (yargs) => {
+    ({ argv } = yargs.fail((msg, err) => {
+      if (err) { throw err }
+      log.info(msg)
+      yargs.showHelp()
+    })
+    .usage('\nUsage: $0 editor')
+    .alias('h', 'help')
+    .help('help')
+    .wrap(null))
+    checkCommands(yargs, argv, 1)
+  })
