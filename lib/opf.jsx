@@ -96,7 +96,11 @@ const stringify = files =>
     strings.bookmeta = bookmeta.map(_ => tmpl.metatag(_)).filter(Boolean)
 
     // going to be a couple more exceptions here, should drop these into `templates.jsx`
-    strings.bookmeta.push(`<meta property="dcterms:modified">${new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')}</meta>`) // eslint-disable-line max-len
+    strings.bookmeta = [
+      ...strings.bookmeta,
+      '<meta property="ibooks:specified-fonts">true</meta>',
+      `<meta property="dcterms:modified">${new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')}</meta>`
+    ]
 
     files.forEach((file, idx) => {
       strings.manifest.push(tmpl.item(file))

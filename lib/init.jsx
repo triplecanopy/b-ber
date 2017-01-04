@@ -49,6 +49,7 @@ const makeNewEbookTemplate = () => {
     path.join(cwd, `${src}/_images`),
     path.join(cwd, `${src}/_javascripts`),
     path.join(cwd, `${src}/_markdown`),
+    path.join(cwd, `${src}/_fonts`),
     path.join(cwd, `${src}/.tmp`)
   ]
   const files = [{

@@ -1,3 +1,9 @@
 
-// SCSS overrides should be included here
+// SCSS overrides should be included here. Mixin below can be used to include
+// custom fonts that are added to the `_fonts` directory.
 //
+// @usage:
+// @include font-face(<font name>, <font path>, <font weight>, <font style> [, ... formats]);
+//
+// @example:
+// @include font-face('AnonymousPro', '../fonts/Anonymous Pro', null, null, ttf);

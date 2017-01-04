@@ -3,18 +3,20 @@ import cdir from 'copy-dir'
 import path from 'path'
 import conf from './config'
 
-// TODO: add other static assets here, as we are now moving from src/ do dist/
-
 const cwd = process.cwd()
-const input = path.join(cwd, conf.src, '_images')
-const output = path.join(cwd, conf.dist, 'OPS/images')
+const src = [
+  '_images',
+  '_fonts'
+]
 
 const copy = () =>
   new Promise((resolve, reject) =>
-    cdir(input, output, (err) => {
-      if (err) { reject(err) }
-      resolve()
-    })
+    src.forEach((_, idx) =>
+      cdir(path.join(cwd, conf.src, _), path.join(cwd, conf.dist, 'OPS', _.slice(1)), (err) => {
+        if (err) { reject(err) }
+        if (idx === src.length - 1) { resolve() }
+      })
+    )
   )
 
 
