@@ -80,6 +80,7 @@ function render_footnote_anchor(tokens, idx, options, env, slf) {
   /* ↩ with escape code to prevent display as Apple Emoji on iOS */
 
   // disabled since we prefer default epub behaviour
+  return '';
   // return ' <a href="#fnref' + id + '">\u21a9\uFE0E</a>';
 }
 
