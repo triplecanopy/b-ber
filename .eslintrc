@@ -12,6 +12,7 @@
     "max-statements-per-line": [2, { "max": 2 }],
     "no-cond-assign": [2, "except-parens"],
     "no-nested-ternary": 0,
+    "no-underscore-dangle": 0,
     "one-var": [2, {
       "initialized": "never",
       "uninitialized": "always"

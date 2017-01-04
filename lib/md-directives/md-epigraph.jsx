@@ -32,7 +32,6 @@ export default {
       let result = ''
 
       if (tokens[idx].nesting === 1) { // opening tag
-
         let matches
         while ((matches = attrsRe.exec(tokens[idx].info.trim())) !== null) { attrs[matches[1]] = matches[2] }
 
@@ -55,8 +54,7 @@ export default {
             '</section>',
             '</section>'
           ].join('')
-        }
-        else {
+        } else {
           result = [
             '<section epub:type="epigraph" class="epigraph chapter">',
             '<div class="figure-lg" style="height: auto;">',

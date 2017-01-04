@@ -22,7 +22,7 @@ const serve = () =>
       nodemon({
         script: path.join(__dirname, 'server.js'),
         ext: 'md js css',
-        env: { 'NODE_ENV': 'development' },
+        env: { NODE_ENV: 'development' },
         ignore: ['node_modules', 'lib'],
         args: ['--use_socket_server', '--use_hot_reloader', `--port ${port}`],
         watch: [conf.src]

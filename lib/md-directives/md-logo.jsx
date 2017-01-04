@@ -12,10 +12,10 @@ import mdInlineBlock from '../md-plugins/md-inline-block'
 export default {
   plugin: mdInlineBlock,
   name: 'logo',
-  renderer: (instance, context) => ({
+  renderer: () => ({
     marker: '+',
     minMarkers: 1,
-    render(tokens, idx) {
+    render() {
       return `<figure id="Triple-Canopy" class="logo">
         <img style="width:120px;" alt="Triple Canopy Logo" src="../images/Triple-Canopy-Logo-Small.png"/>
       </figure>

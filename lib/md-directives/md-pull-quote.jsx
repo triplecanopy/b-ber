@@ -43,7 +43,6 @@ export default {
         if (matches && matches[2]) { citation = matches[2] }
 
         result = '<section class="pull-quote">'
-
       } else {
         result = citation ? `<cite>—&#160;${escapeHtml(citation)}</cite>` : ''
         citation = ''

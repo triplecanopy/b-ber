@@ -12,7 +12,7 @@ import mdInline from '../md-plugins/md-inline-block'
 export default {
   plugin: mdInline,
   name: 'exit',
-  renderer: instance => ({
+  renderer: () => ({
     marker: '+',
     minMarkers: 1,
     validate(params) { return params.trim().match(/^exit/) },
