@@ -23,7 +23,7 @@ const readSpine = () =>
   })
 
 const parseHTML = files =>
-  new Promise(async (resolve, reject) => {
+  new Promise((resolve, reject) => {
     const dir = path.join(cwd, conf.dist, 'OPS/text')
     const text = files.map((_) => {
       let data
@@ -33,14 +33,14 @@ const parseHTML = files =>
         return log.warn(err.message)
       }
       return sanitizer.parse(data)
-    })
+    }).filter(Boolean)
     Promise.all(text).then(docs => resolve(docs.join('\n')))
   })
 
 const writeXML = str =>
   new Promise((resolve, reject) => {
     const data = `<body>${str}</body>`
-    const fpath = path.join(cwd, `Export-${new Date().toISOString().replace(/:/g, '-')}.xml`)
+    const fpath = path.join(cwd, `Export-${new Date().toISOString().replace(/:/g, '-')}.xml.xml`)
     fs.writeFile(fpath, data, 'utf8', (err) => {
       if (err) { throw err }
       resolve()
