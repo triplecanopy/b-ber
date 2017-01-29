@@ -298,3 +298,16 @@ let { argv } = yargs.fail((msg, err) => {
     .wrap(null))
     checkCommands(yargs, argv, 1)
   })
+  .command('xml', 'Export as XML', (yargs) => {
+    ({ argv } = yargs.fail((msg, err) => {
+      if (err) { throw err }
+      log.info(msg)
+      yargs.showHelp()
+    })
+    .usage('\nUsage: $0 xml')
+    .alias('h', 'help')
+    .help('help')
+    .wrap(null))
+    checkCommands(yargs, argv, 1)
+  })
+

@@ -1,6 +1,7 @@
 
 import bunyan from 'bunyan'
 import bformat from 'bunyan-format'
+import util from 'util'
 
 const formatOut = bformat({ outputMode: 'short' })
 
@@ -12,5 +13,6 @@ const formatOut = bformat({ outputMode: 'short' })
 // "trace" (10): Logging from external libraries used by your app or very detailed application logging.
 
 const log = bunyan.createLogger({ name: 'bber', stream: formatOut, level: 'debug' })
+const logg = data => console.log(util.inspect(data, false, null))
 
-export default log
+export { log, logg }
