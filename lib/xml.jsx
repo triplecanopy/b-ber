@@ -2,11 +2,12 @@
 import path from 'path'
 import fs from 'fs-extra'
 import { parseString } from 'xml2js'
-import { log, logg } from './log'
+import { log } from './log'
 import conf from './config'
-import sanitizer from './sanitizer'
+import Sanitizer from './sanitizer'
 
 const cwd = process.cwd()
+const sanitizer = new Sanitizer(['chapter-three']) // TODO: args here should be passed via CLI
 
 const readSpine = () =>
   new Promise((resolve, reject) => {
@@ -40,7 +41,7 @@ const parseHTML = files =>
 const writeXML = str =>
   new Promise((resolve, reject) => {
     const data = `<body>${str}</body>`
-    const fpath = path.join(cwd, `Export-${new Date().toISOString().replace(/:/g, '-')}.xml`)
+    const fpath = path.join(cwd, `Export.xml`)//-${new Date().toISOString().replace(/:/g, '-')}.xml`)
     fs.writeFile(fpath, data, 'utf8', (err) => {
       if (err) { throw err }
       resolve()

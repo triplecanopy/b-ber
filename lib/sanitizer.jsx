@@ -2,10 +2,29 @@
 import htmlparser from 'htmlparser2'
 
 class Sanitizer {
-  constructor() {
-    this.whitelistedAttrs = ['src', 'href']
+  constructor(customElements) {
+    const defaultElements = [
+      'pull-quote',
+      'epigraph',
+      'dialogue',
+      'colophon',
+      'appendix',
+      'subtitle',
+      'frontmatter',
+      'backmatter',
+      'meta-content',
+      'bibliography',
+      'masthead',
+      'figcaption',
+      'subchapter'
+    ]
+    const elements = customElements && customElements.constructor === Array
+      ? [...customElements, ...defaultElements]
+      : defaultElements
+
+    this.customElements = elements
+    this.whitelistedAttrs = ['src', 'href', 'xlink:href']
     this.blacklistedTags = ['html', 'head', 'title', 'meta', 'link', 'script', 'body']
-    this.elementClasses = ['pull-quote']
     this.output = ''
     this.tagnames = []
     this.noop = false
@@ -18,6 +37,10 @@ class Sanitizer {
       this.output = ''
       this.tagnames = []
       this.noop = false
+    }
+    this.onend = (resolve) => {
+      this.output += '<pagebreak></pagebreak>'
+      resolve(this.output)
     }
     this.parse = (html) => {
       const _this = this // eslint-disable-line consistent-this
@@ -39,12 +62,14 @@ class Sanitizer {
                   _this.tagnames.push(attrs.class.replace(/\s+/g, '-'))
                 }
                 break
-              case 'div': {
+              case 'div':
+              case 'span':
+              case 'section': {
                 let tagname = name
                 if (attrs && attrs.class) {
                   const klasses = attrs.class.split(' ')
                   for (let i = 0; i < klasses.length; i++) { // eslint-disable-line no-plusplus
-                    if (_this.elementClasses.indexOf(klasses[i]) > -1) {
+                    if (_this.customElements.indexOf(klasses[i]) > -1) {
                       tagname = klasses[i]
                       break
                     }
@@ -81,7 +106,7 @@ class Sanitizer {
             const tagname = _this.tagnames.pop()
             if (tagname) { _this.output += `</${tagname}>` }
           },
-          onend() { resolve(_this.output) }
+          onend() { _this.onend(resolve) }
         }, { decodeEntities: true })
 
         parser.write(html)
@@ -93,5 +118,4 @@ class Sanitizer {
   }
 }
 
-const sanitizer = new Sanitizer()
-export default sanitizer
+export default Sanitizer
