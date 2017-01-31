@@ -40,7 +40,7 @@ const parseHTML = files =>
 
 const writeXML = str =>
   new Promise((resolve, reject) => {
-    const data = `<body>${str}</body>`
+    const data = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><body>${str}</body>`
     const fpath = path.join(cwd, `Export.xml`)//-${new Date().toISOString().replace(/:/g, '-')}.xml`)
     fs.writeFile(fpath, data, 'utf8', (err) => {
       if (err) { throw err }

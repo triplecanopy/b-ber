@@ -23,7 +23,7 @@ class Sanitizer {
       : defaultElements
 
     this.customElements = elements
-    this.whitelistedAttrs = ['src', 'href', 'xlink:href']
+    this.whitelistedAttrs = ['src', 'href', 'xlink:href', 'xmlns', 'xmlns:xlink']
     this.blacklistedTags = ['html', 'head', 'title', 'meta', 'link', 'script', 'body']
     this.output = ''
     this.tagnames = []
@@ -107,7 +107,7 @@ class Sanitizer {
             if (tagname) { _this.output += `</${tagname}>` }
           },
           onend() { _this.onend(resolve) }
-        }, { decodeEntities: true })
+        }, { decodeEntities: false })
 
         parser.write(html)
         parser.end()
