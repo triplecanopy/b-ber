@@ -1,0 +1,875 @@
+
+<!-- 
+cover.xhtml
+ -->
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?><body><div>
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <image xlink:href="../Images/fmt-cover.jpg">
+      </image></svg>
+    </div><pagebreak></pagebreak>
+
+<!-- 
+epigraph-1.xhtml
+ -->
+
+<epigraph>
+    <div>
+      <figure>
+        <div>
+          <div><figure><a href="loi-17.xhtml#loi-17"><img src="../Images/fmt-ndbs-epigraph-1-thumbnail.jpg"></img></a></figure></div>
+          <figcaption>
+            <p>A sarcophagus in the Coemeterium of the Seven Sleepers at Ephesus, Turkey. 1940. Photograph by Nicholas V. Artamonoff. Courtesy of Dumbarton Oaks. The cemetery is a sleepery, <em>koim&#x113;t&#x113;rion</em>, from the Greek&#x2014;a place to be laid to sleep.</p>
+          </figcaption>
+        </div>
+      </figure>
+    </div>
+  </epigraph><pagebreak></pagebreak>
+
+<!-- 
+epigraph-2.xhtml
+ -->
+
+<epigraph>
+    <subchapter>
+      <pull-quote>
+        <p>
+          There is nothing more tragic than to sleep through a revolution.
+        </p>
+        <cite>&#x2014;Martin Luther King Jr., 1965</cite>
+      </pull-quote>
+      <pull-quote>
+        <p>
+          We shall not all sleep, but we shall all be changed.
+        </p>
+        <cite>&#x2014;1 Corinthians 15:51</cite>
+      </pull-quote>
+    </subchapter>
+  </epigraph><pagebreak></pagebreak>
+
+<!-- 
+epigraph-3.xhtml
+ -->
+
+<epigraph>
+    <subchapter>
+      <div>
+        <figure>
+          <div>
+            <div><figure><a href="loi-18.xhtml#loi-18"><img src="../Images/fmt-ndbs-epigraph-2-thumbnail.jpg"></img></a></figure></div>
+            <figcaption>
+              <p>
+                Sleepers awaken in the Coemeterium of the Seven Sleepers at Ephesus. 1940. Photograph by Nicholas V. Artamonoff. Courtesy of Dumbarton Oaks.
+              </p>
+            </figcaption>
+          </div>
+        </figure>
+      </div>
+    </subchapter>
+  </epigraph><pagebreak></pagebreak>
+
+<!-- 
+bibliography.xhtml
+ -->
+
+<bibliography>
+      <header>
+        <h1>SOURCES
+        <br></br><subtitle>(In the order in which they appear)</subtitle></h1>
+      </header>
+      
+      <subchapter>
+        <header>
+          <h3>1.</h3>
+        </header>
+        <p>Roger Allen, <em>A Period of Time: A Study of Muhammad Al-Muwaylihi&#x2019;s &#x201C;Hadith &#x2018;Isa ibn Hisham&#x201D;</em> (Middle East Centre, St. Antony&#x2019;s College Oxford, Reading: Ithaca Press, 1992).</p>
+        <p>Tawfiq al-Hakim, <em>The People of the Cave</em> (Ahl al-Kahf), trans. Mahmoud El Lozy (Cairo: Elias Modern Publishing House &amp; Co., 1989). I have made some small edits to the translation throughout.</p>
+        <p>Ramsis Awad, ed., <em>Madha qallu &#x2018;an Ahl al-Kahf</em>  (Cairo: Al-Hay&#x2019;a al-&#x2018;Amma al-Misriyya li al-Kitab, 1986). I am indebted to Raphael Cormack for discovering this book in a library in Khartoum and photocopying it for me. Many thanks to Hussein Omar for his translation of this and other Arabic sources throughout the piece.</p>
+        <p>Muhammad Mustafa Badawi, ed., <em>The Cambridge History of Modern Arabic Literature</em> (Cambridge, UK: Cambridge University Press, 1992), chapters 9 and 10.</p>
+        <p>Tawfiq al-Hakim, <em>The Prison of Life</em>, trans. Pierre Cachia (Cairo: American University in Cairo Press, 1992).</p>
+        <p>Dina Amin, &#x201C;Tawfiq al-Hakim,&#x201D; in <em>Essays in Arabic Literary Biography: 1850&#x2013;1950</em>, ed. Roger M. A. Allen, Joseph Edmund Lowry, and Devin J. Stewart (Wiesbaden: Harrassowitz, 2010), 98&#x2013;112.</p>
+        <p>Richard Long, <em>Tawfiq al-Hakim, Playwright of Egypt</em> (London: Ithaca Press, 1979).</p>
+        <p>Pierre Cachia, &#x201C;Idealism and Ideology: The Case of Tawfiq al-Hakim,&#x201D; <em>Journal of the American Oriental Society</em> 100, no. 3 (July&#x2013;October 1980), 225&#x2013;35.</p>
+        <p>William M. Hutchins, <em>Tawfiq Al-Hakim: A Reader&#x2019;s Guide</em> (Boulder, CO: L. Rienner, 2003).</p>
+        <p>Tawfiq al-Hakim, <em>The Return of the Spirit</em>, trans. William M. Hutchins (Washington, DC: Three Continents Press, 1990).</p>
+        <p>Paul Starkey, &#x201C;Philosophical Themes in Tawfiq al-Hakim&#x2019;s Drama,&#x201D; <em>Journal of Arabic Literature</em> 8 (1977), 136&#x2013;52.</p>
+        <p>William M. Hutchins, &#x201C;The Theology of Tawfiq al-Hakim: An Exposition with Examples,&#x201D; <em>The Muslim World</em> 78, nos. 3&#x2013;4 (1988), <span>243&#x2013;79</span>.</p>
+        <p>Bruce Fudge, &#x201C;The Men of the Cave: Tafsir, Tragedy and Tawfiq al-Hakim,&#x201D; <em>Arabica</em> 54, no. 1 (January 2007), 67&#x2013;93.</p>
+        <p>Paul Starkey, <em>From the Ivory Tower: A Critical Study of Tawfiq al-Hakim</em> (London: Ithaca Press, 1987).</p>
+        <p>Richard Long, &#x201C;Tawfiq al-Hakim and the Arabic Theatre,&#x201D; <em>Middle Eastern Studies</em> 5, no. 1 (January 1969), 69&#x2013;74.</p>
+        <p>Gilbert Victor Tutungi, &#x201C;Tawfiq al-Hakim and the West&#x201D; (PhD diss., Indiana University, 1966).</p>
+        <p>
+        <em>Al-Ahram</em> newspaper, articles from December 18, 1935; November 29, 1968; August 6, 1971; and August 13, 1971.</p>
+      </subchapter>
+      
+      <subchapter>
+        <header>
+          <h3>2.</h3>
+        </header>
+        <p>Muhammad Marmaduke Pickthall, <em>The Meaning of the Glorious Qur&#x2019;an</em> (Hyderabad-Deccan: Government Central Press, 1938).</p>
+        <p>A. J.&#xA0;Arberry, <em>The Qur&#x2019;an Interpreted</em> (London: George Allen &amp; Unwin, 1955).</p>
+        <p>Tarif Khalidi, trans., <em>The Qur&#x2019;an</em> (London: Penguin Books: 2008).</p>
+        <p>Sayyid Qutb,<em> In the Shade of the Qur&#x2019;an</em> (Fi Zilal al-Qur&#x2019;an), vol. 11, trans. Adil Salahi (Islamic Foundation, 2003), 182&#x2013;203.</p>
+        <p>Maulana Abul Kalam Azad, <em>The Tarjuman al-Quran</em>, vol. 3, trans. Syed Abdul Latif (Hyderabad, India: Trust for Qur&#x2019;anic Cultural Research, Da&#x2019;iratu&#x2019;l Ma&#x2019;arif Press, 1978).</p>
+        <p>S. A. Kamali, &#x201C;Abul Kalam Azad&#x2019;s Commentary on the Qur&#x2019;an,&#x201D; <em>The Muslim World</em> 49, no. 1 (1959), 518.</p>
+        <p>Sebastian Brock, &#x201C;Jacob of Serugh&#x2019;s Poem on the Sleepers of Ephesus,&#x201D; in <em>&#x201C;I Sowed Fruits into Hearts&#x201D; (Odes Sol.</em> <em>17:13): Festschrift for Professor Michael Lattke</em>, ed. P. Allen, M. Franzmann, and R. Strelan (Early Christian Studies 12; Strathfield, Australia: St. Pauls Publications, 2007), 13&#x2013;30.</p>
+        <p>Pieter W. Van der Horst, &#x201C;Pious Long-Sleepers in Pagan, Jewish, and Christian Antiquity,&#x201D; in <em>Studies in Ancient Judaism and Early Christianity</em> (Leiden: Brill, 2014), 248&#x2013;66.</p>
+        <p>Richard F. Burton, <em>The Book of the Thousand Nights and a Night</em>, vol. 3 (New York: Heritage Press, 1934).</p>
+        <p>Edward Gibbon, <em>The History of the Decline and Fall of the Roman Empire,</em> ed. J. B. Bury (London: Methuen, 1909), III: 436&#x2013;39.</p>
+        <p>Sidney Griffith, &#x201C;Christian Lore and the Arabic Qur&#x2019;an: The &#x2018;Companions of the Cave&#x2019; in <em>Surat al-Kahf</em> and in Syriac Christian Tradition,&#x201D; in <em>The Qur&#x2019;an in Its Historical Context</em>, ed. Gabriel Said Reynolds (Oxford: Routledge, 2008), 109&#x2013;38.</p>
+        <p>Norman Oliver Brown, <em>Apocalypse and/or Metamorphosis</em>
+        <span> (Berkeley: University of California Press, 1991). </span>
+        </p>
+        <p>Ernest Honigmann, &#x201C;Stephen of Ephesus (April 15, 448&#x2013;Oct. 29, 451) and the Legend of the Seven Sleepers,&#x201D; in <em>Patristic Studies</em> (Studi e Testi, 173; Citt&#xE0; del Vaticano, 1953), 125&#x2013;68.</p>
+        <p>Antigone Samellas,<em> Death in the Eastern Mediterranean (50&#x2013;600 A.D.): The Christianization of the East</em> (T&#xFC;bingen, Germany: Mohr Siebeck, 2002).</p>
+      </subchapter>
+      
+      <subchapter>
+        <header>
+          <h3>3.</h3>
+        </header>
+        <p>Clive Foss, <em>Ephesus After Antiquity: A Late Antique, Byzantine, and Turkish City</em> (Cambridge,UK: Cambridge University Press, 1979).</p>
+        <p>Mark Twain, &#x201C;The Legend of the Seven Sleepers,&#x201D; in <em>Innocents Abroad</em> (Hartford, CT: American Publishing Co., 1869).</p>
+        <p>Louis Massignon, &#x201C;Les Sept Dormants, Apocalypse de l&#x2019;Islam&#x201D; and &#x201C;<span>Le culte liturgique et populaire des VII Dormants martyrs d&#x2019;Eph&#xE8;se (Ahl al-kahf): Trait d&#x2019;union orient-occident entre l&#x2019;Islam et la Chr&#xE9;tient&#xE9;,&#x201D; in <em>Opera Minora,</em> tome III (Paris: Presses Universitaires de France, 1969), 104&#x2013;80. </span>
+        </p>
+        <p>Dorothy C. Buck, &#x201C;A Shared Muslim-Christian Pilgrimage,&#x201D; <em>Sufi: A Journal of Sufism</em>, no. 65 (Spring 2005), 20&#x2013;23.</p>
+        <p>Michael Huber, <em>Die Wanderlegende von den Siebenschl&#xE4;fern</em> (Leipzig: O. Harrassowitz, 1910).</p>
+        <p>Louis Dupree, &#x201C;Functions of Folklore in Afghan Society,&#x201D; <em>Asian Affairs</em> 10, no. 1 (1979), 51&#x2013;61.</p>
+        <p>Guy Le Strange, <em>Palestine Under the Moslems: A Description of Syria and the Holy Land from AD 650 to 1500</em>
+        <span>(London: Alexander P. Watt, 1890)</span>.</p>
+        <p>Oya Pancaroglu, &#x201C;Caves, Borderlands and Configurations of Sacred Topography in Medieval Anatolia,&#x201D; <em>M&#xE9;sogeios</em> 25&#x2013;26 (2005), 249&#x2013;81.</p>
+        <p>Viktor Rydberg, <em>Teutonic Mythology: Gods and Goddesses of the Northland</em>, vol. 3, trans. Rasmus B. Anderson (London: Norroena Society, 1906).</p>
+        <p>Frank Barlow, ed. and trans., <em>The Life of King Edward Who Rests at Westminster, Attributed to a Monk of St. Bertin</em> (London: Thomas Nelson and Sons, 1962).</p>
+        <p>Tewfik Canaan, &#x201C;The Decipherment of Arabic Talismans,&#x201D; in <em>Magic and Divination in Early Islam</em>, ed. Emilie Savage-Smith<em>
+        <span>(Aldershot: Ashgate, 2004), 125&#x2013;77.</span>
+        </em></p>
+        <p>Venetia Porter, &#x201C;Amulets Inscribed with the Names of the &#x2018;Seven Sleepers&#x2019; of Ephesus in the British Museum,&#x201D; in <em>Word of God, Art of Man: The Qur&#x2019;an and Its Creative Expressions</em>, ed. Fahmida Suleman (Oxford, UK:<em> Oxford University Press, 2007), 123&#x2013;34.</em></p>
+        <p>Sabine Baring-Gould, <em>Curious Myths of the Middle Ages</em> (Boston: Little Brown, 1904).</p>
+        <p>Ja&#x2018;far Sharif, <em>Qanoon-e-Islam, or the Customs of the Moosulmans of India; comprising a Full and Exact Account of Their Various Rites and Ceremonies, from the Moment of Birth till the Hour of Death</em>, trans. G. A. Herklots (London: Parbury, Allen, and Co., 1832).</p>
+        <p>Craig Crossen and Stephan Prochazka, &#x201C;The Seven Sleepers and Ancient Constellation Traditions&#x2014;a Crossover of Arabic Dialectology with the History of Astronomy,&#x201D; <em>Wiener Zeitschrift f&#xFC;r die Kunde des Morgenlandes</em> 97 (2007), 79&#x2013;105.</p>
+        <p>Danilo Ki&#x161;, <em>The Encyclopedia of the Dead</em>, trans. Michael Henry Heim (New York: Farrar, Straus and Giroux, 1989).</p>
+        <p>Emine G&#xFC;rsoy-Naskali, <em>Ashabu &#x2019;l-Kahf: A Treatise in Eastern Turki</em> (Helsinki: Suomalais-Ugrilainen Seura, 1985).</p>
+      </subchapter>
+      
+      <subchapter>
+        <header>
+          <h3>4.</h3>
+        </header>
+        <p>Rev. Dr. Martin Luther King Jr., &#x201C;Remaining Awake Through a Great Revolution&#x201D; (commencement address for Oberlin College, Oberlin, Ohio, June 14, 1965).</p>
+        <p>Washington Irving, <em>The Legend of Sleepy Hollow and Other Stories</em> (New York: Penguin Classics, 2014).</p>
+
+        <p>Christine Philliou, &#x201C;When the Clock Strikes Twelve: The Inception of an Ottoman Past in Early Republican Turkey,&#x201D; <em>Comparative Studies of South Asia, Africa, and the Middle East</em> 31, no. 1 (2011), 172&#x2013;82.</p>
+        <p>Umut Azak, &#x201C;A Reaction to Authoritarian Modernization in Turkey: The Menemen Incident and the Creation and Contestation of a Myth, 1930&#x2013;1931,&#x201D; in <em>The State and the Subaltern: Modernization, Society and the State in Turkey and Iran</em>, ed. Touraj Atabaki (London: I. B. Tauris, 2007), 143&#x2013;58.
+        </p>
+        <p>Kader Abdolah, <em>My Father&#x2019;s Notebook</em>, trans.<em> Susan Massotty (New York: Harper Perennial, 2006).</em></p>
+        <p>Godefroid de Callata&#xFF;, &#x201C;Astrology and Prophecy: The Ikhwan al-Safa and the Legend of the Seven Sleepers,&#x201D; in Charles Burnett et al., <em>Studies in the History of the Exact Sciences in Honour of David Pingree</em> (Boston: Brill, 2004), 758&#x2013;85.</p>
+        <p>Edward Bellamy, <em>Looking Backward: 2000&#x2013;1887</em>, ed. Matthew Beaumont (Oxford, UK: Oxford University Press, 2009).</p>
+        <p>H. G. Wells, <em>When the Sleeper Wakes</em> (New York: Harper &amp; Bros., 1899).</p>
+        <p>Tawfiq al-Hakim, &#x201C;Voyage to Tomorrow,&#x201D; in <em>Plays,&#xA0;Prefaces&#xA0;&amp;&#xA0;Postscripts&#xA0;of&#xA0;Tawfiq&#xA0;al-Hakim</em>, vol. 2, trans. William M. Hutchins (Washington, DC: Three Continents Press, 1984).</p>
+        <p>&#x2014;&#x2014;&#x2014;,<em> The Revolt of the Young: Essays by Tawfiq al-Hakim</em>,<em> trans. Mona Radwan (Syracuse, NY: Syracuse University Press, 2014).</em></p>
+        <p>Anthony O&#x2019;Mahony, &#x201C;Louis Massignon, the Seven Sleepers of Ephesus and the Christian-Muslim pilgrimage at Vieux-March&#xE9;, Brittany,&#x201D; in <em>Explorations in a Christian Theology of Pilgrimage</em>, ed. Craig Bartholomew and Fred Hughes (Aldershot, UK: Ashgate, 2004), 126&#x2013;48.</p>
+        <p>Louis Massignon, &#x201C;Visitation of the Stranger: Response to an Inquiry about God&#x201D; (1955), in <em>Testimonies and Reflections: Essays of Louis Massignon</em>, ed. Herbert Mason (South Bend, IN: University of Notre Dame Press, 1989).</p>
+        <p>Patrick Laude and Edin Q. Lohja, <em>Louis Massignon: The Vow and the Oath</em> (London: Matheson Trust, 2011).</p>
+        <p>Sidney H. Griffith, &#x201C;Thomas Merton, Louis Massignon, and the Challenge of Islam,&#x201D; <em>The Merton Annual</em> 3 (1990), 151&#x2013;74.</p>
+        <p>Carl Gustav Jung, &#x201C;A Typical Set of Symbols Illustrating the Process of Transformation,&#x201D; in <em>The Archetypes and the Collective Unconscious</em>, trans. R. F. C. Hull (Princeton, NJ: Bollingen Series, Princeton University Press, 1990), 135&#x2013;50.</p>
+        <p>Farhad Massumeh, ed., <em>Falnama: The Book of Omens</em> (London: Thames &amp; Hudson, 2009).</p>
+        <p>Nicholas Battye, &#x201C;Khidr in the Opus of Jung: the Teaching of Surrender,&#x201D; in <em>Jung and the Monotheisms: Judaism, Christianity, and Islam</em>, ed. Joel Ryce-Menuhin (London: Routledge, 1994).</p>
+      </subchapter>
+      
+      <subchapter>
+        <header>
+          <h3>5.</h3>
+        </header>
+        <p>George Oppen, &#x201C;Till Other Voices Wake Us,&#x201D; in <em>New Collected Poems,</em>
+        <span> ed. Michael Davidson (New York: New Directions, 2002), 286. </span>
+        </p>
+        <p>Menekse Sila Yazar, Evrim Erbek, Nezih Eradamlar and Latif Alpkan, &#x201C;The Seven Sleepers: A folie &#xE0; deux case originating from a religious-cultural belief,&#x201D; <em>Transcultural Psychiatry</em> 48 (2011), 684&#x2013;92.</p>
+        <p>Jonathan Crary, <em>24/7: Late Capitalism and the Ends of Sleep</em> (New York: Verso, 2013).</p>
+        <p>Louis Massignon, &#x201C;Time in Islamic Thought&#x201D; (1955), trans. Ralph Manheim, in <em>Man and Time: Papers from the Eranos Yearbooks</em>, ed. Joseph Campbell (New York: Princeton University Press, 1983).</p>
+      </subchapter>
+    </bibliography><pagebreak></pagebreak>
+
+<!-- 
+contributors-1.xhtml
+ -->
+
+<meta-content>
+    <section>
+      <subchapter>
+        <p>Triple Canopy is a magazine based in New York. Since 2007, Triple Canopy has advanced a model for publication that encompasses digital works of art and literature, public conversations, exhibitions, and books. This model hinges on the development of publishing systems that incorporate networked forms of production and circulation. Working closely with artists, writers, technologists, and designers, Triple Canopy produces projects that demand considered reading and viewing. Triple Canopy resists the atomization of culture and, through sustained inquiry and creative research, strives to enrich the public sphere. Triple Canopy is a nonprofit 501(c)3 organization and a member of Common Practice New York.
+        </p>
+        <p>
+        Read more <a href="http://canopycanopycanopy.com/about">here</a>.
+        </p>
+      </subchapter>
+
+      
+      <subchapter>
+        <h2>
+        Editors, Staff and Board of Directors
+        </h2>
+        <h3>Editors</h3>
+        <p>Lucy Ives, Alexander Provan</p>
+        <h3>Director</h3>
+        <p>Peter J. Russo</p>
+        <h3>Creative Director</h3>
+        <p>Caleb Waldorf</p>
+        <h3>Deputy Editor</h3>
+        <p>Molly Kleiman</p>
+        <h3>Managing Editor</h3>
+        <p>Bidita Choudhury</p>
+        <h3>Assistant Director</h3>
+        <p>Momo Ishiguro</p>
+        <h3>Senior Editors</h3>
+        <p>Colby Chamberlain, Sam Frank, Sarah Resnick, William S. Smith</p>
+        <h3>Contributing Editors</h3>
+        <p>Jos&#xE9; Le&#xF3;n Cerrillo, Hannah Whitaker</p>
+        <h3>Associate Editors</h3>
+        <p>Lizzie Feidelson, Matthew Shen Goodman, Emily Wang</p>
+        <h3>Designer</h3>
+        <p>Franklin Vandiver</p>
+        <h3>Lead Developer</h3>
+        <p>Seth Erickson</p>
+        <h3>Front-end Developer</h3>
+        <p>Maxwell Simmer</p>
+        <h3>Technology Advisor</h3>
+        <p>Adam Florin</p>
+        <h3>Production Associate</h3>
+        <p>Gerardo Madera</p>
+        <h3>Copy Editor</h3>
+        <p>Abraham Adams</p>
+        <h3>Video Producer</h3>
+        <p>Jessica Lee</p>
+        <h3>Interns</h3>
+        <p>Maya Harakawa, Stephon Lawrence, Ariana Perez-Castells</p>
+        <h3>Emeritus</h3>
+        <p>Rachel Aviv, Taylor Baldwin, John W. Fail, Taraneh Fazeli, Hannah Frank, Adam Helms, Dana Kash, Sarah Kessler, Laurence Lowe, Andrew Ritchie, Tom Roberge, Christine Smallwood, Genevieve Smith, Anthony Tran, Dan Visel, Jane Yakowitz</p>
+        <h3>Board of Directors</h3>
+        <p>Cory Arcangel<br></br>
+        Eileen Cohen<br></br>
+        Fairfax Dorn<br></br>
+        Alexandra Economou<br></br>
+        Sean Elwood <br></br>
+        Malik Gaines<br></br>
+        Gabrielle Giattino  <br></br>
+        Michael Hainey<br></br>
+        Sof&#xED;a Hern&#xE1;ndez Chong Cuy<br></br>
+        Prem Krishnamurthy<br></br>
+        Katy Lederer<br></br>
+        Brett Littman<br></br>
+        Alex Logsdail<br></br>
+        Gregory R. Miller  <br></br>
+        Fraser D. Mooney<br></br>
+        Selig D. Sacks<br></br>
+        Kate Shepherd<br></br>
+        Lynne Tillman<br></br>
+        Jeffrey Weiss
+        </p>
+      </subchapter>
+    </section>
+
+    </meta-content><pagebreak></pagebreak>
+
+<!-- 
+contributors-2.xhtml
+ -->
+
+<meta-content>
+
+  <section>
+    <p><em>Not Dead but Sleeping</em> was edited primarily by William S. Smith and Emily Wang, with Triple Canopy.</p>
+
+    <p>Major support for <em>Not Dead but Sleeping</em> has been provided by the Truckin&#x2019; Foundation, Robert Rauschenberg Foundation, and Triple Canopy&#x2019;s Publishers Circle.</p>
+    <p>Triple Canopy gratefully acknowledges the AG Foundation, Andy Warhol Foundation for the Visual Arts, the Brown Foundation, Inc., of Houston, Fifth Floor Foundation, Foundation for Contemporary Arts, Fundaci&#xF3;n Jumex, Lambent Foundation/Fund of Tides Foundation, National Endowment for the Arts, New York City Department of Cultural Affairs, New York Council for the Humanities, New York State Council on the Arts, the Orphiflamme Foundation, as well as its Board of Directors, members, and other individuals for their generous support.</p>
+    <p>The author also received support from the Tamaas Foundation and Dar al-Ma&#x2019;m&#xFB;n in Marrakech. She would like to thank Sarah Riggs, Omar Berrada, Juan As&#xED;s Palao G&#xF3;mez, Khalil Nemmaoui, and all the staff at DAM.</p>
+  </section>
+</meta-content><pagebreak></pagebreak>
+
+<!-- 
+loi-1_Figures.xhtml
+ -->
+
+<section>
+<header>
+<h1>Figures</h1>
+</header>
+</section><pagebreak></pagebreak>
+
+<!-- 
+loi-2.xhtml
+ -->
+
+<section><div><figure><div><a href="content-2.xhtml#_52408"><img src="../Images/fmt-ndbs-chapter-1-1-full.jpg"></img></a><figcaption><p></p></figcaption></div></figure></div></section><pagebreak></pagebreak>
+
+<!-- 
+loi-3.xhtml
+ -->
+
+<section><div><figure><div><a href="content-2.xhtml#_41839"><img src="../Images/fmt-ndbs-chapter-1-2-full.jpg"></img></a><figcaption><p></p></figcaption></div></figure></div></section><pagebreak></pagebreak>
+
+<!-- 
+loi-4.xhtml
+ -->
+
+<section><div><figure><div><a href="content-2.xhtml#_75726"><img src="../Images/fmt-ndbs-chapter-1-3-full.jpg"></img></a><figcaption><p></p></figcaption></div></figure></div></section><pagebreak></pagebreak>
+
+<!-- 
+loi-5.xhtml
+ -->
+
+<section><div><figure><div><a href="content-2.xhtml#_70079"><img src="../Images/fmt-ndbs-chapter-1-4-full.jpg"></img></a><figcaption><p></p></figcaption></div></figure></div></section><pagebreak></pagebreak>
+
+<!-- 
+loi-6.xhtml
+ -->
+
+<section><div><figure><div><a href="content-3.xhtml#_89569"><img src="../Images/fmt-ndbs-chapter-2-1-full.png"></img></a><figcaption><p></p></figcaption></div></figure></div></section><pagebreak></pagebreak>
+
+<!-- 
+loi-7.xhtml
+ -->
+
+<section><div><figure><div><a href="content-3.xhtml#_31173"><img src="../Images/fmt-ndbs-chapter-2-2-full.png"></img></a><figcaption><p></p></figcaption></div></figure></div></section><pagebreak></pagebreak>
+
+<!-- 
+loi-8.xhtml
+ -->
+
+<section><div><figure><div><a href="content-3.xhtml#_27446"><img src="../Images/fmt-ndbs-chapter-2-3-full.jpg"></img></a><figcaption><p></p></figcaption></div></figure></div></section><pagebreak></pagebreak>
+
+<!-- 
+loi-9.xhtml
+ -->
+
+<section><div><figure><div><a href="content-5.xhtml#_64536"><img src="../Images/fmt-ndbs-chapter-4-1-full.jpg"></img></a><figcaption><p></p></figcaption></div></figure></div></section><pagebreak></pagebreak>
+
+<!-- 
+loi-10.xhtml
+ -->
+
+<section><div><figure><div><a href="content-5.xhtml#_6586"><img src="../Images/fmt-ndbs-chapter-4-2-full.jpg"></img></a><figcaption><p></p></figcaption></div></figure></div></section><pagebreak></pagebreak>
+
+<!-- 
+loi-11.xhtml
+ -->
+
+<section><div><figure><div><a href="content-5.xhtml#_84207"><img src="../Images/fmt-ndbs-chapter-4-3-full.jpg"></img></a><figcaption><p></p></figcaption></div></figure></div></section><pagebreak></pagebreak>
+
+<!-- 
+content-1.xhtml
+ -->
+
+<section>
+      <header>
+        <h1>Editor&#x2019;s Note</h1>
+      </header>
+      <p>&#x201C;Everyone here is awake,&#x201D; one young Egyptian activist told the <em>New York Times</em> in a 2011 report on nightlife in Tahrir Square, the unofficial capital of the Arab Spring. Who could sleep when there were slogans to be written, strategies to debate, news to discuss, poetry to recite, music to be played, and food to be prepared for thousands? The protester&#x2019;s sentiment was echoed in a line of graffiti scrawled on the side of a tank: &#x201C;The revolution is in Tahrir; no sleeping in bed.&#x201D;</p>
+      <p>Revolution and sleep seem, intuitively, to be antithetical forces. When Anna Della Subin first undertook this book, in 2013, she proposed that sleeping be understood as a revolutionary act. For various reasons, this appeared to be incongruous with the conditions of life and politics in Egypt, which had partly inspired her research into Tawfiq al-Hakim&#x2019;s 1933 play <em>The People of the Cave</em> and the story on which it is based. (The story, in which seven Christian youths fall asleep for three centuries only to awaken in a radically transformed world, is present in many cultures and religions, but it is particularly prominent in Islam.) The ouster of Hosni Mubarak had animated a previously moribund political system, turning it fluid and malleable. The country looked like it was up for grabs. Sleep seemed like an indulgence or a distraction.</p>
+      <p>Revolutionaries throughout history have expressed disdain for sleep. Nikolai Chernyshevsky, the nineteenth-century Russian revolutionary and an archetype for twentieth-century ascetics wedded to the cause, allowed himself to sleep only grudgingly&#x2014;and when he did rest it was on a bed of nails. For Walter Benjamin and Guy Debord, the sleeper is a figure of complacency, and nodding off invariably means accepting the status quo. Subin quotes Martin Luther King&#x2019;s famous admonishment not to sleep through the revolution.</p>
+      <p>Yet the sleeper, too, has a historical mandate. Coverage of the protest movements, revolutions, and occupations that have focused the world&#x2019;s attention in the past five years is replete with iconic images of marching bodies with raised fists. But spend any amount of time reading about those uprisings, encampments, and mass mobilizations, and you&apos;ll discover a vast archive of images of repose.</p>
+
+      <p>Amid the buzz of Tahrir Square, protesters fell asleep at all times of day and night, sometimes napping in the shade of tanks. In Istanbul, they curled up beneath Turkish flags and posters of Atat&#xFC;rk in the tent city erected at Gezi Park. In Hong Kong, they sprawled beneath umbrellas on financial district highways, gumming up traffic. Recumbent, snoring bodies are just as effective &#x201C;upon the gears and upon the wheels, upon the levers, upon all the apparatus,&#x201D; as Mario Savio said in 1964, at making the machine stop&#x2014;if only for the night.</p>
+      <p>In 2011, Occupy Wall Street activists undertook &#x201C;sleepful protests,&#x201D; making beds of tarps and sleeping bags on the sidewalks of New York&#x2019;s financial district. #SleepOWS became one of the many fleeting hashtags associated with the movement, which shaped Subin&#x2019;s disquisition on the power of slumber and influenced her understanding of the legacy of the people of the cave. The ceaseless marches and seminars and committee meetings were stoked and fortified by the quieter&#x2014;but no less radical&#x2014;act of falling asleep in public. One reporter described sleep as a ritual of OWS with a social dimension, &#x201C;sleep, lying among your comrades, everyone vulnerable, everyone absurd, stretched out between the coffee trucks and the police cruisers, under the watchful eye of a mobile NYPD surveillance tower jacked up over a truck.&#x201D;</p>
+      <p>The collective passing out of young people in the financial hub of the city that never sleeps might be seen as an affront to what critic Jonathan Crary calls 24&#x2013;7 capitalism. The sleeper reclaims her right to rest contra contemporary working life, which hinges on the regulation of her body and her schedule in accordance with the whims (and on-demand systems) of employers, as well as on her free time being devoted to the indulgence of manufactured desire.</p>
+      <p>Subin reanimates numerous episodes in the history of the sleepers. She draws from a number of sources: sacred texts like the Qur&#x2019;an, modern political histories like that of the Civil Rights movement, and contemporary artworks like Egyptian artist Wael Shawky&#x2019;s <em>The Cave</em> (2005).</p>
+      <p>In her account, sleep marks a rupture in the continuity of experience. Subin&#x2019;s sleeper-heroes range from the mythical shepherds of ancient Rome who snooze through the empire&#x2019;s embrace of Christianity to the legendary Rip Van Winkle, who remained unconscious through the American Revolution, to Julian West, an otherwise hapless Bostonian who dozes through the arrival of Edward Bellamy&#x2019;s nineteenth-century socialist utopia. These figures are wholly ignorant of the historical changes that have taken place while they slept, which makes them astute social critics. Equipped only with the common sense and the received wisdom of their time, they are forced to confront radically altered bodies of knowledge, beliefs, and prejudices.</p>
+    </section><pagebreak></pagebreak>
+
+<!-- 
+content-2.xhtml
+ -->
+
+<section>
+      <header>
+        <h1>1. THE ACTORS</h1>
+      </header>
+      
+      <subchapter>
+        <p>It appeared as a satire in a Cairo newspaper just as the nineteenth century pirouetted into the twentieth. A pasha, dead for fifty years but recently resurrected from the grave, took his seat in the audience at the Khedivial Opera House with his companion, a hapless writer who had been out for a walk in the City of the Dead at the wrong moment. The writer had been contemplating death&#x2014;an attempt to find inspiration for his book&#x2014;when suddenly the tomb of Egypt&#x2019;s former minister of war had opened up not far from where he stood. As Muhammad al-Muwaylihi imagined in his serialized epic, <em>Hadith &#x2018;Isa ibn Hisham</em>, the formidable pasha, naked except for his burial shroud, demanded the writer&#x2019;s coat, and the two set out for a livelier neighborhood. They went to the theater, an entertainment newly popular within Cairene society since the pasha&#x2019;s time. Waiting in the audience, they watched as men of all ages laughed and hurled insults at one another, occasionally waving to the ladies in the harem boxes who glimmered faintly, like planets. The curtain rose. Seeing the look on the appalled pasha&#x2019;s face, the writer explained that drama was a medium imported from the Occident, and Egyptians, in their laziness, hadn&#x2019;t bothered to become good at it. The pasha rushed out of the Opera and back to the writer&#x2019;s house, where he crawled into bed. But he couldn&#x2019;t sleep after such an unbearable play. His reanimated brain was racing too fast.</p>
+      </subchapter>
+      
+      <subchapter>
+        <div>
+          <figure>
+
+              <div><figure><a href="loi-2.xhtml#loi-2"><img src="../Images/fmt-ndbs-chapter-1-1-thumbnail.jpg"></img></a></figure></div>
+          </figure>
+        </div>
+        <blockquote>
+          <p><span>Yamlikha</span>: &#xA0;This world is not our world. &#x2026;<span>
+          <br></br>Marnush:&#xA0; </span>What do you mean?<span>
+          <br></br>Yamlikha:&#xA0; </span>Do you know how much time we spent in the cave?<span>
+          <br></br>Marnush:&#xA0; </span>A week? A month, according to your fantastic calculation?<span>
+          <br></br>Yamlikha</span>:&#xA0; Marnush, we are dead! Ghosts!<span>
+          <br></br>Marnush:&#xA0; </span>What are you talking about?<span>
+          <br></br>Yamlikha</span>:&#xA0; Three hundred years.</p>
+        </blockquote>
+        <p>On the night of December 12, 1935, Egypt&#x2019;s National Theatre Company had its first performance at the Khedivial Opera House. For its inaugural run, the company chose <em>Ahl al-Kahf</em>, or <em>The People of the Cave</em>, written in Arabic by Tawfiq al-Hakim. At the opening of the first act, three men and a dog awaken in darkness inside a cave. Their limbs are numb, and their backs ache against the chill of the stone floor. Was it all a dream? The young court ministers Marnush and Mishlinya, along with the shepherd Yamlikha, had fled for their lives from the city of Tarsus after the pagan king Dikyanos discovered their crypto-Christian faith. They hid in the mountains; overcome with exhaustion and sorrow, they wept themselves to sleep. Was it all a dream, the dream of three somnambulists on the run?</p>
+        <p>In a haze, the men argue over how long they have slumbered, &#x201C;a day, or part of a day?&#x201D; [<em>They are lit only by blue stage lights; their shadows are enormous.</em>] Famished, they send Yamlikha out for food, but he returns bewildered and empty-handed. He relates how, when he tried to offer a coin to a hunter he met along the road, the man was astonished at his appearance, and his horse recoiled in fright. Turning over the piece of silver in his palm, the hunter demanded to know whether Yamlikha had found some long-buried treasure. Soon after, a crowd of villagers bursts into the cave, and the light from their torches floods the stage, fully illuminating the actors. &#x201C;Ghosts! The dead!&#x201D; the villagers shriek, aghast at the sight of their matted robes, never-ending beards, and fingernails uncut for three hundred years.</p>
+        <p>The men and the dog Qitmir are carried from their crypt to the palace. To their amazement, the symbol of the cross is openly displayed in Tarsus; a Christian emperor, Theodosius, is in power; and the men are received as saints. [<em>The throne room is set with Byzantine columns, mosaics, and bas-reliefs depicting birds, and is suffused with yellow light.</em>] Amid these overnight transformations, Mishlinya is relieved to see the face of his betrothed, Priska, the tyrant Dikyanos&#x2019;s daughter, who had converted for him in secret. But Priska, still wearing the gold crucifix he gave her, does not recognize Mishlinya, and shrinks away in fear. After receiving haircuts, shaves, and clean but strangely styled clothes, the men&#x2014;well preserved in the cool, dark cave&#x2014;appear young again. Venturing out of the palace, Marnush attempts to locate his family, but finds an arms dealership in place of his home. Searching for his infant son, he uncovers a dilapidated grave, with an inscription telling that the boy died a war hero at the age of sixty. The shepherd Yamlikha fails to find his flock.</p>
+        <p>Distraught, and thoroughly persuaded that three centuries have passed, Yamlikha and Marnush conclude that they cannot live in this new world. &#x201C;We are like fish, whose water has changed from sweet to salty,&#x201D; Marnush protests, as they slip back to the cave and into the exile of sleep. But Mishlinya, unable to accept that this Priska is not <em>his</em> Priska but her descendant, stays behind in the world of the awake. As she tries to convince him of the oceanic night that divides them, Mishlinya falls into a frenzied state: &#x201C;Priska! My darling! Come &#x2026; You are she &#x2026; Oh, God, you&#x2019;re not she &#x2026; Am I asleep? Am I alive? Am I in some muddled dream?&#x201D; But then again, ruminates the sleeper, she never seemed as beautiful as in the dream &#x2026;</p>
+      </subchapter>
+
+      
+      <subchapter>
+        <div>
+          <figure>
+
+            <div><figure><a href="loi-3.xhtml#loi-3"><img src="../Images/fmt-ndbs-chapter-1-2-thumbnail.jpg"></img></a></figure></div>
+          </figure>
+        </div>
+        <p>It might have seemed an appropriate play with which to inaugurate the National Theatre, for everywhere it was said that Egypt, having fallen behind the times for several centuries, was at last awakening into modernity. After an indolent, five-hundred-year nap in the shade, Egyptians had been seized by new spirits: of nationalism, cultural revival, and the promise of prosperity. A new age had dawned&#x2014;not only in Egypt but across the Arab world&#x2014;called the <em>Nahda</em>: the &#x201C;Awakening,&#x201D; Resurrection,&#x201D; or &#x201C;Renaissance.&#x201D; The birth of modern Egyptian theater coincided with this rousing of the nation&#x2019;s consciousness. Though it had counted indigenous traditions such as the medieval shadow-puppet play, Egyptian theater in the European style had only begun in the mid-nineteenth century. As the European presence grew, theaters sprang up across Cairo and Alexandria, where one could find Italian opera and French comedies, as well as Egyptianized adaptations in Arabic. Moli&#xE8;re&#x2019;s <em>Tartuffe</em> became <em>Shaykh Matluf</em>, and Hamlet did not die. In 1869, to celebrate the opening of the Suez Canal, the Khedive Ismail commissioned the magnificent Khedivial Opera House in Cairo. Egyptians had developed a taste for the theater, but as the undead pasha&#x2014;awakened by the noise of the Awakening&#x2014;discovered, it required a cacophonous mix of hysterics and tears.</p>
+        <p>The man who would become known as the father of Egyptian drama&#x2014;in part through the sheer number of plays he churned out&#x2014;by his own account came into the world silently, sometime between 1898 and 1903. (He liked to invent different birth years to suit various purposes.) The son of an eminent Egyptian judge and an infamously overbearing Turkish mother, as a child in Alexandria Tawfiq al-Hakim was fascinated with the world of the unseen. At night he would find himself awake, keeping watch for the jinn who acted out their own dramas in the family house. He was convinced he had oracular powers, startling his family when his prophecies occasionally came true. His auguries were not grand or world-historical, but generally limited to predictions of the movements of his relatives, of which he had many. Once, when a telegram arrived stating that his uncle had suddenly died, the young Tawfiq declared to his distraught parents that it was not true, and that his uncle would soon reappear. Moments later, his undead relative walked through the door.</p>
+        <p>In 1919, as a student in Cairo, al-Hakim wrote his first full-length play, <em>The Unwelcome Guest</em>, inspired by the revolution of that year. He joined Egyptians across the country in revolt against their unwelcome guests, the British, and was briefly jailed. While studying law in the early 1920s, al-Hakim continued to moonlight as a playwright, signing his work with a pen name to escape the censure of his parents, who, like many at the time, disapproved of the theater. When he discovered his son&#x2019;s secret, al-Hakim&#x2019;s scandalized father sent him off to Paris to pursue a doctorate in law, reasoning by a curious logic that he would be kept far from the stage. On his return to Cairo three years later, he was without a degree but had seen every play imaginable&#x2014;from Ibsen, Shaw, and Maeterlinck to Chekhov and Pirandello&#x2014;and had written more of his own. Settling back into life in Egypt, al-Hakim felt disoriented and profoundly changed. He was like a man from another time who had arrived in a sleeping land, as he wrote despondently to a friend. In this state of disillusionment, he composed <em>The People of the Cave.</em> Stuck in his job as a lawyer and fearing the repercussions of revealing his clandestine craft, he waited five years before publishing it.</p>
+        <p>He had been listening to Beethoven&#x2019;s Fifth Symphony as he wrote, and modeled the four acts of the play on the symphony&#x2019;s four sections. But he had purchased the records, unlabeled and out of order, at a stand in Paris, and never had the chance to hear the symphony in a concert hall. Al-Hakim would put on the second, andante movement thinking it was the first, and wrote the slow dialogue of the first scene of <em>The People of the Cave</em> to resemble it, speeding up the pace in the following acts. It was not until years later that he realized his mistake. Time was out of joint.</p>
+      </subchapter>
+      
+      <subchapter>
+        <div>
+          <figure>
+
+            <div><figure><a href="loi-4.xhtml#loi-4"><img src="../Images/fmt-ndbs-chapter-1-3-thumbnail.jpg"></img></a></figure></div>
+          </figure>
+        </div>
+        <p>In 1928, the year al-Hakim wrote the play, Mahmoud Mukhtar&#x2019;s iconic statue of the <em>Nahdat Misr</em>, or the &#x201C;Awakening of Egypt,&#x201D; had just been unveiled in Cairo. The granite statue, depicting a peasant woman throwing off her veil and rousing a sleeping sphinx, urged the nation to face a new dawn. Everywhere, from Egypt&#x2019;s newspapers to the coffeehouses that al-Hakim frequented, a question was posed: How should the forward-looking nation become modern without losing touch with its past? The debate took on a related shape among the literary elites: Should Egyptian literature look for inspiration to its storied former lives? And if so, which of its many epochs should it appropriate: the glory of the pharaohs, the philosophy of the Greeks, the erudition of the Abbasids, the poetry of the Mamluks? Or should it awaken fully to the present and look toward new art forms&#x2014;the innovations of Europe&#x2014;to create a literature that would speak to the contemporary age? Al-Hakim&#x2019;s resurrected saints seemed a fitting parable. But at the end of the script, the somnolent martyrs decide they cannot exist in the present day. They slink back into the cave, sacrificing their chance at a second life. Was the play an indictment of the relic Egypt&#x2019;s rush to keep up with the modern world? Yet to condemn it would implicate the new form of the drama itself. In the stage directions, al-Hakim indicated that the final act, as well as the first, should take place entirely in darkness.</p>
+        <p>When <em>The People of the Cave,</em> after five years&#x2019; sleep, appeared in print in the spring of 1933, al-Hakim was fired from his job. His text was hailed in literary circles as a major landmark in Egyptian letters. &#x201C;This was not a revolution against a heritage but the actual beginning of that heritage,&#x201D; the critic Ghali Shukri wrote; &#x201C;Egyptian drama was born in its near-perfect form with <em>The People of the Cave.</em>&#x201D; Egypt&#x2019;s foremost intellectual, the blind luminary Taha Hussein, declared, &#x201C;I have no hesitation in saying that it is the first story created in Arabic literature that can be called a real play.&#x201D; But it was not entirely successful; Hussein reproached al-Hakim for &#x201C;shocking errors in language,&#x201D; and &#x201C;<em>ugly mistakes</em>, some of which violate the essence of Arabic.&#x201D; He chided him for disregarding the experience of the audience by making the work too long in places, and concluded that it was not yet everything he hoped to see Arabic drama achieve. Expressing concern as to what would happen when this drama of ideas was performed on the stage, Hussein suggested he take over the task of perfecting the draft&#x2014;an offer al-Hakim declined.</p>
+        <p>Taha Hussein&#x2019;s premonitions were not unfounded: By most accounts, the inaugural production, which went up two years later, was a resounding flop. In a review in the newspaper <em>al-Ahram</em>, Abd al-Rahman Nasir remarked, &#x201C;This story, as you have seen, is soft in its depth, calm in its revolution of thought. How does it appear to an Egyptian audience used to the violence and drama of the Grand Guignol?&#x201D; To an audience hungover from melodramas and musicals, the play&#x2019;s metaphysics were too lofty, its formal Arabic dialogue too stiff, and the thought experiment required of them too tiring. &#x201C;It reminds one of a lecture rather than a play,&#x201D; remarked one critic. It was no more exciting than watching balls thrown back and forth, complained another. Commentators pointed out that the script was interminably digressive. Why must the actors ramble on about the Japanese fisherman Urashima, who went to sea in his boat and returned four hundred years later? People in the audience fell asleep.
+        </p>
+        <p>Al-Hakim waited until the fourth night to see the show. Afterward, much like his characters, the man from another time fled the stage. Though he published a letter in <em>al-Ahram</em> congratulating the National Theatre&#x2019;s director, the renowned poet Khalil Mutran, on a triumphant success, in private al-Hakim would tell friends that he had been kept away from the rehearsals, was dismayed by what little he saw, and had asked before opening night for the play to be withdrawn. Hurled into a crisis of doubt about his abilities as a playwright, he wrote, &#x201C;The chasm between me and the stage has deepened.&#x201D; In the years that followed, he convinced himself that he had never created <em>The People of the Cave</em> with the intention of having it staged. His theater, he concluded, could exist only in the mind, with the actors as symbols, moving freely in the realm of ideas. Though he would go on to write more than seventy plays, few were staged in the following decades, and the National Theatre was hesitant to undertake further productions. As its director confessed to al-Hakim, &#x201C;Do you know what I do before deciding about a play by you? I read it at home to my children, and if they don&#x2019;t fall asleep, I take it on.&#x201D;</p>
+        <p>Had al-Hakim&#x2019;s sleepers returned too early in Egypt&#x2019;s dawn? The same year the play came out in print, he also published his much more widely praised novel <em>The Return of the Spirit</em>, an allegorical tale about the emergence of an authentic, Egyptian leader who would rouse the nation&#x2019;s soul. (The story, rather immodestly, was based on the author&#x2019;s own childhood.) Gamal Abdel Nasser credited the book with turning him into a revolutionary. In September 1935, as the National Theatre was in rehearsals, the precocious seventeen-year-old Nasser wrote in a letter to a friend, &#x201C;We have frequently spoken of a great action that would bring a dramatic change to the nation and awaken it from its slumber. But nothing has been done yet.&#x201D;</p>
+        <p>Twenty-five years later, the National Theatre restaged the play in an anniversary production. <em>The People of the Cave</em> was reanimated in a changed world: Nasser and the Free Officers had exiled the king, expelled the British, seized foreign businesses, and forged alliances across the Arab world. In a speech marking the nationalization of the Suez Canal, Nasser declared that the Arab spirit was now &#x201C;<em>fully awakened</em> to its new destiny.&#x201D; In his role as president, he hailed al-Hakim as &#x201C;Reviver of Literature,&#x201D; and presented him with honors usually reserved for heads of state. But once again, during the 1960 performance few could stay awake. Though al-Hakim&#x2019;s text was secure in its place in Egypt&#x2019;s canon, popular consensus again deemed the play a failure. &#x201C;I am trying to do in thirty what has taken the theater in other languages about two thousand years,&#x201D; al-Hakim despaired. &#x201C;Authorship is martyrdom in this country.&#x201D;</p>
+      </subchapter>
+      
+      <subchapter>
+        <div>
+          <figure>
+
+            <div><figure><a href="loi-5.xhtml#loi-5"><img src="../Images/fmt-ndbs-chapter-1-4-thumbnail.jpg"></img></a></figure></div>
+          </figure>
+        </div>
+        <p>In bed, unable to sleep, the undead pasha called out for the writer, who was in the middle of a dream in the next room. The writer rushed to the pasha&#x2019;s bedside, and they spent the rest of the night deep in conversation. They spoke about society and politics and art, about what had changed for the better and what for the worse, until the dawn began to hold funeral rites for the night. Night had been a beautiful woman, wrote al-Muwaylihi, too beautiful to suffer either veil or shawl. She toyed with the stars that shone with clarity around her d&#xE9;colletage, then tore them off. She ripped the two orbs of Ursa Minor from her ears, and pulled off from her slender finger the ring of the Pleiades. Her youth fading fast, she became a shaky, gray-haired old woman, leaning on the cane formed by Gemini. Soon dawn covered her with a blue sheet, and morning, in her white raiment, moved in. Night was dead, but it was as if all the world were displaying how life persists in her absence, as it does in ours. Birds flew up over the body of the night. The pasha, it would turn out, was a figment of the writer&#x2019;s dream.</p>
+      </subchapter>
+    </section><pagebreak></pagebreak>
+
+<!-- 
+content-3.xhtml
+ -->
+
+<section>
+      <header>
+        <h1>2. THE PICKLERS</h1>
+        <pull-quote>
+          <p>
+          And when ye withdraw from them and that which they worship except God, then seek refuge in the Cave; your Lord will spread for you His mercy and will prepare for you a pillow in your plight.
+          </p>
+          <cite>&#x2014;&#xA0;Qur&#x2019;an 18:16</cite>
+        </pull-quote>
+      </header>
+      
+      <subchapter>
+        <p>In a prison cell in Cairo, Sayyid Qutb, the Egyptian ideologue and Muslim Brotherhood member, wrote a thirty-volume commentary on the Qur&#x2019;an. He completed it in 1965, the year before he was executed. For Qutb, incarcerated for a decade, the eighteenth chapter of the Qur&#x2019;an had a particular resonance. It told how a group of Christian youths, fleeing religious persecution, had escaped into a cave and fallen asleep for 309 years. God, speaking directly to the Prophet Muhammad, relates how He sealed the sleepers&#x2019; ears so that no sound would disturb them, and inscribed lead tablets at the entrance so that all would know their story. In Qutb&#x2019;s reading of the <em>Surat al-Kahf</em>, the claustrophobic cave was unexpectedly comfortable. &#x201C;The surprise here is great indeed,&#x201D; he wrote. &#x201C;These young believers who have abandoned their people and families, forsaking all the pleasures of this life and preferring instead to sleep rough in a small, dark cave, begin to sense God&#x2019;s grace. They feel it coming, easy, comforting, abundant, limitless.&#x201D; The narrow walls of the chamber were thrown back to reveal a wide horizon, and the loneliness of the sleepers was dispelled by His mercy. <em>We caused them to turn over to the right and to the left</em>, God narrates. He flipped the sleepers periodically from side to side, so that they wouldn&#x2019;t suffer bedsores. There was no one protecting them but God, Qutb wrote.</p>
+        <blockquote>
+          <p><em>And thou mightest have seen the sun, when it rose, inclining from the cave towards the right, and, when it set, passing them by on the left, while they were in a fissure of the cave. That was one of God&#x2019;s signs.</em>(18:17)</p>
+        </blockquote>
+        <p>The Prophet grieved at how his message was scorned by the Meccans, wrote the young Indian nationalist leader Abul Kalam Azad. God told the story of the sleepers to console him&#x2014;a portrait of those who, unwilling to renounce the truth, bore adversity heroically. Azad was working on his Urdu commentary and translation of the Qur&#x2019;an from a jail cell in Ranchi; beginning in 1916, he was imprisoned for several years for editing newspapers that condemned the British Raj and called for independence. He became a committed disciple of Gandhi, espousing nonviolent resistance. When he was freed, only to be soon locked up once more&#x2014;this time with his papers destroyed&#x2014;Azad began again his work on the Qur&#x2019;an. In verse seventeen of the eighteenth sura, God reveals how He shifted the path of the sun at sunrise and sunset to avoid shining into the mouth of the cave, lest the sleepers&#x2019; bodies decay in the heat. Were one to have peered inside, <em>Thou wouldst have deemed them waking though they were asleep.</em> They were not sleeping but temporarily dead, Azad argued. They were so absorbed by their prayers that death caught them in postures of worship. The cave was open on two sides; cross-ventilation kept their bodies cool but caused them to sway. Anyone who stumbled on them would have found a terrifying sight.</p>
+        <p>In the 1935 production of <em>The People of the Cave</em>, the director added a prelude to draw out the connection between the play and its Qur&#x2019;anic inspiration. It was a story that everyone in the Khedivial Opera House audience would have recognized, for in Egypt, the <em>Surat al-Kahf</em> is memorized in schools and recited in mosques. Children are taught that seventy thousand angels stand guard around the words of the chapter. The play began in darkness; from an unknown direction a sound broke the silence and slowly grew louder&#x2014;the voice of the renowned chanter Shaykh Ali Mahmoud, singing the familiar sura. The shadows of the three Christians were projected onto the stage, caught in the act of secret prayer. This was followed by scenes depicting the torture of the Christians by the polytheists, punctuated by eerie bursts of music. Then the shadows acted out the flight to the cave, black ghosts who moved behind an illuminated white screen. In the final act of al-Hakim&#x2019;s script, the sleeper Marnush, as he lies in the cave awaiting death, radically renounces his religion. Battered by the waves of time, Marnush dies &#x201C;stripped of everything,&#x201D; he declares. &#x201C;Naked as I was born &#x2026; No thoughts, no emotions &#x2026; and no faith.&#x201D; The National Theatre Company, fearing controversy for portraying one of the sleepers as an apostate, omitted the lines from the play.</p>
+        <p>In the Qur&#x2019;an, the story begins with a question: <em>Or dost thou think the Men of the Cave and the inscription were among our signs a wonder?</em> (18:9) Al-Hakim&#x2019;s Cairo audience, in its unimpressed reaction, may well have been channeling God&#x2019;s own attitude toward the sleepers. It was not much of a miracle, the verses seem to say. We can find among God&#x2019;s signs on earth much more wondrous things than a long nap. Toward the end of the story, a line reads, <em>Say, &#x201C;It may be that my Lord will lead me unto something nearer to guidance than this&#x201D;</em> (18:24). The twelfth-century Persian scholar Shaykh Tabarsi wrote, &#x201C;Its meaning is, Say, perhaps my Lord will give to me from the signs and the indications of prophecy, something that will be closer to guidance, and better evidence, than the story of the Men of the Cave.&#x201D; Azad, too, warned against reading too much into the story. Even Qutb, locked up in his own dark cell, wrote, &#x201C;Strange as their history is, it is not particularly marvelous among the miracles and signs given by God. Indeed there are numerous things that are much more miraculous in the universe than the story of the cave people.&#x201D; All they did was sleep. The divine word itself seems to say, <em>Can&#x2019;t we find something better than this?</em>
+        </p>
+      </subchapter>
+      
+      <subchapter>
+        <div>
+          <figure>
+
+            <div><figure><a href="loi-6.xhtml#loi-6"><img src="../Images/fmt-ndbs-chapter-2-1-thumbnail.png"></img></a></figure></div>
+          </figure>
+        </div>
+        <p>The Qur&#x2019;an raises an eyebrow at what was first a Christian tale. The oldest extant record of the story is found among the seven hundred homilies of the immensely prolific Syriac poet and bishop Jacob of Serugh, who died in 521 AD. Jacob, drawing on an older, unknown source, narrates that the sleepers awoke in the reign of Emperor Theodosius II, who ruled Byzantium from 408 to 450, the year before the poet himself was born. He locates the story not in Tarsus, the setting of al-Hakim&#x2019;s play, but in Ephesus. A further account is found in the Syriac version of the lost <em>Ecclesiastical History</em> of Zacharias Rhetor, originally written in Greek at the end of the fifth century, and included in the work of John of Ephesus, who lived between 507 and 586. The story appears in Latin in Gregory of Tours&#x2019;s <em>De gloria martyrum</em> around 571; Gregory credits his account to a Latin translation of a Syriac version&#x2014;quite possibly of a story first told in Greek.</p>
+        <p>The legend of the sleepers travels north in the work of the eighth-century Benedictine monk Paul the Deacon in his <em>History of the Lombards</em>. In his retelling, they are Teutons who are still sleeping in the farthest, iciest reaches of northern Europe&#x2014;seven future apostles destined for unbelieving countries. In the thirteenth century, the tale of the sleepers spread widely in the medieval best seller <em>The Golden Legend</em>, a collection of hagiographies compiled by the Italian archbishop of Genoa, Jacobus de Voragine. The legend reappears among the tales of <em>The</em> <em>Thousand and One Nights</em>, which al-Hakim&#x2019;s mother would read to him before bed every evening. It turns up in 1781 in Edward Gibbon&#x2019;s monumental <em>History of the Decline and Fall of the Roman Empire</em>, wherein the curmudgeonly English historian attempts to disentangle the conflicting transmissions of the story. Muhammad &#x201C;has not shown much taste or ingenuity&#x201D; in inventing the dog, the detours of the sun, and the divine flipping of the sleepers, Gibbon complained.</p>
+        <p><em>Some will say: they were three, their dog the fourth. Some say five, their dog the sixth. Many say seven.</em> (18:22) Jacob of Serugh claims there were eight. Zacharias Rhetor says six. The medieval geographer Yaqut cites thirteen. <em>Say, O, Muhammad, My Lord knows best their number. None knoweth them save but a few.</em> &#x201C;The impossibility of history as &#x2018;what actually happened&#x2019; becomes the theme,&#x201D; wrote the California sage Norman O. Brown. &#x201C;The Sleepers; how many were there? Lord only knows.&#x201D; Nor is there consensus as to how many years they slept. One version of Jacob&#x2019;s homilies cites 372 years; a second version, 350. It happened in a single long night, miraculous or not, beginning at some point during the reign of the tyrant Decius (249&#x2013;51), until a moment in Theodosius&#x2019;s rule, which would give a figure closer to two centuries, not three. In the tenth century, the Patriarch of Alexandria Eutychius in his <em>Annals</em> gave a count of 149 years. In the Qur&#x2019;an, God awakens the sleepers so that they might speculate on this very question. Was it <em>a day, or part of a day?</em> (18:19) The verses conclude, <em>Only God knows how long they have tarried</em>. And then He gives the answer: <em>They remained in the Cave for three hundred years, to which another nine may be added.</em> Gibbon is indignant: &#x201C;Nothing less than the ignorance of Mahomet or the legendaries could suppose an interval of three or four hundred years,&#x201D; he scoffs, and gives a tally of 187 years. Or is it God who has no sense of time?</p>
+        <blockquote>
+          <p><span>Yamlikha</span>: Maybe we&#x2019;ve been here for a month?<br></br> <span>Marnush</span>: You&#x2019;re mad!! A month?! And what did we do all this time?<br></br> <span>Yamlikha</span>: We slept.</p>
+        </blockquote>
+      </subchapter>
+      
+      <subchapter>
+        <div>
+          <figure>
+
+            <div><figure><a href="loi-7.xhtml#loi-7"><img src="../Images/fmt-ndbs-chapter-2-2-thumbnail.png"></img></a></figure></div>
+          </figure>
+        </div>
+        <p>&#x201C;The night is a curtain and the day is a stage,&#x201D; declares the undead pasha, after he decides to stop despairing of the world he was resurrected in and laugh at it instead. The story of the sleepers may have all been a play. In the year 447, Stephen, a priest in Ephesus, usurped the episcopal see of the archbishop Bassian, and threw his rival into prison without trial. The legitimacy of Stephen&#x2019;s coup was soon contested by the other archbishops, and Theodosius sent officials to Ephesus to investigate the affair. In order to consolidate his grasp on power, some say Stephen concocted a scheme: He would make his bishopric the site of a sensational miracle, one that would end any doubts as to whether God approved of his new regime. Sometime in the summer of 448, the archbishop may have invented and spread the story that seven martyrs, who had hidden in a cave during the persecutions of Decius, had just awoken, consecrating his diocese with their soporific grace. Some scholars suggest that he may have even hired seven young Ephesians as actors, who were to pretend they had just woken up in the deep future.</p>
+        <p>At the time, a doctrinal controversy was raging in the church as to whether the bodily rising of the dead was possible or not. It was a question with consequences for understanding Christ&#x2019;s resurrection, and our own future reanimation at the End of Days. As the Vatican scholar Ernest Honigmann suspects, Stephen may have commissioned the writing of the <em>Hypomnemata</em>, a Greek &#x201C;memorandum&#x201D; on &#x201C;the veritable resurrection of seven youths,&#x201D; to record for posterity the miracle and refute the heretics who would say that the physical raising of the dead is impossible. Although no version predating Jacob of Serugh survives, scholars surmise that it may be the Greek source from which scribes like Jacob and Gregory of Tours learned the story. In the treatise, dedicated <em>in maiorem Stephani gloriam</em>, it is the bishop himself who finds the lead tablets at the entrance of the cave, proving the truth of the miracle, and the bishop who first realizes that the hand of God is at work. Indeed, Stephen is presented as possessing such godly foresight that he seemed to know of the miracle before it even happened.</p>
+        <p>While the story traveled and gathered many believers along the way, the miracle itself may have failed to achieve its purpose. Stephen&#x2019;s reputation never recovered, and his name was omitted from later versions of the <em>Hypomnemata</em> and from retellings of the tale. If he is remembered by history at all, it is as an embarrassment to the church. On the other hand, his rival, Bassian, is venerated among certain sects as a martyr who renounced his position and fled rather than adopt what he saw as the heretical decisions of the Council of Chalcedon in 451. At the council, Bassian and Stephen aired their grievances against each other, and both were condemned as illegitimate and corrupt, though no one questioned the resurrection of the sleepers. &#x201C;Nobody would have dared to utter open doubts concerning a recent miracle which, though extraordinarily taxing to the credulity of believers, had certainly deeply impressed great masses of the faithful,&#x201D; writes Honigmann. But one of the council members made what seems to be a discreet allusion to it, &#x201C;intelligible only to other skeptics; this can of course only be conjectured with due reserve,&#x201D; the scholar warns. When the question was debated as to where the next, legitimate bishop of Ephesus should be consecrated, Diogenes of Cyzicus argued that it should happen in Constantinople, rather than Ephesus, to avoid further controversies. For in Ephesus, Diogenes mused, &#x201C;they consecrate the <em>salgamarius&#x2014;</em>and that is the reason for all the trouble.&#x201D; A <em>salgamarius</em>, from the Latin, is one who makes or sells pickles.</p>
+      </subchapter>
+      
+      <subchapter>
+        <div>
+          <figure>
+
+            <div><figure><a href="loi-8.xhtml#loi-8"><img src="../Images/fmt-ndbs-chapter-2-3-thumbnail.jpg"></img></a></figure></div>
+          </figure>
+        </div>
+
+        <p>A flopped play, not quite a miracle, an old bishop&#x2019;s ruse. <em>Can&#x2019;t we find something better than this?</em> God Himself thinks we could. But inside any cavernous rock, we find a nest of sleepers. Al-Hakim thought his drama could exist only in the mind. Yet politicians and pilgrims have avidly desired this same story to exist in space. Beyond Ephesus and Tarsus in modern-day Turkey, more than forty caves, in countries from Tunisia to China to Azerbaijan, compete for the claim to the original darkness that pickled the sleepers. It is a point of national pride: State-funded archaeologists labor to prove that their nation&#x2019;s cave is the real one, while ministers of tourism promote the hollows as must-see attractions. The myth is contagious, like a global yawn. They slept and slept, awoke, and dozed once more. Can a story, one so often told, be a failure? Something about it is unsatisfying: We tell it because it is so. For fifteen hundred years, storytellers have been trying to improve on it, adding details, dialogues, subplots, and love interests. Still the legend falls flat, and still we try to resurrect it. Perhaps it is not a story at all, but a reaching toward one, like a zombie rising from a grave. Forever in the future is the dawn.</p>
+      </subchapter>
+    </section><pagebreak></pagebreak>
+
+<!-- 
+content-4-1.xhtml
+ -->
+
+<chapter-three>
+    <header>
+      <h1>3. ZZZZZZZZZZZZZ [THE CAVES]</h1>
+    </header>
+  </chapter-three><pagebreak></pagebreak>
+
+<!-- 
+content-4-2.xhtml
+ -->
+
+<chapter-three>
+    
+    <subchapter>
+      <p>They slept the sleep of Endymion, but the moonlight, unrequited in her love, could not reach them. They slept in the place of the Dormition; they slept while Mary Magdalene, from her grave, kept watch. They slept while the great temple to Artemis was sacked. They slept surrounded by a vast necropolis of believers, believers in them. They slept near St. John; having dreamed the Book of Revelation, he lay in imageless exhaustion. Above his tomb the cracked earth rose and fell, in rhythm; his breath scattered the dust.</p>
+      <p>In 1869, Mark Twain posed for pictures in the ruins of Ephesus. &#x201C;We do not embellish the general desolation of a desert much,&#x201D; he wrote. &#x201C;We add what dignity we can to a stately ruin with our green umbrellas and jackasses, but it is little. However, we mean well.&#x201D;</p>
+      <p>They slept not in Ephesus but in Afsus, a town in Elbistan. They slept not in Afsus but in Fis, the village in Turkey where the Kurdish separatist group PKK was founded. &#x201C;The cave that is in Ephesus does not comply with the definitions of the Qur&#x2019;an,&#x201D; declares KurdishSaladinTV, a YouTube channel. &#x201C;Since Saladin [Fis] is officially recognized as the cave of Seven Sleepers.&#x201D;
+      </p>
+      <p>They slept in Amman, argues a scholar from Amman, who has done extensive research on this subject. In 1961, Jordanian archaeologists unearthed the jaw of the dog Qitmir, with one incisor and four molars intact.</p>
+      <p>They slept by the side of the Silk Road in Xinjiang, while raisins dried in the sun. They slept in a cave that once belonged to the Buddha. Some call it Apsus. When the Red Guards came to destroy the shrine, it is said a dog singlehandedly drove them off.</p>
+      <p>They slept in Maimana, in northern Afghanistan, in a cave lined with hundreds of handprints traced in chalk. Clusters of white tombstones surround the entrance, indications of those who came to visit, or to join them. Some say the Buddhas to the southeast in Bamiyan were once the pagan tyrant Dikyanos and his consort, turned to stone in an act of divine punishment. Further retribution was exacted in March 2001, when the Buddhas were dynamited by the Taliban.</p>
+      <p>They slept on the outskirts of Paphos, where Aphrodite rose from the sea. Seven relics were found in the cave, variously claimed to be the seven martyrs or the fossilized remains of seven Cypriot dwarf hippopotamuses.</p>
+      <p>They slept in Nakhchivan, in the shadow of the Ilandag, a mountain whose peak was chipped by Noah&#x2019;s Ark after the floodwaters receded. In the cave, no trace of the sleepers remains, except a meteorite worn smooth by the hands of pilgrims.</p>
+      <p>They slept in a nest in Tarsus, transformed into young birds. They fell asleep in Glastonbury, under the Chalice Well. They were weary from building a church out of twigs.&#xA0;
+      </p>
+      <p><em>The whole of Europe thus, in one sense, answers the description of the cave</em>, according to the website of the Lahore Ahmadiyya sect.</p>
+      <p>They slept in Gandia, south of Valencia, and in the hills of Granada at Loja. They slept in the crypt of the Marmoutier Abbey. They slept in every house on the Comoro Islands. They slept in Chenini, in southern Tunisia. When they awoke they were thirteen feet tall.</p>
+      <p>They slept in Marseille and in N&#x2019;Gaous and in Nabk, in the monastery of Saint Moses the Abyssinian. They slept in the sky above Basra. The only sound was the footsteps of centuries entering and exiting the stage.</p>
+      <p>They slept over Damascus, in a cave on Mount Qasyun. The caretaker of their shrine carries a talisman: a photograph taken in the cave in 1954 of Louis Massignon, the Christian Islamicist who spent his life hunting traces of their sleep.&#xA0;
+      </p>
+      <p>They slept in Vieux-March&#xE9; in Brittany, and in the cemetery of Guidjel, near S&#xE9;tif. They were lost in God as they slept.</p>
+      <p>They slept in Tibhirine, south of Algiers, where seven French monks were beheaded in the night in 1996. They slept in Midelt, in Morocco, with their hands crossed in prayer, near the monastery where the surviving monks fled.</p>
+      <p>They slept in Yemen, in the mountain sanctuary of Jebel Saber, kept cool by a wind from the north that rushed through the underground tombs.</p>
+      <p>They slept in Finland, where they are feted each year on <em>Unikeonp&#xE4;iv&#xE4;</em>, National Sleepyhead Day. The last person in the house to awaken is thrown into a lake. Or the left side of his chest is shaved.</p>
+      <p>They slept in Cairo in the crypt of al-Maghawri, once occupied by the Bektashi Sufi order and now by the Egyptian military. They slept through the call of the muezzin who cries, <em>Prayer is better than sleep.</em> They slept on the marble altar of the Siebenschl&#xE4;ferkirche in Rotthof, in positions of overwrought repose.</p>
+      <p><em>Had you seen them, you would have fled in fear.</em> (18:18)</p>
+    </subchapter>
+    
+    <subchapter>
+      <p>They were called Maximian, Malchus, Martinian, Dionysius, Constantine, John, and Serapion. Or Clemens, Primus, Laetus, Theodorus, Gaudens, Quiriacus, and Innocentius. Or Arshaledes, Diomedes, Eugenius, Dimatheus, Bronatheus, Stephus, and Cyriacus. Or Maksimilina, Mashilina, Martunus, Yamlikha, Dabriyus, Sirabiyun, and Afastatiyus. Or Aleekha, Muksulimta, Tub-yunus, Udurgut, Yunus, Yuanus, and Kushfootut. Or Maximianus, Dionysius, Exacustodianus, Constantinus, Jamblichus, Johannes, and Martinianus. Or Maximilianus, Dionysius, Amulichus, Martinus, Antoninus, Johannes, and Marcellus. Or Maximilien, Marc, Martini, Denis, Jean, S&#xE9;raphim, and Constantin. Or Gorm&#xE1;nudr, Frerm, Hr&#xFA;tm, Einm, S&#xF3;lm, Selm, and Kornskurdarm&#xE1;nudr. Or Dom Christian, Brother Luc, Father Christophe, Brother Michel, Father Bruno, Father C&#xE9;lestin, and Brother Paul. Or Adam, Idris, Noah, Abraham, Moses, Jesus, and Muhammad.
+      </p>
+      <p>They made themselves a bed in your ear and went to sleep.</p>
+      <p>And the night grew long and old and miraculous.</p>
+    </subchapter>
+    
+
+    <subchapter>
+      <p><em>And their dog</em>
+        (18:18)
+      </p>
+      <p>It followed them as they fled. They drove it away with stones and branches, but it returned. They beat it nearly to death when, according to the Prophet&#x2019;s companion ibn &#x2018;Abbas, the dog spoke: &#x201C;What do you want from me? Do not fear treachery from me: I love the friends of God.&#x201D; Qitmir remained awake all those years, with neither food nor water, keeping vigil while they slept. <em>&#xA0;</em>
+      </p>
+      <p>The dog was yellow. It was black and white. The stern thirteenth-century theologian ibn Taymiyya listed the color of Qitmir among Those Things That Cannot Be Proved and Are in Any Case Useless, alongside the part of the cow struck by Moses and the size and type of wood of Noah&#x2019;s ship.</p>
+      <p>The dog was a man. Qitmir was Ali, the martyred son-in-law of the Prophet, appearing to the young men to test their faith. Or it was the Prophet&#x2019;s companion Salman al-Farsi who appeared in canine form. The dog became the star 80 Ursae Majoris.</p>
+      <p>After God revealed their story to him, Muhammad wanted to visit the sleepers, but He would not permit it. The angel Gabriel told him to seat the four future caliphs, Abu-Bakr, Omar, Osman, and Ali, on the four corners of a carpet, and let a strong wind carry his envoys to the cave. When they arrived, they loosened the rocks blocking the entrance to the cave and the light burst in. Qitmir leaped to his feet and greeted the caliphs.</p>
+      <p>The dog signaled, &#x201C;Come in!&#x201D;</p>
+    </subchapter>
+    
+    <subchapter>
+      <p>They sleep near the navel of the sea, to which all waters find their way. To reach them, one must traverse the land of frost. They sleep in a subterranean citadel, uninfluenced by time. They sleep while ships are flung into the nearby whirlpool like arrows through the air, while Hvergelmir, the roaring kettle, swallows them or spits them back. They were put to sleep by inserting a <em>svefnthorn</em>
+        into each ear. Until the sleep thorns fall or are taken out, the seven men will slumber. They doze until Ragnar&#xF6;k, the day the gods will die.
+      </p>
+      <p>The sleepers are metalsmiths; they rest surrounded by their own creations, weapons built for humans of supernatural size. They are cyclopes. Bands of Frisians and Danes tried to plunder the cavern, but when they touched the sleepers the thieves&#x2019; limbs withered and shrank.</p>
+      <p>They are the seven sons of Mimir, the guardian of the middle root of the World Tree. They are the four stags that graze off its branches: Dvalinn, the Dormant One; D&#xE1;inn, the Dead One; Duneyrr, Thundering in the Ear; and Dura&#xFE;r&#xF3;r, the Snorer. Each son is a seasonal change felt by the tree each year; each ensures the seasons follow one another in their proper order. But when Mimer was slain in the wars between the god clans, the World Tree, having lost its caretaker, succumbed to the spell of time. It decays in crown and root; its deterioration is both natural and moral.</p>
+      <p>They have a sister, Nat, who takes care to see that they are shrouded in darkness at all times. Voices of other women, too, are heard in the tabernacle of sleep.</p>
+    </subchapter>
+    
+    <subchapter>
+      <p>The <em>Vita &#xC6;dwardi Regis</em> records that on Easter Day, King Edward the Confessor sat at a banquet in Westminster surrounded by his bishops and nobles yet barely touched his dinner. He was immersed in thought. Suddenly, to the astonishment of all those present, he broke into &#x201C;indecorous laughter.&#x201D; Soon his face clouded over again and his nobles asked him the reasons first for his merriment and then for his sadness. Edward replied that he had been thanking God for the abundant food and drink on his table, when God sent him a vision. Edward saw&#x2014;as if he were there himself&#x2014;the seven sleepers, lying inside a cave in Mount Celion near Ephesus. Suddenly, all the sleepers flipped over onto their backs, from the right side to the left, and Edward laughed at the synchronized sight. But he soon realized what it meant: For as long as they lie on their left side, violence and misery will plague the world.</p>
+      <p>On hearing this, Earl Harold summoned a knight, a clerk, and a monk to visit the cavern of the sleepers. And so it was, just as Edward had seen. The Ephesians maintained that they heard from their grandfathers that the seven had always slept on their right; but when they entered the cave with the Englishmen, they were found to be lying on their left. It was an omen of what was to befall Christendom, on the eve of the First Crusade. By the end of the eleventh century, Ephesus was seized by the Seljuk Turks; it was wrested back by Byzantium, only to be conquered again a century later. &#x201C;Whenever sorrow threatens, the Sleepers turn on their sides,&#x201D; wrote the mythographer Sabine Baring-Gould.</p>
+      <p>They were drunks, according to Mark Twain. They stole forty-two bottles of an aged liquor from the grocer and drank them all. Their motto was &#x201C;Procrastination is the thief of time.&#x201D; They fell asleep in the cave with their neighbor&#x2019;s dog Ketmehr. When they awoke&#x2014;stark naked&#x2014;they found that Ephesus had been radically transformed and all their relatives were dead. Strangers shut their doors on them in suspicion. When the men realized they had been asleep for two centuries, they exclaimed, &#x201C;Behold, the jig is up&#x2014;let us die.&#x201D; Writes Twain, &#x201C;The Seven-up did cease in Ephesus, for that the Seven that were up were down again, and departed and dead withal. And the names that be upon their tombs, even unto this time, are Johannes Smithianus, Trumps, Gift, High, and Low, Jack, and The Game. And with the sleepers lie also the bottles wherein were once the curious liquors; and upon them is writ, in ancient letters, such words as these&#x2014;names of heathen gods of olden time, perchance: Rumpunch, Jinsling, Egnog. &#x2026; I know it is true, because I have seen the cave myself.&#x201D;</p>
+    </subchapter>
+    
+    <subchapter>
+      <p>They are not three or seven but thirteen, records the medieval geographer Yaqut, a freed slave from Baghdad. In 632, &#x2019;Ubadah ibn al-Samit was sent by Abu Bakr on a proselytizing mission to Byzantium and visited the cave. An iron door was unlocked for him, and he was led inside the chamber. Thirteen men were lying on their backs, in gray cloaks and knee-high leather boots. Ibn al-Samit related, &#x201C;We uncovered their faces, one after the other, and lo! in all was the complexion of healthful bloom. There was red blood in their cheeks; some had grey hair and some had black.&#x201D; Each year, their caretakers would trim the sleepers&#x2019; nails, cut their mustaches, and stand them upright to shake the dust from their clothes. &#x201C;When we came to the last of the men, we found that his head had been cut off with the stroke of a sword,&#x201D; ibn al-Samit recalled, as recorded by Yaqut. &#x201C;It was as though it had happened that very day.&#x201D; The caretakers related that after a band of invaders seized the cave, one of them demanded to know the story of the bodies. Disbelieving it, he severed one of their heads as an experiment. Mujahid ibn Yazid, who visited ninety years after ibn al-Samit, recorded that the wound of the headless sleeper still bled.</p>
+      <p>Ali ibn Yahya, on his own visit to the cave, relates that he tried to smooth some rumpled hairs on one of the sleepers&#x2019; heads, but found they would not flatten. The astrologer Muhammad ibn Musa suspected a trick. Sent by the caliph al-Wathiq to investigate the condition of the sleepers, the caretaker at first refused to let him in, claiming that harm would befall him. Ibn Musa persevered, and entered the cavern to inspect the bodies, which he noted were preserved with unguents, aloes, myrrh, and camphor. He passed his hand over their chest and hair. &#x201C;We had imagined they would have been living men, with the semblance of those who are dead; but behold these men are not of this sort,&#x201D; the astrologer complained to the caretaker. They were not sleeping but embalmed. When ibn Musa resurfaced into the daylight, the caretaker served him lunch. The meal made the astrologer violently ill.</p>
+      <p>&#x201C;Every morning, toward the dawn, very early, they come down from the sky and visit that place where they had slept, and then they go up again,&#x201D; said an Alawite woman to an interviewer in the late 1990s. She lived near the cave at Tarsus, where al-Hakim set his play. They were seven brothers, the nephews of a cruel pharaoh who had forced them to toil without rest. They decided to flee, and meeting a shepherd, a dog, and a camel along the way, hid in a cave in the hills of Enculus, where they fell asleep. When they awoke, and realized that a crowd had gathered around the cave, they refused to leave it and prayed for help. God turned them into the stars of the Big Dipper. Reports circulate in Tarsus of a shaft of light emanating from the constellation down to the cave. &#x201C;Once, on a summer night, I was sleeping on the roof,&#x201D; related the woman, &#x201C;and when I woke up I saw them&#x2014;really or not&#x2014;I saw them in the direction of the cave; there they came down. I do not really know how. But they say it&#x2019;s like that, so they say. The constellation is like a coffee pot. If you stay until night I&#x2019;ll show it to you.&#x201D;</p>
+      <p>Others say the sleepers are the crew of the constellation <em>Safina</em>, or Argo Navis, the ship that hovers above the South Pole. Sailors once set their courses using the star that formed its rudder, Suhayl, or Canopus. A boy went exploring in the cave and never came out, the Alawite woman recalled. The police sealed the entrance so that others would not get lost.</p>
+    </subchapter>
+    
+    <subchapter>
+      <p>&#x201C;Was it a dream?&#x201D; wrote Danilo Ki&#x161; in a short story from <em>The Encyclopedia of the Dead.</em> &#x201C;Was it a dream, the daylight, the light that streamed in on him when the people moved away from the entrance to the cave, when a door opened up in the wall of the crowd standing round, and a new light appeared, incontestably divine, a forgotten light, far and near at once, the light of a sunlit day, the light of life and clear sight?&#x201D;</p>
+      <p>It was Yamlikha who was chosen from among them to venture out for food. On the road leading to the city, he saw white banners written with God&#x2019;s name. He rubbed his eyes with his hands. &#x201C;Am I really awake?&#x201D; This is how the story is told in an undated handwritten manuscript found in a cave in Tuyoq in Xinjiang province and now in the possession of the Finno-Ugrian Society. Yamlikha went to visit his old home, and found that several youths and an old man were living there. He greeted them, then informed them they were living in his house. The youths wanted to start a fight, but the old man restrained them and asked Yamlikha to tell his story. On hearing it, the old man laughed and lost consciousness. When he woke up, he said, &#x201C;I am the son of your son; you are my grandfather.&#x201D; He embraced Yamlikha and wept. Then the old man said, &#x201C;I have a father who is very old, so old that he is only skin and bone. I have wrapped him in cotton and put him hanging in a litter. He is still alive.&#x201D; He brought down the litter and, uncovering it, carefully unwrapped the ancient man from the cotton, &#x201C;in the same way as a newborn child would separate for the first time from his mother.&#x201D; The old man brought milk and put it to the mouth of the ancient, who drank the milk and opened his eyes. He looked at his father&#x2019;s unwrinkled face and cried.</p>
+    </subchapter>
+    
+    <subchapter>
+      <p>The Abbasid caliph al-Mu&#x2018;tasim, who reigned from 833 to 842, had heard the rumor of the people of the cave and sent an emissary to Byzantium to search for them. His ambassador returned instead with a bundle of ancient Greek manuscripts. As Louis Massignon relates in his history of <em>les sept dormants</em>, some say the envoy discovered the texts near the bodies of the sleepers themselves, hidden in the same dark crevices. A team of scholars in Baghdad was devoted to translating them into Arabic. Al-Mu&#x2018;tasim had inherited the project of preserving and translating Greek texts&#x2014;long after they had been forgotten or destroyed in the West&#x2014;from his predecessor, his half brother al-Ma&#x2019;mun, who once met Aristotle in a dream. It was through the efforts of the Abbasids that much of the ancient knowledge was recovered. Via Baghdad, preserved in Arabic, Greek learning would later enter Europe, where it would be reclaimed as its own epistemological heritage.</p>
+      <p>In 448, the year that the questionable Bishop Stephen may have hired actors to pretend they had awakened&#x2014;or the year when they really did resurrect&#x2014;Theodosius issued an edict that all non-Christian books be burned. History forever repeats itself: Fearing the persecution of a Christian tyrant, pagan Greek texts fled to the hills.</p>
+      <p>They were men. They were books. They slept in caves.</p>
+
+    </subchapter>
+  </chapter-three><pagebreak></pagebreak>
+
+<!-- 
+content-5.xhtml
+ -->
+
+<section>
+      <header>
+        <h1>4. REVOLUTION and/or APOCALYPSE</h1>
+      </header>
+      
+      <subchapter>
+        <p>In June 1965, Martin Luther King Jr. delivered the commencement address at Oberlin College. He titled his speech &#x201C;Remaining Awake Through a Great Revolution.&#x201D; &#x201C;I&#x2019;m sure that you have read that arresting little story from the pen of Washington Irving entitled &#x2018;Rip Van Winkle,&#x2019;&#x201D; King began. &#x201C;While he was peacefully snoring up in the mountain, a revolution was taking place in the world. &#x2026; And Rip Van Winkle knew nothing about it; he was asleep.&#x201D; In Irving&#x2019;s tale&#x2014;written over the course of a sleepless night in June 1818&#x2014;the heroically lazy, henpecked Rip takes a twenty-year nap on the slopes of the Catskills. When he awakens, he finds that the village inn that once displayed a portrait of King George III now boasts the face of a different George, his friends are gone, and that other &#x201C;petticoat government,&#x201D; the matriarchy of Dame Van Winkle, is dust. Rip is bewildered. &#x201C;There are all too many people who, in some great period of social change, fail to achieve the new mental outlooks that the new situation demands,&#x201D; King warned. &#x201C;There is nothing more tragic than to sleep through a revolution.&#x201D;</p>
+        <p>A profound transformation was under way in America and the world at large, King continued: the process of decolonization and the rise of the civil rights movement. He condemned those who would impede it. &#x201C;Anyone who feels that our nation can survive half segregated and half integrated is sleeping through a revolution,&#x201D; he declared. Anyone who feels that we can live in isolation today &#x2026; is sleeping through a revolution.&#x201D; And &#x201C;anyone who feels that the problems of mankind can be solved through violence is sleeping through a revolution.&#x201D; Rip Van Winkle, in King&#x2019;s view, was on the wrong side of history&#x2014;the side that snoozed. But although Rip slept through America&#x2019;s struggle for liberty, in Irving&#x2019;s tale he has a certain perspective that everyone else lacks. Due to his long slumber, he is uniquely able to compare two disparate moments, oppressed colony and newly independent nation, and see how they measure up. &#x201C;The very character of the people seemed changed,&#x201D; Rip observes. &#x201C;There was a busy, bustling, disputatious tone about it, instead of the accustomed phlegm and drowsy tranquility.&#x201D; It seems obvious, even innocuous, to put two instants side by side and see what has improved and what is for the worse. But in periods of upheaval this very mode of comparison has been a most controversial act. Sleepers are assessors of our awakenings. And sleep cannot be censored.</p>
+      </subchapter>
+      
+      <subchapter>
+        <div>
+          <figure>
+
+            <div><figure><a href="loi-9.xhtml#loi-9"><img src="../Images/fmt-ndbs-chapter-4-1-thumbnail.jpg"></img></a></figure></div>
+          </figure>
+        </div>
+        <p>The sleeper is the ultimate social critic, though he has missed most of what happened. In exile in Aleppo in 1929, a year after al-Hakim composed <em>The People of the Cave</em>, the Turkish intellectual Refik Halit Karay wrote the play <em>Deli</em>, or <em>Mad</em>. Maruf Bey, a man living in the Ottoman Empire, mysteriously becomes catatonic two days before the Young Turk Revolution in 1908, and comes to his senses twenty years later, to find that the sultanate and the caliphate have been abolished, Mustafa Kemal (later known as Atat&#xFC;rk) is in power, vast sociocultural and political reforms have been implemented, and his wife and daughter are dead. He is confounded by the changes that have taken place in his absence: a world war, new national borders, new methods of keeping time, short haircuts and education for women, men without beards, the shuttering of Sufi lodges, saints&#x2019; tombs, and madrassas, strange alterations to the Turkish language. &#x201C;Am I misunderstanding something?&#x201D; Maruf exclaims in confusion. &#x201C;Surely I haven&#x2019;t recovered yet, I&#x2019;m still sick, maybe I am mad. &#x2026; Or else everyone else has gone mad, and I&#x2019;m the only one left who still has my senses!&#x201D; He wonders whether he is in some muddled dream.</p>
+        <p>Atat&#xFC;rk&#x2019;s reforms were one answer to the question posed by al-Hakim&#x2019;s drama: how the nation, awakening into a new global order, should keep pace with modernity while holding on to its own character. Karay&#x2019;s play was radical for even imagining the Turkish Republic in continuity with the empire that preceded it. The play was essentially highlighting the obvious: There had been a rupture between past and present, a profound restructuring of society and culture in Turkey in a shockingly brief period. But in the 1920s and &#x2019;30s, few authors were speaking to the overwhelming ambivalence, sadness, and absurdity that accompanied Turkey&#x2019;s abrupt modernization. Karay wrote in exile from a society in which stating the obvious was not allowed, as the scholar Christine Philliou has argued. In <em>Deli</em>, which was not published in Turkey until after Atat&#xFC;rk&#x2019;s death, Karay hinted that the changes the president had forced onto the country were, in many ways, mad. Egypt, once a part of the Ottoman Empire, was watching; Cairo pundits debated Turkey&#x2019;s swerve toward modernity and argued over whether it should be emulated. A diplomatic crisis between the two nations exploded in 1932 when Mustafa Kemal demanded that the Egyptian ambassador remove his fez&#x2014;the old, venerable symbol of the ancien r&#xE9;gime, which Turkey had outlawed&#x2014;at a state dinner.</p>
+        <p>Surfacing from his torpor, Maruf Bey, whose name means &#x201C;Mr. Common Sense,&#x201D; is the only one of Karay&#x2019;s characters who remembers his nation&#x2019;s past. But on the stage of history, another cast of sleepers expressed their dismay. In 1930, a dervish named Mehmet from the Naqshabandi Sufi order led a violent uprising against Atat&#xFC;rk&#x2019;s secularizing reforms and what he saw as the idolatry of the state. He declared his seven disciples the Seven Sleepers of the Cave and proclaimed himself the Mahdi, the prophet who, in the End of Days, will come to redeem the world gone awry. From Manisa in the west, Mehmet and his followers traveled to Menemen, outside Izmir, picking up a dog they called Kitmir along the way. In the central mosque, the sheikh announced his return as the Mahdi, showed Kitmir to the congregation as proof, and declared that an army of seventy thousand was en route. Mehmet called for the restoration of the caliphate and Islamic law, the reopening of Sufi shrines, and a return to old ways of life. When local army troops attempted to suppress the revolt, a hundred of Mehmet&#x2019;s supporters rioted, killing a lieutenant. They put his severed head on a pole and carried it around in the streets. In response, the Turkish army called in reinforcements and crushed the uprising, executing Mehmet and the rest of his sleeper cell.</p>
+        <p>Martin Luther King dismissed those&#x2014;like the dervish and his disciples&#x2014;who would fight for a cause with violence as &#x201C;sleeping through the revolution.&#x201D; He was preoccupied by the question: how to stay awake? Yet sleep itself can be a form of nonviolent resistance, with a revolutionary potential of its own. The Iranian author Kader Abdolah, writing in exile in the Netherlands, begins his novel <em>My Father&#x2019;s Notebook</em> with an incantation of the Qur&#x2019;anic chapter of the Cave. His characters, members of the left-wing opposition to the regime of the shah, Mohammad Reza Pahlavi, and then that of Ayatollah Khomeini, escape from prison and flee into the fictional Saffron Mountain, where they hide in a cave to sleep until Iran is free from tyranny. Their dormancy is a protest, a rejection of everything that has happened in Iran over the course of two repressive governments. &#x201C;For it is possible to stand up against an unjust system with all of your might, with all of your body, with all of your soul, and yet not stoop to hatred and violence. Something about this approach disarms the opponent. It exposes his moral defenses, weakens his morale, and at the same time, works on his conscience,&#x201D; MLK said. Sleep is just this sort of refusal, contra King: a stance against injustice that is not only nonviolent but as vulnerable, and as noncooperative, as possible. Sleep is an exile found in the dark, an emigration not across borders but time. When governments fail to protect us, the cave steps in.</p>
+      </subchapter>
+      
+      <subchapter>
+        <div>
+          <figure>
+
+            <div><figure><a href="loi-10.xhtml#loi-10"><img src="../Images/fmt-ndbs-chapter-4-2-thumbnail.jpg"></img></a></figure></div>
+          </figure>
+        </div>
+        <p>If the present has become unbearable, the quickest way to get to the future is to sleep. Like a time traveler, but without expensive equipment, the sleeper arrives in the blink of an eye, fresh with memories of the sunken past. In Basra in the late tenth century, a secret society of philosophers who rejected the bloody sectarian conflicts of their age declared themselves the sleepers of the cave. In the aftermath of the murder of the Prophet&#x2019;s family at Karbala in 680, the Ikhwan al-Safa, or Brethren of Purity, imagined&#x2014;projecting themselves onto the past&#x2014;that they had chosen to fall asleep and reject as corrupt everything that had subsequently happened in the history of Islam. In their retelling of the sleepers&#x2019; legend in the <em>Epistle on Resurrection</em>, the Brethren took the 309 years revealed by the Qur&#x2019;an and added forty-five to it, so at the time of its composition their awakening would still lie ahead in the future. They were writing in their sleep.</p>
+        <p>Sleepers are futurists by nature. Following the publication of <em>The People of the Cave</em>, a critic accused Tawfiq al-Hakim of stealing his plot from one of the cult classics of sci-fi. In the weekly paper <em>Ruz al-Yusuf</em>, Habib al-Zahlawi published a series of articles claiming that al-Hakim had lifted from the American author Edward Bellamy&#x2019;s 1888 novel <em>Looking Backward.</em> A young man falls asleep in Boston in 1887 in his subterranean bedroom, hermetically sealed to shut out the noise of the rapidly industrializing city, rife with poverty and vast inequality. He awakens in the year 2000 into a socialist utopia. The revolution was bloodless: While Julian West slept, the United States abolished capital and private property rights, implemented mandatory labor in service to the nation, and eradicated hunger, laziness, and war. Thousands of readers were convinced. One of the first books in America to sell a million copies, Bellamy&#x2019;s novel persuaded many to become socialists, and some even established utopian communes to bring the book&#x2019;s principles to life. When James B. Weaver ran for president in 1892, the Populist candidate incorporated a number of policies derived from the sleeper story, and attracted a million votes.</p>
+        <p>Of all the novels, sequels, and satires that the book provoked&#x2014;one scholar has counted at least sixty-two works indebted to Bellamy published between 1889 and 1900&#x2014;the best known is H. G. Wells&#x2019;s <em>When the Sleeper Wakes</em>. Graham, a desperate insomniac who hasn&#x2019;t slept for six nights, is on the verge of killing himself when he finally slips into the sweet, merciful oblivion. Two hundred and three years later (the same duration that West slept), Graham awakens to find that he is the sole owner of a corporation that, thanks to the logic of compound interest, has come to own much of the world. While he dozed, the suffering masses made pilgrimages to his bedside and prayed that their overlord might someday be roused to come to their rescue. As the sleeper peers out over the vastness of future London, the city he owns, Wells writes, &#x201C;He thought of Bellamy, the hero of whose Socialistic Utopia had so oddly anticipated this actual experience. But here was no Utopia, no Socialistic state &#x2026; the ancient antithesis of luxury, waste and sensuality on the one hand and abject poverty on the other, still prevailed.&#x201D;</p>
+        <p>In the Cairo papers, al-Zahlawi branded al-Hakim a <em>mutafalsaf&#x2014;</em>an &#x201C;imitator of philosophers&#x201D;&#x2014;and undertook a point-by-point comparison of Bellamy&#x2019;s novel and the play. But he seemed to conclude that the biggest problem wasn&#x2019;t that al-Hakim had plagiarized, but that he wasn&#x2019;t plagiarist enough. Al-Zahlawi opined that the dramatist had let the oxygen of his play go to waste for failing to use it to promote socialism. Al-Hakim should have used the sleepers to reflect on contemporary social life, the struggle of labor against the exploitation of capital, and the miseries of the <em>fellahin</em>, the peasants. &#x201C;<em>Looking Backward</em> is brilliant because it highlights the contrast between two political and social ideas, between socialism and capitalism, through the difference in years,&#x201D; al-Zahlawi wrote, &#x201C;but what did this author of <em>The People of the Cave</em>, may God and Art forgive him, what did he want to show? What was the point of this ruse of three hundred years?&#x201D; Al-Hakim&#x2019;s play, written at a hopeful moment in Paris in 1928, had appeared in print in 1933 in a morphed world. The Great Depression had plunged Egypt into an economic crisis, tempering the optimism of its Awakening. The new prime minister&#x2014;a friend of both the Egyptian monarchy and the British&#x2014;had effectively imposed a dictatorship by suspending the constitution. In such an atmosphere, the dreams of al-Hakim&#x2019;s sleepers seemed empty. Though the playwright was an outspoken critic of the corrupt parliament, the rigged elections, and inert opposition parties, his politics lacked a sense of utopia. That refrain again: <em>Can&#x2019;t we do better than this?</em>
+        </p>
+        <p>In 1958, al-Hakim penned a sci-fi counterpart to <em>The People of the Cave</em>. In <em>Rihlatun ila al-Ghad</em>, or<em> Voyage to Tomorrow</em>, a rocket ship carrying two men&#x2014;convicts sent as test dummies on an experimental spaceflight&#x2014;crash-lands on a postapocalyptic planet. When the men miraculously manage to return to Earth, they speculate over how long they have been gone: <em>a day, part of a day</em>, they surmise, alluding to the Qur&#x2019;an. They discover 309 years have passed. The archaic men find themselves in a future in which money no longer exists, everything is always available via machines, and humans no longer need to work. But in such a utopia, life has lost its meaning. The characters speak of how tradition has been sacrificed at the altar of progress, and one of them plots to save humanity from its aimless fate. He ends up silenced in a faraway, prisonlike &#x201C;City of Quiet&#x201D; for daring to speak of revolution. (With this play, &#x201C;the master was permitting himself slightly to nod,&#x201D; one critic wrote.)
+        </p>
+      </subchapter>
+      
+      <subchapter>
+        <div>
+          <figure>
+
+            <div><figure><a href="loi-11.xhtml#loi-11"><img src="../Images/fmt-ndbs-chapter-4-3-thumbnail.jpg"></img></a></figure></div>
+          </figure>
+        </div>
+        <p>In a twelve-minute film made in 2005 in a supermarket in Amsterdam, the Egyptian artist Wael Shawky walks through an endless maze of chilled aisles reciting the <em>Surat al-Kahf</em> from memory. Dressed in a blazer and white shirt, he maintains eye contact as he delivers the Qur&#x2019;anic verses in the relentless monotone of a news report. A digital green news feed races across the bottom of the screen, flashing the English translation of a text incongruous with its surroundings. The Dutch shoppers reflexively filling their baskets barely register the young man&#x2019;s presence. There is no sense as to whether it is day or night in this windowless, fluorescent-lit cavern. The sleepers are time travelers; they are also travelers by air or sea. For Shawky, the story is a parable of immigration, of those who flee their homes to seek better opportunities yet arrive irreparably out of sync on the new shore. He had staged the piece twice before, in supermarkets in Istanbul and Hamburg. The somnolent saints, invoked in the 24-7 labyrinth of potato chips, highlight the strangeness of our dislocated, consumerist age. Should we sleepwalk through it?</p>
+        <p>&#x201C;The future is no longer a vague word,&#x201D; al-Hakim decreed in <em>The Revolt of the Young</em>, a collection of essays published in 1984, three years before his death. &#x201C;It is an active moving machine that stands on two feet before us in the image of young people who will live in the year 2000 and beyond.&#x201D; In detailing a slightly vampiric theory of how the young resurrect the past by pumping new blood into it, al-Hakim quoted from the ancient Egyptian <em>Book of the Dead</em>. In the text, the god Horus gives new life to the bones of his dead father, Osiris. &#x201C;Arise, arise, Osiris!&#x201D; Horus calls, and Osiris shouts, &#x201C;I am alive!&#x201D; Al-Hakim, writing in the early years of Hosni Mubarak&#x2019;s thirty-year dictatorship, surmised that Osiris was the homeland Egypt, with its monumental past and its &#x201C;humiliating present.&#x201D; The playwright, who had always thought of himself as oracular, foresaw that a revolution would be ignited by the young.</p>
+        <p>In the months following January 4, 2011, the day a twenty-six-year-old street vendor lit himself on fire, an underground art collective calling themselves Ahl al-Kahf&#x2014;the People of the Cave&#x2014;took to the streets of Tunis at night. They covered walls and landmarks of the city with collages and stencils: of Mohamed Bouazizi and other martyrs, of Tunisia&#x2019;s ousted president who had fled. Images of army tanks faced off with portraits of Edward Said and Mahmoud Darwish, Qaddafi&#x2019;s head on a rat&#x2019;s body, and aphorisms from Guy Debord. Other symbols were more enigmatic: a man in a gas mask playing an accordion, a procession of nimble black storks. They posted a manifesto on Facebook:</p>
+
+        <blockquote>
+          <p>&#x627;&#x647;&#x644; &#x627;&#x644;&#x643;&#x647;&#x641; &#x644;&#x64A;&#x633;&#x62A; &#x627;&#x634;&#x62E;&#x627;&#x635;&#x60C; &#x647;&#x64A; &#x62C;&#x64A;&#x644;</p>
+          <p>&#x201C;Ahl al Kahf&#x201D; is not an amount of people, it is a generation</p>
+          <p>&#x633;&#x64A;&#x62E;&#x631;&#x62C;&#x648;&#x646; &#x639;&#x631;&#x627;&#x629; &#x639;&#x646; &#x627;&#x644;&#x62A;&#x639;&#x631;&#x64A;&#x641;&#x60C; &#x627;&#x628;&#x642;&#x64A;&#x646; &#x639;&#x646; &#x627;&#x644;&#x62A;&#x648;&#x631;&#x64A;&#x62F;</p>
+          <p>They will emerge multiple, anonymous, imperceptive and elusive</p>
+          <p>&#x648; &#x633;&#x64A;&#x62E;&#x631;&#x62C;&#x648;&#x646; &#x645;&#x646; &#x627;&#x644;&#x62E;&#x631;&#x627;&#x628; &#x60C; &#x648; &#x633;&#x64A;&#x62E;&#x631;&#x62C;&#x648;&#x646; &#x632;&#x63A;&#x627;&#x631;&#x64A;&#x62F;</p>
+          <p>They will emerge from debris, and emerge as ululations</p>
+          <p>&#x648;&#x633;&#x64A;&#x62E;&#x631;&#x62C;&#x648;&#x646; &#x632;&#x62D;&#x641; &#x634;&#x639;&#x628; &#x637;&#x631;&#x64A;&#x62F;</p>
+          <p>They will emerge, a march of a people exteriorized</p>
+          <p>&#x627;&#x646;&#x628;&#x64A;&#x627;&#x621; &#x647;&#x627;&#x645;&#x634;&#x64A;&#x648;&#x646; &#x645;&#x646; &#x639;&#x635;&#x631; &#x62C;&#x62F;&#x64A;&#x62F; </p>
+          <p>marginal prophets from a new era</p>
+        </blockquote>
+      </subchapter>
+
+      
+      <subchapter>
+        <div>
+          <figure>
+
+            <div><figure><a href="loi-12.xhtml#loi-12"><img src="../Images/fmt-ndbs-chapter-4-4-thumbnail.jpg"></img></a></figure></div>
+          </figure>
+        </div>
+        <p>Every year in July, an unlikely group convenes at a small chapel in Brittany. A mix of Christians and Muslims, they meet to join in prayers at a sixth-century sanctuary devoted to the seven sleepers. In 1954, the year the Algerian War of Independence began, Louis Massignon had the idea for the joint pilgrimage, to deploy syncretism toward peace. He invited a Muslim delegation, largely composed of North Africans in Paris who were confronted daily with racism, to join the age-old crowds of Breton pilgrims at the annual feast in Vieux-March&#xE9;. The ritual remains much as it was sixty years ago. On the eve, there is a procession of banners with verses from the Qur&#x2019;an and images of the Virgin Mary, leading to the <em>tandad</em>, the ceremonial bonfire. Mass is said in Arabic, French, and Latin, along with recitations of the <em>Surat al-Kahf</em> and a twelfth-century Breton canticle that narrates the tale of the sleepers. Under the shade of chestnut trees, the pilgrims share tea and crepes, milk and dates. A lamb is slaughtered and served with couscous. Near the church, water flows through a granite fountain pierced in seven places. Each year during the war, on the day of the feast, Massignon&#x2019;s friends in Algeria would venture, often at great risk, to pay their respects to the shrine of the sleepers near S&#xE9;tif, where a stream rushes through a rock in seven channels.</p>
+        <p>&#xA0;&#x201C;Let us penetrate into this path that is so wide, in this night that is so dark, into the cave where the Seven Sleepers, who are before God immured in his Holy Will, are cradled in the Dormition of love,&#x201D; Massignon wrote in 1956 to a friend in Cairo. Scholar, soldier, diplomat, mystic, Massignon saw pilgrimage as a political act, able to shift the balance of power through people moving together in space. He was a priest, ordained in the Melkite Church, but Massignon had first experienced transcendence through Islam. He was a prisoner on a ship in Iraq in 1908 when a Stranger had visited him, radiating a phosphorescence like that of a fish. The apparition taught Massignon that history is a chain of witnesses&#x2014;he believed he was one of them&#x2014;entering the stage, carrying a truth that is beyond themselves and that runs across the boundaries between religions. Through the Vieux-March&#xE9; pilgrimage, Massignon saw a way to create an encounter that would witness the deep bond of this shared story of the sleepers, a link that would make sense only at the End of Days. In the abbey of Gethsemani in Kentucky, the Trappist monk Thomas Merton fasted in solidarity.</p>
+        <p>Though states and sects might argue over ownership of the sleepers&#x2019; cave, for Massignon it was a point within us all. The cave was the center, the <em>point vierge</em>: the virgin, innermost cell inside us where we encounter God. It was an idea that the scholar had learned from the ninth-century Sufi martyr al-Hallaj, who described it as a place in our hearts so inaccessible that not even a dream could penetrate it. Taking up the idea from Massignon, Merton called it &#x201C;the center of our nothingness, where, in apparent despair, one meets God&#x2014;and is found completely in His mercy.&#x201D; It represents the possibility of escape from oneself by taking refuge within something larger: the point of submission and surrender. It is the site of transformation, of becoming&#x2014;a dawn state. At the Eranos Conference in August 1939, as Europe hurtled into World War II, C. G. Jung, inspired by the presence of Massignon, composed on the spur of the moment a lecture on the seven sleepers. &#x201C;The cave is the place of rebirth, that secret cavity in which one is shut up in order to be incubated and renewed,&#x201D; Jung remarked. &#x201C;Anyone who gets into that cave, that is to say into the cave that everyone has in himself, or into the darkness that lies behind consciousness, will find himself involved in an at first unconscious process of transformation.&#x201D; In the cave, we meet the contents of our unconscious. &#x201C;This may result in a momentous change of personality in the positive or negative sense,&#x201D; the psychiatrist warned. So, too, on the stage of nations: According to some Islamic schools of oneiromancy, if you dream of seeing Qitmir in a certain country, its ruler or regime will be changed.</p>
+        <p>July 1962, the month that Algeria gained independence, marked Massignon&#x2019;s last pilgrimage to Vieux-March&#xE9;. In a letter dated August 4, he wrote, &#x201C;For about nine years we have prayed and fasted (eighty-ninth fast last Friday), suffered. <em>Behold the timid dawn of peace.</em>&#x201D; He died a few months later. During this final pilgrimage, Massignon invited the president of the Student Association of Comoros to read the eighteenth sura. &#x201C;His Arabic psalmody was moving, a cry of resurrection through our seven walled up alive joined with the cry of Magdalene (buried on their threshold) for Lazarus,&#x201D; Massignon recorded. Writes the scholar Anthony O&#x2019;Mahony, &#x201C;Resurrection! This was for Massignon the key word.&#x201D; The sleepers, the seven Lazaruses, are among the few to have glimpsed what will happen to us all at the apocalypse. &#x201C;Their amorous impatience made them appear inordinate, so that they would be witnesses [<em>of the Resurrection</em>] for one short moment,&#x201D; Massignon wrote. It is said that their cave is the first place where the trumpet call of Judgment Day will resound. They can&#x2019;t wait.&#xA0;
+        </p>
+      </subchapter>
+      
+      <subchapter>
+        <div>
+          <figure>
+
+            <div><figure><a href="loi-13.xhtml#loi-13"><img src="../Images/fmt-ndbs-chapter-4-5-thumbnail.jpg"></img></a></figure></div>
+          </figure>
+        </div>
+        <p><em>As for the Hour, there is no doubt concerning it.</em> (18:21)</p>
+        <p>The earliest record of the word <em>futurist</em> is attributed to the Anglican theologian George Stanley Faber, who used it to describe those who believe that the eschatological prophesies of Revelation are still to be fulfilled in the future. When the sleepers awoke in Ephesus, relates Gregory of Tours, they delivered a sermon on the apocalypse to the emperor. &#x201C;Most august Augustus!&#x201D; they cried. &#x201C;In order that you may know that we are all to appear before the judgment seat of Christ according to the words of the Apostle Paul, the Lord God has raised us from the dead and commanded us to make this statement to you. See to it that you are not deceived.&#x201D; Then the witnesses fell back into unconsciousness, to await the Second Coming.</p>
+        <p>&#x201C;O, bibliomancer! Know that the People of the Cave have appeared as your augury,&#x201D; reads an inscription in the <em>Falnama,</em> a book used to predict the future by sixteenth-century Safavids and Ottomans. One would let the book fall open to a random page, and read the omens conveyed in intricate illustrations and calligraphic forecasts. In the streets of Istanbul or the courts of Isfahan, diviners would help interpret the portents. There were images of the End of Days that did not bode well&#x2014;hellfire and gigantic scorpions, the scales of Judgment looming over boar-headed traders and men who stole from orphans. But to chance on a picture of the sleepers was felicitous. Qitmir lies coiled at the feet of the saints, who smile, knowingly, in their eternal nap. The augury begins with verses: &#x201C;I am the dog of the family of Ali, how can I not be safe?&#x201D; It explains, &#x201C;The intentions are auspicious; your ascendant appears to be strong; happiness has become your friend.&#x201D; One will accrue wealth and honors (in six days&#x2019; time), recover lost property, or give birth to a healthy child, the sleepers foretell. In another image, an elusive gray-bearded man with a fiery halo stares into a stream, watching a fish. &#x201C;Travel is good to the highest degree,&#x201D; it prophesies.</p>
+        <p>In the eighteenth chapter of the Qur&#x2019;an, the appearance of the sleepers is followed by an elliptical account of a journey undertaken by Moses, to the place where the two seas meet. Without recognizing it, he and his servant stop at that very place to rest and then continue on. Soon Moses notices that the salted fish they had been carrying for dinner has disappeared. The servant reveals that, at their resting point, he had set the fish down on a rock, but it came back to life, jumped into the sea, and swam away. Moses realizes that they had found the confluence they were seeking. When they return, the fish is gone, but a mysterious Stranger is waiting there.</p>
+        <p>He is Khidr, the &#x201C;Green Man,&#x201D; possibly the fish; he is able to appear everywhere and in any guise at any time. He may be a blade of grass, a moth, a flash of phosphorescence. Massignon called him &#x201C;the director of the Seven Sleepers.&#x201D; He is their watchdog; perhaps he is Qitmir. Moses asks Khidr to teach him the secrets of God&#x2019;s wisdom, and he reluctantly agrees, taking Moses on a voyage of initiation. Some say everyone will encounter Khidr once in their lives: You will know it if you shake hands with an old, bearded man missing a bone in his thumb. In Jung&#x2019;s interpretation, Moses represented the ego while Khidr was the unconscious self, a figure also tied to the psychologist&#x2019;s feelings about his father. In the <em>Alexander Romance</em>, Khidr is Alexander the Great&#x2019;s cook, who drinks the water of life and attains immortality. Each Friday he prays in five cities at once. He is on hajj in Mecca but also in Jerusalem, conversing with the Prophet Elijah. At the End of Days, he will appear alongside the Mahdi in battle with the Antichrist, al-Masih al-Dajjal, to restore justice to the world. Until then, memorization of the Qur&#x2019;anic passages is our amulet: &#x201C;Whoever learns by heart the first and last ten verses of <em>Surat al-Kahf</em> will become immune to the evil influence of the Antichrist,&#x201D; Muhammad is recorded to have said.</p>
+        <p>The final episode of the eighteenth relates how Dhul Qarnayn, &#x201C;the Two-Horned,&#x201D; identified with Alexander, travels to the place of the rising sun. He meets villagers who tell him that invaders are ravaging the land: Gog and Magog, peoples from the North. They are the nations that will rally with Satan, as St. John dreamed in Revelation, asleep in his Patmos cave. (Gog is Russia, Reagan said. Gog and Magog are at work in the Middle East, Bush told Chirac.) In the Qur&#x2019;an, Dhul Qarnayn builds a wall of iron to contain them, a defense that at the eschaton will be broken, he warns. Since then, it is said that the wall has been bombarded by shooting stars thrown by demons and cracked by the failures of those who sin. Khidr and the apotropaic sleepers tirelessly repair it. &#x201C;The Koran is pregnant with the future,&#x201D; wrote Norman O. Brown in 1983.</p>
+        <p><em>Think you of the Day when We remove the hills</em> (18:47)</p>
+        <p>A stone will loosen. A thorn falls out of an ear. Heimdallr blows his horn. Mimir&#x2019;s sons spring up. Mountains will be leveled, leaving the earth utterly featureless. The dead will float up from the sea. Each person who has ever lived will be gathered together; demigods and mythic creatures herded into a separate pen. The books that leave out nothing will be opened. Jerusalem will come down from heaven styled like a bride. The sleepers are amorously impatient.
+        </p>
+      </subchapter>
+    </section><pagebreak></pagebreak>
+
+<!-- 
+content-6.xhtml
+ -->
+
+<section>
+      <header>
+        <h1>5. RESURRECTION</h1>
+        <pull-quote>
+          <p>
+          Can you imagine what it&#x2019;s like for a man to be resurrected from the sleep of death after years and generations have passed, during which all the reasons for living, for hope, have changed? How do you think <em>you</em> would handle the situation?
+          </p>
+          <cite>&#x2014;&#xA0;<em>al-Ahram</em> review of <em>The People of the Cave</em>, December 18, 1935</cite>
+        </pull-quote>
+        <pull-quote>
+          <p><br></br>
+          lights have entered
+          <br></br>us it is a music more powerful
+          <br></br>than music
+          <br></br>till other voices wake
+          <br></br>us or we drown
+          </p>
+          <cite>&#x2014;&#xA0;George Oppen&#x2019;s transformation of a line from T.S. Eliot</cite><br></br>
+        </pull-quote>
+      </header>
+      
+      <subchapter>
+        <p>In the final scene of Tawfiq al-Hakim&#x2019;s <em>The People of the Cave,</em> the princess Priska realizes that she is in love with Mishlinya, that mariner wrecked on the shores of time, the man who loved her ancestor. Mishlinya had finally come to his senses, after a heated argument with the princess, and realized that three centuries had passed, and that she was a different Priska. In despair, he fled the palace, to join the other sleepers back in the cave. As if moving by the propulsion of some prophecy, the princess waits for a month to pass and then goes to visit the cave, assuming that by now he must be dead. She becomes hysterical when she finds Mishlinya alive&#x2014;he was waiting for her&#x2014;yet on the verge of slipping away. She commands the tutor Gallias to bring milk in haste to resuscitate him, but it is too late. &#x201C;You resurrected for me, and I was resurrected for you,&#x201D; she tells Mishlinya. &#x201C;Till we meet again,&#x201D; the sleeper says. Unaware that his daughter is within, the king orders the cave to be ceremoniously sealed, to protect the bodies. In a dramatic ending, Priska chooses to remain in the sepulcher, and join Mishlinya in the long, sweet annihilation.</p>
+        <p>Perhaps her decision isn&#x2019;t so mad. What do we know of death? Perhaps there persists some remnant of heat and life, some trace of one&#x2019;s original form. A spark&#x2014;or is it a dream?&#x2014;still smolders between them. Perhaps love is a law of affinity between molecules, atoms that recombine with each other over the centuries in whatever way they can. The moldering lovers await the next resurrection. Pickaxes are left on the inside of the cave, just in case, at some point in the deep future, the sleepers need to break through to the light.</p>
+      </subchapter>
+      
+      <subchapter>
+        <div>
+          <figure>
+
+            <div><figure><a href="loi-14.xhtml#loi-14"><img src="../Images/fmt-ndbs-chapter-5-1-thumbnail.png"></img></a></figure></div>
+          </figure>
+        </div>
+        <p>A thirty-two-year-old man was escorted by the police to the emergency room of the Bak&#x131;rk&#xF6;y Psychiatric Hospital in Istanbul, records a case study from 2011 by a team of four Turkish psychologists. He had been found with his three young children, locked inside a room with his pregnant wife&#x2019;s decaying corpse. She was not dead, he stated in an interrogation. She was sleeping. She would soon resurrect.</p>
+        <p>The man had worked as a teacher, his wife as an architect. After they married, they quit their jobs and cut all social ties, choosing to spend their days reading the Qur&#x2019;an. The wife gave birth to two children. The couple began to share delusions that they were being persecuted for their faith. Fearing that they would become contaminated by contact with infidels, they moved from Istanbul to another province. They had another child. Financial difficulties forced them to move in with the husband&#x2019;s family. Soon after they arrived, they began acting strangely. They shut themselves and the children into a room, and refused to speak to the rest of the household. They had their meals delivered to their door. When the husband&#x2019;s parents confronted them, the couple grew defensive, claimed they were being hounded for their faith, and fled.</p>
+        <p>The couple moved in with the wife&#x2019;s parents, and again locked themselves and their children in a room. They would read the Qur&#x2019;an by letting the pages fall open to random verses. Often, the book chose to open to the <em>Surat al-Kahf</em>, and they would dwell on the line, <em>They sheltered in a cave</em>. During the night, they would retrieve the meals that were left outside the door only if they landed on the verse, <em>They sent one of them out to bring food</em>. If not, they didn&#x2019;t eat. One day the wife became contorted by pain and began to cry out, and then her body went cold. The man interpreted it as a line from the Sura of Sad: <em>We questioned Solomon and left him on the ground as a corpse</em>. In the chapter, King Solomon is reduced to a &#x201C;skeleton on a throne&#x201D; by God as a test of his devotion, and then resurrected. The husband left his wife&#x2019;s body to be, on the assumption that she would soon wake.</p>
+        <p>After ten days without communication from the couple, the wife&#x2019;s family, hearing the sounds of the children weeping, broke down the door. The room was covered in blood and shit, the wife was dead, and the children were on the verge of starvation. An autopsy determined that she had been four months pregnant, miscarried, and died from loss of blood. Her husband said: &#x2018;&#x2018;She fell asleep for a period like the People of the Cave. She was going to wake up and deliver the fourth baby followed by three others&#x2014;the seven sleepers.&#x201D; She must not be buried, he protested. The husband was hospitalized, given clozapine, and released from custody.</p>
+        <p>Two years later, the man remarried, and his children, who had been under the care of relatives, moved back in with him. He stopped taking the clozapine. He began to relocate from place to place with his family, believing that they were being persecuted for their faith. He began sending apocalyptic messages from his phone. He locked his new wife and the children into a room. She escaped through the window.</p>
+      </subchapter>
+      
+      <subchapter>
+        <div>
+          <figure>
+
+            <div><figure><a href="loi-15.xhtml#loi-15"><img src="../Images/fmt-ndbs-chapter-5-2-thumbnail.png"></img></a></figure></div>
+          </figure>
+        </div>
+        <p>In 1971, Tawfiq al-Hakim, &#x201C;an Egyptian more than five thousand years old,&#x201D; as he called himself, returned to Paris, the site of his education in the theater. With his trademark beret and walking stick, al-Hakim went to visit the neighborhood where he had once lived, forty-five years earlier. He couldn&#x2019;t find the restaurant where he used to eat lunch. He asked a policeman to direct him to rue Pelleport, the quiet street where he had once resided. But even the street now went in a different direction. It had been transformed into a wide, bustling commercial avenue, traversing a new diagonal of the city, and had its own metro. The former rue Pelleport had been renamed. His old house was gone. Baffled, al-Hakim stopped passersby in the street to ask where to find the landmarks he remembered, but he received nothing but confusion in response. &#x201C;It was as though I had turned into a character from <em>The People of the Cave</em>,&#x201D; he said, in an interview in <em>al-Ahram</em>. &#x201C;How can the playwright become a character in his own play? &#x2026; Writers are used to living life first and then writing it. But in many instances, I write life and then I live it afterward. And <em>now I fear what I write</em>, scared that I am writing my fate with my own hands.&#x201D;</p>
+        <p>&#x201C;Arise, arise!&#x201D; al-Hakim once wrote, channeling the bird-god Horus. The playwright told of awakenings. Now no one sleeps anymore. The nightly sleeper, before the onset of industrialization, dozed ten hours an evening on average. Now we cultivate insomnia, a kind of vigilance against the violence of the world that is always on digital display. Time moves at the speed of the information we scroll through in the night. We live in 24-7 time, a cosmos where the distinction between night and day shrinks, where age-old circadian rhythms have given way to a block of undifferentiated moments, lit by the glow of energy-saving bulbs and the ever-open signs of e-commerce. As the theorist Jonathan Crary writes, this world created by capitalism is &#x201C;a world with the shallowest of pasts, and thus in principle without specters. But the homogeneity of the present is an effect of the fraudulent brightness that presumes to extend everywhere and to preempt any mystery or unknowability.&#x201D; Sleep remains a lone site of resistance, the last mystery that defies exposure. In recent years, the US Department of Defense has directed considerable resources into studying the brain of the white-crowned sparrow. On its yearly migration it is able to fly for seven days without sleeping, without suffering any loss in cognitive function. If its secret is unlocked, the hope is that soldiers, and someday civilians, could be trained to imitate the wakeful bird.</p>
+        <p>&#x201C;There exists only the instant,&#x201D; Massignon remarked in a lecture he gave at the Eranos Conference in 1951. &#x201C;For the Muslim theologian time is not a continuous &#x2018;duration,&#x2019; but a constellation, a &#x2018;galaxy&#x2019; of instants,&#x201D; he argued, citing scholars such as the eleventh-century Sufi mystic al-Qushayri. It is a physics not unlike that of 24-7 time, with its instant gratifications documented and shared instantaneously. In such a cosmos, Massignon explained, only the moment exists, for every atom is created anew at every second. There is no necessary connection between cause and effect&#x2014;between them lies only the inscrutable will of God. The most profound instant in the Islamic calendar occurs at twilight, with the appearance of the new moon. &#x201C;It is not permissible to foresee the new moon by means of theoretical tables,&#x201D; Massignon related. &#x201C;It must be watched for and established by two &#x2018;witnesses of the instant.&#x2019;&#x201D; The tenth-century jurist ibn al-Qass argued that the sun&#x2019;s movement is discontinuous: Each night it retreats to a resting place, which it will leave only at God&#x2019;s command. There is no certainty that the future will resemble the past. This is good news, or terrifying.</p>
+        <p>The supremacy of the instant is visible in the form of the Qur&#x2019;an itself, the book that descended to earth in what is known as the Night of Power. Nonlinear, seemingly out of joint, it has the texture of interruption. <em>To God belong the secrets of the heavens and the earth, and the matter of the Hour is as the twinkling of an eye, or it is nearer still</em>, it reveals (16:77). The twinkling or the blink of an eye, <em>lamh al-basar</em>, is the instant. &#x201C;The heresiographers condemn as materialists the &#x2018;Dahriyun,&#x2019; the philosophers who divinize Duration (<em>dahr</em>),&#x201D; wrote Massignon. At best, duration is the silent interval between two instants, what elapses between lightning and thunder. One must not worship it. At the Hour, the galaxy of moments will be gathered together. &#x201C;The instant is a pearl-bearing shell, sealed at the bottom of the ocean of a human heart,&#x201D; said the martyr al-Hallaj, as recorded by Attar. &#x201C;Tomorrow, at the rising tide of Judgment, all the shells will be cast on the beach; and we shall see if any pearl emerges from them.&#x201D; The apocalypse will be an indescribably large collection of seashells.</p>
+        <p>Perhaps in the end there is no story of the seven sleepers, because duration means nothing. What is 187 years; what is 309? Time exists only in the instant. Continuity between one point and the next is upheld by God, or by a force even more unfathomable. &#x201C;History becomes a night, or seven nights,&#x201D; wrote Norman O. Brown. That the world is made anew every moment is the logic of 24-7 capitalism and Sufi metaphysics, but it is also the logic of the dream, in which a century can pass in the instant between flipping from one&#x2019;s right side to one&#x2019;s left. If the story fails, make it new. Revolution begins with reverie. Mundane sleep is the nightly rehearsal, as Crary writes, &#x201C;of what more consequential renewals and beginnings might be.&#x201D; The <em>Surat al-Kahf</em> concludes with the penultimate verse, <em>Say: Though the sea became ink for the Words of my Lord, verily the sea would be used up before the Words of my Lord were exhausted.</em> (18:109) Sleep is a surface like the sea, an ink to draft what is to come. We write life, and we live it afterward.</p>
+      </subchapter>
+      
+      <subchapter>
+        <div>
+          <figure>
+
+            <div><figure><a href="loi-16.xhtml#loi-16"><img src="../Images/fmt-ndbs-chapter-5-3-thumbnail.jpg"></img></a></figure></div>
+          </figure>
+        </div>
+        <p>They sleep in al-Qarafa. They sleep in the cemetery at Pordic. They sleep in Zincirlikuyu, under a shopping mall. They are on their way to the future. The sleeper reaches out a decomposing finger and beckons, <em>Join us</em>.</p>
+      </subchapter>
+    </section><pagebreak></pagebreak>
+
+<!-- 
+loi-12.xhtml
+ -->
+
+<section><div><figure><div><a href="content-5.xhtml#_8755"><img src="../Images/fmt-ndbs-chapter-4-4-full.jpg"></img></a><figcaption><p></p></figcaption></div></figure></div></section><pagebreak></pagebreak>
+
+<!-- 
+loi-13.xhtml
+ -->
+
+<section><div><figure><div><a href="content-5.xhtml#_30410"><img src="../Images/fmt-ndbs-chapter-4-5-full.jpg"></img></a><figcaption><p></p></figcaption></div></figure></div></section><pagebreak></pagebreak>
+
+<!-- 
+loi-14.xhtml
+ -->
+
+<section><div><figure><div><a href="content-6.xhtml#_30725"><img src="../Images/fmt-ndbs-chapter-5-1-full.png"></img></a><figcaption><p></p></figcaption></div></figure></div></section><pagebreak></pagebreak>
+
+<!-- 
+loi-15.xhtml
+ -->
+
+<section><div><figure><div><a href="content-6.xhtml#_65158"><img src="../Images/fmt-ndbs-chapter-5-2-full.png"></img></a><figcaption><p></p></figcaption></div></figure></div></section><pagebreak></pagebreak>
+
+<!-- 
+loi-16.xhtml
+ -->
+
+<section><div><figure><div><a href="content-6.xhtml#_53201"><img src="../Images/fmt-ndbs-chapter-5-3-full.jpg"></img></a><figcaption><p></p></figcaption></div></figure></div></section><pagebreak></pagebreak>
+
+<!-- 
+loi-17.xhtml
+ -->
+
+<section><div><figure><div><a href="epigraph-1.xhtml#_85079"><img src="../Images/fmt-ndbs-epigraph-1-full.jpg"></img></a><figcaption><p></p></figcaption></div></figure></div></section><pagebreak></pagebreak>
+
+<!-- 
+loi-18.xhtml
+ -->
+
+<section><div><figure><div><a href="epigraph-3.xhtml#_91614"><img src="../Images/fmt-ndbs-epigraph-2-full.jpg"></img></a><figcaption><p></p></figcaption></div></figure></div></section><pagebreak></pagebreak>
+
+<!-- 
+appendix.xhtml
+ -->
+
+<backmatter>
+    <appendix>
+      <header>
+        <h1>The Long Tomorrow</h1>
+      </header>
+      <p>
+      <em>Not Dead but Sleeping</em> by Anna Della Subin was published as part of <a href="http://canopycanopycanopy.com/issues/21">The Long Tomorrow, Issue 21</a> of Triple Canopy.
+      </p>
+      <p>
+      This issue of Triple Canopy asks who bears the responsibility, and who possesses the imaginative capacity, to conceive of an ideal world. Though utopians, futurists, and visionaries have never been united under one standard, radicals and progressives used to be uniquely equipped and motivated to do this work, and today mostly defend the scraps of bygone idealism and attend to the detritus of twentieth-century achievements. But constructing an image of an alternative world, another way of living, has an essential social function, and reflects&#x2014;or even determines&#x2014;the agency of the constructors. This task, like forming an image of the past, is never neutral or impartial. And now those who make investments in the future&#x2014;and whose investments pay off&#x2014;tend to be libertarian technologists, financial engineers, and affiliates of plutocrat-funded think tanks. This issue is an exhortation to bet on the future again&#x2014;to formulate propositions, predictions, and projections that make demands on the present.</p>
+
+      <p>Read more, including a table of contents, <a href="http://canopycanopycanopy.com/issues/21">here</a>.
+      </p>
+    </appendix>
+  </backmatter><pagebreak></pagebreak>
+
+<!-- 
+colophon.xhtml
+ -->
+
+<meta-content>
+    <colophon>
+      <p><em>Not Dead But Sleeping</em><br></br>
+      by Anna Della Subin</p>
+      <p>Edited by Triple Canopy, New York, 2016<br></br>
+      Published by Triple Canopy, New York, 2016<br></br>
+
+      ISBN 978-0-9847346-8-9
+
+      </p>
+      <p>&#xA9; 2016 Anna Della Subin, Triple Canopy. All rights reserved. No part of this book may be reproduced or transmitted, in any form, without written permission from the publisher. Texts and images copyright the author, unless otherwise stated.
+      </p>
+      <p><em>Not Dead But Sleeping</em> is a DRM-free ebook that uses a template designed and developed by Triple Canopy. The template and software for producing this ebook will be released as an open-source project on GitHub in 2016. More information <a href="http://triplecanopy.github.io/ebooks/triple-canopy-ebooks/">here</a>.
+      </p>
+      <figure>
+        <img src="../Images/Triple-Canopy-Logo-Small-noprocess.png"></img>
+      </figure>
+      <p>155 Freeman Street<br></br>
+      Brooklyn, New York 11222<br></br>
+      <a href="http://canopycanopycanopy.com">canopycanopycanopy.com</a>
+      </p>
+
+    </colophon>
+  </meta-content></body>

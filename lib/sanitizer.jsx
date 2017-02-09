@@ -38,12 +38,18 @@ class Sanitizer {
       this.tagnames = []
       this.noop = false
     }
-    this.onend = (resolve) => {
-      this.output += '<pagebreak></pagebreak>'
+    this.onend = (resolve, index, len) => {
+      index === len ? this.appendBody() : this.output += '<pagebreak></pagebreak>'
       resolve(this.output)
     }
-    this.parse = (html) => {
+    this.prependBody = () => this.output += '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><body>'
+    this.appendBody = () => this.output += '</body>'
+    this.appendComment = (fname) => this.output += `\n<!-- \n${fname}\n -->\n\n`
+    this.parse = (content, index, arr) => {
       const _this = this // eslint-disable-line consistent-this
+      const len = arr.length - 1
+      _this.appendComment(arr[index])
+      if (index === 0) { _this.prependBody() }
       return new Promise((resolve, reject) => {
         const parser = new htmlparser.Parser({
           onopentag(name, attrs) {
@@ -106,10 +112,12 @@ class Sanitizer {
             const tagname = _this.tagnames.pop()
             if (tagname) { _this.output += `</${tagname}>` }
           },
-          onend() { _this.onend(resolve) }
+          onend() {
+            _this.onend(resolve, index, len)
+          }
         }, { decodeEntities: false })
 
-        parser.write(html)
+        parser.write(content)
         parser.end()
 
         _this.reset()

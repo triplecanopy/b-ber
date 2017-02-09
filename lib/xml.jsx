@@ -26,23 +26,22 @@ const readSpine = () =>
 const parseHTML = files =>
   new Promise((resolve, reject) => {
     const dir = path.join(cwd, conf.dist, 'OPS/text')
-    const text = files.map((_) => {
+    const text = files.map((_, index, arr) => {
       let data
       try {
         data = fs.readFileSync(path.join(dir, _), 'utf8')
       } catch (err) {
         return log.warn(err.message)
       }
-      return sanitizer.parse(data)
+      return sanitizer.parse(data, index, arr)
     }).filter(Boolean)
     Promise.all(text).then(docs => resolve(docs.join('\n')))
   })
 
 const writeXML = str =>
   new Promise((resolve, reject) => {
-    const data = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><body>${str}</body>`
     const fpath = path.join(cwd, `Export.xml`)//-${new Date().toISOString().replace(/:/g, '-')}.xml`)
-    fs.writeFile(fpath, data, 'utf8', (err) => {
+    fs.writeFile(fpath, str, 'utf8', (err) => {
       if (err) { throw err }
       resolve()
     })
