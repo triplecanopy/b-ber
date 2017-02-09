@@ -1,7 +1,7 @@
 
 import path from 'path'
 import zipper from 'epub-zipper'
-import log from './log'
+import { log } from './log'
 import conf from './config'
 
 const cwd = process.cwd()

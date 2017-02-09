@@ -1,7 +1,7 @@
 
 import fs from 'fs-extra'
 import path from 'path'
-import log from './log'
+import { log } from './log'
 import conf from './config'
 import { container, mimetype } from './templates'
 

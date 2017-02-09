@@ -11,7 +11,7 @@ import path from 'path'
 import fs from 'fs-extra'
 import imgsize from 'image-size'
 import conf from '../config'
-import log from '../log'
+import { log } from '../log'
 import mdInline from '../md-plugins/md-inline-block'
 import { hashIt, updateStore, getImageOrientation } from '../utils'
 

@@ -17,7 +17,7 @@
 */
 
 import mdSection from '../md-plugins/md-section'
-import log from '../log'
+import { log } from '../log'
 
 const markerOpen = /^pull-quote(?:\s+(citation)\s+"([^"]+?))?"/
 let citation = ''

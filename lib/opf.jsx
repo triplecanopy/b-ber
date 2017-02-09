@@ -7,10 +7,10 @@ import fs from 'fs-extra'
 import File from 'vinyl'
 import rrdir from 'recursive-readdir'
 import YAML from 'yamljs'
-import { find } from 'underscore'
+import { find, findIndex } from 'underscore'
 
 import conf from './config'
-import log from './log'
+import { log } from './log'
 import * as tmpl from './templates'
 import { topdir, cjoin, getFrontmatter } from './utils'
 
@@ -38,12 +38,24 @@ const parse = arr =>
     extension: path.extname(file)
   }))
 
-const order = filearr =>
+const orderByFileName = filearr =>
   filearr.sort((a, b) => {
     const seqA = a.name.split('_')[0]
     const seqB = b.name.split('_')[0]
     return seqA < seqB ? -1 : seqA > seqB ? 1 : 0 // eslint-disable-line no-nested-ternary
   })
+
+const orderByPagesYAML = filearr => {
+  return YAML.load(path.join(cwd, conf.src, 'pages.yml'), (resp) => {
+    resp.forEach((_) => {
+      const index = findIndex(filearr, item => console.log(_, item.name))
+      // console.log(index)
+      // if (index > -1) {
+
+      // }
+    })
+  })
+}
 
 const add = (file, arr) => {
   if (!file.location || file.location.length < 1) {
@@ -83,7 +95,10 @@ const manifest = () =>
       if (err) { reject(err) }
 
       const files = filearr.filter(_ => path.basename(_).charAt(0) !== '.')
-      const serial = await order(await parse(files.filter(_ => path.extname(_) === '.xhtml')))
+      const serial = await orderByFileName(await parse(files.filter(_ => path.extname(_) === '.xhtml')))
+
+      // orderByPagesYAML(serial)
+
       const parallel = await parse(files.filter(_ => path.extname(_) !== '.xhtml'))
 
       resolve({ serial, parallel })

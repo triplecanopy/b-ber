@@ -5,7 +5,7 @@ import nodemon from 'nodemon'
 import opn from 'opn'
 import { exec } from 'child_process'
 import conf from './config'
-import log from './log'
+import { log } from './log'
 
 const cwd = process.cwd()
 const onRestart = 'npm start -s -- build --invalid'

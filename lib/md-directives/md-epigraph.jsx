@@ -12,7 +12,7 @@
 */
 
 import mdInlineBlock from '../md-plugins/md-inline-block'
-import log from '../log'
+import { log } from '../log'
 
 const markerRe = /^epigraph\s+(?:image|caption)/
 const attrsRe = /(?:(image|caption|citation)\s["]([^"]+)["])/g

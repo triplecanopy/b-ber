@@ -1,5 +1,5 @@
 
-import log from './log'
+import { log } from './log'
 
 function delayedPromise(time, value) {
   return new Promise((resolve/* , reject */) => {

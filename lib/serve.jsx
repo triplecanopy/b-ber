@@ -2,7 +2,7 @@
 import path from 'path'
 import nodemon from 'nodemon'
 import opn from 'opn'
-import log from './log'
+import { log } from './log'
 
 const port = 3000
 const serve = () =>

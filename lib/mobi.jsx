@@ -1,7 +1,7 @@
 
 import zipper from 'mobi-zipper'
 import path from 'path'
-import log from './log'
+import { log } from './log'
 import conf from './config'
 
 const cwd = process.cwd()

@@ -3,7 +3,7 @@
 /* eslint-disable no-shadow */
 
 import yargs from 'yargs'
-import log from './log'
+import { log } from './log'
 import deps from './deps'
 import * as tasks from './tasks'
 import { rpad, hrtimeformat } from './utils'

@@ -3,7 +3,7 @@ import fs from 'fs-extra'
 import path from 'path'
 import File from 'vinyl'
 
-import log from './log'
+import { log } from './log'
 import conf from './config'
 import { scriptTag, stylesheetTag } from './templates'
 

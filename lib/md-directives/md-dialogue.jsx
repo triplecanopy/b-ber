@@ -17,7 +17,7 @@
 */
 
 import mdDialogue from '../md-plugins/md-dialogue'
-import log from '../log'
+import { log } from '../log'
 
 const markerOpen = /^dialogue/
 const markerClose = /^exit/
