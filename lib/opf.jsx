@@ -7,7 +7,7 @@ import fs from 'fs-extra'
 import File from 'vinyl'
 import rrdir from 'recursive-readdir'
 import YAML from 'yamljs'
-import { find, findIndex } from 'underscore'
+import { find, findIndex } from 'lodash'
 
 import conf from './config'
 import { log } from './log'

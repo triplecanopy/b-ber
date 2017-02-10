@@ -5,7 +5,7 @@ import File from 'vinyl'
 import mime from 'mime-types'
 import YAML from 'yamljs'
 import path from 'path'
-import { findWhere } from 'underscore'
+import { find } from 'lodash'
 
 import conf from './config'
 import Props from './props'
@@ -24,7 +24,7 @@ const settings = () => {
 }
 
 function getMeta(key) {
-  const res = findWhere(settings(), { term: key })
+  const res = find(settings(), { term: key })
   if (res && res.value) { return res.value }
   return false
 }

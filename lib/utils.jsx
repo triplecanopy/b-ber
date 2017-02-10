@@ -1,7 +1,7 @@
 
 import fs from 'fs-extra'
 import path from 'path'
-import { compact, findWhere } from 'underscore'
+import { compact, find } from 'lodash'
 import conf from './config'
 import store from './store'
 
@@ -67,7 +67,7 @@ const updateStore = (prop, { ...obj }) => {
   if (!{}.hasOwnProperty.call(store, prop)) {
     throw new Error(`\`${prop}\` is not a member of the \`store\` object.`)
   }
-  if (findWhere(store[prop], { id })) {
+  if (find(store[prop], { id })) {
     throw new Error(`The property ${prop} already contains an item with that \`id\`.`)
   }
   store[prop].push({ ...obj })
@@ -78,7 +78,7 @@ const getImageOrientation = (h, w) => h > w ? 'portrait' : 'landscape' // eslint
 
 const getFrontmatter = (file, prop) => {
   const filename = path.basename(file.name, '.xhtml')
-  const found = findWhere(store.pages, { filename })
+  const found = find(store.pages, { filename })
   return found && {}.hasOwnProperty.call(found, prop) ? found[prop] : null
 }
 
