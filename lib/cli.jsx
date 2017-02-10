@@ -3,9 +3,9 @@
 /* eslint-disable no-shadow */
 
 import yargs from 'yargs'
-import { log } from './log'
 import deps from './deps'
 import * as tasks from './tasks'
+import { log } from './log'
 import { rpad, hrtimeformat } from './utils'
 import { delayedPromise, forEachSerial } from './async'
 
@@ -39,138 +39,8 @@ let { argv } = yargs.fail((msg, err) => {
   .usage('\nUsage: $0 <command> [options]')
   .demand(1)
   .example('$0 create [options]')
-  .command('create', 'Create an Epub dir structure', (yargs) => {
-    ({ argv } = yargs.fail((msg, err) => {
-      if (err) { throw err }
-      log.info(msg)
-      yargs.showHelp()
-    })
-    .usage('\nUsage: $0 create [options]')
-    .alias('h', 'help')
-    .help('help')
-    .wrap(null))
-    checkCommands(yargs, argv, 1)
-  })
-  .command('markit', 'Convert markdown to HTML', (yargs) => {
-    ({ argv } = yargs.fail((msg, err) => {
-      if (err) { throw err }
-      log.info(msg)
-      yargs.showHelp()
-    })
-    .usage('\nUsage: $0 markit')
-    .alias('h', 'help')
-    .help('help')
-    .wrap(null))
-    checkCommands(yargs, argv, 1)
-  })
-  .command('watch', 'Preview a book in the browser', (yargs) => {
-    ({ argv } = yargs.fail((msg, err) => {
-      if (err) { throw err }
-      log.info(msg)
-      yargs.showHelp()
-    })
-    .usage('\nUsage: $0 watch')
-    .alias('h', 'help')
-    .help('help')
-    .wrap(null))
-    checkCommands(yargs, argv, 1)
-  })
-  .command('serve', 'Preview a book in the reader', (yargs) => {
-    ({ argv } = yargs.fail((msg, err) => {
-      if (err) { throw err }
-      log.info(msg)
-      yargs.showHelp()
-    })
-    .usage('\nUsage: $0 serve')
-    .alias('h', 'help')
-    .help('help')
-    .wrap(null))
-    checkCommands(yargs, argv, 1)
-  })
-  .command('scripts', 'Compile the scripts', (yargs) => {
-    ({ argv } = yargs.fail((msg, err) => {
-      if (err) { throw err }
-      log.info(msg)
-      yargs.showHelp()
-    })
-    .usage('\nUsage: $0 scripts')
-    .alias('h', 'help')
-    .help('help')
-    .wrap(null))
-    checkCommands(yargs, argv, 1)
-  })
-  .command('render', 'Render layouts', (yargs) => {
-    ({ argv } = yargs.fail((msg, err) => {
-      if (err) { throw err }
-      log.info(msg)
-      yargs.showHelp()
-    })
-    .usage('\nUsage: $0 render')
-    .alias('h', 'help')
-    .help('help')
-    .wrap(null))
-    checkCommands(yargs, argv, 1)
-  })
-  .command('sass', 'Compile SCSS', (yargs) => {
-    ({ argv } = yargs.fail((msg, err) => {
-      if (err) { throw err }
-      log.info(msg)
-      yargs.showHelp()
-    })
-    .usage('\nUsage: $0 sass')
-    .alias('h', 'help')
-    .help('help')
-    .wrap(null))
-    checkCommands(yargs, argv, 1)
-  })
-  .command('inject', 'Inject scripts and styles', (yargs) => {
-    ({ argv } = yargs.fail((msg, err) => {
-      if (err) { throw err }
-      log.info(msg)
-      yargs.showHelp()
-    })
-    .usage('\nUsage: $0 inject')
-    .alias('h', 'help')
-    .help('help')
-    .wrap(null))
-    checkCommands(yargs, argv, 1)
-  })
-  .command('copy', 'Copy static assets to output dir', (yargs) => {
-    ({ argv } = yargs.fail((msg, err) => {
-      if (err) { throw err }
-      log.info(msg)
-      yargs.showHelp()
-    })
-    .usage('\nUsage: $0 copy')
-    .alias('h', 'help')
-    .help('help')
-    .wrap(null))
-    checkCommands(yargs, argv, 1)
-  })
-  .command('opf', 'Generate the opf', (yargs) => {
-    ({ argv } = yargs.fail((msg, err) => {
-      if (err) { throw err }
-      log.info(msg)
-      yargs.showHelp()
-    })
-    .usage('\nUsage: $0 opf')
-    .alias('h', 'help')
-    .help('help')
-    .wrap(null))
-    checkCommands(yargs, argv, 1)
-  })
-  .command('clean', 'Remove the _output dir', (yargs) => {
-    ({ argv } = yargs.fail((msg, err) => {
-      if (err) { throw err }
-      log.info(msg)
-      yargs.showHelp()
-    })
-    .usage('\nUsage: $0 clean')
-    .alias('h', 'help')
-    .help('help')
-    .wrap(null))
-    checkCommands(yargs, argv, 1)
-  })
+
+
   .command('build', 'Build the _output dir', (yargs) => {
     ({ argv } = yargs.fail((msg, err) => {
       if (err) { throw err }
@@ -183,27 +53,72 @@ let { argv } = yargs.fail((msg, err) => {
     .wrap(null))
     checkCommands(yargs, argv, 1)
   })
-  .command('site', 'Clone Gomez', (yargs) => {
+
+  .command('clean', 'Remove the _output dir', (yargs) => {
     ({ argv } = yargs.fail((msg, err) => {
       if (err) { throw err }
       log.info(msg)
       yargs.showHelp()
     })
-
-    .options('path', {
-      alias: 'p',
-      demand: false,
-      default: './_site',
-      describe: 'Define the site path',
-      type: 'string'
-    })
-
-    .usage('\nUsage: $0 site [path]')
+    .usage('\nUsage: $0 clean')
     .alias('h', 'help')
     .help('help')
     .wrap(null))
     checkCommands(yargs, argv, 1)
   })
+
+  .command('copy', 'Copy static assets to output dir', (yargs) => {
+    ({ argv } = yargs.fail((msg, err) => {
+      if (err) { throw err }
+      log.info(msg)
+      yargs.showHelp()
+    })
+    .usage('\nUsage: $0 copy')
+    .alias('h', 'help')
+    .help('help')
+    .wrap(null))
+    checkCommands(yargs, argv, 1)
+  })
+
+  .command('create', 'Create an Epub dir structure', (yargs) => {
+    ({ argv } = yargs.fail((msg, err) => {
+      if (err) { throw err }
+      log.info(msg)
+      yargs.showHelp()
+    })
+    .usage('\nUsage: $0 create [options]')
+    .alias('h', 'help')
+    .help('help')
+    .wrap(null))
+    checkCommands(yargs, argv, 1)
+  })
+
+  .command('editor', 'Start web-based editor', (yargs) => {
+    ({ argv } = yargs.fail((msg, err) => {
+      if (err) { throw err }
+      log.info(msg)
+      yargs.showHelp()
+    })
+    .usage('\nUsage: $0 editor')
+    .alias('h', 'help')
+    .help('help')
+    .wrap(null))
+    checkCommands(yargs, argv, 1)
+  })
+
+  .command('epub', 'Create an Epub', (yargs) => {
+    ({ argv } = yargs.fail((msg, err) => {
+      if (err) { throw err }
+      log.info(msg)
+      yargs.showHelp()
+    })
+    .usage('\nUsage: $0 epub')
+    .alias('h', 'help')
+    .help('help')
+    .wrap(null))
+    checkCommands(yargs, argv, 1)
+  })
+
   .command('init', 'Initalize b-ber', (yargs) => {
     ({ argv } = yargs.fail((msg, err) => {
       if (err) { throw err }
@@ -233,6 +148,59 @@ let { argv } = yargs.fail((msg, err) => {
     .wrap(null))
     checkCommands(yargs, argv, 1)
   })
+
+  .command('inject', 'Inject scripts and styles', (yargs) => {
+    ({ argv } = yargs.fail((msg, err) => {
+      if (err) { throw err }
+      log.info(msg)
+      yargs.showHelp()
+    })
+    .usage('\nUsage: $0 inject')
+    .alias('h', 'help')
+    .help('help')
+    .wrap(null))
+    checkCommands(yargs, argv, 1)
+  })
+
+  .command('markit', 'Convert markdown to HTML', (yargs) => {
+    ({ argv } = yargs.fail((msg, err) => {
+      if (err) { throw err }
+      log.info(msg)
+      yargs.showHelp()
+    })
+    .usage('\nUsage: $0 markit')
+    .alias('h', 'help')
+    .help('help')
+    .wrap(null))
+    checkCommands(yargs, argv, 1)
+  })
+
+  .command('mobi', 'Create a Mobi', (yargs) => {
+    ({ argv } = yargs.fail((msg, err) => {
+      if (err) { throw err }
+      log.info(msg)
+      yargs.showHelp()
+    })
+    .usage('\nUsage: $0 mobi')
+    .alias('h', 'help')
+    .help('help')
+    .wrap(null))
+    checkCommands(yargs, argv, 1)
+  })
+
+  .command('opf', 'Generate the opf', (yargs) => {
+    ({ argv } = yargs.fail((msg, err) => {
+      if (err) { throw err }
+      log.info(msg)
+      yargs.showHelp()
+    })
+    .usage('\nUsage: $0 opf')
+    .alias('h', 'help')
+    .help('help')
+    .wrap(null))
+    checkCommands(yargs, argv, 1)
+  })
+
   .command('publish', 'Move book to the _site dir', (yargs) => {
     ({ argv } = yargs.fail((msg, err) => {
       if (err) { throw err }
@@ -262,42 +230,94 @@ let { argv } = yargs.fail((msg, err) => {
     .wrap(null))
     checkCommands(yargs, argv, 1)
   })
-  .command('epub', 'Create an Epub', (yargs) => {
+
+  .command('render', 'Render layouts', (yargs) => {
     ({ argv } = yargs.fail((msg, err) => {
       if (err) { throw err }
       log.info(msg)
       yargs.showHelp()
     })
-    .usage('\nUsage: $0 epub')
+    .usage('\nUsage: $0 render')
     .alias('h', 'help')
     .help('help')
     .wrap(null))
     checkCommands(yargs, argv, 1)
   })
-  .command('mobi', 'Create a Mobi', (yargs) => {
+
+  .command('scripts', 'Compile the scripts', (yargs) => {
     ({ argv } = yargs.fail((msg, err) => {
       if (err) { throw err }
       log.info(msg)
       yargs.showHelp()
     })
-    .usage('\nUsage: $0 mobi')
+    .usage('\nUsage: $0 scripts')
     .alias('h', 'help')
     .help('help')
     .wrap(null))
     checkCommands(yargs, argv, 1)
   })
-  .command('editor', 'Start web-based editor', (yargs) => {
+
+  .command('sass', 'Compile SCSS', (yargs) => {
     ({ argv } = yargs.fail((msg, err) => {
       if (err) { throw err }
       log.info(msg)
       yargs.showHelp()
     })
-    .usage('\nUsage: $0 editor')
+    .usage('\nUsage: $0 sass')
     .alias('h', 'help')
     .help('help')
     .wrap(null))
     checkCommands(yargs, argv, 1)
   })
+
+  .command('serve', 'Preview a book in the reader', (yargs) => {
+    ({ argv } = yargs.fail((msg, err) => {
+      if (err) { throw err }
+      log.info(msg)
+      yargs.showHelp()
+    })
+    .usage('\nUsage: $0 serve')
+    .alias('h', 'help')
+    .help('help')
+    .wrap(null))
+    checkCommands(yargs, argv, 1)
+  })
+
+  .command('site', 'Clone b-ber-boiler', (yargs) => {
+    ({ argv } = yargs.fail((msg, err) => {
+      if (err) { throw err }
+      log.info(msg)
+      yargs.showHelp()
+    })
+
+    .options('path', {
+      alias: 'p',
+      demand: false,
+      default: './_site',
+      describe: 'Define the site path',
+      type: 'string'
+    })
+
+    .usage('\nUsage: $0 site [path]')
+    .alias('h', 'help')
+    .help('help')
+    .wrap(null))
+    checkCommands(yargs, argv, 1)
+  })
+
+  .command('watch', 'Preview a book in the browser', (yargs) => {
+    ({ argv } = yargs.fail((msg, err) => {
+      if (err) { throw err }
+      log.info(msg)
+      yargs.showHelp()
+    })
+    .usage('\nUsage: $0 watch')
+    .alias('h', 'help')
+    .help('help')
+    .wrap(null))
+    checkCommands(yargs, argv, 1)
+  })
+
   .command('xml', 'Export as XML', (yargs) => {
     ({ argv } = yargs.fail((msg, err) => {
       if (err) { throw err }
@@ -310,4 +330,3 @@ let { argv } = yargs.fail((msg, err) => {
     .wrap(null))
     checkCommands(yargs, argv, 1)
   })
-
