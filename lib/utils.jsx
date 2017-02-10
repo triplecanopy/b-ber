@@ -82,6 +82,21 @@ const getFrontmatter = (file, prop) => {
   return found && {}.hasOwnProperty.call(found, prop) ? found[prop] : null
 }
 
+const orderByFileName = (filearr) => {
+  if (!filearr || !filearr.length) { return [] }
+  return filearr.sort((a, b) => {
+    const seqA = a.name.split('_')[0]
+    const seqB = b.name.split('_')[0]
+    return seqA < seqB ? -1 : seqA > seqB ? 1 : 0 // eslint-disable-line no-nested-ternary
+  })
+}
+
+const entries = function* (obj) {
+  for (const key of Object.keys(obj)) {
+    yield [key, obj[key]]
+  }
+}
+
 export {
   slashit,
   topdir,
@@ -95,6 +110,8 @@ export {
   regexMap,
   updateStore,
   getImageOrientation,
-  getFrontmatter
+  getFrontmatter,
+  orderByFileName,
+  entries
 }
 

@@ -12,7 +12,7 @@ import { find, findIndex } from 'underscore'
 import conf from './config'
 import { log } from './log'
 import * as tmpl from './templates'
-import { topdir, cjoin, getFrontmatter } from './utils'
+import { topdir, cjoin, getFrontmatter, orderByFileName } from './utils'
 
 const cwd = process.cwd()
 const navdocs = ['toc.ncx', 'toc.xhtml']
@@ -37,13 +37,6 @@ const parse = arr =>
     name: path.basename(file),
     extension: path.extname(file)
   }))
-
-const orderByFileName = filearr =>
-  filearr.sort((a, b) => {
-    const seqA = a.name.split('_')[0]
-    const seqB = b.name.split('_')[0]
-    return seqA < seqB ? -1 : seqA > seqB ? 1 : 0 // eslint-disable-line no-nested-ternary
-  })
 
 const orderByPagesYAML = filearr => {
   return YAML.load(path.join(cwd, conf.src, 'pages.yml'), (resp) => {

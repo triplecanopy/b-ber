@@ -93,6 +93,46 @@ let { argv } = yargs.fail((msg, err) => {
     checkCommands(yargs, argv, 1)
   })
 
+  .command('generate', 'Create a new chapter. Accepts arguments for metadata.', (yargs) => {
+    ({ argv } = yargs.fail((msg, err) => {
+      if (err) { throw err }
+      log.info(msg)
+      yargs.showHelp()
+    })
+
+    .alias('g', 'generate')
+
+    .options('section_title', {
+      alias: 'n',
+      demand: false,
+      default: '',
+      describe: 'Define the chapters\'s title',
+      type: 'string'
+    })
+
+    .options('landmark_type', {
+      alias: 'l',
+      demand: false,
+      default: '',
+      describe: 'Define the chapters\'s landmark type',
+      type: 'string'
+    })
+
+    .options('landmark_title', {
+      alias: 't',
+      demand: false,
+      default: '',
+      describe: 'Define the chapters\'s landmark title',
+      type: 'string'
+    })
+
+    .usage('\nUsage: $0 generate [options]')
+    .alias('h', 'help')
+    .help('help')
+    .wrap(null))
+    checkCommands(yargs, argv, 1)
+  })
+
   .command('editor', 'Start web-based editor', (yargs) => {
     ({ argv } = yargs.fail((msg, err) => {
       if (err) { throw err }
