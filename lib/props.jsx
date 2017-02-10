@@ -11,22 +11,22 @@ const cwd = process.cwd()
 class Props {
   constructor() {
     this.isHTML = function isHTML(file) {
-      return Boolean(mime.lookup(file.fullpath) === 'text/html'
-        || mime.lookup(file.fullpath) === 'application/xhtml+xml')
+      return Boolean(mime.lookup(file.rootpath) === 'text/html'
+        || mime.lookup(file.rootpath) === 'application/xhtml+xml')
     }
     this.isNav = function isNav(file) {
-      return Boolean(mime.lookup(file.fullpath) === 'application/xhtml+xml'
+      return Boolean(mime.lookup(file.rootpath) === 'application/xhtml+xml'
         && file.name === 'toc.xhtml')
     }
     this.isScripted = function isScripted(file) {
       if (!this.isHTML(file)) { return false }
-      const fpath = path.join(cwd, file.fullpath)
+      const fpath = path.join(cwd, file.rootpath)
       const contents = fs.readFileSync(fpath, 'utf8')
       return Boolean(contents.match(/<script/))
     }
     this.isSVG = function isSVG(file) {
       if (!this.isHTML(file)) { return false }
-      const fpath = path.join(cwd, file.fullpath)
+      const fpath = path.join(cwd, file.rootpath)
       const contents = fs.readFileSync(fpath, 'utf8')
       return Boolean(contents.match(/<svg/))
     }

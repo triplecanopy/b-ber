@@ -7,7 +7,7 @@ import fs from 'fs-extra'
 import File from 'vinyl'
 import rrdir from 'recursive-readdir'
 import YAML from 'yamljs'
-import { find, findIndex } from 'lodash'
+import { find, difference, uniq, findIndex } from 'lodash'
 
 import conf from './config'
 import { log } from './log'
@@ -32,22 +32,73 @@ const parse = arr =>
     location: path.basename(file).split('_')[1]
       ? path.basename(file).split('_')[1].split('-')
       : null,
-    fullpath: file,
-    toppath: topdir(file),
+    rootpath: file,
+    opspath: topdir(file),
     name: path.basename(file),
     extension: path.extname(file)
   }))
 
-const orderByPagesYAML = filearr => {
-  return YAML.load(path.join(cwd, conf.src, 'pages.yml'), (resp) => {
-    resp.forEach((_) => {
-      const index = findIndex(filearr, item => console.log(_, item.name))
-      // console.log(index)
-      // if (index > -1) {
+const removeEntries = (arr, diff) => {
+  let entry, index
+  while (diff.length) {
+    entry = diff.pop()
+    index = arr.indexOf(entry)
+    arr.splice(index, 1)
+  }
+  return arr
+}
 
-      // }
+const addEntries = (arr, diff) => {
+  arr.push(...diff)
+  return arr
+}
+
+const updatePagesMetaYAML = arr =>
+  fs.writeFile(
+    path.join(cwd, conf.src, 'pages.yml'),
+    `---\n${arr.map(_ => `- ${_}.xhtml`).join('\n')}`,
+    (err) => {
+      if (err) { throw err }
     })
+
+const orderByPagesUser = (filearr) => {
+  const yamlpath = path.join(cwd, conf.src, 'pages.yml')
+  const files = uniq(filearr.map(_ => path.basename(_.name, _.extension)))
+  const result = []
+  let pages = files // default
+
+  try {
+    if (fs.statSync(yamlpath)) {
+      pages = uniq(YAML.load(yamlpath).map(_ => path.basename(_, '.xhtml')))
+    }
+  }
+  catch (err) {
+    log.warn('Couldn\'t find `pages.yaml`.')
+    updatePagesMetaYAML(pages)
+  }
+
+  // check that all entries are accounted for
+  const pagediff = difference(pages, files)
+  const filediff = difference(files, pages)
+  if (pagediff.length || filediff.length) {
+    if (pagediff.length) { // there are extra entries in the YAML
+      pages = removeEntries(pages, pagediff)
+    }
+    if (filediff.length) { // there are missing entries in the YAML
+      pages = addEntries(pages, filediff)
+    }
+
+    // write the new entries to file
+    updatePagesMetaYAML(pages)
+  }
+
+  // order file data based on order of pages
+  pages.forEach((page, i) => {
+    const object = find(filearr, _ => _.name === `${page}.xhtml`)
+    result[i] = object
   })
+
+  return result
 }
 
 const add = (file, arr) => {
@@ -68,7 +119,8 @@ const add = (file, arr) => {
       title: getFrontmatter(file, 'section_title'),
       children: []
     })
-  } else {
+  }
+  else {
     add(file, parent.children)
   }
 
@@ -88,10 +140,7 @@ const manifest = () =>
       if (err) { reject(err) }
 
       const files = filearr.filter(_ => path.basename(_).charAt(0) !== '.')
-      const serial = await orderByFileName(await parse(files.filter(_ => path.extname(_) === '.xhtml')))
-
-      // orderByPagesYAML(serial)
-
+      const serial = orderByPagesUser(orderByFileName(await parse(files.filter(_ => path.extname(_) === '.xhtml'))))
       const parallel = await parse(files.filter(_ => path.extname(_) !== '.xhtml'))
 
       resolve({ serial, parallel })

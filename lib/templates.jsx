@@ -292,11 +292,11 @@ const tocitem = (list) => {
 const item = (file) => {
   const props = Props.testHTML(file)
   let res = null
-  if (mime.lookup(file.fullpath) !== 'application/oebps-package+xml') {
+  if (mime.lookup(file.rootpath) !== 'application/oebps-package+xml') {
     res = [
       `<item id="${fileid(file.name)}"`,
-      `href="${encodeURI(file.toppath)}"`,
-      `media-type="${mime.lookup(file.fullpath)}"`,
+      `href="${encodeURI(file.opspath)}"`,
+      `media-type="${mime.lookup(file.rootpath)}"`,
       (props && props.length ? `properties="${props.join(' ')}"` : ''),
       '/>'
     ]
@@ -308,7 +308,7 @@ const item = (file) => {
 
 const itemref = (file) => {
   let res = null
-  if (mime.lookup(file.fullpath) === 'text/html' || mime.lookup(file.fullpath) === 'application/xhtml+xml') {
+  if (mime.lookup(file.rootpath) === 'text/html' || mime.lookup(file.rootpath) === 'application/xhtml+xml') {
     res = `<itemref idref="${fileid(file.name)}" linear="yes"/>`
   }
   return res
@@ -316,13 +316,13 @@ const itemref = (file) => {
 
 const reference = (file) => {
   let res = null
-  if (mime.lookup(file.fullpath) === 'text/html' || mime.lookup(file.fullpath) === 'application/xhtml+xml') {
+  if (mime.lookup(file.rootpath) === 'text/html' || mime.lookup(file.rootpath) === 'application/xhtml+xml') {
     if (getFrontmatter(file, 'landmark_type')) {
       res = [
         '<reference',
         ` type="${getFrontmatter(file, 'landmark_type')}"`,
         ` title="${getFrontmatter(file, 'landmark_title')}"`,
-        ` href="${encodeURI(file.toppath)}"/>`
+        ` href="${encodeURI(file.opspath)}"/>`
       ].join('')
     }
   }
