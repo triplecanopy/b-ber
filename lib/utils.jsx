@@ -32,7 +32,7 @@ const slashit = (str) => {
   return fpath
 }
 
-const topdir = file => file.replace(new RegExp(`^${conf.dist}/OPS/?`), '')
+const opspath = file => file.replace(new RegExp(`^${conf.dist}/OPS/?`), '')
 const cjoin = arr => compact(arr).join('\n')
 const fileid = str => '_'.concat(str.replace(/[\s:,“”‘’]/g, '_'))
 const s4 = () => Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1)
@@ -99,7 +99,7 @@ const entries = function* (obj) {
 
 export {
   slashit,
-  topdir,
+  opspath,
   cjoin,
   fileid,
   copy,

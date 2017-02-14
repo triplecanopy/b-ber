@@ -7,12 +7,12 @@ import fs from 'fs-extra'
 import File from 'vinyl'
 import rrdir from 'recursive-readdir'
 import YAML from 'yamljs'
-import { find, difference, uniq, findIndex } from 'lodash'
+import { find, difference, uniq } from 'lodash'
 
 import conf from './config'
 import { log } from './log'
 import * as tmpl from './templates'
-import { topdir, cjoin, getFrontmatter, orderByFileName } from './utils'
+import { opspath, cjoin, getFrontmatter, orderByFileName } from './utils'
 
 const cwd = process.cwd()
 const navdocs = ['toc.ncx', 'toc.xhtml']
@@ -33,7 +33,7 @@ const parse = arr =>
       ? path.basename(file).split('_')[1].split('-')
       : null,
     rootpath: file,
-    opspath: topdir(file),
+    opspath: opspath(file),
     name: path.basename(file),
     extension: path.extname(file)
   }))
@@ -66,14 +66,13 @@ const orderByPagesUser = (filearr) => {
   const files = uniq(filearr.map(_ => path.basename(_.name, _.extension)))
   const result = []
   let pages = files // default
-
   try {
     if (fs.statSync(yamlpath)) {
       pages = uniq(YAML.load(yamlpath).map(_ => path.basename(_, '.xhtml')))
     }
   }
   catch (err) {
-    log.warn('Couldn\'t find `pages.yaml`.')
+    log.warn('No content found in `pages.yml`. Updating the file now.')
     updatePagesMetaYAML(pages)
   }
 
