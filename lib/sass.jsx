@@ -27,6 +27,7 @@ async function sass() {
   return new Promise((resolve, reject) => {
     nsass.render(sassOptions, (err1, result) => {
       if (err1) { reject(err1) }
+      if (!result) { reject('Sass: `result` cannot be null.') }
       postcss([autoprefixer(autoprefixerOptions), cssnano])
         .process(result.css)
         .then(prefixed =>
