@@ -37,7 +37,9 @@ const parseMeta = files =>
 
 const createFile = ({ files, metadata }) => {
   let frontmatter = ''
-  for (const [key, val] of entries(metadata)) { frontmatter += `${key}: ${val}\n` }
+  for (const [key, val] of entries(metadata)) {
+    if (key && val) { frontmatter += `${key}: ${val}\n` }
+  }
   frontmatter = `---\n${frontmatter}---\n`
 
   return new Promise((resolve) => {
