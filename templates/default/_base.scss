@@ -7,9 +7,9 @@ html {
   @if $debug == true {
     @include debug-vertical-alignment;
   }
+  @include break('mobile') { font-size: 112.5%; } // 18px
+  @include break('ipad-pro') { font-size: 192.5%; } // 30.8px
 }
-
-
 
 @page{margin:$base-font-size}
 @namespace url(http://www.w3.org/1999/xhtml);
@@ -77,35 +77,42 @@ p{
   }
 }
 ul {
+  @include no-top-padding-element-follows;
   list-style: disc;
   padding:1em 0 1em 2.31em;
+
+  // TODO: browser only
+  list-style: none;
+
   li{
     @extend %font-base;
     text-indent: 0;
-    ul{
-      li {
-        ul{
 
-        }
-      }
+    // TODO: browser only
+    text-indent: -0.6em;
+    padding-left: 0.6em;
+    &:before {
+      content:'-';
+      display:inline-block;
+      position:relative;
+      left:-0.3em;
     }
   }
 }
 ol {
+  @include no-top-padding-element-follows;
   list-style: decimal;
   padding:1em 0 1em 2.31em;
   li{
     @extend %font-base;
     text-indent: 0;
-    ol{
-      li {
-        ol{
 
-        }
-      }
-    }
+    // TODO: following is browser only
+    text-indent: -0.6em;
+    padding-left: 0.6em;
   }
 }
+
 dl {
   dt{
     @extend %font-base;
@@ -116,19 +123,28 @@ dl {
     text-indent: 0;
   }
 }
+
 table{
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+  margin: 1em 0;
   tr{
-    th{
+    th { border-top: 1px solid $black; }
+    th, td{
       @extend %font-base;
-    }
-    td{
-      @extend %font-base;
+      text-align: left;
+      padding: 1em;
+      border-left: 1px solid $black;
+      border-right: 1px solid $black;
+      border-bottom: 1px solid $black;
     }
   }
 }
+
 blockquote {
   @extend %font-base;
-  @include no-indent-follow;
+  @include no-top-padding-element-follows;
   padding: 0.9em 2.31em 0.95em 2.31em;
   text-indent: 0;
   p {
@@ -138,10 +154,20 @@ blockquote {
   }
 }
 
+hr {
+  padding: 0;
+  margin: 2em 0;
+  height: 1px;
+  width: 100%;
+  background-color: $black;
+  @include no-indent-follow;
+  @include no-top-padding-element-follows;
+}
 
 header{}
 main{}
 section{}
+
 aside.note{
   text-align:left;
   margin:0;
@@ -155,22 +181,22 @@ aside.note{
     }
   }
 }
+
 figure{}
 figcaption{}
 footer{}
 
-
 sup{
   @extend %font-base;
-  font-size: 0.6em;
+  font-size: 0.52em;
   line-height: 1;
   vertical-align: baseline;
   position: relative;
-  top: -0.8em;
+  top: -1em;
 }
 sub{
   @extend %font-base;
-  font-size: 0.6em;
+  font-size: 0.52em;
   line-height: 1;
   vertical-align: baseline;
   position: relative;

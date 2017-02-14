@@ -95,3 +95,13 @@
   display: inline-block;
   text-indent: rhythm(-1, $base-font-size);
 }
+
+
+@mixin no-text-indent-p-follows {
+  + p { text-indent: 0; }
+}
+
+@mixin no-top-padding-element-follows {
+  + table, + ul, + ol, + dl, + blockquote { padding-top: 0; }
+  + hr { margin-top: 1em; }
+}
