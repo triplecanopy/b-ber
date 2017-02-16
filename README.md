@@ -26,33 +26,31 @@ $ bber publish  # Move epub to _site directory
 ## Development
 
 ```
-Usage: lib/cli.jsx <command> [options]
+Usage: bber <command> [options]
 
-Commands:
-  create   Create an Epub dir structure
-  markit   Convert markdown to XHTML
-  watch    Preview a book in the browser
-  serve    Preview a book in the reader
-  scripts  Compile the scripts
-  render   Render layouts
-  sass     Compile SCSS
-  inject   Inject scripts and styles
-  copy     Copy static assets to output dir
-  opf      Generate the opf
-  clean    Remove the `book` dir
-  build    Build the `book` dir
-  site     Download bber-boiler
-  init     Initalize b-ber
-  publish  Move book to the _site dir
-  epub     Create an Epub
-  mobi     Create a Mobi
-  editor   Start web-based editor
+Where <command> is one of:
+  clean, config, copy, create, deploy, props, init, inject, md, opf, publish,
+  render, sass, scripts, serve, site, tasks, templates, utils, loi, epub, mobi,
+  watch, editor, xml, generate
 
-Examples:
-  lib/cli.jsx create [options]
+Some common commands are:
 
-For more information on a command, enter lib/cli.jsx <command> --help
+  Creating books
+    bber init     Create an empty project and file structure, defaults to \`_book\`
+    bber watch    Preview the book in a web-browser during development
+    bber build    Compile and copy assets in \`_book\` to the output directory,
+                  defaults to \`book\`
+    bber epub     Compile an epub from the assets in \`book\`
+    bber mobi     Compile a mobi file from the assets in \`book\`
+
+  Viewing books
+    bber site     Clone the bber-reader into \`site\`
+    bber serve    Preview the compiled epub in the bber-reader
+
+For more information on a command, enter bber <command> --help
 ```
+
+See [the wiki](https://github.com/triplecanopy/b-ber-creator/wiki/CLI-Command-List#full-command-list) for a full list of commands.
 
 ## Commands via `bber`
 

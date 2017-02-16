@@ -9,8 +9,35 @@ import { log } from './log'
 import { rpad, hrtimeformat } from './utils'
 import { delayedPromise, forEachSerial } from './async'
 
+const showCustomHelp = () => console.log(`
+Usage: bber <command> [options]
+
+Where <command> is one of:
+  clean, config, copy, create, deploy, props, init, inject, md, opf, publish,
+  render, sass, scripts, serve, site, tasks, templates, utils, loi, epub, mobi,
+  watch, editor, xml, generate
+
+Some common commands are:
+
+  Creating books
+    bber init     Create an empty project and file structure, defaults to \`_book\`
+    generate      Create a new chapter and add it to pages.yml. Accepts
+                  arguments for metadata.
+    bber watch    Preview the book in a web-browser during development
+    bber build    Compile and copy assets in \`_book\` to the output directory,
+                  defaults to \`book\`
+    bber epub     Compile an epub from the assets in \`book\`
+    bber mobi     Compile a mobi file from the assets in \`book\`
+
+  Viewing books
+    bber site     Clone the bber-reader into \`site\`
+    bber serve    Preview the compiled epub in the bber-reader
+
+For more information on a command, enter bber <command> --help
+`)
+
 const checkCommands = (yarg, argv, required) => {
-  if (argv._.length < required) { return yarg.showHelp() }
+  if (argv._.length < required) { return showCustomHelp() }
   const sequence = {}.hasOwnProperty.call(deps, argv._) ? deps[argv._] : [argv._[0]]
   const start = process.hrtime()
   let total, seq, diff
@@ -34,6 +61,7 @@ const checkCommands = (yarg, argv, required) => {
 let { argv } = yargs.fail((msg, err) => {
   if (err) { throw err }
   log.info(msg)
+  // showCustomHelp()
   yargs.showHelp()
 }).epilog('For more information on a command, enter $0 <command> --help')
   .usage('\nUsage: $0 <command> [options]')
@@ -41,7 +69,7 @@ let { argv } = yargs.fail((msg, err) => {
   .example('$0 create [options]')
 
 
-  .command('build', 'Build the _output dir', (yargs) => {
+  .command('build', 'Build the `book` dir (calls \'clean\', \'create\', \'copy\', \'sass\', \'scripts\', \'render\', \'loi\', \'inject\', \'opf\')', (yargs) => {
     ({ argv } = yargs.fail((msg, err) => {
       if (err) { throw err }
       log.info(msg)
@@ -93,7 +121,7 @@ let { argv } = yargs.fail((msg, err) => {
     checkCommands(yargs, argv, 1)
   })
 
-  .command('generate', 'Create a new chapter. Accepts arguments for metadata.', (yargs) => {
+  .command('generate', 'Create a new chapter and add it to pages.yml. Accepts arguments for metadata.', (yargs) => {
     ({ argv } = yargs.fail((msg, err) => {
       if (err) { throw err }
       log.info(msg)
@@ -146,7 +174,7 @@ let { argv } = yargs.fail((msg, err) => {
     checkCommands(yargs, argv, 1)
   })
 
-  .command('epub', 'Create an Epub', (yargs) => {
+  .command('epub', 'Create an Epub (calls \'clean\', \'create\', \'copy\', \'sass\', \'scripts\', \'render\', \'loi\', \'inject\', \'opf\')', (yargs) => {
     ({ argv } = yargs.fail((msg, err) => {
       if (err) { throw err }
       log.info(msg)
@@ -189,26 +217,13 @@ let { argv } = yargs.fail((msg, err) => {
     checkCommands(yargs, argv, 1)
   })
 
-  .command('inject', 'Inject scripts and styles', (yargs) => {
+  .command('inject', 'Inject scripts and styles into XHTML', (yargs) => {
     ({ argv } = yargs.fail((msg, err) => {
       if (err) { throw err }
       log.info(msg)
       yargs.showHelp()
     })
     .usage('\nUsage: $0 inject')
-    .alias('h', 'help')
-    .help('help')
-    .wrap(null))
-    checkCommands(yargs, argv, 1)
-  })
-
-  .command('markit', 'Convert markdown to HTML', (yargs) => {
-    ({ argv } = yargs.fail((msg, err) => {
-      if (err) { throw err }
-      log.info(msg)
-      yargs.showHelp()
-    })
-    .usage('\nUsage: $0 markit')
     .alias('h', 'help')
     .help('help')
     .wrap(null))
@@ -271,7 +286,7 @@ let { argv } = yargs.fail((msg, err) => {
     checkCommands(yargs, argv, 1)
   })
 
-  .command('render', 'Render layouts', (yargs) => {
+  .command('render', 'Transform Markdown to XHTML', (yargs) => {
     ({ argv } = yargs.fail((msg, err) => {
       if (err) { throw err }
       log.info(msg)
@@ -284,7 +299,7 @@ let { argv } = yargs.fail((msg, err) => {
     checkCommands(yargs, argv, 1)
   })
 
-  .command('scripts', 'Compile the scripts', (yargs) => {
+  .command('scripts', 'Transform coffeescript to JavaScript', (yargs) => {
     ({ argv } = yargs.fail((msg, err) => {
       if (err) { throw err }
       log.info(msg)
@@ -310,7 +325,7 @@ let { argv } = yargs.fail((msg, err) => {
     checkCommands(yargs, argv, 1)
   })
 
-  .command('serve', 'Preview a book in the reader', (yargs) => {
+  .command('serve', 'Preview a book in the bber-reader', (yargs) => {
     ({ argv } = yargs.fail((msg, err) => {
       if (err) { throw err }
       log.info(msg)
@@ -323,7 +338,7 @@ let { argv } = yargs.fail((msg, err) => {
     checkCommands(yargs, argv, 1)
   })
 
-  .command('site', 'Clone b-ber-boiler', (yargs) => {
+  .command('site', 'Download bber-reader', (yargs) => {
     ({ argv } = yargs.fail((msg, err) => {
       if (err) { throw err }
       log.info(msg)
@@ -358,7 +373,7 @@ let { argv } = yargs.fail((msg, err) => {
     checkCommands(yargs, argv, 1)
   })
 
-  .command('xml', 'Export as XML', (yargs) => {
+  .command('xml', 'Export a book as an XML document', (yargs) => {
     ({ argv } = yargs.fail((msg, err) => {
       if (err) { throw err }
       log.info(msg)
