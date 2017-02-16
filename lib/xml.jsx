@@ -16,7 +16,6 @@ const readSpine = () =>
       if (err1) { reject(err1) }
       parseString(data, (err2, result) => {
         if (err2) { reject(err2) }
-        console.log(result)
         const items = result.package.spine[0].itemref
         const files = items.map(_ => _.$.idref.slice(1))
         resolve(files)
