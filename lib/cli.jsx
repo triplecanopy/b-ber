@@ -36,9 +36,29 @@ Some common commands are:
 For more information on a command, enter bber <command> --help
 `)
 
+const checkArguments = () => {
+  console.log()
+}
+
 const checkCommands = (yarg, argv, required) => {
-  if (argv._.length < required) { return showCustomHelp() }
-  const sequence = {}.hasOwnProperty.call(deps, argv._) ? deps[argv._] : [argv._[0]]
+  // No command was given, and help has already been shown in `yargs.fail`
+  if (!argv._.length) {
+    return false
+  }
+
+  // Command was given but doesn't exist in `tasks` or the sequence doesn't exist in `deps`
+  if (argv._.length && (typeof tasks[argv._[0]] === 'undefined' && !{}.hasOwnProperty.call(deps, argv._[0]))) {
+    log.info(`The task \`${argv._[0]}\` does not exist.`)
+    showCustomHelp()
+  }
+
+  // A valid command was given, but there are args missing
+  if (argv._.length < required) {
+    log.info(`Missing required arguments for \`${argv._}\``)
+    return yargs.showHelp()
+  }
+
+  const sequence = {}.hasOwnProperty.call(deps, argv._[0]) ? deps[argv._[0]] : [argv._[0]]
   const start = process.hrtime()
   let total, seq, diff
 
@@ -54,19 +74,17 @@ const checkCommands = (yarg, argv, required) => {
     log.info(`Finished ${rpad(argv._[0], ' ', 8)} ${hrtimeformat(total)}`)
   }
 
-  // bootstrap
   return serial()
 }
 
 let { argv } = yargs.fail((msg, err) => {
   if (err) { throw err }
   log.info(msg)
-  showCustomHelp()
+  return showCustomHelp()
 }).epilog('For more information on a command, enter $0 <command> --help')
   .usage('\nUsage: $0 <command> [options]')
   .demand(1)
   .example('$0 create [options]')
-
 
   .command('build', 'Build the `book` dir (calls \'clean\', \'create\', \'copy\', \'sass\', \'scripts\', \'render\', \'loi\', \'inject\', \'opf\')', (yargs) => {
     ({ argv } = yargs.fail((msg, err) => {
@@ -384,3 +402,6 @@ let { argv } = yargs.fail((msg, err) => {
     .wrap(null))
     checkCommands(yargs, argv, 1)
   })
+
+// checkArguments()
+checkCommands(yargs, argv)
