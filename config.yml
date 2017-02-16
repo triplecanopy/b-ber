@@ -1,4 +1,5 @@
 ---
-environment: development
+env: development
+build: epub
 src: _book
 dist: book

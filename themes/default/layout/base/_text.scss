@@ -1,0 +1,225 @@
+
+// Block elements
+h1 {
+  text-indent: 0;
+  text-transform: uppercase;
+  @include text-center;
+  @include font-base;
+  @include no-indent-follow;
+  padding-top: 0;
+  padding-bottom: 5.65em;
+
+  &.book-title, &.figures-title {
+    @include rhythm-padding(0,0,$text-lg);
+  }
+
+  .backmatter & {
+    text-transform: uppercase;
+    padding: 0;
+    @include rhythm-padding(0,2,$text-md);
+    @include tc-rhythm-sizing($text-sm, $line-sm);
+  }
+}
+
+h2 {
+  @include font-base;
+  @include text-center;
+  @include rhythm-padding(1,1);
+  @include no-indent-follow;
+  text-indent: 0;
+
+  .backmatter & {
+    @include tc-rhythm-sizing($text-md, $line-md);
+    @include tc-rhythm-padding($text-md);
+    padding:rhythm(0.5) 0 0 0;
+  }
+}
+
+h3 {
+  @include font-base;
+  @include text-center;
+  @include rhythm-padding(1,1, $text-sm);
+  @include no-indent-follow;
+  text-indent: 0;
+}
+
+h1,h2,h3,h4,h5,h6 {
+  @include hyphens(none);
+  + p {
+    padding-top: 0;
+    margin-top: 0;
+  }
+  span.subtitle{
+    text-transform: none;
+  }
+}
+
+p {
+  @include font-base;
+  text-indent: rhythm(1.65);
+
+  blockquote & {
+    text-indent: 0;
+    @include tc-rhythm-sizing($text-xs, $line-xs);
+    @include adjust-leading-to(0.91);
+  }
+
+  // Section styles
+  .frontmatter &,
+  .backmatter &,
+  .book_meta & {
+    text-indent: 0;
+    @include tc-rhythm-padding($text-sm);
+  }
+
+  body.book_meta &,
+  // epub|section[type=colophon] &,
+  section.colophon &,
+  // epub|section[type=appendix] &,
+  section.appendix & {
+    font-weight: normal;
+    font-style: normal;
+    text-indent: 0;
+    @include font-base;
+    @include no-indent-follow;
+    @include tc-rhythm-sizing($text-sm, $line-sm);
+    @include tc-rhythm-padding($text-sm);
+  }
+
+  .pull-quote & {
+    text-indent: 0;
+    font-style: italic;
+    font-weight: normal;
+    @include no-indent-follow;
+    @include tc-rhythm-sizing($text-xs, $line-xs);
+    @include adjust-leading-to(0.91);
+  }
+
+  .epigraph .pull-quote & {
+    float: none;
+    width: 100%;
+    margin-top: 0!important;
+    padding-top: 0!important;
+    @include text-center;
+    @include no-indent-follow;
+    @include tc-rhythm-sizing($text-base, $line-base);
+    @include adjust-leading-to(1);
+  }
+}
+
+cite {
+  @include font-base;
+  .pull-quote & {
+    @include no-indent-follow;
+    @include tc-rhythm-sizing($text-xs, $line-xs);
+    @include adjust-leading-to(0.91);
+    float: right;
+    font-weight: normal;
+    text-indent: 0;
+    display: block;
+    text-align: right;
+    width: 75%;
+    margin-left: 25%;
+  }
+  .pull-quote.full-width & {
+    margin-left: 0;
+    width: 100%;
+  }
+  .epigraph .pull-quote & {
+    float: none;
+    width: 100%;
+    @include text-center;
+    @include no-indent-follow;
+    @include tc-rhythm-sizing($text-base, $line-base);
+    @include adjust-leading-to(1);
+  }
+}
+
+// TODO: carried over from NDBS, not sure if these should be added to core or not
+.end-notes header + p {
+  margin-top:0;
+}
+
+// Inline elements
+sup {
+  @include font-base;
+  font-size: 0.52em;
+  line-height: 1;
+  vertical-align: baseline;
+  position: relative;
+  top: -1em;
+}
+
+sub {
+  @include font-base;
+  font-size: 0.52em;
+  line-height: 1;
+  vertical-align: baseline;
+  position: relative;
+  bottom: -0.5em;
+}
+
+small {
+  @include font-base;
+  @include tc-rhythm-sizing($text-sm, $line-sm);
+}
+
+code,
+pre {
+  @include font-base;
+  padding: rhythm(1);
+  background-color: $light-grey;
+  white-space: pre;
+}
+
+a,a:active,a:visited,a:focus,a:hover{}
+
+i {
+  font-weight: 400;
+  font-style: italic;
+  font-family: inherit;
+  b, strong {
+    font-weight: 700;
+    font-style: italic;
+  }
+}
+
+em {
+  font-weight: 400;
+  font-style: italic;
+  font-family: inherit;
+  b, strong {
+    font-weight: 700;
+    font-style: italic;
+  }
+  em, .pull-quote p & {
+    font-weight: 400;
+    font-style: normal;
+  }
+}
+
+strong,b {
+  font-weight: 700;
+  font-style: normal;
+  font-family: inherit;
+  em, i {
+    font-weight: 700;
+    font-style: italic;
+  }
+}
+
+// TODO: this is weird, look into this
+.fn,
+.note,
+.fn-ref,
+a.fn,
+a.note,
+a.fn-ref {
+  @include text-small;
+  text-decoration: none;
+  a{
+    text-decoration: none;
+    display: inline-block;
+    margin-left: 0.89rem;
+  }
+}

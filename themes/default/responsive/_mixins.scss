@@ -1,0 +1,23 @@
+
+@mixin break($media) {
+  @if $media == 'mobile'  {
+    @media #{$mq-mobile} { @content }
+  }
+  @else if $media == 'tablet' {
+    @media #{$mq-tablet} { @content }
+  }
+  @else if $media == 'desktop' {
+    @media #{$mq-desktop} { @content }
+  }
+  @else if $media == 'ipad-pro' {
+    @media #{$ipad-pro} { @content }
+  }
+  @else {
+    @if feature-exists('at-error') == true {
+      @error "`#{$media}` is not a supported media type.";
+    }
+    @else {
+      @warn "`#{$media}` is not a supported media type.";
+    }
+  }
+}

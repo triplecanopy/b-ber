@@ -20,14 +20,14 @@ Where <command> is one of:
 Some common commands are:
 
   Creating books
-    bber init     Create an empty project and file structure, defaults to \`_book\`
-    generate      Create a new chapter and add it to pages.yml. Accepts
-                  arguments for metadata.
-    bber watch    Preview the book in a web-browser during development
-    bber build    Compile and copy assets in \`_book\` to the output directory,
-                  defaults to \`book\`
-    bber epub     Compile an epub from the assets in \`book\`
-    bber mobi     Compile a mobi file from the assets in \`book\`
+    bber init       Create an empty project and file structure, defaults to \`_book\`
+    bber generate   Create a new chapter and add it to pages.yml. Accepts
+                    arguments for metadata.
+    bber watch      Preview the book in a web-browser during development
+    bber build      Compile and copy assets in \`_book\` to the output directory,
+                    defaults to \`book\`
+    bber epub       Compile an epub from the assets in \`book\`
+    bber mobi       Compile a mobi file from the assets in \`book\`
 
   Viewing books
     bber site     Clone the bber-reader into \`site\`
@@ -61,8 +61,7 @@ const checkCommands = (yarg, argv, required) => {
 let { argv } = yargs.fail((msg, err) => {
   if (err) { throw err }
   log.info(msg)
-  // showCustomHelp()
-  yargs.showHelp()
+  showCustomHelp()
 }).epilog('For more information on a command, enter $0 <command> --help')
   .usage('\nUsage: $0 <command> [options]')
   .demand(1)
