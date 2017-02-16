@@ -56,6 +56,7 @@ const makeNewEbookTemplate = () => {
     relpath: 'config.yml',
     content: `---
 env: development # development | production
+theme: default # name or path
 src: ${src}
 dist: ${dist}`
   }, {

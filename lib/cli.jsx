@@ -36,7 +36,7 @@ Some common commands are:
 For more information on a command, enter bber <command> --help
 `)
 
-const checkCommands = (yarg, argv, required) => {
+const checkCommands = (yargs, argv, required) => {
   if (argv._.length < required) { return showCustomHelp() }
   const sequence = {}.hasOwnProperty.call(deps, argv._) ? deps[argv._] : [argv._[0]]
   const start = process.hrtime()
@@ -75,6 +75,7 @@ let { argv } = yargs.fail((msg, err) => {
       yargs.showHelp()
     })
     .usage('\nUsage: $0 build')
+    .config({ cmd: 'build' })
     .alias('h', 'help')
     .help('help')
     .wrap(null))
@@ -88,6 +89,7 @@ let { argv } = yargs.fail((msg, err) => {
       yargs.showHelp()
     })
     .usage('\nUsage: $0 clean')
+    .config({ cmd: 'clean' })
     .alias('h', 'help')
     .help('help')
     .wrap(null))
@@ -101,6 +103,7 @@ let { argv } = yargs.fail((msg, err) => {
       yargs.showHelp()
     })
     .usage('\nUsage: $0 copy')
+    .config({ cmd: 'copy' })
     .alias('h', 'help')
     .help('help')
     .wrap(null))
@@ -114,6 +117,7 @@ let { argv } = yargs.fail((msg, err) => {
       yargs.showHelp()
     })
     .usage('\nUsage: $0 create [options]')
+    .config({ cmd: 'create' })
     .alias('h', 'help')
     .help('help')
     .wrap(null))
@@ -154,6 +158,7 @@ let { argv } = yargs.fail((msg, err) => {
     })
 
     .usage('\nUsage: $0 generate [options]')
+    .config({ cmd: 'generate' })
     .alias('h', 'help')
     .help('help')
     .wrap(null))
@@ -167,6 +172,7 @@ let { argv } = yargs.fail((msg, err) => {
       yargs.showHelp()
     })
     .usage('\nUsage: $0 editor')
+    .config({ cmd: 'editor' })
     .alias('h', 'help')
     .help('help')
     .wrap(null))
@@ -180,6 +186,7 @@ let { argv } = yargs.fail((msg, err) => {
       yargs.showHelp()
     })
     .usage('\nUsage: $0 epub')
+    .config({ cmd: 'epub' })
     .alias('h', 'help')
     .help('help')
     .wrap(null))
@@ -210,6 +217,7 @@ let { argv } = yargs.fail((msg, err) => {
     })
 
     .usage('\nUsage: $0 init')
+    .config({ cmd: 'init' })
     .alias('h', 'help')
     .help('help')
     .wrap(null))
@@ -223,6 +231,7 @@ let { argv } = yargs.fail((msg, err) => {
       yargs.showHelp()
     })
     .usage('\nUsage: $0 inject')
+    .config({ cmd: 'inject' })
     .alias('h', 'help')
     .help('help')
     .wrap(null))
@@ -236,6 +245,7 @@ let { argv } = yargs.fail((msg, err) => {
       yargs.showHelp()
     })
     .usage('\nUsage: $0 mobi')
+    .config({ cmd: 'mobi' })
     .alias('h', 'help')
     .help('help')
     .wrap(null))
@@ -249,6 +259,7 @@ let { argv } = yargs.fail((msg, err) => {
       yargs.showHelp()
     })
     .usage('\nUsage: $0 opf')
+    .config({ cmd: 'opf' })
     .alias('h', 'help')
     .help('help')
     .wrap(null))
@@ -279,6 +290,7 @@ let { argv } = yargs.fail((msg, err) => {
     })
 
     .usage('\nUsage: $0 publish')
+    .config({ cmd: 'publish' })
     .alias('h', 'help')
     .help('help')
     .wrap(null))
@@ -292,6 +304,7 @@ let { argv } = yargs.fail((msg, err) => {
       yargs.showHelp()
     })
     .usage('\nUsage: $0 render')
+    .config({ cmd: 'render' })
     .alias('h', 'help')
     .help('help')
     .wrap(null))
@@ -305,6 +318,7 @@ let { argv } = yargs.fail((msg, err) => {
       yargs.showHelp()
     })
     .usage('\nUsage: $0 scripts')
+    .config({ cmd: 'scripts' })
     .alias('h', 'help')
     .help('help')
     .wrap(null))
@@ -318,6 +332,7 @@ let { argv } = yargs.fail((msg, err) => {
       yargs.showHelp()
     })
     .usage('\nUsage: $0 sass')
+    .config({ cmd: 'sass' })
     .alias('h', 'help')
     .help('help')
     .wrap(null))
@@ -331,6 +346,7 @@ let { argv } = yargs.fail((msg, err) => {
       yargs.showHelp()
     })
     .usage('\nUsage: $0 serve')
+    .config({ cmd: 'serve' })
     .alias('h', 'help')
     .help('help')
     .wrap(null))
@@ -353,6 +369,36 @@ let { argv } = yargs.fail((msg, err) => {
     })
 
     .usage('\nUsage: $0 site [path]')
+    .config({ cmd: 'path]' })
+    .alias('h', 'help')
+    .help('help')
+    .wrap(null))
+    checkCommands(yargs, argv, 1)
+  })
+
+  .command('theme', 'Select a theme for the book', (yargs) => {
+    ({ argv } = yargs.fail((msg, err) => {
+      if (err) { throw err }
+      log.info(msg)
+      yargs.showHelp()
+    })
+
+    .options('list', {
+      alias: 'l',
+      demand: false,
+      describe: 'List the installed themes',
+      type: 'boolean'
+    })
+
+    .options('set', {
+      alias: 's',
+      demand: false,
+      describe: 'Set the current theme',
+      type: 'string'
+    })
+
+    .usage('\nUsage: $0 theme')
+    .config({ cmd: 'theme' })
     .alias('h', 'help')
     .help('help')
     .wrap(null))
@@ -366,6 +412,7 @@ let { argv } = yargs.fail((msg, err) => {
       yargs.showHelp()
     })
     .usage('\nUsage: $0 watch')
+    .config({ cmd: 'watch' })
     .alias('h', 'help')
     .help('help')
     .wrap(null))
@@ -379,6 +426,7 @@ let { argv } = yargs.fail((msg, err) => {
       yargs.showHelp()
     })
     .usage('\nUsage: $0 xml')
+    .config({ cmd: 'xml' })
     .alias('h', 'help')
     .help('help')
     .wrap(null))
