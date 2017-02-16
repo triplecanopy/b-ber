@@ -7,8 +7,12 @@ import { exec } from 'child_process'
 import conf from './config'
 import { log } from './log'
 
+import yargs from 'yargs'
+
+
+const executor = yargs.argv.$0 === 'bber' ? yargs.argv.$0 : './node_modules/.bin/babel-node ./lib/cli.jsx --presets es2015,stage-0'
 const cwd = process.cwd()
-const onRestart = 'npm start -s -- build --invalid'
+const onRestart = `${executor} build --invalid`
 const port = 4000
 
 const restart = () =>
