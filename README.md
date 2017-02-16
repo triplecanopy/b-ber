@@ -15,16 +15,6 @@ $ cd b-ber-creator && npm install
 
 If working in a development environment, replace `bber` in the below commands with `npm start --`
 
-```bash
-$ bber init     # Initialize the directory structure for the book
-$ bber epub     # Create an Epub file
-$ bber mobi     # Create an Mobi file
-$ bber site     # Download Gomez and install dependencies
-$ bber publish  # Move epub to _site directory
-```
-
-## Development
-
 ```
 Usage: bber <command> [options]
 
@@ -36,21 +26,21 @@ Where <command> is one of:
 Some common commands are:
 
   Creating books
-    bber init     Create an empty project and file structure, defaults to \`_book\`
+    bber init     Create an empty project and file structure, defaults to `_book`
     bber watch    Preview the book in a web-browser during development
-    bber build    Compile and copy assets in \`_book\` to the output directory,
-                  defaults to \`book\`
-    bber epub     Compile an epub from the assets in \`book\`
-    bber mobi     Compile a mobi file from the assets in \`book\`
+    bber build    Compile and copy assets in `_book` to the output directory,
+                  defaults to `book`
+    bber epub     Compile an epub from the assets in `book`
+    bber mobi     Compile a mobi file from the assets in `book`
 
   Viewing books
-    bber site     Clone the bber-reader into \`site\`
+    bber site     Clone the bber-reader into `site`
     bber serve    Preview the compiled epub in the bber-reader
 
 For more information on a command, enter bber <command> --help
 ```
 
-See [the wiki](https://github.com/triplecanopy/b-ber-creator/wiki/CLI-Command-List#full-command-list) for a full list of commands.
+See the [wiki](https://github.com/triplecanopy/b-ber-creator/wiki/CLI-Command-List#full-command-list) for a full list of commands.
 
 ## Commands via `bber`
 
