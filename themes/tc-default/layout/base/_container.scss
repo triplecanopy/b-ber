@@ -42,6 +42,22 @@ blockquote {
   text-indent: 0;
 }
 
+.pull-quote { // tc only
+  float: left;
+  text-indent: 0;
+  padding: 0.8em rhythm(1.65); // TODO: optically adjusted
+  .epigraph & { // tc only
+    float: none;
+    padding-top: 0;
+    padding-bottom: 1.4em;
+    margin-top: 0;
+  }
+  + p { text-indent: 0; }
+  h1 + &,
+  .pull-quote + & { padding-top: 0; }
+  &:last-child { padding-bottom: 1.87em; }
+}
+
 
 
 // Sections

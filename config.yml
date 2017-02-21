@@ -3,4 +3,4 @@ env: development
 build: epub
 src: _book
 dist: book
-theme: default
+theme: tc-default

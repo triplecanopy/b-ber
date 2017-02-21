@@ -9,7 +9,7 @@ import { find } from 'lodash'
 
 import conf from './config'
 import Props from './props'
-import { fileid, guid, getFrontmatter } from './utils'
+import { fileid, guid, getFrontmatter, getImageOrientation } from './utils'
 
 const settings = () => {
   const meta = path.join(__dirname, `../${conf.src}`, 'metadata.yml')
@@ -17,9 +17,11 @@ const settings = () => {
     if (meta) {
       return YAML.load(meta)
     }
-  } catch (e) {
+  }
+  catch (e) {
     return {}
   }
+
   return false
 }
 
@@ -153,16 +155,9 @@ const imageTemplates = {
   }
 }
 
-
 function image(data, env) {
-  const { height, width } = data
-  const format = height > width
-    ? 'portrait'
-    : height < width
-    ? 'landscape'
-    : height === width
-    ? 'square'
-    : null
+  const { width, height } = data
+  const format = getImageOrientation(width, height)
   return imageTemplates[env || 'epub'][format](data)
 }
 

@@ -54,8 +54,8 @@ const checkCommands = (yarg, argv, required) => {
     return yargs.showHelp()
   }
 
-  const sequence = {}.hasOwnProperty.call(deps, argv._[0]) ? deps[argv._[0]] : [argv._[0]]
 
+  const sequence = {}.hasOwnProperty.call(deps, argv._[0]) ? deps[argv._[0]] : [argv._[0]]
   const start = process.hrtime()
   let total, seq, diff
 
@@ -94,7 +94,7 @@ let { argv } = yargs.fail((msg, err) => {
     .alias('h', 'help')
     .help('help')
     .wrap(null))
-    checkCommands(yargs, argv, 1)
+    // checkCommands(yargs, argv, 1)
   })
 
   .command('clean', 'Remove the _output dir', (yargs) => {
@@ -108,7 +108,7 @@ let { argv } = yargs.fail((msg, err) => {
     .alias('h', 'help')
     .help('help')
     .wrap(null))
-    checkCommands(yargs, argv, 1)
+    // checkCommands(yargs, argv, 1)
   })
 
   .command('copy', 'Copy static assets to output dir', (yargs) => {
@@ -122,7 +122,7 @@ let { argv } = yargs.fail((msg, err) => {
     .alias('h', 'help')
     .help('help')
     .wrap(null))
-    checkCommands(yargs, argv, 1)
+    // checkCommands(yargs, argv, 1)
   })
 
   .command('create', 'Create an Epub dir structure', (yargs) => {
@@ -136,7 +136,7 @@ let { argv } = yargs.fail((msg, err) => {
     .alias('h', 'help')
     .help('help')
     .wrap(null))
-    checkCommands(yargs, argv, 1)
+    // checkCommands(yargs, argv, 1)
   })
 
   .command('generate', 'Create a new chapter and add it to pages.yml. Accepts arguments for metadata.', (yargs) => {
@@ -177,7 +177,7 @@ let { argv } = yargs.fail((msg, err) => {
     .alias('h', 'help')
     .help('help')
     .wrap(null))
-    checkCommands(yargs, argv, 1)
+    // checkCommands(yargs, argv, 1)
   })
 
   .command('editor', 'Start web-based editor', (yargs) => {
@@ -191,7 +191,7 @@ let { argv } = yargs.fail((msg, err) => {
     .alias('h', 'help')
     .help('help')
     .wrap(null))
-    checkCommands(yargs, argv, 1)
+    // checkCommands(yargs, argv, 1)
   })
 
   .command('epub', 'Create an Epub (calls \'clean\', \'create\', \'copy\', \'sass\', \'scripts\', \'render\', \'loi\', \'inject\', \'opf\')', (yargs) => {
@@ -205,7 +205,7 @@ let { argv } = yargs.fail((msg, err) => {
     .alias('h', 'help')
     .help('help')
     .wrap(null))
-    checkCommands(yargs, argv, 1)
+    // checkCommands(yargs, argv, 1)
   })
 
   .command('init', 'Initalize b-ber', (yargs) => {
@@ -236,7 +236,7 @@ let { argv } = yargs.fail((msg, err) => {
     .alias('h', 'help')
     .help('help')
     .wrap(null))
-    checkCommands(yargs, argv, 1)
+    // checkCommands(yargs, argv, 1)
   })
 
   .command('inject', 'Inject scripts and styles into XHTML', (yargs) => {
@@ -250,7 +250,7 @@ let { argv } = yargs.fail((msg, err) => {
     .alias('h', 'help')
     .help('help')
     .wrap(null))
-    checkCommands(yargs, argv, 1)
+    // checkCommands(yargs, argv, 1)
   })
 
   .command('mobi', 'Create a Mobi', (yargs) => {
@@ -264,7 +264,7 @@ let { argv } = yargs.fail((msg, err) => {
     .alias('h', 'help')
     .help('help')
     .wrap(null))
-    checkCommands(yargs, argv, 1)
+    // checkCommands(yargs, argv, 1)
   })
 
   .command('opf', 'Generate the opf', (yargs) => {
@@ -278,7 +278,7 @@ let { argv } = yargs.fail((msg, err) => {
     .alias('h', 'help')
     .help('help')
     .wrap(null))
-    checkCommands(yargs, argv, 1)
+    // checkCommands(yargs, argv, 1)
   })
 
   .command('publish', 'Move book to the _site dir', (yargs) => {
@@ -309,7 +309,7 @@ let { argv } = yargs.fail((msg, err) => {
     .alias('h', 'help')
     .help('help')
     .wrap(null))
-    checkCommands(yargs, argv, 1)
+    // checkCommands(yargs, argv, 1)
   })
 
   .command('render', 'Transform Markdown to XHTML', (yargs) => {
@@ -323,7 +323,7 @@ let { argv } = yargs.fail((msg, err) => {
     .alias('h', 'help')
     .help('help')
     .wrap(null))
-    checkCommands(yargs, argv, 1)
+    // checkCommands(yargs, argv, 1)
   })
 
   .command('scripts', 'Transform coffeescript to JavaScript', (yargs) => {
@@ -337,7 +337,7 @@ let { argv } = yargs.fail((msg, err) => {
     .alias('h', 'help')
     .help('help')
     .wrap(null))
-    checkCommands(yargs, argv, 1)
+    // checkCommands(yargs, argv, 1)
   })
 
   .command('sass', 'Compile SCSS', (yargs) => {
@@ -351,7 +351,7 @@ let { argv } = yargs.fail((msg, err) => {
     .alias('h', 'help')
     .help('help')
     .wrap(null))
-    checkCommands(yargs, argv, 1)
+    // checkCommands(yargs, argv, 1)
   })
 
   .command('serve', 'Preview a book in the bber-reader', (yargs) => {
@@ -365,7 +365,7 @@ let { argv } = yargs.fail((msg, err) => {
     .alias('h', 'help')
     .help('help')
     .wrap(null))
-    checkCommands(yargs, argv, 1)
+    // checkCommands(yargs, argv, 1)
   })
 
   .command('site', 'Download bber-reader', (yargs) => {
@@ -388,7 +388,7 @@ let { argv } = yargs.fail((msg, err) => {
     .alias('h', 'help')
     .help('help')
     .wrap(null))
-    checkCommands(yargs, argv, 1)
+    // checkCommands(yargs, argv, 1)
   })
 
   .command('theme', 'Select a theme for the book', (yargs) => {
@@ -417,7 +417,7 @@ let { argv } = yargs.fail((msg, err) => {
     .alias('h', 'help')
     .help('help')
     .wrap(null))
-    checkCommands(yargs, argv, 1)
+    // checkCommands(yargs, argv, 1)
   })
 
   .command('watch', 'Preview a book in the browser', (yargs) => {
@@ -431,7 +431,7 @@ let { argv } = yargs.fail((msg, err) => {
     .alias('h', 'help')
     .help('help')
     .wrap(null))
-    checkCommands(yargs, argv, 1)
+    // checkCommands(yargs, argv, 1)
   })
 
   .command('xml', 'Export a book as an XML document', (yargs) => {
@@ -445,7 +445,7 @@ let { argv } = yargs.fail((msg, err) => {
     .alias('h', 'help')
     .help('help')
     .wrap(null))
-    checkCommands(yargs, argv, 1)
+    // checkCommands(yargs, argv, 1)
   })
 
-checkCommands(yargs, argv)
+checkCommands(yargs, argv, 1)

@@ -34,7 +34,7 @@ const createLOILeader = () =>
 const createLOI = () =>
   new Promise((resolve, reject) => {
     store.images.forEach((data, idx) => {
-      const imageStr = image(data)
+      const imageStr = image(data) // call portrait/portraitLong/square/landscape image template
       const markup = renderLayouts(new File({
         path: './.tmp',
         layout: 'page',
@@ -54,7 +54,8 @@ const loi = () =>
       .then(createLOI)
       .catch(err => log.error(err))
       .then(resolve)
-    } else { resolve() }
+    }
+    else { resolve() }
   })
 
 export default loi

@@ -49,7 +49,7 @@ export default {
         if (fs.statSync(image)) {
           const { ...dimensions } = imgsize(image)
           const { height, width } = dimensions
-          const orientation = getImageOrientation(height, width)
+          const orientation = getImageOrientation(width, height)
           updateStore('images', { seq, ...attrs, ...dimensions, ref: context._get('filename') })
           return `<div class="figure-sm ${orientation}">
             <figure id="ref${id}">
@@ -59,10 +59,12 @@ export default {
             </figure>
           </div>`
         }
-      } catch (e) {
+      }
+      catch (e) {
         log.warn(`[${context._get('filename')}.md: ${line}] <img> \`${path.basename(image)}\` not found.`)
         return `<!-- Image not found: ${path.basename(image)} -->\n`
       }
+
       return ''
     }
   })

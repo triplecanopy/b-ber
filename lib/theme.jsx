@@ -44,8 +44,7 @@ const theme = () =>
       config.theme = themeName
       return fs.writeFile(configPath, `---\n${YAML.stringify(config)}`, (err) => {
         if (err) { return reject(err) }
-        // TODO: copy over theme assets
-        // TODO: add theme entry to config
+        // TODO: copy over theme assets?
         log.info(`\nSuccessfully set theme theme to "${themeName}"\n`)
         return resolve()
       })

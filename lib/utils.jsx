@@ -74,7 +74,15 @@ const updateStore = (prop, { ...obj }) => {
   return store
 }
 
-const getImageOrientation = (h, w) => h > w ? 'portrait' : 'landscape' // eslint-disable-line no-confusing-arrow
+const getImageOrientation = (w, h) => {
+  // assign image class based on w:h ratio
+  const widthToHeight = w / h
+  if (widthToHeight < 0.61) { return 'portraitLong' }
+  if (widthToHeight > 0.61 && widthToHeight < 1) { return 'portrait' }
+  if (widthToHeight === 1) { return 'square' }
+  if (widthToHeight > 1) { return 'landscape' }
+  return null
+}
 
 const getFrontmatter = (file, prop) => {
   const filename = path.basename(file.name, '.xhtml')
