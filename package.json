@@ -58,7 +58,7 @@
     "vinyl": "^1.2.0",
     "xml2js": "^0.4.17",
     "yamljs": "^0.2.8",
-    "yargs": "^5.0.0"
+    "yargs": "^6.6.0"
   },
   "devDependencies": {
     "ava": "^0.16.0",

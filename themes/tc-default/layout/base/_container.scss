@@ -96,21 +96,21 @@ section.bibliography {
   margin-bottom: rhythm(1, $base-font-size);
   h1 {
     margin-bottom: 0;
-    padding-bottom:1.4em;
+    padding-bottom: 5.65em;
     line-height: 1.4;
   }
   .subchapter{
     margin-bottom: 0;
   }
-  h3{
-    padding-top: 0;
-    padding-bottom: 1.4em;
+  h3 {
+    padding-top: 1.52174em;
+    padding-bottom: 1.52174em;
     line-height: 1.4;
   }
-  p{
-    text-indent: 0;
-    padding-top: 0;
-    padding-bottom: 1.4em;
+  h3 + p { text-indent: 0; }
+  p {
+    @include font-base;
+    text-indent: rhythm(1.65);
   }
 }
 

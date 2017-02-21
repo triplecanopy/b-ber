@@ -206,18 +206,10 @@ strong,b {
   }
 }
 
-// TODO: this is weird, look into this
-.fn,
-.note,
-.fn-ref,
-a.fn,
-a.note,
-a.fn-ref {
+
+.footnotes {
+  page-break-before: always; // necessary for footnotes to work in mobi
+}
+.footnote {
   @include text-small;
-  text-decoration: none;
-  a{
-    text-decoration: none;
-    display: inline-block;
-    margin-left: 0.89rem;
-  }
 }
