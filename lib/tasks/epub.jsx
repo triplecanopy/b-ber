@@ -1,25 +1,19 @@
 
-import path from 'path'
 import zipper from 'epub-zipper'
 import { log } from '../log'
-import conf from '../config'
-
-const cwd = process.cwd()
+import { dist } from '../utils'
 
 const options = {
-  input: path.join(cwd, conf.dist),
-  output: cwd,
+  input: dist(),
+  output: process.cwd(),
   clean: true
 }
 
 const epub = () =>
-  new Promise(resolve/* , reject */ => {
-    console.log('run epub')
-    resolve()
-  }
-    // zipper.create(options)
-    // .catch(err => log.error(err))
-    // .then(resolve)
+  new Promise(resolve/* , reject */ =>
+    zipper.create(options)
+    .catch(err => log.error(err))
+    .then(resolve)
   )
 
 export default epub

@@ -1,4 +1,6 @@
 
+// TODO: restart cleanup for src/dist here
+
 import fs from 'fs-extra'
 import yargs from 'yargs'
 import path from 'path'

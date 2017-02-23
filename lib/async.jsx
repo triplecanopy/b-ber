@@ -28,18 +28,4 @@ async function serialize(sequence) {
   log.info(`Finished ${rpad('', ' ', 8)} ${hrtimeformat(process.hrtime(start))}`)
 }
 
-async function serialize2(sequence) {
-  await forEachSerial(sequence, async (func) => {
-    await delayedPromise(0, func.call(this))
-    console.log('done')
-  })
-  console.log('alllll done')
-}
-
-function promisify(callback, arr) {
-  const funcs = []
-  arr.forEach(_ => funcs.push(() => callback(_)))
-  return serialize2(funcs)
-}
-
-export { delayedPromise, forEachSerial, serialize, serialize2, promisify }
+export { delayedPromise, forEachSerial, serialize }

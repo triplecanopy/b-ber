@@ -6,6 +6,7 @@ import path from 'path'
 import { compact, find } from 'lodash'
 import conf from '../config'
 import store from '../state/store'
+import actions from '../state'
 
 const cwd = process.cwd()
 
@@ -104,37 +105,20 @@ const entries = function* (obj) {
   }
 }
 
-const createPathsFromDefaultsOrBuildVars = (args, dir) => {
-  const { bber } = args
-  const build = {}.hasOwnProperty.call(bber, 'build')
-    ? 'build'
-    : {}.hasOwnProperty.call(bber, 'defaults')
-    ? 'defaults'
-    : null
+const src = () => {
+  const { build, bber } = actions.getBber('build', 'bber')
+  const { src } = bber[build]
+  return path.join(cwd, src)
+}
 
-  if (!build) { throw new Error('No build type specified.') }
-
-  const src = bber[build].map(_ => path.join(cwd, bber[_].src))
-  const dist = bber[build].map(_ => path.join(cwd, bber[_].dist))
-
-  return { src, dist }
-
+const dist = () => {
+  const { build, bber } = actions.getBber('build', 'bber')
+  const { dist } = bber[build]
+  return path.join(cwd, dist)
 }
 
 export {
-  opspath,
-  cjoin,
-  fileid,
-  copy,
-  guid,
-  rpad,
-  hrtimeformat,
-  hashIt,
-  updateStore,
-  getImageOrientation,
-  getFrontmatter,
-  orderByFileName,
-  entries,
-  createPathsFromDefaultsOrBuildVars
-}
+  opspath, cjoin, fileid, copy, guid, rpad, hrtimeformat, hashIt,
+  updateStore, getImageOrientation, getFrontmatter, orderByFileName, entries,
+  src, dist }
 

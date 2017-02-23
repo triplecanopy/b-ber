@@ -67,7 +67,8 @@ const handler = (argv) => {
   const buildCmds = _buildCommands
   const buildArgs = _buildArgs(argv)
   const buildTasks = buildArgs.length ? buildArgs : !buildArgs.length && argv.d ? [] : buildCmds
-  const sequence = ['clean', 'create', 'copy', 'sass', 'scripts', 'render', 'loi', 'inject', 'opf']
+  // const sequence = ['clean', 'create', 'copy', 'sass', 'scripts', 'render', 'loi', 'inject', 'opf']
+  const sequence = ['clean', 'create']
 
   const { bber } = argv
   actions.setBber({ bber })

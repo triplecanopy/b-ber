@@ -1,26 +1,24 @@
 
 import cdir from 'copy-dir'
 import path from 'path'
-import conf from '../config'
+import { src, dist } from '../utils'
 
-const cwd = process.cwd()
-const src = [
+const input = src()
+const output = dist()
+
+const srcs = [
   '_images',
   '_fonts'
 ]
 
 const copy = () =>
   new Promise((resolve, reject) =>
-    setTimeout(function() {
-      console.log('done copy')
-      resolve()
-    }, 500)
-    // src.forEach((_, idx) =>
-    //   cdir(path.join(cwd, conf.src, _), path.join(cwd, conf.dist, 'OPS', _.slice(1)), (err) => {
-    //     if (err) { reject(err) }
-    //     if (idx === src.length - 1) { resolve() }
-    //   })
-    // )
+    srcs.forEach((_, idx) =>
+      cdir(path.join(input, _), path.join(output, 'OPS', _.slice(1)), (err) => {
+        if (err) { reject(err) }
+        if (idx === srcs.length - 1) { resolve() }
+      })
+    )
   )
 
 
