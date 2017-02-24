@@ -1,0 +1,10 @@
+
+// hiding footnotes on ibooks, since clicking the back-link in a popup causes
+// glitch. see Radar Bug ID# 12551733. a separate mobi:footnotes task removes
+// the inline style altogether when building mobi files.  Might be a better
+// way to do this during build.
+
+// .ibooks-hidden { display: none!important; }
+// html:not([__ibooks_internal_theme]) .ibooks-hidden {
+//   display: inline!important;
+// }

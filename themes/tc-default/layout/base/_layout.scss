@@ -1,0 +1,51 @@
+
+hr {
+  padding: 0;
+  margin: 2em 0;
+  height: 1px;
+  width: 100%;
+  background-color: $black;
+  @include no-indent-follow;
+  @include no-top-padding-element-follows;
+}
+
+
+
+
+// tc only
+body.book_meta,
+section.colophon,
+section.appendix {
+  figure#Triple-Canopy.logo {
+    text-indent: 0;
+    text-align: left;
+    margin:0;
+    padding:0;
+    img{
+      height:auto;
+      text-indent: 0;
+      text-align: left;
+      margin:0;
+      padding:12px 0 0 0;
+    }
+  }
+}
+
+// tc only
+// Adjustments to book meta
+section.staff {
+  h3 {
+    text-align: left;
+    margin:0;
+    padding:0;
+    font-weight: bold;
+    @include tc-rhythm-sizing($text-sm, $line-sm);
+  }
+}
+.masthead h2 {
+  font-weight: 700;
+  font-family: inherit;
+  padding-top:0;
+  text-align: left;
+  @include tc-rhythm-sizing($text-sm, $line-sm);
+}
