@@ -1,7 +1,7 @@
 
 import htmlparser from 'htmlparser2'
 
-class Sanitizer {
+class Parser {
   constructor(customElements) {
     const defaultElements = [
       'pull-quote',
@@ -54,7 +54,7 @@ class Sanitizer {
       const len = arr.length - 1
       _this.appendComment(arr[index])
       if (index === 0) { _this.prependBody() }
-      return new Promise(resolve/* , reject */ => {
+      return new Promise((resolve/* , reject */) => {
         const parser = new htmlparser.Parser({
           onopentag(name, attrs) {
             _this.noop = false
@@ -130,4 +130,4 @@ class Sanitizer {
   }
 }
 
-export default Sanitizer
+export default Parser

@@ -4,12 +4,12 @@ import fs from 'fs-extra'
 import { parseString } from 'xml2js'
 import { log } from '../log'
 import conf from '../config'
-import Sanitizer from '../modules/sanitizer'
+import Parser from '../modules/parser'
 
 const cwd = process.cwd()
 
-// TODO: args here should be passed via CLI to support `const sanitizer = new Sanitizer(['chapter-three'])`
-const sanitizer = new Sanitizer()
+// TODO: args here should be passed via CLI to support `const parser = new Parser(['chapter-three'])`
+const parser = new Parser()
 
 const readSpine = () =>
   new Promise((resolve, reject) => {
@@ -35,7 +35,7 @@ const parseHTML = files =>
       } catch (err) {
         return log.warn(err.message)
       }
-      return sanitizer.parse(data, index, arr)
+      return parser.parse(data, index, arr)
     }).filter(Boolean)
     Promise.all(text).then(docs => resolve(docs.join('\n')))
   })

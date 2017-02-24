@@ -1,5 +1,5 @@
 ---
-env: development # development | production
-theme: default # name or path
+env: development
+theme: tc-default
 src: _book
 dist: book
