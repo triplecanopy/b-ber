@@ -8,7 +8,7 @@ const builder = yargs =>
     .help('h')
     .alias('h', 'help')
     .usage('\nUsage: $0 editor')
-const handler = argv => editor()
+const handler = () => editor()
 
 export default {
   command,

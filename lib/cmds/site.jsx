@@ -6,7 +6,7 @@ const describe = 'Download bber-reader'
 const builder = yargs =>
   yargs
     .options({
-      'p': {
+      p: {
         alias: 'path',
         default: './_site',
         describe: 'Define the site path',
@@ -16,7 +16,7 @@ const builder = yargs =>
     .help('h')
     .alias('h', 'help')
     .usage('\nUsage: $0 site')
-const handler = argv => site()
+const handler = () => site()
 
 export default {
   command,

@@ -10,7 +10,7 @@ import mdExit from '../md/directives/exit'
 import mdImages from '../md/directives/images'
 import mdDialogue from '../md/directives/dialogue'
 import mdEpigraph from '../md/directives/epigraph'
-import { updateStore } from '../utils'
+import { updateStore } from '../utils' // TODO: this should be called with methods in `state`
 
 class MarkIt {
   constructor() {

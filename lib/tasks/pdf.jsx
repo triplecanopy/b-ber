@@ -4,8 +4,8 @@
 import path from 'path'
 import html2pdf from 'html-pdf'
 import fs from 'fs-extra'
-import conf from './config'
-import { log } from './log'
+import conf from '../config'
+// import { log } from '../log'
 
 const cwd = process.cwd()
 const htmlPath = path.join(cwd, conf.dist, 'OPS/Text/content-2.xhtml')
@@ -31,12 +31,13 @@ const options = {
   // base: `file://${path.join(cwd, conf.dist, 'OPS/Text')}`
 }
 
-const pdf = () => {
-  html2pdf.create(html, options).toFile('./output.pdf', (err, data) => {
-    if (err) { throw err }
-    log.info(`success! pdf is at ${data.filename}`)
-  })
-}
+const pdf = () =>
+  new Promise((resolve, reject) =>
+    html2pdf.create(html, options).toFile('./output.pdf', (err, data) => {
+      if (err) { reject(err) }
+      resolve()
+    })
+  )
 
 pdf()
 // export default pdf

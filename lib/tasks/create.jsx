@@ -4,13 +4,7 @@ import { log } from '../log'
 import { container, mimetype } from '../templates'
 import { src, dist } from '../utils'
 
-const input = src()
-const output = dist()
-
-const dirs = [
-  `${output}/OPS`,
-  `${output}/META-INF`
-]
+let input, output, dirs
 
 const write = () =>
   new Promise((resolve, reject) =>
@@ -35,6 +29,13 @@ const makedirs = () =>
 
 const create = () =>
   new Promise((resolve, reject) => {
+    input = src()
+    output = dist()
+    dirs = [
+      `${output}/OPS`,
+      `${output}/META-INF`
+    ]
+
     try {
       if (fs.statSync(input)) {
         makedirs()

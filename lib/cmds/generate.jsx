@@ -6,19 +6,19 @@ const describe = 'Create a new chapter. Accepts arguments for metadata'
 const builder = yargs =>
   yargs
     .options({
-      's': {
+      s: {
         alias: 'section_title',
         describe: 'Define the chapters\'s title',
         default: '',
         type: 'string'
       },
-      'l': {
+      l: {
         alias: 'landmark_type',
         describe: 'Define the chapters\'s landmark type',
         default: '',
         type: 'string'
       },
-      't': {
+      t: {
         alias: 'landmark_title',
         describe: 'Define the chapters\'s landmark title',
         default: '',
@@ -30,7 +30,7 @@ const builder = yargs =>
     .alias('h', 'help')
     .usage('\nUsage: $0 generate')
 
-const handler = argv => generate()
+const handler = () => generate()
 
 export default {
   command,

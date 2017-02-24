@@ -7,7 +7,9 @@ import conf from '../config'
 import Sanitizer from '../modules/sanitizer'
 
 const cwd = process.cwd()
-const sanitizer = new Sanitizer(['chapter-three']) // TODO: args here should be passed via CLI
+
+// TODO: args here should be passed via CLI to support `const sanitizer = new Sanitizer(['chapter-three'])`
+const sanitizer = new Sanitizer()
 
 const readSpine = () =>
   new Promise((resolve, reject) => {
@@ -24,7 +26,7 @@ const readSpine = () =>
   })
 
 const parseHTML = files =>
-  new Promise((resolve, reject) => {
+  new Promise((resolve/* , reject */) => {
     const dir = path.join(cwd, conf.dist, 'OPS/text')
     const text = files.map((_, index, arr) => {
       let data
@@ -39,8 +41,8 @@ const parseHTML = files =>
   })
 
 const writeXML = str =>
-  new Promise((resolve, reject) => {
-    const fpath = path.join(cwd, `Export.xml`)//-${new Date().toISOString().replace(/:/g, '-')}.xml`)
+  new Promise((resolve/* , reject */) => {
+    const fpath = path.join(cwd, 'Export.xml')//-${new Date().toISOString().replace(/:/g, '-')}.xml`)
     fs.writeFile(fpath, str, 'utf8', (err) => {
       if (err) { throw err }
       resolve()
@@ -48,7 +50,7 @@ const writeXML = str =>
   })
 
 const xml = () =>
-  new Promise((resolve, reject) =>
+  new Promise((resolve/* , reject */) =>
     readSpine()
       .then(files => parseHTML(files))
       .then(markup => writeXML(markup))

@@ -1,4 +1,6 @@
 
+// TODO: which dir is this watching? `book`? `book-epub`?
+
 import path from 'path'
 import fs from 'fs-extra'
 import nodemon from 'nodemon'

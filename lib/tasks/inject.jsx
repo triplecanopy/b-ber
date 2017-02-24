@@ -4,10 +4,13 @@ import path from 'path'
 import File from 'vinyl'
 
 import { log } from '../log'
-import conf from '../config'
 import { scriptTag, stylesheetTag } from '../templates'
+import { dist } from '../utils'
 
-const cwd = process.cwd()
+let output
+const initialize = () => {
+  output = dist()
+}
 
 const startTags = {
   javascripts: new RegExp('<!-- inject:js -->', 'ig'),
@@ -23,11 +26,12 @@ const getDirContents = dirpath =>
   new Promise((resolve, reject) =>
     fs.readdir(dirpath, (err, files) => {
       if (err) { reject(err) }
+      if (!files) { throw new Error(`No files found in \`${path.basename(dirpath)}\``) }
       resolve(files)
     }))
 
 const getContents = source => new Promise((resolve, reject) =>
-  fs.readFile(path.join(cwd, conf.dist, 'OPS/text', source), (err, data) => {
+  fs.readFile(path.join(output, 'OPS/text', source), (err, data) => {
     if (err) { reject(err) }
     resolve(new File({ contents: new Buffer(data) }))
   })
@@ -114,7 +118,7 @@ const mapSources = (stylesheets, javascripts, sources) =>
       promiseToReplace('stylesheets', stylesheets, source)
       .then(file => promiseToReplace('javascripts', javascripts, source, file))
       .then(file => write(
-          path.join(cwd, conf.dist, 'OPS/text', source),
+          path.join(output, 'OPS/text', source),
           file.contents.toString('utf8')))
       .catch(err => log.error(err))
       .then(resolve)
@@ -123,11 +127,12 @@ const mapSources = (stylesheets, javascripts, sources) =>
 
 const inject = () =>
   new Promise(async (resolve/* , reject */) => {
-    const textSources = await getDirContents(`${conf.dist}/OPS/text/`)
-    const stylesheets = await getDirContents(`${conf.dist}/OPS/stylesheets/`)
-    const javascripts = await getDirContents(`${conf.dist}/OPS/javascripts/`)
+    await initialize()
+    const textSources = await getDirContents(`${output}/OPS/text/`)
+    const stylesheets = await getDirContents(`${output}/OPS/stylesheets/`)
+    const javascripts = await getDirContents(`${output}/OPS/javascripts/`)
     mapSources(stylesheets, javascripts, textSources)
-    .catch(err => log.log(err))
+    .catch(err => log.error(err))
     .then(resolve)
   })
 

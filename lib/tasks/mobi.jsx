@@ -2,24 +2,19 @@
 import zipper from 'mobi-zipper'
 import path from 'path'
 import { log } from '../log'
-import conf from '../config'
+import { dist } from '../utils'
 
-const cwd = process.cwd()
-
-const options = {
-  input: path.join(cwd, conf.dist, 'OPS/content.opf'),
-  output: cwd,
+const options = () => ({
+  input: path.join(dist(), 'OPS/content.opf'),
+  output: process.cwd(),
   clean: true
-}
+})
 
 const mobi = () =>
-  new Promise(resolve/* , reject */ => {
-    console.log('run mobi')
-    resolve()
-  }
-    // zipper.create(options)
-    // .catch(err => log.error(err))
-    // .then(resolve)
+  new Promise(async resolve/* , reject */ =>
+    zipper.create(await options())
+    .catch(err => log.error(err))
+    .then(resolve)
   )
 
 export default mobi

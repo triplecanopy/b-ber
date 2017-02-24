@@ -1,12 +1,10 @@
 
-import path from 'path'
+/* eslint-disable operator-linebreak */
+
 import fs from 'fs-extra'
 import mime from 'mime-types'
-
 import terms from '../dc/terms'
 import elements from '../dc/elements'
-
-const cwd = process.cwd()
 
 class Props {
   constructor() {
@@ -14,44 +12,49 @@ class Props {
       return Boolean(mime.lookup(file.rootpath) === 'text/html'
         || mime.lookup(file.rootpath) === 'application/xhtml+xml')
     }
+
     this.isNav = function isNav(file) {
       return Boolean(mime.lookup(file.rootpath) === 'application/xhtml+xml'
         && file.name === 'toc.xhtml')
     }
+
     this.isScripted = function isScripted(file) {
       if (!this.isHTML(file)) { return false }
-      const fpath = path.join(cwd, file.rootpath)
+      const fpath = file.rootpath
       const contents = fs.readFileSync(fpath, 'utf8')
       return Boolean(contents.match(/<script/))
     }
+
     this.isSVG = function isSVG(file) {
       if (!this.isHTML(file)) { return false }
-      const fpath = path.join(cwd, file.rootpath)
+      const fpath = file.rootpath
       const contents = fs.readFileSync(fpath, 'utf8')
       return Boolean(contents.match(/<svg/))
     }
+
     this.isDCElement = function isDCElement(data) {
       return Boolean({}.hasOwnProperty.call(data, 'term')
         && elements.indexOf(data.term) > -1)
     }
+
     this.isDCTerm = function isDCTerm(data) {
       return Boolean({}.hasOwnProperty.call(data, 'term')
         && terms.indexOf(data.term) > -1)
     }
-  }
 
-  testHTML(file) {
-    const props = []
-    if (this.isNav(file)) { props.push('nav') }
-    if (this.isScripted(file)) { props.push('scripted') }
-    if (this.isSVG(file)) { props.push('svg') }
-    return props
-  }
+    this.testHTML = function testHTML(file) {
+      const props = []
+      if (this.isNav(file)) { props.push('nav') }
+      if (this.isScripted(file)) { props.push('scripted') }
+      if (this.isSVG(file)) { props.push('svg') }
+      return props
+    }
 
-  testMeta(data) {
-    return {
-      term: this.isDCTerm(data),
-      element: this.isDCElement(data)
+    this.testMeta = function testMeta(data) {
+      return {
+        term: this.isDCTerm(data),
+        element: this.isDCElement(data)
+      }
     }
   }
 }

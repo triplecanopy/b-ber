@@ -6,12 +6,12 @@ const describe = 'Select a theme for the book'
 const builder = yargs =>
   yargs
     .options({
-      'l': {
+      l: {
         alias: 'list',
         describe: 'List the installed themes',
         type: 'boolean'
       },
-      's': {
+      s: {
         alias: 'set',
         describe: 'Set the current theme',
         type: 'string'
@@ -20,7 +20,7 @@ const builder = yargs =>
     .help('h')
     .alias('h', 'help')
     .usage('\nUsage: $0 theme')
-const handler = argv => theme()
+const handler = () => theme()
 
 export default {
   command,

@@ -10,9 +10,8 @@ import { log } from '../log'
 const cwd = process.cwd()
 
 let dest
-const setDest = () => {
+const initialize = () => {
   dest = path.join(cwd, yargs.argv.path)
-  return dest
 }
 
 const download = () =>
@@ -26,8 +25,8 @@ const download = () =>
     })
   })
 
-function site() {
-  setDest()
+async function site() {
+  await initialize()
   return new Promise((resolve, reject) => {
     if (!{}.hasOwnProperty.call(conf, 'reader')) { reject(new Error('No download url.')) }
     download()

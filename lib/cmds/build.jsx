@@ -11,43 +11,43 @@ const describe = 'Compile a book'
 const builder = yargs =>
   yargs
     .options({
-      'd': {
+      d: {
         alias: 'dir',
         describe: 'Compile the output dir',
         default: false,
         type: 'boolean'
       },
-      'e': {
+      e: {
         alias: 'epub',
         describe: 'Build an ePub',
         default: false,
         type: 'boolean'
       },
-      'm': {
+      m: {
         alias: 'mobi',
         describe: 'Build a mobi',
         default: false,
         type: 'boolean'
       },
-      'w': {
+      w: {
         alias: 'web',
         describe: 'Build for web',
         default: false,
         type: 'boolean'
       },
-      'p': {
+      p: {
         alias: 'pdf',
         describe: 'Create a PDF',
         default: false,
         type: 'boolean'
       },
-      's': {
+      s: {
         alias: 'sample',
         describe: 'Create a sample ePub',
         default: false,
         type: 'boolean'
       },
-      'a': {
+      a: {
         alias: 'all',
         describe: 'Build all formats',
         default: true,
@@ -67,16 +67,15 @@ const handler = (argv) => {
   const buildCmds = _buildCommands
   const buildArgs = _buildArgs(argv)
   const buildTasks = buildArgs.length ? buildArgs : !buildArgs.length && argv.d ? [] : buildCmds
-  // const sequence = ['clean', 'create', 'copy', 'sass', 'scripts', 'render', 'loi', 'inject', 'opf']
-  const sequence = ['clean', 'create']
+  const sequence = ['clean', 'create', 'copy', 'sass', 'scripts', 'render', 'loi', 'inject', 'opf']
 
   const { bber } = argv
   actions.setBber({ bber })
 
   const run = (tasks) => {
-    const build = tasks.shift()
-    actions.setBber({ build })
-    serialize([...sequence, build]).then(() => {
+    const next = tasks.shift()
+    actions.setBber({ build: next })
+    serialize([...sequence, next]).then(() => {
       if (tasks.length) { run(tasks) }
     })
   }

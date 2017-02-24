@@ -1,6 +1,4 @@
 
-// TODO: restart cleanup for src/dist here
-
 import fs from 'fs-extra'
 import yargs from 'yargs'
 import path from 'path'
@@ -8,7 +6,7 @@ import YAML from 'yamljs'
 import File from 'vinyl'
 import conf from '../config'
 import { log } from '../log'
-import { orderByFileName, entries } from '../utils'
+import { orderByFileName, entries, lpad } from '../utils'
 
 const cwd = process.cwd()
 
@@ -45,7 +43,7 @@ const createFile = ({ files, metadata }) => {
   frontmatter = `---\n${frontmatter}---\n`
 
   return new Promise((resolve) => {
-    const fname = `000${files.length + 1}_1.md`
+    const fname = `${lpad(String(files.length + 1), '0', 5)}.md`
     const file = new File({
       path: './',
       contents: new Buffer(frontmatter)
@@ -67,28 +65,32 @@ const writeFile = ({ fname, file }) =>
 
 const writePageMeta = ({ fname }) =>
   new Promise((resolve, reject) => {
-    const pagesyaml = path.join(cwd, conf.src, 'pages.yml')
-    let pagemeta = []
-    try {
-      if (fs.statSync(pagesyaml)) {
-        pagemeta = YAML.load(path.join(cwd, conf.src, 'pages.yml'))
+    const buildTypes = ['epub', 'mobi', 'web', 'sample']
+    let type
+    while ((type = buildTypes.pop())) {
+      const pages = path.join(cwd, conf.src, `${type}.yml`)
+      let pagemeta = []
+      try {
+        if (fs.statSync(pages)) {
+          pagemeta = YAML.load(path.join(cwd, conf.src, `${type}.yml`))
+        }
       }
-    }
-    catch (e) {
-      log.info('Creating pages.yaml')
-      fs.writeFileSync(path.join(cwd, conf.src, 'pages.yml'))
-    }
+      catch (e) {
+        log.info(`Creating ${type}.yml`)
+        fs.writeFileSync(path.join(cwd, conf.src, `${type}.yml`), '---')
+      }
 
-    const index = pagemeta.indexOf(fname)
-    if (index > -1) {
-      log.error(`${fname} already exists in \`pages.yml\`. Aborting`)
-      reject()
-    }
+      const index = pagemeta.indexOf(fname)
+      if (index > -1) {
+        log.error(`${fname} already exists in \`${type}.yml\`. Aborting`)
+        reject()
+      }
 
-    fs.appendFile(pagesyaml, `\n- ${path.basename(fname, '.md')}.xhtml`, (err) => {
-      if (err) { throw err }
-      resolve()
-    })
+      fs.appendFile(pages, `\n- ${path.basename(fname, '.md')}.xhtml`, (err) => {
+        if (err) { throw err }
+        if (!buildTypes.length) { resolve() }
+      })
+    }
   })
 
 

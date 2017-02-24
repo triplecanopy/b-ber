@@ -8,7 +8,7 @@ const builder = yargs =>
     .help('h')
     .alias('h', 'help')
     .usage('\nUsage: $0 watch')
-const handler = argv => watch()
+const handler = () => watch()
 
 export default {
   command,

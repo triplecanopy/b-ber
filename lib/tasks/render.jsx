@@ -1,21 +1,25 @@
 
+// TODO: this should be cleaned up to use promise chain
+
 import renderLayouts from 'layouts'
 import path from 'path'
 import fs from 'fs-extra'
 import File from 'vinyl'
-
-import conf from '../config'
 import MarkIt from './md'
 import { pageBody, pageHead, pageTail } from '../templates'
+import { src, dist } from '../utils'
 
-const cwd = process.cwd()
+let input, output, mdDir, textDir
+const initialize = () => {
+  input = src()
+  output = dist()
+  mdDir = path.join(`${input}/_markdown/`)
+  textDir = path.join(`${output}/OPS/text/`)
+}
 
-const mddir = path.join(cwd, `${conf.src}/_markdown/`)
-const dest = path.join(cwd, `${conf.dist}/OPS/text/`)
-
-// write files to `dest` dir
+// write files to `textDir` dir
 const write = (fname, markup, idx, len, rs, rj) =>
-  fs.writeFile(path.join(dest, `${fname}.xhtml`), markup, (err) => {
+  fs.writeFile(path.join(textDir, `${fname}.xhtml`), markup, (err) => {
     if (err) { rj(err) }
     if (idx === len) { rs() }
   })
@@ -31,12 +35,12 @@ const layout = (fname, data, idx, len, rs, rj) => {
   }), { pageBody }).contents.toString()
 
   try {
-    if (fs.statSync(dest)) {
+    if (fs.statSync(textDir)) {
       write(fname, markup, idx, len, rs, rj)
     }
   }
   catch (e) {
-    fs.mkdirs(dest, () => write(fname, markup, idx, len, rs, rj))
+    fs.mkdirs(textDir, () => write(fname, markup, idx, len, rs, rj))
   }
 }
 
@@ -44,19 +48,21 @@ const layout = (fname, data, idx, len, rs, rj) => {
 const parse = (fname, data, idx, len, rs, rj) =>
   layout(fname, MarkIt.render(fname, data), idx, len, rs, rj)
 
-const render = () =>
-  new Promise((resolve, reject) => {
-    fs.readdir(mddir, async (err1, files) => {
+async function render() {
+  await initialize()
+  return new Promise(async (resolve, reject) =>
+    fs.readdir(mdDir, async (err1, files) => {
       if (err1) { reject(err1) }
       const len = files.length - 1
       return files.forEach((file, idx) => {
         if (file.charAt(0) === '.') { return }
-        fs.readFile(path.join(mddir, file), 'utf8', (err2, data) => {
+        fs.readFile(path.join(mdDir, file), 'utf8', (err2, data) => {
           if (err2) { reject(err2) }
           return parse(path.basename(file, '.md'), data, idx, len, resolve, reject)
         })
       })
     })
-  })
+  )
+}
 
 export default render

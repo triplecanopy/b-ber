@@ -4,7 +4,6 @@
 import fs from 'fs-extra'
 import path from 'path'
 import { compact, find } from 'lodash'
-import conf from '../config'
 import store from '../state/store'
 import actions from '../state'
 
@@ -20,8 +19,8 @@ const copy = (source, target) =>
     return rd.pipe(wr)
   })
 
-const opspath = file =>
-  file.replace(new RegExp(`^${conf.dist}/OPS/?`), '')
+const opspath = (fpath, base) =>
+  fpath.replace(new RegExp(`^${base}/OPS/?`), '')
 
 const cjoin = arr =>
   compact(arr).join('\n')
@@ -39,6 +38,13 @@ const rpad = (s, a, n) => {
   let str = s
   if (str.length >= n) { return str }
   while (str.length < n) { str += a }
+  return str
+}
+
+const lpad = (s, a, n) => {
+  let str = s
+  if (str.length >= n) { return str }
+  while (str.length < n) { str = a + str }
   return str
 }
 
@@ -107,18 +113,47 @@ const entries = function* (obj) {
 
 const src = () => {
   const { build, bber } = actions.getBber('build', 'bber')
+  if (!build || !bber) { throw new Error('Missing keys `build` or `bber` in `state`.') }
   const { src } = bber[build]
   return path.join(cwd, src)
 }
 
 const dist = () => {
   const { build, bber } = actions.getBber('build', 'bber')
+  if (!build || !bber) { throw new Error('Missing keys `build` or `bber` in `state`.') }
   const { dist } = bber[build]
   return path.join(cwd, dist)
 }
 
+const build = () => {
+  const { build } = actions.getBber('build')
+  if (build === null) { throw new Error('Missing keys `build` in `state`.') }
+  return build
+}
+
+const env = () => {
+  const { bber } = actions.getBber('bber')
+  const { env } = bber
+  return env
+}
+
+const theme = () => {
+  const { bber } = actions.getBber('bber')
+  const { theme } = bber
+  return {
+    tpath: path.join(cwd, 'themes', theme),
+    tname: theme
+  }
+}
+
+const version = () => {
+  const pkg = JSON.parse(fs.readFileSync(path.join(cwd, 'package.json')))
+  const { version } = pkg
+  return version || ''
+}
+
 export {
-  opspath, cjoin, fileid, copy, guid, rpad, hrtimeformat, hashIt,
+  opspath, cjoin, fileid, copy, guid, rpad, lpad, hrtimeformat, hashIt,
   updateStore, getImageOrientation, getFrontmatter, orderByFileName, entries,
-  src, dist }
+  src, dist, build, env, theme, version }
 

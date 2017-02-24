@@ -7,14 +7,30 @@ import path from 'path'
 import nsass from 'node-sass'
 import postcss from 'postcss'
 import autoprefixer from 'autoprefixer'
-import YAML from 'yamljs'
-import conf from '../config'
 import { log } from '../log'
+import { src, dist, env, build, theme } from '../utils'
 
-const cwd = process.cwd()
-const destdir = path.join(cwd, conf.dist, '/OPS/stylesheets')
-const outputStyle = conf.env === 'production' ? 'compressed' : 'nested'
-const autoprefixerOptions = { browsers: ['last 2 versions', '> 2%'], flexbox: 'no-2009' }
+let input, output, destdir, outputStyle, autoprefixerOptions, outputdir,
+    options, buildVars, includePaths, themeName, themePath
+
+async function initialize() {
+  const { tpath, tname } = theme()
+
+  themeName = tname
+  themePath = tpath
+
+  input = src()
+  output = dist()
+
+  destdir = path.join(output, '/OPS/stylesheets')
+  outputStyle = env() === 'production' ? 'compressed' : 'nested'
+  autoprefixerOptions = { browsers: ['last 2 versions', '> 2%'], flexbox: 'no-2009' }
+  buildVars = `$build: "${build()}";`
+  includePaths = [path.join(input, '_stylesheets/'), themePath]
+
+  outputdir = await createdir() // eslint-disable-line no-use-before-define
+  options = await sassOptions() // eslint-disable-line no-use-before-define
+}
 
 // Check to see if there's an `application.scss` in `_stylesheets`, and if so
 // load that; else verify that a theme is selected in `config`, and that the
@@ -22,55 +38,36 @@ const autoprefixerOptions = { browsers: ['last 2 versions', '> 2%'], flexbox: 'n
 const stylesheet = () =>
   new Promise((resolve/* , reject */) => {
     try {
-      const customSCSS = path.join(cwd, conf.src, '_stylesheets/application.scss')
+      const customSCSS = path.join(input, '_stylesheets/application.scss')
       if (fs.statSync(customSCSS)) {
         return fs.readFile(customSCSS, (err, buffer) => {
           if (err) { throw err }
+          log.info('Using SCSS overrides from `_stylesheets/application.scss`.')
           return resolve(buffer)
         })
       }
     }
     catch (err) {
-      log.info('Couldn\'t find SCSS override, defaulting to theme styles.')
+      log.info(`Attempting to build with \`${themeName}\` theme.`)
     }
 
+    const themeSCSS = path.join(themePath, 'application.scss')
     try {
-      const configPath = path.join(cwd, 'config.yml')
-      if (fs.statSync(configPath)) {
-        const themeName = YAML.load(configPath).theme
-        const themeSCSS = path.join(cwd, 'themes', themeName, 'application.scss')
-
-        try {
-          if (fs.statSync(themeSCSS)) {
-            return fs.readFile(themeSCSS, (err, buffer) => {
-              if (err) { throw err }
-              return resolve(buffer)
-            })
-          }
-        }
-        catch (err) {
-          log.info(`Could not find theme \`${themeName}\`, make sure the theme exists and contains a valid \`application.scss\`.`) // eslint-disable-line max-len
-          return resolve('')
-        }
-
+      if (fs.statSync(themeSCSS)) {
+        return fs.readFile(themeSCSS, (err, buffer) => {
+          if (err) { throw err }
+          log.info(`Using theme \`${themeName}\`.`)
+          return resolve(buffer)
+        })
       }
     }
     catch (err) {
-      log.warn('config.yml does not exist. Re-initialize bber or create the file manually.')
-      return resolve(false)
+      log.info(`Could not find theme \`${themeName}\`. Make sure the theme exists and contains a valid \`application.scss\`.`) // eslint-disable-line max-len
+      return resolve('')
     }
 
     return resolve(false)
   })
-
-
-// TODO: build env from config should be passed in through yargs
-const build = conf.build || 'epub'
-const buildVars = `$build: "${build}";`
-const includePaths = [
-  path.join(cwd, conf.src, '_stylesheets/'),
-  path.join(cwd, 'themes', conf.theme)
-]
 
 const sassOptions = () =>
   new Promise(async (resolve, reject) => {
@@ -89,8 +86,7 @@ const createdir = () =>
   )
 
 async function sass() {
-  const outputdir = await createdir()
-  const options = await sassOptions()
+  await initialize()
   return new Promise((resolve, reject) => {
     nsass.render(options, (err1, result) => {
       if (err1) { return reject(err1) }

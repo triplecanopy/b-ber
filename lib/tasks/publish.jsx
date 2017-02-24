@@ -1,4 +1,8 @@
 
+// TODO: which books should be moved to `_site`? All? just those that are
+// readable? depends on whether there's a download option in the reader.
+// Additionally, this might be better rolled into a `deploy` task
+
 import yargs from 'yargs'
 import path from 'path'
 import cdir from 'copy-dir'

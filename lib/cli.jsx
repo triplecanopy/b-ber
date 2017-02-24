@@ -10,8 +10,8 @@ import config from './config'
 import * as commands from './cmds'
 
 const {
-  build, clean, copy, create, editor, generate, init, inject, opf, publish,
-  render, scripts, sass, serve, site, theme, watch, xml } = commands
+  build, clean, copy, create, editor, generate, init, inject, opf, pdf,
+  publish, render, scripts, sass, serve, site, theme, watch, xml } = commands
 
 
 const cwd = process.cwd()
@@ -20,8 +20,8 @@ const showCustomHelp = () => console.log(`
 Usage: bber <command> [options]
 
 Where <command> is one of:
-  build, clean, copy, create, editor, generate, init, inject, opf, publish,
-  render, scripts, sass, serve, site, theme, watch, xml
+  build, clean, copy, create, editor, generate, init, inject, opf, pdf,
+  publish, render, scripts, sass, serve, site, theme, watch, xml
 
 Some common commands are:
 
@@ -60,7 +60,7 @@ const configFileOrDefaults = (type) => {
 }
 
 const { argv } = yargs // eslint-disable-line no-unused-vars
-  .fail((msg, err, yargs) => {
+  .fail((msg, err/* , yargs */) => {
     console.log(msg)
     showCustomHelp()
     process.exit(0)
@@ -75,6 +75,7 @@ const { argv } = yargs // eslint-disable-line no-unused-vars
   .command(init)
   .command(inject)
   .command(opf)
+  .command(pdf)
   .command(publish)
   .command(render)
   .command(scripts)
@@ -91,7 +92,8 @@ const { argv } = yargs // eslint-disable-line no-unused-vars
       sample: configFileOrDefaults('sample'),
       epub: configFileOrDefaults('epub'),
       mobi: configFileOrDefaults('mobi'),
-      pdf: configFileOrDefaults('pdf')
+      pdf: configFileOrDefaults('pdf'),
+      web: configFileOrDefaults('web')
     }
   })
 

@@ -157,8 +157,9 @@ const imageTemplates = {
 
 function figure(data, env) {
   const { width, height } = data
+  const type = !env || !{}.hasOwnProperty.call(imageTemplates, env) ? 'epub' : env
   const format = getImageOrientation(width, height)
-  return imageTemplates[env || 'epub'][format](data)
+  return imageTemplates[type][format](data)
 }
 
 const loiLeader = () =>

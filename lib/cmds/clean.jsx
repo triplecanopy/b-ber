@@ -12,10 +12,10 @@ const builder = yargs =>
     .usage('\nUsage: $0 clean')
     .config({
       bber: {
-        defaults: ['epub', 'mobi', 'pdf', 'sample'] // default directories to remove
+        defaults: ['epub', 'mobi', 'pdf', 'sample', 'web'] // default directories to remove
       }
     })
-const handler = argv => clean()
+const handler = () => clean()
 
 export default {
   command,

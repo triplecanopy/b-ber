@@ -2,22 +2,21 @@
 import path from 'path'
 import fs from 'fs-extra'
 import rrdir from 'recursive-readdir'
+import { copy, src, dist } from '../utils'
 
-import conf from '../config'
-import { copy } from '../utils'
-
-const cwd = process.cwd()
-
-const src = path.join(cwd, `${conf.src}/_javascripts`)
-const dest = path.join(cwd, `${conf.dist}/OPS/javascripts`)
+let input, output
+const initialize = () => {
+  input = path.join(`${src()}/_javascripts`)
+  output = path.join(`${dist()}/OPS/javascripts`)
+}
 
 const write = () =>
   new Promise((resolve, reject) =>
-    rrdir(src, (err, files) => {
+    rrdir(input, (err, files) => {
       if (err) { reject(err) }
       const filearr = files
       filearr.forEach((file, idx) => {
-        copy(file, `${dest}/${path.basename(file)}`)
+        copy(file, `${output}/${path.basename(file)}`)
         if (idx === filearr.length - 1) {
           resolve()
         }
@@ -26,8 +25,9 @@ const write = () =>
   )
 
 const scripts = () =>
-  new Promise((resolve, reject) => {
-    fs.mkdirs(dest, (err) => {
+  new Promise(async (resolve, reject) => {
+    await initialize()
+    fs.mkdirs(output, (err) => {
       if (err) { reject(err) }
       write().then(resolve)
     })

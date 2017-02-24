@@ -2,7 +2,6 @@
 import fs from 'fs-extra'
 import yargs from 'yargs'
 import path from 'path'
-// import cdir from 'copy-dir'
 import { log } from '../log'
 import { guid } from '../utils'
 
@@ -61,8 +60,17 @@ theme: default # name or path
 src: ${src}
 dist: ${dist}`
   }, {
-    relpath: path.join(cwd, src, 'pages.yml'),
-    content: '---\n'
+    relpath: path.join(cwd, src, 'epub.yml'),
+    content: '---'
+  }, {
+    relpath: path.join(cwd, src, 'mobi.yml'),
+    content: '---'
+  }, {
+    relpath: path.join(cwd, src, 'sample.yml'),
+    content: '---'
+  }, {
+    relpath: path.join(cwd, src, 'web.yml'),
+    content: '---'
   }, {
     relpath: path.join(cwd, src, 'metadata.yml'),
     content: `---
@@ -109,23 +117,12 @@ dist: ${dist}`
     relpath: path.join(cwd, src, '_javascripts/application.js'),
     content: 'if (console && console.log) { console.log(\'Hello World!\') }'
   }, {
-    relpath: path.join(cwd, src, '_markdown/0010_1.md'),
+    relpath: path.join(cwd, src, '_markdown/00001.md'),
     content: `---
 section_title: Chapter One
 landmark_type: bodymatter
 landmark_title: The Book
 ---
-
-# Chapter One
-
-+ section "chapter" "Chapter One" "section__main"
-
-It was the best of times, it was the worst of times.
-
-+ exit
-
-+ image url "city-1.jpg" alt "First City" caption "The First City"
-+ image url "city-2.jpg" alt "Second City" caption "The Second City"
 `
   }]
   return makedirs(dirs, files, src)
@@ -140,22 +137,9 @@ const cleanCSSDir = () =>
     })
   })
 
-// TODO: should this move over bber template files from the selected/default
-// template dir? Probably ...
-//
-// const copyCSSTemplates = () =>
-//   new Promise((resolve, reject) => {
-//     const { src } = getVars()
-//     cdir(path.join(cwd, 'templates/default'), `${src}/_stylesheets`, (err) => {
-//       if (err) { reject(err) }
-//       resolve()
-//     })
-//   })
-
 const init = () =>
   new Promise(resolve/* , reject */ =>
     cleanCSSDir()
-    // .then(copyCSSTemplates)
     .then(makeNewEbookTemplate)
     .catch(err => log.error(err))
     .then(resolve)

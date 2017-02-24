@@ -8,20 +8,24 @@ import File from 'vinyl'
 import rrdir from 'recursive-readdir'
 import YAML from 'yamljs'
 import { find, difference, uniq } from 'lodash'
-
-import conf from '../config'
 import { log } from '../log'
 import * as tmpl from '../templates'
-import { opspath, cjoin, getFrontmatter, orderByFileName } from '../utils'
+import { opspath, cjoin, getFrontmatter, orderByFileName, src, dist, build, version } from '../utils'
 
-const cwd = process.cwd()
 const navdocs = ['toc.ncx', 'toc.xhtml']
 
-let bookmeta
+let bookmeta, input, output, buildType, ver
+const initialize = () => {
+  input = src()
+  output = dist()
+  buildType = build()
+  ver = version()
+  return Promise.resolve()
+}
 
 const loadmeta = () =>
   new Promise(resolve/* , reject */ =>
-    YAML.load(path.join(cwd, conf.src, 'metadata.yml'), (resp) => {
+    YAML.load(path.join(input, 'metadata.yml'), (resp) => {
       bookmeta = resp
       resolve()
     })
@@ -33,7 +37,7 @@ const parse = arr =>
       ? path.basename(file).split('_')[1].split('-')
       : null,
     rootpath: file,
-    opspath: opspath(file),
+    opspath: opspath(file, output),
     name: path.basename(file),
     extension: path.extname(file)
   }))
@@ -55,14 +59,14 @@ const addEntries = (arr, diff) => {
 
 const updatePagesMetaYAML = arr =>
   fs.writeFile(
-    path.join(cwd, conf.src, 'pages.yml'),
+    path.join(input, `${buildType}.yml`),
     `---\n${arr.map(_ => `- ${_}.xhtml`).join('\n')}`,
     (err) => {
       if (err) { throw err }
     })
 
 const orderByPagesUser = (filearr) => {
-  const yamlpath = path.join(cwd, conf.src, 'pages.yml')
+  const yamlpath = path.join(input, `${buildType}.yml`)
   const files = uniq(filearr.map(_ => path.basename(_.name, _.extension)))
   const result = []
   let pages = files // default
@@ -72,7 +76,7 @@ const orderByPagesUser = (filearr) => {
     }
   }
   catch (err) {
-    log.warn('No content found in `pages.yml`. Updating the file now.')
+    log.warn(`No content found in \`${buildType}.yml\`. Updating the file now.`)
     updatePagesMetaYAML(pages)
   }
 
@@ -80,13 +84,14 @@ const orderByPagesUser = (filearr) => {
   const pagediff = difference(pages, files)
   const filediff = difference(files, pages)
   if (pagediff.length || filediff.length) {
-    if (pagediff.length) { // there are extra entries in the YAML
+    if (pagediff.length) {
+      // there are extra entries in the YAML
       pages = removeEntries(pages, pagediff)
     }
-    if (filediff.length) { // there are missing entries in the YAML
+    if (filediff.length) {
+      // there are missing entries in the YAML
       pages = addEntries(pages, filediff)
     }
-
     // write the new entries to file
     updatePagesMetaYAML(pages)
   }
@@ -135,13 +140,13 @@ const makenav = ({ serial, parallel }) =>
 
 const manifest = () =>
   new Promise((resolve, reject) =>
-    rrdir(`${conf.dist}/OPS`, async (err, filearr) => {
+    rrdir(`${output}/OPS`, async (err, filearr) => {
       if (err) { reject(err) }
-
       const files = filearr.filter(_ => path.basename(_).charAt(0) !== '.')
-      const serial = orderByPagesUser(orderByFileName(await parse(files.filter(_ => path.extname(_) === '.xhtml'))))
-      const parallel = await parse(files.filter(_ => path.extname(_) !== '.xhtml'))
-
+      const serial = orderByPagesUser(
+        orderByFileName(
+          parse(files.filter(_ => path.extname(_) === '.xhtml'))))
+      const parallel = parse(files.filter(_ => path.extname(_) !== '.xhtml'))
       resolve({ serial, parallel })
     })
   )
@@ -151,11 +156,12 @@ const stringify = files =>
     const strings = { manifest: [], spine: [], guide: [], bookmeta: [] }
     strings.bookmeta = bookmeta.map(_ => tmpl.metatag(_)).filter(Boolean)
 
-    // going to be a couple more exceptions here, should drop these into `templates.jsx`
+    // Add exceptions here as needed
     strings.bookmeta = [
       ...strings.bookmeta,
       '<meta property="ibooks:specified-fonts">true</meta>',
-      `<meta property="dcterms:modified">${new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')}</meta>`
+      `<meta property="dcterms:modified">${new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')}</meta>`,
+      `<meta name="generator" content="b-ber@${ver}" />`
     ]
 
     files.forEach((file, idx) => {
@@ -169,73 +175,77 @@ const stringify = files =>
 const writeopf = string =>
   new Promise((resolve, reject) => {
     fs.writeFile(
-      path.join(cwd, conf.dist, 'OPS', 'content.opf'), string, (err) => {
+      path.join(output, 'OPS', 'content.opf'), string, (err) => {
         if (err) { reject(err) }
         resolve()
       }
     )
   })
 
-function opflayouts(strings) {
-  return renderLayouts(new File({
-    path: './.tmp',
-    layout: 'opfPackage',
-    contents: new Buffer([
+const renderopf = strings =>
+  new Promise(resolve/* , reject */ =>
+    resolve(
       renderLayouts(new File({
         path: './.tmp',
-        layout: 'opfMetadata',
-        contents: new Buffer(strings.bookmeta.join(''))
-      }), tmpl).contents.toString(),
-      renderLayouts(new File({
-        path: './.tmp',
-        layout: 'opfManifest',
-        contents: new Buffer(cjoin(strings.manifest))
-      }), tmpl).contents.toString(),
-      renderLayouts(new File({
-        path: './.tmp',
-        layout: 'opfSpine',
-        contents: new Buffer(cjoin(strings.spine))
-      }), tmpl).contents.toString(),
-      renderLayouts(new File({
-        path: './.tmp',
-        layout: 'opfGuide',
-        contents: new Buffer(cjoin(strings.guide))
-      }), tmpl).contents.toString()
-    ].join('\n'))
-  }), tmpl)
-  .contents
-  .toString()
-}
+        layout: 'opfPackage',
+        contents: new Buffer([
+          renderLayouts(new File({
+            path: './.tmp',
+            layout: 'opfMetadata',
+            contents: new Buffer(strings.bookmeta.join(''))
+          }), tmpl).contents.toString(),
+          renderLayouts(new File({
+            path: './.tmp',
+            layout: 'opfManifest',
+            contents: new Buffer(cjoin(strings.manifest))
+          }), tmpl).contents.toString(),
+          renderLayouts(new File({
+            path: './.tmp',
+            layout: 'opfSpine',
+            contents: new Buffer(cjoin(strings.spine))
+          }), tmpl).contents.toString(),
+          renderLayouts(new File({
+            path: './.tmp',
+            layout: 'opfGuide',
+            contents: new Buffer(cjoin(strings.guide))
+          }), tmpl).contents.toString()
+        ].join('\n'))
+      }), tmpl)
+      .contents
+      .toString()
+    )
+  )
 
-const navlayouts = ({ nav, filearrs }) => {
-  const navpoints = tmpl.navPoint(nav)
-  const tocitems = tmpl.tocitem(nav)
-  const ncxstring = renderLayouts(new File({
-    path: './.tmp',
-    layout: 'ncxTmpl',
-    contents: new Buffer(navpoints)
-  }), tmpl)
-  .contents
-  .toString()
+const rendernav = ({ nav, filearrs }) =>
+  new Promise((resolve, reject) => {
+    const navpoints = tmpl.navPoint(nav)
+    const tocitems = tmpl.tocitem(nav)
+    const ncxstring = renderLayouts(new File({
+      path: './.tmp',
+      layout: 'ncxTmpl',
+      contents: new Buffer(navpoints)
+    }), tmpl)
+    .contents
+    .toString()
 
-  const tocstring = renderLayouts(new File({
-    path: './.tmp',
-    layout: 'tocTmpl',
-    contents: new Buffer(tocitems)
-  }), tmpl)
-  .contents
-  .toString()
+    const tocstring = renderLayouts(new File({
+      path: './.tmp',
+      layout: 'tocTmpl',
+      contents: new Buffer(tocitems)
+    }), tmpl)
+    .contents
+    .toString()
 
-  return { ncxstring, tocstring, filearrs }
-}
+    resolve({ ncxstring, tocstring, filearrs })
+  })
 
 const writenav = ({ ncxstring, tocstring, filearrs }) =>
   new Promise((resolve, reject) => {
     fs.writeFile(
-      path.join(cwd, conf.dist, 'OPS', 'toc.ncx'), ncxstring, (err1) => {
+      path.join(output, 'OPS', 'toc.ncx'), ncxstring, (err1) => {
         if (err1) { reject(err1) }
         fs.writeFile(
-          path.join(cwd, conf.dist, 'OPS', 'toc.xhtml'), tocstring, (err2) => {
+          path.join(output, 'OPS', 'toc.xhtml'), tocstring, (err2) => {
             if (err2) { reject(err2) }
             resolve(filearrs)
           }
@@ -248,10 +258,10 @@ const clearnav = () =>
   new Promise((resolve, reject) =>
     navdocs.forEach((file, idx) =>
       fs.remove(
-        path.join(cwd, conf.dist, 'OPS', file), (err1) => {
+        path.join(output, 'OPS', file), (err1) => {
           if (err1) { reject(err1) }
           return fs.writeFile(
-            path.join(cwd, conf.dist, 'OPS', file), '', (err2) => {
+            path.join(output, 'OPS', file), '', (err2) => {
               if (err2) { reject(err2) }
               if (idx === navdocs.length - 1) { resolve() }
             }
@@ -261,17 +271,10 @@ const clearnav = () =>
     )
   )
 
-const rendernav = data =>
-  new Promise(async resolve/* , reject */ =>
-    resolve(await navlayouts(data)))
-
-const renderopf = strings =>
-  new Promise(async resolve/* , reject */ =>
-    resolve(await opflayouts(strings)))
-
 const opf = () =>
-  new Promise(resolve/* , reject */ =>
-    loadmeta()
+  new Promise(async resolve/* , reject */ =>
+    initialize()
+    .then(loadmeta)
     .then(clearnav)
     .then(manifest)
     .then(filearrs => makenav(filearrs))

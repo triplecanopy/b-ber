@@ -39,18 +39,22 @@ class Sanitizer {
       this.noop = false
     }
     this.onend = (resolve, index, len) => {
-      index === len ? this.appendBody() : this.output += '<pagebreak></pagebreak>'
+      if (index === len) {
+        this.appendBody()
+      } else {
+        this.output += '<pagebreak></pagebreak>'
+      }
       resolve(this.output)
     }
     this.prependBody = () => this.output += '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><body>'
     this.appendBody = () => this.output += '</body>'
-    this.appendComment = (fname) => this.output += `\n<!-- \n${fname}\n -->\n\n`
+    this.appendComment = fname => this.output += `\n<!-- \n${fname}\n -->\n\n`
     this.parse = (content, index, arr) => {
       const _this = this // eslint-disable-line consistent-this
       const len = arr.length - 1
       _this.appendComment(arr[index])
       if (index === 0) { _this.prependBody() }
-      return new Promise((resolve, reject) => {
+      return new Promise(resolve/* , reject */ => {
         const parser = new htmlparser.Parser({
           onopentag(name, attrs) {
             _this.noop = false

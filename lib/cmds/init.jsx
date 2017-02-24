@@ -6,13 +6,13 @@ const describe = 'Initalize b-ber'
 const builder = yargs =>
   yargs
     .options({
-      's': {
+      s: {
         alias: 'src',
         default: '_book',
         describe: 'Define the book\'s src path',
         type: 'string'
       },
-      'd': {
+      d: {
         alias: 'dist',
         default: 'book',
         describe: 'Define the book\'s dist path',
@@ -24,7 +24,7 @@ const builder = yargs =>
     .alias('h', 'help')
     .usage('\nUsage: $0 init')
 
-const handler = argv => init()
+const handler = () => init()
 
 export default {
   command,
