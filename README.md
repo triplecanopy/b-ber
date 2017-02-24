@@ -19,25 +19,20 @@ If working in a development environment, replace `bber` in the below commands wi
 Usage: bber <command> [options]
 
 Where <command> is one of:
-  clean, config, copy, create, deploy, props, init, inject, md, opf, publish,
-  render, sass, scripts, serve, site, tasks, templates, utils, loi, epub, mobi,
-  watch, editor, xml, generate
+  build, clean, copy, create, editor, generate, init, inject, opf, pdf,
+  publish, render, scripts, sass, serve, site, theme, watch, xml
 
 Some common commands are:
 
   Creating books
     bber init       Create an empty project and file structure, defaults to `_book`
-    bber generate   Create a new chapter and add it to pages.yml. Accepts
-                    arguments for metadata.
+    bber generate   Create a new chapter. Accepts arguments for metadata.
     bber watch      Preview the book in a web-browser during development
-    bber build      Compile and copy assets in `_book` to the output directory,
-                    defaults to `book`
-    bber epub       Compile an epub from the assets in `book`
-    bber mobi       Compile a mobi file from the assets in `book`
+    bber build      Create an ePub, mobi, PDF, or all file formats
 
   Viewing books
-    bber site       Clone the bber-reader into `site`
-    bber serve      Preview the compiled epub in the bber-reader
+    bber site     Clone the bber-reader into `site`
+    bber serve    Preview the compiled epub in the bber-reader
 
 For more information on a command, enter bber <command> --help
 ```
