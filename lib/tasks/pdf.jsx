@@ -1,78 +1,88 @@
 
-// TODO: make task for this, run from CLI with ./node_modules/.bin/babel-node ./lib/pdf.jsx --presets es2015,stage-0
-
 import path from 'path'
-import html2pdf from 'html-pdf'
 import fs from 'fs-extra'
-import conf from '../config'
+import YAML from 'yamljs'
+import { fork } from 'child_process'
 import Printer from '../modules/printer'
-// import { log } from '../log'
+import { log } from '../log'
+import { src, dist, build } from '../utils'
 
-const cwd = process.cwd()
+const child = fork(`${process.cwd()}/lib/child-pdf.js`)
 
-// const htmlPath = path.join(cwd, conf.dist, 'OPS/Text/content-2.xhtml')
-// const html = fs.readFileSync(htmlPath, 'utf8')
-// const options = {
-//   height: '198mm',
-//   width: '130mm',
-//   orientation: 'portrait',
-//   border: {
-//     left: '7mm',
-//     top: '7mm',
-//     bottom: '10mm',
-//     right: '7mm'
-//   },
-//   header: {
-//     height: '14mm',
-//     contents: '<div style="text-align: center; font-family:Helvetica; font-size:12px; color: lightgrey;">Made with bber</div>' // eslint-disable-line max-len
-//   },
-//   footer: {
-//     height: '5mm',
-//     default: '<span>{{page}}</span>/<span>{{pages}}</span>'
-//   }
-//   // base: `file://${path.join(cwd, conf.dist, 'OPS/Text')}`
-// }
-
-const printer = new Printer()
+let input, output, buildType, printer
+const initialize = () => {
+  input = src()
+  output = dist()
+  buildType = build()
+  printer = new Printer(output)
+}
 
 const parseHTML = files =>
-  new Promise((resolve/* , reject */) => {
-    const dir = path.join(cwd, 'book-epub', 'OPS/text')
+  new Promise((resolve, reject) => {
+    const dir = path.join(output, 'OPS/text')
     const text = files.map((_, index, arr) => {
       let data
       try {
         data = fs.readFileSync(path.join(dir, _), 'utf8')
-      } catch (err) {
-        return console.log(err.message)
-        // return log.warn(err.message)
+      }
+      catch (err) {
+        return log.warn(err.message)
       }
       return printer.parse(data, index, arr)
     }).filter(Boolean)
-    Promise.all(text).then(docs => resolve(docs.join('\n')))
+
+    Promise.all(text)
+    .catch(err => reject(err))
+    .then(docs => resolve(docs.join('\n')))
   })
 
-const pdf = () => {
-  // new Promise((resolve, reject) =>
+// const write = content =>
+//   new Promise((resolve, reject) =>
+//     fs.writeFile(path.join(output, 'pdf.xhtml'), content, (err) => {
+//       if (err) { reject(err) }
+//       resolve(content)
+//     })
+//   )
 
-  // remove book-pdf dir
-  // create book-pdf dir
+const print = content =>
+  new Promise((resolve, reject) => {
+    child.on('message', (msg) => {
+      if (msg.status === 1) { throw new Error(msg.err) }
+      if (msg.status === 0) { resolve() }
+    })
 
-  fs.readdir(path.join(cwd, 'book-epub/OPS/text'), (err, files) => {
-    if (err) { throw err }
-    parseHTML(files).then(_ =>
-      // write file to book-pdf dir
-      // init html-pdf for file
-      // write file to ./
-    )
+    child.on('close', (status) => {
+      process.exit(status)
+    })
+
+    child.send({
+      content,
+      options: { base: `file://${output}/OPS/Text/` }
+    })
+
   })
 
-    // html2pdf.create(html, options).toFile('./output.pdf', (err, data) => {
-    //   if (err) { reject(err) }
-    //   resolve()
-    // })
 
-  // )
-}
+const pdf = () =>
+  new Promise(async (resolve, reject) => {
+    await initialize()
+    const manifest = YAML.load(path.join(input, `${buildType}.yml`))
 
-pdf()
-// export default pdf
+    parseHTML(manifest)
+    // not necessary to write the file, but could be nice to have the document as XHTML
+    // .then(content => write(content))
+    .then(content => print(content))
+    .catch(err => log.error(err))
+    .then(resolve)
+
+    // Error: listen EADDRINUSE 0.0.0.0:<port>
+    // http://stackoverflow.com/questions/9898372/how-to-fix-error-listen-eaddrinuse-while-using-nodejs/30163868#30163868
+    //
+    // setTimeout(() => {
+    //   console.log(`process didn't exit: ${process.pid}`)
+    //   console.log(`to kill the current process, press CTRL + C, then enter \`kill -9 ${process.pid}\``)
+    // }, 10000)
+
+  })
+
+export default pdf

@@ -88,10 +88,10 @@ const orderByPagesUser = (filearr) => {
       // there are extra entries in the YAML
       pages = removeEntries(pages, pagediff)
     }
-    if (filediff.length) {
-      // there are missing entries in the YAML
-      pages = addEntries(pages, filediff)
-    }
+    // if (filediff.length) {
+    //   // there are missing entries in the YAML
+    //   pages = addEntries(pages, filediff)
+    // }
     // write the new entries to file
     updatePagesMetaYAML(pages)
   }

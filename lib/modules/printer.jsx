@@ -1,10 +1,12 @@
 
 import htmlparser from 'htmlparser2'
+import path from 'path'
 import Parser from './parser'
 
 class Printer extends Parser {
-  constructor() {
+  constructor(basePath) {
     super()
+    this.basePath = basePath
     this.onend = (resolve/* , index, len */) => {
       resolve(this.output)
     }
@@ -47,7 +49,7 @@ class Printer extends Parser {
       const _this = this // eslint-disable-line consistent-this
       const len = arr.length - 1
       return new Promise((resolve/* , reject */) => {
-        const parser = new htmlparser.Parser({
+        const printer = new htmlparser.Parser({
           onopentag(name, attrs) {
             _this.filterTags(name, index, len, true)
 
@@ -55,7 +57,11 @@ class Printer extends Parser {
 
             const tag = [name]
             for (const [key, val] of _this.entries(attrs)) {
-              tag.push(`${key}="${val}"`)
+              let prop = val
+              if (key === 'src' || key === 'xlink:href' || (name === 'link' && key === 'href')) {
+                prop = path.resolve(_this.basePath, 'OPS/text', val)
+              }
+              tag.push(`${key}="${prop}"`)
             }
             _this.output += `<${tag.join(' ')}>`
           },
@@ -72,8 +78,8 @@ class Printer extends Parser {
           }
         }, { decodeEntities: false })
 
-        parser.write(content)
-        parser.end()
+        printer.write(content)
+        printer.end()
         _this.reset()
       })
     }
