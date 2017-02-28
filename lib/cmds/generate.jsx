@@ -30,7 +30,7 @@ const builder = yargs =>
     .alias('h', 'help')
     .usage('\nUsage: $0 generate')
 
-const handler = () => generate()
+const handler = generate
 
 export default {
   command,

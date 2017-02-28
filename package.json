@@ -29,6 +29,7 @@
     "bunyan": "^1.8.5",
     "bunyan-format": "^0.2.1",
     "copy-dir": "^0.3.0",
+    "css": "^2.2.1",
     "decompress": "^4.0.0",
     "epub-zipper": "^1.2.7",
     "express": "^4.14.0",

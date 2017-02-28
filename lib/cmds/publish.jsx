@@ -22,7 +22,7 @@ const builder = yargs =>
     .help('h')
     .alias('h', 'help')
     .usage('\nUsage: $0 publish')
-const handler = () => publish()
+const handler = publish
 
 export default {
   command,

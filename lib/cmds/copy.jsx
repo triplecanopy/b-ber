@@ -8,7 +8,7 @@ const builder = yargs =>
     .help('h')
     .alias('h', 'help')
     .usage('\nUsage: $0 copy')
-const handler = () => copy()
+const handler = copy
 
 export default {
   command,

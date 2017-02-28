@@ -2,19 +2,41 @@
 import path from 'path'
 import fs from 'fs-extra'
 import YAML from 'yamljs'
-import { fork } from 'child_process'
+import html2pdf from 'html-pdf'
 import Printer from '../modules/printer'
 import { log } from '../log'
 import { src, dist, build } from '../utils'
 
-const child = fork(`${process.cwd()}/lib/child-pdf.js`)
-
-let input, output, buildType, printer
+let input, output, buildType, printer, settings
 const initialize = () => {
   input = src()
   output = dist()
   buildType = build()
   printer = new Printer(output)
+  settings = {
+    fname: `${new Date().toISOString().replace(/:/g, '-')}.pdf`,
+    options: {
+      height: '198mm',
+      width: '130mm',
+      orientation: 'portrait',
+      border: {
+        left: '7mm',
+        top: '7mm',
+        bottom: '10mm',
+        right: '7mm'
+      },
+      header: {
+        height: '14mm',
+        contents: '<div style="text-align: center; font-family:Helvetica; font-size:12px; color: lightgrey;">Made with bber</div>' // eslint-disable-line max-len
+      },
+      footer: {
+        height: '5mm',
+        default: '<span>{{page}}</span>/<span>{{pages}}</span>'
+      },
+      base: `file://${output}/OPS/Text/`,
+      timeout: 10000
+    }
+  }
 }
 
 const parseHTML = files =>
@@ -46,20 +68,13 @@ const parseHTML = files =>
 
 const print = content =>
   new Promise((resolve, reject) => {
-    child.on('message', (msg) => {
-      if (msg.status === 1) { throw new Error(msg.err) }
-      if (msg.status === 0) { resolve() }
+    log.info(`Creating PDF: ${settings.fname}`)
+    html2pdf
+    .create(content, settings.options)
+    .toFile(path.join(process.cwd(), settings.fname), (err, data) => {
+      if (err) { throw err }
+      resolve()
     })
-
-    child.on('close', (status) => {
-      process.exit(status)
-    })
-
-    child.send({
-      content,
-      options: { base: `file://${output}/OPS/Text/` }
-    })
-
   })
 
 
@@ -74,15 +89,6 @@ const pdf = () =>
     .then(content => print(content))
     .catch(err => log.error(err))
     .then(resolve)
-
-    // Error: listen EADDRINUSE 0.0.0.0:<port>
-    // http://stackoverflow.com/questions/9898372/how-to-fix-error-listen-eaddrinuse-while-using-nodejs/30163868#30163868
-    //
-    // setTimeout(() => {
-    //   console.log(`process didn't exit: ${process.pid}`)
-    //   console.log(`to kill the current process, press CTRL + C, then enter \`kill -9 ${process.pid}\``)
-    // }, 10000)
-
   })
 
 export default pdf

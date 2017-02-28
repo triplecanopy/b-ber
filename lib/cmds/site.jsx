@@ -16,7 +16,7 @@ const builder = yargs =>
     .help('h')
     .alias('h', 'help')
     .usage('\nUsage: $0 site')
-const handler = () => site()
+const handler = site
 
 export default {
   command,

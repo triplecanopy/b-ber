@@ -5,6 +5,11 @@ const command = ['theme [options]', 't']
 const describe = 'Select a theme for the book'
 const builder = yargs =>
   yargs
+    .fail((msg, err/* , yargs */) => {
+      console.log(msg)
+      yargs.showHelp()
+      process.exit(0)
+    })
     .options({
       l: {
         alias: 'list',
@@ -20,7 +25,8 @@ const builder = yargs =>
     .help('h')
     .alias('h', 'help')
     .usage('\nUsage: $0 theme')
-const handler = () => theme()
+    .demandCommand(1)
+const handler = theme
 
 export default {
   command,

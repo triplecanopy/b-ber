@@ -6,7 +6,10 @@ import * as tasks from './tasks'
 function delayedPromise(time, value) {
   return new Promise((resolve/* , reject */) => {
     setTimeout(() => resolve(value), time)
-  }).catch(err => log.error(err.formatted || err.message))
+  }).catch((err) => {
+    log.error(err.formatted || err.message)
+    process.exit(1)
+  })
 }
 
 async function forEachSerial(iterable, asyncBlock) {

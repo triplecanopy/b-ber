@@ -11,6 +11,8 @@ import conf from '../config'
 import Props from '../modules/props'
 import { fileid, guid, getFrontmatter, getImageOrientation } from '../utils'
 
+import * as figures from './figures'
+
 const settings = () => {
   const meta = path.join(__dirname, `../${conf.src}`, 'metadata.yml')
   try {
@@ -86,80 +88,11 @@ const page = new File({
     </html>`)
 })
 
-const imageTemplates = {
-  epub: {
-    portrait(data) {
-      return `<section epub:type="loi" title="LIST OF ILLUSTRATIONS" class="chapter figures">
-        <div class="figure-lg">
-          <figure id="${data.id}">
-            <div class="img-wrap" style="width: 70%; margin: 0 auto;">
-              <a href="${data.ref}.xhtml#ref${data.id}">
-                <img class="portrait" alt="${data.alt}" src="../images/${data.url}" style="width: 100%; max-width: 100%; height: auto;"/>
-              </a>
-              <div class="figcaption" style="width: 100%; max-width: 100%; height: auto;">
-                <p class="small">${data.caption || ''}</p>
-              </div>
-            </div>
-          </figure>
-        </div>
-      </section>`
-    },
-    landscape(data) {
-      return `<section epub:type="loi" title="LIST OF ILLUSTRATIONS" class="chapter figures">
-        <div class="figure-lg">
-          <figure id="${data.id}">
-            <div class="img-wrap">
-              <a href="${data.ref}.xhtml#ref${data.id}">
-                <img class="landscape" alt="${data.alt}" src="../images/${data.url}" style="max-width: 100%;"/>
-              </a>
-              <div class="figcaption" style="max-width: 100%;">
-                <p class="small">${data.caption || ''}</p>
-              </div>
-            </div>
-          </figure>
-        </div>
-      </section>`
-    },
-    portraitLong(data) {
-      return `<section epub:type="loi" title="LIST OF ILLUSTRATIONS" class="chapter figures">
-        <div class="figure-lg">
-          <figure id="${data.id}">
-            <div class="img-wrap" style="width: 60%; margin: 0 auto;">
-              <a href="${data.ref}.xhtml#ref${data.id}">
-                <img class="portrait-long" alt="${data.alt}" src="../images/${data.url}" style="width: 100%; max-width: 100%; height: auto;"/>
-              </a>
-              <div class="figcaption" style="width: 100%; max-width: 100%; height: auto;">
-                <p class="small">${data.caption || ''}</p>
-              </div>
-            </div>
-          </figure>
-        </div>
-      </section>`
-    },
-    square(data) {
-      return `<section epub:type="loi" title="LIST OF ILLUSTRATIONS" class="chapter figures">
-        <div class="figure-lg">
-          <figure id="${data.id}">
-            <div class="img-wrap" style="width: 85%; margin: 0 auto;">
-              <a href="${data.ref}.xhtml#ref${data.id}">
-                <img class="square" alt="${data.alt}" src="../images/${data.url}" style="width: 100%; max-width: 100%; height: auto;"/>
-              </a>
-              <div class="figcaption" style="width: 100%; max-width: 100%; height: auto;">
-                <p class="small">${data.caption || ''}</p>
-              </div>
-            </div>
-          </figure>
-        </div>
-      </section>`
-    }
-  }
-}
-
 function figure(data, env) {
   const { width, height } = data
-  const type = !env || !{}.hasOwnProperty.call(imageTemplates, env) ? 'epub' : env
+  const type = !env || !{}.hasOwnProperty.call(figures, env) ? 'epub' : env
   const format = getImageOrientation(width, height)
-  return imageTemplates[type][format](data)
+  return figures[type][format](data)
 }
 
 const loiLeader = () =>

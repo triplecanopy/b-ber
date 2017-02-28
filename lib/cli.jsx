@@ -10,8 +10,8 @@ import config from './config'
 import * as commands from './cmds'
 
 const {
-  build, clean, copy, create, editor, generate, init, inject, opf, pdf,
-  publish, render, scripts, sass, serve, site, theme, watch, xml } = commands
+  build, clean, copy, create/* , editor */, generate, init, inject, opf, pdf,
+  mobiCSS, publish, render, scripts, sass, serve, site, theme, watch, xml } = commands
 
 
 const cwd = process.cwd()
@@ -70,8 +70,8 @@ const { argv } = yargs // eslint-disable-line no-unused-vars
   .command(clean)
   .command(copy)
   .command(create)
+  // .command(editor)
   .command(generate)
-  .command(editor)
   .command(init)
   .command(inject)
   .command(opf)
@@ -99,7 +99,7 @@ const { argv } = yargs // eslint-disable-line no-unused-vars
 
   .help('h')
   .alias('h', 'help')
-  .demandCommand(1)
+  .demandCommand()
   .wrap(72)
   .argv
 

@@ -74,13 +74,14 @@ const handler = (argv) => {
 
   const run = (tasks) => {
     const next = tasks.shift()
+    if (next === 'mobi') { sequence.push('mobiCSS') }
     actions.setBber({ build: next })
-    serialize([...sequence, next]).then(() => {
+    return serialize([...sequence, next]).then((data) => {
       if (tasks.length) { run(tasks) }
     })
   }
 
-  run(buildTasks)
+  return run(buildTasks)
 }
 
 export default {

@@ -8,7 +8,7 @@ const builder = yargs =>
     .help('h')
     .alias('h', 'help')
     .usage('\nUsage: $0 sass')
-const handler = () => sass()
+const handler = sass
 
 export default {
   command,

@@ -8,7 +8,7 @@ const builder = yargs =>
     .help('h')
     .alias('h', 'help')
     .usage('\nUsage: $0 inject')
-const handler = () => inject()
+const handler = inject
 
 export default {
   command,

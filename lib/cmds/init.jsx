@@ -24,7 +24,7 @@ const builder = yargs =>
     .alias('h', 'help')
     .usage('\nUsage: $0 init')
 
-const handler = () => init()
+const handler = init
 
 export default {
   command,

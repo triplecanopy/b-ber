@@ -8,7 +8,7 @@ const builder = yargs =>
     .help('h')
     .alias('h', 'help')
     .usage('\nUsage: $0 pdf')
-const handler = () => pdf()
+const handler = pdf
 
 export default {
   command,

@@ -8,7 +8,7 @@ const builder = yargs =>
     .help('h')
     .alias('h', 'help')
     .usage('\nUsage: $0 xml')
-const handler = () => xml()
+const handler = xml
 
 export default {
   command,
