@@ -50,7 +50,6 @@
     "opn": "^4.0.2",
     "postcss": "^5.2.6",
     "recursive-readdir": "^2.1.0",
-    "request": "^2.79.0",
     "serve-index": "^1.8.0",
     "vinyl": "^1.2.0",
     "xml2js": "^0.4.17",
