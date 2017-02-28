@@ -11,7 +11,7 @@ import { log } from '../log'
 import { src, dist, env, build, theme } from '../utils'
 
 let input, output, destdir, outputStyle, autoprefixerOptions, outputdir,
-    options, buildVars, includePaths, themeName, themePath
+  options, buildVars, includePaths, themeName, themePath
 
 async function initialize() {
   const { tpath, tname } = theme()
@@ -46,8 +46,7 @@ const stylesheet = () =>
           return resolve(buffer)
         })
       }
-    }
-    catch (err) {
+    } catch (err) {
       log.info(`Attempting to build with \`${themeName}\` theme.`)
     }
 
@@ -60,8 +59,7 @@ const stylesheet = () =>
           return resolve(buffer)
         })
       }
-    }
-    catch (err) {
+    } catch (err) {
       log.info(`Could not find theme \`${themeName}\`. Make sure the theme exists and contains a valid \`application.scss\`.`) // eslint-disable-line max-len
       return resolve('')
     }

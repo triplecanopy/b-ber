@@ -3,35 +3,10 @@
 
 import File from 'vinyl'
 import mime from 'mime-types'
-import YAML from 'yamljs'
-import path from 'path'
 import { find } from 'lodash'
-
-import conf from '../config'
 import Props from '../modules/props'
-import { fileid, guid, getFrontmatter, getImageOrientation } from '../utils'
-
+import { fileid, guid, getFrontmatter, getImageOrientation, metadata } from '../utils'
 import * as figures from './figures'
-
-const settings = () => {
-  const meta = path.join(__dirname, `../${conf.src}`, 'metadata.yml')
-  try {
-    if (meta) {
-      return YAML.load(meta)
-    }
-  }
-  catch (e) {
-    return {}
-  }
-
-  return false
-}
-
-function getMeta(key) {
-  const res = find(settings(), { term: key })
-  if (res && res.value) { return res.value }
-  return false
-}
 
 const container = `<?xml version="1.0"?>
   <container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">
@@ -130,23 +105,32 @@ const opfGuide = new File({
   contents: new Buffer('<guide>{% body %}</guide>')
 })
 
-const ncxHead = () =>
-  `<head>
-    <meta name="dtb:uid" content="${getMeta('identifier')}"/>
+const ncxHead = () => {
+  const entry = find(metadata(), { term: 'identifier' })
+  const identifier = entry && {}.hasOwnProperty.call(entry, 'value') ? entry.value : ''
+  return `<head>
+    <meta name="dtb:uid" content="${identifier}"/>
     <meta name="dtb:depth" content="1"/>
     <meta name="dtb:totalPageCount" content="1"/>
     <meta name="dtb:maxPageNumber" content="1"/>
   </head>`
+}
 
-const ncxTitle = () =>
-  `<docTitle>
-    <text>${getMeta('title')}</text>
+const ncxTitle = () => {
+  const entry = find(metadata(), { term: 'title' })
+  const title = entry && {}.hasOwnProperty.call(entry, 'value') ? entry.value : ''
+  return `<docTitle>
+    <text>${title}</text>
   </docTitle>`
+}
 
-const ncxAuthor = () =>
-  `<docAuthor>
-    <text>${getMeta('creator')}</text>
+const ncxAuthor = () => {
+  const entry = find(metadata(), { term: 'creator' })
+  const creator = entry && {}.hasOwnProperty.call(entry, 'value') ? entry.value : ''
+  return `<docAuthor>
+    <text>${creator}</text>
   </docAuthor>`
+}
 
 const ncxTmpl = new File({
   path: 'ncxTmpl.tmpl',
@@ -182,38 +166,27 @@ const tocTmpl = new File({
 })
 
 const navPoint = (list) => {
-  let count = 0
+  let i = 0
   function render(arr) {
-    let res = String('')
-    arr.forEach((entry) => {
-      count += 1
-      res += `<navPoint id="navPoint-${count}" playOrder="${count}">`
-      res += '<navLabel>'
-      res += `<text>${entry.title}</text>`
-      res += '</navLabel>'
-      res += `<content src="text/${entry.filename}"/>`
-      if (entry.children.length) { res += render(entry.children) }
-      res += '</navPoint>'
-    })
-    return res
+    return arr.map((_) => {
+      i++ // eslint-disable-line no-plusplus
+      return `<navPoint id="navPoint-${i}" playOrder="${i}">
+      <navLabel><text>${_.title}</text></navLabel>
+      <content src="text/${_.filename}"/>
+      ${render(_.children)}
+      </navPoint>`
+    }).join('').replace(/\s*\n\s*/g, '')
   }
   return render(list)
 }
 
 const tocitem = (list) => {
   function render(arr) {
-    let res = String('')
-    res += '<ol>'
-    arr.forEach((entry) => {
-      res += '<li>'
-      res += `<a href="text/${entry.filename}">`
-      res += entry.title
-      res += '</a>'
-      if (entry.children.length) { res += render(entry.children) }
-      res += '</li>'
-    })
-    res += '</ol>'
-    return res
+    return `<ol>
+      ${arr.map(_ =>
+        `<li><a href="text/${_.filename}">${_.title}</a>
+        ${render(_.children)}
+        </li>`).join('')}</ol>`.replace(/\s*\n\s*/g, '')
   }
   return render(list)
 }

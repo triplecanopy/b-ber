@@ -62,8 +62,11 @@ class MarkIt {
     this.nestedStrings = []
 
     this.postRenderCallback = function postRenderCallback(data) {
-      this.nestedStrings.forEach(_ => data = data.replace(_.find, _.repl))
-      return data
+      let result = data
+      this.nestedStrings.forEach((_) => {
+        result = data.replace(_.find, _.repl)
+      })
+      return result
     }
 
     this._set = function _set(key, val) {

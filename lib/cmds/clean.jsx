@@ -8,8 +8,8 @@ const builder = yargs =>
     .help('h')
     .alias('h', 'help')
     .usage('\nUsage: $0 clean')
-    .fail((msg, err) => {
-      console.log(msg)
+    .fail((msg/* , err */) => {
+      console.log(msg) // eslint-disable-line no-console
     })
     .config({
       bber: {

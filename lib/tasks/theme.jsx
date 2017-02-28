@@ -12,8 +12,7 @@ const theme = () =>
   new Promise((resolve, reject) => {
     try {
       fs.statSync(themesDir)
-    }
-    catch (err) {
+    } catch (err) {
       log.info('Creating themes directory.')
       fs.mkdir(themesDir)
     }
@@ -34,8 +33,7 @@ const theme = () =>
 
       try {
         fs.statSync(themeDir)
-      }
-      catch (err) {
+      } catch (err) {
         return log.error(`Could not find ${themeDir}.`)
       }
 

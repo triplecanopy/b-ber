@@ -2,7 +2,7 @@
 import { mobiCSS } from '../tasks'
 
 const command = 'mobiCSS'
-const describe = 'mobiCSS assets to the output dir'
+const describe = 'Remove incompatible CSS for Mobi files'
 const builder = yargs =>
   yargs
     .help('h')

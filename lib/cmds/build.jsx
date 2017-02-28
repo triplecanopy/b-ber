@@ -57,11 +57,6 @@ const builder = yargs =>
 
     .help('h')
     .alias('h', 'help')
-    .config({
-      bber: {
-        build: _buildArgs(yargs.argv)
-      }
-    })
 
 const handler = (argv) => {
   const buildCmds = _buildCommands
@@ -69,14 +64,11 @@ const handler = (argv) => {
   const buildTasks = buildArgs.length ? buildArgs : !buildArgs.length && argv.d ? [] : buildCmds
   const sequence = ['clean', 'create', 'copy', 'sass', 'scripts', 'render', 'loi', 'inject', 'opf']
 
-  const { bber } = argv
-  actions.setBber({ bber })
-
   const run = (tasks) => {
-    const next = tasks.shift()
-    if (next === 'mobi') { sequence.push('mobiCSS') }
-    actions.setBber({ build: next })
-    return serialize([...sequence, next]).then((data) => {
+    const next = [tasks.shift()]
+    actions.setBber({ build: next[0] })
+    if (next[0] === 'mobi') { next.unshift('mobiCSS') }
+    return serialize([...sequence, ...next]).then(() => {
       if (tasks.length) { run(tasks) }
     })
   }

@@ -60,8 +60,9 @@ const loi = () =>
       .then(createLOI)
       .catch(err => log.error(err))
       .then(resolve)
+    } else {
+      resolve()
     }
-    else { resolve() }
   })
 
 export default loi

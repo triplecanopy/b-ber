@@ -46,8 +46,7 @@ const parseHTML = files =>
       let data
       try {
         data = fs.readFileSync(path.join(dir, _), 'utf8')
-      }
-      catch (err) {
+      } catch (err) {
         return log.warn(err.message)
       }
       return printer.parse(data, index, arr)
@@ -67,11 +66,11 @@ const parseHTML = files =>
 //   )
 
 const print = content =>
-  new Promise((resolve, reject) => {
+  new Promise((resolve/* , reject */) => {
     log.info(`Creating PDF: ${settings.fname}`)
     html2pdf
     .create(content, settings.options)
-    .toFile(path.join(process.cwd(), settings.fname), (err, data) => {
+    .toFile(path.join(process.cwd(), settings.fname), (err) => {
       if (err) { throw err }
       resolve()
     })
@@ -79,7 +78,7 @@ const print = content =>
 
 
 const pdf = () =>
-  new Promise(async (resolve, reject) => {
+  new Promise(async (resolve/* , reject */) => {
     await initialize()
     const manifest = YAML.load(path.join(input, `${buildType}.yml`))
 

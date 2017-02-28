@@ -74,8 +74,7 @@ const writePageMeta = ({ fname }) =>
         if (fs.statSync(pages)) {
           pagemeta = YAML.load(path.join(cwd, conf.src, `${type}.yml`))
         }
-      }
-      catch (e) {
+      } catch (e) {
         log.info(`Creating ${type}.yml`)
         fs.writeFileSync(path.join(cwd, conf.src, `${type}.yml`), '---')
       }

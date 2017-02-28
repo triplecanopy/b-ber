@@ -10,7 +10,15 @@ import YAML from 'yamljs'
 import { find, difference, uniq } from 'lodash'
 import { log } from '../log'
 import * as tmpl from '../templates'
-import { opspath, cjoin, getFrontmatter, orderByFileName, src, dist, build, version } from '../utils'
+import {
+  opspath,
+  cjoin,
+  getFrontmatter,
+  orderByFileName,
+  src,
+  dist,
+  build,
+  version } from '../utils'
 
 const navdocs = ['toc.ncx', 'toc.xhtml']
 
@@ -52,10 +60,10 @@ const removeEntries = (arr, diff) => {
   return arr
 }
 
-const addEntries = (arr, diff) => {
-  arr.push(...diff)
-  return arr
-}
+// const addEntries = (arr, diff) => {
+//   arr.push(...diff)
+//   return arr
+// }
 
 const updatePagesMetaYAML = arr =>
   fs.writeFile(
@@ -74,8 +82,7 @@ const orderByPagesUser = (filearr) => {
     if (fs.statSync(yamlpath)) {
       pages = uniq(YAML.load(yamlpath).map(_ => path.basename(_, '.xhtml')))
     }
-  }
-  catch (err) {
+  } catch (err) {
     log.warn(`No content found in \`${buildType}.yml\`. Updating the file now.`)
     updatePagesMetaYAML(pages)
   }
@@ -123,8 +130,7 @@ const add = (file, arr) => {
       title: getFrontmatter(file, 'section_title'),
       children: []
     })
-  }
-  else {
+  } else {
     add(file, parent.children)
   }
 
@@ -153,6 +159,7 @@ const manifest = () =>
 
 const stringify = files =>
   new Promise(async (resolve /* , reject */) => {
+    // TODO: this will already be loaded in bber object
     const strings = { manifest: [], spine: [], guide: [], bookmeta: [] }
     strings.bookmeta = bookmeta.map(_ => tmpl.metatag(_)).filter(Boolean)
 
@@ -160,7 +167,7 @@ const stringify = files =>
     strings.bookmeta = [
       ...strings.bookmeta,
       '<meta property="ibooks:specified-fonts">true</meta>',
-      `<meta property="dcterms:modified">${new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')}</meta>`,
+      `<meta property="dcterms:modified">${new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')}</meta>`, // eslint-disable-line max-len
       `<meta name="generator" content="b-ber@${ver}" />`
     ]
 
@@ -217,7 +224,7 @@ const renderopf = strings =>
   )
 
 const rendernav = ({ nav, filearrs }) =>
-  new Promise((resolve, reject) => {
+  new Promise((resolve/* , reject */) => {
     const navpoints = tmpl.navPoint(nav)
     const tocitems = tmpl.tocitem(nav)
     const ncxstring = renderLayouts(new File({

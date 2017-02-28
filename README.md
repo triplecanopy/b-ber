@@ -4,7 +4,14 @@
 
 A command-line epub maker.
 
-## Installation
+## Install with [`yarn`](https://yarnpkg.com/)
+
+```bash
+$ git clone https://github.com/triplecanopy/b-ber-creator.git
+$ cd b-ber-creator && yarn
+```
+
+## Install with [`npm`](https://www.npmjs.com/)
 
 ```bash
 $ git clone https://github.com/triplecanopy/b-ber-creator.git
@@ -51,6 +58,6 @@ $ bber init       # `bber` is now available
 
 ## Testing
 
-```
-$ npm test
+```bash
+$ npm test # Or `yarn test` if using yarn
 ```

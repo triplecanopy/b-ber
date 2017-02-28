@@ -28,7 +28,7 @@ class Parser {
     this.output = ''
     this.tagnames = []
     this.noop = false
-    this.entries = function* (obj) {
+    this.entries = function* entries(obj) {
       for (const key of Object.keys(obj)) {
         yield [key, obj[key]]
       }
@@ -46,9 +46,18 @@ class Parser {
       }
       resolve(this.output)
     }
-    this.prependBody = () => this.output += '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><body>'
-    this.appendBody = () => this.output += '</body>'
-    this.appendComment = fname => this.output += `\n<!-- \n${fname}\n -->\n\n`
+    this.prependBody = () => {
+      this.output += '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><body>'
+      return this
+    }
+    this.appendBody = () => {
+      this.output += '</body>'
+      return this
+    }
+    this.appendComment = (fname) => {
+      this.output += `\n<!-- \n${fname}\n -->\n\n`
+      return this
+    }
     this.parse = (content, index, arr) => {
       const _this = this // eslint-disable-line consistent-this
       const len = arr.length - 1
@@ -112,7 +121,7 @@ class Parser {
               _this.output += text
             }
           },
-          onclosetag(name) {
+          onclosetag() {
             const tagname = _this.tagnames.pop()
             if (tagname) { _this.output += `</${tagname}>` }
           },

@@ -10,8 +10,7 @@ class Printer extends Parser {
     this.onend = (resolve/* , index, len */) => {
       resolve(this.output)
     }
-    this.filterTags = function(name, idx, len, shouldOpen) {
-
+    this.filterTags = function filterTags(name, idx, len, shouldOpen) {
       const firstDoc = idx === 0
       const lastDoc = idx === len
 

@@ -10,12 +10,9 @@
 import path from 'path'
 import fs from 'fs-extra'
 import imgsize from 'image-size'
-import conf from '../../config'
 import { log } from '../../log'
 import mdInline from '../plugins/inline-block'
-import { hashIt, updateStore } from '../../utils'
-
-const cwd = process.cwd()
+import { hashIt, updateStore, src } from '../../utils'
 
 const elemRe = /^image\s\w{3,}\s"["\w]+/
 const attrRe = /(?:(url|alt|caption)\s["]([^"]+)["])/g
@@ -43,7 +40,7 @@ export default {
       let matches
       while ((matches = attrRe.exec(tokens[idx].info.trim())) !== null) { attrs[matches[1]] = matches[2] }
       if (!attrs.url) { log.error(`[${context._get('filename')}.md: ${line}] <img> Missing \`src\` attribute.`) }
-      const image = path.join(cwd, conf.src, '_images', attrs.url)
+      const image = path.join(src(), '_images', attrs.url)
 
       try {
         if (fs.statSync(image)) {

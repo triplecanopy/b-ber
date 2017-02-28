@@ -5,8 +5,8 @@ const command = ['theme [options]', 't']
 const describe = 'Select a theme for the book'
 const builder = yargs =>
   yargs
-    .fail((msg, err/* , yargs */) => {
-      console.log(msg)
+    .fail((msg/* ,err , yargs */) => {
+      console.log(msg) // eslint-disable-line no-console
       yargs.showHelp()
       process.exit(0)
     })

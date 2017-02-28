@@ -5,6 +5,7 @@
   "ecmaFeatures": { "classes": true, "jsx": true },
   "plugins": ["babel"],
   "rules": {
+    "react/require-extension": "off", // https://github.com/airbnb/javascript/issues/978
     "brace-style": [2, "1tbs", { "allowSingleLine": true }],
     "comma-dangle": [1, "never"],
     "import/extensions": [2, "never"],

@@ -42,7 +42,7 @@ const parseHTML = files =>
 
 const writeXML = str =>
   new Promise((resolve/* , reject */) => {
-    const fpath = path.join(cwd, 'Export.xml')//-${new Date().toISOString().replace(/:/g, '-')}.xml`)
+    const fpath = path.join(cwd, 'Export.xml') // -${new Date().toISOString().replace(/:/g, '-')}.xml`)
     fs.writeFile(fpath, str, 'utf8', (err) => {
       if (err) { throw err }
       resolve()
@@ -50,7 +50,7 @@ const writeXML = str =>
   })
 
 const xml = () =>
-  new Promise((resolve/* , reject */) =>
+  new Promise(resolve/* , reject */ =>
     readSpine()
       .then(files => parseHTML(files))
       .then(markup => writeXML(markup))

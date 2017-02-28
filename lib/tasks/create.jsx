@@ -43,8 +43,7 @@ const create = () =>
         .catch(err => log.error(err))
         .then(resolve)
       }
-    }
-    catch (e) {
+    } catch (e) {
       reject(new Error(`${input} directory does not exist.`))
     }
   })

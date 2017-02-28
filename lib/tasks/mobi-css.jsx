@@ -28,7 +28,7 @@ const blackListedProperties = [
 ]
 
 const write = ({ file, content }) =>
-  new Promise((resolve, reject) =>
+  new Promise(resolve/* , reject */ =>
     fs.writeFile(file, content, 'utf8', (err) => {
       if (err) { throw err }
       log.info('Writing', path.basename(file))
@@ -37,7 +37,7 @@ const write = ({ file, content }) =>
   )
 
 const parse = file =>
-  new Promise((resolve, reject) =>
+  new Promise(resolve/* , reject */ =>
     fs.readFile(file, 'utf8', (err, data) => {
       if (err) { throw err }
       const ast = css.parse(data)
@@ -49,7 +49,8 @@ const parse = file =>
           while (j >= 0) {
             let jj = 0
             while (jj < blackListedPrefixes.length) {
-              if (rule.selectors[j].slice(0, blackListedPrefixes[jj].length) === blackListedPrefixes[jj]) {
+              if (rule.selectors[j]
+                .slice(0, blackListedPrefixes[jj].length) === blackListedPrefixes[jj]) {
                 log.info('Removing selector', rule.selectors[j])
                 rule.selectors.splice(j, 1)
               }
@@ -83,7 +84,7 @@ const parse = file =>
   )
 
 const mobiCSS = () =>
-  new Promise((resolve, reject) =>
+  new Promise(resolve/* , reject */ =>
     fs.readdir(path.join(dist(), '/OPS/stylesheets'), (err, files) => {
       if (err) { throw err }
 
@@ -96,7 +97,6 @@ const mobiCSS = () =>
       Promise.all(promises).then(() => {
         resolve()
       })
-
     })
   )
 

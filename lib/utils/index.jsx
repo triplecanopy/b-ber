@@ -3,9 +3,11 @@
 
 import fs from 'fs-extra'
 import path from 'path'
+import YAML from 'yamljs'
 import { compact, find } from 'lodash'
 import store from '../state/store'
 import actions from '../state'
+import config from '../config'
 
 const cwd = process.cwd()
 
@@ -105,55 +107,82 @@ const orderByFileName = (filearr) => {
   })
 }
 
-const entries = function* (obj) {
+const entries = function* entries(obj) {
   for (const key of Object.keys(obj)) {
     yield [key, obj[key]]
   }
 }
 
+
+// getters
+
+// utility for retrieving props from bber instance
+const getVal = val =>
+  config(instance => instance.bber[val])
+
 const src = () => {
-  const { build, bber } = actions.getBber('build', 'bber')
-  if (!build || !bber) { throw new Error('Missing keys `build` or `bber` in `state`.') }
-  const { src } = bber[build]
-  return path.join(cwd, src)
+  const { build } = actions.getBber('build', 'bber')
+  return path.join(cwd, getVal(build).src)
 }
 
 const dist = () => {
-  const { build, bber } = actions.getBber('build', 'bber')
-  if (!build || !bber) { throw new Error('Missing keys `build` or `bber` in `state`.') }
-  const { dist } = bber[build]
-  return path.join(cwd, dist)
+  const { build } = actions.getBber('build', 'bber')
+  return path.join(cwd, getVal(build).dist)
 }
 
 const build = () => {
-  const { build } = actions.getBber('build')
-  if (build === null) { throw new Error('Missing keys `build` in `state`.') }
-  return build
+  const bber = actions.getBber('build')
+  if (bber.build === null) { throw new Error('Missing keys `build` in `state`.') }
+  return bber.build
 }
 
-const env = () => {
-  const { bber } = actions.getBber('bber')
-  const { env } = bber
-  return env
-}
+const env = () =>
+  getVal('env')
 
 const theme = () => {
-  const { bber } = actions.getBber('bber')
-  const { theme } = bber
+  const t = getVal('theme')
   return {
-    tpath: path.join(cwd, 'themes', theme),
-    tname: theme
+    tpath: path.join(cwd, 'themes', t),
+    tname: t
   }
 }
 
-const version = () => {
-  const pkg = JSON.parse(fs.readFileSync(path.join(cwd, 'package.json')))
-  const { version } = pkg
-  return version || ''
+const metadata = () => {
+  // try to get from config class, failing that, get from global store
+  let data = getVal('metadata') || (() => {
+    const { bber } = actions.getBber('bber')
+    return bber.metadata
+  })()
+
+  // if still none, load the config files and then set the store with the
+  // response for the next call
+  if (!data) {
+    const configPath = path.join(cwd, 'config.yml')
+    try {
+      if (fs.statSync(configPath)) {
+        const conf = YAML.load(configPath)
+        try {
+          if (fs.statSync(path.join(cwd, conf.src, 'metadata.yml'))) {
+            data = YAML.load(path.join(cwd, conf.src, 'metadata.yml'))
+            actions.setBber({ bber: { metadata: data } })
+          }
+        } catch (err) {
+          throw new Error(`Cannot find metadata.yml in ${path.basename(conf.src)}`)
+        }
+      }
+    } catch (err) {
+      throw new Error(`Cannot find config.yml in ${path.basename(cwd)}`)
+    }
+  }
+
+  return data
 }
+
+const version = () =>
+  getVal('version')
 
 export {
   opspath, cjoin, fileid, copy, guid, rpad, lpad, hrtimeformat, hashIt,
   updateStore, getImageOrientation, getFrontmatter, orderByFileName, entries,
-  src, dist, build, env, theme, version }
+  src, dist, build, env, theme, version, metadata }
 

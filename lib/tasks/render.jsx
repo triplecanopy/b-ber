@@ -38,8 +38,7 @@ const layout = (fname, data, idx, len, rs, rj) => {
     if (fs.statSync(textDir)) {
       write(fname, markup, idx, len, rs, rj)
     }
-  }
-  catch (e) {
+  } catch (e) {
     fs.mkdirs(textDir, () => write(fname, markup, idx, len, rs, rj))
   }
 }
