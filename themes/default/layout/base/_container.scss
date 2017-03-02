@@ -67,7 +67,6 @@ section.break-before a + div.figure-sm {
   padding-top:0;
 }
 
-// epub|section[type=subchapter],
 section.subchapter {
   margin-bottom: rhythm(1, $base-font-size);
   + section.subchapter > header > h2 {
@@ -75,23 +74,18 @@ section.subchapter {
   }
 }
 
-// epub|section[type=bibliography],
 section.bibliography {
   margin-bottom: rhythm(1, $base-font-size);
-  h1 {
-    margin-bottom: 0;
-    padding-bottom:1.4em;
-    line-height: 1.4;
-  }
   .subchapter{
     margin-bottom: 0;
   }
-  h3{
+  h3 {
     padding-top: 0;
     padding-bottom: 1.4em;
     line-height: 1.4;
   }
-  p{
+  h1 + .subchapter > h3 { padding-top: 0; }
+  p {
     text-indent: 0;
     padding-top: 0;
     padding-bottom: 1.4em;

@@ -58,7 +58,7 @@ function render_footnote_open(tokens, idx, options, env, slf) {
     id += ':' + tokens[idx].meta.subId;
   }
 
-  return '<aside epub:type="footnote" id="fn' + id + '">';
+  return '<aside class="footnote" epub:type="footnote" id="fn' + id + '"><a class="footnote-link" href="#fnref' + id + '">['+ id +']</a>';
 }
 
 function render_footnote_close() {
@@ -73,7 +73,8 @@ function render_footnote_anchor(tokens, idx, options, env, slf) {
   }
 
   /* ↩ with escape code to prevent display as Apple Emoji on iOS */
-  return ' <a href="#fnref' + id + '">\u21a9\uFE0E</a>';
+  // return ' <a href="#fnref' + id + '">\u21a9\uFE0E</a>';
+  return '';
 }
 
 

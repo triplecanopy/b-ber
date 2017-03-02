@@ -99,10 +99,9 @@ figcaption,
 }
 
 // Layout
-//
-body.book_meta,
 section.colophon,
-section.appendix {
+section.appendix,
+section.backmatter {
   figure#Triple-Canopy.logo {
     text-indent: 0;
     text-align: left;

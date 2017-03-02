@@ -13,7 +13,7 @@ h1 {
     @include rhythm-padding(0, 0, $text-lg);
   }
 
-  .backmatter & {
+  section.backmatter & {
     text-transform: uppercase;
     padding: 0;
     @include rhythm-padding(0, 2, $text-md);
@@ -28,7 +28,7 @@ h2 {
   @include no-indent-follow;
   text-indent: 0;
 
-  .backmatter & {
+  section.backmatter & {
     @include tc-rhythm-sizing($text-md, $line-md);
     @include tc-rhythm-padding($text-md);
     padding:rhythm(0.5) 0 0 0;
@@ -66,15 +66,14 @@ p {
 
   // Section styles
   .frontmatter &,
-  .backmatter &,
-  .book_meta & {
+  section.backmatter &,
     text-indent: 0;
     @include tc-rhythm-padding($text-sm);
   }
 
-  body.book_meta &,
   section.colophon &,
-  section.appendix & {
+  section.appendix &,
+  section.backmatter {
     font-weight: normal;
     font-style: normal;
     text-indent: 0;
@@ -102,6 +101,10 @@ p {
     @include no-indent-follow;
     @include tc-rhythm-sizing($text-base, $line-base);
     @include adjust-leading-to(1);
+  }
+
+  .figcaption & {
+    text-indent: 0;
   }
 }
 
@@ -206,18 +209,10 @@ strong,b {
   }
 }
 
-// TODO: this is weird, look into this
-.fn,
-.note,
-.fn-ref,
-a.fn,
-a.note,
-a.fn-ref {
-  @include text-small;
-  text-decoration: none;
-  a{
-    text-decoration: none;
+aside.footnote {
+  margin-left: rhythm(1, $base-font-size);
+  a.footnote-link {
     display: inline-block;
-    margin-left: 0.89rem;
+    text-indent: rhythm(-1, $base-font-size);
   }
 }

@@ -41,9 +41,9 @@ ol {
   }
 
   // Section styles
-  body.book_meta &,
   section.colophon &,
-  section.appendix & {
+  section.appendix &,
+  section.backmatter {
     @include tc-rhythm-padding($text-sm);
     li {
       font-weight: normal;

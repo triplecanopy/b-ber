@@ -10,6 +10,7 @@ const options = () => ({
 })
 
 const epub = () =>
+  // resolve()
   new Promise(async resolve/* , reject */ =>
     zipper.create(await options())
     .catch(err => log.error(err))

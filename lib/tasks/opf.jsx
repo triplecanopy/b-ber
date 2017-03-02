@@ -60,10 +60,10 @@ const removeEntries = (arr, diff) => {
   return arr
 }
 
-// const addEntries = (arr, diff) => {
-//   arr.push(...diff)
-//   return arr
-// }
+const addEntries = (arr, diff) => {
+  arr.push(...diff)
+  return arr
+}
 
 const updatePagesMetaYAML = arr =>
   fs.writeFile(
@@ -95,10 +95,10 @@ const orderByPagesUser = (filearr) => {
       // there are extra entries in the YAML
       pages = removeEntries(pages, pagediff)
     }
-    // if (filediff.length) {
-    //   // there are missing entries in the YAML
-    //   pages = addEntries(pages, filediff)
-    // }
+    if (filediff.length) {
+      // there are missing entries in the YAML
+      pages = addEntries(pages, filediff)
+    }
     // write the new entries to file
     updatePagesMetaYAML(pages)
   }

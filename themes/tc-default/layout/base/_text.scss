@@ -13,10 +13,10 @@ h1 {
     @include rhythm-padding(0, 0, $text-lg);
   }
 
-  .backmatter & {
+  section.backmatter & {
     text-transform: uppercase;
     padding: 0;
-    @include rhythm-padding(0, 2, $text-md);
+    @include rhythm-padding(0, 1, $text-md);
     @include tc-rhythm-sizing($text-sm, $line-sm);
   }
 }
@@ -28,7 +28,7 @@ h2 {
   @include no-indent-follow;
   text-indent: 0;
 
-  .backmatter & {
+  section.backmatter & {
     @include tc-rhythm-sizing($text-md, $line-md);
     @include tc-rhythm-padding($text-md);
     padding:rhythm(0.5) 0 0 0;
@@ -66,15 +66,14 @@ p {
 
   // Section styles
   .frontmatter &,
-  .backmatter &,
-  .book_meta & {
+  section.backmatter & {
     text-indent: 0;
     @include tc-rhythm-padding($text-sm);
   }
 
-  body.book_meta &,
   section.colophon &,
-  section.appendix & {
+  section.appendix &,
+  section.backmatter {
     font-weight: normal;
     font-style: normal;
     text-indent: 0;
@@ -102,6 +101,10 @@ p {
     @include no-indent-follow;
     @include tc-rhythm-sizing($text-base, $line-base);
     @include adjust-leading-to(1);
+  }
+
+  .figcaption & {
+    text-indent: 0;
   }
 }
 
@@ -208,8 +211,22 @@ strong,b {
 
 
 .footnotes {
-  page-break-before: always; // necessary for footnotes to work in mobi
+  @if $build == mobi {
+    page-break-before: always;
+  }
 }
-.footnote {
-  @include text-small;
+
+aside.footnote {
+  @if $build == mobi {
+    page-break-after: always;
+  }
+  margin-left: rhythm(1, $base-font-size);
+  p { text-indent: 0; }
+  a.footnote-link {
+    float: left;
+    text-indent: rhythm(-1, $base-font-size);
+    html[__ibooks_internal_theme] & {
+      display: none!important;
+    }
+  }
 }
