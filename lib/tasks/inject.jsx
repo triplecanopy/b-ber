@@ -1,4 +1,8 @@
 
+/**
+ * @module inject
+ */
+
 import fs from 'fs-extra'
 import path from 'path'
 import File from 'vinyl'
@@ -12,16 +16,29 @@ const initialize = () => {
   output = dist()
 }
 
+/**
+ * RegExp tokens to begin parsing
+ * @type {Object<Object>}
+ */
 const startTags = {
   javascripts: new RegExp('<!-- inject:js -->', 'ig'),
   stylesheets: new RegExp('<!-- inject:css -->', 'ig')
 }
 
+/**
+ * RegExp tokens to end parsing
+ * @type {Object<Object>}
+ */
 const endTags = {
   javascripts: new RegExp('<!-- end:js -->', 'ig'),
   stylesheets: new RegExp('<!-- end:css -->', 'ig')
 }
 
+/**
+ * Get the contents of the output directory
+ * @param  {String} dirpath
+ * @return {Array<String>}
+ */
 const getDirContents = dirpath =>
   new Promise((resolve, reject) =>
     fs.readdir(dirpath, (err, files) => {
@@ -30,6 +47,11 @@ const getDirContents = dirpath =>
       resolve(files)
     }))
 
+/**
+ * Get the contents of a file
+ * @param  {String} source Path to the source file
+ * @return {Object}        Vinyl file object
+ */
 const getContents = source => new Promise((resolve, reject) =>
   fs.readFile(path.join(output, 'OPS/text', source), (err, data) => {
     if (err) { reject(err) }
@@ -37,6 +59,12 @@ const getContents = source => new Promise((resolve, reject) =>
   })
 )
 
+/**
+ * Replace the contents of the RegExp tokens with asset paths
+ * @param  {Array} files
+ * @return {Array}
+ * @throws {Error} If a file does not have a .js or .css extension
+ */
 const templateify = files =>
   files.map((file) => {
     switch (path.extname(file).toLowerCase()) {
@@ -49,8 +77,19 @@ const templateify = files =>
     }
   })
 
+/**
+ * Remove leading whitespace from a string
+ * @param  {String} str
+ * @return {String}
+ */
 const getLeadingWhitespace = str => str.match(/^\s*/)[0]
 
+/**
+ * Search and replace generator
+ * @param {Object} re            Regular expression
+ * @param {String} str
+ * @yield {?Array}
+ */
 function* matchIterator(re, str) {
   let match
   while ((match = re.exec(str)) !== null) {

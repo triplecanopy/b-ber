@@ -1,6 +1,10 @@
 
 /* eslint-disable operator-linebreak */
 
+/**
+ * @module utils
+ */
+
 import fs from 'fs-extra'
 import path from 'path'
 import YAML from 'yamljs'
@@ -21,6 +25,12 @@ const copy = (source, target) =>
     return rd.pipe(wr)
   })
 
+/**
+ * Get a file's relative path to the OPS
+ * @param  {String} fpath File path
+ * @param  {String} base  Book's base path
+ * @return {String}
+ */
 const opspath = (fpath, base) =>
   fpath.replace(new RegExp(`^${base}/OPS/?`), '')
 
@@ -33,9 +43,20 @@ const fileid = str =>
 const s4 = () =>
   Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1)
 
+/**
+ * Create a GUID
+ * @return {String}
+ */
 const guid = () =>
   `${s4()}${s4()}${s4()}${s4()}${s4()}${s4()}${s4()}${s4()}`
 
+/**
+ * Pad a string from the right
+ * @param  {String} s Base string
+ * @param  {String} a Character to pad with
+ * @param  {String} n Length of output
+ * @return {String}
+ */
 const rpad = (s, a, n) => {
   let str = s
   if (str.length >= n) { return str }
@@ -43,6 +64,13 @@ const rpad = (s, a, n) => {
   return str
 }
 
+/**
+ * Pad a string from the left
+ * @param  {String} s Base string
+ * @param  {String} a Character to pad with
+ * @param  {String} n Length of output
+ * @return {String}
+ */
 const lpad = (s, a, n) => {
   let str = s
   if (str.length >= n) { return str }
@@ -50,11 +78,17 @@ const lpad = (s, a, n) => {
   return str
 }
 
+
 const hrtimeformat = (a) => {
   const s = (a[0] * 1000) + (a[1] / 1000000)
   return `${String(s).slice(0, -3)}ms`
 }
 
+/**
+ * Create a hash from a string
+ * @param  {String} str
+ * @return {String}
+ */
 const hashIt = (str) => {
   let hash = 0
   if (str.length === 0) { return hash }
@@ -80,6 +114,12 @@ const updateStore = (prop, { ...obj }) => {
   return store
 }
 
+/**
+ * Determine an image's orientation
+ * @param  {Number} w Image width
+ * @param  {Number} h Image Height
+ * @return {String}
+ */
 const getImageOrientation = (w, h) => {
   // assign image class based on w:h ratio
   const widthToHeight = w / h
@@ -107,6 +147,11 @@ const orderByFileName = (filearr) => {
   })
 }
 
+/**
+ * Create an iterator from object's key/value pairs
+ * @param {Object} obj [description]
+ * @yield {Array} [description]
+ */
 const entries = function* entries(obj) {
   for (const key of Object.keys(obj)) {
     yield [key, obj[key]]

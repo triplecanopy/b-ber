@@ -12,7 +12,8 @@
     "prepublish": "npm run build",
     "bump": "npm version prerelease",
     "preversion": "npm test",
-    "version": "npm run build && git add -A"
+    "version": "npm run build && git add -A",
+    "documentation": "./node_modules/.bin/jsdoc --verbose -c .jsdoc.json"
   },
   "bin": {
     "bber": "./dist/cli.js"
@@ -72,6 +73,8 @@
     "eslint-plugin-import": "^1.16.0",
     "eslint-plugin-jsx-a11y": "^2.2.2",
     "eslint-plugin-react": "^6.4.1",
+    "jsdoc": "^3.4.3",
+    "minami": "^1.1.1",
     "tap-spec": "^4.1.1"
   },
   "ava": {
@@ -88,5 +91,8 @@
       "babel-register"
     ],
     "babel": "inherit"
+  },
+  "engines": {
+    "node": ">=6"
   }
 }

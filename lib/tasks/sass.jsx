@@ -1,4 +1,8 @@
 
+/**
+ * @module sass
+ */
+
 // Could set up themes to be loaded through custom `importer()`, not necessary for
 // now though see: https://github.com/sass/node-sass#render-callback--v300
 

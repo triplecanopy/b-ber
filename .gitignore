@@ -18,3 +18,5 @@ dist
 # build directory for _book
 book*
 _book
+
+documentation

@@ -1,13 +1,25 @@
 
+/**
+ * @module copy
+ */
+
 import cdir from 'copy-dir'
 import path from 'path'
 import { src, dist } from '../utils'
 
+/**
+ * Directories to copy
+ * @type {Array<String>}
+ */
 const srcs = [
   '_images',
   '_fonts'
 ]
 
+/**
+ * Copy assets into the output directory
+ * @return {Promise<Object|Error>}
+ */
 const copy = () =>
   new Promise((resolve, reject) =>
     srcs.forEach((_, idx) =>

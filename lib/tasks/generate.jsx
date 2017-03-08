@@ -1,4 +1,8 @@
 
+/**
+ * @module generate
+ */
+
 import fs from 'fs-extra'
 import yargs from 'yargs'
 import path from 'path'
@@ -10,6 +14,10 @@ import { orderByFileName, entries, lpad } from '../utils'
 
 const cwd = process.cwd()
 
+/**
+ * Get a list of markdown files
+ * @return {Array<Object<String>>}
+ */
 const getFiles = () =>
   new Promise(resolve =>
     fs.readdir(path.join(cwd, conf.src, '_markdown'), (err, files) => {
@@ -23,11 +31,21 @@ const getFiles = () =>
     })
   )
 
+/**
+ * Order files based on their filename
+ * @param  {Array<Object<String>>} files
+ * @return {Array<Object<String>>}
+ */
 const orderFiles = files =>
   new Promise(resolve =>
     resolve(orderByFileName(files))
   )
 
+/**
+ * Get an array of files' frontmatter
+ * @param  {Array} files [description]
+ * @return {Object}       The array of files and their corresponding frontmatter
+ */
 const parseMeta = files =>
   new Promise((resolve) => {
     const { section_title, landmark_type, landmark_title } = yargs.argv
@@ -35,6 +53,12 @@ const parseMeta = files =>
     resolve({ files, metadata })
   })
 
+/**
+ * Create a new vinyl file object with frontmatter
+ * @param  {Array} options.files
+ * @param  {Object} options.metadata
+ * @return {Object} The filename, the file object, and the metadata
+ */
 const createFile = ({ files, metadata }) => {
   let frontmatter = ''
   for (const [key, val] of entries(metadata)) {
@@ -52,6 +76,12 @@ const createFile = ({ files, metadata }) => {
   })
 }
 
+/**
+ * Write a vinyl file object's contents to the output directory
+ * @param  {String} options.fname
+ * @param  {Object} options.file  The vinyl file object
+ * @return {Object}               The filename and file object
+ */
 const writeFile = ({ fname, file }) =>
   new Promise(resolve =>
     fs.writeFile(
@@ -63,6 +93,11 @@ const writeFile = ({ fname, file }) =>
         })
   )
 
+/**
+ * Append a newly created filename to the yaml manifest
+ * @param  {String} options.fname
+ * @return {Promise<Object|Error>}
+ */
 const writePageMeta = ({ fname }) =>
   new Promise((resolve, reject) => {
     const buildTypes = ['epub', 'mobi', 'web', 'sample']
@@ -92,7 +127,10 @@ const writePageMeta = ({ fname }) =>
     }
   })
 
-
+/**
+ * Create a new markdown file
+ * @return {Promise<Object|Error>}
+ */
 const generate = () =>
   new Promise(resolve/* , reject */ =>
     getFiles()

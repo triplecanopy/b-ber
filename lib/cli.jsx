@@ -2,15 +2,28 @@
 
 /* eslint-disable no-shadow, no-console */
 
+/**
+ * @module cli
+ */
+
 import yargs from 'yargs'
 import config from './config'
 import * as commands from './cmds'
 
+/**
+ * Start the build
+ * @memberOf module:cli
+ * @return {}
+ */
 const initialize = () => {
   const {
     build, clean, copy, create/* , editor */, generate, init, inject, opf, pdf,
     /* mobiCSS, */publish, render, scripts, sass, serve, site, theme, watch, xml } = commands
 
+  /**
+   * Shows custom help if a CLI command fails
+   * @return {String}
+   */
   const showCustomHelp = () => console.log(`
   Usage: bber <command> [options]
 
@@ -33,12 +46,18 @@ const initialize = () => {
   For more information on a command, enter bber <command> --help
   `)
 
+  /**
+   * checkCommands
+   * @param  {Object} yargs
+   * @return {}
+   */
   const checkCommands = (yargs) => {
     if (!{}.hasOwnProperty.call(commands, yargs.argv._[0])) {
       showCustomHelp()
       process.exit(0)
     }
   }
+
 
   const { argv } = yargs // eslint-disable-line no-unused-vars
     .fail((msg/* , err, yargs */) => {

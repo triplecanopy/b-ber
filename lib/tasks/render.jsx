@@ -1,4 +1,8 @@
 
+/**
+ * @module render
+ */
+
 // TODO: this should be cleaned up to use promise chain
 
 import renderLayouts from 'layouts'

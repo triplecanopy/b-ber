@@ -1,4 +1,8 @@
 
+/**
+ * @module config
+ */
+
 import YAML from 'yamljs'
 import path from 'path'
 import fs from 'fs-extra'
@@ -6,28 +10,58 @@ import actions from './state'
 
 const cwd = process.cwd()
 
+/**
+ * Load defaults and user settings
+ * @alias module:config#Configuration
+ */
 class Configuration {
+
+  /**
+   * @constructor
+   */
   constructor() {
     this.config = null
     this.metadata = null
   }
 
+  /**
+   * metadata setter
+   * @param  {Object} data
+   * @return {}
+   */
   set metadata(data) {
     this._metadata = data
   }
 
+  /**
+   * metadata getter
+   * @return {Object}
+   */
   get metadata() {
     return this._metadata
   }
 
-  get config() {
-    return this._config
-  }
-
+  /**
+   * config setter
+   * @param  {Object} data
+   * @return {}
+   */
   set config(data) {
     this._config = data
   }
 
+  /**
+   * config getter
+   * @return {Object}
+   */
+  get config() {
+    return this._config
+  }
+
+  /**
+   * bber getter
+   * @return {Object}
+   */
   get bber() {
     return {
       ...this.config,
@@ -40,6 +74,10 @@ class Configuration {
     }
   }
 
+  /**
+   * Load default and user config files
+   * @return {Promise<Object|Error>}
+   */
   loadSettings() {
     return new Promise((resolve/* , reject */) => {
       const defaults = {
@@ -71,6 +109,10 @@ class Configuration {
     })
   }
 
+  /**
+   * Load user metadata files
+   * @return {Promise<Object|Error>}
+   */
   loadMetadata() {
     return new Promise((resolve/* , reject */) => {
       const fpath = path.join(cwd, this.config.src, 'metadata.yml')
@@ -85,6 +127,11 @@ class Configuration {
     })
   }
 
+  /**
+   * Return defaults or user settings for build type
+   * @param  {String} type
+   * @return {Object}
+   */
   fileOrDefaults(type) {
     const buildConfig = { src: this.config.src, dist: `${this.config.dist}-${type}`, pageList: [] }
     const fpath = path.join(cwd, this.config.src, `${type}.yml`)
@@ -101,6 +148,10 @@ class Configuration {
 
 
 let conf
+/**
+ * Initialize the {@link module:config#Configuration} promise chain
+ * @param {module:cli.initialize} callback
+ */
 const loader = (callback) => {
   if (!conf || !(conf instanceof Configuration)) {
     conf = new Configuration()
@@ -115,5 +166,10 @@ const loader = (callback) => {
   return callback(conf)
 }
 
+/**
+ * Callback displayed as module:cli.initialize
+ * @callback module:cli.callback
+ * @return {}
+ */
 
 export default loader

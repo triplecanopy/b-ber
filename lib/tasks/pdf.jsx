@@ -1,4 +1,8 @@
 
+/**
+ * @module pdf
+ */
+
 import path from 'path'
 import fs from 'fs-extra'
 import YAML from 'yamljs'

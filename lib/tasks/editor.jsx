@@ -1,7 +1,15 @@
 
+/**
+ * @module editor
+ */
+
 import bberEditor from 'bber-editor'
 import opn from 'opn'
 
+/**
+ * Launch b-ber editor in a browser
+ * @return {Promise<Object|Error>}
+ */
 const editor = () =>
   new Promise((resolve /* , reject */) => {
     bberEditor.listen(8080, () => {

@@ -1,4 +1,9 @@
 
+/**
+ * Export XHTML in the epub output directory as a single XML document
+ * @module xml
+ */
+
 import path from 'path'
 import fs from 'fs-extra'
 import { parseString } from 'xml2js'

@@ -1,4 +1,8 @@
 
+/**
+ * @module create
+ */
+
 import fs from 'fs-extra'
 import { log } from '../log'
 import { container, mimetype } from '../templates'
@@ -6,6 +10,10 @@ import { src, dist } from '../utils'
 
 let input, output, dirs
 
+/**
+ * Write required epub files
+ * @return {Promise<Object|Error>}
+ */
 const write = () =>
   new Promise((resolve, reject) =>
     fs.writeFile(`${output}/META-INF/container.xml`, container, (err1) => {
@@ -17,6 +25,10 @@ const write = () =>
     })
   )
 
+/**
+ * Create output directories
+ * @return {Promise<Object|Error>}
+ */
 const makedirs = () =>
   new Promise((resolve, reject) =>
     dirs.map((dir, index) =>
@@ -27,6 +39,10 @@ const makedirs = () =>
     )
   )
 
+/**
+ * Create required folder structure and write files
+ * @return {Promise<Object|Error>}
+ */
 const create = () =>
   new Promise((resolve, reject) => {
     input = src()

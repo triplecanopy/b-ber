@@ -1,6 +1,10 @@
 
 /* eslint-disable operator-linebreak */
 
+/**
+ * @module opf
+ */
+
 import renderLayouts from 'layouts'
 import path from 'path'
 import fs from 'fs-extra'

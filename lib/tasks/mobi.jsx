@@ -1,4 +1,8 @@
 
+/**
+ * @module mobi
+ */
+
 import zipper from 'mobi-zipper'
 import path from 'path'
 import { log } from '../log'
