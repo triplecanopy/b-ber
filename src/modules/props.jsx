@@ -7,99 +7,99 @@ import terms from '../dc/terms'
 import elements from '../dc/elements'
 
 /**
- * Detects XML media-type properties based on the content of XHTML documents
- * @static
- * @class Props
+ * Mehtods to detect XML media-type properties based on the content of XHTML documents
+ * @namespace
  */
 class Props {
   /**
-   * [isHTML description]
+   * Detect if a file is an (X)HTML document
    * @param  {String}  file File path
    * @return {Boolean}
    */
-  isHTML(file) {
+  static isHTML(file) {
     return Boolean(mime.lookup(file.rootpath) === 'text/html'
       || mime.lookup(file.rootpath) === 'application/xhtml+xml')
   }
 
   /**
-   * [isNav description]
+   * Detect if a file is an ePub navigation document
    * @param  {String}  file File path
    * @return {Boolean}
    */
-  isNav(file) {
+  static isNav(file) {
     return Boolean(mime.lookup(file.rootpath) === 'application/xhtml+xml'
       && file.name === 'toc.xhtml')
   }
 
   /**
-   * [isScripted description]
+   * Detect if an XHTML file contains JavaScript
    * @param  {String}  file File path
    * @return {Boolean}
    */
-  isScripted(file) {
-    if (!this.isHTML(file)) { return false }
+  static isScripted(file) {
+    if (!Props.isHTML(file)) { return false }
     const fpath = file.rootpath
     const contents = fs.readFileSync(fpath, 'utf8')
     return Boolean(contents.match(/<script/))
   }
 
   /**
-   * [isSVG description]
+   * Detect if an XHTML file contains SVG
    * @param  {String}  file File path
    * @return {Boolean}
    */
-  isSVG(file) {
-    if (!this.isHTML(file)) { return false }
+  static isSVG(file) {
+    if (!Props.isHTML(file)) { return false }
     const fpath = file.rootpath
     const contents = fs.readFileSync(fpath, 'utf8')
     return Boolean(contents.match(/<svg/))
   }
 
   /**
-   * [isDCElement description]
+   * Detect if a term is a Dublin Core `element`
    * @param  {Object}  data [description]
    * @return {Boolean}
    */
-  isDCElement(data) {
+  static isDCElement(data) {
     return Boolean({}.hasOwnProperty.call(data, 'term')
       && elements.indexOf(data.term) > -1)
   }
 
   /**
-   * [isDCTerm description]
+   * Detect if a term is a Dublin Core `term`
    * @param  {Object<String>}  data [description]
    * @return {Boolean}
    */
-  isDCTerm(data) {
+  static isDCTerm(data) {
     return Boolean({}.hasOwnProperty.call(data, 'term')
       && terms.indexOf(data.term) > -1)
   }
 
   /**
-   * [testHTML description]
+   * Test if an XHTML file is a navigation document, contains JavaScript or
+   * SVG
    * @param  {String} file File path
    * @return {Array}      An array of dublin core media-type properties
    */
-  testHTML(file) {
+  static testHTML(file) {
     const props = []
-    if (this.isNav(file)) { props.push('nav') }
-    if (this.isScripted(file)) { props.push('scripted') }
-    if (this.isSVG(file)) { props.push('svg') }
+    if (Props.isNav(file)) { props.push('nav') }
+    if (Props.isScripted(file)) { props.push('scripted') }
+    if (Props.isSVG(file)) { props.push('svg') }
     return props
   }
 
   /**
-   * [testMeta description]
+   * Test if an object contains Dublin Core `term`s or `element`s
    * @param  {Object} data [description]
    * @return {Object<Boolean>}      [description]
    */
-  testMeta(data) {
+  static testMeta(data) {
     return {
-      term: this.isDCTerm(data),
-      element: this.isDCElement(data)
+      term: Props.isDCTerm(data),
+      element: Props.isDCElement(data)
     }
   }
 }
 
-export default new Props()
+export default Props
