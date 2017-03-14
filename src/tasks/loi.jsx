@@ -10,7 +10,8 @@ import File from 'vinyl'
 import { log } from '../log'
 import store from '../state/store'
 import { updateStore, dist, build } from '../utils'
-import { page, figure, loiLeader } from '../templates'
+import figure from '../templates/figures'
+import { page, loiLeader } from '../templates/pages'
 
 let output, buildEnv
 const initialize = () => {

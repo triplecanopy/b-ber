@@ -14,12 +14,12 @@ class Json2XML {
 
   /**
    * Initialize the conversion from JSON to XML
-   * @param  {Object} obj Object to convert
-   * @return {String}     The XML string
+   * @param  {Array<Object>} obj Object to convert
+   * @return {String}            The XML string
    */
   static convert(obj) {
     if (Json2XML.isObject(obj) && Json2XML.lengthOf(obj) === 1) {
-      for (var a in obj) {
+      for (const a in obj) {
         return Json2XML.toXML(a, obj[a])
       }
     }
@@ -87,7 +87,7 @@ class Json2XML {
    * @throws {TypeError}  If an unsupported `type` is passed as the second parameter
    */
   static toXML(tag, obj) {
-    var doc = `<${tag}`
+    let doc = `<${tag}`
     if (Json2XML.isNullOrUndefined(obj)) {
       doc += `${doc}/>`
       return doc
@@ -103,19 +103,19 @@ class Json2XML {
         doc += '>'
       }
 
-      for (var b in obj) {
+      for (const b in obj) {
         if (Json2XML.isArray(obj[b])) {
-          for (var i = 0; i < obj[b].length; i++) {
+          for (let i = 0; i < obj[b].length; i++) { // eslint-disable-line no-plusplus
             if (Json2XML.isNumber(obj[b][i]) || Json2XML.isString(obj[b][i]) || Json2XML.isObject(obj[b][i])) {
               doc += Json2XML.toXML(b, obj[b][i])
             } else {
-              throw new TypeError((typeof obj[b][i]) + ' is not supported.')
+              throw new TypeError(`${(typeof obj[b][i])} is not supported.`)
             }
           }
         } else if (Json2XML.isNumber(obj[b]) || Json2XML.isString(obj[b]) || Json2XML.isObject(obj[b])) {
           doc += Json2XML.toXML(b, obj[b])
         } else {
-          throw new TypeError((typeof obj[b]) + ' is not supported.')
+          throw new TypeError(`${(typeof obj[b])} is not supported.`)
         }
       }
 
@@ -125,20 +125,21 @@ class Json2XML {
   }
 
   static escapeXML(value) {
-    return value.toString().replace(/[<>&'"]/g, function (c) {
+    return value.toString().replace(/[<>&'"]/g, (c) => {
       switch (c) {
-        case '<': return '&lt;';
-        case '>': return '&gt;';
-        case '&': return '&amp;';
-        case '\'': return '&apos;';
-        case '"': return '&quot;';
+        case '<': return '&lt;'
+        case '>': return '&gt;'
+        case '&': return '&amp;'
+        case '\'': return '&apos;'
+        case '"': return '&quot;'
+        default: return ''
       }
     })
   }
 }
 
 
-// const data = [{
+// const data = {data: {
 //     type: "folder",
 //     name: "animals",
 //     path: "/animals",
@@ -161,6 +162,6 @@ class Json2XML {
 //             }]
 //         }]
 //     }]
-// }]
+// }}
 
 export default Json2XML

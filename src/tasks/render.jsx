@@ -10,7 +10,7 @@ import path from 'path'
 import fs from 'fs-extra'
 import File from 'vinyl'
 import MarkIt from './md'
-import { pageBody, pageHead, pageTail } from '../templates'
+import { pageHead, pageBody, pageTail } from '../templates/pages'
 import { src, dist } from '../utils'
 
 let input, output, mdDir, textDir

@@ -37,6 +37,7 @@ const opspath = (fpath, base) =>
 const cjoin = arr =>
   compact(arr).join('\n')
 
+// TODO: this should be more robust
 const fileid = str =>
   '_'.concat(str.replace(/[\s:,“”‘’]/g, '_'))
 
@@ -226,8 +227,13 @@ const metadata = () => {
 const version = () =>
   getVal('version')
 
+const promiseAll = promiseArray =>
+  new Promise((resolve, reject) => {
+    Promise.all(promiseArray).then(resolve)
+  })
+
 export {
   opspath, cjoin, fileid, copy, guid, rpad, lpad, hrtimeformat, hashIt,
   updateStore, getImageOrientation, getFrontmatter, orderByFileName, entries,
-  src, dist, build, env, theme, version, metadata }
+  src, dist, build, env, theme, version, metadata, promiseAll }
 

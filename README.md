@@ -61,3 +61,15 @@ $ bber init       # `bber` is now available
 ```bash
 $ npm test # Or `yarn test` if using yarn
 ```
+
+## Reference
+
+Check out the [wiki](https://github.com/triplecanopy/b-ber-creator/wiki).
+
+## Documentation
+
+```bash
+$ npm run documentation
+```
+
+And open `./documentation/bber/BBER_VERSION/index.html` in your browser.

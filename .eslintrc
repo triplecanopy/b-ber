@@ -31,6 +31,12 @@
     "space-before-function-paren": [2, {
         "anonymous": "always",
         "named": "never"
+    }],
+    "valid-jsdoc": [2, {
+      "prefer": {
+        "returns": "returns"
+      },
+      "requireReturnDescription": false
     }]
   }
 }

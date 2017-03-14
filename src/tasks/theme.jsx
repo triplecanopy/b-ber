@@ -40,7 +40,7 @@ const theme = () =>
       const configPath = path.join(cwd, 'config.yml')
       const config = YAML.load(configPath)
       config.theme = themeName
-      return fs.writeFile(configPath, `---\n${YAML.stringify(config)}`, (err) => {
+      return fs.writeFile(configPath, YAML.stringify(config, Infinity, 2), (err) => {
         if (err) { return reject(err) }
         // TODO: copy over theme assets?
         log.info(`\nSuccessfully set theme theme to "${themeName}"\n`)

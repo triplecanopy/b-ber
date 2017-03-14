@@ -22,11 +22,11 @@ const options = () => ({
  * @return {Promise<Object|Error>}
  */
 const epub = () =>
-  // resolve()
   new Promise(async resolve/* , reject */ =>
-    zipper.create(await options())
-    .catch(err => log.error(err))
-    .then(resolve)
+    resolve()
+  //   zipper.create(await options())
+  //   .catch(err => log.error(err))
+  //   .then(resolve)
   )
 
 export default epub
