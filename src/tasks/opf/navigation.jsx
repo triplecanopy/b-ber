@@ -267,16 +267,24 @@ const createSpineStringsFromTemplate = ({ flow, fileObjects, ...args }) =>
     resolve({ strings, flow, fileObjects, ...args })
   })
 
+/**
+ * Returns a new object from an array of return values from `Promise.all`.
+ * Deep merges a single property passed in as `property`. Uses `Object.assign`
+ * @param  {Array<Object>} args  The objects to merge
+ * @param  {String} property     The properties of `args` to merge
+ * @return {Object}              Deep merged object
+ */
+const deepMergePromiseArrayValues = (args, property) => {
+  const argsArray = args.map(_ => _)
+  const propsArray = args.map(_ => _[property])
+  const props = Object.assign({}, ...propsArray)
+  return Object.assign({}, ...argsArray, { [property]: props })
+}
+
 const writeTocXhtmlFile = args =>
   new Promise((resolve, reject) => {
-    // `data[index]` is relative to the order these functions are called in
-    // the promise chain. merge all responses together before passing it along
-    const a0 = args[0], a1 = args[1], a2 = args[2], a3 = args[3] // eslint-disable-line one-var-declaration-per-line, one-var, max-len
-    const s0 = a0.strings, s1 = a1.strings, s2 = a2.strings, s3 = a3.strings // eslint-disable-line one-var-declaration-per-line, one-var, max-len
-    const strings = Object.assign({}, s0, s1, s2, s3)
-    const result = Object.assign({}, a0, a1, a2, a3, { strings })
-
-    const { toc } = strings
+    const result = deepMergePromiseArrayValues(args, 'strings')
+    const { toc } = result.strings
     const filepath = path.join(output, 'OPS', 'toc.xhtml')
     fs.writeFile(filepath, toc, (err) => {
       if (err) { throw err }
@@ -286,12 +294,8 @@ const writeTocXhtmlFile = args =>
 
 const writeTocNcxFile = args =>
   new Promise((resolve, reject) => {
-    const a0 = args[0], a1 = args[1], a2 = args[2], a3 = args[3] // eslint-disable-line one-var-declaration-per-line, one-var, max-len
-    const s0 = a0.strings, s1 = a1.strings, s2 = a2.strings, s3 = a3.strings // eslint-disable-line one-var-declaration-per-line, one-var, max-len
-    const strings = Object.assign({}, s0, s1, s2, s3)
-    const result = Object.assign({}, a0, a1, a2, a3, { strings })
-
-    const { ncx } = strings
+    const result = deepMergePromiseArrayValues(args, 'strings')
+    const { ncx } = result.strings
     const filepath = path.join(output, 'OPS', 'toc.ncx')
     fs.writeFile(filepath, ncx, (err) => {
       if (err) { throw err }
@@ -301,12 +305,22 @@ const writeTocNcxFile = args =>
 
 const normalizeResponseObject = args =>
   new Promise((resolve, reject) => {
-    const s0 = args[0].strings
-    const s1 = args[1].strings
-    const strings = Object.assign({}, s0, s1)
-    const normalizedResponse = Object.assign({}, args[0], args[1], { strings })
+    const normalizedResponse = deepMergePromiseArrayValues(args, 'strings')
     resolve(normalizedResponse)
   })
+
+/**
+ * Create string representations of navigation data to inject into the
+ * `content.opf`
+ * @param  {Object} args
+ * @return {String}
+ */
+// const createNavigationXML = ({ strings }) =>
+//   new Promise((resolve, reject) => {
+//     const { spine, guide } = strings
+//     const navigationXML = `${spine}\n${guide}`
+//     resolve(navigationXML)
+//   })
 
 /**
  * Initialize promise chain to build ebook navigation structure
@@ -329,14 +343,16 @@ const navigation = () =>
       createSpineStringsFromTemplate(resp)
     ]))
     .then(resp => promiseAll([
-      // these two following methods could be called async, but nice to keep
-      // any errors in the promise chain.
+      // the two following methods both merge the results from `Promise.all`
+      // and return identical new objects containing all navigation
+      // information to the next method in the chain
       writeTocXhtmlFile(resp),
       writeTocNcxFile(resp)
     ]))
-    // combine the responses from the arrays above and pass the response along
-    // for further processing
+    // merge the values from the arrays returned above and pass the response
+    // along to write the `content.opf`
     .then(normalizeResponseObject)
+    // .then(createNavigationXML)
     .catch(err => log.error(err))
     .then(resolve)
   )

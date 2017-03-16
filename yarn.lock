@@ -3221,6 +3221,10 @@ jsbn@~0.1.0:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/jsbn/-/jsbn-0.1.1.tgz#a5e654c2e5a2deb5f201d96cefbca80c0ef2f513"
 
+jsdoc-strip-async-await@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/jsdoc-strip-async-await/-/jsdoc-strip-async-await-0.1.0.tgz#7a755a2b7527da2c76e2163a455636183456152a"
+
 jsdoc@^3.4.3:
   version "3.4.3"
   resolved "https://registry.yarnpkg.com/jsdoc/-/jsdoc-3.4.3.tgz#e5740d6145c681f6679e6c17783a88dbdd97ccd3"

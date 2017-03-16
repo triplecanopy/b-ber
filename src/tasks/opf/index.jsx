@@ -1,59 +1,69 @@
 
 /**
+ * Generates metadata, manifest, guide, and spine XML and writes to to
+ * `content.opf`. Calls {@link module:manifestAndMetadata} and {@link module:navigation}
  * @module opf
- */
-
-/*
-
-  TODO: creating the OPF should be done in multiple stages:
-    - remove existing nav docs
-    - create manifest and metadata
-    - create nav docs and XML (spine, guide, ncx, toc.xhtml)
-    - concatenate everything
-    - write it to disk
-
  */
 
 import path from 'path'
 import fs from 'fs-extra'
-
+import renderLayouts from 'layouts'
+import File from 'vinyl'
 import manifestAndMetadata from './manifest-metadata'
 import navigation from './navigation'
+import { opfPackage } from '../../templates/opf'
+import { dist } from '../../utils'
 import { log } from '../../log'
 
-// `navigationXML` should only be data that pertains to the `content.opf`. the
-// `navigation` module should take care of writing the nav documents
-const concatenateData = ([manifestAndMetadataXML, navigationXML]) =>
+/**
+ * Create the root `package` element and inject metadata, manifest, and
+ * navigation data
+ * @param  {Object} manifestAndMetadataXML Manifest and metadata XML
+ * @param  {Object} navigationXML          Navigation XML
+ * @return {Promise<Object>}
+ */
+const createOpfPackageString = ([manifestAndMetadataXML, navigationXML]) =>
   new Promise((resolve, reject) => {
-    resolve()
+    const { metadata, manifest } = manifestAndMetadataXML
+    const { spine, guide } = navigationXML.strings
+    const opfString = renderLayouts(new File({
+      path: './.tmp',
+      layout: 'opfPackage',
+      contents: new Buffer([metadata, manifest, spine, guide].join('\n'))
+    }), { opfPackage })
+    .contents
+    .toString()
+    resolve(opfString)
   })
 
-const renderStringsAsXML = () =>
+/**
+ * Write the `content.opf` to the output directory
+ * @param  {String} contents The `content.opf` string
+ * @return {Promise<Object>}
+ */
+const writeOpfToDisk = contents =>
   new Promise((resolve, reject) => {
-    resolve()
+    const opsPath = path.join(dist(), 'OPS', 'content.opf')
+    fs.writeFile(opsPath, contents, (err) => {
+      if (err) { throw err }
+      resolve()
+    })
   })
 
-const writeOpfToDisk = () =>
-  new Promise((resolve, reject) => {
-    resolve()
-  })
-
+/**
+ * Initialize `content.opf` creation
+ * @return {Promise<Object>}
+ */
 const opf = () =>
   new Promise(resolve/* , reject */ =>
     Promise.all([
       manifestAndMetadata(),
       navigation()
     ])
-    .then(resp => concatenateData(resp))
-    .then(renderStringsAsXML)
+    .then(createOpfPackageString)
     .then(writeOpfToDisk)
-
-    // err
     .catch(err => log.error(err))
-
-    // next
     .then(resolve)
-
   )
 
 export default opf

@@ -67,30 +67,22 @@ const createManifestAndMetadataFromTemplates = files =>
     })
   })
 
+const createManifestAndMetadataXML = resp =>
+  new Promise((resolve, reject) => {
+    const metadata = renderLayouts(new File({
+      path: './.tmp',
+      layout: 'opfMetadata',
+      contents: new Buffer(resp.bookmeta.join(''))
+    }), tmpl.opf).contents.toString()
 
-const createManifestAndMetadataXML = strings =>
-  new Promise(resolve/* , reject */ =>
-    resolve(
-      renderLayouts(new File({
-        path: './.tmp',
-        layout: 'opfPackage',
-        contents: new Buffer([
-          renderLayouts(new File({
-            path: './.tmp',
-            layout: 'opfMetadata',
-            contents: new Buffer(strings.bookmeta.join(''))
-          }), tmpl.opf).contents.toString(),
-          renderLayouts(new File({
-            path: './.tmp',
-            layout: 'opfManifest',
-            contents: new Buffer(cjoin(strings.manifest))
-          }), tmpl.opf).contents.toString()
-        ].join('\n'))
-      }), tmpl.opf)
-      .contents
-      .toString()
-    )
-  )
+    const manifest = renderLayouts(new File({
+      path: './.tmp',
+      layout: 'opfManifest',
+      contents: new Buffer(cjoin(resp.manifest))
+    }), tmpl.opf).contents.toString()
+
+    resolve({ metadata, manifest })
+  })
 
 const manifestAndMetadata = () =>
   new Promise(resolve/* , reject */ =>
