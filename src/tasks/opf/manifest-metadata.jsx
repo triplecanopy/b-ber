@@ -62,7 +62,7 @@ const createManifestAndMetadataFromTemplates = files =>
     ]
 
     files.forEach((file, idx) => {
-      strings.manifest.push(tmpl.opf.item(file))
+      strings.manifest.push(tmpl.opf.manifestItem(file))
       if (idx === files.length - 1) { resolve(strings) }
     })
   })

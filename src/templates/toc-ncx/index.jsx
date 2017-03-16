@@ -1,7 +1,7 @@
 
 import File from 'vinyl'
 import { find } from 'lodash'
-import { metadata } from '../../utils'
+import { metadata, env } from '../../utils'
 
 const ncxHead = () => {
   const entry = find(metadata(), { term: 'identifier' })
@@ -46,18 +46,19 @@ const ncxTmpl = new File({
 const navPoint = (list) => {
   let i = 0
   function render(arr) {
-    return arr.map((_) => {
+    return arr.map((_, j) => {
       i += 1
-      return `<navPoint id="navPoint-${i}" playOrder="${i}">
-      <navLabel><text>${_.title}</text></navLabel>
-      <content src="text/${_.filename}"/>
-      ${render(_.children)}
-      </navPoint>`
+      if (!_.opspath) { return '' }
+      return `
+        <navPoint id="navPoint-${i}" playOrder="${i}">
+        <navLabel><text>${_.section_title || _.name}</text></navLabel>
+        <content src="${_.opspath}"/>
+        ${(arr[j + 1] && arr[j + 1].constructor === Array) ? render(arr[j + 1]) : ''}
+        </navPoint>`
     })
     .join('')
-    .replace(/\s*\n\s*/g, '')
   }
-  return render(list)
+  return env() === 'production' ? render(list).replace(/\s*\n\s*/g, '') : render(list)
 }
 
 export { ncxTmpl, navPoint }

@@ -6,6 +6,7 @@
  * @module navigation
  */
 
+// vendor
 import renderLayouts from 'layouts'
 import path from 'path'
 import fs from 'fs-extra'
@@ -13,13 +14,20 @@ import File from 'vinyl'
 import rrdir from 'recursive-readdir'
 import YAML from 'yamljs'
 import { findIndex, difference, uniq } from 'lodash'
+
+// utility
 import Props from '../../modules/props'
 import { log, logg } from '../../log'
 import { src, dist, build, promiseAll } from '../../utils'
-import { pathInfoFromFiles, flattenYamlEntries, removeNestedArrayItem, createPagesMetaYaml } from './helpers'
 
-import Json2XML from '../../modules/json2xml'
+// templates
 import { tocTmpl, tocItem } from '../../templates/toc-xhtml'
+import { ncxTmpl, navPoint } from '../../templates/toc-ncx'
+import { opfGuide, opfSpine, guideItems, spineItems } from '../../templates/opf'
+
+// helpers
+import { pathInfoFromFiles, flattenYamlEntries, removeNestedArrayItem,
+  createPagesMetaYaml, nestedLinearContent, buildNavigationObjects } from './helpers'
 
 const navdocs = ['toc.ncx', 'toc.xhtml']
 let input, output, buildType
@@ -69,8 +77,8 @@ const getAllXhtmlFiles = () =>
       // only get html files
       const xhtmlFileObjects = fileObjects.filter(_ => Props.isHTML(_))
       // prepare for diffing
-      const files = uniq(xhtmlFileObjects.map(_ => path.basename(_.name, _.extension)))
-      resolve(files)
+      const filesFromSystem = uniq(xhtmlFileObjects.map(_ => path.basename(_.name, _.extension)))
+      resolve({ filesFromSystem, fileObjects })
     })
   )
 
@@ -81,23 +89,23 @@ const addMissingEntriesToNonLinearSection = (arr, missingEntries) => {
   return arr
 }
 
-const readYamlConfigFiles = () =>
+const readYamlConfigFiles = resp =>
   new Promise((resolve/* , reject */) => {
     const yamlpath = path.join(input, `${buildType}.yml`)
-    let result = []
+    let filesFromYaml = []
     try {
       if (fs.statSync(yamlpath)) {
         const entries = YAML.load(yamlpath)
         const flattenedEntries = uniq(flattenYamlEntries(entries).map(_ => path.basename(_, '.xhtml')))
         // we need both `flattenedEntries` for comparison, and `entries` which
         // contains page hierarchy
-        result = { entries, flattenedEntries }
+        filesFromYaml = { entries, flattenedEntries }
       }
     } catch (err) {
       log.warn(`\`${buildType}.yml\` not found. Creating default file.`)
       createPagesMetaYaml(input, buildType)
     }
-    resolve(result)
+    resolve({ filesFromYaml, ...resp })
   })
 
 /**
@@ -107,8 +115,10 @@ const readYamlConfigFiles = () =>
  * @param  {Array} filesFromYaml   Entries in the YAML manifest
  * @return {Promise<Object<Array>|Error>}
  */
-const compareXhtmlWithYaml = ([filesFromSystem, filesFromYaml]) =>
+const compareXhtmlWithYaml = args =>
   new Promise((resolve, reject) => {
+    const { filesFromSystem, fileObjects } = args[0]
+    const { filesFromYaml } = args[1]
     const { entries, flattenedEntries } = filesFromYaml
     const pages = Array.prototype.slice.call(entries, 0)
     const flow = flattenedEntries // one-dimensional flow of the book used for the spine
@@ -148,17 +158,12 @@ const compareXhtmlWithYaml = ([filesFromSystem, filesFromYaml]) =>
         // prefer not to mutate `pages`, but may as well keep consistent behaviour as above ...
         addMissingEntriesToNonLinearSection(pages, filediff)
       }
-
     }
 
     // finally, remove all non-linear content from `flow` since we don't want
     // it showing up in the spine. this is _not_ the same as `linear="no"`,
     // meaning that any hyperlinks in the document to these pages will
     // invalidate the ebook.
-    //
-    // meaning that non-linear content is parsed separately? probably a better
-    // way of handling this, but right now it's handled by
-    // `createNavigationStructureAsJavascriptObject`.
     const nonLinearIndex = findIndex(pages, 'nonLinear')
     if (nonLinearIndex > -1) {
       pages[nonLinearIndex].nonLinear.forEach((_) => {
@@ -168,7 +173,7 @@ const compareXhtmlWithYaml = ([filesFromSystem, filesFromYaml]) =>
       })
     }
 
-    resolve({ pages, flow })
+    resolve({ pages, flow, fileObjects, filesFromSystem, filesFromYaml })
   })
 
 /**
@@ -177,48 +182,24 @@ const compareXhtmlWithYaml = ([filesFromSystem, filesFromYaml]) =>
  * @param  {Array} options.flow  One-dimensional array of XHTML file names
  * @return {Promise<Object<Array>|Error>}
  */
-const updateConfigFileWithValidAssetPaths = ({ pages, flow }) =>
+const updateConfigFileWithValidAssetPaths = ({ pages, flow, ...args }) =>
   new Promise((resolve, reject) => {
     const yamlpath = path.join(input, `${buildType}.yml`)
     const content = YAML.stringify(pages, Infinity, 2)
     fs.writeFile(yamlpath, content, (err) => {
       if (err) { reject(err) }
-      resolve({ pages, flow })
+      resolve({ pages, flow, ...args })
     })
   })
 
-// // this should recurse through `pages`, adding necessary paths (absolute for
-// // node, relative for the ebook) and file names. it should also (probably)
-// // assign attributes to the items in the spine (such as `non-linear`).
-// //
-// // actually, is this even necessary? probably not ...
-// const createNavigationStructureAsJavascriptObject = ({ pages, flow }) =>
-//   new Promise((resolve, reject) => {
-//     resolve()
-//   })
-
-const buildNavigationObjects = (data, result = []) => {
-  data.forEach((_) => {
-    if (Json2XML.isObject(_) && {}.hasOwnProperty.call(_, 'section')) {
-      const childIndex = (result.push([])) - 1
-      buildNavigationObjects(_.section, result[childIndex])
-    } else {
-      // TODO: this needs page title (and file path relative to OPS?)
-      result.push({ filename: _ })
-    }
-  })
-
-  return result
-}
-
 const createTocStringsFromTemplate = ({ pages, ...args }) =>
   new Promise((resolve/* , reject */) => {
+    // TODO: this should use the `fileObjects` object from `args` to build the
+    // template
     const strings = {}
-    const _pages = Array.prototype.slice.call(pages, 0)
-    const nonLinearIndex = findIndex(_pages, 'nonLinear')
-    _pages.splice(nonLinearIndex, 1)
-    const _tocObjects = buildNavigationObjects(_pages)
-    const tocHTML = tocItem(_tocObjects)
+    const linearContent = nestedLinearContent(pages)
+    const tocObjects = buildNavigationObjects(linearContent, output)
+    const tocHTML = tocItem(tocObjects)
 
     strings.toc = renderLayouts(new File({
       path: './.tmp',
@@ -233,54 +214,97 @@ const createTocStringsFromTemplate = ({ pages, ...args }) =>
 
 const createNcxStringsFromTemplate = ({ pages, ...args }) =>
   new Promise((resolve, reject) => {
-    const strings = { ncx: 'foo bar baz' }
+    // TODO: this should use the `fileObjects` object from `args` to build the
+    // template
+    const strings = {}
+    const linearContent = nestedLinearContent(pages)
+    const ncxObjects = buildNavigationObjects(linearContent, output)
+    const ncxXML = navPoint(ncxObjects)
 
-    resolve({ strings, ...args })
+    strings.ncx = renderLayouts(new File({
+      path: './.tmp',
+      layout: 'ncxTmpl',
+      contents: new Buffer(ncxXML)
+    }), { ncxTmpl })
+    .contents
+    .toString()
+
+    resolve({ pages, strings, ...args })
   })
-  // new Promise((resolve, reject) => {
-  //   const navpoints = tmpl.navPoint(nav)
-  //   const ncxstring = renderLayouts(new File({
-  //     path: './.tmp',
-  //     layout: 'ncxTmpl',
-  //     contents: new Buffer(navpoints)
-  //   }), tmpl)
-  //   .contents
-  //   .toString()
-  // })
 
-const createGuideStringsFromTemplate = ({ pages, flow }) => ({})
-const createSpineStringsFromTemplate = ({ pages, flow }) => ({})
+const createGuideStringsFromTemplate = ({ flow, fileObjects, ...args }) =>
+  new Promise((resolve, reject) => {
+    const strings = {}
+    // TODO: `fileObjects` should be sorted to match `flow`
+    const guideXML = guideItems(fileObjects)
 
-const writeTocXhtmlFile = data =>
+    strings.guide = renderLayouts(new File({
+      path: './.tmp',
+      layout: 'opfGuide',
+      contents: new Buffer(guideXML)
+    }), { opfGuide })
+    .contents
+    .toString()
+
+    resolve({ strings, flow, fileObjects, ...args })
+  })
+
+const createSpineStringsFromTemplate = ({ flow, fileObjects, ...args }) =>
+  new Promise((resolve, reject) => {
+    const strings = {}
+    // TODO: `fileObjects` should be sorted to match `flow`. also, non-linear
+    // content needs to be fed into the templating engine
+    const spineXML = spineItems(fileObjects)
+
+    strings.spine = renderLayouts(new File({
+      path: './.tmp',
+      layout: 'opfSpine',
+      contents: new Buffer(spineXML)
+    }), { opfSpine })
+    .contents
+    .toString()
+
+    resolve({ strings, flow, fileObjects, ...args })
+  })
+
+const writeTocXhtmlFile = args =>
   new Promise((resolve, reject) => {
     // `data[index]` is relative to the order these functions are called in
-    // the promise chain below
-    const contents = data[0].strings
+    // the promise chain. merge all responses together before passing it along
+    const a0 = args[0], a1 = args[1], a2 = args[2], a3 = args[3] // eslint-disable-line one-var-declaration-per-line, one-var, max-len
+    const s0 = a0.strings, s1 = a1.strings, s2 = a2.strings, s3 = a3.strings // eslint-disable-line one-var-declaration-per-line, one-var, max-len
+    const strings = Object.assign({}, s0, s1, s2, s3)
+    const result = Object.assign({}, a0, a1, a2, a3, { strings })
+
+    const { toc } = strings
     const filepath = path.join(output, 'OPS', 'toc.xhtml')
-    fs.writeFile(filepath, contents, (err) => {
+    fs.writeFile(filepath, toc, (err) => {
       if (err) { throw err }
-      resolve(data[0])
+      resolve(result)
     })
   })
 
-const writeTocNcxmlFile = data =>
+const writeTocNcxFile = args =>
   new Promise((resolve, reject) => {
-    const contents = data[1].strings
+    const a0 = args[0], a1 = args[1], a2 = args[2], a3 = args[3] // eslint-disable-line one-var-declaration-per-line, one-var, max-len
+    const s0 = a0.strings, s1 = a1.strings, s2 = a2.strings, s3 = a3.strings // eslint-disable-line one-var-declaration-per-line, one-var, max-len
+    const strings = Object.assign({}, s0, s1, s2, s3)
+    const result = Object.assign({}, a0, a1, a2, a3, { strings })
+
+    const { ncx } = strings
     const filepath = path.join(output, 'OPS', 'toc.ncx')
-    fs.writeFile(filepath, contents, (err) => {
+    fs.writeFile(filepath, ncx, (err) => {
       if (err) { throw err }
-      resolve(data[1])
+      resolve(result)
     })
   })
 
-const normalizeResponseObject = data =>
+const normalizeResponseObject = args =>
   new Promise((resolve, reject) => {
-    const s0 = data[0].strings
-    const s1 = data[1].strings
-
+    const s0 = args[0].strings
+    const s1 = args[1].strings
     const strings = Object.assign({}, s0, s1)
-    const normalizedResponse = Object.assign({}, data[0], data[1], { strings })
-    logg(normalizedResponse)
+    const normalizedResponse = Object.assign({}, args[0], args[1], { strings })
     resolve(normalizedResponse)
   })
 
@@ -292,13 +316,12 @@ const navigation = () =>
   new Promise(resolve/* , reject */ =>
     initialize()
     .then(unlinkExistingNavDocuments)
-    .then(() => promiseAll([
-      getAllXhtmlFiles(),
-      readYamlConfigFiles()
+    .then(resp => promiseAll([
+      getAllXhtmlFiles(resp),
+      readYamlConfigFiles(resp)
     ]))
     .then(compareXhtmlWithYaml)
     .then(updateConfigFileWithValidAssetPaths)
-    // .then(createNavigationStructureAsJavascriptObject)
     .then(resp => promiseAll([
       createTocStringsFromTemplate(resp),
       createNcxStringsFromTemplate(resp),
@@ -309,7 +332,7 @@ const navigation = () =>
       // these two following methods could be called async, but nice to keep
       // any errors in the promise chain.
       writeTocXhtmlFile(resp),
-      writeTocNcxmlFile(resp)
+      writeTocNcxFile(resp)
     ]))
     // combine the responses from the arrays above and pass the response along
     // for further processing

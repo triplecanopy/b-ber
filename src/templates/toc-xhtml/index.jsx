@@ -26,9 +26,9 @@ const tocItem = (list) => {
   function render(arr) {
     return `<ol>
       ${arr.map((_, i) => {
-        if (!_.filename) { return '' }
+        if (!_.opspath) { return '' }
         return `<li>
-            <a href="text/${_.filename}">${_.title || _.filename}</a>
+            <a href="${_.opspath}">${_.section_title || _.name}</a>
               ${(arr[i + 1] && arr[i + 1].constructor === Array) ? render(arr[i + 1]) : ''}
             </li>`
       }).join('')}

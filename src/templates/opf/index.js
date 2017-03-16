@@ -41,7 +41,7 @@ const opfGuide = new File({
   contents: new Buffer('<guide>{% body %}</guide>')
 })
 
-const item = (file) => {
+const manifestItem = (file) => {
   const props = Props.testHTML(file)
   let res = null
   if (mime.lookup(file.rootpath) !== 'application/oebps-package+xml') {
@@ -58,28 +58,30 @@ const item = (file) => {
   return res
 }
 
-const itemref = (file) => {
-  let res = null
-  if (mime.lookup(file.rootpath) === 'text/html' || mime.lookup(file.rootpath) === 'application/xhtml+xml') {
-    res = `<itemref idref="${fileid(file.name)}" linear="yes"/>`
-  }
-  return res
-}
-
-const reference = (file) => {
-  let res = null
-  if (mime.lookup(file.rootpath) === 'text/html' || mime.lookup(file.rootpath) === 'application/xhtml+xml') {
-    if (getFrontmatter(file, 'landmark_type')) {
-      res = [
-        '<reference',
-        ` type="${getFrontmatter(file, 'landmark_type')}"`,
-        ` title="${getFrontmatter(file, 'landmark_title')}"`,
-        ` href="${encodeURI(file.opspath)}"/>`
-      ].join('')
+const spineItems = arr =>
+  arr.map((_) => {
+    let res = ''
+    if (mime.lookup(_.rootpath) === 'text/html' || mime.lookup(_.rootpath) === 'application/xhtml+xml') {
+      res = `<itemref idref="${fileid(_.name)}" linear="yes"/>`
     }
-  }
-  return res
-}
+    return res
+  }).join('')
+
+const guideItems = arr =>
+  arr.map((_) => {
+    let item = ''
+    if (mime.lookup(_.rootpath) === 'text/html' || mime.lookup(_.rootpath) === 'application/xhtml+xml') {
+      if (getFrontmatter(_, 'landmark_type')) {
+        item = [
+          '<reference',
+          ` type="${getFrontmatter(_, 'landmark_type')}"`,
+          ` title="${getFrontmatter(_, 'landmark_title')}"`,
+          ` href="${encodeURI(_.opspath)}"/>`
+        ].join('')
+      }
+    }
+    return item
+  }).join('')
 
 const metatag = (data) => {
   const { term, element } = Props.testMeta(data)
@@ -97,5 +99,5 @@ const metatag = (data) => {
   return res.join('')
 }
 
-export { opfPackage, opfMetadata, opfManifest, opfSpine, opfGuide, item,
-  itemref, reference, metatag }
+export { opfPackage, opfMetadata, opfManifest, opfSpine, opfGuide,
+  manifestItem, spineItems, guideItems, metatag }
