@@ -1,0 +1,1178 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for src/md/plugins/footnote.jsx</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../../prettify.css" />
+    <link rel="stylesheet" href="../../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../../index.html">All files</a> / <a href="index.html">src/md/plugins</a> footnote.jsx
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">11.02% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>28/254</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">6.82% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>9/132</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">30% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>6/20</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">8.21% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>16/195</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line low'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298
+299
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310
+311
+312
+313
+314
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333
+334
+335
+336
+337
+338
+339
+340
+341
+342
+343
+344
+345
+346
+347
+348
+349
+350
+351
+352
+353
+354
+355
+356
+357
+358
+359
+360
+361
+362
+363
+364
+365
+366
+367
+368
+369
+370
+371
+372</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">&nbsp;
+/* eslint-disable */
+&nbsp;
+/*!
+Modified from: markdown-it-footnote 3.0.1 https://github.com//markdown-it/markdown-it-footnote @license MIT */(function(f){<span class="missing-if-branch" title="else path not taken" >E</span>if(<span class="branch-0 cbranch-no" title="branch not covered" >typeof </span>exports==="object"&amp;&amp;typeof module!=="undefined"){module.exports=f()}else <span class="cstat-no" title="statement not covered" >if(typeof define==="function"&amp;&amp;define.amd){<span class="cstat-no" title="statement not covered" >define([],f)}else{var g;<span class="cstat-no" title="statement not covered" >if(typeof window!=="undefined"){<span class="cstat-no" title="statement not covered" >g=window}else <span class="cstat-no" title="statement not covered" >if(typeof global!=="undefined"){<span class="cstat-no" title="statement not covered" >g=global}else <span class="cstat-no" title="statement not covered" >if(typeof self!=="undefined"){<span class="cstat-no" title="statement not covered" >g=self}else{<span class="cstat-no" title="statement not covered" >g=this}<span class="cstat-no" title="statement not covered" >g</span></span></span>.markdownitFootnote = f()}}</span>)(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){<span class="missing-if-branch" title="if path not taken" >I</span>if(!t[o]){v</span>ar a=<span class="cstat-no" title="statement not covered" >typeof require=="function"&amp;&amp;require;<span class="cstat-no" title="statement not covered" >if(!u&amp;&amp;a)<span class="cstat-no" title="statement not covered" >return a(o,!0);<span class="cstat-no" title="statement not covered" >i</span></span>f(i)<span class="cstat-no" title="statement not covered" >return i(o,!0);v</span></span></span>ar f=<span class="cstat-no" title="statement not covered" >new Error("Cannot find module '"+o+"'");<span class="cstat-no" title="statement not covered" >throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,<span class="fstat-no" title="function not covered" >function(</span>e){v</span>ar n=<span class="cstat-no" title="statement not covered" >t[o][1][e];<span class="cstat-no" title="statement not covered" >return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&amp;&amp;require;for(var o=0;o&lt;r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){</span></span></span></span></span></span></span></span>
+// Process footnotes
+//
+'use strict';
+&nbsp;
+////////////////////////////////////////////////////////////////////////////////
+// Renderer partials
+&nbsp;
+f</span>unction <span class="fstat-no" title="function not covered" >render_footnote_anchor_name(tokens, idx, options, env/*, slf*/) {
+  v</span>ar n = <span class="cstat-no" title="statement not covered" >Number(tokens[idx].meta.id + 1).toString();
+  v</span>ar prefix = <span class="cstat-no" title="statement not covered" >'';
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  if (typeof env.docId === 'string') {</span>
+<span class="cstat-no" title="statement not covered" >    prefix = '-' + env.docId + '-';</span>
+  }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  return prefix + n;</span>
+}
+&nbsp;
+f</span>unction <span class="fstat-no" title="function not covered" >render_footnote_caption(tokens, idx/*, options, env, slf*/) {
+  v</span>ar n = <span class="cstat-no" title="statement not covered" >Number(tokens[idx].meta.id + 1).toString();
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  if (tokens[idx].meta.subId &gt; 0) {</span>
+<span class="cstat-no" title="statement not covered" >    n += ':' + tokens[idx].meta.subId;</span>
+  }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  return n;</span>
+}
+&nbsp;
+f</span>unction <span class="fstat-no" title="function not covered" >render_footnote_ref(tokens, idx, options, env, slf) {
+  v</span>ar id      = <span class="cstat-no" title="statement not covered" >slf.rules.footnote_anchor_name(tokens, idx, options, env, slf);
+  v</span>ar caption = <span class="cstat-no" title="statement not covered" >slf.rules.footnote_caption(tokens, idx, options, env, slf);
+  v</span>ar refid   = <span class="cstat-no" title="statement not covered" >id;
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  if (tokens[idx].meta.subId &gt; 0) {</span>
+<span class="cstat-no" title="statement not covered" >    refid += ':' + tokens[idx].meta.subId;</span>
+  }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  return '&lt;sup&gt;&lt;a epub:type="noteref" href="#fn' + id + '" id="fnref' + refid + '"&gt;' + caption + '&lt;/a&gt;&lt;/sup&gt;';</span>
+}
+&nbsp;
+f</span>unction <span class="fstat-no" title="function not covered" >render_footnote_block_open(tokens, idx, options) {
+<span class="cstat-no" title="statement not covered" >  return '&lt;section class="footnotes"&gt;\n';</span>
+}
+&nbsp;
+f</span>unction <span class="fstat-no" title="function not covered" >render_footnote_block_close() {
+<span class="cstat-no" title="statement not covered" >  return '\n&lt;/section&gt;\n';</span>
+}
+&nbsp;
+f</span>unction <span class="fstat-no" title="function not covered" >render_footnote_open(tokens, idx, options, env, slf) {
+  v</span>ar id = <span class="cstat-no" title="statement not covered" >slf.rules.footnote_anchor_name(tokens, idx, options, env, slf);
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  if (tokens[idx].meta.subId &gt; 0) {</span>
+<span class="cstat-no" title="statement not covered" >    id += ':' + tokens[idx].meta.subId;</span>
+  }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  return '&lt;aside class="footnote" epub:type="footnote" id="fn' + id + '"&gt;&lt;a class="footnote-link" href="#fnref' + id + '"&gt;['+ id +']&lt;/a&gt;';</span>
+}
+&nbsp;
+f</span>unction <span class="fstat-no" title="function not covered" >render_footnote_close() {
+<span class="cstat-no" title="statement not covered" >  return '&lt;/aside&gt;\n';</span>
+}
+&nbsp;
+f</span>unction <span class="fstat-no" title="function not covered" >render_footnote_anchor(tokens, idx, options, env, slf) {
+  v</span>ar id = <span class="cstat-no" title="statement not covered" >slf.rules.footnote_anchor_name(tokens, idx, options, env, slf);
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  if (tokens[idx].meta.subId &gt; 0) {</span>
+<span class="cstat-no" title="statement not covered" >    id += ':' + tokens[idx].meta.subId;</span>
+  }
+&nbsp;
+  /* ↩ with escape code to prevent display as Apple Emoji on iOS */
+  // return ' &lt;a href="#fnref' + id + '"&gt;\u21a9\uFE0E&lt;/a&gt;';
+<span class="cstat-no" title="statement not covered" >  return '';</span>
+}
+&nbsp;
+&nbsp;
+module.exports = function footnote_plugin(md) {
+  var parseLinkLabel = md.helpers.parseLinkLabel,
+      isSpace = md.utils.isSpace;
+&nbsp;
+  md.renderer.rules.footnote_ref          = render_footnote_ref;
+  md.renderer.rules.footnote_block_open   = render_footnote_block_open;
+  md.renderer.rules.footnote_block_close  = render_footnote_block_close;
+  md.renderer.rules.footnote_open         = render_footnote_open;
+  md.renderer.rules.footnote_close        = render_footnote_close;
+  md.renderer.rules.footnote_anchor       = render_footnote_anchor;
+&nbsp;
+  // helpers (only used in other rules, no tokens are attached to those)
+  md.renderer.rules.footnote_caption      = render_footnote_caption;
+  md.renderer.rules.footnote_anchor_name  = render_footnote_anchor_name;
+&nbsp;
+  // Process footnote block definition
+  f</span>unction <span class="fstat-no" title="function not covered" >footnote_def(state, startLine, endLine, silent) {
+    var oldBMark, oldTShift, oldSCount, oldParentType, pos, label, token,
+        initial, offset, ch, posAfterColon,
+        start = <span class="cstat-no" title="statement not covered" >state.bMarks[startLine] + state.tShift[startLine],</span>
+        max = <span class="cstat-no" title="statement not covered" >state.eMarks[startLine];</span>
+&nbsp;
+    // line should be at least 5 chars - "[^x]:"
+<span class="cstat-no" title="statement not covered" >    if (start + 4 &gt; max) { <span class="cstat-no" title="statement not covered" >return false; }</span></span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    if (state.src.charCodeAt(start) !== 0x5B/* [ */) { <span class="cstat-no" title="statement not covered" >return false; }</span></span>
+<span class="cstat-no" title="statement not covered" >    if (state.src.charCodeAt(start + 1) !== 0x5E/* ^ */) { <span class="cstat-no" title="statement not covered" >return false; }</span></span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    for (pos = start + 2; pos &lt; max; pos++) {</span>
+<span class="cstat-no" title="statement not covered" >      if (state.src.charCodeAt(pos) === 0x20) { <span class="cstat-no" title="statement not covered" >return false; }</span></span>
+<span class="cstat-no" title="statement not covered" >      if (state.src.charCodeAt(pos) === 0x5D /* ] */) {</span>
+<span class="cstat-no" title="statement not covered" >        break;</span>
+      }
+    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    if (pos === start + 2) { <span class="cstat-no" title="statement not covered" >return false; } // no empty footnote labels</span></span>
+<span class="cstat-no" title="statement not covered" >    if (pos + 1 &gt;= max || state.src.charCodeAt(++pos) !== 0x3A /* : */) { <span class="cstat-no" title="statement not covered" >return false; }</span></span>
+<span class="cstat-no" title="statement not covered" >    if (silent) { <span class="cstat-no" title="statement not covered" >return true; }</span></span>
+<span class="cstat-no" title="statement not covered" >    pos++;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    if (!state.env.footnotes) { <span class="cstat-no" title="statement not covered" >state.env.footnotes = {}; }</span></span>
+<span class="cstat-no" title="statement not covered" >    if (!state.env.footnotes.refs) { <span class="cstat-no" title="statement not covered" >state.env.footnotes.refs = {}; }</span></span>
+<span class="cstat-no" title="statement not covered" >    label = state.src.slice(start + 2, pos - 2);</span>
+<span class="cstat-no" title="statement not covered" >    state.env.footnotes.refs[':' + label] = -1;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    token       = new state.Token('footnote_reference_open', '', 1);</span>
+<span class="cstat-no" title="statement not covered" >    token.meta  = { label: label };</span>
+<span class="cstat-no" title="statement not covered" >    token.level = state.level++;</span>
+<span class="cstat-no" title="statement not covered" >    state.tokens.push(token);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    oldBMark = state.bMarks[startLine];</span>
+<span class="cstat-no" title="statement not covered" >    oldTShift = state.tShift[startLine];</span>
+<span class="cstat-no" title="statement not covered" >    oldSCount = state.sCount[startLine];</span>
+<span class="cstat-no" title="statement not covered" >    oldParentType = state.parentType;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    posAfterColon = pos;</span>
+<span class="cstat-no" title="statement not covered" >    initial = offset = state.sCount[startLine] + pos - (state.bMarks[startLine] + state.tShift[startLine]);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    while (pos &lt; max) {</span>
+<span class="cstat-no" title="statement not covered" >      ch = state.src.charCodeAt(pos);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      if (isSpace(ch)) {</span>
+<span class="cstat-no" title="statement not covered" >        if (ch === 0x09) {</span>
+<span class="cstat-no" title="statement not covered" >          offset += 4 - offset % 4;</span>
+        } else {
+<span class="cstat-no" title="statement not covered" >          offset++;</span>
+        }
+      } else {
+<span class="cstat-no" title="statement not covered" >        break;</span>
+      }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      pos++;</span>
+    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    state.tShift[startLine] = pos - posAfterColon;</span>
+<span class="cstat-no" title="statement not covered" >    state.sCount[startLine] = offset - initial;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    state.bMarks[startLine] = posAfterColon;</span>
+<span class="cstat-no" title="statement not covered" >    state.blkIndent += 4;</span>
+<span class="cstat-no" title="statement not covered" >    state.parentType = 'footnote';</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    if (state.sCount[startLine] &lt; state.blkIndent) {</span>
+<span class="cstat-no" title="statement not covered" >      state.sCount[startLine] += state.blkIndent;</span>
+    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    state.md.block.tokenize(state, startLine, endLine, true);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    state.parentType = oldParentType;</span>
+<span class="cstat-no" title="statement not covered" >    state.blkIndent -= 4;</span>
+<span class="cstat-no" title="statement not covered" >    state.tShift[startLine] = oldTShift;</span>
+<span class="cstat-no" title="statement not covered" >    state.sCount[startLine] = oldSCount;</span>
+<span class="cstat-no" title="statement not covered" >    state.bMarks[startLine] = oldBMark;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    token       = new state.Token('footnote_reference_close', '', -1);</span>
+<span class="cstat-no" title="statement not covered" >    token.level = --state.level;</span>
+<span class="cstat-no" title="statement not covered" >    state.tokens.push(token);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    return true;</span>
+  }
+&nbsp;
+  // Process inline footnotes (^[...])
+  f</span>unction <span class="fstat-no" title="function not covered" >footnote_inline(state, silent) {
+    var labelStart,
+        labelEnd,
+        footnoteId,
+        token,
+        tokens,
+        max = <span class="cstat-no" title="statement not covered" >state.posMax,</span>
+        start = <span class="cstat-no" title="statement not covered" >state.pos;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    if (start + 2 &gt;= max) { <span class="cstat-no" title="statement not covered" >return false; }</span></span>
+<span class="cstat-no" title="statement not covered" >    if (state.src.charCodeAt(start) !== 0x5E/* ^ */) { <span class="cstat-no" title="statement not covered" >return false; }</span></span>
+<span class="cstat-no" title="statement not covered" >    if (state.src.charCodeAt(start + 1) !== 0x5B/* [ */) { <span class="cstat-no" title="statement not covered" >return false; }</span></span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    labelStart = start + 2;</span>
+<span class="cstat-no" title="statement not covered" >    labelEnd = parseLinkLabel(state, start + 1);</span>
+&nbsp;
+    // parser failed to find ']', so it's not a valid note
+<span class="cstat-no" title="statement not covered" >    if (labelEnd &lt; 0) { <span class="cstat-no" title="statement not covered" >return false; }</span></span>
+&nbsp;
+    // We found the end of the link, and know for a fact it's a valid link;
+    // so all that's left to do is to call tokenizer.
+    //
+<span class="cstat-no" title="statement not covered" >    if (!silent) {</span>
+<span class="cstat-no" title="statement not covered" >      if (!state.env.footnotes) { <span class="cstat-no" title="statement not covered" >state.env.footnotes = {}; }</span></span>
+<span class="cstat-no" title="statement not covered" >      if (!state.env.footnotes.list) { <span class="cstat-no" title="statement not covered" >state.env.footnotes.list = []; }</span></span>
+<span class="cstat-no" title="statement not covered" >      footnoteId = state.env.footnotes.list.length;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      state.md.inline.parse(</span>
+        state.src.slice(labelStart, labelEnd),
+        state.md,
+        state.env,
+        tokens = []
+      );
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      token      = state.push('footnote_ref', '', 0);</span>
+<span class="cstat-no" title="statement not covered" >      token.meta = { id: footnoteId };</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      state.env.footnotes.list[footnoteId] = { tokens: tokens };</span>
+    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    state.pos = labelEnd + 1;</span>
+<span class="cstat-no" title="statement not covered" >    state.posMax = max;</span>
+<span class="cstat-no" title="statement not covered" >    return true;</span>
+  }
+&nbsp;
+  // Process footnote references ([^...])
+  f</span>unction <span class="fstat-no" title="function not covered" >footnote_ref(state, silent) {
+    var label,
+        pos,
+        footnoteId,
+        footnoteSubId,
+        token,
+        max = <span class="cstat-no" title="statement not covered" >state.posMax,</span>
+        start = <span class="cstat-no" title="statement not covered" >state.pos;</span>
+&nbsp;
+    // should be at least 4 chars - "[^x]"
+<span class="cstat-no" title="statement not covered" >    if (start + 3 &gt; max) { <span class="cstat-no" title="statement not covered" >return false; }</span></span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    if (!state.env.footnotes || !state.env.footnotes.refs) { <span class="cstat-no" title="statement not covered" >return false; }</span></span>
+<span class="cstat-no" title="statement not covered" >    if (state.src.charCodeAt(start) !== 0x5B/* [ */) { <span class="cstat-no" title="statement not covered" >return false; }</span></span>
+<span class="cstat-no" title="statement not covered" >    if (state.src.charCodeAt(start + 1) !== 0x5E/* ^ */) { <span class="cstat-no" title="statement not covered" >return false; }</span></span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    for (pos = start + 2; pos &lt; max; pos++) {</span>
+<span class="cstat-no" title="statement not covered" >      if (state.src.charCodeAt(pos) === 0x20) { <span class="cstat-no" title="statement not covered" >return false; }</span></span>
+<span class="cstat-no" title="statement not covered" >      if (state.src.charCodeAt(pos) === 0x0A) { <span class="cstat-no" title="statement not covered" >return false; }</span></span>
+<span class="cstat-no" title="statement not covered" >      if (state.src.charCodeAt(pos) === 0x5D /* ] */) {</span>
+<span class="cstat-no" title="statement not covered" >        break;</span>
+      }
+    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    if (pos === start + 2) { <span class="cstat-no" title="statement not covered" >return false; } // no empty footnote labels</span></span>
+<span class="cstat-no" title="statement not covered" >    if (pos &gt;= max) { <span class="cstat-no" title="statement not covered" >return false; }</span></span>
+<span class="cstat-no" title="statement not covered" >    pos++;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    label = state.src.slice(start + 2, pos - 1);</span>
+<span class="cstat-no" title="statement not covered" >    if (typeof state.env.footnotes.refs[':' + label] === 'undefined') { <span class="cstat-no" title="statement not covered" >return false; }</span></span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    if (!silent) {</span>
+<span class="cstat-no" title="statement not covered" >      if (!state.env.footnotes.list) { <span class="cstat-no" title="statement not covered" >state.env.footnotes.list = []; }</span></span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      if (state.env.footnotes.refs[':' + label] &lt; 0) {</span>
+<span class="cstat-no" title="statement not covered" >        footnoteId = state.env.footnotes.list.length;</span>
+<span class="cstat-no" title="statement not covered" >        state.env.footnotes.list[footnoteId] = { label: label, count: 0 };</span>
+<span class="cstat-no" title="statement not covered" >        state.env.footnotes.refs[':' + label] = footnoteId;</span>
+      } else {
+<span class="cstat-no" title="statement not covered" >        footnoteId = state.env.footnotes.refs[':' + label];</span>
+      }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      footnoteSubId = state.env.footnotes.list[footnoteId].count;</span>
+<span class="cstat-no" title="statement not covered" >      state.env.footnotes.list[footnoteId].count++;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      token      = state.push('footnote_ref', '', 0);</span>
+<span class="cstat-no" title="statement not covered" >      token.meta = { id: footnoteId, subId: footnoteSubId, label: label };</span>
+    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    state.pos = pos;</span>
+<span class="cstat-no" title="statement not covered" >    state.posMax = max;</span>
+<span class="cstat-no" title="statement not covered" >    return true;</span>
+  }
+&nbsp;
+  // Glue footnote tokens to end of token stream
+  f</span>unction <span class="fstat-no" title="function not covered" >footnote_tail(state) {
+    var i, l, j, t, lastParagraph, list, token, tokens, current, currentLabel,
+        insideRef = <span class="cstat-no" title="statement not covered" >false,</span>
+        refTokens = <span class="cstat-no" title="statement not covered" >{};</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    if (!state.env.footnotes) { <span class="cstat-no" title="statement not covered" >return; }</span></span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    state.tokens = state.tokens.filter(<span class="fstat-no" title="function not covered" >function (</span>tok) {</span>
+<span class="cstat-no" title="statement not covered" >      if (tok.type === 'footnote_reference_open') {</span>
+<span class="cstat-no" title="statement not covered" >        insideRef = true;</span>
+<span class="cstat-no" title="statement not covered" >        current = [];</span>
+<span class="cstat-no" title="statement not covered" >        currentLabel = tok.meta.label;</span>
+<span class="cstat-no" title="statement not covered" >        return false;</span>
+      }
+<span class="cstat-no" title="statement not covered" >      if (tok.type === 'footnote_reference_close') {</span>
+<span class="cstat-no" title="statement not covered" >        insideRef = false;</span>
+        // prepend ':' to avoid conflict with Object.prototype members
+<span class="cstat-no" title="statement not covered" >        refTokens[':' + currentLabel] = current;</span>
+<span class="cstat-no" title="statement not covered" >        return false;</span>
+      }
+<span class="cstat-no" title="statement not covered" >      if (insideRef) { <span class="cstat-no" title="statement not covered" >current.push(tok); }</span></span>
+<span class="cstat-no" title="statement not covered" >      return !insideRef;</span>
+    });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    if (!state.env.footnotes.list) { <span class="cstat-no" title="statement not covered" >return; }</span></span>
+<span class="cstat-no" title="statement not covered" >    list = state.env.footnotes.list;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    token = new state.Token('footnote_block_open', '', 1);</span>
+<span class="cstat-no" title="statement not covered" >    state.tokens.push(token);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    for (i = 0, l = list.length; i &lt; l; i++) {</span>
+<span class="cstat-no" title="statement not covered" >      token      = new state.Token('footnote_open', '', 1);</span>
+<span class="cstat-no" title="statement not covered" >      token.meta = { id: i, label: list[i].label };</span>
+<span class="cstat-no" title="statement not covered" >      state.tokens.push(token);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      if (list[i].tokens) {</span>
+<span class="cstat-no" title="statement not covered" >        tokens = [];</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        token          = new state.Token('paragraph_open', 'p', 1);</span>
+<span class="cstat-no" title="statement not covered" >        token.block    = true;</span>
+<span class="cstat-no" title="statement not covered" >        tokens.push(token);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        token          = new state.Token('inline', '', 0);</span>
+<span class="cstat-no" title="statement not covered" >        token.children = list[i].tokens;</span>
+<span class="cstat-no" title="statement not covered" >        token.content  = '';</span>
+<span class="cstat-no" title="statement not covered" >        tokens.push(token);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        token          = new state.Token('paragraph_close', 'p', -1);</span>
+<span class="cstat-no" title="statement not covered" >        token.block    = true;</span>
+<span class="cstat-no" title="statement not covered" >        tokens.push(token);</span>
+&nbsp;
+      } else <span class="cstat-no" title="statement not covered" >if (list[i].label) {</span>
+<span class="cstat-no" title="statement not covered" >        tokens = refTokens[':' + list[i].label];</span>
+      }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      state.tokens = state.tokens.concat(tokens);</span>
+<span class="cstat-no" title="statement not covered" >      if (state.tokens[state.tokens.length - 1].type === 'paragraph_close') {</span>
+<span class="cstat-no" title="statement not covered" >        lastParagraph = state.tokens.pop();</span>
+      } else {
+<span class="cstat-no" title="statement not covered" >        lastParagraph = null;</span>
+      }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      t = list[i].count &gt; 0 ? list[i].count : 1;</span>
+<span class="cstat-no" title="statement not covered" >      for (j = 0; j &lt; t; j++) {</span>
+<span class="cstat-no" title="statement not covered" >        token      = new state.Token('footnote_anchor', '', 0);</span>
+<span class="cstat-no" title="statement not covered" >        token.meta = { id: i, subId: j, label: list[i].label };</span>
+<span class="cstat-no" title="statement not covered" >        state.tokens.push(token);</span>
+      }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      if (lastParagraph) {</span>
+<span class="cstat-no" title="statement not covered" >        state.tokens.push(lastParagraph);</span>
+      }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      token = new state.Token('footnote_close', '', -1);</span>
+<span class="cstat-no" title="statement not covered" >      state.tokens.push(token);</span>
+    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    token = new state.Token('footnote_block_close', '', -1);</span>
+<span class="cstat-no" title="statement not covered" >    state.tokens.push(token);</span>
+  }
+&nbsp;
+  md.block.ruler.before('reference', 'footnote_def', footnote_def, { alt: [ 'paragraph', 'reference' ] });
+  md.inline.ruler.after('image', 'footnote_inline', footnote_inline);
+  md.inline.ruler.after('footnote_inline', 'footnote_ref', footnote_ref);
+  md.core.ruler.after('inline', 'footnote_tail', footnote_tail);
+};
+&nbsp;
+},{}]},{},[1])(1)
+});
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri Mar 17 2017 11:59:53 GMT+0100 (CET)
+</div>
+</div>
+<script src="../../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../../sorter.js"></script>
+</body>
+</html>
