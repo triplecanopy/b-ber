@@ -27,57 +27,42 @@ describe('Props', () => {
 
   describe('#isHTML', () => {
     it('Tests if a document is an (X)HTML file', () => {
-      Props.isHTML(htmlFileObject).should.equal(true)
+      Props.isHTML(htmlFileObject).should.be.true
     })
   })
 
   describe('#isNav', () => {
     it('Tests if a document is an Epub navigation document', () => {
-      Props.isNav(navDocument).should.equal(true)
+      Props.isNav(navDocument).should.be.true
     })
   })
 
   describe('#isScripted', () => {
     it('Tests if a document contains a script element', () => {
-      Props.isScripted(scriptDocument).should.equal(true)
+      Props.isScripted(scriptDocument).should.be.true
     })
   })
 
   describe('#isSVG', () => {
     it('Tests if a document contains an SVG element', () => {
-      Props.isSVG(svgDocument).should.equal(true)
+      Props.isSVG(svgDocument).should.be.true
     })
   })
 
   describe('#isDCElement', () => {
-    it('Tests if the term property of an object exists in the dc/elements object', () => {
-
-    })
+    it('Tests if the term property of an object exists in the dc/elements object')
   })
 
   describe('#isDCTerm', () => {
-    it('Tests if the term property of an object exists in the dc/terms object', () => {
-
-    })
+    it('Tests if the term property of an object exists in the dc/terms object')
   })
 
   describe('#testHTML', () => {
-    it('Tests if a document contains a script or SVG element, and if it is an Epub navigation document', () => {
-
-    })
+    it('Tests if a document contains a script or SVG element, and if it is an Epub navigation document')
   })
 
   describe('#testMeta', () => {
-    it('Returns an object with tested term and element properties values', () => {
-
-    })
+    it('Returns an object with tested term and element properties values')
   })
 
-
 })
-
-
-
-
-
-

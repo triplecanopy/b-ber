@@ -13,8 +13,8 @@ export default {
   plugin: inline,
   name: 'exit',
   renderer: () => ({
-    marker: '+',
-    minMarkers: 1,
+    marker: ':',
+    minMarkers: 3,
     validate(params) { return params.trim().match(/^exit/) },
     render() { return '</section>\n' }
   })

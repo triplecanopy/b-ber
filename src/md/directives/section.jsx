@@ -19,8 +19,8 @@ export default {
   plugin: section,
   name: 'section',
   renderer: (instance, context) => ({
-    marker: '+',
-    minMarkers: 1,
+    marker: ':',
+    minMarkers: 3,
     markerOpen: /section\s+/,
     markerClose: /exit/,
     validate(params) {
@@ -34,7 +34,12 @@ export default {
       if (tokens[idx].nesting === 1) { // opening tag
         const line = tokens[idx].map ? tokens[idx].map[0] : null
 
-        if (!matches) { log.error(`[${context._get('filename')}.md] <section> Malformed directive.`) }
+        if (!matches) {
+          log.error(`[${context._get('filename')}.md] <section> Malformed directive.`)
+          result = '<section>'
+          return result
+        }
+
         if (matches && !matches[1]) { log.error(`[${context._get('filename')}.md:${line}] <section> Missing \`type\` attribute.`) }
         if (matches && !matches[2]) { log.error(`[${context._get('filename')}.md:${line}] <section> Missing \`title\` attribute.`) }
 

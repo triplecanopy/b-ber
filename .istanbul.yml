@@ -3,7 +3,11 @@ instrumentation:
     root: .
     extensions: ['.js', '.jsx']
     default-excludes: true
-    excludes: ['node_modules', 'lib']
+    excludes: [
+        'node_modules',
+        'lib',
+        'src/__tests__/*'
+    ]
     embed-source: false
     variable: __coverage__
     compact: true

@@ -31,14 +31,14 @@ const copy = (source, target) =>
  * @param  {String} base  Book's base path
  * @return {String}
  */
-const opspath = (fpath, base) =>
+const opsPath = (fpath, base) =>
   fpath.replace(new RegExp(`^${base}/OPS/?`), '')
 
 const cjoin = arr =>
   compact(arr).join('\n')
 
 // TODO: this should be more robust
-const fileid = str =>
+const fileId = str =>
   '_'.concat(str.replace(/[\s:,“”‘’]/g, '_'))
 
 const s4 = () =>
@@ -233,7 +233,7 @@ const promiseAll = promiseArray =>
   })
 
 export {
-  opspath, cjoin, fileid, copy, guid, rpad, lpad, hrtimeformat, hashIt,
+  opsPath, cjoin, fileId, copy, guid, rpad, lpad, hrtimeformat, hashIt,
   updateStore, getImageOrientation, getFrontmatter, orderByFileName, entries,
   src, dist, build, env, theme, version, metadata, promiseAll }
 

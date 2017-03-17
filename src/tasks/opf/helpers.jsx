@@ -3,14 +3,14 @@ import path from 'path'
 import fs from 'fs-extra'
 import { isObject, isArray, remove, findIndex, find } from 'lodash'
 import Json2XML from '../../modules/json2xml'
-import { opspath, dist } from '../../utils'
+import { opsPath, dist } from '../../utils'
 import store from '../../state/store'
 
 const cwd = process.cwd()
 
 const pathInfoFromFile = (file, dest) => ({
   rootPath: file,
-  opspath: opspath(file, dest),
+  opsPath: opsPath(file, dest),
   name: path.basename(file),
   extension: path.extname(file)
 })
@@ -65,7 +65,7 @@ const buildNavigationObjects = (data, dest, result = []) => {
         filename: _,
         name: path.basename(_, '.xhtml'),
         rootPath: path.join(cwd, dist(), 'OPS', textPath, _),
-        opspath: path.resolve(`/${textPath}/${_}`),
+        opsPath: path.resolve(`/${textPath}/${_}`),
         extension: path.extname(_),
         section_title: ref ? (ref.section_title || '') : '',
         landmark_type: ref ? (ref.landmark_type || '') : '',

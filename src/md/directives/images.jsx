@@ -14,7 +14,7 @@ import { log } from '../../log'
 import mdInline from '../plugins/inline-block'
 import { hashIt, updateStore, src } from '../../utils'
 
-const elemRe = /^image\s\w{3,}\s"["\w]+/
+const elemRe = /^image/
 const attrRe = /(?:(url|alt|caption)\s["]([^"]+)["])/g
 
 let seq = 0
@@ -23,8 +23,8 @@ export default {
   plugin: mdInline,
   name: 'image',
   renderer: (instance, context) => ({
-    marker: '+',
-    minMarkers: 1,
+    marker: ':',
+    minMarkers: 3,
     validate(params) {
       return params.trim().match(elemRe)
     },
@@ -58,8 +58,7 @@ export default {
             </figure>
           </div>`
         }
-      }
-      catch (e) {
+      } catch (e) {
         log.warn(`[${context._get('filename')}.md: ${line}] <img> \`${path.basename(image)}\` not found.`)
         return `<!-- Image not found: ${path.basename(image)} -->\n`
       }

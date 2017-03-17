@@ -26,8 +26,8 @@ export default {
   plugin: section,
   name: 'pullQuote',
   renderer: (instance, context) => ({
-    marker: '+',
-    minMarkers: 1,
+    marker: ':',
+    minMarkers: 3,
     markerOpen: /pull-quote\s+/,
     markerClose: /exit/,
     validate(params) {
@@ -39,7 +39,11 @@ export default {
       let result = ''
 
       if (tokens[idx].nesting === 1) { // opening tag
-        if (!matches) { log.error(`[${context._get('filename')}.md] <pull-quote> Malformed directive.`) }
+        if (!matches) {
+          log.error(`[${context._get('filename')}.md] <pull-quote> Malformed directive.`)
+          result = '<section>'
+          return result
+        }
         if (matches && matches[2]) { citation = matches[2] }
 
         result = '<section class="pull-quote">'

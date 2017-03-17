@@ -4,7 +4,7 @@
 import File from 'vinyl'
 import mime from 'mime-types'
 import Props from '../../modules/props'
-import { fileid, guid, getFrontmatter } from '../../utils'
+import { fileId, guid, getFrontmatter } from '../../utils'
 
 const opfPackage = new File({
   path: 'opfPackage.tmpl',
@@ -46,8 +46,8 @@ const manifestItem = (file) => {
   let res = null
   if (mime.lookup(file.rootpath) !== 'application/oebps-package+xml') {
     res = [
-      `<item id="${fileid(file.name)}"`,
-      `href="${encodeURI(file.opspath)}"`,
+      `<item id="${fileId(file.name)}"`,
+      `href="${encodeURI(file.opsPath)}"`,
       `media-type="${mime.lookup(file.rootpath)}"`,
       (props && props.length ? `properties="${props.join(' ')}"` : ''),
       '/>'
@@ -62,7 +62,7 @@ const spineItems = arr =>
   arr.map((_) => {
     let res = ''
     if (mime.lookup(_.rootpath) === 'text/html' || mime.lookup(_.rootpath) === 'application/xhtml+xml') {
-      res = `<itemref idref="${fileid(_.name)}" linear="yes"/>`
+      res = `<itemref idref="${fileId(_.name)}" linear="yes"/>`
     }
     return res
   }).join('')
@@ -76,7 +76,7 @@ const guideItems = arr =>
           '<reference',
           ` type="${getFrontmatter(_, 'landmark_type')}"`,
           ` title="${getFrontmatter(_, 'landmark_title')}"`,
-          ` href="${encodeURI(_.opspath)}"/>`
+          ` href="${encodeURI(_.opsPath)}"/>`
         ].join('')
       }
     }

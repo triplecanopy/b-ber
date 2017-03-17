@@ -14,15 +14,15 @@
 import inlineBlock from '../plugins/inline-block'
 import { log } from '../../log'
 
-const markerRe = /^epigraph\s+(?:image|caption)/
+const markerRe = /^epigraph/
 const attrsRe = /(?:(image|caption|citation)\s["]([^"]+)["])/g
 
 export default {
   plugin: inlineBlock,
   name: 'epigraph',
   renderer: (instance, context) => ({
-    marker: '+',
-    minMarkers: 1,
+    marker: ':',
+    minMarkers: 3,
     validate(params) {
       return params.trim().match(markerRe)
     },
@@ -37,9 +37,8 @@ export default {
 
         if (!attrs.image && !attrs.caption) {
           log.error(`[${context._get('filename')}.md] <epigraph> Malformed directive.`)
-        }
-
-        if (!attrs.image) {
+          result = ''
+        } else if (!attrs.image && attrs.caption) {
           const captions = attrs.caption.split('|').map(_ => _.trim())
           const citations = attrs.citation.split('|').map(_ => _.trim())
           result = [

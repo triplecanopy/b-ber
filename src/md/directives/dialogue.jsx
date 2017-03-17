@@ -29,8 +29,8 @@ export default {
     context,
     markerOpen,
     markerClose,
-    marker: '+',
-    minMarkers: 1,
+    marker: ':',
+    minMarkers: 3,
     replacementStr: '<span class="speaker">$1</span>',
     validate: params => params.trim().match(markerOpen),
     render(tokens, idx) {

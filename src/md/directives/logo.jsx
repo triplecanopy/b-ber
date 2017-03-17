@@ -13,8 +13,8 @@ export default {
   plugin: inlineBlock,
   name: 'logo',
   renderer: () => ({
-    marker: '+',
-    minMarkers: 1,
+    marker: ':',
+    minMarkers: 3,
     render() {
       return `<figure id="Triple-Canopy" class="logo">
         <img style="width:120px;" alt="Triple Canopy Logo" src="../images/Triple-Canopy-Logo-Small.png"/>

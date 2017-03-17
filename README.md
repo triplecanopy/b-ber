@@ -64,6 +64,8 @@ $ bber init       # `bber` is now available
 $ npm test
 ```
 
+See the coverage report at `./coverage/lcov-report/index.html`
+
 ## Reference
 
 Check out the [wiki](https://github.com/triplecanopy/b-ber-creator/wiki).

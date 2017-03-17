@@ -48,11 +48,11 @@ const navPoint = (list) => {
   function render(arr) {
     return arr.map((_, j) => {
       i += 1
-      if (!_.opspath) { return '' }
+      if (!_.opsPath) { return '' }
       return `
         <navPoint id="navPoint-${i}" playOrder="${i}">
         <navLabel><text>${_.section_title || _.name}</text></navLabel>
-        <content src="${_.opspath}"/>
+        <content src="${_.opsPath}"/>
         ${(arr[j + 1] && arr[j + 1].constructor === Array) ? render(arr[j + 1]) : ''}
         </navPoint>`
     })
