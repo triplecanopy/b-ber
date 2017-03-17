@@ -9,7 +9,7 @@ import store from '../../state/store'
 const cwd = process.cwd()
 
 const pathInfoFromFile = (file, dest) => ({
-  rootpath: file,
+  rootPath: file,
   opspath: opspath(file, dest),
   name: path.basename(file),
   extension: path.extname(file)
@@ -64,7 +64,7 @@ const buildNavigationObjects = (data, dest, result = []) => {
       result.push({
         filename: _,
         name: path.basename(_, '.xhtml'),
-        rootpath: path.join(cwd, dist(), 'OPS', textPath, _),
+        rootPath: path.join(cwd, dist(), 'OPS', textPath, _),
         opspath: path.resolve(`/${textPath}/${_}`),
         extension: path.extname(_),
         section_title: ref ? (ref.section_title || '') : '',

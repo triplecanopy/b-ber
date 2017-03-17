@@ -7,7 +7,7 @@ import nodemon from 'nodemon'
 import opn from 'opn'
 import yargs from 'yargs'
 import { exec } from 'child_process'
-import conf from '../config'
+import conf from '../modules/config'
 import { log } from '../log'
 
 const executor = yargs.argv.$0 === 'bber'

@@ -59,7 +59,7 @@ $ bber init       # `bber` is now available
 ## Testing
 
 ```bash
-$ npm test # Or `yarn test` if using yarn
+$ npm test
 ```
 
 ## Reference

@@ -1,10 +1,16 @@
 {
   "plugins": ["transform-runtime"],
   "presets": ["es2015", "stage-0"],
-  "ignore": ["node_modules"],
+  "ignore": [
+    "node_modules",
+    "src/__tests__"
+  ],
   "env": {
     "production": {
       "presets": ["babili"]
+    },
+    "test": {
+      "presets": ["es2015", "stage-0"]
     }
   }
 }

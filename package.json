@@ -4,16 +4,17 @@
   "description": "A command line epub maker.",
   "main": "./src/cli.jsx",
   "scripts": {
-    "ava": "./node_modules/.bin/ava --verbose || true",
     "__build": "./node_modules/.bin/babel -d lib/ src/",
     "build": "BABEL_ENV=production npm run __build",
     "bump": "npm version prerelease",
+    "istanbul": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha -- -R spec ./src/__tests__/ --compilers js:./node_modules/babel-register || true",
+    "mocha": "./node_modules/.bin/mocha -R spec ./src/__tests__/ --compilers js:./node_modules/babel-register || true",
     "lint": "./node_modules/.bin/eslint ./src/cli.jsx src/*.jsx src/**/*.jsx || true",
     "prepublish": "BABEL_ENV=production npm run __build",
     "preversion": "npm test",
     "documentation": "./node_modules/.bin/jsdoc --verbose -c .jsdoc.json",
     "start": "./node_modules/.bin/babel-node ./src/cli.jsx --presets es2015,stage-0",
-    "test": "npm run ava && npm run lint",
+    "test": "npm run istanbul",
     "version": "BABEL_ENV=production npm run __build && git add -A"
   },
   "bin": {
@@ -59,7 +60,6 @@
     "yargs": "^6.6.0"
   },
   "devDependencies": {
-    "ava": "^0.16.0",
     "babel-cli": "^6.14.0",
     "babel-core": "^6.23.1",
     "babel-eslint": "^7.1.1",
@@ -70,31 +70,20 @@
     "babel-preset-stage-0": "^6.16.0",
     "babel-register": "^6.14.0",
     "babili": "^0.0.12",
+    "chai": "^3.5.0",
+    "chai-as-promised": "^6.0.0",
     "eslint": "^3.16.1",
     "eslint-config-airbnb": "^11.2.0",
     "eslint-plugin-babel": "^3.3.0",
     "eslint-plugin-import": "^1.16.0",
     "eslint-plugin-jsx-a11y": "^2.2.2",
     "eslint-plugin-react": "^6.4.1",
+    "istanbul": "1.0.0-alpha.2",
     "jsdoc": "^3.4.3",
     "jsdoc-strip-async-await": "^0.1.0",
     "minami": "^1.1.1",
+    "mocha": "^3.2.0",
     "tap-spec": "^4.1.1"
-  },
-  "ava": {
-    "files": [
-      "test/*.js"
-    ],
-    "source": [
-      "**/*.{js,jsx,es6}"
-    ],
-    "match": [],
-    "concurrency": 5,
-    "failFast": true,
-    "require": [
-      "babel-register"
-    ],
-    "babel": "inherit"
   },
   "engines": {
     "node": ">=6"

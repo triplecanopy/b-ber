@@ -8,7 +8,7 @@ import yargs from 'yargs'
 import path from 'path'
 import YAML from 'yamljs'
 import File from 'vinyl'
-import conf from '../config'
+import conf from '../modules/config'
 import { log } from '../log'
 import { orderByFileName, entries, lpad } from '../utils'
 

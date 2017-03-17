@@ -7,7 +7,7 @@
  */
 
 import yargs from 'yargs'
-import config from './config'
+import loader from './loader'
 import * as commands from './cmds'
 
 /**
@@ -15,7 +15,7 @@ import * as commands from './cmds'
  * @memberOf module:cli
  * @return {}
  */
-const initialize = () => {
+const load = () => {
   const {
     build, clean, copy, create/* , editor */, generate, init, inject, opf, pdf,
     /* mobiCSS, */publish, render, scripts, sass, serve, site, theme, watch, xml } = commands
@@ -95,4 +95,4 @@ const initialize = () => {
   checkCommands(yargs)
 }
 
-config(initialize)
+loader(load)

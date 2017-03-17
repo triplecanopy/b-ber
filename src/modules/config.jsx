@@ -6,7 +6,6 @@
 import YAML from 'yamljs'
 import path from 'path'
 import fs from 'fs-extra'
-import actions from './state'
 
 const cwd = process.cwd()
 
@@ -146,30 +145,4 @@ class Configuration {
   }
 }
 
-
-let conf
-/**
- * Initialize the {@link module:config#Configuration} promise chain
- * @param {module:cli.initialize} callback
- */
-const loader = (callback) => {
-  if (!conf || !(conf instanceof Configuration)) {
-    conf = new Configuration()
-    return conf.loadSettings()
-      .then(() => conf.loadMetadata())
-      .then(() => {
-        const { bber } = conf
-        actions.setBber({ bber })
-        return callback(conf)
-      })
-  }
-  return callback(conf)
-}
-
-/**
- * Callback displayed as module:cli.initialize
- * @callback module:cli.callback
- * @return {}
- */
-
-export default loader
+export default Configuration

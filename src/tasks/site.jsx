@@ -4,7 +4,7 @@ import path from 'path'
 import https from 'https'
 import decompress from 'decompress'
 
-import conf from '../config'
+import conf from '../modules/config'
 import { log } from '../log'
 
 const cwd = process.cwd()

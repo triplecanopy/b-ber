@@ -4,7 +4,7 @@
  */
 
 export { default as clean } from './clean'
-export { default as config } from '../config'
+export { default as config } from '../modules/config'
 export { default as copy } from './copy'
 export { default as create } from './create'
 export { default as deploy } from './deploy'

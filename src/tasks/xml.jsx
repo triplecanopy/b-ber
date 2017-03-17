@@ -8,7 +8,7 @@ import path from 'path'
 import fs from 'fs-extra'
 import { parseString } from 'xml2js'
 import { log } from '../log'
-import conf from '../config'
+import conf from '../modules/config'
 import Parser from '../modules/parser'
 
 const cwd = process.cwd()

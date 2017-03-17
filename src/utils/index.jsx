@@ -11,7 +11,7 @@ import YAML from 'yamljs'
 import { compact, find } from 'lodash'
 import store from '../state/store'
 import actions from '../state'
-import config from '../config'
+import loader from '../loader'
 
 const cwd = process.cwd()
 
@@ -164,7 +164,7 @@ const entries = function* entries(obj) {
 
 // utility for retrieving props from bber instance
 const getVal = val =>
-  config(instance => instance.bber[val])
+  loader(instance => instance.bber[val])
 
 const src = () => {
   const { build } = actions.getBber('build', 'bber')

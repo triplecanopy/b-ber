@@ -17,8 +17,8 @@ class Props {
    * @return {Boolean}
    */
   static isHTML(file) {
-    return Boolean(mime.lookup(file.rootpath) === 'text/html'
-      || mime.lookup(file.rootpath) === 'application/xhtml+xml')
+    return Boolean(mime.lookup(file.rootPath) === 'text/html'
+      || mime.lookup(file.rootPath) === 'application/xhtml+xml')
   }
 
   /**
@@ -27,7 +27,8 @@ class Props {
    * @return {Boolean}
    */
   static isNav(file) {
-    return Boolean(mime.lookup(file.rootpath) === 'application/xhtml+xml'
+    return Boolean((mime.lookup(file.rootPath) === 'application/xhtml+xml'
+      || mime.lookup(file.rootPath) === 'application/xhtml+xml')
       && file.name === 'toc.xhtml')
   }
 
@@ -38,7 +39,7 @@ class Props {
    */
   static isScripted(file) {
     if (!Props.isHTML(file)) { return false }
-    const fpath = file.rootpath
+    const fpath = file.rootPath
     const contents = fs.readFileSync(fpath, 'utf8')
     return Boolean(contents.match(/<script/))
   }
@@ -50,7 +51,7 @@ class Props {
    */
   static isSVG(file) {
     if (!Props.isHTML(file)) { return false }
-    const fpath = file.rootpath
+    const fpath = file.rootPath
     const contents = fs.readFileSync(fpath, 'utf8')
     return Boolean(contents.match(/<svg/))
   }
