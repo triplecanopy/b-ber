@@ -1,5 +1,5 @@
 ---
-env: development
-theme: tc-default
+env: development # development | production
+theme: default # name or path
 src: _book
-dist: book
+dist: book-epub

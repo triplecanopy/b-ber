@@ -10,7 +10,7 @@ const { opsPath, cjoin, fileId, copy, guid, rpad, lpad, hrtimeformat, hashIt,
   updateStore, getImageOrientation, getFrontmatter, orderByFileName, entries,
   src, dist, build, env, theme, version, metadata, promiseAll } = utils
 
-describe('utils', () => {
+describe('module:utils', () => {
   describe('#cjoin', () => {
     it('Should remove falsey values from an array and join the elements with newlines', () => {
       cjoin(['foo', false, 'bar', 0, null, 'baz', '']).should.equal('foo\nbar\nbaz')

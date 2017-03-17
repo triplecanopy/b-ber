@@ -2,24 +2,28 @@
 import Configuration from './modules/config'
 import actions from './state'
 
-let conf
+let config
 
 /**
  * Initialize the {@link module:config#Configuration} promise chain
  * @param {module:cli.initialize} callback
  */
 const loader = (callback) => {
-  if (!conf || !(conf instanceof Configuration)) {
-    conf = new Configuration()
-    return conf.loadSettings()
-      .then(() => conf.loadMetadata())
+  if (!config || !(config instanceof Configuration)) {
+    config = new Configuration()
+    return config.loadSettings()
+      .then(() => config.loadMetadata())
       .then(() => {
-        const { bber } = conf
+        const env = process.env.NODE_ENV
+        if (env === 'test') { // for unit testing
+          config._config.env = env
+        }
+        const { bber } = config
         actions.setBber({ bber })
-        return callback(conf)
+        return callback(config)
       })
   }
-  return callback(conf)
+  return callback(config)
 }
 
 /**

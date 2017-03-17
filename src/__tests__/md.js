@@ -11,7 +11,7 @@ const MarkIt = require('../tasks/md').default
 const store = require('../state/store').default
 const utils = require('../utils')
 
-describe('MarkIt', () => {
+describe('module:md:MarkIt', () => {
   let consoleErrors = []
   let consoleWarnings = []
 

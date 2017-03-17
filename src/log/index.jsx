@@ -8,6 +8,6 @@ const formatOut = bformat({ outputMode: 'short' })
 // "fatal" (60), "error" (50), "warn" (40), "info" (30), "debug" (20), "trace" (10)
 
 const log = bunyan.createLogger({ name: 'bber', stream: formatOut, level: 'debug' })
-const logg = data => console.log(util.inspect(data, false, null)) // eslint-disable-line no-console
+const logg = data => console.log(util.inspect(data, false, null, true)) // eslint-disable-line no-console
 
 export { log, logg }

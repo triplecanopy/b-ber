@@ -15,55 +15,67 @@ import { opfPackage } from '../../templates/opf'
 import { dist } from '../../utils'
 import { log } from '../../log'
 
-/**
- * Create the root `package` element and inject metadata, manifest, and
- * navigation data
- * @param  {Object} manifestAndMetadataXML Manifest and metadata XML
- * @param  {Object} navigationXML          Navigation XML
- * @return {Promise<Object>}
- */
-const createOpfPackageString = ([manifestAndMetadataXML, navigationXML]) =>
-  new Promise((resolve, reject) => {
-    const { metadata, manifest } = manifestAndMetadataXML
-    const { spine, guide } = navigationXML.strings
-    const opfString = renderLayouts(new File({
-      path: './.tmp',
-      layout: 'opfPackage',
-      contents: new Buffer([metadata, manifest, spine, guide].join('\n'))
-    }), { opfPackage })
-    .contents
-    .toString()
-    resolve(opfString)
-  })
+class Opf {
 
-/**
- * Write the `content.opf` to the output directory
- * @param  {String} contents The `content.opf` string
- * @return {Promise<Object>}
- */
-const writeOpfToDisk = contents =>
-  new Promise((resolve, reject) => {
-    const opsPath = path.join(dist(), 'OPS', 'content.opf')
-    fs.writeFile(opsPath, contents, (err) => {
-      if (err) { throw err }
-      resolve()
+  constructor() {
+    this.createOpfPackageString = Opf.createOpfPackageString
+    this.writeOpfToDisk = Opf.writeOpfToDisk
+  }
+
+  /**
+   * Create the root `package` element and inject metadata, manifest, and
+   * navigation data
+   * @param  {Object} manifestAndMetadataXML Manifest and metadata XML
+   * @param  {Object} navigationXML          Navigation XML
+   * @return {Promise<Object>}
+   */
+  static createOpfPackageString([manifestAndMetadataXML, navigationXML]) {
+    return new Promise((resolve, reject) => {
+      const { metadata, manifest } = manifestAndMetadataXML
+      const { spine, guide } = navigationXML.strings
+      const opfString = renderLayouts(new File({
+        path: './.tmp',
+        layout: 'opfPackage',
+        contents: new Buffer([metadata, manifest, spine, guide].join('\n'))
+      }), { opfPackage })
+      .contents
+      .toString()
+      resolve(opfString)
     })
-  })
+  }
 
-/**
- * Initialize `content.opf` creation
- * @return {Promise<Object>}
- */
-const opf = () =>
-  new Promise(resolve/* , reject */ =>
-    Promise.all([
-      manifestAndMetadata(),
-      navigation()
-    ])
-    .then(createOpfPackageString)
-    .then(writeOpfToDisk)
-    .catch(err => log.error(err))
-    .then(resolve)
-  )
+  /**
+   * Write the `content.opf` to the output directory
+   * @param  {String} contents The `content.opf` string
+   * @return {Promise<Object>}
+   */
+  static writeOpfToDisk(contents) {
+    return new Promise((resolve, reject) => {
+      const opsPath = path.join(dist(), 'OPS', 'content.opf')
+      fs.writeFile(opsPath, contents, (err) => {
+        if (err) { throw err }
+        resolve(contents)
+      })
+    })
+  }
 
+  /**
+   * Initialize `content.opf` creation
+   * @return {Promise<Object>}
+   */
+  init() {
+    return new Promise(resolve/* , reject */ =>
+      Promise.all([
+        manifestAndMetadata(),
+        navigation()
+      ])
+      .then(this.createOpfPackageString)
+      .then(this.writeOpfToDisk)
+      .catch(err => log.error(err))
+      .then(resolve)
+    )
+  }
+}
+
+const opf = process.env.NODE_ENV === 'test' ? Opf : new Opf().init()
 export default opf

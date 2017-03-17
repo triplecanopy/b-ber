@@ -6,5 +6,8 @@
     "before": true,
     "after": true,
     "it": true
+  },
+  "rules": {
+    "import/no-extraneous-dependencies": 0
   }
 }

@@ -1,12 +1,14 @@
 
-require('chai').should()
-
+const should = require('chai').should() // eslint-disable-line no-unused-vars, import/no-extraneous-dependencies
 const Config = require('../modules/config').default
 const loader = require('../loader').default
 
 describe('Configuration', () => {
   let config
-  beforeEach(() => config = new Config())
+  beforeEach(() => {
+    config = new Config()
+    return config
+  })
 
   describe('#constructor', () => {
     it('Should create a new Configuration instance', () => {
@@ -15,8 +17,7 @@ describe('Configuration', () => {
   })
 })
 
-
-describe('loader', () => {
+describe('module:loader', () => {
   describe('#loader', () => {
     it('Should create a new Configuration instance if one does not exist', () => {
       loader(resp => resp.should.be.an.instanceOf(Config))
