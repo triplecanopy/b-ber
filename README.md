@@ -1,6 +1,8 @@
 # b-ber-creator
 
 [![Build Status](https://travis-ci.com/triplecanopy/b-ber-creator.svg?token=d5sXqMpXEby4v8y2wENP&branch=master)](https://travis-ci.com/triplecanopy/b-ber-creator)
+[![Coverage Status](https://coveralls.io/repos/triplecanopy/b-ber-creator/badge.svg?branch=master)](https://coveralls.io/r/<account>/<repository>?branch=master)
+
 
 A command-line epub maker.
 
