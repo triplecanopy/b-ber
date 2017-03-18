@@ -1,12 +1,13 @@
 verbose: false
 instrumentation:
     root: .
-    extensions: ['.js', '.jsx']
+    extensions: ['.jsx']
     default-excludes: true
     excludes: [
         'node_modules',
         'lib',
-        'src/__tests__/*'
+        '**/__tests__/**',
+        'src/shapes/**/*'
     ]
     embed-source: false
     variable: __coverage__

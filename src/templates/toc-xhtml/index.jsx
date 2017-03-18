@@ -1,6 +1,6 @@
 
 import File from 'vinyl'
-import { env } from '../../utils'
+import { env } from 'utils'
 
 const tocTmpl = new File({
   path: 'tocTmpl.tmpl',

@@ -1,7 +1,7 @@
 
-import * as figures from './figures'
-import * as pages from './pages'
-import * as opf from './opf'
+import * as figures from 'templates/figures'
+import * as pages from 'templates/pages'
+import * as opf from 'templates/opf'
 
 const container = `<?xml version="1.0"?>
   <container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">

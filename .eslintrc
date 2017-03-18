@@ -2,24 +2,38 @@
   "parser": "babel-eslint",
   "extends": ["airbnb"],
   "presets": ["es2015", "stage-0"],
-  "ecmaFeatures": { "classes": true, "jsx": true },
-  "plugins": ["babel"],
+  "ecmaFeatures": {
+    "classes": true,
+    "jsx": true
+  },
+  "plugins": [
+    "babel",
+    "import"
+  ],
   "rules": {
     "react/require-extension": "off", // https://github.com/airbnb/javascript/issues/978
-    "brace-style": [2, "1tbs", { "allowSingleLine": true }],
+    "brace-style": [2, "1tbs", {
+      "allowSingleLine": true
+    }],
     "comma-dangle": [1, "never"],
     "import/extensions": [2, "never"],
-    "max-len": [2, 100, { "ignoreComments": true }],
-    "max-statements-per-line": [2, { "max": 2 }],
+    "import/no-extraneous-dependencies": 0,
+    "max-len": [2, 100, 100, {
+      "ignoreTrailingComments": true
+    }],
+    "max-statements-per-line": [2, {
+      "max": 2
+    }],
+    "no-console": 0,
     "no-cond-assign": [2, "except-parens"],
     "no-nested-ternary": 0,
     "no-underscore-dangle": 0,
     "one-var": [2, {
-      "initialized": "never",
-      "uninitialized": "always"
+      "uninitialized": "never",
+      "initialized": "never"
     }],
     "one-var-declaration-per-line": [2, "initializations"],
-    "operator-linebreak": [0],
+    "operator-linebreak": 0,
     "react/display-name": 0,
     "react/jsx-boolean-value": [2, "never"],
     "react/jsx-closing-bracket-location": [2, "line-aligned"],
@@ -29,8 +43,8 @@
     "react/jsx-no-undef": 2,
     "semi": [2, "never"],
     "space-before-function-paren": [2, {
-        "anonymous": "always",
-        "named": "never"
+      "anonymous": "always",
+      "named": "never"
     }],
     "valid-jsdoc": [2, {
       "prefer": {
@@ -38,5 +52,18 @@
       },
       "requireReturnDescription": false
     }]
+  },
+  "settings": {
+    "import/resolver": {
+      "babel-module": {}
+    }
+  },
+  "globals": {
+    "describe": true,
+    "it": true,
+    "before": true,
+    "beforeEach": true,
+    "after": true,
+    "afterEach": true
   }
 }

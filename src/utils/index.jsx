@@ -1,5 +1,5 @@
 
-/* eslint-disable operator-linebreak */
+/* eslint-disable no-bitwise, no-mixed-operators */
 
 /**
  * @module utils
@@ -9,9 +9,8 @@ import fs from 'fs-extra'
 import path from 'path'
 import YAML from 'yamljs'
 import { compact, find } from 'lodash'
-import store from '../state/store'
-import actions from '../state'
-import loader from '../loader'
+import { loader } from 'lib'
+import store from 'lib/store'
 
 const cwd = process.cwd()
 
@@ -37,19 +36,23 @@ const opsPath = (fpath, base) =>
 const cjoin = arr =>
   compact(arr).join('\n')
 
-// TODO: this should be more robust
 const fileId = str =>
-  '_'.concat(str.replace(/[\s:,“”‘’]/g, '_'))
-
-const s4 = () =>
-  Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1)
+  '_'.concat(str.replace(/[^0-9a-z]/gi, '_'))
 
 /**
  * Create a GUID
  * @return {String}
+ * http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript
  */
-const guid = () =>
-  `${s4()}${s4()}${s4()}${s4()}${s4()}${s4()}${s4()}${s4()}`
+const guid = () => {
+  let d = new Date().getTime()
+  const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (d + (Math.random() * 16)) % 16 | 0
+    d = Math.floor(d / 16)
+    return (c === 'x' ? r : r & 0x7 | 0x8).toString(16)
+  })
+  return uuid
+}
 
 /**
  * Pad a string from the right
@@ -95,25 +98,25 @@ const hashIt = (str) => {
   if (str.length === 0) { return hash }
   for (let i = 0, len = str.length; i < len; i++) { // eslint-disable-line no-plusplus
     const chr = str.charCodeAt(i)
-    hash = ((hash << 5) - hash) + chr // eslint-disable-line no-bitwise
-    hash |= 0 // eslint-disable-line no-bitwise
+    hash = ((hash << 5) - hash) + chr
+    hash |= 0
   }
   return `_${Math.abs(hash)}`
 }
 
-// TODO: move this into bber setter
-//
-const updateStore = (prop, { ...obj }) => {
-  const { id } = obj
-  if (!{}.hasOwnProperty.call(store, prop)) {
-    throw new Error(`\`${prop}\` is not a member of the \`store\` object.`)
-  }
-  if (find(store[prop], { id })) {
-    throw new Error(`The property ${prop} already contains an item with that \`id\`.`)
-  }
-  store[prop].push({ ...obj })
-  return store
-}
+const updateStore = (prop, item) => store.add(prop, item)
+
+// const updateStore = (prop, { ...obj }) => {
+  // const { id } = obj
+  // if (!{}.hasOwnProperty.call(store, prop)) {
+  //   throw new Error(`\`${prop}\` is not a member of the \`store\` object.`)
+  // }
+  // if (find(store[prop], { id })) {
+  //   throw new Error(`The property ${prop} already contains an item with that \`id\`.`)
+  // }
+  // store[prop].push({ ...obj })
+  // return store
+// }
 
 /**
  * Determine an image's orientation
@@ -151,7 +154,7 @@ const orderByFileName = (filearr) => {
 /**
  * Create an iterator from object's key/value pairs
  * @param {Object} obj [description]
- * @yield {Array} [description]
+ * @returns {Iterable<Array>}
  */
 const entries = function* entries(obj) {
   for (const key of Object.keys(obj)) {
@@ -162,75 +165,80 @@ const entries = function* entries(obj) {
 
 // getters
 
-// utility for retrieving props from bber instance
-const getVal = val =>
-  loader(instance => instance.bber[val])
+const getConfigValue = (val) => {
+  return loader((instance) => {
+    return instance._config[val]
+  })
+}
 
+const getConfigObject = (key) =>
+  loader(instance => instance[`_${key}`])
+
+
+// TODO: we need to make sure that `store` and `store.bber` have been
+// instantiated, can probably just do this by wrapping them in a check and
+// falling back to the `loader` method
 const src = () => {
-  const { build } = actions.getBber('build', 'bber')
-  return path.join(cwd, getVal(build).src)
+  return path.join(cwd, store.bber[store.build].src)
 }
 
 const dist = () => {
-  const { build } = actions.getBber('build', 'bber')
-  return path.join(cwd, getVal(build).dist)
+  return path.join(cwd, store.bber[store.build].dist)
 }
 
 const build = () => {
-  const bber = actions.getBber('build')
-  if (bber.build === null) { throw new Error('Missing keys `build` in `state`.') }
-  return bber.build
+  if (store.build === null) { throw new Error('Missing keys `build` in `state`.') }
+  return store.build
 }
 
-const env = () =>
-  getVal('env')
+const env = () => getConfigValue('env')
 
+const version = () => getConfigValue('version')
+
+// TODO: this should check that the theme exists in the `themes` dir
 const theme = () => {
-  const t = getVal('theme')
-  return {
-    tpath: path.join(cwd, 'themes', t),
-    tname: t
-  }
+  const t = getConfigValue('theme')
+  return { tpath: path.join(cwd, 'themes', t), tname: t }
 }
 
-const metadata = () => {
-  // try to get from config class, failing that, get from global store
-  let data = getVal('metadata') || (() => {
-    const { bber } = actions.getBber('bber')
-    return bber.metadata
-  })()
+const metadata = () =>
+  getConfigObject('metadata')
 
-  // if still none, load the config files and then set the store with the
-  // response for the next call
-  if (!data) {
-    const configPath = path.join(cwd, 'config.yml')
-    try {
-      if (fs.statSync(configPath)) {
-        const conf = YAML.load(configPath)
-        try {
-          if (fs.statSync(path.join(cwd, conf.src, 'metadata.yml'))) {
-            data = YAML.load(path.join(cwd, conf.src, 'metadata.yml'))
-            actions.setBber({ bber: { metadata: data } })
-          }
-        } catch (err) {
-          throw new Error(`Cannot find metadata.yml in ${path.basename(conf.src)}`)
-        }
-      }
-    } catch (err) {
-      throw new Error(`Cannot find config.yml in ${path.basename(cwd)}`)
-    }
-  }
+// const metadata = () => {
+//   // try to get from config class, failing that, get from global store
+//   let data = getConfigValue('metadata') || (() => {
+//     const { bber } = store
+//     return bber.metadata
+//   })()
 
-  return data
-}
+//   // if still none, load the config files and then set the store with the
+//   // response for the next call
+//   if (!data) {
+//     const configPath = path.join(cwd, 'config.yml')
+//     try {
+//       if (fs.statSync(configPath)) {
+//         const conf = YAML.load(configPath)
+//         try {
+//           if (fs.statSync(path.join(cwd, conf.src, 'metadata.yml'))) {
+//             data = YAML.load(path.join(cwd, conf.src, 'metadata.yml'))
+//             store.merge('bber', { metadata: data })
+//           }
+//         } catch (err) {
+//           throw new Error(`Cannot find metadata.yml in ${path.basename(conf.src)}`)
+//         }
+//       }
+//     } catch (err) {
+//       throw new Error(`Cannot find config.yml in ${path.basename(cwd)}`)
+//     }
+//   }
 
-const version = () =>
-  getVal('version')
+//   return data
+// }
 
 const promiseAll = promiseArray =>
-  new Promise((resolve, reject) => {
+  new Promise(resolve/* , reject */ =>
     Promise.all(promiseArray).then(resolve)
-  })
+  )
 
 export {
   opsPath, cjoin, fileId, copy, guid, rpad, lpad, hrtimeformat, hashIt,

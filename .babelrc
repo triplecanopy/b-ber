@@ -1,9 +1,26 @@
 {
-  "plugins": ["transform-runtime"],
+  "plugins": [
+    "transform-runtime",
+    ["module-resolver", {
+      "root": ["./src"],
+      "alias": {
+        "bar": "./bar",
+        "cli": "./cli",
+        "lib": "./lib",
+        "modifiers": "./modifiers",
+        "output": "./output",
+        "plugins": "./plugins",
+        "log": "./plugins/log",
+        "shapes": "./shapes",
+        "templates": "./templates",
+        "utils": "./utils",
+      }
+    }]
+  ],
   "presets": ["es2015", "stage-0"],
   "ignore": [
     "node_modules",
-    "src/__tests__"
+    "**/__tests__/**"
   ],
   "env": {
     "production": {

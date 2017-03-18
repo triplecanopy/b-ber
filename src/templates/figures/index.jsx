@@ -2,7 +2,7 @@
 import epub from './epub'
 import mobi from './mobi'
 
-import { getImageOrientation } from '../../utils'
+import { getImageOrientation } from 'utils'
 
 const figures = { epub, mobi }
 
