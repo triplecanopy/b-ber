@@ -3,8 +3,8 @@
 
 import File from 'vinyl'
 import mime from 'mime-types'
-import Props from '../../modules/props'
-import { fileId, guid, getFrontmatter } from '../../utils'
+import Props from 'lib/props'
+import { fileId, guid, getFrontmatter } from 'utils'
 
 const opfPackage = new File({
   path: 'opfPackage.tmpl',

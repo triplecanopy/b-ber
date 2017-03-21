@@ -1,0 +1,20 @@
+
+// TODO: remove this? need to remove from `build.jsx` as well
+
+import { mobiCSS } from 'output'
+
+const command = 'mobiCSS'
+const describe = 'Remove incompatible CSS for Mobi files'
+const builder = yargs =>
+  yargs
+    .help('h')
+    .alias('h', 'help')
+    .usage('\nUsage: $0 mobiCSS')
+const handler = mobiCSS
+
+export default {
+  command,
+  describe,
+  builder,
+  handler
+}

@@ -1,7 +1,7 @@
 
 import File from 'vinyl'
 import { find } from 'lodash'
-import { metadata, env } from '../../utils'
+import { metadata, env } from 'utils'
 
 const ncxHead = () => {
   const entry = find(metadata(), { term: 'identifier' })

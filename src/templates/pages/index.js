@@ -1,6 +1,6 @@
 
 import File from 'vinyl'
-import { getFrontmatter } from '../../utils'
+import { getFrontmatter } from 'utils'
 
 const pageHead = name => `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
     <html xmlns="http://www.w3.org/1999/xhtml"

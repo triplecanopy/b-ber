@@ -20,4 +20,5 @@ book*
 _book
 
 documentation
-coverage
+coverage/*
+!coverage/lcov.info
