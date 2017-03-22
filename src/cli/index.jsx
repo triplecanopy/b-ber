@@ -62,13 +62,11 @@ const load = (/* config */) => {
 
   const { argv } = yargs // eslint-disable-line no-unused-vars
     .fail((msg, err, yargs) => {
-      console.log('-------- fails')
-      // console.log(msg)
-      // showCustomHelp()
+      console.log(msg)
+      showCustomHelp()
       if (process.argv.indexOf('-v') > 0 || process.argv.indexOf('--verbose') > 0) {
         console.log(err.stack)
       }
-      console.log(err.stack)
       process.exit(0)
     })
 

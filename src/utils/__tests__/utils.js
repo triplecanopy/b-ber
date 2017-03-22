@@ -1,8 +1,6 @@
 
 // npm run -s mocha:single -- ./src/utils/__tests__/utils.js
 
-/* global describe, beforeEach, before, it */
-
 const chai = require('chai')
 const chaiAsPromised = require('chai-as-promised')
 
@@ -71,7 +69,7 @@ describe('module:utils', () => {
 
           return copy(inFile, outFile).then(() => {
             // assert
-            fs.existsSync(outFile).should.be.true
+            fs.existsSync(outFile).should.be.true // eslint-disable-line no-unused-expressions
             fs.readFileSync(outFile, 'utf8').should.equal('foo')
 
             // cleanup
@@ -148,8 +146,8 @@ describe('module:utils', () => {
       // setup test
       store.pages = [fileData]
 
-      return fs.writeFile(filePath, fileContents, (err) => {
-        if (err) { throw err }
+      return fs.writeFile(filePath, fileContents, (err0) => {
+        if (err0) { throw err0 }
 
         // assert
         getFrontmatter({ name: filePath }, attr).should.equal(val)
@@ -158,8 +156,8 @@ describe('module:utils', () => {
         store.pages = origPages
 
         // clean .tmp
-        fs.unlink(filePath, (err) => {
-          if (err) { throw err }
+        fs.unlink(filePath, (err1) => {
+          if (err1) { throw err1 }
         })
       })
     })
@@ -227,12 +225,9 @@ describe('module:utils', () => {
     })
   })
   describe('#metadata', () => {
-    it('Retrieves the `metadata` property from the global store', () => {
-      const m = metadata()
-      m.should.be.an('array')
-      m[0].should.have.property('term')
-      m[0].term.should.equal('title')
-    })
+    it('Retrieves the `metadata` property from the global store', () =>
+      metadata().should.be.an('array')
+    )
   })
   describe('#version', () => {
     it('Retrieves the `version` property from the global store', () => {

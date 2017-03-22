@@ -73,7 +73,7 @@ Check out the [wiki](https://github.com/triplecanopy/b-ber-creator/wiki).
 ## Documentation
 
 ```bash
-$ npm run documentation
+$ npm run docs
 ```
 
-And open `./documentation/bber/BBER_VERSION/index.html` in your browser.
+And open `./docs/bber/BBER_VERSION/index.html` in your browser.

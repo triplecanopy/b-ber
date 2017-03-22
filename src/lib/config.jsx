@@ -76,34 +76,30 @@ class Configuration {
    * @return {Promise<Object|Error>}
    */
   loadSettings() {
-    return new Promise((resolve/* , reject */) => {
-      const defaults = {
-        src: '_book',
-        dist: 'book',
-        theme: 'default',
-        reader: 'https://codeload.github.com/triplecanopy/b-ber-boiler/zip/master'
-      }
+    const defaults = {
+      src: '_book',
+      dist: 'book',
+      theme: 'default',
+      reader: 'https://codeload.github.com/triplecanopy/b-ber-boiler/zip/master'
+    }
 
-      try {
-        if (fs.statSync(path.join(cwd, 'config.yml'))) {
-          this._config = Object.assign(defaults, YAML.load('./config.yml'))
-        }
-      } catch (e) {
-        this._config = defaults
+    try {
+      if (fs.statSync(path.join(cwd, 'config.yml'))) {
+        this._config = Object.assign(defaults, YAML.load('./config.yml'))
       }
+    } catch (e) {
+      this._config = defaults
+    }
 
-      try {
-        if (fs.statSync(path.join(cwd, 'package.json'))) {
-          const pkg = JSON.parse(fs.readFileSync(path.join(cwd, 'package.json')))
-          const { version } = pkg
-          this._config.version = version
-        }
-      } catch (e) {
-        //
+    try {
+      if (fs.statSync(path.join(cwd, 'package.json'))) {
+        const pkg = JSON.parse(fs.readFileSync(path.join(cwd, 'package.json')))
+        const { version } = pkg
+        this._config.version = version
       }
-
-      resolve()
-    })
+    } catch (err) {
+      throw err
+    }
   }
 
   /**
@@ -111,18 +107,14 @@ class Configuration {
    * @return {Promise<Object|Error>}
    */
   loadMetadata() {
-    return new Promise((resolve/* , reject */) => {
-      const fpath = path.join(cwd, this.config.src, 'metadata.yml')
-      try {
-        if (fs.statSync(fpath)) {
-          this._metadata = YAML.load(fpath)
-        }
-      } catch (err) {
-        this._metadata = []
+    const fpath = path.join(cwd, this.config.src, 'metadata.yml')
+    try {
+      if (fs.statSync(fpath)) {
+        this._metadata = YAML.load(fpath)
       }
-
-      resolve()
-    })
+    } catch (err) {
+      this._metadata = []
+    }
   }
 
   /**

@@ -6,7 +6,7 @@
   "source": {
     "include": ["src", "package.json", "README.md"],
     "includePattern": ".jsx$",
-    "excludePattern": "(node_modules/|documentation)"
+    "excludePattern": "(node_modules/|docs)"
   },
   "plugins": [
     "node_modules/jsdoc/plugins/markdown",
@@ -18,7 +18,7 @@
     "useLongnameInNav": false
   },
   "opts": {
-    "destination": "./documentation",
+    "destination": "./docs",
     "template": "./node_modules/minami",
     "encoding": "utf8",
     "private": true,

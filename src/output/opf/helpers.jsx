@@ -1,8 +1,8 @@
 
 import path from 'path'
 import fs from 'fs-extra'
+import store from 'lib/store'
 import { isObject, isPlainObject, isArray, remove, findIndex, find } from 'lodash'
-import { store } from 'lib'
 import { opsPath, dist } from 'utils'
 
 const cwd = process.cwd()

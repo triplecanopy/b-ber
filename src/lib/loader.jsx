@@ -10,18 +10,13 @@ let config
  * @returns {Function} Executes callback
  */
 const loader = (callback) => {
-  // if (!config || !(config instanceof Configuration)) {
   config = new Configuration()
   config.loadSettings()
   config.loadMetadata()
   const { bber } = config
   config._config.env = process.env.NODE_ENV
   store.merge('bber', bber)
-
   return callback(config)
-
-  // }
-  // return callback(config)
 }
 
 /**

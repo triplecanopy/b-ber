@@ -105,18 +105,6 @@ const hashIt = (str) => {
 
 const updateStore = (prop, item) => store.add(prop, item)
 
-// const updateStore = (prop, { ...obj }) => {
-  // const { id } = obj
-  // if (!{}.hasOwnProperty.call(store, prop)) {
-  //   throw new Error(`\`${prop}\` is not a member of the \`store\` object.`)
-  // }
-  // if (find(store[prop], { id })) {
-  //   throw new Error(`The property ${prop} already contains an item with that \`id\`.`)
-  // }
-  // store[prop].push({ ...obj })
-  // return store
-// }
-
 /**
  * Determine an image's orientation
  * @param  {Number} w Image width
