@@ -4,16 +4,14 @@
     ["module-resolver", {
       "root": ["./src"],
       "alias": {
-        "bar": "./bar",
-        "cli": "./cli",
-        "lib": "./lib",
-        "modifiers": "./modifiers",
-        "output": "./output",
-        "plugins": "./plugins",
-        "log": "./plugins/log",
-        "shapes": "./shapes",
-        "templates": "./templates",
-        "utils": "./utils",
+        "bber-cli": "./bber-cli",
+        "bber-lib": "./bber-lib",
+        "bber-modifiers": "./bber-modifiers",
+        "bber-output": "./bber-output",
+        "bber-plugins": "./bber-plugins",
+        "bber-shapes": "./bber-shapes",
+        "bber-templates": "./bber-templates",
+        "bber-utils": "./bber-utils",
       }
     }]
   ],

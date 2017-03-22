@@ -90,6 +90,6 @@
     "sinon-chai": "^2.8.0"
   },
   "engines": {
-    "node": ">=6"
+    "node": ">=5"
   }
 }
