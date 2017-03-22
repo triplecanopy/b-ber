@@ -46,6 +46,7 @@
       "anonymous": "always",
       "named": "never"
     }],
+    "strict": [0],
     "valid-jsdoc": [2, {
       "prefer": {
         "returns": "returns"

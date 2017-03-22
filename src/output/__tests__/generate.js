@@ -1,3 +1,4 @@
+'use strict'
 
 // npm run -s mocha:single -- ./src/output/__tests__/generate.js
 

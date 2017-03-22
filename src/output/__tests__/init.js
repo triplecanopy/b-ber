@@ -1,3 +1,4 @@
+'use strict'
 
 // npm run -s mocha:single -- ./src/output/__tests__/init.js
 
@@ -15,8 +16,6 @@ chai.use(sinonChai)
 const loader = require('../../lib/loader').default
 const store = require('../../lib/store').default
 const Initialize = require('../init').default
-
-const { log } = require('../../plugins') // eslint-disable-line no-unused-vars
 const Logger = require('../../__tests__/helpers/console')
 
 const cwd = process.cwd()

@@ -1,3 +1,4 @@
+'use strict'
 
 // npm run -s mocha:single -- ./src/lib/__tests__/async.js
 
@@ -7,7 +8,7 @@ const chai = require('chai')
 const sinon = require('sinon') // eslint-disable-line no-unused-vars
 const chaiAsPromised = require('chai-as-promised') // eslint-disable-line no-unused-vars
 const sinonChai = require('sinon-chai')
-const { serialize } = require('../async')
+const serialize = require('../async').serialize
 
 const should = chai.should() // eslint-disable-line no-unused-vars
 chai.use(chaiAsPromised)

@@ -25,9 +25,6 @@
   "env": {
     "production": {
       "presets": ["babili"]
-    },
-    "test": {
-      "presets": ["es2015", "stage-0"]
     }
   }
 }

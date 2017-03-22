@@ -1,3 +1,4 @@
+'use strict'
 
 // npm run -s mocha:single -- ./src/plugins/md/directives/__tests__/directives.js
 

@@ -1,3 +1,4 @@
+'use strict'
 
 // npm run -s mocha:single -- ./src/lib/__tests__/store.js
 

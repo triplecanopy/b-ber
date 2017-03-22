@@ -1,5 +1,8 @@
+'use strict'
 
 // npm run -s mocha:single -- ./src/utils/__tests__/utils.js
+
+/* eslint-disable no-multi-spaces */
 
 const chai = require('chai')
 const chaiAsPromised = require('chai-as-promised')
@@ -11,12 +14,31 @@ const fs = require('fs-extra')
 const path = require('path')
 
 const store = require('../../lib/store').default
-const utils = require('../../utils')
 const ver = require('../../../package.json').version
 
-const { opsPath, cjoin, fileId, copy, guid, rpad, lpad, hrtimeformat, hashIt,
-  updateStore, getImageOrientation, getFrontmatter, orderByFileName, entries,
-  src, dist, build, env, theme, version, metadata, promiseAll } = utils
+// utils
+const opsPath             = require('../../utils').opsPath
+const cjoin               = require('../../utils').cjoin
+const fileId              = require('../../utils').fileId
+const copy                = require('../../utils').copy
+const guid                = require('../../utils').guid
+const rpad                = require('../../utils').rpad
+const lpad                = require('../../utils').lpad
+const hrtimeformat        = require('../../utils').hrtimeformat
+const hashIt              = require('../../utils').hashIt
+const updateStore         = require('../../utils').updateStore
+const getImageOrientation = require('../../utils').getImageOrientation
+const getFrontmatter      = require('../../utils').getFrontmatter
+const orderByFileName     = require('../../utils').orderByFileName
+const entries             = require('../../utils').entries
+const src                 = require('../../utils').src
+const dist                = require('../../utils').dist
+const build               = require('../../utils').build
+const env                 = require('../../utils').env
+const theme               = require('../../utils').theme
+const version             = require('../../utils').version
+const metadata            = require('../../utils').metadata
+const promiseAll          = require('../../utils').promiseAll
 
 const cwd = process.cwd()
 
@@ -176,14 +198,13 @@ describe('module:utils', () => {
   })
   describe('#entries', () => {
     it('Creates an iterator from a JavaScript object', () => {
-      let key
-      let val
-      for (const [k, v] of entries({ prop: 'attr' })) {
-        key = k
-        val = v
-      }
+      const iter = entries({ prop: 'attr' }).next()
+      const done = iter.done
+      const key = iter.value[0]
+      const val = iter.value[1]
       key.should.equal('prop')
       val.should.equal('attr')
+      done.should.be.false // eslint-disable-line no-unused-expressions
     })
   })
 

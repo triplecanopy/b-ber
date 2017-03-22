@@ -1,3 +1,4 @@
+'use strict'
 
 // npm run -s mocha:single -- ./src/plugins/__tests__/md.js
 

@@ -1,3 +1,4 @@
+'use strict'
 
 // npm run -s mocha:single -- ./src/output/opf/__tests__/opf.js
 
@@ -17,8 +18,7 @@ const loader = require('../../../lib/loader').default
 const store = require('../../../lib/store').default
 const Opf = require('../').default
 const Logger = require('../../../__tests__/helpers/console')
-const { log } = require('../../../plugins')
-const { entries } = require('../../../utils')
+const log = require('../../../plugins').log
 
 let logger
 let opf = new Opf()
@@ -47,9 +47,11 @@ const removeAssets = (callback) => {
 }
 
 const createAssets = () => {
-  for (const [k, v] of entries(dirs)) { // eslint-disable-line no-unused-vars
-    if (fs.existsSync(v)) { fs.removeSync(v) }
-    fs.ensureDirSync(v)
+  for (const k in dirs) { // eslint-disable-line no-restricted-syntax
+    if ({}.hasOwnProperty.call(dirs, k)) {
+      if (fs.existsSync(dirs[k])) { fs.removeSync(dirs[k]) }
+      fs.ensureDirSync(dirs[k])
+    }
   }
 
   for (let i = 0; i < files.content.length; i++) { // eslint-disable-line no-plusplus
