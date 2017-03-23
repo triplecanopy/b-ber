@@ -27,6 +27,9 @@
     "no-console": 0,
     "no-cond-assign": [2, "except-parens"],
     "no-nested-ternary": 0,
+    "no-plusplus": [2, {
+      "allowForLoopAfterthoughts": true
+    }],
     "no-underscore-dangle": 0,
     "one-var": [2, {
       "uninitialized": "never",

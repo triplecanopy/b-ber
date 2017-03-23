@@ -28,7 +28,6 @@ describe('module:md:MarkIt', () => {
     loader(() => ({}))
     logger = new Logger()
     return done()
-    // return logger
   })
 
   beforeEach((done) => {

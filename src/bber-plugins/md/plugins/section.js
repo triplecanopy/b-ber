@@ -16,7 +16,6 @@ module.exports = function container_plugin(md, name, options) {
   }
 
   function renderDefault(tokens, idx, _options, env, self) {
-
     // add a class to the opening tag
     if (tokens[idx].nesting === 1) {
       tokens[idx].attrPush([ 'class', name ]);

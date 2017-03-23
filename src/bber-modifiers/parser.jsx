@@ -137,7 +137,7 @@ class Parser {
               let tagname = name
               if (attrs && attrs.class) {
                 const klasses = attrs.class.split(' ')
-                for (let i = 0; i < klasses.length; i++) { // eslint-disable-line no-plusplus
+                for (let i = 0; i < klasses.length; i++) {
                   if (_this.customElements.indexOf(klasses[i]) > -1) {
                     tagname = klasses[i]
                     break

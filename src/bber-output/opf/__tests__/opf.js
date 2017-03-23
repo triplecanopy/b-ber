@@ -54,7 +54,7 @@ const createAssets = () => {
     }
   }
 
-  for (let i = 0; i < files.content.length; i++) { // eslint-disable-line no-plusplus
+  for (let i = 0; i < files.content.length; i++) {
     fs.writeFileSync(path.join(dirs.dist, files.content[i]), strings.content)
   }
 
