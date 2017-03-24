@@ -1,5 +1,5 @@
 
-import { Generate } from 'bber-output'
+import { generate } from 'bber-output'
 import { log } from 'bber-plugins'
 
 const command = ['generate [options...]', 'g']
@@ -31,10 +31,9 @@ const builder = yargs =>
     .alias('h', 'help')
     .usage('\nUsage: $0 generate')
 
-const handler = () => {
-  const g = new Generate()
-  g.init().then(({ title }) => log.info(`Generated new page [${title}]`))
-}
+const handler = () =>
+  generate().then(({ title }) =>
+    log.info(`Generated new page [${title}]`))
 
 export default {
   command,

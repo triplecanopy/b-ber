@@ -7,83 +7,95 @@ import fs from 'fs-extra'
 import path from 'path'
 import { log } from 'bber-plugins'
 import { container, mimetype } from 'bber-templates'
-import { src } from 'bber-utils'
+import { src, dist } from 'bber-utils'
 
 const cwd = process.cwd()
 
-let input
-let output
-let dirs
-
-/**
- * Write required epub files
- * @return {Promise<Object|Error>}
- */
-const write = () =>
-  new Promise((resolve, reject) =>
-    fs.writeFile(`${output}/META-INF/container.xml`, container, (err1) => {
-      if (err1) { reject(err1) }
-      fs.writeFile(`${output}/mimetype`, mimetype, (err2) => {
-        if (err2) { reject(err2) }
-        resolve()
-      })
-    })
-  )
-
-/**
- * Create output directories
- * @return {Promise<Object|Error>}
- */
-const makedirs = () =>
-  new Promise((resolve, reject) =>
-    dirs.map((dir, index) =>
-      fs.mkdirs(dir, (err) => {
-        if (err) { reject(err) }
-        if (index === dirs.length - 1) { resolve() }
-      })
-    )
-  )
-
-const _testParams = (p) => {
-  try {
-    if (!p) {
-      input = src()
-    } else if (p && !fs.existsSync(path.resolve(cwd, p))) {
-      throw new Error(`Directory ${path.resolve(cwd, p)} does not exist`)
-    }
-  } catch (err) {
-    log.error(err)
-    process.exit(1)
+class Create {
+  get src() { // eslint-disable-line class-methods-use-this
+    return src()
   }
-  return p
-}
-
-/**
- * Create required folder structure and write files
- * @param  {String} _input  [description]
- * @param  {String} _output [description]
- * @return {Promise<Object|Error>}
- */
-const create = (_input, _output) =>
-  new Promise((resolve, reject) => {
-    input = _testParams(_input)
-    output = _testParams(_output)
-
-    dirs = [
-      `${output}/OPS`,
-      `${output}/META-INF`
+  get dist() { // eslint-disable-line class-methods-use-this
+    return dist()
+  }
+  get dirs() {
+    return [
+      `${this.dist}/OPS`,
+      `${this.dist}/META-INF`
     ]
+  }
+
+  /**
+   * @constructor
+   */
+  constructor() {
+    this.testParams = Create.prototype.constructor.testParams.bind(this)
+    this.init = this.init.bind(this)
+  }
+
+  write() {
+    return new Promise((resolve/* , reject */) => {
+      const files = [
+        { path: 'META-INF/container.xml', content: container },
+        { path: 'mimetype', content: mimetype }
+      ]
+      return files.forEach((_, i) =>
+        fs.writeFile(path.join(this.dist, _.path), _.content, (err) => { // eslint-disable-line consistent-return
+          if (err) { throw err }
+          if (i === files.length - 1) {
+            return resolve()
+          }
+        })
+      )
+    })
+  }
+
+  makedirs() {
+    return new Promise((resolve, reject) =>
+      this.dirs.map((dir, index) =>
+        fs.mkdirs(dir, (err) => { // eslint-disable-line consistent-return
+          if (err) { reject(err) }
+          if (index === this.dirs.length - 1) {
+            return resolve()
+          }
+        })
+      )
+    )
+  }
+
+  static testParams(_input, _output, callback) {
+    if (!_input || !_output) {
+      throw new Error('[Create#testParams] requires both [input] and [output] parameters')
+    }
+
+    const input = path.resolve(cwd, _input)
+    const output = path.resolve(cwd, _output)
 
     try {
-      if (fs.statSync(input)) {
-        makedirs()
-        .then(write)
+      if (!fs.existsSync(input)) {
+        throw new Error(`Cannot resolve input path: [${input}].\nRun [bber init] to start a new project`) // eslint-disable-line max-len
+      }
+    } catch (err) {
+      return log.error(err)
+    }
+
+    return fs.mkdirs(output, (err) => { // eslint-disable-line consistent-return
+      if (err) { throw err }
+      return callback()
+    })
+  }
+
+  init() {
+    return new Promise(resolve/* , reject */ =>
+      this.testParams(this.src, this.dist, () =>
+        this.makedirs()
+        .then(() => this.write())
         .catch(err => log.error(err))
         .then(resolve)
-      }
-    } catch (e) {
-      reject(new Error(`${input} directory does not exist.`))
-    }
-  })
+      )
+    )
+  }
+}
 
-export default create
+const create = new Create()
+export default create.init

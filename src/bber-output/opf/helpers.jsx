@@ -66,9 +66,8 @@ const buildNavigationObjects = (data, dest, result = []) => {
         rootPath: path.join(cwd, dist(), 'OPS', textPath, _),
         opsPath: path.resolve(`/${textPath}/${_}`),
         extension: path.extname(_),
-        section_title: ref ? (ref.section_title || '') : '',
-        landmark_type: ref ? (ref.landmark_type || '') : '',
-        landmark_title: ref ? (ref.landmark_title || '') : ''
+        title: ref ? (ref.title || '') : '',
+        type: ref ? (ref.type || '') : '',
       })
     }
   })

@@ -46,12 +46,12 @@ const stylesheet = () =>
       if (fs.statSync(customSCSS)) {
         return fs.readFile(customSCSS, (err, buffer) => {
           if (err) { throw err }
-          log.info('Using SCSS overrides from `_stylesheets/application.scss`.')
+          log.info('Using SCSS overrides from `_stylesheets/application.scss`')
           return resolve(buffer)
         })
       }
     } catch (err) {
-      log.info(`Attempting to build with \`${themeName}\` theme.`)
+      log.info(`Attempting to build with [${themeName}] theme`)
     }
 
     const themeSCSS = path.join(themePath, 'application.scss')
@@ -59,12 +59,12 @@ const stylesheet = () =>
       if (fs.statSync(themeSCSS)) {
         return fs.readFile(themeSCSS, (err, buffer) => {
           if (err) { throw err }
-          log.info(`Using theme \`${themeName}\`.`)
+          log.info(`Using theme ${themeName}`)
           return resolve(buffer)
         })
       }
     } catch (err) {
-      log.info(`Could not find theme \`${themeName}\`. Make sure the theme exists and contains a valid \`application.scss\`.`) // eslint-disable-line max-len
+      log.info(`Could not find theme [${themeName}]. Make sure the theme exists and contains a valid [application.scss]`) // eslint-disable-line max-len
       return resolve('')
     }
 
@@ -74,7 +74,7 @@ const stylesheet = () =>
 const sassOptions = () =>
   new Promise(async (resolve, reject) => {
     const styles = await stylesheet()
-    if (styles === false) { return reject('An error occurred loading the SCSS.') }
+    if (styles === false) { return reject('An error occurred loading the SCSS') }
     const data = `${buildVars}\n${styles.toString()}`
     return resolve({ data, includePaths, outputStyle, errLogToConsole: true })
   })
@@ -92,7 +92,7 @@ async function sass() {
   return new Promise((resolve, reject) => {
     nsass.render(options, (err1, result) => {
       if (err1) { return reject(err1) }
-      if (!result) { return reject('Sass: `result` cannot be null.') }
+      if (!result) { return reject('Sass: `result` cannot be null') }
       return postcss(autoprefixer(autoprefixerOptions))
         .process(result.css)
         .then(prefixed =>

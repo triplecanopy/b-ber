@@ -17,6 +17,9 @@ class Store {
   set bber(value) {
     this._bber = value
   }
+  set cursor(value) { // used for tracking nested sections open/close ids
+    this._cursor = value
+  }
 
   get pages() {
     return this._pages
@@ -30,6 +33,9 @@ class Store {
   get bber() {
     return this._bber
   }
+  get cursor() {
+    return this._cursor
+  }
 
   /**
    * @constructor
@@ -40,6 +46,7 @@ class Store {
     this.images = []
     this.build = null
     this.bber = {}
+    this.cursor = []
   }
 
   /**
@@ -52,7 +59,7 @@ class Store {
     const _prop = `_${prop}`
     const _val = val
     if (!{}.hasOwnProperty.call(this, _prop)) {
-      throw new TypeError(`Attempting to add non-existent property [${prop}] to class \`Store\``) // eslint-disable-line max-len
+      throw new TypeError(`Attempting to add non-existent property [${prop}] to class [Store]`) // eslint-disable-line max-len
     }
 
     if (typeof _val === 'undefined') {
@@ -138,6 +145,20 @@ class Store {
   update(prop, val) {
     this[`_${prop}`] = val
     return this[`_${prop}`]
+  }
+
+  /**
+   * [contains description]
+   * @param  {String} prop [description]
+   * @param  {String} val  [description]
+   * @return {Integer}
+   */
+  contains(collection, value) {
+    if (!isArray(this[collection])) {
+      throw new TypeError('[Store#contains] must be called with an array')
+    }
+    const index = this[collection].indexOf(value)
+    return index
   }
 
   /**

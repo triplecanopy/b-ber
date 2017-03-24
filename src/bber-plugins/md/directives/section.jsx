@@ -1,104 +1,97 @@
-
-import { union } from 'lodash'
 import section from 'bber-plugins/md/plugins/section'
+import store from 'bber-lib/store'
 import { log } from 'bber-plugins'
-import * as directives from 'bber-shapes/directives'
 import { attributes, htmlId } from 'bber-plugins/md/directives/helpers'
+import { htmlComment } from 'bber-utils'
+import {
+  BLOCK_DIRECTIVES,
+  BLOCK_DIRECTIVE_MARKER,
+  BLOCK_DIRECTIVE_MARKER_MIN_LENGTH
+} from 'bber-shapes/directives'
 
-const containers = union(
-  directives.FRONTMATTER_DIRECTIVES,
-  directives.BODYMATTER_DIRECTIVES,
-  directives.BACKMATTER_DIRECTIVES
-).join('|')
-
-const containerOpenRegExp = new RegExp(`(${containers})(?::(\\w+)(\\s?.*)?)?$`)
-const containerCloseRegExp = /(exit)(?::(\w+))?/
-
-// var s = '::: dir:id :classes="foo bar baz" page-break-before:yes'
+const containers = BLOCK_DIRECTIVES.join('|')
+const containerOpenRegExp = new RegExp(`(${containers})(?::([^\\s]+)(\\s.*)?)?$`)
+  // specific close tag generated dynamically in validation below
+const containerCloseRegExp = /(exit)(?::([^\s]+))?/
 
 export default {
   plugin: section,
   name: 'section',
   renderer: (instance, context) => ({ // eslint-disable-line no-unused-vars
-    marker: directives.BLOCK_DIRECTIVE_MARKER,
-    minMarkers: directives.BLOCK_DIRECTIVE_MARKER_MIN_LENGTH,
-
+    marker: BLOCK_DIRECTIVE_MARKER,
+    minMarkers: BLOCK_DIRECTIVE_MARKER_MIN_LENGTH,
     markerOpen: containerOpenRegExp,
-    markerClose: containerCloseRegExp,
 
-    validateOpen(params) {
-      const match = params.trim().match(containerOpenRegExp) || []
-      if (typeof match[1] === 'undefined') { // `match[1]` is section id
-        log.error(`Missing [id] attribute for [${match[0]}] directive`)
-        return false
+    validateOpen(params, line) {
+      // following construct is a bit confusing, but the parser needs a
+      // `false` (not `null`) to continue testing for other directives
+      const match = params.trim().match(containerOpenRegExp) || false
+      if (match && match.length) {
+        const id = match[2]
+        if (typeof id === 'undefined') { // `match[1]` is section id
+          log.error(`
+            Missing [id] attribute for [${exports.default.name}:start] directive
+            ${context._get('filename')}.md:${line}`)
+          return false
+        }
+
+        const index = store.contains('cursor', id)
+        if (index < 0) { store.add('cursor', id) }
       }
+
       return match
     },
 
-    validateClose(params) {
-      const match = params.trim().match(containerCloseRegExp) || []
-      if (typeof match[1] === 'undefined') { // `match[1]` is section id
-        log.error(`Missing [id] attribute for [${match[0]}] directive`)
-        return false
+    validateClose(params, line) {
+      const id = store.cursor[store.cursor.length - 1]
+      const match = params.trim().match(new RegExp(`(exit)(?::(${id}))?`)) || false
+      if (match && match.length) {
+        if (typeof match[2] === 'undefined') { // `match[1]` is section id
+          const directive = exports.default.name
+          const fileName = context._get('filename')
+          const location = `${fileName}.md:${line}`
+          log.error(`Missing [id] attribute for [${directive}:exit] directive at [${location}]`)
+          return false
+        }
+
+        const index = store.contains('cursor', id)
+        if (index > -1) { store.remove('cursor', id) }
       }
+
       return match
     },
 
     render(tokens, idx) {
       let result = ''
+      let attrs = ''
+      let id
+      let startComment
+      let endComment
 
+      const lineNr = tokens[idx].map ? tokens[idx].map[0] : null
+      const filename = `_markdown/${context._get('filename')}.md`
 
-      if (tokens[idx].nesting === 1) {  // open
-        const matches = tokens[idx].info.trim().match(containerOpenRegExp)
-        let attrs = ''
-        if (matches && matches[3]) {
-          attrs = attributes(matches[3], matches[1])
+      if (tokens[idx].nesting === 1) { // built-in open, used for both `section` and `exit`
+        const open = tokens[idx].info.trim().match(containerOpenRegExp)
+        const close = tokens[idx].info.trim().match(containerCloseRegExp)
+
+        if (open) { // is section directive
+          id = open[2] // validated above
+          startComment = htmlComment(`START: section:${open[1]}#${htmlId(id)}; ${filename}:${lineNr}`)
+          if (open[3]) { // has attributes
+            attrs = attributes(open[3], open[1])
+            result = `${startComment}<section id="${htmlId(open[2])}"${attrs}>`
+          } else { // only id
+            result = `${startComment}<section id="${open[2]}">`
+          }
+        } else if (close) {
+          id = close[2] // validated above
+          endComment = `<!-- END: section:${close[1]}#${htmlId(id)} -->`
+          result = `</section>${endComment}`
         }
-
-        result = `<section id="${htmlId(matches[2])}"${attrs}>`
-      } else {                          // close
-        // const close = tokens[idx].info.trim().match(containerCloseRegExp)
-        result = '</section>'
       }
 
       return result
-
-
-    //   const { escapeHtml } = instance.utils
-    //   const matches = tokens[idx].info.trim().match(containerRegExp)
-    //   let result = ''
-
-    //   if (tokens[idx].nesting === 1) { // opening tag
-    //     const line = tokens[idx].map ? tokens[idx].map[0] : null
-
-    //     if (!matches) {
-    //       log.error(`[${context._get('filename')}.md] <section> Malformed directive.`)
-    //       result = '<section>'
-    //       return result
-    //     }
-
-    //     if (matches && !matches[1]) { log.error(`[${context._get('filename')}.md:${line}] <section> Missing \`type\` attribute.`) }
-    //     if (matches && !matches[2]) { log.error(`[${context._get('filename')}.md:${line}] <section> Missing \`title\` attribute.`) }
-
-    //     let classes = [matches[1]]
-
-    //     if (matches[3]) {
-    //       classes = [
-    //         ...classes,
-    //         ...matches[3].split(' ').map(_ =>
-    //             escapeHtml(_.trim())).filter(Boolean)
-    //       ]
-    //     }
-
-    //     result = [
-    //       '<section',
-    //       ` epub:type="${escapeHtml(matches[1])}"`,
-    //       ` title="${escapeHtml(matches[2])}"`,
-    //       ` class="${classes.join(' ')}"`,
-    //       '>\n'
-    //     ].join('')
-    //   }
-    //   return result
     }
   })
 }

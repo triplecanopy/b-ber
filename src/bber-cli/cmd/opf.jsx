@@ -1,5 +1,5 @@
 
-import { Opf } from 'bber-output'
+import { opf } from 'bber-output'
 
 const command = ['opf', 'o']
 const describe = 'Generate the opf'
@@ -8,7 +8,7 @@ const builder = yargs =>
     .help('h')
     .alias('h', 'help')
     .usage('\nUsage: $0 opf')
-const handler = new Opf().init()
+const handler = () => opf()
 
 export default {
   command,

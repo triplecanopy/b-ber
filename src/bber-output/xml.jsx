@@ -19,7 +19,7 @@ const parser = new Parser()
 
 /**
  * [description]
- * @return {Object<Promise|Error>} [description]
+ * @return {Object<Promise|Error>}
  */
 const readSpine = () =>
   new Promise((resolve, reject) => {
@@ -38,7 +38,7 @@ const readSpine = () =>
 /**
  * [description]
  * @param  {Array} files [description]
- * @return {String}       [description]
+ * @return {String}
  */
 const parseHTML = files =>
   new Promise((resolve/* , reject */) => {
@@ -46,7 +46,9 @@ const parseHTML = files =>
     const text = files.map((_, index, arr) => {
       let data
       try {
-        data = fs.readFileSync(path.join(dir, _), 'utf8')
+        const f = path.basename(_, '.xhtml').replace(/[^0-9a-z-]/i, '_')
+        data = fs.readFileSync(path.join(dir, `${f}.xhtml`), 'utf8')
+        // data = fs.readFileSync(path.join(dir, _), 'utf8')
       } catch (err) {
         return log.warn(err.message)
       }
@@ -58,7 +60,7 @@ const parseHTML = files =>
 /**
  * [description]
  * @param  {String} str [description]
- * @return {Object<Promise|Error>} [description]
+ * @return {Object<Promise|Error>}
  */
 const writeXML = str =>
   new Promise((resolve/* , reject */) => {
@@ -71,7 +73,7 @@ const writeXML = str =>
 
 /**
  * [description]
- * @return {Object<Promise|Error>} [description]
+ * @return {Object<Promise|Error>}
  */
 const xml = () =>
   new Promise(resolve/* , reject */ =>

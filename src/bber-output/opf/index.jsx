@@ -26,8 +26,9 @@ class Opf {
   }
 
   constructor() {
-    this.createOpfPackageString = Opf.createOpfPackageString
-    this.writeOpfToDisk = Opf.writeOpfToDisk
+    this.createOpfPackageString = Opf.prototype.constructor.createOpfPackageString.bind(this)
+    this.writeOpfToDisk = Opf.prototype.constructor.writeOpfToDisk.bind(this)
+    this.init = this.init.bind(this)
   }
 
   /**
@@ -88,5 +89,5 @@ class Opf {
   }
 }
 
-// const opf = process.env.NODE_ENV === 'test' ? Opf : new Opf().init()
-export default Opf
+const opf = process.env.NODE_ENV === 'test' ? Opf : new Opf().init
+export default opf

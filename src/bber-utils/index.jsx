@@ -17,7 +17,7 @@ const cwd = process.cwd()
  * [description]
  * @param  {String} source [description]
  * @param  {String} target [description]
- * @return {Object}        [description]
+ * @return {Object}
  */
 const copy = (source, target) =>
   new Promise((resolve, reject) => {
@@ -41,7 +41,7 @@ const opsPath = (fpath, base) =>
 /**
  * [description]
  * @param  {Array} arr [description]
- * @return {String}     [description]
+ * @return {String}
  */
 const cjoin = arr =>
   compact(arr).join('\n')
@@ -49,7 +49,7 @@ const cjoin = arr =>
 /**
  * [description]
  * @param  {String} str [description]
- * @return {String}     [description]
+ * @return {String}
  */
 const fileId = str =>
   '_'.concat(str.replace(/[^0-9a-z]/gi, '_'))
@@ -100,7 +100,7 @@ const lpad = (s, a, n) => {
 /**
  * [description]
  * @param  {Array} a [description]
- * @return {String}   [description]
+ * @return {String}
  */
 const hrtimeformat = (a) => {
   const s = (a[0] * 1000) + (a[1] / 1000000)
@@ -122,8 +122,6 @@ const hashIt = (str) => {
   }
   return `_${Math.abs(hash)}`
 }
-
-const updateStore = (prop, item) => store.add(prop, item)
 
 /**
  * Determine an image's orientation
@@ -147,7 +145,7 @@ const getImageOrientation = (w, h) => {
  * [description]
  * @param  {Object} file [description]
  * @param  {String} prop [description]
- * @return {String|Object<null>}      [description]
+ * @return {String|Object<null>}
  */
 const getFrontmatter = (file, prop) => {
   const filename = path.basename(file.name, '.xhtml')
@@ -158,7 +156,7 @@ const getFrontmatter = (file, prop) => {
 /**
  * [description]
  * @param  {Array<Object>} filearr [description]
- * @return {Array<Object>}         [description]
+ * @return {Array<Object>}
  */
 const orderByFileName = (filearr) => {
   if (!filearr || !filearr.length) { return [] }
@@ -172,7 +170,7 @@ const orderByFileName = (filearr) => {
 /**
  * Create an iterator from object's key/value pairs
  * @param {Object} obj [description]
- * @returns {Iterable<Array>}
+ * @return {Iterable<Array>}
  */
 const entries = function* entries(obj) {
   for (const key of Object.keys(obj)) {
@@ -186,7 +184,7 @@ const entries = function* entries(obj) {
 /**
  * [description]
  * @param  {String} val [description]
- * @return {*}     [description]
+ * @return {*}
  */
 const getConfigValue = val =>
   loader(instance => instance._config[val])
@@ -194,7 +192,7 @@ const getConfigValue = val =>
 /**
  * [description]
  * @param  {String} key [description]
- * @return {*}     [description]
+ * @return {*}
  */
 const getConfigObject = key =>
   loader(instance => instance[`_${key}`])
@@ -206,37 +204,54 @@ const getConfigObject = key =>
 
 /**
  * [description]
- * @return {String} [description]
+ * @return {String}
  */
-const src = () =>
-  path.join(cwd, store.bber[store.build].src)
+
+// TODO: this is problematic. bber needs to fail early if there is no output
+// dir specified, and inform the user. maybe they alsway need to specify a
+// working dir from the cli.  bonus: if they can specify the project dir from
+// the cli, then it's posible to build out these fns to work anywhere on the
+// file system.
+const src = () => {
+  if (!store.bber[store.build] || !store.bber[store.build].src) {
+    store.update('build', 'epub')
+  }
+  return path.join(cwd, store.bber[store.build].src)
+}
 
 /**
  * [description]
- * @return {String} [description]
+ * @return {String}
  */
-const dist = () =>
-  path.join(cwd, store.bber[store.build].dist)
+
+// same issue as above with `src` method
+const dist = () => {
+  if (!store.bber[store.build] || !store.bber[store.build].dist) {
+    store.update('build', 'epub')
+  }
+  return path.join(cwd, store.bber[store.build].dist)
+}
+
 
 /**
  * [description]
- * @return {String} [description]
+ * @return {String}
  * @throws {TypeError} If the requested key does not exist in `Store`
  */
 const build = () => {
-  if (store.build === null) { throw new Error('Missing keys [build] in [Store].') }
+  if (store.build === null) { throw new Error('Missing keys [build] in [Store]') }
   return store.build
 }
 
 /**
  * [description]
- * @return {String} [description]
+ * @return {String}
  */
 const env = () => getConfigValue('env')
 
 /**
  * [description]
- * @return {String} [description]
+ * @return {String}
  */
 const version = () => getConfigValue('version')
 
@@ -248,7 +263,7 @@ const theme = () => {
 
 /**
  * [description]
- * @return {Array} [description]
+ * @return {Array}
  */
 const metadata = () =>
   getConfigObject('metadata')
@@ -256,14 +271,15 @@ const metadata = () =>
 /**
  * [description]
  * @param  {Array<Object<Promise>>} promiseArray [description]
- * @return {Object<Promise|Error>}              [description]
+ * @return {Object<Promise|Error>}
  */
 const promiseAll = promiseArray =>
   new Promise(resolve/* , reject */ =>
     Promise.all(promiseArray).then(resolve)
   )
 
-export {
-  opsPath, cjoin, fileId, copy, guid, rpad, lpad, hrtimeformat, hashIt,
-  updateStore, getImageOrientation, getFrontmatter, orderByFileName, entries,
-  src, dist, build, env, theme, version, metadata, promiseAll }
+const htmlComment = str => `\n<!-- ${str} -->\n`
+
+export { opsPath, cjoin, fileId, copy, guid, rpad, lpad, hrtimeformat, hashIt,
+  getImageOrientation, getFrontmatter, orderByFileName, entries, src, dist,
+  build, env, theme, version, metadata, promiseAll, htmlComment }

@@ -33,7 +33,7 @@ const opfManifest = new File({
 
 const opfSpine = new File({
   path: 'opfSpine.tmpl',
-  contents: new Buffer('<spine toc="_toc.ncx">{% body %}</spine>')
+  contents: new Buffer('<spine toc="_toc_ncx">{% body %}</spine>')
 })
 
 const opfGuide = new File({
@@ -44,11 +44,11 @@ const opfGuide = new File({
 const manifestItem = (file) => {
   const props = Props.testHTML(file)
   let res = null
-  if (mime.lookup(file.rootpath) !== 'application/oebps-package+xml') {
+  if (mime.lookup(file.rootPath) !== 'application/oebps-package+xml') {
     res = [
       `<item id="${fileId(file.name)}"`,
       `href="${encodeURI(file.opsPath)}"`,
-      `media-type="${mime.lookup(file.rootpath)}"`,
+      `media-type="${mime.lookup(file.rootPath)}"`,
       (props && props.length ? `properties="${props.join(' ')}"` : ''),
       '/>'
     ]
@@ -61,7 +61,7 @@ const manifestItem = (file) => {
 const spineItems = arr =>
   arr.map((_) => {
     let res = ''
-    if (mime.lookup(_.rootpath) === 'text/html' || mime.lookup(_.rootpath) === 'application/xhtml+xml') {
+    if (mime.lookup(_.rootPath) === 'text/html' || mime.lookup(_.rootPath) === 'application/xhtml+xml') {
       res = `<itemref idref="${fileId(_.name)}" linear="yes"/>`
     }
     return res
@@ -70,12 +70,12 @@ const spineItems = arr =>
 const guideItems = arr =>
   arr.map((_) => {
     let item = ''
-    if (mime.lookup(_.rootpath) === 'text/html' || mime.lookup(_.rootpath) === 'application/xhtml+xml') {
-      if (getFrontmatter(_, 'landmark_type')) {
+    if (mime.lookup(_.rootPath) === 'text/html' || mime.lookup(_.rootPath) === 'application/xhtml+xml') {
+      if (getFrontmatter(_, 'type')) {
         item = [
           '<reference',
-          ` type="${getFrontmatter(_, 'landmark_type')}"`,
-          ` title="${getFrontmatter(_, 'landmark_title')}"`,
+          ` type="${getFrontmatter(_, 'type')}"`,
+          ` title="${getFrontmatter(_, 'title')}"`,
           ` href="${encodeURI(_.opsPath)}"/>`
         ].join('')
       }

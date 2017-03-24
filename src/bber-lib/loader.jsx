@@ -11,7 +11,7 @@ let config
 /**
  * Initialize {@link module:config#Configuration}
  * @param {Function} callback Function to execute after modules load
- * @returns {Function} Executes callback
+ * @return {Function} Executes callback
  */
 const loader = (callback) => {
   config = new Configuration()
@@ -26,7 +26,7 @@ const loader = (callback) => {
 /**
  * Callback displayed as module:cli.initialize
  * @callback module:cli.callback
- * @returns {Object}
+ * @return {Object}
  */
 
 export default loader

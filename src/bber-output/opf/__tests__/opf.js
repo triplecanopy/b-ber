@@ -63,7 +63,6 @@ const createAssets = () => {
 
   // add entries to store so that they're available in `navigation.jsx`
 
-
   return true
 }
 

@@ -1,218 +1,217 @@
 
-// Block elements
-h1 {
-  text-indent: 0;
-  text-transform: uppercase;
-  @include text-center;
-  @include font-base;
-  @include no-indent-follow;
-  padding-top: 0;
-  padding-bottom: 5.65em;
+// // Block elements
+// h1 {
+//   text-indent: 0;
+//   text-transform: uppercase;
+//   @include text-center;
+//   @include font-base;
+//   @include no-indent-follow;
+//   padding-top: 0;
+//   padding-bottom: 5.65em;
 
-  &.book-title, &.figures-title {
-    @include rhythm-padding(0, 0, $text-lg);
-  }
+//   &.book-title, &.figures-title {
+//     @include rhythm-padding(0, 0, $text-lg);
+//   }
 
-  section.backmatter & {
-    text-transform: uppercase;
-    padding: 0;
-    @include rhythm-padding(0, 2, $text-md);
-    @include tc-rhythm-sizing($text-sm, $line-sm);
-  }
-}
+//   section.backmatter & {
+//     text-transform: uppercase;
+//     padding: 0;
+//     @include rhythm-padding(0, 2, $text-md);
+//     @include tc-rhythm-sizing($text-sm, $line-sm);
+//   }
+// }
 
-h2 {
-  @include font-base;
-  @include text-center;
-  @include rhythm-padding(0, 1);
-  @include no-indent-follow;
-  text-indent: 0;
+// h2 {
+//   @include font-base;
+//   @include text-center;
+//   @include rhythm-padding(0, 1);
+//   @include no-indent-follow;
+//   text-indent: 0;
 
-  section.backmatter & {
-    @include tc-rhythm-sizing($text-md, $line-md);
-    @include tc-rhythm-padding($text-md);
-    padding:rhythm(0.5) 0 0 0;
-  }
-}
+//   section.backmatter & {
+//     @include tc-rhythm-sizing($text-md, $line-md);
+//     @include tc-rhythm-padding($text-md);
+//     padding:rhythm(0.5) 0 0 0;
+//   }
+// }
 
-h3, h4, h5, h6 {
-  @include font-base;
-  @include text-center;
-  @include rhythm-padding(0, 1, $text-sm);
-  @include no-indent-follow;
-  text-indent: 0;
-}
+// h3, h4, h5, h6 {
+//   @include font-base;
+//   @include text-center;
+//   @include rhythm-padding(0, 1, $text-sm);
+//   @include no-indent-follow;
+//   text-indent: 0;
+// }
 
-h1,h2,h3,h4,h5,h6 {
-  @include hyphens(none);
-  + p {
-    padding-top: 0;
-    margin-top: 0;
-  }
-  span.subtitle{
-    text-transform: none;
-  }
-}
+// h1,h2,h3,h4,h5,h6 {
+//   @include hyphens(none);
+//   + p {
+//     padding-top: 0;
+//     margin-top: 0;
+//   }
+//   span.subtitle{
+//     text-transform: none;
+//   }
+// }
 
-p {
-  @include font-base;
-  text-indent: rhythm(1.65);
+// p {
+//   @include font-base;
+//   text-indent: rhythm(1.65);
 
-  blockquote & {
-    text-indent: 0;
-    @include tc-rhythm-sizing($text-xs, $line-xs);
-    @include adjust-leading-to(0.91);
-  }
+//   blockquote & {
+//     text-indent: 0;
+//     @include tc-rhythm-sizing($text-xs, $line-xs);
+//     @include adjust-leading-to(0.91);
+//   }
 
-  // Section styles
-  .frontmatter &,
-  section.backmatter &,
-    text-indent: 0;
-    @include tc-rhythm-padding($text-sm);
-  }
+//   .frontmatter &,
+//   section.backmatter &,
+//     text-indent: 0;
+//     @include tc-rhythm-padding($text-sm);
+//   }
 
-  section.colophon &,
-  section.appendix &,
-  section.backmatter {
-    font-weight: normal;
-    font-style: normal;
-    text-indent: 0;
-    @include font-base;
-    @include no-indent-follow;
-    @include tc-rhythm-sizing($text-sm, $line-sm);
-    @include tc-rhythm-padding($text-sm);
-  }
+//   section.colophon &,
+//   section.appendix &,
+//   section.backmatter {
+//     font-weight: normal;
+//     font-style: normal;
+//     text-indent: 0;
+//     @include font-base;
+//     @include no-indent-follow;
+//     @include tc-rhythm-sizing($text-sm, $line-sm);
+//     @include tc-rhythm-padding($text-sm);
+//   }
 
-  .pull-quote & { // tc only
-    text-indent: 0;
-    font-style: italic;
-    font-weight: normal;
-    @include no-indent-follow;
-    @include tc-rhythm-sizing($text-xs, $line-xs);
-    @include adjust-leading-to(0.91);
-  }
+//   .pull-quote & { // tc only
+//     text-indent: 0;
+//     font-style: italic;
+//     font-weight: normal;
+//     @include no-indent-follow;
+//     @include tc-rhythm-sizing($text-xs, $line-xs);
+//     @include adjust-leading-to(0.91);
+//   }
 
-  .epigraph .pull-quote & { // tc only
-    float: none;
-    width: 100%;
-    margin-top: 0!important;
-    padding-top: 0!important;
-    @include text-center;
-    @include no-indent-follow;
-    @include tc-rhythm-sizing($text-base, $line-base);
-    @include adjust-leading-to(1);
-  }
+//   .epigraph .pull-quote & { // tc only
+//     float: none;
+//     width: 100%;
+//     margin-top: 0!important;
+//     padding-top: 0!important;
+//     @include text-center;
+//     @include no-indent-follow;
+//     @include tc-rhythm-sizing($text-base, $line-base);
+//     @include adjust-leading-to(1);
+//   }
 
-  .figcaption & {
-    text-indent: 0;
-  }
-}
+//   .figcaption & {
+//     text-indent: 0;
+//   }
+// }
 
-cite {
-  @include font-base;
-  .pull-quote & { // tc only
-    @include no-indent-follow;
-    @include tc-rhythm-sizing($text-xs, $line-xs);
-    @include adjust-leading-to(0.91);
-    float: right;
-    font-weight: normal;
-    text-indent: 0;
-    display: block;
-    text-align: right;
-    width: 75%;
-    margin-left: 25%;
-  }
-  .pull-quote.full-width & { // tc only
-    margin-left: 0;
-    width: 100%;
-  }
-  .epigraph .pull-quote & { // tc only
-    float: none;
-    width: 100%;
-    @include text-center;
-    @include no-indent-follow;
-    @include tc-rhythm-sizing($text-base, $line-base);
-    @include adjust-leading-to(1);
-  }
-}
+// cite {
+//   @include font-base;
+//   .pull-quote & { // tc only
+//     @include no-indent-follow;
+//     @include tc-rhythm-sizing($text-xs, $line-xs);
+//     @include adjust-leading-to(0.91);
+//     float: right;
+//     font-weight: normal;
+//     text-indent: 0;
+//     display: block;
+//     text-align: right;
+//     width: 75%;
+//     margin-left: 25%;
+//   }
+//   .pull-quote.full-width & { // tc only
+//     margin-left: 0;
+//     width: 100%;
+//   }
+//   .epigraph .pull-quote & { // tc only
+//     float: none;
+//     width: 100%;
+//     @include text-center;
+//     @include no-indent-follow;
+//     @include tc-rhythm-sizing($text-base, $line-base);
+//     @include adjust-leading-to(1);
+//   }
+// }
 
-// TODO: carried over from NDBS, not sure if these should be added to core or not
-.end-notes header + p {
-  margin-top:0;
-}
+// // TODO: carried over from NDBS, not sure if these should be added to core or not
+// .end-notes header + p {
+//   margin-top:0;
+// }
 
-// Inline elements
-sup {
-  @include font-base;
-  font-size: 0.52em;
-  line-height: 1;
-  vertical-align: baseline;
-  position: relative;
-  top: -1em;
-}
+// // Inline elements
+// sup {
+//   @include font-base;
+//   font-size: 0.52em;
+//   line-height: 1;
+//   vertical-align: baseline;
+//   position: relative;
+//   top: -1em;
+// }
 
-sub {
-  @include font-base;
-  font-size: 0.52em;
-  line-height: 1;
-  vertical-align: baseline;
-  position: relative;
-  bottom: -0.5em;
-}
+// sub {
+//   @include font-base;
+//   font-size: 0.52em;
+//   line-height: 1;
+//   vertical-align: baseline;
+//   position: relative;
+//   bottom: -0.5em;
+// }
 
-small {
-  @include font-base;
-  @include tc-rhythm-sizing($text-sm, $line-sm);
-}
+// small {
+//   @include font-base;
+//   @include tc-rhythm-sizing($text-sm, $line-sm);
+// }
 
-code,
-pre {
-  @include font-base;
-  padding: rhythm(1);
-  background-color: $light-grey;
-  white-space: pre;
-}
+// code,
+// pre {
+//   @include font-base;
+//   padding: rhythm(1);
+//   background-color: $light-grey;
+//   white-space: pre;
+// }
 
-a,a:active,a:visited,a:focus,a:hover{}
+// a,a:active,a:visited,a:focus,a:hover{}
 
-i {
-  font-weight: 400;
-  font-style: italic;
-  font-family: inherit;
-  b, strong {
-    font-weight: 700;
-    font-style: italic;
-  }
-}
+// i {
+//   font-weight: 400;
+//   font-style: italic;
+//   font-family: inherit;
+//   b, strong {
+//     font-weight: 700;
+//     font-style: italic;
+//   }
+// }
 
-em {
-  font-weight: 400;
-  font-style: italic;
-  font-family: inherit;
-  b, strong {
-    font-weight: 700;
-    font-style: italic;
-  }
-  em, .pull-quote p & {
-    font-weight: 400;
-    font-style: normal;
-  }
-}
+// em {
+//   font-weight: 400;
+//   font-style: italic;
+//   font-family: inherit;
+//   b, strong {
+//     font-weight: 700;
+//     font-style: italic;
+//   }
+//   em, .pull-quote p & {
+//     font-weight: 400;
+//     font-style: normal;
+//   }
+// }
 
-strong,b {
-  font-weight: 700;
-  font-style: normal;
-  font-family: inherit;
-  em, i {
-    font-weight: 700;
-    font-style: italic;
-  }
-}
+// strong,b {
+//   font-weight: 700;
+//   font-style: normal;
+//   font-family: inherit;
+//   em, i {
+//     font-weight: 700;
+//     font-style: italic;
+//   }
+// }
 
-aside.footnote {
-  margin-left: rhythm(1, $base-font-size);
-  a.footnote-link {
-    display: inline-block;
-    text-indent: rhythm(-1, $base-font-size);
-  }
-}
+// aside.footnote {
+//   margin-left: rhythm(1, $base-font-size);
+//   a.footnote-link {
+//     display: inline-block;
+//     text-indent: rhythm(-1, $base-font-size);
+//   }
+// }

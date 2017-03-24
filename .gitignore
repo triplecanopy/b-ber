@@ -1,23 +1,25 @@
 .DS_Store
 .tmp
 
-*.log
 *.map
 *.epub
 *.mobi
 *.pdf
 
 node_modules
-_site
-_idea
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+/_site
+/_idea
 
 # used for transpiled JSX
 /lib
 
 # build directory for _book
-book*
-_book
+/book*
+/_book
 
-docs
-coverage/*
-!coverage/lcov.info
+/docs
+/coverage

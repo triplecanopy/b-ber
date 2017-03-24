@@ -33,7 +33,7 @@ class ManifestAndMetadata {
 
   /**
    * @constructor
-   * @return {Object} [description]
+   * @return {Object}
    */
   constructor() {
     this.bookmeta = null
@@ -42,7 +42,7 @@ class ManifestAndMetadata {
 
   /**
    * [loadMetadataFromYAML description]
-   * @return {Object<Promise>} [description]
+   * @return {Object<Promise>}
    */
   loadMetadataFromYAML() {
     return new Promise(resolve/* , reject */ =>
@@ -55,7 +55,7 @@ class ManifestAndMetadata {
 
   /**
    * Retrieve lists of files to include in the `content.opf`
-   * @return {Promise<Object<Array>|Error>} [description]
+   * @return {Promise<Object<Array>|Error>}
    */
   createManifestObjectFromAssets() {
     return new Promise(resolve/* , reject */ =>
@@ -85,7 +85,7 @@ class ManifestAndMetadata {
         ...strings.bookmeta,
         '<meta property="ibooks:specified-fonts">true</meta>',
         `<meta property="dcterms:modified">${new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')}</meta>`, // eslint-disable-line max-len
-        `<meta name="generator" content="b-ber@${version}" />`
+        `<meta name="generator" content="b-ber@${version()}" />`
       ]
 
       files.forEach((file, idx) => {
@@ -98,7 +98,7 @@ class ManifestAndMetadata {
   /**
    * [createManifestAndMetadataXML description]
    * @param  {Object} resp [description]
-   * @return {Object<Promise|Error>}      [description]
+   * @return {Object<Promise|Error>}
    */
   static createManifestAndMetadataXML(resp) {
     return new Promise((resolve/* , reject */) => {
@@ -120,7 +120,7 @@ class ManifestAndMetadata {
 
   /**
    * [init description]
-   * @return {Object<Promise|Error>} [description]
+   * @return {Object<Promise|Error>}
    */
   init() {
     return new Promise(resolve/* , reject */ =>
@@ -147,8 +147,4 @@ class ManifestAndMetadata {
 }
 
 
-// export default new ManifestAndMetadata()
-
-
-// const manifestAndMetadata = () => Promise.resolve()
 export default ManifestAndMetadata

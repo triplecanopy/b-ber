@@ -43,7 +43,7 @@ const getDirContents = dirpath =>
   new Promise((resolve, reject) =>
     fs.readdir(dirpath, (err, files) => {
       if (err) { reject(err) }
-      if (!files) { throw new Error(`No files found in \`${path.basename(dirpath)}\``) }
+      if (!files) { throw new Error(`No files found in [${path.basename(dirpath)}]`) }
       resolve(files)
     }))
 
@@ -88,7 +88,7 @@ const getLeadingWhitespace = str => str.match(/^\s*/)[0]
  * Search and replace generator
  * @param {Object} re   Regular expression
  * @param {String} str  String to search
- * @returns {Iterable<Array>}
+ * @return {Iterable<Array>}
  */
 function* matchIterator(re, str) {
   let match

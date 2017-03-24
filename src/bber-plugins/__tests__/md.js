@@ -64,7 +64,7 @@ describe('module:md:MarkIt', () => {
     })
 
     it('Should update the global store with a Markdown file\'s frontmatter', () => {
-      const callback = sinon.spy(utils, 'updateStore')
+      const callback = sinon.spy(store, 'add')
       markit.render('test', '--- foo: bar\n# Test')
       sinon.assert.calledOnce(callback)
       store.pages.should.be.an('array')
@@ -76,12 +76,6 @@ describe('module:md:MarkIt', () => {
   describe('#section', () => {
     it('Should include a `section` directive', () => {
       markit.md.renderer.rules.should.include.all.keys('container_section_open', 'container_section_close')
-    })
-  })
-
-  describe('#exit', () => {
-    it('Should include an `exit` directive', () => {
-      markit.md.renderer.rules.should.include.key('container_exit_open')
     })
   })
 

@@ -2,31 +2,30 @@
 
 // npm run -s mocha:single -- ./src/bber-plugins/md/directives/__tests__/directives.js
 
-/* eslint-disable no-unused-vars, no-multi-spaces, import/newline-after-import */
+/* eslint-disable no-unused-vars, no-multi-spaces, import/newline-after-import, max-len */
 
+const fs = require('fs-extra')
+const path = require('path')
 const _ = require('lodash')
 const chai = require('chai').should() // eslint-disable-line no-unused-vars
-// const sinon = require('sinon')
-// const loader = require('../../../../bber-lib/loader').default
 const store = require('../../../../bber-lib/store').default
-// const utils = require('../../../../bber-utils')
+const utils = require('../../../../bber-utils')
+const loader = require('../../../../bber-lib/loader').default
+
+const entries = utils.entries
+const src = utils.src
 
 // plugins
-// const pluginDialogue = require('../dialogue').default
-// const pluginEpigraph = require('../epigraph').default
-// const pluginExit = require('../exit').default
-// const pluginImages = require('../images').default
-// const pluginLogo = require('../logo').default
-// const pluginPullQuote = require('../pull-quote').default
-const pluginSection = require('../section').default
+const pluginDialogue  = require('../dialogue').default
+const pluginEpigraph  = require('../epigraph').default
+const pluginImage     = require('../image').default
+// const pluginLogo   = require('../logo').default
+const pluginPullQuote = require('../pull-quote').default
+const pluginSection   = require('../section').default
 
 // directive utils
 const helpers          = require('../helpers')
-const directiveBody    = helpers.directiveBody
-const extractAttrs     = helpers.extractAttrs
-const buildAttrArray   = helpers.buildAttrArray
-const stringToCharCode = helpers.stringToCharCode
-const isValidAttr      = helpers.isValidAttr
+const attributes       = helpers.attributes
 const htmlId           = helpers.htmlId
 
 // directive constants
@@ -40,92 +39,39 @@ const INLINE_DIRECTIVE_MARKER_MIN_LENGTH = directives.INLINE_DIRECTIVE_MARKER_MI
 const FRONTMATTER_DIRECTIVES             = directives.FRONTMATTER_DIRECTIVES
 const BODYMATTER_DIRECTIVES              = directives.BODYMATTER_DIRECTIVES
 const BACKMATTER_DIRECTIVES              = directives.BACKMATTER_DIRECTIVES
-const MISC_DIRECTIVES                    = directives.MISC_DIRECTIVES
-
+const BLOCK_DIRECTIVES                   = directives.BLOCK_DIRECTIVES
+const INLINE_DIRECTIVES                  = directives.INLINE_DIRECTIVES
+const GLOBAL_ATTRIBUTES                  = directives.GLOBAL_ATTRIBUTES
+const DIRECTIVE_ATTRIBUTES               = directives.DIRECTIVE_ATTRIBUTES
 
 // test helpers
 const Logger = require('../../../../__tests__/helpers/console')
 const Md = require('./helpers/markit-mock').default
 
-// directive source
-// const DIRECTIVE_STRINGS = require('../')
-
-const GLOBAL_REQUIRES = ['id']
-
-// { `<directive-name>: <String|Array>` }
-const DIRECTIVE_REQUIRES = {
-  image: 'source',
-  'inline-image': 'source',
-  video: 'source',
-  audio: 'source'
-}
-
-// <attribute-name>: { input: output }
-const DIRECTIVE_ATTRIBUTES = {
-  title: {
-    input: 'title:"foo"',
-    output: 'title="foo"'
-  },
-  classes: {
-    input: 'classes:"foo bar baz"',
-    output: 'class="foo bar baz"'
-  },
-  pagebreak: [{
-    input: 'pagebreak:before',
-    output: 'style="page-break-before:before"'
-  }, {
-    input: 'pagebreak:after',
-    output: 'style="page-break-before:always"'
-  }],
-
-  // wildcard
-  // attrs: { input: '',  output: '' },
-
-  // image
-  caption: {
-    input: 'caption:"foo bar"',
-    output: /<p class="caption">foo bar<\/p>/
-  },
-  alt: {
-    input: 'alt:foo',
-    output: 'alt="foo"'
-  },
-
-  // audio/video
-  poster: {
-    input: 'poster:foo.jpg',
-    output: 'poster="foo.jpg"'
-  },
-  autoplay: {
-    input: 'autoplay:yes',
-    output: 'autoplay="autoplay"'
-  },
-  loop: {
-    input: 'loop:yes',
-    output: 'loop="loop"'
-  },
-  controls: {
-    input: 'controls:yes',
-    output: 'controls="controls"'
-  },
-  muted: {
-    input: 'muted:yes',
-    output: 'muted="muted"'
-  },
-
-  // pullquote
-  citation: {
-    input: 'citation:"foo bar"',
-    output: /<cite>&#8212;&#160;foo bar<\/cite>/
-  }
-}
-
 describe('md:directive', () => {
   let logger
   before((done) => {
     logger = new Logger()
-    done()
+    loader(() => {
+      store.update('build', 'epub')
+      const imageData = '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'
+      const imageBuffer = new Buffer(imageData, 'base64')
+      const imageDir = path.join(src(), 'OPS/_images')
+      const imagePath = path.join(imageDir, 'foo.jpg')
+      return fs.mkdirs(imageDir, (err0) => {
+        if (err0) { throw err0 }
+        return fs.writeFile(imagePath, imageBuffer, (err1) => {
+          if (err1) { throw err1 }
+          return done()
+        })
+      })
+    })
   })
+
+  after(done => fs.remove(src(), (err) => {
+    if (err) { throw err }
+    done()
+  }))
 
   let md
   beforeEach((done) => {
@@ -135,160 +81,211 @@ describe('md:directive', () => {
     done()
   })
 
-
   // general
   it('Should throw an error if the required attributes are not present', () => {
     md.load(pluginSection)
-    const allDirectives = _.union(
-      FRONTMATTER_DIRECTIVES,
-      BODYMATTER_DIRECTIVES,
-      BACKMATTER_DIRECTIVES
-    )
-    const result = allDirectives.map(d => md.parser.render(`${BLOCK_DIRECTIVE_FENCE}${d}`))
+    const result = BLOCK_DIRECTIVES.map(d => md.parser.render(`${BLOCK_DIRECTIVE_FENCE}${d}`))
     return logger.errors.should.have.length(result.length * 2) // directives + exits
   })
 
-  it('Should ensure the directive\'s [id] attribute is converted to a valid HTML id', () => {
+  it('Should ensure the directive\'s [id] attribute is converted to a valid HTML id', (done) => {
     htmlId(1).should.equal('_1')
-    return htmlId('foo bar').should.equal('_foo_bar')
+    htmlId('foo bar').should.equal('_foo_bar')
+    return done()
   })
 
-  it('Should add classes to the HTML output based on directive name and type', () => {
+  it('Should add classes to the HTML output based on directive name and type', (done) => {
     md.load(pluginSection)
     const id = 'foo'
-    const attrs = 'classes:"foo bar baz" pagebreak:before'
+    const attrs = 'classes:"foo bar baz"'
     FRONTMATTER_DIRECTIVES.map((d) => {
       const classAttr = `class="foo bar baz frontmatter ${d}"`
-      md.parser.render(`${BLOCK_DIRECTIVE_FENCE}${d}:${id} ${attrs}`).should.contain(classAttr)
+      return md.parser.render(`${BLOCK_DIRECTIVE_FENCE}${d}:${id} ${attrs}`)
+      .should.contain(classAttr)
     }).should.not.contain(false)
 
     BODYMATTER_DIRECTIVES.map((d) => {
       const classAttr = `class="foo bar baz bodymatter ${d}"`
-      md.parser.render(`${BLOCK_DIRECTIVE_FENCE}${d}:${id} ${attrs}`).should.contain(classAttr)
+      return md.parser.render(`${BLOCK_DIRECTIVE_FENCE}${d}:${id} ${attrs}`)
+      .should.contain(classAttr)
     }).should.not.contain(false)
 
     BACKMATTER_DIRECTIVES.map((d) => {
       const classAttr = `class="foo bar baz backmatter ${d}"`
-      md.parser.render(`${BLOCK_DIRECTIVE_FENCE}${d}:${id} ${attrs}`).should.contain(classAttr)
+      return md.parser.render(`${BLOCK_DIRECTIVE_FENCE}${d}:${id} ${attrs}`)
+      .should.contain(classAttr)
     }).should.not.contain(false)
-  })
-  it('Should add epub:type attributes to the HTML output based on directive name and type')
 
-  describe(':element', () => {
-    describe(':frontmatter', () => {
-      it('Should interpret frontmatter types as generic container directives', () => {
-        md.load(pluginSection)
-        const id = 'foo'
-        const re = /<section/
-        return FRONTMATTER_DIRECTIVES.map(d =>
-          md.parser.render(`${BLOCK_DIRECTIVE_FENCE}${d}:${id}`).should.match(re)
-        ).should.not.contain(false)
+    return done()
+  })
+
+  it('Should add the proper attributes to the HTML output', () => {
+    const id = 'foo'
+    md.load(pluginImage)
+    md.load(pluginSection)
+
+    const directiveAttributes = Object.assign({}, DIRECTIVE_ATTRIBUTES)
+    delete directiveAttributes.misc // handle misc (pull-quote, dialogue, epigraph, etc) separately
+
+    const dirs = Object.assign({}, directiveAttributes)
+    const tmpl = Object.assign({}, dirs.section)
+    const sections = _.union(FRONTMATTER_DIRECTIVES, BODYMATTER_DIRECTIVES, BACKMATTER_DIRECTIVES)
+    delete dirs.section
+
+    for (let i = 0; i < sections.length; i++) {
+      dirs[sections[i]] = tmpl
+    }
+
+    // for documentation
+    //
+    // let current = ''
+
+    for (const [k, v] of entries(dirs)) {
+      const __v = Object.assign({}, v.optional)
+
+      const requiredArr = []
+      for (const [rk, rv] of entries(v.required)) { requiredArr.push(rv.input) }
+      const required = requiredArr.join(' ')
+
+      for (const [_k, _v] of entries(__v)) {
+        const attr = _.isArray(_v) ? _v[0] : _v
+        const test = attr.output.constructor === RegExp ? attr.output : new RegExp(attr.output)
+        const open = `${BLOCK_DIRECTIVE_FENCE}${k}:${id} ${required} ${attr.input}`
+        const body = sections.indexOf(k) > -1 ? 'foo' : ''
+        const close = sections.indexOf(k) > -1 ? `${BLOCK_DIRECTIVE_FENCE} exit:${id}` : ''
+        const mdStr = `${open}\n${body}\n${close}`
+
+        // following can be used to generate documentation
+        //
+
+        // console.log()
+        // if (current !== k) {
+        //   current = k
+        //   console.log(`## Directive: \`${current}\``)
+        // }
+        // console.log()
+        // console.log(`### Attribute: \`${_k}\`\n`)
+        // console.log('#### Input\n')
+        // console.log()
+        // console.log('```')
+        // console.log(mdStr)
+        // console.log('```')
+        // console.log()
+        // console.log('#### Output\n')
+        // console.log()
+        // console.log('```')
+        // console.log(md.parser.render(mdStr))
+        // console.log('```')
+        // console.log()
+
+        md.parser.render(mdStr).should.match(test)
+      }
+    }
+  })
+
+  describe(':container', () => {
+    it('Should interpret container types as generic container directives', () => {
+      md.load(pluginSection)
+      const id = 'foo'
+      const re = /<section/
+      return FRONTMATTER_DIRECTIVES.map(d =>
+        md.parser.render(`${BLOCK_DIRECTIVE_FENCE}${d}:${id}`).should.match(re)
+      ).should.not.contain(false)
+    })
+
+    it('Should nest containers with the appropriate closing tags', (done) => {
+      md.load(pluginSection)
+      const id = 'foo'
+      const nestedMdPath = path.join(__dirname, 'strings/section-nested.md')
+      return fs.readFile(nestedMdPath, 'utf8', (err, data) => {
+        if (err) { throw err }
+        const html = md.parser.render(data)
+        const matches = html.match(/(?:START:\s[^\s]+#_nested_([^\s]+)|END:\s[^\s]+#_nested_([^\s]+))/g)
+        matches.should.be.an('array')
+        matches[0].should.equal('START: section:chapter#_nested_outer')
+        matches[1].should.equal('START: section:chapter#_nested_inner')
+        matches[2].should.equal('END: section:exit#_nested_inner')
+        matches[3].should.equal('END: section:exit#_nested_outer')
+        done()
       })
     })
 
-    // describe(':exit', () => {
-    //   it('Should close a `section` element', () => {
-    //     md.load(pluginExit)
-    //     const str = '::: exit'
-    //     md.parser.render(str).should.equal('</section>\n')
-    //   })
+    // misc. directive tests
+    it('Should render a pull-quote directive', () => {
+      md.load(pluginPullQuote)
+      const pq = DIRECTIVE_ATTRIBUTES.misc['pull-quote']
+      const requiredAttrs = pq.required
+
+      let required = ''
+      for (const [rk, rv] of entries(requiredAttrs)) {
+        required += ` ${rv.input}`
+      }
+
+      const optional = pq.optional
+      for (const [k, v] of entries(optional)) {
+        const input = `::: pull-quote:foo ${required} ${v.input}\nfoo\n::: exit:foo`
+        const output = md.parser.render(input)
+      }
+    })
+
+    it('Should render an epigraph directive')//, () => {
+    //   md.load(pluginEpigraph)
+    //   const ep = DIRECTIVE_ATTRIBUTES.misc['epigraph']
+    //   const requiredAttrs = ep.required
+
+    //   let required = ''
+    //   for (const [rk, rv] of entries(requiredAttrs)) {
+    //     required += ` ${rv.input}`
+    //   }
+
+    //   const optional = ep.optional
+    //   for (const [k, v] of entries(optional)) {
+    //     const input = `::: epigraph:foo ${required} ${v.input}\nfoo\n::: exit:foo`
+    //     const output = md.parser.render(input)
+    //   }
     // })
 
-    // describe(':epigraph', () => {
-    //   it('Should render an `epigraph` component', () => {
-    //     md.load(pluginEpigraph)
-    //     const str = '::: epigraph image "foo"'
-    //     md.parser.render(str).should.match(/<section epub:type="epigraph"/)
-    //   })
-    // })
+    it('Should render a dialogue directive')//, () => {
+    //   md.load(pluginDialogue)
+    //   const di = DIRECTIVE_ATTRIBUTES.misc['dialogue']
+    //   const requiredAttrs = di.required
 
-    // describe(':dialogue', () => {
-    //   it('Should render an `dialogue` component')//, () => {
-    //     //md.load(pluginDialogue)
-    //     //const str = ''
-    //     //md.parser.render(str).should.equal('')
-    //   //})
-    // })
+    //   let required = ''
+    //   for (const [rk, rv] of entries(requiredAttrs)) {
+    //     required += ` ${rv.input}`
+    //   }
 
-    // describe(':images', () => {
-    //   it('Should render an `image` component', () => {
-    //     md.load(pluginImages)
-    //     const str = '::: image url "foo.jpg"'
-    //     const out = md.parser.render(str)
-    //     // md.parser.render(str).should.match(/<figure.*<img src="foo/)
-    //   })
+    //   const optional = di.optional
+    //   for (const [k, v] of entries(optional)) {
+    //     const input = `::: dialogue:foo ${required} ${v.input}\nfoo\n::: exit:foo`
+    //     const output = md.parser.render(input)
+    //   }
     // })
+  })
 
-    // describe(':logo', () => {
-    //   it('Should render a `logo` component')//, () => {
-    //     //md.load(pluginLogo)
-    //     //const str = ''
-    //     //md.parser.render(str).should.equal('')
-    //   //})
-    // })
-
-    // describe(':pullQuote', () => {
-    //   it('Should render a `pull-quote` component')//, () => {
-    //     //md.load(pluginPullQuote)
-    //     //const str = ''
-    //     //md.parser.render(str).should.equal('')
-    //   //})
-    // })
-
-    // describe(':section', () => {
-    //   it('Should render a `section` component')//, () => {
-    //     //md.load(pluginSection)
-    //     //const str = ''
-    //     //md.parser.render(str).should.equal('')
-    //   //})
-    // })
+  describe(':inline', () => {
+    it('Should log an error if an image does not exist', () => {
+      md.load(pluginImage)
+      const html = md.parser.render(`${INLINE_DIRECTIVE_FENCE}image:bar source:bar.jpg`)
+      html.should.match(/Image not found/)
+      logger.errors.should.have.length(1)
+    })
   })
 
   describe(':attribute', () => {
-    it('Should extract the directive\'s attributes from the directive body')
-    it('Should log warnings to the console if an unsupported attribute is used')
+    it('Should validate directive\'s attributes', () => {
+      (() => attributes(' bogus:true', 'chapter')).should.throw(TypeError)
+    })
+    it('Should throw an error if no valid attributes are provided', () => {
+      (() => attributes(' bogus:true', 'chapter')).should.throw(TypeError)
+    })
+    it('Should throw an error if no directive is provided', () => {
+      (() => attributes('', 'chapter')).should.throw(TypeError)
+    })
+    it('Should log a warning to the console if an unsupported attribute is used', () => {
+      attributes(' classes:"foo" bogus:true', 'chapter')
+      logger.warnings.should.have.length(1)
+      logger.warnings[0].message.should.match(/Removing illegal/)
+    })
   })
-
-
 })
-
-
- //   it('Should render a `section` directive', () => {
-  //     // TODO: move this to directives testing
-  //     markit.render('test', '::: section "chapter" "Test"').should.equal('<section epub:type="chapter" title="Test" class="chapter">\n')
-  //   })
-
-  //   it('Should output a default element if a `section` directive is malformed', () => {
-  //     markit.render('test', '::: section malformed').should.equal('<section>')
-  //     logger.errors.should.have.length(1)
-  //     logger.errors[0].message.should.match(/<section> Malformed directive/)
-  //   })
-  // })
-
-  // describe('#image', () => {
-  //   it('Should log a console warning if an image is not found')//, () => {
-  //     // MarkIt.render('test', '::: image src:foo.jpg')
-  //     // logger.warnings.should.have.length(1)
-  //     // logger.warnings[0].message.should.match(/<img> `_images/foo.jpg` not found/)
-  //   //})
-  // })
-
-  // describe('#exit', () => {
-  //   it('Should close a container directive when the corresponding `exit` directive is encountered')
-  // })
-
-
-// it('Should validate directive\'s attributes')
-    // it('Should render a directive\'s attributes as valid HTML attributes')
-    // // it('Should log a console error if a directive is malformed', () => {
-    //   markit.render('test', '::: section malformed')
-    //   markit.render('test', '::: epigraph malformed')
-    //   markit.render('test', '::: pull-quote malformed')
-    //   markit.render('test', '::: image malformed')
-
-    //   logger.errors.should.have.length(4)
-    //   logger.errors[0].message.should.match(/<section> Malformed directive/)
-    //   logger.errors[1].message.should.match(/<epigraph> Malformed directive/)
-    //   logger.errors[2].message.should.match(/<pull-quote> Malformed directive/)
-    //   // logger.errors[3].message.should.match(/<image> Malformed directive/)
-    // })

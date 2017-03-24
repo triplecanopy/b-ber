@@ -13,14 +13,14 @@ const theme = () =>
     try {
       fs.statSync(themesDir)
     } catch (err) {
-      log.info('Creating themes directory.')
+      log.info('Creating themes directory')
       fs.mkdir(themesDir)
     }
 
     if (yargs.argv.list) {
       return fs.readdir(themesDir, (err, themes) => {
         if (err) { return reject(err) }
-        if (themes.length < 1) { return log.info('No themes currently available.') }
+        if (themes.length < 1) { return log.info('No themes currently available') }
         const themeList = themes.map(_ => `- ${_}`).join('\n')
         log.info(`\nThe following themes are available:\n${themeList}\n`)
         return resolve()
@@ -48,7 +48,7 @@ const theme = () =>
       })
     }
 
-    return reject('An error occurred.')
+    return reject('An error occurred')
   })
 
 export default theme

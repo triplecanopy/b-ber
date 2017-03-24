@@ -1,20 +1,10 @@
-verbose: false
 instrumentation:
-    root: .
-    extensions: ['.jsx']
-    default-excludes: true
-    excludes: [
-        'node_modules',
-        'lib',
-        '**/__tests__/**',
-        'src/shapes/**/*'
-    ]
+    extensions:
+        - .jsx
+    excludes:
+        - '**/__tests__/**'
     embed-source: false
-    variable: __coverage__
-    compact: true
-    preserve-comments: false
-    complete-copy: false
-    save-baseline: false
+    es-modules: true
     baseline-file: ./coverage/coverage-baseline.json
 reporting:
     print: summary
@@ -26,6 +16,3 @@ reporting:
         lines: [50, 80]
         functions: [50, 80]
         branches: [50, 80]
-hooks:
-    hook-run-in-context: false
-    post-require-hook: null

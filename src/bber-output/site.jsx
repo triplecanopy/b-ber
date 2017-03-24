@@ -28,7 +28,7 @@ const download = () =>
 async function site() {
   await initialize()
   return new Promise((resolve, reject) => {
-    if (!{}.hasOwnProperty.call(config, 'reader')) { reject(new Error('No download url.')) }
+    if (!{}.hasOwnProperty.call(config, 'reader')) { reject(new Error('No download url')) }
     download()
     .then(data => decompress(data, dest, { strip: 1 }))
     .catch(err => log.error(err))

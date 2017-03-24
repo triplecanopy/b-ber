@@ -9,9 +9,9 @@ import * as tasks from 'bber-output'
 
 /**
  * [delayedPromise description]
- * @param  {Number} time  [description]
- * @param  {*} value [description]
- * @return {Promise<Object|Error>}       [description]
+ * @param  {Number} time              [description]
+ * @param  {*} value                  [description]
+ * @return {Promise<Object|Error>}
  */
 function delayedPromise(time, value) {
   return new Promise((resolve/* , reject */) => {
@@ -26,9 +26,9 @@ function delayedPromise(time, value) {
 
 /**
  * [forEachSerial description]
- * @param  {Iterable<Array>} iterable   [description]
- * @param  {Promise<Object>} asyncBlock [description]
- * @return {Promise<Object|Error>}            [description]
+ * @param  {Iterable<Array>} iterable     [description]
+ * @param  {Promise<Object>} asyncBlock   [description]
+ * @return {Promise<Object|Error>}
  */
 async function forEachSerial(iterable, asyncBlock) {
   for (const item of iterable) {
@@ -38,8 +38,8 @@ async function forEachSerial(iterable, asyncBlock) {
 
 /**
  * [serialize description]
- * @param  {Array} sequence [description]
- * @return {Promise<Object|Error>}          [description]
+ * @param  {Array} sequence           [description]
+ * @return {Promise<Object|Error>}
  */
 async function serialize(sequence) {
   const start = process.hrtime()

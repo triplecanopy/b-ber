@@ -145,14 +145,6 @@ describe('module:utils', () => {
       hashIt('foo').should.equal('_101574')
     })
   })
-  describe('#updateStore', () => {
-    it('Should act as a convenience method to update the global store', () => {
-      store.update('pages', [])
-      updateStore('pages', { id: 1 })
-      updateStore('pages', { id: 2 })
-      store.pages.should.have.length(2)
-    })
-  })
   describe('#getFrontmatter', () => {
     it('Retrieves a file\'s frontmatter from the global store', () => {
       // store reference to original array
@@ -207,12 +199,6 @@ describe('module:utils', () => {
       val.should.equal('attr')
       done.should.be.false // eslint-disable-line no-unused-expressions
     })
-  })
-
-  // DEPRECATED
-  //
-  describe('#getVal', () => {
-    it('DEPRECATED: Retrieves a value from the configuration instance\'s `_config` property')
   })
 
   describe('#src', () => {

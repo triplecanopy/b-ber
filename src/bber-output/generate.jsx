@@ -18,16 +18,20 @@ import { orderByFileName, entries, lpad, src } from 'bber-utils'
  * @alias module:generate#Generate
  */
 class Generate {
+  get src() { // eslint-disable-line class-methods-use-this
+    return src()
+  }
+
   /**
    * @constructor
    */
   constructor() {
-    this.getFiles = Generate.getFiles
-    this.orderFiles = Generate.orderFiles
-    this.parseMeta = Generate.parseMeta
-    this.createFile = Generate.createFile
-    this.writeFile = Generate.writeFile
-    this.writePageMeta = Generate.writePageMeta
+    this.getFiles = Generate.prototype.constructor.getFiles.bind(this)
+    this.orderFiles = Generate.prototype.constructor.orderFiles.bind(this)
+    this.parseMeta = Generate.prototype.constructor.parseMeta.bind(this)
+    this.createFile = Generate.prototype.constructor.createFile.bind(this)
+    this.writeFile = Generate.prototype.constructor.writeFile.bind(this)
+    this.writePageMeta = Generate.prototype.constructor.writePageMeta.bind(this)
   }
 
   /**
@@ -36,7 +40,7 @@ class Generate {
    */
   static getFiles() {
     return new Promise(resolve =>
-      fs.readdir(path.join(src(), '_markdown'), (err, files) => {
+      fs.readdir(path.join(this.src, '_markdown'), (err, files) => {
         if (err) { throw err }
         let filearr = files.map((_) => {
           if (path.basename(_).charAt(0) === '.') { return null }
@@ -51,7 +55,7 @@ class Generate {
   /**
    * Order files based on their filename
    * @param  {Array<Object<String>>} files [description]
-   * @return {Array<Object<String>>}       [description]
+   * @return {Array<Object<String>>}
    */
   static orderFiles(files) {
     return new Promise(resolve =>
@@ -66,8 +70,8 @@ class Generate {
    */
   static parseMeta(files) {
     return new Promise((resolve) => {
-      const { section_title, landmark_type, landmark_title } = yargs.argv
-      const metadata = { section_title, landmark_type, landmark_title }
+      const { title, type } = yargs.argv
+      const metadata = { title, type }
       resolve({ files, metadata })
     })
   }
@@ -104,7 +108,7 @@ class Generate {
   static writeFile({ fname, file }) {
     return new Promise(resolve =>
       fs.writeFile(
-          path.join(src(), '_markdown', fname),
+          path.join(this.src, '_markdown', fname),
           String(file.contents),
           (err) => {
             if (err) { throw err }
@@ -123,20 +127,20 @@ class Generate {
       const buildTypes = ['epub', 'mobi', 'web', 'sample']
       let type
       while ((type = buildTypes.pop())) {
-        const pages = path.join(src(), `${type}.yml`)
+        const pages = path.join(this.src, `${type}.yml`)
         let pagemeta = []
         try {
           if (fs.statSync(pages)) {
-            pagemeta = YAML.load(path.join(src(), `${type}.yml`))
+            pagemeta = YAML.load(path.join(this.src, `${type}.yml`))
           }
         } catch (e) {
           log.info(`Creating ${type}.yml`)
-          fs.writeFileSync(path.join(src(), `${type}.yml`), '---')
+          fs.writeFileSync(path.join(this.src, `${type}.yml`), '---')
         }
 
         const index = pagemeta.indexOf(fname)
         if (index > -1) {
-          const err = `${fname} already exists in \`${type}.yml\`. Aborting`
+          const err = `${fname} already exists in [${type}.yml]. Aborting`
           log.error(err)
           return reject(err)
         }
@@ -157,17 +161,17 @@ class Generate {
    */
   init() {
     return new Promise(resolve/* , reject */ =>
-      this.getFiles()
-      .then(this.orderFiles)
-      .then(this.parseMeta)
-      .then(this.createFile)
-      .then(this.writeFile)
-      .then(this.writePageMeta)
+      Generate.getFiles()
+      .then(() => this.orderFiles())
+      .then(() => this.parseMeta())
+      .then(() => this.createFile())
+      .then(() => this.writeFile())
+      .then(() => this.writePageMeta())
       .catch(err => log.error(err))
       .then(resolve)
     )
   }
 }
 
-const generate = Generate
+const generate = process.env.NODE_ENV === 'test' ? Generate : new Generate().init
 export default generate

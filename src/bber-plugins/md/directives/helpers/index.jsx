@@ -1,25 +1,7 @@
 
 import { entries } from 'bber-utils'
-
-// ::: directive:id classes:"foo bar baz" page-break-before:yes
-// <- ' classes:"foo bar baz" page-break-before:yes'
-
-// -> [foo:bar, baz:qux]
-const _extractAttrs = str =>
-  str.split(/([\w-]+:['"][^'"]+['"]|[\w-]+\w[^\s]+)/)
-  .map(_ => _.trim())
-  .filter(Boolean)
-
-// -> { foo: 'bar', baz: 'qux' }
-const _buildAttrObjects = (arr) => {
-  const o = {}
-  arr.map((_) => {
-    const [k, v] = _.split(':')
-    o[k.trim()] = v.trim().replace(/(?:^["']|["']$)/g, '')
-    return o
-  })
-  return o
-}
+import { log } from 'bber-plugins'
+import { BLOCK_DIRECTIVES, INLINE_DIRECTIVES, MISC_DIRECTIVES } from 'bber-shapes/directives'
 
 const _applyTransforms = (k, v) => {
   switch (k) {
@@ -29,29 +11,23 @@ const _applyTransforms = (k, v) => {
       return ` epub:type="${v}"`
     case 'pagebreak':
       return ` style="page-break-${v}:always;"`
+    case 'attrs':
+      return ''
+    case 'source':
+      return ` src="${v}"`
     case 'autoplay':
     case 'loop':
     case 'controls':
     case 'muted':
       return ` ${k}="${k}"`
-    case 'attrs':
-      return ''
+    case 'alt':
     default:
       return ` ${k}="${v}"`
   }
 }
 
-// -> foo="bar" baz="qux"
-const _buildAttrString = (obj) => {
-  let s = ''
-  for (const [k, v] of entries(obj)) {
-    s += _applyTransforms(k, v)
-  }
-  return s
-}
-
-const _lookupParentType = (sectionType) => {
-  switch (sectionType) {
+const _lookUpFamily = (genus) => {
+  switch (genus) {
     case 'halftitlepage':
     case 'titlepage':
     case 'dedication':
@@ -80,33 +56,142 @@ const _lookupParentType = (sectionType) => {
   }
 }
 
-const _extendWithDefaults = (obj, sectionType) => {
-  const types = `${_lookupParentType(sectionType)} ${sectionType}`
-  const result = Object.assign({}, obj)
-  result.epubTypes = types
-  if ({}.hasOwnProperty.call(obj, 'classes')) {
-    result.classes = result.classes += ` ${types}`
-  } else {
-    result.classes = types
+const supportedAttributes = ['title', 'classes', 'pagebreak', 'attributes',
+  'alt', 'poster', 'autoplay', 'loop', 'controls', 'muted', 'autoplay',
+  'loop', 'controls', 'muted', 'citation', 'source']
+
+// ::: directive:id classes:"foo bar baz" page-break-before:yes
+// <- ' classes:"foo bar baz" page-break-before:yes'
+
+// -> [foo:bar, baz:qux]
+const _extractAttrs = str =>
+  str.split(/([\w-]+:['"][^'"]+['"]|[\w-]+\w[^\s]+)/)
+  .map(_ => _.trim())
+  .filter(Boolean)
+
+// -> { foo: 'bar', baz: 'qux' }
+const _buildAttrObjects = (arr) => {
+  const o = {}
+  arr.map((_) => {
+    const [k, v] = _.split(':')
+    o[k.trim()] = v.trim().replace(/(?:^["']|["']$)/g, '')
+    return o
+  })
+  return o
+}
+
+// -> foo="bar" baz="qux"
+const _buildAttrString = (obj) => {
+  let s = ''
+  for (const [k, v] of entries(obj)) {
+    s += _applyTransforms(k, v)
   }
-  return result
+  return s
 }
 
 /**
- * [description]
+ * Determine the directive's classification and parent's type
+ * @param  {String} name [description]
+ * @return {Object<String>}
+ */
+const _getDirectiveTaxonomy = (name) => {
+  // Class    -> Order  -> Family       -> Genus
+  // element  -> block  -> frontmatter  -> preface
+  let index
+  let order
+  let genus
+  if ((index = BLOCK_DIRECTIVES.indexOf(name)) > -1) {
+    order = 'block'
+    genus = BLOCK_DIRECTIVES[index]
+  } else if ((index = INLINE_DIRECTIVES.indexOf(name)) > -1) {
+    order = 'inline'
+    genus = INLINE_DIRECTIVES[index]
+  } else if ((index = MISC_DIRECTIVES.indexOf(name)) > -1) {
+    order = 'misc'
+    genus = MISC_DIRECTIVES[index]
+  }
+
+  return { order, genus }
+}
+
+/**
+ * Ensure that attributes required for valid XHTML are present, and that
+ * system defaults are merged into user settings
+ * @param  {Object} obj  [description]
+ * @param  {String} name [description]
+ * @return {Object}
+ */
+const _extendWithDefaults = (obj, name) => {
+  let taxonomy
+  let result
+  const { order, genus } = _getDirectiveTaxonomy(name)
+  if (!order || !genus) { throw new TypeError(`Invalid directive type: [${name}]`) }
+
+  switch (order) {
+    case 'block':
+      taxonomy = `${_lookUpFamily(genus)} ${genus}`
+      result = Object.assign({}, obj)
+      result.epubTypes = taxonomy
+      if ({}.hasOwnProperty.call(obj, 'classes')) {
+        result.classes = result.classes += ` ${taxonomy}`
+      } else {
+        result.classes = taxonomy
+      }
+      return result
+    case 'inline':
+      if (genus === 'image' || genus === 'inline-image') {
+        result = Object.assign({}, obj)
+        if (!{}.hasOwnProperty.call(obj, 'alt')) {
+          result.alt = result.source
+        }
+      }
+      return result
+    case 'misc':
+      return obj
+    default:
+      return obj
+  }
+}
+
+/**
+ * Create an object from attributes in the given directive
  * @param  {String} str  [description]
  * @param  {String} type [description]
  * @return {String}
  */
-const attributes = (str, type) => {
-  if (!str && typeof str !== 'string') { return '' }
+const attributesObject = (str, type) => {
+  if (!str || typeof str !== 'string') { throw new TypeError('No directive provided') }
   const body = str.trim()
   const attrsArray = _extractAttrs(body)
   const attrsObject = _buildAttrObjects(attrsArray)
+
+  const illegalAttrs = []
+  for (const [k] of entries(attrsObject)) {
+    if (supportedAttributes.indexOf(k) < 0) {
+      illegalAttrs.push(k)
+      delete attrsObject[k]
+    }
+  }
+  if (illegalAttrs.length) { log.warn(`Removing illegal attributes: [${illegalAttrs.join()}]`) }
+  if (!Object.keys(attrsObject).length) { throw new TypeError('Attributes cannot be empty') }
   const mergedAttrs = _extendWithDefaults(attrsObject, type)
-  const attrs = _buildAttrString(mergedAttrs)
-  return attrs
+  return mergedAttrs
 }
+
+/**
+ * Create a string of attributes for an XHTML element
+ * @param  {Object} obj An attributes object
+ * @return {String}
+ */
+const attributesString = obj => _buildAttrString(obj)
+
+/**
+ * Convenience wrapper for creating attributes: String -> Object -> String
+ * @param  {String} str  [description]
+ * @param  {String} type [description]
+ * @return {String}
+ */
+const attributes = (str, type) => _buildAttrString(attributesObject(str, type))
 
 /**
  * [description]
@@ -123,17 +208,9 @@ const stringToCharCode = (s) => {
 
 /**
  * [description]
- * @param  {String} a   [description]
- * @param  {Array} arr  [description]
- * @return {Boolean}
- */
-const isValidAttr = (a, arr) => arr.indexOf(a) > -1
-
-/**
- * [description]
  * @param  {String} s [description]
  * @return {String}
  */
 const htmlId = s => `_${String(s).replace(/[^0-9a-z]/, '_')}`
 
-export { attributes, stringToCharCode, isValidAttr, htmlId }
+export { attributes, attributesObject, attributesString, stringToCharCode, htmlId }

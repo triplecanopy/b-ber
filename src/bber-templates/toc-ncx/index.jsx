@@ -51,8 +51,8 @@ const navPoint = (list) => {
       if (!_.opsPath) { return '' }
       return `
         <navPoint id="navPoint-${i}" playOrder="${i}">
-        <navLabel><text>${_.section_title || _.name}</text></navLabel>
-        <content src="${_.opsPath}"/>
+        <navLabel><text>${_.title || _.name}</text></navLabel>
+        <content src="${_.opsPath.slice(1)}"/>
         ${(arr[j + 1] && arr[j + 1].constructor === Array) ? render(arr[j + 1]) : ''}
         </navPoint>`
     })

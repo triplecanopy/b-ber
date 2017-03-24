@@ -9,15 +9,14 @@
 import YAML from 'yamljs'
 import MarkdownIt from 'markdown-it'
 import mdFrontMatter from 'markdown-it-front-matter'
+import store from 'bber-lib/store'
 import mdFootnote from 'bber-plugins/md/plugins/footnote'
 import mdSection from 'bber-plugins/md/directives/section'
 import mdPullQuote from 'bber-plugins/md/directives/pull-quote'
 import mdLogo from 'bber-plugins/md/directives/logo'
-import mdExit from 'bber-plugins/md/directives/exit'
-import mdImages from 'bber-plugins/md/directives/images'
+import mdImage from 'bber-plugins/md/directives/image'
 import mdDialogue from 'bber-plugins/md/directives/dialogue'
 import mdEpigraph from 'bber-plugins/md/directives/epigraph'
-import { updateStore } from 'bber-utils' // TODO: this should be called with methods in `state`
 
 /**
  * Transform markdown into XHTML
@@ -67,42 +66,38 @@ class MarkIt {
         mdSection.name,
         mdSection.renderer(this.md, this))
       .use(
-        mdExit.plugin,
-        mdExit.name,
-        mdExit.renderer(this.md, this))
-      .use(
         mdFootnote)
       .use(
-        mdImages.plugin,
-        mdImages.name,
-        mdImages.renderer(this.md, this))
-      .use(
-        mdDialogue.plugin,
-        mdDialogue.name,
-        mdDialogue.renderer(this.md, this))
-      .use(
-        mdEpigraph.plugin,
-        mdEpigraph.name,
-        mdEpigraph.renderer(this.md, this))
-      .use(
-        mdLogo.plugin,
-        mdLogo.name,
-        mdLogo.renderer(this.md, this))
-      .use(
-        mdPullQuote.plugin,
-        mdPullQuote.name,
-        mdPullQuote.renderer(this.md, this))
+        mdImage.plugin,
+        mdImage.name,
+        mdImage.renderer(this.md, this))
+      // .use(
+      //   mdDialogue.plugin,
+      //   mdDialogue.name,
+      //   mdDialogue.renderer(this.md, this))
+      // .use(
+      //   mdEpigraph.plugin,
+      //   mdEpigraph.name,
+      //   mdEpigraph.renderer(this.md, this))
+      // .use(
+      //   mdLogo.plugin,
+      //   mdLogo.name,
+      //   mdLogo.renderer(this.md, this))
+      // .use(
+      //   mdPullQuote.plugin,
+      //   mdPullQuote.name,
+      //   mdPullQuote.renderer(this.md, this))
       .use(
         mdFrontMatter,
         (meta) => {
           const filename = this._get('filename')
-          updateStore('pages', { filename, ...YAML.parse(meta) })
+          store.add('pages', { filename, ...YAML.parse(meta) })
         })
   }
 
   /**
    * Callback that is called once rendering has completed
-   * @param  {String} data
+   * @param  {String} data [description]
    * @return {String}
    */
   postRenderCallback(data) {
@@ -118,6 +113,7 @@ class MarkIt {
    * @private
    * @param {String} key [description]
    * @param {String} val [description]
+   * @return {*}
    */
   _set(key, val) {
     this[key] = val
@@ -128,7 +124,7 @@ class MarkIt {
    * [_get description]
    * @private
    * @param  {String} key [description]
-   * @return {String}     [description]
+   * @return {String}
    */
   _get(key) {
     return this[key]
@@ -136,14 +132,14 @@ class MarkIt {
 
   /**
    * [noop description]
-   * @return {} [description]
+   * @return {Function}
    */
   static noop() {}
 
   /**
    * [template description]
    * @param  {Array} meta [description]
-   * @return {String}      [description]
+   * @return {String}
    */
   template(meta) {
     const str = meta.split('\n').map(_ => `  ${_}`).join('\n')
@@ -152,9 +148,9 @@ class MarkIt {
 
   /**
    * Transforms a markdown file to XHTML
-   * @param  {String} filename
-   * @param  {Object} data
-   * @return {MarkIt.postRenderCallback(String)}
+   * @param  {String} filename [description]
+   * @param  {Object} data     [description]
+   * @return {String}
    */
   render(filename, data) {
     this._set('filename', filename)

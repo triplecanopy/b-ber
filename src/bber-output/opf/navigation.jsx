@@ -49,7 +49,7 @@ class Navigation {
   /**
    * [constructor description]
    * @constructor
-   * @return {Object} [description]
+   * @return {Object}
    */
   constructor() {
     this.navdocs = [
@@ -113,7 +113,7 @@ class Navigation {
   addMissingEntriesToNonLinearSection(arr, missingEntries) { // eslint-disable-line class-methods-use-this
     let nonLinearIndex = findIndex(arr, 'nonLinear')
     if (nonLinearIndex < 0) { nonLinearIndex = (arr.push({ nonLinear: [] })) - 1 }
-    missingEntries.forEach(_ => arr[nonLinearIndex].nonLinear.push(_))
+    missingEntries.forEach(_ => arr[nonLinearIndex].nonLinear.push(`${_}.xhtml`))
     return arr
   }
 
@@ -123,7 +123,7 @@ class Navigation {
       let filesFromYaml = []
       try {
         if (fs.existsSync(yamlpath)) {
-          const entries = YAML.load(yamlpath)
+          const entries = YAML.load(yamlpath) || []
           const flattenedEntries = uniq(
             flattenYamlEntries(entries).map(_ => path.basename(_, '.xhtml'))
           )
@@ -133,9 +133,10 @@ class Navigation {
           filesFromYaml = { entries, flattenedEntries }
         }
       } catch (err) {
-        log.warn(`\`${this.build}.yml\` not found. Creating default file.`)
+        log.warn(`[${this.build}.yml] not found. Creating default file.`)
         createPagesMetaYaml(this.src, this.build)
       }
+
       resolve({ filesFromYaml, ...resp })
     })
   }
@@ -150,8 +151,6 @@ class Navigation {
 
   // TODO: destructure arrays in args
   compareXhtmlWithYaml([allXhtmlFiles, yamlConfigFiles]) {
-    // getAllXhtmlFiles
-    // readYamlConfigFiles
     return new Promise((resolve/* , reject */) => {
       const { filesFromSystem, fileObjects } = allXhtmlFiles
       const { filesFromYaml } = yamlConfigFiles
@@ -189,7 +188,7 @@ class Navigation {
           // flow of the book
           log.warn(`Missing entries in ${this.build}.yml files:`)
           log.warn(filediff.map(_ => `${_}.xhtml`))
-          log.warn(`Adding missing entries as \`non-linear\` content to ${this.build}.yml`)
+          log.warn(`Adding missing entries as [non-linear] content to [${this.build}.yml]`)
 
           // prefer not to mutate `pages`, but may as well keep consistent behaviour as above ...
           this.addMissingEntriesToNonLinearSection(pages, filediff)

@@ -19,7 +19,7 @@
     "import/extensions": [2, "never"],
     "import/no-extraneous-dependencies": 0,
     "max-len": [2, 100, 100, {
-      "ignoreTrailingComments": true
+      "ignoreComments": true
     }],
     "max-statements-per-line": [2, {
       "max": 2
@@ -51,9 +51,6 @@
     }],
     "strict": [0],
     "valid-jsdoc": [2, {
-      "prefer": {
-        "returns": "returns"
-      },
       "requireReturnDescription": false
     }]
   },

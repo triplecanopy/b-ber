@@ -7,9 +7,9 @@ import fs from 'fs-extra'
 import path from 'path'
 import renderLayouts from 'layouts'
 import File from 'vinyl'
-import { log } from 'bber-plugins'
 import store from 'bber-lib/store'
-import { updateStore, dist, build } from 'bber-utils'
+import { log } from 'bber-plugins'
+import { dist, build } from 'bber-utils'
 import figure from 'bber-templates/figures'
 import { page, loiLeader } from 'bber-templates/pages'
 
@@ -30,11 +30,10 @@ const createLOILeader = () =>
     }), { page }).contents.toString()
     fs.writeFile(path.join(`${output}/OPS/text/${filename}.xhtml`), markup, 'utf8', (err) => {
       if (err) { reject(err) }
-      updateStore('pages', {
+      store.add('pages', {
         filename,
-        section_title: 'List of Illustrations',
-        landmark_type: 'loi',
-        landmark_title: 'List of Illustrations'
+        title: 'List of Illustrations',
+        type: 'loi'
       })
       resolve()
     })

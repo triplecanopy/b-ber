@@ -1,7 +1,7 @@
 
 import fs from 'fs-extra'
 import path from 'path'
-import confirm from 'confirm-simple'
+import readline from 'readline'
 import { log } from 'bber-plugins'
 import { guid, src, dist } from 'bber-utils'
 
@@ -21,7 +21,7 @@ class Initialize {
 
   /**
    * @constructor
-   * @return {Object} [description]
+   * @return {Object}
    */
   constructor() {
     this.dirs = [
@@ -35,27 +35,25 @@ class Initialize {
     ]
     this.files = [{
       relpath: 'config.yml',
-      content: `---
-env: development # development | production
+      content: `env: development # development | production
 theme: default # name or path
 src: ${path.basename(this.src)}
 dist: ${path.basename(this.src).slice(1)}`
     }, {
       relpath: path.join(this.src, 'epub.yml'),
-      content: '---'
+      content: ''
     }, {
       relpath: path.join(this.src, 'mobi.yml'),
-      content: '---'
+      content: ''
     }, {
       relpath: path.join(this.src, 'sample.yml'),
-      content: '---'
+      content: ''
     }, {
       relpath: path.join(this.src, 'web.yml'),
-      content: '---'
+      content: ''
     }, {
       relpath: path.join(this.src, 'metadata.yml'),
-      content: `---
--
+      content: `-
   term: title
   value: Sample Book
   term_property: title-type
@@ -100,9 +98,8 @@ dist: ${path.basename(this.src).slice(1)}`
     }, {
       relpath: `${this.src}/_markdown/00001.md`,
       content: `---
-section_title: Chapter One
-landmark_type: bodymatter
-landmark_title: The Book
+title: Chapter One
+type: bodymatter
 ---
 `
     }]
@@ -110,7 +107,7 @@ landmark_title: The Book
 
   /**
    * [_makeDirs description]
-   * @return {Promise<Object|Error>} [description]
+   * @return {Promise<Object|Error>}
    */
   _makeDirs() {
     return new Promise((resolve0/* , reject */) => {
@@ -128,7 +125,7 @@ landmark_title: The Book
 
   /**
    * [_writeFiles description]
-   * @return {Promise<Object|Error>} [description]
+   * @return {Promise<Object|Error>}
    */
   _writeFiles() {
     return new Promise((resolve0/* , reject */) => {
@@ -146,7 +143,7 @@ landmark_title: The Book
 
   /**
    * [_writeCoverImage description]
-   * @return {Promise<Object|Error>} [description]
+   * @return {Promise<Object|Error>}
    */
   _writeCoverImage() {
     return new Promise((resolve/* , reject */) => {
@@ -160,7 +157,7 @@ landmark_title: The Book
 
   /**
    * [_removeDirs description]
-   * @return {Promise<Object|Error>} [description]
+   * @return {Promise<Object|Error>}
    */
   _removeDirs() {
     return new Promise(resolve/* , reject */ =>
@@ -174,7 +171,7 @@ landmark_title: The Book
   /**
    * [_removeConfig description]
    * @param  {Function} done [description]
-   * @return {Promise<Object>}        [description]
+   * @return {Promise<Object>}
    */
   _removeConfig(done) { // eslint-disable-line class-methods-use-this
     const configPath = path.join(process.cwd(), 'config.yml')
@@ -186,7 +183,7 @@ landmark_title: The Book
 
   /**
    * [_removeConfigFile description]
-   * @return {Promise<Object|Error>} [description]
+   * @return {Promise<Object|Error>}
    */
   _removeConfigFile() {
     // necessary to remove the config to ensure that settings aren't carried
@@ -196,13 +193,33 @@ landmark_title: The Book
     return new Promise((resolve/* , reject */) => {
       const configPath = path.join(process.cwd(), 'config.yml')
       if (fs.existsSync(configPath)) {
-        log.warn('It looks like this is an active project directory, are you sure you want to overwrite?') // eslint-disable-line max-len
+        log.warn('It looks like this is an active project directory, are you sure you want to overwrite it?') // eslint-disable-line max-len
         if (process.env.NODE_ENV === 'test') { return this._removeConfig(resolve) }
-        confirm('Overwite existing config?', (yes) => {
-          if (!yes) { process.exit(0) }
-          return this._removeConfig(resolve)
+
+        const prompt = readline.createInterface({
+          input: process.stdin,
+          output: process.stdout
         })
+
+        const confirm = (callback) => {
+          prompt.question('? Overwite existing config? (y|N) ', (_answer) => {
+            const answer = _answer.toLowerCase().trim()
+            if (answer === 'y' || answer === 'yes') {
+              prompt.close()
+              log.info('Overwriting project')
+              return this._removeConfig(resolve)
+            } else if (answer === 'n' || answer === 'no' || answer === '') {
+              log.info('Aborting')
+              return process.exit(0)
+            }
+
+            return confirm(callback)
+          })
+        }
+
+        return confirm(() => this._removeConfig(resolve))
       }
+
       return resolve()
     })
   }

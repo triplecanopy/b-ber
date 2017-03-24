@@ -63,24 +63,14 @@ const handler = (argv) => {
   const buildCmds = _buildCommands
   const buildArgs = _buildArgs(argv)
   const buildTasks = buildArgs.length ? buildArgs : !buildArgs.length && argv.d ? [] : buildCmds
-  // const sequence = ['clean', 'create', 'copy', 'sass', 'scripts', 'render', 'loi', 'inject', 'opf']
-  const sequence = ['clean']//, 'create', 'copy']//, 'sass', 'scripts', 'render', 'loi', 'inject', 'opf']
+  const sequence = ['clean', 'create', 'copy', 'sass', 'scripts', 'render', 'loi', 'inject', 'opf']
 
   const run = (tasks) => {
     const next = [tasks.shift()]
     store.update('build', next[0])
     if (next[0] === 'mobi') { next.unshift('mobiCSS') } // TODO: this should be called by `mobi` task
-    return serialize([...sequence/*, ...next*/]).then(() => {
-      if (tasks.length) {
-        console.log('running', next)
-      } else {
-        console.log('-- done')
-        setTimeout(() => {
-          console.log('---- didn\'t exit')
-          console.log(process.pid)
-          process.exit(0)
-        }, 2000)
-      }
+    return serialize([...sequence, ...next]).then(() => {
+      if (tasks.length) { run(tasks) }
     })
   }
 

@@ -1,4 +1,3 @@
----
 env: development # development | production
 theme: default # name or path
 src: _book

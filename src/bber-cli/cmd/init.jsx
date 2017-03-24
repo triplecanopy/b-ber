@@ -1,5 +1,5 @@
 
-import { init } from 'bber-output'
+import { init as Init } from 'bber-output'
 
 const command = ['init [options...]', 'i']
 const describe = 'Initalize b-ber'
@@ -24,7 +24,10 @@ const builder = yargs =>
     .alias('h', 'help')
     .usage('\nUsage: $0 init')
 
-const handler = () => new init
+const handler = () => {
+  const task = new Init()
+  return task.init()
+}
 
 export default {
   command,

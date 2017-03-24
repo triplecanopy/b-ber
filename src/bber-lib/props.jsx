@@ -76,8 +76,8 @@ class Props {
   /**
    * Test if an XHTML file is a navigation document, contains JavaScript or
    * SVG
-   * @param  {String} file File path
-   * @return {Array}      An array of dublin core media-type properties
+   * @param  {String} file  File path
+   * @return {Array}        An array of dublin core media-type properties
    */
   static testHTML(file) {
     const props = []
@@ -90,7 +90,7 @@ class Props {
   /**
    * Test if an object contains Dublin Core `term`s or `element`s
    * @param  {Object} data [description]
-   * @return {Object<Boolean>}      [description]
+   * @return {Object<Boolean>}
    */
   static testMeta(data) {
     return {
