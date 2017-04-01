@@ -51,10 +51,12 @@ export default {
 
       try {
         if (!fs.existsSync(asset)) {
-          throw new Error(`Image not found: [${asset}]`)
+          throw new Error(`
+          Image not found:
+          [${asset}]`)
         }
       } catch (err) {
-        // log.error(err)
+        log.error(err.message)
         result = htmlComment(`Image not found: ${asset}`)
         return result
       }

@@ -45,7 +45,7 @@ const inlineBlockPlugin = (md, name, options = {}) => {
     let _nextLine = state.bMarks[nextLine + 1]
     let _cap_marker = ':'
     let _cap_marker_len = 2
-    let _max_length = 500
+    let _max_length = state.eMarks[state.eMarks.length - 1]
 
     let _caption_start_pos
     let _caption_end_pos
