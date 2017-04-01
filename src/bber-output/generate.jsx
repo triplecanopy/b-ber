@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 
  /**
  * Returns an instance of the Generate class
@@ -18,29 +19,13 @@ import { orderByFileName, entries, lpad, src } from 'bber-utils'
  * @alias module:generate#Generate
  */
 class Generate {
-  get src() { // eslint-disable-line class-methods-use-this
-    return src()
-  }
-
-  /**
-   * @constructor
-   */
-  constructor() {
-    this.getFiles = Generate.prototype.constructor.getFiles.bind(this)
-    this.orderFiles = Generate.prototype.constructor.orderFiles.bind(this)
-    this.parseMeta = Generate.prototype.constructor.parseMeta.bind(this)
-    this.createFile = Generate.prototype.constructor.createFile.bind(this)
-    this.writeFile = Generate.prototype.constructor.writeFile.bind(this)
-    this.writePageMeta = Generate.prototype.constructor.writePageMeta.bind(this)
-  }
-
   /**
    * Get a list of markdown files
    * @return {Array<Object<String>>}
    */
-  static getFiles() {
+  getFiles() {
     return new Promise(resolve =>
-      fs.readdir(path.join(this.src, '_markdown'), (err, files) => {
+      fs.readdir(path.join(src(), '_markdown'), (err, files) => {
         if (err) { throw err }
         let filearr = files.map((_) => {
           if (path.basename(_).charAt(0) === '.') { return null }
@@ -57,7 +42,7 @@ class Generate {
    * @param  {Array<Object<String>>} files [description]
    * @return {Array<Object<String>>}
    */
-  static orderFiles(files) {
+  orderFiles(files) {
     return new Promise(resolve =>
       resolve(orderByFileName(files))
     )
@@ -68,7 +53,7 @@ class Generate {
    * @param  {Array} files [description]
    * @return {Object}       The array of files and their corresponding frontmatter
    */
-  static parseMeta(files) {
+  parseMeta(files) {
     return new Promise((resolve) => {
       const { title, type } = yargs.argv
       const metadata = { title, type }
@@ -82,7 +67,7 @@ class Generate {
    * @param  {Object} options.metadata  [description]
    * @return {Object} The filename, the file object, and the metadata
    */
-  static createFile({ files, metadata }) {
+  createFile({ files, metadata }) {
     let frontmatter = ''
     for (const [key, val] of entries(metadata)) {
       if (key && val) { frontmatter += `${key}: ${val}\n` }
@@ -105,10 +90,10 @@ class Generate {
    * @param  {Object} options.file  The vinyl file object
    * @return {Object}               The filename and file object
    */
-  static writeFile({ fname, file }) {
+  writeFile({ fname, file }) {
     return new Promise(resolve =>
       fs.writeFile(
-          path.join(this.src, '_markdown', fname),
+          path.join(src(), '_markdown', fname),
           String(file.contents),
           (err) => {
             if (err) { throw err }
@@ -122,20 +107,20 @@ class Generate {
    * @param  {String} options.fname   [description]
    * @return {Promise<Object|Error>}
    */
-  static writePageMeta({ fname }) {
+  writePageMeta({ fname }) {
     return new Promise((resolve, reject) => { // eslint-disable-line consistent-return
       const buildTypes = ['epub', 'mobi', 'web', 'sample']
       let type
       while ((type = buildTypes.pop())) {
-        const pages = path.join(this.src, `${type}.yml`)
+        const pages = path.join(src(), `${type}.yml`)
         let pagemeta = []
         try {
           if (fs.statSync(pages)) {
-            pagemeta = YAML.load(path.join(this.src, `${type}.yml`))
+            pagemeta = YAML.load(path.join(src(), `${type}.yml`)) || []
           }
         } catch (e) {
           log.info(`Creating ${type}.yml`)
-          fs.writeFileSync(path.join(this.src, `${type}.yml`), '---')
+          fs.writeFileSync(path.join(src(), `${type}.yml`), '---')
         }
 
         const index = pagemeta.indexOf(fname)
@@ -147,9 +132,11 @@ class Generate {
 
         // TODO: this should add the new file to <type>.yml JSON object and
         // then rewrite to disk
-        return fs.appendFile(pages, `\n- ${path.basename(fname, '.md')}.xhtml`, (err) => {
+        fs.appendFile(pages, `\n- ${path.basename(fname, '.md')}.xhtml`, (err) => { // eslint-disable-line consistent-return
           if (err) { throw err }
-          if (!buildTypes.length) { resolve({ title: fname }) }
+          if (!buildTypes.length) {
+            return resolve({ title: fname })
+          }
         })
       }
     })
@@ -160,18 +147,19 @@ class Generate {
    * @return {Promise<Object|Error>}
    */
   init() {
-    return new Promise(resolve/* , reject */ =>
-      Generate.getFiles()
-      .then(() => this.orderFiles())
-      .then(() => this.parseMeta())
-      .then(() => this.createFile())
-      .then(() => this.writeFile())
-      .then(() => this.writePageMeta())
-      .catch(err => log.error(err))
-      .then(resolve)
-    )
+    return () =>
+      new Promise(resolve/* , reject */ =>
+        this.getFiles()
+        .then(this.orderFiles)
+        .then(this.parseMeta)
+        .then(this.createFile)
+        .then(this.writeFile)
+        .then(this.writePageMeta)
+        .catch(err => log.error(err))
+        .then(resolve)
+      )
   }
 }
 
-const generate = process.env.NODE_ENV === 'test' ? Generate : new Generate().init
+const generate = process.env.NODE_ENV === 'test' ? Generate : new Generate().init()
 export default generate
