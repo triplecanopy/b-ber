@@ -20,6 +20,7 @@ yarn-error.log*
 # build directory for _book
 /book*
 /_book
+/config.yml
 
 /docs
 /coverage

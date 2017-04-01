@@ -1,15 +1,11 @@
 
 import { theme } from 'bber-lib'
+import { fail } from 'bber-cli/helpers'
 
-const command = ['theme [options]', 't']
+const command = 'theme'
 const describe = 'Select a theme for the book'
 const builder = yargs =>
   yargs
-    .fail((msg/* ,err , yargs */) => {
-      console.log(msg)
-      yargs.showHelp()
-      process.exit(0)
-    })
     .options({
       l: {
         alias: 'list',
@@ -25,8 +21,9 @@ const builder = yargs =>
     .help('h')
     .alias('h', 'help')
     .usage('\nUsage: $0 theme')
-    .demandCommand(1)
-const handler = theme
+    .fail((msg, err) => fail(msg, err, yargs))
+
+const handler = () => theme().catch(_ => _)
 
 export default {
   command,

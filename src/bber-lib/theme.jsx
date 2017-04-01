@@ -21,7 +21,9 @@ const theme = () =>
       return fs.readdir(themesDir, (err, themes) => {
         if (err) { return reject(err) }
         if (themes.length < 1) { return log.info('No themes currently available') }
-        const themeList = themes.map(_ => `- ${_}`).join('\n')
+        const themeList = themes.map(_ =>
+          _.charAt(0) === '.' ? null : `- ${_}`
+        ).filter(Boolean).join('\n')
         log.info(`\nThe following themes are available:\n${themeList}\n`)
         return resolve()
       })
@@ -48,7 +50,7 @@ const theme = () =>
       })
     }
 
-    return reject('An error occurred')
+    return reject(yargs.showHelp())
   })
 
 export default theme
