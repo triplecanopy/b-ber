@@ -1,6 +1,6 @@
 {
   "name": "bber",
-  "version": "0.1.0-alpha.4",
+  "version": "0.1.0-alpha.5",
   "description": "A command line epub maker.",
   "main": "./src/bber-cli/index.jsx",
   "scripts": {
