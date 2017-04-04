@@ -32,7 +32,7 @@ const createLOILeader = () =>
       if (err) { reject(err) }
       store.add('pages', {
         filename,
-        title: 'List of Illustrations',
+        title: 'Figures',
         type: 'loi'
       })
       resolve()

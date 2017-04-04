@@ -211,6 +211,6 @@ const stringToCharCode = (s) => {
  * @param  {String} s [description]
  * @return {String}
  */
-const htmlId = s => `_${String(s).replace(/[^0-9a-z]/, '_')}`
+const htmlId = s => `_${String(s).replace(/[^0-9a-z-]/, '_')}`
 
 export { attributes, attributesObject, attributesString, stringToCharCode, htmlId }

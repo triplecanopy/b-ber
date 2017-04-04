@@ -73,14 +73,12 @@ export default {
         attrsObject.classes = classNames
       }
 
-      store.add('images', { id, seq, ...attrsObject, ...dimensions, page, ref, caption })
+      store.add('images', { id: htmlId(id), seq, ...attrsObject, ...dimensions, page, ref, caption })
 
       result = `${comment}<div class="${attrsObject.classes}">
         <figure id="ref${htmlId(id)}">
           <a href="${page}#${htmlId(id)}">
-            <img data-caption="${caption}"
-              src="../images/${encodeURIComponent(attrsObject.source)}"
-              alt="${attrsObject.alt}"
+            <img src="../images/${encodeURIComponent(attrsObject.source)}" alt="${attrsObject.alt}"
             />
           </a>
         </figure>

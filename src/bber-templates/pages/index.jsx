@@ -47,7 +47,7 @@ const page = new File({
 })
 
 const loiLeader = () =>
-  `<section epub:type="loi" title="LIST OF ILLUSTRATIONS" class="chapter figures">
+  `<section epub:type="loi" title="Figures" class="chapter figures">
     <header>
       <h1>Figures</h1>
     </header>
