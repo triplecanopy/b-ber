@@ -7,10 +7,10 @@
 
 */
 
-import inlineBlock from 'bber-plugins/md/plugins/inline-block'
+import figure from 'bber-plugins/md/plugins/figure'
 
 export default {
-  plugin: inlineBlock,
+  plugin: figure,
   name: 'logo',
   renderer: () => ({
     marker: ':',

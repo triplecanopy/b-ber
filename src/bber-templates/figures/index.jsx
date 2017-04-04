@@ -1,8 +1,7 @@
 
+import { getImageOrientation } from 'bber-utils'
 import epub from './epub'
 import mobi from './mobi'
-
-import { getImageOrientation } from 'bber-utils'
 
 const figures = { epub, mobi }
 

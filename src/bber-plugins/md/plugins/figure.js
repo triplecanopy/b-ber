@@ -1,5 +1,5 @@
 /* eslint-disable camelcase, one-var, prefer-const, no-param-reassign, no-multi-spaces */
-const inlineBlockPlugin = (md, name, options = {}) => {
+const figurePlugin = (md, name, options = {}) => {
   const min_markers = options.minMarkers || 3
   const marker_str  = options.marker || ':'
   const marker_char = marker_str.charCodeAt(0)
@@ -119,4 +119,4 @@ const inlineBlockPlugin = (md, name, options = {}) => {
   md.renderer.rules[`container_${name}_close`] = render // not used, but keeping things consistent
 }
 
-export default inlineBlockPlugin
+export default figurePlugin

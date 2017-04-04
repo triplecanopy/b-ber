@@ -4,19 +4,20 @@ import fs from 'fs-extra'
 import store from 'bber-lib/store'
 import imgsize from 'image-size'
 import { log } from 'bber-plugins'
-import mdInline from 'bber-plugins/md/plugins/inline-block'
-import { getImageOrientation, src, htmlComment } from 'bber-utils'
+import figure from 'bber-plugins/md/plugins/figure'
+import figTmpl from 'bber-templates/figures'
+import { getImageOrientation, src, htmlComment, build } from 'bber-utils'
 import { attributesObject, htmlId } from 'bber-plugins/md/directives/helpers'
 import {
   INLINE_DIRECTIVE_MARKER,
   INLINE_DIRECTIVE_MARKER_MIN_LENGTH
 } from 'bber-shapes/directives'
 
-const imageOpenRegExp = /(image)(?::([^\s]+)(\s?.*)?)?$/
+const imageOpenRegExp = /((?:inline-)?image)(?::([^\s]+)(\s?.*)?)?$/
 let seq = 0
 
 export default {
-  plugin: mdInline,
+  plugin: figure,
   name: 'image',
   renderer: (instance, context) => ({
     marker: INLINE_DIRECTIVE_MARKER,
@@ -35,19 +36,20 @@ export default {
     },
 
     render(tokens, idx) {
-      seq += 1 // TODO: keep track of count somewhere else?
-
-      let result
-
+      const match = tokens[idx].info.trim().match(imageOpenRegExp)
+      const type = match[1]
+      const id = match[2]
       const lineNr = tokens[idx].map ? tokens[idx].map[0] : null
       const filename = `_markdown/${context._get('filename')}.md`
-      const match = tokens[idx].info.trim().match(imageOpenRegExp)
-      const id = match[2]
-      const comment = htmlComment(`START: image:${match[1]}#${htmlId(id)}; ${filename}:${lineNr}`)
-      const attrsObject = attributesObject(match[3], match[1])
-      const asset = path.join(src(), '_images', attrsObject.source)
       const children = tokens[idx].children
       const caption = children ? instance.renderInline(tokens[idx].children) : ''
+      const comment = htmlComment(`START: ${type}:${match[1]}#${htmlId(id)}; ${filename}:${lineNr}`)
+      const attrsObject = attributesObject(match[3], match[1])
+      const asset = path.join(src(), '_images', attrsObject.source)
+      const { ...dimensions } = imgsize(asset)
+      const { width, height } = dimensions
+
+      let result, page, classNames, ref, imageData
 
       try {
         if (!fs.existsSync(asset)) {
@@ -61,28 +63,38 @@ export default {
         return result
       }
 
-      const page = `loi-${seq + 1000}.xhtml`
-      const { ...dimensions } = imgsize(asset)
-      const { height, width } = dimensions
-      const classNames = [getImageOrientation(width, height), 'figure-sm'].join(' ')
-      const ref = context._get('filename')
+      switch (type) {
+        case 'image':
+          seq += 1 // TODO: keep track of count somewhere else?
 
-      if ({}.hasOwnProperty.call(attrsObject, 'classes')) {
-        attrsObject.classes += ` ${classNames}`
-      } else {
-        attrsObject.classes = classNames
+          page = `loi-${seq + 1000}.xhtml`
+          classNames = [getImageOrientation(width, height), 'figure-sm'].join(' ')
+          ref = context._get('filename')
+
+          if ({}.hasOwnProperty.call(attrsObject, 'classes')) {
+            attrsObject.classes += ` ${classNames}`
+          } else {
+            attrsObject.classes = classNames
+          }
+
+          store.add('images', { id: htmlId(id), seq, ...attrsObject, ...dimensions, page, ref, caption })
+
+          result = `${comment}<div class="${attrsObject.classes}">
+            <figure id="ref${htmlId(id)}">
+              <a href="${page}#${htmlId(id)}">
+                <img src="../images/${encodeURIComponent(attrsObject.source)}" alt="${attrsObject.alt}"
+                />
+              </a>
+            </figure>
+          </div>`
+          break
+        case 'inline-image':
+          imageData = Object.assign({}, attrsObject, { id: htmlId(id), width, height, caption, inline: true })
+          result = figTmpl(imageData, build())
+          break
+        default:
+          break
       }
-
-      store.add('images', { id: htmlId(id), seq, ...attrsObject, ...dimensions, page, ref, caption })
-
-      result = `${comment}<div class="${attrsObject.classes}">
-        <figure id="ref${htmlId(id)}">
-          <a href="${page}#${htmlId(id)}">
-            <img src="../images/${encodeURIComponent(attrsObject.source)}" alt="${attrsObject.alt}"
-            />
-          </a>
-        </figure>
-      </div>`
 
       return result
     }

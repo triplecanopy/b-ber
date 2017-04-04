@@ -41,8 +41,8 @@ const BLOCK_DIRECTIVES = union(FRONTMATTER_DIRECTIVES, BODYMATTER_DIRECTIVES, BA
 
 // inline
 const INLINE_DIRECTIVES = [
-  'image'
-  // 'image-inline' // TODO: what should output look for inline images?
+  'image',
+  'inline-image'
 ]
 
 // misc

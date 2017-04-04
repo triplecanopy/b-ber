@@ -11,14 +11,14 @@
 
 */
 
-import inlineBlock from 'bber-plugins/md/plugins/inline-block'
+import figure from 'bber-plugins/md/plugins/figure'
 import { log } from 'bber-plugins'
 
 const markerRe = /^epigraph/
 const attrsRe = /(?:(image|caption|citation)\s["]([^"]+)["])/g
 
 export default {
-  plugin: inlineBlock,
+  plugin: figure,
   name: 'epigraph',
   renderer: (instance, context) => ({
     marker: ':',
