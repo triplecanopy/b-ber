@@ -4800,10 +4800,6 @@ vinyl@^1.2.0:
     clone-stats "^0.0.1"
     replace-ext "0.0.1"
 
-webpage@^0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/webpage/-/webpage-0.3.0.tgz#15c8c99e822b499e9981ae6876539b423448b8e7"
-
 which-module@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/which-module/-/which-module-1.0.0.tgz#bba63ca861948994ff307736089e3b96026c2a4f"

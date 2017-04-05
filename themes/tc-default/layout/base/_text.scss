@@ -24,7 +24,7 @@ h1 {
 h2 {
   @include font-base;
   @include text-center;
-  @include rhythm-padding(0, 1);
+  @include rhythm-padding(0, 1, $text-sm);
   @include no-indent-follow;
   text-indent: 0;
 
@@ -32,6 +32,9 @@ h2 {
     @include tc-rhythm-sizing($text-md, $line-md);
     @include tc-rhythm-padding($text-md);
     padding:rhythm(0.5) 0 0 0;
+  }
+  * + & {
+    @include rhythm-padding(1, 1, $text-sm);
   }
 }
 

@@ -4,7 +4,7 @@ import fs from 'fs-extra'
 import Props from 'bber-lib/props'
 import store from 'bber-lib/store'
 import { isObject, isPlainObject, isArray, remove, findIndex, find } from 'lodash'
-import { opsPath, dist, build } from 'bber-utils'
+import { opsPath, dist } from 'bber-utils'
 
 const cwd = process.cwd()
 

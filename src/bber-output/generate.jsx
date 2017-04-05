@@ -120,7 +120,7 @@ class Generate {
           }
         } catch (e) {
           log.info(`Creating ${type}.yml`)
-          fs.writeFileSync(path.join(src(), `${type}.yml`), '---')
+          fs.writeFileSync(path.join(src(), `${type}.yml`))
         }
 
         const index = pagemeta.indexOf(fname)

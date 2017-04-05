@@ -33,7 +33,7 @@ const opfManifest = new File({
 
 const opfSpine = new File({
   path: 'opfSpine.tmpl',
-  contents: new Buffer('<spine toc="_toc_ncx">{% body %}</spine>')
+  contents: new Buffer('<spine toc="toc.ncx">{% body %}</spine>')
 })
 
 const opfGuide = new File({

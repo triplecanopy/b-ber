@@ -87,10 +87,7 @@ dist: ${path.basename(this.src).slice(1)}`
   value: 2017-01-01
 -
   term: identifier
-  value: ${guid()}
--
-  term: cover
-  value: cover.jpg`
+  value: ${guid()}`
     }, {
       relpath: `${this.src}/_javascripts/application.js`,
       content: 'if (console && console.log) { console.log(\'Hello World!\') }'
@@ -144,14 +141,14 @@ type: bodymatter
    * [_writeCoverImage description]
    * @return {Promise<Object|Error>}
    */
-  _writeCoverImage() {
-    return new Promise(resolve/* , reject */ =>
-      fs.writeFile(`${this.src}/_images/cover.jpg`, '', (err) => {
-        if (err) { throw err }
-        resolve()
-      })
-    )
-  }
+  // _writeCoverImage() {
+  //   return new Promise(resolve/* , reject */ =>
+  //     fs.writeFile(`${this.src}/_images/cover.jpg`, '', (err) => {
+  //       if (err) { throw err }
+  //       resolve()
+  //     })
+  //   )
+  // }
 
   /**
    * [_removeDirs description]
@@ -190,7 +187,8 @@ type: bodymatter
     // project directory, and a prompt to remove the existing data?
     return new Promise((resolve/* , reject */) => {
       const configPath = path.join(process.cwd(), 'config.yml')
-      if (fs.existsSync(configPath)) {
+      if (false) {
+      // if (fs.existsSync(configPath)) {
         log.warn('It looks like this is an active project directory, are you sure you want to overwrite it?') // eslint-disable-line max-len
         if (process.env.NODE_ENV === 'test') { return this._removeConfig(resolve) }
 
@@ -232,8 +230,9 @@ type: bodymatter
       .then(() => this._removeDirs())
       .then(() => this._makeDirs())
       .then(() => this._writeFiles())
-      .then(() => this._writeCoverImage())
+      // .then(() => this._writeCoverImage())
       .then(() => cover.write())
+      .then(() => cover.generate())
       .catch(err => log.error(err))
       .then(resolve)
     )

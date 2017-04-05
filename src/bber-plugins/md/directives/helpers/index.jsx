@@ -155,15 +155,25 @@ const _extendWithDefaults = (obj, name) => {
 
 /**
  * Create an object from attributes in the given directive
- * @param  {String} str  [description]
- * @param  {String} type [description]
+ * @param  {String} str     [description]
+ * @param  {String} type    [description]
+ * @param  {Object} context Markdown file where attributes method was called
  * @return {String}
  */
-const attributesObject = (str, type) => {
+const attributesObject = (str, type, context) => {
   if (!str || typeof str !== 'string') { throw new TypeError('No directive provided') }
   const body = str.trim()
   const attrsArray = _extractAttrs(body)
-  const attrsObject = _buildAttrObjects(attrsArray)
+  let attrsObject
+  try {
+    attrsObject = _buildAttrObjects(attrsArray)
+  } catch (err) {
+    const { filename, lineNr } = context
+    log.error(`
+      Invalid directive:
+      ${filename}:${lineNr}`)
+    process.exit(1)
+  }
 
   const illegalAttrs = []
   for (const [k] of entries(attrsObject)) {
@@ -187,11 +197,12 @@ const attributesString = obj => _buildAttrString(obj)
 
 /**
  * Convenience wrapper for creating attributes: String -> Object -> String
- * @param  {String} str  [description]
- * @param  {String} type [description]
+ * @param  {String} str     [description]
+ * @param  {String} type    [description]
+ * @param  {Object} context Markdown file where attributes method was called
  * @return {String}
  */
-const attributes = (str, type) => _buildAttrString(attributesObject(str, type))
+const attributes = (str, type, context) => _buildAttrString(attributesObject(str, type, context))
 
 /**
  * [description]

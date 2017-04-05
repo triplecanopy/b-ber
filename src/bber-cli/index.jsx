@@ -8,7 +8,6 @@
 
 import yargs from 'yargs'
 import loader from 'bber-lib/loader'
-import store from 'bber-lib/store'
 import * as commands from 'bber-cli/cmd'
 
 /**

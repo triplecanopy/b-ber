@@ -39,12 +39,12 @@ export default {
       const match = tokens[idx].info.trim().match(imageOpenRegExp)
       const type = match[1]
       const id = match[2]
-      const lineNr = tokens[idx].map ? tokens[idx].map[0] : null
       const filename = `_markdown/${context._get('filename')}.md`
+      const lineNr = tokens[idx].map ? tokens[idx].map[0] : null
       const children = tokens[idx].children
       const caption = children ? instance.renderInline(tokens[idx].children) : ''
       const comment = htmlComment(`START: ${type}:${match[1]}#${htmlId(id)}; ${filename}:${lineNr}`)
-      const attrsObject = attributesObject(match[3], match[1])
+      const attrsObject = attributesObject(match[3], match[1], { filename, lineNr })
       const asset = path.join(src(), '_images', attrsObject.source)
       const { ...dimensions } = imgsize(asset)
       const { width, height } = dimensions

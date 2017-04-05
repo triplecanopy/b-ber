@@ -10,10 +10,9 @@ import renderLayouts from 'layouts'
 import path from 'path'
 import File from 'vinyl'
 import rrdir from 'recursive-readdir'
-import YAML from 'yamljs'
 import { log } from 'bber-plugins'
 import * as tmpl from 'bber-templates'
-import { cjoin, src, dist, version } from 'bber-utils'
+import { cjoin, src, dist, version, metadata } from 'bber-utils'
 import { pathInfoFromFiles } from './helpers'
 
 /**
@@ -41,16 +40,14 @@ class ManifestAndMetadata {
   }
 
   /**
-   * [loadMetadataFromYAML description]
+   * [loadMetadata description]
    * @return {Object<Promise>}
    */
-  loadMetadataFromYAML() {
-    return new Promise(resolve/* , reject */ =>
-      YAML.load(path.join(this.src, 'metadata.yml'), (resp) => {
-        this.bookmeta = resp
-        resolve()
-      })
-    )
+  loadMetadata() {
+    return new Promise((resolve/* , reject */) => {
+      this.bookmeta = metadata()
+      resolve()
+    })
   }
 
   /**
@@ -102,7 +99,7 @@ class ManifestAndMetadata {
    */
   static createManifestAndMetadataXML(resp) {
     return new Promise((resolve/* , reject */) => {
-      const metadata = renderLayouts(new File({
+      const _metadata = renderLayouts(new File({
         path: './.tmp',
         layout: 'opfMetadata',
         contents: new Buffer(resp.bookmeta.join(''))
@@ -114,7 +111,7 @@ class ManifestAndMetadata {
         contents: new Buffer(cjoin(resp.manifest))
       }), tmpl.opf).contents.toString()
 
-      resolve({ metadata, manifest })
+      resolve({ metadata: _metadata, manifest })
     })
   }
 
@@ -124,8 +121,8 @@ class ManifestAndMetadata {
    */
   init() {
     return new Promise(resolve/* , reject */ =>
-      // get the book metadata from yaml file
-      this.loadMetadataFromYAML()
+      // get the book metadata from store or yaml file
+      this.loadMetadata()
 
       // get lists of files to include in the `content.opf`
       .then(() => this.createManifestObjectFromAssets())

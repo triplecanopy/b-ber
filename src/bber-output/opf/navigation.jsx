@@ -63,34 +63,35 @@ class Navigation {
    * Remove the `toc.xhtml` and `toc.ncx` from the output directory
    * @return {Promise<Object|Error>}
    */
-  unlinkExistingNavDocuments() {
-    return new Promise(resolve/* , reject */ =>
-      this.navdocs.forEach((file, idx) =>
-        fs.remove(
-          path.join(this.dist, 'OPS', file), (err1) => {
-            if (err1) { throw err1 }
-            return fs.writeFile(
-              path.join(this.dist, 'OPS', file), '', (err2) => {
-                if (err2) { throw err2 }
-                if (idx === this.navdocs.length - 1) { resolve() }
-              }
-            )
+  createEmptyNavDocuments() {
+    return new Promise(resolve =>
+      this.navdocs.forEach((_, i) =>
+        fs.writeFile(path.join(this.dist, 'OPS', _), '', (err) => {
+          if (err) { throw err }
+          if (i === this.navdocs.length - 1) {
+            return resolve()
           }
-        )
+        })
       )
     )
-  }
 
-  /**
-   * Ensure build variables are set before execution
-   * @return {Promise<Object|Error>}
-   */
-  // initialize = () => {
-  //   input = src()
-  //   this.dist = dist()
-  //   buildType = build()
-  //   return Promise.resolve()
-  // }
+    // return Promise.resolve()
+    // return new Promise(resolve/* , reject */ =>
+    //   this.navdocs.forEach((file, idx) =>
+    //     fs.remove(
+    //       path.join(this.dist, 'OPS', file), (err1) => {
+    //         if (err1) { throw err1 }
+    //         return fs.writeFile(
+    //           path.join(this.dist, 'OPS', file), '', (err2) => {
+    //             if (err2) { throw err2 }
+    //             if (idx === this.navdocs.length - 1) { resolve() }
+    //           }
+    //         )
+    //       }
+    //     )
+    //   )
+    // )
+  }
 
   /**
    * Retrieve a list of all XHTML files in the output directory
@@ -125,9 +126,7 @@ class Navigation {
       try {
         if (fs.existsSync(yamlpath)) {
           const entries = YAML.load(yamlpath) || []
-          const flattenedEntries = uniq(
-            flattenYamlEntries(entries).map(_ => path.basename(_, '.xhtml'))
-          )
+          const flattenedEntries = uniq(flattenYamlEntries(entries).map(_ => path.basename(_, '.xhtml'))) // eslint-disable-line max-len
 
           // we need both `flattenedEntries` for comparison, and `entries` which
           // contains page hierarchy
@@ -155,8 +154,6 @@ class Navigation {
    * @param  {Array} filesFromYaml   Entries in the YAML manifest
    * @return {Promise<Object<Array>|Error>}
    */
-
-  // TODO: destructure arrays in args
   compareXhtmlWithYaml([allXhtmlFiles, yamlConfigFiles]) {
     return new Promise((resolve/* , reject */) => {
       const { filesFromSystem, fileObjects } = allXhtmlFiles
@@ -238,8 +235,6 @@ class Navigation {
 
   createTocStringsFromTemplate({ pages, ...args }) {
     return new Promise((resolve/* , reject */) => {
-      // TODO: this should use the `fileObjects` object from `args` to build the
-      // template
       const strings = {}
       const linearContent = nestedLinearContent(pages)
       const tocObjects = buildNavigationObjects(linearContent, this.dist)
@@ -259,8 +254,6 @@ class Navigation {
 
   createNcxStringsFromTemplate({ pages, ...args }) {
     return new Promise((resolve/* , reject */) => {
-      // TODO: this should use the `fileObjects` object from `args` to build the
-      // template
       const strings = {}
       const linearContent = nestedLinearContent(pages)
       const ncxObjects = buildNavigationObjects(linearContent, this.dist)
@@ -365,7 +358,7 @@ class Navigation {
    */
   init() {
     return new Promise(resolve/* , reject */ =>
-      this.unlinkExistingNavDocuments()
+      this.createEmptyNavDocuments()
       .then(resp => promiseAll([
         this.getAllXhtmlFiles(resp),
         this.readYamlConfigFiles(resp)
@@ -388,7 +381,6 @@ class Navigation {
       // merge the values from the arrays returned above and pass the response
       // along to write the `content.opf`
       .then(resp => this.normalizeResponseObject(resp))
-      // .then(createNavigationXML)
       .catch(err => log.error(err))
       .then(resolve)
     )

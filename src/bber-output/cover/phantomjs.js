@@ -1,12 +1,20 @@
+/* globals document, phantom */
+/* eslint-disable no-var, prefer-arrow-callback, import/no-unresolved, vars-on-top */
 var system = require('system')
-var args = system.args
 var page = require('webpage').create()
 
-page.viewportSize = { width: 600, height: 800 }
-page.content = args[1]
-const outFile = args[2]
+var args = system.args
+var outFile = args[2]
 
-page.evaluate(function () {
+page.content = args[1]
+page.viewportSize = { width: 600, height: 800 }
+
+page.settings.resourceTimeout = 1
+page.settings.javascriptEnabled = false
+page.settings.loadImages = false
+page.settings.webSecurityEnabled = false
+
+page.evaluate(function evaluate() {
   var body = document.body
   var spans = document.getElementsByTagName('span')
 
@@ -23,4 +31,4 @@ page.evaluate(function () {
 })
 
 page.render(outFile)
-phantom.exit()
+phantom.exit(0)

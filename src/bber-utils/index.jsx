@@ -51,8 +51,10 @@ const cjoin = arr =>
  * @param  {String} str [description]
  * @return {String}
  */
+
+// https://www.w3.org/TR/xml-names/#Conformance
 const fileId = str =>
-  '_'.concat(str.replace(/[^0-9a-z]/gi, '_'))
+  str.replace(/:/g, '_').replace(/^(\d)/, '_$1').replace(/[\s]+/g, '_')
 
 /**
  * Create a GUID
@@ -179,28 +181,30 @@ const entries = function* entries(obj) {
 }
 
 
-// getters
+// getters we need to make sure that `store` and `store.bber` have been
+// instantiated before attempting to return values. we check if the value
+// exists in memory in the getters below, and fallback to loading the config
+// if not.
 
 /**
  * [description]
  * @param  {String} val [description]
  * @return {*}
  */
-const getConfigValue = val =>
-  loader(instance => instance._config[val])
+const getConfigValue = (val) => {
+  if ({}.hasOwnProperty.call(store.bber, val)) { return store.bber[val] }
+  return loader(instance => instance._config[val])
+}
 
 /**
  * [description]
  * @param  {String} key [description]
  * @return {*}
  */
-const getConfigObject = key =>
-  loader(instance => instance[`_${key}`])
-
-
-// TODO: we need to make sure that `store` and `store.bber` have been
-// instantiated, can probably just do this by wrapping them in a check and
-// falling back to the `loader` method
+const getConfigObject = (key) => {
+  if ({}.hasOwnProperty.call(store.bber, key)) { return store.bber[key] }
+  return loader(instance => instance[`_${key}`])
+}
 
 /**
  * [description]

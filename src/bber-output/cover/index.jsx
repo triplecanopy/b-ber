@@ -2,10 +2,14 @@ import fs from 'fs-extra'
 import path from 'path'
 import YAML from 'yamljs'
 import { find } from 'lodash'
-import phantomjs from 'phantomjs-prebuilt'
 import childProcess from 'child_process'
-import { entries, src, version } from 'bber-utils'
+import phantomjs from 'phantomjs-prebuilt'
 import { log } from 'bber-plugins'
+import store from 'bber-lib/store'
+import { entries, src, version, guid, rpad, hrtimeformat } from 'bber-utils'
+
+let seq
+let diff
 
 class Cover {
   constructor() {
@@ -16,12 +20,34 @@ class Cover {
       identifier: '',
       bberVersion: ''
     }
+    this.coverPrefix = '__bber_cover__'
     this.args = [path.join(__dirname, 'phantomjs.js')]
   }
-  write() {
+
+  removeDefaultCovers() {
+    return new Promise((resolve, reject) => {
+      const imageDir = path.join(src(), '_images')
+      return fs.readdir(imageDir, (err0, files) => {
+        if (err0) {
+          throw err0
+        }
+        const oldCovers = files.filter(_ => path.basename(_).match(new RegExp(this.coverPrefix)))
+        if (!oldCovers.length) { return resolve() }
+        return oldCovers.forEach(_ =>
+          fs.remove(path.join(imageDir, _), (err1) => {
+            if (err1) { reject(err1) }
+            return resolve()
+          })
+        )
+      })
+    })
+  }
+
+  create() {
+    seq = process.hrtime()
+    const fileName = `${this.coverPrefix}${guid()}.jpg`
+    const outFile = path.join(src(), '_images', fileName)
     let data
-    let coverImage
-    let outFile
 
     try {
       data = YAML.load(path.join(src(), 'metadata.yml'))
@@ -30,21 +56,8 @@ class Cover {
       process.exit(1)
     }
 
-    try {
-      if ((coverImage = find(data, { term: 'cover' }))) {
-        try {
-          outFile = path.join(src(), '_images', coverImage.value)
-          if (!fs.existsSync(outFile)) {
-            throw new Error(`ENOENT: [${outFile}] not found`)
-          }
-        } catch (err1) {
-          log.error(err1)
-          process.exit(1)
-        }
-      }
-    } catch (err0) {
-      log.error(err0)
-      process.exit(1)
+    if (find(data, { term: 'cover' }) !== undefined) {
+      return Promise.resolve()
     }
 
     for (const [k] of entries(this.metadata)) {
@@ -57,18 +70,18 @@ class Cover {
     this.metadata.bberVersion = version()
     this.metadata['date-modified'] = new Date()
 
+    store.bber.metadata.push({ term: 'cover', value: fileName })
+
     let content = '<html><body>'
-    content = `<h1>${this.metadata.title}</h1>`
+    content += `<h1>${this.metadata.title}</h1>`
     content += `<p><span>Creator</span>${this.metadata.creator}</p>`
     content += `<p><span>Date Modified</span>${this.metadata['date-modified']}</p>`
-    content += `<p><span>ID</span>${this.metadata.identifier}</p>`
+    content += `<p><span>Identifier</span>${this.metadata.identifier}</p>`
     content += `<p><span>b-ber version</span>${this.metadata.bberVersion}</p>`
     content += '</body></html>'
 
-    this.args.push(content)
-    this.args.push(outFile)
-
-    this.generate()
+    this.args.push(content, outFile)
+    return this.removeDefaultCovers().then(() => this.generate())
   }
 
   generate() {
@@ -77,7 +90,9 @@ class Cover {
         if (err) { console.error(err) }
         if (stderr) { console.error(stderr) }
         if (stdout) { console.log(stdout) }
-        resolve()
+        diff = process.hrtime(seq)
+        log.info(`Resolved ${rpad('cover', ' ', 8)} ${hrtimeformat(diff)}`)
+        return resolve()
       })
     )
   }

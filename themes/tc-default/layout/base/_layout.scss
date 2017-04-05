@@ -5,12 +5,10 @@ hr {
   height: 1px;
   width: 100%;
   background-color: $black;
+  border: 0;
   @include no-indent-follow;
   @include no-top-padding-element-follows;
 }
-
-
-
 
 // tc only
 section.colophon,

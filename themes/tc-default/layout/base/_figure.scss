@@ -33,7 +33,8 @@
     display: block;
     margin:0 auto;
   }
-  &.landscape {
+  &.landscape,
+  &.square {
     padding-top:1.35em;
     padding-bottom:1.23em;
     padding-left:0;
@@ -43,7 +44,8 @@
       height: 4.3em; // 108px
     }
   }
-  &.portrait {
+  &.portrait,
+  &.portraitLong {
     padding-top:1.35em;
     padding-bottom:1.23em;
     padding-left:0;

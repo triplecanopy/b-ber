@@ -59,7 +59,7 @@ const stylesheet = () =>
       if (fs.statSync(themeSCSS)) {
         return fs.readFile(themeSCSS, (err, buffer) => {
           if (err) { throw err }
-          log.info(`Using theme ${themeName}`)
+          log.info(`Using theme [${themeName}]`)
           return resolve(buffer)
         })
       }

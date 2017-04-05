@@ -79,7 +79,7 @@ export default {
           id = open[2] // validated above
           startComment = htmlComment(`START: section:${open[1]}#${htmlId(id)}; ${filename}:${lineNr}`)
           if (open[3]) { // has attributes
-            attrs = attributes(open[3], open[1])
+            attrs = attributes(open[3], open[1], { filename, lineNr })
             result = `${startComment}<section id="${htmlId(open[2])}"${attrs}>`
           } else { // only id
             result = `${startComment}<section id="${open[2]}">`

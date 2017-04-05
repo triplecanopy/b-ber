@@ -18,7 +18,7 @@ let citation = ''
 export default {
   plugin: section,
   name: 'pullQuote',
-  renderer: instance/* , context */ => ({
+  renderer: (instance, context) => ({
     marker: BLOCK_DIRECTIVE_MARKER,
     minMarkers: BLOCK_DIRECTIVE_MARKER_MIN_LENGTH,
 
@@ -57,6 +57,8 @@ export default {
 
     render(tokens, idx) {
       const { escapeHtml } = instance.utils
+      const filename = `_markdown/${context._get('filename')}.md`
+      const lineNr = tokens[idx].map ? tokens[idx].map[0] : null
 
       let result = ''
       let id
@@ -69,7 +71,7 @@ export default {
         const close = tokens[idx].info.trim().match(containerCloseRegExp)
 
         if (open) {
-          const attrsObject = attributesObject(open[3], open[1])
+          const attrsObject = attributesObject(open[3], open[1], { filename, lineNr })
 
           if ({}.hasOwnProperty.call(attrsObject, 'classes')) {
             attrsObject.classes = `pull-quote ${attrsObject.classes}`
