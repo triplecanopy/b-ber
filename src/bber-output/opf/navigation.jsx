@@ -28,7 +28,8 @@ import { opfGuide, opfSpine, guideItems, spineItems } from 'bber-templates/opf'
 
 // helpers
 import { pathInfoFromFiles, flattenYamlEntries, removeNestedArrayItem,
-  createPagesMetaYaml, nestedLinearContent, buildNavigationObjects } from 'bber-output/opf/helpers'
+  createPagesMetaYaml, nestedLinearContent, buildNavigationObjects,
+  sortNavigationObjects } from 'bber-output/opf/helpers'
 
 /**
  * @alias module:navigation#Navigation
@@ -131,10 +132,16 @@ class Navigation {
           // we need both `flattenedEntries` for comparison, and `entries` which
           // contains page hierarchy
           filesFromYaml = { entries, flattenedEntries }
+        } else {
+          throw new Error(`[${this.build}.yml] not found. Creating default file.`)
         }
       } catch (err) {
-        log.warn(`[${this.build}.yml] not found. Creating default file.`)
-        createPagesMetaYaml(this.src, this.build)
+        if (err.message.match(/Creating default file/)) {
+          log.warn(err.message)
+          createPagesMetaYaml(this.src, this.build)
+        } else {
+          log.error(err)
+        }
       }
 
       resolve({ filesFromYaml, ...resp })
@@ -274,8 +281,8 @@ class Navigation {
   createGuideStringsFromTemplate({ flow, fileObjects, ...args }) { // eslint-disable-line class-methods-use-this
     return new Promise((resolve/* , reject */) => {
       const strings = {}
-      // TODO: `fileObjects` should be sorted to match `flow`
-      const guideXML = guideItems(fileObjects)
+      const orderedFileObjects = sortNavigationObjects(flow, fileObjects)
+      const guideXML = guideItems(orderedFileObjects)
 
       strings.guide = renderLayouts(new File({
         path: './.tmp',
@@ -292,9 +299,8 @@ class Navigation {
   createSpineStringsFromTemplate({ flow, fileObjects, ...args }) { // eslint-disable-line class-methods-use-this
     return new Promise((resolve/* , reject */) => {
       const strings = {}
-      // TODO: `fileObjects` should be sorted to match `flow`. also, non-linear
-      // content needs to be fed into the templating engine
-      const spineXML = spineItems(fileObjects)
+      const orderedFileObjects = sortNavigationObjects(flow, fileObjects)
+      const spineXML = spineItems(orderedFileObjects)
 
       strings.spine = renderLayouts(new File({
         path: './.tmp',
@@ -352,19 +358,6 @@ class Navigation {
       resolve(normalizedResponse)
     })
   }
-
-  /**
-   * Create string representations of navigation data to inject into the
-   * `content.opf`
-   * @param  {Object} args
-   * @return {String}
-   */
-  // const createNavigationXML = ({ strings }) =>
-  //   new Promise((resolve, reject) => {
-  //     const { spine, guide } = strings
-  //     const navigationXML = `${spine}\n${guide}`
-  //     resolve(navigationXML)
-  //   })
 
   /**
    * Initialize promise chain to build ebook navigation structure

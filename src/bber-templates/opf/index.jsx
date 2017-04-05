@@ -62,7 +62,7 @@ const spineItems = arr =>
   arr.map((_) => {
     let res = ''
     if (mime.lookup(_.rootPath) === 'text/html' || mime.lookup(_.rootPath) === 'application/xhtml+xml') {
-      res = `<itemref idref="${fileId(_.name)}" linear="yes"/>`
+      res = `\n<itemref idref="${fileId(_.name)}" linear="yes"/>` // TODO: should set linear to yes/no here
     }
     return res
   }).join('')
@@ -73,7 +73,7 @@ const guideItems = arr =>
     if (mime.lookup(_.rootPath) === 'text/html' || mime.lookup(_.rootPath) === 'application/xhtml+xml') {
       if (getFrontmatter(_, 'type')) {
         item = [
-          '<reference',
+          '\n<reference',
           ` type="${getFrontmatter(_, 'type')}"`,
           ` title="${getFrontmatter(_, 'title')}"`,
           ` href="${encodeURI(_.opsPath)}"/>`

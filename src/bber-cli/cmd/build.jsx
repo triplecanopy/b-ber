@@ -2,7 +2,10 @@
 import { pick, pickBy, identity, keys } from 'lodash'
 import { serialize } from 'bber-lib/async'
 import store from 'bber-lib/store'
+import { env } from 'bber-utils'
 
+import cover from 'bber-output/cover'
+// cover.write()
 
 const _buildCommands = ['epub', 'mobi', 'pdf', 'web', 'sample']
 const _buildArgs = args => keys(pickBy(pick(args, _buildCommands), identity))
@@ -74,6 +77,10 @@ const handler = (argv) => {
     })
   }
 
+  // this takes a while so call it async. also, there should be an option to
+  // disable in case users would like to not have the cover image overwritten
+  // on build
+  if (env() === 'development') { cover.write() }
   return run(buildTasks)
 }
 

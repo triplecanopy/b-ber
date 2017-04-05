@@ -47,8 +47,8 @@ const navPoint = (list) => {
   let i = 0
   function render(arr) {
     return arr.map((_, j) => {
-      i += 1
       if (!_.opsPath) { return '' }
+      i += 1
       return `
         <navPoint id="navPoint-${i}" playOrder="${i}">
         <navLabel><text>${_.title || _.name}</text></navLabel>

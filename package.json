@@ -51,11 +51,13 @@
     "node-sass": "^3.13.0",
     "nodemon": "^1.11.0",
     "opn": "^4.0.2",
+    "phantomjs-prebuilt": "^2.1.14",
     "postcss": "^5.2.6",
     "recursive-readdir": "^2.1.0",
     "serve-index": "^1.8.0",
-    "sinon": "^2.0.0",
+    "sinon": "^2.1.0",
     "vinyl": "^1.2.0",
+    "webpage": "^0.3.0",
     "xml2js": "^0.4.17",
     "yamljs": "^0.2.8",
     "yargs": "^6.6.0"
@@ -87,7 +89,7 @@
     "jsdoc-strip-async-await": "^0.1.0",
     "minami": "^1.1.1",
     "mocha": "^3.2.0",
-    "sinon-chai": "^2.8.0"
+    "sinon-chai": "^2.9.0"
   },
   "engines": {
     "node": ">=5"

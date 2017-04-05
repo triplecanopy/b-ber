@@ -18,7 +18,7 @@ const loader = (callback) => {
   config.loadSettings()
   config.loadMetadata()
   const { bber } = config
-  config._config.env = process.env.NODE_ENV
+  config._config.env = process.env.NODE_ENV || config._config.env
   store.merge('bber', bber)
   return callback && typeof callback === 'function' ? callback(config) : config
 }

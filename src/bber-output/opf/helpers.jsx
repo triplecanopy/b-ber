@@ -1,9 +1,10 @@
 
 import path from 'path'
 import fs from 'fs-extra'
+import Props from 'bber-lib/props'
 import store from 'bber-lib/store'
 import { isObject, isPlainObject, isArray, remove, findIndex, find } from 'lodash'
-import { opsPath, dist } from 'bber-utils'
+import { opsPath, dist, build } from 'bber-utils'
 
 const cwd = process.cwd()
 
@@ -67,7 +68,7 @@ const buildNavigationObjects = (data, dest, result = []) => {
         opsPath: path.resolve(`/${textPath}/${_}`),
         extension: path.extname(_),
         title: ref ? (ref.title || '') : '',
-        type: ref ? (ref.type || '') : '',
+        type: ref ? (ref.type || '') : ''
       })
     }
   })
@@ -82,6 +83,17 @@ const nestedLinearContent = (pages) => {
   return _pages
 }
 
+const sortNavigationObjects = (flow, fileObjects) => {
+  const result = []
+  const files = fileObjects.filter(_ => Props.isHTML(_))
+  result.length = files.length
+  files.forEach((_) => {
+    const index = flow.indexOf(path.basename(_.name, _.extension))
+    if (index > -1) { result[index] = _ }
+  })
+  return result
+}
 
 export { pathInfoFromFiles, flattenYamlEntries, removeNestedArrayItem,
-  createPagesMetaYaml, buildNavigationObjects, nestedLinearContent }
+  createPagesMetaYaml, buildNavigationObjects, nestedLinearContent,
+  sortNavigationObjects }
