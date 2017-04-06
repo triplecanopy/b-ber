@@ -50,10 +50,10 @@ See the [wiki](https://github.com/triplecanopy/b-ber-creator/wiki/CLI-Command-Li
 
 ## Commands via `bber`
 
-Run CLI commnads with `bber` rather than `npm`. The `bber` command requires transpiled JSX in the `dist` directory during pre-production phases.
+Run CLI commnads with `bber` rather than `npm`. The `bber` command requires transpiled ES6 in the `dist` directory during pre-production phases.
 
 ```bash
-$ npm run build   # transpile JSX
+$ npm run build   # transpile ES6
 $ npm link        # create simlink to bber/bin/cli
 $ bber init       # `bber` is now available
 ```

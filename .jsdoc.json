@@ -5,12 +5,12 @@
   },
   "source": {
     "include": ["src", "package.json", "README.md"],
-    "includePattern": ".jsx$",
+    "includePattern": ".es6$",
     "excludePattern": "(node_modules/|docs)"
   },
   "plugins": [
     "node_modules/jsdoc/plugins/markdown",
-    "node_modules/jsdoc-strip-async-await" // until jsdoc supports async/await
+    "node_modules/jsdoc-strip-async-await"
   ],
   "templates": {
     "cleverLinks": false,

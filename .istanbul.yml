@@ -1,6 +1,6 @@
 instrumentation:
     extensions:
-        - .jsx
+        - .es6
     excludes:
         - '**/__tests__/**'
     embed-source: false

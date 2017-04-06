@@ -61,7 +61,7 @@ const createAssets = () => {
   fs.writeFileSync(files.metadata, strings.metadata)
   fs.writeFileSync(files.build, strings.build)
 
-  // add entries to store so that they're available in `navigation.jsx`
+  // add entries to store so that they're available in `navigation.es6`
 
   return true
 }

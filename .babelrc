@@ -12,6 +12,7 @@
         "bber-shapes": "./bber-shapes",
         "bber-templates": "./bber-templates",
         "bber-utils": "./bber-utils",
+        "vendor": "./vendor"
       }
     }]
   ],

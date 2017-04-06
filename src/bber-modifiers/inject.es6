@@ -1,0 +1,180 @@
+
+/**
+ * @module inject
+ */
+
+import Promise from 'vendor/Zousan'
+import fs from 'fs-extra'
+import path from 'path'
+import File from 'vinyl'
+
+import { log } from 'bber-plugins'
+import { scriptTag, stylesheetTag } from 'bber-templates'
+import { dist } from 'bber-utils'
+
+let output
+const initialize = () => {
+  output = dist()
+}
+
+/**
+ * RegExp tokens to begin parsing
+ * @type {Object<Object>}
+ */
+const startTags = {
+  javascripts: new RegExp('<!-- inject:js -->', 'ig'),
+  stylesheets: new RegExp('<!-- inject:css -->', 'ig')
+}
+
+/**
+ * RegExp tokens to end parsing
+ * @type {Object<Object>}
+ */
+const endTags = {
+  javascripts: new RegExp('<!-- end:js -->', 'ig'),
+  stylesheets: new RegExp('<!-- end:css -->', 'ig')
+}
+
+/**
+ * Get the contents of the output directory
+ * @param {String} dirpath Directory path
+ * @return {Array<String>}
+ */
+const getDirContents = dirpath =>
+  new Promise(resolve =>
+    fs.readdir(dirpath, (err, files) => {
+      if (err) { throw err }
+      if (!files) { throw new Error(`No files found in [${path.basename(dirpath)}]`) }
+      resolve(files)
+    }))
+
+/**
+ * Get the contents of a file
+ * @param  {String} source Path to the source file
+ * @return {Object}        Vinyl file object
+ */
+const getContents = source =>
+  new Promise(resolve =>
+    fs.readFile(path.join(output, 'OPS/text', source), (err, data) => {
+      if (err) { throw err }
+      resolve(new File({ contents: new Buffer(data) }))
+    })
+  )
+
+/**
+ * Replace the contents of the RegExp tokens with asset paths
+ * @param  {Array} files Files to inject
+ * @return {Array}
+ * @throws {Error} If a file does not have a .js or .css extension
+ */
+const templateify = files =>
+  files.map((file) => {
+    switch (path.extname(file).toLowerCase()) {
+      case '.js':
+        return scriptTag.replace(/\{% body %\}/, `../javascripts/${file}`)
+      case '.css':
+        return stylesheetTag.replace(/\{% body %\}/, `../stylesheets/${file}`)
+      default:
+        throw new Error(`Unsupported filetype: ${file}`)
+    }
+  })
+
+/**
+ * Remove leading whitespace from a string
+ * @param  {String} str String to trim
+ * @return {String}
+ */
+const getLeadingWhitespace = str => str.match(/^\s*/)[0]
+
+/**
+ * Search and replace generator
+ * @param {Object} re   Regular expression
+ * @param {String} str  String to search
+ * @return {Iterable<Array>}
+ */
+function* matchIterator(re, str) {
+  let match
+  while ((match = re.exec(str)) !== null) {
+    yield match
+  }
+}
+
+const injectTags = (content, args) => {
+  const { data, start, stop } = args
+  const toInject = templateify(data.slice())
+  let result = ''
+  let endMatch
+
+  for (const startMatch of matchIterator(start, content)) {
+    stop.lastIndex = start.lastIndex
+    endMatch = stop.exec(content)
+
+    if (!endMatch) { throw new Error(`Missing end tag for start tag: ${startMatch[0]}`) }
+
+    const previousInnerContent = content.substring(start.lastIndex, endMatch.index)
+    const indent = getLeadingWhitespace(previousInnerContent)
+
+    toInject.unshift(startMatch[0])
+    toInject.push(endMatch[0])
+
+    result = [
+      content.slice(0, startMatch.index),
+      toInject.join(indent),
+      content.slice(stop.lastIndex)
+    ].join('')
+  }
+
+  return result
+}
+
+const write = (location, data) =>
+  new Promise(resolve =>
+    fs.writeFile(location, data, (err) => {
+      if (err) { throw err }
+      resolve()
+    })
+  )
+
+const promiseToReplace = (prop, data, source, file) =>
+  new Promise(async (resolve) => {
+    const stream = file || await getContents(source)
+    const start = startTags[prop]
+    const stop = endTags[prop]
+    const result = new File({
+      path: source,
+      contents: new Buffer(
+        injectTags(
+          stream.contents.toString('utf8'),
+          { start, stop, data }
+        )
+      )
+    })
+
+    resolve(result)
+  })
+
+const mapSources = (stylesheets, javascripts, sources) =>
+  new Promise((resolve) => {
+    sources.map(source =>
+      promiseToReplace('stylesheets', stylesheets, source)
+      .then(file => promiseToReplace('javascripts', javascripts, source, file))
+      .then(file => write(
+          path.join(output, 'OPS/text', source),
+          file.contents.toString('utf8')))
+      .catch(err => log.error(err))
+      .then(resolve)
+    )
+  })
+
+const inject = () =>
+  new Promise(async (resolve) => {
+    await initialize()
+    const textSources = await getDirContents(`${output}/OPS/text/`)
+    const stylesheets = await getDirContents(`${output}/OPS/stylesheets/`)
+    const javascripts = await getDirContents(`${output}/OPS/javascripts/`)
+    mapSources(stylesheets, javascripts, textSources)
+    .catch(err => log.error(err))
+    .then(resolve)
+  })
+
+export default inject
