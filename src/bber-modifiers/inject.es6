@@ -23,7 +23,7 @@ const initialize = () => {
  */
 const startTags = {
   javascripts: new RegExp('<!-- inject:js -->', 'ig'),
-  stylesheets: new RegExp('<!-- inject:css -->', 'ig')
+  stylesheets: new RegExp('<!-- inject:css -->', 'ig'),
 }
 
 /**
@@ -32,7 +32,7 @@ const startTags = {
  */
 const endTags = {
   javascripts: new RegExp('<!-- end:js -->', 'ig'),
-  stylesheets: new RegExp('<!-- end:css -->', 'ig')
+  stylesheets: new RegExp('<!-- end:css -->', 'ig'),
 }
 
 /**
@@ -120,7 +120,7 @@ const injectTags = (content, args) => {
     result = [
       content.slice(0, startMatch.index),
       toInject.join(indent),
-      content.slice(stop.lastIndex)
+      content.slice(stop.lastIndex),
     ].join('')
   }
 
@@ -147,7 +147,7 @@ const promiseToReplace = (prop, data, source, file) =>
           stream.contents.toString('utf8'),
           { start, stop, data }
         )
-      )
+      ),
     })
 
     resolve(result)

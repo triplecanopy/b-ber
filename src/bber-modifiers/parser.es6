@@ -26,7 +26,7 @@ class Parser {
       'bibliography',
       'masthead',
       'figcaption',
-      'subchapter'
+      'subchapter',
     ]
     const elements = customElements && customElements.constructor === Array
       ? [...customElements, ...defaultElements]
@@ -178,7 +178,7 @@ class Parser {
         },
         onend() {
           _this.onend(resolve, index, len)
-        }
+        },
       }, { decodeEntities: false })
 
       parser.write(content)

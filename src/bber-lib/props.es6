@@ -95,7 +95,7 @@ class Props {
   static testMeta(data) {
     return {
       term: Props.isDCTerm(data),
-      element: Props.isDCElement(data)
+      element: Props.isDCElement(data),
     }
   }
 }

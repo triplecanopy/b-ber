@@ -79,7 +79,7 @@ class Generate {
       const fname = `${lpad(String(files.length + 1), '0', 5)}.md`
       const file = new File({
         path: './',
-        contents: new Buffer(frontmatter)
+        contents: new Buffer(frontmatter),
       })
       resolve({ fname, file, metadata })
     })

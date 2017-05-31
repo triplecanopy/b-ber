@@ -66,8 +66,8 @@ class Server {
         env: { NODE_ENV: 'development' },
         args: [
           `--dir ${this.dir}`,
-          `--port ${this.port}`
-        ]
+          `--port ${this.port}`,
+        ],
       }).once('start', () => {
         log.info('Starting nodemon')
         opn(`http://localhost:${this.port}`)

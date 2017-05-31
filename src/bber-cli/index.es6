@@ -94,8 +94,8 @@ const load = (/* config */) => {
         alias: 'verbose',
         describe: 'Show verbose output',
         default: false,
-        type: 'boolean'
-      }
+        type: 'boolean',
+      },
     })
     .help('h')
     .alias('h', 'help')

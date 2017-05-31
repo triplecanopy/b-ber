@@ -20,14 +20,14 @@ const createLOILeader = () =>
     const markup = renderLayouts(new File({
       path: './.tmp',
       layout: 'page',
-      contents: new Buffer(loiLeader())
+      contents: new Buffer(loiLeader()),
     }), { page }).contents.toString()
     fs.writeFile(path.join(dist(), `/OPS/text/${filename}.xhtml`), markup, 'utf8', (err) => {
       if (err) { throw err }
       store.add('pages', {
         filename,
         title: 'Figures',
-        type: 'loi'
+        type: 'loi',
       })
       resolve()
     })
@@ -42,7 +42,7 @@ const createLOI = () =>
       const markup = renderLayouts(new File({
         path: './.tmp',
         layout: 'page',
-        contents: new Buffer(imageStr)
+        contents: new Buffer(imageStr),
       }), { page }).contents.toString()
       fs.writeFile(path.join(dist(), '/OPS/text', data.page), markup, 'utf8', (err) => {
         if (err) { throw err }

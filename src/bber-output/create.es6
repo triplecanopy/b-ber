@@ -22,7 +22,7 @@ class Create {
   get dirs() {
     return [
       `${this.dist}/OPS`,
-      `${this.dist}/META-INF`
+      `${this.dist}/META-INF`,
     ]
   }
 
@@ -38,7 +38,7 @@ class Create {
     return new Promise((resolve) => {
       const files = [
         { path: 'META-INF/container.xml', content: container },
-        { path: 'mimetype', content: mimetype }
+        { path: 'mimetype', content: mimetype },
       ]
       return files.forEach((_, i) =>
         fs.writeFile(path.join(this.dist, _.path), _.content, (err) => { // eslint-disable-line consistent-return

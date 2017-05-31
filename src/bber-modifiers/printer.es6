@@ -98,7 +98,7 @@ class Printer extends Parser {
         },
         onend() {
           _this.onend(resolve/* , index, len */)
-        }
+        },
       }, { decodeEntities: false })
 
       printer.write(content)

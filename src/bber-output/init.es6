@@ -31,26 +31,26 @@ class Initialize {
       `${this.src}/_stylesheets`,
       `${this.src}/_markdown`,
       `${this.src}/_fonts`,
-      `${this.src}/.tmp`
+      `${this.src}/.tmp`,
     ]
     this.files = [{
       relpath: 'config.yml',
       content: `env: development # development | production
 theme: default # name or path
 src: ${path.basename(this.src)}
-dist: ${path.basename(this.src).slice(1)}`
+dist: ${path.basename(this.src).slice(1)}`,
     }, {
       relpath: path.join(this.src, 'epub.yml'),
-      content: ''
+      content: '',
     }, {
       relpath: path.join(this.src, 'mobi.yml'),
-      content: ''
+      content: '',
     }, {
       relpath: path.join(this.src, 'sample.yml'),
-      content: ''
+      content: '',
     }, {
       relpath: path.join(this.src, 'web.yml'),
-      content: ''
+      content: '',
     }, {
       relpath: path.join(this.src, 'metadata.yml'),
       content: `-
@@ -88,17 +88,17 @@ dist: ${path.basename(this.src).slice(1)}`
   value: 2017-01-01
 -
   term: identifier
-  value: ${guid()}`
+  value: ${guid()}`,
     }, {
       relpath: `${this.src}/_javascripts/application.js`,
-      content: 'if (console && console.log) { console.log(\'Hello World!\') }'
+      content: 'if (console && console.log) { console.log(\'Hello World!\') }',
     }, {
       relpath: `${this.src}/_markdown/00001.md`,
       content: `---
 title: Chapter One
 type: bodymatter
 ---
-`
+`,
     }]
   }
 
@@ -181,7 +181,7 @@ type: bodymatter
 
         const prompt = readline.createInterface({
           input: process.stdin,
-          output: process.stdout
+          output: process.stdout,
         })
 
         const confirm = (callback) => {

@@ -26,7 +26,7 @@ const copy = (_fromLocs, _toLoc) =>
     if (!fromLocs || !fromLocs.length) {
       fromLocs = [
         path.join(src(), '_images'),
-        path.join(src(), '_fonts')
+        path.join(src(), '_fonts'),
       ]
       renameFn = _ => _.slice(1)
     }

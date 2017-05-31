@@ -65,7 +65,7 @@ const renderCss = scssString =>
       data: `$build: "${build()}";${scssString}`,
       includePaths: [path.join(src(), '_stylesheets/'), theme().tpath],
       outputStyle: env() === 'production' ? 'compressed' : 'nested',
-      errLogToConsole: true
+      errLogToConsole: true,
     }, (err, result) => resolve(result))
   )
 

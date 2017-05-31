@@ -69,7 +69,7 @@ class Configuration {
       epub: this.fileOrDefaults('epub'),
       mobi: this.fileOrDefaults('mobi'),
       pdf: this.fileOrDefaults('pdf'),
-      web: this.fileOrDefaults('web')
+      web: this.fileOrDefaults('web'),
     }
   }
 
@@ -82,7 +82,7 @@ class Configuration {
       src: '_book',
       dist: 'book',
       theme: 'default',
-      reader: 'https://codeload.github.com/triplecanopy/b-ber-boiler/zip/master'
+      reader: 'https://codeload.github.com/triplecanopy/b-ber-boiler/zip/master',
     }
 
     try {

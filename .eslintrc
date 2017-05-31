@@ -15,7 +15,7 @@
     "brace-style": [2, "1tbs", {
       "allowSingleLine": true
     }],
-    "comma-dangle": [0],
+    "comma-dangle": [2, "always-multiline"],
     "import/extensions": [2, "never"],
     "import/no-extraneous-dependencies": 0,
     "max-len": [2, 100, 100, {

@@ -40,7 +40,7 @@ const layout = (fname, data, idx, len, rs, rj) => {
   const markup = renderLayouts(new File({
     path: './.tmp',
     layout: 'pageBody',
-    contents: new Buffer(`${head}${data}${tail}`)
+    contents: new Buffer(`${head}${data}${tail}`),
   }), { pageBody }).contents.toString()
 
   try {
