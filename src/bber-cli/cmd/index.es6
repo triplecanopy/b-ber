@@ -1,6 +1,3 @@
-
-/* eslint-disable import/prefer-default-export */
-
 export { default as build } from 'bber-cli/cmd/build'
 export { default as clean } from 'bber-cli/cmd/clean'
 export { default as copy } from 'bber-cli/cmd/copy'

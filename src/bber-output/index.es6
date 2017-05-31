@@ -25,11 +25,9 @@ export { default as generate } from 'bber-output/generate'
 // TODO: Editor causes b-ber-creator to hang (doesn't exit).
 // export { default as editor } from 'bber-output/editor'
 
-// nested
+// output
 export { default as mobi } from 'bber-output/mobi'
-
-// should be called from `mobi` task
-// export { default as mobiCSS } from 'bber-output/mobi/mobi-css'
+export { default as mobiCSS } from 'bber-output/mobi/mobi-css' // TODO: should be called from `mobi` task
 export { default as web } from 'bber-output/web'
 export { default as sample } from 'bber-output/sample'
 export { default as pdf } from 'bber-output/pdf'

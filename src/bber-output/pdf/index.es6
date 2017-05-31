@@ -52,11 +52,12 @@ const initialize = () => {
 }
 
 const parseHTML = files =>
-  new Promise((resolve, reject) => {
+  new Promise((resolve) => {
     const dir = path.join(output, 'OPS/text')
     const text = files.map((_, index, arr) => {
       let data
       try {
+        if (!_ || typeof _ !== 'string' || !fs.existsSync(path.join(dir, _))) { return null }
         data = fs.readFileSync(path.join(dir, _), 'utf8')
       } catch (err) {
         return log.warn(err.message)
@@ -70,8 +71,8 @@ const parseHTML = files =>
   })
 
 const write = (content) => {
-  if (writeOutput !== true) { return Promise.resolve() }
-  return new Promise((resolve, reject) =>
+  if (writeOutput !== true) { return Promise.resolve(content) }
+  return new Promise(resolve =>
     fs.writeFile(path.join(output, 'pdf.xhtml'), content, (err) => {
       if (err) { throw err }
       resolve(content)

@@ -9,15 +9,13 @@ import path from 'path'
 import { log } from 'bber-plugins'
 import { dist } from 'bber-utils'
 
-const options = () => ({
-  input: path.join(dist(), 'OPS/content.opf'),
-  output: process.cwd(),
-  clean: true
-})
-
 const mobi = () =>
-  new Promise(async resolve =>
-    zipper.create(await options())
+  new Promise(resolve =>
+    zipper.create({
+      input: path.join(dist(), 'OPS/content.opf'),
+      output: process.cwd(),
+      clean: true,
+    })
     .catch(err => log.error(err))
     .then(resolve)
   )

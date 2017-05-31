@@ -13,14 +13,13 @@ import { dist } from 'bber-utils'
  */
 const epub = () =>
   new Promise(resolve =>
-    resolve()
-    // zipper.create({
-    //   input: dist(),
-    //   output: process.cwd(),
-    //   clean: true
-    // })
-    // .catch(err => log.error(err))
-    // .then(resolve)
+    zipper.create({
+      input: dist(),
+      output: process.cwd(),
+      clean: true,
+    })
+    .catch(err => log.error(err))
+    .then(resolve)
   )
 
 export default epub
