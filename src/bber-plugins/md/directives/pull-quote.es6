@@ -27,8 +27,10 @@ export default {
 
     validateOpen(params) {
       const match = params.trim().match(containerOpenRegExp) || []
+      if (!match.length) { return false } // no match, keep parsing
+
       const id = match[2]
-      if (typeof id === 'undefined') { // `match[1]` is section id
+      if (typeof id === 'undefined') { // there's a match, but missing the required `id` attr
         log.error(`Missing [id] attribute for [${exports.default.name}] directive`)
         return false
       }
@@ -42,7 +44,9 @@ export default {
     validateClose(params) {
       const id = store.cursor[store.cursor.length - 1]
       const match = params.trim().match(new RegExp(`(exit)(?::(${id}))?`)) || []
-      if (typeof match[2] === 'undefined') { // `match[1]` is section id
+      if (!match.length) { return false }
+
+      if (typeof match[2] === 'undefined') {
         log.error(`Missing [id] attribute for [${exports.default.name}] directive`)
         return false
       }
