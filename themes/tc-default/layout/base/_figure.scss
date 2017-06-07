@@ -86,25 +86,3 @@ figcaption,
   a { text-decoration: none!important; }
   .epigraph & { padding-top: 7px; }
 }
-
-// TODO: confirm removal
-//
-// .landscape {
-//   width: 100%;
-// }
-// .portrait {
-//   width: 100%;
-// }
-
-
-// TODO: confirm removal
-// .unindented {
-//   p {
-//     text-indent: 0;
-//     margin-bottom: 1em;
-//     + .figure-sm.landscape,
-//     + .figure-sm.portrait {
-//       padding-top:0.35em; //
-//     }
-//   }
-// }

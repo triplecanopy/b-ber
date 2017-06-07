@@ -46,6 +46,16 @@ blockquote {
   float: left;
   text-indent: 0;
   padding: 0.8em rhythm(1.65); // TODO: optically adjusted
+
+  section.titlepage &,
+  section.introduction &,
+  section.afterword & {
+    float: none;
+    clear: both;
+    padding-bottom: 5.65em;
+    padding-top: 0.2em;
+  }
+
   .epigraph & { // tc only
     float: none;
     padding-top: 0;
@@ -106,6 +116,9 @@ section.bibliography {
     text-indent: rhythm(1.65);
   }
 }
+
+section.credits { page-break-before: always; }
+section.dialogue p { text-indent: 0!important; }
 
 // Custom layout for non-linear content, iOS only
 //

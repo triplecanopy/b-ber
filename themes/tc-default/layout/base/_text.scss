@@ -2,7 +2,7 @@
 // Block elements
 h1 {
   text-indent: 0;
-  text-transform: uppercase;
+  text-transform: none;
   @include text-center;
   @include font-base;
   @include no-indent-follow;
@@ -14,11 +14,15 @@ h1 {
   }
 
   section.backmatter & {
-    text-transform: uppercase;
+    text-transform: none;
     padding: 0;
     @include rhythm-padding(0, 1, $text-md);
     @include tc-rhythm-sizing($text-sm, $line-sm);
   }
+
+  section.titlepage &,
+  section.introduction &,
+  section.afterword & { padding-bottom: 1em; }
 }
 
 h2 {
@@ -26,6 +30,8 @@ h2 {
   @include text-center;
   @include rhythm-padding(0, 1, $text-sm);
   @include no-indent-follow;
+  margin-top: 0;
+  padding-top: 0
   text-indent: 0;
 
   section.backmatter & {
@@ -106,6 +112,14 @@ p {
     @include adjust-leading-to(1);
   }
 
+  section.titlepage .pull-quote &,
+  section.introduction .pull-quote &,
+  section.afterword .pull-quote & {
+    text-align: center;
+    font-style: normal;
+    em { font-style: italic; }
+  }
+
   .figcaption & {
     text-indent: 0;
   }
@@ -176,7 +190,11 @@ pre {
   white-space: pre;
 }
 
-a,a:active,a:visited,a:focus,a:hover{}
+a,
+a:focus,
+a:active,
+a:visited,
+a:hover {}
 
 i {
   font-weight: 400;
@@ -213,23 +231,14 @@ strong,b {
 }
 
 
-.footnotes {
-  @if $build == mobi {
-    page-break-before: always;
-  }
-}
-
-aside.footnote {
-  @if $build == mobi {
-    page-break-after: always;
-  }
-  margin-left: rhythm(1, $base-font-size);
-  p { text-indent: 0; }
-  a.footnote-link {
-    float: left;
-    text-indent: rhythm(-1, $base-font-size);
-    html[__ibooks_internal_theme] & {
-      display: none!important;
-    }
+// footnotes
+ol.footnotes {
+  margin: 0;
+  li {
+    padding-bottom: 1em;
+    text-indent: 0!important;
+    p { text-indent: 0!important; }
+    a { text-decoration: none!important; }
+    span.hidden-backlink { display: inline; }
   }
 }
