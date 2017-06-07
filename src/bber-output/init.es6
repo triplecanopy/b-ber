@@ -91,7 +91,21 @@ dist: ${path.basename(this.src).slice(1)}`,
   value: ${guid()}`,
     }, {
       relpath: `${this.src}/_javascripts/application.js`,
-      content: 'if (console && console.log) { console.log(\'Hello World!\') }',
+      content: `function clicked(e) {
+  window.location.href = this.getAttribute('href')
+  return false
+}
+
+function main() {
+  // Normalize link behaviour on iBooks
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    links[i].onclick = clicked
+  }
+}
+
+window.onload = main
+`,
     }, {
       relpath: `${this.src}/_markdown/00001.md`,
       content: `---
