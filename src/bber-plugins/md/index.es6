@@ -13,7 +13,7 @@ import store from 'bber-lib/store'
 import mdFootnote from 'bber-plugins/md/plugins/footnote'
 import mdSection from 'bber-plugins/md/directives/section'
 import mdPullQuote from 'bber-plugins/md/directives/pull-quote'
-import mdLogo from 'bber-plugins/md/directives/logo'
+// import mdLogo from 'bber-plugins/md/directives/logo'
 import mdImage from 'bber-plugins/md/directives/image'
 import mdDialogue from 'bber-plugins/md/directives/dialogue'
 import mdEpigraph from 'bber-plugins/md/directives/epigraph'
@@ -65,32 +65,32 @@ class MarkIt {
     const reference = { instance, context }
 
     instance
-      // .use(
-      //   mdSection.plugin,
-      //   mdSection.name,
-      //   mdSection.renderer(reference))
+      .use(
+        mdSection.plugin,
+        mdSection.name,
+        mdSection.renderer(reference))
+      .use(
+        mdPullQuote.plugin,
+        mdPullQuote.name,
+        mdPullQuote.renderer(reference))
       .use(
         mdFootnote)
-      // .use(
-      //   mdImage.plugin,
-      //   mdImage.name,
-      //   mdImage.renderer(reference))
       .use(
         mdDialogue.plugin,
         mdDialogue.name,
         mdDialogue.renderer(reference))
-      // .use(
-      //   mdEpigraph.plugin,
-      //   mdEpigraph.name,
-      //   mdEpigraph.renderer(reference))
+      .use(
+        mdImage.plugin,
+        mdImage.name,
+        mdImage.renderer(reference))
+      .use(
+        mdEpigraph.plugin,
+        mdEpigraph.name,
+        mdEpigraph.renderer(reference))
       // .use(
       //   mdLogo.plugin,
       //   mdLogo.name,
       //   mdLogo.renderer(reference))
-      // .use(
-      //   mdPullQuote.plugin,
-      //   mdPullQuote.name,
-      //   mdPullQuote.renderer(reference))
       .use(
         mdFrontMatter,
         (meta) => {

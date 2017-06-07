@@ -19,7 +19,7 @@ let seq = 0
 export default {
   plugin: figure,
   name: 'image',
-  renderer: (instance, context) => ({
+  renderer: ({ instance, context }) => ({
     marker: INLINE_DIRECTIVE_MARKER,
     minMarkers: INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
     markerOpen: imageOpenRegExp,

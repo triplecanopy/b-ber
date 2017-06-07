@@ -18,7 +18,7 @@ let citation = ''
 export default {
   plugin: section,
   name: 'pullQuote',
-  renderer: (instance, context) => ({
+  renderer: ({ instance, context }) => ({
     marker: BLOCK_DIRECTIVE_MARKER,
     minMarkers: BLOCK_DIRECTIVE_MARKER_MIN_LENGTH,
 
@@ -27,7 +27,6 @@ export default {
 
     validateOpen(params) {
       const match = params.trim().match(containerOpenRegExp) || []
-      const name = match[0]
       const id = match[2]
       if (typeof id === 'undefined') { // `match[1]` is section id
         log.error(`Missing [id] attribute for [${exports.default.name}] directive`)
