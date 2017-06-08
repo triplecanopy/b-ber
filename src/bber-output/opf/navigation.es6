@@ -1,4 +1,4 @@
-
+/* eslint-disable class-methods-use-this */
 /**
  * Scans directory contents and reads YAML files to create the `spine` and
  * `guide` elements in the `content.opf`. Writes essential navigation
@@ -36,15 +36,15 @@ import { pathInfoFromFiles, flattenYamlEntries, removeNestedArrayItem,
  * @alias module:navigation#Navigation
  */
 class Navigation {
-  get src() { // eslint-disable-line class-methods-use-this
+  get src() {
     return src()
   }
 
-  get dist() { // eslint-disable-line class-methods-use-this
+  get dist() {
     return dist()
   }
 
-  get build() { // eslint-disable-line class-methods-use-this
+  get build() {
     return build()
   }
 
@@ -99,10 +99,17 @@ class Navigation {
     )
   }
 
-  addMissingEntriesToNonLinearSection(arr, missingEntries) { // eslint-disable-line class-methods-use-this
+  // hide missing entries by default
+  addMissingEntriesToNonLinearSection(arr, missingEntries) {
     let nonLinearIndex = findIndex(arr, 'nonLinear')
     if (nonLinearIndex < 0) { nonLinearIndex = (arr.push({ nonLinear: [] })) - 1 }
     missingEntries.forEach(_ => arr[nonLinearIndex].nonLinear.push(`${_}.xhtml`))
+    return arr
+  }
+
+  // show missing entries by default
+  addMissingEntriesToLinearSection(arr, missingEntries) {
+    missingEntries.forEach(_ => arr.push(`${_}.xhtml`))
     return arr
   }
 
@@ -174,15 +181,19 @@ class Navigation {
 
         if (filediff.length) {
           // there are missing entries in the YAML (i.e., extra XHTML pages),
-          // but we don't know where to interleave them. we add them to the
-          // manifest so that the ebook validates, but keep them hidden from the
-          // flow of the book
+          // but we don't know where to interleave them, so we just append
+          // them to the top-level list of files
           log.warn(`Missing entries in ${this.build}.yml files:`)
           log.warn(filediff.map(_ => `${_}.xhtml`))
           log.warn(`Adding missing entries as [non-linear] content to [${this.build}.yml]`)
 
+          // `addMissingEntriesToNonLinearSection` is deprecated as default
+          // behaviour, but might be useful in some instances.
+          //
+          // this.addMissingEntriesToNonLinearSection(pages, filediff)
+
           // prefer not to mutate `pages`, but may as well keep consistent behaviour as above ...
-          this.addMissingEntriesToNonLinearSection(pages, filediff)
+          this.addMissingEntriesToLinearSection(pages, filediff)
         }
       }
 
@@ -258,7 +269,7 @@ class Navigation {
     })
   }
 
-  createGuideStringsFromTemplate({ flow, fileObjects, ...args }) { // eslint-disable-line class-methods-use-this
+  createGuideStringsFromTemplate({ flow, fileObjects, ...args }) {
     return new Promise((resolve) => {
       const strings = {}
       const orderedFileObjects = sortNavigationObjects(flow, fileObjects)
@@ -276,7 +287,7 @@ class Navigation {
     })
   }
 
-  createSpineStringsFromTemplate({ flow, fileObjects, ...args }) { // eslint-disable-line class-methods-use-this
+  createSpineStringsFromTemplate({ flow, fileObjects, ...args }) {
     return new Promise((resolve) => {
       const strings = {}
       const orderedFileObjects = sortNavigationObjects(flow, fileObjects)
@@ -301,7 +312,7 @@ class Navigation {
    * @param  {String} property     The properties of `args` to merge
    * @return {Object}              Deep merged object
    */
-  deepMergePromiseArrayValues(args, property) { // eslint-disable-line class-methods-use-this
+  deepMergePromiseArrayValues(args, property) {
     const argsArray = args.map(_ => _)
     const propsArray = args.map(_ => _[property])
     const props = Object.assign({}, ...propsArray)
