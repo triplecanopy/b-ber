@@ -84,7 +84,7 @@ class ManifestAndMetadata {
         ...strings.bookmeta,
         '<meta property="ibooks:specified-fonts">true</meta>',
         `<meta property="dcterms:modified">${new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')}</meta>`, // eslint-disable-line max-len
-        `<meta name="generator" content="b-ber@${version()}" />`
+        `<meta name="generator" content="b-ber@${this.version}" />`
       ]
 
       files.forEach((file, idx) => {
