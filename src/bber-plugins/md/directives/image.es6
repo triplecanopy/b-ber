@@ -1,4 +1,4 @@
-
+/* eslint-disable max-len */
 import path from 'path'
 import fs from 'fs-extra'
 import store from 'bber-lib/store'
@@ -10,7 +10,7 @@ import { getImageOrientation, src, htmlComment, build } from 'bber-utils'
 import { attributesObject, htmlId } from 'bber-plugins/md/directives/helpers'
 import {
   INLINE_DIRECTIVE_MARKER,
-  INLINE_DIRECTIVE_MARKER_MIN_LENGTH
+  INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
 } from 'bber-shapes/directives'
 
 const imageOpenRegExp = /((?:inline-)?image)(?::([^\s]+)(\s?.*)?)?$/
@@ -49,7 +49,7 @@ export default {
       const { ...dimensions } = imgsize(asset)
       const { width, height } = dimensions
 
-      let result, page, classNames, ref, imageData
+      let result, page, classNames, ref, imageData // eslint-disable-line one-var
 
       try {
         if (!fs.existsSync(asset)) {
@@ -82,8 +82,7 @@ export default {
           result = `${comment}<div class="${attrsObject.classes}">
             <figure id="ref${htmlId(id)}">
               <a href="${page}#${htmlId(id)}">
-                <img src="../images/${encodeURIComponent(attrsObject.source)}" alt="${attrsObject.alt}"
-                />
+                <img src="../images/${encodeURIComponent(attrsObject.source)}" alt="${attrsObject.alt}"/>
               </a>
             </figure>
           </div>`
@@ -97,6 +96,6 @@ export default {
       }
 
       return result
-    }
-  })
+    },
+  }),
 }

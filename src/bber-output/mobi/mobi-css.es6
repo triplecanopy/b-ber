@@ -1,4 +1,3 @@
-
 /**
  * @module mobiCss
  */
@@ -29,7 +28,7 @@ const blackListedProperties = [
   'text-rendering',
   '-webkit-font-smoothing',
   '-moz-osx-font-smoothing',
-  '-webkit-text-fill-color'
+  '-webkit-text-fill-color',
 ]
 
 const write = ({ file, content }) =>

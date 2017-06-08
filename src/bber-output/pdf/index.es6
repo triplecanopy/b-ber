@@ -35,19 +35,19 @@ const initialize = () => {
         left: '7mm',
         top: '7mm',
         bottom: '10mm',
-        right: '7mm'
+        right: '7mm',
       },
       header: {
         height: '14mm',
-        contents: '<div style="text-align: center; font-family:Helvetica; font-size:12px; color: lightgrey;">Made with bber</div>' // eslint-disable-line max-len
+        contents: '<div style="text-align: center; font-family:Helvetica; font-size:12px; color: lightgrey;">Made with bber</div>', // eslint-disable-line max-len
       },
       footer: {
         height: '5mm',
-        default: '<span>{{page}}</span>/<span>{{pages}}</span>'
+        default: '<span>{{page}}</span>/<span>{{pages}}</span>',
       },
       base: `file://${output}/OPS/Text/`,
-      timeout: 10000
-    }
+      timeout: 10000,
+    },
   }
 }
 

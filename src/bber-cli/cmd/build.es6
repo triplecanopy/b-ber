@@ -15,44 +15,44 @@ const builder = yargs =>
         alias: 'dir',
         describe: 'Compile the output dir',
         default: false,
-        type: 'boolean'
+        type: 'boolean',
       },
       e: {
         alias: 'epub',
         describe: 'Build an ePub',
         default: false,
-        type: 'boolean'
+        type: 'boolean',
       },
       m: {
         alias: 'mobi',
         describe: 'Build a mobi',
         default: false,
-        type: 'boolean'
+        type: 'boolean',
       },
       w: {
         alias: 'web',
         describe: 'Build for web',
         default: false,
-        type: 'boolean'
+        type: 'boolean',
       },
       p: {
         alias: 'pdf',
         describe: 'Create a PDF',
         default: false,
-        type: 'boolean'
+        type: 'boolean',
       },
       s: {
         alias: 'sample',
         describe: 'Create a sample ePub',
         default: false,
-        type: 'boolean'
+        type: 'boolean',
       },
       a: {
         alias: 'all',
         describe: 'Build all formats',
         default: true,
-        type: 'boolean'
-      }
+        type: 'boolean',
+      },
     })
 
     .help('h')
@@ -62,7 +62,7 @@ const handler = (argv) => {
   const buildCmds = _buildCommands
   const buildArgs = _buildArgs(argv)
   const buildTasks = buildArgs.length ? buildArgs : !buildArgs.length && argv.d ? [] : buildCmds
-  const sequence = ['clean', 'create', 'copy', 'sass', 'scripts', 'render', 'loi', 'inject', 'opf']
+  const sequence = ['clean', 'create', 'copy', 'sass', 'scripts', 'render', 'loi', 'footnotes', 'inject', 'opf']
 
   const run = (tasks) => {
     const next = [tasks.shift()]
@@ -84,5 +84,5 @@ export default {
   command,
   describe,
   builder,
-  handler
+  handler,
 }

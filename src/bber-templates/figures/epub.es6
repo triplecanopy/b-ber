@@ -1,4 +1,4 @@
-
+/* eslint-disable max-len */
 const epub = {
   portrait(data) {
     return `${!data.inline ? '<section epub:type="loi" title="Figures" class="chapter figures">' : ''}
@@ -63,7 +63,7 @@ const epub = {
         </figure>
       </div>
     ${!data.inline ? '</section>' : ''}`
-  }
+  },
 }
 
 export default epub

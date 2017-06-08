@@ -10,14 +10,14 @@ const builder = yargs =>
         alias: 'input',
         default: './book',
         describe: 'Define the input path',
-        type: 'string'
+        type: 'string',
       },
       o: {
         alias: 'output',
         default: './_site',
         describe: 'Define the output path',
-        type: 'string'
-      }
+        type: 'string',
+      },
     })
     .help('h')
     .alias('h', 'help')
@@ -28,5 +28,5 @@ export default {
   command,
   describe,
   builder,
-  handler
+  handler,
 }

@@ -17,8 +17,8 @@ import * as commands from 'bber-cli/cmd'
  */
 const load = (/* config */) => {
   const {
-    build, clean, copy, create/* , editor */, generate, init, inject, opf, pdf,
-    mobiCSS, publish, render, scripts, sass, serve, site, theme, watch, xml } = commands
+    build, clean, copy, create/* , editor */, generate, init, inject, footnotes, opf,
+    pdf, mobiCSS, publish, render, scripts, sass, serve, site, theme, watch, xml } = commands
 
   /**
    * Shows custom help if a CLI command fails
@@ -28,8 +28,8 @@ const load = (/* config */) => {
   Usage: bber <command> [options]
 
   Where <command> is one of:
-    build, clean, copy, create, editor, generate, init, inject, opf, pdf,
-    publish, render, scripts, sass, serve, site, theme, watch, xml
+    build, clean, copy, create, editor, generate, init, inject, footnotes, opf,
+    pdf, publish, render, scripts, sass, serve, site, theme, watch, xml
 
   Some common commands are:
 
@@ -77,6 +77,7 @@ const load = (/* config */) => {
     .command(generate)
     .command(init)
     .command(inject)
+    .command(footnotes)
     .command(opf)
     .command(pdf)
     .command(publish)

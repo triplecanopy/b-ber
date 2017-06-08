@@ -18,6 +18,8 @@ import mdImage from 'bber-plugins/md/directives/image'
 import mdDialogue from 'bber-plugins/md/directives/dialogue'
 import mdEpigraph from 'bber-plugins/md/directives/epigraph'
 
+import { find } from 'lodash'
+
 /**
  * Transform markdown into XHTML
  * @alias module:md#MarkIt
@@ -41,7 +43,7 @@ class MarkIt {
       html: true,
       xhtmlOut: true,
       breaks: false,
-      linkify: false
+      linkify: false,
     })
 
     /**
@@ -74,7 +76,51 @@ class MarkIt {
         mdPullQuote.name,
         mdPullQuote.renderer(reference))
       .use(
-        mdFootnote)
+        mdFrontMatter,
+        (meta) => {
+          const filename = this.filename
+          store.add('pages', { filename, ...YAML.parse(meta) })
+        })
+      .use(
+        mdFootnote,
+        (tokens) => {
+          const filename = this.filename
+          const page = find(store.pages, { filename })
+          const title = page && page.title ? page.title : filename
+
+          // add footnote container and heading. we're doing this here instead
+          // of in `footnotes.js` because we need some file info (just the title :/)
+          tokens.unshift({
+            type: 'block',
+            tag: 'section',
+            attrs: [['class', 'footnotes break-after']],
+            nesting: 1,
+            block: true,
+          }, {
+            type: 'block',
+            tag: 'h1',
+            nesting: 1,
+            block: true,
+          }, {
+            type: 'text',
+            block: false,
+            content: title,
+          }, {
+            type: 'block',
+            tag: 'h1',
+            nesting: -1,
+          })
+
+          // add closing section tag
+          tokens.push({
+            type: 'block',
+            tag: 'section',
+            nesting: -1,
+          })
+
+          const notes = instance.renderer.render(tokens, 0, { reference: `${filename}.xhtml` })
+          store.add('footnotes', { filename, title, notes })
+        })
       .use(
         mdDialogue.plugin,
         mdDialogue.name,
@@ -91,12 +137,6 @@ class MarkIt {
       //   mdLogo.plugin,
       //   mdLogo.name,
       //   mdLogo.renderer(reference))
-      .use(
-        mdFrontMatter,
-        (meta) => {
-          const filename = this.filename
-          store.add('pages', { filename, ...YAML.parse(meta) })
-        })
   }
 
   /**

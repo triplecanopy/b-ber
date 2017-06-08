@@ -14,14 +14,14 @@ const builder = yargs =>
         alias: 'dir',
         describe: 'The directory to serve from',
         default: './_site',
-        type: 'string'
+        type: 'string',
       },
       p: {
         alias: 'port',
         describe: 'Server port',
         default: 3000,
-        type: 'string'
-      }
+        type: 'string',
+      },
     })
     .help('h')
     .alias('h', 'help')
@@ -60,5 +60,5 @@ export default {
   command,
   describe,
   builder,
-  handler
+  handler,
 }

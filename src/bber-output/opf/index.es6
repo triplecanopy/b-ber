@@ -1,4 +1,3 @@
-
 /**
  * Generates metadata, manifest, guide, and spine XML and writes to to
  * `content.opf`. Calls {@link module:manifestAndMetadata} and {@link module:navigation#Navigation}
@@ -46,7 +45,7 @@ class Opf {
       const opfString = renderLayouts(new File({
         path: './.tmp',
         layout: 'opfPackage',
-        contents: new Buffer([metadata, manifest, spine, guide].join('\n'))
+        contents: new Buffer([metadata, manifest, spine, guide].join('\n')),
       }), { opfPackage })
       .contents
       .toString()
@@ -80,7 +79,7 @@ class Opf {
 
       Promise.all([
         manifestAndMetadata.init(),
-        navigation.init()
+        navigation.init(),
       ])
       .then(resp => this.createOpfPackageString(resp))
       .then(resp => this.writeOpfToDisk(resp))

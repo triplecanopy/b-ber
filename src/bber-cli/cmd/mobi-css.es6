@@ -16,5 +16,5 @@ export default {
   command,
   describe,
   builder,
-  handler
+  handler,
 }

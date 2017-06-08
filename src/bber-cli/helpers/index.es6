@@ -1,4 +1,3 @@
-
 const fail = (msg, err, yargs) => {
   console.log(msg)
   yargs.showHelp()

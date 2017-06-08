@@ -74,7 +74,7 @@ class ManifestAndMetadata {
    * @return {Promise<Object|Error>}
    */
   createManifestAndMetadataFromTemplates(files) {
-    return new Promise((resolve ) => {
+    return new Promise((resolve) => {
       // TODO: this will already be loaded in bber object
       const strings = { manifest: [], bookmeta: [] }
       strings.bookmeta = this.bookmeta.map(_ => tmpl.opf.metatag(_)).filter(Boolean)
@@ -84,7 +84,7 @@ class ManifestAndMetadata {
         ...strings.bookmeta,
         '<meta property="ibooks:specified-fonts">true</meta>',
         `<meta property="dcterms:modified">${new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')}</meta>`, // eslint-disable-line max-len
-        `<meta name="generator" content="b-ber@${this.version}" />`
+        `<meta name="generator" content="b-ber@${this.version}" />`,
       ]
 
       files.forEach((file, idx) => {
@@ -104,13 +104,13 @@ class ManifestAndMetadata {
       const _metadata = renderLayouts(new File({
         path: './.tmp',
         layout: 'opfMetadata',
-        contents: new Buffer(resp.bookmeta.join(''))
+        contents: new Buffer(resp.bookmeta.join('')),
       }), tmpl.opf).contents.toString()
 
       const manifest = renderLayouts(new File({
         path: './.tmp',
         layout: 'opfManifest',
-        contents: new Buffer(cjoin(resp.manifest))
+        contents: new Buffer(cjoin(resp.manifest)),
       }), tmpl.opf).contents.toString()
 
       resolve({ metadata: _metadata, manifest })

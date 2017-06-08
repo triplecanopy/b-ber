@@ -1,5 +1,4 @@
-
-import { editor } from 'bber-plugins'
+// import { editor } from 'bber-plugins'
 
 const command = ['editor', 'e']
 const describe = 'Start web-based editor'
@@ -8,14 +7,11 @@ const builder = yargs =>
     .help('h')
     .alias('h', 'help')
     .usage('\nUsage: $0 editor')
-const handler = () => {
-  return
-  // editor
-}
+const handler = () => ({})
 
 export default {
   command,
   describe,
   builder,
-  handler
+  handler,
 }

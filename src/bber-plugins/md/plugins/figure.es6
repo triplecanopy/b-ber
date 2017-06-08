@@ -113,7 +113,7 @@ const figurePlugin = (md, name, options = {}) => {
   }
 
   md.block.ruler.before('fence', `container_${name}`, container, {
-    alt: ['paragraph', 'reference', 'blockquote', 'list']
+    alt: ['paragraph', 'reference', 'blockquote', 'list'],
   })
   md.renderer.rules[`container_${name}_open`] = render
   md.renderer.rules[`container_${name}_close`] = render // not used, but keeping things consistent

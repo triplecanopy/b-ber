@@ -57,7 +57,7 @@ const mobi = {
         </div>
       </figure>
     </div>`
-  }
+  },
 }
 
 export default mobi

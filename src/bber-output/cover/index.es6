@@ -20,7 +20,7 @@ class Cover {
       creator: '',
       // 'date-modified': '',
       identifier: '',
-      bberVersion: ''
+      bberVersion: '',
     }
     this.coverPrefix = '__bber_cover__'
     this.args = [path.join(__dirname, 'phantomjs.js')]
@@ -87,7 +87,7 @@ class Cover {
   }
 
   generate() {
-    return new Promise(resolve  =>
+    return new Promise(resolve =>
       childProcess.execFile(phantomjs.path, this.args, (err, stdout, stderr) => {
         if (err) { console.error(err) }
         if (stderr) { console.error(stderr) }

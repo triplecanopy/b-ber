@@ -1,4 +1,3 @@
-
 import { union } from 'lodash'
 
 const BLOCK_DIRECTIVE_MARKER = ':'
@@ -16,7 +15,7 @@ const FRONTMATTER_DIRECTIVES = [
   'epigraph',
   'foreword',
   'preface',
-  'acknowledgments'
+  'acknowledgments',
 ]
 const BODYMATTER_DIRECTIVES = [
   'introduction',
@@ -25,7 +24,7 @@ const BODYMATTER_DIRECTIVES = [
   'subchapter',
   'epilogue',
   'afterword',
-  'conclusion'
+  'conclusion',
 ]
 const BACKMATTER_DIRECTIVES = [
   'loi',
@@ -33,7 +32,7 @@ const BACKMATTER_DIRECTIVES = [
   'seriespage',
   'credits',
   'contributors',
-  'colophon'
+  'colophon',
 ]
 
 // block union
@@ -42,14 +41,14 @@ const BLOCK_DIRECTIVES = union(FRONTMATTER_DIRECTIVES, BODYMATTER_DIRECTIVES, BA
 // inline
 const INLINE_DIRECTIVES = [
   'image',
-  'inline-image'
+  'inline-image',
 ]
 
 // misc
 const MISC_DIRECTIVES = [
   'pull-quote',
   'dialogue',
-  'epigraph'
+  'epigraph',
 ]
 
 const DIRECTIVE_ATTRIBUTES = {
@@ -58,43 +57,43 @@ const DIRECTIVE_ATTRIBUTES = {
     optional: {
       title: {
         input: 'title:"foo"',
-        output: 'title="foo"'
+        output: 'title="foo"',
       },
       classes: {
         input: 'classes:"foo bar baz"',
-        output: 'class="foo bar baz'
+        output: 'class="foo bar baz',
       },
       pagebreak: [{
         input: 'pagebreak:before',
-        output: 'style="page-break-before:always;"'
+        output: 'style="page-break-before:always;"',
       }, {
         input: 'pagebreak:after',
-        output: 'style="page-break-before:always;"'
-      }]
-    }
+        output: 'style="page-break-before:always;"',
+      }],
+    },
   },
 
   image: {
     required: {
       source: {
         input: 'source:foo.jpg',
-        output: 'src="foo.jpg"'
-      }
+        output: 'src="foo.jpg"',
+      },
     },
     optional: {
       caption: {
         input: 'caption:"foo bar"',
-        output: /data-caption="foo bar"/
+        output: /data-caption="foo bar"/,
       },
       alt: {
         input: 'alt:foo',
-        output: 'alt="foo"'
+        output: 'alt="foo"',
       },
       classes: {
         input: 'classes:"foo bar baz"',
-        output: 'class="foo bar baz'
-      }
-    }
+        output: 'class="foo bar baz',
+      },
+    },
   },
 
   // misc
@@ -104,13 +103,13 @@ const DIRECTIVE_ATTRIBUTES = {
       optional: {
         citation: {
           input: 'citation:"foo bar"',
-          output: /<cite>&#8212;&#160;foo bar<\/cite>/
+          output: /<cite>&#8212;&#160;foo bar<\/cite>/,
         },
         classes: {
           input: 'classes:"foo bar baz"',
-          output: 'class="foo bar baz'
-        }
-      }
+          output: 'class="foo bar baz',
+        },
+      },
     },
     // 'dialogue': {
     //   required: {},
@@ -120,7 +119,7 @@ const DIRECTIVE_ATTRIBUTES = {
     //   required: {},
     //   optional: {}
     // }
-  }
+  },
 
   // // audio/video
   // video: {

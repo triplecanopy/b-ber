@@ -1,6 +1,4 @@
-
 import { copy } from 'bber-output'
-import { log } from 'bber-plugins'
 import { fail } from 'bber-cli/helpers'
 
 const command = ['copy', '[options...]', 'c']
@@ -12,14 +10,14 @@ const builder = yargs =>
         alias: 'in',
         describe: 'The directory/directories to copy',
         default: [],
-        type: 'array'
+        type: 'array',
       },
       o: {
         alias: 'out',
         describe: 'The directory to copy',
         default: '',
-        type: 'string'
-      }
+        type: 'string',
+      },
     })
     .fail((msg, err) => fail(msg, err, yargs))
     .help('h')
@@ -40,5 +38,5 @@ export default {
   command,
   describe,
   builder,
-  handler
+  handler,
 }

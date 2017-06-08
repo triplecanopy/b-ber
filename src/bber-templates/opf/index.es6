@@ -18,27 +18,27 @@ const opfPackage = new File({
       xmlns:dcterms="http://purl.org/dc/terms/"
       prefix="ibooks: http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0/">
       {% body %}
-    </package>`)
+    </package>`),
 })
 
 const opfMetadata = new File({
   path: 'opfMetadata.tmpl',
-  contents: new Buffer('<metadata>{% body %}</metadata>')
+  contents: new Buffer('<metadata>{% body %}</metadata>'),
 })
 
 const opfManifest = new File({
   path: 'opfManifest.tmpl',
-  contents: new Buffer('<manifest>{% body %}</manifest>')
+  contents: new Buffer('<manifest>{% body %}</manifest>'),
 })
 
 const opfSpine = new File({
   path: 'opfSpine.tmpl',
-  contents: new Buffer('<spine toc="toc.ncx">{% body %}</spine>')
+  contents: new Buffer('<spine toc="toc.ncx">{% body %}</spine>'),
 })
 
 const opfGuide = new File({
   path: 'opfGuide.tmpl',
-  contents: new Buffer('<guide>{% body %}</guide>')
+  contents: new Buffer('<guide>{% body %}</guide>'),
 })
 
 const manifestItem = (file) => {
@@ -50,7 +50,7 @@ const manifestItem = (file) => {
       `href="${encodeURI(file.opsPath)}"`,
       `media-type="${mime.lookup(file.rootPath)}"`,
       (props && props.length ? `properties="${props.join(' ')}"` : ''),
-      '/>'
+      '/>',
     ]
     .filter(Boolean)
     .join(' ')
@@ -61,8 +61,9 @@ const manifestItem = (file) => {
 const spineItems = arr =>
   arr.map((_) => {
     let res = ''
-    if (mime.lookup(_.rootPath) === 'text/html' || mime.lookup(_.rootPath) === 'application/xhtml+xml') {
-      res = `\n<itemref idref="${fileId(_.name)}" linear="yes"/>` // TODO: should set linear to yes/no here
+    if (mime.lookup(_.rootPath) === 'text/html'
+        || mime.lookup(_.rootPath) === 'application/xhtml+xml') {
+      res = `\n<itemref idref="${fileId(_.name)}" linear="${_.linear || 'yes'}"/>`
     }
     return res
   }).join('')
@@ -70,13 +71,14 @@ const spineItems = arr =>
 const guideItems = arr =>
   arr.map((_) => {
     let item = ''
-    if (mime.lookup(_.rootPath) === 'text/html' || mime.lookup(_.rootPath) === 'application/xhtml+xml') {
+    if (mime.lookup(_.rootPath) === 'text/html'
+        || mime.lookup(_.rootPath) === 'application/xhtml+xml') {
       if (getFrontmatter(_, 'type')) {
         item = [
           '\n<reference',
           ` type="${getFrontmatter(_, 'type')}"`,
           ` title="${getFrontmatter(_, 'title')}"`,
-          ` href="${encodeURI(_.opsPath)}"/>`
+          ` href="${encodeURI(_.opsPath)}"/>`,
         ].join('')
       }
     }
@@ -93,7 +95,7 @@ const metatag = (data) => {
       && element
       && {}.hasOwnProperty.call(data, 'term_property')
       && {}.hasOwnProperty.call(data, 'term_property_value')) {
-    res.push(`<meta refines="#${itemid}" property="${data.term_property}">${data.term_property_value}</meta>`)
+    res.push(`<meta refines="#${itemid}" property="${data.term_property}">${data.term_property_value}</meta>`) // eslint-disable-line max-len
   }
   if (!term && !element) { res.push(`<meta name="${data.term}" content="${data.value}"/>`) }
   return res.join('')

@@ -10,13 +10,13 @@ const builder = yargs =>
       l: {
         alias: 'list',
         describe: 'List the installed themes',
-        type: 'boolean'
+        type: 'boolean',
       },
       s: {
         alias: 'set',
         describe: 'Set the current theme',
-        type: 'string'
-      }
+        type: 'string',
+      },
     })
     .help('h')
     .alias('h', 'help')
@@ -29,5 +29,5 @@ export default {
   command,
   describe,
   builder,
-  handler
+  handler,
 }

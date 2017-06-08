@@ -26,5 +26,5 @@ export default {
       refs,
       dialogueOpenRegExp,
       dialogueCloseRegExp
-    )
+    ),
 }

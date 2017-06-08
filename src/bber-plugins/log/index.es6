@@ -1,7 +1,7 @@
 
 import bunyan from 'bunyan'
 import bformat from 'bunyan-format'
-import util from 'util'
+// import util from 'util'
 
 const formatOut = bformat({ outputMode: 'short' })
 

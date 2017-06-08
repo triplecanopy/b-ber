@@ -12,20 +12,20 @@ const builder = yargs =>
         alias: 'section_title',
         describe: 'Define the chapters\'s title',
         default: '',
-        type: 'string'
+        type: 'string',
       },
       l: {
         alias: 'landmark_type',
         describe: 'Define the chapters\'s landmark type',
         default: '',
-        type: 'string'
+        type: 'string',
       },
       t: {
         alias: 'landmark_title',
         describe: 'Define the chapters\'s landmark title',
         default: '',
-        type: 'string'
-      }
+        type: 'string',
+      },
     })
 
     .help('h')
@@ -33,7 +33,7 @@ const builder = yargs =>
     .usage('\nUsage: $0 generate')
     .fail((msg, err) => fail(msg, err, yargs))
 
-const handler = () => //console.log(generate())
+const handler = () =>
   generate().then(({ title }) =>
     log.info(`Generated new page [${title}]`)
   ).catch(_ => console.log(_))
@@ -42,5 +42,5 @@ export default {
   command,
   describe,
   builder,
-  handler
+  handler,
 }

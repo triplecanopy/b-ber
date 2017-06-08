@@ -31,6 +31,7 @@ export { default as mobiCSS } from 'bber-output/mobi/mobi-css' // TODO: should b
 export { default as web } from 'bber-output/web'
 export { default as sample } from 'bber-output/sample'
 export { default as pdf } from 'bber-output/pdf'
+export { default as footnotes } from 'bber-output/footnotes'
 
 // lib
 export { default as theme } from 'bber-lib/theme'

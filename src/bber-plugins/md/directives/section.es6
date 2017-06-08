@@ -12,7 +12,7 @@ const containerCloseRegExp = /(exit)(?::([^\s]+))?/
 const render = ({ context }) => (tokens, idx) => {
   let result = ''
   let attrs = ''
-  let id, type, att, startComment, endComment
+  let id, type, att, startComment, endComment // eslint-disable-line one-var
 
   const lineNr = tokens[idx].map ? tokens[idx].map[0] : null
   const filename = `_markdown/${context.filename}.md`
@@ -47,5 +47,5 @@ export default {
       refs,
       containerOpenRegExp,
       containerCloseRegExp
-    )
+    ),
 }

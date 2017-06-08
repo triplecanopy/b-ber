@@ -10,8 +10,8 @@ const builder = yargs =>
         alias: 'path',
         default: './_site',
         describe: 'Define the site path',
-        type: 'string'
-      }
+        type: 'string',
+      },
     })
     .help('h')
     .alias('h', 'help')
@@ -22,5 +22,5 @@ export default {
   command,
   describe,
   builder,
-  handler
+  handler,
 }

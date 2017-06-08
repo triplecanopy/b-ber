@@ -13,5 +13,5 @@ export default [
   'source',
   'subject',
   'title',
-  'type'
+  'type',
 ]

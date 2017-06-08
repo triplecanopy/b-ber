@@ -1,4 +1,3 @@
-
 import File from 'vinyl'
 import { env } from 'bber-utils'
 
@@ -19,7 +18,7 @@ const tocTmpl = new File({
         {% body %}
       </nav>
     </body>
-    </html>`)
+    </html>`),
 })
 
 const tocItem = (list) => {

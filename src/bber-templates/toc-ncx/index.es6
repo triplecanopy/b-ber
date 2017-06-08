@@ -1,4 +1,3 @@
-
 import File from 'vinyl'
 import { find } from 'lodash'
 import { metadata, env } from 'bber-utils'
@@ -40,7 +39,7 @@ const ncxTmpl = new File({
         <navMap>
           {% body %}
         </navMap>
-      </ncx>`)
+      </ncx>`),
 })
 
 const navPoint = (list) => {

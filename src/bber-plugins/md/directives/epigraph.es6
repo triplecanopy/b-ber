@@ -1,4 +1,4 @@
-
+/* eslint-disable max-len */
 /*
 
 @type: epigraph
@@ -51,7 +51,7 @@ export default {
               </div>`
             ).join(''),
             '</section>',
-            '</section>'
+            '</section>',
           ].join('')
         } else {
           result = [
@@ -64,11 +64,11 @@ export default {
             '</div>',
             '</figure>',
             '</div>',
-            '</section>'
+            '</section>',
           ].join('')
         }
       }
       return result
-    }
-  })
+    },
+  }),
 }

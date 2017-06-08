@@ -14,8 +14,8 @@ const builder = yargs =>
         alias: 'dir',
         describe: 'Directory to remove',
         default: '',
-        type: 'string'
-      }
+        type: 'string',
+      },
     })
     .help('h')
     .alias('h', 'help')
@@ -24,8 +24,8 @@ const builder = yargs =>
     .config({
       bber: {
         // default directories to remove
-        defaults: ['epub', 'mobi', 'pdf', 'sample', 'web']
-      }
+        defaults: ['epub', 'mobi', 'pdf', 'sample', 'web'],
+      },
     })
 
 // const handler = clean
@@ -54,5 +54,5 @@ export default {
   command,
   describe,
   builder,
-  handler
+  handler,
 }

@@ -10,14 +10,14 @@ const builder = yargs =>
         alias: 'src',
         default: '_book',
         describe: 'Define the book\'s src path',
-        type: 'string'
+        type: 'string',
       },
       d: {
         alias: 'dist',
         default: 'book',
         describe: 'Define the book\'s dist path',
-        type: 'string'
-      }
+        type: 'string',
+      },
     })
 
     .help('h')
@@ -33,5 +33,5 @@ export default {
   command,
   describe,
   builder,
-  handler
+  handler,
 }

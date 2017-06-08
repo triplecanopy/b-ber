@@ -229,7 +229,7 @@ type: bodymatter
   _createSample() {
     return new Promise(resolve =>
       serialize(['create', 'copy', 'sass', 'scripts', 'render', 'loi', 'inject', 'opf'])
-      .then(() => resolve())
+      .then(resolve)
     )
   }
 

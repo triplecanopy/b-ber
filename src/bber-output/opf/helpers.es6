@@ -1,4 +1,3 @@
-
 import path from 'path'
 import fs from 'fs-extra'
 import Props from 'bber-lib/props'
@@ -12,7 +11,7 @@ const pathInfoFromFile = (file, dest) => ({
   rootPath: file,
   opsPath: opsPath(file, dest),
   name: path.basename(file),
-  extension: path.extname(file)
+  extension: path.extname(file),
 })
 
 const pathInfoFromFiles = (arr, dest) =>
@@ -68,7 +67,7 @@ const buildNavigationObjects = (data, dest, result = []) => {
         opsPath: path.resolve(`/${textPath}/${_}`),
         extension: path.extname(_),
         title: ref ? (ref.title || '') : '',
-        type: ref ? (ref.type || '') : ''
+        type: ref ? (ref.type || '') : '',
       })
     }
   })
@@ -88,8 +87,15 @@ const sortNavigationObjects = (flow, fileObjects) => {
   const files = fileObjects.filter(_ => Props.isHTML(_))
   result.length = files.length
   files.forEach((_) => {
+    // TODO: file objects across the app should either sync or the number of
+    // them should be reduced
+    const ref = find(store.pages, { filename: path.basename(_.name, _.extension) })
     const index = flow.indexOf(path.basename(_.name, _.extension))
-    if (index > -1) { result[index] = _ }
+    if (index > -1) {
+      let linear = 'yes'
+      if (ref && ref.linear) { linear = ref.linear }
+      result[index] = { ..._, linear }
+    }
   })
   return result
 }

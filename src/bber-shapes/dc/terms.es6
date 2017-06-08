@@ -54,5 +54,5 @@ export default [
   'temporal',
   'title',
   'type',
-  'valid'
+  'valid',
 ]

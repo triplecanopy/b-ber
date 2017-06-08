@@ -1,11 +1,23 @@
-
 /* eslint-disable */
+/*! Modified from: markdown-it-footnote 3.0.1 https://github.com//markdown-it/markdown-it-footnote @license MIT */
+'use strict';
 
-/*!
-Modified from: markdown-it-footnote 3.0.1 https://github.com//markdown-it/markdown-it-footnote @license MIT */(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.markdownitFootnote = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+import store from 'bber-lib/store'
+import { isArray } from 'lodash'
+
+/*
+
+TODO:
+  - get file name from env
+  - either render the footnotes as html in this file and store that in
+    `store.footnotes`, or store the tokens and then process them later
+  - create new notes page
+  - add page to nav, content.opf, yaml file, etc.
+
+ */
+
 // Process footnotes
 //
-'use strict';
 
 ////////////////////////////////////////////////////////////////////////////////
 // Renderer partials
@@ -21,7 +33,7 @@ function render_footnote_anchor_name(tokens, idx, options, env/*, slf*/) {
   return prefix + n;
 }
 
-function render_footnote_caption(tokens, idx/*, options, env, slf*/) {
+function render_footnote_caption(tokens, idx, options/*, env, slf*/) {
   var n = Number(tokens[idx].meta.id + 1).toString();
 
   if (tokens[idx].meta.subId > 0) {
@@ -40,29 +52,71 @@ function render_footnote_ref(tokens, idx, options, env, slf) {
     refid += ':' + tokens[idx].meta.subId;
   }
 
-  return '<sup><a epub:type="noteref" href="#fn' + id + '" id="fnref' + refid + '">' + caption + '</a></sup>';
+  // TODO: need to make sure the hard-coded `notes.xhtml` doesn't conflict with an existing file
+  return `<a epub:type="noteref" href="notes.xhtml#fn${id}" id="fnref${refid}">${caption}</a>`;
 }
 
 function render_footnote_block_open(tokens, idx, options) {
-  return '<section class="footnotes">\n';
+  return `<ol class="footnotes">
+  `
 }
 
 function render_footnote_block_close() {
-  return '\n</section>\n';
+  return `</ol>
+  `
 }
 
 function render_footnote_open(tokens, idx, options, env, slf) {
   var id = slf.rules.footnote_anchor_name(tokens, idx, options, env, slf);
+  let childIndex = idx + 2
 
   if (tokens[idx].meta.subId > 0) {
     id += ':' + tokens[idx].meta.subId;
   }
 
-  return '<aside class="footnote" epub:type="footnote" id="fn' + id + '"><a class="footnote-link" href="#fnref' + id + '">['+ id +']</a>';
+  // push the backlink into the parent paragraph
+  if (tokens[childIndex]) {
+    if (!isArray(tokens[childIndex].children)) {
+      tokens[childIndex].children = []
+    }
+    tokens[childIndex].children.push({
+      type: 'inline',
+      attrs: [
+        ['hidden', 'hidden'],
+        ['class', 'hidden-backlink'],
+      ],
+      tag: 'span',
+      nesting: 1,
+      block: false,
+    }, {
+      type: 'inline',
+      tag: 'a',
+      attrs: [['href', `${env.reference}#fnref${id}`]],
+      nesting: 1,
+    }, {
+      type: 'text',
+      block: false,
+      content: '\u21B5',
+    }, {
+      type: 'inline',
+      tag: 'a',
+      nesting: -1,
+    }, {
+      type: 'inline',
+      tag: 'span',
+      nesting: -1,
+    })
+  }
+
+
+  return `<li class="footnote" epub:type="footnote" id="fn${id}">
+  `
 }
 
+
 function render_footnote_close() {
-  return '</aside>\n';
+  return `</li>
+  `
 }
 
 function render_footnote_anchor(tokens, idx, options, env, slf) {
@@ -78,7 +132,7 @@ function render_footnote_anchor(tokens, idx, options, env, slf) {
 }
 
 
-module.exports = function footnote_plugin(md) {
+module.exports = function footnote_plugin(md, callback) {
   var parseLinkLabel = md.helpers.parseLinkLabel,
       isSpace = md.utils.isSpace;
 
@@ -117,6 +171,10 @@ module.exports = function footnote_plugin(md) {
     if (pos + 1 >= max || state.src.charCodeAt(++pos) !== 0x3A /* : */) { return false; }
     if (silent) { return true; }
     pos++;
+
+    //
+    // footnote is found, start parsing footnote body here
+    //
 
     if (!state.env.footnotes) { state.env.footnotes = {}; }
     if (!state.env.footnotes.refs) { state.env.footnotes.refs = {}; }
@@ -283,7 +341,8 @@ module.exports = function footnote_plugin(md) {
   function footnote_tail(state) {
     var i, l, j, t, lastParagraph, list, token, tokens, current, currentLabel,
         insideRef = false,
-        refTokens = {};
+        refTokens = {},
+        footnoteTokens = [];
 
     if (!state.env.footnotes) { return; }
 
@@ -359,6 +418,39 @@ module.exports = function footnote_plugin(md) {
 
     token = new state.Token('footnote_block_close', '', -1);
     state.tokens.push(token);
+
+    // create return value for callback
+    insideRef = false
+    footnoteTokens = [...state.tokens].filter((_) => {
+      if (_.type === 'footnote_block_open') {
+        insideRef = true
+        return true
+      }
+      if (_.type === 'footnote_block_close') {
+        insideRef = false
+        return true
+      }
+
+      return insideRef
+    })
+
+    // remove footnotes from `state.tokens`
+    insideRef = false
+    state.tokens = state.tokens.filter((_) => {
+      if (_.type === 'footnote_block_open') {
+        insideRef = true
+        return false
+      }
+      if (_.type === 'footnote_block_close') {
+        insideRef = false
+        return false
+      }
+
+      return !insideRef
+    })
+
+    // return to MarkIt class
+    callback(footnoteTokens)
   }
 
   md.block.ruler.before('reference', 'footnote_def', footnote_def, { alt: [ 'paragraph', 'reference' ] });
@@ -366,6 +458,3 @@ module.exports = function footnote_plugin(md) {
   md.inline.ruler.after('footnote_inline', 'footnote_ref', footnote_ref);
   md.core.ruler.after('inline', 'footnote_tail', footnote_tail);
 };
-
-},{}]},{},[1])(1)
-});

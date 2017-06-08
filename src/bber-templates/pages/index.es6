@@ -1,4 +1,3 @@
-
 import File from 'vinyl'
 import { getFrontmatter } from 'bber-utils'
 
@@ -13,16 +12,16 @@ const pageHead = name => `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
       <!-- inject:css -->
       <!-- end:css -->
     </head>
-    <body${getFrontmatter({ name }, 'template') ? ` class="${getFrontmatter({ name }, 'template')}"` : ''}>`
+    <body${getFrontmatter({ name }, 'template') ? ` class="${getFrontmatter({ name }, 'template')}"` : ''}>` // eslint-disable-line max-len
 
 const pageTail = () => `<!-- inject:js -->
       <!-- end:js -->
     </body>
-    </html>`
+  </html>`
 
 const pageBody = new File({
   path: 'base.tmpl',
-  contents: new Buffer('{% body %}')
+  contents: new Buffer('{% body %}'),
 })
 
 const page = new File({
@@ -43,7 +42,7 @@ const page = new File({
       <!-- inject:js -->
       <!-- end:js -->
     </body>
-    </html>`)
+    </html>`),
 })
 
 const loiLeader = () =>

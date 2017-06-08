@@ -5,7 +5,7 @@ import { log } from 'bber-plugins'
 import { attributesObject, attributesString, htmlId } from 'bber-plugins/md/directives/helpers'
 import {
   BLOCK_DIRECTIVE_MARKER,
-  BLOCK_DIRECTIVE_MARKER_MIN_LENGTH
+  BLOCK_DIRECTIVE_MARKER_MIN_LENGTH,
 } from 'bber-shapes/directives'
 
 const containerOpenRegExp = /^(pull-quote)(?::([^\s]+)(\s.*)?)?$/
@@ -102,6 +102,6 @@ export default {
       }
 
       return result
-    }
-  })
+    },
+  }),
 }

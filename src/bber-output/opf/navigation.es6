@@ -56,7 +56,7 @@ class Navigation {
   constructor() {
     this.navdocs = [
       'toc.ncx',
-      'toc.xhtml'
+      'toc.xhtml',
     ]
   }
 
@@ -85,7 +85,7 @@ class Navigation {
    * @return {Promise<Object|Error>}
    */
   getAllXhtmlFiles() {
-    return new Promise((resolve, reject) =>
+    return new Promise(resolve =>
       rrdir(`${this.dist}/OPS`, (err, filearr) => {
         if (err) { throw err }
         // TODO: better testing here, make sure we're not including symlinks, for example
@@ -185,7 +185,7 @@ class Navigation {
           // them to the top-level list of files
           log.warn(`Missing entries in ${this.build}.yml files:`)
           log.warn(filediff.map(_ => `${_}.xhtml`))
-          log.warn(`Adding missing entries as [non-linear] content to [${this.build}.yml]`)
+          log.warn(`Adding missing entries as [linear] content to [${this.build}.yml]`)
 
           // `addMissingEntriesToNonLinearSection` is deprecated as default
           // behaviour, but might be useful in some instances.
@@ -241,7 +241,7 @@ class Navigation {
       strings.toc = renderLayouts(new File({
         path: './.tmp',
         layout: 'tocTmpl',
-        contents: new Buffer(tocHTML)
+        contents: new Buffer(tocHTML),
       }), { tocTmpl })
       .contents
       .toString()
@@ -260,7 +260,7 @@ class Navigation {
       strings.ncx = renderLayouts(new File({
         path: './.tmp',
         layout: 'ncxTmpl',
-        contents: new Buffer(ncxXML)
+        contents: new Buffer(ncxXML),
       }), { ncxTmpl })
       .contents
       .toString()
@@ -278,7 +278,7 @@ class Navigation {
       strings.guide = renderLayouts(new File({
         path: './.tmp',
         layout: 'opfGuide',
-        contents: new Buffer(guideXML)
+        contents: new Buffer(guideXML),
       }), { opfGuide })
       .contents
       .toString()
@@ -296,7 +296,7 @@ class Navigation {
       strings.spine = renderLayouts(new File({
         path: './.tmp',
         layout: 'opfSpine',
-        contents: new Buffer(spineXML)
+        contents: new Buffer(spineXML),
       }), { opfSpine })
       .contents
       .toString()
@@ -359,7 +359,7 @@ class Navigation {
       this.createEmptyNavDocuments()
       .then(() => promiseAll([
         this.getAllXhtmlFiles(),
-        this.readYamlConfigFiles()
+        this.readYamlConfigFiles(),
       ]))
       .then(resp => this.compareXhtmlWithYaml(resp))
       .then(resp => this.updateConfigFileWithValidAssetPaths(resp))
@@ -367,14 +367,14 @@ class Navigation {
         this.createTocStringsFromTemplate(resp),
         this.createNcxStringsFromTemplate(resp),
         this.createGuideStringsFromTemplate(resp),
-        this.createSpineStringsFromTemplate(resp)
+        this.createSpineStringsFromTemplate(resp),
       ]))
       .then(resp => promiseAll([
         // the two following methods both merge the results from `Promise.all`
         // and return identical new objects containing all navigation
         // information to the next method in the chain
         this.writeTocXhtmlFile(resp),
-        this.writeTocNcxFile(resp)
+        this.writeTocNcxFile(resp),
       ]))
       // merge the values from the arrays returned above and pass the response
       // along to write the `content.opf`

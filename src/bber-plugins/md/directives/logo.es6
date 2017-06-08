@@ -1,4 +1,4 @@
-
+/* eslint-disable max-len */
 /*
 
 @type: logo
@@ -20,6 +20,6 @@ export default {
         <img style="width:120px;" alt="Triple Canopy Logo" src="../images/Triple-Canopy-Logo-Small.png"/>
       </figure>
       <p>155 Freeman Street<br/>Brooklyn, New York 11222<br/><a href="https://www.canopycanopycanopy.com">canopycanopycanopy.com</a></p>`
-    }
-  })
+    },
+  }),
 }

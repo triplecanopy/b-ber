@@ -11,6 +11,9 @@ class Store {
   set images(value) {
     this._images = value
   }
+  set footnotes(value) {
+    this._footnotes = value
+  }
   set build(value) {
     this._build = value
   }
@@ -26,6 +29,9 @@ class Store {
   }
   get images() {
     return this._images
+  }
+  get footnotes() {
+    return this._footnotes
   }
   get build() {
     return this._build
@@ -44,6 +50,7 @@ class Store {
   constructor() {
     this.pages = []
     this.images = []
+    this.footnotes = []
     this.build = null
     this.bber = {}
     this.cursor = []
@@ -63,7 +70,7 @@ class Store {
     }
 
     if (typeof _val === 'undefined') {
-      throw new TypeError(`Property [${prop}]$ cannot be set to [undefined]`)
+      throw new TypeError(`Property [${prop}] cannot be set to [undefined]`)
     }
 
     return { _prop, _val }
@@ -85,6 +92,11 @@ class Store {
 
     if (isPlainObject(this[_prop])) {
       this[_prop] = Object.assign({}, _val)
+      return this[_prop]
+    }
+
+    if (typeof this[_prop] === 'string') {
+      this[_prop] = this[_prop] + String(val)
       return this[_prop]
     }
 
@@ -168,6 +180,7 @@ class Store {
   reset() {
     this.pages = []
     this.images = []
+    this.footnotes = []
     this.build = null
     this.bber = {}
     return this

@@ -13,14 +13,14 @@ const builder = yargs =>
         alias: 'in',
         describe: 'New src directory path',
         default: '',
-        type: 'string'
+        type: 'string',
       },
       o: {
         alias: 'out',
         describe: 'New dist directory path',
         default: '',
-        type: 'string'
-      }
+        type: 'string',
+      },
     })
     .fail((msg, err) => fail(msg, err, yargs))
     .help('h')
@@ -43,5 +43,5 @@ export default {
   command,
   describe,
   builder,
-  handler
+  handler,
 }
