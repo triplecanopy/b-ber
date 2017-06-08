@@ -1,4 +1,4 @@
-
+/* eslint-disable class-methods-use-this */
 import Promise from 'vendor/Zousan'
 import fs from 'fs-extra'
 import path from 'path'
@@ -6,16 +6,17 @@ import readline from 'readline'
 import cover from 'bber-output/cover'
 import { log } from 'bber-plugins'
 import { guid, src, dist } from 'bber-utils'
+import { serialize } from 'bber-lib/async'
 
 /**
  * @class Initialize
  */
 class Initialize {
-  get src() { // eslint-disable-line class-methods-use-this
+  get src() {
     return src()
   }
 
-  get dist() { // eslint-disable-line class-methods-use-this
+  get dist() {
     return dist()
   }
 
@@ -170,7 +171,7 @@ type: bodymatter
    * @param  {Function} done [description]
    * @return {Promise<Object>}
    */
-  _removeConfig(done) { // eslint-disable-line class-methods-use-this
+  _removeConfig(done) {
     const configPath = path.join(process.cwd(), 'config.yml')
     return fs.unlink(configPath, (err) => {
       if (err) { throw err }
@@ -222,6 +223,17 @@ type: bodymatter
   }
 
   /**
+   * [_createSample description]
+   * @return {Promise<Object|Error>}
+   */
+  _createSample() {
+    return new Promise(resolve =>
+      serialize(['create', 'copy', 'sass', 'scripts', 'render', 'loi', 'inject', 'opf'])
+      .then(() => resolve())
+    )
+  }
+
+  /**
    * Write default directories and files to the source directory
    * @return {Promise<Object|Error>}
    */
@@ -232,6 +244,7 @@ type: bodymatter
       .then(() => this._makeDirs())
       .then(() => this._writeFiles())
       .then(() => cover.generate())
+      .then(() => this._createSample())
       .catch(err => log.error(err))
       .then(resolve)
     )
