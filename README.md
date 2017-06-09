@@ -22,7 +22,7 @@ $ cd b-ber-creator && npm install
 
 ## Workflow
 
-If working in a development environment, replace `bber` in the below commands with `npm start --`
+If working in a development environment, replace `bber` in the below commands with `yarn start --`
 
 ```
 Usage: bber <command> [options]
@@ -61,7 +61,7 @@ $ bber init       # `bber` is now available
 ## Testing
 
 ```bash
-$ npm test
+$ yarn test
 ```
 
 See the coverage report at `./coverage/lcov-report/index.html`
@@ -73,7 +73,7 @@ Check out the [wiki](https://github.com/triplecanopy/b-ber-creator/wiki).
 ## Documentation
 
 ```bash
-$ npm run docs
+$ yarn docs
 ```
 
 And open `./docs/bber/BBER_VERSION/index.html` in your browser.

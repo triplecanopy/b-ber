@@ -2,16 +2,12 @@
   "parser": "babel-eslint",
   "extends": ["airbnb"],
   "presets": ["es2015", "stage-0"],
-  "ecmaFeatures": {
-    "classes": true,
-    "jsx": true
-  },
+  "ecmaFeatures": { "classes": true },
   "plugins": [
     "babel",
     "import"
   ],
   "rules": {
-    "react/require-extension": "off", // https://github.com/airbnb/javascript/issues/978
     "brace-style": [2, "1tbs", {
       "allowSingleLine": true
     }],
@@ -37,13 +33,6 @@
     }],
     "one-var-declaration-per-line": [2, "initializations"],
     "operator-linebreak": 0,
-    "react/display-name": 0,
-    "react/jsx-boolean-value": [2, "never"],
-    "react/jsx-closing-bracket-location": [2, "line-aligned"],
-    "react/jsx-curly-spacing": 0,
-    "react/jsx-indent-props": [2, 2],
-    "react/jsx-no-duplicate-props": 0,
-    "react/jsx-no-undef": 2,
     "semi": [2, "never"],
     "space-before-function-paren": [2, {
       "anonymous": "always",

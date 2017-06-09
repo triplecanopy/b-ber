@@ -1,4 +1,3 @@
-
 const express = require('express')
 const esindex = require('serve-index')
 const path = require('path')
@@ -25,11 +24,11 @@ const hidden = ['.opf', '.ncx']
 const opts = {
   filter(fname) {
     return hidden.indexOf(path.extname(fname)) === -1
-  }
+  },
 }
 
 const app = express()
 app.use(express.static(dir))
 app.use(esindex(dir, opts))
-app.listen(port, () => log.info(`Server is running at localhost: ${port}`))
+app.listen(port, () => log.info(`Server is running at http://localhost:${port}/`))
 

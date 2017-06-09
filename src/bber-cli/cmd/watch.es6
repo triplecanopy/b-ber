@@ -1,4 +1,3 @@
-
 import { watch } from 'bber-output'
 
 const command = ['watch', 'w']

@@ -36,7 +36,7 @@ const load = (/* config */) => {
     Creating books
       bber init       Create an empty project and file structure, defaults to \`_book\`
       bber generate   Create a new chapter. Accepts arguments for metadata.
-      bber watch      Preview the book in a web-browser during development
+      bber watch      Preview the book in a browser during development
       bber build      Create an ePub, mobi, PDF, or all file formats
 
     Viewing books
@@ -87,7 +87,7 @@ const load = (/* config */) => {
     .command(serve)
     .command(site)
     .command(theme)
-    // .command(watch)
+    .command(watch)
     .command(xml)
 
     .options({

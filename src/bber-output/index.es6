@@ -36,7 +36,7 @@ export { default as footnotes } from 'bber-output/footnotes'
 // lib
 export { default as theme } from 'bber-lib/theme'
 export { default as serve } from 'bber-lib/serve'
-// export { default as watch } from 'bber-lib/watch'
+export { default as watch } from 'bber-lib/watch'
 
 // modifiers
 export { default as inject } from 'bber-modifiers/inject'
