@@ -32,8 +32,8 @@ See aliases in the [.babelrc](https://github.com/triplecanopy/b-ber-creator/blob
   * Initialize application loader
   * Configure application from user input and config files in the following order:
     1. `bber` defaults
-    * `.config.yml`
-    * Command line arguments
-    * `<source-dir>/<build-type>.yml`
+    2. `.config.yml`
+    3. Command line arguments
+    4. `<source-dir>/<build-type>.yml`
   * Execute commands
   * Deliver response

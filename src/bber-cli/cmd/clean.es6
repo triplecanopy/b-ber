@@ -1,4 +1,3 @@
-
 import path from 'path'
 import fs from 'fs-extra'
 import { clean } from 'bber-output'
@@ -20,7 +19,9 @@ const builder = yargs =>
     .help('h')
     .alias('h', 'help')
     .usage('\nUsage: $0 clean')
-    .fail((msg, err) => fail(msg, err, yargs))
+    .fail((msg, err) => {
+      fail(msg, err, yargs)
+    })
     .config({
       bber: {
         // default directories to remove

@@ -17,6 +17,7 @@ const cwd = process.cwd()
 // TODO: args here should be passed via CLI to support `const parser = new
 // Parser(['chapter-three'])`
 const parser = new Parser()
+const omit = ['toc.xhtml']
 
 /**
  * [description]
@@ -24,13 +25,15 @@ const parser = new Parser()
  */
 const readSpine = () =>
   new Promise((resolve, reject) => {
-    const opf = path.join(cwd, dist(), 'OPS/content.opf')
+    const opf = path.join(dist(), 'OPS/content.opf')
     return fs.readFile(opf, 'utf8', (err1, data) => {
       if (err1) { reject(err1) }
       parseString(data, (err2, result) => {
         if (err2) { reject(err2) }
         const items = result.package.spine[0].itemref
-        const files = items.map(_ => _.$.idref.slice(1))
+        const files = items.filter(_ =>
+          omit.indexOf(_.$.idref) < 0
+        ).map(_ => _.$.idref.slice(1))
         resolve(files)
       })
     })
@@ -43,13 +46,12 @@ const readSpine = () =>
  */
 const parseHTML = files =>
   new Promise((resolve) => {
-    const dir = path.join(cwd, dist(), 'OPS/text')
+    const dir = path.join(dist(), 'OPS/text')
     const text = files.map((_, index, arr) => {
       let data
       try {
         const f = path.basename(_, '.xhtml').replace(/[^0-9a-z-]/i, '_')
         data = fs.readFileSync(path.join(dir, `${f}.xhtml`), 'utf8')
-        // data = fs.readFileSync(path.join(dir, _), 'utf8')
       } catch (err) {
         return log.warn(err.message)
       }

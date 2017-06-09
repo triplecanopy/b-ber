@@ -24,8 +24,8 @@ const builder = yargs =>
     .alias('h', 'help')
     .usage('\nUsage: $0 init')
 
-const handler = () => {
-  const task = new Init()
+const handler = (argv) => {
+  const task = new Init(argv)
   return task.init()
 }
 

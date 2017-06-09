@@ -87,7 +87,7 @@ class Configuration {
 
     try {
       if (fs.statSync(path.join(cwd, 'config.yml'))) {
-        this._config = Object.assign(defaults, YAML.load('./config.yml'))
+        this._config = { ...defaults, ...YAML.load('./config.yml') }
       }
     } catch (e) {
       this._config = defaults

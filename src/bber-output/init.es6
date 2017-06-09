@@ -8,6 +8,8 @@ import { log } from 'bber-plugins'
 import { guid, src, dist } from 'bber-utils'
 import { serialize } from 'bber-lib/async'
 
+import store from 'bber-lib/store'
+
 /**
  * @class Initialize
  */
@@ -22,9 +24,26 @@ class Initialize {
 
   /**
    * @constructor
+   * @param  {Object} argv Command Line arguments
    * @return {Object}
    */
-  constructor() {
+  constructor(argv = {}) {
+    // TODO: this isn't so elegant ...
+    if (argv.src) {
+      store.bber.src = argv.src
+      store.bber.epub.src = argv.src
+      store.bber.mobi.src = argv.src
+      store.bber.pdf.src = argv.src
+      store.bber.web.src = argv.src
+    }
+    if (argv.dist && argv.dist !== argv.src) {
+      store.bber.dist = argv.dist
+      store.bber.epub.dist = `${argv.dist}-epub`
+      store.bber.mobi.dist = `${argv.dist}-mobi`
+      store.bber.pdf.dist = `${argv.dist}-pdf`
+      store.bber.web.dist = `${argv.dist}-web`
+    }
+
     this.dirs = [
       this.src,
       `${this.src}/_images`,
@@ -39,7 +58,7 @@ class Initialize {
       content: `env: development # development | production
 theme: default # name or path
 src: ${path.basename(this.src)}
-dist: ${path.basename(this.src).slice(1)}`,
+dist: ${path.basename(store.bber.dist)}`,
     }, {
       relpath: path.join(this.src, 'epub.yml'),
       content: '',

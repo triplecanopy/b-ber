@@ -5,17 +5,6 @@
 import store from 'bber-lib/store'
 import { isArray } from 'lodash'
 
-/*
-
-TODO:
-  - get file name from env
-  - either render the footnotes as html in this file and store that in
-    `store.footnotes`, or store the tokens and then process them later
-  - create new notes page
-  - add page to nav, content.opf, yaml file, etc.
-
- */
-
 // Process footnotes
 //
 
