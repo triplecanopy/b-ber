@@ -9,7 +9,7 @@ const containerOpenRegExp = new RegExp(`^(${containers})(?::([^\\s]+)(\\s.*)?)?$
 // matching `exit` tag generated dynamically based on opening tag `id` in factory/block#validateClose
 const containerCloseRegExp = /(exit)(?::([^\s]+))?/
 
-const render = ({ context }) => (tokens, idx) => {
+const render = ({ context = { filename: '' } }) => (tokens, idx) => {
   let result = ''
   let attrs = ''
   let id, type, att, startComment, endComment // eslint-disable-line one-var

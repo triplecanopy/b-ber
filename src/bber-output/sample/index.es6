@@ -4,5 +4,5 @@
 
 import Promise from 'vendor/Zousan'
 
-const sample = () => new Promise(resolve => resolve())
+const sample = () => Promise.resolve()
 export default sample

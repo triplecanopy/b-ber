@@ -19,7 +19,7 @@ let seq = 0
 export default {
   plugin: figure,
   name: 'image',
-  renderer: ({ instance, context }) => ({
+  renderer: ({ instance, context = { filename: '' } }) => ({
     marker: INLINE_DIRECTIVE_MARKER,
     minMarkers: INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
     markerOpen: imageOpenRegExp,
@@ -46,11 +46,10 @@ export default {
       const comment = htmlComment(`START: ${type}:${match[1]}#${htmlId(id)}; ${filename}:${lineNr}`)
       const attrsObject = attributesObject(match[3], match[1], { filename, lineNr })
       const asset = path.join(src(), '_images', attrsObject.source)
-      const { ...dimensions } = imgsize(asset)
-      const { width, height } = dimensions
 
       let result, page, classNames, ref, imageData // eslint-disable-line one-var
 
+      // make sure image exists ...
       try {
         if (!fs.existsSync(asset)) {
           throw new Error(`
@@ -62,6 +61,10 @@ export default {
         result = htmlComment(`Image not found: ${asset}`)
         return result
       }
+
+      // then get the dimensions
+      const { ...dimensions } = imgsize(asset)
+      const { width, height } = dimensions
 
       switch (type) {
         case 'image':

@@ -10,7 +10,7 @@ const sinon = require('sinon')
 const sinonChai = require('sinon-chai')
 const chaiAsPromised = require('chai-as-promised')
 
-const should = chai.should() // eslint-disable-line no-unused-vars
+chai.should()
 chai.use(chaiAsPromised)
 chai.use(sinonChai)
 

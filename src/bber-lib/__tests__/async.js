@@ -5,12 +5,12 @@
 /* eslint-disable no-unused-expressions */
 
 const chai = require('chai')
-const sinon = require('sinon') // eslint-disable-line no-unused-vars
+const sinon = require('sinon')
 const chaiAsPromised = require('chai-as-promised') // eslint-disable-line no-unused-vars
 const sinonChai = require('sinon-chai')
 const serialize = require('../async').serialize
 
-const should = chai.should() // eslint-disable-line no-unused-vars
+chai.should()
 chai.use(chaiAsPromised)
 chai.use(sinonChai)
 
@@ -35,7 +35,7 @@ describe('module:async', () => {
       res = []
       fns = {
         fn1: (() => res.push('foo')),
-        fn2: (() => res.push('bar'))
+        fn2: (() => res.push('bar')),
       }
       spy1 = sinon.spy(fns, 'fn1')
       spy2 = sinon.spy(fns, 'fn2')

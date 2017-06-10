@@ -22,11 +22,18 @@ import { orderByFileName, entries, lpad, src } from 'bber-utils'
 class Generate {
   /**
    * Get a list of markdown files
+   * @param  {String} dir [description]
    * @return {Array<Object<String>>}
    */
-  getFiles() {
-    return new Promise(resolve =>
-      fs.readdir(path.join(src(), '_markdown'), (err, files) => {
+  getFiles(dir) {
+    return new Promise((resolve) => {
+      const d = dir || path.join(src(), '_markdown')
+      try {
+        fs.existsSync(d)
+      } catch (e) {
+        throw e
+      }
+      return fs.readdir(d, (err, files) => {
         if (err) { throw err }
         let filearr = files.map((_) => {
           if (path.basename(_).charAt(0) === '.') { return null }
@@ -35,7 +42,7 @@ class Generate {
         filearr = filearr.length ? filearr : []
         resolve(filearr)
       })
-    )
+    })
   }
 
   /**

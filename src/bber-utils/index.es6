@@ -54,8 +54,7 @@ const cjoin = arr =>
  */
 
 // https://www.w3.org/TR/xml-names/#Conformance
-const fileId = str =>
-  str.replace(/:/g, '_').replace(/^(\d)/, '_$1').replace(/[\s]+/g, '_')
+const fileId = str => `_${str.replace(/[^a-zA-Z0-9_]/g, '_')}`
 
 /**
  * Create a GUID
@@ -285,6 +284,8 @@ const promiseAll = promiseArray =>
 
 const htmlComment = str => `\n<!-- ${str} -->\n`
 
+const passThrough = args => args
+
 export { opsPath, cjoin, fileId, copy, guid, rpad, lpad, hrtimeformat, hashIt,
   getImageOrientation, getFrontmatter, orderByFileName, entries, src, dist,
-  build, env, theme, version, metadata, promiseAll, htmlComment }
+  build, env, theme, version, metadata, promiseAll, htmlComment, passThrough }

@@ -83,7 +83,7 @@ const DIRECTIVE_ATTRIBUTES = {
     optional: {
       caption: {
         input: 'caption:"foo bar"',
-        output: /data-caption="foo bar"/,
+        output: /<img src="\.\.\/images\/foo\.jpg" alt="foo\.jpg"\/>/,
       },
       alt: {
         input: 'alt:foo',
@@ -107,14 +107,14 @@ const DIRECTIVE_ATTRIBUTES = {
         },
         classes: {
           input: 'classes:"foo bar baz"',
-          output: 'class="foo bar baz',
+          output: /class="pull-quote foo bar baz/,
         },
       },
     },
-    // 'dialogue': {
-    //   required: {},
-    //   optional: {}
-    // },
+    dialogue: {
+      required: {},
+      optional: {},
+    },
     // 'epigraph': {
     //   required: {},
     //   optional: {}

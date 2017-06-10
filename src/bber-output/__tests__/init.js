@@ -3,13 +3,12 @@
 // npm run -s mocha:single -- ./src/bber-output/__tests__/init.js
 
 const chai = require('chai')
-const sinon = require('sinon') // eslint-disable-line no-unused-vars
 const sinonChai = require('sinon-chai')
 const chaiAsPromised = require('chai-as-promised')
 const fs = require('fs-extra')
 const path = require('path')
 
-const should = chai.should() // eslint-disable-line no-unused-vars
+chai.should()
 chai.use(chaiAsPromised)
 chai.use(sinonChai)
 

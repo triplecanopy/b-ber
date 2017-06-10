@@ -4,6 +4,6 @@
 
 import Promise from 'vendor/Zousan'
 
-const web = () => new Promise(resolve => resolve())
+const web = () => Promise.resolve()
 export default web
 

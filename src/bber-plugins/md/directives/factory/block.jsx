@@ -2,10 +2,10 @@ import store from 'bber-lib/store'
 import { log } from 'bber-plugins'
 import {
   BLOCK_DIRECTIVE_MARKER,
-  BLOCK_DIRECTIVE_MARKER_MIN_LENGTH
+  BLOCK_DIRECTIVE_MARKER_MIN_LENGTH,
 } from 'bber-shapes/directives'
 
-const renderer = render => ({ context }, markerOpen, markerClose) => ({
+const renderer = render => ({ context = { filename: '' } }, markerOpen, markerClose) => ({
   render,
   markerOpen,
   markerClose,
@@ -46,7 +46,7 @@ const renderer = render => ({ context }, markerOpen, markerClose) => ({
     }
 
     return match
-  }
+  },
 })
 
 export default renderer

@@ -13,6 +13,7 @@
 
 import figure from 'bber-plugins/md/plugins/figure'
 import { log } from 'bber-plugins'
+import { passThrough } from 'bber-utils' // for testing
 
 const markerRe = /^epigraph/
 const attrsRe = /(?:(image|caption|citation)\s["]([^"]+)["])/g
@@ -20,14 +21,14 @@ const attrsRe = /(?:(image|caption|citation)\s["]([^"]+)["])/g
 export default {
   plugin: figure,
   name: 'epigraph',
-  renderer: (instance, context) => ({
+  renderer: ({ instance, context = { filename: '' } }) => ({
     marker: ':',
     minMarkers: 3,
     validate(params) {
       return params.trim().match(markerRe)
     },
     render(tokens, idx) {
-      const { escapeHtml } = instance.utils
+      const escapeHtml = instance && instance.escapeHtml ? instance.escapeHtml : passThrough
       const attrs = { image: '', caption: '', citation: '' }
       let result = ''
 

@@ -8,7 +8,7 @@ class Md {
       html: true,
       xhtmlOut: true,
       breaks: false,
-      linkify: false
+      linkify: false,
     }
     const settings = Object.assign({}, defaults, options)
     this.parser = new MarkdownIt(settings)

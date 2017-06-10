@@ -16,7 +16,6 @@ const MarkdownIt = require('markdown-it')
 const loader = require('../../bber-lib/loader').default
 const store = require('../../bber-lib/store').default
 const MarkIt = require('../md').default
-const utils = require('../../bber-utils')
 
 const Logger = require('../../__tests__/helpers/console')
 

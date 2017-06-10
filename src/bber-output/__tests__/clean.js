@@ -11,7 +11,7 @@ const store = require('../../bber-lib/store').default
 const loader = require('../../bber-lib/loader').default
 const Logger = require('../../__tests__/helpers/console')
 
-const should = chai.should() // eslint-disable-line no-unused-vars, import/no-extraneous-dependencies
+chai.should()
 chai.use(chaiAsPromised)
 
 describe('module:clean', () => {
@@ -28,18 +28,18 @@ describe('module:clean', () => {
   })
 
   describe('#clean', () => {
-    it('Should remove the output directory supplied by `dist()`')//, () => {
-    //   store.update('build', 'epub')
-    //   const dir = path.join(process.cwd(), 'src/__tests__/.tmp/clean')
-    //   fs.mkdirs(dir, (err) => {
-    //     if (err) { throw err }
-    //     return clean(dir).then(() =>
-    //       fs.existsSync(path.join(process.cwd(), 'book-epub')).should.be.false
-    //     ).catch((err) => {
-    //       throw err
-    //     })
-    //   })
-    // })
+    it('Should remove the output directory supplied by `dist()`', () => {
+      const dir = path.join(process.cwd(), 'src/__tests__/.tmp/clean')
+      fs.mkdirs(dir, (err0) => {
+        if (err0) { throw err0 }
+        fs.existsSync(dir).should.be.true // eslint-disable-line no-unused-expressions
+        return clean(dir).then(() =>
+          fs.existsSync(dir).should.be.false
+        ).catch((err1) => {
+          throw err1
+        })
+      })
+    })
     it('Should report an error if there is no directory specified', () => {
       store.update('build', null)
       return clean().catch((err) => {

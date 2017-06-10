@@ -2,17 +2,18 @@
 
 // npm run -s mocha:single -- ./src/bber-utils/__tests__/utils.js
 
-/* eslint-disable no-multi-spaces */
+/* eslint-disable no-multi-spaces, no-unused-expressions */
 
 const chai = require('chai')
 const chaiAsPromised = require('chai-as-promised')
 
-const should = chai.should() // eslint-disable-line no-unused-vars
+chai.should()
 chai.use(chaiAsPromised)
 
 const fs = require('fs-extra')
 const path = require('path')
 
+const loader = require('../../bber-lib/loader').default
 const store = require('../../bber-lib/store').default
 const ver = require('../../../package.json').version
 const utils = require('../../bber-utils')
@@ -27,7 +28,6 @@ const rpad                = utils.rpad
 const lpad                = utils.lpad
 const hrtimeformat        = utils.hrtimeformat
 const hashIt              = utils.hashIt
-const updateStore         = utils.updateStore
 const getImageOrientation = utils.getImageOrientation
 const getFrontmatter      = utils.getFrontmatter
 const orderByFileName     = utils.orderByFileName
@@ -44,6 +44,8 @@ const promiseAll          = utils.promiseAll
 const cwd = process.cwd()
 
 describe('module:utils', () => {
+  before(done => loader(() => done()))
+
   describe('#cjoin', () => {
     it('Should remove falsey values from an array and join the elements with newlines', () => {
       cjoin(['foo', false, 'bar', 0, null, 'baz', '']).should.equal('foo\nbar\nbaz')
@@ -92,7 +94,7 @@ describe('module:utils', () => {
 
           return copy(inFile, outFile).then(() => {
             // assert
-            fs.existsSync(outFile).should.be.true // eslint-disable-line no-unused-expressions
+            fs.existsSync(outFile).should.be.true
             fs.readFileSync(outFile, 'utf8').should.equal('foo')
 
             // cleanup
@@ -116,9 +118,9 @@ describe('module:utils', () => {
     })
   })
   describe('#fileId', () => {
-    it('Creates an HTML-safe element id')//, () => {
-    //   fileId('ß Ff').should.match(/__Ff/)
-    // })
+    it('Creates an XML-safe element id', () => {
+      fileId('1.:ß').should.equal('_1___')
+    })
   })
   describe('#guid', () => {
     it('Generates a GUID', () => {
@@ -197,7 +199,7 @@ describe('module:utils', () => {
       const val = iter.value[1]
       key.should.equal('prop')
       val.should.equal('attr')
-      done.should.be.false // eslint-disable-line no-unused-expressions
+      done.should.be.false
     })
   })
 
@@ -220,9 +222,9 @@ describe('module:utils', () => {
     })
   })
   describe('#env', () => {
-    it('Retrieves the `env` property from the global store')//, () =>
-    //   env().should.equal('test')
-    // )
+    it('Retrieves the `env` property from the global store', () =>
+      env().should.equal('development')
+    )
   })
   describe('#theme', () => {
     it('Retrieves the `theme` directory from the global store', () => {

@@ -3,6 +3,7 @@ import section from 'bber-plugins/md/plugins/section'
 import store from 'bber-lib/store'
 import { log } from 'bber-plugins'
 import { attributesObject, attributesString, htmlId } from 'bber-plugins/md/directives/helpers'
+import { passThrough } from 'bber-utils' // for testing
 import {
   BLOCK_DIRECTIVE_MARKER,
   BLOCK_DIRECTIVE_MARKER_MIN_LENGTH,
@@ -18,7 +19,7 @@ let citation = ''
 export default {
   plugin: section,
   name: 'pullQuote',
-  renderer: ({ instance, context }) => ({
+  renderer: ({ instance, context = { filename: '' } }) => ({
     marker: BLOCK_DIRECTIVE_MARKER,
     minMarkers: BLOCK_DIRECTIVE_MARKER_MIN_LENGTH,
 
@@ -59,7 +60,7 @@ export default {
 
 
     render(tokens, idx) {
-      const { escapeHtml } = instance.utils
+      const escapeHtml = instance && instance.escapeHtml ? instance.escapeHtml : passThrough
       const filename = `_markdown/${context.filename}.md`
       const lineNr = tokens[idx].map ? tokens[idx].map[0] : null
 
