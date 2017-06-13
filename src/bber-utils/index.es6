@@ -9,7 +9,6 @@ import Promise from 'vendor/Zousan'
 import fs from 'fs-extra'
 import path from 'path'
 import { compact, find } from 'lodash'
-import loader from 'bber-lib/loader'
 import store from 'bber-lib/store'
 
 const cwd = process.cwd()
@@ -181,41 +180,10 @@ const entries = function* entries(obj) {
 }
 
 
-// getters we need to make sure that `store` and `store.bber` have been
-// instantiated before attempting to return values. we check if the value
-// exists in memory in the getters below, and fallback to loading the config
-// if not.
-
-/**
- * [description]
- * @param  {String} val [description]
- * @return {*}
- */
-const getConfigValue = (val) => {
-  if ({}.hasOwnProperty.call(store.bber, val)) { return store.bber[val] }
-  return loader(instance => instance._config[val])
-}
-
-/**
- * [description]
- * @param  {String} key [description]
- * @return {*}
- */
-const getConfigObject = (key) => {
-  if ({}.hasOwnProperty.call(store.bber, key)) { return store.bber[key] }
-  return loader(instance => instance[`_${key}`])
-}
-
 /**
  * [description]
  * @return {String}
  */
-
-// TODO: this is problematic. bber needs to fail early if there is no output
-// dir specified, and inform the user. maybe they alsway need to specify a
-// working dir from the cli.  bonus: if they can specify the project dir from
-// the cli, then it's posible to build out these fns to work anywhere on the
-// file system.
 const src = () => {
   if (!store.bber[store.build] || !store.bber[store.build].src) {
     store.update('build', 'epub')
@@ -251,26 +219,25 @@ const build = () => {
  * [description]
  * @return {String}
  */
-const env = () => getConfigValue('env')
+const env = () => store.bber.env
 
 /**
  * [description]
  * @return {String}
  */
-const version = () => getConfigValue('version')
+const version = () => store.bber.version
 
 // TODO: this should check that the theme exists in the `themes` dir
 const theme = () => {
-  const t = getConfigValue('theme')
-  return { tpath: path.join(cwd, 'themes', t), tname: t }
+  const themeName = store.config.theme
+  return { tpath: path.join(cwd, 'themes', themeName), tname: themeName }
 }
 
 /**
  * [description]
  * @return {Array}
  */
-const metadata = () =>
-  getConfigObject('metadata')
+const metadata = () => store.bber.metadata
 
 /**
  * [description]

@@ -7,7 +7,6 @@
  */
 
 import yargs from 'yargs'
-import loader from 'bber-lib/loader'
 import * as commands from 'bber-cli/cmd'
 
 /**
@@ -15,7 +14,7 @@ import * as commands from 'bber-cli/cmd'
  * @memberOf module:cli
  * @return {Object}
  */
-const load = (/* config */) => {
+const init = () => {
   const {
     build, clean, copy, create/* , editor */, generate, init, inject, footnotes, opf,
     pdf, mobiCSS, publish, render, scripts, sass, serve, site, theme, watch, xml } = commands
@@ -107,4 +106,4 @@ const load = (/* config */) => {
   checkCommands(yargs)
 }
 
-loader(load)
+init()

@@ -13,7 +13,6 @@ chai.use(chaiAsPromised)
 const fs = require('fs-extra')
 const path = require('path')
 
-const loader = require('../../bber-lib/loader').default
 const store = require('../../bber-lib/store').default
 const ver = require('../../../package.json').version
 const utils = require('../../bber-utils')
@@ -44,8 +43,6 @@ const promiseAll          = utils.promiseAll
 const cwd = process.cwd()
 
 describe('module:utils', () => {
-  before(done => loader(() => done()))
-
   describe('#cjoin', () => {
     it('Should remove falsey values from an array and join the elements with newlines', () => {
       cjoin(['foo', false, 'bar', 0, null, 'baz', '']).should.equal('foo\nbar\nbaz')

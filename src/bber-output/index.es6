@@ -11,7 +11,6 @@ export { default as init } from 'bber-output/init'
 
 // output/modules
 export { default as clean } from 'bber-output/clean'
-export { default as config } from 'bber-lib/config'
 export { default as copy } from 'bber-output/copy'
 export { default as create } from 'bber-output/create'
 export { default as deploy } from 'bber-output/deploy'

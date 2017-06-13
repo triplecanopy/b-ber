@@ -13,7 +13,6 @@ chai.use(sinonChai)
 const path = require('path')
 const fs = require('fs-extra')
 
-const loader = require('../../bber-lib/loader').default
 const store = require('../../bber-lib/store').default
 const Generate = require('../generate').default
 
@@ -42,16 +41,14 @@ describe('module:generate', () => {
       }
     })
 
-    return loader(() =>
-      fs.mkdirs(mdDir, (err0) => {
-        if (err0) { throw err0 }
-        return fs.writeFile(path.join(mdDir, mdFile), '', (err1) => {
-          if (err1) { throw err1 }
-          store.update('build', 'epub')
-          return callback()
-        })
+    fs.mkdirs(mdDir, (err0) => {
+      if (err0) { throw err0 }
+      return fs.writeFile(path.join(mdDir, mdFile), '', (err1) => {
+        if (err1) { throw err1 }
+        store.update('build', 'epub')
+        return callback()
       })
-    )
+    })
   }
 
   const _teardown = (callback) => {} // eslint-disable-line no-unused-vars

@@ -1,47 +1,34 @@
-
+/* eslint-disable no-multi-spaces */
+import YAML from 'yamljs'
+import path from 'path'
+import fs from 'fs-extra'
 import { isPlainObject, isArray, indexOf } from 'lodash'
+
+const cwd = process.cwd()
 
 /**
  * @class Store
  */
 class Store {
-  set pages(value) {
-    this._pages = value
-  }
-  set images(value) {
-    this._images = value
-  }
-  set footnotes(value) {
-    this._footnotes = value
-  }
-  set build(value) {
-    this._build = value
-  }
-  set bber(value) {
-    this._bber = value
-  }
-  set cursor(value) { // used for tracking nested sections open/close ids
-    this._cursor = value
-  }
+  set env(value)        { this._env = value       }
+  set pages(value)      { this._pages = value     }
+  set images(value)     { this._images = value    }
+  set footnotes(value)  { this._footnotes = value }
+  set build(value)      { this._build = value     }
+  set bber(value)       { this._bber = value      }
+  set cursor(value)     { this._cursor = value    } // used for tracking nested sections open/close ids
+  set config(value)     { this._config = value    }
+  set metadata(value)   { this._metadata = value  }
 
-  get pages() {
-    return this._pages
-  }
-  get images() {
-    return this._images
-  }
-  get footnotes() {
-    return this._footnotes
-  }
-  get build() {
-    return this._build
-  }
-  get bber() {
-    return this._bber
-  }
-  get cursor() {
-    return this._cursor
-  }
+  get env()             { return this._env        }
+  get pages()           { return this._pages      }
+  get images()          { return this._images     }
+  get footnotes()       { return this._footnotes  }
+  get build()           { return this._build      }
+  get bber()            { return this._bber       }
+  get cursor()          { return this._cursor     }
+  get config()          { return this._config     }
+  get metadata()        { return this._metadata   }
 
   /**
    * @constructor
@@ -51,9 +38,21 @@ class Store {
     this.pages = []
     this.images = []
     this.footnotes = []
-    this.build = null
+    this.build = 'epub'
     this.bber = {}
     this.cursor = []
+    this.metadata = []
+    this.env = process.env.NODE_ENV || 'development'
+    this.config = {
+      src: '_book',
+      dist: 'book',
+      theme: 'default',
+      reader: 'https://codeload.github.com/triplecanopy/b-ber-boiler/zip/master',
+    }
+
+    this.loadSettings()
+    this.loadMetadata()
+    this.loadBber()
   }
 
   /**
@@ -74,6 +73,12 @@ class Store {
     }
 
     return { _prop, _val }
+  }
+
+  _fileOrDefaults(type) {
+    const { src, dist } = this.config
+    const fpath = path.join(cwd, src, `${type}.yml`)
+    return { src, dist: `${dist}-${type}`, pageList: fs.existsSync(fpath) ? YAML.load(fpath) : [] }
   }
 
   /**
@@ -142,9 +147,8 @@ class Store {
    * @return {Object}      Merged object
    */
   merge(prop, val) {
-    // TODO: option for deep merge?
     const { _prop, _val } = this._checkTypes(prop, val)
-    this[_prop] = Object.assign({}, this[_prop], _val)
+    this[_prop] = { ...this[_prop], ..._val }
     return this[_prop]
   }
 
@@ -181,9 +185,47 @@ class Store {
     this.pages = []
     this.images = []
     this.footnotes = []
-    this.build = null
+    this.build = 'epub'
     this.bber = {}
+    this.env = 'development'
+    this.config = {}
+    this.metadata = []
     return this
+  }
+
+
+  // from loader
+  //
+  //
+
+  loadSettings() {
+    if (fs.existsSync(path.join(cwd, 'config.yml'))) {
+      this.config = { ...this.config, ...YAML.load('./config.yml') }
+    }
+
+    if (fs.existsSync(path.join(cwd, 'package.json'))) {
+      const { version } = JSON.parse(fs.readFileSync(path.join(cwd, 'package.json')))
+      this.config = { ...this.config, version }
+    }
+  }
+
+  // depends on `config.src`
+  loadMetadata() {
+    const fpath = path.join(cwd, this.config.src, 'metadata.yml')
+    if (fs.existsSync(fpath)) {
+      this.metadata = [...this.metadata, ...YAML.load(fpath)]
+    }
+  }
+
+  loadBber() {
+    this.bber = {
+      metadata: this.metadata,
+      sample: this._fileOrDefaults('sample'),
+      epub: this._fileOrDefaults('epub'),
+      mobi: this._fileOrDefaults('mobi'),
+      pdf: this._fileOrDefaults('pdf'),
+      web: this._fileOrDefaults('web'),
+    }
   }
 }
 

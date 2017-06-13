@@ -8,7 +8,6 @@ const fs = require('fs-extra')
 const path = require('path')
 const clean = require('../clean').default
 const store = require('../../bber-lib/store').default
-const loader = require('../../bber-lib/loader').default
 const Logger = require('../../__tests__/helpers/console')
 
 chai.should()
@@ -17,7 +16,6 @@ chai.use(chaiAsPromised)
 describe('module:clean', () => {
   let logger
   before(() => {
-    loader(() => ({}))
     logger = new Logger()
     return logger
   })

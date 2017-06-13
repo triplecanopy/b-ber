@@ -13,7 +13,6 @@
 const chai = require('chai').should() // eslint-disable-line no-unused-vars
 const sinon = require('sinon')
 const MarkdownIt = require('markdown-it')
-const loader = require('../../bber-lib/loader').default
 const store = require('../../bber-lib/store').default
 const MarkIt = require('../md').default
 
@@ -24,7 +23,6 @@ describe('module:md:MarkIt', () => {
   let markit
 
   before((done) => {
-    loader(() => ({}))
     logger = new Logger()
     return done()
   })
@@ -53,12 +51,6 @@ describe('module:md:MarkIt', () => {
     })
 
     it('Should throw an error if an invalid directive is used')
-
-    it('Should execute `MarkIt#postRenderCallback` after the HTML has been rendered', () => {
-      const callback = sinon.spy(markit, 'postRenderCallback')
-      const params = markit.render('test', '# Test')
-      sinon.assert.calledWith(callback, params)
-    })
 
     it('Should update the global store with a Markdown file\'s frontmatter', () => {
       const callback = sinon.spy(store, 'add')

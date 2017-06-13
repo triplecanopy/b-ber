@@ -14,7 +14,6 @@ chai.should()
 chai.use(chaiAsPromised)
 chai.use(sinonChai)
 
-const loader = require('../../../bber-lib/loader').default
 const store = require('../../../bber-lib/store').default
 const Opf = require('../').default
 const Logger = require('../../../__tests__/helpers/console')
@@ -70,9 +69,7 @@ describe('module:opf', () => {
   before(() => {
     removeAssets(createAssets)
     logger = new Logger()
-    return loader(() => {
-      store.update('build', 'epub')
-    })
+    store.update('build', 'epub')
   })
 
   after(() => removeAssets())

@@ -1,0 +1,3 @@
+# `bber-modifiers`
+
+`bber-modifiers/` contains tasks to maniuplate XTHML once it has been converted from Markdown. The tasks prepare XHTML files for print to PDF, export to InDesign-ready XML, and inject scripts and styles.

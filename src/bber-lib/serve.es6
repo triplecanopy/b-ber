@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 import Promise from 'vendor/Zousan'
 import fs from 'fs-extra'
 import path from 'path'
@@ -6,11 +7,11 @@ import nodemon from 'nodemon'
 import { log } from 'bber-plugins'
 
 class Server {
-  set dir(d) { // eslint-disable-line class-methods-use-this
+  set dir(d) {
     this._dir = d
   }
 
-  get dir() { // eslint-disable-line class-methods-use-this
+  get dir() {
     return this._dir
   }
 
