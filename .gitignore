@@ -24,3 +24,6 @@ yarn-error.log*
 
 /docs
 /coverage
+
+.auth.json
+.credentials
