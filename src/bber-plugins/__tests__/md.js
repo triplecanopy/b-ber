@@ -43,8 +43,6 @@ describe('module:md:MarkIt', () => {
     it('Creates a new instance of the MarkIt class', () => {
       markit.should.be.an('object')
       markit.md.should.be.an.instanceOf(MarkdownIt)
-      markit.nestedStrings.should.be.an('array')
-      markit.nestedStrings.should.have.length(0)
       markit.filename.should.equal('')
     })
   })

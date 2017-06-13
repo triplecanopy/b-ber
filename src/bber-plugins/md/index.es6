@@ -47,14 +47,6 @@ class MarkIt {
     })
 
     /**
-     * [nestedStrings description]
-     * @member
-     * @memberOf module:md#MarkIt
-     * @type {Array}
-     */
-    this.nestedStrings = []
-
-    /**
      * [filename description]
      * @member
      * @memberOf module:md#MarkIt
@@ -139,33 +131,12 @@ class MarkIt {
       //   mdLogo.renderer(reference))
   }
 
-  /**
-   * Callback that is called once rendering has completed
-   * @param  {String} data [description]
-   * @return {String}
-   */
-  postRenderCallback(data) {
-    let result = data
-    this.nestedStrings.forEach((_) => {
-      result = data.replace(_.find, _.repl)
-    })
-    return result
-  }
-
   set filename(name) {
     this._filename = name
   }
 
   get filename() {
     return this._filename
-  }
-
-  set nestedStrings(strings) {
-    this._nestedStrings = strings
-  }
-
-  get nestedStrings() {
-    return this._nestedStrings
   }
 
   /**
@@ -186,8 +157,7 @@ class MarkIt {
    */
   render(filename, data) {
     this.filename = filename
-    this.nestedStrings = []
-    return this.postRenderCallback(this.md.render(data))
+    return this.md.render(data)
   }
 
 }
