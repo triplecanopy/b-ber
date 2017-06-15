@@ -25,5 +25,7 @@ yarn-error.log*
 /docs
 /coverage
 
+# for connecting to third party apps
 .auth.json
-.credentials
+.credentials.json
+
