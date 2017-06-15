@@ -1,30 +1,37 @@
 import plugin from 'bber-plugins/md/plugins/dialogue'
-import renderer from 'bber-plugins/md/directives/factory/block'
+import renderFactory from 'bber-plugins/md/directives/factory/block'
 
-const dialogueOpenRegExp = /^(dialogue)(?::([^\s]+)(\s.*)?)?$/
-const dialogueCloseRegExp = /(exit)(?::([^\s]+))?/
+// define our open and closing markers, used by the `validateOpen` and
+// `validateClose` methods in the `renderFactory`
+const markerOpen = /^(dialogue)(?::([^\s]+)(\s.*)?)?$/
+const markerClose = /^(exit)(?::([^\s]+))?/
 
-const render = () => (tokens, idx) => {
-  const open = tokens[idx].info.trim().match(dialogueOpenRegExp)
-  const close = tokens[idx].info.trim().match(dialogueCloseRegExp)
-  if (open) {
-    return '\n<section class="dialogue">'
+// a simple `render` function that gets passed into our `renderFactory` is
+// responsible for the HTML output.
+const render = (tokens, idx) => {
+  let result = ''
+  if (tokens[idx].nesting === 1) {
+    const open = tokens[idx].info.trim().match(markerOpen)
+    const close = tokens[idx].info.trim().match(markerClose)
+    if (open) {
+      result = '\n<section class="dialogue">'
+    }
+
+    if (close) {
+      result = '\n</section>'
+    }
   }
-
-  if (close) {
-    return '\n</section>'
-  }
-
-  return ''
+  return result
 }
 
 export default {
   plugin,
   name: 'dialogue',
-  renderer: refs =>
-    renderer(render(refs))(
-      refs,
-      dialogueOpenRegExp,
-      dialogueCloseRegExp
-    ),
+  renderer: args =>
+    renderFactory({
+      ...args,
+      markerOpen,
+      markerClose,
+      render,
+    }),
 }

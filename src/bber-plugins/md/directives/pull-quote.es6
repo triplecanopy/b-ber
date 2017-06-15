@@ -1,78 +1,54 @@
-
-import section from 'bber-plugins/md/plugins/section'
-import store from 'bber-lib/store'
-import { log } from 'bber-plugins'
+import plugin from 'bber-plugins/md/plugins/section'
 import { attributesObject, attributesString, htmlId } from 'bber-plugins/md/directives/helpers'
+import { log } from 'bber-plugins'
 import { passThrough } from 'bber-utils' // for testing
 import {
   BLOCK_DIRECTIVE_MARKER,
   BLOCK_DIRECTIVE_MARKER_MIN_LENGTH,
 } from 'bber-shapes/directives'
 
-const containerOpenRegExp = /^(pull-quote)(?::([^\s]+)(\s.*)?)?$/
-const containerCloseRegExp = /(exit)(?::([\s]+))?/
+const marker = BLOCK_DIRECTIVE_MARKER
+const minMarkers = BLOCK_DIRECTIVE_MARKER_MIN_LENGTH
+const markerOpen = /^(pull-quote)(?::([^\s]+)(\s.*)?)?$/
+const markerClose = /(exit)(?::([\s]+))?/
 
-// TODO: citation should be bound to the specific element, i.e., pushed into store
-// with the key (id)
 let citation = ''
 
 export default {
-  plugin: section,
+  plugin,
   name: 'pullQuote',
-  renderer: ({ instance, context = { filename: '' } }) => ({
-    marker: BLOCK_DIRECTIVE_MARKER,
-    minMarkers: BLOCK_DIRECTIVE_MARKER_MIN_LENGTH,
-
-    markerOpen: containerOpenRegExp,
-    markerClose: containerCloseRegExp,
-
-    validateOpen(params) {
-      const match = params.trim().match(containerOpenRegExp) || []
-      if (!match.length) { return false } // no match, keep parsing
-
-      const id = match[2]
-      if (typeof id === 'undefined') { // there's a match, but missing the required `id` attr
-        log.error(`Missing [id] attribute for [${exports.default.name}] directive`)
-        return false
+  renderer: ({ instance, context }) => ({
+    marker,
+    minMarkers,
+    markerOpen,
+    markerClose,
+    validateOpen(params, line) {
+      const match = params.trim().match(markerOpen) || false
+      if (match && match.length) {
+        const [, , id] = match
+        if (typeof id === 'undefined') {
+          log.error(`
+            Missing [id] attribute for [${exports.default.name}:start] directive
+            ${context.filename}.md:${line}`)
+          return false
+        }
       }
-
-      const index = store.contains('cursor', id)
-      if (index < 0) { store.add('cursor', id) }
-
       return match
     },
-
-    validateClose(params) {
-      const id = store.cursor[store.cursor.length - 1]
-      const match = params.trim().match(new RegExp(`(exit)(?::(${id}))?`)) || []
-      if (!match.length) { return false }
-
-      if (typeof match[2] === 'undefined') {
-        log.error(`Missing [id] attribute for [${exports.default.name}] directive`)
-        return false
-      }
-
-      const index = store.contains('cursor', id)
-      if (index > -1) { store.remove('cursor', id) }
-
+    validateClose(params/*, line */) {
+      const match = params.trim().match(markerClose) || false
       return match
     },
-
-
     render(tokens, idx) {
       const escapeHtml = instance && instance.escapeHtml ? instance.escapeHtml : passThrough
       const filename = `_markdown/${context.filename}.md`
       const lineNr = tokens[idx].map ? tokens[idx].map[0] : null
 
       let result = ''
-      let id
-      let startComment
-      let endComment
-      let attributeStr
 
       if (tokens[idx].nesting === 1) {
-        const open = tokens[idx].info.trim().match(containerOpenRegExp)
-        const close = tokens[idx].info.trim().match(containerCloseRegExp)
+        const open = tokens[idx].info.trim().match(markerOpen)
+        const close = tokens[idx].info.trim().match(markerClose)
 
         if (open) {
           const attrsObject = attributesObject(open[3], open[1], { filename, lineNr })
@@ -88,18 +64,19 @@ export default {
             delete attrsObject.citation
           }
 
-          attributeStr = ` ${attributesString(attrsObject)}`
-          id = open[2]
-          startComment = `\n<!-- START: section:${open[1]}#${htmlId(id)} -->\n`
-          result = `${startComment}<section${attributeStr}>`
-        } else if (close) {
-          id = close[2]
-          endComment = `\n<!-- END: section:${close[1]}#${htmlId(id)} -->\n`
-          result = citation ? `<cite>&#8212;&#160;${escapeHtml(citation)}</cite>` : ''
-          result += `</section>${endComment}`
+          const attributeStr = ` ${attributesString(attrsObject)}`
+          const id = open[2]
+          const comment = `\n<!-- START: section:${open[1]}#${htmlId(id)} -->\n`
+          result = `${comment}<section${attributeStr}>`
         }
-      } else {
-        // noop
+
+        if (close) {
+          const id = close[2]
+          const comment = `\n<!-- END:asdfasdf section:${close[1]}#${htmlId(id)} -->\n`
+          result = citation ? `<cite>&#8212;&#160;${escapeHtml(citation)}</cite>` : ''
+          result += `</section>${comment}`
+          citation = ''
+        }
       }
 
       return result

@@ -29,7 +29,6 @@ const hrtimeformat        = utils.hrtimeformat
 const hashIt              = utils.hashIt
 const getImageOrientation = utils.getImageOrientation
 const getFrontmatter      = utils.getFrontmatter
-const orderByFileName     = utils.orderByFileName
 const entries             = utils.entries
 const src                 = utils.src
 const dist                = utils.dist
@@ -43,6 +42,8 @@ const promiseAll          = utils.promiseAll
 const cwd = process.cwd()
 
 describe('module:utils', () => {
+  beforeEach(() => store.reset())
+
   describe('#cjoin', () => {
     it('Should remove falsey values from an array and join the elements with newlines', () => {
       cjoin(['foo', false, 'bar', 0, null, 'baz', '']).should.equal('foo\nbar\nbaz')
@@ -176,18 +177,6 @@ describe('module:utils', () => {
       })
     })
   })
-  describe('#orderByFileName', () => {
-    it('Should return an empty array if no argument is passed', () => {
-      orderByFileName().should.be.an('array')
-      orderByFileName().should.have.length(0)
-    })
-    it('Orders a list of objects by the `name` property', () => {
-      const arr = orderByFileName([{ name: '2_file' }, { name: '1_file' }])
-      arr.should.be.an('array')
-      arr[0].name.should.equal('1_file')
-      arr[1].name.should.equal('2_file')
-    })
-  })
   describe('#entries', () => {
     it('Creates an iterator from a JavaScript object', () => {
       const iter = entries({ prop: 'attr' }).next()
@@ -220,7 +209,7 @@ describe('module:utils', () => {
   })
   describe('#env', () => {
     it('Retrieves the `env` property from the global store', () =>
-      env().should.equal('development')
+      env().should.equal('test')
     )
   })
   describe('#theme', () => {

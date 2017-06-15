@@ -16,7 +16,7 @@ import mdPullQuote from 'bber-plugins/md/directives/pull-quote'
 // import mdLogo from 'bber-plugins/md/directives/logo'
 import mdImage from 'bber-plugins/md/directives/image'
 import mdDialogue from 'bber-plugins/md/directives/dialogue'
-import mdEpigraph from 'bber-plugins/md/directives/epigraph'
+// import mdEpigraph from 'bber-plugins/md/directives/epigraph'
 
 import { find } from 'lodash'
 
@@ -121,10 +121,10 @@ class MarkIt {
         mdImage.plugin,
         mdImage.name,
         mdImage.renderer(reference))
-      .use(
-        mdEpigraph.plugin,
-        mdEpigraph.name,
-        mdEpigraph.renderer(reference))
+      // .use(
+      //   mdEpigraph.plugin,
+      //   mdEpigraph.name,
+      //   mdEpigraph.renderer(reference))
       // .use(
       //   mdLogo.plugin,
       //   mdLogo.name,

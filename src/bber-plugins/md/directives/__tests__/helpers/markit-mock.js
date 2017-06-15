@@ -27,7 +27,10 @@ class Md {
     this.parser.use(
       plugin.plugin,
       plugin.name,
-      plugin.renderer(this.parser, this)
+      plugin.renderer({
+        instance: this.parser,
+        context: this,
+      })
     )
   }
 }

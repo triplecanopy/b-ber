@@ -1,51 +1,53 @@
 import plugin from 'bber-plugins/md/plugins/section'
-import renderer from 'bber-plugins/md/directives/factory/block'
+import renderFactory from 'bber-plugins/md/directives/factory/block'
 import { attributes, htmlId } from 'bber-plugins/md/directives/helpers'
 import { htmlComment } from 'bber-utils'
 import { BLOCK_DIRECTIVES } from 'bber-shapes/directives'
 
+// this matches *all* container-type directives, and outputs the appropriate
+// HTML based on user-defined attributes
 const containers = BLOCK_DIRECTIVES.join('|')
-const containerOpenRegExp = new RegExp(`^(${containers})(?::([^\\s]+)(\\s.*)?)?$`)
-// matching `exit` tag generated dynamically based on opening tag `id` in factory/block#validateClose
-const containerCloseRegExp = /(exit)(?::([^\s]+))?/
+const markerOpen = new RegExp(`^(${containers})(?::([^\\s]+)(\\s.*)?)?$`)
+const markerClose = /(exit)(?::([^\s]+))?/
 
-const render = ({ context = { filename: '' } }) => (tokens, idx) => {
-  let result = ''
-  let attrs = ''
-  let id, type, att, startComment, endComment // eslint-disable-line one-var
-
+// since `context` needs to be available in this `render` method, we curry it
+// in and pass the resulting function to the `renderFactory` below. we also
+// set a default for `context` since we'll need some of its properties during
+// testing
+const render = ({ context = {} }) => (tokens, idx) => {
   const lineNr = tokens[idx].map ? tokens[idx].map[0] : null
   const filename = `_markdown/${context.filename}.md`
 
-  if (tokens[idx].nesting === 1) { // built-in open, used for both `section` and `exit`
-    const open = tokens[idx].info.trim().match(containerOpenRegExp)
-    const close = tokens[idx].info.trim().match(containerCloseRegExp)
+  let result = ''
 
-    if (open) { // is section directive
-      type = open[1]
-      id = open[2]
-      att = open[3]
-      startComment = htmlComment(`START: section:${type}#${htmlId(id)}; ${filename}:${lineNr}`)
-      attrs = attributes(att, type, { filename, lineNr })
-      result = `${startComment}<section id="${htmlId(id)}"${attrs}>`
+  if (tokens[idx].nesting === 1) {
+    const open = tokens[idx].info.trim().match(markerOpen)
+    const close = tokens[idx].info.trim().match(markerClose)
+
+    if (open) {
+      // destructure the attributes from matches, omitting `matches[0]` since
+      // we're only interested in the captures
+      const [, type, id, att] = open
+      const comment = htmlComment(`START: section:${type}#${htmlId(id)}; ${filename}:${lineNr}`)
+      const attrs = attributes(att, type, { filename, lineNr })
+      result = `${comment}<section id="${htmlId(id)}"${attrs}>`
     } else if (close) {
-      type = close[1]
-      id = close[2]
-      endComment = htmlComment(`END: section:${type}#${htmlId(id)}`)
-      result = `</section>${endComment}`
+      const [, type, id] = close
+      const comment = htmlComment(`END: section:${type}#${htmlId(id)}`)
+      result = `</section>${comment}`
     }
   }
-
   return result
 }
 
 export default {
   plugin,
   name: 'section',
-  renderer: refs =>
-    renderer(render(refs))(
-      refs,
-      containerOpenRegExp,
-      containerCloseRegExp
-    ),
+  renderer: args =>
+    renderFactory({
+      ...args,
+      markerOpen,
+      markerClose,
+      render: render(args),
+    }),
 }

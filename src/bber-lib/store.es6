@@ -2,7 +2,7 @@
 import YAML from 'yamljs'
 import path from 'path'
 import fs from 'fs-extra'
-import { isPlainObject, isArray, indexOf } from 'lodash'
+import { isPlainObject, isArray, findIndex } from 'lodash'
 
 const cwd = process.cwd()
 
@@ -19,6 +19,7 @@ class Store {
   set cursor(value)     { this._cursor = value    } // used for tracking nested sections open/close ids
   set config(value)     { this._config = value    }
   set metadata(value)   { this._metadata = value  }
+  set version(value)    { this._version = value   }
 
   get env()             { return this._env        }
   get pages()           { return this._pages      }
@@ -29,30 +30,14 @@ class Store {
   get cursor()          { return this._cursor     }
   get config()          { return this._config     }
   get metadata()        { return this._metadata   }
+  get version()         { return this._version    }
 
   /**
    * @constructor
    * @return {Object} Instance of Store
    */
   constructor() {
-    this.pages = []
-    this.images = []
-    this.footnotes = []
-    this.build = 'epub'
-    this.bber = {}
-    this.cursor = []
-    this.metadata = []
-    this.env = process.env.NODE_ENV || 'development'
-    this.config = {
-      src: '_book',
-      dist: 'book',
-      theme: 'default',
-      reader: 'https://codeload.github.com/triplecanopy/b-ber-boiler/zip/master',
-    }
-
-    this.loadSettings()
-    this.loadMetadata()
-    this.loadBber()
+    this.loadInitialState()
   }
 
   /**
@@ -91,12 +76,12 @@ class Store {
     const { _prop, _val } = this._checkTypes(prop, val)
 
     if (isArray(this[_prop])) {
-      this[_prop].push(_val)
+      this[_prop] = [...this[_prop], _val]
       return this[_prop]
     }
 
     if (isPlainObject(this[_prop])) {
-      this[_prop] = Object.assign({}, _val)
+      this[_prop] = { ...this[_prop], ..._val }
       return this[_prop]
     }
 
@@ -116,11 +101,10 @@ class Store {
    */
   remove(prop, val) {
     const { _prop, _val } = this._checkTypes(prop, val)
-
     if (isArray(this[_prop])) {
       let index
       try {
-        index = indexOf(this[_prop], _val)
+        index = findIndex(this[_prop], _val)
         if (index < 0) {
           throw new TypeError(`The _property [${val}] could not be found in [${this[prop]}]`)
         }
@@ -171,41 +155,49 @@ class Store {
    */
   contains(collection, value) {
     if (!isArray(this[collection])) {
-      throw new TypeError('[Store#contains] must be called with an array')
+      throw new TypeError('[Store#contains] must be called on an array')
     }
-    const index = this[collection].indexOf(value)
-    return index
+    return findIndex(this[collection], value)
   }
 
   /**
    * Restore initial state of store
    * @return {Object} Store
    */
-  reset() {
+
+  loadInitialState() {
     this.pages = []
     this.images = []
     this.footnotes = []
     this.build = 'epub'
     this.bber = {}
-    this.env = 'development'
-    this.config = {}
+    this.cursor = []
     this.metadata = []
-    return this
-  }
-
-
-  // from loader
-  //
-  //
-
-  loadSettings() {
-    if (fs.existsSync(path.join(cwd, 'config.yml'))) {
-      this.config = { ...this.config, ...YAML.load('./config.yml') }
+    this.env = process.env.NODE_ENV || 'development'
+    this.config = {
+      src: '_book',
+      dist: 'book',
+      theme: 'default',
+      reader: 'https://codeload.github.com/triplecanopy/b-ber-boiler/zip/master',
     }
 
+    this.loadSettings()
+    this.loadMetadata()
+    this.loadBber()
+  }
+
+  reset() {
+    this.loadInitialState()
+  }
+
+  loadSettings() {
     if (fs.existsSync(path.join(cwd, 'package.json'))) {
       const { version } = JSON.parse(fs.readFileSync(path.join(cwd, 'package.json')))
-      this.config = { ...this.config, version }
+      this.version = version
+    }
+
+    if (fs.existsSync(path.join(cwd, 'config.yml'))) {
+      this.config = { ...this.config, ...YAML.load('./config.yml') }
     }
   }
 

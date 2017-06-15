@@ -69,6 +69,7 @@ The basic implementation for creating a custom container is below.
 
 ```js
 import plugin from 'bber-plugins/md/plugins/section'
+import renderer from 'bber-plugins/md/directives/factory/block'
 
 const render = ({ context }) => (tokens, idx) => {
   if (tokens[idx].nesting === 1) {  // container open

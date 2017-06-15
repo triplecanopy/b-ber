@@ -155,20 +155,6 @@ const getFrontmatter = (file, prop) => {
 }
 
 /**
- * [description]
- * @param  {Array<Object>} filearr [description]
- * @return {Array<Object>}
- */
-const orderByFileName = (filearr) => {
-  if (!filearr || !filearr.length) { return [] }
-  return filearr.sort((a, b) => {
-    const seqA = a.name.split('_')[0]
-    const seqB = b.name.split('_')[0]
-    return seqA < seqB ? -1 : seqA > seqB ? 1 : 0 // eslint-disable-line no-nested-ternary
-  })
-}
-
-/**
  * Create an iterator from object's key/value pairs
  * @param {Object} obj [description]
  * @return {Iterable<Array>}
@@ -219,13 +205,13 @@ const build = () => {
  * [description]
  * @return {String}
  */
-const env = () => store.bber.env
+const env = () => store.env
 
 /**
  * [description]
  * @return {String}
  */
-const version = () => store.bber.version
+const version = () => store.version
 
 // TODO: this should check that the theme exists in the `themes` dir
 const theme = () => {
@@ -254,5 +240,5 @@ const htmlComment = str => `\n<!-- ${str} -->\n`
 const passThrough = args => args
 
 export { opsPath, cjoin, fileId, copy, guid, rpad, lpad, hrtimeformat, hashIt,
-  getImageOrientation, getFrontmatter, orderByFileName, entries, src, dist,
-  build, env, theme, version, metadata, promiseAll, htmlComment, passThrough }
+  getImageOrientation, getFrontmatter, entries, src, dist, build, env, theme,
+  version, metadata, promiseAll, htmlComment, passThrough }

@@ -58,7 +58,7 @@ class Initialize {
       content: `env: development # development | production
 theme: default # name or path
 src: ${path.basename(this.src)}
-dist: ${path.basename(store.bber.dist)}`,
+dist: ${path.basename(store.config.dist)}`,
     }, {
       relpath: path.join(this.src, 'epub.yml'),
       content: '',

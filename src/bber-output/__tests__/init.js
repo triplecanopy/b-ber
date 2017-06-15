@@ -33,19 +33,19 @@ describe('module:init', () => {
     if (!fs.existsSync(configYml)) {
       fs.writeFileSync(configYml, yamlStr)
     }
-    store.update('build', 'epub')
-    init = new Initialize()
+    store.reset()
     logger.reset()
+    init = new Initialize()
     return init
   })
 
   describe('#_removeConfigFile', () => {
-    it('Should should prompt the user if a `config.yml` exists in the project\'s root path')//, () =>
-    //   init._removeConfigFile().then(() => {
-    //     logger.warnings.should.have.length(1)
-    //     return logger.warnings[0].message.should.match(/It looks like/)
-    //   })
-    // )
+    it('Should should prompt the user if a `config.yml` exists in the project\'s root path', () =>
+      init._removeConfigFile().then(() => {
+        logger.warnings.should.have.length(1)
+        return logger.warnings[0].message.should.match(/It looks like/)
+      })
+    )
 
     it('Should remove `config.yml` in the project\'s root path', () =>
       init._removeConfigFile().then(() =>
@@ -76,11 +76,5 @@ describe('module:init', () => {
         fs.readdirSync(projectDir).should.have.length(11)
       )
     )
-  })
-
-  describe('#init', () => {
-    it('Initializes the promise chain')//, () =>
-    //   init.init().should.eventually.be.fulfilled
-    // )
   })
 })

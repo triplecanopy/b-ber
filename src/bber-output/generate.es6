@@ -13,7 +13,7 @@ import path from 'path'
 import YAML from 'yamljs'
 import File from 'vinyl'
 import { log } from 'bber-plugins'
-import { orderByFileName, entries, lpad, src } from 'bber-utils'
+import { entries, lpad, src } from 'bber-utils'
 
 /**
  * Generate new Markdown documents
@@ -43,17 +43,6 @@ class Generate {
         resolve(filearr)
       })
     })
-  }
-
-  /**
-   * Order files based on their filename
-   * @param  {Array<Object<String>>} files [description]
-   * @return {Array<Object<String>>}
-   */
-  orderFiles(files) {
-    return new Promise(resolve =>
-      resolve(orderByFileName(files))
-    )
   }
 
   /**
@@ -155,7 +144,6 @@ class Generate {
     return () =>
       new Promise(resolve =>
         this.getFiles()
-        .then(this.orderFiles)
         .then(this.parseMeta)
         .then(this.createFile)
         .then(this.writeFile)

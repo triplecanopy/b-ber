@@ -1,12 +1,11 @@
-
-::: chapter:nested_outer classes:"class1 class2 class3" title:"The Outer Title"
+::: chapter:outer
 
 Outer
 
-::: chapter:nested_inner classes:"class3 class4 class5" title:"The Inner Title"
+::: chapter:inner
 
 Inner
 
-::: exit:nested_inner
+::: exit:inner
 
-::: exit:nested_outer
+::: exit:outer

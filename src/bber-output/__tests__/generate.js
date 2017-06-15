@@ -64,16 +64,6 @@ describe('module:generate', () => {
       )
     )
   })
-  describe('#orderFiles', () => {
-    it('Sorts a list of objects based on their `name` properties', () => {
-      const arr = [{ name: '2_file' }, { name: '1_file' }]
-      return g.orderFiles(arr).then((resp) => {
-        resp.should.be.an('array')
-        resp[0].name.should.equal('1_file')
-        resp[1].name.should.equal('2_file')
-      })
-    })
-  })
   describe('#parseMeta', () => {
     it('Extracts frontmatter values from command line arguments')
   })

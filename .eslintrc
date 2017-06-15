@@ -39,6 +39,7 @@
       "anonymous": "always",
       "named": "never"
     }],
+    "spaced-comment": 0,
     "strict": [0],
     "valid-jsdoc": [2, {
       "requireReturnDescription": false
