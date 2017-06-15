@@ -68,7 +68,7 @@ See the coverage report at `./coverage/lcov-report/index.html`
 
 ## Reference
 
-Check out the [wiki](https://github.com/triplecanopy/b-ber-creator/wiki).
+Check out the [wiki](https://github.com/triplecanopy/b-ber-creator/wiki), and the notes in the [`src`](https://github.com/triplecanopy/b-ber-creator/tree/master/src) directory.
 
 ## Documentation
 
