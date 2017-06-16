@@ -1,8 +1,144 @@
 /*! © Triple Canopy 2017 */
 
-@import 'theme-settings';
-@import 'typography/typography';
-@import 'responsive/responsive';
-@import 'layout/layout';
-@import 'print/print';
-@import 'custom';
+@import '../tc-default/application.scss';
+
+//
+// extends _text.scss
+//
+p {
+  .pull-quote & {
+    text-indent: 0;
+    font-style: italic;
+    font-weight: normal;
+    @include no-indent-follow;
+    @include tc-rhythm-sizing($text-xs, $line-xs);
+    @include adjust-leading-to(0.91);
+  }
+
+  .epigraph .pull-quote & {
+    float: none;
+    width: 100%;
+    margin-top: 0!important;
+    padding-top: 0!important;
+    @include text-center;
+    @include no-indent-follow;
+    @include tc-rhythm-sizing($text-base, $line-base);
+    @include adjust-leading-to(1);
+  }
+}
+
+cite {
+  .pull-quote & {
+    @include no-indent-follow;
+    @include tc-rhythm-sizing($text-xs, $line-xs);
+    @include adjust-leading-to(0.91);
+    float: right;
+    font-weight: normal;
+    text-indent: 0;
+    display: block;
+    text-align: right;
+    width: 75%;
+    margin-left: 25%;
+  }
+  .pull-quote.full-width & {
+    margin-left: 0;
+    width: 100%;
+  }
+  .epigraph .pull-quote & {
+    float: none;
+    width: 100%;
+    @include text-center;
+    @include no-indent-follow;
+    @include tc-rhythm-sizing($text-base, $line-base);
+    @include adjust-leading-to(1);
+  }
+}
+
+//
+// extends _layout.scss
+//
+section.colophon,
+section.appendix,
+section.backmatter {
+  figure#Triple-Canopy.logo {
+    text-indent: 0;
+    text-align: left;
+    margin:0;
+    padding:0;
+    img{
+      height:auto;
+      text-indent: 0;
+      text-align: left;
+      margin:0;
+      padding:12px 0 0 0;
+    }
+  }
+}
+
+
+// Adjustments to book meta
+section.staff {
+  h3 {
+    text-align: left;
+    margin:0;
+    padding:0;
+    font-weight: bold;
+    @include tc-rhythm-sizing($text-sm, $line-sm);
+  }
+}
+.masthead h2 {
+  font-weight: 700;
+  font-family: inherit;
+  padding-top:0;
+  text-align: left;
+  @include tc-rhythm-sizing($text-sm, $line-sm);
+}
+
+//
+// extends _figure.scss
+//
+.figure-md { // Large inline images (used in epigraph)
+  text-align: center;
+  page-break-inside: avoid;
+  height: 350px!important;
+  figcaption,
+  .figcaption {
+    text-align: center;
+    width: 100%;
+  }
+
+  .epigraph & {
+    margin-top: 0!important;
+    padding-top: 0!important;
+    page-break-inside:avoid;
+  }
+}
+
+//
+// extends _container.scss
+//
+.pull-quote {
+  float: left;
+  text-indent: 0;
+  padding: 0.8em rhythm(1.65); // TODO: optically adjusted
+
+  section.titlepage &,
+  section.introduction &,
+  section.afterword & {
+    float: none;
+    clear: both;
+    padding-bottom: 5.65em;
+    padding-top: 0.2em;
+  }
+
+  .epigraph & {
+    float: none;
+    padding-top: 0;
+    padding-bottom: 1.4em;
+    margin-top: 0;
+  }
+  + p { text-indent: 0; }
+  h1 + &,
+  .pull-quote + & { padding-top: 0; }
+  &:last-child { padding-bottom: 1.87em; }
+}
