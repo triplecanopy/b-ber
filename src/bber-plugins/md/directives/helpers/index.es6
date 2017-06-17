@@ -72,10 +72,9 @@ const _extractAttrs = str =>
 // -> { foo: 'bar', baz: 'qux' }
 const _buildAttrObjects = (arr) => {
   const o = {}
-  arr.map((_) => {
-    const [k, v] = _.split(':')
-    o[k.trim()] = v.trim().replace(/(?:^["']|["']$)/g, '')
-    return o
+  arr.forEach((_) => {
+    const [, k, v] = _.split(/^([^:]+):/)
+    o[k] = v.replace(/(?:^["']|["']$)/g, '')
   })
   return o
 }
@@ -155,8 +154,8 @@ const _extendWithDefaults = (obj, name) => {
 
 /**
  * Create an object from attributes in the given directive
- * @param  {String} str     [description]
- * @param  {String} type    [description]
+ * @param  {String} str     The directives attributes string
+ * @param  {String} type    The type of directive
  * @param  {Object} context Markdown file where attributes method was called
  * @return {String}
  */
