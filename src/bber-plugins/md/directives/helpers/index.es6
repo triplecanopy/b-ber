@@ -72,10 +72,9 @@ const _extractAttrs = str =>
 // -> { foo: 'bar', baz: 'qux' }
 const _buildAttrObjects = (arr) => {
   const o = {}
-  arr.map((_) => {
-    const [k, v] = _.split(':')
-    o[k.trim()] = v.trim().replace(/(?:^["']|["']$)/g, '')
-    return o
+  arr.forEach((_) => {
+    const [, k, v] = _.split(/^([^:]+):/)
+    o[k] = v.replace(/(?:^["']|["']$)/g, '')
   })
   return o
 }
@@ -155,16 +154,16 @@ const _extendWithDefaults = (obj, name) => {
 
 /**
  * Create an object from attributes in the given directive
- * @param  {String} str     [description]
- * @param  {String} type    [description]
+ * @param  {String} attrs   The directives attributes string
+ * @param  {String} type    The type of directive
  * @param  {Object} context Markdown file where attributes method was called
  * @return {String}
  */
-const attributesObject = (str, type, context) => {
+const attributesObject = (attrs, type, context) => {
   let attrsObject = {}
   if (!type || typeof type !== 'string') { throw new TypeError('No directive provided') }
-  if (str && typeof str === 'string') {
-    const body = str.trim()
+  if (attrs && typeof attrs === 'string') {
+    const body = attrs.trim()
     const attrsArray = _extractAttrs(body)
     try {
       attrsObject = _buildAttrObjects(attrsArray)
@@ -222,6 +221,7 @@ const stringToCharCode = (s) => {
  * @param  {String} s [description]
  * @return {String}
  */
-const htmlId = s => `_${String(s).replace(/[^0-9a-z-]/, '_')}`
+const htmlId = s => `_${String(s).replace(/[^0-9a-zA-Z]/, '_')}`
+
 
 export { attributes, attributesObject, attributesString, stringToCharCode, htmlId }
