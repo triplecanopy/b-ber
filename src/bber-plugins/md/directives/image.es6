@@ -2,7 +2,7 @@
 import path from 'path'
 import fs from 'fs-extra'
 import store from 'bber-lib/store'
-import imgsize from 'image-size'
+import imageSize from 'image-size'
 import { log } from 'bber-plugins'
 import figure from 'bber-plugins/md/plugins/figure'
 import figTmpl from 'bber-templates/figures'
@@ -26,7 +26,8 @@ export default {
 
     validate(params, line) {
       const match = params.trim().match(imageOpenRegExp) || false
-      if (typeof match[2] === 'undefined' || typeof match[3] === 'undefined') { // image requires `id` and `source`
+      const [, , id, source] = match
+      if (typeof id === 'undefined' || typeof source === 'undefined') { // image requires `id` and `source`
         log.error(`
           Missing [id] attribute for [image] directive
           ${context.filename}.md:${line}`)
@@ -37,14 +38,13 @@ export default {
 
     render(tokens, idx) {
       const match = tokens[idx].info.trim().match(imageOpenRegExp)
-      const type = match[1]
-      const id = match[2]
+      const [, type, id, attrs] = match
       const filename = `_markdown/${context.filename}.md`
       const lineNr = tokens[idx].map ? tokens[idx].map[0] : null
       const children = tokens[idx].children
       const caption = children ? instance.renderInline(tokens[idx].children) : ''
-      const comment = htmlComment(`START: ${type}:${match[1]}#${htmlId(id)}; ${filename}:${lineNr}`)
-      const attrsObject = attributesObject(match[3], match[1], { filename, lineNr })
+      const comment = htmlComment(`START: image:${type}#${htmlId(id)}; ${filename}:${lineNr}`)
+      const attrsObject = attributesObject(attrs, type, { filename, lineNr })
       const asset = path.join(src(), '_images', attrsObject.source)
 
       let result, page, classNames, ref, imageData // eslint-disable-line one-var
@@ -63,7 +63,7 @@ export default {
       }
 
       // then get the dimensions
-      const { ...dimensions } = imgsize(asset)
+      const { ...dimensions } = imageSize(asset)
       const { width, height } = dimensions
 
       switch (type) {
