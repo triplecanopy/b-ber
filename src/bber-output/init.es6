@@ -204,9 +204,7 @@ type: bodymatter
    */
   _removeConfigFile() {
     // necessary to remove the config to ensure that settings aren't carried
-    // over from an existing project. there should be a better way of doing
-    // this, though; a check that notifies users that they're in an existing
-    // project directory, and a prompt to remove the existing data?
+    // over from an existing project.
     return new Promise((resolve) => {
       const configPath = path.join(process.cwd(), 'config.yml')
       if (fs.existsSync(configPath)) {

@@ -12,7 +12,7 @@ yarn-debug.log*
 yarn-error.log*
 
 /_site
-/_idea
+.idea
 
 # used for transpiled JSX
 /lib
