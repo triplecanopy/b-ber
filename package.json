@@ -16,8 +16,7 @@
     "docs": "./node_modules/.bin/jsdoc --verbose -c .jsdoc.json",
     "start": "./node_modules/.bin/babel-node ./src/bber-cli/index.es6 --presets es2015,stage-0",
     "test": "yarn lint && yarn istanbul",
-    "posttest": "if [ \"$NODE_ENV\" = production ]; then yarn build; fi",
-    "clean": "node ./_idea/clean/index.js"
+    "posttest": "if [ \"$NODE_ENV\" = production ]; then yarn build; fi"
   },
   "bin": {
     "bber": "./lib/bber-cli/index.js"

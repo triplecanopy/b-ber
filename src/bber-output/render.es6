@@ -14,27 +14,18 @@ import MarkIt from 'bber-plugins/md'
 import { pageHead, pageBody, pageTail } from 'bber-templates/pages'
 import { src, dist } from 'bber-utils'
 
-let input
-let output
-let mdDir
-let textDir
-
-const initialize = () => {
-  input = src()
-  output = dist()
-  mdDir = path.join(`${input}/_markdown/`)
-  textDir = path.join(`${output}/OPS/text/`)
-}
-
 // write files to `textDir` dir
-const write = (fname, markup, idx, len, rs, rj) =>
+const write = (fname, markup, idx, len, rs, rj) => {
+  const textDir = path.join(`${dist()}/OPS/text/`)
   fs.writeFile(path.join(textDir, `${fname}.xhtml`), markup, (err) => {
     if (err) { rj(err) }
     if (idx === len) { rs() }
   })
+}
 
 // insert compiled XHTML into layouts
 const layout = (fname, data, idx, len, rs, rj) => {
+  const textDir = path.join(`${dist()}/OPS/text/`)
   const head = pageHead(fname)
   const tail = pageTail(fname)
   const markup = renderLayouts(new File({
@@ -56,10 +47,10 @@ const layout = (fname, data, idx, len, rs, rj) => {
 const parse = (fname, data, idx, len, rs, rj) =>
   layout(fname, MarkIt.render(fname, data), idx, len, rs, rj)
 
-async function render() {
-  await initialize()
-  return new Promise(async (resolve, reject) =>
-    fs.readdir(mdDir, async (err1, files) => {
+function render() {
+  const mdDir = path.join(`${src()}/_markdown/`)
+  return new Promise((resolve, reject) =>
+    fs.readdir(mdDir, (err1, files) => {
       if (err1) { reject(err1) }
       const len = files.length - 1
       return files.forEach((file, idx) => {
