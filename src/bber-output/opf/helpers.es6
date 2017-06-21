@@ -76,9 +76,9 @@ const buildNavigationObjects = (data, dest, result = []) => {
 }
 
 const nestedLinearContent = (pages) => {
-  const _pages = Array.prototype.slice.call(pages, 0)
+  const _pages = [...pages]
   const nonLinearIndex = findIndex(_pages, 'nonLinear')
-  _pages.splice(nonLinearIndex, 1)
+  if (nonLinearIndex > -1) { _pages.splice(nonLinearIndex, 1) }
   return _pages
 }
 
