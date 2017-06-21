@@ -41,8 +41,7 @@ function render_footnote_ref(tokens, idx, options, env, slf) {
     refid += ':' + tokens[idx].meta.subId;
   }
 
-  // TODO: need to make sure the hard-coded `notes.xhtml` doesn't conflict with an existing file
-  return `<a epub:type="noteref" href="notes.xhtml#fn${id}" id="fnref${refid}">${caption}</a>`;
+  return `<a epub:type="noteref" class="footnote-ref" href="notes.xhtml#fn${id}" id="fnref${refid}">${caption}</a>`;
 }
 
 function render_footnote_block_open(tokens, idx, options) {

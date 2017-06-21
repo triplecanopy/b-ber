@@ -1,6 +1,6 @@
 /*! © Triple Canopy 2017 */
 
-@import '../tc-default/application.scss';
+@import '../default/application.scss';
 
 //
 // extends _text.scss
@@ -113,6 +113,67 @@ section.staff {
     page-break-inside:avoid;
   }
 }
+
+.figure-sm { // Small inline images (used in text flow)
+  text-align: center;
+  a {
+    display: block;
+    margin:0 auto;
+  }
+  &.landscape,
+  &.square {
+    padding-top:1.35em;
+    padding-bottom:1.23em;
+    padding-left:0;
+    padding-right:0;
+    figure, a, img {
+      width: auto;
+      height: 4.3em; // 108px
+    }
+  }
+  &.portrait,
+  &.portraitLong {
+    padding-top:1.35em;
+    padding-bottom:1.23em;
+    padding-left:0;
+    padding-right:0;
+    figure, a, img {
+      width: auto;
+      height: 6.4em; // 160px
+    }
+  } //
+  + blockquote, + blockquote.dialogue {
+    padding-top: 0;
+  }
+}
+
+// Figures pages
+figcaption,
+.figcaption {
+  @include footnote;
+  @include rhythm(0.2, 0, 0, 0, $text-xs);
+  display: inline-block;
+  a { text-decoration: none; }
+  .figure-lg & {
+    padding-top: 0;
+    padding-bottom: 0;
+    font-size: .68em;
+    line-height: 2.05882em;
+    line-height: 1.33em;
+    display: block;
+    text-align: left;
+    margin-top: .83333em;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 0;
+  }
+}
+.img-wrap {
+  width: 100%;
+  a { text-decoration: none!important; }
+  .epigraph & { padding-top: 7px; }
+}
+
 
 //
 // extends _container.scss

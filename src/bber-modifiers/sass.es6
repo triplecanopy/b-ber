@@ -66,7 +66,13 @@ const renderCss = scssString =>
       includePaths: [path.join(src(), '_stylesheets/'), theme().tpath],
       outputStyle: env() === 'production' ? 'compressed' : 'nested',
       errLogToConsole: true,
-    }, (err, result) => resolve(result))
+    }, (err, result) => {
+      if (err) {
+        log.error(err.message)
+        process.exit(1)
+      }
+      resolve(result)
+    })
   )
 
 const applyPostProcessing = ({ css }) =>

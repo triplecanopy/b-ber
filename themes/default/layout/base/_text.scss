@@ -96,7 +96,8 @@ cite {
 }
 
 // Inline elements
-sup {
+sup,
+a.footnote-ref {
   @include font-base;
   font-size: 0.52em;
   line-height: 1;
@@ -168,5 +169,16 @@ aside.footnote {
   a.footnote-link {
     display: inline-block;
     text-indent: rhythm(-1, $base-font-size);
+  }
+}
+
+ol.footnotes {
+  margin: 0;
+  li {
+    padding-bottom: 1em;
+    text-indent: 0!important;
+    p { text-indent: 0!important; }
+    a { text-decoration: none!important; }
+    span.hidden-backlink { display: inline; }
   }
 }
