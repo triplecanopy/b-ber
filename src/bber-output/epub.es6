@@ -11,16 +11,19 @@ import { dist } from 'bber-utils'
  * Compiles epub
  * @return {Promise<Object|Error>}
  */
-const epub = () =>
-  Promise.resolve()
-  // new Promise(resolve =>
-  //   zipper.create({
-  //     input: dist(),
-  //     output: process.cwd(),
-  //     clean: true,
-  //   })
-  //   .catch(err => log.error(err))
-  //   .then(resolve)
-  // )
+const epub = () => {
+  if (process.env.NODE_ENV === 'debug') {
+    return Promise.resolve()
+  }
+  return new Promise(resolve =>
+    zipper.create({
+      input: dist(),
+      output: process.cwd(),
+      clean: true,
+    })
+    .catch(err => log.error(err))
+    .then(resolve)
+  )
+}
 
 export default epub
