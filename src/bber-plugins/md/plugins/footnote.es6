@@ -33,15 +33,14 @@ function render_footnote_caption(tokens, idx, options/*, env, slf*/) {
 }
 
 function render_footnote_ref(tokens, idx, options, env, slf) {
-  var id      = slf.rules.footnote_anchor_name(tokens, idx, options, env, slf);
   var caption = slf.rules.footnote_caption(tokens, idx, options, env, slf);
-  var refid   = id;
+  var ref = tokens[idx].meta.label
 
   if (tokens[idx].meta.subId > 0) {
     refid += ':' + tokens[idx].meta.subId;
   }
 
-  return `<a epub:type="noteref" class="footnote-ref" href="notes.xhtml#fn${id}" id="fnref${refid}">${caption}</a>`;
+  return `<a epub:type="noteref" class="footnote-ref" href="notes.xhtml#fn${ref}" id="fnref${ref}">${caption}</a>`;
 }
 
 function render_footnote_block_open(tokens, idx, options) {
@@ -56,7 +55,8 @@ function render_footnote_block_close() {
 
 function render_footnote_open(tokens, idx, options, env, slf) {
   var id = slf.rules.footnote_anchor_name(tokens, idx, options, env, slf);
-  let childIndex = idx + 2
+  var ref = tokens[idx].meta.label
+  var childIndex = idx + 2
 
   if (tokens[idx].meta.subId > 0) {
     id += ':' + tokens[idx].meta.subId;
@@ -79,7 +79,7 @@ function render_footnote_open(tokens, idx, options, env, slf) {
     }, {
       type: 'inline',
       tag: 'a',
-      attrs: [['href', `${env.reference}#fnref${id}`]],
+      attrs: [['href', `${env.reference}#fnref${ref}`]],
       nesting: 1,
     }, {
       type: 'text',
@@ -97,7 +97,7 @@ function render_footnote_open(tokens, idx, options, env, slf) {
   }
 
 
-  return `<li class="footnote" epub:type="footnote" id="fn${id}">
+  return `<li class="footnote" epub:type="footnote" id="fn${ref}">
   `
 }
 
