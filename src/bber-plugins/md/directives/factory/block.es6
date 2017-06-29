@@ -66,7 +66,7 @@ const renderer = ({ context = {}, render, markerOpen, markerClose }) => ({
     // TODO: if `renderFactory` is going to be used by multiple directive
     // types (MISC, BLOCK, INLINE, etc) then it needs to track the directive
     // type as well as the index in `cursor` (i.e,.
-    // cursor.push({ 'pull-quote': ['theId'] }). this will prevent closing
+    // cursor.push({ 'chapter': ['theId'] }). this will prevent closing
     // on un-related `exit` directives.
     //
     // although, is this possible?
@@ -85,9 +85,14 @@ const renderer = ({ context = {}, render, markerOpen, markerClose }) => ({
       // global store
       if (typeof match[2] === 'undefined') {
         // no `id`, throw an error and tell the parser that there was no match
-        const directive = exports.default.name
-        const location = `${context.filename}.md:${line}`
-        log.error(`Missing [id] attribute for [${directive}:exit] directive at [${location}]`)
+
+        // TODO: naming is incorrect for `exports.default` here, and also we
+        // don't know the type of directive that the `exit` belongs to. should
+        // probably track this in store (see above)
+        //
+        // const directive = exports.default.name
+        // const location = `${context.filename}.md:${line}`
+        // log.error(`Missing [id] attribute for [${directive}:exit] directive at [${location}]`)
         return false
       }
 
