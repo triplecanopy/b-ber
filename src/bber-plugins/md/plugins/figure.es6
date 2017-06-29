@@ -1,7 +1,7 @@
 /* eslint-disable camelcase, one-var, prefer-const, no-param-reassign, no-multi-spaces, no-continue */
 const figurePlugin = (md, name, options = {}) => {
-  const min_markers = options.minMarkers || 3
-  const marker_str  = options.marker || ':'
+  const min_markers = /*options.minMarkers || */ 3
+  const marker_str  = /*options.marker || */ ':'
   const marker_char = marker_str.charCodeAt(0)
   const marker_len  = marker_str.length
   const validate    = options.validate
@@ -42,8 +42,7 @@ const figurePlugin = (md, name, options = {}) => {
     // - check chars at pos to see if they match caption start
     // if not, continue
 
-    let _cap_marker = ':'
-    let _cap_marker_len = 2
+    let _cap_marker_len = min_markers - 1
 
     let _caption_start_pos
     let _caption_end_pos
@@ -55,26 +54,44 @@ const figurePlugin = (md, name, options = {}) => {
     let _cursor
 
     for (;;) {
+      // images can either be self-closing (i.e., they close when another
+      // directive begins, or the parser hits EOF), or can be explicitly
+      // `exit`ed. they can also contain captions, delimited by two colons
+      // (::) after opening the image directive. when they contain captions,
+      // they *must* be explicitly closed with an `exit`.
       nextLine += 1
 
       if (nextLine >= endLine) break // EOF
 
-      if (state.src[state.bMarks[nextLine]] !== ':') continue
+      if (state.src[state.bMarks[nextLine]].charCodeAt(0) !== marker_char) continue
 
       _cursor = state.bMarks[nextLine]
 
-      // this is sort of inelegant, but probably the most efficient way to
-      // fake a lookahead
-      let _one_after = state.src[_cursor + 1]
-      let _two_after = state.src[_cursor + 2]
+      // this is sort of inelegant, but it's an easy way to fake a lookahead
+      let _one_after = state.src[_cursor + 1].charCodeAt(0)
+      let _two_after = state.src[_cursor + 2].charCodeAt(0)
 
-      if (_one_after === _cap_marker && _two_after !== _cap_marker) { // exactly two markers
+      // exactly two markers means we have a caption
+      if (_one_after === marker_char && _two_after !== marker_char) {
         _caption_start_pos = _cursor + _cap_marker_len // store the start index
       }
 
-      if (_one_after === _cap_marker && _two_after === _cap_marker) { // three (or more ...) markers means an `exit`
-        _caption_end_pos = (_cursor + 2) - _cap_marker_len // store the end index
-        _caption_end_line = _cursor
+      // three (or more ...) markers either means an `exit`, or the start of
+      // a new directive
+      if (_one_after === marker_char && _two_after === marker_char) {
+        if (typeof _caption_start_pos !== 'undefined') {
+          // a caption is being captured, so we know we're still in the opening image marker
+          _caption_end_pos = (_cursor + 2) - _cap_marker_len // store the end index
+          _caption_end_line = _cursor
+        } else {
+          // it's either an `exit`, or the start of a new directive. we'll
+          // need to keep parsing the document, so we rewind the current line
+          // to start the next pass, since we already know that there's a
+          // directive at our current position
+          nextLine -= 1
+        }
+        // whatever happened above, we're finished with the image directive at
+        // this point
         break
       }
     }
