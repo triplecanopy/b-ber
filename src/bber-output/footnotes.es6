@@ -47,9 +47,7 @@ class Footnotes {
 
   writeFootnotes() {
     return new Promise((resolve) => {
-      const notes = this.footnotes.length > 1
-        ? this.footnotes.reduce((_, o) => _.notes.concat(o.notes))
-        : this.footnotes[0].notes
+      const notes = this.footnotes.reduce((acc, cur) => acc.concat(cur.notes), '')
       const markup = renderLayouts(new File({
         path: './.tmp',
         layout: 'page',
