@@ -225,6 +225,7 @@ describe('md:directive', () => {
 
       const optional = pq.optional
       for (const [k, v] of entries(optional)) {
+        store.reset()
         const input = `::: pull-quote:foo ${required} ${v.input}\n\nfoo\n\n::: exit:foo`
         const output = md.parser.render(input)
         output.should.match(v.output)

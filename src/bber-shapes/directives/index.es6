@@ -81,10 +81,6 @@ const DIRECTIVE_ATTRIBUTES = {
       },
     },
     optional: {
-      caption: {
-        input: 'caption:"foo bar"',
-        output: /<img src="\.\.\/images\/foo\.jpg" alt="foo\.jpg"\/>/,
-      },
       alt: {
         input: 'alt:foo',
         output: 'alt="foo"',

@@ -56,7 +56,7 @@ const renderer = ({ context = {}, render, markerOpen, markerClose }) => ({
     return match
   },
 
-  validateClose(params, line) {
+  validateClose(params, /*line*/) {
     // we've hit an `exit` token, so we test that its `id` matches the `id`
     // supplied during `validateOpen`. this isn't strictly necessary since
     // b-ber doesn't support interleaving elements (HTML doesn't either for

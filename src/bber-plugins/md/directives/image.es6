@@ -25,11 +25,13 @@ export default {
     markerOpen: imageOpenRegExp,
 
     validate(params, line) {
-      const match = params.trim().match(imageOpenRegExp) || false
+      const match = params.trim().match(imageOpenRegExp)
+      if (!match) { return false }
+
       const [, , id, source] = match
       if (typeof id === 'undefined' || typeof source === 'undefined') { // image requires `id` and `source`
         log.error(`
-          Missing [id] attribute for [image] directive
+          Missing [id] or [source] attribute for [image] directive
           ${context.filename}.md:${line}`)
         return false
       }

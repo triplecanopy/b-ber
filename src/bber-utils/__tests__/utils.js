@@ -146,7 +146,7 @@ describe('module:utils', () => {
     })
   })
   describe('#getFrontmatter', () => {
-    it('Retrieves a file\'s frontmatter from the global store', () => {
+    it('Retrieves a file\'s frontmatter from the global store', (done) => {
       // store reference to original array
       const origPages = Array.prototype.slice.call(0, store.pages)
       const tmpPath = path.join(cwd, 'src/__tests__/.tmp')
@@ -173,6 +173,7 @@ describe('module:utils', () => {
         // clean .tmp
         fs.unlink(filePath, (err1) => {
           if (err1) { throw err1 }
+            done()
         })
       })
     })
