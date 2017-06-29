@@ -68,7 +68,7 @@ export default {
 
       switch (type) {
         case 'image':
-          seq += 1 // TODO: keep track of count somewhere else?
+          seq += 1
 
           page = `loi-${seq + 1000}.xhtml`
           classNames = [getImageOrientation(width, height), 'figure-sm'].join(' ')

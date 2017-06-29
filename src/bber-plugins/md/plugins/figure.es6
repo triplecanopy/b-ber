@@ -1,4 +1,4 @@
-/* eslint-disable camelcase, one-var, prefer-const, no-param-reassign, no-multi-spaces */
+/* eslint-disable camelcase, one-var, prefer-const, no-param-reassign, no-multi-spaces, no-continue */
 const figurePlugin = (md, name, options = {}) => {
   const min_markers = options.minMarkers || 3
   const marker_str  = options.marker || ':'
@@ -38,14 +38,12 @@ const figurePlugin = (md, name, options = {}) => {
     nextLine = startLine
 
     // check to see if the image is followed by a caption
-    // - increment to next start pos
+    // - increment to next line
     // - check chars at pos to see if they match caption start
     // if not, continue
 
-    let _nextLine = state.bMarks[nextLine + 1]
     let _cap_marker = ':'
     let _cap_marker_len = 2
-    let _max_length = state.eMarks[state.eMarks.length - 1]
 
     let _caption_start_pos
     let _caption_end_pos
@@ -54,36 +52,30 @@ const figurePlugin = (md, name, options = {}) => {
 
     let _caption_body
 
-    if (state.src[_nextLine] === _cap_marker) { // image is followed immediately by caption marker
-      let _one_after = state.src[_nextLine + 1]
-      let _two_after = state.src[_nextLine + 2]
+    let _cursor
 
-      if (_one_after === _cap_marker && _two_after !== _cap_marker) { // there are exactly two markers, so we know it's a caption
-        _caption_start_pos = _nextLine + _cap_marker_len // store the start index
+    for (;;) {
+      nextLine += 1
 
-        // if so, caption marker found
-        // start looking for the end of the caption
-        // - increment to next line
-        // - check chars at pos to see if they match caption end
+      if (nextLine >= endLine) break // EOF
 
-        for (;;) {
-          _nextLine += 1
+      if (state.src[state.bMarks[nextLine]] !== ':') continue
 
-          if (_nextLine >= _max_length) { // there is no closing caption marker
-            break
-          }
+      _cursor = state.bMarks[nextLine]
 
-          if (state.src[_nextLine] === _cap_marker) { // same as above
-            _one_after = state.src[_nextLine + 1]
-            _two_after = state.src[_nextLine + 2]
+      // this is sort of inelegant, but probably the most efficient way to
+      // fake a lookahead
+      let _one_after = state.src[_cursor + 1]
+      let _two_after = state.src[_cursor + 2]
 
-            if (_one_after === _cap_marker && _two_after !== _cap_marker) { // found caption end
-              _caption_end_pos = (_nextLine + 2) - _cap_marker_len // store the end index
-              _caption_end_line = _nextLine
-              break
-            }
-          }
-        }
+      if (_one_after === _cap_marker && _two_after !== _cap_marker) { // exactly two markers
+        _caption_start_pos = _cursor + _cap_marker_len // store the start index
+      }
+
+      if (_one_after === _cap_marker && _two_after === _cap_marker) { // three (or more ...) markers means an `exit`
+        _caption_end_pos = (_cursor + 2) - _cap_marker_len // store the end index
+        _caption_end_line = _cursor
+        break
       }
     }
 
