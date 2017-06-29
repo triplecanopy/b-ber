@@ -1,5 +1,5 @@
 import File from 'vinyl'
-import { env } from 'bber-utils'
+import { env, escapeHTML } from 'bber-utils'
 
 const tocTmpl = new File({
   path: 'tocTmpl.tmpl',
@@ -27,7 +27,7 @@ const tocItem = (list) => {
       ${arr.map((_, i) => {
         if (!_.opsPath) { return '' }
         return `<li>
-            <a href="${_.opsPath.slice(1)}">${_.title || _.name}</a>
+            <a href="${_.opsPath.slice(1)}">${escapeHTML(_.title || _.name)}</a>
               ${(arr[i + 1] && arr[i + 1].constructor === Array) ? render(arr[i + 1]) : ''}
             </li>`
       }).join('')}

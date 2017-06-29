@@ -1,6 +1,6 @@
 import File from 'vinyl'
 import { find } from 'lodash'
-import { metadata, env } from 'bber-utils'
+import { metadata, env, escapeHTML } from 'bber-utils'
 
 const ncxHead = () => {
   const entry = find(metadata(), { term: 'identifier' })
@@ -17,7 +17,7 @@ const ncxTitle = () => {
   const entry = find(metadata(), { term: 'title' })
   const title = entry && {}.hasOwnProperty.call(entry, 'value') ? entry.value : ''
   return `<docTitle>
-    <text>${title}</text>
+    <text>${escapeHTML(title)}</text>
   </docTitle>`
 }
 
@@ -25,7 +25,7 @@ const ncxAuthor = () => {
   const entry = find(metadata(), { term: 'creator' })
   const creator = entry && {}.hasOwnProperty.call(entry, 'value') ? entry.value : ''
   return `<docAuthor>
-    <text>${creator}</text>
+    <text>${escapeHTML(creator)}</text>
   </docAuthor>`
 }
 
@@ -50,7 +50,7 @@ const navPoint = (list) => {
       i += 1
       return `
         <navPoint id="navPoint-${i}" playOrder="${i}">
-        <navLabel><text>${_.title || _.name}</text></navLabel>
+        <navLabel><text>${escapeHTML(_.title || _.name)}</text></navLabel>
         <content src="${_.opsPath.slice(1)}"/>
         ${(arr[j + 1] && arr[j + 1].constructor === Array) ? render(arr[j + 1]) : ''}
         </navPoint>`

@@ -4,7 +4,7 @@
 import File from 'vinyl'
 import mime from 'mime-types'
 import Props from 'bber-lib/props'
-import { fileId, guid, getFrontmatter } from 'bber-utils'
+import { fileId, guid, getFrontmatter, escapeHTML } from 'bber-utils'
 
 const opfPackage = new File({
   path: 'opfPackage.tmpl',
@@ -77,7 +77,7 @@ const guideItems = arr =>
         item = [
           '\n<reference',
           ` type="${getFrontmatter(_, 'type')}"`,
-          ` title="${getFrontmatter(_, 'title')}"`,
+          ` title="${escapeHTML(getFrontmatter(_, 'title'))}"`,
           ` href="${encodeURI(_.opsPath)}"/>`,
         ].join('')
       }

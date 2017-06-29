@@ -239,6 +239,17 @@ const htmlComment = str => `\n<!-- ${str} -->\n`
 
 const passThrough = args => args
 
+const escapeHTML = (str) => {
+  const map = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+  }
+  return str.replace(/[&<>"']/g, m => map[m])
+}
+
 export { opsPath, cjoin, fileId, copy, guid, rpad, lpad, hrtimeformat, hashIt,
   getImageOrientation, getFrontmatter, entries, src, dist, build, env, theme,
-  version, metadata, promiseAll, htmlComment, passThrough }
+  version, metadata, promiseAll, htmlComment, passThrough, escapeHTML }
