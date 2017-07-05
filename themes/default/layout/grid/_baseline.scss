@@ -7,11 +7,11 @@
 // Settings for the baseline grid
 // -- all calculations re: vertical sizing will refer to these
 //
-// Default font size is 25px, declared as 1em. We adjust window's font size to
-// 156.25% since it starts at a default of 16px. Text elements are then set to
-// font size 1em (25px). Text element line-height is 1.4 (35px). Element
-// spacing should then be determined based on divisions of 35 (the line-height
-// of a text-element).
+// The desired default font size is 22.5px, declared as 1em. We adjust
+// window's font size to 140.625% since window's base font-size is 16px. Text
+// elements are then set to font size 1em (22.5px). Text element line-height
+// is 1.4 (31.5px). Element spacing should then be determined based on divisions
+// of ~31.5 (the line-height of a text-element).
 //
 
 $base-font-size: $text-base;

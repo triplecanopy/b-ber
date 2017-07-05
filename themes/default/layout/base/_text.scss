@@ -1,7 +1,7 @@
 // Block elements
 h1 {
   text-indent: 0;
-  text-transform: uppercase;
+  text-transform: none;
   @include text-center;
   @include font-base;
   @include no-indent-follow;
@@ -13,7 +13,7 @@ h1 {
   }
 
   section.backmatter & {
-    text-transform: uppercase;
+    text-transform: none;
     padding: 0;
     @include rhythm-padding(0, 2, $text-md);
     @include tc-rhythm-sizing($text-sm, $line-sm);
@@ -84,10 +84,54 @@ p {
   .figcaption & {
     text-indent: 0;
   }
+
+  .pull-quote & {
+    text-indent: 0;
+    font-style: italic;
+    font-weight: normal;
+    @include no-indent-follow;
+    @include tc-rhythm-sizing($text-xs, $line-xs);
+    @include adjust-leading-to(0.91);
+  }
+
+  .epigraph .pull-quote & {
+    float: none;
+    width: 100%;
+    margin-top: 0!important;
+    padding-top: 0!important;
+    @include text-center;
+    @include no-indent-follow;
+    @include tc-rhythm-sizing($text-base, $line-base);
+    @include adjust-leading-to(1);
+  }
 }
 
 cite {
   @include font-base;
+  .pull-quote & {
+    @include no-indent-follow;
+    @include tc-rhythm-sizing($text-xs, $line-xs);
+    @include adjust-leading-to(0.91);
+    float: right;
+    font-weight: normal;
+    text-indent: 0;
+    display: block;
+    text-align: right;
+    width: 75%;
+    margin-left: 25%;
+  }
+  .pull-quote.full-width & {
+    margin-left: 0;
+    width: 100%;
+  }
+  .epigraph .pull-quote & {
+    float: none;
+    width: 100%;
+    @include text-center;
+    @include no-indent-follow;
+    @include tc-rhythm-sizing($text-base, $line-base);
+    @include adjust-leading-to(1);
+  }
 }
 
 // TODO: carried over from NDBS, not sure if these should be added to core or not

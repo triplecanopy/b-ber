@@ -123,3 +123,28 @@ aside.note{
     }
   }
 }
+
+.pull-quote {
+  text-indent: 0;
+  padding: 0.8em rhythm(1.65); // TODO: optically adjusted
+
+  section.titlepage &,
+  section.introduction &,
+  section.afterword & {
+    float: none;
+    clear: both;
+    padding-bottom: 5.65em;
+    padding-top: 0.2em;
+  }
+
+  .epigraph & {
+    float: none;
+    padding-top: 0;
+    padding-bottom: 1.4em;
+    margin-top: 0;
+  }
+  + p { text-indent: 0; }
+  h1 + &,
+  .pull-quote + & { padding-top: 0; }
+  &:last-child { padding-bottom: 1.87em; }
+}

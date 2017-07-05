@@ -9,7 +9,7 @@ $text-color: $black !default;
 $light-grey: #eee !default;
 
 // Font sizes
-$text-base: 25px !default;  // body
+$text-base: 22.5px !default;  // body
 
 $text-xxs: 17px !default;   // source, footnote
 $text-xs: 21px !default;    // blockquote, dialogue
@@ -18,7 +18,7 @@ $text-md: 19px !default;    // non-linear content
 $text-lg: 23px !default;    // h1, h2, h3, h4, h5, h6
 
 // Line heights
-$line-base: 35px !default;
+$line-base: 31.5px !default;
 
 $line-xxs: 25px !default;
 $line-xs: 27px !default;
@@ -27,7 +27,7 @@ $line-md: 25px !default;
 $line-lg: 30px !default;
 
 // Font stacks
-$base-font-family: Iowan, "Iowan", Georgia, Times, "Times New Roman", serif !default;
-$sans-serif: Helvetica, "Helvetica", Arial, sans-serif !default;
+$base-font-family: Iowan, Georgia, Times, 'Times New Roman', serif !default;
+$sans-serif: Helvetica, Arial, sans-serif !default;
 $serif: $base-font-family !default;
 $monospace: Menlo, Osaka, Monaco, monospace !default;
