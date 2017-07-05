@@ -1,4 +1,3 @@
-
 import Promise from 'vendor/Zousan'
 import fs from 'fs-extra'
 import path from 'path'
@@ -8,7 +7,7 @@ import childProcess from 'child_process'
 import phantomjs from 'phantomjs-prebuilt'
 import { log } from 'bber-plugins'
 import store from 'bber-lib/store'
-import { entries, src, version, guid, rpad, hrtimeformat } from 'bber-utils'
+import { entries, src, version, guid, rpad, hrtimeformat, fileId } from 'bber-utils'
 
 let seq
 let diff
@@ -72,15 +71,17 @@ class Cover {
     this.metadata.bberVersion = version()
     this.metadata['date-modified'] = new Date()
 
-    store.bber.metadata.push({ term: 'cover', value: fileName })
+    store.bber.metadata.push({ term: 'cover', value: fileId(fileName) })
 
-    let content = '<html><body>'
-    content += `<h1>${this.metadata.title}</h1>`
-    content += `<p><span>Creator</span>${this.metadata.creator}</p>`
-    content += `<p><span>Date Modified</span>${this.metadata['date-modified']}</p>`
-    content += `<p><span>Identifier</span>${this.metadata.identifier}</p>`
-    content += `<p><span>b-ber version</span>${this.metadata.bberVersion}</p>`
-    content += '</body></html>'
+    const content = `<html>
+      <body>
+        <h1>${this.metadata.title}</h1>
+        <p><span>Creator</span>${this.metadata.creator}</p>
+        <p><span>Date Modified</span>${this.metadata['date-modified']}</p>
+        <p><span>Identifier</span>${this.metadata.identifier}</p>
+        <p><span>b-ber version</span>${this.metadata.bberVersion}</p>
+      </body>
+    </html>`
 
     this.args.push(content, outFile)
     return this.removeDefaultCovers().then(() => this.generate())
