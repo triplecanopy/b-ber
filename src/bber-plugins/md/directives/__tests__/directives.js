@@ -268,12 +268,54 @@ describe('md:directive', () => {
     })
   })
 
-  describe(':inline', () => {
-    it('Should log an error if an image does not exist', () => {
+  describe(':image', () => {
+    beforeEach(() => {
       md.load(pluginImage)
+      store.reset()
+    })
+
+    it('Logs an error if an image does not exist', () => {
       const html = md.parser.render(`${INLINE_DIRECTIVE_FENCE}image:bar source:bar.jpg`)
       html.should.match(/Image not found/)
       logger.errors.should.have.length(1)
+    })
+
+    it('Renders without an exit directive', () => {
+      const html = md.parser.render(`${INLINE_DIRECTIVE_FENCE}image:foo source:foo.jpg`)
+      html.should.match(/<!-- START: image:image#_foo;/)
+    })
+
+    it('Renders a caption only if the attribute is exited', () => {
+      let str = ''
+      str += `${INLINE_DIRECTIVE_FENCE}image:foo source:foo.jpg`
+      str += '\n\nbar\n\n\nsome more stuff'
+      // str += '\n\n::: exit:foo'
+      const html = md.parser.render(str)
+      console.log(str)
+      console.log(store.images[0])
+      console.log(html)
+    })
+
+    it('Renders an image without the caption text', () => {
+      let str = ''
+      str += `${INLINE_DIRECTIVE_FENCE}image:foo source:foo.jpg`
+      str += '\n\n:: bar'
+      str += '\n\n::: exit:foo'
+      const html = md.parser.render(str).split('\n')
+      html.should.have.length(9)
+      html[1].should.match(/<!-- START: image:image#_foo; _markdown\/undefined.md:0 -->/)
+      html[5].should.match(/^\s+<img src="..\/images\/foo.jpg" alt="foo.jpg"\/>/)
+      html[8].should.match(/^\s+<\/div>/)
+    })
+
+    it('Saves captions in the global store', () => {
+      const captionText = ' bar\n\n'
+      let str = ''
+      str += `${INLINE_DIRECTIVE_FENCE}image:foo source:foo.jpg\n\n`
+      str += `::${captionText}`
+      str += '::: exit:foo'
+      md.parser.render(str)
+      store.images[0].caption.should.equal(captionText)
     })
   })
 
