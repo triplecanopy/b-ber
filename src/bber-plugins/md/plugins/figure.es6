@@ -63,36 +63,32 @@ const figurePlugin = (md, name, options = {}) => {
 
       if (nextLine >= endLine) break // EOF
 
-      if (state.src[state.bMarks[nextLine]].charCodeAt(0) !== marker_char) continue
+      // we only check the following line for markers, so whitespace is
+      // significant for image captions. this can be relaxed, but it's more
+      // performant this way.
+      //
+      // there is no caption (open or close); exit and output only the markup
+      // for figure
+      if (state.src[state.bMarks[nextLine]].charCodeAt(0) !== marker_char) break
 
+      // capture the current character
       _cursor = state.bMarks[nextLine]
 
       // this is sort of inelegant, but it's an easy way to fake a lookahead
-      let _one_after = state.src[_cursor + 1].charCodeAt(0)
-      let _two_after = state.src[_cursor + 2].charCodeAt(0)
+      let _curr_char = state.src[_cursor].charCodeAt(0)
+      let _next_char = state.src[_cursor + 1].charCodeAt(0)
 
-      // exactly two markers means we have a caption
-      if (_one_after === marker_char && _two_after !== marker_char) {
-        _caption_start_pos = _cursor + _cap_marker_len // store the start index
-      }
-
-      // three (or more ...) markers either means an `exit`, or the start of
-      // a new directive
-      if (_one_after === marker_char && _two_after === marker_char) {
-        if (typeof _caption_start_pos !== 'undefined') {
-          // a caption is being captured, so we know we're still in the opening image marker
+      // two markers on the next line mean that there's a caption
+      if (_curr_char === marker_char && _next_char === marker_char) {
+        if (typeof _caption_start_pos === 'undefined') {
+          _caption_start_pos = _cursor + _cap_marker_len // store the start index
+        } else if (typeof _caption_start_pos !== 'undefined') {
+          // a caption is being captured, so we know we're still in the
+          // opening image marker
           _caption_end_pos = (_cursor + 2) - _cap_marker_len // store the end index
           _caption_end_line = _cursor
-        } else {
-          // it's either an `exit`, or the start of a new directive. we'll
-          // need to keep parsing the document, so we rewind the current line
-          // to start the next pass, since we already know that there's a
-          // directive at our current position
-          nextLine -= 1
+          break
         }
-        // whatever happened above, we're finished with the image directive at
-        // this point
-        break
       }
     }
 
@@ -101,8 +97,14 @@ const figurePlugin = (md, name, options = {}) => {
     // - add it to the image token so that it can be parsed in `render` method
 
     if (_caption_start_pos && _caption_end_pos) {
+      // we have both a beginning and end marker for the caption, so we can
+      // advance the cursor for further parsing
       _caption_body = state.src.slice(_caption_start_pos, _caption_end_pos)
       _fast_forward = state.bMarks.indexOf(_caption_end_line) + 1
+    } else {
+      // there's no caption, but we've advanced the cursor, so we just rewind
+      // it to where it initially matched our image directive
+      nextLine = startLine
     }
 
     // this will prevent lazy continuations from ever going past our end marker
