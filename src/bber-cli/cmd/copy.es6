@@ -22,7 +22,7 @@ const builder = yargs =>
     .fail((msg, err) => fail(msg, err, yargs))
     .help('h')
     .alias('h', 'help')
-    .usage('\nUsage: $0 copy')
+    .usage(`\nUsage: $0 copy\n\n${describe}`)
 
 const handler = copy
 

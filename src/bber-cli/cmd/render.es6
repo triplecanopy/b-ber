@@ -7,7 +7,7 @@ const builder = yargs =>
   yargs
     .help('h')
     .alias('h', 'help')
-    .usage('\nUsage: $0 render')
+    .usage(`\nUsage: $0 render\n\n${describe}`)
 const handler = render
 
 export default {

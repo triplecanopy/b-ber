@@ -24,7 +24,7 @@ const builder = yargs =>
     })
     .help('h')
     .alias('h', 'help')
-    .usage('\nUsage: $0 serve')
+    .usage(`\nUsage: $0 serve\n\n${describe}`)
 
 const handler = (argv) => {
   // get args

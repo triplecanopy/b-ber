@@ -7,7 +7,7 @@ const builder = yargs =>
   yargs
     .help('h')
     .alias('h', 'help')
-    .usage('\nUsage: $0 sass')
+    .usage(`\nUsage: $0 sass\n\n${describe}`)
 const handler = sass
 
 export default {

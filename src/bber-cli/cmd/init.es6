@@ -22,7 +22,7 @@ const builder = yargs =>
 
     .help('h')
     .alias('h', 'help')
-    .usage('\nUsage: $0 init')
+    .usage(`\nUsage: $0 init\n\n${describe}`)
 
 const handler = (argv) => {
   const task = new Init(argv)

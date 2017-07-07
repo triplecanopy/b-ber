@@ -20,7 +20,7 @@ const builder = yargs =>
     })
     .help('h')
     .alias('h', 'help')
-    .usage('\nUsage: $0 theme')
+    .usage(`\nUsage: $0 theme\n\n${describe}`)
     .fail((msg, err) => fail(msg, err, yargs))
 
 const handler = () => theme().catch(_ => _)

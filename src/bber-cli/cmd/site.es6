@@ -15,7 +15,7 @@ const builder = yargs =>
     })
     .help('h')
     .alias('h', 'help')
-    .usage('\nUsage: $0 site')
+    .usage(`\nUsage: $0 site\n\n${describe}`)
 const handler = site
 
 export default {

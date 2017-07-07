@@ -7,7 +7,7 @@ const builder = yargs =>
   yargs
     .help('h')
     .alias('h', 'help')
-    .usage('\nUsage: $0 footnotes')
+    .usage(`\nUsage: $0 footnotes\n\n${describe}`)
     .fail((msg, err) => fail(msg, err, yargs))
 
 const handler = footnotes

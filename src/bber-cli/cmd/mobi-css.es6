@@ -9,7 +9,7 @@ const builder = yargs =>
   yargs
     .help('h')
     .alias('h', 'help')
-    .usage('\nUsage: $0 mobiCSS')
+    .usage(`\nUsage: $0 mobiCSS\n\n${describe}`)
 const handler = mobiCSS
 
 export default {

@@ -18,7 +18,7 @@ const builder = yargs =>
     })
     .help('h')
     .alias('h', 'help')
-    .usage('\nUsage: $0 clean')
+    .usage(`\nUsage: $0 clean\n\n${describe}`)
     .fail((msg, err) => {
       fail(msg, err, yargs)
     })

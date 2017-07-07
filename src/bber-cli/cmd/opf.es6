@@ -7,7 +7,7 @@ const builder = yargs =>
   yargs
     .help('h')
     .alias('h', 'help')
-    .usage('\nUsage: $0 opf')
+    .usage(`\nUsage: $0 opf\n\n${describe}`)
 const handler = () => opf()
 
 export default {
