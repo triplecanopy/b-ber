@@ -60,7 +60,7 @@ class Footnotes {
           filename: this.file.name,
           title: 'Notes',
           type: 'backmatter',
-          linear: 'no',
+          linear: false,
         })
         resolve()
       })

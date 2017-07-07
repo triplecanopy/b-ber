@@ -62,11 +62,16 @@ const handler = (argv) => {
   const buildCmds = _buildCommands
   const buildArgs = _buildArgs(argv)
   const buildTasks = buildArgs.length ? buildArgs : !buildArgs.length && argv.d ? [] : buildCmds
-  const sequence = ['clean', 'create', 'copy', 'sass', 'scripts', 'render', 'loi', 'footnotes', 'opf', 'inject'] // eslint-disable-line max-len
+  const sequence = ['clean', 'create', 'copy', 'sass', 'scripts', 'render', 'loi', 'footnotes', 'inject', 'opf'] // eslint-disable-line max-len
 
   const run = (tasks) => {
     const next = [tasks.shift()]
+
+    store.reload()
     store.update('build', next[0])
+    store.update('toc', store.bber[next[0]].tocEntries)
+    store.update('spine', store.bber[next[0]].spineEntries)
+
     if (next[0] === 'mobi') { next.unshift('mobiCSS') } // TODO: this should be called by `mobi` task
     return serialize([...sequence, ...next]).then(() => {
       if (tasks.length) { run(tasks) }

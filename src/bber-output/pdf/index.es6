@@ -6,7 +6,7 @@
 import Promise from 'vendor/Zousan'
 import path from 'path'
 import fs from 'fs-extra'
-import YAML from 'yamljs'
+import Yaml from 'bber-modifiers/yaml'
 import html2pdf from 'html-pdf'
 import Printer from 'bber-modifiers/printer'
 import { log } from 'bber-plugins'
@@ -95,7 +95,7 @@ const print = content =>
 const pdf = () =>
   new Promise(async (resolve) => {
     await initialize()
-    const manifest = YAML.load(path.join(input, `${buildType}.yml`))
+    const manifest = Yaml.load(path.join(input, `${buildType}.yml`))
 
     parseHTML(manifest)
     // TODO: pass `writeOutput` flag to determine if the task also outputs

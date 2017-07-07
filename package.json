@@ -15,7 +15,7 @@
     "preversion": "NODE_ENV=production yarn test",
     "docs": "./node_modules/.bin/jsdoc --verbose -c .jsdoc.json",
     "start": "./node_modules/.bin/babel-node ./src/bber-cli/index.es6 --presets es2015,stage-0",
-    "test": "yarn lint && yarn istanbul",
+    "test": "yarn lint && yarn istanbul || true",
     "posttest": "if [ \"$NODE_ENV\" = production ]; then yarn build; fi"
   },
   "bin": {
@@ -39,6 +39,7 @@
     "html-pdf": "^2.1.0",
     "htmlparser2": "^3.9.2",
     "image-size": "^0.5.0",
+    "js-yaml": "^3.9.0",
     "jshint": "^2.9.3",
     "layouts": "^0.13.2",
     "lodash": "^4.17.4",
@@ -56,7 +57,6 @@
     "serve-index": "^1.8.0",
     "vinyl": "^1.2.0",
     "xml2js": "^0.4.17",
-    "yamljs": "^0.2.8",
     "yargs": "^6.6.0"
   },
   "devDependencies": {

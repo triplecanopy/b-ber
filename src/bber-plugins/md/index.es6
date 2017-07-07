@@ -1,4 +1,3 @@
-
 /**
  * Returns an instance of the MarkIt class
  * @module md
@@ -6,7 +5,7 @@
  * @return {MarkIt}
  */
 
-import YAML from 'yamljs'
+import Yaml from 'bber-modifiers/yaml'
 import MarkdownIt from 'markdown-it'
 import mdFrontMatter from 'markdown-it-front-matter'
 import store from 'bber-lib/store'
@@ -71,7 +70,7 @@ class MarkIt {
         mdFrontMatter,
         (meta) => {
           const filename = this.filename
-          store.add('pages', { filename, ...YAML.parse(meta) })
+          store.add('pages', { filename, ...Yaml.parse(meta) })
         })
       .use(
         mdFootnote,

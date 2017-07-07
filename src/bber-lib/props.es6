@@ -14,8 +14,8 @@ class Props {
    * @return {Boolean}
    */
   static isHTML(file) {
-    return Boolean(mime.lookup(file.rootPath) === 'text/html'
-      || mime.lookup(file.rootPath) === 'application/xhtml+xml')
+    return Boolean(mime.lookup(file.rootPath || file.absolutePath) === 'text/html'
+      || mime.lookup(file.rootPath || file.absolutePath) === 'application/xhtml+xml')
   }
 
   /**
@@ -24,8 +24,8 @@ class Props {
    * @return {Boolean}
    */
   static isNav(file) {
-    return Boolean((mime.lookup(file.rootPath) === 'text/html'
-      || mime.lookup(file.rootPath) === 'application/xhtml+xml')
+    return Boolean((mime.lookup(file.rootPath || file.absolutePath) === 'text/html'
+      || mime.lookup(file.rootPath || file.absolutePath) === 'application/xhtml+xml')
       && /toc\.(?:x?html)/.test(file.name))
   }
 
@@ -36,7 +36,7 @@ class Props {
    */
   static isScripted(file) {
     if (!Props.isHTML(file)) { return false }
-    const fpath = file.rootPath
+    const fpath = file.rootPath || file.absolutePath
     const contents = fs.readFileSync(fpath, 'utf8')
     return Boolean(contents.match(/<script/))
   }
@@ -48,7 +48,7 @@ class Props {
    */
   static isSVG(file) {
     if (!Props.isHTML(file)) { return false }
-    const fpath = file.rootPath
+    const fpath = file.rootPath || file.absolutePath
     const contents = fs.readFileSync(fpath, 'utf8')
     return Boolean(contents.match(/<svg/))
   }

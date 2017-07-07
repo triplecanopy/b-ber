@@ -1,6 +1,6 @@
 import fs from 'fs-extra'
 import path from 'path'
-import YAML from 'yamljs'
+import Yaml from 'bber-modifiers/yaml'
 import { log } from 'bber-plugins'
 import { serve as Server } from 'bber-lib'
 
@@ -44,7 +44,7 @@ const handler = (argv) => {
         throw new Error('Shorthand server flags require a config.yml')
       }
 
-      const config = YAML.load(configPath)
+      const config = Yaml.load(configPath)
       options.dir = `${config.dist}-${shorthand}/OPS/text`
     } catch (err) {
       return log.warn(err.message)

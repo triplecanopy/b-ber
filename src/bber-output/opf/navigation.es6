@@ -14,15 +14,22 @@ import path from 'path'
 import fs from 'fs-extra'
 import File from 'vinyl'
 import rrdir from 'recursive-readdir'
-import YAML from 'yamljs'
-import mime from 'mime-types'
-import { findIndex, difference, uniq } from 'lodash'
+import Yaml from 'bber-modifiers/yaml'
+import { difference, uniq, remove } from 'lodash'
 
 // utility
 import store from 'bber-lib/store'
 import Props from 'bber-lib/props'
 import { log } from 'bber-plugins'
-import { src, dist, build, promiseAll, getFrontmatter, escapeHTML } from 'bber-utils'
+import {
+  src,
+  dist,
+  build,
+  promiseAll,
+  nestedContentToYAML,
+  flattenSpineFromYAML,
+  modelFromString,
+} from 'bber-utils'
 
 // templates
 import { tocTmpl, tocItem } from 'bber-templates/toc-xhtml'
@@ -30,9 +37,7 @@ import { ncxTmpl, navPoint } from 'bber-templates/toc-ncx'
 import { opfGuide, opfSpine, guideItems, spineItems } from 'bber-templates/opf'
 
 // helpers
-import { pathInfoFromFiles, flattenYamlEntries, removeNestedArrayItem,
-  createPagesMetaYaml, nestedLinearContent, buildNavigationObjects,
-  sortNavigationObjects } from 'bber-output/opf/helpers'
+import { pathInfoFromFiles } from 'bber-output/opf/helpers'
 
 /**
  * @alias module:navigation#Navigation
@@ -101,46 +106,20 @@ class Navigation {
     )
   }
 
-  // hide missing entries by default
-  addMissingEntriesToNonLinearSection(arr, missingEntries) {
-    let nonLinearIndex = findIndex(arr, 'nonLinear')
-    if (nonLinearIndex < 0) { nonLinearIndex = (arr.push({ nonLinear: [] })) - 1 }
-    missingEntries.forEach(_ => arr[nonLinearIndex].nonLinear.push(`${_}.xhtml`))
-    return arr
-  }
+  deepRemove(collection, fileName) {
+    const found = remove(collection, { fileName })
+    if (found.length) {
+      return collection
+    }
 
-  // show missing entries by default
-  addMissingEntriesToLinearSection(arr, missingEntries) {
-    missingEntries.forEach(_ => arr.push(`${_}.xhtml`))
-    return arr
-  }
-
-  readYamlConfigFiles(resp) {
-    return new Promise((resolve) => {
-      const yamlpath = path.join(this.src, `${this.build}.yml`)
-      let filesFromYaml = []
-      try {
-        if (fs.existsSync(yamlpath)) {
-          const entries = YAML.load(yamlpath) || []
-          const flattenedEntries = uniq(flattenYamlEntries(entries).map(_ => path.basename(_, '.xhtml'))) // eslint-disable-line max-len
-
-          // we need both `flattenedEntries` for comparison, and `entries` which
-          // contains page hierarchy
-          filesFromYaml = { entries, flattenedEntries }
-        } else {
-          throw new Error(`[${this.build}.yml] not found. Creating default file.`)
-        }
-      } catch (err) {
-        if (err.message.match(/Creating default file/)) {
-          log.warn(err.message)
-          createPagesMetaYaml(this.src, this.build)
-        } else {
-          log.error(err)
-        }
+    collection.forEach((item) => { // check against prop names
+      if (item.nodes && item.nodes.length) {
+        return this.deepRemove(item.nodes, fileName)
       }
-
-      resolve({ filesFromYaml, ...resp })
+      return item
     })
+
+    return collection
   }
 
   /**
@@ -150,95 +129,81 @@ class Navigation {
    * @param  {Array} filesFromYaml   Entries in the YAML manifest
    * @return {Promise<Object<Array>|Error>}
    */
-  compareXhtmlWithYaml([allXhtmlFiles, yamlConfigFiles]) {
-    return new Promise((resolve) => {
-      const { filesFromSystem, fileObjects } = allXhtmlFiles
-      const { filesFromYaml } = yamlConfigFiles
-      const { entries, flattenedEntries } = filesFromYaml
-      const pages = Array.prototype.slice.call(entries, 0)
-      const flow = flattenedEntries // one-dimensional flow of the book used for the spine
+  compareXhtmlWithYaml({ filesFromSystem, fileObjects }) {
+    return new Promise((resolve) => { // eslint-disable-line consistent-return
+      const { spine } = store // current build process's spine
+      const { spineList } = store.bber[this.build] // spine items pulled in from type.yml file
+      const flow = uniq(spine.map(_ => _.fileName)) // one-dimensional flow of the book used for the spine
+      const localFiles = filesFromSystem.map(_ => `${_}.xhtml`)
+      const pages = flattenSpineFromYAML(spineList)
 
-      // check that all entries are accounted for
-      const pagediff = difference(flattenedEntries, filesFromSystem) // missing files
-      const filediff = difference(filesFromSystem, flattenedEntries) // missing entries
+      const missingEntries = difference(flow, localFiles) // extra files on system
+      const missingFiles = difference(localFiles, pages) // extra entries in YAML
 
-      if (pagediff.length || filediff.length) {
+      // console.log(pages, flow, filesFromSystem)
+      // console.log(missingEntries, missingFiles)
+      // process.exit(0)
+
+      if (missingEntries.length || missingFiles.length) {
         // there are discrepencies between the files on the system and files
         // declared in the `this.build`.yml file
-        if (pagediff.length) {
+        if (missingEntries.length) {
           // there are extra entries in the YAML (i.e., missing XHTML pages)
           log.warn(`XHTML pages for ${this.build}.yml do not exist:`)
-          log.warn(pagediff.map(_ => `${_}.xhtml`))
+          log.warn(missingEntries)
           log.warn(`Removing redundant entries in ${this.build}.yml`)
 
-          // cycle through the diff to remove redundant entries. called with
-          // lodash#remove, which mutates, so no need to re-assign
-          pagediff.forEach((_) => {
-            removeNestedArrayItem(pages, `${_}.xhtml`)
+          missingEntries.forEach((item) => {
+            remove(spine, { fileName: item })
+            store.update('spine', spine)
 
-            const refIndex = flow.indexOf(_)
-            if (refIndex > -1) { flow.splice(refIndex, 1) }
+            const _pagesIndex = pages.indexOf(item)
+            pages.splice(_pagesIndex, 1)
+
+            const _flowIndex = flow.indexOf(item)
+            flow.splice(_flowIndex, 1)
+
+            const _toc = this.deepRemove(store.toc, item)
+            store.update('toc', _toc)
+          })
+
+          const yamlpath = path.join(this.src, `${this.build}.yml`)
+          const content = Yaml.dump(nestedContentToYAML(store.toc))
+          return fs.writeFile(yamlpath, content, (err) => {
+            if (err) { throw err }
           })
         }
 
-        if (filediff.length) {
+        if (missingFiles.length) {
           // there are missing entries in the YAML (i.e., extra XHTML pages),
           // but we don't know where to interleave them, so we just append
           // them to the top-level list of files
-          log.warn(`Missing entries in ${this.build}.yml files:`)
-          log.warn(filediff.map(_ => `${_}.xhtml`))
-          log.warn(`Adding missing entries as [linear] content to [${this.build}.yml]`)
+          log.warn(`Missing entries in ${this.build}.yml:`)
+          log.warn(missingFiles)
+          log.warn(`Adding missing entries to [${this.build}.yml]`)
 
-          // `addMissingEntriesToNonLinearSection` is deprecated as default
-          // behaviour, but might be useful in some instances.
-          //
-          // this.addMissingEntriesToNonLinearSection(pages, filediff)
+          // add the missing entry to the spine
+          // TODO: add to toc? add to flow/pages?
+          missingFiles.forEach(_ => store.add('spine', modelFromString(_, this.src)))
 
-          // prefer not to mutate `pages`, but may as well keep consistent behaviour as above ...
-          this.addMissingEntriesToLinearSection(pages, filediff)
+          const yamlpath = path.join(this.src, `${this.build}.yml`)
+          const content = Yaml.dump(missingFiles)
+          fs.appendFile(yamlpath, content, (err) => {
+            if (err) { throw err }
+          })
         }
       }
 
-      // finally, remove all non-linear content from `flow` since we don't want
-      // it showing up in the spine. this is _not_ the same as `linear="no"`,
-      // meaning that any hyperlinks in the document to these pages will
-      // invalidate the ebook.
-      const nonLinearIndex = findIndex(pages, 'nonLinear')
-      if (nonLinearIndex > -1) {
-        pages[nonLinearIndex].nonLinear.forEach((_) => {
-          const ref = _.replace(/\.xhtml$/, '')
-          const refIndex = flow.indexOf(ref)
-          if (refIndex > -1) { flow.splice(refIndex, 1) }
-        })
-      }
-
+      const filesFromYaml = { entries: pages, flow }
       resolve({ pages, flow, fileObjects, filesFromSystem, filesFromYaml })
-    })
-  }
-
-  /**
-   * Update the YAML manifest with missing entries
-   * @param  {Array} options.pages Nested array of XHTML file names
-   * @param  {Array} options.flow  One-dimensional array of XHTML file names
-   * @return {Promise<Object<Array>|Error>}
-   */
-  updateConfigFileWithValidAssetPaths({ pages, flow, ...args }) {
-    return new Promise((resolve) => {
-      const yamlpath = path.join(this.src, `${this.build}.yml`)
-      const content = YAML.stringify(pages, Infinity, 2)
-      return fs.writeFile(yamlpath, content, (err) => {
-        if (err) { throw err }
-        resolve({ pages, flow, ...args })
-      })
     })
   }
 
   createTocStringsFromTemplate({ pages, ...args }) {
     return new Promise((resolve) => {
       const strings = {}
-      const linearContent = nestedLinearContent(pages)
-      const tocObjects = buildNavigationObjects(linearContent, this.dist)
-      const tocHTML = tocItem(tocObjects)
+      const { toc } = store
+      const tocHTML = tocItem(toc)
 
       strings.toc = renderLayouts(new File({
         path: './.tmp',
@@ -255,9 +220,8 @@ class Navigation {
   createNcxStringsFromTemplate({ pages, ...args }) {
     return new Promise((resolve) => {
       const strings = {}
-      const linearContent = nestedLinearContent(pages)
-      const ncxObjects = buildNavigationObjects(linearContent, this.dist)
-      const ncxXML = navPoint(ncxObjects)
+      const { toc } = store
+      const ncxXML = navPoint(toc)
 
       strings.ncx = renderLayouts(new File({
         path: './.tmp',
@@ -274,8 +238,8 @@ class Navigation {
   createGuideStringsFromTemplate({ flow, fileObjects, ...args }) {
     return new Promise((resolve) => {
       const strings = {}
-      const orderedFileObjects = sortNavigationObjects(flow, fileObjects)
-      const guideXML = guideItems(orderedFileObjects)
+      const { spine } = store
+      const guideXML = guideItems(spine)
 
       strings.guide = renderLayouts(new File({
         path: './.tmp',
@@ -292,27 +256,8 @@ class Navigation {
   createSpineStringsFromTemplate({ flow, fileObjects, ...args }) {
     return new Promise((resolve) => {
       const strings = {}
-      const orderedFileObjects = sortNavigationObjects(flow, fileObjects)
-      const spineXML = spineItems(orderedFileObjects)
-
-      // add spine items to store for later use (like creating a manifest)
-      //
-      // the `href` property below is appended with an (undocumented) setting
-      // in the config.yml, `contentURL`, if the build is for `web`
-
-      // TODO: move this somewhere else
-      const contentURL = build() === 'web' ? store.config.contentURL : ''
-      orderedFileObjects.forEach((item) => {
-        const entry = {
-          href: `${contentURL}/OPS/${item.opsPath}`,
-          type: mime.lookup(item.rootPath),
-        }
-        if (getFrontmatter(item, 'type')) {
-          entry.title = escapeHTML(getFrontmatter(item, 'title'))
-        }
-
-        store.add('spine', entry)
-      })
+      const { spine } = store
+      const spineXML = spineItems(spine)
 
       strings.spine = renderLayouts(new File({
         path: './.tmp',
@@ -334,10 +279,8 @@ class Navigation {
    * @return {Object}              Deep merged object
    */
   deepMergePromiseArrayValues(args, property) {
-    const argsArray = args.map(_ => _)
-    const propsArray = args.map(_ => _[property])
-    const props = Object.assign({}, ...propsArray)
-    return Object.assign({}, ...argsArray, { [property]: props })
+    const props = Object.assign({}, ...args.map(_ => _[property]))
+    return Object.assign({}, [...args], { [property]: props }) // TODO: this is weird ...
   }
 
   writeTocXhtmlFile(args) {
@@ -378,18 +321,21 @@ class Navigation {
   init() {
     return new Promise(resolve =>
       this.createEmptyNavDocuments()
-      .then(() => promiseAll([
-        this.getAllXhtmlFiles(),
-        this.readYamlConfigFiles(),
-      ]))
+      .then(resp => this.getAllXhtmlFiles(resp))
       .then(resp => this.compareXhtmlWithYaml(resp))
-      .then(resp => this.updateConfigFileWithValidAssetPaths(resp))
       .then(resp => promiseAll([
         this.createTocStringsFromTemplate(resp),
         this.createNcxStringsFromTemplate(resp),
         this.createGuideStringsFromTemplate(resp),
         this.createSpineStringsFromTemplate(resp),
       ]))
+
+      // TODO: while the files are being parsed, attributes should be added to
+      // the file objects, so that we don't have to perform multiple lookups
+      // throughout the build. this means that we're causing side-effects, but
+      // it'd be an efficient way of creating easily-accessible objects later
+      // on.
+
       .then(resp => promiseAll([
         // the two following methods both merge the results from `Promise.all`
         // and return identical new objects containing all navigation

@@ -1,8 +1,16 @@
 /* eslint-disable no-multi-spaces */
-import YAML from 'yamljs'
+import Yaml from 'bber-modifiers/yaml'
 import path from 'path'
 import fs from 'fs-extra'
 import { isPlainObject, isArray, findIndex } from 'lodash'
+import { log } from 'bber-plugins'
+import {
+  createPageModelsFromYAML,
+  flattenNestedEntries,
+  createPagesMetaYaml,
+} from 'bber-lib/helpers'
+
+// import util from 'util'
 
 const cwd = process.cwd()
 
@@ -21,6 +29,7 @@ class Store {
   set metadata(value)   { this._metadata = value  }
   set version(value)    { this._version = value   }
   set spine(value)      { this._spine = value     }
+  set toc(value)        { this._toc = value       }
 
   get env()             { return this._env        }
   get pages()           { return this._pages      }
@@ -32,6 +41,7 @@ class Store {
   get config()          { return this._config     }
   get metadata()        { return this._metadata   }
   get spine()           { return this._spine      }
+  get toc()             { return this._toc        }
 
   /**
    * @constructor
@@ -63,8 +73,36 @@ class Store {
 
   _fileOrDefaults(type) {
     const { src, dist } = this.config
-    const fpath = path.join(cwd, src, `${type}.yml`)
-    return { src, dist: `${dist}-${type}`, pageList: fs.existsSync(fpath) ? YAML.load(fpath) : [] }
+    const yamlPath = path.join(cwd, src, `${type}.yml`)
+
+    let spineList = []
+    let spineEntries = []
+    let tocEntries = []
+
+    try {
+      if (fs.existsSync(yamlPath)) {
+        spineList = Yaml.load(yamlPath) || []
+        tocEntries = createPageModelsFromYAML(spineList, src) // for book flow
+        spineEntries = flattenNestedEntries(tocEntries) // for nested navigation
+      } else {
+        throw new Error(`[${type}.yml] not found. Creating default file.`)
+      }
+    } catch (err) {
+      if (/Creating default file/.test(err.message)) {
+        log.warn(err.message)
+        createPagesMetaYaml(src, type)
+      } else {
+        throw err
+      }
+    }
+
+    return {
+      src,
+      dist: `${dist}-${type}`,
+      spineList,
+      spineEntries,
+      tocEntries,
+    }
   }
 
   /**
@@ -175,6 +213,7 @@ class Store {
     this.cursor = []
     this.metadata = []
     this.spine = []
+    this.toc = []
     this.env = process.env.NODE_ENV || 'development'
     this.config = {
       src: '_book',
@@ -188,6 +227,15 @@ class Store {
     this.loadBber()
   }
 
+  reload() {
+    this.pages = []
+    this.images = []
+    this.footnotes = []
+    this.cursor = []
+    this.spine = []
+    this.toc = []
+  }
+
   reset() {
     this.loadInitialState()
   }
@@ -199,7 +247,7 @@ class Store {
     }
 
     if (fs.existsSync(path.join(cwd, 'config.yml'))) {
-      this.config = { ...this.config, ...YAML.load('./config.yml') }
+      this.config = { ...this.config, ...Yaml.load(path.join(cwd, './config.yml')) }
     }
   }
 
@@ -207,7 +255,7 @@ class Store {
   loadMetadata() {
     const fpath = path.join(cwd, this.config.src, 'metadata.yml')
     if (fs.existsSync(fpath)) {
-      this.metadata = [...this.metadata, ...YAML.load(fpath)]
+      this.metadata = [...this.metadata, ...Yaml.load(fpath)]
     }
   }
 
@@ -224,4 +272,6 @@ class Store {
 }
 
 const store = new Store()
+
+// console.log(util.inspect(store, true, null))
 export default store

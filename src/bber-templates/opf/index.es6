@@ -1,4 +1,3 @@
-
 /* eslint-disable operator-linebreak */
 
 import File from 'vinyl'
@@ -60,26 +59,23 @@ const manifestItem = (file) => {
 
 const spineItems = arr =>
   arr.map((_) => {
-    let res = ''
-    if (mime.lookup(_.rootPath) === 'text/html'
-        || mime.lookup(_.rootPath) === 'application/xhtml+xml') {
-      res = `\n<itemref idref="${fileId(_.name)}" linear="${_.linear || 'yes'}"/>`
+    if (Props.isHTML(_)) {
+      const linear = _.linear === false ? 'no' : 'yes'
+      const title = fileId(_.title || _.name)
+      return `\n<itemref idref="${title}" linear="${linear}"/>`
     }
-    return res
+    return ''
   }).join('')
 
 const guideItems = arr =>
   arr.map((_) => {
     let item = ''
-    if (mime.lookup(_.rootPath) === 'text/html'
-        || mime.lookup(_.rootPath) === 'application/xhtml+xml') {
-      if (getFrontmatter(_, 'type')) {
-        item = [
-          '\n<reference',
-          ` type="${getFrontmatter(_, 'type')}"`,
-          ` title="${escapeHTML(getFrontmatter(_, 'title'))}"`,
-          ` href="${encodeURI(_.opsPath)}"/>`,
-        ].join('')
+    if (Props.isHTML(_)) {
+      let type
+      if ((type = getFrontmatter(_, 'type'))) {
+        const title = escapeHTML(getFrontmatter(_, 'title'))
+        const href = encodeURI(_.relativePath) // relative to OPS
+        item = `\n<reference type="${type}" title="${title}" href="${href}"/>`
       }
     }
     return item
@@ -97,7 +93,16 @@ const metatag = (data) => {
       && {}.hasOwnProperty.call(data, 'term_property_value')) {
     res.push(`<meta refines="#${itemid}" property="${data.term_property}">${data.term_property_value}</meta>`) // eslint-disable-line max-len
   }
-  if (!term && !element) { res.push(`<meta name="${data.term}" content="${data.value}"/>`) }
+
+  if (!term && !element) {
+     // meta element for the cover references the id in the manifest, so we
+     // create a case to encode it properly :/
+    if (data.term !== 'cover') {
+      res.push(`<meta name="${data.term}" content="${data.value}"/>`)
+    } else {
+      res.push(`<meta name="${data.term}" content="${fileId(data.value)}"/>`)
+    }
+  }
   return res.join('')
 }
 

@@ -1,9 +1,8 @@
-
 import Promise from 'vendor/Zousan'
 import path from 'path'
 import fs from 'fs-extra'
 import yargs from 'yargs'
-import YAML from 'yamljs'
+import Yaml from 'bber-modifiers/yaml'
 import { log } from 'bber-plugins'
 
 const cwd = process.cwd()
@@ -39,9 +38,9 @@ const theme = () =>
       }
 
       const configPath = path.join(cwd, 'config.yml')
-      const config = YAML.load(configPath)
+      const config = Yaml.load(configPath)
       config.theme = themeName
-      return fs.writeFile(configPath, YAML.stringify(config, Infinity, 2), (err) => {
+      return fs.writeFile(configPath, Yaml.dump(config), (err) => {
         if (err) { throw err }
         log.info(`\nSuccessfully set theme theme to "${themeName}"\n`)
         resolve()

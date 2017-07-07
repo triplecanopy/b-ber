@@ -285,22 +285,11 @@ describe('md:directive', () => {
       html.should.match(/<!-- START: image:image#_foo;/)
     })
 
-    it('Renders a caption only if the attribute is exited', () => {
-      let str = ''
-      str += `${INLINE_DIRECTIVE_FENCE}image:foo source:foo.jpg`
-      str += '\n\nbar\n\n\nsome more stuff'
-      // str += '\n\n::: exit:foo'
-      const html = md.parser.render(str)
-      console.log(str)
-      console.log(store.images[0])
-      console.log(html)
-    })
-
     it('Renders an image without the caption text', () => {
       let str = ''
       str += `${INLINE_DIRECTIVE_FENCE}image:foo source:foo.jpg`
-      str += '\n\n:: bar'
-      str += '\n\n::: exit:foo'
+      str += '\n:: bar'
+      str += '\n::: exit:foo'
       const html = md.parser.render(str).split('\n')
       html.should.have.length(9)
       html[1].should.match(/<!-- START: image:image#_foo; _markdown\/undefined.md:0 -->/)
@@ -309,13 +298,13 @@ describe('md:directive', () => {
     })
 
     it('Saves captions in the global store', () => {
-      const captionText = ' bar\n\n'
       let str = ''
-      str += `${INLINE_DIRECTIVE_FENCE}image:foo source:foo.jpg\n\n`
-      str += `::${captionText}`
-      str += '::: exit:foo'
+      const caption = 'bar'
+      str += `${INLINE_DIRECTIVE_FENCE}image:foo source:foo.jpg`
+      str += `\n::${caption}`
+      str += '\n::: exit:foo'
       md.parser.render(str)
-      store.images[0].caption.should.equal(captionText)
+      store.images[0].caption.should.equal(`${caption}\n`)
     })
   })
 

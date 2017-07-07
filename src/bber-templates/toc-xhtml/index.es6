@@ -1,5 +1,5 @@
 import File from 'vinyl'
-import { env, escapeHTML } from 'bber-utils'
+import { escapeHTML } from 'bber-utils'
 
 const tocTmpl = new File({
   path: 'tocTmpl.tmpl',
@@ -22,18 +22,22 @@ const tocTmpl = new File({
 })
 
 const tocItem = (list) => {
-  function render(arr) {
-    return `<ol>
-      ${arr.map((_, i) => {
-        if (!_.opsPath) { return '' }
-        return `<li>
-            <a href="${_.opsPath.slice(1)}">${escapeHTML(_.title || _.name)}</a>
-              ${(arr[i + 1] && arr[i + 1].constructor === Array) ? render(arr[i + 1]) : ''}
+  function render(items) {
+    return `
+      <ol>
+        ${items.map(_ => // eslint-disable-line no-confusing-arrow
+          (_.inToc === false)
+          ? ''
+          : `
+            <li>
+              <a href="${_.relativePath.slice(1)}">${escapeHTML(_.title || _.name)}</a>
+              ${_.nodes && _.nodes.length ? render(_.nodes) : ''}
             </li>`
-      }).join('')}
-    </ol>`
+        ).join('')}
+      </ol>`
   }
-  return env() === 'production' ? render(list).replace(/\s*\n\s*/g, '') : render(list)
+
+  return render(list)
 }
 
 export { tocTmpl, tocItem }

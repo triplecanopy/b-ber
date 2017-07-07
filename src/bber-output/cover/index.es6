@@ -1,7 +1,7 @@
 import Promise from 'vendor/Zousan'
 import fs from 'fs-extra'
 import path from 'path'
-import YAML from 'yamljs'
+import Yaml from 'bber-modifiers/yaml'
 import { find } from 'lodash'
 import childProcess from 'child_process'
 import phantomjs from 'phantomjs-prebuilt'
@@ -51,7 +51,7 @@ class Cover {
     let data
 
     try {
-      data = YAML.load(path.join(src(), 'metadata.yml'))
+      data = Yaml.load(path.join(src(), 'metadata.yml'))
     } catch (err) {
       log.error(err)
       process.exit(1)
@@ -71,7 +71,7 @@ class Cover {
     this.metadata.bberVersion = version()
     this.metadata['date-modified'] = new Date()
 
-    store.bber.metadata.push({ term: 'cover', value: fileId(fileName) })
+    store.bber.metadata.push({ term: 'cover', value: fileId(fileName).slice(1) })
 
     const content = `<html>
       <body>

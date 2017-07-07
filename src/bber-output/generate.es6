@@ -10,7 +10,7 @@ import Promise from 'vendor/Zousan'
 import fs from 'fs-extra'
 import yargs from 'yargs'
 import path from 'path'
-import YAML from 'yamljs'
+import Yaml from 'bber-modifiers/yaml'
 import File from 'vinyl'
 import { log } from 'bber-plugins'
 import { entries, lpad, src } from 'bber-utils'
@@ -110,7 +110,7 @@ class Generate {
         let pagemeta = []
         try {
           if (fs.statSync(pages)) {
-            pagemeta = YAML.load(path.join(src(), `${type}.yml`)) || []
+            pagemeta = Yaml.load(path.join(src(), `${type}.yml`)) || []
           }
         } catch (e) {
           log.info(`Creating ${type}.yml`)

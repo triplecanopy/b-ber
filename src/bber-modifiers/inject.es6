@@ -13,7 +13,7 @@ import { dist, build } from 'bber-utils'
 import store from 'bber-lib/store'
 import mime from 'mime-types'
 
-const cwd = process.cwd()
+// import util from 'util'
 
 let output
 const initialize = () => {
@@ -80,6 +80,17 @@ const getJSONLDMetadata = args =>
       })
     })
 
+    const spine = store.spine.map((_) => {
+      const result = {
+        href: _.remotePath,
+        type: mime.lookup(_.absolutePath),
+      }
+      if (_.title) { // TODO: this needs to be added to `store.spine` during parsing
+        result.title = _.title
+      }
+      return result
+    })
+
     const webpubManifest = {
       '@context': 'http://readium.org/webpub/default.jsonld',
       metadata: {},
@@ -90,7 +101,7 @@ const getJSONLDMetadata = args =>
       ],
 
       // spine: [{"href": "http://example.org/chapter1.html", "type": "text/html", "title": "Chapter 1"},]
-      spine: [...store.spine],
+      spine,
       resources,
     }
 
@@ -106,9 +117,16 @@ const getJSONLDMetadata = args =>
     const suffix = 'content'
     const url = `http://rdf-translator.appspot.com/convert/${source}/${target}/${suffix}`
     const form = { content }
+    const file = new File({ path: 'metadata.json-ld' })
+
+    if (process.env.NODE_ENV !== 'production') {
+      file.contents = new Buffer('{}')
+      return resolve([...args, file])
+    }
 
     return request.post({ url, form }, (err, resp, body) => {
-      if (!err && resp.statusCode !== 200) {
+      if (err) { throw err }
+      if (resp.statusCode !== 200) {
         throw new Error(`Error: ${resp.statusCode}`, err)
       }
 

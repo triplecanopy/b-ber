@@ -8,7 +8,7 @@
 import Promise from 'vendor/Zousan'
 import fs from 'fs-extra'
 import path from 'path'
-import { compact, find } from 'lodash'
+import { compact, find, isPlainObject } from 'lodash'
 import store from 'bber-lib/store'
 
 const cwd = process.cwd()
@@ -250,6 +250,95 @@ const escapeHTML = (str) => {
   return str.replace(/[&<>"']/g, m => map[m])
 }
 
+// for generating page models used in navigation
+const spineModel = () => ({
+  relativePath: '',
+  absolutePath: '',
+  extension: '',
+  fileName: '',
+  name: '',
+  remotePath: '',
+  linear: true,
+  inToc: true,
+  nodes: [],
+})
+
+/**
+ * [description]
+ * @param {String} str    File basename with extension
+ * @param {String} _src   Current `src` directory name
+ * @return {Object}
+ */
+const modelFromString = (str, _src) => {
+  const relativePath = path.join('/OPS/text', str) // relative to OPS dir
+  const absolutePath = path.join(cwd, _src, relativePath)
+  const extension = path.extname(absolutePath)
+  const fileName = path.basename(absolutePath)
+  const name = path.basename(absolutePath, extension)
+  const remotePath = absolutePath // TODO: add remote URL where applicable
+  return {
+    ...spineModel(),
+    relativePath,
+    absolutePath,
+    extension,
+    fileName,
+    name,
+    remotePath,
+  }
+}
+
+const modelFromObject = (_obj, _src) => {
+  const { in_toc, linear } = _obj[Object.keys(_obj)[0]]
+  const obj = {}
+
+  if (typeof linear !== 'undefined') { obj.linear = linear }
+  if (typeof in_toc !== 'undefined') { obj.inToc = in_toc } // eslint-disable-line camelcase
+
+  const str = Object.keys(_obj)[0]
+  const model = modelFromString(str, _src)
+
+  return { ...model, ...obj }
+}
+
+const nestedContentToYAML = (arr, result = []) => {
+  arr.forEach((_) => {
+    const model = {}
+
+    // TODO: check for custom attrs somewhere else. also - not sure about
+    // changing snakecase/camelcase all the time, better to just stick with
+    // one way or the other
+    if (_.linear === false || _.inToc === false) {
+      if (_.inToc === false) { model.in_toc = false }
+      if (_.linear === false) { model.linear = false }
+      result.push({ [_.fileName]: model })
+    } else {
+      result.push(_.fileName)
+      if (_.nodes && _.nodes.length) {
+        model.section = []
+        result.push(model)
+        nestedContentToYAML(_.nodes, model.section)
+      }
+    }
+  })
+
+  return result
+}
+
+
+const flattenSpineFromYAML = arr =>
+  arr.reduce((acc, curr) => {
+    if (isPlainObject(curr)) {
+      if (Object.keys(curr)[0] === 'section') {
+        return acc.concat(flattenSpineFromYAML(curr.section))
+      }
+      return acc.concat(Object.keys(curr)[0])
+    }
+    return acc.concat(curr)
+  }, [])
+
+
 export { opsPath, cjoin, fileId, copy, guid, rpad, lpad, hrtimeformat, hashIt,
   getImageOrientation, getFrontmatter, entries, src, dist, build, env, theme,
-  version, metadata, promiseAll, htmlComment, passThrough, escapeHTML }
+  version, metadata, promiseAll, htmlComment, passThrough, escapeHTML,
+  spineModel, modelFromObject, modelFromString, nestedContentToYAML,
+  flattenSpineFromYAML }
