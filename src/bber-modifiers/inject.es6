@@ -1,4 +1,3 @@
-
 /**
  * @module inject
  */
@@ -7,10 +6,14 @@ import Promise from 'vendor/Zousan'
 import fs from 'fs-extra'
 import path from 'path'
 import File from 'vinyl'
-
+import request from 'request'
 import { log } from 'bber-plugins'
-import { scriptTag, stylesheetTag } from 'bber-templates'
-import { dist } from 'bber-utils'
+import { scriptTag, stylesheetTag, jsonLDTag } from 'bber-templates'
+import { dist, build } from 'bber-utils'
+import store from 'bber-lib/store'
+import mime from 'mime-types'
+
+const cwd = process.cwd()
 
 let output
 const initialize = () => {
@@ -24,6 +27,7 @@ const initialize = () => {
 const startTags = {
   javascripts: new RegExp('<!-- inject:js -->', 'ig'),
   stylesheets: new RegExp('<!-- inject:css -->', 'ig'),
+  metadata: new RegExp('<!-- inject:metadata -->', 'ig'),
 }
 
 /**
@@ -33,6 +37,7 @@ const startTags = {
 const endTags = {
   javascripts: new RegExp('<!-- end:js -->', 'ig'),
   stylesheets: new RegExp('<!-- end:css -->', 'ig'),
+  metadata: new RegExp('<!-- end:metadata -->', 'ig'),
 }
 
 /**
@@ -47,6 +52,75 @@ const getDirContents = dirpath =>
       if (!files) { throw new Error(`No files found in [${path.basename(dirpath)}]`) }
       resolve(files)
     }))
+
+/**
+ * Get JSON-LD representation of the book's metadata
+ * @param {Array}  args Results from Promise.all()
+ * @return {Object}     Vinyl File object
+ */
+const getJSONLDMetadata = args =>
+  new Promise((resolve) => {
+    // TODO: a manifest file needs to be written and read from
+
+    const [, stylesheets, javascripts] = args
+    const resources = []
+    const prefix = build() === 'web' ? store.config.contentURL : ''
+
+    stylesheets.forEach((_) => {
+      resources.push({
+        href: `${prefix}/OPS/stylesheets/${_}`,
+        type: 'text/css',
+      })
+    })
+
+    javascripts.forEach((_) => {
+      resources.push({
+        href: `${prefix}/OPS/javascripts/${_}`,
+        type: 'application/javascript',
+      })
+    })
+
+    const webpubManifest = {
+      '@context': 'http://readium.org/webpub/default.jsonld',
+      metadata: {},
+      links: [
+        // {"rel": "self", "href": "http://example.org/bff.json", "type": "application/webpub+json"},
+        // {"rel": "alternate", "href": "http://example.org/publication.epub", "type": "application/epub+zip"},
+        // ...
+      ],
+
+      // spine: [{"href": "http://example.org/chapter1.html", "type": "text/html", "title": "Chapter 1"},]
+      spine: [...store.spine],
+      resources,
+    }
+
+    store.metadata.forEach((item) => {
+      if (item.term && item.value) {
+        webpubManifest.metadata[item.term] = item.value
+      }
+    })
+
+    const content = JSON.stringify(webpubManifest)
+    const source = 'json-ld'
+    const target = 'json-ld'
+    const suffix = 'content'
+    const url = `http://rdf-translator.appspot.com/convert/${source}/${target}/${suffix}`
+    const form = { content }
+
+    return request.post({ url, form }, (err, resp, body) => {
+      if (!err && resp.statusCode !== 200) {
+        throw new Error(`Error: ${resp.statusCode}`, err)
+      }
+
+      resolve([
+        ...args,
+        new File({
+          path: 'metadata.json-ld',
+          contents: new Buffer(body),
+        }),
+      ])
+    })
+  })
 
 /**
  * Get the contents of a file
@@ -69,11 +143,19 @@ const getContents = source =>
  */
 const templateify = files =>
   files.map((file) => {
-    switch (path.extname(file).toLowerCase()) {
+    let fileType
+    if (file instanceof File) { // if file is a vinyl File object
+      fileType = file.path.slice(file.path.lastIndexOf('.'))
+    } else {
+      fileType = path.extname(file).toLowerCase()
+    }
+    switch (fileType) {
       case '.js':
         return scriptTag.replace(/\{% body %\}/, `../javascripts/${file}`)
       case '.css':
         return stylesheetTag.replace(/\{% body %\}/, `../stylesheets/${file}`)
+      case '.json-ld':
+        return jsonLDTag.replace(/\{% body %\}/, String(file.contents))
       default:
         throw new Error(`Unsupported filetype: ${file}`)
     }
@@ -99,9 +181,9 @@ function* matchIterator(re, str) {
   }
 }
 
-const injectTags = (content, args) => {
-  const { data, start, stop } = args
-  const toInject = templateify(data.slice())
+const injectTags = (args) => {
+  const { content, data, start, stop } = args
+  const toInject = templateify(data.constructor === Array ? data : [data])
   let result = ''
   let endMatch
 
@@ -140,39 +222,43 @@ const promiseToReplace = (prop, data, source, file) =>
     const stream = file || await getContents(source)
     const start = startTags[prop]
     const stop = endTags[prop]
+    const content = stream.contents.toString('utf8')
     const result = new File({
       path: source,
       contents: new Buffer(
-        injectTags(
-          stream.contents.toString('utf8'),
-          { start, stop, data }
-        )
+        injectTags({ content, start, stop, data })
       ),
     })
-
     resolve(result)
   })
 
-const mapSources = (stylesheets, javascripts, sources) =>
-  new Promise((resolve) => {
-    sources.map(source =>
+const mapSources = (args) => {
+  const [htmlDocs, stylesheets, javascripts, metadata] = args
+  return new Promise((resolve) => {
+    htmlDocs.forEach(source =>
       promiseToReplace('stylesheets', stylesheets, source)
       .then(file => promiseToReplace('javascripts', javascripts, source, file))
+      .then(file => promiseToReplace('metadata', metadata, source, file))
       .then(file => write(
           path.join(output, 'OPS/text', source),
-          file.contents.toString('utf8')))
+          file.contents.toString('utf8'))
+      )
       .catch(err => log.error(err))
       .then(resolve)
     )
   })
+}
 
 const inject = () =>
-  new Promise(async (resolve) => {
-    await initialize()
-    const textSources = await getDirContents(`${output}/OPS/text/`)
-    const stylesheets = await getDirContents(`${output}/OPS/stylesheets/`)
-    const javascripts = await getDirContents(`${output}/OPS/javascripts/`)
-    mapSources(stylesheets, javascripts, textSources)
+  new Promise((resolve) => {
+    initialize()
+    Promise.all([
+      getDirContents(`${output}/OPS/text/`),
+      getDirContents(`${output}/OPS/stylesheets/`),
+      getDirContents(`${output}/OPS/javascripts/`),
+    ])
+    .then(getJSONLDMetadata)
+    .then(mapSources)
     .catch(err => log.error(err))
     .then(resolve)
   })

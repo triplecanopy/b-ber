@@ -13,5 +13,6 @@ const container = `<?xml version="1.0"?>
 const mimetype = 'application/epub+zip'
 const scriptTag = '<script type="application/javascript" src="{% body %}"></script>'
 const stylesheetTag = '<link rel="stylesheet" type="text/css" href="{% body %}"/>'
+const jsonLDTag = '<script type="application/ld+json">{% body %}</script>'
 
-export { container, mimetype, scriptTag, stylesheetTag, pages, figures, opf }
+export { container, mimetype, scriptTag, stylesheetTag, pages, figures, opf, jsonLDTag }

@@ -16,6 +16,8 @@ const pageHead = name => `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 
 const pageTail = () => `<!-- inject:js -->
       <!-- end:js -->
+      <!-- inject:metadata -->
+      <!-- end:metadata -->
     </body>
   </html>`
 
@@ -41,6 +43,8 @@ const page = new File({
       {% body %}
       <!-- inject:js -->
       <!-- end:js -->
+      <!-- inject:metadata -->
+      <!-- end:metadata -->
     </body>
     </html>`),
 })

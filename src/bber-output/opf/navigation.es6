@@ -15,12 +15,14 @@ import fs from 'fs-extra'
 import File from 'vinyl'
 import rrdir from 'recursive-readdir'
 import YAML from 'yamljs'
+import mime from 'mime-types'
 import { findIndex, difference, uniq } from 'lodash'
 
 // utility
+import store from 'bber-lib/store'
 import Props from 'bber-lib/props'
 import { log } from 'bber-plugins'
-import { src, dist, build, promiseAll } from 'bber-utils'
+import { src, dist, build, promiseAll, getFrontmatter, escapeHTML } from 'bber-utils'
 
 // templates
 import { tocTmpl, tocItem } from 'bber-templates/toc-xhtml'
@@ -292,6 +294,25 @@ class Navigation {
       const strings = {}
       const orderedFileObjects = sortNavigationObjects(flow, fileObjects)
       const spineXML = spineItems(orderedFileObjects)
+
+      // add spine items to store for later use (like creating a manifest)
+      //
+      // the `href` property below is appended with an (undocumented) setting
+      // in the config.yml, `contentURL`, if the build is for `web`
+
+      // TODO: move this somewhere else
+      const contentURL = build() === 'web' ? store.config.contentURL : ''
+      orderedFileObjects.forEach((item) => {
+        const entry = {
+          href: `${contentURL}/OPS/${item.opsPath}`,
+          type: mime.lookup(item.rootPath),
+        }
+        if (getFrontmatter(item, 'type')) {
+          entry.title = escapeHTML(getFrontmatter(item, 'title'))
+        }
+
+        store.add('spine', entry)
+      })
 
       strings.spine = renderLayouts(new File({
         path: './.tmp',

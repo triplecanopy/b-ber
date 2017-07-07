@@ -20,6 +20,7 @@ class Store {
   set config(value)     { this._config = value    }
   set metadata(value)   { this._metadata = value  }
   set version(value)    { this._version = value   }
+  set spine(value)      { this._spine = value     }
 
   get env()             { return this._env        }
   get pages()           { return this._pages      }
@@ -30,7 +31,7 @@ class Store {
   get cursor()          { return this._cursor     }
   get config()          { return this._config     }
   get metadata()        { return this._metadata   }
-  get version()         { return this._version    }
+  get spine()           { return this._spine      }
 
   /**
    * @constructor
@@ -173,6 +174,7 @@ class Store {
     this.bber = {}
     this.cursor = []
     this.metadata = []
+    this.spine = []
     this.env = process.env.NODE_ENV || 'development'
     this.config = {
       src: '_book',
