@@ -30,7 +30,7 @@ const tocItem = (list) => {
           ? ''
           : `
             <li>
-              <a href="${_.relativePath.slice(1)}">${escapeHTML(_.title || _.name)}</a>
+              <a href="${_.relativePath}">${escapeHTML(_.title || _.name)}</a>
               ${_.nodes && _.nodes.length ? render(_.nodes) : ''}
             </li>`
         ).join('')}

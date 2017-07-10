@@ -61,8 +61,8 @@ const spineItems = arr =>
   arr.map((_) => {
     if (Props.isHTML(_)) {
       const linear = _.linear === false ? 'no' : 'yes'
-      const title = fileId(_.title || _.name)
-      return `\n<itemref idref="${title}" linear="${linear}"/>`
+      const fname = fileId(_.fileName)
+      return `\n<itemref idref="${fname}" linear="${linear}"/>`
     }
     return ''
   }).join('')
@@ -74,7 +74,7 @@ const guideItems = arr =>
       let type
       if ((type = getFrontmatter(_, 'type'))) {
         const title = escapeHTML(getFrontmatter(_, 'title'))
-        const href = encodeURI(_.relativePath) // relative to OPS
+        const href = encodeURI(_.relativePath)
         item = `\n<reference type="${type}" title="${title}" href="${href}"/>`
       }
     }

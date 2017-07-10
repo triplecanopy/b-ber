@@ -12,7 +12,7 @@ export { default as init } from 'bber-output/init'
 // output/modules
 export { default as clean } from 'bber-output/clean'
 export { default as copy } from 'bber-output/copy'
-export { default as create } from 'bber-output/create'
+export { default as container } from 'bber-output/container'
 export { default as deploy } from 'bber-output/deploy'
 export { default as publish } from 'bber-output/publish'
 export { default as render } from 'bber-output/render'

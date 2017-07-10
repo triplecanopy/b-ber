@@ -53,7 +53,7 @@ const createScssString = () =>
 
 const ensureCssDir = () =>
   new Promise(resolve =>
-    fs.mkdirs(path.join(dist(), '/OPS/stylesheets'), (err) => {
+    fs.mkdirp(path.join(dist(), '/OPS/stylesheets'), (err) => {
       if (err) { throw err }
       resolve()
     })

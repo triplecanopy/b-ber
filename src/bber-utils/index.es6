@@ -216,7 +216,7 @@ const version = () => store.version
 // TODO: this should check that the theme exists in the `themes` dir
 const theme = () => {
   const themeName = store.config.theme
-  return { tpath: path.join(cwd, 'themes', themeName), tname: themeName }
+  return { tpath: path.join(__dirname, '../../', 'themes', themeName), tname: themeName }
 }
 
 /**
@@ -270,7 +270,8 @@ const spineModel = () => ({
  * @return {Object}
  */
 const modelFromString = (str, _src) => {
-  const relativePath = path.join('/OPS/text', str) // relative to OPS dir
+  const pathFragment = /^(toc\.xhtml|nav\.ncx)$/.test(str) ? '' : 'text' // TODO: clean this up
+  const relativePath = path.join(pathFragment, str) // relative to OPS
   const absolutePath = path.join(cwd, _src, relativePath)
   const extension = path.extname(absolutePath)
   const fileName = path.basename(absolutePath)
