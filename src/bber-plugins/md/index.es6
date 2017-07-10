@@ -5,7 +5,7 @@
  * @return {MarkIt}
  */
 
-import Yaml from 'bber-modifiers/yaml'
+import Yaml from 'bber-lib/yaml'
 import MarkdownIt from 'markdown-it'
 import mdFrontMatter from 'markdown-it-front-matter'
 import store from 'bber-lib/store'

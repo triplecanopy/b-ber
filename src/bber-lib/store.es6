@@ -1,5 +1,5 @@
 /* eslint-disable no-multi-spaces */
-import Yaml from 'bber-modifiers/yaml'
+import Yaml from 'bber-lib/yaml'
 import path from 'path'
 import fs from 'fs-extra'
 import { isPlainObject, isArray, findIndex } from 'lodash'

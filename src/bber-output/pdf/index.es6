@@ -6,7 +6,7 @@
 import Promise from 'vendor/Zousan'
 import path from 'path'
 import fs from 'fs-extra'
-import Yaml from 'bber-modifiers/yaml'
+import Yaml from 'bber-lib/yaml'
 import html2pdf from 'html-pdf'
 import Printer from 'bber-modifiers/printer'
 import { log } from 'bber-plugins'

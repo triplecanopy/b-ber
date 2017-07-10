@@ -14,7 +14,7 @@ import path from 'path'
 import fs from 'fs-extra'
 import File from 'vinyl'
 import rrdir from 'recursive-readdir'
-import Yaml from 'bber-modifiers/yaml'
+import Yaml from 'bber-lib/yaml'
 import { difference, uniq, remove } from 'lodash'
 
 // utility

@@ -1,7 +1,7 @@
 import Promise from 'vendor/Zousan'
 import fs from 'fs-extra'
 import path from 'path'
-import Yaml from 'bber-modifiers/yaml'
+import Yaml from 'bber-lib/yaml'
 import { find } from 'lodash'
 import childProcess from 'child_process'
 import phantomjs from 'phantomjs-prebuilt'

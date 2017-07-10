@@ -1,6 +1,6 @@
 import fs from 'fs-extra'
 import path from 'path'
-import Yaml from 'bber-modifiers/yaml'
+import Yaml from 'bber-lib/yaml'
 import { log } from 'bber-plugins'
 import { serve as Server } from 'bber-lib'
 
