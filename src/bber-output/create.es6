@@ -1,4 +1,4 @@
-
+/* eslint-disable class-methods-use-this, consistent-return */
 /**
  * @module create
  */
@@ -13,10 +13,10 @@ import { src, dist } from 'bber-utils'
 const cwd = process.cwd()
 
 class Create {
-  get src() { // eslint-disable-line class-methods-use-this
+  get src() {
     return src()
   }
-  get dist() { // eslint-disable-line class-methods-use-this
+  get dist() {
     return dist()
   }
   get dirs() {
@@ -41,7 +41,7 @@ class Create {
         { path: 'mimetype', content: mimetype },
       ]
       return files.forEach((_, i) =>
-        fs.writeFile(path.join(this.dist, _.path), _.content, (err) => { // eslint-disable-line consistent-return
+        fs.writeFile(path.join(this.dist, _.path), _.content, (err) => {
           if (err) { throw err }
           if (i === files.length - 1) {
             resolve()
@@ -54,7 +54,7 @@ class Create {
   makedirs() {
     return new Promise(resolve =>
       this.dirs.map((dir, index) =>
-        fs.mkdirs(dir, (err) => { // eslint-disable-line consistent-return
+        fs.mkdirs(dir, (err) => {
           if (err) { throw err }
           if (index === this.dirs.length - 1) {
             resolve()
@@ -84,7 +84,7 @@ class Create {
       process.exit(0)
     }
 
-    return fs.mkdirs(output, (err) => { // eslint-disable-line consistent-return
+    return fs.mkdirs(output, (err) => {
       if (err) { throw err }
       return callback()
     })

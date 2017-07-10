@@ -3,6 +3,9 @@ import path from 'path'
 import { isPlainObject, isArray } from 'lodash'
 import { modelFromString, modelFromObject } from 'bber-utils'
 
+import store from 'bber-lib/store'
+import util from 'util'
+
 const createPageModelsFromYAML = (arr, src) => {
   const _root = [{ nodes: [] }]
   const munge = (_arr, _result) => {
@@ -56,11 +59,13 @@ const flattenNestedEntries = (arr, result = []) => {
   return result
 }
 
-const createPagesMetaYaml = (input, buildType, arr = []) =>
-  fs.writeFile(
-    path.join(input, `${buildType}.yml`),
-    `${arr.map(_ => `- ${_.fileName}`).join('\n')}`,
-    (err) => { if (err) { throw err } }
-  )
+const createPagesMetaYaml = (src, type, arr = []) =>
+  fs.mkdirp(path.join(process.cwd(), src), (err0) => {
+    if (err0) { throw err0 }
+    const content = arr.reduce((acc, curr) => acc.concat(`- ${curr.fileName}`), '')
+    fs.writeFile(path.join(src, `${type}.yml`), content, (err1) => {
+      if (err1) { throw err1 }
+    })
+  })
 
 export { createPageModelsFromYAML, flattenNestedEntries, createPagesMetaYaml }
