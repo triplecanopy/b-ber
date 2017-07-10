@@ -10,7 +10,7 @@ import {
   createPagesMetaYaml,
 } from 'bber-lib/helpers'
 
-// import util from 'util'
+import util from 'util'
 
 const cwd = process.cwd()
 
@@ -89,8 +89,8 @@ class Store {
       }
     } catch (err) {
       if (/Creating default file/.test(err.message)) {
-        log.warn(err.message)
-        createPagesMetaYaml(src, type)
+        log.info(err.message)
+        // createPagesMetaYaml(src, type)
       } else {
         throw err
       }
@@ -120,7 +120,7 @@ class Store {
     }
 
     if (isPlainObject(this[_prop])) {
-      this[_prop] = { ...this[_prop], ..._val }
+      this[_prop] = { ...this[_prop], _val }
       return this[_prop]
     }
 

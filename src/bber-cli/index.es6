@@ -15,9 +15,9 @@ import * as commands from 'bber-cli/cmd'
  * @return {Object}
  */
 const init = () => {
-  const {
-    build, clean, copy, create/* , editor */, generate, init, inject, footnotes, opf,
-    pdf, mobiCSS, publish, render, scripts, sass, serve, site, theme, watch, xml } = commands
+  const { build, clean, copy, container/* , editor */, generate, init, inject,
+    footnotes, opf, pdf, mobiCSS, publish, render, scripts, sass, serve, site,
+    theme, watch, xml, create } = commands
 
   /**
    * Shows custom help if a CLI command fails
@@ -27,13 +27,14 @@ const init = () => {
   Usage: bber <command> [options]
 
   Where <command> is one of:
-    build, clean, copy, create, editor, generate, init, inject, footnotes, opf,
-    pdf, publish, render, scripts, sass, serve, site, theme, watch, xml
+    build, clean, copy, container, generate, init, inject,
+    footnotes, opf, pdf, mobiCSS, publish, render, scripts, sass, serve, site,
+    theme, watch, xml, create
 
   Some common commands are:
 
     Creating books
-      bber init       Create an empty project and file structure, defaults to \`_book\`
+      bber create     Start a new project
       bber generate   Create a new chapter. Accepts arguments for metadata.
       bber watch      Preview the book in a browser during development
       bber build      Create an ePub, mobi, PDF, or all file formats
@@ -71,7 +72,7 @@ const init = () => {
     .command(build)
     .command(clean)
     .command(copy)
-    .command(create)
+    .command(container)
     // .command(editor)
     .command(generate)
     .command(init)
@@ -88,6 +89,7 @@ const init = () => {
     .command(theme)
     .command(watch)
     .command(xml)
+    .command(create)
 
     .options({
       v: {

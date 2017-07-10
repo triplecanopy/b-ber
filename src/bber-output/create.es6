@@ -7,12 +7,12 @@ import Promise from 'vendor/Zousan'
 import fs from 'fs-extra'
 import path from 'path'
 import { log } from 'bber-plugins'
-import { container, mimetype } from 'bber-templates'
+import { containerXML, mimetype } from 'bber-templates'
 import { src, dist } from 'bber-utils'
 
 const cwd = process.cwd()
 
-class Create {
+class Container {
   get src() {
     return src()
   }
@@ -30,14 +30,14 @@ class Create {
    * @constructor
    */
   constructor() {
-    this.testParams = Create.prototype.constructor.testParams.bind(this)
+    this.testParams = Container.prototype.constructor.testParams.bind(this)
     this.init = this.init.bind(this)
   }
 
   write() {
     return new Promise((resolve) => {
       const files = [
-        { path: 'META-INF/container.xml', content: container },
+        { path: 'META-INF/container.xml', content: containerXML },
         { path: 'mimetype', content: mimetype },
       ]
       return files.forEach((_, i) =>
@@ -102,5 +102,5 @@ class Create {
   }
 }
 
-const create = new Create()
-export default create.init
+const container = new Container()
+export default container.init

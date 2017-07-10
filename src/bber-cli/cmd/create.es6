@@ -1,43 +1,63 @@
-
+import { init as Initializer } from 'bber-output'
+import fs from 'fs-extra'
 import path from 'path'
-import { create } from 'bber-output'
 import { log } from 'bber-plugins'
 import { fail } from 'bber-cli/helpers'
+// import util from 'util'
 
 const command = 'create'
-const describe = 'Create an Epub directory structure'
+const describe = 'Create a new project'
 const builder = yargs =>
   yargs
     .options({
-      i: {
-        alias: 'in',
-        describe: 'New src directory path',
-        default: '',
+      n: {
+        alias: 'name',
+        describe: 'New project directory name',
         type: 'string',
-      },
-      o: {
-        alias: 'out',
-        describe: 'New dist directory path',
-        default: '',
-        type: 'string',
+        demandOption: true,
       },
     })
     .fail((msg, err) => fail(msg, err, yargs))
     .help('h')
     .alias('h', 'help')
-    .usage(`\nUsage: $0 create\n\n${describe}`)
+    .usage(`\nUsage: $0 create --name "My Book"\n\n${describe}`)
 
 
 const handler = (argv) => {
-  const i = argv.i
-  const o = argv.o
-  if (!i.length || !o) { throw new Error('Both src and dist directories must be provided') }
-  return create(i, o).then(() =>
-    log.info(`Created src: [${path.basename(i)}] and dist: [${path.basename(o)}]`)
-  )
-}
+  const { name } = argv
+  const args = [...argv._]
+  args.shift() // remove `create` argument
+  args.push(name) // add `name` arg consumed by yargs
 
-// const handler = create
+  const dest = path.join(process.cwd(), name)
+
+  if (args.length > 1) {
+    log.error(`Too many arguments [${args.length}]. Make sure the project name is properly quoted`)
+  }
+
+  try {
+    if (fs.existsSync(dest)) {
+      const files = fs.readdirSync(dest)
+      if (files.length) {
+        throw new Error(`Directory [${name}] exists and is not empty, aborting`)
+      }
+    } else {
+      log.info(`Creating directory ${name}`)
+      fs.mkdirSync(dest)
+    }
+  } catch (e) {
+    log.error(e)
+    process.exit(0)
+  }
+
+  const initializer = new Initializer({ cwd: dest })
+
+  initializer.start()
+  .catch((err) => {
+    log.error(err)
+    process.exit(1)
+  })
+}
 
 export default {
   command,

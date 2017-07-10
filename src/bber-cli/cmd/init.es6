@@ -1,4 +1,3 @@
-
 import { init as Init } from 'bber-output'
 
 const command = ['init [options...]', 'i']
