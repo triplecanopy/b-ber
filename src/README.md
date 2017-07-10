@@ -22,7 +22,7 @@ $ bber init
 <tr><td><a href="https://github.com/triplecanopy/b-ber-creator/tree/master/src/bber-shapes"><code>bber-shapes</code></a></td><td>Simple objects and arrays referenced by the application</td></tr>
 <tr><td><a href="https://github.com/triplecanopy/b-ber-creator/tree/master/src/bber-templates"><code>bber-templates</code></a></td><td>Templates for exporting Markdown to (X)HTML</td></tr>
 <tr><td><a href="https://github.com/triplecanopy/b-ber-creator/tree/master/src/bber-utils"><code>bber-utils</code></a></td><td>Utility functions</td></tr>
-<tr><td><a href="https://github.com/triplecanopy/b-ber-creator/tree/master/src/vendor)</td"><code>vendor</code></a><td>Third-party scripts that aren't (currently) available through a package manager</td></tr>
+<tr><td><a href="https://github.com/triplecanopy/b-ber-creator/tree/master/src/vendor"><code>vendor</code></a><td>Third-party scripts that aren't (currently) available through a package manager</td></tr>
 </table>
 More detailed info is available in each of the sub-directories.
 
