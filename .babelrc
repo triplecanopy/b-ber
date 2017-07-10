@@ -21,9 +21,5 @@
     "node_modules",
     "**/__tests__/**"
   ],
-  "env": {
-    "production": {
-      "presets": ["babili"]
-    }
-  }
+  "env": {}
 }
