@@ -3,7 +3,7 @@
  * @module pdf
  */
 
-import Promise from 'vendor/Zousan'
+import Promise from 'zousan'
 import path from 'path'
 import fs from 'fs-extra'
 import Yaml from 'bber-lib/yaml'

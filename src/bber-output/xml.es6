@@ -4,7 +4,7 @@
  * @module xml
  */
 
-import Promise from 'vendor/Zousan'
+import Promise from 'zousan'
 import path from 'path'
 import fs from 'fs-extra'
 import { parseString } from 'xml2js'

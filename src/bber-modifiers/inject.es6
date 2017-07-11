@@ -2,7 +2,7 @@
  * @module inject
  */
 
-import Promise from 'vendor/Zousan'
+import Promise from 'zousan'
 import fs from 'fs-extra'
 import path from 'path'
 import File from 'vinyl'

@@ -3,7 +3,7 @@
  * @module clean
  */
 
-import Promise from 'vendor/Zousan'
+import Promise from 'zousan'
 import fs from 'fs-extra'
 import { dist } from 'bber-utils'
 

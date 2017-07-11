@@ -11,8 +11,7 @@
         "bber-plugins": "./bber-plugins",
         "bber-shapes": "./bber-shapes",
         "bber-templates": "./bber-templates",
-        "bber-utils": "./bber-utils",
-        "vendor": "./vendor"
+        "bber-utils": "./bber-utils"
       }
     }]
   ],

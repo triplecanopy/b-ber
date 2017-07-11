@@ -1,5 +1,5 @@
 
-import Promise from 'vendor/Zousan'
+import Promise from 'zousan'
 import htmlparser from 'htmlparser2'
 import path from 'path'
 import { Parser } from 'bber-modifiers'

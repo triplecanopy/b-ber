@@ -3,7 +3,7 @@
  * @module mobi
  */
 
-import Promise from 'vendor/Zousan'
+import Promise from 'zousan'
 import zipper from 'mobi-zipper'
 import path from 'path'
 import { log } from 'bber-plugins'

@@ -1,5 +1,5 @@
 
-import Promise from 'vendor/Zousan'
+import Promise from 'zousan'
 import yargs from 'yargs'
 import path from 'path'
 import https from 'https'

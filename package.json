@@ -57,7 +57,8 @@
     "serve-index": "^1.8.0",
     "vinyl": "^1.2.0",
     "xml2js": "^0.4.17",
-    "yargs": "^6.6.0"
+    "yargs": "^6.6.0",
+    "zousan": "https://github.com/msimmer/zousan"
   },
   "devDependencies": {
     "babel-cli": "^6.14.0",

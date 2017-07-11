@@ -6,7 +6,7 @@
  * @return {Opf}
  */
 
-import Promise from 'vendor/Zousan'
+import Promise from 'zousan'
 import path from 'path'
 import fs from 'fs-extra'
 import renderLayouts from 'layouts'

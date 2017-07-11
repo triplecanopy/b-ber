@@ -2,7 +2,7 @@
  * @module epub
  */
 
-import Promise from 'vendor/Zousan'
+import Promise from 'zousan'
 import zipper from 'epub-zipper'
 import { log } from 'bber-plugins'
 import { dist } from 'bber-utils'

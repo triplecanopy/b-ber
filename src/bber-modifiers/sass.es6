@@ -6,7 +6,7 @@
 // Could set up themes to be loaded through custom `importer()`, not necessary for
 // now though see: https://github.com/sass/node-sass#render-callback--v300
 
-import Promise from 'vendor/Zousan'
+import Promise from 'zousan'
 import fs from 'fs-extra'
 import path from 'path'
 import nsass from 'node-sass'

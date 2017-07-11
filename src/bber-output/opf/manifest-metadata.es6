@@ -7,7 +7,7 @@
  * @module manifestAndMetadata
  */
 
-import Promise from 'vendor/Zousan'
+import Promise from 'zousan'
 import renderLayouts from 'layouts'
 import path from 'path'
 import File from 'vinyl'

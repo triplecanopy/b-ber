@@ -3,7 +3,7 @@
  * @module deploy
  */
 
-import Promise from 'vendor/Zousan'
+import Promise from 'zousan'
 
 const deploy = () => Promise.resolve()
 export default deploy

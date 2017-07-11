@@ -89,7 +89,7 @@ class Store {
       }
     } catch (err) {
       if (/Creating default file/.test(err.message)) {
-        log.info(err.message)
+        // log.info(err.message)
         // createPagesMetaYaml(src, type)
       } else {
         throw err

@@ -4962,3 +4962,7 @@ yauzl@^2.4.2:
   dependencies:
     buffer-crc32 "~0.2.3"
     fd-slicer "~1.0.1"
+
+"zousan@https://github.com/msimmer/zousan":
+  version "2.3.3"
+  resolved "https://github.com/msimmer/zousan#567e5d9f17cd9a78e4b95dce1dee4e58830e293d"

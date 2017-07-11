@@ -2,7 +2,7 @@
  * @module mobiCss
  */
 
-import Promise from 'vendor/Zousan'
+import Promise from 'zousan'
 import fs from 'fs-extra'
 import css from 'css'
 import path from 'path'

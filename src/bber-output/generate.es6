@@ -6,7 +6,7 @@
  * @return {Generate}
  */
 
-import Promise from 'vendor/Zousan'
+import Promise from 'zousan'
 import fs from 'fs-extra'
 import yargs from 'yargs'
 import path from 'path'

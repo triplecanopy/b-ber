@@ -1,5 +1,5 @@
 /* eslint-disable class-methods-use-this */
-import Promise from 'vendor/Zousan'
+import Promise from 'zousan'
 import fs from 'fs-extra'
 import path from 'path'
 import nodemon from 'nodemon'

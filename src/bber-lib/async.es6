@@ -3,7 +3,7 @@
  * @module async
  */
 
-import Promise from 'vendor/Zousan'
+import Promise from 'zousan'
 import { log } from 'bber-plugins'
 import { rpad, hrtimeformat } from 'bber-utils'
 import * as tasks from 'bber-output'

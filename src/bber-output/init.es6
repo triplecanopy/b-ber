@@ -1,4 +1,4 @@
-import Promise from 'vendor/Zousan'
+import Promise from 'zousan'
 import fs from 'fs-extra'
 import path from 'path'
 import { log } from 'bber-plugins'
@@ -13,7 +13,6 @@ import {
   readme,
   gitignore,
 } from 'bber-templates'
-
 
 /**
  * @class Initializer
@@ -38,43 +37,42 @@ class Initializer {
    * @param  {Object} argv Command Line arguments
    * @return {Object}
    */
-  constructor({ cwd, argv = { src: '_book', dist: 'book' } }) {
-    if (!cwd) { throw new Error('Base directory not provided') }
+  constructor({ cwd = '', argv = { src: '_book', dist: 'book' } }) {
     const { src, dist } = argv
+
+    if (!cwd) { throw new Error('Base directory not provided') }
+    if (!src || !dist) { throw new Error('Both [src] and [dist] arguments must be provided') }
+    if (src === dist) { throw new Error('[src] and [dist] directories must have different names') }
 
     this.cwd = cwd
     this.src = src
     this.dist = dist
-    this.dirs = []
-    this.files = []
 
     this.projectPath = path.join(this.cwd, this.src)
     this.buildTypes = ['epub', 'mobi', 'pdf', 'sample', 'web']
 
-    if (src) {
-      store.bber.src = src
-      store.bber.epub.src = src
-      store.bber.mobi.src = src
-      store.bber.pdf.src = src
-      store.bber.web.src = src
-    }
-    if (dist && dist !== src) {
-      store.bber.dist = dist
-      store.bber.epub.dist = `${dist}-epub`
-      store.bber.mobi.dist = `${dist}-mobi`
-      store.bber.pdf.dist = `${dist}-pdf`
-      store.bber.web.dist = `${dist}-web`
-    }
-
     this.dirs = sourceDirs(this.projectPath)
 
-    this.buildTypes.forEach(_ => this.files.push(typeYaml(this.projectPath, _)))
-    this.files.push(config(this.projectPath, store.config.dist))
-    this.files.push(metadata(this.projectPath))
-    this.files.push(javascripts(this.projectPath))
-    this.files.push(markdown(this.projectPath))
-    this.files.push(readme(this.projectPath, cwd))
-    this.files.push(gitignore(this.projectPath))
+    this.files = [
+      ...this.buildTypes.map(_ => typeYaml(this.projectPath, _)),
+      config(this.projectPath, store.config.dist),
+      metadata(this.projectPath),
+      javascripts(this.projectPath),
+      markdown(this.projectPath),
+      readme(this.projectPath, cwd),
+      gitignore(this.projectPath),
+    ]
+
+    store.bber = {
+      ...store.bber,
+      src,
+      dist,
+      epub: { ...store.bber.epub, src, dist: `${dist}-epub` },
+      mobi: { ...store.bber.mobi, src, dist: `${dist}-mobi` },
+      pdf: { ...store.bber.pdf, src, dist: `${dist}-pdf` },
+      web: { ...store.bber.web, src, dist: `${dist}-web` },
+      sample: { ...store.bber.sample, src, dist: `${dist}-sample` },
+    }
   }
 
   /**
