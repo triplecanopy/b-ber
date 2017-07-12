@@ -20,27 +20,24 @@ import { src, dist, env, build, theme } from 'bber-utils'
 // theme's `application.scss` exists, then load that; else write a blank file.
 const createScssString = () =>
   new Promise((resolve) => {
+    const chunks = []
+    const variableOverridesPath = path.join(src(), '_stylesheets/variable-overrides.scss')
+    const styleOverridesPath = path.join(src(), '_stylesheets/style-overrides.scss')
+    const themeStylesPath = path.join(theme().tpath, 'application.scss')
+
     try {
-      const customSCSS = path.join(src(), '_stylesheets/application.scss')
-      if (fs.existsSync(customSCSS)) {
-        return fs.readFile(customSCSS, (err, buffer) => {
-          if (err) { throw err }
-          log.info('Using SCSS overrides from `_stylesheets/application.scss`')
-          return resolve(buffer)
-        })
+      if (fs.existsSync(variableOverridesPath)) {
+        const variableOverrides = fs.readFileSync(variableOverridesPath)
+        chunks.push(variableOverrides)
       }
     } catch (err) {
       log.info(`Attempting to build with [${theme().tname}] theme`)
     }
 
-    const themeSCSS = path.join(theme().tpath, 'application.scss')
     try {
-      if (fs.existsSync(themeSCSS)) {
-        return fs.readFile(themeSCSS, (err, buffer) => {
-          if (err) { throw err }
-          log.info(`Using theme [${theme().tname}]`)
-          return resolve(buffer)
-        })
+      if (fs.existsSync(themeStylesPath)) {
+        const themeStyles = fs.readFileSync(themeStylesPath)
+        chunks.push(themeStyles)
       }
     } catch (err) {
       return log.error(`
@@ -48,7 +45,21 @@ const createScssString = () =>
         Make sure the theme exists and contains a valid [application.scss]`)
     }
 
-    throw new Error('Something went wrong compiling the SCSS.')
+    try {
+      if (fs.existsSync(styleOverridesPath)) {
+        const styleOverrides = fs.readFileSync(styleOverridesPath)
+        chunks.push(styleOverrides)
+      }
+    } catch (err) {
+      log.info(`Attempting to build with [${theme().tname}] theme`)
+    }
+
+
+    if (chunks.length < 1) {
+      throw new Error('Something went wrong compiling the SCSS.')
+    }
+
+    resolve(Buffer.concat(chunks))
   })
 
 const ensureCssDir = () =>

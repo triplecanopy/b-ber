@@ -62,7 +62,7 @@ const handler = (argv) => {
   const buildCmds = _buildCommands
   const buildArgs = _buildArgs(argv)
   const buildTasks = buildArgs.length ? buildArgs : !buildArgs.length && argv.d ? [] : buildCmds
-  const sequence = ['clean', 'container', 'copy', 'sass', 'scripts', 'render', 'loi', 'footnotes', 'inject', 'opf'] // eslint-disable-line max-len
+  const sequence = ['clean', 'container', 'cover', 'copy', 'sass', 'scripts', 'render', 'loi', 'footnotes', 'inject', 'opf'] // eslint-disable-line max-len
 
   const run = (tasks) => {
     const next = [tasks.shift()]
@@ -82,9 +82,11 @@ const handler = (argv) => {
   // finish to ensure that store is updated with the default cover image if
   // none exists. phantomjs can be sped up by disabling wifi connection, see
   // bug report here: https://github.com/ariya/phantomjs/issues/14033
-  return process.env.NODE_ENV === 'debug'
-    ? run(buildTasks)
-    : cover.create().then(() => run(buildTasks))
+  // return process.env.NODE_ENV === 'debug'
+  //   ? run(buildTasks)
+  //   : cover.create().then(() => run(buildTasks))
+
+  run(buildTasks)
 }
 
 export default {

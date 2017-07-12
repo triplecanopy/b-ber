@@ -26,7 +26,8 @@ const tocItem = (list) => {
     return `
       <ol>
         ${items.map(_ => // eslint-disable-line no-confusing-arrow
-          (_.inToc === false)
+          (_.in_toc === false)
+          // (_.inToc === false)
           ? ''
           : `
             <li>

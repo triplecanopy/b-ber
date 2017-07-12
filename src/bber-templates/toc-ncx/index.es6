@@ -46,7 +46,8 @@ const navPoint = (list) => {
   let i = 0
   function render(arr) {
     return arr.map((_) => {
-      if (_.inToc === false) { return '' }
+      if (_.in_toc === false) { return '' }
+      // if (_.inToc === false) { return '' }
       i += 1
       return `
         <navPoint id="navPoint-${i}" playOrder="${i}">

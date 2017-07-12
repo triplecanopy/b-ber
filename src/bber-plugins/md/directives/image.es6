@@ -72,7 +72,7 @@ export default {
         case 'image':
           seq += 1
 
-          page = `loi-${seq + 1000}.xhtml`
+          page = `figure-${seq + 1000}.xhtml`
           classNames = [getImageOrientation(width, height), 'figure-sm'].join(' ')
           ref = context.filename
 

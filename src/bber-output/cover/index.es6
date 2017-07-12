@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import Promise from 'zousan'
 import fs from 'fs-extra'
 import path from 'path'
@@ -7,7 +8,20 @@ import childProcess from 'child_process'
 import phantomjs from 'phantomjs-prebuilt'
 import { log } from 'bber-plugins'
 import store from 'bber-lib/store'
-import { entries, src, version, guid, rpad, hrtimeformat, fileId } from 'bber-utils'
+import { coverSVG } from 'bber-templates'
+import { page } from 'bber-templates/pages'
+import imageSize from 'image-size'
+import renderLayouts from 'layouts'
+import File from 'vinyl'
+import {
+  src,
+  dist,
+  version,
+  guid,
+  rpad,
+  hrtimeformat,
+  fileId,
+} from 'bber-utils'
 
 let seq
 let diff
@@ -17,12 +31,16 @@ class Cover {
     this.metadata = {
       title: '',
       creator: '',
-      // 'date-modified': '',
+      'date-modified': new Date(),
       identifier: '',
       bberVersion: '',
     }
+
     this.coverPrefix = '__bber_cover__'
-    this.args = [path.join(__dirname, 'phantomjs.js')]
+    this.phantomjsArgs = [path.join(__dirname, 'phantomjs.js')]
+    this.coverXHTMLContent = ''
+
+    this.init = this.init.bind(this)
   }
 
   removeDefaultCovers() {
@@ -44,62 +62,127 @@ class Cover {
     })
   }
 
-  create() {
-    seq = process.hrtime()
-    const fileName = `${this.coverPrefix}${guid()}.jpg`
-    const outFile = path.join(src(), '_images', fileName)
-    let data
-
-    try {
-      data = Yaml.load(path.join(src(), 'metadata.yml'))
-    } catch (err) {
-      log.error(err)
-      process.exit(1)
-    }
-
-    if (find(data, { term: 'cover' }) !== undefined) {
-      return Promise.resolve()
-    }
-
-    for (const [k] of entries(this.metadata)) {
-      const meta = find(data, { term: k })
-      if (meta) {
-        this.metadata[k] = meta.value
-      }
-    }
-
-    this.metadata.bberVersion = version()
-    this.metadata['date-modified'] = new Date()
-
-    store.bber.metadata.push({ term: 'cover', value: fileId(fileName).slice(1) })
-
-    const content = `<html>
-      <body>
-        <h1>${this.metadata.title}</h1>
-        <p><span>Creator</span>${this.metadata.creator}</p>
-        <p><span>Date Modified</span>${this.metadata['date-modified']}</p>
-        <p><span>Identifier</span>${this.metadata.identifier}</p>
-        <p><span>b-ber version</span>${this.metadata.bberVersion}</p>
-      </body>
-    </html>`
-
-    this.args.push(content, outFile)
-    return this.removeDefaultCovers().then(() => this.generate())
-  }
-
-  generate() {
+  generateDefaultCoverImage() {
     return new Promise(resolve =>
-      childProcess.execFile(phantomjs.path, this.args, (err, stdout, stderr) => {
+      childProcess.execFile(phantomjs.path, this.phantomjsArgs, (err, stdout, stderr) => {
         if (err) { console.error(err) }
         if (stderr) { console.error(stderr) }
         if (stdout) { console.log(stdout) }
         diff = process.hrtime(seq)
-        log.info(`Resolved ${rpad('cover', ' ', 8)} ${hrtimeformat(diff)}`)
+        log.info(`Wrote ${rpad('cover', ' ', 8)} ${hrtimeformat(diff)}`)
         resolve()
       })
+    )
+  }
+
+  writeCoverXHTML() {
+    return new Promise((resolve) => {
+      const textDir = path.join(dist(), '/OPS/text')
+      const coverFilePath = path.join(textDir, 'cover.xhtml')
+      fs.mkdirp(textDir, (err0) => {
+        if (err0) { throw err0 }
+        fs.writeFile(coverFilePath, this.coverXHTMLContent, (err1) => {
+          if (err1) { throw err1 }
+          return resolve()
+        })
+      })
+    })
+  }
+
+  generateCoverXHTML({ coverEntry, coverImagePath }) {
+    return new Promise((resolve) => {
+      // get the image dimensions, and pass them to the coverSVG template
+      const { width, height } = imageSize(coverImagePath)
+      const svg = coverSVG({
+        width,
+        height,
+        href: `images/${encodeURIComponent(coverEntry)}`,
+      })
+
+      // set the content string to be written once resolved
+      this.coverXHTMLContent = renderLayouts(new File({
+        path: './.tmp',
+        layout: 'page',
+        contents: new Buffer(svg),
+      }), { page }).contents.toString()
+      resolve()
+    })
+  }
+
+  createCoverImage() {
+    return new Promise((resolve) => {
+      seq = process.hrtime()
+      let metadata
+      let coverEntry = `${this.coverPrefix}${guid()}.jpg`
+      let coverImagePath = path.join(src(), '_images', coverEntry)
+
+      // check that metadata.yml exists
+      try {
+        metadata = Yaml.load(path.join(src(), 'metadata.yml'))
+      } catch (err) {
+        log.error(err)
+        process.exit(1)
+      }
+
+      // check if cover if referenced
+      const coverListedInMetadata = find(metadata, { term: 'cover' })
+      if (coverListedInMetadata) {
+        coverEntry = coverListedInMetadata.value
+        if (!coverListedInMetadata.value) { throw new Error('Error in [metadata.yml] at cover.value') }
+        // there's a reference to a cover image so we create a cover.xhtml file
+        // containing an SVG-wrapped `image` element with the appropriate cover
+        // dimensions, and write it to the `text` dir.
+
+        // check that the cover image file exists, throw if not
+        coverImagePath = path.join(src(), '_images', coverEntry)
+        try {
+          if (!fs.statSync(coverImagePath)) {
+            throw new Error(`Cover image listed in metadata.yml cannot be found: [${coverImagePath}]`)
+          }
+        } catch (err) {
+          log.error(err)
+          process.exit(1)
+        }
+
+        return this.generateCoverXHTML({ coverEntry, coverImagePath }).then(resolve)
+      } // end if cover exists
+
+      // if there's no cover referenced in the metadata.yml, we create one that
+      // displays the book's metadata (title, generator version, etc)
+
+      this.metadata = { ...this.metadata, ...metadata }
+
+      store.bber.metadata.push({ term: 'cover', value: fileId(coverEntry).slice(1) })
+
+      const content = `<html>
+        <body>
+          <h1>${this.metadata.title}</h1>
+          <p><span>Creator</span>${this.metadata.creator}</p>
+          <p><span>Date Modified</span>${this.metadata['date-modified']}</p>
+          <p><span>Identifier</span>${this.metadata.identifier}</p>
+          <p><span>b-ber version</span>${version()}</p>
+        </body>
+      </html>`
+
+      this.phantomjsArgs.push(content, coverImagePath)
+
+      return this.removeDefaultCovers()
+      .then(() => this.generateDefaultCoverImage())
+      .then(() => this.generateCoverXHTML({ coverEntry, coverImagePath }))
+      .catch(err => log.error(err))
+      .then(resolve)
+    })
+  }
+
+  init() {
+    return new Promise(resolve =>
+      this.createCoverImage()
+      .then(() => this.writeCoverXHTML())
+      .catch(err => log.error(err))
+      .then(resolve)
     )
   }
 }
 
 const cover = new Cover()
-export default cover
+export default cover.init

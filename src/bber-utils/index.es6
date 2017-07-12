@@ -259,7 +259,8 @@ const spineModel = () => ({
   name: '',
   remotePath: '',
   linear: true,
-  inToc: true,
+  in_toc: true,
+  // inToc: true,
   nodes: [],
 })
 
@@ -290,15 +291,15 @@ const modelFromString = (str, _src) => {
 
 const modelFromObject = (_obj, _src) => {
   const { in_toc, linear } = _obj[Object.keys(_obj)[0]]
-  const obj = {}
+  // const obj = {}
 
-  if (typeof linear !== 'undefined') { obj.linear = linear }
-  if (typeof in_toc !== 'undefined') { obj.inToc = in_toc } // eslint-disable-line camelcase
+  // if (typeof linear !== 'undefined') { obj.linear = linear }
+  // if (typeof in_toc !== 'undefined') { obj.inToc = in_toc } // eslint-disable-line camelcase
 
   const str = Object.keys(_obj)[0]
   const model = modelFromString(str, _src)
 
-  return { ...model, ...obj }
+  return { ...model, in_toc, linear }
 }
 
 const nestedContentToYAML = (arr, result = []) => {
@@ -308,8 +309,10 @@ const nestedContentToYAML = (arr, result = []) => {
     // TODO: check for custom attrs somewhere else. also - not sure about
     // changing snakecase/camelcase all the time, better to just stick with
     // one way or the other
-    if (_.linear === false || _.inToc === false) {
-      if (_.inToc === false) { model.in_toc = false }
+    // if (_.linear === false || _.inToc === false) {
+      // if (_.inToc === false) { model.in_toc = false }
+    if (_.linear === false || _.in_toc === false) {
+      if (_.in_toc === false) { model.in_toc = false }
       if (_.linear === false) { model.linear = false }
       result.push({ [_.fileName]: model })
     } else {
@@ -336,7 +339,6 @@ const flattenSpineFromYAML = arr =>
     }
     return acc.concat(curr)
   }, [])
-
 
 export { opsPath, cjoin, fileId, copy, guid, rpad, lpad, hrtimeformat, hashIt,
   getImageOrientation, getFrontmatter, entries, src, dist, build, env, theme,

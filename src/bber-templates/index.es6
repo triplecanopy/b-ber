@@ -1,5 +1,7 @@
+/* eslint-disable max-len */
 import path from 'path'
-import { guid } from 'bber-utils'
+import fs from 'fs-extra'
+import { guid, theme } from 'bber-utils'
 import * as figures from 'bber-templates/figures'
 import * as pages from 'bber-templates/pages'
 import * as opf from 'bber-templates/opf'
@@ -88,7 +90,7 @@ function metadata(src) {
 }
 
 function javascripts(src) {
-  return {
+  return [{
     relpath: `${src}/_javascripts/application.js`,
     content: `function clicked(e) {
   window.location.href = this.getAttribute('href')
@@ -104,18 +106,31 @@ function main() {
 }
 
 window.onload = main`,
-  }
+  }]
 }
 
 function markdown(src) {
-  return {
+  return [{
     relpath: `${src}/_markdown/00001.md`,
     content: `---
 title: Chapter One
 type: bodymatter
 ---
 `,
-  }
+  }]
+}
+
+function stylesheets(src) {
+  return [{
+    relpath: `${src}/_stylesheets/variable-overrides.scss`,
+    content: fs.readFileSync(
+      path.join(theme().tpath, '_theme-settings.scss')
+    , 'utf8').replace(/\s+?!default/g, ''),
+  }, {
+    relpath: `${src}/_stylesheets/style-overrides.scss`,
+    content: `// Styles added here will be appended to the selected theme's
+// CSS output. A good place for overrides and custom styles!`,
+  }]
 }
 
 function readme(src, cwd) {
@@ -147,7 +162,14 @@ yarn-error.log*
   }
 }
 
+function coverSVG({ width, height, href }) {
+  return `<div style="text-align: center; padding: 0; margin: 0;">
+    <svg xmlns="http://www.w3.org/2000/svg" height="100%" preserveAspectRatio="xMidYMid meet" version="1.1" viewBox="0 0 ${width} ${height}" width="100%" xmlns:xlink="http://www.w3.org/1999/xlink">
+      <image width="${width}" height="${height}" xlink:href="../${href}"/>
+    </svg></div>`
+}
 
-export { containerXML, mimetype, scriptTag, stylesheetTag, pages, figures, opf,
-  jsonLDTag, sourceDirs, config, typeYaml, metadata, javascripts, markdown,
-  readme, gitignore }
+
+export { containerXML, mimetype, scriptTag, stylesheetTag, pages, figures,
+  opf, jsonLDTag, sourceDirs, config, typeYaml, metadata, javascripts,
+  stylesheets, markdown, readme, gitignore, coverSVG }

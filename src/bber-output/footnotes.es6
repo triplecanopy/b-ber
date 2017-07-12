@@ -11,7 +11,7 @@ import File from 'vinyl'
 import renderLayouts from 'layouts'
 import store from 'bber-lib/store'
 import { log } from 'bber-plugins'
-import { src, dist } from 'bber-utils'
+import { src, dist, modelFromString } from 'bber-utils'
 import { isArray } from 'lodash'
 import { page } from 'bber-templates/pages'
 
@@ -56,12 +56,22 @@ class Footnotes {
 
       fs.writeFile(this.file.path, markup, 'utf8', (err) => {
         if (err) { throw err }
+
         store.add('pages', {
           filename: this.file.name,
           title: 'Notes',
           type: 'backmatter',
           linear: false,
         })
+
+        const fileData = {
+          ...modelFromString(`${this.file.name}.xhtml`, store.config.src),
+          in_toc: false,
+          linear: false,
+        }
+
+        store.add('spine', fileData)
+
         resolve()
       })
     })

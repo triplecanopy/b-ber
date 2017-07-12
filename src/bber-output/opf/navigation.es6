@@ -15,7 +15,7 @@ import fs from 'fs-extra'
 import File from 'vinyl'
 import rrdir from 'recursive-readdir'
 import Yaml from 'bber-lib/yaml'
-import { difference, uniq, remove } from 'lodash'
+import { find, difference, uniq, remove } from 'lodash'
 
 // utility
 import store from 'bber-lib/store'
@@ -28,7 +28,7 @@ import {
   promiseAll,
   nestedContentToYAML,
   flattenSpineFromYAML,
-  modelFromString,
+  // modelFromString,
 } from 'bber-utils'
 
 // templates
@@ -137,23 +137,23 @@ class Navigation {
       const localFiles = filesFromSystem.map(_ => `${_}.xhtml`)
       const pages = flattenSpineFromYAML(spineList)
 
-      const missingEntries = difference(flow, localFiles) // extra files on system
-      const missingFiles = difference(localFiles, pages) // extra entries in YAML
+      const missingFiles = difference(flow, localFiles) // extra files on system
+      const missingEntries = difference(localFiles, pages) // extra entries in YAML
 
       // console.log(pages, flow, filesFromSystem)
-      // console.log(missingEntries, missingFiles)
+      // console.log(missingFiles, missingEntries)
       // process.exit(0)
 
-      if (missingEntries.length || missingFiles.length) {
+      if (missingFiles.length || missingEntries.length) {
         // there are discrepencies between the files on the system and files
         // declared in the `this.build`.yml file
-        if (missingEntries.length) {
+        if (missingFiles.length) {
           // there are extra entries in the YAML (i.e., missing XHTML pages)
           log.warn(`XHTML pages for ${this.build}.yml do not exist:`)
-          log.warn(missingEntries)
+          log.warn(missingFiles)
           log.warn(`Removing redundant entries in ${this.build}.yml`)
 
-          missingEntries.forEach((item) => {
+          missingFiles.forEach((item) => {
             remove(spine, { fileName: item })
             store.update('spine', spine)
 
@@ -174,20 +174,30 @@ class Navigation {
           })
         }
 
-        if (missingFiles.length) {
+        if (missingEntries.length) {
           // there are missing entries in the YAML (i.e., extra XHTML pages),
           // but we don't know where to interleave them, so we just append
           // them to the top-level list of files
           log.warn(`Missing entries in ${this.build}.yml:`)
-          log.warn(missingFiles)
+          log.warn(missingEntries)
           log.warn(`Adding missing entries to [${this.build}.yml]`)
 
           // add the missing entry to the spine
           // TODO: add to toc? add to flow/pages?
-          missingFiles.forEach(_ => store.add('spine', modelFromString(_, this.src)))
+          // TODO: there need to be some handlers for parsing user-facing attrs
+          const missingEntriesWithAttributes = missingEntries.map((fileName) => {
+            const item = find(spine, { fileName })
+            if (item && (item.in_toc === false || item.linear === false)) {
+              const fileObj = { [fileName]: {} }
+              if (item.in_toc === false) { fileObj[fileName].in_toc = false }
+              if (item.linear === false) { fileObj[fileName].linear = false }
+              return fileObj
+            }
+            return fileName
+          })
 
           const yamlpath = path.join(this.src, `${this.build}.yml`)
-          const content = Yaml.dump(missingFiles)
+          const content = Yaml.dump(missingEntriesWithAttributes)
           fs.appendFile(yamlpath, content, (err) => {
             if (err) { throw err }
           })

@@ -16,7 +16,7 @@ import { page, loiLeader } from 'bber-templates/pages'
 
 const createLOILeader = () =>
   new Promise((resolve) => {
-    const filename = 'loi-0000'
+    const filename = 'figures-titlepage'
     const markup = renderLayouts(new File({
       path: './.tmp',
       layout: 'page',
@@ -52,7 +52,7 @@ const createLOI = () =>
 
         const fileData = {
           ...modelFromString(data.page, store.config.src),
-          inToc: false,
+          in_toc: false,
         }
 
         store.add('spine', fileData)

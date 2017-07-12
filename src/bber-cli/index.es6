@@ -17,7 +17,7 @@ import * as commands from 'bber-cli/cmd'
 const init = () => {
   const { build, clean, copy, container/* , editor */, generate, init, inject,
     footnotes, opf, pdf, mobiCSS, publish, render, scripts, sass, serve, site,
-    theme, watch, xml, create } = commands
+    theme, watch, xml, create, cover } = commands
 
   /**
    * Shows custom help if a CLI command fails
@@ -29,7 +29,7 @@ const init = () => {
   Where <command> is one of:
     build, clean, copy, container, generate, init, inject,
     footnotes, opf, pdf, mobiCSS, publish, render, scripts, sass, serve, site,
-    theme, watch, xml, create
+    theme, watch, xml, create, cover
 
   Some common commands are:
 
@@ -90,6 +90,7 @@ const init = () => {
     .command(watch)
     .command(xml)
     .command(create)
+    .command(cover)
 
     .options({
       v: {
