@@ -16,10 +16,8 @@ chai.use(sinonChai)
 
 const store = require('../../../bber-lib/store').default
 const Opf = require('../').default
-const Logger = require('../../../__tests__/helpers/console')
+const logger = require('../../../__tests__/helpers/console')
 const log = require('../../../bber-plugins').log
-
-let logger
 let opf = new Opf()
 
 // setup
@@ -68,7 +66,6 @@ const createAssets = () => {
 describe('module:opf', () => {
   before(() => {
     removeAssets(createAssets)
-    logger = new Logger()
     store.update('build', 'epub')
   })
 

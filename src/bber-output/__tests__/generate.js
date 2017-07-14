@@ -15,21 +15,13 @@ const fs = require('fs-extra')
 
 const store = require('../../bber-lib/store').default
 const Generate = require('../generate').default
-
-const Logger = require('../../__tests__/helpers/console')
-
+const logger = require('../../__tests__/helpers/console')
 const g = new Generate()
 
 describe('module:generate', () => {
   const srcDir = path.join(process.cwd(), 'src/__tests__/.tmp/generate')
   const mdDir = path.join(srcDir, '_markdown')
   const mdFile = '00001.md'
-
-  let logger
-  before((done) => {
-    logger = new Logger()
-    done()
-  })
 
   // clear application errors
   beforeEach(() => logger.reset())

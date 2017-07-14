@@ -23,13 +23,11 @@ const cjoin               = utils.cjoin
 const fileId              = utils.fileId
 const copy                = utils.copy
 const guid                = utils.guid
-const rpad                = utils.rpad
 const lpad                = utils.lpad
 const hrtimeformat        = utils.hrtimeformat
 const hashIt              = utils.hashIt
 const getImageOrientation = utils.getImageOrientation
 const getFrontmatter      = utils.getFrontmatter
-const entries             = utils.entries
 const src                 = utils.src
 const dist                = utils.dist
 const build               = utils.build
@@ -125,11 +123,6 @@ describe('module:utils', () => {
       guid().should.match(/\w{8}-\w{4}-4\w{3}-\w{4}-\w{12}/)
     })
   })
-  describe('#rpad', () => {
-    it('Pads a string from the right', () => {
-      rpad('f', 'o', 3).should.equal('foo')
-    })
-  })
   describe('#lpad', () => {
     it('Pads a string from the left', () => {
       lpad('f', 'o', 3).should.equal('oof')
@@ -173,20 +166,9 @@ describe('module:utils', () => {
         // clean .tmp
         fs.unlink(filePath, (err1) => {
           if (err1) { throw err1 }
-            done()
+          done()
         })
       })
-    })
-  })
-  describe('#entries', () => {
-    it('Creates an iterator from a JavaScript object', () => {
-      const iter = entries({ prop: 'attr' }).next()
-      const done = iter.done
-      const key = iter.value[0]
-      const val = iter.value[1]
-      key.should.equal('prop')
-      val.should.equal('attr')
-      done.should.be.false
     })
   })
 

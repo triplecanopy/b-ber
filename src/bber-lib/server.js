@@ -1,11 +1,7 @@
 const express = require('express')
 const esindex = require('serve-index')
 const path = require('path')
-const bunyan = require('bunyan')
-const bformat = require('bunyan-format')
-
-const formatOut = bformat({ outputMode: 'short' })
-const log = bunyan.createLogger({ name: 'bber', stream: formatOut, level: 'debug' })
+const log = require('../bber-plugins').log
 
 const parseArgs = (args) => {
   const _argv = args.slice(2)
@@ -30,5 +26,5 @@ const opts = {
 const app = express()
 app.use(express.static(dir))
 app.use(esindex(dir, opts))
-app.listen(port, () => log.info(`Server is running at http://localhost:${port}/`))
+app.listen(port, () => log.info(`Server is running at [http://localhost:${port}/]`))
 

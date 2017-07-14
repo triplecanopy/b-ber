@@ -14,7 +14,7 @@ chai.use(sinonChai)
 
 const store = require('../../bber-lib/store').default
 const Initialize = require('../init').default
-const Logger = require('../../__tests__/helpers/console')
+const logger = require('../../__tests__/helpers/console')
 
 const cwd = process.cwd()
 const configYml = path.join(cwd, 'config.yml')
@@ -22,13 +22,8 @@ const projectDir = path.join(cwd, '_book')
 const yamlStr = '---\nenv: development # development | production\ntheme: default # name or path\nsrc: _book\ndist: book' // eslint-disable-line max-len
 
 let init
-let logger
 
 describe('module:init', () => {
-  before(() => {
-    logger = new Logger()
-    return logger
-  })
   beforeEach(() => {
     if (!fs.existsSync(configYml)) {
       fs.writeFileSync(configYml, yamlStr)

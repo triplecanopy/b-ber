@@ -15,17 +15,10 @@ const sinon = require('sinon')
 const MarkdownIt = require('markdown-it')
 const store = require('../../bber-lib/store').default
 const MarkIt = require('../md').default
-
-const Logger = require('../../__tests__/helpers/console')
+const logger = require('../../__tests__/helpers/console')
 
 describe('module:md:MarkIt', () => {
-  let logger
   let markit
-
-  before((done) => {
-    logger = new Logger()
-    return done()
-  })
 
   beforeEach((done) => {
     logger.reset()
