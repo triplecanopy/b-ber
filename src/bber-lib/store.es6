@@ -262,6 +262,7 @@ class Store {
   loadBber() {
     this.bber = {
       metadata: this.metadata,
+      taskTimes: [], // for tracking CLI task completion
       sample: this._fileOrDefaults('sample'),
       epub: this._fileOrDefaults('epub'),
       mobi: this._fileOrDefaults('mobi'),

@@ -231,12 +231,15 @@ const write = (location, data) =>
   new Promise(resolve =>
     fs.writeFile(location, data, (err) => {
       if (err) { throw err }
+      ;log.info(`bber-modifiers/inject: Wrote [${path.basename(location)}]`)
       resolve()
     })
   )
 
 const promiseToReplace = (prop, data, source, file) =>
   new Promise(async (resolve) => {
+    ;log.info(`bber-modifiers/inject: Preparing to write [${prop}] to [${source}]`)
+
     const stream = file || await getContents(source)
     const start = startTags[prop]
     const stop = endTags[prop]
@@ -253,7 +256,7 @@ const promiseToReplace = (prop, data, source, file) =>
 const mapSources = (args) => {
   const [htmlDocs, stylesheets, javascripts, metadata] = args
   return new Promise((resolve) => {
-    htmlDocs.forEach(source =>
+    htmlDocs.forEach((source, index) =>
       promiseToReplace('stylesheets', stylesheets, source)
       .then(file => promiseToReplace('javascripts', javascripts, source, file))
       .then(file => promiseToReplace('metadata', metadata, source, file))
@@ -262,7 +265,11 @@ const mapSources = (args) => {
           file.contents.toString('utf8'))
       )
       .catch(err => log.error(err))
-      .then(resolve)
+      .then(() => {
+        if (index === htmlDocs.length - 1) {
+          resolve()
+        }
+      })
     )
   })
 }

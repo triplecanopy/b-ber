@@ -4,6 +4,7 @@ import File from 'vinyl'
 import mime from 'mime-types'
 import Props from 'bber-lib/props'
 import { fileId, guid, getFrontmatter, escapeHTML } from 'bber-utils'
+import { log } from 'bber-plugins'
 
 const opfPackage = new File({
   path: 'opfPackage.tmpl',
@@ -60,7 +61,11 @@ const manifestItem = (file) => {
 const spineItems = arr =>
   arr.map((_) => {
     if (Props.isHTML(_)) {
-      const linear = _.linear === false ? 'no' : 'yes'
+      const nonLinear = _.linear === false
+      const linear = nonLinear ? 'no' : 'yes'
+      if (nonLinear) {
+        log.info(`bber-output/opf: Writing non-linear asset [${_.fileName}] to [spine]`)
+      }
       const fname = fileId(_.fileName)
       return `\n<itemref idref="${fname}" linear="${linear}"/>`
     }
@@ -73,6 +78,7 @@ const guideItems = arr =>
     if (Props.isHTML(_)) {
       let type
       if ((type = getFrontmatter(_, 'type'))) {
+        log.info(`bber-output/opf: Adding landmark [${_.fileName}] as [${type}]`)
         const title = escapeHTML(getFrontmatter(_, 'title'))
         const href = encodeURI(_.relativePath)
         item = `\n<reference type="${type}" title="${title}" href="${href}"/>`

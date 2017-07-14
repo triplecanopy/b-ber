@@ -1,4 +1,3 @@
-
 /**
  * @module copy
  */
@@ -10,6 +9,24 @@ import { log } from 'bber-plugins'
 import { src, dist } from 'bber-utils'
 
 const cwd = process.cwd()
+
+const report = (i, o) => {
+  log.info(`bber-output/copy: Copied contents of [${i}] to [${o}]`)
+  fs.readdir(i, (err, data) => {
+    if (err) { throw err }
+    data.forEach(_ => log.info(`bber-output/copy: ${path.basename(i)}/${_} -> ${path.basename(o)}/${_}`))
+  })
+}
+
+const doCopy = (i, o, idx, fromLocs, resolve) => {
+  fs.copy(i, o, (err4) => {
+    if (err4) { throw err4 }
+    report(i, o)
+    if (idx === fromLocs.length - 1) {
+      resolve()
+    }
+  })
+}
 
 /**
  * Copy directories of assets into the output directory
@@ -45,7 +62,7 @@ const copy = (_fromLocs, _toLoc) =>
 
         try {
           if (!fs.existsSync(i)) {
-            throw new Error(`Nothing to copy at [${path.basename(i)}], continuing`)
+            throw new Error(`bber-output/copy: Nothing to copy at [${i}]`)
           }
         } catch (err1) {
           return log.warn(err1.message)
@@ -53,22 +70,21 @@ const copy = (_fromLocs, _toLoc) =>
 
         try {
           if (!fs.existsSync(o)) {
-            throw new Error(`Path [${path.basename(o)}] does not exist, creating empty directory`)
+            throw new Error(`bber-output/copy: Path [${o}] does not exist, creating empty directory`)
           }
         } catch (err2) {
-          log.info(err2.message)
+          log.warn(err2.message)
           return fs.mkdirs(o, (err3) => {
             if (err3) { throw err3 }
-            return fs.copy(i, o, (err4) => {
-              if (err4) { throw err4 }
-              if (idx === fromLocs.length - 1) { resolve() }
-            })
+            doCopy(i, o, idx, fromLocs, resolve)
           })
         }
 
         return fs.copy(i, o, (err5) => {
           if (err5) { throw err5 }
-          if (idx === fromLocs.length - 1) { resolve() }
+          log.info(`bber-output/copy: Copied contents of ${i} to ${o}`)
+          report(i, o)
+          doCopy(i, o, idx, fromLocs, resolve)
         })
       })
     })

@@ -1,4 +1,3 @@
-
 /**
  * @module render
  */
@@ -13,18 +12,20 @@ import File from 'vinyl'
 import MarkIt from 'bber-plugins/md'
 import { pageHead, pageBody, pageTail } from 'bber-templates/pages'
 import { src, dist } from 'bber-utils'
+import { log } from 'bber-plugins'
 
 // write files to `textDir` dir
-const write = (fname, markup, idx, len, rs, rj) => {
+const write = (fname, markup, idx, len, rs) => {
   const textDir = path.join(`${dist()}/OPS/text/`)
   fs.writeFile(path.join(textDir, `${fname}.xhtml`), markup, (err) => {
-    if (err) { rj(err) }
+    log.info(`bber-output/render: Wrote XHTML: [${path.basename(fname)}.xhtml]`)
+    if (err) { throw err }
     if (idx === len) { rs() }
   })
 }
 
 // insert compiled XHTML into layouts
-const layout = (fname, data, idx, len, rs, rj) => {
+const layout = (fname, data, idx, len, rs) => {
   const textDir = path.join(`${dist()}/OPS/text/`)
   const head = pageHead(fname)
   const tail = pageTail(fname)
@@ -34,30 +35,31 @@ const layout = (fname, data, idx, len, rs, rj) => {
     contents: new Buffer(`${head}${data}${tail}`),
   }), { pageBody }).contents.toString()
 
-  try {
-    if (fs.statSync(textDir)) {
-      write(fname, markup, idx, len, rs, rj)
-    }
-  } catch (e) {
-    fs.mkdirs(textDir, () => write(fname, markup, idx, len, rs, rj))
+
+  if (fs.existsSync(textDir)) {
+    write(fname, markup, idx, len, rs)
+  } else {
+    fs.mkdirs(textDir, () => write(fname, markup, idx, len, rs))
   }
 }
 
 // compile md to XHTML
-const parse = (fname, data, idx, len, rs, rj) =>
-  layout(fname, MarkIt.render(fname, data), idx, len, rs, rj)
+const parse = (fname, data, idx, len, rs) =>
+  layout(fname, MarkIt.render(fname, data), idx, len, rs)
 
 function render() {
   const mdDir = path.join(`${src()}/_markdown/`)
-  return new Promise((resolve, reject) =>
+  return new Promise(resolve =>
     fs.readdir(mdDir, (err1, files) => {
-      if (err1) { reject(err1) }
+      if (err1) { throw err1 }
       const len = files.length - 1
       return files.forEach((file, idx) => {
         if (file.charAt(0) === '.') { return }
+
+        log.info(`bber-output/render: Rendering Markdown: [${path.basename(file)}]`)
         fs.readFile(path.join(mdDir, file), 'utf8', (err2, data) => {
-          if (err2) { reject(err2) }
-          return parse(path.basename(file, '.md'), data, idx, len, resolve, reject)
+          if (err2) { throw err2 }
+          return parse(path.basename(file, '.md'), data, idx, len, resolve)
         })
       })
     })

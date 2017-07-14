@@ -1,4 +1,3 @@
-
 /**
  * @module sass
  */
@@ -19,7 +18,7 @@ import { src, dist, env, build, theme } from 'bber-utils'
 // load that; else verify that a theme is selected in `config`, and that the
 // theme's `application.scss` exists, then load that; else write a blank file.
 const createScssString = () =>
-  new Promise((resolve) => {
+  new Promise((resolve) => { // eslint-disable-line consistent-return
     const chunks = []
     const variableOverridesPath = path.join(src(), '_stylesheets/variable-overrides.scss')
     const styleOverridesPath = path.join(src(), '_stylesheets/style-overrides.scss')
@@ -28,19 +27,23 @@ const createScssString = () =>
     try {
       if (fs.existsSync(variableOverridesPath)) {
         const variableOverrides = fs.readFileSync(variableOverridesPath)
+        log.info(`bber-modifiers/sass: Found SCSS variable overrides: ${path.basename(variableOverridesPath)}`)
+        log.info('bber-modifiers/sass: Prepending overrides to SCSS stream')
         chunks.push(variableOverrides)
       }
     } catch (err) {
-      log.info(`Attempting to build with [${theme().tname}] theme`)
+      // log.info(`bber-modifiers/sass: Attempting to build with [${theme().tname}] theme`)
+      log.info('bber-modifiers/sass: Building SCSS without user-defined overrides')
     }
 
     try {
       if (fs.existsSync(themeStylesPath)) {
         const themeStyles = fs.readFileSync(themeStylesPath)
+        log.info(`bber-modifiers/sass: Attempting build with [${theme().tname}] theme`)
         chunks.push(themeStyles)
       }
     } catch (err) {
-      return log.error(`
+      log.error(`bber-modifiers/sass:
         Could not find theme [${theme().tname}].
         Make sure the theme exists and contains a valid [application.scss]`)
     }
@@ -48,15 +51,19 @@ const createScssString = () =>
     try {
       if (fs.existsSync(styleOverridesPath)) {
         const styleOverrides = fs.readFileSync(styleOverridesPath)
+        log.info(`bber-modifiers/sass: Found user-defined styles: ${path.basename(styleOverridesPath)}`)
+        log.info('bber-modifiers/sass: Appending user-defined styles to SCSS stream')
         chunks.push(styleOverrides)
       }
     } catch (err) {
-      log.info(`Attempting to build with [${theme().tname}] theme`)
+      // log.info(`bber-modifiers/sass: Attempting to build with [${theme().tname}] theme`)
+      log.info('bber-modifiers/sass: Building SCSS without user-defined styles')
     }
 
 
     if (chunks.length < 1) {
-      throw new Error('Something went wrong compiling the SCSS.')
+      const err = new Error('bber-modifiers/sass: No readable stylesheets were found.')
+      log.error(err)
     }
 
     resolve(Buffer.concat(chunks))

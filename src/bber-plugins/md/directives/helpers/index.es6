@@ -1,5 +1,4 @@
-
-import { entries } from 'bber-utils'
+import { forOf } from 'bber-utils'
 import { log } from 'bber-plugins'
 import { BLOCK_DIRECTIVES, INLINE_DIRECTIVES, MISC_DIRECTIVES } from 'bber-shapes/directives'
 
@@ -82,9 +81,13 @@ const _buildAttrObjects = (arr) => {
 // -> foo="bar" baz="qux"
 const _buildAttrString = (obj) => {
   let s = ''
-  for (const [k, v] of entries(obj)) {
+  forOf(obj, (k, v) => {
     s += _applyTransforms(k, v)
-  }
+  })
+
+  // for (const [k, v] of entries(obj)) {
+  //   s += _applyTransforms(k, v)
+  // }
   return s
 }
 
@@ -176,12 +179,14 @@ const attributesObject = (attrs, type, context) => {
   }
 
   const illegalAttrs = []
-  for (const [k] of entries(attrsObject)) {
+  const _attrsObject = { ...attrsObject } // so we don't modify during iteration
+  forOf(_attrsObject, (k) => {
     if (supportedAttributes.indexOf(k) < 0) {
       illegalAttrs.push(k)
       delete attrsObject[k]
     }
-  }
+  })
+
   if (illegalAttrs.length) { log.warn(`Removing illegal attributes: [${illegalAttrs.join()}]`) }
   const mergedAttrs = _extendWithDefaults(attrsObject, type)
   return mergedAttrs

@@ -35,7 +35,7 @@ const write = ({ file, content }) =>
   new Promise(resolve =>
     fs.writeFile(file, content, 'utf8', (err) => {
       if (err) { throw err }
-      log.info('Writing', path.basename(file))
+      log.info(`Writing [${path.basename(file)}]`)
       resolve()
     })
   )
@@ -64,7 +64,7 @@ const parse = file =>
           }
         }
         if (blackListedTypes.indexOf(rule.type) > -1) {
-          log.info(`Removing ${rule.type}`, rule[rule.type])
+          log.info(`Removing ${rule.type} [${rule[rule.type]}]`)
           ast.stylesheet.rules.splice(i, 1)
         }
         if (ast.stylesheet.rules[i]) {
@@ -73,7 +73,7 @@ const parse = file =>
             let a = declarations.length - 1
             while (a >= 0) {
               if (blackListedProperties.indexOf(declarations[a].property) > -1) {
-                log.info('Removing property', declarations[a].property)
+                log.info(`Removing property [${declarations[a].property}]`)
                 declarations.splice(a, 1)
               }
               a-- // eslint-disable-line no-plusplus
@@ -94,8 +94,8 @@ const mobiCSS = () =>
 
       const promises = files.map((_) => {
         const file = path.join(dist(), '/OPS/stylesheets', _)
-        log.info(`Parsing ${path.basename(file)}`)
-        return parse(file).then(resp => write(resp))
+        log.info(`Parsing [${path.basename(file)}]`)
+        return parse(file).then(write)
       })
 
       Promise.all(promises).then(() => {

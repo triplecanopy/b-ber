@@ -71,20 +71,6 @@ const guid = () => {
 }
 
 /**
- * Pad a string from the right
- * @param  {String} s Base string
- * @param  {String} a Character to pad with
- * @param  {String} n Length of output
- * @return {String}
- */
-const rpad = (s, a, n) => {
-  let str = s
-  if (str.length >= n) { return str }
-  while (str.length < n) { str += a }
-  return str
-}
-
-/**
  * Pad a string from the left
  * @param  {String} s Base string
  * @param  {String} a Character to pad with
@@ -156,14 +142,14 @@ const getFrontmatter = (file, prop) => {
 
 /**
  * Create an iterator from object's key/value pairs
- * @param {Object} obj [description]
- * @return {Iterable<Array>}
+ * @param {Object} collection   [description]
+ * @param {Object} iterator     [description]
+ * @return {*}
  */
-const entries = function* entries(obj) {
-  for (const key of Object.keys(obj)) {
-    yield [key, obj[key]]
-  }
-}
+const forOf = (collection, iterator) =>
+  Object.entries(collection).forEach(([key, val]) =>
+    iterator(key, val)
+  )
 
 
 /**
@@ -340,8 +326,8 @@ const flattenSpineFromYAML = arr =>
     return acc.concat(curr)
   }, [])
 
-export { opsPath, cjoin, fileId, copy, guid, rpad, lpad, hrtimeformat, hashIt,
-  getImageOrientation, getFrontmatter, entries, src, dist, build, env, theme,
+export { opsPath, cjoin, fileId, copy, guid, lpad, hrtimeformat, hashIt,
+  getImageOrientation, getFrontmatter, forOf, src, dist, build, env, theme,
   version, metadata, promiseAll, htmlComment, passThrough, escapeHTML,
   spineModel, modelFromObject, modelFromString, nestedContentToYAML,
   flattenSpineFromYAML }

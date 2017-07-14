@@ -1,4 +1,3 @@
-
 /**
  * @module loi
  */
@@ -32,6 +31,8 @@ const createLOILeader = () =>
         type: 'loi',
       })
 
+      log.info(`bber-output/loi: Created default Figures titlepage [${filename}.xhtml]`)
+
       resolve()
     })
   })
@@ -56,6 +57,9 @@ const createLOI = () =>
         }
 
         store.add('spine', fileData)
+
+        log.info(`bber-output/loi: Created linked figure page from image found in source [${data.page}]`)
+        log.info(`bber-output/loi: ${data.source} -> ${data.page}`)
 
         if (idx === store.images.length - 1) { resolve() }
       })

@@ -13,7 +13,7 @@ import path from 'path'
 import Yaml from 'bber-lib/yaml'
 import File from 'vinyl'
 import { log } from 'bber-plugins'
-import { entries, lpad, src } from 'bber-utils'
+import { lpad, src } from 'bber-utils'
 
 /**
  * Generate new Markdown documents
@@ -59,18 +59,24 @@ class Generate {
   }
 
   /**
+   * Template to generate YAML frontmatter
+   * @param  {Object} metadata   [description]
+   * @return {String} YAML formatted string
+   */
+  frontmatterYaml(metadata) {
+    return Object.entries(metadata).reduce((acc, [k, v]) =>
+      acc.concat(`${k}: ${v}\n`)
+    , '')
+  }
+
+  /**
    * Create a new vinyl file object with frontmatter
    * @param  {Array} options.files      [description]
    * @param  {Object} options.metadata  [description]
    * @return {Object} The filename, the file object, and the metadata
    */
   createFile({ files, metadata }) {
-    let frontmatter = ''
-    for (const [key, val] of entries(metadata)) {
-      if (key && val) { frontmatter += `${key}: ${val}\n` }
-    }
-    frontmatter = `---\n${frontmatter}---\n`
-
+    const frontmatter = `---\n${this.frontmatterYaml(metadata)}---\n`
     return new Promise((resolve) => {
       const fname = `${lpad(String(files.length + 1), '0', 5)}.md`
       const file = new File({

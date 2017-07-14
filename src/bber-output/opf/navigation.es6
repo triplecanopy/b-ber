@@ -61,7 +61,7 @@ class Navigation {
    * @return {Object}
    */
   constructor() {
-    this.navdocs = [
+    this.navDocs = [
       'toc.ncx',
       'toc.xhtml',
     ]
@@ -73,8 +73,9 @@ class Navigation {
    */
   createEmptyNavDocuments() {
     return new Promise((resolve) => {
+      log.info(`bber-output/opf: Creating navigation documents: [${this.navDocs.join(', ')}]`)
       const promises = []
-      this.navdocs.forEach((_) => {
+      this.navDocs.forEach((_) => {
         promises.push(new Promise(() =>
           fs.writeFile(path.join(this.dist, 'OPS', _), '', (err) => {
             if (err) { throw err }
@@ -149,8 +150,10 @@ class Navigation {
         // declared in the `this.build`.yml file
         if (missingFiles.length) {
           // there are extra entries in the YAML (i.e., missing XHTML pages)
-          log.warn(`XHTML pages for ${this.build}.yml do not exist:`)
-          log.warn(missingFiles)
+          log.warn(`XHTML pages for ${this.build}.yml do not exist::\n${
+            missingEntries.reduce((acc, curr) =>
+              acc.concat(`  ${curr}\n`), '').replace(/\n$/, '')}`
+            )
           log.warn(`Removing redundant entries in ${this.build}.yml`)
 
           missingFiles.forEach((item) => {
@@ -178,8 +181,10 @@ class Navigation {
           // there are missing entries in the YAML (i.e., extra XHTML pages),
           // but we don't know where to interleave them, so we just append
           // them to the top-level list of files
-          log.warn(`Missing entries in ${this.build}.yml:`)
-          log.warn(missingEntries)
+          log.warn(`Missing entries in ${this.build}.yml:\n${
+            missingEntries.reduce((acc, curr) =>
+              acc.concat(`  ${curr}\n`), '').replace(/\n$/, '')}`
+            )
           log.warn(`Adding missing entries to [${this.build}.yml]`)
 
           // add the missing entry to the spine
@@ -210,6 +215,7 @@ class Navigation {
   }
 
   createTocStringsFromTemplate({ pages, ...args }) {
+    log.info('bber-output/opf: Building [toc.xhtml]')
     return new Promise((resolve) => {
       const strings = {}
       const { toc } = store
@@ -228,6 +234,7 @@ class Navigation {
   }
 
   createNcxStringsFromTemplate({ pages, ...args }) {
+    log.info('bber-output/opf: Building [toc.ncx]')
     return new Promise((resolve) => {
       const strings = {}
       const { toc } = store
@@ -246,6 +253,7 @@ class Navigation {
   }
 
   createGuideStringsFromTemplate({ flow, fileObjects, ...args }) {
+    log.info('bber-output/opf: Building [guide]')
     return new Promise((resolve) => {
       const strings = {}
       const { spine } = store
@@ -264,6 +272,7 @@ class Navigation {
   }
 
   createSpineStringsFromTemplate({ flow, fileObjects, ...args }) {
+    log.info('bber-output/opf: Building [spine]')
     return new Promise((resolve) => {
       const strings = {}
       const { spine } = store
@@ -300,6 +309,7 @@ class Navigation {
       const filepath = path.join(this.dist, 'OPS', 'toc.xhtml')
       fs.writeFile(filepath, toc, (err) => {
         if (err) { throw err }
+        log.info(`bber-output/opf: Wrote toc.xhtml: [${filepath}]`)
         resolve(result)
       })
     })
@@ -312,6 +322,7 @@ class Navigation {
       const filepath = path.join(this.dist, 'OPS', 'toc.ncx')
       fs.writeFile(filepath, ncx, (err) => {
         if (err) { throw err }
+        log.info(`bber-output/opf: Wrote toc.ncx: [${filepath}]`)
         resolve(result)
       })
     })
