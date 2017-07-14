@@ -27,12 +27,23 @@ let diff
 
 class Cover {
   constructor() {
-    this.metadata = {
+    const defaultMetadata = {
       title: '',
       creator: '',
       'date-modified': new Date(),
       identifier: '',
-      bberVersion: '',
+    }
+
+    const fileMetadata = {}
+    store.metadata.forEach((_) => {
+      if (_.term && _.value) {
+        fileMetadata[_.term] = _.value
+      }
+    })
+
+    this.metadata = {
+      ...defaultMetadata,
+      ...fileMetadata,
     }
 
     this.coverPrefix = '__bber_cover__'
@@ -154,9 +165,9 @@ class Cover {
       // if there's no cover referenced in the metadata.yml, we create one that
       // displays the book's metadata (title, generator version, etc)
       log.warn(`bber-output/cover: Creating default cover image [${coverEntry}]`)
-      this.metadata = { ...this.metadata, ...metadata }
-
       store.bber.metadata.push({ term: 'cover', value: fileId(coverEntry).slice(1) })
+
+      this.metadata = { ...this.metadata, ...metadata }
 
       const content = `<html>
         <body>

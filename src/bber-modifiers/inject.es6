@@ -120,7 +120,7 @@ const getJSONLDMetadata = args =>
     const file = new File({ path: 'metadata.json-ld' })
 
     if (process.env.NODE_ENV !== 'production') {
-      file.contents = new Buffer('{}')
+      file.contents = new Buffer('')
       return resolve([...args, file])
     }
 
@@ -228,17 +228,17 @@ const injectTags = (args) => {
 }
 
 const write = (location, data) =>
-  new Promise(resolve =>
+  new Promise((resolve) => {
     fs.writeFile(location, data, (err) => {
       if (err) { throw err }
-      ;log.info(`bber-modifiers/inject: Wrote [${path.basename(location)}]`)
+      log.info(`bber-modifiers/inject: Wrote [${path.basename(location)}]`)
       resolve()
     })
-  )
+  })
 
 const promiseToReplace = (prop, data, source, file) =>
   new Promise(async (resolve) => {
-    ;log.info(`bber-modifiers/inject: Preparing to write [${prop}] to [${source}]`)
+    log.info(`bber-modifiers/inject: Preparing to write [${prop}] to [${source}]`)
 
     const stream = file || await getContents(source)
     const start = startTags[prop]

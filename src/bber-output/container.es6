@@ -43,7 +43,7 @@ class Container {
       return files.forEach((_, i) =>
         fs.writeFile(path.join(this.dist, _.path), _.content, (err) => {
           if (err) { throw err }
-          ;log.info(`bber-output/container: Wrote [${_.path}]`)
+          log.info(`bber-output/container: Wrote [${_.path}]`)
           if (i === files.length - 1) {
             resolve()
           }
@@ -57,7 +57,7 @@ class Container {
       this.dirs.map((dir, index) =>
         fs.mkdirs(dir, (err) => {
           if (err) { throw err }
-          ;log.info(`bber-output/container: Created directory [${dir}]`)
+          log.info(`bber-output/container: Created directory [${dir}]`)
           if (index === this.dirs.length - 1) {
             resolve()
           }

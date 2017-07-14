@@ -3,16 +3,19 @@ import Yaml from 'bber-lib/yaml'
 import path from 'path'
 import fs from 'fs-extra'
 import { isPlainObject, isArray, findIndex } from 'lodash'
-import { log } from 'bber-plugins'
+// import { log } from 'bber-plugins'
 import {
   createPageModelsFromYAML,
   flattenNestedEntries,
-  createPagesMetaYaml,
+  // createPagesMetaYaml,
 } from 'bber-lib/helpers'
 
-import util from 'util'
+// import util from 'util'
 
 const cwd = process.cwd()
+
+const BBER_MODULE_PATH = path.join(__dirname, '../../')
+const BBER_PACKAGE_JSON = require(path.join(BBER_MODULE_PATH, 'package.json')) // eslint-disable-line import/no-dynamic-require
 
 /**
  * @class Store
@@ -41,6 +44,7 @@ class Store {
   get config()          { return this._config     }
   get metadata()        { return this._metadata   }
   get spine()           { return this._spine      }
+  get version()         { return this._version    }
   get toc()             { return this._toc        }
 
   /**
@@ -241,10 +245,8 @@ class Store {
   }
 
   loadSettings() {
-    if (fs.existsSync(path.join(cwd, 'package.json'))) {
-      const { version } = JSON.parse(fs.readFileSync(path.join(cwd, 'package.json')))
-      this.version = version
-    }
+    const { version } = BBER_PACKAGE_JSON
+    this.version = version
 
     if (fs.existsSync(path.join(cwd, 'config.yml'))) {
       this.config = { ...this.config, ...Yaml.load(path.join(cwd, './config.yml')) }
@@ -273,6 +275,4 @@ class Store {
 }
 
 const store = new Store()
-
-// console.log(util.inspect(store, true, null))
 export default store

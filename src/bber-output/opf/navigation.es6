@@ -150,7 +150,7 @@ class Navigation {
         // declared in the `this.build`.yml file
         if (missingFiles.length) {
           // there are extra entries in the YAML (i.e., missing XHTML pages)
-          log.warn(`XHTML pages for ${this.build}.yml do not exist::\n${
+          log.warn(`bber-output/opf: XHTML pages for ${this.build}.yml do not exist:\n${
             missingEntries.reduce((acc, curr) =>
               acc.concat(`  ${curr}\n`), '').replace(/\n$/, '')}`
             )
@@ -172,8 +172,10 @@ class Navigation {
 
           const yamlpath = path.join(this.src, `${this.build}.yml`)
           const content = Yaml.dump(nestedContentToYAML(store.toc))
-          return fs.writeFile(yamlpath, content, (err) => {
+
+          fs.writeFile(yamlpath, content, (err) => {
             if (err) { throw err }
+            log.info(`bber-output/opf: Wrote ${this.build}.yml`)
           })
         }
 
@@ -181,11 +183,11 @@ class Navigation {
           // there are missing entries in the YAML (i.e., extra XHTML pages),
           // but we don't know where to interleave them, so we just append
           // them to the top-level list of files
-          log.warn(`Missing entries in ${this.build}.yml:\n${
+          log.warn(`bber-output/opf: Missing entries in ${this.build}.yml:\n${
             missingEntries.reduce((acc, curr) =>
               acc.concat(`  ${curr}\n`), '').replace(/\n$/, '')}`
             )
-          log.warn(`Adding missing entries to [${this.build}.yml]`)
+          log.warn(`bber-output/opf: Adding missing entries to [${this.build}.yml]`)
 
           // add the missing entry to the spine
           // TODO: add to toc? add to flow/pages?
