@@ -1,6 +1,9 @@
 {
   "name": "bber",
   "version": "0.1.0-alpha.10",
+  "engines": {
+    "node": ">=6"
+  },
   "description": "A command line epub maker.",
   "main": "./src/bber-cli/index.es6",
   "scripts": {
@@ -31,6 +34,7 @@
     "autoprefixer": "^6.5.3",
     "bunyan": "^1.8.5",
     "bunyan-format": "^0.2.1",
+    "chalk": "^2.0.1",
     "css": "^2.2.1",
     "decompress": "^4.0.0",
     "epub-zipper": "^1.2.7",
@@ -63,25 +67,24 @@
   "devDependencies": {
     "babel-cli": "^6.14.0",
     "babel-core": "^6.23.1",
-    "babel-eslint": "^7.1.1",
+    "babel-eslint": "^7.2.3",
     "babel-plugin-module-resolver": "^2.5.0",
     "babel-plugin-transform-runtime": "^6.15.0",
     "babel-polyfill": "^6.16.0",
-    "babel-preset-babili": "^0.0.12",
     "babel-preset-es2015": "^6.14.0",
     "babel-preset-stage-0": "^6.16.0",
     "babel-register": "^6.14.0",
-    "babili": "^0.0.12",
     "chai": "^3.5.0",
     "chai-as-promised": "^6.0.0",
     "coveralls": "^2.12.0",
-    "eslint": "^3.16.1",
-    "eslint-config-airbnb": "^11.2.0",
+    "eslint": "3",
+    "eslint-config-airbnb": "^15.0.2",
+    "eslint-config-airbnb-base": "^11.2.0",
     "eslint-import-resolver-babel-module": "^3.0.0",
     "eslint-plugin-babel": "^3.3.0",
-    "eslint-plugin-import": "^1.16.0",
-    "eslint-plugin-jsx-a11y": "^2.2.2",
-    "eslint-plugin-react": "^6.4.1",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-jsx-a11y": "^5.1.1",
+    "eslint-plugin-react": "^7.1.0",
     "istanbul": "1.0.0-alpha.2",
     "jsdoc": "^3.4.3",
     "jsdoc-strip-async-await": "^0.1.0",
@@ -89,8 +92,5 @@
     "mocha": "^3.2.0",
     "sinon": "^2.3.6",
     "sinon-chai": "^2.9.0"
-  },
-  "engines": {
-    "node": ">=6"
   }
 }

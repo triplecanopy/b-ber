@@ -8,6 +8,7 @@
     "import"
   ],
   "rules": {
+    "jsx-a11y/href-no-hash": 0,
     "react/require-extension": "off",
     "brace-style": [2, "1tbs", {
       "allowSingleLine": true
@@ -15,7 +16,7 @@
     "comma-dangle": [2, "always-multiline"],
     "import/extensions": [2, "never"],
     "import/no-extraneous-dependencies": 0,
-    "max-len": [2, 100, 100, {
+    "max-len": [2, 120, 120, {
       "ignoreComments": true
     }],
     "max-statements-per-line": [2, {
