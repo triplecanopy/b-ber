@@ -32,8 +32,6 @@
   "license": "MIT",
   "dependencies": {
     "autoprefixer": "^6.5.3",
-    "bunyan": "^1.8.5",
-    "bunyan-format": "^0.2.1",
     "chalk": "^2.0.1",
     "css": "^2.2.1",
     "decompress": "^4.0.0",
