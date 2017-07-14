@@ -55,7 +55,7 @@ const serialize = (sequence) => {
           endMs: hrtimeformat(taskEnd),
         })
 
-        console.log()
+        if (log.logLevel > 0) { console.log() }
       })
     })
   }, Promise.resolve())

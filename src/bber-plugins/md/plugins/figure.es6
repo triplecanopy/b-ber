@@ -108,7 +108,7 @@ const figurePlugin = (md, name, options = {}) => {
     }
 
     // this will prevent lazy continuations from ever going past our end marker
-    state.lineMax  = nextLine
+    // state.lineMax  = nextLine
     token          = state.push(`container_${name}_open`, 'div', 1)
     token.markup   = markup
     token.block    = true
