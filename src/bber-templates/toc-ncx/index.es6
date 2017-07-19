@@ -1,6 +1,6 @@
 import File from 'vinyl'
 import { find } from 'lodash'
-import { metadata, escapeHTML } from 'bber-utils'
+import { metadata, escapeHTML, getFrontmatter } from 'bber-utils'
 
 const ncxHead = () => {
   const entry = find(metadata(), { term: 'identifier' })
@@ -47,12 +47,11 @@ const navPoint = (list) => {
   function render(arr) {
     return arr.map((_) => {
       if (_.in_toc === false) { return '' }
-      // if (_.inToc === false) { return '' }
       i += 1
       return `
         <navPoint id="navPoint-${i}" playOrder="${i}">
           <navLabel>
-            <text>${escapeHTML(_.title || _.name)}</text>
+            <text>${escapeHTML(getFrontmatter(_, 'title') || _.name)}</text>
           </navLabel>
           <content src="${_.relativePath}" />
           ${_.nodes && _.nodes.length ? render(_.nodes) : ''}
