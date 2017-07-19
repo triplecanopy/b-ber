@@ -437,7 +437,7 @@ module.exports = function footnote_plugin(md, callback) {
       return !insideRef
     })
 
-    // return to MarkIt class
+    // return to MarkdownRenderer class
     callback(footnoteTokens)
   }
 

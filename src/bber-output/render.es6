@@ -9,7 +9,7 @@ import renderLayouts from 'layouts'
 import path from 'path'
 import fs from 'fs-extra'
 import File from 'vinyl'
-import MarkIt from 'bber-plugins/md'
+import MarkdownRenderer from 'bber-plugins/md'
 import { pageHead, pageBody, pageTail } from 'bber-templates/pages'
 import { src, dist } from 'bber-utils'
 import { log } from 'bber-plugins'
@@ -45,7 +45,7 @@ const layout = (fname, data, idx, len, rs) => {
 
 // compile md to XHTML
 const parse = (fname, data, idx, len, rs) =>
-  layout(fname, MarkIt.render(fname, data), idx, len, rs)
+  layout(fname, MarkdownRenderer.render(fname, data), idx, len, rs)
 
 function render() {
   const mdDir = path.join(`${src()}/_markdown/`)

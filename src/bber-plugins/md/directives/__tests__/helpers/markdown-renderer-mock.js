@@ -2,7 +2,7 @@
 
 const MarkdownIt = require('markdown-it')
 
-class Md {
+class MarkdownRendererMock {
   constructor(options = {}) {
     const defaults = {
       html: true,
@@ -35,4 +35,4 @@ class Md {
   }
 }
 
-exports.default = Md
+exports.default = MarkdownRendererMock

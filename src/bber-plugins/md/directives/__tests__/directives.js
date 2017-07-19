@@ -45,7 +45,7 @@ const DIRECTIVE_ATTRIBUTES               = directives.DIRECTIVE_ATTRIBUTES
 
 // test helpers
 const logger = require('../../../../__tests__/helpers/console')
-const Md = require('./helpers/markit-mock').default
+const MarkdownRenderer = require('./helpers/markdown-renderer-mock').default
 
 describe('md:directive', () => {
   let logger
@@ -71,7 +71,7 @@ describe('md:directive', () => {
   let md
   beforeEach((done) => {
     logger.reset()
-    md = new Md()
+    md = new MarkdownRenderer()
     done()
   })
 

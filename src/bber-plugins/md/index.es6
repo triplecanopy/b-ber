@@ -1,8 +1,8 @@
 /**
- * Returns an instance of the MarkIt class
+ * Returns an instance of the MarkdownRenderer class
  * @module md
- * @see {@link module:md#MarkIt}
- * @return {MarkIt}
+ * @see {@link module:md#MarkdownRenderer}
+ * @return {MarkdownRenderer}
  */
 
 import Yaml from 'bber-lib/yaml'
@@ -21,20 +21,20 @@ import { find } from 'lodash'
 
 /**
  * Transform markdown into XHTML
- * @alias module:md#MarkIt
+ * @alias module:md#MarkdownRenderer
  */
-class MarkIt {
+class MarkdownRenderer {
 
   /**
    * @constructor
    */
   constructor() {
-    this.noop = MarkIt.noop
+    this.noop = MarkdownRenderer.noop
 
     /**
      * Instance of MarkdownIt class
      * @member
-     * @memberOf module:md#MarkIt
+     * @memberOf module:md#MarkdownRenderer
      * @see {@link https://github.com/markdown-it/markdown-it|markdown-it}
      * @type {MarkdownIt}
      */
@@ -48,7 +48,7 @@ class MarkIt {
     /**
      * [filename description]
      * @member
-     * @memberOf module:md#MarkIt
+     * @memberOf module:md#MarkdownRenderer
      * @type {String}
      */
     this.filename = ''
@@ -161,6 +161,4 @@ class MarkIt {
 
 }
 
-// export default new MarkIt()
-const markit = process.env.NODE_ENV === 'test' ? MarkIt : new MarkIt()
-export default markit
+export default process.env.NODE_ENV === 'test' ? MarkdownRenderer : new MarkdownRenderer()

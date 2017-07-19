@@ -242,7 +242,7 @@ const spineModel = () => ({
   absolutePath: '',
   extension: '',
   fileName: '',
-  name: '',
+  name: '', // filename without extension
   remotePath: '',
   linear: true,
   in_toc: true,
