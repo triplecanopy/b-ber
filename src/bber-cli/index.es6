@@ -27,9 +27,7 @@ const init = () => {
   Usage: bber <command> [options]
 
   Where <command> is one of:
-    build, clean, copy, container, generate, init, inject,
-    footnotes, opf, pdf, mobiCSS, publish, render, scripts, sass, serve, site,
-    theme, watch, xml, create, cover
+    ${Object.keys(commands).join(', ')}
 
   Some common commands are:
 

@@ -2,6 +2,7 @@
   "plugins": [
     "transform-runtime",
     ["module-resolver", {
+      "cwd": "babelrc",
       "root": ["./src"],
       "alias": {
         "bber-cli": "./bber-cli",
