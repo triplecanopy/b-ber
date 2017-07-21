@@ -9,10 +9,12 @@
 
 ## Application State
 
+_**TK: mention how the navigation and metadata are generated from values in the store object**_
+
 `bber-lib/store.es6` contains `bber`’s configuration and state.
 
 ```sh
-$ bber init
+$ bber build
 ```
 
 1. `bber` is invoked

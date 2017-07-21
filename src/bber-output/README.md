@@ -1,5 +1,7 @@
 # `bber-output`
 
+_**TK: mention how the navigation and metadata are generated from values in the store object**_
+
 `bber-output/` contains a list of tasks that perform I/O operations. If a task exists here, it is likely registered with `yargs` in [`bber-cli`](https://github.com/triplecanopy/b-ber-creator/tree/master/src/bber-cli/cmd), and can be run on the command line.
 
 Some more involved commands call eachother, or trigger a chain of dependencies before themselves running.

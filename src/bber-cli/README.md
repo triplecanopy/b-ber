@@ -5,13 +5,13 @@
 ## Application Flow
 
 ```sh
-$ bber init
+$ bber build
 ```
 
-1. The `init` command is passed to `bber-cli/index.es6`
-2. `bber-cli/index.es6` looks up `bber-cli/cmd/init.es6` to see if an `init` task is registered
-3. `bber` finds the handler in `bber-cli/cmd/init.es6`, and invokes its handler
-4. The handler calls the appropriate function, in this case, `bber-output/init.es6`, passing along any additional arguments that may have been provided.
+1. The `build` command is passed to `bber-cli/index.es6`
+2. `bber-cli/index.es6` looks up `bber-cli/cmd/build.es6` to see if an `build` task is registered
+3. `bber` finds the handler in `bber-cli/cmd/build.es6`, and invokes its handler
+4. The handler calls the appropriate function, in this case, `bber-output/build.es6`, passing along any additional arguments that may have been provided.
 
 ## Stand-Alone Commands
 
@@ -24,7 +24,7 @@ Many `bber` commands can be run outside of a specific application flow. The abov
 ## Compound Commands
 
 ```sh
-$ bber build --epub
+$ bber build --epub # Chains together 'clean', 'container', 'cover', 'copy' ...
 ```
 
 To achieve a synchronous flow, `bber` chains commands using `Promises`. The `build` command calls a sequence of `Promise`s serially to build an ebook. Every `bber` command returns a `Promise` object.
