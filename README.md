@@ -1,79 +1,36 @@
-# b-ber-creator
+<h1 align="center">b-ber-create<br/>TK: image</h1>
+<p align="center">
+  <a href="https://badge.fury.io/js/<repository>"><img alt="npm Version" src="https://badge.fury.io/js/<repository>.svg"></a>
+  <a href="https://travis-ci.com/triplecanopy/b-ber-creator"><img alt="Build Status" src="https://travis-ci.com/triplecanopy/b-ber-creator.svg?token=d5sXqMpXEby4v8y2wENP&branch=master"></a>
+<a href="https://coveralls.io/r/<account>/<repository>?branch=master"><img alt="Coverage Status" src="https://coveralls.io/repos/triplecanopy/b-ber-create/badge.svg?branch=master"></a>
+</p>
 
-[![Build Status](https://travis-ci.com/triplecanopy/b-ber-creator.svg?token=d5sXqMpXEby4v8y2wENP&branch=master)](https://travis-ci.com/triplecanopy/b-ber-creator)
-[![Coverage Status](https://coveralls.io/repos/triplecanopy/b-ber-creator/badge.svg?branch=master)](https://coveralls.io/r/<account>/<repository>?branch=master)
+<p align="center">A toolchain for making web publications</p>
+
+TK: image
+
+## About
+
+TK: *intro to project, no code-blocks*
+
+## Usage examples
+
+TK: *list of links? animated gif samples?*
+
+## Help and Support
+
+TK: **users** *link to users manual (currently wiki, will be moved to bber reader)*
+
+TK: **devs** *link to `src` directory with dev info*
+
+TK: additional links?
 
 
-A command-line epub maker.
+## Features
+ - Write using Markdown
+ - Output as a website, pdf, epub or mobi
+ - Add a cover
 
-## Install with [`yarn`](https://yarnpkg.com/)
+## License
 
-```bash
-$ git clone https://github.com/triplecanopy/b-ber-creator.git
-$ cd b-ber-creator && yarn
-```
-
-## Install with [`npm`](https://www.npmjs.com/)
-
-```bash
-$ git clone https://github.com/triplecanopy/b-ber-creator.git
-$ cd b-ber-creator && npm install
-```
-
-## Workflow
-
-If working in a development environment, replace `bber` in the below commands with `yarn start --`
-
-```
-Usage: bber <command> [options]
-
-Where <command> is one of:
-  build, clean, copy, create, editor, generate, init, inject, opf, pdf,
-  publish, render, scripts, sass, serve, site, theme, watch, xml
-
-Some common commands are:
-
-  Creating books
-    bber init       Create an empty project and file structure, defaults to `_book`
-    bber generate   Create a new chapter. Accepts arguments for metadata.
-    bber watch      Preview the book in a web-browser during development
-    bber build      Create an ePub, mobi, PDF, or all file formats
-
-  Viewing books
-    bber site     Clone the bber-reader into `site`
-    bber serve    Preview the compiled epub in the bber-reader
-
-For more information on a command, enter bber <command> --help
-```
-
-See the [wiki](https://github.com/triplecanopy/b-ber-creator/wiki/CLI-Command-List#full-command-list) for a full list of commands.
-
-## Commands via `bber`
-
-Run CLI commnads with `bber` rather than `npm`. The `bber` command requires transpiled ES6 in the `dist` directory during pre-production phases.
-
-```bash
-$ npm run build   # transpile ES6
-$ npm link        # create simlink to bber/bin/cli
-$ bber init       # `bber` is now available
-```
-
-## Testing
-
-```bash
-$ yarn test
-```
-
-See the coverage report at `./coverage/lcov-report/index.html`
-
-## Documentation
-
-Check out the [wiki](https://github.com/triplecanopy/b-ber-creator/wiki) and documentation in the [`src`](https://github.com/triplecanopy/b-ber-creator/tree/master/src) directory.
-
-## API Reference
-
-```bash
-$ yarn docs
-```
-
-And open `./docs/bber/BBER_VERSION/index.html` in your browser.
+TK: *which license?*

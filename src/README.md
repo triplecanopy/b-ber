@@ -1,15 +1,15 @@
 # Application Lifecycle (i.e., “How Does It Work?”)
 
 ```sh
-$ bber init
+$ bber build
 ```
 
 1. `b-ber` loads its settings from configuration files and environment variables
-2. The `init` command is sent to `yargs` (an optstrings parser) to be evaluated
-3. If `init` is a valid command (it is), then `yargs` invokes the `init` handler with any arguments that were also passed in
-4. The `init` handler calls the `init` task
-5. The `init` task runs, calling all its constituent methods (`read` this, `write` that)
-6. When finished, it delivers a message that either an error was encountered, or that everything went smoothly.
+2. The `build` command is sent to `yargs` (an optstrings parser) to be evaluated
+3. If `build` is a valid command (it is), then `yargs` invokes the `build` handler with any arguments that were also passed in
+4. The `build` handler calls the `build` task
+5. The `build` task runs, calling all its constituent methods (`read` this, `write` that)
+6. Messages are logged to the console to notify that either an error was encountered, or that everything went smoothly.
 
 # Directory Structure
 
@@ -28,9 +28,85 @@ More detailed info is available in each of the sub-directories.
 
 # Development Info
 
-`b-ber` is written entierly in JavaScript (ECMAScript 2015) using the [`babel`](http://babeljs.io/) presets `es2015, stage-0`. `b-ber` tries to rely as little as possible on external libraries or build systems, opting instead to delegate tasks using `npm start`.
+`b-ber` is written in JavaScript (ECMAScript 2015) using the [`babel`](http://babeljs.io/) presets `es2015, stage-0`. `b-ber` tries to rely as little as possible on external libraries or build systems, opting instead to delegate tasks using `npm start`.
 
 The typical application flow triggers a succession of `Promises` using an async factory, and each `b-ber` task returns a `Promise` object. This abstracts away most issues arising from race-conditions, and allows `b-ber` to be easily extended in local, remote, or a combination of environments (or platforms!) while incurring relatively little additional overhead.
+
+## Setting up the Development Environment
+
+Clone the repository and install dependencies:
+
+```sh
+$ git clone https://github.com/triplecanopy/b-ber-creator.git
+$ cd b-ber-creator && yarn
+```
+
+Commands are now available in the CLI using by invoking `npm`'s `start` script:
+
+```sh
+$ yarn start --
+```
+
+```console
+  Usage: bber <command> [options]
+
+  Where <command> is one of:
+    build, clean, copy, container, cover, generate, init, inject, opf, pdf, footnotes, publish, render, scripts, sass, serve, site, theme, watch, xml, create
+
+  Some common commands are:
+
+    Creating books
+      bber create     Start a new project
+      bber generate   Create a new chapter. Accepts arguments for metadata.
+      bber watch      Preview the book in a browser during development
+      bber build      Create an ePub, mobi, PDF, or all file formats
+
+    Viewing books
+      bber site     Clone the bber-reader into `site`
+      bber serve    Preview the compiled epub in the bber-reader
+
+  For more information on a command, enter bber <command> --help
+```
+
+### Running `b-ber` in Development Using `npm link`
+
+Ensure that you're in the `b-ber-create` repository to link to the `b-ber` CLI commands
+
+```sh
+$ npm link
+```
+
+`b-ber` commands are now available globally using `bber`
+
+```sh
+$ pwd
+  /path/to/b-ber-create-repo/
+$ cd ../
+$ bber create --name my-book
+  info: Creating directory my-book
+$ ls -1 my-book
+  README.md
+  _book
+  config.yml
+```
+
+### Running `b-ber` in Development Using a `bash` Alias
+
+Since `b-ber` requires all ES2015 to be transpiled before running, it's necessary to re-`npm link` every time an ES2015 file is changed. Therefore, creating simple `bash` alias to the `yarn start` command can speed up development.
+
+The following aliases `_bber` to the `b-ber` repos `yarn start` command:
+
+```sh
+$ pwd
+  /path/to/b-ber-create-repo/
+$ echo alias=_bber=$(pwd)/node_modules/.bin/babel-node $(pwd)/src/bber-cli/index.es6 >> ~/.bash_profile
+$ . ~/.bash_profile
+$ cd ../
+$ _bber
+
+  Usage: bber <command> [options]
+  ...
+```
 
 ## Pragmatics
 
