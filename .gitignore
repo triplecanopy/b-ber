@@ -10,11 +10,12 @@ node_modules
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+package-lock.json*
 
 /_site
 .idea
 
-# used for transpiled JSX
+# used for transpiled ES6
 /lib
 
 # build directory for _book

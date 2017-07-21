@@ -1,1 +1,10 @@
 src
+.github
+.babelrc
+.editorconfig
+.eslintrc
+.istanbul.yml
+.jsdoc.json
+.travis.yml
+.yarnclean
+yarn.lock
