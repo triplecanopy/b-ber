@@ -1,7 +1,7 @@
 const express = require('express')
 const esindex = require('serve-index')
 const path = require('path')
-const log = require('../bber-plugins').log
+// const log = require('../bber-plugins').log
 
 const parseArgs = (args) => {
   const _argv = args.slice(2)
@@ -26,5 +26,5 @@ const opts = {
 const app = express()
 app.use(express.static(dir))
 app.use(esindex(dir, opts))
-app.listen(port, () => log.info(`Server is running at [http://localhost:${port}/]`))
+app.listen(port, () => console.log(`Server is running at [http://localhost:${port}/]`))
 
