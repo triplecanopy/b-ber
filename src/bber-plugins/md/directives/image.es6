@@ -54,9 +54,7 @@ export default {
       // make sure image exists ...
       try {
         if (!fs.existsSync(asset)) {
-          throw new Error(`
-          Image not found:
-          [${asset}]`)
+          throw new Error(`Image not found: [${asset}]`)
         }
       } catch (err) {
         log.error(err.message)

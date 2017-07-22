@@ -1,6 +1,6 @@
 // we can't use our nice factory for this because it doesn't support
 // customized closing elements (always outputs `</section>`), so we have to
-// write it long-hand
+// write it long-hand. see comments below
 
 import plugin from 'bber-plugins/md/plugins/section'
 import store from 'bber-lib/store'
@@ -54,12 +54,19 @@ export default {
 
       let result = ''
 
+      const token = tokens[idx].info.trim()
+
+      // we handle opening and closing render methods on element open, since
+      // we need to append data (citation blocks) from the directive's opening
+      // attributes to the end of the element
       if (tokens[idx].nesting === 1) {
-        const token = tokens[idx].info.trim()
+        // either a `pull-quote` or an `exit` directive, we keep matches for
+        // both in `open` and `close` vars below
         const open = token.match(markerOpen)
         const close = token.match(markerClose)
 
         if (open) {
+          // the pull-quote opens
           const [, type, id, attrs] = open
 
           // we could just store the id in a variable outside of `render`, but
@@ -74,8 +81,7 @@ export default {
             return false
           }
 
-          store.add('cursor', { id })
-
+          // parse attrs as normal
           const attrsObject = attributesObject(attrs, type, { filename, lineNr })
 
           if ({}.hasOwnProperty.call(attrsObject, 'classes')) {
@@ -84,6 +90,7 @@ export default {
             attrsObject.classes = 'pull-quote'
           }
 
+          // get citation which we'll use below
           if ({}.hasOwnProperty.call(attrsObject, 'citation')) {
             citation = attrsObject.citation
             delete attrsObject.citation
@@ -95,16 +102,27 @@ export default {
         }
 
         if (close) {
+          // it's an exit to a pull-quote
+
+          // make sure that we've stored the opening id for the pull-quote in
+          // the global store
           if (!store.cursor.length) { return result }
 
+          // grab the id from the store. nesting isn't supported, so we know
+          // it's the last netry
           const { id } = store.cursor[store.cursor.length - 1]
 
+          // check that the id matches our token
           if (id && token.match(new RegExp(`exit:${id}`))) {
+            // it's a match for the exit directive's `id`, output the citation
+            // with the HTML comment and reset the citation to prepare for the
+            // next iteration
             const comment = `\n<!-- END: section:pull-quote#${id} -->\n`
             result = citation ? `<cite>&#8212;&#160;${escapeHtml(citation)}</cite>` : ''
             result += `</section>${comment}`
             citation = ''
 
+            // cleanup: remove the id from the store
             const index = store.contains('cursor', { id })
             if (index > -1) { store.remove('cursor', { id }) }
           }

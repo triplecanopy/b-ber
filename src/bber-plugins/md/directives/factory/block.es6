@@ -56,50 +56,35 @@ const renderer = ({ context = {}, render, markerOpen, markerClose }) => ({
     return match
   },
 
-  validateClose(params, /*line*/) {
-    // we've hit an `exit` token, so we test that its `id` matches the `id`
-    // supplied during `validateOpen`. this isn't strictly necessary since
-    // b-ber doesn't support interleaving elements (HTML doesn't either for
-    // `block` elements), however, it enforces a strict document structure
-    // since the alternative is to omit `id`s altogether from closing tokens.
+  validateClose(params, line) {
+    // test if we've hit an `exit` directive
 
-    // TODO: if `renderFactory` is going to be used by multiple directive
-    // types (MISC, BLOCK, INLINE, etc) then it needs to track the directive
-    // type as well as the index in `cursor` (i.e,.
-    // cursor.push({ 'chapter': ['theId'] }). this will prevent closing
-    // on un-related `exit` directives.
-    //
-    // although, is this possible?
+    // test that there are entries in the `store.cursor`
+    if (!store.cursor.length) {
+      // see if we can get an `id` attribute from params and stop parsing
+      const location = `${context.filename}.md:${line}`
+      const id = String(params).split(BLOCK_DIRECTIVE_MARKER)[1]
+      log.error(`Directive [exit:${id}] encountered without a matching opening directive at [${location}]`, 1)
+    }
 
-    // console.log('-- cursor')
-    // console.log(store.cursor)
-
-    if (!store.cursor.length) { return false }
+    // check that the exit directive has a matching `id` in `store.cursor`
     const { id } = store.cursor[store.cursor.length - 1]
-    // const index = store.contains('cursor', {id})
-    // if (index < 0) { return false }
+    const index = store.contains('cursor', { id })
 
+    if (index < 0) {
+      const location = `${context.filename}.md:${line}`
+      log.error(`Directive [exit:${id}] encountered without a matching opening directive at [${location}]`, 1)
+    }
+
+    // test that if our token matches our `exit` schema, and matches the last
+    // `id` in the global store. this is safe since b-ber doesn't support
+    // interleaving block elements
     const match = params.trim().match(new RegExp(`(exit)(?::(${id}))?`)) || false
     if (match && match.length) {
-      // we've hit a match, so we test the `id` against what we have in the
-      // global store
       if (typeof match[2] === 'undefined') {
-        // no `id`, throw an error and tell the parser that there was no match
-
-        // TODO: naming is incorrect for `exports.default` here, and also we
-        // don't know the type of directive that the `exit` belongs to. should
-        // probably track this in store (see above)
-        //
-        // const directive = exports.default.name
-        // const location = `${context.filename}.md:${line}`
-        // log.error(`Missing [id] attribute for [${directive}:exit] directive at [${location}]`)
+        // it's a match, but for a different directive. continue parsing
         return false
       }
-
-      // we checked during `validateOpen` that the `id` was unique, so it's OK
-      // to just pop it off the stack and continue parsing
-      const index = store.contains('cursor', { id })
-      if (index > -1) { store.remove('cursor', { id }) }
     }
 
     // report back to the parser
