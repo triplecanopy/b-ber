@@ -8,6 +8,7 @@
 
 import yargs from 'yargs'
 import * as commands from 'bber-cli/cmd'
+import { version } from 'bber-utils'
 
 /**
  * Start the build
@@ -42,6 +43,8 @@ const init = () => {
       bber serve    Preview the compiled epub in the bber-reader
 
   For more information on a command, enter bber <command> --help
+
+  bber version ${version()}
   `)
 
   /**
