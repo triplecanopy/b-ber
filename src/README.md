@@ -90,6 +90,23 @@ $ ls -1 my-book
   config.yml
 ```
 
+Before pulling changes to the b-ber-create repo un-link the global symlink
+
+```sh
+$ npm rm -g bber
+$ pwd
+  /path/to/b-ber-create-repo/
+$ cd ../
+$ git pull origin master
+```
+
+Once changes have been pulled, its necessary to re-install dependencies before re-linking
+
+```sh
+$ yarn
+$ npm link
+```
+
 ### Running `b-ber` in Development Using a `bash` Alias
 
 Since `b-ber` requires all ES2015 to be transpiled before running, it's necessary to re-`npm link` every time an ES2015 file is changed. Therefore, creating simple `bash` alias to the `yarn start` command can speed up development.
