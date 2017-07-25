@@ -94,9 +94,6 @@ Before pulling changes to the b-ber-create repo un-link the global symlink
 
 ```sh
 $ npm rm -g bber
-$ pwd
-  /path/to/b-ber-create-repo/
-$ cd ../
 $ git pull origin master
 ```
 
