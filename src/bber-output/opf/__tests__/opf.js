@@ -86,9 +86,9 @@ describe('module:opf', () => {
       new Promise(resolve/* , reject */ =>
         Promise.all([
           Promise.resolve(1),
-          Promise.resolve(2)
+          Promise.resolve(2),
         ])
-        .then(() => Promise.reject('foo'))
+        .then(() => { throw new Error('foo') })
         .catch(err => log.error(err))
         .then(() => {
           logger.errors.should.have.length(1)

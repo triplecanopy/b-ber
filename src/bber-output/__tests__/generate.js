@@ -71,8 +71,4 @@ describe('module:generate', () => {
     it('Writes a new Markdown file to disk')
     it('Throws an error if a Markdown file with the same name already exists')
   })
-  describe('#init', () => {
-    it('Initializes the promise chain')
-    it('Catches errors and reports them in the console')
-  })
 })

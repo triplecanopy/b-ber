@@ -12,9 +12,7 @@ const builder = yargs =>
     .usage(`\nUsage: $0 cover\n\n${describe}`)
 
 
-const handler = () => {
-  return cover.init()
-}
+const handler = cover.init
 
 export default {
   command,

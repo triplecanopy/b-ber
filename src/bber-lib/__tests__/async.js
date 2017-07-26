@@ -17,19 +17,21 @@ chai.use(sinonChai)
 const logger = require('../../__tests__/helpers/console')
 
 describe('module:async', () => {
-  let res
-  let fns
-  let spy1
-  let spy2
-  let seq
+  let res, fns, spy1, spy2, seq // eslint-disable-line one-var
 
   describe('#serialize', () => {
     beforeEach(() => {
       logger.reset()
       res = []
       fns = {
-        fn1: (() => res.push('foo')),
-        fn2: (() => res.push('bar')),
+        fn1: (() => new Promise((resolve) => {
+          res.push('foo')
+          resolve()
+        })),
+        fn2: (() => new Promise((resolve) => {
+          res.push('bar')
+          resolve()
+        })),
       }
       spy1 = sinon.spy(fns, 'fn1')
       spy2 = sinon.spy(fns, 'fn2')
@@ -45,7 +47,7 @@ describe('module:async', () => {
       })
     )
 
-    // it('Should log messages to the console', () =>
+    // it('Should log messages to the console', () => // not using `log.info` in `async` task
     //   serialize(seq).then(() => {
     //     logger.infos.should.have.length(3)
     //     logger.infos[0].message.should.match(/Resolved fn1/)

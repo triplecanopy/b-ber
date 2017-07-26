@@ -15,6 +15,7 @@
     }],
     "comma-dangle": [2, "always-multiline"],
     "import/extensions": [2, "never"],
+    "import/no-unresolved": 0,
     "import/no-extraneous-dependencies": 0,
     "max-len": [2, 120, 120, {
       "ignoreComments": true

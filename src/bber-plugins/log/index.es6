@@ -9,6 +9,7 @@ class Logger {
     this.consoleWidth = 70
     this.errors = []
     this.warnings = []
+    this.infos = []
   }
 
   _setLogLevel() {
@@ -118,6 +119,7 @@ class Logger {
   }
 
   _printLog(n, args, stopAndExitWithCode) { // eslint-disable-line consistent-return
+    if (process.env.NODE_ENV === 'test') { return }
     if (n <= this.logLevel && n < 2) {
       this._composeLog(n, args)
     } else if (n === 2) { // error
@@ -140,18 +142,25 @@ class Logger {
   reset() {
     this.errors = []
     this.warnings = []
+    this.infos = []
   }
 
-  debug(args, stopAndExitWithCode) { this._printLog(3, args, stopAndExitWithCode) }   // level 3
-  error(args, stopAndExitWithCode) {                                                  // level 2
-    this._printLog(2, args, stopAndExitWithCode)
+  debug(args, stopAndExitWithCode) {              // level 3
+    this._printLog(3, args, stopAndExitWithCode)
+  }
+
+  error(args, stopAndExitWithCode) {              // level 2
     this.errors.push(args)
+    this._printLog(2, args, stopAndExitWithCode)
   }
-  warn(args) {                                                                        // level 1
-    this._printLog(1, args)
+  warn(args) {                                    // level 1
     this.warnings.push(args)
+    this._printLog(1, args)
   }
-  info(args) { this._printLog(0, args) }                                              // level 0
+  info(args) {                                    // level 0
+    this.infos.push(args)
+    this._printLog(0, args)
+  }
 
   trace(err) {
     console.error(err.stack || err)
@@ -163,6 +172,7 @@ class Logger {
   }
 
   summary({ store, formattedStartDate, formattedEndDate, sequenceEnd }) {
+    if (process.env.NODE_ENV === 'test') { return }
     const sep = ' '.repeat(3)
     const maxReportingLen = { short: 30, long: 70 }
 

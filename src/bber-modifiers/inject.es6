@@ -205,7 +205,8 @@ const injectTags = (args) => {
   let result = ''
   let endMatch
 
-  for (const startMatch of matchIterator(start, content)) {
+  // TODO: remove for..of
+  for (const startMatch of matchIterator(start, content)) { // eslint-disable-line no-restricted-syntax
     stop.lastIndex = start.lastIndex
     endMatch = stop.exec(content)
 

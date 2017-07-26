@@ -135,7 +135,7 @@ const _extendWithDefaults = (obj, name) => {
       result = Object.assign({}, obj)
       result.epubTypes = taxonomy
       if ({}.hasOwnProperty.call(obj, 'classes')) {
-        result.classes = result.classes += ` ${taxonomy}`
+        result.classes += ` ${taxonomy}`
       } else {
         result.classes = taxonomy
       }

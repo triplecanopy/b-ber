@@ -1,7 +1,6 @@
 import { pick, pickBy, identity, keys } from 'lodash'
 import { serialize } from 'bber-lib/async'
 import store from 'bber-lib/store'
-import cover from 'bber-output/cover'
 
 const _buildCommands = ['epub', 'mobi', 'pdf', 'web', 'sample']
 const _buildArgs = args => keys(pickBy(pick(args, _buildCommands), identity))

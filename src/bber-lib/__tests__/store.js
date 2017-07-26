@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-expressions */
+
 'use strict'
 
 // npm run -s mocha:single -- ./src/bber-lib/__tests__/store.js
@@ -34,7 +35,7 @@ describe('Store', () => {
   })
   describe('#merge', () => {
     it('Should merge two objects', () => {
-      store.add('bber', { foo: 1 })
+      store.merge('bber', { foo: 1 })
       store.merge('bber', { bar: 2 })
       store.bber.should.include({ foo: 1, bar: 2 })
     })

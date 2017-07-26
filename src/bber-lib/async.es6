@@ -38,16 +38,18 @@ const serialize = (sequence) => {
 
     return acc.then(async (resp) => {
       taskBegin = process.hrtime()
-      if (log.logLevel > 1) {
+      if (log.logLevel > 1 && process.env.NODE_ENV !== 'test') {
         console.log(chalk.green('🐪 '), 'Starting', chalk.black(`[${_func}]`))
       }
       await func(resp).then(() => {
         taskEnd = process.hrtime(taskBegin)
-        console.log(
-          chalk.green('✔ '),
-          'Finished', chalk.green(`[${_func}]`),
-          `after ${hrtimeformat(taskEnd)}`
-        )
+        if (process.env.NODE_ENV !== 'test') {
+          console.log(
+            chalk.green('✔ '),
+            'Finished', chalk.green(`[${_func}]`),
+            `after ${hrtimeformat(taskEnd)}`
+          )
+        }
 
         store.bber.taskTimes.push({
           taskName: _func,
@@ -55,7 +57,7 @@ const serialize = (sequence) => {
           endMs: hrtimeformat(taskEnd),
         })
 
-        if (log.logLevel > 0) { console.log() }
+        if (log.logLevel > 0 && process.env.NODE_ENV !== 'test') { console.log() }
       })
     })
   }, Promise.resolve())

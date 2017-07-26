@@ -64,10 +64,11 @@ const renderer = ({ context = {}, render, markerOpen, markerClose }) => ({
       // see if we can get an `id` attribute from params and stop parsing
       const location = `${context.filename}.md:${line}`
       const id = String(params).split(BLOCK_DIRECTIVE_MARKER)[1]
-      log.error(`Directive [exit:${id}] encountered without a matching opening directive at [${location}]`, 1)
+      return log.error(`Directive [exit:${id}] encountered without a matching opening directive at [${location}]`, 1)
     }
 
     // check that the exit directive has a matching `id` in `store.cursor`
+
     const { id } = store.cursor[store.cursor.length - 1]
     const index = store.contains('cursor', { id })
 

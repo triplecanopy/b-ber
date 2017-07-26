@@ -41,7 +41,8 @@ class Parser {
 
 
     this.entries = function* entries(obj) {
-      for (const key of Object.keys(obj)) {
+      // TODO: remove for..of
+      for (const key of Object.keys(obj)) { // eslint-disable-line no-restricted-syntax
         yield [key, obj[key]]
       }
     }
@@ -157,7 +158,8 @@ class Parser {
           const tag = []
           const tagname = _this.tagnames[_this.tagnames.length - 1]
           if (tagname && _this.blacklistedTags.indexOf(tagname) < 0) {
-            for (const [key, val] of _this.entries(attrs)) {
+            // TODO: remove for..of
+            for (const [key, val] of _this.entries(attrs)) { // eslint-disable-line no-restricted-syntax
               if (_this.whitelistedAttrs.indexOf(key) > -1) {
                 tag.push(`${key}="${val}"`)
               }

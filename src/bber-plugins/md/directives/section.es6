@@ -34,23 +34,23 @@ const render = ({ context = {} }) => (tokens, idx) => {
       result = `${comment}<section id="${htmlId(id)}"${attrs}>`
     }
   } else {
-      const close = tokens[idx].info.trim().split(BLOCK_DIRECTIVE_MARKER)
-      const [type, id] = close
+    const close = tokens[idx].info.trim().split(BLOCK_DIRECTIVE_MARKER)
+    const [type, id] = close
 
-      // if we're here then the token is a closing element, but we don't know
-      // if it's auto closing, or if it's an `exit` directive. we check to see
-      // if the index exists in the cursor array to make sure that we only end
-      // up closing our section block once
-      const index = store.contains('cursor', { id })
-      if (index > -1) {
-        store.remove('cursor', { id })
-      } else {
-        return ''
-      }
-
-      const comment = htmlComment(`END: section:${type}#${htmlId(id)}`)
-      result = `</section>${comment}`
+    // if we're here then the token is a closing element, but we don't know
+    // if it's auto closing, or if it's an `exit` directive. we check to see
+    // if the index exists in the cursor array to make sure that we only end
+    // up closing our section block once
+    const index = store.contains('cursor', { id })
+    if (index > -1) {
+      store.remove('cursor', { id })
+    } else {
+      return ''
     }
+
+    const comment = htmlComment(`END: section:${type}#${htmlId(id)}`)
+    result = `</section>${comment}`
+  }
   return result
 }
 

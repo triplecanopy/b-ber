@@ -79,7 +79,8 @@ class Printer extends Parser {
           if (_this.noop) { return }
 
           const tag = [name]
-          for (const [key, val] of _this.entries(attrs)) {
+          // TODO: remove for..of
+          for (const [key, val] of _this.entries(attrs)) { // eslint-disable-line no-restricted-syntax
             let prop = val
             if (key === 'src' || key === 'xlink:href' || (name === 'link' && key === 'href')) {
               prop = path.resolve(_this.basePath, 'OPS/text', val)
