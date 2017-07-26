@@ -61,7 +61,6 @@ const manifestItem = (file) => {
 const spineItems = arr =>
   arr.map((_) => {
     if (Props.isHTML(_)) {
-      console.log('---- adds', _.fileName)
       const nonLinear = _.linear === false
       const linear = nonLinear ? 'no' : 'yes'
       if (nonLinear) {

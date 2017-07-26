@@ -65,6 +65,7 @@ const copy = (_fromLocs, _toLoc) =>
             throw new Error(`bber-output/copy: Nothing to copy at [${i}]`)
           }
         } catch (err1) {
+          if (idx === fromLocs.length - 1) { resolve() }
           return log.warn(err1.message)
         }
 
