@@ -57,17 +57,11 @@ class Footnotes {
       fs.writeFile(this.file.path, markup, 'utf8', (err) => {
         if (err) { throw err }
 
-        store.add('pages', {
-          filename: this.file.name,
-          title: 'Notes',
-          type: 'backmatter',
-          linear: false,
-        })
-
         const fileData = {
           ...modelFromString(`${this.file.name}.xhtml`, store.config.src),
           in_toc: false,
           linear: false,
+          generated: true,
         }
 
         store.add('spine', fileData)

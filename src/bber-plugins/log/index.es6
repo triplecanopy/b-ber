@@ -89,6 +89,7 @@ class Logger {
   }
 
   _composeLog(logStyle, args) {
+    return
     if (this.logLevel === 0) { return '' } // for quiet mode
     return console.log(chalk(
       this._statusText(logStyle) +

@@ -278,6 +278,17 @@ class Navigation {
     return new Promise((resolve) => {
       const strings = {}
       const { spine } = store
+
+      // TODO: find somewhere better for this. we add entries to the spine
+      // programatically, but then they're also found on the system, so we
+      // dedupe them here
+      const gens = remove(spine, _ => _.generated === true)
+      gens.forEach((_) => {
+        if (!find(spine, { fileName: _.fileName })) {
+          spine.push(_)
+        }
+      })
+
       const spineXML = spineItems(spine)
 
       strings.spine = renderLayouts(new File({

@@ -54,6 +54,7 @@ const createLOI = () =>
         const fileData = {
           ...modelFromString(data.page, store.config.src),
           in_toc: false,
+          generated: true,
         }
 
         store.add('spine', fileData)
