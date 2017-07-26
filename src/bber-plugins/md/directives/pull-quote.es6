@@ -14,11 +14,12 @@ import {
 
 const marker = BLOCK_DIRECTIVE_MARKER
 const minMarkers = BLOCK_DIRECTIVE_MARKER_MIN_LENGTH
-const markerOpen = /^(pull-quote)(?::([^\s]+)(\s.*)?)?$/
+const markerOpen = /^(pull-quote|exit)(?::([^\s]+)(\s.*)?)?$/
 const markerClose = /(exit)(?::([\s]+))?/
 
 let _line = null
 let citation = ''
+const pullquoteIndices = [] // track these separately
 
 export default {
   plugin,
@@ -42,11 +43,6 @@ export default {
       }
       return match
     },
-    validateClose(params, line) {
-      _line = line
-      const match = params.trim().match(markerClose) || false
-      return match
-    },
     render(tokens, idx) {
       const escapeHtml = instance && instance.escapeHtml ? instance.escapeHtml : passThrough
       const filename = `_markdown/${context.filename}.md`
@@ -65,7 +61,7 @@ export default {
         const open = token.match(markerOpen)
         const close = token.match(markerClose)
 
-        if (open) {
+        if (open && !close) {
           // the pull-quote opens
           const [, type, id, attrs] = open
 
@@ -73,12 +69,10 @@ export default {
           // good to keep consistent with the normal handling
           const index = store.contains('cursor', { id })
           if (index < 0) {
-            store.add('cursor', { id })
+            // store.add('cursor', { id })
+            pullquoteIndices.push(id)
           } else {
-            log.error(`
-              Duplicate [id] attribute [${id}]; [id]s must be unique
-              ${context.filename}.md:${_line}`)
-            return false
+            log.error(`Duplicate [id] attribute [${id}]; [id]s must be unique ${context.filename}.md:${_line}`, 1)
           }
 
           // parse attrs as normal
@@ -102,15 +96,9 @@ export default {
         }
 
         if (close) {
-          // it's an exit to a pull-quote
-
-          // make sure that we've stored the opening id for the pull-quote in
-          // the global store
-          if (!store.cursor.length) { return result }
-
-          // grab the id from the store. nesting isn't supported, so we know
-          // it's the last netry
-          const { id } = store.cursor[store.cursor.length - 1]
+          // it's an exit to a pull-quote. grab the id from the list of
+          // indices
+          const id = pullquoteIndices[pullquoteIndices.length - 1]
 
           // check that the id matches our token
           if (id && token.match(new RegExp(`exit:${id}`))) {
@@ -122,13 +110,11 @@ export default {
             result += `</section>${comment}`
             citation = ''
 
-            // cleanup: remove the id from the store
-            const index = store.contains('cursor', { id })
-            if (index > -1) { store.remove('cursor', { id }) }
+            // update indices
+            pullquoteIndices.pop()
           }
         }
       }
-
       return result
     },
   }),

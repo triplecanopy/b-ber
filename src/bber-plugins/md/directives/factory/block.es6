@@ -19,14 +19,12 @@ const renderer = ({ context = {}, render, markerOpen, markerClose }) => ({
   markerClose,
 
   validateOpen(params, line) {
-    // check to see if we've hit an opening token, i.e., `::: <name>:<id>`
+    // check to see if we've hit an opening/exit token, i.e., `::: <name>:<id>`
     const match = params.trim().match(markerOpen) || false
 
     if (match && match.length) {
-      // it's a directive! now check to see if it's well-formed. we know that
-      // `match[2]` will be the directive's `id`
-
-      const [, , id] = match
+      // it's a directive! now check to see if it's well-formed.
+      const [, type, id] = match
       if (typeof id === 'undefined') {
         // the directive's missing an `id` attribute, so we extract the
         // filename from `context` which we've stored in back in
@@ -42,53 +40,33 @@ const renderer = ({ context = {}, render, markerOpen, markerClose }) => ({
       // we add the `id` to the global store so that we can verify that the
       // container is being properly closed in our `validateClose` method
       const index = store.contains('cursor', { id })
-      if (index < 0) {
+
+      const isOpening = type && type !== 'exit'
+      const isClosing = type && type === 'exit'
+      const inStore = index > -1
+
+      const location = `${context.filename}.md:${line}`
+
+      if (isOpening && inStore) {
+        // it's a duplicate `id`, throw
+        log.error(`Duplicate [id] attribute [${id}]; [id]s must be unique at [${location}]`, 1)
+      } else if (isClosing && !inStore) {
+        // trying to close an un-opened directive, but it might belong to a
+        // different directive type. regardless, we return the match
+        // if (id === 'bar') {
+        return false
+        // }
+      } else if (isOpening && !inStore) {
+        // it's a brand new directive
         store.add('cursor', { id })
-      } else {
-        log.error(`
-          Duplicate [id] attribute [${id}]; [id]s must be unique
-          ${context.filename}.md:${line}`)
-        return false
+      } else if (isClosing && inStore) {
+        // it's the end of a directive
+        store.remove('cursor', { id })
       }
     }
 
-    // let the parser know that a match was found
-    return match
-  },
-
-  validateClose(params, line) {
-    // test if we've hit an `exit` directive
-
-    // test that there are entries in the `store.cursor`
-    if (!store.cursor.length) {
-      // see if we can get an `id` attribute from params and stop parsing
-      const location = `${context.filename}.md:${line}`
-      const id = String(params).split(BLOCK_DIRECTIVE_MARKER)[1]
-      return log.error(`Directive [exit:${id}] encountered without a matching opening directive at [${location}]`, 1)
-    }
-
-    // check that the exit directive has a matching `id` in `store.cursor`
-
-    const { id } = store.cursor[store.cursor.length - 1]
-    const index = store.contains('cursor', { id })
-
-    if (index < 0) {
-      const location = `${context.filename}.md:${line}`
-      log.error(`Directive [exit:${id}] encountered without a matching opening directive at [${location}]`, 1)
-    }
-
-    // test that if our token matches our `exit` schema, and matches the last
-    // `id` in the global store. this is safe since b-ber doesn't support
-    // interleaving block elements
-    const match = params.trim().match(new RegExp(`(exit)(?::(${id}))?`)) || false
-    if (match && match.length) {
-      if (typeof match[2] === 'undefined') {
-        // it's a match, but for a different directive. continue parsing
-        return false
-      }
-    }
-
-    // report back to the parser
+    // let the parser know that a match was found. can be either an opening
+    // directive, or an `exit` directive
     return match
   },
 })

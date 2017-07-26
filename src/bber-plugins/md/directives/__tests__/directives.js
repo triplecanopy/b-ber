@@ -78,7 +78,7 @@ describe('md:directive', () => {
   it('Should throw an error if the required attributes are not present', () => {
     md.load(pluginSection)
     const result = BLOCK_DIRECTIVES.map(d => md.parser.render(`${BLOCK_DIRECTIVE_FENCE}${d}`))
-    return logger.errors.should.have.length(result.length * 2)
+    return logger.errors.should.have.length(result.length)
   })
 
   it('Should ensure the directive\'s [id] attribute is converted to a valid HTML id', (done) => {
@@ -207,7 +207,7 @@ describe('md:directive', () => {
         matches[0].should.equal('START: section:chapter#_outer;')
         matches[1].should.equal('START: section:chapter#_inner;')
         matches[2].should.equal('END: section:exit#_inner')
-        matches[3].should.equal('END: section:chapter#_outer')
+        matches[3].should.equal('END: section:exit#_outer')
         done()
       })
     })
