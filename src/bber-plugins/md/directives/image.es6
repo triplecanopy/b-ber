@@ -14,7 +14,6 @@ import {
 } from 'bber-shapes/directives'
 
 const imageOpenRegExp = /((?:inline-)?image)(?::([^\s]+)(\s?.*)?)?$/
-let seq = 0
 
 export default {
   plugin: figure,
@@ -68,10 +67,7 @@ export default {
 
       switch (type) {
         case 'image':
-          seq += 1
-
-          page = `figure-${seq + 1000}.xhtml`
-          classNames = [getImageOrientation(width, height), 'figure-sm'].join(' ')
+          classNames = `${getImageOrientation(width, height)} figure-sm`
           ref = context.filename
 
           if ({}.hasOwnProperty.call(attrsObject, 'classes')) {
@@ -80,7 +76,8 @@ export default {
             attrsObject.classes = classNames
           }
 
-          store.add('images', { id: htmlId(id), seq, ...attrsObject, ...dimensions, page, ref, caption })
+          page = `figure-${htmlId(attrsObject.source)}.xhtml`
+          store.add('images', { id: htmlId(id), ...attrsObject, ...dimensions, page, ref, caption })
 
           result = `${comment}<div class="${attrsObject.classes}">
             <figure id="ref${htmlId(id)}">

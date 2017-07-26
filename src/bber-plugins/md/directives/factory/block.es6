@@ -29,9 +29,7 @@ const renderer = ({ context = {}, render, markerOpen, markerClose }) => ({
         // the directive's missing an `id` attribute, so we extract the
         // filename from `context` which we've stored in back in
         // `md/index.es6`, and passed into our `renderer`
-        log.error(`
-          Missing [id] attribute for [${exports.default.name}:start] directive
-          ${context.filename}.md:${line}`)
+        log.error(`Missing [id] attribute for [${exports.default.name}:start] directive ${context.filename}.md:${line}`)
 
         // let the parser know that this wasn't a match
         return false
