@@ -107,7 +107,7 @@ export default {
             // with the HTML comment and reset the citation to prepare for the
             // next iteration
             const comment = `\n<!-- END: section:pull-quote#${id} -->\n`
-            result = citation ? `<cite>&#8212;&#160;${instance.renderInline(citation)}</cite>` : ''
+            result = citation ? `<cite>&#8212;&#160;${renderInline(citation)}</cite>` : ''
             result += `</section>${comment}`
             citation = ''
 
