@@ -126,7 +126,7 @@ aside.note{
 
 .pull-quote {
   text-indent: 0;
-  padding: 0.8em rhythm(1.65); // TODO: optically adjusted
+  padding: 0 rhythm(1.65) 1.65em;
 
   section.titlepage &,
   section.introduction &,
@@ -134,7 +134,7 @@ aside.note{
     float: none;
     clear: both;
     padding-bottom: 5.65em;
-    padding-top: 0.2em;
+    padding-top: 0;
   }
 
   .epigraph & {
@@ -144,7 +144,4 @@ aside.note{
     margin-top: 0;
   }
   + p { text-indent: 0; }
-  h1 + &,
-  .pull-quote + & { padding-top: 0; }
-  &:last-child { padding-bottom: 1.87em; }
 }
