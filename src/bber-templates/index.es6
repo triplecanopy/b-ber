@@ -43,7 +43,19 @@ dist: ${path.basename(dist)}`,
 function typeYaml(src, type) {
   return {
     relpath: path.join(src, `${type}.yml`),
-    content: '',
+    content: `# Table of Contents
+# "in_toc:false" removes the Table of Contents from the built-in navigation of the reader.
+# "linear:false" removes the Table of Contents from the book's contents.
+- toc.xhtml:
+    in_toc: false
+    linear: false
+# Cover
+- cover.xhtml:
+    in_toc: false
+# Book Contents
+- project-name_title-page
+- project-name-chapter-01
+- project-name_colophon`,
   }
 }
 
@@ -111,11 +123,64 @@ window.onload = main`,
 
 function markdown(src) {
   return [{
-    relpath: `${src}/_markdown/00001.md`,
+    relpath: `${src}/_markdown/project-name_title-page.md`,
     content: `---
-title: Chapter One
+title: Project Name Title Page
+type: titlepage
+---
+
+::: titlepage:project-name_title-page  title:"Project Name Title Page"
+
+# Project Title by Author
+
+::: exit:project-name_title-page
+`,
+  }, {
+    relpath: `${src}/_markdown/project-name-chapter-01.md`,
+    content: `---
+title: Project Name Chapter One
 type: bodymatter
 ---
+
+::: chapter:project-name_chapter-one title:"Project Name Chapter One"
+
+# Chapter Title
+
+Chapter Contents
+
+::: exit:project-name_chapter-one
+`,
+  }, {
+    relpath: `${src}/_markdown/project-name_colophon.md`,
+    content: `---
+title: Project NameColophon
+type: colophon
+---
+
+::: colophon:project-name_colophon title:"Project Name Colophon"
+
+*Project Title* by Author
+
+Published by Publisher, 2017
+
+::: subchapter:credits
+
+© 2016 *Project Title*, by Author. Texts and images copyright the author, unless otherwise stated.
+
+::: exit:credits
+
+::: logo:publishers-logo source:default-publishers-logo.png
+
+Publisher
+1234 Street
+City, State Zip
+Country
+
+::: logo:b-ber-logo source:b-ber-logo.png
+
+*Project Title* is a DRM-free ebook that uses [b-ber](https://github.com/triplecanopy/b-ber-creator), software designed and developed by [Triple Canopy](https://canopycanopycanopy.com).
+
+::: exit:project-name_colophon
 `,
   }]
 }
