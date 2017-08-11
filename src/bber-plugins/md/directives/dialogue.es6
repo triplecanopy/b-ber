@@ -1,5 +1,6 @@
 import plugin from 'bber-plugins/md/plugins/dialogue'
 import renderFactory from 'bber-plugins/md/directives/factory/block'
+import { attributes, attributesObject, htmlId } from 'bber-plugins/md/directives/helpers'
 
 // define our open and closing markers, used by the `validateOpen` and
 // `validateClose` methods in the `renderFactory`
@@ -14,7 +15,9 @@ const render = (tokens, idx) => {
     const open = tokens[idx].info.trim().match(markerOpen)
     const close = tokens[idx].info.trim().match(markerClose)
     if (open) {
-      result = '\n<section class="dialogue">'
+      const [, type, id, attrs] = open
+      const attrsString = attributes(attrs, type)
+      result = `\n<section id="${htmlId(id)}" class="dialogue"${attrsString}>`
     }
 
     if (close) {
