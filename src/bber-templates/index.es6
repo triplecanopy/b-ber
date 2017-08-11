@@ -82,7 +82,7 @@ function metadata(src) {
   value: en-US
 -
   term: rights
-  value: Sample Book © 2017
+  value: Author Name © 2017
 -
   term: format
   value: epub+zip
