@@ -27,6 +27,7 @@ const _applyTransforms = (k, v) => {
 
 const _lookUpFamily = (genus) => {
   switch (genus) {
+    case 'frontmatter':
     case 'halftitlepage':
     case 'titlepage':
     case 'dedication':
@@ -35,6 +36,7 @@ const _lookUpFamily = (genus) => {
     case 'preface':
     case 'acknowledgments':
       return 'frontmatter'
+    case 'bodymatter':
     case 'introduction':
     case 'prologue':
     case 'chapter':
@@ -43,6 +45,7 @@ const _lookUpFamily = (genus) => {
     case 'afterword':
     case 'conclusion':
       return 'bodymatter'
+    case 'backmatter':
     case 'loi':
     case 'appendix':
     case 'seriespage':

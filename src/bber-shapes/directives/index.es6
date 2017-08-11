@@ -9,6 +9,7 @@ const INLINE_DIRECTIVE_MARKER_MIN_LENGTH = 3
 
 // block
 const FRONTMATTER_DIRECTIVES = [
+  'frontmatter',
   'halftitlepage',
   'titlepage',
   'dedication',
@@ -27,6 +28,7 @@ const BODYMATTER_DIRECTIVES = [
   'conclusion',
 ]
 const BACKMATTER_DIRECTIVES = [
+  'backmatter',
   'loi',
   'appendix',
   'seriespage',
