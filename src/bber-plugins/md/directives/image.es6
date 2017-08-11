@@ -88,7 +88,7 @@ export default {
           </div>`
           break
         case 'inline-image':
-          imageData = Object.assign({}, attrsObject, { id: htmlId(id), width, height, caption, inline: true })
+          imageData = { ...attrsObject, id: htmlId(id), width, height, caption, inline: true }
           result = figTmpl(imageData, build())
           break
         default:
