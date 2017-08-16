@@ -13,11 +13,11 @@ import {
   INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
 } from 'bber-shapes/directives'
 
-const imageOpenRegExp = /((?:inline-)?image)(?::([^\s]+)(\s?.*)?)?$/
+const imageOpenRegExp = /((?:inline-)?figure)(?::([^\s]+)(\s?.*)?)?$/
 
 export default {
   plugin: figure,
-  name: 'image',
+  name: 'figure',
   renderer: ({ instance, context = { filename: '' } }) => ({
     marker: INLINE_DIRECTIVE_MARKER,
     minMarkers: INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
@@ -30,7 +30,7 @@ export default {
       const [, , id, source] = match
       if (typeof id === 'undefined' || typeof source === 'undefined') { // image requires `id` and `source`
         log.error(`
-          Missing [id] or [source] attribute for [image] directive
+          Missing [id] or [source] attribute for [figure] directive
           ${context.filename}.md:${line}`)
         return false
       }
@@ -44,7 +44,7 @@ export default {
       const lineNr = tokens[idx].map ? tokens[idx].map[0] : null
       const children = tokens[idx].children
       const caption = children ? instance.renderInline(tokens[idx].children) : ''
-      const comment = htmlComment(`START: image:${type}#${htmlId(id)}; ${filename}:${lineNr}`)
+      const comment = htmlComment(`START: figure:${type}#${htmlId(id)}; ${filename}:${lineNr}`)
       const attrsObject = attributesObject(attrs, type, { filename, lineNr })
       const asset = path.join(src(), '_images', attrsObject.source)
 
@@ -66,7 +66,7 @@ export default {
       const { width, height } = dimensions
 
       switch (type) {
-        case 'image':
+        case 'figure':
           classNames = `${getImageOrientation(width, height)} figure-sm`
           ref = context.filename
 
@@ -87,7 +87,7 @@ export default {
             </figure>
           </div>`
           break
-        case 'inline-image':
+        case 'inline-figure':
           imageData = { ...attrsObject, id: htmlId(id), width, height, caption, inline: true }
           result = figTmpl(imageData, build())
           break

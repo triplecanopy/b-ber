@@ -42,8 +42,8 @@ const BLOCK_DIRECTIVES = union(FRONTMATTER_DIRECTIVES, BODYMATTER_DIRECTIVES, BA
 
 // inline
 const INLINE_DIRECTIVES = [
-  'image',
-  'inline-image',
+  'figure',
+  'inline-figure',
 ]
 
 // misc
@@ -75,7 +75,7 @@ const DIRECTIVE_ATTRIBUTES = {
     },
   },
 
-  image: {
+  figure: {
     required: {
       source: {
         input: 'source:foo.jpg',

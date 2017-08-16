@@ -144,7 +144,7 @@ const _extendWithDefaults = (obj, name) => {
       }
       return result
     case 'inline':
-      if (genus === 'image' || genus === 'inline-image') {
+      if (genus === 'figure' || genus === 'inline-figure') {
         result = Object.assign({}, obj)
         if (!{}.hasOwnProperty.call(obj, 'alt')) {
           result.alt = result.source
