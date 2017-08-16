@@ -45,6 +45,8 @@ const INLINE_DIRECTIVES = [
   'figure',
   'inline-figure',
   'logo',
+  'video',
+  'audio',
 ]
 
 // misc
@@ -71,7 +73,7 @@ const DIRECTIVE_ATTRIBUTES = {
         output: 'style="page-break-before:always;"',
       }, {
         input: 'pagebreak:after',
-        output: 'style="page-break-before:always;"',
+        output: 'style="page-break-always:always;"',
       }],
     },
   },

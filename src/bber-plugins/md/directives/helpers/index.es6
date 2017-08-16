@@ -14,11 +14,16 @@ const _applyTransforms = (k, v) => {
       return ''
     case 'source':
       return ` src="${v}"`
+
+    // media
+    // boolean attrs
     case 'autoplay':
     case 'loop':
     case 'controls':
     case 'muted':
-      return ` ${k}="${k}"`
+      return v === 'yes' ? ` ${k}="${k}"` : ''
+
+    case 'preload':
     case 'alt':
     default:
       return ` ${k}="${v}"`
@@ -58,9 +63,21 @@ const _lookUpFamily = (genus) => {
   }
 }
 
-const supportedAttributes = ['title', 'classes', 'pagebreak', 'attributes',
-  'alt', 'poster', 'autoplay', 'loop', 'controls', 'muted', 'autoplay',
-  'loop', 'controls', 'muted', 'citation', 'source']
+const SUPPORTED_ATTRIBUTES = [
+  'title',
+  'classes',
+  'pagebreak',
+  'attributes',
+  'alt',
+  'citation',
+  'source',
+  'poster',
+  'autoplay',
+  'loop',
+  'controls',
+  'muted',
+  'preload',
+]
 
 // ::: directive:id classes:"foo bar baz" page-break-before:yes
 // <- ' classes:"foo bar baz" page-break-before:yes'
@@ -78,6 +95,7 @@ const _buildAttrObjects = (arr) => {
     const [, k, v] = _.split(/^([^:]+):/)
     o[k] = v.replace(/(?:^["']|["']$)/g, '')
   })
+
   return o
 }
 
@@ -124,15 +142,15 @@ const _getDirectiveTaxonomy = (name) => {
  * @return {Object}
  */
 const _extendWithDefaults = (obj, name) => {
-  let taxonomy
-  let result
+  const result = { ...obj }
   const { order, genus } = _getDirectiveTaxonomy(name)
+
   if (!order || !genus) { throw new TypeError(`Invalid directive type: [${name}]`) }
 
+  let taxonomy
   switch (order) {
     case 'block':
       taxonomy = `${_lookUpFamily(genus)} ${genus}`
-      result = Object.assign({}, obj)
       result.epubTypes = taxonomy
       if ({}.hasOwnProperty.call(obj, 'classes')) {
         result.classes += ` ${taxonomy}`
@@ -142,16 +160,14 @@ const _extendWithDefaults = (obj, name) => {
       return result
     case 'inline':
       if (genus === 'figure' || genus === 'inline-figure' || genus === 'logo') {
-        result = Object.assign({}, obj)
         if (!{}.hasOwnProperty.call(obj, 'alt')) {
           result.alt = result.source
         }
       }
       return result
     case 'misc':
-      return obj
     default:
-      return obj
+      return result
   }
 }
 
@@ -181,7 +197,7 @@ const attributesObject = (attrs, type, context) => {
   const illegalAttrs = []
   const _attrsObject = { ...attrsObject } // so we don't modify during iteration
   forOf(_attrsObject, (k) => {
-    if (supportedAttributes.indexOf(k) < 0) {
+    if (SUPPORTED_ATTRIBUTES.indexOf(k) < 0) {
       illegalAttrs.push(k)
       delete attrsObject[k]
     }
@@ -189,6 +205,7 @@ const attributesObject = (attrs, type, context) => {
 
   if (illegalAttrs.length) { log.warn(`Removing illegal attributes: [${illegalAttrs.join()}]`) }
   const mergedAttrs = _extendWithDefaults(attrsObject, type)
+
   return mergedAttrs
 }
 

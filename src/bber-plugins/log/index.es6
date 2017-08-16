@@ -4,7 +4,8 @@ import util from 'util'
 
 class Logger {
   constructor() {
-    this.logLevel = this._setLogLevel() // info: 0, warning: 1, error: 2, debug: 3
+    this.logLevel = 0 // info: 0, warning: 1, error: 2, debug: 3
+    // this.logLevel = this._setLogLevel() // info: 0, warning: 1, error: 2, debug: 3
     this.boringOutput = 1
     this.consoleWidth = 70
     this.errors = []
@@ -119,7 +120,6 @@ class Logger {
   }
 
   _printLog(n, args, stopAndExitWithCode) { // eslint-disable-line consistent-return
-    return
     if (process.env.NODE_ENV === 'test') { return }
     if (n <= this.logLevel && n < 2) {
       this._composeLog(n, args)
@@ -173,7 +173,6 @@ class Logger {
   }
 
   summary({ store, formattedStartDate, formattedEndDate, sequenceEnd }) {
-    return
     if (process.env.NODE_ENV === 'test') { return }
     const sep = ' '.repeat(3)
     const maxReportingLen = { short: 30, long: 70 }

@@ -3,7 +3,7 @@
 
 const mobi = {
   portrait(data) {
-    return `<div class="figure-lg"${data.pagebreak ? ` style="pagebreak-${data.pagebreak}:always;"` : ''}>
+    return `<div class="figure-lg"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
       <figure id="${data.id}">
         <div class="img-wrap" style="width: 70%; margin: 0 auto;">
           <span>
@@ -17,7 +17,7 @@ const mobi = {
     </div>`
   },
   landscape(data) {
-    return `<div class="figure-lg"${data.pagebreak ? ` style="pagebreak-${data.pagebreak}:always;"` : ''}>
+    return `<div class="figure-lg"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
       <figure id="${data.id}">
         <div class="img-wrap">
           <span>
@@ -31,7 +31,7 @@ const mobi = {
     </div>`
   },
   portraitLong(data) {
-    return `<div class="figure-lg"${data.pagebreak ? ` style="pagebreak-${data.pagebreak}:always;"` : ''}>
+    return `<div class="figure-lg"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
       <figure id="${data.id}">
         <div class="img-wrap" style="width: 60%; margin: 0 auto;">
           <span>
@@ -45,7 +45,7 @@ const mobi = {
     </div>`
   },
   square(data) {
-    return `<div class="figure-lg"${data.pagebreak ? ` style="pagebreak-${data.pagebreak}:always;"` : ''}>
+    return `<div class="figure-lg"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
       <figure id="${data.id}">
         <div class="img-wrap" style="width: 85%; margin: 0 auto;">
           <span>

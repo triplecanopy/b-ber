@@ -44,6 +44,7 @@ const copy = (_fromLocs, _toLoc) =>
       fromLocs = [
         path.join(src(), '_images'),
         path.join(src(), '_fonts'),
+        path.join(src(), '_media'),
       ]
       renameFn = _ => _.slice(1)
     }

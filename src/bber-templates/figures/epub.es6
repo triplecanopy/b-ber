@@ -2,7 +2,7 @@
 const epub = {
   portrait(data) {
     return `${!data.inline ? '<section epub:type="loi" title="Figures" class="chapter figures">' : ''}
-      <div class="figure-lg"${data.pagebreak ? ` style="pagebreak-${data.pagebreak}:always;"` : ''}>
+      <div class="figure-lg"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
         <figure id="${data.id}">
           <div class="img-wrap" style="width: 70%; margin: 0 auto;">
             ${!data.inline ? `<a href="${data.ref}.xhtml#ref${data.id}">` : ''}
@@ -18,7 +18,7 @@ const epub = {
   },
   landscape(data) {
     return `${!data.inline ? '<section epub:type="loi" title="Figures" class="chapter figures">' : ''}
-      <div class="figure-lg"${data.pagebreak ? ` style="pagebreak-${data.pagebreak}:always;"` : ''}>
+      <div class="figure-lg"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
         <figure id="${data.id}">
           <div class="img-wrap">
             ${!data.inline ? `<a href="${data.ref}.xhtml#ref${data.id}">` : ''}
@@ -34,7 +34,7 @@ const epub = {
   },
   portraitLong(data) {
     return `${!data.inline ? '<section epub:type="loi" title="Figures" class="chapter figures">' : ''}
-      <div class="figure-lg"${data.pagebreak ? ` style="pagebreak-${data.pagebreak}:always;"` : ''}>
+      <div class="figure-lg"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
         <figure id="${data.id}">
           <div class="img-wrap" style="width: 60%; margin: 0 auto;">
             ${!data.inline ? `<a href="${data.ref}.xhtml#ref${data.id}">` : ''}
@@ -50,7 +50,7 @@ const epub = {
   },
   square(data) {
     return `${!data.inline ? '<section epub:type="loi" title="Figures" class="chapter figures">' : ''}
-      <div class="figure-lg"${data.pagebreak ? ` style="pagebreak-${data.pagebreak}:always;"` : ''}>
+      <div class="figure-lg"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
         <figure id="${data.id}">
           <div class="img-wrap" style="width: 85%; margin: 0 auto;">
             ${!data.inline ? `<a href="${data.ref}.xhtml#ref${data.id}">` : ''}

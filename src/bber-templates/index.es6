@@ -26,6 +26,7 @@ function sourceDirs(src) {
     `${src}/_stylesheets`,
     `${src}/_markdown`,
     `${src}/_fonts`,
+    `${src}/_media`,
     `${src}/.tmp`,
   ]
 }
@@ -153,7 +154,7 @@ Chapter Contents
   }, {
     relpath: `${src}/_markdown/project-name_colophon.md`,
     content: `---
-title: Project NameColophon
+title: Project Name Colophon
 type: colophon
 ---
 

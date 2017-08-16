@@ -3,6 +3,8 @@ import Yaml from 'bber-lib/yaml'
 import path from 'path'
 import fs from 'fs-extra'
 import { isPlainObject, isArray, findIndex } from 'lodash'
+import mime from 'mime-types'
+
 // import { log } from 'bber-plugins'
 import {
   createPageModelsFromYAML,
@@ -24,6 +26,7 @@ class Store {
   set env(value)        { this._env = value       }
   set pages(value)      { this._pages = value     }
   set images(value)     { this._images = value    }
+  set videos(value)     { this._videos = value    }
   set footnotes(value)  { this._footnotes = value }
   set build(value)      { this._build = value     }
   set bber(value)       { this._bber = value      }
@@ -37,6 +40,7 @@ class Store {
   get env()             { return this._env        }
   get pages()           { return this._pages      }
   get images()          { return this._images     }
+  get videos()          { return this._videos     }
   get footnotes()       { return this._footnotes  }
   get build()           { return this._build      }
   get bber()            { return this._bber       }
@@ -211,6 +215,8 @@ class Store {
   loadInitialState() {
     this.pages = []
     this.images = []
+    this.videos = []
+    this.audio = []
     this.footnotes = []
     this.build = 'epub'
     this.bber = {}
@@ -228,6 +234,7 @@ class Store {
 
     this.loadSettings()
     this.loadMetadata()
+    this.loadAudioVideo()
     this.loadBber()
   }
 
@@ -258,6 +265,20 @@ class Store {
     const fpath = path.join(cwd, this.config.src, 'metadata.yml')
     if (fs.existsSync(fpath)) {
       this.metadata = [...this.metadata, ...Yaml.load(fpath)]
+    }
+  }
+
+  loadAudioVideo() {
+    const mediaPath = path.join(cwd, this.config.src, '_media')
+    if (fs.existsSync(mediaPath)) {
+      const media = fs.readdirSync(mediaPath)
+      const videos = media.filter(_ => /^video/.test(mime.lookup(_)))
+      const audio = media.filter(_ => /^audio/.test(mime.lookup(_)))
+
+      this.videos = videos
+      this.audio = audio
+    } else {
+      fs.mkdir(mediaPath)
     }
   }
 
