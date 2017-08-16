@@ -171,11 +171,11 @@ class Cover {
 
       const content = `<html>
         <body>
-          <h1>${this.metadata.title}</h1>
-          <p><span>Creator</span>${this.metadata.creator}</p>
-          <p><span>Date Modified</span>${this.metadata['date-modified']}</p>
-          <p><span>Identifier</span>${this.metadata.identifier}</p>
-          <p><span>b-ber version</span>${version()}</p>
+          <p>${this.metadata.title}</p>
+          <p><span>Creator:</span>${this.metadata.creator}</p>
+          <p><span>Date Modified:</span>${this.metadata['date-modified']}</p>
+          <p><span>Identifier:</span>${this.metadata.identifier}</p>
+          <p><span>b-ber version:</span>${version()}</p>
         </body>
       </html>`
 

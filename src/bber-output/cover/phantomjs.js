@@ -18,15 +18,13 @@ page.evaluate(function evaluate() {
   var body = document.body
   var spans = document.getElementsByTagName('span')
 
-  body.style.backgroundColor = 'white'
+  body.style.backgroundColor = '#F6F5FF'
   body.style.margin = '30px'
   body.style.fontFamily = 'Helvetica'
 
   for (var i = 0; i < spans.length; i++) {
-    spans[i].style.textTransform = 'uppercase'
     spans[i].style.display = 'block'
     spans[i].style.paddingBottom = '5px'
-    spans[i].style.fontSize = '0.7rem'
   }
 })
 
