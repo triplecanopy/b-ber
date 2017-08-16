@@ -252,11 +252,12 @@ const spineModel = () => ({
 
 /**
  * [description]
- * @param {String} str    File basename with extension
+ * @param {String} _str    File basename with extension
  * @param {String} _src   Current `src` directory name
  * @return {Object}
  */
-const modelFromString = (str, _src) => {
+const modelFromString = (_str, _src) => {
+  const str = String(_str)
   const pathFragment = /^(toc\.xhtml|nav\.ncx)$/.test(str) ? '' : 'text' // TODO: clean this up
   const relativePath = path.join(pathFragment, str) // relative to OPS
   const absolutePath = path.join(cwd, _src, relativePath)
