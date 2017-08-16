@@ -44,6 +44,7 @@ const BLOCK_DIRECTIVES = union(FRONTMATTER_DIRECTIVES, BODYMATTER_DIRECTIVES, BA
 const INLINE_DIRECTIVES = [
   'figure',
   'inline-figure',
+  'logo',
 ]
 
 // misc

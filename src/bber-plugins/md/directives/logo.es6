@@ -1,13 +1,8 @@
-/* eslint-disable max-len */
-/*
-
-@type: logo
-@usage: + logo
-@output: <figure> ... </figure>
-
-*/
-
 import figure from 'bber-plugins/md/plugins/figure'
+import { attributes, htmlId } from 'bber-plugins/md/directives/helpers'
+
+const markerRe = /^logo/
+const directiveRe = /(logo)(?::([^\s]+)(\s?.*)?)?$/
 
 export default {
   plugin: figure,
@@ -15,11 +10,18 @@ export default {
   renderer: () => ({
     marker: ':',
     minMarkers: 3,
-    render() {
-      return `<figure id="Triple-Canopy" class="logo">
-        <img style="width:120px;" alt="Triple Canopy Logo" src="../images/Triple-Canopy-Logo-Small.png"/>
-      </figure>
-      <p>155 Freeman Street<br/>Brooklyn, New York 11222<br/><a href="https://www.canopycanopycanopy.com">canopycanopycanopy.com</a></p>`
+    validate(params) {
+      return params.trim().match(markerRe)
+    },
+    render(tokens, idx) {
+      const match = tokens[idx].info.trim().match(directiveRe)
+      const [, type, id, attrs] = match
+      const attrString = attributes(attrs, type)
+
+      return `
+        <figure id="${htmlId(id)}" class="logo">
+          <img style="width:120px;" ${attrString}/>
+        </figure>`
     },
   }),
 }

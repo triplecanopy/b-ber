@@ -12,7 +12,7 @@ import store from 'bber-lib/store'
 import mdFootnote from 'bber-plugins/md/plugins/footnote'
 import mdSection from 'bber-plugins/md/directives/section'
 import mdPullQuote from 'bber-plugins/md/directives/pull-quote'
-// import mdLogo from 'bber-plugins/md/directives/logo'
+import mdLogo from 'bber-plugins/md/directives/logo'
 import mdImage from 'bber-plugins/md/directives/image'
 import mdDialogue from 'bber-plugins/md/directives/dialogue'
 // import mdEpigraph from 'bber-plugins/md/directives/epigraph'
@@ -124,10 +124,10 @@ class MarkdownRenderer {
       //   mdEpigraph.plugin,
       //   mdEpigraph.name,
       //   mdEpigraph.renderer(reference))
-      // .use(
-      //   mdLogo.plugin,
-      //   mdLogo.name,
-      //   mdLogo.renderer(reference))
+      .use(
+        mdLogo.plugin,
+        mdLogo.name,
+        mdLogo.renderer(reference))
   }
 
   set filename(name) {

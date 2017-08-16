@@ -88,9 +88,6 @@ const _buildAttrString = (obj) => {
     s += _applyTransforms(k, v)
   })
 
-  // for (const [k, v] of entries(obj)) {
-  //   s += _applyTransforms(k, v)
-  // }
   return s
 }
 
@@ -144,7 +141,7 @@ const _extendWithDefaults = (obj, name) => {
       }
       return result
     case 'inline':
-      if (genus === 'figure' || genus === 'inline-figure') {
+      if (genus === 'figure' || genus === 'inline-figure' || genus === 'logo') {
         result = Object.assign({}, obj)
         if (!{}.hasOwnProperty.call(obj, 'alt')) {
           result.alt = result.source
