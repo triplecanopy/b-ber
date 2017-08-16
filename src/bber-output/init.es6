@@ -38,7 +38,7 @@ class Initializer {
    * @param  {Object} argv Command Line arguments
    * @return {Object}
    */
-  constructor({ cwd = '', argv = { src: '_book', dist: 'book' } }) {
+  constructor({ cwd = '', argv = { src: '_project', dist: 'project' } }) {
     const { src, dist } = argv
 
     if (!cwd) { throw new Error('Base directory not provided') }

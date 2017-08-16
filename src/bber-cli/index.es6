@@ -32,13 +32,13 @@ const init = () => {
 
   Some common commands are:
 
-    Creating books
+    Creating projects
       bber create     Start a new project
       bber generate   Create a new chapter. Accepts arguments for metadata.
-      bber watch      Preview the book in a browser during development
+      bber watch      Preview the project in a browser during development
       bber build      Create an ePub, mobi, PDF, or all file formats
 
-    Viewing books
+    Viewing projects
       bber site     Clone the bber-reader into \`site\`
       bber serve    Preview the compiled epub in the bber-reader
 

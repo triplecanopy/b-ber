@@ -60,30 +60,28 @@ const manifestItem = (file) => {
 
 const spineItems = arr =>
   arr.map((_) => {
-    if (Props.isHTML(_)) {
-      const nonLinear = _.linear === false
-      const linear = nonLinear ? 'no' : 'yes'
-      if (nonLinear) {
-        log.info(`bber-output/opf: Writing non-linear asset [${_.fileName}] to [spine]`)
-      }
-      const fname = fileId(_.fileName)
-      return `\n<itemref idref="${fname}" linear="${linear}"/>`
+    const nonLinear = _.linear === false
+    const linear = nonLinear ? 'no' : 'yes'
+    const fname = fileId(_.fileName)
+
+    if (nonLinear) {
+      log.info(`bber-output/opf: Writing non-linear asset [${_.fileName}] to [spine]`)
     }
-    return ''
+
+    return `\n<itemref idref="${fname}_xhtml" linear="${linear}"/>`
   }).join('')
 
 const guideItems = arr =>
   arr.map((_) => {
     let item = ''
-    if (Props.isHTML(_)) {
-      let type
-      if ((type = getFrontmatter(_, 'type'))) {
-        log.info(`bber-output/opf: Adding landmark [${_.fileName}] as [${type}]`)
-        const title = escapeHTML(getFrontmatter(_, 'title'))
-        const href = encodeURI(_.relativePath)
-        item = `\n<reference type="${type}" title="${title}" href="${href}"/>`
-      }
+    let type
+    if ((type = getFrontmatter(_, 'type'))) {
+      log.info(`bber-output/opf: Adding landmark [${_.fileName}] as [${type}]`)
+      const title = escapeHTML(getFrontmatter(_, 'title'))
+      const href = `${encodeURI(_.relativePath)}.xhtml`
+      item = `\n<reference type="${type}" title="${title}" href="${href}"/>`
     }
+
     return item
   }).join('')
 

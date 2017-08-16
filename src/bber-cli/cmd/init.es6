@@ -7,14 +7,14 @@ const builder = yargs =>
     .options({
       s: {
         alias: 'src',
-        default: '_book',
-        describe: 'Define the book\'s src path',
+        default: '_project',
+        describe: 'Define the project\'s src path',
         type: 'string',
       },
       d: {
         alias: 'dist',
-        default: 'book',
-        describe: 'Define the book\'s dist path',
+        default: 'project',
+        describe: 'Define the project\'s dist path',
         type: 'string',
       },
     })

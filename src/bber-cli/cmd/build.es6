@@ -6,7 +6,7 @@ const _buildCommands = ['epub', 'mobi', 'pdf', 'web', 'sample']
 const _buildArgs = args => keys(pickBy(pick(args, _buildCommands), identity))
 
 const command = ['build [options...]', 'b']
-const describe = 'Compile a book'
+const describe = 'Compile a project'
 const builder = yargs =>
   yargs
     .options({

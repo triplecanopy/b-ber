@@ -8,7 +8,7 @@ const builder = yargs =>
     .options({
       i: {
         alias: 'input',
-        default: './book',
+        default: './project',
         describe: 'Define the input path',
         type: 'string',
       },

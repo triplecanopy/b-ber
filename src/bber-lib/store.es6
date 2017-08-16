@@ -220,8 +220,8 @@ class Store {
     this.toc = []
     this.env = process.env.NODE_ENV || 'development'
     this.config = {
-      src: '_book',
-      dist: 'book',
+      src: '_project',
+      dist: 'project',
       theme: 'default',
       reader: 'https://codeload.github.com/triplecanopy/b-ber-boiler/zip/master',
     }

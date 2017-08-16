@@ -2,7 +2,7 @@
 import { xml } from 'bber-output'
 
 const command = ['xml', 'x']
-const describe = 'Export a book as an XML document'
+const describe = 'Export a project as an XML document'
 const builder = yargs =>
   yargs
     .help('h')

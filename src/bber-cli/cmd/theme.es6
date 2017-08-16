@@ -3,7 +3,7 @@ import { theme } from 'bber-lib'
 import { fail } from 'bber-cli/helpers'
 
 const command = 'theme'
-const describe = 'Select a theme for the book'
+const describe = 'Select a theme for the project'
 const builder = yargs =>
   yargs
     .options({

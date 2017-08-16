@@ -135,15 +135,10 @@ class Navigation {
       const { spine } = store // current build process's spine
       const { spineList } = store.bber[this.build] // spine items pulled in from type.yml file
       const flow = uniq(spine.map(_ => _.fileName)) // one-dimensional flow of the book used for the spine
-      const localFiles = filesFromSystem.map(_ => `${_}.xhtml`)
       const pages = flattenSpineFromYAML(spineList)
 
-      const missingFiles = difference(flow, localFiles) // extra files on system
-      const missingEntries = difference(localFiles, pages) // extra entries in YAML
-
-      // console.log(pages, flow, filesFromSystem)
-      // console.log(missingFiles, missingEntries)
-      // process.exit(0)
+      const missingFiles = difference(flow, filesFromSystem) // extra files on system
+      const missingEntries = difference(filesFromSystem, pages) // extra entries in YAML
 
       if (missingFiles.length || missingEntries.length) {
         // there are discrepencies between the files on the system and files

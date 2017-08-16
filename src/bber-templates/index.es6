@@ -45,14 +45,14 @@ function typeYaml(src, type) {
     relpath: path.join(src, `${type}.yml`),
     content: `# Table of Contents
 # "in_toc:false" removes the Table of Contents from the built-in navigation of the reader.
-# "linear:false" removes the Table of Contents from the book's contents.
-- toc.xhtml:
+# "linear:false" removes the Table of Contents from the project's contents.
+- toc:
     in_toc: false
     linear: false
 # Cover
-- cover.xhtml:
+- cover:
     in_toc: false
-# Book Contents
+# Project Contents
 - project-name_title-page
 - project-name-chapter-01
 - project-name_colophon`,
@@ -64,7 +64,7 @@ function metadata(src) {
     relpath: path.join(src, 'metadata.yml'),
     content: `-
   term: title
-  value: Sample Book
+  value: Sample Project
   term_property: title-type
   term_property_value: main
 -

@@ -20,7 +20,7 @@ const builder = yargs =>
     .fail((msg, err) => fail(msg, err, yargs))
     .help('h')
     .alias('h', 'help')
-    .usage(`\nUsage: $0 create --name "My Book"\n\n${describe}`)
+    .usage(`\nUsage: $0 create --name "My Project"\n\n${describe}`)
 
 
 const handler = (argv) => {

@@ -53,7 +53,7 @@ const navPoint = (list) => {
           <navLabel>
             <text>${escapeHTML(getFrontmatter(_, 'title') || _.name)}</text>
           </navLabel>
-          <content src="${_.relativePath}" />
+          <content src="${_.relativePath}.xhtml" />
           ${_.nodes && _.nodes.length ? render(_.nodes) : ''}
         </navPoint>`
     }).join('')

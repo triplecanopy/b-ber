@@ -5,7 +5,7 @@ import { log } from 'bber-plugins'
 import { serve as Server } from 'bber-lib'
 
 const command = ['serve [options...]', 's']
-const describe = 'Preview a book in the bber-reader'
+const describe = 'Preview a project in the bber-reader'
 const builder = yargs =>
   yargs
     .options({

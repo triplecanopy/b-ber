@@ -132,7 +132,7 @@ class Generate {
 
         // TODO: this should add the new file to <type>.yml JSON object and
         // then rewrite to disk
-        fs.appendFile(pages, `\n- ${path.basename(fname, '.md')}.xhtml`, (err) => { // eslint-disable-line consistent-return
+        fs.appendFile(pages, `\n- ${path.basename(fname, '.md')}`, (err) => { // eslint-disable-line consistent-return
           if (err) { throw err }
           if (!buildTypes.length) {
             resolve({ title: fname })
@@ -150,10 +150,10 @@ class Generate {
     return () =>
       new Promise(resolve =>
         this.getFiles()
-        .then(this.parseMeta)
-        .then(this.createFile)
-        .then(this.writeFile)
-        .then(this.writePageMeta)
+        .then(resp => this.parseMeta(resp))
+        .then(resp => this.createFile(resp))
+        .then(resp => this.writeFile(resp))
+        .then(resp => this.writePageMeta(resp))
         .catch(err => log.error(err))
         .then(resolve)
       )

@@ -2,7 +2,7 @@ import { cover } from 'bber-output'
 import { fail } from 'bber-cli/helpers'
 
 const command = 'cover'
-const describe = 'Generate a book cover'
+const describe = 'Generate a project cover'
 const builder = yargs =>
   yargs
     .options({})

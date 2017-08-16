@@ -32,7 +32,7 @@ const copy = (source, target) =>
 /**
  * Get a file's relative path to the OPS
  * @param  {String} fpath File path
- * @param  {String} base  Book's base path
+ * @param  {String} base  Project's base path
  * @return {String}
  */
 const opsPath = (fpath, base) =>

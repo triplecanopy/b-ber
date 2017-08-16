@@ -17,13 +17,13 @@
 // const cwd = process.cwd()
 // const publish = () =>
 //   new Promise((resolve, reject) => {
-//     const book = yargs.argv.input
-//     const dest = path.join(cwd, yargs.argv.output, book)
+//     const project = yargs.argv.input
+//     const dest = path.join(cwd, yargs.argv.output, project)
 
 //     fs.remove(dest, (err1) => {
 //       if (err1) { reject(err1) }
 //       fs.mkdirs(dest, () =>
-//         cdir(book, dest, (err2) => {
+//         cdir(project, dest, (err2) => {
 //           if (err2) { reject(err2) }
 //           resolve()
 //         })
