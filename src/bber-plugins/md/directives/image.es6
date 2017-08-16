@@ -2,7 +2,7 @@
 import path from 'path'
 import fs from 'fs-extra'
 import store from 'bber-lib/store'
-import imageSize from 'image-size'
+import imageSize from 'probe-image-size'
 import { log } from 'bber-plugins'
 import figure from 'bber-plugins/md/plugins/figure'
 import figTmpl from 'bber-templates/figures'
@@ -62,7 +62,7 @@ export default {
       }
 
       // then get the dimensions
-      const { ...dimensions } = imageSize(asset)
+      const dimensions = imageSize.sync(fs.readFileSync(asset))
       const { width, height } = dimensions
 
       switch (type) {

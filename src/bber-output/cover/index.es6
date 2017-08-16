@@ -10,7 +10,7 @@ import { log } from 'bber-plugins'
 import store from 'bber-lib/store'
 import { coverSVG } from 'bber-templates'
 import { page } from 'bber-templates/pages'
-import imageSize from 'image-size'
+import imageSize from 'probe-image-size'
 import renderLayouts from 'layouts'
 import File from 'vinyl'
 import {
@@ -105,7 +105,7 @@ class Cover {
   generateCoverXHTML({ coverEntry, coverImagePath }) {
     return new Promise((resolve) => {
       // get the image dimensions, and pass them to the coverSVG template
-      const { width, height } = imageSize(coverImagePath)
+      const { width, height } = imageSize.sync(fs.readFileSync(coverImagePath))
       const svg = coverSVG({
         width,
         height,
