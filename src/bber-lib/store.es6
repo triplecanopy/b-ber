@@ -27,6 +27,7 @@ class Store {
   set pages(value)        { this._pages = value         }
   set images(value)       { this._images = value        }
   set videos(value)       { this._videos = value        }
+  set audio(value)        { this._audio = value         }
   set footnotes(value)    { this._footnotes = value     }
   set build(value)        { this._build = value         }
   set bber(value)         { this._bber = value          }
@@ -42,6 +43,7 @@ class Store {
   get pages()             { return this._pages          }
   get images()            { return this._images         }
   get videos()            { return this._videos         }
+  get audio()             { return this._audio          }
   get footnotes()         { return this._footnotes      }
   get build()             { return this._build          }
   get bber()              { return this._bber           }

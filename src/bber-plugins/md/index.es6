@@ -15,6 +15,7 @@ import mdPullQuote from 'bber-plugins/md/directives/pull-quote'
 import mdLogo from 'bber-plugins/md/directives/logo'
 import mdImage from 'bber-plugins/md/directives/image'
 import mdVideo from 'bber-plugins/md/directives/video'
+import mdAudio from 'bber-plugins/md/directives/audio'
 import mdDialogue from 'bber-plugins/md/directives/dialogue'
 // import mdEpigraph from 'bber-plugins/md/directives/epigraph'
 
@@ -125,6 +126,10 @@ class MarkdownRenderer {
         mdVideo.plugin,
         mdVideo.name,
         mdVideo.renderer(reference))
+      .use(
+        mdAudio.plugin,
+        mdAudio.name,
+        mdAudio.renderer(reference))
       // .use(
       //   mdEpigraph.plugin,
       //   mdEpigraph.name,
