@@ -78,12 +78,14 @@ class ManifestAndMetadata {
     return new Promise((resolve) => {
       // TODO: this will already be loaded in bber object
       const strings = { manifest: [], bookmeta: [] }
+      const specifiedFonts = {}.hasOwnProperty.call(store.config, 'ibooks_specified_fonts') && store.config.ibooks_specified_fonts === true
+
       strings.bookmeta = this.bookmeta.map(_ => tmpl.opf.metatag(_)).filter(Boolean)
 
       // Add exceptions here as needed
       strings.bookmeta = [
         ...strings.bookmeta,
-        '<meta property="ibooks:specified-fonts">false</meta>',
+        `<meta property="ibooks:specified-fonts">${specifiedFonts}</meta>`,
         `<meta property="dcterms:modified">${new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')}</meta>`, // eslint-disable-line max-len
         `<meta name="generator" content="b-ber@${this.version}" />`,
       ]
