@@ -3,7 +3,7 @@ import path from 'path'
 import mime from 'mime-types'
 import figure from 'bber-plugins/md/plugins/figure'
 import { attributesString, attributesObject, htmlId } from 'bber-plugins/md/directives/helpers'
-import { htmlComment, src } from 'bber-utils'
+import { htmlComment, src, passThrough } from 'bber-utils'
 import store from 'bber-lib/store'
 import { log } from 'bber-plugins'
 
@@ -49,17 +49,21 @@ const createRemoteMediaSource = sources =>
 export default {
   plugin: figure,
   name: 'video',
-  renderer: () => ({
+  renderer: ({ instance }) => ({
     marker: ':',
     minMarkers: 3,
     validate(params) {
       return params.trim().match(markerRe)
     },
     render(tokens, idx) {
+      // const renderInline = instance && instance.renderInline ? instance.renderInline : passThrough
+
       const match = tokens[idx].info.trim().match(directiveRe)
       const [, type, id, attrs] = match
       const attrsObj = attributesObject(attrs, type)
       const { videos } = store
+      const children = tokens[idx].children
+      const caption = children ? instance.renderInline(tokens[idx].children) : ''
 
       let sources = []
       let sourceElements = ''
@@ -107,6 +111,7 @@ export default {
           ${sourceElements}
           <p>Your device does not support the HTML5 Video API.</p>
         </video>
+        ${ caption ? `<p class="caption caption__video">${caption}</p>` : '' }
         ${commentEnd}`
     },
   }),
