@@ -74,6 +74,18 @@ class Props {
   }
 
   /**
+   * Detect if an XHTML file contains remote resources
+   * @param  {String}  file File path
+   * @return {Boolean}
+   */
+  static hasRemoteResources(file) {
+    if (!Props.isHTML(file)) { return false }
+    const fpath = file.rootPath || file.absolutePath
+    const contents = fs.readFileSync(fpath, 'utf8')
+    return Boolean(contents.match(/src=(?:['"]{1})?https?/))
+  }
+
+  /**
    * Test if an XHTML file is a navigation document, contains JavaScript or
    * SVG
    * @param  {String} file  File path
@@ -84,6 +96,7 @@ class Props {
     if (Props.isNav(file)) { props.push('nav') }
     if (Props.isScripted(file)) { props.push('scripted') }
     if (Props.isSVG(file)) { props.push('svg') }
+    if (Props.hasRemoteResources(file)) { props.push('remote-resources') }
     return props
   }
 

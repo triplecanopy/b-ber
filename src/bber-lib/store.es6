@@ -23,33 +23,35 @@ const BBER_PACKAGE_JSON = require(path.join(BBER_MODULE_PATH, 'package.json')) /
  * @class Store
  */
 class Store {
-  set env(value)        { this._env = value       }
-  set pages(value)      { this._pages = value     }
-  set images(value)     { this._images = value    }
-  set videos(value)     { this._videos = value    }
-  set footnotes(value)  { this._footnotes = value }
-  set build(value)      { this._build = value     }
-  set bber(value)       { this._bber = value      }
-  set cursor(value)     { this._cursor = value    } // used for tracking nested sections open/close ids
-  set config(value)     { this._config = value    }
-  set metadata(value)   { this._metadata = value  }
-  set version(value)    { this._version = value   }
-  set spine(value)      { this._spine = value     }
-  set toc(value)        { this._toc = value       }
+  set env(value)          { this._env = value           }
+  set pages(value)        { this._pages = value         }
+  set images(value)       { this._images = value        }
+  set videos(value)       { this._videos = value        }
+  set footnotes(value)    { this._footnotes = value     }
+  set build(value)        { this._build = value         }
+  set bber(value)         { this._bber = value          }
+  set cursor(value)       { this._cursor = value        } // used for tracking nested sections open/close ids
+  set config(value)       { this._config = value        }
+  set metadata(value)     { this._metadata = value      }
+  set version(value)      { this._version = value       }
+  set spine(value)        { this._spine = value         }
+  set toc(value)          { this._toc = value           }
+  set remoteAssets(value) { this._remoteAssets = value  }
 
-  get env()             { return this._env        }
-  get pages()           { return this._pages      }
-  get images()          { return this._images     }
-  get videos()          { return this._videos     }
-  get footnotes()       { return this._footnotes  }
-  get build()           { return this._build      }
-  get bber()            { return this._bber       }
-  get cursor()          { return this._cursor     }
-  get config()          { return this._config     }
-  get metadata()        { return this._metadata   }
-  get spine()           { return this._spine      }
-  get version()         { return this._version    }
-  get toc()             { return this._toc        }
+  get env()               { return this._env            }
+  get pages()             { return this._pages          }
+  get images()            { return this._images         }
+  get videos()            { return this._videos         }
+  get footnotes()         { return this._footnotes      }
+  get build()             { return this._build          }
+  get bber()              { return this._bber           }
+  get cursor()            { return this._cursor         }
+  get config()            { return this._config         }
+  get metadata()          { return this._metadata       }
+  get spine()             { return this._spine          }
+  get version()           { return this._version        }
+  get toc()               { return this._toc            }
+  get remoteAssets()      { return this._remoteAssets   }
 
   /**
    * @constructor
@@ -224,6 +226,7 @@ class Store {
     this.metadata = []
     this.spine = []
     this.toc = []
+    this.remoteAssets = []
     this.env = process.env.NODE_ENV || 'development'
     this.config = {
       src: '_project',
@@ -245,6 +248,7 @@ class Store {
     this.cursor = []
     this.spine = []
     this.toc = []
+    this.remoteAssets = []
   }
 
   reset() {

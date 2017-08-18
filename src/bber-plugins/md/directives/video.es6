@@ -13,6 +13,8 @@ const directiveRe = /(video)(?::([^\s]+)(\s+.*)?)?$/
 
 const toAlias = fpath => path.basename(path.basename(fpath, path.extname(fpath)))
 
+const isHostedRemotely = asset => /^http/.test(asset)
+
 const validatePosterImage = (_asset) => {
   const asset = path.join(src(), '_images', _asset)
   try {
@@ -26,7 +28,7 @@ const validatePosterImage = (_asset) => {
   return asset
 }
 
-const validateMediaSource = (asset) => {
+const validateLocalMediaSource = (asset) => {
   const { videos } = store
   const _videos = videos.map(_ => toAlias(_))
   if (!asset.length || _videos.indexOf(asset) < 0) {
@@ -36,10 +38,13 @@ const validateMediaSource = (asset) => {
   return asset
 }
 
-const createMediaSources = sources =>
+const createLocalMediaSources = sources =>
   sources.reduce((acc, curr) => acc.concat(`
     <source src="../media/${path.basename(curr)}" type="${mime.lookup(curr)}"/>
   `), '')
+
+const createRemoteMediaSource = sources =>
+  `<source src="${sources[0]}" type="${mime.lookup(sources[0])}"/>`
 
 export default {
   plugin: figure,
@@ -57,6 +62,7 @@ export default {
       const { videos } = store
 
       let sources = []
+      let sourceElements = ''
       let err = null
       let poster = ''
 
@@ -65,23 +71,33 @@ export default {
         poster = `../images/${path.basename(poster)}`
         attrsObj.poster = poster
       }
+
       if (attrsObj.source) {
-        if (validateMediaSource(attrsObj.source)) {
-          sources = videos.filter(_ => toAlias(_) === attrsObj.source)
-          delete attrsObj.source // otherwise we get a `src` tag on our video element
+        const { source } = attrsObj
+
+        if (isHostedRemotely(source)) {
+          sources = [source]
+          sourceElements = createRemoteMediaSource(sources)
+
+          store.add('remoteAssets', source)
+
+        } else if (validateLocalMediaSource(source)) {
+          sources = videos.filter(_ => toAlias(_) === source)
+          sourceElements = createLocalMediaSources(sources)
         }
+
+        delete attrsObj.source // otherwise we get a `src` tag on our video element
       } else {
         err = new Error('Directive [video] requires a [source] attribute, aborting')
         log.error(err, 1)
       }
 
       if (!sources.length) {
-        err = new Error(`Could not find matching video(s) with the basename ${attrsObj.source}`)
+        err = new Error(`Could not find matching video(s) with the basename ${source}`)
         log.error(err, 1)
       }
 
 
-      const sourceElements = createMediaSources(sources)
       const attrString = attributesString(attrsObj)
       const commentStart = htmlComment(`START: video:${type}#${htmlId(id)};`)
       const commentEnd = htmlComment(`END: video:${type}#${htmlId(id)};`)

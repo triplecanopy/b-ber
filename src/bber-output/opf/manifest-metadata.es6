@@ -16,6 +16,7 @@ import { log } from 'bber-plugins'
 import * as tmpl from 'bber-templates'
 import { cjoin, src, dist, version, metadata } from 'bber-utils'
 import { pathInfoFromFiles } from './helpers'
+import store from 'bber-lib/store'
 
 /**
  * @alias module:manifestAndMetadata#ManifestAndMetadata
@@ -61,7 +62,7 @@ class ManifestAndMetadata {
       rrdir(`${this.dist}/OPS`, (err, filearr) => {
         if (err) { throw err }
         // TODO: better testing here, make sure we're not including symlinks, for example
-        const files = filearr.filter(_ => path.basename(_).charAt(0) !== '.')
+        const files = [...store.remoteAssets, ...filearr.filter(_ => path.basename(_).charAt(0) !== '.')]
         const fileObjects = pathInfoFromFiles(files, this.dist) // `pathInfoFromFiles` is creating objects from file names
         resolve(fileObjects)
       })
