@@ -34,6 +34,30 @@ The typical application flow triggers a succession of `Promises` using an async 
 
 ## Setting up the Development Environment
 
+
+
+### Install `Node.js` and `yarn`
+
+Or skip to the section below if you already have them available.
+
+#### macOS
+
+1. Download and install [Node.js](https://nodejs.org/en/download/)
+1. Open Terminal.app
+1. Copy and paste the following into the new Terminal window: `curl -o- -L https://yarnpkg.com/install.sh | bash` 
+1. Press <kbd>RETURN</kbd>
+
+
+#### Windows
+[TK]
+
+#### Linux
+
+1. Download and install [Node.js](https://nodejs.org/en/)
+1. Enter `curl -o- -L https://yarnpkg.com/install.sh | bash` in the shell and press <kbd>RETURN</kbd>
+
+### Clone `b-ber`
+
 Clone the repository and install dependencies:
 
 ```sh
