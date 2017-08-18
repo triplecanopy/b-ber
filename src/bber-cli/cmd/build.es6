@@ -61,7 +61,7 @@ const handler = (argv) => {
   const buildCmds = _buildCommands
   const buildArgs = _buildArgs(argv)
   const buildTasks = buildArgs.length ? buildArgs : !buildArgs.length && argv.d ? [] : buildCmds
-  const sequence = ['clean', 'container', 'cover', 'copy', 'sass', 'scripts', 'render', 'loi', 'footnotes', 'inject', 'opf'] // eslint-disable-line max-len
+  const sequence = ['clean', 'container', 'cover', 'sass', 'copy', 'scripts', 'render', 'loi', 'footnotes', 'inject', 'opf'] // eslint-disable-line max-len
 
   const run = (tasks) => {
     const next = [tasks.shift()]

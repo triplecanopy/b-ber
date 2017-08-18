@@ -14,6 +14,10 @@ import autoprefixer from 'autoprefixer'
 import { log } from 'bber-plugins'
 import { src, dist, env, build, theme } from 'bber-utils'
 
+// dirnames that may be referenced in the theme. we copy over assets when
+// running the sass task
+const ASSET_DIRNAMES = ['fonts', 'images']
+
 // Check to see if there's an `application.scss` in `_stylesheets`, and if so
 // load that; else verify that a theme is selected in `config`, and that the
 // theme's `application.scss` exists, then load that; else write a blank file.
@@ -77,6 +81,57 @@ const ensureCssDir = () =>
     })
   )
 
+// copy assets that exist in theme directory to the corresponding directory in
+// _project:
+//
+// my-theme/fonts/my-font.ttf    -> _project/_fonts/my-font.ttf
+// my-theme/images/my-image.jpg  -> _project/_images/my-image.jpg
+//
+// if the asset already exists in the _project dir, it is *not* overwritten.
+//
+// these assets are then copied to the correct build dir by the `copy` task.
+//
+const copyThemeAssets = () => {
+  new Promise((resolve) => {
+    const promises = []
+    ASSET_DIRNAMES.forEach((dir) => {
+      promises.push(new Promise((resolve) => {
+        const themePath = path.join(theme().tpath, dir)
+        const srcPath = path.join(src(), `_${dir}`)
+        try {
+          if (fs.lstatSync(themePath).isDirectory() && fs.existsSync(srcPath)) {
+            const files = fs.readdirSync(themePath)
+
+            files.forEach((file, i) => {
+              const input = path.join(themePath, file)
+              const output = path.join(srcPath, file)
+
+              fs.copy(input, output, {
+                overwrite: false,
+                errorOnExist: true,
+              }, (err1) => {
+                if (err1) { throw err1 }
+                if (i === files.length -1) { // not sure about this...
+                  resolve()
+                }
+              })
+
+            })
+
+          }
+        } catch (err0) {
+          if (err0.code === 'ENOENT') { return resolve() } // dir doesn't exist in the theme path, but doesn't need to, so proceed
+          log.error(`bber-modifiers/sass: There was a problem copying [${themePath}] to [${srcPath}]`)
+          log.error(err0)
+          resolve()
+        }
+      }))
+    })
+
+    Promise.all(promises).then(resolve)
+  })
+}
+
 const renderCss = scssString =>
   new Promise(resolve =>
     nsass.render({
@@ -97,9 +152,10 @@ const applyPostProcessing = ({ css }) =>
   new Promise(resolve =>
     postcss(autoprefixer({
       browsers: ['last 2 versions', '> 2%'],
-      flexbox: 'no-2009' }))
+      flexbox: 'no-2009',
+    }))
     .process(css)
-    .then(_ => resolve(_))
+    .then(resolve)
   )
 
 const writeCssFile = css =>
@@ -113,6 +169,7 @@ const writeCssFile = css =>
 const sass = () =>
   new Promise((resolve) => {
     ensureCssDir()
+    .then(copyThemeAssets)
     .then(createScssString)
     .then(renderCss)
     .then(applyPostProcessing)

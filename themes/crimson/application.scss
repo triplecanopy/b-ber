@@ -1,0 +1,41 @@
+// variables
+// $text-base: 23.2px;
+// $line-base: 30.8px;
+$serif: Crimson, TimesNewRoman, 'Times New Roman', Times, Baskerville, Georgia, serif;
+$base-font-family: $serif;
+
+// overrides
+html {
+  @if $build == web {
+    @include break('mobile') { font-size: 118.75%; } // 19px
+    @include break('ipad-pro') { font-size: 193.75%; } // 31px
+  }
+}
+
+@font-face {
+  font-family: 'Crimson';
+  src: url('../fonts/TC-crimson-roman-webfont.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Crimson';
+  src: url('../fonts/TC-crimson-bold-webfont.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Crimson';
+  src: url('../fonts/TC-crimson-bolditalic-webfont.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Crimson';
+  src: url('../fonts/TC-crimson-italic-webfont.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+}
+
+
+@import '../default/application.scss';
