@@ -1,0 +1,751 @@
+@namespace url(http://www.w3.org/1999/xhtml);
+@namespace epub url(http://www.idpf.org/2007/ops);
+/* line 2, ../typography/_debug.scss */
+#debug-grid {
+  font-family: 'debug';
+  font-size: 1em;
+  line-height: 1.3125; }
+
+/* line 7, ../typography/_debug.scss */
+.line {
+  position: absolute;
+  pointer-events: none;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  left: 0;
+  right: 0;
+  background-color: pink; }
+
+/* line 18, ../typography/_debug.scss */
+h1, h2, h3, h4, h5, h6, p {
+  width: 100%;
+  background-color: rgba(255, 255, 0, 0.2); }
+
+@font-face {
+  font-family: "Crimson";
+  src: url("../fonts/TC-crimson-roman-webfont.ttf");
+  font-weight: 400;
+  font-style: normal; }
+@font-face {
+  font-family: "Crimson";
+  src: url("../fonts/TC-crimson-bold-webfont.ttf");
+  font-weight: 700;
+  font-style: normal; }
+@font-face {
+  font-family: "Crimson";
+  src: url("../fonts/TC-crimson-bolditalic-webfont.ttf");
+  font-weight: 700;
+  font-style: italic; }
+@font-face {
+  font-family: "Crimson";
+  src: url("../fonts/TC-crimson-italic-webfont.ttf");
+  font-weight: 400;
+  font-style: italic; }
+/* line 1, ../typography/_reset.scss */
+html {
+  font-size: 100%; }
+
+/* line 2, ../typography/_reset.scss */
+body {
+  box-sizing: border-box; }
+
+/* line 3, ../typography/_reset.scss */
+h1, h2, h3, h4, h5, h6, p {
+  margin: 0;
+  padding: 0; }
+
+@page {
+  margin: 32px; }
+/* line 8, ../layout/base/_container.scss */
+body {
+  margin: 0;
+  text-indent: 0;
+  padding: 0;
+  font-family: Iowan, Georgia, Times, "Times New Roman", serif;
+  font-size: 1em;
+  line-height: 1.3125;
+  margin-bottom: 1.3125em;
+  -webkit-hyphens: auto;
+  -epub-hyphens: auto;
+  adobe-hyphenate: auto;
+  -moz-hyphens: auto;
+  -ms-hyphens: auto;
+  hyphens: auto;
+  word-break: break-all;
+  word-break: break-word;
+  widows: 2;
+  orphans: 1;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale; }
+
+/* line 21, ../layout/base/_container.scss */
+blockquote {
+  font-size: 1em;
+  line-height: 1.3125;
+  margin-bottom: 1.3125em;
+  padding: 1.3125em 2em 1.3125em 2em;
+  text-indent: 0; }
+  /* line 211, ../typography/_mixins.scss */
+  blockquote + table, blockquote + ul, blockquote + ol, blockquote + dl, blockquote + blockquote {
+    padding-top: 0; }
+  /* line 212, ../typography/_mixins.scss */
+  blockquote + hr {
+    margin-top: 1.3125em; }
+
+/* line 31, ../layout/base/_container.scss */
+section {
+  clear: both; }
+  /* line 33, ../layout/base/_container.scss */
+  section:after {
+    content: ' ';
+    display: table;
+    clear: both; }
+
+/* line 40, ../layout/base/_container.scss */
+section p:first-child,
+section div.figure-sm + p,
+header + p {
+  text-indent: 0; }
+
+/* line 46, ../layout/base/_container.scss */
+section.break-before a + div.figure-sm {
+  padding-top: 0; }
+
+/* line 50, ../layout/base/_container.scss */
+section.subchapter {
+  margin-bottom: 1.3125em; }
+  /* line 52, ../layout/base/_container.scss */
+  section.subchapter + section.subchapter > header > h2 {
+    padding-top: 0; }
+
+/* line 57, ../layout/base/_container.scss */
+section.bibliography {
+  margin-bottom: 1.3125em; }
+  /* line 59, ../layout/base/_container.scss */
+  section.bibliography .subchapter {
+    margin-bottom: 0; }
+  /* line 62, ../layout/base/_container.scss */
+  section.bibliography h3 {
+    font-size: 1em;
+    line-height: 1.3125;
+    margin-bottom: 1.3125em;
+    padding: 0em 0em 1.3125em 0em; }
+  /* line 66, ../layout/base/_container.scss */
+  section.bibliography h1 + .subchapter > h3 {
+    padding-top: 0; }
+  /* line 69, ../layout/base/_container.scss */
+  section.bibliography p {
+    text-indent: 0;
+    padding: 0em 0em 1.3125em 0em; }
+
+/* line 75, ../layout/base/_container.scss */
+.figure-inline {
+  page-break-inside: avoid;
+  text-align: center; }
+  /* line 208, ../typography/_mixins.scss */
+  .figure-inline + p {
+    text-indent: 0; }
+  /* line 189, ../typography/_mixins.scss */
+  .figure-inline img {
+    display: inline-block;
+    margin: 0 auto;
+    vertical-align: top; }
+  /* line 195, ../typography/_mixins.scss */
+  .figure-inline figcaption {
+    font-size: 0.2962962963em;
+    line-height: 4.4296875;
+    margin-bottom: 4.4296875em;
+    width: 40.9090909091%;
+    display: inline-block;
+    text-align: left; }
+    /* line 208, ../typography/_mixins.scss */
+    .figure-inline figcaption + p {
+      text-indent: 0; }
+    /* line 201, ../typography/_mixins.scss */
+    .figure-inline figcaption a {
+      text-decoration: none; }
+
+/* line 78, ../layout/base/_container.scss */
+.figure-lg {
+  page-break-inside: avoid;
+  text-align: center;
+  text-align: left; }
+  /* line 208, ../typography/_mixins.scss */
+  .figure-lg + p {
+    text-indent: 0; }
+  /* line 189, ../typography/_mixins.scss */
+  .figure-lg img {
+    display: inline-block;
+    margin: 0 auto;
+    vertical-align: top; }
+  /* line 195, ../typography/_mixins.scss */
+  .figure-lg figcaption {
+    font-size: 0.2962962963em;
+    line-height: 4.4296875;
+    margin-bottom: 4.4296875em;
+    width: 90.9090909091%;
+    display: inline-block;
+    text-align: left; }
+    /* line 208, ../typography/_mixins.scss */
+    .figure-lg figcaption + p {
+      text-indent: 0; }
+    /* line 201, ../typography/_mixins.scss */
+    .figure-lg figcaption a {
+      text-decoration: none; }
+
+/* line 83, ../layout/base/_container.scss */
+aside.note {
+  text-align: left;
+  margin: 0;
+  padding: 0em 0em 1.3125em 0em; }
+  /* line 87, ../layout/base/_container.scss */
+  aside.note p {
+    text-indent: 0; }
+    /* line 89, ../layout/base/_container.scss */
+    aside.note p a {
+      display: inline; }
+
+/* line 95, ../layout/base/_container.scss */
+.pull-quote {
+  text-indent: 0;
+  padding: 0em 1em 0em 1em; }
+  /* line 100, ../layout/base/_container.scss */
+  section.titlepage .pull-quote, section.introduction .pull-quote, section.afterword .pull-quote {
+    float: none;
+    clear: both;
+    padding-bottom: 5.25em;
+    padding-top: 0; }
+  /* line 110, ../layout/base/_container.scss */
+  .epigraph .pull-quote {
+    float: none;
+    margin-top: 0;
+    padding: 0em 1em 0em 1em; }
+  /* line 115, ../layout/base/_container.scss */
+  .pull-quote + p {
+    text-indent: 0; }
+
+/* line 126, ../layout/base/_container.scss */
+section.colophon figure.logo,
+section.appendix figure.logo,
+section.backmatter figure.logo {
+  text-indent: 0;
+  text-align: left;
+  margin: 0;
+  padding: 0; }
+  /* line 131, ../layout/base/_container.scss */
+  section.colophon figure.logo img,
+  section.appendix figure.logo img,
+  section.backmatter figure.logo img {
+    height: auto;
+    text-indent: 0;
+    text-align: left;
+    margin: 0;
+    padding: 12px 0 0 0; }
+
+/* line 142, ../layout/base/_container.scss */
+section.staff h3 {
+  text-align: left;
+  margin: 0;
+  padding: 0;
+  font-weight: bold;
+  font-size: 0.6666666667em;
+  line-height: 1.96875;
+  margin-bottom: 1.96875em; }
+
+/* line 150, ../layout/base/_container.scss */
+.masthead h2 {
+  font-weight: 700;
+  font-family: inherit;
+  padding-top: 0;
+  text-align: left;
+  font-size: 0.6666666667em;
+  line-height: 1.96875;
+  margin-bottom: 1.96875em; }
+
+/* line 3, ../layout/base/_figure.scss */
+.figure-sm,
+.figure-lg,
+.figure-xl {
+  page-break-inside: avoid;
+  text-align: center; }
+
+/* line 10, ../layout/base/_figure.scss */
+.figure-md {
+  text-align: center;
+  page-break-inside: avoid;
+  height: 350px !important; }
+  /* line 14, ../layout/base/_figure.scss */
+  .figure-md figcaption,
+  .figure-md .figcaption {
+    text-align: center;
+    width: 100%; }
+  /* line 20, ../layout/base/_figure.scss */
+  .epigraph .figure-md {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    page-break-inside: avoid; }
+
+/* line 27, ../layout/base/_figure.scss */
+.figure-sm {
+  text-align: center; }
+  /* line 29, ../layout/base/_figure.scss */
+  .figure-sm a {
+    display: block;
+    margin: 0 auto; }
+  /* line 33, ../layout/base/_figure.scss */
+  .figure-sm.landscape, .figure-sm.square {
+    padding: 0em 1em 0em 1em; }
+    /* line 35, ../layout/base/_figure.scss */
+    h1 + .figure-sm.landscape, h1 + .figure-sm.square {
+      padding-top: 0; }
+    /* line 37, ../layout/base/_figure.scss */
+    .figure-sm.landscape figure, .figure-sm.landscape a, .figure-sm.landscape img, .figure-sm.square figure, .figure-sm.square a, .figure-sm.square img {
+      width: auto;
+      height: 4.8em; }
+  /* line 42, ../layout/base/_figure.scss */
+  .figure-sm.portrait, .figure-sm.portraitLong {
+    padding-top: 1.35em;
+    padding-bottom: 1.23em;
+    padding-left: 0;
+    padding-right: 0; }
+    /* line 44, ../layout/base/_figure.scss */
+    h1 + .figure-sm.portrait, h1 + .figure-sm.portraitLong {
+      padding-top: 0; }
+    /* line 49, ../layout/base/_figure.scss */
+    .figure-sm.portrait figure, .figure-sm.portrait a, .figure-sm.portrait img, .figure-sm.portraitLong figure, .figure-sm.portraitLong a, .figure-sm.portraitLong img {
+      width: auto;
+      height: 7.11111em; }
+  /* line 54, ../layout/base/_figure.scss */
+  .figure-sm + blockquote,
+  .figure-sm + blockquote.dialogue {
+    padding-top: 0; }
+
+/* line 59, ../layout/base/_figure.scss */
+figcaption, .figcaption {
+  font-size: 0.2962962963em;
+  line-height: 4.4296875;
+  margin-bottom: 4.4296875em;
+  display: inline-block; }
+  /* line 208, ../typography/_mixins.scss */
+  figcaption + p,
+  .figcaption + p {
+    text-indent: 0; }
+  /* line 65, ../layout/base/_figure.scss */
+  figcaption a,
+  .figcaption a {
+    text-decoration: none; }
+  /* line 66, ../layout/base/_figure.scss */
+  .figure-lg figcaption,
+  .figure-lg .figcaption {
+    padding-top: 0;
+    padding-bottom: 0;
+    font-size: .68em;
+    line-height: 2.05882em;
+    line-height: 1.33em;
+    display: block;
+    text-align: left;
+    margin-top: .83333em;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 0; }
+
+/* line 80, ../layout/base/_figure.scss */
+.img-wrap {
+  width: 100%; }
+  /* line 82, ../layout/base/_figure.scss */
+  .img-wrap a {
+    text-decoration: none !important; }
+  /* line 83, ../layout/base/_figure.scss */
+  .epigraph .img-wrap {
+    padding-top: 7px; }
+
+/* line 1, ../layout/base/_layout.scss */
+hr {
+  padding: 0;
+  margin: 2.625em 0;
+  height: 1px;
+  width: 100%;
+  background-color: #222;
+  border: 0; }
+  /* line 208, ../typography/_mixins.scss */
+  hr + p {
+    text-indent: 0; }
+  /* line 211, ../typography/_mixins.scss */
+  hr + table, hr + ul, hr + ol, hr + dl, hr + blockquote {
+    padding-top: 0; }
+  /* line 212, ../typography/_mixins.scss */
+  hr + hr {
+    margin-top: 1.3125em; }
+
+/* line 1, ../layout/base/_list.scss */
+ul {
+  padding: 1.3125em 0em 1.3125em 2em;
+  list-style: disc; }
+  /* line 211, ../typography/_mixins.scss */
+  ul + table, ul + ul, ul + ol, ul + dl, ul + blockquote {
+    padding-top: 0; }
+  /* line 212, ../typography/_mixins.scss */
+  ul + hr {
+    margin-top: 1.3125em; }
+  /* line 10, ../layout/base/_list.scss */
+  ul li {
+    font-size: 1em;
+    line-height: 1.3125;
+    margin-bottom: 1.3125em;
+    text-indent: 0; }
+
+/* line 28, ../layout/base/_list.scss */
+ol {
+  padding: 1.3125em 0em 1.3125em 2em;
+  list-style: decimal; }
+  /* line 211, ../typography/_mixins.scss */
+  ol + table, ol + ul, ol + ol, ol + dl, ol + blockquote {
+    padding-top: 0; }
+  /* line 212, ../typography/_mixins.scss */
+  ol + hr {
+    margin-top: 1.3125em; }
+  /* line 33, ../layout/base/_list.scss */
+  ol li {
+    font-size: 1em;
+    line-height: 1.3125;
+    margin-bottom: 1.3125em;
+    text-indent: 0; }
+  /* line 44, ../layout/base/_list.scss */
+  section.colophon ol, section.appendix ol, section.backmatter ol {
+    padding: 0em 1.5em 0em 1.5em; }
+    /* line 48, ../layout/base/_list.scss */
+    section.colophon ol li, section.appendix ol li, section.backmatter ol li {
+      font-weight: normal;
+      font-style: normal;
+      text-indent: 0;
+      font-size: 0.6666666667em;
+      line-height: 1.96875;
+      margin-bottom: 1.96875em; }
+      /* line 208, ../typography/_mixins.scss */
+      section.colophon ol li + p, section.appendix ol li + p, section.backmatter ol li + p {
+        text-indent: 0; }
+
+/* line 59, ../layout/base/_list.scss */
+dl dd {
+  font-size: 1em;
+  line-height: 1.3125;
+  margin-bottom: 1.3125em;
+  text-indent: 0; }
+/* line 63, ../layout/base/_list.scss */
+dl dt {
+  font-size: 1em;
+  line-height: 1.3125;
+  margin-bottom: 1.3125em;
+  text-indent: 0; }
+
+/* line 2, ../layout/base/_table.scss */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+  margin: 1em 0; }
+  /* line 8, ../layout/base/_table.scss */
+  table tr th {
+    border-top: 1px solid #222; }
+  /* line 9, ../layout/base/_table.scss */
+  table tr th, table tr td {
+    font-size: 1em;
+    line-height: 1.3125;
+    margin-bottom: 1.3125em;
+    text-align: left;
+    padding: 1em;
+    border-left: 1px solid #222;
+    border-right: 1px solid #222;
+    border-bottom: 1px solid #222; }
+
+/* line 4, ../layout/base/_text.scss */
+h1 {
+  font-size: 11.390625em;
+  line-height: 1.037037037;
+  margin-bottom: 0.1152263374em; }
+
+/* line 5, ../layout/base/_text.scss */
+h2 {
+  font-size: 7.59375em;
+  line-height: 1.037037037;
+  margin-bottom: 0.1728395062em; }
+
+/* line 6, ../layout/base/_text.scss */
+h3 {
+  font-size: 5.0625em;
+  line-height: 1.037037037;
+  margin-bottom: 0.2592592593em; }
+
+/* line 7, ../layout/base/_text.scss */
+h4 {
+  font-size: 3.375em;
+  line-height: 1.1666666667;
+  margin-bottom: 0.3888888889em; }
+
+/* line 8, ../layout/base/_text.scss */
+h5 {
+  font-size: 2.25em;
+  line-height: 1.1666666667;
+  margin-bottom: 0.5833333333em; }
+
+/* line 9, ../layout/base/_text.scss */
+h6 {
+  font-size: 1.5em;
+  line-height: 1.75;
+  margin-bottom: 0.875em; }
+
+/* line 10, ../layout/base/_text.scss */
+p {
+  font-size: 1em;
+  line-height: 1.3125;
+  margin-bottom: 1.3125em; }
+
+/* line 13, ../layout/base/_text.scss */
+p {
+  text-indent: 2em !important; }
+  /* line 16, ../layout/base/_text.scss */
+  h1 + p, h2 + p, h3 + p, h4 + p, h5 + p, h6 + p {
+    text-indent: 0 !important; }
+
+/* line 22, ../layout/base/_text.scss */
+h1, h2, h3, h4, h5, h6 {
+  text-indent: 0;
+  text-transform: none;
+  text-align: center;
+  font-weight: 400;
+  font-style: normal;
+  -webkit-hyphens: none;
+  -epub-hyphens: none;
+  adobe-hyphenate: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+  font-size: 1em;
+  line-height: 1.3125;
+  margin-bottom: 1.3125em; }
+  /* line 208, ../typography/_mixins.scss */
+  h1 + p, h2 + p, h3 + p, h4 + p, h5 + p, h6 + p {
+    text-indent: 0; }
+
+/* line 36, ../layout/base/_text.scss */
+h1 {
+  padding: 0em 0em 5.25em 0em; }
+  /* line 39, ../layout/base/_text.scss */
+  h1.book-title, h1.figures-title {
+    padding: 0; }
+  /* line 44, ../layout/base/_text.scss */
+  section.backmatter h1 {
+    padding: 3.9375em 0em 3.9375em 0em;
+    font-size: 0.6666666667em;
+    line-height: 1.96875;
+    margin-bottom: 1.96875em; }
+
+/* line 50, ../layout/base/_text.scss */
+h2 {
+  padding: 1.3125em 0em 1.3125em 0em; }
+  /* line 53, ../layout/base/_text.scss */
+  section.backmatter h2 {
+    font-size: 0.6666666667em;
+    line-height: 1.96875;
+    margin-bottom: 1.96875em;
+    padding: 1.96875em 0em 0em 0em; }
+
+/* line 60, ../layout/base/_text.scss */
+p {
+  font-size: 1em;
+  line-height: 1.3125;
+  margin-bottom: 1.3125em;
+  text-indent: 1em; }
+  /* line 64, ../layout/base/_text.scss */
+  blockquote p {
+    text-indent: 0;
+    font-size: 0.4444444444em;
+    line-height: 2.953125;
+    margin-bottom: 2.953125em; }
+  /* line 69, ../layout/base/_text.scss */
+  .frontmatter p, section.backmatter p {
+    text-indent: 0;
+    padding: 0em 0em 1.96875em 0em; }
+  /* line 75, ../layout/base/_text.scss */
+  section.colophon p, section.appendix p,
+  p section.backmatter {
+    font-weight: normal;
+    font-style: normal;
+    text-indent: 0;
+    font-size: 0.6666666667em;
+    line-height: 1.96875;
+    margin-bottom: 1.96875em;
+    padding: 0em 0em 1.96875em 0em; }
+    /* line 208, ../typography/_mixins.scss */
+    section.colophon p + p, section.appendix p + p,
+    p section.backmatter + p {
+      text-indent: 0; }
+  /* line 86, ../layout/base/_text.scss */
+  .figcaption p {
+    text-indent: 0; }
+  /* line 90, ../layout/base/_text.scss */
+  .pull-quote p {
+    text-indent: 0;
+    font-style: italic;
+    font-weight: normal;
+    font-size: 0.4444444444em;
+    line-height: 2.953125;
+    margin-bottom: 2.953125em; }
+    /* line 208, ../typography/_mixins.scss */
+    .pull-quote p + p {
+      text-indent: 0; }
+  /* line 98, ../layout/base/_text.scss */
+  .epigraph .pull-quote p {
+    float: none;
+    width: 100%;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    text-align: center; }
+    /* line 208, ../typography/_mixins.scss */
+    .epigraph .pull-quote p + p {
+      text-indent: 0; }
+
+/* line 109, ../layout/base/_text.scss */
+cite {
+  font-size: 1em;
+  line-height: 1.3125;
+  margin-bottom: 1.3125em; }
+  /* line 111, ../layout/base/_text.scss */
+  .pull-quote cite {
+    font-size: 0.4444444444em;
+    line-height: 2.953125;
+    margin-bottom: 2.953125em;
+    float: right;
+    font-weight: normal;
+    text-indent: 0;
+    display: block;
+    text-align: right;
+    width: 75%;
+    margin-left: 25%; }
+    /* line 208, ../typography/_mixins.scss */
+    .pull-quote cite + p {
+      text-indent: 0; }
+  /* line 122, ../layout/base/_text.scss */
+  .pull-quote.full-width cite {
+    margin-left: 0;
+    width: 100%; }
+  /* line 126, ../layout/base/_text.scss */
+  .epigraph .pull-quote cite {
+    float: none;
+    width: 100%;
+    text-align: center; }
+    /* line 208, ../typography/_mixins.scss */
+    .epigraph .pull-quote cite + p {
+      text-indent: 0; }
+
+/* line 136, ../layout/base/_text.scss */
+.end-notes header + p {
+  margin-top: 0; }
+
+/* line 141, ../layout/base/_text.scss */
+sup, a.footnote-ref,
+sub {
+  font-size: 0.2962962963em;
+  line-height: 4.4296875;
+  margin-bottom: 4.4296875em;
+  vertical-align: baseline;
+  position: relative; }
+
+/* line 148, ../layout/base/_text.scss */
+sup, a.footnote-ref {
+  top: -1.6875em; }
+
+/* line 149, ../layout/base/_text.scss */
+sub {
+  bottom: 1.6875em; }
+
+/* line 151, ../layout/base/_text.scss */
+small {
+  font-size: 0.6666666667em;
+  line-height: 1.96875;
+  margin-bottom: 1.96875em; }
+
+/* line 155, ../layout/base/_text.scss */
+code,
+pre {
+  font-size: 1em;
+  line-height: 1.3125;
+  margin-bottom: 1.3125em;
+  padding: 1.3125em 1em 1.3125em 1em;
+  background-color: #eee;
+  white-space: pre; }
+
+/* line 163, ../layout/base/_text.scss */
+i {
+  font-weight: 400;
+  font-style: italic;
+  font-family: inherit; }
+  /* line 167, ../layout/base/_text.scss */
+  i b, i strong {
+    font-weight: 700;
+    font-style: italic; }
+
+/* line 173, ../layout/base/_text.scss */
+em {
+  font-weight: 400;
+  font-style: italic;
+  font-family: inherit; }
+  /* line 177, ../layout/base/_text.scss */
+  em b, em strong {
+    font-weight: 700;
+    font-style: italic; }
+  /* line 181, ../layout/base/_text.scss */
+  em em, .pull-quote p em {
+    font-weight: 400;
+    font-style: normal; }
+
+/* line 187, ../layout/base/_text.scss */
+strong, b {
+  font-weight: 700;
+  font-style: normal;
+  font-family: inherit; }
+  /* line 191, ../layout/base/_text.scss */
+  strong em, strong i, b em, b i {
+    font-weight: 700;
+    font-style: italic; }
+
+/* line 202, ../layout/base/_text.scss */
+aside.footnote {
+  margin-left: 1em; }
+  /* line 204, ../layout/base/_text.scss */
+  aside.footnote a.footnote-link {
+    display: inline-block;
+    text-indent: -1em; }
+
+/* line 210, ../layout/base/_text.scss */
+ol.footnotes {
+  margin: 0; }
+  /* line 212, ../layout/base/_text.scss */
+  ol.footnotes li {
+    padding-bottom: 1em;
+    text-indent: 0 !important; }
+    /* line 215, ../layout/base/_text.scss */
+    ol.footnotes li p {
+      text-indent: 0 !important; }
+    /* line 216, ../layout/base/_text.scss */
+    ol.footnotes li a {
+      text-decoration: none !important; }
+    /* line 217, ../layout/base/_text.scss */
+    ol.footnotes li span.hidden-backlink {
+      display: inline; }
+
+/* line 9, ../layout/_layout.scss */
+.break-before {
+  page-break-before: always !important; }
+
+/* line 10, ../layout/_layout.scss */
+.break-after {
+  page-break-after: always !important; }
+
+/* line 11, ../layout/_layout.scss */
+.uppercase {
+  text-transform: uppercase !important; }
+
+/*# sourceMappingURL=application.css.map */

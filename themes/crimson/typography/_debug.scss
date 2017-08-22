@@ -20,15 +20,3 @@
         background-color: rgba(255,255,0,0.2)
     }
 }
-
-
-// Text Sizes
-@if $build == 'development' {
-    h1 { @include type-settings(6); }
-    h2 { @include type-settings(5); }
-    h3 { @include type-settings(4); }
-    h4 { @include type-settings(3); }
-    h5 { @include type-settings(2); }
-    h6 { @include type-settings(1); }
-    p  { @include type-settings(0); }
-}

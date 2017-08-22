@@ -12,8 +12,8 @@ p  { @include type-settings(0); }
 // Text Properties
 p {
     @if $text-indent == true {
-        text-indent: $font-size-base * 2;
-        h1 + &, h2 + &, h3 + &, h4 + &, h5 + &, h6 + & { text-indent: 0; }
+        text-indent: $font-size-base * 2 !important;
+        h1 + &, h2 + &, h3 + &, h4 + &, h5 + &, h6 + & { text-indent: 0 !important; }
     }
 }
 

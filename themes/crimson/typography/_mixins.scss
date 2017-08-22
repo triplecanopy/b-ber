@@ -170,6 +170,11 @@
 }
 
 
+// Defaults to 16px, assuming the `html` element's base font size
+@function em-to-px($value, $root-px: 16px) {
+    @return strip-unit($value) * strip-unit($root-px) + 0px;
+}
+
 
 
 //

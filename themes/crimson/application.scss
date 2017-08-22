@@ -14,16 +14,7 @@ $build: 'epub';
 
 
 // Set @page margin for e-readers
-@page { margin:$font-size-base; }
-
-
-// Text Properties
-p {
-    @if $text-indent == true {
-        text-indent: $font-size-base * 2;
-        h1 + &, h2 + &, h3 + &, h4 + &, h5 + &, h6 + & { text-indent: 0; }
-    }
-}
+@page { margin: em-to-px($font-size-base * 2); }
 
 
 @import 'layout/layout';
