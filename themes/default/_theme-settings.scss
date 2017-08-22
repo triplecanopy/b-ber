@@ -31,3 +31,11 @@ $base-font-family: Iowan, Georgia, Times, 'Times New Roman', serif !default;
 $sans-serif: Helvetica, Arial, sans-serif !default;
 $serif: $base-font-family !default;
 $monospace: Menlo, Osaka, Monaco, monospace !default;
+
+
+
+// variables
+// $text-base: 23.2px;
+// $line-base: 30.8px;
+$serif: Crimson, TimesNewRoman, 'Times New Roman', Times, Baskerville, Georgia, serif;
+$base-font-family: $serif;

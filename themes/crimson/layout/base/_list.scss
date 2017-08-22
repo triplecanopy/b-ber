@@ -1,0 +1,67 @@
+ul {
+    @include following-element-has-no-top-padding;
+    @include padding(1, 0, 1, 2, 0);
+    list-style: disc;
+
+    @if $build == web {
+        list-style: none;
+    }
+
+    li {
+        @include type-settings(0);
+        text-indent: 0;
+
+        @if $build == web {
+            text-indent: -0.6em;
+            padding-left: 0.6em;
+            &:before {
+                content:'-';
+                display:inline-block;
+                position:relative;
+                left:-0.3em;
+            }
+        }
+
+    }
+}
+
+ol {
+    @include following-element-has-no-top-padding;
+    @include padding(1, 0, 1, 2, 0);
+    list-style: decimal;
+
+    li {
+        @include type-settings(0);
+        text-indent: 0;
+
+        @if $build == web {
+            text-indent: -0.6em;
+            padding-left: 0.6em;
+        }
+    }
+
+    // Section styles
+    section.colophon &,
+    section.appendix &,
+    section.backmatter & {
+        @include padding(0, 1, 0, 1, -1);
+        li {
+            font-weight: normal;
+            font-style: normal;
+            text-indent: 0;
+            @include following-paragraph-not-indented;
+            @include type-settings(-1);
+        }
+    }
+}
+
+dl {
+    dd {
+        @include type-settings(0);
+        text-indent: 0;
+    }
+    dt {
+        @include type-settings(0);
+        text-indent: 0;
+    }
+}

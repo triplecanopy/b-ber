@@ -1,0 +1,219 @@
+// Block elements
+
+// Text Sizes
+h1 { @include type-settings(6); }
+h2 { @include type-settings(5); }
+h3 { @include type-settings(4); }
+h4 { @include type-settings(3); }
+h5 { @include type-settings(2); }
+h6 { @include type-settings(1); }
+p  { @include type-settings(0); }
+
+// Text Properties
+p {
+    @if $text-indent == true {
+        text-indent: $font-size-base * 2;
+        h1 + &, h2 + &, h3 + &, h4 + &, h5 + &, h6 + & { text-indent: 0; }
+    }
+}
+
+
+
+h1,h2,h3,h4,h5,h6 {
+    text-indent: 0;
+    text-transform: none;
+    text-align: center;
+    font-weight: 400;
+    font-style: normal;
+    @include hyphens(none);
+    @include type-settings(0);
+    @include following-paragraph-not-indented;
+}
+
+
+
+
+h1 {
+    @include padding(0,0,4,0,0);
+
+    &.book-title,
+    &.figures-title {
+        padding: 0;
+    }
+
+    section.backmatter & {
+        @include padding(2, 0, 2, 0, -1); // TODO: 19px
+        @include type-settings(-1);
+    }
+}
+
+h2 {
+    @include padding(1, 0, 1, 0, 0);
+
+    section.backmatter & {
+        @include type-settings(-1); // TODO: should be 19px
+        @include padding(1, 0, 0, 0, -1); // TODO: should be line-height for 19px
+    }
+}
+
+
+p {
+    @include type-settings(0);
+    text-indent: one-em(0);
+
+    blockquote & {
+        text-indent: 0;
+        @include type-settings(-2);
+    }
+
+    .frontmatter &,
+    section.backmatter & {
+        text-indent: 0;
+        @include padding(0, 0, 1, 0, -1);
+    }
+
+    section.colophon &,
+    section.appendix &,
+    section.backmatter {
+        font-weight: normal;
+        font-style: normal;
+        text-indent: 0;
+        @include following-paragraph-not-indented;
+        @include type-settings(-1);
+        @include padding(0, 0, 1, 0, -1);
+    }
+
+    .figcaption & {
+        text-indent: 0;
+    }
+
+    .pull-quote & {
+        text-indent: 0;
+        font-style: italic;
+        font-weight: normal;
+        @include following-paragraph-not-indented;
+        @include type-settings(-2);
+    }
+
+    .epigraph .pull-quote & {
+        float: none;
+        width: 100%;
+        margin-top: 0!important;
+        padding-top: 0!important;
+        text-align: center;
+        @include following-paragraph-not-indented;
+        // @include tc-rhythm-sizing($text-base, $line-base);
+    }
+}
+
+cite {
+    @include type-settings(0);
+    .pull-quote & {
+        @include following-paragraph-not-indented;
+        @include type-settings(-2);
+        float: right;
+        font-weight: normal;
+        text-indent: 0;
+        display: block;
+        text-align: right;
+        width: 75%;
+        margin-left: 25%;
+    }
+    .pull-quote.full-width & {
+        margin-left: 0;
+        width: 100%;
+    }
+    .epigraph .pull-quote & {
+        float: none;
+        width: 100%;
+        text-align: center;
+        @include following-paragraph-not-indented;
+        // @include tc-rhythm-sizing($text-base, $line-base);
+    }
+}
+
+
+.end-notes header + p {
+    margin-top:0;
+}
+
+// Inline elements
+sup,
+sub {
+    @include type-settings(-3);
+    vertical-align: baseline;
+    position: relative;
+}
+
+sup { top: one-em(-3) * -0.5; }
+sub { bottom: one-em(-3) * 0.5; }
+
+small {
+    @include type-settings(-1);
+}
+
+code,
+pre {
+    @include type-settings(0);
+    @include padding(1,1,1,1,0);
+    background-color: $grey;
+    white-space: pre;
+}
+
+i {
+    font-weight: 400;
+    font-style: italic;
+    font-family: inherit;
+    b, strong {
+        font-weight: 700;
+        font-style: italic;
+    }
+}
+
+em {
+    font-weight: 400;
+    font-style: italic;
+    font-family: inherit;
+    b, strong {
+        font-weight: 700;
+        font-style: italic;
+    }
+    em, .pull-quote p & {
+        font-weight: 400;
+        font-style: normal;
+    }
+}
+
+strong,b {
+    font-weight: 700;
+    font-style: normal;
+    font-family: inherit;
+    em, i {
+        font-weight: 700;
+        font-style: italic;
+    }
+}
+
+
+a.footnote-ref {
+    @extend sup;
+}
+
+aside.footnote {
+    margin-left: one-em(0);
+    a.footnote-link {
+        display: inline-block;
+        text-indent: one-em(0) * -1;
+    }
+}
+
+ol.footnotes {
+    margin: 0;
+    li {
+        padding-bottom: 1em;
+        text-indent: 0!important;
+        p { text-indent: 0!important; }
+        a { text-decoration: none!important; }
+        span.hidden-backlink { display: inline; }
+    }
+}

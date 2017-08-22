@@ -1,0 +1,34 @@
+@if $debug == true {
+    #debug-grid {
+        font-family: 'debug';
+        font-size: $font-size-base;
+        line-height: $line-height-base;
+    }
+    .line {
+        position: absolute;
+        pointer-events: none;
+        height: 1px;
+        margin: 0;
+        padding: 0;
+        left: 0;
+        right: 0;
+        background-color: pink;
+    }
+
+    h1,h2,h3,h4,h5,h6,p {
+        width: 100%;
+        background-color: rgba(255,255,0,0.2)
+    }
+}
+
+
+// Text Sizes
+@if $build == 'development' {
+    h1 { @include type-settings(6); }
+    h2 { @include type-settings(5); }
+    h3 { @include type-settings(4); }
+    h4 { @include type-settings(3); }
+    h5 { @include type-settings(2); }
+    h6 { @include type-settings(1); }
+    p  { @include type-settings(0); }
+}

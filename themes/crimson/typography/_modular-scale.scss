@@ -1,0 +1,8 @@
+// Modular scale base settings. Values set in `_theme-settings`
+//
+// Modular scale demo: http://www.modularscale.com/
+// Modular scale repo: https://github.com/modularscale/modularscale-sass
+$modularscale: (
+    base: $font-size-base,
+    ratio: $font-ratio
+);

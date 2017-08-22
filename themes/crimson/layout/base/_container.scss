@@ -1,0 +1,156 @@
+// html {
+//   @if $build == web {
+//     @include break('mobile') { font-size: 112.5%; } // 18px
+//     @include break('ipad-pro') { font-size: 192.5%; } // 30.8px
+//   }
+// }
+
+body {
+    margin:0;
+    text-indent: 0;
+    padding:0;
+    font-family:$font-family-base;
+    @include type-settings(0);
+    @include hyphens;
+    @include widows;
+    @include orphans;
+    @include text-rendering;
+    @include font-smoothing;
+}
+
+blockquote {
+    @include type-settings(0);
+    @include following-element-has-no-top-padding;
+    // padding: 0.9em 2.31em 0.95em 2.31em;
+    @include padding(1, 2, 1, 2, 0);
+    text-indent: 0;
+}
+
+
+
+section {
+    clear: both;
+    &:after {
+        content: ' ';
+        display: table;
+        clear: both;
+    }
+}
+
+section p:first-child,
+section div.figure-sm + p,
+header + p {
+    text-indent: 0;
+}
+
+section.break-before a + div.figure-sm {
+    padding-top:0;
+}
+
+section.subchapter {
+    margin-bottom: one-line(0);
+    + section.subchapter > header > h2 {
+        padding-top: 0;
+    }
+}
+
+section.bibliography {
+    margin-bottom: one-line(0);
+    .subchapter {
+        margin-bottom: 0;
+    }
+    h3 {
+        @include type-settings(0);
+        @include padding(0,0,1,0,0);
+    }
+    h1 + .subchapter > h3 {
+        padding-top: 0;
+    }
+    p {
+        text-indent: 0;
+        @include padding(0,0,1,0,0);
+    }
+}
+
+.figure-inline {
+    @include figure;
+}
+.figure-lg {
+    @include figure(100);
+    text-align: left;
+}
+
+aside.note {
+    text-align:left;
+    margin:0;
+    @include padding(0,0,1,0,0);
+    p {
+        text-indent: 0;
+        a {
+            display: inline;
+        }
+    }
+}
+
+.pull-quote {
+    text-indent: 0;
+    // padding: 0 rhythm(1.65) 1.65em;
+    @include padding(0, 1, 0, 1, 0);
+
+    section.titlepage &,
+    section.introduction &,
+    section.afterword & {
+        float: none;
+        clear: both;
+        // padding-bottom: 5.65em;
+        padding-bottom: four-lines(0);
+        padding-top: 0;
+    }
+
+    .epigraph & {
+        float: none;
+        margin-top: 0;
+        @include padding(0, 1, 0, 1, 0);
+    }
+    + p {
+        text-indent: 0;
+    }
+}
+
+
+
+
+section.colophon,
+section.appendix,
+section.backmatter {
+    figure.logo {
+        text-indent: 0;
+        text-align: left;
+        margin:0;
+        padding:0;
+        img {
+            height:auto;
+            text-indent: 0;
+            text-align: left;
+            margin:0;
+            padding:12px 0 0 0;
+        }
+    }
+}
+
+section.staff {
+    h3 {
+        text-align: left;
+        margin:0;
+        padding:0;
+        font-weight: bold;
+        @include type-settings(-1);
+    }
+}
+.masthead h2 {
+    font-weight: 700;
+    font-family: inherit;
+    padding-top:0;
+    text-align: left;
+    @include type-settings(-1);
+}

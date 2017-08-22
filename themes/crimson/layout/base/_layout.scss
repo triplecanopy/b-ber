@@ -1,0 +1,10 @@
+hr {
+    padding: 0;
+    margin: two-lines(0) 0;
+    height: 1px;
+    width: 100%;
+    background-color: $black;
+    border: 0;
+    @include following-paragraph-not-indented;
+    @include following-element-has-no-top-padding;
+}

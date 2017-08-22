@@ -1,41 +1,29 @@
-// variables
-// $text-base: 23.2px;
-// $line-base: 30.8px;
-$serif: Crimson, TimesNewRoman, 'Times New Roman', Times, Baskerville, Georgia, serif;
-$base-font-family: $serif;
+// https://github.com/modularscale/modularscale-sass
 
-// overrides
-html {
-  @if $build == web {
-    @include break('mobile') { font-size: 118.75%; } // 19px
-    @include break('ipad-pro') { font-size: 193.75%; } // 31px
-  }
-}
+$build: 'epub';
 
-@font-face {
-  font-family: 'Crimson';
-  src: url('../fonts/TC-crimson-roman-webfont.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-}
-@font-face {
-  font-family: 'Crimson';
-  src: url('../fonts/TC-crimson-bold-webfont.ttf') format('truetype');
-  font-weight: 700;
-  font-style: normal;
-}
-@font-face {
-  font-family: 'Crimson';
-  src: url('../fonts/TC-crimson-bolditalic-webfont.ttf') format('truetype');
-  font-weight: 700;
-  font-style: italic;
-}
-@font-face {
-  font-family: 'Crimson';
-  src: url('../fonts/TC-crimson-italic-webfont.ttf') format('truetype');
-  font-weight: 400;
-  font-style: italic;
+// Declare namespaces
+@namespace url(http://www.w3.org/1999/xhtml);
+@namespace epub url(http://www.idpf.org/2007/ops);
+
+// Load vendor libs
+@import './node_modules/modularscale-sass/stylesheets/_modularscale';
+
+@import 'theme-settings';
+@import 'typography/typography';
+
+
+// Set @page margin for e-readers
+@page { margin:$font-size-base; }
+
+
+// Text Properties
+p {
+    @if $text-indent == true {
+        text-indent: $font-size-base * 2;
+        h1 + &, h2 + &, h3 + &, h4 + &, h5 + &, h6 + & { text-indent: 0; }
+    }
 }
 
 
-@import '../default/application.scss';
+@import 'layout/layout';
