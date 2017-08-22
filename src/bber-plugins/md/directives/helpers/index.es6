@@ -1,6 +1,50 @@
+// import crypto from 'crypto'
 import { forOf } from 'bber-utils'
 import { log } from 'bber-plugins'
-import { BLOCK_DIRECTIVES, INLINE_DIRECTIVES, MISC_DIRECTIVES } from 'bber-shapes/directives'
+import {
+  BLOCK_DIRECTIVES,
+  INLINE_DIRECTIVES,
+  MISC_DIRECTIVES,
+  FRONTMATTER_DIRECTIVES,
+  BODYMATTER_DIRECTIVES,
+  BACKMATTER_DIRECTIVES,
+  ALL_DIRECTIVES,
+  DIRECTIVES_REQUIRING_ALT_TAG,
+  SUPPORTED_ATTRIBUTES,
+} from 'bber-shapes/directives'
+
+
+//
+// querying hierarchies gets confusing, so we're using biological taxonomic
+// rank as an analogue for classification. which is obvs less confusing...
+//
+// Class    -> Order  -> Family       -> Genus
+// element  -> block  -> frontmatter  -> preface
+//
+
+
+const _lookUpFamily = genus =>
+  FRONTMATTER_DIRECTIVES.indexOf(genus) > -1 ? 'frontmatter' :
+  BODYMATTER_DIRECTIVES.indexOf(genus) > -1 ? 'bodymatter' :
+  BACKMATTER_DIRECTIVES.indexOf(genus) > -1 ? 'backmatter' :
+  ''
+
+/**
+ * Determine the directive's classification and parent's type
+ * @param  {String}           genus [description]
+ * @return {Object<String>}
+ */
+const _directiveOrder = genus =>
+  BLOCK_DIRECTIVES.indexOf(genus) > -1 ? 'block' :
+  INLINE_DIRECTIVES.indexOf(genus) > -1 ? 'inline' :
+  MISC_DIRECTIVES.indexOf(genus) > -1 ? 'misc' :
+  null
+
+const _requiresAltTag = genus =>
+  DIRECTIVES_REQUIRING_ALT_TAG.indexOf(genus) > -1
+
+const _isUnsupportedAttribute = attr =>
+  SUPPORTED_ATTRIBUTES.indexOf(attr) < 0
 
 const _applyTransforms = (k, v) => {
   switch (k) {
@@ -15,91 +59,73 @@ const _applyTransforms = (k, v) => {
     case 'source':
       return ` src="${v}"`
 
-    // media
-    // boolean attrs
+    // boolean attrs for audio/video elements
     case 'autoplay':
-    case 'loop':
-    case 'controls':
     case 'muted':
+    case 'controls':
+    case 'autobuffer':
+    case 'loop':
       return v === 'yes' ? ` ${k}="${k}"` : ''
 
-    case 'preload':
-    case 'alt':
     default:
       return ` ${k}="${v}"`
   }
 }
 
-const _lookUpFamily = (genus) => {
-  switch (genus) {
-    case 'frontmatter':
-    case 'halftitlepage':
-    case 'titlepage':
-    case 'dedication':
-    case 'epigraph':
-    case 'foreword':
-    case 'preface':
-    case 'acknowledgments':
-      return 'frontmatter'
-    case 'bodymatter':
-    case 'introduction':
-    case 'prologue':
-    case 'chapter':
-    case 'subchapter':
-    case 'epilogue':
-    case 'afterword':
-    case 'conclusion':
-      return 'bodymatter'
-    case 'backmatter':
-    case 'loi':
-    case 'appendix':
-    case 'seriespage':
-    case 'credits':
-    case 'contributors':
-    case 'colophon':
-      return 'backmatter'
-    default:
-      return ''
+
+// MarkdownIt returns a trimmed string of the directive's attributes, which
+// are parsed and transformed into a string of HTML attributes
+//
+//    ::: directive:id classes:"foo bar baz" page-break-before:yes
+//    -> ' classes:"foo bar baz" page-break-before:yes'
+//    -> { classes:"foo bar baz", "page-break-before":"yes" }
+//    -> class="foo bar baz" style="page-break-before:true;"
+//
+const _parseAttrs = (s) => {
+
+  const out = {}
+
+  let str = ''
+  let open
+  let delim
+  let char
+  let next
+  let key
+
+  for (let i = 0; i < s.length; i++) {
+    char = s[i].charCodeAt(0)
+    next = s[i + 1] ? s[i + 1].charCodeAt(0) : ''
+
+    if (!open && char === 58/* : */) { // char is a token, we set `open` so that we don't misinterpret literals inside quotations
+      open = true
+      key = str
+      str = ''
+      delim = 32/*   */
+      if (next === 34/* " */ || next === 39/* ' */) { i++; delim = next }
+      continue
+    }
+
+    if (char === delim) { // token is ending delimiter since we've advanced our pointer
+      key = key.trim() // trim whitespace, allowing for multiple spaces
+      out[key] = str
+      str = key = ''
+      open = delim = null
+      continue
+    }
+
+    str += s[i]
+
+    if (i === s.length - 1) { // end of line
+      if (key && key.length && str && str.length) {
+        out[key] = str
+      }
+    }
   }
+
+  return out
 }
 
-const SUPPORTED_ATTRIBUTES = [
-  'title',
-  'classes',
-  'pagebreak',
-  'attributes',
-  'alt',
-  'citation',
-  'source',
-  'poster',
-  'autoplay',
-  'loop',
-  'controls',
-  'muted',
-  'preload',
-]
-
-// ::: directive:id classes:"foo bar baz" page-break-before:yes
-// <- ' classes:"foo bar baz" page-break-before:yes'
-
-// -> [foo:bar, baz:qux]
-const _extractAttrs = str =>
-  str.split(/([\w-]+:['"][^'"]+['"]|[\w-]+\w[^\s]+)/)
-  .map(_ => _.trim())
-  .filter(Boolean)
-
-// -> { foo: 'bar', baz: 'qux' }
-const _buildAttrObjects = (arr) => {
-  const o = {}
-  arr.forEach((_) => {
-    const [, k, v] = _.split(/^([^:]+):/)
-    o[k] = v.replace(/(?:^["']|["']$)/g, '')
-  })
-
-  return o
-}
-
-// -> foo="bar" baz="qux"
+// -> prop="val"
 const _buildAttrString = (obj) => {
   let s = ''
   forOf(obj, (k, v) => {
@@ -109,30 +135,6 @@ const _buildAttrString = (obj) => {
   return s
 }
 
-/**
- * Determine the directive's classification and parent's type
- * @param  {String} name [description]
- * @return {Object<String>}
- */
-const _getDirectiveTaxonomy = (name) => {
-  // Class    -> Order  -> Family       -> Genus
-  // element  -> block  -> frontmatter  -> preface
-  let index
-  let order
-  let genus
-  if ((index = BLOCK_DIRECTIVES.indexOf(name)) > -1) {
-    order = 'block'
-    genus = BLOCK_DIRECTIVES[index]
-  } else if ((index = INLINE_DIRECTIVES.indexOf(name)) > -1) {
-    order = 'inline'
-    genus = INLINE_DIRECTIVES[index]
-  } else if ((index = MISC_DIRECTIVES.indexOf(name)) > -1) {
-    order = 'misc'
-    genus = MISC_DIRECTIVES[index]
-  }
-
-  return { order, genus }
-}
 
 /**
  * Ensure that attributes required for valid XHTML are present, and that
@@ -141,30 +143,33 @@ const _getDirectiveTaxonomy = (name) => {
  * @param  {String} name [description]
  * @return {Object}
  */
-const _extendWithDefaults = (obj, name) => {
+const _extendWithDefaults = (obj, genus) => {
   const result = { ...obj }
-  const { order, genus } = _getDirectiveTaxonomy(name)
-
-  if (!order || !genus) { throw new TypeError(`Invalid directive type: [${name}]`) }
+  const order = _directiveOrder(genus)
+  if (!order) { throw new TypeError(`Invalid directive type: [${genus}]`) }
 
   let taxonomy
   switch (order) {
+
     case 'block':
-      taxonomy = `${_lookUpFamily(genus)} ${genus}`
+      taxonomy = `${_lookUpFamily(genus)} ${genus}`     // -> `bodymatter chapter`
       result.epubTypes = taxonomy
       if ({}.hasOwnProperty.call(obj, 'classes')) {
-        result.classes += ` ${taxonomy}`
+        result.classes += ` ${taxonomy}`                // -> class="... bodymatter chapter"
       } else {
-        result.classes = taxonomy
+        result.classes = taxonomy                       // -> class="bodymatter chapter"
       }
       return result
+
     case 'inline':
-      if (genus === 'figure' || genus === 'inline-figure' || genus === 'logo') {
+      if (_requiresAltTag(genus)) {
         if (!{}.hasOwnProperty.call(obj, 'alt')) {
           result.alt = result.source
         }
       }
+
       return result
+
     case 'misc':
     default:
       return result
@@ -174,38 +179,33 @@ const _extendWithDefaults = (obj, name) => {
 /**
  * Create an object from attributes in the given directive
  * @param  {String} attrs   The directives attributes string
- * @param  {String} type    The type of directive
+ * @param  {String} genus   The type of directive
  * @param  {Object} context Markdown file where attributes method was called
  * @return {String}
  */
-const attributesObject = (attrs, type, context) => {
+const attributesObject = (attrs, genus, context = {}) => {
+  const { filename, lineNr } = context
   let attrsObject = {}
-  if (!type || typeof type !== 'string') { throw new TypeError('No directive provided') }
-  if (attrs && typeof attrs === 'string') {
-    const body = attrs.trim()
-    const attrsArray = _extractAttrs(body)
-    try {
-      attrsObject = _buildAttrObjects(attrsArray)
-    } catch (err) {
-      const { filename, lineNr } = context
-      log.error(`
-        Invalid directive: ${filename}:${lineNr}`)
-      process.exit(1)
-    }
+
+  if (!genus || typeof genus !== 'string') {
+    log.error(`No directive provided: ${filename}:${lineNr}`, 1)
   }
 
-  const illegalAttrs = []
-  const _attrsObject = { ...attrsObject } // so we don't modify during iteration
-  forOf(_attrsObject, (k) => {
-    if (SUPPORTED_ATTRIBUTES.indexOf(k) < 0) {
-      illegalAttrs.push(k)
-      delete attrsObject[k]
-    }
-  })
+  if (ALL_DIRECTIVES.indexOf(genus) < 0) {
+    log.error(`Invalid directive: [${genus}] at ${filename}:${lineNr}`, 1)
+  }
 
-  if (illegalAttrs.length) { log.warn(`Removing illegal attributes: [${illegalAttrs.join()}]`) }
-  const mergedAttrs = _extendWithDefaults(attrsObject, type)
+  if (attrs && typeof attrs === 'string') {
+    forOf(_parseAttrs(attrs.trim()), (k, v) => {
+      if (_isUnsupportedAttribute(k)) {
+        return log.warn(`Omitting illegal attribute [${k}] at [${filename}:${lineNr}]`)
+      }
 
+      attrsObject[k] = v
+    })
+  }
+
+  const mergedAttrs = _extendWithDefaults(attrsObject, genus)
   return mergedAttrs
 }
 
@@ -230,20 +230,8 @@ const attributes = (str, type, context) => _buildAttrString(attributesObject(str
  * @param  {String} s [description]
  * @return {String}
  */
-const stringToCharCode = (s) => {
-  let out = ''
-  for (let i = 0; i < s.length; i++) {
-    out += `&#${s[i].charCodeAt(0)};`
-  }
-  return out
-}
-
-/**
- * [description]
- * @param  {String} s [description]
- * @return {String}
- */
-const htmlId = s => `_${String(s).replace(/[^0-9a-zA-Z-]/g, '_')}`
+const htmlId = s =>
+  `_${String(s).replace(/[^0-9a-zA-Z-_]/g, '_')}`//-${crypto.createHash('md5').update(s).digest('hex')}`
 
 
-export { attributes, attributesObject, attributesString, stringToCharCode, htmlId }
+export { attributes, attributesObject, attributesString, htmlId }
