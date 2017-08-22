@@ -38,10 +38,11 @@ export default {
     },
 
     render(tokens, idx) {
-      const match = tokens[idx].info.trim().match(imageOpenRegExp)
-      const [, type, id, attrs] = match
       const filename = `_markdown/${context.filename}.md`
       const lineNr = tokens[idx].map ? tokens[idx].map[0] : null
+
+      const match = tokens[idx].info.trim().match(imageOpenRegExp)
+      const [, type, id, attrs] = match
       const children = tokens[idx].children
       const caption = children ? instance.renderInline(tokens[idx].children) : ''
       const comment = htmlComment(`START: figure:${type}#${htmlId(id)}; ${filename}:${lineNr}`)

@@ -49,18 +49,21 @@ const createRemoteMediaSource = sources =>
 export default {
   plugin: figure,
   name: 'audio',
-  renderer: ({ instance }) => ({
+  renderer: ({ instance, context }) => ({
     marker: ':',
     minMarkers: 3,
     validate(params) {
       return params.trim().match(markerRe)
     },
     render(tokens, idx) {
+      const filename = `_markdown/${context.filename}.md`
+      const lineNr = tokens[idx].map ? tokens[idx].map[0] : null
+
       // const renderInline = instance && instance.renderInline ? instance.renderInline : passThrough
 
       const match = tokens[idx].info.trim().match(directiveRe)
       const [, type, id, attrs] = match
-      const attrsObj = attributesObject(attrs, type)
+      const attrsObj = attributesObject(attrs, type, { filename, lineNr })
       const { audio } = store
       const children = tokens[idx].children
       const caption = children ? instance.renderInline(tokens[idx].children) : ''
