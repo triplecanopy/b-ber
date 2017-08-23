@@ -38,8 +38,8 @@ $font-ratios: (
 $font-ratio: map-get($font-ratios, $font-scale);
 
 
-@import 'mixins';
 @import 'settings';
+@import 'mixins';
 @import 'debug';
 @import 'typography/typography';
 @import 'layout/layout';

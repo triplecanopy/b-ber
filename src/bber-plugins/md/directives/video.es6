@@ -19,10 +19,10 @@ const validatePosterImage = (_asset) => {
   const asset = path.join(src(), '_images', _asset)
   try {
     if (!fs.existsSync(asset)) {
-      throw new Error('Directive [video] poster image does not exist, aborting')
+      throw new Error('Directive [video] poster image does not exist')
     }
   } catch (err) {
-    log.error(err, 1)
+    log.warn(err)
   }
 
   return asset

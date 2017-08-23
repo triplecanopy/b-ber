@@ -15,18 +15,6 @@ const toAlias = fpath => path.basename(path.basename(fpath, path.extname(fpath))
 
 const isHostedRemotely = asset => /^http/.test(asset)
 
-// const validatePosterImage = (_asset) => {
-//   const asset = path.join(src(), '_images', _asset)
-//   try {
-//     if (!fs.existsSync(asset)) {
-//       throw new Error('Directive [audio] poster image does not exist, aborting')
-//     }
-//   } catch (err) {
-//     log.error(err, 1)
-//   }
-
-//   return asset
-// }
 
 const validateLocalMediaSource = (asset) => {
   const { audio } = store

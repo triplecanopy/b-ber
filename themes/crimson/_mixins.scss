@@ -112,7 +112,8 @@
 // @example     adjust-font-size-value(1) // => 1em
 // @example     adjust-font-size-value(2) // => 2em
 @function adjust-font-size-value($value) {
-    @return $font-size-base / strip-unit(ms($value)) + 0em;
+    // @return $font-size-base / strip-unit(ms($value)) + 0em;
+    @return strip-unit(ms($value)) + 0em;
 }
 
 // Compose typographic styles
@@ -153,6 +154,10 @@
 @function five-ems($value)      { @return n-ems(5, $value);     }
 
 
+.foo {
+    font-size: two-ems(0);
+}
+
 // Add padding programatically based on font-size
 // @param $top      int     Number of line-height units at type-settings(0) to add as padding-top
 // @param $left     int     Number of `em`s at type-settings(0) to add as padding-left
@@ -168,7 +173,6 @@
         adjust-font-size-value($value) * $left + 0em
     ;
 }
-
 
 // Defaults to 16px, assuming the `html` element's base font size
 @function em-to-px($value, $root-px: 16px) {

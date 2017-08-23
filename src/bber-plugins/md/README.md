@@ -8,13 +8,13 @@ This directory contains `plugins`, which modify the behaviour of the Markdown pa
 
 ## Directives
 
-In a Markdown document, directives are declared with custom syntax. A directive starts with three consecutive colons, must include an `id` attribute, and may include other optional or required attributes. See the `image` directive below for reference.
+In a Markdown document, directives are declared with custom syntax. A directive starts with three consecutive colons, must include an `id` attribute, and may include other optional or required attributes. See the `figure` directive below for reference.
 
 ```html
 <!-- chapter-one.md -->
 # Chapter One
 
-::: image:image-one source:"./images/my-image.jpg" alt:"My Image"
+::: figure:figure-one source:"./images/my-image.jpg" alt:"My Image"
 ```
 
 A complete list of directives and their attributes can be found [here](https://github.com/triplecanopy/b-ber-creator/wiki/Custom-Directives).
@@ -128,7 +128,7 @@ Plugins can be divided into `block` and `inline` categories. To maintain consist
 ```html
 <!-- chapter-one.md -->
 
-::: image:one source:my-image.jpg
+::: figure:one source:my-image.jpg
 ```
 
 ### Authoring Plugins

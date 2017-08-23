@@ -276,15 +276,17 @@ class Store {
 
   loadAudioVideo() {
     const mediaPath = path.join(cwd, this.config.src, '_media')
-    if (fs.existsSync(mediaPath)) {
-      const media = fs.readdirSync(mediaPath)
-      const videos = media.filter(_ => /^video/.test(mime.lookup(_)))
-      const audio = media.filter(_ => /^audio/.test(mime.lookup(_)))
+    try {
+      if (fs.existsSync(mediaPath)) {
+        const media = fs.readdirSync(mediaPath)
+        const videos = media.filter(_ => /^video/.test(mime.lookup(_)))
+        const audio = media.filter(_ => /^audio/.test(mime.lookup(_)))
 
-      this.videos = videos
-      this.audio = audio
-    } else {
-      fs.mkdir(mediaPath)
+        this.videos = videos
+        this.audio = audio
+      }
+    } catch (err) {
+      throw new Error(err)
     }
   }
 

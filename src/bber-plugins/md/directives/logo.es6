@@ -35,10 +35,10 @@ export default {
 
       try {
         if (!fs.existsSync(inputImagePath)) {
-          throw new Error(`Image [${attrsObj.source}] does not exist, aborting`)
+          throw new Error(`Image [${attrsObj.source}] does not exist`)
         }
       } catch (err) {
-        log.error(err, 1)
+        log.warn(err)
       }
 
       delete attrsObj.source // since we need the path relative to `images`

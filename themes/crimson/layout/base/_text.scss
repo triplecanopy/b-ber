@@ -12,7 +12,7 @@ p  { @include type-settings(0); }
 // Text Properties
 p {
     @if $text-indent == true {
-        text-indent: $font-size-base * 2 !important;
+        text-indent: two-ems(0) !important;
         h1 + &, h2 + &, h3 + &, h4 + &, h5 + &, h6 + & { text-indent: 0 !important; }
     }
 }
@@ -62,22 +62,16 @@ p {
     text-indent: one-em(0);
 
     blockquote & {
-        text-indent: 0;
-        @include type-settings(-2);
+        text-indent: 0!important;
+        @include type-settings(-1);
     }
 
-    .frontmatter &,
-    section.backmatter & {
-        text-indent: 0;
-        @include padding(0, 0, 1, 0, -1);
-    }
 
+    section.frontmatter &,
     section.colophon &,
     section.appendix &,
     section.backmatter {
-        font-weight: normal;
-        font-style: normal;
-        text-indent: 0;
+        text-indent: 0 !important;
         @include following-paragraph-not-indented;
         @include type-settings(-1);
         @include padding(0, 0, 1, 0, -1);
@@ -93,6 +87,10 @@ p {
         font-weight: normal;
         @include following-paragraph-not-indented;
         @include type-settings(-1);
+    }
+
+    .pull-quote + & {
+        text-indent: 0!important;
     }
 
     .epigraph .pull-quote & {
@@ -137,14 +135,14 @@ cite {
 // Inline elements
 sup,
 sub {
-    @include type-settings(-3);
+    @include type-settings(-1);
     line-height: 1;
     vertical-align: baseline;
     position: relative;
 }
 
-sup { top: one-em(-3) * -0.5; }
-sub { bottom: one-em(-3) * 0.5; }
+sup { top: one-em(-1) * -0.4; }
+sub { bottom: one-em(-1) * 0.4; }
 
 small {
     @include type-settings(-1);
@@ -211,6 +209,7 @@ ol.footnotes {
         padding: 0;
         margin: 0;
         text-indent: 0!important;
+        font-size: 1em; // children, since we need to include paras in the li elements
         p { text-indent: 0!important; }
         a { text-decoration: none!important; }
         span.hidden-backlink { display: inline; }

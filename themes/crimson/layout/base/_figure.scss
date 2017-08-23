@@ -20,7 +20,7 @@ figure {
 
     .figcaption, figcaption {
         @include following-paragraph-not-indented;
-        width: 50%;
+        // width: 50%;
         display: inline-block;
         text-align: left;
         a {
@@ -147,7 +147,7 @@ figcaption, .figcaption {
 
 
     p.small {
-        @include type-settings(-1);
+        @include type-settings(-2);
         margin-bottom: 0;
         text-align: left;
         text-indent: 0!important;
@@ -155,7 +155,7 @@ figcaption, .figcaption {
 
     .figure__large &,
     .figure-lg & {
-        width: 90%;
+        // width: 90%;
         margin: 0;
         padding: 0;
     }
