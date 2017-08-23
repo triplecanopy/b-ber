@@ -1,84 +1,169 @@
 
-// Base styles
-.figure-sm,
-.figure-lg,
-.figure-xl {
+//
+//
+// `.figure-xx`/`.figure__xx` classes are containers for figure elements, the
+// `figure` element itself is styled immediately below
+//
+
+
+// Element styles
+figure {
+    @include following-paragraph-not-indented;
+    margin: 0 auto;
+    padding: 0;
+
+    img {
+        display: inline-block;
+        margin: 0 auto;
+        vertical-align: top;
+    }
+
+    .figcaption, figcaption {
+        @include following-paragraph-not-indented;
+        width: 50%;
+        display: inline-block;
+        text-align: left;
+        a {
+            text-decoration: none;
+        }
+    }
+
+}
+
+
+
+
+
+//
+// Base container styles
+// New class names          Legacy class names
+.figure__small,             .figure-sm,
+.figure__medium,            .figure-md,
+.figure__large,             .figure-lg,
+.figure__inline,            .figure-inline
+{
     page-break-inside: avoid;
     text-align: center;
 }
 
-.figure-md { // Large inline images (used in epigraph)
-    text-align: center;
-    page-break-inside: avoid;
-    height: 350px!important;
-    figcaption,
-    .figcaption {
-        text-align: center;
-        width: 100%;
+
+
+// Containers for inline images (used in text flow)
+.figure__small,
+.figure-sm {
+
+    // sizes for the images
+    &.figure__small--landscape,         // new class names
+    &.figure__small--square,            // new class names
+    &.figure__small--portrait,          // new class names
+    &.figure__small--portrait--high,    // new class names
+
+    &.landscape,                        // legacy
+    &.square,                           // legacy
+    &.portrait,                         // legacy
+    &.portraitLong {                    // legacy
+        @include padding(1,0,1,0,0);
+        h1 + & { padding-top: 0 }
+        figure, a, img { width: auto; }
     }
 
-    .epigraph & {
-        margin-top: 0!important;
-        padding-top: 0!important;
-        page-break-inside:avoid;
-    }
-}
 
-.figure-sm { // Small inline images (used in text flow)
-    text-align: center;
     a {
         display: block;
         margin:0 auto;
     }
-    &.landscape,
-    &.square {
-        h1 + & { padding-top: 0 }
-        @include padding(0,1,0,1,0);
-        figure, a, img {
-            width: auto;
-            height: 4.8em; // 108px
-        }
-    }
-    &.portrait,
-    &.portraitLong {
-        h1 + & { padding-top: 0 }
-        padding-top:1.35em;
-        padding-bottom:1.23em;
-        padding-left:0;
-        padding-right:0;
-        figure, a, img {
-            width: auto;
-            height: 7.11111em; // 160px
-        }
-    }
+
+
     + blockquote,
     + blockquote.dialogue { padding-top: 0; }
+
+
+    &.figure__small--landscape,         // new class names
+    &.landscape                         // legacy
+    {
+        figure, a, img {
+            height: n-ems($landscape-image-height, 0);
+        }
+    }
+
+    &.figure__small--square,            // new class names
+    &.square                            // legacy
+    {
+        figure, a, img {
+            height: n-ems($square-image-height, 0);
+        }
+    }
+
+
+
+    &.figure__small--portrait,          // new class names
+    &.portrait                         // legacy
+    {
+        figure, a, img {
+            height: n-ems($portrait-image-height, 0);
+        }
+    }
+
+
+    &.figure__small--portrait--high,    // new class names
+    &.portraitLong                      // legacy
+    {
+        figure, a, img {
+            height: n-ems($portrait-image--high-height, 0);
+        }
+    }
 }
 
-// Figures pages
-figcaption,
-.figcaption {
+
+// Images used in epigraph
+.figure-md {
+    text-align: center;
+    page-break-inside: avoid;
+    // height: 350px!important;
+    height: n-ems(14, 0);
+
+    .epigraph & {
+        margin-top: 0!important;
+        padding-top: 0!important;
+        page-break-inside: avoid;
+    }
+
+}
+
+
+
+
+// `figcaption` element and `.figcaption` class both refer to the same
+// element because the `figcaption` element is not supported on some
+// readers
+figcaption, .figcaption {
+    text-align: center;
+    width: 100%;
     @include following-paragraph-not-indented;
-    @include type-settings(-3);
+    // @include type-settings(-3);
 
     display: inline-block;
     a { text-decoration: none; }
-    .figure-lg & {
-        padding-top: 0;
-        padding-bottom: 0;
-        font-size: .68em;
-        line-height: 2.05882em;
-        line-height: 1.33em;
-        display: block;
-        text-align: left;
-        margin-top: .83333em;
-        margin-left: auto;
-        margin-right: auto;
+
+
+    p.small {
+        @include type-settings(-1);
         margin-bottom: 0;
+        text-align: left;
+        text-indent: 0!important;
+    }
+
+    .figure__large &,
+    .figure-lg & {
+        width: 90%;
+        margin: 0;
+        padding: 0;
     }
 }
+
 .img-wrap {
     width: 100%;
     a { text-decoration: none!important; }
     .epigraph & { padding-top: 7px; }
 }
+

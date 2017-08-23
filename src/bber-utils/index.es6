@@ -201,8 +201,12 @@ const version = () => store.version
 
 // TODO: this should check that the theme exists in the `themes` dir
 const theme = () => {
-  const themeName = store.config.theme
-  return { tpath: path.join(__dirname, '../../', 'themes', themeName), tname: themeName }
+  const name = store.config.theme
+  return {
+    name,
+    root: path.join(__dirname, '../../', 'themes'),
+    path: path.join(__dirname, '../../', 'themes', name),
+  }
 }
 
 /**

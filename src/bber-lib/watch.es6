@@ -13,7 +13,7 @@ let files = []
 
 const restart = () =>
   new Promise(resolve =>
-    serialize(['container', 'copy', 'sass', 'scripts', 'render', 'loi', 'inject'])
+    serialize(['container', 'sass', 'copy', 'scripts', 'render', 'loi', 'inject'])
     .then(resp => resolve(resp))
   )
 

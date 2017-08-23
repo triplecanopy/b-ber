@@ -181,28 +181,28 @@
 // Layout
 //
 //
-@mixin figure($max-width: 45) {
-    page-break-inside: avoid;
-    text-align: center;
+// @mixin figure($max-width: 45) {
+//     page-break-inside: avoid;
+//     text-align: center;
 
-    @include following-paragraph-not-indented;
-    img {
-        display: inline-block;
-        margin: 0 auto;
-        vertical-align: top;
-    }
+//     @include following-paragraph-not-indented;
+//     img {
+//         display: inline-block;
+//         margin: 0 auto;
+//         vertical-align: top;
+//     }
 
-    figcaption {
-        @include following-paragraph-not-indented;
-        @include type-settings(-3);
-        width: percentage($max-width/110);
-        display: inline-block;
-        text-align: left;
-        a {
-            text-decoration: none;
-        }
-    }
-}
+//     figcaption {
+//         @include following-paragraph-not-indented;
+//         @include type-settings(-3);
+//         width: percentage($max-width/110);
+//         display: inline-block;
+//         text-align: left;
+//         a {
+//             text-decoration: none;
+//         }
+//     }
+// }
 
 @mixin following-paragraph-not-indented {
     + p { text-indent: 0; }

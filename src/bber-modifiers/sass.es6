@@ -26,7 +26,7 @@ const createScssString = () =>
     const chunks = []
     const variableOverridesPath = path.join(src(), '_stylesheets/variable-overrides.scss')
     const styleOverridesPath = path.join(src(), '_stylesheets/style-overrides.scss')
-    const themeStylesPath = path.join(theme().tpath, 'application.scss')
+    const themeStylesPath = path.join(theme().path, 'application.scss')
 
     try {
       if (fs.existsSync(variableOverridesPath)) {
@@ -36,19 +36,19 @@ const createScssString = () =>
         chunks.push(variableOverrides)
       }
     } catch (err) {
-      // log.info(`bber-modifiers/sass: Attempting to build with [${theme().tname}] theme`)
+      // log.info(`bber-modifiers/sass: Attempting to build with [${theme().name}] theme`)
       log.info('bber-modifiers/sass: Building SCSS without user-defined overrides')
     }
 
     try {
       if (fs.existsSync(themeStylesPath)) {
         const themeStyles = fs.readFileSync(themeStylesPath)
-        log.info(`bber-modifiers/sass: Attempting build with [${theme().tname}] theme`)
+        log.info(`bber-modifiers/sass: Attempting build with [${theme().name}] theme`)
         chunks.push(themeStyles)
       }
     } catch (err) {
       log.error(`bber-modifiers/sass:
-        Could not find theme [${theme().tname}].
+        Could not find theme [${theme().name}].
         Make sure the theme exists and contains a valid [application.scss]`)
     }
 
@@ -60,7 +60,7 @@ const createScssString = () =>
         chunks.push(styleOverrides)
       }
     } catch (err) {
-      // log.info(`bber-modifiers/sass: Attempting to build with [${theme().tname}] theme`)
+      // log.info(`bber-modifiers/sass: Attempting to build with [${theme().name}] theme`)
       log.info('bber-modifiers/sass: Building SCSS without user-defined styles')
     }
 
@@ -96,10 +96,20 @@ const copyThemeAssets = () => {
     const promises = []
     ASSET_DIRNAMES.forEach((dir) => {
       promises.push(new Promise((resolve) => {
-        const themePath = path.join(theme().tpath, dir)
+        const themePath = path.join(theme().path, dir)
         const srcPath = path.join(src(), `_${dir}`)
+
+
         try {
-          if (fs.lstatSync(themePath).isDirectory() && fs.existsSync(srcPath)) {
+          if (!fs.existsSync(srcPath)) {
+            fs.mkdirp(srcPath)
+          }
+        } catch (err1) {
+          log.error(err1, 1)
+        }
+
+        try {
+          if (fs.lstatSync(themePath).isDirectory()) {
             const files = fs.readdirSync(themePath)
 
             files.forEach((file, i) => {
@@ -109,8 +119,8 @@ const copyThemeAssets = () => {
               fs.copy(input, output, {
                 overwrite: false,
                 errorOnExist: true,
-              }, (err1) => {
-                if (err1) { throw err1 }
+              }, (err2) => {
+                if (err2) { throw err2 }
                 if (i === files.length -1) { // not sure about this...
                   resolve()
                 }
@@ -136,7 +146,7 @@ const renderCss = scssString =>
   new Promise(resolve =>
     nsass.render({
       data: `$build: "${build()}";${scssString}`,
-      includePaths: [path.join(src(), '_stylesheets/'), theme().tpath],
+      includePaths: [path.join(src(), '_stylesheets/'), theme().path],
       outputStyle: env() === 'production' ? 'compressed' : 'nested',
       errLogToConsole: true,
     }, (err, result) => {

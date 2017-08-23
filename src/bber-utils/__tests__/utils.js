@@ -200,7 +200,7 @@ describe('module:utils', () => {
       const t = theme()
       t.should.be.an('object')
       t.should.have.property('tpath')
-      t.tpath.should.equal(path.join(cwd, 'themes', t.tname))
+      t.path.should.equal(path.join(cwd, 'themes', t.name))
     })
   })
   describe('#metadata', () => {

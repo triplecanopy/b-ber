@@ -190,7 +190,7 @@ function stylesheets(src) {
   return [{
     relpath: `${src}/_stylesheets/variable-overrides.scss`,
     content: fs.readFileSync(
-      path.join(theme().tpath, '_theme-settings.scss')
+      path.join(theme().path, '_settings.scss')
     , 'utf8').replace(/\s+?!default/g, ''),
   }, {
     relpath: `${src}/_stylesheets/style-overrides.scss`,

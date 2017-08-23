@@ -1,3 +1,6 @@
+// Set @page margin for e-readers
+@page { margin: em-to-px($font-size-base * 2); }
+
 @import 'base/container';
 @import 'base/figure';
 @import 'base/layout';

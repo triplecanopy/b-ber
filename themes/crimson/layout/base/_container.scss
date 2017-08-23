@@ -1,9 +1,3 @@
-// html {
-//   @if $build == web {
-//     @include break('mobile') { font-size: 112.5%; } // 18px
-//     @include break('ipad-pro') { font-size: 192.5%; } // 30.8px
-//   }
-// }
 
 body {
     margin:0;
@@ -21,7 +15,6 @@ body {
 blockquote {
     @include type-settings(0);
     @include following-element-has-no-top-padding;
-    // padding: 0.9em 2.31em 0.95em 2.31em;
     @include padding(1, 2, 1, 2, 0);
     text-indent: 0;
 }
@@ -72,13 +65,6 @@ section.bibliography {
     }
 }
 
-.figure-inline {
-    @include figure;
-}
-.figure-lg {
-    @include figure(100);
-    text-align: left;
-}
 
 aside.note {
     text-align:left;
@@ -94,15 +80,13 @@ aside.note {
 
 .pull-quote {
     text-indent: 0;
-    // padding: 0 rhythm(1.65) 1.65em;
-    @include padding(0, 1, 0, 1, 0);
+    @include padding(0, 1, 1, 1, 0);
 
     section.titlepage &,
     section.introduction &,
     section.afterword & {
         float: none;
         clear: both;
-        // padding-bottom: 5.65em;
         padding-bottom: four-lines(0);
         padding-top: 0;
     }
