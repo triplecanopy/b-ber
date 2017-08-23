@@ -43,11 +43,11 @@ const theme = () =>
       return fs.writeFile(configPath, Yaml.dump(config), (err) => {
         if (err) { throw err }
         log.info(`\nSuccessfully set theme theme to "${themeName}"\n`)
-        resolve()
+        return resolve()
       })
     }
 
-    return reject(yargs.showHelp())
+    return resolve(yargs.showHelp())
   })
 
 export default theme
