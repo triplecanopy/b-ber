@@ -24,4 +24,4 @@
 
   - Version:
   
-## Screen shots
+## Screen Shots
