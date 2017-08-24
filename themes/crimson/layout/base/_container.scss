@@ -14,9 +14,9 @@ body {
 
 blockquote {
     margin: 0;
-    font-size: 1em; // reset for children
+    font-size: one-em(0);
     @include following-element-has-no-top-padding;
-    @include padding(1, 2, 1, 2, 0);
+    @include padding(1, 1, 1, 1, 0);
 }
 
 
@@ -80,6 +80,7 @@ aside.note {
 
 .pull-quote {
     text-indent: 0;
+    font-size: one-em(0);
     @include padding(0, 1, 1, 1, 0);
 
     section.titlepage &,
@@ -97,7 +98,6 @@ aside.note {
         @include padding(0, 1, 0, 1, 0);
     }
 }
-
 
 
 

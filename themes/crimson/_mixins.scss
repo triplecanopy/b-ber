@@ -154,10 +154,6 @@
 @function five-ems($value)      { @return n-ems(5, $value);     }
 
 
-.foo {
-    font-size: two-ems(0);
-}
-
 // Add padding programatically based on font-size
 // @param $top      int     Number of line-height units at type-settings(0) to add as padding-top
 // @param $left     int     Number of `em`s at type-settings(0) to add as padding-left
@@ -167,8 +163,10 @@
 // @example         padding: @include padding(1, 1, 1, 1, 0) // => padding: 1em 1.3125em 1em 1.3125em;
 @mixin padding($top, $right, $bottom, $left, $value) {
     padding:
+        // adjust-line-height-value($value) * ($top * 4) + 0em // to account for halved line-height
         adjust-line-height-value($value) * $top + 0em
         adjust-font-size-value($value) * $right + 0em
+        // adjust-line-height-value($value) * ($bottom * 4) + 0em // to account for halved line-height
         adjust-line-height-value($value) * $bottom + 0em
         adjust-font-size-value($value) * $left + 0em
     ;
@@ -179,34 +177,6 @@
     @return strip-unit($value) * strip-unit($root-px) + 0px;
 }
 
-
-
-//
-// Layout
-//
-//
-// @mixin figure($max-width: 45) {
-//     page-break-inside: avoid;
-//     text-align: center;
-
-//     @include following-paragraph-not-indented;
-//     img {
-//         display: inline-block;
-//         margin: 0 auto;
-//         vertical-align: top;
-//     }
-
-//     figcaption {
-//         @include following-paragraph-not-indented;
-//         @include type-settings(-3);
-//         width: percentage($max-width/110);
-//         display: inline-block;
-//         text-align: left;
-//         a {
-//             text-decoration: none;
-//         }
-//     }
-// }
 
 @mixin following-paragraph-not-indented {
     + p { text-indent: 0; }

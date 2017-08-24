@@ -12,7 +12,7 @@ p  { @include type-settings(0); }
 // Text Properties
 p {
     @if $text-indent == true {
-        text-indent: two-ems(0) !important;
+        text-indent: one-em(0) !important;
         h1 + &, h2 + &, h3 + &, h4 + &, h5 + &, h6 + & { text-indent: 0 !important; }
     }
 }
@@ -63,7 +63,8 @@ p {
 
     blockquote & {
         text-indent: 0!important;
-        @include type-settings(-1);
+        margin-bottom: 0!important;
+        @include type-settings(-2); // ---
     }
 
 
@@ -83,10 +84,11 @@ p {
 
     .pull-quote & {
         text-indent: 0!important;
+        margin-bottom: 0!important;
         font-style: italic;
         font-weight: normal;
         @include following-paragraph-not-indented;
-        @include type-settings(-1);
+        @include type-settings(-2); // ---
     }
 
     .pull-quote + & {
@@ -104,10 +106,9 @@ p {
 }
 
 cite {
-    @include type-settings(0);
     .pull-quote & {
         @include following-paragraph-not-indented;
-        @include type-settings(-1);
+        @include type-settings(-2); // ---
         font-weight: normal;
         text-indent: 0;
         display: block;
@@ -135,17 +136,16 @@ cite {
 // Inline elements
 sup,
 sub {
-    @include type-settings(-1);
-    line-height: 1;
+    @include type-settings(-4); // ---
     vertical-align: baseline;
     position: relative;
 }
 
-sup { top: one-em(-1) * -0.4; }
-sub { bottom: one-em(-1) * 0.4; }
+sup { top: one-em(-4) * -1; }
+sub { bottom: one-em(-4); }
 
 small {
-    @include type-settings(-1);
+    @include type-settings(-4);
 }
 
 code,
@@ -210,6 +210,7 @@ ol.footnotes {
         margin: 0;
         text-indent: 0!important;
         font-size: 1em; // children, since we need to include paras in the li elements
+        margin-left: one-em(0) * -1;
         p { text-indent: 0!important; }
         a { text-decoration: none!important; }
         span.hidden-backlink { display: inline; }

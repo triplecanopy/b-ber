@@ -147,7 +147,8 @@ figcaption, .figcaption {
 
 
     p.small {
-        @include type-settings(-2);
+        @include type-settings(-7);
+        line-height: 1.55; // TODO: calculate based on tininess
         margin-bottom: 0;
         text-align: left;
         text-indent: 0!important;

@@ -6,6 +6,11 @@
 // https://github.com/modularscale/modularscale-sass
 @import './node_modules/modularscale-sass/stylesheets/_modularscale';
 
+@import 'settings';
+@import 'mixins';
+@import 'debug';
+
+
 // for validation while building on CLI, not an actual setting
 $build: 'epub'                  !default;
 
@@ -37,9 +42,37 @@ $font-ratios: (
 
 $font-ratio: map-get($font-ratios, $font-scale);
 
+.foo {
+    font-family: $font-scale;
+}
 
-@import 'settings';
-@import 'mixins';
-@import 'debug';
+// Initialize Modular Scale
+//
+// @demo http://www.modularscale.com/
+// @repo https://github.com/modularscale/modularscale-sass
+$modularscale: (
+    base: $font-size-base,
+    ratio: $font-ratio
+);
+
+
 @import 'typography/typography';
 @import 'layout/layout';
+
+// some base styles
+html { font-size: 160%; }
+
+body { padding: 0 one-em(0) * .5; }
+
+@if $debug == true {
+    img { background-color: gainsboro; }
+}
+
+h1 { @include type-settings(0); }
+h2 { @include type-settings(0); }
+h3 { @include type-settings(0); }
+h4 { @include type-settings(0); }
+h5 { @include type-settings(0); }
+h6 { @include type-settings(0); }
+p  { @include type-settings(0); }
+
