@@ -2,6 +2,7 @@ ul {
     @include following-element-has-no-top-padding;
     @include padding(1, 0, 1, 2, 0);
     list-style: disc;
+    margin: 0;
 
     @if $build == web {
         list-style: none;
@@ -29,6 +30,7 @@ ol {
     @include following-element-has-no-top-padding;
     @include padding(1, 0, 1, 2, 0);
     list-style: decimal;
+    margin: 0;
 
     li {
         @include type-settings(0);

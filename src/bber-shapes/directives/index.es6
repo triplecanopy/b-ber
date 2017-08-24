@@ -24,11 +24,11 @@ const BODYMATTER_DIRECTIVES = [
   'chapter',
   'subchapter',
   'epilogue',
-  'afterword',
   'conclusion',
 ]
 const BACKMATTER_DIRECTIVES = [
   'backmatter',
+  'afterword',
   'loi',
   'appendix',
   'seriespage',

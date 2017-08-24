@@ -98,11 +98,13 @@ export default {
       const commentEnd = htmlComment(`END: audio:${type}#${htmlId(id)};`)
 
       return `${commentStart}
-        <audio id="${htmlId(id)}"${attrString}>
-          ${sourceElements}
-          <p>Your device does not support the HTML5 Audio API.</p>
-        </audio>
-        ${ caption ? `<p class="caption caption__audio">${caption}</p>` : '' }
+        <section class="audio">
+          <audio id="${htmlId(id)}"${attrString}>
+            ${sourceElements}
+            <p>Your device does not support the HTML5 Audio API.</p>
+          </audio>
+          ${ caption ? `<p class="caption caption__audio">${caption}</p>` : '' }
+        </section>
         ${commentEnd}`
     },
   }),

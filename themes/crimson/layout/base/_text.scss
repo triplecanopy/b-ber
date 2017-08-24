@@ -71,7 +71,7 @@ p {
     section.frontmatter &,
     section.colophon &,
     section.appendix &,
-    section.backmatter {
+    section.backmatter & {
         text-indent: 0 !important;
         @include following-paragraph-not-indented;
         @include type-settings(-1);
@@ -210,7 +210,7 @@ ol.footnotes {
         margin: 0;
         text-indent: 0!important;
         font-size: 1em; // children, since we need to include paras in the li elements
-        margin-left: one-em(0) * -1;
+        // margin-left: one-em(0) * -1;
         p { text-indent: 0!important; }
         a { text-decoration: none!important; }
         span.hidden-backlink { display: inline; }

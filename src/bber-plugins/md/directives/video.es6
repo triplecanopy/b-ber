@@ -49,7 +49,7 @@ const createRemoteMediaSource = sources =>
 export default {
   plugin: figure,
   name: 'video',
-  renderer: ({ instance }) => ({
+  renderer: ({ instance, context }) => ({
     marker: ':',
     minMarkers: 3,
     validate(params) {
@@ -109,11 +109,13 @@ export default {
       const commentEnd = htmlComment(`END: video:${type}#${htmlId(id)};`)
 
       return `${commentStart}
-        <video id="${htmlId(id)}"${attrString}>
-          ${sourceElements}
-          <p>Your device does not support the HTML5 Video API.</p>
-        </video>
-        ${ caption ? `<p class="caption caption__video">${caption}</p>` : '' }
+        <section class="video">
+          <video id="${htmlId(id)}"${attrString}>
+            ${sourceElements}
+            <p>Your device does not support the HTML5 Video API.</p>
+          </video>
+          ${ caption ? `<p class="caption caption__video">${caption}</p>` : '' }
+        </section>
         ${commentEnd}`
     },
   }),
