@@ -103,6 +103,12 @@ p {
         text-align: center;
         @include following-paragraph-not-indented;
     }
+
+    &.interlocutor-parent {
+        text-indent: 0!important;
+        margin-top: one-line(0);
+        &:first-child { margin-top: 0; }
+    }
 }
 
 cite {

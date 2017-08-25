@@ -104,6 +104,14 @@ p {
     @include tc-rhythm-sizing($text-base, $line-base);
     @include adjust-leading-to(1);
   }
+
+  &.interlocutor-parent {
+    text-indent: 0!important;
+    margin-top: rhythm(1, $base-font-size);
+    &:first-child { margin-top: 0; }
+  }
+
+
 }
 
 cite {

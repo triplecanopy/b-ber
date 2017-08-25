@@ -59,10 +59,13 @@ const _applyTransforms = (k, v) => {
     case 'source':
       return ` src="${v}"`
 
+    // media controls enabled by default
+    case 'controls':
+      return v === 'no' ? '' : ` ${k}="${k}"`
+
     // boolean attrs for audio/video elements
     case 'autoplay':
     case 'muted':
-    case 'controls':
     case 'autobuffer':
     case 'loop':
       return v === 'yes' ? ` ${k}="${k}"` : ''
