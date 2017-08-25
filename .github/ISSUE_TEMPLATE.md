@@ -20,8 +20,6 @@
 
 ## Relevant Configuration in YAML
 
-## Specifications
-
-  - Version:
+## b-ber Version
   
 ## Screen Shots
