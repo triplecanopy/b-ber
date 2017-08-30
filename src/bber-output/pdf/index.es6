@@ -11,6 +11,7 @@ import html2pdf from 'html-pdf'
 import Printer from 'bber-modifiers/printer'
 import { log } from 'bber-plugins'
 import { src, dist, build } from 'bber-utils'
+import { isPlainObject, isArray } from 'lodash'
 
 const writeOutput = false
 
@@ -53,18 +54,27 @@ const initialize = () => {
 
 const parseHTML = files =>
   new Promise((resolve) => {
-    const dir = path.join(output, 'OPS/text')
+    const dirname = path.join(output, 'OPS/text')
     const text = files.map((_, index, arr) => {
       let data
+
+      const fname = isPlainObject(_) ? Object.keys(_)[0] : typeof _ === 'string' ? _ : null
+      const ext = '.xhtml'
+
+      if (!fname) { return null }
+
+      const fpath = path.join(dirname, `${fname}${ext}`)
+
       try {
-        if (!_ || typeof _ !== 'string' || !fs.existsSync(path.join(dir, _))) { return null }
-        data = fs.readFileSync(path.join(dir, _), 'utf8')
+        if (!fs.existsSync(fpath)) { return null }
+        data = fs.readFileSync(fpath, 'utf8')
       } catch (err) {
         return log.warn(err.message)
       }
       return printer.parse(data, index, arr)
     }).filter(Boolean)
 
+    console.log(text)
     Promise.all(text)
     .catch(err => log.error(err))
     .then(docs => resolve(docs.join('\n')))
