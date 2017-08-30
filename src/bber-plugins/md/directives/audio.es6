@@ -67,6 +67,11 @@ export default {
       //   attrsObj.poster = poster
       // }
 
+      // add controls attr by default
+      if (!{}.hasOwnProperty.call(attrsObj, 'controls')) {
+        attrsObj.controls = 'controls'
+      }
+
       if (attrsObj.source) {
         const { source } = attrsObj
 

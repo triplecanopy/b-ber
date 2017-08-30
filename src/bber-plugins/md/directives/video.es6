@@ -72,6 +72,11 @@ export default {
       let err = null
       let poster = ''
 
+      // add controls attr by default
+      if (!{}.hasOwnProperty.call(attrsObj, 'controls')) {
+        attrsObj.controls = 'controls'
+      }
+
       if (attrsObj.poster) {
         poster = validatePosterImage(attrsObj.poster)
         poster = `../images/${path.basename(poster)}`
