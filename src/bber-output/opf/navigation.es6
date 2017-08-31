@@ -15,7 +15,7 @@ import fs from 'fs-extra'
 import File from 'vinyl'
 import rrdir from 'recursive-readdir'
 import Yaml from 'bber-lib/yaml'
-import { find, difference, uniq, remove } from 'lodash'
+import { find, difference, uniq, remove, isArray } from 'lodash'
 
 // utility
 import store from 'bber-lib/store'
@@ -166,7 +166,8 @@ class Navigation {
           })
 
           const yamlpath = path.join(this.src, `${this.build}.yml`)
-          const content = Yaml.dump(nestedContentToYAML(store.toc))
+          const nestedContent = nestedContentToYAML(store.toc)
+          const content = isArray(nestedContent) && nestedContent > 0 ? Yaml.dump(nestedContent) : ''
 
           fs.writeFile(yamlpath, content, (err) => {
             if (err) { throw err }
