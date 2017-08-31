@@ -7,6 +7,7 @@
   "description": "A command line epub maker.",
   "main": "./src/bber-cli/index.es6",
   "scripts": {
+    "themes:install": "for i in $(find ./themes -mindepth 1 -maxdepth 1 -type d); do cd \"$i\" && yarn && cd ../../; done",
     "build": "BABEL_ENV=production ./node_modules/.bin/babel -d lib/ src/ --ignore **/__tests__/**",
     "bump": "npm version prerelease -m 'Version bump %s'",
     "coveralls": "NODE_ENV=test ./node_modules/.bin/istanbul cover --config .istanbul.yml ./node_modules/.bin/_mocha --report lcovonly -- --compilers js:./node_modules/babel-register $(find ./src -path \\*/__tests__/*.js -not -path \\*/helpers/*.js | tr \"\\r\\n\" \" \") && cat ./coverage/lcov.info | node_modules/.bin/coveralls && rm -rf ./coverage",
@@ -19,6 +20,7 @@
     "docs": "./node_modules/.bin/jsdoc --verbose -c .jsdoc.json",
     "start": "./node_modules/.bin/babel-node ./src/bber-cli/index.es6 --presets es2015,stage-0",
     "test": "yarn lint && yarn istanbul || true",
+    "postinstall": "yarn themes:install",
     "posttest": "if [ \"$NODE_ENV\" = production ]; then yarn build; fi"
   },
   "bin": {
