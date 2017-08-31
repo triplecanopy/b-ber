@@ -74,7 +74,6 @@ const parseHTML = files =>
       return printer.parse(data, index, arr)
     }).filter(Boolean)
 
-    console.log(text)
     Promise.all(text)
     .catch(err => log.error(err))
     .then(docs => resolve(docs.join('\n')))

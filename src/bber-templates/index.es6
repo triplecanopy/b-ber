@@ -225,6 +225,8 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 bber-debug.log*
+
+/project*
 `,
   }
 }
