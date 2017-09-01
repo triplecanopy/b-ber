@@ -78,7 +78,18 @@ class Generate {
   createFile({ files, metadata }) {
     const frontmatter = `---\n${this.frontmatterYaml(metadata)}---\n`
     return new Promise((resolve) => {
-      const fname = `${lpad(String(files.length + 1), '0', 5)}.md`
+      const { title } = metadata
+      const fname = `${title.replace(/[^a-z0-9_-]/ig, '-')}.md`
+
+      try {
+        if (fs.existsSync(path.join(src(), '_markdown', fname))) {
+          throw new Error(`[bber-output/generate]: _markdown/${fname} already exists, aborting`)
+        }
+      } catch (err) {
+        log.error(err, 1)
+      }
+
+      // const fname = `${lpad(String(files.length + 1), '0', 5)}.md`
       const file = new File({
         path: './',
         contents: new Buffer(frontmatter),
