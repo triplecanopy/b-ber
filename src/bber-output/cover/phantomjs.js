@@ -7,7 +7,7 @@ var args = system.args
 var outFile = args[2]
 
 page.content = args[1]
-page.viewportSize = { width: 600, height: 800 }
+page.viewportSize = { width: 1600, height: 2400 }
 
 page.settings.resourceTimeout = 1
 page.settings.javascriptEnabled = false
@@ -21,6 +21,7 @@ page.evaluate(function evaluate() {
   body.style.backgroundColor = '#F6F5FF'
   body.style.margin = '30px'
   body.style.fontFamily = 'Helvetica'
+  body.style.fontSize = '72px'
 
   for (var i = 0; i < spans.length; i++) {
     spans[i].style.display = 'block'
