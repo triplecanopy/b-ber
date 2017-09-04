@@ -31,7 +31,6 @@ export default {
             const escapeHtml = instance && instance.escapeHtml ? instance.escapeHtml : passThrough
             const attrs = { image: '', caption: '', citation: '' }
             let result = ''
-
             if (tokens[idx].nesting === 1) { // opening tag
                 let matches
                 while ((matches = attrsRe.exec(tokens[idx].info.trim())) !== null) { attrs[matches[1]] = matches[2] }

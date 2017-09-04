@@ -8,6 +8,7 @@ import figure from 'bber-plugins/md/plugins/figure'
 import figTmpl from 'bber-templates/figures'
 import { getImageOrientation, src, htmlComment, build } from 'bber-utils'
 import { attributesObject, htmlId } from 'bber-plugins/md/directives/helpers'
+import mime from 'mime-types'
 import {
     INLINE_DIRECTIVE_MARKER,
     INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
@@ -87,6 +88,7 @@ export default {
                             ref,
                             caption,
                             pageOrder: store.figures.length,
+                            mime: mime.lookup(attrsObject.source),
                         }
                     )
 
@@ -99,7 +101,15 @@ export default {
                     </div>`
                     break
                 case 'inline-figure':
-                    imageData = { ...attrsObject, id: htmlId(id), width, height, caption, inline: true }
+                    imageData = {
+                        ...attrsObject,
+                        id: htmlId(id),
+                        width,
+                        height,
+                        caption,
+                        inline: true,
+                        mime: mime.lookup(attrsObject.source),
+                    }
                     result = figTmpl(imageData, build())
                     break
                 default:
