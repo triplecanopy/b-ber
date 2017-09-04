@@ -19,56 +19,56 @@ const logger = require('../../__tests__/helpers/console')
 const g = new Generate()
 
 describe('module:generate', () => {
-  const srcDir = path.join(process.cwd(), 'src/__tests__/.tmp/generate')
-  const mdDir = path.join(srcDir, '_markdown')
-  const mdFile = '00001.md'
+    const srcDir = path.join(process.cwd(), 'src/__tests__/.tmp/generate')
+    const mdDir = path.join(srcDir, '_markdown')
+    const mdFile = '00001.md'
 
-  // clear application errors
-  beforeEach(() => logger.reset())
+    // clear application errors
+    beforeEach(() => logger.reset())
 
-  const _setup = (callback) => {
-    Object.defineProperty(Generate.prototype, 'src', {
-      get() {
-        return srcDir
-      }
-    })
-
-    fs.mkdirs(mdDir, (err0) => {
-      if (err0) { throw err0 }
-      return fs.writeFile(path.join(mdDir, mdFile), '', (err1) => {
-        if (err1) { throw err1 }
-        store.update('build', 'epub')
-        return callback()
-      })
-    })
-  }
-
-  const _teardown = (callback) => {} // eslint-disable-line no-unused-vars
-
-  describe('#getFiles', () => {
-    it('Gets a list of Markdown files in the source directory', done =>
-      _setup(() =>
-        g.getFiles(mdDir).then((resp) => {
-          resp.should.be.an('array')
-          resp[0].name.should.equal(mdFile)
-          done()
+    const _setup = (callback) => {
+        Object.defineProperty(Generate.prototype, 'src', {
+            get() {
+                return srcDir
+            }
         })
-      )
-    )
-  })
-  describe('#parseMeta', () => {
-    it('Extracts frontmatter values from command line arguments')
-  })
-  describe('#createFile', () => {
-    it('Writes a file with yaml frontmatter')
-  })
-  describe('#writeFile', () => {
-    it('Writes a new Markdown file to disk')
-  })
-  describe('#writePageMeta', () => {
-    it('Writes a new `<type>.yml` config file to disk if one does not exist')
-    it('Updates an existing `<type>.yml` config file to disk if one already exists')
-    it('Writes a new Markdown file to disk')
-    it('Throws an error if a Markdown file with the same name already exists')
-  })
+
+        fs.mkdirs(mdDir, (err0) => {
+            if (err0) { throw err0 }
+            return fs.writeFile(path.join(mdDir, mdFile), '', (err1) => {
+                if (err1) { throw err1 }
+                store.update('build', 'epub')
+                return callback()
+            })
+        })
+    }
+
+    const _teardown = (callback) => {} // eslint-disable-line no-unused-vars
+
+    describe('#getFiles', () => {
+        it('Gets a list of Markdown files in the source directory', done =>
+            _setup(() =>
+                g.getFiles(mdDir).then((resp) => {
+                    resp.should.be.an('array')
+                    resp[0].name.should.equal(mdFile)
+                    done()
+                })
+            )
+        )
+    })
+    describe('#parseMeta', () => {
+        it('Extracts frontmatter values from command line arguments')
+    })
+    describe('#createFile', () => {
+        it('Writes a file with yaml frontmatter')
+    })
+    describe('#writeFile', () => {
+        it('Writes a new Markdown file to disk')
+    })
+    describe('#writePageMeta', () => {
+        it('Writes a new `<type>.yml` config file to disk if one does not exist')
+        it('Updates an existing `<type>.yml` config file to disk if one already exists')
+        it('Writes a new Markdown file to disk')
+        it('Throws an error if a Markdown file with the same name already exists')
+    })
 })

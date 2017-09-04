@@ -24,20 +24,20 @@ const omit = ['toc.xhtml']
  * @return {Object<Promise|Error>}
  */
 const readSpine = () =>
-  new Promise((resolve, reject) => {
-    const opf = path.join(dist(), 'OPS/content.opf')
-    return fs.readFile(opf, 'utf8', (err1, data) => {
-      if (err1) { reject(err1) }
-      parseString(data, (err2, result) => {
-        if (err2) { reject(err2) }
-        const items = result.package.spine[0].itemref
-        const files = items.filter(_ =>
-          omit.indexOf(_.$.idref) < 0
-        ).map(_ => _.$.idref.slice(1))
-        resolve(files)
-      })
+    new Promise((resolve, reject) => {
+        const opf = path.join(dist(), 'OPS/content.opf')
+        return fs.readFile(opf, 'utf8', (err1, data) => {
+            if (err1) { reject(err1) }
+            parseString(data, (err2, result) => {
+                if (err2) { reject(err2) }
+                const items = result.package.spine[0].itemref
+                const files = items.filter(_ =>
+                    omit.indexOf(_.$.idref) < 0
+                ).map(_ => _.$.idref.slice(1))
+                resolve(files)
+            })
+        })
     })
-  })
 
 /**
  * [description]
@@ -45,20 +45,20 @@ const readSpine = () =>
  * @return {String}
  */
 const parseHTML = files =>
-  new Promise((resolve) => {
-    const dir = path.join(dist(), 'OPS/text')
-    const text = files.map((_, index, arr) => {
-      let data
-      try {
-        const f = path.basename(_, '.xhtml').replace(/[^0-9a-z-]/i, '_')
-        data = fs.readFileSync(path.join(dir, `${f}.xhtml`), 'utf8')
-      } catch (err) {
-        return log.warn(err.message)
-      }
-      return parser.parse(data, index, arr)
-    }).filter(Boolean)
-    Promise.all(text).then(docs => resolve(docs.join('\n')))
-  })
+    new Promise((resolve) => {
+        const dir = path.join(dist(), 'OPS/text')
+        const text = files.map((_, index, arr) => {
+            let data
+            try {
+                const f = path.basename(_, '.xhtml').replace(/[^0-9a-z-]/i, '_')
+                data = fs.readFileSync(path.join(dir, `${f}.xhtml`), 'utf8')
+            } catch (err) {
+                return log.warn(err.message)
+            }
+            return parser.parse(data, index, arr)
+        }).filter(Boolean)
+        Promise.all(text).then(docs => resolve(docs.join('\n')))
+    })
 
 /**
  * [description]
@@ -66,25 +66,25 @@ const parseHTML = files =>
  * @return {Object<Promise|Error>}
  */
 const writeXML = str =>
-  new Promise((resolve) => {
-    const fpath = path.join(cwd, 'Export.xml') // -${new Date().toISOString().replace(/:/g, '-')}.xml`)
-    fs.writeFile(fpath, str, 'utf8', (err) => {
-      if (err) { throw err }
-      resolve()
+    new Promise((resolve) => {
+        const fpath = path.join(cwd, 'Export.xml') // -${new Date().toISOString().replace(/:/g, '-')}.xml`)
+        fs.writeFile(fpath, str, 'utf8', (err) => {
+            if (err) { throw err }
+            resolve()
+        })
     })
-  })
 
 /**
  * [description]
  * @return {Object<Promise|Error>}
  */
 const xml = () =>
-  new Promise(resolve =>
-    readSpine()
-      .then(files => parseHTML(files))
-      .then(markup => writeXML(markup))
-      .catch(err => log.error(err))
-      .then(resolve)
-  )
+    new Promise(resolve =>
+        readSpine()
+            .then(files => parseHTML(files))
+            .then(markup => writeXML(markup))
+            .catch(err => log.error(err))
+            .then(resolve)
+    )
 
 export default xml

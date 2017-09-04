@@ -15,18 +15,18 @@ page.settings.loadImages = false
 page.settings.webSecurityEnabled = false
 
 page.evaluate(function evaluate() {
-  var body = document.body
-  var spans = document.getElementsByTagName('span')
+    var body = document.body
+    var spans = document.getElementsByTagName('span')
 
-  body.style.backgroundColor = '#F6F5FF'
-  body.style.margin = '30px'
-  body.style.fontFamily = 'Helvetica'
-  body.style.fontSize = '72px'
+    body.style.backgroundColor = '#F6F5FF'
+    body.style.margin = '30px'
+    body.style.fontFamily = 'Helvetica'
+    body.style.fontSize = '72px'
 
-  for (var i = 0; i < spans.length; i++) {
-    spans[i].style.display = 'block'
-    spans[i].style.paddingBottom = '5px'
-  }
+    for (var i = 0; i < spans.length; i++) {
+        spans[i].style.display = 'block'
+        spans[i].style.paddingBottom = '5px'
+    }
 })
 
 page.render(outFile)

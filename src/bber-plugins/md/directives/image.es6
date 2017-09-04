@@ -9,104 +9,104 @@ import figTmpl from 'bber-templates/figures'
 import { getImageOrientation, src, htmlComment, build } from 'bber-utils'
 import { attributesObject, htmlId } from 'bber-plugins/md/directives/helpers'
 import {
-  INLINE_DIRECTIVE_MARKER,
-  INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
+    INLINE_DIRECTIVE_MARKER,
+    INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
 } from 'bber-shapes/directives'
 
 const imageOpenRegExp = /((?:inline-)?figure)(?::([^\s]+)(\s?.*)?)?$/
 
 export default {
-  plugin: figure,
-  name: 'figure',
-  renderer: ({ instance, context = { filename: '' } }) => ({
-    marker: INLINE_DIRECTIVE_MARKER,
-    minMarkers: INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
-    markerOpen: imageOpenRegExp,
+    plugin: figure,
+    name: 'figure',
+    renderer: ({ instance, context = { filename: '' } }) => ({
+        marker: INLINE_DIRECTIVE_MARKER,
+        minMarkers: INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
+        markerOpen: imageOpenRegExp,
 
-    validate(params, line) {
-      const match = params.trim().match(imageOpenRegExp)
-      if (!match) { return false }
+        validate(params, line) {
+            const match = params.trim().match(imageOpenRegExp)
+            if (!match) { return false }
 
-      const [, , id, source] = match
-      if (typeof id === 'undefined' || typeof source === 'undefined') { // image requires `id` and `source`
-        log.error(`
-          Missing [id] or [source] attribute for [figure] directive
-          ${context.filename}.md:${line}`)
-        return false
-      }
-      return match
-    },
-
-    render(tokens, idx) {
-      const filename = `_markdown/${context.filename}.md`
-      const lineNr = tokens[idx].map ? tokens[idx].map[0] : null
-
-      const match = tokens[idx].info.trim().match(imageOpenRegExp)
-      const [, type, id, attrs] = match
-      const children = tokens[idx].children
-      const caption = children ? instance.renderInline(tokens[idx].children) : ''
-      const comment = htmlComment(`START: figure:${type}#${htmlId(id)}; ${filename}:${lineNr}`)
-      const attrsObject = attributesObject(attrs, type, { filename, lineNr })
-      const asset = path.join(src(), '_images', attrsObject.source)
-
-      let result, page, classNames, ref, imageData // eslint-disable-line one-var
-
-      // make sure image exists ...
-      try {
-        if (!fs.existsSync(asset)) {
-          throw new Error(`Image not found: [${asset}]`)
-        }
-      } catch (err) {
-        log.error(err.message)
-        result = htmlComment(`Image not found: ${asset}`)
-        return result
-      }
-
-      // then get the dimensions
-      const dimensions = imageSize.sync(fs.readFileSync(asset))
-      const { width, height } = dimensions
-
-      switch (type) {
-        case 'figure':
-          classNames = `${getImageOrientation(width, height)} figure-sm`
-          ref = context.filename
-
-          if ({}.hasOwnProperty.call(attrsObject, 'classes')) {
-            attrsObject.classes += ` ${classNames}`
-          } else {
-            attrsObject.classes = classNames
-          }
-
-          page = `figure-${htmlId(attrsObject.source)}.xhtml`
-          store.add('images',
-            {
-              id: htmlId(id),
-              ...attrsObject,
-              ...dimensions,
-              page,
-              ref,
-              caption,
-              pageOrder: store.images.length,
+            const [, , id, source] = match
+            if (typeof id === 'undefined' || typeof source === 'undefined') { // image requires `id` and `source`
+                log.error(`
+                    Missing [id] or [source] attribute for [figure] directive
+                    ${context.filename}.md:${line}`)
+                return false
             }
-          )
+            return match
+        },
 
-          result = `${comment}<div class="${attrsObject.classes}">
-            <figure id="ref${htmlId(id)}">
-              <a href="${page}#${htmlId(id)}">
-                <img src="../images/${encodeURIComponent(attrsObject.source)}" alt="${attrsObject.alt}"/>
-              </a>
-            </figure>
-          </div>`
-          break
-        case 'inline-figure':
-          imageData = { ...attrsObject, id: htmlId(id), width, height, caption, inline: true }
-          result = figTmpl(imageData, build())
-          break
-        default:
-          break
-      }
+        render(tokens, idx) {
+            const filename = `_markdown/${context.filename}.md`
+            const lineNr = tokens[idx].map ? tokens[idx].map[0] : null
 
-      return result
-    },
-  }),
+            const match = tokens[idx].info.trim().match(imageOpenRegExp)
+            const [, type, id, attrs] = match
+            const children = tokens[idx].children
+            const caption = children ? instance.renderInline(tokens[idx].children) : ''
+            const comment = htmlComment(`START: figure:${type}#${htmlId(id)}; ${filename}:${lineNr}`)
+            const attrsObject = attributesObject(attrs, type, { filename, lineNr })
+            const asset = path.join(src(), '_images', attrsObject.source)
+
+            let result, page, classNames, ref, imageData // eslint-disable-line one-var
+
+            // make sure image exists ...
+            try {
+                if (!fs.existsSync(asset)) {
+                    throw new Error(`Image not found: [${asset}]`)
+                }
+            } catch (err) {
+                log.error(err.message)
+                result = htmlComment(`Image not found: ${asset}`)
+                return result
+            }
+
+            // then get the dimensions
+            const dimensions = imageSize.sync(fs.readFileSync(asset))
+            const { width, height } = dimensions
+
+            switch (type) {
+                case 'figure':
+                    classNames = `${getImageOrientation(width, height)} figure-sm`
+                    ref = context.filename
+
+                    if ({}.hasOwnProperty.call(attrsObject, 'classes')) {
+                        attrsObject.classes += ` ${classNames}`
+                    } else {
+                        attrsObject.classes = classNames
+                    }
+
+                    page = `figure-${htmlId(attrsObject.source)}.xhtml`
+                    store.add('images',
+                        {
+                            id: htmlId(id),
+                            ...attrsObject,
+                            ...dimensions,
+                            page,
+                            ref,
+                            caption,
+                            pageOrder: store.images.length,
+                        }
+                    )
+
+                    result = `${comment}<div class="${attrsObject.classes}">
+                        <figure id="ref${htmlId(id)}">
+                            <a href="${page}#${htmlId(id)}">
+                                <img src="../images/${encodeURIComponent(attrsObject.source)}" alt="${attrsObject.alt}"/>
+                            </a>
+                        </figure>
+                    </div>`
+                    break
+                case 'inline-figure':
+                    imageData = { ...attrsObject, id: htmlId(id), width, height, caption, inline: true }
+                    result = figTmpl(imageData, build())
+                    break
+                default:
+                    break
+            }
+
+            return result
+        },
+    }),
 }

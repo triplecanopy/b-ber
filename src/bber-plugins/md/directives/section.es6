@@ -15,40 +15,40 @@ const markerClose = /(exit)(?::([^\s]+))?/
 // set a default for `context` since we'll need some of its properties during
 // testing
 const render = ({ context = {} }) => (tokens, idx) => {
-  const lineNr = tokens[idx].map ? tokens[idx].map[0] : null
-  const filename = `_markdown/${context.filename}.md`
+    const lineNr = tokens[idx].map ? tokens[idx].map[0] : null
+    const filename = `_markdown/${context.filename}.md`
 
-  let result = ''
+    let result = ''
 
-  if (tokens[idx].nesting === 1) { // token open, we ignore closing tokens and let `exit` handle those
-    const close = tokens[idx].info.trim().match(markerClose)
-    const open = tokens[idx].info.trim().match(markerOpen)
+    if (tokens[idx].nesting === 1) { // token open, we ignore closing tokens and let `exit` handle those
+        const close = tokens[idx].info.trim().match(markerClose)
+        const open = tokens[idx].info.trim().match(markerOpen)
 
 
-    if (close) {
-      const [, type, id] = close
-      const comment = htmlComment(`END: section:${type}#${htmlId(id)}`)
-      result = `</section>${comment}`
-    } else {
-      // destructure the attributes from matches, omitting `matches[0]` since
-      // we're only interested in the captures
-      const [, type, id, att] = open
-      const comment = htmlComment(`START: section:${type}#${htmlId(id)}; ${filename}:${lineNr}`)
-      const attrs = attributes(att, type, { filename, lineNr })
-      result = `${comment}<section id="${htmlId(id)}"${attrs}>`
+        if (close) {
+            const [, type, id] = close
+            const comment = htmlComment(`END: section:${type}#${htmlId(id)}`)
+            result = `</section>${comment}`
+        } else {
+            // destructure the attributes from matches, omitting `matches[0]` since
+            // we're only interested in the captures
+            const [, type, id, att] = open
+            const comment = htmlComment(`START: section:${type}#${htmlId(id)}; ${filename}:${lineNr}`)
+            const attrs = attributes(att, type, { filename, lineNr })
+            result = `${comment}<section id="${htmlId(id)}"${attrs}>`
+        }
     }
-  }
-  return result
+    return result
 }
 
 export default {
-  plugin,
-  name: 'section',
-  renderer: args =>
-    renderFactory({
-      ...args,
-      markerOpen,
-      markerClose,
-      render: render(args),
-    }),
+    plugin,
+    name: 'section',
+    renderer: args =>
+        renderFactory({
+            ...args,
+            markerOpen,
+            markerClose,
+            render: render(args),
+        }),
 }

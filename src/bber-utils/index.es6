@@ -20,14 +20,14 @@ const cwd = process.cwd()
  * @return {Object}
  */
 const copy = (source, target) =>
-  new Promise((resolve, reject) => {
-    const rd = fs.createReadStream(source)
-    rd.on('error', reject)
-    const wr = fs.createWriteStream(target)
-    wr.on('error', reject)
-    wr.on('finish', resolve)
-    return rd.pipe(wr)
-  })
+    new Promise((resolve, reject) => {
+        const rd = fs.createReadStream(source)
+        rd.on('error', reject)
+        const wr = fs.createWriteStream(target)
+        wr.on('error', reject)
+        wr.on('finish', resolve)
+        return rd.pipe(wr)
+    })
 
 /**
  * Get a file's relative path to the OPS
@@ -36,7 +36,7 @@ const copy = (source, target) =>
  * @return {String}
  */
 const opsPath = (fpath, base) =>
-  fpath.replace(new RegExp(`^${base}/OPS/?`), '')
+    fpath.replace(new RegExp(`^${base}/OPS/?`), '')
 
 /**
  * [description]
@@ -44,7 +44,7 @@ const opsPath = (fpath, base) =>
  * @return {String}
  */
 const cjoin = arr =>
-  compact(arr).join('\n')
+    compact(arr).join('\n')
 
 /**
  * [description]
@@ -61,13 +61,13 @@ const fileId = str => `_${str.replace(/[^a-zA-Z0-9_]/g, '_')}`
  * http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript
  */
 const guid = () => {
-  let d = new Date().getTime()
-  const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-    const r = (d + (Math.random() * 16)) % 16 | 0
-    d = Math.floor(d / 16)
-    return (c === 'x' ? r : r & 0x7 | 0x8).toString(16)
-  })
-  return uuid
+    let d = new Date().getTime()
+    const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+        const r = (d + (Math.random() * 16)) % 16 | 0
+        d = Math.floor(d / 16)
+        return (c === 'x' ? r : r & 0x7 | 0x8).toString(16)
+    })
+    return uuid
 }
 
 /**
@@ -78,10 +78,10 @@ const guid = () => {
  * @return {String}
  */
 const lpad = (s, a, n) => {
-  let str = s
-  if (str.length >= n) { return str }
-  while (str.length < n) { str = a + str }
-  return str
+    let str = s
+    if (str.length >= n) { return str }
+    while (str.length < n) { str = a + str }
+    return str
 }
 
 /**
@@ -90,8 +90,8 @@ const lpad = (s, a, n) => {
  * @return {String}
  */
 const hrtimeformat = (a) => {
-  const s = (a[0] * 1000) + (a[1] / 1000000)
-  return `${String(s).slice(0, -3)}ms`
+    const s = (a[0] * 1000) + (a[1] / 1000000)
+    return `${String(s).slice(0, -3)}ms`
 }
 
 /**
@@ -100,14 +100,14 @@ const hrtimeformat = (a) => {
  * @return {String}
  */
 const hashIt = (str) => {
-  let hash = 0
-  if (str.length === 0) { return hash }
-  for (let i = 0, len = str.length; i < len; i++) {
-    const chr = str.charCodeAt(i)
-    hash = ((hash << 5) - hash) + chr
-    hash |= 0
-  }
-  return `_${Math.abs(hash)}`
+    let hash = 0
+    if (str.length === 0) { return hash }
+    for (let i = 0, len = str.length; i < len; i++) {
+        const chr = str.charCodeAt(i)
+        hash = ((hash << 5) - hash) + chr
+        hash |= 0
+    }
+    return `_${Math.abs(hash)}`
 }
 
 /**
@@ -117,15 +117,15 @@ const hashIt = (str) => {
  * @return {String}
  */
 const getImageOrientation = (w, h) => {
-  // assign image class based on w:h ratio
-  const widthToHeight = w / h
-  let imageType = null
+    // assign image class based on w:h ratio
+    const widthToHeight = w / h
+    let imageType = null
 
-  if (widthToHeight < 0.61) { imageType = 'portraitLong' }
-  if (widthToHeight >= 0.61 && widthToHeight < 1) { imageType = 'portrait' }
-  if (widthToHeight === 1) { imageType = 'square' }
-  if (widthToHeight > 1) { imageType = 'landscape' }
-  return imageType
+    if (widthToHeight < 0.61) { imageType = 'portraitLong' }
+    if (widthToHeight >= 0.61 && widthToHeight < 1) { imageType = 'portrait' }
+    if (widthToHeight === 1) { imageType = 'square' }
+    if (widthToHeight > 1) { imageType = 'landscape' }
+    return imageType
 }
 
 /**
@@ -135,9 +135,9 @@ const getImageOrientation = (w, h) => {
  * @return {String|Object<null>}
  */
 const getFrontmatter = (file, prop) => {
-  const filename = path.basename(file.name, '.xhtml')
-  const found = find(store.pages, { filename })
-  return found && {}.hasOwnProperty.call(found, prop) ? found[prop] : null
+    const filename = path.basename(file.name, '.xhtml')
+    const found = find(store.pages, { filename })
+    return found && {}.hasOwnProperty.call(found, prop) ? found[prop] : null
 }
 
 /**
@@ -147,9 +147,9 @@ const getFrontmatter = (file, prop) => {
  * @return {*}
  */
 const forOf = (collection, iterator) =>
-  Object.entries(collection).forEach(([key, val]) =>
-    iterator(key, val)
-  )
+    Object.entries(collection).forEach(([key, val]) =>
+        iterator(key, val)
+    )
 
 
 /**
@@ -157,10 +157,10 @@ const forOf = (collection, iterator) =>
  * @return {String}
  */
 const src = () => {
-  if (!store.bber[store.build] || !store.bber[store.build].src) {
-    store.update('build', 'epub')
-  }
-  return path.join(cwd, store.bber[store.build].src)
+    if (!store.bber[store.build] || !store.bber[store.build].src) {
+        store.update('build', 'epub')
+    }
+    return path.join(cwd, store.bber[store.build].src)
 }
 
 /**
@@ -170,10 +170,10 @@ const src = () => {
 
 // same issue as above with `src` method
 const dist = () => {
-  if (!store.bber[store.build] || !store.bber[store.build].dist) {
-    store.update('build', 'epub')
-  }
-  return path.join(cwd, store.bber[store.build].dist)
+    if (!store.bber[store.build] || !store.bber[store.build].dist) {
+        store.update('build', 'epub')
+    }
+    return path.join(cwd, store.bber[store.build].dist)
 }
 
 
@@ -183,8 +183,8 @@ const dist = () => {
  * @throws {TypeError} If the requested key does not exist in `Store`
  */
 const build = () => {
-  if (store.build === null) { throw new Error('Missing keys [build] in [Store]') }
-  return store.build
+    if (store.build === null) { throw new Error('Missing keys [build] in [Store]') }
+    return store.build
 }
 
 /**
@@ -201,12 +201,12 @@ const version = () => store.version
 
 // TODO: this should check that the theme exists in the `themes` dir
 const theme = () => {
-  const name = store.config.theme
-  return {
-    name,
-    root: path.join(__dirname, '../../', 'themes'),
-    path: path.join(__dirname, '../../', 'themes', name),
-  }
+    const name = store.config.theme
+    return {
+        name,
+        root: path.join(__dirname, '../../', 'themes'),
+        path: path.join(__dirname, '../../', 'themes', name),
+    }
 }
 
 /**
@@ -221,38 +221,38 @@ const metadata = () => store.bber.metadata
  * @return {Object<Promise|Error>}
  */
 const promiseAll = promiseArray =>
-  new Promise(resolve =>
-    Promise.all(promiseArray).then(resolve)
-  )
+    new Promise(resolve =>
+        Promise.all(promiseArray).then(resolve)
+    )
 
 const htmlComment = str => `\n<!-- ${str} -->\n`
 
 const passThrough = args => args
 
 const escapeHTML = (str) => {
-  const map = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#39;',
-  }
-  return str.replace(/[&<>"']/g, m => map[m])
+    const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;',
+    }
+    return str.replace(/[&<>"']/g, m => map[m])
 }
 
 // for generating page models used in navigation
 const spineModel = () => ({
-  relativePath: '',
-  absolutePath: '',
-  extension: '',
-  fileName: '',
-  name: '',
-  // baseName: '',
-  remotePath: '',
-  // pageOrder: -1,
-  linear: true,
-  in_toc: true,
-  nodes: [],
+    relativePath: '',
+    absolutePath: '',
+    extension: '',
+    fileName: '',
+    name: '',
+    // baseName: '',
+    remotePath: '',
+    // pageOrder: -1,
+    linear: true,
+    in_toc: true,
+    nodes: [],
 })
 
 /**
@@ -262,70 +262,70 @@ const spineModel = () => ({
  * @return {Object}
  */
 const modelFromString = (_str, _src) => {
-  const str = String(_str)
-  const pathFragment = /^(toc\.x?html|nav\.ncx)$/i.test(str) ? '' : 'text' // TODO: clean this up
-  const relativePath = path.join(pathFragment, str) // relative to OPS
-  const absolutePath = path.join(cwd, _src, relativePath)
-  const extension = path.extname(absolutePath)
-  const fileName = path.basename(absolutePath)
-  const name = path.basename(absolutePath, extension)
-  // const baseName = path.basename(absolutePath, extension)
-  const remotePath = '' // TODO: add remote URL where applicable
-  return {
-    ...spineModel(),
-    relativePath,
-    absolutePath,
-    extension,
-    fileName,
-    name,
-    remotePath,
-  }
+    const str = String(_str)
+    const pathFragment = /^(toc\.x?html|nav\.ncx)$/i.test(str) ? '' : 'text' // TODO: clean this up
+    const relativePath = path.join(pathFragment, str) // relative to OPS
+    const absolutePath = path.join(cwd, _src, relativePath)
+    const extension = path.extname(absolutePath)
+    const fileName = path.basename(absolutePath)
+    const name = path.basename(absolutePath, extension)
+    // const baseName = path.basename(absolutePath, extension)
+    const remotePath = '' // TODO: add remote URL where applicable
+    return {
+        ...spineModel(),
+        relativePath,
+        absolutePath,
+        extension,
+        fileName,
+        name,
+        remotePath,
+    }
 }
 
 const modelFromObject = (_obj, _src) => {
-  const { in_toc, linear } = _obj[Object.keys(_obj)[0]]
-  const str = Object.keys(_obj)[0]
-  const model = modelFromString(str, _src)
+    const { in_toc, linear } = _obj[Object.keys(_obj)[0]]
+    const str = Object.keys(_obj)[0]
+    const model = modelFromString(str, _src)
 
-  return { ...model, in_toc, linear }
+    return { ...model, in_toc, linear }
 }
 
 const nestedContentToYAML = (arr, result = []) => {
-  arr.forEach((_) => {
-    const model = {}
+    arr.forEach((_) => {
+        const model = {}
 
-    // TODO: check for custom attrs somewhere else.
-    if (_.linear === false || _.in_toc === false) {
-      if (_.in_toc === false) { model.in_toc = false }
-      if (_.linear === false) { model.linear = false }
-      result.push({ [_.fileName]: model })
-    } else {
-      result.push(_.fileName)
-      if (_.nodes && _.nodes.length) {
-        model.section = []
-        result.push(model)
-        nestedContentToYAML(_.nodes, model.section)
-      }
-    }
-  })
+        // TODO: check for custom attrs somewhere else.
+        if (_.linear === false || _.in_toc === false) {
+            if (_.in_toc === false) { model.in_toc = false }
+            if (_.linear === false) { model.linear = false }
+            result.push({ [_.fileName]: model })
+        } else {
+            result.push(_.fileName)
+            if (_.nodes && _.nodes.length) {
+                model.section = []
+                result.push(model)
+                nestedContentToYAML(_.nodes, model.section)
+            }
+        }
+    })
 
-  return result
+    return result
 }
 
 
 const flattenSpineFromYAML = arr =>
-  arr.reduce((acc, curr) => {
-    if (isPlainObject(curr)) {
-      if (Object.keys(curr)[0] === 'section') {
-        return acc.concat(flattenSpineFromYAML(curr.section))
-      }
-      return acc.concat(Object.keys(curr)[0])
-    }
-    return acc.concat(curr)
-  }, [])
+    arr.reduce((acc, curr) => {
+        if (isPlainObject(curr)) {
+            if (Object.keys(curr)[0] === 'section') {
+                return acc.concat(flattenSpineFromYAML(curr.section))
+            }
+            return acc.concat(Object.keys(curr)[0])
+        }
+        return acc.concat(curr)
+    }, [])
 
 export { opsPath, cjoin, fileId, copy, guid, lpad, hrtimeformat, hashIt,
-  getImageOrientation, getFrontmatter, forOf, src, dist, build, env, theme,
-  version, metadata, promiseAll, htmlComment, passThrough, escapeHTML,
-  spineModel, modelFromObject, modelFromString, nestedContentToYAML,
-  flattenSpineFromYAML }
+    getImageOrientation, getFrontmatter, forOf, src, dist, build, env, theme,
+    version, metadata, promiseAll, htmlComment, passThrough, escapeHTML,
+    spineModel, modelFromObject, modelFromString, nestedContentToYAML,
+    flattenSpineFromYAML }

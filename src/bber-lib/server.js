@@ -4,31 +4,31 @@ const path = require('path')
 // const log = require('../bber-plugins').log
 
 const parseArgs = (args) => {
-  const _argv = args.slice(2)
-  const argv = {}
-  _argv.forEach((_) => {
-    const [k, v] = _.split(' ')
-    argv[k.replace(/^-+/, '')] = v
+    const _argv = args.slice(2)
+    const argv = {}
+    _argv.forEach((_) => {
+        const [k, v] = _.split(' ')
+        argv[k.replace(/^-+/, '')] = v
+        return argv
+    })
     return argv
-  })
-  return argv
 }
 
 const argv = parseArgs(process.argv)
 const { port, dir } = argv
 const hidden = ['.opf', '.ncx']
 const opts = {
-  filter(fname) {
-    return hidden.indexOf(path.extname(fname)) === -1
-  },
+    filter(fname) {
+        return hidden.indexOf(path.extname(fname)) === -1
+    },
 }
 
 const app = express()
 app.use(express.static(dir))
 app.use(esindex(dir, opts))
 app.listen(port, () => {
-  console.log('Starting Nodemon')
-  console.log(`Server is running at http://localhost:${port}/`)
-  console.log('Enter rs to restart, CTRL + C to exit')
+    console.log('Starting Nodemon')
+    console.log(`Server is running at http://localhost:${port}/`)
+    console.log('Enter rs to restart, CTRL + C to exit')
 })
 

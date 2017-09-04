@@ -27,147 +27,147 @@ import { find } from 'lodash'
  */
 class MarkdownRenderer {
 
-  /**
-   * @constructor
-   */
-  constructor() {
-    this.noop = MarkdownRenderer.noop
+    /**
+     * @constructor
+     */
+    constructor() {
+        this.noop = MarkdownRenderer.noop
+
+        /**
+         * Instance of MarkdownIt class
+         * @member
+         * @memberOf module:md#MarkdownRenderer
+         * @see {@link https://github.com/markdown-it/markdown-it|markdown-it}
+         * @type {MarkdownIt}
+         */
+        this.md = new MarkdownIt({
+            html: true,
+            xhtmlOut: true,
+            breaks: false,
+            linkify: false,
+        })
+
+        /**
+         * [filename description]
+         * @member
+         * @memberOf module:md#MarkdownRenderer
+         * @type {String}
+         */
+        this.filename = ''
+
+        const context = this
+        const instance = this.md
+        const reference = { instance, context }
+
+        instance
+            .use(
+                mdSection.plugin,
+                mdSection.name,
+                mdSection.renderer(reference))
+            .use(
+                mdPullQuote.plugin,
+                mdPullQuote.name,
+                mdPullQuote.renderer(reference))
+            .use(
+                mdFrontMatter,
+                (meta) => {
+                    const filename = this.filename
+                    store.add('pages', { filename, ...Yaml.parse(meta) })
+                })
+            .use(
+                mdFootnote,
+                (tokens) => {
+                    const filename = this.filename
+                    const page = find(store.pages, { filename })
+                    const title = page && page.title ? page.title : filename
+
+                    // add footnote container and heading. we're doing this here instead
+                    // of in `footnotes.js` because we need some file info (just the title :/)
+                    tokens.unshift({
+                        type: 'block',
+                        tag: 'section',
+                        attrs: [['class', 'footnotes break-after']],
+                        nesting: 1,
+                        block: true,
+                    }, {
+                        type: 'block',
+                        tag: 'h1',
+                        nesting: 1,
+                        block: true,
+                    }, {
+                        type: 'text',
+                        block: false,
+                        content: title,
+                    }, {
+                        type: 'block',
+                        tag: 'h1',
+                        nesting: -1,
+                    })
+
+                    // add closing section tag
+                    tokens.push({
+                        type: 'block',
+                        tag: 'section',
+                        nesting: -1,
+                    })
+
+                    const notes = instance.renderer.render(tokens, 0, { reference: `${filename}.xhtml` })
+                    store.add('footnotes', { filename, title, notes })
+                })
+            .use(
+                mdDialogue.plugin,
+                mdDialogue.name,
+                mdDialogue.renderer(reference))
+            .use(
+                mdImage.plugin,
+                mdImage.name,
+                mdImage.renderer(reference))
+            .use(
+                mdVideo.plugin,
+                mdVideo.name,
+                mdVideo.renderer(reference))
+            .use(
+                mdAudio.plugin,
+                mdAudio.name,
+                mdAudio.renderer(reference))
+            // .use(
+            //   mdEpigraph.plugin,
+            //   mdEpigraph.name,
+            //   mdEpigraph.renderer(reference))
+            .use(
+                mdLogo.plugin,
+                mdLogo.name,
+                mdLogo.renderer(reference))
+    }
+
+    set filename(name) {
+        this._filename = name
+    }
+
+    get filename() {
+        return this._filename
+    }
 
     /**
-     * Instance of MarkdownIt class
-     * @member
-     * @memberOf module:md#MarkdownRenderer
-     * @see {@link https://github.com/markdown-it/markdown-it|markdown-it}
-     * @type {MarkdownIt}
+     * [template description]
+     * @param  {Array} meta [description]
+     * @return {String}
      */
-    this.md = new MarkdownIt({
-      html: true,
-      xhtmlOut: true,
-      breaks: false,
-      linkify: false,
-    })
+    template(meta) {
+        const str = meta.split('\n').map(_ => `  ${_}`).join('\n')
+        return `-\n  filename: ${this.filename}\n${str}\n`
+    }
 
     /**
-     * [filename description]
-     * @member
-     * @memberOf module:md#MarkdownRenderer
-     * @type {String}
+     * Transforms a markdown file to XHTML
+     * @param  {String} filename [description]
+     * @param  {Object} data     [description]
+     * @return {String}
      */
-    this.filename = ''
-
-    const context = this
-    const instance = this.md
-    const reference = { instance, context }
-
-    instance
-      .use(
-        mdSection.plugin,
-        mdSection.name,
-        mdSection.renderer(reference))
-      .use(
-        mdPullQuote.plugin,
-        mdPullQuote.name,
-        mdPullQuote.renderer(reference))
-      .use(
-        mdFrontMatter,
-        (meta) => {
-          const filename = this.filename
-          store.add('pages', { filename, ...Yaml.parse(meta) })
-        })
-      .use(
-        mdFootnote,
-        (tokens) => {
-          const filename = this.filename
-          const page = find(store.pages, { filename })
-          const title = page && page.title ? page.title : filename
-
-          // add footnote container and heading. we're doing this here instead
-          // of in `footnotes.js` because we need some file info (just the title :/)
-          tokens.unshift({
-            type: 'block',
-            tag: 'section',
-            attrs: [['class', 'footnotes break-after']],
-            nesting: 1,
-            block: true,
-          }, {
-            type: 'block',
-            tag: 'h1',
-            nesting: 1,
-            block: true,
-          }, {
-            type: 'text',
-            block: false,
-            content: title,
-          }, {
-            type: 'block',
-            tag: 'h1',
-            nesting: -1,
-          })
-
-          // add closing section tag
-          tokens.push({
-            type: 'block',
-            tag: 'section',
-            nesting: -1,
-          })
-
-          const notes = instance.renderer.render(tokens, 0, { reference: `${filename}.xhtml` })
-          store.add('footnotes', { filename, title, notes })
-        })
-      .use(
-        mdDialogue.plugin,
-        mdDialogue.name,
-        mdDialogue.renderer(reference))
-      .use(
-        mdImage.plugin,
-        mdImage.name,
-        mdImage.renderer(reference))
-      .use(
-        mdVideo.plugin,
-        mdVideo.name,
-        mdVideo.renderer(reference))
-      .use(
-        mdAudio.plugin,
-        mdAudio.name,
-        mdAudio.renderer(reference))
-      // .use(
-      //   mdEpigraph.plugin,
-      //   mdEpigraph.name,
-      //   mdEpigraph.renderer(reference))
-      .use(
-        mdLogo.plugin,
-        mdLogo.name,
-        mdLogo.renderer(reference))
-  }
-
-  set filename(name) {
-    this._filename = name
-  }
-
-  get filename() {
-    return this._filename
-  }
-
-  /**
-   * [template description]
-   * @param  {Array} meta [description]
-   * @return {String}
-   */
-  template(meta) {
-    const str = meta.split('\n').map(_ => `  ${_}`).join('\n')
-    return `-\n  filename: ${this.filename}\n${str}\n`
-  }
-
-  /**
-   * Transforms a markdown file to XHTML
-   * @param  {String} filename [description]
-   * @param  {Object} data     [description]
-   * @return {String}
-   */
-  render(filename, data) {
-    this.filename = filename
-    return this.md.render(data)
-  }
+    render(filename, data) {
+        this.filename = filename
+        return this.md.render(data)
+    }
 
 }
 

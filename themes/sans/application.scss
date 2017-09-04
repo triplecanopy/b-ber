@@ -9,42 +9,42 @@ $serif: TimesNewRoman, 'Times New Roman', Times, Baskerville, Georgia, serif;
 
 // overrides
 html {
-  @if $build == web {
-    @include break('mobile') { font-size: 118.75%; } // 19px
-    @include break('ipad-pro') { font-size: 193.75%; } // 31px
-  }
+    @if $build == web {
+        @include break('mobile') { font-size: 118.75%; } // 19px
+        @include break('ipad-pro') { font-size: 193.75%; } // 31px
+    }
 }
 
 h1,h2,h3,h4,h5,h6,
 section.backmatter h1 {
-  text-align: left;
-  padding-bottom: 1em;
-  text-transform: none;
+    text-align: left;
+    padding-bottom: 1em;
+    text-transform: none;
 }
 h1 {
-  font-size: 2.173913043478261em;
-  line-height: 1.16;
-  padding-bottom: 0;
-  text-transform: none;
-  page-break-after: always;
+    font-size: 2.173913043478261em;
+    line-height: 1.16;
+    padding-bottom: 0;
+    text-transform: none;
+    page-break-after: always;
 }
 section.backmatter h1 {
-  page-break-after: avoid;
+    page-break-after: avoid;
 }
 blockquote {
-  @include font-base;
-  @include no-top-padding-element-follows;
-  padding: 1em 2.31em 1em 2.31em;
-  p {
     @include font-base;
-    font-size: 1em;
-    line-height: 1.32759em;
-    text-indent: 0;
-  }
+    @include no-top-padding-element-follows;
+    padding: 1em 2.31em 1em 2.31em;
+    p {
+        @include font-base;
+        font-size: 1em;
+        line-height: 1.32759em;
+        text-indent: 0;
+    }
 }
 .figure-lg {
-  figcaption, .figcaption {
-    font-size: 0.64655em;
-    line-height: 1.33;
-  }
+    figcaption, .figcaption {
+        font-size: 0.64655em;
+        line-height: 1.33;
+    }
 }

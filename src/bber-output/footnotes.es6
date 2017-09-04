@@ -18,104 +18,104 @@ import { page } from 'bber-templates/pages'
 const cwd = process.cwd()
 
 class Footnotes {
-  get src() {
-    return src()
-  }
-  get dist() {
-    return dist()
-  }
-  get footnotes() {
-    return store.footnotes
-  }
-
-  get fileName() {
-    return 'notes'
-  }
-  get file() {
-    return {
-      name: this.fileName,
-      path: path.join(this.dist, `/OPS/text/${this.fileName}.xhtml`),
+    get src() {
+        return src()
     }
-  }
+    get dist() {
+        return dist()
+    }
+    get footnotes() {
+        return store.footnotes
+    }
 
-  /**
-   * @constructor
-   */
-  constructor() {
-    this.init = this.init.bind(this)
-  }
+    get fileName() {
+        return 'notes'
+    }
+    get file() {
+        return {
+            name: this.fileName,
+            path: path.join(this.dist, `/OPS/text/${this.fileName}.xhtml`),
+        }
+    }
 
-  writeFootnotes() {
-    return new Promise((resolve) => {
-      const notes = this.footnotes.reduce((acc, cur) => acc.concat(cur.notes), '')
-      const markup = renderLayouts(new File({
-        path: './.tmp',
-        layout: 'page',
-        contents: new Buffer(notes),
-      }), { page }).contents.toString()
+    /**
+     * @constructor
+     */
+    constructor() {
+        this.init = this.init.bind(this)
+    }
 
-      fs.writeFile(this.file.path, markup, 'utf8', (err) => {
-        if (err) { throw err }
+    writeFootnotes() {
+        return new Promise((resolve) => {
+            const notes = this.footnotes.reduce((acc, cur) => acc.concat(cur.notes), '')
+            const markup = renderLayouts(new File({
+                path: './.tmp',
+                layout: 'page',
+                contents: new Buffer(notes),
+            }), { page }).contents.toString()
 
-        const fileData = {
-          ...modelFromString(`${this.file.name}.xhtml`, store.config.src),
-          in_toc: false,
-          linear: false,
-          generated: true,
+            fs.writeFile(this.file.path, markup, 'utf8', (err) => {
+                if (err) { throw err }
+
+                const fileData = {
+                    ...modelFromString(`${this.file.name}.xhtml`, store.config.src),
+                    in_toc: false,
+                    linear: false,
+                    generated: true,
+                }
+
+                store.add('spine', fileData)
+
+                log.info(`bber-output/footnotes: Created default footnotes page [${this.file.name}.xhtml]`)
+
+                resolve()
+            })
+        })
+    }
+
+    testParams(callback) {
+        if (!this.src || !this.dist) {
+            log.error(new Error(`bber-output/footnotes:
+                [Footnotes#testParams] requires both [input] and [output] parameters`), 1)
         }
 
-        store.add('spine', fileData)
+        const input = path.resolve(cwd, this.src)
+        const output = path.resolve(cwd, this.dist)
 
-        log.info(`bber-output/footnotes: Created default footnotes page [${this.file.name}.xhtml]`)
+        try {
+            if (!fs.existsSync(input)) {
+                throw new Error(`bber-output/footnotes:
+                    Cannot resolve input path: [${input}].
+                    Run [bber init] to start a new project`
+                )
+            }
+        } catch (err) {
+            log.error(err, 1)
+        }
 
-        resolve()
-      })
-    })
-  }
+        if (!isArray(this.footnotes)) {
+            log.error(new Error(`bber-output/footnotes:
+                [bber.store] has not initialized in [Footnotes#testParams], aborting`), 1)
+        }
 
-  testParams(callback) {
-    if (!this.src || !this.dist) {
-      log.error(new Error(`bber-output/footnotes:
-        [Footnotes#testParams] requires both [input] and [output] parameters`), 1)
+        return fs.mkdirs(output, err => callback(err, this.footnotes))
     }
 
-    const input = path.resolve(cwd, this.src)
-    const output = path.resolve(cwd, this.dist)
-
-    try {
-      if (!fs.existsSync(input)) {
-        throw new Error(`bber-output/footnotes:
-          Cannot resolve input path: [${input}].
-          Run [bber init] to start a new project`
+    init() {
+        return new Promise(resolve =>
+            this.testParams((err0, footnotes) => {
+                if (err0) { throw err0 }
+                if (!footnotes.length) {
+                    log.info('bber-output/footnotes: No footnotes found in source files')
+                    return resolve(footnotes)
+                }
+                log.info('bber-output/footnotes: Generating linked footnotes from data found in source')
+                return this.writeFootnotes()
+                .catch(err1 => log.error(err1))
+                .then(resolve)
+            })
         )
-      }
-    } catch (err) {
-      log.error(err, 1)
     }
-
-    if (!isArray(this.footnotes)) {
-      log.error(new Error(`bber-output/footnotes:
-        [bber.store] has not initialized in [Footnotes#testParams], aborting`), 1)
-    }
-
-    return fs.mkdirs(output, err => callback(err, this.footnotes))
-  }
-
-  init() {
-    return new Promise(resolve =>
-      this.testParams((err0, footnotes) => {
-        if (err0) { throw err0 }
-        if (!footnotes.length) {
-          log.info('bber-output/footnotes: No footnotes found in source files')
-          return resolve(footnotes)
-        }
-        log.info('bber-output/footnotes: Generating linked footnotes from data found in source')
-        return this.writeFootnotes()
-        .catch(err1 => log.error(err1))
-        .then(resolve)
-      })
-    )
-  }
 }
 
 const footnotes = new Footnotes()

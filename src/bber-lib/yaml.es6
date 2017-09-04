@@ -8,40 +8,40 @@ import { isPlainObject } from 'lodash'
 // to safe-mode. Doesn't perform any error checking for I/O, assumes
 // that its being given valid paths. All methods are currently synchronous.
 class Yaml {
-  static read(fpath, encoding = 'utf8') {
-    return fs.readFileSync(fpath, encoding)
-  }
-
-  // @param {String} strOrObj  A string (JSON) or plain JS Object
-  static toYaml(strOrObj) {
-    if (typeof strOrObj === 'string') {
-      return _yaml.safeDump(strOrObj)
-    }
-    if (isPlainObject) {
-      return _yaml.safeDump(JSON.stringify(strOrObj))
+    static read(fpath, encoding = 'utf8') {
+        return fs.readFileSync(fpath, encoding)
     }
 
-    throw new TypeError(`Invalid type: [${typeof strOrObj}]`)
-  }
+    // @param {String} strOrObj  A string (JSON) or plain JS Object
+    static toYaml(strOrObj) {
+        if (typeof strOrObj === 'string') {
+            return _yaml.safeDump(strOrObj)
+        }
+        if (isPlainObject) {
+            return _yaml.safeDump(JSON.stringify(strOrObj))
+        }
 
-  // Loads YAML from file contents
-  // @param {String} fpath   File path
-  // @return {Object}
-  static load(fpath) {
-    return _yaml.safeLoad(Yaml.read(fpath))
-  }
+        throw new TypeError(`Invalid type: [${typeof strOrObj}]`)
+    }
 
-  // @param str         JavaScript Object
-  // @return {String}   YAML formatted string
-  static dump(str) {
-    return _yaml.safeDump(str, { indent: 2 })
-  }
+    // Loads YAML from file contents
+    // @param {String} fpath   File path
+    // @return {Object}
+    static load(fpath) {
+        return _yaml.safeLoad(Yaml.read(fpath))
+    }
 
-  // Alias for js-yaml package's `#safeLoad`.
-  // @params str  YAML string
-  static parse(str) {
-    return _yaml.safeLoad(str)
-  }
+    // @param str         JavaScript Object
+    // @return {String}   YAML formatted string
+    static dump(str) {
+        return _yaml.safeDump(str, { indent: 2 })
+    }
+
+    // Alias for js-yaml package's `#safeLoad`.
+    // @params str  YAML string
+    static parse(str) {
+        return _yaml.safeLoad(str)
+    }
 }
 
 export default Yaml

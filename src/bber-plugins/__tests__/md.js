@@ -18,70 +18,70 @@ const MarkdownRenderer = require('../md').default
 const logger = require('../../__tests__/helpers/console')
 
 describe('module:md:MarkdownRenderer', () => {
-  let markdownRenderer
+    let markdownRenderer
 
-  beforeEach((done) => {
-    logger.reset()
-    store.update('build', 'epub')
-    store.update('pages', [])
-    markdownRenderer = new MarkdownRenderer()
-    return done()
-  })
-
-  describe('#constructor', () => {
-    it('Should load user defined `markdown-it` plugins')
-
-    it('Creates a new instance of the MarkdownRenderer class', () => {
-      markdownRenderer.should.be.an('object')
-      markdownRenderer.md.should.be.an.instanceOf(MarkdownIt)
-      markdownRenderer.filename.should.equal('')
-    })
-  })
-
-  describe('#render', () => {
-    it('Should transform a Markdown string to HTML', () => {
-      markdownRenderer.render('test', '# Test').should.equal('<h1>Test</h1>\n')
+    beforeEach((done) => {
+        logger.reset()
+        store.update('build', 'epub')
+        store.update('pages', [])
+        markdownRenderer = new MarkdownRenderer()
+        return done()
     })
 
-    it('Should throw an error if an invalid directive is used')
+    describe('#constructor', () => {
+        it('Should load user defined `markdown-it` plugins')
 
-    it('Should update the global store with a Markdown file\'s frontmatter', () => {
-      const callback = sinon.spy(store, 'add')
-      markdownRenderer.render('test', '--- foo: bar\n# Test')
-      sinon.assert.calledOnce(callback)
-      store.pages.should.be.an('array')
-      store.pages[0].filename.should.equal('test')
-      store.pages[0].should.have.property('foo')
+        it('Creates a new instance of the MarkdownRenderer class', () => {
+            markdownRenderer.should.be.an('object')
+            markdownRenderer.md.should.be.an.instanceOf(MarkdownIt)
+            markdownRenderer.filename.should.equal('')
+        })
     })
-  })
 
-  describe('#section', () => {
-    it('Should include a `section` directive', () => {
-      markdownRenderer.md.renderer.rules.should.include.all.keys('container_section_open', 'container_section_close')
+    describe('#render', () => {
+        it('Should transform a Markdown string to HTML', () => {
+            markdownRenderer.render('test', '# Test').should.equal('<h1>Test</h1>\n')
+        })
+
+        it('Should throw an error if an invalid directive is used')
+
+        it('Should update the global store with a Markdown file\'s frontmatter', () => {
+            const callback = sinon.spy(store, 'add')
+            markdownRenderer.render('test', '--- foo: bar\n# Test')
+            sinon.assert.calledOnce(callback)
+            store.pages.should.be.an('array')
+            store.pages[0].filename.should.equal('test')
+            store.pages[0].should.have.property('foo')
+        })
     })
-  })
 
-  describe('#dialogue', () => {
-    it('Should include a `dialogue` directive', () => {
-      markdownRenderer.md.renderer.rules.should.include.all.keys('container_dialogue_open', 'container_dialogue_close')
+    describe('#section', () => {
+        it('Should include a `section` directive', () => {
+            markdownRenderer.md.renderer.rules.should.include.all.keys('container_section_open', 'container_section_close')
+        })
     })
-  })
 
-  describe('#image', () => {
-    it('Should include an `image` directive', () => {
-      markdownRenderer.md.renderer.rules.should.include.key('container_image_open')
+    describe('#dialogue', () => {
+        it('Should include a `dialogue` directive', () => {
+            markdownRenderer.md.renderer.rules.should.include.all.keys('container_dialogue_open', 'container_dialogue_close')
+        })
     })
-  })
 
-  describe('#logo', () => {
-    it('Should include a `logo` directive')//, () => {
-    //   markdownRenderer.md.renderer.rules.should.include.key('container_logo_open')
-    // })
-  })
-
-  describe('#pull-quote', () => {
-    it('Should include an `pull-quote` directive', () => {
-      markdownRenderer.md.renderer.rules.should.include.all.keys('container_pullQuote_open', 'container_pullQuote_close')
+    describe('#image', () => {
+        it('Should include an `image` directive', () => {
+            markdownRenderer.md.renderer.rules.should.include.key('container_image_open')
+        })
     })
-  })
+
+    describe('#logo', () => {
+        it('Should include a `logo` directive')//, () => {
+        //   markdownRenderer.md.renderer.rules.should.include.key('container_logo_open')
+        // })
+    })
+
+    describe('#pull-quote', () => {
+        it('Should include an `pull-quote` directive', () => {
+            markdownRenderer.md.renderer.rules.should.include.all.keys('container_pullQuote_open', 'container_pullQuote_close')
+        })
+    })
 })

@@ -4,25 +4,25 @@ import { fail } from 'bber-cli/helpers'
 const command = ['copy', '[options...]', 'c']
 const describe = 'Copy assets to the output dir'
 const builder = yargs =>
-  yargs
-    .options({
-      i: {
-        alias: 'in',
-        describe: 'The directory/directories to copy',
-        default: [],
-        type: 'array',
-      },
-      o: {
-        alias: 'out',
-        describe: 'The directory to copy',
-        default: '',
-        type: 'string',
-      },
-    })
-    .fail((msg, err) => fail(msg, err, yargs))
-    .help('h')
-    .alias('h', 'help')
-    .usage(`\nUsage: $0 copy\n\n${describe}`)
+    yargs
+        .options({
+            i: {
+                alias: 'in',
+                describe: 'The directory/directories to copy',
+                default: [],
+                type: 'array',
+            },
+            o: {
+                alias: 'out',
+                describe: 'The directory to copy',
+                default: '',
+                type: 'string',
+            },
+        })
+        .fail((msg, err) => fail(msg, err, yargs))
+        .help('h')
+        .alias('h', 'help')
+        .usage(`\nUsage: $0 copy\n\n${describe}`)
 
 const handler = copy
 
@@ -35,8 +35,8 @@ const handler = copy
 
 
 export default {
-  command,
-  describe,
-  builder,
-  handler,
+    command,
+    describe,
+    builder,
+    handler,
 }

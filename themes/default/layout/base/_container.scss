@@ -11,35 +11,35 @@
 
 // Debugging
 html {
-  @if $debug == true {
-    @include debug-vertical-alignment;
-  }
+    @if $debug == true {
+        @include debug-vertical-alignment;
+    }
 
-  @if $build == web {
-    @include break('mobile') { font-size: 112.5%; } // 18px
-    @include break('ipad-pro') { font-size: 192.5%; } // 30.8px
-  }
+    @if $build == web {
+        @include break('mobile') { font-size: 112.5%; } // 18px
+        @include break('ipad-pro') { font-size: 192.5%; } // 30.8px
+    }
 }
 
 body {
-  margin:0;
-  text-indent: 0;
-  padding:0;
-  font-family:$base-font-family;
-  @include font-base;
-  @include adjust-font-size-to($base-font-size);
-  @include hyphens;
-  @include widows;
-  @include orphans;
-  @include text-rendering;
-  @include font-smoothing;
+    margin:0;
+    text-indent: 0;
+    padding:0;
+    font-family:$base-font-family;
+    @include font-base;
+    @include adjust-font-size-to($base-font-size);
+    @include hyphens;
+    @include widows;
+    @include orphans;
+    @include text-rendering;
+    @include font-smoothing;
 }
 
 blockquote {
-  @include font-base;
-  @include no-top-padding-element-follows;
-  padding: 0.9em 2.31em 0.95em 2.31em;
-  text-indent: 0;
+    @include font-base;
+    @include no-top-padding-element-follows;
+    padding: 0.9em 2.31em 0.95em 2.31em;
+    text-indent: 0;
 }
 
 
@@ -48,98 +48,98 @@ blockquote {
 // TODO: Determine section names to be used for body/section classes
 
 section {
-  clear: both;
-  &:after{
-    content: ' ';
-    display: table;
     clear: both;
-  }
+    &:after{
+        content: ' ';
+        display: table;
+        clear: both;
+    }
 }
 
 section p:first-child,
 header + p {
-  text-indent: 0;
+    text-indent: 0;
 }
 
 section.break-before a + div.figure-sm {
-  padding-top:0;
+    padding-top:0;
 }
 
 section.subchapter {
-  margin-bottom: rhythm(1, $base-font-size);
-  + section.subchapter > header > h2 {
-    padding-top: 0;
-  }
+    margin-bottom: rhythm(1, $base-font-size);
+    + section.subchapter > header > h2 {
+        padding-top: 0;
+    }
 }
 
 section.bibliography {
-  margin-bottom: rhythm(1, $base-font-size);
-  .subchapter{
-    margin-bottom: 0;
-  }
-  h3 {
-    padding-top: 0;
-    padding-bottom: 1.4em;
-    line-height: 1.4;
-  }
-  h1 + .subchapter > h3 { padding-top: 0; }
-  p {
-    text-indent: 0;
-    padding-top: 0;
-    padding-bottom: 1.4em;
-  }
+    margin-bottom: rhythm(1, $base-font-size);
+    .subchapter{
+        margin-bottom: 0;
+    }
+    h3 {
+        padding-top: 0;
+        padding-bottom: 1.4em;
+        line-height: 1.4;
+    }
+    h1 + .subchapter > h3 { padding-top: 0; }
+    p {
+        text-indent: 0;
+        padding-top: 0;
+        padding-bottom: 1.4em;
+    }
 }
 
 // Custom layout for non-linear content, iOS only
 //
 body.non-linear section:first-child {
-  padding: 150px $text-lg $text-lg $text-lg;
-  p:first-child{
-    padding-top: 0;
-  }
+    padding: 150px $text-lg $text-lg $text-lg;
+    p:first-child{
+        padding-top: 0;
+    }
 }
 
 
 .figure-inline{
-  @include figure;
+    @include figure;
 }
 .figure-lg{
-  @include figure(100);
-  text-align: left;
+    @include figure(100);
+    text-align: left;
 }
 
 aside.note{
-  text-align:left;
-  margin:0;
-  padding: 0 0 rhythm(1) 0;
-  p{
-    text-indent: 0;
-    a{
-      display: inline;
-      margin:0;
-      padding:0;
+    text-align:left;
+    margin:0;
+    padding: 0 0 rhythm(1) 0;
+    p{
+        text-indent: 0;
+        a{
+            display: inline;
+            margin:0;
+            padding:0;
+        }
     }
-  }
 }
 
 .pull-quote {
-  text-indent: 0;
-  padding: 0 rhythm(1.65) 1.65em;
+    text-indent: 0;
+    padding: 0 rhythm(1.65) 1.65em;
 
-  section.titlepage &,
-  section.introduction &,
-  section.afterword & {
-    float: none;
-    clear: both;
-    padding-bottom: 5.65em;
-    padding-top: 0;
-  }
+    section.titlepage &,
+    section.introduction &,
+    section.afterword & {
+        float: none;
+        clear: both;
+        padding-bottom: 5.65em;
+        padding-top: 0;
+    }
 
-  .epigraph & {
-    float: none;
-    padding-top: 0;
-    padding-bottom: 1.4em;
-    margin-top: 0;
-  }
-  + p { text-indent: 0; }
+    .epigraph & {
+        float: none;
+        padding-top: 0;
+        padding-bottom: 1.4em;
+        margin-top: 0;
+    }
+    + p { text-indent: 0; }
 }

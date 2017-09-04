@@ -2,15 +2,15 @@
 import { forOf } from 'bber-utils'
 import { log } from 'bber-plugins'
 import {
-  BLOCK_DIRECTIVES,
-  INLINE_DIRECTIVES,
-  MISC_DIRECTIVES,
-  FRONTMATTER_DIRECTIVES,
-  BODYMATTER_DIRECTIVES,
-  BACKMATTER_DIRECTIVES,
-  ALL_DIRECTIVES,
-  DIRECTIVES_REQUIRING_ALT_TAG,
-  SUPPORTED_ATTRIBUTES,
+    BLOCK_DIRECTIVES,
+    INLINE_DIRECTIVES,
+    MISC_DIRECTIVES,
+    FRONTMATTER_DIRECTIVES,
+    BODYMATTER_DIRECTIVES,
+    BACKMATTER_DIRECTIVES,
+    ALL_DIRECTIVES,
+    DIRECTIVES_REQUIRING_ALT_TAG,
+    SUPPORTED_ATTRIBUTES,
 } from 'bber-shapes/directives'
 
 
@@ -24,10 +24,10 @@ import {
 
 
 const _lookUpFamily = genus =>
-  FRONTMATTER_DIRECTIVES.indexOf(genus) > -1 ? 'frontmatter' :
-  BODYMATTER_DIRECTIVES.indexOf(genus) > -1 ? 'bodymatter' :
-  BACKMATTER_DIRECTIVES.indexOf(genus) > -1 ? 'backmatter' :
-  ''
+    FRONTMATTER_DIRECTIVES.indexOf(genus) > -1 ? 'frontmatter' :
+    BODYMATTER_DIRECTIVES.indexOf(genus) > -1 ? 'bodymatter' :
+    BACKMATTER_DIRECTIVES.indexOf(genus) > -1 ? 'backmatter' :
+    ''
 
 /**
  * Determine the directive's classification and parent's type
@@ -35,44 +35,44 @@ const _lookUpFamily = genus =>
  * @return {Object<String>}
  */
 const _directiveOrder = genus =>
-  BLOCK_DIRECTIVES.indexOf(genus) > -1 ? 'block' :
-  INLINE_DIRECTIVES.indexOf(genus) > -1 ? 'inline' :
-  MISC_DIRECTIVES.indexOf(genus) > -1 ? 'misc' :
-  null
+    BLOCK_DIRECTIVES.indexOf(genus) > -1 ? 'block' :
+    INLINE_DIRECTIVES.indexOf(genus) > -1 ? 'inline' :
+    MISC_DIRECTIVES.indexOf(genus) > -1 ? 'misc' :
+    null
 
 const _requiresAltTag = genus =>
-  DIRECTIVES_REQUIRING_ALT_TAG.indexOf(genus) > -1
+    DIRECTIVES_REQUIRING_ALT_TAG.indexOf(genus) > -1
 
 const _isUnsupportedAttribute = attr =>
-  SUPPORTED_ATTRIBUTES.indexOf(attr) < 0
+    SUPPORTED_ATTRIBUTES.indexOf(attr) < 0
 
 const _applyTransforms = (k, v) => {
-  switch (k) {
-    case 'classes':
-      return ` class="${v}"`
-    case 'epubTypes':
-      return ` epub:type="${v}"`
-    case 'pagebreak':
-      return ` style="page-break-${v}:always;"`
-    case 'attrs':
-      return ''
-    case 'source':
-      return ` src="${v}"`
+    switch (k) {
+        case 'classes':
+            return ` class="${v}"`
+        case 'epubTypes':
+            return ` epub:type="${v}"`
+        case 'pagebreak':
+            return ` style="page-break-${v}:always;"`
+        case 'attrs':
+            return ''
+        case 'source':
+            return ` src="${v}"`
 
-    // media controls enabled by default
-    case 'controls':
-      return v === 'no' ? '' : ` ${k}="${k}"`
+        // media controls enabled by default
+        case 'controls':
+            return v === 'no' ? '' : ` ${k}="${k}"`
 
-    // boolean attrs for audio/video elements
-    case 'autoplay':
-    case 'muted':
-    case 'autobuffer':
-    case 'loop':
-      return v === 'yes' ? ` ${k}="${k}"` : ''
+        // boolean attrs for audio/video elements
+        case 'autoplay':
+        case 'muted':
+        case 'autobuffer':
+        case 'loop':
+            return v === 'yes' ? ` ${k}="${k}"` : ''
 
-    default:
-      return ` ${k}="${v}"`
-  }
+        default:
+            return ` ${k}="${v}"`
+    }
 }
 
 
@@ -86,56 +86,56 @@ const _applyTransforms = (k, v) => {
 //
 const _parseAttrs = (s) => {
 
-  const out = {}
+    const out = {}
 
-  let str = ''
-  let open
-  let delim
-  let char
-  let next
-  let key
+    let str = ''
+    let open
+    let delim
+    let char
+    let next
+    let key
 
-  for (let i = 0; i < s.length; i++) {
-    char = s[i].charCodeAt(0)
-    next = s[i + 1] ? s[i + 1].charCodeAt(0) : ''
+    for (let i = 0; i < s.length; i++) {
+        char = s[i].charCodeAt(0)
+        next = s[i + 1] ? s[i + 1].charCodeAt(0) : ''
 
-    if (!open && char === 58/* : */) { // char is a token, we set `open` so that we don't misinterpret literals inside quotations
-      open = true
-      key = str
-      str = ''
-      delim = 32/*   */
-      if (next === 34/* " */ || next === 39/* ' */) { i++; delim = next }
-      continue
+        if (!open && char === 58/* : */) { // char is a token, we set `open` so that we don't misinterpret literals inside quotations
+            open = true
+            key = str
+            str = ''
+            delim = 32/*   */
+            if (next === 34/* " */ || next === 39/* ' */) { i++; delim = next }
+            continue
+        }
+
+        if (char === delim) { // token is ending delimiter since we've advanced our pointer
+            key = key.trim() // trim whitespace, allowing for multiple spaces
+            out[key] = str
+            str = key = ''
+            open = delim = null
+            continue
+        }
+
+        str += s[i]
+
+        if (i === s.length - 1) { // end of line
+            if (key && key.length && str && str.length) {
+                out[key] = str
+            }
+        }
     }
 
-    if (char === delim) { // token is ending delimiter since we've advanced our pointer
-      key = key.trim() // trim whitespace, allowing for multiple spaces
-      out[key] = str
-      str = key = ''
-      open = delim = null
-      continue
-    }
-
-    str += s[i]
-
-    if (i === s.length - 1) { // end of line
-      if (key && key.length && str && str.length) {
-        out[key] = str
-      }
-    }
-  }
-
-  return out
+    return out
 }
 
 // -> prop="val"
 const _buildAttrString = (obj) => {
-  let s = ''
-  forOf(obj, (k, v) => {
-    s += _applyTransforms(k, v)
-  })
+    let s = ''
+    forOf(obj, (k, v) => {
+        s += _applyTransforms(k, v)
+    })
 
-  return s
+    return s
 }
 
 
@@ -147,36 +147,36 @@ const _buildAttrString = (obj) => {
  * @return {Object}
  */
 const _extendWithDefaults = (obj, genus) => {
-  const result = { ...obj }
-  const order = _directiveOrder(genus)
-  if (!order) { throw new TypeError(`Invalid directive type: [${genus}]`) }
+    const result = { ...obj }
+    const order = _directiveOrder(genus)
+    if (!order) { throw new TypeError(`Invalid directive type: [${genus}]`) }
 
-  let taxonomy
-  switch (order) {
+    let taxonomy
+    switch (order) {
 
-    case 'block':
-      taxonomy = `${_lookUpFamily(genus)} ${genus}`     // -> `bodymatter chapter`
-      result.epubTypes = taxonomy
-      if ({}.hasOwnProperty.call(obj, 'classes')) {
-        result.classes += ` ${taxonomy}`                // -> class="... bodymatter chapter"
-      } else {
-        result.classes = taxonomy                       // -> class="bodymatter chapter"
-      }
-      return result
+        case 'block':
+            taxonomy = `${_lookUpFamily(genus)} ${genus}`     // -> `bodymatter chapter`
+            result.epubTypes = taxonomy
+            if ({}.hasOwnProperty.call(obj, 'classes')) {
+                result.classes += ` ${taxonomy}`                // -> class="... bodymatter chapter"
+            } else {
+                result.classes = taxonomy                       // -> class="bodymatter chapter"
+            }
+            return result
 
-    case 'inline':
-      if (_requiresAltTag(genus)) {
-        if (!{}.hasOwnProperty.call(obj, 'alt')) {
-          result.alt = result.source
-        }
-      }
+        case 'inline':
+            if (_requiresAltTag(genus)) {
+                if (!{}.hasOwnProperty.call(obj, 'alt')) {
+                    result.alt = result.source
+                }
+            }
 
-      return result
+            return result
 
-    case 'misc':
-    default:
-      return result
-  }
+        case 'misc':
+        default:
+            return result
+    }
 }
 
 /**
@@ -187,29 +187,29 @@ const _extendWithDefaults = (obj, genus) => {
  * @return {String}
  */
 const attributesObject = (attrs, genus, context = {}) => {
-  const { filename, lineNr } = context
-  let attrsObject = {}
+    const { filename, lineNr } = context
+    let attrsObject = {}
 
-  if (!genus || typeof genus !== 'string') {
-    log.error(`No directive provided: ${filename}:${lineNr}`, 1)
-  }
+    if (!genus || typeof genus !== 'string') {
+        log.error(`No directive provided: ${filename}:${lineNr}`, 1)
+    }
 
-  if (ALL_DIRECTIVES.indexOf(genus) < 0) {
-    log.error(`Invalid directive: [${genus}] at ${filename}:${lineNr}`, 1)
-  }
+    if (ALL_DIRECTIVES.indexOf(genus) < 0) {
+        log.error(`Invalid directive: [${genus}] at ${filename}:${lineNr}`, 1)
+    }
 
-  if (attrs && typeof attrs === 'string') {
-    forOf(_parseAttrs(attrs.trim()), (k, v) => {
-      if (_isUnsupportedAttribute(k)) {
-        return log.warn(`Omitting illegal attribute [${k}] at [${filename}:${lineNr}]`)
-      }
+    if (attrs && typeof attrs === 'string') {
+        forOf(_parseAttrs(attrs.trim()), (k, v) => {
+            if (_isUnsupportedAttribute(k)) {
+                return log.warn(`Omitting illegal attribute [${k}] at [${filename}:${lineNr}]`)
+            }
 
-      attrsObject[k] = v
-    })
-  }
+            attrsObject[k] = v
+        })
+    }
 
-  const mergedAttrs = _extendWithDefaults(attrsObject, genus)
-  return mergedAttrs
+    const mergedAttrs = _extendWithDefaults(attrsObject, genus)
+    return mergedAttrs
 }
 
 /**
@@ -234,7 +234,7 @@ const attributes = (str, type, context) => _buildAttrString(attributesObject(str
  * @return {String}
  */
 const htmlId = s =>
-  `_${String(s).replace(/[^0-9a-zA-Z-_]/g, '_')}`//-${crypto.createHash('md5').update(s).digest('hex')}`
+    `_${String(s).replace(/[^0-9a-zA-Z-_]/g, '_')}`//-${crypto.createHash('md5').update(s).digest('hex')}`
 
 
 export { attributes, attributesObject, attributesString, htmlId }

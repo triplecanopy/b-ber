@@ -14,12 +14,12 @@ import { log } from 'bber-plugins'
  * @return {Promise<Object|Error>}
  */
 const clean = dirPath =>
-  new Promise(resolve =>
-    fs.remove(dirPath || dist(), (err) => {
-      if (err) { throw err }
-      log.info(`bber-output/clean: Removed [${dirPath || dist()}]`)
-      resolve()
-    })
-  )
+    new Promise(resolve =>
+        fs.remove(dirPath || dist(), (err) => {
+          if (err) { throw err }
+          log.info(`bber-output/clean: Removed [${dirPath || dist()}]`)
+          resolve()
+        })
+    )
 
 export default clean
