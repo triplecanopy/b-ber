@@ -38,6 +38,7 @@ class Store {
   set spine(value)        { this._spine = value         }
   set toc(value)          { this._toc = value           }
   set remoteAssets(value) { this._remoteAssets = value  }
+  set loi(value)          { this._loi = value           }
 
   get env()               { return this._env            }
   get pages()             { return this._pages          }
@@ -54,6 +55,7 @@ class Store {
   get version()           { return this._version        }
   get toc()               { return this._toc            }
   get remoteAssets()      { return this._remoteAssets   }
+  get loi()               { return this._loi            }
 
   /**
    * @constructor
@@ -229,6 +231,7 @@ class Store {
     this.spine = []
     this.toc = []
     this.remoteAssets = []
+    this.loi = []
     this.env = process.env.NODE_ENV || 'development'
     this.config = {
       src: '_project',
@@ -251,6 +254,7 @@ class Store {
     this.spine = []
     this.toc = []
     this.remoteAssets = []
+    this.loi = []
   }
 
   reset() {

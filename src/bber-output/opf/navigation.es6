@@ -134,7 +134,7 @@ class Navigation {
     return new Promise((resolve) => { // eslint-disable-line consistent-return
       const { spine } = store // current build process's spine
       const { spineList } = store.bber[this.build] // spine items pulled in from type.yml file
-      const flow = uniq(spine.map(_ => _.fileName)) // one-dimensional flow of the book used for the spine
+      const flow = uniq(spine.map(_ => _.generated ? null : _.fileName).filter(Boolean)) // one-dimensional flow of the book used for the spine, omitting figures pages
       const pages = flattenSpineFromYAML(spineList)
 
       const missingFiles = difference(flow, filesFromSystem) // extra files on system
@@ -166,8 +166,8 @@ class Navigation {
           })
 
           const yamlpath = path.join(this.src, `${this.build}.yml`)
-          const nestedContent = nestedContentToYAML(store.toc)
-          const content = isArray(nestedContent) && nestedContent > 0 ? Yaml.dump(nestedContent) : ''
+          const nestedYamlToc = nestedContentToYAML(store.toc)
+          const content = isArray(nestedYamlToc) && nestedYamlToc.length === 0 ? '' : Yaml.dump(nestedYamlToc)
 
           fs.writeFile(yamlpath, content, (err) => {
             if (err) { throw err }
@@ -189,6 +189,7 @@ class Navigation {
           // TODO: add to toc? add to flow/pages?
           // TODO: there need to be some handlers for parsing user-facing attrs
           const missingEntriesWithAttributes = missingEntries.map((fileName) => {
+            if (/figure-/.test(fileName)) { return }
             const item = find(spine, { fileName })
             if (item && (item.in_toc === false || item.linear === false)) {
               const fileObj = { [fileName]: {} }
@@ -197,10 +198,12 @@ class Navigation {
               return fileObj
             }
             return fileName
-          })
+          }).filter(Boolean)
+
 
           const yamlpath = path.join(this.src, `${this.build}.yml`)
-          const content = Yaml.dump(missingEntriesWithAttributes)
+          const content = isArray(missingEntriesWithAttributes) && missingEntriesWithAttributes.length === 0 ? '' : Yaml.dump(missingEntriesWithAttributes)
+
           fs.appendFile(yamlpath, content, (err) => {
             if (err) { throw err }
           })
@@ -278,12 +281,12 @@ class Navigation {
       // TODO: find somewhere better for this. we add entries to the spine
       // programatically, but then they're also found on the system, so we
       // dedupe them here
-      const gens = remove(spine, _ => _.generated === true)
-      gens.forEach((_) => {
-        if (!find(spine, { fileName: _.fileName })) {
-          spine.push(_)
-        }
-      })
+      // const generatedFiles = remove(spine, _ => _.generated === true)
+      // generatedFiles.forEach((_) => {
+      //   if (!find(spine, { fileName: _.fileName })) {
+      //     spine.push(_)
+      //   }
+      // })
 
       const spineXML = spineItems(spine)
 

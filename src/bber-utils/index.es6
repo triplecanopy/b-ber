@@ -246,11 +246,12 @@ const spineModel = () => ({
   absolutePath: '',
   extension: '',
   fileName: '',
-  name: '', // filename without extension
+  name: '',
+  // baseName: '',
   remotePath: '',
+  // pageOrder: -1,
   linear: true,
   in_toc: true,
-  // inToc: true,
   nodes: [],
 })
 
@@ -262,13 +263,14 @@ const spineModel = () => ({
  */
 const modelFromString = (_str, _src) => {
   const str = String(_str)
-  const pathFragment = /^(toc\.xhtml|nav\.ncx)$/.test(str) ? '' : 'text' // TODO: clean this up
+  const pathFragment = /^(toc\.x?html|nav\.ncx)$/i.test(str) ? '' : 'text' // TODO: clean this up
   const relativePath = path.join(pathFragment, str) // relative to OPS
   const absolutePath = path.join(cwd, _src, relativePath)
   const extension = path.extname(absolutePath)
   const fileName = path.basename(absolutePath)
   const name = path.basename(absolutePath, extension)
-  const remotePath = absolutePath // TODO: add remote URL where applicable
+  // const baseName = path.basename(absolutePath, extension)
+  const remotePath = '' // TODO: add remote URL where applicable
   return {
     ...spineModel(),
     relativePath,
@@ -282,11 +284,6 @@ const modelFromString = (_str, _src) => {
 
 const modelFromObject = (_obj, _src) => {
   const { in_toc, linear } = _obj[Object.keys(_obj)[0]]
-  // const obj = {}
-
-  // if (typeof linear !== 'undefined') { obj.linear = linear }
-  // if (typeof in_toc !== 'undefined') { obj.inToc = in_toc } // eslint-disable-line camelcase
-
   const str = Object.keys(_obj)[0]
   const model = modelFromString(str, _src)
 
@@ -297,11 +294,7 @@ const nestedContentToYAML = (arr, result = []) => {
   arr.forEach((_) => {
     const model = {}
 
-    // TODO: check for custom attrs somewhere else. also - not sure about
-    // changing snakecase/camelcase all the time, better to just stick with
-    // one way or the other
-    // if (_.linear === false || _.inToc === false) {
-      // if (_.inToc === false) { model.in_toc = false }
+    // TODO: check for custom attrs somewhere else.
     if (_.linear === false || _.in_toc === false) {
       if (_.in_toc === false) { model.in_toc = false }
       if (_.linear === false) { model.linear = false }

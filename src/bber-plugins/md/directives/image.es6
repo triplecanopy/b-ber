@@ -78,7 +78,17 @@ export default {
           }
 
           page = `figure-${htmlId(attrsObject.source)}.xhtml`
-          store.add('images', { id: htmlId(id), ...attrsObject, ...dimensions, page, ref, caption })
+          store.add('images',
+            {
+              id: htmlId(id),
+              ...attrsObject,
+              ...dimensions,
+              page,
+              ref,
+              caption,
+              pageOrder: store.images.length,
+            }
+          )
 
           result = `${comment}<div class="${attrsObject.classes}">
             <figure id="ref${htmlId(id)}">

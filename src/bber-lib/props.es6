@@ -26,7 +26,7 @@ class Props {
   static isNav(file) {
     return Boolean((mime.lookup(file.rootPath || file.absolutePath) === 'text/html'
       || mime.lookup(file.rootPath || file.absolutePath) === 'application/xhtml+xml')
-      && /toc\.(?:x?html)/.test(file.name))
+      && /^toc\./.test(file.name))
   }
 
   /**

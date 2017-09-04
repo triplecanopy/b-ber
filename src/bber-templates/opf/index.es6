@@ -3,6 +3,7 @@
 import File from 'vinyl'
 import mime from 'mime-types'
 import Props from 'bber-lib/props'
+import store from 'bber-lib/store'
 import { fileId, guid, getFrontmatter, escapeHTML } from 'bber-utils'
 import { log } from 'bber-plugins'
 
@@ -67,6 +68,16 @@ const spineItems = arr =>
     if (nonLinear) {
       log.info(`bber-output/opf: Writing non-linear asset [${_.fileName}] to [spine]`)
     }
+
+    if (fname.match(/figure/)) {
+      log.info(`bber-output/opf: Writing [LOI] to [spine]`)
+      if (store.loi.length) {
+        let loi = `\n<itemref idref="${fname}_xhtml" linear="${linear}"/>`
+        store.loi.forEach(figure => loi += `\n<itemref idref="${fileId(figure.fileName)}" linear="yes"/>`)
+        return loi
+      }
+    }
+
 
     return `\n<itemref idref="${fname}_xhtml" linear="${linear}"/>`
   }).join('')

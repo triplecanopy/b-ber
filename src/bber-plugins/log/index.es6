@@ -4,7 +4,7 @@ import util from 'util'
 
 class Logger {
   constructor() {
-    this.logLevel = 0 // info: 0, warning: 1, error: 2, debug: 3
+    this.logLevel = 1 // info: 0, warning: 1, error: 2, debug: 3
     // this.logLevel = this._setLogLevel() // info: 0, warning: 1, error: 2, debug: 3
     this.boringOutput = 1
     this.consoleWidth = 70
