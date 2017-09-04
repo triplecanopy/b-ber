@@ -43,15 +43,15 @@ const createLOILeader = () =>
 const createLOI = () =>
     new Promise((resolve) => {
 
-        store.images.forEach((data, idx) => {
+        store.figures.forEach((data, idx) => {
 
             // Create image string based on dimensions of image
             // returns square | landscape | portrait | portraitLong
-            const imageStr = figure(data, build())
+            const figureStr = figure(data, build())
             const markup = renderLayouts(new File({
                 path: './.tmp',
                 layout: 'page',
-                contents: new Buffer(imageStr),
+                contents: new Buffer(figureStr),
             }), { page }).contents.toString()
 
 
@@ -70,7 +70,7 @@ const createLOI = () =>
                 log.info(`bber-output/loi: Created linked figure page from image found in source [${data.page}]`)
                 log.info(`bber-output/loi: ${data.source} -> ${data.page}`)
 
-                if (idx === store.images.length - 1) {
+                if (idx === store.figures.length - 1) {
                     // make sure we've added figures to the spine in the correct order
                     store.loi.sort((a, b) => a.pageOrder < b.pageOrder ? -1 : a.pageOrder > b.pageOrder ? 1 : 0)
                     resolve()
@@ -82,7 +82,7 @@ const createLOI = () =>
 
 const loi = () =>
     new Promise(async (resolve) => {
-        if (store.images.length) {
+        if (store.figures.length) {
             createLOILeader()
             .then(createLOI)
             .catch(err => log.error(err))

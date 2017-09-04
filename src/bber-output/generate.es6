@@ -83,7 +83,7 @@ class Generate {
 
             try {
                 if (fs.existsSync(path.join(src(), '_markdown', fname))) {
-                    throw new Error(`[bber-output/generate]: _markdown/${fname} already exists, aborting`)
+                    throw new Error(`bber-output/generate: _markdown/${fname} already exists, aborting`)
                 }
             } catch (err) {
                 log.error(err, 1)

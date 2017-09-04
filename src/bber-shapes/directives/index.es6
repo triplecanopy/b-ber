@@ -44,6 +44,8 @@ const INLINE_DIRECTIVES = [
     'logo',
     'video',
     'audio',
+    'video-inline',
+    'audio-inline',
 ]
 
 // misc

@@ -25,8 +25,8 @@ const BBER_PACKAGE_JSON = require(path.join(BBER_MODULE_PATH, 'package.json')) /
 class Store {
     set env(value)          { this._env = value           }
     set pages(value)        { this._pages = value         }
-    set images(value)       { this._images = value        }
-    set videos(value)       { this._videos = value        }
+    set figures(value)      { this._figures = value       }
+    set video(value)        { this._video = value         }
     set audio(value)        { this._audio = value         }
     set footnotes(value)    { this._footnotes = value     }
     set build(value)        { this._build = value         }
@@ -42,8 +42,8 @@ class Store {
 
     get env()               { return this._env            }
     get pages()             { return this._pages          }
-    get images()            { return this._images         }
-    get videos()            { return this._videos         }
+    get figures()           { return this._figures        }
+    get video()             { return this._video          }
     get audio()             { return this._audio          }
     get footnotes()         { return this._footnotes      }
     get build()             { return this._build          }
@@ -219,21 +219,21 @@ class Store {
      */
 
     loadInitialState() {
-        this.pages = []
-        this.images = []
-        this.videos = []
-        this.audio = []
-        this.footnotes = []
-        this.build = 'epub'
-        this.bber = {}
-        this.cursor = []
-        this.metadata = []
-        this.spine = []
-        this.toc = []
+        this.pages        = []
+        this.figures      = []
+        this.video        = []
+        this.audio        = []
+        this.footnotes    = []
+        this.build        = 'epub'
+        this.bber         = {}
+        this.cursor       = []
+        this.metadata     = []
+        this.spine        = []
+        this.toc          = []
         this.remoteAssets = []
-        this.loi = []
-        this.env = process.env.NODE_ENV || 'development'
-        this.config = {
+        this.loi          = []
+        this.env          = process.env.NODE_ENV || 'development'
+        this.config       = {
             src: '_project',
             dist: 'project',
             theme: 'default',
@@ -247,14 +247,14 @@ class Store {
     }
 
     reload() {
-        this.pages = []
-        this.images = []
-        this.footnotes = []
-        this.cursor = []
-        this.spine = []
-        this.toc = []
+        this.pages        = []
+        this.figures      = []
+        this.footnotes    = []
+        this.cursor       = []
+        this.spine        = []
+        this.toc          = []
         this.remoteAssets = []
-        this.loi = []
+        this.loi          = []
     }
 
     reset() {
@@ -283,10 +283,10 @@ class Store {
         try {
             if (fs.existsSync(mediaPath)) {
                 const media = fs.readdirSync(mediaPath)
-                const videos = media.filter(_ => /^video/.test(mime.lookup(_)))
+                const video = media.filter(_ => /^video/.test(mime.lookup(_)))
                 const audio = media.filter(_ => /^audio/.test(mime.lookup(_)))
 
-                this.videos = videos
+                this.video = video
                 this.audio = audio
             }
         } catch (err) {

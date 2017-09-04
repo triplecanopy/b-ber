@@ -78,7 +78,7 @@ export default {
                     }
 
                     page = `figure-${htmlId(attrsObject.source)}.xhtml`
-                    store.add('images',
+                    store.add('figures',
                         {
                             id: htmlId(id),
                             ...attrsObject,
@@ -86,7 +86,7 @@ export default {
                             page,
                             ref,
                             caption,
-                            pageOrder: store.images.length,
+                            pageOrder: store.figures.length,
                         }
                     )
 

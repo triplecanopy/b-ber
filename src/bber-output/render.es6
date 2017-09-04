@@ -37,7 +37,6 @@ const layout = (fname, data, idx, len, rs) => {
         contents: new Buffer(`${head}${data}${tail}`),
     }), { pageBody }).contents.toString()
 
-
     if (fs.existsSync(textDir)) {
         write(fname, markup, idx, len, rs)
     } else {

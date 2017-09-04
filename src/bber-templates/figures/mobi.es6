@@ -58,6 +58,58 @@ const mobi = {
             </figure>
         </div>`
     },
+    audio(data) {
+        return `
+            <div class="figure-lg">
+                <figure id="${ data.id }">
+
+                    <div class="img-wrap">
+
+                        <section class="audio">
+                            <audio ${ data.attrString }>
+                                ${ data.sourceElements }
+                                <p>Your device does not support the HTML5 Audio API.</p>
+                            </audio>
+                        </section>
+
+                        <div class="figcaption" style="max-width: 100%;">
+                            <p class="small">
+                                ${ data.caption ? `${ data.caption }<br/>` : '' }
+                                <a href="${ data.ref }.xhtml#ref${ data.id }">\u21B5</a>
+                            </p>
+                        </div>
+
+                    </div>
+
+                </figure>
+            </div>`
+    },
+    video(data) {
+        return `
+            <div class="figure-lg">
+                <figure id="${ data.id }">
+
+                    <div class="img-wrap">
+
+                        <section class="video">
+                            <video ${ data.attrString }>
+                                ${ data.sourceElements }
+                                <p>Your device does not support the HTML5 Video API.</p>
+                            </video>
+                        </section>
+
+                        <div class="figcaption" style="max-width: 100%;">
+                            <p class="small">
+                                ${ data.caption ? `${ data.caption }<br/>` : '' }
+                                <a href="${ data.ref }.xhtml#ref${ data.id }">\u21B5</a>
+                            </p>
+                        </div>
+
+                    </div>
+
+                </figure>
+            </div>`
+    },
 }
 
 export default mobi

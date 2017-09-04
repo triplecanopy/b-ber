@@ -273,9 +273,9 @@ class Logger {
             , sep)))
         }
 
-        console.log(chalk.cyan(`🛫  Created ${store.images.length} image(s)`))
+        console.log(chalk.cyan(`🛫  Created ${store.figures.length} figures(s)`))
         if (this.logLevel > 1) {
-            console.log(chalk.black(store.images.reduce((acc, curr) => {
+            console.log(chalk.black(store.figures.reduce((acc, curr) => {
                 const { width, height, page } = curr
                 const attrs = { width, height, page }
 

@@ -14,8 +14,7 @@ import mdSection from 'bber-plugins/md/directives/section'
 import mdPullQuote from 'bber-plugins/md/directives/pull-quote'
 import mdLogo from 'bber-plugins/md/directives/logo'
 import mdImage from 'bber-plugins/md/directives/image'
-import mdVideo from 'bber-plugins/md/directives/video'
-import mdAudio from 'bber-plugins/md/directives/audio'
+import mdMedia from 'bber-plugins/md/directives/media'
 import mdDialogue from 'bber-plugins/md/directives/dialogue'
 // import mdEpigraph from 'bber-plugins/md/directives/epigraph'
 
@@ -123,13 +122,9 @@ class MarkdownRenderer {
                 mdImage.name,
                 mdImage.renderer(reference))
             .use(
-                mdVideo.plugin,
-                mdVideo.name,
-                mdVideo.renderer(reference))
-            .use(
-                mdAudio.plugin,
-                mdAudio.name,
-                mdAudio.renderer(reference))
+                mdMedia.plugin,
+                mdMedia.name,
+                mdMedia.renderer(reference))
             // .use(
             //   mdEpigraph.plugin,
             //   mdEpigraph.name,
