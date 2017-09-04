@@ -94,9 +94,6 @@ function metadata(src) {
   term: publisher
   value: Triple Canopy
 -
-  term: date-modified
-  value: 2017-01-01
--
   term: identifier
   value: ${guid()}`,
   }
