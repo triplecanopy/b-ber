@@ -58,7 +58,7 @@ class Footnotes {
                 if (err) { throw err }
 
                 const fileData = {
-                    ...modelFromString(`${this.file.name}.xhtml`, store.config.src),
+                    ...modelFromString(`${this.file.name}`, store.config.src),
                     in_toc: false,
                     linear: false,
                     generated: true,

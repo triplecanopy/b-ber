@@ -43,8 +43,8 @@ h1 {
     }
 
     section.backmatter & {
-        @include padding(2, 0, 2, 0, -1); // TODO: 19px
         @include type-settings(-1);
+        @include padding(2, 0, 2, 0, -1);
     }
 
     section.titlepage & {
@@ -62,7 +62,7 @@ h1 {
     section.credits &,
     section.contributors &,
     section.appendix & {
-        @include padding(0,0,4,0,0);
+        @include padding(0,0,4,0,-1);
         @include following-paragraph-not-indented;
     }
 
@@ -72,8 +72,8 @@ h2 {
     @include padding(1, 0, 1, 0, 0);
 
     section.backmatter & {
-        @include type-settings(-1); // TODO: should be 19px
-        @include padding(1, 0, 0, 0, -1); // TODO: should be line-height for 19px
+        @include type-settings(-1);
+        @include padding(1, 0, 0, 0, -1);
     }
 
     section.titlepage & {
@@ -86,6 +86,7 @@ h2 {
     section.credits &,
     section.contributors &,
     section.appendix & {
+        @include type-settings(-1);
         @include padding(0, 0, 1, 0, -1);
         @include following-paragraph-not-indented;
     }

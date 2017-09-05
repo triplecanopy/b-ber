@@ -6,6 +6,7 @@ import Props from 'bber-lib/props'
 import store from 'bber-lib/store'
 import { fileId, guid, getFrontmatter, escapeHTML } from 'bber-utils'
 import { log } from 'bber-plugins'
+import path from 'path'
 
 const opfPackage = new File({
     path: 'opfPackage.tmpl',
@@ -63,7 +64,7 @@ const spineItems = arr =>
     arr.map((_) => {
         const nonLinear = _.linear === false
         const linear = nonLinear ? 'no' : 'yes'
-        const fname = fileId(_.fileName)
+        const fname = fileId(path.basename(_.fileName, _.extname))
 
         if (nonLinear) {
             log.info(`bber-output/opf: Writing non-linear asset [${_.fileName}] to [spine]`)

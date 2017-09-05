@@ -66,6 +66,7 @@ export default {
             // then get the dimensions
             const dimensions = imageSize.sync(fs.readFileSync(asset))
             const { width, height } = dimensions
+            const figureId = String(Math.random()).slice(2)
 
             switch (type) {
                 case 'figure':
@@ -78,10 +79,10 @@ export default {
                         attrsObject.classes = classNames
                     }
 
-                    page = `figure-${htmlId(attrsObject.source)}.xhtml`
+                    page = `figure-${figureId}.xhtml`
                     store.add('figures',
                         {
-                            id: htmlId(id),
+                            id: figureId,
                             ...attrsObject,
                             ...dimensions,
                             page,
@@ -93,8 +94,8 @@ export default {
                     )
 
                     result = `${comment}<div class="${attrsObject.classes}">
-                        <figure id="ref${htmlId(id)}">
-                            <a href="${page}#${htmlId(id)}">
+                        <figure id="ref${figureId}">
+                            <a href="${page}#${figureId}">
                                 <img src="../images/${encodeURIComponent(attrsObject.source)}" alt="${attrsObject.alt}"/>
                             </a>
                         </figure>
@@ -103,7 +104,7 @@ export default {
                 case 'inline-figure':
                     imageData = {
                         ...attrsObject,
-                        id: htmlId(id),
+                        id: figureId,
                         width,
                         height,
                         caption,

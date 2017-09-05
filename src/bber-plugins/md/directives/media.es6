@@ -3,7 +3,7 @@ import path from 'path'
 import mime from 'mime-types'
 import figure from 'bber-plugins/md/plugins/figure'
 import { attributesString, attributesObject, htmlId } from 'bber-plugins/md/directives/helpers'
-import { htmlComment, src, passThrough } from 'bber-utils'
+import { htmlComment, src, /*passThrough, */build } from 'bber-utils'
 import store from 'bber-lib/store'
 import { log } from 'bber-plugins'
 
@@ -124,6 +124,7 @@ export default {
 
 
             const attrString = attributesString(attrsObject)
+            const webOnlyAttrString = build() === 'web' ? 'webkit-playsinline="webkit-playsinline" playsinline="playsinline"' : ''
             const commentStart = htmlComment(`START: ${mediaType}:${type}#${htmlId(id)};`)
             const commentEnd = htmlComment(`END: ${mediaType}:${type}#${htmlId(id)};`)
             const page = `figure-${htmlId(source)}.xhtml`
@@ -159,7 +160,7 @@ export default {
                 case 'video-inline':
                     return `${commentStart}
                         <section class="${mediaType}">
-                            <${mediaType} id="${htmlId(id)}"${attrString} webkit-playsinline="webkit-playsinline" playsinline="playsinline">
+                            <${mediaType} id="${htmlId(id)}"${attrString}${webOnlyAttrString}>
                                 ${sourceElements}
                                 <p>Your device does not support the HTML5 ${mediaType} API.</p>
                             </${mediaType}>

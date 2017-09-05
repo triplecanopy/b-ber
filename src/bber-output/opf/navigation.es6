@@ -15,7 +15,13 @@ import fs from 'fs-extra'
 import File from 'vinyl'
 import rrdir from 'recursive-readdir'
 import Yaml from 'bber-lib/yaml'
-import { find, difference, uniq, remove, isArray } from 'lodash'
+import {
+    find,
+    difference,
+    uniq,
+    remove,
+    isArray
+} from 'lodash'
 
 // utility
 import store from 'bber-lib/store'
@@ -28,7 +34,7 @@ import {
     promiseAll,
     nestedContentToYAML,
     flattenSpineFromYAML,
-    // modelFromString,
+    modelFromString,
 } from 'bber-utils'
 
 // templates
@@ -79,6 +85,16 @@ class Navigation {
                 promises.push(new Promise(() =>
                     fs.writeFile(path.join(this.dist, 'OPS', _), '', (err) => {
                         if (err) { throw err }
+
+                        const fileData = {
+                            ...modelFromString(_.substring(0, _.indexOf('.')), store.config.src),
+                            in_toc: false,
+                            linear: false,
+                            generated: true,
+                        }
+
+                        store.add('spine', fileData)
+
                         resolve()
                     })
                 ))
@@ -191,6 +207,11 @@ class Navigation {
                     const missingEntriesWithAttributes = missingEntries.map((fileName) => {
                         if (/figure-/.test(fileName)) { return }
                         const item = find(spine, { fileName })
+
+                        // if the file has attributes that need to be listed
+                        // in the type.yml files, then we return an object
+                        // with the appropriate attributes. otherwise, we
+                        // return a string (the file's basename)
                         if (item && (item.in_toc === false || item.linear === false)) {
                             const fileObj = { [fileName]: {} }
                             if (item.in_toc === false) { fileObj[fileName].in_toc = false }
@@ -281,12 +302,12 @@ class Navigation {
             // TODO: find somewhere better for this. we add entries to the spine
             // programatically, but then they're also found on the system, so we
             // dedupe them here
-            // const generatedFiles = remove(spine, _ => _.generated === true)
-            // generatedFiles.forEach((_) => {
-            //   if (!find(spine, { fileName: _.fileName })) {
-            //     spine.push(_)
-            //   }
-            // })
+            const generatedFiles = remove(spine, _ => _.generated === true)
+            generatedFiles.forEach((_) => {
+                if (!find(spine, { fileName: _.fileName })) {
+                    spine.push(_)
+                }
+            })
 
             const spineXML = spineItems(spine)
 

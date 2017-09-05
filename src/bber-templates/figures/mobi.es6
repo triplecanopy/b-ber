@@ -3,7 +3,7 @@
 
 const mobi = {
     portrait: function(data) {
-        return `<div class="figure__large"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
+        return `<div class="figure__large${ data.inline ? 'figure__inline' : '' }"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
             <figure id="${data.id}">
                 <div class="img-wrap" style="width: 70%; margin: 0 auto;">
                     <span>
@@ -17,7 +17,7 @@ const mobi = {
         </div>`
     },
     landscape: function(data) {
-        return `<div class="figure__large"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
+        return `<div class="figure__large${ data.inline ? 'figure__inline' : '' }"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
             <figure id="${data.id}">
                 <div class="img-wrap">
                     <span>
@@ -31,7 +31,7 @@ const mobi = {
         </div>`
     },
     'portrait-high': function(data) {
-        return `<div class="figure__large"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
+        return `<div class="figure__large${ data.inline ? 'figure__inline' : '' }"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
             <figure id="${data.id}">
                 <div class="img-wrap" style="width: 60%; margin: 0 auto;">
                     <span>
@@ -45,7 +45,7 @@ const mobi = {
         </div>`
     },
     square: function(data) {
-        return `<div class="figure__large"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
+        return `<div class="figure__large${ data.inline ? 'figure__inline' : '' }"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
             <figure id="${data.id}">
                 <div class="img-wrap" style="width: 85%; margin: 0 auto;">
                     <span>
