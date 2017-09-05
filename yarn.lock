@@ -1561,9 +1561,9 @@ entities@^1.1.1, entities@~1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/entities/-/entities-1.1.1.tgz#6e5c2d0a5621b5dadaecef80b90edfb5cd7772f0"
 
-epub-zipper@^1.2.7:
-  version "1.2.8"
-  resolved "https://registry.yarnpkg.com/epub-zipper/-/epub-zipper-1.2.8.tgz#2f224abe3099751c6a12ba0442109837b7e5193d"
+epub-zipper@^1.2.9:
+  version "1.2.9"
+  resolved "https://registry.yarnpkg.com/epub-zipper/-/epub-zipper-1.2.9.tgz#0c1b75ba1ffbfb65d9ab450fcbe0479f3431ae7d"
   dependencies:
     babel-runtime "^6.18.0"
 
