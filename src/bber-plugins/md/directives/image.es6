@@ -91,15 +91,15 @@ export default {
                             pageOrder: store.figures.length,
                             mime: mime.lookup(attrsObject.source),
                         }
-                    )
+                        )
 
                     result = `${comment}<div class="${attrsObject.classes}">
-                        <figure id="ref${figureId}">
-                            <a href="${page}#${figureId}">
-                                <img src="../images/${encodeURIComponent(attrsObject.source)}" alt="${attrsObject.alt}"/>
-                            </a>
-                        </figure>
-                    </div>`
+                            <figure id="ref${figureId}">
+                                <a href="${page}#${figureId}">
+                                    <img src="../images/${encodeURIComponent(attrsObject.source)}" alt="${attrsObject.alt}"/>
+                                </a>
+                            </figure>
+                        </div>`
                     break
                 case 'inline-figure':
                     imageData = {

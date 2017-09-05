@@ -2,8 +2,8 @@
 /* eslint-disable max-len */
 
 const mobi = {
-    portrait: function(data) {
-        return `<div class="figure__large${ data.inline ? 'figure__inline' : '' }"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
+    portrait(data) {
+        return `<div class="figure__large${data.inline ? 'figure__inline' : ''}"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
             <figure id="${data.id}">
                 <div class="img-wrap" style="width: 70%; margin: 0 auto;">
                     <span>
@@ -16,8 +16,8 @@ const mobi = {
             </figure>
         </div>`
     },
-    landscape: function(data) {
-        return `<div class="figure__large${ data.inline ? 'figure__inline' : '' }"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
+    landscape(data) {
+        return `<div class="figure__large${data.inline ? 'figure__inline' : ''}"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
             <figure id="${data.id}">
                 <div class="img-wrap">
                     <span>
@@ -30,8 +30,8 @@ const mobi = {
             </figure>
         </div>`
     },
-    'portrait-high': function(data) {
-        return `<div class="figure__large${ data.inline ? 'figure__inline' : '' }"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
+    'portrait-high': function (data) {
+        return `<div class="figure__large${data.inline ? 'figure__inline' : ''}"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
             <figure id="${data.id}">
                 <div class="img-wrap" style="width: 60%; margin: 0 auto;">
                     <span>
@@ -44,8 +44,8 @@ const mobi = {
             </figure>
         </div>`
     },
-    square: function(data) {
-        return `<div class="figure__large${ data.inline ? 'figure__inline' : '' }"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
+    square(data) {
+        return `<div class="figure__large${data.inline ? 'figure__inline' : ''}"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
             <figure id="${data.id}">
                 <div class="img-wrap" style="width: 85%; margin: 0 auto;">
                     <span>
@@ -58,24 +58,24 @@ const mobi = {
             </figure>
         </div>`
     },
-    audio: function(data) {
+    audio(data) {
         return `
             <div class="figure__large">
-                <figure id="${ data.id }">
+                <figure id="${data.id}">
 
                     <div class="img-wrap">
 
                         <section class="audio">
-                            <audio ${ data.attrString }>
-                                ${ data.sourceElements }
+                            <audio ${data.attrString}>
+                                ${data.sourceElements}
                                 <p>Your device does not support the HTML5 Audio API.</p>
                             </audio>
                         </section>
 
                         <div class="figcaption" style="max-width: 100%;">
                             <p class="small">
-                                ${ data.caption ? `${ data.caption }<br/>` : '' }
-                                <a href="${ data.ref }.xhtml#ref${ data.id }">\u21B5</a>
+                                ${data.caption ? `${data.caption}<br/>` : ''}
+                                <a href="${data.ref}.xhtml#ref${data.id}">\u21B5</a>
                             </p>
                         </div>
 
@@ -84,24 +84,24 @@ const mobi = {
                 </figure>
             </div>`
     },
-    video: function(data) {
+    video(data) {
         return `
             <div class="figure__large">
-                <figure id="${ data.id }">
+                <figure id="${data.id}">
 
                     <div class="img-wrap">
 
                         <section class="video">
-                            <video ${ data.attrString }>
-                                ${ data.sourceElements }
+                            <video ${data.attrString}>
+                                ${data.sourceElements}
                                 <p>Your device does not support the HTML5 Video API.</p>
                             </video>
                         </section>
 
                         <div class="figcaption" style="max-width: 100%;">
                             <p class="small">
-                                ${ data.caption ? `${ data.caption }<br/>` : '' }
-                                <a href="${ data.ref }.xhtml#ref${ data.id }">\u21B5</a>
+                                ${data.caption ? `${data.caption}<br/>` : ''}
+                                <a href="${data.ref}.xhtml#ref${data.id}">\u21B5</a>
                             </p>
                         </div>
 

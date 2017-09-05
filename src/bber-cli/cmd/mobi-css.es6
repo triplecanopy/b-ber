@@ -11,8 +11,8 @@ const builder = yargs =>
 const handler = mobiCSS
 
 export default {
-  command,
-  describe,
-  builder,
-  handler,
+    command,
+    describe,
+    builder,
+    handler,
 }

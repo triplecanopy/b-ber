@@ -13,8 +13,8 @@ const builder = yargs =>
 const handler = footnotes
 
 export default {
-  command,
-  describe,
-  builder,
-  handler,
+    command,
+    describe,
+    builder,
+    handler,
 }

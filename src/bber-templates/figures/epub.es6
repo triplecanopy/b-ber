@@ -1,8 +1,8 @@
 /* eslint-disable max-len */
 const epub = {
-    portrait: function(data) {
+    portrait(data) {
         return `${!data.inline ? '<section epub:type="loi" title="Figures" class="chapter figures">' : ''}
-            <div class="figure__large${ data.inline ? ' figure__inline' : '' }"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
+            <div class="figure__large${data.inline ? ' figure__inline' : ''}"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
                 <figure id="${data.id}">
                     <div class="img-wrap" style="width: 70%; margin: 0 auto;">
                         ${!data.inline ? `<a href="${data.ref}.xhtml#ref${data.id}">` : ''}
@@ -16,9 +16,9 @@ const epub = {
             </div>
         ${!data.inline ? '</section>' : ''}`
     },
-    landscape: function(data) {
+    landscape(data) {
         return `${!data.inline ? '<section epub:type="loi" title="Figures" class="chapter figures">' : ''}
-            <div class="figure__large${ data.inline ? ' figure__inline' : '' }"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
+            <div class="figure__large${data.inline ? ' figure__inline' : ''}"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
                 <figure id="${data.id}">
                     <div class="img-wrap">
                         ${!data.inline ? `<a href="${data.ref}.xhtml#ref${data.id}">` : ''}
@@ -32,9 +32,9 @@ const epub = {
             </div>
         ${!data.inline ? '</section>' : ''}`
     },
-    'portrait-high': function(data) {
+    'portrait-high': function (data) {
         return `${!data.inline ? '<section epub:type="loi" title="Figures" class="chapter figures">' : ''}
-            <div class="figure__large${ data.inline ? ' figure__inline' : '' }"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
+            <div class="figure__large${data.inline ? ' figure__inline' : ''}"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
                 <figure id="${data.id}">
                     <div class="img-wrap" style="width: 60%; margin: 0 auto;">
                         ${!data.inline ? `<a href="${data.ref}.xhtml#ref${data.id}">` : ''}
@@ -48,9 +48,9 @@ const epub = {
             </div>
         ${!data.inline ? '</section>' : ''}`
     },
-    square: function(data) {
+    square(data) {
         return `${!data.inline ? '<section epub:type="loi" title="Figures" class="chapter figures">' : ''}
-            <div class="figure__large${ data.inline ? ' figure__inline' : '' }"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
+            <div class="figure__large${data.inline ? ' figure__inline' : ''}"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
                 <figure id="${data.id}">
                     <div class="img-wrap" style="width: 85%; margin: 0 auto;">
                         ${!data.inline ? `<a href="${data.ref}.xhtml#ref${data.id}">` : ''}
@@ -64,24 +64,24 @@ const epub = {
             </div>
         ${!data.inline ? '</section>' : ''}`
     },
-    audio: function(data) {
+    audio(data) {
         return `
             <div class="figure__large">
-                <figure id="${ data.id }">
+                <figure id="${data.id}">
 
                     <div class="img-wrap">
 
                         <section class="audio">
-                            <audio ${ data.attrString }>
-                                ${ data.sourceElements }
+                            <audio ${data.attrString}>
+                                ${data.sourceElements}
                                 <p>Your device does not support the HTML5 Audio API.</p>
                             </audio>
                         </section>
 
                         <div class="figcaption" style="max-width: 100%;">
                             <p class="small">
-                                ${ data.caption ? `${ data.caption }<br/>` : '' }
-                                <a href="${ data.ref }.xhtml#ref${ data.id }">\u21B5</a>
+                                ${data.caption ? `${data.caption}<br/>` : ''}
+                                <a href="${data.ref}.xhtml#ref${data.id}">\u21B5</a>
                             </p>
                         </div>
 
@@ -90,24 +90,24 @@ const epub = {
                 </figure>
             </div>`
     },
-    video: function(data) {
+    video(data) {
         return `
             <div class="figure__large">
-                <figure id="${ data.id }">
+                <figure id="${data.id}">
 
                     <div class="img-wrap">
 
                         <section class="video">
-                            <video ${ data.attrString }>
-                                ${ data.sourceElements }
+                            <video ${data.attrString}>
+                                ${data.sourceElements}
                                 <p>Your device does not support the HTML5 Video API.</p>
                             </video>
                         </section>
 
                         <div class="figcaption" style="max-width: 100%;">
                             <p class="small">
-                                ${ data.caption ? `${ data.caption }<br/>` : '' }
-                                <a href="${ data.ref }.xhtml#ref${ data.id }">\u21B5</a>
+                                ${data.caption ? `${data.caption}<br/>` : ''}
+                                <a href="${data.ref}.xhtml#ref${data.id}">\u21B5</a>
                             </p>
                         </div>
 

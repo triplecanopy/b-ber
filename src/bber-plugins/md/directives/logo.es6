@@ -24,7 +24,7 @@ export default {
             const match = tokens[idx].info.trim().match(directiveRe)
             const [, type, id, attrs] = match
 
-            const attrsObj = attributesObject(attrs, type, { filename , lineNr })
+            const attrsObj = attributesObject(attrs, type, { filename, lineNr })
 
             if (!attrsObj.source) {
                 log.error('[source] attribute is required by [logo] directive, aborting', 1)

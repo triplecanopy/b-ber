@@ -71,7 +71,7 @@ const spineItems = arr =>
         }
 
         if (fname.match(/figure/)) {
-            log.info(`bber-output/opf: Writing [LOI] to [spine]`)
+            log.info('bber-output/opf: Writing [LOI] to [spine]')
             if (store.loi.length) {
                 let loi = `\n<itemref idref="${fname}_xhtml" linear="${linear}"/>`
                 store.loi.forEach(figure => loi += `\n<itemref idref="${fileId(figure.fileName)}" linear="yes"/>`)

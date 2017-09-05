@@ -121,13 +121,11 @@ const copyThemeAssets = () => {
                                 errorOnExist: true,
                             }, (err2) => {
                                 if (err2) { throw err2 }
-                                if (i === files.length -1) { // not sure about this...
+                                if (i === files.length - 1) { // not sure about this...
                                     resolve()
                                 }
                             })
-
                         })
-
                     }
                 } catch (err0) {
                     if (err0.code === 'ENOENT') { return resolve() } // dir doesn't exist in the theme path, but doesn't need to, so proceed

@@ -10,8 +10,8 @@ const builder = yargs =>
 const handler = render
 
 export default {
-  command,
-  describe,
-  builder,
-  handler,
+    command,
+    describe,
+    builder,
+    handler,
 }

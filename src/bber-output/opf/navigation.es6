@@ -20,7 +20,7 @@ import {
     difference,
     uniq,
     remove,
-    isArray
+    isArray,
 } from 'lodash'
 
 // utility
