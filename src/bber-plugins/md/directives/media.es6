@@ -159,7 +159,7 @@ export default {
                 case 'video-inline':
                     return `${commentStart}
                         <section class="${mediaType}">
-                            <${mediaType} id="${htmlId(id)}"${attrString} webkit-playsinline playsinline>
+                            <${mediaType} id="${htmlId(id)}"${attrString} webkit-playsinline="webkit-playsinline" playsinline="playsinline">
                                 ${sourceElements}
                                 <p>Your device does not support the HTML5 ${mediaType} API.</p>
                             </${mediaType}>
