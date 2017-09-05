@@ -9,12 +9,24 @@ import fs from 'fs-extra'
 import File from 'vinyl'
 import MarkdownRenderer from 'bber-plugins/md'
 import { pageHead, pageBody, pageTail } from 'bber-templates/pages'
-import { src, dist } from 'bber-utils'
+import { src, dist, env } from 'bber-utils'
 import { log } from 'bber-plugins'
 import store from 'bber-lib/store'
 import { findIndex } from 'lodash'
+import { minify } from 'html-minifier'
 
 const promises = []
+const minificationOptions = {
+    collapseWhitespace: true,
+    collapseInlineTagWhitespace: true,
+    html5: true,
+    keepClosingSlash: true,
+    removeAttributeQuotes: true,
+    removeComments: true,
+    removeEmptyAttributes: true,
+    removeScriptTypeAttributes: true,
+}
+
 
 const writeMarkupToFile = (fname, markup) =>
     new Promise((resolve) => {
@@ -41,12 +53,16 @@ const createPageLayout = (fname, data) =>
         const body    = MarkdownRenderer.render(fname, data)
         const tail    = pageTail(fname)
 
-        const markup = renderLayouts(new File({
+        let markup
+        markup = renderLayouts(new File({
             path: './.tmp',
             layout: 'pageBody',
             contents: new Buffer(`${head}${body}${tail}`),
         }), { pageBody }).contents.toString()
 
+        if (env() === 'production') {
+            markup = minify(markup, minificationOptions)
+        }
 
         try {
             if (!fs.existsSync(textDir)) {
@@ -75,8 +91,8 @@ function render() {
 
     return new Promise(resolve =>
 
-        fs.readdir(mdDir, (err1, _files) => {
-            if (err1) { throw err1 }
+        fs.readdir(mdDir, (err, _files) => {
+            if (err) { throw err }
 
             const reference = store.spine
             const files = _files.filter(_ => _.charAt(0) !== '.')
