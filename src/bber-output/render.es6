@@ -2,8 +2,6 @@
  * @module render
  */
 
-// TODO: this should be cleaned up
-
 import Promise from 'zousan'
 import renderLayouts from 'layouts'
 import path from 'path'
@@ -16,38 +14,61 @@ import { log } from 'bber-plugins'
 import store from 'bber-lib/store'
 import { findIndex } from 'lodash'
 
-// write files to `textDir` dir
-const write = (fname, markup, idx, len, rs) => {
-    const textDir = path.join(`${dist()}/OPS/text/`)
-    fs.writeFile(path.join(textDir, `${fname}.xhtml`), markup, (err) => {
-        log.info(`bber-output/render: Wrote XHTML: [${path.basename(fname)}.xhtml]`)
-        if (err) { throw err }
-        if (idx === len) { rs() }
+const promises = []
+
+const writeMarkupToFile = (fname, markup) =>
+    new Promise((resolve) => {
+
+        const outputPath = path.join(dist(), 'OPS/text', `${fname}.xhtml`)
+
+        return fs.writeFile(outputPath, markup, (err) => {
+            if (err) { throw err }
+
+            log.info(`bber-output/render: Wrote XHTML: [${path.basename(fname)}.xhtml]`)
+            resolve()
+
+        })
     })
-}
 
-// insert compiled XHTML into layouts
-const layout = (fname, data, idx, len, rs) => {
-    const textDir = path.join(`${dist()}/OPS/text/`)
-    const head = pageHead(fname)
-    const tail = pageTail(fname)
-    const markup = renderLayouts(new File({
-        path: './.tmp',
-        layout: 'pageBody',
-        contents: new Buffer(`${head}${data}${tail}`),
-    }), { pageBody }).contents.toString()
 
-    if (fs.existsSync(textDir)) {
-        write(fname, markup, idx, len, rs)
-    } else {
-        fs.mkdirs(textDir, () => write(fname, markup, idx, len, rs))
-    }
-}
 
-// compile md to XHTML
-const parse = (fname, data, idx, len, rs) =>
-    layout(fname, MarkdownRenderer.render(fname, data), idx, len, rs)
+// convert md to xhtml and wrap with page template
+const createPageLayout = (fname, data) =>
+    new Promise((resolve) => {
 
+        const textDir = path.join(`${dist()}/OPS/text/`)
+        const head    = pageHead(fname)
+        const body    = MarkdownRenderer.render(fname, data)
+        const tail    = pageTail(fname)
+
+        const markup = renderLayouts(new File({
+            path: './.tmp',
+            layout: 'pageBody',
+            contents: new Buffer(`${head}${body}${tail}`),
+        }), { pageBody }).contents.toString()
+
+
+        try {
+            if (!fs.existsSync(textDir)) {
+                fs.mkdirSync(textDir)
+            }
+        } catch (err) {
+            // noop
+        }
+
+        return writeMarkupToFile(fname, markup).then(resolve)
+
+    })
+
+
+const createXTHMLFile = (fpath) =>
+    new Promise(resolve =>
+        fs.readFile(fpath, 'utf8', (err, data) => {
+            if (err) { throw err }
+            const fname = path.basename(fpath, '.md')
+            return createPageLayout(fname, data).then(resolve)
+        })
+    )
 
 function render() {
     const mdDir = path.join(`${src()}/_markdown/`)
@@ -65,8 +86,8 @@ function render() {
             files.sort((a, b) => {
                 const filenameA = path.basename(a, '.md')
                 const filenameB = path.basename(b, '.md')
-                const indexA = findIndex(reference, { fileName: filenameA })
-                const indexB = findIndex(reference, { fileName: filenameB })
+                const indexA    = findIndex(reference, { fileName: filenameA })
+                const indexB    = findIndex(reference, { fileName: filenameB })
 
                 return indexA < indexB ? -1 : indexA > indexB ? 1 : 0
             })
@@ -77,10 +98,11 @@ function render() {
 
                 log.info(`bber-output/render: Rendering Markdown: [${path.basename(file)}]`)
 
-                fs.readFile(path.join(mdDir, file), 'utf8', (err2, data) => {
-                    if (err2) { throw err2 }
-                    return parse(path.basename(file, '.md'), data, idx, len, resolve)
-                })
+                promises.push(createXTHMLFile(path.join(mdDir, file)))
+
+                Promise.all(promises)
+                .catch(err => log.error(err, 1))
+                .then(resolve)
 
             })
         })
