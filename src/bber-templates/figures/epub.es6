@@ -1,8 +1,8 @@
 /* eslint-disable max-len */
 const epub = {
-    portrait(data) {
+    portrait: function(data) {
         return `${!data.inline ? '<section epub:type="loi" title="Figures" class="chapter figures">' : ''}
-            <div class="figure-lg"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
+            <div class="figure__large"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
                 <figure id="${data.id}">
                     <div class="img-wrap" style="width: 70%; margin: 0 auto;">
                         ${!data.inline ? `<a href="${data.ref}.xhtml#ref${data.id}">` : ''}
@@ -16,9 +16,9 @@ const epub = {
             </div>
         ${!data.inline ? '</section>' : ''}`
     },
-    landscape(data) {
+    landscape: function(data) {
         return `${!data.inline ? '<section epub:type="loi" title="Figures" class="chapter figures">' : ''}
-            <div class="figure-lg"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
+            <div class="figure__large"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
                 <figure id="${data.id}">
                     <div class="img-wrap">
                         ${!data.inline ? `<a href="${data.ref}.xhtml#ref${data.id}">` : ''}
@@ -32,9 +32,9 @@ const epub = {
             </div>
         ${!data.inline ? '</section>' : ''}`
     },
-    portraitLong(data) {
+    'portrait-high': function(data) {
         return `${!data.inline ? '<section epub:type="loi" title="Figures" class="chapter figures">' : ''}
-            <div class="figure-lg"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
+            <div class="figure__large"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
                 <figure id="${data.id}">
                     <div class="img-wrap" style="width: 60%; margin: 0 auto;">
                         ${!data.inline ? `<a href="${data.ref}.xhtml#ref${data.id}">` : ''}
@@ -48,9 +48,9 @@ const epub = {
             </div>
         ${!data.inline ? '</section>' : ''}`
     },
-    square(data) {
+    square: function(data) {
         return `${!data.inline ? '<section epub:type="loi" title="Figures" class="chapter figures">' : ''}
-            <div class="figure-lg"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
+            <div class="figure__large"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
                 <figure id="${data.id}">
                     <div class="img-wrap" style="width: 85%; margin: 0 auto;">
                         ${!data.inline ? `<a href="${data.ref}.xhtml#ref${data.id}">` : ''}
@@ -64,9 +64,9 @@ const epub = {
             </div>
         ${!data.inline ? '</section>' : ''}`
     },
-    audio(data) {
+    audio: function(data) {
         return `
-            <div class="figure-lg">
+            <div class="figure__large">
                 <figure id="${ data.id }">
 
                     <div class="img-wrap">
@@ -90,9 +90,9 @@ const epub = {
                 </figure>
             </div>`
     },
-    video(data) {
+    video: function(data) {
         return `
-            <div class="figure-lg">
+            <div class="figure__large">
                 <figure id="${ data.id }">
 
                     <div class="img-wrap">

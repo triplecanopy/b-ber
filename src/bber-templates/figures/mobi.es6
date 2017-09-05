@@ -2,8 +2,8 @@
 /* eslint-disable max-len */
 
 const mobi = {
-    portrait(data) {
-        return `<div class="figure-lg"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
+    portrait: function(data) {
+        return `<div class="figure__large"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
             <figure id="${data.id}">
                 <div class="img-wrap" style="width: 70%; margin: 0 auto;">
                     <span>
@@ -16,8 +16,8 @@ const mobi = {
             </figure>
         </div>`
     },
-    landscape(data) {
-        return `<div class="figure-lg"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
+    landscape: function(data) {
+        return `<div class="figure__large"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
             <figure id="${data.id}">
                 <div class="img-wrap">
                     <span>
@@ -30,8 +30,8 @@ const mobi = {
             </figure>
         </div>`
     },
-    portraitLong(data) {
-        return `<div class="figure-lg"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
+    'portrait-high': function(data) {
+        return `<div class="figure__large"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
             <figure id="${data.id}">
                 <div class="img-wrap" style="width: 60%; margin: 0 auto;">
                     <span>
@@ -44,8 +44,8 @@ const mobi = {
             </figure>
         </div>`
     },
-    square(data) {
-        return `<div class="figure-lg"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
+    square: function(data) {
+        return `<div class="figure__large"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
             <figure id="${data.id}">
                 <div class="img-wrap" style="width: 85%; margin: 0 auto;">
                     <span>
@@ -58,9 +58,9 @@ const mobi = {
             </figure>
         </div>`
     },
-    audio(data) {
+    audio: function(data) {
         return `
-            <div class="figure-lg">
+            <div class="figure__large">
                 <figure id="${ data.id }">
 
                     <div class="img-wrap">
@@ -84,9 +84,9 @@ const mobi = {
                 </figure>
             </div>`
     },
-    video(data) {
+    video: function(data) {
         return `
-            <div class="figure-lg">
+            <div class="figure__large">
                 <figure id="${ data.id }">
 
                     <div class="img-wrap">

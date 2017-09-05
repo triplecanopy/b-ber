@@ -1,7 +1,9 @@
 ul {
+    @include type-settings(-2);
     @include following-element-has-no-top-padding;
-    @include padding(1, 0, 1, 2, 0);
+    @include padding(1, 0, 0, 2, 0);
     list-style: disc;
+    text-indent: 0;
     margin: 0;
 
     @if $build == web {
@@ -9,7 +11,6 @@ ul {
     }
 
     li {
-        @include type-settings(0);
         text-indent: 0;
 
         @if $build == web {
@@ -24,17 +25,22 @@ ul {
         }
 
     }
+
+    * {
+        @include type-settings(0);
+    }
 }
 
 ol {
+    @include type-settings(-2);
     @include following-element-has-no-top-padding;
-    @include padding(1, 0, 1, 2, 0);
+    @include padding(1, 0, 0, 2, 0);
     list-style: decimal;
+    text-indent: 0;
     margin: 0;
 
     li {
-        @include type-settings(0);
-        text-indent: 0;
+        padding-top: 0;
 
         @if $build == web {
             text-indent: -0.6em;
@@ -48,13 +54,17 @@ ol {
     section.backmatter & {
         @include padding(0, 1, 0, 1, -1);
         li {
+            @include following-paragraph-not-indented;
             font-weight: normal;
             font-style: normal;
             text-indent: 0;
-            @include following-paragraph-not-indented;
-            @include type-settings(-1);
         }
     }
+
+    * {
+        @include type-settings(0);
+    }
+
 }
 
 dl {

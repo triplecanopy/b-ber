@@ -146,7 +146,7 @@ export default {
                         }
                     )
 
-                    return `<div class="landscape figure-sm">
+                    return `<div class="figure__small--landscape figure__small">
                         <figure id="ref${htmlId(id)}">
                             <a href="${page}#${htmlId(id)}">
                                 <img src="${ poster }" alt=""/>
@@ -159,7 +159,7 @@ export default {
                 case 'video-inline':
                     return `${commentStart}
                         <section class="${mediaType}">
-                            <${mediaType} id="${htmlId(id)}"${attrString}>
+                            <${mediaType} id="${htmlId(id)}"${attrString} webkit-playsinline playsinline>
                                 ${sourceElements}
                                 <p>Your device does not support the HTML5 ${mediaType} API.</p>
                             </${mediaType}>

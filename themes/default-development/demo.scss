@@ -55,10 +55,7 @@ $modularscale: (
 @import 'typography/typography';
 @import 'layout/layout';
 
-
-// base styles
-//
-
+// some base styles
 html { font-size: 160%; }
 
 body { padding: 0 one-em(0) * .5; }
@@ -66,3 +63,12 @@ body { padding: 0 one-em(0) * .5; }
 @if $debug == true {
     img { background-color: gainsboro; }
 }
+
+h1 { @include type-settings(0); }
+h2 { @include type-settings(0); }
+h3 { @include type-settings(0); }
+h4 { @include type-settings(0); }
+h5 { @include type-settings(0); }
+h6 { @include type-settings(0); }
+p  { @include type-settings(0); }
+

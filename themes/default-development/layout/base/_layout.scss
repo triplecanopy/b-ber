@@ -1,9 +1,9 @@
 hr {
+    width: 25%;
+    background-color:$grey;
     padding: 0;
-    margin: two-lines(0) 0;
+    margin: one-line(0) auto;
     height: 1px;
-    width: 100%;
-    background-color: $black;
     border: 0;
     @include following-paragraph-not-indented;
     @include following-element-has-no-top-padding;

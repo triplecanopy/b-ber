@@ -31,21 +31,26 @@ figure {
 }
 
 
-
-
-
 //
 // Base container styles
-// New class names          Legacy class names
-.figure__small,             .figure-sm,
-.figure__medium,            .figure-md,
-.figure__large,             .figure-lg,
-.figure__inline,            .figure-inline
+// New class names  Legacy class names
+.figure__small,     .figure-sm,
+.figure__medium,    .figure-md,
+.figure__large,     .figure-lg,
+.figure__inline,    .figure-inline
 {
     page-break-inside: avoid;
     text-align: center;
 }
 
+.figure__inline,
+.figure-inline { // legacy
+    &.figure__large,
+    &.figure-lg { // legacy
+        page-break-before: always;
+        page-break-after: always;
+    }
+}
 
 
 // Containers for inline images (used in text flow)
@@ -136,7 +141,8 @@ figure {
 // `figcaption` element and `.figcaption` class both refer to the same
 // element because the `figcaption` element is not supported on some
 // readers
-figcaption, .figcaption {
+figcaption,
+.figcaption {
     text-align: center;
     width: 100%;
     @include following-paragraph-not-indented;

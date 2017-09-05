@@ -69,7 +69,7 @@ export default {
 
             switch (type) {
                 case 'figure':
-                    classNames = `${getImageOrientation(width, height)} figure-sm`
+                    classNames = `figure__small figure__small--${getImageOrientation(width, height)}`
                     ref = context.filename
 
                     if ({}.hasOwnProperty.call(attrsObject, 'classes')) {

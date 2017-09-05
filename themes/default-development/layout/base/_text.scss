@@ -1,13 +1,14 @@
 // Block elements
 
 // Text Sizes
-h1 { @include type-settings(6); }
-h2 { @include type-settings(5); }
-h3 { @include type-settings(4); }
-h4 { @include type-settings(3); }
-h5 { @include type-settings(2); }
-h6 { @include type-settings(1); }
+h1 { @include type-settings(0); margin-top: 0; margin-bottom: 0; padding-top: 0;                                }
+h2 { @include type-settings(0); margin-top: 0; margin-bottom: 0; padding-top: 0;                                }
+h3 { @include type-settings(0); margin-top: 0; margin-bottom: 0; padding-top: 0; padding-bottom: one-line(0);   }
+h4 { @include type-settings(0); margin-top: 0; margin-bottom: 0; padding-top: 0; padding-bottom: one-line(0);   }
+h5 { @include type-settings(0); margin-top: 0; margin-bottom: 0; padding-top: 0; padding-bottom: one-line(0);   }
+h6 { @include type-settings(0); margin-top: 0; margin-bottom: 0; padding-top: 0; padding-bottom: one-line(0);   }
 p  { @include type-settings(0); }
+
 
 // Text Properties
 p {
@@ -45,6 +46,26 @@ h1 {
         @include padding(2, 0, 2, 0, -1); // TODO: 19px
         @include type-settings(-1);
     }
+
+    section.titlepage & {
+        padding-bottom: 0;
+    }
+
+    section.preface &,
+    section.frontmatter &,
+    section.acknowledgements & {
+        @include following-paragraph-not-indented;
+    }
+
+    section.afterword &,
+    section.seriespage &,
+    section.credits &,
+    section.contributors &,
+    section.appendix & {
+        @include padding(0,0,4,0,0);
+        @include following-paragraph-not-indented;
+    }
+
 }
 
 h2 {
@@ -54,8 +75,29 @@ h2 {
         @include type-settings(-1); // TODO: should be 19px
         @include padding(1, 0, 0, 0, -1); // TODO: should be line-height for 19px
     }
+
+    section.titlepage & {
+        padding-bottom: one-line(0);
+    }
+
+
+    section.afterword &,
+    section.seriespage &,
+    section.credits &,
+    section.contributors &,
+    section.appendix & {
+        @include padding(0, 0, 1, 0, -1);
+        @include following-paragraph-not-indented;
+    }
+
 }
 
+h3 {
+    section.titlepage & {
+        @include type-settings(-4);
+        padding-bottom: one-line(-4);
+    }
+}
 
 p {
     @include type-settings(0);
@@ -67,10 +109,6 @@ p {
         @include type-settings(-2); // ---
     }
 
-
-    section.frontmatter &,
-    section.colophon &,
-    section.appendix &,
     section.backmatter & {
         text-indent: 0 !important;
         @include following-paragraph-not-indented;
@@ -78,17 +116,64 @@ p {
         @include padding(0, 0, 1, 0, -1);
     }
 
+    section.preface &,
+    section.frontmatter &,
+    section.acknowledgements & {
+        text-indent: one-em(0) !important;
+        padding-bottom: 0;
+    }
+
+    section.frontmatter.dedication & {
+        @include type-settings(0);
+        @include padding(0, 1, 1, 0, 0);
+        text-indent: 0 !important;
+    }
+
+    section.dialogue & {
+        &.interlocutor-parent {
+            @include padding(1, 0, 0, 0, 0);
+            margin-top: 0;
+            .interlocutor {
+                @include type-settings(-8);
+                line-height: 1;
+                font-family: $sans;
+                font-weight: bold;
+                text-transform: uppercase;
+                vertical-align: baseline;
+            }
+        }
+    }
+
+    section.colophon &,
+    section.afterword &,
+    section.seriespage &,
+    section.credits &,
+    section.contributors &,
+    section.appendix & {
+        @include type-settings(-2);
+        padding-bottom: one-line(-2);
+    }
+
+    section.colophon &,
+    section.afterword & {
+        &:first-child,
+        &:first-child, {
+          text-indent: 0 !important;
+        }
+    }
+
+
     .figcaption & {
         text-indent: 0;
     }
 
     .pull-quote & {
+        @include following-paragraph-not-indented;
+        @include type-settings(-4); // ---
         text-indent: 0!important;
         margin-bottom: 0!important;
         font-style: italic;
         font-weight: normal;
-        @include following-paragraph-not-indented;
-        @include type-settings(-2); // ---
     }
 
     .pull-quote + & {
@@ -96,12 +181,13 @@ p {
     }
 
     .epigraph .pull-quote & {
+        @include following-paragraph-not-indented;
+        @include type-settings(0);
         float: none;
         width: 100%;
         margin-top: 0!important;
         padding-top: 0!important;
         text-align: center;
-        @include following-paragraph-not-indented;
     }
 
     &.interlocutor-parent {
@@ -114,8 +200,9 @@ p {
 cite {
     .pull-quote & {
         @include following-paragraph-not-indented;
-        @include type-settings(-2); // ---
+        @include type-settings(-4); // ---
         font-weight: normal;
+        font-style: normal;
         text-indent: 0;
         display: block;
         text-align: right;
@@ -127,10 +214,11 @@ cite {
         width: 100%;
     }
     .epigraph .pull-quote & {
+        @include following-paragraph-not-indented;
+        @include type-settings(0);
         float: none;
         width: 100%;
         text-align: center;
-        @include following-paragraph-not-indented;
     }
 }
 
@@ -142,13 +230,16 @@ cite {
 // Inline elements
 sup,
 sub {
-    @include type-settings(-4); // ---
+    @include type-settings(-8); // ---
     vertical-align: baseline;
+    text-decoration: none;
     position: relative;
+    line-height: 1;
+
 }
 
-sup { top: one-em(-4) * -1; }
-sub { bottom: one-em(-4); }
+sup { top:      one-em(-8) * -2; }
+sub { bottom:   one-em(-8) * -1; }
 
 small {
     @include type-settings(-4);

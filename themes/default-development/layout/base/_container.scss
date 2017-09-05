@@ -19,8 +19,6 @@ blockquote {
     @include padding(1, 1, 1, 1, 0);
 }
 
-
-
 section {
     clear: both;
     &:after {
@@ -30,8 +28,8 @@ section {
     }
 }
 
-header + p {
-    text-indent: 0;
+header {
+    @include following-paragraph-not-indented;
 }
 
 section.break-before a + div.figure-sm {
@@ -43,6 +41,16 @@ section.subchapter {
     + section.subchapter > header > h2 {
         padding-top: 0;
     }
+
+    section.colophon &,
+    section.afterword &,
+    section.seriespage &,
+    section.credits &,
+    section.contributors &,
+    section.appendix & {
+        margin-bottom: 0;
+    }
+
 }
 
 section.bibliography {
@@ -61,6 +69,21 @@ section.bibliography {
         text-indent: 0;
         @include padding(0,0,1,0,0);
     }
+}
+
+.audio,
+.video {
+    text-align: center;
+    @include padding(1,1,1,1,0)
+    .figure__large & { padding: 0; }
+}
+
+audio,
+video {
+    margin: 0;
+    padding: 0;
+    display: inline-block;
+    width: 100%;
 }
 
 
@@ -108,11 +131,11 @@ section.backmatter {
         margin:0;
         padding:0;
         img {
-            height:auto;
-            text-indent: 0;
+            height: two-lines(0);
+            width: auto !important;
             text-align: left;
-            margin:0;
-            padding:12px 0 0 0;
+            margin: 0;
+            padding: 0;
         }
     }
 }

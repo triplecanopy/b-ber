@@ -15,7 +15,6 @@ const figure = (data, env) => {
     const format = isImage(mime) ? getImageOrientation(width, height) : isAudio(mime) ? 'audio' : isVideo(mime) ? 'video' : null
 
     if (!format) {
-        console.log(data, width, height, getImageOrientation(width, height))
         log.error(`bber-templates: [${data.source}] is of unsupported media type [${mime}]`, 1)
     }
 

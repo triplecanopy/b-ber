@@ -121,12 +121,13 @@ const getImageOrientation = (w, h) => {
     const widthToHeight = w / h
     let imageType = null
 
-    if (widthToHeight < 0.61) { imageType = 'portraitLong' }
+    if (widthToHeight < 0.61)                       { imageType = 'portrait-high' }
     if (widthToHeight >= 0.61 && widthToHeight < 1) { imageType = 'portrait' }
-    if (widthToHeight === 1) { imageType = 'square' }
-    if (widthToHeight > 1) { imageType = 'landscape' }
+    if (widthToHeight === 1)                        { imageType = 'square' }
+    if (widthToHeight > 1)                          { imageType = 'landscape' }
     return imageType
 }
+
 
 /**
  * [description]

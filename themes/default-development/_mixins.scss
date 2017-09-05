@@ -179,7 +179,7 @@
 
 
 @mixin following-paragraph-not-indented {
-    + p { text-indent: 0; }
+    + p { text-indent: 0!important; }
 }
 @mixin following-element-has-no-top-padding {
     + table, + ul, + ol, + dl, + blockquote { padding-top: 0; }
@@ -196,3 +196,12 @@
     display: inline-block;
     text-indent: one-em(0) * -1;
 }
+
+
+// Alert colours
+$alert: (
+    'info'    : $info,
+    'warning' : $warning,
+    'danger'  : $danger,
+    'success'  : $success,
+);
