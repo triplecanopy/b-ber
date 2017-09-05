@@ -17,6 +17,7 @@
     "import/extensions": [2, "never"],
     "import/no-unresolved": 0,
     "import/no-extraneous-dependencies": 0,
+    "indent": [2, 4],
     "max-len": [2, 120, 120, {
       "ignoreComments": true
     }],
@@ -25,6 +26,7 @@
     }],
     "no-console": 0,
     "no-cond-assign": [2, "except-parens"],
+    "no-multi-spaces:": 0,
     "no-nested-ternary": 0,
     "no-plusplus": [2, {
       "allowForLoopAfterthoughts": true
