@@ -79,8 +79,8 @@ describe('module:md:MarkdownRenderer', () => {
         // })
     })
 
-    describe('#pull-quote', () => {
-        it('Should include an `pull-quote` directive', () => {
+    describe('#pullquote', () => {
+        it('Should include an `pullquote` directive', () => {
             markdownRenderer.md.renderer.rules.should.include.all.keys('container_pullQuote_open', 'container_pullQuote_close')
         })
     })

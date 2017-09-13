@@ -85,7 +85,7 @@ p {
         text-indent: 0;
     }
 
-    .pull-quote & {
+    .pullquote & {
         text-indent: 0;
         font-style: italic;
         font-weight: normal;
@@ -94,7 +94,7 @@ p {
         @include adjust-leading-to(0.91);
     }
 
-    .epigraph .pull-quote & {
+    .epigraph .pullquote & {
         float: none;
         width: 100%;
         margin-top: 0!important;
@@ -116,7 +116,7 @@ p {
 
 cite {
     @include font-base;
-    .pull-quote & {
+    .pullquote & {
         @include no-indent-follow;
         @include tc-rhythm-sizing($text-xs, $line-xs);
         @include adjust-leading-to(0.91);
@@ -128,11 +128,11 @@ cite {
         width: 75%;
         margin-left: 25%;
     }
-    .pull-quote.full-width & {
+    .pullquote.full-width & {
         margin-left: 0;
         width: 100%;
     }
-    .epigraph .pull-quote & {
+    .epigraph .pullquote & {
         float: none;
         width: 100%;
         @include text-center;
@@ -200,7 +200,7 @@ em {
         font-weight: 700;
         font-style: italic;
     }
-    em, .pull-quote p & {
+    em, .pullquote p & {
         font-weight: 400;
         font-style: normal;
     }

@@ -168,7 +168,7 @@ p {
         text-indent: 0;
     }
 
-    .pull-quote & {
+    .pullquote & {
         @include following-paragraph-not-indented;
         @include type-settings(-4); // ---
         text-indent: 0!important;
@@ -177,11 +177,11 @@ p {
         font-weight: normal;
     }
 
-    .pull-quote + & {
+    .pullquote + & {
         text-indent: 0!important;
     }
 
-    .epigraph .pull-quote & {
+    .epigraph .pullquote & {
         @include following-paragraph-not-indented;
         @include type-settings(0);
         float: none;
@@ -199,7 +199,7 @@ p {
 }
 
 cite {
-    .pull-quote & {
+    .pullquote & {
         @include following-paragraph-not-indented;
         @include type-settings(-4); // ---
         font-weight: normal;
@@ -210,11 +210,11 @@ cite {
         width: 75%;
         margin-left: 25%;
     }
-    .pull-quote.full-width & {
+    .pullquote.full-width & {
         margin-left: 0;
         width: 100%;
     }
-    .epigraph .pull-quote & {
+    .epigraph .pullquote & {
         @include following-paragraph-not-indented;
         @include type-settings(0);
         float: none;
@@ -272,7 +272,7 @@ em {
         font-weight: 700;
         font-style: italic;
     }
-    em, .pull-quote p & {
+    em, .pullquote p & {
         font-weight: 400;
         font-style: normal;
     }

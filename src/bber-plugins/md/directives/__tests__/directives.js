@@ -19,7 +19,7 @@ const pluginDialogue  = require('../dialogue').default
 const pluginEpigraph  = require('../epigraph').default
 const pluginImage     = require('../image').default
 // const pluginLogo   = require('../logo').default
-const pluginPullQuote = require('../pull-quote').default
+const pluginPullQuote = require('../pullquote').default
 const pluginSection   = require('../section').default
 
 // directive utils
@@ -121,7 +121,7 @@ describe('md:directive', () => {
         md.load(pluginSection)
 
         const directiveAttributes = Object.assign({}, DIRECTIVE_ATTRIBUTES)
-        delete directiveAttributes.misc // handle misc (pull-quote, dialogue, epigraph, etc) separately
+        delete directiveAttributes.misc // handle misc (pullquote, dialogue, epigraph, etc) separately
 
         const dirs = Object.assign({}, directiveAttributes)
         const tmpl = Object.assign({}, dirs.section)
@@ -213,9 +213,9 @@ describe('md:directive', () => {
         })
 
         // misc. directive tests
-        it('Should render a pull-quote directive', () => {
+        it('Should render a pullquote directive', () => {
             md.load(pluginPullQuote)
-            const pq = DIRECTIVE_ATTRIBUTES.misc['pull-quote']
+            const pq = DIRECTIVE_ATTRIBUTES.misc['pullquote']
             const requiredAttrs = pq.required
 
             let required = ''
@@ -229,13 +229,13 @@ describe('md:directive', () => {
             const optional = pq.optional
             forOf(optional, (k, v) => {
                 store.reset()
-                const input = `::: pull-quote:foo ${required} ${v.input}\n\nfoo\n\n::: exit:foo`
+                const input = `::: pullquote:foo ${required} ${v.input}\n\nfoo\n\n::: exit:foo`
                 const output = md.parser.render(input)
                 output.should.match(v.output)
             })
             // for (const [k, v] of entries(optional)) {
             //   store.reset()
-            //   const input = `::: pull-quote:foo ${required} ${v.input}\n\nfoo\n\n::: exit:foo`
+            //   const input = `::: pullquote:foo ${required} ${v.input}\n\nfoo\n\n::: exit:foo`
             //   const output = md.parser.render(input)
             //   output.should.match(v.output)
             // }
