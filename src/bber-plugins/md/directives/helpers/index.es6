@@ -11,6 +11,7 @@ import {
     ALL_DIRECTIVES,
     DIRECTIVES_REQUIRING_ALT_TAG,
     SUPPORTED_ATTRIBUTES,
+    DRAFT_DIRECTIVES,
 } from 'bber-shapes/directives'
 
 
@@ -186,9 +187,10 @@ const _extendWithDefaults = (obj, genus) => {
  * @param  {Object} context Markdown file where attributes method was called
  * @return {String}
  */
-const attributesObject = (attrs, genus, context = {}) => {
+const attributesObject = (attrs, _genus, context = {}) => {
     const { filename, lineNr } = context
     let attrsObject = {}
+    let genus = _genus
 
     if (!genus || typeof genus !== 'string') {
         log.error(`No directive provided: ${filename}:${lineNr}`, 1)
@@ -196,6 +198,11 @@ const attributesObject = (attrs, genus, context = {}) => {
 
     if (ALL_DIRECTIVES.indexOf(genus) < 0) {
         log.error(`Invalid directive: [${genus}] at ${filename}:${lineNr}`, 1)
+    }
+
+    if (DRAFT_DIRECTIVES.indexOf(genus) > -1) {
+        log.warn(`Epub type specification for directive [${genus}] is currently in draft. Substituting [${genus}] for generic [chapter].`)
+        genus = 'chapter'
     }
 
     if (attrs && typeof attrs === 'string') {

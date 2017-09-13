@@ -127,7 +127,7 @@ export default {
             const webOnlyAttrString = build() === 'web' ? 'webkit-playsinline="webkit-playsinline" playsinline="playsinline"' : ''
             const commentStart = htmlComment(`START: ${mediaType}:${type}#${htmlId(id)};`)
             const commentEnd = htmlComment(`END: ${mediaType}:${type}#${htmlId(id)};`)
-            const page = `figure-${htmlId(source)}.xhtml`
+            const page = `figure_${htmlId(source)}.xhtml`
 
             switch (type) {
                 case 'audio':

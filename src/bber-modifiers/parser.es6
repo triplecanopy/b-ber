@@ -14,7 +14,7 @@ class Parser {
      */
     constructor(customElements) {
         const defaultElements = [
-            'pull-quote',
+            'pullquote',
             'epigraph',
             'dialogue',
             'colophon',

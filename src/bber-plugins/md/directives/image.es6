@@ -66,7 +66,7 @@ export default {
             // then get the dimensions
             const dimensions = imageSize.sync(fs.readFileSync(asset))
             const { width, height } = dimensions
-            const figureId = String(Math.random()).slice(2)
+            const figureId = '_' + String(Math.random()).slice(2)
 
             switch (type) {
                 case 'figure':
@@ -79,7 +79,7 @@ export default {
                         attrsObject.classes = classNames
                     }
 
-                    page = `figure-${figureId}.xhtml`
+                    page = `figure${figureId}.xhtml`
                     store.add('figures',
                         {
                             id: figureId,

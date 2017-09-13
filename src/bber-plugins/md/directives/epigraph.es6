@@ -45,7 +45,7 @@ export default {
                         '<section epub:type="epigraph" class="epigraph chapter">',
                         '<section epub:type="subchapter" class="subchapter">',
                         captions.map((caption, idx2) =>
-                            `<div class="pull-quote full-width">
+                            `<div class="pullquote full-width">
                                 <p>${escapeHtml(caption)}</p>
                                 ${(citations[idx2] ? `<cite>&#x2014;${escapeHtml(citations[idx2])}</cite>` : '')}
                             </div>`

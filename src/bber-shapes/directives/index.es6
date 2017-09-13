@@ -50,9 +50,44 @@ const INLINE_DIRECTIVES = [
 
 // misc
 const MISC_DIRECTIVES = [
-    'pull-quote',
+    'pullquote',
     'dialogue',
     'epigraph',
+]
+
+// belonging to the epub-vocab, but still in draft. see https://idpf.github.io/epub-vocabs/structure/
+const DRAFT_DIRECTIVES = [
+    'abstract',
+    'toc-brief',
+    'credits',
+    'keywords',
+    'seriespage ',
+    'case-study',
+    'pullquote',
+    'label',
+    'ordinal',
+    'learning-objectives',
+    'learning-outcome',
+    'learning-outcomes',
+    'learning-resources',
+    'learning-standard',
+    'learning-standards',
+    'answer',
+    'answers',
+    'assessments',
+    'feedback',
+    'fill-in-the-blank-problem',
+    'general-problem',
+    'match-problem',
+    'multiple-choice-problem',
+    'practice',
+    'question',
+    'practices',
+    'true-false-problem',
+    'biblioref',
+    'glossref',
+    'backlink',
+    'credit',
 ]
 
 // unions
@@ -102,7 +137,7 @@ const DIRECTIVE_ATTRIBUTES = {
 
     // misc
     misc: {
-        'pull-quote': {
+        'pullquote': {
             required: {},
             optional: {
                 citation: {
@@ -111,7 +146,7 @@ const DIRECTIVE_ATTRIBUTES = {
                 },
                 classes: {
                     input: 'classes:"foo bar baz"',
-                    output: /class="pull-quote foo bar baz/,
+                    output: /class="pullquote foo bar baz/,
                 },
             },
         },
@@ -241,4 +276,5 @@ export {
     ALL_DIRECTIVES,
     SUPPORTED_ATTRIBUTES,
     DIRECTIVES_REQUIRING_ALT_TAG,
+    DRAFT_DIRECTIVES,
 }
