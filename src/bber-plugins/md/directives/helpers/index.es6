@@ -12,6 +12,7 @@ import {
     DIRECTIVES_REQUIRING_ALT_TAG,
     SUPPORTED_ATTRIBUTES,
     DRAFT_DIRECTIVES,
+    DEPRECATED_DIRECTIVES,
 } from 'bber-shapes/directives'
 
 
@@ -202,6 +203,11 @@ const attributesObject = (attrs, _genus, context = {}) => {
 
     if (DRAFT_DIRECTIVES.indexOf(genus) > -1) {
         log.warn(`Epub type specification for directive [${genus}] is currently in draft. Substituting [${genus}] for generic [chapter].`)
+        genus = 'chapter'
+    }
+
+    if (DEPRECATED_DIRECTIVES.indexOf(genus) > -1) {
+        log.warn(`Epub type specification for directive [${genus}] is currently deprecated. Substituting [${genus}] for generic [chapter].`)
         genus = 'chapter'
     }
 

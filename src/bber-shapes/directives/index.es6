@@ -61,7 +61,7 @@ const DRAFT_DIRECTIVES = [
     'toc-brief',
     'credits',
     'keywords',
-    'seriespage ',
+    'seriespage',
     'case-study',
     'pullquote',
     'label',
@@ -88,6 +88,19 @@ const DRAFT_DIRECTIVES = [
     'glossref',
     'backlink',
     'credit',
+]
+
+const DEPRECATED_DIRECTIVES = [
+    'subchapter',
+    'help',
+    'marginalia',
+    'sidebar',
+    'warning',
+    'annotation',
+    'note',
+    'rearnote',
+    'rearnotes',
+    'annoref',
 ]
 
 // unions
@@ -277,4 +290,5 @@ export {
     SUPPORTED_ATTRIBUTES,
     DIRECTIVES_REQUIRING_ALT_TAG,
     DRAFT_DIRECTIVES,
+    DEPRECATED_DIRECTIVES,
 }
