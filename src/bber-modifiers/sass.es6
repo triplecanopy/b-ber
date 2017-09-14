@@ -2,9 +2,6 @@
  * @module sass
  */
 
-// Could set up themes to be loaded through custom `importer()`, not necessary for
-// now though see: https://github.com/sass/node-sass#render-callback--v300
-
 import Promise from 'zousan'
 import fs from 'fs-extra'
 import path from 'path'
@@ -12,7 +9,8 @@ import nodeSass from 'node-sass'
 import postcss from 'postcss'
 import autoprefixer from 'autoprefixer'
 import { log } from 'bber-plugins'
-import { src, dist, env, build, theme } from 'bber-utils'
+import { src, dist, env, build/*, theme*/ } from 'bber-utils'
+import store from 'bber-lib/store'
 
 // dirnames that may be referenced in the theme. we copy over assets when
 // running the sass task
@@ -21,17 +19,21 @@ const ASSET_DIRNAMES = ['fonts', 'images']
 // Check to see if there's an `application.scss` in `_stylesheets`, and if so
 // load that; else verify that a theme is selected in `config`, and that the
 // theme's `application.scss` exists, then load that; else write a blank file.
-const createScssString = () =>
+const createSCSSString = () =>
     new Promise((resolve) => { // eslint-disable-line consistent-return
         const chunks = []
-        const variableOverridesPath = path.join(src(), '_stylesheets/variable-overrides.scss')
-        const styleOverridesPath = path.join(src(), '_stylesheets/style-overrides.scss')
-        const themeStylesPath = path.join(theme().path, 'application.scss')
+        const { theme } = store
+        const themeName = theme.name
+
+        const themeSettingsPath  = path.join(src(), '_stylesheets', themeName, '_settings.scss')
+        const themeOverridesPath = path.join(src(), '_stylesheets', themeName, '_overrides.scss')
+        const themeStylesPath    = theme.entry
 
         try {
-            if (fs.existsSync(variableOverridesPath)) {
-                const variableOverrides = fs.readFileSync(variableOverridesPath)
-                log.info(`bber-modifiers/sass: Found SCSS variable overrides: ${path.basename(variableOverridesPath)}`)
+            // load user-defined variables
+            if (fs.existsSync(themeSettingsPath)) {
+                const variableOverrides = fs.readFileSync(themeSettingsPath)
+                log.info(`bber-modifiers/sass: Found SCSS variable overrides: ${path.basename(themeSettingsPath)}`)
                 log.info('bber-modifiers/sass: Prepending overrides to SCSS stream')
                 chunks.push(variableOverrides)
             }
@@ -40,21 +42,23 @@ const createScssString = () =>
         }
 
         try {
+            // load theme styles
             if (fs.existsSync(themeStylesPath)) {
                 const themeStyles = fs.readFileSync(themeStylesPath)
-                log.info(`bber-modifiers/sass: Attempting build with [${theme().name}] theme`)
+                log.info(`bber-modifiers/sass: Attempting build with [${themeName}] theme`)
                 chunks.push(themeStyles)
             }
         } catch (err) {
             log.error(`bber-modifiers/sass:
-                Could not find theme [${theme().name}].
+                Could not find theme [${themeName}].
                 Make sure the theme exists and contains a valid [application.scss]`)
         }
 
         try {
-            if (fs.existsSync(styleOverridesPath)) {
-                const styleOverrides = fs.readFileSync(styleOverridesPath)
-                log.info(`bber-modifiers/sass: Found user-defined styles: ${path.basename(styleOverridesPath)}`)
+            // load user-defined styles
+            if (fs.existsSync(themeOverridesPath)) {
+                const styleOverrides = fs.readFileSync(themeOverridesPath)
+                log.info(`bber-modifiers/sass: Found user-defined styles: ${path.basename(themeOverridesPath)}`)
                 log.info('bber-modifiers/sass: Appending user-defined styles to SCSS stream')
                 chunks.push(styleOverrides)
             }
@@ -71,7 +75,8 @@ const createScssString = () =>
         resolve(Buffer.concat(chunks))
     })
 
-const ensureCssDir = () =>
+// make sure the compiled output dir exists
+const ensureCSSDir = () =>
     new Promise(resolve =>
         fs.mkdirp(path.join(dist(), '/OPS/stylesheets'), (err) => {
             if (err) { throw err }
@@ -91,12 +96,13 @@ const ensureCssDir = () =>
 //
 const copyThemeAssets = () => {
     new Promise((resolve) => {
+        const { theme } = store
         const promises = []
         ASSET_DIRNAMES.forEach((dir) => {
             promises.push(new Promise((resolve) => {
-                const themePath = path.join(theme().path, dir)
-                const srcPath = path.join(src(), `_${dir}`)
 
+                const themePath = path.resolve(path.dirname(theme.entry), dir)
+                const srcPath = path.join(src(), `_${dir}`)
 
                 try {
                     if (!fs.existsSync(srcPath)) {
@@ -138,11 +144,11 @@ const copyThemeAssets = () => {
     })
 }
 
-const renderCss = scssString =>
+const renderCSS = scssString =>
     new Promise(resolve =>
         nodeSass.render({
             data: `$build: "${build()}";${scssString}`,
-            includePaths: [path.join(src(), '_stylesheets/'), theme().path],
+            includePaths: [path.join(src(), '_stylesheets/'), path.dirname(store.theme.entry)],
             outputStyle: env() === 'production' ? 'compressed' : 'nested',
             errLogToConsole: true,
         }, (err, result) => {
@@ -161,7 +167,7 @@ const applyPostProcessing = ({ css }) =>
         .then(resolve)
     )
 
-const writeCssFile = css =>
+const writeCSSFile = css =>
     new Promise(resolve =>
         fs.writeFile(path.join(dist(), '/OPS/stylesheets/application.css'), css, (err) => {
             if (err) { throw err }
@@ -171,12 +177,12 @@ const writeCssFile = css =>
 
 const sass = () =>
     new Promise((resolve) => {
-        ensureCssDir()
+        ensureCSSDir()
         .then(copyThemeAssets)
-        .then(createScssString)
-        .then(renderCss)
+        .then(createSCSSString)
+        .then(renderCSS)
         .then(applyPostProcessing)
-        .then(writeCssFile)
+        .then(writeCSSFile)
         .catch(err => log.error(err))
         .then(resolve)
     })

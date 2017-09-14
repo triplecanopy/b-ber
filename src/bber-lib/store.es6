@@ -2,10 +2,10 @@
 import Yaml from 'bber-lib/yaml'
 import path from 'path'
 import fs from 'fs-extra'
-import { isPlainObject, isArray, findIndex } from 'lodash'
+import { isPlainObject, isArray, find, findIndex } from 'lodash'
 import mime from 'mime-types'
-
-// import { log } from 'bber-plugins'
+import themes from 'b-ber-themes'
+import { log } from 'bber-plugins'
 import {
     createPageModelsFromYAML,
     flattenNestedEntries,
@@ -39,6 +39,7 @@ class Store {
     set toc(value)          { this._toc = value           }
     set remoteAssets(value) { this._remoteAssets = value  }
     set loi(value)          { this._loi = value           }
+    set theme(value)        { this._theme = value         }
 
     get env()               { return this._env            }
     get pages()             { return this._pages          }
@@ -56,6 +57,7 @@ class Store {
     get toc()               { return this._toc            }
     get remoteAssets()      { return this._remoteAssets   }
     get loi()               { return this._loi            }
+    get theme()             { return this._theme          }
 
     /**
      * @constructor
@@ -232,16 +234,18 @@ class Store {
         this.toc          = []
         this.remoteAssets = []
         this.loi          = []
+        this.theme        = {}
         this.env          = process.env.NODE_ENV || 'development'
         this.config       = {
             src: '_project',
             dist: 'project',
-            theme: 'default',
+            theme: 'b-ber-theme-serif',
             reader: 'https://codeload.github.com/triplecanopy/b-ber-boiler/zip/master',
         }
 
         this.loadSettings()
         this.loadMetadata()
+        this.loadTheme()
         this.loadAudioVideo()
         this.loadBber()
     }
@@ -276,6 +280,53 @@ class Store {
         if (fs.existsSync(fpath)) {
             this.metadata = [...this.metadata, ...Yaml.load(fpath)]
         }
+    }
+
+    loadTheme() {
+        // just in case ...
+        const themeError = new Error(`b-ber-lib/store: There was an error loading theme [${this.config.theme}]`)
+
+        if ({}.hasOwnProperty.call(themes, this.config.theme)) {
+            this.theme = themes[this.config.theme]
+            return
+        } else {
+            if (!{}.hasOwnProperty.call(this.config, 'themes_directory')) {
+                // no user defined theme, bail
+                log.error('b-ber-lib/store: There was an error loading the theme, make sure you\'ve added a [themes_directory] to the [config.yml] if you\'re using a custom theme.', 1)
+            }
+
+            // possibly a user defined theme, test if it exists
+            try {
+                const userThemesPath = path.resolve(cwd, this.config.themes_directory)
+                const userThemes = fs.readdirSync(userThemesPath).reduce((acc, curr) => {
+                    if (!fs.lstatSync(path.resolve(userThemesPath, curr)).isDirectory()) { return acc }
+                    const userModule =
+                        fs.existsSync(path.resolve(userThemesPath, curr, 'package.json'))
+                            ? require(path.resolve(userThemesPath, curr))
+                            : require(path.resolve(userThemesPath, curr, 'index.js'))
+                    return acc.concat(userModule)
+                }, [])
+
+
+                const userTheme = find(userThemes, { name: this.config.theme})
+
+                if (!userTheme) {
+                    log.error(`bber-lib/store: Could not find theme [${this.config.theme}]`, 1)
+                }
+
+                // exists! set it
+
+                this.theme = userTheme
+                return
+
+            } catch (err) {
+                log.error(themeError, 1)
+            }
+
+        }
+
+        log.error(themeError, 1)
+
     }
 
     loadAudioVideo() {
