@@ -1,61 +1,63 @@
 import Promise from 'zousan'
+
 import path from 'path'
 import fs from 'fs-extra'
 import yargs from 'yargs'
 import Yaml from 'bber-lib/yaml'
 import { log } from 'bber-plugins'
-import { theme, src } from 'bber-utils'
+import { src, forOf } from 'bber-utils'
 
-const __theme = () =>
+import store from 'bber-lib/store'
+import themes from 'b-ber-themes'
+
+const theme = () =>
     new Promise((resolve, reject) => {
-        const themesRoot = theme().root
-        const themeCurrent = theme().name || ''
 
-        try {
-            fs.existsSync(themesRoot)
-        } catch (err) {
-            log.info('Creating themes directory')
-            fs.mkdir(themesRoot)
+        const { config } = store
+
+
+        console.log(themes)
+        process.exit(0)
+
+        const themeList = []
+        forOf(themes, _ => themeList.push(_))
+
+        // get user themes dir, if any, and merge with built-in b-ber themes
+        if ({}.hasOwnProperty.call(config, 'user_themes_directory')) {
+            forEach(config.user_themes_directory, _ => themeList.push(_))
         }
+
+        const currentTheme = config.theme || ''
 
         if (yargs.argv.list) {
-            return fs.readdir(themesRoot, (err, themes) => {
-                if (err) { throw err }
-                if (themes.length < 1) { return log.info('No themes currently available') }
 
-                const themeList = themes.reduce((acc, curr) => {
-                    if (curr.charAt(0) === '.') { return acc }
-                    const icon = themeCurrent === curr ? '✔ ' : '- '
-                    return acc.concat(`${icon} ${curr}\n`)
-                }, '')
+            console.log()
+            console.log('The following themes are available:')
+
+            console.log(themeList.reduce((acc, curr) => {
+                const icon = currentTheme === curr ? '✔' : '-'
+                return acc.concat(`  ${icon} ${curr}\n`)
+            }, ''))
 
 
-                console.log()
-                console.log('The following themes are available:')
-                console.log(themeList)
+            return resolve()
 
-                // log.info(`\nThe following themes are available:\n${themeList}\n`)
-
-                return resolve()
-            })
         }
+
 
         if (yargs.argv.set) {
             const themeName = yargs.argv.set
-            const themeDir = path.resolve(themesRoot, themeName)
 
-            try {
-                fs.existsSync(themeDir)
-            } catch (err) {
+            if (themeList.indexOf(themeName) < 0) {
                 return log.error(`Could not find ${themeDir}.`)
             }
 
             const configPath = path.join(process.cwd(), 'config.yml')
-            const config = Yaml.load(configPath)
+            const configObj = Yaml.load(configPath)
 
-            config.theme = themeName
+            configObj.theme = themeName
 
-            return fs.writeFile(configPath, Yaml.dump(config), (err) => {
+            return fs.writeFile(configPath, Yaml.dump(configObj), (err) => {
                 if (err) { throw err }
                 log.info(`\nSuccessfully set theme theme to "${themeName}"\n`)
                 return resolve()
@@ -64,6 +66,7 @@ const __theme = () =>
         }
 
         return resolve(yargs.showHelp())
+
     })
 
-export default __theme
+export default theme

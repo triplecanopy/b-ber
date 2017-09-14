@@ -201,14 +201,15 @@ const env = () => store.env
 const version = () => store.version
 
 // TODO: this should check that the theme exists in the `themes` dir
-const theme = () => {
-    const name = store.config.theme
-    return {
-        name,
-        root: path.join(__dirname, '../../', 'themes'),
-        path: path.join(__dirname, '../../', 'themes', name),
-    }
-}
+const theme = () =>  store.config.theme
+// {
+    // const name = store.config.theme
+    // return {
+    //     name,
+    //     root: path.join(__dirname, '../../', 'themes'),
+    //     path: path.join(__dirname, '../../', 'themes', name),
+    // }
+// }
 
 /**
  * [description]
@@ -325,8 +326,32 @@ const flattenSpineFromYAML = arr =>
         return acc.concat(curr)
     }, [])
 
-export { opsPath, cjoin, fileId, copy, guid, lpad, hrtimeformat, hashIt,
-    getImageOrientation, getFrontmatter, forOf, src, dist, build, env, theme,
-    version, metadata, promiseAll, htmlComment, passThrough, escapeHTML,
-    spineModel, modelFromObject, modelFromString, nestedContentToYAML,
-    flattenSpineFromYAML }
+export {
+    opsPath,
+    cjoin,
+    fileId,
+    copy,
+    guid,
+    lpad,
+    hrtimeformat,
+    hashIt,
+    getImageOrientation,
+    getFrontmatter,
+    forOf,
+    src,
+    dist,
+    build,
+    env,
+    theme,
+    version,
+    metadata,
+    promiseAll,
+    htmlComment,
+    passThrough,
+    escapeHTML,
+    spineModel,
+    modelFromObject,
+    modelFromString,
+    nestedContentToYAML,
+    flattenSpineFromYAML,
+}

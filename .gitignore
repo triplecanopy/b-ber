@@ -12,16 +12,8 @@ yarn-debug.log*
 yarn-error.log*
 package-lock.json*
 
-/_site
-.idea
-
 # used for transpiled ES6
 /lib
-
-# build directory for _book
-/book*
-/_book
-/config.yml
 
 /docs
 /coverage

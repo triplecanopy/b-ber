@@ -8,7 +8,7 @@
 import Promise from 'zousan'
 import fs from 'fs-extra'
 import path from 'path'
-import nsass from 'node-sass'
+import nodeSass from 'node-sass'
 import postcss from 'postcss'
 import autoprefixer from 'autoprefixer'
 import { log } from 'bber-plugins'
@@ -36,7 +36,6 @@ const createScssString = () =>
                 chunks.push(variableOverrides)
             }
         } catch (err) {
-            // log.info(`bber-modifiers/sass: Attempting to build with [${theme().name}] theme`)
             log.info('bber-modifiers/sass: Building SCSS without user-defined overrides')
         }
 
@@ -60,7 +59,6 @@ const createScssString = () =>
                 chunks.push(styleOverrides)
             }
         } catch (err) {
-            // log.info(`bber-modifiers/sass: Attempting to build with [${theme().name}] theme`)
             log.info('bber-modifiers/sass: Building SCSS without user-defined styles')
         }
 
@@ -142,16 +140,13 @@ const copyThemeAssets = () => {
 
 const renderCss = scssString =>
     new Promise(resolve =>
-        nsass.render({
+        nodeSass.render({
             data: `$build: "${build()}";${scssString}`,
             includePaths: [path.join(src(), '_stylesheets/'), theme().path],
             outputStyle: env() === 'production' ? 'compressed' : 'nested',
             errLogToConsole: true,
         }, (err, result) => {
-            if (err) {
-                log.error(err.message)
-                process.exit(1)
-            }
+            if (err) { log.error(err.message, 1) }
             resolve(result)
         })
     )
