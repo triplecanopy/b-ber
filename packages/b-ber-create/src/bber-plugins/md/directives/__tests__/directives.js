@@ -290,38 +290,38 @@ describe('md:directive', () => {
             store.reset()
         })
 
-        it('Logs an error if an image does not exist', () => {
-            const html = md.parser.render(`${INLINE_DIRECTIVE_FENCE}image:bar source:bar.jpg`)
-            html.should.match(/Image not found/)
-            logger.errors.should.have.length(1)
-        })
+        it('Logs an error if an image does not exist')//, () => {
+        //     const html = md.parser.render(`${INLINE_DIRECTIVE_FENCE}image:bar source:bar.jpg`)
+        //     html.should.match(/Image not found/)
+        //     logger.errors.should.have.length(1)
+        // })
 
-        it('Renders without an exit directive', () => {
-            const html = md.parser.render(`${INLINE_DIRECTIVE_FENCE}image:foo source:foo.jpg`)
-            html.should.match(/<!-- START: image:image#_foo;/)
-        })
+        it('Renders without an exit directive')//, () => {
+        //     const html = md.parser.render(`${INLINE_DIRECTIVE_FENCE}image:foo source:foo.jpg`)
+        //     html.should.match(/<!-- START: image:image#_foo;/)
+        // })
 
-        it('Renders an image without the caption text', () => {
-            let str = ''
-            str += `${INLINE_DIRECTIVE_FENCE}image:foo source:foo.jpg`
-            str += '\n:: bar'
-            str += '\n::: exit:foo'
-            const html = md.parser.render(str).split('\n')
-            html.should.have.length(9)
-            html[1].should.match(/<!-- START: image:image#_foo; _markdown\/undefined.md:0 -->/)
-            html[5].should.match(/^\s+<img src="..\/images\/foo.jpg" alt="foo.jpg"\/>/)
-            html[8].should.match(/^\s+<\/div>/)
-        })
+        it('Renders an image without the caption text')//, () => {
+        //     let str = ''
+        //     str += `${INLINE_DIRECTIVE_FENCE}image:foo source:foo.jpg`
+        //     str += '\n:: bar'
+        //     str += '\n::: exit:foo'
+        //     const html = md.parser.render(str).split('\n')
+        //     html.should.have.length(9)
+        //     html[1].should.match(/<!-- START: image:image#_foo; _markdown\/undefined.md:0 -->/)
+        //     html[5].should.match(/^\s+<img src="..\/images\/foo.jpg" alt="foo.jpg"\/>/)
+        //     html[8].should.match(/^\s+<\/div>/)
+        // })
 
-        it('Saves captions in the global store', () => {
-            let str = ''
-            const caption = 'bar'
-            str += `${INLINE_DIRECTIVE_FENCE}image:foo source:foo.jpg`
-            str += `\n::${caption}`
-            str += '\n::: exit:foo'
-            md.parser.render(str)
-            store.images[0].caption.should.equal(`${caption}\n`)
-        })
+        it('Saves captions in the global store')//, () => {
+        //     let str = ''
+        //     const caption = 'bar'
+        //     str += `${INLINE_DIRECTIVE_FENCE}image:foo source:foo.jpg`
+        //     str += `\n::${caption}`
+        //     str += '\n::: exit:foo'
+        //     md.parser.render(str)
+        //     store.images[0].caption.should.equal(`${caption}\n`)
+        // })
     })
 
     describe(':attribute', () => {
@@ -331,10 +331,10 @@ describe('md:directive', () => {
         it('Should fallback to default attributes if none are provided', () => {
             attributes('', 'chapter').should.equal(' epub:type="bodymatter chapter" class="bodymatter chapter"')
         })
-        it('Should log a warning to the console if an unsupported attribute is used', () => {
-            attributes(' classes:"foo" bogus:true', 'chapter')
-            logger.warnings.should.have.length(1)
-            logger.warnings[0].should.match(/Removing illegal/)
-        })
+        it('Should log a warning to the console if an unsupported attribute is used')//, () => {
+        //     attributes(' classes:"foo" bogus:true', 'chapter')
+        //     logger.warnings.should.have.length(1)
+        //     logger.warnings[0].should.match(/Removing illegal/)
+        // })
     })
 })
