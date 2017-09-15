@@ -1,6 +1,6 @@
 import plugin from 'bber-plugins/md/plugins/dialogue'
 import renderFactory from 'bber-plugins/md/directives/factory/block'
-import { attributes, attributesObject, htmlId } from 'bber-plugins/md/directives/helpers'
+import { attributes, htmlId } from 'bber-plugins/md/directives/helpers'
 
 // define our open and closing markers, used by the `validateOpen` and
 // `validateClose` methods in the `renderFactory`

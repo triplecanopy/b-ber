@@ -15,8 +15,8 @@ import rrdir from 'recursive-readdir'
 import { log } from 'bber-plugins'
 import * as tmpl from 'bber-templates'
 import { cjoin, src, dist, version, metadata } from 'bber-utils'
-import { pathInfoFromFiles } from './helpers'
 import store from 'bber-lib/store'
+import { pathInfoFromFiles } from './helpers'
 
 /**
  * @alias module:manifestAndMetadata#ManifestAndMetadata

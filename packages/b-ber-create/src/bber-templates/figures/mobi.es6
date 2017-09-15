@@ -30,7 +30,7 @@ const mobi = {
             </figure>
         </div>`
     },
-    'portrait-high': function (data) {
+    'portrait-high': function (data) { // eslint-disable-line func-names
         return `<div class="figure__large${data.inline ? 'figure__inline' : ''}"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
             <figure id="${data.id}">
                 <div class="img-wrap" style="width: 60%; margin: 0 auto;">

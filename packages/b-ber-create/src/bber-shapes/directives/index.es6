@@ -150,7 +150,7 @@ const DIRECTIVE_ATTRIBUTES = {
 
     // misc
     misc: {
-        'pullquote': {
+        pullquote: {
             required: {},
             optional: {
                 citation: {

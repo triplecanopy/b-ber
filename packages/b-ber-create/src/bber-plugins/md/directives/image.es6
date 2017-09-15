@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 import path from 'path'
 import fs from 'fs-extra'
 import store from 'bber-lib/store'
@@ -66,7 +65,7 @@ export default {
             // then get the dimensions
             const dimensions = imageSize.sync(fs.readFileSync(asset))
             const { width, height } = dimensions
-            const figureId = '_' + String(Math.random()).slice(2)
+            const figureId = `_${String(Math.random()).slice(2)}`
 
             switch (type) {
                 case 'figure':

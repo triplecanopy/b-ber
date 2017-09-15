@@ -1,4 +1,4 @@
-// import crypto from 'crypto'
+/* eslint-disable no-plusplus, max-statements-per-line, no-continue, no-multi-assign */
 import { forOf } from 'bber-utils'
 import { log } from 'bber-plugins'
 import {
@@ -144,8 +144,8 @@ const _buildAttrString = (obj) => {
 /**
  * Ensure that attributes required for valid XHTML are present, and that
  * system defaults are merged into user settings
- * @param  {Object} obj  [description]
- * @param  {String} name [description]
+ * @param  {Object} obj   [description]
+ * @param  {String} genus [description]
  * @return {Object}
  */
 const _extendWithDefaults = (obj, genus) => {
@@ -184,13 +184,14 @@ const _extendWithDefaults = (obj, genus) => {
 /**
  * Create an object from attributes in the given directive
  * @param  {String} attrs   The directives attributes string
- * @param  {String} genus   The type of directive
+ * @param  {String} _genus  The type of directive
  * @param  {Object} context Markdown file where attributes method was called
  * @return {String}
  */
 const attributesObject = (attrs, _genus, context = {}) => {
     const { filename, lineNr } = context
-    let attrsObject = {}
+    const attrsObject = {}
+
     let genus = _genus
 
     if (!genus || typeof genus !== 'string') {

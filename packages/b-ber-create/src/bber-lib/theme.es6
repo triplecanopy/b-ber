@@ -1,9 +1,9 @@
+/* eslint-disable global-require, import/no-dynamic-require */
 import Promise from 'zousan'
 import path from 'path'
 import fs from 'fs-extra'
 import yargs from 'yargs'
 import Yaml from 'bber-lib/yaml'
-// import { log } from 'bber-plugins'
 import { src, forOf } from 'bber-utils'
 import store from 'bber-lib/store'
 import themes from 'b-ber-themes'

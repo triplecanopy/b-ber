@@ -6,7 +6,7 @@ import plugin from 'bber-plugins/md/plugins/section'
 import store from 'bber-lib/store'
 import { attributesObject, attributesString } from 'bber-plugins/md/directives/helpers'
 import { log } from 'bber-plugins'
-import { passThrough } from 'bber-utils' // for testing
+// import { passThrough } from 'bber-utils' // for testing
 import {
     BLOCK_DIRECTIVE_MARKER,
     BLOCK_DIRECTIVE_MARKER_MIN_LENGTH,

@@ -1,3 +1,4 @@
+/* eslint-disable no-mixed-operators, template-curly-spacing */
 import fs from 'fs-extra'
 import path from 'path'
 import mime from 'mime-types'
@@ -175,7 +176,7 @@ export default {
                         </section>
                         ${commentEnd}`
                 default:
-                    throw new Error(`Something went wrong parsing [${asset}] in [${context.filename}]`)
+                    throw new Error(`Something went wrong parsing [${source}] in [${context.filename}]`)
             }
 
         },

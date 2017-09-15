@@ -13,7 +13,7 @@ import path from 'path'
 import Yaml from 'bber-lib/yaml'
 import File from 'vinyl'
 import { log } from 'bber-plugins'
-import { lpad, src } from 'bber-utils'
+import { src } from 'bber-utils'
 
 /**
  * Generate new Markdown documents
@@ -75,7 +75,7 @@ class Generate {
      * @param  {Object} options.metadata  [description]
      * @return {Object} The filename, the file object, and the metadata
      */
-    createFile({ files, metadata }) {
+    createFile({ metadata }) {
         const frontmatter = `---\n${this.frontmatterYaml(metadata)}---\n`
         return new Promise((resolve) => {
             const { title } = metadata
@@ -89,7 +89,6 @@ class Generate {
                 log.error(err, 1)
             }
 
-            // const fname = `${lpad(String(files.length + 1), '0', 5)}.md`
             const file = new File({
                 path: './',
                 contents: new Buffer(frontmatter),

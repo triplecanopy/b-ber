@@ -109,8 +109,7 @@ function render() {
             })
 
 
-            const len = files.length - 1
-            return files.forEach((file, idx) => {
+            return files.forEach((file) => {
 
                 log.info(`bber-output/render: Rendering Markdown: [${path.basename(file)}]`)
 

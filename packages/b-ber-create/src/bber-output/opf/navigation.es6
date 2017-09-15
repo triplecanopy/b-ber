@@ -205,7 +205,7 @@ class Navigation {
                     // TODO: add to toc? add to flow/pages?
                     // TODO: there need to be some handlers for parsing user-facing attrs
                     const missingEntriesWithAttributes = missingEntries.map((fileName) => {
-                        if (/figure_/.test(fileName)) { return }
+                        if (/figure_/.test(fileName)) { return null }
                         const item = find(spine, { fileName })
 
                         // if the file has attributes that need to be listed

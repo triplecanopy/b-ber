@@ -32,7 +32,7 @@ const epub = {
             </div>
         ${!data.inline ? '</section>' : ''}`
     },
-    'portrait-high': function (data) {
+    'portrait-high': function (data) { // eslint-disable-line func-names
         return `${!data.inline ? '<section epub:type="loi" title="Figures" class="chapter figures">' : ''}
             <div class="figure__large${data.inline ? ' figure__inline' : ''}"${data.pagebreak ? ` style="page-break-${data.pagebreak}:always;"` : ''}>
                 <figure id="${data.id}">

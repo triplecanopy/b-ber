@@ -1,4 +1,4 @@
-/* eslint-disable no-multi-spaces */
+/* eslint-disable global-require, import/no-dynamic-require */
 import Yaml from 'bber-lib/yaml'
 import path from 'path'
 import fs from 'fs-extra'
@@ -288,7 +288,6 @@ class Store {
 
         if ({}.hasOwnProperty.call(themes, this.config.theme)) {
             this.theme = themes[this.config.theme]
-            return
         } else {
             if (!{}.hasOwnProperty.call(this.config, 'themes_directory')) {
                 // no user defined theme, bail
@@ -308,7 +307,7 @@ class Store {
                 }, [])
 
 
-                const userTheme = find(userThemes, { name: this.config.theme})
+                const userTheme = find(userThemes, { name: this.config.theme })
 
                 if (!userTheme) {
                     log.error(`bber-lib/store: Could not find theme [${this.config.theme}]`, 1)
@@ -324,8 +323,6 @@ class Store {
             }
 
         }
-
-        log.error(themeError, 1)
 
     }
 

@@ -11,7 +11,7 @@ import html2pdf from 'html-pdf'
 import Printer from 'bber-modifiers/printer'
 import { log } from 'bber-plugins'
 import { src, dist, build } from 'bber-utils'
-import { isPlainObject, isArray } from 'lodash'
+import { isPlainObject } from 'lodash'
 
 const writeOutput = false
 

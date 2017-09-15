@@ -1,5 +1,6 @@
 {
     "name": "b-ber",
+    "version": "0.1.0-alpha.14",
     "license": "MIT",
     "private": true,
     "engines": {

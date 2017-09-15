@@ -94,7 +94,7 @@ const ensureCSSDir = () =>
 //
 // these assets are then copied to the correct build dir by the `copy` task.
 //
-const copyThemeAssets = () => {
+const copyThemeAssets = () =>
     new Promise((resolve) => {
         const { theme } = store
         const promises = []
@@ -142,7 +142,7 @@ const copyThemeAssets = () => {
 
         Promise.all(promises).then(resolve)
     })
-}
+
 
 const renderCSS = scssString =>
     new Promise(resolve =>
