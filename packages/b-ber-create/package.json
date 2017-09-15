@@ -1,9 +1,6 @@
 {
   "name": "b-ber-create",
   "version": "0.1.0-alpha.14",
-  "engines": {
-    "node": ">=6"
-  },
   "description": "A command line epub maker.",
   "main": "./src/bber-cli/index.es6",
   "scripts": {
@@ -12,7 +9,6 @@
     "coveralls": "NODE_ENV=test ./node_modules/.bin/istanbul cover --config .istanbul.yml ./node_modules/.bin/_mocha --report lcovonly -- --compilers js:./node_modules/babel-register $(find ./src -path \\*/__tests__/*.js -not -path \\*/helpers/*.js | tr \"\\r\\n\" \" \") && cat ./coverage/lcov.info | node_modules/.bin/coveralls && rm -rf ./coverage",
     "istanbul": "NODE_ENV=test ./node_modules/.bin/istanbul cover --config .istanbul.yml ./node_modules/.bin/_mocha -- -R spec --compilers js:./node_modules/babel-register $(find ./src -path \\*/__tests__/*.js -not -path \\*/helpers/*.js | tr \"\\r\\n\" \" \")",
     "mocha": "NODE_ENV=test ./node_modules/.bin/mocha -R spec --compilers js:./node_modules/babel-register $(find ./src -path \\*/__tests__/*.js -not -path \\*/helpers/*.js | tr \"\\r\\n\" \" \")",
-    "mocha:single": "NODE_ENV=test ./node_modules/.bin/mocha -R spec --compilers js:./node_modules/babel-register",
     "lint": "./node_modules/.bin/eslint -c ./.eslintrc './src/**/*.es6'",
     "prepublish": "NODE_ENV=production yarn test",
     "preversion": "NODE_ENV=production yarn test",
@@ -33,7 +29,7 @@
   "dependencies": {
     "ajv": "4.10.0",
     "autoprefixer": "^6.5.3",
-    "b-ber-themes": "0.1.0",
+    "b-ber-themes": "0.1.0-alpha.14",
     "chalk": "^2.0.1",
     "css": "^2.2.1",
     "decompress": "^4.0.0",
