@@ -1,0 +1,13 @@
+{
+  "name": "b-ber-theme-serif",
+  "version": "0.1.1",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "sass -l --trace --watch application.scss:demo/application.css"
+  },
+  "author": "Maxwell Simmer <maxwell.simmer@gmail.com> (http://maxwellsimmer.com)",
+  "dependencies": {
+    "modularscale-sass": "^3.0.3"
+  }
+}

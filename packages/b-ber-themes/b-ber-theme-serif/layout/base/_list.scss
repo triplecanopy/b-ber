@@ -1,0 +1,89 @@
+ul {
+    @include type-settings(-2);
+    padding: one-line(-2) 0 one-line(-2) two-ems(0);
+    @include following-element-has-no-top-padding;
+    list-style: disc;
+    text-indent: 0;
+    margin: 0;
+
+    ul, ol {
+        padding: 0 0 0 two-ems(0);
+    }
+
+    @if $build == web {
+        list-style: none;
+    }
+
+    li {
+        text-indent: 0;
+
+        @if $build == web {
+            text-indent: -0.6em;
+            padding-left: 0.6em;
+            &:before {
+                content:'-';
+                display:inline-block;
+                position:relative;
+                left:-0.3em;
+            }
+        }
+
+    }
+
+    * {
+        @include type-settings(0);
+        line-height: line-height(ms(-2));
+    }
+}
+
+ol {
+    @include type-settings(-2);
+    padding: one-line(-2) 0 one-line(-2) two-ems(0);
+    @include following-element-has-no-top-padding;
+    list-style: decimal;
+    text-indent: 0;
+    margin: 0;
+
+    ul, ol {
+        padding: 0 0 0 two-ems(0);
+    }
+
+    li {
+        padding-top: 0;
+
+        @if $build == web {
+            text-indent: -0.6em;
+            padding-left: 0.6em;
+        }
+    }
+
+    // Section styles
+    section.colophon &,
+    section.appendix &,
+    section.backmatter & {
+        @include padding(0, 1, 0, 1, -1);
+        li {
+            @include following-paragraph-not-indented;
+            font-weight: normal;
+            font-style: normal;
+            text-indent: 0;
+        }
+    }
+
+    * {
+        @include type-settings(0);
+        line-height: line-height(ms(-2));
+    }
+
+}
+
+dl {
+    dd {
+        @include type-settings(0);
+        text-indent: 0;
+    }
+    dt {
+        @include type-settings(0);
+        text-indent: 0;
+    }
+}

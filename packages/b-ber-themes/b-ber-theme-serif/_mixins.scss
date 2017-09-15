@@ -1,0 +1,207 @@
+
+//
+// Media Queries
+//
+//
+@mixin break($media) {
+    @if $media == 'mobile'  {
+        @media #{$media-mobile} { @content }
+    }
+    @else if $media == 'tablet' {
+        @media #{$media-tablet} { @content }
+    }
+    @else if $media == 'desktop' {
+        @media #{$media-desktop} { @content }
+    }
+    @else {
+        @if feature-exists('at-error') == true {
+            @error "`#{$media}` is not a supported media type.";
+        }
+        @else {
+            @warn "`#{$media}` is not a supported media type.";
+        }
+    }
+}
+
+
+
+//
+// Typography
+//
+//
+
+
+// font-face utility mixin
+// @example     @include font-face('Crimson', 'TC-crimson-italic-webfont', ('ttf'), 400, italic);
+@mixin font-face($font-name, $file-name, $formats:('ttf', 'otf'), $weight: 400, $style: normal) {
+    $filepath: "../fonts/" + $file-name;
+    @font-face {
+        font-family: "#{$font-name}";
+        @each $format in $formats {
+            src: url($filepath + "." + $format);
+        }
+        font: {
+            weight: $weight;
+            style: $style;
+        }
+    }
+}
+
+// General typographic settings
+@mixin hyphens($hyphenation:auto) {
+    -webkit-hyphens: $hyphenation;
+    -epub-hyphens: $hyphenation;
+    adobe-hyphenate: $hyphenation;
+    -moz-hyphens: $hyphenation;
+    -ms-hyphens: $hyphenation;
+    hyphens: $hyphenation;
+    @if $hyphenation != 'none'{
+        word-break: break-all;
+        word-break: break-word; // Webkit
+    }
+}
+
+@mixin widows($n:2) {
+    widows: $n;
+}
+
+@mixin orphans($n:1) {
+    orphans: $n;
+}
+
+@mixin text-rendering($value:optimizeLegibility) {
+    text-rendering:$value;
+}
+
+@mixin font-smoothing {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+
+
+
+
+// Remove units from a value
+// @example     strip-unit(1em) // => 1
+@function strip-unit($value) {
+    @if type-of($value) == 'number' and not unitless($value) {
+        @return $value / ($value * 0 + 1);
+    }
+    @return $value;
+}
+
+// Returns a unitless line-height value, relative to an element's font size.
+// Calculated by using the global `$line-height-base`
+// @example     line-height(11.390625em) // => 1.037037037
+@function line-height($font-size) {
+    @return ceil($font-size / $line-height-base) * ($line-height-base / $font-size);
+}
+
+// Returns a value for a single line-height unit in `em`s, relative to the
+// element's font-size. Useful for consistently spacing top/bottom
+// margin/padding
+// @example     adjust-line-height-value(0) // => 1.3125em
+// @example     adjust-line-height-value(6) // => 0.1152263374em
+@function adjust-line-height-value($value) {
+    @return $line-height-base / strip-unit(ms($value)) + 0em;
+}
+
+// Returns a value for a single em in `em`s, relative to the
+// element's font-size.
+// @example     adjust-font-size-value(1) // => 1em
+// @example     adjust-font-size-value(2) // => 2em
+@function adjust-font-size-value($value) {
+    // @return $font-size-base / strip-unit(ms($value)) + 0em;
+    @return strip-unit(ms($value)) + 0em;
+}
+
+// Compose typographic styles
+@mixin type-settings($value) {
+    font-size: ms($value);
+    line-height: line-height(ms($value));
+    @if $vertical-space == true {
+        margin-bottom: adjust-line-height-value($value);
+    }
+}
+
+
+// Abstract wrappers for element spacing
+// @param $n        int     How many spaces?
+// @param $value    int     The modular scale index of the element
+@function n-lines($n, $value) {
+    @return adjust-line-height-value($value) * $n + 0em;
+}
+@function n-ems($n, $value) {
+    @return adjust-font-size-value($value) * $n + 0em;
+}
+
+// Convenience wrappers for element spacing.
+// @param $value    int     The modular scale index of the element
+// @example         margin-top: one-line(0); // => margin-top: 1.3125em;
+@function one-line($value)      { @return n-lines(1, $value);   }
+@function two-lines($value)     { @return n-lines(2, $value);   }
+@function three-lines($value)   { @return n-lines(3, $value);   }
+@function four-lines($value)    { @return n-lines(4, $value);   }
+@function five-lines($value)    { @return n-lines(5, $value);   }
+
+// @param   $value  int     The modular scale index of the element
+// @example         margin-top: one-em(0); // => margin-top: 1em;
+@function one-em($value)        { @return n-ems(1, $value);     }
+@function two-ems($value)       { @return n-ems(2, $value);     }
+@function three-ems($value)     { @return n-ems(3, $value);     }
+@function four-ems($value)      { @return n-ems(4, $value);     }
+@function five-ems($value)      { @return n-ems(5, $value);     }
+
+
+// Add padding programatically based on font-size
+// @param $top      int     Number of line-height units at type-settings(0) to add as padding-top
+// @param $left     int     Number of `em`s at type-settings(0) to add as padding-left
+// @param $bottom   int     Number of line-height units at type-settings(0) to add as padding-bottom
+// @param $right    int     Number of `em`s at type-settings(0) to add as padding-right
+// @param $value    int     Elements type-settings index
+// @example         padding: @include padding(1, 1, 1, 1, 0) // => padding: 1em 1.3125em 1em 1.3125em;
+@mixin padding($top, $right, $bottom, $left, $value) {
+    padding:
+        // adjust-line-height-value($value) * ($top * 4) + 0em // to account for halved line-height
+        adjust-line-height-value($value) * $top + 0em
+        adjust-font-size-value($value) * $right + 0em
+        // adjust-line-height-value($value) * ($bottom * 4) + 0em // to account for halved line-height
+        adjust-line-height-value($value) * $bottom + 0em
+        adjust-font-size-value($value) * $left + 0em
+    ;
+}
+
+// Defaults to 16px, assuming the `html` element's base font size
+@function em-to-px($value, $root-px: 16px) {
+    @return strip-unit($value) * strip-unit($root-px) + 0px;
+}
+
+
+@mixin following-paragraph-not-indented {
+    + p { text-indent: 0!important; }
+}
+@mixin following-element-has-no-top-padding {
+    + table, + ul, + ol, + dl, + blockquote { padding-top: 0; }
+    + hr { margin-top: one-line(0); }
+}
+
+
+@mixin bullet-container {
+    text-indent: 0;
+    margin-left: one-em(0);
+}
+
+@mixin bullet {
+    display: inline-block;
+    text-indent: one-em(0) * -1;
+}
+
+
+// Alert colours
+$alert: (
+    'info'    : $info,
+    'warning' : $warning,
+    'danger'  : $danger,
+    'success'  : $success,
+);
