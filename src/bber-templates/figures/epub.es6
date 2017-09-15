@@ -74,7 +74,12 @@ const epub = {
                         <section class="audio">
                             <audio ${data.attrString}>
                                 ${data.sourceElements}
-                                <p>Your device does not support the HTML5 Audio API.</p>
+                                <div class="media__fallback__${data.mediaType} media__fallback--image figure__small--landscape figure__small">
+                                    <figure>
+                                        <img src="${data.poster}" alt="Media fallback image"/>
+                                    </figure>
+                                </div>
+                                <p class="media__fallback__${data.mediaType} media__fallback--text">Your device does not support the HTML5 ${data.mediaType} API.</p>
                             </audio>
                         </section>
 
@@ -100,7 +105,12 @@ const epub = {
                         <section class="video">
                             <video ${data.attrString}>
                                 ${data.sourceElements}
-                                <p>Your device does not support the HTML5 Video API.</p>
+                                <div class="media__fallback__${data.mediaType} media__fallback--image figure__small--landscape figure__small">
+                                    <figure>
+                                        <img src="${data.poster}" alt="Media fallback image"/>
+                                    </figure>
+                                </div>
+                                <p class="media__fallback__${data.mediaType} media__fallback--text">Your device does not support the HTML5 ${data.mediaType} API.</p>
                             </video>
                         </section>
 

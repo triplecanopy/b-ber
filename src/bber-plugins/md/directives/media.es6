@@ -142,15 +142,17 @@ export default {
                             page,
                             ref: context.filename,
                             caption,
-                            mime: mediaType, // down the line, we just do a quick regex test, so it's OK (for now) if this isn't actually a valid mimetype
+                            mime: mediaType,
                             pageOrder: store.figures.length,
+                            poster,
+                            mediaType,
                         }
                     )
 
                     return `<div class="figure__small--landscape figure__small">
                         <figure id="ref${htmlId(id)}">
                             <a href="${page}#${htmlId(id)}">
-                                <img src="${ poster }" alt=""/>
+                                <img src="${poster}" alt=""/>
                             </a>
                         </figure>
                     </div>`
@@ -162,7 +164,12 @@ export default {
                         <section class="${mediaType}">
                             <${mediaType} id="${htmlId(id)}"${attrString}${webOnlyAttrString}>
                                 ${sourceElements}
-                                <p>Your device does not support the HTML5 ${mediaType} API.</p>
+                                <div class="media__fallback__${mediaType} media__fallback--image figure__small--landscape figure__small">
+                                    <figure>
+                                        <img src="${poster}" alt="Media fallback image"/>
+                                    </figure>
+                                </div>
+                                <p class="media__fallback__${mediaType} media__fallback--text">Your device does not support the HTML5 ${mediaType} API.</p>
                             </${mediaType}>
                             ${ caption ? `<p class="caption caption__${mediaType}">${caption}</p>` : '' }
                         </section>
