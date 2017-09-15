@@ -1,0 +1,18 @@
+{
+  "name": "batch",
+  "version": "0.1.0",
+  "description": "",
+  "main": "batch.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Maxwell Simmer <maxwell.simmer@gmail.com> (http://maxwellsimmer.com)",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/lodash": "^4.14.69",
+    "@types/node": "^8.0.14"
+  },
+  "dependencies": {
+    "lodash": "^4.17.4"
+  }
+}

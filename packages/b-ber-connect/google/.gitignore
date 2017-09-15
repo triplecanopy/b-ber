@@ -1,0 +1,11 @@
+.DS_Store
+
+.drive
+.credentials.json
+
+node_modules
+npm-debug.log*
+package-lock.json
+
+yarn-debug.log*
+yarn-error.log*

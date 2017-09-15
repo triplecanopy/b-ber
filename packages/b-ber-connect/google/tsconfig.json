@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "sourceMap": false,
+        "target": "es6",
+        "module": "commonjs",
+        "removeComments": true,
+        "strict": true
+    },
+    "files": [
+        "batch.ts"
+    ]
+}
