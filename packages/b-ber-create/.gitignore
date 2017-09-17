@@ -17,3 +17,6 @@ package-lock.json*
 
 /docs
 /coverage
+
+# used during tests
+/_project
