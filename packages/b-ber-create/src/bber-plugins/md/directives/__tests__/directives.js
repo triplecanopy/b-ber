@@ -111,7 +111,7 @@ ${!_.isEmpty(optional[0]) ? optional.reduce((acc, curr) => acc.concat(`* \`${cur
 </tr>
 <tr>
 <td>Creates additional XHTML files (e.g., adds files to the <code>loi</code>)</td>
-<td><code>${directive.supplementaryOutputRepository}</code></td>
+<td><code>${!!(directive.supplementaryOutputRepository)}</code></td>
 </tr>
 </table>
 
@@ -129,7 +129,7 @@ ${prettify(directive.example.basic.html)}
 
 ${ directive.generated.basic.html ? `
 
-### Generated Variant Output
+### Generated Output
 
 This directive creates XHTML files which are inserted into the \`figures\` section of the publication. The generated markup is below.
 
@@ -142,6 +142,10 @@ ${prettify(directive.generated.basic.html)}
 ${ directive.example.variant.md ? `
 
 ### Variant Syntax
+
+This directive supports an extended syntax that tokenizes supplemental content.
+
+In the case of figures, for example, a caption can be added by wrapping a line of text with two colons (\`::\`) immediately following the \`figure\` directive.  See example below for details.
 
 \`\`\`md
 ${directive.example.variant.md}
@@ -156,7 +160,7 @@ ${prettify(directive.example.variant.html)}
 
 ${directive.generated.variant.html ? `
 
-### Generated Output
+### Generated Variant Output
 
 \`\`\`html
 ${prettify(directive.generated.variant.html)}
@@ -250,6 +254,8 @@ describe('md:directive', () => {
         md.load(pluginPullQuote)
         md.load(pluginSection)
 
+        const _id = () => `my-unique-id-${String(Math.random()).slice(2)}`
+
         let outputString = documentationHeader()
         let directiveToken = {}
 
@@ -297,7 +303,7 @@ describe('md:directive', () => {
 
             directive.optional.forEach((attr) => {
 
-                const id = `my-unique-id-${String(Math.random()).slice(2)}`
+                const id = _id()
 
                 directiveString = ''
                 directiveString += `${BLOCK_DIRECTIVE_FENCE}${name}`
@@ -338,6 +344,23 @@ describe('md:directive', () => {
                                 directiveToken.example.variant.html = directiveOutputVariant
                                 renderedFigure = figureTemplates(store[directive.supplementaryOutputRepository].pop(), 'epub')
                                 directiveToken.generated.variant.html = renderedFigure
+
+                            } else if (directive.selfClosing === false && directive.syntaxVariants && !directive.supplementaryOutputRepository) {
+                                directiveToken.example.basic.md += '\n\nHere is some *rendered* Markdown\n'
+                                directiveToken.example.basic.md += `\n::: exit:${id}`
+                                directiveToken.example.basic.html = md.parser.render(directiveToken.example.basic.md) + '</section>'
+
+                                store.reset() // reset id
+
+                                // add variant
+                                directiveOutputVariant = directiveString
+                                directiveOutputVariant += directive.syntaxVariants
+                                directiveOutputVariant += `\n::: exit:${id}`
+
+                                directiveToken.example.variant.md = directiveOutputVariant
+
+                                directiveOutputVariant = md.parser.render(directiveOutputVariant)
+                                directiveToken.example.variant.html = directiveOutputVariant + '</section>'
 
 
                             } else {
@@ -402,7 +425,7 @@ describe('md:directive', () => {
                 }
 
 
-                if (directive.selfClosing === false && directive.syntaxVariants) {
+                if (directive.selfClosing === false && directive.syntaxVariants && directive.supplementaryOutputRepository) {
                     directiveString += `\n${directive.syntaxVariants}\n`
                     directiveString +=  `\n::: exit:${directive.required.id}`
 
@@ -415,6 +438,17 @@ describe('md:directive', () => {
 
                 }
 
+                if (directive.selfClosing === false && directive.syntaxVariants && !directive.supplementaryOutputRepository) {
+                    directiveString += `\n${directive.syntaxVariants}\n`
+                    directiveString +=  `\n::: exit:${id}`
+
+                    directiveToken.example.attrs[attr.name].md = directiveString
+                    directiveOutput = md.parser.render(directiveString) // render
+                    directiveToken.example.attrs[attr.name].html = directiveOutput + '</section>'
+
+                    directiveOutput.should.match(new RegExp(attr.output)) // test
+                }
+
 
             }) // end `directive.optional`
 
@@ -425,8 +459,10 @@ describe('md:directive', () => {
 
         // render complete list of directives
         //
-        //
-        // console.log(outputString)
+        fs.writeFile('all-directives.md', outputString, function(err) {
+            if (err) { throw err }
+            // console.log('\t✔ Wrote all-directives')
+        })
 
     })
 

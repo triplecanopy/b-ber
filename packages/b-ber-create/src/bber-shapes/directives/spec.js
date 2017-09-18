@@ -149,6 +149,37 @@ const figureInlineDirective = {
 }
 
 
+const dialogueDirective = {
+    required: [{
+        id: id(),
+    }],
+    supplementaryOutputRepository: false,
+    syntaxVariants: syntaxFor('dialogue'),
+    selfClosing: false,
+    optional: [{
+        name: 'title',
+        value: '"foo"',
+        output: 'title="foo"',
+    }, {
+        name: 'pagebreak',
+        value: 'before',
+        output: 'style="page-break-before:always;"',
+    }, {
+        name: 'pagebreak',
+        value: 'after',
+        output: 'style="page-break-after:always;"',
+    }],
+}
+
+// const footnotesDirective = {
+//     required: [{}],
+//     supplementaryOutputRepository: 'notes',
+//     syntaxVariants: false,
+//     selfClosing: false,
+//     optional: [{}],
+// }
+
+
 const videoDirective = {
     required: [{
         id: id(),
@@ -262,10 +293,6 @@ const audioDirective = {
         value: 'after',
         output: 'style="page-break-after:always;"',
     }, {
-        name: 'poster',
-        value: source('image'),
-        output: `poster="${source('image')}"`,
-    }, {
         name: 'controls',
         value: 'yes',
         output: 'controls="controls"',
@@ -357,6 +384,8 @@ const DIRECTIVE_SPEC = {
     colophon        : Object.assign({}, genericContainerDirective.section),
     volume          : Object.assign({}, genericContainerDirective.section),
     part            : Object.assign({}, genericContainerDirective.section),
+    dialogue        : Object.assign({}, dialogueDirective),
+    // footnotes       : Object.assign({}, footnotesDirective),
     figure          : Object.assign({}, figureDirective),
     'inline-figure' : Object.assign({}, figureInlineDirective),
     audio           : Object.assign({}, audioDirective),
