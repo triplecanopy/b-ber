@@ -1,7 +1,8 @@
 /* eslint-disable max-len */
 import path from 'path'
 import fs from 'fs-extra'
-import { guid, theme } from 'bber-utils'
+import { guid } from 'bber-utils'
+import store from 'bber-lib/store'
 import * as figures from 'bber-templates/figures'
 import * as pages from 'bber-templates/pages'
 import * as opf from 'bber-templates/opf'
@@ -35,7 +36,7 @@ function config(src, dist) {
     return {
         relpath: path.join(path.dirname(src), 'config.yml'),
         content: `env: development # development | production
-theme: default # name or path
+theme: b-ber-theme-serif # name or path
 src: ${path.basename(src)}
 dist: ${path.basename(dist)}`,
     }
@@ -189,16 +190,7 @@ Country
 }
 
 function stylesheets(src) {
-    return [{
-        relpath: `${src}/_stylesheets/variable-overrides.scss`,
-        content: fs.readFileSync(
-            path.join(theme().path, '_settings.scss')
-        , 'utf8').replace(/\s+?!default/g, ''),
-    }, {
-        relpath: `${src}/_stylesheets/style-overrides.scss`,
-        content: `// Styles added here will be appended to the selected theme's
-// CSS output. A good place for overrides and custom styles!`,
-    }]
+    return []
 }
 
 function readme(src, cwd) {

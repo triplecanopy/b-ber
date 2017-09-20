@@ -6,6 +6,7 @@ import { isPlainObject, isArray, find, findIndex } from 'lodash'
 import mime from 'mime-types'
 import themes from 'b-ber-themes'
 import { log } from 'bber-plugins'
+import yargs from 'yargs'
 import {
     createPageModelsFromYAML,
     flattenNestedEntries,
@@ -290,8 +291,18 @@ class Store {
             this.theme = themes[this.config.theme]
         } else {
             if (!{}.hasOwnProperty.call(this.config, 'themes_directory')) {
-                // no user defined theme, bail
-                log.error('b-ber-lib/store: There was an error loading the theme, make sure you\'ve added a [themes_directory] to the [config.yml] if you\'re using a custom theme.', 1)
+                if (!yargs.argv._[0] || yargs.argv._[0] !== 'theme') {
+                    // user is trying to run a command without defining a theme, so bail
+                    log.error('b-ber-lib/store: There was an error loading the theme, make sure you\'ve added a [themes_directory] to the [config.yml] if you\'re using a custom theme.', 1)
+                } else {
+                    // user is trying to run a `theme` command, either to set
+                    // or list the available themes.  we don't need the
+                    // `theme` config object for this operation, so continue
+                    // execution
+                    this.theme = {}
+                    return
+                }
+
             }
 
             // possibly a user defined theme, test if it exists
