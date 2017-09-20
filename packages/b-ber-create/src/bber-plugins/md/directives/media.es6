@@ -150,7 +150,7 @@ export default {
                         }
                     )
 
-                    return `<div class="figure__small--landscape figure__small">
+                    return `<div class="figure__small figure__small--landscape">
                         <figure id="ref${htmlId(id)}">
                             <a href="${page}#${htmlId(id)}">
                                 <img src="${poster}" alt=""/>
@@ -165,7 +165,7 @@ export default {
                         <section class="${mediaType}">
                             <${mediaType} id="${htmlId(id)}"${attrString}${webOnlyAttrString}>
                                 ${sourceElements}
-                                <div class="media__fallback__${mediaType} media__fallback--image figure__small--landscape figure__small">
+                                <div class="media__fallback__${mediaType} media__fallback--image figure__small figure__small--landscape">
                                     <figure>
                                         <img src="${poster}" alt="Media fallback image"/>
                                     </figure>

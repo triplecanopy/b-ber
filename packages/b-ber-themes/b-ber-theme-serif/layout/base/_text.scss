@@ -1,12 +1,12 @@
 // Block elements
 
 // Text Sizes
-h1 { @include type-settings(0); margin-top: 0; margin-bottom: 0; padding-top: 0;                                }
-h2 { @include type-settings(0); margin-top: 0; margin-bottom: 0; padding-top: 0;                                }
-h3 { @include type-settings(0); margin-top: 0; margin-bottom: 0; padding-top: 0; padding-bottom: one-line(0);   }
-h4 { @include type-settings(0); margin-top: 0; margin-bottom: 0; padding-top: 0; padding-bottom: one-line(0);   }
-h5 { @include type-settings(0); margin-top: 0; margin-bottom: 0; padding-top: 0; padding-bottom: one-line(0);   }
-h6 { @include type-settings(0); margin-top: 0; margin-bottom: 0; padding-top: 0; padding-bottom: one-line(0);   }
+h1 { @include type-settings(0); margin-top: 0; margin-bottom: 0; padding-top: 0;                              }
+h2 { @include type-settings(0); margin-top: 0; margin-bottom: 0; padding-top: 0;                              }
+h3 { @include type-settings(0); margin-top: 0; margin-bottom: 0; padding-top: 0; padding-bottom: one-line(0); }
+h4 { @include type-settings(0); margin-top: 0; margin-bottom: 0; padding-top: 0; padding-bottom: one-line(0); }
+h5 { @include type-settings(0); margin-top: 0; margin-bottom: 0; padding-top: 0; padding-bottom: one-line(0); }
+h6 { @include type-settings(0); margin-top: 0; margin-bottom: 0; padding-top: 0; padding-bottom: one-line(0); }
 p  { @include type-settings(0); }
 
 
@@ -69,7 +69,7 @@ h1 {
 }
 
 h2 {
-    @include padding(1, 0, 1, 0, 0);
+    @include padding(0, 0, 1, 0, 0);
 
     section.backmatter & {
         @include type-settings(-1);
@@ -107,7 +107,7 @@ p {
     blockquote & {
         text-indent: 0!important;
         margin-bottom: 0!important;
-        @include type-settings(-2); // ---
+        @include type-settings(-2);
     }
 
     section.backmatter & {
@@ -170,7 +170,7 @@ p {
 
     .pullquote & {
         @include following-paragraph-not-indented;
-        @include type-settings(-4); // ---
+        @include type-settings(-4);
         text-indent: 0!important;
         margin-bottom: 0!important;
         font-style: italic;
@@ -201,7 +201,7 @@ p {
 cite {
     .pullquote & {
         @include following-paragraph-not-indented;
-        @include type-settings(-4); // ---
+        @include type-settings(-4);
         font-weight: normal;
         font-style: normal;
         text-indent: 0;
@@ -231,7 +231,7 @@ cite {
 // Inline elements
 sup,
 sub {
-    @include type-settings(-8); // ---
+    @include type-settings(-8);
     vertical-align: baseline;
     text-decoration: none;
     position: relative;
@@ -239,7 +239,7 @@ sub {
 
 }
 
-sup { top:      one-em(-8) * -2; }
+sup { top:      one-em(-8) * -1.25; }
 sub { bottom:   one-em(-8) * -1; }
 
 small {
