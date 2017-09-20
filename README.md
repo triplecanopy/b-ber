@@ -18,7 +18,7 @@ $ yarn
 $ lerna bootstrap
 ```
 
-Once that's done, create a gloabl symlink to `b-ber` 
+Once that's done, create a global symlink to `b-ber` 
 
 ```console
 $ cd packages/b-ber-create 
