@@ -43,7 +43,7 @@ export default {
                     const citations = attrs.citation.split('|').map(_ => _.trim())
                     result = [
                         '<section epub:type="epigraph" class="epigraph chapter">',
-                        '<section epub:type="subchapter" class="subchapter">',
+                        '<section epub:type="chapter" class="subchapter">',
                         captions.map((caption, idx2) =>
                             `<div class="pullquote full-width">
                                 <p>${escapeHtml(caption)}</p>

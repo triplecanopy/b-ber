@@ -20,12 +20,11 @@ $info: #5050c5                                              !default;
 $warning: #c5c550                                           !default;
 $danger: #c55050                                            !default;
 $success: #50c5c5                                           !default;
+$grey: #eee                                                 !default;
 
-// Set `$grey` conditionally in case of e-ink readers
+// Set `$grey` in case of e-ink readers
 @if $build == 'mobi' {
-    $grey: $black                                           !default;
-} @else {
-    $grey: #eee                                             !default;
+    $grey: $black;
 }
 
 // Layout

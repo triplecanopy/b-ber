@@ -222,6 +222,18 @@ const attributesObject = (attrs, _genus, context = {}) => {
         })
     }
 
+    // add original `_genus` as a class to the attrs object in case it's
+    // different from the current `genus` (which might've changed due to it's
+    // specification). do this to keep styling consistent
+    if (genus !== _genus) {
+        if ({}.hasOwnProperty.call(attrsObject, 'classes')) {
+            attrsObject.classes += ` ${_genus}`
+        } else {
+            attrsObject.classes = _genus
+        }
+    }
+
+
     const mergedAttrs = _extendWithDefaults(attrsObject, genus)
     return mergedAttrs
 }
