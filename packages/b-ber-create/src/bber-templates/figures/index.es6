@@ -1,5 +1,5 @@
 import { getImageOrientation } from 'bber-utils'
-import { log } from 'bber-plugins'
+import log from 'b-ber-logger'
 import epub from './epub'
 import mobi from './mobi'
 

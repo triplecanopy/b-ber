@@ -3,7 +3,7 @@ import path from 'path'
 import figure from 'bber-plugins/md/plugins/figure'
 import { attributesString, attributesObject, htmlId } from 'bber-plugins/md/directives/helpers'
 import { /*htmlComment, */src } from 'bber-utils'
-import { log } from 'bber-plugins'
+import log from 'b-ber-logger'
 
 const markerRe = /^logo/
 const directiveRe = /(logo)(?::([^\s]+)(\s?.*)?)?$/

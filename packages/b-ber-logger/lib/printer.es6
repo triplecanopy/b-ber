@@ -1,6 +1,6 @@
 import util from 'util'
 
-function __printNotices(type, task = 'b-ber') { // TODO: clean up
+function printNotices(type, task = 'b-ber') { // TODO: clean up
     const prop = task ? `task${type[0].toUpperCase()}${type.slice(1)}` : type
     const notices = this[type].slice(this[prop] * -1)
     const leader = type === 'warnings' ? 'WARN' : 'ERROR'
@@ -23,8 +23,8 @@ function __printNotices(type, task = 'b-ber') { // TODO: clean up
 }
 
 export function printWarnings(task) {
-    __printNotices.call(this, 'warnings', task)
+    printNotices.call(this, 'warnings', task)
 }
 export function printErrors(task) {
-    __printNotices.call(this, 'errors', task)
+    printNotices.call(this, 'errors', task)
 }

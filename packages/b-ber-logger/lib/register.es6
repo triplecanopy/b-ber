@@ -1,6 +1,4 @@
-import { sequences } from 'bber-shapes/sequences'
-
-export function registerSequence(store, command, commanders) {
+export function registerSequence(store, command, commanders, sequences) {
 
     this.command = command
     if (command !== 'build') { return } // TODO: should handle this better when showing `fail`

@@ -6,7 +6,7 @@ import figure from 'bber-plugins/md/plugins/figure'
 import { attributesString, attributesObject } from 'bber-plugins/md/directives/helpers'
 import { htmlComment, src, build } from 'bber-utils'
 import store from 'bber-lib/store'
-import { log } from 'bber-plugins'
+import log from 'b-ber-logger'
 
 const markerRe = /^(video|audio)/
 const directiveRe = /(audio(?:-inline)?|video(?:-inline)?)(?::([^\s]+)(\s+.*)?)?$/

@@ -1,5 +1,4 @@
 import chalk from 'chalk'
-import { hrtimeformat } from 'bber-utils'
 import { EventEmitter } from 'events'
 
 class Timer extends EventEmitter {
@@ -28,6 +27,10 @@ class Timer extends EventEmitter {
 
     }
 
+    hrtimeformat(t) {
+        const s = (t[0] * 1000) + (t[1] / 1000000)
+        return `${String(s).slice(0, -3)}ms`
+    }
 
 
     prepare() {
@@ -44,8 +47,8 @@ class Timer extends EventEmitter {
     stop(task) {
         this.taskEnd = process.hrtime(this.sequenceBegin)
 
-        const beginMs = hrtimeformat(this.taskBegin)
-        const endMs   = hrtimeformat(this.taskEnd)
+        const beginMs = this.hrtimeformat(this.taskBegin)
+        const endMs   = this.hrtimeformat(this.taskEnd)
         const totalMs = `${(parseFloat(endMs, 10) - parseFloat(beginMs, 10)).toFixed(3)}ms`
 
 
@@ -70,7 +73,7 @@ class Timer extends EventEmitter {
 
         const { taskTimes, formattedStartDate } = this
         const formattedEndDate = new Date().toLocaleDateString('en-CA', Timer.dateFormattingOptions)
-        const sequenceEnd = hrtimeformat(process.hrtime(this.sequenceBegin))
+        const sequenceEnd = this.hrtimeformat(process.hrtime(this.sequenceBegin))
 
         this.emit('done', { taskTimes, formattedStartDate, formattedEndDate, sequenceEnd })
 

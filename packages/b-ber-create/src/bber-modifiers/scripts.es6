@@ -3,7 +3,7 @@ import path from 'path'
 import fs from 'fs-extra'
 import rrdir from 'recursive-readdir'
 import { copy, src, dist } from 'bber-utils'
-import { log } from 'bber-plugins'
+import log from 'b-ber-logger'
 
 const write = () =>
     new Promise(resolve =>

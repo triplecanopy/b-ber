@@ -9,7 +9,7 @@ import fs from 'fs-extra'
 import Yaml from 'bber-lib/yaml'
 import html2pdf from 'html-pdf'
 import Printer from 'bber-modifiers/printer'
-import { log } from 'bber-plugins'
+import log from 'b-ber-logger'
 import { src, dist, build } from 'bber-utils'
 import { isPlainObject } from 'lodash'
 

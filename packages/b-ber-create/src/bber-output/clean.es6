@@ -6,7 +6,7 @@
 import Promise from 'zousan'
 import fs from 'fs-extra'
 import { dist } from 'bber-utils'
-import { log } from 'bber-plugins'
+import log from 'b-ber-logger'
 
 /**
  * Remove an ebook's output directory

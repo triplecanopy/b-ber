@@ -1,5 +1,5 @@
 import store from 'bber-lib/store'
-import { log } from 'bber-plugins'
+import log from 'b-ber-logger'
 import {
     BLOCK_DIRECTIVE_MARKER,
     BLOCK_DIRECTIVE_MARKER_MIN_LENGTH,

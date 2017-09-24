@@ -1,7 +1,7 @@
 import path from 'path'
 import fs from 'fs-extra'
 import nodemon from 'nodemon'
-import { log } from 'bber-plugins'
+import log from 'b-ber-logger'
 import { serialize } from 'bber-lib/async'
 import { src, dist } from 'bber-utils'
 

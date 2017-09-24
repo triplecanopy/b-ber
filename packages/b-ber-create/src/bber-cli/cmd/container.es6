@@ -1,6 +1,6 @@
 import path from 'path'
 import { container } from 'bber-output'
-import { log } from 'bber-plugins'
+import log from 'b-ber-logger'
 import { fail } from 'bber-cli/helpers'
 
 const command = 'container'

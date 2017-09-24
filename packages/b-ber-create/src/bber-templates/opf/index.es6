@@ -5,7 +5,7 @@ import mime from 'mime-types'
 import Props from 'bber-lib/props'
 import store from 'bber-lib/store'
 import { fileId, guid, escapeHTML } from 'bber-utils'
-import { log } from 'bber-plugins'
+import log from 'b-ber-logger'
 import path from 'path'
 
 const opfPackage = new File({

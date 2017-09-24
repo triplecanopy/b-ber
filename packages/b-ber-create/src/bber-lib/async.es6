@@ -3,7 +3,7 @@
  */
 
 import Promise from 'zousan'
-import { log } from 'bber-plugins'
+import log from 'b-ber-logger'
 import * as tasks from 'bber-output'
 
 const serialize = (sequence) => {

@@ -8,7 +8,7 @@ import Promise from 'zousan'
 import path from 'path'
 import fs from 'fs-extra'
 import { parseString } from 'xml2js'
-import { log } from 'bber-plugins'
+import log from 'b-ber-logger'
 import { Parser } from 'bber-modifiers'
 import { dist } from 'bber-utils'
 

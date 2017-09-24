@@ -12,7 +12,7 @@
 */
 
 import figure from 'bber-plugins/md/plugins/figure'
-import { log } from 'bber-plugins'
+import log from 'b-ber-logger'
 import { passThrough } from 'bber-utils' // for testing
 
 const markerRe = /^epigraph/

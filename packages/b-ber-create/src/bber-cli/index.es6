@@ -10,10 +10,8 @@ import yargs from 'yargs'
 import * as commands from 'bber-cli/cmd'
 import { version } from 'bber-utils'
 
-import { log } from 'bber-plugins'
+import log from 'b-ber-logger'
 import store from 'bber-lib/store'
-
-
 import { sequences } from 'bber-shapes/sequences'
 
 /**
@@ -85,7 +83,7 @@ const init = () => {
         }
 
         store.update('sequence', cmdSequence)
-        log.registerSequence(store, cmd, commanders)
+        log.registerSequence(store, cmd, commanders, sequences)
 
     }
 

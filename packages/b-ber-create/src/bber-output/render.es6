@@ -10,7 +10,7 @@ import File from 'vinyl'
 import MarkdownRenderer from 'bber-plugins/md'
 import { pageHead, pageBody, pageTail } from 'bber-templates/pages'
 import { src, dist } from 'bber-utils'
-import { log } from 'bber-plugins'
+import log from 'b-ber-logger'
 import store from 'bber-lib/store'
 import { findIndex } from 'lodash'
 

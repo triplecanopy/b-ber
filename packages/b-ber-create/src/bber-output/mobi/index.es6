@@ -5,7 +5,7 @@
 import Promise from 'zousan'
 import zipper from 'mobi-zipper'
 import path from 'path'
-import { log } from 'bber-plugins'
+import log from 'b-ber-logger'
 import { dist } from 'bber-utils'
 
 const pageBreakBeforeXPATH = () => {

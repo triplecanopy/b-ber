@@ -1,32 +1,29 @@
-import chalk from 'chalk'
-import util from 'util'
-import path from 'path'
 import store from 'bber-lib/store'
-import Timer from './timer'
+import Timer from './lib/timer'
 
 
-import { printWarnings, printErrors } from './printer'
-import { indent, incrementIndent, decrementIndent, incrementCounter, decrementCounter } from './indenter'
+import { printWarnings, printErrors } from './lib/printer'
+import { indent, incrementIndent, decrementIndent, incrementCounter, decrementCounter } from './lib/indenter'
 
-import { bind } from './listeners'
-import { notify } from './events'
+import { bind } from './lib/listeners'
+import { notify } from './lib/events'
 
-import { warn } from './warn'
-import { info } from './info'
-import { error } from './error'
-import { debug } from './debug'
-import { trace } from './trace'
-import { inspect } from './inspect'
-import { summary } from './summary'
+import { warn } from './lib/warn'
+import { info } from './lib/info'
+import { error } from './lib/error'
+import { debug } from './lib/debug'
+import { trace } from './lib/trace'
+import { inspect } from './lib/inspect'
+import { summary } from './lib/summary'
 
-import { configure } from './configure'
-import { registerSequence } from './register'
+import { configure } from './lib/configure'
+import { registerSequence } from './lib/register'
 
 
-import { wrap, decorate, floatFormat } from './format'
-import { counter, getContext } from './context'
-import { composeMessage } from './compose'
-import { reset } from './reset'
+import { wrap, decorate, floatFormat } from './lib/format'
+import { counter, getContext } from './lib/context'
+import { composeMessage } from './lib/compose'
+import { reset } from './lib/reset'
 
 
 

@@ -5,7 +5,7 @@ import fs from 'fs-extra'
 import { isPlainObject, isArray, find, findIndex } from 'lodash'
 import mime from 'mime-types'
 import themes from 'b-ber-themes'
-import { log } from 'bber-plugins'
+import log from 'b-ber-logger'
 import yargs from 'yargs'
 import {
     createPageModelsFromYAML,

@@ -4,7 +4,7 @@ import fs from 'fs-extra'
 import path from 'path'
 import nodemon from 'nodemon'
 // import opn from 'opn'
-import { log } from 'bber-plugins'
+import log from 'b-ber-logger'
 
 class Server {
     set dir(d) {

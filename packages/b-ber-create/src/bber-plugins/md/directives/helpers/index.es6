@@ -1,6 +1,6 @@
 /* eslint-disable no-plusplus, max-statements-per-line, no-continue, no-multi-assign */
 import { forOf } from 'bber-utils'
-import { log } from 'bber-plugins'
+import log from 'b-ber-logger'
 import {
     BLOCK_DIRECTIVES,
     INLINE_DIRECTIVES,
