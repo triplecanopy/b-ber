@@ -10,15 +10,18 @@ import yargs from 'yargs'
 import * as commands from 'bber-cli/cmd'
 import { version } from 'bber-utils'
 
+import { log } from 'bber-plugins'
+import store from 'bber-lib/store'
+
+
+import { sequences } from 'bber-shapes/sequences'
+
 /**
  * Start the build
  * @memberOf module:cli
  * @return {Object}
  */
 const init = () => {
-    const { build, clean, copy, container/* , editor */, generate, init, inject,
-        footnotes, opf, pdf, mobiCSS, publish, render, scripts, sass, serve, site,
-        theme, watch, xml, create, cover } = commands
 
     /**
      * Shows custom help if a CLI command fails
@@ -28,19 +31,23 @@ const init = () => {
     Usage: bber <command> [options]
 
     Where <command> is one of:
-        ${Object.keys(commands).join(', ')}
+
+        ${
+            Object.keys(commands).sort().reduce((acc, curr) => {
+                const a = acc.split('\n')
+                const l = a[a.length - 1].length
+                return acc.concat(l > 70 ? `\n\t${curr}, ` : `${curr}, `)
+            }, '').slice(0, -2)
+        }
+
 
     Some common commands are:
 
         Creating projects
             bber create     Start a new project
             bber generate   Create a new chapter. Accepts arguments for metadata.
-            bber watch      Preview the project in a browser during development
+            bber watch      Preview the publication's contents in a browser
             bber build      Create an ePub, mobi, PDF, or all file formats
-
-        Viewing projects
-            bber site     Clone the bber-reader into \`site\`
-            bber serve    Preview the compiled epub in the bber-reader
 
     For more information on a command, enter bber <command> --help
 
@@ -53,45 +60,70 @@ const init = () => {
      * @return {Object|Error}
      */
     const checkCommands = (yargs) => {
-        if (!{}.hasOwnProperty.call(commands, yargs.argv._[0])) {
+
+        const cmd = yargs.argv._[0]
+
+        if (!{}.hasOwnProperty.call(commands, cmd)) {
             showCustomHelp()
             process.exit(0)
         }
+
+        let cmdSequence = sequences[cmd] || [cmd]
+        let commanders = {}
+
+        if (cmd === 'build') {
+
+            const { epub, mobi, pdf, web, sample } = yargs.argv
+            commanders = [epub, mobi, pdf, web, sample].filter(Boolean).length === 0
+                ? { epub: true, mobi: true, pdf: true, web: true, sample: true } // build all by default
+                : { epub, mobi, pdf, web, sample }
+
+            Object.entries(commanders).forEach(([k, v]) => {
+                if (v) { cmdSequence.push(...sequences[k]) }
+            })
+
+        }
+
+        store.update('sequence', cmdSequence)
+        log.registerSequence(store, cmd, commanders)
+
     }
 
+    checkCommands(yargs)
 
-    const { argv } = yargs // eslint-disable-line no-unused-vars
+    yargs // eslint-disable-line no-unused-vars
         .fail((msg, err, yargs) => {
+
+            // TODO: log.error()
+
             console.log(msg)
             showCustomHelp()
-            if (process.argv.indexOf('-v') > 0 || process.argv.indexOf('--verbose') > 0) {
-                console.log(err.stack)
-            }
-            process.exit(0)
+            console.log(err.stack)
+            process.exit(1)
         })
 
-        .command(build)
-        .command(clean)
-        .command(copy)
-        .command(container)
-        // .command(editor)
-        .command(generate)
-        .command(init)
-        .command(inject)
-        .command(footnotes)
-        .command(opf)
-        .command(pdf)
-        .command(publish)
-        .command(render)
-        .command(scripts)
-        .command(sass)
-        .command(serve)
-        .command(site)
-        .command(theme)
-        .command(watch)
-        .command(xml)
-        .command(create)
-        .command(cover)
+        .command(commands.build)
+        .command(commands.clean)
+        .command(commands.copy)
+        .command(commands.container)
+        // .command(commands.editor)
+        .command(commands.generate)
+        .command(commands.init)
+        .command(commands.inject)
+        .command(commands.footnotes)
+        .command(commands.opf)
+        .command(commands.pdf)
+        .command(commands.publish)
+        .command(commands.render)
+        .command(commands.scripts)
+        .command(commands.sass)
+        // .command(commands.serve)
+        // .command(commands.site)
+        .command(commands.theme)
+        .command(commands.watch)
+        .command(commands.xml)
+        .command(commands.create)
+        .command(commands.cover)
 
         .options({
             v: {
@@ -104,10 +136,10 @@ const init = () => {
         .help('h')
         .alias('h', 'help')
         .demandCommand()
-        .wrap(72)
+        .wrap(70)
         .argv
 
-    checkCommands(yargs)
+
 }
 
 init()

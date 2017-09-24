@@ -66,7 +66,7 @@ class Footnotes {
 
                 store.add('spine', fileData)
 
-                log.info(`bber-output/footnotes: Created default footnotes page [${this.file.name}.xhtml]`)
+                log.info(`Created default footnotes page [${this.file.name}.xhtml]`)
 
                 resolve()
             })
@@ -75,8 +75,7 @@ class Footnotes {
 
     testParams(callback) {
         if (!this.src || !this.dist) {
-            log.error(new Error(`bber-output/footnotes:
-                [Footnotes#testParams] requires both [input] and [output] parameters`), 1)
+            log.error(new Error(`[Footnotes#testParams] requires both [input] and [output] parameters`))
         }
 
         const input = path.resolve(cwd, this.src)
@@ -90,12 +89,11 @@ class Footnotes {
                 )
             }
         } catch (err) {
-            log.error(err, 1)
+            log.error(err)
         }
 
         if (!isArray(this.footnotes)) {
-            log.error(new Error(`bber-output/footnotes:
-                [bber.store] has not initialized in [Footnotes#testParams], aborting`), 1)
+            log.error(new Error(`[bber.store] has not initialized in [Footnotes#testParams], aborting`))
         }
 
         return fs.mkdirs(output, err => callback(err, this.footnotes))
@@ -106,10 +104,10 @@ class Footnotes {
             this.testParams((err0, footnotes) => {
                 if (err0) { throw err0 }
                 if (!footnotes.length) {
-                    log.info('bber-output/footnotes: No footnotes found in source files')
+                    log.info('No footnotes found in source files')
                     return resolve(footnotes)
                 }
-                log.info('bber-output/footnotes: Generating linked footnotes from data found in source')
+                log.info('Generating linked footnotes from data found in source')
                 return this.writeFootnotes()
                 .catch(err1 => log.error(err1))
                 .then(resolve)

@@ -33,37 +33,38 @@ const createSCSSString = () =>
             // load user-defined variables
             if (fs.existsSync(themeSettingsPath)) {
                 const variableOverrides = fs.readFileSync(themeSettingsPath)
-                log.info(`bber-modifiers/sass: Found SCSS variable overrides: ${path.basename(themeSettingsPath)}`)
-                log.info('bber-modifiers/sass: Prepending overrides to SCSS stream')
+                log.info()
+                log.info(`Found SCSS variable overrides: ${path.basename(themeSettingsPath)}`)
+                log.info('Prepending overrides to SCSS stream')
                 chunks.push(variableOverrides)
             }
         } catch (err) {
-            log.info('bber-modifiers/sass: Building SCSS without user-defined overrides')
+            log.info('Building SCSS without user-defined overrides')
         }
 
         try {
             // load theme styles
             if (fs.existsSync(themeStylesPath)) {
                 const themeStyles = fs.readFileSync(themeStylesPath)
-                log.info(`bber-modifiers/sass: Attempting build with [${themeName}] theme`)
+                log.info(`Attempting build with [${themeName}] theme`)
                 chunks.push(themeStyles)
             }
         } catch (err) {
-            log.error(`bber-modifiers/sass:
+            log.error(`
                 Could not find theme [${themeName}].
-                Make sure the theme exists and contains a valid [application.scss]`)
+                Make sure the theme exists and contains a valid [application.scss]`, __filename)
         }
 
         try {
             // load user-defined styles
             if (fs.existsSync(themeOverridesPath)) {
                 const styleOverrides = fs.readFileSync(themeOverridesPath)
-                log.info(`bber-modifiers/sass: Found user-defined styles: ${path.basename(themeOverridesPath)}`)
-                log.info('bber-modifiers/sass: Appending user-defined styles to SCSS stream')
+                log.info(`Found user-defined styles: ${path.basename(themeOverridesPath)}`)
+                log.info('Appending user-defined styles to SCSS stream')
                 chunks.push(styleOverrides)
             }
         } catch (err) {
-            log.info('bber-modifiers/sass: Building SCSS without user-defined styles')
+            log.info('Building SCSS without user-defined styles')
         }
 
 
@@ -133,8 +134,8 @@ const copyThemeAssets = () =>
                     }
                 } catch (err0) {
                     if (err0.code === 'ENOENT') { return resolve() } // dir doesn't exist in the theme path, but doesn't need to, so proceed
-                    log.error(`bber-modifiers/sass: There was a problem copying [${themePath}] to [${srcPath}]`)
-                    log.error(err0)
+                    log.error(`There was a problem copying [${themePath}] to [${srcPath}]`)
+                    // log.error(err0)
                     resolve()
                 }
             }))

@@ -128,19 +128,6 @@ const getImageOrientation = (w, h) => {
     return imageType
 }
 
-
-/**
- * [description]
- * @param  {Object} file [description]
- * @param  {String} prop [description]
- * @return {String|Object<null>}
- */
-const getFrontmatter = (file, prop) => {
-    const filename = path.basename(file.name, '.xhtml')
-    const found = find(store.pages, { filename })
-    return found && {}.hasOwnProperty.call(found, prop) ? found[prop] : null
-}
-
 /**
  * Create an iterator from object's key/value pairs
  * @param {Object} collection   [description]
@@ -251,6 +238,8 @@ const spineModel = () => ({
     name: '',
     // baseName: '',
     remotePath: '',
+    type: '',
+    title: '',
     // pageOrder: -1,
     linear: true,
     in_toc: true,
@@ -271,6 +260,7 @@ const modelFromString = (_str, _src) => {
     const extension = path.extname(absolutePath)
     const fileName = path.basename(absolutePath)
     const name = path.basename(absolutePath, extension)
+
     // const baseName = path.basename(absolutePath, extension)
     const remotePath = '' // TODO: add remote URL where applicable
     return {
@@ -336,7 +326,6 @@ export {
     hrtimeformat,
     hashIt,
     getImageOrientation,
-    getFrontmatter,
     forOf,
     src,
     dist,

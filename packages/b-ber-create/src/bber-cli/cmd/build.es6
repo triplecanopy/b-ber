@@ -2,6 +2,9 @@ import { pick, pickBy, identity, keys } from 'lodash'
 import { serialize } from 'bber-lib/async'
 import store from 'bber-lib/store'
 
+
+import { log } from 'bber-plugins'
+
 const _buildCommands = ['epub', 'mobi', 'pdf', 'web', 'sample']
 const _buildArgs = args => keys(pickBy(pick(args, _buildCommands), identity))
 
@@ -61,7 +64,12 @@ const handler = (argv) => {
     const buildCmds = _buildCommands
     const buildArgs = _buildArgs(argv)
     const buildTasks = buildArgs.length ? buildArgs : !buildArgs.length && argv.d ? [] : buildCmds
+
+    // TODO: sequence = store.sequences
+
     const sequence = ['clean', 'container', 'cover', 'sass', 'copy', 'scripts', 'render', 'loi', 'footnotes', 'inject', 'opf'] // eslint-disable-line max-len
+
+
 
     const run = (tasks) => {
         const next = [tasks.shift()]

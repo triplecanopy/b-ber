@@ -8,25 +8,7 @@ import fs from 'fs-extra'
 import { log } from 'bber-plugins'
 import { src, dist } from 'bber-utils'
 
-const cwd = process.cwd()
-
-const report = (i, o) => {
-    log.info(`bber-output/copy: Copied contents of [${i}] to [${o}]`)
-    fs.readdir(i, (err, data) => {
-        if (err) { throw err }
-        data.forEach(_ => log.info(`bber-output/copy: ${path.basename(i)}/${_} -> ${path.basename(o)}/${_}`))
-    })
-}
-
-const doCopy = (i, o, idx, fromLocs, resolve) => {
-    fs.copy(i, o, (err4) => {
-        if (err4) { throw err4 }
-        report(i, o)
-        if (idx === fromLocs.length - 1) {
-            resolve()
-        }
-    })
-}
+const FILE_SIZE_WARNING_LIMIT = 1500000 // 1.5Mb
 
 /**
  * Copy directories of assets into the output directory
@@ -34,62 +16,47 @@ const doCopy = (i, o, idx, fromLocs, resolve) => {
  * @param {String}        [_toLoc] To directory
  * @return {Promise<Object|Error>}
  */
-const copy = (_fromLocs, _toLoc) =>
+const copy = () =>
     new Promise((resolve) => {
-        let fromLocs = _fromLocs
-        let toLoc = _toLoc
-        let renameFn = _ => _
 
-        if (!fromLocs || !fromLocs.length) {
-            fromLocs = [
-                path.join(src(), '_images'),
-                path.join(src(), '_fonts'),
-                path.join(src(), '_media'),
-            ]
-            renameFn = _ => _.slice(1)
-        }
+        const promises = []
 
-        if (toLoc) {
-            toLoc = path.resolve(cwd, toLoc)
-        } else {
-            toLoc = path.join(dist(), 'OPS')
-        }
+        const dirs = [
+            { from: path.join(src(), '_images'), to: path.join(dist(), 'OPS', 'images') },
+            { from: path.join(src(), '_fonts'), to: path.join(dist(), 'OPS', 'fonts') },
+            { from: path.join(src(), '_media'), to: path.join(dist(), 'OPS', 'media') },
+        ]
 
-        return fs.mkdirs(toLoc, (err0) => {
-            if (err0) { throw err0 }
-            return fromLocs.forEach((_, idx) => {
-                const i = path.resolve(cwd, _)
-                const o = path.resolve(toLoc, renameFn(path.basename(_)))
-
+        dirs.forEach((_) => {
+            promises.push(new Promise((resolve) => {
                 try {
-                    if (!fs.existsSync(i)) {
-                        throw new Error(`bber-output/copy: Nothing to copy at [${i}]`)
-                    }
-                } catch (err1) {
-                    if (idx === fromLocs.length - 1) { resolve() }
-                    return log.warn(err1.message)
-                }
-
-                try {
-                    if (!fs.existsSync(o)) {
-                        throw new Error(`bber-output/copy: Path [${o}] does not exist, creating empty directory`)
-                    }
-                } catch (err2) {
-                    log.warn(err2.message)
-                    return fs.mkdirs(o, (err3) => {
-                        if (err3) { throw err3 }
-                        doCopy(i, o, idx, fromLocs, resolve)
+                    fs.mkdirpSync(_.to)
+                    fs.copySync(_.from, _.to, {
+                        overwrite: false,
+                        errorOnExist: true,
+                        filter: file => path.basename(file).charAt(0) !== '.'
                     })
+                } catch (err) {
+                    throw err
                 }
+                const baseFrom = `${path.basename(_.from)}`
+                const baseTo   = `${path.basename(_.to)}`
 
-                return fs.copy(i, o, (err5) => {
-                    if (err5) { throw err5 }
-                    log.info(`bber-output/copy: Copied contents of ${i} to ${o}`)
-                    report(i, o)
-                    doCopy(i, o, idx, fromLocs, resolve)
+                fs.readdirSync(_.to).forEach(file => {
+                    const size = fs.statSync(path.join(_.to, file)).size
+                    log.info('Copied [%s] {%\d}', `${baseTo}/${file}`, size)
+                    if (size > FILE_SIZE_WARNING_LIMIT) {
+                        log.warn('[%s]:{%d Kb} exceeds the recommended file size of {%d Kb}', file, size / 1000, FILE_SIZE_WARNING_LIMIT / 1000)
+                    }
                 })
-            })
+
+                resolve()
+            }))
         })
+
+        Promise.all(promises).catch(err => log.error(err)).then(resolve)
+
+
     })
 
 

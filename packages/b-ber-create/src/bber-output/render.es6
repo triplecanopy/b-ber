@@ -9,24 +9,13 @@ import fs from 'fs-extra'
 import File from 'vinyl'
 import MarkdownRenderer from 'bber-plugins/md'
 import { pageHead, pageBody, pageTail } from 'bber-templates/pages'
-import { src, dist, env } from 'bber-utils'
+import { src, dist } from 'bber-utils'
 import { log } from 'bber-plugins'
 import store from 'bber-lib/store'
 import { findIndex } from 'lodash'
-import { minify } from 'html-minifier'
+
 
 const promises = []
-const minificationOptions = {
-    collapseWhitespace: true,
-    collapseInlineTagWhitespace: true,
-    html5: true,
-    keepClosingSlash: true,
-    removeAttributeQuotes: true,
-    removeComments: true,
-    removeEmptyAttributes: true,
-    removeScriptTypeAttributes: true,
-}
-
 
 const writeMarkupToFile = (fname, markup) =>
     new Promise((resolve) => {
@@ -36,7 +25,7 @@ const writeMarkupToFile = (fname, markup) =>
         return fs.writeFile(outputPath, markup, (err) => {
             if (err) { throw err }
 
-            log.info(`bber-output/render: Wrote XHTML: [${path.basename(fname)}.xhtml]`)
+            log.info(`Wrote XHTML [${path.basename(fname)}.xhtml]`)
             resolve()
 
         })
@@ -45,13 +34,13 @@ const writeMarkupToFile = (fname, markup) =>
 
 
 // convert md to xhtml and wrap with page template
-const createPageLayout = (fname, data) =>
+const createPageLayout = (fileName, data) =>
     new Promise((resolve) => {
 
         const textDir = path.join(`${dist()}/OPS/text/`)
-        const head    = pageHead(fname)
-        const body    = MarkdownRenderer.render(fname, data)
-        const tail    = pageTail(fname)
+        const head    = pageHead()
+        const body    = MarkdownRenderer.render(fileName, data)
+        const tail    = pageTail()
 
         let markup
         markup = renderLayouts(new File({
@@ -59,10 +48,6 @@ const createPageLayout = (fname, data) =>
             layout: 'pageBody',
             contents: new Buffer(`${head}${body}${tail}`),
         }), { pageBody }).contents.toString()
-
-        if (env() === 'production') {
-            markup = minify(markup, minificationOptions)
-        }
 
         try {
             if (!fs.existsSync(textDir)) {
@@ -72,7 +57,7 @@ const createPageLayout = (fname, data) =>
             // noop
         }
 
-        return writeMarkupToFile(fname, markup).then(resolve)
+        return writeMarkupToFile(fileName, markup).then(resolve)
 
     })
 
@@ -111,7 +96,7 @@ function render() {
 
             return files.forEach((file) => {
 
-                log.info(`bber-output/render: Rendering Markdown: [${path.basename(file)}]`)
+                log.info(`Rendering Markdown [${path.basename(file)}]`)
 
                 promises.push(createXTHMLFile(path.join(mdDir, file)))
 

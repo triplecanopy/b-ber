@@ -195,20 +195,20 @@ const attributesObject = (attrs, _genus, context = {}) => {
     let genus = _genus
 
     if (!genus || typeof genus !== 'string') {
-        log.error(`No directive provided: ${filename}:${lineNr}`, 1)
+        log.error(`No directive provided: ${filename}:${lineNr}`)
     }
 
     if (ALL_DIRECTIVES.indexOf(genus) < 0) {
-        log.error(`Invalid directive: [${genus}] at ${filename}:${lineNr}`, 1)
+        log.error(`Invalid directive: [${genus}] at ${filename}:${lineNr}`)
     }
 
     if (DRAFT_DIRECTIVES.indexOf(genus) > -1) {
-        log.warn(`Epub type specification for directive [${genus}] is currently in draft. Substituting [${genus}] for generic [chapter].`)
+        log.warn(`[${genus}] EPUB specification is [DRAFT]. Substituting [${genus}] for [chapter].`)
         genus = 'chapter'
     }
 
     if (DEPRECATED_DIRECTIVES.indexOf(genus) > -1) {
-        log.warn(`Epub type specification for directive [${genus}] is currently deprecated. Substituting [${genus}] for generic [chapter].`)
+        log.warn(`[${genus}] EPUB specification is [DEPRECATED]. Substituting [${genus}] for [chapter].`)
         genus = 'chapter'
     }
 

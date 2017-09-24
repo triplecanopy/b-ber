@@ -17,7 +17,7 @@ const clean = dirPath =>
     new Promise(resolve =>
         fs.remove(dirPath || dist(), (err) => {
             if (err) { throw err }
-            log.info(`bber-output/clean: Removed [${dirPath || dist()}]`)
+            log.info('Removed [%s]', (dirPath || dist()))
             resolve()
         })
     )

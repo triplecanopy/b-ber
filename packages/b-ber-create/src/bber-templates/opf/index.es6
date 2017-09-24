@@ -4,7 +4,7 @@ import File from 'vinyl'
 import mime from 'mime-types'
 import Props from 'bber-lib/props'
 import store from 'bber-lib/store'
-import { fileId, guid, getFrontmatter, escapeHTML } from 'bber-utils'
+import { fileId, guid, escapeHTML } from 'bber-utils'
 import { log } from 'bber-plugins'
 import path from 'path'
 
@@ -67,11 +67,11 @@ const spineItems = arr =>
         const fname = fileId(path.basename(_.fileName, _.extname))
 
         if (nonLinear) {
-            log.info(`bber-output/opf: Writing non-linear asset [${_.fileName}] to [spine]`)
+            log.info(`Writing non-linear asset [${_.fileName}] to [spine]`)
         }
 
         if (fname.match(/figure/)) {
-            log.info('bber-output/opf: Writing [LOI] to [spine]')
+            log.info('Writing [LOI] to [spine]')
             if (store.loi.length) {
                 let loi = `\n<itemref idref="${fname}_xhtml" linear="${linear}"/>`
                 store.loi.forEach(figure => loi += `\n<itemref idref="${fileId(figure.fileName)}" linear="yes"/>`)
@@ -87,9 +87,9 @@ const guideItems = arr =>
     arr.map((_) => {
         let item = ''
         let type
-        if ((type = getFrontmatter(_, 'type'))) {
-            log.info(`bber-output/opf: Adding landmark [${_.fileName}] as [${type}]`)
-            const title = escapeHTML(getFrontmatter(_, 'title'))
+        if ((type = _.type)) {
+            log.info(`Adding landmark [${_.fileName}] as [${type}]`)
+            const title = escapeHTML(_.title)
             const href = `${encodeURI(_.relativePath)}.xhtml`
             item = `\n<reference type="${type}" title="${title}" href="${href}"/>`
         }

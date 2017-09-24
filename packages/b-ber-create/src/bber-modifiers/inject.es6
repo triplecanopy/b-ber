@@ -9,16 +9,23 @@ import File from 'vinyl'
 import request from 'request'
 import { log } from 'bber-plugins'
 import { scriptTag, stylesheetTag, jsonLDTag } from 'bber-templates'
-import { dist, build } from 'bber-utils'
+import { dist, build, env } from 'bber-utils'
 import store from 'bber-lib/store'
 import mime from 'mime-types'
+import { minify } from 'html-minifier'
 
-// import util from 'util'
 
-let output
-const initialize = () => {
-    output = dist()
+const minificationOptions = {
+    collapseWhitespace: true,
+    collapseInlineTagWhitespace: true,
+    html5: true,
+    keepClosingSlash: true,
+    removeAttributeQuotes: true,
+    removeComments: true,
+    removeEmptyAttributes: true,
+    removeScriptTypeAttributes: true,
 }
+
 
 /**
  * RegExp tokens to begin parsing
@@ -112,12 +119,12 @@ const getJSONLDMetadata = args =>
         })
 
         const content = JSON.stringify(webpubManifest)
-        const source = 'json-ld'
-        const target = 'json-ld'
-        const suffix = 'content'
-        const url = `http://rdf-translator.appspot.com/convert/${source}/${target}/${suffix}`
-        const form = { content }
-        const file = new File({ path: 'metadata.json-ld' })
+        const source  = 'json-ld'
+        const target  = 'json-ld'
+        const suffix  = 'content'
+        const url     = `http://rdf-translator.appspot.com/convert/${source}/${target}/${suffix}`
+        const form    = { content }
+        const file    = new File({ path: 'metadata.json-ld' })
 
         if (process.env.NODE_ENV !== 'production') {
             file.contents = new Buffer('')
@@ -147,7 +154,7 @@ const getJSONLDMetadata = args =>
  */
 const getContents = source =>
     new Promise(resolve =>
-        fs.readFile(path.join(output, 'OPS/text', source), (err, data) => {
+        fs.readFile(path.join(dist(), 'OPS/text', source), (err, data) => {
             if (err) { throw err }
             resolve(new File({ contents: new Buffer(data) }))
         })
@@ -232,19 +239,20 @@ const write = (location, data) =>
     new Promise((resolve) => {
         fs.writeFile(location, data, (err) => {
             if (err) { throw err }
-            log.info(`bber-modifiers/inject: Wrote [${path.basename(location)}]`)
+            log.info(`Wrote [${path.basename(location)}]`)
             resolve()
         })
     })
 
 const promiseToReplace = (prop, data, source, file) =>
     new Promise(async (resolve) => {
-        log.info(`bber-modifiers/inject: Preparing to write [${prop}] to [${source}]`)
+        log.info(`Preparing to write [${prop}] to [${source}]`)
 
-        const stream = file || await getContents(source)
-        const start = startTags[prop]
-        const stop = endTags[prop]
+        const stream  = file || await getContents(source)
+        const start   = startTags[prop]
+        const stop    = endTags[prop]
         const content = stream.contents.toString('utf8')
+
         const result = new File({
             path: source,
             contents: new Buffer(
@@ -261,10 +269,12 @@ const mapSources = (args) => {
             promiseToReplace('stylesheets', stylesheets, source)
             .then(file => promiseToReplace('javascripts', javascripts, source, file))
             .then(file => promiseToReplace('metadata', metadata, source, file))
-            .then(file => write(
-                    path.join(output, 'OPS/text', source),
-                    file.contents.toString('utf8'))
-            )
+            .then((file) => {
+                const contents = env() === 'production'
+                    ? minify(file.contents.toString('utf8'), minificationOptions)
+                    : file.contents.toString('utf8')
+                write(path.join(dist(), 'OPS/text', source), contents)
+            })
             .catch(err => log.error(err))
             .then(() => {
                 if (index === htmlDocs.length - 1) {
@@ -277,11 +287,10 @@ const mapSources = (args) => {
 
 const inject = () =>
     new Promise((resolve) => {
-        initialize()
         Promise.all([
-            getDirContents(`${output}/OPS/text/`),
-            getDirContents(`${output}/OPS/stylesheets/`),
-            getDirContents(`${output}/OPS/javascripts/`),
+            getDirContents(`${dist()}/OPS/text/`),
+            getDirContents(`${dist()}/OPS/stylesheets/`),
+            getDirContents(`${dist()}/OPS/javascripts/`),
         ])
         .then(getJSONLDMetadata)
         .then(mapSources)

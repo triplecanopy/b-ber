@@ -3,8 +3,8 @@ import fs from 'fs-extra'
 import path from 'path'
 import mime from 'mime-types'
 import figure from 'bber-plugins/md/plugins/figure'
-import { attributesString, attributesObject, htmlId } from 'bber-plugins/md/directives/helpers'
-import { htmlComment, src, /*passThrough, */build } from 'bber-utils'
+import { attributesString, attributesObject } from 'bber-plugins/md/directives/helpers'
+import { htmlComment, src, build } from 'bber-utils'
 import store from 'bber-lib/store'
 import { log } from 'bber-plugins'
 
@@ -124,11 +124,12 @@ export default {
             }
 
 
+            const figureId = `_${String(Math.random()).slice(2)}`
             const attrString = attributesString(attrsObject)
             const webOnlyAttrString = build() === 'web' ? 'webkit-playsinline="webkit-playsinline" playsinline="playsinline"' : ''
-            const commentStart = htmlComment(`START: ${mediaType}:${type}#${htmlId(id)};`)
-            const commentEnd = htmlComment(`END: ${mediaType}:${type}#${htmlId(id)};`)
-            const page = `figure_${htmlId(source)}.xhtml`
+            const commentStart = htmlComment(`START: ${mediaType}:${type}#${figureId};`)
+            const commentEnd = htmlComment(`END: ${mediaType}:${type}#${figureId};`)
+            const page = `figure_${figureId}.xhtml`
 
             switch (type) {
                 case 'audio':
@@ -137,7 +138,7 @@ export default {
                     // add it to store so that it's rendered as a `figure`
                     store.add('figures',
                         {
-                            id: htmlId(id),
+                            id: figureId,
                             attrString,
                             sourceElements,
                             page,
@@ -147,12 +148,13 @@ export default {
                             pageOrder: store.figures.length,
                             poster,
                             mediaType,
+                            source,
                         }
                     )
 
                     return `<div class="figure__small figure__small--landscape">
-                        <figure id="ref${htmlId(id)}">
-                            <a href="${page}#${htmlId(id)}">
+                        <figure id="ref${figureId}">
+                            <a href="${page}#${figureId}">
                                 <img src="${poster}" alt=""/>
                             </a>
                         </figure>
@@ -163,7 +165,7 @@ export default {
                 case 'video-inline':
                     return `${commentStart}
                         <section class="${mediaType}">
-                            <${mediaType} id="${htmlId(id)}"${attrString}${webOnlyAttrString}>
+                            <${mediaType} id="${figureId}"${attrString}${webOnlyAttrString}>
                                 ${sourceElements}
                                 <div class="media__fallback__${mediaType} media__fallback--image figure__small figure__small--landscape">
                                     <figure>

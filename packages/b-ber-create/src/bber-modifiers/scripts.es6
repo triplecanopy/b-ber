@@ -11,7 +11,7 @@ const write = () =>
             if (err) { throw err }
             const filearr = files
             filearr.forEach((file, idx) => {
-                log.info(`bber-modifiers/scripts: Injecting file: [${path.basename(file)}] into XHTML`)
+                log.info(`Injecting file: [${path.basename(file)}] into XHTML`)
                 copy(file, path.join(dist(), 'OPS/javascripts', path.basename(file)))
                 if (idx === filearr.length - 1) {
                     resolve()

@@ -1,5 +1,5 @@
 import File from 'vinyl'
-import { escapeHTML, getFrontmatter } from 'bber-utils'
+import { escapeHTML } from 'bber-utils'
 
 const tocTmpl = new File({
     path: 'tocTmpl.tmpl',
@@ -30,7 +30,7 @@ const tocItem = (list) => {
                     ? ''
                     : `
                         <li>
-                            <a href="${_.relativePath}.xhtml">${escapeHTML(getFrontmatter(_, 'title') || _.name)}</a>
+                            <a href="${_.relativePath}.xhtml">${escapeHTML(_.title || _.name)}</a>
                             ${_.nodes && _.nodes.length ? render(_.nodes) : ''}
                         </li>`
                 ).join('')}

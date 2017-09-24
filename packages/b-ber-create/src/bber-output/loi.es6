@@ -26,15 +26,14 @@ const createLOILeader = () =>
 
         fs.writeFile(path.join(dist(), `/OPS/text/${filename}.xhtml`), markup, 'utf8', (err) => {
             if (err) { throw err }
-            // TODO: following be merged with `store.spine`, and `store.pages`
-            // should be removed
-            store.add('pages', {
+
+            store.add('guide', {
                 filename,
                 title: 'Figures',
                 type: 'loi',
             })
 
-            log.info(`bber-output/loi: Created default Figures titlepage [${filename}.xhtml]`)
+            log.info(`Created default Figures titlepage [${filename}.xhtml]`)
 
             resolve()
         })
@@ -67,8 +66,7 @@ const createLOI = () =>
 
                 store.add('loi', fileData)
 
-                log.info(`bber-output/loi: Created linked figure page from image found in source [${data.page}]`)
-                log.info(`bber-output/loi: ${data.source} -> ${data.page}`)
+                log.info(`Linking figure [${data.source}] to [${data.page}]`)
 
                 if (idx === store.figures.length - 1) {
                     // make sure we've added figures to the spine in the correct order

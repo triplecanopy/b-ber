@@ -65,7 +65,8 @@ class Cover {
                 return oldCovers.forEach(_ =>
                     fs.remove(path.join(imageDir, _), (err1) => {
                         if (err1) { reject(err1) }
-                        log.info(`bber-output/cover: Removed outdated cover image [${_}]`)
+                        log.info('Removed outdated cover image [%s]', _)
+                        // log.info(`bber-output/cover: Removed outdated cover image [${_}]`)
                         resolve()
                     })
                 )
@@ -74,14 +75,15 @@ class Cover {
     }
 
     generateDefaultCoverImage() {
-        log.info('bber-output/cover: Creating cover image')
+        log.info('Creating cover image')
         return new Promise(resolve =>
             childProcess.execFile(phantomjs.path, this.phantomjsArgs, (err, stdout, stderr) => {
                 if (err) { console.error(err) }
                 if (stderr) { console.error(stderr) }
                 if (stdout) { console.log(stdout) }
                 diff = process.hrtime(seq)
-                log.info(`bber-output/cover: Wrote cover image in [${hrtimeformat(diff)}]`)
+                // log.info(`bber-output/cover: Wrote cover image in [${hrtimeformat(diff)}]`)
+                log.info('Wrote cover image in [%s]', hrtimeformat(diff))
                 resolve()
             })
         )
@@ -95,7 +97,8 @@ class Cover {
                 if (err0) { throw err0 }
                 fs.writeFile(coverFilePath, this.coverXHTMLContent, (err1) => {
                     if (err1) { throw err1 }
-                    log.info('bber-output/cover: Wrote [cover.xhtml]')
+                    // log.info('bber-output/cover: Wrote [cover.xhtml]')
+                    log.info('Wrote [cover.xhtml]')
                     return resolve()
                 })
             })
@@ -112,7 +115,7 @@ class Cover {
                 href: `images/${encodeURIComponent(coverEntry)}`,
             })
 
-            log.info('bber-output/cover: Creating [cover.xhtml]')
+            log.info('Creating [cover.xhtml]')
 
             // set the content string to be written once resolved
             this.coverXHTMLContent = renderLayouts(new File({
@@ -132,7 +135,7 @@ class Cover {
             let coverImagePath = path.join(src(), '_images', coverEntry)
 
             // check that metadata.yml exists
-            log.info('bber-output/cover: Verifying cover entry in [metadata.yml]')
+            log.info('Verifying cover entry in [metadata.yml]')
             try {
                 metadata = Yaml.load(path.join(src(), 'metadata.yml'))
             } catch (err) {
@@ -143,7 +146,7 @@ class Cover {
             const coverListedInMetadata = find(metadata, { term: 'cover' })
             if (coverListedInMetadata) {
                 coverEntry = coverListedInMetadata.value
-                log.info(`bber-output/cover: Verifying cover image [${coverEntry}]`)
+                log.info('Verifying cover image [%s]', coverEntry)
                 if (!coverListedInMetadata.value) { throw new Error('Error in [metadata.yml] at cover.value') }
                 // there's a reference to a cover image so we create a cover.xhtml file
                 // containing an SVG-wrapped `image` element with the appropriate cover
@@ -164,7 +167,7 @@ class Cover {
 
             // if there's no cover referenced in the metadata.yml, we create one that
             // displays the book's metadata (title, generator version, etc)
-            log.warn(`bber-output/cover: Creating default cover image [${coverEntry}]`)
+            log.warn('Creating default cover image [%s]', coverEntry)
             store.bber.metadata.push({ term: 'cover', value: fileId(coverEntry).slice(1) })
 
             this.metadata = { ...this.metadata, ...metadata }

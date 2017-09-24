@@ -18,7 +18,29 @@ import mdMedia from 'bber-plugins/md/directives/media'
 import mdDialogue from 'bber-plugins/md/directives/dialogue'
 // import mdEpigraph from 'bber-plugins/md/directives/epigraph'
 
-import { find } from 'lodash'
+import util from 'util'
+import { extend, find } from 'lodash'
+
+
+function deepFind(collection, fileName, callback) {
+    const found = find(collection, { fileName })
+    if (found) {
+        if (callback) {
+            callback(found)
+            return
+        }
+        return found
+    }
+
+    collection.forEach((item) => { // check against prop names
+        if (item.nodes && item.nodes.length) {
+            return deepFind(item.nodes, fileName)
+        }
+        return item
+    })
+
+    return collection
+}
 
 /**
  * Transform markdown into XHTML
@@ -70,15 +92,32 @@ class MarkdownRenderer {
             .use(
                 mdFrontMatter,
                 (meta) => {
+
                     const filename = this.filename
-                    store.add('pages', { filename, ...Yaml.parse(meta) })
+                    const YAMLMeta = Yaml.parse(meta)
+
+                    store.add('guide', { filename, ...YAMLMeta })
+
+                    const spineEntry = find(store.spine, { fileName: filename })
+
+                    // merge the found entry in the store and spine so that we
+                    // can access the metadata later. since deepFind is
+                    // expensive, don't try unless we know that the entry
+                    // exists
+                    if (spineEntry) {
+
+                        deepFind(store.spine, filename, found => extend(found, YAMLMeta))
+                        deepFind(store.toc, filename, found => extend(found, YAMLMeta))
+
+                    }
+
                 })
             .use(
                 mdFootnote,
                 (tokens) => {
-                    const filename = this.filename
-                    const page = find(store.pages, { filename })
-                    const title = page && page.title ? page.title : filename
+                    const fileName = this.filename
+                    const entry = find(store.spine, { fileName })
+                    const title = entry.title || entry.filename
 
                     // add footnote container and heading. we're doing this here instead
                     // of in `footnotes.js` because we need some file info (just the title :/)
@@ -110,8 +149,8 @@ class MarkdownRenderer {
                         nesting: -1,
                     })
 
-                    const notes = instance.renderer.render(tokens, 0, { reference: `${filename}.xhtml` })
-                    store.add('footnotes', { filename, title, notes })
+                    const notes = instance.renderer.render(tokens, 0, { reference: `${fileName}.xhtml` })
+                    store.add('footnotes', { filename: fileName, title, notes })
                 })
             .use(
                 mdDialogue.plugin,

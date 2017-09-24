@@ -1,7 +1,6 @@
 import File from 'vinyl'
-import { getFrontmatter } from 'bber-utils'
 
-const pageHead = name => `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+const pageHead = () => `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
         <html xmlns="http://www.w3.org/1999/xhtml"
         xmlns:epub="http://www.idpf.org/2007/ops"
         xmlns:ibooks="http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0"
@@ -12,7 +11,7 @@ const pageHead = name => `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
             <!-- inject:css -->
             <!-- end:css -->
         </head>
-        <body${getFrontmatter({ name }, 'template') ? ` class="${getFrontmatter({ name }, 'template')}"` : ''}>` // eslint-disable-line max-len
+        <body>`
 
 const pageTail = () => `<!-- inject:js -->
             <!-- end:js -->

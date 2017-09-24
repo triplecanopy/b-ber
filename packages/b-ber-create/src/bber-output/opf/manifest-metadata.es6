@@ -103,8 +103,8 @@ class ManifestAndMetadata {
      * @return {Object<Promise|Error>}
      */
     static createManifestAndMetadataXML(resp) {
-        log.info('bber-output/opf: Building [manifest]')
-        log.info('bber-output/opf: Building [metadata]')
+        log.info('Building [manifest]')
+        log.info('Building [metadata]')
         return new Promise((resolve) => {
             const _metadata = renderLayouts(new File({
                 path: './.tmp',

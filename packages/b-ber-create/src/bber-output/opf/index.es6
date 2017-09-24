@@ -39,7 +39,7 @@ class Opf {
      * @return {Promise<Object>}
      */
     static createOpfPackageString([manifestAndMetadataXML, navigationXML]) {
-        log.info('bber-output/opf: Building [opf]')
+        log.info('Building [opf]')
         return new Promise((resolve) => {
             const { metadata, manifest } = manifestAndMetadataXML
             const { spine, guide } = navigationXML.strings
@@ -64,7 +64,7 @@ class Opf {
             const opsPath = path.join(this.dist, 'OPS', 'content.opf')
             fs.writeFile(opsPath, contents, (err) => {
                 if (err) { throw err }
-                log.info(`bber-output/opf: Wrote content.opf: [${opsPath}]`)
+                log.info(`Wrote content.opf [${opsPath}]`)
                 resolve(contents)
             })
         })

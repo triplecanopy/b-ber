@@ -10,7 +10,6 @@ import yargs from 'yargs'
 import {
     createPageModelsFromYAML,
     flattenNestedEntries,
-    // createPagesMetaYaml,
 } from 'bber-lib/helpers'
 
 // import util from 'util'
@@ -25,7 +24,7 @@ const BBER_PACKAGE_JSON = require(path.join(BBER_MODULE_PATH, 'package.json')) /
  */
 class Store {
     set env(value)          { this._env = value           }
-    set pages(value)        { this._pages = value         }
+    set guide(value)        { this._guide = value         }
     set figures(value)      { this._figures = value       }
     set video(value)        { this._video = value         }
     set audio(value)        { this._audio = value         }
@@ -41,9 +40,10 @@ class Store {
     set remoteAssets(value) { this._remoteAssets = value  }
     set loi(value)          { this._loi = value           }
     set theme(value)        { this._theme = value         }
+    set sequence(value)        { this._sequence = value         }
 
     get env()               { return this._env            }
-    get pages()             { return this._pages          }
+    get guide()             { return this._guide          }
     get figures()           { return this._figures        }
     get video()             { return this._video          }
     get audio()             { return this._audio          }
@@ -59,6 +59,7 @@ class Store {
     get remoteAssets()      { return this._remoteAssets   }
     get loi()               { return this._loi            }
     get theme()             { return this._theme          }
+    get sequence()             { return this._sequence          }
 
     /**
      * @constructor
@@ -222,7 +223,7 @@ class Store {
      */
 
     loadInitialState() {
-        this.pages        = []
+        this.guide        = []
         this.figures      = []
         this.video        = []
         this.audio        = []
@@ -236,12 +237,13 @@ class Store {
         this.remoteAssets = []
         this.loi          = []
         this.theme        = {}
+        this.sequence        = []
         this.env          = process.env.NODE_ENV || 'development'
         this.config       = {
             src: '_project',
             dist: 'project',
             theme: 'b-ber-theme-serif',
-            reader: 'https://codeload.github.com/triplecanopy/b-ber-boiler/zip/master',
+            // reader: 'https://codeload.github.com/triplecanopy/b-ber-boiler/zip/master',
         }
 
         this.loadSettings()
@@ -252,7 +254,7 @@ class Store {
     }
 
     reload() {
-        this.pages        = []
+        this.guide        = []
         this.figures      = []
         this.footnotes    = []
         this.cursor       = []
@@ -260,6 +262,7 @@ class Store {
         this.toc          = []
         this.remoteAssets = []
         this.loi          = []
+        // this.sequence        = [] // should this be reset?
     }
 
     reset() {
@@ -355,13 +358,12 @@ class Store {
 
     loadBber() {
         this.bber = {
-            metadata: this.metadata,
-            taskTimes: [], // for tracking CLI task completion
-            sample: this._fileOrDefaults('sample'),
-            epub: this._fileOrDefaults('epub'),
-            mobi: this._fileOrDefaults('mobi'),
-            pdf: this._fileOrDefaults('pdf'),
-            web: this._fileOrDefaults('web'),
+            metadata  : this.metadata,
+            sample    : this._fileOrDefaults('sample'),
+            epub      : this._fileOrDefaults('epub'),
+            mobi      : this._fileOrDefaults('mobi'),
+            pdf       : this._fileOrDefaults('pdf'),
+            web       : this._fileOrDefaults('web'),
         }
     }
 }

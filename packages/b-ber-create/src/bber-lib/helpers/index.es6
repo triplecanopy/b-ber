@@ -3,9 +3,6 @@ import path from 'path'
 import { isPlainObject, isArray } from 'lodash'
 import { modelFromString, modelFromObject } from 'bber-utils'
 
-// import store from 'bber-lib/store'
-// import util from 'util'
-
 const createPageModelsFromYAML = (arr, src) => {
     const _root = [{ nodes: [] }]
     const munge = (_arr, _result) => {
