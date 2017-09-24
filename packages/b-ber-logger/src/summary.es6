@@ -26,7 +26,7 @@ function printNavigationTree(store) {
 
 export function summary({ store, taskTimes, formattedStartDate, formattedEndDate, sequenceEnd }) {
 
-    if (this.logLevel < 2 && this.summarize !== true) { return }
+    if (this.logLevel < 4 && this.summarize !== true) { return }
 
     console.log('%s%s', this.indent(), '-'.repeat(this.consoleWidth))
     console.log()

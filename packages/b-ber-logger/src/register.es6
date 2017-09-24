@@ -3,9 +3,9 @@ export function registerSequence(store, command, commanders, sequences) {
     this.command = command
     if (command !== 'build') { return } // TODO: should handle this better when showing `fail`
 
-    const { sequence } = store
+    if (this.logLevel < 3) { return }
 
-    if (this.logLevel === 0) { return }
+    const { sequence } = store
 
     console.log()
     console.log(`%sStarting [%s]`, this.indent(), command)
@@ -16,8 +16,6 @@ export function registerSequence(store, command, commanders, sequences) {
     console.log(`%sRunning the following tasks`, this.indent())
     console.log()
 
-    this.incrementIndent()
-
     if (Object.keys(commanders).length) {
         const cmds = Object.keys(commanders).filter(_ => commanders[_])
         cmds.forEach((_) => {
@@ -25,13 +23,12 @@ export function registerSequence(store, command, commanders, sequences) {
             this.incrementIndent()
             console.log(`${this.indent()}${this.wrap(sequences[_], this.indent())}`)
             this.decrementIndent()
+            console.log()
         })
 
     } else {
         console.log(`${this.indent()}${this.wrap(sequence, this.indent())}`)
     }
 
-
-    this.decrementIndent()
 
 }

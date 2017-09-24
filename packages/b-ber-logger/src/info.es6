@@ -1,8 +1,6 @@
-// import util from 'util'
-
 export function info() {
 
-    if (this.logLevel === 0) { return }
+    if (this.logLevel < 3) { return }
 
     const args = Array.prototype.slice.call(arguments, 0)
 
@@ -13,14 +11,16 @@ export function info() {
     let prefix = ''
     if (context) {
         if (this.command === 'build') { // TODO: handle this better; don't show first line whitespace on standalone command
-            console.log()
+            if (this.logLevel > 3) { console.log() }
         }
         this.decrementIndent()
-        prefix += `${this.indent()}${this.decorate(`Using [${context}]`, 'cyan')}\n`
+        console.log(this.indent() + this.decorate(`Using [${context}]`, 'cyan'))
         this.incrementIndent()
     }
 
     prefix += `${counter}${this.indent().substring(counter.length)}`
+
+    if (this.logLevel < 4) { return }
 
     console.log(`${prefix}${message}`)
 

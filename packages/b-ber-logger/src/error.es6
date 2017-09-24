@@ -1,6 +1,9 @@
 import util from 'util'
 
 export function error() {
+
+    if (this.logLevel < 1) { return }
+
     const args = Array.prototype.slice.call(arguments, 0)
     const errCode = 1
 

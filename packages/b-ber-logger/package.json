@@ -7,6 +7,11 @@
     "lib": "lib"
   },
   "scripts": {
+    "prepare.index": "BABEL_ENV=production ../../node_modules/.bin/babel index.es6 > index.js",
+    "prepare.lib": "BABEL_ENV=production ../../node_modules/.bin/babel -d lib/ src/ --ignore **/__tests__/**",
+    "prepare": "yarn prepare.index && yarn prepare.lib",
+    "build": "yarn prepare",
+    "watch": "BABEL_ENV=production ../../node_modules/.bin/babel -d lib/ src/ --watch index.es6",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Maxwell Simmer <maxwell.simmer@gmail.com> (http://maxwellsimmer.com)",

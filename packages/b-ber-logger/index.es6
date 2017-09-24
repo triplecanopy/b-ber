@@ -3,7 +3,13 @@ import Timer from './lib/timer'
 
 
 import { printWarnings, printErrors } from './lib/printer'
-import { indent, incrementIndent, decrementIndent, incrementCounter, decrementCounter } from './lib/indenter'
+import {
+    indent,
+    incrementIndent,
+    decrementIndent,
+    incrementCounter,
+    decrementCounter
+} from './lib/indenter'
 
 import { bind } from './lib/listeners'
 import { notify } from './lib/events'
@@ -30,7 +36,7 @@ import { reset } from './lib/reset'
 class Logger extends Timer {
 
     static defaults = {
-        logLevel     : 1,
+        logLevel     : 3,
         boringOutput : false,
         summarize    : false,
         command      : null,
@@ -70,8 +76,9 @@ class Logger extends Timer {
 
         // options
         this.settings = {
-            verbose     : false,
             quiet       : false,
+            verbose     : false,
+            debug       : false,
             summarize   : Logger.defaults.summarize,
             'no-color'  : Logger.defaults.boringOutput,
             'log-level' : Logger.defaults.logLevel,

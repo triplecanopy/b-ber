@@ -196,7 +196,9 @@ class Navigation {
                     // them to the top-level list of files
 
                     missingEntries.forEach((_) => {
-                        log.warn(`Adding missing entry [${_}] to [${this.build}.yml]`)
+                        if (/figure_/.test(_) === false) { // don't warn for figures pages
+                            log.warn(`Adding missing entry [${_}] to [${this.build}.yml]`)
+                        }
                     })
 
 

@@ -2,7 +2,7 @@ import util from 'util'
 
 export function warn() {
 
-    if (this.logLevel === 0) { return }
+    if (this.logLevel < 2) { return }
 
     const args = Array.prototype.slice.call(arguments, 0)
 

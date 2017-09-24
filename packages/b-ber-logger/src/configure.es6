@@ -2,10 +2,10 @@ export function configure() {
     /*
 
         0 quiet             show nothing
-        1 info              show some info
-        2 verbose           show all info
-        3 warn              show warnings and errors
-        4 error             show only errors
+        1 error             show only errors
+        2 warn              show warnings and errors
+        3 info              show minimal info
+        4 verbose           show all info
         5 debug             show everything
 
      */
@@ -13,7 +13,8 @@ export function configure() {
     let logLevel
     logLevel = this.settings['log-level']
     logLevel = this.settings.quiet ? 0 : logLevel
-    logLevel = this.settings.verbose ? 2 : logLevel
+    logLevel = this.settings.verbose ? 4 : logLevel
+    logLevel = this.settings.debug ? 5 : logLevel
 
     this.logLevel = logLevel
 
