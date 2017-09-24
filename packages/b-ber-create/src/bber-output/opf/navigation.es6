@@ -79,7 +79,7 @@ class Navigation {
      */
     createEmptyNavDocuments() {
         return new Promise((resolve) => {
-            log.info(`Creating navigation documents: [${this.navDocs.join(', ')}]`)
+            log.info(`Creating navigation documents [${this.navDocs.join(', ')}]`)
             const promises = []
             this.navDocs.forEach((_) => {
                 promises.push(new Promise(() =>
@@ -110,7 +110,7 @@ class Navigation {
      */
     getAllXhtmlFiles() {
         return new Promise(resolve =>
-            rrdir(`${this.dist}/OPS`, (err, filearr) => {
+            rrdir(`${this.dist}${path.sep}OPS`, (err, filearr) => {
                 if (err) { throw err }
                 // TODO: better testing here, make sure we're not including symlinks, for example
                 const fileObjects = pathInfoFromFiles(filearr, this.dist)
@@ -149,7 +149,7 @@ class Navigation {
     compareXhtmlWithYaml({ filesFromSystem, fileObjects }) {
         return new Promise((resolve) => { // eslint-disable-line consistent-return
             const { spine } = store // current build process's spine
-            const { spineList } = store.bber[this.build] // spine items pulled in from type.yml file
+            const { spineList } = store.builds[this.build] // spine items pulled in from type.yml file
             const flow = uniq(spine.map(_ => _.generated ? null : _.fileName).filter(Boolean)) // one-dimensional flow of the book used for the spine, omitting figures pages
             const pages = flattenSpineFromYAML(spineList)
 
@@ -243,7 +243,7 @@ class Navigation {
             const tocHTML = tocItem(toc)
 
             strings.toc = renderLayouts(new File({
-                path: './.tmp',
+                path: '.tmp',
                 layout: 'tocTmpl',
                 contents: new Buffer(tocHTML),
             }), { tocTmpl })
@@ -262,7 +262,7 @@ class Navigation {
             const ncxXML = navPoint(toc)
 
             strings.ncx = renderLayouts(new File({
-                path: './.tmp',
+                path: '.tmp',
                 layout: 'ncxTmpl',
                 contents: new Buffer(ncxXML),
             }), { ncxTmpl })
@@ -281,7 +281,7 @@ class Navigation {
             const guideXML = guideItems(spine)
 
             strings.guide = renderLayouts(new File({
-                path: './.tmp',
+                path: '.tmp',
                 layout: 'opfGuide',
                 contents: new Buffer(guideXML),
             }), { opfGuide })
@@ -311,7 +311,7 @@ class Navigation {
             const spineXML = spineItems(spine)
 
             strings.spine = renderLayouts(new File({
-                path: './.tmp',
+                path: '.tmp',
                 layout: 'opfSpine',
                 contents: new Buffer(spineXML),
             }), { opfSpine })

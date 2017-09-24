@@ -9,12 +9,17 @@ import nodeSass from 'node-sass'
 import postcss from 'postcss'
 import autoprefixer from 'autoprefixer'
 import log from 'b-ber-logger'
-import { src, dist, env, build/*, theme*/ } from 'bber-utils'
+import { src, dist, env, build } from 'bber-utils'
 import store from 'bber-lib/store'
 
 // dirnames that may be referenced in the theme. we copy over assets when
 // running the sass task
 const ASSET_DIRNAMES = ['fonts', 'images']
+
+const autoprefixerOptions = store.config.autoprefixer_options || {
+    browsers: ['last 2 versions', '> 2%'],
+    flexbox: 'no-2009',
+}
 
 // Check to see if there's an `application.scss` in `_stylesheets`, and if so
 // load that; else verify that a theme is selected in `config`, and that the
@@ -50,9 +55,7 @@ const createSCSSString = () =>
                 chunks.push(themeStyles)
             }
         } catch (err) {
-            log.error(`
-                Could not find theme [${themeName}].
-                Make sure the theme exists and contains a valid [application.scss]`, __filename)
+            log.error(`Could not find theme [${themeName}]. Make sure the theme exists and contains a valid [application.scss]`)
         }
 
         try {
@@ -79,7 +82,7 @@ const createSCSSString = () =>
 // make sure the compiled output dir exists
 const ensureCSSDir = () =>
     new Promise(resolve =>
-        fs.mkdirp(path.join(dist(), '/OPS/stylesheets'), (err) => {
+        fs.mkdirp(path.join(dist(), 'OPS', 'stylesheets'), (err) => {
             if (err) { throw err }
             resolve()
         })
@@ -110,7 +113,7 @@ const copyThemeAssets = () =>
                         fs.mkdirp(srcPath)
                     }
                 } catch (err1) {
-                    log.error(err1, 1)
+                    log.error(err1)
                 }
 
                 try {
@@ -126,7 +129,7 @@ const copyThemeAssets = () =>
                                 errorOnExist: true,
                             }, (err2) => {
                                 if (err2) { throw err2 }
-                                if (i === files.length - 1) { // not sure about this...
+                                if (i === files.length - 1) {
                                     resolve()
                                 }
                             })
@@ -135,7 +138,6 @@ const copyThemeAssets = () =>
                 } catch (err0) {
                     if (err0.code === 'ENOENT') { return resolve() } // dir doesn't exist in the theme path, but doesn't need to, so proceed
                     log.error(`There was a problem copying [${themePath}] to [${srcPath}]`)
-                    // log.error(err0)
                     resolve()
                 }
             }))
@@ -149,28 +151,25 @@ const renderCSS = scssString =>
     new Promise(resolve =>
         nodeSass.render({
             data: `$build: "${build()}";${scssString}`,
-            includePaths: [path.join(src(), '_stylesheets/'), path.dirname(store.theme.entry)],
+            includePaths: [path.join(src(), '_stylesheets'), path.dirname(store.theme.entry)],
             outputStyle: env() === 'production' ? 'compressed' : 'nested',
             errLogToConsole: true,
         }, (err, result) => {
-            if (err) { log.error(err.message, 1) }
+            if (err) { log.error(err) }
             resolve(result)
         })
     )
 
 const applyPostProcessing = ({ css }) =>
     new Promise(resolve =>
-        postcss(autoprefixer({
-            browsers: ['last 2 versions', '> 2%'],
-            flexbox: 'no-2009',
-        }))
+        postcss(autoprefixer(autoprefixerOptions))
         .process(css)
         .then(resolve)
     )
 
 const writeCSSFile = css =>
     new Promise(resolve =>
-        fs.writeFile(path.join(dist(), '/OPS/stylesheets/application.css'), css, (err) => {
+        fs.writeFile(path.join(dist(), 'OPS', 'stylesheets', (env() === 'production' ? `${store.hash}.css` : 'application.css')), css, (err) => {
             if (err) { throw err }
             resolve()
         })

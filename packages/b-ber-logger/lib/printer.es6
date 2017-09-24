@@ -12,12 +12,14 @@ function printNotices(type, task = 'b-ber') { // TODO: clean up
     this.incrementIndent()
     notices.forEach((_) => {
 
-        // const stack = _.stack.split('\n').slice(2).map(s => s.replace(/^\s+/, ''))[0]//.join('\n')
-        const stack = _.stack.split('\n').slice(2).map(s => s.replace(/^\s+/, this.indent())).join('\n')
-
         console.log('%s%s %s', this.indent(), this.decorate(leader, color, 'underline'), this.decorate(_.message, 'cyan'))
-        console.log('%s', stack)
-        console.log()
+
+        if (this.logLevel > 1) {
+            const stack = _.stack.split('\n').slice(2).map(s => s.replace(/^\s+/, this.indent())).join('\n')
+            console.log('%s', stack)
+            console.log()
+        }
+
     })
     this.decrementIndent()
 }

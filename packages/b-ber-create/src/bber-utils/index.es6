@@ -1,6 +1,3 @@
-
-/* eslint-disable no-bitwise, no-mixed-operators */
-
 /**
  * @module utils
  */
@@ -8,26 +5,10 @@
 import Promise from 'zousan'
 import fs from 'fs-extra'
 import path from 'path'
-import { compact, find, isPlainObject } from 'lodash'
+import { isPlainObject } from 'lodash'
 import store from 'bber-lib/store'
 
 const cwd = process.cwd()
-
-/**
- * [description]
- * @param  {String} source [description]
- * @param  {String} target [description]
- * @return {Object}
- */
-const copy = (source, target) =>
-    new Promise((resolve, reject) => {
-        const rd = fs.createReadStream(source)
-        rd.on('error', reject)
-        const wr = fs.createWriteStream(target)
-        wr.on('error', reject)
-        wr.on('finish', resolve)
-        return rd.pipe(wr)
-    })
 
 /**
  * Get a file's relative path to the OPS
@@ -36,15 +17,7 @@ const copy = (source, target) =>
  * @return {String}
  */
 const opsPath = (fpath, base) =>
-    fpath.replace(new RegExp(`^${base}/OPS/?`), '')
-
-/**
- * [description]
- * @param  {Array} arr [description]
- * @return {String}
- */
-const cjoin = arr =>
-    compact(arr).join('\n')
+    fpath.replace(new RegExp(`^${base}${path.sep}OPS${path.sep}?`), '')
 
 /**
  * [description]
@@ -56,35 +29,6 @@ const cjoin = arr =>
 const fileId = str => `_${str.replace(/[^a-zA-Z0-9_]/g, '_')}`
 
 /**
- * Create a GUID
- * @return {String}
- * http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript
- */
-const guid = () => {
-    let d = new Date().getTime()
-    const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-        const r = (d + (Math.random() * 16)) % 16 | 0
-        d = Math.floor(d / 16)
-        return (c === 'x' ? r : r & 0x7 | 0x8).toString(16)
-    })
-    return uuid
-}
-
-/**
- * Pad a string from the left
- * @param  {String} s Base string
- * @param  {String} a Character to pad with
- * @param  {String} n Length of output
- * @return {String}
- */
-const lpad = (s, a, n) => {
-    let str = s
-    if (str.length >= n) { return str }
-    while (str.length < n) { str = a + str }
-    return str
-}
-
-/**
  * [description]
  * @param  {Array} a [description]
  * @return {String}
@@ -92,22 +36,6 @@ const lpad = (s, a, n) => {
 const hrtimeformat = (a) => {
     const s = (a[0] * 1000) + (a[1] / 1000000)
     return `${String(s).slice(0, -3)}ms`
-}
-
-/**
- * Create a hash from a string
- * @param  {String} str [description]
- * @return {String}
- */
-const hashIt = (str) => {
-    let hash = 0
-    if (str.length === 0) { return hash }
-    for (let i = 0, len = str.length; i < len; i++) {
-        const chr = str.charCodeAt(i)
-        hash = ((hash << 5) - hash) + chr
-        hash |= 0
-    }
-    return `_${Math.abs(hash)}`
 }
 
 /**
@@ -145,10 +73,10 @@ const forOf = (collection, iterator) =>
  * @return {String}
  */
 const src = () => {
-    if (!store.bber[store.build] || !store.bber[store.build].src) {
+    if (!store.builds[store.build] || !store.builds[store.build].src) {
         store.update('build', 'epub')
     }
-    return path.join(cwd, store.bber[store.build].src)
+    return path.join(cwd, store.builds[store.build].src)
 }
 
 /**
@@ -156,53 +84,22 @@ const src = () => {
  * @return {String}
  */
 
-// same issue as above with `src` method
 const dist = () => {
-    if (!store.bber[store.build] || !store.bber[store.build].dist) {
+    if (!store.builds[store.build] || !store.builds[store.build].dist) {
         store.update('build', 'epub')
     }
-    return path.join(cwd, store.bber[store.build].dist)
+    return path.join(cwd, store.builds[store.build].dist)
 }
 
+const build = () => store.build
 
-/**
- * [description]
- * @return {String}
- * @throws {TypeError} If the requested key does not exist in `Store`
- */
-const build = () => {
-    if (store.build === null) { throw new Error('Missing keys [build] in [Store]') }
-    return store.build
-}
-
-/**
- * [description]
- * @return {String}
- */
 const env = () => store.env
 
-/**
- * [description]
- * @return {String}
- */
 const version = () => store.version
 
-// TODO: this should check that the theme exists in the `themes` dir
-const theme = () =>  store.config.theme
-// {
-    // const name = store.config.theme
-    // return {
-    //     name,
-    //     root: path.join(__dirname, '../../', 'themes'),
-    //     path: path.join(__dirname, '../../', 'themes', name),
-    // }
-// }
+const theme = () =>  store.theme
 
-/**
- * [description]
- * @return {Array}
- */
-const metadata = () => store.bber.metadata
+const metadata = () => store.metadata
 
 /**
  * [description]
@@ -318,13 +215,8 @@ const flattenSpineFromYAML = arr =>
 
 export {
     opsPath,
-    cjoin,
     fileId,
-    copy,
-    guid,
-    lpad,
     hrtimeformat,
-    hashIt,
     getImageOrientation,
     forOf,
     src,

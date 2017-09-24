@@ -19,19 +19,19 @@ import {
  * @class Initializer
  */
 class Initializer {
-    set src(val) { this._src = val }
-    set dist(val) { this._dist = val }
-    set cwd(val) { this._cwd = val }
-    set dirs(val) { this._dirs = val }
-    set files(val) { this._files = val }
-    set projectPath(val) { this._projectPath = val }
+    set src(val)            { this._src = val }
+    set dist(val)           { this._dist = val }
+    set cwd(val)            { this._cwd = val }
+    set dirs(val)           { this._dirs = val }
+    set files(val)          { this._files = val }
+    set projectPath(val)    { this._projectPath = val }
 
-    get src() { return this._src }
-    get dist() { return this._dist }
-    get cwd() { return this._cwd }
-    get dirs() { return this._dirs }
-    get files() { return this._files }
-    get projectPath() { return this._projectPath }
+    get src()               { return this._src }
+    get dist()              { return this._dist }
+    get cwd()               { return this._cwd }
+    get dirs()              { return this._dirs }
+    get files()             { return this._files }
+    get projectPath()       { return this._projectPath }
 
     /**
      * @constructor
@@ -65,15 +65,13 @@ class Initializer {
             gitignore(this.projectPath),
         ]
 
-        store.bber = {
-            ...store.bber,
-            src,
-            dist,
-            epub: { ...store.bber.epub, src, dist: `${dist}-epub` },
-            mobi: { ...store.bber.mobi, src, dist: `${dist}-mobi` },
-            pdf: { ...store.bber.pdf, src, dist: `${dist}-pdf` },
-            web: { ...store.bber.web, src, dist: `${dist}-web` },
-            sample: { ...store.bber.sample, src, dist: `${dist}-sample` },
+        store.builds = {
+            ...store.builds,
+            epub: { ...store.builds.epub, src, dist: `${dist}-epub` },
+            mobi: { ...store.builds.mobi, src, dist: `${dist}-mobi` },
+            pdf: { ...store.builds.pdf, src, dist: `${dist}-pdf` },
+            web: { ...store.builds.web, src, dist: `${dist}-web` },
+            sample: { ...store.builds.sample, src, dist: `${dist}-sample` },
         }
     }
 

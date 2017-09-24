@@ -44,7 +44,7 @@ class Opf {
             const { metadata, manifest } = manifestAndMetadataXML
             const { spine, guide } = navigationXML.strings
             const opfString = renderLayouts(new File({
-                path: './.tmp',
+                path: '.tmp',
                 layout: 'opfPackage',
                 contents: new Buffer([metadata, manifest, spine, guide].join('\n')),
             }), { opfPackage })

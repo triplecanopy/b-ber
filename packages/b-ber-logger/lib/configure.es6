@@ -10,16 +10,14 @@ export function configure() {
 
      */
 
+    let logLevel
+    logLevel = this.settings['log-level']
+    logLevel = this.settings.quiet ? 0 : logLevel
+    logLevel = this.settings.verbose ? 2 : logLevel
 
-    this.logLevel = this.settings['log-level']
-        ? this.settings['log-level']
-        : this.settings.verbose
-        ? 2
-        : this.settings.quiet
-        ? 0
-        : this.logLevel
-
+    this.logLevel = logLevel
 
     this.boringOutput = this.settings['no-color'] || this.boringOutput
+    this.summarize = this.settings.summarize || this.summarize
 
 }

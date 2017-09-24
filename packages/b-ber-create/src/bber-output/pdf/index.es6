@@ -51,8 +51,8 @@ const initialize = () => {
                     //last: 'Last Page'
                 },
             },
-            //zoomFactor: '1', // default is 1 
-            base: `file://${output}/OPS/Text/`,
+            //zoomFactor: '1', // default is 1
+            base: `file://${output}${path.sep}OPS${path.sep}Text${path.sep}`,
             timeout: 10000,
         },
     }
@@ -60,7 +60,7 @@ const initialize = () => {
 
 const parseHTML = files =>
     new Promise((resolve) => {
-        const dirname = path.join(output, 'OPS/text')
+        const dirname = path.join(output, 'OPS', 'text')
         const text = files.map((_, index, arr) => {
             let data
 

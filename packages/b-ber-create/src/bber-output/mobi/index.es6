@@ -19,7 +19,7 @@ const pageBreakBeforeXPATH = () => {
 const mobi = () =>
     new Promise(resolve =>
         zipper.create({
-            input: path.join(dist(), 'OPS/content.opf'),
+            input: path.join(dist(), 'OPS', 'content.opf'),
             output: process.cwd(),
             clean: true,
             flags: [
@@ -30,7 +30,6 @@ const mobi = () =>
                 '--chapter-mark=none',
                 '--disable-remove-fake-margins',
                 `--page-breaks-before='${pageBreakBeforeXPATH()}'`,
-                // '--page-breaks-before="/"',
             ],
         })
         .catch(err => log.error(err))

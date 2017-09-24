@@ -12,7 +12,6 @@ import { dist } from 'bber-utils'
  * @return {Promise<Object|Error>}
  */
 const epub = () => {
-    return Promise.resolve()
     if (process.env.NODE_ENV === 'debug') {
         return Promise.resolve()
     }

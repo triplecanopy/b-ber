@@ -20,7 +20,7 @@ const promises = []
 const writeMarkupToFile = (fname, markup) =>
     new Promise((resolve) => {
 
-        const outputPath = path.join(dist(), 'OPS/text', `${fname}.xhtml`)
+        const outputPath = path.join(dist(), 'OPS', 'text', `${fname}.xhtml`)
 
         return fs.writeFile(outputPath, markup, (err) => {
             if (err) { throw err }
@@ -37,14 +37,14 @@ const writeMarkupToFile = (fname, markup) =>
 const createPageLayout = (fileName, data) =>
     new Promise((resolve) => {
 
-        const textDir = path.join(`${dist()}/OPS/text/`)
+        const textDir = path.join(dist(), 'OPS', 'text')
         const head    = pageHead()
         const body    = MarkdownRenderer.render(fileName, data)
         const tail    = pageTail()
 
         let markup
         markup = renderLayouts(new File({
-            path: './.tmp',
+            path: '.tmp',
             layout: 'pageBody',
             contents: new Buffer(`${head}${body}${tail}`),
         }), { pageBody }).contents.toString()
@@ -72,7 +72,7 @@ const createXTHMLFile = (fpath) =>
     )
 
 function render() {
-    const mdDir = path.join(`${src()}/_markdown/`)
+    const mdDir = path.join(src(), '_markdown')
 
     return new Promise(resolve =>
 
@@ -101,7 +101,7 @@ function render() {
                 promises.push(createXTHMLFile(path.join(mdDir, file)))
 
                 Promise.all(promises)
-                .catch(err => log.error(err, 1))
+                .catch(err => log.error(err))
                 .then(resolve)
 
             })

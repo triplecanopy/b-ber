@@ -1,8 +1,6 @@
-/* eslint-disable max-len */
 import path from 'path'
 import fs from 'fs-extra'
-import { guid } from 'bber-utils'
-import store from 'bber-lib/store'
+import crypto from 'crypto'
 import * as figures from 'bber-templates/figures'
 import * as pages from 'bber-templates/pages'
 import * as opf from 'bber-templates/opf'
@@ -96,7 +94,7 @@ function metadata(src) {
     value: Triple Canopy
 -
     term: identifier
-    value: ${guid()}`,
+    value: ${crypto.randomBytes(20).toString('hex')}`,
     }
 }
 
@@ -195,7 +193,7 @@ function stylesheets(src) {
 
 function readme(src, cwd) {
     return {
-        relpath: `${path.dirname(src)}/README.md`,
+        relpath: `${path.dirname(src)}${path.sep}README.md`,
         content: `# ${path.basename(cwd)}
 
 Created with [b-ber](https://github.com/triplecanopy/b-ber-creator/)
@@ -205,7 +203,7 @@ Created with [b-ber](https://github.com/triplecanopy/b-ber-creator/)
 
 function gitignore(src) {
     return {
-        relpath: `${path.dirname(src)}/.gitignore`,
+        relpath: `${path.dirname(src)}${path.sep}.gitignore`,
         content: `.DS_Store
 .tmp
 
@@ -233,6 +231,23 @@ function coverSVG({ width, height, href }) {
 }
 
 
-export { containerXML, mimetype, scriptTag, stylesheetTag, pages, figures,
-    opf, jsonLDTag, sourceDirs, config, typeYaml, metadata, javascripts,
-    stylesheets, markdown, readme, gitignore, coverSVG }
+export {
+    containerXML,
+    mimetype,
+    scriptTag,
+    stylesheetTag,
+    pages,
+    figures,
+    opf,
+    jsonLDTag,
+    sourceDirs,
+    config,
+    typeYaml,
+    metadata,
+    javascripts,
+    stylesheets,
+    markdown,
+    readme,
+    gitignore,
+    coverSVG
+}

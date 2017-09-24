@@ -14,7 +14,7 @@ import File from 'vinyl'
 import rrdir from 'recursive-readdir'
 import log from 'b-ber-logger'
 import * as tmpl from 'bber-templates'
-import { cjoin, src, dist, version, metadata } from 'bber-utils'
+import { src, dist, version, metadata } from 'bber-utils'
 import store from 'bber-lib/store'
 import { pathInfoFromFiles } from './helpers'
 
@@ -59,7 +59,7 @@ class ManifestAndMetadata {
      */
     createManifestObjectFromAssets() {
         return new Promise(resolve =>
-            rrdir(`${this.dist}/OPS`, (err, filearr) => {
+            rrdir(`${this.dist}${path.sep}OPS`, (err, filearr) => {
                 if (err) { throw err }
                 // TODO: better testing here, make sure we're not including symlinks, for example
                 const files = [...store.remoteAssets, ...filearr.filter(_ => path.basename(_).charAt(0) !== '.')]
@@ -107,15 +107,15 @@ class ManifestAndMetadata {
         log.info('Building [metadata]')
         return new Promise((resolve) => {
             const _metadata = renderLayouts(new File({
-                path: './.tmp',
+                path: '.tmp',
                 layout: 'opfMetadata',
-                contents: new Buffer(resp.bookmeta.join('')),
+                contents: new Buffer(resp.bookmeta.join(''/*'\n'*/)),
             }), tmpl.opf).contents.toString()
 
             const manifest = renderLayouts(new File({
-                path: './.tmp',
+                path: '.tmp',
                 layout: 'opfManifest',
-                contents: new Buffer(cjoin(resp.manifest)),
+                contents: new Buffer(resp.manifest.filter(Boolean).join(''/*'\n'*/)),
             }), tmpl.opf).contents.toString()
 
             resolve({ metadata: _metadata, manifest })

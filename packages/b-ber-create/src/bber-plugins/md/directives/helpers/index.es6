@@ -1,6 +1,7 @@
 /* eslint-disable no-plusplus, max-statements-per-line, no-continue, no-multi-assign */
 import { forOf } from 'bber-utils'
 import log from 'b-ber-logger'
+import crypto from 'crypto'
 import {
     BLOCK_DIRECTIVES,
     INLINE_DIRECTIVES,
@@ -260,7 +261,7 @@ const attributes = (str, type, context) => _buildAttrString(attributesObject(str
  * @return {String}
  */
 const htmlId = s =>
-    `_${String(s).replace(/[^0-9a-zA-Z-_]/g, '_')}`//-${crypto.createHash('md5').update(s).digest('hex')}`
+    `_${crypto.randomBytes(20).toString('hex')}`
 
 
 export { attributes, attributesObject, attributesString, htmlId }

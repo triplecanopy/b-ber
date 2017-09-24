@@ -1,4 +1,3 @@
-/* eslint-disable class-methods-use-this, consistent-return */
 /**
  * @module create
  */
@@ -21,8 +20,8 @@ class Container {
     }
     get dirs() {
         return [
-            `${this.dist}/OPS`,
-            `${this.dist}/META-INF`,
+            `${this.dist}${path.sep}OPS`,
+            `${this.dist}${path.sep}META-INF`,
         ]
     }
 
@@ -37,14 +36,13 @@ class Container {
     write() {
         return new Promise((resolve) => {
             const files = [
-                { path: 'META-INF/container.xml', content: containerXML },
+                { path: `META-INF${path.sep}container.xml`, content: containerXML },
                 { path: 'mimetype', content: mimetype },
             ]
             return files.forEach((_, i) =>
                 fs.writeFile(path.join(this.dist, _.path), _.content, (err) => {
                     if (err) { throw err }
                     log.info('Wrote [%s]', _.path)
-                    // log.info(`bber-output/container: Wrote [${_.path}]`)
                     if (i === files.length - 1) {
                         resolve()
                     }
@@ -59,7 +57,6 @@ class Container {
                 fs.mkdirs(dir, (err) => {
                     if (err) { throw err }
                     log.info('Created directory [%s]', dir)
-                    // log.info(`bber-output/container: Created directory [${dir}]`)
                     if (index === this.dirs.length - 1) {
                         resolve()
                     }

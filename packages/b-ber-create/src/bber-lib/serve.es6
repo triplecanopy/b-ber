@@ -44,8 +44,7 @@ class Server {
                 throw new TypeError(`Cannot resolve path [${dir}]`)
             }
         } catch (err) {
-            log.error(err.message)
-            process.exit(1)
+            log.error(err)
         }
 
         this.dir = dir

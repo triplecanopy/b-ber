@@ -35,9 +35,7 @@ export default {
             if (match && match.length) {
                 const [, , id] = match
                 if (typeof id === 'undefined') {
-                    log.error(`
-                        Missing [id] attribute for [${exports.default.name}:start] directive
-                        ${context.filename}.md:${line}`)
+                    log.error(`Missing [id] attribute for [${exports.default.name}:start] directive ${context.filename}.md:${line}`)
                     return false
                 }
             }
@@ -73,7 +71,7 @@ export default {
                         // store.add('cursor', { id })
                         pullquoteIndices.push(id)
                     } else {
-                        log.error(`Duplicate [id] attribute [${id}]; [id]s must be unique ${context.filename}.md:${_line}`, 1)
+                        log.error(`Duplicate [id] attribute [${id}]; [id]s must be unique ${context.filename}.md:${_line}`)
                     }
 
                     // parse attrs as normal

@@ -7,6 +7,7 @@ import { attributesString, attributesObject } from 'bber-plugins/md/directives/h
 import { htmlComment, src, build } from 'bber-utils'
 import store from 'bber-lib/store'
 import log from 'b-ber-logger'
+import crypto from 'crypto'
 
 const markerRe = /^(video|audio)/
 const directiveRe = /(audio(?:-inline)?|video(?:-inline)?)(?::([^\s]+)(\s+.*)?)?$/
@@ -38,7 +39,7 @@ const validateLocalMediaSource = (asset, mediaType) => {
     const media = [...store[mediaType]].map(_ => toAlias(_))
     if (!asset.length || media.indexOf(asset) < 0) {
         const err = new Error(`bber-directives: Could not find [${mediaType}] matching [${asset}], make sure it's included in the [_media] directory`) // eslint-disable-line max-len
-        log.error(err, 1)
+        log.error(err)
     }
 
     return asset
@@ -94,7 +95,7 @@ export default {
 
             if (!source) {
                 err = new Error(`bber-directives: Directive [${type}] requires a [source] attribute, aborting`)
-                log.error(err, 1)
+                log.error(err)
             }
 
 
@@ -113,7 +114,7 @@ export default {
 
             if (!sources.length) {
                 err = new Error(`bber-directives: Could not find matching [${mediaType}] with the basename [${source}]`)
-                log.error(err, 1)
+                log.error(err)
             }
 
 
@@ -124,12 +125,12 @@ export default {
             }
 
 
-            const figureId = `_${String(Math.random()).slice(2)}`
+            const figureId = `_${crypto.randomBytes(20).toString('hex')}`
             const attrString = attributesString(attrsObject)
             const webOnlyAttrString = build() === 'web' ? 'webkit-playsinline="webkit-playsinline" playsinline="playsinline"' : ''
             const commentStart = htmlComment(`START: ${mediaType}:${type}#${figureId};`)
             const commentEnd = htmlComment(`END: ${mediaType}:${type}#${figureId};`)
-            const page = `figure_${figureId}.xhtml`
+            const page = `figure${figureId}.xhtml`
 
             switch (type) {
                 case 'audio':

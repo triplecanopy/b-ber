@@ -25,7 +25,7 @@ const omit = ['toc.xhtml']
  */
 const readSpine = () =>
     new Promise((resolve, reject) => {
-        const opf = path.join(dist(), 'OPS/content.opf')
+        const opf = path.join(dist(), 'OPS', 'content.opf')
         return fs.readFile(opf, 'utf8', (err1, data) => {
             if (err1) { reject(err1) }
             parseString(data, (err2, result) => {
@@ -46,7 +46,7 @@ const readSpine = () =>
  */
 const parseHTML = files =>
     new Promise((resolve) => {
-        const dir = path.join(dist(), 'OPS/text')
+        const dir = path.join(dist(), 'OPS', 'text')
         const text = files.map((_, index, arr) => {
             let data
             try {

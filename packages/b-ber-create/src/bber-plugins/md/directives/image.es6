@@ -8,6 +8,7 @@ import figTmpl from 'bber-templates/figures'
 import { getImageOrientation, src, htmlComment, build } from 'bber-utils'
 import { attributesObject, htmlId } from 'bber-plugins/md/directives/helpers'
 import mime from 'mime-types'
+import crypto from 'crypto'
 import {
     INLINE_DIRECTIVE_MARKER,
     INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
@@ -29,9 +30,7 @@ export default {
 
             const [, , id, source] = match
             if (typeof id === 'undefined' || typeof source === 'undefined') { // image requires `id` and `source`
-                log.error(`
-                    Missing [id] or [source] attribute for [figure] directive
-                    ${context.filename}.md:${line}`)
+                log.error(`Missing [id] or [source] attribute for [figure] directive${context.filename}.md:${line}`)
                 return false
             }
             return match
@@ -54,18 +53,18 @@ export default {
             // make sure image exists ...
             try {
                 if (!fs.existsSync(asset)) {
-                    throw new Error(`Image not found: [${asset}]`)
+                    throw new Error(`Image not found [${asset}]`)
                 }
             } catch (err) {
                 log.error(err.message)
-                result = htmlComment(`Image not found: ${asset}`)
+                result = htmlComment(`Image not found [${asset}]`)
                 return result
             }
 
             // then get the dimensions
             const dimensions = imageSize.sync(fs.readFileSync(asset))
             const { width, height } = dimensions
-            const figureId = `_${String(Math.random()).slice(2)}`
+            const figureId = `_${crypto.randomBytes(20).toString('hex')}`
 
             switch (type) {
                 case 'figure':
@@ -79,18 +78,16 @@ export default {
                     }
 
                     page = `figure${figureId}.xhtml`
-                    store.add('figures',
-                        {
-                            id: figureId,
-                            ...attrsObject,
-                            ...dimensions,
-                            page,
-                            ref,
-                            caption,
-                            pageOrder: store.figures.length,
-                            mime: mime.lookup(attrsObject.source),
-                        }
-                        )
+                    store.add('figures', {
+                        id: figureId,
+                        ...attrsObject,
+                        ...dimensions,
+                        page,
+                        ref,
+                        caption,
+                        pageOrder: store.figures.length,
+                        mime: mime.lookup(attrsObject.source),
+                    })
 
                     result = `${comment}<div class="${attrsObject.classes}">
                             <figure id="ref${figureId}">

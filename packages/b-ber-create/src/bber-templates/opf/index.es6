@@ -1,24 +1,17 @@
-/* eslint-disable operator-linebreak */
-
 import File from 'vinyl'
 import mime from 'mime-types'
 import Props from 'bber-lib/props'
 import store from 'bber-lib/store'
-import { fileId, guid, escapeHTML } from 'bber-utils'
+import { fileId, escapeHTML } from 'bber-utils'
 import log from 'b-ber-logger'
 import path from 'path'
+import crypto from 'crypto'
+
 
 const opfPackage = new File({
     path: 'opfPackage.tmpl',
     contents: new Buffer(`<?xml version="1.0" encoding="UTF-8"?>
-        <package
-            version="3.0"
-            xml:lang="en"
-            unique-identifier="uuid"
-            xmlns="http://www.idpf.org/2007/opf"
-            xmlns:dc="http://purl.org/dc/elements/1.1/"
-            xmlns:dcterms="http://purl.org/dc/terms/"
-            prefix="ibooks: http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0/">
+        <package version="3.0" xml:lang="en" unique-identifier="uuid" xmlns="http://www.idpf.org/2007/opf" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" prefix="ibooks: http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0/">
             {% body %}
         </package>`),
 })
@@ -73,14 +66,14 @@ const spineItems = arr =>
         if (fname.match(/figure/)) {
             log.info('Writing [LOI] to [spine]')
             if (store.loi.length) {
-                let loi = `\n<itemref idref="${fname}_xhtml" linear="${linear}"/>`
-                store.loi.forEach(figure => loi += `\n<itemref idref="${fileId(figure.fileName)}" linear="yes"/>`)
+                let loi = /*\n*/`<itemref idref="${fname}_xhtml" linear="${linear}"/>`
+                store.loi.forEach(figure => loi += /*\n*/`<itemref idref="${fileId(figure.fileName)}" linear="yes"/>`)
                 return loi
             }
         }
 
 
-        return `\n<itemref idref="${fname}_xhtml" linear="${linear}"/>`
+        return /*\n*/`<itemref idref="${fname}_xhtml" linear="${linear}"/>`
     }).join('')
 
 const guideItems = arr =>
@@ -91,7 +84,7 @@ const guideItems = arr =>
             log.info(`Adding landmark [${_.fileName}] as [${type}]`)
             const title = escapeHTML(_.title)
             const href = `${encodeURI(_.relativePath)}.xhtml`
-            item = `\n<reference type="${type}" title="${title}" href="${href}"/>`
+            item = /*\n*/`<reference type="${type}" title="${title}" href="${href}"/>`
         }
 
         return item
@@ -99,7 +92,7 @@ const guideItems = arr =>
 
 const metatag = (data) => {
     const { term, element } = Props.testMeta(data)
-    const itemid = element && data.term === 'identifier' ? 'uuid' : `_${guid()}`
+    const itemid = element && data.term === 'identifier' ? 'uuid' : `_${crypto.randomBytes(20).toString('hex')}`
     const res = []
     if (term) { res.push(`<meta property="dcterms:${data.term}">${data.value}</meta>`) }
     if (element) { res.push(`<dc:${data.term} id="${itemid}">${data.value}</dc:${data.term}>`) }

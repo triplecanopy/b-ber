@@ -18,13 +18,13 @@ const createLOILeader = () =>
 
         const filename = 'figures-titlepage'
         const markup = renderLayouts(new File({
-            path: './.tmp',
+            path: '.tmp',
             layout: 'page',
             contents: new Buffer(loiLeader()),
         }), { page }).contents.toString()
 
 
-        fs.writeFile(path.join(dist(), `/OPS/text/${filename}.xhtml`), markup, 'utf8', (err) => {
+        fs.writeFile(path.join(dist(), 'OPS', 'text', `${filename}.xhtml`), markup, 'utf8', (err) => {
             if (err) { throw err }
 
             store.add('guide', {
@@ -48,13 +48,13 @@ const createLOI = () =>
             // returns square | landscape | portrait | portraitLong
             const figureStr = figure(data, build())
             const markup = renderLayouts(new File({
-                path: './.tmp',
+                path: '.tmp',
                 layout: 'page',
                 contents: new Buffer(figureStr),
             }), { page }).contents.toString()
 
 
-            fs.writeFile(path.join(dist(), '/OPS/text', data.page), markup, 'utf8', (err) => {
+            fs.writeFile(path.join(dist(), 'OPS', 'text', data.page), markup, 'utf8', (err) => {
                 if (err) { throw err }
 
                 const fileData = {

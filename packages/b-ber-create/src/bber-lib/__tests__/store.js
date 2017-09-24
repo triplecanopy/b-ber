@@ -35,9 +35,9 @@ describe('Store', () => {
     })
     describe('#merge', () => {
         it('Should merge two objects', () => {
-            store.merge('bber', { foo: 1 })
-            store.merge('bber', { bar: 2 })
-            store.bber.should.include({ foo: 1, bar: 2 })
+            store.merge('builds', { foo: 1 })
+            store.merge('builds', { bar: 2 })
+            store.builds.should.include({ foo: 1, bar: 2 })
         })
     })
     describe('#update', () => {

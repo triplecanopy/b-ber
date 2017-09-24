@@ -32,6 +32,7 @@ class Logger extends Timer {
     static defaults = {
         logLevel     : 1,
         boringOutput : false,
+        summarize    : false,
         command      : null,
         consoleWidth : 70,
         errors       : [],
@@ -71,8 +72,9 @@ class Logger extends Timer {
         this.settings = {
             verbose     : false,
             quiet       : false,
-            'no-color'  : false,
-            'log-level' : 0,
+            summarize   : Logger.defaults.summarize,
+            'no-color'  : Logger.defaults.boringOutput,
+            'log-level' : Logger.defaults.logLevel,
         }
 
 

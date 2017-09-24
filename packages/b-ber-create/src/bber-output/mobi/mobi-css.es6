@@ -89,11 +89,11 @@ const parse = file =>
 
 const mobiCSS = () =>
     new Promise(resolve =>
-        fs.readdir(path.join(dist(), '/OPS/stylesheets'), (err, files) => {
+        fs.readdir(path.join(dist(), 'OPS', 'stylesheets'), (err, files) => {
             if (err) { throw err }
 
             const promises = files.map((_) => {
-                const file = path.join(dist(), '/OPS/stylesheets', _)
+                const file = path.join(dist(), 'OPS', 'stylesheets', _)
                 log.info(`Parsing [${path.basename(file)}]`)
                 return parse(file).then(write)
             })

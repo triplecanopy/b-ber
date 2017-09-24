@@ -5,6 +5,7 @@ import google from 'googleapis'
 import Dropbox from 'dropbox'
 import { remove } from 'lodash'
 import opn from 'opn'
+import crypto from 'crypto'
 
 import initializers from './initializers'
 import authServers from './auth-servers'
@@ -95,7 +96,7 @@ class Connect {
         })
     }
     addSocket(socket) {
-        const id = String(Math.random()).slice(2)
+        const id = crypto.randomBytes(20).toString('hex')
         this.socketIds.push(id)
         this.sockets.push({ id, socket })
     }

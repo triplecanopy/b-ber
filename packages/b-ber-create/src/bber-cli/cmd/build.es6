@@ -76,8 +76,8 @@ const handler = (argv) => {
 
         store.reload()
         store.update('build', next[0])
-        store.update('toc', store.bber[next[0]].tocEntries)
-        store.update('spine', store.bber[next[0]].spineEntries)
+        store.update('toc', store.builds[next[0]].tocEntries)
+        store.update('spine', store.builds[next[0]].spineEntries)
 
         if (next[0] === 'mobi') { next.unshift('mobiCSS') } // TODO: this should be called by `mobi` task
         return serialize([...sequence, ...next]).then(() => {

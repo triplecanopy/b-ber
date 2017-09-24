@@ -1,3 +1,5 @@
+import util from 'util'
+
 function printNavigationTree(store) {
     const _this = this
 
@@ -24,7 +26,7 @@ function printNavigationTree(store) {
 
 export function summary({ store, taskTimes, formattedStartDate, formattedEndDate, sequenceEnd }) {
 
-    if (this.logLevel === 0) { return }
+    if (this.logLevel < 2 && this.summarize !== true) { return }
 
     console.log('%s%s', this.indent(), '-'.repeat(this.consoleWidth))
     console.log()
@@ -62,20 +64,10 @@ export function summary({ store, taskTimes, formattedStartDate, formattedEndDate
 
     printNavigationTree.call(this, store)
     console.log()
-
     console.log('%s%s %s %s', this.indent(), 'Created', store.spine.length, 'XHTML file(s)')
     console.log('%s%s %s %s', this.indent(), 'Created', store.figures.length, 'figures(s)')
     console.log()
     console.log('%s%s %s', this.indent(), 'b-ber version', store.version)
     console.log()
-
-    if (!this.errors.length) {
-        console.log('%s%s', this.indent(), this.decorate('Build succeeded', 'green', 'underline'))
-        console.log()
-    } else {
-        console.log('%s%s', this.indent(), this.decorate('Build error', 'red', 'underline'))
-        console.log()
-    }
-
 
 }

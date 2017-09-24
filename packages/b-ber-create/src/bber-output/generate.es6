@@ -83,14 +83,14 @@ class Generate {
 
             try {
                 if (fs.existsSync(path.join(src(), '_markdown', fname))) {
-                    throw new Error(`bber-output/generate: _markdown/${fname} already exists, aborting`)
+                    throw new Error(`_markdown${path.sep}${fname} already exists, aborting`)
                 }
             } catch (err) {
-                log.error(err, 1)
+                log.error(err)
             }
 
             const file = new File({
-                path: './',
+                path: '',
                 contents: new Buffer(frontmatter),
             })
             resolve({ fname, file, metadata })
@@ -142,7 +142,7 @@ class Generate {
 
                 // TODO: this should add the new file to <type>.yml JSON object and
                 // then rewrite to disk
-                fs.appendFile(pages, `\n- ${path.basename(fname, '.md')}`, (err) => { // eslint-disable-line consistent-return
+                fs.appendFile(pages, `\n- ${path.basename(fname, '.md')}`, (err) => {
                     if (err) { throw err }
                     if (!buildTypes.length) {
                         resolve({ title: fname })

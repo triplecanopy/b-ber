@@ -7,16 +7,15 @@ import mime from 'mime-types'
 import themes from 'b-ber-themes'
 import log from 'b-ber-logger'
 import yargs from 'yargs'
+import crypto from 'crypto'
 import {
     createPageModelsFromYAML,
     flattenNestedEntries,
 } from 'bber-lib/helpers'
 
-// import util from 'util'
-
 const cwd = process.cwd()
 
-const BBER_MODULE_PATH = path.join(__dirname, '../../')
+const BBER_MODULE_PATH = path.dirname(path.dirname(__dirname))
 const BBER_PACKAGE_JSON = require(path.join(BBER_MODULE_PATH, 'package.json')) // eslint-disable-line import/no-dynamic-require
 
 /**
@@ -30,7 +29,7 @@ class Store {
     set audio(value)        { this._audio = value         }
     set footnotes(value)    { this._footnotes = value     }
     set build(value)        { this._build = value         }
-    set bber(value)         { this._bber = value          }
+    set builds(value)       { this._builds = value        }
     set cursor(value)       { this._cursor = value        } // used for tracking nested sections open/close ids
     set config(value)       { this._config = value        }
     set metadata(value)     { this._metadata = value      }
@@ -40,7 +39,8 @@ class Store {
     set remoteAssets(value) { this._remoteAssets = value  }
     set loi(value)          { this._loi = value           }
     set theme(value)        { this._theme = value         }
-    set sequence(value)        { this._sequence = value         }
+    set sequence(value)     { this._sequence = value      }
+    set hash(value)         { this._hash = value          } // build hash used for bundled scripts, stylessheets, etc
 
     get env()               { return this._env            }
     get guide()             { return this._guide          }
@@ -49,7 +49,7 @@ class Store {
     get audio()             { return this._audio          }
     get footnotes()         { return this._footnotes      }
     get build()             { return this._build          }
-    get bber()              { return this._bber           }
+    get builds()            { return this._builds         }
     get cursor()            { return this._cursor         }
     get config()            { return this._config         }
     get metadata()          { return this._metadata       }
@@ -59,7 +59,8 @@ class Store {
     get remoteAssets()      { return this._remoteAssets   }
     get loi()               { return this._loi            }
     get theme()             { return this._theme          }
-    get sequence()             { return this._sequence          }
+    get sequence()          { return this._sequence       }
+    get hash()              { return this._hash           }
 
     /**
      * @constructor
@@ -100,8 +101,8 @@ class Store {
         try {
             if (fs.existsSync(yamlPath)) {
                 spineList = Yaml.load(yamlPath) || []
-                tocEntries = createPageModelsFromYAML(spineList, src) // for book flow
-                spineEntries = flattenNestedEntries(tocEntries) // for nested navigation
+                tocEntries = createPageModelsFromYAML(spineList, src) // nested navigation
+                spineEntries = flattenNestedEntries(tocEntries) // one-dimensional page flow
             } else {
                 throw new Error(`[${type}.yml] not found. Creating default file.`)
             }
@@ -229,7 +230,7 @@ class Store {
         this.audio        = []
         this.footnotes    = []
         this.build        = 'epub'
-        this.bber         = {}
+        this.builds       = {}
         this.cursor       = []
         this.metadata     = []
         this.spine        = []
@@ -237,20 +238,20 @@ class Store {
         this.remoteAssets = []
         this.loi          = []
         this.theme        = {}
-        this.sequence        = []
+        this.sequence     = []
+        this.hash         = crypto.randomBytes(20).toString('hex')
         this.env          = process.env.NODE_ENV || 'development'
         this.config       = {
             src: '_project',
             dist: 'project',
             theme: 'b-ber-theme-serif',
-            // reader: 'https://codeload.github.com/triplecanopy/b-ber-boiler/zip/master',
         }
 
         this.loadSettings()
         this.loadMetadata()
         this.loadTheme()
         this.loadAudioVideo()
-        this.loadBber()
+        this.loadBuilds()
     }
 
     reload() {
@@ -262,7 +263,8 @@ class Store {
         this.toc          = []
         this.remoteAssets = []
         this.loi          = []
-        // this.sequence        = [] // should this be reset?
+        this.sequence     = []
+        this.hash         = crypto.randomBytes(20).toString('hex')
     }
 
     reset() {
@@ -274,7 +276,7 @@ class Store {
         this.version = version
 
         if (fs.existsSync(path.join(cwd, 'config.yml'))) {
-            this.config = { ...this.config, ...Yaml.load(path.join(cwd, './config.yml')) }
+            this.config = { ...this.config, ...Yaml.load(path.join(cwd, 'config.yml')) }
         }
     }
 
@@ -296,7 +298,7 @@ class Store {
             if (!{}.hasOwnProperty.call(this.config, 'themes_directory')) {
                 if (!yargs.argv._[0] || yargs.argv._[0] !== 'theme') {
                     // user is trying to run a command without defining a theme, so bail
-                    log.error('b-ber-lib/store: There was an error loading the theme, make sure you\'ve added a [themes_directory] to the [config.yml] if you\'re using a custom theme.', 1)
+                    log.error('There was an error loading the theme, make sure you\'ve added a [themes_directory] to the [config.yml] if you\'re using a custom theme.')
                 } else {
                     // user is trying to run a `theme` command, either to set
                     // or list the available themes.  we don't need the
@@ -324,7 +326,7 @@ class Store {
                 const userTheme = find(userThemes, { name: this.config.theme })
 
                 if (!userTheme) {
-                    log.error(`bber-lib/store: Could not find theme [${this.config.theme}]`, 1)
+                    log.error(`Could not find theme [${this.config.theme}]`)
                 }
 
                 // exists! set it
@@ -333,7 +335,7 @@ class Store {
                 return
 
             } catch (err) {
-                log.error(themeError, 1)
+                log.error(themeError)
             }
 
         }
@@ -356,9 +358,8 @@ class Store {
         }
     }
 
-    loadBber() {
-        this.bber = {
-            metadata  : this.metadata,
+    loadBuilds() {
+        this.builds = {
             sample    : this._fileOrDefaults('sample'),
             epub      : this._fileOrDefaults('epub'),
             mobi      : this._fileOrDefaults('mobi'),

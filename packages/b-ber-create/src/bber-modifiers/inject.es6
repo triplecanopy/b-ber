@@ -15,12 +15,12 @@ import mime from 'mime-types'
 import { minify } from 'html-minifier'
 
 
-const minificationOptions = {
+const htmlMinifyOptions = store.config.html_minify_options || {
     collapseWhitespace: true,
     collapseInlineTagWhitespace: true,
     html5: true,
     keepClosingSlash: true,
-    removeAttributeQuotes: true,
+    removeAttributeQuotes: false,
     removeComments: true,
     removeEmptyAttributes: true,
     removeScriptTypeAttributes: true,
@@ -82,7 +82,7 @@ const getJSONLDMetadata = args =>
 
         javascripts.forEach((_) => {
             resources.push({
-                href: `${prefix}/OPS/javascripts/${_}`,
+                href: `${prefix}${path.sep}OPS${path.sep}javascripts${path.sep}${_}`,
                 type: 'application/javascript',
             })
         })
@@ -154,7 +154,7 @@ const getJSONLDMetadata = args =>
  */
 const getContents = source =>
     new Promise(resolve =>
-        fs.readFile(path.join(dist(), 'OPS/text', source), (err, data) => {
+        fs.readFile(path.join(dist(), 'OPS', 'text', source), (err, data) => {
             if (err) { throw err }
             resolve(new File({ contents: new Buffer(data) }))
         })
@@ -176,9 +176,9 @@ const templateify = files =>
         }
         switch (fileType) {
             case '.js':
-                return scriptTag.replace(/\{% body %\}/, `../javascripts/${file}`)
+                return scriptTag.replace(/\{% body %\}/, `..${path.sep}javascripts${path.sep}${file}`)
             case '.css':
-                return stylesheetTag.replace(/\{% body %\}/, `../stylesheets/${file}`)
+                return stylesheetTag.replace(/\{% body %\}/, `..${path.sep}stylesheets${path.sep}${file}`)
             case '.json-ld':
                 return jsonLDTag.replace(/\{% body %\}/, String(file.contents))
             default:
@@ -271,9 +271,9 @@ const mapSources = (args) => {
             .then(file => promiseToReplace('metadata', metadata, source, file))
             .then((file) => {
                 const contents = env() === 'production'
-                    ? minify(file.contents.toString('utf8'), minificationOptions)
+                    ? minify(file.contents.toString('utf8'), htmlMinifyOptions)
                     : file.contents.toString('utf8')
-                write(path.join(dist(), 'OPS/text', source), contents)
+                write(path.join(dist(), 'OPS', 'text', source), contents)
             })
             .catch(err => log.error(err))
             .then(() => {
@@ -288,9 +288,9 @@ const mapSources = (args) => {
 const inject = () =>
     new Promise((resolve) => {
         Promise.all([
-            getDirContents(`${dist()}/OPS/text/`),
-            getDirContents(`${dist()}/OPS/stylesheets/`),
-            getDirContents(`${dist()}/OPS/javascripts/`),
+            getDirContents(path.join(dist(), 'OPS', 'text')),
+            getDirContents(path.join(dist(), 'OPS', 'stylesheets')),
+            getDirContents(path.join(dist(), 'OPS', 'javascripts')),
         ])
         .then(getJSONLDMetadata)
         .then(mapSources)

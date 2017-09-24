@@ -47,7 +47,7 @@ const renderer = ({ context = {}, render, markerOpen, markerClose }) => ({
 
             if (isOpening && inStore) {
                 // it's a duplicate `id`, throw
-                log.error(`Duplicate [id] attribute [${id}]; [id]s must be unique at [${location}]`, 1)
+                log.error(`Duplicate [id] attribute [${id}]; [id]s must be unique at [${location}]`)
             } else if (isClosing && !inStore) {
                 // trying to close an un-opened directive, but it might belong to a
                 // different directive type. regardless, we return the match

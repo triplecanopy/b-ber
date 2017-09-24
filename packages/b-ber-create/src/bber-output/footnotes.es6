@@ -1,5 +1,3 @@
-/* eslint-disable class-methods-use-this */
-
 /**
  * @module footnotes
  */
@@ -34,7 +32,7 @@ class Footnotes {
     get file() {
         return {
             name: this.fileName,
-            path: path.join(this.dist, `/OPS/text/${this.fileName}.xhtml`),
+            path: path.join(this.dist, 'OPS', 'text', `${this.fileName}.xhtml`),
         }
     }
 
@@ -49,7 +47,7 @@ class Footnotes {
         return new Promise((resolve) => {
             const notes = this.footnotes.reduce((acc, cur) => acc.concat(cur.notes), '')
             const markup = renderLayouts(new File({
-                path: './.tmp',
+                path: '.tmp',
                 layout: 'page',
                 contents: new Buffer(notes),
             }), { page }).contents.toString()
@@ -83,10 +81,7 @@ class Footnotes {
 
         try {
             if (!fs.existsSync(input)) {
-                throw new Error(`bber-output/footnotes:
-                    Cannot resolve input path: [${input}].
-                    Run [bber init] to start a new project`
-                )
+                throw new Error(`Cannot resolve input path: [${input}]. Run [bber init] to start a new project`)
             }
         } catch (err) {
             log.error(err)
