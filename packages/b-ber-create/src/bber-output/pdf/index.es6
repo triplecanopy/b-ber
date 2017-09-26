@@ -29,14 +29,14 @@ const initialize = () => {
     settings = {
         fname: `${new Date().toISOString().replace(/:/g, '-')}.pdf`,
         options: {
-            height: '198mm',
-            width: '130mm',
+            height: '279mm', //8.5"
+            width: '215.9mm', //11"
             orientation: 'portrait',
             border: {
-                left: '7mm',
-                top: '7mm',
-                bottom: '10mm',
-                right: '7mm',
+                left: '14mm',
+                top: '14mm',
+                bottom: '20mm',
+                right: '14mm',
             },
             header: {
                 height: '14mm',
@@ -44,8 +44,14 @@ const initialize = () => {
             },
             footer: {
                 height: '5mm',
-                default: '<span>{{page}}</span>/<span>{{pages}}</span>',
+                contents: {
+                    //first: 'Cover page',
+                    //2: 'Second page',
+                    default: '<div style="font-family:Helvetica; font-size:12px; color: lightgrey;"><span>{{page}}</span>/<span>{{pages}}</span></div>',
+                    //last: 'Last Page'
+                },
             },
+            //zoomFactor: '1', // default is 1 
             base: `file://${output}/OPS/Text/`,
             timeout: 10000,
         },
