@@ -69,13 +69,13 @@ class Timer extends EventEmitter {
     }
 
 
-    done() {
+    done({ store }) {
 
         const { taskTimes, formattedStartDate } = this
         const formattedEndDate = new Date().toLocaleDateString('en-CA', Timer.dateFormattingOptions)
         const sequenceEnd = this.hrtimeformat(process.hrtime(this.sequenceBegin))
 
-        this.emit('done', { taskTimes, formattedStartDate, formattedEndDate, sequenceEnd })
+        this.emit('done', { store, taskTimes, formattedStartDate, formattedEndDate, sequenceEnd })
 
     }
 }

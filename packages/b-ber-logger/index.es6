@@ -1,7 +1,4 @@
-import store from 'bber-lib/store'
 import Timer from './lib/timer'
-
-
 import { printWarnings, printErrors } from './lib/printer'
 import {
     indent,
@@ -145,7 +142,7 @@ class Logger extends Timer {
     }
 
     printSummary(data) {
-        this.summary({ store, ...data })
+        this.summary({ ...data })
     }
 
 }

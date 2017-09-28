@@ -5,6 +5,7 @@
 import Promise from 'zousan'
 import log from 'b-ber-logger'
 import * as tasks from 'bber-output'
+import store from 'bber-lib/store'
 
 const serialize = (sequence) => {
     return sequence.reduce((acc, task) => {
@@ -19,7 +20,7 @@ const serialize = (sequence) => {
             await func(resp).then(() => log.notify('stop', task))
         })
     }, Promise.resolve())
-    .then(() => log.notify('done'))
+    .then(() => log.notify('done', { store }))
 }
 
 export { serialize }
