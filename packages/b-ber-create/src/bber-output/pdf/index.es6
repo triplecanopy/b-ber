@@ -9,6 +9,7 @@ import fs from 'fs-extra'
 import Yaml from 'bber-lib/yaml'
 import html2pdf from 'html-pdf'
 import Printer from 'bber-modifiers/printer'
+import Store from 'bber-modifiers/store'
 import log from 'b-ber-logger'
 import { src, dist, build } from 'bber-utils'
 import { isPlainObject } from 'lodash'
@@ -110,8 +111,7 @@ const print = content =>
 const pdf = () =>
     new Promise(async (resolve) => {
         await initialize()
-        const manifest = Yaml.load(path.join(input, `${buildType}.yml`))
-
+        const manifest = Store._spine.map((n) => n.fileName); 
         parseHTML(manifest)
         // TODO: pass `writeOutput` flag to determine if the task also outputs
         // XHTML version
