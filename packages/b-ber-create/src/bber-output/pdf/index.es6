@@ -7,7 +7,7 @@ import Promise from 'zousan'
 import path from 'path'
 import fs from 'fs-extra'
 import Yaml from 'bber-lib/yaml'
-import Store from 'bber-lib/store'
+import store from 'bber-lib/store'
 import html2pdf from 'html-pdf'
 import Printer from 'bber-modifiers/printer'
 import log from 'b-ber-logger'
@@ -18,14 +18,14 @@ const writeOutput = false
 
 let input
 let output
-let buildType
+//let buildType
 let printer
 let settings
 
 const initialize = () => {
     input = src()
     output = dist()
-    buildType = build()
+    //buildType = build()
     printer = new Printer(output)
     settings = {
         fname: `${new Date().toISOString().replace(/:/g, '-')}.pdf`,
@@ -38,9 +38,13 @@ const initialize = () => {
                 top: '14mm',
                 bottom: '20mm',
                 right: '14mm',
+                left: '7mm',
+                top: '7mm',
+                bottom: '10mm',
+                right: '7mm',
             },
             header: {
-                height: '14mm',
+                height: 'mm',
                 contents: '<div style="text-align: center; font-family:Helvetica; font-size:12px; color: lightgrey;">Made with bber</div>', // eslint-disable-line max-len
             },
             footer: {
@@ -52,7 +56,6 @@ const initialize = () => {
                     //last: 'Last Page'
                 },
             },
-            //zoomFactor: '1', // default is 1
             base: `file://${output}${path.sep}OPS${path.sep}Text${path.sep}`,
             timeout: 10000,
         },
@@ -111,7 +114,9 @@ const print = content =>
 const pdf = () =>
     new Promise(async (resolve) => {
         await initialize()
-        const manifest = Store._spine.map((n) => n.fileName); 
+        
+        Object.defineProperty(store, 'spine', { get: function() {return this._spine;} });
+        const manifest = store.spine.map((n) => n.fileName);
         parseHTML(manifest)
         // TODO: pass `writeOutput` flag to determine if the task also outputs
         // XHTML version
