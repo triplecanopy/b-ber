@@ -110,11 +110,17 @@ p {
         @include type-settings(-2);
     }
 
-    section.backmatter & {
+    section.backmatter &,
+    section.colophon &,
+    section.afterword &,
+    section.seriespage &,
+    section.credits &,
+    section.contributors &,
+    section.appendix & {
         text-indent: 0 !important;
         @include following-paragraph-not-indented;
-        @include type-settings(-1);
-        @include padding(0, 0, 1, 0, -1);
+        @include type-settings(-2);
+        @include padding(0, 0, 1, 0, -2);
     }
 
     section.preface &,
@@ -143,16 +149,6 @@ p {
                 vertical-align: baseline;
             }
         }
-    }
-
-    section.colophon &,
-    section.afterword &,
-    section.seriespage &,
-    section.credits &,
-    section.contributors &,
-    section.appendix & {
-        @include type-settings(-2);
-        padding-bottom: one-line(-2);
     }
 
     section.colophon &,
