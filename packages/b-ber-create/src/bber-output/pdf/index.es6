@@ -6,26 +6,21 @@
 import Promise from 'zousan'
 import path from 'path'
 import fs from 'fs-extra'
-import Yaml from 'bber-lib/yaml'
 import store from 'bber-lib/store'
 import html2pdf from 'html-pdf'
 import Printer from 'bber-modifiers/printer'
 import log from 'b-ber-logger'
-import { src, dist, build } from 'bber-utils'
+import { src, dist } from 'bber-utils'
 import { isPlainObject } from 'lodash'
 
 const writeOutput = false
 
-let input
 let output
-//let buildType
 let printer
 let settings
 
 const initialize = () => {
-    input = src()
     output = dist()
-    //buildType = build()
     printer = new Printer(output)
     settings = {
         fname: `${new Date().toISOString().replace(/:/g, '-')}.pdf`,
@@ -38,17 +33,13 @@ const initialize = () => {
                 top: '14mm',
                 bottom: '20mm',
                 right: '14mm',
-                left: '7mm',
-                top: '7mm',
-                bottom: '10mm',
-                right: '7mm',
             },
             header: {
-                height: 'mm',
+                height: '7mm',
                 contents: '<div style="text-align: center; font-family:Helvetica; font-size:12px; color: lightgrey;">Made with bber</div>', // eslint-disable-line max-len
             },
             footer: {
-                height: '5mm',
+                height: '7mm',
                 contents: {
                     //first: 'Cover page',
                     //2: 'Second page',
@@ -110,14 +101,12 @@ const print = content =>
         })
     })
 
-
 const pdf = () =>
     new Promise(async (resolve) => {
         await initialize()
-        
-        Object.defineProperty(store, 'spine', { get: function() {return this._spine;} });
-        const manifest = store.spine.map((n) => n.fileName);
+        const manifest = store.spine.map((n) => n.fileName)
         parseHTML(manifest)
+        
         // TODO: pass `writeOutput` flag to determine if the task also outputs
         // XHTML version
         .then(content => write(content))
@@ -125,5 +114,5 @@ const pdf = () =>
         .catch(err => log.error(err))
         .then(resolve)
     })
-
+    
 export default pdf
