@@ -116,8 +116,10 @@ class MarkdownRenderer {
                 mdFootnote,
                 (tokens) => {
                     const fileName = this.filename
+
+                    // TODO: add footnotes to spine if not already added
                     const entry = find(store.spine, { fileName })
-                    const title = entry.title || entry.filename
+                    const title = entry && entry.title ? entry.title : fileName
 
                     // add footnote container and heading. we're doing this here instead
                     // of in `footnotes.js` because we need some file info (just the title :/)
