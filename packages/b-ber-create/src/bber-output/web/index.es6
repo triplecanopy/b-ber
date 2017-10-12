@@ -104,14 +104,14 @@ function createNavigationElement() {
         const title = getProjectTitle()
 
         const navElement = `
-            <nav id="toc" role="navigation">
+            <nav class="publication__toc" role="navigation">
                 ${tocHTML}
             </nav>
         `
 
         const headerElement = `
-            <header role="navigation">
-                <div class="header__item">
+            <header class="publication__header" role="navigation">
+                <div class="header__item header__item__toggle">
                     <button>Navigation</button>
                 </div>
                 <div class="header__item">
@@ -136,7 +136,7 @@ function buttonPrev(filePath) {
 
     if (index > -1 && store.spine[prevIndex]) {
         const href = `${store.spine[prevIndex].fileName}.xhtml`
-        html = `<a href="${href}">←</a>`
+        html = `<a class="publication__nav__prev" href="${href}"></a>`
     }
 
     return html
@@ -150,7 +150,7 @@ function buttonNext(filePath) {
 
     if (index > -1 && store.spine[nextIndex]) {
         const href = `${store.spine[nextIndex].fileName}.xhtml`
-        html = `<a href="${href}">→</a>`
+        html = `<a class="publication__nav__next" href="${href}"></a>`
     }
 
     return html
@@ -161,19 +161,56 @@ function paginate(filePath) {
         next: buttonNext(filePath),
     }
 }
+function paginationNavigation(filePath) {
+    const { prev, next } = paginate(filePath)
+    return `
+        <nav class="publication__nav" role="navigation">
+            ${prev}
+            ${next}
+        </nav>
+    `
+}
 
 function injectNavigationIntoFile(filePath, elements) {
     return new Promise(resolve => {
         const { navElement, headerElement } = elements
-        const { prev, next } = paginate(filePath)
-
+        const pageNavigation = paginationNavigation(filePath)
 
         log.info(`Adding pagination to ${path.basename(filePath)}`)
         fs.readFile(filePath, 'utf8', (err, data) => {
             if (err) { throw err }
 
-            const navigation = headerElement + navElement + prev + next
-            const contents = data.replace(/(<body[^>]*?>)/, `$1${navigation}`)
+            // prepare to modify publication content
+            let contents
+
+            // prepend the dynamically generated elements to body, adding a
+            // wrapper around the main publication content. this allows us to
+            // create a sliding nav, fixed header, etc.
+            //
+            // TODO: eventually classlist should be parsed, or a more robust
+            // solution implemented
+            contents = data.replace(/(<body[^>]*?>)/, `
+                $1
+                ${navElement}
+                <div class="publication">
+                ${headerElement}
+                ${pageNavigation}
+            `)
+
+            // close the wrapper element, adding a little javascript for the
+            // navigation toggle. should be moved to core when stable
+            contents = contents.replace(/(<\/body>)/, `
+                </div>
+                <script>
+                function registerNavEvents() {
+                    document.querySelector('.header__item__toggle button').addEventListener('click', function() {
+                        document.body.classList.toggle('nav--closed')
+                    }, false);
+                }
+                window.addEventListener('load', registerNavEvents, false);
+                </script>
+                $1
+                `)
 
             fs.writeFile(filePath, contents, err => {
                 if (err) { throw err }
@@ -223,15 +260,17 @@ function createIndexHTML({ navElement, headerElement }) {
         const indexHTML = `
             <!DOCTYPE html>
             <html>
+                <meta http-equiv="default-style" content="text/html charset=utf-8"/>
+                <link rel="stylesheet" type="text/css" href="../stylesheets/application.css"/>
                 <head>
                     <title>${title}</title>
                 </head>
                 <body>
-                    ${headerElement}
                     ${navElement}
-                    <main>
+                    <div class="publication">
+                        ${headerElement}
                         ${metadataHTML}
-                    </main>
+                    </div>
                 </body>
             </html>
         `

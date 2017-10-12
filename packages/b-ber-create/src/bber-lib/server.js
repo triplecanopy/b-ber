@@ -1,7 +1,6 @@
 const express = require('express')
 const esindex = require('serve-index')
 const path = require('path')
-// const log = require('../bber-plugins').log
 
 const parseArgs = (args) => {
     const _argv = args.slice(2)

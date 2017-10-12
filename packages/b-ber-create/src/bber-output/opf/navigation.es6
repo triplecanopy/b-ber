@@ -170,9 +170,6 @@ class Navigation {
                         remove(spine, { fileName: item })
                         store.update('spine', spine)
 
-                        const _guideIndex = guide.indexOf(item)
-                        guide.splice(_guideIndex, 1)
-
                         const _flowIndex = flow.indexOf(item)
                         flow.splice(_flowIndex, 1)
 

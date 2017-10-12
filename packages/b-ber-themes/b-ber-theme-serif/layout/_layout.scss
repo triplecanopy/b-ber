@@ -7,6 +7,7 @@
 @import 'base/list';
 @import 'base/table';
 @import 'base/text';
+@import 'base/web'; // conditional styles
 
 
 .break-before   { page-break-before: always!important; }
