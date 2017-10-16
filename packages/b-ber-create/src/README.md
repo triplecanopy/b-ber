@@ -157,9 +157,3 @@ import utils from 'bber-utils'
 ```
 
 See aliases in the [.babelrc](https://github.com/triplecanopy/b-ber-creator/blob/master/.babelrc) under `module-resolver`.
-
-### ...
-
-## Obligatory Cat
-
-!['Obligacat'](https://s-media-cache-ak0.pinimg.com/736x/d1/54/76/d15476f7949d1697f3ed453b19a70ef0.jpg)
