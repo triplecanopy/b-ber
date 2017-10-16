@@ -1,0 +1,33 @@
+-
+    term: title
+    value: Sample Project
+    term_property: title-type
+    term_property_value: main
+-
+    term: creator
+    value: Author Name
+    term_property: role
+    term_property_value: aut
+-
+    term: contributor
+    value: bber
+    term_property: role
+    term_property_value: ctb
+-
+    term: language
+    value: en-US
+-
+    term: rights
+    value: Author Name © 2017
+-
+    term: format
+    value: epub+zip
+-
+    term: date
+    value: 2017-01-01
+-
+    term: publisher
+    value: Triple Canopy
+-
+    term: identifier
+    value: 64b5e4cfd52039dc9e2b9ed53e15a16195404f78

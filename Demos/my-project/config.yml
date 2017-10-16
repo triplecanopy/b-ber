@@ -1,0 +1,4 @@
+env: development # development | production
+theme: b-ber-theme-serif # name or path
+src: _project
+dist: project
