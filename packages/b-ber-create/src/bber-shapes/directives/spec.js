@@ -387,7 +387,7 @@ const DIRECTIVE_SPEC = {
     dialogue        : Object.assign({}, dialogueDirective),
     // footnotes       : Object.assign({}, footnotesDirective),
     figure          : Object.assign({}, figureDirective),
-    'inline-figure' : Object.assign({}, figureInlineDirective),
+    'figure-inline' : Object.assign({}, figureInlineDirective),
     audio           : Object.assign({}, audioDirective),
     'audio-inline'  : Object.assign({}, audioInlineDirective),
     video           : Object.assign({}, videoDirective),

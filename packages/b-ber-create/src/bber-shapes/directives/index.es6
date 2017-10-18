@@ -42,7 +42,7 @@ const BACKMATTER_DIRECTIVES = [
 // inline
 const INLINE_DIRECTIVES = [
     'figure',
-    'inline-figure',
+    'figure-inline',
     'logo',
     'video',
     'audio',
@@ -137,7 +137,7 @@ const SUPPORTED_ATTRIBUTES = [
 
 const DIRECTIVES_REQUIRING_ALT_TAG = [
     'figure',
-    'inline-figure',
+    'figure-inline',
     'logo',
 ]
 

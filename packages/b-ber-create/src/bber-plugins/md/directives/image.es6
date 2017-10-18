@@ -14,7 +14,7 @@ import {
     INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
 } from 'bber-shapes/directives'
 
-const imageOpenRegExp = /((?:inline-)?figure)(?::([^\s]+)(\s?.*)?)?$/
+const imageOpenRegExp = /(figure(?:-inline)?)(?::([^\s]+)(\s?.*)?)?$/
 
 export default {
     plugin: figure,
@@ -97,7 +97,7 @@ export default {
                             </figure>
                         </div>`
                     break
-                case 'inline-figure':
+                case 'figure-inline':
                     imageData = {
                         ...attrsObject,
                         id: figureId,
