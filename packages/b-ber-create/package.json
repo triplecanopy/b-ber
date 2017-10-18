@@ -35,7 +35,7 @@
     "decompress": "^4.0.0",
     "epub-zipper": "^1.2.9",
     "express": "^4.14.0",
-    "fs-extra": "^0.30.0",
+    "fs-extra": "^4.0.2",
     "html-minifier": "^3.5.3",
     "html-pdf": "^2.1.0",
     "htmlparser2": "^3.9.2",

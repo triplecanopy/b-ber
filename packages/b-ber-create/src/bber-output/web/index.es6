@@ -46,27 +46,30 @@ function initialize() {
 
 
 function moveAssetsToRootDirctory() {
+    const promises = []
     return new Promise(resolve => {
         const assets = fs.readdirSync(OPS_PATH)
 
+        // console.log(assets)
+        // process.exit()
         assets.forEach((_, i) => {
 
             const to = path.join(DIST_PATH, _)
             const frm = path.join(OPS_PATH, _)
 
-            fs.move(frm, to, (err) => {
-                if (err) { throw err }
-                log.info(`Moving [%s]`, _)
-                if (i === assets.length - 1) {
+            log.info(`Moving [%s]`, _)
+            promises.push(fs.move(frm, to))
 
-                    // remove the OPS dir once all the moving assets have been moved
-                    fs.remove(OPS_PATH, err => {
-                        if (err) { throw err }
-                        resolve()
-                    })
-                }
+        })
+
+        Promise.all(promises).then(() => {
+            // remove the OPS dir once all the moving assets have been moved
+            fs.remove(OPS_PATH, err => {
+                if (err) { throw err }
+                resolve()
             })
         })
+
     })
 }
 function unlinkRedundantAssets() {

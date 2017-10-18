@@ -126,7 +126,7 @@ const copyThemeAssets = () =>
 
                             fs.copy(input, output, {
                                 overwrite: false,
-                                errorOnExist: true,
+                                errorOnExist: false,
                             }, (err2) => {
                                 if (err2) { throw err2 }
                                 if (i === files.length - 1) {
