@@ -127,7 +127,7 @@ export default {
 
             const figureId = `_${crypto.randomBytes(20).toString('hex')}`
             const attrString = attributesString(attrsObject)
-            const webOnlyAttrString = build() === 'web' ? 'webkit-playsinline="webkit-playsinline" playsinline="playsinline"' : ''
+            const webOnlyAttrString = build() === 'web' ? ' webkit-playsinline="webkit-playsinline" playsinline="playsinline"' : ''
             const commentStart = htmlComment(`START: ${mediaType}:${type}#${figureId};`)
             const commentEnd = htmlComment(`END: ${mediaType}:${type}#${figureId};`)
             const page = `figure${figureId}.xhtml`
