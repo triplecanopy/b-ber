@@ -86,7 +86,7 @@ const epub = {
                         <div class="figcaption" style="max-width: 100%;">
                             <p class="small">
                                 ${data.caption ? `${data.caption}<br/>` : ''}
-                                <a href="${data.ref}.xhtml#ref${data.id}">\u21B5</a>
+                                <a href="${data.ref}.xhtml#ref${data.id}">Return</a>
                             </p>
                         </div>
 
@@ -117,7 +117,7 @@ const epub = {
                         <div class="figcaption" style="max-width: 100%;">
                             <p class="small">
                                 ${data.caption ? `${data.caption}<br/>` : ''}
-                                <a href="${data.ref}.xhtml#ref${data.id}">\u21B5</a>
+                                <a href="${data.ref}.xhtml#ref${data.id}">Return</a>
                             </p>
                         </div>
 
