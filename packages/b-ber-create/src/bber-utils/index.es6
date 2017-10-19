@@ -213,6 +213,17 @@ const flattenSpineFromYAML = arr =>
         return acc.concat(curr)
     }, [])
 
+function getPagebreakAttribute({ pagebreak }) {
+    if (!pagebreak || typeof pagebreak !== 'string') { return '' }
+    switch (pagebreak) {
+        case 'before':
+        case 'after':
+            return ` style="page-break-${pagebreak}:always;"`
+        case 'both':
+            return ` style="page-break-before:always; page-break-after:always;"`
+    }
+}
+
 export {
     opsPath,
     fileId,
@@ -235,4 +246,5 @@ export {
     modelFromString,
     nestedContentToYAML,
     flattenSpineFromYAML,
+    getPagebreakAttribute,
 }

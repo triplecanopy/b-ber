@@ -56,7 +56,9 @@ const _applyTransforms = (k, v) => {
         case 'epubTypes':
             return ` epub:type="${v}"`
         case 'pagebreak':
-            return ` style="page-break-${v}:always;"`
+            return v === 'both'
+                ? ` style="page-break-before:always; page-break-after:always;"`
+                : ` style="page-break-${v}:always;"`
         case 'attrs':
             return ''
         case 'source':
@@ -82,10 +84,10 @@ const _applyTransforms = (k, v) => {
 // MarkdownIt returns a trimmed string of the directive's attributes, which
 // are parsed and transformed into a string of HTML attributes
 //
-//    ::: directive:id classes:"foo bar baz" page-break-before:yes
-//    -> ' classes:"foo bar baz" page-break-before:yes'
-//    -> { classes:"foo bar baz", "page-break-before":"yes" }
-//    -> class="foo bar baz" style="page-break-before:true;"
+//    ::: directive:id classes:"foo bar baz"
+//    -> ' classes:"foo bar baz"
+//    -> { classes:"foo bar baz" }
+//    -> class="foo bar baz"
 //
 const _parseAttrs = (s) => {
 
