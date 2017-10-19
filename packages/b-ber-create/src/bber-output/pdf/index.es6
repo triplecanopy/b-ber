@@ -15,15 +15,15 @@ import { isPlainObject } from 'lodash'
 
 const writeOutput = false
 
-let output
-let printer
 let settings
+let printer
+
+const fileName = () => new Date().toISOString().replace(/:/g, '-')
 
 const initialize = () => {
-    output = dist()
-    printer = new Printer(output)
+    printer = new Printer(dist())
     settings = {
-        fname: `${new Date().toISOString().replace(/:/g, '-')}.pdf`,
+        fname: `${fileName()}.pdf`,
         options: {
             height: '279mm', //8.5"
             width: '215.9mm', //11"
@@ -47,15 +47,17 @@ const initialize = () => {
                     //last: 'Last Page'
                 },
             },
-            base: `file://${output}${path.sep}OPS${path.sep}Text${path.sep}`,
+            base: `file://${dist()}${path.sep}OPS${path.sep}Text${path.sep}`,
             timeout: 10000,
         },
     }
+
+    return Promise.resolve()
 }
 
 const parseHTML = files =>
     new Promise((resolve) => {
-        const dirname = path.join(output, 'OPS', 'text')
+        const dirname = path.join(dist(), 'OPS', 'text')
         const text = files.map((_, index, arr) => {
             let data
 
@@ -72,7 +74,9 @@ const parseHTML = files =>
             } catch (err) {
                 return log.warn(err.message)
             }
+
             return printer.parse(data, index, arr)
+
         }).filter(Boolean)
 
         Promise.all(text)
@@ -83,7 +87,7 @@ const parseHTML = files =>
 const write = (content) => {
     if (writeOutput !== true) { return Promise.resolve(content) }
     return new Promise(resolve =>
-        fs.writeFile(path.join(output, 'pdf.xhtml'), content, (err) => {
+        fs.writeFile(path.join(dist(), 'pdf.xhtml'), content, (err) => {
             if (err) { throw err }
             resolve(content)
         })
@@ -102,17 +106,18 @@ const print = content =>
     })
 
 const pdf = () =>
-    new Promise(async (resolve) => {
-        await initialize()
-        const manifest = store.spine.map((n) => n.fileName)
-        parseHTML(manifest)
-        
+    new Promise((resolve) => {
+        const manifest = store.spine.map(n => n.fileName)
+
         // TODO: pass `writeOutput` flag to determine if the task also outputs
         // XHTML version
+
+        initialize()
+        .then(() => parseHTML(manifest))
         .then(content => write(content))
         .then(content => print(content))
         .catch(err => log.error(err))
         .then(resolve)
     })
-    
+
 export default pdf
