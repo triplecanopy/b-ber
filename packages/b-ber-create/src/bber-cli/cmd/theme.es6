@@ -1,5 +1,4 @@
-
-import { theme } from 'bber-lib'
+import { theme } from 'bber-lib/theme'
 import { fail } from 'bber-cli/helpers'
 
 const command = 'theme'

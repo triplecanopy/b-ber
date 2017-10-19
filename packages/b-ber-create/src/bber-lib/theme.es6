@@ -8,11 +8,95 @@ import { src, forOf } from 'bber-utils'
 import store from 'bber-lib/store'
 import themes from 'b-ber-themes'
 
-const cwd = process.cwd()
+function setTheme(themeName, themeList, cwd) {
+    return new Promise(resolve => {
+        if (themeList.indexOf(themeName) < 0) {
+            console.error(`Could not find theme matching [${themeName}].`)
+            console.log('Select one from the list of available themes:')
+            console.log(themeList.reduce((acc, curr) => {
+                const icon = currentTheme === curr ? '✔' : '-'
+                return acc.concat(`  ${icon} ${curr}\n`)
+            }, ''))
+            return
+        }
+
+        const configPath = path.join(cwd, 'config.yml')
+        const configObj  = Yaml.load(configPath)
+        const promises   = []
+
+        // save the new theme name to the config.yml
+        configObj.theme = themeName
+
+        // write the updated config file
+        promises.push(new Promise(resolve =>
+            fs.writeFile(configPath, Yaml.dump(configObj), (err) => {
+                if (err) { throw err }
+                console.log()
+                console.log(`Successfully set theme theme to [${themeName}]`)
+                console.log()
+                return resolve()
+            }))
+        )
+
+        // add a theme dir with the same name to the src dir, copy over
+        // the `settings` file, and create an overrides file
+        promises.push(new Promise((resolve) => {
+            const themeObject =
+                {}.hasOwnProperty.call(themes, themeName)
+                    ? themes[themeName]
+                    : userThemes[themeName]
+
+            const settingsFileName    = '_settings.scss'
+            const overridesFileName   = '_overrides.scss'
+            const settingsOutputPath  = path.join(cwd, configObj.src || '_project', '_stylesheets', themeName)
+            const settingsInputFile   = path.join(path.dirname(themeObject.entry), settingsFileName)
+            const settingsOutputFile  = path.join(settingsOutputPath, settingsFileName)
+            const overridesOutputFile = path.join(settingsOutputPath, overridesFileName)
+
+
+            try {
+                if (!fs.existsSync(settingsOutputPath)) {
+                    fs.mkdirsSync(settingsOutputPath)
+                }
+            } catch (err) {
+                console.error(err)
+                process.exit(1)
+            }
+
+            try {
+                if (fs.existsSync(settingsOutputFile)) {
+                    throw new Error(`b-ber-lib/theme: [${settingsOutputFile}] already exists`)
+                } else {
+                    fs.copySync(settingsInputFile, settingsOutputFile, {})
+                    console.log(`Created [${settingsOutputFile}]`)
+                }
+                if (fs.existsSync(overridesOutputFile)) {
+                    throw new Error(`b-ber-lib/theme: [${overridesOutputFile}] already exists`)
+                } else {
+                    fs.writeFileSync(overridesOutputFile, '')
+                }
+            } catch (err) {
+                if (/b-ber-lib/.test(err.message)) {
+                    console.log(err.message)
+                } else {
+                    console.error(err)
+                }
+            }
+
+            resolve()
+
+        }))
+
+
+        return Promise.all(promises).then(resolve)
+    })
+}
+
 
 const theme = () =>
     new Promise((resolve) => {
 
+        const cwd = process.cwd()
         const { config } = store
         const themeList = []
         const userThemes = []
@@ -70,92 +154,11 @@ const theme = () =>
 
         if (yargs.argv.set) {
             const themeName = yargs.argv.set
-
-            if (themeList.indexOf(themeName) < 0) {
-                console.error(`Could not find theme matching [${themeName}].`)
-                console.log('Select one from the list of available themes:')
-                console.log(themeList.reduce((acc, curr) => {
-                    const icon = currentTheme === curr ? '✔' : '-'
-                    return acc.concat(`  ${icon} ${curr}\n`)
-                }, ''))
-                return
-            }
-
-            const configPath = path.join(cwd, 'config.yml')
-            const configObj  = Yaml.load(configPath)
-            const promises   = []
-
-            // save the new theme name to the config.yml
-            configObj.theme = themeName
-
-            // write the updated config file
-            promises.push(new Promise((resolve) =>
-                fs.writeFile(configPath, Yaml.dump(configObj), (err) => {
-                    if (err) { throw err }
-                    console.log()
-                    console.log(`Successfully set theme theme to [${themeName}]`)
-                    console.log()
-                    return resolve()
-                }))
-            )
-
-            // add a theme dir with the same name to the src dir, copy over
-            // the `settings` file, and create an overrides file
-            promises.push(new Promise((resolve) => {
-
-                const themeObject =
-                    {}.hasOwnProperty.call(themes, themeName)
-                        ? themes[themeName]
-                        : userThemes[themeName]
-
-                const settingsFileName    = '_settings.scss'
-                const overridesFileName   = '_overrides.scss'
-                const settingsOutputPath  = path.join(src(), '_stylesheets', themeName)
-                const settingsInputFile   = path.join(path.dirname(themeObject.entry), settingsFileName)
-                const settingsOutputFile  = path.join(settingsOutputPath, settingsFileName)
-                const overridesOutputFile = path.join(settingsOutputPath, overridesFileName)
-
-
-                try {
-                    if (!fs.existsSync(settingsOutputPath)) {
-                        fs.mkdirsSync(settingsOutputPath)
-                    }
-                } catch (err) {
-                    console.error(err)
-                    process.exit(1)
-                }
-
-                try {
-                    if (fs.existsSync(settingsOutputFile)) {
-                        throw new Error(`b-ber-lib/theme: [${settingsOutputFile}] already exists`)
-                    } else {
-                        fs.copySync(settingsInputFile, settingsOutputFile, {})
-                        console.log(`Created [${settingsOutputFile}]`)
-                    }
-                    if (fs.existsSync(overridesOutputFile)) {
-                        throw new Error(`b-ber-lib/theme: [${overridesOutputFile}] already exists`)
-                    } else {
-                        fs.writeFileSync(overridesOutputFile, '')
-                    }
-                } catch (err) {
-                    if (/b-ber-lib/.test(err.message)) {
-                        console.log(err.message)
-                    } else {
-                        console.error(err)
-                    }
-                }
-
-                return resolve()
-
-            }))
-
-
-            return Promise.all(promises).then(resolve)
-
+            return setTheme(themeName, themeList, cwd).then(resolve)
         }
 
         return resolve(yargs.showHelp())
 
     })
 
-export default theme
+export { theme, setTheme }

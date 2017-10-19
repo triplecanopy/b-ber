@@ -12,7 +12,8 @@
         "bber-plugins": "./packages/b-ber-create/src/bber-plugins",
         "bber-shapes": "./packages/b-ber-create/src/bber-shapes",
         "bber-templates": "./packages/b-ber-create/src/bber-templates",
-        "bber-utils": "./packages/b-ber-create/src/bber-utils"
+        "bber-utils": "./packages/b-ber-create/src/bber-utils",
+        "bber-assets": "./packages/b-ber-create/src/bber-assets"
       }
     }]
   ],

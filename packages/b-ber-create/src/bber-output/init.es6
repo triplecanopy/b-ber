@@ -3,6 +3,8 @@ import fs from 'fs-extra'
 import path from 'path'
 import log from 'b-ber-logger'
 import store from 'bber-lib/store'
+import getAssets from 'bber-assets'
+import { setTheme } from 'bber-lib/theme'
 import {
     sourceDirs,
     config,
@@ -111,6 +113,30 @@ class Initializer {
         })
     }
 
+    _copyImages() {
+        return new Promise(resolve => {
+            const promises = []
+            getAssets().then(assets => {
+                const { 'b-ber-logo': bberLogo, 'default-publishers-logo': publishersLogo } = assets
+                const images = [bberLogo, publishersLogo]
+
+                log.info('Copying development assets')
+                images.forEach(a => {
+                    promises.push(fs.copy(a, path.join(this.projectPath, '_images', path.basename(a))))
+                })
+
+                Promise.all(promises).then(resolve)
+            })
+        })
+
+    }
+    _setTheme() {
+        log.info('Setting default theme')
+        return new Promise(resolve => {
+            setTheme(store.theme.name, [store.theme.name], path.dirname(this.projectPath)).then(resolve)
+        })
+    }
+
     /**
      * Write default directories and files to the source directory
      * @return {Promise<Object|Error>}
@@ -119,8 +145,8 @@ class Initializer {
         return new Promise(resolve =>
             this._makeDirs()
             .then(() => this._writeFiles())
-            // .then(() => cover.generate())
-            // .then(() => this._createSample())
+            .then(() => this._copyImages())
+            .then(() => this._setTheme())
             .catch(err => log.error(err))
             .then(resolve)
         )
