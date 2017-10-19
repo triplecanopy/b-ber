@@ -1,14 +1,20 @@
 // Block elements
 
 // Text Sizes
-h1 { @include type-settings(0); margin-top: 0; margin-bottom: 0; padding-top: 0;                              }
-h2 { @include type-settings(0); margin-top: 0; margin-bottom: 0; padding-top: 0;                              }
-h3 { @include type-settings(0); margin-top: 0; margin-bottom: 0; padding-top: 0; padding-bottom: one-line(0); }
-h4 { @include type-settings(0); margin-top: 0; margin-bottom: 0; padding-top: 0; padding-bottom: one-line(0); }
-h5 { @include type-settings(0); margin-top: 0; margin-bottom: 0; padding-top: 0; padding-bottom: one-line(0); }
-h6 { @include type-settings(0); margin-top: 0; margin-bottom: 0; padding-top: 0; padding-bottom: one-line(0); }
+h1 { @include type-settings(0); margin-top: 0; margin-bottom: 0; padding-top: one-line(0); padding-bottom: one-line(0); }
+h2 { @include type-settings(0); margin-top: 0; margin-bottom: 0; padding-top: one-line(0); padding-bottom: one-line(0); }
+h3 { @include type-settings(0); margin-top: 0; margin-bottom: 0; padding-top: one-line(0); padding-bottom: one-line(0); }
+h4 { @include type-settings(0); margin-top: 0; margin-bottom: 0; padding-top: one-line(0); padding-bottom: one-line(0); }
+h5 { @include type-settings(0); margin-top: 0; margin-bottom: 0; padding-top: one-line(0); padding-bottom: one-line(0); }
+h6 { @include type-settings(0); margin-top: 0; margin-bottom: 0; padding-top: one-line(0); padding-bottom: one-line(0); }
 p  { @include type-settings(0); }
 
+
+section {
+    h1, h2, h3, h4, h5, h6 {
+        padding-top: 0;
+    }
+}
 
 // Text Properties
 p {
@@ -35,7 +41,10 @@ h1,h2,h3,h4,h5,h6 {
 
 
 h1 {
-    @include padding(0,0,4,0,0);
+    padding-bottom: four-lines(0);
+    section & {
+        @include padding(0,0,4,0,0);
+    }
 
     &.book-title,
     &.figures-title {
@@ -69,7 +78,9 @@ h1 {
 }
 
 h2 {
-    @include padding(0, 0, 1, 0, 0);
+    section & {
+        @include padding(0, 0, 1, 0, 0);
+    }
 
     section.backmatter & {
         @include type-settings(-1);
