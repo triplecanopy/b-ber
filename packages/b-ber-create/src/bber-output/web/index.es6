@@ -48,41 +48,41 @@ function initialize() {
 function moveAssetsToRootDirctory() {
     const promises = []
     return new Promise(resolve => {
-        const assets = fs.readdirSync(OPS_PATH)
+        fs.readdir(OPS_PATH, (err, files) => {
+            if (err) { throw err }
 
-        // console.log(assets)
-        // process.exit()
-        assets.forEach((_, i) => {
+            const dirs = files.filter(f => {
+                return f.charAt(0) !== '.' && fs.statSync(path.join(OPS_PATH, f)).isDirectory()
+            })
 
-            const to = path.join(DIST_PATH, _)
-            const frm = path.join(OPS_PATH, _)
+            dirs.forEach((f, i) => {
 
-            log.info(`Moving [%s]`, _)
-            promises.push(fs.move(frm, to))
+                const frm = path.join(OPS_PATH, f)
+                const to = path.join(DIST_PATH, f)
 
-        })
+                log.info(`Moving [%s]`, f)
+                promises.push(fs.move(frm, to))
 
-        Promise.all(promises).then(() => {
-            // remove the OPS dir once all the moving assets have been moved
-            fs.remove(OPS_PATH, err => {
-                if (err) { throw err }
-                resolve()
+            })
+
+            Promise.all(promises).then(_ => {
+                // remove the OPS dir once all the moving assets have been moved
+                fs.remove(OPS_PATH).then(resolve)
             })
         })
-
     })
 }
 function unlinkRedundantAssets() {
+    const promises = []
     return new Promise(resolve => {
-        ASSETS_TO_UNLINK.forEach((_, i) => {
-            log.info(`Removing [%s]`, path.basename(_))
-            fs.remove(_, err => {
-                if (err) { throw err }
-                if (i === ASSETS_TO_UNLINK.length - 1) {
-                    resolve()
-                }
-            })
+
+        ASSETS_TO_UNLINK.forEach((f, i) => {
+            log.info(`Removing [%s]`, path.basename(f))
+            promises.push(fs.remove(f))
         })
+
+        Promise.all(promises).then(resolve)
+
     })
 }
 
@@ -174,9 +174,8 @@ function paginationNavigation(filePath) {
     `
 }
 
-function injectNavigationIntoFile(filePath, elements) {
+function injectNavigationIntoFile(filePath, { navElement, headerElement }) {
     return new Promise(resolve => {
-        const { navElement, headerElement } = elements
         const pageNavigation = paginationNavigation(filePath)
 
         log.info(`Adding pagination to ${path.basename(filePath)}`)
@@ -227,14 +226,20 @@ function injectNavigationIntoFiles({ navElement, headerElement }) {
     return new Promise(resolve => {
         const elements = { navElement, headerElement }
         const textPath = path.join(DIST_PATH, 'text')
-        const htmlFiles = fs.readdirSync(textPath).filter(_ => path.extname(_) === '.xhtml')
         const promises = []
-        htmlFiles.forEach(_ => {
-            const filePath = path.resolve(textPath, _)
-            promises.push(injectNavigationIntoFile(filePath, elements))
-        })
 
-        Promise.all(promises).then(() => resolve(elements))
+        fs.readdir(textPath, (err, files) => {
+            if (err) { throw err }
+
+            files.forEach(f => {
+                if (!path.extname(f) === '.xhtml') { return }
+                const filePath = path.resolve(textPath, f)
+                promises.push(injectNavigationIntoFile(filePath, elements))
+            })
+
+            Promise.all(promises).then(_ => resolve(elements))
+
+        })
 
     })
 
