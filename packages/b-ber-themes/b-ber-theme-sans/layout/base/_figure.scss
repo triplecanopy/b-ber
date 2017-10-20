@@ -6,6 +6,19 @@
 //
 
 
+// mixins
+//
+
+
+@mixin caption {
+    @include type-settings(-7);
+    line-height: 1.55; // TODO: calculate based on tininess
+    margin-bottom: 0;
+    text-align: left;
+    text-indent: 0!important;
+}
+
+
 // Element styles
 figure {
     @include following-paragraph-not-indented;
@@ -163,11 +176,7 @@ figcaption,
 
 
     p.small {
-        @include type-settings(-7);
-        line-height: 1.55; // TODO: calculate based on tininess
-        margin-bottom: 0;
-        text-align: left;
-        text-indent: 0!important;
+        @include caption;
     }
 
     .figure__large &,
@@ -176,6 +185,10 @@ figcaption,
         margin: 0;
         padding: 0;
     }
+}
+
+p.caption {
+    @include caption;
 }
 
 .img-wrap {
