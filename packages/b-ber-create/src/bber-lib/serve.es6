@@ -1,80 +1,64 @@
-/* eslint-disable class-methods-use-this */
-import Promise from 'zousan'
-import fs from 'fs-extra'
 import path from 'path'
+import fs from 'fs-extra'
 import nodemon from 'nodemon'
-// import opn from 'opn'
 import log from 'b-ber-logger'
+import { serialize } from 'bber-lib/async'
+import { src, dist } from 'bber-utils'
+import store from 'bber-lib/store'
 
-class Server {
-    set dir(d) {
-        this._dir = d
-    }
+const PORT = 4000
+const DEBOUNCE_SPEED = 400
+const SEQUENCE = ['clean', 'container', 'sass', 'copy', 'scripts', 'render', 'loi', 'footnotes', 'inject', 'opf', 'web']
 
-    get dir() {
-        return this._dir
-    }
+let timer
+let files = []
 
-    /**
-     * [constructor description]
-     * @param  {Object} options [description]
-     * @return {Object}
-     */
-    constructor(options = {}) {
-        this.serve = this.serve.bind(this)
-        this.validateBuildPath = this.validateBuildPath.bind(this)
+const restart = () =>
+    new Promise(resolve => {
+        store.update('build', 'web') // set the proper build vars
+        store.update('toc', store.builds.web.tocEntries)
+        store.update('spine', store.builds.web.spineEntries)
 
-        const defaults = { port: 3000, dir: './_site' }
-        const settings = Object.assign({}, defaults, options)
-        const { port, dir } = settings
+        return serialize(SEQUENCE).then(resolve)
+    })
 
-        this.port = port
-        this.validateBuildPath(dir)
-    }
-
-    /**
-     * [validateBuildPath description]
-     * @param  {String} _dir [description]
-     * @return {Object}
-     */
-    validateBuildPath(_dir) {
-        const dir = path.resolve(process.cwd(), _dir)
-        try {
-            if (!fs.existsSync(dir)) {
-                throw new TypeError(`Cannot resolve path [${dir}]`)
-            }
-        } catch (err) {
-            log.error(err)
-        }
-
-        this.dir = dir
-        log.info(`Setting endpoint to [${this.dir}]`)
-        return this
-    }
-
-    serve() { // eslint-disable-line class-method-use-this
-        return new Promise((resolve) => {
-            process.once('SIGTERM', () => {
-                process.exit(0)
-            })
-            process.once('SIGINT', () => {
-                process.exit(0)
-            })
-            return nodemon({
+const serve = () =>
+    new Promise((resolve, reject) => {
+        restart().then(() => {
+            console.log()
+            log.info('Starting nodemon')
+            nodemon({
                 script: path.join(__dirname, 'server.js'),
+                ext: 'md js scss',
                 env: { NODE_ENV: 'development' },
+                ignore: ['node_modules', 'lib'],
+                watch: src(),
                 args: [
-                    `--dir ${this.dir}`,
-                    `--port ${this.port}`,
+                    '--use_socket_server',
+                    '--use_hot_reloader',
+                    `--port ${PORT}`,
+                    `--dir ${dist()}`,
                 ],
-            }).once('start', () => {
-                log.info('Starting nodemon')
-                // opn(`http://localhost:${this.port}`)
-                resolve()
+            })
+            .once('start', resolve)
+            .on('restart', (file) => {
+                clearTimeout(timer)
+                files.push(file)
+                timer = setTimeout(() => {
+                    log.info(`Restarting server due to changes:\n${files.join('\n')}`)
+                    console.log()
+                    restart().then(() => { files = [] })
+                }, DEBOUNCE_SPEED)
             })
         })
-    }
-}
 
-const server = Server
-export default server
+        process.once('SIGTERM', () => {
+            process.exit(0)
+        })
+        process.once('SIGINT', () => {
+            process.exit(0)
+        })
+
+    })
+
+export default serve

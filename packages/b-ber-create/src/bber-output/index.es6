@@ -22,8 +22,6 @@ export { default as loi } from 'bber-output/loi'
 export { default as epub } from 'bber-output/epub'
 export { default as xml } from 'bber-output/xml'
 export { default as generate } from 'bber-output/generate'
-// TODO: Editor causes b-ber-creator to hang (doesn't exit).
-// export { default as editor } from 'bber-output/editor'
 
 // output
 export { default as mobi } from 'bber-output/mobi'
@@ -36,7 +34,6 @@ export { default as footnotes } from 'bber-output/footnotes'
 // lib
 export { default as theme } from 'bber-lib/theme'
 export { default as serve } from 'bber-lib/serve'
-export { default as watch } from 'bber-lib/watch'
 
 // modifiers
 export { default as inject } from 'bber-modifiers/inject'

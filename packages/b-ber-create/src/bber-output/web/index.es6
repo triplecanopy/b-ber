@@ -103,7 +103,7 @@ function createNavigationElement() {
         // TODO: why is this invalidating the toc.xhtml?
         // generally, the folder stucture should be modified to allow
         // nesting, among other things
-        const tocHTML = tocItem(toc).replace(/href="text/g, 'href="/text')
+        const tocHTML = tocItem(toc).replace(/a href="/g, 'a href="/text/')
         const title = getProjectTitle()
 
         const navElement = `

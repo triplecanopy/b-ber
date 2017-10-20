@@ -44,7 +44,7 @@ const init = () => {
         Creating projects
             bber create     Start a new project
             bber generate   Create a new chapter. Accepts arguments for metadata.
-            bber watch      Preview the publication's contents in a browser
+            bber serve      Preview the publication's contents in a browser
             bber build      Create an ePub, mobi, PDF, or all file formats
 
     For more information on a command, enter bber <command> --help
@@ -115,10 +115,9 @@ const init = () => {
         .command(commands.render)
         .command(commands.scripts)
         .command(commands.sass)
-        // .command(commands.serve)
         // .command(commands.site)
         .command(commands.theme)
-        .command(commands.watch)
+        .command(commands.serve)
         .command(commands.xml)
         .command(commands.create)
         .command(commands.cover)
