@@ -10,18 +10,17 @@ import store from 'bber-lib/store'
 import html2pdf from 'html-pdf'
 import Printer from 'bber-modifiers/printer'
 import log from 'b-ber-logger'
-import { src, dist } from 'bber-utils'
-import { isPlainObject } from 'lodash'
+import { dist, parseHTMLFiles } from 'bber-utils'
 
 const writeOutput = false
 
 let settings
-let printer
+let parser
 
 const fileName = () => new Date().toISOString().replace(/:/g, '-')
 
 const initialize = () => {
-    printer = new Printer(dist())
+    parser = new Printer(dist())
     settings = {
         fname: `${fileName()}.pdf`,
         options: {
@@ -55,35 +54,6 @@ const initialize = () => {
     return Promise.resolve()
 }
 
-const parseHTML = files =>
-    new Promise((resolve) => {
-        const dirname = path.join(dist(), 'OPS', 'text')
-        const text = files.map((_, index, arr) => {
-            let data
-
-            const fname = isPlainObject(_) ? Object.keys(_)[0] : typeof _ === 'string' ? _ : null
-            const ext = '.xhtml'
-
-            if (!fname) { return null }
-
-            const fpath = path.join(dirname, `${fname}${ext}`)
-
-            try {
-                if (!fs.existsSync(fpath)) { return null }
-                data = fs.readFileSync(fpath, 'utf8')
-            } catch (err) {
-                return log.warn(err.message)
-            }
-
-            return printer.parse(data, index, arr)
-
-        }).filter(Boolean)
-
-        Promise.all(text)
-        .catch(err => log.error(err))
-        .then(docs => resolve(docs.join('\n')))
-    })
-
 const write = (content) => {
     if (writeOutput !== true) { return Promise.resolve(content) }
     return new Promise(resolve =>
@@ -113,7 +83,7 @@ const pdf = () =>
         // XHTML version
 
         initialize()
-        .then(() => parseHTML(manifest))
+        .then(() => parseHTMLFiles(manifest, parser, dist()))
         .then(content => write(content))
         .then(content => print(content))
         .catch(err => log.error(err))

@@ -224,6 +224,41 @@ function getPagebreakAttribute({ pagebreak }) {
     }
 }
 
+
+// used by xml and pdf tasks
+// @param files     Array           List of `fileName` properties from the store.manifest object
+// @param parser    Object          Instance of the Parser/Printer class
+// @param dist      String          Absolute project path
+// @return          Promise|Error   Promise (An XML string)
+function parseHTMLFiles(files, parser, dist) {
+    return new Promise((resolve, reject) => {
+        const dirname = path.join(dist, 'OPS', 'text')
+        const text = files.map((_, index, arr) => {
+            let data
+
+            const fname = isPlainObject(_) ? Object.keys(_)[0] : typeof _ === 'string' ? _ : null
+            const ext = '.xhtml'
+
+            if (!fname) { return null }
+
+            const fpath = path.join(dirname, `${fname}${ext}`)
+
+            try {
+                if (!fs.existsSync(fpath)) { return null }
+                data = fs.readFileSync(fpath, 'utf8')
+            } catch (err) {
+                return log.warn(err.message)
+            }
+
+            return parser.parse(data, index, arr)
+
+        }).filter(Boolean)
+
+        Promise.all(text).catch(err => log.error(err))
+        .then(docs => resolve(docs.join('\n')))
+    })
+}
+
 export {
     opsPath,
     fileId,
@@ -247,4 +282,5 @@ export {
     nestedContentToYAML,
     flattenSpineFromYAML,
     getPagebreakAttribute,
+    parseHTMLFiles,
 }
