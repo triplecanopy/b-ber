@@ -67,7 +67,7 @@ class Parser {
      * @return {Promise<Object|Error>}
      */
     onend(resolve, index, len) {
-        if (index === len) {
+        if (index === len - 1) {
             this.appendBody()
         } else {
             this.output += '<pagebreak></pagebreak>'
@@ -76,11 +76,20 @@ class Parser {
     }
 
     /**
+     * [appendXMLDeclaration description]
+     * @return {Parser}
+     */
+    appendXMLDeclaration() {
+        this.output += '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+        return this
+    }
+
+    /**
      * [prependBody description]
      * @return {Parser}
      */
     prependBody() {
-        this.output += '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><body>'
+        this.output += '<body>'
         return this
     }
 
@@ -113,6 +122,7 @@ class Parser {
     parse(content, index, arr) {
         const _this = this // eslint-disable-line consistent-this
         const len = arr.length - 1
+        if (index === 0) { _this.appendXMLDeclaration() }
         _this.appendComment(arr[index])
         if (index === 0) { _this.prependBody() }
         return new Promise((resolve) => {
