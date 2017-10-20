@@ -1,4 +1,4 @@
-
+import store from 'bber-lib/store'
 import fs from 'fs-extra'
 import mime from 'mime-types'
 import { terms, elements } from 'bber-shapes/dc'
@@ -14,8 +14,8 @@ class Props {
      * @return {Boolean}
      */
     static isHTML(file) {
-        return Boolean(mime.lookup(file.rootPath || file.absolutePath) === 'text/html'
-            || mime.lookup(file.rootPath || file.absolutePath) === 'application/xhtml+xml')
+        return Boolean(mime.lookup(file.absolutePath) === 'text/html'
+            || mime.lookup(file.absolutePath) === 'application/xhtml+xml')
     }
 
     /**
@@ -24,8 +24,8 @@ class Props {
      * @return {Boolean}
      */
     static isNav(file) {
-        return Boolean((mime.lookup(file.rootPath || file.absolutePath) === 'text/html'
-            || mime.lookup(file.rootPath || file.absolutePath) === 'application/xhtml+xml')
+        return Boolean((mime.lookup(file.absolutePath) === 'text/html'
+            || mime.lookup(file.absolutePath) === 'application/xhtml+xml')
             && /^toc\./.test(file.name))
     }
 
@@ -36,7 +36,27 @@ class Props {
      */
     static isScripted(file) {
         if (!Props.isHTML(file)) { return false }
-        const fpath = file.rootPath || file.absolutePath
+
+        // TODO: fixme; we need to check if the toc.xhtml is scripted, but it
+        // hasn't been written to disk yet.  checking right now against the
+        // results from `store.template.dynamicTail` for now, since we know
+        // that the toc was written using that
+        if (Props.isNav(file)) {
+            // the dynamicTail function in store throws an error initially,
+            // though, as the function is assigned during the inject task, so
+            // make sure to handle that
+            let tail = ''
+            try {
+                tail = store.templates.dynamicPageTail()
+            } catch (err) {
+                if (/store.templates#dynamicPageTail/.test(err)) { return false }
+                throw err
+            }
+
+            return tail.match(/<script/)
+        }
+
+        const fpath = file.absolutePath
         const contents = fs.readFileSync(fpath, 'utf8')
         return Boolean(contents.match(/<script/))
     }
@@ -48,7 +68,7 @@ class Props {
      */
     static isSVG(file) {
         if (!Props.isHTML(file)) { return false }
-        const fpath = file.rootPath || file.absolutePath
+        const fpath = file.absolutePath
         const contents = fs.readFileSync(fpath, 'utf8')
         return Boolean(contents.match(/<svg/))
     }
@@ -80,7 +100,7 @@ class Props {
      */
     static hasRemoteResources(file) {
         if (!Props.isHTML(file)) { return false }
-        const fpath = file.rootPath || file.absolutePath
+        const fpath = file.absolutePath
         const contents = fs.readFileSync(fpath, 'utf8')
         return Boolean(contents.match(/src=(?:['"]{1})?https?/))
     }

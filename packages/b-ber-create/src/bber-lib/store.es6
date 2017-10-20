@@ -18,6 +18,12 @@ const cwd = process.cwd()
 const BBER_MODULE_PATH = path.dirname(path.dirname(__dirname))
 const BBER_PACKAGE_JSON = require(path.join(BBER_MODULE_PATH, 'package.json')) // eslint-disable-line import/no-dynamic-require
 
+
+function dynamicPageTmpl() { throw new Error('[store.templates#dynamicPageTmpl] has not been initialized in b-ber-modifiers/inject') }
+function dynamicPageHead() { throw new Error('[store.templates#dynamicPageHead] has not been initialized in b-ber-modifiers/inject') }
+function dynamicPageTail() { throw new Error('[store.templates#dynamicPageTail] has not been initialized in b-ber-modifiers/inject') }
+
+
 /**
  * @class Store
  */
@@ -247,6 +253,14 @@ class Store {
             theme: 'b-ber-theme-serif',
         }
 
+        // for dynamically created templates. functions here are overwritten
+        // during build. see b-ber-modifiers/inject#mapSourcesToDynamicPageTemplate
+        this.templates    = {
+            dynamicPageTmpl,
+            dynamicPageHead,
+            dynamicPageTail,
+        }
+
         this.loadSettings()
         this.loadMetadata()
         this.loadTheme()
@@ -264,6 +278,7 @@ class Store {
         this.remoteAssets = []
         this.loi          = []
         this.sequence     = []
+        this.templates    = { dynamicPageHead, dynamicPageTail }
         this.hash         = crypto.randomBytes(20).toString('hex')
     }
 

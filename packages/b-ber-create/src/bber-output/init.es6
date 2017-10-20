@@ -103,7 +103,7 @@ class Initializer {
         return new Promise((resolve0) => {
             const promises = this.files.map(_ =>
                 new Promise(resolve1 =>
-                    fs.writeFile(_.relpath, _.content, (err) => {
+                    fs.writeFile(_.relativePath, _.content, (err) => {
                         if (err) { throw err }
                         resolve1()
                     })

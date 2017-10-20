@@ -32,7 +32,7 @@ function sourceDirs(src) {
 
 function config(src, dist) {
     return {
-        relpath: path.join(path.dirname(src), 'config.yml'),
+        relativePath: path.join(path.dirname(src), 'config.yml'),
         content: `env: development # development | production
 theme: b-ber-theme-serif # name or path
 src: ${path.basename(src)}
@@ -42,7 +42,7 @@ dist: ${path.basename(dist)}`,
 
 function typeYaml(src, type) {
     return {
-        relpath: path.join(src, `${type}.yml`),
+        relativePath: path.join(src, `${type}.yml`),
         content: `# Table of Contents
 # "in_toc:false" removes the Table of Contents from the built-in navigation of the reader.
 # "linear:false" removes the Table of Contents from the project's contents.
@@ -61,7 +61,7 @@ function typeYaml(src, type) {
 
 function metadata(src) {
     return {
-        relpath: path.join(src, 'metadata.yml'),
+        relativePath: path.join(src, 'metadata.yml'),
         content: `-
     term: title
     value: Sample Project
@@ -100,7 +100,7 @@ function metadata(src) {
 
 function javascripts(src) {
     return [{
-        relpath: `${src}/_javascripts/application.js`,
+        relativePath: `${src}/_javascripts/application.js`,
         content: `function clicked(e) {
     window.location.href = this.getAttribute('href');
     return false;
@@ -125,7 +125,7 @@ window.addEventListener('load', main, false);`,
 
 function markdown(src) {
     return [{
-        relpath: `${src}/_markdown/project-name_title-page.md`,
+        relativePath: `${src}/_markdown/project-name_title-page.md`,
         content: `---
 title: Project Name Title Page
 type: titlepage
@@ -138,7 +138,7 @@ type: titlepage
 ::: exit:project-name_title-page
 `,
     }, {
-        relpath: `${src}/_markdown/project-name-chapter-01.md`,
+        relativePath: `${src}/_markdown/project-name-chapter-01.md`,
         content: `---
 title: Project Name Chapter One
 type: bodymatter
@@ -153,7 +153,7 @@ Chapter Contents
 ::: exit:project-name_chapter-one
 `,
     }, {
-        relpath: `${src}/_markdown/project-name_colophon.md`,
+        relativePath: `${src}/_markdown/project-name_colophon.md`,
         content: `---
 title: Project Name Colophon
 type: colophon
@@ -193,7 +193,7 @@ function stylesheets(src) {
 
 function readme(src, cwd) {
     return {
-        relpath: `${path.dirname(src)}${path.sep}README.md`,
+        relativePath: `${path.dirname(src)}${path.sep}README.md`,
         content: `# ${path.basename(cwd)}
 
 Created with [b-ber](https://github.com/triplecanopy/b-ber-creator/)
@@ -203,7 +203,7 @@ Created with [b-ber](https://github.com/triplecanopy/b-ber-creator/)
 
 function gitignore(src) {
     return {
-        relpath: `${path.dirname(src)}${path.sep}.gitignore`,
+        relativePath: `${path.dirname(src)}${path.sep}.gitignore`,
         content: `.DS_Store
 .tmp
 

@@ -1,25 +1,19 @@
 import File from 'vinyl'
+import path from 'path'
 import { escapeHTML } from 'bber-utils'
+import store from 'bber-lib/store'
 
-const tocTmpl = new File({
-    path: 'tocTmpl.tmpl',
-    contents: new Buffer(`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-        <html xmlns="http://www.w3.org/1999/xhtml"
-        xmlns:epub="http://www.idpf.org/2007/ops"
-        xmlns:ibooks="http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0"
-        epub:prefix="ibooks: http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0">
-        <head>
-            <title></title>
-            <meta http-equiv="default-style" content="text/html charset=utf-8"/>
-        </head>
-        <body>
+const tocTmpl = () =>
+    new File({
+        path: 'tocTmpl.tmpl',
+        contents: new Buffer(`${store.templates.dynamicPageHead()}
             <nav id="toc" epub:type="toc">
                 <h2>Table of Contents</h2>
                 {% body %}
             </nav>
-        </body>
-        </html>`),
-})
+            ${store.templates.dynamicPageTail()}
+        `),
+    })
 
 const tocItem = (list) => {
     function render(items) {
@@ -28,9 +22,8 @@ const tocItem = (list) => {
                 ${items.map(_ => // eslint-disable-line no-confusing-arrow
                     (_.in_toc === false)
                     ? ''
-                    : `
-                        <li>
-                            <a href="${_.relativePath}.xhtml">${escapeHTML(_.title || _.name)}</a>
+                    : `<li>
+                        <a href="${path.basename(_.relativePath)}.xhtml">${escapeHTML(_.title || _.name)}</a>
                             ${_.nodes && _.nodes.length ? render(_.nodes) : ''}
                         </li>`
                 ).join('')}

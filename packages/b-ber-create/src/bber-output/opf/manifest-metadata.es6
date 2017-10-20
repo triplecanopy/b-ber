@@ -109,13 +109,13 @@ class ManifestAndMetadata {
             const _metadata = renderLayouts(new File({
                 path: '.tmp',
                 layout: 'opfMetadata',
-                contents: new Buffer(resp.bookmeta.join(''/*'\n'*/)),
+                contents: new Buffer(resp.bookmeta.join('')),
             }), tmpl.opf).contents.toString()
 
             const manifest = renderLayouts(new File({
                 path: '.tmp',
                 layout: 'opfManifest',
-                contents: new Buffer(resp.manifest.filter(Boolean).join(''/*'\n'*/)),
+                contents: new Buffer(resp.manifest.filter(Boolean).join('')),
             }), tmpl.opf).contents.toString()
 
             resolve({ metadata: _metadata, manifest })

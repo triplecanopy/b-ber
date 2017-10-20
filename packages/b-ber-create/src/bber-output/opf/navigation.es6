@@ -69,7 +69,7 @@ class Navigation {
     constructor() {
         this.navDocs = [
             'toc.ncx',
-            'toc.xhtml',
+            `text${path.sep}toc.xhtml`,
         ]
     }
 
@@ -245,7 +245,7 @@ class Navigation {
                 path: '.tmp',
                 layout: 'tocTmpl',
                 contents: new Buffer(tocHTML),
-            }), { tocTmpl })
+            }), { tocTmpl: tocTmpl() })
             .contents
             .toString()
 
@@ -337,7 +337,7 @@ class Navigation {
         return new Promise((resolve) => {
             const result = this.deepMergePromiseArrayValues(args, 'strings')
             const { toc } = result.strings
-            const filepath = path.join(this.dist, 'OPS', 'toc.xhtml')
+            const filepath = path.join(this.dist, 'OPS', 'text', 'toc.xhtml')
             fs.writeFile(filepath, toc, (err) => {
                 if (err) { throw err }
                 log.info(`Wrote toc.xhtml [${filepath}]`)

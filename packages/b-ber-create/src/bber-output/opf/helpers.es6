@@ -3,7 +3,7 @@ import path from 'path'
 import { opsPath } from 'bber-utils'
 
 const pathInfoFromFile = (file, dest) => ({
-    rootPath: file,
+    absolutePath: file,
     opsPath: opsPath(file, dest),
     name: path.basename(file),
     extension: path.extname(file),

@@ -259,13 +259,16 @@ const promiseToReplace = (prop, data, source, file) =>
                 injectTags({ content, start, stop, data })
             ),
         })
+
         resolve(result)
     })
 
+// Iterate over the list of XHTML files, injecting script and style tags
+// inside of the placeholders
 const mapSources = (args) => {
     const [htmlDocs, stylesheets, javascripts, metadata] = args
     return new Promise((resolve) => {
-        htmlDocs.forEach((source, index) =>
+        htmlDocs.forEach((source, index) => {
             promiseToReplace('stylesheets', stylesheets, source)
             .then(file => promiseToReplace('javascripts', javascripts, source, file))
             .then(file => promiseToReplace('metadata', metadata, source, file))
@@ -281,7 +284,69 @@ const mapSources = (args) => {
                     resolve()
                 }
             })
-        )
+
+        })
+    })
+}
+
+// We create a dummy file that has the injected stylesheets, javascripts,
+// etc., so that we can continue to create documents on the fly without re-
+// running the inject task.  This is necessary for adding scripts and styles
+// to nav documents (toc.xhtml) which is dynamically generated, but requires
+// that
+// 1) all the pages in the book are already written to disk, and
+// 2) all the pages in the book already have the scripts/styles injected into
+//    them, since we scan the html files looking for these tags when building
+//    the content.opf
+const dummy = new File({
+    path: 'dummy.xhtml',
+    contents: new Buffer(`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+        <html xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:epub="http://www.idpf.org/2007/ops"
+        xmlns:ibooks="http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0"
+        epub:prefix="ibooks: http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0">
+        <head>
+            <title></title>
+            <meta http-equiv="default-style" content="text/html charset=utf-8"/>
+            <!-- inject:css -->
+            <!-- end:css -->
+        </head>
+        <body>
+        {% body %}
+        <!-- inject:js -->
+        <!-- end:js -->
+        <!-- inject:metadata -->
+        <!-- end:metadata -->
+        </body>
+    </html>`),
+})
+
+// `mapSourcesToDynamicPageTemplate` accomplishes the same as `mapSources`
+// above, but we pass in the vinyl file object (dummy) in the first
+// `promiseToReplace`.  This function then parses the result into `pageHead`
+// and `pageTail` functions and adds them to the templates module
+const mapSourcesToDynamicPageTemplate = (args) => {
+    const [, stylesheets, javascripts, metadata] = args
+    const docs = [dummy.path]
+
+    return new Promise((resolve) => {
+        docs.forEach((source) => {
+
+            promiseToReplace('stylesheets', stylesheets, source, dummy)
+            .then(file => promiseToReplace('javascripts', javascripts, source, file))
+            .then(file => promiseToReplace('metadata', metadata, source, file))
+            .then((file) => {
+                const tmpl = file.contents.toString().split('{% body %}')
+                const head = tmpl[0]
+                const tail = tmpl[1]
+                store.templates.dynamicPageTmpl = () => file.contents.toString()
+                store.templates.dynamicPageHead = () => head
+                store.templates.dynamicPageTail = () => tail
+            })
+            .catch(err => log.error(err))
+            .then(resolve)
+
+        })
     })
 }
 
@@ -293,7 +358,12 @@ const inject = () =>
             getDirContents(path.join(dist(), 'OPS', 'javascripts')),
         ])
         .then(getJSONLDMetadata)
-        .then(mapSources)
+        .then(files =>
+            Promise.all([
+                mapSources(files),
+                mapSourcesToDynamicPageTemplate(files),
+            ])
+        )
         .catch(err => log.error(err))
         .then(resolve)
     })
