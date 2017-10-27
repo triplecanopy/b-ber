@@ -4,7 +4,7 @@ import { getPagebreakAttribute } from 'bber-utils'
 
 const mobi = {
     portrait(data) {
-        return `<div class="figure__large${data.inline ? ' figure__inline' : ''}"${getPagebreakAttribute(data)}>
+        return `<div class="figure__large${data.inline ? ` figure__inline figure__inline--portrait ${data.classes}` : ''}"${getPagebreakAttribute(data)}>
             <figure id="${data.id}">
                 <div class="img-wrap" style="width: 70%; margin: 0 auto;">
                     <span>
@@ -18,7 +18,7 @@ const mobi = {
         </div>`
     },
     landscape(data) {
-        return `<div class="figure__large${data.inline ? ' figure__inline' : ''}"${getPagebreakAttribute(data)}>
+        return `<div class="figure__large${data.inline ? ` figure__inline figure__inline--landscape ${data.classes}` : ''}"${getPagebreakAttribute(data)}>
             <figure id="${data.id}">
                 <div class="img-wrap">
                     <span>
@@ -32,7 +32,7 @@ const mobi = {
         </div>`
     },
     'portrait-high': function (data) { // eslint-disable-line func-names
-        return `<div class="figure__large${data.inline ? ' figure__inline' : ''}"${getPagebreakAttribute(data)}>
+        return `<div class="figure__large${data.inline ? ` figure__inline figure__inline--portrait-high ${data.classes}` : ''}"${getPagebreakAttribute(data)}>
             <figure id="${data.id}">
                 <div class="img-wrap" style="width: 60%; margin: 0 auto;">
                     <span>
@@ -46,7 +46,7 @@ const mobi = {
         </div>`
     },
     square(data) {
-        return `<div class="figure__large${data.inline ? ' figure__inline' : ''}"${getPagebreakAttribute(data)}>
+        return `<div class="figure__large${data.inline ? ` figure__inline figure__inline--square ${data.classes}` : ''}"${getPagebreakAttribute(data)}>
             <figure id="${data.id}">
                 <div class="img-wrap" style="width: 85%; margin: 0 auto;">
                     <span>

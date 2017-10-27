@@ -268,7 +268,7 @@ const promiseToReplace = (prop, data, source, file) =>
 const mapSources = (args) => {
     const [htmlDocs, stylesheets, javascripts, metadata] = args
     return new Promise((resolve) => {
-        htmlDocs.forEach((source, index) => {
+        htmlDocs.forEach((source, index) =>
             promiseToReplace('stylesheets', stylesheets, source)
             .then(file => promiseToReplace('javascripts', javascripts, source, file))
             .then(file => promiseToReplace('metadata', metadata, source, file))
@@ -285,7 +285,7 @@ const mapSources = (args) => {
                 }
             })
 
-        })
+        )
     })
 }
 
@@ -324,29 +324,28 @@ const dummy = new File({
 // `mapSourcesToDynamicPageTemplate` accomplishes the same as `mapSources`
 // above, but we pass in the vinyl file object (dummy) in the first
 // `promiseToReplace`.  This function then parses the result into `pageHead`
-// and `pageTail` functions and adds them to the templates module
+// and `pageTail` functions and adds them to the `template` object in `store`
 const mapSourcesToDynamicPageTemplate = (args) => {
     const [, stylesheets, javascripts, metadata] = args
     const docs = [dummy.path]
 
     return new Promise((resolve) => {
-        docs.forEach((source) => {
-
+        docs.forEach((source) =>
             promiseToReplace('stylesheets', stylesheets, source, dummy)
             .then(file => promiseToReplace('javascripts', javascripts, source, file))
             .then(file => promiseToReplace('metadata', metadata, source, file))
             .then((file) => {
-                const tmpl = file.contents.toString().split('{% body %}')
-                const head = tmpl[0]
-                const tail = tmpl[1]
-                store.templates.dynamicPageTmpl = () => file.contents.toString()
+                const tmpl = file.contents.toString()
+                const parts = tmpl.split('{% body %}')
+                const head = parts[0]
+                const tail = parts[1]
+                store.templates.dynamicPageTmpl = () => tmpl
                 store.templates.dynamicPageHead = () => head
                 store.templates.dynamicPageTail = () => tail
             })
             .catch(err => log.error(err))
             .then(resolve)
-
-        })
+        )
     })
 }
 

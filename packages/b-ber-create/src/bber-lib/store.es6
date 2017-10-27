@@ -278,7 +278,7 @@ class Store {
         this.remoteAssets = []
         this.loi          = []
         this.sequence     = []
-        this.templates    = { dynamicPageHead, dynamicPageTail }
+        this.templates    = { dynamicPageTmpl, dynamicPageHead, dynamicPageTail }
         this.hash         = crypto.randomBytes(20).toString('hex')
     }
 

@@ -98,6 +98,10 @@ export default {
                         </div>`
                     break
                 case 'figure-inline':
+                    if (!{}.hasOwnProperty.call(attrsObject, 'classes')) {
+                        attrsObject.classes  = ''
+                    }
+
                     imageData = {
                         ...attrsObject,
                         id: figureId,
@@ -107,6 +111,7 @@ export default {
                         inline: true,
                         mime: mime.lookup(attrsObject.source),
                     }
+
                     result = figTmpl(imageData, build())
                     break
                 default:

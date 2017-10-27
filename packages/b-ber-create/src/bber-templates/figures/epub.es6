@@ -5,7 +5,7 @@ import { getPagebreakAttribute } from 'bber-utils'
 const epub = {
     portrait(data) {
         return `${!data.inline ? '<section epub:type="loi" title="Figures" class="chapter figures">' : ''}
-            <div class="figure__large${data.inline ? ' figure__inline' : ''}"${getPagebreakAttribute(data)}>
+            <div class="figure__large${data.inline ? ` figure__inline figure__inline--portrait ${data.classes}` : ''}"${getPagebreakAttribute(data)}>
                 <figure id="${data.id}">
                     <div class="img-wrap" style="width: 70%; margin: 0 auto;">
                         ${!data.inline ? `<a href="${data.ref}.xhtml#ref${data.id}">` : ''}
@@ -21,7 +21,7 @@ const epub = {
     },
     landscape(data) {
         return `${!data.inline ? '<section epub:type="loi" title="Figures" class="chapter figures">' : ''}
-            <div class="figure__large${data.inline ? ' figure__inline' : ''}"${getPagebreakAttribute(data)}>
+            <div class="figure__large${data.inline ? ` figure__inline figure__inline--landscape ${data.classes}` : ''}"${getPagebreakAttribute(data)}>
                 <figure id="${data.id}">
                     <div class="img-wrap">
                         ${!data.inline ? `<a href="${data.ref}.xhtml#ref${data.id}">` : ''}
@@ -37,7 +37,7 @@ const epub = {
     },
     'portrait-high': function (data) { // eslint-disable-line func-names
         return `${!data.inline ? '<section epub:type="loi" title="Figures" class="chapter figures">' : ''}
-            <div class="figure__large${data.inline ? ' figure__inline' : ''}"${getPagebreakAttribute(data)}>
+            <div class="figure__large${data.inline ? ` figure__inline figure__inline--portrait-high ${data.classes}` : ''}"${getPagebreakAttribute(data)}>
                 <figure id="${data.id}">
                     <div class="img-wrap" style="width: 60%; margin: 0 auto;">
                         ${!data.inline ? `<a href="${data.ref}.xhtml#ref${data.id}">` : ''}
@@ -53,7 +53,7 @@ const epub = {
     },
     square(data) {
         return `${!data.inline ? '<section epub:type="loi" title="Figures" class="chapter figures">' : ''}
-            <div class="figure__large${data.inline ? ' figure__inline' : ''}"${getPagebreakAttribute(data)}>
+            <div class="figure__large${data.inline ? ` figure__inline figure__inline--square ${data.classes}` : ''}"${getPagebreakAttribute(data)}>
                 <figure id="${data.id}">
                     <div class="img-wrap" style="width: 85%; margin: 0 auto;">
                         ${!data.inline ? `<a href="${data.ref}.xhtml#ref${data.id}">` : ''}
