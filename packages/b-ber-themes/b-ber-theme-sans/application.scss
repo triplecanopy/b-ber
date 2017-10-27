@@ -61,7 +61,9 @@ $modularscale: (
 
 html { font-size: 160%; }
 
-body { padding: 0 one-em(0) * .5; }
+@if $build != web {
+    body { padding: 0 one-em(0) * .5; }
+}
 
 @if $debug == true {
     img { background-color: gainsboro; }

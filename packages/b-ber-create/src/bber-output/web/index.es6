@@ -115,7 +115,9 @@ function createNavigationElement() {
         const headerElement = `
             <header class="publication__header" role="navigation">
                 <div class="header__item header__item__toggle">
-                    <button>Navigation</button>
+                    <button>
+                        <i class="material-icons">view-list</i>
+                    </button>
                 </div>
                 <div class="header__item">
                     <h1>
@@ -139,7 +141,13 @@ function buttonPrev(filePath) {
 
     if (index > -1 && store.spine[prevIndex]) {
         const href = `${store.spine[prevIndex].fileName}.xhtml`
-        html = `<a class="publication__nav__prev" href="${href}"></a>`
+        html = `
+            <div class="publication__nav__prev">
+                <a class="publication__nav__link" href="${href}">
+                    <i class="material-icons">arrow-left</i>
+                </a>
+            </div>
+        `
     }
 
     return html
@@ -153,7 +161,13 @@ function buttonNext(filePath) {
 
     if (index > -1 && store.spine[nextIndex]) {
         const href = `${store.spine[nextIndex].fileName}.xhtml`
-        html = `<a class="publication__nav__next" href="${href}"></a>`
+        html = `
+            <div class="publication__nav__next">
+                <a class="publication__nav__link" href="${href}">
+                    <i class="material-icons">arrow-right</i>
+                </a>
+            </div>
+        `
     }
 
     return html
@@ -192,17 +206,19 @@ function injectNavigationIntoFile(filePath, { navElement, headerElement }) {
             // TODO: eventually classlist should be parsed, or a more robust
             // solution implemented
             contents = data.replace(/(<body[^>]*?>)/, `
-                $1
+                <body class="nav--closed">
                 ${navElement}
                 <div class="publication">
                 ${headerElement}
                 ${pageNavigation}
+                <div class="publication__contents">
             `)
 
             // close the wrapper element, adding a little javascript for the
             // navigation toggle. should be moved to core when stable
             contents = contents.replace(/(<\/body>)/, `
-                </div>
+                </div> <!-- / .publication__contents -->
+                </div> <!-- / .publication -->
                 <script>
                 function registerNavEvents() {
                     document.querySelector('.header__item__toggle button').addEventListener('click', function() {

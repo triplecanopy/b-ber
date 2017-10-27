@@ -6,7 +6,7 @@ import { serialize } from 'bber-lib/async'
 import { src, dist } from 'bber-utils'
 import store from 'bber-lib/store'
 
-const PORT = 4000
+const PORT = 8080
 const DEBOUNCE_SPEED = 400
 const SEQUENCE = ['clean', 'container', 'sass', 'copy', 'scripts', 'render', 'loi', 'footnotes', 'inject', 'opf', 'web']
 

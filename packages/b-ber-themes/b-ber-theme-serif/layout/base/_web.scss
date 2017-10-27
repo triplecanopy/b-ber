@@ -1,6 +1,12 @@
 // wrapper element is injected between opening and closing body tags during
 // build
 
+
+@mixin grid-container() {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+}
+
 @if $build == 'web' {
 
     body { padding: 0; }
@@ -9,16 +15,37 @@
     $transition-speed: 250ms;
     $transition-easing: ease;
 
-    $dimensions-large-x: 60px;
-    $dimensions-large-y: 60px;
+    $dimensions-large-x: 48px;
+    $dimensions-large-y: 48px;
     $dimensions-medium-x: $dimensions-large-x / 2;
     $dimensions-medium-y: $dimensions-large-y / 2;
 
+    $cell-large-width: 300px;
+
+    $grid-column-span: 3 / span 8;
+
     .publication {
+        min-height: 100vh;
         position: relative;
-        margin-left: 300px;
+        margin: 0 0 0 $cell-large-width;
+        padding: 0;
         transition: margin-left $transition-speed $transition-easing;
-        padding: 0 $dimensions-large-x;
+        border:1px solid $black;
+
+        // @include grid-container;
+
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        grid-template-rows: $dimensions-large-y auto $dimensions-large-y;
+
+
+        // grid-gap: 2%;
+        grid-gap: 0;
+        border:1px solid $black;
+
+        & > * {
+            grid-column: 4 / span 6;
+        }
     }
 
     .publication__toc {
@@ -30,7 +57,7 @@
         overflow: auto;
         -webkit-overflow-scrolling: touch;
 
-        width: 300px;
+        width: $cell-large-width;
         transition: transform $transition-speed $transition-easing;
     }
 
@@ -46,6 +73,9 @@
 
     // header styles
     .publication__header {
+        grid-column: $grid-column-span;
+        grid-row: 1;
+
         position: relative;
         z-index: 1;
         margin: 0;
@@ -71,40 +101,66 @@
 
     // prev/next arrows
     .publication__nav {
-        position: absolute;
-        height: 0;
-        width: 0;
+        @include grid-container; // can't use `display: subgrid` so we re-declare
+        position: fixed;
+
+        transition: width $transition-speed $transition-easing;
+        width: calc(100% - 300px);
+        body.nav--closed & {
+            width: 100%;
+        }
+
+        height: $dimensions-large-y;
+        bottom: 0;
+
+        background: lightblue;
+
+        grid-column: $grid-column-span;
+        grid-row: 3;
+
         .publication__nav__prev,
         .publication__nav__next {
-            width: $dimensions-large-x;
-            position: fixed;
-            top: 0;
-            bottom: 0;
+            background: coral;
+
+            width: auto;
+            height: $dimensions-large-y;
+
             display: flex;
             align-items: center;
             justify-content: center;
-            &:before {
-                display: flex;
-                position: absolute;
-                width: $dimensions-medium-x;
-                height: $dimensions-medium-y;
-                align-items: center;
-                justify-content: center;
-            }
         }
         .publication__nav__prev {
-            margin-left: $dimensions-large-x * -1;
-            &:before {
-                content: '←';
-            }
+            grid-column: 3;
+            justify-content: flex-start;
         }
         .publication__nav__next {
-            right: 0;
-            &:before {
-                content: '→';
-            }
+            grid-column: 10;
+            justify-content: flex-end;
         }
     }
 
+    // all the pub's content gets dropped into the `publication__contents`
+    // element during web task
+    .publication__contents {
+        grid-column: $grid-column-span;
+        grid-row: 2;
+    }
 
+
+    //
+    //
+    //
+    .figure__small {
+        grid-column: 4 / span 6;
+    }
+
+    .figure__inline.figure__large {
+        grid-column: 4 / span 6;
+        margin: two-lines(1) 0;
+    }
+
+    .publication__header {
+        grid-column: 1 / span 12;
+        height: $dimensions-large-y;
+    }
 }
