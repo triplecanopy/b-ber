@@ -18,7 +18,6 @@ import {
     src,
     dist,
     version,
-    hrtimeformat,
     fileId,
 } from 'bber-utils'
 

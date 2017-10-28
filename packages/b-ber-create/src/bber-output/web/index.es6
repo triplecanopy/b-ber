@@ -16,12 +16,10 @@
 import Promise from 'zousan'
 import fs from 'fs-extra'
 import path from 'path'
-import { build, src, dist } from 'bber-utils'
+import { dist } from 'bber-utils'
 import log from 'b-ber-logger'
 import store from 'bber-lib/store'
 import { tocItem } from 'bber-templates/toc-xhtml'
-import File from 'vinyl'
-import renderLayouts from 'layouts'
 import { find, findIndex } from 'lodash'
 
 
@@ -51,11 +49,9 @@ function moveAssetsToRootDirctory() {
         fs.readdir(OPS_PATH, (err, files) => {
             if (err) { throw err }
 
-            const dirs = files.filter(f => {
-                return f.charAt(0) !== '.' && fs.statSync(path.join(OPS_PATH, f)).isDirectory()
-            })
+            const dirs = files.filter(f => f.charAt(0) !== '.' && fs.statSync(path.join(OPS_PATH, f)).isDirectory())
 
-            dirs.forEach((f, i) => {
+            dirs.forEach(f => {
 
                 const frm = path.join(OPS_PATH, f)
                 const to = path.join(DIST_PATH, f)
@@ -65,7 +61,7 @@ function moveAssetsToRootDirctory() {
 
             })
 
-            Promise.all(promises).then(_ => {
+            Promise.all(promises).then(() => {
                 // remove the OPS dir once all the moving assets have been moved
                 fs.remove(OPS_PATH).then(resolve)
             })
@@ -76,7 +72,7 @@ function unlinkRedundantAssets() {
     const promises = []
     return new Promise(resolve => {
 
-        ASSETS_TO_UNLINK.forEach((f, i) => {
+        ASSETS_TO_UNLINK.forEach((f) => {
             log.info(`Removing [%s]`, path.basename(f))
             promises.push(fs.remove(f))
         })
@@ -186,7 +182,7 @@ function paginationNavigation(filePath) {
     `
 }
 
-function navToggleScript() {
+function getNavigationToggleScript() {
     return `
         <script>
         function registerNavEvents() {
@@ -202,6 +198,7 @@ function navToggleScript() {
 function injectNavigationIntoFile(filePath, { navElement, headerElement }) {
     return new Promise(resolve => {
         const pageNavigation = paginationNavigation(filePath)
+        const navigationToggleScript = getNavigationToggleScript()
 
         log.info(`Adding pagination to ${path.basename(filePath)}`)
         fs.readFile(filePath, 'utf8', (err, data) => {
@@ -230,7 +227,7 @@ function injectNavigationIntoFile(filePath, { navElement, headerElement }) {
             contents = contents.replace(/(<\/body>)/, `
                 </div> <!-- / .publication__contents -->
                 </div> <!-- / .publication -->
-                ${navToggleScript()}
+                ${navigationToggleScript}
                 $1
                 `)
 
@@ -257,7 +254,7 @@ function injectNavigationIntoFiles({ navElement, headerElement }) {
                 promises.push(injectNavigationIntoFile(filePath, elements))
             })
 
-            Promise.all(promises).then(_ => resolve(elements))
+            Promise.all(promises).then(() => resolve(elements))
 
         })
 
@@ -266,25 +263,64 @@ function injectNavigationIntoFiles({ navElement, headerElement }) {
 }
 
 
-function getProjectMetadataHTML() {
+// function getProjectMetadataHTML() {
+//     return `
+//         <table>
+//         <tbody>
+//             ${store.metadata.reduce((acc, curr) => (
+//                 acc.concat(`<tr>
+//                     <td>${curr.term}</td>
+//                     <td>${curr.value}</td>
+//                 </tr>`)
+//             ), '') }
+//         </tbody>
+//         </table>
+//     `
+// }
+
+
+// subtracts 1 from `n` argument since `getPage` refrerences store.spine,
+// which is 0-indexed
+function getPage(_n = -1) {
+    const n = _n - 1
+    let url
+    try {
+        url = `text/${store.spine[n].fileName}.xhtml`
+    } catch (err) {
+        if (err) { throw err }
+    }
+
+    return url
+}
+
+function getFirstPage() {
+    return getPage(1)
+}
+
+function getCoverImage() {
+    const { metadata } = store
+    const coverEntry = find(metadata, { term: 'cover' })
+    const firstPage = getFirstPage()
+
+    let coverImageSrc = 'images/'
+    if (coverEntry && {}.hasOwnProperty.call(coverEntry, 'value')) {
+        coverImageSrc += coverEntry.value
+    }
+
     return `
-        <table>
-        <tbody>
-            ${store.metadata.reduce((acc, curr) => (
-                acc.concat(`<tr>
-                    <td>${curr.term}</td>
-                    <td>${curr.value}</td>
-                </tr>`)
-            ), '') }
-        </tbody>
-        </table>
+        <a class="cover__image__link" href="${firstPage}">
+            <img class="cover__image" src="${coverImageSrc}" alt="Cover" />
+        </a>
     `
 }
 
 function createIndexHTML({ navElement, headerElement }) {
     return new Promise(resolve => {
         const title = getProjectTitle()
-        const metadataHTML = getProjectMetadataHTML()
+        // const metadataHTML = getProjectMetadataHTML()
+        const coverImage = getCoverImage()
+        const navigationToggleScript = getNavigationToggleScript()
+
         const indexHTML = `
             <!DOCTYPE html>
             <html>
@@ -298,10 +334,10 @@ function createIndexHTML({ navElement, headerElement }) {
                     <div class="publication">
                         ${headerElement}
                         <div class="publication__contents">
-                            ${metadataHTML}
+                            ${coverImage}
                         </div>
                     </div>
-                    ${navToggleScript()}
+                    ${navigationToggleScript}
                 </body>
             </html>
         `
@@ -314,18 +350,17 @@ function createIndexHTML({ navElement, headerElement }) {
 }
 
 // TODO
-function generateWebpubManifest() {}
+// function generateWebpubManifest() {}
 
 
-const web = () => {
-    return initialize()
-    .then(unlinkRedundantAssets)
-    .then(moveAssetsToRootDirctory)
-    .then(createNavigationElement)
-    .then(injectNavigationIntoFiles)
-    .then(createIndexHTML)
-    .catch(err => log.error(err))
-}
+const web = () =>
+    initialize()
+        .then(unlinkRedundantAssets)
+        .then(moveAssetsToRootDirctory)
+        .then(createNavigationElement)
+        .then(injectNavigationIntoFiles)
+        .then(createIndexHTML)
+        .catch(err => log.error(err))
 
 export default web
 

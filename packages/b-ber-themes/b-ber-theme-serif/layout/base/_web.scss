@@ -176,6 +176,13 @@
         grid-row: 2;
     }
 
+    .cover__image__link {
+        display: block;
+        height: calc(100vh - #{n-lines(8, 0)} - #{$dimensions-large-y});
+    }
+    .cover__image {
+        max-height: 100%;
+    }
 
 
     //
