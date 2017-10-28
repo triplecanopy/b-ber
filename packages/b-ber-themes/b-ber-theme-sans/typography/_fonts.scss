@@ -1,0 +1,3 @@
+@if $build == 'web' {
+    @include font-face('Material Icons', 'MaterialIcons-Regular', ('eot', 'svg', 'ttf', 'woff', 'woff2'), 400, normal);
+}

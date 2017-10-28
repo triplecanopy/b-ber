@@ -115,9 +115,7 @@ function createNavigationElement() {
         const headerElement = `
             <header class="publication__header" role="navigation">
                 <div class="header__item header__item__toggle">
-                    <button>
-                        <i class="material-icons">view-list</i>
-                    </button>
+                    <button class="material-icons">view_list</button>
                 </div>
                 <div class="header__item">
                     <h1>
@@ -144,7 +142,7 @@ function buttonPrev(filePath) {
         html = `
             <div class="publication__nav__prev">
                 <a class="publication__nav__link" href="${href}">
-                    <i class="material-icons">arrow-left</i>
+                    <i class="material-icons">arrow_back</i>
                 </a>
             </div>
         `
@@ -164,7 +162,7 @@ function buttonNext(filePath) {
         html = `
             <div class="publication__nav__next">
                 <a class="publication__nav__link" href="${href}">
-                    <i class="material-icons">arrow-right</i>
+                    <i class="material-icons">arrow_forward</i>
                 </a>
             </div>
         `
@@ -185,6 +183,19 @@ function paginationNavigation(filePath) {
             ${prev}
             ${next}
         </nav>
+    `
+}
+
+function navToggleScript() {
+    return `
+        <script>
+        function registerNavEvents() {
+            document.querySelector('.header__item__toggle button').addEventListener('click', function() {
+                document.body.classList.toggle('nav--closed')
+            }, false);
+        }
+        window.addEventListener('load', registerNavEvents, false);
+        </script>
     `
 }
 
@@ -219,14 +230,7 @@ function injectNavigationIntoFile(filePath, { navElement, headerElement }) {
             contents = contents.replace(/(<\/body>)/, `
                 </div> <!-- / .publication__contents -->
                 </div> <!-- / .publication -->
-                <script>
-                function registerNavEvents() {
-                    document.querySelector('.header__item__toggle button').addEventListener('click', function() {
-                        document.body.classList.toggle('nav--closed')
-                    }, false);
-                }
-                window.addEventListener('load', registerNavEvents, false);
-                </script>
+                ${navToggleScript()}
                 $1
                 `)
 
@@ -289,12 +293,15 @@ function createIndexHTML({ navElement, headerElement }) {
                 <head>
                     <title>${title}</title>
                 </head>
-                <body>
+                <body class="nav--closed">
                     ${navElement}
                     <div class="publication">
                         ${headerElement}
-                        ${metadataHTML}
+                        <div class="publication__contents">
+                            ${metadataHTML}
+                        </div>
                     </div>
+                    ${navToggleScript()}
                 </body>
             </html>
         `
