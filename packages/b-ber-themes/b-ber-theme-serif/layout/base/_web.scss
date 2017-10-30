@@ -1,6 +1,5 @@
-// wrapper element is injected between opening and closing body tags during
-// build
-
+// Conditional styles for web build since the layout includes a dynamimc
+// sidebar and CSS Grid layout
 
 @mixin web-grid-container() {
     display: grid;
@@ -49,8 +48,6 @@
 
     $cell-large-width: $dimensions-extra-large-x * 3;
 
-    $grid-column-span: 3 / span 8;
-
     .publication {
         min-height: 100vh;
         position: relative;
@@ -62,6 +59,30 @@
         grid-template-columns: repeat(12, 1fr);
         grid-template-rows: $dimensions-large-y auto $dimensions-extra-large-y;
         grid-gap: 0;
+    }
+
+    .publication__search {
+        height: $dimensions-large-x;
+
+        display: flex;
+        align-items: stretch;
+        flex-direction: row;
+
+        .publication__search__input {
+            height: $dimensions-large-x;
+            @include type-settings(-2);
+            width: calc(100% - #{two-ems(0)});
+            border: 0;
+            border-bottom: 1px solid $grey;
+            display: block;
+            margin: 0;
+            padding: 0 one-em(0);
+        }
+        .publication__search__button {
+            border-bottom: 1px solid $grey;
+            padding: 8px;
+            height: $dimensions-large-y + 1; // eh?
+        }
     }
 
     .publication__toc {
@@ -172,7 +193,7 @@
     // element during web task
     .publication__contents {
         @include padding(4,0,3,0,0);
-        grid-column: $grid-column-span;
+        grid-column: 3 / span 8;
         grid-row: 2;
     }
 
@@ -184,6 +205,42 @@
         max-height: 100%;
     }
 
+
+    .search__results {
+        margin-top: three-lines(0) * -1;
+    }
+    .search__result {
+        @include type-settings(-5);
+        line-height: 1.35;
+        margin-bottom: one-line(0);
+
+        * {
+            margin: 0;
+            padding: 0;
+            font-weight: 400;
+            font-style: normal;
+            text-indent: 0;
+            text-align: left;
+            font-family: $sans;
+        }
+
+    }
+    .search__result__link {
+        text-decoration: none;
+        color: darken($grey, 30%);
+
+        mark {
+            color: $black;
+            font-weight: 700;
+            background-color: transparent;
+        }
+    }
+
+
+    .search__result__text {
+        display: inline-block;
+        padding: 0.3621em 0; // TODO: using `padding` mixin
+    }
 
     //
     //
@@ -197,8 +254,4 @@
     //     margin: two-lines(1) 0;
     // }
 
-    // .publication__header {
-    //     grid-column: 1 / span 12;
-    //     height: $dimensions-large-y;
-    // }
 }

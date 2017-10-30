@@ -21,11 +21,13 @@ import log from 'b-ber-logger'
 import store from 'bber-lib/store'
 import { tocItem } from 'bber-templates/toc-xhtml'
 import { find, findIndex } from 'lodash'
+import cheerio from 'cheerio'
 
 
 let ASSETS_TO_UNLINK
 let DIST_PATH
 let OPS_PATH
+let OMIT_FROM_SEARCH
 
 // make sure we're using the correct build variables
 function initialize() {
@@ -37,6 +39,10 @@ function initialize() {
         path.join(DIST_PATH, 'META-INF'),
         path.join(DIST_PATH, 'OPS/content.opf'),
         path.join(DIST_PATH, 'OPS/toc.ncx'),
+    ]
+
+    OMIT_FROM_SEARCH = [ // list of spine item entry `fileName`s
+        'toc',
     ]
 
     return Promise.resolve()
@@ -104,6 +110,10 @@ function createNavigationElement() {
 
         const navElement = `
             <nav class="publication__toc" role="navigation">
+                <div class="publication__search">
+                    <input disabled="disabled" class="publication__search__input" placeholder="Search" value="" />
+                    <button class="material-icons publication__search__button">search</button>
+                </div>
                 ${tocHTML}
             </nav>
         `
@@ -184,13 +194,27 @@ function paginationNavigation(filePath) {
 
 function getNavigationToggleScript() {
     return `
-        <script>
+        <script type="text/javascript">
+        // <![CDATA[
+
         function registerNavEvents() {
             document.querySelector('.header__item__toggle button').addEventListener('click', function() {
-                document.body.classList.toggle('nav--closed')
+                document.body.classList.toggle('nav--closed');
             }, false);
         }
         window.addEventListener('load', registerNavEvents, false);
+
+        // ]]>
+        </script>
+    `
+}
+
+function getWebWorkerScript() {
+    return `
+        <script type="text/javascript">
+        // <![CDATA[
+        ${fs.readFileSync(path.join(__dirname, 'worker-init.js'))}
+        // ]]>
         </script>
     `
 }
@@ -199,6 +223,7 @@ function injectNavigationIntoFile(filePath, { navElement, headerElement }) {
     return new Promise(resolve => {
         const pageNavigation = paginationNavigation(filePath)
         const navigationToggleScript = getNavigationToggleScript()
+        const webWorkerScript = getWebWorkerScript()
 
         log.info(`Adding pagination to ${path.basename(filePath)}`)
         fs.readFile(filePath, 'utf8', (err, data) => {
@@ -228,8 +253,9 @@ function injectNavigationIntoFile(filePath, { navElement, headerElement }) {
                 </div> <!-- / .publication__contents -->
                 </div> <!-- / .publication -->
                 ${navigationToggleScript}
+                ${webWorkerScript}
                 $1
-                `)
+            `)
 
             fs.writeFile(filePath, contents, err => {
                 if (err) { throw err }
@@ -239,6 +265,7 @@ function injectNavigationIntoFile(filePath, { navElement, headerElement }) {
         })
     })
 }
+
 function injectNavigationIntoFiles({ navElement, headerElement }) {
     return new Promise(resolve => {
         const elements = { navElement, headerElement }
@@ -259,9 +286,68 @@ function injectNavigationIntoFiles({ navElement, headerElement }) {
         })
 
     })
-
 }
 
+function indexPageContent() {
+    return new Promise((resolve, reject) => {
+        // TODO: `indexPageContent` should create a `lunr` index for faster parsing down the line
+
+        const { spine } = store
+        const promises = []
+        const records = []
+
+        let fileIndex = -1
+        spine.filter(_ => OMIT_FROM_SEARCH.indexOf(_.fileName) < 0).forEach(entry =>
+            promises.push(new Promise((resolve, reject) => {
+                fs.readFile(path.join(OPS_PATH, `${entry.relativePath}.xhtml`), 'utf8', (err, data) => {
+                    if (err) { reject(err) }
+
+                    const $ = cheerio.load(data)
+                    const title = $('h1,h2,h3,h4,h5,h6').first().text()
+                    const body = $('body').text().replace(/\n\s+/g, '\n').trim() // reduce whitespace
+                    const url = `/text/${entry.fileName}.xhtml`
+
+                    fileIndex += 1
+                    records.push({ id: fileIndex, title, body, url })
+                    resolve()
+                })
+            }))
+        )
+
+        Promise.all(promises)
+        .catch(err => reject(err))
+        .then(() => resolve(JSON.stringify(records)))
+    })
+}
+
+function writeJSONPageData(json) {
+    return new Promise((resolve, reject) => {
+        fs.writeFile(path.join(DIST_PATH, 'search-index.json'), json, err => {
+            if (err) { reject(err) }
+            resolve()
+        })
+    })
+}
+
+function importVendorScripts() {
+    return new Promise((resolve, reject) => {
+        const searchScriptPath = path.resolve(__dirname, '../../../node_modules/lunr/lunr.js') // TODO: should have access to bber path in store
+        const outputPath = path.join(DIST_PATH, 'lunr.js')
+        fs.copy(searchScriptPath, outputPath)
+            .catch(err => reject(err))
+            .then(resolve)
+    })
+}
+
+function writeWebWorker() {
+    return new Promise((resolve, reject) => {
+        const worker = fs.readFileSync(path.join(__dirname, 'worker.js'))
+        fs.writeFile(path.join(DIST_PATH, 'worker.js'), worker, err => {
+            if (err) { reject(err) }
+            resolve()
+        })
+    })
+}
 
 // function getProjectMetadataHTML() {
 //     return `
@@ -320,10 +406,14 @@ function createIndexHTML({ navElement, headerElement }) {
         // const metadataHTML = getProjectMetadataHTML()
         const coverImage = getCoverImage()
         const navigationToggleScript = getNavigationToggleScript()
+        const webWorkerScript = getWebWorkerScript()
 
         const indexHTML = `
-            <!DOCTYPE html>
-            <html>
+            <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+            <html xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:epub="http://www.idpf.org/2007/ops"
+                xmlns:ibooks="http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0"
+                epub:prefix="ibooks: http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0">
                 <meta http-equiv="default-style" content="text/html charset=utf-8"/>
                 <link rel="stylesheet" type="text/css" href="../stylesheets/application.css"/>
                 <head>
@@ -338,6 +428,7 @@ function createIndexHTML({ navElement, headerElement }) {
                         </div>
                     </div>
                     ${navigationToggleScript}
+                    ${webWorkerScript}
                 </body>
             </html>
         `
@@ -356,10 +447,21 @@ function createIndexHTML({ navElement, headerElement }) {
 const web = () =>
     initialize()
         .then(unlinkRedundantAssets)
+
+        // Create search index
+        .then(indexPageContent)
+        .then(writeJSONPageData)
+
+        // move files to root directory and create an index.html
         .then(moveAssetsToRootDirctory)
         .then(createNavigationElement)
         .then(injectNavigationIntoFiles)
         .then(createIndexHTML)
+
+        // write scripts into HTML files
+        .then(importVendorScripts)
+        .then(writeWebWorker)
+
         .catch(err => log.error(err))
 
 export default web

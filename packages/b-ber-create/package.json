@@ -31,6 +31,7 @@
     "autoprefixer": "^6.5.3",
     "b-ber-themes": "0.1.0-alpha.14",
     "b-ber-logger": "0.1.0-alpha.14",
+    "cheerio": "^1.0.0-rc.2",
     "css": "^2.2.1",
     "decompress": "^4.0.0",
     "epub-zipper": "^1.2.9",
@@ -43,6 +44,7 @@
     "jshint": "^2.9.3",
     "layouts": "^0.13.2",
     "lodash": "^4.17.4",
+    "lunr": "2",
     "markdown-it": "^8.3.1",
     "markdown-it-container": "^2.0.0",
     "markdown-it-front-matter": "^0.1.2",
@@ -58,7 +60,6 @@
     "serve-index": "^1.8.0",
     "uglify-js": "^3.1.2",
     "vinyl": "^1.2.0",
-    "xml2js": "^0.4.17",
     "yargs": "^6.6.0",
     "zousan": "https://github.com/msimmer/zousan"
   },
