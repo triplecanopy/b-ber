@@ -424,7 +424,9 @@ function createIndexHTML({ navElement, headerElement }) {
                     <div class="publication">
                         ${headerElement}
                         <div class="publication__contents">
-                            ${coverImage}
+                            <section>
+                                ${coverImage}
+                            </section>
                         </div>
                     </div>
                     ${navigationToggleScript}

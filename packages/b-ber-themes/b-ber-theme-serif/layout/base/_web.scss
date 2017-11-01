@@ -1,12 +1,31 @@
-// Conditional styles for web build since the layout includes a dynamimc
-// sidebar and CSS Grid layout
+// Web build. These styles will be added to the main stylesheet when running
+// `bber build --web`.
+//
+// The b-ber web layout uses CSS Grid for a multi-column layout. The default
+// styles create a container with three rows (header, content, and footer), and
+// twelve columns.
+//
+// In addition, the web build creates navigation and info panels that can be
+// updated in individual themes, or by porting the SCSS below into a child
+// theme.
 
+
+// Default vertical column count. If this is changed, values below need to be
+// manually updated as well.
+$web-grid-columns: 12;
+
+// Some handy mixins. These are declared above the `@if $build == ...` styles,
+// since we can't declare mixins in a conditional statement in SCSS.
 @mixin web-grid-container() {
     display: grid;
-    grid-template-columns: repeat(12, 1fr);
+    grid-template-columns: repeat($web-grid-columns, 1fr);
 }
 
-@mixin web-navigation-link() {
+@mixin web-grid-full-width() {
+    grid-column: 1 / span $web-grid-columns;
+}
+
+@mixin web-navigation-link() {  // These are the links that appear in the navigation sidebar (the table of contents).
     font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
     text-decoration: none;
     color: $black;
@@ -14,9 +33,11 @@
     letter-spacing: 0.02em;
 }
 
+// Conditional styles for the web build. The `web` variable is set dynamically
+// during build when running `bber build --web`
 @if $build == 'web' {
 
-    // some base styles
+    // Some base styles
     body { padding: 0; }
     button {
         appearance: none;
@@ -32,11 +53,13 @@
 
 
 
-
-    // navigation show/hide
+    // Some variables for spacing, sizing, and transitions.
+    //
+    // Show/hide the navigation panels (TOC and info sidebar)
     $transition-speed: 250ms;
     $transition-easing: ease;
 
+    // Basi spacing
     $dimensions-extra-large-x: 96px;
     $dimensions-extra-large-y: 96px;
 
@@ -48,6 +71,8 @@
 
     $cell-large-width: $dimensions-extra-large-x * 3;
 
+    // The `publication` element is the main CSS Grid, it contains both vertical
+    // and horizontal grid elements
     .publication {
         min-height: 100vh;
         position: relative;
@@ -56,11 +81,12 @@
         transition: margin-left $transition-speed $transition-easing;
 
         display: grid;
-        grid-template-columns: repeat(12, 1fr);
+        grid-template-columns: repeat($web-grid-columns, 1fr);
         grid-template-rows: $dimensions-large-y auto $dimensions-extra-large-y;
         grid-gap: 0;
     }
 
+    // Search bar which is wrapped in the navigation panel
     .publication__search {
         height: $dimensions-large-x;
 
@@ -81,10 +107,11 @@
         .publication__search__button {
             border-bottom: 1px solid $grey;
             padding: 8px;
-            height: $dimensions-large-y + 1; // eh?
+            height: $dimensions-large-y + 1;
         }
     }
 
+    // The table of contents. An ordered, nested list.
     .publication__toc {
         @include type-settings(-7);
         position: fixed;
@@ -102,7 +129,8 @@
         & > ol { padding-right: 15px; }
         ol li,
         ul li {
-            white-space: nowrap;
+            white-space: nowrap;        // Hide the overflow on longer TOC entries, will become
+                                        // problematic for deeply nested structures.
             text-overflow: ellipsis;
             overflow: hidden;
             margin: 5px 0;
@@ -113,7 +141,8 @@
         }
     }
 
-    body.nav--closed {
+    body.nav--closed {                  // The `nav--closed` class is toggled via JavaScript in
+                                        // the footer of the generated HTML pages.
         .publication__toc {
             transform: translateX(-100%);
         }
@@ -123,11 +152,10 @@
     }
 
 
-    // header styles
+    // Header styles
     .publication__header {
         @include type-settings(-7);
-
-        grid-column: 1 / span 12;
+        @include web-grid-full-width;
         grid-row: 1;
 
         position: relative;
@@ -149,15 +177,15 @@
             a { @include web-navigation-link; }
         }
 
-        .header__item__toggle {
+        .header__item__toggle { // Toggle nav button
             position: absolute;
             left: 0;
         }
     }
 
-    // prev/next arrows
+    // Prev / next arrows in the footer
     .publication__nav {
-        @include web-grid-container; // can't use `display: subgrid` so we re-declare
+        @include web-grid-container; // We can't use `display: subgrid` so we re-declare
         transition: width $transition-speed $transition-easing;
         height: $dimensions-extra-large-y;
 
@@ -189,14 +217,39 @@
         }
     }
 
-    // all the pub's content gets dropped into the `publication__contents`
-    // element during web task
+    // All of the publication's content gets dropped into the
+    // `publication__contents` element during web task.
+    //
+    // For the CSS Grid layout to function propertly (i.e., allow a user to
+    // apply styles to child elements in the layout such as full-bleed images),
+    // we set the `publication__contents` to span the entire n columns, and then
+    // apply a smaller default column-span to all of the containing elements.
+    //
+    // This also means that, for the layout to function properly, *all elements
+    // should be wrapped in `section` elements*. b-ber allows a user to do this
+    // easily by using container directives, like `::: chapter`.
+    //
     .publication__contents {
         @include padding(4,0,3,0,0);
-        grid-column: 3 / span 8;
         grid-row: 2;
+
+        @include web-grid-container;            // We can't use `display: subgrid` so we re-declare
+        @include web-grid-full-width;           // `publication__contents` spans the entire page
+        * { @include web-grid-full-width; }     // All elements (except for `sections`, see below) also span the entire page
+
+        section {                               // `section` elements are also CSS Grid containers
+            @include web-grid-container;
+            @include web-grid-full-width;
+            *:not(section) { grid-column: 3 / span 8; }     // All child elements of a `section` (except for other `section`s)
+                                                            // span a smaller area by default. This allows overrides to be
+                                                            // easily applied to child elements in `_overrides.scss` to create
+                                                            // more complex layouts.
+        }
     }
 
+    // The first page (index.html) of the generated web build is the
+    // publication's cover image, which is wrapped in a link that leads to the
+    // first page of text
     .cover__image__link {
         display: block;
         height: calc(100vh - #{n-lines(8, 0)} - #{$dimensions-large-y});
@@ -205,7 +258,8 @@
         max-height: 100%;
     }
 
-
+    // Search results layout. Search results are added and removed to/from the
+    // `publication__contents` element dynamically on search
     .search__results {
         margin-top: three-lines(0) * -1;
     }
@@ -229,29 +283,25 @@
         text-decoration: none;
         color: darken($grey, 30%);
 
-        mark {
+        mark { // Search terms that are found in the text are highlighted bold.
             color: $black;
             font-weight: 700;
             background-color: transparent;
         }
     }
 
-
+    // The context around the found search term, i.e., 100 characters on either
+    // side of the text around the found search term
     .search__result__text {
         display: inline-block;
         padding: 0.3621em 0; // TODO: using `padding` mixin
     }
 
-    //
-    //
-    //
-    // .figure__small {
-    //     grid-column: 4 / span 6;
+    // Dev
+    // full-bleed images
+    // .figure__large.figure__inline {
+    //     @include web-grid-full-width;
     // }
 
-    // .figure__inline.figure__large {
-    //     grid-column: 4 / span 6;
-    //     margin: two-lines(1) 0;
-    // }
 
 }
