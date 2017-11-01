@@ -141,10 +141,50 @@ $web-grid-columns: 12;
         }
     }
 
-    body.nav--closed {                  // The `nav--closed` class is toggled via JavaScript in
+    .publication__info {
+        @include type-settings(-7);
+        position: fixed;
+        z-index: 1;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
+        border-right: 1px solid $grey;
+        width: $cell-large-width;
+        transition: transform $transition-speed $transition-easing;
+
+        ol, ul, li, a { @include web-navigation-link; }
+
+        & > ol { padding-right: 15px; }
+        ol li,
+        ul li {
+            white-space: nowrap;        // Hide the overflow on longer TOC entries, will become
+                                        // problematic for deeply nested structures.
+            text-overflow: ellipsis;
+            overflow: hidden;
+            margin: 5px 0;
+            &:last-child { margin: 0; }
+        }
+        ol ul, ol ol {
+            padding: 0 0 0 one-em(0);
+        }
+    }
+
+
+    body.toc--visible {                 // The `toc--visible` class is toggled via JavaScript in
                                         // the footer of the generated HTML pages.
         .publication__toc {
             transform: translateX(-100%);
+        }
+        .publication {
+            margin-left: 0;
+        }
+    }
+
+    body.info--visible {
+        .publication__toc {
+            transform: translateX(0);
         }
         .publication {
             margin-left: 0;
@@ -235,6 +275,7 @@ $web-grid-columns: 12;
 
         @include web-grid-container;            // We can't use `display: subgrid` so we re-declare
         @include web-grid-full-width;           // `publication__contents` spans the entire page
+        grid-template-rows: max-content;        // https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template-rows
         * { @include web-grid-full-width; }     // All elements (except for `sections`, see below) also span the entire page
 
         section {                               // `section` elements are also CSS Grid containers
