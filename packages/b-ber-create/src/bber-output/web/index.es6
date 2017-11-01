@@ -106,9 +106,10 @@ function createNavigationElement() {
         // generally, the folder stucture should be modified to allow
         // nesting, among other things
         const tocHTML = tocItem(toc).replace(/a href="/g, 'a href="/text/')
+        const metadataHTML = getProjectMetadataHTML()
         const title = getProjectTitle()
 
-        const navElement = `
+        const tocElement = `
             <nav class="publication__toc" role="navigation">
                 <div class="publication__search">
                     <input disabled="disabled" class="publication__search__input" placeholder="Search" value="" />
@@ -118,9 +119,15 @@ function createNavigationElement() {
             </nav>
         `
 
+        const infoElement = `
+            <nav class="publication__info" role="navigation">
+                ${metadataHTML}
+            </nav>
+        `
+
         const headerElement = `
             <header class="publication__header" role="navigation">
-                <div class="header__item header__item__toggle">
+                <div class="header__item header__item__toggle header__item__toggle--toc">
                     <button class="material-icons">view_list</button>
                 </div>
                 <div class="header__item">
@@ -128,10 +135,13 @@ function createNavigationElement() {
                         <a href="/">${title}</a>
                     </h1>
                 </div>
+                <div class="header__item header__item__toggle header__item__toggle--info">
+                    <button class="material-icons">info</button>
+                </div>
             </header>
         `
 
-        resolve({ navElement, headerElement })
+        resolve({ tocElement, infoElement, headerElement })
     })
 }
 
@@ -198,8 +208,13 @@ function getNavigationToggleScript() {
         // <![CDATA[
 
         function registerNavEvents() {
-            document.querySelector('.header__item__toggle button').addEventListener('click', function() {
-                document.body.classList.toggle('nav--closed');
+            document.querySelector('.header__item__toggle--toc button').addEventListener('click', function() {
+                document.body.classList.remove('info--visible');
+                document.body.classList.toggle('toc--visible');
+            }, false);
+            document.querySelector('.header__item__toggle--info button').addEventListener('click', function() {
+                document.body.classList.remove('toc--visible');
+                document.body.classList.toggle('info--visible');
             }, false);
         }
         window.addEventListener('load', registerNavEvents, false);
@@ -219,7 +234,7 @@ function getWebWorkerScript() {
     `
 }
 
-function injectNavigationIntoFile(filePath, { navElement, headerElement }) {
+function injectNavigationIntoFile(filePath, { tocElement, infoElement, headerElement }) {
     return new Promise(resolve => {
         const pageNavigation = paginationNavigation(filePath)
         const navigationToggleScript = getNavigationToggleScript()
@@ -239,8 +254,9 @@ function injectNavigationIntoFile(filePath, { navElement, headerElement }) {
             // TODO: eventually classlist should be parsed, or a more robust
             // solution implemented
             contents = data.replace(/(<body[^>]*?>)/, `
-                <body class="nav--closed">
-                ${navElement}
+                $1
+                ${tocElement}
+                ${infoElement}
                 <div class="publication">
                 ${headerElement}
                 ${pageNavigation}
@@ -266,9 +282,8 @@ function injectNavigationIntoFile(filePath, { navElement, headerElement }) {
     })
 }
 
-function injectNavigationIntoFiles({ navElement, headerElement }) {
+function injectNavigationIntoFiles(elements) {
     return new Promise(resolve => {
-        const elements = { navElement, headerElement }
         const textPath = path.join(DIST_PATH, 'text')
         const promises = []
 
@@ -349,20 +364,20 @@ function writeWebWorker() {
     })
 }
 
-// function getProjectMetadataHTML() {
-//     return `
-//         <table>
-//         <tbody>
-//             ${store.metadata.reduce((acc, curr) => (
-//                 acc.concat(`<tr>
-//                     <td>${curr.term}</td>
-//                     <td>${curr.value}</td>
-//                 </tr>`)
-//             ), '') }
-//         </tbody>
-//         </table>
-//     `
-// }
+function getProjectMetadataHTML() {
+    return `
+        <table>
+        <tbody>
+            ${store.metadata.reduce((acc, curr) => (
+                acc.concat(`<tr>
+                    <td>${curr.term}</td>
+                    <td>${curr.value}</td>
+                </tr>`)
+            ), '') }
+        </tbody>
+        </table>
+    `
+}
 
 
 // subtracts 1 from `n` argument since `getPage` refrerences store.spine,
@@ -400,10 +415,9 @@ function getCoverImage() {
     `
 }
 
-function createIndexHTML({ navElement, headerElement }) {
+function createIndexHTML({ tocElement, infoElement, headerElement }) {
     return new Promise(resolve => {
         const title = getProjectTitle()
-        // const metadataHTML = getProjectMetadataHTML()
         const coverImage = getCoverImage()
         const navigationToggleScript = getNavigationToggleScript()
         const webWorkerScript = getWebWorkerScript()
@@ -420,7 +434,8 @@ function createIndexHTML({ navElement, headerElement }) {
                     <title>${title}</title>
                 </head>
                 <body class="nav--closed">
-                    ${navElement}
+                    ${tocElement}
+                    ${infoElement}
                     <div class="publication">
                         ${headerElement}
                         <div class="publication__contents">

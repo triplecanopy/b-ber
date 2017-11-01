@@ -76,9 +76,9 @@ $web-grid-columns: 12;
     .publication {
         min-height: 100vh;
         position: relative;
-        margin: 0 0 0 $cell-large-width;
+        margin: 0;
         padding: 0;
-        transition: margin-left $transition-speed $transition-easing;
+        transition: padding-right $transition-speed $transition-easing;
 
         display: grid;
         grid-template-columns: repeat($web-grid-columns, 1fr);
@@ -113,14 +113,16 @@ $web-grid-columns: 12;
 
     // The table of contents. An ordered, nested list.
     .publication__toc {
+        transform: translateX(-100%);
         @include type-settings(-7);
         position: fixed;
-        z-index: 1;
+        z-index: 2;
         top: 0;
         bottom: 0;
         overflow: auto;
         -webkit-overflow-scrolling: touch;
         border-right: 1px solid $grey;
+        background-color: $white;
         width: $cell-large-width;
         transition: transform $transition-speed $transition-easing;
 
@@ -142,6 +144,7 @@ $web-grid-columns: 12;
     }
 
     .publication__info {
+        transform: translateX(100%);
         @include type-settings(-7);
         position: fixed;
         z-index: 1;
@@ -150,7 +153,7 @@ $web-grid-columns: 12;
         right: 0;
         overflow: auto;
         -webkit-overflow-scrolling: touch;
-        border-right: 1px solid $grey;
+        border-left: 1px solid $grey;
         width: $cell-large-width;
         transition: transform $transition-speed $transition-easing;
 
@@ -175,19 +178,19 @@ $web-grid-columns: 12;
     body.toc--visible {                 // The `toc--visible` class is toggled via JavaScript in
                                         // the footer of the generated HTML pages.
         .publication__toc {
-            transform: translateX(-100%);
+            transform: translateX(0);
         }
-        .publication {
-            margin-left: 0;
+        .header__item__toggle--toc {
+            left: $cell-large-width;
         }
     }
 
     body.info--visible {
-        .publication__toc {
+        .publication__info {
             transform: translateX(0);
         }
         .publication {
-            margin-left: 0;
+            padding-right: $cell-large-width;
         }
     }
 
@@ -217,9 +220,18 @@ $web-grid-columns: 12;
             a { @include web-navigation-link; }
         }
 
-        .header__item__toggle { // Toggle nav button
+        .header__item__toggle { // Toggle nav buttons
             position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .header__item__toggle--toc {
+            transition: left $transition-speed $transition-easing;
             left: 0;
+        }
+        .header__item__toggle--info {
+            right: 0;
         }
     }
 
