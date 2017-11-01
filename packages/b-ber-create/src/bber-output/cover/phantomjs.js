@@ -18,10 +18,11 @@ page.evaluate(function evaluate() {
     var body = document.body
     var spans = document.getElementsByTagName('span')
 
-    body.style.backgroundColor = '#F6F5FF'
-    body.style.margin = '30px'
+    body.style.backgroundColor = '#5050C5'
+    body.style.margin = '100px'
     body.style.fontFamily = 'Helvetica'
-    body.style.fontSize = '72px'
+    body.style.fontSize = '45px'
+    body.style.color = '#FFFFFF'
 
     for (var i = 0; i < spans.length; i++) {
         spans[i].style.display = 'block'
