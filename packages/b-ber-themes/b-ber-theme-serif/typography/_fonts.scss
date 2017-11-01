@@ -4,5 +4,5 @@
 @include font-face('Crimson', 'TC-crimson-italic-webfont', ('ttf'), 400, italic);
 
 @if $build == 'web' {
-    @include font-face('Material Icons', 'MaterialIcons-Regular', ('eot', 'svg', 'ttf', 'woff', 'woff2'), 400, normal);
+    @include font-face('Material Icons', 'MaterialIcons-Regular', ('eot', 'ttf', 'woff', 'woff2'), 400, normal);
 }
