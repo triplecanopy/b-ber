@@ -148,6 +148,18 @@ function getHeaderElement(fileName) {
     `
 }
 
+function removeNonLinearTOCEntries(nodes) {
+    if (Array.isArray(nodes) !== true) { return [] }
+    const nodes_ = nodes.filter(node => {
+        if (node.nodes) {
+            removeNonLinearTOCEntries(node.nodes)
+        }
+        return node.linear !== false
+    })
+
+    return nodes_
+}
+
 function createNavigationElement() {
     return new Promise(resolve => {
         const { toc } = store
@@ -155,7 +167,9 @@ function createNavigationElement() {
         // TODO: why is this invalidating the toc.xhtml?
         // generally, the folder stucture should be modified to allow
         // nesting, among other things
-        const tocHTML = tocItem(toc).replace(/a href="/g, 'a href="/text/')
+
+        const toc_ = removeNonLinearTOCEntries(toc)
+        const tocHTML = tocItem(toc_).replace(/a href="/g, 'a href="/text/')
         const metadataHTML = getProjectMetadataHTML()
         const title = getProjectTitle()
 
@@ -368,9 +382,9 @@ function writeJSONPageData(json) {
 
 function importVendorScripts() {
     return new Promise((resolve, reject) => {
-        const searchScriptPath = path.resolve(__dirname, '../../../node_modules/lunr/lunr.js') // TODO: should have access to bber path in store
+        const lunrPath = require.resolve('lunr')
         const outputPath = path.join(DIST_PATH, 'lunr.js')
-        fs.copy(searchScriptPath, outputPath)
+        fs.copy(lunrPath, outputPath)
             .catch(err => reject(err))
             .then(resolve)
     })
