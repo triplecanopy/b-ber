@@ -34,15 +34,6 @@
         transition: transform $transition-speed $transition-easing;
     }
 
-    body.nav--closed {
-        .publication__toc {
-            transform: translateX(-100%);
-        }
-        .publication {
-            margin-left: 0;
-        }
-    }
-
 
     // header styles
     .publication__header {

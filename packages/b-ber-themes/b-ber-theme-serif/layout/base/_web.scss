@@ -92,7 +92,7 @@ $web-grid-columns: 12;
 
         display: grid;
         grid-template-columns: repeat($web-grid-columns, 1fr);
-        grid-template-rows: $dimensions-large-y auto $dimensions-extra-large-y;
+        grid-template-rows: $dimensions-large-y auto $dimensions-extra-large-y * 0.75;
         grid-gap: 0;
     }
 
@@ -146,7 +146,7 @@ $web-grid-columns: 12;
         .publication__search__button--close {
             position: absolute;
             visibility: hidden;
-            right: -10px;
+            right: -15px;
             &.publication__search__button--close--visible {
                 visibility: visible;
             }
@@ -193,16 +193,46 @@ $web-grid-columns: 12;
         @include type-settings(-7);
         transform: translateX(100%);
         position: fixed;
-        z-index: 2;
+        z-index: 3;
         top: $dimensions-large-x;
         bottom: 0;
         right: 0;
         overflow: auto;
         -webkit-overflow-scrolling: touch;
-        border-left: 1px solid $grey;
+        border-left: 1px solid $black;
         background-color: $white;
         width: $cell-large-width;
         transition: transform $transition-speed $transition-easing;
+
+
+        dt, dd { @include web-navigation-link; }
+        & > dl {
+            padding-right: 15px;
+            border-top: 1px solid $black;
+        }
+        dl dt,
+        dl dd {
+            white-space: nowrap;        // Hide the overflow on longer TOC entries, will become
+                                        // problematic for deeply nested structures.
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+        dl dt {
+            text-transform: capitalize;
+            margin: 5px 0;
+            &:last-child { margin: 0; }
+        }
+        dl dd {
+            margin: 5px 0 one-line(0);
+            &:last-child { margin: 0; }
+        }
+
+        dl dl {
+            padding: 0 0 0 one-em(0);
+        }
+
+        dt { font-weight: 700; }
+
     }
 
 
@@ -354,6 +384,7 @@ $web-grid-columns: 12;
     // first page of text
     .cover__image__link {
         display: block;
+        text-align: center;
         height: calc(100vh - #{n-lines(8, 0)} - #{$dimensions-large-y});
     }
     .cover__image {
@@ -417,4 +448,18 @@ $web-grid-columns: 12;
         }
     }
 
+    // TODO: this might need to be extended to all elements that 'pagebreak`
+    .figure__large.figure__inline {
+		margin: two-lines(0) 0;
+    }
+
+    // TODO: should this be for all builds?
+    figure .figcaption a,
+	figure figcaption a,
+	.img-wrap a, {
+		color:$black;
+		text-decoration:underline !important;
+	}
+
 }
+

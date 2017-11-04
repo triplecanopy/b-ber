@@ -112,16 +112,14 @@ function getChapterTitle(fileName) {
 
 function getProjectMetadataHTML() {
     return `
-        <table>
-            <tbody>
-                ${store.metadata.reduce((acc, curr) => (
-                    acc.concat(`<tr>
-                        <td>${curr.term}</td>
-                        <td>${curr.value}</td>
-                    </tr>`)
-                ), '') }
-            </tbody>
-        </table>
+        <dl>
+            ${store.metadata.reduce((acc, curr) => (
+                acc.concat(`
+                    <dt>${curr.term}</dt>
+                    <dd>${curr.value}</dd>
+                `)
+            ), '') }
+        </dl>
     `
 }
 
@@ -393,7 +391,7 @@ function writeWebWorker() {
 // which is 0-indexed
 function getPage(_n = -1) {
     const n = _n - 1
-    let url
+    let url = '#'
     try {
         url = `text/${store.spine[n].fileName}.xhtml`
     } catch (err) {
@@ -432,6 +430,7 @@ function createIndexHTML({ tocElement, infoElement }) {
         const webWorkerScript = getWebWorkerScript()
         const headerElement = getHeaderElement()
 
+        // TODO: should get dynamic page template here to ensure asset hash on production build
         const indexHTML = `
             <?xml version="1.0" encoding="UTF-8" standalone="no"?>
             <html xmlns="http://www.w3.org/1999/xhtml"
@@ -443,7 +442,7 @@ function createIndexHTML({ tocElement, infoElement }) {
                 <head>
                     <title>${title}</title>
                 </head>
-                <body class="nav--closed">
+                <body>
                     ${tocElement}
                     ${infoElement}
                     <div class="publication">

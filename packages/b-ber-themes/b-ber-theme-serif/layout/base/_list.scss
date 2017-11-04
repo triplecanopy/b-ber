@@ -36,7 +36,7 @@ ul {
     }
 }
 
-ol {
+ol, dl {
     @include type-settings(-2);
     padding: one-line(-2) 0 one-line(-2) two-ems(0);
     @include following-element-has-no-top-padding;
@@ -44,11 +44,11 @@ ol {
     text-indent: 0;
     margin: 0;
 
-    ul, ol {
+    ul, ol, dl {
         padding: 0 0 0 two-ems(0);
     }
 
-    li {
+    li, dt, dd {
         padding-top: 0;
 
         @if $build == web {
@@ -75,15 +75,4 @@ ol {
         line-height: line-height(ms(-2));
     }
 
-}
-
-dl {
-    dd {
-        @include type-settings(0);
-        text-indent: 0;
-    }
-    dt {
-        @include type-settings(0);
-        text-indent: 0;
-    }
 }
