@@ -1,19 +1,5 @@
-/*
-
-Fonts registered in _fonts.scss
-
-@font-face {
-  font-family: 'Material Icons';
-  font-style: normal;
-  font-weight: 400;
-  src: url(MaterialIcons-Regular.eot);
-  src: local('Material Icons'),
-       local('MaterialIcons-Regular'),
-       url(MaterialIcons-Regular.woff2) format('woff2'),
-       url(MaterialIcons-Regular.woff) format('woff'),
-       url(MaterialIcons-Regular.ttf) format('truetype');
-} */
-
+// This is a slightly modified version of the Material Icons CSS available from
+// Google. @font-face rules are declared in _fonts.scss
 @if $build == 'web' {
   .material-icons {
     font-family: 'Material Icons';

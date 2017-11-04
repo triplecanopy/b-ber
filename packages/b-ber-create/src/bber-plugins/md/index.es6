@@ -18,7 +18,7 @@ import mdMedia from 'bber-plugins/md/directives/media'
 import mdDialogue from 'bber-plugins/md/directives/dialogue'
 // import mdEpigraph from 'bber-plugins/md/directives/epigraph'
 
-import util from 'util'
+import hlsj from 'highlight.js'
 import { extend, find } from 'lodash'
 
 
@@ -58,7 +58,7 @@ class MarkdownRenderer {
          * Instance of MarkdownIt class
          * @member
          * @memberOf module:md#MarkdownRenderer
-         * @see {@link https://github.com/markdown-it/markdown-it|markdown-it}
+         * @see {@link https://github.com/markdown-it/markdown-it}
          * @type {MarkdownIt}
          */
         this.md = new MarkdownIt({
@@ -66,6 +66,19 @@ class MarkdownRenderer {
             xhtmlOut: true,
             breaks: false,
             linkify: false,
+
+            // Syntax highlighting is done with highlight.js. It's up to
+            // individual themes to include the highlight.js stylesheets, or to
+            // add their own custom styles
+            highlight: (str, lang) => {
+                if (lang && hlsj.getLanguage(lang)) {
+                    try {
+                        return hlsj.highlight(lang, str).value
+                    } catch (_) { /* noop */ }
+                }
+
+                return ''
+            },
         })
 
         /**

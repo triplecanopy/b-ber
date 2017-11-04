@@ -7,5 +7,7 @@
     "start": "sass -l --trace --watch application.scss:demo/application.css"
   },
   "author": "Maxwell Simmer <maxwell.simmer@gmail.com> (http://maxwellsimmer.com)",
-  "dependencies": {}
+  "dependencies": {
+    "highlight.js": "^9.12.0"
+  }
 }
