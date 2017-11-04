@@ -1,9 +1,16 @@
 // Web build. These styles will be added to the main stylesheet when running
 // `bber build --web`.
 //
+// Currently this file contains all the elements for the web build. This should
+// eventually be split up into the chrome with UX elements (including Material
+// design icon fonts and other vendor assets), and the styles for the page
+// content itself. This *also* means that the web build task in
+// bber-output/web/index.es should be updated to distinguish between the UX and
+// content as well. BONUS: then users can add their own UI :)
+//
 // The b-ber web layout uses CSS Grid for a multi-column layout. The default
 // styles create a container with three rows (header, content, and footer), and
-// twelve columns.
+// twelve vertical columns.
 //
 // In addition, the web build creates navigation and info panels that can be
 // updated in individual themes, or by porting the SCSS below into a child
@@ -29,7 +36,6 @@ $web-grid-columns: 12;
     font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
     text-decoration: none;
     color: $black;
-    font-weight: 500;
     letter-spacing: 0.02em;
 }
 
@@ -43,6 +49,7 @@ $web-grid-columns: 12;
         appearance: none;
         background: transparent;
         border: 0;
+        border-radius: 0;
         padding: 5px;
         outline: none;
 
@@ -60,14 +67,17 @@ $web-grid-columns: 12;
     $transition-easing: ease;
 
     // Basi spacing
-    $dimensions-extra-large-x: 96px;
-    $dimensions-extra-large-y: 96px;
+    $dimensions-extra-large-x: 128px;
+    $dimensions-extra-large-y: 128px;
 
     $dimensions-large-x: $dimensions-extra-large-x / 2;
     $dimensions-large-y: $dimensions-extra-large-y / 2;
 
     $dimensions-medium-x: $dimensions-large-x / 2;
     $dimensions-medium-y: $dimensions-large-y / 2;
+
+    $dimensions-small-x: $dimensions-medium-x / 2;
+    $dimensions-small-y: $dimensions-medium-y / 2;
 
     $cell-large-width: $dimensions-extra-large-x * 3;
 
@@ -86,28 +96,60 @@ $web-grid-columns: 12;
         grid-gap: 0;
     }
 
-    // Search bar which is wrapped in the navigation panel
+    // Publication title is the first element in the TOC panel
+    .publication__title {
+        @include web-navigation-link;
+        @include type-settings(-2);
+
+        height: $dimensions-large-x;
+        display: flex;
+        align-items: center;
+        flex-direction: row;
+        border-bottom: 1px solid $grey;
+        text-indent: one-em(0);
+        padding-left: 15px; // mimic layout of list elements in TOC
+    }
+
+    // Search bar
     .publication__search {
+        position: absolute;
+        left: 70%; // effectively the width of the serach bar when expanded since it's pinned right
+        right: $dimensions-large-x;
         height: $dimensions-large-x;
 
         display: flex;
-        align-items: stretch;
+        align-items: center;
         flex-direction: row;
+        justify-content: flex-end;
 
         .publication__search__input {
-            height: $dimensions-large-x;
             @include type-settings(-2);
-            width: calc(100% - #{two-ems(0)});
             border: 0;
-            border-bottom: 1px solid $grey;
             display: block;
             margin: 0;
-            padding: 0 one-em(0);
+            padding: 0 0 5px 0;
+            width: 0;
+            outline: none;
+            background-color: $white;
+            transition: width $transition-speed $transition-easing;
+            border-bottom: 1px solid $black;
+            &.publication__search__input--expanded {
+                margin-left: 10px; // optics
+                width: $cell-large-width;
+            }
         }
         .publication__search__button {
-            border-bottom: 1px solid $grey;
-            padding: 8px;
-            height: $dimensions-large-y + 1;
+            padding: 10px;
+            position: relative;
+            right: -10px;
+        }
+        .publication__search__button--close {
+            position: absolute;
+            visibility: hidden;
+            right: -10px;
+            &.publication__search__button--close--visible {
+                visibility: visible;
+            }
         }
     }
 
@@ -116,19 +158,23 @@ $web-grid-columns: 12;
         transform: translateX(-100%);
         @include type-settings(-7);
         position: fixed;
-        z-index: 2;
+        z-index: 3;
         top: 0;
         bottom: 0;
         overflow: auto;
         -webkit-overflow-scrolling: touch;
-        border-right: 1px solid $grey;
+        border-right: 1px solid $black;
         background-color: $white;
         width: $cell-large-width;
         transition: transform $transition-speed $transition-easing;
 
         ol, ul, li, a { @include web-navigation-link; }
+        a:hover { text-decoration: underline; }
 
-        & > ol { padding-right: 15px; }
+        & > ol {
+            padding-right: 15px;
+            border-top: 1px solid $black;
+        }
         ol li,
         ul li {
             white-space: nowrap;        // Hide the overflow on longer TOC entries, will become
@@ -144,34 +190,19 @@ $web-grid-columns: 12;
     }
 
     .publication__info {
-        transform: translateX(100%);
         @include type-settings(-7);
+        transform: translateX(100%);
         position: fixed;
-        z-index: 1;
-        top: 0;
+        z-index: 2;
+        top: $dimensions-large-x;
         bottom: 0;
         right: 0;
         overflow: auto;
         -webkit-overflow-scrolling: touch;
         border-left: 1px solid $grey;
+        background-color: $white;
         width: $cell-large-width;
         transition: transform $transition-speed $transition-easing;
-
-        ol, ul, li, a { @include web-navigation-link; }
-
-        & > ol { padding-right: 15px; }
-        ol li,
-        ul li {
-            white-space: nowrap;        // Hide the overflow on longer TOC entries, will become
-                                        // problematic for deeply nested structures.
-            text-overflow: ellipsis;
-            overflow: hidden;
-            margin: 5px 0;
-            &:last-child { margin: 0; }
-        }
-        ol ul, ol ol {
-            padding: 0 0 0 one-em(0);
-        }
     }
 
 
@@ -180,8 +211,9 @@ $web-grid-columns: 12;
         .publication__toc {
             transform: translateX(0);
         }
-        .header__item__toggle--toc {
-            left: $cell-large-width;
+        .publication__contents:before {
+            visibility: visible;
+            opacity: 0.5;
         }
     }
 
@@ -201,8 +233,6 @@ $web-grid-columns: 12;
         @include web-grid-full-width;
         grid-row: 1;
 
-        position: relative;
-        z-index: 1;
         margin: 0;
         padding: 0;
         top: 0;
@@ -211,15 +241,20 @@ $web-grid-columns: 12;
         display: flex;
         align-items: center;
         justify-content: center;
-        border-bottom: 1px solid $black;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.26);
+		position: fixed;
+		width: 100%;
+		z-index: 2;
+		background-color: $white;
 
         h1 {
+            @include web-navigation-link;
             @include type-settings(-2);
             padding: 0;
             margin: 0;
-            a { @include web-navigation-link; }
         }
 
+        .header__item__title {}
         .header__item__toggle { // Toggle nav buttons
             position: absolute;
             display: flex;
@@ -227,11 +262,10 @@ $web-grid-columns: 12;
             justify-content: center;
         }
         .header__item__toggle--toc {
-            transition: left $transition-speed $transition-easing;
-            left: 0;
+            left: $dimensions-small-x;
         }
         .header__item__toggle--info {
-            right: 0;
+            right: $dimensions-small-x;
         }
     }
 
@@ -285,7 +319,7 @@ $web-grid-columns: 12;
         @include padding(4,0,3,0,0);
         grid-row: 2;
 
-        @include web-grid-container;            // We can't use `display: subgrid` so we re-declare
+        @include web-grid-container;            // We can't use `display: subgrid` so we re-declare it.
         @include web-grid-full-width;           // `publication__contents` spans the entire page
         grid-template-rows: max-content;        // https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template-rows
         * { @include web-grid-full-width; }     // All elements (except for `sections`, see below) also span the entire page
@@ -298,6 +332,21 @@ $web-grid-columns: 12;
                                                             // easily applied to child elements in `_overrides.scss` to create
                                                             // more complex layouts.
         }
+
+        // Logic for overlay when sidebar open
+        &:before {
+            content: '';
+            visibility: hidden;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            opacity: 0;
+            background-color: $black;
+            transition: opacity $transition-speed $transition-easing;
+          }
+
     }
 
     // The first page (index.html) of the generated web build is the
@@ -315,6 +364,7 @@ $web-grid-columns: 12;
     // `publication__contents` element dynamically on search
     .search__results {
         margin-top: three-lines(0) * -1;
+        margin-bottom:two-lines(0);
     }
     .search__result {
         @include type-settings(-5);
@@ -328,13 +378,12 @@ $web-grid-columns: 12;
             font-style: normal;
             text-indent: 0;
             text-align: left;
-            font-family: $sans;
         }
 
     }
     .search__result__link {
         text-decoration: none;
-        color: darken($grey, 30%);
+        color: $black;
 
         mark { // Search terms that are found in the text are highlighted bold.
             color: $black;
@@ -350,11 +399,22 @@ $web-grid-columns: 12;
         padding: 0.3621em 0; // TODO: using `padding` mixin
     }
 
-    // Dev
-    // full-bleed images
-    // .figure__large.figure__inline {
-    //     @include web-grid-full-width;
-    // }
+    // Media queries
+    @include break('mobile') {
 
+        // Sidebars
+        .publication__toc,
+        .publication__info {
+            top: 49px;
+            border-right: 0;
+            width: 100%;
+        }
+
+        body.info--visible {
+            .publication {
+                padding-right: 0;
+            }
+        }
+    }
 
 }

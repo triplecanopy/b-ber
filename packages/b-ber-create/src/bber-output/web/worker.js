@@ -14,6 +14,8 @@ function onRequestReadyStateChange(state = null) {
     readyState = state || this.readyState;
     postMessage({ readyState: readyState });
 }
+
+// TODO: prebuild index during web build, see here: https://lunrjs.com/guides/index_prebuilding.html
 function onRequestLoad() {
     records = JSON.parse(this.responseText);
     searchIndex = lunr(function() {
@@ -65,6 +67,9 @@ function parseSearchResults(results) {
                 var lastIndex = 0;
 
                 for (var i = 0; i < result.matchData.metadata[term][fieldName].position.length; i++) {
+
+                    if (!records[result.ref][fieldName]) { continue; } // guard for fuzzy searches ... should be handled better
+
                     var begin = result.matchData.metadata[term][fieldName].position[i][0];
                     var length = result.matchData.metadata[term][fieldName].position[i][1];
 
@@ -91,8 +96,19 @@ function parseSearchResults(results) {
     return output;
 }
 
-function doSearch(query) {
-    var results = searchIndex.search(query);
+function doSearch(term) {
+    // var results = searchIndex.search(term);
+    var results = searchIndex.query(function(q) {
+        q.term(term, {
+            fields: ['title', 'body'],
+            // boost: 1,
+            editDistance: 1,
+            // usePipeline: false,
+            // wildcard: lunr.Query.wildcard.LEADING,
+            // wildcard: lunr.Query.wildcard.LEADING | lunr.Query.wildcard.TRAILING,
+        });
+    });
+
     var data = parseSearchResults(results)
     return data;
 }
@@ -101,6 +117,6 @@ getSearchIndex();
 
 onmessage = function(e) {
     if (readyState < 4) { return; }
-    var results = doSearch(e.data.query);
+    var results = doSearch(e.data.term);
     postMessage({ results: results });
 }

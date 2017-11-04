@@ -72,7 +72,7 @@ const createSCSSString = () =>
 
 
         if (chunks.length < 1) {
-            const err = new Error('bber-modifiers/sass: No readable stylesheets were found.')
+            const err = new Error('No readable stylesheets were found.')
             log.error(err)
         }
 
@@ -151,7 +151,10 @@ const renderCSS = scssString =>
     new Promise(resolve =>
         nodeSass.render({
             data: `$build: "${build()}";${scssString}`,
-            includePaths: [path.join(src(), '_stylesheets'), path.dirname(store.theme.entry)],
+            includePaths: [
+                path.join(src(), '_stylesheets'),
+                path.dirname(store.theme.entry),
+            ],
             outputStyle: env() === 'production' ? 'compressed' : 'nested',
             errLogToConsole: true,
         }, (err, result) => {

@@ -98,6 +98,58 @@ function getProjectTitle() {
     return title
 }
 
+function getChapterTitle(fileName) {
+    if (typeof fileName !== 'string') { return getProjectTitle() }
+
+    let title = ''
+    const entry = find(store.spine, { fileName })
+    if (entry && entry.title) {
+        title = entry.title
+    }
+
+    return title
+}
+
+function getProjectMetadataHTML() {
+    return `
+        <table>
+            <tbody>
+                ${store.metadata.reduce((acc, curr) => (
+                    acc.concat(`<tr>
+                        <td>${curr.term}</td>
+                        <td>${curr.value}</td>
+                    </tr>`)
+                ), '') }
+            </tbody>
+        </table>
+    `
+}
+
+function getHeaderElement(fileName) {
+    const title = getChapterTitle(fileName)
+    return `
+        <header class="publication__header" role="navigation">
+            <div class="header__item header__item__toggle header__item__toggle--toc">
+                <button class="material-icons">view_list</button>
+            </div>
+
+            <div class="header__item header__item__title">
+                <h1>${title}</h1>
+            </div>
+
+            <div class="header__item publication__search">
+                <button class="material-icons publication__search__button publication__search__button--open">search</button>
+                <input type="text" disabled="disabled" class="publication__search__input" placeholder="" value=""></input>
+                <button class="material-icons publication__search__button publication__search__button--close">close</button>
+            </div>
+
+            <div class="header__item header__item__toggle header__item__toggle--info">
+                <button class="material-icons">info</button>
+            </div>
+        </header>
+    `
+}
+
 function createNavigationElement() {
     return new Promise(resolve => {
         const { toc } = store
@@ -111,9 +163,8 @@ function createNavigationElement() {
 
         const tocElement = `
             <nav class="publication__toc" role="navigation">
-                <div class="publication__search">
-                    <input disabled="disabled" class="publication__search__input" placeholder="Search" value="" />
-                    <button class="material-icons publication__search__button">search</button>
+                <div class="publication__title">
+                    <a href="/">${title}</a>
                 </div>
                 ${tocHTML}
             </nav>
@@ -125,23 +176,7 @@ function createNavigationElement() {
             </nav>
         `
 
-        const headerElement = `
-            <header class="publication__header" role="navigation">
-                <div class="header__item header__item__toggle header__item__toggle--toc">
-                    <button class="material-icons">view_list</button>
-                </div>
-                <div class="header__item">
-                    <h1>
-                        <a href="/">${title}</a>
-                    </h1>
-                </div>
-                <div class="header__item header__item__toggle header__item__toggle--info">
-                    <button class="material-icons">info</button>
-                </div>
-            </header>
-        `
-
-        resolve({ tocElement, infoElement, headerElement })
+        resolve({ tocElement, infoElement })
     })
 }
 
@@ -206,19 +241,7 @@ function getNavigationToggleScript() {
     return `
         <script type="text/javascript">
         // <![CDATA[
-
-        function registerNavEvents() {
-            document.querySelector('.header__item__toggle--toc button').addEventListener('click', function() {
-                document.body.classList.remove('info--visible');
-                document.body.classList.toggle('toc--visible');
-            }, false);
-            document.querySelector('.header__item__toggle--info button').addEventListener('click', function() {
-                document.body.classList.remove('toc--visible');
-                document.body.classList.toggle('info--visible');
-            }, false);
-        }
-        window.addEventListener('load', registerNavEvents, false);
-
+        ${fs.readFileSync(path.join(__dirname, 'navigation.js'))}
         // ]]>
         </script>
     `
@@ -228,17 +251,18 @@ function getWebWorkerScript() {
     return `
         <script type="text/javascript">
         // <![CDATA[
-        ${fs.readFileSync(path.join(__dirname, 'worker-init.js'))}
+        ${fs.readFileSync(path.join(__dirname, 'search.js'))}
         // ]]>
         </script>
     `
 }
 
-function injectNavigationIntoFile(filePath, { tocElement, infoElement, headerElement }) {
+function injectNavigationIntoFile(filePath, { tocElement, infoElement }) {
     return new Promise(resolve => {
         const pageNavigation = paginationNavigation(filePath)
         const navigationToggleScript = getNavigationToggleScript()
         const webWorkerScript = getWebWorkerScript()
+        const headerElement = getHeaderElement(path.basename(filePath, path.extname(filePath)))
 
         log.info(`Adding pagination to ${path.basename(filePath)}`)
         fs.readFile(filePath, 'utf8', (err, data) => {
@@ -364,21 +388,6 @@ function writeWebWorker() {
     })
 }
 
-function getProjectMetadataHTML() {
-    return `
-        <table>
-        <tbody>
-            ${store.metadata.reduce((acc, curr) => (
-                acc.concat(`<tr>
-                    <td>${curr.term}</td>
-                    <td>${curr.value}</td>
-                </tr>`)
-            ), '') }
-        </tbody>
-        </table>
-    `
-}
-
 
 // subtracts 1 from `n` argument since `getPage` refrerences store.spine,
 // which is 0-indexed
@@ -415,12 +424,13 @@ function getCoverImage() {
     `
 }
 
-function createIndexHTML({ tocElement, infoElement, headerElement }) {
+function createIndexHTML({ tocElement, infoElement }) {
     return new Promise(resolve => {
         const title = getProjectTitle()
         const coverImage = getCoverImage()
         const navigationToggleScript = getNavigationToggleScript()
         const webWorkerScript = getWebWorkerScript()
+        const headerElement = getHeaderElement()
 
         const indexHTML = `
             <?xml version="1.0" encoding="UTF-8" standalone="no"?>
