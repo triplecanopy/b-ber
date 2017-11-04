@@ -1,5 +1,4 @@
 import path from 'path'
-import fs from 'fs-extra'
 import nodemon from 'nodemon'
 import log from 'b-ber-logger'
 import { serialize } from 'bber-lib/async'
@@ -23,16 +22,19 @@ const restart = () =>
     })
 
 const serve = () =>
-    new Promise((resolve, reject) => {
+    new Promise(resolve => {
         restart().then(() => {
             console.log()
             log.info('Starting nodemon')
             nodemon({
                 script: path.join(__dirname, 'server.js'),
-                ext: 'md js scss',
+                ext: 'md js scss es es6',
                 env: { NODE_ENV: 'development' },
                 ignore: ['node_modules', 'lib'],
-                watch: src(),
+                watch: [
+                    src(),
+                    path.resolve(__dirname, '..', '..', '..'),
+                ],
                 args: [
                     '--use_socket_server',
                     '--use_hot_reloader',
