@@ -4,17 +4,62 @@ import path from 'path'
 import fs from 'fs-extra'
 import yargs from 'yargs'
 import Yaml from 'bber-lib/yaml'
-import { src, forOf } from 'bber-utils'
+import { forOf } from 'bber-utils'
 import store from 'bber-lib/store'
 import themes from 'b-ber-themes'
+import { find } from 'lodash'
 
-function setTheme(themeName, themeList, cwd) {
+
+
+function getUserDefinedThemes() {
+    return new Promise(resolve => {
+        const { config } = store
+        const cwd = process.cwd()
+
+        const names = []
+        const themes = {}
+
+        if (!{}.hasOwnProperty.call(config, 'themes_directory')) { resolve({ names, themes }) }
+
+        fs.readdirSync(path.join(cwd, config.themes_directory)).forEach((_) => {
+            const modulePath = path.resolve(cwd, config.themes_directory, _)
+
+            if (!fs.lstatSync(modulePath).isDirectory()) { return }
+
+            // `entryPoint` here is either a package.json file, or an index.js script that exports the theme object
+            // theme object schema:
+            //
+            // {
+            //      name: String        required
+            //      entry: String       required
+            //      fonts: Array        required
+            //      images: Array       required
+            //      npmPackage: Object  optional
+            // }
+            //
+            const userModule =
+                fs.existsSync(path.join(modulePath, 'package.json'))
+                    ? require(path.join(modulePath))
+                    : require(path.join(modulePath, 'index.js'))
+
+
+            const moduleName = userModule.name
+            names.push(moduleName)
+            themes[moduleName] = userModule
+        })
+
+        resolve({ names, themes })
+
+    })
+}
+
+function setTheme(themeName, themeList, userThemes, cwd) {
     return new Promise(resolve => {
         if (themeList.indexOf(themeName) < 0) {
             console.error(`Could not find theme matching [${themeName}].`)
             console.log('Select one from the list of available themes:')
             console.log(themeList.reduce((acc, curr) => {
-                const icon = currentTheme === curr ? '✔' : '-'
+                const icon = themeName === curr ? '✔' : '-'
                 return acc.concat(`  ${icon} ${curr}\n`)
             }, ''))
             return
@@ -44,7 +89,7 @@ function setTheme(themeName, themeList, cwd) {
             const themeObject =
                 {}.hasOwnProperty.call(themes, themeName)
                     ? themes[themeName]
-                    : userThemes[themeName]
+                    : userThemes.themes[themeName]
 
             const settingsFileName    = '_settings.scss'
             const overridesFileName   = '_overrides.scss'
@@ -94,51 +139,24 @@ function setTheme(themeName, themeList, cwd) {
 
 
 const theme = () =>
-    new Promise((resolve) => {
+    new Promise(async (resolve) => {
+
 
         const cwd = process.cwd()
         const { config } = store
         const themeList = []
-        const userThemes = []
 
         forOf(themes, _ => themeList.push(_))
 
         // get user themes dir, if any, and merge with built-in b-ber themes
-        if ({}.hasOwnProperty.call(config, 'themes_directory')) {
-
-            fs.readdirSync(path.join(cwd, config.themes_directory)).forEach((_) => {
-                const modulePath = path.resolve(cwd, config.themes_directory, _)
-
-                if (!fs.lstatSync(modulePath).isDirectory()) { return }
-
-
-                // `entryPoint` here is either a package.json file, or an index.js script that exports the theme object
-                // theme object schema:
-                //
-                // {
-                //      name: String        required
-                //      entry: String       required
-                //      fonts: Array        required
-                //      images: Array       required
-                //      npmPackage: Object  optional
-                // }
-                //
-                const userModule =
-                    fs.existsSync(path.join(modulePath, 'package.json'))
-                        ? require(path.join(modulePath))
-                        : require(path.join(modulePath, 'index.js'))
-
-
-                const moduleName = userModule.name
-                userThemes[moduleName] = userModule
-                themeList.push(moduleName)
-            })
+        const userThemes = await getUserDefinedThemes()
+        for (let i = 0; i < userThemes.names.length; i++) {
+            themeList.push(userThemes.names[i])
         }
 
         const currentTheme = config.theme || ''
 
         if (yargs.argv.list) {
-
             console.log()
             console.log('The following themes are available:')
             console.log(themeList.reduce((acc, curr) => {
@@ -146,15 +164,13 @@ const theme = () =>
                 return acc.concat(`  ${icon} ${curr}\n`)
             }, ''))
 
-
             return resolve()
-
         }
 
 
         if (yargs.argv.set) {
             const themeName = yargs.argv.set
-            return setTheme(themeName, themeList, cwd).then(resolve)
+            return setTheme(themeName, themeList, userThemes, cwd).then(resolve)
         }
 
         return resolve(yargs.showHelp())

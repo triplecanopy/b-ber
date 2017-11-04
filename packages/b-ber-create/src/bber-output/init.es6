@@ -133,7 +133,7 @@ class Initializer {
     _setTheme() {
         log.info('Setting default theme')
         return new Promise(resolve => {
-            setTheme(store.theme.name, [store.theme.name], path.dirname(this.projectPath)).then(resolve)
+            setTheme(store.theme.name, [store.theme.name], [], path.dirname(this.projectPath)).then(resolve)
         })
     }
 

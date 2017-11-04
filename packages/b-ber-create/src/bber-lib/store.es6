@@ -339,7 +339,6 @@ class Store {
 
 
                 const userTheme = find(userThemes, { name: this.config.theme })
-
                 if (!userTheme) {
                     log.error(`Could not find theme [${this.config.theme}]`)
                 }
