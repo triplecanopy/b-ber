@@ -1,1 +1,9 @@
+.DS_Store
+.babelrc
+.eslintrc
+.git
+.github
+.gitignore
 demos
+node_modules
+yarn.lock
