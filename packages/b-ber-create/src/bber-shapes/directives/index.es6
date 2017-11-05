@@ -27,6 +27,11 @@ const BODYMATTER_DIRECTIVES = [
     'conclusion',
     'part',
     'volume',
+
+    // TODO: it'll be useful to have some generic container directives available
+    // for secitoning layout
+    'section',
+    'article',
 ]
 const BACKMATTER_DIRECTIVES = [
     'backmatter',
