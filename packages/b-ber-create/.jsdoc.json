@@ -9,8 +9,7 @@
     "excludePattern": "(node_modules/|docs)"
   },
   "plugins": [
-    "node_modules/jsdoc/plugins/markdown",
-    "node_modules/jsdoc-strip-async-await"
+    "node_modules/jsdoc/plugins/markdown"
   ],
   "templates": {
     "cleverLinks": false,

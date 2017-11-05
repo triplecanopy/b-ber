@@ -12,7 +12,7 @@
     "lint": "./node_modules/.bin/eslint -c ../../.eslintrc './src/**/*.es6'",
     "prepare": "NODE_ENV=production yarn test",
     "preversion": "NODE_ENV=production yarn test",
-    "docs": "./node_modules/.bin/jsdoc --verbose -c .jsdoc.json",
+    "docs": "jsdoc --verbose --configure .jsdoc.json",
     "start": "./node_modules/.bin/babel-node ./src/bber-cli/index.es6 --presets es2015,stage-0",
     "test": "yarn lint && yarn istanbul || true",
     "posttest": "if [ \"$NODE_ENV\" = production ]; then yarn build; fi"
@@ -50,6 +50,7 @@
     "markdown-it-container": "^2.0.0",
     "markdown-it-front-matter": "^0.1.2",
     "mime-types": "^2.1.13",
+    "minami": "^1.2.3",
     "mobi-zipper": "0.1.8",
     "node-sass": "^3.13.0",
     "nodemon": "^1.11.0",

@@ -58,10 +58,7 @@ function setTheme(themeName, themeList, userThemes, cwd) {
         if (themeList.indexOf(themeName) < 0) {
             console.error(`Could not find theme matching [${themeName}].`)
             console.log('Select one from the list of available themes:')
-            console.log(themeList.reduce((acc, curr) => {
-                const icon = themeName === curr ? '✔' : '-'
-                return acc.concat(`  ${icon} ${curr}\n`)
-            }, ''))
+            console.log(printThemeList(themeList))
             return
         }
 
@@ -137,6 +134,11 @@ function setTheme(themeName, themeList, userThemes, cwd) {
     })
 }
 
+const printThemeList = (themeList, currentTheme = '') =>
+    themeList.reduce((acc, curr) => {
+        const icon = currentTheme && currentTheme === curr ? '✔' : '-'
+        return acc.concat(`  ${icon} ${curr}\n`)
+    }, '')
 
 const theme = () =>
     new Promise(async (resolve) => {
@@ -159,11 +161,7 @@ const theme = () =>
         if (yargs.argv.list) {
             console.log()
             console.log('The following themes are available:')
-            console.log(themeList.reduce((acc, curr) => {
-                const icon = currentTheme === curr ? '✔' : '-'
-                return acc.concat(`  ${icon} ${curr}\n`)
-            }, ''))
-
+            console.log(printThemeList(themeList, currentTheme))
             return resolve()
         }
 
