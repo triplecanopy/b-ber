@@ -125,7 +125,7 @@ const _parseAttrs = (s) => {
 
         if (i === s.length - 1) { // end of line
             if (key && key.length && str && str.length) {
-                out[key] = str
+                out[key.trim()] = str
             }
         }
     }
