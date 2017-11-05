@@ -1,6 +1,6 @@
 # `bber-plugins/md`
 
-This directory contains `plugins`, which modify the behaviour of the Markdown parser, and  `directives`, which define methods for rendering HTML.
+This directory contains the Markdown parser and its extensions, called   `directives`, which define methods for rendering HTML.
 
 ## Parser
 
@@ -17,7 +17,7 @@ In a Markdown document, directives are declared with custom syntax. A directive 
 ::: figure:figure-one source:"./images/my-image.jpg" alt:"My Image"
 ```
 
-A complete list of directives and their attributes can be found [here](https://github.com/triplecanopy/b-ber-creator/wiki/Custom-Directives).
+A complete list of directives and their attributes can be found [here](https://github.com/triplecanopy/b-ber/wiki/all-directives).
 
 ## Plugins
 
@@ -134,3 +134,7 @@ Plugins can be divided into `block` and `inline` categories. To maintain consist
 ### Authoring Plugins
 
 See the `markdown-it` [API documentation](https://markdown-it.github.io/markdown-it/) and [development info](https://github.com/markdown-it/markdown-it/tree/master/docs) for details about authoring plugins.
+
+### Roadmap
+
+`b-ber` will support user defined MarkdownIt extensions in the future.

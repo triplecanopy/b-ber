@@ -1,5 +1,6 @@
 # `b-ber`
 
+The `b-ber` repository is a monorepo that is managed with [Lerna](https://lernajs.io/). This means that a number of `b-ber` packages are published to `npm` from the same codebase.
 
 ## Installation
 
@@ -11,17 +12,17 @@ If [`lerna`](https://github.com/lerna/lerna/) isn't already installed:
 $ npm i -g lerna
 ```
 
-Then, in the root directory
+Then, in the `b-ber` repo
 
 ```console
-$ yarn 
+$ yarn
 $ lerna bootstrap
 ```
 
-Once that's done, create a global symlink to `b-ber-create` 
+Once that's done, create a global symlink to `b-ber-create`
 
 ```console
-$ cd packages/b-ber-create 
+$ cd packages/b-ber-create
 $ npm link
 ```
 
@@ -34,7 +35,7 @@ $ bber
 
     Where <command> is one of:
     ...
-    
+
 ```
 
 ## Updates

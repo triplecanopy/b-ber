@@ -1,5 +1,7 @@
 # `bber-utils`
 
-_**TK: expand on this a bit?**_
+Global utilities used throughout the application.
 
-Utilities! Because installing another `npm` package isn't always the answer :P
+## TODO
+
+These should be split up and namespaced, or managed with separate `npm` packages.

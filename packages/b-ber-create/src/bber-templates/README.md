@@ -1,8 +1,8 @@
 # `b-ber-templates`
 
-_**TK: add examples for strings below**_
-
 This directory contains all the XML and HTML templates used when writing output. Templates are typically created by passing in a `vinyl` File object to the [`layouts`](https://www.npmjs.com/package/layouts) package.
+
+Templates are typically invoked using a build variable when running `b-ber` from the command line. `$ bber build --epub`, for example, will cause `b-ber` to pull templates from `templates.epub`.
 
 ```js
 // demo-template.js

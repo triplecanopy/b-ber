@@ -1,10 +1,8 @@
 # `bber-output`
 
-_**TK: mention how the navigation and metadata are generated from values in the store object**_
-
 `bber-output/` contains a list of tasks that perform I/O operations. If a task exists here, it is likely registered with `yargs` in [`bber-cli`](https://github.com/triplecanopy/b-ber-creator/tree/master/src/bber-cli/cmd), and can be run on the command line.
 
-Some more involved commands call eachother, or trigger a chain of dependencies before themselves running.
+Some more involved commands call each other, or trigger a chain of dependencies before themselves running. See the example below for details.
 
 ```sh
 $ bber opf
@@ -19,9 +17,9 @@ $ bber opf
 
 ## Design
 
-`b-ber` commands always return a `Promise`, and handle their own errors. Commands are chained together with a `Promise` factory at runtime, which outputs any errors encountered, and invokes the next command (if any).
+`b-ber` commands always return a `Promise`. Commands are chained together with a `Promise` reducer at runtime, which outputs any errors encountered, and invokes the next command (if any).
 
-The following is a minimal example of a function that reads from a Markdown file, and, uselessly, writes the data directly to an XHTML file.
+The following is a minimal example of a function that reads from a Markdown file and then writes the data directly to an HTML file.
 
 ```js
 import fs from 'fs'
@@ -45,9 +43,9 @@ const output = (data) =>
 const myFunc = () =>
   new Promise(resolve =>
     input()
-    .then(output)
-    .catch(err => console.error(err))
-    .then(resolve)
+      .then(output)
+      .catch(err => console.error(err))
+      .then(resolve)
   )
 
 export default myFunc
