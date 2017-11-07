@@ -60,4 +60,4 @@ $ npm link
 **[Demos](https://github.com/triplecanopy/b-ber/tree/master/demos)**        
 **[User's manual](https://github.com/triplecanopy/b-ber/wiki)**
 
-There are also **[READMEs](https://github.com/triplecanopy/b-ber/tree/master/packages)** directory for more detailed information.
+There are also **[READMEs](https://github.com/triplecanopy/b-ber/tree/master/packages)** in the `packages` directory with more detailed information.
