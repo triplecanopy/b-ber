@@ -19,10 +19,6 @@ const restart = () =>
         store.update('spine', store.builds.web.spineEntries)
         store.update('config.baseurl', '/')
 
-        console.log('restart')
-        console.log(store.config.baseurl)
-
-
         return serialize(SEQUENCE).then(resolve)
     })
 
