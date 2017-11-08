@@ -74,7 +74,7 @@ function initializeWebWorker() {
                     </a> \
                 </div> \
             ')
-        }, '<div class="search__results">') + '</div>';
+        }, '<section class="search__results">') + '</section>';
     }
 
     // TODO: better just to show/hide the contents rather than resetting each time
