@@ -262,8 +262,8 @@ const attributes = (str, type, context) => _buildAttrString(attributesObject(str
  * @param  {String} s [description]
  * @return {String}
  */
-const htmlId = s =>
-    `_${crypto.randomBytes(20).toString('hex')}`
+const htmlId = s => s.replace(/[^0-9a-zA-Z_-]/g, '-')
+    // `_${crypto.randomBytes(20).toString('hex')}`
 
 
 export { attributes, attributesObject, attributesString, htmlId }
