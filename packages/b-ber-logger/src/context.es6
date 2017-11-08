@@ -1,4 +1,5 @@
 import path from 'path'
+import Timer from './timer'
 
 function ctx(filename) {
     return path.basename(path.dirname(filename)) + path.sep + path.basename(filename, path.extname(filename))
@@ -6,7 +7,8 @@ function ctx(filename) {
 
 export function counter() {
     this.incrementCounter()
-    return `[${this.taskCounter}]`
+    return `[${Timer.dateFormat()}]`
+    // return `[${this.taskCounter}]`
 }
 export function getContext() {
 

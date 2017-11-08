@@ -12,6 +12,15 @@ class Timer extends EventEmitter {
         second : 'numeric',
     }
 
+    static timeFormat(t) {
+        const s = (t[0] * 1000) + (t[1] / 1000000)
+        return `${String(s).slice(0, -3)}ms`
+    }
+
+    static dateFormat() {
+        return new Date(Date.now()).toLocaleString().split(' ')[1]
+    }
+
     constructor() {
         super()
 
@@ -22,16 +31,9 @@ class Timer extends EventEmitter {
         this.formattedStartDate = null
         this.taskTimes          = null
 
-
         this.prepare()
 
     }
-
-    hrtimeformat(t) {
-        const s = (t[0] * 1000) + (t[1] / 1000000)
-        return `${String(s).slice(0, -3)}ms`
-    }
-
 
     prepare() {
         this.sequenceBegin = process.hrtime()
@@ -47,8 +49,8 @@ class Timer extends EventEmitter {
     stop(task) {
         this.taskEnd = process.hrtime(this.sequenceBegin)
 
-        const beginMs = this.hrtimeformat(this.taskBegin)
-        const endMs   = this.hrtimeformat(this.taskEnd)
+        const beginMs = Timer.timeFormat(this.taskBegin)
+        const endMs   = Timer.timeFormat(this.taskEnd)
         const totalMs = `${(parseFloat(endMs, 10) - parseFloat(beginMs, 10)).toFixed(3)}ms`
 
 
@@ -73,7 +75,7 @@ class Timer extends EventEmitter {
 
         const { taskTimes, formattedStartDate } = this
         const formattedEndDate = new Date().toLocaleDateString('en-CA', Timer.dateFormattingOptions)
-        const sequenceEnd = this.hrtimeformat(process.hrtime(this.sequenceBegin))
+        const sequenceEnd = Timer.timeFormat(process.hrtime(this.sequenceBegin))
 
         this.emit('done', { store, taskTimes, formattedStartDate, formattedEndDate, sequenceEnd })
 

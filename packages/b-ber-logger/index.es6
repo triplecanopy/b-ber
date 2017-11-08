@@ -45,8 +45,8 @@ class Logger extends Timer {
         taskErrors   : 0,
 
         whitespace   : ' ',
-        increment    : 4,
-        indentLevel  : 4,
+        increment    : 0,
+        indentLevel  : 0,
         taskCounter  : -1,
         context      : null,
     }
