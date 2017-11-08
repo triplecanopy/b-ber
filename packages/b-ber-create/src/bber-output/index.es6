@@ -41,4 +41,4 @@ export { default as sass } from 'bber-modifiers/sass'
 export { default as scripts } from 'bber-modifiers/scripts'
 
 // plugins
-export { default as md } from 'bber-plugins/md'
+export { default as md } from 'bber-plugins/markdown'

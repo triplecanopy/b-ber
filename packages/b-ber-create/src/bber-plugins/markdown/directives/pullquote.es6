@@ -2,9 +2,9 @@
 // customized closing elements (always outputs `</section>`), so we have to
 // write it long-hand. see comments below
 
-import plugin from 'bber-plugins/md/plugins/section'
+import plugin from 'bber-plugins/markdown/plugins/section'
 import store from 'bber-lib/store'
-import { attributesObject, attributesString } from 'bber-plugins/md/directives/helpers'
+import { attributesObject, attributesString } from 'bber-plugins/markdown/directives/helpers'
 import log from 'b-ber-logger'
 // import { passThrough } from 'bber-utils' // for testing
 import {

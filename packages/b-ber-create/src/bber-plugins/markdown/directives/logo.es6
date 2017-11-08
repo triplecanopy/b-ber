@@ -1,7 +1,7 @@
 import fs from 'fs-extra'
 import path from 'path'
-import figure from 'bber-plugins/md/plugins/figure'
-import { attributesString, attributesObject, htmlId } from 'bber-plugins/md/directives/helpers'
+import figure from 'bber-plugins/markdown/plugins/figure'
+import { attributesString, attributesObject, htmlId } from 'bber-plugins/markdown/directives/helpers'
 import { /*htmlComment, */src } from 'bber-utils'
 import log from 'b-ber-logger'
 

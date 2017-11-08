@@ -11,7 +11,7 @@
 
 */
 
-import figure from 'bber-plugins/md/plugins/figure'
+import figure from 'bber-plugins/markdown/plugins/figure'
 import log from 'b-ber-logger'
 import { passThrough } from 'bber-utils' // for testing
 

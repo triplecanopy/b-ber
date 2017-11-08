@@ -1,7 +1,7 @@
 'use strict'
 
-// npm run -s mocha:single -- ./src/bber-plugins/md/directives/__tests__/directives.js
-// ./node_modules/.bin/mocha -R spec --compilers js:./node_modules/babel-register ./src/bber-plugins/md/directives/__tests__/directives.js
+// npm run -s mocha:single -- ./src/bber-plugins/markdown/directives/__tests__/directives.js
+// ./node_modules/.bin/mocha -R spec --compilers js:./node_modules/babel-register ./src/bber-plugins/markdown/directives/__tests__/directives.js
 
 /* eslint-disable no-unused-vars, no-multi-spaces, import/newline-after-import, max-len */
 

@@ -1,4 +1,4 @@
-# `bber-plugins/md`
+# `bber-plugins/markdown`
 
 This directory contains the Markdown parser and its extensions, called   `directives`, which define methods for rendering HTML.
 
@@ -68,8 +68,8 @@ The `markdown-it-container` plugin provides an interface to manipulate output HT
 The basic implementation for creating a custom container is below.
 
 ```js
-import plugin from 'bber-plugins/md/plugins/section'
-import renderer from 'bber-plugins/md/directives/factory/block'
+import plugin from 'bber-plugins/markdown/plugins/section'
+import renderer from 'bber-plugins/markdown/directives/factory/block'
 
 const render = ({ context }) => (tokens, idx) => {
   if (tokens[idx].nesting === 1) {  // container open
@@ -94,7 +94,7 @@ export default {
 Plugins are then registered with the `markdown-it` instance with the following pattern.
 
 ```js
-import extension from 'bber-plugins/md/directives/section'
+import extension from 'bber-plugins/markdown/directives/section'
 
 this.md = new MarkdownIt()
 this.md.use(
@@ -104,7 +104,7 @@ this.md.use(
 )
 ```
 
-See [`bber-plugins/md/directives/section.es6`](https://github.com/triplecanopy/b-ber-creator/blob/master/src/bber-plugins/md/directives/section.es6) and [`bber-plugins/md/index.es6`](https://github.com/triplecanopy/b-ber-creator/blob/master/src/bber-plugins/md/index.es6) for actual implementation.
+See [`bber-plugins/markdown/directives/section.es6`](https://github.com/triplecanopy/b-ber-creator/blob/master/src/bber-plugins/markdown/directives/section.es6) and [`bber-plugins/markdown/index.es6`](https://github.com/triplecanopy/b-ber-creator/blob/master/src/bber-plugins/markdown/index.es6) for actual implementation.
 
 ### Plugin Rules
 
