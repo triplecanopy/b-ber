@@ -13,7 +13,7 @@ import path from 'path'
 import Yaml from 'bber-lib/yaml'
 import File from 'vinyl'
 import log from 'b-ber-logger'
-import { src } from 'bber-utils'
+import { src, env } from 'bber-utils'
 
 /**
  * Generate new Markdown documents
@@ -170,5 +170,5 @@ class Generate {
     }
 }
 
-const generate = process.env.NODE_ENV === 'test' ? Generate : new Generate().init()
+const generate = env() === 'test' ? Generate : new Generate().init()
 export default generate

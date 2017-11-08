@@ -1,6 +1,8 @@
 import path from 'path'
 import fs from 'fs-extra'
 import crypto from 'crypto'
+import store from 'bber-lib/store'
+import Yaml from 'bber-lib/yaml'
 import * as figures from 'bber-templates/figures'
 import * as pages from 'bber-templates/pages'
 import * as opf from 'bber-templates/opf'
@@ -33,10 +35,7 @@ function sourceDirs(src) {
 function config(src, dist) {
     return {
         relativePath: path.join(path.dirname(src), 'config.yml'),
-        content: `env: development # development | production
-theme: b-ber-theme-serif # name or path
-src: ${path.basename(src)}
-dist: ${path.basename(dist)}`,
+        content: Yaml.dump(store.config),
     }
 }
 

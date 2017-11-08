@@ -1,7 +1,7 @@
 import Promise from 'zousan'
 import path from 'path'
 import fs from 'fs-extra'
-import { src, dist } from 'bber-utils'
+import { src, dist, env } from 'bber-utils'
 import store from 'bber-lib/store'
 import log from 'b-ber-logger'
 import uglifyJS from 'uglify-js'
@@ -61,7 +61,7 @@ const write = () =>
         fs.readdir(path.join(src(), '_javascripts'), (err, _files) => {
             if (err) { throw err }
             const files = _files.filter(_ => path.extname(_) === '.js')
-            promises.push((process.env.NODE_ENV === 'production' ? optimized : unoptimized)(files))
+            promises.push((env() === 'production' ? optimized : unoptimized)(files))
             Promise.all(promises).then(resolve)
         })
     })

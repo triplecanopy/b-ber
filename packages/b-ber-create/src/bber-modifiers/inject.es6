@@ -126,7 +126,7 @@ const getJSONLDMetadata = args =>
         const form    = { content }
         const file    = new File({ path: 'metadata.json-ld' })
 
-        if (process.env.NODE_ENV !== 'production') {
+        if (env() !== 'production') {
             file.contents = new Buffer('')
             return resolve([...args, file])
         }

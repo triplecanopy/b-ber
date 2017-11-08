@@ -12,7 +12,7 @@ import fs from 'fs-extra'
 import renderLayouts from 'layouts'
 import File from 'vinyl'
 import { opfPackage } from 'bber-templates/opf'
-import { dist } from 'bber-utils'
+import { dist, env } from 'bber-utils'
 import log from 'b-ber-logger'
 import ManifestAndMetadata from './manifest-metadata'
 import Navigation from './navigation'
@@ -91,5 +91,5 @@ class Opf {
     }
 }
 
-const opf = process.env.NODE_ENV === 'test' ? Opf : new Opf().init
+const opf = env() === 'test' ? Opf : new Opf().init
 export default opf

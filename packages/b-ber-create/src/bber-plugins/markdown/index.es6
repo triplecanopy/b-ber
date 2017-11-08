@@ -16,6 +16,7 @@ import mdLogo from 'bber-plugins/markdown/directives/logo'
 import mdImage from 'bber-plugins/markdown/directives/image'
 import mdMedia from 'bber-plugins/markdown/directives/media'
 import mdDialogue from 'bber-plugins/markdown/directives/dialogue'
+import { env } from 'bber-utils'
 // import mdEpigraph from 'bber-plugins/markdown/directives/epigraph'
 
 import hlsj from 'highlight.js'
@@ -220,4 +221,4 @@ class MarkdownRenderer {
 
 }
 
-export default process.env.NODE_ENV === 'test' ? MarkdownRenderer : new MarkdownRenderer()
+export default env() === 'test' ? MarkdownRenderer : new MarkdownRenderer()

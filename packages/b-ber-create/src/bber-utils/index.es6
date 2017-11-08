@@ -93,7 +93,7 @@ const dist = () => {
 
 const build = () => store.build
 
-const env = () => store.env
+const env = () => store.config.env
 
 const version = () => store.version
 

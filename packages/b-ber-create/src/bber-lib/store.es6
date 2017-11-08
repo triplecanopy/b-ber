@@ -246,11 +246,18 @@ class Store {
         this.theme        = {}
         this.sequence     = []
         this.hash         = crypto.randomBytes(20).toString('hex')
-        this.env          = process.env.NODE_ENV || 'development'
         this.config       = {
+            env: process.env.NODE_ENV || 'development',
             src: '_project',
             dist: 'project',
             theme: 'b-ber-theme-serif',
+            ibooks_specified_fonts: false,
+            theme: 'b-ber-theme-serif',
+            themes_directory: './themes',
+            autoprefixer_options: {
+                browsers: ['last 2 versions', '> 2%'],
+                flexbox: 'no-2009',
+            },
         }
 
         // for dynamically created templates. functions here are overwritten
