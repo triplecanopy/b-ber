@@ -17,6 +17,11 @@ const restart = () =>
         store.update('build', 'web') // set the proper build vars
         store.update('toc', store.builds.web.tocEntries)
         store.update('spine', store.builds.web.spineEntries)
+        store.update('config.baseurl', '/')
+
+        console.log('restart')
+        console.log(store.config.baseurl)
+
 
         return serialize(SEQUENCE).then(resolve)
     })

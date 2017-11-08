@@ -25,11 +25,24 @@ let ASSETS_TO_UNLINK
 let DIST_PATH
 let OPS_PATH
 let OMIT_FROM_SEARCH
+let BASE_URL
+
+function addTrailingSlash(s) {
+    var s_ = s
+    if (s_ === '/') { return s_ }
+    if (s_.charCodeAt(s_.length - 1) !== 47/* / */) {
+        s_ += '/'
+    }
+    return s_
+}
 
 // make sure we're using the correct build variables
 function initialize() {
+
+    console.log('initialize web')
     DIST_PATH = dist()
     OPS_PATH = path.join(DIST_PATH, 'OPS')
+    BASE_URL = {}.hasOwnProperty.call(store.config, 'baseurl') ? addTrailingSlash(store.config.baseurl) : '/'
 
     ASSETS_TO_UNLINK = [
         path.join(DIST_PATH, 'mimetype'),
@@ -166,14 +179,14 @@ function createNavigationElement() {
         // nesting, among other things
 
         const toc_ = removeNonLinearTOCEntries(toc)
-        const tocHTML = tocItem(toc_).replace(/a href="/g, 'a href="/text/')
+        const tocHTML = tocItem(toc_).replace(/a href="/g, `a href="${BASE_URL}text/`)
         const metadataHTML = getProjectMetadataHTML()
         const title = getProjectTitle()
 
         const tocElement = `
             <nav class="publication__toc" role="navigation">
                 <div class="publication__title">
-                    <a href="/">${title}</a>
+                    <a href="${BASE_URL}">${title}</a>
                 </div>
                 ${tocHTML}
             </nav>
@@ -201,7 +214,7 @@ function buttonPrev(filePath) {
         const href = `${store.spine[prevIndex].fileName}.xhtml`
         html = `
             <div class="publication__nav__prev">
-                <a class="publication__nav__link" href="${href}">
+                <a class="publication__nav__link" href="${BASE_URL}text/${href}">
                     <i class="material-icons">arrow_back</i>
                 </a>
             </div>
@@ -221,7 +234,7 @@ function buttonNext(filePath) {
         const href = `${store.spine[nextIndex].fileName}.xhtml`
         html = `
             <div class="publication__nav__next">
-                <a class="publication__nav__link" href="${href}">
+                <a class="publication__nav__link" href="${BASE_URL}text/${href}">
                     <i class="material-icons">arrow_forward</i>
                 </a>
             </div>
@@ -250,7 +263,7 @@ function getNavigationToggleScript() {
     return `
         <script type="text/javascript">
         // <![CDATA[
-        ${fs.readFileSync(path.join(__dirname, 'navigation.js'))}
+        ${injectBaseURL(fs.readFileSync(path.join(__dirname, 'navigation.js')))}
         // ]]>
         </script>
     `
@@ -260,7 +273,7 @@ function getWebWorkerScript() {
     return `
         <script type="text/javascript">
         // <![CDATA[
-        ${fs.readFileSync(path.join(__dirname, 'search.js'))}
+        ${injectBaseURL(fs.readFileSync(path.join(__dirname, 'search.js')))}
         // ]]>
         </script>
     `
@@ -353,7 +366,7 @@ function indexPageContent() {
                     const $ = cheerio.load(data)
                     const title = $('h1,h2,h3,h4,h5,h6').first().text()
                     const body = $('body').text().replace(/\n\s+/g, '\n').trim() // reduce whitespace
-                    const url = `/text/${entry.fileName}.xhtml`
+                    const url = `${BASE_URL}text/${entry.fileName}.xhtml`
 
                     fileIndex += 1
                     records.push({ id: fileIndex, title, body, url })
@@ -387,9 +400,20 @@ function importVendorScripts() {
     })
 }
 
+function injectBaseURL(script) {
+    const script_ =
+        typeof script === 'string'
+            ? script
+            : Buffer.isBuffer(script)
+            ? String(script)
+            : ''
+
+    return new Buffer(script_.replace(/%BASE_URL%/g, BASE_URL))
+}
+
 function writeWebWorker() {
     return new Promise((resolve, reject) => {
-        const worker = fs.readFileSync(path.join(__dirname, 'worker.js'))
+        const worker = injectBaseURL(fs.readFileSync(path.join(__dirname, 'worker.js')))
         fs.writeFile(path.join(DIST_PATH, 'worker.js'), worker, err => {
             if (err) { reject(err) }
             resolve()
@@ -404,7 +428,7 @@ function getPage(_n = -1) {
     const n = _n - 1
     let url = '#'
     try {
-        url = `text/${store.spine[n].fileName}.xhtml`
+        url = `${BASE_URL}text/${store.spine[n].fileName}.xhtml`
     } catch (err) {
         if (err) { throw err }
     }
@@ -449,7 +473,7 @@ function createIndexHTML({ tocElement, infoElement }) {
                 xmlns:ibooks="http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0"
                 epub:prefix="ibooks: http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0">
                 <meta http-equiv="default-style" content="text/html charset=utf-8"/>
-                <link rel="stylesheet" type="text/css" href="../stylesheets/application.css"/>
+                <link rel="stylesheet" type="text/css" href="${BASE_URL}stylesheets/application.css"/>
                 <head>
                     <title>${title}</title>
                 </head>

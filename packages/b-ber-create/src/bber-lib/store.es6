@@ -202,13 +202,23 @@ class Store {
 
     /**
      * Update a property of Store
+     * Accepts nested objects up to one level
      * @param  {String} prop Property name
      * @param  {*} val  New value
      * @return {*}      Updated property
+     * @example         store.update('config.baseurl', '/')
      */
     update(prop, val) {
-        this[`_${prop}`] = val
-        return this[`_${prop}`]
+        const [key, rest] = prop.split('.')
+        if ({}.hasOwnProperty.call(this, `_${key}`)) {
+            if (rest) {
+                this[`_${key}`][rest] =val
+            } else {
+                this[`_${key}`] = val
+            }
+        }
+
+        return this[`_${key}`]
     }
 
     /**
@@ -254,6 +264,7 @@ class Store {
             ibooks_specified_fonts: false,
             theme: 'b-ber-theme-serif',
             themes_directory: './themes',
+            baseurl: '/',
             autoprefixer_options: {
                 browsers: ['last 2 versions', '> 2%'],
                 flexbox: 'no-2009',

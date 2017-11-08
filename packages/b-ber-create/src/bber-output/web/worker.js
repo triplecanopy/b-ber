@@ -5,7 +5,7 @@
 // It manages the WebWorker for search.
 //
 
-importScripts('/lunr.js');
+importScripts('%BASE_URL%' + 'lunr.js'); // BASE_URL added dynamically on build
 var searchIndex;
 var records = [];
 var readyState = 0;
@@ -38,7 +38,7 @@ function getSearchIndex() {
     req.addEventListener('load', onRequestLoad);
     req.addEventListener('open', onRequestReadyStateChange);
     req.addEventListener('send', onRequestReadyStateChange);
-    req.open('GET', '/search-index.json');
+    req.open('GET', '%BASE_URL%' + 'search-index.json');
     req.send();
 }
 

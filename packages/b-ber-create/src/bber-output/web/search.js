@@ -58,7 +58,7 @@ function bindEventHandlers() {
 }
 
 function initializeWebWorker() {
-    var worker = new Worker('/worker.js');
+    var worker = new Worker('%BASE_URL%' + 'worker.js'); // BASE_URL added dynamically on build
     var timer;
     var debounceSpeed = 30;
 
