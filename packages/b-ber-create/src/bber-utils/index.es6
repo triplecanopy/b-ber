@@ -145,7 +145,7 @@ const spineModel = () => ({
 
 /**
  * [description]
- * @param {String} _str    File basename with extension
+ * @param {String} _str   File basename with extension
  * @param {String} _src   Current `src` directory name
  * @return {Object}
  */
@@ -259,6 +259,21 @@ function parseHTMLFiles(files, parser, dist) {
     })
 }
 
+
+// TODO: the whole figures/generated pages/user-configurable YAML thing should
+// be worked out better. one reason is below, where we need the title of a
+// generated page, but since metadata is attache in the frontmatter YAML of an
+// MD file, there is no reference for the metadata.
+//
+// this is provisional, will just cause more confusion in the future
+const getTitleOrName = page => {
+    if (page.name === 'figures-titlepage') {
+        return 'Figures'
+    }
+
+    return page.title || page.name
+}
+
 export {
     opsPath,
     fileId,
@@ -283,4 +298,5 @@ export {
     flattenSpineFromYAML,
     getPagebreakAttribute,
     parseHTMLFiles,
+    getTitleOrName,
 }

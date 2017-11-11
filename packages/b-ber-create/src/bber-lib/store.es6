@@ -28,51 +28,31 @@ function dynamicPageTail() { throw new Error('[store.templates#dynamicPageTail] 
  * @class Store
  */
 class Store {
-    set env(value)          { this._env = value           }
-    set guide(value)        { this._guide = value         }
-    set figures(value)      { this._figures = value       }
-    set video(value)        { this._video = value         }
-    set audio(value)        { this._audio = value         }
-    set footnotes(value)    { this._footnotes = value     }
-    set build(value)        { this._build = value         }
-    set builds(value)       { this._builds = value        }
-    set cursor(value)       { this._cursor = value        } // used for tracking nested sections open/close ids
-    set config(value)       { this._config = value        }
-    set metadata(value)     { this._metadata = value      }
-    set version(value)      { this._version = value       }
-    set spine(value)        { this._spine = value         }
-    set toc(value)          { this._toc = value           }
-    set remoteAssets(value) { this._remoteAssets = value  }
-    set loi(value)          { this._loi = value           }
-    set theme(value)        { this._theme = value         }
-    set sequence(value)     { this._sequence = value      }
-    set hash(value)         { this._hash = value          } // build hash used for bundled scripts, stylessheets, etc
-
-    get env()               { return this._env            }
-    get guide()             { return this._guide          }
-    get figures()           { return this._figures        }
-    get video()             { return this._video          }
-    get audio()             { return this._audio          }
-    get footnotes()         { return this._footnotes      }
-    get build()             { return this._build          }
-    get builds()            { return this._builds         }
-    get cursor()            { return this._cursor         }
-    get config()            { return this._config         }
-    get metadata()          { return this._metadata       }
-    get spine()             { return this._spine          }
-    get version()           { return this._version        }
-    get toc()               { return this._toc            }
-    get remoteAssets()      { return this._remoteAssets   }
-    get loi()               { return this._loi            }
-    get theme()             { return this._theme          }
-    get sequence()          { return this._sequence       }
-    get hash()              { return this._hash           }
-
     /**
      * @constructor
      * @return {Object} Instance of Store
      */
     constructor() {
+        this.env = null
+        this.guide = null
+        this.figures = null
+        this.video = null
+        this.audio = null
+        this.footnotes = null
+        this.build = null
+        this.builds = null
+        this.cursor = null
+        this.config = null
+        this.metadata = null
+        this.version = null
+        this.spine = null
+        this.toc = null
+        this.remoteAssets = null
+        this.loi = null
+        this.theme = null
+        this.sequence = null
+        this.hash = null
+
         this.loadInitialState()
     }
 
@@ -83,7 +63,7 @@ class Store {
      * @return {Object}
      */
     _checkTypes(prop, val) {
-        const _prop = `_${prop}`
+        const _prop = prop
         const _val = val
         if (!{}.hasOwnProperty.call(this, _prop)) {
             throw new TypeError(`Attempting to add non-existent property [${prop}] to class [Store]`) // eslint-disable-line max-len
@@ -210,15 +190,15 @@ class Store {
      */
     update(prop, val) {
         const [key, rest] = prop.split('.')
-        if ({}.hasOwnProperty.call(this, `_${key}`)) {
+        if ({}.hasOwnProperty.call(this, key)) {
             if (rest) {
-                this[`_${key}`][rest] =val
+                this[key][rest] =val
             } else {
-                this[`_${key}`] = val
+                this[key] = val
             }
         }
 
-        return this[`_${key}`]
+        return this[key]
     }
 
     /**
@@ -392,11 +372,11 @@ class Store {
 
     loadBuilds() {
         this.builds = {
-            sample    : this._fileOrDefaults('sample'),
-            epub      : this._fileOrDefaults('epub'),
-            mobi      : this._fileOrDefaults('mobi'),
-            pdf       : this._fileOrDefaults('pdf'),
-            web       : this._fileOrDefaults('web'),
+            sample: this._fileOrDefaults('sample'),
+            epub: this._fileOrDefaults('epub'),
+            mobi: this._fileOrDefaults('mobi'),
+            pdf: this._fileOrDefaults('pdf'),
+            web: this._fileOrDefaults('web'),
         }
     }
 }

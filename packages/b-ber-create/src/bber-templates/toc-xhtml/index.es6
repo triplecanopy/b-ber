@@ -1,6 +1,6 @@
 import File from 'vinyl'
 import path from 'path'
-import { escapeHTML } from 'bber-utils'
+import { escapeHTML, getTitleOrName } from 'bber-utils'
 import store from 'bber-lib/store'
 
 const tocTmpl = () =>
@@ -19,12 +19,12 @@ const tocItem = (list) => {
     function render(items) {
         return `
             <ol>
-                ${items.map(_ => // eslint-disable-line no-confusing-arrow
-                    (_.in_toc === false)
+                ${items.map(a => // eslint-disable-line no-confusing-arrow
+                    (a.in_toc === false)
                     ? ''
                     : `<li>
-                        <a href="${path.basename(_.relativePath)}.xhtml">${escapeHTML(_.title || _.name)}</a>
-                            ${_.nodes && _.nodes.length ? render(_.nodes) : ''}
+                        <a href="${path.basename(a.relativePath)}.xhtml">${escapeHTML(getTitleOrName(a))}</a>
+                            ${a.nodes && a.nodes.length ? render(a.nodes) : ''}
                         </li>`
                 ).join('')}
             </ol>`

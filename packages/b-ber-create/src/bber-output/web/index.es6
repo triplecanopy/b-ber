@@ -26,6 +26,7 @@ let DIST_PATH
 let OPS_PATH
 let OMIT_FROM_SEARCH
 let BASE_URL
+let flow // copy of spine for web task, see `WebFlow` below
 
 function addTrailingSlash(s) {
     var s_ = s
@@ -36,10 +37,54 @@ function addTrailingSlash(s) {
     return s_
 }
 
+// class to manage pagination for web layout. when building an epub, figures are
+// handled outside of the spine, mostly so that they can have hashed file names
+// (since they're generated on the fly), and so that the individual figures
+// pages are not listed in the YAML files. the `WebFlow` class creates a new
+// spine by merging in the loi
+class WebFlow {
+    constructor({ spine, loi }) {
+        this.spine = spine
+        this.loi = loi
+
+        this.prepareLoi()
+        this.addFiguresToSpine()
+        this.removeNonLinearEntriesFromSpine()
+    }
+
+    // TODO: the naming scheme for figures is slightly different for figures
+    // (the `fileName` property has a file extension). this needs to be fixed
+    prepareLoi() {
+        this.loi = this.loi.map(a => {
+            a.fileName = a.fileName.replace(/\.xhtml$/, '')
+            a.relativePath = a.relativePath.replace(/\.xhtml$/, '')
+            return a
+        })
+    }
+
+    getFiguresPageIndex() {
+        const fileName = 'figures-titlepage'
+        return findIndex(this.spine, { fileName })
+    }
+
+    addFiguresToSpine() {
+        if (!this.loi.length) { return }
+
+        const figuresPageIndex = this.getFiguresPageIndex()
+        if (figuresPageIndex < 0) { return }
+
+        this.spine.splice(figuresPageIndex + 1, 0, ...this.loi)
+    }
+
+    removeNonLinearEntriesFromSpine() {
+        this.spine = this.spine.filter(a => a.linear)
+    }
+}
+
+
+
 // make sure we're using the correct build variables
 function initialize() {
-
-    console.log('initialize web')
     DIST_PATH = dist()
     OPS_PATH = path.join(DIST_PATH, 'OPS')
     BASE_URL = {}.hasOwnProperty.call(store.config, 'baseurl') ? addTrailingSlash(store.config.baseurl) : '/'
@@ -54,6 +99,9 @@ function initialize() {
     OMIT_FROM_SEARCH = [ // list of spine item entry `fileName`s
         'toc',
     ]
+
+    const { spine, loi } = store
+    flow = new WebFlow({ spine, loi })
 
     return Promise.resolve()
 }
@@ -112,7 +160,7 @@ function getChapterTitle(fileName) {
     if (typeof fileName !== 'string') { return getProjectTitle() }
 
     let title = ''
-    const entry = find(store.spine, { fileName })
+    const entry = find(flow.spine, { fileName })
     if (entry && entry.title) {
         title = entry.title
     }
@@ -158,28 +206,10 @@ function getHeaderElement(fileName) {
     `
 }
 
-function removeNonLinearTOCEntries(nodes) {
-    if (Array.isArray(nodes) !== true) { return [] }
-    const nodes_ = nodes.filter(node => {
-        if (node.nodes) {
-            removeNonLinearTOCEntries(node.nodes)
-        }
-        return node.linear !== false
-    })
-
-    return nodes_
-}
-
 function createNavigationElement() {
     return new Promise(resolve => {
         const { toc } = store
-
-        // TODO: why is this invalidating the toc.xhtml?
-        // generally, the folder stucture should be modified to allow
-        // nesting, among other things
-
-        const toc_ = removeNonLinearTOCEntries(toc)
-        const tocHTML = tocItem(toc_).replace(/a href="/g, `a href="${BASE_URL}text/`)
+        const tocHTML = tocItem(toc).replace(/a href="/g, `a href="${BASE_URL}text/`)
         const metadataHTML = getProjectMetadataHTML()
         const title = getProjectTitle()
 
@@ -205,13 +235,13 @@ function createNavigationElement() {
 
 function buttonPrev(filePath) {
     const fileName = path.basename(filePath, '.xhtml')
-    const index = findIndex(store.spine, { fileName })
+    const index = findIndex(flow.spine, { fileName })
     const prevIndex = index - 1
 
     let html = ''
 
-    if (index > -1 && store.spine[prevIndex]) {
-        const href = `${store.spine[prevIndex].fileName}.xhtml`
+    if (index > -1 && flow.spine[prevIndex]) {
+        const href = `${flow.spine[prevIndex].fileName}.xhtml`
         html = `
             <div class="publication__nav__prev">
                 <a class="publication__nav__link" href="${BASE_URL}text/${href}">
@@ -225,13 +255,13 @@ function buttonPrev(filePath) {
 }
 function buttonNext(filePath) {
     const fileName = path.basename(filePath, '.xhtml')
-    const index = findIndex(store.spine, { fileName })
+    const index = findIndex(flow.spine, { fileName })
     const nextIndex = index + 1
 
     let html = ''
 
-    if (index > -1 && store.spine[nextIndex]) {
-        const href = `${store.spine[nextIndex].fileName}.xhtml`
+    if (index > -1 && flow.spine[nextIndex]) {
+        const href = `${flow.spine[nextIndex].fileName}.xhtml`
         html = `
             <div class="publication__nav__next">
                 <a class="publication__nav__link" href="${BASE_URL}text/${href}">
@@ -301,11 +331,8 @@ function injectNavigationIntoFile(filePath, { tocElement, infoElement }) {
             // solution implemented
             contents = data.replace(/(<body[^>]*?>)/, `
                 $1
-                ${tocElement}
-                ${infoElement}
                 <div class="publication">
                 ${headerElement}
-                ${pageNavigation}
                 <div class="publication__contents">
             `)
 
@@ -313,7 +340,10 @@ function injectNavigationIntoFile(filePath, { tocElement, infoElement }) {
             // navigation toggle. should be moved to core when stable
             contents = contents.replace(/(<\/body>)/, `
                 </div> <!-- / .publication__contents -->
+                ${pageNavigation}
                 </div> <!-- / .publication -->
+                ${tocElement}
+                ${infoElement}
                 ${navigationToggleScript}
                 ${webWorkerScript}
                 $1
@@ -353,12 +383,12 @@ function indexPageContent() {
     return new Promise((resolve, reject) => {
         // TODO: `indexPageContent` should create a `lunr` index for faster parsing down the line
 
-        const { spine } = store
+        const { spine } = flow
         const promises = []
         const records = []
 
         let fileIndex = -1
-        spine.filter(_ => OMIT_FROM_SEARCH.indexOf(_.fileName) < 0).forEach(entry =>
+        spine.filter(a => OMIT_FROM_SEARCH.indexOf(a.fileName) < 0).forEach(entry =>
             promises.push(new Promise((resolve, reject) => {
                 fs.readFile(path.join(OPS_PATH, `${entry.relativePath}.xhtml`), 'utf8', (err, data) => {
                     if (err) { reject(err) }
@@ -428,9 +458,9 @@ function getPage(_n = -1) {
     const n = _n - 1
     let url = '#'
     try {
-        url = `${BASE_URL}text/${store.spine[n].fileName}.xhtml`
+        url = `${BASE_URL}text/${flow.spine[n].fileName}.xhtml`
     } catch (err) {
-        if (err) { throw err }
+        throw err
     }
 
     return url

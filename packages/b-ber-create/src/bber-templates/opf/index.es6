@@ -64,7 +64,7 @@ const spineItems = arr =>
             log.info(`Writing non-linear asset [${_.fileName}] to [spine]`)
         }
 
-        if (fname.match(/figure/)) {
+        if (fname.match(/figure/)) { // TODO: this should be handled more transparently, rn it feels a bit like a side-effect
             log.info('Writing [LOI] to [spine]')
             if (store.loi.length) {
                 let loi = `<itemref idref="${fname}_xhtml" linear="${linear}"/>`
