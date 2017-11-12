@@ -116,7 +116,7 @@ aside.note {
     .epigraph & {
         float: none;
         margin-top: 0;
-        @include padding(0, 1, 0, 1, 0);
+        @include padding(0, 1, 2, 1, 0);
     }
 }
 
@@ -136,6 +136,10 @@ section.backmatter {
             text-align: left;
             margin: 0;
             padding: 0;
+
+            @if $build == 'web' {
+                width: 80px !important;
+            }
         }
     }
 }

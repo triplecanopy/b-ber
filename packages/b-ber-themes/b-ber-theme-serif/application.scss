@@ -63,10 +63,25 @@ $modularscale: (
 
 html { font-size: 160%; }
 
-@if $build != web {
+// TODO: we're overriding the base font size in `.publication_contents` for the
+// web build, but everything should just be sized up to remove redundant
+// override
+@if $build != 'web' {
+    html { font-size: 100%; }
     body { padding: 0 one-em(0) * .5; }
+}
+
+@if $build == 'web' {
+    .publication__contents {
+		font-size: 80%;
+    }
+    @include break('mobile') {
+        .publication__contents {
+            font-size: 70%;
+        }
+    }
 }
 
 @if $debug == true {
     img { background-color: gainsboro; }
-}
+}publication_contents

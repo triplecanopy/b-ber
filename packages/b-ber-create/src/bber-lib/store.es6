@@ -192,7 +192,7 @@ class Store {
         const [key, rest] = prop.split('.')
         if ({}.hasOwnProperty.call(this, key)) {
             if (rest) {
-                this[key][rest] =val
+                this[key][rest] = val
             } else {
                 this[key] = val
             }

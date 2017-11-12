@@ -75,6 +75,12 @@ figure {
     }
 }
 
+.figure__large.figure__inline {
+    .epigraph & {
+        margin-top: 0;
+    }
+}
+
 
 // Containers for inline images (used in text flow)
 .figure__small,
@@ -155,7 +161,6 @@ figure {
         padding-top: 0!important;
         page-break-inside: avoid;
     }
-
 }
 
 

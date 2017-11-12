@@ -16,11 +16,11 @@ $media-desktop: 'only screen \
 // Colors
 $white: #fff                                                !default;
 $black: #222                                                !default;
-$info: #5050c5                                              !default;
-$warning: #c5c550                                           !default;
-$danger: #c55050                                            !default;
-$success: #50c5c5                                           !default;
 $grey: #eee                                                 !default;
+$info: #26A4B7                                              !default;
+$warning: #DA4539                                          	!default;
+$danger: #CD8D59                                            !default;
+$success: #5050C5                                          	!default;
 
 // Set `$grey` in case of e-ink readers
 @if $build == 'mobi' {

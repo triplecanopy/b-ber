@@ -52,7 +52,9 @@ $web-grid-columns: 12;
         border-radius: 0;
         padding: 5px;
         outline: none;
+        cursor: pointer;
 
+        &:hover { color: $success; }
         &:active, &:focus {
             outline: none;
         }
@@ -108,6 +110,7 @@ $web-grid-columns: 12;
         border-bottom: 1px solid $grey;
         text-indent: one-em(0);
         padding-left: 15px; // mimic layout of list elements in TOC
+        font-weight: 700;
     }
 
     // Search bar
@@ -158,12 +161,12 @@ $web-grid-columns: 12;
         transform: translateX(-100%);
         @include type-settings(-7);
         position: fixed;
-        z-index: 3;
+        z-index: 2;
         top: 0;
         bottom: 0;
         overflow: auto;
         -webkit-overflow-scrolling: touch;
-        border-right: 1px solid $black;
+        border-right: 1px solid $grey;
         background-color: $white;
         width: $cell-large-width;
         transition: transform $transition-speed $transition-easing;
@@ -173,7 +176,6 @@ $web-grid-columns: 12;
 
         & > ol {
             padding-right: 15px;
-            border-top: 1px solid $black;
         }
         ol li,
         ul li {
@@ -193,13 +195,13 @@ $web-grid-columns: 12;
         @include type-settings(-7);
         transform: translateX(100%);
         position: fixed;
-        z-index: 3;
+        z-index: 1;
         top: $dimensions-large-x;
         bottom: 0;
         right: 0;
         overflow: auto;
         -webkit-overflow-scrolling: touch;
-        border-left: 1px solid $black;
+        border-left: 1px solid $grey;
         background-color: $white;
         width: $cell-large-width;
         transition: transform $transition-speed $transition-easing;
@@ -208,7 +210,6 @@ $web-grid-columns: 12;
         dt, dd { @include web-navigation-link; }
         & > dl {
             padding-right: 15px;
-            border-top: 1px solid $black;
         }
         dl dt,
         dl dd {
@@ -234,7 +235,6 @@ $web-grid-columns: 12;
         dt { font-weight: 700; }
 
     }
-
 
     body.toc--visible {                 // The `toc--visible` class is toggled via JavaScript in
                                         // the footer of the generated HTML pages.
@@ -303,14 +303,14 @@ $web-grid-columns: 12;
     .publication__nav {
         @include web-grid-container; // We can't use `display: subgrid` so we re-declare
         transition: width $transition-speed $transition-easing;
-        height: $dimensions-extra-large-y;
 
         grid-column: 2 / span 10;
         grid-row: 3;
-        align-items: end;
+        align-items: baseline;
 
         .publication__nav__link {
             color: $black;
+            &:hover { color: $success; }
         }
 
         .publication__nav__prev,
@@ -357,10 +357,16 @@ $web-grid-columns: 12;
         section {                               // `section` elements are also CSS Grid containers
             @include web-grid-container;
             @include web-grid-full-width;
-            *:not(section) { grid-column: 3 / span 8; }     // All child elements of a `section` (except for other `section`s)
-                                                            // span a smaller area by default. This allows overrides to be
-                                                            // easily applied to child elements in `_overrides.scss` to create
-                                                            // more complex layouts.
+            *:not(section) {                    // All child elements of a `section` (except for other `section`s)
+                                                // span a smaller area by default. This allows overrides to be
+                                                // easily applied to child elements in `_overrides.scss` to create
+                                                // more complex layouts.
+
+                grid-column: 4 / span 6;
+
+                @include break('mobile') { grid-column: 2 / span 10; }
+                @include break('tablet') { grid-column: 2 / span 10; }
+            }
         }
 
         // Logic for overlay when sidebar open
@@ -436,9 +442,17 @@ $web-grid-columns: 12;
         // Sidebars
         .publication__toc,
         .publication__info {
-            top: 49px;
             border-right: 0;
             width: 100%;
+        }
+
+        .publication__toc {
+            top: $dimensions-large-x;
+            z-index: 1;
+        }
+
+        .publication__search {
+            left: 42px;
         }
 
         body.info--visible {
@@ -460,6 +474,4 @@ $web-grid-columns: 12;
 		color:$black;
 		text-decoration:underline !important;
 	}
-
 }
-
