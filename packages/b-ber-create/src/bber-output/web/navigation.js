@@ -23,6 +23,16 @@ function navigatePrev() {
     navigate('prev');
 }
 
+var editableElementTagNames = [
+    'INPUT',
+    'TEXTAREA',
+];
+function isEditing(e) {
+    return (
+        (e.altKey || e.ctrlKey || e.shiftKey) ||
+        (document.activeElement && editableElementTagNames.indexOf(document.activeElement.tagName) > -1)
+    );
+}
 
 function registerNavEvents() {
     // sliding panels
@@ -48,19 +58,17 @@ function registerNavEvents() {
     }, false);
 
     // keyboard navigation
-    // TODO: this a good idea? might just end up being annoying for users
-    //
-    // document.addEventListener('keyup', function(e) {
-    //     if (e && e.which) {
-    //         if (e.which === 39/* arrow right */) {
-    //             navigateNext();
-    //         }
-    //         if (e.which === 37/* arrow left */) {
-    //             navigatePrev();
-
-    //         }
-    //     }
-    // }, false);
+    document.addEventListener('keydown', function(e) {
+        if (isEditing(e)) { return; }
+        if (e && e.which) {
+            if (e.which === 39/* arrow right */) {
+                navigateNext();
+            }
+            if (e.which === 37/* arrow left */) {
+                navigatePrev();
+            }
+        }
+    }, false);
 }
 
 window.addEventListener('load', registerNavEvents, false);
