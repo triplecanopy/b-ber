@@ -196,6 +196,15 @@ p.caption {
     @include caption;
 }
 
+.media__fallback__audio,
+.media__fallback__video {}
+
+.media__fallback--image {}
+
+.media__fallback--text {
+    @include caption;
+}
+
 .img-wrap {
     width: 100%;
     a { text-decoration: none!important; }

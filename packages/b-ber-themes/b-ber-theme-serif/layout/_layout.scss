@@ -8,6 +8,7 @@
 @import 'base/table';
 @import 'base/text';
 @import 'base/web'; // conditional styles
+@import 'base/print'; // for print views and PDF generation
 
 
 .break-before   { page-break-before: always!important; }
