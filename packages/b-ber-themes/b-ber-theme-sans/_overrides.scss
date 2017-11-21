@@ -1,0 +1,195 @@
+// All directives to retain
+.title-page h1 {
+    color: $success;
+}
+
+// Global overrides for all themes
+.pullquote + p {
+    text-indent: 0 !important;
+}
+
+section.frontmatter.dedication p {
+    text-indent: 0 !important;
+}
+
+a.footnote-ref {
+    color: $black; // Note: this positioning is from web sans build.
+    left: 1px;
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+
+// Sans Styling
+
+// base
+body {
+    font-family: $sans;
+}
+
+p {
+    text-indent: 0 !important;
+    margin-bottom: one-line(0);
+}
+
+// containers
+section.subchapter {
+    margin-bottom: 0;
+}
+blockquote {
+    padding-top: 0;
+}
+
+
+
+// headers
+section,
+section.titlepage,
+section.afterword,
+section.seriespage,
+section.credits,
+section.contributors,
+section.appendix,
+section.backmatter {
+    h1, h2, h3, h4, h5, h6 {
+		text-align: left;
+		font-weight: bold;
+	}
+
+    h1 {
+		@include type-settings(2);
+        padding-bottom: one-line(2);
+	}
+
+	h2 {
+		@include type-settings(1);
+	}
+
+	h3 {
+		@include type-settings(0);
+	}
+
+	h4, h5, h6 {
+		@include type-settings(-1);
+	}
+	table {
+        margin-top: 0;
+	}
+	ul, ol, dl {
+        padding-top: 0;
+    }
+}
+
+// elements with nesting
+ol, ul {
+	@include type-settings(0);
+}
+ol ol, ol ul,
+ul ol, ul ul {
+	font-size: 1em;
+}
+
+table {
+	@include type-settings(0);
+}
+
+table table,
+table th,
+table td {
+	font-size: 1em;
+}
+
+
+
+p,
+code {
+	@include type-settings(0);
+}
+
+// normal text
+section.preface p,
+section.frontmatter p,
+section.acknowledgements p {
+    text-indent: 0 !important;
+}
+
+section.backmatter p,
+section.colophon p,
+section.afterword p,
+section.seriespage p,
+section.credits p,
+section.contributors p,
+section.appendix p {
+    padding-bottom: 0;
+}
+
+section.dialogue p.interlocutor-parent {
+    padding-top: 0;
+}
+
+
+// smaller text
+section.backmatter p,
+section.colophon p,
+section.afterword p,
+section.seriespage p,
+section.credits p,
+section.contributors p,
+section.appendix p,
+.pullquote p,
+.pullquote cite,
+blockquote p {
+	@include type-settings(-1);
+}
+
+// smallest text
+p.caption,
+figcaption p.small,
+.figcaption p.small,
+section.dialogue p.interlocutor-parent .interlocutor {
+	@include type-settings(-2);
+}
+
+// images
+.figure__small.figure__small--landscape,
+.figure__small.figure__small--square,
+.figure__small.figure__small--portrait,
+.figure__small.figure__small--portrait-high {
+    padding-top: 0;
+}
+
+.figure__large.figure__inline {
+    margin-top: one-line(0);
+}
+
+
+
+
+
+// Web styles
+
+.publication__toc,
+.publication__header,
+.publication__info,
+.publication__search,
+.publication__search .publication__search__input,
+.search__result {
+	@include type-settings(-1);
+}
+
+// reduce size to account for nested lists being set at 1em
+.publication__toc > ol {
+	@include type-settings(-2);
+}
+
+// Mobile web styles
+@if $build == 'web' {
+	@include break('mobile') {
+		.publication__contents {
+			font-size: 70%;
+		}
+	}
+}
+
+

@@ -39,7 +39,9 @@ h1,h2,h3,h4,h5,h6 {
     @include following-paragraph-not-indented;
 }
 
-
+a, a:link, a:visited {
+    color: $black;
+}
 
 
 h1 {

@@ -11,7 +11,7 @@
 @import 'debug';
 
 // Load syntax highlighting
-@import "node_modules/highlight.js/styles/tomorrow";
+@import "../node_modules/highlight.js/styles/tomorrow";
 
 // for validation while building on CLI, not an actual setting
 $build: 'epub'                  !default;
@@ -61,23 +61,23 @@ $modularscale: (
 // base styles
 //
 
-html { font-size: 160%; }
+html { font-size: 156.25%; } // 25px
 
 // TODO: we're overriding the base font size in `.publication_contents` for the
 // web build, but everything should just be sized up to remove redundant
 // override
 @if $build != 'web' {
-    html { font-size: 100%; }
+    html { font-size: 100%; } // still 25px
     body { padding: 0 one-em(0) * .5; }
 }
 
 @if $build == 'web' {
     .publication__contents {
-		font-size: 80%;
+		font-size: 80%; // 20px
     }
     @include break('mobile') {
         .publication__contents {
-            font-size: 70%;
+            font-size: 68%; // 17px
         }
     }
 }

@@ -17,9 +17,9 @@ function getUserDefinedThemes() {
         const cwd = process.cwd()
 
         const names = []
-        const themes = {}
+        const userThemes = {}
 
-        if (!{}.hasOwnProperty.call(config, 'themes_directory')) { resolve({ names, themes }) }
+        if (!{}.hasOwnProperty.call(config, 'themes_directory')) { resolve({ names, themes: userThemes }) }
 
         fs.readdirSync(path.join(cwd, config.themes_directory)).forEach((_) => {
             const modulePath = path.resolve(cwd, config.themes_directory, _)
@@ -45,10 +45,10 @@ function getUserDefinedThemes() {
 
             const moduleName = userModule.name
             names.push(moduleName)
-            themes[moduleName] = userModule
+            userThemes[moduleName] = userModule
         })
 
-        resolve({ names, themes })
+        resolve({ names, themes: userThemes })
 
     })
 }

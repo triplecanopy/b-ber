@@ -16,21 +16,16 @@ $media-desktop: 'only screen \
 // Colors
 $white: #fff                                                !default;
 $black: #222                                                !default;
-$info: #5050c5                                              !default;
-$warning: #c5c550                                           !default;
-$danger: #c55050                                            !default;
-$success: #50c5c5                                           !default;
 $grey: #eee                                                 !default;
-
-// Set `$grey` in case of e-ink readers
-@if $build == 'mobi' {
-    $grey: $black;
-}
+$info: #26A4B7                                              !default;
+$warning: #DA4539                                          	!default;
+$danger: #CD8D59                                            !default;
+$success: #5050C5                                          	!default;
 
 // Layout
 $debug: false                                               !default;
-$text-indent: false                                         !default;
-$vertical-space: true                                       !default;
+$text-indent: true                                          !default;
+$vertical-space: false                                      !default;
 
 // Font Size
 $font-size-base: 1em                                        !default;
@@ -59,18 +54,17 @@ $line-height-base: 1.3                                      !default;
 // $font-scale: 'major-second'       ;//    8:9             1.125
 // $font-scale: 'minor-second'       ;//    15:16           1.067
 
-$font-scale: 'minor-second'                                 !default;
+$font-scale: 'minor-third'                                  !default;
 
 // Font stacks
 $sans: Helvetica, Arial, sans-serif                         !default;
 $serif: Iowan, Georgia, Times, serif                        !default;
 $mono: Menlo, Osaka, Monaco, monospace                      !default;
 
-$font-family-base: $sans                                    !default;
+$font-family-base: $serif                                   !default;
 
 // Inline image element dimensions as int, interpreted as ems
 $landscape-image-height: 4                                  !default;
 $square-image-height: 4                                     !default;
 $portrait-image-height: 5                                   !default;
 $portrait-image--high-height: 5                             !default;
-
