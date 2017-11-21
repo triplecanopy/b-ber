@@ -68,13 +68,13 @@ const epub = {
         ${!data.inline ? '</section>' : ''}`
     },
     audio(data) {
-        return `
+        return `${!data.inline ? '<section epub:type="loi" title="Figures" class="chapter figures">' : ''}
             <div class="figure__large">
                 <figure id="${data.id}">
 
                     <div class="img-wrap">
 
-                        <section class="audio">
+                        <div class="audio">
                             <audio ${data.attrString}>
                                 ${data.sourceElements}
                                 <div class="media__fallback__${data.mediaType} media__fallback--image figure__small--landscape figure__small">
@@ -84,7 +84,7 @@ const epub = {
                                 </div>
                                 <p class="media__fallback__${data.mediaType} media__fallback--text">Your device does not support the HTML5 ${data.mediaType} API.</p>
                             </audio>
-                        </section>
+                        </div>
 
                         <div class="figcaption" style="max-width: 100%;">
                             <p class="small">
@@ -96,16 +96,17 @@ const epub = {
                     </div>
 
                 </figure>
-            </div>`
+            </div>
+        ${!data.inline ? '</section>' : ''}`
     },
     video(data) {
-        return `
+        return `${!data.inline ? '<section epub:type="loi" title="Figures" class="chapter figures">' : ''}
             <div class="figure__large">
                 <figure id="${data.id}">
 
                     <div class="img-wrap">
 
-                        <section class="video">
+                        <div class="video">
                             <video ${data.attrString}>
                                 ${data.sourceElements}
                                 <div class="media__fallback__${data.mediaType} media__fallback--image figure__small--landscape figure__small">
@@ -115,7 +116,7 @@ const epub = {
                                 </div>
                                 <p class="media__fallback__${data.mediaType} media__fallback--text">Your device does not support the HTML5 ${data.mediaType} API.</p>
                             </video>
-                        </section>
+                        </div>
 
                         <div class="figcaption" style="max-width: 100%;">
                             <p class="small">
@@ -127,7 +128,8 @@ const epub = {
                     </div>
 
                 </figure>
-            </div>`
+            </div>
+        ${!data.inline ? '</section>' : ''}`
     },
 }
 

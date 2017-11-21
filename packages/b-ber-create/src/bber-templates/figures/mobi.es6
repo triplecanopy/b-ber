@@ -61,12 +61,12 @@ const mobi = {
     },
     audio(data) {
         return `
-            <div class="figure__large">
+            <div class="figure__large${data.inline ? ` figure__inline figure__inline--landscape ${data.classes}` : ''}"${getPagebreakAttribute(data)}>
                 <figure id="${data.id}">
 
                     <div class="img-wrap">
 
-                        <section class="audio">
+                        <div class="audio">
                             <audio ${data.attrString}>
                                 ${data.sourceElements}
                                 <div class="media__fallback__${data.mediaType} media__fallback--image figure__small--landscape figure__small">
@@ -76,7 +76,7 @@ const mobi = {
                                 </div>
                                 <p class="media__fallback__${data.mediaType} media__fallback--text">Your device does not support the HTML5 ${data.mediaType} API.</p>
                             </audio>
-                        </section>
+                        </div>
 
                         <div class="figcaption" style="max-width: 100%;">
                             <p class="small">
@@ -92,12 +92,12 @@ const mobi = {
     },
     video(data) {
         return `
-            <div class="figure__large">
+            <div class="figure__large${data.inline ? ` figure__inline figure__inline--landscape ${data.classes}` : ''}"${getPagebreakAttribute(data)}>
                 <figure id="${data.id}">
 
                     <div class="img-wrap">
 
-                        <section class="video">
+                        <div class="video">
                             <video ${data.attrString}>
                                 ${data.sourceElements}
                                 <div class="media__fallback__${data.mediaType} media__fallback--image figure__small--landscape figure__small">
@@ -107,7 +107,7 @@ const mobi = {
                                 </div>
                                 <p class="media__fallback__${data.mediaType} media__fallback--text">Your device does not support the HTML5 ${data.mediaType} API.</p>
                             </video>
-                        </section>
+                        </div>
 
                         <div class="figcaption" style="max-width: 100%;">
                             <p class="small">
