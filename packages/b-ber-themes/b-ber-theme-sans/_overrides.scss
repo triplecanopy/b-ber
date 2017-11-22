@@ -134,6 +134,14 @@ section.dialogue p.interlocutor-parent .interlocutor {
 	@include type-settings(-2);
 }
 
+sup, a.footnote-ref, sub {
+	@include type-settings(-3);
+}
+
+sup, a.footnote-ref {
+	top:-.8em;
+}
+
 // images
 .figure__small.figure__small--landscape,
 .figure__small.figure__small--square,
