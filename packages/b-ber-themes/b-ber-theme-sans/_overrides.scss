@@ -1,28 +1,3 @@
-// All directives to retain
-.title-page h1 {
-    color: $success;
-}
-
-// Global overrides for all themes
-.pullquote + p {
-    text-indent: 0 !important;
-}
-
-section.frontmatter.dedication p {
-    text-indent: 0 !important;
-}
-
-a.footnote-ref {
-    color: $black; // Note: this positioning is from web sans build.
-    left: 1px;
-    &:hover {
-        text-decoration: underline;
-    }
-}
-
-
-// Sans Styling
-
 // base
 body {
     font-family: $sans;

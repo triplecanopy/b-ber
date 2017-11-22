@@ -156,11 +156,7 @@ p {
     section.frontmatter.dedication & {
         @include type-settings(0);
         @include padding(0, 1, 1, 0, 0);
-        @if $text-indent != false {
-            text-indent: one-em(0) !important;
-        } @else {
-            text-indent: one-em(0);
-        }
+        text-indent: 0;
     }
 
     section.dialogue & {
@@ -201,11 +197,7 @@ p {
     }
 
     .pullquote + & {
-        @if $text-indent != false {
-            text-indent: one-em(0) !important;
-        } @else {
-            text-indent: one-em(0);
-        }
+        text-indent: 0;
     }
 
     .epigraph .pullquote & {
@@ -261,11 +253,13 @@ cite {
 sup,
 sub {
     @include type-settings(-8);
+    line-height: 1;
+    color: $black;
     vertical-align: baseline;
     text-decoration: none;
     position: relative;
-    line-height: 1;
-
+    left: 1px;
+    &:hover { text-decoration: underline; }
 }
 
 sup { top:      one-em(-8) * -1.25; }
