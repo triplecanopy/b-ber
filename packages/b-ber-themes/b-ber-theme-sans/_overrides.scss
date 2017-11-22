@@ -58,7 +58,7 @@ section.backmatter {
 
 // elements with nesting
 ol, ul {
-	@include type-settings(0);
+	@include type-settings(-1);
 }
 ol ol, ol ul,
 ul ol, ul ul {
@@ -66,7 +66,7 @@ ul ol, ul ul {
 }
 
 table {
-	@include type-settings(0);
+	@include type-settings(-1);
 }
 
 table table,
@@ -97,6 +97,14 @@ section.credits p,
 section.contributors p,
 section.appendix p {
     padding-bottom: 0;
+}
+
+section.titlepage h1 {
+	padding-bottom:0;
+}
+
+section.titlepage h2 {
+	padding-bottom:one-line(0);
 }
 
 section.dialogue p.interlocutor-parent {
