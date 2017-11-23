@@ -5,21 +5,31 @@
 
 import Promise from 'zousan'
 import fs from 'fs-extra'
-import { dist } from 'bber-utils'
+import path from 'path'
+import { dist, build } from 'bber-utils'
 import log from 'b-ber-logger'
 
 /**
- * Remove an ebook's output directory
- * @param {String} [dirPath] Directory to remove
+ * Remove an ebook's output directory and outdated builds
  * @return {Promise<Object|Error>}
  */
-const clean = dirPath =>
-    new Promise(resolve =>
-        fs.remove(dirPath || dist(), (err) => {
+const clean = _ =>
+    new Promise(resolve => {
+        const projectDir = dist()
+        const projectRoot = path.dirname(projectDir)
+        const fileType = `.${build()}`
+        const oldBuilds = fs.readdirSync(projectRoot).filter(a => path.extname(a) === fileType)
+
+        if (oldBuilds.length) {
+            oldBuilds.forEach(a => fs.remove(path.join(projectRoot, a)))
+            log.info('Removed [%s]', oldBuilds.join('\n'))
+        }
+
+        fs.remove(projectDir, (err) => {
             if (err) { throw err }
-            log.info('Removed [%s]', (dirPath || dist()))
+            log.info('Removed [%s]', projectDir)
             resolve()
         })
-    )
+    })
 
 export default clean

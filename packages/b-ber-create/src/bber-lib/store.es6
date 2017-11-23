@@ -303,7 +303,7 @@ class Store {
 
     loadTheme() {
         // just in case ...
-        const themeError = new Error(`b-ber-lib/store: There was an error loading theme [${this.config.theme}]`)
+        const themeError = new Error(`There was an error loading theme [${this.config.theme}]`)
 
         if ({}.hasOwnProperty.call(themes, this.config.theme)) {
             this.theme = themes[this.config.theme]

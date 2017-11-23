@@ -626,6 +626,10 @@ combined-stream@^1.0.5, combined-stream@~1.0.5:
   dependencies:
     delayed-stream "~1.0.0"
 
+command-exists@^1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/command-exists/-/command-exists-1.2.2.tgz#12819c64faf95446ec0ae07fe6cafb6eb3708b22"
+
 commander@2.11.x, commander@~2.11.0:
   version "2.11.0"
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.11.0.tgz#157152fd1e7a6c8d98a5b715cf376df928004563"
@@ -2689,10 +2693,6 @@ mkdirp@0.5.1, mkdirp@0.5.x, "mkdirp@>=0.5 0", mkdirp@^0.5.0, mkdirp@^0.5.1, mkdi
   resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-0.5.1.tgz#30057438eac6cf7f8c4767f38648d6697d75c903"
   dependencies:
     minimist "0.0.8"
-
-mobi-zipper@0.1.8:
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/mobi-zipper/-/mobi-zipper-0.1.8.tgz#2920d662c33df0614d8ceedb4f3044a70adf4ad5"
 
 mocha@^3.2.0:
   version "3.2.0"

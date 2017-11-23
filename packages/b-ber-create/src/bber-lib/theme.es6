@@ -107,13 +107,13 @@ function setTheme(themeName, themeList, userThemes, cwd) {
 
             try {
                 if (fs.existsSync(settingsOutputFile)) {
-                    throw new Error(`b-ber-lib/theme: [${settingsOutputFile}] already exists`)
+                    throw new Error(`[${settingsOutputFile}] already exists`)
                 } else {
                     fs.copySync(settingsInputFile, settingsOutputFile, {})
                     console.log(`Created [${settingsOutputFile}]`)
                 }
                 if (fs.existsSync(overridesOutputFile)) {
-                    throw new Error(`b-ber-lib/theme: [${overridesOutputFile}] already exists`)
+                    throw new Error(`[${overridesOutputFile}] already exists`)
                 } else {
                     fs.writeFileSync(overridesOutputFile, '')
                 }

@@ -3,10 +3,10 @@
  */
 
 import Promise from 'zousan'
-import zipper from 'mobi-zipper'
 import path from 'path'
 import log from 'b-ber-logger'
 import { dist } from 'bber-utils'
+import EbookConvert from 'bber-lib/EbookConvert'
 
 const pageBreakBeforeXPATH = () => ([
         '//h:*[@class="figure__large figure__inline"]',
@@ -15,11 +15,13 @@ const pageBreakBeforeXPATH = () => ([
     ].join('|'))
 
 const mobi = () =>
-    new Promise(resolve =>
-        zipper.create({
-            input: path.join(dist(), 'OPS', 'content.opf'),
-            output: process.cwd(),
-            clean: true,
+    new Promise(resolve => {
+        const opsPath = path.join(dist(), 'OPS')
+        const inputPath = path.join(opsPath, 'content.opf')
+        return EbookConvert.convert({
+            inputPath,
+            outputPath: process.cwd(),
+            fileType: 'mobi',
             flags: [
                 '--mobi-file-type=both',
                 '--disable-font-rescaling',
@@ -32,6 +34,6 @@ const mobi = () =>
         })
         .catch(err => log.error(err))
         .then(resolve)
-    )
+    })
 
 export default mobi
