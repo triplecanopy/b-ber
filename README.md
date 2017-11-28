@@ -17,7 +17,7 @@ If [`lerna`](https://github.com/lerna/lerna/) or [`yarn`](https://yarnpkg.com/) 
 
 ```console
 $ npm i -g lerna
-$ npm install -g yarn
+$ npm i -g yarn
 ```
 
 Then, in the `b-ber` repo
