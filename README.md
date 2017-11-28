@@ -13,10 +13,11 @@ The `b-ber` repository is a monorepo that is managed with [Lerna](https://lernaj
 
 Clone the repo and install dependencies.
 
-If [`lerna`](https://github.com/lerna/lerna/) isn't already installed:
+If [`lerna`](https://github.com/lerna/lerna/) or [`yarn`](https://yarnpkg.com/) isn't already installed:
 
 ```console
 $ npm i -g lerna
+$ npm install -g yarn
 ```
 
 Then, in the `b-ber` repo
