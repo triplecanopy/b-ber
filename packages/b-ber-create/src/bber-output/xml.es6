@@ -40,14 +40,46 @@ const initialize = () =>
  * @return {Object<Promise|Error>}
  */
 
+const inddFRMT_Linebreaks = str =>
+    new Promise((resolve) => {
+        
+        // REMOVES COMMENTS AND WHITESPACE BETWEEN <PAGEBREAKS> AND FOLLOWING TAGS
+        const rmvComments = str.replace(/<!--[\s\S]*?-->/g,"");
+        const rmvBreaks = rmvComments.replace(/\/pagebreak>[\s\S]*?</g,"/pagebreak><");
+
+        str = rmvBreaks
+        resolve(str)
+    })
+
+/**
+ * [description]
+ * @param  {String} str [description]
+ * @return {Object<Promise|Error>}
+ */
+
+const inddFRMT_TOC = str =>
+    new Promise((resolve) => {
+        
+        // INJECTS TOC INTO BODY OF DOCUMENT
+        const rmvBodyClose = str.replace(/\/body>[\s\S]*?<nav>/g,"pagebreak></pagebreak><nav>");
+        const inddFmt = rmvBodyClose.replace(/\/nav>[\s\S]*?\/pagebreak>/g,"/nav></body>");
+
+        str = inddFmt
+        resolve(str)
+    })
+
+
+/**
+ * [description]
+ * @param  {String} str [description]
+ * @return {Object<Promise|Error>}
+ */
+
 const writeXML = str =>
     new Promise((resolve) => {
         const fpath = path.join(cwd, `Export-${new Date().toISOString().replace(/:/g, '-')}.xml`)
-
-        const rmvComments = str.replace(/<!--[\s\S]*?-->/g,"");
-        const rmvBreaks = rmvComments.replace(/\/pagebreak>[\s\S]*?</g,"/pagebreak><");
         
-        fs.writeFile(fpath, rmvBreaks, 'utf8', (err) => {
+        fs.writeFile(fpath, str, 'utf8', (err) => {
             if (err) { throw err }
             resolve()
         })
@@ -61,6 +93,8 @@ const xml = () =>
     new Promise(resolve =>
         initialize()
         .then(manifest => parseHTMLFiles(manifest, parser, dist()))
+        .then(inddFRMT_Linebreaks)
+        .then(inddFRMT_TOC)
         .then(writeXML)
         .catch(err => log.error(err))
         .then(resolve)
