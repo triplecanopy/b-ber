@@ -39,10 +39,15 @@ const initialize = () =>
  * @param  {String} str [description]
  * @return {Object<Promise|Error>}
  */
+
 const writeXML = str =>
     new Promise((resolve) => {
         const fpath = path.join(cwd, `Export-${new Date().toISOString().replace(/:/g, '-')}.xml`)
-        fs.writeFile(fpath, str, 'utf8', (err) => {
+
+        const rmvComments = str.replace(/<!--[\s\S]*?-->/g,"");
+        const rmvBreaks = rmvComments.replace(/\/pagebreak>[\s\S]*?</g,"/pagebreak><");
+        
+        fs.writeFile(fpath, rmvBreaks, 'utf8', (err) => {
             if (err) { throw err }
             resolve()
         })
