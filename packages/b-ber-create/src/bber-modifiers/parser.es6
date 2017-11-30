@@ -67,7 +67,10 @@ class Parser {
      * @return {Promise<Object|Error>}
      */
     onend(resolve, index, len) {
-        if (index === len - 1) {
+
+        // replaces -if (index === len - 1)
+        // in order to add TOC into body contents
+        if (index === len) {
             this.appendBody()
         } else {
             this.output += '<pagebreak></pagebreak>'
@@ -163,6 +166,7 @@ class Parser {
                             _this.tagnames.push(name)
                             break
                     }
+
 
                     if (_this.noop) { return }
                     const tag = []

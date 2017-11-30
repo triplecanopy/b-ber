@@ -57,28 +57,10 @@ const inddFRMT_Linebreaks = str =>
  * @return {Object<Promise|Error>}
  */
 
-const inddFRMT_TOC = str =>
-    new Promise((resolve) => {
-        
-        // INJECTS TOC INTO BODY OF DOCUMENT
-        const rmvBodyClose = str.replace(/\/body>[\s\S]*?<nav>/g,"pagebreak></pagebreak><nav>");
-        const inddFmt = rmvBodyClose.replace(/\/nav>[\s\S]*?\/pagebreak>/g,"/nav></body>");
-
-        str = inddFmt
-        resolve(str)
-    })
-
-
-/**
- * [description]
- * @param  {String} str [description]
- * @return {Object<Promise|Error>}
- */
-
 const writeXML = str =>
     new Promise((resolve) => {
         const fpath = path.join(cwd, `Export-${new Date().toISOString().replace(/:/g, '-')}.xml`)
-        
+
         fs.writeFile(fpath, str, 'utf8', (err) => {
             if (err) { throw err }
             resolve()
@@ -94,7 +76,6 @@ const xml = () =>
         initialize()
         .then(manifest => parseHTMLFiles(manifest, parser, dist()))
         .then(inddFRMT_Linebreaks)
-        .then(inddFRMT_TOC)
         .then(writeXML)
         .catch(err => log.error(err))
         .then(resolve)
