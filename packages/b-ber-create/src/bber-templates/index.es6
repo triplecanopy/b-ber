@@ -1,5 +1,4 @@
 import path from 'path'
-import fs from 'fs-extra'
 import crypto from 'crypto'
 import store from 'bber-lib/store'
 import Yaml from 'bber-lib/yaml'
@@ -32,7 +31,7 @@ function sourceDirs(src) {
     ]
 }
 
-function config(src, dist) {
+function config(src) {
     return {
         relativePath: path.join(path.dirname(src), 'config.yml'),
         content: Yaml.dump(store.config),
@@ -186,7 +185,7 @@ Country
     }]
 }
 
-function stylesheets(src) {
+function stylesheets() {
     return []
 }
 
@@ -251,5 +250,5 @@ export {
     markdown,
     readme,
     gitignore,
-    coverSVG
+    coverSVG,
 }

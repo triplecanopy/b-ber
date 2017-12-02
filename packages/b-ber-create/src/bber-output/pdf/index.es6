@@ -111,8 +111,8 @@ const pdf = () =>
         const manifest = store.spine.filter(a => a.linear !== false).map(a => a.fileName)
 
         initialize()
-            .then(_ => removeOldPDFBuilds())
-            .then(_ => parseHTMLFiles(manifest, parser, dist()))
+            .then(() => removeOldPDFBuilds())
+            .then(() => parseHTMLFiles(manifest, parser, dist()))
             .then(content => write(content))
             .then(content => print(content))
             .catch(err => log.error(err))

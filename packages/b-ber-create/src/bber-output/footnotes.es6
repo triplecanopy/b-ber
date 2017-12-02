@@ -2,6 +2,8 @@
  * @module footnotes
  */
 
+/* eslint-disable class-methods-use-this */
+
 import Promise from 'zousan'
 import fs from 'fs-extra'
 import path from 'path'
