@@ -11,7 +11,7 @@ const mobi = {
                         <img class="portrait" alt="${data.alt}" src="../images/${data.source}" style="width: 100%; max-width: 100%; height: auto;"/>
                     </span>
                     <div class="figcaption" style="width: 100%; max-width: 100%; height: auto;">
-                        <p class="small">${data.caption ? `${data.caption}` : ''}${data.caption && !data.inline ? '<br/>' : '' }${data.inline ? '' : `<a href="${data.ref}.xhtml#ref${data.id}">Return</a>`}</p>
+                        <p class="small">${data.caption ? `${data.caption}` : ''}${data.caption && !data.inline ? '<br/>' : ''}${data.inline ? '' : `<a href="${data.ref}.xhtml#ref${data.id}">Return</a>`}</p>
                     </div>
                 </div>
             </figure>
@@ -25,7 +25,7 @@ const mobi = {
                         <img class="landscape" alt="${data.alt}" src="../images/${data.source}" style="max-width: 100%;"/>
                     </span>
                     <div class="figcaption" style="max-width: 100%;">
-                        <p class="small">${data.caption ? `${data.caption}` : ''}${data.caption && !data.inline ? '<br/>' : '' }${data.inline ? '' : `<a href="${data.ref}.xhtml#ref${data.id}">Return</a>`}</p>
+                        <p class="small">${data.caption ? `${data.caption}` : ''}${data.caption && !data.inline ? '<br/>' : ''}${data.inline ? '' : `<a href="${data.ref}.xhtml#ref${data.id}">Return</a>`}</p>
                     </div>
                 </div>
             </figure>
@@ -39,7 +39,7 @@ const mobi = {
                         <img class="portrait-long" alt="${data.alt}" src="../images/${data.source}" style="width: 100%; max-width: 100%; height: auto;"/>
                     </span>
                     <div class="figcaption" style="width: 100%; max-width: 100%; height: auto;">
-                        <p class="small">${data.caption ? `${data.caption}` : ''}${data.caption && !data.inline ? '<br/>' : '' }${data.inline ? '' : `<a href="${data.ref}.xhtml#ref${data.id}">Return</a>`}</p>
+                        <p class="small">${data.caption ? `${data.caption}` : ''}${data.caption && !data.inline ? '<br/>' : ''}${data.inline ? '' : `<a href="${data.ref}.xhtml#ref${data.id}">Return</a>`}</p>
                     </div>
                 </div>
             </figure>
@@ -53,7 +53,7 @@ const mobi = {
                         <img class="square" alt="${data.alt}" src="../images/${data.source}" style="width: 100%; max-width: 100%; height: auto;"/>
                     </span>
                     <div class="figcaption" style="width: 100%; max-width: 100%; height: auto;">
-                        <p class="small">${data.caption ? `${data.caption}` : ''}${data.caption && !data.inline ? '<br/>' : '' }${data.inline ? '' : `<a href="${data.ref}.xhtml#ref${data.id}">Return</a>`}</p>
+                        <p class="small">${data.caption ? `${data.caption}` : ''}${data.caption && !data.inline ? '<br/>' : ''}${data.inline ? '' : `<a href="${data.ref}.xhtml#ref${data.id}">Return</a>`}</p>
                     </div>
                 </div>
             </figure>

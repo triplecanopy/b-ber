@@ -42,8 +42,7 @@ const createPageLayout = (fileName, data) =>
         const body    = MarkdownRenderer.render(fileName, data)
         const tail    = pageTail()
 
-        let markup
-        markup = renderLayouts(new File({
+        const markup = renderLayouts(new File({
             path: '.tmp',
             layout: 'pageBody',
             contents: new Buffer(`${head}${body}${tail}`),

@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
-/* eslint-disable no-shadow, no-console, no-unused-vars */
-
+/* eslint-disable no-shadow, no-console, no-unused-vars, no-unused-expressions */
 /**
  * @module cli
  */
@@ -66,7 +65,7 @@ const init = () => {
             process.exit(0)
         }
 
-        let cmdSequence = sequences[cmd] || [cmd]
+        const cmdSequence = sequences[cmd] || [cmd]
         let commanders = {}
 
         if (cmd === 'build') {
@@ -89,7 +88,7 @@ const init = () => {
 
     checkCommands(yargs)
 
-    yargs // eslint-disable-line no-unused-vars
+    yargs
         .fail((msg, err, yargs) => {
 
             // TODO: log.error()

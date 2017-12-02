@@ -34,17 +34,17 @@ const copy = () =>
                     fs.copySync(_.from, _.to, {
                         overwrite: false,
                         errorOnExist: true,
-                        filter: file => path.basename(file).charAt(0) !== '.'
+                        filter: file => path.basename(file).charAt(0) !== '.',
                     })
                 } catch (err) {
                     throw err
                 }
-                const baseFrom = `${path.basename(_.from)}`
+
                 const baseTo   = `${path.basename(_.to)}`
 
                 fs.readdirSync(_.to).forEach(file => {
                     const size = fs.statSync(path.join(_.to, file)).size
-                    log.info('Copied [%s] {%\d}', `${baseTo}/${file}`, size)
+                    log.info('Copied [%s] {%d}', `${baseTo}/${file}`, size)
                     if (size > FILE_SIZE_WARNING_LIMIT) {
                         log.warn('[%s]:{%d Kb} exceeds the recommended file size of {%d Kb}', file, size / 1000, FILE_SIZE_WARNING_LIMIT / 1000)
                     }

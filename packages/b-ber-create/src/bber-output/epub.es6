@@ -11,8 +11,8 @@ import { dist } from 'bber-utils'
  * Compiles epub
  * @return {Promise<Object|Error>}
  */
-const epub = () => {
-    return new Promise(resolve =>
+const epub = () =>
+    new Promise(resolve =>
         zipper.create({
             input: dist(),
             output: process.cwd(),
@@ -21,6 +21,6 @@ const epub = () => {
         .catch(err => log.error(err))
         .then(resolve)
     )
-}
+
 
 export default epub
