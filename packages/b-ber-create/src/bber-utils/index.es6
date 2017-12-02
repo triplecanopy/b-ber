@@ -7,6 +7,7 @@ import fs from 'fs-extra'
 import path from 'path'
 import { isPlainObject } from 'lodash'
 import store from 'bber-lib/store'
+import log from 'b-ber-logger'
 
 const cwd = process.cwd()
 
@@ -221,6 +222,8 @@ function getPagebreakAttribute({ pagebreak }) {
             return ` style="page-break-${pagebreak}:always;"`
         case 'both':
             return ` style="page-break-before:always; page-break-after:always;"`
+        default:
+            return ''
     }
 }
 
@@ -231,7 +234,7 @@ function getPagebreakAttribute({ pagebreak }) {
 // @param dist      String          Absolute project path
 // @return          Promise|Error   Promise (An XML string)
 function parseHTMLFiles(files, parser, dist) {
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
         const dirname = path.join(dist, 'OPS', 'text')
         const text = files.map((_, index, arr) => {
             let data

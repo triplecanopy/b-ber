@@ -9,10 +9,10 @@ import log from 'b-ber-logger'
 import { dist } from 'bber-utils'
 
 const pageBreakBeforeXPATH = () => ([
-        '//h:*[@class="figure__large figure__inline"]',
-        '//h:*[@class="figure__large figure__inline"]/following::h:p[1]',
-        '//h:*[@style="page-break-before:always;"]', // TODO: this is too strict if the XHTML changes, calibre supports regex in xpath, should use that
-    ].join('|'))
+    '//h:*[@class="figure__large figure__inline"]',
+    '//h:*[@class="figure__large figure__inline"]/following::h:p[1]',
+    '//h:*[@style="page-break-before:always;"]', // TODO: this is too strict if the XHTML changes, calibre supports regex in xpath, should use that
+].join('|'))
 
 const mobi = () =>
     new Promise(resolve =>
