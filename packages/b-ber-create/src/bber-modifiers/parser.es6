@@ -68,9 +68,7 @@ class Parser {
      */
     onend(resolve, index, len) {
 
-        // replaces -if (index === len - 1)
-        // in order to add TOC into body contents
-        if (index === len) {
+        if (index === len - 1) {
             this.appendBody()
         } else {
             this.output += '<pagebreak></pagebreak>'
@@ -124,7 +122,7 @@ class Parser {
      */
     parse(content, index, arr) {
         const _this = this // eslint-disable-line consistent-this
-        const len = arr.length - 1
+        const len = arr.length
         if (index === 0) { _this.appendXMLDeclaration() }
         _this.appendComment(arr[index])
         if (index === 0) { _this.prependBody() }

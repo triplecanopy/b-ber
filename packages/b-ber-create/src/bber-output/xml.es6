@@ -40,15 +40,11 @@ const initialize = () =>
  * @return {Object<Promise|Error>}
  */
 
-const inddFRMT_Linebreaks = str =>
+const inddFRMT = str =>
     new Promise((resolve) => {
-        
-        // REMOVES COMMENTS AND WHITESPACE BETWEEN <PAGEBREAKS> AND FOLLOWING TAGS
-        const rmvComments = str.replace(/<!--[\s\S]*?-->/g,"");
-        const rmvBreaks = rmvComments.replace(/\/pagebreak>[\s\S]*?</g,"/pagebreak><");
-
-        str = rmvBreaks
-        resolve(str)
+        const rmvComments = str.replace(/<!--[\s\S]*?-->/g, "") // removes comments
+        const rmvBreaks = rmvComments.replace(/\/pagebreak>[\s\S]*?</g, "/pagebreak><") // removes whitespace between pagebreak and following selectors
+        resolve(rmvBreaks)
     })
 
 /**
@@ -60,7 +56,6 @@ const inddFRMT_Linebreaks = str =>
 const writeXML = str =>
     new Promise((resolve) => {
         const fpath = path.join(cwd, `Export-${new Date().toISOString().replace(/:/g, '-')}.xml`)
-
         fs.writeFile(fpath, str, 'utf8', (err) => {
             if (err) { throw err }
             resolve()
@@ -75,7 +70,7 @@ const xml = () =>
     new Promise(resolve =>
         initialize()
         .then(manifest => parseHTMLFiles(manifest, parser, dist()))
-        .then(inddFRMT_Linebreaks)
+        .then(inddFRMT)
         .then(writeXML)
         .catch(err => log.error(err))
         .then(resolve)
