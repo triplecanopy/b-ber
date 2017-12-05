@@ -7,9 +7,6 @@ import Yaml from 'bber-lib/yaml'
 import { forOf } from 'bber-utils'
 import store from 'bber-lib/store'
 import themes from 'b-ber-themes'
-import { find } from 'lodash'
-
-
 
 function getUserDefinedThemes() {
     return new Promise(resolve => {
@@ -52,6 +49,13 @@ function getUserDefinedThemes() {
 
     })
 }
+
+const printThemeList = (themeList, currentTheme = '') =>
+    themeList.reduce((acc, curr) => {
+        const icon = currentTheme && currentTheme === curr ? '✔' : '-'
+        return acc.concat(`  ${icon} ${curr}\n`)
+    }, '')
+
 
 function setTheme(themeName, themeList, userThemes, cwd) {
     return new Promise(resolve => {
@@ -133,12 +137,6 @@ function setTheme(themeName, themeList, userThemes, cwd) {
         return Promise.all(promises).then(resolve)
     })
 }
-
-const printThemeList = (themeList, currentTheme = '') =>
-    themeList.reduce((acc, curr) => {
-        const icon = currentTheme && currentTheme === curr ? '✔' : '-'
-        return acc.concat(`  ${icon} ${curr}\n`)
-    }, '')
 
 const theme = () =>
     new Promise(async (resolve) => {

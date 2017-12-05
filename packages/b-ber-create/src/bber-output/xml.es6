@@ -39,6 +39,20 @@ const initialize = () =>
  * @param  {String} str [description]
  * @return {Object<Promise|Error>}
  */
+
+const inddFRMT = str =>
+    new Promise((resolve) => {
+        const rmvComments = str.replace(/<!--[\s\S]*?-->/g, "") // removes comments
+        const rmvBreaks = rmvComments.replace(/\/pagebreak>[\s\S]*?</g, "/pagebreak><") // removes whitespace between pagebreak and following selectors
+        resolve(rmvBreaks)
+    })
+
+/**
+ * [description]
+ * @param  {String} str [description]
+ * @return {Object<Promise|Error>}
+ */
+
 const writeXML = str =>
     new Promise((resolve) => {
         const fpath = path.join(cwd, `Export-${new Date().toISOString().replace(/:/g, '-')}.xml`)
@@ -56,6 +70,7 @@ const xml = () =>
     new Promise(resolve =>
         initialize()
         .then(manifest => parseHTMLFiles(manifest, parser, dist()))
+        .then(inddFRMT)
         .then(writeXML)
         .catch(err => log.error(err))
         .then(resolve)

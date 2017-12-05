@@ -2,6 +2,8 @@
  * @module async
  */
 
+/* eslint-disable import/prefer-default-export */
+
 import Promise from 'zousan'
 import log from 'b-ber-logger'
 import * as tasks from 'bber-output'
@@ -23,8 +25,8 @@ import store from 'bber-lib/store'
 // output/index.js` directly.
 //
 
-const serialize = (sequence) => {
-    return sequence.reduce((acc, task) => {
+const serialize = (sequence) =>
+    sequence.reduce((acc, task) => {
         const func = tasks[task] || task
 
         if (typeof func !== 'function') {
@@ -37,6 +39,5 @@ const serialize = (sequence) => {
         })
     }, Promise.resolve())
     .then(() => log.notify('done', { store }))
-}
 
 export { serialize }

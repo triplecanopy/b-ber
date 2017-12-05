@@ -58,7 +58,7 @@ section.backmatter {
 
 // elements with nesting
 ol, ul {
-	@include type-settings(0);
+	@include type-settings(-1);
 }
 ol ol, ol ul,
 ul ol, ul ul {
@@ -66,7 +66,7 @@ ul ol, ul ul {
 }
 
 table {
-	@include type-settings(0);
+	@include type-settings(-1);
 }
 
 table table,
@@ -99,6 +99,14 @@ section.appendix p {
     padding-bottom: 0;
 }
 
+section.titlepage h1 {
+	padding-bottom:0;
+}
+
+section.titlepage h2 {
+	padding-bottom:one-line(0);
+}
+
 section.dialogue p.interlocutor-parent {
     padding-top: 0;
 }
@@ -124,6 +132,14 @@ figcaption p.small,
 .figcaption p.small,
 section.dialogue p.interlocutor-parent .interlocutor {
 	@include type-settings(-2);
+}
+
+sup, a.footnote-ref, sub {
+	@include type-settings(-3);
+}
+
+sup, a.footnote-ref {
+	top:-.8em;
 }
 
 // images

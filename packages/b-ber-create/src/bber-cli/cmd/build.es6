@@ -3,7 +3,7 @@ import { serialize } from 'bber-lib/async'
 import store from 'bber-lib/store'
 
 
-import log from 'b-ber-logger'
+// import log from 'b-ber-logger'
 
 const _buildCommands = ['epub', 'mobi', 'pdf', 'web', 'sample']
 const _buildArgs = args => keys(pickBy(pick(args, _buildCommands), identity))

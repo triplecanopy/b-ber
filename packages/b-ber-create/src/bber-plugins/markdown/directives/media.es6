@@ -67,7 +67,7 @@ export default {
             const filename            = `_markdown/${context.filename}.md`
             const lineNr              = tokens[idx].map ? tokens[idx].map[0] : null
             const match               = tokens[idx].info.trim().match(directiveRe)
-            const [, type, id, attrs] = match
+            const [, type, , attrs]   = match
             const attrsObject         = attributesObject(attrs, type, { filename, lineNr })
             const mediaType           = type.indexOf('-') && type.substring(0, type.indexOf('-')) || type
             const media               = [...store[mediaType]]

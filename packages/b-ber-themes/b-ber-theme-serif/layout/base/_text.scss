@@ -126,7 +126,6 @@ p {
     }
 
     section.backmatter &,
-    section.colophon &,
     section.afterword &,
     section.seriespage &,
     section.credits &,
@@ -140,6 +139,13 @@ p {
         @include following-paragraph-not-indented;
         @include type-settings(-2);
         @include padding(0, 0, 1, 0, -2);
+    }
+
+    section.colophon & {
+        @include following-paragraph-not-indented;
+        @include type-settings(-2);
+        @include padding(0, 0, 1, 0, -2);
+        text-indent:0 !important;
     }
 
     section.preface &,

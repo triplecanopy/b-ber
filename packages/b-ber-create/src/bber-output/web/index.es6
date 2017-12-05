@@ -29,7 +29,7 @@ let BASE_URL
 let flow // copy of spine for web task, see `WebFlow` below
 
 function addTrailingSlash(s) {
-    var s_ = s
+    let s_ = s
     if (s_ === '/') { return s_ }
     if (s_.charCodeAt(s_.length - 1) !== 47/* / */) {
         s_ += '/'
@@ -56,9 +56,10 @@ class WebFlow {
     // (the `fileName` property has a file extension). this needs to be fixed
     prepareLoi() {
         this.loi = this.loi.map(a => {
-            a.fileName = a.fileName.replace(/\.xhtml$/, '')
-            a.relativePath = a.relativePath.replace(/\.xhtml$/, '')
-            return a
+            const b = { ...a }
+            b.fileName = b.fileName.replace(/\.xhtml$/, '')
+            b.relativePath = b.relativePath.replace(/\.xhtml$/, '')
+            return b
         })
     }
 
@@ -176,7 +177,7 @@ function getProjectMetadataHTML() {
                     <dt>${curr.term}</dt>
                     <dd>${curr.value}</dd>
                 `)
-            ), '') }
+            ), '')}
         </dl>
     `
 }
@@ -287,6 +288,17 @@ function paginationNavigation(filePath) {
             ${next}
         </nav>
     `
+}
+
+function injectBaseURL(script) {
+    const script_ =
+        typeof script === 'string'
+            ? script
+            : Buffer.isBuffer(script)
+            ? String(script)
+            : ''
+
+    return new Buffer(script_.replace(/%BASE_URL%/g, BASE_URL))
 }
 
 function getNavigationToggleScript() {
@@ -428,17 +440,6 @@ function importVendorScripts() {
             .catch(err => reject(err))
             .then(resolve)
     })
-}
-
-function injectBaseURL(script) {
-    const script_ =
-        typeof script === 'string'
-            ? script
-            : Buffer.isBuffer(script)
-            ? String(script)
-            : ''
-
-    return new Buffer(script_.replace(/%BASE_URL%/g, BASE_URL))
 }
 
 function writeWebWorker() {
