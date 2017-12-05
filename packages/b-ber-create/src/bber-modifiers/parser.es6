@@ -67,6 +67,7 @@ class Parser {
      * @return {Promise<Object|Error>}
      */
     onend(resolve, index, len) {
+
         if (index === len - 1) {
             this.appendBody()
         } else {
@@ -121,7 +122,7 @@ class Parser {
      */
     parse(content, index, arr) {
         const _this = this // eslint-disable-line consistent-this
-        const len = arr.length - 1
+        const len = arr.length
         if (index === 0) { _this.appendXMLDeclaration() }
         _this.appendComment(arr[index])
         if (index === 0) { _this.prependBody() }
@@ -163,6 +164,7 @@ class Parser {
                             _this.tagnames.push(name)
                             break
                     }
+
 
                     if (_this.noop) { return }
                     const tag = []
