@@ -27,11 +27,13 @@ const copy = () =>
             { from: path.join(src(), '_media'), to: path.join(dist(), 'OPS', 'media') },
         ]
 
-        dirs.forEach((_) => {
+        dirs.forEach((a) => {
             promises.push(new Promise((resolve) => {
                 try {
-                    fs.mkdirpSync(_.to)
-                    fs.copySync(_.from, _.to, {
+                    fs.mkdirpSync(a.to)
+                    fs.mkdirpSync(a.from) // ensure `from` dir exists
+
+                    fs.copySync(a.from, a.to, {
                         overwrite: false,
                         errorOnExist: true,
                         filter: file => path.basename(file).charAt(0) !== '.',
@@ -40,10 +42,10 @@ const copy = () =>
                     throw err
                 }
 
-                const baseTo   = `${path.basename(_.to)}`
+                const baseTo   = `${path.basename(a.to)}`
 
-                fs.readdirSync(_.to).forEach(file => {
-                    const size = fs.statSync(path.join(_.to, file)).size
+                fs.readdirSync(a.to).forEach(file => {
+                    const size = fs.statSync(path.join(a.to, file)).size
                     log.info('Copied [%s] {%d}', `${baseTo}/${file}`, size)
                     if (size > FILE_SIZE_WARNING_LIMIT) {
                         log.warn('[%s]:{%d Kb} exceeds the recommended file size of {%d Kb}', file, size / 1000, FILE_SIZE_WARNING_LIMIT / 1000)
