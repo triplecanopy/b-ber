@@ -2,15 +2,14 @@ const express = require('express')
 const esindex = require('serve-index')
 const path = require('path')
 
-const parseArgs = (args) => {
-    const _argv = args.slice(2)
-    const argv = {}
-    _argv.forEach((_) => {
-        const [k, v] = _.split(' ')
-        argv[k.replace(/^-+/, '')] = v
-        return argv
-    })
-    return argv
+const parseArgs = args => {
+    const result = {}
+    let args_
+
+    args_ = args.slice(2)
+    args_ = args_.map(a => a.split(/^--(\w+)\s/).filter(Boolean))
+    args_.forEach(a => result[a[0]] = a[1] || true)
+    return result
 }
 
 const argv = parseArgs(process.argv)
