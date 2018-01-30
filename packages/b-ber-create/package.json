@@ -1,5 +1,5 @@
 {
-  "name": "b-ber-create",
+  "name": "@canopycanopycanopy/b-ber-create",
   "version": "0.1.0-alpha.14",
   "description": "A command line epub maker.",
   "main": "./src/bber-cli/index.es6",
@@ -29,8 +29,8 @@
   "dependencies": {
     "ajv": "4.10.0",
     "autoprefixer": "^6.5.3",
-    "b-ber-logger": "0.1.0-alpha.14",
-    "b-ber-themes": "0.1.0-alpha.14",
+    "@canopycanopycanopy/b-ber-logger": "0.1.0-alpha.14",
+    "@canopycanopycanopy/b-ber-themes": "0.1.0-alpha.14",
     "cheerio": "^1.0.0-rc.2",
     "command-exists": "^1.2.2",
     "css": "^2.2.1",
