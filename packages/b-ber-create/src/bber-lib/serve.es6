@@ -1,6 +1,6 @@
 import path from 'path'
 import nodemon from 'nodemon'
-import log from 'b-ber-logger'
+import log from '@canopycanopycanopy/b-ber-logger'
 import { serialize } from 'bber-lib/async'
 import { src, dist } from 'bber-utils'
 import store from 'bber-lib/store'

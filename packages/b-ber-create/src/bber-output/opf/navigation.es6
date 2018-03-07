@@ -26,7 +26,7 @@ import {
 // utility
 import store from 'bber-lib/store'
 import Props from 'bber-lib/props'
-import log from 'b-ber-logger'
+import log from '@canopycanopycanopy/b-ber-logger'
 import {
     src,
     dist,

@@ -7,7 +7,7 @@ import Promise from 'zousan'
 import fs from 'fs-extra'
 import path from 'path'
 import { dist, build } from 'bber-utils'
-import log from 'b-ber-logger'
+import log from '@canopycanopycanopy/b-ber-logger'
 
 /**
  * Remove an ebook's output directory and outdated builds

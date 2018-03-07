@@ -4,7 +4,7 @@
 
 import Promise from 'zousan'
 import zipper from 'epub-zipper'
-import log from 'b-ber-logger'
+import log from '@canopycanopycanopy/b-ber-logger'
 import { dist } from 'bber-utils'
 
 /**

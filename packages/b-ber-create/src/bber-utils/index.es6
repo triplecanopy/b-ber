@@ -7,7 +7,7 @@ import fs from 'fs-extra'
 import path from 'path'
 import { isPlainObject } from 'lodash'
 import store from 'bber-lib/store'
-import log from 'b-ber-logger'
+import log from '@canopycanopycanopy/b-ber-logger'
 
 const cwd = process.cwd()
 

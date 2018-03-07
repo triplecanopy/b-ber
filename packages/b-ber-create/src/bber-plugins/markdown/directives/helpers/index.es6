@@ -1,6 +1,6 @@
 /* eslint-disable no-plusplus, max-statements-per-line, no-continue, no-multi-assign */
 import { forOf } from 'bber-utils'
-import log from 'b-ber-logger'
+import log from '@canopycanopycanopy/b-ber-logger'
 // import crypto from 'crypto'
 import {
     BLOCK_DIRECTIVES,
@@ -14,7 +14,7 @@ import {
     SUPPORTED_ATTRIBUTES,
     DRAFT_DIRECTIVES,
     DEPRECATED_DIRECTIVES,
-} from 'bber-shapes/directives'
+} from '@canopycanopycanopy/b-ber-shapes/directives'
 
 
 //

@@ -5,7 +5,7 @@
 import Promise from 'zousan'
 import path from 'path'
 import fs from 'fs-extra'
-import log from 'b-ber-logger'
+import log from '@canopycanopycanopy/b-ber-logger'
 import { src, dist } from 'bber-utils'
 
 const FILE_SIZE_WARNING_LIMIT = 1500000 // 1.5Mb

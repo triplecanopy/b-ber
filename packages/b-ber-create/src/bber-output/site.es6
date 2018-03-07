@@ -6,7 +6,7 @@ import https from 'https'
 import decompress from 'decompress'
 
 import { config } from 'bber-lib'
-import log from 'b-ber-logger'
+import log from '@canopycanopycanopy/b-ber-logger'
 
 const cwd = process.cwd()
 const download = () =>

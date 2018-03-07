@@ -1,7 +1,7 @@
 import store from 'bber-lib/store'
 import fs from 'fs-extra'
 import mime from 'mime-types'
-import { terms, elements } from 'bber-shapes/dc'
+import { terms, elements } from '@canopycanopycanopy/b-ber-shapes/dc'
 
 /**
  * Mehtods to detect XML media-type properties based on the content of XHTML documents

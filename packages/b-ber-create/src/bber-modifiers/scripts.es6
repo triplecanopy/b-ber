@@ -3,7 +3,7 @@ import path from 'path'
 import fs from 'fs-extra'
 import { src, dist, env } from 'bber-utils'
 import store from 'bber-lib/store'
-import log from 'b-ber-logger'
+import log from '@canopycanopycanopy/b-ber-logger'
 import uglifyJS from 'uglify-js'
 
 const uglifyOptions = store.config.uglify_options || {

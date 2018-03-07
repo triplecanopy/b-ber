@@ -8,7 +8,7 @@ import path from 'path'
 import nodeSass from 'node-sass'
 import postcss from 'postcss'
 import autoprefixer from 'autoprefixer'
-import log from 'b-ber-logger'
+import log from '@canopycanopycanopy/b-ber-logger'
 import { src, dist, env, build } from 'bber-utils'
 import store from 'bber-lib/store'
 

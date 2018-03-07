@@ -3,7 +3,7 @@ import mime from 'mime-types'
 import Props from 'bber-lib/props'
 import store from 'bber-lib/store'
 import { fileId, escapeHTML } from 'bber-utils'
-import log from 'b-ber-logger'
+import log from '@canopycanopycanopy/b-ber-logger'
 import path from 'path'
 import crypto from 'crypto'
 

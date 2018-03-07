@@ -5,7 +5,7 @@
 /* eslint-disable import/prefer-default-export */
 
 import Promise from 'zousan'
-import log from 'b-ber-logger'
+import log from '@canopycanopycanopy/b-ber-logger'
 import * as tasks from 'bber-output'
 import store from 'bber-lib/store'
 

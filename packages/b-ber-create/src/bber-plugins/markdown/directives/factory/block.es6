@@ -1,9 +1,9 @@
 import store from 'bber-lib/store'
-import log from 'b-ber-logger'
+import log from '@canopycanopycanopy/b-ber-logger'
 import {
     BLOCK_DIRECTIVE_MARKER,
     BLOCK_DIRECTIVE_MARKER_MIN_LENGTH,
-} from 'bber-shapes/directives'
+} from '@canopycanopycanopy/b-ber-shapes/directives'
 
 const marker = BLOCK_DIRECTIVE_MARKER
 const minMarkers = BLOCK_DIRECTIVE_MARKER_MIN_LENGTH

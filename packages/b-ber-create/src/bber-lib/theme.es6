@@ -6,7 +6,7 @@ import yargs from 'yargs'
 import Yaml from 'bber-lib/yaml'
 import { forOf } from 'bber-utils'
 import store from 'bber-lib/store'
-import themes from 'b-ber-themes'
+import themes from '@canopycanopycanopy/b-ber-themes'
 
 function getUserDefinedThemes() {
     return new Promise(resolve => {

@@ -2,7 +2,7 @@ import path from 'path'
 import fs from 'fs-extra'
 import store from 'bber-lib/store'
 import imageSize from 'probe-image-size'
-import log from 'b-ber-logger'
+import log from '@canopycanopycanopy/b-ber-logger'
 import figure from 'bber-plugins/markdown/plugins/figure'
 import figTmpl from 'bber-templates/figures'
 import { getImageOrientation, src, htmlComment, build } from 'bber-utils'
@@ -12,7 +12,7 @@ import crypto from 'crypto'
 import {
     INLINE_DIRECTIVE_MARKER,
     INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
-} from 'bber-shapes/directives'
+} from '@canopycanopycanopy/b-ber-shapes/directives'
 
 const imageOpenRegExp = /(figure(?:-inline)?)(?::([^\s]+)(\s?.*)?)?$/
 

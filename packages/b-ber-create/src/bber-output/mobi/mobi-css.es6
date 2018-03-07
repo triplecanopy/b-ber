@@ -6,7 +6,7 @@ import Promise from 'zousan'
 import fs from 'fs-extra'
 import css from 'css'
 import path from 'path'
-import log from 'b-ber-logger'
+import log from '@canopycanopycanopy/b-ber-logger'
 import { dist } from 'bber-utils'
 
 const blackListedPrefixes = ['epub|']

@@ -6,7 +6,7 @@ import figure from 'bber-plugins/markdown/plugins/figure'
 import { attributesString, attributesObject } from 'bber-plugins/markdown/directives/helpers'
 import { htmlComment, src, build } from 'bber-utils'
 import store from 'bber-lib/store'
-import log from 'b-ber-logger'
+import log from '@canopycanopycanopy/b-ber-logger'
 import crypto from 'crypto'
 
 const markerRe = /^(video|audio)/

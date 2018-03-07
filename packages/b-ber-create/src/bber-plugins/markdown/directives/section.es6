@@ -2,7 +2,7 @@ import plugin from 'bber-plugins/markdown/plugins/section'
 import renderFactory from 'bber-plugins/markdown/directives/factory/block'
 import { attributes, htmlId } from 'bber-plugins/markdown/directives/helpers'
 import { htmlComment } from 'bber-utils'
-import { BLOCK_DIRECTIVES } from 'bber-shapes/directives'
+import { BLOCK_DIRECTIVES } from '@canopycanopycanopy/b-ber-shapes/directives'
 
 // this matches *all* container-type directives, and outputs the appropriate
 // HTML based on user-defined attributes

@@ -7,7 +7,7 @@
 import Promise from 'zousan'
 import path from 'path'
 import fs from 'fs-extra'
-import log from 'b-ber-logger'
+import log from '@canopycanopycanopy/b-ber-logger'
 import { Parser } from 'bber-modifiers'
 import { dist, parseHTMLFiles } from 'bber-utils'
 import store from 'bber-lib/store'

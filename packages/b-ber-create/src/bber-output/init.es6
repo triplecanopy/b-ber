@@ -1,7 +1,7 @@
 import Promise from 'zousan'
 import fs from 'fs-extra'
 import path from 'path'
-import log from 'b-ber-logger'
+import log from '@canopycanopycanopy/b-ber-logger'
 import store from 'bber-lib/store'
 import getAssets from 'bber-assets'
 import { setTheme } from 'bber-lib/theme'

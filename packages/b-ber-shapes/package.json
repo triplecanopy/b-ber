@@ -1,0 +1,20 @@
+{
+  "name": "@canopycanopycanopy/b-ber-shapes",
+  "version": "0.1.0-alpha.14",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "dc": "dc",
+    "directives": "directives",
+    "sequences": "sequences"
+  },
+  "scripts": {
+    "prepare.lib": "BABEL_ENV=production ../../node_modules/.bin/babel -d ./ src/ --ignore **/__tests__/**",
+    "prepare": "yarn prepare.lib",
+    "build": "yarn prepare",
+    "watch": "BABEL_ENV=production ../../node_modules/.bin/babel -d lib/ src/ --watch index.es6",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Maxwell Simmer <maxwell.simmer@gmail.com> (http://maxwellsimmer.com)",
+  "license": "MIT"
+}

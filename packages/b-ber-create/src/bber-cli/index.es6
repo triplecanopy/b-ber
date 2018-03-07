@@ -9,9 +9,9 @@ import yargs from 'yargs'
 import * as commands from 'bber-cli/cmd'
 import { version } from 'bber-utils'
 
-import log from 'b-ber-logger'
+import log from '@canopycanopycanopy/b-ber-logger'
 import store from 'bber-lib/store'
-import { sequences } from 'bber-shapes/sequences'
+import { sequences } from '@canopycanopycanopy/b-ber-shapes/sequences'
 
 /**
  * Start the build

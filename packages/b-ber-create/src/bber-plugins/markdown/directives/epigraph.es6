@@ -12,7 +12,7 @@
 */
 
 import figure from 'bber-plugins/markdown/plugins/figure'
-import log from 'b-ber-logger'
+import log from '@canopycanopycanopy/b-ber-logger'
 import { passThrough } from 'bber-utils' // for testing
 
 const markerRe = /^epigraph/

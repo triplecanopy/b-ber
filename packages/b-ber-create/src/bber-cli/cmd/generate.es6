@@ -1,5 +1,5 @@
 import { generate } from 'bber-output'
-import log from 'b-ber-logger'
+import log from '@canopycanopycanopy/b-ber-logger'
 import { fail } from 'bber-cli/helpers'
 
 const command = 'generate'

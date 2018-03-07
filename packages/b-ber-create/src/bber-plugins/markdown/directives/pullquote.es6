@@ -5,12 +5,12 @@
 import plugin from 'bber-plugins/markdown/plugins/section'
 import store from 'bber-lib/store'
 import { attributesObject, attributesString } from 'bber-plugins/markdown/directives/helpers'
-import log from 'b-ber-logger'
+import log from '@canopycanopycanopy/b-ber-logger'
 // import { passThrough } from 'bber-utils' // for testing
 import {
     BLOCK_DIRECTIVE_MARKER,
     BLOCK_DIRECTIVE_MARKER_MIN_LENGTH,
-} from 'bber-shapes/directives'
+} from '@canopycanopycanopy/b-ber-shapes/directives'
 
 const marker = BLOCK_DIRECTIVE_MARKER
 const minMarkers = BLOCK_DIRECTIVE_MARKER_MIN_LENGTH

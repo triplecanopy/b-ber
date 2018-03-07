@@ -12,7 +12,7 @@ import yargs from 'yargs'
 import path from 'path'
 import Yaml from 'bber-lib/yaml'
 import File from 'vinyl'
-import log from 'b-ber-logger'
+import log from '@canopycanopycanopy/b-ber-logger'
 import { src, env } from 'bber-utils'
 
 /**

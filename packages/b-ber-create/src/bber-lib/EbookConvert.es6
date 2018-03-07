@@ -1,7 +1,7 @@
 import path from 'path'
 import { exec } from 'child_process'
 import exists from 'command-exists'
-import log from 'b-ber-logger'
+import log from '@canopycanopycanopy/b-ber-logger'
 
 const command = 'ebook-convert'
 

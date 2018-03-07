@@ -13,7 +13,7 @@ import renderLayouts from 'layouts'
 import File from 'vinyl'
 import { opfPackage } from 'bber-templates/opf'
 import { dist, env } from 'bber-utils'
-import log from 'b-ber-logger'
+import log from '@canopycanopycanopy/b-ber-logger'
 import ManifestAndMetadata from './manifest-metadata'
 import Navigation from './navigation'
 
