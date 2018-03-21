@@ -1,5 +1,7 @@
+/* eslint-disable import/prefer-default-export */
+
 export function bind() {
-    this.on('begin', ({ task, begin }) => {
+    this.on('begin', ({ task }) => {
 
         this.task         = task
         this.taskWarnings = 0
@@ -49,7 +51,7 @@ export function bind() {
 
     })
 
-    this.on('done', (data) => {
+    this.on('done', data => {
         if (this.logLevel < 3) { console.log() }
         if (!this.errors.length) {
             console.log('%s%s', this.indent(), this.decorate('Build succeeded', 'green', 'underline'))

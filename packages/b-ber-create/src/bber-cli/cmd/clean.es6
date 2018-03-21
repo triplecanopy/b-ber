@@ -30,7 +30,7 @@ const builder = yargs =>
         })
 
 // const handler = clean
-const handler = (argv) => {
+const handler = argv => {
     const d = argv.d
 
     if (!d) {

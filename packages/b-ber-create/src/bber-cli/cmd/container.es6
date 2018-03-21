@@ -27,7 +27,7 @@ const builder = yargs =>
         .usage(`\nUsage: $0 container\n\n${describe}`)
 
 
-const handler = (argv) => {
+const handler = argv => {
     const i = argv.i
     const o = argv.o
     if (!i.length || !o) { throw new Error('Both src and dist directories must be provided') }

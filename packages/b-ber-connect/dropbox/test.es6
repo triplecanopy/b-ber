@@ -2,14 +2,14 @@ import Connect from '../connect'
 
 const connect = new Connect({ client: 'dropbox' })
 
-connect.exec((done) => {
+connect.exec(done => {
     const { dropbox } = connect
     dropbox.filesListFolder({ path: '' })
-        .then((resp) => {
+        .then(resp => {
             console.log(resp.entries)
             done()
         })
-        .catch((err) => {
+        .catch(err => {
             console.log(err)
             done()
         })

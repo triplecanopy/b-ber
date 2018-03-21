@@ -26,7 +26,7 @@ function sync() {
     // console.log(assets)
     download(assets)
     .catch(err => console.log(err))
-    .then((data) => {
+    .then(data => {
         console.log()
         console.log()
         console.log()
@@ -40,10 +40,10 @@ function sync() {
 //   .then(({ source, clean }) => {
 //     // const source = path.join(__dirname, 'tmp') // TODO: this should probably be app root
 //     const dest = path.join(src(), '_markdown')
-//     fs.copy(source, dest, { overwrite: true }, (err0) => {
+//     fs.copy(source, dest, { overwrite: true }, err0 => {
 //       if (err0) { throw err0 }
 //       if (clean) {
-//         fs.remove(source, (err1) => {
+//         fs.remove(source, err1 => {
 //           if (err1) { throw err1 }
 //           console.log('Sync done!')
 //         })

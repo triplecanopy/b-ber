@@ -29,7 +29,7 @@ export default {
                 this.oauth2Client.setCredentials(this.credentials)
 
                 const credPath = path.join(__dirname, this.client, '.credentials.json')
-                fs.writeFile(credPath, JSON.stringify(this.credentials), 'utf8', (err1) => {
+                fs.writeFile(credPath, JSON.stringify(this.credentials), 'utf8', err1 => {
                     if (err1) { throw err1 }
                     res.send({ status: 'OK' })
                     this.exit(callback)
@@ -58,7 +58,7 @@ export default {
             this.dropbox.accessToken = access_token
 
             const credPath = path.join(__dirname, this.client, '.credentials.json')
-            fs.writeFile(credPath, JSON.stringify(this.credentials), 'utf8', (err1) => {
+            fs.writeFile(credPath, JSON.stringify(this.credentials), 'utf8', err1 => {
                 if (err1) { throw err1 }
                 res.send({ status: 'OK' })
                 this.exit(callback)

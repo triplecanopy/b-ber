@@ -45,7 +45,7 @@ class Cover {
         }
 
         const fileMetadata = {}
-        store.metadata.forEach((_) => {
+        store.metadata.forEach(_ => {
             if (_.term && _.value) {
                 fileMetadata[_.term] = _.value
             }
@@ -69,7 +69,7 @@ class Cover {
 
     // if running in sequence with other builds, necessary to flush the state
     loadInitialState() {
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
             this.phantomjsArgs     = [path.join(__dirname, 'phantomjs.js')]
             this.coverXHTMLContent = ''
             this.coverEntry        = ''
@@ -87,9 +87,9 @@ class Cover {
                 const oldCovers = files.filter(_ => path.basename(_).match(new RegExp(this.coverPrefix)))
                 if (!oldCovers.length) { resolve() }
 
-                return oldCovers.forEach((_) => {
+                return oldCovers.forEach(_ => {
                     const coverPath = path.join(imageDir, _)
-                    fs.remove(coverPath, (err1) => {
+                    fs.remove(coverPath, err1 => {
                         if (err1) { reject(err1) }
                         log.info('Removed outdated cover image [%s]', _)
                         resolve()
@@ -113,12 +113,12 @@ class Cover {
     }
 
     writeCoverXHTML() {
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
             const textDir = path.join(dist(), 'OPS', 'text')
             const coverFilePath = path.join(textDir, 'cover.xhtml')
-            fs.mkdirp(textDir, (err0) => {
+            fs.mkdirp(textDir, err0 => {
                 if (err0) { throw err0 }
-                fs.writeFile(coverFilePath, this.coverXHTMLContent, (err1) => {
+                fs.writeFile(coverFilePath, this.coverXHTMLContent, err1 => {
                     if (err1) { throw err1 }
                     log.info('Wrote [cover.xhtml]')
                     return resolve()
@@ -128,7 +128,7 @@ class Cover {
     }
 
     generateCoverXHTML() {
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
             // get the image dimensions, and pass them to the coverSVG template
             const { width, height } = imageSize.sync(fs.readFileSync(this.coverImagePath))
             const svg = coverSVG({
@@ -150,7 +150,7 @@ class Cover {
     }
 
     createCoverImage() {
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
             let metadata
 
             this.coverEntry = `${this.coverPrefix}${crypto.randomBytes(20).toString('hex')}.jpg`

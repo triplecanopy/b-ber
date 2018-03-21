@@ -18,8 +18,8 @@ function getUserDefinedThemes() {
 
         if (!{}.hasOwnProperty.call(config, 'themes_directory')) { resolve({ names, themes: userThemes }) }
 
-        fs.readdirSync(path.join(cwd, config.themes_directory)).forEach((_) => {
-            const modulePath = path.resolve(cwd, config.themes_directory, _)
+        fs.readdirSync(path.join(cwd, config.themes_directory)).forEach(a => {
+            const modulePath = path.resolve(cwd, config.themes_directory, a)
 
             if (!fs.lstatSync(modulePath).isDirectory()) { return }
 
@@ -75,7 +75,7 @@ function setTheme(themeName, themeList, userThemes, cwd) {
 
         // write the updated config file
         promises.push(new Promise(resolve =>
-            fs.writeFile(configPath, Yaml.dump(configObj), (err) => {
+            fs.writeFile(configPath, Yaml.dump(configObj), err => {
                 if (err) { throw err }
                 console.log()
                 console.log(`Successfully set theme theme to [${themeName}]`)
@@ -86,7 +86,7 @@ function setTheme(themeName, themeList, userThemes, cwd) {
 
         // add a theme dir with the same name to the src dir, copy over
         // the `settings` file, and create an overrides file
-        promises.push(new Promise((resolve) => {
+        promises.push(new Promise(resolve => {
             const themeObject =
                 {}.hasOwnProperty.call(themes, themeName)
                     ? themes[themeName]
@@ -138,15 +138,14 @@ function setTheme(themeName, themeList, userThemes, cwd) {
     })
 }
 
-const theme = () =>
-    new Promise(async (resolve) => {
-
+const theme = _ =>
+    new Promise(async resolve => {
 
         const cwd = process.cwd()
         const { config } = store
         const themeList = []
 
-        forOf(themes, _ => themeList.push(_))
+        forOf(themes, a => themeList.push(a))
 
         // get user themes dir, if any, and merge with built-in b-ber themes
         const userThemes = await getUserDefinedThemes()

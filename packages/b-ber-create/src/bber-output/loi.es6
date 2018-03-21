@@ -14,7 +14,7 @@ import figure from 'bber-templates/figures'
 import { page, loiLeader } from 'bber-templates/pages'
 
 const createLOILeader = () =>
-    new Promise((resolve) => {
+    new Promise(resolve => {
 
         const filename = 'figures-titlepage'
         const markup = renderLayouts(new File({
@@ -24,7 +24,7 @@ const createLOILeader = () =>
         }), { page }).contents.toString()
 
 
-        fs.writeFile(path.join(dist(), 'OPS', 'text', `${filename}.xhtml`), markup, 'utf8', (err) => {
+        fs.writeFile(path.join(dist(), 'OPS', 'text', `${filename}.xhtml`), markup, 'utf8', err => {
             if (err) { throw err }
 
             store.add('guide', {
@@ -40,7 +40,7 @@ const createLOILeader = () =>
     })
 
 const createLOI = () =>
-    new Promise((resolve) => {
+    new Promise(resolve => {
 
         store.figures.forEach((data, idx) => {
 
@@ -54,7 +54,7 @@ const createLOI = () =>
             }), { page }).contents.toString()
 
 
-            fs.writeFile(path.join(dist(), 'OPS', 'text', data.page), markup, 'utf8', (err) => {
+            fs.writeFile(path.join(dist(), 'OPS', 'text', data.page), markup, 'utf8', err => {
                 if (err) { throw err }
 
                 const fileData = {
@@ -79,7 +79,7 @@ const createLOI = () =>
     })
 
 const loi = () =>
-    new Promise(async (resolve) => {
+    new Promise(async resolve => {
         if (store.figures.length) {
             createLOILeader()
             .then(createLOI)

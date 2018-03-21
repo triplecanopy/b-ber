@@ -47,7 +47,7 @@ class ManifestAndMetadata {
      * @return {Object<Promise>}
      */
     loadMetadata() {
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
             this.bookmeta = metadata()
             resolve()
         })
@@ -75,7 +75,7 @@ class ManifestAndMetadata {
      * @return {Promise<Object|Error>}
      */
     createManifestAndMetadataFromTemplates(files) {
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
             // TODO: this will already be loaded in bber object
             const strings = { manifest: [], bookmeta: [] }
             const specifiedFonts = {}.hasOwnProperty.call(store.config, 'ibooks_specified_fonts') && store.config.ibooks_specified_fonts === true
@@ -105,7 +105,7 @@ class ManifestAndMetadata {
     static createManifestAndMetadataXML(resp) {
         log.info('Building [manifest]')
         log.info('Building [metadata]')
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
             const _metadata = renderLayouts(new File({
                 path: '.tmp',
                 layout: 'opfMetadata',

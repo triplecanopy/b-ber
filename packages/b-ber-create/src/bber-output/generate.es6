@@ -26,7 +26,7 @@ class Generate {
      * @return {Array<Object<String>>}
      */
     getFiles(dir) {
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
             const d = dir || path.join(src(), '_markdown')
             try {
                 fs.existsSync(d)
@@ -35,7 +35,7 @@ class Generate {
             }
             return fs.readdir(d, (err, files) => {
                 if (err) { throw err }
-                let filearr = files.map((_) => {
+                let filearr = files.map(_ => {
                     if (path.basename(_).charAt(0) === '.') { return null }
                     return { name: _ }
                 }).filter(Boolean)
@@ -51,7 +51,7 @@ class Generate {
      * @return {Object}       The array of files and their corresponding frontmatter
      */
     parseMeta(files) {
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
             const { title, type } = yargs.argv
             const metadata = { title, type }
             resolve({ files, metadata })
@@ -77,7 +77,7 @@ class Generate {
      */
     createFile({ metadata }) {
         const frontmatter = `---\n${this.frontmatterYaml(metadata)}---\n`
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
             const { title } = metadata
             const fname = `${title.replace(/[^a-z0-9_-]/ig, '-')}.md`
 
@@ -105,7 +105,7 @@ class Generate {
      */
     writeFile({ fname, file }) {
         return new Promise(resolve =>
-            fs.writeFile(path.join(src(), '_markdown', fname), String(file.contents), (err) => {
+            fs.writeFile(path.join(src(), '_markdown', fname), String(file.contents), err => {
                 if (err) { throw err }
                 resolve({ fname, file })
             })
@@ -118,7 +118,7 @@ class Generate {
      * @return {Promise<Object|Error>}
      */
     writePageMeta({ fname }) {
-        return new Promise((resolve) => { // eslint-disable-line consistent-return
+        return new Promise(resolve => { // eslint-disable-line consistent-return
             const buildTypes = ['epub', 'mobi', 'web', 'sample']
             let type
             while ((type = buildTypes.pop())) {
@@ -142,7 +142,7 @@ class Generate {
 
                 // TODO: this should add the new file to <type>.yml JSON object and
                 // then rewrite to disk
-                fs.appendFile(pages, `\n- ${path.basename(fname, '.md')}`, (err) => {
+                fs.appendFile(pages, `\n- ${path.basename(fname, '.md')}`, err => {
                     if (err) { throw err }
                     if (!buildTypes.length) {
                         resolve({ title: fname })

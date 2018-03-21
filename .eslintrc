@@ -18,7 +18,7 @@
     "no-confusing-arrow": 0,
     "no-multiple-empty-lines": 0,
     "no-return-assign": 0,
-
+    "no-unused-vars": [2, { "argsIgnorePattern": "^_$" }],
     "jsx-a11y/href-no-hash": 0,
     "react/require-extension": "off",
     "brace-style": [2, "1tbs", {

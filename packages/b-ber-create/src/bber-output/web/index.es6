@@ -137,7 +137,7 @@ function unlinkRedundantAssets() {
     const promises = []
     return new Promise(resolve => {
 
-        ASSETS_TO_UNLINK.forEach((f) => {
+        ASSETS_TO_UNLINK.forEach(f => {
             log.info(`Removing [%s]`, path.basename(f))
             promises.push(fs.remove(f))
         })

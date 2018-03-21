@@ -1,3 +1,5 @@
+/* eslint-disable import/prefer-default-export */
+
 export function registerSequence(store, command, commanders, sequences) {
 
     this.command = command
@@ -18,7 +20,7 @@ export function registerSequence(store, command, commanders, sequences) {
 
     if (Object.keys(commanders).length) {
         const cmds = Object.keys(commanders).filter(_ => commanders[_])
-        cmds.forEach((_) => {
+        cmds.forEach(_ => {
             console.log(`${this.indent()}${command}:${_}`)
             this.incrementIndent()
             console.log(`${this.indent()}${this.wrap(sequences[_], this.indent())}`)

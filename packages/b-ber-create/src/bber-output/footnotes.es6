@@ -46,7 +46,7 @@ class Footnotes {
     }
 
     writeFootnotes() {
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
             const notes = this.footnotes.reduce((acc, cur) => acc.concat(cur.notes), '')
             const markup = renderLayouts(new File({
                 path: '.tmp',
@@ -54,7 +54,7 @@ class Footnotes {
                 contents: new Buffer(notes),
             }), { page }).contents.toString()
 
-            fs.writeFile(this.file.path, markup, 'utf8', (err) => {
+            fs.writeFile(this.file.path, markup, 'utf8', err => {
                 if (err) { throw err }
 
                 const fileData = {

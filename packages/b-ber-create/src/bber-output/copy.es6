@@ -17,7 +17,7 @@ const FILE_SIZE_WARNING_LIMIT = 1500000 // 1.5Mb
  * @return {Promise<Object|Error>}
  */
 const copy = () =>
-    new Promise((resolve) => {
+    new Promise(resolve => {
 
         const promises = []
 
@@ -27,8 +27,8 @@ const copy = () =>
             { from: path.join(src(), '_media'), to: path.join(dist(), 'OPS', 'media') },
         ]
 
-        dirs.forEach((a) => {
-            promises.push(new Promise((resolve) => {
+        dirs.forEach(a => {
+            promises.push(new Promise(resolve => {
                 try {
                     fs.mkdirpSync(a.to)
                     fs.mkdirpSync(a.from) // ensure `from` dir exists

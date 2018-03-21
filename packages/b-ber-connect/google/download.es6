@@ -66,7 +66,7 @@ function parentFolderContents(resp, done) {
     const driveFiles = filter(files, { mimeType: MIMETYPE_DRIVE_FILE })
     const driveFolders = filter(files, { mimeType: MIMETYPE_DRIVE_FOLDER })
 
-    driveFolders.forEach((driveFolder) => {
+    driveFolders.forEach(driveFolder => {
         batch.add(childFolderContents, driveFolder, (err, data) => {
             done(err, [...driveFiles, ...data])
         })
@@ -91,7 +91,7 @@ function exportFile(file, done) {
         // through
         const content = transformWithMiddleware(fs.readFileSync(tmpFile, 'utf8')/*, contentType */)
 
-        fs.writeFile(fpath, content, (err) => {
+        fs.writeFile(fpath, content, err => {
             done(err, file)
         })
     })
@@ -109,7 +109,7 @@ function batchExportFiles(files, done) {
         })
     )
     batch.processQueue()
-    batch.once('end', (err) => {
+    batch.once('end', err => {
         done(err, results)
     })
 }
@@ -129,7 +129,7 @@ function download(assets) {
             const rootData = remove(assets, { asset: 'root' }) // mutates
             if (!rootData) { throw new Error('Root directory must be specified in [config.yml]') }
 
-            ensureTmpDir((err0) => {
+            ensureTmpDir(err0 => {
                 if (err0) { throw err0 }
                 return rootFolderContents({ ...rootData[0] }, (err1, data0) => {
                     if (err1) { throw err1 }

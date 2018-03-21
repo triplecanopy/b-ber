@@ -12,7 +12,7 @@ const cwd = process.cwd()
 const download = () =>
     new Promise((resolve, reject) => {
         const chunks = []
-        return https.get(config.reader, (resp) => {
+        return https.get(config.reader, resp => {
             if (resp.statusCode !== 200) { reject('Could not connect to the server') }
             resp.on('error', err => reject(err))
             resp.on('data', chunk => chunks.push(chunk))

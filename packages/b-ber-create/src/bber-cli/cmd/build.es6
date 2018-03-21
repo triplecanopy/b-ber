@@ -60,7 +60,7 @@ const builder = yargs =>
         .help('h')
         .alias('h', 'help')
 
-const handler = (argv) => {
+const handler = argv => {
     const buildCmds = _buildCommands
     const buildArgs = _buildArgs(argv)
     const buildTasks = buildArgs.length ? buildArgs : !buildArgs.length && argv.d ? [] : buildCmds
@@ -71,7 +71,7 @@ const handler = (argv) => {
 
 
 
-    const run = (tasks) => {
+    const run = tasks => {
         const next = [tasks.shift()]
 
         store.reload()

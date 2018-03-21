@@ -25,7 +25,7 @@ import store from 'bber-lib/store'
 // output/index.js` directly.
 //
 
-const serialize = (sequence) =>
+const serialize = sequence =>
     sequence.reduce((acc, task) => {
         const func = tasks[task] || task
 
@@ -33,11 +33,11 @@ const serialize = (sequence) =>
             throw new Error(`async#serialize: Invalid parameter [${func}:${typeof func}]`)
         }
 
-        return acc.then(async (resp) => {
+        return acc.then(async resp => {
             log.notify('start', task)
-            await func(resp).then(() => log.notify('stop', task))
+            await func(resp).then(_ => log.notify('stop', task))
         })
     }, Promise.resolve())
-    .then(() => log.notify('done', { store }))
+    .then(_ => log.notify('done', { store }))
 
 export { serialize }

@@ -82,10 +82,10 @@ class Initializer {
      * @return {Promise<Object|Error>}
      */
     _makeDirs() {
-        return new Promise((resolve0) => {
+        return new Promise(resolve0 => {
             const promises = this.dirs.map(_ =>
                 new Promise(resolve1 =>
-                    fs.mkdirp(_, (err) => {
+                    fs.mkdirp(_, err => {
                         if (err) { throw err }
                         resolve1()
                     })
@@ -100,10 +100,10 @@ class Initializer {
      * @return {Promise<Object|Error>}
      */
     _writeFiles() {
-        return new Promise((resolve0) => {
+        return new Promise(resolve0 => {
             const promises = this.files.map(_ =>
                 new Promise(resolve1 =>
-                    fs.writeFile(_.relativePath, _.content, (err) => {
+                    fs.writeFile(_.relativePath, _.content, err => {
                         if (err) { throw err }
                         resolve1()
                     })

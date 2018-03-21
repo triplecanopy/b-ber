@@ -18,11 +18,11 @@ import { findIndex } from 'lodash'
 const promises = []
 
 const writeMarkupToFile = (fname, markup) =>
-    new Promise((resolve) => {
+    new Promise(resolve => {
 
         const outputPath = path.join(dist(), 'OPS', 'text', `${fname}.xhtml`)
 
-        return fs.writeFile(outputPath, markup, (err) => {
+        return fs.writeFile(outputPath, markup, err => {
             if (err) { throw err }
 
             log.info(`Wrote XHTML [${path.basename(fname)}.xhtml]`)
@@ -35,7 +35,7 @@ const writeMarkupToFile = (fname, markup) =>
 
 // convert md to xhtml and wrap with page template
 const createPageLayout = (fileName, data) =>
-    new Promise((resolve) => {
+    new Promise(resolve => {
 
         const textDir = path.join(dist(), 'OPS', 'text')
         const head    = pageHead()
@@ -61,7 +61,7 @@ const createPageLayout = (fileName, data) =>
     })
 
 
-const createXTHMLFile = (fpath) =>
+const createXTHMLFile = fpath =>
     new Promise(resolve =>
         fs.readFile(fpath, 'utf8', (err, data) => {
             if (err) { throw err }
@@ -93,7 +93,7 @@ function render() {
             })
 
 
-            return files.forEach((file) => {
+            return files.forEach(file => {
 
                 log.info(`Rendering Markdown [${path.basename(file)}]`)
 

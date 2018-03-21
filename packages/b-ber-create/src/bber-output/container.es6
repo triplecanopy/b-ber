@@ -36,13 +36,13 @@ class Container {
     }
 
     write() {
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
             const files = [
                 { path: `META-INF${path.sep}container.xml`, content: containerXML },
                 { path: 'mimetype', content: mimetype },
             ]
             return files.forEach((_, i) =>
-                fs.writeFile(path.join(this.dist, _.path), _.content, (err) => {
+                fs.writeFile(path.join(this.dist, _.path), _.content, err => {
                     if (err) { throw err }
                     log.info('Wrote [%s]', _.path)
                     if (i === files.length - 1) {
@@ -56,7 +56,7 @@ class Container {
     makedirs() {
         return new Promise(resolve =>
             this.dirs.map((dir, index) =>
-                fs.mkdirs(dir, (err) => {
+                fs.mkdirs(dir, err => {
                     if (err) { throw err }
                     log.info('Created directory [%s]', dir)
                     if (index === this.dirs.length - 1) {
@@ -87,7 +87,7 @@ class Container {
             process.exit(0)
         }
 
-        return fs.mkdirs(output, (err) => {
+        return fs.mkdirs(output, err => {
             if (err) { throw err }
             return callback()
         })

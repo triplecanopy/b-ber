@@ -89,7 +89,7 @@ const _applyTransforms = (k, v) => {
 //    -> { classes:"foo bar baz" }
 //    -> class="foo bar baz"
 //
-const _parseAttrs = (s) => {
+const _parseAttrs = s => {
 
     const out = {}
 
@@ -134,7 +134,7 @@ const _parseAttrs = (s) => {
 }
 
 // -> prop="val"
-const _buildAttrString = (obj) => {
+const _buildAttrString = obj => {
     let s = ''
     forOf(obj, (k, v) => {
         s += _applyTransforms(k, v)

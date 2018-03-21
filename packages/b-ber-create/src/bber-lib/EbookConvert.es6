@@ -39,9 +39,12 @@ function convertDocument({ inputPath, bookPath, flags }) {
 }
 
 function convert(options) {
-    if (!options.inputPath || !options.outputPath || !options.fileType) {
-        throw new Error('Missing required options `inputPath`, `oputputPath`, and/or `fileType`')
-    }
+    const props = ['inputPath', 'outputPath', 'fileType']
+    props.forEach(prop => {
+        if (!{}.hasOwnProperty.call(options, prop)) {
+            throw new Error(`Missing required option [${prop}]`)
+        }
+    })
 
     const settings = { ...defaults, ...options }
     const modified = new Date().toISOString().replace(/:/g, '-')

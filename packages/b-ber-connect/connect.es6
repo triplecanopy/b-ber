@@ -56,7 +56,7 @@ class Connect {
     }
 
     authFactory(client) {
-        return (callback) => {
+        return callback => {
             authServers[client].call(this, callback)
         }
     }
@@ -88,7 +88,7 @@ class Connect {
         })
     }
     subscribeServer() {
-        this.server.on('connection', (socket) => {
+        this.server.on('connection', socket => {
             this.addSocket(socket)
             socket.on('close', () => {
                 this.removeSocket(socket)

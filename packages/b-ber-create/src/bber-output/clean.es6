@@ -25,7 +25,7 @@ const clean = _ =>
             log.info('Removed [%s]', oldBuilds.join('\n'))
         }
 
-        fs.remove(projectDir, (err) => {
+        fs.remove(projectDir, err => {
             if (err) { throw err }
             log.info('Removed [%s]', projectDir)
             resolve()

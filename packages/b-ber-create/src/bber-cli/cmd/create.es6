@@ -23,7 +23,7 @@ const builder = yargs =>
         .usage(`\nUsage: $0 create --name "My Project"\n\n${describe}`)
 
 
-const handler = (argv) => {
+const handler = argv => {
     const { name } = argv
     const args = [...argv._]
     args.shift() // remove `create` argument
@@ -53,7 +53,7 @@ const handler = (argv) => {
     const initializer = new Initializer({ cwd: dest })
 
     initializer.start()
-    .catch((err) => {
+    .catch(err => {
         log.error(err)
         process.exit(1)
     })

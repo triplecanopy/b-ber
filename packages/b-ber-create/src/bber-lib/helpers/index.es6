@@ -6,7 +6,7 @@ import { modelFromString, modelFromObject } from 'bber-utils'
 const createPageModelsFromYAML = (arr, src) => {
     const _root = [{ nodes: [] }]
     const munge = (_arr, _result) => {
-        _arr.forEach((a) => {
+        _arr.forEach(a => {
             // preface our function with a guard that assigns the accumulator to
             // `_root` if it lacks a `nodes` property
             let index
@@ -42,7 +42,7 @@ const createPageModelsFromYAML = (arr, src) => {
 }
 
 const flattenNestedEntries = (arr, result = []) => {
-    arr.forEach((a) => {
+    arr.forEach(a => {
         if (isPlainObject(a)) { // in an entry
             result.push(a)
             if (a.nodes && a.nodes.length) {
@@ -57,10 +57,10 @@ const flattenNestedEntries = (arr, result = []) => {
 }
 
 const createPagesMetaYaml = (src, type, arr = []) =>
-    fs.mkdirp(path.join(process.cwd(), src), (err0) => {
+    fs.mkdirp(path.join(process.cwd(), src), err0 => {
         if (err0) { throw err0 }
         const content = arr.reduce((acc, curr) => acc.concat(`- ${curr.fileName}`), '')
-        fs.writeFile(path.join(src, `${type}.yml`), content, (err1) => {
+        fs.writeFile(path.join(src, `${type}.yml`), content, err1 => {
             if (err1) { throw err1 }
         })
     })

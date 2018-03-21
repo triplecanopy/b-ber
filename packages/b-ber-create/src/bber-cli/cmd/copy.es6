@@ -26,7 +26,7 @@ const builder = yargs =>
 
 const handler = copy
 
-// const handler = (argv) => {
+// const handler = argv => {
 //   const i = argv.i
 //   const o = argv.o
 //   if (!i.length || !o) { throw new Error('Both input and output directories must be provided') }

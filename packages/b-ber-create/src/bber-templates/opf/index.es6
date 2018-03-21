@@ -36,7 +36,7 @@ const opfGuide = new File({
     contents: new Buffer('<guide>{% body %}</guide>'),
 })
 
-const manifestItem = (file) => {
+const manifestItem = file => {
     const props = Props.testHTML(file)
     let res = null
 
@@ -55,7 +55,7 @@ const manifestItem = (file) => {
 }
 
 const spineItems = arr =>
-    arr.map((_) => {
+    arr.map(_ => {
         const nonLinear = _.linear === false
         const linear = nonLinear ? 'no' : 'yes'
         const fname = fileId(path.basename(_.fileName, _.extname))
@@ -78,7 +78,7 @@ const spineItems = arr =>
     }).join('')
 
 const guideItems = arr =>
-    arr.map((_) => {
+    arr.map(_ => {
         let item = ''
         let type
         if ((type = _.type)) {
@@ -91,7 +91,7 @@ const guideItems = arr =>
         return item
     }).join('')
 
-const metatag = (data) => {
+const metatag = data => {
     const { term, element } = Props.testMeta(data)
     const itemid = element && data.term === 'identifier' ? 'uuid' : `_${crypto.randomBytes(20).toString('hex')}`
     const res = []

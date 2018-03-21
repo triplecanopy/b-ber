@@ -34,7 +34,7 @@ const fileId = str => `_${str.replace(/[^a-zA-Z0-9_]/g, '_')}`
  * @param  {Array} a [description]
  * @return {String}
  */
-const hrtimeformat = (a) => {
+const hrtimeformat = a => {
     const s = (a[0] * 1000) + (a[1] / 1000000)
     return `${String(s).slice(0, -3)}ms`
 }
@@ -116,7 +116,7 @@ const htmlComment = str => `\n<!-- ${str} -->\n`
 
 const passThrough = args => args
 
-const escapeHTML = (str) => {
+const escapeHTML = str => {
     const map = {
         '&': '&amp;',
         '<': '&lt;',
@@ -181,7 +181,7 @@ const modelFromObject = (_obj, _src) => {
 }
 
 const nestedContentToYAML = (arr, result = []) => {
-    arr.forEach((_) => {
+    arr.forEach(_ => {
         const model = {}
 
         // TODO: check for custom attrs somewhere else.

@@ -15,7 +15,7 @@ const tocTmpl = () =>
         `),
     })
 
-const tocItem = (list) => {
+const tocItem = list => {
     function render(items) {
         return `
             <ol>

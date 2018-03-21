@@ -1,4 +1,4 @@
-import util from 'util'
+/* eslint-disable import/prefer-default-export */
 
 function printNavigationTree(store) {
     const _this = this
@@ -7,7 +7,7 @@ function printNavigationTree(store) {
     this.incrementIndent()
 
     function parse(items) {
-        items.forEach((item) => {
+        items.forEach(item => {
             console.log('%s%s', _this.indent(), item.title || `[${item.name}]`)
             if (item.nodes && item.nodes.length) {
                 _this.incrementIndent()
@@ -24,7 +24,7 @@ function printNavigationTree(store) {
 
 
 
-export function summary({ store, taskTimes, formattedStartDate, formattedEndDate, sequenceEnd }) {
+export function summary({ store, formattedStartDate, formattedEndDate, sequenceEnd }) {
 
     if (this.logLevel < 4 && this.summarize !== true) { return }
 
@@ -56,7 +56,7 @@ export function summary({ store, taskTimes, formattedStartDate, formattedEndDate
 
     console.log(this.decorate('%sMetadata', 'cyan'), this.indent())
     this.incrementIndent()
-    store.metadata.forEach((_) => {
+    store.metadata.forEach(_ => {
         console.log('%s%s: %s', this.indent(), _.term, _.value)
     })
     this.decrementIndent()

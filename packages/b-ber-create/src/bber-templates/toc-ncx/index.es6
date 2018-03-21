@@ -42,10 +42,10 @@ const ncxTmpl = new File({
             </ncx>`),
 })
 
-const navPoint = (list) => {
+const navPoint = list => {
     let i = 0
     function render(arr) {
-        return arr.map((a) => {
+        return arr.map(a => {
             if (a.in_toc === false) { return '' }
             i += 1
             return `

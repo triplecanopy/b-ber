@@ -71,7 +71,7 @@ class Printer extends Parser {
     parse(content, index, arr) {
         const _this = this // eslint-disable-line consistent-this
         const len = arr.length - 1
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
             const printer = new htmlparser.Parser({
                 onopentag(name, attrs) {
                     _this.filterTags(name, index, len, true)

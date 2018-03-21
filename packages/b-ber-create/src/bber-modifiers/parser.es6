@@ -126,7 +126,7 @@ class Parser {
         if (index === 0) { _this.appendXMLDeclaration() }
         _this.appendComment(arr[index])
         if (index === 0) { _this.prependBody() }
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
             const parser = new htmlparser.Parser({
                 onopentag(name, attrs) {
                     _this.noop = false

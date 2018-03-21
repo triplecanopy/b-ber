@@ -56,7 +56,7 @@ const init = () => {
      * @param  {Object} yargs Yargs module
      * @return {Object|Error}
      */
-    const checkCommands = (yargs) => {
+    const checkCommands = yargs => {
 
         const cmd = yargs.argv._[0]
 

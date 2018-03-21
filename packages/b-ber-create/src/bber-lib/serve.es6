@@ -12,7 +12,7 @@ const SEQUENCE = ['clean', 'container', 'sass', 'copy', 'scripts', 'render', 'lo
 let timer
 let files = []
 
-const restart = () =>
+const restart = _ =>
     new Promise(resolve => {
         store.update('build', 'web') // set the proper build vars
         store.update('toc', store.builds.web.tocEntries)
@@ -22,9 +22,11 @@ const restart = () =>
         return serialize(SEQUENCE).then(resolve)
     })
 
-const serve = () =>
+
+const serve = _ =>
     new Promise(resolve => {
-        restart().then(() => {
+        restart()
+        .then(_ => {
             console.log()
             log.info('Starting nodemon')
             nodemon({
@@ -44,21 +46,21 @@ const serve = () =>
                 ],
             })
             .once('start', resolve)
-            .on('restart', (file) => {
+            .on('restart', file => {
                 clearTimeout(timer)
                 files.push(file)
-                timer = setTimeout(() => {
+                timer = setTimeout(_ => {
                     log.info(`Restarting server due to changes:\n${files.join('\n')}`)
                     console.log()
-                    restart().then(() => { files = [] })
+                    restart().then(_ => files = [])
                 }, DEBOUNCE_SPEED)
             })
         })
 
-        process.once('SIGTERM', () => {
+        process.once('SIGTERM', _ => {
             process.exit(0)
         })
-        process.once('SIGINT', () => {
+        process.once('SIGINT', _ => {
             process.exit(0)
         })
 

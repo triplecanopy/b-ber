@@ -409,7 +409,7 @@ module.exports = function footnote_plugin(md, callback) {
 
         // create return value for callback
         insideRef = false
-        footnoteTokens = [...state.tokens].filter((_) => {
+        footnoteTokens = [...state.tokens].filter(_ => {
             if (_.type === 'footnote_block_open') {
                 insideRef = true
                 return true
@@ -424,7 +424,7 @@ module.exports = function footnote_plugin(md, callback) {
 
         // remove footnotes from `state.tokens`
         insideRef = false
-        state.tokens = state.tokens.filter((_) => {
+        state.tokens = state.tokens.filter(_ => {
             if (_.type === 'footnote_block_open') {
                 insideRef = true
                 return false

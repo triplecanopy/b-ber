@@ -40,7 +40,7 @@ class Opf {
      */
     static createOpfPackageString([manifestAndMetadataXML, navigationXML]) {
         log.info('Building [opf]')
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
             const { metadata, manifest } = manifestAndMetadataXML
             const { spine, guide } = navigationXML.strings
             const opfString = renderLayouts(new File({
@@ -60,9 +60,9 @@ class Opf {
      * @return {Promise<Object>}
      */
     static writeOpfToDisk(contents) {
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
             const opsPath = path.join(this.dist, 'OPS', 'content.opf')
-            fs.writeFile(opsPath, contents, (err) => {
+            fs.writeFile(opsPath, contents, err => {
                 if (err) { throw err }
                 log.info(`Wrote content.opf [${opsPath}]`)
                 resolve(contents)
@@ -75,7 +75,7 @@ class Opf {
      * @return {Promise<Object>}
      */
     init() {
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
             const manifestAndMetadata = new ManifestAndMetadata()
             const navigation = new Navigation()
 

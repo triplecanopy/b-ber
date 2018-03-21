@@ -12,7 +12,7 @@ function printNotices(type, task = 'b-ber') {
         console.log('%s%s', this.indent(), this.decorate(header, color, 'underline'))
 
         this.incrementIndent()
-        notices.forEach((_) => {
+        notices.forEach(_ => {
 
             console.log()
             console.log('%s%s %s', this.indent(), this.decorate(leader, color, 'underline'), this.decorate(_.message, 'cyan'))

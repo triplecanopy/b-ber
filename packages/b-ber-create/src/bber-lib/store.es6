@@ -358,8 +358,8 @@ class Store {
         try {
             if (fs.existsSync(mediaPath)) {
                 const media = fs.readdirSync(mediaPath)
-                const video = media.filter(_ => /^video/.test(mime.lookup(_)))
-                const audio = media.filter(_ => /^audio/.test(mime.lookup(_)))
+                const video = media.filter(a => /^video/.test(mime.lookup(a)))
+                const audio = media.filter(a => /^audio/.test(mime.lookup(a)))
 
                 this.video = video
                 this.audio = audio

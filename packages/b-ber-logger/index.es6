@@ -130,7 +130,7 @@ class Logger extends Timer {
             return acc
         }, {})
 
-        Object.keys(this.settings).forEach((_) => {
+        Object.keys(this.settings).forEach(_ => {
             const opt = `--${_}`
             if ({}.hasOwnProperty.call(argv, opt)) {
                 this.settings[_] = argv[opt]

@@ -33,7 +33,7 @@ const blackListedProperties = [
 
 const write = ({ file, content }) =>
     new Promise(resolve =>
-        fs.writeFile(file, content, 'utf8', (err) => {
+        fs.writeFile(file, content, 'utf8', err => {
             if (err) { throw err }
             log.info(`Writing [${path.basename(file)}]`)
             resolve()
@@ -92,7 +92,7 @@ const mobiCSS = () =>
         fs.readdir(path.join(dist(), 'OPS', 'stylesheets'), (err, files) => {
             if (err) { throw err }
 
-            const promises = files.map((_) => {
+            const promises = files.map(_ => {
                 const file = path.join(dist(), 'OPS', 'stylesheets', _)
                 log.info(`Parsing [${path.basename(file)}]`)
                 return parse(file).then(write)

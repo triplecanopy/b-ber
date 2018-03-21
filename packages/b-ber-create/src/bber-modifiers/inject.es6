@@ -66,34 +66,34 @@ const getDirContents = dirpath =>
  * @return {Object}     Vinyl File object
  */
 const getJSONLDMetadata = args =>
-    new Promise((resolve) => {
+    new Promise(resolve => {
         // TODO: a manifest file needs to be written and read from
 
         const [, stylesheets, javascripts] = args
         const resources = []
         const prefix = build() === 'web' ? store.config.contentURL : ''
 
-        stylesheets.forEach((_) => {
+        stylesheets.forEach(a => {
             resources.push({
-                href: `${prefix}/OPS/stylesheets/${_}`,
+                href: `${prefix}/OPS/stylesheets/${a}`,
                 type: 'text/css',
             })
         })
 
-        javascripts.forEach((_) => {
+        javascripts.forEach(a => {
             resources.push({
-                href: `${prefix}${path.sep}OPS${path.sep}javascripts${path.sep}${_}`,
+                href: `${prefix}${path.sep}OPS${path.sep}javascripts${path.sep}${a}`,
                 type: 'application/javascript',
             })
         })
 
-        const spine = store.spine.map((_) => {
+        const spine = store.spine.map(a => {
             const result = {
-                href: _.remotePath,
-                type: mime.lookup(_.absolutePath),
+                href: a.remotePath,
+                type: mime.lookup(a.absolutePath),
             }
-            if (_.title) { // TODO: this needs to be added to `store.spine` during parsing
-                result.title = _.title
+            if (a.title) { // TODO: this needs to be added to `store.spine` during parsing
+                result.title = a.title
             }
             return result
         })
@@ -112,7 +112,7 @@ const getJSONLDMetadata = args =>
             resources,
         }
 
-        store.metadata.forEach((item) => {
+        store.metadata.forEach(item => {
             if (item.term && item.value) {
                 webpubManifest.metadata[item.term] = item.value
             }
@@ -167,7 +167,7 @@ const getContents = source =>
  * @throws {Error} If a file does not have a .js or .css extension
  */
 const templateify = files =>
-    files.map((file) => {
+    files.map(file => {
         let fileType
         if (file instanceof File) { // if file is a vinyl File object
             fileType = file.path.slice(file.path.lastIndexOf('.'))
@@ -206,7 +206,7 @@ function* matchIterator(re, str) {
     }
 }
 
-const injectTags = (args) => {
+const injectTags = args => {
     const { content, data, start, stop } = args
     const toInject = templateify(data.constructor === Array ? data : [data])
     let result = ''
@@ -236,8 +236,8 @@ const injectTags = (args) => {
 }
 
 const write = (location, data) =>
-    new Promise((resolve) => {
-        fs.writeFile(location, data, (err) => {
+    new Promise(resolve => {
+        fs.writeFile(location, data, err => {
             if (err) { throw err }
             log.info(`Wrote [${path.basename(location)}]`)
             resolve()
@@ -245,7 +245,7 @@ const write = (location, data) =>
     })
 
 const promiseToReplace = (prop, data, source, file) =>
-    new Promise(async (resolve) => {
+    new Promise(async resolve => {
         log.info(`Preparing to write [${prop}] to [${source}]`)
 
         const stream  = file || await getContents(source)
@@ -265,24 +265,22 @@ const promiseToReplace = (prop, data, source, file) =>
 
 // Iterate over the list of XHTML files, injecting script and style tags
 // inside of the placeholders
-const mapSources = (args) => {
+const mapSources = args => {
     const [htmlDocs, stylesheets, javascripts, metadata] = args
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
         htmlDocs.forEach((source, index) =>
             promiseToReplace('stylesheets', stylesheets, source)
             .then(file => promiseToReplace('javascripts', javascripts, source, file))
             .then(file => promiseToReplace('metadata', metadata, source, file))
-            .then((file) => {
+            .then(file => {
                 const contents = env() === 'production'
                     ? minify(file.contents.toString('utf8'), htmlMinifyOptions)
                     : file.contents.toString('utf8')
                 write(path.join(dist(), 'OPS', 'text', source), contents)
             })
             .catch(err => log.error(err))
-            .then(() => {
-                if (index === htmlDocs.length - 1) {
-                    resolve()
-                }
+            .then(_ => {
+                if (index === htmlDocs.length - 1) resolve()
             })
 
         )
@@ -325,23 +323,22 @@ const dummy = new File({
 // above, but we pass in the vinyl file object (dummy) in the first
 // `promiseToReplace`.  This function then parses the result into `pageHead`
 // and `pageTail` functions and adds them to the `template` object in `store`
-const mapSourcesToDynamicPageTemplate = (args) => {
+const mapSourcesToDynamicPageTemplate = args => {
     const [, stylesheets, javascripts, metadata] = args
     const docs = [dummy.path]
 
-    return new Promise((resolve) => {
-        docs.forEach((source) =>
+    return new Promise(resolve => {
+        docs.forEach(source =>
             promiseToReplace('stylesheets', stylesheets, source, dummy)
             .then(file => promiseToReplace('javascripts', javascripts, source, file))
             .then(file => promiseToReplace('metadata', metadata, source, file))
-            .then((file) => {
+            .then(file => {
                 const tmpl = file.contents.toString()
-                const parts = tmpl.split('{% body %}')
-                const head = parts[0]
-                const tail = parts[1]
-                store.templates.dynamicPageTmpl = () => tmpl
-                store.templates.dynamicPageHead = () => head
-                store.templates.dynamicPageTail = () => tail
+                const [head, tail] = tmpl.split('{% body %}')
+
+                store.templates.dynamicPageTmpl = _ => tmpl
+                store.templates.dynamicPageHead = _ => head
+                store.templates.dynamicPageTail = _ => tail
             })
             .catch(err => log.error(err))
             .then(resolve)
@@ -349,8 +346,8 @@ const mapSourcesToDynamicPageTemplate = (args) => {
     })
 }
 
-const inject = () =>
-    new Promise((resolve) => {
+const inject = _ =>
+    new Promise(resolve => {
         Promise.all([
             getDirContents(path.join(dist(), 'OPS', 'text')),
             getDirContents(path.join(dist(), 'OPS', 'stylesheets')),

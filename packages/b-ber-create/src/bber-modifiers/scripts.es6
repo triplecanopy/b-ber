@@ -25,12 +25,12 @@ const uglify = files => {
 }
 
 const optimized = files =>
-    new Promise((resolve) => {
+    new Promise(resolve => {
         const contents = files.map(_ => fs.readFileSync(path.join(src(), '_javascripts', _), 'utf8'))
         const js = uglify(contents)
         const { hash } = store
         const out = path.join(dist(), 'OPS', 'javascripts', `${hash}.js`)
-        fs.writeFile(out, js, (err) => {
+        fs.writeFile(out, js, err => {
             if (err) { throw err }
             log.info('Wrote [%s]', `javascripts${path.sep}${path.basename(out)}`)
             resolve()
@@ -39,11 +39,11 @@ const optimized = files =>
 
 const unoptimized = files => {
     const promises = []
-    return new Promise((resolve) => {
-        files.forEach((file) => {
-            promises.push(new Promise((resolve) => {
+    return new Promise(resolve => {
+        files.forEach(file => {
+            promises.push(new Promise(resolve => {
                 const out = path.join(dist(), 'OPS', 'javascripts', file)
-                fs.copy(path.join(src(), '_javascripts', file), out, (err) => {
+                fs.copy(path.join(src(), '_javascripts', file), out, err => {
                     if (err) { throw err }
                     log.info('Wrote [%s]', `javascripts${path.sep}${path.basename(out)}`)
                     resolve()
@@ -56,7 +56,7 @@ const unoptimized = files => {
 
 
 const write = () =>
-    new Promise((resolve) => {
+    new Promise(resolve => {
         const promises = []
         fs.readdir(path.join(src(), '_javascripts'), (err, _files) => {
             if (err) { throw err }
@@ -69,7 +69,7 @@ const write = () =>
 
 const ensureDir = () =>
     new Promise(resolve =>
-        fs.mkdirp(path.join(dist(), 'OPS', 'javascripts'), (err) => {
+        fs.mkdirp(path.join(dist(), 'OPS', 'javascripts'), err => {
             if (err) { throw err }
             resolve()
         })

@@ -25,7 +25,7 @@ const autoprefixerOptions = store.config.autoprefixer_options || {
 // load that; else verify that a theme is selected in `config`, and that the
 // theme's `application.scss` exists, then load that; else write a blank file.
 const createSCSSString = () =>
-    new Promise((resolve) => { // eslint-disable-line consistent-return
+    new Promise(resolve => { // eslint-disable-line consistent-return
         const chunks = []
         const { theme } = store
         const themeName = theme.name
@@ -82,7 +82,7 @@ const createSCSSString = () =>
 // make sure the compiled output dir exists
 const ensureCSSDir = () =>
     new Promise(resolve =>
-        fs.mkdirp(path.join(dist(), 'OPS', 'stylesheets'), (err) => {
+        fs.mkdirp(path.join(dist(), 'OPS', 'stylesheets'), err => {
             if (err) { throw err }
             resolve()
         })
@@ -99,11 +99,11 @@ const ensureCSSDir = () =>
 // these assets are then copied to the correct build dir by the `copy` task.
 //
 const copyThemeAssets = () =>
-    new Promise((resolve) => {
+    new Promise(resolve => {
         const { theme } = store
         const promises = []
-        ASSET_DIRNAMES.forEach((dir) => {
-            promises.push(new Promise((resolve) => {
+        ASSET_DIRNAMES.forEach(dir => {
+            promises.push(new Promise(resolve => {
 
                 const themePath = path.resolve(path.dirname(theme.entry), dir)
                 const srcPath = path.join(src(), `_${dir}`)
@@ -127,7 +127,7 @@ const copyThemeAssets = () =>
                             fs.copy(input, output, {
                                 overwrite: false,
                                 errorOnExist: false,
-                            }, (err2) => {
+                            }, err2 => {
                                 if (err2) { throw err2 }
                                 if (i === files.length - 1) {
                                     resolve()
@@ -172,14 +172,14 @@ const applyPostProcessing = ({ css }) =>
 
 const writeCSSFile = css =>
     new Promise(resolve =>
-        fs.writeFile(path.join(dist(), 'OPS', 'stylesheets', (env() === 'production' ? `${store.hash}.css` : 'application.css')), css, (err) => {
+        fs.writeFile(path.join(dist(), 'OPS', 'stylesheets', (env() === 'production' ? `${store.hash}.css` : 'application.css')), css, err => {
             if (err) { throw err }
             resolve()
         })
     )
 
 const sass = () =>
-    new Promise((resolve) => {
+    new Promise(resolve => {
         ensureCSSDir()
         .then(copyThemeAssets)
         .then(createSCSSString)

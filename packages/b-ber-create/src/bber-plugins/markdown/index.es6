@@ -33,7 +33,7 @@ function deepFind(collection, fileName, callback) {
         return found
     }
 
-    collection.forEach((item) => { // check against prop names
+    collection.forEach(item => { // check against prop names
         if (item.nodes && item.nodes.length) {
             return deepFind(item.nodes, fileName)
         }
@@ -105,7 +105,7 @@ class MarkdownRenderer {
                 mdPullQuote.renderer(reference))
             .use(
                 mdFrontMatter,
-                (meta) => {
+                meta => {
 
                     const filename = this.filename
                     const YAMLMeta = Yaml.parse(meta)
@@ -128,7 +128,7 @@ class MarkdownRenderer {
                 })
             .use(
                 mdFootnote,
-                (tokens) => {
+                tokens => {
                     const fileName = this.filename
 
                     // TODO: add footnotes to spine if not already added
