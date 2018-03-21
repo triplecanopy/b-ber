@@ -1,7 +1,6 @@
 /* eslint-disable no-plusplus, max-statements-per-line, no-continue, no-multi-assign */
 import { forOf } from 'bber-utils'
 import log from '@canopycanopycanopy/b-ber-logger'
-// import crypto from 'crypto'
 import {
     BLOCK_DIRECTIVES,
     INLINE_DIRECTIVES,
@@ -89,7 +88,7 @@ const _applyTransforms = (k, v) => {
 //    -> { classes:"foo bar baz" }
 //    -> class="foo bar baz"
 //
-const _parseAttrs = s => {
+const parseAttrs = s => {
 
     const out = {}
 
@@ -115,7 +114,7 @@ const _parseAttrs = s => {
 
         if (char === delim) { // token is ending delimiter since we've advanced our pointer
             key = key.trim() // trim whitespace, allowing for multiple spaces
-            out[key] = str
+            if (key) out[key] = str
             str = key = ''
             open = delim = null
             continue
@@ -125,7 +124,8 @@ const _parseAttrs = s => {
 
         if (i === s.length - 1) { // end of line
             if (key && key.length && str && str.length) {
-                out[key.trim()] = str
+                const key_ = key.trim()
+                if (key_) out[key_] = str
             }
         }
     }
@@ -216,7 +216,7 @@ const attributesObject = (attrs, _genus, context = {}) => {
     }
 
     if (attrs && typeof attrs === 'string') {
-        forOf(_parseAttrs(attrs.trim()), (k, v) => {
+        forOf(parseAttrs(attrs.trim()), (k, v) => {
             if (_isUnsupportedAttribute(k)) {
                 return log.warn(`Omitting illegal attribute [${k}] at [${filename}:${lineNr}]`)
             }
@@ -263,7 +263,6 @@ const attributes = (str, type, context) => _buildAttrString(attributesObject(str
  * @return {String}
  */
 const htmlId = s => s.replace(/[^0-9a-zA-Z_-]/g, '-')
-    // `_${crypto.randomBytes(20).toString('hex')}`
 
 
-export { attributes, attributesObject, attributesString, htmlId }
+export { attributes, attributesObject, attributesString, htmlId, parseAttrs }

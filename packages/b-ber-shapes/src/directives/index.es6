@@ -59,6 +59,7 @@ const INLINE_DIRECTIVES = [
 const MISC_DIRECTIVES = [
     'pullquote',
     'dialogue',
+    'gallery',
     'epigraph',
 ]
 
@@ -122,6 +123,7 @@ const SUPPORTED_ATTRIBUTES = [
     'alt',
     'citation',
     'source',
+    'sources',
     'poster',
     'autoplay',
     'loop',

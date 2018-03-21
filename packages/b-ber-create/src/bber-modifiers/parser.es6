@@ -17,6 +17,7 @@ class Parser {
             'pullquote',
             'epigraph',
             'dialogue',
+            'gallery',
             'colophon',
             'appendix',
             'subtitle',
