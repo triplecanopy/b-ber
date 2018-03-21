@@ -19,6 +19,8 @@ If [`lerna`](https://github.com/lerna/lerna/) isn't already installed:
 $ npm i -g lerna
 ```
 
+Then [install `yarn`](https://yarnpkg.com/en/docs/install/) according to documentation. (Note: using `npm` is discouraged.)
+
 Then, in the `b-ber` repo
 
 ```console
