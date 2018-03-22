@@ -34,7 +34,7 @@ const render = (tokens, idx) => {
                 result = `
                     <div class="figure__large figure__inline figure__fullbleed">
                         <figure id="${htmlId(id)}">
-                            <div class="img-wrap">`
+                            <div class="figure__items">`
                 break
             case 'epub':
             case 'mobi':

@@ -8,7 +8,7 @@ import figTmpl from 'bber-templates/figures'
 import { getImageOrientation, src, htmlComment, build } from 'bber-utils'
 import { attributesObject, htmlId } from 'bber-plugins/markdown/directives/helpers'
 import mime from 'mime-types'
-import crypto from 'crypto'
+// import crypto from 'crypto'
 import {
     INLINE_DIRECTIVE_MARKER,
     INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
@@ -64,7 +64,7 @@ export default {
             // then get the dimensions
             const dimensions = imageSize.sync(fs.readFileSync(asset))
             const { width, height } = dimensions
-            const figureId = `_${crypto.randomBytes(20).toString('hex')}`
+            const figureId = htmlId(id) //`_${crypto.randomBytes(20).toString('hex')}`
 
             switch (type) {
                 case 'figure':

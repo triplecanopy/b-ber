@@ -6,7 +6,7 @@ const mobi = {
     portrait(data) {
         return `<div class="figure__large${data.inline ? ` figure__inline figure__inline--portrait ${data.classes}` : ''}"${getPagebreakAttribute(data)}>
             <figure id="${data.id}">
-                <div class="img-wrap" style="width: 70%; margin: 0 auto;">
+                <div class="figure__items" style="width: 70%; margin: 0 auto;">
                     <span>
                         <img class="portrait" alt="${data.alt}" src="../images/${data.source}" style="width: 100%; max-width: 100%; height: auto;"/>
                     </span>
@@ -20,7 +20,7 @@ const mobi = {
     landscape(data) {
         return `<div class="figure__large${data.inline ? ` figure__inline figure__inline--landscape ${data.classes}` : ''}"${getPagebreakAttribute(data)}>
             <figure id="${data.id}">
-                <div class="img-wrap">
+                <div class="figure__items">
                     <span>
                         <img class="landscape" alt="${data.alt}" src="../images/${data.source}" style="max-width: 100%;"/>
                     </span>
@@ -34,7 +34,7 @@ const mobi = {
     'portrait-high': function (data) { // eslint-disable-line func-names
         return `<div class="figure__large${data.inline ? ` figure__inline figure__inline--portrait-high ${data.classes}` : ''}"${getPagebreakAttribute(data)}>
             <figure id="${data.id}">
-                <div class="img-wrap" style="width: 60%; margin: 0 auto;">
+                <div class="figure__items" style="width: 60%; margin: 0 auto;">
                     <span>
                         <img class="portrait-long" alt="${data.alt}" src="../images/${data.source}" style="width: 100%; max-width: 100%; height: auto;"/>
                     </span>
@@ -48,7 +48,7 @@ const mobi = {
     square(data) {
         return `<div class="figure__large${data.inline ? ` figure__inline figure__inline--square ${data.classes}` : ''}"${getPagebreakAttribute(data)}>
             <figure id="${data.id}">
-                <div class="img-wrap" style="width: 85%; margin: 0 auto;">
+                <div class="figure__items" style="width: 85%; margin: 0 auto;">
                     <span>
                         <img class="square" alt="${data.alt}" src="../images/${data.source}" style="width: 100%; max-width: 100%; height: auto;"/>
                     </span>
@@ -64,7 +64,7 @@ const mobi = {
             <div class="figure__large${data.inline ? ` figure__inline figure__inline--landscape ${data.classes}` : ''}"${getPagebreakAttribute(data)}>
                 <figure id="${data.id}">
 
-                    <div class="img-wrap">
+                    <div class="figure__items">
 
                         <div class="audio">
                             <audio ${data.attrString}>
@@ -95,7 +95,7 @@ const mobi = {
             <div class="figure__large${data.inline ? ` figure__inline figure__inline--landscape ${data.classes}` : ''}"${getPagebreakAttribute(data)}>
                 <figure id="${data.id}">
 
-                    <div class="img-wrap">
+                    <div class="figure__items">
 
                         <div class="video">
                             <video ${data.attrString}>
@@ -125,7 +125,7 @@ const mobi = {
         return `
             <div class="figure__large${data.inline ? ` figure__inline figure__inline--landscape ${data.classes}` : ''}"${getPagebreakAttribute(data)}>
                 <figure id="${data.id}">
-                    <div class="img-wrap">
+                    <div class="figure__items">
                         <div class="iframe">
                             <iframe src="${encodeQueryString(data.source)}" />
                         </div>

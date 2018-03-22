@@ -139,6 +139,9 @@ const containerPlugin = (md, name, options = {}) => {
                     const next = state.tokens[i + 1]
 
                     prev.tag = 'div'
+                    prev.attrSet('class', 'gallery__item')
+                    prev.attrSet('data-gallery-item', attrs.item)
+
                     next.tag = 'div'
 
                     switch (attrs.type) {

@@ -7,7 +7,7 @@ const epub = {
         return `${!data.inline ? '<section epub:type="loi" title="Figures" class="chapter figures">' : ''}
             <div class="figure__large${data.inline ? ` figure__inline figure__inline--portrait ${data.classes}` : ''}"${getPagebreakAttribute(data)}>
                 <figure id="${data.id}">
-                    <div class="img-wrap" style="width: 70%; margin: 0 auto;">
+                    <div class="figure__items" style="width: 70%; margin: 0 auto;">
                         ${!data.inline ? `<a href="${data.ref}.xhtml#ref${data.id}">` : ''}
                             <img class="portrait" alt="${data.alt}" src="../images/${data.source}" style="width: 100%; max-width: 100%; height: auto;"/>
                         ${!data.inline ? '</a>' : ''}
@@ -23,7 +23,7 @@ const epub = {
         return `${!data.inline ? '<section epub:type="loi" title="Figures" class="chapter figures">' : ''}
             <div class="figure__large${data.inline ? ` figure__inline figure__inline--landscape ${data.classes}` : ''}"${getPagebreakAttribute(data)}>
                 <figure id="${data.id}">
-                    <div class="img-wrap">
+                    <div class="figure__items">
                         ${!data.inline ? `<a href="${data.ref}.xhtml#ref${data.id}">` : ''}
                             <img class="landscape" alt="${data.alt}" src="../images/${data.source}" style="max-width: 100%;"/>
                         ${!data.inline ? '</a>' : ''}
@@ -39,7 +39,7 @@ const epub = {
         return `${!data.inline ? '<section epub:type="loi" title="Figures" class="chapter figures">' : ''}
             <div class="figure__large${data.inline ? ` figure__inline figure__inline--portrait-high ${data.classes}` : ''}"${getPagebreakAttribute(data)}>
                 <figure id="${data.id}">
-                    <div class="img-wrap" style="width: 60%; margin: 0 auto;">
+                    <div class="figure__items" style="width: 60%; margin: 0 auto;">
                         ${!data.inline ? `<a href="${data.ref}.xhtml#ref${data.id}">` : ''}
                             <img class="portrait-long" alt="${data.alt}" src="../images/${data.source}" style="width: 100%; max-width: 100%; height: auto;"/>
                         ${!data.inline ? '</a>' : ''}
@@ -55,7 +55,7 @@ const epub = {
         return `${!data.inline ? '<section epub:type="loi" title="Figures" class="chapter figures">' : ''}
             <div class="figure__large${data.inline ? ` figure__inline figure__inline--square ${data.classes}` : ''}"${getPagebreakAttribute(data)}>
                 <figure id="${data.id}">
-                    <div class="img-wrap" style="width: 85%; margin: 0 auto;">
+                    <div class="figure__items" style="width: 85%; margin: 0 auto;">
                         ${!data.inline ? `<a href="${data.ref}.xhtml#ref${data.id}">` : ''}
                             <img class="square" alt="${data.alt}" src="../images/${data.source}" style="width: 100%; max-width: 100%; height: auto;"/>
                         ${!data.inline ? '</a>' : ''}
@@ -72,7 +72,7 @@ const epub = {
             <div class="figure__large">
                 <figure id="${data.id}">
 
-                    <div class="img-wrap">
+                    <div class="figure__items">
 
                         <div class="audio">
                             <audio ${data.attrString}>
@@ -104,7 +104,7 @@ const epub = {
             <div class="figure__large">
                 <figure id="${data.id}">
 
-                    <div class="img-wrap">
+                    <div class="figure__items">
 
                         <div class="video">
                             <video ${data.attrString}>
@@ -135,7 +135,7 @@ const epub = {
         return `${!data.inline ? '<section epub:type="loi" title="Figures" class="chapter figures">' : ''}
             <div class="figure__large">
                 <figure id="${data.id}">
-                    <div class="img-wrap">
+                    <div class="figure__items">
                         <div class="iframe">
                             <iframe src="${encodeQueryString(data.source)}" />
                         </div>

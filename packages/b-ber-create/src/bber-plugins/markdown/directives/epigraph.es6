@@ -58,7 +58,7 @@ export default {
                         '<section epub:type="epigraph" class="epigraph chapter">',
                         '<div class="figure-lg" style="height: auto;">',
                         '<figure style="height: auto;">',
-                        '<div class="img-wrap" style="width: 100%; margin: 0 auto;">',
+                        '<div class="figure__items" style="width: 100%; margin: 0 auto;">',
                         `<img class="landscape" alt="${attrs.image}" src="../images/${escapeHtml(attrs.image)}" style="width: 100%; max-width: 100%; height: auto;"/>`,
                         (attrs.caption ? `<div class="figcaption" style="width: 100%; max-width: 100%; height: auto;"><p class="small">${escapeHtml(attrs.caption)}</p></div>` : ''),
                         '</div>',
