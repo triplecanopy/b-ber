@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 
-import { getPagebreakAttribute } from 'bber-utils'
+import { getPagebreakAttribute, encodeQueryString } from 'bber-utils'
 
 const epub = {
     portrait(data) {
@@ -127,6 +127,26 @@ const epub = {
 
                     </div>
 
+                </figure>
+            </div>
+        ${!data.inline ? '</section>' : ''}`
+    },
+    iframe(data) {
+        return `${!data.inline ? '<section epub:type="loi" title="Figures" class="chapter figures">' : ''}
+            <div class="figure__large">
+                <figure id="${data.id}">
+                    <div class="img-wrap">
+                        <div class="iframe">
+                            <iframe src="${encodeQueryString(data.source)}" />
+                        </div>
+
+                        <div class="figcaption" style="max-width: 100%;">
+                            <p class="small">
+                                ${data.caption ? `${data.caption}<br/>` : ''}
+                                <a href="${data.ref}.xhtml#ref${data.id}">Return</a>
+                            </p>
+                        </div>
+                    </div>
                 </figure>
             </div>
         ${!data.inline ? '</section>' : ''}`

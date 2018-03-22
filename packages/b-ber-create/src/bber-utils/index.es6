@@ -277,6 +277,25 @@ const getTitleOrName = page => {
     return page.title || page.name
 }
 
+const ensureDecoded = str => {
+    let str_ = str
+    while (decodeURIComponent(str_) !== str_) str_ = decodeURIComponent(str_)
+    return str_
+}
+
+const encodeQueryString = url => {
+    let url_ = url.split('?')
+    const loc = url_[0]
+    let qs = url_[1]
+
+    if (!qs) return loc
+
+    qs = ensureDecoded(qs)
+    qs = encodeURIComponent(qs)
+    url_ = `${loc}?${qs}`
+    return url_
+}
+
 export {
     opsPath,
     fileId,
@@ -302,4 +321,6 @@ export {
     getPagebreakAttribute,
     parseHTMLFiles,
     getTitleOrName,
+    ensureDecoded,
+    encodeQueryString,
 }

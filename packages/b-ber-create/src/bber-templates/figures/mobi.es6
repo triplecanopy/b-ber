@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 
-import { getPagebreakAttribute } from 'bber-utils'
+import { getPagebreakAttribute, encodeQueryString } from 'bber-utils'
 
 const mobi = {
     portrait(data) {
@@ -107,6 +107,27 @@ const mobi = {
                                 </div>
                                 <p class="media__fallback__${data.mediaType} media__fallback--text">Your device does not support the HTML5 ${data.mediaType} API.</p>
                             </video>
+                        </div>
+
+                        <div class="figcaption" style="max-width: 100%;">
+                            <p class="small">
+                                ${data.caption ? `${data.caption}<br/>` : ''}
+                                <a href="${data.ref}.xhtml#ref${data.id}">Return</a>
+                            </p>
+                        </div>
+
+                    </div>
+
+                </figure>
+            </div>`
+    },
+    iframe(data) {
+        return `
+            <div class="figure__large${data.inline ? ` figure__inline figure__inline--landscape ${data.classes}` : ''}"${getPagebreakAttribute(data)}>
+                <figure id="${data.id}">
+                    <div class="img-wrap">
+                        <div class="iframe">
+                            <iframe src="${encodeQueryString(data.source)}" />
                         </div>
 
                         <div class="figcaption" style="max-width: 100%;">

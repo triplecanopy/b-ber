@@ -44,7 +44,7 @@ const manifestItem = file => {
         res = [
             `<item id="${fileId(file.name)}"`,
             `href="${encodeURI(file.opsPath)}"`,
-            `media-type="${mime.lookup(file.absolutePath)}"`,
+            `media-type="${!file.remote ? mime.lookup(file.absolutePath) : 'application/octet-stream'}"`, // TODO: fixme remote resources
             (props && props.length ? `properties="${props.join(' ')}"` : ''),
             '/>',
         ]
@@ -78,13 +78,13 @@ const spineItems = arr =>
     }).join('')
 
 const guideItems = arr =>
-    arr.map(_ => {
+    arr.map(a => {
         let item = ''
         let type
-        if ((type = _.type)) {
-            log.info(`Adding landmark [${_.fileName}] as [${type}]`)
-            const title = escapeHTML(_.title)
-            const href = `${encodeURI(_.relativePath)}.xhtml`
+        if ((type = a.type)) {
+            log.info(`Adding landmark [${a.fileName}] as [${type}]`)
+            const title = escapeHTML(a.title)
+            const href = `${encodeURI(a.relativePath)}.xhtml`
             item = `<reference type="${type}" title="${title}" href="${href}"/>`
         }
 

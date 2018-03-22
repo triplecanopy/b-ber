@@ -1,13 +1,13 @@
 /* eslint-disable no-mixed-operators, template-curly-spacing */
+
 import fs from 'fs-extra'
 import path from 'path'
 import mime from 'mime-types'
 import figure from 'bber-plugins/markdown/plugins/figure'
-import { attributesString, attributesObject } from 'bber-plugins/markdown/directives/helpers'
-import { htmlComment, src, build } from 'bber-utils'
+import { attributesString, attributesObject, htmlId } from 'bber-plugins/markdown/directives/helpers'
+import { htmlComment, src, build, encodeQueryString } from 'bber-utils'
 import store from 'bber-lib/store'
 import log from '@canopycanopycanopy/b-ber-logger'
-import crypto from 'crypto'
 
 const markerRe = /^(video|audio)/
 const directiveRe = /(audio(?:-inline)?|video(?:-inline)?)(?::([^\s]+)(\s+.*)?)?$/
@@ -16,6 +16,8 @@ const directiveRe = /(audio(?:-inline)?|video(?:-inline)?)(?::([^\s]+)(\s+.*)?)?
 const toAlias = fpath => path.basename(path.basename(fpath, path.extname(fpath)))
 
 const isHostedRemotely = asset => /^http/.test(asset)
+
+const isHostedBySupportedThirdParty = asset => asset.match(/(vimeo|youtube)\.com/)
 
 const validatePosterImage = (_asset, type) => {
     const asset = path.join(src(), '_images', _asset)
@@ -67,9 +69,12 @@ export default {
             const filename            = `_markdown/${context.filename}.md`
             const lineNr              = tokens[idx].map ? tokens[idx].map[0] : null
             const match               = tokens[idx].info.trim().match(directiveRe)
-            const [, type, , attrs]   = match
+            const [, , id, attrs]     = match
+
+            let type                  = match[1]
+            let mediaType             = type.indexOf('-') && type.substring(0, type.indexOf('-')) || type
+
             const attrsObject         = attributesObject(attrs, type, { filename, lineNr })
-            const mediaType           = type.indexOf('-') && type.substring(0, type.indexOf('-')) || type
             const media               = [...store[mediaType]]
             const children            = tokens[idx].children
             const caption             = children ? instance.renderInline(tokens[idx].children) : ''
@@ -78,6 +83,7 @@ export default {
             let sourceElements        = ''
             let err                   = null
             let poster                = ''
+            let provider              = null
 
             // add controls attr by default
             if (!{}.hasOwnProperty.call(attrsObject, 'controls')) {
@@ -101,8 +107,14 @@ export default {
 
 
             if (isHostedRemotely(source)) {
-                sources = [source]
-                sourceElements = createRemoteMediaSource(sources)
+                const supportedThirdParty = isHostedBySupportedThirdParty(source)
+                if (supportedThirdParty) {
+                    [, provider] = supportedThirdParty
+                    type = type.replace(/(audio|video)/, 'iframe') // iframe, iframe-inline
+                } else {
+                    sources = [source]
+                    sourceElements = createRemoteMediaSource(sources)
+                }
 
                 store.add('remoteAssets', source)
 
@@ -112,7 +124,7 @@ export default {
             }
 
 
-            if (!sources.length) {
+            if (!sources.length && type !== 'iframe' && type !== 'iframe-inline') {
                 err = new Error(`bber-directives: Could not find matching [${mediaType}] with the basename [${source}]`)
                 log.error(err)
             }
@@ -125,14 +137,15 @@ export default {
             }
 
 
-            const figureId = `_${crypto.randomBytes(20).toString('hex')}`
+            const figureId = htmlId(id)
             const attrString = attributesString(attrsObject)
             const webOnlyAttrString = build() === 'web' ? ' webkit-playsinline="webkit-playsinline" playsinline="playsinline"' : ''
             const commentStart = htmlComment(`START: ${mediaType}:${type}#${figureId};`)
             const commentEnd = htmlComment(`END: ${mediaType}:${type}#${figureId};`)
-            const page = `figure${figureId}.xhtml`
+            const page = `figure-${figureId}.xhtml`
 
             switch (type) {
+                case 'iframe':
                 case 'audio':
                 case 'video':
 
@@ -150,6 +163,7 @@ export default {
                             poster,
                             mediaType,
                             source,
+                            type,
                         }
                     )
 
@@ -161,6 +175,14 @@ export default {
                         </figure>
                     </div>`
 
+
+                case 'iframe-inline':
+                    return `${commentStart}
+                        <section id="${figureId}">
+                            <iframe src="${encodeQueryString(source)}" />
+                            ${ caption ? `<p class="caption caption__${mediaType}">${caption}</p>` : '' }
+                        </section>
+                    ${commentEnd}`
 
                 case 'audio-inline':
                 case 'video-inline':
