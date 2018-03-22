@@ -1,0 +1,28 @@
+{
+  "name": "@canopycanopycanopy/b-ber-cli",
+  "version": "0.1.0-alpha.14",
+  "description": "",
+  "main": "src/index.js",
+  "bin": "dist/index.js",
+  "scripts": {
+    "prepare.dist": "BABEL_ENV=production ../../node_modules/.bin/babel -d dist/ src/ --ignore **/__tests__/**",
+    "clean": "rimraf dist",
+    "prepare": "yarn clean && yarn prepare.dist",
+    "build": "yarn prepare",
+    "watch": "BABEL_ENV=production ../../node_modules/.bin/babel -d dist/ src/ --watch src",
+    "start": "./node_modules/.bin/babel-node --trace-warnings ./src/index.js --presets es2015,stage-0",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Maxwell Simmer <maxwell.simmer@gmail.com> (http://maxwellsimmer.com)",
+  "license": "MIT",
+  "dependencies": {
+    "@canopycanopycanopy/b-ber-lib": "^0.1.0-alpha.14",
+    "@canopycanopycanopy/b-ber-logger": "^0.1.0-alpha.14",
+    "@canopycanopycanopy/b-ber-shapes": "^0.1.0-alpha.14",
+    "@canopycanopycanopy/b-ber-tasks": "^0.1.0-alpha.14",
+    "@canopycanopycanopy/b-ber-templates": "^0.1.0-alpha.14",
+    "fs-extra": "^5.0.0",
+    "lodash": "^4.17.5"
+  },
+  "devDependencies": {}
+}

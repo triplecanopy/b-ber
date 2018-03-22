@@ -12,7 +12,7 @@
 import fs from 'fs-extra'
 import path from 'path'
 import stripBomStream from 'strip-bom-stream'
-import { remove, filter } from 'lodash'
+import {remove, filter} from 'lodash'
 // import toMarkdown from 'to-markdown'
 import sanitizeFileName from 'sanitize-filename'
 

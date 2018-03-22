@@ -10,7 +10,7 @@ function newLine(posTop) {
 }
 
 function drawLines() {
-    if (document.getElementsByClassName('line').length) { return; }
+    if (document.getElementsByClassName('line').length) return;
     var body = document.body,
         html = document.documentElement;
 

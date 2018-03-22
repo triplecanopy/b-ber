@@ -1,0 +1,43 @@
+{
+  "name": "@canopycanopycanopy/b-ber-tasks",
+  "version": "0.1.0-alpha.14",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "prepare.dist": "BABEL_ENV=production ../../node_modules/.bin/babel -d dist/ src/ --ignore **/__tests__/**,src/web/search.js,src/web/worker.js,src/web/navigation.js,src/serve/server.js && yarn copy",
+    "copy": "./copy.sh",
+    "clean": "rimraf dist",
+    "prepare": "yarn clean && yarn prepare.dist",
+    "build": "yarn prepare",
+    "watch": "BABEL_ENV=production ../../node_modules/.bin/babel -d dist/ src/ --watch src --ignore **/__tests__/**,src/web/search.js,src/web/worker.js,src/web/navigation.js,src/serve/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Maxwell Simmer <maxwell.simmer@gmail.com> (http://maxwellsimmer.com)",
+  "license": "MIT",
+  "dependencies": {
+    "@canopycanopycanopy/b-ber-grammar": "^0.1.0-alpha.14",
+    "@canopycanopycanopy/b-ber-lib": "^0.1.0-alpha.14",
+    "@canopycanopycanopy/b-ber-logger": "^0.1.0-alpha.14",
+    "@canopycanopycanopy/b-ber-resources": "^0.1.0-alpha.14",
+    "@canopycanopycanopy/b-ber-templates": "^0.1.0-alpha.14",
+    "autoprefixer": "^8.2.0",
+    "cheerio": "^1.0.0-rc.2",
+    "decompress": "^4.2.0",
+    "epub-zipper": "^1.2.9",
+    "express": "^4.16.3",
+    "fs-extra": "^5.0.0",
+    "html-minifier": "^3.5.12",
+    "layouts": "^2.0.1",
+    "lodash": "^4.17.5",
+    "lunr": "^2.1.6",
+    "node-sass": "^4.8.3",
+    "nodemon": "^1.17.2",
+    "phantomjs-prebuilt": "^2.1.16",
+    "postcss": "^6.0.21",
+    "probe-image-size": "^4.0.0",
+    "recursive-readdir": "^2.2.2",
+    "serve-index": "^1.9.1",
+    "vinyl": "^2.1.0",
+    "yargs": "^11.0.0"
+  }
+}

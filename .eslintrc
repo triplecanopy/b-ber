@@ -40,6 +40,7 @@
       "allowForLoopAfterthoughts": true
     }],
     "no-underscore-dangle": 0,
+    "object-curly-spacing": 0,
     "one-var": [2, {
       "uninitialized": "never",
       "initialized": "never"

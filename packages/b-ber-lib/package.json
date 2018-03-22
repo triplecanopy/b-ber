@@ -1,0 +1,30 @@
+{
+  "name": "@canopycanopycanopy/b-ber-lib",
+  "version": "0.1.0-alpha.14",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "prepare.dist": "BABEL_ENV=production ../../node_modules/.bin/babel -d ./ src/ --ignore **/__tests__/**",
+    "clean": "rimraf utils && rimraf *.js",
+    "prepare": "yarn clean && yarn prepare.dist",
+    "build": "yarn prepare",
+    "watch": "BABEL_ENV=production ../../node_modules/.bin/babel -d ./ src/ --watch src --watch index.js",
+    "start": "./node_modules/.bin/babel-node ./src/index.js --presets es2015,stage-0",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Maxwell Simmer <maxwell.simmer@gmail.com> (http://maxwellsimmer.com)",
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {
+    "@canopycanopycanopy/b-ber-logger": "^0.1.0-alpha.14",
+    "@canopycanopycanopy/b-ber-shapes": "^0.1.0-alpha.14",
+    "@canopycanopycanopy/b-ber-themes": "^0.1.0-alpha.14",
+    "command-exists": "^1.2.2",
+    "fs-extra": "^5.0.0",
+    "htmlparser2": "^3.9.2",
+    "js-yaml": "^3.11.0",
+    "lodash": "^4.17.5",
+    "mime-types": "^2.1.18",
+    "yargs": "^11.0.0"
+  }
+}

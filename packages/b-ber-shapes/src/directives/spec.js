@@ -58,7 +58,7 @@ const SUPPORTED_ATTRIBUTES = [
 
 const genericContainerDirective = {
     section: {
-        required: [{ id: id() }],
+        required: [{id: id()}],
         supplementaryOutputRepository: false, // the name of the object in the `store` object that will contain supplementarily generated content, if any; i.e., the `figures` object
         syntaxVariants: false,
         selfClosing: false,
@@ -396,4 +396,4 @@ const DIRECTIVE_SPEC = {
 }
 
 
-export { DIRECTIVE_SPEC }
+export {DIRECTIVE_SPEC}

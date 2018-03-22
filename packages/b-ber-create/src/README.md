@@ -153,7 +153,7 @@ All local modules resolve to absolute paths using [babel-plugin-module-resolver]
 import utils from '../../../bber-utils'
 
 // yes
-import utils from 'bber-utils'
+import utils from '@canopycanopycanopy/b-ber-lib/utils'
 ```
 
 See aliases in the [.babelrc](https://github.com/triplecanopy/b-ber-creator/blob/master/.babelrc) under `module-resolver`.

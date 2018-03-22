@@ -1,5 +1,5 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+Object.defineProperty(exports, "__esModule", {value: true});
 const events_1 = require("events");
 const lodash_1 = require("lodash");
 class Batch extends events_1.EventEmitter {
@@ -36,7 +36,7 @@ class Batch extends events_1.EventEmitter {
         this._queue.push(proc);
     }
     removeFromQueue(proc) {
-        const { id } = proc;
+        const {id} = proc;
         const index = this._findProcessIndexById(id);
         if (index > -1) {
             this._queue.splice(index, 1);
@@ -78,8 +78,8 @@ class Batch extends events_1.EventEmitter {
     }
     add(func, ...args) {
         const id = this._id();
-        this._addToQueue({ id, func, args });
+        this._addToQueue({id, func, args});
     }
 }
-Batch.defaults = { maxCalls: 10, timeLimit: 1000 };
+Batch.defaults = {maxCalls: 10, timeLimit: 1000};
 exports.default = Batch;

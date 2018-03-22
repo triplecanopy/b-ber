@@ -1,27 +1,8 @@
 {
-  "plugins": [
-    "transform-runtime",
-    ["module-resolver", {
-      "cwd": "babelrc",
-      "root": ["./"],
-      "alias": {
-        "bber-cli": "./packages/b-ber-create/src/bber-cli",
-        "bber-lib": "./packages/b-ber-create/src/bber-lib",
-        "bber-modifiers": "./packages/b-ber-create/src/bber-modifiers",
-        "bber-output": "./packages/b-ber-create/src/bber-output",
-        "bber-plugins": "./packages/b-ber-create/src/bber-plugins",
-        "bber-shapes": "./packages/b-ber-create/src/bber-shapes",
-        "bber-templates": "./packages/b-ber-create/src/bber-templates",
-        "bber-utils": "./packages/b-ber-create/src/bber-utils",
-        "bber-assets": "./packages/b-ber-create/src/bber-assets"
-      }
-    }]
-  ],
   "presets": ["es2015", "stage-0"],
   "ignore": [
     "node_modules",
     "**/__tests__/**"
   ],
-  "env": {}
+  "plugins": ["transform-runtime"]
 }
-

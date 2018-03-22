@@ -3,7 +3,7 @@ import fs from 'fs-extra'
 import path from 'path'
 import google from 'googleapis'
 import Dropbox from 'dropbox'
-import { remove } from 'lodash'
+import {remove} from 'lodash'
 import opn from 'opn'
 import crypto from 'crypto'
 

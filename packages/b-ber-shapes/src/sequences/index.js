@@ -40,4 +40,4 @@ const sequences = {
 }
 
 
-export { sequences }
+export {sequences}

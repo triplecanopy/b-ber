@@ -1,0 +1,33 @@
+{
+  "name": "@canopycanopycanopy/b-ber-templates",
+  "version": "0.1.0-alpha.14",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "Ncx": "Ncx",
+    "Opf": "Opf",
+    "Ops": "Ops",
+    "Project": "Project",
+    "Toc": "Toc",
+    "Xhtml": "Xhtml",
+    "Xml": "Xml"
+  },
+  "scripts": {
+    "prepare.dist": "BABEL_ENV=production ../../node_modules/.bin/babel -d ./ src/ --ignore **/__tests__/**",
+    "prepare": "yarn clean && yarn prepare.dist",
+    "clean": "rimraf Ncx && rimraf Opf && rimraf Ops && rimraf Project && rimraf Toc && rimraf Xhtml && rimraf Xml && rimraf figures",
+    "build": "yarn prepare",
+    "watch": "BABEL_ENV=production ../../node_modules/.bin/babel -d ./ src/ --watch src --watch index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Maxwell Simmer <maxwell.simmer@gmail.com> (http://maxwellsimmer.com)",
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {
+    "@canopycanopycanopy/b-ber-lib": "^0.1.0-alpha.14",
+    "@canopycanopycanopy/b-ber-logger": "^0.1.0-alpha.14",
+    "lodash": "^4.17.5",
+    "mime-types": "^2.1.18",
+    "vinyl": "^2.1.0"
+  }
+}

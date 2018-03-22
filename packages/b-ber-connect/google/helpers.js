@@ -1,31 +1,31 @@
 /* eslint-disable key-spacing */
 import fs from 'fs-extra'
 import path from 'path'
-import Yaml from 'bber-lib/yaml'
-import { isPlainObject } from 'lodash'
+import Yaml from '@canopycanopycanopy/b-ber-lib/yaml'
+import {isPlainObject} from 'lodash'
 
 class Cache {
     static verifiesExistence(fpath) {
-        if (!fs.existsSync(fpath)) { throw new Error(`ENOENT: ${fpath}`) }
+        if (!fs.existsSync(fpath)) throw new Error(`ENOENT: ${fpath`)}
         return fpath
     }
     static verifiesObjectType(arg) {
-        if (!isPlainObject(arg)) { return {} }
+        if (!isPlainObject(arg)) return {}
         return arg
     }
     set assets(val) {
         this._assets = val
     }
     get assets() {
-        if (this._assets) { return this._assets }
-        const config = Yaml.load(Cache.verifiesExistence(path.join(process.cwd(), 'config.yml')))
+        if (this._assets) return this._assets
+        const config = YamlAdaptor.load(Cache.verifiesExistence(path.join(process.cwd(), 'config.yml')))
         this.assets = Cache.verifiesObjectType(config).assets
         return this._assets
     }
 }
 
 const Cached = new Cache()
-export { Cached }
+export {Cached}
 
 // private methods
 function _parseAssetValue(prop) {
