@@ -51,15 +51,15 @@ const renderer = ({ context = {}, render, markerOpen, markerClose }) => ({
             } else if (isClosing && !inStore) {
                 // trying to close an un-opened directive, but it might belong to a
                 // different directive type. regardless, we return the match
-                // if (id === 'bar') {
                 return false
-                // }
             } else if (isOpening && !inStore) {
                 // it's a brand new directive
-                store.add('cursor', { id })
+                store.add('cursor', { id, type })
+                return true
             } else if (isClosing && inStore) {
                 // it's the end of a directive
-                store.remove('cursor', { id })
+                // store.remove('cursor', { id }) // removed in `close` in section.es
+                return true
             }
         }
 

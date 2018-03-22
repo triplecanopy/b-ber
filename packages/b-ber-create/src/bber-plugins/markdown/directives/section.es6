@@ -1,8 +1,10 @@
+import store from 'bber-lib/store'
 import plugin from 'bber-plugins/markdown/plugins/section'
 import renderFactory from 'bber-plugins/markdown/directives/factory/block'
 import { attributes, htmlId } from 'bber-plugins/markdown/directives/helpers'
 import { htmlComment } from 'bber-utils'
 import { BLOCK_DIRECTIVES } from '@canopycanopycanopy/b-ber-shapes/directives'
+import find from 'lodash/find'
 
 // this matches *all* container-type directives, and outputs the appropriate
 // HTML based on user-defined attributes
@@ -28,7 +30,22 @@ const render = ({ context = {} }) => (tokens, idx) => {
         if (close) {
             const [, type, id] = close
             const comment = htmlComment(`END: section:${type}#${htmlId(id)}`)
-            result = `</section>${comment}`
+            const directive = find(store.cursor, { id })
+
+            // TODO: the parser needs to be more discerning. should include
+            // checking the attr types and the calls to open/close in a more
+            // transparent way. refactoring candidate.
+
+            if (directive && directive.type === 'gallery') {
+                store.remove('cursor', { id })
+                result = `
+                            </div>
+                        </figure>
+                    </div>${comment}`
+            } else {
+                store.remove('cursor', { id })
+                result = `</section>${comment}`
+            }
         } else {
             // destructure the attributes from matches, omitting `matches[0]` since
             // we're only interested in the captures

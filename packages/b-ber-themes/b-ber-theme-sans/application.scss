@@ -59,6 +59,7 @@ $modularscale: (
 
 
 // Get these from sibling theme
+// TODO: should just grab them from node modules and add the serif theme as a dep
 @import '../b-ber-theme-serif/vendor/material-icons';
 @import '../b-ber-theme-serif/typography/typography';
 @import '../b-ber-theme-serif/layout/layout';

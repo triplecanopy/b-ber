@@ -471,7 +471,35 @@ $web-grid-columns: 12;
     figure .figcaption a,
 	figure figcaption a,
 	.img-wrap a, {
-		color:$black;
+		color: $black;
 		text-decoration:underline !important;
-	}
-}
+    }
+
+    // fullbleed
+    .figure__fullbleed {}
+
+    // media
+    section.video {
+        position: relative;
+    }
+    button.media__controls {
+        @extend .material-icons;
+        position: absolute;
+        font-size: 3rem;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+
+        &.media__controls--pause {
+            &:before { content: 'pause_circle_outline'; }
+        }
+        &.media__controls--play {
+            &:before { content: 'play_circle_outline'; }
+        }
+    }
+
+} // endif build == web

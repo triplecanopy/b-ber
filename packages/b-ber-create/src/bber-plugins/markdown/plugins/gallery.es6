@@ -4,12 +4,10 @@
 import path from 'path'
 import { htmlId, parseAttrs } from 'bber-plugins/markdown/directives/helpers'
 import store from 'bber-lib/store'
-import { build } from 'bber-utils'
 
-// needed for fns below
-import mime from 'mime-types'
 
 // TODO: following is taken from media.es, should be exporting it
+import mime from 'mime-types'
 const toAlias = fpath => path.basename(path.basename(fpath, path.extname(fpath)))
 
 
@@ -18,10 +16,17 @@ const addCaption = (t, attrs) => {
 
     t.children.push({
         type: 'block',
+        tag: 'div',
+        attrs: [
+            ['class', 'figcaption'],
+            ['data-caption', htmlId(attrs.source)],
+        ],
+        nesting: 1,
+    }, {
+        type: 'block',
         tag: 'p',
         attrs: [
-            ['class', 'caption'],
-            ['data-caption', htmlId(attrs.source)],
+            ['class', 'small'],
         ],
         nesting: 1,
     }, {
@@ -31,6 +36,10 @@ const addCaption = (t, attrs) => {
     }, {
         type: 'block',
         tag: 'p',
+        nesting: -1,
+    }, {
+        type: 'block',
+        tag: 'div',
         nesting: -1,
     })
 
@@ -121,15 +130,16 @@ const containerPlugin = (md, name, options = {}) => {
                 if (matchedContent) {
                     const attrs = parseAttrs(matchedContent[1])
                     const media = [...store.video]
+                    const supportedMediaAttrs = ['controls', 'loop', 'fullscreen']
+
                     let sources
+                    let mediaAttrs
 
                     const prev = state.tokens[i - 1]
                     const next = state.tokens[i + 1]
 
                     prev.tag = 'div'
                     next.tag = 'div'
-
-                    // if build() ...
 
                     switch (attrs.type) {
                         case 'image':
@@ -139,8 +149,9 @@ const containerPlugin = (md, name, options = {}) => {
                                 type: 'inline',
                                 tag: 'img',
                                 attrs: [
-                                    ['src', attrs.source],
                                     ['data-image', htmlId(attrs.source)],
+                                    ['src', `../images/${encodeURIComponent(attrs.source)}`],
+                                    ['alt', attrs.alt || attrs.source],
                                 ],
                                 nesting: 0,
                             })
@@ -151,14 +162,25 @@ const containerPlugin = (md, name, options = {}) => {
 
                         case 'video':
 
+                            mediaAttrs = []
+                            mediaAttrs.push(['data-video', htmlId(attrs.source)])
+                            if (attrs.poster) mediaAttrs.push(['poster', `../images/${attrs.poster}`])
+                            supportedMediaAttrs.forEach(a => { // add boolean attrs
+                                if (attrs[a]) mediaAttrs.push([a, a])
+                            })
+
+
                             t.content = ''
                             t.children.push({
                                 type: 'block',
+                                tag: 'section',
+                                attrs: [['class', 'video']],
+                                nesting: 1,
+                            }, {
+                                type: 'block',
                                 tag: 'video',
-                                attrs: [
-                                    ['data-video', htmlId(attrs.source)],
-                                ],
-                                nesting: 0,
+                                attrs: mediaAttrs,
+                                nesting: 1,
                             })
 
                             sources = media.filter(a => toAlias(a) === attrs.source)
@@ -177,6 +199,18 @@ const containerPlugin = (md, name, options = {}) => {
                             t.children.push({
                                 type: 'block',
                                 tag: 'video',
+                                nesting: -1,
+                            }, {
+                                type: 'inline', // controls. TODO: add to media core directive
+                                tag: 'button',
+                                attrs: [
+                                    ['data-media-controls', htmlId(attrs.source)],
+                                    ['class', 'media__controls media__controls--play'],
+                                ],
+                                nesting: 0,
+                            }, {
+                                type: 'block',
+                                tag: 'section',
                                 nesting: -1,
                             })
 

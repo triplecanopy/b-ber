@@ -1,6 +1,7 @@
 import plugin from 'bber-plugins/markdown/plugins/gallery'
 import renderFactory from 'bber-plugins/markdown/directives/factory/block'
 import { attributes, htmlId } from 'bber-plugins/markdown/directives/helpers'
+import { build } from 'bber-utils'
 
 // define our open and closing markers, used by the `validateOpen` and
 // `validateClose` methods in the `renderFactory`
@@ -10,20 +11,41 @@ const markerClose = /^(exit)(?::([^\s]+))?/
 // a simple `render` function that gets passed into our `renderFactory` is
 // responsible for the HTML output.
 const render = (tokens, idx) => {
+    const open = tokens[idx].info.trim().match(markerOpen)
     let result = ''
-    if (tokens[idx].nesting === 1) {
-        const open = tokens[idx].info.trim().match(markerOpen)
-        const close = tokens[idx].info.trim().match(markerClose)
-        if (open) {
-            const [, type, id, attrs] = open
-            const attrsString = attributes(attrs, type)
-            result = `\n<section id="${htmlId(id)}" class="gallery"${attrsString}>`
-        }
 
-        if (close) {
-            result = '\n</section>'
+    if (tokens[idx].nesting === 1 && open) {
+        const [, type, id, attrs] = open
+        const attrsString = attributes(attrs, type)
+
+        // gallery directive is handled differentenly based on build:
+
+        //  web: drop all assets (images, videos, etc) into a `fullscreen`
+        //      container so that they can be positioned using custom CSS
+
+        //  epub, mobi: drop all assets into a section.gallery container
+        //      that is initialized as a slider via JS if available.
+        //      defaults to a simple sequence of images
+
+        //  pdf: sequence of images
+
+        switch (build()) {
+            case 'web':
+                result = `
+                    <div class="figure__large figure__inline figure__fullbleed">
+                        <figure id="${htmlId(id)}">
+                            <div class="img-wrap">`
+                break
+            case 'epub':
+            case 'mobi':
+            case 'pdf':
+            case 'sample':
+            default:
+                result = `\n<section id="${htmlId(id)}" class="gallery"${attrsString}>`
+                break
         }
     }
+
     return result
 }
 
