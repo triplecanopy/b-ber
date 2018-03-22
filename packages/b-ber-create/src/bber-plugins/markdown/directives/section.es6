@@ -2,7 +2,7 @@ import store from 'bber-lib/store'
 import plugin from 'bber-plugins/markdown/plugins/section'
 import renderFactory from 'bber-plugins/markdown/directives/factory/block'
 import { attributes, htmlId } from 'bber-plugins/markdown/directives/helpers'
-import { htmlComment } from 'bber-utils'
+import { htmlComment, build } from 'bber-utils'
 import { BLOCK_DIRECTIVES } from '@canopycanopycanopy/b-ber-shapes/directives'
 import find from 'lodash/find'
 
@@ -36,7 +36,7 @@ const render = ({ context = {} }) => (tokens, idx) => {
             // checking the attr types and the calls to open/close in a more
             // transparent way. refactoring candidate.
 
-            if (directive && directive.type === 'gallery') {
+            if (directive && directive.type === 'gallery' && build() === 'web') {
                 store.remove('cursor', { id })
                 result = `
                             </div>
