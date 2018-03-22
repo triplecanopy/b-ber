@@ -365,13 +365,13 @@ figcaption, .figcaption {
     padding: 0; }
 
 /* line 165, ../layout/base/_figure.scss */
-.img-wrap {
+.figure__items {
   width: 100%; }
   /* line 167, ../layout/base/_figure.scss */
-  .img-wrap a {
+  .figure__items a {
     text-decoration: none !important; }
   /* line 168, ../layout/base/_figure.scss */
-  .epigraph .img-wrap {
+  .epigraph .figure__items {
     padding-top: 7px; }
 
 /* line 1, ../layout/base/_layout.scss */

@@ -470,13 +470,75 @@ $web-grid-columns: 12;
     // TODO: should this be for all builds?
     figure .figcaption a,
 	figure figcaption a,
-	.img-wrap a, {
+	.figure__items a, {
 		color: $black;
 		text-decoration:underline !important;
     }
 
-    // fullbleed
-    .figure__fullbleed {}
+    // fullbleed. fullbleed panels are completely customizeable, so set to
+    // position: absoulte for full control over child positioning below. can be
+    // used to add sub-grids, etc
+    .figure__fullbleed:not(.figure__small) {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        grid-column: 1!important;
+
+        &.figure__large.figure__inline {
+            figure {
+                .figure__items {
+                    img {
+                        object-fit: cover;
+                        width: 100%;
+                        height: 100%;
+                    }
+                    .figcaption {
+                        position: absolute;
+                    }
+                }
+            }
+        }
+
+        figure {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+
+            .figure__items {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+            }
+
+            .gallery__item {
+                position: absolute;
+                height: 300px;
+                width: 300px;
+
+                left: 50%;
+                top: 50%;
+                transform: translateX(-50%) translateY(-50%);
+
+                // add overrides as needed ...
+                // .gallery__item[data-gallery-item=my-id-1] { left: 100px; }
+                // .gallery__item[data-gallery-item=my-id-2] { left: 200px; }
+
+                img {
+                    max-width: 100%;
+                    max-height: 100%;
+                }
+            }
+
+            .figure__items img,
+            .figure__items video {}
+        }
+    }
 
     // media
     section.video {

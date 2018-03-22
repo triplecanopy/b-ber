@@ -205,7 +205,7 @@ p.caption {
     @include caption;
 }
 
-.img-wrap {
+.figure__items {
     width: 100%;
     a { text-decoration: none!important; }
     .epigraph & { padding-top: 7px; }
