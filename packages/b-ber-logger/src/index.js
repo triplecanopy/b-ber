@@ -22,23 +22,23 @@ import {reset} from './reset'
 class Logger extends Timer {
 
     static defaults = {
-        logLevel     : 4,
-        // logLevel     : 3,
-        boringOutput : false,
-        summarize    : false,
-        command      : null,
-        consoleWidth : 70,
-        errors       : [],
-        warnings     : [],
+        // logLevel     : 4,
+        logLevel: 3,
+        boringOutput: false,
+        summarize: false,
+        command: null,
+        consoleWidth: 70,
+        errors: [],
+        warnings: [],
 
-        taskWarnings : 0,
-        taskErrors   : 0,
+        taskWarnings: 0,
+        taskErrors: 0,
 
-        whitespace   : ' ',
-        increment    : 0,
-        indentLevel  : 0,
-        taskCounter  : -1,
-        context      : null,
+        whitespace: ' ',
+        increment: 0,
+        indentLevel: 0,
+        taskCounter: -1,
+        context: null,
     }
 
     constructor() {

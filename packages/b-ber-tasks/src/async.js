@@ -2,7 +2,6 @@
  * @module async
  */
 
-/* eslint-disable import/prefer-default-export */
 import log from '@canopycanopycanopy/b-ber-logger'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 
@@ -39,4 +38,4 @@ const serialize = (sequence, tasks) =>
     )
         .then(_ => log.notify('done', {state}))
 
-export {serialize}
+export default {serialize}

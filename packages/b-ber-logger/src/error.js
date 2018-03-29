@@ -26,8 +26,8 @@ export function error() {
     prefix += this.decorate('b-ber', 'white', 'bgBlack')
     prefix += ' '
     prefix += this.decorate('warn', 'white', 'bgRed')
-    prefix += ' '
-    prefix += counter
+    // prefix += ' '
+    // prefix += counter
     prefix += ' '
 
     const formatted = util.format.apply(util, ['%s %s', prefix, message])

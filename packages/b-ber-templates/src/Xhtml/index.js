@@ -52,6 +52,16 @@ class Xhtml {
         return `<link rel="stylesheet" type="text/css" href="{% body %}"/>`
     }
 
+    static loi() {
+        return `
+            <section epub:type="loi" title="Figures" class="chapter figures">
+                <header>
+                    <h1>Figures</h1>
+                </header>
+            </section>
+        `
+    }
+
     static document() {
         return new File({
             path: 'xhtml.document.tmpl',
@@ -64,15 +74,3 @@ class Xhtml {
 }
 
 export default Xhtml
-
-
-/*
-const loiLeader = () =>
-    `<section epub:type="loi" title="Figures" class="chapter figures">
-        <header>
-            <h1>Figures</h1>
-        </header>
-    </section>`
-
-export {pageHead, pageTail, pageBody, page, loiLeader}
-*/

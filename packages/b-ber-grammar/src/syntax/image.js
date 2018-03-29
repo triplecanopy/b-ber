@@ -108,7 +108,7 @@ export default {
                         mime: mime.lookup(attrsObject.source),
                     }
 
-                    result = figTmpl(imageData, build())
+                    result = figTmpl(imageData, state.build)
                     break
                 default:
                     break

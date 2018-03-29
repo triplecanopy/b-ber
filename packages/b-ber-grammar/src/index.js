@@ -8,20 +8,17 @@
 import hlsj from 'highlight.js'
 import {extend, find} from 'lodash'
 import MarkdownIt from 'markdown-it'
-import mdFrontMatter from 'markdown-it-front-matter'
 import YamlAdaptor from '@canopycanopycanopy/b-ber-lib/YamlAdaptor'
 import state from '@canopycanopycanopy/b-ber-lib/State'
-import mdFootnote from './parsers/footnote'
-import mdSection from './syntax/section'
-import mdPullQuote from './syntax/pullquote'
-import mdLogo from './syntax/logo'
-import mdImage from './syntax/image'
-import mdMedia from './syntax/media'
-import mdDialogue from './syntax/dialogue'
-import mdGallery from './syntax/gallery'
-// import {env} from '@canopycanopycanopy/b-ber-lib/utils'
-// import mdEpigraph from './syntax/epigraph'
-
+import markdownItFrontmatter from 'markdown-it-front-matter'
+import markdownItFootnote from './parsers/footnote'
+import markdownItSection from './syntax/section'
+import markdownItPullquote from './syntax/pullquote'
+import markdownItLogo from './syntax/logo'
+import markdownItImage from './syntax/image'
+import markdownItMedia from './syntax/media'
+import markdownItDialogue from './syntax/dialogue'
+import markdownItGallery from './syntax/gallery'
 
 
 function deepFind(collection, fileName, callback) {
@@ -63,7 +60,7 @@ class MarkdownRenderer {
          * @see {@link https://github.com/markdown-it/markdown-it}
          * @type {MarkdownIt}
          */
-        this.md = new MarkdownIt({
+        this.markdownIt = new MarkdownIt({
             html: true,
             xhtmlOut: true,
             breaks: false,
@@ -91,21 +88,13 @@ class MarkdownRenderer {
          */
         this.filename = ''
 
-        const context = this
-        const instance = this.md
-        const reference = {instance, context}
+        const reference = {instance: this.markdownIt, context: this}
 
-        instance
+        this.markdownIt
+            .use(markdownItSection.plugin, markdownItSection.name, markdownItSection.renderer(reference))
+            .use(markdownItPullquote.plugin, markdownItPullquote.name, markdownItPullquote.renderer(reference))
             .use(
-                mdSection.plugin,
-                mdSection.name,
-                mdSection.renderer(reference))
-            .use(
-                mdPullQuote.plugin,
-                mdPullQuote.name,
-                mdPullQuote.renderer(reference))
-            .use(
-                mdFrontMatter,
+                markdownItFrontmatter,
                 meta => {
 
                     const filename = this.filename
@@ -120,15 +109,13 @@ class MarkdownRenderer {
                     // expensive, don't try unless we know that the entry
                     // exists
                     if (spineEntry) {
-
-                        deepFind(state.spine, filename, found => extend(found, YAMLMeta))
-                        deepFind(state.toc, filename, found => extend(found, YAMLMeta))
-
+                        deepFind(state.spine, filename, a => extend(a, YAMLMeta))
+                        deepFind(state.toc, filename, a => extend(a, YAMLMeta))
                     }
 
                 })
             .use(
-                mdFootnote,
+                markdownItFootnote,
                 tokens => {
                     const fileName = this.filename
 
@@ -166,33 +153,14 @@ class MarkdownRenderer {
                         nesting: -1,
                     })
 
-                    const notes = instance.renderer.render(tokens, 0, {reference: `${fileName}.xhtml`})
+                    const notes = this.markdownIt.renderer.render(tokens, 0, {reference: `${fileName}.xhtml`})
                     state.add('footnotes', {filename: fileName, title, notes})
                 })
-            .use(
-                mdDialogue.plugin,
-                mdDialogue.name,
-                mdDialogue.renderer(reference))
-            .use(
-                mdGallery.plugin,
-                mdGallery.name,
-                mdGallery.renderer(reference))
-            .use(
-                mdImage.plugin,
-                mdImage.name,
-                mdImage.renderer(reference))
-            .use(
-                mdMedia.plugin,
-                mdMedia.name,
-                mdMedia.renderer(reference))
-            // .use(
-            //   mdEpigraph.plugin,
-            //   mdEpigraph.name,
-            //   mdEpigraph.renderer(reference))
-            .use(
-                mdLogo.plugin,
-                mdLogo.name,
-                mdLogo.renderer(reference))
+            .use(markdownItDialogue.plugin, markdownItDialogue.name, markdownItDialogue.renderer(reference))
+            .use(markdownItGallery.plugin, markdownItGallery.name, markdownItGallery.renderer(reference))
+            .use(markdownItImage.plugin, markdownItImage.name, markdownItImage.renderer(reference))
+            .use(markdownItMedia.plugin, markdownItMedia.name, markdownItMedia.renderer(reference))
+            .use(markdownItLogo.plugin, markdownItLogo.name, markdownItLogo.renderer(reference))
     }
 
     set filename(name) {
@@ -221,7 +189,7 @@ class MarkdownRenderer {
      */
     render(filename, data) {
         this.filename = filename
-        return this.md.render(data)
+        return this.markdownIt.render(data)
     }
 
 }

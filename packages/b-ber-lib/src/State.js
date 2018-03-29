@@ -1,5 +1,7 @@
-import {isPlainObject, isArray} from 'lodash'
 import crypto from 'crypto'
+import isPlainObject from 'lodash/isPlainObject'
+import isArray from 'lodash/isArray'
+import findIndex from 'lodash/findIndex'
 import ApplicationLoader from './ApplicationLoader'
 
 const dynamicPageTmpl = _ => { throw new Error('[state.templates#dynamicPageTmpl] has not been initialized in b-ber-modifiers/inject') }
@@ -100,7 +102,8 @@ class State extends ApplicationLoader {
      */
     remove(prop, val) {
         if (isArray(this[prop])) {
-            const index = this[prop].indexOf(val)
+            // const index = this[prop].indexOf(val)
+            const index = findIndex(this[prop], val)
             if (index < 0) throw new TypeError(`The _property [${val}] could not be found in [state.${prop}]`)
             this[prop].splice(index, 1)
             return
@@ -154,7 +157,7 @@ class State extends ApplicationLoader {
      */
     contains(collection, value) {
         if (!isArray(this[collection])) throw new TypeError('[State#contains] must be called on an array')
-        return this[collection].indexOf(value)
+        return findIndex(this[collection], value)
     }
 }
 

@@ -5,23 +5,19 @@ function printNotices(type, task = 'b-ber') {
     const notices = this[type].slice(this[prop] * -1)
     const leader = type === 'warnings' ? 'WARN' : 'ERROR'
     const header = util.format.apply(util, ['[%s] emitted [%d] %s', task, notices.length, type])
-    const color = type === 'warnings' ? 'yellow' : 'red'
+    const color = 'black'
+    // const color = type === 'warnings' ? 'yellow' : 'red'
 
+    if (this.logLevel > 2) console.log('%s%s', this.indent(), this.decorate(header, color))
 
     if (this.logLevel > 3) {
-        console.log('%s%s', this.indent(), this.decorate(header, color, 'underline'))
 
         this.incrementIndent()
         notices.forEach(_ => {
+            const stack = _.stack.split('\n').slice(2).map(s => s.replace(/^\s+/, this.indent())).join('\n')
 
-            console.log()
-            console.log('%s%s %s', this.indent(), this.decorate(leader, color, 'underline'), this.decorate(_.message, 'cyan'))
-
-            if (this.logLevel > 1) {
-                const stack = _.stack.split('\n').slice(2).map(s => s.replace(/^\s+/, this.indent())).join('\n')
-                console.log('%s', stack)
-            }
-
+            console.log('%s%s %s', this.indent(), this.decorate(leader, color), this.decorate(_.message, 'cyan'))
+            console.log('%s', stack)
         })
         this.decrementIndent()
     }

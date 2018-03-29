@@ -16,8 +16,8 @@ export function info(...args) {
     prefix += this.decorate('b-ber', 'white', 'bgBlack')
     prefix += ' '
     prefix += this.decorate('info', 'green')
-    prefix += ' '
-    prefix += counter
+    // prefix += ' '
+    // prefix += counter
     prefix += ' '
 
     if (this.logLevel < 4) return

@@ -77,9 +77,7 @@ function setTheme(themeName, themeList, userThemes, cwd) {
         promises.push(new Promise(resolve =>
             fs.writeFile(configPath, YamlAdaptor.dump(configObj), err => {
                 if (err) throw err
-                console.log()
                 console.log(`Successfully set theme theme to [${themeName}]`)
-                console.log()
                 return resolve()
             }))
         )

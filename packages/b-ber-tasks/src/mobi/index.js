@@ -5,7 +5,7 @@
 
 import path from 'path'
 import log from '@canopycanopycanopy/b-ber-logger'
-import {dist} from '@canopycanopycanopy/b-ber-lib/utils'
+import state from '@canopycanopycanopy/b-ber-lib/State'
 import EbookConvert from '@canopycanopycanopy/b-ber-lib/EbookConvert'
 
 const pageBreakBeforeXPATH = () => ([
@@ -16,7 +16,7 @@ const pageBreakBeforeXPATH = () => ([
 
 const mobi = () =>
     new Promise(resolve => {
-        const opsPath = path.join(dist(), 'OPS')
+        const opsPath = path.join(state.dist, 'OPS')
         const inputPath = path.join(opsPath, 'content.opf')
         return EbookConvert.convert({
             inputPath,

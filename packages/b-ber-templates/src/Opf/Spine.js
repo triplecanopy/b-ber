@@ -1,5 +1,6 @@
 import path from 'path'
 import File from 'vinyl'
+import state from '@canopycanopycanopy/b-ber-lib/State'
 import {fileId} from '@canopycanopycanopy/b-ber-lib/utils'
 import log from '@canopycanopycanopy/b-ber-logger'
 

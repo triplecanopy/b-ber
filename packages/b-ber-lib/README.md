@@ -23,7 +23,7 @@ During the build process, some properties of `bber-lib/state.es6` are updated.
 
 ## Application Lifecycle
 
-`@canopycanopycanopy/b-ber-lib/async.es6` exports a `Promise` factory that is used to run `bber` commands in sequence.
+`@canopycanopycanopy/b-ber-tasks/async.es6` exports a `Promise` factory that is used to run `bber` commands in sequence.
 
 ```js
 const sequence = [promise1, promise2, promise3]

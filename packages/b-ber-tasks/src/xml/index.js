@@ -8,7 +8,7 @@ import path from 'path'
 import fs from 'fs-extra'
 import log from '@canopycanopycanopy/b-ber-logger'
 import HtmlToXml from '@canopycanopycanopy/b-ber-lib/HtmlToXml'
-import {dist, parseHTMLFiles} from '@canopycanopycanopy/b-ber-lib/utils'
+import {parseHTMLFiles} from '@canopycanopycanopy/b-ber-lib/utils'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import {serialize} from '../async'
 import * as tasks from '../'
@@ -69,7 +69,7 @@ const writeXML = str =>
 const xml = () =>
     new Promise(resolve =>
         initialize()
-        .then(manifest => parseHTMLFiles(manifest, parser, dist()))
+        .then(manifest => parseHTMLFiles(manifest, parser, state.dist))
         .then(inddFRMT)
         .then(writeXML)
         .catch(err => log.error(err))

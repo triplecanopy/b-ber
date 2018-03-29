@@ -11,7 +11,7 @@ export function warn(...args) {
         message = this.composeMessage(args)
     }
 
-    const counter = this.counter()
+    // const counter = this.counter()
     const {stack} = new Error()
 
     let prefix = ''
@@ -19,9 +19,9 @@ export function warn(...args) {
     prefix += this.decorate('b-ber', 'white', 'bgBlack')
     prefix += ' '
     prefix += this.decorate('warn', 'black', 'bgYellowBright')
-    prefix += ' '
-    prefix += counter
-    prefix += ' '
+    // prefix += ' '
+    // prefix += counter
+    // prefix += ' '
 
     const formatted = util.format.apply(util, ['%s %s', prefix, message])
 

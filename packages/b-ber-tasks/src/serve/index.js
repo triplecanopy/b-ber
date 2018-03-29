@@ -2,7 +2,6 @@ import path from 'path'
 import nodemon from 'nodemon'
 import log from '@canopycanopycanopy/b-ber-logger'
 import state from '@canopycanopycanopy/b-ber-lib/State'
-import {serialize} from '../async'
 import * as tasks from '../'
 
 const PORT = 8080
@@ -19,7 +18,7 @@ const restart = _ =>
         state.update('spine', state.buildTypes.web.spineEntries)
         state.update('config.baseurl', '/')
 
-        return serialize(SEQUENCE, tasks).then(resolve)
+        return tasks.async.serialize(SEQUENCE, tasks).then(resolve)
     })
 
 
@@ -49,7 +48,6 @@ const serve = _ =>
                 files.push(file)
                 timer = setTimeout(_ => {
                     log.info(`Restarting server due to changes:\n${files.join('\n')}`)
-                    console.log()
                     restart().then(_ => files = [])
                 }, DEBOUNCE_SPEED)
             })

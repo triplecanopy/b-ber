@@ -14,13 +14,22 @@ export function bind() {
         }
 
         console.log(
-            '%s%s %s %s Starting',
+            '%s%s %s Starting',
             this.indent(),
             this.decorate('b-ber', 'white', 'bgBlack'),
             this.decorate('info', 'green'),
-            this.counter(),
+            // this.counter(),
             this.decorate(task, 'magenta')
         )
+
+        // console.log(
+        //     '%s%s %s %s Starting',
+        //     this.indent(),
+        //     this.decorate('b-ber', 'white', 'bgBlack'),
+        //     this.decorate('info', 'green'),
+        //     this.counter(),
+        //     this.decorate(task, 'magenta')
+        // )
 
         this.incrementIndent()
 
@@ -35,16 +44,26 @@ export function bind() {
         const {totalMs} = taskTime
 
         console.log(
-            '%s%s %s %s Finished',
+            '%s%s %s Finished',
             this.indent(),
             this.decorate('b-ber', 'white', 'bgBlack'),
             this.decorate('info', 'green'),
-            this.counter(),
+            // this.counter(),
             this.decorate(task, 'green'),
             'after',
             totalMs
         )
-        console.log()
+
+        // console.log(
+        //     '%s%s %s %s Finished',
+        //     this.indent(),
+        //     this.decorate('b-ber', 'white', 'bgBlack'),
+        //     this.decorate('info', 'green'),
+        //     this.counter(),
+        //     this.decorate(task, 'green'),
+        //     'after',
+        //     totalMs
+        // )
 
         // const {beginMs, endMs, totalMs} = taskTime
         // if (this.logLevel > 3) {
@@ -71,14 +90,16 @@ export function bind() {
     })
 
     this.on('done', data => {
-        if (this.logLevel < 3) console.log()
+
+        console.log()
+
         if (!this.errors.length) {
-            console.log('%s%s', this.indent(), this.decorate('Build succeeded', 'green', 'underline'))
-            console.log()
+            console.log('%s%s', this.indent(), this.decorate('Build succeeded', 'green'))
         } else {
-            console.log('%s%s', this.indent(), this.decorate('Build error', 'red', 'underline'))
-            console.log()
+            console.log('%s%s', this.indent(), this.decorate('Build error', 'red'))
         }
+
+        console.log()
 
         // this.printSummary(data)
     })

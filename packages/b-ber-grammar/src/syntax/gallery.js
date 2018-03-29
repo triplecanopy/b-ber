@@ -1,4 +1,4 @@
-import {build} from '@canopycanopycanopy/b-ber-lib/utils'
+import state from '@canopycanopycanopy/b-ber-lib/State'
 import renderFactory from './factory/block'
 import {attributes, htmlId} from './helpers'
 import plugin from '../parsers/gallery'
@@ -29,7 +29,7 @@ const render = (tokens, idx) => {
 
         //  pdf: sequence of images
 
-        switch (build()) {
+        switch (state.build) {
             case 'web':
                 result = `
                     <div class="figure__large figure__inline figure__fullbleed">

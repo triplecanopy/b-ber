@@ -54,7 +54,7 @@ export default myFunc
 After extending the command list in `bber-cli`, and defining a handler in `bber-cli/cmd`, the `myFunc` module could be inserted into a sequence of other `b-ber` commands.
 
 ```js
-import {serialize} from '@canopycanopycanopy/b-ber-lib/async'
+import {serialize} from '@canopycanopycanopy/b-ber-tasks/async'
 
 const sequence = ['clean', 'myFunc', 'render']
 serialize(sequence).then(() => {

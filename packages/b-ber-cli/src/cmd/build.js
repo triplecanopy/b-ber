@@ -1,5 +1,5 @@
 import {pick, pickBy, identity, keys} from 'lodash'
-import {serialize} from '@canopycanopycanopy/b-ber-lib/async'
+import * as allTasks from '@canopycanopycanopy/b-ber-tasks'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 
 const _buildCommands = ['epub', 'mobi', 'pdf', 'web', 'sample']
@@ -68,15 +68,14 @@ const handler = argv => {
     const run = tasks => {
         const next = [tasks.shift()]
 
-        state.reload()
+        state.reset()
         state.update('build', next[0])
         state.update('toc', state.buildTypes[next[0]].tocEntries)
         state.update('spine', state.buildTypes[next[0]].spineEntries)
 
-
         if (next[0] === 'mobi') next.unshift('mobiCSS') // TODO: this should be called by `mobi` task
 
-        return serialize([...sequence, ...next]).then(() => {
+        return allTasks.async.serialize([...sequence, ...next], allTasks).then(() => {
             if (tasks.length) run(tasks)
         })
     }

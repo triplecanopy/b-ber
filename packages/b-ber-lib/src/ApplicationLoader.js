@@ -32,7 +32,7 @@ class ApplicationLoader {
         buildTypes: { sample: {}, epub: {}, mobi: {}, pdf: {}, web: {}},
     }
     constructor() {
-        this.__MODULE_PATH__ = path.dirname(__dirname)
+        this.__MODULE_PATH__ = path.dirname(path.dirname(__dirname))
         this.__PACKAGE_JSON__ = require(path.join(this.__MODULE_PATH__, 'package.json')) // eslint-disable-line import/no-dynamic-require,global-require
 
         Object.entries(ApplicationLoader.defaults).forEach(([key, val]) => this[key] = val)

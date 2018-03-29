@@ -9,14 +9,12 @@ export function registerSequence(state, command, commanders, sequences) {
 
     const {sequence} = state
 
-    console.log()
     console.log(this.decorate([`%sStarting [%s]`, this.indent(), command], 'cyan'))
 
     this.incrementIndent()
 
     console.log(`%sPreparing to run [%d] tasks`, this.indent(), sequence.length)
     console.log(`%sRunning the following tasks`, this.indent())
-    console.log()
 
     if (Object.keys(commanders).length) {
         const cmds = Object.keys(commanders).filter(a => commanders[a])
@@ -25,7 +23,6 @@ export function registerSequence(state, command, commanders, sequences) {
             this.incrementIndent()
             console.log(`${this.indent()}${this.wrap(sequences[a], this.indent())}`)
             this.decrementIndent()
-            console.log()
         })
 
     } else {

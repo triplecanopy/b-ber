@@ -2,16 +2,15 @@
  * @module loi
  */
 
-
 import fs from 'fs-extra'
 import path from 'path'
 import renderLayouts from 'layouts'
 import File from 'vinyl'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
-import {dist, build, modelFromString} from '@canopycanopycanopy/b-ber-lib/utils'
+import {modelFromString} from '@canopycanopycanopy/b-ber-lib/utils'
 import figure from '@canopycanopycanopy/b-ber-templates/figures'
-import {page, loiLeader} from '@canopycanopycanopy/b-ber-templates/Xhtml'
+import Xhtml from '@canopycanopycanopy/b-ber-templates/Xhtml'
 
 const createLOILeader = () =>
     new Promise(resolve => {
@@ -19,12 +18,12 @@ const createLOILeader = () =>
         const filename = 'figures-titlepage'
         const markup = renderLayouts(new File({
             path: '.tmp',
-            layout: 'page',
-            contents: new Buffer(loiLeader()),
-        }), {page}).contents.toString()
+            layout: 'document',
+            contents: new Buffer(Xhtml.loi()),
+        }), {document: Xhtml.document()}).contents.toString()
 
 
-        fs.writeFile(path.join(dist(), 'OPS', 'text', `${filename}.xhtml`), markup, 'utf8', err => {
+        fs.writeFile(path.join(state.dist, 'OPS', 'text', `${filename}.xhtml`), markup, 'utf8', err => {
             if (err) throw err
 
             state.add('guide', {
@@ -46,15 +45,15 @@ const createLOI = () =>
 
             // Create image string based on dimensions of image
             // returns square | landscape | portrait | portraitLong
-            const figureStr = figure(data, build())
+            const figureStr = figure(data, state.build)
             const markup = renderLayouts(new File({
                 path: '.tmp',
-                layout: 'page',
+                layout: 'document',
                 contents: new Buffer(figureStr),
-            }), {page}).contents.toString()
+            }), {document: Xhtml.document()}).contents.toString()
 
 
-            fs.writeFile(path.join(dist(), 'OPS', 'text', data.page), markup, 'utf8', err => {
+            fs.writeFile(path.join(state.dist, 'OPS', 'text', data.page), markup, 'utf8', err => {
                 if (err) throw err
 
                 const fileData = {

@@ -1,10 +1,10 @@
 import state from '@canopycanopycanopy/b-ber-lib/State'
+import {htmlComment} from '@canopycanopycanopy/b-ber-lib/utils'
+import {BLOCK_DIRECTIVES} from '@canopycanopycanopy/b-ber-shapes/directives'
+import find from 'lodash/find'
 import plugin from '../parsers/section'
 import renderFactory from './factory/block'
 import {attributes, htmlId} from './helpers'
-import {htmlComment, build} from '@canopycanopycanopy/b-ber-lib/utils'
-import {BLOCK_DIRECTIVES} from '@canopycanopycanopy/b-ber-shapes/directives'
-import find from 'lodash/find'
 
 // this matches *all* container-type directives, and outputs the appropriate
 // HTML based on user-defined attributes
@@ -36,7 +36,7 @@ const render = ({context = {}}) => (tokens, idx) => {
             // checking the attr types and the calls to open/close in a more
             // transparent way. refactoring candidate.
 
-            if (directive && directive.type === 'gallery' && build() === 'web') {
+            if (directive && directive.type === 'gallery' && state.build === 'web') {
                 state.remove('cursor', {id})
                 result = `
                             </div>
