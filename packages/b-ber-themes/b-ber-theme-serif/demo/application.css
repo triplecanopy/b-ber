@@ -71,8 +71,6 @@ body {
   -moz-hyphens: auto;
   -ms-hyphens: auto;
   hyphens: auto;
-  word-break: break-all;
-  word-break: break-word;
   widows: 2;
   orphans: 1;
   text-rendering: optimizeLegibility;

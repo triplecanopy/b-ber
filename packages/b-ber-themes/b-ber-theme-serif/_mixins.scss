@@ -55,10 +55,6 @@
     -moz-hyphens: $hyphenation;
     -ms-hyphens: $hyphenation;
     hyphens: $hyphenation;
-    @if $hyphenation != 'none'{
-        word-break: break-all;
-        word-break: break-word; // Webkit
-    }
 }
 
 @mixin widows($n:2) {
