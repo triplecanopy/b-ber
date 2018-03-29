@@ -13,7 +13,10 @@
   },
   "author": "Maxwell Simmer <maxwell.simmer@gmail.com> (http://maxwellsimmer.com)",
   "license": "MIT",
-  "devDependencies": {},
+  "devDependencies": {
+    "jest": "^22.4.3",
+    "rimraf": "^2.6.2"
+  },
   "dependencies": {
     "@canopycanopycanopy/b-ber-lib": "^0.1.0-alpha.14",
     "@canopycanopycanopy/b-ber-logger": "^0.1.0-alpha.14",

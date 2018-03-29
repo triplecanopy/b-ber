@@ -70,8 +70,8 @@ const handler = argv => {
 
         state.reload()
         state.update('build', next[0])
-        state.update('toc', state.builds[next[0]].tocEntries)
-        state.update('spine', state.builds[next[0]].spineEntries)
+        state.update('toc', state.buildTypes[next[0]].tocEntries)
+        state.update('spine', state.buildTypes[next[0]].spineEntries)
 
 
         if (next[0] === 'mobi') next.unshift('mobiCSS') // TODO: this should be called by `mobi` task

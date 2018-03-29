@@ -18,5 +18,8 @@
   },
   "author": "Maxwell Simmer <maxwell.simmer@gmail.com> (http://maxwellsimmer.com)",
   "license": "MIT",
-  "devDependencies": {}
+  "devDependencies": {
+    "jest": "^22.4.3",
+    "rimraf": "^2.6.2"
+  }
 }

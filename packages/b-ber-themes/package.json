@@ -11,5 +11,9 @@
   "dependencies": {
     "highlight.js": "^9.12.0",
     "modularscale-sass": "^3.0.3"
+  },
+  "devDependencies": {
+    "jest": "^22.4.3",
+    "rimraf": "^2.6.2"
   }
 }

@@ -1,7 +1,3 @@
-'use strict'
-
-// npm run -s mocha:single -- ./src/bber-lib/__tests__/async.js
-
 /* eslint-disable no-unused-expressions */
 
 const chai = require('chai')

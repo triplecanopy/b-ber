@@ -25,8 +25,8 @@ const sequence = ['clean', 'container', 'sass', 'copy', 'scripts', 'render', 'lo
 const initialize = () =>
     new Promise(resolve => {
         state.update('build', 'epub') // set the proper build vars
-        state.update('toc', state.builds.epub.tocEntries)
-        state.update('spine', state.builds.epub.spineEntries)
+        state.update('toc', state.buildTypes.epub.tocEntries)
+        state.update('spine', state.buildTypes.epub.spineEntries)
 
         return serialize(sequence, tasks).then(() => {
             resolve(state.spine.map(n => n.fileName))

@@ -74,10 +74,10 @@ const forOf = (collection, iterator) =>
  * @return {String}
  */
 // const src = () => {
-//     if (!state.builds[state.build] || !state.builds[state.build].src) {
+//     if (!state.buildTypes[state.build] || !state.buildTypes[state.build].src) {
 //         state.update('build', 'epub')
 //     }
-//     return path.join(cwd, state.builds[state.build].src)
+//     return path.join(cwd, state.buildTypes[state.build].src)
 // }
 
 /**
@@ -86,10 +86,10 @@ const forOf = (collection, iterator) =>
  */
 
 // const dist = () => {
-//     if (!state.builds[state.build] || !state.builds[state.build].dist) {
+//     if (!state.buildTypes[state.build] || !state.buildTypes[state.build].dist) {
 //         state.update('build', 'epub')
 //     }
-//     return path.join(cwd, state.builds[state.build].dist)
+//     return path.join(cwd, state.buildTypes[state.build].dist)
 // }
 
 // const build = () => state.build

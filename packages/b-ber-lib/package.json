@@ -4,17 +4,22 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "prepare.dist": "BABEL_ENV=production ../../node_modules/.bin/babel -d ./ src/ --ignore **/__tests__/**",
+    "prepare.dist": "BABEL_ENV=production ../../node_modules/.bin/babel -d ./ src/ --ignore test/",
     "clean": "rimraf utils && rimraf *.js",
     "prepare": "yarn clean && yarn prepare.dist",
     "build": "yarn prepare",
-    "watch": "BABEL_ENV=production ../../node_modules/.bin/babel -d ./ src/ --watch src --watch index.js",
+    "watch": "BABEL_ENV=production ../../node_modules/.bin/babel -d ./ src/ --watch src --watch index.js --ignore test/",
     "start": "./node_modules/.bin/babel-node ./src/index.js --presets es2015,stage-0",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "yarn jest --verbose"
   },
   "author": "Maxwell Simmer <maxwell.simmer@gmail.com> (http://maxwellsimmer.com)",
   "license": "MIT",
-  "devDependencies": {},
+  "devDependencies": {
+    "jest": "^22.4.3",
+    "mock-fs": "^4.4.2",
+    "rimraf": "^2.6.2",
+    "vinyl": "^2.1.0"
+  },
   "dependencies": {
     "@canopycanopycanopy/b-ber-logger": "^0.1.0-alpha.14",
     "@canopycanopycanopy/b-ber-shapes": "^0.1.0-alpha.14",

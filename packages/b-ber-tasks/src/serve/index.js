@@ -15,8 +15,8 @@ let files = []
 const restart = _ =>
     new Promise(resolve => {
         state.update('build', 'web') // set the proper build vars
-        state.update('toc', state.builds.web.tocEntries)
-        state.update('spine', state.builds.web.spineEntries)
+        state.update('toc', state.buildTypes.web.tocEntries)
+        state.update('spine', state.buildTypes.web.spineEntries)
         state.update('config.baseurl', '/')
 
         return serialize(SEQUENCE, tasks).then(resolve)

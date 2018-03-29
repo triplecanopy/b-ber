@@ -166,7 +166,7 @@ class Navigation {
     compareXhtmlWithYaml({filesFromSystem, fileObjects}) {
         return new Promise(resolve => { // eslint-disable-line consistent-return
             const {spine} = state // current build process's spine
-            const {spineList} = state.builds[this.build] // spine items pulled in from type.yml file
+            const {spineList} = state.buildTypes[this.build] // spine items pulled in from type.yml file
             const flow = uniq(spine.map(a => a.generated ? null : a.fileName).filter(Boolean)) // one-dimensional flow of the book used for the spine, omitting figures pages
             const pages = flattenSpineFromYAML(spineList)
 

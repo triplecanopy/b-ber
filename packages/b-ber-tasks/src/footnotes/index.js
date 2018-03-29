@@ -52,7 +52,7 @@ class Footnotes {
                 path: '.tmp',
                 layout: 'page',
                 contents: new Buffer(notes),
-            }), {page}).contents.toString()
+            }), {page: Xhtml.document()}).contents.toString()
 
             fs.writeFile(this.file.path, markup, 'utf8', err => {
                 if (err) throw err

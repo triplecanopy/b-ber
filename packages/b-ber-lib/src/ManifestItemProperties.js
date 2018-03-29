@@ -56,11 +56,7 @@ class ManifestItemProperties {
             return tail.match(/<script/)
         }
 
-
-        const fpath = file.absolutePath
-        const contents = fs.readFileSync(fpath, 'utf8')
-
-
+        const contents = fs.readFileSync(file.absolutePath, 'utf8')
         return Boolean(contents.match(/<script/))
     }
 
@@ -71,8 +67,7 @@ class ManifestItemProperties {
      */
     static isSVG(file) {
         if (!ManifestItemProperties.isHTML(file)) return false
-        const fpath = file.absolutePath
-        const contents = fs.readFileSync(fpath, 'utf8')
+        const contents = fs.readFileSync(file.absolutePath, 'utf8')
         return Boolean(contents.match(/<svg/))
     }
 

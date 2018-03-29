@@ -4,12 +4,12 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "prepare.dist": "BABEL_ENV=production ../../node_modules/.bin/babel -d dist/ src/ --ignore **/__tests__/**,src/web/search.js,src/web/worker.js,src/web/navigation.js,src/serve/server.js && yarn copy",
+    "prepare.dist": "BABEL_ENV=production ../../node_modules/.bin/babel -d dist/ src/ --ignore test,src/web/search.js,src/web/worker.js,src/web/navigation.js,src/serve/server.js && yarn copy",
     "copy": "./copy.sh",
     "clean": "rimraf dist",
     "prepare": "yarn clean && yarn prepare.dist",
     "build": "yarn prepare",
-    "watch": "BABEL_ENV=production ../../node_modules/.bin/babel -d dist/ src/ --watch src --ignore **/__tests__/**,src/web/search.js,src/web/worker.js,src/web/navigation.js,src/serve/server.js",
+    "watch": "BABEL_ENV=production ../../node_modules/.bin/babel -d dist/ src/ --watch src --ignore test,src/web/search.js,src/web/worker.js,src/web/navigation.js,src/serve/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Maxwell Simmer <maxwell.simmer@gmail.com> (http://maxwellsimmer.com)",
@@ -39,5 +39,9 @@
     "serve-index": "^1.9.1",
     "vinyl": "^2.1.0",
     "yargs": "^11.0.0"
+  },
+  "devDependencies": {
+    "jest": "^22.4.3",
+    "rimraf": "^2.6.2"
   }
 }

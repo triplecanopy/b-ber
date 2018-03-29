@@ -3,7 +3,7 @@
 // npm run -s mocha:single -- ./src/bber-plugins/markdown/directives/__tests__/directives.js
 // ./node_modules/.bin/mocha -R spec --compilers js:./node_modules/babel-register ./src/bber-plugins/markdown/directives/__tests__/directives.js
 
-/* eslint-disable no-unused-vars, no-multi-spaces, import/newline-after-import, max-len */
+/* eslint-disable */
 
 const fs = require('fs-extra')
 const path = require('path')
@@ -350,7 +350,7 @@ describe('md:directive', () => {
                                 directiveToken.example.basic.md += `\n::: exit:${id}`
                                 directiveToken.example.basic.html = md.parser.render(directiveToken.example.basic.md) + '</section>'
 
-                                state.reset() // reset id
+                                state.init() // reset id
 
                                 // add variant
                                 directiveOutputVariant = directiveString
@@ -368,7 +368,7 @@ describe('md:directive', () => {
                             }
 
                             // clear the state to prepare for attr testing
-                            state.reset()
+                            state.init()
                         }
 
                     })
@@ -487,7 +487,7 @@ describe('md:directive', () => {
         // })
 
         // it('Should render a dialogue directive', () => {
-        //     state.reset()
+        //     state.init()
         //     md.load(pluginDialogue)
         //     const di = DIRECTIVE_ATTRIBUTES.misc.dialogue
         //     const requiredAttrs = di.required
@@ -515,7 +515,7 @@ describe('md:directive', () => {
     describe(':image', () => {
         beforeEach(() => {
             md.load(pluginImage)
-            state.reset()
+            state.init()
         })
 
         it('Logs an error if an image does not exist')//, () => {
