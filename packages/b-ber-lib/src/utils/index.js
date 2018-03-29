@@ -296,6 +296,8 @@ const encodeQueryString = url => {
     return url_
 }
 
+const trimSlashes = url => url.replace(/(^\/+|\/+$)/, '')
+
 export {
     opsPath,
     fileId,
@@ -323,4 +325,5 @@ export {
     getTitleOrName,
     ensureDecoded,
     encodeQueryString,
+    trimSlashes,
 }

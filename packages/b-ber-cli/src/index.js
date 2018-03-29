@@ -8,7 +8,7 @@
 import yargs from 'yargs'
 import log from '@canopycanopycanopy/b-ber-logger'
 import state from '@canopycanopycanopy/b-ber-lib/State'
-import {sequences} from '@canopycanopycanopy/b-ber-shapes/sequences'
+import sequences from '@canopycanopycanopy/b-ber-shapes/sequences'
 import * as commands from './cmd'
 
 /**
@@ -68,10 +68,11 @@ const init = () => {
 
         if (cmd === 'build') {
 
-            const {epub, mobi, pdf, web, sample} = yargs.argv
-            commanders = [epub, mobi, pdf, web, sample].filter(Boolean).length === 0
-                ? {epub: true, mobi: true, pdf: true, web: true, sample: true} // build all by default
-                : {epub, mobi, pdf, web, sample}
+            const {epub, mobi, pdf, web, sample, reader} = yargs.argv
+            commanders = [epub, mobi, pdf, web, sample, reader].filter(Boolean).length === 0
+                ? {epub: true, mobi: true, pdf: true, web: true, sample: true, reader: true} // build all by default
+                : {epub, mobi, pdf, web, sample, reader}
+
 
             Object.entries(commanders).forEach(([k, v]) => {
                 if (v) cmdSequence.push(...sequences[k])
@@ -88,9 +89,6 @@ const init = () => {
 
     yargs
         .fail((msg, err, yargs) => {
-
-            // TODO: log.error()
-
             console.log(msg)
             showCustomHelp()
             console.log(err.stack)
@@ -101,7 +99,6 @@ const init = () => {
         .command(commands.clean)
         .command(commands.copy)
         .command(commands.container)
-        // .command(commands.editor)
         .command(commands.generate)
         .command(commands.init)
         .command(commands.inject)
@@ -112,7 +109,6 @@ const init = () => {
         .command(commands.render)
         .command(commands.scripts)
         .command(commands.sass)
-        // .command(commands.site)
         .command(commands.theme)
         .command(commands.serve)
         .command(commands.xml)
@@ -132,7 +128,6 @@ const init = () => {
         .demandCommand()
         .wrap(70)
         .argv
-
 
 }
 

@@ -1,5 +1,3 @@
-/* eslint-disable import/prefer-default-export */
-
 const build = [
     'clean',
     'container',
@@ -37,7 +35,11 @@ const sequences = {
         ...build,
         'sample',
     ],
+    reader: [
+        ...build,
+        'reader',
+    ],
 }
 
 
-export {sequences}
+export default sequences

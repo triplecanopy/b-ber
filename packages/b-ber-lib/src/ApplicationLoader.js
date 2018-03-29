@@ -21,11 +21,13 @@ class ApplicationLoader {
             theme: 'b-ber-theme-serif',
             themes_directory: './themes',
             baseurl: '/',
+            remote_url: '/',
             autoprefixer_options: {
                 browsers: ['last 2 versions', '> 2%'],
                 flexbox: 'no-2009',
             },
         },
+
         metadata: [],
         video: [],
         audio: [],
@@ -126,6 +128,7 @@ class ApplicationLoader {
             mobi: this.__loadFromFileOrDefaultSettings('mobi'),
             pdf: this.__loadFromFileOrDefaultSettings('pdf'),
             web: this.__loadFromFileOrDefaultSettings('web'),
+            reader: this.__loadFromFileOrDefaultSettings('reader'),
         }
     }
 

@@ -3,7 +3,7 @@ import util from 'util'
 function printNotices(type, task = 'b-ber') {
     const prop = task ? `task${type[0].toUpperCase()}${type.slice(1)}` : type
     const notices = this[type].slice(this[prop] * -1)
-    const leader = type === 'warnings' ? 'WARN' : 'ERROR'
+    const leader = type === 'warnings' ? 'warn' : 'err'
     const header = util.format.apply(util, ['[%s] emitted [%d] %s', task, notices.length, type])
     const color = 'black'
     // const color = type === 'warnings' ? 'yellow' : 'red'

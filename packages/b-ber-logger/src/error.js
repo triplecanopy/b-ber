@@ -23,9 +23,9 @@ export function error() {
 
     let prefix = ''
 
-    prefix += this.decorate('b-ber', 'white', 'bgBlack')
+    prefix += this.decorate('b-ber', 'whiteBright', 'bgBlack')
     prefix += ' '
-    prefix += this.decorate('warn', 'white', 'bgRed')
+    prefix += this.decorate('error', 'whiteBright', 'bgRed')
     // prefix += ' '
     // prefix += counter
     prefix += ' '

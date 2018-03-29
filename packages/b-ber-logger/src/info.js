@@ -13,7 +13,7 @@ export function info(...args) {
     //     this.incrementIndent()
     // }
 
-    prefix += this.decorate('b-ber', 'white', 'bgBlack')
+    prefix += this.decorate('b-ber', 'whiteBright', 'bgBlack')
     prefix += ' '
     prefix += this.decorate('info', 'green')
     // prefix += ' '

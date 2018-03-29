@@ -16,7 +16,7 @@ export function bind() {
         console.log(
             '%s%s %s Starting',
             this.indent(),
-            this.decorate('b-ber', 'white', 'bgBlack'),
+            this.decorate('b-ber', 'whiteBright', 'bgBlack'),
             this.decorate('info', 'green'),
             // this.counter(),
             this.decorate(task, 'magenta')
@@ -25,7 +25,7 @@ export function bind() {
         // console.log(
         //     '%s%s %s %s Starting',
         //     this.indent(),
-        //     this.decorate('b-ber', 'white', 'bgBlack'),
+        //     this.decorate('b-ber', 'whiteBright', 'bgBlack'),
         //     this.decorate('info', 'green'),
         //     this.counter(),
         //     this.decorate(task, 'magenta')
@@ -46,7 +46,7 @@ export function bind() {
         console.log(
             '%s%s %s Finished',
             this.indent(),
-            this.decorate('b-ber', 'white', 'bgBlack'),
+            this.decorate('b-ber', 'whiteBright', 'bgBlack'),
             this.decorate('info', 'green'),
             // this.counter(),
             this.decorate(task, 'green'),
@@ -57,7 +57,7 @@ export function bind() {
         // console.log(
         //     '%s%s %s %s Finished',
         //     this.indent(),
-        //     this.decorate('b-ber', 'white', 'bgBlack'),
+        //     this.decorate('b-ber', 'whiteBright', 'bgBlack'),
         //     this.decorate('info', 'green'),
         //     this.counter(),
         //     this.decorate(task, 'green'),

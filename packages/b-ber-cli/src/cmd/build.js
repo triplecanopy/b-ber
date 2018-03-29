@@ -2,7 +2,7 @@ import {pick, pickBy, identity, keys} from 'lodash'
 import * as allTasks from '@canopycanopycanopy/b-ber-tasks'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 
-const _buildCommands = ['epub', 'mobi', 'pdf', 'web', 'sample']
+const _buildCommands = ['epub', 'mobi', 'pdf', 'web', 'sample', 'reader']
 const _buildArgs = args => keys(pickBy(pick(args, _buildCommands), identity))
 
 const command = ['build [options...]', 'b']
@@ -43,6 +43,12 @@ const builder = yargs =>
             s: {
                 alias: 'sample',
                 describe: 'Create a sample ePub',
+                default: false,
+                type: 'boolean',
+            },
+            r: {
+                alias: 'reader',
+                describe: 'Build for the b-ber-reader format',
                 default: false,
                 type: 'boolean',
             },

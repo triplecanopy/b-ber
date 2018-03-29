@@ -16,7 +16,7 @@ export function warn(...args) {
 
     let prefix = ''
 
-    prefix += this.decorate('b-ber', 'white', 'bgBlack')
+    prefix += this.decorate('b-ber', 'whiteBright', 'bgBlack')
     prefix += ' '
     prefix += this.decorate('warn', 'black', 'bgYellowBright')
     // prefix += ' '
