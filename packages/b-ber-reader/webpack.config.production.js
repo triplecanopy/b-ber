@@ -62,9 +62,9 @@ module.exports = {
             },
         }),
 
-        new BundleAnalyzerPlugin({
-            openAnalyzer: true,
-        }),
+        // new BundleAnalyzerPlugin({
+        //     openAnalyzer: true,
+        // }),
 
         new webpack.NoEmitOnErrorsPlugin(),
 
