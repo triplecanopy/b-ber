@@ -4,60 +4,66 @@ import log from '@canopycanopycanopy/b-ber-logger'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import * as tasks from '../'
 
-const PORT = 8080
+const PORT = 3000
 const DEBOUNCE_SPEED = 400
-const SEQUENCE = ['clean', 'container', 'sass', 'copy', 'scripts', 'render', 'loi', 'footnotes', 'inject', 'opf', 'web']
+const SEQUENCE = ['clean', 'container', 'sass', 'copy', 'scripts', 'render', 'loi', 'footnotes', 'inject', 'opf']
 
 let timer
 let files = []
 
-const restart = _ =>
-    new Promise(resolve => {
-        state.update('build', 'web') // set the proper build vars
-        state.update('toc', state.buildTypes.web.tocEntries)
-        state.update('spine', state.buildTypes.web.spineEntries)
-        state.update('config.baseurl', '/')
+const createSequence = build => [...SEQUENCE, build]
 
-        return tasks.async.serialize(SEQUENCE, tasks).then(resolve)
+const restart = build => new Promise(resolve => {
+    state.update('build', build)
+    state.update('toc', state.buildTypes[build].tocEntries)
+    state.update('spine', state.buildTypes[build].spineEntries)
+    state.update('config.baseurl', '/')
+    state.update('config.remote_url', `http://localhost:${PORT}`)
+
+    return tasks.async.serialize(createSequence(build), tasks).then(resolve)
+})
+
+
+const registerObserver = build => new Promise(resolve =>
+    nodemon({
+        script: path.join(__dirname, `server-${build}.js`),
+        ext: 'md js scss',
+        env: {
+            NODE_ENV: JSON.stringify('development'),
+        },
+        ignore: [
+            'node_modules',
+            'dist',
+        ],
+        watch: [
+            state.src,
+        ],
+        args: [
+            '--use_socket_server',
+            '--use_hot_reloader',
+            `--port ${PORT}`,
+            `--dir ${state.dist}`,
+        ],
     })
+        .once('start', resolve)
+        .on('restart', file => {
+            clearTimeout(timer)
+            files.push(file)
+            timer = setTimeout(_ => {
+                log.info(`Restarting server due to changes`)
+                log.info(`${files.join('\n')}`)
 
-
-const serve = _ =>
-    new Promise(resolve => {
-        restart().then(_ =>
-            nodemon({
-                script: path.join(__dirname, 'server.js'),
-                ext: 'md js scss',
-                env: {NODE_ENV: 'development'},
-                ignore: ['node_modules', 'lib'],
-                watch: [
-                    state.src,
-                    path.resolve(__dirname, '..', '..', '..'),
-                ],
-                args: [
-                    '--use_socket_server',
-                    '--use_hot_reloader',
-                    `--port ${PORT}`,
-                    `--dir ${state.dist}`,
-                ],
-            })
-                .once('start', resolve)
-                .on('restart', file => {
-                    clearTimeout(timer)
-                    files.push(file)
-                    timer = setTimeout(_ => {
-                        log.info(`Restarting server due to changes:\n${files.join('\n')}`)
-                        restart().then(_ => files = [])
-                    }, DEBOUNCE_SPEED)
-                }))
-
-        process.once('SIGTERM', _ => {
-            process.exit(0)
+                files = []
+                restart(build)
+            }, DEBOUNCE_SPEED)
         })
-        process.once('SIGINT', _ => {
-            process.exit(0)
-        })
+)
 
-    })
+const serve = ({build}) => {
+    restart(build).then(_ => registerObserver(build))
+
+    process.once('SIGTERM', _ => process.exit(0))
+    process.once('SIGINT', _ => process.exit(0))
+}
 
 export default serve

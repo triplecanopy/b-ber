@@ -1,16 +1,7 @@
-const express = require('express')
-const serveIndex = require('serve-index')
-const path = require('path')
-
-const parseArgs = args => {
-    const result = {}
-    let args_
-
-    args_ = args.slice(2)
-    args_ = args_.map(a => a.split(/^--(\w+)\s/).filter(Boolean))
-    args_.forEach(a => result[a[0]] = a[1] || true)
-    return result
-}
+import path from 'path'
+import express from 'express'
+import serveIndex from 'serve-index'
+import {parseArgs} from './helpers'
 
 const argv = parseArgs(process.argv)
 const {port, dir} = argv

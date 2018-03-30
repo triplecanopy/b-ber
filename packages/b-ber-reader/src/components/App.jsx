@@ -49,9 +49,9 @@ class App extends Component {
             this.goToBookURL(location)
         })
     }
-    handleClick({name, url}) { // eslint-disable-line class-methods-use-this
+    handleClick({title, url}) { // eslint-disable-line class-methods-use-this
         const bookURL = url
-        history.push(Url.slug(name), {bookURL})
+        history.push(Url.slug(title), {bookURL})
     }
     render() {
         const {books, bookURL} = this.state

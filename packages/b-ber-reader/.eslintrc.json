@@ -34,7 +34,7 @@
     "react/prefer-stateless-function": 0,
     "react/require-extension": "off",
     "react/jsx-indent": 0,
-    "react/jsx-indent-props": [2, 2],
+    "react/jsx-indent-props": [2, 4],
     "brace-style": [2, "stroustrup", {
       "allowSingleLine": true
     }],
