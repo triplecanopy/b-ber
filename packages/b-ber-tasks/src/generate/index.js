@@ -118,7 +118,7 @@ class Generate {
      */
     writePageMeta({fname}) {
         return new Promise(resolve => { // eslint-disable-line consistent-return
-            const buildTypes = ['epub', 'mobi', 'web', 'sample']
+            const buildTypes = ['epub', 'mobi', 'web', 'sample', 'reader']
             let type
             while ((type = buildTypes.pop())) {
                 const pages = path.join(state.src, `${type}.yml`)

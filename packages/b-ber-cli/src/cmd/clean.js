@@ -25,7 +25,7 @@ const builder = yargs =>
         .config({
             bber: {
                 // default directories to remove
-                defaults: ['epub', 'mobi', 'pdf', 'sample', 'web'],
+                defaults: ['epub', 'mobi', 'pdf', 'sample', 'web', 'reader'],
             },
         })
 
