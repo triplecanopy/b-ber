@@ -1,6 +1,7 @@
 {
   "name": "@canopycanopycanopy/b-ber-tasks",
   "version": "0.1.0-alpha.14",
+  "private": true,
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -13,7 +14,10 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Maxwell Simmer <maxwell.simmer@gmail.com> (http://maxwellsimmer.com)",
-  "license": "MIT",
+  "license": "GNU GPLv3",
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "@canopycanopycanopy/b-ber-grammar": "^0.1.0-alpha.14",
     "@canopycanopycanopy/b-ber-lib": "^0.1.0-alpha.14",

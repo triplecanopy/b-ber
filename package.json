@@ -1,8 +1,8 @@
 {
     "name": "@canopycanopycanopy/b-ber",
     "version": "0.1.0-alpha.14",
-    "license": "MIT",
     "private": true,
+    "license": "GNU GPLv3",
     "engines": {
         "node": ">= 4.x <= 8.x",
         "npm": ">= 2.x <= 5.x",

@@ -1,11 +1,15 @@
 {
   "name": "b-ber-theme-sans",
   "version": "0.1.0-alpha.14",
+  "private": true,
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Maxwell Simmer <maxwell.simmer@gmail.com> (http://maxwellsimmer.com)",
-  "license": "MIT"
+  "license": "GNU GPLv3",
+  "publishConfig": {
+    "access": "public"
+  }
 }

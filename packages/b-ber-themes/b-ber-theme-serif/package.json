@@ -1,11 +1,14 @@
 {
   "name": "b-ber-theme-serif",
   "version": "0.1.0-alpha.14",
+  "private": true,
   "main": "index.js",
-  "license": "MIT",
+  "author": "Maxwell Simmer <maxwell.simmer@gmail.com> (http://maxwellsimmer.com)",
+  "license": "GNU GPLv3",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "start": "sass -l --trace --watch application.scss:demo/application.css"
-  },
-  "author": "Maxwell Simmer <maxwell.simmer@gmail.com> (http://maxwellsimmer.com)",
-  "dependencies": {}
+  }
 }
