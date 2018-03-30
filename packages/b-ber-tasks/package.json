@@ -1,6 +1,6 @@
 {
   "name": "@canopycanopycanopy/b-ber-tasks",
-  "version": "0.1.0-alpha.14",
+  "version": "0.1.0-alpha.15",
   "private": true,
   "description": "",
   "main": "dist/index.js",
@@ -19,12 +19,12 @@
     "access": "public"
   },
   "dependencies": {
-    "@canopycanopycanopy/b-ber-grammar": "^0.1.0-alpha.14",
-    "@canopycanopycanopy/b-ber-lib": "^0.1.0-alpha.14",
-    "@canopycanopycanopy/b-ber-logger": "^0.1.0-alpha.14",
-    "@canopycanopycanopy/b-ber-reader": "^0.1.0-alpha.14",
-    "@canopycanopycanopy/b-ber-resources": "^0.1.0-alpha.14",
-    "@canopycanopycanopy/b-ber-templates": "^0.1.0-alpha.14",
+    "@canopycanopycanopy/b-ber-grammar": "^0.1.0-alpha.15",
+    "@canopycanopycanopy/b-ber-lib": "^0.1.0-alpha.15",
+    "@canopycanopycanopy/b-ber-logger": "^0.1.0-alpha.15",
+    "@canopycanopycanopy/b-ber-reader": "^0.1.0-alpha.15",
+    "@canopycanopycanopy/b-ber-resources": "^0.1.0-alpha.15",
+    "@canopycanopycanopy/b-ber-templates": "^0.1.0-alpha.15",
     "autoprefixer": "^8.2.0",
     "cheerio": "^1.0.0-rc.2",
     "decompress": "^4.2.0",
