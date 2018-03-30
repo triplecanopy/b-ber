@@ -139,7 +139,7 @@ export default {
 
             const figureId = htmlId(id)
             const attrString = attributesString(attrsObject)
-            const webOnlyAttrString = state.build === 'web' ? ' webkit-playsinline="webkit-playsinline" playsinline="playsinline"' : ''
+            const webOnlyAttrString = state.build === 'web' || state.build === 'reader' ? ' webkit-playsinline="webkit-playsinline" playsinline="playsinline"' : ''
             const commentStart = htmlComment(`START: ${mediaType}:${type}#${figureId};`)
             const commentEnd = htmlComment(`END: ${mediaType}:${type}#${figureId};`)
             const page = `figure-${figureId}.xhtml`

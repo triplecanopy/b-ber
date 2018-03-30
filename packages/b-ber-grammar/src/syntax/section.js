@@ -36,7 +36,7 @@ const render = ({context = {}}) => (tokens, idx) => {
             // checking the attr types and the calls to open/close in a more
             // transparent way. refactoring candidate.
 
-            if (directive && directive.type === 'gallery' && state.build === 'web') {
+            if (directive && directive.type === 'gallery' && (state.build === 'web' || state.build === 'reader')) {
                 state.remove('cursor', {id})
                 result = `
                             </div>
