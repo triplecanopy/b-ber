@@ -1,4 +1,6 @@
-# `b-ber`
+<h1 align="center">
+    <img alt="b-ber" src="https://user-images.githubusercontent.com/4243474/38133122-2af4f794-340e-11e8-8ac9-9b46afecfd9b.png" width="450">
+</h1>
 
 [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lernajs.io/)
 [![npm Version](https://badge.fury.io/js/b-ber.svg)](https://badge.fury.io/js/b-ber)
@@ -9,7 +11,7 @@
 
 The `b-ber` repository is a monorepo that is managed with [Lerna](https://lernajs.io/). This means that a number of `b-ber` packages are published to `npm` from the same codebase.
 
-## Installation
+## Installation 
 
 Clone the repo and install dependencies.
 
@@ -19,23 +21,54 @@ If [`lerna`](https://github.com/lerna/lerna/) isn't already installed:
 $ npm i -g lerna
 ```
 
-Then [install `yarn`](https://yarnpkg.com/en/docs/install/) according to documentation. (Note: using `npm` is discouraged.)
+Then [install `yarn`](https://yarnpkg.com/en/docs/install/) according to documentation.  Note that using `npm` to install `yarn` is discouraged.
 
-Then, in the `b-ber` repo
+Run the following n the `b-ber` repo
 
 ```console
 $ yarn
 $ lerna bootstrap
 ```
 
-Once that's done, create a global symlink to `b-ber-create`
+### Running a Development version of `b-ber`
+
+Create a symlink to `b-ber-create` either using `npm`, or by manually creating a symlink in the `.profile`
+
+#### `npm` Method
+
+This method will create a symlink in the global `node_modules` directory to the compiled code. Updates to the codebase will require re-linking the `b-ber` module.
+
+Build the application from the `b-ber` repo
 
 ```console
-$ cd packages/b-ber-create
-$ npm link
+$ lerna run build
 ```
 
-The `bber` command is now available!
+Link the package
+
+```console
+$ cd packages/b-ber-cli
+$ npm link bber
+```
+
+To re-link the module after changes, rebuild `b-ber` and run 
+
+```console
+$ npm rm -g bber
+```
+
+Then repeat the linking steps above.
+
+#### `.profile` Method
+
+Update the command below for your preferred profile file (`.profile`, `.bash_profile`, `.zshrc`, etc.). Protip: use an alias other than `bber` so that you know which module you're using in the future.
+
+```console
+$ echo "alias _bber=$(pwd)/packages/b-ber-cli/dist/index.js" >> ~/.profile
+$ source ~/.profile
+```
+
+`b-ber` should now be globally available
 
 ```console
 $ bber
@@ -47,14 +80,29 @@ $ bber
 
 ```
 
-## Updates
+## Develop
 
-After pulling changes from the `b-ber` repo, you'll need to re-`npm link` the `b-ber-create` repo.
+Watch tasks are available in each of the package directories to use during development.
 
 ```console
-$ npm rm -g bber
-$ cd /path/to/b-ber-create/
-$ npm link
+$ cd packages/b-ber-package
+$ yarn watch
+```
+
+Or watch all packages using `lerna` from the `b-ber` repo
+
+```console
+$ lerna run watch --no-sort --stream
+```
+
+More information about using `lerna` commands can be found [here](https://github.com/lerna/lerna/).
+
+## Test
+
+Run tests either in individual packages, or in all packages from the `b-ber` repo root using [`jest`](https://facebook.github.io/jest/).
+
+```console
+$ yarn jest
 ```
 
 ## Documentation
