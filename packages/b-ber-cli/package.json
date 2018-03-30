@@ -1,6 +1,7 @@
 {
   "name": "@canopycanopycanopy/b-ber-cli",
   "version": "0.1.0-alpha.14",
+  "private": true,
   "description": "",
   "main": "src/index.js",
   "bin": "dist/index.js",
@@ -14,7 +15,10 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Maxwell Simmer <maxwell.simmer@gmail.com> (http://maxwellsimmer.com)",
-  "license": "MIT",
+  "license": "GNU GPLv3",
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "@canopycanopycanopy/b-ber-lib": "^0.1.0-alpha.14",
     "@canopycanopycanopy/b-ber-logger": "^0.1.0-alpha.14",

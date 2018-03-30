@@ -1,6 +1,7 @@
 {
   "name": "@canopycanopycanopy/b-ber-reader",
   "version": "0.1.0-alpha.14",
+  "private": true,
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -18,7 +19,10 @@
     "test": "yarn test.lint && yarn test.jest"
   },
   "author": "Maxwell Simmer <maxwell.simmer@gmail.com> (http://maxwellsimmer.com)",
-  "license": "MIT",
+  "license": "GNU GPLv3",
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",

@@ -1,6 +1,7 @@
 {
   "name": "@canopycanopycanopy/b-ber-create",
   "version": "0.1.0-alpha.14",
+  "private": true,
   "description": "A command line epub maker.",
   "main": "./src/bber-cli/index.es6",
   "scripts": {
@@ -25,7 +26,10 @@
     "url": "git+https://github.com/triplecanopy/b-ber-creator.git"
   },
   "author": "Maxwell Simmer",
-  "license": "MIT",
+  "license": "GNU GPLv3",
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "@canopycanopycanopy/b-ber-logger": "0.1.0-alpha.14",
     "@canopycanopycanopy/b-ber-shapes": "0.1.0-alpha.14",
