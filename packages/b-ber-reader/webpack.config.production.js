@@ -5,7 +5,7 @@ const loaders = require('./webpack.loaders')
 
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
-const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer')
+// const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer')
 
 module.exports = {
     target: 'web',
@@ -27,23 +27,13 @@ module.exports = {
         },
 
         {
-            test: /\.sss/,
+            test: /\.sss$/,
             exclude: /(node_modules|public|dist|test)/,
             use: ExtractTextPlugin.extract({
                 fallback: 'style-loader',
                 use: [
                     {loader: 'css-loader'},
-                    {
-                        loader: 'postcss-loader',
-                        options: {
-                            sourceMap: false,
-                            parser: 'sugarss',
-                            plugins: _ => [
-                                require('autoprefixer')({}),
-                                require('cssnano')({preset: 'default'}),
-                            ],
-                        },
-                    },
+                    {loader: 'postcss-loader'},
                 ],
             }),
 

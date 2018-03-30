@@ -78,10 +78,12 @@ class Reader {
     }
     copyEpubToOutputDir() {
         const promises = []
+        const title = this.getBookMetadata('title')
+        const epubDir = trimSlashes(kebabCase(title))
         return new Promise(resolve => {
             this.epubAssets.forEach(item =>
                 promises.push(
-                    fs.move(path.join(this.dist, item), path.join(this.outputDir, item))
+                    fs.move(path.join(this.dist, item), path.join(this.outputDir, epubDir, item))
                 )
             )
 

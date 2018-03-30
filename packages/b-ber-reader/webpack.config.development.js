@@ -27,7 +27,7 @@ module.exports = {
         },
 
         {
-            test: /\.sss/,
+            test: /\.sss$/,
             exclude: /(node_modules|public|dist|test)/,
             use: ExtractTextPlugin.extract({
                 fallback: 'style-loader',

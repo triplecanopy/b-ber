@@ -10,6 +10,7 @@
     "webpack.dist": "yarn clean && NODE_ENV=production webpack --mode production --config webpack.config.production.js --progress --profile --colors",
     "start": "./node_modules/.bin/concurrently \"yarn webpack.src\" \"nodemon server.js\"",
     "clean": "rimraf dist && rimraf public",
+    "watch": "yarn clean && NODE_ENV=production webpack --mode production -w --config webpack.config.production.js",
     "build": "yarn webpack.dist",
     "serve": "nodemon server.js",
     "test.lint": "./node_modules/.bin/eslint -c .eslintrc.json './src/**/*.js'",

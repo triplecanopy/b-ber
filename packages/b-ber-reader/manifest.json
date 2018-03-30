@@ -1,13 +1,13 @@
 [{
-    "name": "Think of the Lemur",
+    "title": "Think of the Lemur",
     "url": "http://localhost:3000/epub/tc--totl-crimson/",
     "cover": "http://localhost:3000/epub/tc--totl-crimson/OPS/images/think-of-the-lemur-cover.jpg"
 }, {
-    "name": "All Directives Demo",
+    "title": "All Directives Demo",
     "url": "http://localhost:3000/epub/tc--all-directives/",
     "cover": "http://localhost:3000/epub/tc--all-directives/OPS/images/__bber_cover__640f5791-bef1-4c99-d8cc-801bc29cd0f9.jpg"
 }, {
-    "name": "The Amme Talks",
+    "title": "The Amme Talks",
     "url": "http://localhost:3000/epub/tc--amme/",
     "cover": "http://localhost:3000/epub/tc--amme/OPS/images/cover-noprocess.jpg"
 }]
