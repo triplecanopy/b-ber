@@ -65,7 +65,7 @@ const createLOI = () =>
 
                 state.add('loi', fileData)
 
-                log.info(`Linking figure [${data.source}] to [${data.page}]`)
+                log.info(`loi linking [${data.source}] to [${data.page}]`)
 
                 if (idx === state.figures.length - 1) {
                     // make sure we've added figures to the spine in the correct order

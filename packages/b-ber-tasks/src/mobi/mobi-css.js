@@ -35,7 +35,7 @@ const write = ({file, content}) =>
     new Promise(resolve =>
         fs.writeFile(file, content, 'utf8', err => {
             if (err) throw err
-            log.info(`Writing [${path.basename(file)}]`)
+            log.info(`mobi writing [${path.basename(file)}]`)
             resolve()
         })
     )

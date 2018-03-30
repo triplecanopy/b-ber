@@ -43,14 +43,14 @@ const createSCSSString = () =>
                 chunks.push(variableOverrides)
             }
         } catch (err) {
-            log.info('Building SCSS without user-defined overrides')
+            log.info('scss building without user-defined overrides')
         }
 
         try {
             // load theme styles
             if (fs.existsSync(themeStylesPath)) {
                 const themeStyles = fs.readFileSync(themeStylesPath)
-                log.info(`Attempting build with [${themeName}] theme`)
+                log.info(`scss attempting to build with [${themeName}] theme`)
                 chunks.push(themeStyles)
             }
         } catch (err) {
@@ -66,7 +66,7 @@ const createSCSSString = () =>
                 chunks.push(styleOverrides)
             }
         } catch (err) {
-            log.info('Building SCSS without user-defined styles')
+            log.info('scss building without user-defined styles')
         }
 
 
@@ -165,8 +165,8 @@ const renderCSS = scssString =>
 const applyPostProcessing = ({css}) =>
     new Promise(resolve =>
         postcss(autoprefixer(autoprefixerOptions))
-        .process(css)
-        .then(resolve)
+            .process(css, {from: undefined})
+            .then(resolve)
     )
 
 const writeCSSFile = css =>
@@ -180,13 +180,13 @@ const writeCSSFile = css =>
 const sass = () =>
     new Promise(resolve => {
         ensureCSSDir()
-        .then(copyThemeAssets)
-        .then(createSCSSString)
-        .then(renderCSS)
-        .then(applyPostProcessing)
-        .then(writeCSSFile)
-        .catch(err => log.error(err))
-        .then(resolve)
+            .then(copyThemeAssets)
+            .then(createSCSSString)
+            .then(renderCSS)
+            .then(applyPostProcessing)
+            .then(writeCSSFile)
+            .catch(err => log.error(err))
+            .then(resolve)
     })
 
 

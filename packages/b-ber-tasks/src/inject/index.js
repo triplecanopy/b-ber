@@ -246,7 +246,7 @@ const write = (location, data) =>
 
 const promiseToReplace = (prop, data, source, file) =>
     new Promise(async resolve => {
-        log.info(`Preparing to write [${prop}] to [${source}]`)
+        log.info(`inject ${prop} [${source}]`)
 
         const stream  = file || await getContents(source)
         const start   = startTags[prop]
@@ -270,18 +270,18 @@ const mapSources = args => {
     return new Promise(resolve => {
         htmlDocs.forEach((source, index) =>
             promiseToReplace('stylesheets', stylesheets, source)
-            .then(file => promiseToReplace('javascripts', javascripts, source, file))
-            .then(file => promiseToReplace('metadata', metadata, source, file))
-            .then(file => {
-                const contents = state.env === 'production'
-                    ? minify(file.contents.toString('utf8'), htmlMinifyOptions)
-                    : file.contents.toString('utf8')
-                write(path.join(state.dist, 'OPS', 'text', source), contents)
-            })
-            .catch(err => log.error(err))
-            .then(_ => {
-                if (index === htmlDocs.length - 1) resolve()
-            })
+                .then(file => promiseToReplace('javascripts', javascripts, source, file))
+                .then(file => promiseToReplace('metadata', metadata, source, file))
+                .then(file => {
+                    const contents = state.env === 'production'
+                        ? minify(file.contents.toString('utf8'), htmlMinifyOptions)
+                        : file.contents.toString('utf8')
+                    write(path.join(state.dist, 'OPS', 'text', source), contents)
+                })
+                .catch(err => log.error(err))
+                .then(_ => {
+                    if (index === htmlDocs.length - 1) resolve()
+                })
 
         )
     })

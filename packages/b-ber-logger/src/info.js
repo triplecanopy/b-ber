@@ -1,8 +1,10 @@
+/* eslint-disable import/prefer-default-export */
+
 export function info(...args) {
 
     if (this.logLevel < 3) return
 
-    const counter = this.counter()
+    // const counter = this.counter()
     // const context = this.getContext()
     const message = this.decorate(this.composeMessage(args), 'black')
 

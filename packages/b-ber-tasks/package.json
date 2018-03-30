@@ -18,6 +18,7 @@
     "@canopycanopycanopy/b-ber-grammar": "^0.1.0-alpha.14",
     "@canopycanopycanopy/b-ber-lib": "^0.1.0-alpha.14",
     "@canopycanopycanopy/b-ber-logger": "^0.1.0-alpha.14",
+    "@canopycanopycanopy/b-ber-reader": "^0.1.0-alpha.14",
     "@canopycanopycanopy/b-ber-resources": "^0.1.0-alpha.14",
     "@canopycanopycanopy/b-ber-templates": "^0.1.0-alpha.14",
     "autoprefixer": "^8.2.0",

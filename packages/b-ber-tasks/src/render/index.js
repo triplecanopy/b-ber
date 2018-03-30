@@ -24,7 +24,7 @@ const writeMarkupToFile = (fname, markup) =>
         return fs.writeFile(outputPath, markup, err => {
             if (err) throw err
 
-            log.info(`Wrote XHTML [${path.basename(fname)}.xhtml]`)
+            log.info(`render xhtml [${path.basename(fname)}.xhtml]`)
             resolve()
 
         })
@@ -94,7 +94,7 @@ function render() {
 
             return files.forEach(file => {
 
-                log.info(`Rendering Markdown [${path.basename(file)}]`)
+                log.info(`render markdown [${path.basename(file)}]`)
 
                 promises.push(createXTHMLFile(path.join(mdDir, file)))
 

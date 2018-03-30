@@ -24,8 +24,7 @@ const restart = _ =>
 
 const serve = _ =>
     new Promise(resolve => {
-        restart()
-        .then(_ =>
+        restart().then(_ =>
             nodemon({
                 script: path.join(__dirname, 'server.js'),
                 ext: 'md js scss',
@@ -42,16 +41,15 @@ const serve = _ =>
                     `--dir ${state.dist}`,
                 ],
             })
-            .once('start', resolve)
-            .on('restart', file => {
-                clearTimeout(timer)
-                files.push(file)
-                timer = setTimeout(_ => {
-                    log.info(`Restarting server due to changes:\n${files.join('\n')}`)
-                    restart().then(_ => files = [])
-                }, DEBOUNCE_SPEED)
-            })
-        )
+                .once('start', resolve)
+                .on('restart', file => {
+                    clearTimeout(timer)
+                    files.push(file)
+                    timer = setTimeout(_ => {
+                        log.info(`Restarting server due to changes:\n${files.join('\n')}`)
+                        restart().then(_ => files = [])
+                    }, DEBOUNCE_SPEED)
+                }))
 
         process.once('SIGTERM', _ => {
             process.exit(0)

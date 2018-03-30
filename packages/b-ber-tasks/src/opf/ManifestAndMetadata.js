@@ -103,8 +103,8 @@ class ManifestAndMetadata {
      * @return {Object<Promise|Error>}
      */
     static createManifestAndMetadataXML(resp) {
-        log.info('Building [manifest]')
-        log.info('Building [metadata]')
+        log.info('opf creating [manifest]')
+        log.info('opf creating [metadata]')
         return new Promise(resolve => {
             const _metadata = renderLayouts(new File({
                 path: '.tmp',

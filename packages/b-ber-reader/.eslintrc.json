@@ -1,13 +1,12 @@
 {
+  "extends": "airbnb",
   "parser": "babel-eslint",
-  "extends": ["airbnb"],
-  "presets": ["es2015", "stage-0"],
-  "ecmaFeatures": { "classes": true },
   "plugins": [
     "babel",
     "import"
   ],
   "rules": {
+    "function-paren-newline": 0,
     "padded-blocks": 0,
     "no-multi-spaces": 0,
     "no-shadow": 0,
@@ -19,20 +18,38 @@
     "no-multiple-empty-lines": 0,
     "no-return-assign": 0,
     "no-unused-vars": [2, { "argsIgnorePattern": "^_$" }],
+    "no-useless-constructor": 0,
+    "jsx-a11y/label-has-for": [2, {
+      "allowChildren": false,
+      "required": {
+        "some": ["nesting", "id"]
+      }
+    }],
     "jsx-a11y/href-no-hash": 0,
+    "jsx-quotes": 0,
+    "react/no-array-index-key": 0,
+    "react/no-danger": 0,
+    "react/no-unused-state": 0,
+    "react/prop-types": 0,
+    "react/prefer-stateless-function": 0,
     "react/require-extension": "off",
-    "brace-style": [2, "1tbs", {
+    "react/jsx-indent": 0,
+    "react/jsx-indent-props": [2, 2],
+    "brace-style": [2, "stroustrup", {
       "allowSingleLine": true
     }],
     "comma-dangle": [2, "always-multiline"],
     "import/extensions": [2, "never"],
+    "import/newline-after-import": 0,
     "import/no-unresolved": 0,
     "import/no-extraneous-dependencies": 0,
+    "import/prefer-default-export": 0,
     "indent": [2, 4, { "SwitchCase": 1 }],
     "max-statements-per-line": [2, {
       "max": 2
     }],
     "no-console": 0,
+    "no-continue": 0,
     "no-cond-assign": [2, "except-parens"],
     "no-multi-spaces:": 0,
     "no-nested-ternary": 0,
@@ -40,6 +57,7 @@
       "allowForLoopAfterthoughts": true
     }],
     "no-underscore-dangle": 0,
+    "object-curly-newline": 0,
     "object-curly-spacing": 0,
     "one-var": [2, {
       "uninitialized": "never",
@@ -58,17 +76,8 @@
       "requireReturnDescription": false
     }]
   },
-  "settings": {
-    "import/resolver": {
-      "babel-module": {}
-    }
-  },
   "globals": {
-    "describe": true,
-    "it": true,
-    "before": true,
-    "beforeEach": true,
-    "after": true,
-    "afterEach": true
+    "document": true,
+    "window": true
   }
 }

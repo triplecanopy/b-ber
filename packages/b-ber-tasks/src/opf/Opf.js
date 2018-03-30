@@ -38,7 +38,7 @@ class Opf {
      * @return {Promise<Object>}
      */
     static createOpfPackageString([manifestAndMetadataXML, navigationXML]) {
-        log.info('Building [opf]')
+        log.info('opf creating [opf]')
         return new Promise(resolve => {
             const {metadata, manifest} = manifestAndMetadataXML
             const {spine, guide} = navigationXML.strings

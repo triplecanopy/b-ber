@@ -10,7 +10,6 @@ export function wrap(arr, space) {
 }
 
 
-
 export function floatFormat(n) {
 
     const num = parseInt(n, 10)
@@ -26,10 +25,10 @@ export function floatFormat(n) {
         'Pb',
     ]
 
-    const fmt = (num / Math.pow(1000, pow)).toFixed(2)
+    const fmt = (num / (1000 ** pow)).toFixed(2)
     const str = `${fmt} ${pows[pow]}`
 
-    return this.decorate(str, 'black')
+    return str
 }
 
 export function decorate(_args, ...props) {

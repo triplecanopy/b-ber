@@ -363,7 +363,7 @@ function injectNavigationIntoFile(filePath, {tocElement, infoElement}) {
 
             fs.writeFile(filePath, contents, err => {
                 if (err) throw err
-                log.info(`Writing web output for ${path.basename(filePath)}`)
+                log.info(`web writing ${path.basename(filePath)}`)
                 resolve()
             })
         })

@@ -1,12 +1,11 @@
+/* eslint-disable import/prefer-default-export */
+
 import util from 'util'
 
-export function error() {
+export function error(...args) {
 
-    if (this.logLevel < 1) { return }
-
-    const args = Array.prototype.slice.call(arguments, 0)
+    if (this.logLevel < 1) return
     const errCode = 1
-
 
     let message
     let stack
@@ -19,13 +18,13 @@ export function error() {
         ({ stack } = new Error())
     }
 
-    const counter = this.counter()
+    // const counter = this.counter()
 
     let prefix = ''
 
     prefix += this.decorate('b-ber', 'whiteBright', 'bgBlack')
     prefix += ' '
-    prefix += this.decorate('error', 'whiteBright', 'bgRed')
+    prefix += this.decorate('ERR!', 'whiteBright', 'bgRed')
     // prefix += ' '
     // prefix += counter
     prefix += ' '

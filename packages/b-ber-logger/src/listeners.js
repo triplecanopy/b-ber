@@ -1,5 +1,8 @@
 /* eslint-disable import/prefer-default-export */
 
+
+import util from 'util'
+
 export function bind() {
     this.on('begin', ({task}) => {
 
@@ -13,23 +16,15 @@ export function bind() {
             return
         }
 
-        console.log(
-            '%s%s %s Starting',
+        const message = util.format.call(util,
+            '%s%s %s %s',
             this.indent(),
             this.decorate('b-ber', 'whiteBright', 'bgBlack'),
             this.decorate('info', 'green'),
-            // this.counter(),
-            this.decorate(task, 'magenta')
+            this.decorate(task, 'black')
         )
 
-        // console.log(
-        //     '%s%s %s %s Starting',
-        //     this.indent(),
-        //     this.decorate('b-ber', 'whiteBright', 'bgBlack'),
-        //     this.decorate('info', 'green'),
-        //     this.counter(),
-        //     this.decorate(task, 'magenta')
-        // )
+        process.stdout.write(message)
 
         this.incrementIndent()
 
@@ -43,27 +38,20 @@ export function bind() {
 
         const {totalMs} = taskTime
 
-        console.log(
-            '%s%s %s Finished',
+        process.stdout.clearLine()
+        process.stdout.cursorTo(0)
+
+        const message = util.format.call(util,
+            '%s%s %s %s done - %s',
             this.indent(),
             this.decorate('b-ber', 'whiteBright', 'bgBlack'),
             this.decorate('info', 'green'),
-            // this.counter(),
-            this.decorate(task, 'green'),
-            'after',
+            this.decorate(task, 'black'),
             totalMs
         )
 
-        // console.log(
-        //     '%s%s %s %s Finished',
-        //     this.indent(),
-        //     this.decorate('b-ber', 'whiteBright', 'bgBlack'),
-        //     this.decorate('info', 'green'),
-        //     this.counter(),
-        //     this.decorate(task, 'green'),
-        //     'after',
-        //     totalMs
-        // )
+        process.stdout.write(message)
+        process.stdout.write('\n')
 
         // const {beginMs, endMs, totalMs} = taskTime
         // if (this.logLevel > 3) {
@@ -75,31 +63,41 @@ export function bind() {
         // }
 
         if (this.taskWarnings) {
-            console.log()
             this.printWarnings(task)
-            console.log()
         }
 
         if (this.taskErrors) {
-            console.log()
             this.printErrors(task)
-            console.log()
         }
 
 
     })
 
     this.on('done', data => {
+        let message
 
-        console.log()
-
+        if (this.logLevel === 2) process.stdout.write('\n') // TODO
         if (!this.errors.length) {
-            console.log('%s%s', this.indent(), this.decorate('Build succeeded', 'green'))
+            message = util.format.call(util,
+                '%s%s %s %s',
+                this.indent(),
+                this.decorate('b-ber', 'whiteBright', 'bgBlack'),
+                this.decorate('info', 'green'),
+                this.decorate('Build succeeded', 'green'),
+            )
         } else {
-            console.log('%s%s', this.indent(), this.decorate('Build error', 'red'))
+            message = util.format.call(util,
+                '%s%s %s %s',
+                this.indent(),
+                this.decorate('b-ber', 'whiteBright', 'bgBlack'),
+                this.decorate('info', 'green'),
+                this.decorate('Build failed', 'red'),
+            )
         }
 
-        console.log()
+        process.stdout.write(message)
+        process.stdout.write('\n')
+
 
         // this.printSummary(data)
     })

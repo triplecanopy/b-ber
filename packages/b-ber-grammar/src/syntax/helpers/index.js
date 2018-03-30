@@ -209,12 +209,12 @@ const attributesObject = (attrs, _genus, context = {}) => {
     }
 
     if (DRAFT_DIRECTIVES.indexOf(genus) > -1) {
-        log.warn(`[${genus}] EPUB specification is [DRAFT]. Substituting [${genus}] for [chapter].`)
+        log.warn(`epub [${genus}] is [draft]. substituting with [chapter].`)
         genus = 'chapter'
     }
 
     if (DEPRECATED_DIRECTIVES.indexOf(genus) > -1) {
-        log.warn(`[${genus}] EPUB specification is [DEPRECATED]. Substituting [${genus}] for [chapter].`)
+        log.warn(`epub [${genus}] is [deprecated]. substituting with [chapter].`)
         genus = 'chapter'
     }
 

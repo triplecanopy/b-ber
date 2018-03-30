@@ -252,7 +252,7 @@ class Navigation {
     }
 
     createTocStringsFromTemplate({pages, ...args}) {
-        log.info('Building [toc.xhtml]')
+        log.info('opf creating [toc.xhtml]')
         return new Promise(resolve => {
             const strings = {}
             const {toc} = state
@@ -272,7 +272,7 @@ class Navigation {
     }
 
     createNcxStringsFromTemplate({pages, ...args}) {
-        log.info('Building [toc.ncx]')
+        log.info('opf creating [toc.ncx]')
         return new Promise(resolve => {
             const strings = {}
             const {toc} = state
@@ -291,7 +291,7 @@ class Navigation {
     }
 
     createGuideStringsFromTemplate({flow, fileObjects, ...args}) {
-        log.info('Building [guide]')
+        log.info('opf creating [guide]')
         return new Promise(resolve => {
             const strings = {}
             const {spine} = state
@@ -311,7 +311,7 @@ class Navigation {
     }
 
     createSpineStringsFromTemplate({flow, fileObjects, ...args}) {
-        log.info('Building [spine]')
+        log.info('opf creating [spine]')
         return new Promise(resolve => {
             const strings = {}
             const {spine} = state

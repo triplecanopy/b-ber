@@ -22,8 +22,7 @@ import {reset} from './reset'
 class Logger extends Timer {
 
     static defaults = {
-        // logLevel     : 4,
-        logLevel: 3,
+        logLevel: 2,
         boringOutput: false,
         summarize: false,
         command: null,
@@ -63,15 +62,13 @@ class Logger extends Timer {
 
         // options
         this.settings = {
-            quiet       : false,
-            verbose     : false,
-            debug       : false,
-            summarize   : Logger.defaults.summarize,
-            'no-color'  : Logger.defaults.boringOutput,
-            'log-level' : Logger.defaults.logLevel,
+            quiet: false,
+            verbose: false,
+            debug: false,
+            summarize: Logger.defaults.summarize,
+            'no-color': Logger.defaults.boringOutput,
+            'log-level': Logger.defaults.logLevel,
         }
-
-
 
 
         // bindings

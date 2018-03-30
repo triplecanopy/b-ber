@@ -1,0 +1,14 @@
+.DS_Store
+.tmp
+epub
+/lib
+dist
+public
+database.json
+node_modules
+
+package-lock*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.localconfig

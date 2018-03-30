@@ -16,6 +16,7 @@ class Reader {
         this.epubAssets = ['META-INF', 'OPS', 'mimetype']
 
         this.readerModuleName = '@canopycanopycanopy/b-ber-reader'
+        this.readerModuleDistDir = 'dist'
         this.readerAppPath = null
 
         return new Promise(resolve => {
@@ -40,13 +41,37 @@ class Reader {
     }
     ensureReaderModuleExists() {
         try {
-            this.readerAppPath = path.dirname(path.join(require.resolve(this.readerModuleName)))
+            this.readerAppPath = path.dirname(path.join(require.resolve(JSON.stringify(this.readerModuleName))))
+            return Promise.resolve()
         } catch (err) {
+            // module not found using require.resolve, so we check if there's a symlinked version available
+        }
+
+        const {paths} = module
+        let modulePath
+        for (let i = 0; i < paths.length; i++) {
+            const _path = path.resolve(paths[i], this.readerModuleName)
+            if (fs.existsSync(_path)) {
+                modulePath = _path
+                break
+            }
+        }
+
+        if (!modulePath) {
             log.error(`Cannot find module ${this.readerModuleName}. Try running npm i -S ${this.readerModuleName}`)
             process.exit(1)
         }
 
-        return Promise.resolve()
+        try {
+            this.readerAppPath = fs.realpathSync(path.join(modulePath, this.readerModuleDistDir))
+            return Promise.resolve()
+        } catch (err) {
+            log.error(`
+                A symlinked version of ${this.readerModuleName} was found but is inaccessible.
+                Try running npm i -S ${this.readerModuleName}
+            `)
+            process.exit(1)
+        }
     }
     createOutputDir() {
         return fs.ensureDir(this.outputDir)
@@ -75,7 +100,7 @@ class Reader {
         const cover = `${url}/OPS/images/${this.getBookMetadata('cover')}`
         const manifest = [{title, url, cover}]
 
-        return fs.writeJson(path.join(this.outputDir, 'manifest.json'), manifest)
+        return fs.writeJson(path.join(this.dist, 'manifest.json'), manifest)
     }
     copyReaderAppToOutputDir() {
         return fs.copy(this.readerAppPath, this.dist)

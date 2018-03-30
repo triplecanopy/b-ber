@@ -1,0 +1,82 @@
+{
+  "parser": "babel-eslint",
+  "extends": [
+    "airbnb"
+  ],
+
+  "env": {
+    "es6": true,
+    "jest": true,
+    "mocha": true,
+    "node": true
+  },
+
+  "plugins": [
+    "babel",
+    "import"
+  ],
+
+  "rules": {
+    "arrow-parens": 0,
+    "brace-style": [2, "1tbs", {
+        "allowSingleLine": true
+      }
+    ],
+    "comma-dangle": [2, "always-multiline"],
+    "consistent-return": 0,
+    "import/extensions": [2, "never"],
+    "import/no-extraneous-dependencies": 0,
+    "import/no-unresolved": 0,
+    "indent": [2, 4, {
+        "SwitchCase": 1
+      }
+    ],
+    "jsx-a11y/href-no-hash": 0,
+    "max-len": 0,
+    "max-statements-per-line": [2, {
+        "max": 2
+      }
+    ],
+    "no-cond-assign": [2, "except-parens"],
+    "no-confusing-arrow": 0,
+    "no-console": 0,
+    "no-multi-spaces": 0,
+    "no-multi-spaces:": 0,
+    "no-multiple-empty-lines": 0,
+    "no-nested-ternary": 0,
+    "no-plusplus": [2, {
+        "allowForLoopAfterthoughts": true
+      }
+    ],
+    "no-return-assign": 0,
+    "no-shadow": 0,
+    "no-underscore-dangle": 0,
+    "no-unused-vars": [2, {
+        "argsIgnorePattern":"^_$"
+      }
+    ],
+    "object-curly-spacing": 0,
+    "one-var": [2, {
+        "uninitialized":"never",
+        "initialized":"never"
+      }
+    ],
+    "one-var-declaration-per-line": [2, "initializations"],
+    "operator-linebreak": 0,
+    "padded-blocks": 0,
+    "quotes": 0,
+    "react/require-extension":"off",
+    "semi": [2,"never"],
+    "space-before-function-paren": [2, {
+        "anonymous":"always",
+        "named":"never"
+      }
+    ],
+    "spaced-comment": 0,
+    "strict": 0,
+    "valid-jsdoc": [2, {
+        "requireReturnDescription": false
+      }
+    ]
+  }
+}

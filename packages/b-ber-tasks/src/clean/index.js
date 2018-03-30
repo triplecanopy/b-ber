@@ -16,6 +16,7 @@ import log from '@canopycanopycanopy/b-ber-logger'
 const clean = _ =>
     new Promise(resolve => {
         const projectDir = state.dist
+
         const projectRoot = path.dirname(projectDir)
         const fileType = `.${state.build}`
         const oldBuilds = fs.readdirSync(projectRoot).filter(a => path.extname(a) === fileType)
