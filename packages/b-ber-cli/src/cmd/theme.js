@@ -1,4 +1,5 @@
 import {theme} from '@canopycanopycanopy/b-ber-lib/theme'
+import log from '@canopycanopycanopy/b-ber-logger'
 import {fail} from '../helpers'
 
 const command = 'theme'
@@ -22,7 +23,7 @@ const builder = yargs =>
         .usage(`\nUsage: $0 theme\n\n${describe}`)
         .fail((msg, err) => fail(msg, err, yargs))
 
-const handler = () => theme().catch(_ => _)
+const handler = _ => theme().catch(err => log.error(err))
 
 export default {
     command,

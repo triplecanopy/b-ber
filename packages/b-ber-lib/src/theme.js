@@ -4,6 +4,7 @@ import path from 'path'
 import fs from 'fs-extra'
 import yargs from 'yargs'
 import themes from '@canopycanopycanopy/b-ber-themes'
+import log from '@canopycanopycanopy/b-ber-logger'
 import YamlAdaptor from './YamlAdaptor'
 import {forOf} from './utils'
 import state from './State'
@@ -54,15 +55,15 @@ const printThemeList = (themeList, currentTheme = '') =>
     themeList.reduce((acc, curr) => {
         const icon = currentTheme && currentTheme === curr ? '✔' : '-'
         return acc.concat(`  ${icon} ${curr}\n`)
-    }, '')
+    }, '\n')
 
 
 function setTheme(themeName, themeList, userThemes, cwd) {
     return new Promise(resolve => {
         if (themeList.indexOf(themeName) < 0) {
-            console.error(`Could not find theme matching [${themeName}].`)
-            console.log('Select one from the list of available themes:')
-            console.log(printThemeList(themeList))
+            log.error(`Could not find theme matching [${themeName}].`)
+            log.info('Select one from the list of available themes:')
+            log.info(printThemeList(themeList))
             return
         }
 
@@ -77,7 +78,7 @@ function setTheme(themeName, themeList, userThemes, cwd) {
         promises.push(new Promise(resolve =>
             fs.writeFile(configPath, YamlAdaptor.dump(configObj), err => {
                 if (err) throw err
-                console.log(`Successfully set theme theme to [${themeName}]`)
+                log.info(`Successfully set theme theme to [${themeName}]`)
                 return resolve()
             }))
         )
@@ -103,7 +104,7 @@ function setTheme(themeName, themeList, userThemes, cwd) {
                     fs.mkdirsSync(settingsOutputPath)
                 }
             } catch (err) {
-                console.error(err)
+                log.error(err)
                 process.exit(1)
             }
 
@@ -112,7 +113,7 @@ function setTheme(themeName, themeList, userThemes, cwd) {
                     throw new Error(`[${settingsOutputFile}] already exists`)
                 } else {
                     fs.copySync(settingsInputFile, settingsOutputFile, {})
-                    console.log(`Created [${settingsOutputFile}]`)
+                    log.info(`Created [${settingsOutputFile}]`)
                 }
                 if (fs.existsSync(overridesOutputFile)) {
                     throw new Error(`[${overridesOutputFile}] already exists`)
@@ -120,10 +121,10 @@ function setTheme(themeName, themeList, userThemes, cwd) {
                     fs.writeFileSync(overridesOutputFile, '')
                 }
             } catch (err) {
-                if (/b-ber-lib/.test(err.message)) {
-                    console.log(err.message)
+                if (/already exists/.test(err.message)) {
+                    log.info(err.message)
                 } else {
-                    console.error(err)
+                    log.error(err)
                 }
             }
 
@@ -139,6 +140,8 @@ function setTheme(themeName, themeList, userThemes, cwd) {
 const theme = _ =>
     new Promise(async resolve => {
 
+        log.logLevel = 4
+
         const cwd = process.cwd()
         const {config} = state
         const themeList = []
@@ -151,12 +154,11 @@ const theme = _ =>
             themeList.push(userThemes.names[i])
         }
 
-        const currentTheme = config.theme || ''
+        const currentTheme = config.theme && config.theme.name ? config.theme.name : ''
 
         if (yargs.argv.list) {
-            console.log()
-            console.log('The following themes are available:')
-            console.log(printThemeList(themeList, currentTheme))
+            log.info('The following themes are available:')
+            log.info(printThemeList(themeList, currentTheme))
             return resolve()
         }
 
