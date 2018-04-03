@@ -66,7 +66,7 @@ Then repeat the linking step above.
 Update the command below for your preferred profile file (`.profile`, `.bash_profile`, `.zshrc`, etc.). Protip: use an alias other than `bber` so that you know which module you're referencing in the future.
 
 ```console
-$ echo "alias _bber=\"$(pwd)/node_modules/.bin/babel-node $(pwd)/packages/b-ber-cli/dist/index.js --presets es2015,stage-0"\" >> ~/.profile
+$ echo "alias _bber=\"$(pwd)/node_modules/.bin/babel-node $(pwd)/packages/b-ber-cli/dist/index.js"\" >> ~/.profile
 $ source ~/.profile
 ```
 
