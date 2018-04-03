@@ -50,7 +50,7 @@ test('parses opf data', done => {
 
 // parseNCX
 test.skip('parses ncx data', done => {
-    // TOOD: stub Request.get
+    // TODO: stub Request.get
     done()
 })
 

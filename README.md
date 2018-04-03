@@ -25,7 +25,7 @@ $ npm i -g lerna
 
 Then [install `yarn`](https://yarnpkg.com/en/docs/install/) according to documentation.  Note that using `npm` to install `yarn` is discouraged.
 
-Run the following n the `b-ber` repo
+Run the following in the `b-ber` repo
 
 ```console
 $ yarn
@@ -34,7 +34,7 @@ $ lerna bootstrap
 
 ### Running a Development version of `b-ber`
 
-Create a symlink to `b-ber-create` either using `npm`, or by manually creating a symlink in the `.profile`
+Create a symlink to `b-ber-cli` either using `npm`, or manually by adding it to your `.profile`.
 
 #### `npm` Method
 
@@ -59,11 +59,11 @@ To re-link the module after changes, rebuild `b-ber` and run
 $ npm rm -g bber
 ```
 
-Then repeat the linking steps above.
+Then repeat the linking step above.
 
 #### `.profile` Method
 
-Update the command below for your preferred profile file (`.profile`, `.bash_profile`, `.zshrc`, etc.). Protip: use an alias other than `bber` so that you know which module you're using in the future.
+Update the command below for your preferred profile file (`.profile`, `.bash_profile`, `.zshrc`, etc.). Protip: use an alias other than `bber` so that you know which module you're referencing in the future.
 
 ```console
 $ echo "alias _bber=\"$(pwd)/node_modules/.bin/babel-node $(pwd)/packages/b-ber-cli/dist/index.js --presets es2015,stage-0"\" >> ~/.profile
