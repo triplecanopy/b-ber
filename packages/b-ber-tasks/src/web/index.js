@@ -321,11 +321,22 @@ function getWebWorkerScript() {
     `
 }
 
+function getEventHandlerScript() {
+    return `
+        <script type="text/javascript">
+        // <![CDATA[
+        ${injectBaseURL(fs.readFileSync(path.join(__dirname, 'event-handlers.js')))}
+        // ]]>
+        </script>
+    `
+}
+
 function injectNavigationIntoFile(filePath, {tocElement, infoElement}) {
     return new Promise(resolve => {
         const pageNavigation = paginationNavigation(filePath)
         const navigationToggleScript = getNavigationToggleScript()
         const webWorkerScript = getWebWorkerScript()
+        const evenHandlerScript = getEventHandlerScript()
         const headerElement = getHeaderElement(path.basename(filePath, path.extname(filePath)))
 
         log.info(`Adding pagination to ${path.basename(filePath)}`)
@@ -358,6 +369,7 @@ function injectNavigationIntoFile(filePath, {tocElement, infoElement}) {
                 ${infoElement}
                 ${navigationToggleScript}
                 ${webWorkerScript}
+                ${evenHandlerScript}
                 $1
             `)
 

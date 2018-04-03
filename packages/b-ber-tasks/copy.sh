@@ -5,6 +5,7 @@ declare -a files=(
     "src/web/search.js"
     "src/web/worker.js"
     "src/web/navigation.js"
+    "src/web/event-handlers.js"
     "src/serve/server-web.js"
     "src/serve/server-reader.js"
 )

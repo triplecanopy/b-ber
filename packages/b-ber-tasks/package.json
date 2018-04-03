@@ -5,12 +5,12 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "prepare.dist": "BABEL_ENV=production ../../node_modules/.bin/babel -d dist/ src/ --ignore test,src/web/search.js,src/web/worker.js,src/web/navigation.js,src/serve/server.js && yarn copy",
+    "prepare.dist": "BABEL_ENV=production ../../node_modules/.bin/babel -d dist/ src/ --ignore test,src/web/search.js,src/web/worker.js,src/web/navigation.js,src/web/event-handlers.js,src/serve/server.js && yarn copy",
     "copy": "./copy.sh",
     "clean": "rimraf dist",
     "prepare": "yarn clean && yarn prepare.dist",
     "build": "yarn prepare",
-    "watch": "BABEL_ENV=production ../../node_modules/.bin/babel -d dist/ src/ --watch src --ignore test,src/web/search.js,src/web/worker.js,src/web/navigation.js,src/serve/server.js",
+    "watch": "BABEL_ENV=production ../../node_modules/.bin/babel -d dist/ src/ --watch src --ignore test,src/web/search.js,src/web/worker.js,src/web/navigation.js,src/web/event-handlers.js,src/serve/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Maxwell Simmer <maxwell.simmer@gmail.com> (http://maxwellsimmer.com)",

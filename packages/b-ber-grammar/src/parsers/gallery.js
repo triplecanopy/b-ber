@@ -3,10 +3,10 @@
 
 import path from 'path'
 import _state from '@canopycanopycanopy/b-ber-lib/State'
+import mime from 'mime-types' // TODO: remove after abstracting toAlias
 import {htmlId, parseAttrs} from '../syntax/helpers'
 
 // TODO: following is taken from media.es, should be exporting it
-import mime from 'mime-types'
 const toAlias = fpath => path.basename(path.basename(fpath, path.extname(fpath)))
 
 
