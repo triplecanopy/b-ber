@@ -94,7 +94,7 @@ $ yarn watch
 Or watch all packages using `lerna` from the `b-ber` repo
 
 ```console
-$ lerna run watch --no-sort --stream
+$ yarn watch
 ```
 
 More information about using `lerna` commands can be found [here](https://github.com/lerna/lerna/).

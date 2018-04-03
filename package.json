@@ -8,6 +8,9 @@
         "npm": ">= 2.x <= 5.x",
         "yarn": ">=0.27.5 || >= 1.0.2"
     },
+    "scripts": {
+        "watch": "lerna run watch --no-sort --stream"
+    },
     "devDependencies": {
         "ajv": "^6.4.0",
         "babel-cli": "^6.14.0",
