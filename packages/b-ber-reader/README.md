@@ -20,7 +20,7 @@ $ yarn
 
 2. Add an `epub` directory to the repo's root directory with some Epubs.
 
-3. Add a `manifest.json` to the repo's root. Each entry must have a `title`, `url`, and `cover` property.
+3. Add a `books.json` to the repo's root. Each entry must have a `title`, `url`, and `cover` property.
 
 ```json
 [{
@@ -31,6 +31,14 @@ $ yarn
 ```
 
 ## Develop
+
+**Protip**  
+Add a `.localconfig` file in the `b-ber-reader` project directory to enable debug
+
+```js
+// .localconfig
+module.exports = {debug: true}
+```
 
 ### Using `b-ber`
 
@@ -73,8 +81,6 @@ $ yarn watch
 
 ## Build
 
-If deploying remotely, ensure that the book's urls in the `manifest.json` point to a valid urls where the application will be hosted and not `localhost`.
-
 ### `b-ber`
 
 Ensure that you've set the `remote_url` in the your project's `config.yml` to the domain where the project will be hosted
@@ -93,6 +99,8 @@ This will create a web-optimized application in a new `project-reader` directory
 
 
 ### Standalone
+
+If deploying remotely, ensure that the book's urls in the `books.json` point to a valid urls where the application will be hosted and not `localhost`.
 
 ```
 $ yarn build

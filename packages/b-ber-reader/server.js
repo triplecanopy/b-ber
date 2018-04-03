@@ -1,6 +1,6 @@
 const path = require('path')
 const express = require('express')
-const manifest = require('./manifest.json')
+const manifest = require('./books.json')
 const router = express.Router()
 const app = express()
 const PORT = 3000

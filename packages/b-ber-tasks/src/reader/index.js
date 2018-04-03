@@ -13,6 +13,7 @@ class Reader {
     constructor() {
         this.outputDirName = 'epub'
         this.outputDir = path.join(this.dist, this.outputDirName)
+        this.apiDir = path.join(this.dist, 'api')
         this.epubAssets = ['META-INF', 'OPS', 'mimetype']
 
         this.readerModuleName = '@canopycanopycanopy/b-ber-reader'
@@ -20,7 +21,7 @@ class Reader {
         this.readerAppPath = null
 
         return new Promise(resolve => {
-            this.createOutputDir()
+            this.createOutputDirs()
                 .then(_ => this.ensureReaderModuleExists())
                 .then(_ => this.copyEpubToOutputDir())
                 .then(_ => this.writeBookManifest())
@@ -73,8 +74,8 @@ class Reader {
             process.exit(1)
         }
     }
-    createOutputDir() {
-        return fs.ensureDir(this.outputDir)
+    createOutputDirs() {
+        return fs.ensureDir(this.outputDir).then(_ => fs.ensureDir(this.apiDir))
     }
     copyEpubToOutputDir() {
         const promises = []
@@ -102,7 +103,8 @@ class Reader {
         const cover = `${url}/OPS/images/${this.getBookMetadata('cover')}`
         const manifest = [{title, url, cover}]
 
-        return fs.writeJson(path.join(this.dist, 'manifest.json'), manifest)
+        // write to an `api` dir in case the app is being deployed statically
+        return fs.writeJson(path.join(this.apiDir, 'books.json'), manifest)
     }
     copyReaderAppToOutputDir() {
         return fs.copy(this.readerAppPath, this.dist)

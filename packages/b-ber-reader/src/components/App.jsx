@@ -19,7 +19,7 @@ class App extends Component {
     }
     componentDidMount() {
         this.bindHistoryListener()
-        Request.get('/api/books.json')
+        Request.getManifest()
             .then(({data}) => this.setState({books: data}))
             .then(_ => this.goToBookURL(history.location))
     }

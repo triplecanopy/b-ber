@@ -4,7 +4,6 @@ epub
 /lib
 dist
 public
-database.json
 node_modules
 
 package-lock*
