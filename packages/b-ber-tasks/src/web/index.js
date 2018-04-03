@@ -172,12 +172,11 @@ function getChapterTitle(fileName) {
 function getProjectMetadataHTML() {
     return `
         <dl>
-            ${state.metadata.reduce((acc, curr) => (
-                acc.concat(`
-                    <dt>${curr.term}</dt>
-                    <dd>${curr.value}</dd>
-                `)
-            ), '')}
+            ${state.metadata.reduce((acc, curr) => acc.concat(`
+                <dt>${curr.term}</dt>
+                <dd>${curr.value}</dd>
+            `)
+        , '')}
         </dl>
     `
 }
@@ -291,12 +290,13 @@ function paginationNavigation(filePath) {
 }
 
 function injectBaseURL(script) {
-    const script_ =
-        typeof script === 'string'
-            ? script
-            : Buffer.isBuffer(script)
-            ? String(script)
-            : ''
+    let script_ = ''
+
+    if (typeof script === 'string') {
+        script_ = script
+    } else if (Buffer.isBuffer(script)) {
+        script_ = String(script)
+    }
 
     return new Buffer(script_.replace(/%BASE_URL%/g, BASE_URL))
 }
@@ -430,8 +430,8 @@ function indexPageContent() {
         )
 
         Promise.all(promises)
-        .catch(err => reject(err))
-        .then(() => resolve(JSON.stringify(records)))
+            .catch(err => reject(err))
+            .then(() => resolve(JSON.stringify(records)))
     })
 }
 
