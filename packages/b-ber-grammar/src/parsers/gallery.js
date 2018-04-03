@@ -2,9 +2,8 @@
 /*! A slightly adapted version of markdown-it-container 2.0.0 https://github.com//markdown-it/markdown-it-container @license MIT */
 
 import path from 'path'
-import state from '@canopycanopycanopy/b-ber-lib/State'
+import _state from '@canopycanopycanopy/b-ber-lib/State'
 import {htmlId, parseAttrs} from '../syntax/helpers'
-
 
 // TODO: following is taken from media.es, should be exporting it
 import mime from 'mime-types'
@@ -129,7 +128,7 @@ const containerPlugin = (md, name, options = {}) => {
 
                 if (matchedContent) {
                     const attrs = parseAttrs(matchedContent[1])
-                    const media = [...state.video]
+                    const media = [..._state.video]
                     const supportedMediaAttrs = ['controls', 'loop', 'fullscreen']
 
                     let sources
