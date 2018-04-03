@@ -1,7 +1,7 @@
-import fs from 'fs-extra'
-import path from 'path'
-import express from 'express'
-import {parseArgs} from './helpers'
+const fs = require('fs-extra')
+const path = require('path')
+const express = require('express')
+const {parseArgs} = require('./helpers')
 
 
 const app = express()

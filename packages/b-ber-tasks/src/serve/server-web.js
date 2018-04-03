@@ -1,7 +1,7 @@
-import path from 'path'
-import express from 'express'
-import serveIndex from 'serve-index'
-import {parseArgs} from './helpers'
+const path = require('path')
+const express = require('express')
+const serveIndex = require('serve-index')
+const {parseArgs} = require('./helpers')
 
 const argv = parseArgs(process.argv)
 const {port, dir} = argv
