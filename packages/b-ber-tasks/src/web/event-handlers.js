@@ -5,7 +5,9 @@ function handlePlayButtonClick() {
     var video = document.querySelector('[data-video="'+ id +'"]')
     if (!video) return
 
-    this.classList.toggle('media__controls--play media__controls--pause')
+    this.classList.toggle('media__controls--play')
+    this.classList.toggle('media__controls--pause')
+
     if (video.paused) {
         video.play()
     }
