@@ -20,7 +20,7 @@ export function registerSequence(state, command/*, commanders, sequences*/) {
     )
 
     process.stdout.write(message)
-    process.stdout.write('\n')
+    this.newLine()
 
     message = util.format.call(util,
         '%s%s %s %s',
@@ -32,5 +32,5 @@ export function registerSequence(state, command/*, commanders, sequences*/) {
     )
 
     process.stdout.write(message)
-    process.stdout.write('\n')
+    this.newLine()
 }

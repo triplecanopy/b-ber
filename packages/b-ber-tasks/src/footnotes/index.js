@@ -66,7 +66,7 @@ class Footnotes {
 
                 state.add('spine', fileData)
 
-                log.info(`Created default footnotes page [${this.file.name}.xhtml]`)
+                log.info(`create default footnotes page [${this.file.name}.xhtml]`)
 
                 resolve()
             })

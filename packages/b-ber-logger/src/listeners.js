@@ -17,14 +17,16 @@ export function bind() {
         }
 
         const message = util.format.call(util,
-            '%s%s %s %s',
+            '%s%s %s %s %s',
             this.indent(),
             this.decorate('b-ber', 'whiteBright', 'bgBlack'),
             this.decorate('info', 'green'),
-            this.decorate(task, 'black')
+            this.decorate(task, 'black'),
+            this.decorate('start', 'black')
         )
 
         process.stdout.write(message)
+        this.newLine()
 
         this.incrementIndent()
 
@@ -51,7 +53,7 @@ export function bind() {
         )
 
         process.stdout.write(message)
-        process.stdout.write('\n')
+        this.newLine()
 
         // const {beginMs, endMs, totalMs} = taskTime
         // if (this.logLevel > 3) {
@@ -62,43 +64,21 @@ export function bind() {
         //     this.decrementIndent()
         // }
 
-        if (this.taskWarnings) {
-            this.printWarnings(task)
-        }
-
-        if (this.taskErrors) {
-            this.printErrors(task)
-        }
-
-
+        // if (this.taskWarnings) this.printWarnings(task)
+        // if (this.taskErrors) this.printErrors(task)
     })
 
-    this.on('done', data => {
-        let message
-
-        if (this.logLevel === 2) process.stdout.write('\n') // TODO
-        if (!this.errors.length) {
-            message = util.format.call(util,
-                '%s%s %s %s',
-                this.indent(),
-                this.decorate('b-ber', 'whiteBright', 'bgBlack'),
-                this.decorate('info', 'green'),
-                this.decorate('Build succeeded', 'green'),
-            )
-        } else {
-            message = util.format.call(util,
-                '%s%s %s %s',
-                this.indent(),
-                this.decorate('b-ber', 'whiteBright', 'bgBlack'),
-                this.decorate('info', 'green'),
-                this.decorate('Build failed', 'red'),
-            )
-        }
+    this.on('done', data => { // eslint-disable-line no-unused-vars
+        const message = util.format.call(util,
+            '%s%s %s %s',
+            this.indent(),
+            this.decorate('b-ber', 'whiteBright', 'bgBlack'),
+            this.decorate('info', 'green'),
+            this.decorate('Build succeeded', 'green'),
+        )
 
         process.stdout.write(message)
-        process.stdout.write('\n')
-
-
+        this.newLine()
         // this.printSummary(data)
     })
 }

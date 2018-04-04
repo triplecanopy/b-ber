@@ -113,7 +113,7 @@ function setTheme(themeName, themeList, userThemes, cwd) {
                     throw new Error(`[${settingsOutputFile}] already exists`)
                 } else {
                     fs.copySync(settingsInputFile, settingsOutputFile, {})
-                    log.info(`Created [${settingsOutputFile}]`)
+                    log.info(`create [${settingsOutputFile}]`)
                 }
                 if (fs.existsSync(overridesOutputFile)) {
                     throw new Error(`[${overridesOutputFile}] already exists`)

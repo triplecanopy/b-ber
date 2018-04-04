@@ -1,13 +1,12 @@
 /* eslint-disable */
 
 function handlePlayButtonClick() {
-    console.log('click')
     var id = this.dataset.mediaControls
     var video = document.querySelector('[data-video="'+ id +'"]')
     if (!video) return
 
     this.classList.toggle('media__controls--play media__controls--pause')
-    if (video.paused()) {
+    if (video.paused) {
         video.play()
     }
     else {
@@ -16,7 +15,6 @@ function handlePlayButtonClick() {
 }
 
 function bindEventHandlers() {
-    console.log('bind')
     var buttonsPlay = Array.prototype.slice.call(document.querySelectorAll('button.media__controls'), 0)
     for (var i = 0; i < buttonsPlay.length; i++) {
         buttonsPlay[i].addEventListener('click', handlePlayButtonClick, false)

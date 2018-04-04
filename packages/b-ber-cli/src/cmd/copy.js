@@ -30,7 +30,7 @@ const handler = copy
 //   const i = argv.i
 //   const o = argv.o
 //   if (!i.length || !o) throw new Error('Both input and output directories must be provided')
-//   return copy(i, o).then(() => log.info(`Copied ${i} to ${o}`))
+//   return copy(i, o).then(() => log.info(`copy ${i} to ${o}`))
 // }
 
 

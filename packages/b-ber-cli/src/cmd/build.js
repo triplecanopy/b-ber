@@ -64,6 +64,9 @@ const builder = yargs =>
         .alias('h', 'help')
 
 const handler = argv => {
+
+    process.env.NODE_ENV = process.env.NODE_ENV || 'production'
+
     const buildCmds = _buildCommands
     const buildArgs = _buildArgs(argv)
     const buildTasks = buildArgs.length ? buildArgs : !buildArgs.length && argv.d ? [] : buildCmds

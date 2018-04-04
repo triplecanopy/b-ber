@@ -200,7 +200,7 @@ class Navigation {
 
                     fs.writeFile(yamlpath, content, err => {
                         if (err) throw err
-                        log.info(`Wrote ${this.build}.yml`)
+                        log.info(`emit ${this.build}.yml`)
                     })
                 }
 
@@ -360,7 +360,7 @@ class Navigation {
             const filepath = path.join(this.dist, 'OPS', 'text', 'toc.xhtml')
             fs.writeFile(filepath, toc, err => {
                 if (err) throw err
-                log.info(`Wrote toc.xhtml [${filepath}]`)
+                log.info(`emit toc.xhtml [${filepath}]`)
                 resolve(result)
             })
         })
@@ -373,7 +373,7 @@ class Navigation {
             const filepath = path.join(this.dist, 'OPS', 'toc.ncx')
             fs.writeFile(filepath, ncx, err => {
                 if (err) throw err
-                log.info(`Wrote toc.ncx [${filepath}]`)
+                log.info(`emit toc.ncx [${filepath}]`)
                 resolve(result)
             })
         })

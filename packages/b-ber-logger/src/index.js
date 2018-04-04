@@ -24,7 +24,7 @@ class Logger extends Timer {
     static defaults = {
         logLevel: 2,
         boringOutput: false,
-        summarize: false,
+        summary: false,
         command: null,
         consoleWidth: 70,
         errors: [],
@@ -65,7 +65,7 @@ class Logger extends Timer {
             quiet: false,
             verbose: false,
             debug: false,
-            summarize: Logger.defaults.summarize,
+            summary: Logger.defaults.summary,
             'no-color': Logger.defaults.boringOutput,
             'log-level': Logger.defaults.logLevel,
         }
@@ -126,6 +126,10 @@ class Logger extends Timer {
 
         this.configure()
         this.bind()
+    }
+
+    newLine() { // eslint-disable-line class-methods-use-this
+        process.stdout.write('\n')
     }
 
     printSummary(data) {

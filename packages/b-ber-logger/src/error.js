@@ -18,16 +18,11 @@ export function error(...args) {
         ({ stack } = new Error())
     }
 
-    // const counter = this.counter()
-
     let prefix = ''
 
     prefix += this.decorate('b-ber', 'whiteBright', 'bgBlack')
     prefix += ' '
     prefix += this.decorate('ERR!', 'whiteBright', 'bgRed')
-    // prefix += ' '
-    // prefix += counter
-    prefix += ' '
 
     const formatted = util.format.apply(util, ['%s %s', prefix, message])
 
@@ -38,10 +33,12 @@ export function error(...args) {
         formatted,
     })
 
-    console.log(formatted)
-    console.log()
-    console.log(stack)
-    console.log()
-    console.log(this.decorate(`b-ber exited with code ${errCode}`, 'red'))
+
+    process.stdout.write(formatted)
+    this.newLine()
+    process.stdout.write(util.format.call(util, stack))
+    this.newLine()
+    process.stdout.write(this.decorate(`b-ber exited with code ${errCode}`, 'whiteBright', 'bgRed'))
+    this.newLine()
     process.exit(errCode)
 }

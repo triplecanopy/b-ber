@@ -38,6 +38,9 @@ class Reader {
         return state.dist
     }
     get remoteURL() {
+        if (process.env.NODE_ENV === 'production' && (!state.config || !state.config.remote_url || /^http/.test(state.config.remote_url) === false)) {
+            throw new Error(`Task [build/reader] requires a remote_url to be set in config.yml`)
+        }
         return state.config.remote_url || 'http://localhost:3000'
     }
     ensureReaderModuleExists() {
@@ -60,7 +63,6 @@ class Reader {
 
         if (!modulePath) {
             log.error(`Cannot find module ${this.readerModuleName}. Try running npm i -S ${this.readerModuleName}`)
-            process.exit(1)
         }
 
         try {

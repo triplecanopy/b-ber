@@ -32,7 +32,7 @@ const handler = argv => {
     const o = argv.o
     if (!i.length || !o) throw new Error('Both src and dist directories must be provided')
     return container(i, o).then(() =>
-        log.info(`Created src: [${path.basename(i)}] and dist: [${path.basename(o)}]`)
+        log.info(`create src: [${path.basename(i)}] and dist: [${path.basename(o)}]`)
     )
 }
 

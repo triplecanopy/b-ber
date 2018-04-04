@@ -19,14 +19,14 @@ $ bber build --epub --verbose # same as --log-level=4
 $ bber build --epub --quiet # same as --log-level=0
 ```
 
-A summary can be printed out at the end of the build process by using the `summarize` flag. The summary contains information about the build time, metadata, and pagination.
+A summary can be printed out at the end of the build process by using the `summary` flag. The summary contains information about the build time, metadata, and pagination.
 
 ```console
-$ bber build --epub --summarize
+$ bber build --epub --summary
 ```
 
 Flags can also be used in combination with one another.
 
 ```console
-$ bber build --epub --summarize --quiet
+$ bber build --epub --summary --quiet
 ```

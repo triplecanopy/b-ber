@@ -9,7 +9,6 @@ import File from 'vinyl'
 import request from 'request'
 import log from '@canopycanopycanopy/b-ber-logger'
 import Xhtml from '@canopycanopycanopy/b-ber-templates/Xhtml'
-// import {scriptTag, stylesheetTag, jsonLDTag} from '@canopycanopycanopy/b-ber-templates'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import mime from 'mime-types'
 import {minify} from 'html-minifier'
@@ -239,7 +238,7 @@ const write = (location, data) =>
     new Promise(resolve => {
         fs.writeFile(location, data, err => {
             if (err) throw err
-            log.info(`Wrote [${path.basename(location)}]`)
+            log.info(`emit [${path.basename(location)}]`)
             resolve()
         })
     })
@@ -330,18 +329,18 @@ const mapSourcesToDynamicPageTemplate = args => {
     return new Promise(resolve => {
         docs.forEach(source =>
             promiseToReplace('stylesheets', stylesheets, source, dummy)
-            .then(file => promiseToReplace('javascripts', javascripts, source, file))
-            .then(file => promiseToReplace('metadata', metadata, source, file))
-            .then(file => {
-                const tmpl = file.contents.toString()
-                const [head, tail] = tmpl.split('{% body %}')
+                .then(file => promiseToReplace('javascripts', javascripts, source, file))
+                .then(file => promiseToReplace('metadata', metadata, source, file))
+                .then(file => {
+                    const tmpl = file.contents.toString()
+                    const [head, tail] = tmpl.split('{% body %}')
 
-                state.templates.dynamicPageTmpl = _ => tmpl
-                state.templates.dynamicPageHead = _ => head
-                state.templates.dynamicPageTail = _ => tail
-            })
-            .catch(err => log.error(err))
-            .then(resolve)
+                    state.templates.dynamicPageTmpl = _ => tmpl
+                    state.templates.dynamicPageHead = _ => head
+                    state.templates.dynamicPageTail = _ => tail
+                })
+                .catch(err => log.error(err))
+                .then(resolve)
         )
     })
 }
@@ -353,15 +352,15 @@ const inject = _ =>
             getDirContents(path.join(state.dist, 'OPS', 'stylesheets')),
             getDirContents(path.join(state.dist, 'OPS', 'javascripts')),
         ])
-        .then(getJSONLDMetadata)
-        .then(files =>
-            Promise.all([
-                mapSources(files),
-                mapSourcesToDynamicPageTemplate(files),
-            ])
-        )
-        .catch(err => log.error(err))
-        .then(resolve)
+            .then(getJSONLDMetadata)
+            .then(files =>
+                Promise.all([
+                    mapSources(files),
+                    mapSourcesToDynamicPageTemplate(files),
+                ])
+            )
+            .catch(err => log.error(err))
+            .then(resolve)
     })
 
 export default inject

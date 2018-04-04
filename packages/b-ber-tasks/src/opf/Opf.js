@@ -71,7 +71,7 @@ class Opf {
             const opsPath = path.join(this.dist, 'OPS', 'content.opf')
             fs.writeFile(opsPath, contents, err => {
                 if (err) throw err
-                log.info(`Wrote content.opf [${opsPath}]`)
+                log.info(`emit content.opf [${opsPath}]`)
                 resolve(contents)
             })
         })

@@ -11,7 +11,7 @@ const {port, dir} = argv
 
 
 const api = router.get('/books.json', (_, res) =>
-    fs.readFile(path.join(dir, 'manifest.json'), 'utf8', (err, data) => {
+    fs.readFile(path.join(dir, 'books.json'), 'utf8', (err, data) => {
         if (err) throw err
         return res.json(JSON.parse(data))
     })

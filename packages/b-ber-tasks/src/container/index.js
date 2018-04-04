@@ -41,10 +41,10 @@ class Container {
                 {path: path.join('META-INF', 'container.xml'), content: Xml.container()},
                 {path: 'mimetype', content: Xml.mimetype()},
             ]
-            return files.forEach((_, i) =>
-                fs.writeFile(path.join(this.dist, _.path), _.content, err => {
+            return files.forEach((a, i) =>
+                fs.writeFile(path.join(this.dist, a.path), a.content, err => {
                     if (err) throw err
-                    log.info('Wrote [%s]', _.path)
+                    log.info('emit [%s]', a.path)
                     if (i === files.length - 1) {
                         resolve()
                     }
@@ -58,7 +58,7 @@ class Container {
             this.dirs.map((dir, index) =>
                 fs.mkdirs(dir, err => {
                     if (err) throw err
-                    log.info('Created directory [%s]', dir)
+                    log.info('create directory [%s]', dir)
                     if (index === this.dirs.length - 1) {
                         resolve()
                     }
@@ -97,9 +97,9 @@ class Container {
         return new Promise(resolve =>
             this.testParams(this.src, this.dist, () =>
                 this.makedirs()
-                .then(() => this.write())
-                .catch(err => log.error(err))
-                .then(resolve)
+                    .then(() => this.write())
+                    .catch(err => log.error(err))
+                    .then(resolve)
             )
         )
     }

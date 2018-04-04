@@ -48,7 +48,7 @@ const handler = argv => {
         throw new Error(`The directory [${dirPath}] does not exist`)
     }
 
-    return clean(dirPath).then(log.info(`Removed [${dirPath}]`))
+    return clean(dirPath).then(log.info(`remove [${dirPath}]`))
 }
 
 export default {

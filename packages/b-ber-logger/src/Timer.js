@@ -1,15 +1,14 @@
-import chalk from 'chalk'
 import {EventEmitter} from 'events'
 
 class Timer extends EventEmitter {
 
     static dateFormattingOptions = {
-        day    : 'numeric',
-        month  : 'short',
-        year   : 'numeric',
-        hour   : 'numeric',
-        minute : 'numeric',
-        second : 'numeric',
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric',
     }
 
     static timeFormat(t) {

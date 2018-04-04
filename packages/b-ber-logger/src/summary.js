@@ -25,7 +25,7 @@ function printNavigationTree(state) {
 
 export function summary({state, formattedStartDate, formattedEndDate, sequenceEnd}) {
 
-    if (this.logLevel < 4 && this.summarize !== true) { return }
+    if (this.logLevel < 4 && this.summary !== true) return
 
     console.log('%s%s', this.indent(), '-'.repeat(this.consoleWidth))
     console.log()
@@ -60,8 +60,8 @@ export function summary({state, formattedStartDate, formattedEndDate, sequenceEn
     printNavigationTree.call(this, state)
 
     console.log()
-    console.log('%s%s %s %s', this.indent(), 'Created', state.spine.length, 'XHTML file(s)')
-    console.log('%s%s %s %s', this.indent(), 'Created', state.figures.length, 'figures(s)')
+    console.log('%s%s %s %s', this.indent(), 'create', state.spine.length, 'XHTML file(s)')
+    console.log('%s%s %s %s', this.indent(), 'create', state.figures.length, 'figures(s)')
     console.log()
     console.log('%s%s %s', this.indent(), 'b-ber version', state.version)
     console.log()

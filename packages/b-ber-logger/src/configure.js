@@ -21,6 +21,6 @@ export function configure() {
     this.logLevel = logLevel
 
     this.boringOutput = this.settings['no-color'] || this.boringOutput
-    this.summarize = this.settings.summarize || this.summarize
+    this.summary = this.settings.summary || this.summary
 
 }

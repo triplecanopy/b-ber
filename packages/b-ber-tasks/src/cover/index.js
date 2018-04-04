@@ -85,7 +85,7 @@ class Cover {
                     const coverPath = path.join(imageDir, _)
                     fs.remove(coverPath, err1 => {
                         if (err1) reject(err1)
-                        log.info('Removed outdated cover image [%s]', _)
+                        log.info('remove outdated cover image [%s]', _)
                         resolve()
                     })
                 })
@@ -100,7 +100,7 @@ class Cover {
                 if (err) log.error(err)
                 if (stderr) log.error(stderr)
                 if (stdout) log.info(stdout)
-                log.info('Wrote cover image')
+                log.info('emit cover image')
                 resolve()
             })
         )
@@ -114,7 +114,7 @@ class Cover {
                 if (err0) throw err0
                 fs.writeFile(coverFilePath, this.coverXHTMLContent, err1 => {
                     if (err1) throw err1
-                    log.info('Wrote [cover.xhtml]')
+                    log.info('emit [cover.xhtml]')
                     return resolve()
                 })
             })
@@ -151,7 +151,7 @@ class Cover {
             this.coverImagePath = path.join(state.src, '_images', this.coverEntry)
 
             // check that metadata.yml exists
-            log.info('Verifying cover entry in [metadata.yml]')
+            log.info('verify cover entry in [metadata.yml]')
             try {
                 metadata = YamlAdaptor.load(path.join(state.src, 'metadata.yml'))
             } catch (err) {
@@ -162,7 +162,7 @@ class Cover {
             const coverListedInMetadata = find(metadata, {term: 'cover'})
             if (coverListedInMetadata) {
                 this.coverEntry = coverListedInMetadata.value
-                log.info('Verifying cover image [%s]', this.coverEntry)
+                log.info('verify cover image [%s]', this.coverEntry)
                 if (!coverListedInMetadata.value) throw new Error('Error in [metadata.yml] at cover.value')
                 // there's a reference to a cover image so we create a cover.xhtml file
                 // containing an SVG-wrapped `image` element with the appropriate cover

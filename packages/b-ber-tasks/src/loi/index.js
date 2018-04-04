@@ -32,7 +32,7 @@ const createLOILeader = () =>
                 type: 'loi',
             })
 
-            log.info(`Created default Figures titlepage [${filename}.xhtml]`)
+            log.info(`create default Figures titlepage [${filename}.xhtml]`)
 
             resolve()
         })

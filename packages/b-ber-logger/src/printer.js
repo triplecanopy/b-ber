@@ -1,8 +1,7 @@
 import util from 'util'
 
 function printNotices(type, task = 'b-ber') {
-    const prop = task ? `task${type[0].toUpperCase()}${type.slice(1)}` : type
-    const notices = this[type].slice(this[prop] * -1)
+    const notices = this[type]
     const leader = type === 'warnings' ? 'WARN' : 'ERR!'
     const color = type === 'warnings' ? 'bgYellowBright' : 'bgRed'
 
@@ -16,20 +15,7 @@ function printNotices(type, task = 'b-ber') {
         this.decorate(type, 'black'),
     )
 
-    if (this.logLevel > 2) {
-        process.stdout.write(message)
-        process.stdout.write('\n')
-    }
-
-    if (this.logLevel > 3) {
-
-        this.incrementIndent()
-        notices.forEach(notice => {
-            console.log('%s%s %s', this.indent(), this.decorate(leader, color), this.decorate(notice.message, 'cyan'))
-            console.log('%s', notice)
-        })
-        this.decrementIndent()
-    }
+    if (this.logLevel > 2) process.stdout.write(message)
 
 }
 

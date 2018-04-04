@@ -46,7 +46,7 @@ const copy = () =>
 
                 fs.readdirSync(a.to).forEach(file => {
                     const size = fs.statSync(path.join(a.to, file)).size
-                    log.info('copied [%s - {%d}]', `${baseTo}/${file}`, size)
+                    log.info('copy [%s - {%d}]', `${baseTo}/${file}`, size)
                     if (size > FILE_SIZE_WARNING_LIMIT) {
                         log.warn('[%s - {%d}] exceeds recommended file size of {%d}', file, size, FILE_SIZE_WARNING_LIMIT)
                     }

@@ -31,7 +31,7 @@ const optimized = files =>
         const out = path.join(state.dist, 'OPS', 'javascripts', `${hash}.js`)
         fs.writeFile(out, js, err => {
             if (err) throw err
-            log.info('Wrote [%s]', `javascripts${path.sep}${path.basename(out)}`)
+            log.info('emit [%s]', `javascripts${path.sep}${path.basename(out)}`)
             resolve()
         })
     })
@@ -44,7 +44,7 @@ const unoptimized = files => {
                 const out = path.join(state.dist, 'OPS', 'javascripts', file)
                 fs.copy(path.join(state.src, '_javascripts', file), out, err => {
                     if (err) throw err
-                    log.info('Wrote [%s]', `javascripts${path.sep}${path.basename(out)}`)
+                    log.info('emit [%s]', `javascripts${path.sep}${path.basename(out)}`)
                     resolve()
                 })
             }))
