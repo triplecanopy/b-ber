@@ -19,13 +19,17 @@ const FILE_SIZE_WARNING_LIMIT = 1500000 // 1.5Mb
 const copy = () =>
     new Promise(resolve => {
 
+        const {ignore} = state.config
         const promises = []
+        let dirs = []
 
-        const dirs = [
-            {from: path.join(state.src, '_images'), to: path.join(state.dist, 'OPS', 'images')},
-            {from: path.join(state.src, '_fonts'), to: path.join(state.dist, 'OPS', 'fonts')},
-            {from: path.join(state.src, '_media'), to: path.join(state.dist, 'OPS', 'media')},
+        dirs = [
+            {from: path.resolve(state.src, '_images'), to: path.resolve(state.dist, 'OPS', 'images')},
+            {from: path.resolve(state.src, '_fonts'), to: path.resolve(state.dist, 'OPS', 'fonts')},
+            {from: path.resolve(state.src, '_media'), to: path.resolve(state.dist, 'OPS', 'media')},
         ]
+
+        dirs = dirs.filter(a => (typeof ignore[a.from]))
 
         dirs.forEach(a => {
             promises.push(new Promise(resolve => {
@@ -36,13 +40,13 @@ const copy = () =>
                     fs.copySync(a.from, a.to, {
                         overwrite: false,
                         errorOnExist: true,
-                        filter: file => path.basename(file).charAt(0) !== '.',
+                        filter: file => path.basename(file).charAt(0) !== '.' && !ignore[file],
                     })
                 } catch (err) {
                     throw err
                 }
 
-                const baseTo   = `${path.basename(a.to)}`
+                const baseTo = `${path.basename(a.to)}`
 
                 fs.readdirSync(a.to).forEach(file => {
                     const size = fs.statSync(path.join(a.to, file)).size

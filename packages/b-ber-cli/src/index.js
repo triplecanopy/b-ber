@@ -81,7 +81,7 @@ const init = () => {
         }
 
         state.update('sequence', cmdSequence)
-        log.registerSequence(state, cmd, commanders, sequences)
+        log.registerSequence(state, cmd/*, commanders, sequences*/)
 
     }
 

@@ -47,7 +47,9 @@ class ApplicationLoader {
 
     __config() {
         if (!fs.existsSync(path.join(cwd, 'config.yml'))) return
-        this.config = {...this.config, ...YamlAdaptor.load(path.join(cwd, 'config.yml'))}
+        const baseConfig = YamlAdaptor.load(path.join(cwd, 'config.yml'))
+
+        this.config = {...this.config, ...baseConfig}
     }
 
     __metadata() {
@@ -123,26 +125,30 @@ class ApplicationLoader {
 
     __builds() {
         this.buildTypes = {
-            sample: this.__loadFromFileOrDefaultSettings('sample'),
-            epub: this.__loadFromFileOrDefaultSettings('epub'),
-            mobi: this.__loadFromFileOrDefaultSettings('mobi'),
-            pdf: this.__loadFromFileOrDefaultSettings('pdf'),
-            web: this.__loadFromFileOrDefaultSettings('web'),
-            reader: this.__loadFromFileOrDefaultSettings('reader'),
+            sample: this.__loadBuildSettings('sample'),
+            epub: this.__loadBuildSettings('epub'),
+            mobi: this.__loadBuildSettings('mobi'),
+            pdf: this.__loadBuildSettings('pdf'),
+            web: this.__loadBuildSettings('web'),
+            reader: this.__loadBuildSettings('reader'),
         }
     }
 
-    __loadFromFileOrDefaultSettings(type) {
+    __loadBuildSettings(type) {
         const {src, dist} = this.config
-        const yamlPath = path.join(cwd, src, `${type}.yml`)
+        const navigationConfigFile = path.join(cwd, src, `${type}.yml`)
+        const buildConfigFile = path.join(cwd, `config.${type}.yml`) // build-specific config, i.e., loads from config.epub.yml, config.mobi.yml, etc
+
+        let buildConfig = {}
 
         let spineList = []
         let spineEntries = []
         let tocEntries = []
 
+
         try {
-            if (fs.existsSync(yamlPath)) {
-                spineList = YamlAdaptor.load(yamlPath) || []
+            if (fs.existsSync(navigationConfigFile)) {
+                spineList = YamlAdaptor.load(navigationConfigFile) || []
                 tocEntries = createPageModelsFromYAML(spineList, src) // nested navigation
                 spineEntries = flattenNestedEntries(tocEntries) // one-dimensional page flow
             } else {
@@ -150,8 +156,38 @@ class ApplicationLoader {
             }
         } catch (err) {
             if (/Creating default file/.test(err.message)) {
-                // log.info(err.message)
-                // createPagesMetaYaml(src, type)
+                log.warn(err.message)
+                fs.writeFileSync(navigationConfigFile, '')
+            } else {
+                throw err
+            }
+        }
+
+        try {
+            if (fs.existsSync(buildConfigFile)) {
+                buildConfig = YamlAdaptor.load(buildConfigFile)
+                let ignore = []
+
+                // store in temp. var so we can map to object
+                if (buildConfig.ignore) ignore = [...buildConfig.ignore]
+
+                if (ignore.length) {
+                    buildConfig.ignore = {}
+                    ignore.forEach(a => {
+                        const file = path.resolve(cwd, src, a)
+                        const stats = fs.statSync(file)
+                        buildConfig.ignore[file] = {
+                            type: stats.isDirectory() ? 'directory' : stats.isFile() ? 'file' : null,
+                        }
+                    })
+                }
+
+            } else {
+                throw new Error(`[config.${type}.yml] not found. Using base configuration for [${type}] build`)
+            }
+        } catch (err) {
+            if (/Using base configuration/.test(err.message)) {
+                // noop
             } else {
                 throw err
             }
@@ -160,6 +196,7 @@ class ApplicationLoader {
         return {
             src,
             dist: `${dist}-${type}`,
+            config: buildConfig,
             spineList,
             spineEntries,
             tocEntries,
