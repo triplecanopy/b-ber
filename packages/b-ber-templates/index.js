@@ -1,69 +1,44 @@
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
+exports.Xml = exports.Xhtml = exports.Toc = exports.Project = exports.Ops = exports.Opf = exports.Ncx = undefined;
 
-var _utils = require('@canopycanopycanopy/b-ber-lib/utils');
+var _Ncx = require('./Ncx');
 
-var _bBerLogger = require('@canopycanopycanopy/b-ber-logger');
+var _Ncx2 = _interopRequireDefault(_Ncx);
 
-var _bBerLogger2 = _interopRequireDefault(_bBerLogger);
+var _Opf = require('./Opf');
 
-var _epub = require('./epub');
+var _Opf2 = _interopRequireDefault(_Opf);
 
-var _epub2 = _interopRequireDefault(_epub);
+var _Ops = require('./Ops');
 
-var _mobi = require('./mobi');
+var _Ops2 = _interopRequireDefault(_Ops);
 
-var _mobi2 = _interopRequireDefault(_mobi);
+var _Project = require('./Project');
 
-function _interopRequireDefault(obj) {
-    return obj && obj.__esModule ? obj : { default: obj };
-}
+var _Project2 = _interopRequireDefault(_Project);
 
-var figures = { epub: _epub2.default, mobi: _mobi2.default };
+var _Toc = require('./Toc');
 
-var isImage = function isImage(mime) {
-    return (/^image/.test(mime)
-    );
-};
-var isAudio = function isAudio(mime) {
-    return (/^audio/.test(mime)
-    );
-};
-var isVideo = function isVideo(mime) {
-    return (/^video/.test(mime)
-    );
-};
-var isIframe = function isIframe(type) {
-    return type === 'iframe';
-};
+var _Toc2 = _interopRequireDefault(_Toc);
 
-var figure = function figure(data, env) {
-    var width = data.width,
-        height = data.height,
-        mime = data.mime,
-        type = data.type;
+var _Xhtml = require('./Xhtml');
 
-    var _env = !env || !{}.hasOwnProperty.call(figures, env) ? 'epub' : env;
+var _Xhtml2 = _interopRequireDefault(_Xhtml);
 
-    var format = null;
-    if (isIframe(type)) {
-        format = 'iframe';
-    } else if (isImage(mime)) {
-        format = (0, _utils.getImageOrientation)(width, height);
-    } else if (isAudio(mime)) {
-        format = 'audio';
-    } else if (isVideo(mime)) {
-        format = 'video';
-    }
+var _Xml = require('./Xml');
 
-    if (!format) {
-        _bBerLogger2.default.error('bber-templates: [' + data.source + '] is of unsupported media type [' + mime + ']');
-    }
+var _Xml2 = _interopRequireDefault(_Xml);
 
-    return figures[_env][format](data);
-};
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-exports.default = figure;
+exports.Ncx = _Ncx2.default;
+exports.Opf = _Opf2.default;
+exports.Ops = _Ops2.default;
+exports.Project = _Project2.default;
+exports.Toc = _Toc2.default;
+exports.Xhtml = _Xhtml2.default;
+exports.Xml = _Xml2.default;

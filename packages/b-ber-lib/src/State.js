@@ -50,9 +50,6 @@ class State extends ApplicationLoader {
     get env() { // eslint-disable-line class-methods-use-this
         return process.env.NODE_ENV || 'development'
     }
-    get private() {
-        return this.config.private
-    }
 
     set src(val) {
         this.config.src = val
@@ -65,9 +62,6 @@ class State extends ApplicationLoader {
     }
     set env(val) {
         this.config.env = val
-    }
-    set private(val) {
-        this.config.private = val
     }
 
     reset() {
