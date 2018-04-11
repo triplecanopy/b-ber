@@ -9,7 +9,8 @@
         "yarn": ">=0.27.5 || >= 1.0.2"
     },
     "scripts": {
-        "watch": "lerna run watch --no-sort --stream"
+        "watch": "lerna run watch --no-sort --stream",
+        "test": "yarn jest"
     },
     "devDependencies": {
         "ajv": "^6.4.0",
