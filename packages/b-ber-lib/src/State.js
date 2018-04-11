@@ -50,6 +50,9 @@ class State extends ApplicationLoader {
     get env() { // eslint-disable-line class-methods-use-this
         return process.env.NODE_ENV || 'development'
     }
+    get private() {
+        return this.config.private
+    }
 
     set src(val) {
         this.config.src = val
@@ -62,6 +65,9 @@ class State extends ApplicationLoader {
     }
     set env(val) {
         this.config.env = val
+    }
+    set private(val) {
+        this.config.private = val
     }
 
     reset() {
@@ -108,7 +114,6 @@ class State extends ApplicationLoader {
      */
     remove(prop, val) {
         if (isArray(this[prop])) {
-            // const index = this[prop].indexOf(val)
             const index = findIndex(this[prop], val)
             if (index < 0) throw new TypeError(`The _property [${val}] could not be found in [state.${prop}]`)
             this[prop].splice(index, 1)

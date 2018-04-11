@@ -304,6 +304,7 @@ const dummy = new File({
         epub:prefix="ibooks: http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0">
         <head>
             <title></title>
+            ${state.config.private ? '<meta name="robots" content="noindex,nofollow"/>' : '<meta name="robots" content="index,follow"/>'}
             <meta http-equiv="default-style" content="text/html charset=utf-8"/>
             <!-- inject:css -->
             <!-- end:css -->

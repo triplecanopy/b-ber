@@ -507,6 +507,7 @@ function createIndexHTML({tocElement, infoElement}) {
         const navigationToggleScript = getNavigationToggleScript()
         const webWorkerScript = getWebWorkerScript()
         const headerElement = getHeaderElement()
+        const robotsMeta = state.config.private ? '<meta name="robots" content="noindex,nofollow"/>' : '<meta name="robots" content="index,follow"/>'
 
         // TODO: should get dynamic page template here to ensure asset hash on production build
         const indexHTML = `
@@ -516,7 +517,9 @@ function createIndexHTML({tocElement, infoElement}) {
                 xmlns:ibooks="http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0"
                 epub:prefix="ibooks: http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0">
                 <meta http-equiv="default-style" content="text/html charset=utf-8"/>
+                ${robotsMeta}
                 <link rel="stylesheet" type="text/css" href="${BASE_URL}stylesheets/application.css"/>
+
                 <head>
                     <title>${title}</title>
                 </head>

@@ -1,4 +1,5 @@
 import File from 'vinyl'
+import state from '@canopycanopycanopy/b-ber-lib/State'
 
 class Xhtml {
     static head() {
@@ -6,6 +7,8 @@ class Xhtml {
         // TODO: whitespace should be trimmed from the doc start and end after
         // b-ber runs
 
+
+        const robotsMeta = state.config.private ? '<meta name="robots" content="noindex,nofollow"/>' : '<meta name="robots" content="index,follow"/>'
         return `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
             <html xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:epub="http://www.idpf.org/2007/ops"
@@ -14,6 +17,7 @@ class Xhtml {
             <head>
                 <title></title>
                 <meta http-equiv="default-style" content="text/html charset=utf-8"/>
+                ${robotsMeta}
                 <!-- inject:css -->
                 <!-- end:css -->
             </head>

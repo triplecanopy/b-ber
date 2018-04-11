@@ -22,6 +22,7 @@ class ApplicationLoader {
             themes_directory: './themes',
             base_url: '/',
             remote_url: '/',
+            private: false,
             autoprefixer_options: {
                 browsers: ['last 2 versions', '> 2%'],
                 flexbox: 'no-2009',
