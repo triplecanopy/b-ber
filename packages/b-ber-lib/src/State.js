@@ -140,7 +140,7 @@ class State extends ApplicationLoader {
      * @param  {String} prop Property name
      * @param  {*} val  New value
      * @return {*}      Updated property
-     * @example         state.update('config.baseurl', '/')
+     * @example         state.update('config.base_url', '/')
      */
     update(prop, val) {
         const [key, rest] = prop.split('.')

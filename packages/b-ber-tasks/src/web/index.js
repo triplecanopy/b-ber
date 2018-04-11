@@ -88,7 +88,7 @@ class WebFlow {
 function initialize() {
     DIST_PATH = state.dist
     OPS_PATH = path.join(DIST_PATH, 'OPS')
-    BASE_URL = {}.hasOwnProperty.call(state.config, 'baseurl') ? addTrailingSlash(state.config.baseurl) : '/'
+    BASE_URL = {}.hasOwnProperty.call(state.config, 'base_url') ? addTrailingSlash(state.config.base_url) : '/'
 
     ASSETS_TO_UNLINK = [
         path.join(DIST_PATH, 'mimetype'),

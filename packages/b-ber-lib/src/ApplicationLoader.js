@@ -20,7 +20,7 @@ class ApplicationLoader {
             ibooks_specified_fonts: false,
             theme: 'b-ber-theme-serif',
             themes_directory: './themes',
-            baseurl: '/',
+            base_url: '/',
             remote_url: '/',
             autoprefixer_options: {
                 browsers: ['last 2 versions', '> 2%'],

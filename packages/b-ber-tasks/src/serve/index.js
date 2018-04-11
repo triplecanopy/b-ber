@@ -17,7 +17,7 @@ const restart = build => new Promise(resolve => {
     state.update('build', build)
     state.update('toc', state.buildTypes[build].tocEntries)
     state.update('spine', state.buildTypes[build].spineEntries)
-    state.update('config.baseurl', '/')
+    state.update('config.base_url', '/')
     state.update('config.remote_url', `http://localhost:${PORT}`)
 
     return tasks.async.serialize(createSequence(build), tasks).then(resolve)
