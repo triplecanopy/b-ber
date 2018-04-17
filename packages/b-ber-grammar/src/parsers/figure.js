@@ -55,10 +55,9 @@ const figurePlugin = (md, name, options = {}) => {
 
         for (;;) {
             // images can either be self-closing (i.e., they close when another
-            // directive begins, or the parser hits EOF), or can be explicitly
-            // `exit`ed. they can also contain captions, delimited by two colons
-            // (::) after opening the image directive. when they contain captions,
-            // they *must* be explicitly closed with an `exit`.
+            // directive begins, or the parser hits EOF), and can also contain
+            // captions, delimited by two colons (::) after opening the image
+            // directive.
             nextLine += 1
 
             if (nextLine >= endLine) break // EOF
@@ -104,7 +103,7 @@ const figurePlugin = (md, name, options = {}) => {
         } else {
             // there's no caption, but we've advanced the cursor, so we just rewind
             // it to where it initially matched our image directive
-            nextLine = startLine
+            nextLine = startLine + 1
         }
 
         // this will prevent lazy continuations from ever going past our end marker
@@ -116,9 +115,12 @@ const figurePlugin = (md, name, options = {}) => {
         token.children = _caption_body
         token.map      = [startLine, nextLine]
 
+        // add ending token since we're using a `container` plugin as an inline
+        token          = state.push(`container_${name}_close`, 'div', -1)
+
         // then,
         // - increment the pointer to the caption end if applicable
-        state.line     = _fast_forward || nextLine + 1
+        state.line     = _fast_forward || nextLine
 
         return true
     }

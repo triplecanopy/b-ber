@@ -1,6 +1,7 @@
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import {htmlComment} from '@canopycanopycanopy/b-ber-lib/utils'
 import {BLOCK_DIRECTIVES} from '@canopycanopycanopy/b-ber-shapes/directives'
+import log from '@canopycanopycanopy/b-ber-logger'
 import find from 'lodash/find'
 import plugin from '../parsers/section'
 import renderFactory from './factory/block'
@@ -29,6 +30,9 @@ const render = ({context = {}}) => (tokens, idx) => {
 
         if (close) {
             const [, type, id] = close
+
+            log.debug(`exit directive [${id}]`)
+
             const comment = htmlComment(`END: section:${type}#${htmlId(id)}`)
             const directive = find(state.cursor, {id})
 
@@ -50,11 +54,35 @@ const render = ({context = {}}) => (tokens, idx) => {
             // destructure the attributes from matches, omitting `matches[0]` since
             // we're only interested in the captures
             const [, type, id, att] = open
+
+            log.debug(`open directive [${id}]`)
+
             const comment = htmlComment(`START: section:${type}#${htmlId(id)}; ${filename}:${lineNr}`)
             const attrs = attributes(att, type, {filename, lineNr})
             result = `${comment}<section id="${htmlId(id)}"${attrs}>`
         }
+    } else {
+
+        // tokens `nesting` prop is -1. we should be closing the html element
+        // here, but probably have done so above since we're treating `exit`
+        // directives as openers. check to see if the element has in fact been
+        // closed
+        const close = tokens[idx].info.trim().split(':')
+        if (close.length && close[1]) {
+            const [, id] = close
+            if (state.contains('cursor', {id}) > -1) {
+                // its id still exists in state, so it's open. force close here
+                const comment = htmlComment(`END: section:#${htmlId(id)}`)
+                result = `</section>${comment}`
+
+                // remove the id
+                state.remove('cursor', {id})
+            }
+
+        }
+
     }
+
     return result
 }
 

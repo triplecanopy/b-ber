@@ -122,10 +122,14 @@ const containerPlugin = (md, name, options = {}) => {
         state.line       = nextLine + (auto_closed ? 1 : 0)
 
         // parse child tokens
+        // set a flag so that we don't render other directives' children which may use the same syntax
+        let childOfGallery = false
         state.tokens.forEach((t, i) => {
-            if (t.type === 'inline') {
-                const matchedContent = t.content.match(/^(::\s?(.+)\s?::)/)
+            if (t.type === 'container_gallery_open') childOfGallery = true
+            if (t.type === 'container_gallery_close') childOfGallery = false
 
+            if (t.type === 'inline' && childOfGallery) {
+                const matchedContent = t.content.match(/^(::\s?(.+)\s?::)/)
                 if (matchedContent) {
                     const attrs = parseAttrs(matchedContent[1])
                     const media = [..._state.video]

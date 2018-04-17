@@ -18,10 +18,12 @@ export default {
             return params.trim().match(markerRe)
         },
         render(tokens, idx) {
-            const filename = `_markdown/${context.filename}.md`
-            const lineNr = tokens[idx].map ? tokens[idx].map[0] : null
 
             const match = tokens[idx].info.trim().match(directiveRe)
+            if (!match) return ''
+
+            const filename = `_markdown/${context.filename}.md`
+            const lineNr = tokens[idx].map ? tokens[idx].map[0] : null
             const [, type, id, attrs] = match
 
             const attrsObj = attributesObject(attrs, type, {filename, lineNr})

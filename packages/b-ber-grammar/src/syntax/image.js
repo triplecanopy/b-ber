@@ -5,7 +5,7 @@ import imageSize from 'probe-image-size'
 import log from '@canopycanopycanopy/b-ber-logger'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import figTmpl from '@canopycanopycanopy/b-ber-templates/figures'
-import {getImageOrientation, htmlComment, build} from '@canopycanopycanopy/b-ber-lib/utils'
+import {getImageOrientation, htmlComment} from '@canopycanopycanopy/b-ber-lib/utils'
 import {INLINE_DIRECTIVE_MARKER, INLINE_DIRECTIVE_MARKER_MIN_LENGTH} from '@canopycanopycanopy/b-ber-shapes/directives'
 import {attributesObject, htmlId} from './helpers'
 import figure from '../parsers/figure'
@@ -33,10 +33,13 @@ export default {
         },
 
         render(tokens, idx) {
+
+            if (tokens[idx].type === 'container_figure_close') return ''
+
             const filename = `_markdown/${context.filename}.md`
             const lineNr = tokens[idx].map ? tokens[idx].map[0] : null
-
             const match = tokens[idx].info.trim().match(imageOpenRegExp)
+
             const [, type, id, attrs] = match
             const children = tokens[idx].children
             const caption = children ? instance.renderInline(tokens[idx].children) : ''

@@ -14,6 +14,7 @@ const render = (tokens, idx) => {
     const open = tokens[idx].info.trim().match(markerOpen)
     let result = ''
 
+
     if (tokens[idx].nesting === 1 && open) {
         const [, type, id, attrs] = open
         const attrsString = attributes(attrs, type)

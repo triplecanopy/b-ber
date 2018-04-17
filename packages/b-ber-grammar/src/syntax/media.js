@@ -65,10 +65,11 @@ export default {
             return params.trim().match(markerRe)
         },
         render(tokens, idx) {
-            // const renderInline = instance && instance.renderInline ? instance.renderInline : passThrough
+            const match = tokens[idx].info.trim().match(directiveRe)
+            if (!match) return ''
+
             const filename            = `_markdown/${context.filename}.md`
             const lineNr              = tokens[idx].map ? tokens[idx].map[0] : null
-            const match               = tokens[idx].info.trim().match(directiveRe)
             const [, , id, attrs]     = match
 
             let type                  = match[1]

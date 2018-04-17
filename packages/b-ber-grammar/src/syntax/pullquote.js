@@ -68,7 +68,7 @@ export default {
                         // state.add('cursor', {id})
                         pullquoteIndices.push(id)
                     } else {
-                        log.error(`Duplicate [id] attribute [${id}]; [id]s must be unique ${context.filename}.md:${_line}`)
+                        log.error(`Duplicate [id] attribute [${id}]. [id]s must be unique ${context.filename}.md:${_line}`)
                     }
 
                     // parse attrs as normal

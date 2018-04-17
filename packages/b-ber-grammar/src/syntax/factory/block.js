@@ -40,11 +40,13 @@ const renderer = ({context = {}, render, markerOpen, markerClose}) => ({
             const isClosing = type && type === 'exit'
             const inStore = index > -1
 
-            const location = `${context.filename}.md:${line}`
 
+            log.debug(`id: ${id}; isOpening: ${isOpening}; isClosing: ${isClosing}; type: ${type}, inStore: ${inStore}`)
+
+            const location = `${context.filename}.md:${line}`
             if (isOpening && inStore) {
                 // it's a duplicate `id`, throw
-                log.error(`Duplicate [id] attribute [${id}]; [id]s must be unique at [${location}]`)
+                log.error(`Duplicate [id] attribute [${id}]. [id]s must be unique at [${location}]`)
             } else if (isClosing && !inStore) {
                 // trying to close an un-opened directive, but it might belong to a
                 // different directive type. regardless, we return the match
@@ -54,8 +56,7 @@ const renderer = ({context = {}, render, markerOpen, markerClose}) => ({
                 state.add('cursor', {id, type})
                 return true
             } else if (isClosing && inStore) {
-                // it's the end of a directive
-                // state.remove('cursor', {id}) // removed in `close` in section.es
+                // it's the end of a directive, handle close in section.js
                 return true
             }
         }

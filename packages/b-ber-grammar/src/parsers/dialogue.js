@@ -79,8 +79,13 @@ const containerPlugin = (md, name, options = {}) => {
         state.line       = nextLine + (auto_closed ? 1 : 0)
 
         // parse child tokens
+        // set a flag so that we don't render other directives' children which may use the same syntax
+        let childOfDialogue = false
         state.tokens.forEach((t, i) => {
-            if (t.type === 'inline') {
+            if (t.type === 'container_dialogue_open') childOfDialogue = true
+            if (t.type === 'container_dialogue_close') childOfDialogue = false
+
+            if (t.type === 'inline' && childOfDialogue) {
                 const matchedContent = t.content.match(/^(::\s?([^:]+?)\s?::)/)
                 if (matchedContent) {
                     const parent = state.tokens[i - 1]
