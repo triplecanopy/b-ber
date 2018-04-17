@@ -1,3 +1,3 @@
-# `bber-assets`
+# `bber-resources`
 
-Default assets used by `b-ber`, mostly when creating new projects.
+This package contains resources used by `b-ber` when creating new projects.

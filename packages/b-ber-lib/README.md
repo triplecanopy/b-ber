@@ -1,33 +1,127 @@
-# `bber-lib`
+# `b-ber-lib`
 
-`bber-lib/` contains higher-order functions that manage, depend upon, or otherwise interact with the application state. The application state is stored in an instance of the [`Store` class](https://github.com/triplecanopy/b-ber/blob/master/packages/b-ber-create/src/bber-lib/state.es6).
-
-- `bber-lib/props.es6` is a namespace for filtering files based on mime-type
-- `bber-lib/serve.es6` invokes a [`nodemon`](https://www.npmjs.com/package/nodemon) server for viewing a publicatoin in a web browser
-- `bber-lib/theme.es6` manages SCSS theme packages found in `src/themes/`
+`b-ber-lib` contains a collections of classes for interacting with the application state. 
 
 ## Application State
 
-`bber-lib/state.es6` contains `bber`’s configuration and state. When `b-ber` is invoked, the values in `store` are populated with values loaded from configuration files, and by the command line arguments. The example below outlines invokation.
+When `b-ber` is invoked, values in `state` are populated with those loaded from configuration files and passed in from the command line. `b-ber-lib/State.js` provides a simple API for interacting with stored values.
 
-```sh
-$ bber build
+
+## API 
+
+### Getters
+
+```
+State#src()
 ```
 
-1. `bber` is invoked
-2. `bber-lib/state.es6` is instantiated
-3. `bber-lib/state.es6` loads configuration files and saves their data for use throughout the application lifecycle
+Returns current configuration's `src` directory
 
-
-During the build process, some properties of `bber-lib/state.es6` are updated.
-
-## Application Lifecycle
-
-`@canopycanopycanopy/b-ber-tasks/async.es6` exports a `Promise` factory that is used to run `bber` commands in sequence.
-
-```js
-const sequence = [promise1, promise2, promise3]
-serialize(sequence).then(() => {
-  console.log('Done')
-})
 ```
+State#dist() 
+```
+
+Returns current configuration's `dist` directory
+
+```
+State#theme() 
+```
+
+Returns information about the current theme
+
+```
+State#env()
+```
+
+Returns the `NODE_ENV`, defaulting to 'development'
+
+```
+State#reset()
+```
+
+Reboot `State` with its default values
+
+### Properties
+
+```
+State#guide <Array>
+```
+List of files to be included in the project's `guide`
+```
+State#figures <Array>
+```
+List of images
+```
+State#footnotes <Array>
+```
+ List of footnotes
+```
+State#build <String>
+```
+Current `build` type
+```
+State#cursor <Array>
+```
+List of directive ids
+```
+State#spine <Array>
+```
+List of files to be included in the project's `spine`
+```
+State#toc <Array>
+```
+List of files to be included in the project's `toc`
+```
+State#remoteAssets <Array>
+```
+List of remote asset URLs
+```
+State#loi <Array>
+```
+List of images
+```
+State#sequence <Array>
+```
+List of `b-ber` commands
+```
+State#hash <String>
+```
+Process id
+
+```
+State#templates: <Object>
+```
+
+Dynamically created templates. These are functions are overwritten during build to wrok around sequencing issues. see b-ber-tasks/inject#mapSourcesToDynamicPageTemplate for details
+
+### Methods
+
+```
+State#add(prop : string, value : string | object | array)
+```
+
+Add an item to an existing property
+
+```
+State#remove(prop : string)
+```
+
+Remove an item from an existing property
+
+```
+State#merge(prop : string, value : object)
+```
+
+Merge an object with an existing property
+
+```
+State#update(prop : string, value : any)
+```
+
+Set an existing property to a new value. Can be used to update nested values using dot syntax
+
+```
+State#contains(prop : string, value : any)
+```
+
+Determine if a property of `State` which is an array contains a value

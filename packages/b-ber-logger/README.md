@@ -2,31 +2,27 @@
 
 This is the console logger for `b-ber`.
 
-`b-ber` supports flags to change the verbosity of output during build, which can be set with the `log-level` flag, from `0` (quiet) to `4` (verbose).
+`b-ber-logger` supports flags to change the verbosity of output during build, which can be set with the `log-level` flag.
 
-```console
-$ bber build --epub --log-level=0 # quiet
-$ bber build --epub --log-level=1 # error
-$ bber build --epub --log-level=2 # warn
-$ bber build --epub --log-level=3 # info (default)
-$ bber build --epub --log-level=4 # verbose
+```
+log-level=0 # No logging
+log-level=1 # Error
+log-level=2 # Warn (default)
+log-level=3 # Info
+log-level=4 # Verbose
 ```
 
-`b-ber` also accepts some common aliases.
+`b-ber-logger` also supports the following flags:
 
-```console
-$ bber build --epub --verbose # same as --log-level=4
-$ bber build --epub --quiet # same as --log-level=0
+```
+no-color    # No console color
+verbose     # Alias for log-level 4
+quiet       # Alias for log-level 0
+summary     # Prints a summary after build
 ```
 
-A summary can be printed out at the end of the build process by using the `summary` flag. The summary contains information about the build time, metadata, and pagination.
+## Example
 
-```console
-$ bber build --epub --summary
 ```
-
-Flags can also be used in combination with one another.
-
-```console
-$ bber build --epub --summary --quiet
+$ bber build --epub --summary --verbose
 ```

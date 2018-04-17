@@ -12,6 +12,8 @@ No setup is required.
 
 ### As a Standalone App
 
+0. Install [`yarn`](https://yarnpkg.com/lang/en/docs/install/)
+
 1. Clone the repository and install dependencies
 
 ```
@@ -108,7 +110,7 @@ $ yarn build
 
 ## Test
 
-Run tests with [`jest`](https://facebook.github.io/jest/), either from the `b-ber` repo
+Run tests with [`jest`](https://facebook.github.io/jest/), either from the `b-ber` repo ...
 
 ```console
 $ lerna run test --scope=@canopycanopycanopy/b-ber-reader
