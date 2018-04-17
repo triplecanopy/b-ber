@@ -1,9 +1,9 @@
 import fs from 'fs-extra'
 import path from 'path'
-import figure from '../parsers/figure'
-import {attributesString, attributesObject, htmlId} from './helpers'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
+import figure from '../parsers/figure'
+import {attributesString, attributesObject, htmlId} from './helpers'
 
 const markerRe = /^logo/
 const directiveRe = /(logo)(?::([^\s]+)(\s?.*)?)?$/

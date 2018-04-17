@@ -1,63 +1,62 @@
-# `bber-output`
+# `b-ber-tasks`
 
-`bber-output/` contains a list of tasks that perform I/O operations. If a task exists here, it is likely registered with `yargs` in [`bber-cli`](https://github.com/triplecanopy/b-ber-creator/tree/master/src/bber-cli/cmd), and can be run on the command line.
+`b-ber-tasks` exports methods for performing IO operations which are invoked by `b-ber-cli`. Most of the tasks here can be run from the command line with `bber` using `b-ber-cli`.
 
-Some more involved commands call each other, or trigger a chain of dependencies before themselves running. See the example below for details.
+Tasks can be chained, and return `Promises`. Some `bber` commands will invoke a chain of tasks. See the example below for details.
 
 ```sh
 $ bber opf
 ```
 
-1. Passes the `opf` command to `yargs` in `bber-cli`
-2. Invokes the handler registered with the `opf` task in `bber-cli/cmd`
-3. `bber-output/opf/index.es6`, the registered handler for the `opf` command, is then called
-4. `bber-output/opf/index.es6` simultaneously calls `bber-output/opf/manifest-metadata.es6` and `bber-output/opf/navigation.es6`
-5. The responses from `manifest-metadata` and `navigation` are merged once both tasks have completed, and the result is passed back to `bber-output/opf/index.es6` for further processing
+1. Passes the `opf` command to `yargs` in `b-ber-cli`
+2. Invokes the handler registered with the `opf` task in `bber-cli/dist/cmd`
+3. The method exported from `b-ber-tasks/opf/index.js` has been registered as the handler for the `opf` command and is called
+4. `b-ber-tasks/opf/index.js` simultaneously calls `b-ber-tasks/opf/ManifestAndMetadata.js` and `b-ber-tasks/opf/Navigation.js` using `Promise.all`
+5. The responses from `ManifestAndMetadata` and `Navigation` are merged once both tasks have completed, and the result is passed back to `b-ber-tasks/opf/index.js` for further processing
 6. The `content.opf` file is then written to disk
 
 ## Design
 
-`b-ber` commands always return a `Promise`. Commands are chained together with a `Promise` reducer at runtime, which outputs any errors encountered, and invokes the next command (if any).
+Tasks are chained together with a `Promise` reducer at runtime, which invokes the next command once the current command resolves, or halts due to errors using `Promise.catch`. 
 
-The following is a minimal example of a function that reads from a Markdown file and then writes the data directly to an HTML file.
+The following is a minimal example of a task that reads from a Markdown file and then writes the data directly to an HTML file.
 
 ```js
 import fs from 'fs'
 
-const input = () =>
-  new Promise(resolve =>
-    fs.readFile('./my-file.md', 'utf8', (err, data) => {
-      if (err) { throw err }
-      resolve(data)
-    })
-  )
+const input = _ => new Promise((resolve, reject) =>
+  fs.readFile('./my-file.md', 'utf8', (err, data) => {
+    if (err) return reject(err)
+    resolve(data)
+  })
+)
 
-const output = (data) =>
-  new Promise(resolve =>
-    fs.writeFile('./my-file.xhtml', data, (err) => {
-      if (err) { throw err }
-      resolve()
-    })
-  )
+const output = data => new Promise((resolve, reject) =>
+  fs.writeFile('./my-file.xhtml', data, err => {
+    if (err) return reject(err)
+    resolve()
+  })
+)
 
-const myFunc = () =>
-  new Promise(resolve =>
-    input()
-      .then(output)
-      .catch(err => console.error(err))
-      .then(resolve)
-  )
+const myFunc = _ => new Promise(resolve =>
+  input()
+    .then(output)
+    .catch(err => console.error(err.message))
+    .then(resolve)
+)
 
 export default myFunc
 ```
 
-After extending the command list in `bber-cli`, and defining a handler in `bber-cli/cmd`, the `myFunc` module could be inserted into a sequence of other `b-ber` commands.
+The `myFunc` module could be inserted into a sequence of other `b-ber` commands by extending the command list in `b-ber-cli`, and defining a handler in `b-ber-cli/cmd`.
 
 ```js
-import {serialize} from '@canopycanopycanopy/b-ber-tasks/async'
+// Import the Promise reducer
+import {serialize} from '@canopycanopycanopy/b-ber-tasks/async' 
 
+// Define a sequence
 const sequence = ['clean', 'myFunc', 'render']
-serialize(sequence).then(() => {
-  console.log('Done')
-})
+
+// Run tasks serially
+serialize(sequence).then(_ => console.log('Done'))
 ```

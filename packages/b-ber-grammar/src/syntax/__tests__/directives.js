@@ -31,8 +31,8 @@ const attributes       = helpers.attributes
 const htmlId           = helpers.htmlId
 
 // directive constants
-const directives                         = require('../../../../bber-shapes/directives')
-const directiveSpec                      = require('../../../../bber-shapes/directives/spec').DIRECTIVE_SPEC
+const directives                         = require('../../../../b-ber-shapes/directives')
+const directiveSpec                      = require('../../../../b-ber-shapes/directives/spec').DIRECTIVE_SPEC
 const figureTemplates                    = require('../../../../bber-templates/figures').default
 
 const BLOCK_DIRECTIVE_MARKER             = directives.BLOCK_DIRECTIVE_MARKER
