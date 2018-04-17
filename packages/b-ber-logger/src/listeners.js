@@ -54,18 +54,6 @@ export function bind() {
 
         process.stdout.write(message)
         this.newLine()
-
-        // const {beginMs, endMs, totalMs} = taskTime
-        // if (this.logLevel > 3) {
-        //     console.log('%s%s %s', this.indent(), 'Start', beginMs)
-        //     console.log('%s%s %s', this.indent(), 'End', endMs)
-        //     console.log('%s%s %s', this.indent(), 'Elapsed', totalMs)
-        //     console.log()
-        //     this.decrementIndent()
-        // }
-
-        // if (this.taskWarnings) this.printWarnings(task)
-        // if (this.taskErrors) this.printErrors(task)
     })
 
     this.on('done', data => { // eslint-disable-line no-unused-vars
@@ -79,6 +67,6 @@ export function bind() {
 
         process.stdout.write(message)
         this.newLine()
-        // this.printSummary(data)
+        if (this.summary) this.printSummary(data)
     })
 }

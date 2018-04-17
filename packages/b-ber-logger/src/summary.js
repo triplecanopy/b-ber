@@ -1,69 +1,103 @@
 /* eslint-disable import/prefer-default-export */
 
-function printNavigationTree(state) {
+import util from 'util'
+import isPlainObject from 'lodash/isPlainObject'
 
-    console.log('%s%s', this.indent(), this.decorate('Structure', 'cyan'))
-    this.incrementIndent()
+const INDENTATION = '  '
 
-    function parse(items, context) {
-        items.forEach(item => {
-            console.log('%s%s', context.indent(), item.title || `[${item.name}]`)
+function write(msgs, context) {
+    const len = msgs.length - 1
+    const esses = ' %s'.repeat(len)
+    const msgs_ = msgs.map(([text, color]) => context.decorate(text, color))
+
+    const message = util.format.call(util,
+        `%s%s %s${esses}`,
+        context.indent(),
+        context.decorate('b-ber', 'whiteBright', 'bgBlack'),
+        context.decorate('summary', 'magenta'),
+        ...msgs_
+    )
+    process.stdout.write(message)
+    context.newLine()
+}
+
+function printNavigation(data, context, indent = 0) {
+    const indent_ = INDENTATION.repeat(indent)
+    function render(data, context) {
+        data.forEach(item => {
+            write([
+                [`${indent_}${item.title || '[no title]'} : ${item.name}`, 'black'],
+            ], context)
+
             if (item.nodes && item.nodes.length) {
-                context.incrementIndent()
-                parse(item.nodes, context)
-                context.decrementIndent()
+                render(item.nodes, context)
             }
         })
     }
 
-    parse(state.toc, this)
-
-    this.decrementIndent()
+    render(data, context)
 }
 
+function writeMetadata(data, context) {
+    Object.entries(data).forEach(([, v]) => {
+        if (isPlainObject(v)) {
+            write([
+                [`${v.term} : ${v.value}`, 'black'],
+            ], context)
+        }
+    })
+}
 
+function writeConfig(data, context, indent = 0) {
+    const indent_ = INDENTATION.repeat(indent)
+    Object.entries(data).forEach(([k, v]) => {
+        if (typeof v === 'string') {
+            write([
+                [`${indent_}${k} : ${v}`, 'black'],
+            ], context)
+        }
 
-export function summary({state, formattedStartDate, formattedEndDate, sequenceEnd}) {
+        if (isPlainObject(v)) {
+            write([
+                [`${indent_}${k}`, 'black'],
+            ], context)
+            writeConfig(v, context, indent + 1)
+        }
+    })
+}
 
-    if (this.logLevel < 4 && this.summary !== true) return
+export function printSummary({state, formattedStartDate, formattedEndDate, sequenceEnd}) {
 
-    console.log('%s%s', this.indent(), '-'.repeat(this.consoleWidth))
-    console.log()
-    console.log('%s%s', this.indent(), 'Summary')
-    console.log()
-    console.log('%s%s', this.indent(), '-'.repeat(this.consoleWidth))
-    console.log()
+    write([
+        ['start        ', 'green'],
+        [formattedStartDate, 'black'],
+    ], this)
 
-    console.log(this.decorate('%sBuild start: %s', 'cyan'), this.indent(), formattedStartDate)
-    console.log(this.decorate('%sBuild end: %s', 'cyan'), this.indent(), formattedEndDate)
-    console.log(this.decorate('%sElapsed time: %s', 'cyan'), this.indent(), sequenceEnd)
-    console.log()
+    write([
+        ['end          ', 'green'],
+        [formattedEndDate, 'black'],
+    ], this)
 
-    this.printWarnings()
-    console.log()
+    write([
+        ['time         ', 'green'],
+        [sequenceEnd, 'black'],
+    ], this)
 
-    this.printErrors()
-    console.log()
+    write([
+        ['configuration', 'green'],
+    ], this)
 
-    console.log(this.decorate('%sConfiguration', 'cyan'), this.indent())
-    this.incrementIndent()
-    Object.entries(state.config).forEach(([k, v]) => console.log('%s%s: %s', this.indent(), k, v))
-    this.decrementIndent()
-    console.log()
+    writeConfig(state.config, this)
 
-    console.log(this.decorate('%sMetadata', 'cyan'), this.indent())
-    this.incrementIndent()
-    state.metadata.forEach(a => console.log('%s%s: %s', this.indent(), a.term, a.value))
-    this.decrementIndent()
-    console.log()
+    write([
+        ['metadata     ', 'green'],
+    ], this)
 
-    printNavigationTree.call(this, state)
+    writeMetadata(state.metadata, this)
 
-    console.log()
-    console.log('%s%s %s %s', this.indent(), 'create', state.spine.length, 'XHTML file(s)')
-    console.log('%s%s %s %s', this.indent(), 'create', state.figures.length, 'figures(s)')
-    console.log()
-    console.log('%s%s %s', this.indent(), 'b-ber version', state.version)
-    console.log()
+    write([
+        ['navigation   ', 'green'],
+    ], this)
 
+    printNavigation(state.toc, this)
 }

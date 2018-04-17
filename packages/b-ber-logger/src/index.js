@@ -8,8 +8,8 @@ import {info} from './info'
 import {error} from './error'
 import {debug} from './debug'
 import {trace} from './trace'
-import {inspect} from './inspect'
-import {summary} from './summary'
+// import {inspect} from './inspect'
+import {printSummary} from './summary'
 import {configure} from './configure'
 import {registerSequence} from './register'
 import {wrap, decorate, floatFormat} from './format'
@@ -82,22 +82,19 @@ class Logger extends Timer {
         this.incrementCounter = incrementCounter.bind(this)
         this.decrementCounter = decrementCounter.bind(this)
 
+        this.bind = bind.bind(this)
+        this.notify = notify.bind(this)
 
         this.warn = warn.bind(this)
         this.info = info.bind(this)
         this.error = error.bind(this)
         this.debug = debug.bind(this)
         this.trace = trace.bind(this)
-        this.inspect = inspect.bind(this)
-        this.summary = summary.bind(this)
-
-
-        this.bind = bind.bind(this)
-        this.notify = notify.bind(this)
+        // this.inspect = inspect.bind(this)
+        this.printSummary = printSummary.bind(this)
 
         this.configure = configure.bind(this)
         this.registerSequence = registerSequence.bind(this)
-
 
         this.wrap = wrap.bind(this)
         this.decorate = decorate.bind(this)
@@ -131,11 +128,6 @@ class Logger extends Timer {
     newLine() { // eslint-disable-line class-methods-use-this
         process.stdout.write('\n')
     }
-
-    printSummary(data) {
-        this.summary({ ...data })
-    }
-
 }
 
 const log = new Logger()
