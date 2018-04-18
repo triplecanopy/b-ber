@@ -58,18 +58,24 @@ class Ncx {
             <content src="${data.relativePath}.xhtml" />
         `
     }
-    static navPoints(data, index = 0) {
-        let index_ = index
-        return data.map(a => {
-            if (a.in_toc === false) return ''
-            index_ += 1
-            return `
-                <navPoint id="navPoint-${index_}" playOrder="${index_}">
-                    ${Ncx.navPoint(a)}
-                    ${a.nodes && a.nodes.length ? Ncx.navPoints(a.nodes, index_) : ''}
-                </navPoint>
-            `
-        }).join('')
+    static navPoints(data) {
+        let index = 0
+
+        function render(data) {
+            return data.map(a => {
+                if (a.in_toc === false) return ''
+                index += 1
+                return `
+                    <navPoint id="navPoint-${index}" playOrder="${index}">
+                        ${Ncx.navPoint(a)}
+                        ${a.nodes && a.nodes.length ? render(a.nodes) : ''}
+                    </navPoint>
+                `
+            }).join('')
+        }
+
+        const xml = render(data)
+        return xml
     }
 }
 
