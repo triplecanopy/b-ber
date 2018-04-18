@@ -211,8 +211,7 @@ class Navigation {
                     // them to the top-level list of files
 
                     missingEntries.forEach(name => {
-                        if (state.contains('loi', {name}) > -1) { // don't warn for figures pages
-                        // if (/^figure/.test(name) === false) {
+                        if (state.contains('loi', {name}) < 0) { // don't warn for figures pages
                             log.warn(`Adding missing entry [${name}] to [${this.build}.yml]`)
                         }
                     })
