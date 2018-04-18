@@ -4,7 +4,7 @@ import state from '@canopycanopycanopy/b-ber-lib/State'
 import YamlAdaptor from '@canopycanopycanopy/b-ber-lib/YamlAdaptor'
 
 class Project {
-    static directories({src}) {
+    static directories(src) {
         return [
             src,
             `${src}/_images`,
@@ -16,13 +16,13 @@ class Project {
             `${src}/.tmp`,
         ]
     }
-    static configYAML({src}) {
+    static configYAML(src) {
         return {
             relativePath: path.join(path.dirname(src), 'config.yml'),
             content: YamlAdaptor.dump(state.config),
         }
     }
-    static typeYAML({src, type}) {
+    static typeYAML(src, type) {
         return {
             relativePath: path.join(src, `${type}.yml`),
             content: `
@@ -42,7 +42,7 @@ class Project {
         `,
         }
     }
-    static metadataYAML({src}) {
+    static metadataYAML(src) {
         return {
             relativePath: path.join(src, 'metadata.yml'),
             content: `-
@@ -80,7 +80,7 @@ class Project {
         value: ${crypto.randomBytes(20).toString('hex')}`,
         }
     }
-    static javascripts({src}) {
+    static javascripts(src) {
         return [{
             relativePath: `${src}/_javascripts/application.js`,
             content: `function clicked(e) {
@@ -105,7 +105,7 @@ class Project {
         `,
         }]
     }
-    static markdown({src}) {
+    static markdown(src) {
         return [{
             relativePath: `${src}/_markdown/project-name_title-page.md`,
             content: `---
@@ -171,7 +171,7 @@ class Project {
     static stylesheets() {
         return []
     }
-    static readme({src, cwd}) {
+    static readme(src, cwd) {
         return {
             relativePath: `${path.dirname(src)}${path.sep}README.md`,
             content: `
@@ -181,7 +181,7 @@ Created with [b-ber](https://github.com/triplecanopy/b-ber/)
 `,
         }
     }
-    static gitignore({src}) {
+    static gitignore(src) {
         return {
             relativePath: `${path.dirname(src)}${path.sep}.gitignore`,
             content: `

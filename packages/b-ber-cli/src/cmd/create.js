@@ -3,7 +3,6 @@ import fs from 'fs-extra'
 import {init as Initializer} from '@canopycanopycanopy/b-ber-tasks'
 import log from '@canopycanopycanopy/b-ber-logger'
 import {fail} from '../helpers'
-// import util from 'util'
 
 const command = 'create'
 const describe = 'Create a new project'
@@ -52,11 +51,11 @@ const handler = argv => {
 
     const initializer = new Initializer({cwd: dest})
 
-    initializer.start()
-    .catch(err => {
-        log.error(err)
-        process.exit(1)
-    })
+    initializer.start(name)
+        .catch(err => {
+            log.error(err)
+            process.exit(1)
+        })
 }
 
 export default {

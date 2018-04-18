@@ -138,6 +138,7 @@ class ApplicationLoader {
 
     __loadBuildSettings(type) {
         const {src, dist} = this.config
+        const projectDir = path.join(cwd, src)
         const navigationConfigFile = path.join(cwd, src, `${type}.yml`)
         const buildConfigFile = path.join(cwd, `config.${type}.yml`) // build-specific config, i.e., loads from config.epub.yml, config.mobi.yml, etc
 
@@ -147,6 +148,22 @@ class ApplicationLoader {
         let spineEntries = []
         let tocEntries = []
 
+        try {
+            if (!fs.existsSync(projectDir)) {
+                throw new Error(`Project directory [${projectDir}] does not exist`)
+            }
+        } catch (err) {
+            // Starting a new project, noop
+            return {
+                src,
+                dist: `${dist}-${type}`,
+                config: buildConfig,
+                spineList,
+                spineEntries,
+                tocEntries,
+            }
+        }
+
 
         try {
             if (fs.existsSync(navigationConfigFile)) {
@@ -154,7 +171,7 @@ class ApplicationLoader {
                 tocEntries = createPageModelsFromYAML(spineList, src) // nested navigation
                 spineEntries = flattenNestedEntries(tocEntries) // one-dimensional page flow
             } else {
-                throw new Error(`[${type}.yml] not found. Creating default file.`)
+                throw new Error(`[${type}.yml] not found. Creating default file`)
             }
         } catch (err) {
             if (/Creating default file/.test(err.message)) {
