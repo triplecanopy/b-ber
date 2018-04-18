@@ -17,7 +17,7 @@ function checkForCalibre() {
     return new Promise((resolve, reject) => {
         exists(command, (err, ok) => {
             if (err || !ok) {
-                reject(new Error('Error: calibre\'s ebook-convert must be installed. Download calibre here: https://calibre-ebook.com/'))
+                return reject(new Error('Error: calibre\'s ebook-convert must be installed. Download calibre here: https://calibre-ebook.com/'))
             }
             resolve()
         })
@@ -28,11 +28,11 @@ function checkForCalibre() {
 function convertDocument({inputPath, bookPath, flags}) {
     return new Promise((resolve, reject) => {
         exec(`${command} ${inputPath} ${bookPath} ${flags.join(' ')}`,
-            {cwd: path.dirname(inputPath)},
+            {cwd: process.cwd()},
             (err, stdout, stderr) => {
-                if (err) reject(err)
+                if (err) return reject(err)
                 if (stderr !== '') reject(new Error(stderr))
-                if (stdout !== '') log.info(stdout)
+                if (stdout !== '') process.stdout.write(stdout)
                 resolve()
             })
     })
@@ -54,9 +54,9 @@ function convert(options) {
 
     return new Promise((resolve, reject) =>
         checkForCalibre()
-        .then(() => convertDocument(settings))
-        .catch(reject)
-        .then(resolve)
+            .then(() => convertDocument(settings))
+            .catch(reject)
+            .then(resolve)
     )
 }
 
