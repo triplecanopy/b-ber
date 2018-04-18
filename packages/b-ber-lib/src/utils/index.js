@@ -258,7 +258,7 @@ function parseHTMLFiles(files, parser, dist) {
         }).filter(Boolean)
 
         Promise.all(text).catch(err => log.error(err))
-        .then(docs => resolve(docs.join('\n')))
+            .then(docs => resolve(docs.join('\n')))
     })
 }
 

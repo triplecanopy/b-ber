@@ -158,7 +158,7 @@ class State extends ApplicationLoader {
      * [contains description]
      * @param  {String} collection  [description]
      * @param  {String} value       [description]
-     * @return {Integer}
+     * @return {Integer}            Returns an index, so checks should be against -1 for existence
      */
     contains(collection, value) {
         if (!isArray(this[collection])) throw new TypeError('[State#contains] must be called on an array')

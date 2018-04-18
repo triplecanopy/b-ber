@@ -210,9 +210,10 @@ class Navigation {
                     // but we don't know where to interleave them, so we just append
                     // them to the top-level list of files
 
-                    missingEntries.forEach(a => {
-                        if (/figure_/.test(a) === false) { // don't warn for figures pages
-                            log.warn(`Adding missing entry [${a}] to [${this.build}.yml]`)
+                    missingEntries.forEach(name => {
+                        if (state.contains('loi', {name}) > -1) { // don't warn for figures pages
+                        // if (/^figure/.test(name) === false) {
+                            log.warn(`Adding missing entry [${name}] to [${this.build}.yml]`)
                         }
                     })
 
@@ -221,7 +222,7 @@ class Navigation {
                     // TODO: add to toc? add to flow/pages?
                     // TODO: there need to be some handlers for parsing user-facing attrs
                     const missingEntriesWithAttributes = missingEntries.map(fileName => {
-                        if (/figure_/.test(fileName)) return null
+                        if (state.contains('loi', {name: fileName}) > -1) return null
                         const item = find(spine, {fileName})
 
                         // if the file has attributes that need to be listed
