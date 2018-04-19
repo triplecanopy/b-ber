@@ -32,7 +32,7 @@ export function floatFormat(n) {
 }
 
 export function decorate(_args, ...props) {
-    const args = _args.constructor === Array ? _args : [_args]
+    const args = _args && _args.constructor === Array ? _args : [_args]
 
     let message = util.format.call(util, ...args)
 

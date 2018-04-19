@@ -36,14 +36,13 @@ class ApplicationLoader {
         buildTypes: { sample: {}, epub: {}, mobi: {}, pdf: {}, web: {}},
     }
     constructor() {
-        this.__MODULE_PATH__ = path.dirname(path.dirname(__dirname))
-        this.__PACKAGE_JSON__ = require(path.join(this.__MODULE_PATH__, 'package.json')) // eslint-disable-line import/no-dynamic-require,global-require
-
+        const scriptPath = path.resolve(path.dirname(path.dirname(process.argv[1])), 'package.json')
+        this.pkg = JSON.parse(fs.readFileSync(scriptPath), 'utf8')
         Object.entries(ApplicationLoader.defaults).forEach(([key, val]) => this[key] = val)
     }
 
     __version() {
-        const {version} = this.__PACKAGE_JSON__
+        const {version} = this.pkg
         this.version = version
     }
 

@@ -2,7 +2,16 @@
 
 import state from '../src/State'
 
-beforeEach(() => state.reset())
+jest.mock('../src/ApplicationLoader')
+
+beforeEach(() => {
+    state.reset()
+    Object.defineProperty(state, 'buildTypes', { // quicker than making up an entire mock
+        value: {},
+        writable: true,
+        enumerable: true,
+    })
+})
 
 describe('State', () => {
 
@@ -22,8 +31,8 @@ describe('State', () => {
 
     describe('#remove', () => {
         it('Should remove an item from an array or object', () => {
-            state.add('sequence', 'foo')
-            state.remove('sequence', 'foo')
+            state.add('sequence', {foo: 1})
+            state.remove('sequence', {foo: 1})
             expect(state.sequence).toEqual([])
         })
     })

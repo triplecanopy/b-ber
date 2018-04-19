@@ -1,25 +1,24 @@
 /* global expect,beforeAll,afterAll */
 
 import path from 'path'
-// import File from 'vinyl'
 import mock from 'mock-fs'
 import ManifestItemProperties from '../src/ManifestItemProperties'
 
-require('chai').should()
+jest.mock('../src/ApplicationLoader')
 
 const html = {absolutePath: path.resolve(__dirname, 'file.xhtml')}
 const nav = {absolutePath: path.resolve(__dirname, 'toc.xhtml'), name: 'toc.xhtml'}
 const scriptFile = {absolutePath: '/mocks/script.xhtml'}
 const svgFile = {absolutePath: '/mocks/svg.xhtml'}
 
-beforeAll(() =>
+beforeAll(() => {
     mock({
         '/mocks': {
             'script.xhtml': '<html><script></script></html>',
             'svg.xhtml': '<html><svg></svg></html>',
         },
     })
-)
+})
 
 afterAll(() => mock.restore())
 
