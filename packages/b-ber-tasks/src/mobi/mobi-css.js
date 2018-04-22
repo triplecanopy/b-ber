@@ -7,7 +7,7 @@ import fs from 'fs-extra'
 import css from 'css'
 import path from 'path'
 import log from '@canopycanopycanopy/b-ber-logger'
-import {dist} from '@canopycanopycanopy/b-ber-lib/utils'
+import state from '@canopycanopycanopy/b-ber-lib/State'
 
 const blackListedPrefixes = ['epub|']
 const blackListedTypes = ['namespace']
@@ -89,11 +89,11 @@ const parse = file =>
 
 const mobiCSS = () =>
     new Promise(resolve =>
-        fs.readdir(path.join(dist(), 'OPS', 'stylesheets'), (err, files) => {
+        fs.readdir(path.join(state.dist, 'OPS', 'stylesheets'), (err, files) => {
             if (err) throw err
 
             const promises = files.map(_ => {
-                const file = path.join(dist(), 'OPS', 'stylesheets', _)
+                const file = path.join(state.dist, 'OPS', 'stylesheets', _)
                 log.info(`Parsing [${path.basename(file)}]`)
                 return parse(file).then(write)
             })

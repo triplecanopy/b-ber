@@ -32,8 +32,8 @@ const mobi = () =>
                 `--page-breaks-before='${pageBreakBeforeXPATH()}'`,
             ],
         })
-        .catch(err => log.error(err))
-        .then(resolve)
+            .catch(err => log.error(err))
+            .then(resolve)
     })
 
 export default mobi

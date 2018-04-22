@@ -27,7 +27,7 @@ const serialize = (sequence, tasks) =>
 
             const func = tasks[task] || task
 
-            if (typeof func !== 'function') throw new Error(`async#serialize: Invalid parameter [${func}:${typeof func}]`)
+            if (typeof func !== 'function') throw new Error(`async#serialize: Invalid parameter [${func}] is [${typeof func}], expected [function]`)
 
             return acc.then(async resp => {
                 log.notify('start', task)

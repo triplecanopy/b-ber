@@ -27,6 +27,7 @@
     "@canopycanopycanopy/b-ber-templates": "^0.1.0-alpha.15",
     "autoprefixer": "^8.2.0",
     "cheerio": "^1.0.0-rc.2",
+    "css": "^2.2.1",
     "decompress": "^4.2.0",
     "epub-zipper": "^1.2.9",
     "express": "^4.16.3",

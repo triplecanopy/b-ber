@@ -83,7 +83,7 @@ const handler = argv => {
         state.update('spine', state.buildTypes[next[0]].spineEntries)
         state.merge('config', state.buildTypes[next[0]].config)
 
-        if (next[0] === 'mobi') next.unshift('mobiCSS') // TODO: this should be called by `mobi` task
+        if (next[0] === 'mobi') next.unshift('mobiCSS') // TODO: this is resolved by using shapes/sequences
 
         return allTasks.async.serialize([...sequence, ...next], allTasks).then(() => {
             if (tasks.length) run(tasks)
