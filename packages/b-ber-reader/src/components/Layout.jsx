@@ -153,7 +153,7 @@ class Layout extends Component {
                     const spreadTotal = Math.floor(columnCount)
                     console.log('spreadTotal', spreadTotal)
 
-                    this.props.setReaderState({spreadTotal})
+                    this.props.setReaderState({spreadTotal, executeDeferredCallback: true})
                 }
                 else {
                     const {columns} = this.state
@@ -174,7 +174,7 @@ class Layout extends Component {
                         console.groupEnd()
                     }
 
-                    this.props.setReaderState({spreadTotal})
+                    this.props.setReaderState({spreadTotal, executeDeferredCallback: true})
 
                 }
             })

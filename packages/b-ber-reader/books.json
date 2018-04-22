@@ -10,4 +10,8 @@
     "title": "The Amme Talks",
     "url": "http://localhost:3000/epub/tc--amme/",
     "cover": "http://localhost:3000/epub/tc--amme/OPS/images/cover-noprocess.jpg"
+}, {
+    "title":"All Directives Demo Project",
+    "url":"http://localhost:3000/epub/all-directives-demo-project",
+    "cover":"http://localhost:3000/epub/all-directives-demo-project/OPS/images/__bber_cover__d8b66d966b4b3276f35211f2549c11d1e474abfb.jpg"
 }]

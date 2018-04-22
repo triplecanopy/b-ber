@@ -7,6 +7,7 @@ import {ViewerSettings} from '../models'
 import {debug, verboseOutput} from '../config'
 import history from '../lib/History'
 
+const noop = _ => {}
 
 let _bookContent = null
 
@@ -50,6 +51,7 @@ class Reader extends Component {
             spreadIndex: 0,
             spreadTotal: 0,
             handleEvents: false,
+            executeDeferredCallback: false,
 
             // sidebar
             showSidebar: null,
@@ -61,8 +63,13 @@ class Reader extends Component {
             spinnerVisible: true,
         }
 
-
         this.localStorageKey = 'bber_reader'
+
+        // deferredCallback is called after polling gauges that the document is
+        // completely laid out
+        this.deferredCallback = noop
+        this.deferredCallbackTimeout = null
+        this.deferredCallbackTimer = 60
 
         this.createStateFromOPF = this.createStateFromOPF.bind(this)
         this.loadSpineItem = this.loadSpineItem.bind(this)
@@ -88,6 +95,8 @@ class Reader extends Component {
         this.deRegisterOverlayElementId = this.deRegisterOverlayElementId.bind(this)
         this.showSpinner = this.showSpinner.bind(this)
         this.hideSpinner = this.hideSpinner.bind(this)
+        this.registerDeferredCallback = this.registerDeferredCallback.bind(this)
+        this.deRegisterDeferredCallback = this.deRegisterDeferredCallback.bind(this)
     }
 
     getChildContext() {
@@ -119,6 +128,15 @@ class Reader extends Component {
         if (cssHash === null) {
             this.setState({scopedCSS: nextProps.cssHash})
         }
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        const {executeDeferredCallback} = nextState
+        if (executeDeferredCallback && executeDeferredCallback !== this.state.executeDeferredCallback) {
+            window.clearTimeout(this.deferredCallbackTimeout)
+            this.deferredCallbackTimeout = setTimeout(_ => this.callDeferred(), this.deferredCallbackTimer)
+        }
+        return true
     }
 
     componentWillUnmount() {
@@ -226,7 +244,7 @@ class Reader extends Component {
     }
 
 
-    loadSpineItem(spineItem/*, deferredCallback*/) {
+    loadSpineItem(spineItem, deferredCallback) {
         let requestedSpineItem = spineItem
         if (!requestedSpineItem) [requestedSpineItem] = this.state.spine
 
@@ -256,17 +274,6 @@ class Reader extends Component {
                 }
             })
             .then(_ => {
-                // if (deferredCallback && typeof deferredCallback === 'function') {
-                //     return Promise.resolve(deferredCallback()).then(_ =>
-                //         setImmediate(_ => {
-                //             this.enablePageTransitions()
-                //             this.enableEventHandling()
-                //             this.forceInitialRender()
-                //         })
-                //     )
-                // }
-
-
                 this.setState({
                     currentSpineItem: requestedSpineItem,
                     spineItemURL: requestedSpineItem.absoluteURL,
@@ -274,11 +281,27 @@ class Reader extends Component {
                     this.updateQueryString()
                     this.enablePageTransitions()
                     this.enableEventHandling()
+                    this.registerDeferredCallback(deferredCallback)
                     this.hideSpinner()
                     return Promise.resolve()
                 })
             })
             .catch(console.error)
+    }
+
+    registerDeferredCallback(callback = noop) {
+        if (debug) console.log('Reader#registerDeferredCallback', callback.name)
+        this.deferredCallback = callback
+    }
+    deRegisterDeferredCallback() {
+        if (debug) console.log('Reader#deRegisterDeferredCallback', this.deferredCallback.name)
+        this.deferredCallback = noop
+    }
+    callDeferred() {
+        if (debug) console.log('Reader#callDeferred', this.deferredCallback.name)
+        this.deferredCallback.call(this)
+        this.deRegisterDeferredCallback()
+        this.setState({executeDeferredCallback: false})
     }
 
     handleSidebarButtonClick(value) {
@@ -324,23 +347,9 @@ class Reader extends Component {
 
         let deferredCallback
         if (increment === -1) {
-            // TODO: this navigates to last page when moving backwards. should
-            // try to find a better solution than polling
             deferredCallback = _ => {
-                let spreadTotal
-                let spreadTotalRef
-                const interval = setInterval(_ => {
-                    ({spreadTotal} = this.state)
-                    if (spreadTotalRef !== spreadTotal) {
-                        spreadTotalRef = spreadTotal
-                    }
-                    else {
-                        this.navigateToSpreadByIndex(spreadTotal)
-                        window.clearInterval(interval)
-                    }
-                }, 200)
-
-                setTimeout(_ => window.clearInterval(interval), 1000)
+                const {spreadTotal} = this.state
+                this.navigateToSpreadByIndex(spreadTotal)
             }
         }
 
