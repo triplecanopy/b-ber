@@ -293,11 +293,11 @@ class Reader extends Component {
     }
 
     registerDeferredCallback(callback = noop) {
-        if (debug) console.log('Reader#registerDeferredCallback', callback.name)
+        if (debug && verboseOutput) console.log('Reader#registerDeferredCallback', callback.name)
         this.deferredCallback = callback
     }
     deRegisterDeferredCallback() {
-        if (debug) console.log('Reader#deRegisterDeferredCallback', this.deferredCallback.name)
+        if (debug && verboseOutput) console.log('Reader#deRegisterDeferredCallback', this.deferredCallback.name)
         this.deferredCallback = noop
     }
 
@@ -308,7 +308,7 @@ class Reader extends Component {
         this.setState({executeDeferredCallback: true})
     }
     callDeferred() {
-        if (debug) console.log('Reader#callDeferred', this.deferredCallback.name)
+        if (debug && verboseOutput) console.log('Reader#callDeferred', this.deferredCallback.name)
         this.deferredCallback.call(this)
         this.deRegisterDeferredCallback()
         this.setState({executeDeferredCallback: false})
