@@ -93,6 +93,7 @@ class Spread extends Component {
         const padding = paddingTop + paddingBottom
 
         height = isNumeric(height) ? (height * 2) - (padding * 2) : height
+        height -= 1 // nudge to prevent overflow onto next spread
         this.setState({height})
     }
     // TODO: shouldn't be parsing props with regex
