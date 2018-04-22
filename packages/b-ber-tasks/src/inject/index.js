@@ -16,7 +16,7 @@ import {minify} from 'html-minifier'
 
 const htmlMinifyOptions = state.config.html_minify_options || {
     collapseWhitespace: true,
-    collapseInlineTagWhitespace: true,
+    collapseInlineTagWhitespace: false,
     html5: true,
     keepClosingSlash: true,
     removeAttributeQuotes: false,
