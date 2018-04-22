@@ -16,6 +16,7 @@ class Marker extends Component {
         // columnGap: PropTypes.number,
         // translateX: PropTypes.number,
         transitionSpeed: PropTypes.number,
+        requestDeferredCallbackExecution: PropTypes.func,
     }
     constructor(props) {
         super(props)
@@ -119,6 +120,7 @@ class Marker extends Component {
         }
 
         this.setState({verso, recto, parentOffset})
+        this.context.requestDeferredCallbackExecution()
     }
 
     connectObservers() {

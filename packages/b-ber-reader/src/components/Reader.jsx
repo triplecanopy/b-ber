@@ -26,6 +26,7 @@ class Reader extends Component {
         navigateToChapterByURL: PropTypes.func,
         registerOverlayElementId: PropTypes.func,
         deRegisterOverlayElementId: PropTypes.func,
+        requestDeferredCallbackExecution: PropTypes.func,
     }
     constructor(props) {
         super(props)
@@ -97,6 +98,7 @@ class Reader extends Component {
         this.hideSpinner = this.hideSpinner.bind(this)
         this.registerDeferredCallback = this.registerDeferredCallback.bind(this)
         this.deRegisterDeferredCallback = this.deRegisterDeferredCallback.bind(this)
+        this.requestDeferredCallbackExecution = this.requestDeferredCallbackExecution.bind(this)
     }
 
     getChildContext() {
@@ -106,6 +108,7 @@ class Reader extends Component {
             overlayElementId: this.state.overlayElementId,
             registerOverlayElementId: this.registerOverlayElementId,
             deRegisterOverlayElementId: this.deRegisterOverlayElementId,
+            requestDeferredCallbackExecution: this.requestDeferredCallbackExecution,
         }
     }
 
@@ -296,6 +299,13 @@ class Reader extends Component {
     deRegisterDeferredCallback() {
         if (debug) console.log('Reader#deRegisterDeferredCallback', this.deferredCallback.name)
         this.deferredCallback = noop
+    }
+
+    // this only sets a single property in Reader.state, but is used as an
+    // alternative to allowing complete access to Reader.state via
+    // this._setState since we're passing it down via context to Marker
+    requestDeferredCallbackExecution() {
+        this.setState({executeDeferredCallback: true})
     }
     callDeferred() {
         if (debug) console.log('Reader#callDeferred', this.deferredCallback.name)
