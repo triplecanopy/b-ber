@@ -144,6 +144,7 @@ export default {
             const commentStart = htmlComment(`START: ${mediaType}:${type}#${figureId};`)
             const commentEnd = htmlComment(`END: ${mediaType}:${type}#${figureId};`)
             const page = `figure-${figureId}.xhtml`
+            const href = state.build === 'reader' ? 'figures-titlepage.xhtml' : page
 
             switch (type) {
                 case 'iframe':
@@ -170,7 +171,7 @@ export default {
 
                     return `<div class="figure__small figure__small--landscape">
                         <figure id="ref${figureId}">
-                            <a href="${page}#${figureId}">
+                            <a href="${href}#${figureId}">
                                 <img src="${poster}" alt=""/>
                             </a>
                         </figure>
