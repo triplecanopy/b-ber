@@ -70,7 +70,7 @@ class Reader extends Component {
         // completely laid out
         this.deferredCallback = noop
         this.deferredCallbackTimeout = null
-        this.deferredCallbackTimer = 60
+        this.deferredCallbackTimer = 1000
 
         this.createStateFromOPF = this.createStateFromOPF.bind(this)
         this.loadSpineItem = this.loadSpineItem.bind(this)
@@ -282,10 +282,16 @@ class Reader extends Component {
                     spineItemURL: requestedSpineItem.absoluteURL,
                 }, _ => {
                     this.updateQueryString()
-                    this.enablePageTransitions()
-                    this.enableEventHandling()
-                    this.registerDeferredCallback(deferredCallback)
-                    this.hideSpinner()
+
+                    if (deferredCallback) {
+                        this.registerDeferredCallback(deferredCallback)
+                    }
+                    else {
+                        this.enablePageTransitions()
+                        this.enableEventHandling()
+                        this.hideSpinner()
+                    }
+
                     return Promise.resolve()
                 })
             })
@@ -310,6 +316,11 @@ class Reader extends Component {
     callDeferred() {
         if (debug && verboseOutput) console.log('Reader#callDeferred', this.deferredCallback.name)
         this.deferredCallback.call(this)
+
+        this.enablePageTransitions()
+        this.enableEventHandling()
+        this.hideSpinner()
+
         this.deRegisterDeferredCallback()
         this.setState({executeDeferredCallback: false})
     }
