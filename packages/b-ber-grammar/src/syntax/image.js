@@ -47,7 +47,7 @@ export default {
             const attrsObject = attributesObject(attrs, type, {filename, lineNr})
             const asset = path.join(state.src, '_images', attrsObject.source)
 
-            let result, page, classNames, ref, imageData // eslint-disable-line one-var
+            let result, page, href, classNames, ref, imageData // eslint-disable-line one-var
 
             // make sure image exists ...
             try {
@@ -77,6 +77,7 @@ export default {
                     }
 
                     page = `figure${figureId}.xhtml`
+                    href = state.build === 'reader' ? 'figures-titlepage.xhtml' : page
                     state.add('figures', {
                         id: figureId,
                         ...attrsObject,
@@ -90,7 +91,7 @@ export default {
 
                     result = `${comment}<div class="${attrsObject.classes}">
                             <figure id="ref${figureId}">
-                                <a href="${page}#${figureId}">
+                                <a href="${href}#${figureId}">
                                     <img src="../images/${encodeURIComponent(attrsObject.source)}" alt="${attrsObject.alt}"/>
                                 </a>
                             </figure>
