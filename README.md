@@ -84,6 +84,14 @@ $ bber
 
 ## Develop
 
+When pulling in new changes from the `b-ber` repository, ensure you're running the latest build.
+
+```console
+$ lerna run build
+$ lerna bootstrap
+```
+
+
 Watch tasks are available in each of the package directories to use during development.
 
 ```console
