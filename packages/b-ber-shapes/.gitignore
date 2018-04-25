@@ -7,3 +7,5 @@ package-lock.json*
 /dc
 /directives
 /sequences
+/create-build-sequence.js
+/index.js

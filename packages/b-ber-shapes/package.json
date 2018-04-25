@@ -25,5 +25,8 @@
   "devDependencies": {
     "jest": "^22.4.3",
     "rimraf": "^2.6.2"
+  },
+  "dependencies": {
+    "lodash": "^4.17.10"
   }
 }

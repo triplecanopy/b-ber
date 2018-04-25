@@ -2,14 +2,10 @@
 
 import util from 'util'
 
-export function registerSequence(state, command/*, commanders, sequences*/) {
+export function registerSequence(state, command, sequence) {
 
     this.command = command
     if (command !== 'build') return // TODO: should handle this better when showing `fail`
-
-    const {sequence} = state
-
-    this.incrementIndent()
 
     let message = util.format.call(util,
         '%s%s %s %s',

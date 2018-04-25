@@ -1,9 +1,7 @@
-import {pick, pickBy, identity, keys} from 'lodash'
 import * as allTasks from '@canopycanopycanopy/b-ber-tasks'
 import state from '@canopycanopycanopy/b-ber-lib/State'
-
-const _buildCommands = ['epub', 'mobi', 'pdf', 'web', 'sample', 'reader']
-const _buildArgs = args => keys(pickBy(pick(args, _buildCommands), identity))
+import sequences from '@canopycanopycanopy/b-ber-shapes/sequences'
+import createBuildSequence from '@canopycanopycanopy/b-ber-shapes/create-build-sequence'
 
 const command = ['build [options...]', 'b']
 const describe = 'Compile a project'
@@ -67,26 +65,19 @@ const handler = argv => {
 
     process.env.NODE_ENV = process.env.NODE_ENV || 'production'
 
-    const buildCmds = _buildCommands
-    const buildArgs = _buildArgs(argv)
-    const buildTasks = buildArgs.length ? buildArgs : !buildArgs.length && argv.d ? [] : buildCmds
+    const sequence = createBuildSequence(argv)
 
-    // TODO: sequence = state.sequences
-    const sequence = ['clean', 'container', 'cover', 'sass', 'copy', 'scripts', 'render', 'loi', 'footnotes', 'inject', 'opf'] // eslint-disable-line max-len
-
-    const run = tasks => {
-        const next = [tasks.shift()]
+    const run = buildTasks => {
+        const build = buildTasks.shift()
 
         state.reset()
-        state.update('build', next[0])
-        state.update('toc', state.buildTypes[next[0]].tocEntries)
-        state.update('spine', state.buildTypes[next[0]].spineEntries)
-        state.merge('config', state.buildTypes[next[0]].config)
+        state.update('build', build)
+        state.update('toc', state.buildTypes[build].tocEntries)
+        state.update('spine', state.buildTypes[build].spineEntries)
+        state.merge('config', state.buildTypes[build].config)
 
-        if (next[0] === 'mobi') next.unshift('mobiCSS') // TODO: this is resolved by using shapes/sequences
-
-        return allTasks.async.serialize([...sequence, ...next], allTasks).then(() => {
-            if (tasks.length) run(tasks)
+        return allTasks.async.serialize(sequences[build], allTasks).then(() => {
+            if (buildTasks.length) run(buildTasks)
         })
     }
 
@@ -94,7 +85,7 @@ const handler = argv => {
     // finish to ensure that state is updated with the default cover image if
     // none exists. phantomjs can be sped up by disabling wifi connection, see
     // bug report here: https://github.com/ariya/phantomjs/issues/14033
-    run(buildTasks)
+    run(sequence)
 }
 
 export default {
