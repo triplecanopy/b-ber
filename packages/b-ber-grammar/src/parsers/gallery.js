@@ -10,7 +10,7 @@ import {htmlId, parseAttrs} from '../syntax/helpers'
 const toAlias = fpath => path.basename(path.basename(fpath, path.extname(fpath)))
 
 
-const addCaption = (t, attrs) => {
+const addCaption = (md, t, attrs) => {
     if (!attrs.caption) return
 
     t.children.push({
@@ -28,11 +28,11 @@ const addCaption = (t, attrs) => {
             ['class', 'small'],
         ],
         nesting: 1,
-    }, {
-        type: 'text',
-        content: attrs.caption,
-        nesting: 0,
-    }, {
+    },
+
+    ...md.parseInline(attrs.caption, {})[0].children,
+
+    {
         type: 'block',
         tag: 'p',
         nesting: -1,
@@ -41,7 +41,6 @@ const addCaption = (t, attrs) => {
         tag: 'div',
         nesting: -1,
     })
-
 }
 
 const containerPlugin = (md, name, options = {}) => {
@@ -162,7 +161,7 @@ const containerPlugin = (md, name, options = {}) => {
                                 nesting: 0,
                             })
 
-                            addCaption(t, attrs)
+                            addCaption(md, t, attrs)
 
                             break
 
@@ -220,7 +219,7 @@ const containerPlugin = (md, name, options = {}) => {
                                 nesting: -1,
                             })
 
-                            addCaption(t, attrs)
+                            addCaption(md, t, attrs)
 
                             break
 
