@@ -5,7 +5,6 @@ import util from 'util'
 export function registerSequence(state, command, sequence) {
 
     this.command = command
-    if (command !== 'build') return // TODO: should handle this better when showing `fail`
 
     let message = util.format.call(util,
         '%s%s %s %s',
@@ -24,7 +23,7 @@ export function registerSequence(state, command, sequence) {
         this.decorate('b-ber', 'whiteBright', 'bgBlack'),
         this.decorate('Preparing to run', 'black'),
         this.decorate(sequence.length, 'black'),
-        this.decorate('tasks', 'black'),
+        this.decorate(`task${sequence.length > 1 ? 's' : ''}`, 'black'),
     )
 
     process.stdout.write(message)
