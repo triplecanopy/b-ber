@@ -40,8 +40,17 @@ class Asset {
     }
     static convertToReactAttrs(attrs) {
         const attrs_ = {}
-        Object.entries(attrs).forEach(([key, val]) => attrs_[convert(key)] = val)
+        Object.entries(attrs).forEach(([key, val]) => {
+            // TODO: handle other boolen attrs not covered by `convert`
+            if (key === 'playsinline') {
+                attrs_.playsInline = val
+            }
+            else {
+                attrs_[convert(key)] = val
+            }
+        })
 
+        if (!attrs || Object.keys(attrs).length < 1) return attrs_
         if (!attrs.style) return attrs_
 
         const style = {}
