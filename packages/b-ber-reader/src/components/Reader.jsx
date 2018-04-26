@@ -388,8 +388,9 @@ class Reader extends Component {
         const elem = document.querySelector(hash)
         if (!elem) return console.warn(`Could not find element ${hash}`)
 
+        const windowWidth = window.innerWidth
         const {x} = elem.getBoundingClientRect()
-        const spreadIndex = Math.round(x / window.innerWidth) // TODO: more precise
+        const spreadIndex = Math.floor(x / windowWidth)
 
         this.setState({spreadIndex}, this.updateQueryString)
     }

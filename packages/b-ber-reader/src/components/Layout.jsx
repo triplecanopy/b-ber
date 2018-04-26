@@ -1,17 +1,14 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import debounce from 'lodash/debounce'
-import ResizeObserver from 'resize-observer-polyfill'
-import {detect} from 'detect-browser'
 import transitions from '../lib/transition-styles'
-import {debug, verboseOutput} from '../config'
 import Viewport from '../helpers/Viewport'
 import {isNumeric} from '../helpers/Types'
 import {cssHeightDeclarationPropType} from '../lib/custom-prop-types'
+import observable from '../lib/decorate-observable'
 
-const browser = detect()
 
-
+@observable
 class Layout extends Component {
     static propTypes = {
         viewerSettings: PropTypes.shape({
@@ -68,18 +65,16 @@ class Layout extends Component {
         this.debounceSpeed = 60
         this.contentNode = null
         this.layoutNode = null
-        this.resizeObserver = null
+
+        ::this.getFrameHeight
+        ::this.updateDimensions
+        ::this.updateTransform
+        ::this.onResizeDone
+        ::this.bindEventListeners
+        ::this.unBindEventListeners
+
         this.handleResize = debounce(this.onResizeDone, this.debounceSpeed, {}).bind(this)
 
-        this.getFrameHeight = this.getFrameHeight.bind(this)
-        this.updateDimensions = this.updateDimensions.bind(this)
-        this.updateTransform = this.updateTransform.bind(this)
-        this.onResizeDone = this.onResizeDone.bind(this)
-        this.bindEventListeners = this.bindEventListeners.bind(this)
-        this.unBindEventListeners = this.unBindEventListeners.bind(this)
-        this.connectResizeObserver = this.connectResizeObserver.bind(this)
-        this.unobserveResizeObserver = this.unobserveResizeObserver.bind(this)
-        this.disconnectResizeObserver = this.disconnectResizeObserver.bind(this)
     }
 
     getChildContext() {
@@ -99,9 +94,7 @@ class Layout extends Component {
         this.updateDimensions()
         this.updateTransform()
         this.bindEventListeners()
-        this.connectResizeObserver()
     }
-
 
     componentWillReceiveProps(nextProps) {
         const {spreadIndex} = nextProps
@@ -110,7 +103,6 @@ class Layout extends Component {
 
     componentWillUnmount() {
         this.unBindEventListeners()
-        this.unobserveResizeObserver()
     }
 
     onResizeDone() {
@@ -134,61 +126,6 @@ class Layout extends Component {
 
     unBindEventListeners() {
         window.removeEventListener('resize', this.handleResize, false)
-    }
-
-    connectResizeObserver() {
-        this.resizeObserver = new ResizeObserver(entries => {
-            Object.values(entries).forEach(entry => {
-                if (browser.name === 'firefox') {
-                    const contentWidth = parseFloat(entry.target.offsetWidth, 10)
-
-                    console.log('contentWidth', contentWidth)
-
-                    const spreadWidth = window.innerWidth
-                    console.log('spreadWidth', spreadWidth)
-
-                    const columnCount = contentWidth / spreadWidth
-                    console.log('columnCount', columnCount)
-
-                    const spreadTotal = Math.floor(columnCount)
-                    console.log('spreadTotal', spreadTotal)
-
-                    this.props.setReaderState({spreadTotal, executeDeferredCallback: true})
-                }
-                else {
-                    const {columns} = this.state
-                    const contentHeight = parseFloat(entry.contentRect.height, 10)
-                    const frameHeight = this.getFrameHeight()
-
-                    // we need to return 0 for column count on mobile to ensure that
-                    // chapter navigation works
-                    let columnCount = contentHeight / frameHeight
-                    if (!isNumeric(columnCount)) columnCount = 0
-
-                    const spreadTotal = Math.floor(columnCount / columns)
-
-                    if (debug && verboseOutput) {
-                        console.group('Layout#connectResizeObserver')
-                        console.log('spreadTotal: %d; contentHeight: %d; frameHeight %d; columns %d',
-                                     spreadTotal, contentHeight, frameHeight, columns) // eslint-disable-line indent
-                        console.groupEnd()
-                    }
-
-                    this.props.setReaderState({spreadTotal, executeDeferredCallback: true})
-
-                }
-            })
-        })
-
-        this.resizeObserver.observe(this.contentNode)
-    }
-
-    disconnectResizeObserver() {
-        this.resizeObserver.disconnect()
-    }
-
-    unobserveResizeObserver() {
-        this.resizeObserver.unobserve(this.contentNode)
     }
 
     updateDimensions() {
