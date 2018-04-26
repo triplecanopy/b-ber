@@ -7,7 +7,7 @@ const builder = yargs =>
         .help('h')
         .alias('h', 'help')
         .usage(`\nUsage: $0 opf\n\n${describe}`)
-const handler = () => opf()
+const handler = opf
 
 export default {
     command,

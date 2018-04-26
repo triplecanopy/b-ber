@@ -131,21 +131,21 @@ class ManifestAndMetadata {
             // get the book metadata from state or yaml file
             this.loadMetadata()
 
-            // get lists of files to include in the `content.opf`
-            .then(() => this.createManifestObjectFromAssets())
+                // get lists of files to include in the `content.opf`
+                .then(() => this.createManifestObjectFromAssets())
 
-            // create strings of XML entries for the `content.opf`
-            .then(resp => this.createManifestAndMetadataFromTemplates(resp))
+                // create strings of XML entries for the `content.opf`
+                .then(resp => this.createManifestAndMetadataFromTemplates(resp))
 
-            // create the manifest and metadata from templating strings.manifest and
-            // strings.metadata
-            .then(resp => this.createManifestAndMetadataXML(resp))
+                // create the manifest and metadata from templating strings.manifest and
+                // strings.metadata
+                .then(resp => this.createManifestAndMetadataXML(resp))
 
-            // handle err
-            .catch(err => log.error(err))
+                // handle err
+                .catch(err => log.error(err))
 
-            // next
-            .then(resolve)
+                // next
+                .then(resolve)
         )
     }
 }

@@ -23,7 +23,7 @@ describe('b-ber-themes', () => {
     })
 
 
-    describe('themes packages', () => {
+    describe('theme packages', () => {
         const actualModule = require.requireActual('../index.js')
         const actualModules = {}
         Object.keys(actualModule).forEach(a => {

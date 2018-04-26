@@ -18,6 +18,7 @@
   },
   "devDependencies": {
     "jest": "^22.4.3",
+    "jest-extended": "^0.7.1",
     "node-sass": "^4.8.3",
     "rimraf": "^2.6.2"
   }

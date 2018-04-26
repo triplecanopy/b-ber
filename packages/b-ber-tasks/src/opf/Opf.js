@@ -20,14 +20,20 @@ import {ManifestAndMetadata, Navigation} from './'
  * @alias module:opf#Opf
  */
 class Opf {
-    get dist() { // eslint-disable-line class-methods-use-this
-        return state.dist
-    }
+    static createOpf() {
+        return new Promise(resolve => {
+            const manifestAndMetadata = new ManifestAndMetadata()
+            const navigation = new Navigation()
 
-    constructor() {
-        this.createOpfPackageString = Opf.prototype.constructor.createOpfPackageString.bind(this)
-        this.writeOpfToDisk = Opf.prototype.constructor.writeOpfToDisk.bind(this)
-        this.init = this.init.bind(this)
+            Promise.all([
+                manifestAndMetadata.init(),
+                navigation.init(),
+            ])
+                .then(Opf.createOpfPackageString)
+                .then(Opf.writeOpfToDisk)
+                .catch(err => log.error(err))
+                .then(resolve)
+        })
     }
 
     /**
@@ -68,7 +74,7 @@ class Opf {
      */
     static writeOpfToDisk(contents) {
         return new Promise(resolve => {
-            const opsPath = path.join(this.dist, 'OPS', 'content.opf')
+            const opsPath = path.join(state.dist, 'OPS', 'content.opf')
             fs.writeFile(opsPath, contents, err => {
                 if (err) throw err
                 log.info(`emit content.opf [${opsPath}]`)
@@ -76,26 +82,7 @@ class Opf {
             })
         })
     }
-
-    /**
-     * Initialize `content.opf` creation
-     * @return {Promise<Object>}
-     */
-    init() {
-        return new Promise(resolve => {
-            const manifestAndMetadata = new ManifestAndMetadata()
-            const navigation = new Navigation()
-
-            Promise.all([
-                manifestAndMetadata.init(),
-                navigation.init(),
-            ])
-                .then(resp => this.createOpfPackageString(resp))
-                .then(resp => this.writeOpfToDisk(resp))
-                .catch(err => log.error(err))
-                .then(resolve)
-        })
-    }
 }
+
 
 export default Opf

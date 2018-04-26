@@ -1,6 +1,5 @@
 module.exports = {
-    name: 'b-ber',
+    name: 'b-ber-tasks',
     verbose: true,
     setupTestFrameworkScriptFile: 'jest-extended',
 }
-
