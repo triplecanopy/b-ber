@@ -1,5 +1,5 @@
 module.exports = {
-    name: 'b-ber-reader',
+    name: 'b-ber-themes',
     verbose: true,
     setupTestFrameworkScriptFile: 'jest-extended',
 }
