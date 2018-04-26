@@ -13,8 +13,8 @@ export default function observable(target) {
 
     const _componentWillMount = target.prototype.componentWillMount
     target.prototype.componentWillMount = function componentWillMount() {
-        target.__observerableTimer = null
-        target.__contentWidth = 0
+        this.__observerableTimer = null
+        this.__contentDimensions = 0
         this.__resizeObserver = null
         this.__mutationObserver = null
 
@@ -86,17 +86,18 @@ export default function observable(target) {
             const spreadTotal = Math.floor(columnCount)
             console.log('spreadTotal', spreadTotal)
 
-            this.props.setReaderState({spreadTotal, executeDeferredCallback: true})
-
             // we force FF to re-render if contentWidth has changed to ensure
             // we're getting the latest values
-            if (this.__contentWidth !== contentWidth) {
+            if (this.__contentDimensions !== contentWidth) {
                 window.clearTimeout(this.timer)
                 this.timer = setTimeout(_ => {
-                    this.__contentWidth = contentWidth
+                    this.__contentDimensions = contentWidth
                     this.contentNode.style.display = 'none'
                     this.contentNode.style.display = 'block'
                 }, ensureRenderTimeout)
+            }
+            else {
+                this.props.setReaderState({spreadTotal, ready: true})
             }
 
         }
@@ -119,7 +120,17 @@ export default function observable(target) {
                 console.groupEnd()
             }
 
-            this.props.setReaderState({spreadTotal, executeDeferredCallback: true})
+            if (this.__contentDimensions !== contentHeight) {
+                window.clearTimeout(this.timer)
+                this.timer = setTimeout(_ => {
+                    this.__contentDimensions = contentHeight
+                    this.contentNode.style.display = 'none'
+                    this.contentNode.style.display = 'block'
+                }, ensureRenderTimeout)
+            }
+            else {
+                this.props.setReaderState({spreadTotal, ready: true})
+            }
 
         }
 

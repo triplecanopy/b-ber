@@ -6,8 +6,7 @@ import {Request, XMLAdaptor, Asset, Url} from '../helpers'
 import {ViewerSettings} from '../models'
 import {debug, verboseOutput} from '../config'
 import history from '../lib/History'
-
-const noop = _ => {}
+import deferrable from '../lib/decorate-deferrable'
 
 let _bookContent = null
 
@@ -19,6 +18,7 @@ const bookContentComponent = _ => (
     </div>
 )
 
+@deferrable
 class Reader extends Component {
     static childContextTypes = {
         spreadIndex: PropTypes.number,
@@ -52,7 +52,6 @@ class Reader extends Component {
             spreadIndex: 0,
             spreadTotal: 0,
             handleEvents: false,
-            executeDeferredCallback: false,
 
             // sidebar
             showSidebar: null,
@@ -65,12 +64,6 @@ class Reader extends Component {
         }
 
         this.localStorageKey = 'bber_reader'
-
-        // deferredCallback is called after polling gauges that the document is
-        // completely laid out
-        this.deferredCallback = noop
-        this.deferredCallbackTimeout = null
-        this.deferredCallbackTimer = 1000
 
         this.createStateFromOPF = this.createStateFromOPF.bind(this)
         this.loadSpineItem = this.loadSpineItem.bind(this)
@@ -96,9 +89,6 @@ class Reader extends Component {
         this.deRegisterOverlayElementId = this.deRegisterOverlayElementId.bind(this)
         this.showSpinner = this.showSpinner.bind(this)
         this.hideSpinner = this.hideSpinner.bind(this)
-        this.registerDeferredCallback = this.registerDeferredCallback.bind(this)
-        this.deRegisterDeferredCallback = this.deRegisterDeferredCallback.bind(this)
-        this.requestDeferredCallbackExecution = this.requestDeferredCallbackExecution.bind(this)
     }
 
     getChildContext() {
@@ -113,6 +103,7 @@ class Reader extends Component {
     }
 
     componentWillMount() {
+        this.registerCanCallDeferred(_ => this.state.ready)
         this.createStateFromOPF().then(_ => {
             const storage = window.localStorage.getItem(this.localStorageKey)
             if (!storage) return this.loadSpineItem()
@@ -134,10 +125,9 @@ class Reader extends Component {
     }
 
     shouldComponentUpdate(nextProps, nextState) {
-        const {executeDeferredCallback} = nextState
-        if (executeDeferredCallback && executeDeferredCallback !== this.state.executeDeferredCallback) {
-            window.clearTimeout(this.deferredCallbackTimeout)
-            this.deferredCallbackTimeout = setTimeout(_ => this.callDeferred(), this.deferredCallbackTimer)
+        const {ready} = nextState
+        if (ready && ready !== this.state.ready) { // not strictly necessary, but better performance
+            this.requestDeferredCallbackExecution()
         }
         return true
     }
@@ -251,6 +241,7 @@ class Reader extends Component {
         let requestedSpineItem = spineItem
         if (!requestedSpineItem) [requestedSpineItem] = this.state.spine
 
+        this.setState({ready: false})
         this.closeSidebars()
         this.disableEventHandling()
         this.disablePageTransitions()
@@ -290,39 +281,14 @@ class Reader extends Component {
                         this.enablePageTransitions()
                         this.enableEventHandling()
                         this.hideSpinner()
+                        this.setState({ready: true})
+                        // this.requestDeferredCallbackExecution()
                     }
 
                     return Promise.resolve()
                 })
             })
             .catch(console.error)
-    }
-
-    registerDeferredCallback(callback = noop) {
-        if (debug && verboseOutput) console.log('Reader#registerDeferredCallback', callback.name)
-        this.deferredCallback = callback
-    }
-    deRegisterDeferredCallback() {
-        if (debug && verboseOutput) console.log('Reader#deRegisterDeferredCallback', this.deferredCallback.name)
-        this.deferredCallback = noop
-    }
-
-    // this only sets a single property in Reader.state, but is used as an
-    // alternative to allowing complete access to Reader.state via
-    // this._setState since we're passing it down via context to Marker
-    requestDeferredCallbackExecution() {
-        this.setState({executeDeferredCallback: true})
-    }
-    callDeferred() {
-        if (debug && verboseOutput) console.log('Reader#callDeferred', this.deferredCallback.name)
-        this.deferredCallback.call(this)
-
-        this.enablePageTransitions()
-        this.enableEventHandling()
-        this.hideSpinner()
-
-        this.deRegisterDeferredCallback()
-        this.setState({executeDeferredCallback: false})
     }
 
     handleSidebarButtonClick(value) {
@@ -371,6 +337,22 @@ class Reader extends Component {
             deferredCallback = _ => {
                 const {spreadTotal} = this.state
                 this.navigateToSpreadByIndex(spreadTotal)
+                setTimeout(_ => {
+                    this.enablePageTransitions()
+                    this.enableEventHandling()
+                    this.hideSpinner()
+                }, 400) // TODO: must match transition speed
+            }
+        }
+
+        // this branch is redundant, but smoothes out page transisitions when moving forward
+        else {
+            deferredCallback = _ => {
+                setTimeout(_ => {
+                    this.enablePageTransitions()
+                    this.enableEventHandling()
+                    this.hideSpinner()
+                }, 400) // TODO: must match transition speed
             }
         }
 
@@ -402,7 +384,17 @@ class Reader extends Component {
 
         let deferredCallback
         const {hash} = url
-        if (hash) deferredCallback = _ => this.navigateToElementById(hash)
+        if (hash) {
+            deferredCallback = _ => {
+                this.navigateToElementById(hash)
+
+                setTimeout(_ => {
+                    this.enablePageTransitions()
+                    this.enableEventHandling()
+                    this.hideSpinner()
+                }, 400) // TODO: should match transition speed. all these deferreds should be collected together
+            }
+        }
 
         const currentSpineItemIndex = findIndex(spine, {absoluteURL: absoluteURL_})
         if (currentSpineItemIndex === this.state.currentSpineItemIndex) return this.closeSidebars()
