@@ -39,12 +39,13 @@ export default function observable(target) {
 
         if (_componentDidMount) _componentDidMount.call(this, arguments)
 
-        this.connectResizeObserver()
+        this.observe()
     }
 
     const _componentWillUnmount = target.prototype.componentWillUnmount
     target.prototype.componentWillUnmount = function componentWillUnmount() {
-        this.unobserveResizeObserver()
+
+        this.unobserve()
 
         if (_componentWillUnmount) _componentWillUnmount.call(this, arguments)
     }
@@ -55,6 +56,11 @@ export default function observable(target) {
 
         this.__resizeObserver = new ResizeObserver(this.calculateNodePositionAfterResize)
         this.__resizeObserver.observe(this.contentNode)
+    }
+
+    target.prototype.connectMutationObserver = function connectMutationObserver() {
+
+        if (!this.contentNode) throw new Error(`Couldn't find this.contentNode`)
 
         this.__mutationObserver = new window.MutationObserver(this.calculateNodePositionAfterMutation)
         this.__mutationObserver.observe(this.contentNode, {attributes: true, subtree: true})
@@ -64,9 +70,18 @@ export default function observable(target) {
         this.__resizeObserver.disconnect()
     }
 
+    target.prototype.disconnectMutationObserver = function disconnectMutationObserver() {
+        this.__mutationObserver.disconnect()
+    }
+
     target.prototype.unobserveResizeObserver = function unobserveResizeObserver() {
         if (!this.contentNode) throw new Error(`Couldn't find this.contentNode`)
         this.__resizeObserver.unobserve(this.contentNode)
+    }
+
+    target.prototype.unobserveMutationObserver = function unobserveMutationObserver() {
+        if (!this.contentNode) throw new Error(`Couldn't find this.contentNode`)
+        this.__mutationObserver.disconnect(this.contentNode)
     }
 
     target.prototype.calculateNodePosition = function calculateNodePosition(/*entry*/) {
@@ -134,6 +149,22 @@ export default function observable(target) {
 
         }
 
+    }
+
+    target.prototype.observe = function observe() {
+        this.connectResizeObserver()
+        this.connectMutationObserver()
+
+    }
+
+    target.prototype.unobserve = function unobserve() {
+        this.unobserveResizeObserver()
+        this.unobserveMutationObserver()
+    }
+
+    target.prototype.disconnect = function disconnect() {
+        this.disconnectResizeObserver()
+        this.disconnectMutationObserver()
     }
 
 }
