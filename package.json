@@ -10,7 +10,8 @@
     },
     "scripts": {
         "watch": "lerna run watch --no-sort --stream",
-        "test": "yarn jest",
+        "lint": "for d in $(ls ./packages); do ./node_modules/.bin/eslint ./packages/$d/src/**/*.js $d/src/**/*.js; done",
+        "test": "yarn lint && yarn jest",
         "build": "lerna run build"
     },
     "devDependencies": {

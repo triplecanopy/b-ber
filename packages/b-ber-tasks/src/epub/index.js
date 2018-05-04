@@ -18,8 +18,8 @@ const epub = () =>
             output: process.cwd(),
             clean: true,
         })
-        .catch(err => log.error(err))
-        .then(resolve)
+            .catch(err => log.error(err))
+            .then(resolve)
     )
 
 

@@ -173,7 +173,7 @@ const modelFromString = (_str, _src) => {
 }
 
 const modelFromObject = (_obj, _src) => {
-    const {in_toc, linear} = _obj[Object.keys(_obj)[0]]
+    const {in_toc, linear} = _obj[Object.keys(_obj)[0]] // eslint-disable-line camelcase
     const str = Object.keys(_obj)[0]
     const model = modelFromString(str, _src)
 

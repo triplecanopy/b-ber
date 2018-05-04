@@ -23,9 +23,9 @@ const site = () =>
             reject(new Error('No download url'))
         }
         download()
-        .then(data => decompress(data, path.join(cwd, yargs.argv.path), {strip: 1}))
-        .catch(err => log.error(err))
-        .then(resolve)
+            .then(data => decompress(data, path.join(cwd, yargs.argv.path), {strip: 1}))
+            .catch(err => log.error(err))
+            .then(resolve)
     })
 
 export default site

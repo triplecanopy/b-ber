@@ -13,15 +13,15 @@ const pathInfoFromFile = (file, dest) => {
             extension: '',
             remote: true,
         }
-    } else {
-        return {
-            absolutePath: file,
-            opsPath: opsPath(file, dest),
-            name: path.basename(file),
-            extension: path.extname(file),
-            remote: false,
-        }
     }
+    return {
+        absolutePath: file,
+        opsPath: opsPath(file, dest),
+        name: path.basename(file),
+        extension: path.extname(file),
+        remote: false,
+    }
+
 }
 
 const pathInfoFromFiles = (arr, dest) =>

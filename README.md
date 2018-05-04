@@ -112,7 +112,7 @@ More information about using `lerna` commands can be found [here](https://github
 Run tests either in individual packages, or in all packages from the `b-ber` repo root using [`jest`](https://facebook.github.io/jest/).
 
 ```console
-$ yarn jest
+$ yarn test
 ```
 
 ## Documentation

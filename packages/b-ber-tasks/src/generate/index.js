@@ -1,6 +1,6 @@
 /* eslint-disable class-methods-use-this */
 
- /**
+/**
  * Returns an instance of the Generate class
  * @see {@link module:generate#Generate}
  * @return {Generate}
@@ -63,9 +63,7 @@ class Generate {
      * @return {String} YAML formatted string
      */
     frontmatterYaml(metadata) {
-        return Object.entries(metadata).reduce((acc, [k, v]) =>
-            acc.concat(`${k}: ${v}\n`)
-        , '')
+        return Object.entries(metadata).reduce((acc, [k, v]) => acc.concat(`${k}: ${v}\n`), '')
     }
 
     /**
@@ -159,12 +157,12 @@ class Generate {
         return () =>
             new Promise(resolve =>
                 this.getFiles()
-                .then(resp => this.parseMeta(resp))
-                .then(resp => this.createFile(resp))
-                .then(resp => this.writeFile(resp))
-                .then(resp => this.writePageMeta(resp))
-                .catch(err => log.error(err))
-                .then(resolve)
+                    .then(resp => this.parseMeta(resp))
+                    .then(resp => this.createFile(resp))
+                    .then(resp => this.writeFile(resp))
+                    .then(resp => this.writePageMeta(resp))
+                    .catch(err => log.error(err))
+                    .then(resolve)
             )
     }
 }

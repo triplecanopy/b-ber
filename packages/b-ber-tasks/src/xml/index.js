@@ -69,11 +69,11 @@ const writeXML = str =>
 const xml = () =>
     new Promise(resolve =>
         initialize()
-        .then(manifest => parseHTMLFiles(manifest, parser, state.dist))
-        .then(inddFRMT)
-        .then(writeXML)
-        .catch(err => log.error(err))
-        .then(resolve)
+            .then(manifest => parseHTMLFiles(manifest, parser, state.dist))
+            .then(inddFRMT)
+            .then(writeXML)
+            .catch(err => log.error(err))
+            .then(resolve)
     )
 
 export default xml

@@ -77,9 +77,9 @@ const ensureDir = () =>
 const scripts = () =>
     new Promise(resolve =>
         ensureDir()
-        .then(write)
-        .catch(err => log.error(err))
-        .then(resolve)
+            .then(write)
+            .catch(err => log.error(err))
+            .then(resolve)
     )
 
 export default scripts

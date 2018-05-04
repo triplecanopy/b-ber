@@ -11,9 +11,9 @@
 
 */
 
-import figure from '../parsers/figure'
 import log from '@canopycanopycanopy/b-ber-logger'
 import {passThrough} from '@canopycanopycanopy/b-ber-lib/utils' // for testing
+import figure from '../parsers/figure'
 
 const markerRe = /^epigraph/
 const attrsRe = /(?:(image|caption|citation)\s["]([^"]+)["])/g
@@ -33,7 +33,7 @@ export default {
             let result = ''
             if (tokens[idx].nesting === 1) { // opening tag
                 let matches
-                while ((matches = attrsRe.exec(tokens[idx].info.trim())) !== null) {attrs[matches[1]] = matches[2]}
+                while ((matches = attrsRe.exec(tokens[idx].info.trim())) !== null) attrs[matches[1]] = matches[2]
 
                 if (!attrs.image && !attrs.caption) {
                     log.error(`[${context.filename}.md] <epigraph> Malformed directive.`)

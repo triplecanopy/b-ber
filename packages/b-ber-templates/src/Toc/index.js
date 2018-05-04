@@ -1,3 +1,5 @@
+/* eslint-disable indent */
+
 import path from 'path'
 import File from 'vinyl'
 import {escapeHTML, getTitleOrName} from '@canopycanopycanopy/b-ber-lib/utils'
@@ -31,7 +33,8 @@ class Toc {
                             ${Toc.item(a)}
                             ${a.nodes && a.nodes.length ? Toc.items(a.nodes) : ''}
                         </li>
-                    `}).join('')
+                    `
+                    }).join('')
                 }
             </ol>
         `

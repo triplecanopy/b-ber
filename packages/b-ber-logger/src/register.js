@@ -2,21 +2,6 @@
 
 import util from 'util'
 
-export function printVersion() {
-
-    const message = util.format.call(util,
-        '%s%s %s %s',
-        this.indent(),
-        this.decorate('b-ber', 'whiteBright', 'bgBlack'),
-        this.decorate('version', 'black'),
-        this.decorate(state.version, 'magenta'),
-    )
-
-    process.stdout.write(message)
-    this.newLine()
-}
-
-
 export function registerSequence(state, command, sequence) {
 
     const message = util.format.call(util,

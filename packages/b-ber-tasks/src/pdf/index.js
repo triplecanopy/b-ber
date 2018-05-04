@@ -21,8 +21,8 @@ const pdf = () =>
             outputPath: process.cwd(),
             fileType: 'pdf',
         })
-        .catch(err => log.error(err))
-        .then(resolve)
+            .catch(err => log.error(err))
+            .then(resolve)
     })
 
 export default pdf
