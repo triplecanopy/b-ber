@@ -4,7 +4,9 @@
   "private": true,
   "description": "",
   "main": "src/index.js",
-  "bin": "dist/index.js",
+  "bin": {
+    "bber": "dist/index.js"
+  },
   "scripts": {
     "prepare.dist": "BABEL_ENV=production ../../node_modules/.bin/babel -d dist/ src/ --ignore **/__tests__/**",
     "clean": "rimraf dist",

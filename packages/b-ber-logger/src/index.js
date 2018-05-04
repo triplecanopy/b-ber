@@ -11,6 +11,7 @@ import {trace} from './trace'
 // import {inspect} from './inspect'
 import {printSummary} from './summary'
 import {configure} from './configure'
+import {printVersion} from './print-version'
 import {registerSequence} from './register'
 import {wrap, decorate, floatFormat} from './format'
 import {counter, getContext} from './context'
@@ -94,6 +95,7 @@ class Logger extends Timer {
         this.printSummary = printSummary.bind(this)
 
         this.configure = configure.bind(this)
+        this.printVersion = printVersion.bind(this)
         this.registerSequence = registerSequence.bind(this)
 
         this.wrap = wrap.bind(this)

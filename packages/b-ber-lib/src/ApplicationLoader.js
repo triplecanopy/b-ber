@@ -39,6 +39,8 @@ class ApplicationLoader {
         const scriptPath = path.resolve(path.dirname(path.dirname(process.argv[1])), 'package.json')
         this.pkg = JSON.parse(fs.readFileSync(scriptPath), 'utf8')
         Object.entries(ApplicationLoader.defaults).forEach(([key, val]) => this[key] = val)
+
+        // log.printVersion(this.pkg.version)
     }
 
     __version() {
@@ -135,6 +137,11 @@ class ApplicationLoader {
         }
     }
 
+    __createSpineListFromMarkdownFiles() {
+        const markdownDir = path.join(cwd, this.config.src, '_markdown')
+        return fs.readdirSync(markdownDir).filter(a => path.extname(a) === '.md').map(a => path.basename(a, '.md'))
+    }
+
     __loadBuildSettings(type) {
         const {src, dist} = this.config
         const projectDir = path.join(cwd, src)
@@ -167,19 +174,21 @@ class ApplicationLoader {
         try {
             if (fs.existsSync(navigationConfigFile)) {
                 spineList = YamlAdaptor.load(navigationConfigFile) || []
-                tocEntries = createPageModelsFromYAML(spineList, src) // nested navigation
-                spineEntries = flattenNestedEntries(tocEntries) // one-dimensional page flow
             } else {
-                throw new Error(`[${type}.yml] not found. Creating default file`)
+                throw new Error(`creating default file [${type}.yml]`)
             }
         } catch (err) {
-            if (/Creating default file/.test(err.message)) {
+            if (/creating default file/.test(err.message)) {
                 log.warn(err.message)
                 fs.writeFileSync(navigationConfigFile, '')
+                spineList = this.__createSpineListFromMarkdownFiles()
             } else {
                 throw err
             }
         }
+
+        tocEntries = createPageModelsFromYAML(spineList, src) // nested navigation
+        spineEntries = flattenNestedEntries(tocEntries) // one-dimensional page flow
 
         try {
             if (fs.existsSync(buildConfigFile)) {

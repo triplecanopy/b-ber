@@ -2,11 +2,9 @@
 
 import util from 'util'
 
-export function registerSequence(state, command, sequence) {
+export function printVersion() {
 
-    this.command = command
-
-    let message = util.format.call(util,
+    const message = util.format.call(util,
         '%s%s %s %s',
         this.indent(),
         this.decorate('b-ber', 'whiteBright', 'bgBlack'),
@@ -16,8 +14,12 @@ export function registerSequence(state, command, sequence) {
 
     process.stdout.write(message)
     this.newLine()
+}
 
-    message = util.format.call(util,
+
+export function registerSequence(state, command, sequence) {
+
+    const message = util.format.call(util,
         '%s%s %s %s',
         this.indent(),
         this.decorate('b-ber', 'whiteBright', 'bgBlack'),

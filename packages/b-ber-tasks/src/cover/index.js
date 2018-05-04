@@ -13,7 +13,7 @@ import log from '@canopycanopycanopy/b-ber-logger'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import YamlAdaptor from '@canopycanopycanopy/b-ber-lib/YamlAdaptor'
 import Xhtml from '@canopycanopycanopy/b-ber-templates/Xhtml'
-import {version, fileId} from '@canopycanopycanopy/b-ber-lib/utils'
+import {fileId} from '@canopycanopycanopy/b-ber-lib/utils'
 
 class Cover {
 
@@ -185,10 +185,7 @@ class Cover {
             // displays the book's metadata (title, generator version, etc)
             log.warn('Creating default cover image [%s]', this.coverEntry)
 
-
-            state.remove('metadata', 'cover')
             state.add('metadata', {term: 'cover', value: fileId(this.coverEntry).slice(1)})
-
             this.metadata = {...this.metadata, ...metadata}
 
             const content = `
@@ -198,7 +195,7 @@ class Cover {
                         <p><span>Creator:</span>${this.metadata.creator}</p>
                         <p><span>Date Modified:</span>${this.metadata['date-modified']}</p>
                         <p><span>Identifier:</span>${this.metadata.identifier}</p>
-                        <p><span>b-ber version:</span>${version()}</p>
+                        <p><span>b-ber version:</span>${state.version}</p>
                     </body>
                 </html>
             `
@@ -207,8 +204,8 @@ class Cover {
             this.phantomjsArgs.push(content, this.coverImagePath)
 
             return this.removeDefaultCovers()
-                .then(() => this.generateDefaultCoverImage())
-                .then(() => this.generateCoverXHTML())
+                .then(_ => this.generateDefaultCoverImage())
+                .then(_ => this.generateCoverXHTML())
                 .catch(err => log.error(err))
                 .then(resolve)
         })
@@ -217,10 +214,10 @@ class Cover {
     init() {
         return new Promise(resolve =>
             this.loadInitialState()
-            .then(() => this.createCoverImage())
-            .then(() => this.writeCoverXHTML())
-            .catch(err => log.error(err))
-            .then(resolve)
+                .then(_ => this.createCoverImage())
+                .then(_ => this.writeCoverXHTML())
+                .catch(err => log.error(err))
+                .then(resolve)
         )
     }
 }
