@@ -3,3 +3,4 @@ node_modules
 package-lock*
 yarn-error.log
 lerna-debug.log
+coverage
