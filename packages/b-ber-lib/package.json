@@ -1,6 +1,6 @@
 {
   "name": "@canopycanopycanopy/b-ber-lib",
-  "version": "0.1.0-alpha.15",
+  "version": "0.1.0-alpha.16",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -24,9 +24,9 @@
     "vinyl": "^2.1.0"
   },
   "dependencies": {
-    "@canopycanopycanopy/b-ber-logger": "^0.1.0-alpha.15",
-    "@canopycanopycanopy/b-ber-shapes": "^0.1.0-alpha.15",
-    "@canopycanopycanopy/b-ber-themes": "^0.1.0-alpha.15",
+    "@canopycanopycanopy/b-ber-logger": "^0.1.0-alpha.16",
+    "@canopycanopycanopy/b-ber-shapes": "^0.1.0-alpha.16",
+    "@canopycanopycanopy/b-ber-themes": "^0.1.0-alpha.16",
     "command-exists": "^1.2.2",
     "fs-extra": "^5.0.0",
     "htmlparser2": "^3.9.2",
