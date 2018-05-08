@@ -4,9 +4,9 @@
     "private": true,
     "license": "GNU GPLv3",
     "engines": {
-        "node": ">= 4.x <= 8.x",
+        "node": ">= 4.x <= 9.x",
         "npm": ">= 2.x <= 5.x",
-        "yarn": ">=0.27.5 || >= 1.0.2"
+        "yarn": ">=0.27.5 || >= 1.6.0"
     },
     "scripts": {
         "watch": "lerna run watch --no-sort --stream",
