@@ -3,7 +3,7 @@
   "version": "0.1.0-alpha.15",
   "private": true,
   "description": "",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "bin": {
     "bber": "dist/index.js"
   },
