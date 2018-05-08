@@ -1,0 +1,16 @@
+// Set @page margin for e-readers
+@page { margin: em-to-px($font-size-base * 2); }
+
+@import 'base/container';
+@import 'base/figure';
+@import 'base/layout';
+@import 'base/list';
+@import 'base/table';
+@import 'base/text';
+@import 'base/web'; // conditional styles
+@import 'base/print'; // for print views and PDF generation
+
+
+.break-before   { page-break-before: always!important; }
+.break-after    { page-break-after: always!important; }
+.uppercase      { text-transform: uppercase!important; }

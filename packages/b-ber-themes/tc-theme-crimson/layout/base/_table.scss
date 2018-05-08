@@ -1,0 +1,27 @@
+@function table-border ($width: 1px, $style: solid, $color: $grey) {
+    @return $width $style $color;
+}
+
+table {
+    @include type-settings(-6);
+    page-break-inside: avoid;
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 100%;
+    margin: two-lines(0) 0;
+    tr {
+        th {
+            font-family: $sans;
+            border-top: table-border();
+        }
+        th, td {
+            @include type-settings(0);
+            font-family: $sans;
+            text-align: left;
+            padding: one-em(0);
+            border-left: table-border();
+            border-right: table-border();
+            border-bottom: table-border();
+        }
+    }
+}
