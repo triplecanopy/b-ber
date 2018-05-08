@@ -1,3 +1,3 @@
 # `b-ber-resources`
 
-This package contains resources used by `b-ber` when creating new projects.
+This project is currently very alpha. README coming soon!
