@@ -1,3 +1,5 @@
+/src
+/test
 .github
 .babelrc
 .editorconfig
@@ -7,4 +9,5 @@
 .travis.yml
 .yarnclean
 yarn.lock
-src
+yarn-debug.log*
+yarn-error.log*

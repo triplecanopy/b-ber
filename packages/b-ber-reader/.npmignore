@@ -1,4 +1,3 @@
-src
 .github
 .babelrc
 .editorconfig
@@ -6,7 +5,20 @@ src
 .istanbul.yml
 .jsdoc.json
 .travis.yml
-.yarnclean
-yarn.lock
 server.js
 .localconfig
+.yarnclean
+yarn.lock
+yarn-debug.log*
+yarn-error.log*
+
+/.eslintrc.json
+/src
+/test
+/epub
+/books.json
+/jest.config.js
+/postcss.config.js
+/webpack.config.development.js
+/webpack.config.production.js
+/webpack.loaders.js

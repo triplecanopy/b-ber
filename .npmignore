@@ -1,9 +1,11 @@
 .DS_Store
 .babelrc
 .eslintrc
-.git
 .github
 .gitignore
 demos
 node_modules
+.yarnclean
 yarn.lock
+yarn-debug.log*
+yarn-error.log*
