@@ -4,14 +4,14 @@
 
 // Load vendor libs
 // https://github.com/modularscale/modularscale-sass
-@import '../node_modules/modularscale-sass/stylesheets/_modularscale';
+@import 'node_modules/modularscale-sass/stylesheets/_modularscale';
 
 @import 'settings';
 @import 'mixins';
 @import 'debug';
 
 // Load syntax highlighting
-@import "../node_modules/highlight.js/styles/tomorrow";
+@import "node_modules/highlight.js/styles/tomorrow";
 
 // for validation while building on CLI, not an actual setting
 $build: 'epub'                  !default;
