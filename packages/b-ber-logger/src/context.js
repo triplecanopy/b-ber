@@ -1,4 +1,4 @@
-import Timer from './timer'
+import Timer from './Timer'
 
 function ctx(filename) {
     return filename
