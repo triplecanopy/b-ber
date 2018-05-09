@@ -18,5 +18,9 @@
   "devDependencies": {
     "jest": "^22.4.3",
     "rimraf": "^2.6.2"
+  },
+  "dependencies": {
+    "babel-runtime": "^6.26.0",
+    "fs-extra": "^6.0.0"
   }
 }
