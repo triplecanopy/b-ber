@@ -12,7 +12,7 @@
         "watch": "lerna run watch --no-sort --stream",
         "lint": "for d in $(ls ./packages); do ./node_modules/.bin/eslint ./packages/$d/src/**/*.js $d/src/**/*.js; done",
         "test": "yarn lint && yarn jest",
-        "build": "lerna run build"
+        "build": "yarn test && lerna run build"
     },
     "devDependencies": {
         "ajv": "^6.4.0",

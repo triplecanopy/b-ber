@@ -153,6 +153,7 @@ const renderCSS = scssString =>
             includePaths: [
                 path.join(state.src, '_stylesheets'),
                 path.dirname(state.theme.entry),
+                path.dirname(path.dirname(state.theme.entry)),
             ],
             outputStyle: state.env === 'production' ? 'compressed' : 'nested',
             errLogToConsole: true,

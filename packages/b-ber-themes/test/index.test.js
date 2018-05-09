@@ -66,7 +66,10 @@ describe('b-ber-themes', () => {
 
                     expect(() => sass.render({
                         data: `$build: "epub"; ${contents}`,
-                        includePaths: [path.dirname(theme.entry)],
+                        includePaths: [
+                            path.dirname(theme.entry),
+                            path.dirname(path.dirname(theme.entry)),
+                        ],
                     }, (err, result) => {
                         expect(err).toBeNil()
 

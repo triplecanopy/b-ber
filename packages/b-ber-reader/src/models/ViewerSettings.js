@@ -57,8 +57,9 @@ class ViewerSettings {
     set paddingRight(val) { this.settings.paddingRight = val }
     set paddingBottom(val) { this.settings.paddingBottom = val }
 
-    set padding(...val) {
-        const [top, right, bottom, left] = val
+    // expects array of values
+    set padding(values) {
+        const [top, right, bottom, left] = values
         if (isNumeric(top)) this.settings.paddingTop = top
         if (isNumeric(right)) this.settings.paddingRight = right
         if (isNumeric(bottom)) this.settings.paddingTop = bottom
