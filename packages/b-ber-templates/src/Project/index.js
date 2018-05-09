@@ -7,6 +7,7 @@ class Project {
     static directories(src) {
         return [
             src,
+            path.join(path.dirname(src), 'themes'),
             `${src}/_images`,
             `${src}/_javascripts`,
             `${src}/_stylesheets`,

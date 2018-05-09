@@ -53,9 +53,9 @@ function getUserDefinedThemes() {
 
 const printThemeList = (themeList, currentTheme = '') =>
     themeList.reduce((acc, curr) => {
-        const icon = currentTheme && currentTheme === curr ? '✔' : '-'
+        const icon = currentTheme && currentTheme === curr ? '✓' : '○'
         return acc.concat(`  ${icon} ${curr}\n`)
-    }, '\n')
+    }, '\n').slice(0, -1)
 
 
 function setTheme(themeName, themeList, userThemes, cwd) {

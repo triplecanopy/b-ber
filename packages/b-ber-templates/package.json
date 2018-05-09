@@ -18,7 +18,7 @@
     "clean": "rimraf Ncx && rimraf Opf && rimraf Ops && rimraf Project && rimraf Toc && rimraf Xhtml && rimraf Xml && rimraf figures",
     "build": "yarn prepare",
     "watch": "BABEL_ENV=production ../../node_modules/.bin/babel -d ./ src/ --watch src",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "yarn jest"
   },
   "author": "Maxwell Simmer <maxwell.simmer@gmail.com> (http://maxwellsimmer.com)",
   "license": "GNU GPLv3",
