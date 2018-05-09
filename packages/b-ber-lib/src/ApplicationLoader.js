@@ -36,11 +36,9 @@ class ApplicationLoader {
         buildTypes: { sample: {}, epub: {}, mobi: {}, pdf: {}, web: {}},
     }
     constructor() {
-        const scriptPath = path.resolve(path.dirname(path.dirname(process.argv[1])), 'package.json')
+        const scriptPath = path.resolve(__dirname, 'package.json')
         this.pkg = JSON.parse(fs.readFileSync(scriptPath), 'utf8')
         Object.entries(ApplicationLoader.defaults).forEach(([key, val]) => this[key] = val)
-
-        // log.printVersion(this.pkg.version)
     }
 
     __version() {
