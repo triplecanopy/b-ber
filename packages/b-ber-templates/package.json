@@ -30,8 +30,8 @@
     "rimraf": "^2.6.2"
   },
   "dependencies": {
-    "@canopycanopycanopy/b-ber-lib": "^0.1.0-alpha.16",
-    "@canopycanopycanopy/b-ber-logger": "^0.1.0-alpha.16",
+    "@canopycanopycanopy/b-ber-lib": "canary",
+    "@canopycanopycanopy/b-ber-logger": "canary",
     "lodash": "^4.17.5",
     "mime-types": "^2.1.18",
     "vinyl": "^2.1.0"

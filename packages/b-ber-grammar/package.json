@@ -21,10 +21,10 @@
     "rimraf": "^2.6.2"
   },
   "dependencies": {
-    "@canopycanopycanopy/b-ber-lib": "^0.1.0-alpha.16",
-    "@canopycanopycanopy/b-ber-logger": "^0.1.0-alpha.16",
-    "@canopycanopycanopy/b-ber-shapes": "^0.1.0-alpha.16",
-    "@canopycanopycanopy/b-ber-templates": "^0.1.0-alpha.16",
+    "@canopycanopycanopy/b-ber-lib": "canary",
+    "@canopycanopycanopy/b-ber-logger": "canary",
+    "@canopycanopycanopy/b-ber-shapes": "canary",
+    "@canopycanopycanopy/b-ber-templates": "canary",
     "fs-extra": "^5.0.0",
     "highlight.js": "^9.12.0",
     "layouts": "^2.0.1",
