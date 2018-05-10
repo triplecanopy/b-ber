@@ -21,7 +21,7 @@ class ApplicationLoader {
             theme: 'b-ber-theme-serif',
             themes_directory: './themes',
             base_url: '/',
-            remote_url: '/',
+            remote_url: 'http://localhost:3000/',
             private: false,
             ignore: {},
             autoprefixer_options: {

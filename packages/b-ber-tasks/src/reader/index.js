@@ -41,7 +41,7 @@ class Reader {
         if (process.env.NODE_ENV === 'production' && (!state.config || !state.config.remote_url || /^http/.test(state.config.remote_url) === false)) {
             throw new Error(`Task [build/reader] requires a remote_url to be set in config.yml`)
         }
-        return state.config.remote_url || 'http://localhost:3000'
+        return state.config.remote_url || 'http://localhost:3000/'
     }
     ensureReaderModuleExists() {
         try {
