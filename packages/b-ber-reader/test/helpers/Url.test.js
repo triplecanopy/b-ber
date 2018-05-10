@@ -3,37 +3,32 @@
 import Url from '../../src/helpers/Url'
 
 
-test('creates a slug', done => {
+test('creates a slug', () => {
     const input = 'abc #!$   éß1'
     const output = 'abc-1'
     expect(Url.slug(input)).toBe(output)
-    done()
 })
 
-test('builds a query string', done => {
+test('builds a query string', () => {
     const input = {foo: "one", bar: 1.1, baz: [1, true, 'qux zop'], bat: null}
     const output = 'foo=one&bar=1.1&baz=%5B1%2Ctrue%2C%22qux%20zop%22%5D&bat=null'
     expect(Url.buildQueryString(input)).toBe(output)
-    done()
 })
 
-test('ensures a url has been decoded', done => {
+test('ensures a url has been decoded', () => {
     const input = 'http://foo%2520bar%252520baz.com'
     const output = 'http://foo bar baz.com'
     expect(Url.ensureDecodedURL(input)).toBe(output)
-    done()
 })
 
-test('trims slashes', done => {
+test('trims slashes', () => {
     expect(Url.trimSlashes('/foo')).toBe('foo')
     expect(Url.trimSlashes('/foo/')).toBe('foo')
     expect(Url.trimSlashes('////foo')).toBe('foo')
     expect(Url.trimSlashes('////foo//')).toBe('foo')
-
-    done()
 })
 
-test('resolves a relative url', done => {
+test('resolves a relative url', () => {
     expect(Url.resolveRelativeURL(
         'http://example.com',
         'foo/bar'
@@ -63,11 +58,9 @@ test('resolves a relative url', done => {
         'http://example.com/',
         'foo/?bar=some val'
     )).toBe('http://example.com/foo/?bar=some%20val')
-
-    done()
 })
 
-test('resolves overlapping urls', done => {
+test('resolves overlapping urls', () => {
     expect(Url.resolveOverlappingURL(
         'http://example.com/foo',
         'foo/bar'
@@ -77,6 +70,33 @@ test('resolves overlapping urls', done => {
         'http://example.com/foo/bar/baz',
         '/bar/baz'
     )).toBe('http://example.com/foo/bar/baz')
+})
 
-    done()
+test('tests if a url is relative', () => {
+    expect(Url.isRelativeURL('http://example.com/test.jpg')).toBe(false)
+    expect(Url.isRelativeURL('../test.jpg')).toBe(true)
+    expect(Url.isRelativeURL('test.jpg')).toBe(true)
+    expect(Url.isRelativeURL('../../../test.jpg')).toBe(true)
+})
+
+test('trims a filename from a url', () => {
+    expect(Url.trimFilenameFromResponse('http://example.com/test.jpg')).toBe('http://example.com')
+    expect(Url.trimFilenameFromResponse('http://example.com/path/to/file/test.jpg')).toBe('http://example.com/path/to/file')
+})
+
+test('creates an absolute url', () => {
+    expect(Url.toAbsoluteUrl(
+        'http://example.com/',
+        'path/to/file/test.jpg'
+    )).toBe('http://example.com/path/to/file/test.jpg')
+
+    expect(Url.toAbsoluteUrl(
+        'http://example.com',
+        'path/to/file/test.jpg'
+    )).toBe('http://example.com/path/to/file/test.jpg')
+
+    expect(Url.toAbsoluteUrl(
+        'http://example.com/',
+        '/path/to/file/test.jpg'
+    )).toBe('http://example.com/path/to/file/test.jpg')
 })

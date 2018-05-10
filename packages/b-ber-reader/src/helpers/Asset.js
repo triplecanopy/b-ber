@@ -13,13 +13,13 @@ class Asset {
         let hash = 0
         let chr
         const seed_ = String(seed)
-        if (seed_.length === 0) return hash
+        if (seed_.length === 0) return String(hash)
         for (let i = 0; i < seed_.length; i++) {
             chr = seed_.charCodeAt(i)
             hash = ((hash << 5) - hash) + chr
             hash |= 0
         }
-        return hash
+        return String(hash)
     }
     static createId() {
         return `_${Math.random().toString(36).substr(2, 9)}`
