@@ -73,7 +73,7 @@ class MarkdownRenderer {
                 if (lang && hlsj.getLanguage(lang)) {
                     try {
                         return hlsj.highlight(lang, str).value
-                    } catch (_) {/* noop */}
+                    } catch (_) { /* noop */ }
                 }
 
                 return ''

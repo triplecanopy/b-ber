@@ -1,4 +1,4 @@
-/* eslint-disable no-plusplus, max-statements-per-line, no-continue, no-multi-assign */
+/* eslint-disable no-plusplus, max-statements-per-line, no-continue, no-multi-assign, indent */
 import {forOf} from '@canopycanopycanopy/b-ber-lib/utils'
 import log from '@canopycanopycanopy/b-ber-logger'
 import {
