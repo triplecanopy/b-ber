@@ -11,7 +11,7 @@
     "scripts": {
         "watch": "lerna run watch --no-sort --stream",
         "lint": "ls ./packages | xargs -I {} ./node_modules/.bin/eslint ./packages/{}/src/**/*.js",
-        "test": "yarn lint && yarn jest",
+        "test": "rimraf ./coverage && yarn lint && yarn jest",
         "build": "yarn test && lerna run build"
     },
     "devDependencies": {
