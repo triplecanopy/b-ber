@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Audio renders the component 1`] = `
+<audio
+  data-autoplay={true}
+  onCanPlay={[Function]}
+/>
+`;
+
+exports[`Audio renders the component 2`] = `
+<audio
+  data-autoplay={false}
+  onCanPlay={[Function]}
+/>
+`;

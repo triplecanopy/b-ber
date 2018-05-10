@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Video renders the component 1`] = `
+<video
+  data-autoplay={true}
+  onCanPlay={[Function]}
+  onClick={[Function]}
+/>
+`;
+
+exports[`Video renders the component 2`] = `
+<video
+  data-autoplay={false}
+  onCanPlay={[Function]}
+  onClick={[Function]}
+/>
+`;

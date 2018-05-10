@@ -38,6 +38,8 @@
         "istanbul-api": "1.2.2",
         "istanbul-reports": "1.1.4",
         "jest": "^22.4.3",
+        "jest-environment-jsdom": "^22.4.3",
+        "jest-environment-jsdom-global": "^1.0.3",
         "jest-extended": "^0.7.1",
         "jsdoc": "^3.4.3",
         "jsdoc-strip-async-await": "^0.1.0",

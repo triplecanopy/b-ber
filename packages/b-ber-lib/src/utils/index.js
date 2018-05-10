@@ -71,39 +71,6 @@ const forOf = (collection, iterator) =>
 
 /**
  * [description]
- * @return {String}
- */
-// const src = () => {
-//     if (!state.buildTypes[state.build] || !state.buildTypes[state.build].src) {
-//         state.update('build', 'epub')
-//     }
-//     return path.join(cwd, state.buildTypes[state.build].src)
-// }
-
-/**
- * [description]
- * @return {String}
- */
-
-// const dist = () => {
-//     if (!state.buildTypes[state.build] || !state.buildTypes[state.build].dist) {
-//         state.update('build', 'epub')
-//     }
-//     return path.join(cwd, state.buildTypes[state.build].dist)
-// }
-
-// const build = () => state.build
-
-// const env = () => state.config.env
-
-// const version = () => state.version
-
-// const theme = () =>  state.theme
-
-// const metadata = () => state.metadata
-
-/**
- * [description]
  * @param  {Array<Object<Promise>>} promiseArray [description]
  * @return {Object<Promise|Error>}
  */
@@ -304,13 +271,6 @@ export {
     hrtimeformat,
     getImageOrientation,
     forOf,
-    // src,
-    // dist,
-    // build,
-    // env,
-    // theme,
-    // version,
-    // metadata,
     promiseAll,
     htmlComment,
     passThrough,
