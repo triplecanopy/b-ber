@@ -1,25 +1,26 @@
-## Device
-
-## Software
-
-## Example Project Link
-
 ## Expected Behavior
 
 ## Actual Behavior
 
 ## Steps to Reproduce the Problem
-
   1.
   2.
   3.
 
+## Environment
+
+Copy in the results of the following commands, entered into the console, below
+
+- Node version: [`$ node -v`]
+- Node version (nvm): [`$ nvm run node -v`]
+- npm version: [`$ npm -v`]
+- b-ber version: [`$ bber --version`]
+- Project config: [`$ cat ./config.yml`]
+
 ## Console Output
 
+## Example Project Link
+
 ## Relevant Markdown Sample
-
-## Relevant Configuration in YAML
-
-## b-ber Version
   
 ## Screen Shots
