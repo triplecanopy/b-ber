@@ -62,7 +62,7 @@ class ViewerSettings {
         const [top, right, bottom, left] = values
         if (isNumeric(top)) this.settings.paddingTop = top
         if (isNumeric(right)) this.settings.paddingRight = right
-        if (isNumeric(bottom)) this.settings.paddingTop = bottom
+        if (isNumeric(bottom)) this.settings.paddingBottom = bottom
         if (isNumeric(left)) this.settings.paddingLeft = left
     }
 
