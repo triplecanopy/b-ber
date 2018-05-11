@@ -1,4 +1,4 @@
-const build = [
+export const build = [
     'clean',
     'container',
     'cover',

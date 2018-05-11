@@ -22,20 +22,25 @@ import state from '@canopycanopycanopy/b-ber-lib/State'
 //
 
 const serialize = (sequence, tasks) =>
-    sequence.reduce(
-        (acc, task) => {
+    sequence.reduce((acc, task) => {
 
-            const func = tasks[task] || task
+        const func = tasks[task] || task
 
-            if (typeof func !== 'function') throw new Error(`async#serialize: Invalid parameter [${func}] is [${typeof func}], expected [function]`)
+        if (typeof func !== 'function') throw new Error(`async#serialize: Invalid parameter [${func}] is [${typeof func}], expected [function]`)
 
-            return acc.then(async resp => {
-                log.notify('start', task)
-                await func(resp).then(_ => log.notify('stop', task))
+        return acc.then(async resp => {
+            log.notify('start', task)
+            return func(resp).then(data => {
+                log.notify('stop', task)
+                return data
             })
+        })
 
-        }, Promise.resolve()
-    )
-        .then(_ => log.notify('done', {state}))
+    }, Promise.resolve())
+
+        .then(response => {
+            log.notify('done', {state})
+            return response
+        })
 
 export default {serialize}

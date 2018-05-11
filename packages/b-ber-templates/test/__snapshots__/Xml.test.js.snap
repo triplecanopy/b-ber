@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`templates.Xml container matches the snapshot 1`] = `
+"<?xml version=\\"1.0\\"?>
+            <container version=\\"1.0\\" xmlns=\\"urn:oasis:names:tc:opendocument:xmlns:container\\">
+                <rootfiles>
+                    <rootfile full-path=\\"OPS/content.opf\\" media-type=\\"application/oebps-package+xml\\"/>
+                </rootfiles>
+            </container>
+        "
+`;
+
+exports[`templates.Xml mimetype matches the snapshot 1`] = `"application/epub+zip"`;

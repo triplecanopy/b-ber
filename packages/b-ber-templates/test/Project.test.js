@@ -5,7 +5,7 @@ import state from '@canopycanopycanopy/b-ber-lib/State'
 import YamlAdaptor from '@canopycanopycanopy/b-ber-lib/YamlAdaptor'
 import Project from '../src/Project'
 
-describe('b-ber-templates', () => {
+describe('templates.Project', () => {
 
     test('it creates the source directories', () => {
 
