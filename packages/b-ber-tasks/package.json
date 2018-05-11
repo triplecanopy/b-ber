@@ -28,7 +28,7 @@
     "cheerio": "^1.0.0-rc.2",
     "css": "^2.2.1",
     "decompress": "^4.2.0",
-    "epub-zipper": "^1.2.9",
+    "epub-zipper": "^1.2.10",
     "express": "^4.16.3",
     "fs-extra": "^5.0.0",
     "html-minifier": "^3.5.12",
