@@ -15,7 +15,7 @@
   "scripts": {
     "prepare.dist": "BABEL_ENV=production ../../node_modules/.bin/babel -d ./ src/ --ignore **/__tests__/**",
     "prepare": "yarn clean && yarn prepare.dist",
-    "clean": "rimraf Ncx && rimraf Opf && rimraf Ops && rimraf Project && rimraf Toc && rimraf Xhtml && rimraf Xml && rimraf figures",
+    "clean": "rimraf ./index.js && rimraf Ncx && rimraf Opf && rimraf Ops && rimraf Project && rimraf Toc && rimraf Xhtml && rimraf Xml && rimraf figures",
     "build": "yarn prepare",
     "watch": "BABEL_ENV=production ../../node_modules/.bin/babel -d ./ src/ --watch src",
     "test": "yarn jest"
