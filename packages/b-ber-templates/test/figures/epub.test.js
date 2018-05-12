@@ -11,6 +11,10 @@ describe('templates.epub', () => {
             alt: 'test',
             source: 'test',
             caption: 'test',
+            attrString: 'autoplay="false"',
+            sourceElements: '<source />',
+            mediaType: 'test',
+            poster: 'test.jpg',
         }
 
         expect(epub.portrait(data)).toMatchSnapshot()

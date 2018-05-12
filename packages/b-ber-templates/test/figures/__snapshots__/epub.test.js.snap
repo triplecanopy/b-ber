@@ -76,14 +76,14 @@ exports[`templates.epub creates the markup 5`] = `
                     <div class=\\"figure__items\\">
 
                         <div class=\\"audio\\">
-                            <audio undefined>
-                                undefined
-                                <div class=\\"media__fallback__undefined media__fallback--image figure__small--landscape figure__small\\">
+                            <audio autoplay=\\"false\\">
+                                <source />
+                                <div class=\\"media__fallback__test media__fallback--image figure__small--landscape figure__small\\">
                                     <figure>
-                                        <img src=\\"undefined\\" alt=\\"Media fallback image\\"/>
+                                        <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
                                     </figure>
                                 </div>
-                                <p class=\\"media__fallback__undefined media__fallback--text\\">Your device does not support the HTML5 undefined API.</p>
+                                <p class=\\"media__fallback__test media__fallback--text\\">Your device does not support the HTML5 test API.</p>
                             </audio>
                         </div>
 
@@ -109,14 +109,14 @@ exports[`templates.epub creates the markup 6`] = `
                     <div class=\\"figure__items\\">
 
                         <div class=\\"video\\">
-                            <video undefined>
-                                undefined
-                                <div class=\\"media__fallback__undefined media__fallback--image figure__small--landscape figure__small\\">
+                            <video autoplay=\\"false\\">
+                                <source />
+                                <div class=\\"media__fallback__test media__fallback--image figure__small--landscape figure__small\\">
                                     <figure>
-                                        <img src=\\"undefined\\" alt=\\"Media fallback image\\"/>
+                                        <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
                                     </figure>
                                 </div>
-                                <p class=\\"media__fallback__undefined media__fallback--text\\">Your device does not support the HTML5 undefined API.</p>
+                                <p class=\\"media__fallback__test media__fallback--text\\">Your device does not support the HTML5 test API.</p>
                             </video>
                         </div>
 
@@ -231,14 +231,14 @@ exports[`templates.epub creates the markup 12`] = `
                     <div class=\\"figure__items\\">
 
                         <div class=\\"audio\\">
-                            <audio undefined>
-                                undefined
-                                <div class=\\"media__fallback__undefined media__fallback--image figure__small--landscape figure__small\\">
+                            <audio autoplay=\\"false\\">
+                                <source />
+                                <div class=\\"media__fallback__test media__fallback--image figure__small--landscape figure__small\\">
                                     <figure>
-                                        <img src=\\"undefined\\" alt=\\"Media fallback image\\"/>
+                                        <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
                                     </figure>
                                 </div>
-                                <p class=\\"media__fallback__undefined media__fallback--text\\">Your device does not support the HTML5 undefined API.</p>
+                                <p class=\\"media__fallback__test media__fallback--text\\">Your device does not support the HTML5 test API.</p>
                             </audio>
                         </div>
 
@@ -264,14 +264,14 @@ exports[`templates.epub creates the markup 13`] = `
                     <div class=\\"figure__items\\">
 
                         <div class=\\"video\\">
-                            <video undefined>
-                                undefined
-                                <div class=\\"media__fallback__undefined media__fallback--image figure__small--landscape figure__small\\">
+                            <video autoplay=\\"false\\">
+                                <source />
+                                <div class=\\"media__fallback__test media__fallback--image figure__small--landscape figure__small\\">
                                     <figure>
-                                        <img src=\\"undefined\\" alt=\\"Media fallback image\\"/>
+                                        <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
                                     </figure>
                                 </div>
-                                <p class=\\"media__fallback__undefined media__fallback--text\\">Your device does not support the HTML5 undefined API.</p>
+                                <p class=\\"media__fallback__test media__fallback--text\\">Your device does not support the HTML5 test API.</p>
                             </video>
                         </div>
 
@@ -386,14 +386,14 @@ exports[`templates.epub creates the markup 19`] = `
                     <div class=\\"figure__items\\">
 
                         <div class=\\"audio\\">
-                            <audio undefined>
-                                undefined
-                                <div class=\\"media__fallback__undefined media__fallback--image figure__small--landscape figure__small\\">
+                            <audio autoplay=\\"false\\">
+                                <source />
+                                <div class=\\"media__fallback__test media__fallback--image figure__small--landscape figure__small\\">
                                     <figure>
-                                        <img src=\\"undefined\\" alt=\\"Media fallback image\\"/>
+                                        <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
                                     </figure>
                                 </div>
-                                <p class=\\"media__fallback__undefined media__fallback--text\\">Your device does not support the HTML5 undefined API.</p>
+                                <p class=\\"media__fallback__test media__fallback--text\\">Your device does not support the HTML5 test API.</p>
                             </audio>
                         </div>
 
@@ -419,14 +419,14 @@ exports[`templates.epub creates the markup 20`] = `
                     <div class=\\"figure__items\\">
 
                         <div class=\\"video\\">
-                            <video undefined>
-                                undefined
-                                <div class=\\"media__fallback__undefined media__fallback--image figure__small--landscape figure__small\\">
+                            <video autoplay=\\"false\\">
+                                <source />
+                                <div class=\\"media__fallback__test media__fallback--image figure__small--landscape figure__small\\">
                                     <figure>
-                                        <img src=\\"undefined\\" alt=\\"Media fallback image\\"/>
+                                        <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
                                     </figure>
                                 </div>
-                                <p class=\\"media__fallback__undefined media__fallback--text\\">Your device does not support the HTML5 undefined API.</p>
+                                <p class=\\"media__fallback__test media__fallback--text\\">Your device does not support the HTML5 test API.</p>
                             </video>
                         </div>
 
@@ -541,14 +541,14 @@ exports[`templates.epub creates the markup 26`] = `
                     <div class=\\"figure__items\\">
 
                         <div class=\\"audio\\">
-                            <audio undefined>
-                                undefined
-                                <div class=\\"media__fallback__undefined media__fallback--image figure__small--landscape figure__small\\">
+                            <audio autoplay=\\"false\\">
+                                <source />
+                                <div class=\\"media__fallback__test media__fallback--image figure__small--landscape figure__small\\">
                                     <figure>
-                                        <img src=\\"undefined\\" alt=\\"Media fallback image\\"/>
+                                        <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
                                     </figure>
                                 </div>
-                                <p class=\\"media__fallback__undefined media__fallback--text\\">Your device does not support the HTML5 undefined API.</p>
+                                <p class=\\"media__fallback__test media__fallback--text\\">Your device does not support the HTML5 test API.</p>
                             </audio>
                         </div>
 
@@ -574,14 +574,14 @@ exports[`templates.epub creates the markup 27`] = `
                     <div class=\\"figure__items\\">
 
                         <div class=\\"video\\">
-                            <video undefined>
-                                undefined
-                                <div class=\\"media__fallback__undefined media__fallback--image figure__small--landscape figure__small\\">
+                            <video autoplay=\\"false\\">
+                                <source />
+                                <div class=\\"media__fallback__test media__fallback--image figure__small--landscape figure__small\\">
                                     <figure>
-                                        <img src=\\"undefined\\" alt=\\"Media fallback image\\"/>
+                                        <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
                                     </figure>
                                 </div>
-                                <p class=\\"media__fallback__undefined media__fallback--text\\">Your device does not support the HTML5 undefined API.</p>
+                                <p class=\\"media__fallback__test media__fallback--text\\">Your device does not support the HTML5 test API.</p>
                             </video>
                         </div>
 
