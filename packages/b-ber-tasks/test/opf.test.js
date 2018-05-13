@@ -2,7 +2,7 @@
 
 import {Opf, ManifestAndMetadata, Navigation} from '../src/opf'
 
-jest.mock('../../b-ber-lib/ApplicationLoader')
+jest.mock('../../b-ber-lib/src/ApplicationLoader')
 
 const state = jest.genMockFromModule('@canopycanopycanopy/b-ber-lib/State')
 
