@@ -124,11 +124,13 @@ class Reader extends Component {
         }
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
-        const {ready} = nextState
-        if (ready && ready !== this.state.ready) { // not strictly necessary, but better performance
-            this.requestDeferredCallbackExecution()
-        }
+    shouldComponentUpdate(/*nextProps, nextState */) {
+        // const {ready} = nextState
+        // if (ready && ready !== this.state.ready) {
+        //     this.requestDeferredCallbackExecution()
+        // }
+
+        this.requestDeferredCallbackExecution()
         return true
     }
 
@@ -154,7 +156,6 @@ class Reader extends Component {
             search,
             state,
         })
-
     }
 
     showSpinner() {
@@ -281,10 +282,10 @@ class Reader extends Component {
                         this.enablePageTransitions()
                         this.enableEventHandling()
                         this.hideSpinner()
-                        this.setState({ready: true})
                         // this.requestDeferredCallbackExecution()
                     }
 
+                    this.setState({ready: true})
                     return Promise.resolve()
                 })
             })
@@ -337,22 +338,18 @@ class Reader extends Component {
             deferredCallback = _ => {
                 const {spreadTotal} = this.state
                 this.navigateToSpreadByIndex(spreadTotal)
-                setTimeout(_ => {
-                    this.enablePageTransitions()
-                    this.enableEventHandling()
-                    this.hideSpinner()
-                }, 400) // TODO: must match transition speed
+                this.enablePageTransitions()
+                this.enableEventHandling()
+                this.hideSpinner()
             }
         }
 
         // this branch is redundant, but smoothes out page transisitions when moving forward
         else {
             deferredCallback = _ => {
-                setTimeout(_ => {
-                    this.enablePageTransitions()
-                    this.enableEventHandling()
-                    this.hideSpinner()
-                }, 400) // TODO: must match transition speed
+                this.enablePageTransitions()
+                this.enableEventHandling()
+                this.hideSpinner()
             }
         }
 
@@ -469,6 +466,7 @@ class Reader extends Component {
                 handleChapterNavigation={this.handleChapterNavigation}
                 handleSidebarButtonClick={this.handleSidebarButtonClick}
                 navigateToChapterByURL={this.navigateToChapterByURL}
+                downloads={this.props.downloads}
             >
                 <Frame
                     hash={hash}

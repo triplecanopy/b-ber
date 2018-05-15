@@ -84,6 +84,10 @@ class XMLAdaptor {
     static createGuideItems(rootNode) {
         const {__guide} = rootNode
         return new Promise(resolve => {
+            if (!__guide.elements || !__guide.elements.length) {
+                return resolve({...rootNode, guide: []})
+            }
+
             const guide = __guide.elements.map(reference => {
                 const {type, title, href} = reference.attributes
                 return new GuideItem({type, title, href})

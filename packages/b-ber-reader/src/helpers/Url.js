@@ -73,6 +73,32 @@ class Url {
 
         return encodeURI(href)
     }
+
+    static stripQuery(url) {
+        return url.split('?')[0]
+    }
+
+    static stripHash(url) {
+        return url.split('#')[0]
+    }
+
+    static stripQueryAndHash(url) {
+        let url_
+        url_ = Url.stripQuery(url)
+        url_ = Url.stripHash(url)
+        return url_
+    }
+
+    static createPath(path) {
+        let path_ = String(path)
+        if (!path_ || path_ === '/') return '/'
+
+        path_ = Url.ensureDecodedURL(path_)
+        path_ = Url.stripQueryAndHash(path_)
+        path_ = path_.split('/').filter(Boolean).join('/')
+        path_ = path_.length ? `/${path_}/` : '/'
+        return path_
+    }
 }
 
 export default Url

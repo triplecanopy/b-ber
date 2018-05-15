@@ -9,8 +9,12 @@ class App extends Component {
         super(props)
 
         this.state = {
-            books: [],
-            bookURL: null,
+            books: props.books || [],
+            bookURL: props.bookURL || null,
+            defaultBookURL: props.bookURL || null,
+            basePath: props.basePath || '/',
+            downloads: props.downloads || [],
+            loadRemoteLibrary: props.loadRemoteLibrary || false,
         }
 
         this.handleClick = this.handleClick.bind(this)
@@ -19,26 +23,33 @@ class App extends Component {
     }
     componentDidMount() {
         this.bindHistoryListener()
+
+        const {loadRemoteLibrary} = this.state
+        if (!loadRemoteLibrary) return this.goToBookURL(history.location)
+
         Request.getManifest()
-            .then(({data}) => this.setState({books: data}))
+            .then(({data}) => this.setState({books: [...this.state.books, ...data]}))
             .then(_ => this.goToBookURL(history.location))
+
     }
     goToBookURL(location) {
+        const {defaultBookURL, basePath} = this.state
+
         if (!location || !location.state) {
             console.log('No history.location or history.location.state')
-            history.push('/', {bookURL: null})
+            history.push(Url.createPath(basePath), {bookURL: defaultBookURL})
             return
         }
 
         const {books} = this.state
         let {bookURL} = location.state
 
-        if (!find(books, {url: bookURL})) bookURL = null
+        if (!find(books, {url: bookURL})) bookURL = defaultBookURL
 
         this.setState({bookURL})
     }
     bindHistoryListener() {
-        console.log(history)
+        console.log('History:', history)
         history.listen((location/* , action */) => {
             if (!location.state) {
                 console.warn('No history.location.state')
@@ -58,7 +69,7 @@ class App extends Component {
         return (
             <div>
                 {bookURL
-                    ? <Reader bookURL={bookURL} />
+                    ? <Reader bookURL={bookURL} {...this.props} />
                     : <Library books={books} handleClick={this.handleClick} />}
             </div>
         )

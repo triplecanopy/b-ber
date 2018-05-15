@@ -9,7 +9,13 @@ const SidebarDownloads = props => (
             {'controls__sidebar__downloads--open': props.showSidebar === 'downloads'}
         )}
     >
-        <div>downloads</div>
+        <ul>
+            {props.downloads.map((a, i) => (
+                <li key={i}>
+                    <a href={a.url} download>{a.label}</a>
+                </li>
+            ))}
+        </ul>
     </nav>
 )
 
