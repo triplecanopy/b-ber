@@ -8,6 +8,7 @@ const defaults = {
     inputPath: null,
     outputPath: null,
     fileType: null, // any format supported by `ebook-convert`
+    fileName: new Date().toISOString().replace(/:/g, '-'),
     flags: [],
 }
 
@@ -46,8 +47,7 @@ function convert(options) {
     })
 
     const settings = {...defaults, ...options}
-    const modified = new Date().toISOString().replace(/:/g, '-')
-    const bookName = `${modified}.${settings.fileType.replace(/^\./, '')}`
+    const bookName = `${settings.fileName}.${settings.fileType.replace(/^\./, '')}`
 
     settings.bookPath = `"${path.resolve(settings.outputPath, bookName)}"`
 

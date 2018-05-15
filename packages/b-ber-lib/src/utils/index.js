@@ -5,9 +5,8 @@
 
 import fs from 'fs-extra'
 import path from 'path'
-import {isPlainObject} from 'lodash'
+import {isPlainObject, find} from 'lodash'
 import log from '@canopycanopycanopy/b-ber-logger'
-// import state from '../State'
 
 const cwd = process.cwd()
 
@@ -265,6 +264,13 @@ const encodeQueryString = url => {
 
 const trimSlashes = url => url.replace(/(^\/+|\/+$)/, '')
 
+const getBookMetadata = (term, state) => {
+    const entry = find(state.metadata, {term})
+    if (entry && entry.value) return entry.value
+    log.warn(`Could not find metadata value for ${term}`)
+    return ''
+}
+
 export {
     opsPath,
     fileId,
@@ -286,4 +292,5 @@ export {
     ensureDecoded,
     encodeQueryString,
     trimSlashes,
+    getBookMetadata,
 }

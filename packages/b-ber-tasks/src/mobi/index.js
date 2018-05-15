@@ -7,6 +7,7 @@ import path from 'path'
 import log from '@canopycanopycanopy/b-ber-logger'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import EbookConvert from '@canopycanopycanopy/b-ber-lib/EbookConvert'
+import {getBookMetadata} from '@canopycanopycanopy/b-ber-lib/utils'
 
 const pageBreakBeforeXPATH = () => ([
     '//h:*[@class="figure__large figure__inline"]',
@@ -22,6 +23,7 @@ const mobi = () =>
             inputPath,
             outputPath: process.cwd(),
             fileType: 'mobi',
+            fileName: getBookMetadata('identifier', state),
             flags: [
                 '--mobi-file-type=both',
                 '--disable-font-rescaling',

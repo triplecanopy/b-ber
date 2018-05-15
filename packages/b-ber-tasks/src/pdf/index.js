@@ -4,6 +4,7 @@ import fs from 'fs-extra'
 import log from '@canopycanopycanopy/b-ber-logger'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import EbookConvert from '@canopycanopycanopy/b-ber-lib/EbookConvert'
+import {getBookMetadata} from '@canopycanopycanopy/b-ber-lib/utils'
 
 const pdf = () =>
     new Promise(resolve => {
@@ -20,6 +21,7 @@ const pdf = () =>
             inputPath,
             outputPath: process.cwd(),
             fileType: 'pdf',
+            fileName: getBookMetadata('identifier', state),
         })
             .catch(err => log.error(err))
             .then(resolve)
