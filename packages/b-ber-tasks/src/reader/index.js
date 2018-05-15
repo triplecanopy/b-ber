@@ -2,8 +2,8 @@
 
 import fs from 'fs-extra'
 import path from 'path'
+import crypto from 'crypto'
 import state from '@canopycanopycanopy/b-ber-lib/State'
-import kebabCase from 'lodash/kebabCase'
 import find from 'lodash/find'
 import {trimSlashes} from '@canopycanopycanopy/b-ber-lib/utils'
 import log from '@canopycanopycanopy/b-ber-logger'
@@ -41,7 +41,11 @@ class Reader {
         if (process.env.NODE_ENV === 'production' && (!state.config || !state.config.remote_url || /^http/.test(state.config.remote_url) === false)) {
             throw new Error(`Task [build/reader] requires a remote_url to be set in config.yml`)
         }
-        return state.config.remote_url || 'http://localhost:3000/'
+        return state.config.remote_url || 'http://localhost:4000/'
+    }
+    createDirname(s) {
+        if (!s || typeof s !== 'string') return crypto.randomBytes(20).toString('hex')
+        return s.replace(/[^0-9a-zA-Z-]/g, '-')
     }
     ensureReaderModuleExists() {
         try {
@@ -81,8 +85,7 @@ class Reader {
     }
     copyEpubToOutputDir() {
         const promises = []
-        const title = this.getBookMetadata('title')
-        const epubDir = trimSlashes(kebabCase(title))
+        const epubDir = this.createDirname(this.getBookMetadata('identifier'))
         return new Promise(resolve => {
             this.epubAssets.forEach(item =>
                 promises.push(
@@ -100,10 +103,11 @@ class Reader {
         return ''
     }
     writeBookManifest() {
+        const identifier = this.getBookMetadata('identifier')
         const title = this.getBookMetadata('title')
-        const url = `${trimSlashes(this.remoteURL)}/${this.outputDirName}/${trimSlashes(kebabCase(title))}`
+        const url = `${trimSlashes(this.remoteURL)}/${this.outputDirName}/${this.createDirname(identifier)}`
         const cover = `${url}/OPS/images/${this.getBookMetadata('cover')}`
-        const manifest = [{title, url, cover}]
+        const manifest = [{title, url, cover, id: identifier}]
 
         // write to an `api` dir in case the app is being deployed statically
         return fs.writeJson(path.join(this.apiDir, 'books.json'), manifest)

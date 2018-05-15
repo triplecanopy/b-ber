@@ -4,7 +4,7 @@ import log from '@canopycanopycanopy/b-ber-logger'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import * as tasks from '../'
 
-const PORT = 3000
+const PORT = 4000
 const DEBOUNCE_SPEED = 400
 const SEQUENCE = ['clean', 'container', 'sass', 'copy', 'scripts', 'render', 'loi', 'footnotes', 'inject', 'opf']
 

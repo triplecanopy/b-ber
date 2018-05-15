@@ -3,7 +3,7 @@ const express = require('express')
 const manifest = require('./books.json')
 const router = express.Router()
 const app = express()
-const PORT = 3000
+const PORT = 4000
 
 const api = router.get('/books.json', (_, res) => res.json(manifest))
 
