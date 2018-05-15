@@ -95,6 +95,7 @@ export default function bber() {
         .command(commands.xml)
         .command(commands.create)
         .command(commands.cover)
+        .command(commands.deploy)
 
         .help('h')
         .alias('h', 'help')
