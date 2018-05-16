@@ -24,9 +24,9 @@
     "vinyl": "^2.1.0"
   },
   "dependencies": {
-    "@canopycanopycanopy/b-ber-logger": "0.1.0-alpha.17",
-    "@canopycanopycanopy/b-ber-shapes": "0.1.0-alpha.17",
-    "@canopycanopycanopy/b-ber-themes": "0.1.0-alpha.17",
+    "@canopycanopycanopy/b-ber-logger": "canary",
+    "@canopycanopycanopy/b-ber-shapes": "canary",
+    "@canopycanopycanopy/b-ber-themes": "canary",
     "babel-runtime": "^6.26.0",
     "command-exists": "^1.2.2",
     "fs-extra": "^5.0.0",
