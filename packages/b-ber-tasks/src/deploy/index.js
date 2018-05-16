@@ -12,7 +12,6 @@ import YamlAdaptor from '@canopycanopycanopy/b-ber-lib/YamlAdaptor'
 import log from '@canopycanopycanopy/b-ber-logger'
 
 const cwd = process.cwd()
-const rl = readline.createInterface(process.stdin, process.stdout)
 
 
 function ensureAwsCli() {
@@ -99,6 +98,8 @@ function ensure() {
 function prompt() {
     return new Promise(resolve => {
         ensure().then(response => {
+
+            const rl = readline.createInterface(process.stdin, process.stdout)
             const {bucketURL, awsRegion} = response
 
             console.log(``)
