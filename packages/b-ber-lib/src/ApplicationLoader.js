@@ -22,6 +22,8 @@ class ApplicationLoader {
             themes_directory: './themes',
             base_url: '/',
             remote_url: 'http://localhost:4000/',
+            reader_url: 'http://localhost:4000/project-reader',
+            builds: ['epub', 'mobi', 'pdf'],
             private: false,
             ignore: {},
             autoprefixer_options: {

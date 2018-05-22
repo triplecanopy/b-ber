@@ -1,7 +1,10 @@
+import fs from 'fs-extra'
+import path from 'path'
 import * as allTasks from '@canopycanopycanopy/b-ber-tasks'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import sequences from '@canopycanopycanopy/b-ber-shapes/sequences'
 import createBuildSequence from '@canopycanopycanopy/b-ber-shapes/create-build-sequence'
+import Project from '@canopycanopycanopy/b-ber-templates/Project'
 
 const command = ['build [options...]', 'b']
 const describe = 'Compile a project'
@@ -67,6 +70,47 @@ const handler = argv => {
 
     const sequence = createBuildSequence(argv)
 
+    // make sure all necessary directories exist.
+    // TODO: should be a separate task
+    const ensure = _ => new Promise(resolve => {
+        const cwd = process.cwd()
+        const src = state.src
+        return Promise.all([
+            fs.mkdirp(path.join(cwd, src, '_fonts')),
+            fs.mkdirp(path.join(cwd, src, '_images')),
+            fs.mkdirp(path.join(cwd, src, '_javascripts')),
+            fs.mkdirp(path.join(cwd, src, '_markdown')),
+            fs.mkdirp(path.join(cwd, src, '_media')),
+            fs.mkdirp(path.join(cwd, src, '_stylesheets')),
+        ])
+            .then(_ => {
+                const projectPath = path.join(cwd, state.src)
+                const files = [
+                    ...Project.javascripts(projectPath),
+                    ...Project.stylesheets(projectPath),
+                ]
+
+                const requiredFiles = []
+
+                files.forEach(a => {
+                    try {
+                        fs.statSync(path.join(cwd, a.relativePath))
+                    } catch (err) {
+                        requiredFiles.push(fs.writeFile(a.relativePath, a.content))
+                    }
+                })
+
+                if (requiredFiles.length) {
+                    Promise.all(requiredFiles).then(resolve)
+                } else {
+                    resolve()
+                }
+            })
+
+
+            .then(resolve)
+    })
+
     const run = buildTasks => {
         const build = buildTasks.shift()
 
@@ -85,7 +129,7 @@ const handler = argv => {
     // finish to ensure that state is updated with the default cover image if
     // none exists. phantomjs can be sped up by disabling wifi connection, see
     // bug report here: https://github.com/ariya/phantomjs/issues/14033
-    run(sequence)
+    ensure().then(_ => run(sequence))
 }
 
 export default {

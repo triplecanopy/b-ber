@@ -45,6 +45,7 @@ function deploy({bucketURL, awsRegion}) {
                         --include "project-web/*" \\
                         --region ${awsRegion}`
 
+
         const proc = exec(command, {cwd})
 
         proc.stdout.on('data', data => console.log(String(data)))
@@ -71,10 +72,10 @@ function deploy({bucketURL, awsRegion}) {
 
 function ensureEnvVars() {
     return new Promise(resolve => {
-        const {AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, S3_BBER_BUCKET_REGION} = process.env
+        const {AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, BBER_BUCKET_REGION} = process.env
 
-        if (!AWS_ACCESS_KEY_ID || !AWS_SECRET_ACCESS_KEY || !S3_BBER_BUCKET_REGION) {
-            log.error(`[AWS_ACCESS_KEY_ID], [AWS_SECRET_ACCESS_KEY] and [S3_BBER_BUCKET_REGION] must be set to deploy the project`)
+        if (!AWS_ACCESS_KEY_ID || !AWS_SECRET_ACCESS_KEY || !BBER_BUCKET_REGION) {
+            log.error(`[AWS_ACCESS_KEY_ID], [AWS_SECRET_ACCESS_KEY] and [BBER_BUCKET_REGION] must be set to deploy the project`)
         }
 
         const configFile = path.resolve(cwd, 'config.yml')
@@ -83,7 +84,7 @@ function ensureEnvVars() {
 
         if (!bucket_url) log.error(`[bucket_url] must be set in config.yml to deploy the project`)
 
-        resolve({bucketURL: bucket_url, awsRegion: S3_BBER_BUCKET_REGION})
+        resolve({bucketURL: bucket_url, awsRegion: BBER_BUCKET_REGION})
     })
 }
 

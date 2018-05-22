@@ -26,6 +26,9 @@ class Reader {
                 .then(_ => this.copyEpubToOutputDir())
                 .then(_ => this.writeBookManifest())
                 .then(_ => this.copyReaderAppToOutputDir())
+                .then(_ => this.injectServerDataIntoTemplate())
+                .then(_ => this.updateLinkedResourcesWithAbsolutePaths())
+                .then(_ => this.updateAssetURLsWithAbsolutePaths())
                 .catch(err => log.error(err))
                 .then(resolve)
         })
@@ -75,7 +78,7 @@ class Reader {
         } catch (err) {
             log.error(`
                 A symlinked version of ${this.readerModuleName} was found but is inaccessible.
-                Try running npm i -S ${this.readerModuleName}
+                Try running npm i -S ${this.readerModuleName}, or rebuilding the reader package if running this command in a development environment
             `)
             process.exit(1)
         }
@@ -102,6 +105,14 @@ class Reader {
         log.warn(`Could not find metadata value for ${term}`)
         return ''
     }
+    getProjectConfig(term) {
+        const value = state.config[term]
+        if (!value) {
+            log.warn(`Could not find config value for ${term}`)
+            return ''
+        }
+        return value
+    }
     writeBookManifest() {
         const identifier = this.getBookMetadata('identifier')
         const title = this.getBookMetadata('title')
@@ -114,6 +125,53 @@ class Reader {
     }
     copyReaderAppToOutputDir() {
         return fs.copy(this.readerAppPath, this.dist)
+    }
+
+    injectServerDataIntoTemplate() {
+        const indexHTML = path.join(this.dist, 'index.html')
+        const bookURL = `${this.getProjectConfig('reader_url').replace(/$\/+/, '')}/epub/${this.getBookMetadata('identifier')}`
+        const serverData = {
+            books: [{
+                title: this.getBookMetadata('title'),
+                url: bookURL,
+                cover: this.getBookMetadata('cover'),
+            }],
+            bookURL,
+            projectURL: this.getProjectConfig('remote_url'),
+            downloads: this.getProjectConfig('builds'),
+            basePath: this.getProjectConfig('base_path'),
+            loadRemoteLibrary: false,
+
+        }
+
+        let contents
+        contents = fs.readFileSync(indexHTML, 'utf8')
+        contents = contents.replace(/__SERVER_DATA__ = {}/, `__SERVER_DATA__ = ${JSON.stringify(serverData)}`)
+
+        return fs.writeFile(indexHTML, contents)
+    }
+
+    updateLinkedResourcesWithAbsolutePaths() {
+        const indexContents = fs.readFileSync(path.join(this.dist, 'index.html'), 'utf8')
+        const versionHash = indexContents.match(/link href="\/(\w+\.css)"/)[1]
+        const stylesheet = path.join(this.dist, versionHash)
+
+        let contents
+        contents = fs.readFileSync(stylesheet, 'utf8')
+        contents = contents.replace(/url\(\//g, `url(${this.getProjectConfig('reader_url')}/`)
+
+
+        return fs.writeFile(stylesheet, contents)
+    }
+
+    updateAssetURLsWithAbsolutePaths() {
+        const indexHTML = path.join(this.dist, 'index.html')
+
+        let contents
+        contents = fs.readFileSync(indexHTML, 'utf8')
+        contents = contents.replace(/(src|href)="(\/[^"]+?)"/g, `$1="${this.getProjectConfig('reader_url')}$2"`)
+
+        return fs.writeFile(indexHTML, contents)
     }
 
 }
