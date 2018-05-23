@@ -35,5 +35,9 @@ module.exports = {
     ],
     coverageReporters: ['html', 'lcov', 'json'],
     testEnvironment: 'jest-environment-jsdom-global',
+    testPathIgnorePatterns: [
+        '<rootDir>/packages/b-ber-reader/test/helpers/XMLAdaptor.test.js', 
+        '<rootDir>/packages/b-ber-shapes/directives/spec.js',
+    ],
 }
 
