@@ -27,13 +27,13 @@ module.exports = {
         },
 
         {
-            test: /\.sss$/,
+            test: /\.scss$/,
             exclude: /(node_modules|public|dist|test)/,
             use: ExtractTextPlugin.extract({
                 fallback: 'style-loader',
                 use: [
                     {loader: 'css-loader'},
-                    {loader: 'postcss-loader'},
+                    {loader: 'sass-loader'},
                 ],
             }),
 

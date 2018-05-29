@@ -1,0 +1,55 @@
+ul {
+    padding: one-line(-3) 0 one-line(-2) one-em(0);
+    @include following-element-has-no-top-padding;
+    list-style: circle;
+    text-indent: 0;
+    margin: 0;
+
+    ul, ol {
+        padding: 0 0 0 two-ems(0);
+    }
+
+    li {
+        text-indent: 0;
+    }
+
+    * {
+        @include type-settings(0);
+        line-height: line-height(ms(-2));
+    }
+}
+
+ol, dl {
+    padding: one-line(-3) 0 one-line(-2) one-em(-2);
+    @include following-element-has-no-top-padding;
+    list-style: decimal;
+    text-indent: 0;
+    margin: 0;
+
+    ul, ol, dl {
+        padding: 0 0 0 two-ems(0);
+    }
+
+    li, dt, dd {
+        padding-top: 0;
+    }
+
+    // Section styles
+    section.colophon &,
+    section.appendix &,
+    section.backmatter & {
+        @include padding(0, 1, 0, 1, -1);
+        li {
+            @include following-paragraph-not-indented;
+            font-weight: normal;
+            font-style: normal;
+            text-indent: 0;
+        }
+    }
+
+    * {
+        @include type-settings(0);
+        line-height: line-height(ms(-2));
+    }
+
+}
