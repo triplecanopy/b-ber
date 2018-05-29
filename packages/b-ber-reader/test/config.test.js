@@ -15,7 +15,7 @@ describe('b-ber-reader development config', () => {
     })
 
     test('does not fail if a local config is not present', () => {
-        //jest.mock('../.localconfig', () => { throw new Error() })
+        jest.mock('../.localconfig', () => { throw new Error() })
         expect(() => require('../.localconfig')).toThrow()
         expect(() => require('../src/config')).not.toThrow()
     })
@@ -36,7 +36,7 @@ describe('b-ber-reader production config', () => {
     })
 
     test('does not fail if a local config is not present', () => {
-        //jest.mock('../.localconfig', () => { throw new Error() })
+        jest.mock('../.localconfig', () => { throw new Error() })
         expect(() => require('../.localconfig')).toThrow()
         expect(() => require('../src/config')).not.toThrow()
     })
