@@ -14,7 +14,7 @@ class App extends Component {
             defaultBookURL: props.bookURL || null,
             basePath: props.basePath || '/',
             downloads: props.downloads || [],
-            loadRemoteLibrary: props.loadRemoteLibrary || false,
+            loadRemoteLibrary: typeof props.loadRemoteLibrary !== 'undefined' ? props.loadRemoteLibrary : /^localhost/.test(window.location.host),
         }
 
         this.handleClick = this.handleClick.bind(this)
@@ -65,12 +65,19 @@ class App extends Component {
         history.push(Url.slug(title), {bookURL})
     }
     render() {
-        const {books, bookURL} = this.state
+        const {books, bookURL, downloads} = this.state
         return (
             <div>
                 {bookURL
-                    ? <Reader bookURL={bookURL} {...this.props} />
-                    : <Library books={books} handleClick={this.handleClick} />}
+                    ? <Reader
+                        bookURL={bookURL}
+                        downloads={downloads}
+                        {...this.props}
+                    />
+                    : <Library
+                        books={books}
+                        handleClick={this.handleClick}
+                    />}
             </div>
         )
     }
