@@ -1,6 +1,6 @@
 import fs from 'fs-extra'
 import path from 'path'
-import * as allTasks from '@canopycanopycanopy/b-ber-tasks'
+import * as tasks from '@canopycanopycanopy/b-ber-tasks'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import sequences from '@canopycanopycanopy/b-ber-shapes/sequences'
 import createBuildSequence from '@canopycanopycanopy/b-ber-shapes/create-build-sequence'
@@ -120,7 +120,7 @@ const handler = argv => {
         state.update('spine', state.buildTypes[build].spineEntries)
         state.merge('config', state.buildTypes[build].config)
 
-        return allTasks.async.serialize(sequences[build], allTasks).then(() => {
+        return tasks.async.serialize(sequences[build], tasks).then(() => {
             if (buildTasks.length) run(buildTasks)
         })
     }
