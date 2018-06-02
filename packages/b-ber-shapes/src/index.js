@@ -1,6 +1,6 @@
-import dc from './dc'
-import directives from './directives'
-import sequences from './sequences'
-import createBuildSequence from './create-build-sequence'
+const dc = require('./dc')
+const directives = require('./directives')
+const sequences = require('./sequences')
+const createBuildSequence = require('./create-build-sequence')
 
 export default {dc, directives, sequences, createBuildSequence}
