@@ -11,19 +11,6 @@ import log from '@canopycanopycanopy/b-ber-logger'
 import Xhtml from '@canopycanopycanopy/b-ber-templates/Xhtml'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import mime from 'mime-types'
-import {minify} from 'html-minifier'
-
-
-const htmlMinifyOptions = state.config.html_minify_options || {
-    collapseWhitespace: true,
-    collapseInlineTagWhitespace: false,
-    html5: true,
-    keepClosingSlash: true,
-    removeAttributeQuotes: false,
-    removeComments: true,
-    removeEmptyAttributes: true,
-    removeScriptTypeAttributes: true,
-}
 
 
 /**
@@ -271,12 +258,7 @@ const mapSources = args => {
             promiseToReplace('stylesheets', stylesheets, source)
                 .then(file => promiseToReplace('javascripts', javascripts, source, file))
                 .then(file => promiseToReplace('metadata', metadata, source, file))
-                .then(file => {
-                    const contents = state.env === 'production'
-                        ? minify(file.contents.toString('utf8'), htmlMinifyOptions)
-                        : file.contents.toString('utf8')
-                    write(path.join(state.dist, 'OPS', 'text', source), contents)
-                })
+                .then(file => write(path.join(state.dist, 'OPS', 'text', source), file.contents.toString('utf8')))
                 .catch(err => log.error(err))
                 .then(_ => {
                     if (index === htmlDocs.length - 1) resolve()

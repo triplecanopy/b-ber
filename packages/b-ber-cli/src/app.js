@@ -86,7 +86,6 @@ export default function bber() {
         .command(commands.footnotes)
         .command(commands.opf)
         .command(commands.pdf)
-        .command(commands.publish)
         .command(commands.render)
         .command(commands.scripts)
         .command(commands.sass)
