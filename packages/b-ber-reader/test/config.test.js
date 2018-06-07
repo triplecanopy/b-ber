@@ -1,5 +1,5 @@
 /* global jest,test,expect,jsdom */
-/* eslint-disable global-require */
+/* eslint-disable global-require,no-empty */
 
 describe('b-ber-reader development config', () => {
 
@@ -15,8 +15,19 @@ describe('b-ber-reader development config', () => {
     })
 
     test('does not fail if a local config is not present', () => {
-        jest.mock('../.localconfig', () => { throw new Error() })
-        expect(() => require('../.localconfig')).toThrow()
+        jest.mock('../src/config', () => {
+            let pkg = {
+                debug: false,
+                verboseOutput: false,
+                mobileViewportMaxWidth: 960,
+            }
+            try {
+                pkg = require('./bogus')
+            }
+            catch (err) {}
+            return pkg
+        })
+        expect(() => require('./bogus')).toThrow()
         expect(() => require('../src/config')).not.toThrow()
     })
 })
@@ -36,8 +47,19 @@ describe('b-ber-reader production config', () => {
     })
 
     test('does not fail if a local config is not present', () => {
-        jest.mock('../.localconfig', () => { throw new Error() })
-        expect(() => require('../.localconfig')).toThrow()
+        jest.mock('../src/config', () => {
+            let pkg = {
+                debug: false,
+                verboseOutput: false,
+                mobileViewportMaxWidth: 960,
+            }
+            try {
+                pkg = require('./bogus')
+            }
+            catch (err) {}
+            return pkg
+        })
+        expect(() => require('./bogus')).toThrow()
         expect(() => require('../src/config')).not.toThrow()
     })
 })
