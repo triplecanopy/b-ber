@@ -64,6 +64,7 @@ class App extends Component {
         const bookURL = url
         history.push(Url.slug(title), {bookURL})
     }
+
     render() {
         const {books, bookURL, downloads} = this.state
         return (
