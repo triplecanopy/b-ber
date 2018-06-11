@@ -2,7 +2,6 @@
 
 import path from 'path'
 import fs from 'fs-extra'
-import yargs from 'yargs'
 import themes from '@canopycanopycanopy/b-ber-themes'
 import log from '@canopycanopycanopy/b-ber-logger'
 import YamlAdaptor from './YamlAdaptor'
@@ -137,7 +136,7 @@ function setTheme(themeName, themeList, userThemes, cwd) {
     })
 }
 
-const theme = _ =>
+const theme = args =>
     new Promise(async resolve => {
 
         log.logLevel = 4
@@ -155,20 +154,17 @@ const theme = _ =>
         }
 
         const currentTheme = config.theme && config.theme.name ? config.theme.name : ''
-
-        if (yargs.argv.list) {
+        if (args.list) {
             log.info('The following themes are available:')
             log.info(printThemeList(themeList, currentTheme))
             return resolve()
         }
 
 
-        if (yargs.argv.set) {
-            const themeName = yargs.argv.set
+        if (args.set && args.themeName) {
+            const {themeName} = args
             return setTheme(themeName, themeList, userThemes, cwd).then(resolve)
         }
-
-        return resolve(yargs.showHelp())
 
     })
 

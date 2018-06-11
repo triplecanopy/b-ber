@@ -1,15 +1,15 @@
 /* global expect,jest */
 
 
-import create from '../../src/cmd/create'
+import _new from '../../src/cmd/new'
 
 jest.mock('@canopycanopycanopy/b-ber-tasks', () => ({
-    create: jest.fn(),
+    _new: jest.fn(),
 }))
 
-describe('create', () => {
+describe('new', () => {
     it('exports a yargs command object', () => {
-        expect(create).toEqual(expect.objectContaining({
+        expect(_new).toEqual(expect.objectContaining({
             command: expect.anything(),
             describe: expect.any(String),
             builder: expect.any(Function),

@@ -14,11 +14,13 @@ import log from '@canopycanopycanopy/b-ber-logger'
  * Remove an ebook's output directory and outdated builds
  * @return {Promise<Object|Error>}
  */
-const clean = _ =>
+const clean = () =>
     new Promise(resolve => {
-        const projectDir = state.dist
 
-        const projectRoot = path.dirname(projectDir)
+        const dir_ = state.dist
+        path.resolve(process.cwd(), dir_)
+
+        const projectRoot = path.dirname(dir_)
         const fileType = `.${state.build}`
         const oldBuilds = fs.readdirSync(projectRoot).filter(a => path.extname(a) === fileType)
 
@@ -27,9 +29,9 @@ const clean = _ =>
             log.info('remove [%s]', oldBuilds.join('\n'))
         }
 
-        fs.remove(projectDir, err => {
+        fs.remove(dir_, err => {
             if (err) throw err
-            log.info('remove [%s]', projectDir)
+            log.info('remove [%s]', dir_)
             resolve()
         })
     })

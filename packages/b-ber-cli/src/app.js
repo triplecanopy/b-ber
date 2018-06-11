@@ -36,7 +36,7 @@ export default function bber() {
 
     Some common commands are:
 
-        bber create     Start a new project
+        bber new        Start a new project
         bber generate   Create a new chapter. Accepts arguments for metadata.
         bber serve      Preview the publication's contents in a browser
         bber build      Create an ePub, mobi, PDF, or all file formats
@@ -77,22 +77,12 @@ export default function bber() {
         })
 
         .command(commands.build)
-        .command(commands.clean)
-        .command(commands.copy)
-        .command(commands.container)
         .command(commands.generate)
-        .command(commands.init)
-        .command(commands.inject)
-        .command(commands.footnotes)
         .command(commands.opf)
-        .command(commands.pdf)
-        .command(commands.render)
-        .command(commands.scripts)
-        .command(commands.sass)
         .command(commands.theme)
         .command(commands.serve)
         .command(commands.xml)
-        .command(commands.create)
+        .command(commands.new)
         .command(commands.cover)
         .command(commands.deploy)
 

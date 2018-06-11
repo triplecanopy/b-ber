@@ -4,44 +4,39 @@ import {init as Initializer} from '@canopycanopycanopy/b-ber-tasks'
 import log from '@canopycanopycanopy/b-ber-logger'
 import {fail} from '../helpers'
 
-const command = 'create'
+const command = 'new <project>'
 const describe = 'Create a new project'
 const builder = yargs =>
     yargs
-        .options({
-            n: {
-                alias: 'name',
-                describe: 'New project directory name',
-                type: 'string',
-                demandOption: true,
-            },
+        .positional('project', {
+            describe: 'New project name',
+            type: 'string',
         })
         .fail((msg, err) => fail(msg, err, yargs))
         .help('h')
         .alias('h', 'help')
-        .usage(`\nUsage: $0 create --name "My Project"\n\n${describe}`)
-
+        .usage(`\nUsage: $0 new "My Project"\n\n${describe}`)
 
 const handler = argv => {
-    const {name} = argv
+    const {project} = argv
     const args = [...argv._]
-    args.shift() // remove `create` argument
-    args.push(name) // add `name` arg consumed by yargs
+    args.shift() // remove `new` argument
+    args.push(project) // add `project` arg consumed by yargs
 
-    const dest = path.join(process.cwd(), name)
+    const dest = path.join(process.cwd(), project)
 
     if (args.length > 1) {
-        log.error(`Too many arguments [${args.length}]. Make sure the project name is properly quoted`)
+        log.error(`Too many arguments [${args.length}]. Make sure the project project is properly quoted`)
     }
 
     try {
         if (fs.existsSync(dest)) {
             const files = fs.readdirSync(dest)
             if (files.length) {
-                throw new Error(`Directory [${name}] exists and is not empty, aborting`)
+                throw new Error(`Directory [${project}] exists and is not empty, aborting`)
             }
         } else {
-            log.info(`Creating directory ${name}`)
+            log.info(`Creating directory ${project}`)
             fs.mkdirSync(dest)
         }
     } catch (e) {
@@ -51,7 +46,7 @@ const handler = argv => {
 
     const initializer = new Initializer({cwd: dest})
 
-    initializer.start(name)
+    initializer.start(project)
         .catch(err => {
             log.error(err)
             process.exit(1)
