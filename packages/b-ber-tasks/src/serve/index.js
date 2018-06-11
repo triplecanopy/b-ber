@@ -19,6 +19,7 @@ const restart = build => new Promise(resolve => {
     state.update('spine', state.buildTypes[build].spineEntries)
     state.update('config.base_url', '/')
     state.update('config.remote_url', `http://localhost:${PORT}`)
+    state.update('config.reader_url', `http://localhost:${PORT}`)
 
     return tasks.async.serialize(createSequence(build), tasks).then(resolve)
 })
