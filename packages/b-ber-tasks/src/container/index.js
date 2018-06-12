@@ -44,7 +44,7 @@ class Container {
             return files.forEach((a, i) =>
                 fs.writeFile(path.join(this.dist, a.path), a.content, err => {
                     if (err) throw err
-                    log.info('emit [%s]', a.path)
+                    log.info('container emit [%s]', a.path)
                     if (i === files.length - 1) {
                         resolve()
                     }
@@ -58,7 +58,7 @@ class Container {
             this.dirs.map((dir, index) =>
                 fs.mkdirs(dir, err => {
                     if (err) throw err
-                    log.info('create directory [%s]', dir)
+                    log.info('container emit [%s]', dir)
                     if (index === this.dirs.length - 1) {
                         resolve()
                     }

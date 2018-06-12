@@ -44,7 +44,7 @@ class Opf {
      * @return {Promise<Object>}
      */
     static createOpfPackageString([manifestAndMetadataXML, navigationXML]) {
-        log.info('opf creating [opf]')
+        log.info('opf build [package]')
         return new Promise(resolve => {
             const {metadata, manifest} = manifestAndMetadataXML
             const {spine, guide} = navigationXML.strings
@@ -77,7 +77,7 @@ class Opf {
             const opsPath = path.join(state.dist, 'OPS', 'content.opf')
             fs.writeFile(opsPath, contents, err => {
                 if (err) throw err
-                log.info(`emit content.opf [${opsPath}]`)
+                log.info(`opf emit content.opf [${opsPath}]`)
                 resolve(contents)
             })
         })

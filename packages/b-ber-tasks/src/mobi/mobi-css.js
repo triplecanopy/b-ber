@@ -35,12 +35,12 @@ const write = ({file, content}) =>
     new Promise(resolve =>
         fs.writeFile(file, content, 'utf8', err => {
             if (err) throw err
-            log.info(`mobi writing [${path.basename(file)}]`)
+            log.info(`mobiCSS write [${path.basename(file)}]`)
             resolve()
         })
     )
 
-const parse = file =>
+const process = file =>
     new Promise(resolve =>
         fs.readFile(file, 'utf8', (err, data) => {
             if (err) throw err
@@ -53,9 +53,8 @@ const parse = file =>
                     while (j >= 0) {
                         let jj = 0
                         while (jj < blackListedPrefixes.length) {
-                            if (rule.selectors[j]
-                                .slice(0, blackListedPrefixes[jj].length) === blackListedPrefixes[jj]) {
-                                log.info('Removing selector', rule.selectors[j])
+                            if (rule.selectors[j].slice(0, blackListedPrefixes[jj].length) === blackListedPrefixes[jj]) {
+                                log.info('mobiCSS remove selector', rule.selectors[j])
                                 rule.selectors.splice(j, 1)
                             }
                             jj++ // eslint-disable-line no-plusplus
@@ -64,7 +63,7 @@ const parse = file =>
                     }
                 }
                 if (blackListedTypes.indexOf(rule.type) > -1) {
-                    log.info(`Removing ${rule.type} [${rule[rule.type]}]`)
+                    log.info(`mobiCSS remove ${rule.type} [${rule[rule.type]}]`)
                     ast.stylesheet.rules.splice(i, 1)
                 }
                 if (ast.stylesheet.rules[i]) {
@@ -73,7 +72,7 @@ const parse = file =>
                         let a = declarations.length - 1
                         while (a >= 0) {
                             if (blackListedProperties.indexOf(declarations[a].property) > -1) {
-                                log.info(`Removing property [${declarations[a].property}]`)
+                                log.info(`mobiCSS remove property [${declarations[a].property}]`)
                                 declarations.splice(a, 1)
                             }
                             a-- // eslint-disable-line no-plusplus
@@ -92,15 +91,13 @@ const mobiCSS = () =>
         fs.readdir(path.join(state.dist, 'OPS', 'stylesheets'), (err, files) => {
             if (err) throw err
 
-            const promises = files.map(_ => {
-                const file = path.join(state.dist, 'OPS', 'stylesheets', _)
-                log.info(`Parsing [${path.basename(file)}]`)
-                return parse(file).then(write)
+            const promises = files.map(a => {
+                const file = path.join(state.dist, 'OPS', 'stylesheets', a)
+                log.info(`mobiCSS process [${path.basename(file)}]`)
+                return process(file).then(write)
             })
 
-            Promise.all(promises).then(() => {
-                resolve()
-            })
+            Promise.all(promises).then(resolve)
         })
     )
 

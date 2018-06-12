@@ -27,7 +27,7 @@ const createLOILeader = _ => new Promise((resolve, reject) => {
 
         state.add('guide', {filename: fileName, title: 'Figures', type: 'loi'})
 
-        log.info(`emit default figures titlepage [${fileName}]`)
+        log.info(`loi emit default figures titlepage [${fileName}]`)
 
         resolve()
     })
@@ -90,7 +90,7 @@ const createLOIAsSingleHTMLFile = _ => new Promise((resolve, reject) => {
 
         state.add('guide', {filename: fileName, title: 'Figures', type: 'loi'})
 
-        log.info(`emit figures titlepage [${fileName}]`)
+        log.info(`loi emit figures titlepage [${fileName}]`)
 
         resolve()
     })

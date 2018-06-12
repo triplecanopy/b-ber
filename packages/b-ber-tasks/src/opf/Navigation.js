@@ -97,7 +97,7 @@ class Navigation {
      */
     createEmptyNavDocuments() {
         return new Promise(resolve => {
-            log.info(`Creating navigation documents [${this.navDocs.join(', ')}]`)
+            log.info(`opf build navigation documents [${this.navDocs.join(', ')}]`)
             const promises = []
             this.navDocs.forEach(_ => {
                 promises.push(new Promise(() =>
@@ -201,7 +201,7 @@ class Navigation {
 
                     fs.writeFile(yamlpath, content, err => {
                         if (err) throw err
-                        log.info(`emit ${this.build}.yml`)
+                        log.info(`opf emit ${this.build}.yml`)
                     })
                 }
 
@@ -253,7 +253,7 @@ class Navigation {
     }
 
     createTocStringsFromTemplate({pages, ...args}) {
-        log.info('opf creating [toc.xhtml]')
+        log.info('opf build [toc.xhtml]')
         return new Promise(resolve => {
             const strings = {}
             const {toc} = state
@@ -273,7 +273,7 @@ class Navigation {
     }
 
     createNcxStringsFromTemplate({pages, ...args}) {
-        log.info('opf creating [toc.ncx]')
+        log.info('opf build [toc.ncx]')
         return new Promise(resolve => {
             const strings = {}
             const {toc} = state
@@ -292,7 +292,7 @@ class Navigation {
     }
 
     createGuideStringsFromTemplate({flow, fileObjects, ...args}) {
-        log.info('opf creating [guide]')
+        log.info('opf build [guide]')
         return new Promise(resolve => {
             const strings = {}
             const {spine} = state
@@ -312,7 +312,7 @@ class Navigation {
     }
 
     createSpineStringsFromTemplate({flow, fileObjects, ...args}) {
-        log.info('opf creating [spine]')
+        log.info('opf build [spine]')
         return new Promise(resolve => {
             const strings = {}
             const {spine} = state
@@ -361,7 +361,7 @@ class Navigation {
             const filepath = path.join(this.dist, 'OPS', 'text', 'toc.xhtml')
             fs.writeFile(filepath, toc, err => {
                 if (err) throw err
-                log.info(`emit toc.xhtml [${filepath}]`)
+                log.info(`opf emit toc.xhtml [${filepath}]`)
                 resolve(result)
             })
         })
@@ -374,7 +374,7 @@ class Navigation {
             const filepath = path.join(this.dist, 'OPS', 'toc.ncx')
             fs.writeFile(filepath, ncx, err => {
                 if (err) throw err
-                log.info(`emit toc.ncx [${filepath}]`)
+                log.info(`opf emit toc.ncx [${filepath}]`)
                 resolve(result)
             })
         })

@@ -115,25 +115,25 @@ const getJSONLDMetadata = args =>
         const form    = {content}
         const file    = new File({path: 'metadata.json-ld'})
 
-        if (state.env !== 'production') {
+        // if (state.env !== 'production') {
             file.contents = new Buffer('')
             return resolve([...args, file])
-        }
+        // }
 
-        return request.post({url, form}, (err, resp, body) => {
-            if (err) throw err
-            if (resp.statusCode !== 200) {
-                throw new Error(`Error: ${resp.statusCode}`, err)
-            }
+        // return request.post({url, form}, (err, resp, body) => {
+        //     if (err) throw err
+        //     if (resp.statusCode !== 200) {
+        //         throw new Error(`Error: ${resp.statusCode}`, err)
+        //     }
 
-            resolve([
-                ...args,
-                new File({
-                    path: 'metadata.json-ld',
-                    contents: new Buffer(body),
-                }),
-            ])
-        })
+        //     resolve([
+        //         ...args,
+        //         new File({
+        //             path: 'metadata.json-ld',
+        //             contents: new Buffer(body),
+        //         }),
+        //     ])
+        // })
     })
 
 /**
@@ -234,7 +234,7 @@ const write = (location, data) =>
     new Promise(resolve => {
         fs.writeFile(location, data, err => {
             if (err) throw err
-            log.info(`emit [${path.basename(location)}]`)
+            log.info(`inject emit [${path.basename(location)}]`)
             resolve()
         })
     })

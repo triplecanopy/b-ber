@@ -20,11 +20,11 @@ class Spine {
             const linear = nonLinear ? 'no' : 'yes'
             const fname = fileId(path.basename(a.fileName, a.extname))
 
-            if (nonLinear) log.info(`templates/spine writing non-linear asset [${a.fileName}]`)
+            if (nonLinear) log.info(`opf templates/spine writing non-linear asset [${a.fileName}]`)
 
             if (fname.match(/figure/)) { // TODO: this should be handled more transparently, rn it feels a bit like a side-effect
 
-                log.info('templates/spine writing [loi]')
+                log.info('opf templates/spine writing [loi]')
 
                 if (state.loi.length) {
                     let loi = `<itemref idref="${fname}_xhtml" linear="${linear}"/>`

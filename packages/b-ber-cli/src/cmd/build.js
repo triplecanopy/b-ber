@@ -6,69 +6,17 @@ import sequences from '@canopycanopycanopy/b-ber-shapes/sequences'
 import createBuildSequence from '@canopycanopycanopy/b-ber-shapes/create-build-sequence'
 import Project from '@canopycanopycanopy/b-ber-templates/Project'
 
-const command = ['build [options...]', 'b']
-const describe = 'Compile a project'
-const builder = yargs =>
-    yargs
-        .options({
-            d: {
-                alias: 'dir',
-                describe: 'Compile the output dir',
-                default: false,
-                type: 'boolean',
-            },
-            e: {
-                alias: 'epub',
-                describe: 'Build an ePub',
-                default: false,
-                type: 'boolean',
-            },
-            m: {
-                alias: 'mobi',
-                describe: 'Build a mobi',
-                default: false,
-                type: 'boolean',
-            },
-            w: {
-                alias: 'web',
-                describe: 'Build for web',
-                default: false,
-                type: 'boolean',
-            },
-            p: {
-                alias: 'pdf',
-                describe: 'Create a PDF',
-                default: false,
-                type: 'boolean',
-            },
-            s: {
-                alias: 'sample',
-                describe: 'Create a sample ePub',
-                default: false,
-                type: 'boolean',
-            },
-            r: {
-                alias: 'reader',
-                describe: 'Build for the b-ber-reader format',
-                default: false,
-                type: 'boolean',
-            },
-            a: {
-                alias: 'all',
-                describe: 'Build all formats',
-                default: true,
-                type: 'boolean',
-            },
-        })
-
-        .help('h')
-        .alias('h', 'help')
+const command = 'build [|epub|mobi|pdf|reader|sample|web]' // note leading pipe - to ensure we can run the `all` command without arguments
+const describe = 'Build a project'
 
 const handler = argv => {
 
-    process.env.NODE_ENV = process.env.NODE_ENV || 'production'
+    // console.log(argv)
 
+    process.env.NODE_ENV = process.env.NODE_ENV || 'production'
     const sequence = createBuildSequence(argv)
+
+    // console.log(sequence)
 
     // make sure all necessary directories exist.
     // TODO: should be a separate task
@@ -132,6 +80,53 @@ const handler = argv => {
     // bug report here: https://github.com/ariya/phantomjs/issues/14033
     ensure().then(_ => run(sequence))
 }
+
+const builder = yargs =>
+    yargs
+        .command(
+            '',
+            'Build all formats',
+            () => {},
+            handler,
+        )
+        .command(
+            'epub',
+            'Build an Epub',
+            () => {},
+            handler,
+        )
+        .command(
+            'mobi',
+            'Build a Mobi',
+            () => {},
+            handler,
+        )
+        .command(
+            'pdf',
+            'Build a PDF',
+            () => {},
+            handler,
+        )
+        .command(
+            'reader',
+            'Build for the b-ber-reader format',
+            () => {},
+            handler,
+        )
+        .command(
+            'sample',
+            'Build a sample Epub',
+            () => {},
+            handler,
+        )
+        .command(
+            'web',
+            'Build for web',
+            () => {},
+            handler,
+        )
+        .help('h')
+        .alias('h', 'help')
 
 export default {
     command,

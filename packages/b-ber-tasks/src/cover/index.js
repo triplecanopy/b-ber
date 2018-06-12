@@ -94,13 +94,12 @@ class Cover {
     }
 
     generateDefaultCoverImage() {
-        log.info('Creating cover image')
         return new Promise(resolve =>
             childProcess.execFile(phantomjs.path, this.phantomjsArgs, (err, stdout, stderr) => {
                 if (err) log.error(err)
                 if (stderr) log.error(stderr)
                 if (stdout) log.info(stdout)
-                log.info('emit cover image')
+                log.info('cover emit cover image')
                 resolve()
             })
         )
@@ -114,7 +113,7 @@ class Cover {
                 if (err0) throw err0
                 fs.writeFile(coverFilePath, this.coverXHTMLContent, err1 => {
                     if (err1) throw err1
-                    log.info('emit [cover.xhtml]')
+                    log.info('cover emit [cover.xhtml]')
                     return resolve()
                 })
             })
@@ -131,7 +130,7 @@ class Cover {
                 href: `images/${encodeURIComponent(this.coverEntry)}`,
             })
 
-            log.info('Creating [cover.xhtml]')
+            log.info('cover build [cover.xhtml]')
 
             // set the content string to be written once resolved
             this.coverXHTMLContent = renderLayouts(new File({
@@ -151,7 +150,7 @@ class Cover {
             this.coverImagePath = path.join(state.src, '_images', this.coverEntry)
 
             // check that metadata.yml exists
-            log.info('verify cover entry in [metadata.yml]')
+            log.info('cover verify entry in [metadata.yml]')
             try {
                 metadata = YamlAdaptor.load(path.join(state.src, 'metadata.yml'))
             } catch (err) {
@@ -162,7 +161,7 @@ class Cover {
             const coverListedInMetadata = find(metadata, {term: 'cover'})
             if (coverListedInMetadata) {
                 this.coverEntry = coverListedInMetadata.value
-                log.info('verify cover image [%s]', this.coverEntry)
+                log.info('cover verify image [%s]', this.coverEntry)
                 if (!coverListedInMetadata.value) throw new Error('Error in [metadata.yml] at cover.value')
                 // there's a reference to a cover image so we create a cover.xhtml file
                 // containing an SVG-wrapped `image` element with the appropriate cover
@@ -183,7 +182,7 @@ class Cover {
 
             // if there's no cover referenced in the metadata.yml, we create one that
             // displays the book's metadata (title, generator version, etc)
-            log.warn('Creating default cover image [%s]', this.coverEntry)
+            log.warn('cover emit [%s]', this.coverEntry)
 
             state.add('metadata', {term: 'cover', value: fileId(this.coverEntry).slice(1)})
             this.metadata = {...this.metadata, ...metadata}

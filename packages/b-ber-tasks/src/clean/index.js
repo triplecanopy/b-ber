@@ -26,12 +26,12 @@ const clean = () =>
 
         if (oldBuilds.length) {
             oldBuilds.forEach(a => fs.remove(path.join(projectRoot, a)))
-            log.info('remove [%s]', oldBuilds.join('\n'))
+            log.info('clean remove [%s]', oldBuilds.join('\n'))
         }
 
         fs.remove(dir_, err => {
             if (err) throw err
-            log.info('remove [%s]', dir_)
+            log.info('clean remove [%s]', dir_)
             resolve()
         })
     })

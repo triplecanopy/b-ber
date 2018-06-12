@@ -101,10 +101,10 @@ class Footnotes {
             this.testParams((err0, footnotes) => {
                 if (err0) throw err0
                 if (!footnotes.length) {
-                    log.info('No footnotes found in source files')
+                    log.info('footnotes no footnotes found in source')
                     return resolve(footnotes)
                 }
-                log.info('Generating linked footnotes from data found in source')
+                log.info('footnotes generating links')
                 return this.writeFootnotes()
                     .catch(err1 => log.error(err1))
                     .then(resolve)

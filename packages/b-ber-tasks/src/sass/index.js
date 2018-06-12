@@ -37,9 +37,8 @@ const createSCSSString = () =>
             // load user-defined variables
             if (fs.existsSync(themeSettingsPath)) {
                 const variableOverrides = fs.readFileSync(themeSettingsPath)
-                log.info()
-                log.info(`Found SCSS variable overrides: ${path.basename(themeSettingsPath)}`)
-                log.info('Prepending overrides to SCSS stream')
+                log.info(`sass use overrides [${path.basename(themeSettingsPath)}]`)
+                log.info('sass prepend overrides')
                 chunks.push(variableOverrides)
             }
         } catch (err) {
@@ -50,7 +49,7 @@ const createSCSSString = () =>
             // load theme styles
             if (fs.existsSync(themeStylesPath)) {
                 const themeStyles = fs.readFileSync(themeStylesPath)
-                log.info(`scss attempting to build with [${themeName}] theme`)
+                log.info(`sass attempt build with [${themeName}] theme`)
                 chunks.push(themeStyles)
             }
         } catch (err) {
@@ -61,8 +60,8 @@ const createSCSSString = () =>
             // load user-defined styles
             if (fs.existsSync(themeOverridesPath)) {
                 const styleOverrides = fs.readFileSync(themeOverridesPath)
-                log.info(`Found user-defined styles: ${path.basename(themeOverridesPath)}`)
-                log.info('Appending user-defined styles to SCSS stream')
+                log.info(`sass use user-defined styles [${path.basename(themeOverridesPath)}]`)
+                log.info('sass append user-defined styles')
                 chunks.push(styleOverrides)
             }
         } catch (err) {
