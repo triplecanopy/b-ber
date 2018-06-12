@@ -39,6 +39,7 @@ class ApplicationLoader {
 
         this.version = this.npmPackage.version
         this.metadata = []
+        this.theme = {}
         this.video = []
         this.audio = []
         this.buildTypes = {
@@ -70,8 +71,8 @@ class ApplicationLoader {
     _theme() {
         const themeError = new Error(`There was an error loading theme [${this.theme}]`)
 
-        if ({}.hasOwnProperty.call(themes, this.theme)) {
-            this.theme = themes[this.theme]
+        if ({}.hasOwnProperty.call(themes, this.config.theme)) {
+            this.theme = themes[this.config.theme]
         } else {
             if (!{}.hasOwnProperty.call(this.config, 'themes_directory')) {
                 if (!yargs.argv._[0] || yargs.argv._[0] !== 'theme') {
@@ -102,9 +103,7 @@ class ApplicationLoader {
 
 
                 const userTheme = find(userThemes, {name: this.config.theme})
-                if (!userTheme) {
-                    log.error(`Could not find theme [${this.config.theme}]`)
-                }
+                if (!userTheme) log.error(`Could not find theme [${this.config.theme}]`)
 
                 // exists! set it
                 this.theme = userTheme
@@ -209,9 +208,9 @@ class ApplicationLoader {
     load() {
         this._config()
         this._metadata()
-        this._theme()
         this._media()
         this._builds()
+        this._theme()
     }
 }
 

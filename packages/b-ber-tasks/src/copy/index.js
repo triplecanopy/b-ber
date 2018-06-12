@@ -9,6 +9,7 @@ import log from '@canopycanopycanopy/b-ber-logger'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 
 const FILE_SIZE_WARNING_LIMIT = 1500000 // 1.5Mb
+const cwd = process.cwd()
 
 /**
  * Copy directories of assets into the output directory
@@ -19,7 +20,10 @@ const FILE_SIZE_WARNING_LIMIT = 1500000 // 1.5Mb
 const copy = () =>
     new Promise(resolve => {
 
-        const {ignore} = state.config
+        // resolve paths in ignore
+        let {ignore} = state.config
+        ignore = ignore.map(a => path.resolve(cwd, a))
+
         const promises = []
         let dirs = []
 
@@ -29,7 +33,7 @@ const copy = () =>
             {from: path.resolve(state.src, '_media'), to: path.resolve(state.dist, 'OPS', 'media')},
         ]
 
-        dirs = dirs.filter(a => (typeof ignore[a.from]))
+        dirs = dirs.filter(a => ignore.indexOf(a.from) < 0)
 
         dirs.forEach(a => {
             promises.push(new Promise(resolve => {

@@ -46,6 +46,9 @@ const getDirContents = dirpath =>
             resolve(files)
         }))
 
+
+const getRemoteResources = resource => new Promise(resolve => resolve(state.config[`remote_${resource}`] || []))
+
 /**
  * Get JSON-LD representation of the book's metadata
  * @param {Array}  args Results from Promise.all()
@@ -155,16 +158,22 @@ const getContents = source =>
 const templateify = files =>
     files.map(file => {
         let fileType
+        let base = ''
+        let dirName = ''
         if (file instanceof File) { // if file is a vinyl File object
             fileType = file.path.slice(file.path.lastIndexOf('.'))
         } else {
             fileType = path.extname(file).toLowerCase()
         }
+
+        dirName = fileType === '.css' ? 'stylesheets' : 'javascripts'
+        base = /^(http|\/\/)/.test(file) === false ? `..${path.sep}${dirName}${path.sep}` : ''
+
         switch (fileType) {
             case '.js':
-                return Xhtml.script().replace(/\{% body %\}/, `..${path.sep}javascripts${path.sep}${file}`)
+                return Xhtml.script().replace(/\{% body %\}/, `${base}${file}`)
             case '.css':
-                return Xhtml.stylesheet().replace(/\{% body %\}/, `..${path.sep}stylesheets${path.sep}${file}`)
+                return Xhtml.stylesheet().replace(/\{% body %\}/, `${base}${file}`)
             case '.json-ld':
                 return Xhtml.script('application/ld+json', true).replace(/\{% body %\}/, String(file.contents))
             default:
@@ -328,12 +337,20 @@ const mapSourcesToDynamicPageTemplate = args => {
     })
 }
 
+const getResources = type => new Promise(resolve => {
+    Promise.all([
+        getRemoteResources(type),
+        getDirContents(path.join(state.dist, 'OPS', type)),
+    ])
+        .then(([a, b]) => resolve([...a, ...b]))
+})
+
 const inject = _ =>
     new Promise(resolve => {
         Promise.all([
             getDirContents(path.join(state.dist, 'OPS', 'text')),
-            getDirContents(path.join(state.dist, 'OPS', 'stylesheets')),
-            getDirContents(path.join(state.dist, 'OPS', 'javascripts')),
+            getResources('stylesheets'),
+            getResources('javascripts'),
         ])
             .then(getJSONLDMetadata)
             .then(files =>

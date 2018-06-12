@@ -40,6 +40,7 @@
     "probe-image-size": "^4.0.0",
     "recursive-readdir": "^2.2.2",
     "serve-index": "^1.9.1",
+    "uglify-js": "^3.4.0",
     "vinyl": "^2.1.0",
     "yargs": "^11.0.0"
   },
