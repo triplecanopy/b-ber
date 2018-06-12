@@ -11,9 +11,12 @@ import {createPageModelsFromYAML, flattenNestedEntries} from './helpers'
 const cwd = process.cwd()
 
 class ApplicationLoader {
-    static defaults = {
-        version: '',
-        config: {
+    constructor() {
+        const scriptPath = path.resolve(__dirname, 'package.json')
+
+        this.npmPackage = JSON.parse(fs.readFileSync(scriptPath), 'utf8')
+
+        this.defaultConfig = {
             env: process.env.NODE_ENV || 'development',
             src: '_project',
             dist: 'project',
@@ -25,43 +28,46 @@ class ApplicationLoader {
             reader_url: 'http://localhost:4000/project-reader',
             builds: ['epub', 'mobi', 'pdf'],
             private: false,
-            ignore: {},
+            ignore: [],
             autoprefixer_options: {
                 browsers: ['last 2 versions', '> 2%'],
                 flexbox: 'no-2009',
             },
-        },
+        }
 
-        metadata: [],
-        video: [],
-        audio: [],
-        buildTypes: { sample: {}, epub: {}, mobi: {}, pdf: {}, web: {}},
-    }
-    constructor() {
-        const scriptPath = path.resolve(__dirname, 'package.json')
-        this.pkg = JSON.parse(fs.readFileSync(scriptPath), 'utf8')
-        Object.entries(ApplicationLoader.defaults).forEach(([key, val]) => this[key] = val)
+        this.config = {...this.defaultConfig}
+
+        this.version = this.npmPackage.version
+        this.metadata = []
+        this.video = []
+        this.audio = []
+        this.buildTypes = {
+            sample: {},
+            epub: {},
+            mobi: {},
+            pdf: {},
+            web: {},
+        }
     }
 
-    __version() {
-        const {version} = this.pkg
-        this.version = version
+    _resetConfig() {
+        this.config = {...this.defaultConfig}
     }
 
-    __config() {
+    _config() {
         if (!fs.existsSync(path.join(cwd, 'config.yml'))) return
-        const baseConfig = YamlAdaptor.load(path.join(cwd, 'config.yml'))
+        const userConfig = YamlAdaptor.load(path.join(cwd, 'config.yml'))
 
-        this.config = {...this.config, ...baseConfig}
+        this.config = {...this.config, ...userConfig}
     }
 
-    __metadata() {
+    _metadata() {
         const fpath = path.join(cwd, this.config.src, 'metadata.yml')
         if (!fs.existsSync(fpath)) return
         this.metadata = [...this.metadata, ...YamlAdaptor.load(fpath)]
     }
 
-    __theme() {
+    _theme() {
         const themeError = new Error(`There was an error loading theme [${this.theme}]`)
 
         if ({}.hasOwnProperty.call(themes, this.theme)) {
@@ -110,7 +116,7 @@ class ApplicationLoader {
         }
     }
 
-    __media() {
+    _media() {
         const mediaPath = path.join(cwd, this.config.src, '_media')
         try {
             if (fs.existsSync(mediaPath)) {
@@ -126,51 +132,24 @@ class ApplicationLoader {
         }
     }
 
-    __builds() {
+    _builds() {
         this.buildTypes = {
-            sample: this.__loadBuildSettings('sample'),
-            epub: this.__loadBuildSettings('epub'),
-            mobi: this.__loadBuildSettings('mobi'),
-            pdf: this.__loadBuildSettings('pdf'),
-            web: this.__loadBuildSettings('web'),
-            reader: this.__loadBuildSettings('reader'),
+            sample: this._loadBuildSettings('sample'),
+            epub: this._loadBuildSettings('epub'),
+            mobi: this._loadBuildSettings('mobi'),
+            pdf: this._loadBuildSettings('pdf'),
+            web: this._loadBuildSettings('web'),
+            reader: this._loadBuildSettings('reader'),
         }
     }
 
-    __createSpineListFromMarkdownFiles() {
+    _createSpineListFromMarkdownFiles() {
         const markdownDir = path.join(cwd, this.config.src, '_markdown')
         return fs.readdirSync(markdownDir).filter(a => path.extname(a) === '.md').map(a => path.basename(a, '.md'))
     }
 
-    __loadBuildSettings(type) {
-        const {src, dist} = this.config
-        const projectDir = path.join(cwd, src)
-        const navigationConfigFile = path.join(cwd, src, `${type}.yml`)
-        const buildConfigFile = path.join(cwd, `config.${type}.yml`) // build-specific config, i.e., loads from config.epub.yml, config.mobi.yml, etc
-
-        let buildConfig = {}
-
+    _createSpineList(navigationConfigFile, type) {
         let spineList = []
-        let spineEntries = []
-        let tocEntries = []
-
-        try {
-            if (!fs.existsSync(projectDir)) {
-                throw new Error(`Project directory [${projectDir}] does not exist`)
-            }
-        } catch (err) {
-            // Starting a new project, noop
-            return {
-                src,
-                dist: `${dist}-${type}`,
-                config: buildConfig,
-                spineList,
-                spineEntries,
-                tocEntries,
-            }
-        }
-
-
         try {
             if (fs.existsSync(navigationConfigFile)) {
                 spineList = YamlAdaptor.load(navigationConfigFile) || []
@@ -181,49 +160,46 @@ class ApplicationLoader {
             if (/creating default file/.test(err.message)) {
                 log.warn(err.message)
                 fs.writeFileSync(navigationConfigFile, '')
-                spineList = this.__createSpineListFromMarkdownFiles()
+                spineList = this._createSpineListFromMarkdownFiles()
             } else {
                 throw err
             }
         }
 
-        tocEntries = createPageModelsFromYAML(spineList, src) // nested navigation
-        spineEntries = flattenNestedEntries(tocEntries) // one-dimensional page flow
+        return spineList
+    }
+
+
+    _loadBuildSettings(type) {
+        const {src, dist} = this.config
+        const projectDir = path.join(cwd, src)
+        const navigationConfigFile = path.join(cwd, src, `${type}.yml`)
 
         try {
-            if (fs.existsSync(buildConfigFile)) {
-                buildConfig = YamlAdaptor.load(buildConfigFile)
-                let ignore = []
-
-                // store in temp. var so we can map to object
-                if (buildConfig.ignore) ignore = [...buildConfig.ignore]
-
-                if (ignore.length) {
-                    buildConfig.ignore = {}
-                    ignore.forEach(a => {
-                        const file = path.resolve(cwd, src, a)
-                        const stats = fs.statSync(file)
-                        buildConfig.ignore[file] = {
-                            type: stats.isDirectory() ? 'directory' : stats.isFile() ? 'file' : null,
-                        }
-                    })
-                }
-
-            } else {
-                throw new Error(`[config.${type}.yml] not found. Using base configuration for [${type}] build`)
-            }
+            if (!fs.existsSync(projectDir)) throw new Error(`Project directory [${projectDir}] does not exist`)
         } catch (err) {
-            if (/Using base configuration/.test(err.message)) {
-                // noop
-            } else {
-                throw err
+            // Starting a new project, noop
+            return {
+                src,
+                dist: `${dist}-${type}`,
+                config: {},
+                spineList: [],
+                spineEntries: [],
+                tocEntries: [],
             }
         }
+
+        const spineList = this._createSpineList(navigationConfigFile, type)
+        const tocEntries = createPageModelsFromYAML(spineList, src) // nested navigation
+        const spineEntries = flattenNestedEntries(tocEntries) // one-dimensional page flow
+
+        // build-specific config. gets merged into base config during build step
+        const config = this.config[type] ? {...this.config[type]} : {}
 
         return {
             src,
             dist: `${dist}-${type}`,
-            config: buildConfig,
+            config,
             spineList,
             spineEntries,
             tocEntries,
@@ -231,12 +207,11 @@ class ApplicationLoader {
     }
 
     load() {
-        this.__version()
-        this.__config()
-        this.__metadata()
-        this.__theme()
-        this.__media()
-        this.__builds()
+        this._config()
+        this._metadata()
+        this._theme()
+        this._media()
+        this._builds()
     }
 }
 

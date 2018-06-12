@@ -55,15 +55,6 @@ class Initializer {
             Project.readme(this.projectPath, cwd),
             Project.gitignore(this.projectPath),
         ]
-
-        state.buildTypes = {
-            ...state.buildTypes,
-            epub: {...state.buildTypes.epub, src, dist: `${dist}-epub`},
-            mobi: {...state.buildTypes.mobi, src, dist: `${dist}-mobi`},
-            pdf: {...state.buildTypes.pdf, src, dist: `${dist}-pdf`},
-            web: {...state.buildTypes.web, src, dist: `${dist}-web`},
-            sample: {...state.buildTypes.sample, src, dist: `${dist}-sample`},
-        }
     }
 
     /**

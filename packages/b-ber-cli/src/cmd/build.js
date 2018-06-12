@@ -111,6 +111,7 @@ const handler = argv => {
             .then(resolve)
     })
 
+
     const run = buildTasks => {
         const build = buildTasks.shift()
 

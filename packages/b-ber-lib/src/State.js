@@ -31,7 +31,8 @@ class State extends ApplicationLoader {
     constructor() {
         super()
 
-        this.__updateConfig()
+        this._resetEntries()
+        this._resetConfig()
         this.load()
     }
 
@@ -65,13 +66,14 @@ class State extends ApplicationLoader {
     }
 
     reset() {
-        this.__updateConfig()
+        this._resetEntries()
+        this._resetConfig()
 
         this.templates = {dynamicPageTmpl, dynamicPageHead, dynamicPageTail}
         this.hash = crypto.randomBytes(20).toString('hex')
     }
 
-    __updateConfig() {
+    _resetEntries() {
         Object.entries(State.defaults).forEach(([key, val]) => this[key] = val)
     }
 
