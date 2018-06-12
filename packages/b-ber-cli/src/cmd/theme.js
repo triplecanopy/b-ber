@@ -1,7 +1,7 @@
 import {theme} from '@canopycanopycanopy/b-ber-lib/theme'
 import {fail} from '../helpers'
 
-const command = 'theme <list|set>'
+const command = 'theme <list>'
 const describe = 'Manage a project\'s theme'
 const builder = yargs =>
     yargs
@@ -10,12 +10,6 @@ const builder = yargs =>
             'List the installed themes',
             () => {},
             () => theme({list: true})
-        )
-        .command(
-            'set <theme-name>',
-            'Set the theme',
-            () => {},
-            argv => theme({set: true, themeName: argv.themeName})
         )
         .help('h')
         .alias('h', 'help')

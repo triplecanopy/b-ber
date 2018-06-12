@@ -4,7 +4,6 @@ import path from 'path'
 import fs from 'fs-extra'
 import themes from '@canopycanopycanopy/b-ber-themes'
 import log from '@canopycanopycanopy/b-ber-logger'
-import YamlAdaptor from './YamlAdaptor'
 import {forOf} from './utils'
 import state from './State'
 
@@ -56,92 +55,11 @@ const printThemeList = (themeList, currentTheme = '') =>
         return acc.concat(`  ${icon} ${curr}\n`)
     }, '\n').slice(0, -1)
 
-
-function setTheme(themeName, themeList, userThemes, cwd) {
-    return new Promise(resolve => {
-        if (themeList.indexOf(themeName) < 0) {
-            log.error(`Could not find theme matching [${themeName}].`)
-            log.info('Select one from the list of available themes:')
-            log.info(printThemeList(themeList))
-            return
-        }
-
-        const configPath = path.join(cwd, 'config.yml')
-        const configObj  = YamlAdaptor.load(configPath)
-        const promises   = []
-
-        // save the new theme name to the config.yml
-        configObj.theme = themeName
-
-        // write the updated config file
-        promises.push(new Promise(resolve =>
-            fs.writeFile(configPath, YamlAdaptor.dump(configObj), err => {
-                if (err) throw err
-                log.info(`Successfully set theme theme to [${themeName}]`)
-                return resolve()
-            }))
-        )
-
-        // add a theme dir with the same name to the src dir, copy over
-        // the `settings` file, and create an overrides file
-        promises.push(new Promise(resolve => {
-            const themeObject =
-                {}.hasOwnProperty.call(themes, themeName)
-                    ? themes[themeName]
-                    : userThemes.themes[themeName]
-
-            const settingsFileName    = '_settings.scss'
-            const overridesFileName   = '_overrides.scss'
-            const settingsOutputPath  = path.join(cwd, configObj.src || '_project', '_stylesheets', themeName)
-            const settingsInputFile   = path.join(path.dirname(themeObject.entry), settingsFileName)
-            const settingsOutputFile  = path.join(settingsOutputPath, settingsFileName)
-            const overridesOutputFile = path.join(settingsOutputPath, overridesFileName)
-
-
-            try {
-                if (!fs.existsSync(settingsOutputPath)) {
-                    fs.mkdirsSync(settingsOutputPath)
-                }
-            } catch (err) {
-                log.error(err)
-                process.exit(1)
-            }
-
-            try {
-                if (fs.existsSync(settingsOutputFile)) {
-                    throw new Error(`[${settingsOutputFile}] already exists`)
-                } else {
-                    fs.copySync(settingsInputFile, settingsOutputFile, {})
-                    log.info(`create [${settingsOutputFile}]`)
-                }
-                if (fs.existsSync(overridesOutputFile)) {
-                    throw new Error(`[${overridesOutputFile}] already exists`)
-                } else {
-                    fs.writeFileSync(overridesOutputFile, '')
-                }
-            } catch (err) {
-                if (/already exists/.test(err.message)) {
-                    log.info(err.message)
-                } else {
-                    log.error(err)
-                }
-            }
-
-            resolve()
-
-        }))
-
-
-        return Promise.all(promises).then(resolve)
-    })
-}
-
 const theme = args =>
     new Promise(async resolve => {
 
         log.logLevel = 4
 
-        const cwd = process.cwd()
         const {config} = state
         const themeList = []
 
@@ -159,13 +77,6 @@ const theme = args =>
             log.info(printThemeList(themeList, currentTheme))
             return resolve()
         }
-
-
-        if (args.set && args.themeName) {
-            const {themeName} = args
-            return setTheme(themeName, themeList, userThemes, cwd).then(resolve)
-        }
-
     })
 
-export {theme, setTheme}
+export {theme} // eslint-disable-line import/prefer-default-export
