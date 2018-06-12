@@ -1,4 +1,3 @@
-
 import fs from 'fs-extra'
 import path from 'path'
 import log from '@canopycanopycanopy/b-ber-logger'
@@ -11,19 +10,19 @@ import Project from '@canopycanopycanopy/b-ber-templates/Project'
  * @class Initializer
  */
 class Initializer {
-    set src(val)            { this._src = val }
-    set dist(val)           { this._dist = val }
-    set cwd(val)            { this._cwd = val }
-    set dirs(val)           { this._dirs = val }
-    set files(val)          { this._files = val }
-    set projectPath(val)    { this._projectPath = val }
+    set src(val) { this._src = val }
+    set dist(val) { this._dist = val }
+    set cwd(val) { this._cwd = val }
+    set dirs(val) { this._dirs = val }
+    set files(val) { this._files = val }
+    set projectPath(val) { this._projectPath = val }
 
-    get src()               { return this._src }
-    get dist()              { return this._dist }
-    get cwd()               { return this._cwd }
-    get dirs()              { return this._dirs }
-    get files()             { return this._files }
-    get projectPath()       { return this._projectPath }
+    get src() { return this._src }
+    get dist() { return this._dist }
+    get cwd() { return this._cwd }
+    get dirs() { return this._dirs }
+    get files() { return this._files }
+    get projectPath() { return this._projectPath }
 
     /**
      * @constructor
@@ -62,16 +61,9 @@ class Initializer {
      * @return {Promise<Object|Error>}
      */
     _makeDirs() {
-        return new Promise(resolve0 => {
-            const promises = this.dirs.map(_ =>
-                new Promise(resolve1 =>
-                    fs.mkdirp(_, err => {
-                        if (err) throw err
-                        resolve1()
-                    })
-                )
-            )
-            return Promise.all(promises).then(resolve0)
+        return new Promise(resolve => {
+            const promises = this.dirs.map(a => fs.mkdirp(a))
+            return Promise.all(promises).then(resolve)
         })
     }
 
@@ -80,16 +72,9 @@ class Initializer {
      * @return {Promise<Object|Error>}
      */
     _writeFiles() {
-        return new Promise(resolve0 => {
-            const promises = this.files.map(_ =>
-                new Promise(resolve1 =>
-                    fs.writeFile(_.relativePath, _.content, err => {
-                        if (err) throw err
-                        resolve1()
-                    })
-                )
-            )
-            return Promise.all(promises).then(resolve0)
+        return new Promise(resolve => {
+            const promises = this.files.map(a => fs.writeFile(a.relativePath, a.content))
+            return Promise.all(promises).then(resolve)
         })
     }
 
@@ -101,10 +86,7 @@ class Initializer {
                 const images = [bberLogo, publishersLogo]
 
                 log.info('Copying development assets')
-                images.forEach(a => {
-                    promises.push(fs.copy(a, path.join(this.projectPath, '_images', path.basename(a))))
-                })
-
+                images.forEach(a => promises.push(fs.copy(a, path.join(this.projectPath, '_images', path.basename(a)))))
                 Promise.all(promises).then(resolve)
             })
         })
@@ -112,9 +94,12 @@ class Initializer {
     }
     _setTheme() {
         log.info('Setting default theme')
-        return new Promise(resolve => {
-            setTheme(state.theme.name, [state.theme.name], [], path.dirname(this.projectPath)).then(resolve)
-        })
+        return new Promise(resolve => setTheme(
+            state.theme.name,
+            [state.theme.name],
+            [],
+            path.dirname(this.projectPath)
+        ).then(resolve))
     }
 
     /**
@@ -125,10 +110,10 @@ class Initializer {
     start(name = '') {
         return new Promise(resolve =>
             this._makeDirs()
-                .then(_ => this._writeFiles())
-                .then(_ => this._copyImages())
-                .then(_ => this._setTheme())
-                .then(_ => console.log(`Created new project [${name}]`)) // bber logger may not available?
+                .then(() => this._writeFiles())
+                .then(() => this._copyImages())
+                .then(() => this._setTheme())
+                .then(() => console.log(`Created new project [${name}]`)) // bber logger may not available?
                 .catch(err => log.error(err))
                 .then(resolve)
         )
