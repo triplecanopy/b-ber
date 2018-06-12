@@ -153,7 +153,7 @@ const theme = args =>
             themeList.push(userThemes.names[i])
         }
 
-        const currentTheme = config.theme && config.theme.name ? config.theme.name : ''
+        const currentTheme = config.theme && config.theme ? config.theme : ''
         if (args.list) {
             log.info('The following themes are available:')
             log.info(printThemeList(themeList, currentTheme))
