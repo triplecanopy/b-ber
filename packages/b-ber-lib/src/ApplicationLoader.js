@@ -16,7 +16,7 @@ class ApplicationLoader {
 
         this.npmPackage = JSON.parse(fs.readFileSync(scriptPath), 'utf8')
 
-        this.defaultConfig = {
+        this.initialConfig = {
             env: process.env.NODE_ENV || 'development',
             src: '_project',
             dist: 'project',
@@ -35,7 +35,7 @@ class ApplicationLoader {
             },
         }
 
-        this.config = {...this.defaultConfig}
+        this.config = {...this.initialConfig}
 
         this.version = this.npmPackage.version
         this.metadata = []
@@ -52,14 +52,16 @@ class ApplicationLoader {
     }
 
     _resetConfig() {
-        this.config = {...this.defaultConfig}
+        this.config = {...this.initialConfig}
     }
 
     _config() {
         if (!fs.existsSync(path.join(cwd, 'config.yml'))) return
         const userConfig = YamlAdaptor.load(path.join(cwd, 'config.yml'))
 
-        this.config = {...this.config, ...userConfig}
+        // updates initialConfig with data from config.yml
+        this.initialConfig = {...this.config, ...userConfig}
+        this.config = {...this.initialConfig}
     }
 
     _metadata() {

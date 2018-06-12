@@ -26,7 +26,7 @@ const uglify = contents => {
 
 const optimized = files =>
     new Promise(resolve => {
-        const contents = files.map(a => fs.readFileSync(a, 'utf8')).join('')
+        const contents = files.map(a => fs.readFileSync(path.resolve(cwd, state.src, '_javascripts', a), 'utf8')).join('')
         const js = uglify(contents)
         const {hash} = state
         const out = path.join(state.dist, 'OPS', 'javascripts', `${hash}.js`)
@@ -61,7 +61,7 @@ const write = () =>
         const promises = []
         fs.readdir(path.join(state.src, '_javascripts'), (err, _files) => {
             if (err) throw err
-            const files = _files.filter(a => path.extname(a) === '.js').map(a => path.resolve(cwd, state.src, '_javascripts', a))
+            const files = _files.filter(a => path.extname(a) === '.js')//.map(a => path.join('_javascripts', a))
             promises.push((state.env === 'production' ? optimized : unoptimized)(files))
             Promise.all(promises).then(resolve)
         })

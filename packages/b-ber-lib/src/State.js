@@ -45,9 +45,7 @@ class State extends ApplicationLoader {
         }
         return this.config.dist
     }
-    // get theme() {
-    //     return this.config.theme
-    // }
+
     get env() { // eslint-disable-line class-methods-use-this
         return process.env.NODE_ENV || 'development'
     }
@@ -58,9 +56,7 @@ class State extends ApplicationLoader {
     set dist(val) {
         this.config.dist = val
     }
-    // set theme(val) {
-    //     this.config.theme = val
-    // }
+
     set env(val) {
         this.config.env = val
     }

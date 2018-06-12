@@ -22,6 +22,7 @@ const copy = () =>
 
         // resolve paths in ignore
         let {ignore} = state.config
+        if (ignore.constructor !== Array) ignore = []
         ignore = ignore.map(a => path.resolve(cwd, a))
 
         const promises = []
