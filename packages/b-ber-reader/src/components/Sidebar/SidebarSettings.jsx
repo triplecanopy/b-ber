@@ -31,7 +31,8 @@ class SidebarSettings extends Component {
     }
     render() {
         // const {
-        //     // columnGap,          // columnGap 60
+        //     // columnGapPage,      // columnGapPage 30
+        //     // columnGapLayout,    // columnGapLayout 120
         //     // fontSize,           // fontSize 120
         //     // paddingBottom,      // paddingBottom 30
         //     // paddingLeft,        // paddingLeft 30

@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import debounce from 'lodash/debounce'
+import pick from 'lodash/pick'
 import transitions from '../lib/transition-styles'
 import Viewport from '../helpers/Viewport'
 import {isNumeric} from '../helpers/Types'
@@ -16,7 +17,8 @@ class Layout extends Component {
             paddingLeft: PropTypes.number.isRequired,
             paddingBottom: PropTypes.number.isRequired,
             fontSize: PropTypes.string.isRequired,
-            columnGap: PropTypes.number.isRequired,
+            columnGapPage: PropTypes.number.isRequired,
+            columnGapLayout: PropTypes.number.isRequired,
             transition: PropTypes.string.isRequired,
             transitionSpeed: PropTypes.number.isRequired,
             theme: PropTypes.string.isRequired,
@@ -24,7 +26,8 @@ class Layout extends Component {
     }
     static childContextTypes = {
         height: cssHeightDeclarationPropType,
-        columnGap: PropTypes.number,
+        columnGapPage: PropTypes.number,
+        columnGapLayout: PropTypes.number,
         translateX: PropTypes.number,
         paddingTop: PropTypes.number,
         paddingLeft: PropTypes.number,
@@ -36,7 +39,8 @@ class Layout extends Component {
         super(props)
 
         const {
-            columnGap,
+            columnGapPage,
+            columnGapLayout,
             paddingTop,
             paddingLeft,
             paddingRight,
@@ -57,9 +61,19 @@ class Layout extends Component {
             transform: 'translateX(0)',
             translateX: 0,
 
-            columns: 2,
-            columnGap,
-            columnFill: 'auto',
+            columnWidth: 'auto',
+            columnCount: 2,
+            columnGapPage,
+            columnGapLayout,
+
+            // we need to set this to 'balance' to preserve the mix of column
+            // gaps. unfortunately, this means that our cols are all 'balanced',
+            // when we'd actually like to have them set to 'auto'. we append a
+            // spacer element as a react component that functions similarly to
+            // the Spread component, which fills the space after the last
+            // element in the layout to stretch the container to the full height
+            // of the screen
+            columnFill: 'balance',
         }
 
         this.debounceSpeed = 60
@@ -80,7 +94,8 @@ class Layout extends Component {
     getChildContext() {
         return {
             height: this.state.height,
-            columnGap: this.state.columnGap,
+            columnGapPage: this.state.columnGapPage,
+            columnGapLayout: this.state.columnGapLayout,
             translateX: this.state.translateX,
             paddingTop: this.state.paddingTop,
             paddingLeft: this.state.paddingLeft,
@@ -110,14 +125,17 @@ class Layout extends Component {
         this.updateTransform()
     }
 
-    getFrameHeight() {
+    getFrameHeight() { // eslint-disable-line class-methods-use-this
         if (Viewport.isMobile()) return 'auto'
-        const {paddingTop, paddingBottom} = this.state
+
+        // const {paddingTop, paddingBottom} = this.state
 
         let {height} = this.state
         if (!isNumeric(height)) height = window.innerHeight // make sure we're not treating 'auto' as a number
 
-        return height - (paddingTop + paddingBottom)
+        return height
+        // return height - paddingTop
+        // return height - (paddingTop + paddingBottom)
     }
 
     bindEventListeners() {
@@ -138,13 +156,56 @@ class Layout extends Component {
 
     updateTransform(spreadIndex = 0) {
         const isMobile = Viewport.isMobile()
-        const {width} = this.state
+        const {paddingLeft, paddingRight, columnGapLayout, width} = this.state
+        const gutter = width + ((paddingLeft + paddingRight) / 2) + columnGapLayout
+
         let translateX = 0
-        if (!isMobile) translateX = (width * spreadIndex) * -1
+        if (!isMobile) translateX = (gutter * spreadIndex) * -1
         if (!isMobile) translateX = (translateX === 0 && Math.sign(1 / translateX) === -1) ? 0 : translateX // no -0
 
         const transform = `translateX(${translateX}px)`
         this.setState({transform, translateX})
+    }
+
+    pageStyles() {
+        return {
+            ...pick(this.state, [
+                'margin',
+                'border',
+                'paddingTop',
+                'paddingBottom',
+                'boxSizing',
+                'height',
+                'transform',
+            ]),
+
+            // additional static styles
+            columnGap: this.state.columnGapPage,
+            columnCount: 1,
+            columnWidth: 'auto',
+        }
+    }
+    layoutStyles() {
+        return {
+            ...pick(this.state, [
+                'margin',
+                'border',
+                'paddingLeft',
+                'paddingRight',
+                'boxSizing',
+                'width',
+                'columns',
+                'columnFill',
+            ]),
+
+            columnGap: this.state.columnGapLayout,
+        }
+    }
+    contentStyles() { // eslint-disable-line class-methods-use-this
+        return {
+            padding: 0,
+            margin: 0,
+        }
     }
 
     render() {
@@ -155,24 +216,33 @@ class Layout extends Component {
 
         // don't animate if we're transitioning forward to a new chapter, or
         // following an internal link
-        let styles = {...this.state}
-        if (pageAnimation) styles = {...this.state, ...transitionStyles}
+        let pageStyles = {...this.pageStyles(), height}
+        if (pageAnimation) pageStyles = {...pageStyles, ...transitionStyles}
+
+        const layoutStyles = {...this.layoutStyles()}
+        const contentStyles = {...this.contentStyles(), minHeight: height}
 
         return (
+
             <div
-                id='layout'
-                style={styles}
-                ref={node => this.layoutNode = node}
+                id='page'
+                style={pageStyles}
             >
                 <div
-                    id='content'
-                    style={{minHeight: height, padding: 0, margin: 0}}
-                    ref={node => this.contentNode = node}
+                    id='layout'
+                    style={layoutStyles}
+                    ref={node => this.layoutNode = node}
                 >
-                    <this.props.bookContent
-                        {...this.props}
-                        {...this.state}
-                    />
+                    <div
+                        id='content'
+                        style={contentStyles}
+                        ref={node => this.contentNode = node}
+                    >
+                        <this.props.bookContent
+                            {...this.props}
+                            {...this.state}
+                        />
+                    </div>
                 </div>
             </div>
         )

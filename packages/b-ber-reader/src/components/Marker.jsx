@@ -13,7 +13,8 @@ class Marker extends Component {
         paddingTop: PropTypes.number,
         paddingLeft: PropTypes.number,
         paddingBottom: PropTypes.number,
-        // columnGap: PropTypes.number,
+        // columnGapPage: PropTypes.number,
+        // columnGapLayout: PropTypes.number,
         // translateX: PropTypes.number,
         transitionSpeed: PropTypes.number,
         requestDeferredCallbackExecution: PropTypes.func,
@@ -100,7 +101,6 @@ class Marker extends Component {
         const parentOffset = this.getParentOffsetBottom()
 
         const {x} = this.markerNode.getBoundingClientRect()
-        // const {columnGap, translateX} = this.context
         const windowWidth = window.innerWidth
         const position = (x - paddingLeft) / windowWidth
 
