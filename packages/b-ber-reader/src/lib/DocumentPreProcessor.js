@@ -3,12 +3,12 @@ import {MediaStyleSheet} from '../models'
 import {mobileViewportMaxWidth} from '../config'
 
 class DocumentPreProcessor {
-    constructor({doc}) {
+    constructor({doc, paddingLeft}) {
         this.doc = doc
         this.breakPoint = mobileViewportMaxWidth
         this.styleSheets = [
-            new MediaStyleSheet({query: `only screen and (max-width: ${this.breakPoint}px)`, rules: [...mediaSmall]}),
-            new MediaStyleSheet({query: `only screen and (min-width: ${this.breakPoint + 1}px)`, rules: [...mediaLarge]}),
+            new MediaStyleSheet({query: `only screen and (max-width: ${this.breakPoint}px)`, rules: [...mediaSmall({paddingLeft})]}),
+            new MediaStyleSheet({query: `only screen and (min-width: ${this.breakPoint + 1}px)`, rules: [...mediaLarge({paddingLeft})]}),
         ]
     }
 

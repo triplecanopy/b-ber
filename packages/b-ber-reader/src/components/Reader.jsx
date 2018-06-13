@@ -256,6 +256,7 @@ class Reader extends Component {
                 requestedSpineItem,
                 ...this.state,
                 navigateToChapterByURL: this.navigateToChapterByURL,
+                paddingLeft: this.state.viewerSettings.get('paddingLeft'),
             }))
 
             .then(({bookContent, scopedCSS}) => {
@@ -327,7 +328,16 @@ class Reader extends Component {
         const {spine} = this.state
         const nextIndex = currentSpineItemIndex + increment
 
-        if (nextIndex > spine.length - 1 || nextIndex < 0) return
+        // send message to parent to notify EOF
+        if (nextIndex > spine.length - 1 || nextIndex < 0) {
+            if (window.parent) {
+                window.parent.postMessage({
+                    type: 'pagination',
+                    eof: true,
+                }, '*')
+            }
+            return
+        }
 
         currentSpineItemIndex = nextIndex
         const currentSpineItem = spine[nextIndex]
@@ -337,7 +347,7 @@ class Reader extends Component {
         if (increment === -1) {
             deferredCallback = _ => {
                 const {spreadTotal} = this.state
-                this.navigateToSpreadByIndex(spreadTotal)
+                this.navigateToSpreadByIndex(spreadTotal === 0 ? 0 : spreadTotal - 1) // TODO: fixme -- adjusted for column:balance
                 this.enablePageTransitions()
                 this.enableEventHandling()
                 this.hideSpinner()

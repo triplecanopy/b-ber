@@ -1,13 +1,13 @@
 import {debug} from '../config'
 
-export const mediaLarge = [{
+export const mediaLarge = ({paddingLeft}) => [{
     selector: `.figure__fullbleed figure`,
     declarations: [
         `position: absolute`,
         `height: 100vh`,
         `width: 100vw`,
         `top: 0`,
-        `margin-left: -30px`, // must match #layout padding
+        `margin-left: ${paddingLeft * -1}px`, // must match #layout padding
     ],
 }, {
     selector: `.figure__fullbleed figure .img-wrap img,
@@ -28,11 +28,11 @@ export const mediaLarge = [{
 }]
 
 
-export const mediaSmall = [{
+export const mediaSmall = ({paddingLeft}) => [{
     selector: `.figure__fullbleed figure`,
     declarations: [
         `width: 100vw`,
-        `margin-left: -30px`, // must match #layout padding
+        `margin-left: ${paddingLeft * -1}px`, // must match #layout padding
     ],
 }, {
     selector: `.figure__fullbleed figure .img-wrap img,

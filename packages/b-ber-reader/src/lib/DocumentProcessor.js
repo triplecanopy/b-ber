@@ -8,11 +8,11 @@ class DocumentProcessor {
         markerElement: 'span',
     }
     constructor(options = {}) {
-        const settings = {...DocumentProcessor.defaults, ...options}
+        this.settings = {...DocumentProcessor.defaults, ...options}
 
-        this.targetClassNames = settings.targetClassNames
-        this.markerClassNames = settings.markerClassNames
-        this.markerElement = settings.markerElement
+        this.targetClassNames = this.settings.targetClassNames
+        this.markerClassNames = this.settings.markerClassNames
+        this.markerElement = this.settings.markerElement
 
         this.markerStyles = {
             display: 'block',
@@ -207,11 +207,12 @@ class DocumentProcessor {
     parseXML(xmlString, callback) {
         const parser = new window.DOMParser()
         const doc = parser.parseFromString(xmlString, 'text/html')
+        const {paddingLeft} = this.settings
         let xml
         let err = null
 
         // TODO: pass in options here?
-        const documentPreProcessor = new DocumentPreProcessor({doc})
+        const documentPreProcessor = new DocumentPreProcessor({doc, paddingLeft})
         documentPreProcessor.parseXML()
 
         this.walkDocument(doc, doc_ => {
