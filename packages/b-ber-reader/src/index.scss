@@ -1,12 +1,10 @@
 $white: #fff;
 $black: #000;
-$violet: #ee82ee;
 $tc-purple: #5050C5;
-$component-x: 37px;
-$component-y: 37px;
-$padding-y: 47px;
 $lightgrey: #d3d3d3;
-$cornflowerblue: #6495ed;
+$component-x: 37px;
+$padding-y: 47px;
+$mobile-break: 400px;
 
 // base
 * {
@@ -176,7 +174,7 @@ button {
 .controls__sidebar__chapters {
     position: fixed;
     z-index: 2;
-    top: $component-y;
+    top: $component-x;
     height: 100vh;
     background: $white;
     border-right: 1px solid $lightgrey;
@@ -185,6 +183,10 @@ button {
     transform: translateX(-100%);
     overflow: auto;
     -webkit-overflow-scrolling: touch;
+
+    @media screen and (max-width: $mobile-break) {
+    		width: 100%!important;
+    }
 
     &.controls__sidebar__chapters--open {
         transform: translateX(0);
@@ -196,7 +198,7 @@ button {
 .controls__sidebar__settings {
     position: fixed;
     z-index: 2;
-    top: $component-y;
+    top: $component-x;
     right: 0;
     height: 100vh;
     background: $white;
@@ -206,6 +208,10 @@ button {
     transform: translateX(100%);
     overflow: auto;
     -webkit-overflow-scrolling: touch;
+
+    @media screen and (max-width: $mobile-break) {
+    		width: 100%!important;
+    }
 
     &.controls__sidebar__metadata--open,
     &.controls__sidebar__downloads--open,
@@ -266,19 +272,20 @@ button {
         align-items: center;
         justify-content: center;
         height: $component-x;
-        // padding: 0px 10px 0 10px;
+        padding: 0px 10px 0 10px;
 
         li {
             display: flex;
-            
-            //TC SPECIFIC STYLES
-            // &:first-child,
-            // &:last-child {
-            //     display: none;
-            // }
 
             &:nth-child(2) {
                 flex: 1;
+            }
+
+            &:nth-child(2),
+            &:nth-child(2) {
+              button {
+                font-size: 1.5em;
+              }
             }
 
             .nav__button {
@@ -305,48 +312,24 @@ button {
     position: fixed;
     display: none;
     background: $white;
-
-    .spinner--visible {
-        display: block;
-    }
-
-    .spinner__detail {
-        position: absolute;
-        width: 30px;
-        height: 30px;
-        top: calc(50% - 15px);
-        left: calc(50% - 15px);
-        border-width: 1px;
-        border-radius: 50%;
-        border-style: solid;
-        border-top-color: transparent;
-        border-right-color: $black;
-        border-bottom-color: $black;
-        border-left-color: $black;
-        animation: spin 1s infinite linear;
-    }
 }
 
-#gridContainer {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    margin: 0;
-    border: 0;
-    opacity: .5;
-    z-index: -1;
-    
-    #grid {
-        background: $cornflowerblue;
-        display: flex;
-        width: 100%;
-        height: 100%;
-    
-        * {
-            background: $lightgrey;
-        }
-    }
+.spinner--visible {
+    display: block;
+}
 
+.spinner__detail {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    top: calc(50% - 15px);
+    left: calc(50% - 15px);
+    border-width: 1px;
+    border-radius: 50%;
+    border-style: solid;
+    border-top-color: transparent;
+    border-right-color: $black;
+    border-bottom-color: $black;
+    border-left-color: $black;
+    animation: spin 1s infinite linear;
 }
