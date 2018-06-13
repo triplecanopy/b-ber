@@ -18,7 +18,8 @@ describe('ViewerSettings', () => {
             paddingRight: expect.any(Number),
             paddingBottom: expect.any(Number),
             fontSize: expect.any(Number),
-            columnGap: expect.any(Number),
+            columnGapPage: expect.any(Number),
+            columnGapLayout: expect.any(Number),
             theme: themes.DEFAULT,
             transition: transitions.SLIDE,
             transitionSpeed: expect.any(Number),
@@ -42,7 +43,8 @@ describe('ViewerSettings', () => {
         expect(vs.paddingX).toEqual(ViewerSettings.defaults.paddingLeft + ViewerSettings.defaults.paddingRight)
         expect(vs.paddingY).toEqual(ViewerSettings.defaults.paddingTop + ViewerSettings.defaults.paddingBottom)
         expect(vs.columns).toEqual(ViewerSettings.defaults.columns)
-        expect(vs.columnGap).toEqual(ViewerSettings.defaults.columnGap)
+        expect(vs.columnGapPage).toEqual(ViewerSettings.defaults.columnGapPage)
+        expect(vs.columnGapLayout).toEqual(ViewerSettings.defaults.columnGapLayout)
         expect(vs.transition).toEqual(ViewerSettings.defaults.transition)
         expect(vs.transitionSpeed).toEqual(ViewerSettings.defaults.transitionSpeed)
         expect(vs.theme).toEqual(ViewerSettings.defaults.theme)
@@ -57,7 +59,8 @@ describe('ViewerSettings', () => {
         vs.paddingRight = 1
         vs.paddingBottom = 1
         vs.columns = 1
-        vs.columnGap = 1
+        vs.columnGapPage = 1
+        vs.columnGapLayout = 1
         vs.transition = 1
         vs.transitionSpeed = 1
         vs.theme = 1
@@ -67,7 +70,8 @@ describe('ViewerSettings', () => {
         expect(vs.paddingRight).toBe(1)
         expect(vs.paddingBottom).toBe(1)
         expect(vs.columns).toBe(1)
-        expect(vs.columnGap).toBe(1)
+        expect(vs.columnGapPage).toBe(1)
+        expect(vs.columnGapLayout).toBe(1)
         expect(vs.transition).toBe(1)
         expect(vs.transitionSpeed).toBe(1)
         expect(vs.theme).toBe(1)
@@ -116,7 +120,8 @@ describe('ViewerSettings', () => {
         expect(vs.get('paddingRight')).toBe(ViewerSettings.defaults.paddingRight)
         expect(vs.get('paddingBottom')).toBe(ViewerSettings.defaults.paddingBottom)
         expect(vs.get('columns')).toBe(ViewerSettings.defaults.columns)
-        expect(vs.get('columnGap')).toBe(ViewerSettings.defaults.columnGap)
+        expect(vs.get('columnGapPage')).toBe(ViewerSettings.defaults.columnGapPage)
+        expect(vs.get('columnGapLayout')).toBe(ViewerSettings.defaults.columnGapLayout)
         expect(vs.get('transition')).toBe(ViewerSettings.defaults.transition)
         expect(vs.get('transitionSpeed')).toBe(ViewerSettings.defaults.transitionSpeed)
         expect(vs.get('theme')).toBe(ViewerSettings.defaults.theme)
@@ -133,7 +138,8 @@ describe('ViewerSettings', () => {
         vs.put('paddingRight', 1)
         vs.put('paddingBottom', 1)
         vs.put('columns', 1)
-        vs.put('columnGap', 1)
+        vs.put('columnGapPage', 1)
+        vs.put('columnGapLayout', 1)
         vs.put('transition', 1)
         vs.put('transitionSpeed', 1)
         vs.put('theme', 1)
@@ -143,7 +149,8 @@ describe('ViewerSettings', () => {
         expect(vs.paddingRight).toBe(1)
         expect(vs.paddingBottom).toBe(1)
         expect(vs.columns).toBe(1)
-        expect(vs.columnGap).toBe(1)
+        expect(vs.columnGapPage).toBe(1)
+        expect(vs.columnGapLayout).toBe(1)
         expect(vs.transition).toBe(1)
         expect(vs.transitionSpeed).toBe(1)
         expect(vs.theme).toBe(1)
