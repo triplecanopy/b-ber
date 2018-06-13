@@ -16,13 +16,14 @@
     esutils "^2.0.2"
     js-tokens "^3.0.0"
 
-"@canopycanopycanopy/b-ber-lib@canary":
-  version "0.1.0-alpha.6c14f6a2"
-  resolved "https://registry.yarnpkg.com/@canopycanopycanopy/b-ber-lib/-/b-ber-lib-0.1.0-alpha.6c14f6a2.tgz#13dd15d38cd161cccbba9fb6d60ba3fe2518edd3"
+"@canopycanopycanopy/b-ber-lib@0.1.0-alpha.17":
+  version "0.1.0-alpha.17"
+  resolved "https://registry.yarnpkg.com/@canopycanopycanopy/b-ber-lib/-/b-ber-lib-0.1.0-alpha.17.tgz#2193b8173b6d6ffaabf2dd1a26cc1dca042fea93"
   dependencies:
     "@canopycanopycanopy/b-ber-logger" canary
     "@canopycanopycanopy/b-ber-shapes" canary
     "@canopycanopycanopy/b-ber-themes" canary
+    babel-runtime "^6.26.0"
     command-exists "^1.2.2"
     fs-extra "^5.0.0"
     htmlparser2 "^3.9.2"
@@ -30,6 +31,14 @@
     lodash "^4.17.5"
     mime-types "^2.1.18"
     yargs "^11.0.0"
+
+"@canopycanopycanopy/b-ber-logger@0.1.0-alpha.17":
+  version "0.1.0-alpha.17"
+  resolved "https://registry.yarnpkg.com/@canopycanopycanopy/b-ber-logger/-/b-ber-logger-0.1.0-alpha.17.tgz#9b240b6984da76fd349e2a1a9cb5360684f9384b"
+  dependencies:
+    babel-runtime "^6.26.0"
+    chalk "^2.1.0"
+    lodash "^4.17.10"
 
 "@canopycanopycanopy/b-ber-logger@canary":
   version "0.1.0-alpha.6c14f6a2"

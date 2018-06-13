@@ -16,6 +16,22 @@
     esutils "^2.0.2"
     js-tokens "^3.0.0"
 
+"@canopycanopycanopy/b-ber-lib@0.1.0-alpha.17":
+  version "0.1.0-alpha.17"
+  resolved "https://registry.yarnpkg.com/@canopycanopycanopy/b-ber-lib/-/b-ber-lib-0.1.0-alpha.17.tgz#2193b8173b6d6ffaabf2dd1a26cc1dca042fea93"
+  dependencies:
+    "@canopycanopycanopy/b-ber-logger" canary
+    "@canopycanopycanopy/b-ber-shapes" canary
+    "@canopycanopycanopy/b-ber-themes" canary
+    babel-runtime "^6.26.0"
+    command-exists "^1.2.2"
+    fs-extra "^5.0.0"
+    htmlparser2 "^3.9.2"
+    js-yaml "^3.11.0"
+    lodash "^4.17.5"
+    mime-types "^2.1.18"
+    yargs "^11.0.0"
+
 "@canopycanopycanopy/b-ber-lib@canary":
   version "0.1.0-alpha.6c14f6a2"
   resolved "https://registry.yarnpkg.com/@canopycanopycanopy/b-ber-lib/-/b-ber-lib-0.1.0-alpha.6c14f6a2.tgz#13dd15d38cd161cccbba9fb6d60ba3fe2518edd3"
@@ -31,11 +47,26 @@
     mime-types "^2.1.18"
     yargs "^11.0.0"
 
+"@canopycanopycanopy/b-ber-logger@0.1.0-alpha.17":
+  version "0.1.0-alpha.17"
+  resolved "https://registry.yarnpkg.com/@canopycanopycanopy/b-ber-logger/-/b-ber-logger-0.1.0-alpha.17.tgz#9b240b6984da76fd349e2a1a9cb5360684f9384b"
+  dependencies:
+    babel-runtime "^6.26.0"
+    chalk "^2.1.0"
+    lodash "^4.17.10"
+
 "@canopycanopycanopy/b-ber-logger@canary":
   version "0.1.0-alpha.6c14f6a2"
   resolved "https://registry.yarnpkg.com/@canopycanopycanopy/b-ber-logger/-/b-ber-logger-0.1.0-alpha.6c14f6a2.tgz#d6168d1ab009672843c54d9963c482666e3774b7"
   dependencies:
     chalk "^2.1.0"
+
+"@canopycanopycanopy/b-ber-shapes@0.1.0-alpha.17":
+  version "0.1.0-alpha.17"
+  resolved "https://registry.yarnpkg.com/@canopycanopycanopy/b-ber-shapes/-/b-ber-shapes-0.1.0-alpha.17.tgz#abe744db0f7bd494189712ab8455bb7fccc951b5"
+  dependencies:
+    babel-runtime "^6.26.0"
+    lodash "^4.17.10"
 
 "@canopycanopycanopy/b-ber-shapes@canary":
   version "0.1.0-alpha.6c14f6a2"
@@ -43,12 +74,13 @@
   dependencies:
     lodash "^4.17.10"
 
-"@canopycanopycanopy/b-ber-templates@canary":
-  version "0.1.0-alpha.6c14f6a2"
-  resolved "https://registry.yarnpkg.com/@canopycanopycanopy/b-ber-templates/-/b-ber-templates-0.1.0-alpha.6c14f6a2.tgz#7dfadc7350931e0bad43a6ab9507d0f95943d796"
+"@canopycanopycanopy/b-ber-templates@0.1.0-alpha.17":
+  version "0.1.0-alpha.17"
+  resolved "https://registry.yarnpkg.com/@canopycanopycanopy/b-ber-templates/-/b-ber-templates-0.1.0-alpha.17.tgz#e28cf9f75f9339bfaab2760671ab314448c0e75c"
   dependencies:
     "@canopycanopycanopy/b-ber-lib" canary
     "@canopycanopycanopy/b-ber-logger" canary
+    babel-runtime "^6.26.0"
     lodash "^4.17.5"
     mime-types "^2.1.18"
     vinyl "^2.1.0"
