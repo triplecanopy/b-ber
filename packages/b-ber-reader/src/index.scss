@@ -76,6 +76,7 @@ button {
     background: $white;
     border-bottom: 1px solid $lightgrey;
     height: $component-x;
+    opacity: 1!important;
 
     nav ul {
         display: flex;
@@ -88,7 +89,7 @@ button {
         li {
             display: flex;
 
-            &:nth-child(1) {
+            &:nth-child(2) {
                 flex: 1;
             }
 
@@ -98,7 +99,7 @@ button {
             }
 
             .nav__button {
-                padding: 0 3px;
+                padding: 0 5px;
                 transition: color 100ms ease;
 
                 &:hover {
@@ -114,10 +115,11 @@ button {
     font-family: Georgia, "Iowan", Times, serif;
     font-weight: 400;
     font-size: 14px;
+    padding-bottom: $component-x;
     
     ol,
     ul,
-    dl {
+    dl {	
 
         li {
             text-transform: capitalize;
@@ -126,8 +128,12 @@ button {
                 text-indent: calc(#{$padding-y} / 2);
                 display: block;
                 width: 100%;
-                padding: calc(#{$padding-y} / 2) 0 calc(#{$padding-y} / 2);
+                padding: calc(#{$padding-y} / 2) calc(#{$padding-y} / 2) calc(#{$padding-y} / 2) 0;
                 border-bottom: 1px solid $lightgrey;
+                text-indent: calc(#{$padding-y} / 2);
+    						overflow: hidden;
+    						white-space: nowrap;
+    						text-overflow: ellipsis;
             }
 
             ol, 
@@ -167,11 +173,29 @@ button {
     }
 }
 
-.controls__sidebar__chapters,
+.controls__sidebar__chapters {
+    position: fixed;
+    z-index: 2;
+    top: $component-y;
+    height: 100vh;
+    background: $white;
+    border-right: 1px solid $lightgrey;
+    width: calc(#{$component-x} * 10);
+    transition: transform 300ms ease;
+    transform: translateX(-100%);
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+
+    &.controls__sidebar__chapters--open {
+        transform: translateX(0);
+    }
+}
+
 .controls__sidebar__metadata,
 .controls__sidebar__downloads,
 .controls__sidebar__settings {
     position: fixed;
+    z-index: 2;
     top: $component-y;
     right: 0;
     height: 100vh;
@@ -183,7 +207,6 @@ button {
     overflow: auto;
     -webkit-overflow-scrolling: touch;
 
-    &.controls__sidebar__chapters--open,
     &.controls__sidebar__metadata--open,
     &.controls__sidebar__downloads--open,
     &.controls__sidebar__settings--open {
@@ -212,6 +235,10 @@ button {
 }
 
 .controls__sidebar__downloads {
+
+	height: auto!important;
+	padding-bottom: 0!important;
+
   ul li {
     display: flex;
   }
@@ -229,8 +256,9 @@ button {
     left: 0;
     right: 0;
     bottom: 0;
-    background: $white;
+    background: transparent;
     height: $component-x;
+    opacity: 1!important;
 
     nav ul {
         display: flex;
@@ -244,17 +272,17 @@ button {
             display: flex;
             
             //TC SPECIFIC STYLES
-            &:first-child,
-            &:last-child {
-                display: none;
-            }
+            // &:first-child,
+            // &:last-child {
+            //     display: none;
+            // }
 
             &:nth-child(2) {
                 flex: 1;
             }
 
             .nav__button {
-                padding: 0 3px;
+                padding: 0 5px;
                 transition: color 100ms ease;
 
                 //TC SPECIFIC STYLES
