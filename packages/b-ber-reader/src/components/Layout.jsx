@@ -128,14 +128,10 @@ class Layout extends Component {
     getFrameHeight() { // eslint-disable-line class-methods-use-this
         if (Viewport.isMobile()) return 'auto'
 
-        // const {paddingTop, paddingBottom} = this.state
-
         let {height} = this.state
         if (!isNumeric(height)) height = window.innerHeight // make sure we're not treating 'auto' as a number
 
         return height
-        // return height - paddingTop
-        // return height - (paddingTop + paddingBottom)
     }
 
     bindEventListeners() {
