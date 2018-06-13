@@ -9,14 +9,14 @@ const NavigationHeader = props => (
                     <button
                         className='material-icons nav__button nav__button__chapters'
                         onClick={props.destroyReaderComponent}
-                    >home
+                    >menu
                     </button>
                 </li>
                 <li>
                     <button
                         className='material-icons nav__button nav__button__chapters'
                         onClick={_ => props.handleSidebarButtonClick('chapters')}
-                    >menu
+                    >view_list
                     </button>
                 </li>
                 <li>

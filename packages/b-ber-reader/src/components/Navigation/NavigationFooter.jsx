@@ -12,7 +12,7 @@ const NavigationFooter = props => (
                             if (props.handleEvents === false) return
                             props.handleChapterNavigation(-1)
                         }}
-                    >first_page
+                    >arrow_back
                     </button>
                 </li>
                 <li>
@@ -42,7 +42,7 @@ const NavigationFooter = props => (
                             if (props.handleEvents === false) return
                             props.handleChapterNavigation(1)
                         }}
-                    >last_page
+                    >arrow_forward
                     </button>
                 </li>
             </ul>

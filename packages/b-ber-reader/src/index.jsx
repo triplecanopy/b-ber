@@ -3,7 +3,7 @@ import {render} from 'react-dom'
 import {App} from './components'
 
 import './lib/polyfills'
-import './index.sss'
+import './index.scss'
 
 
 const {__SERVER_DATA__} = window
