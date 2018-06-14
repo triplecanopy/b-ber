@@ -10,27 +10,15 @@ const SidebarDownloads = props => (
         )}
     >
         <ul>
-            <li >
-                    <a download>epub3</a>
+            {props.downloads.map((a, i) => (
+                <li key={i}>
+                    <a href={a.url} download>{a.label}</a>
                     <button
                         className='material-icons'
                     >file_download
                     </button>
                 </li>
-                <li >
-                    <a download>PDF</a>
-                    <button
-                        className='material-icons'
-                    >file_download
-                    </button>
-                </li>
-                <li >
-                    <a download>Mobi</a>
-                    <button
-                        className='material-icons'
-                    >file_download
-                    </button>
-                </li>
+            ))}
         </ul>
     </nav>
 )
