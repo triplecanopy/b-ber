@@ -42,21 +42,29 @@ class Spread extends Component {
     }
     componentDidMount() {
         this.connectResizeObserver()
+        this.attachNodes()
+        if (browser.name !== 'chrome') {
+            setTimeout(_ => this.updateChildElementPositions(), 1000)
+        }
     }
     componentWillUnmount() {
         this.disconnectResizeObserver()
     }
     attachNodes() {
         const markerRefId = this.props['data-marker-reference']
+        // console.log('--------markerRefId', markerRefId)
         this.markerNode = document.querySelector(`[data-marker="${markerRefId}"]`)
         this.figureNode = document.querySelector(`[data-marker-reference="${markerRefId}"] figure`)
+
+        // console.log(this.markerNode)
+        // console.log(this.figureNode)
     }
     getMarkerPosition() {
         let verso = false
         let recto = false
 
         if (!this.markerNode) {
-            console.error(`Unbound marker node for spread ${this.props['data-marker-reference']}`)
+            console.error(`Spread#getMarkerPosition: Unbound marker node for spread ${this.props['data-marker-reference']}`)
             return {verso, recto}
         }
 
@@ -72,7 +80,7 @@ class Spread extends Component {
     }
     getMarkerDOMRect() {
         if (!this.markerNode) {
-            console.error(`Unbound marker node for spread ${this.props['data-marker-reference']}`)
+            console.error(`Spread#getMarkerDOMRect: Unbound marker node for spread ${this.props['data-marker-reference']}`)
             return new window.DOMRect()
         }
 
@@ -99,16 +107,18 @@ class Spread extends Component {
     // TODO: shouldn't be parsing props with regex
     getPostionLeftFromMatrix() {
         return parseInt(
-            window.getComputedStyle(document.getElementById('layout'))
+            window.getComputedStyle(document.getElementById('page'))
                 .transform.replace(/(matrix\(|\))/, '')
                 .split(',')
                 .map(a => a.trim())[4]
             , 10)
     }
     updateChildElementPositions() {
+        console.log('-- updateChildElementPositions')
         if (!this.figureNode) { // TODO
+            console.log('no figure')
             this.attachNodes()
-            return setImmediate(_ => this.updateChildElementPositions())
+            // return setImmediate(_ => this.updateChildElementPositions())
         }
 
         const {innerWidth} = window
@@ -118,8 +128,12 @@ class Spread extends Component {
 
         // TODO: figures should be added as React components during parsing stage
         if (verso) {
+            console.log('----- verso')
             this.figureNode.style.left = `${x - transformLeft + innerWidth}px`
             this.figureNode.dataset.layout = 'verso'
+
+            console.log(this.figureNode)
+            console.log(x, transformLeft, innerWidth, `${x - transformLeft + innerWidth}px`)
         }
         if (recto) {
             this.figureNode.style.left = `${x - transformLeft + (innerWidth / 2)}px`
@@ -133,7 +147,7 @@ class Spread extends Component {
         // TODO: chrome's default behaviour sets the absolutely positioned
         // elements in relation to their parent containers, but this should be
         // updated for consistencey
-        if (browser.name !== 'chrome') this.updateChildElementPositions()
+        // if (browser.name !== 'chrome') this.updateChildElementPositions()
 
         let styles = {height}
         if (debug) styles = {...styles, ...debugStyles}

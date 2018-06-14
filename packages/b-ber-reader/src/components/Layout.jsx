@@ -122,7 +122,7 @@ class Layout extends Component {
 
     onResizeDone() {
         this.updateDimensions()
-        this.updateTransform()
+        // this.updateTransform()
     }
 
     getFrameHeight() { // eslint-disable-line class-methods-use-this
@@ -143,20 +143,20 @@ class Layout extends Component {
     }
 
     updateDimensions() {
+        const {paddingLeft, paddingRight} = this.props.viewerSettings
         const isMobile = Viewport.isMobile()
         const width = window.innerWidth
         const columns = isMobile ? 1 : 2
         const height = isMobile ? 'auto' : window.innerHeight
-        this.setState({width, height, columns})
+        this.setState({width, height, columns, paddingLeft, paddingRight})
     }
 
     updateTransform(spreadIndex = 0) {
+        const {width} = this.state
         const isMobile = Viewport.isMobile()
-        const {paddingLeft, paddingRight, columnGapLayout, width} = this.state
-        const gutter = width + ((paddingLeft + paddingRight) / 2) + columnGapLayout
 
         let translateX = 0
-        if (!isMobile) translateX = (gutter * spreadIndex) * -1
+        if (!isMobile) translateX = (width * spreadIndex) * -1
         if (!isMobile) translateX = (translateX === 0 && Math.sign(1 / translateX) === -1) ? 0 : translateX // no -0
 
         const transform = `translateX(${translateX}px)`

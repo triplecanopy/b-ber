@@ -9,7 +9,7 @@ import {debug, verboseOutput} from '../config'
 export default function observable(target) {
 
     const browser = detect()
-    const ensureRenderTimeout = 60
+    const ensureRenderTimeout = 200
 
     const _componentWillMount = target.prototype.componentWillMount
     target.prototype.componentWillMount = function componentWillMount() {
@@ -98,7 +98,7 @@ export default function observable(target) {
             const columnCount = contentWidth / spreadWidth
             console.log('columnCount', columnCount)
 
-            const spreadTotal = Math.floor(columnCount) - 1 // TODO: allow for extra column needed for 'balance' CSS property
+            const spreadTotal = Math.floor(columnCount)// - 1 // TODO: allow for extra column needed for 'balance' CSS property
             console.log('spreadTotal', spreadTotal)
 
             // we force FF to re-render if contentWidth has changed to ensure
@@ -126,7 +126,7 @@ export default function observable(target) {
             let columnCount = contentHeight / frameHeight
             if (!isNumeric(columnCount)) columnCount = 0
 
-            const spreadTotal = Math.floor(columnCount / columns) - 1 // TODO: allow for extra column needed for 'balance' CSS property
+            const spreadTotal = Math.floor(columnCount / columns)// - 1 // TODO: allow for extra column needed for 'balance' CSS property
 
             if (debug && verboseOutput) {
                 console.group('Layout#connectResizeObserver')
@@ -138,12 +138,14 @@ export default function observable(target) {
             if (this.__contentDimensions !== contentHeight) {
                 window.clearTimeout(this.timer)
                 this.timer = setTimeout(_ => {
+                    // console.log('-- timer')
                     this.__contentDimensions = contentHeight
                     this.contentNode.style.display = 'none'
                     this.contentNode.style.display = 'block'
                 }, ensureRenderTimeout)
             }
             else {
+                // console.log('-- set')
                 this.props.setReaderState({spreadTotal, ready: true})
             }
 

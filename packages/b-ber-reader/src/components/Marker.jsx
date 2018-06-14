@@ -91,7 +91,7 @@ class Marker extends Component {
         return parentOffset
     }
 
-    calculateNodePosition(record) {
+    calculateNodePosition(record = undefined) {
         if (!this.markerNode) {
             console.error(`No marker node`)
             return
@@ -99,13 +99,17 @@ class Marker extends Component {
 
         const {paddingLeft} = this.context
         const parentOffset = this.getParentOffsetBottom()
-
         const {x} = this.markerNode.getBoundingClientRect()
         const windowWidth = window.innerWidth
-        const position = (x - paddingLeft) / windowWidth
+        const firstSpread = (x === paddingLeft)
 
-        const verso = isInt(position)
-        const recto = isFloat(position)
+        // determine if the marker is verso or recto. we're basically testing
+        // whether the marker's x offset is even (verso) or odd (recto)
+        const position = firstSpread ? x : (x - paddingLeft) / windowWidth
+        const verso = firstSpread ? true : isInt(parseFloat(String(position).slice(0, 3)))
+        const recto = firstSpread ? false : isFloat(parseFloat(String(position).slice(0, 3)))
+
+        // console.log(x, position, paddingLeft)
 
         if (debug && verboseOutput) {
             const initiator = String(record).split(',')[0].replace(/(\[object |\])/g, '').replace(/Record/, 'Observer').replace(/Entry/, '')
@@ -183,6 +187,8 @@ class Marker extends Component {
 
         let markerStyles = {...this.props.style}
         if (debug) markerStyles = {...markerStyles, ...debugMarkerStyles}
+
+        // console.log('spacerStyles', spacerStyles)
 
         return (
             <span>

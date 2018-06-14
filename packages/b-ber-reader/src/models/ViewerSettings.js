@@ -19,7 +19,7 @@ class ViewerSettings {
         fontSize: 120,
         // fontFamily: 'Times',
         // columns: 2, // dynamic, based on screen size
-        columnGapPage: 120,
+        columnGapPage: 0,
         columnGapLayout: 30,
         theme: themes.DEFAULT,
         transition: transitions.SLIDE,
@@ -35,8 +35,8 @@ class ViewerSettings {
     }
 
     get paddingTop() { return this.settings.paddingTop }
-    get paddingLeft() { return this.settings.paddingLeft }
-    get paddingRight() { return this.settings.paddingRight }
+    get paddingLeft() { return typeof this.settings.paddingLeft === 'function' ? this.settings.paddingLeft() : this.settings.paddingLeft }
+    get paddingRight() { return typeof this.settings.paddingRight === 'function' ? this.settings.paddingRight() : this.settings.paddingRight }
     get paddingBottom() { return this.settings.paddingBottom }
 
     get paddingX() { return this.settings.paddingLeft + this.settings.paddingLeft }

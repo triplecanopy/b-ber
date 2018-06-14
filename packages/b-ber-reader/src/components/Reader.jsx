@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import findIndex from 'lodash/findIndex'
 import {Controls, Frame, Spinner} from './'
 import {Request, XMLAdaptor, Asset, Url} from '../helpers'
+import Viewport from '../helpers/Viewport'
 import {ViewerSettings} from '../models'
 import {debug, verboseOutput} from '../config'
 import history from '../lib/History'
@@ -31,6 +32,12 @@ class Reader extends Component {
     constructor(props) {
         super(props)
 
+        this.gridColumns = () => Viewport.isMobile() ? 8 : 12
+        this.gridSettingsOptions = {
+            paddingLeft: () => window.innerWidth / this.gridColumns(),
+            paddingRight: () => window.innerWidth / this.gridColumns(),
+        }
+
         this.state = {
             __metadata: [],
             __spine: [],
@@ -57,7 +64,7 @@ class Reader extends Component {
             showSidebar: null,
 
             // view
-            viewerSettings: new ViewerSettings(),
+            viewerSettings: new ViewerSettings(this.gridSettingsOptions),
             pageAnimation: false,
             overlayElementId: null,
             spinnerVisible: true,
@@ -89,6 +96,14 @@ class Reader extends Component {
         this.deRegisterOverlayElementId = this.deRegisterOverlayElementId.bind(this)
         this.showSpinner = this.showSpinner.bind(this)
         this.hideSpinner = this.hideSpinner.bind(this)
+
+        this.handleResize = this.handleResize.bind(this)
+    }
+
+    handleResize() { // eslint-disable-line react/sort-comp
+        console.log('-- resize')
+        const viewerSettings = new ViewerSettings(this.gridSettingsOptions)
+        this.setState({viewerSettings})
     }
 
     getChildContext() {
@@ -114,6 +129,10 @@ class Reader extends Component {
         })
     }
 
+    componentDidMount() {
+        window.addEventListener('resize', this.handleResize, false)
+    }
+
     componentWillReceiveProps(nextProps) {
         const {hash, cssHash} = this.state
         if (hash === null) {
@@ -124,13 +143,14 @@ class Reader extends Component {
         }
     }
 
-    shouldComponentUpdate(/*nextProps, nextState */) {
-        // const {ready} = nextState
-        // if (ready && ready !== this.state.ready) {
-        //     this.requestDeferredCallbackExecution()
-        // }
+    shouldComponentUpdate(_, nextState) {
+        const {ready} = nextState
+        if (ready && ready !== this.state.ready) {
+            console.log('-- requestDeferredCallbackExecution')
+            this.requestDeferredCallbackExecution()
+        }
 
-        this.requestDeferredCallbackExecution()
+        // this.requestDeferredCallbackExecution()
         return true
     }
 
@@ -166,7 +186,7 @@ class Reader extends Component {
     }
 
     updateViewerSettings(settings = {}) {
-        const viewerSettings = new ViewerSettings()
+        const viewerSettings = new ViewerSettings(this.gridSettingsOptions)
         viewerSettings.put(settings)
         this.setState({viewerSettings}, this.saveViewerSettings)
     }
@@ -256,7 +276,7 @@ class Reader extends Component {
                 requestedSpineItem,
                 ...this.state,
                 navigateToChapterByURL: this.navigateToChapterByURL,
-                paddingLeft: this.state.viewerSettings.get('paddingLeft'),
+                paddingLeft: this.state.viewerSettings.paddingLeft,
             }))
 
             .then(({bookContent, scopedCSS}) => {
@@ -286,7 +306,7 @@ class Reader extends Component {
                         // this.requestDeferredCallbackExecution()
                     }
 
-                    this.setState({ready: true})
+                    // this.setState({ready: true})
                     return Promise.resolve()
                 })
             })
@@ -347,7 +367,8 @@ class Reader extends Component {
         if (increment === -1) {
             deferredCallback = _ => {
                 const {spreadTotal} = this.state
-                this.navigateToSpreadByIndex(spreadTotal === 0 ? 0 : spreadTotal - 1) // TODO: fixme -- adjusted for column:balance
+                this.navigateToSpreadByIndex(spreadTotal) // TODO: fixme -- adjusted for column:balance
+                // this.navigateToSpreadByIndex(spreadTotal < 1 ? 0 : spreadTotal - 1) // TODO: fixme -- adjusted for column:balance
                 this.enablePageTransitions()
                 this.enableEventHandling()
                 this.hideSpinner()
@@ -399,7 +420,7 @@ class Reader extends Component {
                     this.enablePageTransitions()
                     this.enableEventHandling()
                     this.hideSpinner()
-                }, 400) // TODO: should match transition speed. all these deferreds should be collected together
+                }, 100) // TODO: should match transition speed. all these deferreds should be collected together
             }
         }
 
