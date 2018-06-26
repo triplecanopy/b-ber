@@ -15,6 +15,10 @@
     "url":"http://localhost:4000/epub/all-directives-demo-gallery-fullbleed/",
     "cover":"http://localhost:4000/epub/all-directives-demo-gallery-fullbleed/OPS/images/__bber_cover__d8b66d966b4b3276f35211f2549c11d1e474abfb.jpg"
 }, {
+    "title":"All Directives Demo Gallery Fullbleed test",
+    "url":"http://localhost:4000/epub/all-directives-demo-gallery-fullbleed-test/",
+    "cover":"http://localhost:4000/epub/all-directives-demo-gallery-fullbleed-test/OPS/images/__bber_cover__d8b66d966b4b3276f35211f2549c11d1e474abfb.jpg"
+}, {
     "title":"All Directives Demo Gallery Fullbleed One Page",
     "url":"http://localhost:4000/epub/all-directives-demo-project-one-page/",
     "cover":"http://localhost:4000/epub/all-directives-demo-project-one-page/OPS/images/__bber_cover__d8b66d966b4b3276f35211f2549c11d1e474abfb.jpg"

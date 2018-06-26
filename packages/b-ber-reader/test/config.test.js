@@ -10,7 +10,6 @@ describe('b-ber-reader development config', () => {
         expect(config).toEqual(expect.objectContaining({
             debug: expect.any(Boolean),
             verboseOutput: expect.any(Boolean),
-            mobileViewportMaxWidth: expect.any(Number),
         }))
     })
 
@@ -19,7 +18,6 @@ describe('b-ber-reader development config', () => {
             let pkg = {
                 debug: false,
                 verboseOutput: false,
-                mobileViewportMaxWidth: 960,
             }
             try {
                 pkg = require('./bogus')
@@ -42,7 +40,6 @@ describe('b-ber-reader production config', () => {
         expect(config).toEqual(expect.objectContaining({
             debug: expect.any(Boolean),
             verboseOutput: expect.any(Boolean),
-            mobileViewportMaxWidth: expect.any(Number),
         }))
     })
 
@@ -51,7 +48,6 @@ describe('b-ber-reader production config', () => {
             let pkg = {
                 debug: false,
                 verboseOutput: false,
-                mobileViewportMaxWidth: 960,
             }
             try {
                 pkg = require('./bogus')

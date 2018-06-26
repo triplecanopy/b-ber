@@ -7,6 +7,8 @@ import Viewport from '../helpers/Viewport'
 import {isNumeric} from '../helpers/Types'
 import {cssHeightDeclarationPropType} from '../lib/custom-prop-types'
 import observable from '../lib/decorate-observable'
+import {debug} from '../config'
+import browser from '../lib/browser'
 
 
 @observable
@@ -17,8 +19,7 @@ class Layout extends Component {
             paddingLeft: PropTypes.number.isRequired,
             paddingBottom: PropTypes.number.isRequired,
             fontSize: PropTypes.string.isRequired,
-            columnGapPage: PropTypes.number.isRequired,
-            columnGapLayout: PropTypes.number.isRequired,
+            columnGap: PropTypes.number.isRequired,
             transition: PropTypes.string.isRequired,
             transitionSpeed: PropTypes.number.isRequired,
             theme: PropTypes.string.isRequired,
@@ -26,8 +27,7 @@ class Layout extends Component {
     }
     static childContextTypes = {
         height: cssHeightDeclarationPropType,
-        columnGapPage: PropTypes.number,
-        columnGapLayout: PropTypes.number,
+        columnGap: PropTypes.number,
         translateX: PropTypes.number,
         paddingTop: PropTypes.number,
         paddingLeft: PropTypes.number,
@@ -39,8 +39,7 @@ class Layout extends Component {
         super(props)
 
         const {
-            columnGapPage,
-            columnGapLayout,
+            columnGap,
             paddingTop,
             paddingLeft,
             paddingRight,
@@ -63,17 +62,8 @@ class Layout extends Component {
 
             columnWidth: 'auto',
             columnCount: 2,
-            columnGapPage,
-            columnGapLayout,
-
-            // we need to set this to 'balance' to preserve the mix of column
-            // gaps. unfortunately, this means that our cols are all 'balanced',
-            // when we'd actually like to have them set to 'auto'. we append a
-            // spacer element as a react component that functions similarly to
-            // the Spread component, which fills the space after the last
-            // element in the layout to stretch the container to the full height
-            // of the screen
-            columnFill: 'balance',
+            columnGap,
+            columnFill: 'auto',
         }
 
         this.debounceSpeed = 60
@@ -94,8 +84,7 @@ class Layout extends Component {
     getChildContext() {
         return {
             height: this.state.height,
-            columnGapPage: this.state.columnGapPage,
-            columnGapLayout: this.state.columnGapLayout,
+            columnGap: this.state.columnGap,
             translateX: this.state.translateX,
             paddingTop: this.state.paddingTop,
             paddingLeft: this.state.paddingLeft,
@@ -125,21 +114,30 @@ class Layout extends Component {
         // this.updateTransform()
     }
 
-    getFrameHeight() { // eslint-disable-line class-methods-use-this
+    getFrameHeight() {
         if (Viewport.isMobile()) return 'auto'
 
         let {height} = this.state
+        const {paddingTop, paddingBottom} = this.state
+
         if (!isNumeric(height)) height = window.innerHeight // make sure we're not treating 'auto' as a number
+
+        height -= paddingTop
+        height -= paddingBottom
 
         return height
     }
 
-    bindEventListeners() {
-        window.addEventListener('resize', this.handleResize, false)
-    }
+    getTranslateX(_spreadIndex) {
+        const spreadIndex = typeof _spreadIndex === 'undefined' ? this.props.spreadIndex : _spreadIndex
+        const {width, paddingLeft, paddingRight, columnGap} = this.state
+        const isMobile = Viewport.isMobile()
 
-    unBindEventListeners() {
-        window.removeEventListener('resize', this.handleResize, false)
+        let translateX = 0
+        if (!isMobile) translateX = (((width - paddingLeft - paddingRight) + columnGap) * spreadIndex) * -1
+        if (!isMobile) translateX = (translateX === 0 && Math.sign(1 / translateX) === -1) ? 0 : translateX // no -0
+
+        return translateX
     }
 
     updateDimensions() {
@@ -151,52 +149,41 @@ class Layout extends Component {
         this.setState({width, height, columns, paddingLeft, paddingRight})
     }
 
-    updateTransform(spreadIndex = 0) {
-        const {width} = this.state
-        const isMobile = Viewport.isMobile()
+    bindEventListeners() {
+        window.addEventListener('resize', this.handleResize, false)
+    }
 
-        let translateX = 0
-        if (!isMobile) translateX = (width * spreadIndex) * -1
-        if (!isMobile) translateX = (translateX === 0 && Math.sign(1 / translateX) === -1) ? 0 : translateX // no -0
+    unBindEventListeners() {
+        window.removeEventListener('resize', this.handleResize, false)
+    }
 
+    updateTransform(spreadIndex) {
+        const translateX = this.getTranslateX(spreadIndex)
         const transform = `translateX(${translateX}px)`
+
         this.setState({transform, translateX})
     }
 
-    pageStyles() {
-        return {
-            ...pick(this.state, [
-                'margin',
-                'border',
-                'paddingTop',
-                'paddingBottom',
-                'boxSizing',
-                'height',
-                'transform',
-            ]),
-
-            // additional static styles
-            columnGap: this.state.columnGapPage,
-            columnCount: 1,
-            columnWidth: 'auto',
-        }
-    }
     layoutStyles() {
         return {
             ...pick(this.state, [
                 'margin',
                 'border',
+                'paddingTop',
                 'paddingLeft',
                 'paddingRight',
+                'paddingBottom',
+                'columnGap',
                 'boxSizing',
                 'width',
+                'height',
                 'columns',
                 'columnFill',
+                'transform',
             ]),
-
-            columnGap: this.state.columnGapLayout,
         }
     }
+
     contentStyles() { // eslint-disable-line class-methods-use-this
         return {
             padding: 0,
@@ -204,42 +191,84 @@ class Layout extends Component {
         }
     }
 
+    leafStyles(position/* <left|right> */) {
+
+        // our overlay styles for hiding content in the 'padding' range. FF
+        // animations 'jump' when animating a transform, so we use 'left' and
+        // 'right' properties in that case. in either case, need to move the
+        // leaves in the opposite direction as the containing element
+
+        const {transitionSpeed} = this.props.viewerSettings
+
+        let styles = {}
+        let positionX = 0
+
+        positionX = this.getTranslateX()
+
+        if (browser.name === 'firefox') {
+            if (position === 'left') positionX *= -1
+            styles = {[position]: `${positionX}px`, transition: `${position} ${transitionSpeed}ms ease 0s`}
+        }
+        else {
+            positionX *= -1
+            const transform = `translateX(${positionX}px)`
+            styles = {transform, transition: `transform ${transitionSpeed}ms ease 0s`}
+        }
+
+        if (debug) styles = {...styles, opacity: 0.4, backgroundColor: 'blue'}
+
+        return styles
+    }
+
     render() {
         const height = this.getFrameHeight()
         const {pageAnimation} = this.props
+        const {paddingLeft, paddingRight} = this.state
         const {transition, transitionSpeed} = this.props.viewerSettings
-        const transitionStyles = transitions({transitionSpeed})[transition]
 
-        // don't animate if we're transitioning forward to a new chapter, or
-        // following an internal link
-        let pageStyles = {...this.pageStyles(), height}
-        if (pageAnimation) pageStyles = {...pageStyles, ...transitionStyles}
 
-        const layoutStyles = {...this.layoutStyles()}
         const contentStyles = {...this.contentStyles(), minHeight: height}
 
-        return (
+        const layoutTransition = transitions({transitionSpeed})[transition]
 
+        let layoutStyles = {...this.layoutStyles(), ...layoutTransition}
+        let leafLeftStyles = {...this.leafStyles('left'), width: paddingLeft}
+        let leafRightStyles = {...this.leafStyles('right'), width: paddingRight}
+
+        // disable transition animation by default. enabling transition requires
+        // user action, like clicking 'next'
+        if (!pageAnimation) {
+            layoutStyles = {...layoutStyles, transition: 'none'}
+            leafLeftStyles = {...leafLeftStyles, transition: 'none'}
+            leafRightStyles = {...leafRightStyles, transition: 'none'}
+        }
+
+        return (
             <div
-                id='page'
-                style={pageStyles}
+                id='layout'
+                style={layoutStyles}
+                ref={node => this.layoutNode = node}
             >
                 <div
-                    id='layout'
-                    style={layoutStyles}
-                    ref={node => this.layoutNode = node}
+                    id='content'
+                    style={contentStyles}
+                    ref={node => this.contentNode = node}
                 >
-                    <div
-                        id='content'
-                        style={contentStyles}
-                        ref={node => this.contentNode = node}
-                    >
-                        <this.props.bookContent
-                            {...this.props}
-                            {...this.state}
-                        />
-                    </div>
+                    <this.props.bookContent
+                        {...this.props}
+                        {...this.state}
+                    />
                 </div>
+
+                <div
+                    className='leaf leaf--left'
+                    style={leafLeftStyles}
+                />
+                <div
+                    className='leaf leaf--right'
+                    style={leafRightStyles}
+                />
+
             </div>
         )
     }

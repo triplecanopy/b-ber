@@ -159,12 +159,12 @@ class XMLAdaptor {
     static parseSpineItemResponse(response) {
         const {data} = response.data
         const {responseURL} = response.data.request
-        const {hash, opsURL, paddingLeft} = response
+        const {hash, opsURL, paddingLeft, columnGap} = response
 
         return new Promise(resolve => {
             const promises = []
             const htmlToReactParser = new HtmlToReactParser()
-            const documentProcessor = new DocumentProcessor({paddingLeft})
+            const documentProcessor = new DocumentProcessor({paddingLeft, columnGap})
             const {xml, doc} = documentProcessor.parseXML(data)
             const re = /<body[^>]*?>([\s\S]*)<\/body>/
 

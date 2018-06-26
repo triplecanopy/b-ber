@@ -6,8 +6,17 @@ class DocumentProcessor {
         targetClassNames: ['figure__inline', 'figure__large', 'figure__fullbleed'],
         markerClassNames: 'marker',
         markerElement: 'span',
+        paddingLeft: 0,
+        columnGap: 0,
     }
     constructor(options = {}) {
+
+        // initialize
+        if (!DocumentPreProcessor.getRootDocument()) DocumentPreProcessor.setRootDocument(document)
+
+        // cleanup
+        DocumentPreProcessor.removeStyleSheets()
+
         this.settings = {...DocumentProcessor.defaults, ...options}
 
         this.targetClassNames = this.settings.targetClassNames
@@ -207,13 +216,13 @@ class DocumentProcessor {
     parseXML(xmlString, callback) {
         const parser = new window.DOMParser()
         const doc = parser.parseFromString(xmlString, 'text/html')
-        const {paddingLeft} = this.settings
+        const {paddingLeft, columnGap} = this.settings
         let xml
         let err = null
 
-        // TODO: pass in options here?
-        const documentPreProcessor = new DocumentPreProcessor({doc, paddingLeft})
-        documentPreProcessor.parseXML()
+        DocumentPreProcessor.setContextDocument(doc)
+        DocumentPreProcessor.createStyleSheets({paddingLeft, columnGap})
+        DocumentPreProcessor.parseXML()
 
         this.walkDocument(doc, doc_ => {
             if (!this.validateDocument(doc_)) err = new Error('Invalid markup')

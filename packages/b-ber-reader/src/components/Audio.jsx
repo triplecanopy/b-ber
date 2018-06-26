@@ -8,8 +8,7 @@ class Audio extends Media {
     }
     static contextTypes = {
         spreadIndex: PropTypes.number,
-        columnGapPage: PropTypes.number,
-        columnGapLayout: PropTypes.number,
+        columnGap: PropTypes.number,
         translateX: PropTypes.number,
         paddingLeft: PropTypes.number,
         paddingRight: PropTypes.number,

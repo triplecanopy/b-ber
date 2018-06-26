@@ -1,8 +1,8 @@
-import {mobileViewportMaxWidth} from '../config'
+import {breakpoints} from '../constants'
 
 class Viewport {
     static isMobile() {
-        return window.innerWidth <= mobileViewportMaxWidth
+        return window.innerWidth <= breakpoints.MOBILE
     }
 }
 

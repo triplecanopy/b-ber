@@ -12,18 +12,17 @@ const __extendExistingProps = (target, ref, obj, opts = {enumerable: true}) => {
 
 class ViewerSettings {
     static defaults = {
-        paddingTop: 30,
+        paddingTop: 37,
         paddingLeft: 90,
         paddingRight: 90,
-        paddingBottom: 30,
+        paddingBottom: 37,
         fontSize: 120,
         // fontFamily: 'Times',
-        // columns: 2, // dynamic, based on screen size
-        columnGapPage: 0,
-        columnGapLayout: 30,
+        // columns: 2,                  // dynamic, based on screen size
+        columnGap: 30,
         theme: themes.DEFAULT,
         transition: transitions.SLIDE,
-        transitionSpeed: 400,
+        transitionSpeed: 400,           // must be in ms
     }
     constructor(options = {}) {
         this.settings = {}
@@ -43,8 +42,7 @@ class ViewerSettings {
     get paddingY() { return this.settings.paddingTop + this.settings.paddingBottom }
 
     get columns() { return this.settings.columns }
-    get columnGapPage() { return this.settings.columnGapPage }
-    get columnGapLayout() { return this.settings.columnGapLayout }
+    get columnGap() { return this.settings.columnGap }
     get transition() { return this.settings.transition }
     get transitionSpeed() { return this.settings.transitionSpeed }
     get theme() { return this.settings.theme }
@@ -69,8 +67,7 @@ class ViewerSettings {
     }
 
     set columns(val) { this.settings.columns = val }
-    set columnGapPage(val) { this.settings.columnGapPage = val }
-    set columnGapLayout(val) { this.settings.columnGapLayout = val }
+    set columnGap(val) { this.settings.columnGap = val }
     set transition(val) { this.settings.transition = val }
     set transitionSpeed(val) { this.settings.transitionSpeed = val }
     set theme(val) { this.settings.theme = val }

@@ -1,12 +1,13 @@
 /* eslint-disable no-param-reassign,prefer-rest-params */
 
 import {debug, verboseOutput} from '../config'
+import {noop} from '../helpers/utils'
+import Messenger from '../lib/Messenger'
 
 export default function deferrable(target) {
 
-    const noop = _ => {}
-
     const _componentWillMount = target.prototype.componentWillMount
+
     target.prototype.componentWillMount = function componentWillMount() {
         this.__defaultDeferredCallback = noop
         this.__deferredCallback = noop
@@ -31,6 +32,8 @@ export default function deferrable(target) {
         window.clearTimeout(this.__deferredCallbackTimeout)
         this.__deferredCallbackTimeout = setTimeout(_ => {
 
+            Messenger.sendDeferredEvent()
+
             if (!this.canCallDeferred || !this.callDeferred) return
             if (this.canCallDeferred()) return this.callDeferred()
             this.requestDeferredCallbackExecution()
@@ -46,8 +49,6 @@ export default function deferrable(target) {
 
     target.prototype.callDeferred = function callDeferred() {
         if (debug && verboseOutput) console.log(`${target.name}#callDeferred`, this.__deferredCallback.name)
-        // console.clear()
-        // console.log('-- call')
         this.__deferredCallback.call(this)
         this.deRegisterDeferredCallback()
     }

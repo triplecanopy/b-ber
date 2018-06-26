@@ -24,10 +24,12 @@ class Controls extends Component {
         if (!e || typeof e.which === 'undefined') return
         switch (e.which) {
             case 37: /* arrow left */
+                this.props.enablePageTransitions()
                 this.props.handlePageNavigation(-1)
                 this.props.handleSidebarButtonClick(null)
                 break
             case 39: /* arrow right */
+                this.props.enablePageTransitions()
                 this.props.handlePageNavigation(1)
                 this.props.handleSidebarButtonClick(null)
                 break

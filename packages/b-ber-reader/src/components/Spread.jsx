@@ -3,12 +3,12 @@ import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import ResizeObserver from 'resize-observer-polyfill'
 import debounce from 'lodash/debounce'
-import {detect} from 'detect-browser'
 import {debug} from '../config'
 import {isNumeric} from '../helpers/Types'
 import {cssHeightDeclarationPropType} from '../lib/custom-prop-types'
-
-const browser = detect()
+import Messenger from '../lib/Messenger'
+import {messagesTypes} from '../constants'
+import browser from '../lib/browser'
 
 
 class Spread extends Component {
@@ -16,6 +16,7 @@ class Spread extends Component {
         height: cssHeightDeclarationPropType,
         paddingTop: PropTypes.number,
         paddingLeft: PropTypes.number,
+        paddingRight: PropTypes.number,
         paddingBottom: PropTypes.number,
     }
     constructor(props) {
@@ -23,6 +24,8 @@ class Spread extends Component {
 
         this.state = {
             height: 0,
+
+            // verso and recto relate to the position of the marker node
             verso: false,
             recto: false,
         }
@@ -31,6 +34,7 @@ class Spread extends Component {
         this.spreadNode = null
         this.figureNode = null
         this.debounceSpeed = 60
+        this.messageKey = null
 
         this.getMarkerPosition = this.getMarkerPosition.bind(this)
         this.getMarkerDOMRect = this.getMarkerDOMRect.bind(this)
@@ -40,24 +44,34 @@ class Spread extends Component {
         this.disconnectResizeObserver = this.disconnectResizeObserver.bind(this)
         this.debounceCalculateSpreadOffset = debounce(this.calculateSpreadOffset, this.debounceSpeed, {}).bind(this)
     }
+    componentWillMount() {
+
+        // Adds listener for our 'ready' event that's fired in
+        // decorate-observable.js. This is used to update the absolutely
+        // positioned images in fullbleed panels which function properly on
+        // Chrome, so we only need it for FF and Safari
+
+        this.messageKey = Messenger.register(_ => {
+            if (browser.name === 'chrome') return
+            this.updateChildElementPositions()
+        }, messagesTypes.DEFERRED_EVENT)
+    }
     componentDidMount() {
         this.connectResizeObserver()
         this.attachNodes()
-        if (browser.name !== 'chrome') {
-            setTimeout(_ => this.updateChildElementPositions(), 1000)
-        }
+
+        // More x-browser compat.
+        if (browser.name === 'chrome') return
+        setImmediate(this.updateChildElementPositions)
     }
     componentWillUnmount() {
         this.disconnectResizeObserver()
+        Messenger.deregister(this.messageKey)
     }
     attachNodes() {
         const markerRefId = this.props['data-marker-reference']
-        // console.log('--------markerRefId', markerRefId)
         this.markerNode = document.querySelector(`[data-marker="${markerRefId}"]`)
         this.figureNode = document.querySelector(`[data-marker-reference="${markerRefId}"] figure`)
-
-        // console.log(this.markerNode)
-        // console.log(this.figureNode)
     }
     getMarkerPosition() {
         let verso = false
@@ -73,6 +87,7 @@ class Spread extends Component {
             return {verso, recto}
         }
 
+        // TODO: this should be passed down via props, not picked from the DOM
         verso = JSON.parse(this.markerNode.dataset.verso)
         recto = JSON.parse(this.markerNode.dataset.recto)
 
@@ -102,52 +117,58 @@ class Spread extends Component {
 
         height = isNumeric(height) ? (height * 2) - (padding * 2) : height
         if (isNumeric(height)) height -= 1 // nudge to prevent overflow onto next spread
-        this.setState({height})
+
+        this.setState({height}, this.updateChildElementPositions)
     }
-    // TODO: shouldn't be parsing props with regex
+
     getPostionLeftFromMatrix() {
-        return parseInt(
-            window.getComputedStyle(document.getElementById('page'))
-                .transform.replace(/(matrix\(|\))/, '')
-                .split(',')
-                .map(a => a.trim())[4]
-            , 10)
+        const matrix = window.getComputedStyle(document.querySelector('#layout'))
+            .transform.replace(/(matrix\(|\))/, '')
+            .split(',')
+            .map(a => Number(a.trim()))
+
+        return matrix[4]
     }
+
+    // Spread#updateChildElementPositions lays out absolutely positioned images
+    // over fullbleed placeholders for FF and Safari. This is Chrome's default
+    // behaviour so we don't bother shifting anything around in that case
     updateChildElementPositions() {
-        console.log('-- updateChildElementPositions')
-        if (!this.figureNode) { // TODO
-            console.log('no figure')
+
+        if (!this.figureNode) {
+
+            // We call this function recursively on next tick since we know
+            // there will be a figure node, but it may just not be available in
+            // the DOM
+
             this.attachNodes()
-            // return setImmediate(_ => this.updateChildElementPositions())
+            return setImmediate(this.updateChildElementPositions)
         }
 
-        const {innerWidth} = window
         const {verso, recto} = this.getMarkerPosition()
         const {x} = this.getMarkerDOMRect()
         const transformLeft = this.getPostionLeftFromMatrix()
 
-        // TODO: figures should be added as React components during parsing stage
-        if (verso) {
-            console.log('----- verso')
-            this.figureNode.style.left = `${x - transformLeft + innerWidth}px`
-            this.figureNode.dataset.layout = 'verso'
+        let position = x - transformLeft + window.innerWidth
 
-            console.log(this.figureNode)
-            console.log(x, transformLeft, innerWidth, `${x - transformLeft + innerWidth}px`)
-        }
-        if (recto) {
-            this.figureNode.style.left = `${x - transformLeft + (innerWidth / 2)}px`
-            this.figureNode.dataset.layout = 'recto'
-        }
+        if (recto) position -= window.innerWidth / 2
+
+        position = `${position}px`
+
+
+        // Only update figure's position if it's innaccurate
+        if (this.figureNode.style.left !== position) this.figureNode.style.left = `${position}`
+        if (verso && this.figureNode.dataset.layout !== 'verso') this.figureNode.dataset.layout = 'verso'
+        if (recto && this.figureNode.dataset.layout !== 'recto') this.figureNode.dataset.layout = 'recto'
+
     }
     render() {
         const {height} = this.state
         const debugStyles = {background: 'beige'}
 
-        // TODO: chrome's default behaviour sets the absolutely positioned
-        // elements in relation to their parent containers, but this should be
-        // updated for consistencey
-        // if (browser.name !== 'chrome') this.updateChildElementPositions()
+        // Cross-browser image layout
+        // if (browser.name !== 'chrome')
+        this.updateChildElementPositions()
 
         let styles = {height}
         if (debug) styles = {...styles, ...debugStyles}

@@ -1,17 +1,26 @@
 /* eslint-disable no-param-reassign,prefer-rest-params */
 
 import debounce from 'lodash/debounce'
-import {detect} from 'detect-browser'
 import ResizeObserver from 'resize-observer-polyfill'
 import {isNumeric} from '../helpers/Types'
 import {debug, verboseOutput} from '../config'
+import browser from '../lib/browser'
+
+const ensureRenderTimeout = 200
+
+const log = (spreadTotal, contentDimensions, frameHeight, columns) => {
+    if (debug && verboseOutput) {
+        console.group('Layout#connectResizeObserver')
+        console.log('spreadTotal: %d; contentDimensions: %d; frameHeight %d; columns %d',
+                    spreadTotal, contentDimensions, frameHeight, columns) // eslint-disable-line indent
+        console.groupEnd()
+    }
+}
 
 export default function observable(target) {
 
-    const browser = detect()
-    const ensureRenderTimeout = 200
-
     const _componentWillMount = target.prototype.componentWillMount
+
     target.prototype.componentWillMount = function componentWillMount() {
         this.__observerableTimer = null
         this.__contentDimensions = 0
@@ -87,68 +96,52 @@ export default function observable(target) {
     target.prototype.calculateNodePosition = function calculateNodePosition(/*entry*/) {
         if (!this.contentNode) throw new Error(`Couldn't find this.contentNode`)
 
+        const {columns, paddingLeft} = this.state
+
+        let contentDimensions
+        let columnCount
+        let spreadTotal
+        let spreadWidth
+        let frameHeight
+
+
+        // FF only
         if (browser.name === 'firefox') {
-            const contentWidth = this.contentNode.offsetWidth
+            contentDimensions = this.contentNode.offsetWidth - (paddingLeft * 2)
+            spreadWidth = window.innerWidth - (paddingLeft * 2)
+            columnCount = contentDimensions / spreadWidth
 
-            console.log('contentWidth', contentWidth)
-
-            const spreadWidth = window.innerWidth
-            console.log('spreadWidth', spreadWidth)
-
-            const columnCount = contentWidth / spreadWidth
-            console.log('columnCount', columnCount)
-
-            const spreadTotal = Math.floor(columnCount)// - 1 // TODO: allow for extra column needed for 'balance' CSS property
-            console.log('spreadTotal', spreadTotal)
-
-            // we force FF to re-render if contentWidth has changed to ensure
-            // we're getting the latest values
-            if (this.__contentDimensions !== contentWidth) {
-                window.clearTimeout(this.timer)
-                this.timer = setTimeout(_ => {
-                    this.__contentDimensions = contentWidth
-                    this.contentNode.style.display = 'none'
-                    this.contentNode.style.display = 'block'
-                }, ensureRenderTimeout)
-            }
-            else {
-                this.props.setReaderState({spreadTotal, ready: true})
-            }
-
+            spreadTotal = Math.floor(columnCount)
         }
+
         else {
-            const {columns} = this.state
-            const contentHeight = this.contentNode.offsetHeight
-            const frameHeight = this.getFrameHeight()
+            contentDimensions = this.contentNode.offsetHeight
+            frameHeight = this.getFrameHeight()
 
             // we need to return 0 for column count on mobile to ensure that
             // chapter navigation works
-            let columnCount = contentHeight / frameHeight
+            let columnCount = contentDimensions / frameHeight
             if (!isNumeric(columnCount)) columnCount = 0
 
-            const spreadTotal = Math.floor(columnCount / columns)// - 1 // TODO: allow for extra column needed for 'balance' CSS property
+            spreadTotal = Math.floor(columnCount / columns)
 
-            if (debug && verboseOutput) {
-                console.group('Layout#connectResizeObserver')
-                console.log('spreadTotal: %d; contentHeight: %d; frameHeight %d; columns %d',
-                                spreadTotal, contentHeight, frameHeight, columns) // eslint-disable-line indent
-                console.groupEnd()
-            }
+        }
 
-            if (this.__contentDimensions !== contentHeight) {
-                window.clearTimeout(this.timer)
-                this.timer = setTimeout(_ => {
-                    // console.log('-- timer')
-                    this.__contentDimensions = contentHeight
-                    this.contentNode.style.display = 'none'
-                    this.contentNode.style.display = 'block'
-                }, ensureRenderTimeout)
-            }
-            else {
-                // console.log('-- set')
-                this.props.setReaderState({spreadTotal, ready: true})
-            }
+        log(spreadTotal, contentDimensions, frameHeight, columns)
 
+        if (this.__contentDimensions !== contentDimensions) {
+            window.clearTimeout(this.timer)
+            this.timer = setTimeout(_ => {
+                this.__contentDimensions = contentDimensions
+
+                log(spreadTotal, contentDimensions, frameHeight, columns)
+
+                this.contentNode.style.display = 'none'
+                this.contentNode.style.display = 'block'
+            }, ensureRenderTimeout)
+        }
+        else {
+            this.props.setReaderState({spreadTotal, ready: true})
         }
 
     }

@@ -1,19 +1,21 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import findIndex from 'lodash/findIndex'
+import debounce from 'lodash/debounce'
 import {Controls, Frame, Spinner} from './'
 import {Request, XMLAdaptor, Asset, Url} from '../helpers'
 import Viewport from '../helpers/Viewport'
 import {ViewerSettings} from '../models'
-import {debug, verboseOutput} from '../config'
+import {debug, verboseOutput, useLocalStorage} from '../config'
 import history from '../lib/History'
 import deferrable from '../lib/decorate-deferrable'
+import Messenger from '../lib/Messenger'
 
 let _bookContent = null
 
-const getBookContent = _ => _bookContent
+const getBookContent = () => _bookContent
 
-const bookContentComponent = _ => (
+const bookContentComponent = () => (
     <div>
         {getBookContent()}
     </div>
@@ -32,6 +34,7 @@ class Reader extends Component {
     constructor(props) {
         super(props)
 
+        // TODO: move this to viewerSettings, should probably be default behaviour
         this.gridColumns = () => Viewport.isMobile() ? 8 : 12
         this.gridSettingsOptions = {
             paddingLeft: () => window.innerWidth / this.gridColumns(),
@@ -59,13 +62,15 @@ class Reader extends Component {
             spreadIndex: 0,
             spreadTotal: 0,
             handleEvents: false,
+            firstPage: false,
+            lastPage: false,
 
             // sidebar
             showSidebar: null,
 
             // view
             viewerSettings: new ViewerSettings(this.gridSettingsOptions),
-            pageAnimation: false,
+            pageAnimation: false, // disabled by default, and activated in Reader#enablePageTransitions on user action
             overlayElementId: null,
             spinnerVisible: true,
         }
@@ -98,12 +103,11 @@ class Reader extends Component {
         this.hideSpinner = this.hideSpinner.bind(this)
 
         this.handleResize = this.handleResize.bind(this)
-    }
 
-    handleResize() { // eslint-disable-line react/sort-comp
-        console.log('-- resize')
-        const viewerSettings = new ViewerSettings(this.gridSettingsOptions)
-        this.setState({viewerSettings})
+
+        this.debounceResizeSpeed = 400
+        this.handleResizeStart = debounce(this.handleResizeStart, this.debounceResizeSpeed, {leading: true, trailing: false}).bind(this)
+        this.handleResizeEnd = debounce(this.handleResizeEnd, this.debounceResizeSpeed, {leading: false, trailing: true}).bind(this)
     }
 
     getChildContext() {
@@ -120,6 +124,8 @@ class Reader extends Component {
     componentWillMount() {
         this.registerCanCallDeferred(_ => this.state.ready)
         this.createStateFromOPF().then(_ => {
+            if (useLocalStorage === false) return this.loadSpineItem()
+
             const storage = window.localStorage.getItem(this.localStorageKey)
             if (!storage) return this.loadSpineItem()
             const storage_ = JSON.parse(storage)
@@ -131,6 +137,8 @@ class Reader extends Component {
 
     componentDidMount() {
         window.addEventListener('resize', this.handleResize, false)
+        window.addEventListener('resize', this.handleResizeStart, false)
+        window.addEventListener('resize', this.handleResizeEnd, false)
     }
 
     componentWillReceiveProps(nextProps) {
@@ -146,11 +154,10 @@ class Reader extends Component {
     shouldComponentUpdate(_, nextState) {
         const {ready} = nextState
         if (ready && ready !== this.state.ready) {
-            console.log('-- requestDeferredCallbackExecution')
+            if (debug && verboseOutput) console.log('Reader#shouldComponentUpdate: requestDeferredCallbackExecution', `ready: ${ready}`)
             this.requestDeferredCallbackExecution()
         }
 
-        // this.requestDeferredCallbackExecution()
         return true
     }
 
@@ -158,6 +165,19 @@ class Reader extends Component {
         const {cssHash} = this.state
         this.setState({hash: null, cssHash: null})
         Asset.removeBookStyles(cssHash)
+    }
+
+    handleResize() {
+        const viewerSettings = new ViewerSettings(this.gridSettingsOptions)
+        this.setState({viewerSettings})
+    }
+
+    handleResizeStart() {
+        this.disablePageTransitions()
+        if (!debug) this.showSpinner()
+    }
+    handleResizeEnd() {
+        if (!debug) this.hideSpinner()
     }
 
     updateQueryString() {
@@ -186,6 +206,8 @@ class Reader extends Component {
     }
 
     updateViewerSettings(settings = {}) {
+        if (useLocalStorage === false) return
+
         const viewerSettings = new ViewerSettings(this.gridSettingsOptions)
         viewerSettings.put(settings)
         this.setState({viewerSettings}, this.saveViewerSettings)
@@ -194,6 +216,8 @@ class Reader extends Component {
     // currently viewer settings are global (for all books) although they could
     // be scoped to individual books using the books' hash
     saveViewerSettings() {
+        if (useLocalStorage === false) return
+
         const viewerSettings = {...this.state.viewerSettings.settings}
         let storage = window.localStorage.getItem(this.localStorageKey)
         storage = storage ? JSON.parse(storage) : {}
@@ -277,6 +301,7 @@ class Reader extends Component {
                 ...this.state,
                 navigateToChapterByURL: this.navigateToChapterByURL,
                 paddingLeft: this.state.viewerSettings.paddingLeft,
+                columnGap: this.state.viewerSettings.columnGap,
             }))
 
             .then(({bookContent, scopedCSS}) => {
@@ -299,8 +324,9 @@ class Reader extends Component {
                     if (deferredCallback) {
                         this.registerDeferredCallback(deferredCallback)
                     }
+
                     else {
-                        this.enablePageTransitions()
+                        // this.enablePageTransitions()
                         this.enableEventHandling()
                         this.hideSpinner()
                         // this.requestDeferredCallbackExecution()
@@ -348,43 +374,52 @@ class Reader extends Component {
         const {spine} = this.state
         const nextIndex = currentSpineItemIndex + increment
 
-        // send message to parent to notify EOF
-        if (nextIndex > spine.length - 1 || nextIndex < 0) {
-            if (window.parent) {
-                window.parent.postMessage({
-                    type: 'pagination',
-                    eof: true,
-                }, '*')
-            }
+
+        const firstPage = nextIndex < 0
+        const lastPage = nextIndex > spine.length - 1
+
+        if (firstPage || lastPage) {
+            this.setState({firstPage, lastPage}, _ => Messenger.sendPaginationEvent(this.state))
             return
         }
 
         currentSpineItemIndex = nextIndex
         const currentSpineItem = spine[nextIndex]
-        const spreadIndex = 0
+        const spreadIndex = 0 // TODO: why not getting this from state?
 
         let deferredCallback
         if (increment === -1) {
             deferredCallback = _ => {
                 const {spreadTotal} = this.state
-                this.navigateToSpreadByIndex(spreadTotal) // TODO: fixme -- adjusted for column:balance
-                // this.navigateToSpreadByIndex(spreadTotal < 1 ? 0 : spreadTotal - 1) // TODO: fixme -- adjusted for column:balance
-                this.enablePageTransitions()
+                this.navigateToSpreadByIndex(spreadTotal)
+
+                // this.enablePageTransitions()
                 this.enableEventHandling()
                 this.hideSpinner()
+
+                Messenger.sendPaginationEvent(this.state)
             }
         }
 
-        // this branch is redundant, but smoothes out page transisitions when moving forward
+        // this branch smoothes out page transisitions when moving forward
         else {
             deferredCallback = _ => {
-                this.enablePageTransitions()
+                // this.enablePageTransitions()
                 this.enableEventHandling()
                 this.hideSpinner()
+
+                Messenger.sendPaginationEvent(this.state)
             }
         }
 
-        this.setState({spreadIndex, currentSpineItem, currentSpineItemIndex, showSidebar: null}, _ => {
+        this.setState({
+            spreadIndex,
+            currentSpineItem,
+            currentSpineItemIndex,
+            showSidebar: null,
+            firstPage,
+            lastPage,
+        }, _ => {
             this.loadSpineItem(currentSpineItem, deferredCallback)
             this.savePosition()
         })
@@ -417,7 +452,7 @@ class Reader extends Component {
                 this.navigateToElementById(hash)
 
                 setTimeout(_ => {
-                    this.enablePageTransitions()
+                    // this.enablePageTransitions()
                     this.enableEventHandling()
                     this.hideSpinner()
                 }, 100) // TODO: should match transition speed. all these deferreds should be collected together
@@ -442,6 +477,8 @@ class Reader extends Component {
     }
 
     savePosition() {
+        if (useLocalStorage === false) return
+
         const {hash, currentSpineItem, currentSpineItemIndex, spreadIndex} = this.state
         let storage = window.localStorage.getItem(this.localStorageKey)
         if (!storage) storage = JSON.stringify({})
@@ -483,6 +520,7 @@ class Reader extends Component {
             handleEvents,
             spinnerVisible,
         } = this.state
+
         return (
             <Controls
                 guide={guide}
@@ -491,6 +529,7 @@ class Reader extends Component {
                 showSidebar={showSidebar}
                 viewerSettings={viewerSettings}
                 handleEvents={handleEvents}
+                enablePageTransitions={this.enablePageTransitions}
                 handlePageNavigation={this.handlePageNavigation}
                 updateViewerSettings={this.updateViewerSettings}
                 destroyReaderComponent={this.destroyReaderComponent}

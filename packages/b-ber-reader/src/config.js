@@ -1,18 +1,15 @@
 const localConfig = (_ => {
-    if (/^localhost/.test(window.location.host) === false) return {}
     let _config = {}
-    try {
-        _config = require('../.localconfig') // eslint-disable-line global-require
-    }
-    catch (err) {
-        //
-    }
+    if (/^localhost/.test(window.location.host) === false) return _config
+
+    try { _config = require('../.localconfig') } // eslint-disable-line global-require
+    catch (err) { /* noop */ }
     return _config
 })()
 
 module.exports = {
-    debug: false,
-    verboseOutput: false,
-    mobileViewportMaxWidth: 960,
-    ...localConfig,
+    debug: false,                   // 'colorizes' elements. useful for work on spreads/markers
+    useLocalStorage: true,          // load/save data from localStorage
+    verboseOutput: false,           // log level
+    ...localConfig,                 // user opts
 }

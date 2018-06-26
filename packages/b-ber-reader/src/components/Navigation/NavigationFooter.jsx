@@ -20,6 +20,7 @@ const NavigationFooter = props => (
                         className='material-icons'
                         onClick={_ => {
                             if (props.handleEvents === false) return
+                            props.enablePageTransitions()
                             props.handlePageNavigation(-1)
                         }}
                     >chevron_left
@@ -30,6 +31,7 @@ const NavigationFooter = props => (
                         className='material-icons'
                         onClick={_ => {
                             if (props.handleEvents === false) return
+                            props.enablePageTransitions()
                             props.handlePageNavigation(1)
                         }}
                     >chevron_right

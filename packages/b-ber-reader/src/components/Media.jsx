@@ -50,7 +50,7 @@ class Media extends Component {
         if (!this.media || !this.context) return
 
         const {x} = this.media.getBoundingClientRect()
-        const {columnGapPage, columnGapLayout, translateX} = this.context
+        const {columnGap, translateX} = this.context
         const {fullScreen} = this.state
         const windowWidth = window.innerWidth
 
@@ -60,7 +60,7 @@ class Media extends Component {
         }
         else {
             // TODO: should account for element offset (margins/padding)
-            nodeSpreadIndex = Math.floor((x - ((columnGapPage + columnGapLayout) / 2) - translateX) / windowWidth)
+            nodeSpreadIndex = Math.floor((x - (columnGap / 2) - translateX) / windowWidth)
         }
 
         return nodeSpreadIndex
@@ -91,10 +91,10 @@ class Media extends Component {
         if (!this.media || !this.state.canPlay) return
         if (this.media.paused) {
             this.play()
+            return
         }
-        else {
-            this.pause()
-        }
+
+        this.pause()
     }
     play() {
         if (!this.media) return

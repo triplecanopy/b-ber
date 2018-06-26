@@ -1,13 +1,15 @@
 import {debug} from '../config'
 
-export const mediaLarge = ({paddingLeft}) => [{
+export const mediaLarge = ({paddingLeft, columnGap}) => [{
     selector: `.figure__fullbleed figure`,
     declarations: [
-        `position: absolute`,
-        `height: 100vh`,
-        `width: 100vw`,
+        `opacity: ${debug ? 0.8 : 1}`,
         `top: 0`,
-        `margin-left: ${paddingLeft * -1}px`, // must match #layout padding
+        `z-index: 11`,
+        `height: 100vh`,
+        `position: absolute`,
+        `width: calc(100vw - ${(paddingLeft * 2)}px)`,
+        `margin-left: ${(paddingLeft * -2) + columnGap}px`,
     ],
 }, {
     selector: `.figure__fullbleed figure .img-wrap img,
@@ -28,11 +30,12 @@ export const mediaLarge = ({paddingLeft}) => [{
 }]
 
 
-export const mediaSmall = ({paddingLeft}) => [{
+export const mediaSmall = ({paddingLeft, columnGap}) => [{
     selector: `.figure__fullbleed figure`,
     declarations: [
-        `width: 100vw`,
-        `margin-left: ${paddingLeft * -1}px`, // must match #layout padding
+        `z-index: 11`,
+        `width: calc(100vw - ${(paddingLeft * 2)}px)`,
+        `margin-left: ${(paddingLeft * -2) + columnGap}px`,
     ],
 }, {
     selector: `.figure__fullbleed figure .img-wrap img,
