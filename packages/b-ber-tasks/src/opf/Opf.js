@@ -14,7 +14,7 @@ import File from 'vinyl'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
 import Pkg from '@canopycanopycanopy/b-ber-templates/Opf/Pkg'
-import {ManifestAndMetadata, Navigation} from './'
+import {ManifestAndMetadata, Navigation} from '.'
 
 /**
  * @alias module:opf#Opf

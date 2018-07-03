@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import find from 'lodash/find'
-import {Reader, Library} from './'
+import {Reader, Library} from '.'
 import {Request, Url} from '../helpers'
 import history from '../lib/History'
 
