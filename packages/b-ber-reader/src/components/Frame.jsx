@@ -1,6 +1,7 @@
 import React from 'react'
-import {Layout} from './'
+import {Layout, DebugGrid} from '.'
 import Viewport from '../helpers/Viewport'
+import {debug} from '../config'
 
 const Frame = props => {
     const {fontSize} = props.viewerSettings
@@ -25,6 +26,7 @@ const Frame = props => {
             style={styles}
         >
             <Layout {...props} />
+            {debug && <DebugGrid {...props} />}
         </div>
     )
 }

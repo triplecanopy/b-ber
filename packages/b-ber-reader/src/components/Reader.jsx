@@ -2,9 +2,8 @@ import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import findIndex from 'lodash/findIndex'
 import debounce from 'lodash/debounce'
-import {Controls, Frame, Spinner} from './'
+import {Controls, Frame, Spinner} from '.'
 import {Request, XMLAdaptor, Asset, Url} from '../helpers'
-import Viewport from '../helpers/Viewport'
 import {ViewerSettings} from '../models'
 import {debug, verboseOutput, useLocalStorage} from '../config'
 import history from '../lib/History'
@@ -34,13 +33,6 @@ class Reader extends Component {
     constructor(props) {
         super(props)
 
-        // TODO: move this to viewerSettings, should probably be default behaviour
-        this.gridColumns = () => Viewport.isMobile() ? 8 : 12
-        this.gridSettingsOptions = {
-            paddingLeft: () => window.innerWidth / this.gridColumns(),
-            paddingRight: () => window.innerWidth / this.gridColumns(),
-        }
-
         this.state = {
             __metadata: [],
             __spine: [],
@@ -69,7 +61,7 @@ class Reader extends Component {
             showSidebar: null,
 
             // view
-            viewerSettings: new ViewerSettings(this.gridSettingsOptions),
+            viewerSettings: new ViewerSettings(),
             pageAnimation: false, // disabled by default, and activated in Reader#enablePageTransitions on user action
             overlayElementId: null,
             spinnerVisible: true,
@@ -168,7 +160,7 @@ class Reader extends Component {
     }
 
     handleResize() {
-        const viewerSettings = new ViewerSettings(this.gridSettingsOptions)
+        const viewerSettings = new ViewerSettings()
         this.setState({viewerSettings})
     }
 
@@ -208,7 +200,7 @@ class Reader extends Component {
     updateViewerSettings(settings = {}) {
         if (useLocalStorage === false) return
 
-        const viewerSettings = new ViewerSettings(this.gridSettingsOptions)
+        const viewerSettings = new ViewerSettings()
         viewerSettings.put(settings)
         this.setState({viewerSettings}, this.saveViewerSettings)
     }

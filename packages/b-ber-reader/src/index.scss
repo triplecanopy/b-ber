@@ -343,3 +343,22 @@ button {
     &.leaf--left { left: 0; }
     &.leaf--right { right: 0; }
 }
+
+
+
+// debug
+
+.grid__debug {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100%;
+    .grid__debug__line {
+        background-color: blue;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 1px;
+    }
+}

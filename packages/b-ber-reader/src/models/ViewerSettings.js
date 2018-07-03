@@ -1,6 +1,7 @@
 import isPlainObject from 'lodash/isPlainObject'
 import {isNumeric} from '../helpers/Types'
 import {transitions, themes} from '../constants'
+import Viewport from '../helpers/Viewport'
 
 const __extendExistingProps = (target, ref, obj, opts = {enumerable: true}) => {
     Object.entries(ref).forEach(([key, val]) => {
@@ -13,16 +14,26 @@ const __extendExistingProps = (target, ref, obj, opts = {enumerable: true}) => {
 class ViewerSettings {
     static defaults = {
         paddingTop: 37,
-        paddingLeft: 90,
-        paddingRight: 90,
         paddingBottom: 37,
-        fontSize: 120,
+
+        // paddingLeft: 90,
+        // paddingRight: 90,
+
+        // typography
         // fontFamily: 'Times',
-        // columns: 2,                  // dynamic, based on screen size
+
+        fontSize: 120,
+        // columns: 2, // dynamic, based on screen size
         columnGap: 30,
+
+        // theme settings. transition speed must be set in ms
         theme: themes.DEFAULT,
         transition: transitions.SLIDE,
-        transitionSpeed: 400,           // must be in ms
+        transitionSpeed: 400,
+
+        // responsive
+        desktopColumnCount: 12,
+        mobileColumnCount: 8,
     }
     constructor(options = {}) {
         this.settings = {}
@@ -31,7 +42,16 @@ class ViewerSettings {
 
         this.put = this.put.bind(this)
         this.get = this.get.bind(this)
+
+        // responsive
+        this.gridColumns = _ => Viewport.isMobile() ? this.settings.mobileColumnCount : this.settings.desktopColumnCount
+        this.paddingLeft = _ => window.innerWidth / this.settings.gridColumns()
+        this.paddingRight = _ => window.innerWidth / this.settings.gridColumns()
     }
+
+
+    // responsive
+    get gridColumns() { return typeof this.settings.gridColumns === 'function' ? this.settings.gridColumns() : this.settings.gridColumns }
 
     get paddingTop() { return this.settings.paddingTop }
     get paddingLeft() { return typeof this.settings.paddingLeft === 'function' ? this.settings.paddingLeft() : this.settings.paddingLeft }
@@ -51,6 +71,8 @@ class ViewerSettings {
     get fontSize() {
         return `${this.settings.fontSize}%`
     }
+
+    set gridColumns(val) { this.settings.gridColumns = val }
 
     set paddingTop(val) { this.settings.paddingTop = val }
     set paddingLeft(val) { this.settings.paddingLeft = val }
