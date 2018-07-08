@@ -9,7 +9,7 @@
         "yarn": ">=0.27.5 || >= 1.6.0"
     },
     "scripts": {
-        "watch": "lerna run watch --no-sort --stream",
+        "watch": "lerna run --parallel watch",
         "lint": "ls ./packages | xargs -I {} ./node_modules/.bin/eslint ./packages/{}/src/**/{*.js,*.jsx}",
         "test": "rimraf ./coverage && yarn lint && yarn jest",
         "build": "yarn test && lerna run build"
