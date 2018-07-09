@@ -5,7 +5,6 @@
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
 import {BLOCK_DIRECTIVE_MARKER, BLOCK_DIRECTIVE_MARKER_MIN_LENGTH} from '@canopycanopycanopy/b-ber-shapes/directives'
-// import {passThrough} from '@canopycanopycanopy/b-ber-lib/utils' // for testing
 import plugin from '../parsers/section'
 import {attributesObject, attributesString} from './helpers'
 
@@ -39,8 +38,6 @@ export default {
             return match
         },
         render(tokens, idx) {
-            // const renderInline = instance && instance.renderInline ? instance.renderInline : passThrough // `passThrough` during testing
-
             const filename = `_markdown/${context.filename}.md`
             const lineNr = tokens[idx].map ? tokens[idx].map[0] : null
 

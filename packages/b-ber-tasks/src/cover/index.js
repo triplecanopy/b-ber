@@ -3,33 +3,16 @@
 import path from 'path'
 import fs from 'fs-extra'
 import crypto from 'crypto'
-import {find} from 'lodash'
 import childProcess from 'child_process'
 import imageSize from 'probe-image-size'
-import renderLayouts from 'layouts'
-import File from 'vinyl'
 import phantomjs from 'phantomjs-prebuilt'
 import log from '@canopycanopycanopy/b-ber-logger'
 import state from '@canopycanopycanopy/b-ber-lib/State'
-import YamlAdaptor from '@canopycanopycanopy/b-ber-lib/YamlAdaptor'
+import {YamlAdaptor, Template} from '@canopycanopycanopy/b-ber-lib'
 import Xhtml from '@canopycanopycanopy/b-ber-templates/Xhtml'
-import {fileId} from '@canopycanopycanopy/b-ber-lib/utils'
+import {fileId, getBookMetadata} from '@canopycanopycanopy/b-ber-lib/utils'
 
 class Cover {
-
-    get coverEntry() {
-        return this._coverEntry
-    }
-    set coverEntry(value) {
-        this._coverEntry = value
-    }
-    get coverImagePath() {
-        return this._coverImagePath
-    }
-    set coverImagePath(value) {
-        this._coverImagePath = value
-    }
-
     constructor() {
         const defaultMetadata = {
             title: '',
@@ -40,9 +23,7 @@ class Cover {
 
         const fileMetadata = {}
         state.metadata.forEach(a => {
-            if (a.term && a.value) {
-                fileMetadata[a.term] = a.value
-            }
+            if (a.term && a.value) fileMetadata[a.term] = a.value
         })
 
         this.metadata = {
@@ -63,34 +44,29 @@ class Cover {
 
     // if running in sequence with other builds, necessary to flush the state
     loadInitialState() {
-        return new Promise(resolve => {
-            this.phantomjsArgs     = [path.join(__dirname, 'phantomjs.js')]
-            this.coverXHTMLContent = ''
-            this.coverEntry        = ''
-            this.coverImagePath    = ''
-            resolve()
-        })
+        this.phantomjsArgs     = [path.join(__dirname, 'phantomjs.js')]
+        this.coverXHTMLContent = ''
+        this.coverEntry        = ''
+        this.coverImagePath    = ''
+
+        return Promise.resolve()
     }
 
     removeDefaultCovers() {
-        return new Promise((resolve, reject) => {
-            const imageDir = path.join(state.src, '_images')
-            return fs.readdir(imageDir, (err0, files) => {
-                if (err0) throw err0
+        const imageDir = path.join(state.src, '_images')
 
-                const oldCovers = files.filter(_ => path.basename(_).match(new RegExp(this.coverPrefix)))
-                if (!oldCovers.length) resolve()
+        return fs.readdir(imageDir).then(files => {
+            const _covers = files.filter(a => path.basename(a).match(new RegExp(this.coverPrefix)))
 
-                return oldCovers.forEach(_ => {
-                    const coverPath = path.join(imageDir, _)
-                    fs.remove(coverPath, err1 => {
-                        if (err1) reject(err1)
-                        log.info('remove outdated cover image [%s]', _)
-                        resolve()
-                    })
-                })
-            })
+            if (!_covers.length) return Promise.resolve()
+
+            const promises = _covers.map(a => fs.remove(path.join(imageDir, a))
+                .then(() => log.info('remove outdated cover image [%s]', a))
+            )
+
+            return Promise.all(promises)
         })
+
     }
 
     generateDefaultCoverImage() {
@@ -99,6 +75,7 @@ class Cover {
                 if (err) log.error(err)
                 if (stderr) log.error(stderr)
                 if (stdout) log.info(stdout)
+
                 log.info('cover emit cover image')
                 resolve()
             })
@@ -106,38 +83,26 @@ class Cover {
     }
 
     writeCoverXHTML() {
-        return new Promise(resolve => {
-            const textDir = path.join(state.dist, 'OPS', 'text')
-            const coverFilePath = path.join(textDir, 'cover.xhtml')
-            fs.mkdirp(textDir, err0 => {
-                if (err0) throw err0
-                fs.writeFile(coverFilePath, this.coverXHTMLContent, err1 => {
-                    if (err1) throw err1
-                    log.info('cover emit [cover.xhtml]')
-                    return resolve()
-                })
-            })
-        })
+        const textDir = path.join(state.dist, 'OPS', 'text')
+        const coverFilePath = path.join(textDir, 'cover.xhtml')
+
+        return fs.mkdirp(textDir)
+            .then(() => fs.writeFile(coverFilePath, this.coverXHTMLContent))
+            .then(() => log.info('cover emit [cover.xhtml]'))
     }
 
     generateCoverXHTML() {
         return new Promise(resolve => {
             // get the image dimensions, and pass them to the coverSVG template
             const {width, height} = imageSize.sync(fs.readFileSync(this.coverImagePath))
-            const svg = Xhtml.cover({
-                width,
-                height,
-                href: `images/${encodeURIComponent(this.coverEntry)}`,
-            })
+            const href = `images/${encodeURIComponent(this.coverEntry)}`
+            const svg = Xhtml.cover({width, height, href})
+
+            // set the content string to be written once resolved
+            this.coverXHTMLContent = Template.render('page', svg, Xhtml.document())
 
             log.info('cover build [cover.xhtml]')
 
-            // set the content string to be written once resolved
-            this.coverXHTMLContent = renderLayouts(new File({
-                path: '.tmp',
-                layout: 'page',
-                contents: new Buffer(svg),
-            }), {page: Xhtml.document()}).contents.toString()
             resolve()
         })
     }
@@ -158,17 +123,19 @@ class Cover {
             }
 
             // check if cover if referenced
-            const coverListedInMetadata = find(metadata, {term: 'cover'})
+            const coverListedInMetadata = getBookMetadata('cover', state)
+
             if (coverListedInMetadata) {
-                this.coverEntry = coverListedInMetadata.value
+                this.coverEntry = coverListedInMetadata
                 log.info('cover verify image [%s]', this.coverEntry)
-                if (!coverListedInMetadata.value) throw new Error('Error in [metadata.yml] at cover.value')
+
                 // there's a reference to a cover image so we create a cover.xhtml file
                 // containing an SVG-wrapped `image` element with the appropriate cover
                 // dimensions, and write it to the `text` dir.
 
                 // check that the cover image file exists, throw if not
                 this.coverImagePath = path.join(state.src, '_images', this.coverEntry)
+
                 try {
                     if (!fs.statSync(this.coverImagePath)) {
                         throw new Error(`Cover image listed in metadata.yml cannot be found: [${this.coverImagePath}]`)
@@ -203,21 +170,18 @@ class Cover {
             this.phantomjsArgs.push(content, this.coverImagePath)
 
             return this.removeDefaultCovers()
-                .then(_ => this.generateDefaultCoverImage())
-                .then(_ => this.generateCoverXHTML())
-                .catch(err => log.error(err))
+                .then(() => this.generateDefaultCoverImage())
+                .then(() => this.generateCoverXHTML())
+                .catch(log.error)
                 .then(resolve)
         })
     }
 
     init() {
-        return new Promise(resolve =>
-            this.loadInitialState()
-                .then(_ => this.createCoverImage())
-                .then(_ => this.writeCoverXHTML())
-                .catch(err => log.error(err))
-                .then(resolve)
-        )
+        return this.loadInitialState()
+            .then(() => this.createCoverImage())
+            .then(() => this.writeCoverXHTML())
+            .catch(log.error)
     }
 }
 

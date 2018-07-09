@@ -23,9 +23,6 @@ const builder = yargs =>
         .usage(`\nUsage: $0 serve\n\n${describe}`)
 
 const handler = argv => {
-
-    process.env.NODE_ENV = 'development'
-
     const build = argv.reader ? 'reader' : 'web'
     return serve({build})
 }

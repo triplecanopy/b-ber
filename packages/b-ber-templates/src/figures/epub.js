@@ -1,11 +1,11 @@
 /* eslint-disable max-len */
 
-import {getPagebreakAttribute, encodeQueryString} from '@canopycanopycanopy/b-ber-lib/utils'
+import {Html, Url} from '@canopycanopycanopy/b-ber-lib'
 
 const epub = {
     portrait(data) {
         return `${!data.inline ? '<section epub:type="loi" title="Figures" class="chapter figures">' : ''}
-            <div class="figure__large${data.inline ? ` figure__inline figure__inline--portrait ${data.classes}` : ''}"${getPagebreakAttribute(data)}>
+            <div class="figure__large${data.inline ? ` figure__inline figure__inline--portrait ${data.classes}` : ''}"${Html.pagebreakAttribute(data)}>
                 <figure id="${data.id}">
                     <div class="figure__items" style="width: 70%; margin: 0 auto;">
                         ${!data.inline ? `<a href="${data.ref}.xhtml#ref${data.id}">` : ''}
@@ -21,7 +21,7 @@ const epub = {
     },
     landscape(data) {
         return `${!data.inline ? '<section epub:type="loi" title="Figures" class="chapter figures">' : ''}
-            <div class="figure__large${data.inline ? ` figure__inline figure__inline--landscape ${data.classes}` : ''}"${getPagebreakAttribute(data)}>
+            <div class="figure__large${data.inline ? ` figure__inline figure__inline--landscape ${data.classes}` : ''}"${Html.pagebreakAttribute(data)}>
                 <figure id="${data.id}">
                     <div class="figure__items">
                         ${!data.inline ? `<a href="${data.ref}.xhtml#ref${data.id}">` : ''}
@@ -37,7 +37,7 @@ const epub = {
     },
     'portrait-high': function (data) { // eslint-disable-line func-names
         return `${!data.inline ? '<section epub:type="loi" title="Figures" class="chapter figures">' : ''}
-            <div class="figure__large${data.inline ? ` figure__inline figure__inline--portrait-high ${data.classes}` : ''}"${getPagebreakAttribute(data)}>
+            <div class="figure__large${data.inline ? ` figure__inline figure__inline--portrait-high ${data.classes}` : ''}"${Html.pagebreakAttribute(data)}>
                 <figure id="${data.id}">
                     <div class="figure__items" style="width: 60%; margin: 0 auto;">
                         ${!data.inline ? `<a href="${data.ref}.xhtml#ref${data.id}">` : ''}
@@ -53,7 +53,7 @@ const epub = {
     },
     square(data) {
         return `${!data.inline ? '<section epub:type="loi" title="Figures" class="chapter figures">' : ''}
-            <div class="figure__large${data.inline ? ` figure__inline figure__inline--square ${data.classes}` : ''}"${getPagebreakAttribute(data)}>
+            <div class="figure__large${data.inline ? ` figure__inline figure__inline--square ${data.classes}` : ''}"${Html.pagebreakAttribute(data)}>
                 <figure id="${data.id}">
                     <div class="figure__items" style="width: 85%; margin: 0 auto;">
                         ${!data.inline ? `<a href="${data.ref}.xhtml#ref${data.id}">` : ''}
@@ -137,7 +137,7 @@ const epub = {
                 <figure id="${data.id}">
                     <div class="figure__items">
                         <div class="iframe">
-                            <iframe src="${encodeQueryString(data.source)}" />
+                            <iframe src="${Url.encodeQueryString(data.source)}" />
                         </div>
 
                         <div class="figcaption" style="max-width: 100%;">

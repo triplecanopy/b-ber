@@ -501,50 +501,46 @@ function getCoverImage() {
 }
 
 function createIndexHTML({tocElement, infoElement}) {
-    return new Promise(resolve => {
-        const title = getProjectTitle()
-        const coverImage = getCoverImage()
-        const navigationToggleScript = getNavigationToggleScript()
-        const webWorkerScript = getWebWorkerScript()
-        const headerElement = getHeaderElement()
-        const robotsMeta = state.config.private ? '<meta name="robots" content="noindex,nofollow"/>' : '<meta name="robots" content="index,follow"/>'
+    const title = getProjectTitle()
+    const coverImage = getCoverImage()
+    const navigationToggleScript = getNavigationToggleScript()
+    const webWorkerScript = getWebWorkerScript()
+    const headerElement = getHeaderElement()
+    const robotsMeta = state.config.private ? '<meta name="robots" content="noindex,nofollow"/>' : '<meta name="robots" content="index,follow"/>'
 
-        // TODO: should get dynamic page template here to ensure asset hash on production build
-        const indexHTML = `
-            <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-            <html xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:epub="http://www.idpf.org/2007/ops"
-                xmlns:ibooks="http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0"
-                epub:prefix="ibooks: http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0">
-                <meta http-equiv="default-style" content="text/html charset=utf-8"/>
-                ${robotsMeta}
-                <link rel="stylesheet" type="text/css" href="${BASE_URL}stylesheets/application.css"/>
+    // TODO: should get dynamic page template here to ensure asset hash on production build
+    const indexHTML = `
+        <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+        <html xmlns="http://www.w3.org/1999/xhtml"
+            xmlns:epub="http://www.idpf.org/2007/ops"
+            xmlns:ibooks="http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0"
+            epub:prefix="ibooks: http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0">
+            <meta http-equiv="default-style" content="text/html charset=utf-8"/>
+            ${robotsMeta}
+            <link rel="stylesheet" type="text/css" href="${BASE_URL}stylesheets/application.css"/>
 
-                <head>
-                    <title>${title}</title>
-                </head>
-                <body>
-                    ${tocElement}
-                    ${infoElement}
-                    <div class="publication">
-                        ${headerElement}
-                        <div class="publication__contents">
-                            <section>
-                                ${coverImage}
-                            </section>
-                        </div>
+            <head>
+                <title>${title}</title>
+            </head>
+            <body>
+                ${tocElement}
+                ${infoElement}
+                <div class="publication">
+                    ${headerElement}
+                    <div class="publication__contents">
+                        <section>
+                            ${coverImage}
+                        </section>
                     </div>
-                    ${navigationToggleScript}
-                    ${webWorkerScript}
-                </body>
-            </html>
-        `
+                </div>
+                ${navigationToggleScript}
+                ${webWorkerScript}
+            </body>
+        </html>
+    `
 
-        fs.writeFile(path.resolve(DIST_PATH, 'index.html'), indexHTML, err => {
-            if (err) throw err
-            resolve()
-        })
-    })
+    return fs.writeFile(path.resolve(DIST_PATH, 'index.html'), indexHTML)
+
 }
 
 // TODO
@@ -569,7 +565,7 @@ const web = () =>
         .then(importVendorScripts)
         .then(writeWebWorker)
 
-        .catch(err => log.error(err))
+        .catch(log.error)
 
 export default web
 

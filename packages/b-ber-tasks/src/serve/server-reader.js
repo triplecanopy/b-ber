@@ -11,10 +11,9 @@ const {port, dir} = argv
 
 
 const api = router.get('/books.json', (_, res) =>
-    fs.readFile(path.join(cwd, dir, 'api', 'books.json'), 'utf8', (err, data) => {
-        if (err) throw err
-        return res.json(JSON.parse(data))
-    })
+    fs.readFile(path.join(cwd, dir, 'api', 'books.json'), 'utf8')
+        .then(data => res.json(JSON.parse(data)))
+        .catch(console.error)
 )
 
 app.use(express.static(dir))

@@ -88,48 +88,44 @@ function ensureEnvVars() {
     })
 }
 
-function ensure() {
+
+function prompt() {
     return new Promise(resolve =>
         ensureAwsCli()
             .then(ensureEnvVars)
-            .then(resolve)
+            .then(response => {
+
+                const rl = readline.createInterface(process.stdin, process.stdout)
+                const {bucketURL, awsRegion} = response
+
+                console.log(``)
+                console.log('Does the following look OK?')
+                console.log(``)
+                console.log(` Bucket URL:    ${bucketURL}`)
+                console.log(` AWS Region:    ${awsRegion}`)
+                console.log(``)
+
+                rl.setPrompt(' [yN] ')
+                rl.prompt()
+
+                rl.on('line', data => {
+                    if (data === 'y' || data === 'yes') {
+                        return deploy({bucketURL, awsRegion})
+                            .then(rl.close)
+                            .then(resolve)
+                            .catch(log.error)
+                    }
+                    rl.close()
+                }).on('close', () => {
+                    console.log(``)
+                    process.exit(0)
+                })
+
+            })
+            .catch(log.error)
     )
 }
 
-function prompt() {
-    return new Promise(resolve => {
-        ensure().then(response => {
-
-            const rl = readline.createInterface(process.stdin, process.stdout)
-            const {bucketURL, awsRegion} = response
-
-            console.log(``)
-            console.log('Does the following look OK?')
-            console.log(``)
-            console.log(` Bucket URL:    ${bucketURL}`)
-            console.log(` AWS Region:    ${awsRegion}`)
-            console.log(``)
-
-            rl.setPrompt(' [yN] ')
-            rl.prompt()
-
-            rl.on('line', data => {
-                if (data === 'y' || data === 'yes') {
-                    return deploy({bucketURL, awsRegion})
-                        .then(() => rl.close())
-                        .then(resolve)
-                        .catch(log.error)
-                }
-                rl.close()
-            }).on('close', () => {
-                console.log(``)
-                process.exit(0)
-            })
-
-        })
-    })
-}
-
-const main = () => new Promise(resolve => prompt(resolve))
+const main = () => prompt()
 
 export default main

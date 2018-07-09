@@ -65,7 +65,7 @@ const copy = () =>
             }))
         })
 
-        Promise.all(promises).catch(err => log.error(err)).then(resolve)
+        Promise.all(promises).catch(log.error).then(resolve)
 
 
     })

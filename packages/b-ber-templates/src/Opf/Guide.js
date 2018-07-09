@@ -1,5 +1,5 @@
 import File from 'vinyl'
-import {escapeHTML} from '@canopycanopycanopy/b-ber-lib/utils'
+import {Html} from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 
 class Guide {
@@ -21,7 +21,7 @@ class Guide {
 
                 log.info(`guide adding landmark [${a.fileName}] as [${type}]`)
 
-                const title = escapeHTML(a.title)
+                const title = Html.escape(a.title)
                 const href = `${encodeURI(a.relativePath)}.xhtml`
                 item = Guide.item({type, title, href})
             }

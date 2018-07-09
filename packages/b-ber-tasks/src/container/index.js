@@ -11,97 +11,41 @@ import log from '@canopycanopycanopy/b-ber-logger'
 import Xml from '@canopycanopycanopy/b-ber-templates/Xml'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 
-const cwd = process.cwd()
-
 class Container {
-    get src() {
-        return state.src
-    }
-    get dist() {
-        return state.dist
-    }
     get dirs() {
         return [
-            path.join(this.dist, 'OPS'),
-            path.join(this.dist, 'META-INF'),
+            path.join(state.dist, 'OPS'),
+            path.join(state.dist, 'META-INF'),
         ]
     }
 
-    /**
-     * @constructor
-     */
     constructor() {
-        this.testParams = Container.prototype.constructor.testParams.bind(this)
         this.init = this.init.bind(this)
     }
 
     write() {
-        return new Promise(resolve => {
-            const files = [
-                {path: path.join('META-INF', 'container.xml'), content: Xml.container()},
-                {path: 'mimetype', content: Xml.mimetype()},
-            ]
-            return files.forEach((a, i) =>
-                fs.writeFile(path.join(this.dist, a.path), a.content, err => {
-                    if (err) throw err
-                    log.info('container emit [%s]', a.path)
-                    if (i === files.length - 1) {
-                        resolve()
-                    }
-                })
-            )
-        })
+        const files = [
+            {path: path.join('META-INF', 'container.xml'), content: Xml.container()},
+            {path: 'mimetype', content: Xml.mimetype()},
+        ]
+
+        const promises = files.map(a =>
+            fs.writeFile(path.join(state.dist, a.path), a.content)
+                .then(_ => log.info('container emit [%s]', a.path))
+        )
+
+        return Promise.all(promises)
     }
 
     makedirs() {
-        return new Promise(resolve =>
-            this.dirs.map((dir, index) =>
-                fs.mkdirs(dir, err => {
-                    if (err) throw err
-                    log.info('container emit [%s]', dir)
-                    if (index === this.dirs.length - 1) {
-                        resolve()
-                    }
-                })
-            )
-        )
-    }
-
-    static testParams(_input, _output, callback) {
-        if (!_input || !_output) {
-            throw new Error('[Create#testParams] requires both [input] and [output] parameters')
-        }
-
-        const input = path.resolve(cwd, _input)
-        const output = path.resolve(cwd, _output)
-
-        try {
-            if (!fs.existsSync(input)) {
-                throw new Error(`
-                    Cannot resolve input path: [${input}].
-                    Run [bber init] to start a new project`
-                )
-            }
-        } catch (err) {
-            log.error(err)
-            process.exit(0)
-        }
-
-        return fs.mkdirs(output, err => {
-            if (err) throw err
-            return callback()
-        })
+        const promises = this.dirs.map(a => fs.mkdirs(a).then(() => log.info('container emit [%s]', a)))
+        return Promise.all(promises)
     }
 
     init() {
-        return new Promise(resolve =>
-            this.testParams(this.src, this.dist, () =>
-                this.makedirs()
-                    .then(() => this.write())
-                    .catch(err => log.error(err))
-                    .then(resolve)
-            )
-        )
+        return this.makedirs()
+            .then(() => this.write())
+            .catch(log.error)
     }
 }
 

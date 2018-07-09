@@ -14,14 +14,16 @@ describe('ViewerSettings', () => {
 
         expect(vs.settings).toEqual(expect.objectContaining({
             paddingTop: expect.any(Number),
-            paddingLeft: expect.any(Number),
-            paddingRight: expect.any(Number),
+            paddingLeft: expect.any(Function),
+            paddingRight: expect.any(Function),
             paddingBottom: expect.any(Number),
             fontSize: expect.any(Number),
             columnGap: expect.any(Number),
             theme: themes.DEFAULT,
             transition: transitions.SLIDE,
             transitionSpeed: expect.any(Number),
+            desktopColumnCount: expect.any(Number),
+            mobileColumnCount: expect.any(Number),
         }))
 
         vs = new ViewerSettings({paddingTop: 1})
@@ -36,10 +38,10 @@ describe('ViewerSettings', () => {
         const vs = new ViewerSettings({})
 
         expect(vs.paddingTop).toEqual(ViewerSettings.defaults.paddingTop)
-        expect(vs.paddingLeft).toEqual(ViewerSettings.defaults.paddingLeft)
-        expect(vs.paddingRight).toEqual(ViewerSettings.defaults.paddingRight)
+        expect(vs.paddingLeft).toBeNumber()
+        expect(vs.paddingRight).toBeNumber()
         expect(vs.paddingBottom).toEqual(ViewerSettings.defaults.paddingBottom)
-        expect(vs.paddingX).toEqual(ViewerSettings.defaults.paddingLeft + ViewerSettings.defaults.paddingRight)
+        expect(vs.paddingX).toBeNumber()
         expect(vs.paddingY).toEqual(ViewerSettings.defaults.paddingTop + ViewerSettings.defaults.paddingBottom)
         expect(vs.columns).toEqual(ViewerSettings.defaults.columns)
         expect(vs.columnGap).toEqual(ViewerSettings.defaults.columnGap)
@@ -112,8 +114,8 @@ describe('ViewerSettings', () => {
         const vs = new ViewerSettings({})
 
         expect(vs.get('paddingTop')).toBe(ViewerSettings.defaults.paddingTop)
-        expect(vs.get('paddingLeft')).toBe(ViewerSettings.defaults.paddingLeft)
-        expect(vs.get('paddingRight')).toBe(ViewerSettings.defaults.paddingRight)
+        expect(vs.get('paddingLeft')).toBeFunction()
+        expect(vs.get('paddingRight')).toBeFunction()
         expect(vs.get('paddingBottom')).toBe(ViewerSettings.defaults.paddingBottom)
         expect(vs.get('columns')).toBe(ViewerSettings.defaults.columns)
         expect(vs.get('columnGap')).toBe(ViewerSettings.defaults.columnGap)
@@ -121,7 +123,19 @@ describe('ViewerSettings', () => {
         expect(vs.get('transitionSpeed')).toBe(ViewerSettings.defaults.transitionSpeed)
         expect(vs.get('theme')).toBe(ViewerSettings.defaults.theme)
 
-        expect(vs.get()).toEqual(ViewerSettings.defaults)
+        expect(vs.get()).toEqual(expect.objectContaining({
+            paddingTop: expect.any(Number),
+            paddingLeft: expect.any(Function),
+            paddingRight: expect.any(Function),
+            paddingBottom: expect.any(Number),
+            fontSize: expect.any(Number),
+            columnGap: expect.any(Number),
+            theme: themes.DEFAULT,
+            transition: transitions.SLIDE,
+            transitionSpeed: expect.any(Number),
+            desktopColumnCount: expect.any(Number),
+            mobileColumnCount: expect.any(Number),
+        }))
     })
 
     it('sets properties by key', () => {

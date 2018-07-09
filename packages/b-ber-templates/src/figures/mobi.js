@@ -1,10 +1,10 @@
 /* eslint-disable max-len */
 
-import {getPagebreakAttribute, encodeQueryString} from '@canopycanopycanopy/b-ber-lib/utils'
+import {Html, Url} from '@canopycanopycanopy/b-ber-lib'
 
 const mobi = {
     portrait(data) {
-        return `<div class="figure__large${data.inline ? ` figure__inline figure__inline--portrait ${data.classes}` : ''}"${getPagebreakAttribute(data)}>
+        return `<div class="figure__large${data.inline ? ` figure__inline figure__inline--portrait ${data.classes}` : ''}"${Html.pagebreakAttribute(data)}>
             <figure id="${data.id}">
                 <div class="figure__items" style="width: 70%; margin: 0 auto;">
                     <span>
@@ -18,7 +18,7 @@ const mobi = {
         </div>`
     },
     landscape(data) {
-        return `<div class="figure__large${data.inline ? ` figure__inline figure__inline--landscape ${data.classes}` : ''}"${getPagebreakAttribute(data)}>
+        return `<div class="figure__large${data.inline ? ` figure__inline figure__inline--landscape ${data.classes}` : ''}"${Html.pagebreakAttribute(data)}>
             <figure id="${data.id}">
                 <div class="figure__items">
                     <span>
@@ -32,7 +32,7 @@ const mobi = {
         </div>`
     },
     'portrait-high': function (data) { // eslint-disable-line func-names
-        return `<div class="figure__large${data.inline ? ` figure__inline figure__inline--portrait-high ${data.classes}` : ''}"${getPagebreakAttribute(data)}>
+        return `<div class="figure__large${data.inline ? ` figure__inline figure__inline--portrait-high ${data.classes}` : ''}"${Html.pagebreakAttribute(data)}>
             <figure id="${data.id}">
                 <div class="figure__items" style="width: 60%; margin: 0 auto;">
                     <span>
@@ -46,7 +46,7 @@ const mobi = {
         </div>`
     },
     square(data) {
-        return `<div class="figure__large${data.inline ? ` figure__inline figure__inline--square ${data.classes}` : ''}"${getPagebreakAttribute(data)}>
+        return `<div class="figure__large${data.inline ? ` figure__inline figure__inline--square ${data.classes}` : ''}"${Html.pagebreakAttribute(data)}>
             <figure id="${data.id}">
                 <div class="figure__items" style="width: 85%; margin: 0 auto;">
                     <span>
@@ -61,7 +61,7 @@ const mobi = {
     },
     audio(data) {
         return `
-            <div class="figure__large${data.inline ? ` figure__inline figure__inline--landscape ${data.classes}` : ''}"${getPagebreakAttribute(data)}>
+            <div class="figure__large${data.inline ? ` figure__inline figure__inline--landscape ${data.classes}` : ''}"${Html.pagebreakAttribute(data)}>
                 <figure id="${data.id}">
 
                     <div class="figure__items">
@@ -92,7 +92,7 @@ const mobi = {
     },
     video(data) {
         return `
-            <div class="figure__large${data.inline ? ` figure__inline figure__inline--landscape ${data.classes}` : ''}"${getPagebreakAttribute(data)}>
+            <div class="figure__large${data.inline ? ` figure__inline figure__inline--landscape ${data.classes}` : ''}"${Html.pagebreakAttribute(data)}>
                 <figure id="${data.id}">
 
                     <div class="figure__items">
@@ -123,11 +123,11 @@ const mobi = {
     },
     iframe(data) {
         return `
-            <div class="figure__large${data.inline ? ` figure__inline figure__inline--landscape ${data.classes}` : ''}"${getPagebreakAttribute(data)}>
+            <div class="figure__large${data.inline ? ` figure__inline figure__inline--landscape ${data.classes}` : ''}"${Html.pagebreakAttribute(data)}>
                 <figure id="${data.id}">
                     <div class="figure__items">
                         <div class="iframe">
-                            <iframe src="${encodeQueryString(data.source)}" />
+                            <iframe src="${Url.encodeQueryString(data.source)}" />
                         </div>
 
                         <div class="figcaption" style="max-width: 100%;">

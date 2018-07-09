@@ -31,7 +31,7 @@ class Opf {
             ])
                 .then(Opf.createOpfPackageString)
                 .then(Opf.writeOpfToDisk)
-                .catch(err => log.error(err))
+                .catch(log.error)
                 .then(resolve)
         })
     }

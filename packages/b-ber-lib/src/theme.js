@@ -55,10 +55,9 @@ const printThemeList = (themeList, currentTheme = '') =>
         return acc.concat(`  ${icon} ${curr}\n`)
     }, '\n').slice(0, -1)
 
-const theme = args =>
-    new Promise(async resolve => {
 
-        log.logLevel = 4
+const theme = args =>
+    new Promise(resolve => {
 
         const {config} = state
         const themeList = []
@@ -66,15 +65,15 @@ const theme = args =>
         forOf(themes, a => themeList.push(a))
 
         // get user themes dir, if any, and merge with built-in b-ber themes
-        const userThemes = await getUserDefinedThemes()
+        const userThemes = getUserDefinedThemes()
         for (let i = 0; i < userThemes.names.length; i++) {
             themeList.push(userThemes.names[i])
         }
 
         const currentTheme = config.theme && config.theme ? config.theme : ''
         if (args.list) {
-            log.info('The following themes are available:')
-            log.info(printThemeList(themeList, currentTheme))
+            log.notice('The following themes are available:')
+            log.notice(printThemeList(themeList, currentTheme))
             return resolve()
         }
     })

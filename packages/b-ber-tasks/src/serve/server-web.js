@@ -13,8 +13,10 @@ const opts = {
 }
 
 const app = express()
+
 app.use(express.static(dir))
 app.use(serveIndex(dir, opts))
+
 app.listen(port, _ => {
     console.log('Starting Nodemon')
     console.log(`Server is running at http://localhost:${port}/`)

@@ -6,7 +6,7 @@ import yargs from 'yargs'
 import themes from '@canopycanopycanopy/b-ber-themes'
 import log from '@canopycanopycanopy/b-ber-logger'
 import YamlAdaptor from './YamlAdaptor'
-import {createPageModelsFromYAML, flattenNestedEntries} from './helpers'
+import Spine from './Spine'
 
 const cwd = process.cwd()
 
@@ -144,33 +144,6 @@ class ApplicationLoader {
         }
     }
 
-    _createSpineListFromMarkdownFiles() {
-        const markdownDir = path.join(cwd, this.config.src, '_markdown')
-        return fs.readdirSync(markdownDir).filter(a => path.extname(a) === '.md').map(a => path.basename(a, '.md'))
-    }
-
-    _createSpineList(navigationConfigFile, type) {
-        let spineList = []
-        try {
-            if (fs.existsSync(navigationConfigFile)) {
-                spineList = YamlAdaptor.load(navigationConfigFile) || []
-            } else {
-                throw new Error(`creating default file [${type}.yml]`)
-            }
-        } catch (err) {
-            if (/creating default file/.test(err.message)) {
-                log.warn(err.message)
-                fs.writeFileSync(navigationConfigFile, '')
-                spineList = this._createSpineListFromMarkdownFiles()
-            } else {
-                throw err
-            }
-        }
-
-        return spineList
-    }
-
-
     _loadBuildSettings(type) {
         const {src, dist} = this.config
         const projectDir = path.join(cwd, src)
@@ -190,9 +163,12 @@ class ApplicationLoader {
             }
         }
 
-        const spineList = this._createSpineList(navigationConfigFile, type)
-        const tocEntries = createPageModelsFromYAML(spineList, src) // nested navigation
-        const spineEntries = flattenNestedEntries(tocEntries) // one-dimensional page flow
+
+        const spine = new Spine({src, buildType: type})
+
+        const spineList = spine.create(navigationConfigFile)
+        const tocEntries = spine.build(spineList, src) // nested navigation
+        const spineEntries = spine.flatten(tocEntries) // one-dimensional page flow
 
         // build-specific config. gets merged into base config during build step
         const config = this.config[type] ? {...this.config[type]} : {}

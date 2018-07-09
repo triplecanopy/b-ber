@@ -24,64 +24,38 @@ const uglify = contents => {
     return result.code
 }
 
-const optimized = files =>
-    new Promise(resolve => {
-        const contents = files.map(a => fs.readFileSync(path.resolve(cwd, state.src, '_javascripts', a), 'utf8')).join('')
-        const js = uglify(contents)
-        const {hash} = state
-        const out = path.join(state.dist, 'OPS', 'javascripts', `${hash}.js`)
+const optimized = files => {
+    const contents = files.map(a => fs.readFileSync(path.resolve(cwd, state.src, '_javascripts', a), 'utf8')).join('')
+    const js = uglify(contents)
+    const {hash} = state
+    const out = path.join(state.dist, 'OPS', 'javascripts', `${hash}.js`)
 
-        fs.writeFile(out, js, err => {
-            if (err) throw err
-            log.info('scripts emit [%s]', `javascripts${path.sep}${path.basename(out)}`)
-            resolve()
-        })
-    })
+    return fs.writeFile(out, js).then(() => log.info('scripts emit [%s]', `javascripts${path.sep}${path.basename(out)}`))
+}
 
 const unoptimized = files => {
-    const promises = []
-    return new Promise(resolve => {
-        files.forEach(file => {
-            promises.push(new Promise(resolve => {
-                const out = path.join(state.dist, 'OPS', 'javascripts', file)
-                fs.copy(path.join(state.src, '_javascripts', file), out, err => {
-                    if (err) throw err
-                    log.info('scripts emit [%s]', `javascripts${path.sep}${path.basename(out)}`)
-                    resolve()
-                })
-            }))
-        })
-        Promise.all(promises).then(resolve)
+    const promises = files.map(file => {
+        const input = path.join(state.src, '_javascripts', file)
+        const output = path.join(state.dist, 'OPS', 'javascripts', file)
+        return fs.copy(input, output)
+            .then(() => log.info('scripts emit [%s]', `javascripts${path.sep}${path.basename(output)}`))
     })
+
+    return Promise.all(promises).catch(log.error)
 }
 
 
 const write = () =>
-    new Promise(resolve => {
-        const promises = []
-        fs.readdir(path.join(state.src, '_javascripts'), (err, _files) => {
-            if (err) throw err
-            const files = _files.filter(a => path.extname(a) === '.js')//.map(a => path.join('_javascripts', a))
-            promises.push((state.env === 'production' ? optimized : unoptimized)(files))
-            Promise.all(promises).then(resolve)
-        })
+    fs.readdir(path.join(state.src, '_javascripts')).then(_files => {
+        const files = _files.filter(a => path.extname(a) === '.js')
+        return (state.env === 'production' ? optimized : unoptimized)(files)
     })
 
 
 const ensureDir = () =>
-    new Promise(resolve =>
-        fs.mkdirp(path.join(state.dist, 'OPS', 'javascripts'), err => {
-            if (err) throw err
-            resolve()
-        })
-    )
+    fs.mkdirp(path.join(state.dist, 'OPS', 'javascripts'))
 
-const scripts = () =>
-    new Promise(resolve =>
-        ensureDir()
-            .then(write)
-            .catch(err => log.error(err))
-            .then(resolve)
-    )
+const scripts = () => ensureDir().then(write).catch(log.error)
+
 
 export default scripts

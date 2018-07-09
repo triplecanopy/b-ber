@@ -5,106 +5,61 @@
 
 import path from 'path'
 import fs from 'fs-extra'
-import File from 'vinyl'
-import renderLayouts from 'layouts'
 import {findIndex} from 'lodash'
 import MarkdownRenderer from '@canopycanopycanopy/b-ber-grammar'
 import Xhtml from '@canopycanopycanopy/b-ber-templates/Xhtml'
 import log from '@canopycanopycanopy/b-ber-logger'
+import {Template} from '@canopycanopycanopy/b-ber-lib'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 
 
-const promises = []
-
-const writeMarkupToFile = (fname, markup) =>
-    new Promise(resolve => {
-
-        const outputPath = path.join(state.dist, 'OPS', 'text', `${fname}.xhtml`)
-
-        return fs.writeFile(outputPath, markup, err => {
-            if (err) throw err
-
-            log.info(`render xhtml [${path.basename(fname)}.xhtml]`)
-            resolve()
-
-        })
-    })
-
-
+const writeMarkupToFile = (fname, markup) => {
+    fs.writeFile(path.join(state.dist, 'OPS', 'text', `${fname}.xhtml`), markup)
+        .then(() => log.info(`render xhtml [${path.basename(fname)}.xhtml]`))
+}
 
 // convert md to xhtml and wrap with page template
-const createPageLayout = (fileName, data) =>
-    new Promise(resolve => {
+const createPageLayout = (fileName, data) => {
+    const textDir = path.join(state.dist, 'OPS', 'text')
+    const head    = Xhtml.head()
+    const body    = MarkdownRenderer.render(fileName, data)
+    const tail    = Xhtml.tail()
+    const markup  = Template.render('body', `${head}${body}${tail}`, Xhtml.body())
 
-        const textDir = path.join(state.dist, 'OPS', 'text')
-        const head    = Xhtml.head()
-        const body    = MarkdownRenderer.render(fileName, data)
-        const tail    = Xhtml.tail()
-
-        const markup = renderLayouts(new File({
-            path: '.tmp',
-            layout: 'body',
-            contents: new Buffer(`${head}${body}${tail}`),
-        }), {body: Xhtml.body()}).contents.toString()
-
-        try {
-            if (!fs.existsSync(textDir)) {
-                fs.mkdirSync(textDir)
-            }
-        } catch (err) {
-            // noop
-        }
-
-        return writeMarkupToFile(fileName, markup).then(resolve)
-
-    })
-
+    return fs.mkdirp(textDir)
+        .then(() => writeMarkupToFile(fileName, markup))
+        .catch(log.error)
+}
 
 const createXTHMLFile = fpath =>
-    new Promise(resolve =>
-        fs.readFile(fpath, 'utf8', (err, data) => {
-            if (err) throw err
-            const fname = path.basename(fpath, '.md')
-            return createPageLayout(fname, data).then(resolve)
-        })
-    )
+    fs.readFile(fpath, 'utf8')
+        .then(data => createPageLayout(path.basename(fpath, '.md'), data))
+        .catch(log.error)
+
 
 function render() {
-    const mdDir = path.join(state.src, '_markdown')
+    const markdownDir = path.join(state.src, '_markdown')
 
-    return new Promise(resolve =>
-
-        fs.readdir(mdDir, (err, _files) => {
-            if (err) throw err
-
-            const reference = state.spine
-            const files = _files.filter(_ => _.charAt(0) !== '.')
-
-            // sort the files in the order that they appear in `type.yml`, so that
-            // we process them (and the images they contain) in the correct order
-            files.sort((a, b) => {
+    return fs.readdir(markdownDir).then(files => {
+        // sort the files in the order that they appear in `type.yml`, so that
+        // we process them (and the images they contain) in the correct order
+        const promises = files
+            .filter(a => a.charAt(0) !== '.')
+            .sort((a, b) => {
                 const filenameA = path.basename(a, '.md')
                 const filenameB = path.basename(b, '.md')
-                const indexA    = findIndex(reference, {fileName: filenameA})
-                const indexB    = findIndex(reference, {fileName: filenameB})
+                const indexA    = findIndex(state.spine, {fileName: filenameA})
+                const indexB    = findIndex(state.spine, {fileName: filenameB})
 
                 return indexA < indexB ? -1 : indexA > indexB ? 1 : 0
             })
+            .map(a =>
+                createXTHMLFile(path.join(markdownDir, a))
+                    .then(() => log.info(`render markdown [${path.basename(a)}]`))
+            )
 
-
-            return files.forEach(file => {
-
-                log.info(`render markdown [${path.basename(file)}]`)
-
-                promises.push(createXTHMLFile(path.join(mdDir, file)))
-
-                Promise.all(promises)
-                    .catch(err => log.error(err))
-                    .then(resolve)
-
-            })
-        })
-    )
+        return Promise.all(promises).catch(log.error)
+    })
 }
 
 export default render

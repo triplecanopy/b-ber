@@ -8,77 +8,28 @@
  * @see {@link module:navigation#Navigation}
  */
 
-import renderLayouts from 'layouts'
 import path from 'path'
 import fs from 'fs-extra'
-import File from 'vinyl'
 import rrdir from 'recursive-readdir'
 import find from 'lodash/find'
 import difference from 'lodash/difference'
 import uniq from 'lodash/uniq'
 import remove from 'lodash/remove'
 import isArray from 'lodash/isArray'
-import YamlAdaptor from '@canopycanopycanopy/b-ber-lib/YamlAdaptor'
 import state from '@canopycanopycanopy/b-ber-lib/State'
-import ManifestItemProperties from '@canopycanopycanopy/b-ber-lib/ManifestItemProperties'
 import log from '@canopycanopycanopy/b-ber-logger'
 import Toc from '@canopycanopycanopy/b-ber-templates/Toc'
 import Ncx from '@canopycanopycanopy/b-ber-templates/Ncx'
-// import Opf from '@canopycanopycanopy/b-ber-templates/Opf'
 import Guide from '@canopycanopycanopy/b-ber-templates/Opf/Guide'
 import Spine from '@canopycanopycanopy/b-ber-templates/Opf/Spine'
-
-
-import {promiseAll, nestedContentToYAML, flattenSpineFromYAML, modelFromString, opsPath} from '@canopycanopycanopy/b-ber-lib/utils'
-// import {pathInfoFromFiles} from '@canopycanopycanopy/b-ber-tasks/opf/helpers' // TODO: fixme
-
-// copied from opf/helpers
-const isRemote = file => /^http/.test(file)
-
-const pathInfoFromFile = (file, dest) => {
-    if (isRemote(file)) {
-        return {
-            absolutePath: file,
-            opsPath: file,
-            name: file,
-            extension: '',
-            remote: true,
-        }
-    }
-
-    return {
-        absolutePath: file,
-        opsPath: opsPath(file, dest),
-        name: path.basename(file),
-        extension: path.extname(file),
-        remote: false,
-    }
-
-}
-
-const pathInfoFromFiles = (arr, dest) =>
-    arr.map(file => pathInfoFromFile(file, dest))
-
-
-// end
+import {YamlAdaptor, Template, ManifestItemProperties, SpineItem} from '@canopycanopycanopy/b-ber-lib'
+import {flattenSpineFromYAML, nestedContentToYAML, pathInfoFromFiles} from './helpers'
 
 
 /**
  * @alias module:navigation#Navigation
  */
 class Navigation {
-    get src() {
-        return state.src
-    }
-
-    get dist() {
-        return state.dist
-    }
-
-    get build() {
-        return state.build
-    }
-
     /**
      * [constructor description]
      * @constructor
@@ -101,15 +52,11 @@ class Navigation {
             const promises = []
             this.navDocs.forEach(_ => {
                 promises.push(new Promise(() =>
-                    fs.writeFile(path.join(this.dist, 'OPS', _), '', err => {
+                    fs.writeFile(path.join(state.dist, 'OPS', _), '', err => {
                         if (err) throw err
 
-                        const fileData = {
-                            ...modelFromString(_.substring(0, _.indexOf('.')), state.src),
-                            in_toc: false,
-                            linear: false,
-                            generated: true,
-                        }
+                        const fileName = _.substring(0, _.indexOf('.'))
+                        const fileData = new SpineItem({fileName, in_toc: false, linear: false, generated: true})
 
                         state.add('spine', fileData)
 
@@ -118,7 +65,7 @@ class Navigation {
                 ))
             })
 
-            return promiseAll(promises).then(resolve)
+            return Promise.all(promises).then(resolve)
         })
     }
 
@@ -128,10 +75,10 @@ class Navigation {
      */
     getAllXhtmlFiles() {
         return new Promise(resolve =>
-            rrdir(`${this.dist}${path.sep}OPS`, (err, filearr) => {
+            rrdir(`${state.dist}${path.sep}OPS`, (err, filearr) => {
                 if (err) throw err
                 // TODO: better testing here, make sure we're not including symlinks, for example
-                const fileObjects = pathInfoFromFiles(filearr, this.dist)
+                const fileObjects = pathInfoFromFiles(filearr, state.dist)
                 // only get html files
                 const xhtmlFileObjects = fileObjects.filter(_ => ManifestItemProperties.isHTML(_))
                 // prepare for diffing
@@ -167,7 +114,7 @@ class Navigation {
     compareXhtmlWithYaml({filesFromSystem, fileObjects}) {
         return new Promise(resolve => { // eslint-disable-line consistent-return
             const {spine} = state // current build process's spine
-            const {spineList} = state.buildTypes[this.build] // spine items pulled in from type.yml file
+            const {spineList} = state.buildTypes[state.build] // spine items pulled in from type.yml file
             const flow = uniq(spine.map(a => a.generated ? null : a.fileName).filter(Boolean)) // one-dimensional flow of the book used for the spine, omitting figures pages
             const pages = flattenSpineFromYAML(spineList)
 
@@ -176,12 +123,12 @@ class Navigation {
 
             if (missingFiles.length || missingEntries.length) {
                 // there are discrepencies between the files on the system and files
-                // declared in the `this.build`.yml file
+                // declared in the `state.build`.yml file
                 if (missingFiles.length) {
                     // there are extra entries in the YAML (i.e., missing XHTML pages)
 
                     missingEntries.forEach(_ => {
-                        log.warn(`Removing redundant entry [${_}] in ${this.build}.yml`)
+                        log.warn(`Removing redundant entry [${_}] in ${state.build}.yml`)
                     })
 
                     missingFiles.forEach(item => {
@@ -195,13 +142,13 @@ class Navigation {
                         state.update('toc', _toc)
                     })
 
-                    const yamlpath = path.join(this.src, `${this.build}.yml`)
+                    const yamlpath = path.join(state.src, `${state.build}.yml`)
                     const nestedYamlToc = nestedContentToYAML(state.toc)
                     const content = isArray(nestedYamlToc) && nestedYamlToc.length === 0 ? '' : YamlAdaptor.dump(nestedYamlToc)
 
                     fs.writeFile(yamlpath, content, err => {
                         if (err) throw err
-                        log.info(`opf emit ${this.build}.yml`)
+                        log.info(`opf emit ${state.build}.yml`)
                     })
                 }
 
@@ -212,7 +159,7 @@ class Navigation {
 
                     missingEntries.forEach(name => {
                         if (state.contains('loi', {name}) < 0) { // don't warn for figures pages
-                            log.warn(`Adding missing entry [${name}] to [${this.build}.yml]`)
+                            log.warn(`Adding missing entry [${name}] to [${state.build}.yml]`)
                         }
                     })
 
@@ -238,7 +185,7 @@ class Navigation {
                     }).filter(Boolean)
 
 
-                    const yamlpath = path.join(this.src, `${this.build}.yml`)
+                    const yamlpath = path.join(state.src, `${state.build}.yml`)
                     const content = isArray(missingEntriesWithAttributes) && missingEntriesWithAttributes.length === 0 ? '' : YamlAdaptor.dump(missingEntriesWithAttributes)
 
                     fs.appendFile(yamlpath, content, err => {
@@ -259,14 +206,7 @@ class Navigation {
             const {toc} = state
             const tocHTML = Toc.items(toc)
 
-            strings.toc = renderLayouts(
-                new File({
-                    path: '.tmp',
-                    layout: 'document',
-                    contents: new Buffer(tocHTML),
-                }),
-                {document: Toc.document()}
-            ).contents.toString()
+            strings.toc = Template.render('document', tocHTML, Toc.document())
 
             resolve({pages, strings, ...args})
         })
@@ -279,13 +219,7 @@ class Navigation {
             const {toc} = state
             const ncxXML = Ncx.navPoints(toc)
 
-            strings.ncx = renderLayouts(
-                new File({
-                    path: '.tmp',
-                    layout: 'document',
-                    contents: new Buffer(ncxXML),
-                }), {document: Ncx.document()}
-            ).contents.toString()
+            strings.ncx = Template.render('document', ncxXML,  Ncx.document())
 
             resolve({pages, strings, ...args})
         })
@@ -298,14 +232,7 @@ class Navigation {
             const {spine} = state
             const guideXML = Guide.items(spine)
 
-            strings.guide = renderLayouts(
-                new File({
-                    path: '.tmp',
-                    layout: 'guide',
-                    contents: new Buffer(guideXML),
-                }),
-                {guide: Guide.body()}
-            ).contents.toString()
+            strings.guide = Template.render('guide', guideXML, Guide.body())
 
             resolve({strings, flow, fileObjects, ...args})
         })
@@ -329,14 +256,7 @@ class Navigation {
 
             const spineXML = Spine.items(spine)
 
-            strings.spine = renderLayouts(
-                new File({
-                    path: '.tmp',
-                    layout: 'spine',
-                    contents: new Buffer(spineXML),
-                }),
-                {spine: Spine.body()}
-            ).contents.toString()
+            strings.spine = Template.render('spine', spineXML, Spine.body())
 
             resolve({strings, flow, fileObjects, ...args})
         })
@@ -358,7 +278,7 @@ class Navigation {
         return new Promise(resolve => {
             const result = this.deepMergePromiseArrayValues(args, 'strings')
             const {toc} = result.strings
-            const filepath = path.join(this.dist, 'OPS', 'text', 'toc.xhtml')
+            const filepath = path.join(state.dist, 'OPS', 'text', 'toc.xhtml')
             fs.writeFile(filepath, toc, err => {
                 if (err) throw err
                 log.info(`opf emit toc.xhtml [${filepath}]`)
@@ -371,7 +291,7 @@ class Navigation {
         return new Promise(resolve => {
             const result = this.deepMergePromiseArrayValues(args, 'strings')
             const {ncx} = result.strings
-            const filepath = path.join(this.dist, 'OPS', 'toc.ncx')
+            const filepath = path.join(state.dist, 'OPS', 'toc.ncx')
             fs.writeFile(filepath, ncx, err => {
                 if (err) throw err
                 log.info(`opf emit toc.ncx [${filepath}]`)
@@ -396,20 +316,14 @@ class Navigation {
             this.createEmptyNavDocuments()
                 .then(resp => this.getAllXhtmlFiles(resp))
                 .then(resp => this.compareXhtmlWithYaml(resp))
-                .then(resp => promiseAll([
+                .then(resp => Promise.all([
                     this.createTocStringsFromTemplate(resp),
                     this.createNcxStringsFromTemplate(resp),
                     this.createGuideStringsFromTemplate(resp),
                     this.createSpineStringsFromTemplate(resp),
                 ]))
 
-                // TODO: while the files are being parsed, attributes should be added to
-                // the file objects, so that we don't have to perform multiple lookups
-                // throughout the build. this means that we're causing side-effects, but
-                // it'd be an efficient way of creating easily-accessible objects later
-                // on.
-
-                .then(resp => promiseAll([
+                .then(resp => Promise.all([
                     // the two following methods both merge the results from `Promise.all`
                     // and return identical new objects containing all navigation
                     // information to the next method in the chain
@@ -419,7 +333,7 @@ class Navigation {
                 // merge the values from the arrays returned above and pass the response
                 // along to write the `content.opf`
                 .then(resp => this.normalizeResponseObject(resp))
-                .catch(err => log.error(err))
+                .catch(log.error)
                 .then(resolve)
         )
     }

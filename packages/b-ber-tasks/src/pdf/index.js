@@ -6,25 +6,25 @@ import state from '@canopycanopycanopy/b-ber-lib/State'
 import EbookConvert from '@canopycanopycanopy/b-ber-lib/EbookConvert'
 import {getBookMetadata} from '@canopycanopycanopy/b-ber-lib/utils'
 
-const pdf = () =>
-    new Promise(resolve => {
+const pdf = () => {
+    const opsPath = path.join(state.dist, 'OPS')
+    const inputPath = path.join(opsPath, 'content.opf')
 
-        const opsPath = path.join(state.dist, 'OPS')
-        const inputPath = path.join(opsPath, 'content.opf')
+    // TODO: remove TOC manually since we don't have the option in
+    // ebook-convert to skip it. should probably be done elsewhere
+    const tocPath = path.join(opsPath, 'text', 'toc.xhtml')
 
-        // TODO: remove TOC manually since we don't have the option in
-        // ebook-convert to skip it. should probably be done elsewhere
-        const tocPath = path.join(opsPath, 'text', 'toc.xhtml')
-        fs.remove(tocPath)
-
-        return EbookConvert.convert({
+    return fs.remove(tocPath).then(() =>
+        EbookConvert.convert({
             inputPath,
             outputPath: process.cwd(),
             fileType: 'pdf',
             fileName: getBookMetadata('identifier', state),
         })
-            .catch(err => log.error(err))
-            .then(resolve)
-    })
+            .catch(log.error)
+    )
+
+}
+
 
 export default pdf

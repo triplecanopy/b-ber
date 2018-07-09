@@ -58,7 +58,7 @@ class ViewerSettings {
     get paddingRight() { return typeof this.settings.paddingRight === 'function' ? this.settings.paddingRight() : this.settings.paddingRight }
     get paddingBottom() { return this.settings.paddingBottom }
 
-    get paddingX() { return this.settings.paddingLeft + this.settings.paddingLeft }
+    get paddingX() { return this.settings.paddingLeft() + this.settings.paddingRight() }
     get paddingY() { return this.settings.paddingTop + this.settings.paddingBottom }
 
     get columns() { return this.settings.columns }

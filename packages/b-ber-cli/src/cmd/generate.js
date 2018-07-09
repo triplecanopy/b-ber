@@ -1,5 +1,4 @@
 import {generate} from '@canopycanopycanopy/b-ber-tasks'
-import log from '@canopycanopycanopy/b-ber-logger'
 import {fail} from '../helpers'
 
 const command = 'generate'
@@ -24,10 +23,7 @@ const builder = yargs =>
         .usage(`\nUsage: $0 generate\n\n${describe}`)
         .fail((msg, err) => fail(msg, err, yargs))
 
-const handler = () =>
-    generate().then(({title}) =>
-        log.info(`Generated new page [${title}]`)
-    ).catch(_ => console.log(_))
+const handler = generate
 
 export default {
     command,

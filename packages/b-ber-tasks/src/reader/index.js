@@ -5,7 +5,7 @@ import path from 'path'
 import crypto from 'crypto'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import find from 'lodash/find'
-import {trimSlashes} from '@canopycanopycanopy/b-ber-lib/utils'
+import {Url} from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 
 
@@ -22,14 +22,14 @@ class Reader {
 
         return new Promise(resolve => {
             this.createOutputDirs()
-                .then(_ => this.ensureReaderModuleExists())
-                .then(_ => this.copyEpubToOutputDir())
-                .then(_ => this.writeBookManifest())
-                .then(_ => this.copyReaderAppToOutputDir())
-                .then(_ => this.injectServerDataIntoTemplate())
-                .then(_ => this.updateLinkedResourcesWithAbsolutePaths())
-                .then(_ => this.updateAssetURLsWithAbsolutePaths())
-                .catch(err => log.error(err))
+                .then(() => this.ensureReaderModuleExists())
+                .then(() => this.copyEpubToOutputDir())
+                .then(() => this.writeBookManifest())
+                .then(() => this.copyReaderAppToOutputDir())
+                .then(() => this.injectServerDataIntoTemplate())
+                .then(() => this.updateLinkedResourcesWithAbsolutePaths())
+                .then(() => this.updateAssetURLsWithAbsolutePaths())
+                .catch(log.error)
                 .then(resolve)
         })
 
@@ -87,17 +87,10 @@ class Reader {
         return fs.ensureDir(this.outputDir).then(_ => fs.ensureDir(this.apiDir))
     }
     copyEpubToOutputDir() {
-        const promises = []
         const epubDir = this.createDirname(this.getBookMetadata('identifier'))
-        return new Promise(resolve => {
-            this.epubAssets.forEach(item =>
-                promises.push(
-                    fs.move(path.join(this.dist, item), path.join(this.outputDir, epubDir, item))
-                )
-            )
+        const promises = this.epubAssets.map(item => fs.move(path.join(this.dist, item), path.join(this.outputDir, epubDir, item)))
 
-            Promise.all(promises).then(resolve)
-        })
+        return Promise.all(promises).catch(log.error)
     }
     getBookMetadata(term) {
         const entry = find(state.metadata, {term})
@@ -116,7 +109,7 @@ class Reader {
     writeBookManifest() {
         const identifier = this.getBookMetadata('identifier')
         const title = this.getBookMetadata('title')
-        const url = `${trimSlashes(this.remoteURL)}/${this.outputDirName}/${this.createDirname(identifier)}`
+        const url = `${Url.trimSlashes(this.remoteURL)}/${this.outputDirName}/${this.createDirname(identifier)}`
         const cover = `${url}/OPS/images/${this.getBookMetadata('cover')}`
         const manifest = [{title, url, cover, id: identifier}]
 
@@ -160,7 +153,6 @@ class Reader {
         contents = fs.readFileSync(stylesheet, 'utf8')
         contents = contents.replace(/url\(\//g, `url(${this.getProjectConfig('reader_url')}/`)
 
-
         return fs.writeFile(stylesheet, contents)
     }
 
@@ -176,6 +168,6 @@ class Reader {
 
 }
 
-const main = _ => new Reader()
+const main = () => new Reader()
 
 export default main

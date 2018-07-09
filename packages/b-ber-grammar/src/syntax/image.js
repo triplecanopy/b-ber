@@ -3,9 +3,10 @@ import fs from 'fs-extra'
 import mime from 'mime-types'
 import imageSize from 'probe-image-size'
 import log from '@canopycanopycanopy/b-ber-logger'
+import {Html} from '@canopycanopycanopy/b-ber-lib'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import figTmpl from '@canopycanopycanopy/b-ber-templates/figures'
-import {getImageOrientation, htmlComment} from '@canopycanopycanopy/b-ber-lib/utils'
+import {getImageOrientation} from '@canopycanopycanopy/b-ber-lib/utils'
 import {INLINE_DIRECTIVE_MARKER, INLINE_DIRECTIVE_MARKER_MIN_LENGTH} from '@canopycanopycanopy/b-ber-shapes/directives'
 import {attributesObject, htmlId} from './helpers'
 import figure from '../parsers/figure'
@@ -43,7 +44,7 @@ export default {
             const [, type, id, attrs] = match
             const children = tokens[idx].children
             const caption = children ? instance.renderInline(tokens[idx].children) : ''
-            const comment = htmlComment(`START: figure:${type}#${htmlId(id)}; ${filename}:${lineNr}`)
+            const comment = Html.comment(`START: figure:${type}#${htmlId(id)}; ${filename}:${lineNr}`)
             const attrsObject = attributesObject(attrs, type, {filename, lineNr})
             const asset = path.join(state.src, '_images', attrsObject.source)
 
@@ -56,7 +57,7 @@ export default {
                 }
             } catch (err) {
                 log.error(err.message)
-                result = htmlComment(`Image not found [${asset}]`)
+                result = Html.comment(`Image not found [${asset}]`)
                 return result
             }
 

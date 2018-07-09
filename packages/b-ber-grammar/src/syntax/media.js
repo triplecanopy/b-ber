@@ -3,7 +3,7 @@
 import fs from 'fs-extra'
 import path from 'path'
 import mime from 'mime-types'
-import {htmlComment, encodeQueryString} from '@canopycanopycanopy/b-ber-lib/utils'
+import {Html, Url} from '@canopycanopycanopy/b-ber-lib'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
 import figure from '../parsers/figure'
@@ -141,8 +141,8 @@ export default {
             const figureId = htmlId(id)
             const attrString = attributesString(attrsObject)
             const webOnlyAttrString = state.build === 'web' || state.build === 'reader' ? ' webkit-playsinline="webkit-playsinline" playsinline="playsinline"' : ''
-            const commentStart = htmlComment(`START: ${mediaType}:${type}#${figureId};`)
-            const commentEnd = htmlComment(`END: ${mediaType}:${type}#${figureId};`)
+            const commentStart = Html.comment(`START: ${mediaType}:${type}#${figureId};`)
+            const commentEnd = Html.comment(`END: ${mediaType}:${type}#${figureId};`)
             const page = `figure-${figureId}.xhtml`
             const href = state.build === 'reader' ? 'figures-titlepage.xhtml' : page
 
@@ -181,7 +181,7 @@ export default {
                 case 'iframe-inline':
                     return `${commentStart}
                         <section id="${figureId}">
-                            <iframe src="${encodeQueryString(source)}" />
+                            <iframe src="${Url.encodeQueryString(source)}" />
                             ${caption ? `<p class="caption caption__${mediaType}">${caption}</p>` : ''}
                         </section>
                     ${commentEnd}`

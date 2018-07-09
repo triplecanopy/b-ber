@@ -12,7 +12,6 @@
 */
 
 import log from '@canopycanopycanopy/b-ber-logger'
-import {passThrough} from '@canopycanopycanopy/b-ber-lib/utils' // for testing
 import figure from '../parsers/figure'
 
 const markerRe = /^epigraph/
@@ -28,7 +27,7 @@ export default {
             return params.trim().match(markerRe)
         },
         render(tokens, idx) {
-            const escapeHtml = instance && instance.escapeHtml ? instance.escapeHtml : passThrough
+            const {escapeHtml} = instance.escapeHtml
             const attrs = {image: '', caption: '', citation: ''}
             let result = ''
             if (tokens[idx].nesting === 1) { // opening tag

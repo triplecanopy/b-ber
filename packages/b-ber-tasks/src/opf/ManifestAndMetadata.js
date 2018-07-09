@@ -142,7 +142,7 @@ class ManifestAndMetadata {
                 .then(resp => this.createManifestAndMetadataXML(resp))
 
                 // handle err
-                .catch(err => log.error(err))
+                .catch(log.error)
 
                 // next
                 .then(resolve)

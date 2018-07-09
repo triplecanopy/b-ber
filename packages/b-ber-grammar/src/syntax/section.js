@@ -1,5 +1,5 @@
 import state from '@canopycanopycanopy/b-ber-lib/State'
-import {htmlComment} from '@canopycanopycanopy/b-ber-lib/utils'
+import {Html} from '@canopycanopycanopy/b-ber-lib'
 import {BLOCK_DIRECTIVES} from '@canopycanopycanopy/b-ber-shapes/directives'
 import log from '@canopycanopycanopy/b-ber-logger'
 import find from 'lodash/find'
@@ -33,7 +33,7 @@ const render = ({context = {}}) => (tokens, idx) => {
 
             log.debug(`exit directive [${id}]`)
 
-            const comment = htmlComment(`END: section:${type}#${htmlId(id)}`)
+            const comment = Html.comment(`END: section:${type}#${htmlId(id)}`)
             const directive = find(state.cursor, {id})
 
             // TODO: the parser needs to be more discerning. should include
@@ -57,7 +57,7 @@ const render = ({context = {}}) => (tokens, idx) => {
 
             log.debug(`open directive [${id}]`)
 
-            const comment = htmlComment(`START: section:${type}#${htmlId(id)}; ${filename}:${lineNr}`)
+            const comment = Html.comment(`START: section:${type}#${htmlId(id)}; ${filename}:${lineNr}`)
             const attrs = attributes(att, type, {filename, lineNr})
             result = `${comment}<section id="${htmlId(id)}"${attrs}>`
         }
@@ -72,7 +72,7 @@ const render = ({context = {}}) => (tokens, idx) => {
             const [, id] = close
             if (state.contains('cursor', {id}) > -1) {
                 // its id still exists in state, so it's open. force close here
-                const comment = htmlComment(`END: section:#${htmlId(id)}`)
+                const comment = Html.comment(`END: section:#${htmlId(id)}`)
                 result = `</section>${comment}`
 
                 // remove the id

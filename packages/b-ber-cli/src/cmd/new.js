@@ -47,10 +47,6 @@ const handler = argv => {
     const initializer = new Initializer({cwd: dest})
 
     initializer.start(project)
-        .catch(err => {
-            log.error(err)
-            process.exit(1)
-        })
 }
 
 export default {

@@ -1,6 +1,7 @@
 import File from 'vinyl'
 import find from 'lodash/find'
-import {escapeHTML, getTitleOrName} from '@canopycanopycanopy/b-ber-lib/utils'
+import {Html} from '@canopycanopycanopy/b-ber-lib'
+import {getTitleOrName} from '@canopycanopycanopy/b-ber-lib/utils'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 
 
@@ -22,7 +23,7 @@ class Ncx {
         const title = entry && {}.hasOwnProperty.call(entry, 'value') ? entry.value : ''
         return `
             <docTitle>
-                <text>${escapeHTML(title)}</text>
+                <text>${Html.escape(title)}</text>
             </docTitle>
         `
     }
@@ -31,7 +32,7 @@ class Ncx {
         const creator = entry && {}.hasOwnProperty.call(entry, 'value') ? entry.value : ''
         return `
             <docAuthor>
-                <text>${escapeHTML(creator)}</text>
+                <text>${Html.escape(creator)}</text>
             </docAuthor>
         `
     }
@@ -53,7 +54,7 @@ class Ncx {
     static navPoint(data) {
         return `
             <navLabel>
-                <text>${escapeHTML(getTitleOrName(data))}</text>
+                <text>${Html.escape(getTitleOrName(data))}</text>
             </navLabel>
             <content src="${data.relativePath}.xhtml" />
         `
