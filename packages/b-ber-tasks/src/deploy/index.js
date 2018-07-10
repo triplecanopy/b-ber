@@ -35,8 +35,10 @@ function ensureAwsCli() {
 function deploy({bucketURL, awsRegion}) {
     return new Promise(resolve => {
         const sourceDir = path.resolve(cwd, './')
-        const command = `aws s3 cp ${sourceDir} ${bucketURL} \\
-                        --recursive \\
+
+        // uses 'sync' by default.
+        // TODO: allow different upload strategies? 'cp' needs --recursive flag
+        const command = `aws s3 sync ${sourceDir} ${bucketURL} \\
                         --exclude "*" \\
                         --include "*.epub" \\
                         --include "*.mobi" \\
@@ -111,7 +113,7 @@ function prompt() {
                 rl.on('line', data => {
                     if (data === 'y' || data === 'yes') {
                         return deploy({bucketURL, awsRegion})
-                            .then(rl.close)
+                            .then(() => rl.close())
                             .then(resolve)
                             .catch(log.error)
                     }
