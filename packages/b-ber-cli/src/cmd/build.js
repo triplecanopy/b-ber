@@ -11,12 +11,8 @@ const describe = 'Build a project'
 
 const handler = argv => {
 
-    // console.log(argv)
-
     process.env.NODE_ENV = process.env.NODE_ENV || 'development'
     const sequence = createBuildSequence(argv)
-
-    // console.log(sequence)
 
     // make sure all necessary directories exist.
     // TODO: should be a separate task
