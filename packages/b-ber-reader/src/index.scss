@@ -354,6 +354,7 @@ button {
     left: 0;
     height: 100vh;
     width: 100%;
+    pointer-events: none;
     .grid__debug__line {
         background-color: blue;
         position: absolute;
