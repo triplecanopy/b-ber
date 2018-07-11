@@ -99,7 +99,6 @@ class ViewerSettings {
     }
 
     set columns(val) { this.settings.columns = val }
-    set columnGap(val) { this.settings.columnGap = val }
     set transition(val) { this.settings.transition = val }
     set transitionSpeed(val) { this.settings.transitionSpeed = val }
     set theme(val) { this.settings.theme = val }
