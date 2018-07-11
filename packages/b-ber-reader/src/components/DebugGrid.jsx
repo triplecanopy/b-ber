@@ -8,16 +8,14 @@ class DebugGrid extends Component {
     }
 
     drawGrid() {
-        const {gridColumns, paddingLeft} = this.props.viewerSettings
+        const {gridColumns, paddingLeft, gridColumnWidth} = this.props.viewerSettings
         const lines = []
-
-        let left
         for (let i = 0; i < gridColumns; i++) {
-            left = paddingLeft * (i + 1)
+            const styles = {left: paddingLeft * i, width: gridColumnWidth}
             lines.push(
                 <span
                     key={i}
-                    style={{left}}
+                    style={styles}
                     className='grid__debug__line'
                 />
             )

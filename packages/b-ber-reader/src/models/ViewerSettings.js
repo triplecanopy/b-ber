@@ -45,15 +45,20 @@ class ViewerSettings {
 
         // responsive
         this.gridColumns = _ => Viewport.isMobile() ? this.settings.mobileColumnCount : this.settings.desktopColumnCount
-        this.paddingLeft = _ => window.innerWidth / this.settings.gridColumns()
-        this.paddingRight = _ => window.innerWidth / this.settings.gridColumns()
-        this.paddingTop = _ => ( 6 / window.innerHeight ) * 10000
-        this.paddingBottom = _ => ( 6 / window.innerHeight ) * 10000
+        this.gridColumnWidth = _ => ((50 / this.settings.gridColumns()) / 100) * window.innerWidth
+        this.gridGutterWidth = _ => ((50 / (this.settings.gridColumns() - 1)) / 100) * window.innerWidth
+        this.paddingLeft = _ => this.settings.gridColumnWidth() + this.settings.gridGutterWidth()
+        this.paddingRight = _ => this.settings.gridColumnWidth() + this.settings.gridGutterWidth()
+        this.paddingTop = _ => (7 / window.innerHeight) * 10000
+        this.paddingBottom = _ => (5 / window.innerHeight) * 10000
+        this.columnGap = _ => this.settings.gridGutterWidth()
     }
 
 
     // responsive
     get gridColumns() { return typeof this.settings.gridColumns === 'function' ? this.settings.gridColumns() : this.settings.gridColumns }
+    get gridColumnWidth() { return typeof this.settings.gridColumnWidth === 'function' ? this.settings.gridColumnWidth() : this.settings.gridColumnWidth }
+    get gridGutterWidth() { return typeof this.settings.gridGutterWidth === 'function' ? this.settings.gridGutterWidth() : this.settings.gridGutterWidth }
 
     get paddingTop() { return typeof this.settings.paddingTop === 'function' ? this.settings.paddingTop() : this.settings.paddingTop }
     get paddingLeft() { return typeof this.settings.paddingLeft === 'function' ? this.settings.paddingLeft() : this.settings.paddingLeft }
@@ -64,7 +69,7 @@ class ViewerSettings {
     get paddingY() { return this.settings.paddingTop + this.settings.paddingBottom }
 
     get columns() { return this.settings.columns }
-    get columnGap() { return this.settings.columnGap }
+    get columnGap() { return typeof this.settings.columnGap === 'function' ? this.settings.columnGap() : this.settings.columnGap }
     get transition() { return this.settings.transition }
     get transitionSpeed() { return this.settings.transitionSpeed }
     get theme() { return this.settings.theme }
@@ -75,6 +80,9 @@ class ViewerSettings {
     }
 
     set gridColumns(val) { this.settings.gridColumns = val }
+    set gridColumnWidth(val) { this.settings.gridColumnWidth = val }
+    set gridGutterWidth(val) { this.settings.gridGutterWidth = val }
+    set columnGap(val) { this.settings.columnGap = val }
 
     set paddingTop(val) { this.settings.paddingTop = val }
     set paddingLeft(val) { this.settings.paddingLeft = val }

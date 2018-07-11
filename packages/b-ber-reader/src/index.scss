@@ -349,6 +349,7 @@ button {
 // debug
 
 .grid__debug {
+    display:block;
     position: fixed;
     top: 0;
     left: 0;
@@ -356,7 +357,8 @@ button {
     width: 100%;
     pointer-events: none;
     .grid__debug__line {
-        background-color: blue;
+        background-color: cornflowerblue;
+        opacity: 0.4;
         position: absolute;
         top: 0;
         bottom: 0;
