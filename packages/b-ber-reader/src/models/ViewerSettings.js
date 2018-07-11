@@ -47,16 +47,18 @@ class ViewerSettings {
         this.gridColumns = _ => Viewport.isMobile() ? this.settings.mobileColumnCount : this.settings.desktopColumnCount
         this.paddingLeft = _ => window.innerWidth / this.settings.gridColumns()
         this.paddingRight = _ => window.innerWidth / this.settings.gridColumns()
+        this.paddingTop = _ => ( 6 / window.innerHeight ) * 10000
+        this.paddingBottom = _ => ( 6 / window.innerHeight ) * 10000
     }
 
 
     // responsive
     get gridColumns() { return typeof this.settings.gridColumns === 'function' ? this.settings.gridColumns() : this.settings.gridColumns }
 
-    get paddingTop() { return this.settings.paddingTop }
+    get paddingTop() { return typeof this.settings.paddingTop === 'function' ? this.settings.paddingTop() : this.settings.paddingTop }
     get paddingLeft() { return typeof this.settings.paddingLeft === 'function' ? this.settings.paddingLeft() : this.settings.paddingLeft }
     get paddingRight() { return typeof this.settings.paddingRight === 'function' ? this.settings.paddingRight() : this.settings.paddingRight }
-    get paddingBottom() { return this.settings.paddingBottom }
+    get paddingBottom() { return typeof this.settings.paddingBottom === 'function' ? this.settings.paddingBottom() : this.settings.paddingBottom }
 
     get paddingX() { return this.settings.paddingLeft() + this.settings.paddingRight() }
     get paddingY() { return this.settings.paddingTop + this.settings.paddingBottom }

@@ -141,12 +141,12 @@ class Layout extends Component {
     }
 
     updateDimensions() {
-        const {paddingLeft, paddingRight} = this.props.viewerSettings
+        const {paddingLeft, paddingRight, paddingTop, paddingBottom} = this.props.viewerSettings
         const isMobile = Viewport.isMobile()
         const width = window.innerWidth
         const columns = isMobile ? 1 : 2
         const height = isMobile ? 'auto' : window.innerHeight
-        this.setState({width, height, columns, paddingLeft, paddingRight})
+        this.setState({width, height, columns, paddingLeft, paddingRight, paddingTop, paddingBottom})
     }
 
     bindEventListeners() {
