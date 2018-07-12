@@ -1,8 +1,8 @@
 import fs from 'fs-extra'
 import path from 'path'
 import File from 'vinyl'
-import request from 'request'
-import mime from 'mime-types'
+// import request from 'request'
+// import mime from 'mime-types'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 
 // We create a dummy file that has the injected stylesheets, javascripts,
@@ -60,7 +60,7 @@ export function* matchIterator(re, str) {
 }
 
 export const getJSONLDMetadata = args =>
-    new Promise(resolve => {
+    new Promise(resolve => { // eslint-disable-line arrow-body-style
 
         // TODO: following occasionally throws errors when building if the
         // rdf.translator API fails. commenting out for now. need to find a

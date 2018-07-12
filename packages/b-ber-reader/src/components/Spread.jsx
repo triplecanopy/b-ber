@@ -216,7 +216,7 @@ class Spread extends Component {
                 .spread-index__${spreadPosition}     #spread__${markerRefId} > figure { transform: translateX(0px); }
                 .spread-index__${spreadPosition + 1} #spread__${markerRefId} > figure,
                 .spread-index__${spreadPosition + 2} #spread__${markerRefId} > figure { transform: translateX(${paddingLeft * -2}px); }
-            `
+            `,
         }
     }
 
