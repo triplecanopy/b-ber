@@ -62,84 +62,92 @@ export function* matchIterator(re, str) {
 export const getJSONLDMetadata = args =>
     new Promise(resolve => {
 
-        if (state.env !== 'production') {
-            return resolve([
-                ...args,
-                new File({
-                    path: 'metadata.json-ld',
-                    contents: new Buffer(''),
-                }),
-            ])
-        }
+        // TODO: following occasionally throws errors when building if the
+        // rdf.translator API fails. commenting out for now. need to find a
+        // stable, probably locally hosted, solution
 
-        const [, stylesheets, javascripts] = args
-        const resources = []
-        const prefix = state.build === 'web' ? state.config.contentURL : ''
 
-        stylesheets.forEach(a => {
-            resources.push({
-                href: `${prefix}${path.sep}OPS${path.sep}stylesheets${path.sep}${a}`,
-                type: 'text/css',
-            })
-        })
+        // if (state.env !== 'production') {
+        return resolve([
+            ...args,
+            new File({
+                path: 'metadata.json-ld',
+                contents: new Buffer(''),
+            }),
+        ])
+        // }
 
-        javascripts.forEach(a => {
-            resources.push({
-                href: `${prefix}${path.sep}OPS${path.sep}javascripts${path.sep}${a}`,
-                type: 'application/javascript',
-            })
-        })
+        // if (state.env !== 'production') {
 
-        const spine = state.spine.map(a => {
-            const result = {
-                href: a.remotePath || a.relativePath,
-                type: mime.lookup(a.absolutePath),
-            }
-            if (a.title) { // TODO: this needs to be added to `state.spine` during parsing
-                result.title = a.title
-            }
+        //     const [, stylesheets, javascripts] = args
+        //     const resources = []
+        //     const prefix = state.build === 'web' ? state.config.contentURL : ''
 
-            return result
-        })
+        //     stylesheets.forEach(a => {
+        //         resources.push({
+        //             href: `${prefix}${path.sep}OPS${path.sep}stylesheets${path.sep}${a}`,
+        //             type: 'text/css',
+        //         })
+        //     })
 
-        const webpubManifest = {
-            // '@context': 'http://readium.org/webpub/default.jsonld',
-            '@context': 'http://schema.org/',
-            metadata: {},
-            links: [
-                // {"rel": "self", "href": "http://example.org/bff.json", "type": "application/webpub+json"},
-                // {"rel": "alternate", "href": "http://example.org/publication.epub", "type": "application/epub+zip"},
-                // ...
-            ],
+        //     javascripts.forEach(a => {
+        //         resources.push({
+        //             href: `${prefix}${path.sep}OPS${path.sep}javascripts${path.sep}${a}`,
+        //             type: 'application/javascript',
+        //         })
+        //     })
 
-            // spine: [{"href": "http://example.org/chapter1.html", "type": "text/html", "title": "Chapter 1"},]
-            spine,
-            resources,
-        }
+        //     const spine = state.spine.map(a => {
+        //         const result = {
+        //             href: a.remotePath || a.relativePath,
+        //             type: mime.lookup(a.absolutePath),
+        //         }
+        //         if (a.title) { // TODO: this needs to be added to `state.spine` during parsing
+        //             result.title = a.title
+        //         }
 
-        state.metadata.forEach(item => {
-            if (item.term && item.value) {
-                webpubManifest.metadata[item.term] = item.value
-            }
-        })
+        //         return result
+        //     })
 
-        const content = JSON.stringify(webpubManifest)
-        const source  = 'json-ld'
-        const target  = 'json-ld'
-        const suffix  = 'content'
-        const url     = `http://rdf-translator.appspot.com/convert/${source}/${target}/${suffix}`
-        const form    = {content}
+        //     const webpubManifest = {
+        //         // '@context': 'http://readium.org/webpub/default.jsonld',
+        //         '@context': 'http://schema.org/',
+        //         metadata: {},
+        //         links: [
+        //             // {"rel": "self", "href": "http://example.org/bff.json", "type": "application/webpub+json"},
+        //             // {"rel": "alternate", "href": "http://example.org/publication.epub", "type": "application/epub+zip"},
+        //             // ...
+        //         ],
 
-        return request.post({url, form}, (err, resp, body) => {
-            if (err) throw err
-            if (resp.statusCode !== 200) throw new Error(`Error: ${resp.statusCode}`, err)
+        //         // spine: [{"href": "http://example.org/chapter1.html", "type": "text/html", "title": "Chapter 1"},]
+        //         spine,
+        //         resources,
+        //     }
 
-            return resolve([
-                ...args,
-                new File({
-                    path: '.tmp',
-                    contents: new Buffer(body),
-                }),
-            ])
-        })
+        //     state.metadata.forEach(item => {
+        //         if (item.term && item.value) {
+        //             webpubManifest.metadata[item.term] = item.value
+        //         }
+        //     })
+
+        //     const content = JSON.stringify(webpubManifest)
+        //     const source  = 'json-ld'
+        //     const target  = 'json-ld'
+        //     const suffix  = 'content'
+        //     const url     = `http://rdf-translator.appspot.com/convert/${source}/${target}/${suffix}`
+        //     const form    = {content}
+
+        //     return request.post({url, form}, (err, resp, body) => {
+        //         if (err) throw err
+        //         if (resp.statusCode !== 200) throw new Error(`Error: ${resp.statusCode}`, err)
+
+        //         return resolve([
+        //             ...args,
+        //             new File({
+        //                 path: '.tmp',
+        //                 contents: new Buffer(body),
+        //             }),
+        //         ])
+        //     })
+        // }
     })
