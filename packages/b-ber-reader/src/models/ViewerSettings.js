@@ -13,18 +13,7 @@ const __extendExistingProps = (target, ref, obj, opts = {enumerable: true}) => {
 
 class ViewerSettings {
     static defaults = {
-        paddingTop: 37,
-        paddingBottom: 37,
-
-        // paddingLeft: 90,
-        // paddingRight: 90,
-
-        // typography
-        // fontFamily: 'Times',
-
         fontSize: 120,
-        // columns: 2, // dynamic, based on screen size
-        columnGap: 30,
 
         // theme settings. transition speed must be set in ms
         theme: themes.DEFAULT,
@@ -66,7 +55,7 @@ class ViewerSettings {
     get paddingBottom() { return typeof this.settings.paddingBottom === 'function' ? this.settings.paddingBottom() : this.settings.paddingBottom }
 
     get paddingX() { return this.settings.paddingLeft() + this.settings.paddingRight() }
-    get paddingY() { return this.settings.paddingTop + this.settings.paddingBottom }
+    get paddingY() { return this.settings.paddingTop() + this.settings.paddingBottom() }
 
     get columns() { return this.settings.columns }
     get columnGap() { return typeof this.settings.columnGap === 'function' ? this.settings.columnGap() : this.settings.columnGap }

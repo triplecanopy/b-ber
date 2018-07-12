@@ -13,12 +13,12 @@ describe('ViewerSettings', () => {
         vs = new ViewerSettings({})
 
         expect(vs.settings).toEqual(expect.objectContaining({
-            paddingTop: expect.any(Number),
+            paddingTop: expect.any(Function),
             paddingLeft: expect.any(Function),
             paddingRight: expect.any(Function),
-            paddingBottom: expect.any(Number),
+            paddingBottom: expect.any(Function),
             fontSize: expect.any(Number),
-            columnGap: expect.any(Number),
+            columnGap: expect.any(Function),
             theme: themes.DEFAULT,
             transition: transitions.SLIDE,
             transitionSpeed: expect.any(Number),
@@ -26,10 +26,10 @@ describe('ViewerSettings', () => {
             mobileColumnCount: expect.any(Number),
         }))
 
-        vs = new ViewerSettings({paddingTop: 1})
+        vs = new ViewerSettings({fontSize: 1})
 
         expect(vs.settings).toEqual(expect.objectContaining({
-            paddingTop: 1,
+            fontSize: 1,
         }))
     })
 
@@ -37,14 +37,14 @@ describe('ViewerSettings', () => {
 
         const vs = new ViewerSettings({})
 
-        expect(vs.paddingTop).toEqual(ViewerSettings.defaults.paddingTop)
+        expect(vs.paddingTop).toBeNumber()
         expect(vs.paddingLeft).toBeNumber()
         expect(vs.paddingRight).toBeNumber()
-        expect(vs.paddingBottom).toEqual(ViewerSettings.defaults.paddingBottom)
+        expect(vs.paddingBottom).toBeNumber()
         expect(vs.paddingX).toBeNumber()
-        expect(vs.paddingY).toEqual(ViewerSettings.defaults.paddingTop + ViewerSettings.defaults.paddingBottom)
+        expect(vs.paddingY).toEqual(vs.paddingTop + vs.paddingBottom)
         expect(vs.columns).toEqual(ViewerSettings.defaults.columns)
-        expect(vs.columnGap).toEqual(ViewerSettings.defaults.columnGap)
+        expect(vs.columnGap).toBeNumber()
         expect(vs.transition).toEqual(ViewerSettings.defaults.transition)
         expect(vs.transitionSpeed).toEqual(ViewerSettings.defaults.transitionSpeed)
         expect(vs.theme).toEqual(ViewerSettings.defaults.theme)
@@ -113,23 +113,23 @@ describe('ViewerSettings', () => {
 
         const vs = new ViewerSettings({})
 
-        expect(vs.get('paddingTop')).toBe(ViewerSettings.defaults.paddingTop)
+        expect(vs.get('paddingTop')).toBeFunction()
         expect(vs.get('paddingLeft')).toBeFunction()
         expect(vs.get('paddingRight')).toBeFunction()
-        expect(vs.get('paddingBottom')).toBe(ViewerSettings.defaults.paddingBottom)
+        expect(vs.get('paddingBottom')).toBeFunction()
         expect(vs.get('columns')).toBe(ViewerSettings.defaults.columns)
-        expect(vs.get('columnGap')).toBe(ViewerSettings.defaults.columnGap)
+        expect(vs.get('columnGap')).toBeFunction()
         expect(vs.get('transition')).toBe(ViewerSettings.defaults.transition)
         expect(vs.get('transitionSpeed')).toBe(ViewerSettings.defaults.transitionSpeed)
         expect(vs.get('theme')).toBe(ViewerSettings.defaults.theme)
 
         expect(vs.get()).toEqual(expect.objectContaining({
-            paddingTop: expect.any(Number),
+            paddingTop: expect.any(Function),
             paddingLeft: expect.any(Function),
             paddingRight: expect.any(Function),
-            paddingBottom: expect.any(Number),
+            paddingBottom: expect.any(Function),
             fontSize: expect.any(Number),
-            columnGap: expect.any(Number),
+            columnGap: expect.any(Function),
             theme: themes.DEFAULT,
             transition: transitions.SLIDE,
             transitionSpeed: expect.any(Number),
