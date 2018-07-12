@@ -9,6 +9,7 @@ import {cssHeightDeclarationPropType} from '../lib/custom-prop-types'
 import Messenger from '../lib/Messenger'
 import {messagesTypes} from '../constants'
 import browser from '../lib/browser'
+import Viewport from '../helpers/Viewport'
 
 
 class Spread extends Component {
@@ -18,6 +19,7 @@ class Spread extends Component {
         paddingLeft: PropTypes.number,
         paddingRight: PropTypes.number,
         paddingBottom: PropTypes.number,
+        columnGap: PropTypes.number,
     }
     constructor(props) {
         super(props)
@@ -28,6 +30,9 @@ class Spread extends Component {
             // verso and recto relate to the position of the marker node
             verso: false,
             recto: false,
+
+            // spreadPosition: 0, // spreadIndex that the spread appears on
+            markerRefId: null,
         }
 
         this.markerNode = null
@@ -36,10 +41,13 @@ class Spread extends Component {
         this.debounceSpeed = 60
         this.messageKey = null
 
+        this.spreadPosition = 0
+
         this.getMarkerPosition = this.getMarkerPosition.bind(this)
         this.getMarkerDOMRect = this.getMarkerDOMRect.bind(this)
         this.calculateSpreadOffset = this.calculateSpreadOffset.bind(this)
         this.updateChildElementPositions = this.updateChildElementPositions.bind(this)
+        this.createStyleSheetHTML = this.createStyleSheetHTML.bind(this)
         this.connectResizeObserver = this.connectResizeObserver.bind(this)
         this.disconnectResizeObserver = this.disconnectResizeObserver.bind(this)
         this.debounceCalculateSpreadOffset = debounce(this.calculateSpreadOffset, this.debounceSpeed, {}).bind(this)
@@ -72,6 +80,8 @@ class Spread extends Component {
         const markerRefId = this.props['data-marker-reference']
         this.markerNode = document.querySelector(`[data-marker="${markerRefId}"]`)
         this.figureNode = document.querySelector(`[data-marker-reference="${markerRefId}"] figure`)
+
+        this.setState({markerRefId})
     }
     getMarkerPosition() {
         let verso = false
@@ -149,21 +159,69 @@ class Spread extends Component {
         const {x} = this.getMarkerDOMRect()
         const transformLeft = this.getPostionLeftFromMatrix()
 
-        let position = x - transformLeft + window.innerWidth
+        const width = window.innerWidth
+        const {paddingLeft, paddingRight, columnGap} = this.context
+        const layoutWidth = ((width - paddingLeft - paddingRight) + columnGap)
+        const spreadPosition = Math.ceil((x - transformLeft) / layoutWidth)
 
-        if (recto) position -= window.innerWidth / 2
+        let position = 0
+
+        if (!Viewport.isMobile()) {
+            position = x - transformLeft + window.innerWidth
+            if (recto) position -= window.innerWidth / 2
+        }
+        else {
+            position = paddingLeft * -1
+        }
 
         position = `${position}px`
 
+        this.spreadPosition = spreadPosition
 
         // Only update figure's position if it's innaccurate
         if (this.figureNode.style.left !== position) this.figureNode.style.left = `${position}`
         if (verso && this.figureNode.dataset.layout !== 'verso') this.figureNode.dataset.layout = 'verso'
         if (recto && this.figureNode.dataset.layout !== 'recto') this.figureNode.dataset.layout = 'recto'
 
+
+        // set this after loading to prevent figures drifing around on initial page load
+        // TODO: should be passing in transition speed
+
+        const transform = `transition: transform 400ms ease`
+        const vendorPrefixedTransforms = [
+            'webkitTransform',
+            'MozTransform',
+            'msTransform',
+            'OTransform',
+            'transform',
+        ]
+
+        if (this.figureNode.style.transform !== transform) {
+            for (let i = 0; i < vendorPrefixedTransforms.length; i++) {
+                this.figureNode.style[vendorPrefixedTransforms[i]] = transform
+            }
+        }
+
     }
+
+    createStyleSheetHTML() {
+        const {markerRefId} = this.state
+        const {spreadPosition} = this
+        const {paddingLeft} = this.context
+
+        return {
+            __html: `
+                .spread-index__${spreadPosition - 2} #spread__${markerRefId} > figure,
+                .spread-index__${spreadPosition - 1} #spread__${markerRefId} > figure { transform: translateX(${paddingLeft * 2}px); }
+                .spread-index__${spreadPosition}     #spread__${markerRefId} > figure { transform: translateX(0px); }
+                .spread-index__${spreadPosition + 1} #spread__${markerRefId} > figure,
+                .spread-index__${spreadPosition + 2} #spread__${markerRefId} > figure { transform: translateX(${paddingLeft * -2}px); }
+            `
+        }
+    }
+
     render() {
-        const {height} = this.state
+        const {height, markerRefId} = this.state
         const debugStyles = {background: 'beige'}
 
         // Cross-browser image layout
@@ -176,9 +234,11 @@ class Spread extends Component {
         return (
             <div
                 {...this.props}
+                id={`spread__${markerRefId}`}
                 style={styles}
                 ref={node => this.spreadNode = node}
             >
+                {Viewport.isMobile() !== true && <style dangerouslySetInnerHTML={this.createStyleSheetHTML()} />}
                 {this.props.children}
             </div>
         )

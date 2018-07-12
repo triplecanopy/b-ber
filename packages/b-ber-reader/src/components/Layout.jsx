@@ -222,7 +222,7 @@ class Layout extends Component {
 
     render() {
         const height = this.getFrameHeight()
-        const {pageAnimation} = this.props
+        const {pageAnimation, spreadIndex} = this.props
         const {paddingLeft, paddingRight} = this.state
         const {transition, transitionSpeed} = this.props.viewerSettings
 
@@ -246,6 +246,7 @@ class Layout extends Component {
         return (
             <div
                 id='layout'
+                className={`spread-index__${spreadIndex}`}
                 style={layoutStyles}
                 ref={node => this.layoutNode = node}
             >

@@ -8,8 +8,8 @@ export const mediaLarge = ({paddingLeft, columnGap}) => [{
         `z-index: 11`,
         `height: 100vh`,
         `position: absolute`,
-        `width: calc(100vw - ${(paddingLeft * 2)}px)`,
-        `margin-left: ${(paddingLeft * -2) + columnGap}px`,
+        `width: 100vw`,
+        `margin-left: ${(paddingLeft * -3) + columnGap}px`,
     ],
 }, {
     selector: `.figure__fullbleed figure .img-wrap img,
@@ -30,12 +30,12 @@ export const mediaLarge = ({paddingLeft, columnGap}) => [{
 }]
 
 
-export const mediaSmall = ({paddingLeft, columnGap}) => [{
+export const mediaSmall = (/* {paddingLeft, columnGap} */) => [{
     selector: `.figure__fullbleed figure`,
     declarations: [
         `z-index: 11`,
-        `width: calc(100vw - ${(paddingLeft * 2)}px)`,
-        `margin-left: ${(paddingLeft * -2) + columnGap}px`,
+        `width: 100vw`,
+        `position: relative`,
     ],
 }, {
     selector: `.figure__fullbleed figure .img-wrap img,
