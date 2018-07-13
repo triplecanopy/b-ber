@@ -9,20 +9,18 @@ import {cssHeightDeclarationPropType} from '../lib/custom-prop-types'
 import DocumentPreProcessor from '../lib/DocumentPreProcessor'
 
 class Marker extends Component {
+    static ELEMENT_EDGE_VERSO = 50
+    static ELEMENT_EDGE_VERSO_WITHIN_MARGIN_OF_ERROR = 49
+    static ELEMENT_EDGE_RECTO = 0
+
     static contextTypes = {
         height: cssHeightDeclarationPropType,
         paddingTop: PropTypes.number,
         paddingLeft: PropTypes.number,
         paddingBottom: PropTypes.number,
         columnGap: PropTypes.number,
-        // translateX: PropTypes.number,
         transitionSpeed: PropTypes.number,
-        // requestDeferredCallbackExecution: PropTypes.func,
     }
-
-    static ELEMENT_EDGE_VERSO = 50
-    static ELEMENT_EDGE_VERSO_WITHIN_MARGIN_OF_ERROR = 49
-    static ELEMENT_EDGE_RECTO = 0
 
     constructor(props) {
         super(props)

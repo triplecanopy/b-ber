@@ -10,6 +10,9 @@ import history from '../lib/History'
 import deferrable from '../lib/decorate-deferrable'
 import Messenger from '../lib/Messenger'
 
+const MAX_RENDER_TIMEOUT = 400
+
+
 let _bookContent = null
 
 const getBookContent = () => _bookContent
@@ -321,11 +324,11 @@ class Reader extends Component {
                         // this.enablePageTransitions()
                         this.enableEventHandling()
                         this.hideSpinner()
-                        // this.requestDeferredCallbackExecution()
                     }
 
-                    // this.setState({ready: true})
-                    return Promise.resolve()
+                    return setTimeout(() => {
+                        this.setState({ready: true}) // TODO: force load
+                    }, MAX_RENDER_TIMEOUT)
                 })
             })
             .catch(console.error)

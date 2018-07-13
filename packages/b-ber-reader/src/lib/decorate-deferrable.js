@@ -36,7 +36,7 @@ export default function deferrable(target) {
 
             if (!this.canCallDeferred || !this.callDeferred) return
             if (this.canCallDeferred()) return this.callDeferred()
-            this.requestDeferredCallbackExecution()
+            this.requestDeferredCallbackExecution() // this needs calculateNodePosition() to have been called in Layout (via decorate-observable) to resolve
 
         }, this.__deferredCallbackTimer)
     }
