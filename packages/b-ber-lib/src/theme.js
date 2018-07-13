@@ -17,6 +17,16 @@ function getUserDefinedThemes() {
 
         if (!{}.hasOwnProperty.call(config, 'themes_directory')) resolve({names, themes: userThemes})
 
+
+        try {
+            if (!fs.existsSync(path.join(process.cwd(), config.themes_directory))) {
+                throw new Error(`Themes directory [${config.themes_directory}] does not exist.`)
+            }
+        } catch (err) {
+            log.warn(err)
+            return resolve({names, themes: userThemes})
+        }
+
         fs.readdirSync(path.join(cwd, config.themes_directory)).forEach(a => {
             const modulePath = path.resolve(cwd, config.themes_directory, a)
 
@@ -50,14 +60,14 @@ function getUserDefinedThemes() {
 }
 
 const printThemeList = (themeList, currentTheme = '') =>
-    themeList.reduce((acc, curr) => {
+    themeList.reduce((acc, curr) => { // eslint-disable-line prefer-template
         const icon = currentTheme && currentTheme === curr ? '✓' : '○'
         return acc.concat(`  ${icon} ${curr}\n`)
-    }, '\n').slice(0, -1)
+    }, '\n').slice(0, -1) + '\n'
 
 
 const theme = args =>
-    new Promise(resolve => {
+    new Promise(async resolve => {
 
         const {config} = state
         const themeList = []
@@ -65,7 +75,8 @@ const theme = args =>
         forOf(themes, a => themeList.push(a))
 
         // get user themes dir, if any, and merge with built-in b-ber themes
-        const userThemes = getUserDefinedThemes()
+        const userThemes = await getUserDefinedThemes()
+
         for (let i = 0; i < userThemes.names.length; i++) {
             themeList.push(userThemes.names[i])
         }
@@ -73,7 +84,7 @@ const theme = args =>
         const currentTheme = config.theme && config.theme ? config.theme : ''
         if (args.list) {
             log.notice('The following themes are available:')
-            log.notice(printThemeList(themeList, currentTheme))
+            console.log(printThemeList(themeList, currentTheme))
             return resolve()
         }
     })
