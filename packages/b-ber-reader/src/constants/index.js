@@ -12,6 +12,7 @@ export const themes = {
 export const messagesTypes = {
     PAGINATION_EVENT: 'PAGINATION_EVENT',
     DEFERRED_EVENT: 'DEFERRED_EVENT',
+    CLICK_EVENT: 'CLICK_EVENT',
 }
 
 // single breakpoint set at 960px

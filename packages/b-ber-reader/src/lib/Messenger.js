@@ -30,6 +30,10 @@ class Messenger {
         window.parent.postMessage(event, Messenger.MESSAGE_DOMAIN)
     }
 
+    static sendClickEvent(event) {
+        window.parent.postMessage({...event, type: messagesTypes.CLICK_EVENT}, Messenger.MESSAGE_DOMAIN)
+    }
+
     static register(callback, type = null) {
         const key = rand()
         const event = 'message'

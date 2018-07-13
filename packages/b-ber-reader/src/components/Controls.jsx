@@ -1,22 +1,37 @@
 import React, {Component} from 'react'
 import {NavigationHeader, NavigationFooter} from './Navigation'
 import {SidebarMetadata, SidebarDownloads, SidebarChapters, SidebarSettings} from './Sidebar'
+import Messenger from '../lib/Messenger'
+import {messagesTypes} from '../constants'
 
 class Controls extends Component {
     constructor(props) {
         super(props)
 
-        this.bindKeyboardEvents = this.bindKeyboardEvents.bind(this)
-        this.bindKeyboardEvents = this.bindKeyboardEvents.bind(this)
+        this.bindEvents = this.bindEvents.bind(this)
+        this.unbindEvents = this.unbindEvents.bind(this)
         this.handleKeyDown = this.handleKeyDown.bind(this)
+        this.handleClick = this.handleClick.bind(this)
     }
 
     componentWillMount() {
-        this.bindKeyboardEvents()
+        this.bindEvents()
+
+        Messenger.register((() => this.props.handleSidebarButtonClick(null)), messagesTypes.CLICK_EVENT)
     }
 
     componentWillUnmount() {
-        this.unBindKeyboardEvents()
+        this.unbindEvents()
+    }
+
+    handleClick(e) {
+        if (this.props.handleEvents === false) return
+
+        Messenger.sendClickEvent(e)
+
+        if (e.target.closest('.controls__sidebar') === null && e.target.closest('.nav__button') === null && this.props.showSidebar) {
+            this.props.handleSidebarButtonClick(null)
+        }
     }
 
     handleKeyDown(e) {
@@ -41,12 +56,14 @@ class Controls extends Component {
         }
     }
 
-    bindKeyboardEvents() {
+    bindEvents() {
         document.addEventListener('keydown', this.handleKeyDown, false)
+        document.addEventListener('click', this.handleClick, false)
     }
 
-    unBindKeyboardEvents() {
+    unbindEvents() {
         document.removeEventListener('keydown', this.handleKeyDown, false)
+        document.removeEventListener('click', this.handleClick, false)
     }
 
     render() {
