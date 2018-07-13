@@ -245,14 +245,30 @@ button {
 	height: auto!important;
 	padding-bottom: 0!important;
 
-  ul li {
-    display: flex;
-  }
+    ul li {
+        display: flex;
+    }
 
-  ul button {
-    padding-right: calc(#{$component-x} / 2);
-    border-bottom: 1px solid $lightgrey;
-  }
+    li {
+        position: relative;
+    }
+
+    button {
+        padding-right: calc(#{$component-x} / 2);
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+    }
+
+    a {
+        position: relative;
+        z-index: 1;
+        &:hover + button {
+            color: $tc-purple;
+        }
+    }
+
 }
 
 
