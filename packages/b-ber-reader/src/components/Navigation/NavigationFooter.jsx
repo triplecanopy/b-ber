@@ -7,7 +7,7 @@ const NavigationFooter = props => (
             <ul>
                 <li>
                     <button
-                        className='material-icons'
+                        className='material-icons nav__button'
                         onClick={_ => {
                             if (props.handleEvents === false) return
                             props.handleChapterNavigation(-1)
@@ -17,7 +17,7 @@ const NavigationFooter = props => (
                 </li>
                 <li>
                     <button
-                        className='material-icons'
+                        className='material-icons nav__button'
                         onClick={_ => {
                             if (props.handleEvents === false) return
                             props.enablePageTransitions()
@@ -28,7 +28,7 @@ const NavigationFooter = props => (
                 </li>
                 <li>
                     <button
-                        className='material-icons'
+                        className='material-icons nav__button'
                         onClick={_ => {
                             if (props.handleEvents === false) return
                             props.enablePageTransitions()
@@ -39,7 +39,7 @@ const NavigationFooter = props => (
                 </li>
                 <li>
                     <button
-                        className='material-icons'
+                        className='material-icons nav__button'
                         onClick={_ => {
                             if (props.handleEvents === false) return
                             props.handleChapterNavigation(1)

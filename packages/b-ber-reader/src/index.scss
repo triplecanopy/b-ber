@@ -18,11 +18,16 @@ ol {
 }
 
 button {
+    cursor: pointer;
     appearance: none;
     background: transparent;
     border: 0;
     display: block;
     outline: none;
+}
+
+a {
+    cursor: pointer;
 }
 
 // icons
@@ -93,7 +98,7 @@ button {
 
             //TC SPECIFIC STYLES
             &:nth-child(3) {
-              display: none;
+                display: none;
             }
 
             .nav__button {
@@ -129,9 +134,9 @@ button {
                 padding: calc(#{$padding-y} / 2) calc(#{$padding-y} / 2) calc(#{$padding-y} / 2) 0;
                 border-bottom: 1px solid $lightgrey;
                 text-indent: calc(#{$padding-y} / 2);
-    						overflow: hidden;
-    						white-space: nowrap;
-    						text-overflow: ellipsis;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
             }
 
             ol,
@@ -139,8 +144,8 @@ button {
             dl {
 
               a {
-                  text-indent: $padding-y;
-              }
+                    text-indent: $padding-y;
+                }
             }
 
         }
@@ -166,7 +171,7 @@ button {
                 &:hover {
                     color: $tc-purple;
                 }
-          }
+             }
         }
     }
 }
@@ -185,7 +190,7 @@ button {
     -webkit-overflow-scrolling: touch;
 
     @media screen and (max-width: $mobile-break) {
-    		width: 100%!important;
+        width: 100%!important;
     }
 
     &.controls__sidebar__chapters--open {
@@ -210,7 +215,7 @@ button {
     -webkit-overflow-scrolling: touch;
 
     @media screen and (max-width: $mobile-break) {
-    		width: 100%!important;
+        width: 100%!important;
     }
 
     &.controls__sidebar__metadata--open,
@@ -299,9 +304,9 @@ button {
 
             &:nth-child(2),
             &:nth-child(2) {
-              button {
-                font-size: 1.5em;
-              }
+                button {
+                    font-size: 1.5em;
+                }
             }
 
             .nav__button {
@@ -309,12 +314,12 @@ button {
                 transition: color 100ms ease;
 
                 //TC SPECIFIC STYLES
-                :hover {
+                &:hover {
                     color: $tc-purple;
                 }
+            }
         }
-      }
-  }
+    }
 }
 
 @keyframes spin {
