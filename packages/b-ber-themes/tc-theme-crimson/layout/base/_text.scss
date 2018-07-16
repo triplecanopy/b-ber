@@ -356,8 +356,8 @@ strong,b {
     }
 }
 
-
-a.footnote-ref {
+a.footnote-ref,
+.footnote__container a {
     @extend sup;
 }
 
