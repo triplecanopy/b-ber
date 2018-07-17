@@ -356,9 +356,11 @@ strong,b {
     }
 }
 
-a.footnote-ref,
-.footnote__container a {
-    @extend sup;
+a.footnote-ref { @extend sup; }
+
+.footnote__container {
+    a { @extend sup; }
+    .footnote__body { @include padding(1, 0, 1, 0, 0); }
 }
 
 aside.footnote {

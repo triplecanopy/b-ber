@@ -4,14 +4,13 @@ import PropTypes from 'prop-types'
 import {Request, Asset, Url} from '../helpers'
 
 const footnoteStyles = maxWidth => ({
-    border: '1px solid black',
     display: 'block',
     background: 'white',
     position: 'absolute',
-    padding: '10px',
     width: `${maxWidth}px`,
     fontSize: '14px',
     lineHeight: '1.6',
+    zIndex: '1000',
 })
 
 const blacklistedElementNames = [
@@ -108,25 +107,18 @@ class Footnote extends Component {
             >
                 <a
                     href={this.props.href}
-                    onClick={this.showFootnote}
+                    onMouseOver={this.showFootnote}
+                    onFocus={this.showFootnote}
                 >{this.props.children}
                 </a>
                 {footnoteBody && footnoteVisible ?
                     <span
                         className='footnote__body'
-                        style={footnoteStyles((window.innerWidth / 2) - 60)} // TODO: column width
+                        style={footnoteStyles((window.innerWidth / 23) * 9)} // TODO: column width
+                        onMouseOut={this.hideFootnote}
+                        onBlur={this.hideFootnote}
                     >
                         <span className='footnote__content' dangerouslySetInnerHTML={{__html: footnoteBody}} />
-                        <button
-                            style={{
-                                position: 'absolute',
-                                fontSize: '21px',
-                                right: 0,
-                                top: 0,
-                            }}
-                            onClick={this.hideFootnote}
-                        >&times;
-                        </button>
                     </span> :
                     null
                 }
