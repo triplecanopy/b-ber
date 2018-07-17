@@ -134,11 +134,11 @@ section.dialogue p.interlocutor-parent .interlocutor {
 	@include type-settings(-2);
 }
 
-sup, a.footnote-ref, sub {
+sup, a.footnote-ref, .footnote__container a, sub {
 	@include type-settings(-3);
 }
 
-sup, a.footnote-ref {
+sup, a.footnote-ref, .footnote__container a {
 	top:-.8em;
 }
 
