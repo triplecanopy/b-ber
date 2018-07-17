@@ -1,6 +1,6 @@
 {
   "name": "@canopycanopycanopy/b-ber-tasks",
-  "version": "0.1.0-alpha.1256bf58",
+  "version": "0.1.0-alpha.de5a155f",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -18,12 +18,12 @@
     "access": "public"
   },
   "dependencies": {
-    "@canopycanopycanopy/b-ber-grammar": "0.1.0-alpha.1256bf58",
-    "@canopycanopycanopy/b-ber-lib": "0.1.0-alpha.1256bf58",
-    "@canopycanopycanopy/b-ber-logger": "0.1.0-alpha.1256bf58",
-    "@canopycanopycanopy/b-ber-reader": "0.1.0-alpha.1256bf58",
-    "@canopycanopycanopy/b-ber-resources": "0.1.0-alpha.1256bf58",
-    "@canopycanopycanopy/b-ber-templates": "0.1.0-alpha.1256bf58",
+    "@canopycanopycanopy/b-ber-grammar": "0.1.0-alpha.de5a155f",
+    "@canopycanopycanopy/b-ber-lib": "0.1.0-alpha.de5a155f",
+    "@canopycanopycanopy/b-ber-logger": "0.1.0-alpha.de5a155f",
+    "@canopycanopycanopy/b-ber-reader": "0.1.0-alpha.de5a155f",
+    "@canopycanopycanopy/b-ber-resources": "0.1.0-alpha.de5a155f",
+    "@canopycanopycanopy/b-ber-templates": "0.1.0-alpha.de5a155f",
     "autoprefixer": "^8.2.0",
     "cheerio": "^1.0.0-rc.2",
     "css": "^2.2.1",

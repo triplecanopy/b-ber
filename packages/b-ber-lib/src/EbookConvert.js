@@ -31,7 +31,7 @@ function convertDocument({inputPath, bookPath, flags}) {
             {cwd: process.cwd()},
             (err, stdout, stderr) => {
                 if (err) return reject(err)
-                if (stderr !== '') reject(new Error(stderr))
+                if (stderr !== '') process.stdout.write(stderr)
                 if (stdout !== '') process.stdout.write(stdout)
                 resolve()
             })
