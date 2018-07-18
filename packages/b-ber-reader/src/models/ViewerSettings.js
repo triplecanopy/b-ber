@@ -34,12 +34,12 @@ class ViewerSettings {
 
         // responsive
         this.gridColumns = _ => Viewport.isMobile() ? this.settings.mobileColumnCount : this.settings.desktopColumnCount
-        this.gridColumnWidth = _ => ((50 / this.settings.gridColumns()) / 100) * window.innerWidth
-        this.gridGutterWidth = _ => ((50 / (this.settings.gridColumns() - 1)) / 100) * window.innerWidth
+        this.gridColumnWidth = _ => ((65 / this.settings.gridColumns()) / 100) * window.innerWidth
+        this.gridGutterWidth = _ => ((35 / (this.settings.gridColumns() - 1)) / 100) * window.innerWidth
         this.paddingLeft = _ => this.settings.gridColumnWidth() + this.settings.gridGutterWidth()
         this.paddingRight = _ => this.settings.gridColumnWidth() + this.settings.gridGutterWidth()
-        this.paddingTop = _ => (7 / window.innerHeight) * 10000
-        this.paddingBottom = _ => (5 / window.innerHeight) * 10000
+        this.paddingTop = _ => window.innerHeight / 7
+        this.paddingBottom = _ => window.innerHeight / 7
         this.columnGap = _ => this.settings.gridGutterWidth()
     }
 

@@ -186,7 +186,7 @@ class Layout extends Component {
 
     contentStyles() { // eslint-disable-line class-methods-use-this
         return {
-            padding: 0,
+            padding: '0 1.25em 0 0',
             margin: 0,
         }
     }
