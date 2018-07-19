@@ -9,9 +9,10 @@ import {cssHeightDeclarationPropType} from '../lib/custom-prop-types'
 import DocumentPreProcessor from '../lib/DocumentPreProcessor'
 
 class Marker extends Component {
-    static ELEMENT_EDGE_VERSO = 50
-    static ELEMENT_EDGE_VERSO_WITHIN_MARGIN_OF_ERROR = 49
-    static ELEMENT_EDGE_RECTO = 0
+    static ELEMENT_EDGE_VERSO_MIN = 48
+    static ELEMENT_EDGE_VERSO_MAX = 52
+    static ELEMENT_EDGE_RECTO_MIN = 0
+    static ELEMENT_EDGE_RECTO_MAX = 2
 
     static contextTypes = {
         height: cssHeightDeclarationPropType,
@@ -92,7 +93,13 @@ class Marker extends Component {
     }
 
     nodeEdgeIsInAllowableRange(position, _position) { // eslint-disable-line class-methods-use-this
-        const result = (position === Marker.ELEMENT_EDGE_VERSO || position === Marker.ELEMENT_EDGE_VERSO_WITHIN_MARGIN_OF_ERROR || position === Marker.ELEMENT_EDGE_RECTO)
+
+        const result = (
+            (position >= Marker.ELEMENT_EDGE_VERSO_MIN && position <= Marker.ELEMENT_EDGE_VERSO_MAX) ||
+            (position >= Marker.ELEMENT_EDGE_RECTO_MIN && position <= Marker.ELEMENT_EDGE_RECTO_MAX)
+        )
+
+        // const result = (position === Marker.ELEMENT_EDGE_VERSO || position === Marker.ELEMENT_EDGE_VERSO_WITHIN_MARGIN_OF_ERROR || position === Marker.ELEMENT_EDGE_RECTO)
         if (debug && verboseOutput) console.log('Marker#nodeEdgeIsInAllowableRange Recalculating layout', position, _position)
         return result
     }
@@ -126,8 +133,8 @@ class Marker extends Component {
         // sit within 0.01px of the *left* edge of the visible frame if it's on
         // a verso column. we've effectively multiplied the decimal value by 10
         // above, and check against that sum
-        const verso = position === Marker.ELEMENT_EDGE_VERSO || position === Marker.ELEMENT_EDGE_VERSO_WITHIN_MARGIN_OF_ERROR
-        const recto = !verso
+        const verso = (position >= Marker.ELEMENT_EDGE_VERSO_MIN && position <= Marker.ELEMENT_EDGE_VERSO_MAX)
+        const recto = (position >= Marker.ELEMENT_EDGE_RECTO_MIN && position <= Marker.ELEMENT_EDGE_RECTO_MAX)
 
         // in the case that the marker's edge is *not* at 0, or withing 0.01px
         // of the centre line (usually during browser resize, or as other
@@ -139,7 +146,7 @@ class Marker extends Component {
         // given that the layout will likely be adjusted by the user (i.e.,
         // resizing the browser to adjust the broken layout, which will trigger
         // a reflow), the chances of a stack overflow are pretty minimal
-        if (this.nodeEdgeIsInAllowableRange(position, _position) !== true) {
+        if (this.nodeEdgeIsInAllowableRange(position, _position) !== true || (verso === false && recto === false)) {
             clearTimeout(this.timer)
             this.timer = setTimeout(this.calculateNodePosition, this.context.transitionSpeed)
         }
