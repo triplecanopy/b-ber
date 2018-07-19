@@ -27,7 +27,7 @@ class Controls extends Component {
     handleClick(e) {
         if (this.props.handleEvents === false) return
 
-        Messenger.sendClickEvent(e)
+        if (!this.props.showSidebar) Messenger.sendClickEvent(e)
 
         if (e.target.closest('.controls__sidebar') === null && e.target.closest('.nav__button') === null && this.props.showSidebar) {
             this.props.handleSidebarButtonClick(null)
