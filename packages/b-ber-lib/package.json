@@ -20,8 +20,7 @@
   "devDependencies": {
     "jest": "^22.4.3",
     "mock-fs": "^4.4.2",
-    "rimraf": "^2.6.2",
-    "vinyl": "^2.1.0"
+    "rimraf": "^2.6.2"
   },
   "dependencies": {
     "@canopycanopycanopy/b-ber-logger": "0.1.0-alpha.de5a155f",
@@ -35,6 +34,7 @@
     "layouts": "^3.0.1",
     "lodash": "^4.17.5",
     "mime-types": "^2.1.18",
+    "vinyl": "^2.2.0",
     "yargs": "^11.0.0"
   }
 }
