@@ -71,8 +71,20 @@ figure {
     &.figure-lg { // legacy
         page-break-before: always;
         page-break-after: always;
-        // @include padding(1,0,1,0,0); // in case readers don't respect page-break, at least there's a bit of space
+        @include padding(1,0,1,0,0); // in case readers don't respect page-break, at least there's a bit of space
     }
+}
+
+#layout.context__desktop { // desktop context only
+    .figure__inline,
+    .figure-inline { // legacy
+        &.figure__large,
+        &.figure-lg { // legacy
+            -webkit-column-break-before: always;
+            -webkit-column-break-after: always;
+            padding: 0;
+        }
+    } 
 }
 
 .figure__large.figure__inline {

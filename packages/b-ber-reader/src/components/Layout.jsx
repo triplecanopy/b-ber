@@ -225,7 +225,8 @@ class Layout extends Component {
         const {pageAnimation, spreadIndex} = this.props
         const {paddingLeft, paddingRight} = this.state
         const {transition, transitionSpeed} = this.props.viewerSettings
-
+        const isMobile = Viewport.isMobile()
+        const contextClass = isMobile ? "mobile" : "desktop"
 
         const contentStyles = {...this.contentStyles(), minHeight: height}
 
@@ -246,7 +247,7 @@ class Layout extends Component {
         return (
             <div
                 id='layout'
-                className={`spread-index__${spreadIndex}`}
+                className={`spread-index__${spreadIndex} context__${contextClass}`}
                 style={layoutStyles}
                 ref={node => this.layoutNode = node}
             >
