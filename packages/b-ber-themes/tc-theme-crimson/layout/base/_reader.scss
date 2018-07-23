@@ -1,0 +1,26 @@
+@if $build == 'reader' {
+    .figure__fullbleed figure .figure__items {
+        width: 100%;
+        height: 100%;
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+    }
+    .figure__fullbleed.figure__large.figure__inline figure {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+        @include break('mobile') { grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr; }
+        grid-column-gap: calc(35% / 15);
+        .gallery__item {
+            position: absolute;
+            img, video {
+                object-fit: contain;
+                height: 100%;
+                width: 100%;
+            }
+        }
+    }
+}

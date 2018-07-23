@@ -21,8 +21,8 @@ class ViewerSettings {
         transitionSpeed: 400,
 
         // responsive
-        desktopColumnCount: 12,
-        mobileColumnCount: 8,
+        desktopColumnCount: 16,
+        mobileColumnCount: 9,
     }
     constructor(options = {}) {
         this.settings = {}

@@ -8,8 +8,9 @@ class DebugGrid extends Component {
     }
 
     drawGrid() {
-        const {gridColumns, paddingLeft, gridColumnWidth} = this.props.viewerSettings
+        const {gridColumns, gridColumnWidth, gridGutterWidth} = this.props.viewerSettings
         const lines = []
+        const paddingLeft = gridColumnWidth + gridGutterWidth
         for (let i = 0; i < gridColumns; i++) {
             const styles = {left: paddingLeft * i, width: gridColumnWidth}
             lines.push(
