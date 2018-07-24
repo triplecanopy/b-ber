@@ -186,7 +186,7 @@ class Layout extends Component {
 
     contentStyles() { // eslint-disable-line class-methods-use-this
         return {
-            padding: '0 1.25em 0 0',
+            padding: 0,
             margin: 0,
         }
     }
@@ -215,7 +215,7 @@ class Layout extends Component {
             styles = {transform, transition: `transform ${transitionSpeed}ms ease 0s`}
         }
 
-        if (debug) styles = {...styles, opacity: 0.4, backgroundColor: 'blue'}
+        if (debug) styles = {...styles, opacity: 1, backgroundColor: 'white'}
 
         return styles
     }

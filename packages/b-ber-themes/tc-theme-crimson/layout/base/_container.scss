@@ -21,6 +21,7 @@ blockquote {
 
 section {
     clear: both;
+    padding-right: 1em;
     &:after {
         content: ' ';
         display: table;
@@ -33,7 +34,7 @@ header {
 }
 
 section.break-before a + div.figure-sm {
-    padding-top:0;
+    padding-top: 0;
 }
 
 section.subchapter {
@@ -69,6 +70,11 @@ section.bibliography {
         text-indent: 0;
         @include padding(0,0,1,0,0);
     }
+}
+
+section#gallery,
+section#full-bleed {
+    padding-right: 0;
 }
 
 .audio,
