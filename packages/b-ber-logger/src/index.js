@@ -9,7 +9,7 @@ import {error} from './error'
 import {debug} from './debug'
 import {trace} from './trace'
 import {notice} from './notice'
-// import {inspect} from './inspect'
+import {inspect} from './inspect'
 import {printSummary} from './summary'
 import {configure} from './configure'
 import {printVersion} from './print-version'
@@ -93,7 +93,7 @@ class Logger extends Timer {
         this.debug = debug.bind(this)
         this.trace = trace.bind(this)
         this.notice = notice.bind(this)
-        // this.inspect = inspect.bind(this)
+        this.inspect = inspect.bind(this)
         this.printSummary = printSummary.bind(this)
 
         this.configure = configure.bind(this)
