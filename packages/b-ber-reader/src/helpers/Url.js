@@ -39,6 +39,10 @@ class Url {
         return url_
     }
     static resolveRelativeURL(url, path) {
+        if (!url || !path) {
+            console.warn(`Url#resolveRelativeURL: No 'url' or 'path' param provided`, url, path)
+            return '/'
+        }
         const url_ = Url.addTrailingSlash(url)
         const path_ = Url.trimSlashes(path)
 

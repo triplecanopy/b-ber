@@ -5,7 +5,8 @@ import {Link} from '../'
 const NestedChapterList = props => {
     const {items} = props
     const depth = props.depth || 0
-    const items_ = items.filter(a => a.depth === depth)
+    const items_ = items.filter(a => (a.depth === depth && a.linear !== 'no'))
+
     return (
         <ol>
             {items_.map((item, i) => (
