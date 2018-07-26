@@ -37,7 +37,7 @@ class Messenger {
     static register(callback, type = null) {
         const key = rand()
         const event = 'message'
-        const handler = e => (!type || type === e.data.type) && callback()
+        const handler = e => (!type || type === e.data.type) && callback(e)
 
         registry.set(key, {event, type, handler, callback})
         window.addEventListener(event, handler, false)

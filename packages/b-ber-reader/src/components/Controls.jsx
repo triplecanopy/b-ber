@@ -17,7 +17,11 @@ class Controls extends Component {
     componentWillMount() {
         this.bindEvents()
 
-        Messenger.register((() => this.props.handleSidebarButtonClick(null)), messagesTypes.CLICK_EVENT)
+        Messenger.register((e) => {
+            if (!e.origin || e.origin !== window.location.origin) {
+                this.props.handleSidebarButtonClick(null)
+            }
+        }, messagesTypes.CLICK_EVENT)
     }
 
     componentWillUnmount() {
@@ -27,7 +31,7 @@ class Controls extends Component {
     handleClick(e) {
         if (this.props.handleEvents === false) return
 
-        if (!this.props.showSidebar) Messenger.sendClickEvent(e)
+        Messenger.sendClickEvent(e)
 
         if (e.target.closest('.controls__sidebar') === null && e.target.closest('.nav__button') === null && this.props.showSidebar) {
             this.props.handleSidebarButtonClick(null)
