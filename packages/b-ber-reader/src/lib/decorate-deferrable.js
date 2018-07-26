@@ -49,6 +49,7 @@ export default function deferrable(target) {
 
     target.prototype.callDeferred = function callDeferred() {
         if (debug && verboseOutput) console.log(`${target.name}#callDeferred`, this.__deferredCallback.name)
+        console.log('-- calling deferred', this.__deferredCallback.name)
         this.__deferredCallback.call(this)
         this.deRegisterDeferredCallback()
     }

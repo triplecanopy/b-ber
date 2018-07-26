@@ -10,7 +10,8 @@ import history from '../lib/History'
 import deferrable from '../lib/decorate-deferrable'
 import Messenger from '../lib/Messenger'
 
-const MAX_RENDER_TIMEOUT = 400
+const MAX_RENDER_TIMEOUT = 0
+const MAX_DEFERRED_CALLBACK_TIMEOUT = 0
 
 
 let _bookContent = null
@@ -119,13 +120,17 @@ class Reader extends Component {
     componentWillMount() {
         this.registerCanCallDeferred(_ => this.state.ready)
         this.createStateFromOPF().then(_ => {
-            if (useLocalStorage === false) return this.loadSpineItem()
+            if (useLocalStorage === false) {
+                console.log('-- loadSpineItem')
+                return this.loadSpineItem()
+            }
 
             const storage = window.localStorage.getItem(this.localStorageKey)
             if (!storage) return this.loadSpineItem()
             const storage_ = JSON.parse(storage)
 
             this.updateViewerSettings(storage_.viewerSettings)
+            console.log('-- loadInitialSpineItem')
             this.loadInitialSpineItem(storage_)
         })
     }
@@ -150,6 +155,7 @@ class Reader extends Component {
         const {ready} = nextState
         if (ready && ready !== this.state.ready) {
             if (debug && verboseOutput) console.log('Reader#shouldComponentUpdate: requestDeferredCallbackExecution', `ready: ${ready}`)
+            console.log('-- requestdeferred')
             this.requestDeferredCallbackExecution()
         }
 
@@ -231,7 +237,10 @@ class Reader extends Component {
         }
 
         const {currentSpineItem, currentSpineItemIndex, spreadIndex} = storage[hash]
-        this.setState({currentSpineItem, currentSpineItemIndex, spreadIndex}, _ => this.loadSpineItem(currentSpineItem))
+        this.setState({currentSpineItem, currentSpineItemIndex, spreadIndex}, _ => {
+            console.log('-- loading')
+            this.loadSpineItem(currentSpineItem)
+        })
     }
 
     createStateFromOPF() {
@@ -241,22 +250,46 @@ class Reader extends Component {
 
         this.setState({opsURL})
 
+
+        console.time('Reader#createStateFromOPF')
+        console.time('Request.get(opfURL)')
+
         return Request.get(opfURL)
-            .then(XMLAdaptor.parseOPF)
-            .then(data => XMLAdaptor.parseNCX(data, opsURL))
-            .then(data => Promise.all([
-                XMLAdaptor.createGuideItems(data),
-                XMLAdaptor.createSpineItems(data),
-            ]))
+            .then(data => {
+                console.timeEnd('Request.get(opfURL)')
+                console.time('XMLAdaptor.parseOPF()')
+                return XMLAdaptor.parseOPF(data)
+            })
+            .then(data => {
+                console.timeEnd('XMLAdaptor.parseOPF()')
+                console.time('XMLAdaptor.parseNCX(data, opsURL)')
+                return XMLAdaptor.parseNCX(data, opsURL)
+            })
+            .then(data => {
+                console.timeEnd('XMLAdaptor.parseNCX(data, opsURL)')
+                console.time('XMLAdaptor.createGuideItems(data),XMLAdaptor.createSpineItems(data)')
+                return Promise.all([
+                    XMLAdaptor.createGuideItems(data),
+                    XMLAdaptor.createSpineItems(data),
+                ])
+            })
             .then(([a, b]) => {
+                console.timeEnd('XMLAdaptor.createGuideItems(data),XMLAdaptor.createSpineItems(data)')
+                console.time('XMLAdaptor.udpateGuideItemURLs(data, opsURL),XMLAdaptor.udpateSpineItemURLs(data, opsURL)')
                 const data = {...a, ...b}
                 return Promise.all([
                     XMLAdaptor.udpateGuideItemURLs(data, opsURL),
                     XMLAdaptor.udpateSpineItemURLs(data, opsURL),
                 ])
             })
-            .then(([a, b]) => XMLAdaptor.createBookMetadata({...a, ...b}))
-            .then(data => this.setState({...data}))
+            .then(([a, b]) => {
+                console.timeEnd('XMLAdaptor.udpateGuideItemURLs(data, opsURL),XMLAdaptor.udpateSpineItemURLs(data, opsURL)')
+                return XMLAdaptor.createBookMetadata({...a, ...b})
+            })
+            .then(data => {
+                console.timeEnd('Reader#createStateFromOPF')
+                return this.setState({...data})
+            })
             .catch(console.error)
     }
 
@@ -281,25 +314,38 @@ class Reader extends Component {
         let requestedSpineItem = spineItem
         if (!requestedSpineItem) [requestedSpineItem] = this.state.spine
 
+
         this.setState({ready: false})
         this.closeSidebars()
         this.disableEventHandling()
         this.disablePageTransitions()
         this.showSpinner()
 
+
+        console.time('Content Visible')
+        console.time('Reader#loadSpineItem')
+        console.time('Request.get(requestedSpineItem.absoluteURL)')
+
         Request.get(requestedSpineItem.absoluteURL)
             // basically we're passing in props to a dehydrated tree here.
             // should be cleaned up a bit
-            .then(data => XMLAdaptor.parseSpineItemResponse({
-                data,
-                requestedSpineItem,
-                ...this.state,
-                navigateToChapterByURL: this.navigateToChapterByURL,
-                paddingLeft: this.state.viewerSettings.paddingLeft,
-                columnGap: this.state.viewerSettings.columnGap,
-            }))
+            .then(data => {
+                console.timeEnd('Request.get(requestedSpineItem.absoluteURL)')
+                console.time('XMLAdaptor.parseSpineItemResponse()')
+                return XMLAdaptor.parseSpineItemResponse({
+                    data,
+                    requestedSpineItem,
+                    ...this.state,
+                    navigateToChapterByURL: this.navigateToChapterByURL,
+                    paddingLeft: this.state.viewerSettings.paddingLeft,
+                    columnGap: this.state.viewerSettings.columnGap,
+                })
+            })
 
             .then(({bookContent, scopedCSS}) => {
+
+                console.timeEnd('XMLAdaptor.parseSpineItemResponse()')
+
                 const {hash} = this.state
 
                 _bookContent = bookContent
@@ -310,6 +356,9 @@ class Reader extends Component {
                 }
             })
             .then(_ => {
+
+                console.time('this.setState({ready: true})')
+
                 this.setState({
                     currentSpineItem: requestedSpineItem,
                     spineItemURL: requestedSpineItem.absoluteURL,
@@ -327,7 +376,9 @@ class Reader extends Component {
                     }
 
                     return setTimeout(() => {
-                        this.setState({ready: true}) // TODO: force load
+                        console.timeEnd('this.setState({ready: true})')
+                        console.timeEnd('Reader#loadSpineItem')
+                        // return this.setState({ready: true}) // TODO: force load
                     }, MAX_RENDER_TIMEOUT)
                 })
             })
@@ -393,6 +444,8 @@ class Reader extends Component {
                 this.hideSpinner()
 
                 Messenger.sendPaginationEvent(this.state)
+
+                console.timeEnd('Content Visible')
             }
         }
 
@@ -404,6 +457,8 @@ class Reader extends Component {
                 this.hideSpinner()
 
                 Messenger.sendPaginationEvent(this.state)
+
+                console.timeEnd('Content Visible')
             }
         }
 
@@ -443,6 +498,7 @@ class Reader extends Component {
         let deferredCallback
         const {hash} = url
         if (hash) {
+            console.time('deferredCallback')
             deferredCallback = _ => {
                 this.navigateToElementById(hash)
 
@@ -450,7 +506,8 @@ class Reader extends Component {
                     // this.enablePageTransitions()
                     this.enableEventHandling()
                     this.hideSpinner()
-                }, 100) // TODO: should match transition speed. all these deferreds should be collected together
+                    console.timeEnd('Content Visible')
+                }, MAX_DEFERRED_CALLBACK_TIMEOUT) // TODO: should match transition speed. all these deferreds should be collected together
             }
         }
 
@@ -508,6 +565,7 @@ class Reader extends Component {
             spine,
             showSidebar,
             hash,
+            ready,
             spreadIndex,
             spreadTotal,
             viewerSettings,
@@ -535,6 +593,7 @@ class Reader extends Component {
             >
                 <Frame
                     hash={hash}
+                    ready={ready}
                     spreadIndex={spreadIndex}
                     spreadTotal={spreadTotal}
                     bookContent={bookContentComponent}

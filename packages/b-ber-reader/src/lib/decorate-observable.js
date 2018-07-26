@@ -6,7 +6,7 @@ import {isNumeric} from '../helpers/Types'
 import {debug, verboseOutput} from '../config'
 import browser from '../lib/browser'
 
-const ensureRenderTimeout = 200
+const ensureRenderTimeout = 0
 
 const log = (spreadTotal, contentDimensions, frameHeight, columns) => {
     if (debug && verboseOutput) {
@@ -105,6 +105,10 @@ export default function observable(target) {
         let frameHeight
 
 
+        if (this.props.ready === true) return
+        console.log('-- calculateNodePosition')
+        console.time('observable#setReaderState')
+
         // FF only
         if (browser.name === 'firefox') {
             contentDimensions = this.contentNode.offsetWidth - (paddingLeft * 2)
@@ -141,6 +145,7 @@ export default function observable(target) {
             }, ensureRenderTimeout)
         }
         else {
+            console.timeEnd('observable#setReaderState')
             this.props.setReaderState({spreadTotal, ready: true})
         }
 

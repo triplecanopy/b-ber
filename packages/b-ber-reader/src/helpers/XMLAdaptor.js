@@ -161,6 +161,9 @@ class XMLAdaptor {
         const {responseURL} = response.data.request
         const {hash, opsURL, paddingLeft, columnGap} = response
 
+
+        console.time('XMLAdaptor#parseSpineItemResponse')
+
         return new Promise(resolve => {
             const promises = []
             const htmlToReactParser = new HtmlToReactParser()
@@ -208,7 +211,13 @@ class XMLAdaptor {
                 )
             )
 
+            console.time('XMLAdaptor#parseSpineItemResponse: get stylesheets')
+
             Promise.all(promises).then(sheets => {
+
+                console.timeEnd('XMLAdaptor#parseSpineItemResponse: get stylesheets')
+                console.time('XMLAdaptor#parseSpineItemResponse: parse stylesheets')
+
                 const hashedClassName = `_${hash}`
                 let scopedCSS = ''
                 sheets.forEach(sheet => {
@@ -266,6 +275,9 @@ class XMLAdaptor {
 
                     scopedCSS += csstree.generate(ast)
                 })
+
+                console.timeEnd('XMLAdaptor#parseSpineItemResponse: parse stylesheets')
+                console.timeEnd('XMLAdaptor#parseSpineItemResponse')
 
                 resolve({bookContent, scopedCSS})
             })
