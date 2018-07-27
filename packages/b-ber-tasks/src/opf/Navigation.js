@@ -38,6 +38,7 @@ class Navigation {
     constructor() {
         this.navDocs = [
             'toc.ncx',
+            'toc.xhtml',
         ]
     }
 

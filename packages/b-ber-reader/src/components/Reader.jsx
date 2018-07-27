@@ -3,9 +3,9 @@ import PropTypes from 'prop-types'
 import findIndex from 'lodash/findIndex'
 import debounce from 'lodash/debounce'
 import {Controls, Frame, Spinner} from '.'
-import {Request, XMLAdaptor, Asset, Url} from '../helpers'
+import {Request, XMLAdaptor, Asset, Url, Cache, Storage} from '../helpers'
 import {ViewerSettings} from '../models'
-import {debug, verboseOutput, useLocalStorage} from '../config'
+import {debug, logTime, verboseOutput, useLocalStorage} from '../config'
 import history from '../lib/History'
 import deferrable from '../lib/decorate-deferrable'
 import Messenger from '../lib/Messenger'
@@ -118,20 +118,16 @@ class Reader extends Component {
     }
 
     componentWillMount() {
+        Cache.clear() // clear initially for now. still caches styles for subsequent pages
         this.registerCanCallDeferred(_ => this.state.ready)
         this.createStateFromOPF().then(_ => {
-            if (useLocalStorage === false) {
-                console.log('-- loadSpineItem')
-                return this.loadSpineItem()
-            }
+            if (useLocalStorage === false) return this.loadSpineItem()
 
-            const storage = window.localStorage.getItem(this.localStorageKey)
+            const storage = Storage.get(this.localStorageKey)
             if (!storage) return this.loadSpineItem()
-            const storage_ = JSON.parse(storage)
 
-            this.updateViewerSettings(storage_.viewerSettings)
-            console.log('-- loadInitialSpineItem')
-            this.loadInitialSpineItem(storage_)
+            this.updateViewerSettings(storage.viewerSettings)
+            this.loadInitialSpineItem(storage)
         })
     }
 
@@ -155,7 +151,6 @@ class Reader extends Component {
         const {ready} = nextState
         if (ready && ready !== this.state.ready) {
             if (debug && verboseOutput) console.log('Reader#shouldComponentUpdate: requestDeferredCallbackExecution', `ready: ${ready}`)
-            console.log('-- requestdeferred')
             this.requestDeferredCallbackExecution()
         }
 
@@ -220,17 +215,15 @@ class Reader extends Component {
         if (useLocalStorage === false) return
 
         const viewerSettings = {...this.state.viewerSettings.settings}
-        let storage = window.localStorage.getItem(this.localStorageKey)
-        storage = storage ? JSON.parse(storage) : {}
+        const storage = Storage.get(this.localStorageKey)
 
         if (!storage.viewerSettings) storage.viewerSettings = {}
         storage.viewerSettings = {...storage.viewerSettings, ...viewerSettings}
-        storage = JSON.stringify(storage)
 
-        window.localStorage.setItem(this.localStorageKey, storage)
+        Storage.set(this.localStorageKey, storage)
     }
 
-    loadInitialSpineItem(storage) {
+    loadInitialSpineItem(storage = {}) {
         const {hash} = this.state
         if (!storage[hash] || !storage[hash].currentSpineItem) {
             return this.loadSpineItem()
@@ -238,7 +231,6 @@ class Reader extends Component {
 
         const {currentSpineItem, currentSpineItemIndex, spreadIndex} = storage[hash]
         this.setState({currentSpineItem, currentSpineItemIndex, spreadIndex}, _ => {
-            console.log('-- loading')
             this.loadSpineItem(currentSpineItem)
         })
     }
@@ -251,31 +243,43 @@ class Reader extends Component {
         this.setState({opsURL})
 
 
-        console.time('Reader#createStateFromOPF')
-        console.time('Request.get(opfURL)')
+        if (logTime) {
+            console.time('Reader#createStateFromOPF')
+            console.time('Request.get(opfURL)')
+        }
 
         return Request.get(opfURL)
             .then(data => {
-                console.timeEnd('Request.get(opfURL)')
-                console.time('XMLAdaptor.parseOPF()')
+
+                if (logTime) {
+                    console.timeEnd('Request.get(opfURL)')
+                    console.time('XMLAdaptor.parseOPF()')
+                }
+
                 return XMLAdaptor.parseOPF(data)
             })
             .then(data => {
-                console.timeEnd('XMLAdaptor.parseOPF()')
-                console.time('XMLAdaptor.parseNCX(data, opsURL)')
+                if (logTime) {
+                    console.timeEnd('XMLAdaptor.parseOPF()')
+                    console.time('XMLAdaptor.parseNCX(data, opsURL)')
+                }
                 return XMLAdaptor.parseNCX(data, opsURL)
             })
             .then(data => {
-                console.timeEnd('XMLAdaptor.parseNCX(data, opsURL)')
-                console.time('XMLAdaptor.createGuideItems(data),XMLAdaptor.createSpineItems(data)')
+                if (logTime) {
+                    console.timeEnd('XMLAdaptor.parseNCX(data, opsURL)')
+                    console.time('XMLAdaptor.createGuideItems(data),XMLAdaptor.createSpineItems(data)')
+                }
                 return Promise.all([
                     XMLAdaptor.createGuideItems(data),
                     XMLAdaptor.createSpineItems(data),
                 ])
             })
             .then(([a, b]) => {
-                console.timeEnd('XMLAdaptor.createGuideItems(data),XMLAdaptor.createSpineItems(data)')
-                console.time('XMLAdaptor.udpateGuideItemURLs(data, opsURL),XMLAdaptor.udpateSpineItemURLs(data, opsURL)')
+                if (logTime) {
+                    console.timeEnd('XMLAdaptor.createGuideItems(data),XMLAdaptor.createSpineItems(data)')
+                    console.time('XMLAdaptor.udpateGuideItemURLs(data, opsURL),XMLAdaptor.udpateSpineItemURLs(data, opsURL)')
+                }
                 const data = {...a, ...b}
                 return Promise.all([
                     XMLAdaptor.udpateGuideItemURLs(data, opsURL),
@@ -283,11 +287,11 @@ class Reader extends Component {
                 ])
             })
             .then(([a, b]) => {
-                console.timeEnd('XMLAdaptor.udpateGuideItemURLs(data, opsURL),XMLAdaptor.udpateSpineItemURLs(data, opsURL)')
+                if (logTime) console.timeEnd('XMLAdaptor.udpateGuideItemURLs(data, opsURL),XMLAdaptor.udpateSpineItemURLs(data, opsURL)')
                 return XMLAdaptor.createBookMetadata({...a, ...b})
             })
             .then(data => {
-                console.timeEnd('Reader#createStateFromOPF')
+                if (logTime) console.timeEnd('Reader#createStateFromOPF')
                 return this.setState({...data})
             })
             .catch(console.error)
@@ -321,17 +325,21 @@ class Reader extends Component {
         this.disablePageTransitions()
         this.showSpinner()
 
+        if (logTime) {
+            console.time('Content Visible')
+            console.time('Reader#loadSpineItem')
+            console.time('Request.get(requestedSpineItem.absoluteURL)')
+        }
 
-        console.time('Content Visible')
-        console.time('Reader#loadSpineItem')
-        console.time('Request.get(requestedSpineItem.absoluteURL)')
 
         Request.get(requestedSpineItem.absoluteURL)
             // basically we're passing in props to a dehydrated tree here.
             // should be cleaned up a bit
             .then(data => {
-                console.timeEnd('Request.get(requestedSpineItem.absoluteURL)')
-                console.time('XMLAdaptor.parseSpineItemResponse()')
+                if (logTime) {
+                    console.timeEnd('Request.get(requestedSpineItem.absoluteURL)')
+                    console.time('XMLAdaptor.parseSpineItemResponse()')
+                }
                 return XMLAdaptor.parseSpineItemResponse({
                     data,
                     requestedSpineItem,
@@ -344,7 +352,7 @@ class Reader extends Component {
 
             .then(({bookContent, scopedCSS}) => {
 
-                console.timeEnd('XMLAdaptor.parseSpineItemResponse()')
+                if (logTime) console.timeEnd('XMLAdaptor.parseSpineItemResponse()')
 
                 const {hash} = this.state
 
@@ -357,7 +365,7 @@ class Reader extends Component {
             })
             .then(_ => {
 
-                console.time('this.setState({ready: true})')
+                if (logTime) console.time('this.setState({ready: true})')
 
                 this.setState({
                     currentSpineItem: requestedSpineItem,
@@ -376,13 +384,28 @@ class Reader extends Component {
                     }
 
                     return setTimeout(() => {
-                        console.timeEnd('this.setState({ready: true})')
-                        console.timeEnd('Reader#loadSpineItem')
+                        if (logTime) {
+                            console.timeEnd('this.setState({ready: true})')
+                            console.timeEnd('Reader#loadSpineItem')
+                        }
                         // return this.setState({ready: true}) // TODO: force load
                     }, MAX_RENDER_TIMEOUT)
                 })
             })
-            .catch(console.error)
+            .catch(err => {
+                // Something went wrong loading the book. clear storage for this book
+                // TODO: retry? try to navigate to home
+
+                console.error(err)
+
+                const storage = Storage.get(this.localStorageKey)
+                const {hash} = this.state
+                delete storage[hash]
+                Storage.set(this.localStorageKey, storage)
+
+                // this.loadSpineItem()
+
+            })
     }
 
     handleSidebarButtonClick(value) {
@@ -445,7 +468,7 @@ class Reader extends Component {
 
                 Messenger.sendPaginationEvent(this.state)
 
-                console.timeEnd('Content Visible')
+                if (logTime) console.timeEnd('Content Visible')
             }
         }
 
@@ -458,7 +481,7 @@ class Reader extends Component {
 
                 Messenger.sendPaginationEvent(this.state)
 
-                console.timeEnd('Content Visible')
+                if (logTime) console.timeEnd('Content Visible')
             }
         }
 
@@ -498,7 +521,9 @@ class Reader extends Component {
         let deferredCallback
         const {hash} = url
         if (hash) {
-            console.time('deferredCallback')
+
+            if (logTime) console.time('deferredCallback')
+
             deferredCallback = _ => {
                 this.navigateToElementById(hash)
 
@@ -506,7 +531,9 @@ class Reader extends Component {
                     // this.enablePageTransitions()
                     this.enableEventHandling()
                     this.hideSpinner()
-                    console.timeEnd('Content Visible')
+
+                    if (logTime) console.timeEnd('Content Visible')
+
                 }, MAX_DEFERRED_CALLBACK_TIMEOUT) // TODO: should match transition speed. all these deferreds should be collected together
             }
         }

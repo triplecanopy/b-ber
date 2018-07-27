@@ -9,6 +9,7 @@ const localConfig = (_ => {
 
 module.exports = {
     debug: false,                   // 'colorizes' elements. useful for work on spreads/markers
+    logTime: false,                 // show console.time
     useLocalStorage: true,          // load/save data from localStorage
     verboseOutput: false,           // log level
     ...localConfig,                 // user opts

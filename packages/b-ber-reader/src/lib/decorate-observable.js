@@ -3,7 +3,7 @@
 import debounce from 'lodash/debounce'
 import ResizeObserver from 'resize-observer-polyfill'
 import {isNumeric} from '../helpers/Types'
-import {debug, verboseOutput} from '../config'
+import {debug, verboseOutput, logTime} from '../config'
 import browser from '../lib/browser'
 
 const ensureRenderTimeout = 0
@@ -106,8 +106,8 @@ export default function observable(target) {
 
 
         if (this.props.ready === true) return
-        console.log('-- calculateNodePosition')
-        console.time('observable#setReaderState')
+
+        if (logTime) console.time('observable#setReaderState')
 
         // FF only
         if (browser.name === 'firefox') {
@@ -145,7 +145,7 @@ export default function observable(target) {
             }, ensureRenderTimeout)
         }
         else {
-            console.timeEnd('observable#setReaderState')
+            if (logTime) console.timeEnd('observable#setReaderState')
             this.props.setReaderState({spreadTotal, ready: true})
         }
 

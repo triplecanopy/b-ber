@@ -2,10 +2,11 @@ import xmljs from 'xml-js'
 import {Parser as HtmlToReactParser} from 'html-to-react'
 import find from 'lodash/find'
 import csstree, {List} from 'css-tree'
-import {Url, Request} from '.'
+import {Url, Request, Cache} from '.'
 import {BookMetadata, SpineItem, GuideItem} from '../models'
 import {processingInstructions, isValidNode} from '../lib/process-nodes'
 import DocumentProcessor from '../lib/DocumentProcessor'
+import {logTime} from '../config'
 
 class XMLAdaptor {
     static opfURL(url) {
@@ -58,10 +59,12 @@ class XMLAdaptor {
     static createSpineItems(rootNode) {
         const {__manifest, __spine, __ncx} = rootNode
         return new Promise(resolve => {
-            const spine = __spine.elements.map(itemref => {
+            let spine
+
+            spine = __spine.elements.map(itemref => {
                 const {idref, linear} = itemref.attributes
                 const item = find(__manifest.elements, a => a.attributes.id === idref)
-                if (!item) return new SpineItem({idref, linear})
+                if (!item || linear !== 'yes') return null // spine item not found in manifest (!) or non-linear
 
                 const {id, href} = item.attributes
                 const mediaType = item.attributes['media-type']
@@ -69,6 +72,8 @@ class XMLAdaptor {
                 const spineItem = new SpineItem({id, href, mediaType, properties, idref, linear})
                 return spineItem
             })
+
+            spine = spine.filter(Boolean) // remove non-linear and invalid entries
 
 
             if (__ncx) {
@@ -162,7 +167,7 @@ class XMLAdaptor {
         const {hash, opsURL, paddingLeft, columnGap} = response
 
 
-        console.time('XMLAdaptor#parseSpineItemResponse')
+        if (logTime) console.time('XMLAdaptor#parseSpineItemResponse')
 
         return new Promise(resolve => {
             const promises = []
@@ -198,30 +203,40 @@ class XMLAdaptor {
 
             for (let i = 0; i < links.length; i++) {
                 if (links[i].rel === 'stylesheet') {
-                    styles.push(Url.resolveRelativeURL(
-                        Url.trimFilenameFromResponse(responseURL),
-                        Url.trimSlashes(links[i].getAttribute('href')))
-                    )
+                    const base = Url.trimFilenameFromResponse(responseURL)
+                    const url = Url.resolveRelativeURL(base, Url.trimSlashes(links[i].getAttribute('href')))
+
+                    styles.push({url, base})
                 }
             }
 
-            styles.forEach(sheet =>
-                promises.push(
-                    Request.get(sheet).then(({data}) => data)
-                )
-            )
+            styles.forEach(({url, base}) => {
+                promises.push(new Promise(resolve => {
+                    const cache = Cache.get(url)
+                    if (cache && cache.data) return resolve({base, data: cache.data})
+                    return Request.get(url).then(({data}) => {
+                        Cache.set(url, data)
+                        return resolve({base, data})
+                    })
+                }))
+            })
 
-            console.time('XMLAdaptor#parseSpineItemResponse: get stylesheets')
+            if (logTime) console.time('XMLAdaptor#parseSpineItemResponse: get stylesheets')
 
             Promise.all(promises).then(sheets => {
 
-                console.timeEnd('XMLAdaptor#parseSpineItemResponse: get stylesheets')
-                console.time('XMLAdaptor#parseSpineItemResponse: parse stylesheets')
+                if (logTime) {
+                    console.timeEnd('XMLAdaptor#parseSpineItemResponse: get stylesheets')
+                    console.time('XMLAdaptor#parseSpineItemResponse: parse stylesheets')
+                }
 
                 const hashedClassName = `_${hash}`
                 let scopedCSS = ''
-                sheets.forEach(sheet => {
+                sheets.forEach(({base, data}) => {
+                    const sheet = data
+                    const styleSheetURL = Url.resolveRelativeURL(opsURL, base)
                     const ast = csstree.parse(sheet)
+
                     csstree.walk(ast, {
                         enter: (node, item, list) => {
                             let value
@@ -266,7 +281,7 @@ class XMLAdaptor {
                                 }
 
                                 if (Url.isRelativeURL(nodeText)) {
-                                    nodeText = Url.resolveRelativeURL(opsURL, nodeText)
+                                    nodeText = Url.resolveRelativeURL(styleSheetURL, nodeText)
                                     node.value.value = `"${nodeText}"` // eslint-disable-line no-param-reassign
                                 }
                             }
@@ -276,8 +291,10 @@ class XMLAdaptor {
                     scopedCSS += csstree.generate(ast)
                 })
 
-                console.timeEnd('XMLAdaptor#parseSpineItemResponse: parse stylesheets')
-                console.timeEnd('XMLAdaptor#parseSpineItemResponse')
+                if (logTime) {
+                    console.timeEnd('XMLAdaptor#parseSpineItemResponse: parse stylesheets')
+                    console.timeEnd('XMLAdaptor#parseSpineItemResponse')
+                }
 
                 resolve({bookContent, scopedCSS})
             })
