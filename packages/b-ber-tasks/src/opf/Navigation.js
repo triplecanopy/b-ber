@@ -22,7 +22,7 @@ import Toc from '@canopycanopycanopy/b-ber-templates/Toc'
 import Ncx from '@canopycanopycanopy/b-ber-templates/Ncx'
 import Guide from '@canopycanopycanopy/b-ber-templates/Opf/Guide'
 import Spine from '@canopycanopycanopy/b-ber-templates/Opf/Spine'
-import {YamlAdaptor, Template, ManifestItemProperties, SpineItem} from '@canopycanopycanopy/b-ber-lib'
+import {YamlAdaptor, Template, ManifestItemProperties} from '@canopycanopycanopy/b-ber-lib'
 import {flattenSpineFromYAML, nestedContentToYAML, pathInfoFromFiles} from './helpers'
 
 
@@ -38,7 +38,7 @@ class Navigation {
     constructor() {
         this.navDocs = [
             'toc.ncx',
-            'toc.xhtml',
+            'text/toc.xhtml',
         ]
     }
 
@@ -49,22 +49,7 @@ class Navigation {
     createEmptyNavDocuments() {
         return new Promise(resolve => {
             log.info(`opf build navigation documents [${this.navDocs.join(', ')}]`)
-            const promises = []
-            this.navDocs.forEach(_ => {
-                promises.push(new Promise(() =>
-                    fs.writeFile(path.join(state.dist, 'OPS', _), '', err => {
-                        if (err) throw err
-
-                        const fileName = _.substring(0, _.indexOf('.'))
-                        const fileData = new SpineItem({fileName, in_toc: false, linear: false, generated: true})
-
-                        state.add('spine', fileData)
-
-                        resolve()
-                    })
-                ))
-            })
-
+            const promises = this.navDocs.map(a => fs.writeFile(path.join(state.dist, 'OPS', a), ''))
             return Promise.all(promises).then(resolve)
         })
     }
