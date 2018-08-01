@@ -1,5 +1,6 @@
 /* eslint-disable class-methods-use-this */
 import DocumentPreProcessor from './DocumentPreProcessor'
+import {rand} from '../helpers/utils'
 
 class DocumentProcessor {
     static defaults = {
@@ -8,6 +9,7 @@ class DocumentProcessor {
         markerElement: 'span',
         paddingLeft: 0,
         columnGap: 0,
+        responseURL: window.location.host,
     }
     constructor(options = {}) {
 
@@ -16,8 +18,12 @@ class DocumentProcessor {
 
         // cleanup
         DocumentPreProcessor.removeStyleSheets()
+        DocumentPreProcessor.removeScripts()
 
+        // settings
         this.settings = {...DocumentProcessor.defaults, ...options}
+
+        DocumentPreProcessor.setRequestURI(this.settings.responseURL)
 
         this.targetClassNames = this.settings.targetClassNames
         this.markerClassNames = this.settings.markerClassNames
@@ -145,7 +151,7 @@ class DocumentProcessor {
     }
 
     createMarkerId() {
-        return String(Math.random()).slice(2)
+        return rand()
     }
 
     walkDocument(doc, callback) {
@@ -222,6 +228,7 @@ class DocumentProcessor {
 
         DocumentPreProcessor.setContextDocument(doc)
         DocumentPreProcessor.createStyleSheets({paddingLeft, columnGap})
+        DocumentPreProcessor.createScriptElements()
         DocumentPreProcessor.parseXML()
 
         this.walkDocument(doc, doc_ => {

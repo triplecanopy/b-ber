@@ -93,7 +93,7 @@ class Spread extends Component {
         }
 
         if (!this.markerNode.dataset || !this.markerNode.dataset.verso || !this.markerNode.dataset.recto) {
-            console.warn(`Cannot get dataset from marker ${this.props['data-marker-reference']}`)
+            console.warn(`Could not get dataset from marker ${this.props['data-marker-reference']}`)
             return {verso, recto}
         }
 

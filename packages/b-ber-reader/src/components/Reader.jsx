@@ -101,6 +101,10 @@ class Reader extends Component {
         this.handleResize = this.handleResize.bind(this)
 
 
+        this.handleScriptCreate = this.handleScriptCreate.bind(this)
+        this.handleScriptError = this.handleScriptError.bind(this)
+        this.handleScriptLoad = this.handleScriptLoad.bind(this)
+
         this.debounceResizeSpeed = 400
         this.handleResizeStart = debounce(this.handleResizeStart, this.debounceResizeSpeed, {leading: true, trailing: false}).bind(this)
         this.handleResizeEnd = debounce(this.handleResizeEnd, this.debounceResizeSpeed, {leading: false, trailing: true}).bind(this)
@@ -355,13 +359,16 @@ class Reader extends Component {
                 if (logTime) console.timeEnd('XMLAdaptor.parseSpineItemResponse()')
 
                 const {hash} = this.state
+                let {cssHash} = this.state
 
                 _bookContent = bookContent
 
-                if (this.state.cssHash === null) {
-                    this.setState({cssHash: hash})
+                if (cssHash === null) {
+                    cssHash = hash
                     Asset.appendBookStyles(scopedCSS, hash)
                 }
+
+                this.setState({cssHash})
             })
             .then(_ => {
 
@@ -585,6 +592,10 @@ class Reader extends Component {
         this.setState({...props})
     }
 
+    handleScriptCreate() { console.log('handleScriptCreate') } // eslint-disable-line class-methods-use-this
+    handleScriptError() { console.log('handleScriptError') } // eslint-disable-line class-methods-use-this
+    handleScriptLoad() { console.log('handleScriptLoad') } // eslint-disable-line class-methods-use-this
+
     render() {
         const {
             metadata,
@@ -593,6 +604,7 @@ class Reader extends Component {
             showSidebar,
             hash,
             ready,
+            bookURL,
             spreadIndex,
             spreadTotal,
             viewerSettings,
@@ -621,6 +633,7 @@ class Reader extends Component {
                 <Frame
                     hash={hash}
                     ready={ready}
+                    bookURL={bookURL}
                     spreadIndex={spreadIndex}
                     spreadTotal={spreadTotal}
                     bookContent={bookContentComponent}
@@ -628,7 +641,6 @@ class Reader extends Component {
                     setReaderState={this._setState}
                     viewerSettings={viewerSettings}
                 />
-
                 <Spinner spinnerVisible={spinnerVisible} />
             </Controls>
         )

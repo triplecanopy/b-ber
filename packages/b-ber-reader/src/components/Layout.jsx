@@ -70,15 +70,14 @@ class Layout extends Component {
         this.contentNode = null
         this.layoutNode = null
 
-        ::this.getFrameHeight
-        ::this.updateDimensions
-        ::this.updateTransform
-        ::this.onResizeDone
-        ::this.bindEventListeners
-        ::this.unBindEventListeners
+        this.getFrameHeight = this.getFrameHeight.bind(this)
+        this.updateDimensions = this.updateDimensions.bind(this)
+        this.updateTransform = this.updateTransform.bind(this)
+        this.onResizeDone = this.onResizeDone.bind(this)
+        this.bindEventListeners = this.bindEventListeners.bind(this)
+        this.unBindEventListeners = this.unBindEventListeners.bind(this)
 
         this.handleResize = debounce(this.onResizeDone, this.debounceSpeed, {}).bind(this)
-
     }
 
     getChildContext() {

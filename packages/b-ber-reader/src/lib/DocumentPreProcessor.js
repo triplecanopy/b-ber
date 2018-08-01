@@ -1,12 +1,14 @@
 import find from 'lodash/find'
 import {mediaSmall, mediaLarge} from './multi-column-styles'
-import {MediaStyleSheet} from '../models'
+import {MediaStyleSheet, Script} from '../models'
 import {media} from '../constants'
 
 const state = {
     root: null,         // app context, used for styles
     document: null,     // content context, used for (removing) scripts
     styleSheets: [],    // MediaStyleSheet list
+    scripts: [],        // scripts
+    requestURI: '',     // original domain of the request
 }
 
 class DocumentPreProcessor {
@@ -16,6 +18,10 @@ class DocumentPreProcessor {
 
     static setRootDocument(document) {
         state.root = document
+    }
+
+    static setRequestURI(requestURI) {
+        state.requestURI = requestURI
     }
 
     static createStyleSheets({paddingLeft, columnGap}) {
@@ -38,9 +44,24 @@ class DocumentPreProcessor {
         )
     }
 
+    static appendScripts() {
+        state.scripts.forEach(a =>
+            (a.src && a.type === 'text/javascript') && a.appendScript(state.root) // TODO: better filter needed here
+        )
+    }
+
+    static createScriptElements() {
+        const scriptElements = Array.prototype.slice.call((state.document.querySelectorAll('script') || []), 0)
+        const {requestURI, scripts} = state
+
+        if (!scriptElements) return scripts
+
+        state.scripts = scriptElements.map(node => (new Script({node, requestURI})))
+
+        return state.scripts
+    }
+
     static removeScriptElements() {
-        // TODO: adjust the following to allow json+ld. might want to move the
-        // json from state.document to state.root
         const scripts = state.document.querySelectorAll('script')
         for (let i = 0; i < scripts.length; i++) {
             scripts[i].parentNode.removeChild(scripts[i])
@@ -71,15 +92,28 @@ class DocumentPreProcessor {
     }
 
     static removeStyleSheet({id, media}) {
-        const {styleSheetElement, styleSheetId} = DocumentPreProcessor.getStyleSheetByMediaOrId({id, media})
+        const {styleSheetElement} = DocumentPreProcessor.getStyleSheetByMediaOrId({id, media})
         styleSheetElement.parentNode.removeChild(styleSheetElement)
-        state.styleSheets = [...state.styleSheets.filter(a => a.id !== styleSheetId)]
+        state.styleSheets = [...state.styleSheets.filter(a => a.id !== id)]
     }
 
     static removeStyleSheets() {
         let sheet
         while ((sheet = state.styleSheets.pop())) {
             DocumentPreProcessor.removeStyleSheet({id: sheet.id})
+        }
+    }
+
+    static removeScript({id}) {
+        const script = state.root.querySelector(`#${id}`)
+        if (script) script.parentNode.removeChild(script)
+        state.scripts = [...state.scripts.filter(a => a.id !== id)]
+    }
+
+    static removeScripts() {
+        let script
+        while ((script = state.scripts.pop())) {
+            DocumentPreProcessor.removeScript({id: script.id})
         }
     }
 
@@ -108,6 +142,7 @@ class DocumentPreProcessor {
 
         DocumentPreProcessor.removeScriptElements()
         DocumentPreProcessor.appendStyleSheets()
+        DocumentPreProcessor.appendScripts()
 
         if (callback && typeof callback === 'function') return callback(err, state.document)
         return state.document

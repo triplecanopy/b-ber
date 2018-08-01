@@ -172,7 +172,7 @@ class XMLAdaptor {
         return new Promise(resolve => {
             const promises = []
             const htmlToReactParser = new HtmlToReactParser()
-            const documentProcessor = new DocumentProcessor({paddingLeft, columnGap})
+            const documentProcessor = new DocumentProcessor({paddingLeft, columnGap, responseURL})
             const {xml, doc} = documentProcessor.parseXML(data)
             const re = /<body[^>]*?>([\s\S]*)<\/body>/
 
@@ -192,9 +192,6 @@ class XMLAdaptor {
 
             // scope stylesheets and pass them along to be appended to the DOM
             // as well
-
-            // TODO: this should be cached so that we're not having to
-            // parse the CSS again every time a new chapter is rendered
 
             // TODO: will also need to grab inline styles and parse similarly
             // TODO: need to fix page breaks here: "page-break-inside: auto"
