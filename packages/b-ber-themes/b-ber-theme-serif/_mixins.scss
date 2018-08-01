@@ -201,3 +201,75 @@ $alert: (
     'danger'  : $danger,
     'success'  : $success,
 );
+
+// Gallery Styles
+
+@function columnOffest($column, $position, $grid-columns) {
+	@if $position == "end" {
+		@return ($column) * (65% / ($grid-columns));
+	} @if $position == "start" {
+		@return ($column - 1) * (65% / $grid-columns);
+	} 
+}
+
+@function gutterOffest($column, $grid-columns) {
+	@return ($column - 1) * (35% / ($grid-columns - 1));
+}
+
+// If gallery items are on second page, reset left offset
+
+@function mobileOffest($column, $position, $grid-columns){
+	@if $column > 8 {
+		@return columnOffest(($column - 7), $position, $grid-columns) + gutterOffest(($column - 7), $grid-columns);
+	} @else {
+		@return columnOffest($column, $position, $grid-columns) + gutterOffest($column, $grid-columns);
+	}
+}
+
+// If gallery items are on second page, knock under page one content
+
+@function mobileTop($column, $top){
+	@if $column > 8 {
+		@return calc(75vh + #{$top});
+	} @else {
+		@return $top;
+	}
+}
+
+// Galley Item Mixin Parameters
+
+//  @param $column      int                     left    Number anchors media to corresponding column
+//  @param $position    string (start | end)    left    Positions media at start or end of @param column
+//  @param $width       int                     width   Calculates width based on columns * input
+//  @param $position    string (start | end)    width   Extends media to either "start or end" of column
+//  @param $top         int (px)                top     Accepts px value
+
+// Mixin uses param names for clarity
+
+//  @include galleryItem(
+//      $column: number, 
+//      $position: string (start | end),
+//      $width: number, 
+//      $extend: string (start | end), 
+//      $top: number (takes px value)
+//  );
+
+@mixin galleryItem($column, $position, $width, $extend, $top) {
+	@include break('mobile') { 
+		width: columnOffest($width, $extend, 9) + gutterOffest($width, 9);
+		left: mobileOffest($column, $position, 9);
+		top: mobileTop($column, $top);
+	}
+
+	@include break('tablet') { 
+		width: columnOffest($width, $extend, 9) + gutterOffest($width, 9);
+		left: mobileOffest($column, $position, 9);
+		top: mobileTop($column, $top);
+	}
+
+	@include break('desktop') { 
+		width: columnOffest($width, $extend, 16) + gutterOffest($width, 16);
+		left: columnOffest($column, $position, 16) + gutterOffest($column, 16);
+		top: $top;
+	}
+}
