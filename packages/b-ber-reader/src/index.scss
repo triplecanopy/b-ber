@@ -370,7 +370,6 @@ a {
 // debug
 
 .grid__debug {
-    display: none;
     position: fixed;
     top: 0;
     left: 0;
@@ -384,5 +383,8 @@ a {
         top: 0;
         bottom: 0;
         width: 1px;
+        color: white;
+        padding-top: 50px;
+        text-align: center;
     }
 }

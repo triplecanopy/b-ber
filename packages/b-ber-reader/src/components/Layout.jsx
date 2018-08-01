@@ -215,7 +215,7 @@ class Layout extends Component {
             styles = {transform, transition: `transform ${transitionSpeed}ms ease 0s`}
         }
 
-        if (debug) styles = {...styles, opacity: 1, backgroundColor: 'white'}
+        if (debug) styles = {...styles, opacity: 0.4, backgroundColor: 'blue'}
 
         return styles
     }

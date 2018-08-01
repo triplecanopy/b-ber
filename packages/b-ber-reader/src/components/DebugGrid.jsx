@@ -13,12 +13,13 @@ class DebugGrid extends Component {
         const paddingLeft = gridColumnWidth + gridGutterWidth
         for (let i = 0; i < gridColumns; i++) {
             const styles = {left: paddingLeft * i, width: gridColumnWidth}
+            const index = i + 1
             lines.push(
                 <span
                     key={i}
                     style={styles}
                     className='grid__debug__line'
-                />
+                >{index}</span>
             )
         }
 
