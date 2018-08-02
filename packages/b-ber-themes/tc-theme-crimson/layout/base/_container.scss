@@ -21,9 +21,8 @@ blockquote {
 
 section {
     clear: both;
-    padding-right: 1em;
+    padding-right: 0.75vh;
     @include break('mobile') { padding-right: 0; }
-    @include break('xlarge') { padding-right: 0.5em; }
     &:after {
         content: ' ';
         display: table;

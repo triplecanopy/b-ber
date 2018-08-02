@@ -7,6 +7,9 @@ class Viewport {
     static isXlarge() {
         return window.innerWidth >= breakpoints.XLARGE
     }
+    static isTall() {
+        return window.innerHeight >= breakpoints.TALL
+    }
 }
 
 export default Viewport
