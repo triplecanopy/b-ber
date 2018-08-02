@@ -12,6 +12,9 @@ $media-tablet: 'only screen \
                 and (max-width: 768px)'                     !default;
 $media-desktop: 'only screen \
                 and (min-width: 680px)'                     !default;
+$media-xlarge:  'only screen \
+                and (min-width: 1336px)'                    !default;
+
 
 // Colors
 $white: #fff                                                !default;
