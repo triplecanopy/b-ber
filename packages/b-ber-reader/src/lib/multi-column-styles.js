@@ -1,7 +1,8 @@
 import {debug} from '../config'
 
 export const mediaLarge = ({paddingLeft, columnGap}) => [{
-    selector: `.figure__fullbleed figure`,
+    selector: `.figure__fullbleed figure,
+               .spread .spread__content`,
     declarations: [
         `opacity: ${debug ? 0.8 : 1}`,
         `top: 0`,
@@ -31,7 +32,8 @@ export const mediaLarge = ({paddingLeft, columnGap}) => [{
 
 
 export const mediaSmall = (/* {paddingLeft, columnGap} */) => [{
-    selector: `.figure__fullbleed figure`,
+    selector: `.figure__fullbleed figure
+               .spread .spread__content`,
     declarations: [
         `z-index: 11`,
         `width: 100vw`,

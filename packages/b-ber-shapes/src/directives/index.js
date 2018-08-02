@@ -60,6 +60,7 @@ const MISC_DIRECTIVES = [
     'pullquote',
     'dialogue',
     'gallery',
+    'spread',
     'epigraph',
 ]
 

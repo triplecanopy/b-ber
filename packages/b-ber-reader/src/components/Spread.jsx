@@ -31,13 +31,12 @@ class Spread extends Component {
             verso: false,
             recto: false,
 
-            // spreadPosition: 0, // spreadIndex that the spread appears on
             markerRefId: null,
         }
 
         this.markerNode = null
         this.spreadNode = null
-        this.figureNode = null
+        this.childNode = null
         this.debounceSpeed = 60
         this.messageKey = null
 
@@ -78,8 +77,10 @@ class Spread extends Component {
     }
     attachNodes() {
         const markerRefId = this.props['data-marker-reference']
+
         this.markerNode = document.querySelector(`[data-marker="${markerRefId}"]`)
-        this.figureNode = document.querySelector(`[data-marker-reference="${markerRefId}"] figure`)
+        this.childNode = (document.querySelector(`[data-marker-reference="${markerRefId}"] figure`) ||
+                          document.querySelector(`[data-marker-reference="${markerRefId}"] .spread__content`)) // TODO: abstract to pass in child element selector
 
         this.setState({markerRefId})
     }
@@ -144,8 +145,7 @@ class Spread extends Component {
     // over fullbleed placeholders for FF and Safari. This is Chrome's default
     // behaviour so we don't bother shifting anything around in that case
     updateChildElementPositions() {
-
-        if (!this.figureNode) {
+        if (!this.childNode) {
 
             // We call this function recursively on next tick since we know
             // there will be a figure node, but it may just not be available in
@@ -179,9 +179,9 @@ class Spread extends Component {
         this.spreadPosition = spreadPosition
 
         // Only update figure's position if it's innaccurate
-        if (this.figureNode.style.left !== position) this.figureNode.style.left = `${position}`
-        if (verso && this.figureNode.dataset.layout !== 'verso') this.figureNode.dataset.layout = 'verso'
-        if (recto && this.figureNode.dataset.layout !== 'recto') this.figureNode.dataset.layout = 'recto'
+        if (this.childNode.style.left !== position) this.childNode.style.left = `${position}`
+        if (verso && this.childNode.dataset.layout !== 'verso') this.childNode.dataset.layout = 'verso'
+        if (recto && this.childNode.dataset.layout !== 'recto') this.childNode.dataset.layout = 'recto'
 
 
         // set this after loading to prevent figures drifing around on initial page load
@@ -196,9 +196,9 @@ class Spread extends Component {
             'transform',
         ]
 
-        if (this.figureNode.style.transform !== transform) {
+        if (this.childNode.style.transform !== transform) {
             for (let i = 0; i < vendorPrefixedTransforms.length; i++) {
-                this.figureNode.style[vendorPrefixedTransforms[i]] = transform
+                this.childNode.style[vendorPrefixedTransforms[i]] = transform
             }
         }
 
@@ -212,10 +212,15 @@ class Spread extends Component {
         return {
             __html: `
                 .spread-index__${spreadPosition - 2} #spread__${markerRefId} > figure,
-                .spread-index__${spreadPosition - 1} #spread__${markerRefId} > figure { transform: translateX(${paddingLeft * 2}px); }
-                .spread-index__${spreadPosition}     #spread__${markerRefId} > figure { transform: translateX(0px); }
+                .spread-index__${spreadPosition - 2} #spread__${markerRefId} > .spread__content,
+                .spread-index__${spreadPosition - 1} #spread__${markerRefId} > figure,
+                .spread-index__${spreadPosition - 1} #spread__${markerRefId} > .spread__content { transform: translateX(${paddingLeft * 2}px); }
+                .spread-index__${spreadPosition}     #spread__${markerRefId} > figure,
+                .spread-index__${spreadPosition}     #spread__${markerRefId} > .spread__content { transform: translateX(0px); }
                 .spread-index__${spreadPosition + 1} #spread__${markerRefId} > figure,
-                .spread-index__${spreadPosition + 2} #spread__${markerRefId} > figure { transform: translateX(${paddingLeft * -2}px); }
+                .spread-index__${spreadPosition + 1} #spread__${markerRefId} > .spread__content,
+                .spread-index__${spreadPosition + 2} #spread__${markerRefId} > figure,
+                .spread-index__${spreadPosition + 2} #spread__${markerRefId} > .spread__content { transform: translateX(${paddingLeft * -2}px); }
             `,
         }
     }

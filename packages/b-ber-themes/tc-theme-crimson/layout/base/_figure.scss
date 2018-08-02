@@ -1,7 +1,7 @@
 
 //
 //
-// `.figure-xx`/`.figure__xx` classes are containers for figure elements, the
+// `.figure__xx` classes are containers for figure elements, the
 // `figure` element itself is styled immediately below
 //
 
@@ -55,30 +55,33 @@ figure {
 
 //
 // Base container styles
-// New class names  Legacy class names
-.figure__small,     .figure-sm,
-.figure__medium,    .figure-md,
-.figure__large,     .figure-lg,
-.figure__inline,    .figure-inline
-{
+.figure__small,
+.figure__medium,
+.figure__large,
+.figure__inline {
     page-break-inside: avoid;
     text-align: center;
 }
 
-.figure__large,
-.figure-lg { // legacy
+.figure__large {
     page-break-before: always;
     page-break-after: always;
     @include padding(1,0,1,0,0); // in case readers don't respect page-break, at least there's a bit of space
 }
 
+.spread {
+    page-break-inside: avoid;
+    page-break-before: always;
+    page-break-after: always;
+}
+
 #layout.context__desktop { // desktop context only
     .figure__large,
-    .figure-lg { // legacy
+    .spread {
        -webkit-column-break-before: always;
        -webkit-column-break-after: always;
        padding: 0;
-    } 
+    }
 }
 
 .figure__large.figure__inline {
@@ -89,19 +92,13 @@ figure {
 
 
 // Containers for inline images (used in text flow)
-.figure__small,
-.figure-sm {
+.figure__small {
 
     // sizes for the images
-    &.figure__small--landscape,         // new class names
-    &.figure__small--square,            // new class names
-    &.figure__small--portrait,          // new class names
-    &.figure__small--portrait-high,    // new class names
-
-    &.landscape,                        // legacy
-    &.square,                           // legacy
-    &.portrait,                         // legacy
-    &.portraitLong {                    // legacy
+    &.figure__small--landscape,
+    &.figure__small--square,
+    &.figure__small--portrait,
+    &.figure__small--portrait-high {
         @include padding(1,0,1,0,0);
         h1 + & { padding-top: 0 }
         figure, a, img { width: auto; }
@@ -109,7 +106,6 @@ figure {
 
 
     a {
-        // display: block; // GB
         margin:0 auto;
     }
 
@@ -118,17 +114,13 @@ figure {
     + blockquote.dialogue { padding-top: 0; }
 
 
-    &.figure__small--landscape,         // new class names
-    &.landscape                         // legacy
-    {
+    &.figure__small--landscape {
         figure, a, img {
             height: n-lines($landscape-image-height, 0);
         }
     }
 
-    &.figure__small--square,            // new class names
-    &.square                            // legacy
-    {
+    &.figure__small--square {
         figure, a, img {
             height: n-lines($square-image-height, 0);
         }
@@ -136,18 +128,14 @@ figure {
 
 
 
-    &.figure__small--portrait,          // new class names
-    &.portrait                         // legacy
-    {
+    &.figure__small--portrait {
         figure, a, img {
             height: n-lines($portrait-image-height, 0);
         }
     }
 
 
-    &.figure__small--portrait-high,    // new class names
-    &.portraitLong                      // legacy
-    {
+    &.figure__small--portrait-high {
         figure, a, img {
             height: n-lines($portrait-image--high-height, 0);
         }
@@ -156,7 +144,7 @@ figure {
 
 
 // Images used in epigraph
-.figure-md {
+.figure__medium {
     text-align: center;
     page-break-inside: avoid;
     // height: 350px!important;
@@ -190,9 +178,7 @@ figcaption,
         @include caption;
     }
 
-    .figure__large &,
-    .figure-lg & {
-        // width: 90%;
+    .figure__large & {
         margin: 0;
         padding: 0;
     }

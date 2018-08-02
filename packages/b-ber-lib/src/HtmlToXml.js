@@ -16,6 +16,7 @@ class HtmlToXml {
             'epigraph',
             'dialogue',
             'gallery',
+            'spread',
             'colophon',
             'appendix',
             'subtitle',

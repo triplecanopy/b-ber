@@ -33,7 +33,7 @@ header {
     @include following-paragraph-not-indented;
 }
 
-section.break-before a + div.figure-sm {
+section.break-before a + div.figure__small {
     padding-top: 0;
 }
 

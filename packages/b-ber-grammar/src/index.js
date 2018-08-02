@@ -19,6 +19,7 @@ import markdownItImage from './syntax/image'
 import markdownItMedia from './syntax/media'
 import markdownItDialogue from './syntax/dialogue'
 import markdownItGallery from './syntax/gallery'
+import markdownItSpread from './syntax/spread'
 
 
 function deepFind(collection, fileName, callback) {
@@ -158,6 +159,7 @@ class MarkdownRenderer {
                 })
             .use(markdownItDialogue.plugin, markdownItDialogue.name, markdownItDialogue.renderer(reference))
             .use(markdownItGallery.plugin, markdownItGallery.name, markdownItGallery.renderer(reference))
+            .use(markdownItSpread.plugin, markdownItSpread.name, markdownItSpread.renderer(reference))
             .use(markdownItImage.plugin, markdownItImage.name, markdownItImage.renderer(reference))
             .use(markdownItMedia.plugin, markdownItMedia.name, markdownItMedia.renderer(reference))
             .use(markdownItLogo.plugin, markdownItLogo.name, markdownItLogo.renderer(reference))
