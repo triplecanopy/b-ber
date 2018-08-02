@@ -19,6 +19,7 @@ const Frame = props => {
     const desktopStyles = {overflow: 'hidden'}
     const mobileStyles = {WebkitOverflowScrolling: 'touch', overflow: 'auto'}
     const styles = Viewport.isMobile() ? {...baseStyles, ...mobileStyles} : {...baseStyles, ...desktopStyles}
+    console.log("viewport", Viewport.isXlarge())
     return (
         <div
             id='frame'

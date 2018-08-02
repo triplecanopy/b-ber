@@ -18,6 +18,7 @@ export const messagesTypes = {
 // single breakpoint set at 960px
 export const breakpoints = {
     MOBILE: 960,
+    XLARGE: 1590,
 }
 
 export const media = {

@@ -83,10 +83,10 @@ html { font-size: 156.25%; } // 25px
 }
 
 @if $build == 'reader' {
-    @include break('xlarge') {
-        #layout {
-            font-size: calc(#{$font-size-base} + 0.25vw);
-        }
+    #layout {
+        font-size: calc(#{$font-size-base} + 0.300vw); // Covers Mobile and Tablet Contexts
+        @include break('desktop') { font-size: calc(#{$font-size-base} + 0.075vw);}
+        @include break('xlarge')  { font-size: calc(#{$font-size-base} + 0.150vw);}
     }
 }
 
