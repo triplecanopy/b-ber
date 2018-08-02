@@ -10,10 +10,6 @@
         }
     }
     .figure__fullbleed.figure__large.figure__inline figure {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-        @include break('mobile') { grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr; }
-        grid-column-gap: calc(35% / 15);
         .gallery__item {
             position: absolute;
             img, video {
