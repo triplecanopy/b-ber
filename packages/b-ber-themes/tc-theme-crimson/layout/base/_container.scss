@@ -21,7 +21,8 @@ blockquote {
 
 section {
     clear: both;
-    padding-right: 1em;
+    padding-right: 0.75vh;
+    @include break('mobile') { padding-right: 0; }
     &:after {
         content: ' ';
         display: table;
@@ -80,7 +81,7 @@ section#full-bleed {
 .audio,
 .video {
     text-align: center;
-    @include padding(1,1,1,1,0)
+    @include padding(1,1,1,1,0);
     .figure__large & { padding: 0; }
 }
 

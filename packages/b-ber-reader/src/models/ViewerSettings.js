@@ -36,10 +36,10 @@ class ViewerSettings {
         this.gridColumns = _ => Viewport.isMobile() ? this.settings.mobileColumnCount : this.settings.desktopColumnCount
         this.gridColumnWidth = _ => ((65 / this.settings.gridColumns()) / 100) * window.innerWidth
         this.gridGutterWidth = _ => ((35 / (this.settings.gridColumns() - 1)) / 100) * window.innerWidth
-        this.paddingLeft = _ => this.settings.gridColumnWidth() + this.settings.gridGutterWidth()
-        this.paddingRight = _ => this.settings.gridColumnWidth() + this.settings.gridGutterWidth()
-        this.paddingTop = _ => window.innerHeight / 7
-        this.paddingBottom = _ => window.innerHeight / 7
+        this.paddingLeft = _ => Viewport.isXlarge() ? (this.settings.gridColumnWidth() + this.settings.gridGutterWidth()) * 2 : Viewport.isMobile() ? this.settings.gridColumnWidth() : this.settings.gridColumnWidth() + this.settings.gridGutterWidth()
+        this.paddingRight = _ => Viewport.isXlarge() ? (this.settings.gridColumnWidth() + this.settings.gridGutterWidth()) * 2 : Viewport.isMobile() ? this.settings.gridColumnWidth() : this.settings.gridColumnWidth() + this.settings.gridGutterWidth()
+        this.paddingTop = _ => Viewport.isXlarge() ? window.innerHeight / 6 : Viewport.isTall() ? window.innerHeight / 5.5 : window.innerHeight / 7
+        this.paddingBottom = _ => Viewport.isTall() ? (Viewport.isXlarge() ? window.innerHeight / 7 : window.innerHeight / 5) : window.innerHeight / 7
         this.columnGap = _ => this.settings.gridGutterWidth()
     }
 
