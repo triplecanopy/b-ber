@@ -244,7 +244,7 @@ $alert: (
 //  @param $column      int                     left    Number anchors media to corresponding column
 //  @param $position    string (start | end)    left    Positions media at start or end of @param column
 //  @param $width       int                     width   Calculates width based on columns * input
-//  @param $position    string (start | end)    width   Extends media to either "start or end" of column
+//  @param $extend      string (start | end)    width   Extends media to either "start or end" of column
 //  @param $top         int (px)                top     Accepts px value
 
 // Mixin uses param names for clarity
