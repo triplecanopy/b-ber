@@ -4,7 +4,7 @@ import {rand} from '../helpers/utils'
 
 class DocumentProcessor {
     static defaults = {
-        targetClassNames: ['figure__inline', 'figure__large', 'figure__fullbleed'],
+        targetClassNames: [['figure__inline', 'figure__large', 'figure__fullbleed'], ['spread']],
         markerClassNames: 'marker',
         markerElement: 'span',
         paddingLeft: 0,
@@ -45,6 +45,7 @@ class DocumentProcessor {
 
         this.blackListedNodes = {
             names: [
+                'META',
                 'LINK',
                 'SCRIPT',
                 'STYLE',
@@ -65,8 +66,8 @@ class DocumentProcessor {
         }
     }
 
-    classListContainsAll(node, names) {
-        return names.every(name => node.classList.contains(name))
+    classListContainsAll(node) {
+        return this.targetClassNames.some(list => list.every(name => node.classList.contains(name)))
     }
 
     shouldParse(node) {
@@ -78,7 +79,7 @@ class DocumentProcessor {
     }
 
     isTarget(node) {
-        return this.classListContainsAll(node, this.targetClassNames)
+        return this.classListContainsAll(node)
     }
 
     hasChildren(node) {

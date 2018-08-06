@@ -46,6 +46,11 @@ const render = ({context = {}}) => (tokens, idx) => {
                             </div>
                         </figure>
                     </div>${comment}`
+            } else if (directive && directive.type === 'spread' && (state.build === 'web' || state.build === 'reader')) {
+                state.remove('cursor', {id})
+                result = `
+                        </div>
+                    </div>${comment}`
             } else {
                 state.remove('cursor', {id})
                 result = `</section>${comment}`

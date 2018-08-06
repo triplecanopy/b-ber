@@ -9,7 +9,7 @@ const {spawn} = require('child_process')
 // jest uses babel to transpile our code at runtime, which replaces native
 // Promise with the implementation in babel-core. this causes errors since our
 // cp doesn't have access to babel
-const Promise = require('Promise')
+const {Promise} = global
 
 // helper to convert our test functions to string. we eval them in a child
 // process so that we can track events emitted from `process`
