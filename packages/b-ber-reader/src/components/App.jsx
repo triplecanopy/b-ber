@@ -14,7 +14,7 @@ class App extends Component {
             defaultBookURL: props.bookURL || null,
             basePath: props.basePath || '/',
             downloads: props.downloads || [],
-            uiTheme: props.uiTheme || '/',
+            uiOptions: props.uiOptions || {},
             loadRemoteLibrary: typeof props.loadRemoteLibrary !== 'undefined' ? props.loadRemoteLibrary : /^localhost/.test(window.location.host),
         }
 

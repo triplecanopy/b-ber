@@ -27,7 +27,20 @@ class ApplicationLoader {
             remote_url: 'http://localhost:4000/',
             reader_url: 'http://localhost:4000/project-reader',
             builds: ['epub', 'mobi', 'pdf'],
-            ui_theme: './themes',
+            ui_options: {
+                navigation: {
+                    header_icons: {
+                        info: true,
+                        home: true,
+                        downloads: true,
+                        toc: true,
+                    },
+                    footer_icons: {
+                        chapter: true,
+                        page: true,
+                    },
+                },
+            },
             private: false,
             ignore: [],
             autoprefixer_options: {

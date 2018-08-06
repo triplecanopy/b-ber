@@ -134,21 +134,7 @@ class Reader {
             downloads: this.getProjectConfig('builds'),
             basePath: this.getProjectConfig('base_path'),
             loadRemoteLibrary: false,
-            uiTheme: this.getProjectConfig('ui_theme'),
-            // uiTheme: {
-            //     navigation: {
-            //         header_icons: [{
-            //             home: this.getBookMetadata('home'),
-            //             toc: this.getBookMetadata('toc'),
-            //             downloads: this.getBookMetadata('downloads'),
-            //             info: this.getBookMetadata('info'),
-            //         }],
-            //         footer_icons: [{
-            //             chapter_next: this.getBookMetadata('chapter_next'),
-            //             page_next: this.getBookMetadata('chapter_next'),
-            //         }],
-            //     },
-            // },
+            uiOptions: this.getProjectConfig('ui_options'),
         }
 
         let contents
