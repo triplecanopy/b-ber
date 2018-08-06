@@ -64,7 +64,7 @@ figure {
 }
 
 .figure__inline {
-    &.figure__large,
+    &.figure__large {
         page-break-before: always;
         page-break-after: always;
         // @include padding(1,0,1,0,0); // in case readers don't respect page-break, at least there's a bit of space
