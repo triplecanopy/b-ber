@@ -9,9 +9,12 @@ $media-mobile: 'only screen \
                 and (max-width: 680px)'                     !default;
 $media-tablet: 'only screen \
                 and (min-width: 680px) \
-                and (max-width: 768px)'                     !default;
+                and (max-width: 960px)'                     !default;
 $media-desktop: 'only screen \
-                and (min-width: 680px)'                     !default;
+                and (min-width: 960px)'                     !default;
+$media-xlarge:  'only screen \
+                and (min-width: 1590px)'                    !default;
+
 
 // Colors
 $white: #fff                                                !default;
