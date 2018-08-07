@@ -91,6 +91,7 @@ a {
 
         li {
             display: flex;
+            min-width: 30px;
 
             &:nth-child(2) {
                 flex: 1;

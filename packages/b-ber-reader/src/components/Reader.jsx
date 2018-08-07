@@ -629,6 +629,7 @@ class Reader extends Component {
                 handleSidebarButtonClick={this.handleSidebarButtonClick}
                 navigateToChapterByURL={this.navigateToChapterByURL}
                 downloads={this.props.downloads}
+                uiOptions={this.props.uiOptions}
             >
                 <Frame
                     hash={hash}

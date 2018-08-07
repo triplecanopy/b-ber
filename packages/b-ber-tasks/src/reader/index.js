@@ -134,7 +134,7 @@ class Reader {
             downloads: this.getProjectConfig('builds'),
             basePath: this.getProjectConfig('base_path'),
             loadRemoteLibrary: false,
-
+            uiOptions: this.getProjectConfig('ui_options'),
         }
 
         let contents
