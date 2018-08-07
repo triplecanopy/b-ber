@@ -129,6 +129,8 @@ class Spread extends Component {
         height = isNumeric(height) ? (height * 2) - (padding * 2) : height
         if (isNumeric(height)) height -= 1 // nudge to prevent overflow onto next spread
 
+        if (JSON.parse(this.markerNode.dataset.unbound) === true) height = (height / 2) - 1
+
         this.setState({height}, this.updateChildElementPositions)
     }
 
@@ -169,6 +171,7 @@ class Spread extends Component {
         if (!Viewport.isMobile()) {
             position = x - transformLeft + window.innerWidth
             if (recto) position -= window.innerWidth / 2
+            if (JSON.parse(this.markerNode.dataset.unbound) === true) position = (paddingLeft / 2) + (columnGap / 2)
         }
         else {
             position = paddingLeft * -1

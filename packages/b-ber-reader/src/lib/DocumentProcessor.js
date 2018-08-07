@@ -46,6 +46,8 @@ class DocumentProcessor {
         this.blackListedNodes = {
             names: [
                 'META',
+                'TITLE',
+                'HEAD',
                 'LINK',
                 'SCRIPT',
                 'STYLE',
@@ -145,6 +147,7 @@ class DocumentProcessor {
 
         elem.setAttribute('class', this.markerClassNames)
         elem.setAttribute('data-marker', id)
+        elem.setAttribute('data-unbound', false)
         elem.appendChild(text)
         this.setMarkerStyles(elem)
 
@@ -173,6 +176,13 @@ class DocumentProcessor {
                     }
                     else {
                         console.warn('No siblings or children could be found for', node.nodeName)
+
+                        const elem = this.createMarker(markerId)
+                        elem.setAttribute('data-unbound', true)
+                        node.parentNode.prepend(elem)
+                        node.setAttribute('data-marker-reference', markerId)
+
+                        return
                     }
                 }
                 if (node.children && node.children.length) {

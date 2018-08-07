@@ -207,6 +207,7 @@ class Marker extends Component {
             offsetHeight -= padding / 2
         }
 
+        if (JSON.parse(this.markerNode.dataset.unbound) === true) return offsetHeight / 2
         return offsetHeight
     }
 
