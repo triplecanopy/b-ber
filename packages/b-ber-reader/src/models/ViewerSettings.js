@@ -38,7 +38,7 @@ class ViewerSettings {
         this.gridGutterWidth = _ => ((35 / (this.settings.gridColumns() - 1)) / 100) * window.innerWidth
         this.paddingLeft = _ => Viewport.isXlarge() ? (this.settings.gridColumnWidth() + this.settings.gridGutterWidth()) * 2 : Viewport.isMobile() ? this.settings.gridColumnWidth() : this.settings.gridColumnWidth() + this.settings.gridGutterWidth()
         this.paddingRight = _ => Viewport.isXlarge() ? (this.settings.gridColumnWidth() + this.settings.gridGutterWidth()) * 2 : Viewport.isMobile() ? this.settings.gridColumnWidth() : this.settings.gridColumnWidth() + this.settings.gridGutterWidth()
-        this.paddingTop = _ => Viewport.isXlarge() ? window.innerHeight / 6 : Viewport.isTall() ? window.innerHeight / 5.5 : window.innerHeight / 7
+        this.paddingTop = _ => Viewport.isXlarge() ? window.innerHeight / 6 : Viewport.isTall() ? window.innerHeight / 5.5 : Viewport.isMobile() ? window.innerHeight / 10 : window.innerHeight / 7
         this.paddingBottom = _ => Viewport.isTall() ? (Viewport.isXlarge() ? window.innerHeight / 7 : window.innerHeight / 5) : window.innerHeight / 7
         this.columnGap = _ => this.settings.gridGutterWidth()
     }
