@@ -1,4 +1,9 @@
 @if $build == 'reader' {
+    .figure__items .figcaption a {
+        text-decoration: underline !important;
+        margin-left: one-em(-20);
+	}
+
     .figure__fullbleed figure .figure__items {
         width: 100%;
         height: 100%;
@@ -7,6 +12,22 @@
             height: 100%;
             object-fit: cover;
             object-position: center;
+        }
+        .figcaption {
+            position: relative;
+            width: 100%;
+            left: 0px;
+            bottom: 0px;
+    
+            @include break ('desktop'){
+                position: absolute;
+                width: 30%;
+                bottom: 50px;
+                @include columnAlign(
+                    $column: 1, 
+                    $position: end
+                );
+            }
         }
     }
     .figure__fullbleed.figure__large.figure__inline figure {
@@ -17,6 +38,16 @@
                 height: 100%;
                 width: 100%;
             }
+            .figcaption {
+                position: relative;
+                width: 100%;
+                left: 0px;
+                bottom: 0px;
+            }
         }
+    }
+
+    #spread-example .spread .spread__content { 
+        @include padToColumn(2, 'start');
     }
 }

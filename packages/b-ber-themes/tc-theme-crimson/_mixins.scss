@@ -303,3 +303,25 @@ $alert: (
         margin-top: calcTop(860px, $top, 1.62);
 	}
 }
+
+@mixin columnAlign($column, $position) {
+    // covers mobile and tablet
+	left: mobileOffest($column, $position, 9);
+    
+    @include break('desktop') { 
+		left: columnOffest($column, $position, 16) + gutterOffest($column, 16);
+    }
+}
+
+@mixin padToColumn($column, $position){
+    // covers mobile and tablet
+    padding: 0;
+    @include break('desktop') { 
+        $side: columnOffest($column, $position, 16) + gutterOffest($column, 16);
+        padding-top: 12%;
+        padding-left: $side; 
+        padding-bottom: 12%;
+        padding-right: $side; 
+    }
+}
+

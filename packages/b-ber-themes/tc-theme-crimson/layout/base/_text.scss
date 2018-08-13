@@ -45,46 +45,6 @@ a, a:link, a:visited {
 }
 
 
-// h1 {
-//     padding-bottom: four-lines(0);
-//     section & {
-//         @include padding(0,0,4,0,0);
-//     }
-
-//     &.book-title,
-//     &.figures-title {
-//         padding: 0;
-//     }
-
-//     section.backmatter & {
-//         @include type-settings(-1);
-//         @include padding(2, 0, 2, 0, -1);
-//     }
-
-//     section.titlepage & {
-//         @include type-settings(10);
-//         line-height: 1.2;
-//         text-align: left;
-//         padding-bottom: 1.2em;
-//     }
-
-//     section.preface &,
-//     section.frontmatter &,
-//     section.acknowledgements & {
-//         @include following-paragraph-not-indented;
-//     }
-
-//     section.afterword &,
-//     section.seriespage &,
-//     section.credits &,
-//     section.contributors &,
-//     section.appendix & {
-//         @include padding(0,0,4,0,-1);
-//         @include following-paragraph-not-indented;
-//     }
-
-// }
-
 h1, h2 {
     text-align: left;
     font-weight: bold;
@@ -124,6 +84,12 @@ h3, h4, h5, h6 {
     }
 }
 
+
+h1, h2, h3, h4, h5, h6 {
+    section.frontmatter p {
+        text-indent: 0 !important;
+    }
+}
 section > h3:first-child,
 section > h4:first-child,
 section > h5:first-child,
@@ -179,6 +145,15 @@ p {
             text-indent: one-em(0);
         }
         padding-bottom: 0;
+    }
+
+    section.frontmatter h1 &,
+    section.frontmatter h2 &,
+    section.frontmatter h3 &,
+    section.frontmatter h4 &,
+    section.frontmatter h5 &,
+    section.frontmatter h6 &{
+        text-indent:0 !important;
     }
 
     section.frontmatter.dedication & {
