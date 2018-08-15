@@ -260,15 +260,14 @@ class Layout extends Component {
                         {...this.state}
                     />
                 </div>
-
-                <div
+                {!isMobile && <div
                     className='leaf leaf--left'
                     style={leafLeftStyles}
-                />
-                <div
+                />}
+                {!isMobile &&  <div
                     className='leaf leaf--right'
                     style={leafRightStyles}
-                />
+                />}
 
             </div>
         )
