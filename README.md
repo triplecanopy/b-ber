@@ -18,11 +18,11 @@ To get started, please visit the wiki [here](/triplecanopy/b-ber/wiki/getting-st
 
 ## Summary of Features
 
-- Builds static websites, pdfs, epubs, and mobi files;
-- Generated output follows the EPUB 3.0 specification;
+- Builds ePubs, Mobis, PDFs, static websites in both horizontal and vertical orientation, and XML files that can be imported into desktop publishing software;
+- Generated output follows the [EPUB 3.0 specification](http://idpf.org/epub/30);
 - Creates and embeds rich metadata in JSON-LD;
-- Creates metadata that conforms to the [`webpub` specification](https://w3c.github.io/dpub-pwp-ucr/) for web-based publications;
-- It is easy to override styles or build your own themes;
+- Creates metadata that conforms to the [webpub specification](https://w3c.github.io/dpub-pwp-ucr/) for web-based publications;
+- Can be styled through overrides or custom themes;
 - TK Can be used as a utility library by accessing its component modules.
 
 Demo projects, which include all of the functionality described in the wiki can be found below:
@@ -37,9 +37,9 @@ Demo projects, which include all of the functionality described in the wiki can 
 
 In addition to bug fixes and ongoing maintenance, below are some currently known [enhancements](https://github.com/triplecanopy/b-ber/labels/enhancement) that we plan on devleoping for future releases:
 
-- Further styling and testing for outputed formats.
-- Extend metadata.
-- Develop system to generate pages from metadata and create templating system.
+- Further styling and testing for outputed formats;
+- Extended metadata;
+- Develop system to generate pages from metadata and create templating system;
 - Create a more 'pluggable' interface:
     - Allow users to create and integrate their own markdown-it plugins;
     - Allow users to create their own b-ber extensions.
@@ -52,7 +52,7 @@ Issues should be [reported](https://github.com/triplecanopy/b-ber/issues) at the
 
 ## Contribution Guidelines
 
-Pull requests are welcome. If you plan to contribute to b-ber's development please send a notification to [b-ber@canopycanopycanopy.com](mailto:b-ber@canopycanopycanopy.com), so that we are aware of work that you are doing. There is no explicit style-guide, but a style of coding that's consistent with the existing codebase should be maintained.
+Pull requests are welcome. If you plan to contribute to b-ber's development please send a notification to [b-ber@canopycanopycanopy.com](mailto:b-ber@canopycanopycanopy.com), so that we are aware of any contributions you plan on making. There is no explicit style-guide, but a style of coding that's consistent with the existing codebase should be maintained.
 
 ## Code of Conduct
 
