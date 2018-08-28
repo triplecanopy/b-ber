@@ -2,7 +2,7 @@ $white: #fff;
 $black: #000;
 $tc-purple: #5050C5;
 $lightgrey: #d3d3d3;
-$component-x: 37px;
+$component-x: 35px;
 $padding-y: 47px;
 $mobile-break: 400px;
 
@@ -91,7 +91,7 @@ a {
 
         li {
             display: flex;
-            min-width: 30px;
+            min-width: 25px;
 
             &:nth-child(2) {
                 flex: 1;
