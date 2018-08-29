@@ -105,7 +105,7 @@ class Marker extends Component {
     }
 
     calculateNodePosition(record = undefined) {
-        if (!this.markerNode) return console.error(`No marker node`)
+        if (!this.markerNode) return console.error('No marker node')
 
         this.removeParentOffsetBottom()
 
@@ -154,7 +154,7 @@ class Marker extends Component {
         if (debug && verboseOutput) {
             const initiator = String(record).split(',')[0].replace(/(\[object |\])/g, '').replace(/Record/, 'Observer').replace(/Entry/, '')
             const versoOrRecto = verso ? 'verso' : 'recto'
-            console.group(`Marker#calculateNodePosition`)
+            console.group('Marker#calculateNodePosition')
             console.log(`Initiator: ${initiator}`)
             console.log(`Marker: ${this.markerNode.dataset.marker}`)
             console.log(`Layout: ${versoOrRecto}`)

@@ -225,7 +225,7 @@ class Layout extends Component {
         const {paddingLeft, paddingRight} = this.state
         const {transition, transitionSpeed} = this.props.viewerSettings
         const isMobile = Viewport.isMobile()
-        const contextClass = isMobile ? "mobile" : "desktop"
+        const contextClass = isMobile ? 'mobile' : 'desktop'
 
         const contentStyles = {...this.contentStyles(), minHeight: height}
 

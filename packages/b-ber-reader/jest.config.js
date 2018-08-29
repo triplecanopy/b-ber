@@ -3,4 +3,5 @@ module.exports = {
     verbose: false,
     setupTestFrameworkScriptFile: 'jest-extended',
     testEnvironment: 'jest-environment-jsdom-global',
+    testURL: 'http://localhost/',
 }
