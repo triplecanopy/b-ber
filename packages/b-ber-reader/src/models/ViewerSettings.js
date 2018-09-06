@@ -122,7 +122,7 @@ class ViewerSettings {
             return
         }
 
-        console.error(`Invalid params: could not update settings`)
+        console.error('Invalid params: could not update settings')
 
     }
 }

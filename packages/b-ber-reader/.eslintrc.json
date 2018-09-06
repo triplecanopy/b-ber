@@ -12,7 +12,7 @@
     "no-shadow": 0,
     "max-len": 0,
     "arrow-parens": 0,
-    "quotes": 0,
+    "quotes": [2, "single"],
     "consistent-return": 0,
     "no-confusing-arrow": 0,
     "no-multiple-empty-lines": 0,
@@ -52,6 +52,7 @@
     "no-console": 0,
     "no-continue": 0,
     "no-cond-assign": [2, "except-parens"],
+    "no-mixed-operators": 0,
     "no-multi-spaces:": 0,
     "no-nested-ternary": 0,
     "no-plusplus": [2, {

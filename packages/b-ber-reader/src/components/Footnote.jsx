@@ -84,7 +84,7 @@ class Footnote extends Component {
             const doc = parser.parseFromString(data, 'text/html')
             const elem = doc.getElementById(id)
 
-            if (!elem) return console.error(`Could not retrieve footnote %s; Document URL %s`, hash, this.props.href)
+            if (!elem) return console.error('Could not retrieve footnote %s; Document URL %s', hash, this.props.href)
             const footnoteBody = processFootnoteResponseElement(elem)
 
             this.setState({footnoteBody})

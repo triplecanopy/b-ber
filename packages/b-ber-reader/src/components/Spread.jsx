@@ -114,7 +114,7 @@ class Spread extends Component {
     }
     connectResizeObserver() {
         const contentNode = document.querySelector('#content')
-        if (!contentNode) return console.error(`Spread#connectResizeObserver: No #content node`)
+        if (!contentNode) return console.error('Spread#connectResizeObserver: No #content node')
         this.resizeObserver = new ResizeObserver(this.debounceCalculateSpreadOffset)
         this.resizeObserver.observe(contentNode)
     }
@@ -190,7 +190,7 @@ class Spread extends Component {
         // set this after loading to prevent figures drifing around on initial page load
         // TODO: should be passing in transition speed
 
-        const transform = `transition: transform 400ms ease`
+        const transform = 'transition: transform 400ms ease'
         const vendorPrefixedTransforms = [
             'webkitTransform',
             'MozTransform',

@@ -69,7 +69,7 @@ class DocumentPreProcessor {
     }
 
     static getStyleSheetByMediaOrId({id, media}) {
-        if (!id && !media) return console.warn(`DocumentPreProcessor#updateStyleSheet requires either and 'id' or a 'media' parameter`)
+        if (!id && !media) return console.warn('DocumentPreProcessor#updateStyleSheet requires either and \'id\' or a \'media\' parameter')
 
         let styleSheetId
 
@@ -79,14 +79,14 @@ class DocumentPreProcessor {
 
         else if (media) {
             const _styleSheet = find(this.styleSheets, {media})
-            if (!_styleSheet) return console.warn(`No styleSheet exists for provided 'id' or 'media'`, id, media)
+            if (!_styleSheet) return console.warn('No styleSheet exists for provided \'id\' or \'media\'', id, media)
 
             styleSheetId = _styleSheet.id
         }
 
         const styleSheetElement = state.root.querySelector(`#${styleSheetId}`)
 
-        if (!styleSheetElement) return console.warn(`No styleSheet exists for provided 'id' or 'media'`, id, media)
+        if (!styleSheetElement) return console.warn('No styleSheet exists for provided \'id\' or \'media\'', id, media)
 
         return {styleSheetElement, styleSheetId}
     }
