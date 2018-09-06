@@ -35,6 +35,7 @@ const render = (tokens, idx) => {
             case 'reader':
                 result = `
                     <div class="figure__large figure__inline figure__fullbleed">
+                    <div class="gallery__background"></div>
                         <figure id="${htmlId(id)}">
                             <div class="figure__items">`
                 break
