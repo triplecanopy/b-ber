@@ -250,7 +250,7 @@ $alert: (
 	@if $colStart > 8 {
         @return #{$vh};
 	} @else {
-		@return calc(#{$vh} / 5.5);
+		@return calc(#{$vh} / 8.5);
 	}
 }
 
@@ -301,8 +301,7 @@ $alert: (
     
     $top: strip-unit($top);
     $m_top: strip-unit($m_top);
-
-    .figure__fullbleed.figure__large.figure__inline figure 
+ 
     .gallery__item:nth-child(#{$i}) {
 
         // mobile settings
@@ -340,7 +339,7 @@ $alert: (
             width: itemWidth($colStart, $startPos, $colEnd, $endPos, 16);
             left: leftOffset($colStart, $startPos, 16);
             top: calc(100vh / 7);
-            margin-top: calcTop(860px, $top, 1.62);
+            margin-top: calcTop(780px, $top, 1.62);
         }
     }
 }

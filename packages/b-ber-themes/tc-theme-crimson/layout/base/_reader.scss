@@ -41,7 +41,7 @@
             min-height: 300vh;
             overflow: hidden;
             @include break('desktop'){
-                z-index: 4;
+                // z-index: 4;
             }
         }
         figure .gallery__item {
