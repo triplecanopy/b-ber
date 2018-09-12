@@ -77,14 +77,15 @@ figure {
 
 #layout.context__desktop { // desktop context only
     .figure__large, .spread {
-       -webkit-column-break-after: always;
        padding: 0;
     }
     .figure__large {
+        -webkit-column-break-after: always;
         -webkit-column-break-before: always;
     }
     .figure__fullbleed {
-        -webkit-column-break-before: avoid;
+        -webkit-column-break-before: avoid!important;
+        -webkit-column-break-after: avoid!important;
     }
 }
 
