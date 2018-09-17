@@ -19,7 +19,7 @@ const NavigationFooter = props => (
                 <li>
                     <button
                         className='material-icons nav__button'
-                        style={props.uiOptions.navigation.footer_icons.page ? {} : {display: 'none'}}
+                        style={props.uiOptions.navigation.footer_icons.page && props.currentSpineItemIndex !== 0 ? {} : {display: 'none'}}
                         onClick={_ => {
                             if (props.handleEvents === false) return
                             props.enablePageTransitions()
@@ -31,7 +31,7 @@ const NavigationFooter = props => (
                 <li>
                     <button
                         className='material-icons nav__button'
-                        style={props.uiOptions.navigation.footer_icons.page ? {} : {display: 'none'}}
+                        style={props.uiOptions.navigation.footer_icons.page && props.currentSpineItemIndex !== (props.spine.length - 1) ? {} : {display: 'none'}}
                         onClick={_ => {
                             if (props.handleEvents === false) return
                             props.enablePageTransitions()

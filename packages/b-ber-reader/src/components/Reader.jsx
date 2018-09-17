@@ -601,6 +601,7 @@ class Reader extends Component {
             metadata,
             guide,
             spine,
+            currentSpineItemIndex,
             showSidebar,
             hash,
             ready,
@@ -617,6 +618,7 @@ class Reader extends Component {
             <Controls
                 guide={guide}
                 spine={spine}
+                currentSpineItemIndex={currentSpineItemIndex}
                 metadata={metadata}
                 showSidebar={showSidebar}
                 viewerSettings={viewerSettings}
