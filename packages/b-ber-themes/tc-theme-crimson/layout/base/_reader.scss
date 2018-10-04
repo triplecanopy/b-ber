@@ -30,39 +30,42 @@
             }
         }
     }
+    //If Gallery is first element in chapter, align to top of page
+    #layout #content {
+        section#gallery {
+            .figure__large.figure__inline.figure__fullbleed {
+                height: auto!important;                
+            }
+        }
+    }
     
     #gallery .figure__fullbleed.figure__large.figure__inline {
         
         .gallery__background {
-            position: fixed;
-            top: 0px;
+            position: absolute;
             left: 0px;
             width: 100%;
-            min-height: 300vh;
-            overflow: hidden;
-            @include break('desktop'){
-                // z-index: 4;
-            }
         }
+
         figure .gallery__item {
-                position: absolute;
-                height: auto;
-                img, video {
-                    object-fit: contain;
-                    height: 100%;
-                    width: 100%;
-                }
-                .figcaption {
-                    position: relative;
-                    width: 100%;
-                    left: 0px;
-                    bottom: 0px;
-                }
-                &:last-child {
-                    margin-bottom: 100px;
-                }
+            position: absolute;
+            height: auto;
+            img, video {
+                object-fit: contain;
+                height: 100%;
+                width: 100%;
+            }
+            .figcaption {
+                position: relative;
+                width: 100%;
+                left: 0px;
+                bottom: 0px;
+            }
+            &:last-child {
+                margin-bottom: 100px;
             }
         }
+    }
     
 
     .spread__content {
