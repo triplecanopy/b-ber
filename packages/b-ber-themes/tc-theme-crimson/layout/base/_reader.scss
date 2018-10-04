@@ -31,15 +31,19 @@
         }
     }
     //If Gallery is first element in chapter, align to top of page
-    #layout #content {
-        section#gallery {
-            .figure__large.figure__inline.figure__fullbleed {
-                height: auto!important;                
+    @include break('mobile'){
+        #layout #content {
+            section {
+                &:first-child {
+                    .figure__large.figure__inline.figure__fullbleed {
+                        height: auto!important;                
+                    }
+                }
             }
         }
     }
     
-    #gallery .figure__fullbleed.figure__large.figure__inline {
+    section .figure__fullbleed.figure__large.figure__inline {
         
         .gallery__background {
             position: absolute;
