@@ -1,11 +1,10 @@
-import {rand} from '../helpers/utils'
-import {messagesTypes} from '../constants'
-import {PageEvent, DeferredEvent} from '../models'
+import { rand } from '../helpers/utils'
+import { messagesTypes } from '../constants'
+import { PageEvent, DeferredEvent } from '../models'
 
 const registry = new Map()
 
 class Messenger {
-
     static MESSAGE_DOMAIN = '*'
 
     static getListeners() {
@@ -20,8 +19,18 @@ class Messenger {
         return Messenger.MESSAGE_DOMAIN
     }
 
-    static sendPaginationEvent({spreadIndex, spreadTotal, firstPage, lastPage}) {
-        const event = new PageEvent({spreadIndex, spreadTotal, firstPage, lastPage})
+    static sendPaginationEvent({
+        spreadIndex,
+        spreadTotal,
+        firstPage,
+        lastPage,
+    }) {
+        const event = new PageEvent({
+            spreadIndex,
+            spreadTotal,
+            firstPage,
+            lastPage,
+        })
         window.parent.postMessage(event, Messenger.MESSAGE_DOMAIN)
     }
 
@@ -31,7 +40,22 @@ class Messenger {
     }
 
     static sendClickEvent(event) {
-        window.parent.postMessage({...event, type: messagesTypes.CLICK_EVENT}, Messenger.MESSAGE_DOMAIN)
+        window.parent.postMessage(
+            { ...event, type: messagesTypes.CLICK_EVENT },
+            Messenger.MESSAGE_DOMAIN
+        )
+    }
+
+    static sendKeydownEvent(event) {
+        window.parent.postMessage(
+            {
+                ...event,
+                keyCode: event.keyCode,
+                metaKey: event.metaKey,
+                type: messagesTypes.KEYDOWN_EVENT,
+            },
+            Messenger.MESSAGE_DOMAIN
+        )
     }
 
     static register(callback, type = null) {
@@ -39,7 +63,7 @@ class Messenger {
         const event = 'message'
         const handler = e => (!type || type === e.data.type) && callback(e)
 
-        registry.set(key, {event, type, handler, callback})
+        registry.set(key, { event, type, handler, callback })
         window.addEventListener(event, handler, false)
 
         return key
@@ -48,13 +72,15 @@ class Messenger {
     static deregister(key) {
         if (!key) return
 
-        const {handler} = registry.get(key)
+        const { handler } = registry.get(key)
         window.removeEventListener('message', handler, false)
         registry.delete(key)
     }
 
     static clear() {
-        registry.forEach((entry, key) => entry.handler && Messenger.deregister(key))
+        registry.forEach(
+            (entry, key) => entry.handler && Messenger.deregister(key)
+        )
         registry.clear()
     }
 }

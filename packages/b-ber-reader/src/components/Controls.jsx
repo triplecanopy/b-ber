@@ -1,8 +1,13 @@
-import React, {Component} from 'react'
-import {NavigationHeader, NavigationFooter} from './Navigation'
-import {SidebarMetadata, SidebarDownloads, SidebarChapters, SidebarSettings} from './Sidebar'
+import React, { Component } from 'react'
+import { NavigationHeader, NavigationFooter } from './Navigation'
+import {
+    SidebarMetadata,
+    SidebarDownloads,
+    SidebarChapters,
+    SidebarSettings,
+} from './Sidebar'
 import Messenger from '../lib/Messenger'
-import {messagesTypes} from '../constants'
+import { messagesTypes } from '../constants'
 
 class Controls extends Component {
     constructor(props) {
@@ -17,7 +22,7 @@ class Controls extends Component {
     componentWillMount() {
         this.bindEvents()
 
-        Messenger.register((e) => {
+        Messenger.register(e => {
             if (!e.origin || e.origin !== window.location.origin) {
                 this.props.handleSidebarButtonClick(null)
             }
@@ -33,7 +38,11 @@ class Controls extends Component {
 
         Messenger.sendClickEvent(e)
 
-        if (e.target.closest('.controls__sidebar') === null && e.target.closest('.nav__button') === null && this.props.showSidebar) {
+        if (
+            e.target.closest('.controls__sidebar') === null &&
+            e.target.closest('.nav__button') === null &&
+            this.props.showSidebar
+        ) {
             this.props.handleSidebarButtonClick(null)
         }
     }
@@ -41,19 +50,29 @@ class Controls extends Component {
     handleKeyDown(e) {
         if (this.props.handleEvents === false) return
         if (!e || typeof e.which === 'undefined') return
+
+        Messenger.sendKeydownEvent(e)
+
         switch (e.which) {
-            case 37: /* arrow left */
+            case 37 /* arrow left */:
                 this.props.enablePageTransitions()
                 this.props.handlePageNavigation(-1)
                 this.props.handleSidebarButtonClick(null)
                 break
-            case 39: /* arrow right */
+            case 39 /* arrow right */:
                 this.props.enablePageTransitions()
                 this.props.handlePageNavigation(1)
                 this.props.handleSidebarButtonClick(null)
                 break
-            case 27: /* ESC */
+            case 27 /* ESC */:
                 this.props.handleSidebarButtonClick(null)
+                break
+            case 80 /* p */:
+                if (e.metaKey) {
+                    e.preventDefault()
+                    e.stopImmediatePropagation()
+                    window.print()
+                }
                 break
             default:
                 break
@@ -72,7 +91,7 @@ class Controls extends Component {
 
     render() {
         return (
-            <div className='controls'>
+            <div className="controls">
                 <NavigationHeader {...this.props} />
                 <SidebarChapters {...this.props} />
                 <SidebarDownloads {...this.props} />

@@ -13,6 +13,7 @@ export const messagesTypes = {
     PAGINATION_EVENT: 'PAGINATION_EVENT',
     DEFERRED_EVENT: 'DEFERRED_EVENT',
     CLICK_EVENT: 'CLICK_EVENT',
+    KEYDOWN_EVENT: 'KEYDOWN_EVENT',
 }
 
 // single breakpoint set at 960px
