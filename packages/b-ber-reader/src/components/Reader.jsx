@@ -9,6 +9,7 @@ import {debug, logTime, verboseOutput, useLocalStorage} from '../config'
 import history from '../lib/History'
 import deferrable from '../lib/decorate-deferrable'
 import Messenger from '../lib/Messenger'
+import Viewport from '../helpers/Viewport'
 
 const MAX_RENDER_TIMEOUT = 0
 const MAX_DEFERRED_CALLBACK_TIMEOUT = 0
@@ -178,6 +179,11 @@ class Reader extends Component {
     }
     handleResizeEnd() {
         if (!debug) this.hideSpinner()
+    }
+
+
+    scrollToTop() {
+        if (Viewport.isMobile()) document.getElementById('frame').scrollTo(0, 0)
     }
 
     updateQueryString() {
@@ -467,6 +473,8 @@ class Reader extends Component {
         if (increment === -1) {
             deferredCallback = _ => {
                 const {spreadTotal} = this.state
+
+                this.scrollToTop()
                 this.navigateToSpreadByIndex(spreadTotal)
 
                 // this.enablePageTransitions()
@@ -482,7 +490,7 @@ class Reader extends Component {
         // this branch smoothes out page transisitions when moving forward
         else {
             deferredCallback = _ => {
-                // this.enablePageTransitions()
+                this.scrollToTop()
                 this.enableEventHandling()
                 this.hideSpinner()
 
