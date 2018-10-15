@@ -1,31 +1,42 @@
-import crypto from 'crypto'
-import isPlainObject from 'lodash/isPlainObject'
-import isArray from 'lodash/isArray'
-import findIndex from 'lodash/findIndex'
-import ApplicationLoader from './ApplicationLoader'
+import crypto from "crypto"
+import isPlainObject from "lodash/isPlainObject"
+import isArray from "lodash/isArray"
+import findIndex from "lodash/findIndex"
+import ApplicationLoader from "./ApplicationLoader"
 
-const dynamicPageTmpl = _ => { throw new Error('[state.templates#dynamicPageTmpl] has not been initialized in b-ber-modifiers/inject') }
-const dynamicPageHead = _ => { throw new Error('[state.templates#dynamicPageHead] has not been initialized in b-ber-modifiers/inject') }
-const dynamicPageTail = _ => { throw new Error('[state.templates#dynamicPageTail] has not been initialized in b-ber-modifiers/inject') }
+const dynamicPageTmpl = _ => {
+    throw new Error(
+        "[state.templates#dynamicPageTmpl] has not been initialized in b-ber-modifiers/inject"
+    )
+}
+const dynamicPageHead = _ => {
+    throw new Error(
+        "[state.templates#dynamicPageHead] has not been initialized in b-ber-modifiers/inject"
+    )
+}
+const dynamicPageTail = _ => {
+    throw new Error(
+        "[state.templates#dynamicPageTail] has not been initialized in b-ber-modifiers/inject"
+    )
+}
 
 class State extends ApplicationLoader {
-
     static defaults = {
         guide: [],
         figures: [],
         footnotes: [],
-        build: 'epub',
+        build: "epub",
         cursor: [],
         spine: [],
         toc: [],
         remoteAssets: [],
         loi: [],
         sequence: [],
-        hash: crypto.randomBytes(20).toString('hex'),
+        hash: crypto.randomBytes(20).toString("hex"),
 
         // for dynamically created templates. functions here are overwritten
         // during build. see b-ber-modifiers/inject#mapSourcesToDynamicPageTemplate
-        templates: {dynamicPageTmpl, dynamicPageHead, dynamicPageTail},
+        templates: { dynamicPageTmpl, dynamicPageHead, dynamicPageTail },
     }
 
     constructor() {
@@ -46,8 +57,9 @@ class State extends ApplicationLoader {
         return this.config.dist
     }
 
-    get env() { // eslint-disable-line class-methods-use-this
-        return process.env.NODE_ENV || 'development'
+    get env() {
+        // eslint-disable-line class-methods-use-this
+        return process.env.NODE_ENV || "development"
     }
 
     set src(val) {
@@ -65,12 +77,14 @@ class State extends ApplicationLoader {
         this._resetEntries()
         this._resetConfig()
 
-        this.templates = {dynamicPageTmpl, dynamicPageHead, dynamicPageTail}
-        this.hash = crypto.randomBytes(20).toString('hex')
+        this.templates = { dynamicPageTmpl, dynamicPageHead, dynamicPageTail }
+        this.hash = crypto.randomBytes(20).toString("hex")
     }
 
     _resetEntries() {
-        Object.entries(State.defaults).forEach(([key, val]) => this[key] = val)
+        Object.entries(State.defaults).forEach(
+            ([key, val]) => (this[key] = val)
+        )
     }
 
     /**
@@ -86,16 +100,16 @@ class State extends ApplicationLoader {
         }
 
         if (isPlainObject(this[prop])) {
-            this[prop] = {...this[prop], val}
+            this[prop] = { ...this[prop], val }
             return
         }
 
-        if (typeof this[prop] === 'string') {
+        if (typeof this[prop] === "string") {
             this[prop] = this[prop] + String(val)
             return
         }
 
-        throw new Error('Something went wrong in `State#add`')
+        throw new Error("Something went wrong in `State#add`")
     }
 
     /**
@@ -107,7 +121,11 @@ class State extends ApplicationLoader {
     remove(prop, val) {
         if (isArray(this[prop])) {
             const index = findIndex(this[prop], val)
-            if (index < 0) throw new TypeError(`The _property [${val}] could not be found in [state.${prop}]`)
+            if (index < 0) {
+                throw new TypeError(
+                    `The _property [${val}] could not be found in [state.${prop}]`
+                )
+            }
             this[prop].splice(index, 1)
             return
         }
@@ -117,7 +135,7 @@ class State extends ApplicationLoader {
             return
         }
 
-        throw new Error('Something went wrong in `State#remove`')
+        throw new Error("Something went wrong in `State#remove`")
     }
 
     /**
@@ -127,8 +145,8 @@ class State extends ApplicationLoader {
      * @return {Object}      Merged object
      */
     merge(prop, val) {
-        if (!isPlainObject(this[prop]) || !isPlainObject(val)) throw new Error(`Attempting to merge non-object in [State#merge]`)
-        this[prop] = {...this[prop], ...val}
+        if (!isPlainObject(this[prop]) || !isPlainObject(val)) { throw new Error(`Attempting to merge non-object in [State#merge]`) }
+        this[prop] = { ...this[prop], ...val }
     }
 
     /**
@@ -140,7 +158,7 @@ class State extends ApplicationLoader {
      * @example         state.update('config.base_url', '/')
      */
     update(prop, val) {
-        const [key, rest] = prop.split('.')
+        const [key, rest] = prop.split(".")
         if ({}.hasOwnProperty.call(this, key)) {
             if (rest) {
                 this[key][rest] = val
@@ -159,7 +177,7 @@ class State extends ApplicationLoader {
      * @return {Integer}            Returns an index, so checks should be against -1 for existence
      */
     contains(collection, value) {
-        if (!isArray(this[collection])) throw new TypeError('[State#contains] must be called on an array')
+        if (!isArray(this[collection])) { throw new TypeError("[State#contains] must be called on an array") }
         return findIndex(this[collection], value)
     }
 }
