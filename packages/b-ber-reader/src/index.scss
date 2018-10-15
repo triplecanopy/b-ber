@@ -323,11 +323,6 @@ a {
     }
 }
 
-@keyframes spin {
-    0% {transform: rotate(0deg);}
-    100% {transform: rotate(360deg);}
-}
-
 .spinner {
     width: 100vw;
     height: 100vh;
@@ -340,21 +335,33 @@ a {
     display: block;
 }
 
+// https://github.com/tobiasahlin/SpinKit/blob/master/examples/5-pulse.html
+@keyframes pulse {
+    0% {
+        -webkit-transform: scale(0);
+        transform: scale(0);
+    }
+    100% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+        opacity: 0;
+    }
+}
+
 .spinner__detail {
     position: absolute;
-    width: 30px;
-    height: 30px;
-    top: calc(50% - 15px);
-    left: calc(50% - 15px);
-    border-width: 1px;
-    border-radius: 50%;
-    border-style: solid;
-    border-top-color: transparent;
-    border-right-color: $black;
-    border-bottom-color: $black;
-    border-left-color: $black;
-    animation: spin 1s infinite linear;
+    top: calc(50% - 20px);
+    left: calc(50% - 20px);
+    width: 40px;
+    height: 40px;
+    margin: 0;
+    padding: 0;
+    background-color: $black;
+    border-radius: 100%;
+    -webkit-animation: pulse 1s infinite ease-in-out;
+    animation: pulse 1s infinite ease-in-out;
 }
+
 
 .leaf {
     position: fixed;
