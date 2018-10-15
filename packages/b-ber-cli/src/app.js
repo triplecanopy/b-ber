@@ -3,12 +3,12 @@
  * @module cli
  */
 
-import yargs from 'yargs'
-import log from '@canopycanopycanopy/b-ber-logger'
-import state from '@canopycanopycanopy/b-ber-lib/State'
-import createBuildSequence from '@canopycanopycanopy/b-ber-shapes/create-build-sequence'
-import sequences from '@canopycanopycanopy/b-ber-shapes/sequences'
-import * as commands from './cmd'
+import yargs from "yargs"
+import log from "@canopycanopycanopy/b-ber-logger"
+import state from "@canopycanopycanopy/b-ber-lib/State"
+import createBuildSequence from "@canopycanopycanopy/b-ber-shapes/create-build-sequence"
+import sequences from "@canopycanopycanopy/b-ber-shapes/sequences"
+import * as commands from "./cmd"
 
 const lineLength = 70
 
@@ -18,21 +18,24 @@ const lineLength = 70
  * @return {Object}
  */
 export default function bber() {
-
     /**
      * Shows custom help if a CLI command fails
      * @return {String}
      */
-    const showCustomHelp = () => console.log(`
+    const showCustomHelp = () =>
+        console.log(`
     Usage: bber <command> [options]
 
     Where <command> is one of:
 
-    ${Object.keys(commands).sort().reduce((acc, curr) => {
-        const a = acc.split('\n')
-        const l = a[a.length - 1].length
-        return acc.concat(l > lineLength ? `\n    ${curr}, ` : `${curr}, `)
-    }, '').slice(0, -2)}
+    ${Object.keys(commands)
+        .sort()
+        .reduce((acc, curr) => {
+            const a = acc.split("\n")
+            const l = a[a.length - 1].length
+            return acc.concat(l > lineLength ? `\n    ${curr}, ` : `${curr}, `)
+        }, "")
+        .slice(0, -2)}
 
     Some common commands are:
 
@@ -51,8 +54,7 @@ export default function bber() {
      * @param  {Object} yargs Yargs module
      * @return {Object|Error}
      */
-    const checkCommands = ({argv}) => {
-
+    const checkCommands = ({ argv }) => {
         const command = argv._[0]
 
         if (!{}.hasOwnProperty.call(commands, command)) {
@@ -60,9 +62,15 @@ export default function bber() {
             process.exit(0)
         }
 
-        const sequence = command === 'build' ? createBuildSequence(argv).reduce((a, c) => a.concat(...sequences[c]), []) : [command]
+        const sequence =
+            command === "build"
+                ? createBuildSequence(argv).reduce(
+                    (a, c) => a.concat(...sequences[c]),
+                    []
+                )
+                : [command]
 
-        state.update('sequence', sequence)
+        state.update("sequence", sequence)
         log.registerSequence(state, command, sequence)
     }
 
@@ -86,10 +94,8 @@ export default function bber() {
         .command(commands.cover)
         .command(commands.deploy)
 
-        .help('h')
-        .alias('h', 'help')
+        .help("h")
+        .alias("h", "help")
         .demandCommand()
-        .wrap(lineLength)
-        .argv
-
+        .wrap(lineLength).argv
 }

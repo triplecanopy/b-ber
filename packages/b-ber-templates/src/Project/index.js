@@ -1,13 +1,13 @@
-import path from 'path'
-import crypto from 'crypto'
-import state from '@canopycanopycanopy/b-ber-lib/State'
-import YamlAdaptor from '@canopycanopycanopy/b-ber-lib/YamlAdaptor'
+import path from "path"
+import crypto from "crypto"
+import state from "@canopycanopycanopy/b-ber-lib/State"
+import YamlAdaptor from "@canopycanopycanopy/b-ber-lib/YamlAdaptor"
 
 class Project {
     static directories(src) {
         return [
             src,
-            path.join(path.dirname(src), 'themes'),
+            path.join(path.dirname(src), "themes"),
             `${src}/_images`,
             `${src}/_javascripts`,
             `${src}/_stylesheets`,
@@ -19,7 +19,7 @@ class Project {
     }
     static configYAML(src) {
         return {
-            relativePath: path.join(path.dirname(src), 'config.yml'),
+            relativePath: path.join(path.dirname(src), "config.yml"),
             content: YamlAdaptor.dump(state.config),
         }
     }
@@ -27,8 +27,8 @@ class Project {
         return {
             relativePath: path.join(src, `${type}.yml`),
             content: `# Table of Contents
-# "in_toc:false" removes the Table of Contents from the built-in navigation of the reader.
-# "linear:false" removes the Table of Contents from the project's contents.
+# "in_toc:false" removes the entry from the built-in navigation of the reader.
+# "linear:false" removes the entry from the project's contents.
 - toc:
         in_toc: false
         linear: false
@@ -44,7 +44,7 @@ class Project {
     }
     static metadataYAML(src) {
         return {
-            relativePath: path.join(src, 'metadata.yml'),
+            relativePath: path.join(src, "metadata.yml"),
             content: `-
     term: title
     value: Sample Project
@@ -77,14 +77,15 @@ class Project {
     value: Triple Canopy
 -
     term: identifier
-    value: ${crypto.randomBytes(20).toString('hex')}
+    value: ${crypto.randomBytes(20).toString("hex")}
 `,
         }
     }
     static javascripts(src) {
-        return [{
-            relativePath: `${src}/_javascripts/application.js`,
-            content: `// All user defined functions should be wrapped in a 'domReady' call - or by using a third-party lib like jQuery - for compatibility in reader, web, and e-reader versions
+        return [
+            {
+                relativePath: `${src}/_javascripts/application.js`,
+                content: `// All user defined functions should be wrapped in a 'domReady' call - or by using a third-party lib like jQuery - for compatibility in reader, web, and e-reader versions
 // Examples:
 //  domReady(fn)
 //  domReady(function() {})
@@ -185,12 +186,14 @@ function main() {
 
 domReady(main)
 `,
-        }]
+            },
+        ]
     }
     static markdown(src) {
-        return [{
-            relativePath: `${src}/_markdown/project-name_title-page.md`,
-            content: `---
+        return [
+            {
+                relativePath: `${src}/_markdown/project-name_title-page.md`,
+                content: `---
 title: Project Name Title Page
 type: titlepage
 ---
@@ -201,9 +204,10 @@ type: titlepage
 
 ::: exit:project-name_title-page
 `,
-        }, {
-            relativePath: `${src}/_markdown/project-name-chapter-01.md`,
-            content: `---
+            },
+            {
+                relativePath: `${src}/_markdown/project-name-chapter-01.md`,
+                content: `---
 title: Project Name Chapter One
 type: bodymatter
 ---
@@ -216,9 +220,10 @@ Chapter Contents
 
 ::: exit:project-name_chapter-one
 `,
-        }, {
-            relativePath: `${src}/_markdown/project-name_colophon.md`,
-            content: `---
+            },
+            {
+                relativePath: `${src}/_markdown/project-name_colophon.md`,
+                content: `---
 title: Project Name Colophon
 type: colophon
 ---
@@ -248,7 +253,8 @@ Country
 
 ::: exit:project-name_colophon
 `,
-        }]
+            },
+        ]
     }
     static stylesheets() {
         return []

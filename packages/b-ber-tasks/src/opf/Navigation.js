@@ -32,7 +32,6 @@ import {
     nestedContentToYAML,
     pathInfoFromFiles,
 } from "./helpers"
-import { inspect } from "util"
 
 /**
  * @alias module:navigation#Navigation
