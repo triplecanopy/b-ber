@@ -53,7 +53,7 @@ class DocumentPreProcessor {
                 /(?:text|application)\/(?:x-java|java|ecma)script/.test(
                     a.type
                 ) &&
-                a.appendScript(state.root) // TODO: better filter needed here
+                a.appendScript(state.root)
         )
     }
 

@@ -1,11 +1,11 @@
-import React, {Component} from 'react'
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import ResizeObserver from 'resize-observer-polyfill'
 import debounce from 'lodash/debounce'
-import {isNumeric} from '../helpers/Types'
-import {debug, verboseOutput} from '../config'
+import { isNumeric } from '../helpers/Types'
+import { debug, verboseOutput } from '../config'
 import Viewport from '../helpers/Viewport'
-import {cssHeightDeclarationPropType} from '../lib/custom-prop-types'
+import { cssHeightDeclarationPropType } from '../lib/custom-prop-types'
 import DocumentPreProcessor from '../lib/DocumentPreProcessor'
 
 class Marker extends Component {
@@ -36,7 +36,9 @@ class Marker extends Component {
         this.removeParentOffsetBottom = this.removeParentOffsetBottom.bind(this)
         this.connectObservers = this.connectObservers.bind(this)
         this.disconnectObservers = this.disconnectObservers.bind(this)
-        this.nodeEdgeIsInAllowableRange = this.nodeEdgeIsInAllowableRange.bind(this)
+        this.nodeEdgeIsInAllowableRange = this.nodeEdgeIsInAllowableRange.bind(
+            this
+        )
 
         // refs
         this.contentNode = null // TODO: should be passed via props
@@ -65,7 +67,9 @@ class Marker extends Component {
         // settled into the left-most position of the container
         this.calculateNodePositionAfterResize = debounce(
             // this.calculateNodePosition, this.context.transitionSpeed, {
-            this.calculateNodePosition, 0, {
+            this.calculateNodePosition,
+            0,
+            {
                 leading: false,
                 trailing: true,
             }
@@ -86,21 +90,29 @@ class Marker extends Component {
         const parent = this.markerNode.parentNode.parentNode
 
         if (!parent) return
-        if (debug) parent.style.backgroundColor = 'lightblue'
+        // if (debug) parent.style.backgroundColor = 'lightblue'
 
         parent.style.paddingBottom = 0
         parent.style.marginBottom = 0
     }
 
-    nodeEdgeIsInAllowableRange(position, _position) { // eslint-disable-line class-methods-use-this
+    // eslint-disable-next-line class-methods-use-this
+    nodeEdgeIsInAllowableRange(position, _position) {
+        const result =
+            (position >= Marker.ELEMENT_EDGE_VERSO_MIN &&
+                position <= Marker.ELEMENT_EDGE_VERSO_MAX) ||
+            (position >= Marker.ELEMENT_EDGE_RECTO_MIN &&
+                position <= Marker.ELEMENT_EDGE_RECTO_MAX)
 
-        const result = (
-            (position >= Marker.ELEMENT_EDGE_VERSO_MIN && position <= Marker.ELEMENT_EDGE_VERSO_MAX) ||
-            (position >= Marker.ELEMENT_EDGE_RECTO_MIN && position <= Marker.ELEMENT_EDGE_RECTO_MAX)
-        )
+        if (debug && verboseOutput) {
+            console.log(
+                'Marker#nodeEdgeIsInAllowableRange Recalculating layout',
+                position,
+                _position
+            )
+        }
 
-        // const result = (position === Marker.ELEMENT_EDGE_VERSO || position === Marker.ELEMENT_EDGE_VERSO_WITHIN_MARGIN_OF_ERROR || position === Marker.ELEMENT_EDGE_RECTO)
-        if (debug && verboseOutput) console.log('Marker#nodeEdgeIsInAllowableRange Recalculating layout', position, _position)
+        // console.log('xx', result, position, _position)
         return result
     }
 
@@ -109,13 +121,12 @@ class Marker extends Component {
 
         this.removeParentOffsetBottom()
 
-        const {paddingLeft, columnGap} = this.context
-        const {x, width} = this.markerNode.getBoundingClientRect()
+        const { paddingLeft, columnGap } = this.context
+        const { x, width } = this.markerNode.getBoundingClientRect()
 
         // determine if the marker is verso or recto. we're testing whether the
-        // marker's x offset is divisible by our layout width (which is the same
-        // as the window width). a remainder means that the marker is positioned
-        // at 1/2 the page width, or 'recto'
+        // marker's x offset is divisible by the window width. a remainder means
+        // that the marker is positioned at 1/2 the page width, or 'recto'
 
         // here's the width of the layout's visible frame
         const layoutUnit = window.innerWidth - paddingLeft * 2 + columnGap // eslint-disable-line no-mixed-operators
@@ -124,7 +135,9 @@ class Marker extends Component {
         const pageUnitRecto = x - columnGap - width - paddingLeft
 
         // get the decimal value of the recto unit over the visible frame, rounded to two
-        const position = Number((Math.abs(pageUnitRecto / layoutUnit) % 1).toFixed(2).substring(2))
+        const position = Number(
+            (Math.abs(pageUnitRecto / layoutUnit) % 1).toFixed(2).substring(2)
+        )
 
         // keep a reference of the original calculation for debugging
         const _position = Math.abs(pageUnitRecto / layoutUnit)
@@ -133,10 +146,14 @@ class Marker extends Component {
         // sit within 0.01px of the *left* edge of the visible frame if it's on
         // a verso column. we've effectively multiplied the decimal value by 10
         // above, and check against that sum
-        const verso = (position >= Marker.ELEMENT_EDGE_VERSO_MIN && position <= Marker.ELEMENT_EDGE_VERSO_MAX)
-        const recto = (position >= Marker.ELEMENT_EDGE_RECTO_MIN && position <= Marker.ELEMENT_EDGE_RECTO_MAX)
+        const verso =
+            position >= Marker.ELEMENT_EDGE_VERSO_MIN &&
+            position <= Marker.ELEMENT_EDGE_VERSO_MAX
+        const recto =
+            position >= Marker.ELEMENT_EDGE_RECTO_MIN &&
+            position <= Marker.ELEMENT_EDGE_RECTO_MAX
 
-        // in the case that the marker's edge is *not* at 0, or withing 0.01px
+        // in the case that the marker's edge is *not* at 0, or within 0.01px
         // of the centre line (usually during browser resize, or as other
         // markers are shifting the DOM around) calculateNodePosition calls
         // itself recursively after a timeout.
@@ -146,34 +163,52 @@ class Marker extends Component {
         // given that the layout will likely be adjusted by the user (i.e.,
         // resizing the browser to adjust the broken layout, which will trigger
         // a reflow), the chances of a stack overflow are pretty minimal
-        if (this.nodeEdgeIsInAllowableRange(position, _position) !== true || (verso === false && recto === false)) {
+        if (
+            this.nodeEdgeIsInAllowableRange(position, _position) !== true ||
+            (verso === false && recto === false)
+        ) {
             clearTimeout(this.timer)
-            this.timer = setTimeout(this.calculateNodePosition, this.context.transitionSpeed)
+            this.timer = setTimeout(
+                this.calculateNodePosition,
+                this.context.transitionSpeed
+            )
         }
 
         if (debug && verboseOutput) {
-            const initiator = String(record).split(',')[0].replace(/(\[object |\])/g, '').replace(/Record/, 'Observer').replace(/Entry/, '')
+            const initiator = String(record)
+                .split(',')[0]
+                .replace(/(\[object |\])/g, '')
+                .replace(/Record/, 'Observer')
+                .replace(/Entry/, '')
             const versoOrRecto = verso ? 'verso' : 'recto'
             console.group('Marker#calculateNodePosition')
             console.log(`Initiator: ${initiator}`)
             console.log(`Marker: ${this.markerNode.dataset.marker}`)
             console.log(`Layout: ${versoOrRecto}`)
             console.log('Record:', record)
-            console.log('position: %d, Computed Position: %d, DOMRect.x: %d, paddingLeft: %d', position, _position, x, paddingLeft)
+            console.log(
+                'position: %d, Computed Position: %d, DOMRect.x: %d, paddingLeft: %d',
+                position,
+                _position,
+                x,
+                paddingLeft
+            )
             console.groupEnd()
         }
 
         // TODO: may want to debounce this call, or write up 'swap' functions in
         // DocumentPreProcessor in case of flickering, but seems OK rn
         DocumentPreProcessor.removeStyleSheets()
-        DocumentPreProcessor.createStyleSheets({paddingLeft, columnGap})
+        DocumentPreProcessor.createStyleSheets({ paddingLeft, columnGap })
         DocumentPreProcessor.appendStyleSheets()
 
-        this.setState({verso, recto})
+        this.setState({ verso, recto })
     }
 
     connectObservers() {
-        this.resizeObserver = new ResizeObserver(this.calculateNodePositionAfterResize)
+        this.resizeObserver = new ResizeObserver(
+            this.calculateNodePositionAfterResize
+        )
         this.resizeObserver.observe(this.contentNode)
     }
 
@@ -183,14 +218,16 @@ class Marker extends Component {
 
     calculateOffsetHeight() {
         let offsetHeight = 0
-        if (!this.layoutNode || !this.markerNode || Viewport.isMobile()) return offsetHeight
+        if (!this.layoutNode || !this.markerNode || Viewport.isMobile()) {
+            return offsetHeight
+        }
 
-        const {verso, recto} = this.state
+        const { verso, recto } = this.state
         const markerBottom = this.markerNode.getBoundingClientRect().bottom
-        const {paddingTop, paddingBottom} = this.context
+        const { paddingTop, paddingBottom } = this.context
         const padding = paddingTop + paddingBottom
 
-        let {height} = this.context
+        let { height } = this.context
         if (!isNumeric(height)) height = window.innerHeight
 
         if (verso) {
@@ -207,22 +244,24 @@ class Marker extends Component {
             offsetHeight -= padding / 2
         }
 
-        if (JSON.parse(this.markerNode.dataset.unbound) === true) return offsetHeight / 2
+        if (JSON.parse(this.markerNode.dataset.unbound) === true) {
+            return offsetHeight / 2
+        }
         return offsetHeight
     }
 
     render() {
-        const {verso, recto} = this.state
+        const { verso, recto } = this.state
         const offsetHeight = this.calculateOffsetHeight()
 
-        const debugSpacerStyles = {background: 'coral'}
-        const debugMarkerStyles = {backgroundColor: (verso ? 'violet' : 'red')}
+        const debugSpacerStyles = { background: 'coral' }
+        const debugMarkerStyles = { backgroundColor: verso ? 'violet' : 'red' }
 
-        let spacerStyles = {paddingBottom: offsetHeight, display: 'block'}
-        if (debug) spacerStyles = {...spacerStyles, ...debugSpacerStyles}
+        let spacerStyles = { paddingBottom: offsetHeight, display: 'block' }
+        if (debug) spacerStyles = { ...spacerStyles, ...debugSpacerStyles }
 
-        let markerStyles = {...this.props.style}
-        if (debug) markerStyles = {...markerStyles, ...debugMarkerStyles}
+        let markerStyles = { ...this.props.style }
+        if (debug) markerStyles = { ...markerStyles, ...debugMarkerStyles }
 
         return (
             <span>
@@ -231,12 +270,9 @@ class Marker extends Component {
                     data-verso={verso}
                     data-recto={recto}
                     style={markerStyles}
-                    ref={node => this.markerNode = node}
+                    ref={node => (this.markerNode = node)}
                 />
-                <span
-                    className='marker__spacer'
-                    style={spacerStyles}
-                />
+                <span className="marker__spacer" style={spacerStyles} />
             </span>
         )
     }

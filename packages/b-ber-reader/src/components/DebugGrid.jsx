@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, { Component } from 'react'
 
 class DebugGrid extends Component {
     constructor(props) {
@@ -8,18 +8,20 @@ class DebugGrid extends Component {
     }
 
     drawGrid() {
-        const {gridColumns, gridColumnWidth, gridGutterWidth} = this.props.viewerSettings
+        const {
+            gridColumns,
+            gridColumnWidth,
+            gridGutterWidth,
+        } = this.props.viewerSettings
         const lines = []
         const paddingLeft = gridColumnWidth + gridGutterWidth
         for (let i = 0; i < gridColumns; i++) {
-            const styles = {left: paddingLeft * i, width: gridColumnWidth}
+            const styles = { left: paddingLeft * i, width: gridColumnWidth }
             const index = i + 1
             lines.push(
-                <span
-                    key={i}
-                    style={styles}
-                    className='grid__debug__line'
-                >{index}</span>
+                <span key={i} style={styles} className="grid__debug__line">
+                    {index}
+                </span>
             )
         }
 
@@ -27,11 +29,7 @@ class DebugGrid extends Component {
     }
 
     render() {
-        return (
-            <div className='grid__debug'>
-                {this.drawGrid()}
-            </div>
-        )
+        return <div className="grid__debug">{this.drawGrid()}</div>
     }
 }
 

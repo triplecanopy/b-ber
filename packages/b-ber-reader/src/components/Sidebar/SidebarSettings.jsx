@@ -30,18 +30,6 @@ class SidebarSettings extends Component {
         this.props.updateViewerSettings({fontSize})
     }
     render() {
-        // const {
-        //     // columnGap,          // columnGap 30
-        //     // fontSize,           // fontSize 120
-        //     // paddingBottom,      // paddingBottom 30
-        //     // paddingLeft,        // paddingLeft 30
-        //     // paddingRight,       // paddingRight 30
-        //     // paddingTop,         // paddingTop 30
-        //     // theme,              // theme "default"
-        //     // transition,         // transition "slide"
-        //     // transitionSpeed,    // transitionSpeed 400
-        // } = this.props.viewerSettings
-
         const {
             fontSize,
             fontSizeMin,

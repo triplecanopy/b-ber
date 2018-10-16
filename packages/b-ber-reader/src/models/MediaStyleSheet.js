@@ -1,7 +1,7 @@
-import {rand} from '../helpers/utils'
+import { rand } from '../helpers/utils'
 
 class MediaStyleSheet {
-    constructor({id, media, rules}) {
+    constructor({ id, media, rules }) {
         this.id = id || `_${rand()}`
         this.media = media
         this.rules = rules
@@ -11,7 +11,9 @@ class MediaStyleSheet {
     insertRules(doc) {
         this.rules.forEach(a =>
             this.elem.appendChild(
-                doc.createTextNode(`${a.selector} { ${a.declarations.join(';')} }`)
+                doc.createTextNode(
+                    `${a.selector} { ${a.declarations.join(';')} }`
+                )
             )
         )
     }
@@ -30,7 +32,6 @@ class MediaStyleSheet {
     removeSheet(doc) {
         doc.body.removeChild(this.elem)
     }
-
 }
 
 export default MediaStyleSheet

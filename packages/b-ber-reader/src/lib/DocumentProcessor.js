@@ -1,10 +1,14 @@
 /* eslint-disable class-methods-use-this */
 import DocumentPreProcessor from './DocumentPreProcessor'
-import {rand} from '../helpers/utils'
+import { rand } from '../helpers/utils'
 
 class DocumentProcessor {
     static defaults = {
-        targetClassNames: [['figure__inline', 'figure__large', 'figure__fullbleed'], ['spread']],
+        targetClassNames: [
+            ['figure__inline', 'figure__large', 'figure__fullbleed'],
+            ['spread'],
+        ],
+        blacklistedClassNames: [['gallery__item', 'figure__items']],
         markerClassNames: 'marker',
         markerElement: 'span',
         paddingLeft: 0,
@@ -12,20 +16,22 @@ class DocumentProcessor {
         responseURL: window.location.host,
     }
     constructor(options = {}) {
-
         // initialize
-        if (!DocumentPreProcessor.getRootDocument()) DocumentPreProcessor.setRootDocument(document)
+        if (!DocumentPreProcessor.getRootDocument()) {
+            DocumentPreProcessor.setRootDocument(document)
+        }
 
         // cleanup
         DocumentPreProcessor.removeStyleSheets()
         DocumentPreProcessor.removeScripts()
 
         // settings
-        this.settings = {...DocumentProcessor.defaults, ...options}
+        this.settings = { ...DocumentProcessor.defaults, ...options }
 
         DocumentPreProcessor.setRequestURI(this.settings.responseURL)
 
         this.targetClassNames = this.settings.targetClassNames
+        this.blacklistedClassNames = this.settings.blacklistedClassNames
         this.markerClassNames = this.settings.markerClassNames
         this.markerElement = this.settings.markerElement
 
@@ -51,7 +57,6 @@ class DocumentProcessor {
                 'LINK',
                 'SCRIPT',
                 'STYLE',
-                'SPAN',
                 'EM',
                 'I',
                 'STRONG',
@@ -64,34 +69,46 @@ class DocumentProcessor {
                 'SUP',
                 'SUB',
                 'IFRAME',
+                'FIGURE',
             ],
         }
     }
 
-    classListContainsAll(node) {
-        return this.targetClassNames.some(list => list.every(name => node.classList.contains(name)))
+    classListContainsAll(node, classNames) {
+        return classNames.some(list =>
+            list.every(name => node.classList.contains(name))
+        )
+    }
+
+    classListContainsNone(node, classNames) {
+        return classNames.some(list =>
+            list.every(name => !node.classList.contains(name))
+        )
     }
 
     shouldParse(node) {
+        // prettier-ignore
         return (
-            node.nodeType === 1                                                     // is an element
-            && this.blackListedNodes.names.indexOf(node.nodeName.toUpperCase()) < 0 // not blacklisted
-            && node.classList.contains(this.markerClassNames) !== true              // not a marker
+            node.nodeType === 1 && // is an element
+            this.blackListedNodes.names.indexOf(node.nodeName.toUpperCase()) < 0 && // not blacklisted
+            node.classList.contains(this.markerClassNames) !== true && // not a marker
+            this.classListContainsNone(node, this.blacklistedClassNames)
         )
     }
 
     isTarget(node) {
-        return this.classListContainsAll(node)
+        return this.classListContainsAll(node, this.targetClassNames)
     }
 
     hasChildren(node) {
-        return (node && node.children && node.children.length)
+        return node && node.children && node.children.length
     }
 
     getLastChild(children) {
         let node = null
 
-        for (let i = children.length - 1; i >= 0; i--) { // start at bottom
+        for (let i = children.length - 1; i >= 0; i--) {
+            // start at bottom
             node = children[i]
             if (!this.shouldParse(node)) continue
 
@@ -138,7 +155,9 @@ class DocumentProcessor {
     }
 
     setMarkerStyles(elem) {
-        Object.entries(this.markerStyles).forEach(([key, val]) => elem.style[key] = val) // eslint-disable-line no-param-reassign
+        Object.entries(this.markerStyles).forEach(
+            ([key, val]) => (elem.style[key] = val) // eslint-disable-line no-param-reassign
+        )
     }
 
     createMarker(id) {
@@ -175,7 +194,10 @@ class DocumentProcessor {
                         node.setAttribute('data-marker-reference', markerId)
                     }
                     else {
-                        console.warn('No siblings or children could be found for', node.nodeName)
+                        console.warn(
+                            'No siblings or children could be found for',
+                            node.nodeName
+                        )
 
                         const elem = this.createMarker(markerId)
                         elem.setAttribute('data-unbound', true)
@@ -195,7 +217,6 @@ class DocumentProcessor {
             callback(doc)
         }
     }
-
 
     // check that all references have markers
     validateDocument(doc) {
@@ -218,37 +239,48 @@ class DocumentProcessor {
         for (let j = 0; j < markers.length; j++) {
             const markerId = markers[j].dataset.marker
             const markerData = typeof markerId !== 'undefined'
-            console.assert(markerData, `Marker ${j} does not have a marker attribute`)
+            console.assert(
+                markerData,
+                `Marker ${j} does not have a marker attribute`
+            )
 
             const refExists = refHash[markerId]
-            console.assert(refExists, `Reference for marker ${j} (${markerId}) could not be found`)
+            console.assert(
+                refExists,
+                `Reference for marker ${j} (${markerId}) could not be found`
+            )
 
             if (!markerData) validMarkers = false
             if (!refExists) validRefs = false
         }
 
-        return (validLength && validMarkers && validRefs)
+        return validLength && validMarkers && validRefs
     }
 
     parseXML(xmlString, callback) {
         const parser = new window.DOMParser()
         const doc = parser.parseFromString(xmlString, 'text/html')
-        const {paddingLeft, columnGap} = this.settings
+        const { paddingLeft, columnGap } = this.settings
         let xml
         let err = null
 
         DocumentPreProcessor.setContextDocument(doc)
-        DocumentPreProcessor.createStyleSheets({paddingLeft, columnGap})
+        DocumentPreProcessor.createStyleSheets({ paddingLeft, columnGap })
         DocumentPreProcessor.createScriptElements()
         DocumentPreProcessor.parseXML()
 
         this.walkDocument(doc, doc_ => {
             if (!this.validateDocument(doc_)) err = new Error('Invalid markup')
-            xml = xmlString.replace(/<body([^>]*?)>[\s\S]*<\/body>/g, `<body$1>${String(doc.body.innerHTML)}</body>`)
+            xml = xmlString.replace(
+                /<body([^>]*?)>[\s\S]*<\/body>/g,
+                `<body$1>${String(doc.body.innerHTML)}</body>`
+            )
         })
 
-        const result = {xml, doc}
-        if (callback && typeof callback === 'function') return callback(err, result)
+        const result = { xml, doc }
+        if (callback && typeof callback === 'function') {
+            return callback(err, result)
+        }
         return result
     }
 }

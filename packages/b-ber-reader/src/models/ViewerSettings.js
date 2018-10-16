@@ -1,12 +1,17 @@
 import isPlainObject from 'lodash/isPlainObject'
-import {isNumeric} from '../helpers/Types'
-import {transitions, themes} from '../constants'
+import { isNumeric } from '../helpers/Types'
+import { transitions, themes } from '../constants'
 import Viewport from '../helpers/Viewport'
 
-const __extendExistingProps = (target, ref, obj, opts = {enumerable: true}) => {
+const __extendExistingProps = (
+    target,
+    ref,
+    obj,
+    opts = { enumerable: true }
+) => {
     Object.entries(ref).forEach(([key, val]) => {
-        const value = ({}.hasOwnProperty.call(obj, key)) ? obj[key] : val
-        Object.defineProperty(target, key, {value, ...opts})
+        const value = {}.hasOwnProperty.call(obj, key) ? obj[key] : val
+        Object.defineProperty(target, key, { value, ...opts })
     })
     return target
 }
@@ -26,57 +31,153 @@ class ViewerSettings {
     }
     constructor(options = {}) {
         this.settings = {}
-        const options_ = __extendExistingProps({}, ViewerSettings.defaults, options)
-        this.settings = {...this.settings, ...options_}
+        const options_ = __extendExistingProps(
+            {},
+            ViewerSettings.defaults,
+            options
+        )
+        this.settings = { ...this.settings, ...options_ }
 
         this.put = this.put.bind(this)
         this.get = this.get.bind(this)
 
         // responsive
-        this.gridColumns = _ => Viewport.isMobile() ? this.settings.mobileColumnCount : this.settings.desktopColumnCount
-        this.gridColumnWidth = _ => ((65 / this.settings.gridColumns()) / 100) * window.innerWidth
-        this.gridGutterWidth = _ => ((35 / (this.settings.gridColumns() - 1)) / 100) * window.innerWidth
-        this.paddingLeft = _ => Viewport.isXlarge() ? (this.settings.gridColumnWidth() + this.settings.gridGutterWidth()) * 2 : Viewport.isMobile() ? this.settings.gridColumnWidth() : this.settings.gridColumnWidth() + this.settings.gridGutterWidth()
-        this.paddingRight = _ => Viewport.isXlarge() ? (this.settings.gridColumnWidth() + this.settings.gridGutterWidth()) * 2 : Viewport.isMobile() ? this.settings.gridColumnWidth() : this.settings.gridColumnWidth() + this.settings.gridGutterWidth()
-        this.paddingTop = _ => Viewport.isXlarge() ? window.innerHeight / 6 : Viewport.isTall() ? window.innerHeight / 5.5 : Viewport.isMobile() ? window.innerHeight / 10 : window.innerHeight / 7
-        this.paddingBottom = _ => Viewport.isTall() ? (Viewport.isXlarge() ? window.innerHeight / 7 : window.innerHeight / 5) : window.innerHeight / 7
+        this.gridColumns = _ =>
+            Viewport.isMobile()
+                ? this.settings.mobileColumnCount
+                : this.settings.desktopColumnCount
+        this.gridColumnWidth = _ =>
+            (65 / this.settings.gridColumns() / 100) * window.innerWidth
+        this.gridGutterWidth = _ =>
+            (35 / (this.settings.gridColumns() - 1) / 100) * window.innerWidth
+        this.paddingLeft = _ =>
+            Viewport.isXlarge()
+                ? (this.settings.gridColumnWidth() +
+                      this.settings.gridGutterWidth()) *
+                  2
+                : Viewport.isMobile()
+                    ? this.settings.gridColumnWidth()
+                    : this.settings.gridColumnWidth() +
+                      this.settings.gridGutterWidth()
+        this.paddingRight = _ =>
+            Viewport.isXlarge()
+                ? (this.settings.gridColumnWidth() +
+                      this.settings.gridGutterWidth()) *
+                  2
+                : Viewport.isMobile()
+                    ? this.settings.gridColumnWidth()
+                    : this.settings.gridColumnWidth() +
+                      this.settings.gridGutterWidth()
+        this.paddingTop = _ =>
+            Viewport.isXlarge()
+                ? window.innerHeight / 6
+                : Viewport.isTall()
+                    ? window.innerHeight / 5.5
+                    : Viewport.isMobile()
+                        ? window.innerHeight / 10
+                        : window.innerHeight / 7
+        this.paddingBottom = _ =>
+            Viewport.isTall()
+                ? Viewport.isXlarge()
+                    ? window.innerHeight / 7
+                    : window.innerHeight / 5
+                : window.innerHeight / 7
         this.columnGap = _ => this.settings.gridGutterWidth()
     }
 
-
     // responsive
-    get gridColumns() { return typeof this.settings.gridColumns === 'function' ? this.settings.gridColumns() : this.settings.gridColumns }
-    get gridColumnWidth() { return typeof this.settings.gridColumnWidth === 'function' ? this.settings.gridColumnWidth() : this.settings.gridColumnWidth }
-    get gridGutterWidth() { return typeof this.settings.gridGutterWidth === 'function' ? this.settings.gridGutterWidth() : this.settings.gridGutterWidth }
+    get gridColumns() {
+        return typeof this.settings.gridColumns === 'function'
+            ? this.settings.gridColumns()
+            : this.settings.gridColumns
+    }
+    get gridColumnWidth() {
+        return typeof this.settings.gridColumnWidth === 'function'
+            ? this.settings.gridColumnWidth()
+            : this.settings.gridColumnWidth
+    }
+    get gridGutterWidth() {
+        return typeof this.settings.gridGutterWidth === 'function'
+            ? this.settings.gridGutterWidth()
+            : this.settings.gridGutterWidth
+    }
 
-    get paddingTop() { return typeof this.settings.paddingTop === 'function' ? this.settings.paddingTop() : this.settings.paddingTop }
-    get paddingLeft() { return typeof this.settings.paddingLeft === 'function' ? this.settings.paddingLeft() : this.settings.paddingLeft }
-    get paddingRight() { return typeof this.settings.paddingRight === 'function' ? this.settings.paddingRight() : this.settings.paddingRight }
-    get paddingBottom() { return typeof this.settings.paddingBottom === 'function' ? this.settings.paddingBottom() : this.settings.paddingBottom }
+    get paddingTop() {
+        return typeof this.settings.paddingTop === 'function'
+            ? this.settings.paddingTop()
+            : this.settings.paddingTop
+    }
+    get paddingLeft() {
+        return typeof this.settings.paddingLeft === 'function'
+            ? this.settings.paddingLeft()
+            : this.settings.paddingLeft
+    }
+    get paddingRight() {
+        return typeof this.settings.paddingRight === 'function'
+            ? this.settings.paddingRight()
+            : this.settings.paddingRight
+    }
+    get paddingBottom() {
+        return typeof this.settings.paddingBottom === 'function'
+            ? this.settings.paddingBottom()
+            : this.settings.paddingBottom
+    }
 
-    get paddingX() { return this.settings.paddingLeft() + this.settings.paddingRight() }
-    get paddingY() { return this.settings.paddingTop() + this.settings.paddingBottom() }
+    get paddingX() {
+        return this.settings.paddingLeft() + this.settings.paddingRight()
+    }
+    get paddingY() {
+        return this.settings.paddingTop() + this.settings.paddingBottom()
+    }
 
-    get columns() { return this.settings.columns }
-    get columnGap() { return typeof this.settings.columnGap === 'function' ? this.settings.columnGap() : this.settings.columnGap }
-    get transition() { return this.settings.transition }
-    get transitionSpeed() { return this.settings.transitionSpeed }
-    get theme() { return this.settings.theme }
+    get columns() {
+        return this.settings.columns
+    }
+    get columnGap() {
+        return typeof this.settings.columnGap === 'function'
+            ? this.settings.columnGap()
+            : this.settings.columnGap
+    }
+    get transition() {
+        return this.settings.transition
+    }
+    get transitionSpeed() {
+        return this.settings.transitionSpeed
+    }
+    get theme() {
+        return this.settings.theme
+    }
 
     // returns n as a string (percentage)
     get fontSize() {
         return `${this.settings.fontSize}%`
     }
 
-    set gridColumns(val) { this.settings.gridColumns = val }
-    set gridColumnWidth(val) { this.settings.gridColumnWidth = val }
-    set gridGutterWidth(val) { this.settings.gridGutterWidth = val }
-    set columnGap(val) { this.settings.columnGap = val }
+    set gridColumns(val) {
+        this.settings.gridColumns = val
+    }
+    set gridColumnWidth(val) {
+        this.settings.gridColumnWidth = val
+    }
+    set gridGutterWidth(val) {
+        this.settings.gridGutterWidth = val
+    }
+    set columnGap(val) {
+        this.settings.columnGap = val
+    }
 
-    set paddingTop(val) { this.settings.paddingTop = val }
-    set paddingLeft(val) { this.settings.paddingLeft = val }
-    set paddingRight(val) { this.settings.paddingRight = val }
-    set paddingBottom(val) { this.settings.paddingBottom = val }
+    set paddingTop(val) {
+        this.settings.paddingTop = val
+    }
+    set paddingLeft(val) {
+        this.settings.paddingLeft = val
+    }
+    set paddingRight(val) {
+        this.settings.paddingRight = val
+    }
+    set paddingBottom(val) {
+        this.settings.paddingBottom = val
+    }
 
     // expects array of values
     set padding(values) {
@@ -87,10 +188,18 @@ class ViewerSettings {
         if (isNumeric(left)) this.settings.paddingLeft = left
     }
 
-    set columns(val) { this.settings.columns = val }
-    set transition(val) { this.settings.transition = val }
-    set transitionSpeed(val) { this.settings.transitionSpeed = val }
-    set theme(val) { this.settings.theme = val }
+    set columns(val) {
+        this.settings.columns = val
+    }
+    set transition(val) {
+        this.settings.transition = val
+    }
+    set transitionSpeed(val) {
+        this.settings.transitionSpeed = val
+    }
+    set theme(val) {
+        this.settings.theme = val
+    }
 
     // stores vals as numbers
     set fontSize(val) {
@@ -106,15 +215,24 @@ class ViewerSettings {
 
     put(objectOrString = {}, val = null) {
         if (isPlainObject(objectOrString)) {
-            const objectOrString_ = {...objectOrString}
+            const objectOrString_ = { ...objectOrString }
 
             // TODO: this should be extracted and process other props
             if ({}.hasOwnProperty.call(objectOrString_, 'fontSize')) {
-                if (!isNumeric(objectOrString_.fontSize)) objectOrString_.fontSize = parseFloat(objectOrString_.fontSize, 10)
+                if (!isNumeric(objectOrString_.fontSize)) {
+                    objectOrString_.fontSize = parseFloat(
+                        objectOrString_.fontSize,
+                        10
+                    )
+                }
             }
 
-            const options = __extendExistingProps({}, ViewerSettings.defaults, objectOrString_)
-            this.settings = {...this.settings, ...options}
+            const options = __extendExistingProps(
+                {},
+                ViewerSettings.defaults,
+                objectOrString_
+            )
+            this.settings = { ...this.settings, ...options }
             return
         }
         if (typeof objectOrString === 'string') {
@@ -123,7 +241,6 @@ class ViewerSettings {
         }
 
         console.error('Invalid params: could not update settings')
-
     }
 }
 

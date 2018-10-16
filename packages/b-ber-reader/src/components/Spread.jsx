@@ -1,16 +1,15 @@
 /* eslint-disable class-methods-use-this,no-mixed-operators,react/sort-comp */
-import React, {Component} from 'react'
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import ResizeObserver from 'resize-observer-polyfill'
 import debounce from 'lodash/debounce'
-import {debug} from '../config'
-import {isNumeric} from '../helpers/Types'
-import {cssHeightDeclarationPropType} from '../lib/custom-prop-types'
+import { debug } from '../config'
+import { isNumeric } from '../helpers/Types'
+import { cssHeightDeclarationPropType } from '../lib/custom-prop-types'
 import Messenger from '../lib/Messenger'
-import {messagesTypes} from '../constants'
+import { messagesTypes } from '../constants'
 import browser from '../lib/browser'
 import Viewport from '../helpers/Viewport'
-
 
 class Spread extends Component {
     static contextTypes = {
@@ -45,14 +44,21 @@ class Spread extends Component {
         this.getMarkerPosition = this.getMarkerPosition.bind(this)
         this.getMarkerDOMRect = this.getMarkerDOMRect.bind(this)
         this.calculateSpreadOffset = this.calculateSpreadOffset.bind(this)
-        this.updateChildElementPositions = this.updateChildElementPositions.bind(this)
+        this.updateChildElementPositions = this.updateChildElementPositions.bind(
+            this
+        )
         this.createStyleSheetHTML = this.createStyleSheetHTML.bind(this)
         this.connectResizeObserver = this.connectResizeObserver.bind(this)
         this.disconnectResizeObserver = this.disconnectResizeObserver.bind(this)
-        this.debounceCalculateSpreadOffset = debounce(this.calculateSpreadOffset, this.debounceSpeed, {}).bind(this)
+        this.debounceCalculateSpreadOffset = debounce(
+            this.calculateSpreadOffset,
+            this.debounceSpeed,
+            {}
+        ).bind(this)
+
+        this.time = 0
     }
     componentWillMount() {
-
         // Adds listener for our 'ready' event that's fired in
         // decorate-observable.js. This is used to update the absolutely
         // positioned images in fullbleed panels which function properly on
@@ -78,35 +84,58 @@ class Spread extends Component {
     attachNodes() {
         const markerRefId = this.props['data-marker-reference']
 
-        this.markerNode = document.querySelector(`[data-marker="${markerRefId}"]`)
-        this.childNode = (document.querySelector(`[data-marker-reference="${markerRefId}"] figure`) ||
-                          document.querySelector(`[data-marker-reference="${markerRefId}"] .spread__content`)) // TODO: abstract to pass in child element selector
+        this.markerNode = document.querySelector(
+            `[data-marker="${markerRefId}"]`
+        )
+        this.childNode =
+            document.querySelector(
+                `[data-marker-reference="${markerRefId}"] figure`
+            ) ||
+            document.querySelector(
+                `[data-marker-reference="${markerRefId}"] .spread__content`
+            ) // TODO: abstract to pass in child element selector
 
-        this.setState({markerRefId})
+        this.setState({ markerRefId })
     }
     getMarkerPosition() {
         let verso = false
         let recto = false
 
         if (!this.markerNode) {
-            console.error(`Spread#getMarkerPosition: Unbound marker node for spread ${this.props['data-marker-reference']}`)
-            return {verso, recto}
+            console.error(
+                `Spread#getMarkerPosition: Unbound marker node for spread ${
+                    this.props['data-marker-reference']
+                }`
+            )
+            return { verso, recto }
         }
 
-        if (!this.markerNode.dataset || !this.markerNode.dataset.verso || !this.markerNode.dataset.recto) {
-            console.warn(`Could not get dataset from marker ${this.props['data-marker-reference']}`)
-            return {verso, recto}
+        if (
+            !this.markerNode.dataset ||
+            !this.markerNode.dataset.verso ||
+            !this.markerNode.dataset.recto
+        ) {
+            console.warn(
+                `Could not get dataset from marker ${
+                    this.props['data-marker-reference']
+                }`
+            )
+            return { verso, recto }
         }
 
         // TODO: this should be passed down via props, not picked from the DOM
         verso = JSON.parse(this.markerNode.dataset.verso)
         recto = JSON.parse(this.markerNode.dataset.recto)
 
-        return {verso, recto}
+        return { verso, recto }
     }
     getMarkerDOMRect() {
         if (!this.markerNode) {
-            console.error(`Spread#getMarkerDOMRect: Unbound marker node for spread ${this.props['data-marker-reference']}`)
+            console.error(
+                `Spread#getMarkerDOMRect: Unbound marker node for spread ${
+                    this.props['data-marker-reference']
+                }`
+            )
             return new window.DOMRect()
         }
 
@@ -114,28 +143,37 @@ class Spread extends Component {
     }
     connectResizeObserver() {
         const contentNode = document.querySelector('#content')
-        if (!contentNode) return console.error('Spread#connectResizeObserver: No #content node')
-        this.resizeObserver = new ResizeObserver(this.debounceCalculateSpreadOffset)
+        if (!contentNode) {
+            return console.error(
+                'Spread#connectResizeObserver: No #content node'
+            )
+        }
+        this.resizeObserver = new ResizeObserver(
+            this.debounceCalculateSpreadOffset
+        )
         this.resizeObserver.observe(contentNode)
     }
     disconnectResizeObserver() {
         this.resizeObserver.disconnect()
     }
     calculateSpreadOffset() {
-        let {height} = this.context
-        const {paddingTop, paddingBottom} = this.context
+        let { height } = this.context
+        const { paddingTop, paddingBottom } = this.context
         const padding = paddingTop + paddingBottom
 
-        height = isNumeric(height) ? (height * 2) - (padding * 2) : height
+        height = isNumeric(height) ? height * 2 - padding * 2 : height
         if (isNumeric(height)) height -= 1 // nudge to prevent overflow onto next spread
 
-        if (JSON.parse(this.markerNode.dataset.unbound) === true) height = (height / 2) - 1
+        if (JSON.parse(this.markerNode.dataset.unbound) === true) {
+            height = height / 2 - 1
+        }
 
-        this.setState({height}, this.updateChildElementPositions)
+        this.setState({ height }, this.updateChildElementPositions)
     }
 
     getPostionLeftFromMatrix() {
-        const matrix = window.getComputedStyle(document.querySelector('#layout'))
+        const matrix = window
+            .getComputedStyle(document.querySelector('#layout'))
             .transform.replace(/(matrix\(|\))/, '')
             .split(',')
             .map(a => Number(a.trim()))
@@ -148,7 +186,6 @@ class Spread extends Component {
     // behaviour so we don't bother shifting anything around in that case
     updateChildElementPositions() {
         if (!this.childNode) {
-
             // We call this function recursively on next tick since we know
             // there will be a figure node, but it may just not be available in
             // the DOM
@@ -157,21 +194,23 @@ class Spread extends Component {
             return setImmediate(this.updateChildElementPositions)
         }
 
-        const {verso, recto} = this.getMarkerPosition()
-        const {x} = this.getMarkerDOMRect()
+        const { verso, recto } = this.getMarkerPosition()
+        const { x } = this.getMarkerDOMRect()
         const transformLeft = this.getPostionLeftFromMatrix()
 
         const width = window.innerWidth
-        const {paddingLeft, paddingRight, columnGap} = this.context
-        const layoutWidth = ((width - paddingLeft - paddingRight) + columnGap)
+        const { paddingLeft, paddingRight, columnGap } = this.context
+        const layoutWidth = width - paddingLeft - paddingRight + columnGap // width of a single column
         const spreadPosition = Math.ceil((x - transformLeft) / layoutWidth)
 
         let position = 0
 
         if (!Viewport.isMobile()) {
             position = x - transformLeft + window.innerWidth
-            if (recto) position -= window.innerWidth / 2
-            if (JSON.parse(this.markerNode.dataset.unbound) === true) position = (paddingLeft / 2) + (columnGap / 2)
+            if (recto) position -= layoutWidth / 2
+            if (JSON.parse(this.markerNode.dataset.unbound) === true) {
+                position = (paddingLeft / 2 + columnGap / 2) - 4 // TODO: proper calc
+            }
         }
         else {
             position = paddingLeft * -1
@@ -182,10 +221,15 @@ class Spread extends Component {
         this.spreadPosition = spreadPosition
 
         // Only update figure's position if it's innaccurate
-        if (this.childNode.style.left !== position) this.childNode.style.left = `${position}`
-        if (verso && this.childNode.dataset.layout !== 'verso') this.childNode.dataset.layout = 'verso'
-        if (recto && this.childNode.dataset.layout !== 'recto') this.childNode.dataset.layout = 'recto'
-
+        if (this.childNode.style.left !== position) {
+            this.childNode.style.left = `${position}`
+        }
+        if (verso && this.childNode.dataset.layout !== 'verso') {
+            this.childNode.dataset.layout = 'verso'
+        }
+        if (recto && this.childNode.dataset.layout !== 'recto') {
+            this.childNode.dataset.layout = 'recto'
+        }
 
         // set this after loading to prevent figures drifing around on initial page load
         // TODO: should be passing in transition speed
@@ -204,15 +248,15 @@ class Spread extends Component {
                 this.childNode.style[vendorPrefixedTransforms[i]] = transform
             }
         }
-
     }
 
     createStyleSheetHTML() {
-        const {markerRefId} = this.state
-        const {spreadPosition} = this
-        const {paddingLeft} = this.context
+        const { markerRefId } = this.state
+        const { spreadPosition } = this
+        const { paddingLeft } = this.context
 
         return {
+            // prettier-ignore
             __html: `
                 .spread-index__${spreadPosition - 2} #spread__${markerRefId} > figure,
                 .spread-index__${spreadPosition - 2} #spread__${markerRefId} > .spread__content,
@@ -229,24 +273,26 @@ class Spread extends Component {
     }
 
     render() {
-        const {height, markerRefId} = this.state
-        const debugStyles = {background: 'beige'}
+        const { height, markerRefId } = this.state
+        const debugStyles = { background: 'beige' }
 
-        // Cross-browser image layout
-        // if (browser.name !== 'chrome')
         this.updateChildElementPositions()
 
-        let styles = {height}
-        if (debug) styles = {...styles, ...debugStyles}
+        let styles = { height }
+        if (debug) styles = { ...styles, ...debugStyles }
 
         return (
             <div
                 {...this.props}
                 id={`spread__${markerRefId}`}
                 style={styles}
-                ref={node => this.spreadNode = node}
+                ref={node => (this.spreadNode = node)}
             >
-                {Viewport.isMobile() !== true && <style dangerouslySetInnerHTML={this.createStyleSheetHTML()} />}
+                {Viewport.isMobile() !== true && (
+                    <style
+                        dangerouslySetInnerHTML={this.createStyleSheetHTML()}
+                    />
+                )}
                 {this.props.children}
             </div>
         )
