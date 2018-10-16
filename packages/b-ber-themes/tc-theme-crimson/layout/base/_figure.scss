@@ -1,57 +1,55 @@
-
 //
 //
 // `.figure__xx` classes are containers for figure elements, the
 // `figure` element itself is styled immediately below
 //
 
-
 // mixins
 //
 
-
 @mixin caption {
-    @include type-settings(-5);
-    line-height: 1.55; // TODO: calculate based on tininess
-    margin-bottom: 0;
-    text-align: left;
-    text-indent: 0!important;
+  @include type-settings(-5);
+  line-height: 1.55; // TODO: calculate based on tininess
+  margin-bottom: 0;
+  text-align: left;
+  text-indent: 0 !important;
 }
-
 
 // Element styles
 figure {
-    @include following-paragraph-not-indented;
+  @include following-paragraph-not-indented;
+  margin: 0 auto;
+  padding: 0;
+
+  img {
+    display: inline-block;
     margin: 0 auto;
-    padding: 0;
+    vertical-align: top;
+  }
 
-    img {
-        display: inline-block;
-        margin: 0 auto;
-        vertical-align: top;
+  .figcaption,
+  figcaption {
+    @include following-paragraph-not-indented;
+    // width: 50%;
+    display: inline-block;
+    text-align: left;
+    a {
+      text-decoration: none;
     }
-
-    .figcaption, figcaption {
-        @include following-paragraph-not-indented;
-        // width: 50%;
-        display: inline-block;
-        text-align: left;
-        a {
-            text-decoration: none;
-        }
-    }
-
+  }
 }
 
-.figure__small img {}
-.figure__medium img {}
+.figure__small img {
+}
+.figure__medium img {
+}
 .figure__large img {
-    &.landscape {
-        width: 100%;
-    }
+  &.landscape {
+    width: 100%;
+  }
 }
-.figure__inline img {}
-
+.figure__inline img {
+}
 
 //
 // Base container styles
@@ -59,153 +57,177 @@ figure {
 .figure__medium,
 .figure__large,
 .figure__inline {
-    page-break-inside: avoid;
-    text-align: center;
+  page-break-inside: avoid;
+  text-align: center;
 }
 
 .figure__large {
-    page-break-before: always;
-    page-break-after: always;
-    @include padding(1,0,1,0,0); // in case readers don't respect page-break, at least there's a bit of space
+  page-break-before: always;
+  page-break-after: always;
+  @include padding(
+    1,
+    0,
+    1,
+    0,
+    0
+  ); // in case readers don't respect page-break, at least there's a bit of space
 }
 
 .spread {
-    page-break-inside: avoid;
-    page-break-before: always;
-    page-break-after: always;
+  page-break-inside: avoid;
+  page-break-before: always;
+  page-break-after: always;
 }
 
-#layout.context__desktop { // desktop context only
-    .figure__large, .spread {
-       padding: 0;
-    }
-    .figure__large {
-        -webkit-column-break-after: always;
-        -webkit-column-break-before: always;
-    }
-    .figure__fullbleed {
-        -webkit-column-break-before: avoid!important;
-        -webkit-column-break-after: avoid!important;
-    }
+#layout.context__desktop {
+  // desktop context only
+  .figure__large,
+  .spread {
+    padding: 0;
+  }
+  .figure__large {
+    -webkit-column-break-after: always;
+    -webkit-column-break-before: always;
+  }
+  .figure__fullbleed {
+    -webkit-column-break-before: avoid !important;
+    -webkit-column-break-after: avoid !important;
+  }
 }
 
 .figure__large.figure__inline {
-    .epigraph & {
-        margin-top: 0;
-    }
+  .epigraph & {
+    margin-top: 0;
+  }
 }
-
 
 // Containers for inline images (used in text flow)
 .figure__small {
-
-    // sizes for the images
-    &.figure__small--landscape,
-    &.figure__small--square,
-    &.figure__small--portrait,
-    &.figure__small--portrait-high {
-        @include padding(1,0,1,0,0);
-        h1 + & { padding-top: 0 }
-        figure, a, img { width: auto; }
+  // sizes for the images
+  &.figure__small--landscape,
+  &.figure__small--square,
+  &.figure__small--portrait,
+  &.figure__small--portrait-high {
+    @include padding(1, 0, 1, 0, 0);
+    h1 + & {
+      padding-top: 0;
     }
-
-
-    a {
-        margin:0 auto;
+    figure,
+    a,
+    img {
+      width: auto;
     }
+  }
 
+  a {
+    margin: 0 auto;
+  }
 
-    + blockquote,
-    + blockquote.dialogue { padding-top: 0; }
+  + blockquote,
+  + blockquote.dialogue {
+    padding-top: 0;
+  }
 
-
-    &.figure__small--landscape {
-        figure, a, img {
-            height: n-lines($landscape-image-height, 0);
-        }
+  &.figure__small--landscape {
+    figure,
+    a,
+    img {
+      height: n-lines($landscape-image-height, 0);
     }
+  }
 
-    &.figure__small--square {
-        figure, a, img {
-            height: n-lines($square-image-height, 0);
-        }
+  &.figure__small--square {
+    figure,
+    a,
+    img {
+      height: n-lines($square-image-height, 0);
     }
+  }
 
-
-
-    &.figure__small--portrait {
-        figure, a, img {
-            height: n-lines($portrait-image-height, 0);
-        }
+  &.figure__small--portrait {
+    figure,
+    a,
+    img {
+      height: n-lines($portrait-image-height, 0);
     }
+  }
 
-
-    &.figure__small--portrait-high {
-        figure, a, img {
-            height: n-lines($portrait-image--high-height, 0);
-        }
+  &.figure__small--portrait-high {
+    figure,
+    a,
+    img {
+      height: n-lines($portrait-image--high-height, 0);
     }
+  }
 }
-
 
 // Images used in epigraph
 .figure__medium {
-    text-align: center;
+  text-align: center;
+  page-break-inside: avoid;
+  // height: 350px!important;
+  height: n-ems(14, 0);
+
+  .epigraph & {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
     page-break-inside: avoid;
-    // height: 350px!important;
-    height: n-ems(14, 0);
-
-    .epigraph & {
-        margin-top: 0!important;
-        padding-top: 0!important;
-        page-break-inside: avoid;
-    }
+  }
 }
-
-
-
 
 // `figcaption` element and `.figcaption` class both refer to the same
 // element because the `figcaption` element is not supported on some
 // readers
 figcaption,
 .figcaption {
-    text-align: center;
-    width: 100%;
-    @include following-paragraph-not-indented;
-    // @include type-settings(-3);
+  text-align: center;
+  width: 100%;
+  @include following-paragraph-not-indented;
+  // @include type-settings(-3);
 
-    display: inline-block;
-    a { text-decoration: none; }
+  display: inline-block;
+  a {
+    text-decoration: none;
+  }
 
+  p.small {
+    @include caption;
+  }
 
-    p.small {
-        @include caption;
-    }
-
-    .figure__large & {
-        margin: 0;
-        padding: 0;
-    }
+  .figure__large & {
+    margin: 0;
+    padding: 0;
+  }
 }
 
 p.caption {
-    @include caption;
+  @include caption;
 }
 
 .media__fallback__audio,
-.media__fallback__video {}
+.media__fallback__video {
+}
 
-.media__fallback--image {}
+.media__fallback--image {
+}
 
 .media__fallback--text {
-    @include caption;
+  @include caption;
 }
 
 .figure__items {
-    width: 100%;
-    margin: 0px!important;
-    a { text-decoration: none!important; }
-    .epigraph & { padding-top: 7px; }
+  width: 100%;
+  margin: 0px !important;
+  a {
+    text-decoration: none !important;
+  }
+  .epigraph & {
+    padding-top: 7px;
+  }
+  .figure__inline--portrait & {
+    width: 60%;
+  }
+  .figure__inline--portrait-high & {
+    width: 50%;
+  }
 }
-
