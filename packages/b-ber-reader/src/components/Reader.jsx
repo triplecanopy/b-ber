@@ -181,8 +181,7 @@ class Reader extends Component {
         if (!debug) this.hideSpinner()
     }
 
-
-    scrollToTop() {
+    scrollToTop() { // eslint-disable-line class-methods-use-this
         if (Viewport.isMobile()) document.getElementById('frame').scrollTo(0, 0)
     }
 

@@ -57,8 +57,8 @@ class State extends ApplicationLoader {
         return this.config.dist
     }
 
+    // eslint-disable-next-line class-methods-use-this
     get env() {
-        // eslint-disable-line class-methods-use-this
         return process.env.NODE_ENV || "development"
     }
 
@@ -145,7 +145,9 @@ class State extends ApplicationLoader {
      * @return {Object}      Merged object
      */
     merge(prop, val) {
-        if (!isPlainObject(this[prop]) || !isPlainObject(val)) { throw new Error(`Attempting to merge non-object in [State#merge]`) }
+        if (!isPlainObject(this[prop]) || !isPlainObject(val)) {
+            throw new Error(`Attempting to merge non-object in [State#merge]`)
+        }
         this[prop] = { ...this[prop], ...val }
     }
 
@@ -177,7 +179,9 @@ class State extends ApplicationLoader {
      * @return {Integer}            Returns an index, so checks should be against -1 for existence
      */
     contains(collection, value) {
-        if (!isArray(this[collection])) { throw new TypeError("[State#contains] must be called on an array") }
+        if (!isArray(this[collection])) {
+            throw new TypeError("[State#contains] must be called on an array")
+        }
         return findIndex(this[collection], value)
     }
 }

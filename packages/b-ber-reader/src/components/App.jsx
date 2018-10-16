@@ -82,8 +82,9 @@ class App extends Component {
             this.goToBookURL(location)
         })
     }
+
+    // eslint-disable-next-line class-methods-use-this
     handleClick({ title, url }) {
-        // eslint-disable-line class-methods-use-this
         const bookURL = url
         history.push(Url.slug(title), { bookURL })
     }
