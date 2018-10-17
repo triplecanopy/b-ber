@@ -3,12 +3,15 @@ import fs from 'fs-extra'
 import mime from 'mime-types'
 import imageSize from 'probe-image-size'
 import log from '@canopycanopycanopy/b-ber-logger'
-import {Html} from '@canopycanopycanopy/b-ber-lib'
+import { Html } from '@canopycanopycanopy/b-ber-lib'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import figTmpl from '@canopycanopycanopy/b-ber-templates/figures'
-import {getImageOrientation} from '@canopycanopycanopy/b-ber-lib/utils'
-import {INLINE_DIRECTIVE_MARKER, INLINE_DIRECTIVE_MARKER_MIN_LENGTH} from '@canopycanopycanopy/b-ber-shapes/directives'
-import {attributesObject, htmlId} from './helpers'
+import { getImageOrientation } from '@canopycanopycanopy/b-ber-lib/utils'
+import {
+    INLINE_DIRECTIVE_MARKER,
+    INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
+} from '@canopycanopycanopy/b-ber-shapes/directives'
+import { attributesObject, htmlId } from './helpers'
 import figure from '../parsers/figure'
 
 const imageOpenRegExp = /(figure(?:-inline)?)(?::([^\s]+)(\s?.*)?)?$/
@@ -16,7 +19,7 @@ const imageOpenRegExp = /(figure(?:-inline)?)(?::([^\s]+)(\s?.*)?)?$/
 export default {
     plugin: figure,
     name: 'figure',
-    renderer: ({instance, context = { filename: ''} }) => ({
+    renderer: ({ instance, context = { filename: '' } }) => ({
         marker: INLINE_DIRECTIVE_MARKER,
         minMarkers: INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
         markerOpen: imageOpenRegExp,
@@ -26,15 +29,19 @@ export default {
             if (!match) return false
 
             const [, , id, source] = match
-            if (typeof id === 'undefined' || typeof source === 'undefined') { // image requires `id` and `source`
-                log.error(`Missing [id] or [source] attribute for [figure] directive${context.filename}.md:${line}`)
+            if (typeof id === 'undefined' || typeof source === 'undefined') {
+                // image requires `id` and `source`
+                log.error(
+                    `Missing [id] or [source] attribute for [figure] directive${
+                        context.filename
+                    }.md:${line}`,
+                )
                 return false
             }
             return match
         },
 
         render(tokens, idx) {
-
             if (tokens[idx].type === 'container_figure_close') return ''
 
             const filename = `_markdown/${context.filename}.md`
@@ -43,9 +50,16 @@ export default {
 
             const [, type, id, attrs] = match
             const children = tokens[idx].children
-            const caption = children ? instance.renderInline(tokens[idx].children) : ''
-            const comment = Html.comment(`START: figure:${type}#${htmlId(id)}; ${filename}:${lineNr}`)
-            const attrsObject = attributesObject(attrs, type, {filename, lineNr})
+            const caption = children
+                ? instance.renderInline(tokens[idx].children)
+                : ''
+            const comment = Html.comment(
+                `START: figure:${type}#${htmlId(id)}; ${filename}:${lineNr}`,
+            )
+            const attrsObject = attributesObject(attrs, type, {
+                filename,
+                lineNr,
+            })
             const asset = path.join(state.src, '_images', attrsObject.source)
 
             let result, page, href, classNames, ref, imageData // eslint-disable-line one-var
@@ -63,12 +77,15 @@ export default {
 
             // then get the dimensions
             const dimensions = imageSize.sync(fs.readFileSync(asset))
-            const {width, height} = dimensions
+            const { width, height } = dimensions
             const figureId = htmlId(id) //`_${crypto.randomBytes(20).toString('hex')}`
 
             switch (type) {
                 case 'figure':
-                    classNames = `figure__small figure__small--${getImageOrientation(width, height)}`
+                    classNames = `figure__small figure__small--${getImageOrientation(
+                        width,
+                        height,
+                    )}`
                     ref = context.filename
 
                     if ({}.hasOwnProperty.call(attrsObject, 'classes')) {
@@ -78,7 +95,10 @@ export default {
                     }
 
                     page = `figure${figureId}.xhtml`
-                    href = state.build === 'reader' ? 'figures-titlepage.xhtml' : page
+                    href =
+                        state.build === 'reader'
+                            ? 'figures-titlepage.xhtml'
+                            : page
                     state.add('figures', {
                         id: figureId,
                         ...attrsObject,
@@ -93,14 +113,16 @@ export default {
                     result = `${comment}<div class="${attrsObject.classes}">
                             <figure id="ref${figureId}">
                                 <a href="${href}#${figureId}">
-                                    <img src="../images/${encodeURIComponent(attrsObject.source)}" alt="${attrsObject.alt}"/>
+                                    <img src="../images/${encodeURIComponent(
+            attrsObject.source,
+        )}" alt="${attrsObject.alt}"/>
                                 </a>
                             </figure>
                         </div>`
                     break
                 case 'figure-inline':
                     if (!{}.hasOwnProperty.call(attrsObject, 'classes')) {
-                        attrsObject.classes  = ''
+                        attrsObject.classes = ''
                     }
 
                     imageData = {

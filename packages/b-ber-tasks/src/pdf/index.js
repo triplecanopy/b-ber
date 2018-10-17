@@ -1,10 +1,9 @@
-
 import path from 'path'
 import fs from 'fs-extra'
 import log from '@canopycanopycanopy/b-ber-logger'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import EbookConvert from '@canopycanopycanopy/b-ber-lib/EbookConvert'
-import {getBookMetadata} from '@canopycanopycanopy/b-ber-lib/utils'
+import { getBookMetadata } from '@canopycanopycanopy/b-ber-lib/utils'
 
 const pdf = () => {
     const opsPath = path.join(state.dist, 'OPS')
@@ -20,11 +19,8 @@ const pdf = () => {
             outputPath: process.cwd(),
             fileType: 'pdf',
             fileName: getBookMetadata('identifier', state),
-        })
-            .catch(log.error)
+        }).catch(log.error),
     )
-
 }
-
 
 export default pdf

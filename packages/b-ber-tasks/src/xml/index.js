@@ -3,7 +3,6 @@
  * @module xml
  */
 
-
 import path from 'path'
 import fs from 'fs-extra'
 import isPlainObject from 'lodash/isPlainObject'
@@ -14,58 +13,80 @@ import * as tasks from '../'
 
 const cwd = process.cwd()
 const parser = new HtmlToXml()
-const sequence = ['clean', 'container', 'sass', 'copy', 'scripts', 'render', 'loi', 'footnotes', 'inject', 'opf']
+const sequence = [
+    'clean',
+    'container',
+    'sass',
+    'copy',
+    'scripts',
+    'render',
+    'loi',
+    'footnotes',
+    'inject',
+    'opf',
+]
 
+const initialize = () =>
+    new Promise(resolve => {
+        state.update('build', 'epub') // set the proper build vars
+        state.update('toc', state.buildTypes.epub.tocEntries)
+        state.update('spine', state.buildTypes.epub.spineEntries)
 
-const initialize = () => new Promise(resolve => {
-    state.update('build', 'epub') // set the proper build vars
-    state.update('toc', state.buildTypes.epub.tocEntries)
-    state.update('spine', state.buildTypes.epub.spineEntries)
-
-    return tasks.async.serialize(sequence, tasks).then(() => {
-        resolve(state.spine.map(n => n.fileName))
+        return tasks.async.serialize(sequence, tasks).then(() => {
+            resolve(state.spine.map(n => n.fileName))
+        })
     })
-})
 
-
-const formatForInDesign = str => new Promise(resolve => {
-    let str_ = str
-    str_ = str_.replace(/<!--[\s\S]*?-->/g, '')
-    str_ = str_.replace(/\/pagebreak>[\s\S]*?</g, '/pagebreak><')
-    resolve(str_)
-})
+const formatForInDesign = str =>
+    new Promise(resolve => {
+        let str_ = str
+        str_ = str_.replace(/<!--[\s\S]*?-->/g, '')
+        str_ = str_.replace(/\/pagebreak>[\s\S]*?</g, '/pagebreak><')
+        resolve(str_)
+    })
 
 const writeXML = str => {
-    const fpath = path.join(cwd, `Export-${new Date().toISOString().replace(/:/g, '-')}.xml`)
+    const fpath = path.join(
+        cwd,
+        `Export-${new Date().toISOString().replace(/:/g, '-')}.xml`,
+    )
     return fs.writeFile(fpath, str, 'utf8')
 }
 
-const parseHTMLFiles = (files, parser, dist) =>  new Promise(resolve => {
-    const dirname = path.join(dist, 'OPS', 'text')
-    const promises = files.map((a, index, arr) => {
-        let data
+const parseHTMLFiles = (files, parser, dist) =>
+    new Promise(resolve => {
+        const dirname = path.join(dist, 'OPS', 'text')
+        const promises = files
+            .map((a, index, arr) => {
+                let data
 
-        const fname = isPlainObject(a) ? Object.keys(a)[0] : typeof a === 'string' ? a : null
-        const ext = '.xhtml'
+                const fname = isPlainObject(a)
+                    ? Object.keys(a)[0]
+                    : typeof a === 'string'
+                        ? a
+                        : null
+                const ext = '.xhtml'
 
-        if (!fname) return null
+                if (!fname) return null
 
-        const fpath = path.join(dirname, `${fname}${ext}`)
+                const fpath = path.join(dirname, `${fname}${ext}`)
 
-        try {
-            if (!fs.existsSync(fpath)) return null
-            data = fs.readFileSync(fpath, 'utf8')
-        } catch (err) {
-            log.warn(err.message)
-            return null
-        }
+                try {
+                    if (!fs.existsSync(fpath)) return null
+                    data = fs.readFileSync(fpath, 'utf8')
+                } catch (err) {
+                    log.warn(err.message)
+                    return null
+                }
 
-        return parser.parse(data, index, arr)
+                return parser.parse(data, index, arr)
+            })
+            .filter(Boolean)
 
-    }).filter(Boolean)
-
-    Promise.all(promises).catch(log.error).then(docs => resolve(docs.join('\n')))
-})
+        Promise.all(promises)
+            .catch(log.error)
+            .then(docs => resolve(docs.join('\n')))
+    })
 
 /**
  * [description]

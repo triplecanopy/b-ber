@@ -19,7 +19,7 @@ class Audio extends Media {
     render() {
         return (
             <audio // eslint-disable-line jsx-a11y/media-has-caption
-                ref={node => this.media = node}
+                ref={node => (this.media = node)}
                 onCanPlay={this.handleOnCanPlay}
                 {...this.props}
             >

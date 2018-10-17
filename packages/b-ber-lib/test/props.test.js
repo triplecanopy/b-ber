@@ -8,10 +8,13 @@ jest.mock('../src/Spine')
 jest.mock('../src/SpineItem')
 jest.mock('../src/ApplicationLoader')
 
-const html = {absolutePath: path.resolve(__dirname, 'file.xhtml')}
-const nav = {absolutePath: path.resolve(__dirname, 'toc.xhtml'), name: 'toc.xhtml'}
-const scriptFile = {absolutePath: '/mocks/script.xhtml'}
-const svgFile = {absolutePath: '/mocks/svg.xhtml'}
+const html = { absolutePath: path.resolve(__dirname, 'file.xhtml') }
+const nav = {
+    absolutePath: path.resolve(__dirname, 'toc.xhtml'),
+    name: 'toc.xhtml',
+}
+const scriptFile = { absolutePath: '/mocks/script.xhtml' }
+const svgFile = { absolutePath: '/mocks/svg.xhtml' }
 
 beforeAll(() => {
     mock({
@@ -24,9 +27,7 @@ beforeAll(() => {
 
 afterAll(() => mock.restore())
 
-
 describe('ManifestItemProperties', () => {
-
     describe('#isHTML', () => {
         it('Tests if a document is an (X)HTML file', done => {
             expect(ManifestItemProperties.isHTML(html)).toBe(true)
@@ -56,15 +57,21 @@ describe('ManifestItemProperties', () => {
     })
 
     describe('#isDCElement', () => {
-        it('Tests if the term property of an object exists in the dc/elements object')
+        it(
+            'Tests if the term property of an object exists in the dc/elements object',
+        )
     })
 
     describe('#isDCTerm', () => {
-        it('Tests if the term property of an object exists in the dc/terms object')
+        it(
+            'Tests if the term property of an object exists in the dc/terms object',
+        )
     })
 
     describe('#testHTML', () => {
-        it('Tests if a document contains a script or SVG element, and if it is an Epub navigation document') // eslint-disable-line max-len
+        it(
+            'Tests if a document contains a script or SVG element, and if it is an Epub navigation document',
+        ) // eslint-disable-line max-len
     })
 
     describe('#testMeta', () => {

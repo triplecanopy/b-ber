@@ -5,7 +5,8 @@ function printNotices(type, task = 'b-ber') {
     const leader = type === 'warnings' ? 'WARN' : 'ERR!'
     const color = type === 'warnings' ? 'bgYellowBright' : 'bgRed'
 
-    const message = util.format.call(util,
+    const message = util.format.call(
+        util,
         '%s%s %s task %s - %s %s',
         this.indent(),
         this.decorate('b-ber', 'whiteBright', 'bgBlack'),
@@ -16,7 +17,6 @@ function printNotices(type, task = 'b-ber') {
     )
 
     if (this.logLevel > 2) process.stdout.write(message)
-
 }
 
 export function printWarnings(task) {

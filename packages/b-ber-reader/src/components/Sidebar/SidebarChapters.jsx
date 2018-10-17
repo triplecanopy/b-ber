@@ -42,7 +42,7 @@ const SidebarChapters = props => (
             {
                 'controls__sidebar__chapters--open':
                     props.showSidebar === 'chapters',
-            }
+            },
         )}
     >
         <NestedChapterList items={[...props.spine]} />

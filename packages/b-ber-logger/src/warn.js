@@ -3,7 +3,6 @@
 import util from 'util'
 
 export function warn(...args) {
-
     if (this.logLevel < 2) return
 
     let message = this.composeMessage(args)
@@ -14,7 +13,7 @@ export function warn(...args) {
         message = this.composeMessage(args)
     }
 
-    const {stack} = new Error()
+    const { stack } = new Error()
 
     let prefix = ''
 
@@ -35,7 +34,9 @@ export function warn(...args) {
     this.newLine()
 
     if (this.logLevel > 3) {
-        process.stdout.write(util.format.call(util, stack.replace(/^Error\s+/, 'Warning ')))
+        process.stdout.write(
+            util.format.call(util, stack.replace(/^Error\s+/, 'Warning ')),
+        )
         this.newLine()
     }
 }

@@ -1,4 +1,4 @@
-import {opf} from '@canopycanopycanopy/b-ber-tasks'
+import { opf } from '@canopycanopycanopy/b-ber-tasks'
 
 const command = 'opf'
 const describe = 'Generate the opf'

@@ -1,11 +1,11 @@
 /* eslint-disable camelcase, one-var, prefer-const, no-param-reassign, no-multi-spaces, no-continue */
 const figurePlugin = (md, name, options = {}) => {
     const min_markers = /*options.minMarkers || */ 3
-    const marker_str  = /*options.marker || */ ':'
+    const marker_str = /*options.marker || */ ':'
     const marker_char = marker_str.charCodeAt(0)
-    const marker_len  = marker_str.length
-    const validate    = options.validate
-    const render      = options.render
+    const marker_len = marker_str.length
+    const validate = options.validate
+    const render = options.render
 
     function container(state, startLine, endLine, silent) {
         const start = state.bMarks[startLine] + state.tShift[startLine]
@@ -32,7 +32,6 @@ const figurePlugin = (md, name, options = {}) => {
         if (!validate(params, state.line + 1)) return false
         // Since start is found, we can report success here in validation mode
         if (silent) return true
-
 
         // Search for the end of the block
         nextLine = startLine
@@ -68,7 +67,11 @@ const figurePlugin = (md, name, options = {}) => {
             //
             // there is no caption (open or close); exit and output only the markup
             // for figure
-            if (state.src[state.bMarks[nextLine]].charCodeAt(0) !== marker_char) break
+            if (
+                state.src[state.bMarks[nextLine]].charCodeAt(0) !== marker_char
+            ) {
+                break
+            }
 
             // capture the current character
             _cursor = state.bMarks[nextLine]
@@ -84,7 +87,9 @@ const figurePlugin = (md, name, options = {}) => {
                 } else if (typeof _caption_start_pos !== 'undefined') {
                     // a caption is being captured, so we know we're still in the
                     // opening image marker
-                    _caption_end_pos = (_cursor + 2) - _cap_marker_len // state the end index
+
+                    // eslint-disable-next-line
+                    _caption_end_pos = _cursor + 2 - _cap_marker_len // state the end index
                     _caption_end_line = _cursor
                     break
                 }
@@ -98,7 +103,10 @@ const figurePlugin = (md, name, options = {}) => {
         if (_caption_start_pos && _caption_end_pos) {
             // we have both a beginning and end marker for the caption, so we can
             // advance the cursor for further parsing
-            _caption_body = state.src.slice(_caption_start_pos, _caption_end_pos)
+            _caption_body = state.src.slice(
+                _caption_start_pos,
+                _caption_end_pos,
+            )
             _fast_forward = state.bMarks.indexOf(_caption_end_line) + 1
         } else {
             // there's no caption, but we've advanced the cursor, so we just rewind
@@ -108,19 +116,19 @@ const figurePlugin = (md, name, options = {}) => {
 
         // this will prevent lazy continuations from ever going past our end marker
         // state.lineMax  = nextLine
-        token          = state.push(`container_${name}_open`, 'div', 1)
-        token.markup   = markup
-        token.block    = true
-        token.info     = params
+        token = state.push(`container_${name}_open`, 'div', 1)
+        token.markup = markup
+        token.block = true
+        token.info = params
         token.children = _caption_body
-        token.map      = [startLine, nextLine]
+        token.map = [startLine, nextLine]
 
         // add ending token since we're using a `container` plugin as an inline
-        token          = state.push(`container_${name}_close`, 'div', -1)
+        token = state.push(`container_${name}_close`, 'div', -1)
 
         // then,
         // - increment the pointer to the caption end if applicable
-        state.line     = _fast_forward || nextLine
+        state.line = _fast_forward || nextLine
 
         return true
     }

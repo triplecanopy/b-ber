@@ -1,5 +1,5 @@
 class SpineItem {
-    constructor({id, href, mediaType, properties, idref, linear}) {
+    constructor({ id, href, mediaType, properties, idref, linear }) {
         this.id = id
         this.href = href
         this.mediaType = mediaType

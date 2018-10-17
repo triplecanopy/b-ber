@@ -1,8 +1,10 @@
-const {decodeURI, encodeURI, encodeURIComponent} = window
+const { decodeURI, encodeURI, encodeURIComponent } = window
 
 class Url {
     static slug(str) {
-        return String(str).toLowerCase().trim()
+        return String(str)
+            .toLowerCase()
+            .trim()
             .replace(/[\s-]+/g, '-')
             .replace(/[^\w-]+/g, '')
             .replace(/-+/g, '-')
@@ -11,7 +13,13 @@ class Url {
     static buildQueryString(data) {
         const result = []
         Object.entries(data).forEach(([key, val]) =>
-            result.push(`${encodeURIComponent(key)}=${encodeURIComponent(val && val.constructor === Array ? JSON.stringify(val) : val)}`)
+            result.push(
+                `${encodeURIComponent(key)}=${encodeURIComponent(
+                    val && val.constructor === Array
+                        ? JSON.stringify(val)
+                        : val,
+                )}`,
+            ),
         )
         return result.join('&')
     }
@@ -40,14 +48,18 @@ class Url {
     }
     static resolveRelativeURL(url, path) {
         if (!url || !path) {
-            console.warn('Url#resolveRelativeURL: No \'url\' or \'path\' param provided', url, path)
+            console.warn(
+                'Url#resolveRelativeURL: No \'url\' or \'path\' param provided',
+                url,
+                path,
+            )
             return '/'
         }
 
         const url_ = Url.addTrailingSlash(url)
         const path_ = Url.trimSlashes(path)
 
-        let {href} = new window.URL(path_, url_)
+        let { href } = new window.URL(path_, url_)
         href = Url.ensureDecodedURL(href)
         return encodeURI(href)
     }
@@ -63,7 +75,7 @@ class Url {
     static resolveOverlappingURL(base, path) {
         const base_ = new window.URL(base)
         const path_ = Url.trimSlashes(path).split('/')
-        const {origin, pathname} = base_
+        const { origin, pathname } = base_
         const basePathName = Url.trimSlashes(pathname).split('/')
         basePathName.pop() // we know it's a file name, so we can already pop the last entry
 
@@ -74,7 +86,7 @@ class Url {
         }
 
         const urlPath = [...basePathName, ...path_].join('/')
-        const {href} = new window.URL(Url.ensureDecodedURL(urlPath), origin)
+        const { href } = new window.URL(Url.ensureDecodedURL(urlPath), origin)
 
         return encodeURI(href)
     }
@@ -100,7 +112,10 @@ class Url {
 
         path_ = Url.ensureDecodedURL(path_)
         path_ = Url.stripQueryAndHash(path_)
-        path_ = path_.split('/').filter(Boolean).join('/')
+        path_ = path_
+            .split('/')
+            .filter(Boolean)
+            .join('/')
         path_ = path_.length ? `/${path_}/` : '/'
         return path_
     }

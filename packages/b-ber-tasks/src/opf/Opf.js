@@ -6,7 +6,6 @@
  * @return {Opf}
  */
 
-
 import path from 'path'
 import fs from 'fs-extra'
 import renderLayouts from 'layouts'
@@ -14,7 +13,7 @@ import File from 'vinyl'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
 import Pkg from '@canopycanopycanopy/b-ber-templates/Opf/Pkg'
-import {ManifestAndMetadata, Navigation} from '.'
+import { ManifestAndMetadata, Navigation } from '.'
 
 /**
  * @alias module:opf#Opf
@@ -25,10 +24,7 @@ class Opf {
             const manifestAndMetadata = new ManifestAndMetadata()
             const navigation = new Navigation()
 
-            Promise.all([
-                manifestAndMetadata.init(),
-                navigation.init(),
-            ])
+            Promise.all([manifestAndMetadata.init(), navigation.init()])
                 .then(Opf.createOpfPackageString)
                 .then(Opf.writeOpfToDisk)
                 .catch(log.error)
@@ -46,8 +42,8 @@ class Opf {
     static createOpfPackageString([manifestAndMetadataXML, navigationXML]) {
         log.info('opf build [package]')
         return new Promise(resolve => {
-            const {metadata, manifest} = manifestAndMetadataXML
-            const {spine, guide} = navigationXML.strings
+            const { metadata, manifest } = manifestAndMetadataXML
+            const { spine, guide } = navigationXML.strings
 
             const opfString = renderLayouts(
                 new File({
@@ -60,7 +56,7 @@ class Opf {
                         ${guide}
                     `),
                 }),
-                {body: Pkg.body()}
+                { body: Pkg.body() },
             ).contents.toString()
 
             resolve(opfString)
@@ -83,6 +79,5 @@ class Opf {
         })
     }
 }
-
 
 export default Opf

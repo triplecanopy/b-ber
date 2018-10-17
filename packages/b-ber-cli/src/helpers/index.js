@@ -4,4 +4,4 @@ const fail = (msg, err, yargs) => {
     process.exit(0)
 }
 
-export {fail}
+export { fail }

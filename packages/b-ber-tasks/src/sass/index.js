@@ -2,7 +2,6 @@
  * @module sass
  */
 
-
 import path from 'path'
 import fs from 'fs-extra'
 import nodeSass from 'node-sass'
@@ -23,58 +22,76 @@ const autoprefixerOptions = state.config.autoprefixer_options || {
 // Check to see if there's an `application.scss` in `_stylesheets`, and if so
 // load that; else verify that a theme is selected in `config`, and that the
 // theme's `application.scss` exists, then load that; else write a blank file.
-const createSCSSString = () => new Promise(resolve => {
-    const chunks = []
-    const {theme} = state
-    const themeName = theme.name
+const createSCSSString = () =>
+    new Promise(resolve => {
+        const chunks = []
+        const { theme } = state
+        const themeName = theme.name
 
-    const themeSettingsPath  = path.join(state.src, '_stylesheets', themeName, '_settings.scss')
-    const themeOverridesPath = path.join(state.src, '_stylesheets', themeName, '_overrides.scss')
-    const themeStylesPath    = theme.entry
+        const themeSettingsPath = path.join(
+            state.src,
+            '_stylesheets',
+            themeName,
+            '_settings.scss',
+        )
+        const themeOverridesPath = path.join(
+            state.src,
+            '_stylesheets',
+            themeName,
+            '_overrides.scss',
+        )
+        const themeStylesPath = theme.entry
 
-    try {
-        // load user-defined variables
-        if (fs.existsSync(themeSettingsPath)) {
-            const variableOverrides = fs.readFileSync(themeSettingsPath)
-            log.info(`sass use overrides [${path.basename(themeSettingsPath)}]`)
-            log.info('sass prepend overrides')
-            chunks.push(variableOverrides)
+        try {
+            // load user-defined variables
+            if (fs.existsSync(themeSettingsPath)) {
+                const variableOverrides = fs.readFileSync(themeSettingsPath)
+                log.info(
+                    `sass use overrides [${path.basename(themeSettingsPath)}]`,
+                )
+                log.info('sass prepend overrides')
+                chunks.push(variableOverrides)
+            }
+        } catch (err) {
+            log.info('sass building without user-defined overrides')
         }
-    } catch (err) {
-        log.info('sass building without user-defined overrides')
-    }
 
-    try {
-        // load theme styles
-        if (fs.existsSync(themeStylesPath)) {
-            const themeStyles = fs.readFileSync(themeStylesPath)
-            log.info(`sass attempt build with [${themeName}] theme`)
-            chunks.push(themeStyles)
+        try {
+            // load theme styles
+            if (fs.existsSync(themeStylesPath)) {
+                const themeStyles = fs.readFileSync(themeStylesPath)
+                log.info(`sass attempt build with [${themeName}] theme`)
+                chunks.push(themeStyles)
+            }
+        } catch (err) {
+            log.error(
+                `Could not find theme [${themeName}]. Make sure the theme exists and contains a valid [application.scss]`,
+            )
         }
-    } catch (err) {
-        log.error(`Could not find theme [${themeName}]. Make sure the theme exists and contains a valid [application.scss]`)
-    }
 
-    try {
-        // load user-defined styles
-        if (fs.existsSync(themeOverridesPath)) {
-            const styleOverrides = fs.readFileSync(themeOverridesPath)
-            log.info(`sass use user-defined styles [${path.basename(themeOverridesPath)}]`)
-            log.info('sass append user-defined styles')
-            chunks.push(styleOverrides)
+        try {
+            // load user-defined styles
+            if (fs.existsSync(themeOverridesPath)) {
+                const styleOverrides = fs.readFileSync(themeOverridesPath)
+                log.info(
+                    `sass use user-defined styles [${path.basename(
+                        themeOverridesPath,
+                    )}]`,
+                )
+                log.info('sass append user-defined styles')
+                chunks.push(styleOverrides)
+            }
+        } catch (err) {
+            log.info('scss building without user-defined styles')
         }
-    } catch (err) {
-        log.info('scss building without user-defined styles')
-    }
 
+        if (chunks.length < 1) {
+            const err = new Error('No readable stylesheets were found.')
+            log.error(err)
+        }
 
-    if (chunks.length < 1) {
-        const err = new Error('No readable stylesheets were found.')
-        log.error(err)
-    }
-
-    return resolve(Buffer.concat(chunks))
-})
+        return resolve(Buffer.concat(chunks))
+    })
 
 // make sure the compiled output dir exists
 const ensureCSSDir = () =>
@@ -91,7 +108,7 @@ const ensureCSSDir = () =>
 // these assets are then copied to the correct build dir by the `copy` task.
 //
 const copyThemeAssets = () => {
-    const {theme} = state
+    const { theme } = state
 
     const fileData = ASSET_DIRNAMES.reduce((acc, curr) => {
         const themePath = path.resolve(path.dirname(theme.entry), curr)
@@ -103,56 +120,67 @@ const copyThemeAssets = () => {
             fs.lstatSync(themePath).isDirectory()
         } catch (err) {
             if (err.code === 'ENOENT') return acc
-            throw new Error(`There was a problem copying [${themePath}] to [${srcPath}]`)
+            throw new Error(
+                `There was a problem copying [${themePath}] to [${srcPath}]`,
+            )
         }
 
-        const fileData = fs.readdirSync(themePath).filter(a => a.charAt(0) !== '.').map(fileName => ({
-            input: path.join(themePath, fileName),
-            output: path.join(srcPath, fileName),
-        }))
-
+        const fileData = fs
+            .readdirSync(themePath)
+            .filter(a => a.charAt(0) !== '.')
+            .map(fileName => ({
+                input: path.join(themePath, fileName),
+                output: path.join(srcPath, fileName),
+            }))
 
         return acc.concat(fileData)
-
     }, [])
 
-
-    const promises = fileData.map(({input, output}) =>
+    const promises = fileData.map(({ input, output }) =>
         fs.copy(input, output, {
             overwrite: false,
             errorOnExist: false,
-        })
+        }),
     )
 
     return Promise.all(promises).catch(log.error)
 }
 
+const renderCSS = scssString =>
+    new Promise(resolve =>
+        nodeSass.render(
+            {
+                data: `$build: "${state.build}";${scssString}`,
+                includePaths: [
+                    path.join(state.src, '_stylesheets'),
+                    path.dirname(state.theme.entry),
+                    path.dirname(path.dirname(state.theme.entry)),
+                ],
+                outputStyle:
+                    state.env === 'production' ? 'compressed' : 'nested',
+                errLogToConsole: true,
+            },
+            (err, result) => {
+                if (err) throw err
+                resolve(result)
+            },
+        ),
+    )
 
-const renderCSS = scssString => new Promise(resolve =>
-    nodeSass.render({
-        data: `$build: "${state.build}";${scssString}`,
-        includePaths: [
-            path.join(state.src, '_stylesheets'),
-            path.dirname(state.theme.entry),
-            path.dirname(path.dirname(state.theme.entry)),
-        ],
-        outputStyle: state.env === 'production' ? 'compressed' : 'nested',
-        errLogToConsole: true,
-    }, (err, result) => {
-        if (err) throw err
-        resolve(result)
-    })
-)
-
-const applyPostProcessing = ({css}) => new Promise(resolve =>
-    postcss(autoprefixer(autoprefixerOptions))
-        .process(css, {from: undefined})
-        .then(resolve)
-)
+const applyPostProcessing = ({ css }) =>
+    new Promise(resolve =>
+        postcss(autoprefixer(autoprefixerOptions))
+            .process(css, { from: undefined })
+            .then(resolve),
+    )
 
 const writeCSSFile = cssString => {
-    const fileName = state.env === 'production' ? `${state.hash}.css` : 'application.css'
-    return fs.writeFile(path.join(state.dist, 'OPS', 'stylesheets', fileName), cssString)
+    const fileName =
+        state.env === 'production' ? `${state.hash}.css` : 'application.css'
+    return fs.writeFile(
+        path.join(state.dist, 'OPS', 'stylesheets', fileName),
+        cssString,
+    )
 }
 
 const sass = () =>
@@ -163,6 +191,5 @@ const sass = () =>
         .then(applyPostProcessing)
         .then(writeCSSFile)
         .catch(log.error)
-
 
 export default sass

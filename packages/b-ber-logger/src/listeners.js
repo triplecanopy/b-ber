@@ -1,63 +1,62 @@
 /* eslint-disable import/prefer-default-export */
 
-
 import util from 'util'
 
 export function bind() {
-    this.on('begin', ({task}) => {
-
-        this.task         = task
+    this.on('begin', ({ task }) => {
+        this.task = task
         this.taskWarnings = 0
-        this.taskErrors   = 0
-
+        this.taskErrors = 0
 
         if (this.logLevel < 3) {
             this.incrementIndent()
             return
         }
 
-        const message = util.format.call(util,
+        const message = util.format.call(
+            util,
             '%s%s %s %s %s',
             this.indent(),
             this.decorate('b-ber', 'whiteBright', 'bgBlack'),
             this.decorate('info', 'green'),
             this.decorate(task, 'black'),
-            this.decorate('start', 'black')
+            this.decorate('start', 'black'),
         )
 
         process.stdout.write(message)
         this.newLine()
 
         this.incrementIndent()
-
     })
 
-    this.on('end', ({task, taskTime}) => {
-
+    this.on('end', ({ task, taskTime }) => {
         this.decrementIndent()
 
         if (this.logLevel < 3) return
 
-        const {totalMs} = taskTime
+        const { totalMs } = taskTime
 
         process.stdout.clearLine()
         process.stdout.cursorTo(0)
 
-        const message = util.format.call(util,
+        const message = util.format.call(
+            util,
             '%s%s %s %s done - %s',
             this.indent(),
             this.decorate('b-ber', 'whiteBright', 'bgBlack'),
             this.decorate('info', 'green'),
             this.decorate(task, 'black'),
-            totalMs
+            totalMs,
         )
 
         process.stdout.write(message)
         this.newLine()
     })
 
-    this.on('done', data => { // eslint-disable-line no-unused-vars
-        const message = util.format.call(util,
+    this.on('done', data => {
+        // eslint-disable-line no-unused-vars
+        const message = util.format.call(
+            util,
             '%s%s %s %s',
             this.indent(),
             this.decorate('b-ber', 'whiteBright', 'bgBlack'),

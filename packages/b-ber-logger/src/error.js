@@ -3,7 +3,6 @@
 import util from 'util'
 
 export function error(...args) {
-
     if (this.logLevel < 1) return
     const errCode = 1
 
@@ -11,11 +10,11 @@ export function error(...args) {
     let stack
 
     if (args[0] instanceof Error) {
-        message = this.composeMessage([args[0].message]);
-        ({ stack } = args[0])
+        message = this.composeMessage([args[0].message])
+        ;({ stack } = args[0])
     } else {
-        message = this.composeMessage(args);
-        ({ stack } = new Error())
+        message = this.composeMessage(args)
+        ;({ stack } = new Error())
     }
 
     let prefix = ''
@@ -33,12 +32,17 @@ export function error(...args) {
         formatted,
     })
 
-
     process.stdout.write(formatted)
     this.newLine()
     process.stdout.write(util.format.call(util, stack))
     this.newLine()
-    process.stdout.write(this.decorate(`b-ber exited with code ${errCode}`, 'whiteBright', 'bgRed'))
+    process.stdout.write(
+        this.decorate(
+            `b-ber exited with code ${errCode}`,
+            'whiteBright',
+            'bgRed',
+        ),
+    )
     this.newLine()
     process.exit(errCode)
 }

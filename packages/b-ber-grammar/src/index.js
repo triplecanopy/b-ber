@@ -6,7 +6,7 @@
  */
 
 import hlsj from 'highlight.js'
-import {extend, find} from 'lodash'
+import { extend, find } from 'lodash'
 import MarkdownIt from 'markdown-it'
 import YamlAdaptor from '@canopycanopycanopy/b-ber-lib/YamlAdaptor'
 import state from '@canopycanopycanopy/b-ber-lib/State'
@@ -21,9 +21,8 @@ import markdownItDialogue from './syntax/dialogue'
 import markdownItGallery from './syntax/gallery'
 import markdownItSpread from './syntax/spread'
 
-
 function deepFind(collection, fileName, callback) {
-    const found = find(collection, {fileName})
+    const found = find(collection, { fileName })
     if (found) {
         if (callback) {
             callback(found)
@@ -32,7 +31,8 @@ function deepFind(collection, fileName, callback) {
         return found
     }
 
-    collection.forEach(item => { // check against prop names
+    collection.forEach(item => {
+        // check against prop names
         if (item.nodes && item.nodes.length) {
             return deepFind(item.nodes, fileName)
         }
@@ -47,7 +47,6 @@ function deepFind(collection, fileName, callback) {
  * @alias module:md#MarkdownRenderer
  */
 class MarkdownRenderer {
-
     /**
      * @constructor
      */
@@ -74,7 +73,9 @@ class MarkdownRenderer {
                 if (lang && hlsj.getLanguage(lang)) {
                     try {
                         return hlsj.highlight(lang, str).value
-                    } catch (_) { /* noop */ }
+                    } catch (_) {
+                        /* noop */
+                    }
                 }
 
                 return ''
@@ -89,80 +90,113 @@ class MarkdownRenderer {
          */
         this.filename = ''
 
-        const reference = {instance: this.markdownIt, context: this}
+        const reference = { instance: this.markdownIt, context: this }
 
         this.markdownIt
-            .use(markdownItSection.plugin, markdownItSection.name, markdownItSection.renderer(reference))
-            .use(markdownItPullquote.plugin, markdownItPullquote.name, markdownItPullquote.renderer(reference))
             .use(
-                markdownItFrontmatter,
-                meta => {
-
-                    const filename = this.filename
-                    const YAMLMeta = YamlAdaptor.parse(meta)
-
-                    state.add('guide', {filename, ...YAMLMeta})
-
-                    const spineEntry = find(state.spine, {fileName: filename})
-
-                    // merge the found entry in the state and spine so that we
-                    // can access the metadata later. since deepFind is
-                    // expensive, don't try unless we know that the entry
-                    // exists
-                    if (spineEntry) {
-                        deepFind(state.spine, filename, a => extend(a, YAMLMeta))
-                        deepFind(state.toc, filename, a => extend(a, YAMLMeta))
-                    }
-
-                })
+                markdownItSection.plugin,
+                markdownItSection.name,
+                markdownItSection.renderer(reference),
+            )
             .use(
-                markdownItFootnote,
-                tokens => {
-                    const fileName = this.filename
+                markdownItPullquote.plugin,
+                markdownItPullquote.name,
+                markdownItPullquote.renderer(reference),
+            )
+            .use(markdownItFrontmatter, meta => {
+                const filename = this.filename
+                const YAMLMeta = YamlAdaptor.parse(meta)
 
-                    // TODO: add footnotes to spine if not already added
-                    const entry = find(state.spine, {fileName})
-                    const title = entry && entry.title ? entry.title : fileName
+                state.add('guide', { filename, ...YAMLMeta })
 
-                    // add footnote container and heading. we're doing this here instead
-                    // of in `footnotes.js` because we need some file info (just the title :/)
-                    tokens.unshift({
+                const spineEntry = find(state.spine, { fileName: filename })
+
+                // merge the found entry in the state and spine so that we
+                // can access the metadata later. since deepFind is
+                // expensive, don't try unless we know that the entry
+                // exists
+                if (spineEntry) {
+                    deepFind(state.spine, filename, a => extend(a, YAMLMeta))
+                    deepFind(state.toc, filename, a => extend(a, YAMLMeta))
+                }
+            })
+            .use(markdownItFootnote, tokens => {
+                const fileName = this.filename
+
+                // TODO: add footnotes to spine if not already added
+                const entry = find(state.spine, { fileName })
+                const title = entry && entry.title ? entry.title : fileName
+
+                // add footnote container and heading. we're doing this here instead
+                // of in `footnotes.js` because we need some file info (just the title :/)
+                tokens.unshift(
+                    {
                         type: 'block',
                         tag: 'section',
                         attrs: [['class', 'footnotes break-after']],
                         nesting: 1,
                         block: true,
-                    }, {
+                    },
+                    {
                         type: 'block',
                         tag: 'h1',
                         nesting: 1,
                         block: true,
-                    }, {
+                    },
+                    {
                         type: 'text',
                         block: false,
                         content: title,
-                    }, {
+                    },
+                    {
                         type: 'block',
                         tag: 'h1',
                         nesting: -1,
-                    })
+                    },
+                )
 
-                    // add closing section tag
-                    tokens.push({
-                        type: 'block',
-                        tag: 'section',
-                        nesting: -1,
-                    })
-
-                    const notes = this.markdownIt.renderer.render(tokens, 0, {reference: `${fileName}.xhtml`})
-                    state.add('footnotes', {filename: fileName, title, notes})
+                // add closing section tag
+                tokens.push({
+                    type: 'block',
+                    tag: 'section',
+                    nesting: -1,
                 })
-            .use(markdownItDialogue.plugin, markdownItDialogue.name, markdownItDialogue.renderer(reference))
-            .use(markdownItGallery.plugin, markdownItGallery.name, markdownItGallery.renderer(reference))
-            .use(markdownItSpread.plugin, markdownItSpread.name, markdownItSpread.renderer(reference))
-            .use(markdownItImage.plugin, markdownItImage.name, markdownItImage.renderer(reference))
-            .use(markdownItMedia.plugin, markdownItMedia.name, markdownItMedia.renderer(reference))
-            .use(markdownItLogo.plugin, markdownItLogo.name, markdownItLogo.renderer(reference))
+
+                const notes = this.markdownIt.renderer.render(tokens, 0, {
+                    reference: `${fileName}.xhtml`,
+                })
+                state.add('footnotes', { filename: fileName, title, notes })
+            })
+            .use(
+                markdownItDialogue.plugin,
+                markdownItDialogue.name,
+                markdownItDialogue.renderer(reference),
+            )
+            .use(
+                markdownItGallery.plugin,
+                markdownItGallery.name,
+                markdownItGallery.renderer(reference),
+            )
+            .use(
+                markdownItSpread.plugin,
+                markdownItSpread.name,
+                markdownItSpread.renderer(reference),
+            )
+            .use(
+                markdownItImage.plugin,
+                markdownItImage.name,
+                markdownItImage.renderer(reference),
+            )
+            .use(
+                markdownItMedia.plugin,
+                markdownItMedia.name,
+                markdownItMedia.renderer(reference),
+            )
+            .use(
+                markdownItLogo.plugin,
+                markdownItLogo.name,
+                markdownItLogo.renderer(reference),
+            )
     }
 
     set filename(name) {
@@ -179,7 +213,10 @@ class MarkdownRenderer {
      * @return {String}
      */
     template(meta) {
-        const str = meta.split('\n').map(_ => `  ${_}`).join('\n')
+        const str = meta
+            .split('\n')
+            .map(_ => `  ${_}`)
+            .join('\n')
         return `-\n  filename: ${this.filename}\n${str}\n`
     }
 
@@ -193,7 +230,6 @@ class MarkdownRenderer {
         this.filename = filename
         return this.markdownIt.render(data)
     }
-
 }
 
 const markdownRenderer = new MarkdownRenderer()

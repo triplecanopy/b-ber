@@ -1,4 +1,4 @@
-import {messagesTypes} from '../constants'
+import { messagesTypes } from '../constants'
 
 export default class DeferredEvent {
     constructor() {

@@ -1,20 +1,27 @@
 /* eslint-disable camelcase, one-var, no-continue, no-param-reassign, prefer-const, no-multi-spaces */
 /*! A slightly adapted version of markdown-it-container 2.0.0 https://github.com//markdown-it/markdown-it-container @license MIT */
 const containerPlugin = (md, name, options = {}) => {
-    const min_markers   = options.minMarkers || 3
-    const marker_str    = options.marker || ':'
-    const marker_char   = marker_str.charCodeAt(0)
-    const marker_len    = marker_str.length
-    const validateOpen  = options.validateOpen
+    const min_markers = options.minMarkers || 3
+    const marker_str = options.marker || ':'
+    const marker_char = marker_str.charCodeAt(0)
+    const marker_len = marker_str.length
+    const validateOpen = options.validateOpen
     // const validateClose = options.validateClose
-    const render        = options.render
+    const render = options.render
 
     function container(state, startLine, endLine, silent) {
-        let pos, nextLine, marker_count, markup, params, token, old_parent, old_line_max
+        let pos,
+            nextLine,
+            marker_count,
+            markup,
+            params,
+            token,
+            old_parent,
+            old_line_max
         let auto_closed = false
-        let start       = state.bMarks[startLine] + state.tShift[startLine]
-        let lineNr      = startLine + 1
-        let max         = state.eMarks[startLine]
+        let start = state.bMarks[startLine] + state.tShift[startLine]
+        let lineNr = startLine + 1
+        let max = state.eMarks[startLine]
 
         if (marker_char !== state.src.charCodeAt(start)) return false
 
@@ -54,29 +61,29 @@ const containerPlugin = (md, name, options = {}) => {
             break
         }
 
-        old_parent       = state.parentType
-        old_line_max     = state.lineMax
+        old_parent = state.parentType
+        old_line_max = state.lineMax
         state.parentType = 'container'
 
         // this will prevent lazy continuations from ever going past our end marker
-        state.lineMax    = nextLine
+        state.lineMax = nextLine
 
-        token            = state.push(`container_${name}_open`, 'section', 1)
-        token.markup     = markup
-        token.block      = true
-        token.info       = params
-        token.map        = [startLine, nextLine]
+        token = state.push(`container_${name}_open`, 'section', 1)
+        token.markup = markup
+        token.block = true
+        token.info = params
+        token.map = [startLine, nextLine]
 
         state.md.block.tokenize(state, startLine + 1, nextLine)
 
-        token            = state.push(`container_${name}_close`, 'section', -1)
-        token.markup     = state.src.slice(start, pos)
-        token.block      = true
-        token.info       = params
+        token = state.push(`container_${name}_close`, 'section', -1)
+        token.markup = state.src.slice(start, pos)
+        token.block = true
+        token.info = params
 
         state.parentType = old_parent
-        state.lineMax    = old_line_max
-        state.line       = nextLine + (auto_closed ? 1 : 0)
+        state.lineMax = old_line_max
+        state.line = nextLine + (auto_closed ? 1 : 0)
 
         return true
     }

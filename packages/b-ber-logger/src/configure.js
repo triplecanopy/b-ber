@@ -22,5 +22,4 @@ export function configure() {
 
     this.boringOutput = this.settings['no-color'] || this.boringOutput
     this.summary = this.settings.summary || this.summary
-
 }

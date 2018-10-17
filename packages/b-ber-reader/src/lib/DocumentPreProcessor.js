@@ -42,7 +42,7 @@ class DocumentPreProcessor {
         state.styleSheets.forEach(
             a =>
                 state.root.querySelector(`#${a.id}`) === null &&
-                a.appendSheet(state.root)
+                a.appendSheet(state.root),
         )
     }
 
@@ -51,23 +51,23 @@ class DocumentPreProcessor {
             a =>
                 a.src &&
                 /(?:text|application)\/(?:x-java|java|ecma)script/.test(
-                    a.type
+                    a.type,
                 ) &&
-                a.appendScript(state.root)
+                a.appendScript(state.root),
         )
     }
 
     static createScriptElements() {
         const scriptElements = Array.prototype.slice.call(
             state.document.querySelectorAll('script') || [],
-            0
+            0,
         )
         const { requestURI, scripts } = state
 
         if (!scriptElements) return scripts
 
         state.scripts = scriptElements.map(
-            node => new Script({ node, requestURI })
+            node => new Script({ node, requestURI }),
         )
 
         return state.scripts
@@ -83,7 +83,7 @@ class DocumentPreProcessor {
     static getStyleSheetByMediaOrId({ id, media }) {
         if (!id && !media) {
             return console.warn(
-                'DocumentPreProcessor#updateStyleSheet requires either and \'id\' or a \'media\' parameter'
+                'DocumentPreProcessor#updateStyleSheet requires either and \'id\' or a \'media\' parameter',
             )
         }
 
@@ -98,7 +98,7 @@ class DocumentPreProcessor {
                 return console.warn(
                     'No styleSheet exists for provided \'id\' or \'media\'',
                     id,
-                    media
+                    media,
                 )
             }
 
@@ -111,7 +111,7 @@ class DocumentPreProcessor {
             return console.warn(
                 'No styleSheet exists for provided \'id\' or \'media\'',
                 id,
-                media
+                media,
             )
         }
 

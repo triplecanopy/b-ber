@@ -12,34 +12,13 @@ export const build = [
     'opf',
 ]
 
-
 const sequences = {
-    epub: [
-        ...build,
-        'epub',
-    ],
-    mobi: [
-        ...build,
-        'mobiCSS',
-        'mobi',
-    ],
-    pdf: [
-        ...build,
-        'pdf',
-    ],
-    web: [
-        ...build,
-        'web',
-    ],
-    sample: [
-        ...build,
-        'sample',
-    ],
-    reader: [
-        ...build,
-        'reader',
-    ],
+    epub: [...build, 'epub'],
+    mobi: [...build, 'mobiCSS', 'mobi'],
+    pdf: [...build, 'pdf'],
+    web: [...build, 'web'],
+    sample: [...build, 'sample'],
+    reader: [...build, 'reader'],
 }
-
 
 export default sequences

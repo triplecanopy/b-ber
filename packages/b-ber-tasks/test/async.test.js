@@ -1,4 +1,3 @@
-
 import async from '../src/async'
 
 jest.mock('@canopycanopycanopy/b-ber-logger', () => ({
@@ -9,7 +8,6 @@ jest.mock('@canopycanopycanopy/b-ber-logger', () => ({
 
 describe('task: async', () => {
     it('runs commands in sequence', done => {
-
         expect.assertions(3)
 
         const sequence = ['foo', 'bar', 'baz']
@@ -26,11 +24,9 @@ describe('task: async', () => {
             expect(tasks.baz).toHaveBeenCalled()
             done()
         })
-
     })
 
     it('passes values to subsequent calls', done => {
-
         expect.assertions(4)
 
         const sequence = ['foo', 'bar', 'baz']
@@ -48,11 +44,9 @@ describe('task: async', () => {
             expect(result).toBe(3)
             done()
         })
-
     })
 
     it('throws on invalid params', done => {
-
         expect.assertions(3)
 
         const sequence = ['foo', 'bar']
@@ -62,7 +56,8 @@ describe('task: async', () => {
             bar: 'bogus',
         }
 
-        const promise = () => new Promise(() => async.serialize(sequence, tasks))
+        const promise = () =>
+            new Promise(() => async.serialize(sequence, tasks))
 
         expect(() => async.serialize(sequence, tasks)).toThrow()
 
@@ -71,6 +66,5 @@ describe('task: async', () => {
             expect(err.message).toMatch(/async#serialize: Invalid parameter/)
             done()
         })
-
     })
 })

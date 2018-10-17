@@ -6,6 +6,6 @@ export const parseArgs = args => {
 
     args_ = args.slice(2)
     args_ = args_.map(a => a.split(/^--(\w+)\s/).filter(Boolean))
-    args_.forEach(a => result[a[0]] = a[1] || true)
+    args_.forEach(a => (result[a[0]] = a[1] || true))
     return result
 }

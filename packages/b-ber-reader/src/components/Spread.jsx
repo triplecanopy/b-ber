@@ -1,4 +1,4 @@
-/* eslint-disable class-methods-use-this,no-mixed-operators,react/sort-comp */
+/* eslint-disable class-methods-use-this,react/sort-comp */
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import ResizeObserver from 'resize-observer-polyfill'
@@ -45,7 +45,7 @@ class Spread extends Component {
         this.getMarkerDOMRect = this.getMarkerDOMRect.bind(this)
         this.calculateSpreadOffset = this.calculateSpreadOffset.bind(this)
         this.updateChildElementPositions = this.updateChildElementPositions.bind(
-            this
+            this,
         )
         this.createStyleSheetHTML = this.createStyleSheetHTML.bind(this)
         this.connectResizeObserver = this.connectResizeObserver.bind(this)
@@ -53,7 +53,7 @@ class Spread extends Component {
         this.debounceCalculateSpreadOffset = debounce(
             this.calculateSpreadOffset,
             this.debounceSpeed,
-            {}
+            {},
         ).bind(this)
 
         this.time = 0
@@ -85,14 +85,14 @@ class Spread extends Component {
         const markerRefId = this.props['data-marker-reference']
 
         this.markerNode = document.querySelector(
-            `[data-marker="${markerRefId}"]`
+            `[data-marker="${markerRefId}"]`,
         )
         this.childNode =
             document.querySelector(
-                `[data-marker-reference="${markerRefId}"] figure`
+                `[data-marker-reference="${markerRefId}"] figure`,
             ) ||
             document.querySelector(
-                `[data-marker-reference="${markerRefId}"] .spread__content`
+                `[data-marker-reference="${markerRefId}"] .spread__content`,
             ) // TODO: abstract to pass in child element selector
 
         this.setState({ markerRefId })
@@ -105,7 +105,7 @@ class Spread extends Component {
             console.error(
                 `Spread#getMarkerPosition: Unbound marker node for spread ${
                     this.props['data-marker-reference']
-                }`
+                }`,
             )
             return { verso, recto }
         }
@@ -118,7 +118,7 @@ class Spread extends Component {
             console.warn(
                 `Could not get dataset from marker ${
                     this.props['data-marker-reference']
-                }`
+                }`,
             )
             return { verso, recto }
         }
@@ -134,7 +134,7 @@ class Spread extends Component {
             console.error(
                 `Spread#getMarkerDOMRect: Unbound marker node for spread ${
                     this.props['data-marker-reference']
-                }`
+                }`,
             )
             return new window.DOMRect()
         }
@@ -145,11 +145,11 @@ class Spread extends Component {
         const contentNode = document.querySelector('#content')
         if (!contentNode) {
             return console.error(
-                'Spread#connectResizeObserver: No #content node'
+                'Spread#connectResizeObserver: No #content node',
             )
         }
         this.resizeObserver = new ResizeObserver(
-            this.debounceCalculateSpreadOffset
+            this.debounceCalculateSpreadOffset,
         )
         this.resizeObserver.observe(contentNode)
     }
@@ -209,7 +209,7 @@ class Spread extends Component {
             position = x - transformLeft + window.innerWidth
             if (recto) position -= layoutWidth / 2
             if (JSON.parse(this.markerNode.dataset.unbound) === true) {
-                position = (paddingLeft / 2 + columnGap / 2) - 4 // TODO: proper calc
+                position = paddingLeft / 2 + columnGap / 2 - 4 // TODO: proper calc
             }
         }
         else {

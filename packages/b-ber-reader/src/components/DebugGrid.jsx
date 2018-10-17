@@ -21,7 +21,7 @@ class DebugGrid extends Component {
             lines.push(
                 <span key={i} style={styles} className="grid__debug__line">
                     {index}
-                </span>
+                </span>,
             )
         }
 

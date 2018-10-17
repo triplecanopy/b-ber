@@ -1,28 +1,31 @@
 import Timer from './Timer'
-import {printWarnings, printErrors} from './printer'
-import {indent, incrementIndent, decrementIndent, incrementCounter, decrementCounter} from './indenter'
-import {bind} from './listeners'
-import {notify} from './events'
-import {warn} from './warn'
-import {info} from './info'
-import {error} from './error'
-import {debug} from './debug'
-import {trace} from './trace'
-import {notice} from './notice'
-import {inspect} from './inspect'
-import {printSummary} from './summary'
-import {configure} from './configure'
-import {printVersion} from './print-version'
-import {registerSequence} from './register'
-import {wrap, decorate, floatFormat} from './format'
-import {counter, getContext} from './context'
-import {composeMessage} from './compose'
-import {reset} from './reset'
-
-
+import { printWarnings, printErrors } from './printer'
+import {
+    indent,
+    incrementIndent,
+    decrementIndent,
+    incrementCounter,
+    decrementCounter,
+} from './indenter'
+import { bind } from './listeners'
+import { notify } from './events'
+import { warn } from './warn'
+import { info } from './info'
+import { error } from './error'
+import { debug } from './debug'
+import { trace } from './trace'
+import { notice } from './notice'
+import { inspect } from './inspect'
+import { printSummary } from './summary'
+import { configure } from './configure'
+import { printVersion } from './print-version'
+import { registerSequence } from './register'
+import { wrap, decorate, floatFormat } from './format'
+import { counter, getContext } from './context'
+import { composeMessage } from './compose'
+import { reset } from './reset'
 
 class Logger extends Timer {
-
     static defaults = {
         logLevel: 2,
         boringOutput: false,
@@ -45,22 +48,21 @@ class Logger extends Timer {
     constructor() {
         super()
 
-        this.logLevel     = Logger.defaults.logLevel
+        this.logLevel = Logger.defaults.logLevel
         this.boringOutput = Logger.defaults.boringOutput
-        this.command      = Logger.defaults.command
+        this.command = Logger.defaults.command
         this.consoleWidth = Logger.defaults.consoleWidth
-        this.errors       = Logger.defaults.errors
-        this.warnings     = Logger.defaults.warnings
+        this.errors = Logger.defaults.errors
+        this.warnings = Logger.defaults.warnings
 
         this.taskWarnings = Logger.defaults.taskWarnings
-        this.taskErrors   = Logger.defaults.taskErrors
+        this.taskErrors = Logger.defaults.taskErrors
 
-        this.whitespace   = Logger.defaults.whitespace
-        this.increment    = Logger.defaults.increment
-        this.indentLevel  = Logger.defaults.indentLevel
-        this.taskCounter  = Logger.defaults.taskCounter
-        this.context      = Logger.defaults.context
-
+        this.whitespace = Logger.defaults.whitespace
+        this.increment = Logger.defaults.increment
+        this.indentLevel = Logger.defaults.indentLevel
+        this.taskCounter = Logger.defaults.taskCounter
+        this.context = Logger.defaults.context
 
         // options
         this.settings = {
@@ -72,11 +74,9 @@ class Logger extends Timer {
             'log-level': Logger.defaults.logLevel,
         }
 
-
         // bindings
         this.printWarnings = printWarnings.bind(this)
         this.printErrors = printErrors.bind(this)
-
 
         this.indent = indent.bind(this)
         this.incrementIndent = incrementIndent.bind(this)
@@ -102,14 +102,13 @@ class Logger extends Timer {
 
         this.wrap = wrap.bind(this)
         this.decorate = decorate.bind(this)
-        this.floatFormat  = floatFormat.bind(this)
+        this.floatFormat = floatFormat.bind(this)
 
         this.counter = counter.bind(this)
         this.getContext = getContext.bind(this)
 
         this.composeMessage = composeMessage.bind(this)
         this.reset = reset.bind(this)
-
 
         // parse args
         const argv = process.argv.reduce((acc, curr) => {
@@ -129,7 +128,8 @@ class Logger extends Timer {
         this.bind()
     }
 
-    newLine() { // eslint-disable-line class-methods-use-this
+    // eslint-disable-next-line class-methods-use-this
+    newLine() {
         process.stdout.write('\n')
     }
 }

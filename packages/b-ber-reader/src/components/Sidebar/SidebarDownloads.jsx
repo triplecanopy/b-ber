@@ -6,17 +6,19 @@ const SidebarDownloads = props => (
         className={classNames(
             'controls__sidebar',
             'controls__sidebar__downloads',
-            {'controls__sidebar__downloads--open': props.showSidebar === 'downloads'}
+            {
+                'controls__sidebar__downloads--open':
+                    props.showSidebar === 'downloads',
+            },
         )}
     >
         <ul>
             {props.downloads.map((a, i) => (
                 <li key={i}>
-                    <a href={a.url} download>{a.label}</a>
-                    <button
-                        className='material-icons'
-                    >file_download
-                    </button>
+                    <a href={a.url} download>
+                        {a.label}
+                    </a>
+                    <button className="material-icons">file_download</button>
                 </li>
             ))}
         </ul>

@@ -2,7 +2,6 @@
  * @module utils
  */
 
-
 import path from 'path'
 import find from 'lodash/find'
 import log from '@canopycanopycanopy/b-ber-logger'
@@ -13,7 +12,8 @@ import log from '@canopycanopycanopy/b-ber-logger'
  * @param  {String} base  Project's base path
  * @return {String}
  */
-const opsPath = (fpath, base) => fpath.replace(new RegExp(`^${base}${path.sep}OPS${path.sep}?`), '')
+const opsPath = (fpath, base) =>
+    fpath.replace(new RegExp(`^${base}${path.sep}OPS${path.sep}?`), '')
 
 /**
  * [description]
@@ -49,10 +49,7 @@ const getImageOrientation = (w, h) => {
  * @return {*}
  */
 const forOf = (collection, iterator) =>
-    Object.entries(collection).forEach(([key, val]) =>
-        iterator(key, val)
-    )
-
+    Object.entries(collection).forEach(([key, val]) => iterator(key, val))
 
 // TODO: the whole figures/generated pages/user-configurable YAML thing should
 // be worked out better. one reason is below, where we need the title of a
@@ -69,7 +66,7 @@ const getTitleOrName = page => {
 }
 
 const getBookMetadata = (term, state) => {
-    const entry = find(state.metadata, {term})
+    const entry = find(state.metadata, { term })
     if (entry && entry.value) return entry.value
     log.warn(`Could not find metadata value for ${term}`)
     return ''

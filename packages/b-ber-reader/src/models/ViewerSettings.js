@@ -7,7 +7,7 @@ const __extendExistingProps = (
     target,
     ref,
     obj,
-    opts = { enumerable: true }
+    opts = { enumerable: true },
 ) => {
     Object.entries(ref).forEach(([key, val]) => {
         const value = {}.hasOwnProperty.call(obj, key) ? obj[key] : val
@@ -34,7 +34,7 @@ class ViewerSettings {
         const options_ = __extendExistingProps(
             {},
             ViewerSettings.defaults,
-            options
+            options,
         )
         this.settings = { ...this.settings, ...options_ }
 
@@ -222,7 +222,7 @@ class ViewerSettings {
                 if (!isNumeric(objectOrString_.fontSize)) {
                     objectOrString_.fontSize = parseFloat(
                         objectOrString_.fontSize,
-                        10
+                        10,
                     )
                 }
             }
@@ -230,7 +230,7 @@ class ViewerSettings {
             const options = __extendExistingProps(
                 {},
                 ViewerSettings.defaults,
-                objectOrString_
+                objectOrString_,
             )
             this.settings = { ...this.settings, ...options }
             return

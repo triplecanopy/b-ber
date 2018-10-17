@@ -4,9 +4,12 @@
 
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
-import {BLOCK_DIRECTIVE_MARKER, BLOCK_DIRECTIVE_MARKER_MIN_LENGTH} from '@canopycanopycanopy/b-ber-shapes/directives'
+import {
+    BLOCK_DIRECTIVE_MARKER,
+    BLOCK_DIRECTIVE_MARKER_MIN_LENGTH,
+} from '@canopycanopycanopy/b-ber-shapes/directives'
 import plugin from '../parsers/section'
-import {attributesObject, attributesString} from './helpers'
+import { attributesObject, attributesString } from './helpers'
 
 const marker = BLOCK_DIRECTIVE_MARKER
 const minMarkers = BLOCK_DIRECTIVE_MARKER_MIN_LENGTH
@@ -20,7 +23,7 @@ const pullquoteIndices = [] // track these separately
 export default {
     plugin,
     name: 'pullQuote',
-    renderer: ({instance, context}) => ({
+    renderer: ({ instance, context }) => ({
         marker,
         minMarkers,
         markerOpen,
@@ -31,7 +34,11 @@ export default {
             if (match && match.length) {
                 const [, , id] = match
                 if (typeof id === 'undefined') {
-                    log.error(`Missing [id] attribute for [${exports.default.name}:start] directive ${context.filename}.md:${line}`)
+                    log.error(
+                        `Missing [id] attribute for [${
+                            exports.default.name
+                        }:start] directive ${context.filename}.md:${line}`,
+                    )
                     return false
                 }
             }
@@ -60,16 +67,23 @@ export default {
 
                     // we could just state the id in a variable outside of `render`, but
                     // good to keep consistent with the normal handling
-                    const index = state.contains('cursor', {id})
+                    const index = state.contains('cursor', { id })
                     if (index < 0) {
                         // state.add('cursor', {id})
                         pullquoteIndices.push(id)
                     } else {
-                        log.error(`Duplicate [id] attribute [${id}]. [id]s must be unique ${context.filename}.md:${_line}`)
+                        log.error(
+                            `Duplicate [id] attribute [${id}]. [id]s must be unique ${
+                                context.filename
+                            }.md:${_line}`,
+                        )
                     }
 
                     // parse attrs as normal
-                    const attrsObject = attributesObject(attrs, type, {filename, lineNr})
+                    const attrsObject = attributesObject(attrs, type, {
+                        filename,
+                        lineNr,
+                    })
 
                     if ({}.hasOwnProperty.call(attrsObject, 'classes')) {
                         attrsObject.classes = `pullquote ${attrsObject.classes}`
@@ -99,7 +113,11 @@ export default {
                         // with the HTML comment and reset the citation to prepare for the
                         // next iteration
                         const comment = `\n<!-- END: section:pullquote#${id} -->\n`
-                        result = citation ? `<cite>&#8212;&#160;${instance.renderInline(citation)}</cite>` : ''
+                        result = citation
+                            ? `<cite>&#8212;&#160;${instance.renderInline(
+                                citation,
+                            )}</cite>`
+                            : ''
                         result += `</section>${comment}`
                         citation = ''
 

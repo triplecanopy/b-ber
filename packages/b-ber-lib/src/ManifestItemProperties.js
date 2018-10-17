@@ -1,6 +1,6 @@
 import fs from 'fs-extra'
 import mime from 'mime-types'
-import {terms, elements} from '@canopycanopycanopy/b-ber-shapes/dc'
+import { terms, elements } from '@canopycanopycanopy/b-ber-shapes/dc'
 import state from './State'
 
 /**
@@ -14,8 +14,10 @@ class ManifestItemProperties {
      * @return {Boolean}
      */
     static isHTML(file) {
-        return Boolean(mime.lookup(file.absolutePath) === 'text/html'
-            || mime.lookup(file.absolutePath) === 'application/xhtml+xml')
+        return Boolean(
+            mime.lookup(file.absolutePath) === 'text/html' ||
+                mime.lookup(file.absolutePath) === 'application/xhtml+xml',
+        )
     }
 
     /**
@@ -24,9 +26,11 @@ class ManifestItemProperties {
      * @return {Boolean}
      */
     static isNav(file) {
-        return Boolean((mime.lookup(file.absolutePath) === 'text/html'
-            || mime.lookup(file.absolutePath) === 'application/xhtml+xml')
-            && /^toc\./.test(file.name))
+        return Boolean(
+            (mime.lookup(file.absolutePath) === 'text/html' ||
+                mime.lookup(file.absolutePath) === 'application/xhtml+xml') &&
+                /^toc\./.test(file.name),
+        )
     }
 
     /**
@@ -77,8 +81,10 @@ class ManifestItemProperties {
      * @return {Boolean}
      */
     static isDCElement(data) {
-        return Boolean({}.hasOwnProperty.call(data, 'term')
-            && elements.indexOf(data.term) > -1)
+        return Boolean(
+            {}.hasOwnProperty.call(data, 'term') &&
+                elements.indexOf(data.term) > -1,
+        )
     }
 
     /**
@@ -87,8 +93,10 @@ class ManifestItemProperties {
      * @return {Boolean}
      */
     static isDCTerm(data) {
-        return Boolean({}.hasOwnProperty.call(data, 'term')
-            && terms.indexOf(data.term) > -1)
+        return Boolean(
+            {}.hasOwnProperty.call(data, 'term') &&
+                terms.indexOf(data.term) > -1,
+        )
     }
 
     /**
@@ -114,7 +122,7 @@ class ManifestItemProperties {
         if (ManifestItemProperties.isNav(file)) props.push('nav')
         if (ManifestItemProperties.isScripted(file)) props.push('scripted')
         if (ManifestItemProperties.isSVG(file)) props.push('svg')
-        if (ManifestItemProperties.hasRemoteResources(file)) props.push('remote-resources')
+        if (ManifestItemProperties.hasRemoteResources(file)) { props.push('remote-resources') }
         return props
     }
 

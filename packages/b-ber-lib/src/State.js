@@ -1,22 +1,22 @@
-import crypto from "crypto"
-import isPlainObject from "lodash/isPlainObject"
-import isArray from "lodash/isArray"
-import findIndex from "lodash/findIndex"
-import ApplicationLoader from "./ApplicationLoader"
+import crypto from 'crypto'
+import isPlainObject from 'lodash/isPlainObject'
+import isArray from 'lodash/isArray'
+import findIndex from 'lodash/findIndex'
+import ApplicationLoader from './ApplicationLoader'
 
 const dynamicPageTmpl = _ => {
     throw new Error(
-        "[state.templates#dynamicPageTmpl] has not been initialized in b-ber-modifiers/inject"
+        '[state.templates#dynamicPageTmpl] has not been initialized in b-ber-modifiers/inject',
     )
 }
 const dynamicPageHead = _ => {
     throw new Error(
-        "[state.templates#dynamicPageHead] has not been initialized in b-ber-modifiers/inject"
+        '[state.templates#dynamicPageHead] has not been initialized in b-ber-modifiers/inject',
     )
 }
 const dynamicPageTail = _ => {
     throw new Error(
-        "[state.templates#dynamicPageTail] has not been initialized in b-ber-modifiers/inject"
+        '[state.templates#dynamicPageTail] has not been initialized in b-ber-modifiers/inject',
     )
 }
 
@@ -25,14 +25,14 @@ class State extends ApplicationLoader {
         guide: [],
         figures: [],
         footnotes: [],
-        build: "epub",
+        build: 'epub',
         cursor: [],
         spine: [],
         toc: [],
         remoteAssets: [],
         loi: [],
         sequence: [],
-        hash: crypto.randomBytes(20).toString("hex"),
+        hash: crypto.randomBytes(20).toString('hex'),
 
         // for dynamically created templates. functions here are overwritten
         // during build. see b-ber-modifiers/inject#mapSourcesToDynamicPageTemplate
@@ -59,7 +59,7 @@ class State extends ApplicationLoader {
 
     // eslint-disable-next-line class-methods-use-this
     get env() {
-        return process.env.NODE_ENV || "development"
+        return process.env.NODE_ENV || 'development'
     }
 
     set src(val) {
@@ -78,12 +78,12 @@ class State extends ApplicationLoader {
         this._resetConfig()
 
         this.templates = { dynamicPageTmpl, dynamicPageHead, dynamicPageTail }
-        this.hash = crypto.randomBytes(20).toString("hex")
+        this.hash = crypto.randomBytes(20).toString('hex')
     }
 
     _resetEntries() {
         Object.entries(State.defaults).forEach(
-            ([key, val]) => (this[key] = val)
+            ([key, val]) => (this[key] = val),
         )
     }
 
@@ -104,12 +104,12 @@ class State extends ApplicationLoader {
             return
         }
 
-        if (typeof this[prop] === "string") {
+        if (typeof this[prop] === 'string') {
             this[prop] = this[prop] + String(val)
             return
         }
 
-        throw new Error("Something went wrong in `State#add`")
+        throw new Error('Something went wrong in `State#add`')
     }
 
     /**
@@ -123,7 +123,7 @@ class State extends ApplicationLoader {
             const index = findIndex(this[prop], val)
             if (index < 0) {
                 throw new TypeError(
-                    `The _property [${val}] could not be found in [state.${prop}]`
+                    `The _property [${val}] could not be found in [state.${prop}]`,
                 )
             }
             this[prop].splice(index, 1)
@@ -135,7 +135,7 @@ class State extends ApplicationLoader {
             return
         }
 
-        throw new Error("Something went wrong in `State#remove`")
+        throw new Error('Something went wrong in `State#remove`')
     }
 
     /**
@@ -160,7 +160,7 @@ class State extends ApplicationLoader {
      * @example         state.update('config.base_url', '/')
      */
     update(prop, val) {
-        const [key, rest] = prop.split(".")
+        const [key, rest] = prop.split('.')
         if ({}.hasOwnProperty.call(this, key)) {
             if (rest) {
                 this[key][rest] = val
@@ -180,7 +180,7 @@ class State extends ApplicationLoader {
      */
     contains(collection, value) {
         if (!isArray(this[collection])) {
-            throw new TypeError("[State#contains] must be called on an array")
+            throw new TypeError('[State#contains] must be called on an array')
         }
         return findIndex(this[collection], value)
     }

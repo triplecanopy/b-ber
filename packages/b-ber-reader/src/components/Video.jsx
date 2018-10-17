@@ -20,7 +20,7 @@ class Video extends Media {
     render() {
         return (
             <video // eslint-disable-line jsx-a11y/media-has-caption
-                ref={node => this.media = node}
+                ref={node => (this.media = node)}
                 onCanPlay={this.handleOnCanPlay}
                 onClick={this.handleOnClick}
                 {...this.props}

@@ -37,7 +37,7 @@ class Marker extends Component {
         this.connectObservers = this.connectObservers.bind(this)
         this.disconnectObservers = this.disconnectObservers.bind(this)
         this.nodeEdgeIsInAllowableRange = this.nodeEdgeIsInAllowableRange.bind(
-            this
+            this,
         )
 
         // refs
@@ -72,7 +72,7 @@ class Marker extends Component {
             {
                 leading: false,
                 trailing: true,
-            }
+            },
         ).bind(this)
 
         this.calculateNodePosition()
@@ -108,7 +108,7 @@ class Marker extends Component {
             console.log(
                 'Marker#nodeEdgeIsInAllowableRange Recalculating layout',
                 position,
-                _position
+                _position,
             )
         }
 
@@ -129,14 +129,14 @@ class Marker extends Component {
         // that the marker is positioned at 1/2 the page width, or 'recto'
 
         // here's the width of the layout's visible frame
-        const layoutUnit = window.innerWidth - paddingLeft * 2 + columnGap // eslint-disable-line no-mixed-operators
+        const layoutUnit = window.innerWidth - paddingLeft * 2 + columnGap
 
         // if a marker's edge is in the recto position, the sum of this operation will be 0
         const pageUnitRecto = x - columnGap - width - paddingLeft
 
         // get the decimal value of the recto unit over the visible frame, rounded to two
         const position = Number(
-            (Math.abs(pageUnitRecto / layoutUnit) % 1).toFixed(2).substring(2)
+            (Math.abs(pageUnitRecto / layoutUnit) % 1).toFixed(2).substring(2),
         )
 
         // keep a reference of the original calculation for debugging
@@ -170,7 +170,7 @@ class Marker extends Component {
             clearTimeout(this.timer)
             this.timer = setTimeout(
                 this.calculateNodePosition,
-                this.context.transitionSpeed
+                this.context.transitionSpeed,
             )
         }
 
@@ -191,7 +191,7 @@ class Marker extends Component {
                 position,
                 _position,
                 x,
-                paddingLeft
+                paddingLeft,
             )
             console.groupEnd()
         }
@@ -207,7 +207,7 @@ class Marker extends Component {
 
     connectObservers() {
         this.resizeObserver = new ResizeObserver(
-            this.calculateNodePositionAfterResize
+            this.calculateNodePositionAfterResize,
         )
         this.resizeObserver.observe(this.contentNode)
     }

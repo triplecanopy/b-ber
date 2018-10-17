@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
 class Link extends Component {
@@ -17,7 +17,8 @@ class Link extends Component {
                     e.preventDefault()
                     this.context.navigateToChapterByURL(this.props.href)
                 }}
-            >{this.props.children}
+            >
+                {this.props.children}
             </a>
         )
     }

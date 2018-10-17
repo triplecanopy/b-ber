@@ -1,7 +1,6 @@
 /* global test,expect */
 
-import {isNumeric, isInt, isFloat} from '../../src/helpers/Types'
-
+import { isNumeric, isInt, isFloat } from '../../src/helpers/Types'
 
 test('is numeric', done => {
     expect(isNumeric('1')).toBe(false)
@@ -20,7 +19,6 @@ test('is numeric', done => {
 
     done()
 })
-
 
 test('is an integer', done => {
     expect(isInt(2.1)).toBe(false)

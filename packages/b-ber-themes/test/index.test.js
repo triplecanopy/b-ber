@@ -5,7 +5,6 @@ import path from 'path'
 import sass from 'node-sass'
 
 describe('b-ber-themes', () => {
-
     test('it exports the themes', () => {
         expect(() => require.resolve('../index.js')).not.toThrow()
 
@@ -22,7 +21,6 @@ describe('b-ber-themes', () => {
         expect(actualModules).toEqual(actualModule)
     })
 
-
     describe('theme packages', () => {
         const actualModule = require.requireActual('../index.js')
         const actualModules = {}
@@ -36,7 +34,6 @@ describe('b-ber-themes', () => {
                 const theme = actualModules[a]
 
                 test('it has the required properties', () => {
-
                     const themeKeys = Object.keys(theme)
 
                     const base = {
@@ -48,7 +45,9 @@ describe('b-ber-themes', () => {
                     }
 
                     // text existence
-                    Object.keys(base).forEach(a => expect(themeKeys).toContain(a))
+                    Object.keys(base).forEach(a =>
+                        expect(themeKeys).toContain(a),
+                    )
 
                     // check type
                     themeKeys.forEach(key => {
@@ -56,30 +55,32 @@ describe('b-ber-themes', () => {
                             base[key](theme[key])
                         }
                     })
-
                 })
 
                 test('it builds the css', done => {
-
                     const contents = fs.readFileSync(theme.entry, 'utf8')
                     expect(contents).toBeString()
 
-                    expect(() => sass.render({
-                        data: `$build: "epub"; ${contents}`,
-                        includePaths: [
-                            path.dirname(theme.entry),
-                            path.dirname(path.dirname(theme.entry)),
-                        ],
-                    }, (err, result) => {
-                        expect(err).toBeNil()
+                    expect(() =>
+                        sass.render(
+                            {
+                                data: `$build: "epub"; ${contents}`,
+                                includePaths: [
+                                    path.dirname(theme.entry),
+                                    path.dirname(path.dirname(theme.entry)),
+                                ],
+                            },
+                            (err, result) => {
+                                expect(err).toBeNil()
 
-                        expect(Buffer.isBuffer(result.css)).toBeTrue()
-                        expect(result.stats).toBeObject()
-                        expect(result.stats.includedFiles).toBeArray()
+                                expect(Buffer.isBuffer(result.css)).toBeTrue()
+                                expect(result.stats).toBeObject()
+                                expect(result.stats.includedFiles).toBeArray()
 
-                        done()
-
-                    })).not.toThrow()
+                                done()
+                            },
+                        ),
+                    ).not.toThrow()
                 })
             })
         })

@@ -2,15 +2,16 @@
 /* eslint-disable global-require,no-empty */
 
 describe('b-ber-reader development config', () => {
-
-    beforeAll(() => jsdom.reconfigure({url: 'http://localhost:3000/'}))
+    beforeAll(() => jsdom.reconfigure({ url: 'http://localhost:3000/' }))
 
     test('loads the local config', () => {
         const config = require('../src/config')
-        expect(config).toEqual(expect.objectContaining({
-            debug: expect.any(Boolean),
-            verboseOutput: expect.any(Boolean),
-        }))
+        expect(config).toEqual(
+            expect.objectContaining({
+                debug: expect.any(Boolean),
+                verboseOutput: expect.any(Boolean),
+            }),
+        )
     })
 
     test('does not fail if a local config is not present', () => {
@@ -21,8 +22,7 @@ describe('b-ber-reader development config', () => {
             }
             try {
                 pkg = require('./bogus')
-            }
-            catch (err) {}
+            } catch (err) {}
             return pkg
         })
         expect(() => require('./bogus')).toThrow()
@@ -30,17 +30,17 @@ describe('b-ber-reader development config', () => {
     })
 })
 
-
 describe('b-ber-reader production config', () => {
-
-    beforeAll(() => jsdom.reconfigure({url: 'https://www.example.com/'}))
+    beforeAll(() => jsdom.reconfigure({ url: 'https://www.example.com/' }))
 
     test('loads the local config', () => {
         const config = require('../src/config')
-        expect(config).toEqual(expect.objectContaining({
-            debug: expect.any(Boolean),
-            verboseOutput: expect.any(Boolean),
-        }))
+        expect(config).toEqual(
+            expect.objectContaining({
+                debug: expect.any(Boolean),
+                verboseOutput: expect.any(Boolean),
+            }),
+        )
     })
 
     test('does not fail if a local config is not present', () => {
@@ -51,8 +51,7 @@ describe('b-ber-reader production config', () => {
             }
             try {
                 pkg = require('./bogus')
-            }
-            catch (err) {}
+            } catch (err) {}
             return pkg
         })
         expect(() => require('./bogus')).toThrow()

@@ -1,6 +1,6 @@
-import {transitions} from '../constants'
+import { transitions } from '../constants'
 
-const styles = ({transitionSpeed}) => ({
+const styles = ({ transitionSpeed }) => ({
     [transitions.SLIDE]: { transition: `transform ${transitionSpeed}ms ease` },
     [transitions.FADE]: {},
 })

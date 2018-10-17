@@ -3,8 +3,8 @@
 import util from 'util'
 
 export function registerSequence(state, command, sequence) {
-
-    const message = util.format.call(util,
+    const message = util.format.call(
+        util,
         '%s%s %s %s',
         this.indent(),
         this.decorate('b-ber', 'whiteBright', 'bgBlack'),

@@ -1,7 +1,7 @@
-import state from "@canopycanopycanopy/b-ber-lib/State"
-import renderFactory from "./factory/block"
-import { attributes, htmlId } from "./helpers"
-import plugin from "../parsers/gallery"
+import state from '@canopycanopycanopy/b-ber-lib/State'
+import renderFactory from './factory/block'
+import { attributes, htmlId } from './helpers'
+import plugin from '../parsers/gallery'
 
 // define our open and closing markers, used by the `validateOpen` and
 // `validateClose` methods in the `renderFactory`
@@ -12,7 +12,7 @@ const markerClose = /^(exit)(?::([^\s]+))?/
 // responsible for the HTML output.
 const render = (tokens, idx) => {
     const open = tokens[idx].info.trim().match(markerOpen)
-    let result = ""
+    let result = ''
 
     if (tokens[idx].nesting === 1 && open) {
         const [, type, id, attrs] = open
@@ -30,8 +30,8 @@ const render = (tokens, idx) => {
         //  pdf: sequence of images
 
         switch (state.build) {
-            case "web":
-            case "reader":
+            case 'web':
+            case 'reader':
                 // prettier ignore
                 result = `
                     <section id="${htmlId(id)}" class="gallery">
@@ -40,10 +40,10 @@ const render = (tokens, idx) => {
                                 <div class="gallery__background"></div>
                                 <div class="figure__items">`
                 break
-            case "epub":
-            case "mobi":
-            case "pdf":
-            case "sample":
+            case 'epub':
+            case 'mobi':
+            case 'pdf':
+            case 'sample':
             default:
                 // prettier-ignore
                 result = `\n<section id="${htmlId(id)}" class="gallery"${attrsString}>`
@@ -56,7 +56,7 @@ const render = (tokens, idx) => {
 
 export default {
     plugin,
-    name: "gallery",
+    name: 'gallery',
     renderer: args =>
         renderFactory({
             ...args,

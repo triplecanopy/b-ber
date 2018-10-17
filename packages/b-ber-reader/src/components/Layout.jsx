@@ -1,15 +1,14 @@
-import React, {Component} from 'react'
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import debounce from 'lodash/debounce'
 import pick from 'lodash/pick'
 import transitions from '../lib/transition-styles'
 import Viewport from '../helpers/Viewport'
-import {isNumeric} from '../helpers/Types'
-import {cssHeightDeclarationPropType} from '../lib/custom-prop-types'
+import { isNumeric } from '../helpers/Types'
+import { cssHeightDeclarationPropType } from '../lib/custom-prop-types'
 import observable from '../lib/decorate-observable'
-import {debug} from '../config'
+import { debug } from '../config'
 import browser from '../lib/browser'
-
 
 @observable
 class Layout extends Component {
@@ -77,7 +76,11 @@ class Layout extends Component {
         this.bindEventListeners = this.bindEventListeners.bind(this)
         this.unBindEventListeners = this.unBindEventListeners.bind(this)
 
-        this.handleResize = debounce(this.onResizeDone, this.debounceSpeed, {}).bind(this)
+        this.handleResize = debounce(
+            this.onResizeDone,
+            this.debounceSpeed,
+            {},
+        ).bind(this)
     }
 
     getChildContext() {
@@ -100,7 +103,7 @@ class Layout extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        const {spreadIndex} = nextProps
+        const { spreadIndex } = nextProps
         this.updateTransform(spreadIndex)
     }
 
@@ -116,8 +119,8 @@ class Layout extends Component {
     getFrameHeight() {
         if (Viewport.isMobile()) return 'auto'
 
-        let {height} = this.state
-        const {paddingTop, paddingBottom} = this.state
+        let { height } = this.state
+        const { paddingTop, paddingBottom } = this.state
 
         if (!isNumeric(height)) height = window.innerHeight // make sure we're not treating 'auto' as a number
 
@@ -128,24 +131,50 @@ class Layout extends Component {
     }
 
     getTranslateX(_spreadIndex) {
-        const spreadIndex = typeof _spreadIndex === 'undefined' ? this.props.spreadIndex : _spreadIndex
-        const {width, paddingLeft, paddingRight, columnGap} = this.state
+        const spreadIndex =
+            typeof _spreadIndex === 'undefined'
+                ? this.props.spreadIndex
+                : _spreadIndex
+        const { width, paddingLeft, paddingRight, columnGap } = this.state
         const isMobile = Viewport.isMobile()
 
         let translateX = 0
-        if (!isMobile) translateX = (((width - paddingLeft - paddingRight) + columnGap) * spreadIndex) * -1
-        if (!isMobile) translateX = (translateX === 0 && Math.sign(1 / translateX) === -1) ? 0 : translateX // no -0
+        if (!isMobile) {
+            translateX =
+                (width - paddingLeft - paddingRight + columnGap) *
+                spreadIndex *
+                -1
+        }
+        if (!isMobile) {
+            translateX =
+                translateX === 0 && Math.sign(1 / translateX) === -1
+                    ? 0
+                    : translateX
+        } // no -0
 
         return translateX
     }
 
     updateDimensions() {
-        const {paddingLeft, paddingRight, paddingTop, paddingBottom} = this.props.viewerSettings
+        const {
+            paddingLeft,
+            paddingRight,
+            paddingTop,
+            paddingBottom,
+        } = this.props.viewerSettings
         const isMobile = Viewport.isMobile()
         const width = window.innerWidth
         const columns = isMobile ? 1 : 2
         const height = isMobile ? 'auto' : window.innerHeight
-        this.setState({width, height, columns, paddingLeft, paddingRight, paddingTop, paddingBottom})
+        this.setState({
+            width,
+            height,
+            columns,
+            paddingLeft,
+            paddingRight,
+            paddingTop,
+            paddingBottom,
+        })
     }
 
     bindEventListeners() {
@@ -160,7 +189,7 @@ class Layout extends Component {
         const translateX = this.getTranslateX(spreadIndex)
         const transform = `translateX(${translateX}px)`
 
-        this.setState({transform, translateX})
+        this.setState({ transform, translateX })
     }
 
     layoutStyles() {
@@ -183,21 +212,21 @@ class Layout extends Component {
         }
     }
 
-    contentStyles() { // eslint-disable-line class-methods-use-this
+    // eslint-disable-next-line class-methods-use-this
+    contentStyles() {
         return {
             padding: 0,
             margin: 0,
         }
     }
 
-    leafStyles(position/* <left|right> */) {
-
+    leafStyles(position /* <left|right> */) {
         // our overlay styles for hiding content in the 'padding' range. FF
         // animations 'jump' when animating a transform, so we use 'left' and
         // 'right' properties in that case. in either case, need to move the
         // leaves in the opposite direction as the containing element
 
-        const {transitionSpeed} = this.props.viewerSettings
+        const { transitionSpeed } = this.props.viewerSettings
 
         let styles = {}
         let positionX = 0
@@ -206,69 +235,72 @@ class Layout extends Component {
 
         if (browser.name === 'firefox') {
             if (position === 'left') positionX *= -1
-            styles = {[position]: `${positionX}px`, transition: `${position} ${transitionSpeed}ms ease 0s`}
+            styles = {
+                [position]: `${positionX}px`,
+                transition: `${position} ${transitionSpeed}ms ease 0s`,
+            }
         }
         else {
             positionX *= -1
             const transform = `translateX(${positionX}px)`
-            styles = {transform, transition: `transform ${transitionSpeed}ms ease 0s`}
+            styles = {
+                transform,
+                transition: `transform ${transitionSpeed}ms ease 0s`,
+            }
         }
 
-        if (debug) styles = {...styles, opacity: 0.4, backgroundColor: 'blue'}
+        if (debug) styles = { ...styles, opacity: 0.4, backgroundColor: 'blue' }
 
         return styles
     }
 
     render() {
         const height = this.getFrameHeight()
-        const {pageAnimation, spreadIndex} = this.props
-        const {paddingLeft, paddingRight} = this.state
-        const {transition, transitionSpeed} = this.props.viewerSettings
+        const { pageAnimation, spreadIndex } = this.props
+        const { paddingLeft, paddingRight } = this.state
+        const { transition, transitionSpeed } = this.props.viewerSettings
         const isMobile = Viewport.isMobile()
         const contextClass = isMobile ? 'mobile' : 'desktop'
 
-        const contentStyles = {...this.contentStyles(), minHeight: height}
+        const contentStyles = { ...this.contentStyles(), minHeight: height }
 
-        const layoutTransition = transitions({transitionSpeed})[transition]
+        const layoutTransition = transitions({ transitionSpeed })[transition]
 
-        let layoutStyles = {...this.layoutStyles(), ...layoutTransition}
-        let leafLeftStyles = {...this.leafStyles('left'), width: paddingLeft}
-        let leafRightStyles = {...this.leafStyles('right'), width: paddingRight}
+        let layoutStyles = { ...this.layoutStyles(), ...layoutTransition }
+        let leafLeftStyles = { ...this.leafStyles('left'), width: paddingLeft }
+        let leafRightStyles = {
+            ...this.leafStyles('right'),
+            width: paddingRight,
+        }
 
         // disable transition animation by default. enabling transition requires
         // user action, like clicking 'next'
         if (!pageAnimation) {
-            layoutStyles = {...layoutStyles, transition: 'none'}
-            leafLeftStyles = {...leafLeftStyles, transition: 'none'}
-            leafRightStyles = {...leafRightStyles, transition: 'none'}
+            layoutStyles = { ...layoutStyles, transition: 'none' }
+            leafLeftStyles = { ...leafLeftStyles, transition: 'none' }
+            leafRightStyles = { ...leafRightStyles, transition: 'none' }
         }
 
         return (
             <div
-                id='layout'
+                id="layout"
                 className={`spread-index__${spreadIndex} context__${contextClass}`}
                 style={layoutStyles}
-                ref={node => this.layoutNode = node}
+                ref={node => (this.layoutNode = node)}
             >
                 <div
-                    id='content'
+                    id="content"
                     style={contentStyles}
-                    ref={node => this.contentNode = node}
+                    ref={node => (this.contentNode = node)}
                 >
-                    <this.props.bookContent
-                        {...this.props}
-                        {...this.state}
-                    />
+                    <this.props.bookContent {...this.props} {...this.state} />
                 </div>
-                {!isMobile && <div
-                    className='leaf leaf--left'
-                    style={leafLeftStyles}
-                />}
-                {!isMobile &&  <div
-                    className='leaf leaf--right'
-                    style={leafRightStyles}
-                />}
-
+                {!isMobile && (
+                    <div className="leaf leaf--left" style={leafLeftStyles} />
+                )}
+                {!isMobile && (
+                    <div className="leaf leaf--right" style={leafRightStyles} />
+                )}
             </div>
         )
     }

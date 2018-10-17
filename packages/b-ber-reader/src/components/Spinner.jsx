@@ -3,12 +3,11 @@ import classNames from 'classnames'
 
 const Spinner = props => (
     <div
-        className={classNames(
-            'spinner',
-            {'spinner--visible': props.spinnerVisible},
-        )}
+        className={classNames('spinner', {
+            'spinner--visible': props.spinnerVisible,
+        })}
     >
-        <div className='spinner__detail' />
+        <div className="spinner__detail" />
     </div>
 )
 

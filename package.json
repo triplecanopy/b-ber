@@ -57,6 +57,7 @@
         "sinon-chai": "^2.13.0"
     },
     "dependencies": {
+        "prettier": "^1.14.3",
         "replace": "^1.0.0"
     }
 }

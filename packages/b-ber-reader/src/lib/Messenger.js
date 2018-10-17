@@ -42,7 +42,7 @@ class Messenger {
     static sendClickEvent(event) {
         window.parent.postMessage(
             { ...event, type: messagesTypes.CLICK_EVENT },
-            Messenger.MESSAGE_DOMAIN
+            Messenger.MESSAGE_DOMAIN,
         )
     }
 
@@ -54,7 +54,7 @@ class Messenger {
                 metaKey: event.metaKey,
                 type: messagesTypes.KEYDOWN_EVENT,
             },
-            Messenger.MESSAGE_DOMAIN
+            Messenger.MESSAGE_DOMAIN,
         )
     }
 
@@ -79,7 +79,7 @@ class Messenger {
 
     static clear() {
         registry.forEach(
-            (entry, key) => entry.handler && Messenger.deregister(key)
+            (entry, key) => entry.handler && Messenger.deregister(key),
         )
         registry.clear()
     }

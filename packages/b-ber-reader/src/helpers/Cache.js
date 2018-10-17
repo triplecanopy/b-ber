@@ -1,4 +1,4 @@
-import {Asset, Storage} from '.'
+import { Asset, Storage } from '.'
 
 class Cache {
     static localStorageKey = 'bber_cache'
@@ -14,7 +14,7 @@ class Cache {
         const hash = Asset.createHash(url)
         const storage = Storage.get(Cache.localStorageKey)
 
-        storage[hash] = {data}
+        storage[hash] = { data }
 
         Storage.set(Cache.localStorageKey, storage)
     }
@@ -23,6 +23,5 @@ class Cache {
         Storage.clear(Cache.localStorageKey)
     }
 }
-
 
 export default Cache

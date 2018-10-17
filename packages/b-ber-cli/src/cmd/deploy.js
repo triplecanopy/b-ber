@@ -1,4 +1,4 @@
-import {deploy} from '@canopycanopycanopy/b-ber-tasks'
+import { deploy } from '@canopycanopycanopy/b-ber-tasks'
 
 const command = ['deploy']
 const describe = 'Deploy the current project'

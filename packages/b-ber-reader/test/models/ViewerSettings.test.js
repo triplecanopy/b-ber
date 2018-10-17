@@ -1,40 +1,42 @@
 /* global jest,test,expect */
 
 import ViewerSettings from '../../src/models/ViewerSettings'
-import {transitions, themes} from '../../src/constants'
+import { transitions, themes } from '../../src/constants'
 
 console.error = jest.fn()
 
 describe('ViewerSettings', () => {
     test('creates the viewer settings', () => {
-
         let vs
 
         vs = new ViewerSettings({})
 
-        expect(vs.settings).toEqual(expect.objectContaining({
-            paddingTop: expect.any(Function),
-            paddingLeft: expect.any(Function),
-            paddingRight: expect.any(Function),
-            paddingBottom: expect.any(Function),
-            fontSize: expect.any(Number),
-            columnGap: expect.any(Function),
-            theme: themes.DEFAULT,
-            transition: transitions.SLIDE,
-            transitionSpeed: expect.any(Number),
-            desktopColumnCount: expect.any(Number),
-            mobileColumnCount: expect.any(Number),
-        }))
+        expect(vs.settings).toEqual(
+            expect.objectContaining({
+                paddingTop: expect.any(Function),
+                paddingLeft: expect.any(Function),
+                paddingRight: expect.any(Function),
+                paddingBottom: expect.any(Function),
+                fontSize: expect.any(Number),
+                columnGap: expect.any(Function),
+                theme: themes.DEFAULT,
+                transition: transitions.SLIDE,
+                transitionSpeed: expect.any(Number),
+                desktopColumnCount: expect.any(Number),
+                mobileColumnCount: expect.any(Number),
+            }),
+        )
 
-        vs = new ViewerSettings({fontSize: 1})
+        vs = new ViewerSettings({ fontSize: 1 })
 
-        expect(vs.settings).toEqual(expect.objectContaining({
-            fontSize: 1,
-        }))
+        expect(vs.settings).toEqual(
+            expect.objectContaining({
+                fontSize: 1,
+            }),
+        )
     })
 
     test('gets properties using lenses', () => {
-
         const vs = new ViewerSettings({})
 
         expect(vs.paddingTop).toBeNumber()
@@ -46,12 +48,13 @@ describe('ViewerSettings', () => {
         expect(vs.columns).toEqual(ViewerSettings.defaults.columns)
         expect(vs.columnGap).toBeNumber()
         expect(vs.transition).toEqual(ViewerSettings.defaults.transition)
-        expect(vs.transitionSpeed).toEqual(ViewerSettings.defaults.transitionSpeed)
+        expect(vs.transitionSpeed).toEqual(
+            ViewerSettings.defaults.transitionSpeed,
+        )
         expect(vs.theme).toEqual(ViewerSettings.defaults.theme)
     })
 
     test('sets properties using lenses', () => {
-
         const vs = new ViewerSettings({})
 
         vs.paddingTop = 1
@@ -74,12 +77,11 @@ describe('ViewerSettings', () => {
         expect(vs.transitionSpeed).toBe(1)
         expect(vs.theme).toBe(1)
 
-        expect(() => vs.paddingX = 1).toThrow()
-        expect(() => vs.paddingY = 1).toThrow()
+        expect(() => (vs.paddingX = 1)).toThrow()
+        expect(() => (vs.paddingY = 1)).toThrow()
     })
 
     it('sets properties using shorthand values', () => {
-
         const vs = new ViewerSettings({})
 
         vs.padding = [1, 2, 3, 4]
@@ -88,11 +90,9 @@ describe('ViewerSettings', () => {
         expect(vs.paddingRight).toBe(2)
         expect(vs.paddingBottom).toBe(3)
         expect(vs.paddingLeft).toBe(4)
-
     })
 
     it('uses custom lenses', () => {
-
         const vs = new ViewerSettings({})
 
         expect(typeof vs.fontSize).toBe('string')
@@ -106,11 +106,9 @@ describe('ViewerSettings', () => {
         vs.fontSize = null
         expect(typeof vs.fontSize).toBe('string')
         expect(vs.fontSize).toMatch(/%$/)
-
     })
 
     it('gets properties by key', () => {
-
         const vs = new ViewerSettings({})
 
         expect(vs.get('paddingTop')).toBeFunction()
@@ -120,26 +118,29 @@ describe('ViewerSettings', () => {
         expect(vs.get('columns')).toBe(ViewerSettings.defaults.columns)
         expect(vs.get('columnGap')).toBeFunction()
         expect(vs.get('transition')).toBe(ViewerSettings.defaults.transition)
-        expect(vs.get('transitionSpeed')).toBe(ViewerSettings.defaults.transitionSpeed)
+        expect(vs.get('transitionSpeed')).toBe(
+            ViewerSettings.defaults.transitionSpeed,
+        )
         expect(vs.get('theme')).toBe(ViewerSettings.defaults.theme)
 
-        expect(vs.get()).toEqual(expect.objectContaining({
-            paddingTop: expect.any(Function),
-            paddingLeft: expect.any(Function),
-            paddingRight: expect.any(Function),
-            paddingBottom: expect.any(Function),
-            fontSize: expect.any(Number),
-            columnGap: expect.any(Function),
-            theme: themes.DEFAULT,
-            transition: transitions.SLIDE,
-            transitionSpeed: expect.any(Number),
-            desktopColumnCount: expect.any(Number),
-            mobileColumnCount: expect.any(Number),
-        }))
+        expect(vs.get()).toEqual(
+            expect.objectContaining({
+                paddingTop: expect.any(Function),
+                paddingLeft: expect.any(Function),
+                paddingRight: expect.any(Function),
+                paddingBottom: expect.any(Function),
+                fontSize: expect.any(Number),
+                columnGap: expect.any(Function),
+                theme: themes.DEFAULT,
+                transition: transitions.SLIDE,
+                transitionSpeed: expect.any(Number),
+                desktopColumnCount: expect.any(Number),
+                mobileColumnCount: expect.any(Number),
+            }),
+        )
     })
 
     it('sets properties by key', () => {
-
         const vs = new ViewerSettings({})
 
         vs.put('paddingTop', 1)
@@ -168,13 +169,11 @@ describe('ViewerSettings', () => {
         vs.put('fontSize', '100.0')
         expect(vs.fontSize).toBe('100.0%')
 
-        vs.put({fontSize: '100', paddingBottom: 1})
+        vs.put({ fontSize: '100', paddingBottom: 1 })
         expect(vs.fontSize).toBe('100%')
         expect(vs.paddingBottom).toBe(1)
 
         vs.put(['bogus'])
         expect(console.error).toHaveBeenCalled()
-
     })
-
 })

@@ -2,29 +2,29 @@
  * @module loi
  */
 
-import fs from "fs-extra"
-import path from "path"
-import state from "@canopycanopycanopy/b-ber-lib/State"
-import log from "@canopycanopycanopy/b-ber-logger"
-import { SpineItem, Template } from "@canopycanopycanopy/b-ber-lib"
-import figure from "@canopycanopycanopy/b-ber-templates/figures"
-import Xhtml from "@canopycanopycanopy/b-ber-templates/Xhtml"
+import fs from 'fs-extra'
+import path from 'path'
+import state from '@canopycanopycanopy/b-ber-lib/State'
+import log from '@canopycanopycanopy/b-ber-logger'
+import { SpineItem, Template } from '@canopycanopycanopy/b-ber-lib'
+import figure from '@canopycanopycanopy/b-ber-templates/figures'
+import Xhtml from '@canopycanopycanopy/b-ber-templates/Xhtml'
 
 const createLOILeader = () => {
-    const fileName = "figures-titlepage.xhtml"
-    const markup = Template.render("document", Xhtml.loi(), Xhtml.document())
+    const fileName = 'figures-titlepage.xhtml'
+    const markup = Template.render('document', Xhtml.loi(), Xhtml.document())
 
     return fs
         .writeFile(
-            path.join(state.dist, "OPS", "text", `${fileName}`),
+            path.join(state.dist, 'OPS', 'text', `${fileName}`),
             markup,
-            "utf8"
+            'utf8',
         )
         .then(() => {
-            state.add("guide", {
+            state.add('guide', {
                 filename: fileName,
-                title: "Figures",
-                type: "loi",
+                title: 'Figures',
+                type: 'loi',
             })
             log.info(`loi emit default figures titlepage [${fileName}]`)
         })
@@ -35,13 +35,13 @@ const createLOIAsSeparateHTMLFiles = () => {
         // Create image string based on dimensions of image
         // returns square | landscape | portrait | portraitLong
         const figureStr = figure(data, state.build)
-        const markup = Template.render("document", figureStr, Xhtml.document())
+        const markup = Template.render('document', figureStr, Xhtml.document())
 
         return fs
             .writeFile(
-                path.join(state.dist, "OPS", "text", data.page),
+                path.join(state.dist, 'OPS', 'text', data.page),
                 markup,
-                "utf8"
+                'utf8',
             )
             .then(() => {
                 const fileData = new SpineItem({
@@ -50,7 +50,7 @@ const createLOIAsSeparateHTMLFiles = () => {
                     ref: data.ref,
                     pageOrder: data.pageOrder,
                 })
-                state.add("loi", fileData)
+                state.add('loi', fileData)
                 log.info(`loi linking [${data.source}] to [${data.page}]`)
             })
     })
@@ -62,33 +62,33 @@ const createLOIAsSeparateHTMLFiles = () => {
                     ? -1
                     : a.pageOrder > b.pageOrder
                         ? 1
-                        : 0
-        )
+                        : 0,
+        ),
     )
 }
 
 const createLOIAsSingleHTMLFile = () => {
-    let figuresPage = ""
+    let figuresPage = ''
     figuresPage += Xhtml.loi()
     figuresPage += state.figures.reduce(
         (acc, curr) => acc.concat(figure(curr, state.build)),
-        ""
+        '',
     )
 
-    const fileName = "figures-titlepage.xhtml"
-    const markup = Template.render("document", figuresPage, Xhtml.document())
+    const fileName = 'figures-titlepage.xhtml'
+    const markup = Template.render('document', figuresPage, Xhtml.document())
 
     return fs
         .writeFile(
-            path.join(state.dist, "OPS", "text", `${fileName}`),
+            path.join(state.dist, 'OPS', 'text', `${fileName}`),
             markup,
-            "utf8"
+            'utf8',
         )
         .then(() => {
-            state.add("guide", {
+            state.add('guide', {
                 filename: fileName,
-                title: "Figures",
-                type: "loi",
+                title: 'Figures',
+                type: 'loi',
             })
             log.info(`loi emit figures titlepage [${fileName}]`)
         })
@@ -105,7 +105,9 @@ const loi = () => {
 
     // This branch concatentates all the figures, as well as the loi-leader
     // (the 'Figures' header text) into a single document
-    if (state.build === "reader") { return createLOIAsSingleHTMLFile().catch(log.error) }
+    if (state.build === 'reader') {
+        return createLOIAsSingleHTMLFile().catch(log.error)
+    }
 
     // create separate files
     return createLOILeader()

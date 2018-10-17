@@ -12,7 +12,7 @@ class HtmlToPrintReadyHtml extends HtmlToXml {
         this.basePath = basePath
     }
 
-    onend(resolve/* , index, len */) {
+    onend(resolve /* , index, len */) {
         resolve(this.output)
     }
 
@@ -70,42 +70,54 @@ class HtmlToPrintReadyHtml extends HtmlToXml {
         const _this = this // eslint-disable-line consistent-this
         const len = arr.length - 1
         return new Promise(resolve => {
-            const printer = new htmlparser.Parser({
-                onopentag(name, attrs) {
-                    _this.filterTags(name, index, len, true)
+            const printer = new htmlparser.Parser(
+                {
+                    onopentag(name, attrs) {
+                        _this.filterTags(name, index, len, true)
 
-                    if (_this.noop) return
+                        if (_this.noop) return
 
-                    const tag = [name]
-                    // TODO: remove for..of
-                    for (const [key, val] of _this.entries(attrs)) { // eslint-disable-line no-restricted-syntax
-                        let prop = val
-                        if (key === 'src' || key === 'xlink:href' || (name === 'link' && key === 'href')) {
-                            prop = path.resolve(_this.basePath, 'OPS', 'text', val)
+                        const tag = [name]
+                        // TODO: remove for..of
+                        // eslint-disable-next-line no-restricted-syntax
+                        for (const [key, val] of _this.entries(attrs)) {
+                            let prop = val
+                            if (
+                                key === 'src' ||
+                                key === 'xlink:href' ||
+                                (name === 'link' && key === 'href')
+                            ) {
+                                prop = path.resolve(
+                                    _this.basePath,
+                                    'OPS',
+                                    'text',
+                                    val,
+                                )
+                            }
+                            tag.push(`${key}="${prop}"`)
                         }
-                        tag.push(`${key}="${prop}"`)
-                    }
-                    _this.output += `<${tag.join(' ')}>`
+                        _this.output += `<${tag.join(' ')}>`
+                    },
+                    ontext(text) {
+                        _this.output += text
+                    },
+                    onclosetag(name) {
+                        _this.filterTags(name, index, len, false)
+                        if (_this.noop) return
+                        _this.output += `</${name}>`
+                    },
+                    onend() {
+                        _this.onend(resolve /* , index, len */)
+                    },
                 },
-                ontext(text) {
-                    _this.output += text
-                },
-                onclosetag(name) {
-                    _this.filterTags(name, index, len, false)
-                    if (_this.noop) return
-                    _this.output += `</${name}>`
-                },
-                onend() {
-                    _this.onend(resolve/* , index, len */)
-                },
-            }, {decodeEntities: false})
+                { decodeEntities: false },
+            )
 
             printer.write(content)
             printer.end()
             _this.reset()
         })
     }
-
 }
 
 export default HtmlToPrintReadyHtml

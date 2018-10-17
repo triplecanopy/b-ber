@@ -13,23 +13,30 @@ test('creates a random id', () => {
 })
 
 test('creates escaped React attributes', () => {
-    expect(Asset.convertToReactAttrs(
-        {'data-foo': 'bar', style: 'font-family: times'}
-    )).toEqual({'data-foo': 'bar', style: {fontFamily: 'times'}})
+    expect(
+        Asset.convertToReactAttrs({
+            'data-foo': 'bar',
+            style: 'font-family: times',
+        }),
+    ).toEqual({ 'data-foo': 'bar', style: { fontFamily: 'times' } })
 
-    expect(Asset.convertToReactAttrs(
-        {style: 'height: 10px; border: 0'}
-    )).toEqual({style: {height: '10px', border: '0'}})
+    expect(
+        Asset.convertToReactAttrs({ style: 'height: 10px; border: 0' }),
+    ).toEqual({ style: { height: '10px', border: '0' } })
 
-    expect(Asset.convertToReactAttrs(
-        {style: '-webkit-overflow-scrolling: touch; -ms-user-select: none; -moz-transition-delay: 1s; -o-perspective: 100px;'}
-    )).toEqual({style: {
-        WebkitOverflowScrolling: 'touch',
-        msUserSelect: 'none',
-        MozTransitionDelay: '1s',
-        OPerspective: '100px',
-    }})
-
+    expect(
+        Asset.convertToReactAttrs({
+            style:
+                '-webkit-overflow-scrolling: touch; -ms-user-select: none; -moz-transition-delay: 1s; -o-perspective: 100px;',
+        }),
+    ).toEqual({
+        style: {
+            WebkitOverflowScrolling: 'touch',
+            msUserSelect: 'none',
+            MozTransitionDelay: '1s',
+            OPerspective: '100px',
+        },
+    })
 })
 
 test('appends a stylsheet', () => {
@@ -48,5 +55,3 @@ test('removes a stylsheet', () => {
     expect(document.querySelector('#_test')).toBe(null)
     expect(() => Asset.removeBookStyles('test')).not.toThrow()
 })
-
-

@@ -6,7 +6,10 @@ const SidebarMetadata = props => (
         className={classNames(
             'controls__sidebar',
             'controls__sidebar__metadata',
-            {'controls__sidebar__metadata--open': props.showSidebar === 'metadata'}
+            {
+                'controls__sidebar__metadata--open':
+                    props.showSidebar === 'metadata',
+            },
         )}
     >
         <dl>

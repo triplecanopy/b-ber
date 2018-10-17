@@ -1,4 +1,4 @@
-import {Component} from 'react'
+import { Component } from 'react'
 import Viewport from '../helpers/Viewport'
 
 class Media extends Component {
@@ -8,7 +8,9 @@ class Media extends Component {
         this.state = {
             canPlay: false,
             autoPlay: this.props['data-autoplay'] || false,
-            fullScreen: this.props['data-fullscreen'] ? JSON.parse(this.props['data-fullscreen']) : false,
+            fullScreen: this.props['data-fullscreen']
+                ? JSON.parse(this.props['data-fullscreen'])
+                : false,
             paused: true,
             nodeSpreadIndex: 0,
         }
@@ -49,9 +51,9 @@ class Media extends Component {
     getNodeSpreadIndex() {
         if (!this.media || !this.context) return
 
-        const {x} = this.media.getBoundingClientRect()
-        const {columnGap, translateX} = this.context
-        const {fullScreen} = this.state
+        const { x } = this.media.getBoundingClientRect()
+        const { columnGap, translateX } = this.context
+        const { fullScreen } = this.state
         const windowWidth = window.innerWidth
 
         let nodeSpreadIndex
@@ -60,21 +62,23 @@ class Media extends Component {
         }
         else {
             // TODO: should account for element offset (margins/padding)
-            nodeSpreadIndex = Math.floor((x - (columnGap / 2) - translateX) / windowWidth)
+            nodeSpreadIndex = Math.floor(
+                (x - columnGap / 2 - translateX) / windowWidth,
+            )
         }
 
         return nodeSpreadIndex
     }
 
     setNodeSpreadIndex(nodeSpreadIndex) {
-        this.setState({nodeSpreadIndex})
+        this.setState({ nodeSpreadIndex })
     }
 
     handleUpdatedSpreadIndex(index) {
         if (!this.state.autoPlay || Viewport.isMobile()) return
 
-        const {spreadIndex} = this.context
-        const {canPlay, paused} = this.state
+        const { spreadIndex } = this.context
+        const { canPlay, paused } = this.state
 
         if (spreadIndex === index && paused && canPlay) {
             this.play()
@@ -85,7 +89,7 @@ class Media extends Component {
     }
 
     handleOnCanPlay() {
-        this.setState({canPlay: true})
+        this.setState({ canPlay: true })
     }
     handleOnClick() {
         if (!this.media || !this.state.canPlay) return
@@ -100,14 +104,14 @@ class Media extends Component {
         if (!this.media) return
         if (this.media.paused && this.state.canPlay) {
             this.media.play()
-            this.setState({paused: false})
+            this.setState({ paused: false })
         }
     }
     pause() {
         if (!this.media) return
         if (!this.media.paused && this.state.canPlay) {
             this.media.pause()
-            this.setState({paused: true})
+            this.setState({ paused: true })
         }
     }
 }

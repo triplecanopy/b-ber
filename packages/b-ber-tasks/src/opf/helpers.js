@@ -1,6 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 import path from 'path'
-import {opsPath} from '@canopycanopycanopy/b-ber-lib/utils'
+import { opsPath } from '@canopycanopycanopy/b-ber-lib/utils'
 import isPlainObject from 'lodash/isPlainObject'
 
 const isRemote = file => /^http/.test(file)
@@ -22,12 +22,10 @@ const pathInfoFromFile = (file, dest) => {
         extension: path.extname(file),
         remote: false,
     }
-
 }
 
 const pathInfoFromFiles = (arr, dest) =>
     arr.map(file => pathInfoFromFile(file, dest))
-
 
 const flattenSpineFromYAML = arr =>
     arr.reduce((acc, curr) => {
@@ -40,7 +38,6 @@ const flattenSpineFromYAML = arr =>
         return acc.concat(curr)
     }, [])
 
-
 const nestedContentToYAML = (arr, result = []) => {
     arr.forEach(a => {
         const model = {}
@@ -49,7 +46,7 @@ const nestedContentToYAML = (arr, result = []) => {
         if (a.linear === false || a.in_toc === false) {
             if (a.in_toc === false) model.in_toc = false
             if (a.linear === false) model.linear = false
-            result.push({[a.fileName]: model})
+            result.push({ [a.fileName]: model })
         } else {
             result.push(a.fileName)
             if (a.nodes && a.nodes.length) {
@@ -63,5 +60,4 @@ const nestedContentToYAML = (arr, result = []) => {
     return result
 }
 
-
-export {pathInfoFromFiles, flattenSpineFromYAML, nestedContentToYAML}
+export { pathInfoFromFiles, flattenSpineFromYAML, nestedContentToYAML }

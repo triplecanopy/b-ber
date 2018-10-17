@@ -2,7 +2,6 @@
  * @module mobiCss
  */
 
-
 import fs from 'fs-extra'
 import css from 'css'
 import path from 'path'
@@ -31,12 +30,13 @@ const blackListedProperties = [
     '-webkit-text-fill-color',
 ]
 
-const write = ({file, content}) =>
-    fs.writeFile(file, content, 'utf8').then(() => log.info(`mobiCSS write [${path.basename(file)}]`))
+const write = ({ file, content }) =>
+    fs
+        .writeFile(file, content, 'utf8')
+        .then(() => log.info(`mobiCSS write [${path.basename(file)}]`))
 
 const process = file =>
     fs.readFile(file, 'utf8').then(data => {
-
         const ast = css.parse(data)
 
         let i = ast.stylesheet.rules.length - 1
@@ -48,8 +48,16 @@ const process = file =>
                 while (j >= 0) {
                     let jj = 0
                     while (jj < blackListedPrefixes.length) {
-                        if (rule.selectors[j].slice(0, blackListedPrefixes[jj].length) === blackListedPrefixes[jj]) {
-                            log.info('mobiCSS remove selector', rule.selectors[j])
+                        if (
+                            rule.selectors[j].slice(
+                                0,
+                                blackListedPrefixes[jj].length,
+                            ) === blackListedPrefixes[jj]
+                        ) {
+                            log.info(
+                                'mobiCSS remove selector',
+                                rule.selectors[j],
+                            )
                             rule.selectors.splice(j, 1)
                         }
                         jj++ // eslint-disable-line no-plusplus
@@ -64,12 +72,20 @@ const process = file =>
             }
 
             if (ast.stylesheet.rules[i]) {
-                const {declarations} = ast.stylesheet.rules[i]
+                const { declarations } = ast.stylesheet.rules[i]
                 if (declarations) {
                     let a = declarations.length - 1
                     while (a >= 0) {
-                        if (blackListedProperties.indexOf(declarations[a].property) > -1) {
-                            log.info(`mobiCSS remove property [${declarations[a].property}]`)
+                        if (
+                            blackListedProperties.indexOf(
+                                declarations[a].property,
+                            ) > -1
+                        ) {
+                            log.info(
+                                `mobiCSS remove property [${
+                                    declarations[a].property
+                                }]`,
+                            )
                             declarations.splice(a, 1)
                         }
                         a-- // eslint-disable-line no-plusplus
@@ -80,22 +96,20 @@ const process = file =>
         }
 
         const content = css.stringify(ast)
-        return {file, content}
+        return { file, content }
     })
-
 
 const mobiCSS = () => {
     const stylesheetsPath = path.join(state.dist, 'OPS', 'stylesheets')
     return fs.readdir(stylesheetsPath).then(files =>
-        Promise.all(files.map(a => {
-            const file = path.join(state.dist, 'OPS', 'stylesheets', a)
-            log.info(`mobiCSS process [${path.basename(file)}]`)
-            return process(file).then(write)
-        })).catch(log.error)
+        Promise.all(
+            files.map(a => {
+                const file = path.join(state.dist, 'OPS', 'stylesheets', a)
+                log.info(`mobiCSS process [${path.basename(file)}]`)
+                return process(file).then(write)
+            }),
+        ).catch(log.error),
     )
 }
-
-
-
 
 export default mobiCSS

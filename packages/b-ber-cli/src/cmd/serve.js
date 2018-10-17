@@ -1,6 +1,6 @@
-import {serve} from '@canopycanopycanopy/b-ber-tasks'
+import { serve } from '@canopycanopycanopy/b-ber-tasks'
 import log from '@canopycanopycanopy/b-ber-logger'
-import {fail} from '../helpers'
+import { fail } from '../helpers'
 
 const command = ['serve', 's']
 const describe = 'Preview a project in the browser using the `web` build.'
@@ -10,23 +10,13 @@ const handler = yargs => {
     if (build !== 'web' && build !== 'reader') return fail('', '', yargs)
 
     log.notice(`Serving [b-ber-${build}]`)
-    return serve({build})
+    return serve({ build })
 }
 
 const builder = yargs =>
     yargs
-        .command(
-            '',
-            'Serve the Web build',
-            () => {},
-            () => handler(yargs),
-        )
-        .command(
-            'web',
-            'Serve the Web build',
-            () => {},
-            () => handler(yargs),
-        )
+        .command('', 'Serve the Web build', () => {}, () => handler(yargs))
+        .command('web', 'Serve the Web build', () => {}, () => handler(yargs))
         .command(
             'reader',
             'Serve the Reader build',
@@ -36,7 +26,6 @@ const builder = yargs =>
         .help('h')
         .alias('h', 'help')
         .usage(`\nUsage: $0 serve\n\n${describe}`)
-
 
 export default {
     command,

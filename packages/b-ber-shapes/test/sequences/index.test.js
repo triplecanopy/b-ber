@@ -1,5 +1,4 @@
-
-import sequences, {build} from '../../src/sequences'
+import sequences, { build } from '../../src/sequences'
 
 describe('sequences', () => {
     it('exports the build list', () => {

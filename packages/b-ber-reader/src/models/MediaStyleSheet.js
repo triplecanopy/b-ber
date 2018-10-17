@@ -12,9 +12,9 @@ class MediaStyleSheet {
         this.rules.forEach(a =>
             this.elem.appendChild(
                 doc.createTextNode(
-                    `${a.selector} { ${a.declarations.join(';')} }`
-                )
-            )
+                    `${a.selector} { ${a.declarations.join(';')} }`,
+                ),
+            ),
         )
     }
 

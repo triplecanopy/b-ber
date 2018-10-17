@@ -1,3 +1,5 @@
+/* eslint-disable import/no-dynamic-require,global-require */
+
 import path from 'path'
 import fs from 'fs-extra'
 import find from 'lodash/find'
@@ -49,7 +51,7 @@ class ApplicationLoader {
             },
         }
 
-        this.config = {...this.initialConfig}
+        this.config = { ...this.initialConfig }
 
         this.version = this.npmPackage.version
         this.metadata = []
@@ -66,7 +68,7 @@ class ApplicationLoader {
     }
 
     _resetConfig() {
-        this.config = {...this.initialConfig}
+        this.config = { ...this.initialConfig }
     }
 
     _config() {
@@ -74,8 +76,8 @@ class ApplicationLoader {
         const userConfig = YamlAdaptor.load(path.join(cwd, 'config.yml'))
 
         // updates initialConfig with data from config.yml
-        this.initialConfig = {...this.config, ...userConfig}
-        this.config = {...this.initialConfig}
+        this.initialConfig = { ...this.config, ...userConfig }
+        this.config = { ...this.initialConfig }
     }
 
     _metadata() {
@@ -85,7 +87,9 @@ class ApplicationLoader {
     }
 
     _theme() {
-        const themeError = new Error(`There was an error loading theme [${this.theme}]`)
+        const themeError = new Error(
+            `There was an error loading theme [${this.theme}]`,
+        )
 
         if ({}.hasOwnProperty.call(themes, this.config.theme)) {
             this.theme = themes[this.config.theme]
@@ -93,7 +97,9 @@ class ApplicationLoader {
             if (!{}.hasOwnProperty.call(this.config, 'themes_directory')) {
                 if (!yargs.argv._[0] || yargs.argv._[0] !== 'theme') {
                     // user is trying to run a command without defining a theme, so bail
-                    log.error('There was an error loading the theme, make sure you\'ve added a [themes_directory] to the [config.yml] if you\'re using a custom theme.')
+                    log.error(
+                        "There was an error loading the theme, make sure you've added a [themes_directory] to the [config.yml] if you're using a custom theme.",
+                    )
                 } else {
                     // user is trying to run a `theme` command, either to set
                     // or list the available themes.  we don't need the
@@ -102,29 +108,44 @@ class ApplicationLoader {
                     this.theme = {}
                     return
                 }
-
             }
 
             // possibly a user defined theme, test if it exists
             try {
-                const userThemesPath = path.resolve(cwd, this.config.themes_directory)
-                const userThemes = fs.readdirSync(userThemesPath).reduce((acc, curr) => {
-                    if (!fs.lstatSync(path.resolve(userThemesPath, curr)).isDirectory()) return acc
-                    const userModule =
-                        fs.existsSync(path.resolve(userThemesPath, curr, 'package.json'))
-                            ? require(path.resolve(userThemesPath, curr)) // eslint-disable-line import/no-dynamic-require,global-require
-                            : require(path.resolve(userThemesPath, curr, 'index.js')) // eslint-disable-line import/no-dynamic-require,global-require
-                    return acc.concat(userModule)
-                }, [])
+                const userThemesPath = path.resolve(
+                    cwd,
+                    this.config.themes_directory,
+                )
+                const userThemes = fs
+                    .readdirSync(userThemesPath)
+                    .reduce((acc, curr) => {
+                        if (
+                            !fs
+                                .lstatSync(path.resolve(userThemesPath, curr))
+                                .isDirectory()
+                        ) {
+                            return acc
+                        }
+                        const userModule = fs.existsSync(
+                            path.resolve(userThemesPath, curr, 'package.json'),
+                        )
+                            ? require(path.resolve(userThemesPath, curr))
+                            : require(path.resolve(
+                                userThemesPath,
+                                curr,
+                                'index.js',
+                            ))
+                        return acc.concat(userModule)
+                    }, [])
 
-
-                const userTheme = find(userThemes, {name: this.config.theme})
-                if (!userTheme) log.error(`Could not find theme [${this.config.theme}]`)
+                const userTheme = find(userThemes, { name: this.config.theme })
+                if (!userTheme) {
+                    log.error(`Could not find theme [${this.config.theme}]`)
+                }
 
                 // exists! set it
                 this.theme = userTheme
                 return
-
             } catch (err) {
                 log.error(themeError)
             }
@@ -159,12 +180,16 @@ class ApplicationLoader {
     }
 
     _loadBuildSettings(type) {
-        const {src, dist} = this.config
+        const { src, dist } = this.config
         const projectDir = path.join(cwd, src)
         const navigationConfigFile = path.join(cwd, src, `${type}.yml`)
 
         try {
-            if (!fs.existsSync(projectDir)) throw new Error(`Project directory [${projectDir}] does not exist`)
+            if (!fs.existsSync(projectDir)) {
+                throw new Error(
+                    `Project directory [${projectDir}] does not exist`,
+                )
+            }
         } catch (err) {
             // Starting a new project, noop
             return {
@@ -177,15 +202,14 @@ class ApplicationLoader {
             }
         }
 
-
-        const spine = new Spine({src, buildType: type})
+        const spine = new Spine({ src, buildType: type })
 
         const spineList = spine.create(navigationConfigFile)
         const tocEntries = spine.build(spineList, src) // nested navigation
         const spineEntries = spine.flatten(tocEntries) // one-dimensional page flow
 
         // build-specific config. gets merged into base config during build step
-        const config = this.config[type] ? {...this.config[type]} : {}
+        const config = this.config[type] ? { ...this.config[type] } : {}
 
         return {
             src,
@@ -205,6 +229,5 @@ class ApplicationLoader {
         this._theme()
     }
 }
-
 
 export default ApplicationLoader

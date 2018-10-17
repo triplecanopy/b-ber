@@ -76,13 +76,13 @@ class DocumentProcessor {
 
     classListContainsAll(node, classNames) {
         return classNames.some(list =>
-            list.every(name => node.classList.contains(name))
+            list.every(name => node.classList.contains(name)),
         )
     }
 
     classListContainsNone(node, classNames) {
         return classNames.some(list =>
-            list.every(name => !node.classList.contains(name))
+            list.every(name => !node.classList.contains(name)),
         )
     }
 
@@ -156,7 +156,7 @@ class DocumentProcessor {
 
     setMarkerStyles(elem) {
         Object.entries(this.markerStyles).forEach(
-            ([key, val]) => (elem.style[key] = val) // eslint-disable-line no-param-reassign
+            ([key, val]) => (elem.style[key] = val), // eslint-disable-line no-param-reassign
         )
     }
 
@@ -196,7 +196,7 @@ class DocumentProcessor {
                     else {
                         console.warn(
                             'No siblings or children could be found for',
-                            node.nodeName
+                            node.nodeName,
                         )
 
                         const elem = this.createMarker(markerId)
@@ -241,13 +241,13 @@ class DocumentProcessor {
             const markerData = typeof markerId !== 'undefined'
             console.assert(
                 markerData,
-                `Marker ${j} does not have a marker attribute`
+                `Marker ${j} does not have a marker attribute`,
             )
 
             const refExists = refHash[markerId]
             console.assert(
                 refExists,
-                `Reference for marker ${j} (${markerId}) could not be found`
+                `Reference for marker ${j} (${markerId}) could not be found`,
             )
 
             if (!markerData) validMarkers = false
@@ -273,7 +273,7 @@ class DocumentProcessor {
             if (!this.validateDocument(doc_)) err = new Error('Invalid markup')
             xml = xmlString.replace(
                 /<body([^>]*?)>[\s\S]*<\/body>/g,
-                `<body$1>${String(doc.body.innerHTML)}</body>`
+                `<body$1>${String(doc.body.innerHTML)}</body>`,
             )
         })
 

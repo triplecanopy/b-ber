@@ -2,8 +2,8 @@
 
 import debounce from 'lodash/debounce'
 import ResizeObserver from 'resize-observer-polyfill'
-import {isNumeric} from '../helpers/Types'
-import {debug, verboseOutput, logTime} from '../config'
+import { isNumeric } from '../helpers/Types'
+import { debug, verboseOutput, logTime } from '../config'
 import browser from '../lib/browser'
 
 const ensureRenderTimeout = 0
@@ -11,14 +11,18 @@ const ensureRenderTimeout = 0
 const log = (spreadTotal, contentDimensions, frameHeight, columns) => {
     if (debug && verboseOutput) {
         console.group('Layout#connectResizeObserver')
-        console.log('spreadTotal: %d; contentDimensions: %d; frameHeight %d; columns %d',
-                    spreadTotal, contentDimensions, frameHeight, columns) // eslint-disable-line indent
+        console.log(
+            'spreadTotal: %d; contentDimensions: %d; frameHeight %d; columns %d',
+            spreadTotal,
+            contentDimensions,
+            frameHeight,
+            columns,
+        ) // eslint-disable-line indent
         console.groupEnd()
     }
 }
 
 export default function observable(target) {
-
     const _componentWillMount = target.prototype.componentWillMount
 
     target.prototype.componentWillMount = function componentWillMount() {
@@ -32,18 +36,21 @@ export default function observable(target) {
 
     const _componentDidMount = target.prototype.componentDidMount
     target.prototype.componentDidMount = function componentDidMount() {
-
-        const {transitionSpeed} = this.props.viewerSettings
+        const { transitionSpeed } = this.props.viewerSettings
 
         this.calculateNodePositionAfterResize = debounce(
-            this.calculateNodePosition, transitionSpeed, {}
+            this.calculateNodePosition,
+            transitionSpeed,
+            {},
         ).bind(this)
 
         this.calculateNodePositionAfterMutation = debounce(
-            this.calculateNodePosition, 60, {
+            this.calculateNodePosition,
+            60,
+            {
                 leading: false,
                 trailing: true,
-            }
+            },
         ).bind(this)
 
         if (_componentDidMount) _componentDidMount.call(this, arguments)
@@ -53,26 +60,30 @@ export default function observable(target) {
 
     const _componentWillUnmount = target.prototype.componentWillUnmount
     target.prototype.componentWillUnmount = function componentWillUnmount() {
-
         this.unobserve()
 
         if (_componentWillUnmount) _componentWillUnmount.call(this, arguments)
     }
 
     target.prototype.connectResizeObserver = function connectResizeObserver() {
-
         if (!this.contentNode) throw new Error('Couldn\'t find this.contentNode')
 
-        this.__resizeObserver = new ResizeObserver(this.calculateNodePositionAfterResize)
+        this.__resizeObserver = new ResizeObserver(
+            this.calculateNodePositionAfterResize,
+        )
         this.__resizeObserver.observe(this.contentNode)
     }
 
     target.prototype.connectMutationObserver = function connectMutationObserver() {
-
         if (!this.contentNode) throw new Error('Couldn\'t find this.contentNode')
 
-        this.__mutationObserver = new window.MutationObserver(this.calculateNodePositionAfterMutation)
-        this.__mutationObserver.observe(this.contentNode, {attributes: true, subtree: true})
+        this.__mutationObserver = new window.MutationObserver(
+            this.calculateNodePositionAfterMutation,
+        )
+        this.__mutationObserver.observe(this.contentNode, {
+            attributes: true,
+            subtree: true,
+        })
     }
 
     target.prototype.disconnectResizeObserver = function disconnectResizeObserver() {
@@ -96,7 +107,7 @@ export default function observable(target) {
     target.prototype.calculateNodePosition = function calculateNodePosition(/*entry*/) {
         if (!this.contentNode) throw new Error('Couldn\'t find this.contentNode')
 
-        const {columns, paddingLeft} = this.state
+        const { columns, paddingLeft } = this.state
 
         let contentDimensions
         let columnCount
@@ -104,20 +115,18 @@ export default function observable(target) {
         let spreadWidth
         let frameHeight
 
-
         if (this.props.ready === true) return
 
         if (logTime) console.time('observable#setReaderState')
 
         // FF only
         if (browser.name === 'firefox') {
-            contentDimensions = this.contentNode.offsetWidth - (paddingLeft * 2)
-            spreadWidth = window.innerWidth - (paddingLeft * 2)
+            contentDimensions = this.contentNode.offsetWidth - paddingLeft * 2
+            spreadWidth = window.innerWidth - paddingLeft * 2
             columnCount = contentDimensions / spreadWidth
 
             spreadTotal = Math.floor(columnCount)
         }
-
         else {
             contentDimensions = this.contentNode.offsetHeight
             frameHeight = this.getFrameHeight()
@@ -128,7 +137,6 @@ export default function observable(target) {
             if (!isNumeric(columnCount)) columnCount = 0
 
             spreadTotal = Math.floor(columnCount / columns)
-
         }
 
         log(spreadTotal, contentDimensions, frameHeight, columns)
@@ -146,15 +154,13 @@ export default function observable(target) {
         }
         else {
             if (logTime) console.timeEnd('observable#setReaderState')
-            this.props.setReaderState({spreadTotal, ready: true})
+            this.props.setReaderState({ spreadTotal, ready: true })
         }
-
     }
 
     target.prototype.observe = function observe() {
         this.connectResizeObserver()
         this.connectMutationObserver()
-
     }
 
     target.prototype.unobserve = function unobserve() {
@@ -166,5 +172,4 @@ export default function observable(target) {
         this.disconnectResizeObserver()
         this.disconnectMutationObserver()
     }
-
 }

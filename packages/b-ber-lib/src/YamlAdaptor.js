@@ -1,6 +1,6 @@
 import _yaml from 'js-yaml'
 import fs from 'fs-extra'
-import {isPlainObject} from 'lodash'
+import { isPlainObject } from 'lodash'
 
 /*
 
@@ -39,7 +39,7 @@ class YamlAdaptor {
     // @param str         JavaScript Object
     // @return {String}   YAML formatted string
     static dump(str) {
-        return _yaml.safeDump(str, {indent: 2})
+        return _yaml.safeDump(str, { indent: 2 })
     }
 
     // Alias for js-yaml package's `#safeLoad`.

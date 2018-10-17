@@ -10,7 +10,6 @@
 // This script can also be modularized in the future as an `ebook-to-static-
 // site` module for external use
 
-
 import path from 'path'
 import fs from 'fs-extra'
 import find from 'lodash/find'
@@ -19,7 +18,6 @@ import cheerio from 'cheerio'
 import log from '@canopycanopycanopy/b-ber-logger'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import Toc from '@canopycanopycanopy/b-ber-templates/Toc'
-
 
 let ASSETS_TO_UNLINK
 let DIST_PATH
@@ -31,7 +29,7 @@ let flow // copy of spine for web task, see `WebFlow` below
 function addTrailingSlash(s) {
     let s_ = s
     if (s_ === '/') return s_
-    if (s_.charCodeAt(s_.length - 1) !== 47/* / */) {
+    if (s_.charCodeAt(s_.length - 1) !== 47 /* / */) {
         s_ += '/'
     }
     return s_
@@ -43,7 +41,7 @@ function addTrailingSlash(s) {
 // pages are not listed in the YAML files. the `WebFlow` class creates a new
 // spine by merging in the loi
 class WebFlow {
-    constructor({spine, loi}) {
+    constructor({ spine, loi }) {
         this.spine = spine
         this.loi = loi
 
@@ -56,7 +54,7 @@ class WebFlow {
     // (the `fileName` property has a file extension). this needs to be fixed
     prepareLoi() {
         this.loi = this.loi.map(a => {
-            const b = {...a}
+            const b = { ...a }
             b.fileName = b.fileName.replace(/\.xhtml$/, '')
             b.relativePath = b.relativePath.replace(/\.xhtml$/, '')
             return b
@@ -65,7 +63,7 @@ class WebFlow {
 
     getFiguresPageIndex() {
         const fileName = 'figures-titlepage'
-        return findIndex(this.spine, {fileName})
+        return findIndex(this.spine, { fileName })
     }
 
     addFiguresToSpine() {
@@ -82,13 +80,13 @@ class WebFlow {
     }
 }
 
-
-
 // make sure we're using the correct build variables
 function initialize() {
     DIST_PATH = state.dist
     OPS_PATH = path.join(DIST_PATH, 'OPS')
-    BASE_URL = {}.hasOwnProperty.call(state.config, 'base_url') ? addTrailingSlash(state.config.base_url) : '/'
+    BASE_URL = {}.hasOwnProperty.call(state.config, 'base_url')
+        ? addTrailingSlash(state.config.base_url)
+        : '/'
 
     ASSETS_TO_UNLINK = [
         path.join(DIST_PATH, 'mimetype'),
@@ -97,16 +95,16 @@ function initialize() {
         path.join(DIST_PATH, 'OPS/toc.ncx'),
     ]
 
-    OMIT_FROM_SEARCH = [ // list of spine item entry `fileName`s
+    OMIT_FROM_SEARCH = [
+        // list of spine item entry `fileName`s
         'toc',
     ]
 
-    const {spine, loi} = state
-    flow = new WebFlow({spine, loi})
+    const { spine, loi } = state
+    flow = new WebFlow({ spine, loi })
 
     return Promise.resolve()
 }
-
 
 function moveAssetsToRootDirctory() {
     const promises = []
@@ -114,16 +112,18 @@ function moveAssetsToRootDirctory() {
         fs.readdir(OPS_PATH, (err, files) => {
             if (err) throw err
 
-            const dirs = files.filter(f => f.charAt(0) !== '.' && fs.statSync(path.join(OPS_PATH, f)).isDirectory())
+            const dirs = files.filter(
+                f =>
+                    f.charAt(0) !== '.' &&
+                    fs.statSync(path.join(OPS_PATH, f)).isDirectory(),
+            )
 
             dirs.forEach(f => {
-
                 const frm = path.join(OPS_PATH, f)
                 const to = path.join(DIST_PATH, f)
 
                 log.info(`Moving [%s]`, f)
                 promises.push(fs.move(frm, to))
-
             })
 
             Promise.all(promises).then(() => {
@@ -136,20 +136,18 @@ function moveAssetsToRootDirctory() {
 function unlinkRedundantAssets() {
     const promises = []
     return new Promise(resolve => {
-
         ASSETS_TO_UNLINK.forEach(f => {
             log.info(`Removing [%s]`, path.basename(f))
             promises.push(fs.remove(f))
         })
 
         Promise.all(promises).then(resolve)
-
     })
 }
 
 function getProjectTitle() {
     let title = ''
-    const titleEntry = find(state.metadata, {term: 'title'})
+    const titleEntry = find(state.metadata, { term: 'title' })
     if (titleEntry && titleEntry.value) {
         title = titleEntry.value
     }
@@ -161,7 +159,7 @@ function getChapterTitle(fileName) {
     if (typeof fileName !== 'string') return getProjectTitle()
 
     let title = ''
-    const entry = find(flow.spine, {fileName})
+    const entry = find(flow.spine, { fileName })
     if (entry && entry.title) {
         title = entry.title
     }
@@ -172,11 +170,14 @@ function getChapterTitle(fileName) {
 function getProjectMetadataHTML() {
     return `
         <dl>
-            ${state.metadata.reduce((acc, curr) => acc.concat(`
+            ${state.metadata.reduce(
+        (acc, curr) =>
+            acc.concat(`
                 <dt>${curr.term}</dt>
                 <dd>${curr.value}</dd>
-            `)
-        , '')}
+            `),
+        '',
+    )}
         </dl>
     `
 }
@@ -208,8 +209,11 @@ function getHeaderElement(fileName) {
 
 function createNavigationElement() {
     return new Promise(resolve => {
-        const {toc} = state
-        const tocHTML = Toc.items(toc).replace(/a href="/g, `a href="${BASE_URL}text/`)
+        const { toc } = state
+        const tocHTML = Toc.items(toc).replace(
+            /a href="/g,
+            `a href="${BASE_URL}text/`,
+        )
         const metadataHTML = getProjectMetadataHTML()
         const title = getProjectTitle()
 
@@ -228,14 +232,13 @@ function createNavigationElement() {
             </nav>
         `
 
-        resolve({tocElement, infoElement})
+        resolve({ tocElement, infoElement })
     })
 }
 
-
 function buttonPrev(filePath) {
     const fileName = path.basename(filePath, '.xhtml')
-    const index = findIndex(flow.spine, {fileName})
+    const index = findIndex(flow.spine, { fileName })
     const prevIndex = index - 1
 
     let html = ''
@@ -255,7 +258,7 @@ function buttonPrev(filePath) {
 }
 function buttonNext(filePath) {
     const fileName = path.basename(filePath, '.xhtml')
-    const index = findIndex(flow.spine, {fileName})
+    const index = findIndex(flow.spine, { fileName })
     const nextIndex = index + 1
 
     let html = ''
@@ -280,7 +283,7 @@ function paginate(filePath) {
     }
 }
 function paginationNavigation(filePath) {
-    const {prev, next} = paginate(filePath)
+    const { prev, next } = paginate(filePath)
     return `
         <nav class="publication__nav" role="navigation">
             ${prev}
@@ -325,19 +328,23 @@ function getEventHandlerScript() {
     return `
         <script type="text/javascript">
         // <![CDATA[
-        ${injectBaseURL(fs.readFileSync(path.join(__dirname, 'event-handlers.js')))}
+        ${injectBaseURL(
+        fs.readFileSync(path.join(__dirname, 'event-handlers.js')),
+    )}
         // ]]>
         </script>
     `
 }
 
-function injectNavigationIntoFile(filePath, {tocElement, infoElement}) {
+function injectNavigationIntoFile(filePath, { tocElement, infoElement }) {
     return new Promise(resolve => {
         const pageNavigation = paginationNavigation(filePath)
         const navigationToggleScript = getNavigationToggleScript()
         const webWorkerScript = getWebWorkerScript()
         const evenHandlerScript = getEventHandlerScript()
-        const headerElement = getHeaderElement(path.basename(filePath, path.extname(filePath)))
+        const headerElement = getHeaderElement(
+            path.basename(filePath, path.extname(filePath)),
+        )
 
         log.info(`Adding pagination to ${path.basename(filePath)}`)
         fs.readFile(filePath, 'utf8', (err, data) => {
@@ -352,16 +359,21 @@ function injectNavigationIntoFile(filePath, {tocElement, infoElement}) {
             //
             // TODO: eventually classlist should be parsed, or a more robust
             // solution implemented
-            contents = data.replace(/(<body[^>]*?>)/, `
+            contents = data.replace(
+                /(<body[^>]*?>)/,
+                `
                 $1
                 <div class="publication">
                 ${headerElement}
                 <div class="publication__contents">
-            `)
+            `,
+            )
 
             // close the wrapper element, adding a little javascript for the
             // navigation toggle. should be moved to core when stable
-            contents = contents.replace(/(<\/body>)/, `
+            contents = contents.replace(
+                /(<\/body>)/,
+                `
                 </div> <!-- / .publication__contents -->
                 ${pageNavigation}
                 </div> <!-- / .publication -->
@@ -371,7 +383,8 @@ function injectNavigationIntoFile(filePath, {tocElement, infoElement}) {
                 ${webWorkerScript}
                 ${evenHandlerScript}
                 $1
-            `)
+            `,
+            )
 
             fs.writeFile(filePath, contents, err => {
                 if (err) throw err
@@ -397,9 +410,7 @@ function injectNavigationIntoFiles(elements) {
             })
 
             Promise.all(promises).then(() => resolve(elements))
-
         })
-
     })
 }
 
@@ -407,27 +418,47 @@ function indexPageContent() {
     return new Promise((resolve, reject) => {
         // TODO: `indexPageContent` should create a `lunr` index for faster parsing down the line
 
-        const {spine} = flow
+        const { spine } = flow
         const promises = []
         const records = []
 
         let fileIndex = -1
-        spine.filter(a => OMIT_FROM_SEARCH.indexOf(a.fileName) < 0).forEach(entry =>
-            promises.push(new Promise((resolve, reject) => {
-                fs.readFile(path.join(OPS_PATH, `${entry.relativePath}.xhtml`), 'utf8', (err, data) => {
-                    if (err) reject(err)
+        spine
+            .filter(a => OMIT_FROM_SEARCH.indexOf(a.fileName) < 0)
+            .forEach(entry =>
+                promises.push(
+                    new Promise((resolve, reject) => {
+                        fs.readFile(
+                            path.join(OPS_PATH, `${entry.relativePath}.xhtml`),
+                            'utf8',
+                            (err, data) => {
+                                if (err) reject(err)
 
-                    const $ = cheerio.load(data)
-                    const title = $('h1,h2,h3,h4,h5,h6').first().text()
-                    const body = $('body').text().replace(/\n\s+/g, '\n').trim() // reduce whitespace
-                    const url = `${BASE_URL}text/${entry.fileName}.xhtml`
+                                const $ = cheerio.load(data)
+                                const title = $('h1,h2,h3,h4,h5,h6')
+                                    .first()
+                                    .text()
+                                const body = $('body')
+                                    .text()
+                                    .replace(/\n\s+/g, '\n')
+                                    .trim() // reduce whitespace
+                                const url = `${BASE_URL}text/${
+                                    entry.fileName
+                                }.xhtml`
 
-                    fileIndex += 1
-                    records.push({id: fileIndex, title, body, url})
-                    resolve()
-                })
-            }))
-        )
+                                fileIndex += 1
+                                records.push({
+                                    id: fileIndex,
+                                    title,
+                                    body,
+                                    url,
+                                })
+                                resolve()
+                            },
+                        )
+                    }),
+                ),
+            )
 
         Promise.all(promises)
             .catch(err => reject(err))
@@ -456,14 +487,15 @@ function importVendorScripts() {
 
 function writeWebWorker() {
     return new Promise((resolve, reject) => {
-        const worker = injectBaseURL(fs.readFileSync(path.join(__dirname, 'worker.js')))
+        const worker = injectBaseURL(
+            fs.readFileSync(path.join(__dirname, 'worker.js')),
+        )
         fs.writeFile(path.join(DIST_PATH, 'worker.js'), worker, err => {
             if (err) reject(err)
             resolve()
         })
     })
 }
-
 
 // subtracts 1 from `n` argument since `getPage` refrerences state.spine,
 // which is 0-indexed
@@ -484,8 +516,8 @@ function getFirstPage() {
 }
 
 function getCoverImage() {
-    const {metadata} = state
-    const coverEntry = find(metadata, {term: 'cover'})
+    const { metadata } = state
+    const coverEntry = find(metadata, { term: 'cover' })
     const firstPage = getFirstPage()
 
     let coverImageSrc = 'images/'
@@ -500,13 +532,15 @@ function getCoverImage() {
     `
 }
 
-function createIndexHTML({tocElement, infoElement}) {
+function createIndexHTML({ tocElement, infoElement }) {
     const title = getProjectTitle()
     const coverImage = getCoverImage()
     const navigationToggleScript = getNavigationToggleScript()
     const webWorkerScript = getWebWorkerScript()
     const headerElement = getHeaderElement()
-    const robotsMeta = state.config.private ? '<meta name="robots" content="noindex,nofollow"/>' : '<meta name="robots" content="index,follow"/>'
+    const robotsMeta = state.config.private
+        ? '<meta name="robots" content="noindex,nofollow"/>'
+        : '<meta name="robots" content="index,follow"/>'
 
     // TODO: should get dynamic page template here to ensure asset hash on production build
     const indexHTML = `
@@ -540,12 +574,10 @@ function createIndexHTML({tocElement, infoElement}) {
     `
 
     return fs.writeFile(path.resolve(DIST_PATH, 'index.html'), indexHTML)
-
 }
 
 // TODO
 // function generateWebpubManifest() {}
-
 
 const web = () =>
     initialize()
@@ -568,4 +600,3 @@ const web = () =>
         .catch(log.error)
 
 export default web
-

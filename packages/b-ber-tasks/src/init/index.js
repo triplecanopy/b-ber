@@ -14,12 +14,16 @@ class Initializer {
      * @param  {Object} argv Command Line arguments
      * @return {Object}
      */
-    constructor({cwd = '', argv = {src: '_project', dist: 'project'}}) {
-        const {src, dist} = argv
+    constructor({ cwd = '', argv = { src: '_project', dist: 'project' } }) {
+        const { src, dist } = argv
 
         if (!cwd) throw new Error('Base directory not provided')
-        if (!src || !dist) throw new Error('Both [src] and [dist] arguments must be provided')
-        if (src === dist) throw new Error('[src] and [dist] directories must have different names')
+        if (!src || !dist) { throw new Error('Both [src] and [dist] arguments must be provided') }
+        if (src === dist) {
+            throw new Error(
+                '[src] and [dist] directories must have different names',
+            )
+        }
 
         this.cwd = cwd
         this.src = src
@@ -47,21 +51,30 @@ class Initializer {
     }
 
     writeFiles() {
-        const promises = this.files.map(a => fs.writeFile(a.relativePath, a.content))
+        const promises = this.files.map(a =>
+            fs.writeFile(a.relativePath, a.content),
+        )
         return Promise.all(promises)
     }
 
     copyImages() {
         return getAssets().then(assets => {
-            const {'b-ber-logo': bberLogo, 'default-publishers-logo': publishersLogo} = assets
+            const {
+                'b-ber-logo': bberLogo,
+                'default-publishers-logo': publishersLogo,
+            } = assets
             const images = [bberLogo, publishersLogo]
 
             log.info('Copying development assets')
 
-            const promises = images.map(a => fs.copy(a, path.join(this.projectPath, '_images', path.basename(a))))
+            const promises = images.map(a =>
+                fs.copy(
+                    a,
+                    path.join(this.projectPath, '_images', path.basename(a)),
+                ),
+            )
             return Promise.all(promises)
         })
-
     }
 
     /**
@@ -75,7 +88,6 @@ class Initializer {
             .then(() => this.copyImages())
             .then(() => log.notice(`Created new project [${name}]`))
             .catch(log.error)
-
     }
 }
 

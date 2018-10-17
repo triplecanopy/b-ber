@@ -15,7 +15,8 @@ const Library = props => (
                     backgroundRepeat: 'no-repeat',
                     backgroundPosition: 'center',
                 }}
-            >{book.name}
+            >
+                {book.name}
             </button>
         ))}
     </div>

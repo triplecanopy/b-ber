@@ -1,11 +1,11 @@
-import React, {Component} from 'react'
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import findIndex from 'lodash/findIndex'
 import debounce from 'lodash/debounce'
-import {Controls, Frame, Spinner} from '.'
-import {Request, XMLAdaptor, Asset, Url, Cache, Storage} from '../helpers'
-import {ViewerSettings} from '../models'
-import {debug, logTime, verboseOutput, useLocalStorage} from '../config'
+import { Controls, Frame, Spinner } from '.'
+import { Request, XMLAdaptor, Asset, Url, Cache, Storage } from '../helpers'
+import { ViewerSettings } from '../models'
+import { debug, logTime, verboseOutput, useLocalStorage } from '../config'
 import history from '../lib/History'
 import deferrable from '../lib/decorate-deferrable'
 import Messenger from '../lib/Messenger'
@@ -14,16 +14,11 @@ import Viewport from '../helpers/Viewport'
 const MAX_RENDER_TIMEOUT = 0
 const MAX_DEFERRED_CALLBACK_TIMEOUT = 0
 
-
 let _bookContent = null
 
 const getBookContent = () => _bookContent
 
-const bookContentComponent = () => (
-    <div>
-        {getBookContent()}
-    </div>
-)
+const bookContentComponent = () => <div>{getBookContent()}</div>
 
 @deferrable
 class Reader extends Component {
@@ -95,20 +90,29 @@ class Reader extends Component {
         this.updateQueryString = this.updateQueryString.bind(this)
         this.saveViewerSettings = this.saveViewerSettings.bind(this)
         this.registerOverlayElementId = this.registerOverlayElementId.bind(this)
-        this.deRegisterOverlayElementId = this.deRegisterOverlayElementId.bind(this)
+        this.deRegisterOverlayElementId = this.deRegisterOverlayElementId.bind(
+            this,
+        )
         this.showSpinner = this.showSpinner.bind(this)
         this.hideSpinner = this.hideSpinner.bind(this)
 
         this.handleResize = this.handleResize.bind(this)
-
 
         this.handleScriptCreate = this.handleScriptCreate.bind(this)
         this.handleScriptError = this.handleScriptError.bind(this)
         this.handleScriptLoad = this.handleScriptLoad.bind(this)
 
         this.debounceResizeSpeed = 400
-        this.handleResizeStart = debounce(this.handleResizeStart, this.debounceResizeSpeed, {leading: true, trailing: false}).bind(this)
-        this.handleResizeEnd = debounce(this.handleResizeEnd, this.debounceResizeSpeed, {leading: false, trailing: true}).bind(this)
+        this.handleResizeStart = debounce(
+            this.handleResizeStart,
+            this.debounceResizeSpeed,
+            { leading: true, trailing: false },
+        ).bind(this)
+        this.handleResizeEnd = debounce(
+            this.handleResizeEnd,
+            this.debounceResizeSpeed,
+            { leading: false, trailing: true },
+        ).bind(this)
     }
 
     getChildContext() {
@@ -118,7 +122,8 @@ class Reader extends Component {
             overlayElementId: this.state.overlayElementId,
             registerOverlayElementId: this.registerOverlayElementId,
             deRegisterOverlayElementId: this.deRegisterOverlayElementId,
-            requestDeferredCallbackExecution: this.requestDeferredCallbackExecution,
+            requestDeferredCallbackExecution: this
+                .requestDeferredCallbackExecution,
         }
     }
 
@@ -143,19 +148,24 @@ class Reader extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        const {hash, cssHash} = this.state
+        const { hash, cssHash } = this.state
         if (hash === null) {
-            this.setState({hash: nextProps.hash})
+            this.setState({ hash: nextProps.hash })
         }
         if (cssHash === null) {
-            this.setState({scopedCSS: nextProps.cssHash})
+            this.setState({ scopedCSS: nextProps.cssHash })
         }
     }
 
     shouldComponentUpdate(_, nextState) {
-        const {ready} = nextState
+        const { ready } = nextState
         if (ready && ready !== this.state.ready) {
-            if (debug && verboseOutput) console.log('Reader#shouldComponentUpdate: requestDeferredCallbackExecution', `ready: ${ready}`)
+            if (debug && verboseOutput) {
+                console.log(
+                    'Reader#shouldComponentUpdate: requestDeferredCallbackExecution',
+                    `ready: ${ready}`,
+                )
+            }
             this.requestDeferredCallbackExecution()
         }
 
@@ -163,14 +173,14 @@ class Reader extends Component {
     }
 
     componentWillUnmount() {
-        const {cssHash} = this.state
-        this.setState({hash: null, cssHash: null})
+        const { cssHash } = this.state
+        this.setState({ hash: null, cssHash: null })
         Asset.removeBookStyles(cssHash)
     }
 
     handleResize() {
         const viewerSettings = new ViewerSettings()
-        this.setState({viewerSettings})
+        this.setState({ viewerSettings })
     }
 
     handleResizeStart() {
@@ -181,14 +191,19 @@ class Reader extends Component {
         if (!debug) this.hideSpinner()
     }
 
-    scrollToTop() { // eslint-disable-line class-methods-use-this
+    // eslint-disable-next-line class-methods-use-this
+    scrollToTop() {
         if (Viewport.isMobile()) document.getElementById('frame').scrollTo(0, 0)
     }
 
     updateQueryString() {
-        const {currentSpineItem, currentSpineItemIndex, spreadIndex} = this.state
-        const {slug} = currentSpineItem
-        const {pathname, state} = history.location
+        const {
+            currentSpineItem,
+            currentSpineItemIndex,
+            spreadIndex,
+        } = this.state
+        const { slug } = currentSpineItem
+        const { pathname, state } = history.location
 
         const search = Url.buildQueryString({
             slug,
@@ -204,10 +219,10 @@ class Reader extends Component {
     }
 
     showSpinner() {
-        this.setState({spinnerVisible: true})
+        this.setState({ spinnerVisible: true })
     }
     hideSpinner() {
-        this.setState({spinnerVisible: false})
+        this.setState({ spinnerVisible: false })
     }
 
     updateViewerSettings(settings = {}) {
@@ -215,7 +230,7 @@ class Reader extends Component {
 
         const viewerSettings = new ViewerSettings()
         viewerSettings.put(settings)
-        this.setState({viewerSettings}, this.saveViewerSettings)
+        this.setState({ viewerSettings }, this.saveViewerSettings)
     }
 
     // currently viewer settings are global (for all books) although they could
@@ -223,34 +238,43 @@ class Reader extends Component {
     saveViewerSettings() {
         if (useLocalStorage === false) return
 
-        const viewerSettings = {...this.state.viewerSettings.settings}
+        const viewerSettings = { ...this.state.viewerSettings.settings }
         const storage = Storage.get(this.localStorageKey)
 
         if (!storage.viewerSettings) storage.viewerSettings = {}
-        storage.viewerSettings = {...storage.viewerSettings, ...viewerSettings}
+        storage.viewerSettings = {
+            ...storage.viewerSettings,
+            ...viewerSettings,
+        }
 
         Storage.set(this.localStorageKey, storage)
     }
 
     loadInitialSpineItem(storage = {}) {
-        const {hash} = this.state
+        const { hash } = this.state
         if (!storage[hash] || !storage[hash].currentSpineItem) {
             return this.loadSpineItem()
         }
 
-        const {currentSpineItem, currentSpineItemIndex, spreadIndex} = storage[hash]
-        this.setState({currentSpineItem, currentSpineItemIndex, spreadIndex}, _ => {
-            this.loadSpineItem(currentSpineItem)
-        })
+        const {
+            currentSpineItem,
+            currentSpineItemIndex,
+            spreadIndex,
+        } = storage[hash]
+        this.setState(
+            { currentSpineItem, currentSpineItemIndex, spreadIndex },
+            _ => {
+                this.loadSpineItem(currentSpineItem)
+            },
+        )
     }
 
     createStateFromOPF() {
-        const {bookURL} = this.state
+        const { bookURL } = this.state
         const opfURL = XMLAdaptor.opfURL(bookURL)
         const opsURL = XMLAdaptor.opsURL(bookURL)
 
-        this.setState({opsURL})
-
+        this.setState({ opsURL })
 
         if (logTime) {
             console.time('Reader#createStateFromOPF')
@@ -259,7 +283,6 @@ class Reader extends Component {
 
         return Request.get(opfURL)
             .then(data => {
-
                 if (logTime) {
                     console.timeEnd('Request.get(opfURL)')
                     console.time('XMLAdaptor.parseOPF()')
@@ -277,7 +300,9 @@ class Reader extends Component {
             .then(data => {
                 if (logTime) {
                     console.timeEnd('XMLAdaptor.parseNCX(data, opsURL)')
-                    console.time('XMLAdaptor.createGuideItems(data),XMLAdaptor.createSpineItems(data)')
+                    console.time(
+                        'XMLAdaptor.createGuideItems(data),XMLAdaptor.createSpineItems(data)',
+                    )
                 }
                 return Promise.all([
                     XMLAdaptor.createGuideItems(data),
@@ -286,49 +311,55 @@ class Reader extends Component {
             })
             .then(([a, b]) => {
                 if (logTime) {
-                    console.timeEnd('XMLAdaptor.createGuideItems(data),XMLAdaptor.createSpineItems(data)')
-                    console.time('XMLAdaptor.udpateGuideItemURLs(data, opsURL),XMLAdaptor.udpateSpineItemURLs(data, opsURL)')
+                    console.timeEnd(
+                        'XMLAdaptor.createGuideItems(data),XMLAdaptor.createSpineItems(data)',
+                    )
+                    console.time(
+                        'XMLAdaptor.udpateGuideItemURLs(data, opsURL),XMLAdaptor.udpateSpineItemURLs(data, opsURL)',
+                    )
                 }
-                const data = {...a, ...b}
+                const data = { ...a, ...b }
                 return Promise.all([
                     XMLAdaptor.udpateGuideItemURLs(data, opsURL),
                     XMLAdaptor.udpateSpineItemURLs(data, opsURL),
                 ])
             })
             .then(([a, b]) => {
-                if (logTime) console.timeEnd('XMLAdaptor.udpateGuideItemURLs(data, opsURL),XMLAdaptor.udpateSpineItemURLs(data, opsURL)')
-                return XMLAdaptor.createBookMetadata({...a, ...b})
+                if (logTime) {
+                    console.timeEnd(
+                        'XMLAdaptor.udpateGuideItemURLs(data, opsURL),XMLAdaptor.udpateSpineItemURLs(data, opsURL)',
+                    )
+                }
+                return XMLAdaptor.createBookMetadata({ ...a, ...b })
             })
             .then(data => {
                 if (logTime) console.timeEnd('Reader#createStateFromOPF')
-                return this.setState({...data})
+                return this.setState({ ...data })
             })
             .catch(console.error)
     }
 
     enablePageTransitions() {
-        this.setState({pageAnimation: true})
+        this.setState({ pageAnimation: true })
     }
     disablePageTransitions() {
-        this.setState({pageAnimation: false})
+        this.setState({ pageAnimation: false })
     }
     enableEventHandling() {
-        this.setState({handleEvents: true})
+        this.setState({ handleEvents: true })
     }
     disableEventHandling() {
-        this.setState({handleEvents: false})
+        this.setState({ handleEvents: false })
     }
     closeSidebars() {
-        this.setState({showSidebar: null})
+        this.setState({ showSidebar: null })
     }
-
 
     loadSpineItem(spineItem, deferredCallback) {
         let requestedSpineItem = spineItem
         if (!requestedSpineItem) [requestedSpineItem] = this.state.spine
 
-
-        this.setState({ready: false})
+        this.setState({ ready: false })
         this.closeSidebars()
         this.disableEventHandling()
         this.disablePageTransitions()
@@ -340,13 +371,14 @@ class Reader extends Component {
             console.time('Request.get(requestedSpineItem.absoluteURL)')
         }
 
-
         Request.get(requestedSpineItem.absoluteURL)
             // basically we're passing in props to a dehydrated tree here.
             // should be cleaned up a bit
             .then(data => {
                 if (logTime) {
-                    console.timeEnd('Request.get(requestedSpineItem.absoluteURL)')
+                    console.timeEnd(
+                        'Request.get(requestedSpineItem.absoluteURL)',
+                    )
                     console.time('XMLAdaptor.parseSpineItemResponse()')
                 }
                 return XMLAdaptor.parseSpineItemResponse({
@@ -359,12 +391,11 @@ class Reader extends Component {
                 })
             })
 
-            .then(({bookContent, scopedCSS}) => {
+            .then(({ bookContent, scopedCSS }) => {
+                if (logTime) { console.timeEnd('XMLAdaptor.parseSpineItemResponse()') }
 
-                if (logTime) console.timeEnd('XMLAdaptor.parseSpineItemResponse()')
-
-                const {hash} = this.state
-                let {cssHash} = this.state
+                const { hash } = this.state
+                let { cssHash } = this.state
 
                 _bookContent = bookContent
 
@@ -373,36 +404,37 @@ class Reader extends Component {
                     Asset.appendBookStyles(scopedCSS, hash)
                 }
 
-                this.setState({cssHash})
+                this.setState({ cssHash })
             })
             .then(_ => {
-
                 if (logTime) console.time('this.setState({ready: true})')
 
-                this.setState({
-                    currentSpineItem: requestedSpineItem,
-                    spineItemURL: requestedSpineItem.absoluteURL,
-                }, _ => {
-                    this.updateQueryString()
+                this.setState(
+                    {
+                        currentSpineItem: requestedSpineItem,
+                        spineItemURL: requestedSpineItem.absoluteURL,
+                    },
+                    _ => {
+                        this.updateQueryString()
 
-                    if (deferredCallback) {
-                        this.registerDeferredCallback(deferredCallback)
-                    }
-
-                    else {
-                        // this.enablePageTransitions()
-                        this.enableEventHandling()
-                        this.hideSpinner()
-                    }
-
-                    return setTimeout(() => {
-                        if (logTime) {
-                            console.timeEnd('this.setState({ready: true})')
-                            console.timeEnd('Reader#loadSpineItem')
+                        if (deferredCallback) {
+                            this.registerDeferredCallback(deferredCallback)
                         }
-                        // return this.setState({ready: true}) // TODO: force load
-                    }, MAX_RENDER_TIMEOUT)
-                })
+                        else {
+                            // this.enablePageTransitions()
+                            this.enableEventHandling()
+                            this.hideSpinner()
+                        }
+
+                        return setTimeout(() => {
+                            if (logTime) {
+                                console.timeEnd('this.setState({ready: true})')
+                                console.timeEnd('Reader#loadSpineItem')
+                            }
+                            // return this.setState({ready: true}) // TODO: force load
+                        }, MAX_RENDER_TIMEOUT)
+                    },
+                )
             })
             .catch(err => {
                 // Something went wrong loading the book. clear storage for this book
@@ -411,30 +443,33 @@ class Reader extends Component {
                 console.error(err)
 
                 const storage = Storage.get(this.localStorageKey)
-                const {hash} = this.state
+                const { hash } = this.state
                 delete storage[hash]
                 Storage.set(this.localStorageKey, storage)
 
                 // this.loadSpineItem()
-
             })
     }
 
     handleSidebarButtonClick(value) {
-        let {showSidebar} = this.state
+        let { showSidebar } = this.state
         showSidebar = value === showSidebar ? null : value
-        this.setState({showSidebar})
+        this.setState({ showSidebar })
     }
 
     handlePageNavigation(increment) {
-        let {spreadIndex} = this.state
-        const {spreadTotal} = this.state
+        let { spreadIndex } = this.state
+        const { spreadTotal } = this.state
         const nextIndex = spreadIndex + increment
 
         if (debug && verboseOutput) {
             console.group('Reader#handlePageNavigation')
-            console.log('spreadIndex: %d; nextIndex: %d; spreadTotal %d',
-                         spreadIndex, nextIndex, spreadTotal) // eslint-disable-line indent
+            console.log(
+                'spreadIndex: %d; nextIndex: %d; spreadTotal %d',
+                spreadIndex,
+                nextIndex,
+                spreadTotal,
+            ) // eslint-disable-line indent
             console.groupEnd()
         }
 
@@ -447,20 +482,24 @@ class Reader extends Component {
         }
 
         spreadIndex = nextIndex
-        this.setState({spreadIndex, showSidebar: null}, this.updateQueryString)
+        this.setState(
+            { spreadIndex, showSidebar: null },
+            this.updateQueryString,
+        )
     }
 
     handleChapterNavigation(increment) {
-        let {currentSpineItemIndex} = this.state
-        const {spine} = this.state
+        let { currentSpineItemIndex } = this.state
+        const { spine } = this.state
         const nextIndex = currentSpineItemIndex + increment
-
 
         const firstPage = nextIndex < 0
         const lastPage = nextIndex > spine.length - 1
 
         if (firstPage || lastPage) {
-            this.setState({firstPage, lastPage}, _ => Messenger.sendPaginationEvent(this.state))
+            this.setState({ firstPage, lastPage }, _ =>
+                Messenger.sendPaginationEvent(this.state),
+            )
             return
         }
 
@@ -471,7 +510,7 @@ class Reader extends Component {
         let deferredCallback
         if (increment === -1) {
             deferredCallback = _ => {
-                const {spreadTotal} = this.state
+                const { spreadTotal } = this.state
 
                 this.scrollToTop()
                 this.navigateToSpreadByIndex(spreadTotal)
@@ -499,21 +538,24 @@ class Reader extends Component {
             }
         }
 
-        this.setState({
-            spreadIndex,
-            currentSpineItem,
-            currentSpineItemIndex,
-            showSidebar: null,
-            firstPage,
-            lastPage,
-        }, _ => {
-            this.loadSpineItem(currentSpineItem, deferredCallback)
-            this.savePosition()
-        })
+        this.setState(
+            {
+                spreadIndex,
+                currentSpineItem,
+                currentSpineItemIndex,
+                showSidebar: null,
+                firstPage,
+                lastPage,
+            },
+            _ => {
+                this.loadSpineItem(currentSpineItem, deferredCallback)
+                this.savePosition()
+            },
+        )
     }
 
     navigateToSpreadByIndex(spreadIndex) {
-        this.setState({spreadIndex}, this.updateQueryString)
+        this.setState({ spreadIndex }, this.updateQueryString)
     }
 
     navigateToElementById(hash) {
@@ -521,25 +563,23 @@ class Reader extends Component {
         if (!elem) return console.warn(`Could not find element ${hash}`)
 
         const windowWidth = window.innerWidth
-        const {x} = elem.getBoundingClientRect()
+        const { x } = elem.getBoundingClientRect()
         const spreadIndex = Math.floor(x / windowWidth)
 
-        this.setState({spreadIndex}, this.updateQueryString)
+        this.setState({ spreadIndex }, this.updateQueryString)
     }
 
     navigateToChapterByURL(absoluteURL) {
-        const {spine} = this.state
+        const { spine } = this.state
         const url = new window.URL(absoluteURL)
         const absoluteURL_ = `${url.origin}${url.pathname}` // TODO: handle hashes, query strings
 
         let deferredCallback
-        const {hash} = url
+        const { hash } = url
         if (hash) {
-
             if (logTime) console.time('deferredCallback')
 
             deferredCallback = _ => {
-
                 setTimeout(_ => {
                     // this.enablePageTransitions()
                     this.navigateToElementById(hash)
@@ -547,13 +587,14 @@ class Reader extends Component {
                     this.hideSpinner()
 
                     if (logTime) console.timeEnd('Content Visible')
-
                 }, MAX_DEFERRED_CALLBACK_TIMEOUT) // TODO: should match transition speed. all these deferreds should be collected together
             }
         }
 
-        const currentSpineItemIndex = findIndex(spine, {absoluteURL: absoluteURL_})
-        if (currentSpineItemIndex === this.state.currentSpineItemIndex) return this.closeSidebars()
+        const currentSpineItemIndex = findIndex(spine, {
+            absoluteURL: absoluteURL_,
+        })
+        if (currentSpineItemIndex === this.state.currentSpineItemIndex) { return this.closeSidebars() }
         if (currentSpineItemIndex < 0) {
             console.warn(`No spine item found for ${absoluteURL_}`)
             return
@@ -563,45 +604,68 @@ class Reader extends Component {
         const spreadIndex = 0
         const pageAnimation = false
 
-        this.setState({currentSpineItem, currentSpineItemIndex, spreadIndex, pageAnimation}, _ => {
-            this.loadSpineItem(currentSpineItem, deferredCallback)
-            this.savePosition()
-        })
+        this.setState(
+            {
+                currentSpineItem,
+                currentSpineItemIndex,
+                spreadIndex,
+                pageAnimation,
+            },
+            _ => {
+                this.loadSpineItem(currentSpineItem, deferredCallback)
+                this.savePosition()
+            },
+        )
     }
 
     savePosition() {
         if (useLocalStorage === false) return
 
-        const {hash, currentSpineItem, currentSpineItemIndex, spreadIndex} = this.state
+        const {
+            hash,
+            currentSpineItem,
+            currentSpineItemIndex,
+            spreadIndex,
+        } = this.state
         let storage = window.localStorage.getItem(this.localStorageKey)
         if (!storage) storage = JSON.stringify({})
 
         storage = JSON.parse(storage)
-        storage[hash] = {currentSpineItem, currentSpineItemIndex, spreadIndex}
+        storage[hash] = { currentSpineItem, currentSpineItemIndex, spreadIndex }
 
         const storage_ = JSON.stringify(storage)
         window.localStorage.setItem(this.localStorageKey, storage_)
     }
 
-    destroyReaderComponent() { // eslint-disable-line class-methods-use-this
-        history.push('/', {bookURL: null})
+    // eslint-disable-next-line class-methods-use-this
+    destroyReaderComponent() {
+        history.push('/', { bookURL: null })
     }
 
     registerOverlayElementId(overlayElementId) {
-        this.setState({overlayElementId})
+        this.setState({ overlayElementId })
     }
 
     deRegisterOverlayElementId() {
-        this.setState({overlayElementId: null})
+        this.setState({ overlayElementId: null })
     }
 
     _setState(props) {
-        this.setState({...props})
+        this.setState({ ...props })
     }
 
-    handleScriptCreate() { console.log('handleScriptCreate') } // eslint-disable-line class-methods-use-this
-    handleScriptError() { console.log('handleScriptError') } // eslint-disable-line class-methods-use-this
-    handleScriptLoad() { console.log('handleScriptLoad') } // eslint-disable-line class-methods-use-this
+    // eslint-disable-next-line class-methods-use-this
+    handleScriptCreate() {
+        console.log('handleScriptCreate')
+    }
+    // eslint-disable-next-line class-methods-use-this
+    handleScriptError() {
+        console.log('handleScriptError')
+    }
+    // eslint-disable-next-line class-methods-use-this
+    handleScriptLoad() {
+        console.log('handleScriptLoad')
+    }
 
     render() {
         const {

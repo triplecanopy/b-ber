@@ -1,15 +1,15 @@
-import state from "@canopycanopycanopy/b-ber-lib/State"
-import { Html } from "@canopycanopycanopy/b-ber-lib"
-import { BLOCK_DIRECTIVES } from "@canopycanopycanopy/b-ber-shapes/directives"
-import log from "@canopycanopycanopy/b-ber-logger"
-import find from "lodash/find"
-import plugin from "../parsers/section"
-import renderFactory from "./factory/block"
-import { attributes, htmlId } from "./helpers"
+import state from '@canopycanopycanopy/b-ber-lib/State'
+import { Html } from '@canopycanopycanopy/b-ber-lib'
+import { BLOCK_DIRECTIVES } from '@canopycanopycanopy/b-ber-shapes/directives'
+import log from '@canopycanopycanopy/b-ber-logger'
+import find from 'lodash/find'
+import plugin from '../parsers/section'
+import renderFactory from './factory/block'
+import { attributes, htmlId } from './helpers'
 
 // this matches *all* container-type directives, and outputs the appropriate
 // HTML based on user-defined attributes
-const containers = BLOCK_DIRECTIVES.join("|")
+const containers = BLOCK_DIRECTIVES.join('|')
 const markerOpen = new RegExp(`^(${containers}|exit)(?::([^\\s]+)(\\s.*)?)?$`) // treat `exit` like an opening marker since we're using it as such
 const markerClose = /(exit)(?::([^\s]+))?/
 
@@ -21,7 +21,7 @@ const render = ({ context = {} }) => (tokens, idx) => {
     const lineNr = tokens[idx].map ? tokens[idx].map[0] : null
     const filename = `_markdown/${context.filename}.md`
 
-    let result = ""
+    let result = ''
 
     if (tokens[idx].nesting === 1) {
         // token open, we ignore closing tokens and let `exit` handle those
@@ -42,10 +42,10 @@ const render = ({ context = {} }) => (tokens, idx) => {
 
             if (
                 directive &&
-                directive.type === "gallery" &&
-                (state.build === "web" || state.build === "reader")
+                directive.type === 'gallery' &&
+                (state.build === 'web' || state.build === 'reader')
             ) {
-                state.remove("cursor", { id })
+                state.remove('cursor', { id })
                 // prettier-ignore
                 result = `
                                 </div>
@@ -55,15 +55,15 @@ const render = ({ context = {} }) => (tokens, idx) => {
                     ${comment}`
             } else if (
                 directive &&
-                directive.type === "spread" &&
-                (state.build === "web" || state.build === "reader")
+                directive.type === 'spread' &&
+                (state.build === 'web' || state.build === 'reader')
             ) {
-                state.remove("cursor", { id })
+                state.remove('cursor', { id })
                 result = `
                         </div>
                     </div>${comment}`
             } else {
-                state.remove("cursor", { id })
+                state.remove('cursor', { id })
                 result = `</section>${comment}`
             }
         } else {
@@ -74,7 +74,7 @@ const render = ({ context = {} }) => (tokens, idx) => {
             log.debug(`open directive [${id}]`)
 
             const comment = Html.comment(
-                `START: section:${type}#${htmlId(id)}; ${filename}:${lineNr}`
+                `START: section:${type}#${htmlId(id)}; ${filename}:${lineNr}`,
             )
             const attrs = attributes(att, type, { filename, lineNr })
             result = `${comment}<section id="${htmlId(id)}"${attrs}>`
@@ -84,16 +84,16 @@ const render = ({ context = {} }) => (tokens, idx) => {
         // here, but probably have done so above since we're treating `exit`
         // directives as openers. check to see if the element has in fact been
         // closed
-        const close = tokens[idx].info.trim().split(":")
+        const close = tokens[idx].info.trim().split(':')
         if (close.length && close[1]) {
             const [, id] = close
-            if (state.contains("cursor", { id }) > -1) {
+            if (state.contains('cursor', { id }) > -1) {
                 // its id still exists in state, so it's open. force close here
                 const comment = Html.comment(`END: section:#${htmlId(id)}`)
                 result = `</section>${comment}`
 
                 // remove the id
-                state.remove("cursor", { id })
+                state.remove('cursor', { id })
             }
         }
     }
@@ -103,7 +103,7 @@ const render = ({ context = {} }) => (tokens, idx) => {
 
 export default {
     plugin,
-    name: "section",
+    name: 'section',
     renderer: args =>
         renderFactory({
             ...args,

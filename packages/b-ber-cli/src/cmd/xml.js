@@ -1,4 +1,4 @@
-import {xml} from '@canopycanopycanopy/b-ber-tasks'
+import { xml } from '@canopycanopycanopy/b-ber-tasks'
 
 const command = ['xml', 'x']
 const describe = 'Export a project as an XML document'

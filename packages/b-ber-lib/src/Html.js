@@ -1,5 +1,4 @@
 class Html {
-
     static comment(str) {
         return `\n<!-- ${str} -->\n`
     }
@@ -15,8 +14,7 @@ class Html {
         return str.replace(/[&<>"']/g, m => map[m])
     }
 
-
-    static pagebreakAttribute({pagebreak}) {
+    static pagebreakAttribute({ pagebreak }) {
         if (!pagebreak || typeof pagebreak !== 'string') return ''
         switch (pagebreak) {
             case 'before':
@@ -28,7 +26,6 @@ class Html {
                 return ''
         }
     }
-
 }
 
 export default Html

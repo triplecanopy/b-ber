@@ -1,24 +1,24 @@
 /* eslint-disable max-len */
 
-import path from "path"
-import fs from "fs-extra"
-import crypto from "crypto"
-import childProcess from "child_process"
-import imageSize from "probe-image-size"
-import phantomjs from "phantomjs-prebuilt"
-import log from "@canopycanopycanopy/b-ber-logger"
-import state from "@canopycanopycanopy/b-ber-lib/State"
-import { YamlAdaptor, Template } from "@canopycanopycanopy/b-ber-lib"
-import Xhtml from "@canopycanopycanopy/b-ber-templates/Xhtml"
-import { fileId, getBookMetadata } from "@canopycanopycanopy/b-ber-lib/utils"
+import path from 'path'
+import fs from 'fs-extra'
+import crypto from 'crypto'
+import childProcess from 'child_process'
+import imageSize from 'probe-image-size'
+import phantomjs from 'phantomjs-prebuilt'
+import log from '@canopycanopycanopy/b-ber-logger'
+import state from '@canopycanopycanopy/b-ber-lib/State'
+import { YamlAdaptor, Template } from '@canopycanopycanopy/b-ber-lib'
+import Xhtml from '@canopycanopycanopy/b-ber-templates/Xhtml'
+import { fileId, getBookMetadata } from '@canopycanopycanopy/b-ber-lib/utils'
 
 class Cover {
     constructor() {
         const defaultMetadata = {
-            title: "",
-            creator: "",
-            "date-modified": new Date(),
-            identifier: "",
+            title: '',
+            creator: '',
+            'date-modified': new Date(),
+            identifier: '',
         }
 
         const fileMetadata = {}
@@ -31,11 +31,11 @@ class Cover {
             ...fileMetadata,
         }
 
-        this.coverPrefix = "__bber_cover__"
+        this.coverPrefix = '__bber_cover__'
         this.phantomjsArgs = []
-        this.coverXHTMLContent = ""
-        this.coverEntry = ""
-        this.coverImagePath = ""
+        this.coverXHTMLContent = ''
+        this.coverEntry = ''
+        this.coverImagePath = ''
 
         this.init = this.init.bind(this)
         this.loadInitialState = this.loadInitialState.bind(this)
@@ -43,20 +43,20 @@ class Cover {
 
     // if running in sequence with other builds, necessary to flush the state
     loadInitialState() {
-        this.phantomjsArgs = [path.join(__dirname, "phantomjs.js")]
-        this.coverXHTMLContent = ""
-        this.coverEntry = ""
-        this.coverImagePath = ""
+        this.phantomjsArgs = [path.join(__dirname, 'phantomjs.js')]
+        this.coverXHTMLContent = ''
+        this.coverEntry = ''
+        this.coverImagePath = ''
 
         return Promise.resolve()
     }
 
     removeDefaultCovers() {
-        const imageDir = path.join(state.src, "_images")
+        const imageDir = path.join(state.src, '_images')
 
         return fs.readdir(imageDir).then(files => {
             const _covers = files.filter(a =>
-                path.basename(a).match(new RegExp(this.coverPrefix))
+                path.basename(a).match(new RegExp(this.coverPrefix)),
             )
 
             if (!_covers.length) return Promise.resolve()
@@ -64,7 +64,9 @@ class Cover {
             const promises = _covers.map(a =>
                 fs
                     .remove(path.join(imageDir, a))
-                    .then(() => log.info("remove outdated cover image [%s]", a))
+                    .then(() =>
+                        log.info('remove outdated cover image [%s]', a),
+                    ),
             )
 
             return Promise.all(promises)
@@ -81,40 +83,40 @@ class Cover {
                     if (stderr) log.error(stderr)
                     if (stdout) log.info(stdout)
 
-                    log.info("cover emit cover image")
+                    log.info('cover emit cover image')
                     resolve()
-                }
-            )
+                },
+            ),
         )
     }
 
     writeCoverXHTML() {
-        const textDir = path.join(state.dist, "OPS", "text")
-        const coverFilePath = path.join(textDir, "cover.xhtml")
+        const textDir = path.join(state.dist, 'OPS', 'text')
+        const coverFilePath = path.join(textDir, 'cover.xhtml')
 
         return fs
             .mkdirp(textDir)
             .then(() => fs.writeFile(coverFilePath, this.coverXHTMLContent))
-            .then(() => log.info("cover emit [cover.xhtml]"))
+            .then(() => log.info('cover emit [cover.xhtml]'))
     }
 
     generateCoverXHTML() {
         return new Promise(resolve => {
             // get the image dimensions, and pass them to the coverSVG template
             const { width, height } = imageSize.sync(
-                fs.readFileSync(this.coverImagePath)
+                fs.readFileSync(this.coverImagePath),
             )
             const href = `images/${encodeURIComponent(this.coverEntry)}`
             const svg = Xhtml.cover({ width, height, href })
 
             // set the content string to be written once resolved
             this.coverXHTMLContent = Template.render(
-                "page",
+                'page',
                 svg,
-                Xhtml.document()
+                Xhtml.document(),
             )
 
-            log.info("cover build [cover.xhtml]")
+            log.info('cover build [cover.xhtml]')
 
             resolve()
         })
@@ -126,29 +128,29 @@ class Cover {
 
             this.coverEntry = `${this.coverPrefix}${crypto
                 .randomBytes(20)
-                .toString("hex")}.jpg`
+                .toString('hex')}.jpg`
             this.coverImagePath = path.join(
                 state.src,
-                "_images",
-                this.coverEntry
+                '_images',
+                this.coverEntry,
             )
 
             // check that metadata.yml exists
-            log.info("cover verify entry in [metadata.yml]")
+            log.info('cover verify entry in [metadata.yml]')
             try {
                 metadata = YamlAdaptor.load(
-                    path.join(state.src, "metadata.yml")
+                    path.join(state.src, 'metadata.yml'),
                 )
             } catch (err) {
                 log.error(err)
             }
 
             // check if cover if referenced
-            const coverListedInMetadata = getBookMetadata("cover", state)
+            const coverListedInMetadata = getBookMetadata('cover', state)
 
             if (coverListedInMetadata) {
-                this.coverEntry = coverListedInMetadata.replace(/_jpg$/, ".jpg") // TODO: fixme, for generated covers
-                log.info("cover verify image [%s]", this.coverEntry)
+                this.coverEntry = coverListedInMetadata.replace(/_jpg$/, '.jpg') // TODO: fixme, for generated covers
+                log.info('cover verify image [%s]', this.coverEntry)
 
                 // there's a reference to a cover image so we create a cover.xhtml file
                 // containing an SVG-wrapped `image` element with the appropriate cover
@@ -157,8 +159,8 @@ class Cover {
                 // check that the cover image file exists, throw if not
                 this.coverImagePath = path.join(
                     state.src,
-                    "_images",
-                    this.coverEntry
+                    '_images',
+                    this.coverEntry,
                 )
 
                 try {
@@ -166,7 +168,7 @@ class Cover {
                         throw new Error(
                             `Cover image listed in metadata.yml cannot be found: [${
                                 this.coverImagePath
-                            }]`
+                            }]`,
                         )
                     }
                 } catch (err) {
@@ -178,10 +180,10 @@ class Cover {
 
             // if there's no cover referenced in the metadata.yml, we create one that
             // displays the book's metadata (title, generator version, etc)
-            log.warn("cover emit [%s]", this.coverEntry)
+            log.warn('cover emit [%s]', this.coverEntry)
 
-            state.add("metadata", {
-                term: "cover",
+            state.add('metadata', {
+                term: 'cover',
                 value: fileId(this.coverEntry).slice(1),
             })
             this.metadata = { ...this.metadata, ...metadata }
@@ -192,7 +194,7 @@ class Cover {
                         <p>${this.metadata.title}</p>
                         <p><span>Creator:</span>${this.metadata.creator}</p>
                         <p><span>Date Modified:</span>${
-    this.metadata["date-modified"]
+    this.metadata['date-modified']
 }</p>
                         <p><span>Identifier:</span>${
     this.metadata.identifier

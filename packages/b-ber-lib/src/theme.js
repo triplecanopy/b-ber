@@ -4,27 +4,34 @@ import path from 'path'
 import fs from 'fs-extra'
 import themes from '@canopycanopycanopy/b-ber-themes'
 import log from '@canopycanopycanopy/b-ber-logger'
-import {forOf} from './utils'
+import { forOf } from './utils'
 import state from './State'
 
 function getUserDefinedThemes() {
     return new Promise(resolve => {
-        const {config} = state
+        const { config } = state
         const cwd = process.cwd()
 
         const names = []
         const userThemes = {}
 
-        if (!{}.hasOwnProperty.call(config, 'themes_directory')) resolve({names, themes: userThemes})
-
+        if (!{}.hasOwnProperty.call(config, 'themes_directory')) { resolve({ names, themes: userThemes }) }
 
         try {
-            if (!fs.existsSync(path.join(process.cwd(), config.themes_directory))) {
-                throw new Error(`Themes directory [${config.themes_directory}] does not exist.`)
+            if (
+                !fs.existsSync(
+                    path.join(process.cwd(), config.themes_directory),
+                )
+            ) {
+                throw new Error(
+                    `Themes directory [${
+                        config.themes_directory
+                    }] does not exist.`,
+                )
             }
         } catch (err) {
             log.warn(err)
-            return resolve({names, themes: userThemes})
+            return resolve({ names, themes: userThemes })
         }
 
         fs.readdirSync(path.join(cwd, config.themes_directory)).forEach(a => {
@@ -43,33 +50,33 @@ function getUserDefinedThemes() {
             //      npmPackage: Object  optional
             // }
             //
-            const userModule =
-                fs.existsSync(path.join(modulePath, 'package.json'))
-                    ? require(path.join(modulePath))
-                    : require(path.join(modulePath, 'index.js'))
-
+            const userModule = fs.existsSync(
+                path.join(modulePath, 'package.json'),
+            )
+                ? require(path.join(modulePath))
+                : require(path.join(modulePath, 'index.js'))
 
             const moduleName = userModule.name
             names.push(moduleName)
             userThemes[moduleName] = userModule
         })
 
-        resolve({names, themes: userThemes})
-
+        resolve({ names, themes: userThemes })
     })
 }
 
 const printThemeList = (themeList, currentTheme = '') =>
-    themeList.reduce((acc, curr) => { // eslint-disable-line prefer-template
-        const icon = currentTheme && currentTheme === curr ? '✓' : '○'
-        return acc.concat(`  ${icon} ${curr}\n`)
-    }, '\n').slice(0, -1) + '\n'
-
+    `${themeList
+        .reduce((acc, curr) => {
+            // eslint-disable-line prefer-template
+            const icon = currentTheme && currentTheme === curr ? '✓' : '○'
+            return acc.concat(`  ${icon} ${curr}\n`)
+        }, '\n')
+        .slice(0, -1)}\n`
 
 const theme = args =>
     new Promise(async resolve => {
-
-        const {config} = state
+        const { config } = state
         const themeList = []
 
         forOf(themes, a => themeList.push(a))
@@ -89,4 +96,4 @@ const theme = args =>
         }
     })
 
-export {theme} // eslint-disable-line import/prefer-default-export
+export { theme } // eslint-disable-line import/prefer-default-export

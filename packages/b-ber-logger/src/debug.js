@@ -1,6 +1,3 @@
 /* eslint-disable import/prefer-default-export */
 
-export function debug() {
-}
-
-
+export function debug() {}

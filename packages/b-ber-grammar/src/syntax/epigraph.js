@@ -20,35 +20,53 @@ const attrsRe = /(?:(image|caption|citation)\s["]([^"]+)["])/g
 export default {
     plugin: figure,
     name: 'epigraph',
-    renderer: ({instance, context = { filename: ''} }) => ({
+    renderer: ({ instance, context = { filename: '' } }) => ({
         marker: ':',
         minMarkers: 3,
         validate(params) {
             return params.trim().match(markerRe)
         },
         render(tokens, idx) {
-            const {escapeHtml} = instance.escapeHtml
-            const attrs = {image: '', caption: '', citation: ''}
+            const { escapeHtml } = instance.escapeHtml
+            const attrs = { image: '', caption: '', citation: '' }
             let result = ''
-            if (tokens[idx].nesting === 1) { // opening tag
+            if (tokens[idx].nesting === 1) {
+                // opening tag
                 let matches
-                while ((matches = attrsRe.exec(tokens[idx].info.trim())) !== null) attrs[matches[1]] = matches[2]
+                while (
+                    (matches = attrsRe.exec(tokens[idx].info.trim())) !== null
+                ) { attrs[matches[1]] = matches[2] }
 
                 if (!attrs.image && !attrs.caption) {
-                    log.error(`[${context.filename}.md] <epigraph> Malformed directive.`)
+                    log.error(
+                        `[${
+                            context.filename
+                        }.md] <epigraph> Malformed directive.`,
+                    )
                     result = ''
                 } else if (!attrs.image && attrs.caption) {
                     const captions = attrs.caption.split('|').map(_ => _.trim())
-                    const citations = attrs.citation.split('|').map(_ => _.trim())
+                    const citations = attrs.citation
+                        .split('|')
+                        .map(_ => _.trim())
                     result = [
                         '<section epub:type="epigraph" class="epigraph chapter">',
                         '<section epub:type="chapter" class="subchapter">',
-                        captions.map((caption, idx2) =>
-                            `<div class="pullquote full-width">
+                        captions
+                            .map(
+                                (caption, idx2) =>
+                                    `<div class="pullquote full-width">
                                 <p>${escapeHtml(caption)}</p>
-                                ${(citations[idx2] ? `<cite>&#x2014;${escapeHtml(citations[idx2])}</cite>` : '')}
-                            </div>`
-                        ).join(''),
+                                ${
+        citations[idx2]
+            ? `<cite>&#x2014;${escapeHtml(
+                citations[idx2],
+            )}</cite>`
+            : ''
+        }
+                            </div>`,
+                            )
+                            .join(''),
                         '</section>',
                         '</section>',
                     ].join('')
@@ -58,8 +76,16 @@ export default {
                         '<div class="figure-lg" style="height: auto;">',
                         '<figure style="height: auto;">',
                         '<div class="figure__items" style="width: 100%; margin: 0 auto;">',
-                        `<img class="landscape" alt="${attrs.image}" src="../images/${escapeHtml(attrs.image)}" style="width: 100%; max-width: 100%; height: auto;"/>`,
-                        (attrs.caption ? `<div class="figcaption" style="width: 100%; max-width: 100%; height: auto;"><p class="small">${escapeHtml(attrs.caption)}</p></div>` : ''),
+                        `<img class="landscape" alt="${
+                            attrs.image
+                        }" src="../images/${escapeHtml(
+                            attrs.image,
+                        )}" style="width: 100%; max-width: 100%; height: auto;"/>`,
+                        attrs.caption
+                            ? `<div class="figcaption" style="width: 100%; max-width: 100%; height: auto;"><p class="small">${escapeHtml(
+                                attrs.caption,
+                            )}</p></div>`
+                            : '',
                         '</div>',
                         '</figure>',
                         '</div>',

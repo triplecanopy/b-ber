@@ -22,7 +22,7 @@ test('injects markup', done => {
     </html>`
 
     processor.parseXML(html, (err, result) => {
-        const {xml, doc} = result
+        const { xml, doc } = result
         expect(err).toBe(null)
         expect(typeof xml).toBe('string')
 
@@ -34,7 +34,6 @@ test('injects markup', done => {
 
         done()
     })
-
 })
 
 test('catches errors', done => {
@@ -58,7 +57,6 @@ test('asserts validity', done => {
         done()
     })
 })
-
 
 test('validates a document', done => {
     const processor = new DocumentProcessor()

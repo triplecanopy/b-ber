@@ -41,8 +41,16 @@ describe('directives', () => {
     })
 
     it('exports merged directive lists', () => {
-        expect(BLOCK_DIRECTIVES).toEqual([...FRONTMATTER_DIRECTIVES, ...BODYMATTER_DIRECTIVES, ...BACKMATTER_DIRECTIVES])
-        expect(ALL_DIRECTIVES).toEqual([...BLOCK_DIRECTIVES, ...INLINE_DIRECTIVES, ...MISC_DIRECTIVES])
+        expect(BLOCK_DIRECTIVES).toEqual([
+            ...FRONTMATTER_DIRECTIVES,
+            ...BODYMATTER_DIRECTIVES,
+            ...BACKMATTER_DIRECTIVES,
+        ])
+        expect(ALL_DIRECTIVES).toEqual([
+            ...BLOCK_DIRECTIVES,
+            ...INLINE_DIRECTIVES,
+            ...MISC_DIRECTIVES,
+        ])
     })
 
     it('exports lists of attributes', () => {

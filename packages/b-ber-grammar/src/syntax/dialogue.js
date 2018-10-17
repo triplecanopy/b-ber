@@ -1,6 +1,6 @@
 import plugin from '../parsers/dialogue'
 import renderFactory from './factory/block'
-import {attributes, htmlId} from './helpers'
+import { attributes, htmlId } from './helpers'
 
 // define our open and closing markers, used by the `validateOpen` and
 // `validateClose` methods in the `renderFactory`
@@ -17,7 +17,9 @@ const render = (tokens, idx) => {
         if (open) {
             const [, type, id, attrs] = open
             const attrsString = attributes(attrs, type)
-            result = `\n<section id="${htmlId(id)}" class="dialogue"${attrsString}>`
+            result = `\n<section id="${htmlId(
+                id,
+            )}" class="dialogue"${attrsString}>`
         }
 
         if (close) {

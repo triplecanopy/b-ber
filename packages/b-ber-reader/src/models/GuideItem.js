@@ -1,5 +1,5 @@
 class GuideItem {
-    constructor({type, title, href}) {
+    constructor({ type, title, href }) {
         this.type = type
         this.title = title
         this.href = href

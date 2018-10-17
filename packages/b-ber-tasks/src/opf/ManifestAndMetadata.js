@@ -7,7 +7,6 @@
  * @module manifestAndMetadata
  */
 
-
 import path from 'path'
 import renderLayouts from 'layouts'
 import File from 'vinyl'
@@ -16,7 +15,7 @@ import log from '@canopycanopycanopy/b-ber-logger'
 import Metadata from '@canopycanopycanopy/b-ber-templates/Opf/Metadata'
 import Manifest from '@canopycanopycanopy/b-ber-templates/Opf/Manifest'
 import state from '@canopycanopycanopy/b-ber-lib/State'
-import {pathInfoFromFiles} from './helpers'
+import { pathInfoFromFiles } from './helpers'
 
 /**
  * @alias module:manifestAndMetadata#ManifestAndMetadata
@@ -39,7 +38,8 @@ class ManifestAndMetadata {
      */
     constructor() {
         this.bookmeta = null
-        this.createManifestAndMetadataXML = ManifestAndMetadata.createManifestAndMetadataXML
+        this.createManifestAndMetadataXML =
+            ManifestAndMetadata.createManifestAndMetadataXML
     }
 
     /**
@@ -62,10 +62,13 @@ class ManifestAndMetadata {
             rrdir(`${this.dist}${path.sep}OPS`, (err, filearr) => {
                 if (err) throw err
                 // TODO: better testing here, make sure we're not including symlinks, for example
-                const files = [...state.remoteAssets, ...filearr.filter(_ => path.basename(_).charAt(0) !== '.')]
+                const files = [
+                    ...state.remoteAssets,
+                    ...filearr.filter(_ => path.basename(_).charAt(0) !== '.'),
+                ]
                 const fileObjects = pathInfoFromFiles(files, this.dist) // `pathInfoFromFiles` is creating objects from file names
                 resolve(fileObjects)
-            })
+            }),
         )
     }
 
@@ -77,16 +80,24 @@ class ManifestAndMetadata {
     createManifestAndMetadataFromTemplates(files) {
         return new Promise(resolve => {
             // TODO: this will already be loaded in bber object
-            const strings = {manifest: [], bookmeta: []}
-            const specifiedFonts = {}.hasOwnProperty.call(state.config, 'ibooks_specified_fonts') && state.config.ibooks_specified_fonts === true
+            const strings = { manifest: [], bookmeta: [] }
+            const specifiedFonts =
+                {}.hasOwnProperty.call(
+                    state.config,
+                    'ibooks_specified_fonts',
+                ) && state.config.ibooks_specified_fonts === true
 
-            strings.bookmeta = this.bookmeta.map(a => Metadata.meta(a)).filter(Boolean)
+            strings.bookmeta = this.bookmeta
+                .map(a => Metadata.meta(a))
+                .filter(Boolean)
 
             // Add exceptions here as needed
             strings.bookmeta = [
                 ...strings.bookmeta,
                 `<meta property="ibooks:specified-fonts">${specifiedFonts}</meta>`,
-                `<meta property="dcterms:modified">${new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')}</meta>`, // eslint-disable-line max-len
+                `<meta property="dcterms:modified">${new Date()
+                    .toISOString()
+                    .replace(/\.\d{3}Z$/, 'Z')}</meta>`, // eslint-disable-line max-len
                 `<meta name="generator" content="b-ber@${this.version}" />`,
             ]
 
@@ -106,19 +117,27 @@ class ManifestAndMetadata {
         log.info('opf build [manifest]')
         log.info('opf build [metadata]')
         return new Promise(resolve => {
-            const _metadata = renderLayouts(new File({
-                path: '.tmp',
-                layout: 'body',
-                contents: new Buffer(resp.bookmeta.join('')),
-            }), {body: Metadata.body()}).contents.toString()
+            const _metadata = renderLayouts(
+                new File({
+                    path: '.tmp',
+                    layout: 'body',
+                    contents: new Buffer(resp.bookmeta.join('')),
+                }),
+                { body: Metadata.body() },
+            ).contents.toString()
 
-            const manifest = renderLayouts(new File({
-                path: '.tmp',
-                layout: 'body',
-                contents: new Buffer(resp.manifest.filter(Boolean).join('')),
-            }), {body: Manifest.body()}).contents.toString()
+            const manifest = renderLayouts(
+                new File({
+                    path: '.tmp',
+                    layout: 'body',
+                    contents: new Buffer(
+                        resp.manifest.filter(Boolean).join(''),
+                    ),
+                }),
+                { body: Manifest.body() },
+            ).contents.toString()
 
-            resolve({metadata: _metadata, manifest})
+            resolve({ metadata: _metadata, manifest })
         })
     }
 
@@ -145,10 +164,9 @@ class ManifestAndMetadata {
                 .catch(log.error)
 
                 // next
-                .then(resolve)
+                .then(resolve),
         )
     }
 }
-
 
 export default ManifestAndMetadata

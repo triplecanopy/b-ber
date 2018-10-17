@@ -25,5 +25,6 @@ export const breakpoints = {
 
 export const media = {
     MEDIA_QUERY_SMALL: `only screen and (min-width: ${breakpoints.MOBILE}px)`,
-    MEDIA_QUERY_LARGE: `only screen and (max-width: ${breakpoints.MOBILE + 1}px)`,
+    MEDIA_QUERY_LARGE: `only screen and (max-width: ${breakpoints.MOBILE +
+        1}px)`,
 }

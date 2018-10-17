@@ -1,5 +1,5 @@
 /* eslint-disable no-plusplus, max-statements-per-line, no-continue, no-multi-assign, indent */
-import {forOf} from '@canopycanopycanopy/b-ber-lib/utils'
+import { forOf } from '@canopycanopycanopy/b-ber-lib/utils'
 import log from '@canopycanopycanopy/b-ber-logger'
 import {
     BLOCK_DIRECTIVES,
@@ -15,7 +15,6 @@ import {
     DEPRECATED_DIRECTIVES,
 } from '@canopycanopycanopy/b-ber-shapes/directives'
 
-
 //
 // querying hierarchies gets confusing, so we're using biological taxonomic
 // rank as an analogue for classification. which is obvs less confusing...
@@ -24,12 +23,14 @@ import {
 // element  -> block  -> frontmatter  -> preface
 //
 
-
 const _lookUpFamily = genus =>
-    FRONTMATTER_DIRECTIVES.indexOf(genus) > -1 ? 'frontmatter' :
-    BODYMATTER_DIRECTIVES.indexOf(genus) > -1 ? 'bodymatter' :
-    BACKMATTER_DIRECTIVES.indexOf(genus) > -1 ? 'backmatter' :
-    ''
+    FRONTMATTER_DIRECTIVES.indexOf(genus) > -1
+        ? 'frontmatter'
+        : BODYMATTER_DIRECTIVES.indexOf(genus) > -1
+            ? 'bodymatter'
+            : BACKMATTER_DIRECTIVES.indexOf(genus) > -1
+                ? 'backmatter'
+                : ''
 
 /**
  * Determine the directive's classification and parent's type
@@ -37,16 +38,18 @@ const _lookUpFamily = genus =>
  * @return {Object<String>}
  */
 const _directiveOrder = genus =>
-    BLOCK_DIRECTIVES.indexOf(genus) > -1 ? 'block' :
-    INLINE_DIRECTIVES.indexOf(genus) > -1 ? 'inline' :
-    MISC_DIRECTIVES.indexOf(genus) > -1 ? 'misc' :
-    null
+    BLOCK_DIRECTIVES.indexOf(genus) > -1
+        ? 'block'
+        : INLINE_DIRECTIVES.indexOf(genus) > -1
+            ? 'inline'
+            : MISC_DIRECTIVES.indexOf(genus) > -1
+                ? 'misc'
+                : null
 
 const _requiresAltTag = genus =>
     DIRECTIVES_REQUIRING_ALT_TAG.indexOf(genus) > -1
 
-const _isUnsupportedAttribute = attr =>
-    SUPPORTED_ATTRIBUTES.indexOf(attr) < 0
+const _isUnsupportedAttribute = attr => SUPPORTED_ATTRIBUTES.indexOf(attr) < 0
 
 const _applyTransforms = (k, v) => {
     switch (k) {
@@ -79,7 +82,6 @@ const _applyTransforms = (k, v) => {
     }
 }
 
-
 // MarkdownIt returns a trimmed string of the directive's attributes, which
 // are parsed and transformed into a string of HTML attributes
 //
@@ -89,7 +91,6 @@ const _applyTransforms = (k, v) => {
 //    -> class="foo bar baz"
 //
 const parseAttrs = s => {
-
     const out = {}
 
     let str = ''
@@ -103,19 +104,21 @@ const parseAttrs = s => {
         char = s[i].charCodeAt(0)
         next = s[i + 1] ? s[i + 1].charCodeAt(0) : ''
 
-        if (!open && char === 58/* : */) { // char is a token, we set `open` so that we don't misinterpret literals inside quotations
+        if (!open && char === 58 /* : */) {
+            // char is a token, we set `open` so that we don't misinterpret literals inside quotations
             open = true
             key = str
             str = ''
-            delim = 32/*   */
-            if (next === 34/* " */ || next === 39/* ' */) {
+            delim = 32 /*   */
+            if (next === 34 /* " */ || next === 39 /* ' */) {
                 i++
                 delim = next
             }
             continue
         }
 
-        if (char === delim) { // token is ending delimiter since we've advanced our pointer
+        if (char === delim) {
+            // token is ending delimiter since we've advanced our pointer
             key = key.trim() // trim whitespace, allowing for multiple spaces
             if (key) out[key] = str
             str = key = ''
@@ -125,7 +128,8 @@ const parseAttrs = s => {
 
         str += s[i]
 
-        if (i === s.length - 1) { // end of line
+        if (i === s.length - 1) {
+            // end of line
             if (key && key.length && str && str.length) {
                 const key_ = key.trim()
                 if (key_) out[key_] = str
@@ -146,7 +150,6 @@ const _buildAttrString = obj => {
     return s
 }
 
-
 /**
  * Ensure that attributes required for valid XHTML are present, and that
  * system defaults are merged into user settings
@@ -155,20 +158,19 @@ const _buildAttrString = obj => {
  * @return {Object}
  */
 const _extendWithDefaults = (obj, genus) => {
-    const result = {...obj}
+    const result = { ...obj }
     const order = _directiveOrder(genus)
     if (!order) throw new TypeError(`Invalid directive type: [${genus}]`)
 
     let taxonomy
     switch (order) {
-
         case 'block':
-            taxonomy = `${_lookUpFamily(genus)} ${genus}`     // -> `bodymatter chapter`
+            taxonomy = `${_lookUpFamily(genus)} ${genus}` // -> `bodymatter chapter`
             result.epubTypes = taxonomy
             if ({}.hasOwnProperty.call(obj, 'classes')) {
-                result.classes += ` ${taxonomy}`                // -> class="... bodymatter chapter"
+                result.classes += ` ${taxonomy}` // -> class="... bodymatter chapter"
             } else {
-                result.classes = taxonomy                       // -> class="bodymatter chapter"
+                result.classes = taxonomy // -> class="bodymatter chapter"
             }
             return result
 
@@ -195,7 +197,7 @@ const _extendWithDefaults = (obj, genus) => {
  * @return {String}
  */
 const attributesObject = (attrs, _genus, context = {}) => {
-    const {filename, lineNr} = context
+    const { filename, lineNr } = context
     const attrsObject = {}
 
     let genus = _genus
@@ -210,23 +212,31 @@ const attributesObject = (attrs, _genus, context = {}) => {
 
     if (DRAFT_DIRECTIVES.indexOf(genus) > -1) {
         if (BACKMATTER_DIRECTIVES.indexOf(genus) > -1) {
-            log.warn(`render [epub:${genus}] is [draft]. substituting with [backmatter].`)
+            log.warn(
+                `render [epub:${genus}] is [draft]. substituting with [backmatter].`,
+            )
             genus = 'backmatter'
         } else {
-            log.warn(`render [epub:${genus}] is [draft]. substituting with [chapter].`)
+            log.warn(
+                `render [epub:${genus}] is [draft]. substituting with [chapter].`,
+            )
             genus = 'chapter'
         }
     }
 
     if (DEPRECATED_DIRECTIVES.indexOf(genus) > -1) {
-        log.warn(`render [epub:${genus}] is [deprecated]. substituting with [chapter].`)
+        log.warn(
+            `render [epub:${genus}] is [deprecated]. substituting with [chapter].`,
+        )
         genus = 'chapter'
     }
 
     if (attrs && typeof attrs === 'string') {
         forOf(parseAttrs(attrs.trim()), (k, v) => {
             if (_isUnsupportedAttribute(k)) {
-                return log.warn(`Omitting illegal attribute [${k}] at [${filename}:${lineNr}]`)
+                return log.warn(
+                    `Omitting illegal attribute [${k}] at [${filename}:${lineNr}]`,
+                )
             }
 
             attrsObject[k] = v
@@ -262,7 +272,8 @@ const attributesString = obj => _buildAttrString(obj)
  * @param  {Object} context Markdown file where attributes method was called
  * @return {String}
  */
-const attributes = (str, type, context) => _buildAttrString(attributesObject(str, type, context))
+const attributes = (str, type, context) =>
+    _buildAttrString(attributesObject(str, type, context))
 
 /**
  * [description]
@@ -271,5 +282,4 @@ const attributes = (str, type, context) => _buildAttrString(attributesObject(str
  */
 const htmlId = s => s.replace(/[^0-9a-zA-Z_-]/g, '-')
 
-
-export {attributes, attributesObject, attributesString, htmlId, parseAttrs}
+export { attributes, attributesObject, attributesString, htmlId, parseAttrs }

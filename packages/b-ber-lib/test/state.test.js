@@ -8,7 +8,8 @@ jest.mock('../src/ApplicationLoader')
 
 beforeEach(() => {
     state.reset()
-    Object.defineProperty(state, 'buildTypes', { // quicker than making up an entire mock
+    Object.defineProperty(state, 'buildTypes', {
+        // quicker than making up an entire mock
         value: {},
         writable: true,
         enumerable: true,
@@ -16,11 +17,10 @@ beforeEach(() => {
 })
 
 describe('State', () => {
-
     describe('#add', () => {
         it('Should add an item to an array or object', () => {
             const a = 'foo'
-            const o = {foo: 1}
+            const o = { foo: 1 }
 
             state.add('sequence', a)
             state.add('cursor', o)
@@ -33,26 +33,24 @@ describe('State', () => {
 
     describe('#remove', () => {
         it('Should remove an item from an array or object', () => {
-            state.add('sequence', {foo: 1})
-            state.remove('sequence', {foo: 1})
+            state.add('sequence', { foo: 1 })
+            state.remove('sequence', { foo: 1 })
             expect(state.sequence).toEqual([])
         })
     })
 
-
     describe('#merge', () => {
         it('Should merge two objects', () => {
-            state.merge('buildTypes', {foo: 1})
-            state.merge('buildTypes', {bar: 2})
+            state.merge('buildTypes', { foo: 1 })
+            state.merge('buildTypes', { bar: 2 })
             expect(state.buildTypes).toHaveProperty('foo', 1)
             expect(state.buildTypes).toHaveProperty('bar', 2)
         })
     })
 
-
     describe('#update', () => {
         it('Should set the value of a property', done => {
-            const addFoo = (callback) => {
+            const addFoo = callback => {
                 state.add('sequence', 'foo')
                 callback()
             }

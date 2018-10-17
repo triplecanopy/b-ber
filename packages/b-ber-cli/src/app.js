@@ -3,12 +3,12 @@
  * @module cli
  */
 
-import yargs from "yargs"
-import log from "@canopycanopycanopy/b-ber-logger"
-import state from "@canopycanopycanopy/b-ber-lib/State"
-import createBuildSequence from "@canopycanopycanopy/b-ber-shapes/create-build-sequence"
-import sequences from "@canopycanopycanopy/b-ber-shapes/sequences"
-import * as commands from "./cmd"
+import yargs from 'yargs'
+import log from '@canopycanopycanopy/b-ber-logger'
+import state from '@canopycanopycanopy/b-ber-lib/State'
+import createBuildSequence from '@canopycanopycanopy/b-ber-shapes/create-build-sequence'
+import sequences from '@canopycanopycanopy/b-ber-shapes/sequences'
+import * as commands from './cmd'
 
 const lineLength = 70
 
@@ -31,10 +31,10 @@ export default function bber() {
     ${Object.keys(commands)
         .sort()
         .reduce((acc, curr) => {
-            const a = acc.split("\n")
+            const a = acc.split('\n')
             const l = a[a.length - 1].length
             return acc.concat(l > lineLength ? `\n    ${curr}, ` : `${curr}, `)
-        }, "")
+        }, '')
         .slice(0, -2)}
 
     Some common commands are:
@@ -63,14 +63,14 @@ export default function bber() {
         }
 
         const sequence =
-            command === "build"
+            command === 'build'
                 ? createBuildSequence(argv).reduce(
                     (a, c) => a.concat(...sequences[c]),
-                    []
+                    [],
                 )
                 : [command]
 
-        state.update("sequence", sequence)
+        state.update('sequence', sequence)
         log.registerSequence(state, command, sequence)
     }
 
@@ -94,8 +94,8 @@ export default function bber() {
         .command(commands.cover)
         .command(commands.deploy)
 
-        .help("h")
-        .alias("h", "help")
+        .help('h')
+        .alias('h', 'help')
         .demandCommand()
         .wrap(lineLength).argv
 }

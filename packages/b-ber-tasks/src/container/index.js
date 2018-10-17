@@ -4,7 +4,6 @@
 
 /* eslint-disable class-methods-use-this */
 
-
 import path from 'path'
 import fs from 'fs-extra'
 import log from '@canopycanopycanopy/b-ber-logger'
@@ -13,10 +12,7 @@ import state from '@canopycanopycanopy/b-ber-lib/State'
 
 class Container {
     get dirs() {
-        return [
-            path.join(state.dist, 'OPS'),
-            path.join(state.dist, 'META-INF'),
-        ]
+        return [path.join(state.dist, 'OPS'), path.join(state.dist, 'META-INF')]
     }
 
     constructor() {
@@ -25,20 +21,26 @@ class Container {
 
     write() {
         const files = [
-            {path: path.join('META-INF', 'container.xml'), content: Xml.container()},
-            {path: 'mimetype', content: Xml.mimetype()},
+            {
+                path: path.join('META-INF', 'container.xml'),
+                content: Xml.container(),
+            },
+            { path: 'mimetype', content: Xml.mimetype() },
         ]
 
         const promises = files.map(a =>
-            fs.writeFile(path.join(state.dist, a.path), a.content)
-                .then(_ => log.info('container emit [%s]', a.path))
+            fs
+                .writeFile(path.join(state.dist, a.path), a.content)
+                .then(_ => log.info('container emit [%s]', a.path)),
         )
 
         return Promise.all(promises)
     }
 
     makedirs() {
-        const promises = this.dirs.map(a => fs.mkdirs(a).then(() => log.info('container emit [%s]', a)))
+        const promises = this.dirs.map(a =>
+            fs.mkdirs(a).then(() => log.info('container emit [%s]', a)),
+        )
         return Promise.all(promises)
     }
 

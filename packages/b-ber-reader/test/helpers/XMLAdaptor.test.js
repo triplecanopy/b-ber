@@ -23,7 +23,6 @@ const xml = {
 }
 
 test('parses opf data', done => {
-
     XMLAdaptor.parseOPF(xml).then(resp => {
         expect(resp).toEqual({
             __metadata: expect.objectContaining({
@@ -55,19 +54,19 @@ test.skip('parses ncx data', done => {
 })
 
 test.skip('creates spine object', async done => {
-
     const data = await XMLAdaptor.parseOPF(xml)
 
     XMLAdaptor.createSpineItems(data)
         .then(resp => XMLAdaptor.parseNCX(resp, opsURL))
         .then(resp => {
-            expect(resp).toEqual(expect.objectContaining({
-                __manifest: expect.any(Object),
-                __spine: expect.any(Object),
-                // __ncx: expect.any(Object),
-            }))
+            expect(resp).toEqual(
+                expect.objectContaining({
+                    __manifest: expect.any(Object),
+                    __spine: expect.any(Object),
+                    // __ncx: expect.any(Object),
+                }),
+            )
 
             done()
         })
-
 })

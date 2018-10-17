@@ -6,7 +6,6 @@
  * @return {Generate}
  */
 
-
 import path from 'path'
 import fs from 'fs-extra'
 import yargs from 'yargs'
@@ -19,34 +18,36 @@ import state from '@canopycanopycanopy/b-ber-lib/State'
  * @alias module:generate#Generate
  */
 class Generate {
-
     constructor() {
         this.init = this.init.bind(this)
     }
 
-    createFile({markdownDir, metadata}) {
+    createFile({ markdownDir, metadata }) {
         let frontmatter
-        frontmatter = Object.entries(metadata).reduce((acc, [k, v]) => acc.concat(`${k}: ${v}\n`), '')
+        frontmatter = Object.entries(metadata).reduce(
+            (acc, [k, v]) => acc.concat(`${k}: ${v}\n`),
+            '',
+        )
         frontmatter = `---\n${frontmatter}---\n`
 
-        const {title} = metadata
-        const fileName = `${title.replace(/[^a-z0-9_-]/ig, '-')}.md`
+        const { title } = metadata
+        const fileName = `${title.replace(/[^a-z0-9_-]/gi, '-')}.md`
         const filePath = path.join(markdownDir, fileName)
 
         try {
             if (fs.existsSync(filePath)) {
-                throw new Error(`_markdown${path.sep}${fileName} already exists, aborting`)
+                throw new Error(
+                    `_markdown${path.sep}${fileName} already exists, aborting`,
+                )
             }
         } catch (err) {
             throw err
         }
 
-        return fs.writeFile(filePath, frontmatter).then(() => ({fileName}))
+        return fs.writeFile(filePath, frontmatter).then(() => ({ fileName }))
     }
 
-
-    writePageMeta({fileName}) {
-
+    writePageMeta({ fileName }) {
         // TODO: this should eventually just be one 'nav' file that's read from for all builds
         const buildTypes = ['epub', 'mobi', 'web', 'sample', 'reader']
 
@@ -56,7 +57,9 @@ class Generate {
 
             try {
                 if (fs.statSync(navigationYAML)) {
-                    pageMeta = YamlAdaptor.load(path.join(state.src, `${type}.yml`)) || []
+                    pageMeta =
+                        YamlAdaptor.load(path.join(state.src, `${type}.yml`)) ||
+                        []
                 }
             } catch (err) {
                 log.info(`Creating ${type}.yml`)
@@ -65,25 +68,33 @@ class Generate {
 
             const index = pageMeta.indexOf(fileName)
 
-            if (index > -1) throw new Error(`${fileName} already exists in [${type}.yml]. Aborting`)
+            if (index > -1) {
+                throw new Error(
+                    `${fileName} already exists in [${type}.yml]. Aborting`,
+                )
+            }
 
-            return fs.appendFile(navigationYAML, `\n- ${path.basename(fileName, '.md')}`)
+            return fs.appendFile(
+                navigationYAML,
+                `\n- ${path.basename(fileName, '.md')}`,
+            )
         })
 
-        return Promise.all(promises).then(() => ({fileName}))
-
+        return Promise.all(promises).then(() => ({ fileName }))
     }
 
     init() {
-
         const markdownDir = path.join(state.src, '_markdown')
-        const {title, type} = yargs.argv
-        const metadata = {title, type}
+        const { title, type } = yargs.argv
+        const metadata = { title, type }
 
-        return fs.mkdirp(markdownDir)
-            .then(() => this.createFile({markdownDir, metadata}))
+        return fs
+            .mkdirp(markdownDir)
+            .then(() => this.createFile({ markdownDir, metadata }))
             .then(resp => this.writePageMeta(resp))
-            .then(({fileName}) => log.notice(`Generated new page [${fileName}]`))
+            .then(({ fileName }) =>
+                log.notice(`Generated new page [${fileName}]`),
+            )
             .catch(log.error)
     }
 }

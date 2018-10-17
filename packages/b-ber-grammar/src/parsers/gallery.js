@@ -4,59 +4,68 @@
 import path from 'path'
 import _state from '@canopycanopycanopy/b-ber-lib/State'
 import mime from 'mime-types' // TODO: remove after abstracting toAlias
-import {htmlId, parseAttrs} from '../syntax/helpers'
+import { htmlId, parseAttrs } from '../syntax/helpers'
 
 // TODO: following is taken from media.es, should be exporting it
-const toAlias = fpath => path.basename(path.basename(fpath, path.extname(fpath)))
-
+const toAlias = fpath =>
+    path.basename(path.basename(fpath, path.extname(fpath)))
 
 const addCaption = (md, t, attrs) => {
     if (!attrs.caption) return
 
-    t.children.push({
-        type: 'block',
-        tag: 'div',
-        attrs: [
-            ['class', 'figcaption'],
-            ['data-caption', htmlId(attrs.source)],
-        ],
-        nesting: 1,
-    }, {
-        type: 'block',
-        tag: 'p',
-        attrs: [
-            ['class', 'small'],
-        ],
-        nesting: 1,
-    },
+    t.children.push(
+        {
+            type: 'block',
+            tag: 'div',
+            attrs: [
+                ['class', 'figcaption'],
+                ['data-caption', htmlId(attrs.source)],
+            ],
+            nesting: 1,
+        },
+        {
+            type: 'block',
+            tag: 'p',
+            attrs: [['class', 'small']],
+            nesting: 1,
+        },
 
-    ...md.parseInline(attrs.caption, {})[0].children,
+        ...md.parseInline(attrs.caption, {})[0].children,
 
-    {
-        type: 'block',
-        tag: 'p',
-        nesting: -1,
-    }, {
-        type: 'block',
-        tag: 'div',
-        nesting: -1,
-    })
+        {
+            type: 'block',
+            tag: 'p',
+            nesting: -1,
+        },
+        {
+            type: 'block',
+            tag: 'div',
+            nesting: -1,
+        },
+    )
 }
 
 const containerPlugin = (md, name, options = {}) => {
-    const min_markers   = options.minMarkers || 3
-    const marker_str    = options.marker || ':'
-    const marker_char   = marker_str.charCodeAt(0)
-    const marker_len    = marker_str.length
-    const validateOpen  = options.validateOpen
-    const render        = options.render
+    const min_markers = options.minMarkers || 3
+    const marker_str = options.marker || ':'
+    const marker_char = marker_str.charCodeAt(0)
+    const marker_len = marker_str.length
+    const validateOpen = options.validateOpen
+    const render = options.render
 
     function container(state, startLine, endLine, silent) {
-        let pos, nextLine, marker_count, markup, params, token, old_parent, old_line_max
+        let pos,
+            nextLine,
+            marker_count,
+            markup,
+            params,
+            token,
+            old_parent,
+            old_line_max
         let auto_closed = false
-        let start       = state.bMarks[startLine] + state.tShift[startLine]
-        let lineNr      = startLine + 1
-        let max         = state.eMarks[startLine]
+        let start = state.bMarks[startLine] + state.tShift[startLine]
+        let lineNr = startLine + 1
+        let max = state.eMarks[startLine]
 
         if (marker_char !== state.src.charCodeAt(start)) return false
 
@@ -74,7 +83,9 @@ const containerPlugin = (md, name, options = {}) => {
         markup = state.src.slice(start, pos)
         params = state.src.slice(pos, max)
 
-        if (!validateOpen(params, lineNr)/* && !validateClose(params, lineNr)*/) return false
+        if (
+            !validateOpen(params, lineNr) /* && !validateClose(params, lineNr)*/
+        ) { return false }
         if (silent) return true // for testing validation
 
         nextLine = startLine
@@ -97,28 +108,28 @@ const containerPlugin = (md, name, options = {}) => {
             break
         }
 
-        old_parent       = state.parentType
-        old_line_max     = state.lineMax
+        old_parent = state.parentType
+        old_line_max = state.lineMax
         state.parentType = 'container'
 
         // this will prevent lazy continuations from ever going past our end marker
-        state.lineMax    = nextLine
+        state.lineMax = nextLine
 
-        token            = state.push(`container_${name}_open`, 'div', 1)
-        token.markup     = markup
-        token.block      = true
-        token.info       = params
-        token.map        = [startLine, nextLine]
+        token = state.push(`container_${name}_open`, 'div', 1)
+        token.markup = markup
+        token.block = true
+        token.info = params
+        token.map = [startLine, nextLine]
 
         state.md.block.tokenize(state, startLine + 1, nextLine)
 
-        token            = state.push(`container_${name}_close`, 'div', -1)
-        token.markup     = state.src.slice(start, pos)
-        token.block      = true
+        token = state.push(`container_${name}_close`, 'div', -1)
+        token.markup = state.src.slice(start, pos)
+        token.block = true
 
         state.parentType = old_parent
-        state.lineMax    = old_line_max
-        state.line       = nextLine + (auto_closed ? 1 : 0)
+        state.lineMax = old_line_max
+        state.line = nextLine + (auto_closed ? 1 : 0)
 
         // parse child tokens
         // set a flag so that we don't render other directives' children which may use the same syntax
@@ -132,7 +143,11 @@ const containerPlugin = (md, name, options = {}) => {
                 if (matchedContent) {
                     const attrs = parseAttrs(matchedContent[1])
                     const media = [..._state.video]
-                    const supportedMediaAttrs = ['controls', 'loop', 'fullscreen']
+                    const supportedMediaAttrs = [
+                        'controls',
+                        'loop',
+                        'fullscreen',
+                    ]
 
                     let sources
                     let mediaAttrs
@@ -148,14 +163,18 @@ const containerPlugin = (md, name, options = {}) => {
 
                     switch (attrs.type) {
                         case 'image':
-
                             t.content = ''
                             t.children.push({
                                 type: 'inline',
                                 tag: 'img',
                                 attrs: [
                                     ['data-image', htmlId(attrs.source)],
-                                    ['src', `../images/${encodeURIComponent(attrs.source)}`],
+                                    [
+                                        'src',
+                                        `../images/${encodeURIComponent(
+                                            attrs.source,
+                                        )}`,
+                                    ],
                                     ['alt', attrs.alt || attrs.source],
                                 ],
                                 nesting: 0,
@@ -166,58 +185,83 @@ const containerPlugin = (md, name, options = {}) => {
                             break
 
                         case 'video':
-
                             mediaAttrs = []
-                            mediaAttrs.push(['data-video', htmlId(attrs.source)])
-                            if (attrs.poster) mediaAttrs.push(['poster', `../images/${attrs.poster}`])
-                            supportedMediaAttrs.forEach(a => { // add boolean attrs
+                            mediaAttrs.push([
+                                'data-video',
+                                htmlId(attrs.source),
+                            ])
+                            if (attrs.poster) {
+                                mediaAttrs.push([
+                                    'poster',
+                                    `../images/${attrs.poster}`,
+                                ])
+                            }
+                            supportedMediaAttrs.forEach(a => {
+                                // add boolean attrs
                                 if (attrs[a]) mediaAttrs.push([a, a])
                             })
 
-
                             t.content = ''
-                            t.children.push({
-                                type: 'block',
-                                tag: 'section',
-                                attrs: [['class', 'video']],
-                                nesting: 1,
-                            }, {
-                                type: 'block',
-                                tag: 'video',
-                                attrs: mediaAttrs,
-                                nesting: 1,
-                            })
+                            t.children.push(
+                                {
+                                    type: 'block',
+                                    tag: 'section',
+                                    attrs: [['class', 'video']],
+                                    nesting: 1,
+                                },
+                                {
+                                    type: 'block',
+                                    tag: 'video',
+                                    attrs: mediaAttrs,
+                                    nesting: 1,
+                                },
+                            )
 
-                            sources = media.filter(a => toAlias(a) === attrs.source)
+                            sources = media.filter(
+                                a => toAlias(a) === attrs.source,
+                            )
                             sources.forEach(source => {
                                 t.children.push({
                                     type: 'inline',
                                     tag: 'source',
                                     attrs: [
-                                        ['src', `../media/${path.basename(source)}`],
+                                        [
+                                            'src',
+                                            `../media/${path.basename(source)}`,
+                                        ],
                                         ['type', mime.lookup(source)],
                                     ],
                                     nesting: 0,
                                 })
                             })
 
-                            t.children.push({
-                                type: 'block',
-                                tag: 'video',
-                                nesting: -1,
-                            }, {
-                                type: 'inline', // controls. TODO: add to media core directive
-                                tag: 'button',
-                                attrs: [
-                                    ['data-media-controls', htmlId(attrs.source)],
-                                    ['class', 'media__controls media__controls--play'],
-                                ],
-                                nesting: 0,
-                            }, {
-                                type: 'block',
-                                tag: 'section',
-                                nesting: -1,
-                            })
+                            t.children.push(
+                                {
+                                    type: 'block',
+                                    tag: 'video',
+                                    nesting: -1,
+                                },
+                                {
+                                    type: 'inline', // controls. TODO: add to media core directive
+                                    tag: 'button',
+                                    attrs: [
+                                        [
+                                            'data-media-controls',
+                                            htmlId(attrs.source),
+                                        ],
+                                        [
+                                            'class',
+                                            'media__controls media__controls--play',
+                                        ],
+                                    ],
+                                    nesting: 0,
+                                },
+                                {
+                                    type: 'block',
+                                    tag: 'section',
+                                    nesting: -1,
+                                },
+                            )
 
                             addCaption(md, t, attrs)
 

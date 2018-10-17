@@ -1,15 +1,15 @@
-import {theme} from '@canopycanopycanopy/b-ber-lib/theme'
-import {fail} from '../helpers'
+import { theme } from '@canopycanopycanopy/b-ber-lib/theme'
+import { fail } from '../helpers'
 
 const command = 'theme <list>'
-const describe = 'Manage a project\'s theme'
+const describe = "Manage a project's theme"
 const builder = yargs =>
     yargs
         .command(
             'list',
             'List the installed themes',
             () => {},
-            () => theme({list: true})
+            () => theme({ list: true }),
         )
         .help('h')
         .alias('h', 'help')

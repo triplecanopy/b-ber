@@ -1,6 +1,6 @@
 /* global jest,test,expect */
 
-import {Opf, ManifestAndMetadata, Navigation} from '../src/opf'
+import { Opf, ManifestAndMetadata, Navigation } from '../src/opf'
 
 jest.mock('../../b-ber-lib/src/ApplicationLoader')
 
@@ -21,27 +21,25 @@ describe('Opf', () => {
 })
 
 describe('ManifestAndMetadata', () => {
-
     beforeAll(() => {
-
         manifestAndMetadata = new ManifestAndMetadata()
 
         Object.defineProperties(manifestAndMetadata, {
             src: {
                 get: () => src,
-                set: val => src = val,
+                set: val => (src = val),
                 enumerable: true,
                 configurable: true,
             },
             dist: {
                 get: () => dist,
-                set: val => dist = val,
+                set: val => (dist = val),
                 enumerable: true,
                 configurable: true,
             },
             version: {
                 get: () => version,
-                set: val => version = val,
+                set: val => (version = val),
                 enumerable: true,
                 configurable: true,
             },
@@ -65,7 +63,6 @@ describe('ManifestAndMetadata', () => {
                 configurable: true,
             },
         })
-
     })
 
     test('it loads the module', () => {
@@ -73,13 +70,12 @@ describe('ManifestAndMetadata', () => {
     })
 
     test('it is properly configured', () => {
-
         expect(manifestAndMetadata.src).toBe(src)
         expect(manifestAndMetadata.dist).toBe(dist)
         expect(manifestAndMetadata.version).toBe(version)
 
-        manifestAndMetadata.loadMetadata().then(() => expect(manifestAndMetadata.bookmeta).toEqual([]))
-
+        manifestAndMetadata
+            .loadMetadata()
+            .then(() => expect(manifestAndMetadata.bookmeta).toEqual([]))
     })
 })
-

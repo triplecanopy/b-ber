@@ -23,7 +23,11 @@ export const dummy = new File({
         epub:prefix="ibooks: http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0">
         <head>
             <title></title>
-            ${state.config.private ? '<meta name="robots" content="noindex,nofollow"/>' : '<meta name="robots" content="index,follow"/>'}
+            ${
+    state.config.private
+        ? '<meta name="robots" content="noindex,nofollow"/>'
+        : '<meta name="robots" content="index,follow"/>'
+}
             <meta http-equiv="default-style" content="text/html charset=utf-8"/>
             <!-- inject:css -->
             <!-- end:css -->
@@ -41,8 +45,9 @@ export const dummy = new File({
 export const getLeadingWhitespace = str => str.match(/^\s*/)[0]
 
 export const getContents = source =>
-    fs.readFile(path.join(state.dist, 'OPS', 'text', source))
-        .then(data => new File({contents: new Buffer(data)}))
+    fs
+        .readFile(path.join(state.dist, 'OPS', 'text', source))
+        .then(data => new File({ contents: new Buffer(data) }))
 
 export const getRemoteResources = resource =>
     Promise.resolve(state.config[`remote_${resource}`] || [])
@@ -51,8 +56,7 @@ export const getResources = type =>
     Promise.all([
         fs.readdir(path.join(state.dist, 'OPS', type)),
         getRemoteResources(type),
-    ])
-        .then(([a, b]) => [...a, ...b])
+    ]).then(([a, b]) => [...a, ...b])
 
 export function* matchIterator(re, str) {
     let match
@@ -60,15 +64,15 @@ export function* matchIterator(re, str) {
 }
 
 export const getJSONLDMetadata = args =>
-    new Promise(resolve => { // eslint-disable-line arrow-body-style
+    new Promise(resolve =>
+        // eslint-disable-line arrow-body-style
 
         // TODO: following occasionally throws errors when building if the
         // rdf.translator API fails. commenting out for now. need to find a
         // stable, probably locally hosted, solution
 
-
         // if (state.env !== 'production') {
-        return resolve([
+        resolve([
             ...args,
             new File({
                 path: 'metadata.json-ld',
@@ -150,4 +154,4 @@ export const getJSONLDMetadata = args =>
         //         ])
         //     })
         // }
-    })
+    )

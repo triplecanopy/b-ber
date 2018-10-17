@@ -1,6 +1,6 @@
 import fs from 'fs-extra'
 import path from 'path'
-import {isPlainObject, isArray} from 'lodash'
+import { isPlainObject, isArray } from 'lodash'
 import log from '@canopycanopycanopy/b-ber-logger'
 import YamlAdaptor from './YamlAdaptor'
 import SpineItem from './SpineItem'
@@ -8,17 +8,14 @@ import SpineItem from './SpineItem'
 const cwd = process.cwd()
 
 class Spine {
-
-    constructor({src, buildType}) {
+    constructor({ src, buildType }) {
         this.src = src
         this.buildType = buildType
-        this.root = [{nodes: []}]
+        this.root = [{ nodes: [] }]
     }
 
     build(arr, result) {
-
         arr.forEach(a => {
-
             let index
             let nodes
 
@@ -28,39 +25,34 @@ class Spine {
                 index = 0
             }
 
-            if (!result[index] || !{}.hasOwnProperty.call(result[index], 'nodes')) {
+            if (
+                !result[index] ||
+                !{}.hasOwnProperty.call(result[index], 'nodes')
+            ) {
                 nodes = this.root[0].nodes
             } else {
                 nodes = result[index].nodes
             }
 
             if (isPlainObject(a)) {
-
                 if (Object.keys(a)[0] === 'section') {
-
                     // nested section
                     this.build(a[Object.keys(a)[0]], nodes)
-
                 } else {
-
                     // entry with attributes
                     const fileName = Object.keys(a)[0]
                     const options = a[Object.keys(a)[0]]
-                    const data = new SpineItem({fileName, ...options})
+                    const data = new SpineItem({ fileName, ...options })
                     nodes.push(data)
-
                 }
             } else {
-
                 // string entry
-                const data = new SpineItem({fileName: a})
+                const data = new SpineItem({ fileName: a })
                 nodes.push(data)
             }
         })
 
-
         return this.root[0].nodes
-
     }
 
     flatten(arr, result = []) {
@@ -74,10 +66,14 @@ class Spine {
 
     createSpineListFromMarkdown() {
         const markdownDir = path.join(cwd, this.src, '_markdown')
-        return fs.readdirSync(markdownDir).filter(a => path.extname(a) === '.md').map(a => path.basename(a, '.md'))
+        return fs
+            .readdirSync(markdownDir)
+            .filter(a => path.extname(a) === '.md')
+            .map(a => path.basename(a, '.md'))
     }
 
-    createSpineListFromConfig(navigationConfigFile) { // eslint-disable-line class-methods-use-this
+    // eslint-disable-next-line class-methods-use-this
+    createSpineListFromConfig(navigationConfigFile) {
         return YamlAdaptor.load(navigationConfigFile) || []
     }
 
@@ -101,7 +97,6 @@ class Spine {
 
         return spineList
     }
-
 }
 
 export default Spine

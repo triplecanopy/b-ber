@@ -7,7 +7,7 @@ const args = system.args
 const outFile = args[2]
 
 page.content = args[1]
-page.viewportSize = {width: 1600, height: 2400}
+page.viewportSize = { width: 1600, height: 2400 }
 
 page.settings.resourceTimeout = 1
 page.settings.javascriptEnabled = false
