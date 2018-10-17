@@ -7,17 +7,13 @@ const NestedChapterList = props => {
     const depth = props.depth || 0
     const items_ = items.filter(a => a.depth === depth)
 
+    console.log('xx', props)
+
     return (
         <ol>
             {items_.map((item, i) => (
                 <li key={i}>
-                    <Link
-                        href={item.absoluteURL}
-                        onClick={e => {
-                            e.preventDefault()
-                            props.navigateToChapterByURL(item.absoluteURL)
-                        }}
-                    >
+                    <Link href={item.absoluteURL}>
                         {item.title || `Chapter ${depth}.${i}`}
                     </Link>
                     {item.children.length > 0 ? (
@@ -42,7 +38,7 @@ const SidebarChapters = props => (
             {
                 'controls__sidebar__chapters--open':
                     props.showSidebar === 'chapters',
-            },
+            }
         )}
     >
         <NestedChapterList items={[...props.spine]} />

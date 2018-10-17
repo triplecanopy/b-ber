@@ -11,8 +11,9 @@ class Link extends Component {
     }
     render() {
         return (
+            // eslint-disable-next-line
             <a
-                href={this.props.href}
+                href="#"
                 onClick={e => {
                     e.preventDefault()
                     this.context.navigateToChapterByURL(this.props.href)
