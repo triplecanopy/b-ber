@@ -53,10 +53,10 @@ class Navigation {
     createEmptyNavDocuments() {
         return new Promise(resolve => {
             log.info(
-                `opf build navigation documents [${this.navDocs.join(', ')}]`,
+                `opf build navigation documents [${this.navDocs.join(', ')}]`
             )
             const promises = this.navDocs.map(a =>
-                fs.writeFile(path.join(state.dist, 'OPS', a), ''),
+                fs.writeFile(path.join(state.dist, 'OPS', a), '')
             )
             return Promise.all(promises).then(resolve)
         })
@@ -74,16 +74,16 @@ class Navigation {
                 const fileObjects = pathInfoFromFiles(filearr, state.dist)
                 // only get html files
                 const xhtmlFileObjects = fileObjects.filter(_ =>
-                    ManifestItemProperties.isHTML(_),
+                    ManifestItemProperties.isHTML(_)
                 )
                 // prepare for diffing
                 const filesFromSystem = uniq(
                     xhtmlFileObjects.map(_ =>
-                        path.basename(_.name, _.extension),
-                    ),
+                        path.basename(_.name, _.extension)
+                    )
                 )
                 resolve({ filesFromSystem, fileObjects })
-            }),
+            })
         )
     }
 
@@ -119,7 +119,7 @@ class Navigation {
             const flow = uniq(
                 spine
                     .map(a => (a.generated ? null : a.fileName))
-                    .filter(Boolean),
+                    .filter(Boolean)
             ) // one-dimensional flow of the book used for the spine, omitting figures pages
 
             const pages = flattenSpineFromYAML(spineList)
@@ -131,11 +131,11 @@ class Navigation {
                 // declared in the `state.build`.yml file
                 if (missingFiles.length) {
                     // there are extra entries in the YAML (i.e., missing XHTML pages)
-                    missingEntries.forEach(_ => {
+                    missingEntries.forEach(a => {
                         log.warn(
-                            `Removing redundant entry [${_}] in ${
+                            `Removing redundant entry [${a}] in ${
                                 state.build
-                            }.yml`,
+                            }.yml`
                         )
                     })
 
@@ -174,7 +174,7 @@ class Navigation {
                             log.warn(
                                 `Adding missing entry [${name}] to [${
                                     state.build
-                                }.yml]`,
+                                }.yml]`
                             )
                         }
                     })
@@ -192,7 +192,7 @@ class Navigation {
 
                             // TODO: state should handle dot-notation for add/remove
                             state.buildTypes[state.build].spineList.push(
-                                fileName,
+                                fileName
                             )
 
                             return fileName
@@ -220,6 +220,27 @@ class Navigation {
                 filesFromSystem,
                 filesFromYaml,
             })
+        })
+    }
+
+    updateSpineForBuildType(args) {
+        return new Promise(resolve => {
+            switch (state.build) {
+                case 'reader':
+                    state.spine.forEach(
+                        a => !a.in_toc && state.remove('spine', a)
+                    )
+                    break
+
+                case 'epub':
+                case 'mobi':
+                case 'pdf':
+                case 'sample':
+                default:
+                    break
+            }
+
+            resolve(args)
         })
     }
 
@@ -278,6 +299,9 @@ class Navigation {
                 }
             })
 
+            // console.log(spine)
+            // process.exit()
+
             const spineXML = Spine.items(spine)
 
             strings.spine = Template.render('spine', spineXML, Spine.body())
@@ -328,7 +352,7 @@ class Navigation {
         return new Promise(resolve => {
             const normalizedResponse = this.deepMergePromiseArrayValues(
                 args,
-                'strings',
+                'strings'
             )
             resolve(normalizedResponse)
         })
@@ -343,13 +367,14 @@ class Navigation {
             this.createEmptyNavDocuments()
                 .then(resp => this.getAllXhtmlFiles(resp))
                 .then(resp => this.compareXhtmlWithYaml(resp))
+                .then(resp => this.updateSpineForBuildType(resp))
                 .then(resp =>
                     Promise.all([
                         this.createTocStringsFromTemplate(resp),
                         this.createNcxStringsFromTemplate(resp),
                         this.createGuideStringsFromTemplate(resp),
                         this.createSpineStringsFromTemplate(resp),
-                    ]),
+                    ])
                 )
 
                 .then(resp =>
@@ -359,13 +384,13 @@ class Navigation {
                         // information to the next method in the chain
                         this.writeTocXhtmlFile(resp),
                         this.writeTocNcxFile(resp),
-                    ]),
+                    ])
                 )
                 // merge the values from the arrays returned above and pass the response
                 // along to write the `content.opf`
                 .then(resp => this.normalizeResponseObject(resp))
                 .catch(log.error)
-                .then(resolve),
+                .then(resolve)
         )
     }
 }

@@ -7,8 +7,6 @@ const NestedChapterList = props => {
     const depth = props.depth || 0
     const items_ = items.filter(a => a.depth === depth)
 
-    console.log('xx', props)
-
     return (
         <ol>
             {items_.map((item, i) => (

@@ -8,6 +8,7 @@ const PORT = 4000
 const DEBOUNCE_SPEED = 400
 const SEQUENCE = [
     'clean',
+    'cover',
     'container',
     'sass',
     'copy',
@@ -64,14 +65,14 @@ const registerObserver = build =>
                     files = []
                     restart(build)
                 }, DEBOUNCE_SPEED)
-            }),
+            })
     )
 
 const serve = ({ build }) => {
-    restart(build).then(_ => registerObserver(build))
+    restart(build).then(() => registerObserver(build))
 
-    process.once('SIGTERM', _ => process.exit(0))
-    process.once('SIGINT', _ => process.exit(0))
+    process.once('SIGTERM', () => process.exit(0))
+    process.once('SIGINT', () => process.exit(0))
 }
 
 export default serve
