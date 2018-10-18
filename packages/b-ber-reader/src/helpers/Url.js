@@ -1,4 +1,4 @@
-const { decodeURI, encodeURI, encodeURIComponent } = window
+const { decodeURI, encodeURI, encodeURIComponent, URLSearchParams } = window
 
 class Url {
     static slug(str) {
@@ -15,43 +15,55 @@ class Url {
         Object.entries(data).forEach(([key, val]) =>
             result.push(
                 `${encodeURIComponent(key)}=${encodeURIComponent(
-                    val && val.constructor === Array
-                        ? JSON.stringify(val)
-                        : val,
-                )}`,
-            ),
+                    val && val.constructor === Array ? JSON.stringify(val) : val
+                )}`
+            )
         )
         return result.join('&')
     }
+
+    static parseQueryString(query) {
+        const params = new URLSearchParams(query)
+        const result = {}
+        for (const [key, val] of params.entries()) result[key] = val // eslint-disable-line
+        return result
+    }
+
     static ensureDecodedURL(url) {
         let url_ = String(url)
         if (!url_) return url_
         while (url_ !== decodeURI(url_)) url_ = decodeURI(url_)
         return url_
     }
+
     static isRelativeURL(url) {
         return /^http/.test(url) === false
     }
+
     static stripTrailingSlash(url) {
         return url.replace(/\/+$/, '')
     }
+
     static trimSlashes(path) {
         return path.replace(/(^\/+|\/+$)/g, '')
     }
+
     static addTrailingSlash(url) {
         return `${Url.stripTrailingSlash(url)}/`
     }
+
     static trimFilenameFromResponse(url) {
         let url_ = Url.trimSlashes(url)
         url_ = url_.slice(0, url_.lastIndexOf('/'))
         return url_
     }
+
     static resolveRelativeURL(url, path) {
         if (!url || !path) {
             console.warn(
                 'Url#resolveRelativeURL: No \'url\' or \'path\' param provided',
                 url,
-                path,
+                path
             )
             return '/'
         }
@@ -63,6 +75,7 @@ class Url {
         href = Url.ensureDecodedURL(href)
         return encodeURI(href)
     }
+
     static toAbsoluteUrl(url, path) {
         const url_ = Url.stripTrailingSlash(url)
         const path_ = Url.trimSlashes(path)
@@ -72,6 +85,7 @@ class Url {
 
         return encodeURI(href)
     }
+
     static resolveOverlappingURL(base, path) {
         const base_ = new window.URL(base)
         const path_ = Url.trimSlashes(path).split('/')

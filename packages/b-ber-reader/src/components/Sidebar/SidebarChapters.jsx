@@ -14,13 +14,11 @@ const NestedChapterList = props => {
                     <Link href={item.absoluteURL}>
                         {item.title || `Chapter ${depth}.${i}`}
                     </Link>
-                    {item.children.length > 0 ? (
+                    {item.children.length > 0 && (
                         <NestedChapterList
                             items={item.children}
                             depth={depth + 1}
                         />
-                    ) : (
-                        ''
                     )}
                 </li>
             ))}

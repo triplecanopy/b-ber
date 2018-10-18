@@ -32,6 +32,7 @@ class App extends Component {
             basePath: props.basePath || '/',
             downloads: props.downloads || [],
             uiOptions: props.uiOptions || {},
+            search: '',
             loadRemoteLibrary:
                 typeof props.loadRemoteLibrary !== 'undefined'
                     ? props.loadRemoteLibrary
@@ -42,6 +43,7 @@ class App extends Component {
         this.bindHistoryListener = this.bindHistoryListener.bind(this)
         this.goToBookURL = this.goToBookURL.bind(this)
     }
+
     componentDidMount() {
         this.bindHistoryListener()
 
@@ -50,10 +52,11 @@ class App extends Component {
 
         Request.getManifest()
             .then(({ data }) =>
-                this.setState({ books: [...this.state.books, ...data] }),
+                this.setState({ books: [...this.state.books, ...data] })
             )
-            .then(_ => this.goToBookURL(history.location))
+            .then(() => this.goToBookURL(history.location))
     }
+
     goToBookURL(location) {
         const { defaultBookURL, basePath } = this.state
 
@@ -70,9 +73,11 @@ class App extends Component {
 
         this.setState({ bookURL })
     }
+
     bindHistoryListener() {
         console.log('History:', history)
         history.listen((location /* , action */) => {
+            const { search } = location
             if (!location.state) {
                 console.warn('No history.location.state')
                 console.warn('Location:', location)
@@ -80,6 +85,7 @@ class App extends Component {
             }
 
             this.goToBookURL(location)
+            this.setState({ search: search.slice(1) })
         })
     }
 
@@ -90,12 +96,13 @@ class App extends Component {
     }
 
     render() {
-        const { books, bookURL, downloads } = this.state
+        const { books, bookURL, search, downloads } = this.state
         return (
             <div>
                 {bookURL ? (
                     <Reader
                         bookURL={bookURL}
+                        search={search}
                         downloads={downloads}
                         {...this.props}
                     />

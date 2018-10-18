@@ -10,13 +10,13 @@ class Link extends Component {
         super(props)
     }
     render() {
+        const { href } = this.props
         return (
-            // eslint-disable-next-line
             <a
-                href="#"
+                href={href}
                 onClick={e => {
                     e.preventDefault()
-                    this.context.navigateToChapterByURL(this.props.href)
+                    this.context.navigateToChapterByURL(href)
                 }}
             >
                 {this.props.children}
