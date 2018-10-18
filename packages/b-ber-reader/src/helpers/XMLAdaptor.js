@@ -54,11 +54,12 @@ class XMLAdaptor {
                 ({ data }) => {
                     const __ncx = JSON.parse(xmljs.xml2json(data))
                     resolve({ ...rootNode, __ncx })
-                },
+                }
             )
         })
     }
     static createSpineItems(rootNode) {
+        console.log('xxxxxxx', rootNode)
         const { __manifest, __spine, __ncx } = rootNode
         return new Promise(resolve => {
             let spine
@@ -67,7 +68,7 @@ class XMLAdaptor {
                 const { idref, linear } = itemref.attributes
                 const item = find(
                     __manifest.elements,
-                    a => a.attributes.id === idref,
+                    a => a.attributes.id === idref
                 )
                 if (!item || linear !== 'yes') return null // spine item not found in manifest (!) or non-linear
 
@@ -93,7 +94,7 @@ class XMLAdaptor {
                 const { elements } = __ncx.elements[0]
                 const navMap = find(elements, { name: 'navMap' })
                 navMap.elements.forEach(navPoint =>
-                    XMLAdaptor.parseNavPoints(spine, __manifest, navPoint),
+                    XMLAdaptor.parseNavPoints(spine, __manifest, navPoint)
                 )
             }
 
@@ -120,7 +121,7 @@ class XMLAdaptor {
             const { spine } = rootNode
             spine.map(
                 // eslint-disable-next-line no-param-reassign
-                a => (a.absoluteURL = Url.resolveRelativeURL(opsURL, a.href)),
+                a => (a.absoluteURL = Url.resolveRelativeURL(opsURL, a.href))
             )
             resolve({ ...rootNode, spine })
         })
@@ -130,7 +131,7 @@ class XMLAdaptor {
             const { guide } = rootNode
             guide.map(
                 // eslint-disable-next-line no-param-reassign
-                a => (a.absoluteURL = Url.resolveRelativeURL(opsURL, a.href)),
+                a => (a.absoluteURL = Url.resolveRelativeURL(opsURL, a.href))
             )
             resolve({ ...rootNode, guide })
         })
@@ -144,7 +145,7 @@ class XMLAdaptor {
         src = Url.ensureDecodedURL(src)
         const item = find(
             manifest.elements,
-            a => Url.ensureDecodedURL(a.attributes.href) === src,
+            a => Url.ensureDecodedURL(a.attributes.href) === src
         )
         if (!item) return console.error(`Could not find manifest item: ${src}`)
 
@@ -160,17 +161,13 @@ class XMLAdaptor {
         spineItem.set('title', title)
         spineItem.set('slug', slug)
         spineItem.set('depth', depth)
+        spineItem.set('inTOC', true)
+
         if (parent) parent.addChild(spineItem)
 
         const depth_ = depth + 1
         navPoint.elements.forEach(child =>
-            XMLAdaptor.parseNavPoints(
-                spine,
-                manifest,
-                child,
-                depth_,
-                spineItem,
-            ),
+            XMLAdaptor.parseNavPoints(spine, manifest, child, depth_, spineItem)
         )
     }
 
@@ -222,7 +219,7 @@ class XMLAdaptor {
             const bookContent = htmlToReactParser.parseWithInstructions(
                 data_,
                 isValidNode,
-                processingInstructions(response),
+                processingInstructions(response)
             )
 
             // scope stylesheets and pass them along to be appended to the DOM
@@ -238,7 +235,7 @@ class XMLAdaptor {
                     const base = Url.trimFilenameFromResponse(responseURL)
                     const url = Url.resolveRelativeURL(
                         base,
-                        Url.trimSlashes(links[i].getAttribute('href')),
+                        Url.trimSlashes(links[i].getAttribute('href'))
                     )
 
                     styles.push({ url, base })
@@ -256,23 +253,23 @@ class XMLAdaptor {
                             Cache.set(url, data)
                             return resolve({ base, data })
                         })
-                    }),
+                    })
                 )
             })
 
             if (logTime) {
                 console.time(
-                    'XMLAdaptor#parseSpineItemResponse: get stylesheets',
+                    'XMLAdaptor#parseSpineItemResponse: get stylesheets'
                 )
             }
 
             Promise.all(promises).then(sheets => {
                 if (logTime) {
                     console.timeEnd(
-                        'XMLAdaptor#parseSpineItemResponse: get stylesheets',
+                        'XMLAdaptor#parseSpineItemResponse: get stylesheets'
                     )
                     console.time(
-                        'XMLAdaptor#parseSpineItemResponse: parse stylesheets',
+                        'XMLAdaptor#parseSpineItemResponse: parse stylesheets'
                     )
                 }
 
@@ -341,14 +338,14 @@ class XMLAdaptor {
                                 if (value.type !== 'Raw') {
                                     nodeText = nodeText.substr(
                                         1,
-                                        nodeText.length - 2,
+                                        nodeText.length - 2
                                     ) // trim quotes
                                 }
 
                                 if (Url.isRelativeURL(nodeText)) {
                                     nodeText = Url.resolveRelativeURL(
                                         styleSheetURL,
-                                        nodeText,
+                                        nodeText
                                     )
                                     node.value.value = `"${nodeText}"` // eslint-disable-line no-param-reassign
                                 }
@@ -361,7 +358,7 @@ class XMLAdaptor {
 
                 if (logTime) {
                     console.timeEnd(
-                        'XMLAdaptor#parseSpineItemResponse: parse stylesheets',
+                        'XMLAdaptor#parseSpineItemResponse: parse stylesheets'
                     )
                     console.timeEnd('XMLAdaptor#parseSpineItemResponse')
                 }

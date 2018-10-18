@@ -11,6 +11,7 @@ class SpineItem {
         this.slug = ''
         this.depth = 0
         this.children = []
+        this.inTOC = false
     }
 
     set(key, val) {

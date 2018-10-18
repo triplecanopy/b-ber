@@ -223,27 +223,6 @@ class Navigation {
         })
     }
 
-    updateSpineForBuildType(args) {
-        return new Promise(resolve => {
-            switch (state.build) {
-                case 'reader':
-                    state.spine.forEach(
-                        a => !a.in_toc && state.remove('spine', a)
-                    )
-                    break
-
-                case 'epub':
-                case 'mobi':
-                case 'pdf':
-                case 'sample':
-                default:
-                    break
-            }
-
-            resolve(args)
-        })
-    }
-
     createTocStringsFromTemplate({ pages, ...args }) {
         log.info('opf build [toc.xhtml]')
         return new Promise(resolve => {
@@ -367,7 +346,6 @@ class Navigation {
             this.createEmptyNavDocuments()
                 .then(resp => this.getAllXhtmlFiles(resp))
                 .then(resp => this.compareXhtmlWithYaml(resp))
-                .then(resp => this.updateSpineForBuildType(resp))
                 .then(resp =>
                     Promise.all([
                         this.createTocStringsFromTemplate(resp),
