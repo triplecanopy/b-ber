@@ -1,13 +1,13 @@
-import path from "path"
-import crypto from "crypto"
-import state from "@canopycanopycanopy/b-ber-lib/State"
-import YamlAdaptor from "@canopycanopycanopy/b-ber-lib/YamlAdaptor"
+import path from 'path'
+import crypto from 'crypto'
+import state from '@canopycanopycanopy/b-ber-lib/State'
+import YamlAdaptor from '@canopycanopycanopy/b-ber-lib/YamlAdaptor'
 
 class Project {
     static directories(src) {
         return [
             src,
-            path.join(path.dirname(src), "themes"),
+            path.join(path.dirname(src), 'themes'),
             `${src}/_images`,
             `${src}/_javascripts`,
             `${src}/_stylesheets`,
@@ -19,7 +19,7 @@ class Project {
     }
     static configYAML(src) {
         return {
-            relativePath: path.join(path.dirname(src), "config.yml"),
+            relativePath: path.join(path.dirname(src), 'config.yml'),
             content: YamlAdaptor.dump(state.config),
         }
     }
@@ -44,7 +44,7 @@ class Project {
     }
     static metadataYAML(src) {
         return {
-            relativePath: path.join(src, "metadata.yml"),
+            relativePath: path.join(src, 'metadata.yml'),
             content: `-
     term: title
     value: Sample Project
@@ -77,7 +77,7 @@ class Project {
     value: Triple Canopy
 -
     term: identifier
-    value: ${crypto.randomBytes(20).toString("hex")}
+    value: ${crypto.randomBytes(20).toString('hex')}
 `,
         }
     }
@@ -85,7 +85,9 @@ class Project {
         return [
             {
                 relativePath: `${src}/_javascripts/application.js`,
-                content: `// All user defined functions should be wrapped in a 'domReady' call - or by using a third-party lib like jQuery - for compatibility in reader, web, and e-reader versions
+                content: `// All user defined functions should be wrapped in a 'domReady' call - or by using a third-party lib like jQuery - for compatibility in reader, web, and e-reader versions.
+// Use the global \`window.bber.env\` variable to limit scripts to particular envionments. See example below
+//
 // Examples:
 //  domReady(fn)
 //  domReady(function() {})
@@ -172,8 +174,9 @@ function clicked(e) {
 }
 
 function main() {
+    if (window.bber.env === 'reader') return;
     // Normalize link behaviour on iBooks, without interfering with footnotes
-    var links = document.getElementsByTagName('a')
+    var links = document.getElementsByTagName('a');
     links = Array.prototype.slice.call(links, 0);
     links = links.filter(function(l) {
         return l.classList.contains('footnote-ref') === false;
@@ -184,7 +187,7 @@ function main() {
     }
 }
 
-domReady(main)
+domReady(main);
 `,
             },
         ]
