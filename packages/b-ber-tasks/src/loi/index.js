@@ -77,7 +77,9 @@ const createLOIAsSingleHTMLFile = () => {
                 figure(
                     {
                         ...curr,
-                        classes: curr.classes.replace(/small/g, 'inline'),
+                        classes: curr.classes
+                            ? curr.classes.replace(/small/g, 'inline')
+                            : '',
                     },
                     state.build
                 )
