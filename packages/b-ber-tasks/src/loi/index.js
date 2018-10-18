@@ -18,7 +18,7 @@ const createLOILeader = () => {
         .writeFile(
             path.join(state.dist, 'OPS', 'text', `${fileName}`),
             markup,
-            'utf8',
+            'utf8'
         )
         .then(() => {
             state.add('guide', {
@@ -41,7 +41,7 @@ const createLOIAsSeparateHTMLFiles = () => {
             .writeFile(
                 path.join(state.dist, 'OPS', 'text', data.page),
                 markup,
-                'utf8',
+                'utf8'
             )
             .then(() => {
                 const fileData = new SpineItem({
@@ -62,17 +62,27 @@ const createLOIAsSeparateHTMLFiles = () => {
                     ? -1
                     : a.pageOrder > b.pageOrder
                         ? 1
-                        : 0,
-        ),
+                        : 0
+        )
     )
 }
 
+// only called in `reader` build
 const createLOIAsSingleHTMLFile = () => {
     let figuresPage = ''
     figuresPage += Xhtml.loi()
     figuresPage += state.figures.reduce(
-        (acc, curr) => acc.concat(figure(curr, state.build)),
-        '',
+        (acc, curr) =>
+            acc.concat(
+                figure(
+                    {
+                        ...curr,
+                        classes: curr.classes.replace(/small/g, 'inline'),
+                    },
+                    state.build
+                )
+            ),
+        ''
     )
 
     const fileName = 'figures-titlepage.xhtml'
@@ -82,7 +92,7 @@ const createLOIAsSingleHTMLFile = () => {
         .writeFile(
             path.join(state.dist, 'OPS', 'text', `${fileName}`),
             markup,
-            'utf8',
+            'utf8'
         )
         .then(() => {
             state.add('guide', {

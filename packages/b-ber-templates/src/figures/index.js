@@ -1,9 +1,10 @@
-import {getImageOrientation} from '@canopycanopycanopy/b-ber-lib/utils'
+import { getImageOrientation } from '@canopycanopycanopy/b-ber-lib/utils'
 import log from '@canopycanopycanopy/b-ber-logger'
 import epub from './epub'
 import mobi from './mobi'
+import reader from './reader'
 
-const figures = { epub, mobi }
+const figures = { epub, mobi, reader }
 
 const isImage = mime => /^image/.test(mime)
 const isAudio = mime => /^audio/.test(mime)
@@ -26,7 +27,11 @@ const figure = (data, env) => {
     }
 
     if (!format) {
-        log.error(`bber-templates: [${data.source}] is of unsupported media type [${mime}]`)
+        log.error(
+            `bber-templates: [${
+                data.source
+            }] is of unsupported media type [${mime}]`
+        )
     }
 
     return figures[_env][format](data)
