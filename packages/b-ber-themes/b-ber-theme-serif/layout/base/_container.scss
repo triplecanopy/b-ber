@@ -21,6 +21,8 @@ blockquote {
 
 section {
     clear: both;
+    padding-right: 2vh;
+    @include break('mobile') { padding-right: 0; }
     &:after {
         content: ' ';
         display: table;
