@@ -155,10 +155,9 @@ const _buildAttrString = obj => {
  * system defaults are merged into user settings
  * @param  {Object} obj   [description]
  * @param  {String} genus [description]
- * @param  {String} origGenus  [description]
  * @return {Object}
  */
-const _extendWithDefaults = (obj, genus, origGenus) => {
+const _extendWithDefaults = (obj, genus) => {
     const result = { ...obj }
     const order = _directiveOrder(genus)
     if (!order) throw new TypeError(`Invalid directive type: [${genus}]`)
@@ -166,9 +165,11 @@ const _extendWithDefaults = (obj, genus, origGenus) => {
     let taxonomy
     switch (order) {
         case 'block':
-            taxonomy = genus !== origGenus ? `${_lookUpFamily(origGenus)} ${genus}` : `${_lookUpFamily(genus)} ${genus}` // -> `bodymatter chapter`
+            taxonomy = `${_lookUpFamily(genus)} ${genus}` // -> `bodymatter chapter`
             result.epubTypes = taxonomy
             if ({}.hasOwnProperty.call(obj, 'classes')) {
+                taxonomy = `${_lookUpFamily(result.classes)} ${genus}`
+                result.epubTypes = taxonomy
                 result.classes += ` ${taxonomy}` // -> class="... bodymatter chapter"
             } else {
                 result.classes = taxonomy // -> class="bodymatter chapter"
@@ -202,7 +203,6 @@ const attributesObject = (attrs, _genus, context = {}) => {
     const attrsObject = {}
 
     let genus = _genus
-    let origGenus = _genus
 
     if (!genus || typeof genus !== 'string') {
         log.error(`No directive provided: ${filename}:${lineNr}`)
@@ -213,18 +213,16 @@ const attributesObject = (attrs, _genus, context = {}) => {
     }
 
     if (DRAFT_DIRECTIVES.indexOf(genus) > -1) {
-            log.warn(
-                `render [epub:${genus}] is [draft]. substituting with [chapter].`,
-            )
-            origGenus = genus
-            genus = 'chapter'
+        log.warn(
+            `render [epub:${genus}] is [draft]. substituting with [chapter].`,
+        )
+        genus = 'chapter'
     }
 
     if (DEPRECATED_DIRECTIVES.indexOf(genus) > -1) {
         log.warn(
             `render [epub:${genus}] is [deprecated]. substituting with [chapter].`,
         )
-        origGenus = genus
         genus = 'chapter'
     }
 
@@ -251,7 +249,7 @@ const attributesObject = (attrs, _genus, context = {}) => {
         }
     }
 
-    const mergedAttrs = _extendWithDefaults(attrsObject, genus, origGenus)
+    const mergedAttrs = _extendWithDefaults(attrsObject, genus)
     return mergedAttrs
 }
 
