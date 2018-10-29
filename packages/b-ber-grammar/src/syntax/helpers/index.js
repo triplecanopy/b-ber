@@ -168,6 +168,8 @@ const _extendWithDefaults = (obj, genus) => {
             taxonomy = `${_lookUpFamily(genus)} ${genus}` // -> `bodymatter chapter`
             result.epubTypes = taxonomy
             if ({}.hasOwnProperty.call(obj, 'classes')) {
+                taxonomy = `${_lookUpFamily(result.classes)} ${genus}`
+                result.epubTypes = taxonomy
                 result.classes += ` ${taxonomy}` // -> class="... bodymatter chapter"
             } else {
                 result.classes = taxonomy // -> class="bodymatter chapter"
@@ -211,17 +213,10 @@ const attributesObject = (attrs, _genus, context = {}) => {
     }
 
     if (DRAFT_DIRECTIVES.indexOf(genus) > -1) {
-        if (BACKMATTER_DIRECTIVES.indexOf(genus) > -1) {
-            log.warn(
-                `render [epub:${genus}] is [draft]. substituting with [backmatter].`,
-            )
-            genus = 'backmatter'
-        } else {
-            log.warn(
-                `render [epub:${genus}] is [draft]. substituting with [chapter].`,
-            )
-            genus = 'chapter'
-        }
+        log.warn(
+            `render [epub:${genus}] is [draft]. substituting with [chapter].`,
+        )
+        genus = 'chapter'
     }
 
     if (DEPRECATED_DIRECTIVES.indexOf(genus) > -1) {
