@@ -37,7 +37,6 @@ const render = (tokens, idx) => {
                     <section id="${htmlId(id)}" class="gallery">
                         <div class="figure__large figure__inline figure__fullbleed">
                             <figure>
-                                <div class="gallery__background"></div>
                                 <div class="figure__items">`
                 break
             case 'epub':

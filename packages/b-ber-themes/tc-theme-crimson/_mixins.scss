@@ -347,21 +347,33 @@ $alert: (
     
     @include break('mobile') {
         height: mobileTop(860px, 110, 1.62, $totalColumns)!important;
-        .gallery__background {
-            height: mobileTop(860px, 110, 1.62, $totalColumns)!important;
+        .figure__large.figure__inline.figure__fullbleed {
+            figure {
+                &:before {
+                    height: mobileTop(860px, 110, 1.62, $totalColumns)!important;
+                }
+            }
         }
     }
 
     @include break('tablet') {
         height: mobileTop(200vh, 110, 1.62, $totalColumns)!important;
-        .gallery__background {
-            height: mobileTop(200vh, 110, 1.62, $totalColumns)!important;
+        .figure__large.figure__inline.figure__fullbleed {
+            figure {
+                &:before {
+                    height: mobileTop(200vh, 110, 1.62, $totalColumns)!important;
+                }
+            }
         }
     }
 
-    .gallery__background {
-        height: 100vh;
-        background: $background-color;
+    .figure__large.figure__inline.figure__fullbleed {
+        figure {
+            &:before {
+                height: 100vh;
+                background: $background-color;
+            }
+        }
     }
 }
 
