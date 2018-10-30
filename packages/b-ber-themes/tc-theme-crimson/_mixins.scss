@@ -392,9 +392,7 @@ $alert: (
     padding-right: leftOffset($column, $position, 9);
     
     @include break('desktop') { 
-        // padding: leftOffset($column, $position, 16), $topPadding;
         padding-left: leftOffset($column, $position, 16);
         padding-right: leftOffset($column, $position, 9);
     }
 }
-
