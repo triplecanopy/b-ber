@@ -75,7 +75,7 @@ section.bibliography {
 .audio,
 .video {
     text-align: center;
-    @include padding(1,1,1,1,0)
+    @include padding(1,1,1,1,0);
     .figure__large & { padding: 0; }
 }
 

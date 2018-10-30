@@ -13,6 +13,15 @@
     @else if $media == 'desktop' {
         @media #{$media-desktop} { @content }
     }
+    @else if $media == 'tall' {
+        @media #{$media-tall} { @content  }
+    }
+    @else if $media == 'mobile-short' {
+        @media #{$mobile-short} { @content  }
+    }
+    @else if $media == 'desktop-short' {
+        @media #{$desktop-short} { @content  }
+    }
     @else {
         @if feature-exists('at-error') == true {
             @error "`#{$media}` is not a supported media type.";
@@ -204,72 +213,183 @@ $alert: (
 
 // Gallery Styles
 
-@function columnOffest($column, $position, $grid-columns) {
-	@if $position == "end" {
-		@return ($column) * (65% / ($grid-columns));
-	} @if $position == "start" {
-		@return ($column - 1) * (65% / $grid-columns);
-	} 
+@function leftOffset($colStart, $startPos, $grid-columns) {
+    @if $grid-columns == 9 and $colStart > 8 { $colStart: $colStart - 8; } 
+    $columns: $colStart - 1;
+    $gutters: $colStart - 1;
+    @if $startPos == "end" {  $columns: $colStart; }
+    $columnWidth: ($columns) * (65% / ($grid-columns));
+    $gutterWidth: ($gutters) * (35% / ($grid-columns - 1));
+    @return $columnWidth + $gutterWidth;
 }
 
-@function gutterOffest($column, $grid-columns) {
-	@return ($column - 1) * (35% / ($grid-columns - 1));
+@function itemWidth($colStart, $startPos, $colEnd, $endPos, $grid-columns) {
+    $columns: $colEnd - $colStart;
+    $gutters: $colEnd - $colStart;
+    @if $startPos == "end" and $endPos == "start" { $columns: $columns - 1 }
+    @if $startPos == "start" and $endPos == "end" { $columns: $columns + 1 }
+    $columnWidth: ($columns) * (65% / ($grid-columns));
+    $gutterWidth: ($gutters) * (35% / ($grid-columns - 1));
+    @return $columnWidth + $gutterWidth;
 }
 
 // If gallery items are on second page, reset left offset
 
 @function mobileOffest($column, $position, $grid-columns){
-	@if $column > 8 {
-		@return columnOffest(($column - 7), $position, $grid-columns) + gutterOffest(($column - 7), $grid-columns);
-	} @else {
-		@return columnOffest($column, $position, $grid-columns) + gutterOffest($column, $grid-columns);
-	}
+    @if $column > 8 { $column: $column - 8; } 
+    @return columnOffest($column, $position, $grid-columns) + gutterOffest($column, $grid-columns);
 }
 
 // If gallery items are on second page, knock under page one content
+// needs minumum pixel fallback for vh values
 
-@function mobileTop($column, $top){
-	@if $column > 8 {
-		@return calc(75vh + #{$top});
-	} @else {
-		@return $top;
-	}
+@function mobileTop($vh, $top, $remainder, $m_colStart){
+    @if $top == 0 { $top : 1 }
+    @if $m_colStart > 8 {
+        @return calc((#{$vh} / #{$remainder}) / (100 / #{$top}) + (#{$vh} / 1.25) );
+    }
+    @else { 
+        @return calc((#{$vh} / #{$remainder}) / (100 / #{$top}) + (#{$vh} / 15) );
+    }
+}
+
+@function calcTop($vh, $top, $remainder){
+    @if $top == 0 { $top : 1 }
+    @return calc((#{$vh} / #{$remainder}) / (100 / #{$top}) );
 }
 
 // Galley Item Mixin Parameters
 
-//  @param $column      int                     left    Number anchors media to corresponding column
-//  @param $position    string (start | end)    left    Positions media at start or end of @param column
-//  @param $width       int                     width   Calculates width based on columns * input
-//  @param $position    string (start | end)    width   Extends media to either "start or end" of column
-//  @param $top         int (px)                top     Accepts px value
+//  @param $colStart    int                     left    Anchors Left edge of media to column
+//  @param $startPos    string (start | end)    left    Positions media at start or end of @param column
+//  @param $colEnd      int                     width   Anchors Right edge of media to column
+//  @param $endPos      string (start | end)    width   Extends media to either "start or end" of column
+//  @param $top         int (percentage)        top     Accepts percentage from "top"
+
+//  @param $m_colStart    int                     left    Mobile override, defaults to desktop vars if empty
+//  @param $m_startPos    string (start | end)    left    Mobile override, defaults to desktop vars if empty
+//  @param $m_colEnd      int                     width   Mobile override, defaults to desktop vars if empty
+//  @param $m_endPos      string (start | end)    width   Mobile override, defaults to desktop vars if empty
+//  @param $m_top         int (percentage)        top     Mobile override, defaults to desktop vars if empty
 
 // Mixin uses param names for clarity
 
 //  @include galleryItem(
-//      $column: number, 
-//      $position: string (start | end),
-//      $width: number, 
-//      $extend: string (start | end), 
-//      $top: number (takes px value)
+//      $colStart: number, 
+//      $startPos: string (start | end),
+//      $colEnd: number, 
+//      $endPos: string (start | end), 
+//      $top: number (%),
+
+// Optional Mobile Overrides
+
+//      $m_colStart: number, 
+//      $m_startPos: string (start | end),
+//      $m_colEnd: number, 
+//      $m_endPos: string (start | end), 
+//      $m_top: number (%)
 //  );
 
-@mixin galleryItem($column, $position, $width, $extend, $top) {
-	@include break('mobile') { 
-		width: columnOffest($width, $extend, 9) + gutterOffest($width, 9);
-		left: mobileOffest($column, $position, 9);
-		top: mobileTop($column, $top);
-	}
+@mixin galleryItem($i, $colStart, $startPos, $colEnd, $endPos, $top, 
+    // mobile values default to standard if not passed
+    $m_colStart: $colStart, 
+    $m_startPos: $startPos, 
+    $m_colEnd: $colEnd, 
+    $m_endPos: $endPos, 
+    $m_top: $top){
+    
+    $top: strip-unit($top);
+    $m_top: strip-unit($m_top);
 
-	@include break('tablet') { 
-		width: columnOffest($width, $extend, 9) + gutterOffest($width, 9);
-		left: mobileOffest($column, $position, 9);
-		top: mobileTop($column, $top);
-	}
+    .gallery__item:nth-child(#{$i}) {
 
-	@include break('desktop') { 
-		width: columnOffest($width, $extend, 16) + gutterOffest($width, 16);
-		left: columnOffest($column, $position, 16) + gutterOffest($column, 16);
-		top: $top;
-	}
+        // mobile settings
+        width: itemWidth($m_colStart, $m_startPos, $m_colEnd, $m_endPos, 9);
+	    left: leftOffset($m_colStart, $m_startPos, 9);
+        margin-top: mobileTop(100vh, $m_top, 1.62, $m_colStart);
+        
+        @include break('mobile-short') { 
+            margin-top: mobileTop(860px, $top, 1.62, $m_colStart);
+        }
+
+        @include break('tablet') {
+            margin-top: mobileTop(200vh, $m_top, 1.62, $m_colStart);
+        }
+
+	    @include break('desktop') { 
+            width: itemWidth($colStart, $startPos, $colEnd, $endPos, 16);
+            left:leftOffset($colStart, $startPos, 16);
+            top: calc(100vh / 7);
+            margin-top: calcTop(100vh, $top, 1.4);
+        }
+
+        @include break('tall') { 
+	    	width: itemWidth($colStart, $startPos, $colEnd, $endPos, 16);
+            left:leftOffset($colStart, $startPos, 16);
+            top: calc(100vh / 5.5);
+            margin-top: calcTop(100vh, $top, 1.62);
+        }
+
+        @include break('desktop-short') { 
+            width: itemWidth($colStart, $startPos, $colEnd, $endPos, 16);
+            left: leftOffset($colStart, $startPos, 16);
+            top: calc(100vh / 7);
+            margin-top: calcTop(780px, $top, 1.62);
+        }
+    }
+}
+
+@mixin galleryBackground($background-color){
+    $totalColumns: 9;
+    
+    @include break('mobile') {
+        height: mobileTop(860px, 110, 1.62, $totalColumns)!important;
+        .figure__large.figure__inline.figure__fullbleed {
+            figure {
+                &:before {
+                    height: mobileTop(860px, 110, 1.62, $totalColumns)!important;
+                }
+            }
+        }
+    }
+
+    @include break('tablet') {
+        height: mobileTop(200vh, 110, 1.62, $totalColumns)!important;
+        .figure__large.figure__inline.figure__fullbleed {
+            figure {
+                &:before {
+                    height: mobileTop(200vh, 110, 1.62, $totalColumns)!important;
+                }
+            }
+        }
+    }
+
+    .figure__large.figure__inline.figure__fullbleed {
+        figure {
+            &:before {
+                height: 100vh;
+                background: $background-color;
+            }
+        }
+    }
+}
+
+@mixin columnAlign($column, $position) {
+    // covers mobile and tablet
+	left: leftOffset($column, $position, 9);
+    
+    @include break('desktop') { 
+		left: leftOffset($column, $position, 16);
+    }
+}
+
+@mixin padToColumn($column, $position, $topPadding) {
+    // covers mobile and tablet
+    padding-left: leftOffset($column, $position, 9);
+    padding-right: leftOffset($column, $position, 9);
+    
+    @include break('desktop') { 
+        padding-left: leftOffset($column, $position, 16);
+        padding-right: leftOffset($column, $position, 9);
+    }
 }
