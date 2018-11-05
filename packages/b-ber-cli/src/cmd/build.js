@@ -27,7 +27,7 @@ const handler = argv => {
                 fs.mkdirp(path.join(cwd, src, '_media')),
                 fs.mkdirp(path.join(cwd, src, '_stylesheets')),
             ])
-                .then(_ => {
+                .then(() => {
                     const projectPath = path.join(cwd, state.src)
                     const files = [
                         ...Project.javascripts(projectPath),
@@ -41,7 +41,7 @@ const handler = argv => {
                             fs.statSync(path.join(cwd, a.relativePath))
                         } catch (err) {
                             requiredFiles.push(
-                                fs.writeFile(a.relativePath, a.content),
+                                fs.writeFile(a.relativePath, a.content)
                             )
                         }
                     })
@@ -74,7 +74,7 @@ const handler = argv => {
     // finish to ensure that state is updated with the default cover image if
     // none exists. phantomjs can be sped up by disabling wifi connection, see
     // bug report here: https://github.com/ariya/phantomjs/issues/14033
-    ensure().then(_ => run(sequence))
+    ensure().then(() => run(sequence))
 }
 
 const builder = yargs =>
@@ -87,7 +87,7 @@ const builder = yargs =>
             'reader',
             'Build for the b-ber-reader format',
             () => {},
-            handler,
+            handler
         )
         .command('sample', 'Build a sample Epub', () => {}, handler)
         .command('web', 'Build for web', () => {}, handler)

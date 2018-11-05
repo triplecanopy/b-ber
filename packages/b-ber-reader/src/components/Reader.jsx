@@ -130,7 +130,7 @@ class Reader extends Component {
     componentWillMount() {
         Cache.clear() // clear initially for now. still caches styles for subsequent pages
         this.registerCanCallDeferred(_ => this.state.ready)
-        this.createStateFromOPF().then(_ => {
+        this.createStateFromOPF().then(() => {
             if (useLocalStorage === false) return this.loadSpineItem()
 
             const storage = Storage.get(this.localStorageKey)
@@ -406,7 +406,7 @@ class Reader extends Component {
 
                 this.setState({ cssHash })
             })
-            .then(_ => {
+            .then(() => {
                 if (logTime) console.time('this.setState({ready: true})')
 
                 this.setState(

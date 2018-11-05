@@ -64,7 +64,7 @@ const unoptimized = files => {
 }
 
 const write = () =>
-    fs.readdir(path.join(state.src, '_javascripts')).then(_files => {
+    fs.readdir(path.join(state.src, '_javascripts')).then(()files => {
         const files = _files.filter(a => path.extname(a) === '.js')
         return (state.env === 'production' ? optimized : unoptimized)(files)
     })

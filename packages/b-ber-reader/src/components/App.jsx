@@ -52,7 +52,7 @@ class App extends Component {
             .then(({ data }) =>
                 this.setState({ books: [...this.state.books, ...data] }),
             )
-            .then(_ => this.goToBookURL(history.location))
+            .then(() => this.goToBookURL(history.location))
     }
     goToBookURL(location) {
         const { defaultBookURL, basePath } = this.state

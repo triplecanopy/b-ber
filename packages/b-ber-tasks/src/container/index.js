@@ -31,7 +31,7 @@ class Container {
         const promises = files.map(a =>
             fs
                 .writeFile(path.join(state.dist, a.path), a.content)
-                .then(_ => log.info('container emit [%s]', a.path)),
+                .then(() => log.info('container emit [%s]', a.path)),
         )
 
         return Promise.all(promises)

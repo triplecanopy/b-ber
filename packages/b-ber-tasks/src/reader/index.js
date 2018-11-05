@@ -103,7 +103,7 @@ class Reader {
         }
     }
     createOutputDirs() {
-        return fs.ensureDir(this.outputDir).then(_ => fs.ensureDir(this.apiDir))
+        return fs.ensureDir(this.outputDir).then(() => fs.ensureDir(this.apiDir))
     }
     copyEpubToOutputDir() {
         const epubDir = this.createDirname(this.getBookMetadata('identifier'))
