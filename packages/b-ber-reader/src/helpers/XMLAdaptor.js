@@ -59,7 +59,6 @@ class XMLAdaptor {
         })
     }
     static createSpineItems(rootNode) {
-        console.log('xxxxxxx', rootNode)
         const { __manifest, __spine, __ncx } = rootNode
         return new Promise(resolve => {
             let spine
