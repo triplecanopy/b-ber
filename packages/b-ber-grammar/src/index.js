@@ -215,7 +215,7 @@ class MarkdownRenderer {
     template(meta) {
         const str = meta
             .split('\n')
-            .map(_ => `  ${_}`)
+            .map(a => `  ${a}`)
             .join('\n')
         return `-\n  filename: ${this.filename}\n${str}\n`
     }

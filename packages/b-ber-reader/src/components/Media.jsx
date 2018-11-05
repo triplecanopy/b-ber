@@ -35,7 +35,7 @@ class Media extends Component {
 
     componentWillReceiveProps() {
         window.clearTimeout(this.timer)
-        this.timer = setTimeout(_ => {
+        this.timer = setTimeout(() => {
             const index = this.getNodeSpreadIndex()
             if (index !== this.state.nodeSpreadIndex) {
                 this.setNodeSpreadIndex(index)
@@ -63,7 +63,7 @@ class Media extends Component {
         else {
             // TODO: should account for element offset (margins/padding)
             nodeSpreadIndex = Math.floor(
-                (x - columnGap / 2 - translateX) / windowWidth,
+                (x - columnGap / 2 - translateX) / windowWidth
             )
         }
 

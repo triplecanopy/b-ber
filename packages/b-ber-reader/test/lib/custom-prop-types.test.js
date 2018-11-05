@@ -32,7 +32,7 @@ test('validates a custom propType', done => {
 
 test('creates a chainable propType', done => {
     const spy = jest.spyOn(console, 'error')
-    console.error.mockImplementation(_ => {})
+    console.error.mockImplementation(() => {})
 
     class Foo extends Component {}
 

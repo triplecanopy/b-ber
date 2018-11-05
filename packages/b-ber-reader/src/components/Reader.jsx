@@ -580,7 +580,7 @@ class Reader extends Component {
             if (logTime) console.time('deferredCallback')
 
             deferredCallback = _ => {
-                setTimeout(_ => {
+                setTimeout(() => {
                     // this.enablePageTransitions()
                     this.navigateToElementById(hash)
                     this.enableEventHandling()
