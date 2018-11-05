@@ -342,26 +342,43 @@ $alert: (
     }
 }
 
-@mixin galleryBackground($background-color){
+// Galley Background Mixin Parameters
+
+//  @param $background-color    string      background      Sets elements background-color   
+//  @param $height              int         height          Sets elements height, defaults to 125 if empty
+
+@mixin galleryBackground($background-color, $height: 125){
     $totalColumns: 9;
     
     @include break('mobile') {
-        height: mobileTop(860px, 110, 1.62, $totalColumns)!important;
-        .gallery__background {
-            height: mobileTop(860px, 110, 1.62, $totalColumns)!important;
+        height: mobileTop(860px, $height, 1.62, $totalColumns)!important;
+        .figure__large.figure__inline.figure__fullbleed {
+            figure {
+                &:before {
+                    height: mobileTop(860px, $height, 1.62, $totalColumns)!important;
+                }
+            }
         }
     }
 
     @include break('tablet') {
-        height: mobileTop(200vh, 110, 1.62, $totalColumns)!important;
-        .gallery__background {
-            height: mobileTop(200vh, 110, 1.62, $totalColumns)!important;
+        height: mobileTop(200vh, $height, 1.62, $totalColumns)!important;
+        .figure__large.figure__inline.figure__fullbleed {
+            figure {
+                &:before {
+                    height: mobileTop(200vh, $height, 1.62, $totalColumns)!important;
+                }
+            }
         }
     }
 
-    .gallery__background {
-        height: 100vh;
-        background: $background-color;
+    .figure__large.figure__inline.figure__fullbleed {
+        figure {
+            &:before {
+                height: 100vh;
+                background: $background-color;
+            }
+        }
     }
 }
 
@@ -380,9 +397,7 @@ $alert: (
     padding-right: leftOffset($column, $position, 9);
     
     @include break('desktop') { 
-        // padding: leftOffset($column, $position, 16), $topPadding;
         padding-left: leftOffset($column, $position, 16);
         padding-right: leftOffset($column, $position, 9);
     }
 }
-

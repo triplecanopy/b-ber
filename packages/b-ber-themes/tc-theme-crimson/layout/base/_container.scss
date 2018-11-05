@@ -21,7 +21,7 @@ blockquote {
 
 section {
     clear: both;
-    padding-right: 0.75vh;
+    padding-right: 2vh;
     @include break('mobile') { padding-right: 0; }
     &:after {
         content: ' ';
@@ -71,11 +71,6 @@ section.bibliography {
         text-indent: 0;
         @include padding(0,0,1,0,0);
     }
-}
-
-section#gallery,
-section#full-bleed {
-    padding-right: 0;
 }
 
 .audio,

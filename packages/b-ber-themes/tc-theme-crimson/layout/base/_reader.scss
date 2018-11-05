@@ -4,73 +4,45 @@
         margin-left: one-em(-20);
 	}
 
-    .figure__fullbleed figure .figure__items {
-        width: 100%;
-        height: 100%;
-        img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: center;
-        }
-        .figcaption {
-            position: relative;
-            width: 100%;
-            left: 0px;
-            bottom: 0px;
-    
-            @include break ('desktop'){
-                position: absolute;
-                width: 30%;
-                bottom: 50px;
-                @include columnAlign(
-                    $column: 1, 
-                    $position: end
-                );
+    section.gallery {
+        margin: 1.35em 0em 1.35em 0em;
+        &:nth-child(1){
+            margin-top: 0;
+            figure  {
+                &:before { top: 0px; }
             }
         }
-    }
-    //If Gallery is first element in chapter, align to top of page
-    @include break('mobile'){
-        #layout #content {
-            section {
-                &:first-child {
-                    .figure__large.figure__inline.figure__fullbleed {
-                        height: auto!important;                
+        .figure__large.figure__inline.figure__fullbleed {
+            padding: 0;
+            figure {
+                .gallery__item {
+                    position: absolute;
+                    height: auto;
+                    img, video {
+                        object-fit: contain;
+                        height: 100%;
+                        width: 100%;
                     }
+                    .figcaption {
+                        position: relative;
+                        width: 100%;
+                        left: 0px;
+                        bottom: 0px;
+                    }
+                    &:last-child {
+                        margin-bottom: 100px;
+                    }
+                }
+                &:before {
+                    content: "";
+                    height: auto;
+                    width: 100%;
+                    position: absolute;
+                    left: 0px;
                 }
             }
         }
     }
-    
-    section .figure__fullbleed.figure__large.figure__inline {
-        
-        .gallery__background {
-            position: absolute;
-            left: 0px;
-            width: 100%;
-        }
-
-        figure .gallery__item {
-            position: absolute;
-            height: auto;
-            img, video {
-                object-fit: contain;
-                height: 100%;
-                width: 100%;
-            }
-            .figcaption {
-                position: relative;
-                width: 100%;
-                left: 0px;
-                bottom: 0px;
-            }
-            &:last-child {
-                margin-bottom: 100px;
-            }
-        }
-    }
-    
 
     .spread__content {
         padding-top: 35px;

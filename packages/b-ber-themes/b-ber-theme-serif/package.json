@@ -2,7 +2,7 @@
   "name": "b-ber-theme-serif",
   "version": "0.1.0-alpha.de5a155f",
   "main": "index.js",
-  "author": "Maxwell Simmer <maxwell.simmer@gmail.com> (http://maxwellsimmer.com)",
+  "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
   "license": "GNU GPLv3",
   "publishConfig": {
     "access": "public"
