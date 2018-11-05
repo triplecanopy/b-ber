@@ -225,10 +225,16 @@ p.caption {
     .epigraph & {
         padding-top: 7px;
     }
+    .figure__inline--square & {
+        width: 60%;
+    }
+    .figure__inline--landscape & {
+        width: 75%;
+    }
     .figure__inline--portrait & {
         width: 45%;
     }
     .figure__inline--portrait-high & {
-        width: 50%;
+        width: 35%;
     }
 }
