@@ -79,7 +79,7 @@ class Navigation {
                 // prepare for diffing
                 const filesFromSystem = uniq(
                     xhtmlFileObjects.map(a =>
-                        path.basename(a.name, _.extension)
+                        path.basename(a.name, a.extension)
                     )
                 )
                 resolve({ filesFromSystem, fileObjects })

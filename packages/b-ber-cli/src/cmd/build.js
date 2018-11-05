@@ -15,20 +15,20 @@ const handler = argv => {
 
     // make sure all necessary directories exist.
     // TODO: should be a separate task
-    const ensure = _ =>
+    const ensure = () =>
         new Promise(resolve => {
             const cwd = process.cwd()
-            const src = state.src
+            const { src } = state
+            const projectPath = path.join(cwd, src)
             return Promise.all([
-                fs.mkdirp(path.join(cwd, src, '_fonts')),
-                fs.mkdirp(path.join(cwd, src, '_images')),
-                fs.mkdirp(path.join(cwd, src, '_javascripts')),
-                fs.mkdirp(path.join(cwd, src, '_markdown')),
-                fs.mkdirp(path.join(cwd, src, '_media')),
-                fs.mkdirp(path.join(cwd, src, '_stylesheets')),
+                fs.mkdirp(path.join(projectPath, '_fonts')),
+                fs.mkdirp(path.join(projectPath, '_images')),
+                fs.mkdirp(path.join(projectPath, '_javascripts')),
+                fs.mkdirp(path.join(projectPath, '_markdown')),
+                fs.mkdirp(path.join(projectPath, '_media')),
+                fs.mkdirp(path.join(projectPath, '_stylesheets')),
             ])
                 .then(() => {
-                    const projectPath = path.join(cwd, state.src)
                     const files = [
                         ...Project.javascripts(projectPath),
                         ...Project.stylesheets(projectPath),
@@ -38,15 +38,22 @@ const handler = argv => {
 
                     files.forEach(a => {
                         try {
-                            fs.statSync(path.join(cwd, a.relativePath))
+                            fs.statSync(a.absolutePath)
                         } catch (err) {
                             requiredFiles.push(
-                                fs.writeFile(a.relativePath, a.content)
+                                fs.writeFile(a.absolutePath, a.content)
+                            )
+                            console.log(
+                                'err',
+                                'push',
+                                a.absolutePath
+                                // a.content
                             )
                         }
                     })
 
                     if (requiredFiles.length) {
+                        console.log('yy', requiredFiles)
                         Promise.all(requiredFiles).then(resolve)
                     } else {
                         resolve()

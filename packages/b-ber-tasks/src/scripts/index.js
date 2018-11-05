@@ -28,8 +28,8 @@ const optimized = files => {
         .map(a =>
             fs.readFileSync(
                 path.resolve(cwd, state.src, '_javascripts', a),
-                'utf8',
-            ),
+                'utf8'
+            )
         )
         .join('')
     const js = uglify(contents)
@@ -41,8 +41,8 @@ const optimized = files => {
         .then(() =>
             log.info(
                 'scripts emit [%s]',
-                `javascripts${path.sep}${path.basename(out)}`,
-            ),
+                `javascripts${path.sep}${path.basename(out)}`
+            )
         )
 }
 
@@ -55,8 +55,8 @@ const unoptimized = files => {
             .then(() =>
                 log.info(
                     'scripts emit [%s]',
-                    `javascripts${path.sep}${path.basename(output)}`,
-                ),
+                    `javascripts${path.sep}${path.basename(output)}`
+                )
             )
     })
 
@@ -64,7 +64,7 @@ const unoptimized = files => {
 }
 
 const write = () =>
-    fs.readdir(path.join(state.src, '_javascripts')).then(()files => {
+    fs.readdir(path.join(state.src, '_javascripts')).then(_files => {
         const files = _files.filter(a => path.extname(a) === '.js')
         return (state.env === 'production' ? optimized : unoptimized)(files)
     })
