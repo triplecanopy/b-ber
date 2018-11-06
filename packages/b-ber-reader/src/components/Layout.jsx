@@ -79,7 +79,7 @@ class Layout extends Component {
         this.handleResize = debounce(
             this.onResizeDone,
             this.debounceSpeed,
-            {},
+            {}
         ).bind(this)
     }
 

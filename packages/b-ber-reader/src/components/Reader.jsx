@@ -46,6 +46,7 @@ class Reader extends Component {
             currentSpineItem: null,
             currentSpineItemIndex: 0,
             search: '',
+            initialLoad: true,
 
             // layout
             hash: Asset.createHash(this.props.bookURL),
@@ -152,9 +153,9 @@ class Reader extends Component {
         const { hash, cssHash, search } = this.state
 
         if (nextProps.search !== search) {
-            console.log('updates')
             const {slug, currentSpineItemIndex, spreadIndex } = Url.parseQueryString(nextProps.search)
-            this.setState({ slug, currentSpineItemIndex, spreadIndex, search: nextProps.search })
+            const spreadIndex_ = Number(spreadIndex)
+            this.setState({ slug, currentSpineItemIndex, spreadIndex: spreadIndex_, search: nextProps.search })
         }
 
         if (hash === null) {
@@ -204,14 +205,19 @@ class Reader extends Component {
         if (Viewport.isMobile()) document.getElementById('frame').scrollTo(0, 0)
     }
 
-    updateQueryString() {
+    updateQueryString(replaceState = true) {
         const {
             currentSpineItem,
             currentSpineItemIndex,
             spreadIndex,
         } = this.state
+
         const { slug } = currentSpineItem
         const { pathname, state } = history.location
+        const update = 'push'//replaceState ? 'replace' : 'push'
+
+        console.log('-- update', update)
+        console.log('xxxxx')
 
         const search = Url.buildQueryString({
             slug,
@@ -220,7 +226,7 @@ class Reader extends Component {
         })
 
         this.setState({ search }, () =>
-            history.push({
+            history[update]({
                 pathname,
                 search,
                 state,
@@ -271,6 +277,7 @@ class Reader extends Component {
             currentSpineItemIndex,
             spreadIndex,
         } = storage[hash]
+
         this.setState(
             { currentSpineItem, currentSpineItemIndex, spreadIndex },
             () => {
@@ -369,6 +376,8 @@ class Reader extends Component {
         let requestedSpineItem = spineItem
         if (!requestedSpineItem) [requestedSpineItem] = this.state.spine
 
+        const { initialLoad } = this.state
+
         this.setState({ ready: false })
         this.closeSidebars()
         this.disableEventHandling()
@@ -423,17 +432,17 @@ class Reader extends Component {
 
                 this.setState(
                     {
+                        initialLoad: false,
                         currentSpineItem: requestedSpineItem,
                         spineItemURL: requestedSpineItem.absoluteURL,
                     },
                     () => {
-                        this.updateQueryString()
+                        this.updateQueryString(initialLoad)
 
                         if (deferredCallback) {
                             this.registerDeferredCallback(deferredCallback)
                         }
                         else {
-                            // this.enablePageTransitions()
                             this.enableEventHandling()
                             this.hideSpinner()
                         }
@@ -481,7 +490,7 @@ class Reader extends Component {
                 spreadIndex,
                 nextIndex,
                 spreadTotal
-            ) // eslint-disable-line indent
+            )
             console.groupEnd()
         }
 
@@ -526,8 +535,6 @@ class Reader extends Component {
 
                 this.scrollToTop()
                 this.navigateToSpreadByIndex(spreadTotal)
-
-                // this.enablePageTransitions()
                 this.enableEventHandling()
                 this.hideSpinner()
 
