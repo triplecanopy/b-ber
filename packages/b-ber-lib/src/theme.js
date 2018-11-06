@@ -13,11 +13,9 @@ const getUserDefinedThemes = () => {
     const cwd = process.cwd()
 
     const names = []
-    const userThemes = {}
+    const themes = {}
 
-    if (!{}.hasOwnProperty.call(config, 'themes_directory')) {
-        return { names, themes: userThemes }
-    }
+    if (!config.themes_directory) return { names, themes }
 
     try {
         if (!fs.existsSync(path.join(process.cwd(), config.themes_directory))) {
@@ -27,7 +25,7 @@ const getUserDefinedThemes = () => {
         }
     } catch (err) {
         log.warn(err)
-        return { names, themes: userThemes }
+        return { names, themes }
     }
 
     fs.readdirSync(path.join(cwd, config.themes_directory)).forEach(a => {
@@ -52,10 +50,10 @@ const getUserDefinedThemes = () => {
 
         const moduleName = userModule.name
         names.push(moduleName)
-        userThemes[moduleName] = userModule
+        themes[moduleName] = userModule
     })
 
-    return { names, themes: userThemes }
+    return { names, themes }
 }
 
 const printThemeList = (themes, current = '') =>
@@ -70,13 +68,10 @@ const getThemes = () => {
     const { config } = state
     const themes = []
     const current = config.theme && config.theme ? config.theme : ''
-    const userThemes = getUserDefinedThemes()
+    const userThemes = getUserDefinedThemes().themes
 
     Object.keys(defaultThemes).forEach(a => themes.push(defaultThemes[a]))
-
-    for (let i = 0; i < userThemes; i++) {
-        themes.push(userThemes[i])
-    }
+    Object.keys(userThemes).forEach(a => themes.push(userThemes[a]))
 
     return { current, themes }
 }
