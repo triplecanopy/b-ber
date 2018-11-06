@@ -12,7 +12,7 @@
     display: inline-block;
     white-space: nowrap;
     word-wrap: normal;
-    direction: ltr;
+    // direction: ltr; // breaks epub validation
     -webkit-font-feature-settings: 'liga';
     -webkit-font-smoothing: antialiased;
 }

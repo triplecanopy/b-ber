@@ -137,10 +137,7 @@ const copyThemeAssets = theme => {
         .then(() => {
             if (!theme.fonts.length) return Promise.resolve()
             const promises = theme.fonts.map(a =>
-                safeCopy(
-                    path.join(themePath, 'fonts', a),
-                    path.join(fontsPath, a)
-                )
+                safeCopy(a, path.join(fontsPath, path.basename(a)))
             )
             return Promise.all(promises)
         })

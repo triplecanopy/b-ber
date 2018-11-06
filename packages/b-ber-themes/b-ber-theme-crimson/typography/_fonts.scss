@@ -15,9 +15,13 @@
     italic
 );
 
-@if $build == 'web' {
-    @import url('https://fonts.googleapis.com/css?family=Material+Icons');
-}
+@include font-face(
+    'Material Icons',
+    'MaterialIcons-Regular',
+    ('eot', 'ttf', 'woff', 'woff2'),
+    400,
+    normal
+);
 
 .icon-font {
     font-weight: normal;
@@ -29,7 +33,13 @@
     display: inline-block;
     white-space: nowrap;
     word-wrap: normal;
-    direction: ltr;
+    // direction: ltr; // breaks epub validation
     -webkit-font-feature-settings: 'liga';
     -webkit-font-smoothing: antialiased;
+}
+
+// not including with @import for customizability
+.material-icons {
+    @extend .icon-font;
+    font-family: 'Material Icons';
 }
