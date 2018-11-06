@@ -7,6 +7,7 @@ import defaultThemes from '@canopycanopycanopy/b-ber-themes'
 import log from '@canopycanopycanopy/b-ber-logger'
 import YamlAdaptor from './YamlAdaptor'
 import state from './State'
+import { safeCopy, safeWrite } from './utils'
 
 const getUserDefinedThemes = () => {
     const { config } = state
@@ -33,8 +34,8 @@ const getUserDefinedThemes = () => {
 
         if (!fs.lstatSync(modulePath).isDirectory()) return
 
-        // `entryPoint` here is either a package.json file, or an index.js script that exports the theme object
-        // theme object schema:
+        // `entryPoint` is either a package.json file, or an index.js script
+        // that exports the theme object theme object schema:
         //
         // {
         //      name: String        required
@@ -58,16 +59,21 @@ const getUserDefinedThemes = () => {
 
 const printThemeList = (themes, current = '') =>
     `${themes
-        .reduce((acc, curr) => {
-            const icon = current && current === curr.name ? '✓' : '○'
-            return acc.concat(`  ${icon} ${curr.name}\n`)
-        }, '\n')
+        .reduce(
+            (acc, curr) =>
+                acc.concat(
+                    `  ${current && current === curr.name ? '✓' : '○'} ${
+                        curr.name
+                    }\n`
+                ),
+            '\n'
+        )
         .slice(0, -1)}\n`
 
 const getThemes = () => {
     const { config } = state
     const themes = []
-    const current = config.theme && config.theme ? config.theme : ''
+    const current = config.theme ? config.theme : ''
     const userThemes = getUserDefinedThemes().themes
 
     Object.keys(defaultThemes).forEach(a => themes.push(defaultThemes[a]))
@@ -81,30 +87,6 @@ const createProjectThemeDirectory = name => {
     return fs
         .mkdirp(path.join(process.cwd(), src, '_stylesheets', name))
         .catch(log.error)
-}
-
-const safeCopy = (data, dest) => {
-    try {
-        if (fs.existsSync(dest)) {
-            throw new Error('EEXIST')
-        }
-    } catch (err) {
-        if (err.message === 'EEXIST') return Promise.resolve()
-    }
-
-    return fs.copy(data, dest)
-}
-
-const safeWrite = (dest, data) => {
-    try {
-        if (fs.existsSync(dest)) {
-            throw new Error('EEXIST')
-        }
-    } catch (err) {
-        if (err.message === 'EEXIST') return Promise.resolve()
-    }
-
-    return fs.writeFile(dest, data)
 }
 
 const copyThemeAssets = theme => {
@@ -127,6 +109,7 @@ const copyThemeAssets = theme => {
     )
     const fontsPath = path.join(process.cwd(), src, '_fonts')
     const imagesPath = path.join(process.cwd(), src, '_images')
+
     return safeCopy(themeSettings, settingsPath)
         .then(safeWrite(overridesPath, ''))
         .then(() => {
@@ -165,7 +148,7 @@ class Theme {
         console.log(printThemeList(themes, current))
     }
 
-    static set = async (name, force = false) => {
+    static set = (name, force = false) => {
         const { current, themes } = getThemes()
         const theme = find(themes, { name })
 
