@@ -73,13 +73,13 @@ class Navigation {
                 // TODO: better testing here, make sure we're not including symlinks, for example
                 const fileObjects = pathInfoFromFiles(filearr, state.dist)
                 // only get html files
-                const xhtmlFileObjects = fileObjects.filter(_ =>
-                    ManifestItemProperties.isHTML(_)
+                const xhtmlFileObjects = fileObjects.filter(a =>
+                    ManifestItemProperties.isHTML(a)
                 )
                 // prepare for diffing
                 const filesFromSystem = uniq(
-                    xhtmlFileObjects.map(_ =>
-                        path.basename(_.name, _.extension)
+                    xhtmlFileObjects.map(a =>
+                        path.basename(a.name, a.extension)
                     )
                 )
                 resolve({ filesFromSystem, fileObjects })
@@ -297,7 +297,7 @@ class Navigation {
      * @return {Object}              Deep merged object
      */
     deepMergePromiseArrayValues(args, property) {
-        const props = Object.assign({}, ...args.map(_ => _[property]))
+        const props = Object.assign({}, ...args.map(a => a[property]))
         return Object.assign({}, [...args], { [property]: props }) // TODO: this is weird ...
     }
 

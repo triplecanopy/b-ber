@@ -1,9 +1,11 @@
 import fs from 'fs-extra'
 import path from 'path'
 import log from '@canopycanopycanopy/b-ber-logger'
-import state from '@canopycanopycanopy/b-ber-lib/State'
+import sequences from '@canopycanopycanopy/b-ber-shapes/sequences'
 import getAssets from '@canopycanopycanopy/b-ber-resources'
 import Project from '@canopycanopycanopy/b-ber-templates/Project'
+import state from '@canopycanopycanopy/b-ber-lib/State'
+import Theme from '@canopycanopycanopy/b-ber-lib/theme'
 
 /**
  * @class Initializer
@@ -11,36 +13,41 @@ import Project from '@canopycanopycanopy/b-ber-templates/Project'
 class Initializer {
     /**
      * @constructor
-     * @param  {Object} argv Command Line arguments
+     * @param  {Object} directories Command Line arguments
      * @return {Object}
      */
-    constructor({ cwd = '', argv = { src: '_project', dist: 'project' } }) {
-        const { src, dist } = argv
+    constructor({
+        projectName = '',
+        projectPath = '',
+        directories = { src: '_project', dist: 'project' },
+    }) {
+        const { src, dist } = directories
 
-        if (!cwd) throw new Error('Base directory not provided')
-        if (!src || !dist) { throw new Error('Both [src] and [dist] arguments must be provided') }
+        if (!projectPath) throw new Error('Base directory not provided')
+        if (!src || !dist) {
+            throw new Error('Both [src] and [dist] arguments must be provided')
+        }
         if (src === dist) {
             throw new Error(
-                '[src] and [dist] directories must have different names',
+                '[src] and [dist] directories must have different names'
             )
         }
 
-        this.cwd = cwd
         this.src = src
         this.dist = dist
-
-        this.projectPath = path.join(this.cwd, this.src)
-        this.buildTypes = ['epub', 'mobi', 'pdf', 'sample', 'web']
+        this.projectName = projectName
+        this.projectPath = path.join(projectPath, this.src)
+        this.buildTypes = Object.keys(sequences)
         this.dirs = Project.directories(this.projectPath)
 
         this.files = [
             ...this.buildTypes.map(a => Project.typeYAML(this.projectPath, a)),
-            Project.configYAML(this.projectPath, state.config.dist),
+            Project.configYAML(this.projectPath),
             Project.metadataYAML(this.projectPath),
             ...Project.javascripts(this.projectPath),
             ...Project.stylesheets(this.projectPath),
             ...Project.markdown(this.projectPath),
-            Project.readme(this.projectPath, cwd),
+            Project.readme(this.projectPath),
             Project.gitignore(this.projectPath),
         ]
     }
@@ -52,7 +59,7 @@ class Initializer {
 
     writeFiles() {
         const promises = this.files.map(a =>
-            fs.writeFile(a.relativePath, a.content),
+            fs.writeFile(a.absolutePath, a.content)
         )
         return Promise.all(promises)
     }
@@ -70,11 +77,22 @@ class Initializer {
             const promises = images.map(a =>
                 fs.copy(
                     a,
-                    path.join(this.projectPath, '_images', path.basename(a)),
-                ),
+                    path.join(this.projectPath, '_images', path.basename(a))
+                )
             )
             return Promise.all(promises)
         })
+    }
+
+    // eslint-disable-next-line class-methods-use-this
+    setTheme() {
+        const { theme } = state.config
+        process.chdir(this.projectName)
+        return Theme.set(theme, true)
+    }
+
+    done() {
+        return log.notice(`Created new project [${this.projectName}]`)
     }
 
     /**
@@ -82,11 +100,12 @@ class Initializer {
      * @param  {String} name Name of the project
      * @return {Promise<Object|Error>}
      */
-    start(name = '') {
+    start() {
         this.makeDirs()
             .then(() => this.writeFiles())
             .then(() => this.copyImages())
-            .then(() => log.notice(`Created new project [${name}]`))
+            .then(() => this.setTheme())
+            .then(() => this.done())
             .catch(log.error)
     }
 }

@@ -3,9 +3,11 @@ const path = require('path')
 const npmPackage = require('./package.json')
 
 module.exports = {
-    name: npmPackage.name,
+    name: 'serif',
     entry: path.join(__dirname, 'application.scss'),
-    fonts: fs.readdirSync(path.join(__dirname, 'fonts')).filter(_ => /\.(otf|ttf|woff2?|eot|svg)/i.test(path.extname(_))),
-    images: [],//fs.readdirSync(path.join(__dirname, 'images')).filter(_ => /\.(jpe?g|png|svg|gif)/i.test(path.extname(_))),
-    npmPackage: npmPackage,
+    fonts: fs
+        .readdirSync(path.join(__dirname, 'fonts'))
+        .filter(a => /\.(otf|ttf|woff2?|eot|svg)/i.test(path.extname(a))),
+    images: [],
+    npmPackage,
 }

@@ -15,6 +15,7 @@ import {
     getResources,
     matchIterator,
     getJSONLDMetadata,
+    getInlineScripts,
 } from './helpers'
 
 const TOKENS_START = {
@@ -56,16 +57,21 @@ const templateify = files =>
 
         switch (fileType) {
             case '.js':
-                return Xhtml.script().replace(/\{% body %\}/, `${base}${file}`)
+                return file instanceof File
+                    ? Xhtml.script('application/javascript', true).replace(
+                        /\{% body %\}/,
+                        String(file.contents)
+                    )
+                    : Xhtml.script().replace(/\{% body %\}/, `${base}${file}`)
             case '.css':
                 return Xhtml.stylesheet().replace(
                     /\{% body %\}/,
-                    `${base}${file}`,
+                    `${base}${file}`
                 )
             case '.json-ld':
                 return Xhtml.script('application/ld+json', true).replace(
                     /\{% body %\}/,
-                    String(file.contents),
+                    String(file.contents)
                 )
             default:
                 throw new Error(`Unsupported filetype: ${file}`)
@@ -90,7 +96,7 @@ const injectTags = args => {
 
         const previousInnerContent = content.substring(
             start.lastIndex,
-            endMatch.index,
+            endMatch.index
         )
         const indent = getLeadingWhitespace(previousInnerContent)
 
@@ -127,17 +133,17 @@ const promiseToReplace = (prop, data, source, file) =>
 // Iterate over the list of XHTML files, injecting script and style tags
 // inside of the placeholders
 const mapSources = args => {
-    const [htmlDocs, stylesheets, javascripts, metadata] = args
-    const promises = htmlDocs.map(source => {
+    const { xhtml, stylesheets, javascripts, metadata } = args
+    const promises = xhtml.map(source => {
         const location = path.join(state.dist, 'OPS', 'text', source)
 
         return promiseToReplace('stylesheets', stylesheets, source)
             .then(file =>
-                promiseToReplace('javascripts', javascripts, source, file),
+                promiseToReplace('javascripts', javascripts, source, file)
             )
             .then(file => promiseToReplace('metadata', metadata, source, file))
             .then(file =>
-                fs.writeFile(location, file.contents.toString('utf8')),
+                fs.writeFile(location, file.contents.toString('utf8'))
             )
             .then(() => log.info(`inject emit [${path.basename(location)}]`))
     })
@@ -150,40 +156,44 @@ const mapSources = args => {
 // `promiseToReplace`.  This function then parses the result into `pageHead`
 // and `pageTail` functions and adds them to the `template` object in `state`
 const mapSourcesToDynamicPageTemplate = args => {
-    const [, stylesheets, javascripts, metadata] = args
+    const { stylesheets, javascripts, metadata } = args
     const docs = [dummy.path]
     const promises = docs.map(source =>
         promiseToReplace('stylesheets', stylesheets, source, dummy)
             .then(file =>
-                promiseToReplace('javascripts', javascripts, source, file),
+                promiseToReplace('javascripts', javascripts, source, file)
             )
             .then(file => promiseToReplace('metadata', metadata, source, file))
             .then(file => {
                 const tmpl = file.contents.toString()
                 const [head, tail] = tmpl.split('{% body %}')
 
-                state.templates.dynamicPageTmpl = _ => tmpl
-                state.templates.dynamicPageHead = _ => head
-                state.templates.dynamicPageTail = _ => tail
-            }),
+                state.templates.dynamicPageTmpl = () => tmpl
+                state.templates.dynamicPageHead = () => head
+                state.templates.dynamicPageTail = () => tail
+            })
     )
 
     return Promise.all(promises).catch(log.error)
 }
 
-const inject = () =>
-    Promise.all([
-        fs.readdir(path.join(state.dist, 'OPS', 'text')),
-        getResources('stylesheets'),
-        getResources('javascripts'),
-    ])
-        .then(getJSONLDMetadata)
-        .then(files =>
-            Promise.all([
-                mapSources(files),
-                mapSourcesToDynamicPageTemplate(files),
-            ]),
-        )
-        .catch(log.error)
+const getXHTMLFiles = () => fs.readdir(path.join(state.dist, 'OPS', 'text'))
+
+const inject = async () => {
+    const files = {
+        xhtml: await getXHTMLFiles(),
+        stylesheets: await getResources('stylesheets'),
+        javascripts: [
+            ...(await getResources('javascripts')),
+            ...(await getInlineScripts()),
+        ],
+        metadata: await getJSONLDMetadata(),
+    }
+
+    return Promise.all([
+        mapSources(files),
+        mapSourcesToDynamicPageTemplate(files),
+    ]).catch(log.error)
+}
 
 export default inject

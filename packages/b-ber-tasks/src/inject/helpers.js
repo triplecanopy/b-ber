@@ -63,95 +63,113 @@ export function* matchIterator(re, str) {
     while ((match = re.exec(str)) !== null) yield match
 }
 
-export const getJSONLDMetadata = args =>
-    new Promise(resolve =>
-        // eslint-disable-line arrow-body-style
+export const getJSONLDMetadata = () => [
+    new File({
+        path: 'metadata.json-ld',
+        contents: new Buffer(''),
+    }),
+]
 
-        // TODO: following occasionally throws errors when building if the
-        // rdf.translator API fails. commenting out for now. need to find a
-        // stable, probably locally hosted, solution
+// new Promise(
+//     resolve =>
+//         // eslint-disable-line arrow-body-style
 
-        // if (state.env !== 'production') {
-        resolve([
-            ...args,
-            new File({
-                path: 'metadata.json-ld',
-                contents: new Buffer(''),
-            }),
-        ])
-        // }
+//         // TODO: following occasionally throws errors when building if the
+//         // rdf.translator API fails. commenting out for now. need to find a
+//         // stable, probably locally hosted, solution
 
-        // if (state.env !== 'production') {
+//         // if (state.env !== 'production') {
+//         resolve([
+//             ...args,
+//             new File({
+//                 path: 'metadata.json-ld',
+//                 contents: new Buffer(''),
+//             }),
+//         ])
+//     // }
 
-        //     const [, stylesheets, javascripts] = args
-        //     const resources = []
-        //     const prefix = state.build === 'web' ? state.config.contentURL : ''
+// if (state.env !== 'production') {
 
-        //     stylesheets.forEach(a => {
-        //         resources.push({
-        //             href: `${prefix}${path.sep}OPS${path.sep}stylesheets${path.sep}${a}`,
-        //             type: 'text/css',
-        //         })
-        //     })
+//     const [, stylesheets, javascripts] = args
+//     const resources = []
+//     const prefix = state.build === 'web' ? state.config.contentURL : ''
 
-        //     javascripts.forEach(a => {
-        //         resources.push({
-        //             href: `${prefix}${path.sep}OPS${path.sep}javascripts${path.sep}${a}`,
-        //             type: 'application/javascript',
-        //         })
-        //     })
+//     stylesheets.forEach(a => {
+//         resources.push({
+//             href: `${prefix}${path.sep}OPS${path.sep}stylesheets${path.sep}${a}`,
+//             type: 'text/css',
+//         })
+//     })
 
-        //     const spine = state.spine.map(a => {
-        //         const result = {
-        //             href: a.remotePath || a.relativePath,
-        //             type: mime.lookup(a.absolutePath),
-        //         }
-        //         if (a.title) { // TODO: this needs to be added to `state.spine` during parsing
-        //             result.title = a.title
-        //         }
+//     javascripts.forEach(a => {
+//         resources.push({
+//             href: `${prefix}${path.sep}OPS${path.sep}javascripts${path.sep}${a}`,
+//             type: 'application/javascript',
+//         })
+//     })
 
-        //         return result
-        //     })
+//     const spine = state.spine.map(a => {
+//         const result = {
+//             href: a.remotePath || a.relativePath,
+//             type: mime.lookup(a.absolutePath),
+//         }
+//         if (a.title) { // TODO: this needs to be added to `state.spine` during parsing
+//             result.title = a.title
+//         }
 
-        //     const webpubManifest = {
-        //         // '@context': 'http://readium.org/webpub/default.jsonld',
-        //         '@context': 'http://schema.org/',
-        //         metadata: {},
-        //         links: [
-        //             // {"rel": "self", "href": "http://example.org/bff.json", "type": "application/webpub+json"},
-        //             // {"rel": "alternate", "href": "http://example.org/publication.epub", "type": "application/epub+zip"},
-        //             // ...
-        //         ],
+//         return result
+//     })
 
-        //         // spine: [{"href": "http://example.org/chapter1.html", "type": "text/html", "title": "Chapter 1"},]
-        //         spine,
-        //         resources,
-        //     }
+//     const webpubManifest = {
+//         // '@context': 'http://readium.org/webpub/default.jsonld',
+//         '@context': 'http://schema.org/',
+//         metadata: {},
+//         links: [
+//             // {"rel": "self", "href": "http://example.org/bff.json", "type": "application/webpub+json"},
+//             // {"rel": "alternate", "href": "http://example.org/publication.epub", "type": "application/epub+zip"},
+//             // ...
+//         ],
 
-        //     state.metadata.forEach(item => {
-        //         if (item.term && item.value) {
-        //             webpubManifest.metadata[item.term] = item.value
-        //         }
-        //     })
+//         // spine: [{"href": "http://example.org/chapter1.html", "type": "text/html", "title": "Chapter 1"},]
+//         spine,
+//         resources,
+//     }
 
-        //     const content = JSON.stringify(webpubManifest)
-        //     const source  = 'json-ld'
-        //     const target  = 'json-ld'
-        //     const suffix  = 'content'
-        //     const url     = `http://rdf-translator.appspot.com/convert/${source}/${target}/${suffix}`
-        //     const form    = {content}
+//     state.metadata.forEach(item => {
+//         if (item.term && item.value) {
+//             webpubManifest.metadata[item.term] = item.value
+//         }
+//     })
 
-        //     return request.post({url, form}, (err, resp, body) => {
-        //         if (err) throw err
-        //         if (resp.statusCode !== 200) throw new Error(`Error: ${resp.statusCode}`, err)
+//     const content = JSON.stringify(webpubManifest)
+//     const source  = 'json-ld'
+//     const target  = 'json-ld'
+//     const suffix  = 'content'
+//     const url     = `http://rdf-translator.appspot.com/convert/${source}/${target}/${suffix}`
+//     const form    = {content}
 
-        //         return resolve([
-        //             ...args,
-        //             new File({
-        //                 path: '.tmp',
-        //                 contents: new Buffer(body),
-        //             }),
-        //         ])
-        //     })
-        // }
-    )
+//     return request.post({url, form}, (err, resp, body) => {
+//         if (err) throw err
+//         if (resp.statusCode !== 200) throw new Error(`Error: ${resp.statusCode}`, err)
+
+//         return resolve([
+//             ...args,
+//             new File({
+//                 path: '.tmp',
+//                 contents: new Buffer(body),
+//             }),
+//         ])
+//     })
+// }
+// )
+
+export const getInlineScripts = () => [
+    new File({
+        path: 'env.js',
+        contents: new Buffer(
+            `window.bber = window.bber || {}; window.bber.env = '${
+                state.build
+            }';`
+        ),
+    }),
+]

@@ -12,6 +12,15 @@ $media-tablet: 'only screen \
                 and (max-width: 768px)'                     !default;
 $media-desktop: 'only screen \
                 and (min-width: 680px)'                     !default;
+$media-tall:    'only screen \
+                and (min-height: 860px) \
+                and (min-width:  960px)'                    !default;
+$mobile-short:  'only screen \
+                and (max-height: 860px) \
+                and (max-width: 960px)'                     !default;
+$desktop-short: 'only screen \
+                and (max-height: 860px) \
+                and (min-width: 960px)'                     !default;
 
 // Colors
 $white: #fff                                                !default;

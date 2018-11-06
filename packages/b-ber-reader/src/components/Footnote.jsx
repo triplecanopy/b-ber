@@ -75,7 +75,7 @@ class Footnote extends Component {
             !footnoteVisible &&
             nextContext.overlayElementId === this.overlayElementId
         ) {
-            this.getFootnote().then(_ =>
+            this.getFootnote().then(() =>
                 this.setState({ footnoteVisible: true }),
             )
         }

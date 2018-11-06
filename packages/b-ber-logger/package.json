@@ -11,7 +11,7 @@
     "watch": "BABEL_ENV=production ../../node_modules/.bin/babel -d dist/ src/ --watch src",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Maxwell Simmer <maxwell.simmer@gmail.com> (http://maxwellsimmer.com)",
+  "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
   "license": "GNU GPLv3",
   "publishConfig": {
     "access": "public"

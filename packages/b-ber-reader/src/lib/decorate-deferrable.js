@@ -41,7 +41,7 @@ export default function deferrable(target) {
 
     target.prototype.requestDeferredCallbackExecution = function requestDeferredCallbackExecution() {
         window.clearTimeout(this.__deferredCallbackTimeout)
-        this.__deferredCallbackTimeout = setTimeout(_ => {
+        this.__deferredCallbackTimeout = setTimeout(() => {
             Messenger.sendDeferredEvent()
 
             if (!this.canCallDeferred || !this.callDeferred) return

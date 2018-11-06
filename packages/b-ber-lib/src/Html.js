@@ -4,6 +4,7 @@ class Html {
     }
 
     static escape(str) {
+        const str_ = typeof str !== 'string' ? String(str) : str
         const map = {
             '&': '&amp;',
             '<': '&lt;',
@@ -11,7 +12,7 @@ class Html {
             '"': '&quot;',
             "'": '&#39;',
         }
-        return str.replace(/[&<>"']/g, m => map[m])
+        return str_.replace(/[&<>"']/g, m => map[m])
     }
 
     static pagebreakAttribute({ pagebreak }) {

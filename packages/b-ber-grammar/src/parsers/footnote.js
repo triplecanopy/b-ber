@@ -436,12 +436,12 @@ module.exports = function footnote_plugin(md, callback) {
 
         // create return value for callback
         insideRef = false
-        footnoteTokens = [...state.tokens].filter(_ => {
-            if (_.type === 'footnote_block_open') {
+        footnoteTokens = [...state.tokens].filter(a => {
+            if (a.type === 'footnote_block_open') {
                 insideRef = true
                 return true
             }
-            if (_.type === 'footnote_block_close') {
+            if (a.type === 'footnote_block_close') {
                 insideRef = false
                 return true
             }

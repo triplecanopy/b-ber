@@ -20,7 +20,7 @@
     "watch": "BABEL_ENV=production ../../node_modules/.bin/babel -d ./ src/ --watch src",
     "test": "yarn jest"
   },
-  "author": "Maxwell Simmer <maxwell.simmer@gmail.com> (http://maxwellsimmer.com)",
+  "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
   "license": "GNU GPLv3",
   "publishConfig": {
     "access": "public"

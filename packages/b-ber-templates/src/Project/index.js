@@ -1,13 +1,13 @@
-import path from "path"
-import crypto from "crypto"
-import state from "@canopycanopycanopy/b-ber-lib/State"
-import YamlAdaptor from "@canopycanopycanopy/b-ber-lib/YamlAdaptor"
+import path from 'path'
+import crypto from 'crypto'
+import state from '@canopycanopycanopy/b-ber-lib/State'
+import YamlAdaptor from '@canopycanopycanopy/b-ber-lib/YamlAdaptor'
 
 class Project {
     static directories(src) {
         return [
             src,
-            path.join(path.dirname(src), "themes"),
+            path.join(path.dirname(src), 'themes'),
             `${src}/_images`,
             `${src}/_javascripts`,
             `${src}/_stylesheets`,
@@ -17,15 +17,23 @@ class Project {
             `${src}/.tmp`,
         ]
     }
+    static relativePath(src, ...rest) {
+        return path.join(path.basename(src), ...rest)
+    }
+    static absolutePath(src, ...rest) {
+        return path.join(path.dirname(src), path.basename(src), ...rest)
+    }
     static configYAML(src) {
         return {
-            relativePath: path.join(path.dirname(src), "config.yml"),
+            relativePath: Project.relativePath(src, '..', 'config.yml'),
+            absolutePath: Project.absolutePath(src, '..', 'config.yml'),
             content: YamlAdaptor.dump(state.config),
         }
     }
     static typeYAML(src, type) {
         return {
-            relativePath: path.join(src, `${type}.yml`),
+            relativePath: Project.relativePath(src, `${type}.yml`),
+            absolutePath: Project.absolutePath(src, `${type}.yml`),
             content: `# Table of Contents
 # "in_toc:false" removes the entry from the built-in navigation of the reader.
 # "linear:false" removes the entry from the project's contents.
@@ -44,7 +52,8 @@ class Project {
     }
     static metadataYAML(src) {
         return {
-            relativePath: path.join(src, "metadata.yml"),
+            relativePath: Project.relativePath(src, 'metadata.yml'),
+            absolutePath: Project.absolutePath(src, 'metadata.yml'),
             content: `-
     term: title
     value: Sample Project
@@ -77,15 +86,26 @@ class Project {
     value: Triple Canopy
 -
     term: identifier
-    value: ${crypto.randomBytes(20).toString("hex")}
+    value: ${crypto.randomBytes(20).toString('hex')}
 `,
         }
     }
     static javascripts(src) {
         return [
             {
-                relativePath: `${src}/_javascripts/application.js`,
-                content: `// All user defined functions should be wrapped in a 'domReady' call - or by using a third-party lib like jQuery - for compatibility in reader, web, and e-reader versions
+                relativePath: Project.relativePath(
+                    src,
+                    '_javascripts',
+                    'application.js'
+                ),
+                absolutePath: Project.absolutePath(
+                    src,
+                    '_javascripts',
+                    'application.js'
+                ),
+                content: `// All user defined functions should be wrapped in a 'domReady' call - or by using a third-party lib like jQuery - for compatibility in reader, web, and e-reader versions.
+// Use the global \`window.bber.env\` variable to limit scripts to particular envionments. See example below
+//
 // Examples:
 //  domReady(fn)
 //  domReady(function() {})
@@ -172,8 +192,9 @@ function clicked(e) {
 }
 
 function main() {
+    if (window.bber.env === 'reader') return;
     // Normalize link behaviour on iBooks, without interfering with footnotes
-    var links = document.getElementsByTagName('a')
+    var links = document.getElementsByTagName('a');
     links = Array.prototype.slice.call(links, 0);
     links = links.filter(function(l) {
         return l.classList.contains('footnote-ref') === false;
@@ -184,7 +205,7 @@ function main() {
     }
 }
 
-domReady(main)
+domReady(main);
 `,
             },
         ]
@@ -192,7 +213,16 @@ domReady(main)
     static markdown(src) {
         return [
             {
-                relativePath: `${src}/_markdown/project-name_title-page.md`,
+                relativePath: Project.relativePath(
+                    src,
+                    '_markdown',
+                    'project-name-title-page.md'
+                ),
+                absolutePath: Project.absolutePath(
+                    src,
+                    '_markdown',
+                    'project-name-title-page.md'
+                ),
                 content: `---
 title: Project Name Title Page
 type: titlepage
@@ -206,7 +236,16 @@ type: titlepage
 `,
             },
             {
-                relativePath: `${src}/_markdown/project-name-chapter-01.md`,
+                relativePath: Project.relativePath(
+                    src,
+                    '_markdown',
+                    'project-name-chapter-01.md'
+                ),
+                absolutePath: Project.absolutePath(
+                    src,
+                    '_markdown',
+                    'project-name-chapter-01.md'
+                ),
                 content: `---
 title: Project Name Chapter One
 type: bodymatter
@@ -222,7 +261,16 @@ Chapter Contents
 `,
             },
             {
-                relativePath: `${src}/_markdown/project-name_colophon.md`,
+                relativePath: Project.relativePath(
+                    src,
+                    '_markdown',
+                    'project-name-colophon.md'
+                ),
+                absolutePath: Project.absolutePath(
+                    src,
+                    '_markdown',
+                    'project-name-colophon.md'
+                ),
                 content: `---
 title: Project Name Colophon
 type: colophon
@@ -259,11 +307,12 @@ Country
     static stylesheets() {
         return []
     }
-    static readme(src, cwd) {
+    static readme(src) {
         return {
-            relativePath: `${path.dirname(src)}${path.sep}README.md`,
+            relativePath: Project.relativePath(src, '..', 'README.md'),
+            absolutePath: Project.absolutePath(src, '..', 'README.md'),
             content: `
-# ${path.basename(cwd)}
+# ${path.basename(process.cwd())}
 
 Created with [b-ber](https://github.com/triplecanopy/b-ber/)
 `,
@@ -271,7 +320,8 @@ Created with [b-ber](https://github.com/triplecanopy/b-ber/)
     }
     static gitignore(src) {
         return {
-            relativePath: `${path.dirname(src)}${path.sep}.gitignore`,
+            relativePath: Project.relativePath(src, '..', '.gitignore'),
+            absolutePath: Project.absolutePath(src, '..', '.gitignore'),
             content: `.DS_Store
 .tmp
 

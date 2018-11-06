@@ -44,7 +44,7 @@ const validatePosterImage = (_asset, type) => {
 }
 
 const validateLocalMediaSource = (asset, mediaType) => {
-    const media = [...state[mediaType]].map(_ => toAlias(_))
+    const media = [...state[mediaType]].map(a => toAlias(a))
     if (!asset.length || media.indexOf(asset) < 0) {
         const err = new Error(
             `bber-directives: Could not find [${mediaType}] matching [${asset}], make sure it's included in the [_media] directory`,

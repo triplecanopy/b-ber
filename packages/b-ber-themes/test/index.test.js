@@ -12,7 +12,9 @@ describe('b-ber-themes', () => {
         const actualModules = {}
         Object.keys(actualModule).forEach(a => {
             expect(() => {
-                const b = require.requireActual(`../${a}`)
+                const b = require.requireActual(
+                    `../${actualModule[a].npmPackage.name}`
+                )
                 actualModules[b.name] = b
             }).not.toThrow()
         })
@@ -25,7 +27,9 @@ describe('b-ber-themes', () => {
         const actualModule = require.requireActual('../index.js')
         const actualModules = {}
         Object.keys(actualModule).forEach(a => {
-            const b = require.requireActual(`../${a}`)
+            const b = require.requireActual(
+                `../${actualModule[a].npmPackage.name}`
+            )
             actualModules[b.name] = b
         })
 
@@ -46,7 +50,7 @@ describe('b-ber-themes', () => {
 
                     // text existence
                     Object.keys(base).forEach(a =>
-                        expect(themeKeys).toContain(a),
+                        expect(themeKeys).toContain(a)
                     )
 
                     // check type
@@ -78,8 +82,8 @@ describe('b-ber-themes', () => {
                                 expect(result.stats.includedFiles).toBeArray()
 
                                 done()
-                            },
-                        ),
+                            }
+                        )
                     ).not.toThrow()
                 })
             })

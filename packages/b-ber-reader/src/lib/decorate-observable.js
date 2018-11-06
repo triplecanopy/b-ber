@@ -143,7 +143,7 @@ export default function observable(target) {
 
         if (this.__contentDimensions !== contentDimensions) {
             window.clearTimeout(this.timer)
-            this.timer = setTimeout(_ => {
+            this.timer = setTimeout(() => {
                 this.__contentDimensions = contentDimensions
 
                 log(spreadTotal, contentDimensions, frameHeight, columns)

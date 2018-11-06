@@ -131,8 +131,16 @@ class Reader extends Component {
 
     componentWillMount() {
         Cache.clear() // clear initially for now. still caches styles for subsequent pages
+<<<<<<< HEAD
         this.registerCanCallDeferred(() => this.state.ready)
         this.createStateFromOPF().then(() => {
+||||||| merged common ancestors
+        this.registerCanCallDeferred(_ => this.state.ready)
+        this.createStateFromOPF().then(_ => {
+=======
+        this.registerCanCallDeferred(_ => this.state.ready)
+        this.createStateFromOPF().then(() => {
+>>>>>>> master
             if (useLocalStorage === false) return this.loadSpineItem()
 
             const storage = Storage.get(this.localStorageKey)
@@ -598,8 +606,16 @@ class Reader extends Component {
         if (hash) {
             if (logTime) console.time('deferredCallback')
 
+<<<<<<< HEAD
             deferredCallback = () => {
                 setTimeout(() => {
+||||||| merged common ancestors
+            deferredCallback = _ => {
+                setTimeout(_ => {
+=======
+            deferredCallback = _ => {
+                setTimeout(() => {
+>>>>>>> master
                     // this.enablePageTransitions()
                     this.navigateToElementById(hash)
                     this.enableEventHandling()

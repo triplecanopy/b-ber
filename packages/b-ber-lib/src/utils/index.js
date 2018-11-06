@@ -2,6 +2,7 @@
  * @module utils
  */
 
+import fs from 'fs-extra'
 import path from 'path'
 import find from 'lodash/find'
 import log from '@canopycanopycanopy/b-ber-logger'
@@ -72,6 +73,30 @@ const getBookMetadata = (term, state) => {
     return ''
 }
 
+const safeCopy = (from, to) => {
+    try {
+        if (fs.existsSync(to)) {
+            throw new Error('EEXIST')
+        }
+    } catch (err) {
+        if (err.message === 'EEXIST') return Promise.resolve()
+    }
+
+    return fs.copy(from, to)
+}
+
+const safeWrite = (dest, data) => {
+    try {
+        if (fs.existsSync(dest)) {
+            throw new Error('EEXIST')
+        }
+    } catch (err) {
+        if (err.message === 'EEXIST') return Promise.resolve()
+    }
+
+    return fs.writeFile(dest, data)
+}
+
 export {
     opsPath,
     fileId,
@@ -79,4 +104,6 @@ export {
     forOf,
     getTitleOrName,
     getBookMetadata,
+    safeCopy,
+    safeWrite,
 }

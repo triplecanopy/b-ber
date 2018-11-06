@@ -34,7 +34,7 @@ const render = (tokens, idx) => {
             case 'reader':
                 result = `
                     <div class="spread">
-                        <div class="spread__content">`
+                        <div id="${htmlId(id)}" class="spread__content">`
                 break
             case 'epub':
             case 'mobi':
@@ -42,7 +42,7 @@ const render = (tokens, idx) => {
             case 'sample':
             default:
                 result = `\n<section id="${htmlId(
-                    id,
+                    id
                 )}" class="spread"${attrsString}>`
                 break
         }

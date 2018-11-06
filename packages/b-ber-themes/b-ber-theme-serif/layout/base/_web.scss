@@ -16,7 +16,6 @@
 // updated in individual themes, or by porting the SCSS below into a child
 // theme.
 
-
 // Default vertical column count. If this is changed, values below need to be
 // manually updated as well.
 $web-grid-columns: 12;
@@ -32,7 +31,8 @@ $web-grid-columns: 12;
     grid-column: 1 / span $web-grid-columns;
 }
 
-@mixin web-navigation-link() {  // These are the links that appear in the navigation sidebar (the table of contents).
+@mixin web-navigation-link() {
+    // These are the links that appear in the navigation sidebar (the table of contents).
     font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
     text-decoration: none;
     color: $black;
@@ -42,9 +42,10 @@ $web-grid-columns: 12;
 // Conditional styles for the web build. The `web` variable is set dynamically
 // during build when running `bber build --web`
 @if $build == 'web' {
-
     // Some base styles
-    body { padding: 0; }
+    body {
+        padding: 0;
+    }
     button {
         appearance: none;
         background: transparent;
@@ -54,13 +55,14 @@ $web-grid-columns: 12;
         outline: none;
         cursor: pointer;
 
-        &:hover { color: $success; }
-        &:active, &:focus {
+        &:hover {
+            color: $success;
+        }
+        &:active,
+        &:focus {
             outline: none;
         }
     }
-
-
 
     // Some variables for spacing, sizing, and transitions.
     //
@@ -171,22 +173,32 @@ $web-grid-columns: 12;
         width: $cell-large-width;
         transition: transform $transition-speed $transition-easing;
 
-        ol, ul, li, a { @include web-navigation-link; }
-        a:hover { text-decoration: underline; }
+        ol,
+        ul,
+        li,
+        a {
+            @include web-navigation-link;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
 
         & > ol {
             padding-right: 15px;
         }
         ol li,
         ul li {
-            white-space: nowrap;        // Hide the overflow on longer TOC entries, will become
-                                        // problematic for deeply nested structures.
+            white-space: nowrap; // Hide the overflow on longer TOC entries, will become
+            // problematic for deeply nested structures.
             text-overflow: ellipsis;
             overflow: hidden;
             margin: 5px 0;
-            &:last-child { margin: 0; }
+            &:last-child {
+                margin: 0;
+            }
         }
-        ol ul, ol ol {
+        ol ul,
+        ol ol {
             padding: 0 0 0 one-em(0);
         }
     }
@@ -206,38 +218,46 @@ $web-grid-columns: 12;
         width: $cell-large-width;
         transition: transform $transition-speed $transition-easing;
 
-
-        dt, dd { @include web-navigation-link; }
+        dt,
+        dd {
+            @include web-navigation-link;
+        }
         & > dl {
             padding-right: 15px;
         }
         dl dt,
         dl dd {
-            white-space: nowrap;        // Hide the overflow on longer TOC entries, will become
-                                        // problematic for deeply nested structures.
+            white-space: nowrap; // Hide the overflow on longer TOC entries, will become
+            // problematic for deeply nested structures.
             text-overflow: ellipsis;
             overflow: hidden;
         }
         dl dt {
             text-transform: capitalize;
             margin: 5px 0;
-            &:last-child { margin: 0; }
+            &:last-child {
+                margin: 0;
+            }
         }
         dl dd {
             margin: 5px 0 one-line(0);
-            &:last-child { margin: 0; }
+            &:last-child {
+                margin: 0;
+            }
         }
 
         dl dl {
             padding: 0 0 0 one-em(0);
         }
 
-        dt { font-weight: 700; }
-
+        dt {
+            font-weight: 700;
+        }
     }
 
-    body.toc--visible {                 // The `toc--visible` class is toggled via JavaScript in
-                                        // the footer of the generated HTML pages.
+    body.toc--visible {
+        // The `toc--visible` class is toggled via JavaScript in
+        // the footer of the generated HTML pages.
         .publication__toc {
             transform: translateX(0);
         }
@@ -256,7 +276,6 @@ $web-grid-columns: 12;
         }
     }
 
-
     // Header styles
     .publication__header {
         @include type-settings(-7);
@@ -272,10 +291,10 @@ $web-grid-columns: 12;
         align-items: center;
         justify-content: center;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.26);
-		position: fixed;
-		width: 100%;
-		z-index: 2;
-		background-color: $white;
+        position: fixed;
+        width: 100%;
+        z-index: 2;
+        background-color: $white;
 
         h1 {
             @include web-navigation-link;
@@ -284,8 +303,10 @@ $web-grid-columns: 12;
             margin: 0;
         }
 
-        .header__item__title {}
-        .header__item__toggle { // Toggle nav buttons
+        .header__item__title {
+        }
+        .header__item__toggle {
+            // Toggle nav buttons
             position: absolute;
             display: flex;
             align-items: center;
@@ -310,12 +331,13 @@ $web-grid-columns: 12;
 
         .publication__nav__link {
             color: $black;
-            &:hover { color: $success; }
+            &:hover {
+                color: $success;
+            }
         }
 
         .publication__nav__prev,
         .publication__nav__next {
-
             width: auto;
             height: $dimensions-large-y;
 
@@ -346,26 +368,34 @@ $web-grid-columns: 12;
     // easily by using container directives, like `::: chapter`.
     //
     .publication__contents {
-        @include padding(4,0,3,0,0);
+        @include padding(4, 0, 3, 0, 0);
         grid-row: 2;
 
-        @include web-grid-container;            // We can't use `display: subgrid` so we re-declare it.
-        @include web-grid-full-width;           // `publication__contents` spans the entire page
-        grid-template-rows: max-content;        // https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template-rows
-        * { @include web-grid-full-width; }     // All elements (except for `sections`, see below) also span the entire page
+        @include web-grid-container; // We can't use `display: subgrid` so we re-declare it.
+        @include web-grid-full-width; // `publication__contents` spans the entire page
+        grid-template-rows: max-content; // https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template-rows
+        * {
+            @include web-grid-full-width;
+        } // All elements (except for `sections`, see below) also span the entire page
 
-        section {                               // `section` elements are also CSS Grid containers
+        section {
+            // `section` elements are also CSS Grid containers
             @include web-grid-container;
             @include web-grid-full-width;
-            *:not(section) {                    // All child elements of a `section` (except for other `section`s)
-                                                // span a smaller area by default. This allows overrides to be
-                                                // easily applied to child elements in `_overrides.scss` to create
-                                                // more complex layouts.
+            *:not(section) {
+                // All child elements of a `section` (except for other `section`s)
+                // span a smaller area by default. This allows overrides to be
+                // easily applied to child elements in `_overrides.scss` to create
+                // more complex layouts.
 
                 grid-column: 4 / span 6;
 
-                @include break('mobile') { grid-column: 2 / span 10; }
-                @include break('tablet') { grid-column: 2 / span 10; }
+                @include break('mobile') {
+                    grid-column: 2 / span 10;
+                }
+                @include break('tablet') {
+                    grid-column: 2 / span 10;
+                }
             }
         }
 
@@ -381,8 +411,7 @@ $web-grid-columns: 12;
             opacity: 0;
             background-color: $black;
             transition: opacity $transition-speed $transition-easing;
-          }
-
+        }
     }
 
     // The first page (index.html) of the generated web build is the
@@ -401,7 +430,7 @@ $web-grid-columns: 12;
     // `publication__contents` element dynamically on search
     .search__results {
         margin-top: three-lines(0) * -1;
-        margin-bottom:two-lines(0);
+        margin-bottom: two-lines(0);
     }
     .search__result {
         @include type-settings(-5);
@@ -416,13 +445,13 @@ $web-grid-columns: 12;
             text-indent: 0;
             text-align: left;
         }
-
     }
     .search__result__link {
         text-decoration: none;
         color: $black;
 
-        mark { // Search terms that are found in the text are highlighted bold.
+        mark {
+            // Search terms that are found in the text are highlighted bold.
             color: $black;
             font-weight: 700;
             background-color: transparent;
@@ -438,7 +467,6 @@ $web-grid-columns: 12;
 
     // Media queries
     @include break('mobile') {
-
         // Sidebars
         .publication__toc,
         .publication__info {
@@ -464,15 +492,15 @@ $web-grid-columns: 12;
 
     // TODO: this might need to be extended to all elements that 'pagebreak`
     .figure__large.figure__inline {
-		margin: two-lines(0) 0;
+        margin: two-lines(0) 0;
     }
 
     // TODO: should this be for all builds?
     figure .figcaption a,
-	figure figcaption a,
-	.figure__items a, {
-		color: $black;
-		text-decoration:underline !important;
+    figure figcaption a,
+    .figure__items a {
+        color: $black;
+        text-decoration: underline !important;
     }
 
     // fullbleed. fullbleed panels are completely customizeable, so set to
@@ -484,7 +512,7 @@ $web-grid-columns: 12;
         left: 0;
         right: 0;
         bottom: 0;
-        grid-column: 1!important;
+        grid-column: 1 !important;
 
         &.figure__large.figure__inline {
             figure {
@@ -536,7 +564,8 @@ $web-grid-columns: 12;
             }
 
             .figure__items img,
-            .figure__items video {}
+            .figure__items video {
+            }
         }
     }
 
@@ -545,7 +574,7 @@ $web-grid-columns: 12;
         position: relative;
     }
     button.media__controls {
-        @extend .material-icons;
+        @extend .icon-font;
         position: absolute;
         font-size: 3rem;
         top: 0;
@@ -557,11 +586,14 @@ $web-grid-columns: 12;
         z-index: 1;
 
         &.media__controls--pause {
-            &:before { content: 'pause_circle_outline'; }
+            &:before {
+                content: 'pause_circle_outline';
+            }
         }
         &.media__controls--play {
-            &:before { content: 'play_circle_outline'; }
+            &:before {
+                content: 'play_circle_outline';
+            }
         }
     }
-
 } // endif build == web

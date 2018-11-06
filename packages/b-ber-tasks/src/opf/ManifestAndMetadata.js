@@ -64,7 +64,7 @@ class ManifestAndMetadata {
                 // TODO: better testing here, make sure we're not including symlinks, for example
                 const files = [
                     ...state.remoteAssets,
-                    ...filearr.filter(_ => path.basename(_).charAt(0) !== '.'),
+                    ...filearr.filter(a => path.basename(a).charAt(0) !== '.'),
                 ]
                 const fileObjects = pathInfoFromFiles(files, this.dist) // `pathInfoFromFiles` is creating objects from file names
                 resolve(fileObjects)

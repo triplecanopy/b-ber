@@ -15,44 +15,41 @@ const handler = argv => {
 
     // make sure all necessary directories exist.
     // TODO: should be a separate task
-    const ensure = _ =>
+    const ensure = () =>
         new Promise(resolve => {
             const cwd = process.cwd()
-            const src = state.src
+            const { src } = state
+            const projectPath = path.join(cwd, src)
             return Promise.all([
-                fs.mkdirp(path.join(cwd, src, '_fonts')),
-                fs.mkdirp(path.join(cwd, src, '_images')),
-                fs.mkdirp(path.join(cwd, src, '_javascripts')),
-                fs.mkdirp(path.join(cwd, src, '_markdown')),
-                fs.mkdirp(path.join(cwd, src, '_media')),
-                fs.mkdirp(path.join(cwd, src, '_stylesheets')),
+                fs.mkdirp(path.join(projectPath, '_fonts')),
+                fs.mkdirp(path.join(projectPath, '_images')),
+                fs.mkdirp(path.join(projectPath, '_javascripts')),
+                fs.mkdirp(path.join(projectPath, '_markdown')),
+                fs.mkdirp(path.join(projectPath, '_media')),
+                fs.mkdirp(path.join(projectPath, '_stylesheets')),
             ])
-                .then(_ => {
-                    const projectPath = path.join(cwd, state.src)
+                .then(() => {
                     const files = [
                         ...Project.javascripts(projectPath),
                         ...Project.stylesheets(projectPath),
                     ]
 
-                    const requiredFiles = []
-
-                    files.forEach(a => {
+                    const requiredFiles = files.reduce((acc, curr) => {
                         try {
-                            fs.statSync(path.join(cwd, a.relativePath))
+                            fs.statSync(curr.absolutePath)
                         } catch (err) {
-                            requiredFiles.push(
-                                fs.writeFile(a.relativePath, a.content),
+                            acc.concat(
+                                fs.writeFile(curr.absolutePath, curr.content)
                             )
                         }
-                    })
 
-                    if (requiredFiles.length) {
-                        Promise.all(requiredFiles).then(resolve)
-                    } else {
-                        resolve()
-                    }
+                        return acc
+                    }, [])
+
+                    return requiredFiles.length
+                        ? Promise.all(requiredFiles).then(resolve)
+                        : resolve()
                 })
-
                 .then(resolve)
         })
 
@@ -74,7 +71,7 @@ const handler = argv => {
     // finish to ensure that state is updated with the default cover image if
     // none exists. phantomjs can be sped up by disabling wifi connection, see
     // bug report here: https://github.com/ariya/phantomjs/issues/14033
-    ensure().then(_ => run(sequence))
+    ensure().then(() => run(sequence))
 }
 
 const builder = yargs =>
@@ -87,7 +84,7 @@ const builder = yargs =>
             'reader',
             'Build for the b-ber-reader format',
             () => {},
-            handler,
+            handler
         )
         .command('sample', 'Build a sample Epub', () => {}, handler)
         .command('web', 'Build for web', () => {}, handler)

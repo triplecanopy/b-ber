@@ -12,7 +12,7 @@
     "start": "./node_modules/.bin/babel-node ./src/index.js --presets es2015,stage-0",
     "test": "yarn jest --verbose"
   },
-  "author": "Maxwell Simmer <maxwell.simmer@gmail.com> (http://maxwellsimmer.com)",
+  "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
   "license": "GNU GPLv3",
   "publishConfig": {
     "access": "public"
