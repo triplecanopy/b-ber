@@ -23,7 +23,7 @@ class ApplicationLoader {
             src: '_project',
             dist: 'project',
             ibooks_specified_fonts: false,
-            theme: 'b-ber-theme-serif',
+            theme: 'serif',
             themes_directory: './themes',
             base_url: '/',
             remote_url: 'http://localhost:4000/',
