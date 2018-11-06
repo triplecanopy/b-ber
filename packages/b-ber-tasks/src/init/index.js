@@ -1,7 +1,7 @@
 import fs from 'fs-extra'
 import path from 'path'
 import log from '@canopycanopycanopy/b-ber-logger'
-// import state from '@canopycanopycanopy/b-ber-lib/State'
+import sequences from '@canopycanopycanopy/b-ber-shapes/sequences'
 import getAssets from '@canopycanopycanopy/b-ber-resources'
 import Project from '@canopycanopycanopy/b-ber-templates/Project'
 
@@ -35,7 +35,7 @@ class Initializer {
         this.dist = dist
         this.projectName = projectName
         this.projectPath = path.join(projectPath, this.src)
-        this.buildTypes = ['epub', 'mobi', 'pdf', 'sample', 'web']
+        this.buildTypes = Object.keys(sequences)
         this.dirs = Project.directories(this.projectPath)
 
         this.files = [

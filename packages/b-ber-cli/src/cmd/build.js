@@ -34,32 +34,22 @@ const handler = argv => {
                         ...Project.stylesheets(projectPath),
                     ]
 
-                    const requiredFiles = []
-
-                    files.forEach(a => {
+                    const requiredFiles = files.reduce((acc, curr) => {
                         try {
-                            fs.statSync(a.absolutePath)
+                            fs.statSync(curr.absolutePath)
                         } catch (err) {
-                            requiredFiles.push(
-                                fs.writeFile(a.absolutePath, a.content)
-                            )
-                            console.log(
-                                'err',
-                                'push',
-                                a.absolutePath
-                                // a.content
+                            acc.concat(
+                                fs.writeFile(curr.absolutePath, curr.content)
                             )
                         }
-                    })
 
-                    if (requiredFiles.length) {
-                        console.log('yy', requiredFiles)
-                        Promise.all(requiredFiles).then(resolve)
-                    } else {
-                        resolve()
-                    }
+                        return acc
+                    }, [])
+
+                    return requiredFiles.length
+                        ? Promise.all(requiredFiles).then(resolve)
+                        : resolve()
                 })
-
                 .then(resolve)
         })
 
