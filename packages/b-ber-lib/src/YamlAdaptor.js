@@ -22,7 +22,7 @@ class YamlAdaptor {
         if (typeof strOrObj === 'string') {
             return _yaml.safeDump(strOrObj)
         }
-        if (isPlainObject) {
+        if (isPlainObject(strOrObj)) {
             return _yaml.safeDump(JSON.stringify(strOrObj))
         }
 
@@ -39,6 +39,7 @@ class YamlAdaptor {
     // @param str         JavaScript Object
     // @return {String}   YAML formatted string
     static dump(str) {
+        // const str = isPlainObject(data) ? JSON.stringify(data) : data
         return _yaml.safeDump(str, { indent: 2 })
     }
 

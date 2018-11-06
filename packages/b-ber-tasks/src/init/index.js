@@ -4,6 +4,8 @@ import log from '@canopycanopycanopy/b-ber-logger'
 import sequences from '@canopycanopycanopy/b-ber-shapes/sequences'
 import getAssets from '@canopycanopycanopy/b-ber-resources'
 import Project from '@canopycanopycanopy/b-ber-templates/Project'
+import state from '@canopycanopycanopy/b-ber-lib/State'
+import Theme from '@canopycanopycanopy/b-ber-lib/theme'
 
 /**
  * @class Initializer
@@ -82,6 +84,13 @@ class Initializer {
         })
     }
 
+    // eslint-disable-next-line class-methods-use-this
+    setTheme() {
+        const { theme } = state.config
+        process.chdir(this.projectName)
+        return Theme.set(theme, true)
+    }
+
     done() {
         return log.notice(`Created new project [${this.projectName}]`)
     }
@@ -95,6 +104,7 @@ class Initializer {
         this.makeDirs()
             .then(() => this.writeFiles())
             .then(() => this.copyImages())
+            .then(() => this.setTheme())
             .then(() => this.done())
             .catch(log.error)
     }
