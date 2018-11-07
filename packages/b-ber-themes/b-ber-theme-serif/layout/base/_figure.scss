@@ -218,7 +218,7 @@ p.caption {
 
 .figure__items {
     width: 100%;
-    margin: 0px;
+    margin: 0 auto;
     a {
         text-decoration: none !important;
     }
@@ -226,15 +226,15 @@ p.caption {
         padding-top: 7px;
     }
     .figure__inline--square & {
-        width: 60%;
+        width: 80%;
     }
     .figure__inline--landscape & {
-        width: 75%;
+        width: 100%;
     }
     .figure__inline--portrait & {
-        width: 45%;
+        width: 60%;
     }
     .figure__inline--portrait-high & {
-        width: 35%;
+        width: 48%;
     }
 }
