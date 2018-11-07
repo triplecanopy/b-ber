@@ -1,26 +1,26 @@
 {
-  "name": "@canopycanopycanopy/b-ber-resources",
-  "version": "0.1.0-alpha.de5a155f",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "prepare.dist": "BABEL_ENV=production ../../node_modules/.bin/babel -d ./ src/ --ignore test/",
-    "clean": "rimraf utils && rimraf *.js",
-    "prepare": "yarn clean && yarn prepare.dist",
-    "build": "yarn prepare"
-  },
-  "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
-  "license": "GNU GPLv3",
-  "publishConfig": {
-    "access": "public"
-  },
-  "devDependencies": {
-    "jest": "^22.4.3",
-    "rimraf": "^2.6.2"
-  },
-  "dependencies": {
-    "babel-runtime": "^6.26.0",
-    "fs-extra": "^6.0.0"
-  }
+    "name": "@canopycanopycanopy/b-ber-resources",
+    "version": "0.1.0-alpha.de5a155f",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "prepare.dist": "BABEL_ENV=production ../../node_modules/.bin/babel -d ./ src/ --ignore test/",
+        "clean": "rimraf utils && rimraf *.js",
+        "prepare": "yarn clean && yarn prepare.dist",
+        "build": "yarn prepare"
+    },
+    "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
+    "license": "GPL-3.0-or-later",
+    "publishConfig": {
+        "access": "public"
+    },
+    "devDependencies": {
+        "jest": "^22.4.3",
+        "rimraf": "^2.6.2"
+    },
+    "dependencies": {
+        "babel-runtime": "^6.26.0",
+        "fs-extra": "^6.0.0"
+    }
 }

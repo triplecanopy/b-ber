@@ -1,40 +1,40 @@
 {
-  "name": "@canopycanopycanopy/b-ber-lib",
-  "version": "0.1.0-alpha.de5a155f",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "prepare.dist": "BABEL_ENV=production ../../node_modules/.bin/babel -d ./ src/ --ignore test/",
-    "clean": "rimraf utils && rimraf *.js",
-    "prepare": "yarn clean && yarn prepare.dist",
-    "build": "yarn prepare",
-    "watch": "BABEL_ENV=production ../../node_modules/.bin/babel -d ./ src/ --watch src --watch index.js --ignore test/",
-    "start": "./node_modules/.bin/babel-node ./src/index.js --presets es2015,stage-0",
-    "test": "yarn jest --verbose"
-  },
-  "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
-  "license": "GNU GPLv3",
-  "publishConfig": {
-    "access": "public"
-  },
-  "devDependencies": {
-    "jest": "^22.4.3",
-    "mock-fs": "^4.4.2",
-    "rimraf": "^2.6.2"
-  },
-  "dependencies": {
-    "@canopycanopycanopy/b-ber-logger": "0.1.0-alpha.de5a155f",
-    "@canopycanopycanopy/b-ber-shapes": "0.1.0-alpha.de5a155f",
-    "@canopycanopycanopy/b-ber-themes": "0.1.0-alpha.de5a155f",
-    "babel-runtime": "^6.26.0",
-    "command-exists": "^1.2.2",
-    "fs-extra": "^5.0.0",
-    "htmlparser2": "^3.9.2",
-    "js-yaml": "^3.11.0",
-    "layouts": "^3.0.1",
-    "lodash": "^4.17.5",
-    "mime-types": "^2.1.18",
-    "vinyl": "^2.2.0",
-    "yargs": "^11.0.0"
-  }
+    "name": "@canopycanopycanopy/b-ber-lib",
+    "version": "0.1.0-alpha.de5a155f",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "prepare.dist": "BABEL_ENV=production ../../node_modules/.bin/babel -d ./ src/ --ignore test/",
+        "clean": "rimraf utils && rimraf *.js",
+        "prepare": "yarn clean && yarn prepare.dist",
+        "build": "yarn prepare",
+        "watch": "BABEL_ENV=production ../../node_modules/.bin/babel -d ./ src/ --watch src --watch index.js --ignore test/",
+        "start": "./node_modules/.bin/babel-node ./src/index.js --presets es2015,stage-0",
+        "test": "yarn jest --verbose"
+    },
+    "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
+    "license": "GPL-3.0-or-later",
+    "publishConfig": {
+        "access": "public"
+    },
+    "devDependencies": {
+        "jest": "^22.4.3",
+        "mock-fs": "^4.4.2",
+        "rimraf": "^2.6.2"
+    },
+    "dependencies": {
+        "@canopycanopycanopy/b-ber-logger": "0.1.0-alpha.de5a155f",
+        "@canopycanopycanopy/b-ber-shapes": "0.1.0-alpha.de5a155f",
+        "@canopycanopycanopy/b-ber-themes": "0.1.0-alpha.de5a155f",
+        "babel-runtime": "^6.26.0",
+        "command-exists": "^1.2.2",
+        "fs-extra": "^5.0.0",
+        "htmlparser2": "^3.9.2",
+        "js-yaml": "^3.11.0",
+        "layouts": "^3.0.1",
+        "lodash": "^4.17.5",
+        "mime-types": "^2.1.18",
+        "vinyl": "^2.2.0",
+        "yargs": "^11.0.0"
+    }
 }

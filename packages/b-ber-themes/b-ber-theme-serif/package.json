@@ -3,7 +3,7 @@
     "version": "0.1.0-alpha.de5a155f",
     "main": "index.js",
     "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
-    "license": "GNU GPLv3",
+    "license": "GPL-3.0-or-later",
     "publishConfig": {
         "access": "public"
     },

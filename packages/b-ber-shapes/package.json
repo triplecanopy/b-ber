@@ -1,33 +1,33 @@
 {
-  "name": "@canopycanopycanopy/b-ber-shapes",
-  "version": "0.1.0-alpha.de5a155f",
-  "description": "",
-  "main": "index.js",
-  "directories": {
-    "dc": "dc",
-    "directives": "directives",
-    "sequences": "sequences"
-  },
-  "scripts": {
-    "prepare.lib": "BABEL_ENV=production ../../node_modules/.bin/babel -d ./ src/ --ignore **/__tests__/**",
-    "prepare": "yarn clean && yarn prepare.lib",
-    "clean": "rimraf dc && rimraf directives && rimraf sequences",
-    "build": "yarn prepare",
-    "watch": "BABEL_ENV=production ../../node_modules/.bin/babel -d ./ src/ --watch src",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
-  "license": "GNU GPLv3",
-  "publishConfig": {
-    "access": "public"
-  },
-  "devDependencies": {
-    "jest": "^22.4.3",
-    "rimraf": "^2.6.2"
-  },
-  "dependencies": {
-    "babel-runtime": "^6.26.0",
-    "jest-extended": "^0.7.1",
-    "lodash": "^4.17.10"
-  }
+    "name": "@canopycanopycanopy/b-ber-shapes",
+    "version": "0.1.0-alpha.de5a155f",
+    "description": "",
+    "main": "index.js",
+    "directories": {
+        "dc": "dc",
+        "directives": "directives",
+        "sequences": "sequences"
+    },
+    "scripts": {
+        "prepare.lib": "BABEL_ENV=production ../../node_modules/.bin/babel -d ./ src/ --ignore **/__tests__/**",
+        "prepare": "yarn clean && yarn prepare.lib",
+        "clean": "rimraf dc && rimraf directives && rimraf sequences",
+        "build": "yarn prepare",
+        "watch": "BABEL_ENV=production ../../node_modules/.bin/babel -d ./ src/ --watch src",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
+    "license": "GPL-3.0-or-later",
+    "publishConfig": {
+        "access": "public"
+    },
+    "devDependencies": {
+        "jest": "^22.4.3",
+        "rimraf": "^2.6.2"
+    },
+    "dependencies": {
+        "babel-runtime": "^6.26.0",
+        "jest-extended": "^0.7.1",
+        "lodash": "^4.17.10"
+    }
 }

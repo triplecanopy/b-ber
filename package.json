@@ -2,7 +2,7 @@
     "name": "@canopycanopycanopy/b-ber",
     "version": "0.1.0-alpha.de5a155f",
     "private": true,
-    "license": "GNU GPLv3",
+    "license": "GPL-3.0-or-later",
     "engines": {
         "node": ">= 4.x <= 9.x",
         "npm": ">= 2.x <= 5.x",

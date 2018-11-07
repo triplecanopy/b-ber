@@ -1,28 +1,28 @@
 {
-  "name": "@canopycanopycanopy/b-ber-logger",
-  "version": "0.1.0-alpha.de5a155f",
-  "description": "",
-  "main": "dist/index.js",
-  "scripts": {
-    "prepare.dist": "BABEL_ENV=production ../../node_modules/.bin/babel -d dist/ src/ --ignore **/__tests__/**",
-    "prepare": "yarn clean && yarn prepare.dist",
-    "clean": "rimraf dist",
-    "build": "yarn prepare",
-    "watch": "BABEL_ENV=production ../../node_modules/.bin/babel -d dist/ src/ --watch src",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
-  "license": "GNU GPLv3",
-  "publishConfig": {
-    "access": "public"
-  },
-  "dependencies": {
-    "babel-runtime": "^6.26.0",
-    "chalk": "^2.1.0",
-    "lodash": "^4.17.10"
-  },
-  "devDependencies": {
-    "jest": "^22.4.3",
-    "rimraf": "^2.6.2"
-  }
+    "name": "@canopycanopycanopy/b-ber-logger",
+    "version": "0.1.0-alpha.de5a155f",
+    "description": "",
+    "main": "dist/index.js",
+    "scripts": {
+        "prepare.dist": "BABEL_ENV=production ../../node_modules/.bin/babel -d dist/ src/ --ignore **/__tests__/**",
+        "prepare": "yarn clean && yarn prepare.dist",
+        "clean": "rimraf dist",
+        "build": "yarn prepare",
+        "watch": "BABEL_ENV=production ../../node_modules/.bin/babel -d dist/ src/ --watch src",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
+    "license": "GPL-3.0-or-later",
+    "publishConfig": {
+        "access": "public"
+    },
+    "dependencies": {
+        "babel-runtime": "^6.26.0",
+        "chalk": "^2.1.0",
+        "lodash": "^4.17.10"
+    },
+    "devDependencies": {
+        "jest": "^22.4.3",
+        "rimraf": "^2.6.2"
+    }
 }
