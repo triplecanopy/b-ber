@@ -78,6 +78,9 @@ figure {
     page-break-inside: avoid;
     page-break-before: always;
     page-break-after: always;
+    section {
+        padding:20% 20% 0 20%; // basic centered spread layout
+    }
 }
 
 #layout.context__desktop {
@@ -198,6 +201,15 @@ figcaption,
     .figure__large & {
         margin: 0;
         padding: 0;
+    }
+
+    .figure__fullbleed & {
+        bottom: 70px;
+        display: inline-block;
+        left: 20px;
+        margin: 0;
+        padding: 0;
+        position: absolute;  
     }
 }
 
