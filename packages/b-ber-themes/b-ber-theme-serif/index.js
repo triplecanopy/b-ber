@@ -5,9 +5,14 @@ const npmPackage = require('./package.json')
 module.exports = {
     name: 'serif',
     entry: path.join(__dirname, 'application.scss'),
-    fonts: fs
-        .readdirSync(path.join(__dirname, 'fonts'))
-        .filter(a => /\.(otf|ttf|woff2?|eot|svg)/i.test(path.extname(a))),
+    fonts: (() => {
+        const fontsDir = path.join(__dirname, 'fonts')
+        return fs.existsSync(fontsDir)
+            ? fs
+                .readdirSync(fontsDir)
+                .filter(a => /\.(otf|ttf|woff2?|eot)/i.test(path.extname(a)))
+            : []
+    })(),
     images: [],
     npmPackage,
 }

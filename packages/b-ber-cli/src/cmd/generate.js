@@ -7,13 +7,13 @@ const builder = yargs =>
     yargs
         .options({
             title: {
-                describe: "Define the chapters's title",
-                default: '',
+                describe: 'Chapter title',
+                demandOption: true,
                 type: 'string',
             },
             type: {
-                describe: "Define the chapters's type",
-                default: '',
+                describe: 'Chapter type',
+                default: 'bodymatter',
                 type: 'string',
             },
         })

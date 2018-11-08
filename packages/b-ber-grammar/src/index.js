@@ -5,7 +5,7 @@
  * @return {MarkdownRenderer}
  */
 
-import hlsj from 'highlight.js'
+import hlsj from 'highlight.js' // eslint-disable-line import/extensions
 import { extend, find } from 'lodash'
 import MarkdownIt from 'markdown-it'
 import YamlAdaptor from '@canopycanopycanopy/b-ber-lib/YamlAdaptor'
