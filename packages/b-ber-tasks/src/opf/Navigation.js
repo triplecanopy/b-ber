@@ -157,6 +157,8 @@ class Navigation {
                             ? ''
                             : YamlAdaptor.dump(nestedYamlToc)
 
+                    console.log(content)
+
                     fs.writeFile(yamlpath, content, err => {
                         if (err) throw err
                         log.info(`opf emit ${state.build}.yml`)

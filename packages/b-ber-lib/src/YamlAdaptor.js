@@ -1,52 +1,63 @@
-import _yaml from 'js-yaml'
-import fs from 'fs-extra'
-import { isPlainObject } from 'lodash'
-
 /*
 
 API to transform YAML to/from JSON and JavaScript objects. Includes convenience
 wrappers for loading local files. Uses
-[`js-yaml`](https://www.npmjs.com/package/js-yaml), defaulting always to
-safe-mode. Doesn't perform any error checking for I/O, assumes that its being
-given valid paths. All methods are currently synchronous.
+[`yawn-yaml`](https://github.com/mohsen1/yawn-yaml). Doesn't perform any error
+checking for I/O, assumes that its being given valid paths. All methods are
+synchronous.
 
 */
 
+import fs from 'fs-extra'
+import isPlainObject from 'lodash/isPlainObject'
+import isArray from 'lodash/isArray'
+
+const YAWN = require('yawn-yaml/cjs')
+
 class YamlAdaptor {
-    static read(fpath, encoding = 'utf8') {
-        return fs.readFileSync(fpath, encoding)
+    static read(file, encoding = 'utf8') {
+        return fs.readFileSync(file, encoding)
     }
 
+    // JSON | Object -> YAML
     // @param {String} strOrObj  A string (JSON) or plain JS Object
-    static toYaml(strOrObj) {
-        if (typeof strOrObj === 'string') {
-            return _yaml.safeDump(strOrObj)
-        }
-        if (isPlainObject(strOrObj)) {
-            return _yaml.safeDump(JSON.stringify(strOrObj))
+    static toYaml(input) {
+        let yawn
+        if (typeof input === 'string') {
+            yawn = new YAWN(input)
+            console.log('here1', yawn.yaml)
+            return yawn.yaml
         }
 
-        throw new TypeError(`Invalid type: [${typeof strOrObj}]`)
+        if (isPlainObject(input) || isArray(input)) {
+            yawn = new YAWN(JSON.stringify(input))
+            console.log('here2', yawn.yaml, yawn)
+            return yawn.yaml
+        }
+
+        throw new TypeError(`Invalid type: [${typeof input}]`)
     }
 
-    // Loads YAML from file contents
-    // @param {String} fpath   File path
+    // IO -> YAML
+    // @param {String} file   File path
     // @return {Object}
-    static load(fpath) {
-        return _yaml.safeLoad(YamlAdaptor.read(fpath))
+    static load(file) {
+        const data = YamlAdaptor.read(file)
+        const yawn = new YAWN(data)
+        return yawn.json // returns plain object, no need to parse (i.e., not actually 'json')
     }
 
-    // @param str         JavaScript Object
+    // @param str         JSON string | object literal
     // @return {String}   YAML formatted string
     static dump(str) {
-        // const str = isPlainObject(data) ? JSON.stringify(data) : data
-        return _yaml.safeDump(str, { indent: 2 })
+        return YamlAdaptor.toYaml(str)
     }
 
-    // Alias for js-yaml package's `#safeLoad`.
+    // JSON -> YAML
     // @params str  YAML string
     static parse(str) {
-        return _yaml.safeLoad(str)
+        const yawn = new YAWN(str)
+        return yawn.json // returns plain object, no need to parse (i.e., not actually 'json')
     }
 }
 
