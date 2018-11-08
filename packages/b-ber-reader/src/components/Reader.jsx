@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import findIndex from 'lodash/findIndex'
 import debounce from 'lodash/debounce'
+import find from 'lodash/find'
 import { Controls, Frame, Spinner } from '.'
 import { Request, XMLAdaptor, Asset, Url, Cache, Storage } from '../helpers'
 import { ViewerSettings } from '../models'
@@ -46,7 +47,6 @@ class Reader extends Component {
             currentSpineItem: null,
             currentSpineItemIndex: 0,
             search: '',
-            initialLoad: true,
 
             // layout
             hash: Asset.createHash(this.props.bookURL),
@@ -131,16 +131,8 @@ class Reader extends Component {
 
     componentWillMount() {
         Cache.clear() // clear initially for now. still caches styles for subsequent pages
-<<<<<<< HEAD
         this.registerCanCallDeferred(() => this.state.ready)
         this.createStateFromOPF().then(() => {
-||||||| merged common ancestors
-        this.registerCanCallDeferred(_ => this.state.ready)
-        this.createStateFromOPF().then(_ => {
-=======
-        this.registerCanCallDeferred(_ => this.state.ready)
-        this.createStateFromOPF().then(() => {
->>>>>>> master
             if (useLocalStorage === false) return this.loadSpineItem()
 
             const storage = Storage.get(this.localStorageKey)
@@ -161,7 +153,16 @@ class Reader extends Component {
         const { hash, cssHash, search } = this.state
 
         if (nextProps.search !== search) {
-            const {slug, currentSpineItemIndex, spreadIndex } = Url.parseQueryString(nextProps.search)
+            const { slug, currentSpineItemIndex, spreadIndex } = Url.parseQueryString(nextProps.search)
+            const url = Url.parseQueryString(search)
+
+            // load the new spine item if the slug has changed
+            if (url.slug && url.slug !== slug) {
+                const spineItem = find(this.state.spine, { slug })
+                return this.loadSpineItem(spineItem)
+            }
+
+            // otherwise update the query string
             const spreadIndex_ = Number(spreadIndex)
             this.setState({ slug, currentSpineItemIndex, spreadIndex: spreadIndex_, search: nextProps.search })
         }
@@ -169,6 +170,7 @@ class Reader extends Component {
         if (hash === null) {
             this.setState({ hash: nextProps.hash })
         }
+
         if (cssHash === null) {
             this.setState({ scopedCSS: nextProps.cssHash })
         }
@@ -213,7 +215,7 @@ class Reader extends Component {
         if (Viewport.isMobile()) document.getElementById('frame').scrollTo(0, 0)
     }
 
-    updateQueryString(replaceState = true) {
+    updateQueryString() {
         const {
             currentSpineItem,
             currentSpineItemIndex,
@@ -221,11 +223,9 @@ class Reader extends Component {
         } = this.state
 
         const { slug } = currentSpineItem
+        const url = Url.parseQueryString(this.props.search)
         const { pathname, state } = history.location
-        const update = 'push'//replaceState ? 'replace' : 'push'
-
-        console.log('-- update', update)
-        console.log('xxxxx')
+        const update = !url.slug || url.slug === slug ? 'replace' : 'push'
 
         const search = Url.buildQueryString({
             slug,
@@ -384,8 +384,6 @@ class Reader extends Component {
         let requestedSpineItem = spineItem
         if (!requestedSpineItem) [requestedSpineItem] = this.state.spine
 
-        const { initialLoad } = this.state
-
         this.setState({ ready: false })
         this.closeSidebars()
         this.disableEventHandling()
@@ -440,12 +438,12 @@ class Reader extends Component {
 
                 this.setState(
                     {
-                        initialLoad: false,
                         currentSpineItem: requestedSpineItem,
                         spineItemURL: requestedSpineItem.absoluteURL,
+                        // TODO: add initial state?
                     },
                     () => {
-                        this.updateQueryString(initialLoad)
+                        this.updateQueryString()
 
                         if (deferredCallback) {
                             this.registerDeferredCallback(deferredCallback)
@@ -520,7 +518,7 @@ class Reader extends Component {
     handleChapterNavigation(increment) {
         let { currentSpineItemIndex } = this.state
         const { spine } = this.state
-        const nextIndex = currentSpineItemIndex + increment
+        const nextIndex = Number(currentSpineItemIndex) + increment
 
         const firstPage = nextIndex < 0
         const lastPage = nextIndex > spine.length - 1
@@ -606,16 +604,8 @@ class Reader extends Component {
         if (hash) {
             if (logTime) console.time('deferredCallback')
 
-<<<<<<< HEAD
             deferredCallback = () => {
                 setTimeout(() => {
-||||||| merged common ancestors
-            deferredCallback = _ => {
-                setTimeout(_ => {
-=======
-            deferredCallback = _ => {
-                setTimeout(() => {
->>>>>>> master
                     // this.enablePageTransitions()
                     this.navigateToElementById(hash)
                     this.enableEventHandling()
@@ -664,6 +654,7 @@ class Reader extends Component {
             currentSpineItemIndex,
             spreadIndex,
         } = this.state
+
         let storage = window.localStorage.getItem(this.localStorageKey)
         if (!storage) storage = JSON.stringify({})
 
