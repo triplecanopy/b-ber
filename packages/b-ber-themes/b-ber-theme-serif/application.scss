@@ -11,7 +11,7 @@
 @import 'debug';
 
 // Load syntax highlighting
-@import 'node_modules/highlight.js/styles/tomorrow';
+@import 'node_modules/highlight.js/styles/tomorrow.css';
 
 // for validation while building on CLI, not an actual setting
 $build: 'epub' !default;
