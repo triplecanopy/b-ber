@@ -27,10 +27,7 @@
     "import/extensions": [2, "never"],
     "import/no-extraneous-dependencies": 0,
     "import/no-unresolved": 0,
-    "indent": [2, 4, {
-        "SwitchCase": 1
-      }
-    ],
+    "indent": 0,
     "jsx-a11y/href-no-hash": 0,
     "max-len": 0,
     "max-statements-per-line": [2, {

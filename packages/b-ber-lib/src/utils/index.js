@@ -67,7 +67,7 @@ const getTitleOrName = page => {
 }
 
 const getBookMetadata = (term, state) => {
-    const entry = find(state.metadata, { term })
+    const entry = find(state.metadata.json(), { term })
     if (entry && entry.value) return entry.value
     log.warn(`Could not find metadata value for ${term}`)
     return ''

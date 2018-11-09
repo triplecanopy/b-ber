@@ -160,9 +160,7 @@ function getChapterTitle(fileName) {
 
     let title = ''
     const entry = find(flow.spine, { fileName })
-    if (entry && entry.title) {
-        title = entry.title
-    }
+    if (entry && entry.title) title = entry.title
 
     return title
 }
@@ -170,14 +168,14 @@ function getChapterTitle(fileName) {
 function getProjectMetadataHTML() {
     return `
         <dl>
-            ${state.metadata.reduce(
-        (acc, curr) =>
-            acc.concat(`
-                <dt>${curr.term}</dt>
-                <dd>${curr.value}</dd>
-            `),
-        '',
-    )}
+            ${state.metadata.json().reduce(
+                (acc, curr) =>
+                    acc.concat(`
+                        <dt>${curr.term}</dt>
+                        <dd>${curr.value}</dd>
+                    `),
+                '',
+            )}
         </dl>
     `
 }
@@ -329,8 +327,8 @@ function getEventHandlerScript() {
         <script type="text/javascript">
         // <![CDATA[
         ${injectBaseURL(
-        fs.readFileSync(path.join(__dirname, 'event-handlers.js')),
-    )}
+            fs.readFileSync(path.join(__dirname, 'event-handlers.js')),
+        )}
         // ]]>
         </script>
     `
@@ -516,7 +514,7 @@ function getFirstPage() {
 }
 
 function getCoverImage() {
-    const { metadata } = state
+    const metadata = state.metadata.json()
     const coverEntry = find(metadata, { term: 'cover' })
     const firstPage = getFirstPage()
 

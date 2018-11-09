@@ -1,11 +1,7 @@
-import fs from 'fs-extra'
-import path from 'path'
-import { isPlainObject, isArray } from 'lodash'
-import log from '@canopycanopycanopy/b-ber-logger'
+import isArray from 'lodash/isArray'
+import isPlainObject from 'lodash/isPlainObject'
 import YamlAdaptor from './YamlAdaptor'
 import SpineItem from './SpineItem'
-
-const cwd = process.cwd()
 
 class Spine {
     constructor({ src, buildType }) {
@@ -64,38 +60,9 @@ class Spine {
         return result
     }
 
-    createSpineListFromMarkdown() {
-        const markdownDir = path.join(cwd, this.src, '_markdown')
-        return fs
-            .readdirSync(markdownDir)
-            .filter(a => path.extname(a) === '.md')
-            .map(a => path.basename(a, '.md'))
-    }
-
     // eslint-disable-next-line class-methods-use-this
-    createSpineListFromConfig(navigationConfigFile) {
-        return YamlAdaptor.load(navigationConfigFile) || []
-    }
-
     create(navigationConfigFile) {
-        let spineList = []
-        try {
-            if (fs.existsSync(navigationConfigFile)) {
-                spineList = this.createSpineListFromConfig(navigationConfigFile)
-            } else {
-                throw new Error(`creating default file [${this.buildType}.yml]`)
-            }
-        } catch (err) {
-            if (/creating default file/.test(err.message)) {
-                log.warn(err.message)
-                fs.writeFileSync(navigationConfigFile, '')
-                spineList = this.createSpineListFromMarkdown()
-            } else {
-                throw err
-            }
-        }
-
-        return spineList
+        return YamlAdaptor.load(navigationConfigFile)
     }
 }
 

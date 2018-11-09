@@ -48,7 +48,7 @@ class ManifestAndMetadata {
      */
     loadMetadata() {
         return new Promise(resolve => {
-            this.bookmeta = state.metadata
+            this.bookmeta = state.metadata.json()
             resolve()
         })
     }

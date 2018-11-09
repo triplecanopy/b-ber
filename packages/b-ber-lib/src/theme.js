@@ -21,7 +21,7 @@ const getUserDefinedThemes = () => {
     try {
         if (!fs.existsSync(path.join(process.cwd(), config.themes_directory))) {
             throw new Error(
-                `Themes directory [${config.themes_directory}] does not exist.`
+                `Themes directory [${config.themes_directory}] does not exist.`,
             )
         }
     } catch (err) {
@@ -64,9 +64,9 @@ const printThemeList = (themes, current = '') =>
                 acc.concat(
                     `  ${current && current === curr.name ? '✓' : '○'} ${
                         curr.name
-                    }\n`
+                    }\n`,
                 ),
-            '\n'
+            '\n',
         )
         .slice(0, -1)}\n`
 
@@ -98,14 +98,14 @@ const copyThemeAssets = theme => {
         src,
         '_stylesheets',
         theme.name,
-        '_settings.scss'
+        '_settings.scss',
     )
     const overridesPath = path.join(
         process.cwd(),
         src,
         '_stylesheets',
         theme.name,
-        '_overrides.scss'
+        '_overrides.scss',
     )
     const fontsPath = path.join(process.cwd(), src, '_fonts')
     const imagesPath = path.join(process.cwd(), src, '_images')
@@ -115,7 +115,7 @@ const copyThemeAssets = theme => {
         .then(() => {
             if (!theme.fonts.length) return Promise.resolve()
             const promises = theme.fonts.map(a =>
-                safeCopy(a, path.join(fontsPath, path.basename(a)))
+                safeCopy(a, path.join(fontsPath, path.basename(a))),
             )
             return Promise.all(promises)
         })
@@ -124,14 +124,15 @@ const copyThemeAssets = theme => {
             const promises = theme.images.map(a =>
                 safeCopy(
                     path.join(themePath, 'images', a),
-                    path.join(imagesPath, a)
-                )
+                    path.join(imagesPath, a),
+                ),
             )
             return Promise.all(promises)
         })
         .catch(log.error)
 }
 
+// TODO: yaml
 const updateConfig = name => {
     const configPath = path.join(process.cwd(), 'config.yml')
     const config = YamlAdaptor.load(configPath)

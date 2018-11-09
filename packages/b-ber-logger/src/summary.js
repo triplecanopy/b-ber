@@ -87,7 +87,7 @@ export function printSummary({
 
     write([['metadata     ', 'green']], this)
 
-    writeMetadata(state.metadata, this)
+    writeMetadata(state.metadata.json(), this)
 
     write([['navigation   ', 'green']], this)
 

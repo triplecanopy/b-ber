@@ -7,84 +7,53 @@ import mime from 'mime-types'
 import yargs from 'yargs'
 import themes from '@canopycanopycanopy/b-ber-themes'
 import log from '@canopycanopycanopy/b-ber-logger'
-import YamlAdaptor from './YamlAdaptor'
+import Yaml from './Yaml'
+import Config from './Config'
 import Spine from './Spine'
 
 const cwd = process.cwd()
 
 class ApplicationLoader {
+    metadata = []
+    theme = {}
+    video = []
+    audio = []
+    buildTypes = {
+        sample: {},
+        epub: {},
+        mobi: {},
+        pdf: {},
+        web: {},
+        reader: {},
+    }
+
     constructor() {
         const scriptPath = path.resolve(__dirname, 'package.json')
-
         this.npmPackage = JSON.parse(fs.readFileSync(scriptPath), 'utf8')
-
-        this.initialConfig = {
-            env: process.env.NODE_ENV || 'development',
-            src: '_project',
-            dist: 'project',
-            ibooks_specified_fonts: false,
-            theme: 'serif',
-            themes_directory: './themes',
-            base_url: '/',
-            remote_url: 'http://localhost:4000/',
-            reader_url: 'http://localhost:4000/project-reader',
-            builds: ['epub', 'mobi', 'pdf'],
-            ui_options: {
-                navigation: {
-                    header_icons: {
-                        info: true,
-                        home: true,
-                        downloads: true,
-                        toc: true,
-                    },
-                    footer_icons: {
-                        chapter: true,
-                        page: true,
-                    },
-                },
-            },
-            private: false,
-            ignore: [],
-            autoprefixer_options: {
-                browsers: ['last 2 versions', '> 2%'],
-                flexbox: 'no-2009',
-            },
-        }
-
-        this.config = { ...this.initialConfig }
-
         this.version = this.npmPackage.version
-        this.metadata = []
-        this.theme = {}
-        this.video = []
-        this.audio = []
-        this.buildTypes = {
-            sample: {},
-            epub: {},
-            mobi: {},
-            pdf: {},
-            web: {},
-            reader: {},
-        }
+        this.config = new Config()
     }
 
     _resetConfig() {
-        this.config = { ...this.initialConfig }
+        this.config = new Config()
     }
 
     _config() {
         if (!fs.existsSync(path.join(cwd, 'config.yml'))) return
-        const userConfig = YamlAdaptor.load(path.join(cwd, 'config.yml'))
+        const config = new Yaml('config')
+        config.load(path.join(cwd, 'config.yml'))
 
-        // updates initialConfig with data from config.yml
-        this.initialConfig = { ...this.config, ...userConfig }
-        this.config = { ...this.initialConfig }
+        // not necessary right now to pass around a YAWN instance since we'er
+        // not writing back to config.yml, but may be necessary at some point
+        this.config = new Config(config.json())
     }
 
     _metadata() {
         const fpath = path.join(cwd, this.config.src, 'metadata.yml')
         if (!fs.existsSync(fpath)) return
-        this.metadata = [...this.metadata, ...YamlAdaptor.load(fpath)]
+
+        this.metadata = new Yaml('metadata')
+        this.metadata.load(fpath)
     }
 
     _theme() {
