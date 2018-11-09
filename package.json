@@ -21,7 +21,8 @@
     },
     "husky": {
         "hooks": {
-            "pre-commit": "yarn lint && yarn pretty && yarn jest"
+            "pre-commit": "yarn pretty",
+            "pre-push": "yarn lint && yarn pretty && yarn jest"
         }
     },
     "devDependencies": {
