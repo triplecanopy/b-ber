@@ -1,7 +1,7 @@
 module.exports = {
     name: 'b-ber',
     setupTestFrameworkScriptFile: 'jest-extended',
-    collectCoverage: true,
+    collectCoverage: false,
     collectCoverageFrom: [
         '**/*.{js,jsx}',
         '!**/node_modules/**',

@@ -16,7 +16,6 @@
         "flush.rebuild": "lerna exec yarn && lerna bootstrap",
         "flush": "yarn flush.lock && yarn flush.modules && yarn flush.rebuild",
         "test": "rimraf ./coverage && yarn lint && yarn jest",
-        "bump.canary": "replace '0.1.0-alpha.c43f205d' $(git rev-parse --short HEAD 2> /dev/null | sed \"s/\\(.*\\)/0.1.0-alpha.\\1/\") ./lerna.json $(ls packages | xargs -I {} echo ./packages/{}/package.json) ./packages/b-ber-themes/b-ber-theme-serif/package.json ./packages/b-ber-themes/b-ber-theme-sans/package.json",
         "build": "yarn test && lerna run build"
     },
     "husky": {
