@@ -20,40 +20,38 @@ module.exports = {
         extensions: ['.js', '.jsx'],
     },
     module: {
-        rules: [{
-            test: /\.jsx?$/,
-            exclude: /(node_modules|public|dist|test)/,
-            loader: 'babel-loader',
-        },
+        rules: [
+            {
+                test: /\.jsx?$/,
+                exclude: /(node_modules|public|dist|test)/,
+                loader: 'babel-loader',
+            },
 
-        {
-            test: /\.scss$/,
-            exclude: /(node_modules|public|dist|test)/,
-            use: ExtractTextPlugin.extract({
-                fallback: 'style-loader',
-                use: [
-                    {loader: 'css-loader'},
-                    {loader: 'postcss-loader',
-                        options: {
-                            ident: 'postcss',
-                            plugins: [
-                                require('autoprefixer')(),
-                                require('cssnano')(),
-                            ],
+            {
+                test: /\.scss$/,
+                exclude: /(node_modules|public|dist|test)/,
+                use: ExtractTextPlugin.extract({
+                    fallback: 'style-loader',
+                    use: [
+                        { loader: 'css-loader' },
+                        {
+                            loader: 'postcss-loader',
+                            options: {
+                                ident: 'postcss',
+                                plugins: [
+                                    require('autoprefixer')(),
+                                    require('cssnano')(),
+                                ],
+                            },
                         },
-                    },
-                    {loader: 'sass-loader'},
-                ],
-            }),
+                        { loader: 'sass-loader' },
+                    ],
+                }),
+            },
 
-        },
-
-
-        ...loaders,
-
+            ...loaders,
         ],
     },
-
 
     plugins: [
         new webpack.DefinePlugin({
@@ -80,6 +78,5 @@ module.exports = {
                 js: ['bundle.js'],
             },
         }),
-
     ],
 }

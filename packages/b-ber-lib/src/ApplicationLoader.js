@@ -89,7 +89,7 @@ class ApplicationLoader {
 
     _theme() {
         const themeError = new Error(
-            `There was an error loading theme [${this.theme}]`
+            `There was an error loading theme [${this.theme}]`,
         )
 
         if ({}.hasOwnProperty.call(themes, this.config.theme)) {
@@ -99,7 +99,7 @@ class ApplicationLoader {
                 if (!yargs.argv._[0] || yargs.argv._[0] !== 'theme') {
                     // user is trying to run a command without defining a theme, so bail
                     log.error(
-                        "There was an error loading the theme, make sure you've added a [themes_directory] to the [config.yml] if you're using a custom theme."
+                        "There was an error loading the theme, make sure you've added a [themes_directory] to the [config.yml] if you're using a custom theme.",
                     )
                 } else {
                     // user is trying to run a `theme` command, either to set
@@ -115,7 +115,7 @@ class ApplicationLoader {
             try {
                 const userThemesPath = path.resolve(
                     cwd,
-                    this.config.themes_directory
+                    this.config.themes_directory,
                 )
                 const userThemes = fs
                     .readdirSync(userThemesPath)
@@ -127,15 +127,13 @@ class ApplicationLoader {
                         ) {
                             return acc
                         }
-                        const userModule = fs.existsSync(
-                            path.resolve(userThemesPath, curr, 'package.json')
+                        const themePath = fs.existsSync(
+                            path.resolve(userThemesPath, curr, 'package.json'),
                         )
-                            ? require(path.resolve(userThemesPath, curr))
-                            : require(path.resolve(
-                                userThemesPath,
-                                curr,
-                                'index.js'
-                            ))
+                            ? path.resolve(userThemesPath, curr)
+                            : path.resolve(userThemesPath, curr, 'index.js')
+
+                        const userModule = require(themePath)
                         return acc.concat(userModule)
                     }, [])
 
@@ -188,7 +186,7 @@ class ApplicationLoader {
         try {
             if (!fs.existsSync(projectDir)) {
                 throw new Error(
-                    `Project directory [${projectDir}] does not exist`
+                    `Project directory [${projectDir}] does not exist`,
                 )
             }
         } catch (err) {

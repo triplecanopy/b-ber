@@ -4,7 +4,7 @@ const loaders = require('./webpack.loaders')
 
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
-const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer')
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 
 module.exports = {
     target: 'web',
@@ -20,27 +20,23 @@ module.exports = {
         extensions: ['.js', '.jsx'],
     },
     module: {
-        rules: [{
-            test: /\.jsx?$/,
-            exclude: /(node_modules|public|dist|test)/,
-            loader: 'babel-loader',
-        },
+        rules: [
+            {
+                test: /\.jsx?$/,
+                exclude: /(node_modules|public|dist|test)/,
+                loader: 'babel-loader',
+            },
 
-        {
-            test: /\.scss$/,
-            exclude: /(node_modules|public|dist|test)/,
-            use: ExtractTextPlugin.extract({
-                fallback: 'style-loader',
-                use: [
-                    {loader: 'css-loader'},
-                    {loader: 'sass-loader'},
-                ],
-            }),
+            {
+                test: /\.scss$/,
+                exclude: /(node_modules|public|dist|test)/,
+                use: ExtractTextPlugin.extract({
+                    fallback: 'style-loader',
+                    use: [{ loader: 'css-loader' }, { loader: 'sass-loader' }],
+                }),
+            },
 
-        },
-
-        ...loaders,
-
+            ...loaders,
         ],
     },
 
@@ -55,7 +51,6 @@ module.exports = {
                 NODE_ENV: JSON.stringify('development'),
             },
         }),
-
 
         new webpack.NoEmitOnErrorsPlugin(),
 

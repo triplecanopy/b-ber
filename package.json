@@ -15,12 +15,13 @@
         "flush.modules": "ls ./packages | xargs -I {} rimraf ./packages/{}/node_modules",
         "flush.rebuild": "lerna exec yarn && lerna bootstrap",
         "flush": "yarn flush.lock && yarn flush.modules && yarn flush.rebuild",
-        "test": "rimraf ./coverage && yarn lint && yarn jest",
+        "test": "rimraf ./coverage && yarn lint && yarn pretty && yarn jest --collectCoverage=true",
+        "pretty": "node scripts/pretty",
         "build": "yarn test && lerna run build"
     },
     "husky": {
         "hooks": {
-            "pre-commit": "yarn lint && yarn jest"
+            "pre-commit": "yarn lint && yarn pretty && yarn jest"
         }
     },
     "devDependencies": {
@@ -57,12 +58,10 @@
         "lerna": "^2.1.2",
         "minami": "^1.2.3",
         "mocha": "^3.2.0",
+        "prettier": "^1.15.1",
         "rimraf": "^2.6.2",
         "sinon": "^3.2.1",
         "sinon-chai": "^2.13.0"
     },
-    "dependencies": {
-        "prettier": "^1.14.3",
-        "replace": "^1.0.0"
-    }
+    "dependencies": {}
 }
