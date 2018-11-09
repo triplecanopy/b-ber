@@ -11,7 +11,9 @@ app.use(express.static('public'))
 app.use('/epub', express.static(path.join(__dirname, 'epub')))
 app.use('/api', api)
 
-app.get('*', (_, res) => res.sendFile(path.join(__dirname, 'public/index.html')))
+app.get('*', (_, res) =>
+    res.sendFile(path.join(__dirname, 'public', 'index.html')),
+)
 
 app.listen(PORT)
 

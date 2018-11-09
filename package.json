@@ -5,8 +5,8 @@
     "license": "GPL-3.0-or-later",
     "engines": {
         "node": ">= 4.x <= 9.x",
-        "npm": ">= 2.x <= 5.x",
-        "yarn": ">=0.27.5 || >= 1.6.0"
+        "npm": ">= 2.x <= 6.x",
+        "yarn": ">=0.27.5 || <= 1.12.x"
     },
     "scripts": {
         "watch": "lerna run --parallel watch",
@@ -15,9 +15,15 @@
         "flush.modules": "ls ./packages | xargs -I {} rimraf ./packages/{}/node_modules",
         "flush.rebuild": "lerna exec yarn && lerna bootstrap",
         "flush": "yarn flush.lock && yarn flush.modules && yarn flush.rebuild",
-        "test": "rimraf ./coverage && yarn lint && yarn jest",
-        "bump.canary": "replace '0.1.0-alpha.c43f205d' $(git rev-parse --short HEAD 2> /dev/null | sed \"s/\\(.*\\)/0.1.0-alpha.\\1/\") ./lerna.json $(ls packages | xargs -I {} echo ./packages/{}/package.json) ./packages/b-ber-themes/b-ber-theme-serif/package.json ./packages/b-ber-themes/b-ber-theme-sans/package.json",
+        "test": "rimraf ./coverage && yarn lint && yarn pretty && yarn jest --collectCoverage=true",
+        "pretty": "node scripts/pretty",
         "build": "yarn test && lerna run build"
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "yarn pretty",
+            "pre-push": "yarn lint && yarn pretty && yarn jest"
+        }
     },
     "devDependencies": {
         "ajv": "^6.4.0",
@@ -40,6 +46,7 @@
         "eslint-plugin-jsx-a11y": "^5.1.1",
         "eslint-plugin-react": "^7.3.0",
         "fs-extra": "^6.0.1",
+        "husky": "^1.1.3",
         "istanbul": "^0.4.5",
         "istanbul-api": "1.2.2",
         "istanbul-reports": "1.1.4",
@@ -52,12 +59,10 @@
         "lerna": "^2.1.2",
         "minami": "^1.2.3",
         "mocha": "^3.2.0",
+        "prettier": "^1.15.1",
         "rimraf": "^2.6.2",
         "sinon": "^3.2.1",
         "sinon-chai": "^2.13.0"
     },
-    "dependencies": {
-        "prettier": "^1.14.3",
-        "replace": "^1.0.0"
-    }
+    "dependencies": {}
 }

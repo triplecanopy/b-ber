@@ -1,7 +1,7 @@
 module.exports = {
     name: 'b-ber',
     setupTestFrameworkScriptFile: 'jest-extended',
-    collectCoverage: true,
+    collectCoverage: false,
     collectCoverageFrom: [
         '**/*.{js,jsx}',
         '!**/node_modules/**',
@@ -35,5 +35,5 @@ module.exports = {
     ],
     coverageReporters: ['html', 'lcov', 'json'],
     testEnvironment: 'jest-environment-jsdom-global',
+    testURL: 'http://localhost/',
 }
-
