@@ -14,7 +14,7 @@
 @import '../b-ber-theme-serif/debug';
 
 // Load syntax highlighting
-@import 'node_modules/highlight.js/styles/tomorrow.css';
+@import 'css:node_modules/highlight.js/styles/tomorrow';
 
 // for validation while building on CLI, not an actual setting
 $build: 'epub' !default;
