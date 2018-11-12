@@ -54,39 +54,119 @@ class Project {
         return {
             relativePath: Project.relativePath(src, 'metadata.yml'),
             absolutePath: Project.absolutePath(src, 'metadata.yml'),
-            content: `-
-    term: title
-    value: Sample Project
-    term_property: title-type
-    term_property_value: main
--
-    term: creator
-    value: Author Name
-    term_property: role
-    term_property_value: aut
--
-    term: contributor
-    value: bber
-    term_property: role
-    term_property_value: ctb
--
-    term: language
-    value: en-US
--
-    term: rights
-    value: Author Name © 2017
--
-    term: format
-    value: epub+zip
--
-    term: date
-    value: 2017-01-01
--
-    term: publisher
-    value: Triple Canopy
--
-    term: identifier
-    value: ${crypto.randomBytes(20).toString('hex')}
+            content: `# ==============================================================================
+# Project Metadata
+# Please see http://dublincore.org/documents/dcmi-terms/ for information on terms
+# and ususage. TK Please note that additional metadata can be entered and parsed
+# if following the outline below.
+# ------------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------------
+# Title and Description
+# ------------------------------------------------------------------------------
+- term: title
+  value: Project Title
+  term_property: title-type
+  term_property_value: main
+
+- term: description
+  value: Project description.
+
+- term: abstract
+  value: Abstract.
+
+# ------------------------------------------------------------------------------
+# Contributors
+# ------------------------------------------------------------------------------
+
+- term: creator
+  value: Last Name, First Name
+  term_property: role
+  term_property_value: aut
+
+- term: contributor
+  value: b-ber
+  term_property: role
+  term_property_value: mrk
+
+# ------------------------------------------------------------------------------
+# Collaborators (editors, developers, designers, researchers, etc.)
+# ------------------------------------------------------------------------------
+
+- term: contributor
+  value: Last Name, First Name
+  term_property: role
+  term_property_value: edt
+
+- term: contributor
+  value: Last Name, First Name
+  term_property: role
+  term_property_value: drt
+
+- term: contributor
+  value: Last Name, First Name
+  term_property: role
+  term_property_value: ard
+- term: contributor
+  value: Last Name, First Name
+  term_property: role
+  term_property_value: pmn
+- term: contributor
+  value: Last Name, First Name
+  term_property: role
+  term_property_value: pmn
+- term: contributor
+  value: Last Name, First Name
+  term_property: role
+  term_property_value: prg
+- term: contributor
+  value: Last Name, First Name
+  term_property: role
+  term_property_value: dsr
+- term: contributor
+  value: Last Name, First Name
+  term_property: role
+  term_property_value: mrk
+- term: contributor
+  value: Last Name, First Name
+  term_property: role
+  term_property_value: rtm
+
+# ------------------------------------------------------------------------------
+# Publication Information
+# ------------------------------------------------------------------------------
+
+- term: language
+  value: en-US
+- term: rights
+  value: © 2018
+- term: format
+  value: epub+zip
+- term: date
+  value: 2018-01-01
+- term: publisher
+  value: Publisher
+- term: identifier
+  value: 123456789-
+- term: tableOfContents
+  value: 'Chapter One; Chapter Two; etc.'
+
+# ------------------------------------------------------------------------------
+# Additional Metadata
+# ------------------------------------------------------------------------------
+
+- term: temporal
+  value: time
+- term: spatial
+  value: Project Title Location
+- term: subject
+  value: Project Title Subject
+
+# ------------------------------------------------------------------------------
+# Cover
+# ------------------------------------------------------------------------------
+- term: identifier
+  value: ${crypto.randomBytes(20).toString('hex')}
 `,
         }
     }
@@ -96,12 +176,12 @@ class Project {
                 relativePath: Project.relativePath(
                     src,
                     '_javascripts',
-                    'application.js'
+                    'application.js',
                 ),
                 absolutePath: Project.absolutePath(
                     src,
                     '_javascripts',
-                    'application.js'
+                    'application.js',
                 ),
                 content: `// All user defined functions should be wrapped in a 'domReady' call - or by using a third-party lib like jQuery - for compatibility in reader, web, and e-reader versions.
 // Use the global \`window.bber.env\` variable to limit scripts to particular envionments. See example below
@@ -216,12 +296,12 @@ domReady(main);
                 relativePath: Project.relativePath(
                     src,
                     '_markdown',
-                    'project-name-title-page.md'
+                    'project-name-title-page.md',
                 ),
                 absolutePath: Project.absolutePath(
                     src,
                     '_markdown',
-                    'project-name-title-page.md'
+                    'project-name-title-page.md',
                 ),
                 content: `---
 title: Project Name Title Page
@@ -239,12 +319,12 @@ type: titlepage
                 relativePath: Project.relativePath(
                     src,
                     '_markdown',
-                    'project-name-chapter-01.md'
+                    'project-name-chapter-01.md',
                 ),
                 absolutePath: Project.absolutePath(
                     src,
                     '_markdown',
-                    'project-name-chapter-01.md'
+                    'project-name-chapter-01.md',
                 ),
                 content: `---
 title: Project Name Chapter One
@@ -264,12 +344,12 @@ Chapter Contents
                 relativePath: Project.relativePath(
                     src,
                     '_markdown',
-                    'project-name-colophon.md'
+                    'project-name-colophon.md',
                 ),
                 absolutePath: Project.absolutePath(
                     src,
                     '_markdown',
-                    'project-name-colophon.md'
+                    'project-name-colophon.md',
                 ),
                 content: `---
 title: Project Name Colophon
