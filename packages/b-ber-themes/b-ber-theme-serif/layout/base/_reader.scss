@@ -3,7 +3,7 @@
   section.gallery {
     .figure__items {
       display: grid;
-      grid-template-columns: repeat(3, 1fr [column]);
+      grid-template-columns: repeat($grid-columns, 1fr [column]);
       grid-template-rows:repeat(1, 1fr [row]);
       grid-gap: 40px;
       height: 100%;
