@@ -14,9 +14,6 @@ class Video extends Media {
         paddingRight: PropTypes.number,
         transitionSpeed: PropTypes.number,
     }
-    constructor(props) {
-        super(props)
-    }
     render() {
         return (
             <video // eslint-disable-line jsx-a11y/media-has-caption

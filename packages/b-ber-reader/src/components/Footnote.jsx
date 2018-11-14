@@ -29,13 +29,11 @@ const processFootnoteResponseElement = elem => {
         if (child.nodeName === 'A') {
             if (!child.href || Url.isRelativeURL(child.href)) {
                 child.parentNode.removeChild(child)
-            }
-            else {
+            } else {
                 const { origin } = new window.URL(child.href)
                 if (new RegExp(window.location.origin).test(origin)) {
                     child.parentNode.removeChild(child) // remove internal links
-                }
-                else {
+                } else {
                     child.setAttribute('target', '_blank') // ensure external links open in new page
                 }
             }
@@ -70,8 +68,7 @@ class Footnote extends Component {
             nextContext.overlayElementId !== this.overlayElementId
         ) {
             this.setState({ footnoteVisible: false })
-        }
-        else if (
+        } else if (
             !footnoteVisible &&
             nextContext.overlayElementId === this.overlayElementId
         ) {

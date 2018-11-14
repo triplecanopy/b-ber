@@ -79,7 +79,7 @@ class Layout extends Component {
         this.handleResize = debounce(
             this.onResizeDone,
             this.debounceSpeed,
-            {}
+            {},
         ).bind(this)
     }
 
@@ -239,8 +239,7 @@ class Layout extends Component {
                 [position]: `${positionX}px`,
                 transition: `${position} ${transitionSpeed}ms ease 0s`,
             }
-        }
-        else {
+        } else {
             positionX *= -1
             const transform = `translateX(${positionX}px)`
             styles = {

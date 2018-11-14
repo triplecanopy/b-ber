@@ -70,7 +70,9 @@ class SidebarSettings extends Component {
                                         fontSize < fontSizeMin ||
                                         fontSize > fontSizeMax ||
                                         fontSize % 10 !== 0
-                                    ) { return }
+                                    ) {
+                                        return
+                                    }
 
                                     this.setState({ fontSize })
                                     this.props.updateViewerSettings({

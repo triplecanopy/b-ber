@@ -24,6 +24,7 @@
     ],
     "comma-dangle": [2, "always-multiline"],
     "consistent-return": 0,
+    "function-paren-newline": 0,
     "import/extensions": [2, "never"],
     "import/no-extraneous-dependencies": 0,
     "import/no-unresolved": 0,
@@ -35,6 +36,13 @@
       }
     ],
     "jsx-a11y/href-no-hash": 0,
+    "jsx-a11y/label-has-for": [2, {
+      "allowChildren": false,
+      "required": {
+        "some": ["nesting", "id"]
+      }
+    }],
+    "jsx-quotes": 0,
     "max-len": 0,
     "max-statements-per-line": [2, {
         "max": 2
@@ -67,9 +75,18 @@
     "one-var-declaration-per-line": [2, "initializations"],
     "operator-linebreak": 0,
     "padded-blocks": 0,
-    "quotes": 0,
-    "react/require-extension":"off",
-    "semi": [2,"never"],
+    "quotes": [2, "single", { "avoidEscape": true }],
+    "react/jsx-boolean-value": 0,
+    "react/no-array-index-key": 0,
+    "react/no-danger": 0,
+    "react/no-unused-state": 0,
+    "react/prop-types": 0,
+    "react/prefer-stateless-function": 0,
+    "react/require-extension": "off",
+    "react/jsx-indent": 0,
+    "react/jsx-indent-props": [2, 4],
+
+    "semi": [2, "never"],
     "space-before-function-paren": [2, {
         "anonymous":"always",
         "named":"never"
@@ -81,5 +98,9 @@
         "requireReturnDescription": false
       }
     ]
+  },
+  "globals": {
+    "document": true,
+    "window": true
   }
 }

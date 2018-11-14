@@ -52,7 +52,7 @@ class App extends Component {
 
         Request.getManifest()
             .then(({ data }) =>
-                this.setState({ books: [...this.state.books, ...data] })
+                this.setState({ books: [...this.state.books, ...data] }),
             )
             .then(() => this.goToBookURL(history.location))
     }

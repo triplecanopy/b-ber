@@ -59,7 +59,7 @@ const registerObserver = build =>
                 clearTimeout(timer)
                 files.push(file)
                 timer = setTimeout(() => {
-                    log.info(`Restarting server due to changes`)
+                    log.info('Restarting server due to changes')
                     log.info(`${files.join('\n')}`)
 
                     files = []

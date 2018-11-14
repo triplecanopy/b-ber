@@ -122,7 +122,7 @@ function moveAssetsToRootDirctory() {
                 const frm = path.join(OPS_PATH, f)
                 const to = path.join(DIST_PATH, f)
 
-                log.info(`Moving [%s]`, f)
+                log.info('Moving [%s]', f)
                 promises.push(fs.move(frm, to))
             })
 
@@ -137,7 +137,7 @@ function unlinkRedundantAssets() {
     const promises = []
     return new Promise(resolve => {
         ASSETS_TO_UNLINK.forEach(f => {
-            log.info(`Removing [%s]`, path.basename(f))
+            log.info('Removing [%s]', path.basename(f))
             promises.push(fs.remove(f))
         })
 

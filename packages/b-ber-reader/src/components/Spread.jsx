@@ -211,8 +211,7 @@ class Spread extends Component {
             if (JSON.parse(this.markerNode.dataset.unbound) === true) {
                 position = paddingLeft / 2 + columnGap / 2 - 4 // TODO: proper calc
             }
-        }
-        else {
+        } else {
             position = paddingLeft * -1
         }
 
@@ -268,7 +267,7 @@ class Spread extends Component {
                 .spread-index__${spreadPosition + 1} #spread__${markerRefId} > .spread__content,
                 .spread-index__${spreadPosition + 2} #spread__${markerRefId} > figure,
                 .spread-index__${spreadPosition + 2} #spread__${markerRefId} > .spread__content { transform: translateX(${paddingLeft * -2}px); }
-            `,
+            ` // eslint-disable-line comma-dangle
         }
     }
 

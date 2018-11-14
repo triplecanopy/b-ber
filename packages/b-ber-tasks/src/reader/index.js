@@ -46,7 +46,7 @@ class Reader {
                 /^http/.test(state.config.remote_url) === false)
         ) {
             throw new Error(
-                `Task [build/reader] requires a remote_url to be set in config.yml`,
+                'Task [build/reader] requires a remote_url to be set in config.yml',
             )
         }
         return state.config.remote_url || 'http://localhost:4000/'

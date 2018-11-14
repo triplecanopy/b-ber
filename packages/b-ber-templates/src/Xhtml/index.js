@@ -55,7 +55,7 @@ class Xhtml {
             : `<script type="${type}" src="{% body %}"></script>`
     }
     static stylesheet() {
-        return `<link rel="stylesheet" type="text/css" href="{% body %}"/>`
+        return '<link rel="stylesheet" type="text/css" href="{% body %}"/>'
     }
 
     static loi() {

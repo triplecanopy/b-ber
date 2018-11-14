@@ -146,7 +146,7 @@ class State extends ApplicationLoader {
      */
     merge(prop, val) {
         if (!isPlainObject(this[prop]) || !isPlainObject(val)) {
-            throw new Error(`Attempting to merge non-object in [State#merge]`)
+            throw new Error('Attempting to merge non-object in [State#merge]')
         }
         this[prop] = { ...this[prop], ...val }
     }
