@@ -49,10 +49,7 @@ class DocumentPreProcessor {
     static appendScripts() {
         state.scripts.forEach(
             a =>
-                a.src &&
-                /(?:text|application)\/(?:x-java|java|ecma)script/.test(
-                    a.type,
-                ) &&
+                /(?:text|application)\/(?:(x-)?java|ecma)script/.test(a.type) &&
                 a.appendScript(state.root),
         )
     }
@@ -83,7 +80,7 @@ class DocumentPreProcessor {
     static getStyleSheetByMediaOrId({ id, media }) {
         if (!id && !media) {
             return console.warn(
-                'DocumentPreProcessor#updateStyleSheet requires either and \'id\' or a \'media\' parameter',
+                "DocumentPreProcessor#updateStyleSheet requires either and 'id' or a 'media' parameter",
             )
         }
 
@@ -91,12 +88,11 @@ class DocumentPreProcessor {
 
         if (id) {
             styleSheetId = id
-        }
-        else if (media) {
+        } else if (media) {
             const _styleSheet = find(this.styleSheets, { media })
             if (!_styleSheet) {
                 return console.warn(
-                    'No styleSheet exists for provided \'id\' or \'media\'',
+                    "No styleSheet exists for provided 'id' or 'media'",
                     id,
                     media,
                 )
@@ -109,7 +105,7 @@ class DocumentPreProcessor {
 
         if (!styleSheetElement) {
             return console.warn(
-                'No styleSheet exists for provided \'id\' or \'media\'',
+                "No styleSheet exists for provided 'id' or 'media'",
                 id,
                 media,
             )
