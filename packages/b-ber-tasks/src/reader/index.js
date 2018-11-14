@@ -46,13 +46,15 @@ class Reader {
                 /^http/.test(state.config.remote_url) === false)
         ) {
             throw new Error(
-                `Task [build/reader] requires a remote_url to be set in config.yml`,
+                'Task [build/reader] requires a remote_url to be set in config.yml',
             )
         }
         return state.config.remote_url || 'http://localhost:4000/'
     }
     createDirname(s) {
-        if (!s || typeof s !== 'string') { return crypto.randomBytes(20).toString('hex') }
+        if (!s || typeof s !== 'string') {
+            return crypto.randomBytes(20).toString('hex')
+        }
         return s.replace(/[^0-9a-zA-Z-]/g, '-')
     }
     ensureReaderModuleExists() {
@@ -93,17 +95,19 @@ class Reader {
         } catch (err) {
             log.error(`
                 A symlinked version of ${
-    this.readerModuleName
-} was found but is inaccessible.
+                    this.readerModuleName
+                } was found but is inaccessible.
                 Try running npm i -S ${
-    this.readerModuleName
-}, or rebuilding the reader package if running this command in a development environment
+                    this.readerModuleName
+                }, or rebuilding the reader package if running this command in a development environment
             `)
             process.exit(1)
         }
     }
     createOutputDirs() {
-        return fs.ensureDir(this.outputDir).then(() => fs.ensureDir(this.apiDir))
+        return fs
+            .ensureDir(this.outputDir)
+            .then(() => fs.ensureDir(this.apiDir))
     }
     copyEpubToOutputDir() {
         const epubDir = this.createDirname(this.getBookMetadata('identifier'))

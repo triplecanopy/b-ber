@@ -272,7 +272,7 @@ sup { top:      one-em(-8) * -1.25; }
 sub { bottom:   one-em(-8) * -1;    }
 
 small {
-    @include type-settings(-4);
+    @include type-settings(-3);
 }
 
 pre {

@@ -22,7 +22,7 @@ class Html {
             case 'after':
                 return ` style="page-break-${pagebreak}:always;"`
             case 'both':
-                return ` style="page-break-before:always; page-break-after:always;"`
+                return ' style="page-break-before:always; page-break-after:always;"'
             default:
                 return ''
         }

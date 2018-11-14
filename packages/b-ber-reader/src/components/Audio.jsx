@@ -13,9 +13,7 @@ class Audio extends Media {
         paddingLeft: PropTypes.number,
         paddingRight: PropTypes.number,
     }
-    constructor(props) {
-        super(props)
-    }
+
     render() {
         return (
             <audio // eslint-disable-line jsx-a11y/media-has-caption

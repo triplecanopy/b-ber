@@ -110,7 +110,7 @@ class DocumentProcessor {
         for (let i = children.length - 1; i >= 0; i--) {
             // start at bottom
             node = children[i]
-            if (!this.shouldParse(node)) continue
+            if (!this.shouldParse(node)) continue // eslint-disable-line no-continue
 
             if (this.hasChildren(node)) {
                 return this.getLastChild(node.children)
@@ -192,8 +192,7 @@ class DocumentProcessor {
                         // inject into tree
                         sibling.appendChild(this.createMarker(markerId))
                         node.setAttribute('data-marker-reference', markerId)
-                    }
-                    else {
+                    } else {
                         console.warn(
                             'No siblings or children could be found for',
                             node.nodeName,

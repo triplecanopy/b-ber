@@ -159,6 +159,33 @@ const renderCSS = scssString =>
                 outputStyle:
                     state.env === 'production' ? 'compressed' : 'nested',
                 errLogToConsole: true,
+                importer: (url, prev, done) => {
+                    if (/^css:/.test(url)) {
+                        const url_ = url.slice(4)
+
+                        let cssPath
+
+                        cssPath = path.join(
+                            path.dirname(state.theme.entry),
+                            `${url_}.css`,
+                        )
+
+                        if (!fs.existsSync(cssPath)) {
+                            cssPath = path.join(
+                                path.dirname(path.dirname(state.theme.entry)),
+                                `${url_}.css`,
+                            )
+                        }
+
+                        if (!fs.existsSync(cssPath)) {
+                            log.error('Could not find @imported css', cssPath)
+                        }
+
+                        const contents = fs.readFileSync(cssPath, 'utf8')
+                        return done({ contents })
+                    }
+                    return done()
+                },
             },
             (err, result) => {
                 if (err) throw err

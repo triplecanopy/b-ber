@@ -17,14 +17,14 @@ function ensureAwsCli() {
         try {
             execSync('aws --version > /dev/null 2>&1', { cwd })
         } catch (err) {
-            console.log(``)
+            console.log('')
             console.log(err.message)
-            console.log(``)
-            console.log(`AWS CLI must be installed to run deploy`)
+            console.log('')
+            console.log('AWS CLI must be installed to run deploy')
             console.log(
-                `See installation instructions here: https://docs.aws.amazon.com/cli/latest/userguide/installing.html`,
+                'See installation instructions here: https://docs.aws.amazon.com/cli/latest/userguide/installing.html',
             )
-            console.log(``)
+            console.log('')
             process.exit(1)
         }
 
@@ -53,15 +53,15 @@ function deploy({ bucketURL, awsRegion }) {
         proc.stderr.on('data', data => console.log(String(data)))
 
         proc.on('error', err => {
-            console.log(``)
-            console.log(`ERROR: aws encountered an error`)
+            console.log('')
+            console.log('ERROR: aws encountered an error')
             console.log(err.message)
             console.log(err.stack)
         })
 
         proc.on('close', code => {
             if (code !== 0) {
-                console.log(``)
+                console.log('')
                 console.log(`ERROR: aws exited with code ${code}`)
             }
 
@@ -84,7 +84,7 @@ function ensureEnvVars() {
             !BBER_BUCKET_REGION
         ) {
             log.error(
-                `[AWS_ACCESS_KEY_ID], [AWS_SECRET_ACCESS_KEY] and [BBER_BUCKET_REGION] must be set to deploy the project`,
+                '[AWS_ACCESS_KEY_ID], [AWS_SECRET_ACCESS_KEY] and [BBER_BUCKET_REGION] must be set to deploy the project',
             )
         }
 
@@ -94,7 +94,7 @@ function ensureEnvVars() {
 
         if (!bucket_url) {
             log.error(
-                `[bucket_url] must be set in config.yml to deploy the project`,
+                '[bucket_url] must be set in config.yml to deploy the project',
             )
         }
 
@@ -113,12 +113,12 @@ function prompt() {
                 )
                 const { bucketURL, awsRegion } = response
 
-                console.log(``)
+                console.log('')
                 console.log('Does the following look OK?')
-                console.log(``)
+                console.log('')
                 console.log(` Bucket URL:    ${bucketURL}`)
                 console.log(` AWS Region:    ${awsRegion}`)
-                console.log(``)
+                console.log('')
 
                 rl.setPrompt(' [yN] ')
                 rl.prompt()
@@ -132,7 +132,7 @@ function prompt() {
                     }
                     rl.close()
                 }).on('close', () => {
-                    console.log(``)
+                    console.log('')
                     process.exit(0)
                 })
             })

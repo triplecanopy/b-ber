@@ -5,7 +5,7 @@ import jsStringEscape from 'js-string-escape'
 import camelCase from 'camel-case'
 import { isNumeric } from './Types'
 
-const quote_ = quote({ quotes: '\'' })
+const quote_ = quote({ quotes: "'" })
 
 class Asset {
     // https://stackoverflow.com/questions/7616461/generate-a-hash-from-string-in-javascript-jquery
@@ -46,8 +46,7 @@ class Asset {
             // TODO: handle other boolen attrs not covered by `convert`
             if (key === 'playsinline') {
                 attrs_.playsInline = val
-            }
-            else {
+            } else {
                 attrs_[convert(key)] = val
             }
         })
@@ -73,8 +72,7 @@ class Asset {
                 )
                 key = camelCase(key)
                 key = key[0].toUpperCase() + key.slice(1)
-            }
-            else {
+            } else {
                 key = camelCase(key)
             }
 

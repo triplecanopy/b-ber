@@ -6,9 +6,6 @@ class Link extends Component {
         spreadIndex: PropTypes.number,
         navigateToChapterByURL: PropTypes.func,
     }
-    constructor(props) {
-        super(props)
-    }
     render() {
         const { href } = this.props
         return (

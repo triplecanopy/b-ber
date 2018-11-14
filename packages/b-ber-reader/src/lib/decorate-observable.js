@@ -66,7 +66,7 @@ export default function observable(target) {
     }
 
     target.prototype.connectResizeObserver = function connectResizeObserver() {
-        if (!this.contentNode) throw new Error('Couldn\'t find this.contentNode')
+        if (!this.contentNode) throw new Error("Couldn't find this.contentNode")
 
         this.__resizeObserver = new ResizeObserver(
             this.calculateNodePositionAfterResize,
@@ -75,7 +75,7 @@ export default function observable(target) {
     }
 
     target.prototype.connectMutationObserver = function connectMutationObserver() {
-        if (!this.contentNode) throw new Error('Couldn\'t find this.contentNode')
+        if (!this.contentNode) throw new Error("Couldn't find this.contentNode")
 
         this.__mutationObserver = new window.MutationObserver(
             this.calculateNodePositionAfterMutation,
@@ -95,17 +95,17 @@ export default function observable(target) {
     }
 
     target.prototype.unobserveResizeObserver = function unobserveResizeObserver() {
-        if (!this.contentNode) throw new Error('Couldn\'t find this.contentNode')
+        if (!this.contentNode) throw new Error("Couldn't find this.contentNode")
         this.__resizeObserver.unobserve(this.contentNode)
     }
 
     target.prototype.unobserveMutationObserver = function unobserveMutationObserver() {
-        if (!this.contentNode) throw new Error('Couldn\'t find this.contentNode')
+        if (!this.contentNode) throw new Error("Couldn't find this.contentNode")
         this.__mutationObserver.disconnect(this.contentNode)
     }
 
     target.prototype.calculateNodePosition = function calculateNodePosition(/*entry*/) {
-        if (!this.contentNode) throw new Error('Couldn\'t find this.contentNode')
+        if (!this.contentNode) throw new Error("Couldn't find this.contentNode")
 
         const { columns, paddingLeft } = this.state
 
@@ -126,8 +126,7 @@ export default function observable(target) {
             columnCount = contentDimensions / spreadWidth
 
             spreadTotal = Math.floor(columnCount)
-        }
-        else {
+        } else {
             contentDimensions = this.contentNode.offsetHeight
             frameHeight = this.getFrameHeight()
 
@@ -151,8 +150,7 @@ export default function observable(target) {
                 this.contentNode.style.display = 'none'
                 this.contentNode.style.display = 'block'
             }, ensureRenderTimeout)
-        }
-        else {
+        } else {
             if (logTime) console.timeEnd('observable#setReaderState')
             this.props.setReaderState({ spreadTotal, ready: true })
         }

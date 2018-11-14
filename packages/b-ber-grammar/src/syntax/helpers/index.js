@@ -27,10 +27,10 @@ const _lookUpFamily = genus =>
     FRONTMATTER_DIRECTIVES.indexOf(genus) > -1
         ? 'frontmatter'
         : BODYMATTER_DIRECTIVES.indexOf(genus) > -1
-            ? 'bodymatter'
-            : BACKMATTER_DIRECTIVES.indexOf(genus) > -1
-                ? 'backmatter'
-                : ''
+        ? 'bodymatter'
+        : BACKMATTER_DIRECTIVES.indexOf(genus) > -1
+        ? 'backmatter'
+        : ''
 
 /**
  * Determine the directive's classification and parent's type
@@ -41,10 +41,10 @@ const _directiveOrder = genus =>
     BLOCK_DIRECTIVES.indexOf(genus) > -1
         ? 'block'
         : INLINE_DIRECTIVES.indexOf(genus) > -1
-            ? 'inline'
-            : MISC_DIRECTIVES.indexOf(genus) > -1
-                ? 'misc'
-                : null
+        ? 'inline'
+        : MISC_DIRECTIVES.indexOf(genus) > -1
+        ? 'misc'
+        : null
 
 const _requiresAltTag = genus =>
     DIRECTIVES_REQUIRING_ALT_TAG.indexOf(genus) > -1
@@ -59,7 +59,7 @@ const _applyTransforms = (k, v) => {
             return ` epub:type="${v}"`
         case 'pagebreak':
             return v === 'both'
-                ? ` style="page-break-before:always; page-break-after:always;"`
+                ? ' style="page-break-before:always; page-break-after:always;"'
                 : ` style="page-break-${v}:always;"`
         case 'attrs':
             return ''

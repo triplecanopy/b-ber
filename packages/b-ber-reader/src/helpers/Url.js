@@ -15,9 +15,11 @@ class Url {
         Object.entries(data).forEach(([key, val]) =>
             result.push(
                 `${encodeURIComponent(key)}=${encodeURIComponent(
-                    val && val.constructor === Array ? JSON.stringify(val) : val
-                )}`
-            )
+                    val && val.constructor === Array
+                        ? JSON.stringify(val)
+                        : val,
+                )}`,
+            ),
         )
         return result.join('&')
     }
@@ -61,9 +63,9 @@ class Url {
     static resolveRelativeURL(url, path) {
         if (!url || !path) {
             console.warn(
-                'Url#resolveRelativeURL: No \'url\' or \'path\' param provided',
+                "Url#resolveRelativeURL: No 'url' or 'path' param provided",
                 url,
-                path
+                path,
             )
             return '/'
         }

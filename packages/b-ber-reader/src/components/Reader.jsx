@@ -93,7 +93,7 @@ class Reader extends Component {
         this.saveViewerSettings = this.saveViewerSettings.bind(this)
         this.registerOverlayElementId = this.registerOverlayElementId.bind(this)
         this.deRegisterOverlayElementId = this.deRegisterOverlayElementId.bind(
-            this
+            this,
         )
         this.showSpinner = this.showSpinner.bind(this)
         this.hideSpinner = this.hideSpinner.bind(this)
@@ -108,12 +108,12 @@ class Reader extends Component {
         this.handleResizeStart = debounce(
             this.handleResizeStart,
             this.debounceResizeSpeed,
-            { leading: true, trailing: false }
+            { leading: true, trailing: false },
         ).bind(this)
         this.handleResizeEnd = debounce(
             this.handleResizeEnd,
             this.debounceResizeSpeed,
-            { leading: false, trailing: true }
+            { leading: false, trailing: true },
         ).bind(this)
     }
 
@@ -153,7 +153,11 @@ class Reader extends Component {
         const { hash, cssHash, search } = this.state
 
         if (nextProps.search !== search) {
-            const { slug, currentSpineItemIndex, spreadIndex } = Url.parseQueryString(nextProps.search)
+            const {
+                slug,
+                currentSpineItemIndex,
+                spreadIndex,
+            } = Url.parseQueryString(nextProps.search)
             const url = Url.parseQueryString(search)
 
             // load the new spine item if the slug has changed
@@ -164,7 +168,12 @@ class Reader extends Component {
 
             // otherwise update the query string
             const spreadIndex_ = Number(spreadIndex)
-            this.setState({ slug, currentSpineItemIndex, spreadIndex: spreadIndex_, search: nextProps.search })
+            this.setState({
+                slug,
+                currentSpineItemIndex,
+                spreadIndex: spreadIndex_,
+                search: nextProps.search,
+            })
         }
 
         if (hash === null) {
@@ -182,7 +191,7 @@ class Reader extends Component {
             if (debug && verboseOutput) {
                 console.log(
                     'Reader#shouldComponentUpdate: requestDeferredCallbackExecution',
-                    `ready: ${ready}`
+                    `ready: ${ready}`,
                 )
             }
             this.requestDeferredCallbackExecution()
@@ -238,7 +247,7 @@ class Reader extends Component {
                 pathname,
                 search,
                 state,
-            })
+            }),
         )
     }
 
@@ -290,7 +299,7 @@ class Reader extends Component {
             { currentSpineItem, currentSpineItemIndex, spreadIndex },
             () => {
                 this.loadSpineItem(currentSpineItem)
-            }
+            },
         )
     }
 
@@ -326,7 +335,7 @@ class Reader extends Component {
                 if (logTime) {
                     console.timeEnd('XMLAdaptor.parseNCX(data, opsURL)')
                     console.time(
-                        'XMLAdaptor.createGuideItems(data),XMLAdaptor.createSpineItems(data)'
+                        'XMLAdaptor.createGuideItems(data),XMLAdaptor.createSpineItems(data)',
                     )
                 }
                 return Promise.all([
@@ -337,10 +346,10 @@ class Reader extends Component {
             .then(([a, b]) => {
                 if (logTime) {
                     console.timeEnd(
-                        'XMLAdaptor.createGuideItems(data),XMLAdaptor.createSpineItems(data)'
+                        'XMLAdaptor.createGuideItems(data),XMLAdaptor.createSpineItems(data)',
                     )
                     console.time(
-                        'XMLAdaptor.udpateGuideItemURLs(data, opsURL),XMLAdaptor.udpateSpineItemURLs(data, opsURL)'
+                        'XMLAdaptor.udpateGuideItemURLs(data, opsURL),XMLAdaptor.udpateSpineItemURLs(data, opsURL)',
                     )
                 }
                 const data = { ...a, ...b }
@@ -352,7 +361,7 @@ class Reader extends Component {
             .then(([a, b]) => {
                 if (logTime) {
                     console.timeEnd(
-                        'XMLAdaptor.udpateGuideItemURLs(data, opsURL),XMLAdaptor.udpateSpineItemURLs(data, opsURL)'
+                        'XMLAdaptor.udpateGuideItemURLs(data, opsURL),XMLAdaptor.udpateSpineItemURLs(data, opsURL)',
                     )
                 }
                 return XMLAdaptor.createBookMetadata({ ...a, ...b })
@@ -402,7 +411,7 @@ class Reader extends Component {
             .then(data => {
                 if (logTime) {
                     console.timeEnd(
-                        'Request.get(requestedSpineItem.absoluteURL)'
+                        'Request.get(requestedSpineItem.absoluteURL)',
                     )
                     console.time('XMLAdaptor.parseSpineItemResponse()')
                 }
@@ -447,8 +456,7 @@ class Reader extends Component {
 
                         if (deferredCallback) {
                             this.registerDeferredCallback(deferredCallback)
-                        }
-                        else {
+                        } else {
                             this.enableEventHandling()
                             this.hideSpinner()
                         }
@@ -460,7 +468,7 @@ class Reader extends Component {
                             }
                             // return this.setState({ready: true}) // TODO: force load
                         }, MAX_RENDER_TIMEOUT)
-                    }
+                    },
                 )
             })
             .catch(err => {
@@ -495,7 +503,7 @@ class Reader extends Component {
                 'spreadIndex: %d; nextIndex: %d; spreadTotal %d',
                 spreadIndex,
                 nextIndex,
-                spreadTotal
+                spreadTotal,
             )
             console.groupEnd()
         }
@@ -510,8 +518,8 @@ class Reader extends Component {
 
         spreadIndex = nextIndex
         this.setState(
-            { spreadIndex, showSidebar: null},
-            this.updateQueryString
+            { spreadIndex, showSidebar: null },
+            this.updateQueryString,
         )
     }
 
@@ -525,7 +533,7 @@ class Reader extends Component {
 
         if (firstPage || lastPage) {
             this.setState({ firstPage, lastPage }, () =>
-                Messenger.sendPaginationEvent(this.state)
+                Messenger.sendPaginationEvent(this.state),
             )
             return
         }
@@ -548,10 +556,8 @@ class Reader extends Component {
 
                 if (logTime) console.timeEnd('Content Visible')
             }
-        }
-
-        // this branch smoothes out page transisitions when moving forward
-        else {
+        } else {
+            // this branch smoothes out page transisitions when moving forward
             deferredCallback = () => {
                 this.scrollToTop()
                 this.enableEventHandling()
@@ -575,7 +581,7 @@ class Reader extends Component {
             () => {
                 this.loadSpineItem(currentSpineItem, deferredCallback)
                 this.savePosition()
-            }
+            },
         )
     }
 
@@ -641,7 +647,7 @@ class Reader extends Component {
             () => {
                 this.loadSpineItem(currentSpineItem, deferredCallback)
                 this.savePosition()
-            }
+            },
         )
     }
 

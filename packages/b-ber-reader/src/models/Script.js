@@ -4,13 +4,14 @@ import { Url } from '../helpers'
 class Script {
     constructor({ node, requestURI }) {
         this.id = node.id || `_${rand()}`
-        this.type = node.type || 'text/javascript'
+        this.type = node.type || 'application/javascript'
         this.src = Script.getScriptSourceFromNodeValue(node)
+        this.inline = typeof this.src === 'undefined'
         this.body =
             node.childNodes && node.childNodes.length
                 ? node.childNodes[0].nodeValue.trim()
                 : ''
-        this.async = true
+        this.async = false
         this.requestURI = requestURI
     }
 
@@ -22,12 +23,14 @@ class Script {
 
     appendScript(doc) {
         const base = Url.trimFilenameFromResponse(this.requestURI)
-        const src = Url.resolveRelativeURL(base, this.src)
+        const src = !this.inline ? Url.resolveRelativeURL(base, this.src) : null
 
         this.elem = doc.createElement('script')
         this.elem.id = this.id
-        this.elem.src = src
-        this.elem.async = this.async
+
+        if (!this.inline) this.elem.src = src
+        if (this.inline) this.elem.innerHTML = this.body
+        if (this.async) this.elem.async = true
 
         doc.body.appendChild(this.elem)
     }

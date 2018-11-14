@@ -59,8 +59,7 @@ class Media extends Component {
         let nodeSpreadIndex
         if (fullScreen) {
             nodeSpreadIndex = (x - translateX) / windowWidth
-        }
-        else {
+        } else {
             // TODO: should account for element offset (margins/padding)
             nodeSpreadIndex = Math.floor(
                 (x - columnGap / 2 - translateX) / windowWidth
@@ -82,8 +81,7 @@ class Media extends Component {
 
         if (spreadIndex === index && paused && canPlay) {
             this.play()
-        }
-        else if (spreadIndex !== index && !paused) {
+        } else if (spreadIndex !== index && !paused) {
             this.pause()
         }
     }

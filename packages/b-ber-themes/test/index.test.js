@@ -13,7 +13,7 @@ describe('b-ber-themes', () => {
         Object.keys(actualModule).forEach(a => {
             expect(() => {
                 const b = require.requireActual(
-                    `../${actualModule[a].npmPackage.name}`
+                    `../${actualModule[a].npmPackage.name}`,
                 )
                 actualModules[b.name] = b
             }).not.toThrow()
@@ -28,7 +28,7 @@ describe('b-ber-themes', () => {
         const actualModules = {}
         Object.keys(actualModule).forEach(a => {
             const b = require.requireActual(
-                `../${actualModule[a].npmPackage.name}`
+                `../${actualModule[a].npmPackage.name}`,
             )
             actualModules[b.name] = b
         })
@@ -50,7 +50,7 @@ describe('b-ber-themes', () => {
 
                     // text existence
                     Object.keys(base).forEach(a =>
-                        expect(themeKeys).toContain(a)
+                        expect(themeKeys).toContain(a),
                     )
 
                     // check type
@@ -73,6 +73,34 @@ describe('b-ber-themes', () => {
                                     path.dirname(theme.entry),
                                     path.dirname(path.dirname(theme.entry)),
                                 ],
+                                importer: (url, prev, done) => {
+                                    if (/^css:/.test(url)) {
+                                        const url_ = url.slice(4)
+
+                                        let cssPath
+
+                                        cssPath = path.join(
+                                            path.dirname(theme.entry),
+                                            `${url_}.css`,
+                                        )
+
+                                        if (!fs.existsSync(cssPath)) {
+                                            cssPath = path.join(
+                                                path.dirname(
+                                                    path.dirname(theme.entry),
+                                                ),
+                                                `${url_}.css`,
+                                            )
+                                        }
+
+                                        const contents = fs.readFileSync(
+                                            cssPath,
+                                            'utf8',
+                                        )
+                                        return done({ contents })
+                                    }
+                                    return done()
+                                },
                             },
                             (err, result) => {
                                 expect(err).toBeNil()
@@ -82,8 +110,8 @@ describe('b-ber-themes', () => {
                                 expect(result.stats.includedFiles).toBeArray()
 
                                 done()
-                            }
-                        )
+                            },
+                        ),
                     ).not.toThrow()
                 })
             })
