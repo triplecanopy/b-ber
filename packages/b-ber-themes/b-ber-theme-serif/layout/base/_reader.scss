@@ -1,23 +1,10 @@
 @if $build == "reader" {
-  // Basic Gallery Styles: 3x
-  section.gallery {
-    .figure__items {
-      display: grid;
-      grid-template-columns: repeat($grid-columns, 1fr [column]);
-      grid-template-rows:repeat(1, 1fr [row]);
-      grid-gap: 40px;
-      height: 100%;
-      padding: 5% 5%;
-      width: 100%;
-      left: 0;
-      margin: 0 auto;
-      .gallery__item {
-        position: relative;
-        margin:0;
-      }
-      .figcaption {
-          position:initial;
-      }
-    }
-  }
+	figure {
+		.figcaption,
+		figcaption {
+			padding-top:8px;
+			display: block;
+		}
+	}
+	$line-height-base: 1.4;
 }
