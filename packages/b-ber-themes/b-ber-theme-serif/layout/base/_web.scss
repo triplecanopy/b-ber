@@ -6,7 +6,7 @@
 // design icon fonts and other vendor assets), and the styles for the page
 // content itself. This *also* means that the web build task in
 // bber-output/web/index.es should be updated to distinguish between the UX and
-// content as well. BONUS: then users can add their own UI :)
+// content as well. Then users can add their own UI.
 //
 // The b-ber web layout uses CSS Grid for a multi-column layout. The default
 // styles create a container with three rows (header, content, and footer), and
@@ -18,9 +18,10 @@
 
 // Default vertical column count. If this is changed, values below need to be
 // manually updated as well.
+
 $web-grid-columns: 12;
 
-// Some handy mixins. These are declared above the `@if $build == ...` styles,
+// Some mixins can be found below. These are declared above the `@if $build == ...` styles,
 // since we can't declare mixins in a conditional statement in SCSS.
 @mixin web-grid-container() {
     display: grid;
@@ -64,13 +65,13 @@ $web-grid-columns: 12;
         }
     }
 
-    // Some variables for spacing, sizing, and transitions.
+    // Variables for spacing, sizing, and transitions.
     //
-    // Show/hide the navigation panels (TOC and info sidebar)
+    // Show/hide the navigation panels (TOC and info sidebar).
     $transition-speed: 250ms;
     $transition-easing: ease;
 
-    // Basi spacing
+    // Basic spacing
     $dimensions-extra-large-x: 128px;
     $dimensions-extra-large-y: 128px;
 
@@ -86,7 +87,7 @@ $web-grid-columns: 12;
     $cell-large-width: $dimensions-extra-large-x * 3;
 
     // The `publication` element is the main CSS Grid, it contains both vertical
-    // and horizontal grid elements
+    // and horizontal grid elements.
     .publication {
         min-height: 100vh;
         position: relative;
@@ -100,11 +101,10 @@ $web-grid-columns: 12;
         grid-gap: 0;
     }
 
-    // Publication title is the first element in the TOC panel
+    // Publication title is the first element in the TOC panel.
     .publication__title {
         @include web-navigation-link;
         @include type-settings(-2);
-
         height: $dimensions-large-x;
         display: flex;
         align-items: center;
@@ -118,10 +118,9 @@ $web-grid-columns: 12;
     // Search bar
     .publication__search {
         position: absolute;
-        left: 70%; // effectively the width of the serach bar when expanded since it's pinned right
+        left: 70%; // This is effectively the width of the serach bar when expanded since it's pinned right.
         right: $dimensions-large-x;
         height: $dimensions-large-x;
-
         display: flex;
         align-items: center;
         flex-direction: row;
@@ -158,7 +157,7 @@ $web-grid-columns: 12;
         }
     }
 
-    // The table of contents. An ordered, nested list.
+    // The table of contents, which is an ordered, nested list.
     .publication__toc {
         transform: translateX(-100%);
         @include type-settings(-7);
@@ -172,13 +171,13 @@ $web-grid-columns: 12;
         background-color: $white;
         width: $cell-large-width;
         transition: transform $transition-speed $transition-easing;
-
         ol,
         ul,
         li,
         a {
             @include web-navigation-link;
         }
+
         a:hover {
             text-decoration: underline;
         }
@@ -227,7 +226,7 @@ $web-grid-columns: 12;
         }
         dl dt,
         dl dd {
-            white-space: nowrap; // Hide the overflow on longer TOC entries, will become
+            white-space: nowrap; // Hide the overflow on longer TOC entries, which could become
             // problematic for deeply nested structures.
             text-overflow: ellipsis;
             overflow: hidden;
@@ -324,10 +323,10 @@ $web-grid-columns: 12;
     .publication__nav {
         @include web-grid-container; // We can't use `display: subgrid` so we re-declare
         transition: width $transition-speed $transition-easing;
-
         grid-column: 2 / span 10;
         grid-row: 3;
         align-items: baseline;
+        z-index:1;
 
         .publication__nav__link {
             color: $black;
@@ -371,15 +370,15 @@ $web-grid-columns: 12;
         @include padding(4, 0, 3, 0, 0);
         grid-row: 2;
 
-        @include web-grid-container; // We can't use `display: subgrid` so we re-declare it.
+        @include web-grid-container; // We can't use `display: subgrid` so it is re-declared.
         @include web-grid-full-width; // `publication__contents` spans the entire page
         grid-template-rows: max-content; // https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template-rows
         * {
             @include web-grid-full-width;
-        } // All elements (except for `sections`, see below) also span the entire page
+        } // All elements (except for `sections`, see below) also span the entire page.
 
         section {
-            // `section` elements are also CSS Grid containers
+            // `section` elements are also CSS Grid containers.
             @include web-grid-container;
             @include web-grid-full-width;
             *:not(section) {
@@ -416,7 +415,7 @@ $web-grid-columns: 12;
 
     // The first page (index.html) of the generated web build is the
     // publication's cover image, which is wrapped in a link that leads to the
-    // first page of text
+    // first page of text.
     .cover__image__link {
         display: block;
         text-align: center;
@@ -427,7 +426,7 @@ $web-grid-columns: 12;
     }
 
     // Search results layout. Search results are added and removed to/from the
-    // `publication__contents` element dynamically on search
+    // `publication__contents` element dynamically on search.
     .search__results {
         margin-top: three-lines(0) * -1;
         margin-bottom: two-lines(0);
@@ -459,7 +458,7 @@ $web-grid-columns: 12;
     }
 
     // The context around the found search term, i.e., 100 characters on either
-    // side of the text around the found search term
+    // side of the text around the found search term.
     .search__result__text {
         display: inline-block;
         padding: 0.3621em 0; // TODO: using `padding` mixin
@@ -503,9 +502,9 @@ $web-grid-columns: 12;
         text-decoration: underline !important;
     }
 
-    // fullbleed. fullbleed panels are completely customizeable, so set to
-    // position: absoulte for full control over child positioning below. can be
-    // used to add sub-grids, etc
+    // Fullbleed. fullbleed panels are completely customizeable, so set to
+    // position: absoulte for full control over child positioning below. Can be
+    // used to add sub-grids.
     .figure__fullbleed:not(.figure__small) {
         position: absolute;
         top: 0;
@@ -543,33 +542,43 @@ $web-grid-columns: 12;
                 right: 0;
                 bottom: 0;
             }
-
-            .gallery__item {
-                position: absolute;
-                height: 300px;
-                width: 300px;
-
-                left: 50%;
-                top: 50%;
-                transform: translateX(-50%) translateY(-50%);
-
-                // add overrides as needed ...
-                // .gallery__item[data-gallery-item=my-id-1] { left: 100px; }
-                // .gallery__item[data-gallery-item=my-id-2] { left: 200px; }
-
-                img {
-                    max-width: 100%;
-                    max-height: 100%;
-                }
-            }
-
             .figure__items img,
             .figure__items video {
             }
         }
     }
 
-    // media
+    // Gallery styles
+    section.gallery .figure__fullbleed.figure__gallery {
+        .figure__items {
+            height:70vh;
+            .gallery__item {
+                img {
+                    height: auto;
+                }
+                .figcaption {
+                    display: block;
+                    padding-top:8px;
+                    position: initial;
+                }
+            }
+        }
+    }
+
+    // TODO: Fix spread layout
+    .publication__contents {
+        .spread {
+            grid-column:1 / span 12;
+            margin-top:-5.6em;
+            height: 100vh;
+            section {
+                display: block;
+                padding:5%;
+            }
+        }
+    }
+
+    // Media
     section.video {
         position: relative;
     }
