@@ -35,7 +35,7 @@ const render = (tokens, idx) => {
                 // prettier ignore
                 result = `
                     <section id="${htmlId(id)}" class="gallery">
-                        <div class="figure__large figure__inline figure__fullbleed">
+                        <div class="figure__large figure__inline figure__fullbleed figure__gallery">
                             <figure>
                                 <div class="figure__items">`
                 break
