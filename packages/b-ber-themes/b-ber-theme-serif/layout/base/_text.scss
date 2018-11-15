@@ -95,7 +95,6 @@ h2 {
         padding-bottom: one-line(0);
     }
 
-
     section.afterword &,
     section.seriespage &,
     section.credits &,
@@ -105,7 +104,6 @@ h2 {
         @include padding(0, 0, 1, 0, -1);
         @include following-paragraph-not-indented;
     }
-
 }
 
 h3 {
@@ -249,7 +247,6 @@ cite {
         margin-left: 0;
     }
 }
-
 
 .end-notes header + p {
     margin-top:0;
