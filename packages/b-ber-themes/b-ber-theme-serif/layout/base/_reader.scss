@@ -1,4 +1,5 @@
 @if $build == "reader" {
+	// Caption styling for reader.
 	figure {
 		.figcaption,
 		figcaption {
@@ -7,4 +8,89 @@
 		}
 	}
 	$line-height-base: 1.4;
+
+    // Fullbleed Image styling.
+    .figure__fullbleed.figure__inline--landscape 
+    .figure__items {
+        height: 100vh;
+        margin: 0;
+        width: 100vw;
+        img {
+            height: 100vh;
+            object-fit: cover;
+        }
+        .figcaption {
+            bottom: 50px;
+            display: inline-block;
+            left: 25px;
+            margin: 0;
+            padding: 0;
+            position: absolute;  
+        }
+    }
+    // Spread Styling
+    .spread {
+        section {
+            height:100vh;
+            width: 100vw;
+        }
+    }
+    // Gallery Styling
+    // This sets up a layout for galleries that contains 12 columns and two rows and is responsive. See settings file to modify. 
+    section.gallery .figure__gallery {
+        .figure__items {
+            display: grid;
+            grid-template: [row1-start] "t1 t2 t3 t4 t5 t6 t7 t8 t9 t10 t11 t12" 43% [row1-end]
+            [row2-start] "b1 b2 b3 b4 b5 b6 b7 b8 b9 b10 b11 b12" 43% [row2-end]
+            / auto;
+            grid-gap: 14% 3%;
+            height: 75vh;
+            margin-top: 75px;
+            padding: 0px;
+            width: 85vw;
+            .gallery__item {
+                grid-column: span 4;
+            }
+        }
+	}
+
+	// Mobile Overrides for Fullbleed, spreads, and galleries.
+	@media screen
+	and (min-width: 320px)
+	and (max-width: 768px){ 
+		// Gallery
+		section.gallery .figure__gallery .figure__items {
+		grid-template: [row1-start] "t1 t2 t3 t4 t5 t6" auto [row1-end] 
+		[row2-start] "b1 b2 b3 b4 b5 b6" auto [row2-end]
+		/auto;
+		margin-top:0;
+		grid-gap: 14% 3%; 
+		}
+		// Fullbleed
+		.figure__fullbleed.figure__inline--landscape 
+		.figure__items {
+			height: auto;
+			margin: 0 auto;
+			width: auto;
+			img {
+				height: auto;
+				object-fit: cover;
+			}
+			.figcaption {
+				bottom: auto;
+				display: inline-block;
+				left: auto;
+				margin: 0;
+				padding: 0;
+				position: relative;  
+			}
+		}
+		// Spread
+		.spread {
+			section {
+				height:auto;
+				width: auto;
+			}
+		}
+	}		
 }
