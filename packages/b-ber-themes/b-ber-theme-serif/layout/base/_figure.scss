@@ -60,31 +60,11 @@ figure {
     ); // Space is added in the event that readers don't respect the page-break atrribute.
 }
 
-// Basic spread styles
+// Basic spread styles to have page break. Further styling for Reader found in _reader.scss.
 .spread {
     page-break-inside: avoid;
     page-break-before: always;
     page-break-after: always;
-    section {
-        padding:20% 20% 0 20%; // Basic centered spread layout.
-    }
-}
-
-// Gallery Styling
-// This sets up a layout for galleries that contains 12 columns and two rows and is responsive. See settings file to modify. 
-section.gallery .figure__gallery {
-    .figure__items {
-        display: grid;
-        grid-template: $grid-template;
-        grid-gap: $grid-gap;
-        height: 85vh;
-        margin-top: 75px;
-        padding: 0px;
-        width: 85vw;
-        .gallery__item {
-            grid-column: span 4;
-        }
-    }
 }
 
 #layout.context__desktop {
@@ -202,15 +182,6 @@ figcaption,
     }
 
     .figure__large & {
-    }
-
-    .figure__fullbleed.figure__inline--landscape & {
-        bottom: 70px;
-        display: inline-block;
-        left: 20px;
-        margin: 0;
-        padding: 0;
-        position: absolute;  
     }
 }
 
