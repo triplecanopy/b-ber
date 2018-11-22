@@ -118,49 +118,31 @@ a {
                 &:hover {
                     color: $tc-purple;
                 }
-            &.nav__button__downloads {
-                color: rgba(80,80,197, 1);
-                animation: nav__button__downloads 2s 30;
+                &.nav__button__downloads {
+                    color: rgba(80, 80, 197, 1);
+                    animation: nav__button__downloads 2s 30;
                     &:hover {
                         animation: none;
                     }
-                    @-webkit-keyframes nav__button__downloads {
+                    @keyframes nav__button__downloads {
                         0% {
-                          color: rgba(80,80,197, .3);
+                            color: rgba(80, 80, 197, 0.3);
                         }
                         25% {
-                            color: rgba(80,80,197, .6);
+                            color: rgba(80, 80, 197, 0.6);
                         }
                         50% {
                             color: rgba(0, 0, 0, 1);
                         }
                         75% {
-                            color: rgba(80,80,197, .6);
+                            color: rgba(80, 80, 197, 0.6);
                         }
                         100% {
-                            color: rgba(80,80,197, .3);
+                            color: rgba(80, 80, 197, 0.3);
                         }
-                      }
-                      @keyframes nav__button__downloads {
-                        0% {
-                            color: rgba(80,80,197, .3);
-                          }
-                          25% {
-                              color: rgba(80,80,197, .6);
-                          }
-                          50% {
-                              color: rgba(0, 0, 0, 1);
-                          }
-                          75% {
-                              color: rgba(80,80,197, .6);
-                          }
-                          100% {
-                              color: rgba(80,80,197, .3);
-                          }
                     }
                 }
             }
-
         }
     }
 }
