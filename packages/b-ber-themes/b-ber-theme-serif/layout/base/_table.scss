@@ -1,4 +1,4 @@
-@function table-border ($width: 1px, $style: solid, $color: $grey) {
+@function table-border($width: 1px, $style: solid, $color: $grey) {
     @return $width $style $color;
 }
 
@@ -14,7 +14,8 @@ table {
             font-family: $sans;
             border-top: table-border();
         }
-        th, td {
+        th,
+        td {
             @include type-settings(0);
             font-family: $sans;
             text-align: left;

@@ -1,8 +1,8 @@
 body {
-    margin:0;
+    margin: 0;
     text-indent: 0;
-    padding:0;
-    font-family:$font-family-base;
+    padding: 0;
+    font-family: $font-family-base;
     @include type-settings(0);
     @include hyphens;
     @include widows;
@@ -20,7 +20,9 @@ blockquote {
 
 section {
     clear: both;
-    @include break('desktop') { padding-right: 2vh; }
+    @include break('desktop') {
+        padding-right: 2vh;
+    }
     &:after {
         content: ' ';
         display: table;
@@ -33,7 +35,7 @@ header {
 }
 
 section.break-before a + div.figure__small {
-    padding-top:0;
+    padding-top: 0;
 }
 
 section.subchapter {
@@ -58,22 +60,24 @@ section.bibliography {
     }
     h3 {
         @include type-settings(0);
-        @include padding(0,0,1,0,0);
+        @include padding(0, 0, 1, 0, 0);
     }
     h1 + .subchapter > h3 {
         padding-top: 0;
     }
     p {
         text-indent: 0;
-        @include padding(0,0,1,0,0);
+        @include padding(0, 0, 1, 0, 0);
     }
 }
 
 .audio,
 .video {
     text-align: center;
-    @include padding(1,1,1,1,0);
-    .figure__large & { padding: 0; }
+    @include padding(1, 1, 1, 1, 0);
+    .figure__large & {
+        padding: 0;
+    }
 }
 
 audio,
@@ -85,9 +89,9 @@ video {
 }
 
 aside.note {
-    text-align:left;
-    margin:0;
-    @include padding(0,0,1,0,0);
+    text-align: left;
+    margin: 0;
+    @include padding(0, 0, 1, 0, 0);
     p {
         text-indent: 0;
         a {
@@ -123,8 +127,8 @@ section.backmatter {
     figure.logo {
         text-indent: 0;
         text-align: left;
-        margin:0;
-        padding:0;
+        margin: 0;
+        padding: 0;
         img {
             height: auto;
             width: auto;
@@ -144,8 +148,8 @@ section.backmatter {
 section.staff {
     h3 {
         text-align: left;
-        margin:0;
-        padding:0;
+        margin: 0;
+        padding: 0;
         font-weight: bold;
         @include type-settings(-1);
     }
@@ -154,7 +158,7 @@ section.staff {
 .masthead h2 {
     font-weight: 700;
     font-family: inherit;
-    padding-top:0;
+    padding-top: 0;
     text-align: left;
     @include type-settings(-1);
 }

@@ -178,7 +178,7 @@ figcaption,
 
     p.small {
         @include caption;
-        width:90%;
+        width: 90%;
     }
 
     .figure__large & {

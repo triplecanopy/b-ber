@@ -326,7 +326,7 @@ $web-grid-columns: 12;
         grid-column: 2 / span 10;
         grid-row: 3;
         align-items: baseline;
-        z-index:1;
+        z-index: 1;
 
         .publication__nav__link {
             color: $black;
@@ -551,14 +551,14 @@ $web-grid-columns: 12;
     // Gallery styles
     section.gallery .figure__fullbleed.figure__gallery {
         .figure__items {
-            height:70vh;
+            height: 70vh;
             .gallery__item {
                 img {
                     height: auto;
                 }
                 .figcaption {
                     display: block;
-                    padding-top:8px;
+                    padding-top: 8px;
                     position: initial;
                 }
             }
@@ -568,12 +568,12 @@ $web-grid-columns: 12;
     // TODO: Fix spread layout
     .publication__contents {
         .spread {
-            grid-column:1 / span 12;
-            margin-top:-5.6em;
+            grid-column: 1 / span 12;
+            margin-top: -5.6em;
             height: 100vh;
             section {
                 display: block;
-                padding:5%;
+                padding: 5%;
             }
         }
     }
