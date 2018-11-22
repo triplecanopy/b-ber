@@ -39,7 +39,7 @@ const handler = argv => {
                             fs.statSync(curr.absolutePath)
                         } catch (err) {
                             acc.concat(
-                                fs.writeFile(curr.absolutePath, curr.content)
+                                fs.writeFile(curr.absolutePath, curr.content),
                             )
                         }
 
@@ -84,7 +84,7 @@ const builder = yargs =>
             'reader',
             'Build for the b-ber-reader format',
             () => {},
-            handler
+            handler,
         )
         .command('sample', 'Build a sample Epub', () => {}, handler)
         .command('web', 'Build for web', () => {}, handler)

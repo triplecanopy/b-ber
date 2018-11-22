@@ -115,8 +115,8 @@ export default {
                         const comment = `\n<!-- END: section:pullquote#${id} -->\n`
                         result = citation
                             ? `<cite>&#8212;&#160;${instance.renderInline(
-                                citation,
-                            )}</cite>`
+                                  citation,
+                              )}</cite>`
                             : ''
                         result += `</section>${comment}`
                         citation = ''

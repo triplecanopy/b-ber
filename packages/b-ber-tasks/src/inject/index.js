@@ -59,19 +59,19 @@ const templateify = files =>
             case '.js':
                 return file instanceof File
                     ? Xhtml.script('application/javascript', true).replace(
-                        /\{% body %\}/,
-                        String(file.contents)
-                    )
+                          /\{% body %\}/,
+                          String(file.contents),
+                      )
                     : Xhtml.script().replace(/\{% body %\}/, `${base}${file}`)
             case '.css':
                 return Xhtml.stylesheet().replace(
                     /\{% body %\}/,
-                    `${base}${file}`
+                    `${base}${file}`,
                 )
             case '.json-ld':
                 return Xhtml.script('application/ld+json', true).replace(
                     /\{% body %\}/,
-                    String(file.contents)
+                    String(file.contents),
                 )
             default:
                 throw new Error(`Unsupported filetype: ${file}`)
@@ -96,7 +96,7 @@ const injectTags = args => {
 
         const previousInnerContent = content.substring(
             start.lastIndex,
-            endMatch.index
+            endMatch.index,
         )
         const indent = getLeadingWhitespace(previousInnerContent)
 
@@ -139,11 +139,11 @@ const mapSources = args => {
 
         return promiseToReplace('stylesheets', stylesheets, source)
             .then(file =>
-                promiseToReplace('javascripts', javascripts, source, file)
+                promiseToReplace('javascripts', javascripts, source, file),
             )
             .then(file => promiseToReplace('metadata', metadata, source, file))
             .then(file =>
-                fs.writeFile(location, file.contents.toString('utf8'))
+                fs.writeFile(location, file.contents.toString('utf8')),
             )
             .then(() => log.info(`inject emit [${path.basename(location)}]`))
     })
@@ -161,7 +161,7 @@ const mapSourcesToDynamicPageTemplate = args => {
     const promises = docs.map(source =>
         promiseToReplace('stylesheets', stylesheets, source, dummy)
             .then(file =>
-                promiseToReplace('javascripts', javascripts, source, file)
+                promiseToReplace('javascripts', javascripts, source, file),
             )
             .then(file => promiseToReplace('metadata', metadata, source, file))
             .then(file => {
@@ -171,7 +171,7 @@ const mapSourcesToDynamicPageTemplate = args => {
                 state.templates.dynamicPageTmpl = () => tmpl
                 state.templates.dynamicPageHead = () => head
                 state.templates.dynamicPageTail = () => tail
-            })
+            }),
     )
 
     return Promise.all(promises).catch(log.error)

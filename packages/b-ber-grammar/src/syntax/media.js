@@ -60,8 +60,8 @@ const createLocalMediaSources = sources =>
         (acc, curr) =>
             acc.concat(`
         <source src="../media/${path.basename(curr)}" type="${mime.lookup(
-    curr,
-)}"/>
+                curr,
+            )}"/>
     `),
         '',
     )
@@ -134,7 +134,7 @@ export default {
                     source,
                 )
                 if (supportedThirdParty) {
-                    [, provider] = supportedThirdParty
+                    ;[, provider] = supportedThirdParty
                     type = type.replace(/(audio|video)/, 'iframe') // iframe, iframe-inline
                 } else {
                     sources = [source]
@@ -212,10 +212,10 @@ export default {
                         <section id="${figureId}">
                             <iframe src="${Url.encodeQueryString(source)}" />
                             ${
-        caption
-            ? `<p class="caption caption__${mediaType}">${caption}</p>`
-            : ''
-        }
+                                caption
+                                    ? `<p class="caption caption__${mediaType}">${caption}</p>`
+                                    : ''
+                            }
                         </section>
                     ${commentEnd}`
 
@@ -233,10 +233,10 @@ export default {
                                 <p class="media__fallback__${mediaType} media__fallback--text">Your device does not support the HTML5 ${mediaType} API.</p>
                             </${mediaType}>
                             ${
-        caption
-            ? `<p class="caption caption__${mediaType}">${caption}</p>`
-            : ''
-        }
+                                caption
+                                    ? `<p class="caption caption__${mediaType}">${caption}</p>`
+                                    : ''
+                            }
                         </section>
                         ${commentEnd}`
                 default:

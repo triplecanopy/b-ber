@@ -114,8 +114,8 @@ export default {
                             <figure id="ref${figureId}">
                                 <a href="${href}#${figureId}">
                                     <img src="../images/${encodeURIComponent(
-            attrsObject.source,
-        )}" alt="${attrsObject.alt}"/>
+                                        attrsObject.source,
+                                    )}" alt="${attrsObject.alt}"/>
                                 </a>
                             </figure>
                         </div>`

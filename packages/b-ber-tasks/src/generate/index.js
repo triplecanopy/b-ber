@@ -25,7 +25,7 @@ class Generate {
     createFile({ markdownDir, metadata }) {
         const frontmatter = `---\n${Object.entries(metadata).reduce(
             (acc, [k, v]) => (v ? acc.concat(`${k}: ${v}\n`) : acc),
-            ''
+            '',
         )}---\n`
 
         const { title } = metadata
@@ -35,7 +35,7 @@ class Generate {
         try {
             if (fs.existsSync(filePath)) {
                 throw new Error(
-                    `_markdown${path.sep}${fileName} already exists, aborting`
+                    `_markdown${path.sep}${fileName} already exists, aborting`,
                 )
             }
         } catch (err) {
@@ -68,13 +68,13 @@ class Generate {
 
             if (index > -1) {
                 throw new Error(
-                    `${fileName} already exists in [${type}.yml]. Aborting`
+                    `${fileName} already exists in [${type}.yml]. Aborting`,
                 )
             }
 
             return fs.appendFile(
                 navigationYAML,
-                `\n- ${path.basename(fileName, '.md')}`
+                `\n- ${path.basename(fileName, '.md')}`,
             )
         })
 
@@ -91,7 +91,7 @@ class Generate {
             .then(() => this.createFile({ markdownDir, metadata }))
             .then(resp => this.writePageMeta(resp))
             .then(({ fileName }) =>
-                log.notice(`Generated new page [${fileName}]`)
+                log.notice(`Generated new page [${fileName}]`),
             )
             .catch(log.error)
     }

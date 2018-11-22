@@ -64,19 +64,19 @@ class SidebarSettings extends Component {
                                     this.setState({ fontSize: e.target.value })
                                 }}
                                 onBlur={_ => {
-                                    let { fontSize } = this.state
-                                    fontSize = Math.round(fontSize * 0.1) * 10
+                                    let fontSize_ = this.state.fontSize
+                                    fontSize_ = Math.round(fontSize_ * 0.1) * 10
                                     if (
-                                        fontSize < fontSizeMin ||
-                                        fontSize > fontSizeMax ||
-                                        fontSize % 10 !== 0
+                                        fontSize_ < fontSizeMin ||
+                                        fontSize_ > fontSizeMax ||
+                                        fontSize_ % 10 !== 0
                                     ) {
                                         return
                                     }
 
-                                    this.setState({ fontSize })
+                                    this.setState({ fontSize: fontSize_ })
                                     this.props.updateViewerSettings({
-                                        fontSize,
+                                        fontSize: fontSize_,
                                     })
                                 }}
                             />

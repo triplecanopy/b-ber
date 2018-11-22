@@ -1,7 +1,7 @@
 import find from 'lodash/find'
 import { mediaSmall, mediaLarge } from './multi-column-styles'
 import { MediaStyleSheet, Script } from '../models'
-import { media } from '../constants'
+import { MEDIA_QUERY_LARGE, MEDIA_QUERY_SMALL } from '../constants'
 
 const state = {
     root: null, // app context, used for styles
@@ -28,11 +28,11 @@ class DocumentPreProcessor {
         state.styleSheets = [
             ...state.styleSheets,
             new MediaStyleSheet({
-                media: media.MEDIA_QUERY_LARGE,
+                media: MEDIA_QUERY_LARGE,
                 rules: [...mediaSmall({ paddingLeft, columnGap })],
             }),
             new MediaStyleSheet({
-                media: media.MEDIA_QUERY_SMALL,
+                media: MEDIA_QUERY_SMALL,
                 rules: [...mediaLarge({ paddingLeft, columnGap })],
             }),
         ]

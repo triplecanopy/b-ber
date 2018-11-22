@@ -8,7 +8,7 @@ const inlineClasses = (data, ratioName) =>
         .concat(
             'figure__large',
             'figure__inline',
-            `figure__inline--${ratioName}`
+            `figure__inline--${ratioName}`,
         )
         .filter(Boolean)
         .join(' ')

@@ -132,7 +132,7 @@ export default function observable(target) {
 
             // we need to return 0 for column count on mobile to ensure that
             // chapter navigation works
-            let columnCount = contentDimensions / frameHeight
+            columnCount = contentDimensions / frameHeight
             if (!isNumeric(columnCount)) columnCount = 0
 
             spreadTotal = Math.floor(columnCount / columns)

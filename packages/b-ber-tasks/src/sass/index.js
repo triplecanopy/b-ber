@@ -125,7 +125,7 @@ const copyThemeAssets = () => {
             )
         }
 
-        const fileData = fs
+        const data = fs
             .readdirSync(themePath)
             .filter(a => a.charAt(0) !== '.')
             .map(fileName => ({
@@ -133,7 +133,7 @@ const copyThemeAssets = () => {
                 output: path.join(srcPath, fileName),
             }))
 
-        return acc.concat(fileData)
+        return acc.concat(data)
     }, [])
 
     const promises = fileData.map(({ input, output }) =>

@@ -24,10 +24,10 @@ export const dummy = new File({
         <head>
             <title></title>
             ${
-    state.config.private
-        ? '<meta name="robots" content="noindex,nofollow"/>'
-        : '<meta name="robots" content="index,follow"/>'
-}
+                state.config.private
+                    ? '<meta name="robots" content="noindex,nofollow"/>'
+                    : '<meta name="robots" content="index,follow"/>'
+            }
             <meta http-equiv="default-style" content="text/html charset=utf-8"/>
             <!-- inject:css -->
             <!-- end:css -->
@@ -169,7 +169,7 @@ export const getInlineScripts = () => [
         contents: new Buffer(
             `window.bber = window.bber || {}; window.bber.env = '${
                 state.build
-            }';`
+            }';`,
         ),
     }),
 ]

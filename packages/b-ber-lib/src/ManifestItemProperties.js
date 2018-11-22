@@ -122,7 +122,9 @@ class ManifestItemProperties {
         if (ManifestItemProperties.isNav(file)) props.push('nav')
         if (ManifestItemProperties.isScripted(file)) props.push('scripted')
         if (ManifestItemProperties.isSVG(file)) props.push('svg')
-        if (ManifestItemProperties.hasRemoteResources(file)) { props.push('remote-resources') }
+        if (ManifestItemProperties.hasRemoteResources(file)) {
+            props.push('remote-resources')
+        }
         return props
     }
 

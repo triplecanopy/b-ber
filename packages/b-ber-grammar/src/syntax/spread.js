@@ -42,7 +42,7 @@ const render = (tokens, idx) => {
             case 'sample':
             default:
                 result = `\n<section id="${htmlId(
-                    id
+                    id,
                 )}" class="spread"${attrsString}>`
                 break
         }

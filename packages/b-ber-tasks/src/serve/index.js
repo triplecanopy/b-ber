@@ -65,7 +65,7 @@ const registerObserver = build =>
                     files = []
                     restart(build)
                 }, DEBOUNCE_SPEED)
-            })
+            }),
     )
 
 const serve = ({ build }) => {

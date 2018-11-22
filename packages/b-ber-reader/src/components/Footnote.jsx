@@ -96,9 +96,10 @@ class Footnote extends Component {
                     this.props.href,
                 )
             }
-            const footnoteBody = processFootnoteResponseElement(elem)
 
-            this.setState({ footnoteBody })
+            this.setState({
+                footnoteBody: processFootnoteResponseElement(elem),
+            })
         })
     }
     showFootnote(e) {

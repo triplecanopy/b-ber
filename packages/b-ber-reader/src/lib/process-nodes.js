@@ -113,9 +113,9 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
             const attrs = Asset.convertToReactAttrs(node.attribs)
             const poster = node.attribs.poster
                 ? Url.resolveOverlappingURL(
-                    requestedSpineItem.absoluteURL,
-                    node.attribs.poster,
-                )
+                      requestedSpineItem.absoluteURL,
+                      node.attribs.poster,
+                  )
                 : null
             const { autoPlay } = attrs
 

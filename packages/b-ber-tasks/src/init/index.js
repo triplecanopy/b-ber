@@ -29,7 +29,7 @@ class Initializer {
         }
         if (src === dist) {
             throw new Error(
-                '[src] and [dist] directories must have different names'
+                '[src] and [dist] directories must have different names',
             )
         }
 
@@ -59,7 +59,7 @@ class Initializer {
 
     writeFiles() {
         const promises = this.files.map(a =>
-            fs.writeFile(a.absolutePath, a.content)
+            fs.writeFile(a.absolutePath, a.content),
         )
         return Promise.all(promises)
     }
@@ -77,8 +77,8 @@ class Initializer {
             const promises = images.map(a =>
                 fs.copy(
                     a,
-                    path.join(this.projectPath, '_images', path.basename(a))
-                )
+                    path.join(this.projectPath, '_images', path.basename(a)),
+                ),
             )
             return Promise.all(promises)
         })

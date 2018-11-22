@@ -53,10 +53,10 @@ class Navigation {
     createEmptyNavDocuments() {
         return new Promise(resolve => {
             log.info(
-                `opf build navigation documents [${this.navDocs.join(', ')}]`
+                `opf build navigation documents [${this.navDocs.join(', ')}]`,
             )
             const promises = this.navDocs.map(a =>
-                fs.writeFile(path.join(state.dist, 'OPS', a), '')
+                fs.writeFile(path.join(state.dist, 'OPS', a), ''),
             )
             return Promise.all(promises).then(resolve)
         })
@@ -74,16 +74,16 @@ class Navigation {
                 const fileObjects = pathInfoFromFiles(filearr, state.dist)
                 // only get html files
                 const xhtmlFileObjects = fileObjects.filter(a =>
-                    ManifestItemProperties.isHTML(a)
+                    ManifestItemProperties.isHTML(a),
                 )
                 // prepare for diffing
                 const filesFromSystem = uniq(
                     xhtmlFileObjects.map(a =>
-                        path.basename(a.name, a.extension)
-                    )
+                        path.basename(a.name, a.extension),
+                    ),
                 )
                 resolve({ filesFromSystem, fileObjects })
-            })
+            }),
         )
     }
 
@@ -119,7 +119,7 @@ class Navigation {
             const flow = uniq(
                 spine
                     .map(a => (a.generated ? null : a.fileName))
-                    .filter(Boolean)
+                    .filter(Boolean),
             ) // one-dimensional flow of the book used for the spine, omitting figures pages
 
             const pages = flattenSpineFromYAML(spineList)
@@ -135,7 +135,7 @@ class Navigation {
                         log.warn(
                             `Removing redundant entry [${a}] in ${
                                 state.build
-                            }.yml`
+                            }.yml`,
                         )
                     })
 
@@ -174,7 +174,7 @@ class Navigation {
                             log.warn(
                                 `Adding missing entry [${name}] to [${
                                     state.build
-                                }.yml]`
+                                }.yml]`,
                             )
                         }
                     })
@@ -192,7 +192,7 @@ class Navigation {
 
                             // TODO: state should handle dot-notation for add/remove
                             state.buildTypes[state.build].spineList.push(
-                                fileName
+                                fileName,
                             )
 
                             return fileName
@@ -331,7 +331,7 @@ class Navigation {
         return new Promise(resolve => {
             const normalizedResponse = this.deepMergePromiseArrayValues(
                 args,
-                'strings'
+                'strings',
             )
             resolve(normalizedResponse)
         })
@@ -352,7 +352,7 @@ class Navigation {
                         this.createNcxStringsFromTemplate(resp),
                         this.createGuideStringsFromTemplate(resp),
                         this.createSpineStringsFromTemplate(resp),
-                    ])
+                    ]),
                 )
 
                 .then(resp =>
@@ -362,13 +362,13 @@ class Navigation {
                         // information to the next method in the chain
                         this.writeTocXhtmlFile(resp),
                         this.writeTocNcxFile(resp),
-                    ])
+                    ]),
                 )
                 // merge the values from the arrays returned above and pass the response
                 // along to write the `content.opf`
                 .then(resp => this.normalizeResponseObject(resp))
                 .catch(log.error)
-                .then(resolve)
+                .then(resolve),
         )
     }
 }

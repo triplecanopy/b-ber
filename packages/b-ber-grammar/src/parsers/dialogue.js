@@ -41,7 +41,9 @@ const containerPlugin = (md, name, options = {}) => {
 
         if (
             !validateOpen(params, lineNr) /* && !validateClose(params, lineNr)*/
-        ) { return false }
+        ) {
+            return false
+        }
         if (silent) return true // for testing validation
 
         nextLine = startLine

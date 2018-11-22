@@ -22,22 +22,22 @@ class Metadata {
         if (term) {
             res.push(
                 `<meta property="dcterms:${data.term}">${Html.escape(
-                    data.value
-                )}</meta>`
+                    data.value,
+                )}</meta>`,
             )
         }
         if (element) {
             res.push(
                 `<dc:${data.term} id="${itemid}">${Html.escape(
-                    data.value
-                )}</dc:${data.term}>`
+                    data.value,
+                )}</dc:${data.term}>`,
             )
         }
         if (term && element && data.term_property && data.term_property_value) {
             res.push(
                 `<meta refines="#${itemid}" property="${
                     data.term_property
-                }">${Html.escape(data.term_property_value)}</meta>`
+                }">${Html.escape(data.term_property_value)}</meta>`,
             )
         }
 
@@ -47,14 +47,14 @@ class Metadata {
             if (data.term !== 'cover') {
                 res.push(
                     `<meta name="${data.term}" content="${Html.escape(
-                        data.value
-                    )}"/>`
+                        data.value,
+                    )}"/>`,
                 )
             } else {
                 res.push(
                     `<meta name="${data.term}" content="${fileId(
-                        Html.escape(data.value)
-                    )}"/>`
+                        Html.escape(data.value),
+                    )}"/>`,
                 )
             }
         }

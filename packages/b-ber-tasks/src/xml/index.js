@@ -53,7 +53,7 @@ const writeXML = str => {
     return fs.writeFile(fpath, str, 'utf8')
 }
 
-const parseHTMLFiles = (files, parser, dist) =>
+const parseHTMLFiles = (files, parser_, dist) =>
     new Promise(resolve => {
         const dirname = path.join(dist, 'OPS', 'text')
         const promises = files
@@ -63,8 +63,8 @@ const parseHTMLFiles = (files, parser, dist) =>
                 const fname = isPlainObject(a)
                     ? Object.keys(a)[0]
                     : typeof a === 'string'
-                        ? a
-                        : null
+                    ? a
+                    : null
                 const ext = '.xhtml'
 
                 if (!fname) return null
@@ -79,7 +79,7 @@ const parseHTMLFiles = (files, parser, dist) =>
                     return null
                 }
 
-                return parser.parse(data, index, arr)
+                return parser_.parse(data, index, arr)
             })
             .filter(Boolean)
 

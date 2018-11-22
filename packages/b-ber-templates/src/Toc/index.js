@@ -2,10 +2,9 @@
 
 import path from 'path'
 import File from 'vinyl'
-import {Html} from '@canopycanopycanopy/b-ber-lib'
-import {getTitleOrName} from '@canopycanopycanopy/b-ber-lib/utils'
+import { Html } from '@canopycanopycanopy/b-ber-lib'
+import { getTitleOrName } from '@canopycanopycanopy/b-ber-lib/utils'
 import state from '@canopycanopycanopy/b-ber-lib/State'
-
 
 class Toc {
     static document() {
@@ -21,22 +20,29 @@ class Toc {
         })
     }
     static item(data) {
-        return `<a href="${path.basename(data.relativePath)}.xhtml">${Html.escape(getTitleOrName(data))}</a>`
+        return `<a href="${path.basename(
+            data.relativePath,
+        )}.xhtml">${Html.escape(getTitleOrName(data))}</a>`
     }
 
     static items(data) {
         return `
             <ol>
-                ${data.map(a => {
-                    if (a.in_toc === false) return ''
-                    return `
+                ${data
+                    .map(a => {
+                        if (a.in_toc === false) return ''
+                        return `
                         <li>
                             ${Toc.item(a)}
-                            ${a.nodes && a.nodes.length ? Toc.items(a.nodes) : ''}
+                            ${
+                                a.nodes && a.nodes.length
+                                    ? Toc.items(a.nodes)
+                                    : ''
+                            }
                         </li>
                     `
-                    }).join('')
-                }
+                    })
+                    .join('')}
             </ol>
         `
     }

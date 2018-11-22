@@ -35,7 +35,9 @@ export default {
                 let matches
                 while (
                     (matches = attrsRe.exec(tokens[idx].info.trim())) !== null
-                ) { attrs[matches[1]] = matches[2] }
+                ) {
+                    attrs[matches[1]] = matches[2]
+                }
 
                 if (!attrs.image && !attrs.caption) {
                     log.error(
@@ -58,12 +60,12 @@ export default {
                                     `<div class="pullquote full-width">
                                 <p>${escapeHtml(caption)}</p>
                                 ${
-        citations[idx2]
-            ? `<cite>&#x2014;${escapeHtml(
-                citations[idx2],
-            )}</cite>`
-            : ''
-        }
+                                    citations[idx2]
+                                        ? `<cite>&#x2014;${escapeHtml(
+                                              citations[idx2],
+                                          )}</cite>`
+                                        : ''
+                                }
                             </div>`,
                             )
                             .join(''),
@@ -83,8 +85,8 @@ export default {
                         )}" style="width: 100%; max-width: 100%; height: auto;"/>`,
                         attrs.caption
                             ? `<div class="figcaption" style="width: 100%; max-width: 100%; height: auto;"><p class="small">${escapeHtml(
-                                attrs.caption,
-                            )}</p></div>`
+                                  attrs.caption,
+                              )}</p></div>`
                             : '',
                         '</div>',
                         '</figure>',

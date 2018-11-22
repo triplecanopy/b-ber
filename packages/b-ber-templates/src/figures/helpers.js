@@ -21,26 +21,26 @@ export const figure = data =>
             /%SECTION_OPEN%/,
             data.inline
                 ? ''
-                : '<section epub:type="loi" title="Figures" class="chapter figures">'
+                : '<section epub:type="loi" title="Figures" class="chapter figures">',
         )
         .replace(/%FIGURE_CLASS_NAMES%/, data.classes)
         .replace(/%PAGE_BREAK_STYLES%/, Html.pagebreakAttribute(data))
         .replace(/%ID%/, data.id)
         .replace(
             /%FIGURE_STYLES%/,
-            data.figureStyles ? `style="${data.figureStyles}"` : ''
+            data.figureStyles ? `style="${data.figureStyles}"` : '',
         )
         .replace(
             /%IMAGE_STYLES%/,
-            data.imageStyles ? `style="${data.imageStyles}"` : ''
+            data.imageStyles ? `style="${data.imageStyles}"` : '',
         )
         .replace(
             /%FIGCAPTION_STYLES%/,
-            data.figcaptionStyles ? `style="${data.figcaptionStyles}"` : ''
+            data.figcaptionStyles ? `style="${data.figcaptionStyles}"` : '',
         )
         .replace(
             /%LINK_OPEN%/,
-            data.inline ? '' : `<a href="${data.ref}.xhtml#ref${data.id}">`
+            data.inline ? '' : `<a href="${data.ref}.xhtml#ref${data.id}">`,
         )
         .replace(/%LINK_CLOSE%/, data.inline ? '' : '</a>')
         .replace(/%IMAGE_ALT%/, data.alt)
@@ -80,7 +80,7 @@ export const media = data =>
             /%SECTION_OPEN%/,
             data.inline
                 ? ''
-                : '<section epub:type="loi" title="Figures" class="chapter figures">'
+                : '<section epub:type="loi" title="Figures" class="chapter figures">',
         )
         .replace(/%ID%/, data.id)
         .replace(/%MEDIA_TYPE%/, data.mediaType)
@@ -116,7 +116,7 @@ export const iframe = data =>
             /%SECTION_OPEN%/,
             data.inline
                 ? ''
-                : '<section epub:type="loi" title="Figures" class="chapter figures">'
+                : '<section epub:type="loi" title="Figures" class="chapter figures">',
         )
         .replace(/%ID%/, data.id)
         .replace(/%SRC%/, Url.encodeQueryString(data.source))

@@ -62,7 +62,7 @@ class Media extends Component {
         } else {
             // TODO: should account for element offset (margins/padding)
             nodeSpreadIndex = Math.floor(
-                (x - columnGap / 2 - translateX) / windowWidth
+                (x - columnGap / 2 - translateX) / windowWidth,
             )
         }
 

@@ -42,47 +42,47 @@ class ViewerSettings {
         this.get = this.get.bind(this)
 
         // responsive
-        this.gridColumns = _ =>
+        this.gridColumns = () =>
             Viewport.isMobile()
                 ? this.settings.mobileColumnCount
                 : this.settings.desktopColumnCount
-        this.gridColumnWidth = _ =>
+        this.gridColumnWidth = () =>
             (65 / this.settings.gridColumns() / 100) * window.innerWidth
-        this.gridGutterWidth = _ =>
+        this.gridGutterWidth = () =>
             (35 / (this.settings.gridColumns() - 1) / 100) * window.innerWidth
-        this.paddingLeft = _ =>
+        this.paddingLeft = () =>
             Viewport.isXlarge()
                 ? (this.settings.gridColumnWidth() +
                       this.settings.gridGutterWidth()) *
                   2
                 : Viewport.isMobile()
-                    ? this.settings.gridColumnWidth()
-                    : this.settings.gridColumnWidth() +
-                      this.settings.gridGutterWidth()
-        this.paddingRight = _ =>
+                ? this.settings.gridColumnWidth()
+                : this.settings.gridColumnWidth() +
+                  this.settings.gridGutterWidth()
+        this.paddingRight = () =>
             Viewport.isXlarge()
                 ? (this.settings.gridColumnWidth() +
                       this.settings.gridGutterWidth()) *
                   2
                 : Viewport.isMobile()
-                    ? this.settings.gridColumnWidth()
-                    : this.settings.gridColumnWidth() +
-                      this.settings.gridGutterWidth()
-        this.paddingTop = _ =>
+                ? this.settings.gridColumnWidth()
+                : this.settings.gridColumnWidth() +
+                  this.settings.gridGutterWidth()
+        this.paddingTop = () =>
             Viewport.isXlarge()
                 ? window.innerHeight / 6
                 : Viewport.isTall()
-                    ? window.innerHeight / 5.5
-                    : Viewport.isMobile()
-                        ? window.innerHeight / 10
-                        : window.innerHeight / 7
-        this.paddingBottom = _ =>
+                ? window.innerHeight / 5.5
+                : Viewport.isMobile()
+                ? window.innerHeight / 10
+                : window.innerHeight / 7
+        this.paddingBottom = () =>
             Viewport.isTall()
                 ? Viewport.isXlarge()
                     ? window.innerHeight / 7
                     : window.innerHeight / 5
                 : window.innerHeight / 7
-        this.columnGap = _ => this.settings.gridGutterWidth()
+        this.columnGap = () => this.settings.gridGutterWidth()
     }
 
     // responsive

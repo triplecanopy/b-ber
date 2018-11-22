@@ -30,7 +30,7 @@ const handler = argv => {
         log.error(
             `Too many arguments [${
                 args.length
-            }]. Make sure the project name is properly quoted`
+            }]. Make sure the project name is properly quoted`,
         )
     }
 
@@ -39,7 +39,7 @@ const handler = argv => {
             const files = fs.readdirSync(projectPath)
             if (files.length) {
                 throw new Error(
-                    `Directory [${projectName}] exists and is not empty, aborting`
+                    `Directory [${projectName}] exists and is not empty, aborting`,
                 )
             }
         } else {

@@ -24,8 +24,8 @@ function write(msgs, context) {
 
 function printNavigation(data, context, indent = 0) {
     const indent_ = INDENTATION.repeat(indent)
-    function render(data, context) {
-        data.forEach(item => {
+    function render(_data, _context) {
+        _data.forEach(item => {
             write(
                 [
                     [
@@ -35,11 +35,11 @@ function printNavigation(data, context, indent = 0) {
                         'black',
                     ],
                 ],
-                context,
+                _context,
             )
 
             if (item.nodes && item.nodes.length) {
-                render(item.nodes, context)
+                render(item.nodes, _context)
             }
         })
     }

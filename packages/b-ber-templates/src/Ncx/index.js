@@ -1,14 +1,14 @@
 import File from 'vinyl'
 import find from 'lodash/find'
-import {Html} from '@canopycanopycanopy/b-ber-lib'
-import {getTitleOrName} from '@canopycanopycanopy/b-ber-lib/utils'
+import { Html } from '@canopycanopycanopy/b-ber-lib'
+import { getTitleOrName } from '@canopycanopycanopy/b-ber-lib/utils'
 import state from '@canopycanopycanopy/b-ber-lib/State'
-
 
 class Ncx {
     static head() {
-        const entry = find(state.metadata, {term: 'identifier'})
-        const identifier = entry && {}.hasOwnProperty.call(entry, 'value') ? entry.value : ''
+        const entry = find(state.metadata, { term: 'identifier' })
+        const identifier =
+            entry && {}.hasOwnProperty.call(entry, 'value') ? entry.value : ''
         return `
             <head>
                 <meta name="dtb:uid" content="${identifier}"/>
@@ -19,8 +19,9 @@ class Ncx {
         `
     }
     static title() {
-        const entry = find(state.metadata, {term: 'title'})
-        const title = entry && {}.hasOwnProperty.call(entry, 'value') ? entry.value : ''
+        const entry = find(state.metadata, { term: 'title' })
+        const title =
+            entry && {}.hasOwnProperty.call(entry, 'value') ? entry.value : ''
         return `
             <docTitle>
                 <text>${Html.escape(title)}</text>
@@ -28,8 +29,9 @@ class Ncx {
         `
     }
     static author() {
-        const entry = find(state.metadata, {term: 'creator'})
-        const creator = entry && {}.hasOwnProperty.call(entry, 'value') ? entry.value : ''
+        const entry = find(state.metadata, { term: 'creator' })
+        const creator =
+            entry && {}.hasOwnProperty.call(entry, 'value') ? entry.value : ''
         return `
             <docAuthor>
                 <text>${Html.escape(creator)}</text>
@@ -62,17 +64,19 @@ class Ncx {
     static navPoints(data) {
         let index = 0
 
-        function render(data) {
-            return data.map(a => {
-                if (a.in_toc === false) return ''
-                index += 1
-                return `
+        function render(_data) {
+            return _data
+                .map(a => {
+                    if (a.in_toc === false) return ''
+                    index += 1
+                    return `
                     <navPoint id="navPoint-${index}" playOrder="${index}">
                         ${Ncx.navPoint(a)}
                         ${a.nodes && a.nodes.length ? render(a.nodes) : ''}
                     </navPoint>
                 `
-            }).join('')
+                })
+                .join('')
         }
 
         const xml = render(data)

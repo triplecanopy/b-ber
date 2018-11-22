@@ -11,18 +11,19 @@
     "scripts": {
         "watch": "lerna run --parallel watch",
         "lint": "ls ./packages | xargs -I {} ./node_modules/.bin/eslint ./packages/{}/src/**/{*.js,*.jsx}",
+        "lint.changed": "DIFF=`git diff-index --name-only HEAD | grep -E \"(.*).(jsx?|scss)$\"`; if [ \"$DIFF\" ]; then ./node_modules/.bin/eslint $DIFF; fi",
         "flush.lock": "ls ./packages | xargs -I {} rimraf ./packages/{}/yarn.lock",
         "flush.modules": "ls ./packages | xargs -I {} rimraf ./packages/{}/node_modules",
         "flush.rebuild": "lerna exec yarn && lerna bootstrap",
         "flush": "yarn flush.lock && yarn flush.modules && yarn flush.rebuild",
         "test": "rimraf ./coverage && yarn lint && yarn pretty && yarn jest --collectCoverage=true",
-        "pretty": "node scripts/pretty",
-        "build": "yarn test && lerna run build"
+        "build": "yarn test && lerna run build",
+        "prettier.check": "./node_modules/.bin/eslint --print-config . | ./node_modules/.bin/eslint-config-prettier-check"
     },
     "husky": {
         "hooks": {
-            "pre-commit": "yarn pretty",
-            "pre-push": "yarn lint && yarn pretty && yarn jest"
+            "pre-commit": "yarn lint.changed",
+            "pre-push": "yarn lint && yarn jest"
         }
     },
     "devDependencies": {
@@ -41,9 +42,11 @@
         "eslint": "^4.19.1",
         "eslint-config-airbnb": "^15.1.0",
         "eslint-config-airbnb-base": "^12.0.0",
+        "eslint-config-prettier": "^3.3.0",
         "eslint-plugin-babel": "^4.1.2",
         "eslint-plugin-import": "^2.7.0",
         "eslint-plugin-jsx-a11y": "^5.1.1",
+        "eslint-plugin-prettier": "^3.0.0",
         "eslint-plugin-react": "^7.3.0",
         "fs-extra": "^6.0.1",
         "husky": "^1.1.3",

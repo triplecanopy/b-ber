@@ -45,7 +45,7 @@ const copy = () =>
 
         dirs.forEach(a => {
             promises.push(
-                new Promise(resolve => {
+                new Promise(resolve1 => {
                     try {
                         fs.mkdirpSync(a.to)
                         fs.mkdirpSync(a.from) // ensure `from` dir exists
@@ -76,7 +76,7 @@ const copy = () =>
                         }
                     })
 
-                    resolve()
+                    resolve1()
                 }),
             )
         })

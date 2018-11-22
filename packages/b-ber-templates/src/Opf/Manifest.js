@@ -1,7 +1,7 @@
 import File from 'vinyl'
 import mime from 'mime-types'
 import ManifestItemProperties from '@canopycanopycanopy/b-ber-lib/ManifestItemProperties'
-import {fileId} from '@canopycanopycanopy/b-ber-lib/utils'
+import { fileId } from '@canopycanopycanopy/b-ber-lib/utils'
 
 class Manifest {
     static body() {
@@ -13,13 +13,21 @@ class Manifest {
 
     static item(file) {
         const props = ManifestItemProperties.testHTML(file)
-        const {name, opsPath, absolutePath, remote} = file
+        const { name, opsPath, absolutePath, remote } = file
         return `
             <item
                 id="${fileId(name)}"
                 href="${encodeURI(opsPath)}"
-                media-type="${!remote ? mime.lookup(absolutePath) : 'application/octet-stream'}"
-                ${props && props.length ? `properties="${props.join(' ')}"` : ''}
+                media-type="${
+                    !remote
+                        ? mime.lookup(absolutePath)
+                        : 'application/octet-stream'
+                }"
+                ${
+                    props && props.length
+                        ? `properties="${props.join(' ')}"`
+                        : ''
+                }
             />
         `
     }

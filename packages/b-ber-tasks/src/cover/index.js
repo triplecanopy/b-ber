@@ -66,7 +66,7 @@ class Cover {
 
         return fs.readdir(imageDir).then(files => {
             const _covers = files.filter(a =>
-                path.basename(a).match(new RegExp(this.coverPrefix))
+                path.basename(a).match(new RegExp(this.coverPrefix)),
             )
 
             if (!_covers.length) return Promise.resolve()
@@ -74,7 +74,9 @@ class Cover {
             const promises = _covers.map(a =>
                 fs
                     .remove(path.join(imageDir, a))
-                    .then(() => log.info('remove outdated cover image [%s]', a))
+                    .then(() =>
+                        log.info('remove outdated cover image [%s]', a),
+                    ),
             )
 
             return Promise.all(promises)
@@ -93,8 +95,8 @@ class Cover {
 
                     log.info('cover emit cover image')
                     resolve()
-                }
-            )
+                },
+            ),
         )
     }
 
@@ -112,7 +114,7 @@ class Cover {
         return new Promise(resolve => {
             // get the image dimensions, and pass them to the coverSVG template
             const { width, height } = imageSize.sync(
-                fs.readFileSync(this.coverImagePath)
+                fs.readFileSync(this.coverImagePath),
             )
             const href = `images/${encodeURIComponent(this.coverEntry)}`
             const svg = Xhtml.cover({ width, height, href })
@@ -121,7 +123,7 @@ class Cover {
             this.coverXHTMLContent = Template.render(
                 'page',
                 svg,
-                Xhtml.document()
+                Xhtml.document(),
             )
 
             log.info('cover build [cover.xhtml]')
@@ -144,7 +146,7 @@ class Cover {
             this.coverImagePath = path.join(
                 state.src,
                 '_images',
-                this.coverEntry
+                this.coverEntry,
             )
 
             // check that metadata.yml exists
@@ -170,7 +172,7 @@ class Cover {
                 this.coverImagePath = path.join(
                     state.src,
                     '_images',
-                    this.coverEntry
+                    this.coverEntry,
                 )
 
                 try {
@@ -178,7 +180,7 @@ class Cover {
                         throw new Error(
                             `Cover image listed in metadata.yml cannot be found: [${
                                 this.coverImagePath
-                            }]`
+                            }]`,
                         )
                     }
                 } catch (err) {

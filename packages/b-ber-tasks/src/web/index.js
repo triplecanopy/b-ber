@@ -171,13 +171,13 @@ function getProjectMetadataHTML() {
     return `
         <dl>
             ${state.metadata.reduce(
-        (acc, curr) =>
-            acc.concat(`
+                (acc, curr) =>
+                    acc.concat(`
                 <dt>${curr.term}</dt>
                 <dd>${curr.value}</dd>
             `),
-        '',
-    )}
+                '',
+            )}
         </dl>
     `
 }
@@ -329,8 +329,8 @@ function getEventHandlerScript() {
         <script type="text/javascript">
         // <![CDATA[
         ${injectBaseURL(
-        fs.readFileSync(path.join(__dirname, 'event-handlers.js')),
-    )}
+            fs.readFileSync(path.join(__dirname, 'event-handlers.js')),
+        )}
         // ]]>
         </script>
     `
@@ -386,8 +386,8 @@ function injectNavigationIntoFile(filePath, { tocElement, infoElement }) {
             `,
             )
 
-            fs.writeFile(filePath, contents, err => {
-                if (err) throw err
+            fs.writeFile(filePath, contents, err1 => {
+                if (err1) throw err1
                 log.info(`web writing ${path.basename(filePath)}`)
                 resolve()
             })
@@ -427,12 +427,12 @@ function indexPageContent() {
             .filter(a => OMIT_FROM_SEARCH.indexOf(a.fileName) < 0)
             .forEach(entry =>
                 promises.push(
-                    new Promise((resolve, reject) => {
+                    new Promise((resolve1, reject1) => {
                         fs.readFile(
                             path.join(OPS_PATH, `${entry.relativePath}.xhtml`),
                             'utf8',
                             (err, data) => {
-                                if (err) reject(err)
+                                if (err) reject1(err)
 
                                 const $ = cheerio.load(data)
                                 const title = $('h1,h2,h3,h4,h5,h6')
@@ -453,7 +453,7 @@ function indexPageContent() {
                                     body,
                                     url,
                                 })
-                                resolve()
+                                resolve1()
                             },
                         )
                     }),

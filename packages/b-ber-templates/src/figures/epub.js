@@ -1,15 +1,31 @@
 /* eslint-disable max-len */
 
-import {Html, Url} from '@canopycanopycanopy/b-ber-lib'
+import { Html, Url } from '@canopycanopycanopy/b-ber-lib'
 
 const epub = {
     portrait(data) {
-        return `${!data.inline ? '<section epub:type="loi" title="Figures" class="chapter figures">' : ''}
-            <div class="figure__large${data.inline ? ` figure__inline figure__inline--portrait ${data.classes}` : ''}"${Html.pagebreakAttribute(data)}>
+        return `${
+            !data.inline
+                ? '<section epub:type="loi" title="Figures" class="chapter figures">'
+                : ''
+        }
+            <div class="figure__large${
+                data.inline
+                    ? ` figure__inline figure__inline--portrait ${data.classes}`
+                    : ''
+            }"${Html.pagebreakAttribute(data)}>
                 <figure id="${data.id}">
                     <div class="figure__items" style="width: 70%; margin: 0 auto;">
-                        ${!data.inline ? `<a href="${data.ref}.xhtml#ref${data.id}">` : ''}
-                            <img class="portrait" alt="${data.alt}" src="../images/${data.source}" style="width: 100%; max-width: 100%; height: auto;"/>
+                        ${
+                            !data.inline
+                                ? `<a href="${data.ref}.xhtml#ref${data.id}">`
+                                : ''
+                        }
+                            <img class="portrait" alt="${
+                                data.alt
+                            }" src="../images/${
+            data.source
+        }" style="width: 100%; max-width: 100%; height: auto;"/>
                         ${!data.inline ? '</a>' : ''}
                         <div class="figcaption" style="width: 100%; max-width: 100%; height: auto;">
                             <p class="small">${data.caption}</p>
@@ -20,12 +36,30 @@ const epub = {
         ${!data.inline ? '</section>' : ''}`
     },
     landscape(data) {
-        return `${!data.inline ? '<section epub:type="loi" title="Figures" class="chapter figures">' : ''}
-            <div class="figure__large${data.inline ? ` figure__inline figure__inline--landscape ${data.classes}` : ''}"${Html.pagebreakAttribute(data)}>
+        return `${
+            !data.inline
+                ? '<section epub:type="loi" title="Figures" class="chapter figures">'
+                : ''
+        }
+            <div class="figure__large${
+                data.inline
+                    ? ` figure__inline figure__inline--landscape ${
+                          data.classes
+                      }`
+                    : ''
+            }"${Html.pagebreakAttribute(data)}>
                 <figure id="${data.id}">
                     <div class="figure__items">
-                        ${!data.inline ? `<a href="${data.ref}.xhtml#ref${data.id}">` : ''}
-                            <img class="landscape" alt="${data.alt}" src="../images/${data.source}" style="max-width: 100%;"/>
+                        ${
+                            !data.inline
+                                ? `<a href="${data.ref}.xhtml#ref${data.id}">`
+                                : ''
+                        }
+                            <img class="landscape" alt="${
+                                data.alt
+                            }" src="../images/${
+            data.source
+        }" style="max-width: 100%;"/>
                         ${!data.inline ? '</a>' : ''}
                         <div class="figcaption" style="max-width: 100%;">
                             <p class="small">${data.caption}</p>
@@ -35,13 +69,32 @@ const epub = {
             </div>
         ${!data.inline ? '</section>' : ''}`
     },
-    'portrait-high': function (data) { // eslint-disable-line func-names
-        return `${!data.inline ? '<section epub:type="loi" title="Figures" class="chapter figures">' : ''}
-            <div class="figure__large${data.inline ? ` figure__inline figure__inline--portrait-high ${data.classes}` : ''}"${Html.pagebreakAttribute(data)}>
+    // eslint-disable-line func-names
+    'portrait-high': data =>
+        `${
+            !data.inline
+                ? '<section epub:type="loi" title="Figures" class="chapter figures">'
+                : ''
+        }
+            <div class="figure__large${
+                data.inline
+                    ? ` figure__inline figure__inline--portrait-high ${
+                          data.classes
+                      }`
+                    : ''
+            }"${Html.pagebreakAttribute(data)}>
                 <figure id="${data.id}">
                     <div class="figure__items" style="width: 60%; margin: 0 auto;">
-                        ${!data.inline ? `<a href="${data.ref}.xhtml#ref${data.id}">` : ''}
-                            <img class="portrait-long" alt="${data.alt}" src="../images/${data.source}" style="width: 100%; max-width: 100%; height: auto;"/>
+                        ${
+                            !data.inline
+                                ? `<a href="${data.ref}.xhtml#ref${data.id}">`
+                                : ''
+                        }
+                            <img class="portrait-long" alt="${
+                                data.alt
+                            }" src="../images/${
+            data.source
+        }" style="width: 100%; max-width: 100%; height: auto;"/>
                         ${!data.inline ? '</a>' : ''}
                         <div class="figcaption" style="width: 100%; max-width: 100%; height: auto;">
                             <p class="small">${data.caption}</p>
@@ -49,15 +102,30 @@ const epub = {
                     </div>
                 </figure>
             </div>
-        ${!data.inline ? '</section>' : ''}`
-    },
+        ${!data.inline ? '</section>' : ''}`,
     square(data) {
-        return `${!data.inline ? '<section epub:type="loi" title="Figures" class="chapter figures">' : ''}
-            <div class="figure__large${data.inline ? ` figure__inline figure__inline--square ${data.classes}` : ''}"${Html.pagebreakAttribute(data)}>
+        return `${
+            !data.inline
+                ? '<section epub:type="loi" title="Figures" class="chapter figures">'
+                : ''
+        }
+            <div class="figure__large${
+                data.inline
+                    ? ` figure__inline figure__inline--square ${data.classes}`
+                    : ''
+            }"${Html.pagebreakAttribute(data)}>
                 <figure id="${data.id}">
                     <div class="figure__items" style="width: 85%; margin: 0 auto;">
-                        ${!data.inline ? `<a href="${data.ref}.xhtml#ref${data.id}">` : ''}
-                            <img class="square" alt="${data.alt}" src="../images/${data.source}" style="width: 100%; max-width: 100%; height: auto;"/>
+                        ${
+                            !data.inline
+                                ? `<a href="${data.ref}.xhtml#ref${data.id}">`
+                                : ''
+                        }
+                            <img class="square" alt="${
+                                data.alt
+                            }" src="../images/${
+            data.source
+        }" style="width: 100%; max-width: 100%; height: auto;"/>
                         ${!data.inline ? '</a>' : ''}
                         <div class="figcaption" style="width: 100%; max-width: 100%; height: auto;">
                             <p class="small">${data.caption}</p>
@@ -68,7 +136,11 @@ const epub = {
         ${!data.inline ? '</section>' : ''}`
     },
     audio(data) {
-        return `${!data.inline ? '<section epub:type="loi" title="Figures" class="chapter figures">' : ''}
+        return `${
+            !data.inline
+                ? '<section epub:type="loi" title="Figures" class="chapter figures">'
+                : ''
+        }
             <div class="figure__large">
                 <figure id="${data.id}">
 
@@ -77,19 +149,29 @@ const epub = {
                         <div class="audio">
                             <audio ${data.attrString}>
                                 ${data.sourceElements}
-                                <div class="media__fallback__${data.mediaType} media__fallback--image figure__small--landscape figure__small">
+                                <div class="media__fallback__${
+                                    data.mediaType
+                                } media__fallback--image figure__small--landscape figure__small">
                                     <figure>
-                                        <img src="${data.poster}" alt="Media fallback image"/>
+                                        <img src="${
+                                            data.poster
+                                        }" alt="Media fallback image"/>
                                     </figure>
                                 </div>
-                                <p class="media__fallback__${data.mediaType} media__fallback--text">Your device does not support the HTML5 ${data.mediaType} API.</p>
+                                <p class="media__fallback__${
+                                    data.mediaType
+                                } media__fallback--text">Your device does not support the HTML5 ${
+            data.mediaType
+        } API.</p>
                             </audio>
                         </div>
 
                         <div class="figcaption" style="max-width: 100%;">
                             <p class="small">
                                 ${data.caption ? `${data.caption}<br/>` : ''}
-                                <a href="${data.ref}.xhtml#ref${data.id}">Return</a>
+                                <a href="${data.ref}.xhtml#ref${
+            data.id
+        }">Return</a>
                             </p>
                         </div>
 
@@ -100,7 +182,11 @@ const epub = {
         ${!data.inline ? '</section>' : ''}`
     },
     video(data) {
-        return `${!data.inline ? '<section epub:type="loi" title="Figures" class="chapter figures">' : ''}
+        return `${
+            !data.inline
+                ? '<section epub:type="loi" title="Figures" class="chapter figures">'
+                : ''
+        }
             <div class="figure__large">
                 <figure id="${data.id}">
 
@@ -109,19 +195,29 @@ const epub = {
                         <div class="video">
                             <video ${data.attrString}>
                                 ${data.sourceElements}
-                                <div class="media__fallback__${data.mediaType} media__fallback--image figure__small--landscape figure__small">
+                                <div class="media__fallback__${
+                                    data.mediaType
+                                } media__fallback--image figure__small--landscape figure__small">
                                     <figure>
-                                        <img src="${data.poster}" alt="Media fallback image"/>
+                                        <img src="${
+                                            data.poster
+                                        }" alt="Media fallback image"/>
                                     </figure>
                                 </div>
-                                <p class="media__fallback__${data.mediaType} media__fallback--text">Your device does not support the HTML5 ${data.mediaType} API.</p>
+                                <p class="media__fallback__${
+                                    data.mediaType
+                                } media__fallback--text">Your device does not support the HTML5 ${
+            data.mediaType
+        } API.</p>
                             </video>
                         </div>
 
                         <div class="figcaption" style="max-width: 100%;">
                             <p class="small">
                                 ${data.caption ? `${data.caption}<br/>` : ''}
-                                <a href="${data.ref}.xhtml#ref${data.id}">Return</a>
+                                <a href="${data.ref}.xhtml#ref${
+            data.id
+        }">Return</a>
                             </p>
                         </div>
 
@@ -132,18 +228,26 @@ const epub = {
         ${!data.inline ? '</section>' : ''}`
     },
     iframe(data) {
-        return `${!data.inline ? '<section epub:type="loi" title="Figures" class="chapter figures">' : ''}
+        return `${
+            !data.inline
+                ? '<section epub:type="loi" title="Figures" class="chapter figures">'
+                : ''
+        }
             <div class="figure__large">
                 <figure id="${data.id}">
                     <div class="figure__items">
                         <div class="iframe">
-                            <iframe src="${Url.encodeQueryString(data.source)}" />
+                            <iframe src="${Url.encodeQueryString(
+                                data.source,
+                            )}" />
                         </div>
 
                         <div class="figcaption" style="max-width: 100%;">
                             <p class="small">
                                 ${data.caption ? `${data.caption}<br/>` : ''}
-                                <a href="${data.ref}.xhtml#ref${data.id}">Return</a>
+                                <a href="${data.ref}.xhtml#ref${
+            data.id
+        }">Return</a>
                             </p>
                         </div>
                     </div>
