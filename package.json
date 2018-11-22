@@ -72,5 +72,7 @@
         "sinon": "^3.2.1",
         "sinon-chai": "^2.13.0"
     },
-    "dependencies": {}
+    "dependencies": {
+        "resolve-cwd": "^2.0.0"
+    }
 }
