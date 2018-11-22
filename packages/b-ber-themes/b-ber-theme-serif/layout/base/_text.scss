@@ -1,3 +1,5 @@
+// sass-lint:disable no-mergeable-selectors
+
 // Block elements
 
 // Text Sizes
@@ -61,24 +63,26 @@ section {
 // Text Properties
 p {
     @if $text-indent == true {
-        text-indent: one-em(0) !important;
+        text-indent: one-em(
+            0
+        ) !important; // sass-lint:disable-line no-important
         h1 + &,
         h2 + &,
         h3 + &,
         h4 + &,
         h5 + &,
         h6 + & {
-            text-indent: 0 !important;
+            text-indent: 0 !important; // sass-lint:disable-line no-important
         }
     } @else {
-        text-indent: 0 !important;
+        text-indent: 0 !important; // sass-lint:disable-line no-important
         h1 + &,
         h2 + &,
         h3 + &,
         h4 + &,
         h5 + &,
         h6 + & {
-            text-indent: 0 !important;
+            text-indent: 0 !important; // sass-lint:disable-line no-important
         }
     }
 }
@@ -89,14 +93,14 @@ h3,
 h4,
 h5,
 h6 {
+    @include hyphens(none);
+    @include type-settings(0);
+    @include following-paragraph-not-indented;
     text-indent: 0;
     text-transform: none;
     text-align: center;
     font-weight: 400;
     font-style: normal;
-    @include hyphens(none);
-    @include type-settings(0);
-    @include following-paragraph-not-indented;
 }
 
 a,
@@ -178,9 +182,9 @@ p {
     text-indent: one-em(0);
 
     blockquote & {
-        text-indent: 0 !important;
-        margin-bottom: 0 !important;
         @include type-settings(-2);
+        text-indent: 0 !important; // sass-lint:disable-line no-important
+        margin-bottom: 0 !important; // sass-lint:disable-line no-important
     }
 
     section.backmatter &,
@@ -190,7 +194,9 @@ p {
     section.contributors &,
     section.appendix & {
         @if $text-indent != false {
-            text-indent: one-em(0) !important;
+            text-indent: one-em(
+                0
+            ) !important; // sass-lint:disable-line no-important
         } @else {
             text-indent: one-em(0);
         }
@@ -203,14 +209,16 @@ p {
         @include following-paragraph-not-indented;
         @include type-settings(-2);
         @include padding(0, 0, 1, 0, -2);
-        text-indent: 0 !important;
+        text-indent: 0 !important; // sass-lint:disable-line no-important
     }
 
     section.preface &,
     section.frontmatter &,
     section.acknowledgements & {
         @if $text-indent != false {
-            text-indent: one-em(0) !important;
+            text-indent: one-em(
+                0
+            ) !important; // sass-lint:disable-line no-important
         } @else {
             text-indent: one-em(0);
         }
@@ -242,7 +250,7 @@ p {
     section.afterword & {
         &:first-child,
         &:first-child {
-            text-indent: 0 !important;
+            text-indent: 0 !important; // sass-lint:disable-line no-important
         }
     }
 
@@ -253,8 +261,8 @@ p {
     .pullquote & {
         @include following-paragraph-not-indented;
         @include type-settings(-4);
-        text-indent: 0 !important;
-        margin-bottom: 0 !important;
+        text-indent: 0 !important; // sass-lint:disable-line no-important
+        margin-bottom: 0 !important; // sass-lint:disable-line no-important
         font-style: italic;
         font-weight: normal;
     }
@@ -268,14 +276,14 @@ p {
         @include type-settings(0);
         float: none;
         width: 100%;
-        margin-top: 0 !important;
-        padding-top: 0 !important;
-        text-indent: 0 !important;
+        margin-top: 0 !important; // sass-lint:disable-line no-important
+        padding-top: 0 !important; // sass-lint:disable-line no-important
+        text-indent: 0 !important; // sass-lint:disable-line no-important
         text-align: center;
     }
 
     &.interlocutor-parent {
-        text-indent: 0 !important;
+        text-indent: 0 !important; // sass-lint:disable-line no-important
         margin-top: one-line(0);
         &:first-child {
             margin-top: 0;
@@ -348,7 +356,7 @@ pre {
     white-space: pre;
     overflow: auto;
 
-    text-indent: 0 !important;
+    text-indent: 0 !important; // sass-lint:disable-line no-important
     border-radius: 3px;
     font-family: Consolas, Menlo, Courier, monospace;
     background-color: #f6f8fa;
@@ -424,13 +432,13 @@ ol.footnotes {
     li {
         padding: 0;
         margin: 0;
-        text-indent: 0 !important;
+        text-indent: 0 !important; // sass-lint:disable-line no-important
         font-size: 1em; // children, since we need to include paras in the li elements
         p {
-            text-indent: 0 !important;
+            text-indent: 0 !important; // sass-lint:disable-line no-important
         }
         a {
-            text-decoration: none !important;
+            text-decoration: none !important; // sass-lint:disable-line no-important
         }
         span.hidden-backlink {
             display: inline;

@@ -25,10 +25,10 @@ $desktop-short: 'only screen \
 $white: #fff                                                !default;
 $black: #222                                                !default;
 $grey: #eee                                                 !default;
-$info: #26A4B7                                              !default;
-$warning: #DA4539                                          	!default;
-$danger: #CD8D59                                            !default;
-$success: #5050C5                                          	!default;
+$info: #26a4b7                                              !default;
+$warning: #da4539                                          	!default;
+$danger: #cd8d59                                            !default;
+$success: #5050c5                                          	!default;
 
 // Set `$grey` in case of e-ink readers
 @if $build == 'mobi' {

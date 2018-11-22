@@ -1,5 +1,5 @@
 @if $build == 'web' {
-    @import url('https://fonts.googleapis.com/css?family=Material+Icons');
+    @import url('//fonts.googleapis.com/css?family=Material+Icons');
 }
 
 .icon-font {
@@ -13,6 +13,6 @@
     white-space: nowrap;
     word-wrap: normal;
     // direction: ltr; // breaks epub validation
-    -webkit-font-feature-settings: 'liga';
-    -webkit-font-smoothing: antialiased;
+    font-feature-settings: 'liga';
+    font-smoothing: antialiased;
 }

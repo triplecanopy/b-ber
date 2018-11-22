@@ -1,3 +1,5 @@
+// sass-lint:disable indentation
+
 //
 // Media Queries
 //
@@ -29,9 +31,9 @@
         }
     } @else {
         @if feature-exists('at-error') == true {
-            @error "`#{$media}` is not a supported media type.";
+            @error "`#{$media}` is not a supported media type."; // sass-lint:disable-line quotes
         } @else {
-            @warn "`#{$media}` is not a supported media type.";
+            @warn "`#{$media}` is not a supported media type."; // sass-lint:disable-line quotes
         }
     }
 }
@@ -68,16 +70,13 @@
     line-height: 1.3;
     margin-bottom: 0;
     text-align: left;
-    text-indent: 0 !important;
+    text-indent: 0 !important; // sass-lint:disable-line no-important
 }
 
 // General typographic settings
 @mixin hyphens($hyphenation: auto) {
-    -webkit-hyphens: $hyphenation;
     -epub-hyphens: $hyphenation;
     adobe-hyphenate: $hyphenation;
-    -moz-hyphens: $hyphenation;
-    -ms-hyphens: $hyphenation;
     hyphens: $hyphenation;
 }
 
@@ -94,8 +93,8 @@
 }
 
 @mixin font-smoothing {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased; // sass-lint:disable-line no-vendor-prefixes
+    -moz-osx-font-smoothing: grayscale; // sass-lint:disable-line no-vendor-prefixes
 }
 
 // Remove units from a value
@@ -210,7 +209,7 @@
 
 @mixin following-paragraph-not-indented {
     + p {
-        text-indent: 0 !important;
+        text-indent: 0 !important; // sass-lint:disable-line no-important
     }
 }
 @mixin following-element-has-no-top-padding {

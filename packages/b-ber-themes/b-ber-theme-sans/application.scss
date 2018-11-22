@@ -1,6 +1,6 @@
 // Declare namespaces
-@namespace url(http://www.w3.org/1999/xhtml);
-@namespace epub url(http://www.idpf.org/2007/ops);
+@namespace url('http://www.w3.org/1999/xhtml');
+@namespace epub url('http://www.idpf.org/2007/ops');
 
 // Load vendor libs
 // https://github.com/modularscale/modularscale-sass
@@ -92,7 +92,7 @@ html {
 
 @if $debug == true {
     img {
-        background-color: gainsboro;
+        background-color: #dcdcdc;
     }
 }
 

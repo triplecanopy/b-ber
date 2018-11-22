@@ -49,15 +49,10 @@ figure {
 }
 
 .figure__large {
+    // Space is added in the event that readers don't respect the page-break atrribute.
+    @include padding(1, 0, 1, 0, 0);
     page-break-before: always;
     page-break-after: always;
-    @include padding(
-        1,
-        0,
-        1,
-        0,
-        0
-    ); // Space is added in the event that readers don't respect the page-break atrribute.
 }
 
 // Basic spread styles to have page break. Further styling for Reader found in _reader.scss.
@@ -74,12 +69,12 @@ figure {
         padding: 0;
     }
     .figure__large {
-        -webkit-column-break-after: always;
-        -webkit-column-break-before: always;
+        -webkit-column-break-after: always; // sass-lint:disable-line no-vendor-prefixes
+        -webkit-column-break-before: always; // sass-lint:disable-line no-vendor-prefixes
     }
     .figure__fullbleed {
-        -webkit-column-break-before: avoid !important;
-        -webkit-column-break-after: avoid !important;
+        -webkit-column-break-before: avoid !important; // sass-lint:disable-line no-important,no-vendor-prefixes
+        -webkit-column-break-after: avoid !important; // sass-lint:disable-line no-important,no-vendor-prefixes
     }
 }
 
@@ -153,12 +148,12 @@ figure {
 .figure__medium {
     text-align: center;
     page-break-inside: avoid;
-    // height: 350px!important;
+    // height: 350px!important; // sass-lint:disable-line no-important
     height: n-ems(14, 0);
 
     .epigraph & {
-        margin-top: 0 !important;
-        padding-top: 0 !important;
+        margin-top: 0 !important; // sass-lint:disable-line no-important
+        padding-top: 0 !important; // sass-lint:disable-line no-important
         page-break-inside: avoid;
     }
 }
@@ -168,9 +163,9 @@ figure {
 // readers.
 figcaption,
 .figcaption {
+    @include following-paragraph-not-indented;
     text-align: center;
     width: 100%;
-    @include following-paragraph-not-indented;
     display: inline-block;
     a {
         text-decoration: none;
@@ -205,7 +200,7 @@ p.caption {
     width: 100%;
     margin: 0 auto;
     a {
-        text-decoration: none !important;
+        text-decoration: none !important; // sass-lint:disable-line no-important
     }
     .epigraph & {
         padding-top: 7px;

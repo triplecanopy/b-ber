@@ -1,3 +1,5 @@
+// sass-lint:disable mixins-before-declarations,nesting-depth
+
 // Web build. These styles will be added to the main stylesheet when running
 // `bber build --web`.
 //
@@ -23,16 +25,16 @@ $web-grid-columns: 12;
 
 // Some mixins can be found below. These are declared above the `@if $build == ...` styles,
 // since we can't declare mixins in a conditional statement in SCSS.
-@mixin web-grid-container() {
+@mixin web-grid-container {
     display: grid;
     grid-template-columns: repeat($web-grid-columns, 1fr);
 }
 
-@mixin web-grid-full-width() {
+@mixin web-grid-full-width {
     grid-column: 1 / span $web-grid-columns;
 }
 
-@mixin web-navigation-link() {
+@mixin web-navigation-link {
     // These are the links that appear in the navigation sidebar (the table of contents).
     font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
     text-decoration: none;
@@ -131,7 +133,7 @@ $web-grid-columns: 12;
             border: 0;
             display: block;
             margin: 0;
-            padding: 0 0 5px 0;
+            padding: 0 0 5px;
             width: 0;
             outline: none;
             background-color: $white;
@@ -159,14 +161,14 @@ $web-grid-columns: 12;
 
     // The table of contents, which is an ordered, nested list.
     .publication__toc {
-        transform: translateX(-100%);
         @include type-settings(-7);
+        transform: translateX(-100%);
         position: fixed;
         z-index: 2;
         top: 0;
         bottom: 0;
         overflow: auto;
-        -webkit-overflow-scrolling: touch;
+        -webkit-overflow-scrolling: touch; // sass-lint:disable-line no-vendor-prefixes
         border-right: 1px solid $grey;
         background-color: $white;
         width: $cell-large-width;
@@ -211,7 +213,7 @@ $web-grid-columns: 12;
         bottom: 0;
         right: 0;
         overflow: auto;
-        -webkit-overflow-scrolling: touch;
+        -webkit-overflow-scrolling: touch; // sass-lint:disable-line no-vendor-prefixes
         border-left: 1px solid $grey;
         background-color: $white;
         width: $cell-large-width;
@@ -499,7 +501,7 @@ $web-grid-columns: 12;
     figure figcaption a,
     .figure__items a {
         color: $black;
-        text-decoration: underline !important;
+        text-decoration: underline !important; // sass-lint:disable-line no-important
     }
 
     // Fullbleed. fullbleed panels are completely customizeable, so set to
@@ -511,7 +513,7 @@ $web-grid-columns: 12;
         left: 0;
         right: 0;
         bottom: 0;
-        grid-column: 1 !important;
+        grid-column: 1 !important; // sass-lint:disable-line no-important
 
         &.figure__large.figure__inline {
             figure {

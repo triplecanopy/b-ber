@@ -88,7 +88,7 @@ a {
     background: $white;
     border-bottom: 1px solid $lightgrey;
     height: $component-x;
-    opacity: 1 !important;
+    opacity: 1 !important; // sass-lint:disable-line no-important
 
     nav ul {
         display: flex;
@@ -229,7 +229,7 @@ a {
     -webkit-overflow-scrolling: touch;
 
     @media screen and (max-width: $mobile-break) {
-        width: 100% !important;
+        width: 100% !important; // sass-lint:disable-line no-important
     }
 
     &.controls__sidebar__chapters--open {
@@ -254,7 +254,7 @@ a {
     -webkit-overflow-scrolling: touch;
 
     @media screen and (max-width: $mobile-break) {
-        width: 100% !important;
+        width: 100% !important; // sass-lint:disable-line no-important
     }
 
     &.controls__sidebar__metadata--open,
@@ -285,8 +285,8 @@ a {
 }
 
 .controls__sidebar__downloads {
-    height: auto !important;
-    padding-bottom: 0 !important;
+    height: auto !important; // sass-lint:disable-line no-important
+    padding-bottom: 0 !important; // sass-lint:disable-line no-important
 
     ul li {
         display: flex;
@@ -321,7 +321,7 @@ a {
     bottom: 0;
     background: transparent;
     height: $component-x;
-    opacity: 1 !important;
+    opacity: 1 !important; // sass-lint:disable-line no-important
 
     nav ul {
         display: flex;
@@ -437,16 +437,16 @@ a {
     .controls__header,
     .controls__footer,
     .leaf {
-        display: none !important;
+        display: none !important; // sass-lint:disable-line no-important
     }
     #frame {
-        position: static !important;
-        overflow: visible !important;
+        position: static !important; // sass-lint:disable-line no-important
+        overflow: visible !important; // sass-lint:disable-line no-important
         #layout {
-            transform: none !important;
-            height: auto !important;
-            width: auto !important;
-            columns: unset !important;
+            transform: none !important; // sass-lint:disable-line no-important
+            height: auto !important; // sass-lint:disable-line no-important
+            width: auto !important; // sass-lint:disable-line no-important
+            columns: unset !important; // sass-lint:disable-line no-important
         }
     }
 }

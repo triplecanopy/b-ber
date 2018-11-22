@@ -1,7 +1,7 @@
 ul {
     @include type-settings(-2);
     padding: one-line(-2) 0 one-line(-2) two-ems(0);
-    @include following-element-has-no-top-padding;
+    @include following-element-has-no-top-padding; // sass-lint:disable-line mixins-before-declarations
     list-style: disc;
     text-indent: 0;
     margin: 0;
@@ -40,7 +40,7 @@ ol,
 dl {
     @include type-settings(-2);
     padding: one-line(-2) 0 one-line(-2) two-ems(0);
-    @include following-element-has-no-top-padding;
+    @include following-element-has-no-top-padding; // sass-lint:disable-line mixins-before-declarations
     list-style: decimal;
     text-indent: 0;
     margin: 0;

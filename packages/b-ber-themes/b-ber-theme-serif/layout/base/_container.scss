@@ -1,28 +1,28 @@
 body {
-    margin: 0;
-    text-indent: 0;
-    padding: 0;
-    font-family: $font-family-base;
     @include type-settings(0);
     @include hyphens;
     @include widows;
     @include orphans;
     @include text-rendering;
     @include font-smoothing;
+    margin: 0;
+    text-indent: 0;
+    padding: 0;
+    font-family: $font-family-base;
 }
 
 blockquote {
-    margin: 0;
-    font-size: one-em(0);
     @include following-element-has-no-top-padding;
     @include padding(1, 1, 1, 1, 0);
+    margin: 0;
+    font-size: one-em(0);
 }
 
 section {
-    clear: both;
     @include break('desktop') {
         padding-right: 2vh;
     }
+    clear: both;
     &:after {
         content: ' ';
         display: table;
@@ -66,15 +66,15 @@ section.bibliography {
         padding-top: 0;
     }
     p {
-        text-indent: 0;
         @include padding(0, 0, 1, 0, 0);
+        text-indent: 0;
     }
 }
 
 .audio,
 .video {
-    text-align: center;
     @include padding(1, 1, 1, 1, 0);
+    text-align: center;
     .figure__large & {
         padding: 0;
     }
@@ -89,9 +89,9 @@ video {
 }
 
 aside.note {
+    @include padding(0, 0, 1, 0, 0);
     text-align: left;
     margin: 0;
-    @include padding(0, 0, 1, 0, 0);
     p {
         text-indent: 0;
         a {
@@ -101,9 +101,9 @@ aside.note {
 }
 
 .pullquote {
+    @include padding(0, 1, 1, 1, 0);
     text-indent: 0;
     font-size: one-em(0);
-    @include padding(0, 1, 1, 1, 0);
 
     section.titlepage &,
     section.introduction &,
@@ -115,9 +115,9 @@ aside.note {
     }
 
     .epigraph & {
+        @include padding(0, 1, 2, 1, 0);
         float: none;
         margin-top: 0;
-        @include padding(0, 1, 2, 1, 0);
     }
 }
 
@@ -136,10 +136,10 @@ section.backmatter {
             margin: 0;
             padding: 0;
             @if $build == 'web' {
-                width: 60px !important;
+                width: 60px !important; // sass-lint:disable-line no-important
             }
             @if $build == 'reader' {
-                width: 60px !important;
+                width: 60px !important; // sass-lint:disable-line no-important
             }
         }
     }
@@ -147,18 +147,18 @@ section.backmatter {
 
 section.staff {
     h3 {
+        @include type-settings(-1);
         text-align: left;
         margin: 0;
         padding: 0;
         font-weight: bold;
-        @include type-settings(-1);
     }
 }
 
 .masthead h2 {
+    @include type-settings(-1);
     font-weight: 700;
     font-family: inherit;
     padding-top: 0;
     text-align: left;
-    @include type-settings(-1);
 }

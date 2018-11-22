@@ -14,11 +14,11 @@
 @import 'base/print'; // for print views and PDF generation
 
 .break-before {
-    page-break-before: always !important;
+    page-break-before: always !important; // sass-lint:disable-line no-important
 }
 .break-after {
-    page-break-after: always !important;
+    page-break-after: always !important; // sass-lint:disable-line no-important
 }
 .uppercase {
-    text-transform: uppercase !important;
+    text-transform: uppercase !important; // sass-lint:disable-line no-important
 }

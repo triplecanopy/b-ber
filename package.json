@@ -10,8 +10,12 @@
     },
     "scripts": {
         "watch": "lerna run --parallel watch",
-        "lint": "ls ./packages | xargs -I {} ./node_modules/.bin/eslint ./packages/{}/src/**/{*.js,*.jsx}",
-        "lint.changed": "DIFF=`git diff-index --name-only HEAD | grep -E \"(.*).(jsx?|scss)$\"`; if [ \"$DIFF\" ]; then ./node_modules/.bin/eslint $DIFF; fi",
+        "lint.js": "ls ./packages | xargs -I {} ./node_modules/.bin/eslint ./packages/{}/src/**/{*.js,*.jsx}",
+        "lint.scss": "node_modules/.bin/sass-lint -c .sasslintrc './packages/b-ber-themes/b-ber-theme-sans/**/*.scss, ./packages/b-ber-themes/b-ber-theme-serif/**/*.scss' -v -q",
+        "lint": "yarn lint.js && yarn lint.scss",
+        "lint.changed.js": "DIFF=`git diff-index --name-only HEAD | grep -E \".*\\.jsx?$\"`; if [ \"$DIFF\" ]; then ./node_modules/.bin/eslint $DIFF; fi",
+        "lint.changed.scss": "DIFF=`git diff-index --name-only HEAD | grep -E \"themes.*\\.(scss|sass|less|css)$\"`; if [ \"$DIFF\" ]; then node_modules/.bin/sass-lint -c .sasslintrc $DIFF -v -q; fi",
+        "lint.changed": "yarn lint.changed.js && yarn lint.changed.scss",
         "flush.lock": "ls ./packages | xargs -I {} rimraf ./packages/{}/yarn.lock",
         "flush.modules": "ls ./packages | xargs -I {} rimraf ./packages/{}/node_modules",
         "flush.rebuild": "lerna exec yarn && lerna bootstrap",
@@ -64,6 +68,7 @@
         "mocha": "^3.2.0",
         "prettier": "^1.15.1",
         "rimraf": "^2.6.2",
+        "sass-lint": "^1.12.1",
         "sinon": "^3.2.1",
         "sinon-chai": "^2.13.0"
     },

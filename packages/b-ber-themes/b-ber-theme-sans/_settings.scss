@@ -26,10 +26,10 @@ $desktop-short: 'only screen \
 $white: #fff                                                !default;
 $black: #222                                                !default;
 $grey: #eee                                                 !default;
-$info: #26A4B7                                              !default;
-$warning: #DA4539                                          	!default;
-$danger: #CD8D59                                            !default;
-$success: #5050C5                                          	!default;
+$info: #26a4b7                                              !default;
+$warning: #da4539                                           !default;
+$danger: #cd8d59                                            !default;
+$success: #5050c5                                           !default;
 
 // Layout
 $debug: false                                               !default;
@@ -79,8 +79,8 @@ $portrait-image-height: 5                                   !default;
 $portrait-image--high-height: 5                             !default;
 
 // Gallery grid (web & reader)
-$grid-template: 
-    [row1-start] "t1 t2 t3 t4 t5 t6 t7 t8 t9 t10 t11 t12" 43% [row1-end]
-    [row2-start] "b1 b2 b3 b4 b5 b6 b7 b8 b9 b10 b11 b12" 43% [row2-end]
-    / auto                                                  !default;
+$grid-template:
+    [row1-start] 't1 t2 t3 t4 t5 t6 t7 t8 t9 t10 t11 t12' 43% [row1-end] // sass-lint:disable-line indentation
+    [row2-start] 'b1 b2 b3 b4 b5 b6 b7 b8 b9 b10 b11 b12' 43% [row2-end] // sass-lint:disable-line indentation
+    / auto                                                  !default; // sass-lint:disable-line indentation
 $grid-gap: 14% 3%                                           !default;
