@@ -6,12 +6,12 @@ const proc = exec(
     `${path.join(
         __dirname,
         '..',
-        'node_modules/.bin/prettier'
+        'node_modules/.bin/prettier',
     )} --config ${path.join(
         __dirname,
         '..',
-        '.prettierrc'
-    )} ./packages/**/*.js -l`
+        '.prettierrc',
+    )} ./packages/**/{*.js,*.scss} -l`,
 )
 
 proc.stdout.on('data', data => errors.push(`${data}`.trim()))
