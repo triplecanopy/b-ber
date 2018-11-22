@@ -6,7 +6,8 @@ ul {
     text-indent: 0;
     margin: 0;
 
-    ul, ol {
+    ul,
+    ol {
         padding: 0 0 0 two-ems(0);
     }
 
@@ -21,13 +22,12 @@ ul {
             text-indent: -0.6em;
             padding-left: 0.6em;
             &:before {
-                content:'-';
-                display:inline-block;
-                position:relative;
-                left:-0.3em;
+                content: '-';
+                display: inline-block;
+                position: relative;
+                left: -0.3em;
             }
         }
-
     }
 
     * {
@@ -36,7 +36,8 @@ ul {
     }
 }
 
-ol, dl {
+ol,
+dl {
     @include type-settings(-2);
     padding: one-line(-2) 0 one-line(-2) two-ems(0);
     @include following-element-has-no-top-padding;
@@ -44,11 +45,15 @@ ol, dl {
     text-indent: 0;
     margin: 0;
 
-    ul, ol, dl {
+    ul,
+    ol,
+    dl {
         padding: 0 0 0 two-ems(0);
     }
 
-    li, dt, dd {
+    li,
+    dt,
+    dd {
         padding-top: 0;
 
         @if $build == web {
@@ -74,5 +79,4 @@ ol, dl {
         @include type-settings(0);
         line-height: line-height(ms(-2));
     }
-
 }

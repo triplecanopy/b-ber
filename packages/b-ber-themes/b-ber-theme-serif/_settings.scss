@@ -2,7 +2,6 @@
 // Variables
 //
 
-
 // Media Queries
 $media-mobile: 'only screen \
                 and (min-width: 320px) \
@@ -36,7 +35,7 @@ $success: #5050C5                                          	!default;
     $grey: $black;
 }
 
-// highlight.js theme name. Eventually this will pull in the appropriate CSS
+// TODO: highlight.js theme name. Eventually this will pull in the appropriate CSS
 // from highlight.js. Currently there's no way to use dynamic imports with SCSS,
 // so this will either have to be managed elsewhere
 // $syntax-highlighting: 'dracula'                             !default;
@@ -87,7 +86,3 @@ $landscape-image-height: 4                                  !default;
 $square-image-height: 4                                     !default;
 $portrait-image-height: 5                                   !default;
 $portrait-image--high-height: 5                             !default;
-
-// Grid Columns
-
-$grid-columns: 3                                            !default;

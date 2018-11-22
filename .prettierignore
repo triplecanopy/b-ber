@@ -20,3 +20,8 @@ packages/b-ber-templates/Toc/*.js
 packages/b-ber-templates/Xhtml/*.js
 packages/b-ber-templates/Xml/*.js
 packages/b-ber-templates/figures/*.js
+packages/b-ber-themes/b-ber-theme-serif/_settings.scss
+packages/b-ber-themes/b-ber-theme-serif/_overrides.scss
+packages/b-ber-themes/b-ber-theme-sans/_settings.scss
+packages/b-ber-themes/b-ber-theme-sans/_overrides.scss
+packages/b-ber-themes/b-ber-theme-serif/_mixins.scss
