@@ -23,7 +23,7 @@ const opsPath = (fpath, base) =>
  */
 
 // https://www.w3.org/TR/xml-names/#Conformance
-const fileId = str => `_${str.replace(/[^a-zA-Z0-9_]/g, '_')}`
+const fileId = str => `_${str.replace(/[^a-zA-Z0-9_-]/g, '_')}`
 
 /**
  * Determine an image's orientation
