@@ -102,7 +102,6 @@ class Marker extends Component {
     }
 
     calculateNodePosition(record = undefined) {
-        console.log('calculateNodePosition')
         if (!this.markerNode) return console.error('No marker node')
 
         const { paddingLeft, columnGap } = this.context
