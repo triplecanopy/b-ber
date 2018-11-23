@@ -191,6 +191,17 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
             )
         },
         processNode(node, children, index) {
+            // TODO: this should be cleaned up so that we're processing the
+            // parent rather than the marker. It's necessary to remove a marker's
+            // parent's margin/padding-bottom instead of calculating an offset to
+            // fixes FF issue where bottom distance is *always* appended to the
+            // column after resizing
+
+            // eslint-disable-next-line no-param-reassign
+            node.parent.attribs = {
+                ...node.parent.attribs,
+                style: 'padding-bottom: 0; margin-bottom: 0',
+            }
             const attrs = Asset.convertToReactAttrs(node.attribs)
 
             return React.createElement(

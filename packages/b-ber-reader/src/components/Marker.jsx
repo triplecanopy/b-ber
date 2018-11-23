@@ -33,7 +33,6 @@ class Marker extends Component {
 
         this.calculateNodePosition = this.calculateNodePosition.bind(this)
         this.calculateOffsetHeight = this.calculateOffsetHeight.bind(this)
-        this.removeParentOffsetBottom = this.removeParentOffsetBottom.bind(this)
         this.connectObservers = this.connectObservers.bind(this)
         this.disconnectObservers = this.disconnectObservers.bind(this)
         this.nodeEdgeIsInAllowableRange = this.nodeEdgeIsInAllowableRange.bind(
@@ -83,19 +82,6 @@ class Marker extends Component {
         this.disconnectObservers()
     }
 
-    // Remove a marker's parent's margin/padding-bottom instead of calculating
-    // an offset. fixes FF issue where bottom distance is *always* appended to
-    // the column after resizing
-    removeParentOffsetBottom() {
-        const parent = this.markerNode.parentNode.parentNode
-
-        if (!parent) return
-        // if (debug) parent.style.backgroundColor = 'lightblue'
-
-        parent.style.paddingBottom = 0
-        parent.style.marginBottom = 0
-    }
-
     // eslint-disable-next-line class-methods-use-this
     nodeEdgeIsInAllowableRange(position, _position) {
         const result =
@@ -112,14 +98,12 @@ class Marker extends Component {
             )
         }
 
-        // console.log('xx', result, position, _position)
         return result
     }
 
     calculateNodePosition(record = undefined) {
+        console.log('calculateNodePosition')
         if (!this.markerNode) return console.error('No marker node')
-
-        this.removeParentOffsetBottom()
 
         const { paddingLeft, columnGap } = this.context
         const { x, width } = this.markerNode.getBoundingClientRect()
@@ -213,6 +197,7 @@ class Marker extends Component {
     }
 
     disconnectObservers() {
+        clearTimeout(this.timer)
         this.resizeObserver.disconnect()
     }
 
