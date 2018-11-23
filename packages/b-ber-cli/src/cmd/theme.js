@@ -1,4 +1,4 @@
-import Theme from '@canopycanopycanopy/b-ber-lib/theme'
+import Theme from '@canopycanopycanopy/b-ber-lib/Theme'
 import { fail } from '../helpers'
 
 const _command = 'theme <command> [options]'

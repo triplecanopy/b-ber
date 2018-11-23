@@ -5,7 +5,7 @@ import sequences from '@canopycanopycanopy/b-ber-shapes/sequences'
 import getAssets from '@canopycanopycanopy/b-ber-resources'
 import Project from '@canopycanopycanopy/b-ber-templates/Project'
 import state from '@canopycanopycanopy/b-ber-lib/State'
-import Theme from '@canopycanopycanopy/b-ber-lib/theme'
+import Theme from '@canopycanopycanopy/b-ber-lib/Theme'
 
 /**
  * @class Initializer

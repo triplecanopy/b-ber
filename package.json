@@ -20,14 +20,15 @@
         "flush.modules": "ls ./packages | xargs -I {} rimraf ./packages/{}/node_modules",
         "flush.rebuild": "lerna exec yarn && lerna bootstrap",
         "flush": "yarn flush.lock && yarn flush.modules && yarn flush.rebuild",
-        "test": "rimraf ./coverage && yarn lint && yarn pretty && yarn jest --collectCoverage=true",
+        "test.coverage": "rimraf ./coverage && yarn lint && yarn jest --collectCoverage=true",
+        "test": "yarn lint && yarn jest",
         "build": "yarn test && lerna run build",
         "prettier.check": "./node_modules/.bin/eslint --print-config . | ./node_modules/.bin/eslint-config-prettier-check"
     },
     "husky": {
         "hooks": {
             "pre-commit": "yarn lint.changed",
-            "pre-push": "yarn lint && yarn jest"
+            "pre-push": "yarn test"
         }
     },
     "devDependencies": {
