@@ -51,37 +51,21 @@ class ViewerSettings {
         this.gridGutterWidth = () =>
             (35 / (this.settings.gridColumns() - 1) / 100) * window.innerWidth
         this.paddingLeft = () =>
-            Viewport.isXlarge()
-                ? (this.settings.gridColumnWidth() +
-                      this.settings.gridGutterWidth()) *
-                  2
-                : Viewport.isMobile()
-                ? this.settings.gridColumnWidth()
-                : this.settings.gridColumnWidth() +
-                  this.settings.gridGutterWidth()
+            Viewport.exact(
+                this.settings.gridColumnWidth(),
+                this.settings.gridColumnWidth() + this.settings.gridGutterWidth(), // prettier-ignore
+                (this.settings.gridColumnWidth() + this.settings.gridGutterWidth()) * 2, // prettier-ignore
+            )
         this.paddingRight = () =>
-            Viewport.isXlarge()
-                ? (this.settings.gridColumnWidth() +
-                      this.settings.gridGutterWidth()) *
-                  2
-                : Viewport.isMobile()
-                ? this.settings.gridColumnWidth()
-                : this.settings.gridColumnWidth() +
-                  this.settings.gridGutterWidth()
+            Viewport.exact(
+                this.settings.gridColumnWidth(),
+                this.settings.gridColumnWidth() + this.settings.gridGutterWidth(), // prettier-ignore
+                (this.settings.gridColumnWidth() + this.settings.gridGutterWidth()) * 2, // prettier-ignore
+            )
         this.paddingTop = () =>
-            Viewport.isXlarge()
-                ? window.innerHeight / 6
-                : Viewport.isTall()
-                ? window.innerHeight / 5.5
-                : Viewport.isMobile()
-                ? window.innerHeight / 10
-                : window.innerHeight / 7
+            Viewport.optimize(0.14, 0.14, 0.18, window.innerHeight)
         this.paddingBottom = () =>
-            Viewport.isTall()
-                ? Viewport.isXlarge()
-                    ? window.innerHeight / 7
-                    : window.innerHeight / 5
-                : window.innerHeight / 7
+            Viewport.optimize(0.11, 0.14, 0.18, window.innerHeight)
         this.columnGap = () => this.settings.gridGutterWidth()
     }
 

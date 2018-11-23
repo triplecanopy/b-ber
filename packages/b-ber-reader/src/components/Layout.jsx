@@ -162,10 +162,12 @@ class Layout extends Component {
             paddingTop,
             paddingBottom,
         } = this.props.viewerSettings
+
         const isMobile = Viewport.isMobile()
         const width = window.innerWidth
         const columns = isMobile ? 1 : 2
         const height = isMobile ? 'auto' : window.innerHeight
+
         this.setState({
             width,
             height,

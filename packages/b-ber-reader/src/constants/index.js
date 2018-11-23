@@ -16,15 +16,15 @@ export const messagesTypes = {
     KEYDOWN_EVENT: 'KEYDOWN_EVENT',
 }
 
-// TODO: rename/clean these up
+export const BREAKPOINT_HORIZONTAL_SMALL = 680
+export const BREAKPOINT_HORIZONTAL_MEDIUM = 960
+export const BREAKPOINT_HORIZONTAL_LARGE = 1590
 
-// Single breakpoint set at 960px
-const MOBILE = 960
-const XLARGE = 1590
-const TALL = 860
-
-export const breakpoints = { MOBILE, XLARGE, TALL }
+export const BREAKPOINT_VERTICAL_SMALL = 320
+export const BREAKPOINT_VERTICAL_MEDIUM = 480
+export const BREAKPOINT_VERTICAL_LARGE = 860
 
 // Media queries
-export const MEDIA_QUERY_SMALL = `only screen and (min-width: ${MOBILE}px)`
-export const MEDIA_QUERY_LARGE = `only screen and (max-width: ${MOBILE + 1}px)`
+export const MEDIA_QUERY_SMALL = `only screen and (min-width: ${BREAKPOINT_HORIZONTAL_SMALL}px)`
+export const MEDIA_QUERY_LARGE = `only screen and (max-width: ${BREAKPOINT_HORIZONTAL_SMALL +
+    1}px)`
