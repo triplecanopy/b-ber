@@ -177,6 +177,20 @@ class DocumentProcessor {
         return rand()
     }
 
+    addMarkerReferenceToChild(node, markerId) {
+        for (let i = 0; i < node.children.length; i++) {
+            if (
+                node.children[i].nodeName === 'FIGURE' ||
+                node.children[i].classList.contains('spread__content')
+            ) {
+                node.children[i].setAttribute(
+                    'data-marker-reference-figure',
+                    markerId,
+                )
+            }
+        }
+    }
+
     walkDocument(doc, callback) {
         const nodes = doc.children
 
@@ -192,6 +206,7 @@ class DocumentProcessor {
                         // inject into tree
                         sibling.appendChild(this.createMarker(markerId))
                         node.setAttribute('data-marker-reference', markerId)
+                        this.addMarkerReferenceToChild(node, markerId)
                     } else {
                         console.warn(
                             'No siblings or children could be found for',
@@ -202,6 +217,7 @@ class DocumentProcessor {
                         elem.setAttribute('data-unbound', true)
                         node.parentNode.prepend(elem)
                         node.setAttribute('data-marker-reference', markerId)
+                        this.addMarkerReferenceToChild(node, markerId)
 
                         return
                     }
@@ -268,8 +284,10 @@ class DocumentProcessor {
         DocumentPreProcessor.createScriptElements()
         DocumentPreProcessor.parseXML()
 
-        this.walkDocument(doc, doc_ => {
-            if (!this.validateDocument(doc_)) err = new Error('Invalid markup')
+        this.walkDocument(doc, nextDoc => {
+            if (!this.validateDocument(nextDoc)) {
+                err = new Error('Invalid markup')
+            }
             xml = xmlString.replace(
                 /<body([^>]*?)>[\s\S]*<\/body>/g,
                 `<body$1>${String(doc.body.innerHTML)}</body>`,
@@ -280,6 +298,7 @@ class DocumentProcessor {
         if (callback && typeof callback === 'function') {
             return callback(err, result)
         }
+
         return result
     }
 }

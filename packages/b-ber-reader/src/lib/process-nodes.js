@@ -1,9 +1,17 @@
 import React from 'react'
 import { ProcessNodeDefinitions } from 'html-to-react'
-import { Link, Footnote, Spread, Marker, Audio, Video } from '../components'
+import {
+    Link,
+    Footnote,
+    Spread,
+    Marker,
+    Audio,
+    Video,
+    SpreadFigure,
+} from '../components'
 import { Asset, Url } from '../helpers'
 
-export const isValidNode = _ => true
+export const isValidNode = () => true
 export const processNodeDefinitions = new ProcessNodeDefinitions(React)
 export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
     {
@@ -158,6 +166,28 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
                         requestedSpineItem.absoluteURL,
                         attrs.xlinkHref,
                     ),
+                },
+                children,
+            )
+        },
+    },
+    {
+        shouldProcessNode(node) {
+            return (
+                node.type === 'tag' &&
+                {}.hasOwnProperty.call(
+                    node.attribs,
+                    'data-marker-reference-figure',
+                )
+            )
+        },
+        processNode(node, children, index) {
+            const attrs = Asset.convertToReactAttrs(node.attribs)
+            return React.createElement(
+                SpreadFigure,
+                {
+                    ...attrs,
+                    key: index,
                 },
                 children,
             )

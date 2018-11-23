@@ -30,6 +30,8 @@ class Reader extends Component {
         registerOverlayElementId: PropTypes.func,
         deRegisterOverlayElementId: PropTypes.func,
         requestDeferredCallbackExecution: PropTypes.func,
+        addRef: PropTypes.func,
+        refs: PropTypes.object,
     }
     constructor(props) {
         super(props)
@@ -67,6 +69,8 @@ class Reader extends Component {
             pageAnimation: false, // disabled by default, and activated in Reader#enablePageTransitions on user action
             overlayElementId: null,
             spinnerVisible: true,
+
+            refs: {},
         }
 
         this.localStorageKey = 'bber_reader'
@@ -117,8 +121,16 @@ class Reader extends Component {
         ).bind(this)
     }
 
+    addRef = ref => {
+        const { refs } = this.state
+        const nextRefs = { ...refs, [ref.markerId]: ref }
+        this.setState({ refs: nextRefs })
+    }
+
     getChildContext() {
         return {
+            addRef: this.addRef.bind(this),
+            refs: this.state.refs,
             spreadIndex: this.state.spreadIndex,
             navigateToChapterByURL: this.navigateToChapterByURL,
             overlayElementId: this.state.overlayElementId,
@@ -718,6 +730,8 @@ class Reader extends Component {
             handleEvents,
             spinnerVisible,
         } = this.state
+
+        // console.log('this.state.refs', this.state.refs)
 
         return (
             <Controls

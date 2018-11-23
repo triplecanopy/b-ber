@@ -13,8 +13,10 @@ class DebugGrid extends Component {
             gridColumnWidth,
             gridGutterWidth,
         } = this.props.viewerSettings
+
         const lines = []
         const paddingLeft = gridColumnWidth + gridGutterWidth
+
         for (let i = 0; i < gridColumns; i++) {
             const styles = { left: paddingLeft * i, width: gridColumnWidth }
             const index = i + 1

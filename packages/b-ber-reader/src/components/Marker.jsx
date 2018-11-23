@@ -21,16 +21,21 @@ class Marker extends Component {
         paddingBottom: PropTypes.number,
         columnGap: PropTypes.number,
         transitionSpeed: PropTypes.number,
+        addRef: PropTypes.func,
     }
 
     constructor(props) {
         super(props)
 
         this.state = {
-            verso: null,
-            recto: null,
+            verso: false,
+            recto: false,
+            x: 0,
+            markerId: '',
+            unbound: false,
         }
 
+        this.updateRef = this.updateRef.bind(this)
         this.calculateNodePosition = this.calculateNodePosition.bind(this)
         this.calculateOffsetHeight = this.calculateOffsetHeight.bind(this)
         this.connectObservers = this.connectObservers.bind(this)
@@ -48,10 +53,23 @@ class Marker extends Component {
         this.resizeObserver = null
 
         // callbacks
-        this.calculateNodePositionAfterResize = _ => ({})
+        this.calculateNodePositionAfterResize = () => ({})
+    }
+
+    updateRef() {
+        const { recto, verso, x, markerId, unbound } = this.state
+        this.context.addRef({
+            recto,
+            verso,
+            x,
+            markerId,
+            unbound,
+        })
     }
 
     componentDidMount() {
+        this.calculateNodePosition()
+
         this.contentNode = document.querySelector('#content')
         this.layoutNode = document.querySelector('#layout')
 
@@ -150,6 +168,7 @@ class Marker extends Component {
             this.nodeEdgeIsInAllowableRange(position, _position) !== true ||
             (verso === false && recto === false)
         ) {
+            console.log('node not in allowable range')
             clearTimeout(this.timer)
             this.timer = setTimeout(
                 this.calculateNodePosition,
@@ -185,7 +204,16 @@ class Marker extends Component {
         DocumentPreProcessor.createStyleSheets({ paddingLeft, columnGap })
         DocumentPreProcessor.appendStyleSheets()
 
-        this.setState({ verso, recto })
+        this.setState(
+            {
+                verso,
+                recto,
+                x,
+                markerId: this.props['data-marker'],
+                unbound: JSON.parse(this.props['data-unbound']),
+            },
+            this.updateRef,
+        )
     }
 
     connectObservers() {
@@ -228,9 +256,12 @@ class Marker extends Component {
             offsetHeight -= padding / 2
         }
 
-        if (JSON.parse(this.markerNode.dataset.unbound) === true) {
-            return offsetHeight / 2
+        if (JSON.parse(this.props['data-unbound']) === true) {
+            offsetHeight /= 2
         }
+
+        offsetHeight = Math.floor(offsetHeight)
+        offsetHeight -= 1 // nudge
         return offsetHeight
     }
 
@@ -241,7 +272,10 @@ class Marker extends Component {
         const debugSpacerStyles = { background: 'coral' }
         const debugMarkerStyles = { backgroundColor: verso ? 'violet' : 'red' }
 
-        let spacerStyles = { paddingBottom: offsetHeight, display: 'block' }
+        let spacerStyles = {
+            paddingBottom: offsetHeight,
+            display: 'block',
+        }
         if (debug) spacerStyles = { ...spacerStyles, ...debugSpacerStyles }
 
         let markerStyles = { ...this.props.style }
