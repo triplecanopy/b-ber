@@ -13,7 +13,7 @@ const isIframe = type => type === 'iframe'
 
 const figure = (data, env) => {
     const { width, height, mime, type } = data
-    const _env = !env || !{}.hasOwnProperty.call(figures, env) ? 'epub' : env
+    const _env = !env || !figures[env] ? 'epub' : env
 
     let format = null
     if (isIframe(type)) {

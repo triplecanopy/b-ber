@@ -5,7 +5,7 @@ import imageSize from 'probe-image-size'
 import log from '@canopycanopycanopy/b-ber-logger'
 import { Html } from '@canopycanopycanopy/b-ber-lib'
 import state from '@canopycanopycanopy/b-ber-lib/State'
-import figTmpl from '@canopycanopycanopy/b-ber-templates/figures'
+import figureTemplate from '@canopycanopycanopy/b-ber-templates/figures'
 import { getImageOrientation } from '@canopycanopycanopy/b-ber-lib/utils'
 import {
     INLINE_DIRECTIVE_MARKER,
@@ -78,7 +78,7 @@ export default {
             // then get the dimensions
             const dimensions = imageSize.sync(fs.readFileSync(asset))
             const { width, height } = dimensions
-            const figureId = htmlId(id) //`_${crypto.randomBytes(20).toString('hex')}`
+            const figureId = htmlId(id)
 
             switch (type) {
                 case 'figure':
@@ -99,6 +99,7 @@ export default {
                         state.build === 'reader'
                             ? 'figures-titlepage.xhtml'
                             : page
+
                     state.add('figures', {
                         id: figureId,
                         ...attrsObject,
@@ -120,11 +121,9 @@ export default {
                             </figure>
                         </div>`
                     break
-                case 'figure-inline':
-                    if (!{}.hasOwnProperty.call(attrsObject, 'classes')) {
-                        attrsObject.classes = ''
-                    }
 
+                case 'figure-inline':
+                    attrsObject.classes = attrsObject.classes || ''
                     imageData = {
                         ...attrsObject,
                         id: figureId,
@@ -135,7 +134,7 @@ export default {
                         mime: mime.lookup(attrsObject.source),
                     }
 
-                    result = figTmpl(imageData, state.build)
+                    result = figureTemplate(imageData, state.build)
                     break
                 default:
                     break

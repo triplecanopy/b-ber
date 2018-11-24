@@ -7,6 +7,8 @@ import log from '@canopycanopycanopy/b-ber-logger'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import { getBookMetadata } from '@canopycanopycanopy/b-ber-lib/utils'
 
+// const epub = () => Promise.resolve()
+
 const epub = () =>
     zipper
         .create({
