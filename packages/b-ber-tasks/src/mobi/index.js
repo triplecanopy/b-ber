@@ -13,6 +13,7 @@ const pageBreakBeforeXPATH = () =>
         '//h:*[@class="figure__large figure__inline"]',
         '//h:*[@class="figure__large figure__inline"]/following::h:p[1]',
         '//h:*[@style="page-break-before:always;"]', // TODO: this is too strict if the XHTML changes, calibre supports regex in xpath, should use that
+        '//h:*[@data-gallery-item]',
     ].join('|')
 
 const mobi = () => {
