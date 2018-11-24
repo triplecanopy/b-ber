@@ -2,620 +2,636 @@
 
 exports[`templates.epub creates the markup 1`] = `
 "
-            <div class=\\"figure__large figure__inline figure__inline--portrait test\\">
-                <figure id=\\"1\\">
-                    <div class=\\"figure__items\\" style=\\"width: 70%; margin: 0 auto;\\">
-                        
-                            <img class=\\"portrait\\" alt=\\"test\\" src=\\"../images/test\\" style=\\"width: 100%; max-width: 100%; height: auto;\\"/>
-                        
-                        <div class=\\"figcaption\\" style=\\"width: 100%; max-width: 100%; height: auto;\\">
-                            <p class=\\"small\\">test</p>
-                        </div>
+    
+        <div class=\\"figure__large figure__inline figure__inline--portrait test\\" >
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\" style=\\"width:70%;margin:0 auto;\\">
+                    
+                        <img class=\\"portrait\\" alt=\\"test\\" src=\\"../images/test\\" style=\\"width:100%;max-width:100%;height:auto;\\"/>
+                    
+                    <div class=\\"figcaption\\" style=\\"width:100%;max-width:100%;height:auto;\\">
+                        <p class=\\"small\\">test</p>
                     </div>
-                </figure>
-            </div>
-        "
+                </div>
+            </figure>
+        </div>
+    
+"
 `;
 
 exports[`templates.epub creates the markup 2`] = `
 "
-            <div class=\\"figure__large figure__inline figure__inline--landscape test\\">
-                <figure id=\\"1\\">
-                    <div class=\\"figure__items\\">
-                        
-                            <img class=\\"landscape\\" alt=\\"test\\" src=\\"../images/test\\" style=\\"max-width: 100%;\\"/>
-                        
-                        <div class=\\"figcaption\\" style=\\"max-width: 100%;\\">
-                            <p class=\\"small\\">test</p>
-                        </div>
+    
+        <div class=\\"figure__large figure__inline figure__inline--landscape test\\" >
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\" >
+                    
+                        <img class=\\"landscape\\" alt=\\"test\\" src=\\"../images/test\\" style=\\"max-width:100%;\\"/>
+                    
+                    <div class=\\"figcaption\\" style=\\"max-width:100%;\\">
+                        <p class=\\"small\\">test</p>
                     </div>
-                </figure>
-            </div>
-        "
+                </div>
+            </figure>
+        </div>
+    
+"
 `;
 
 exports[`templates.epub creates the markup 3`] = `
 "
-            <div class=\\"figure__large figure__inline figure__inline--portrait-high test\\">
-                <figure id=\\"1\\">
-                    <div class=\\"figure__items\\" style=\\"width: 60%; margin: 0 auto;\\">
-                        
-                            <img class=\\"portrait-long\\" alt=\\"test\\" src=\\"../images/test\\" style=\\"width: 100%; max-width: 100%; height: auto;\\"/>
-                        
-                        <div class=\\"figcaption\\" style=\\"width: 100%; max-width: 100%; height: auto;\\">
-                            <p class=\\"small\\">test</p>
-                        </div>
+    
+        <div class=\\"figure__large figure__inline figure__inline--portrait-high test\\" >
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\" style=\\"width:60%;margin:0 auto;\\">
+                    
+                        <img class=\\"portrait-high\\" alt=\\"test\\" src=\\"../images/test\\" style=\\"width:100%;max-width:100%;height:auto;\\"/>
+                    
+                    <div class=\\"figcaption\\" style=\\"width:100%;max-width:100%;height:auto;\\">
+                        <p class=\\"small\\">test</p>
                     </div>
-                </figure>
-            </div>
-        "
+                </div>
+            </figure>
+        </div>
+    
+"
 `;
 
 exports[`templates.epub creates the markup 4`] = `
 "
-            <div class=\\"figure__large figure__inline figure__inline--square test\\">
-                <figure id=\\"1\\">
-                    <div class=\\"figure__items\\" style=\\"width: 85%; margin: 0 auto;\\">
-                        
-                            <img class=\\"square\\" alt=\\"test\\" src=\\"../images/test\\" style=\\"width: 100%; max-width: 100%; height: auto;\\"/>
-                        
-                        <div class=\\"figcaption\\" style=\\"width: 100%; max-width: 100%; height: auto;\\">
-                            <p class=\\"small\\">test</p>
-                        </div>
+    
+        <div class=\\"figure__large figure__inline figure__inline--square test\\" >
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\" style=\\"width:85%;margin:0 auto;\\">
+                    
+                        <img class=\\"square\\" alt=\\"test\\" src=\\"../images/test\\" style=\\"width:100%;max-width:100%;height:auto;\\"/>
+                    
+                    <div class=\\"figcaption\\" style=\\"width:100%;max-width:100%;height:auto;\\">
+                        <p class=\\"small\\">test</p>
                     </div>
-                </figure>
-            </div>
-        "
+                </div>
+            </figure>
+        </div>
+    
+"
 `;
 
 exports[`templates.epub creates the markup 5`] = `
 "
-            <div class=\\"figure__large\\">
-                <figure id=\\"1\\">
-
-                    <div class=\\"figure__items\\">
-
-                        <div class=\\"audio\\">
-                            <audio autoplay=\\"false\\">
-                                <source />
-                                <div class=\\"media__fallback__test media__fallback--image figure__small--landscape figure__small\\">
-                                    <figure>
-                                        <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
-                                    </figure>
-                                </div>
-                                <p class=\\"media__fallback__test media__fallback--text\\">Your device does not support the HTML5 test API.</p>
-                            </audio>
-                        </div>
-
-                        <div class=\\"figcaption\\" style=\\"max-width: 100%;\\">
-                            <p class=\\"small\\">
-                                test<br/>
-                                <a href=\\"1.xhtml#ref1\\">Return</a>
-                            </p>
-                        </div>
-
+    
+        <div class=\\"figure__large\\">
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\">
+                    <div class=\\"audio-or-video\\">
+                        <audio-or-video autoplay=\\"false\\">
+                            <source />
+                            <div class=\\"media__fallback__audio-or-video media__fallback--image figure__small--landscape figure__small\\">
+                                <figure>
+                                    <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
+                                </figure>
+                            </div>
+                            <p class=\\"media__fallback__audio-or-video media__fallback--text\\">Your device does not support the HTML5 audio-or-video API.</p>
+                        </audio-or-video>
                     </div>
-
-                </figure>
-            </div>
-        "
+                    <div class=\\"figcaption\\" style=\\"max-width: 100%;\\">
+                        <p class=\\"small\\">
+                            test<br>
+                            <a href=\\"1.xhtml#ref1\\">Return</a>
+                        </p>
+                    </div>
+                </div>
+            </figure>
+        </div>
+    
+    "
 `;
 
 exports[`templates.epub creates the markup 6`] = `
 "
-            <div class=\\"figure__large\\">
-                <figure id=\\"1\\">
-
-                    <div class=\\"figure__items\\">
-
-                        <div class=\\"video\\">
-                            <video autoplay=\\"false\\">
-                                <source />
-                                <div class=\\"media__fallback__test media__fallback--image figure__small--landscape figure__small\\">
-                                    <figure>
-                                        <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
-                                    </figure>
-                                </div>
-                                <p class=\\"media__fallback__test media__fallback--text\\">Your device does not support the HTML5 test API.</p>
-                            </video>
-                        </div>
-
-                        <div class=\\"figcaption\\" style=\\"max-width: 100%;\\">
-                            <p class=\\"small\\">
-                                test<br/>
-                                <a href=\\"1.xhtml#ref1\\">Return</a>
-                            </p>
-                        </div>
-
+    
+        <div class=\\"figure__large\\">
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\">
+                    <div class=\\"audio-or-video\\">
+                        <audio-or-video autoplay=\\"false\\">
+                            <source />
+                            <div class=\\"media__fallback__audio-or-video media__fallback--image figure__small--landscape figure__small\\">
+                                <figure>
+                                    <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
+                                </figure>
+                            </div>
+                            <p class=\\"media__fallback__audio-or-video media__fallback--text\\">Your device does not support the HTML5 audio-or-video API.</p>
+                        </audio-or-video>
                     </div>
-
-                </figure>
-            </div>
-        "
+                    <div class=\\"figcaption\\" style=\\"max-width: 100%;\\">
+                        <p class=\\"small\\">
+                            test<br>
+                            <a href=\\"1.xhtml#ref1\\">Return</a>
+                        </p>
+                    </div>
+                </div>
+            </figure>
+        </div>
+    
+    "
 `;
 
 exports[`templates.epub creates the markup 7`] = `
 "
-            <div class=\\"figure__large\\">
-                <figure id=\\"1\\">
-                    <div class=\\"figure__items\\">
-                        <div class=\\"iframe\\">
-                            <iframe src=\\"test\\" />
-                        </div>
-
-                        <div class=\\"figcaption\\" style=\\"max-width: 100%;\\">
-                            <p class=\\"small\\">
-                                test<br/>
-                                <a href=\\"1.xhtml#ref1\\">Return</a>
-                            </p>
-                        </div>
+    
+        <div class=\\"figure__large\\">
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\">
+                    <div class=\\"iframe\\">
+                        <iframe src=\\"test\\" />
                     </div>
-                </figure>
-            </div>
-        "
+
+                    <div class=\\"figcaption\\" style=\\"max-width: 100%;\\">
+                        <p class=\\"small\\">
+                            test<br/>
+                            <a href=\\"1.xhtml#ref1\\">Return</a>
+                        </p>
+                    </div>
+                </div>
+            </figure>
+        </div>
+    
+    "
 `;
 
 exports[`templates.epub creates the markup 8`] = `
-"<section epub:type=\\"loi\\" title=\\"Figures\\" class=\\"chapter figures\\">
-            <div class=\\"figure__large\\">
-                <figure id=\\"1\\">
-                    <div class=\\"figure__items\\" style=\\"width: 70%; margin: 0 auto;\\">
-                        <a href=\\"1.xhtml#ref1\\">
-                            <img class=\\"portrait\\" alt=\\"test\\" src=\\"../images/test\\" style=\\"width: 100%; max-width: 100%; height: auto;\\"/>
-                        </a>
-                        <div class=\\"figcaption\\" style=\\"width: 100%; max-width: 100%; height: auto;\\">
-                            <p class=\\"small\\">test</p>
-                        </div>
+"
+    <section epub:type=\\"loi\\" title=\\"Figures\\" class=\\"chapter figures\\">
+        <div class=\\"figure__large\\" >
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\" style=\\"width:70%;margin:0 auto;\\">
+                    <a href=\\"1.xhtml#ref1\\">
+                        <img class=\\"portrait\\" alt=\\"test\\" src=\\"../images/test\\" style=\\"width:100%;max-width:100%;height:auto;\\"/>
+                    </a>
+                    <div class=\\"figcaption\\" style=\\"width:100%;max-width:100%;height:auto;\\">
+                        <p class=\\"small\\">test</p>
                     </div>
-                </figure>
-            </div>
-        </section>"
+                </div>
+            </figure>
+        </div>
+    </section>
+"
 `;
 
 exports[`templates.epub creates the markup 9`] = `
-"<section epub:type=\\"loi\\" title=\\"Figures\\" class=\\"chapter figures\\">
-            <div class=\\"figure__large\\">
-                <figure id=\\"1\\">
-                    <div class=\\"figure__items\\">
-                        <a href=\\"1.xhtml#ref1\\">
-                            <img class=\\"landscape\\" alt=\\"test\\" src=\\"../images/test\\" style=\\"max-width: 100%;\\"/>
-                        </a>
-                        <div class=\\"figcaption\\" style=\\"max-width: 100%;\\">
-                            <p class=\\"small\\">test</p>
-                        </div>
+"
+    <section epub:type=\\"loi\\" title=\\"Figures\\" class=\\"chapter figures\\">
+        <div class=\\"figure__large\\" >
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\" >
+                    <a href=\\"1.xhtml#ref1\\">
+                        <img class=\\"landscape\\" alt=\\"test\\" src=\\"../images/test\\" style=\\"max-width:100%;\\"/>
+                    </a>
+                    <div class=\\"figcaption\\" style=\\"max-width:100%;\\">
+                        <p class=\\"small\\">test</p>
                     </div>
-                </figure>
-            </div>
-        </section>"
+                </div>
+            </figure>
+        </div>
+    </section>
+"
 `;
 
 exports[`templates.epub creates the markup 10`] = `
-"<section epub:type=\\"loi\\" title=\\"Figures\\" class=\\"chapter figures\\">
-            <div class=\\"figure__large\\">
-                <figure id=\\"1\\">
-                    <div class=\\"figure__items\\" style=\\"width: 60%; margin: 0 auto;\\">
-                        <a href=\\"1.xhtml#ref1\\">
-                            <img class=\\"portrait-long\\" alt=\\"test\\" src=\\"../images/test\\" style=\\"width: 100%; max-width: 100%; height: auto;\\"/>
-                        </a>
-                        <div class=\\"figcaption\\" style=\\"width: 100%; max-width: 100%; height: auto;\\">
-                            <p class=\\"small\\">test</p>
-                        </div>
+"
+    <section epub:type=\\"loi\\" title=\\"Figures\\" class=\\"chapter figures\\">
+        <div class=\\"figure__large\\" >
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\" style=\\"width:60%;margin:0 auto;\\">
+                    <a href=\\"1.xhtml#ref1\\">
+                        <img class=\\"portrait-high\\" alt=\\"test\\" src=\\"../images/test\\" style=\\"width:100%;max-width:100%;height:auto;\\"/>
+                    </a>
+                    <div class=\\"figcaption\\" style=\\"width:100%;max-width:100%;height:auto;\\">
+                        <p class=\\"small\\">test</p>
                     </div>
-                </figure>
-            </div>
-        </section>"
+                </div>
+            </figure>
+        </div>
+    </section>
+"
 `;
 
 exports[`templates.epub creates the markup 11`] = `
-"<section epub:type=\\"loi\\" title=\\"Figures\\" class=\\"chapter figures\\">
-            <div class=\\"figure__large\\">
-                <figure id=\\"1\\">
-                    <div class=\\"figure__items\\" style=\\"width: 85%; margin: 0 auto;\\">
-                        <a href=\\"1.xhtml#ref1\\">
-                            <img class=\\"square\\" alt=\\"test\\" src=\\"../images/test\\" style=\\"width: 100%; max-width: 100%; height: auto;\\"/>
-                        </a>
-                        <div class=\\"figcaption\\" style=\\"width: 100%; max-width: 100%; height: auto;\\">
-                            <p class=\\"small\\">test</p>
-                        </div>
+"
+    <section epub:type=\\"loi\\" title=\\"Figures\\" class=\\"chapter figures\\">
+        <div class=\\"figure__large\\" >
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\" style=\\"width:85%;margin:0 auto;\\">
+                    <a href=\\"1.xhtml#ref1\\">
+                        <img class=\\"square\\" alt=\\"test\\" src=\\"../images/test\\" style=\\"width:100%;max-width:100%;height:auto;\\"/>
+                    </a>
+                    <div class=\\"figcaption\\" style=\\"width:100%;max-width:100%;height:auto;\\">
+                        <p class=\\"small\\">test</p>
                     </div>
-                </figure>
-            </div>
-        </section>"
+                </div>
+            </figure>
+        </div>
+    </section>
+"
 `;
 
 exports[`templates.epub creates the markup 12`] = `
-"<section epub:type=\\"loi\\" title=\\"Figures\\" class=\\"chapter figures\\">
-            <div class=\\"figure__large\\">
-                <figure id=\\"1\\">
-
-                    <div class=\\"figure__items\\">
-
-                        <div class=\\"audio\\">
-                            <audio autoplay=\\"false\\">
-                                <source />
-                                <div class=\\"media__fallback__test media__fallback--image figure__small--landscape figure__small\\">
-                                    <figure>
-                                        <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
-                                    </figure>
-                                </div>
-                                <p class=\\"media__fallback__test media__fallback--text\\">Your device does not support the HTML5 test API.</p>
-                            </audio>
-                        </div>
-
-                        <div class=\\"figcaption\\" style=\\"max-width: 100%;\\">
-                            <p class=\\"small\\">
-                                test<br/>
-                                <a href=\\"1.xhtml#ref1\\">Return</a>
-                            </p>
-                        </div>
-
+"
+    <section epub:type=\\"loi\\" title=\\"Figures\\" class=\\"chapter figures\\">
+        <div class=\\"figure__large\\">
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\">
+                    <div class=\\"audio-or-video\\">
+                        <audio-or-video autoplay=\\"false\\">
+                            <source />
+                            <div class=\\"media__fallback__audio-or-video media__fallback--image figure__small--landscape figure__small\\">
+                                <figure>
+                                    <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
+                                </figure>
+                            </div>
+                            <p class=\\"media__fallback__audio-or-video media__fallback--text\\">Your device does not support the HTML5 audio-or-video API.</p>
+                        </audio-or-video>
                     </div>
-
-                </figure>
-            </div>
-        </section>"
+                    <div class=\\"figcaption\\" style=\\"max-width: 100%;\\">
+                        <p class=\\"small\\">
+                            test<br>
+                            <a href=\\"1.xhtml#ref1\\">Return</a>
+                        </p>
+                    </div>
+                </div>
+            </figure>
+        </div>
+    </section>
+    "
 `;
 
 exports[`templates.epub creates the markup 13`] = `
-"<section epub:type=\\"loi\\" title=\\"Figures\\" class=\\"chapter figures\\">
-            <div class=\\"figure__large\\">
-                <figure id=\\"1\\">
-
-                    <div class=\\"figure__items\\">
-
-                        <div class=\\"video\\">
-                            <video autoplay=\\"false\\">
-                                <source />
-                                <div class=\\"media__fallback__test media__fallback--image figure__small--landscape figure__small\\">
-                                    <figure>
-                                        <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
-                                    </figure>
-                                </div>
-                                <p class=\\"media__fallback__test media__fallback--text\\">Your device does not support the HTML5 test API.</p>
-                            </video>
-                        </div>
-
-                        <div class=\\"figcaption\\" style=\\"max-width: 100%;\\">
-                            <p class=\\"small\\">
-                                test<br/>
-                                <a href=\\"1.xhtml#ref1\\">Return</a>
-                            </p>
-                        </div>
-
+"
+    <section epub:type=\\"loi\\" title=\\"Figures\\" class=\\"chapter figures\\">
+        <div class=\\"figure__large\\">
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\">
+                    <div class=\\"audio-or-video\\">
+                        <audio-or-video autoplay=\\"false\\">
+                            <source />
+                            <div class=\\"media__fallback__audio-or-video media__fallback--image figure__small--landscape figure__small\\">
+                                <figure>
+                                    <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
+                                </figure>
+                            </div>
+                            <p class=\\"media__fallback__audio-or-video media__fallback--text\\">Your device does not support the HTML5 audio-or-video API.</p>
+                        </audio-or-video>
                     </div>
-
-                </figure>
-            </div>
-        </section>"
+                    <div class=\\"figcaption\\" style=\\"max-width: 100%;\\">
+                        <p class=\\"small\\">
+                            test<br>
+                            <a href=\\"1.xhtml#ref1\\">Return</a>
+                        </p>
+                    </div>
+                </div>
+            </figure>
+        </div>
+    </section>
+    "
 `;
 
 exports[`templates.epub creates the markup 14`] = `
-"<section epub:type=\\"loi\\" title=\\"Figures\\" class=\\"chapter figures\\">
-            <div class=\\"figure__large\\">
-                <figure id=\\"1\\">
-                    <div class=\\"figure__items\\">
-                        <div class=\\"iframe\\">
-                            <iframe src=\\"test\\" />
-                        </div>
-
-                        <div class=\\"figcaption\\" style=\\"max-width: 100%;\\">
-                            <p class=\\"small\\">
-                                test<br/>
-                                <a href=\\"1.xhtml#ref1\\">Return</a>
-                            </p>
-                        </div>
+"
+    <section epub:type=\\"loi\\" title=\\"Figures\\" class=\\"chapter figures\\">
+        <div class=\\"figure__large\\">
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\">
+                    <div class=\\"iframe\\">
+                        <iframe src=\\"test\\" />
                     </div>
-                </figure>
-            </div>
-        </section>"
+
+                    <div class=\\"figcaption\\" style=\\"max-width: 100%;\\">
+                        <p class=\\"small\\">
+                            test<br/>
+                            <a href=\\"1.xhtml#ref1\\">Return</a>
+                        </p>
+                    </div>
+                </div>
+            </figure>
+        </div>
+    </section>
+    "
 `;
 
 exports[`templates.epub creates the markup 15`] = `
-"<section epub:type=\\"loi\\" title=\\"Figures\\" class=\\"chapter figures\\">
-            <div class=\\"figure__large\\" style=\\"page-break-before:always;\\">
-                <figure id=\\"1\\">
-                    <div class=\\"figure__items\\" style=\\"width: 70%; margin: 0 auto;\\">
-                        <a href=\\"1.xhtml#ref1\\">
-                            <img class=\\"portrait\\" alt=\\"test\\" src=\\"../images/test\\" style=\\"width: 100%; max-width: 100%; height: auto;\\"/>
-                        </a>
-                        <div class=\\"figcaption\\" style=\\"width: 100%; max-width: 100%; height: auto;\\">
-                            <p class=\\"small\\">test</p>
-                        </div>
+"
+    
+        <div class=\\"figure__large figure__inline figure__inline--portrait test\\"  style=\\"page-break-before:always;\\">
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\" style=\\"width:70%;margin:0 auto;\\">
+                    
+                        <img class=\\"portrait\\" alt=\\"test\\" src=\\"../images/test\\" style=\\"width:100%;max-width:100%;height:auto;\\"/>
+                    
+                    <div class=\\"figcaption\\" style=\\"width:100%;max-width:100%;height:auto;\\">
+                        <p class=\\"small\\">test</p>
                     </div>
-                </figure>
-            </div>
-        </section>"
+                </div>
+            </figure>
+        </div>
+    
+"
 `;
 
 exports[`templates.epub creates the markup 16`] = `
-"<section epub:type=\\"loi\\" title=\\"Figures\\" class=\\"chapter figures\\">
-            <div class=\\"figure__large\\" style=\\"page-break-before:always;\\">
-                <figure id=\\"1\\">
-                    <div class=\\"figure__items\\">
-                        <a href=\\"1.xhtml#ref1\\">
-                            <img class=\\"landscape\\" alt=\\"test\\" src=\\"../images/test\\" style=\\"max-width: 100%;\\"/>
-                        </a>
-                        <div class=\\"figcaption\\" style=\\"max-width: 100%;\\">
-                            <p class=\\"small\\">test</p>
-                        </div>
+"
+    
+        <div class=\\"figure__large figure__inline figure__inline--landscape test\\"  style=\\"page-break-before:always;\\">
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\" >
+                    
+                        <img class=\\"landscape\\" alt=\\"test\\" src=\\"../images/test\\" style=\\"max-width:100%;\\"/>
+                    
+                    <div class=\\"figcaption\\" style=\\"max-width:100%;\\">
+                        <p class=\\"small\\">test</p>
                     </div>
-                </figure>
-            </div>
-        </section>"
+                </div>
+            </figure>
+        </div>
+    
+"
 `;
 
 exports[`templates.epub creates the markup 17`] = `
-"<section epub:type=\\"loi\\" title=\\"Figures\\" class=\\"chapter figures\\">
-            <div class=\\"figure__large\\" style=\\"page-break-before:always;\\">
-                <figure id=\\"1\\">
-                    <div class=\\"figure__items\\" style=\\"width: 60%; margin: 0 auto;\\">
-                        <a href=\\"1.xhtml#ref1\\">
-                            <img class=\\"portrait-long\\" alt=\\"test\\" src=\\"../images/test\\" style=\\"width: 100%; max-width: 100%; height: auto;\\"/>
-                        </a>
-                        <div class=\\"figcaption\\" style=\\"width: 100%; max-width: 100%; height: auto;\\">
-                            <p class=\\"small\\">test</p>
-                        </div>
+"
+    
+        <div class=\\"figure__large figure__inline figure__inline--portrait-high test\\"  style=\\"page-break-before:always;\\">
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\" style=\\"width:60%;margin:0 auto;\\">
+                    
+                        <img class=\\"portrait-high\\" alt=\\"test\\" src=\\"../images/test\\" style=\\"width:100%;max-width:100%;height:auto;\\"/>
+                    
+                    <div class=\\"figcaption\\" style=\\"width:100%;max-width:100%;height:auto;\\">
+                        <p class=\\"small\\">test</p>
                     </div>
-                </figure>
-            </div>
-        </section>"
+                </div>
+            </figure>
+        </div>
+    
+"
 `;
 
 exports[`templates.epub creates the markup 18`] = `
-"<section epub:type=\\"loi\\" title=\\"Figures\\" class=\\"chapter figures\\">
-            <div class=\\"figure__large\\" style=\\"page-break-before:always;\\">
-                <figure id=\\"1\\">
-                    <div class=\\"figure__items\\" style=\\"width: 85%; margin: 0 auto;\\">
-                        <a href=\\"1.xhtml#ref1\\">
-                            <img class=\\"square\\" alt=\\"test\\" src=\\"../images/test\\" style=\\"width: 100%; max-width: 100%; height: auto;\\"/>
-                        </a>
-                        <div class=\\"figcaption\\" style=\\"width: 100%; max-width: 100%; height: auto;\\">
-                            <p class=\\"small\\">test</p>
-                        </div>
+"
+    
+        <div class=\\"figure__large figure__inline figure__inline--square test\\"  style=\\"page-break-before:always;\\">
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\" style=\\"width:85%;margin:0 auto;\\">
+                    
+                        <img class=\\"square\\" alt=\\"test\\" src=\\"../images/test\\" style=\\"width:100%;max-width:100%;height:auto;\\"/>
+                    
+                    <div class=\\"figcaption\\" style=\\"width:100%;max-width:100%;height:auto;\\">
+                        <p class=\\"small\\">test</p>
                     </div>
-                </figure>
-            </div>
-        </section>"
+                </div>
+            </figure>
+        </div>
+    
+"
 `;
 
 exports[`templates.epub creates the markup 19`] = `
-"<section epub:type=\\"loi\\" title=\\"Figures\\" class=\\"chapter figures\\">
-            <div class=\\"figure__large\\">
-                <figure id=\\"1\\">
-
-                    <div class=\\"figure__items\\">
-
-                        <div class=\\"audio\\">
-                            <audio autoplay=\\"false\\">
-                                <source />
-                                <div class=\\"media__fallback__test media__fallback--image figure__small--landscape figure__small\\">
-                                    <figure>
-                                        <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
-                                    </figure>
-                                </div>
-                                <p class=\\"media__fallback__test media__fallback--text\\">Your device does not support the HTML5 test API.</p>
-                            </audio>
-                        </div>
-
-                        <div class=\\"figcaption\\" style=\\"max-width: 100%;\\">
-                            <p class=\\"small\\">
-                                test<br/>
-                                <a href=\\"1.xhtml#ref1\\">Return</a>
-                            </p>
-                        </div>
-
+"
+    
+        <div class=\\"figure__large\\">
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\">
+                    <div class=\\"audio-or-video\\">
+                        <audio-or-video autoplay=\\"false\\">
+                            <source />
+                            <div class=\\"media__fallback__audio-or-video media__fallback--image figure__small--landscape figure__small\\">
+                                <figure>
+                                    <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
+                                </figure>
+                            </div>
+                            <p class=\\"media__fallback__audio-or-video media__fallback--text\\">Your device does not support the HTML5 audio-or-video API.</p>
+                        </audio-or-video>
                     </div>
-
-                </figure>
-            </div>
-        </section>"
+                    <div class=\\"figcaption\\" style=\\"max-width: 100%;\\">
+                        <p class=\\"small\\">
+                            test<br>
+                            <a href=\\"1.xhtml#ref1\\">Return</a>
+                        </p>
+                    </div>
+                </div>
+            </figure>
+        </div>
+    
+    "
 `;
 
 exports[`templates.epub creates the markup 20`] = `
-"<section epub:type=\\"loi\\" title=\\"Figures\\" class=\\"chapter figures\\">
-            <div class=\\"figure__large\\">
-                <figure id=\\"1\\">
-
-                    <div class=\\"figure__items\\">
-
-                        <div class=\\"video\\">
-                            <video autoplay=\\"false\\">
-                                <source />
-                                <div class=\\"media__fallback__test media__fallback--image figure__small--landscape figure__small\\">
-                                    <figure>
-                                        <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
-                                    </figure>
-                                </div>
-                                <p class=\\"media__fallback__test media__fallback--text\\">Your device does not support the HTML5 test API.</p>
-                            </video>
-                        </div>
-
-                        <div class=\\"figcaption\\" style=\\"max-width: 100%;\\">
-                            <p class=\\"small\\">
-                                test<br/>
-                                <a href=\\"1.xhtml#ref1\\">Return</a>
-                            </p>
-                        </div>
-
+"
+    
+        <div class=\\"figure__large\\">
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\">
+                    <div class=\\"audio-or-video\\">
+                        <audio-or-video autoplay=\\"false\\">
+                            <source />
+                            <div class=\\"media__fallback__audio-or-video media__fallback--image figure__small--landscape figure__small\\">
+                                <figure>
+                                    <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
+                                </figure>
+                            </div>
+                            <p class=\\"media__fallback__audio-or-video media__fallback--text\\">Your device does not support the HTML5 audio-or-video API.</p>
+                        </audio-or-video>
                     </div>
-
-                </figure>
-            </div>
-        </section>"
+                    <div class=\\"figcaption\\" style=\\"max-width: 100%;\\">
+                        <p class=\\"small\\">
+                            test<br>
+                            <a href=\\"1.xhtml#ref1\\">Return</a>
+                        </p>
+                    </div>
+                </div>
+            </figure>
+        </div>
+    
+    "
 `;
 
 exports[`templates.epub creates the markup 21`] = `
-"<section epub:type=\\"loi\\" title=\\"Figures\\" class=\\"chapter figures\\">
-            <div class=\\"figure__large\\">
-                <figure id=\\"1\\">
-                    <div class=\\"figure__items\\">
-                        <div class=\\"iframe\\">
-                            <iframe src=\\"test\\" />
-                        </div>
-
-                        <div class=\\"figcaption\\" style=\\"max-width: 100%;\\">
-                            <p class=\\"small\\">
-                                test<br/>
-                                <a href=\\"1.xhtml#ref1\\">Return</a>
-                            </p>
-                        </div>
+"
+    
+        <div class=\\"figure__large\\">
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\">
+                    <div class=\\"iframe\\">
+                        <iframe src=\\"test\\" />
                     </div>
-                </figure>
-            </div>
-        </section>"
+
+                    <div class=\\"figcaption\\" style=\\"max-width: 100%;\\">
+                        <p class=\\"small\\">
+                            test<br/>
+                            <a href=\\"1.xhtml#ref1\\">Return</a>
+                        </p>
+                    </div>
+                </div>
+            </figure>
+        </div>
+    
+    "
 `;
 
 exports[`templates.epub creates the markup 22`] = `
-"<section epub:type=\\"loi\\" title=\\"Figures\\" class=\\"chapter figures\\">
-            <div class=\\"figure__large\\" style=\\"page-break-after:always;\\">
-                <figure id=\\"1\\">
-                    <div class=\\"figure__items\\" style=\\"width: 70%; margin: 0 auto;\\">
-                        <a href=\\"1.xhtml#ref1\\">
-                            <img class=\\"portrait\\" alt=\\"test\\" src=\\"../images/test\\" style=\\"width: 100%; max-width: 100%; height: auto;\\"/>
-                        </a>
-                        <div class=\\"figcaption\\" style=\\"width: 100%; max-width: 100%; height: auto;\\">
-                            <p class=\\"small\\">test</p>
-                        </div>
+"
+    
+        <div class=\\"figure__large figure__inline figure__inline--portrait test\\"  style=\\"page-break-after:always;\\">
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\" style=\\"width:70%;margin:0 auto;\\">
+                    
+                        <img class=\\"portrait\\" alt=\\"test\\" src=\\"../images/test\\" style=\\"width:100%;max-width:100%;height:auto;\\"/>
+                    
+                    <div class=\\"figcaption\\" style=\\"width:100%;max-width:100%;height:auto;\\">
+                        <p class=\\"small\\">test</p>
                     </div>
-                </figure>
-            </div>
-        </section>"
+                </div>
+            </figure>
+        </div>
+    
+"
 `;
 
 exports[`templates.epub creates the markup 23`] = `
-"<section epub:type=\\"loi\\" title=\\"Figures\\" class=\\"chapter figures\\">
-            <div class=\\"figure__large\\" style=\\"page-break-after:always;\\">
-                <figure id=\\"1\\">
-                    <div class=\\"figure__items\\">
-                        <a href=\\"1.xhtml#ref1\\">
-                            <img class=\\"landscape\\" alt=\\"test\\" src=\\"../images/test\\" style=\\"max-width: 100%;\\"/>
-                        </a>
-                        <div class=\\"figcaption\\" style=\\"max-width: 100%;\\">
-                            <p class=\\"small\\">test</p>
-                        </div>
+"
+    
+        <div class=\\"figure__large figure__inline figure__inline--landscape test\\"  style=\\"page-break-after:always;\\">
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\" >
+                    
+                        <img class=\\"landscape\\" alt=\\"test\\" src=\\"../images/test\\" style=\\"max-width:100%;\\"/>
+                    
+                    <div class=\\"figcaption\\" style=\\"max-width:100%;\\">
+                        <p class=\\"small\\">test</p>
                     </div>
-                </figure>
-            </div>
-        </section>"
+                </div>
+            </figure>
+        </div>
+    
+"
 `;
 
 exports[`templates.epub creates the markup 24`] = `
-"<section epub:type=\\"loi\\" title=\\"Figures\\" class=\\"chapter figures\\">
-            <div class=\\"figure__large\\" style=\\"page-break-after:always;\\">
-                <figure id=\\"1\\">
-                    <div class=\\"figure__items\\" style=\\"width: 60%; margin: 0 auto;\\">
-                        <a href=\\"1.xhtml#ref1\\">
-                            <img class=\\"portrait-long\\" alt=\\"test\\" src=\\"../images/test\\" style=\\"width: 100%; max-width: 100%; height: auto;\\"/>
-                        </a>
-                        <div class=\\"figcaption\\" style=\\"width: 100%; max-width: 100%; height: auto;\\">
-                            <p class=\\"small\\">test</p>
-                        </div>
+"
+    
+        <div class=\\"figure__large figure__inline figure__inline--portrait-high test\\"  style=\\"page-break-after:always;\\">
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\" style=\\"width:60%;margin:0 auto;\\">
+                    
+                        <img class=\\"portrait-high\\" alt=\\"test\\" src=\\"../images/test\\" style=\\"width:100%;max-width:100%;height:auto;\\"/>
+                    
+                    <div class=\\"figcaption\\" style=\\"width:100%;max-width:100%;height:auto;\\">
+                        <p class=\\"small\\">test</p>
                     </div>
-                </figure>
-            </div>
-        </section>"
+                </div>
+            </figure>
+        </div>
+    
+"
 `;
 
 exports[`templates.epub creates the markup 25`] = `
-"<section epub:type=\\"loi\\" title=\\"Figures\\" class=\\"chapter figures\\">
-            <div class=\\"figure__large\\" style=\\"page-break-after:always;\\">
-                <figure id=\\"1\\">
-                    <div class=\\"figure__items\\" style=\\"width: 85%; margin: 0 auto;\\">
-                        <a href=\\"1.xhtml#ref1\\">
-                            <img class=\\"square\\" alt=\\"test\\" src=\\"../images/test\\" style=\\"width: 100%; max-width: 100%; height: auto;\\"/>
-                        </a>
-                        <div class=\\"figcaption\\" style=\\"width: 100%; max-width: 100%; height: auto;\\">
-                            <p class=\\"small\\">test</p>
-                        </div>
+"
+    
+        <div class=\\"figure__large figure__inline figure__inline--square test\\"  style=\\"page-break-after:always;\\">
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\" style=\\"width:85%;margin:0 auto;\\">
+                    
+                        <img class=\\"square\\" alt=\\"test\\" src=\\"../images/test\\" style=\\"width:100%;max-width:100%;height:auto;\\"/>
+                    
+                    <div class=\\"figcaption\\" style=\\"width:100%;max-width:100%;height:auto;\\">
+                        <p class=\\"small\\">test</p>
                     </div>
-                </figure>
-            </div>
-        </section>"
+                </div>
+            </figure>
+        </div>
+    
+"
 `;
 
 exports[`templates.epub creates the markup 26`] = `
-"<section epub:type=\\"loi\\" title=\\"Figures\\" class=\\"chapter figures\\">
-            <div class=\\"figure__large\\">
-                <figure id=\\"1\\">
-
-                    <div class=\\"figure__items\\">
-
-                        <div class=\\"audio\\">
-                            <audio autoplay=\\"false\\">
-                                <source />
-                                <div class=\\"media__fallback__test media__fallback--image figure__small--landscape figure__small\\">
-                                    <figure>
-                                        <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
-                                    </figure>
-                                </div>
-                                <p class=\\"media__fallback__test media__fallback--text\\">Your device does not support the HTML5 test API.</p>
-                            </audio>
-                        </div>
-
-                        <div class=\\"figcaption\\" style=\\"max-width: 100%;\\">
-                            <p class=\\"small\\">
-                                test<br/>
-                                <a href=\\"1.xhtml#ref1\\">Return</a>
-                            </p>
-                        </div>
-
+"
+    
+        <div class=\\"figure__large\\">
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\">
+                    <div class=\\"audio-or-video\\">
+                        <audio-or-video autoplay=\\"false\\">
+                            <source />
+                            <div class=\\"media__fallback__audio-or-video media__fallback--image figure__small--landscape figure__small\\">
+                                <figure>
+                                    <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
+                                </figure>
+                            </div>
+                            <p class=\\"media__fallback__audio-or-video media__fallback--text\\">Your device does not support the HTML5 audio-or-video API.</p>
+                        </audio-or-video>
                     </div>
-
-                </figure>
-            </div>
-        </section>"
+                    <div class=\\"figcaption\\" style=\\"max-width: 100%;\\">
+                        <p class=\\"small\\">
+                            test<br>
+                            <a href=\\"1.xhtml#ref1\\">Return</a>
+                        </p>
+                    </div>
+                </div>
+            </figure>
+        </div>
+    
+    "
 `;
 
 exports[`templates.epub creates the markup 27`] = `
-"<section epub:type=\\"loi\\" title=\\"Figures\\" class=\\"chapter figures\\">
-            <div class=\\"figure__large\\">
-                <figure id=\\"1\\">
-
-                    <div class=\\"figure__items\\">
-
-                        <div class=\\"video\\">
-                            <video autoplay=\\"false\\">
-                                <source />
-                                <div class=\\"media__fallback__test media__fallback--image figure__small--landscape figure__small\\">
-                                    <figure>
-                                        <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
-                                    </figure>
-                                </div>
-                                <p class=\\"media__fallback__test media__fallback--text\\">Your device does not support the HTML5 test API.</p>
-                            </video>
-                        </div>
-
-                        <div class=\\"figcaption\\" style=\\"max-width: 100%;\\">
-                            <p class=\\"small\\">
-                                test<br/>
-                                <a href=\\"1.xhtml#ref1\\">Return</a>
-                            </p>
-                        </div>
-
+"
+    
+        <div class=\\"figure__large\\">
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\">
+                    <div class=\\"audio-or-video\\">
+                        <audio-or-video autoplay=\\"false\\">
+                            <source />
+                            <div class=\\"media__fallback__audio-or-video media__fallback--image figure__small--landscape figure__small\\">
+                                <figure>
+                                    <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
+                                </figure>
+                            </div>
+                            <p class=\\"media__fallback__audio-or-video media__fallback--text\\">Your device does not support the HTML5 audio-or-video API.</p>
+                        </audio-or-video>
                     </div>
-
-                </figure>
-            </div>
-        </section>"
+                    <div class=\\"figcaption\\" style=\\"max-width: 100%;\\">
+                        <p class=\\"small\\">
+                            test<br>
+                            <a href=\\"1.xhtml#ref1\\">Return</a>
+                        </p>
+                    </div>
+                </div>
+            </figure>
+        </div>
+    
+    "
 `;
 
 exports[`templates.epub creates the markup 28`] = `
-"<section epub:type=\\"loi\\" title=\\"Figures\\" class=\\"chapter figures\\">
-            <div class=\\"figure__large\\">
-                <figure id=\\"1\\">
-                    <div class=\\"figure__items\\">
-                        <div class=\\"iframe\\">
-                            <iframe src=\\"test\\" />
-                        </div>
-
-                        <div class=\\"figcaption\\" style=\\"max-width: 100%;\\">
-                            <p class=\\"small\\">
-                                test<br/>
-                                <a href=\\"1.xhtml#ref1\\">Return</a>
-                            </p>
-                        </div>
+"
+    
+        <div class=\\"figure__large\\">
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\">
+                    <div class=\\"iframe\\">
+                        <iframe src=\\"test\\" />
                     </div>
-                </figure>
-            </div>
-        </section>"
+
+                    <div class=\\"figcaption\\" style=\\"max-width: 100%;\\">
+                        <p class=\\"small\\">
+                            test<br/>
+                            <a href=\\"1.xhtml#ref1\\">Return</a>
+                        </p>
+                    </div>
+                </div>
+            </figure>
+        </div>
+    
+    "
 `;

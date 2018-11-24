@@ -5,12 +5,8 @@ const FULLBLEED_CLASS_NAME = 'figure__fullbleed'
 const classNamesArray = data => (data.classes || '').split(' ')
 
 const inlineClasses = (data, ratioName) =>
-    classNamesArray(data)
-        .concat(
-            'figure__large',
-            'figure__inline',
-            `figure__inline--${ratioName}`,
-        )
+    ['figure__large', 'figure__inline', `figure__inline--${ratioName}`]
+        .concat(classNamesArray(data))
         .filter(Boolean)
         .join(' ')
 
@@ -53,7 +49,7 @@ export const figureTemplate = data =>
                 : 'figure__large',
         )
         .replace(/%PAGE_BREAK_STYLES%/, Html.pagebreakAttribute(data))
-        .replace(/%ID%/, data.id)
+        .replace(/%ID%/g, data.id)
         .replace(/%FIGURE_STYLES%/, createStyleAttribute(data.figureStyles))
         .replace(/%IMAGE_STYLES%/, createStyleAttribute(data.imageStyles))
         .replace(
@@ -77,7 +73,7 @@ export const media = data =>
         <div class="figure__large">
             <figure id="%ID%">
                 <div class="figure__items">
-                    <div class="video">
+                    <div class="%MEDIA_TYPE%">
                         <%MEDIA_TYPE% %ELEMENT_ATTRIBUTES%>
                             %SOURCE_ELEMENTS%
                             <div class="media__fallback__%MEDIA_TYPE% media__fallback--image figure__small--landscape figure__small">
@@ -86,7 +82,7 @@ export const media = data =>
                                 </figure>
                             </div>
                             <p class="media__fallback__%MEDIA_TYPE% media__fallback--text">Your device does not support the HTML5 %MEDIA_TYPE% API.</p>
-                        </video>
+                        </%MEDIA_TYPE%>
                     </div>
                     <div class="figcaption" style="max-width: 100%;">
                         <p class="small">
@@ -105,13 +101,13 @@ export const media = data =>
                 ? ''
                 : '<section epub:type="loi" title="Figures" class="chapter figures">',
         )
-        .replace(/%ID%/, data.id)
-        .replace(/%MEDIA_TYPE%/, data.mediaType)
-        .replace(/%ELEMENT_ATTRIBUTES%/, data.attrString)
-        .replace(/%SOURCE_ELEMENTS%/, data.sourceElements)
-        .replace(/%POSTER_IMAGE%/, data.poster)
-        .replace(/%CAPTION%/, data.caption ? `${data.caption}<br>` : '')
-        .replace(/%REF%/, data.ref)
+        .replace(/%ID%/g, data.id)
+        .replace(/%MEDIA_TYPE%/g, data.mediaType)
+        .replace(/%ELEMENT_ATTRIBUTES%/g, data.attrString)
+        .replace(/%SOURCE_ELEMENTS%/g, data.sourceElements)
+        .replace(/%POSTER_IMAGE%/g, data.poster)
+        .replace(/%CAPTION%/g, data.caption ? `${data.caption}<br>` : '')
+        .replace(/%REF%/g, data.ref)
         .replace(/%SECTION_CLOSE%/, data.inline ? '' : '</section>')
 
 export const iframe = data =>
@@ -141,11 +137,11 @@ export const iframe = data =>
                 ? ''
                 : '<section epub:type="loi" title="Figures" class="chapter figures">',
         )
-        .replace(/%ID%/, data.id)
-        .replace(/%SRC%/, Url.encodeQueryString(data.source))
-        .replace(/%CAPTION%/, data.caption ? `${data.caption}<br/>` : '')
-        .replace(/%REF%/, data.ref)
-        .replace(/%SECTION_CLOSE%/, data.inline ? '' : '</section>')
+        .replace(/%ID%/g, data.id)
+        .replace(/%SRC%/g, Url.encodeQueryString(data.source))
+        .replace(/%CAPTION%/g, data.caption ? `${data.caption}<br/>` : '')
+        .replace(/%REF%/g, data.ref)
+        .replace(/%SECTION_CLOSE%/g, data.inline ? '' : '</section>')
 
 export const figure = ({
     data,

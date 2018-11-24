@@ -74,9 +74,9 @@ const epub = {
             },
         }),
 
-    audio: data => media({ data }),
-    video: data => media({ data }),
-    iframe: data => iframe({ data }),
+    audio: data => media(data),
+    video: data => media(data),
+    iframe: data => iframe(data),
 }
 
 export default epub
