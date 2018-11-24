@@ -3,8 +3,8 @@ import state from '@canopycanopycanopy/b-ber-lib/State'
 
 class Xhtml {
     static head() {
-        // TODO: whitespace should be trimmed from the doc start and end after
-        // b-ber runs
+        // TODO
+        // @issue: https://github.com/triplecanopy/b-ber/issues/232
 
         const robotsMeta = state.config.private
             ? '<meta name="robots" content="noindex,nofollow"/>'

@@ -43,7 +43,8 @@ class Asset {
     static convertToReactAttrs(attrs) {
         const attrs_ = {}
         Object.entries(attrs).forEach(([key, val]) => {
-            // TODO: handle other boolen attrs not covered by `convert`
+            // This will need to be updated to handle other boolen attrs not
+            // covered by `convert` in case the audio/video API changes
             if (key === 'playsinline') {
                 attrs_.playsInline = val
             } else {

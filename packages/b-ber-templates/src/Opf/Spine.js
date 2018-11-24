@@ -31,6 +31,7 @@ class Spine {
 
                 if (fname.match(/figure/)) {
                     // TODO: this should be handled more transparently, rn it feels a bit like a side-effect
+                    // https://github.com/triplecanopy/b-ber/issues/208
 
                     log.info('opf templates/spine writing [loi]')
 

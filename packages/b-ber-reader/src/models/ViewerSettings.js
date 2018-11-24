@@ -202,6 +202,7 @@ class ViewerSettings {
             const objectOrString_ = { ...objectOrString }
 
             // TODO: this should be extracted and process other props
+            // @issue: https://github.com/triplecanopy/b-ber/issues/222
             if ({}.hasOwnProperty.call(objectOrString_, 'fontSize')) {
                 if (!isNumeric(objectOrString_.fontSize)) {
                     objectOrString_.fontSize = parseFloat(

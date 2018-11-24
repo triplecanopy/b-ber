@@ -71,6 +71,7 @@ class Navigation {
             rrdir(`${state.dist}${path.sep}OPS`, (err, filearr) => {
                 if (err) throw err
                 // TODO: better testing here, make sure we're not including symlinks, for example
+                // @issue: https://github.com/triplecanopy/b-ber/issues/228
                 const fileObjects = pathInfoFromFiles(filearr, state.dist)
                 // only get html files
                 const xhtmlFileObjects = fileObjects.filter(a =>
@@ -180,8 +181,6 @@ class Navigation {
                     })
 
                     // add the missing entry to the spine
-                    // TODO: add to toc? add to flow/pages?
-                    // TODO: there need to be some handlers for parsing user-facing attrs
                     const missingEntriesWithAttributes = missingEntries
                         .map(fileName => {
                             if (
@@ -191,6 +190,7 @@ class Navigation {
                             }
 
                             // TODO: state should handle dot-notation for add/remove
+                            // @issue: https://github.com/triplecanopy/b-ber/issues/229
                             state.buildTypes[state.build].spineList.push(
                                 fileName,
                             )
@@ -268,18 +268,14 @@ class Navigation {
             const strings = {}
             const { spine } = state
 
-            // TODO: find somewhere better for this. we add entries to the spine
-            // programatically, but then they're also found on the system, so we
-            // dedupe them here
+            // We add entries to the spine programatically, but then they're
+            // also found on the system, so we dedupe them here
             const generatedFiles = remove(spine, a => a.generated === true)
             generatedFiles.forEach(a => {
                 if (!find(spine, { fileName: a.fileName })) {
                     spine.push(a)
                 }
             })
-
-            // console.log(spine)
-            // process.exit()
 
             const spineXML = Spine.items(spine)
 
@@ -298,7 +294,7 @@ class Navigation {
      */
     deepMergePromiseArrayValues(args, property) {
         const props = Object.assign({}, ...args.map(a => a[property]))
-        return Object.assign({}, [...args], { [property]: props }) // TODO: this is weird ...
+        return Object.assign({}, [...args], { [property]: props })
     }
 
     writeTocXhtmlFile(args) {

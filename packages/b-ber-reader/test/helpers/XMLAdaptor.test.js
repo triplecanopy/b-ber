@@ -50,6 +50,7 @@ test('parses opf data', done => {
 // parseNCX
 test.skip('parses ncx data', done => {
     // TODO: stub Request.get
+    // @issue: https://github.com/triplecanopy/b-ber/issues/223
     done()
 })
 

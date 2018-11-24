@@ -25,6 +25,7 @@ class Media extends Component {
         this.handleUpdatedSpreadIndex = this.handleUpdatedSpreadIndex.bind(this)
 
         // TODO: should avoid firing on initial load, when spreadIndex === 0
+        // @issue: https://github.com/triplecanopy/b-ber/issues/213
         this.timer = null
         this.media = null
     }
@@ -61,6 +62,7 @@ class Media extends Component {
             nodeSpreadIndex = (x - translateX) / windowWidth
         } else {
             // TODO: should account for element offset (margins/padding)
+            // @issue: https://github.com/triplecanopy/b-ber/issues/213
             nodeSpreadIndex = Math.floor(
                 (x - columnGap / 2 - translateX) / windowWidth,
             )

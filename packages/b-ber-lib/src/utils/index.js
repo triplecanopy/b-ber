@@ -54,8 +54,9 @@ const forOf = (collection, iterator) =>
 
 // TODO: the whole figures/generated pages/user-configurable YAML thing should
 // be worked out better. one reason is below, where we need the title of a
-// generated page, but since metadata is attache in the frontmatter YAML of an
+// generated page, but since metadata is attached in the frontmatter YAML of an
 // MD file, there is no reference for the metadata.
+// @issue: https://github.com/triplecanopy/b-ber/issues/208
 //
 // this is provisional, will just cause more confusion in the future
 const getTitleOrName = page => {

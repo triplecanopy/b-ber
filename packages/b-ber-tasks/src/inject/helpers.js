@@ -70,6 +70,8 @@ export const getJSONLDMetadata = () => [
     }),
 ]
 
+// TODO:
+// @issue: https://github.com/triplecanopy/b-ber/issues/226
 // new Promise(
 //     resolve =>
 //         // eslint-disable-line arrow-body-style

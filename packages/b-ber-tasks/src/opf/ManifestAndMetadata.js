@@ -62,6 +62,7 @@ class ManifestAndMetadata {
             rrdir(`${this.dist}${path.sep}OPS`, (err, filearr) => {
                 if (err) throw err
                 // TODO: better testing here, make sure we're not including symlinks, for example
+                // @issue: https://github.com/triplecanopy/b-ber/issues/228
                 const files = [
                     ...state.remoteAssets,
                     ...filearr.filter(a => path.basename(a).charAt(0) !== '.'),
@@ -79,7 +80,6 @@ class ManifestAndMetadata {
      */
     createManifestAndMetadataFromTemplates(files) {
         return new Promise(resolve => {
-            // TODO: this will already be loaded in bber object
             const strings = { manifest: [], bookmeta: [] }
             const specifiedFonts =
                 {}.hasOwnProperty.call(

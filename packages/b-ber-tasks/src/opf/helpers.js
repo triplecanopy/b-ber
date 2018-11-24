@@ -43,6 +43,7 @@ const nestedContentToYAML = (arr, result = []) => {
         const model = {}
 
         // TODO: check for custom attrs somewhere else.
+        // @issue: https://github.com/triplecanopy/b-ber/issues/208
         if (a.linear === false || a.in_toc === false) {
             if (a.in_toc === false) model.in_toc = false
             if (a.linear === false) model.linear = false

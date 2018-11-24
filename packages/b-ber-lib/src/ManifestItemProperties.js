@@ -45,6 +45,7 @@ class ManifestItemProperties {
         // hasn't been written to disk yet.  checking right now against the
         // results from `state.template.dynamicTail` for now, since we know
         // that the toc was written using that
+        // @issue: https://github.com/triplecanopy/b-ber/issues/206
         if (ManifestItemProperties.isNav(file)) {
             // the dynamicTail function in state throws an error initially,
             // though, as the function is assigned during the inject task, so

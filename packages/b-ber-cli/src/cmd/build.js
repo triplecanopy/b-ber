@@ -15,6 +15,7 @@ const handler = argv => {
 
     // make sure all necessary directories exist.
     // TODO: should be a separate task
+    // @issue: https://github.com/triplecanopy/b-ber/issues/202
     const ensure = () =>
         new Promise(resolve => {
             const cwd = process.cwd()

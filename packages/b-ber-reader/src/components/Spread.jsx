@@ -189,6 +189,7 @@ class Spread extends Component {
         const { verso, recto, x, unbound } = this.state.marker
         // set this after loading to prevent figures drifing around on initial page load
         // TODO: should be passing in transition speed
+        // @issue: https://github.com/triplecanopy/b-ber/issues/216
         const transform = 'transition: transform 400ms ease'
         const transformLeft = this.getPostionLeftFromMatrix()
 

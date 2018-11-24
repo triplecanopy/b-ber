@@ -45,8 +45,8 @@ class Marker extends Component {
         )
 
         // refs
-        this.contentNode = null // TODO: should be passed via props
-        this.layoutNode = null // TODO: should be passed via props
+        this.contentNode = null // TODO: should be passed via props @issue: https://github.com/triplecanopy/b-ber/issues/210
+        this.layoutNode = null // TODO: should be passed via props @issue: https://github.com/triplecanopy/b-ber/issues/210
         this.markerNode = null
 
         this.timer = null
@@ -164,11 +164,12 @@ class Marker extends Component {
         // given that the layout will likely be adjusted by the user (i.e.,
         // resizing the browser to adjust the broken layout, which will trigger
         // a reflow), the chances of a stack overflow are pretty minimal
+        //
+        // @issue: https://github.com/triplecanopy/b-ber/issues/211
         if (
             this.nodeEdgeIsInAllowableRange(position, _position) !== true ||
             (verso === false && recto === false)
         ) {
-            console.log('node not in allowable range')
             clearTimeout(this.timer)
             this.timer = setTimeout(
                 this.calculateNodePosition,
@@ -200,6 +201,7 @@ class Marker extends Component {
 
         // TODO: may want to debounce this call, or write up 'swap' functions in
         // DocumentPreProcessor in case of flickering, but seems OK rn
+        // @issue: https://github.com/triplecanopy/b-ber/issues/212
         DocumentPreProcessor.removeStyleSheets()
         DocumentPreProcessor.createStyleSheets({ paddingLeft, columnGap })
         DocumentPreProcessor.appendStyleSheets()

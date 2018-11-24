@@ -52,6 +52,7 @@ class WebFlow {
 
     // TODO: the naming scheme for figures is slightly different for figures
     // (the `fileName` property has a file extension). this needs to be fixed
+    // @issue: https://github.com/triplecanopy/b-ber/issues/208
     prepareLoi() {
         this.loi = this.loi.map(a => {
             const b = { ...a }
@@ -356,9 +357,6 @@ function injectNavigationIntoFile(filePath, { tocElement, infoElement }) {
             // prepend the dynamically generated elements to body, adding a
             // wrapper around the main publication content. this allows us to
             // create a sliding nav, fixed header, etc.
-            //
-            // TODO: eventually classlist should be parsed, or a more robust
-            // solution implemented
             contents = data.replace(
                 /(<body[^>]*?>)/,
                 `
@@ -417,6 +415,7 @@ function injectNavigationIntoFiles(elements) {
 function indexPageContent() {
     return new Promise((resolve, reject) => {
         // TODO: `indexPageContent` should create a `lunr` index for faster parsing down the line
+        // @issue: https://github.com/triplecanopy/b-ber/issues/231
 
         const { spine } = flow
         const promises = []
@@ -543,6 +542,7 @@ function createIndexHTML({ tocElement, infoElement }) {
         : '<meta name="robots" content="index,follow"/>'
 
     // TODO: should get dynamic page template here to ensure asset hash on production build
+    // @issue: https://github.com/triplecanopy/b-ber/issues/232
     const indexHTML = `
         <?xml version="1.0" encoding="UTF-8" standalone="no"?>
         <html xmlns="http://www.w3.org/1999/xhtml"
@@ -577,6 +577,7 @@ function createIndexHTML({ tocElement, infoElement }) {
 }
 
 // TODO
+// @issue: https://github.com/triplecanopy/b-ber/issues/226
 // function generateWebpubManifest() {}
 
 const web = () =>

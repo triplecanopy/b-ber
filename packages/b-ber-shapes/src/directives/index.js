@@ -32,8 +32,7 @@ const BODYMATTER_DIRECTIVES = [
     'part',
     'volume',
 
-    // TODO: it'll be useful to have some generic container directives available
-    // for secitoning layout
+    // Generic container directives for secitoning layout
     'section',
     'article',
 ]

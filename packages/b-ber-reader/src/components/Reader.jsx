@@ -461,7 +461,6 @@ class Reader extends Component {
                     {
                         currentSpineItem: requestedSpineItem,
                         spineItemURL: requestedSpineItem.absoluteURL,
-                        // TODO: add initial state?
                     },
                     () => {
                         this.updateQueryString()
@@ -479,6 +478,7 @@ class Reader extends Component {
                                 console.timeEnd('Reader#loadSpineItem')
                             }
                             // return this.setState({ready: true}) // TODO: force load
+                            // @issue: https://github.com/triplecanopy/b-ber/issues/214
                         }, MAX_RENDER_TIMEOUT)
                     },
                 )
@@ -486,6 +486,7 @@ class Reader extends Component {
             .catch(err => {
                 // Something went wrong loading the book. clear storage for this book
                 // TODO: retry? try to navigate to home
+                // @issue: https://github.com/triplecanopy/b-ber/issues/214
 
                 console.error(err)
 
@@ -552,7 +553,7 @@ class Reader extends Component {
 
         currentSpineItemIndex = nextIndex
         const currentSpineItem = spine[nextIndex]
-        const spreadIndex = 0 // TODO: why not getting this from state?
+        const spreadIndex = 0
 
         let deferredCallback
         if (increment === -1) {
@@ -615,7 +616,9 @@ class Reader extends Component {
     navigateToChapterByURL(absoluteURL) {
         const { spine } = this.state
         const url = new window.URL(absoluteURL)
-        const absoluteURL_ = `${url.origin}${url.pathname}` // TODO: handle hashes, query strings
+
+        // Can eventually handle hashes or query strings here
+        const absoluteURL_ = `${url.origin}${url.pathname}`
 
         let deferredCallback
         const { hash } = url
@@ -630,7 +633,10 @@ class Reader extends Component {
                     this.hideSpinner()
 
                     if (logTime) console.timeEnd('Content Visible')
-                }, MAX_DEFERRED_CALLBACK_TIMEOUT) // TODO: should match transition speed. all these deferreds should be collected together
+                    // TODO: should match transition speed. all these deferreds should be collected together
+                    // @issue: https://github.com/triplecanopy/b-ber/issues/215
+                    // @issue: https://github.com/triplecanopy/b-ber/issues/216
+                }, MAX_DEFERRED_CALLBACK_TIMEOUT)
             }
         }
 

@@ -79,6 +79,7 @@ class HtmlToPrintReadyHtml extends HtmlToXml {
 
                         const tag = [name]
                         // TODO: remove for..of
+                        // @issue: https://github.com/triplecanopy/b-ber/issues/205
                         // eslint-disable-next-line no-restricted-syntax
                         for (const [key, val] of _this.entries(attrs)) {
                             let prop = val

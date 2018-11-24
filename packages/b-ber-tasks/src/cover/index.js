@@ -161,7 +161,9 @@ class Cover {
             const coverListedInMetadata = getBookMetadata('cover', state)
 
             if (coverListedInMetadata) {
-                this.coverEntry = coverListedInMetadata.replace(/_jpg$/, '.jpg') // TODO: fixme, for generated covers
+                // TODO: fixme, for generated covers
+                // @issue: https://github.com/triplecanopy/b-ber/issues/208
+                this.coverEntry = coverListedInMetadata.replace(/_jpg$/, '.jpg')
                 log.info('cover verify image [%s]', this.coverEntry)
 
                 // there's a reference to a cover image so we create a cover.xhtml file

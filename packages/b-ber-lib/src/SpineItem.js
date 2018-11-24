@@ -13,6 +13,7 @@ class SpineItem {
         // TODO: rename name baseName
         // TODO: fileName has an extension in some cases, other times not (only seen in inject/index.js so far). this needs to be verified
         // TODO: should contain separate fields for input and output name (i.e., .md and .xhtml)
+        // @issue: https://github.com/triplecanopy/b-ber/issues/207
 
         this.fileName = fileName
         // this.fileName = `${path.basename(fileName, '.md')}.md`
@@ -31,7 +32,7 @@ class SpineItem {
         this.linear = typeof linear === 'boolean' ? linear : true
         this.generated = Boolean(generated)
         this.nodes = []
-        this.ref = null // TODO: what's this?
+        this.ref = null // TODO: what's this? @issue: https://github.com/triplecanopy/b-ber/issues/207
     }
 }
 

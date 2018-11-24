@@ -39,6 +39,7 @@ const render = ({ context = {} }) => (tokens, idx) => {
             // TODO: the parser needs to be more discerning. should include
             // checking the attr types and the calls to open/close in a more
             // transparent way. refactoring candidate.
+            // @issue: https://github.com/triplecanopy/b-ber/issues/204
 
             if (
                 directive &&

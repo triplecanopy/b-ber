@@ -47,6 +47,7 @@ class Generate {
 
     writePageMeta({ fileName }) {
         // TODO: this should eventually just be one 'nav' file that's read from for all builds
+        // @issue: https://github.com/triplecanopy/b-ber/issues/225
         const buildTypes = ['epub', 'mobi', 'web', 'sample', 'reader']
 
         const promises = buildTypes.map(type => {

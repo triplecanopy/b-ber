@@ -226,6 +226,7 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
             // parent's margin/padding-bottom instead of calculating an offset to
             // fixes FF issue where bottom distance is *always* appended to the
             // column after resizing
+            // @issue: https://github.com/triplecanopy/b-ber/issues/221
 
             // eslint-disable-next-line no-param-reassign
             node.parent.attribs = {

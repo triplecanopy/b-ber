@@ -463,7 +463,9 @@ $web-grid-columns: 12;
     // side of the text around the found search term.
     .search__result__text {
         display: inline-block;
-        padding: 0.3621em 0; // TODO: using `padding` mixin
+        // TODO: using `padding` mixin
+        // @issue: https://github.com/triplecanopy/b-ber/issues/235
+        padding: 0.3621em 0;
     }
 
     // Media queries
@@ -491,12 +493,10 @@ $web-grid-columns: 12;
         }
     }
 
-    // TODO: this might need to be extended to all elements that 'pagebreak`
     .figure__large.figure__inline {
         margin: two-lines(0) 0;
     }
 
-    // TODO: should this be for all builds?
     figure .figcaption a,
     figure figcaption a,
     .figure__items a {
@@ -567,7 +567,6 @@ $web-grid-columns: 12;
         }
     }
 
-    // TODO: Fix spread layout
     .publication__contents {
         .spread {
             grid-column: 1 / span 12;

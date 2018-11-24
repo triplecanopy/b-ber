@@ -57,6 +57,7 @@ $modularscale: (
 
 // Get these from sibling theme
 // TODO: should just grab them from node modules and add the serif theme as a dep
+// @issue: https://github.com/triplecanopy/b-ber/issues/233
 @import '../b-ber-theme-serif/typography/typography';
 @import '../b-ber-theme-serif/layout/layout';
 
@@ -67,9 +68,6 @@ html {
     font-size: 156.25%;
 } // 25px
 
-// TODO: we're overriding the base font size in `.publication_contents` for the
-// web build, but everything should just be sized up to remove redundant
-// override
 @if $build != 'web' {
     html {
         font-size: 100%;

@@ -211,7 +211,9 @@ class XMLAdaptor {
                 columnGap,
                 responseURL,
             })
-            const { xml, doc } = documentProcessor.parseXML(response.data.data) // TODO: data.data
+            // TODO: data.data
+            // @issue: https://github.com/triplecanopy/b-ber/issues/217
+            const { xml, doc } = documentProcessor.parseXML(response.data.data)
             const re = /<body[^>]*?>([\s\S]*)<\/body>/
 
             // create react element that will be appended to our #frame element.
@@ -232,7 +234,7 @@ class XMLAdaptor {
             // as well
 
             // TODO: will also need to grab inline styles and parse similarly
-            // TODO: need to fix page breaks here: "page-break-inside: auto"
+            // @issue: https://github.com/triplecanopy/b-ber/issues/218
             const links = doc.querySelectorAll('link')
             const styles = []
 
@@ -303,6 +305,7 @@ class XMLAdaptor {
                             // TODO: the following should be fixed up so that
                             // they're actually replacing the node, rather than
                             // modifying props.
+                            // @issue: https://github.com/triplecanopy/b-ber/issues/219
 
                             // these need to be synced with the
                             // HTML structure in Layout.jsx

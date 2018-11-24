@@ -161,7 +161,9 @@ class DocumentPreProcessor {
     }
 
     static parseXML(callback) {
-        const err = null // TODO
+        // TODO
+        // @issue: https://github.com/triplecanopy/b-ber/issues/220
+        const err = null
 
         DocumentPreProcessor.removeScriptElements()
         DocumentPreProcessor.appendStyleSheets()

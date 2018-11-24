@@ -125,9 +125,11 @@ class Footnote extends Component {
                     {this.props.children}
                 </a>
                 {footnoteBody && footnoteVisible ? (
+                    // TODO: column width
+                    // @issue: https://github.com/triplecanopy/b-ber/issues/209
                     <span
                         className="footnote__body"
-                        style={footnoteStyles((window.innerWidth / 23) * 9)} // TODO: column width
+                        style={footnoteStyles((window.innerWidth / 23) * 9)}
                         onMouseOut={this.hideFootnote}
                         onBlur={this.hideFootnote}
                     >

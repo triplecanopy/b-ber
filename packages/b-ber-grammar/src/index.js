@@ -122,8 +122,6 @@ class MarkdownRenderer {
             })
             .use(markdownItFootnote, tokens => {
                 const fileName = this.filename
-
-                // TODO: add footnotes to spine if not already added
                 const entry = find(state.spine, { fileName })
                 const title = entry && entry.title ? entry.title : fileName
 
