@@ -65,7 +65,7 @@ class ViewerSettings {
         this.paddingTop = () =>
             Viewport.optimize(0.14, 0.14, 0.18, window.innerHeight)
         this.paddingBottom = () =>
-            Viewport.optimize(0.11, 0.14, 0.18, window.innerHeight)
+            Viewport.optimize(0.1, 0.1, 0.14, window.innerHeight)
         this.columnGap = () => this.settings.gridGutterWidth()
     }
 
