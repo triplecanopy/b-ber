@@ -1,5 +1,5 @@
 import {
-    // BREAKPOINT_HORIZONTAL_SMALL,
+    BREAKPOINT_HORIZONTAL_SMALL,
     BREAKPOINT_HORIZONTAL_MEDIUM,
     BREAKPOINT_HORIZONTAL_LARGE,
     // BREAKPOINT_VERTICAL_SMALL,
@@ -9,7 +9,7 @@ import {
 
 class Viewport {
     static isMobile() {
-        return window.innerWidth <= BREAKPOINT_HORIZONTAL_MEDIUM
+        return window.innerWidth <= BREAKPOINT_HORIZONTAL_SMALL
     }
 
     static isLarge = (value, mult) =>
