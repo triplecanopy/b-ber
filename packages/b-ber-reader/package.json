@@ -13,9 +13,7 @@
         "watch": "yarn clean && NODE_ENV=production webpack --mode production -w --config webpack.config.production.js",
         "build": "yarn webpack.dist",
         "serve": "nodemon server.js",
-        "test.lint": "../../node_modules/.bin/eslint -c .eslintrc.json './src/**/{*.js,*.jsx}'",
-        "test.jest": "yarn jest",
-        "test": "yarn test.lint && yarn test.jest"
+        "test": "yarn jest"
     },
     "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
     "license": "GPL-3.0-or-later",

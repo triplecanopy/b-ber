@@ -4,7 +4,7 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
+        "test": "yarn jest",
         "prepare.dist": "BABEL_ENV=production ../../node_modules/.bin/babel -d ./ src/ --ignore test/",
         "clean": "rimraf utils && rimraf *.js",
         "prepare": "yarn clean && yarn prepare.dist",

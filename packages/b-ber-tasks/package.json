@@ -10,7 +10,7 @@
         "prepare": "yarn clean && yarn prepare.dist",
         "build": "yarn prepare",
         "watch": "BABEL_ENV=production ../../node_modules/.bin/babel -d dist/ src/ --watch src --ignore test,src/web/search.js,src/web/worker.js,src/web/navigation.js,src/web/event-handlers.js,src/serve/server.js",
-        "test": "jest test"
+        "test": "yarn jest"
     },
     "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
     "license": "GPL-3.0-or-later",

@@ -14,7 +14,7 @@
         "clean": "rimraf dc && rimraf directives && rimraf sequences",
         "build": "yarn prepare",
         "watch": "BABEL_ENV=production ../../node_modules/.bin/babel -d ./ src/ --watch src",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "yarn jest"
     },
     "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
     "license": "GPL-3.0-or-later",
