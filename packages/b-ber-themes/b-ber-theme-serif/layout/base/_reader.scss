@@ -57,7 +57,7 @@
     }
 
     // Mobile Overrides for Fullbleed, spreads, and galleries.
-    @include break('tablet') {
+    @include break('mobile') {
         // Gallery
         section.gallery .figure__gallery .figure__items {
             grid-template:
