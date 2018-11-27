@@ -1,0 +1,5 @@
+module.exports = {
+    debug: false,
+    useLocalStorage: true,
+    verboseOutput: false,
+}
