@@ -97,10 +97,6 @@ class Spread extends Component {
     componentWillReceiveProps(_, nextContext) {
         const markerRefId = this.props['data-marker-reference']
         if (nextContext.refs[markerRefId]) {
-            console.log(
-                'Spread#componentWillReceiveProps tests nextProps.marker',
-            )
-
             const { verso, recto, x, markerId, unbound } = nextContext.refs[
                 markerRefId
             ]
@@ -112,9 +108,6 @@ class Spread extends Component {
                 markerId !== this.state.marker.markerId ||
                 unbound !== this.state.marker.unbound
             ) {
-                console.log(
-                    'Spread#componentWillReceiveProps updates nextProps.marker',
-                )
                 this.setState(
                     { marker: nextContext.refs[markerRefId] },
                     this.updateChildElementPositions,

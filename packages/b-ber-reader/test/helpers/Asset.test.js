@@ -40,7 +40,7 @@ test('creates escaped React attributes', () => {
 })
 
 test('appends a stylsheet', () => {
-    Object.defineProperty(window.URL, 'createObjectURL', { value: _ => {} }) // https://github.com/jsdom/jsdom/issues/1721
+    Object.defineProperty(window.URL, 'createObjectURL', { value: () => {} }) // https://github.com/jsdom/jsdom/issues/1721
     Asset.appendBookStyles('', 'test')
     expect(document.querySelector('#_test')).not.toBe(null)
 })

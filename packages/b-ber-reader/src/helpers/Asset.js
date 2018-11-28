@@ -38,7 +38,11 @@ class Asset {
     }
     static removeBookStyles(hash) {
         const link = document.querySelector(`#_${hash}`)
-        if (link) link.parentNode.removeChild(link)
+        if (link) {
+            const href = link.getAttribute('href')
+            if (href && /^blob:/.test(href)) window.URL.revokeObjectURL(href)
+            link.parentNode.removeChild(link)
+        }
     }
     static convertToReactAttrs(attrs) {
         const attrs_ = {}
