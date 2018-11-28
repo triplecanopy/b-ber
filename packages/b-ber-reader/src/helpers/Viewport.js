@@ -8,9 +8,7 @@ import {
 } from '../constants'
 
 class Viewport {
-    static isMobile() {
-        return window.innerWidth <= BREAKPOINT_HORIZONTAL_SMALL
-    }
+    static isMobile = () => window.innerWidth <= BREAKPOINT_HORIZONTAL_SMALL
 
     static isLarge = (value, mult) =>
         (window.innerWidth >= BREAKPOINT_HORIZONTAL_LARGE ||
@@ -39,9 +37,9 @@ class Viewport {
     // margin-left: 120px // at large breakpoints
     //
     static optimize = (min, med, max, value) =>
-        Viewport.isSmall(value, min) ||
+        Viewport.isLarge(value, max) ||
         Viewport.isMedium(value, med) ||
-        Viewport.isLarge(value, max)
+        Viewport.isSmall(value, min)
 
     // Same as above but with exact values, i.e.,
     //
@@ -52,7 +50,7 @@ class Viewport {
     // margin-left: 60px // at medium breakpoints
     // margin-left: 120px // at large breakpoints
     static exact = (min, med, max) =>
-        Viewport.isSmall(min) || Viewport.isMedium(med) || Viewport.isLarge(max)
+        Viewport.isLarge(max) || Viewport.isMedium(med) || Viewport.isSmall(min)
 }
 
 export default Viewport

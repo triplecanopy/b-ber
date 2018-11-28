@@ -17,6 +17,10 @@
         @media #{$media-desktop} {
             @content;
         }
+    } @else if $media == 'wide' {
+        @media #{$media-wide} {
+            @content;
+        }
     } @else if $media == 'tall' {
         @media #{$media-tall} {
             @content;
