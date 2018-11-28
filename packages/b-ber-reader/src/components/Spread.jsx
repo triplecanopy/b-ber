@@ -205,7 +205,7 @@ class Spread extends Component {
             if (recto) left -= layoutWidth / 2
             if (unbound) left = 0
         } else {
-            left = paddingLeft * -1
+            left = 0
         }
 
         left = `${left}px`
