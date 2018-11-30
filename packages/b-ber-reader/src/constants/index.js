@@ -63,7 +63,7 @@ export const MOBILE_COLUMN_COUNT = 9
 // @media (max-width: 768px and max-height: 480px) {}
 
 // Box 9 would look like
-// @media (min-width: 1590px and min-height: 860px) {}
+// @media (min-width: 1290px and min-height: 860px) {}
 
 // Box 7 would look like
 // @media (max-width: 768px and min-height: 860px) {}
@@ -86,6 +86,10 @@ export const MOBILE_COLUMN_COUNT = 9
 // [ 'auto', 'auto', 'auto', 'auto' ]
 // [ 15, 'auto', 30, 'auto' ]
 //
+// Values in px are also accepted, and must be passed in as a string. The
+// following would add 30px to the top and bottom of the reader's frame
+//
+// ['30px', 'auto', '30px', 'auto']
 
 export const VIEWPORT_DIMENSIONS_MATRIX = [
     ['60px', 'auto', '60px', 'auto'], [15, 'auto', 18, 'auto'],         [18, 'auto', 20, 'auto'], // => sm x sm, md x sm, lg x sm
