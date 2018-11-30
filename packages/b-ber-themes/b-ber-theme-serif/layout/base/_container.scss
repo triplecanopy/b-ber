@@ -19,9 +19,6 @@ blockquote {
 }
 
 section {
-    @include break('desktop') {
-        padding-right: 2vh;
-    }
     clear: both;
     &:after {
         content: ' ';
