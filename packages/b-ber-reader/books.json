@@ -43,5 +43,10 @@
         "title": "Gallery Example",
         "url": "http://localhost:4000/epub/gallery-example/",
         "cover": "http://localhost:4000/epub/gallery-example/OPS/images/__bber_cover__c337fea9c80550a108a6dd7d0bdfe21c25db9838.jpg"
+    },
+    {
+        "title": "Gallery Example 2",
+        "url": "http://localhost:4000/epub/g2/",
+        "cover": "http://localhost:4000/epub/g2/OPS/images/__bber_cover__c337fea9c80550a108a6dd7d0bdfe21c25db9838.jpg"
     }
 ]

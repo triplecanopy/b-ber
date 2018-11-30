@@ -8,7 +8,6 @@ import { isNumeric } from '../helpers/Types'
 import { cssHeightDeclarationPropType } from '../lib/custom-prop-types'
 import Messenger from '../lib/Messenger'
 import { messagesTypes } from '../constants'
-// import browser from '../lib/browser'
 import Viewport from '../helpers/Viewport'
 
 const SpreadStyleBlock = props => {
@@ -121,14 +120,11 @@ class Spread extends Component {
         // positioned images in fullbleed panels which function properly on
         // Chrome, so we only need it for FF and Safari
         this.messageKey = Messenger.register(() => {
-            // if (browser.name === 'chrome') return
             this.updateChildElementPositions()
         }, messagesTypes.DEFERRED_EVENT)
     }
     componentDidMount() {
         this.connectResizeObserver()
-        // More x-browser compat.
-        // if (browser.name === 'chrome') return
         setImmediate(this.updateChildElementPositions)
     }
     componentWillUnmount() {
@@ -165,16 +161,6 @@ class Spread extends Component {
         this.setState({ height }, this.updateChildElementPositions)
     }
 
-    getPostionLeftFromMatrix() {
-        const matrix = window
-            .getComputedStyle(document.querySelector('#layout'))
-            .transform.replace(/(matrix\(|\))/, '')
-            .split(',')
-            .map(a => Number(a.trim()))
-
-        return matrix[4]
-    }
-
     // Spread#updateChildElementPositions lays out absolutely positioned images
     // over fullbleed placeholders for FF and Safari. This is Chrome's default
     // behaviour so we don't bother shifting anything around in that case
@@ -184,12 +170,15 @@ class Spread extends Component {
         // TODO: should be passing in transition speed
         // @issue: https://github.com/triplecanopy/b-ber/issues/216
         const transform = 'transition: transform 400ms ease'
-        const transformLeft = this.getPostionLeftFromMatrix()
-
         const width = window.innerWidth
         const { paddingLeft, paddingRight, columnGap } = this.context
         const layoutWidth = width - paddingLeft - paddingRight + columnGap // not sure why we're adding columnGap in here ...
-        const spreadPosition = Math.ceil((x - transformLeft) / width)
+
+        // TODO: gutter width should be passed via props
+        const spreadPosition =
+            Math.floor(
+                (x + paddingLeft * 2 + Viewport.getGutterWidth()) / width,
+            ) + 1
 
         let left = 0
 

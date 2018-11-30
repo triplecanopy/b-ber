@@ -246,16 +246,14 @@ class Marker extends Component {
 
         if (verso) {
             offsetHeight = height
-            offsetHeight *= 2
-            offsetHeight -= padding
-            offsetHeight -= padding / 2
-            offsetHeight -= markerBottom
+            offsetHeight += padding
+            offsetHeight -= markerBottom - paddingTop
         }
 
         if (recto) {
             offsetHeight = height
             offsetHeight -= markerBottom
-            offsetHeight -= padding / 2
+            offsetHeight -= paddingTop
         }
 
         if (JSON.parse(this.props['data-unbound']) === true) {

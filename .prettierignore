@@ -6,6 +6,8 @@ demos
 *.loaders.js
 packages/b-ber-lib/*.js
 packages/b-ber-reader/epub/**/*.js
+packages/b-ber-reader/src/helpers/Viewport.js
+packages/b-ber-reader/src/constants/index.js
 packages/b-ber-resources/*.js
 packages/b-ber-shapes/*.js
 packages/b-ber-shapes/dc/*.js

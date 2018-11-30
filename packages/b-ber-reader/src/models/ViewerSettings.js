@@ -24,10 +24,6 @@ class ViewerSettings {
         theme: themes.DEFAULT,
         transition: transitions.SLIDE,
         transitionSpeed: 400,
-
-        // responsive
-        desktopColumnCount: 16,
-        mobileColumnCount: 9,
     }
     constructor(options = {}) {
         this.settings = {}
@@ -41,32 +37,12 @@ class ViewerSettings {
         this.put = this.put.bind(this)
         this.get = this.get.bind(this)
 
-        // responsive
-        this.gridColumns = () =>
-            Viewport.isMobile()
-                ? this.settings.mobileColumnCount
-                : this.settings.desktopColumnCount
-        this.gridColumnWidth = () =>
-            (65 / this.settings.gridColumns() / 100) * window.innerWidth
-        this.gridGutterWidth = () =>
-            (35 / (this.settings.gridColumns() - 1) / 100) * window.innerWidth
-        this.paddingLeft = () =>
-            Viewport.exact(
-                this.settings.gridColumnWidth(),
-                this.settings.gridColumnWidth() + this.settings.gridGutterWidth(), // prettier-ignore
-                (this.settings.gridColumnWidth() + this.settings.gridGutterWidth()) * 2, // prettier-ignore
-            )
-        this.paddingRight = () =>
-            Viewport.exact(
-                this.settings.gridColumnWidth(),
-                this.settings.gridColumnWidth() + this.settings.gridGutterWidth(), // prettier-ignore
-                (this.settings.gridColumnWidth() + this.settings.gridGutterWidth()) * 2, // prettier-ignore
-            )
-        this.paddingTop = () =>
-            Viewport.optimize(0.14, 0.14, 0.18, window.innerHeight)
-        this.paddingBottom = () =>
-            Viewport.optimize(0.1, 0.1, 0.14, window.innerHeight)
-        this.columnGap = () => this.settings.gridGutterWidth()
+        this.columnGap = () => Viewport.getGutterWidth()
+
+        this.paddingLeft = () => Viewport.optimized().left
+        this.paddingRight = () => Viewport.optimized().right
+        this.paddingTop = () => Viewport.optimized().top
+        this.paddingBottom = () => Viewport.optimized().bottom
     }
 
     // responsive
