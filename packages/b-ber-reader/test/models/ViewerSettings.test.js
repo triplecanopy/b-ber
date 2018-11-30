@@ -22,8 +22,6 @@ describe('ViewerSettings', () => {
                 theme: themes.DEFAULT,
                 transition: transitions.SLIDE,
                 transitionSpeed: expect.any(Number),
-                desktopColumnCount: expect.any(Number),
-                mobileColumnCount: expect.any(Number),
             }),
         )
 
@@ -134,8 +132,6 @@ describe('ViewerSettings', () => {
                 theme: themes.DEFAULT,
                 transition: transitions.SLIDE,
                 transitionSpeed: expect.any(Number),
-                desktopColumnCount: expect.any(Number),
-                mobileColumnCount: expect.any(Number),
             }),
         )
     })
