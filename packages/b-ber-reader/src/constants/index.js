@@ -62,11 +62,11 @@ export const MOBILE_COLUMN_COUNT = 9
 // In CSS, box 1 would look like
 // @media (max-width: 768px and max-height: 480px) {}
 
-// Box 9 would look like
-// @media (min-width: 1290px and min-height: 860px) {}
-
 // Box 7 would look like
 // @media (max-width: 768px and min-height: 860px) {}
+
+// Box 9 would look like
+// @media (min-width: 1290px and min-height: 860px) {}
 
 // Each box contains four values for the padding of the element, in typical CSS
 // style (top, right, bottom, left). Each value is a number representing a
@@ -92,9 +92,9 @@ export const MOBILE_COLUMN_COUNT = 9
 // ['30px', 'auto', '30px', 'auto']
 
 export const VIEWPORT_DIMENSIONS_MATRIX = [
-    ['60px', 'auto', '60px', 'auto'], [15, 'auto', 18, 'auto'],         [18, 'auto', 20, 'auto'], // => sm x sm, md x sm, lg x sm
-    ['60px', 'auto', '60px', 'auto'], [15, 'auto', 18, 'auto'],         [18, 'auto', 20, 'auto'], // => sm x md, md x md, lg x md
-    ['60px', 'auto', '60px', 'auto'], ['auto', 'auto', 'auto', 'auto'], [18, 'auto', 20, 'auto'], // => sm x lg, md x lg, lg x lg
+    ['60px', 'auto', '60px', 'auto'], [18, 'auto', 15, 'auto'],         [22, 'auto', 18, 'auto'], // => sm x sm, md x sm, lg x sm
+    ['60px', 'auto', '60px', 'auto'], [15, 'auto', 10, 'auto'],         [15, 'auto', 10, 'auto'], // => sm x md, md x md, lg x md
+    ['60px', 'auto', '60px', 'auto'], [30, 'auto', 20, 'auto'],         [15, 'auto', 10, 'auto'], // => sm x lg, md x lg, lg x lg
 ]
 
 // used in DocumentPreProcessor for appended stylesheets
