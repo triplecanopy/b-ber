@@ -1,7 +1,7 @@
-$white: #fff;
-$black: #000;
-$tc-purple: #5050c5;
-$lightgrey: #d3d3d3;
+$white: rgba(255, 255, 255, 1);
+$black: rgba(34, 34, 34, 1);
+$tc-purple: rgba(80, 80, 197, 1);
+$lightgrey: rgba(211, 211, 211, 1);
 $component-x: 35px;
 $padding-y: 47px;
 
@@ -117,31 +117,31 @@ a {
             .nav__button {
                 padding: 0 5px;
                 @include transition-fast('color');
-
                 &:hover {
                     color: $tc-purple;
                 }
                 &.nav__button__downloads {
-                    color: rgba(80, 80, 197, 1);
-                    animation: nav__button__downloads 2s 30;
+                    color:$black;
+                    animation: nav__button__downloads 2.5s infinite;
                     &:hover {
                         animation: none;
+                        color: $tc-purple;
                     }
                     @keyframes nav__button__downloads {
                         0% {
-                            color: rgba(80, 80, 197, 0.3);
+                            color: rgba(194, 194, 194, 0.2);
                         }
                         25% {
-                            color: rgba(80, 80, 197, 0.6);
+                            color: rgba(194, 194, 194, 0.6);
                         }
                         50% {
                             color: rgba(0, 0, 0, 1);
                         }
                         75% {
-                            color: rgba(80, 80, 197, 0.6);
+                            color: rgba(194, 194, 194, 0.6);
                         }
                         100% {
-                            color: rgba(80, 80, 197, 0.3);
+                            color: rgba(194, 194, 194, 0.2);
                         }
                     }
                 }
