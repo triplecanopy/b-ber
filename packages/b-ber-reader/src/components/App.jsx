@@ -75,12 +75,11 @@ class App extends Component {
     }
 
     bindHistoryListener() {
-        console.log('History:', history)
         history.listen((location /* , action */) => {
             const { search } = location
             if (!location.state) {
                 console.warn('No history.location.state')
-                console.warn('Location:', location)
+                if (history.length) return history.goBack()
                 return
             }
 
