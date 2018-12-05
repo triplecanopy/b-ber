@@ -737,8 +737,6 @@ class Reader extends Component {
             spinnerVisible,
         } = this.state
 
-        // console.log('this.state.refs', this.state.refs)
-
         return (
             <Controls
                 guide={guide}
@@ -748,6 +746,8 @@ class Reader extends Component {
                 showSidebar={showSidebar}
                 viewerSettings={viewerSettings}
                 handleEvents={handleEvents}
+                spreadIndex={spreadIndex}
+                spreadTotal={spreadTotal}
                 enablePageTransitions={this.enablePageTransitions}
                 handlePageNavigation={this.handlePageNavigation}
                 updateViewerSettings={this.updateViewerSettings}

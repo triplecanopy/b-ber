@@ -1,6 +1,33 @@
 import React from 'react'
 import { debug } from '../../config'
 
+const chapterStyles = {
+    prev: props =>
+        !props.uiOptions.navigation.footer_icons.chapter ||
+        props.currentSpineItemIndex === 0
+            ? { display: 'none' }
+            : {},
+    next: props =>
+        !props.uiOptions.navigation.footer_icons.chapter ||
+        props.currentSpineItemIndex === props.spine.length - 1
+            ? { display: 'none' }
+            : {},
+}
+
+const pageStyles = {
+    prev: props =>
+        !props.uiOptions.navigation.footer_icons.page ||
+        (props.currentSpineItemIndex === 0 && props.spreadIndex === 0)
+            ? { display: 'none' }
+            : {},
+    next: props =>
+        !props.uiOptions.navigation.footer_icons.page ||
+        (props.currentSpineItemIndex === props.spine.length - 1 &&
+            props.spreadIndex === props.spreadTotal)
+            ? { display: 'none' }
+            : {},
+}
+
 const NavigationFooter = props => (
     <footer className="controls__footer" style={debug ? { opacity: 0.4 } : {}}>
         <nav>
@@ -8,11 +35,7 @@ const NavigationFooter = props => (
                 <li>
                     <button
                         className="material-icons nav__button"
-                        style={
-                            props.uiOptions.navigation.footer_icons.chapter
-                                ? {}
-                                : { display: 'none' }
-                        }
+                        style={chapterStyles.prev(props)}
                         onClick={_ => {
                             if (props.handleEvents === false) return
                             props.handleChapterNavigation(-1)
@@ -24,12 +47,7 @@ const NavigationFooter = props => (
                 <li>
                     <button
                         className="material-icons nav__button"
-                        style={
-                            props.uiOptions.navigation.footer_icons.page &&
-                            props.currentSpineItemIndex !== 0
-                                ? {}
-                                : { display: 'none' }
-                        }
+                        style={pageStyles.prev(props)}
                         onClick={_ => {
                             if (props.handleEvents === false) return
                             props.enablePageTransitions()
@@ -42,13 +60,7 @@ const NavigationFooter = props => (
                 <li>
                     <button
                         className="material-icons nav__button"
-                        style={
-                            props.uiOptions.navigation.footer_icons.page &&
-                            props.currentSpineItemIndex !==
-                                props.spine.length - 1
-                                ? {}
-                                : { display: 'none' }
-                        }
+                        style={pageStyles.next(props)}
                         onClick={_ => {
                             if (props.handleEvents === false) return
                             props.enablePageTransitions()
@@ -61,11 +73,7 @@ const NavigationFooter = props => (
                 <li>
                     <button
                         className="material-icons nav__button"
-                        style={
-                            props.uiOptions.navigation.footer_icons.chapter
-                                ? {}
-                                : { display: 'none' }
-                        }
+                        style={chapterStyles.next(props)}
                         onClick={_ => {
                             if (props.handleEvents === false) return
                             props.handleChapterNavigation(1)
