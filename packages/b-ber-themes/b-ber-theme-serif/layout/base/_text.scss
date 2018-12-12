@@ -47,7 +47,6 @@ h6 {
 }
 p {
     @include type-settings(0);
-    @include padding(0, 1, 0, 0, 0);
 }
 
 section {
