@@ -4,3 +4,4 @@ package-lock*
 yarn-error.log
 lerna-debug.log
 coverage
+packages/b-ber-reader/books.json
