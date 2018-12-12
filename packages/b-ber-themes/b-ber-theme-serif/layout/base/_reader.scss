@@ -60,6 +60,12 @@
         }
     }
 
+    // Footnotes
+    ol.footnotes {
+        padding: 0;
+        list-style: none;
+    }
+
     // Mobile Overrides for Fullbleed, spreads, and galleries.
     @include break('mobile') {
         // Gallery

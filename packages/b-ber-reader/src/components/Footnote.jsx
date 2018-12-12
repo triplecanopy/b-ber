@@ -121,6 +121,7 @@ class Footnote extends Component {
                     href={this.props.href}
                     onMouseOver={this.showFootnote}
                     onFocus={this.showFootnote}
+                    onClick={e => e.preventDefault()}
                 >
                     {this.props.children}
                 </a>
