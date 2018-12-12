@@ -11,6 +11,7 @@ class Link extends Component {
         return (
             <a
                 href={href}
+                style={this.props.style || {}}
                 onClick={e => {
                     e.preventDefault()
                     this.context.navigateToChapterByURL(href)

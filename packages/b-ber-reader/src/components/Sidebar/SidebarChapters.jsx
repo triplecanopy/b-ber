@@ -11,7 +11,10 @@ const NestedChapterList = props => {
         <ol>
             {items_.map((item, i) => (
                 <li key={i}>
-                    <Link href={item.absoluteURL}>
+                    <Link
+                        style={{ textIndent: `${24 * (depth + 1)}px` }}
+                        href={item.absoluteURL}
+                    >
                         {item.title || `Chapter ${depth}.${i}`}
                     </Link>
                     {item.children.length > 0 && (

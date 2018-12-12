@@ -121,7 +121,7 @@ a {
                     color: $tc-purple;
                 }
                 &.nav__button__downloads {
-                    color:$black;
+                    color: $black;
                     animation: nav__button__downloads 2.5s infinite;
                     &:hover {
                         animation: none;
@@ -171,7 +171,6 @@ a {
                 padding: calc(#{$padding-y} / 2) calc(#{$padding-y} / 2)
                     calc(#{$padding-y} / 2) 0;
                 border-bottom: 1px solid $lightgrey;
-                text-indent: calc(#{$padding-y} / 2);
                 overflow: hidden;
                 white-space: nowrap;
                 text-overflow: ellipsis;

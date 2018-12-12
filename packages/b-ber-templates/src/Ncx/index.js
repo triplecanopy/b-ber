@@ -64,17 +64,17 @@ class Ncx {
     static navPoints(data) {
         let index = 0
 
-        function render(_data) {
-            return _data
+        function render(arr) {
+            return arr
                 .map(a => {
                     if (a.in_toc === false) return ''
                     index += 1
                     return `
-                    <navPoint id="navPoint-${index}" playOrder="${index}">
-                        ${Ncx.navPoint(a)}
-                        ${a.nodes && a.nodes.length ? render(a.nodes) : ''}
-                    </navPoint>
-                `
+                        <navPoint id="navPoint-${index}" playOrder="${index}">
+                            ${Ncx.navPoint(a)}
+                            ${a.nodes && a.nodes.length ? render(a.nodes) : ''}
+                        </navPoint>
+                    `
                 })
                 .join('')
         }
