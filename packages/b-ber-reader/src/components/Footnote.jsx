@@ -130,7 +130,7 @@ class Footnote extends Component {
                     // @issue: https://github.com/triplecanopy/b-ber/issues/209
                     <span
                         className="footnote__body"
-                        style={footnoteStyles((window.innerWidth / 23) * 9)}
+                        style={footnoteStyles((window.innerWidth / 23) * 9.5)}
                         onMouseOut={this.hideFootnote}
                         onBlur={this.hideFootnote}
                     >
