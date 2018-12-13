@@ -162,23 +162,23 @@ const renderCSS = scssString =>
                 importer: (url, prev, done) => {
                     if (/^css:/.test(url)) {
                         const url_ = url.slice(4)
+                        const cwd = process.cwd()
+                        const paths = []
 
-                        let cssPath
+                        let basePath = path.dirname(state.theme.entry)
+                        let cssPath = path.join(basePath, `${url_}.css`)
 
-                        cssPath = path.join(
-                            path.dirname(state.theme.entry),
-                            `${url_}.css`,
-                        )
+                        while (!fs.existsSync(cssPath)) {
+                            basePath = path.dirname(basePath)
+                            cssPath = path.join(basePath, `${url_}.css`)
+                            paths.push(cssPath)
 
-                        if (!fs.existsSync(cssPath)) {
-                            cssPath = path.join(
-                                path.dirname(path.dirname(state.theme.entry)),
-                                `${url_}.css`,
-                            )
-                        }
-
-                        if (!fs.existsSync(cssPath)) {
-                            log.error('Could not find @imported css', cssPath)
+                            if (basePath === path.dirname(cwd)) {
+                                log.error(
+                                    'Could not find @imported css. Searched in the following paths:',
+                                    paths.join('\n'),
+                                )
+                            }
                         }
 
                         const contents = fs.readFileSync(cssPath, 'utf8')
