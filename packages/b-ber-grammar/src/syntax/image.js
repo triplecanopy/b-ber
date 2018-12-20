@@ -61,6 +61,9 @@ export default {
                 lineNr,
             })
             const asset = path.join(state.src, '_images', attrsObject.source)
+            const mediaType =
+                (type.indexOf('-') && type.substring(0, type.indexOf('-'))) ||
+                type
 
             let result, page, href, classNames, ref, imageData // eslint-disable-line one-var
 
@@ -107,6 +110,7 @@ export default {
                         page,
                         ref,
                         caption,
+                        mediaType,
                         pageOrder: state.figures.length,
                         mime: mime.lookup(attrsObject.source),
                     })

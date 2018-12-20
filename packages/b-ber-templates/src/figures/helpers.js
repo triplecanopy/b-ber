@@ -106,7 +106,7 @@ export const media = data =>
         .replace(/%ELEMENT_ATTRIBUTES%/g, data.attrString)
         .replace(/%SOURCE_ELEMENTS%/g, data.sourceElements)
         .replace(/%POSTER_IMAGE%/g, data.poster)
-        .replace(/%CAPTION%/g, data.caption ? `${data.caption}<br>` : '')
+        .replace(/%CAPTION%/g, data.caption ? `${data.caption}<br/>` : '')
         .replace(/%REF%/g, data.ref)
         .replace(/%SECTION_CLOSE%/, data.inline ? '' : '</section>')
 

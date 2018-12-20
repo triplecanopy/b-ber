@@ -58,11 +58,11 @@ const validateLocalMediaSource = (asset, mediaType) => {
 const createLocalMediaSources = sources =>
     sources.reduce(
         (acc, curr) =>
-            acc.concat(`
-        <source src="../media/${path.basename(curr)}" type="${mime.lookup(
-                curr,
-            )}"/>
-    `),
+            acc.concat(
+                `<source src="../media/${path.basename(
+                    curr,
+                )}" type="${mime.lookup(curr)}"/>`,
+            ),
         '',
     )
 
