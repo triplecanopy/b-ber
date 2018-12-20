@@ -1,14 +1,17 @@
 import React from 'react'
+import Viewport from '../../helpers/Viewport'
 import { debug } from '../../config'
 
 const chapterStyles = {
     prev: props =>
-        !props.uiOptions.navigation.footer_icons.chapter ||
+        (!Viewport.isMobile() &&
+            !props.uiOptions.navigation.footer_icons.chapter) ||
         props.currentSpineItemIndex === 0
             ? { display: 'none' }
             : {},
     next: props =>
-        !props.uiOptions.navigation.footer_icons.chapter ||
+        (!Viewport.isMobile() &&
+            !props.uiOptions.navigation.footer_icons.chapter) ||
         props.currentSpineItemIndex === props.spine.length - 1
             ? { display: 'none' }
             : {},
@@ -16,11 +19,13 @@ const chapterStyles = {
 
 const pageStyles = {
     prev: props =>
+        Viewport.isMobile() ||
         !props.uiOptions.navigation.footer_icons.page ||
         (props.currentSpineItemIndex === 0 && props.spreadIndex === 0)
             ? { display: 'none' }
             : {},
     next: props =>
+        Viewport.isMobile() ||
         !props.uiOptions.navigation.footer_icons.page ||
         (props.currentSpineItemIndex === props.spine.length - 1 &&
             props.spreadIndex === props.spreadTotal)
