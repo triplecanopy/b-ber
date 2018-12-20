@@ -204,7 +204,9 @@ class Navigation {
                         isArray(missingEntriesWithAttributes) &&
                         missingEntriesWithAttributes.length === 0
                             ? ''
-                            : YamlAdaptor.dump(missingEntriesWithAttributes)
+                            : `\n${YamlAdaptor.dump(
+                                  missingEntriesWithAttributes,
+                              )}`
 
                     fs.appendFile(yamlpath, content, err => {
                         if (err) throw err
