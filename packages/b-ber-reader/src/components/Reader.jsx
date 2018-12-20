@@ -24,6 +24,7 @@ const bookContentComponent = () => <div>{getBookContent()}</div>
 @deferrable
 class Reader extends Component {
     static childContextTypes = {
+        viewerSettings: PropTypes.object,
         spreadIndex: PropTypes.number,
         overlayElementId: PropTypes.string,
         navigateToChapterByURL: PropTypes.func,
@@ -109,11 +110,13 @@ class Reader extends Component {
         this.handleScriptLoad = this.handleScriptLoad.bind(this)
 
         this.debounceResizeSpeed = 400
+
         this.handleResizeStart = debounce(
             this.handleResizeStart,
             this.debounceResizeSpeed,
             { leading: true, trailing: false },
         ).bind(this)
+
         this.handleResizeEnd = debounce(
             this.handleResizeEnd,
             this.debounceResizeSpeed,
@@ -129,6 +132,7 @@ class Reader extends Component {
 
     getChildContext() {
         return {
+            viewerSettings: this.state.viewerSettings,
             addRef: this.addRef.bind(this),
             refs: this.state.refs,
             spreadIndex: this.state.spreadIndex,

@@ -1,17 +1,8 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import classNames from 'classnames'
 import { Request, Asset, Url } from '../helpers'
-
-const footnoteStyles = maxWidth => ({
-    display: 'block',
-    background: 'white',
-    position: 'absolute',
-    width: `${maxWidth}px`,
-    fontSize: '14px',
-    lineHeight: '1.6',
-    zIndex: '1000',
-})
 
 const blacklistedElementNames = ['SCRIPT', 'STYLE']
 
@@ -47,6 +38,7 @@ const processFootnoteResponseElement = elem => {
 
 class Footnote extends Component {
     static contextTypes = {
+        viewerSettings: PropTypes.object,
         overlayElementId: PropTypes.string,
         registerOverlayElementId: PropTypes.func,
         deRegisterOverlayElementId: PropTypes.func,
@@ -54,12 +46,17 @@ class Footnote extends Component {
 
     constructor(props) {
         super(props)
-        this.state = { footnoteBody: null, footnoteVisible: false }
+        this.state = {
+            footnoteBody: null,
+            footnoteVisible: false,
+        }
         this.getFootnote = this.getFootnote.bind(this)
         this.showFootnote = this.showFootnote.bind(this)
         this.hideFootnote = this.hideFootnote.bind(this)
 
         this.overlayElementId = Asset.createId()
+        this.footnoteElement = null
+        this.footnoteContainer = null
     }
     componentWillReceiveProps(_, nextContext) {
         const { footnoteVisible } = this.state
@@ -110,12 +107,41 @@ class Footnote extends Component {
         e.preventDefault()
         this.context.deRegisterOverlayElementId()
     }
+    getFootnoteOffset() {
+        if (!this.footnoteContainer || !this.footnoteElement) {
+            console.warn('Footnote elements are not bound')
+            return false
+        }
+
+        const { top } = this.footnoteContainer.getBoundingClientRect()
+        const height = this.footnoteElement.offsetHeight
+        const windowHeight = window.innerHeight
+
+        return top + height > windowHeight
+    }
+    footnoteStyles() {
+        const { columnWidth } = this.context.viewerSettings
+        const aboveElement = this.getFootnoteOffset()
+        const offsetProp = aboveElement ? 'bottom' : 'top'
+
+        return {
+            background: 'white',
+            position: 'absolute',
+            width: `${columnWidth}px`,
+            fontSize: '14px',
+            lineHeight: 1.6,
+            zIndex: 1000,
+            [offsetProp]: '1.5rem',
+        }
+    }
+
     render() {
         const { footnoteBody, footnoteVisible } = this.state
         return (
             <span
-                style={{ display: 'inline', position: 'relative' }}
+                ref={node => (this.footnoteContainer = node)}
                 className="footnote__container"
+                style={{ display: 'inline', position: 'relative' }}
             >
                 <a
                     href={this.props.href}
@@ -125,21 +151,22 @@ class Footnote extends Component {
                 >
                     {this.props.children}
                 </a>
-                {footnoteBody && footnoteVisible ? (
-                    // TODO: column width
-                    // @issue: https://github.com/triplecanopy/b-ber/issues/209
+
+                <span
+                    ref={node => (this.footnoteElement = node)}
+                    className={classNames('footnote__body', {
+                        'footnote__body--hidden':
+                            !footnoteBody || !footnoteVisible,
+                    })}
+                    style={this.footnoteStyles()}
+                    onMouseOut={this.hideFootnote}
+                    onBlur={this.hideFootnote}
+                >
                     <span
-                        className="footnote__body"
-                        style={footnoteStyles((window.innerWidth / 23) * 9.5)}
-                        onMouseOut={this.hideFootnote}
-                        onBlur={this.hideFootnote}
-                    >
-                        <span
-                            className="footnote__content"
-                            dangerouslySetInnerHTML={{ __html: footnoteBody }}
-                        />
-                    </span>
-                ) : null}
+                        className="footnote__content"
+                        dangerouslySetInnerHTML={{ __html: footnoteBody }}
+                    />
+                </span>
             </span>
         )
     }

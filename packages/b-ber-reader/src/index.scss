@@ -39,6 +39,14 @@ a {
     cursor: pointer;
 }
 
+.footnote__body {
+    visibility: visible;
+    display: block;
+    &.footnote__body--hidden {
+        visibility: hidden;
+    }
+}
+
 // icons
 @font-face {
     font-family: 'Material Icons';

@@ -32,6 +32,7 @@ class ViewerSettings {
             ViewerSettings.defaults,
             options,
         )
+
         this.settings = { ...this.settings, ...options_ }
 
         this.put = this.put.bind(this)
@@ -43,6 +44,9 @@ class ViewerSettings {
         this.paddingRight = () => Viewport.optimized().right
         this.paddingTop = () => Viewport.optimized().top
         this.paddingBottom = () => Viewport.optimized().bottom
+
+        this.columnWidth = () =>
+            window.innerWidth / 2 - this.columnGap - this.paddingLeft
     }
 
     // responsive
@@ -98,6 +102,11 @@ class ViewerSettings {
             ? this.settings.columnGap()
             : this.settings.columnGap
     }
+    get columnWidth() {
+        return typeof this.settings.columnWidth === 'function'
+            ? this.settings.columnWidth()
+            : this.settings.columnWidth
+    }
     get transition() {
         return this.settings.transition
     }
@@ -125,7 +134,9 @@ class ViewerSettings {
     set columnGap(val) {
         this.settings.columnGap = val
     }
-
+    set columnWidth(val) {
+        this.settings.columnWidth = val
+    }
     set paddingTop(val) {
         this.settings.paddingTop = val
     }
