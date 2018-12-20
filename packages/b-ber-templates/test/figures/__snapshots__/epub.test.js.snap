@@ -95,7 +95,7 @@ exports[`templates.epub creates the markup 5`] = `
                     </div>
                     <div class=\\"figcaption\\" style=\\"max-width: 100%;\\">
                         <p class=\\"small\\">
-                            test<br>
+                            test<br/>
                             <a href=\\"1.xhtml#ref1\\">Return</a>
                         </p>
                     </div>
@@ -125,7 +125,7 @@ exports[`templates.epub creates the markup 6`] = `
                     </div>
                     <div class=\\"figcaption\\" style=\\"max-width: 100%;\\">
                         <p class=\\"small\\">
-                            test<br>
+                            test<br/>
                             <a href=\\"1.xhtml#ref1\\">Return</a>
                         </p>
                     </div>
@@ -254,7 +254,7 @@ exports[`templates.epub creates the markup 12`] = `
                     </div>
                     <div class=\\"figcaption\\" style=\\"max-width: 100%;\\">
                         <p class=\\"small\\">
-                            test<br>
+                            test<br/>
                             <a href=\\"1.xhtml#ref1\\">Return</a>
                         </p>
                     </div>
@@ -284,7 +284,7 @@ exports[`templates.epub creates the markup 13`] = `
                     </div>
                     <div class=\\"figcaption\\" style=\\"max-width: 100%;\\">
                         <p class=\\"small\\">
-                            test<br>
+                            test<br/>
                             <a href=\\"1.xhtml#ref1\\">Return</a>
                         </p>
                     </div>
@@ -413,7 +413,7 @@ exports[`templates.epub creates the markup 19`] = `
                     </div>
                     <div class=\\"figcaption\\" style=\\"max-width: 100%;\\">
                         <p class=\\"small\\">
-                            test<br>
+                            test<br/>
                             <a href=\\"1.xhtml#ref1\\">Return</a>
                         </p>
                     </div>
@@ -443,7 +443,7 @@ exports[`templates.epub creates the markup 20`] = `
                     </div>
                     <div class=\\"figcaption\\" style=\\"max-width: 100%;\\">
                         <p class=\\"small\\">
-                            test<br>
+                            test<br/>
                             <a href=\\"1.xhtml#ref1\\">Return</a>
                         </p>
                     </div>
@@ -572,7 +572,7 @@ exports[`templates.epub creates the markup 26`] = `
                     </div>
                     <div class=\\"figcaption\\" style=\\"max-width: 100%;\\">
                         <p class=\\"small\\">
-                            test<br>
+                            test<br/>
                             <a href=\\"1.xhtml#ref1\\">Return</a>
                         </p>
                     </div>
@@ -602,7 +602,7 @@ exports[`templates.epub creates the markup 27`] = `
                     </div>
                     <div class=\\"figcaption\\" style=\\"max-width: 100%;\\">
                         <p class=\\"small\\">
-                            test<br>
+                            test<br/>
                             <a href=\\"1.xhtml#ref1\\">Return</a>
                         </p>
                     </div>
