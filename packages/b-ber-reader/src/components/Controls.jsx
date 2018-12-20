@@ -82,11 +82,13 @@ class Controls extends Component {
     bindEvents() {
         document.addEventListener('keydown', this.handleKeyDown, false)
         document.addEventListener('click', this.handleClick, false)
+        document.addEventListener('touchstart', this.handleClick, false)
     }
 
     unbindEvents() {
         document.removeEventListener('keydown', this.handleKeyDown, false)
         document.removeEventListener('click', this.handleClick, false)
+        document.removeEventListener('touchstart', this.handleClick, false)
     }
 
     render() {
