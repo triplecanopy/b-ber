@@ -114,10 +114,11 @@ class Footnote extends Component {
         }
 
         const { top } = this.footnoteContainer.getBoundingClientRect()
+        const { paddingTop, paddingBottom } = this.context.viewerSettings
         const height = this.footnoteElement.offsetHeight
         const windowHeight = window.innerHeight
 
-        return top + height > windowHeight
+        return top + height > windowHeight - (paddingTop + paddingBottom)
     }
     footnoteStyles() {
         const { columnWidth } = this.context.viewerSettings
