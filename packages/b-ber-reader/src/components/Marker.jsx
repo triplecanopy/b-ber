@@ -123,7 +123,8 @@ class Marker extends Component {
         if (!this.markerNode) return console.error('No marker node')
 
         const { paddingLeft, columnGap } = this.context
-        const { x, width } = this.markerNode.getBoundingClientRect()
+        const x = this.markerNode.offsetLeft
+        const { width } = this.markerNode.getBoundingClientRect()
 
         // determine if the marker is verso or recto. we're testing whether the
         // marker's x offset is divisible by the window width. a remainder means
@@ -237,17 +238,31 @@ class Marker extends Component {
         }
 
         const { verso, recto } = this.state
+        // const markerBottom =
+        //     this.markerNode.offsetTop + this.markerNode.offsetHeight
+        // console.log(
+        //     'xx',
+        //     this.markerNode.offsetTop,
+        //     this.markerNode.offsetHeight,
+        //     this.markerNode.getBoundingClientRect().bottom,
+        // )
         const markerBottom = this.markerNode.getBoundingClientRect().bottom
         const { paddingTop, paddingBottom } = this.context
         const padding = paddingTop + paddingBottom
 
-        let { height } = this.context
+        let { height } = this.context // window.innerHeight
         if (!isNumeric(height)) height = window.innerHeight
+
+        // console.log('recto', recto)
+        // console.log('verso', verso)
+        // console.log('paddingTop, paddingBottom', paddingTop, paddingBottom)
 
         if (verso) {
             offsetHeight = height
-            offsetHeight += padding
-            offsetHeight -= markerBottom - paddingTop
+            offsetHeight -= padding
+            offsetHeight += height - paddingTop - markerBottom
+            // offsetHeight += height - paddingTop - this.markerNode.offsetTop
+            // offsetHeight -= markerBottom - paddingTop
         }
 
         if (recto) {
@@ -257,7 +272,8 @@ class Marker extends Component {
         }
 
         if (JSON.parse(this.props['data-unbound']) === true) {
-            offsetHeight /= 2
+            console.log('-- unbound')
+            // offsetHeight /= 2
         }
 
         offsetHeight = Math.floor(offsetHeight)

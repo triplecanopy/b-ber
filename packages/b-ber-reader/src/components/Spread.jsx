@@ -11,25 +11,61 @@ import { messagesTypes } from '../constants'
 import Viewport from '../helpers/Viewport'
 
 const SpreadStyleBlock = props => {
-    const { spreadPosition, markerRefId, unbound, paddingLeft } = props
+    const {
+        spreadPosition,
+        markerRefId,
+        unbound,
+        paddingLeft,
+        recto,
+        markerX,
+    } = props
+
     const offsetLeftPrevious = unbound ? 0 : paddingLeft * 2
     const offsetLeftCurrent = unbound ? paddingLeft * 2 : 0
-    const offsetLeftNext = unbound ? paddingLeft * -2 : paddingLeft * -2
+    const offsetLeftNext = paddingLeft * -2
+    const spreadPosition_ = recto ? spreadPosition - 1 : spreadPosition
 
     // prettier-ignore
+    // .figure__items { opacity: 0.5; }
+    // span.marker:before {
+    //     display: block;
+    //     position: absolute;
+    //     top: 0;
+    //     left: 170px;
+    //     height: 30px;
+    //     z-index: 99999;
+    //     width: 150px;
+    //     background: beige;
+    //     color: black;
+    //     font-family: helvetica;
+    //     font-size: 24px;
+    // }
+    // span.marker[data-verso=true]:before { content: 'verso'; }
+    // span.marker[data-recto=true]:before { content: 'recto'; }
     const styles = `
-        .spread-index__${spreadPosition - 2} #spread__${markerRefId} > figure,
-        .spread-index__${spreadPosition - 2} #spread__${markerRefId} > .spread__content,
-        .spread-index__${spreadPosition - 1} #spread__${markerRefId} > figure,
-        .spread-index__${spreadPosition - 1} #spread__${markerRefId} > .spread__content { transform: translateX(${offsetLeftPrevious}px); }
-        .spread-index__${spreadPosition}     #spread__${markerRefId} > figure,
-        .spread-index__${spreadPosition}     #spread__${markerRefId} > .spread__content { transform: translateX(${offsetLeftCurrent}px); }
-        .spread-index__${spreadPosition + 1} #spread__${markerRefId} > figure,
-        .spread-index__${spreadPosition + 1} #spread__${markerRefId} > .spread__content,
-        .spread-index__${spreadPosition + 2} #spread__${markerRefId} > figure,
-        .spread-index__${spreadPosition + 2} #spread__${markerRefId} > .spread__content { transform: translateX(${offsetLeftNext}px); }
+
+        .spread-index__${spreadPosition_ - 2} #spread__${markerRefId} > figure,
+        .spread-index__${spreadPosition_ - 2} #spread__${markerRefId} > .spread__content,
+        .spread-index__${spreadPosition_ - 1} #spread__${markerRefId} > figure,
+        .spread-index__${spreadPosition_ - 1} #spread__${markerRefId} > .spread__content { transform: translateX(${offsetLeftPrevious}px); }
+
+        .spread-index__${spreadPosition_}     #spread__${markerRefId} > figure,
+        .spread-index__${spreadPosition_}     #spread__${markerRefId} > .spread__content { transform: translateX(${offsetLeftCurrent}px); }
+
+        .spread-index__${spreadPosition_ + 1} #spread__${markerRefId} > figure,
+        .spread-index__${spreadPosition_ + 1} #spread__${markerRefId} > .spread__content,
+        .spread-index__${spreadPosition_ + 2} #spread__${markerRefId} > figure,
+        .spread-index__${spreadPosition_ + 2} #spread__${markerRefId} > .spread__content { transform: translateX(${offsetLeftNext}px); }
     `
-    return <style>{Viewport.isMobile() ? null : styles}</style>
+    return (
+        <style
+            id={`style__${markerRefId}`}
+            data-position={spreadPosition_}
+            data-marker-x={markerX}
+        >
+            {Viewport.isMobile() ? null : styles}
+        </style>
+    )
 }
 
 class Spread extends Component {
@@ -155,7 +191,7 @@ class Spread extends Component {
         if (isNumeric(height)) height -= 1 // nudge to prevent overflow onto next spread
 
         if (this.state.marker.unbound === true) {
-            height = height / 2 - 1
+            // height = height / 2 - 1
         }
 
         this.setState({ height }, this.updateChildElementPositions)
@@ -163,7 +199,7 @@ class Spread extends Component {
 
     // Spread#updateChildElementPositions lays out absolutely positioned images
     // over fullbleed placeholders for FF and Safari. This is Chrome's default
-    // behaviour so we don't bother shifting anything around in that case
+    // behaviour but we update there as well for consistency
     updateChildElementPositions() {
         const { verso, recto, x, unbound } = this.state.marker
         // set this after loading to prevent figures drifing around on initial page load
@@ -173,18 +209,13 @@ class Spread extends Component {
         const width = window.innerWidth
         const { paddingLeft, paddingRight, columnGap } = this.context
         const layoutWidth = width - paddingLeft - paddingRight + columnGap // not sure why we're adding columnGap in here ...
-
-        // TODO: gutter width should be passed via props
-        const spreadPosition =
-            Math.floor(
-                (x + paddingLeft * 2 + Viewport.getGutterWidth()) / width,
-            ) + 1
+        const spreadPosition = Math.round((x + paddingLeft) / layoutWidth) + 1
 
         let left = 0
 
         if (!Viewport.isMobile()) {
             left = layoutWidth * spreadPosition
-            if (recto) left -= layoutWidth / 2
+            if (recto) left -= layoutWidth
             if (unbound) left = 0
         } else {
             left = 0
@@ -207,22 +238,20 @@ class Spread extends Component {
         const { unbound } = this.state.marker
         const { paddingLeft } = this.context
 
-        const debugStyles = { background: 'beige' }
+        const debugStyles = { background: 'blue' }
 
         let styles = { height }
         if (debug) styles = { ...styles, ...debugStyles }
 
         return (
-            <div
-                {...this.props}
-                id={`spread__${this.props['data-marker-reference']}`}
-                style={styles}
-            >
+            <div {...this.props} id={`spread__${markerRefId}`} style={styles}>
                 <SpreadStyleBlock
+                    recto={this.state.marker.recto}
                     markerRefId={markerRefId}
                     spreadPosition={spreadPosition}
                     unbound={unbound}
                     paddingLeft={paddingLeft}
+                    markerX={this.state.marker.x}
                 />
                 {this.props.children}
             </div>
