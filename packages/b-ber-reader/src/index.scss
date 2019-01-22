@@ -6,8 +6,8 @@ $component-x: 35px;
 $padding-y: 47px;
 
 // The following queries should be kept in sync with constants in src/constants.js
-$mobile-break: 400px; // TODO: sync with constants in src/constants.js; @issue: https://github.com/triplecanopy/b-ber/issues/240
-$tablet-break: 680px;
+$mobile-breakpoint-max: 414px; // Max. supported 'mobile' size (iPhone XS/R); Only applies to menu, so not used in constants.js
+$tablet-breakpoint-max: 768px;
 
 $font-serif: Georgia, 'Iowan', Times, serif;
 
@@ -241,7 +241,7 @@ a {
     overflow: auto;
     -webkit-overflow-scrolling: touch;
 
-    @media screen and (max-width: $mobile-break) {
+    @media screen and (max-width: $mobile-breakpoint-max) {
         width: 100% !important; // sass-lint:disable-line no-important
     }
 
@@ -266,7 +266,7 @@ a {
     overflow: auto;
     -webkit-overflow-scrolling: touch;
 
-    @media screen and (max-width: $mobile-break) {
+    @media screen and (max-width: $mobile-breakpoint-max) {
         width: 100% !important; // sass-lint:disable-line no-important
     }
 
@@ -336,7 +336,7 @@ a {
     height: $component-x;
     opacity: 1 !important; // sass-lint:disable-line no-important
 
-    @media screen and (max-width: $tablet-break) {
+    @media screen and (max-width: $tablet-breakpoint-max) {
         background: $white;
     }
 
