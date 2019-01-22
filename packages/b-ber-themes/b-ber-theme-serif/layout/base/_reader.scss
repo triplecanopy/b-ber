@@ -1,10 +1,6 @@
 // sass-lint:disable indentation
 
 @if $build == 'reader' {
-    // Right padding for paragraphs
-    p {
-        @include padding(0, 1, 0, 0, 0);
-    }
     // Caption styling.
     figure {
         .figcaption,
