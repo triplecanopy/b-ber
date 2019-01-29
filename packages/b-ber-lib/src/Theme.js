@@ -169,68 +169,66 @@ class Theme {
             const pkg = path.join(process.cwd(), 'package.json')
             if (!fs.existsSync(pkg)) return
 
+            const { config } = state
             const { dependencies } = fs.readJsonSync(pkg)
-            const commands = []
             const names = []
+            const promises1 = []
+            const promises2 = []
             const themes = {}
 
             Object.keys(dependencies).forEach(dep => {
                 if (/^b-ber-theme/.test(dep)) {
                     names.push(dep)
-                    commands.push(
-                        `cd ${path.join(
-                            process.cwd(),
-                            'node_modules',
-                            dep,
-                        )} && npm i`,
+                    fs.copySync(
+                        path.join(process.cwd(), 'node_modules', dep),
+                        path.join(process.cwd(), config.themes_directory, dep),
                     )
                 }
             })
 
-            commands
-                .reduce(
-                    (acc, curr) =>
-                        acc.then(
-                            () =>
-                                new Promise((rs, rj) =>
-                                    exec(curr, (error, stdout, stderr) => {
-                                        if (
-                                            stderr !== '' &&
-                                            /^npm notice/.test(stderr) === false
-                                        ) {
-                                            return rj(stderr)
-                                        }
-                                        console.log(stdout.trim())
-                                        return rs(stdout)
-                                    }),
+            names.forEach(name => {
+                promises1.push(
+                    new Promise(rs => {
+                        exec(
+                            'npm i',
+                            {
+                                cwd: path.join(
+                                    process.cwd(),
+                                    config.themes_directory,
+                                    name,
                                 ),
-                        ),
-                    Promise.resolve(),
+                            },
+                            (error, stdout, stderr) => {
+                                if (stderr) console.log(stderr.trim())
+                                if (stdout) console.log(stdout.trim())
+                                rs()
+                            },
+                        )
+                    }),
                 )
+            })
+
+            return Promise.all(promises1)
                 .then(() => {
                     names.forEach(name => {
                         themes[name] = require(path.resolve(
                             process.cwd(),
-                            'node_modules',
+                            config.themes_directory,
                             name,
                             'index.js',
                         ))
                     })
 
-                    const promises = []
                     Object.entries(themes).forEach(([name, theme]) => {
-                        promises.push(
+                        promises2.push(
                             createProjectThemeDirectory(name)
                                 .then(() => copyThemeAssets(theme))
                                 .then(() => copyPackagedThemeDirectory(name))
                                 .then(() => log.notice(`installed [${name}]`)),
                         )
                     })
-
-                    Promise.all(promises)
-                        .then(resolve)
-                        .catch(log.error)
                 })
+                .then(resolve)
                 .catch(log.error)
         })
 
