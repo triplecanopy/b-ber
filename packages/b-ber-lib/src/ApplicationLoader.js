@@ -137,7 +137,7 @@ class ApplicationLoader {
                 const userTheme = find(userThemes, { name: this.config.theme })
 
                 if (!userTheme) {
-                    log.error(`Could not find theme [${this.config.theme}]`)
+                    log.notice(`Could not find theme [${this.config.theme}]`)
                 }
 
                 // exists! set it

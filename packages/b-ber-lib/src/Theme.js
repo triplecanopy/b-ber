@@ -177,7 +177,13 @@ class Theme {
             Object.keys(dependencies).forEach(dep => {
                 if (/^b-ber-theme/.test(dep)) {
                     names.push(dep)
-                    commands.push(`cd node_modules/${dep} && npm i`)
+                    commands.push(
+                        `cd ${path.join(
+                            process.cwd(),
+                            'node_modules',
+                            dep,
+                        )} && npm i`,
+                    )
                 }
             })
 
