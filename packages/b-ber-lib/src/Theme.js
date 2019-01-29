@@ -201,7 +201,8 @@ class Theme {
                             (error, stdout, stderr) => {
                                 if (stderr) console.log(stderr.trim())
                                 if (stdout) console.log(stdout.trim())
-                                rs()
+                                log.notice('installed theme dependencies', name)
+                                return rs()
                             },
                         )
                     }),
