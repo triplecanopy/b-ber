@@ -5,6 +5,7 @@ import fs from 'fs-extra'
 import find from 'lodash/find'
 import defaultThemes from '@canopycanopycanopy/b-ber-themes'
 import log from '@canopycanopycanopy/b-ber-logger'
+import { exec } from 'child_process'
 import YamlAdaptor from './YamlAdaptor'
 import state from './State'
 import { safeCopy, safeWrite } from './utils'
@@ -45,13 +46,21 @@ const getUserDefinedThemes = () => {
         //      npmPackage: Object  optional
         // }
         //
-        const userModule = fs.existsSync(path.join(modulePath, 'package.json'))
-            ? require(path.join(modulePath))
-            : require(path.join(modulePath, 'index.js'))
 
-        const moduleName = userModule.name
-        names.push(moduleName)
-        themes[moduleName] = userModule
+        try {
+            const userModule = fs.existsSync(
+                path.join(modulePath, 'package.json'),
+            )
+                ? require(path.join(modulePath))
+                : require(path.join(modulePath, 'index.js'))
+
+            const moduleName = userModule.name
+
+            names.push(moduleName)
+            themes[moduleName] = userModule
+        } catch (err) {
+            log.notice(err.message)
+        }
     })
 
     return { names, themes }
@@ -132,6 +141,13 @@ const copyThemeAssets = theme => {
         .catch(log.error)
 }
 
+const copyPackagedThemeDirectory = name => {
+    const { config } = state
+    const from = path.join(process.cwd(), 'node_modules', name)
+    const to = path.join(process.cwd(), config.themes_directory, name)
+    return fs.copy(from, to)
+}
+
 const updateConfig = name => {
     const configPath = path.join(process.cwd(), 'config.yml')
     const config = YamlAdaptor.load(configPath)
@@ -147,6 +163,70 @@ class Theme {
         log.notice('The following themes are available:')
         console.log(printThemeList(themes, current))
     }
+
+    static install = () =>
+        new Promise(resolve => {
+            const pkg = path.join(process.cwd(), 'package.json')
+            if (!fs.existsSync(pkg)) return
+
+            const { dependencies } = fs.readJsonSync(pkg)
+            const commands = []
+            const names = []
+            const themes = {}
+
+            Object.keys(dependencies).forEach(dep => {
+                if (/^b-ber-theme/.test(dep)) {
+                    names.push(dep)
+                    commands.push(`cd node_modules/${dep} && npm i`)
+                }
+            })
+
+            commands
+                .reduce(
+                    (acc, curr) =>
+                        acc.then(
+                            () =>
+                                new Promise((rs, rj) =>
+                                    exec(curr, (error, stdout, stderr) => {
+                                        if (
+                                            stderr !== '' &&
+                                            /^npm notice/.test(stderr) === false
+                                        ) {
+                                            return rj(stderr)
+                                        }
+                                        console.log(stdout.trim())
+                                        return rs(stdout)
+                                    }),
+                                ),
+                        ),
+                    Promise.resolve(),
+                )
+                .then(() => {
+                    names.forEach(name => {
+                        themes[name] = require(path.resolve(
+                            process.cwd(),
+                            'node_modules',
+                            name,
+                            'index.js',
+                        ))
+                    })
+
+                    const promises = []
+                    Object.entries(themes).forEach(([name, theme]) => {
+                        promises.push(
+                            createProjectThemeDirectory(name)
+                                .then(() => copyThemeAssets(theme))
+                                .then(() => copyPackagedThemeDirectory(name))
+                                .then(() => log.notice(`installed [${name}]`)),
+                        )
+                    })
+
+                    Promise.all(promises)
+                        .then(resolve)
+                        .catch(log.error)
+                })
+                .catch(log.error)
+        })
 
     static set = (name, force = false) => {
         const { current, themes } = getThemes()

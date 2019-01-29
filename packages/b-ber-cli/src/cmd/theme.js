@@ -6,15 +6,14 @@ const describe = "Manage a project's theme"
 
 const handler = args => {
     const { command, options } = args
-    const cmd = command === 'set' ? 'set' : 'list'
-    return Theme[cmd](options)
+    return Theme[command](options)
 }
 
 const builder = yargs =>
     yargs
         .positional('command', {
             describe: 'Theme command to execute',
-            choices: ['set', 'list', 'ls'],
+            choices: ['set', 'list', 'ls', 'install'],
             type: 'string',
         })
         .positional('options', {

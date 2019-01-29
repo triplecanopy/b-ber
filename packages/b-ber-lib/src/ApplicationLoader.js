@@ -88,10 +88,6 @@ class ApplicationLoader {
     }
 
     _theme() {
-        const themeError = new Error(
-            `There was an error loading theme [${this.theme}]`,
-        )
-
         if ({}.hasOwnProperty.call(themes, this.config.theme)) {
             this.theme = themes[this.config.theme]
         } else {
@@ -117,6 +113,7 @@ class ApplicationLoader {
                     cwd,
                     this.config.themes_directory,
                 )
+
                 const userThemes = fs
                     .readdirSync(userThemesPath)
                     .reduce((acc, curr) => {
@@ -138,6 +135,7 @@ class ApplicationLoader {
                     }, [])
 
                 const userTheme = find(userThemes, { name: this.config.theme })
+
                 if (!userTheme) {
                     log.error(`Could not find theme [${this.config.theme}]`)
                 }
@@ -146,7 +144,9 @@ class ApplicationLoader {
                 this.theme = userTheme
                 return
             } catch (err) {
-                log.error(themeError)
+                log.notice(
+                    `There was an error loading theme [${this.config.theme}]`,
+                )
             }
         }
     }
