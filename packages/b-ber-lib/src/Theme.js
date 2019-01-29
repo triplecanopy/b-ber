@@ -227,6 +227,8 @@ class Theme {
                                 .then(() => log.notice(`installed [${name}]`)),
                         )
                     })
+
+                    return Promise.all(promises2).catch(log.error)
                 })
                 .then(resolve)
                 .catch(log.error)
