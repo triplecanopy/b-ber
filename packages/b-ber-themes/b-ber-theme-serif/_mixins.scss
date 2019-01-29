@@ -216,6 +216,10 @@
         text-indent: 0 !important; // sass-lint:disable-line no-important
     }
 }
+@mixin paragraph-not-indented {
+        text-indent: 0 !important; // sass-lint:disable-line no-important
+        padding-bottom: one-line(0);
+}
 @mixin following-element-has-no-top-padding {
     + table,
     + ul,
