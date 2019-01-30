@@ -293,7 +293,7 @@ function injectBaseURL(script) {
         script_ = String(script)
     }
 
-    return new Buffer(script_.replace(/%BASE_URL%/g, BASE_URL))
+    return Buffer.from(script_.replace(/%BASE_URL%/g, BASE_URL))
 }
 
 function getNavigationToggleScript() {

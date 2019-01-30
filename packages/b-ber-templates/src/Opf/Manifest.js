@@ -7,7 +7,7 @@ class Manifest {
     static body() {
         return new File({
             path: 'manifest.body.tmpl',
-            contents: new Buffer('<manifest>{% body %}</manifest>'),
+            contents: Buffer.from('<manifest>{% body %}</manifest>'),
         })
     }
 

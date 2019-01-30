@@ -8,7 +8,7 @@ class Spine {
     static body() {
         return new File({
             path: 'spine.body.tmpl',
-            contents: new Buffer('<spine toc="_toc_ncx">{% body %}</spine>'),
+            contents: Buffer.from('<spine toc="_toc_ncx">{% body %}</spine>'),
         })
     }
     static item({ fname, linear }) {

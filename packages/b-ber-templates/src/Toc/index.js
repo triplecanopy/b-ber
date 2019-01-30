@@ -10,7 +10,7 @@ class Toc {
     static document() {
         return new File({
             path: 'toc.document.tmpl',
-            contents: new Buffer(`${state.templates.dynamicPageHead()}
+            contents: Buffer.from(`${state.templates.dynamicPageHead()}
                 <nav id="toc" epub:type="toc">
                     <h2>Table of Contents</h2>
                     {% body %}

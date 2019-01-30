@@ -38,7 +38,7 @@ class Ncx {
     static document() {
         return new File({
             path: 'ncx.document.tmpl',
-            contents: new Buffer(`<?xml version="1.0" encoding="UTF-8"?>
+            contents: Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
                 <ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1">
                     ${Ncx.head()}
                     ${Ncx.title()}

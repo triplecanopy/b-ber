@@ -105,7 +105,7 @@ const promiseToReplace = (prop, data, source, file) =>
 
         const result = new File({
             path: source,
-            contents: new Buffer(injectTags({ content, start, stop, data })),
+            contents: Buffer.from(injectTags({ content, start, stop, data })),
         })
 
         resolve(result)

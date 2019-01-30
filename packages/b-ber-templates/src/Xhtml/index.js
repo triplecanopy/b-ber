@@ -27,7 +27,7 @@ class Xhtml {
     static body() {
         return new File({
             path: 'page.body.tmpl',
-            contents: new Buffer('{% body %}'),
+            contents: Buffer.from('{% body %}'),
         })
     }
     static tail() {
@@ -71,7 +71,7 @@ class Xhtml {
     static document() {
         return new File({
             path: 'xhtml.document.tmpl',
-            contents: new Buffer(`${Xhtml.head()}
+            contents: Buffer.from(`${Xhtml.head()}
                     {% body %}
                 ${Xhtml.tail()}
             `),

@@ -111,7 +111,7 @@ class ManifestAndMetadata {
                 new File({
                     path: '.tmp',
                     layout: 'body',
-                    contents: new Buffer(resp.bookmeta.join('')),
+                    contents: Buffer.from(resp.bookmeta.join('')),
                 }),
                 { body: Metadata.body() },
             ).contents.toString()
@@ -120,7 +120,7 @@ class ManifestAndMetadata {
                 new File({
                     path: '.tmp',
                     layout: 'body',
-                    contents: new Buffer(resp.manifest.filter(Boolean).join('')),
+                    contents: Buffer.from(resp.manifest.filter(Boolean).join('')),
                 }),
                 { body: Manifest.body() },
             ).contents.toString()

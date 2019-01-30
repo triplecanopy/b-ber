@@ -6,7 +6,7 @@ class Guide {
     static body() {
         return new File({
             path: 'guide.body.tmpl',
-            contents: new Buffer('<guide>{% body %}</guide>'),
+            contents: Buffer.from('<guide>{% body %}</guide>'),
         })
     }
 

@@ -8,7 +8,7 @@ class Metadata {
     static body() {
         return new File({
             path: 'metadata.body.tmpl',
-            contents: new Buffer('<metadata>{% body %}</metadata>'),
+            contents: Buffer.from('<metadata>{% body %}</metadata>'),
         })
     }
 

@@ -7,7 +7,7 @@ class Template {
             new File({
                 path: '.tmp',
                 layout,
-                contents: new Buffer(contents),
+                contents: Buffer.from(contents),
             }),
             { [layout]: tmpl },
         ).contents.toString()
