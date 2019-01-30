@@ -23,7 +23,7 @@ class ApplicationLoader {
             src: '_project',
             dist: 'project',
             ibooks_specified_fonts: false,
-            theme: 'serif',
+            theme: 'b-ber-theme-serif',
             themes_directory: './themes',
             base_url: '/',
             remote_url: 'http://localhost:4000/',
@@ -88,66 +88,62 @@ class ApplicationLoader {
     }
 
     _theme() {
-        if ({}.hasOwnProperty.call(themes, this.config.theme)) {
+        // theme prop missing in config
+        if (!this.config.theme) {
+            console.log('if (!this.config.theme) {')
+            log.notice('No [theme] property found in config.yml')
+            log.notice('Using theme [b-ber-theme-serif]')
+            this.theme = themes['b-ber-them-serif']
+            return
+        }
+
+        // is set, using a built-in theme
+        if (themes[this.config.theme]) {
+            console.log('xxxxxx')
+            console.log('if (themes[this.config.theme]) {')
             this.theme = themes[this.config.theme]
-        } else {
-            if (!{}.hasOwnProperty.call(this.config, 'themes_directory')) {
-                if (!yargs.argv._[0] || yargs.argv._[0] !== 'theme') {
-                    // user is trying to run a command without defining a theme, so bail
-                    log.error(
-                        "There was an error loading the theme, make sure you've added a [themes_directory] to the [config.yml] if you're using a custom theme.",
-                    )
-                } else {
-                    // user is trying to run a `theme` command, either to set
-                    // or list the available themes.  we don't need the
-                    // `theme` config object for this operation, so continue
-                    // execution
-                    this.theme = {}
-                    return
-                }
-            }
+            return
+        }
 
-            // possibly a user defined theme, test if it exists
-            try {
-                const userThemesPath = path.resolve(
-                    cwd,
-                    this.config.themes_directory,
-                )
+        const userThemesPath = path.resolve(cwd, this.config.themes_directory)
+        if (!fs.statSync(userThemesPath)) {
+            console.log('if (!fs.statSync(userThemesPath)) {')
+            log.notice('No [themes_directory] property found in config.yml')
+            log.notice('Using theme [b-ber-theme-serif]')
+            this.theme = themes['b-ber-them-serif']
+            return
+        }
 
-                const userThemes = fs
-                    .readdirSync(userThemesPath)
-                    .reduce((acc, curr) => {
-                        if (
-                            !fs
-                                .lstatSync(path.resolve(userThemesPath, curr))
-                                .isDirectory()
-                        ) {
-                            return acc
-                        }
-                        const themePath = fs.existsSync(
-                            path.resolve(userThemesPath, curr, 'package.json'),
-                        )
-                            ? path.resolve(userThemesPath, curr)
-                            : path.resolve(userThemesPath, curr, 'index.js')
+        // possibly a user defined theme, test if it exists
+        const userTheme = fs.readdirSync(userThemesPath).find(dirname => dirname === this.config.theme)
 
-                        const userModule = require(themePath)
-                        return acc.concat(userModule)
-                    }, [])
+        if (!userTheme) {
+            console.log('if (!userTheme) {')
+            log.notice(`User defined theme [${this.config.theme}] not found`)
+            return
+        }
 
-                const userTheme = find(userThemes, { name: this.config.theme })
+        if (!userTheme) {
+            console.log('if (!userTheme) {')
+            log.notice(`Could not find user-defined theme [${this.config.theme}]`)
+            log.notice('Using theme [b-ber-theme-serif]')
+            this.theme = themes['b-ber-them-serif']
+            return
+        }
 
-                if (!userTheme) {
-                    log.notice(`Could not find theme [${this.config.theme}]`)
-                }
+        try {
+            this.theme = require(userTheme)
+            console.log('required')
+        } catch (err) {
+            log.notice(`There was an error during require [${this.config.theme}]`)
+            log.notice('Using theme [b-ber-theme-serif]')
+            this.theme = themes['b-ber-them-serif']
+            return
+        }
 
-                // exists! set it
-                this.theme = userTheme
-                return
-            } catch (err) {
-                log.notice(
-                    `There was an error loading theme [${this.config.theme}]`,
-                )
-            }
+        if (!this.theme) {
+            console.log('err?')
+            process.exit()
         }
     }
 
@@ -185,9 +181,7 @@ class ApplicationLoader {
 
         try {
             if (!fs.existsSync(projectDir)) {
-                throw new Error(
-                    `Project directory [${projectDir}] does not exist`,
-                )
+                throw new Error(`Project directory [${projectDir}] does not exist`)
             }
         } catch (err) {
             // Starting a new project, noop

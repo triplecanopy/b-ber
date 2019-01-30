@@ -1,5 +1,5 @@
 import { cover } from '@canopycanopycanopy/b-ber-tasks'
-import { fail } from '../helpers'
+import { fail } from '@canopycanopycanopy/b-ber-lib/utils'
 
 const command = 'cover'
 const describe = 'Generate a project cover'

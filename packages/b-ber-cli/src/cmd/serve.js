@@ -1,6 +1,6 @@
 import { serve } from '@canopycanopycanopy/b-ber-tasks'
 import log from '@canopycanopycanopy/b-ber-logger'
-import { fail } from '../helpers'
+import { fail } from '@canopycanopycanopy/b-ber-lib/utils'
 
 const command = ['serve', 's']
 const describe = 'Preview a project in the browser using the `web` build.'

@@ -8,7 +8,6 @@
 
 import path from 'path'
 import fs from 'fs-extra'
-import yargs from 'yargs'
 import YamlAdaptor from '@canopycanopycanopy/b-ber-lib/YamlAdaptor'
 import log from '@canopycanopycanopy/b-ber-logger'
 import state from '@canopycanopycanopy/b-ber-lib/State'
@@ -52,19 +51,8 @@ class Generate {
 
         const promises = buildTypes.map(type => {
             const navigationYAML = path.join(state.src, `${type}.yml`)
-            let pageMeta = []
-
-            try {
-                if (fs.statSync(navigationYAML)) {
-                    pageMeta =
-                        YamlAdaptor.load(path.join(state.src, `${type}.yml`)) ||
-                        []
-                }
-            } catch (err) {
-                log.info(`Creating ${type}.yml`)
-                fs.writeFileSync(path.join(state.src, `${type}.yml`))
-            }
-
+            const pageMeta =
+                YamlAdaptor.load(path.join(state.src, `${type}.yml`)) || []
             const index = pageMeta.indexOf(fileName)
 
             if (index > -1) {
@@ -82,11 +70,8 @@ class Generate {
         return Promise.all(promises).then(() => ({ fileName }))
     }
 
-    init() {
+    init(metadata) {
         const markdownDir = path.join(state.src, '_markdown')
-        const { title, type } = yargs.argv
-        const metadata = { title, type }
-
         return fs
             .mkdirp(markdownDir)
             .then(() => this.createFile({ markdownDir, metadata }))

@@ -1,13 +1,14 @@
 import Theme from '@canopycanopycanopy/b-ber-lib/Theme'
-import { fail } from '../helpers'
+import { fail, ensure } from '@canopycanopycanopy/b-ber-lib/utils'
 
 const _command = 'theme <command> [options]'
 const describe = "Manage a project's theme"
 
-const handler = args => {
-    const { command, options } = args
-    return Theme[command](options)
-}
+const handler = () => args =>
+    ensure().then(() => {
+        const { command, options } = args
+        return Theme[command](options)
+    })
 
 const builder = yargs =>
     yargs
@@ -29,5 +30,5 @@ export default {
     command: _command,
     describe,
     builder,
-    handler,
+    handler: handler(),
 }

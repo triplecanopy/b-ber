@@ -6,8 +6,6 @@ import YamlAdaptor from '@canopycanopycanopy/b-ber-lib/YamlAdaptor'
 class Project {
     static directories(src) {
         return [
-            src,
-            path.join(path.dirname(src), 'themes'),
             `${src}/_images`,
             `${src}/_javascripts`,
             `${src}/_stylesheets`,
@@ -21,7 +19,7 @@ class Project {
         return path.join(path.basename(src), ...rest)
     }
     static absolutePath(src, ...rest) {
-        return path.join(path.dirname(src), path.basename(src), ...rest)
+        return path.resolve(path.dirname(src), path.basename(src), ...rest)
     }
     static configYAML(src) {
         return {
@@ -146,8 +144,6 @@ class Project {
   value: 2018-01-01
 - term: publisher
   value: Publisher
-- term: identifier
-  value: 123456789-
 - term: tableOfContents
   value: 'Chapter One; Chapter Two; etc.'
 

@@ -6,9 +6,7 @@ import YamlAdaptor from '@canopycanopycanopy/b-ber-lib/YamlAdaptor'
 import Project from '../src/Project'
 
 describe('templates.Project', () => {
-
     test('it creates the source directories', () => {
-
         const cwd = '/test'
         const projectDir = '/_project'
         const projectPath = path.join(cwd, state.src)
@@ -16,8 +14,6 @@ describe('templates.Project', () => {
         const directories = Project.directories(projectPath)
 
         expect(directories).toEqual([
-            `${cwd}${projectDir}`,
-            `${cwd}/themes`,
             `${cwd}${projectDir}/_images`,
             `${cwd}${projectDir}/_javascripts`,
             `${cwd}${projectDir}/_stylesheets`,
@@ -26,7 +22,6 @@ describe('templates.Project', () => {
             `${cwd}${projectDir}/_media`,
             `${cwd}${projectDir}/.tmp`,
         ])
-
     })
 
     test('it writes valid YAML', () => {
@@ -35,7 +30,6 @@ describe('templates.Project', () => {
 
         expect(Project.typeYAML(projectPath).content).not.toMatch(/^\s+-/)
         expect(Project.metadataYAML(projectPath).content).not.toMatch(/^\s+-/)
-
     })
 
     test('it writes a config file that mirrors default state', () => {
@@ -45,7 +39,5 @@ describe('templates.Project', () => {
         const configObj = YamlAdaptor.parse(yamlConfig)
 
         expect(configObj).toEqual(state.config)
-
     })
-
 })

@@ -21,9 +21,7 @@ const getUserDefinedThemes = () => {
 
     try {
         if (!fs.existsSync(path.join(process.cwd(), config.themes_directory))) {
-            throw new Error(
-                `Themes directory [${config.themes_directory}] does not exist.`,
-            )
+            throw new Error(`Themes directory [${config.themes_directory}] does not exist.`)
         }
     } catch (err) {
         log.warn(err)
@@ -48,9 +46,7 @@ const getUserDefinedThemes = () => {
         //
 
         try {
-            const userModule = fs.existsSync(
-                path.join(modulePath, 'package.json'),
-            )
+            const userModule = fs.existsSync(path.join(modulePath, 'package.json'))
                 ? require(path.join(modulePath))
                 : require(path.join(modulePath, 'index.js'))
 
@@ -68,15 +64,7 @@ const getUserDefinedThemes = () => {
 
 const printThemeList = (themes, current = '') =>
     `${themes
-        .reduce(
-            (acc, curr) =>
-                acc.concat(
-                    `  ${current && current === curr.name ? '✓' : '○'} ${
-                        curr.name
-                    }\n`,
-                ),
-            '\n',
-        )
+        .reduce((acc, curr) => acc.concat(`  ${current && current === curr.name ? '✓' : '○'} ${curr.name}\n`), '\n')
         .slice(0, -1)}\n`
 
 const getThemes = () => {
@@ -93,29 +81,15 @@ const getThemes = () => {
 
 const createProjectThemeDirectory = name => {
     const { src } = state.config
-    return fs
-        .mkdirp(path.join(process.cwd(), src, '_stylesheets', name))
-        .catch(log.error)
+    return fs.mkdirp(path.join(process.cwd(), src, '_stylesheets', name)).catch(log.error)
 }
 
 const copyThemeAssets = theme => {
     const { src } = state.config
     const themePath = path.dirname(theme.entry)
     const themeSettings = path.join(themePath, '_settings.scss')
-    const settingsPath = path.join(
-        process.cwd(),
-        src,
-        '_stylesheets',
-        theme.name,
-        '_settings.scss',
-    )
-    const overridesPath = path.join(
-        process.cwd(),
-        src,
-        '_stylesheets',
-        theme.name,
-        '_overrides.scss',
-    )
+    const settingsPath = path.join(process.cwd(), src, '_stylesheets', theme.name, '_settings.scss')
+    const overridesPath = path.join(process.cwd(), src, '_stylesheets', theme.name, '_overrides.scss')
     const fontsPath = path.join(process.cwd(), src, '_fonts')
     const imagesPath = path.join(process.cwd(), src, '_images')
 
@@ -123,18 +97,13 @@ const copyThemeAssets = theme => {
         .then(safeWrite(overridesPath, ''))
         .then(() => {
             if (!theme.fonts.length) return Promise.resolve()
-            const promises = theme.fonts.map(a =>
-                safeCopy(a, path.join(fontsPath, path.basename(a))),
-            )
+            const promises = theme.fonts.map(a => safeCopy(a, path.join(fontsPath, path.basename(a))))
             return Promise.all(promises)
         })
         .then(() => {
             if (!theme.images.length) return Promise.resolve()
             const promises = theme.images.map(a =>
-                safeCopy(
-                    path.join(themePath, 'images', a),
-                    path.join(imagesPath, a),
-                ),
+                safeCopy(path.join(themePath, 'images', a), path.join(imagesPath, a)),
             )
             return Promise.all(promises)
         })
@@ -192,11 +161,7 @@ class Theme {
                         exec(
                             'npm i',
                             {
-                                cwd: path.join(
-                                    process.cwd(),
-                                    config.themes_directory,
-                                    name,
-                                ),
+                                cwd: path.join(process.cwd(), config.themes_directory, name),
                             },
                             (error, stdout, stderr) => {
                                 if (stderr) console.log(stderr.trim())
@@ -212,12 +177,7 @@ class Theme {
             return Promise.all(promises1)
                 .then(() => {
                     names.forEach(name => {
-                        themes[name] = require(path.resolve(
-                            process.cwd(),
-                            config.themes_directory,
-                            name,
-                            'index.js',
-                        ))
+                        themes[name] = require(path.resolve(process.cwd(), config.themes_directory, name, 'index.js'))
                     })
 
                     Object.entries(themes).forEach(([name, theme]) => {

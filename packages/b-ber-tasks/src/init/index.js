@@ -6,6 +6,7 @@ import getAssets from '@canopycanopycanopy/b-ber-resources'
 import Project from '@canopycanopycanopy/b-ber-templates/Project'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import Theme from '@canopycanopycanopy/b-ber-lib/Theme'
+import { ensure } from '@canopycanopycanopy/b-ber-lib/utils'
 
 /**
  * @class Initializer
@@ -13,55 +14,36 @@ import Theme from '@canopycanopycanopy/b-ber-lib/Theme'
 class Initializer {
     /**
      * @constructor
-     * @param  {Object} directories Command Line arguments
+     * @param  {Object} options Command Line arguments
      * @return {Object}
      */
-    constructor({
-        projectName = '',
-        projectPath = '',
-        directories = { src: '_project', dist: 'project' },
-    }) {
-        const { src, dist } = directories
+    constructor({ name = '' }) {
+        this.src = '_project'
+        this.dist = 'project'
+        this.name = name
+        this.path = path.join(name, this.src)
+        this.builds = Object.keys(sequences)
 
-        if (!projectPath) throw new Error('Base directory not provided')
-        if (!src || !dist) {
-            throw new Error('Both [src] and [dist] arguments must be provided')
+        if (fs.existsSync(this.path)) {
+            log.error(`Project [${name}] already exits, aborting`)
         }
-        if (src === dist) {
-            throw new Error(
-                '[src] and [dist] directories must have different names',
-            )
-        }
+    }
 
-        this.src = src
-        this.dist = dist
-        this.projectName = projectName
-        this.projectPath = path.join(projectPath, this.src)
-        this.buildTypes = Object.keys(sequences)
-        this.dirs = Project.directories(this.projectPath)
-
-        this.files = [
-            ...this.buildTypes.map(a => Project.typeYAML(this.projectPath, a)),
-            Project.configYAML(this.projectPath),
-            Project.metadataYAML(this.projectPath),
-            ...Project.javascripts(this.projectPath),
-            ...Project.stylesheets(this.projectPath),
-            ...Project.markdown(this.projectPath),
-            Project.readme(this.projectPath),
-            Project.gitignore(this.projectPath),
+    createAssets = () => {
+        const files = [
+            ...this.builds.map(a => Project.typeYAML(this.path, a)),
+            Project.configYAML(this.path),
+            Project.metadataYAML(this.path),
+            ...Project.javascripts(this.path),
+            ...Project.stylesheets(this.path),
+            ...Project.markdown(this.path),
+            Project.readme(this.path),
+            Project.gitignore(this.path),
         ]
-    }
 
-    makeDirs() {
-        const promises = this.dirs.map(a => fs.mkdirp(a))
-        return Promise.all(promises)
-    }
+        const dirs = Project.directories(this.path)
 
-    writeFiles() {
-        const promises = this.files.map(a =>
-            fs.writeFile(a.absolutePath, a.content),
-        )
-        return Promise.all(promises)
+        return ensure({ files, dirs, prefix: this.name })
     }
 
     copyImages() {
@@ -75,10 +57,7 @@ class Initializer {
             log.info('Copying development assets')
 
             const promises = images.map(a =>
-                fs.copy(
-                    a,
-                    path.join(this.projectPath, '_images', path.basename(a)),
-                ),
+                fs.copy(a, path.join(this.path, '_images', path.basename(a))),
             )
             return Promise.all(promises)
         })
@@ -87,12 +66,8 @@ class Initializer {
     // eslint-disable-next-line class-methods-use-this
     setTheme() {
         const { theme } = state.config
-        process.chdir(this.projectName)
+        process.chdir(this.name)
         return Theme.set(theme, true)
-    }
-
-    done() {
-        return log.notice(`Created new project [${this.projectName}]`)
     }
 
     /**
@@ -101,11 +76,10 @@ class Initializer {
      * @return {Promise<Object|Error>}
      */
     start() {
-        this.makeDirs()
-            .then(() => this.writeFiles())
+        this.createAssets()
             .then(() => this.copyImages())
             .then(() => this.setTheme())
-            .then(() => this.done())
+            .then(() => log.notice(`Created new project [${this.name}]`))
             .catch(log.error)
     }
 }

@@ -10,9 +10,7 @@ import log from '@canopycanopycanopy/b-ber-logger'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import { YamlAdaptor, Template } from '@canopycanopycanopy/b-ber-lib'
 import Xhtml from '@canopycanopycanopy/b-ber-templates/Xhtml'
-import {
-    /*fileId */ getBookMetadata,
-} from '@canopycanopycanopy/b-ber-lib/utils'
+import { getBookMetadata } from '@canopycanopycanopy/b-ber-lib/utils'
 
 class Cover {
     constructor() {

@@ -5,6 +5,7 @@
 import fs from 'fs-extra'
 import path from 'path'
 import find from 'lodash/find'
+import uniq from 'lodash/uniq'
 import log from '@canopycanopycanopy/b-ber-logger'
 
 /**
@@ -13,7 +14,7 @@ import log from '@canopycanopycanopy/b-ber-logger'
  * @param  {String} base  Project's base path
  * @return {String}
  */
-const opsPath = (fpath, base) =>
+export const opsPath = (fpath, base) =>
     fpath.replace(new RegExp(`^${base}${path.sep}OPS${path.sep}?`), '')
 
 /**
@@ -23,7 +24,7 @@ const opsPath = (fpath, base) =>
  */
 
 // https://www.w3.org/TR/xml-names/#Conformance
-const fileId = str => `_${str.replace(/[^a-zA-Z0-9_-]/g, '_')}`
+export const fileId = str => `_${str.replace(/[^a-zA-Z0-9_-]/g, '_')}`
 
 /**
  * Determine an image's orientation
@@ -31,7 +32,7 @@ const fileId = str => `_${str.replace(/[^a-zA-Z0-9_-]/g, '_')}`
  * @param  {Number} h Image Height
  * @return {String}
  */
-const getImageOrientation = (w, h) => {
+export const getImageOrientation = (w, h) => {
     // assign image class based on w:h ratio
     const widthToHeight = w / h
     let imageType = null
@@ -49,7 +50,7 @@ const getImageOrientation = (w, h) => {
  * @param {Object} iterator     [description]
  * @return {*}
  */
-const forOf = (collection, iterator) =>
+export const forOf = (collection, iterator) =>
     Object.entries(collection).forEach(([key, val]) => iterator(key, val))
 
 // TODO: the whole figures/generated pages/user-configurable YAML thing should
@@ -59,7 +60,7 @@ const forOf = (collection, iterator) =>
 // @issue: https://github.com/triplecanopy/b-ber/issues/208
 //
 // this is provisional, will just cause more confusion in the future
-const getTitleOrName = page => {
+export const getTitleOrName = page => {
     if (page.name === 'figures-titlepage') {
         return 'Figures'
     }
@@ -67,14 +68,14 @@ const getTitleOrName = page => {
     return page.title || page.name
 }
 
-const getBookMetadata = (term, state) => {
+export const getBookMetadata = (term, state) => {
     const entry = find(state.metadata, { term })
     if (entry && entry.value) return entry.value
     log.warn(`Could not find metadata value for ${term}`)
     return ''
 }
 
-const safeCopy = (from, to) => {
+export const safeCopy = (from, to) => {
     try {
         if (fs.existsSync(to)) {
             throw new Error('EEXIST')
@@ -86,7 +87,7 @@ const safeCopy = (from, to) => {
     return fs.copy(from, to)
 }
 
-const safeWrite = (dest, data) => {
+export const safeWrite = (dest, data) => {
     try {
         if (fs.existsSync(dest)) {
             throw new Error('EEXIST')
@@ -98,13 +99,51 @@ const safeWrite = (dest, data) => {
     return fs.writeFile(dest, data)
 }
 
-export {
-    opsPath,
-    fileId,
-    getImageOrientation,
-    forOf,
-    getTitleOrName,
-    getBookMetadata,
-    safeCopy,
-    safeWrite,
+export const fail = (msg, err, yargs) => {
+    yargs.showHelp()
+    process.exit(0)
 }
+
+const ensureDirs = (dirs, prefix) => {
+    const cwd = process.cwd()
+    const dirs_ = uniq(
+        [
+            `${prefix}/_project`,
+            `${prefix}/_project/_fonts`,
+            `${prefix}/_project/_images`,
+            `${prefix}/_project/_javascripts`,
+            `${prefix}/_project/_markdown`,
+            `${prefix}/_project/_media`,
+            `${prefix}/_project/_stylesheets`,
+            `${prefix}/themes`,
+        ].concat([...dirs]),
+    ).map(a => fs.ensureDir(path.join(cwd, a)))
+    return Promise.all(dirs_)
+}
+
+const ensureFiles = (files, prefix) => {
+    const cwd = process.cwd()
+    const files_ = ['epub', 'mobi', 'web', 'sample', 'reader']
+        .map(a => ({
+            absolutePath: path.join(cwd, prefix, '_project', `${a}.yml`),
+            content: '',
+        }))
+        .concat([...files])
+        .reduce(
+            (acc, curr) =>
+                fs.existsSync(curr.absolutePath)
+                    ? acc
+                    : acc.concat(fs.writeFile(curr.absolutePath, curr.content)),
+            [],
+        )
+    return Promise.all(files_)
+}
+
+// make sure all necessary files and directories exist
+export const ensure = (assets = { files: [], dirs: [], prefix: '' }) =>
+    new Promise(resolve =>
+        ensureDirs(assets.dirs, assets.prefix)
+            .then(() => ensureFiles(assets.files, assets.prefix))
+            .then(resolve)
+            .catch(log.error),
+    )
