@@ -12,10 +12,7 @@ const inlineClasses = (data, ratioName) =>
 
 const createStyleAttribute = data => {
     if (!isPlainObject(data) || !Object.keys(data).length) return ''
-    const attrs = Object.entries(data).reduce(
-        (acc, [key, val]) => acc.concat(`${key}:${val};`),
-        '',
-    )
+    const attrs = Object.entries(data).reduce((acc, [key, val]) => acc.concat(`${key}:${val};`), '')
     return `style="${attrs}"`
 }
 
@@ -38,28 +35,15 @@ export const figureTemplate = data =>
 `
         .replace(
             /%SECTION_OPEN%/,
-            data.inline
-                ? ''
-                : '<section epub:type="loi" title="Figures" class="chapter figures">',
+            data.inline ? '' : '<section epub:type="loi" title="Figures" class="chapter figures">',
         )
-        .replace(
-            /%FIGURE_CLASS_NAMES%/,
-            data.inline || data.applyInlineClasses
-                ? data.classes
-                : 'figure__large',
-        )
+        .replace(/%FIGURE_CLASS_NAMES%/, data.inline || data.applyInlineClasses ? data.classes : 'figure__large')
         .replace(/%PAGE_BREAK_STYLES%/, Html.pagebreakAttribute(data))
         .replace(/%ID%/g, data.id)
         .replace(/%FIGURE_STYLES%/, createStyleAttribute(data.figureStyles))
         .replace(/%IMAGE_STYLES%/, createStyleAttribute(data.imageStyles))
-        .replace(
-            /%FIGCAPTION_STYLES%/,
-            createStyleAttribute(data.figcaptionStyles),
-        )
-        .replace(
-            /%LINK_OPEN%/,
-            data.inline ? '' : `<a href="${data.ref}.xhtml#ref${data.id}">`,
-        )
+        .replace(/%FIGCAPTION_STYLES%/, createStyleAttribute(data.figcaptionStyles))
+        .replace(/%LINK_OPEN%/, data.inline ? '' : `<a href="${data.ref}.xhtml#ref${data.id}">`)
         .replace(/%LINK_CLOSE%/, data.inline ? '' : '</a>')
         .replace(/%IMAGE_CLASS_NAME%/, data.imageClassName)
         .replace(/%IMAGE_ALT%/, data.alt)
@@ -97,9 +81,7 @@ export const media = data =>
     `
         .replace(
             /%SECTION_OPEN%/,
-            data.inline
-                ? ''
-                : '<section epub:type="loi" title="Figures" class="chapter figures">',
+            data.inline ? '' : '<section epub:type="loi" title="Figures" class="chapter figures">',
         )
         .replace(/%ID%/g, data.id)
         .replace(/%MEDIA_TYPE%/g, data.mediaType)
@@ -133,9 +115,7 @@ export const iframe = data =>
     `
         .replace(
             /%SECTION_OPEN%/,
-            data.inline
-                ? ''
-                : '<section epub:type="loi" title="Figures" class="chapter figures">',
+            data.inline ? '' : '<section epub:type="loi" title="Figures" class="chapter figures">',
         )
         .replace(/%ID%/g, data.id)
         .replace(/%SRC%/g, Url.encodeQueryString(data.source))
@@ -152,10 +132,7 @@ export const figure = ({
     applyInlineClasses = false,
 }) => {
     const classes = inlineClasses(data, ratioName)
-    const imageClassName =
-        classNamesArray(data).indexOf(FULLBLEED_CLASS_NAME) > -1
-            ? 'fullbleed'
-            : ratioName
+    const imageClassName = classNamesArray(data).indexOf(FULLBLEED_CLASS_NAME) > -1 ? 'fullbleed' : ratioName
 
     return figureTemplate({
         ...data,

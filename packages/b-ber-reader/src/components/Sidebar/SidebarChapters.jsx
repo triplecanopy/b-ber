@@ -11,18 +11,10 @@ const NestedChapterList = props => {
         <ol>
             {items_.map((item, i) => (
                 <li key={i}>
-                    <Link
-                        style={{ textIndent: `${24 * (depth + 1)}px` }}
-                        href={item.absoluteURL}
-                    >
+                    <Link style={{ textIndent: `${24 * (depth + 1)}px` }} href={item.absoluteURL}>
                         {item.title || `Chapter ${depth}.${i}`}
                     </Link>
-                    {item.children.length > 0 && (
-                        <NestedChapterList
-                            items={item.children}
-                            depth={depth + 1}
-                        />
-                    )}
+                    {item.children.length > 0 && <NestedChapterList items={item.children} depth={depth + 1} />}
                 </li>
             ))}
         </ol>
@@ -31,14 +23,9 @@ const NestedChapterList = props => {
 
 const SidebarChapters = props => (
     <nav
-        className={classNames(
-            'controls__sidebar',
-            'controls__sidebar__chapters',
-            {
-                'controls__sidebar__chapters--open':
-                    props.showSidebar === 'chapters',
-            },
-        )}
+        className={classNames('controls__sidebar', 'controls__sidebar__chapters', {
+            'controls__sidebar__chapters--open': props.showSidebar === 'chapters',
+        })}
     >
         <NestedChapterList items={[...props.spine]} />
     </nav>

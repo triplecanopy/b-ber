@@ -18,16 +18,8 @@ class Manifest {
             <item
                 id="${fileId(name)}"
                 href="${encodeURI(opsPath)}"
-                media-type="${
-                    !remote
-                        ? mime.lookup(absolutePath)
-                        : 'application/octet-stream'
-                }"
-                ${
-                    props && props.length
-                        ? `properties="${props.join(' ')}"`
-                        : ''
-                }
+                media-type="${!remote ? mime.lookup(absolutePath) : 'application/octet-stream'}"
+                ${props && props.length ? `properties="${props.join(' ')}"` : ''}
             />
         `
     }

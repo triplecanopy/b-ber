@@ -30,10 +30,7 @@ const handler = argv => {
     const { src } = state
     const projectPath = path.join(process.cwd(), src)
 
-    const files = [
-        ...Project.javascripts(projectPath),
-        ...Project.stylesheets(projectPath),
-    ]
+    const files = [...Project.javascripts(projectPath), ...Project.stylesheets(projectPath)]
 
     // phantomjs takes forever (> 5sec) to exit, but we need to wait for it to
     // finish to ensure that state is updated with the default cover image if
@@ -48,12 +45,7 @@ const builder = yargs =>
         .command('epub', 'Build an Epub', () => {}, handler)
         .command('mobi', 'Build a Mobi', () => {}, handler)
         .command('pdf', 'Build a PDF', () => {}, handler)
-        .command(
-            'reader',
-            'Build for the b-ber-reader format',
-            () => {},
-            handler,
-        )
+        .command('reader', 'Build for the b-ber-reader format', () => {}, handler)
         .command('sample', 'Build a sample Epub', () => {}, handler)
         .command('web', 'Build for web', () => {}, handler)
         .help('h')

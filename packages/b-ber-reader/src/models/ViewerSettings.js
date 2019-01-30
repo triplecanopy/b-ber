@@ -3,12 +3,7 @@ import { isNumeric } from '../helpers/Types'
 import { transitions, themes } from '../constants'
 import Viewport from '../helpers/Viewport'
 
-const __extendExistingProps = (
-    target,
-    ref,
-    obj,
-    opts = { enumerable: true },
-) => {
+const __extendExistingProps = (target, ref, obj, opts = { enumerable: true }) => {
     Object.entries(ref).forEach(([key, val]) => {
         const value = {}.hasOwnProperty.call(obj, key) ? obj[key] : val
         Object.defineProperty(target, key, { value, ...opts })
@@ -27,11 +22,7 @@ class ViewerSettings {
     }
     constructor(options = {}) {
         this.settings = {}
-        const options_ = __extendExistingProps(
-            {},
-            ViewerSettings.defaults,
-            options,
-        )
+        const options_ = __extendExistingProps({}, ViewerSettings.defaults, options)
 
         this.settings = { ...this.settings, ...options_ }
 
@@ -45,15 +36,12 @@ class ViewerSettings {
         this.paddingTop = () => Viewport.optimized().top
         this.paddingBottom = () => Viewport.optimized().bottom
 
-        this.columnWidth = () =>
-            window.innerWidth / 2 - this.columnGap - this.paddingLeft
+        this.columnWidth = () => window.innerWidth / 2 - this.columnGap - this.paddingLeft
     }
 
     // responsive
     get gridColumns() {
-        return typeof this.settings.gridColumns === 'function'
-            ? this.settings.gridColumns()
-            : this.settings.gridColumns
+        return typeof this.settings.gridColumns === 'function' ? this.settings.gridColumns() : this.settings.gridColumns
     }
     get gridColumnWidth() {
         return typeof this.settings.gridColumnWidth === 'function'
@@ -67,14 +55,10 @@ class ViewerSettings {
     }
 
     get paddingTop() {
-        return typeof this.settings.paddingTop === 'function'
-            ? this.settings.paddingTop()
-            : this.settings.paddingTop
+        return typeof this.settings.paddingTop === 'function' ? this.settings.paddingTop() : this.settings.paddingTop
     }
     get paddingLeft() {
-        return typeof this.settings.paddingLeft === 'function'
-            ? this.settings.paddingLeft()
-            : this.settings.paddingLeft
+        return typeof this.settings.paddingLeft === 'function' ? this.settings.paddingLeft() : this.settings.paddingLeft
     }
     get paddingRight() {
         return typeof this.settings.paddingRight === 'function'
@@ -98,14 +82,10 @@ class ViewerSettings {
         return this.settings.columns
     }
     get columnGap() {
-        return typeof this.settings.columnGap === 'function'
-            ? this.settings.columnGap()
-            : this.settings.columnGap
+        return typeof this.settings.columnGap === 'function' ? this.settings.columnGap() : this.settings.columnGap
     }
     get columnWidth() {
-        return typeof this.settings.columnWidth === 'function'
-            ? this.settings.columnWidth()
-            : this.settings.columnWidth
+        return typeof this.settings.columnWidth === 'function' ? this.settings.columnWidth() : this.settings.columnWidth
     }
     get transition() {
         return this.settings.transition
@@ -192,18 +172,11 @@ class ViewerSettings {
             // @issue: https://github.com/triplecanopy/b-ber/issues/222
             if ({}.hasOwnProperty.call(objectOrString_, 'fontSize')) {
                 if (!isNumeric(objectOrString_.fontSize)) {
-                    objectOrString_.fontSize = parseFloat(
-                        objectOrString_.fontSize,
-                        10,
-                    )
+                    objectOrString_.fontSize = parseFloat(objectOrString_.fontSize, 10)
                 }
             }
 
-            const options = __extendExistingProps(
-                {},
-                ViewerSettings.defaults,
-                objectOrString_,
-            )
+            const options = __extendExistingProps({}, ViewerSettings.defaults, objectOrString_)
             this.settings = { ...this.settings, ...options }
             return
         }

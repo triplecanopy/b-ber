@@ -41,13 +41,9 @@ class Reader {
     get remoteURL() {
         if (
             process.env.NODE_ENV === 'production' &&
-            (!state.config ||
-                !state.config.remote_url ||
-                /^http/.test(state.config.remote_url) === false)
+            (!state.config || !state.config.remote_url || /^http/.test(state.config.remote_url) === false)
         ) {
-            throw new Error(
-                'Task [build/reader] requires a remote_url to be set in config.yml',
-            )
+            throw new Error('Task [build/reader] requires a remote_url to be set in config.yml')
         }
         return state.config.remote_url || 'http://localhost:4000/'
     }
@@ -59,11 +55,7 @@ class Reader {
     }
     ensureReaderModuleExists() {
         try {
-            this.readerAppPath = path.dirname(
-                path.join(
-                    require.resolve(JSON.stringify(this.readerModuleName)),
-                ),
-            )
+            this.readerAppPath = path.dirname(path.join(require.resolve(JSON.stringify(this.readerModuleName))))
             return Promise.resolve()
         } catch (err) {
             // module not found using require.resolve, so we check if there's a symlinked version available
@@ -80,23 +72,15 @@ class Reader {
         }
 
         if (!modulePath) {
-            log.error(
-                `Cannot find module ${
-                    this.readerModuleName
-                }. Try running npm i -S ${this.readerModuleName}`,
-            )
+            log.error(`Cannot find module ${this.readerModuleName}. Try running npm i -S ${this.readerModuleName}`)
         }
 
         try {
-            this.readerAppPath = fs.realpathSync(
-                path.join(modulePath, this.readerModuleDistDir),
-            )
+            this.readerAppPath = fs.realpathSync(path.join(modulePath, this.readerModuleDistDir))
             return Promise.resolve()
         } catch (err) {
             log.error(`
-                A symlinked version of ${
-                    this.readerModuleName
-                } was found but is inaccessible.
+                A symlinked version of ${this.readerModuleName} was found but is inaccessible.
                 Try running npm i -S ${
                     this.readerModuleName
                 }, or rebuilding the reader package if running this command in a development environment
@@ -105,17 +89,12 @@ class Reader {
         }
     }
     createOutputDirs() {
-        return fs
-            .ensureDir(this.outputDir)
-            .then(() => fs.ensureDir(this.apiDir))
+        return fs.ensureDir(this.outputDir).then(() => fs.ensureDir(this.apiDir))
     }
     copyEpubToOutputDir() {
         const epubDir = this.createDirname(this.getBookMetadata('identifier'))
         const promises = this.epubAssets.map(item =>
-            fs.move(
-                path.join(this.dist, item),
-                path.join(this.outputDir, epubDir, item),
-            ),
+            fs.move(path.join(this.dist, item), path.join(this.outputDir, epubDir, item)),
         )
 
         return Promise.all(promises).catch(log.error)
@@ -137,9 +116,7 @@ class Reader {
     writeBookManifest() {
         const identifier = this.getBookMetadata('identifier')
         const title = this.getBookMetadata('title')
-        const url = `${Url.trimSlashes(this.remoteURL)}/${
-            this.outputDirName
-        }/${this.createDirname(identifier)}`
+        const url = `${Url.trimSlashes(this.remoteURL)}/${this.outputDirName}/${this.createDirname(identifier)}`
         const cover = `${url}/OPS/images/${this.getBookMetadata('cover')}`
         const manifest = [{ title, url, cover, id: identifier }]
 
@@ -152,10 +129,9 @@ class Reader {
 
     injectServerDataIntoTemplate() {
         const indexHTML = path.join(this.dist, 'index.html')
-        const bookURL = `${this.getProjectConfig('reader_url').replace(
-            /$\/+/,
-            '',
-        )}/epub/${this.getBookMetadata('identifier')}`
+        const bookURL = `${this.getProjectConfig('reader_url').replace(/$\/+/, '')}/epub/${this.getBookMetadata(
+            'identifier',
+        )}`
         const serverData = {
             books: [
                 {
@@ -174,28 +150,19 @@ class Reader {
 
         let contents
         contents = fs.readFileSync(indexHTML, 'utf8')
-        contents = contents.replace(
-            /__SERVER_DATA__ = {}/,
-            `__SERVER_DATA__ = ${JSON.stringify(serverData)}`,
-        )
+        contents = contents.replace(/__SERVER_DATA__ = {}/, `__SERVER_DATA__ = ${JSON.stringify(serverData)}`)
 
         return fs.writeFile(indexHTML, contents)
     }
 
     updateLinkedResourcesWithAbsolutePaths() {
-        const indexContents = fs.readFileSync(
-            path.join(this.dist, 'index.html'),
-            'utf8',
-        )
+        const indexContents = fs.readFileSync(path.join(this.dist, 'index.html'), 'utf8')
         const versionHash = indexContents.match(/link href="\/(\w+\.css)"/)[1]
         const stylesheet = path.join(this.dist, versionHash)
 
         let contents
         contents = fs.readFileSync(stylesheet, 'utf8')
-        contents = contents.replace(
-            /url\(\//g,
-            `url(${this.getProjectConfig('reader_url')}/`,
-        )
+        contents = contents.replace(/url\(\//g, `url(${this.getProjectConfig('reader_url')}/`)
 
         return fs.writeFile(stylesheet, contents)
     }
@@ -205,10 +172,7 @@ class Reader {
 
         let contents
         contents = fs.readFileSync(indexHTML, 'utf8')
-        contents = contents.replace(
-            /(src|href)="(\/[^"]+?)"/g,
-            `$1="${this.getProjectConfig('reader_url')}$2"`,
-        )
+        contents = contents.replace(/(src|href)="(\/[^"]+?)"/g, `$1="${this.getProjectConfig('reader_url')}$2"`)
 
         return fs.writeFile(indexHTML, contents)
     }

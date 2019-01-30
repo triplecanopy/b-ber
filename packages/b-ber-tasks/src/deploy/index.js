@@ -73,17 +73,9 @@ function deploy({ bucketURL, awsRegion }) {
 
 function ensureEnvVars() {
     return new Promise(resolve => {
-        const {
-            AWS_ACCESS_KEY_ID,
-            AWS_SECRET_ACCESS_KEY,
-            BBER_BUCKET_REGION,
-        } = process.env
+        const { AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, BBER_BUCKET_REGION } = process.env
 
-        if (
-            !AWS_ACCESS_KEY_ID ||
-            !AWS_SECRET_ACCESS_KEY ||
-            !BBER_BUCKET_REGION
-        ) {
+        if (!AWS_ACCESS_KEY_ID || !AWS_SECRET_ACCESS_KEY || !BBER_BUCKET_REGION) {
             log.error(
                 '[AWS_ACCESS_KEY_ID], [AWS_SECRET_ACCESS_KEY] and [BBER_BUCKET_REGION] must be set to deploy the project',
             )
@@ -94,9 +86,7 @@ function ensureEnvVars() {
         const { bucket_url } = config
 
         if (!bucket_url) {
-            log.error(
-                '[bucket_url] must be set in config.yml to deploy the project',
-            )
+            log.error('[bucket_url] must be set in config.yml to deploy the project')
         }
 
         resolve({ bucketURL: bucket_url, awsRegion: BBER_BUCKET_REGION })
@@ -108,10 +98,7 @@ function prompt() {
         ensureAwsCli()
             .then(ensureEnvVars)
             .then(response => {
-                const rl = readline.createInterface(
-                    process.stdin,
-                    process.stdout,
-                )
+                const rl = readline.createInterface(process.stdin, process.stdout)
                 const { bucketURL, awsRegion } = response
 
                 console.log('')

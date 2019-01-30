@@ -36,13 +36,7 @@ export function error(...args) {
     this.newLine()
     process.stdout.write(util.format.call(util, stack))
     this.newLine()
-    process.stdout.write(
-        this.decorate(
-            `b-ber exited with code ${errCode}`,
-            'whiteBright',
-            'bgRed',
-        ),
-    )
+    process.stdout.write(this.decorate(`b-ber exited with code ${errCode}`, 'whiteBright', 'bgRed'))
     this.newLine()
     process.exit(errCode)
 }

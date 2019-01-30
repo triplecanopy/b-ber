@@ -120,7 +120,9 @@ const copyPackagedThemeDirectory = name => {
 const updateConfig = name => {
     const configPath = path.join(process.cwd(), 'config.yml')
     const config = YamlAdaptor.load(configPath)
+
     config.theme = name
+
     const config_ = YamlAdaptor.dump(config)
     return fs.writeFile(configPath, config_)
 }
@@ -129,8 +131,7 @@ class Theme {
     static list = () => {
         const { current, themes } = getThemes()
 
-        log.notice('The following themes are available:')
-        console.log(printThemeList(themes, current))
+        log.notice('The following themes are available:', '\n', printThemeList(themes, current))
     }
 
     static install = () =>

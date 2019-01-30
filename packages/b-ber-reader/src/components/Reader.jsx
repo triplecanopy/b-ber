@@ -97,9 +97,7 @@ class Reader extends Component {
         this.updateQueryString = this.updateQueryString.bind(this)
         this.saveViewerSettings = this.saveViewerSettings.bind(this)
         this.registerOverlayElementId = this.registerOverlayElementId.bind(this)
-        this.deRegisterOverlayElementId = this.deRegisterOverlayElementId.bind(
-            this,
-        )
+        this.deRegisterOverlayElementId = this.deRegisterOverlayElementId.bind(this)
         this.showSpinner = this.showSpinner.bind(this)
         this.hideSpinner = this.hideSpinner.bind(this)
 
@@ -111,17 +109,15 @@ class Reader extends Component {
 
         this.debounceResizeSpeed = 400
 
-        this.handleResizeStart = debounce(
-            this.handleResizeStart,
-            this.debounceResizeSpeed,
-            { leading: true, trailing: false },
-        ).bind(this)
+        this.handleResizeStart = debounce(this.handleResizeStart, this.debounceResizeSpeed, {
+            leading: true,
+            trailing: false,
+        }).bind(this)
 
-        this.handleResizeEnd = debounce(
-            this.handleResizeEnd,
-            this.debounceResizeSpeed,
-            { leading: false, trailing: true },
-        ).bind(this)
+        this.handleResizeEnd = debounce(this.handleResizeEnd, this.debounceResizeSpeed, {
+            leading: false,
+            trailing: true,
+        }).bind(this)
     }
 
     addRef = ref => {
@@ -140,8 +136,7 @@ class Reader extends Component {
             overlayElementId: this.state.overlayElementId,
             registerOverlayElementId: this.registerOverlayElementId,
             deRegisterOverlayElementId: this.deRegisterOverlayElementId,
-            requestDeferredCallbackExecution: this
-                .requestDeferredCallbackExecution,
+            requestDeferredCallbackExecution: this.requestDeferredCallbackExecution,
         }
     }
 
@@ -169,11 +164,7 @@ class Reader extends Component {
         const { hash, cssHash, search } = this.state
 
         if (nextProps.search !== search) {
-            const {
-                slug,
-                currentSpineItemIndex,
-                spreadIndex,
-            } = Url.parseQueryString(nextProps.search)
+            const { slug, currentSpineItemIndex, spreadIndex } = Url.parseQueryString(nextProps.search)
             const url = Url.parseQueryString(search)
 
             // load the new spine item if the slug has changed
@@ -205,10 +196,7 @@ class Reader extends Component {
         const { ready } = nextState
         if (ready && ready !== this.state.ready) {
             if (debug && verboseOutput) {
-                console.log(
-                    'Reader#shouldComponentUpdate: requestDeferredCallbackExecution',
-                    `ready: ${ready}`,
-                )
+                console.log('Reader#shouldComponentUpdate: requestDeferredCallbackExecution', `ready: ${ready}`)
             }
             this.requestDeferredCallbackExecution()
         }
@@ -241,11 +229,7 @@ class Reader extends Component {
     }
 
     updateQueryString() {
-        const {
-            currentSpineItem,
-            currentSpineItemIndex,
-            spreadIndex,
-        } = this.state
+        const { currentSpineItem, currentSpineItemIndex, spreadIndex } = this.state
 
         const { slug } = currentSpineItem
         const url = Url.parseQueryString(this.props.search)
@@ -305,18 +289,11 @@ class Reader extends Component {
             return this.loadSpineItem()
         }
 
-        const {
-            currentSpineItem,
-            currentSpineItemIndex,
-            spreadIndex,
-        } = storage[hash]
+        const { currentSpineItem, currentSpineItemIndex, spreadIndex } = storage[hash]
 
-        this.setState(
-            { currentSpineItem, currentSpineItemIndex, spreadIndex },
-            () => {
-                this.loadSpineItem(currentSpineItem)
-            },
-        )
+        this.setState({ currentSpineItem, currentSpineItemIndex, spreadIndex }, () => {
+            this.loadSpineItem(currentSpineItem)
+        })
     }
 
     createStateFromOPF() {
@@ -350,20 +327,13 @@ class Reader extends Component {
             .then(data => {
                 if (logTime) {
                     console.timeEnd('XMLAdaptor.parseNCX(data, opsURL)')
-                    console.time(
-                        'XMLAdaptor.createGuideItems(data),XMLAdaptor.createSpineItems(data)',
-                    )
+                    console.time('XMLAdaptor.createGuideItems(data),XMLAdaptor.createSpineItems(data)')
                 }
-                return Promise.all([
-                    XMLAdaptor.createGuideItems(data),
-                    XMLAdaptor.createSpineItems(data),
-                ])
+                return Promise.all([XMLAdaptor.createGuideItems(data), XMLAdaptor.createSpineItems(data)])
             })
             .then(([a, b]) => {
                 if (logTime) {
-                    console.timeEnd(
-                        'XMLAdaptor.createGuideItems(data),XMLAdaptor.createSpineItems(data)',
-                    )
+                    console.timeEnd('XMLAdaptor.createGuideItems(data),XMLAdaptor.createSpineItems(data)')
                     console.time(
                         'XMLAdaptor.udpateGuideItemURLs(data, opsURL),XMLAdaptor.udpateSpineItemURLs(data, opsURL)',
                     )
@@ -426,9 +396,7 @@ class Reader extends Component {
             // should be cleaned up a bit
             .then(data => {
                 if (logTime) {
-                    console.timeEnd(
-                        'Request.get(requestedSpineItem.absoluteURL)',
-                    )
+                    console.timeEnd('Request.get(requestedSpineItem.absoluteURL)')
                     console.time('XMLAdaptor.parseSpineItemResponse()')
                 }
                 return XMLAdaptor.parseSpineItemResponse({
@@ -516,12 +484,7 @@ class Reader extends Component {
 
         if (debug && verboseOutput) {
             console.group('Reader#handlePageNavigation')
-            console.log(
-                'spreadIndex: %d; nextIndex: %d; spreadTotal %d',
-                spreadIndex,
-                nextIndex,
-                spreadTotal,
-            )
+            console.log('spreadIndex: %d; nextIndex: %d; spreadTotal %d', spreadIndex, nextIndex, spreadTotal)
             console.groupEnd()
         }
 
@@ -534,10 +497,7 @@ class Reader extends Component {
         }
 
         spreadIndex = nextIndex
-        this.setState(
-            { spreadIndex, showSidebar: null },
-            this.updateQueryString,
-        )
+        this.setState({ spreadIndex, showSidebar: null }, this.updateQueryString)
     }
 
     handleChapterNavigation(increment) {
@@ -549,9 +509,7 @@ class Reader extends Component {
         const lastPage = nextIndex > spine.length - 1
 
         if (firstPage || lastPage) {
-            this.setState({ firstPage, lastPage }, () =>
-                Messenger.sendPaginationEvent(this.state),
-            )
+            this.setState({ firstPage, lastPage }, () => Messenger.sendPaginationEvent(this.state))
             return
         }
 
@@ -676,12 +634,7 @@ class Reader extends Component {
     savePosition() {
         if (useLocalStorage === false) return
 
-        const {
-            hash,
-            currentSpineItem,
-            currentSpineItemIndex,
-            spreadIndex,
-        } = this.state
+        const { hash, currentSpineItem, currentSpineItemIndex, spreadIndex } = this.state
 
         let storage = window.localStorage.getItem(this.localStorageKey)
         if (!storage) storage = JSON.stringify({})

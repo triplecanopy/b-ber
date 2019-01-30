@@ -27,11 +27,7 @@ const figure = (data, env) => {
     }
 
     if (!format) {
-        log.error(
-            `bber-templates: [${
-                data.source
-            }] is of unsupported media type [${mime}]`,
-        )
+        log.error(`bber-templates: [${data.source}] is of unsupported media type [${mime}]`)
     }
 
     return figures[_env][format](data)

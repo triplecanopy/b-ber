@@ -40,9 +40,7 @@ class Marker extends Component {
         this.calculateOffsetHeight = this.calculateOffsetHeight.bind(this)
         this.connectObservers = this.connectObservers.bind(this)
         this.disconnectObservers = this.disconnectObservers.bind(this)
-        this.nodeEdgeIsInAllowableRange = this.nodeEdgeIsInAllowableRange.bind(
-            this,
-        )
+        this.nodeEdgeIsInAllowableRange = this.nodeEdgeIsInAllowableRange.bind(this)
 
         // refs
         this.contentNode = null // TODO: should be passed via props @issue: https://github.com/triplecanopy/b-ber/issues/210
@@ -103,17 +101,11 @@ class Marker extends Component {
     // eslint-disable-next-line class-methods-use-this
     nodeEdgeIsInAllowableRange(position, _position) {
         const result =
-            (position >= Marker.ELEMENT_EDGE_VERSO_MIN &&
-                position <= Marker.ELEMENT_EDGE_VERSO_MAX) ||
-            (position >= Marker.ELEMENT_EDGE_RECTO_MIN &&
-                position <= Marker.ELEMENT_EDGE_RECTO_MAX)
+            (position >= Marker.ELEMENT_EDGE_VERSO_MIN && position <= Marker.ELEMENT_EDGE_VERSO_MAX) ||
+            (position >= Marker.ELEMENT_EDGE_RECTO_MIN && position <= Marker.ELEMENT_EDGE_RECTO_MAX)
 
         if (debug && verboseOutput) {
-            console.log(
-                'Marker#nodeEdgeIsInAllowableRange Recalculating layout',
-                position,
-                _position,
-            )
+            console.log('Marker#nodeEdgeIsInAllowableRange Recalculating layout', position, _position)
         }
 
         return result
@@ -137,9 +129,7 @@ class Marker extends Component {
         const pageUnitRecto = x - columnGap - width - paddingLeft
 
         // get the decimal value of the recto unit over the visible frame, rounded to two
-        const position = Number(
-            (Math.abs(pageUnitRecto / layoutUnit) % 1).toFixed(2).substring(2),
-        )
+        const position = Number((Math.abs(pageUnitRecto / layoutUnit) % 1).toFixed(2).substring(2))
 
         // keep a reference of the original calculation for debugging
         const _position = Math.abs(pageUnitRecto / layoutUnit)
@@ -148,12 +138,8 @@ class Marker extends Component {
         // sit within 0.01px of the *left* edge of the visible frame if it's on
         // a verso column. we've effectively multiplied the decimal value by 10
         // above, and check against that sum
-        const verso =
-            position >= Marker.ELEMENT_EDGE_VERSO_MIN &&
-            position <= Marker.ELEMENT_EDGE_VERSO_MAX
-        const recto =
-            position >= Marker.ELEMENT_EDGE_RECTO_MIN &&
-            position <= Marker.ELEMENT_EDGE_RECTO_MAX
+        const verso = position >= Marker.ELEMENT_EDGE_VERSO_MIN && position <= Marker.ELEMENT_EDGE_VERSO_MAX
+        const recto = position >= Marker.ELEMENT_EDGE_RECTO_MIN && position <= Marker.ELEMENT_EDGE_RECTO_MAX
 
         // in the case that the marker's edge is *not* at 0, or within 0.01px
         // of the centre line (usually during browser resize, or as other
@@ -167,15 +153,9 @@ class Marker extends Component {
         // a reflow), the chances of a stack overflow are pretty minimal
         //
         // @issue: https://github.com/triplecanopy/b-ber/issues/211
-        if (
-            this.nodeEdgeIsInAllowableRange(position, _position) !== true ||
-            (verso === false && recto === false)
-        ) {
+        if (this.nodeEdgeIsInAllowableRange(position, _position) !== true || (verso === false && recto === false)) {
             clearTimeout(this.timer)
-            this.timer = setTimeout(
-                this.calculateNodePosition,
-                this.context.transitionSpeed,
-            )
+            this.timer = setTimeout(this.calculateNodePosition, this.context.transitionSpeed)
         }
 
         if (debug && verboseOutput) {
@@ -220,9 +200,7 @@ class Marker extends Component {
     }
 
     connectObservers() {
-        this.resizeObserver = new ResizeObserver(
-            this.calculateNodePositionAfterResize,
-        )
+        this.resizeObserver = new ResizeObserver(this.calculateNodePositionAfterResize)
         this.resizeObserver.observe(this.contentNode)
     }
 

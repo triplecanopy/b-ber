@@ -45,18 +45,15 @@ export const dummy = new File({
 export const getLeadingWhitespace = str => str.match(/^\s*/)[0]
 
 export const getContents = source =>
-    fs
-        .readFile(path.join(state.dist, 'OPS', 'text', source))
-        .then(data => new File({ contents: new Buffer(data) }))
+    fs.readFile(path.join(state.dist, 'OPS', 'text', source)).then(data => new File({ contents: new Buffer(data) }))
 
-export const getRemoteResources = resource =>
-    Promise.resolve(state.config[`remote_${resource}`] || [])
+export const getRemoteResources = resource => Promise.resolve(state.config[`remote_${resource}`] || [])
 
 export const getResources = type =>
-    Promise.all([
-        fs.readdir(path.join(state.dist, 'OPS', type)),
-        getRemoteResources(type),
-    ]).then(([a, b]) => [...a, ...b])
+    Promise.all([fs.readdir(path.join(state.dist, 'OPS', type)), getRemoteResources(type)]).then(([a, b]) => [
+        ...a,
+        ...b,
+    ])
 
 export function* matchIterator(re, str) {
     let match
@@ -168,10 +165,6 @@ export const getJSONLDMetadata = () => [
 export const getInlineScripts = () => [
     new File({
         path: 'env.js',
-        contents: new Buffer(
-            `window.bber = window.bber || {}; window.bber.env = '${
-                state.build
-            }';`,
-        ),
+        contents: new Buffer(`window.bber = window.bber || {}; window.bber.env = '${state.build}';`),
     }),
 ]

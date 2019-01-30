@@ -82,10 +82,7 @@ class ManifestItemProperties {
      * @return {Boolean}
      */
     static isDCElement(data) {
-        return Boolean(
-            {}.hasOwnProperty.call(data, 'term') &&
-                elements.indexOf(data.term) > -1,
-        )
+        return Boolean({}.hasOwnProperty.call(data, 'term') && elements.indexOf(data.term) > -1)
     }
 
     /**
@@ -94,10 +91,7 @@ class ManifestItemProperties {
      * @return {Boolean}
      */
     static isDCTerm(data) {
-        return Boolean(
-            {}.hasOwnProperty.call(data, 'term') &&
-                terms.indexOf(data.term) > -1,
-        )
+        return Boolean({}.hasOwnProperty.call(data, 'term') && terms.indexOf(data.term) > -1)
     }
 
     /**

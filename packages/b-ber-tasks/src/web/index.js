@@ -85,9 +85,7 @@ class WebFlow {
 function initialize() {
     DIST_PATH = state.dist
     OPS_PATH = path.join(DIST_PATH, 'OPS')
-    BASE_URL = {}.hasOwnProperty.call(state.config, 'base_url')
-        ? addTrailingSlash(state.config.base_url)
-        : '/'
+    BASE_URL = {}.hasOwnProperty.call(state.config, 'base_url') ? addTrailingSlash(state.config.base_url) : '/'
 
     ASSETS_TO_UNLINK = [
         path.join(DIST_PATH, 'mimetype'),
@@ -113,11 +111,7 @@ function moveAssetsToRootDirctory() {
         fs.readdir(OPS_PATH, (err, files) => {
             if (err) throw err
 
-            const dirs = files.filter(
-                f =>
-                    f.charAt(0) !== '.' &&
-                    fs.statSync(path.join(OPS_PATH, f)).isDirectory(),
-            )
+            const dirs = files.filter(f => f.charAt(0) !== '.' && fs.statSync(path.join(OPS_PATH, f)).isDirectory())
 
             dirs.forEach(f => {
                 const frm = path.join(OPS_PATH, f)
@@ -211,10 +205,7 @@ function getHeaderElement(fileName) {
 function createNavigationElement() {
     return new Promise(resolve => {
         const { toc } = state
-        const tocHTML = Toc.items(toc).replace(
-            /a href="/g,
-            `a href="${BASE_URL}text/`,
-        )
+        const tocHTML = Toc.items(toc).replace(/a href="/g, `a href="${BASE_URL}text/`)
         const metadataHTML = getProjectMetadataHTML()
         const title = getProjectTitle()
 
@@ -329,9 +320,7 @@ function getEventHandlerScript() {
     return `
         <script type="text/javascript">
         // <![CDATA[
-        ${injectBaseURL(
-            fs.readFileSync(path.join(__dirname, 'event-handlers.js')),
-        )}
+        ${injectBaseURL(fs.readFileSync(path.join(__dirname, 'event-handlers.js')))}
         // ]]>
         </script>
     `
@@ -343,9 +332,7 @@ function injectNavigationIntoFile(filePath, { tocElement, infoElement }) {
         const navigationToggleScript = getNavigationToggleScript()
         const webWorkerScript = getWebWorkerScript()
         const evenHandlerScript = getEventHandlerScript()
-        const headerElement = getHeaderElement(
-            path.basename(filePath, path.extname(filePath)),
-        )
+        const headerElement = getHeaderElement(path.basename(filePath, path.extname(filePath)))
 
         log.info(`Adding pagination to ${path.basename(filePath)}`)
         fs.readFile(filePath, 'utf8', (err, data) => {
@@ -427,34 +414,28 @@ function indexPageContent() {
             .forEach(entry =>
                 promises.push(
                     new Promise((resolve1, reject1) => {
-                        fs.readFile(
-                            path.join(OPS_PATH, `${entry.relativePath}.xhtml`),
-                            'utf8',
-                            (err, data) => {
-                                if (err) reject1(err)
+                        fs.readFile(path.join(OPS_PATH, `${entry.relativePath}.xhtml`), 'utf8', (err, data) => {
+                            if (err) reject1(err)
 
-                                const $ = cheerio.load(data)
-                                const title = $('h1,h2,h3,h4,h5,h6')
-                                    .first()
-                                    .text()
-                                const body = $('body')
-                                    .text()
-                                    .replace(/\n\s+/g, '\n')
-                                    .trim() // reduce whitespace
-                                const url = `${BASE_URL}text/${
-                                    entry.fileName
-                                }.xhtml`
+                            const $ = cheerio.load(data)
+                            const title = $('h1,h2,h3,h4,h5,h6')
+                                .first()
+                                .text()
+                            const body = $('body')
+                                .text()
+                                .replace(/\n\s+/g, '\n')
+                                .trim() // reduce whitespace
+                            const url = `${BASE_URL}text/${entry.fileName}.xhtml`
 
-                                fileIndex += 1
-                                records.push({
-                                    id: fileIndex,
-                                    title,
-                                    body,
-                                    url,
-                                })
-                                resolve1()
-                            },
-                        )
+                            fileIndex += 1
+                            records.push({
+                                id: fileIndex,
+                                title,
+                                body,
+                                url,
+                            })
+                            resolve1()
+                        })
                     }),
                 ),
             )
@@ -486,9 +467,7 @@ function importVendorScripts() {
 
 function writeWebWorker() {
     return new Promise((resolve, reject) => {
-        const worker = injectBaseURL(
-            fs.readFileSync(path.join(__dirname, 'worker.js')),
-        )
+        const worker = injectBaseURL(fs.readFileSync(path.join(__dirname, 'worker.js')))
         fs.writeFile(path.join(DIST_PATH, 'worker.js'), worker, err => {
             if (err) reject(err)
             resolve()

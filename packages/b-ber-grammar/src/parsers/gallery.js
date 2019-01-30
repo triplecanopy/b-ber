@@ -8,8 +8,7 @@ import { htmlId, parseAttrs } from '../syntax/helpers'
 
 // TODO: following is taken from media.es, should be exporting it
 // @issue: https://github.com/triplecanopy/b-ber/issues/203
-const toAlias = fpath =>
-    path.basename(path.basename(fpath, path.extname(fpath)))
+const toAlias = fpath => path.basename(path.basename(fpath, path.extname(fpath)))
 
 const addCaption = (md, t, attrs) => {
     if (!attrs.caption) return
@@ -18,10 +17,7 @@ const addCaption = (md, t, attrs) => {
         {
             type: 'block',
             tag: 'div',
-            attrs: [
-                ['class', 'figcaption'],
-                ['data-caption', htmlId(attrs.source)],
-            ],
+            attrs: [['class', 'figcaption'], ['data-caption', htmlId(attrs.source)]],
             nesting: 1,
         },
         {
@@ -97,10 +93,7 @@ const createMediaElement = (tok, attrs) => {
         tok.children.push({
             type: 'inline',
             tag: 'source',
-            attrs: [
-                ['src', `../media/${path.basename(source)}`],
-                ['type', mime.lookup(source)],
-            ],
+            attrs: [['src', `../media/${path.basename(source)}`], ['type', mime.lookup(source)]],
             nesting: 0,
         })
     })
@@ -138,14 +131,7 @@ const containerPlugin = (md, name, options = {}) => {
     const render = options.render
 
     function container(state, startLine, endLine, silent) {
-        let pos,
-            nextLine,
-            marker_count,
-            markup,
-            params,
-            token,
-            old_parent,
-            old_line_max
+        let pos, nextLine, marker_count, markup, params, token, old_parent, old_line_max
         let auto_closed = false
         let start = state.bMarks[startLine] + state.tShift[startLine]
         let lineNr = startLine + 1
@@ -167,9 +153,7 @@ const containerPlugin = (md, name, options = {}) => {
         markup = state.src.slice(start, pos)
         params = state.src.slice(pos, max)
 
-        if (
-            !validateOpen(params, lineNr) /* && !validateClose(params, lineNr)*/
-        ) {
+        if (!validateOpen(params, lineNr) /* && !validateClose(params, lineNr)*/) {
             return false
         }
         if (silent) return true // for testing validation

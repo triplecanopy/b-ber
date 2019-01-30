@@ -48,17 +48,12 @@ class Initializer {
 
     copyImages() {
         return getAssets().then(assets => {
-            const {
-                'b-ber-logo': bberLogo,
-                'default-publishers-logo': publishersLogo,
-            } = assets
+            const { 'b-ber-logo': bberLogo, 'default-publishers-logo': publishersLogo } = assets
             const images = [bberLogo, publishersLogo]
 
             log.info('Copying development assets')
 
-            const promises = images.map(a =>
-                fs.copy(a, path.join(this.path, '_images', path.basename(a))),
-            )
+            const promises = images.map(a => fs.copy(a, path.join(this.path, '_images', path.basename(a))))
             return Promise.all(promises)
         })
     }

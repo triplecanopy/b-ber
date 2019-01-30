@@ -3,7 +3,7 @@ title: Project Name Colophon
 type: colophon
 ---
 
-::: colophon:project-name_colophon title:"Project Name Colophon"
+::: colophon:project-name-colophon title:"Project Name Colophon"
 
 *Project Title* by Author
 
@@ -26,4 +26,4 @@ Country
 
 *Project Title* is a DRM-free ebook that uses [b-ber](https://github.com/triplecanopy/b-ber), software designed and developed by [Triple Canopy](https://canopycanopycanopy.com).
 
-::: exit:project-name_colophon
+::: exit:project-name-colophon

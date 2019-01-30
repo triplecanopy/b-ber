@@ -7,6 +7,8 @@ import path from 'path'
 import find from 'lodash/find'
 import uniq from 'lodash/uniq'
 import log from '@canopycanopycanopy/b-ber-logger'
+import sequences from '@canopycanopycanopy/b-ber-shapes/sequences'
+import findIndex from 'lodash/findIndex'
 
 /**
  * Get a file's relative path to the OPS
@@ -14,8 +16,7 @@ import log from '@canopycanopycanopy/b-ber-logger'
  * @param  {String} base  Project's base path
  * @return {String}
  */
-export const opsPath = (fpath, base) =>
-    fpath.replace(new RegExp(`^${base}${path.sep}OPS${path.sep}?`), '')
+export const opsPath = (fpath, base) => fpath.replace(new RegExp(`^${base}${path.sep}OPS${path.sep}?`), '')
 
 /**
  * [description]
@@ -50,8 +51,7 @@ export const getImageOrientation = (w, h) => {
  * @param {Object} iterator     [description]
  * @return {*}
  */
-export const forOf = (collection, iterator) =>
-    Object.entries(collection).forEach(([key, val]) => iterator(key, val))
+export const forOf = (collection, iterator) => Object.entries(collection).forEach(([key, val]) => iterator(key, val))
 
 // TODO: the whole figures/generated pages/user-configurable YAML thing should
 // be worked out better. one reason is below, where we need the title of a
@@ -116,34 +116,34 @@ const ensureDirs = (dirs, prefix) => {
             `${prefix}/_project/_media`,
             `${prefix}/_project/_stylesheets`,
             `${prefix}/themes`,
-        ].concat([...dirs]),
+        ].concat(dirs),
     ).map(a => fs.ensureDir(path.join(cwd, a)))
+
     return Promise.all(dirs_)
 }
 
 const ensureFiles = (files, prefix) => {
     const cwd = process.cwd()
-    const files_ = ['epub', 'mobi', 'web', 'sample', 'reader']
+    const files_ = Object.keys(sequences)
         .map(a => ({
             absolutePath: path.join(cwd, prefix, '_project', `${a}.yml`),
             content: '',
         }))
-        .concat([...files])
+        .filter(({ absolutePath }) => findIndex(files, { absolutePath }) < 0)
+        .concat(files)
         .reduce(
             (acc, curr) =>
-                fs.existsSync(curr.absolutePath)
-                    ? acc
-                    : acc.concat(fs.writeFile(curr.absolutePath, curr.content)),
+                fs.existsSync(curr.absolutePath) ? acc : acc.concat(fs.writeFile(curr.absolutePath, curr.content)),
             [],
         )
     return Promise.all(files_)
 }
 
 // make sure all necessary files and directories exist
-export const ensure = (assets = { files: [], dirs: [], prefix: '' }) =>
+export const ensure = ({ files = [], dirs = [], prefix = '' } = {}) =>
     new Promise(resolve =>
-        ensureDirs(assets.dirs, assets.prefix)
-            .then(() => ensureFiles(assets.files, assets.prefix))
+        ensureDirs(dirs, prefix)
+            .then(() => ensureFiles(files, prefix))
             .then(resolve)
             .catch(log.error),
     )

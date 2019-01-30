@@ -19,9 +19,7 @@ class Guide {
                 let item = ''
                 let type
                 if ((type = a.type)) {
-                    log.info(
-                        `guide adding landmark [${a.fileName}] as [${type}]`,
-                    )
+                    log.info(`guide adding landmark [${a.fileName}] as [${type}]`)
 
                     const title = Html.escape(a.title)
                     const href = `${encodeURI(a.relativePath)}.xhtml`

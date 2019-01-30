@@ -1,14 +1,5 @@
 class BookMetadata {
-    constructor({
-        contributor,
-        creator,
-        format,
-        identifier,
-        language,
-        publisher,
-        rights,
-        title,
-    }) {
+    constructor({ contributor, creator, format, identifier, language, publisher, rights, title }) {
         this.contributor = contributor
         this.creator = creator
         this.format = format

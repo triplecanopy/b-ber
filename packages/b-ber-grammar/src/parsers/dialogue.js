@@ -10,14 +10,7 @@ const containerPlugin = (md, name, options = {}) => {
     const render = options.render
 
     function container(state, startLine, endLine, silent) {
-        let pos,
-            nextLine,
-            marker_count,
-            markup,
-            params,
-            token,
-            old_parent,
-            old_line_max
+        let pos, nextLine, marker_count, markup, params, token, old_parent, old_line_max
         let auto_closed = false
         let start = state.bMarks[startLine] + state.tShift[startLine]
         let lineNr = startLine + 1
@@ -39,9 +32,7 @@ const containerPlugin = (md, name, options = {}) => {
         markup = state.src.slice(start, pos)
         params = state.src.slice(pos, max)
 
-        if (
-            !validateOpen(params, lineNr) /* && !validateClose(params, lineNr)*/
-        ) {
+        if (!validateOpen(params, lineNr) /* && !validateClose(params, lineNr)*/) {
             return false
         }
         if (silent) return true // for testing validation
@@ -103,10 +94,7 @@ const containerPlugin = (md, name, options = {}) => {
                     if (parent.type === 'paragraph_open') {
                         parent.attrPush(['class', 'interlocutor-parent'])
                     }
-                    t.content = t.content.replace(
-                        new RegExp(matchedContent[1]),
-                        '',
-                    )
+                    t.content = t.content.replace(new RegExp(matchedContent[1]), '')
                     t.children.push(
                         {
                             type: 'inline',

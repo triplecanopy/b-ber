@@ -20,17 +20,9 @@ const clean = () => {
     const promises = fs
         .readdirSync(projectRoot)
         .filter(a => path.extname(a) === fileType)
-        .map(b =>
-            fs
-                .remove(path.join(projectRoot, b))
-                .then(() => log.info('clean remove [%s]', b)),
-        )
+        .map(b => fs.remove(path.join(projectRoot, b)).then(() => log.info('clean remove [%s]', b)))
 
-    return Promise.all(promises).then(() =>
-        fs
-            .remove(state.dist)
-            .then(() => log.info('clean remove [%s]', state.dist)),
-    )
+    return Promise.all(promises).then(() => fs.remove(state.dist).then(() => log.info('clean remove [%s]', state.dist)))
 }
 
 export default () => clean().catch(log.error)

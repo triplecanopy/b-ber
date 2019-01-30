@@ -31,11 +31,7 @@ export default {
             const [, , id, source] = match
             if (typeof id === 'undefined' || typeof source === 'undefined') {
                 // image requires `id` and `source`
-                log.error(
-                    `Missing [id] or [source] attribute for [figure] directive${
-                        context.filename
-                    }.md:${line}`,
-                )
+                log.error(`Missing [id] or [source] attribute for [figure] directive${context.filename}.md:${line}`)
                 return false
             }
             return match
@@ -50,20 +46,14 @@ export default {
 
             const [, type, id, attrs] = match
             const children = tokens[idx].children
-            const caption = children
-                ? instance.renderInline(tokens[idx].children)
-                : ''
-            const comment = Html.comment(
-                `START: figure:${type}#${htmlId(id)}; ${filename}:${lineNr}`,
-            )
+            const caption = children ? instance.renderInline(tokens[idx].children) : ''
+            const comment = Html.comment(`START: figure:${type}#${htmlId(id)}; ${filename}:${lineNr}`)
             const attrsObject = attributesObject(attrs, type, {
                 filename,
                 lineNr,
             })
             const asset = path.join(state.src, '_images', attrsObject.source)
-            const mediaType =
-                (type.indexOf('-') && type.substring(0, type.indexOf('-'))) ||
-                type
+            const mediaType = (type.indexOf('-') && type.substring(0, type.indexOf('-'))) || type
 
             let result, page, href, classNames, ref, imageData // eslint-disable-line one-var
 
@@ -85,10 +75,7 @@ export default {
 
             switch (type) {
                 case 'figure':
-                    classNames = `figure__small figure__small--${getImageOrientation(
-                        width,
-                        height,
-                    )}`
+                    classNames = `figure__small figure__small--${getImageOrientation(width, height)}`
                     ref = context.filename
 
                     if ({}.hasOwnProperty.call(attrsObject, 'classes')) {
@@ -98,10 +85,7 @@ export default {
                     }
 
                     page = `figure${figureId}.xhtml`
-                    href =
-                        state.build === 'reader'
-                            ? 'figures-titlepage.xhtml'
-                            : page
+                    href = state.build === 'reader' ? 'figures-titlepage.xhtml' : page
 
                     state.add('figures', {
                         id: figureId,
@@ -118,9 +102,9 @@ export default {
                     result = `${comment}<div class="${attrsObject.classes}">
                             <figure id="ref${figureId}">
                                 <a href="${href}#${figureId}">
-                                    <img src="../images/${encodeURIComponent(
-                                        attrsObject.source,
-                                    )}" alt="${attrsObject.alt}"/>
+                                    <img src="../images/${encodeURIComponent(attrsObject.source)}" alt="${
+                        attrsObject.alt
+                    }"/>
                                 </a>
                             </figure>
                         </div>`

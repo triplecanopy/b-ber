@@ -8,9 +8,7 @@ module.exports = {
     fonts: (() => {
         const fontsDir = path.join(__dirname, 'fonts')
         return fs.existsSync(fontsDir)
-            ? fs
-                  .readdirSync(fontsDir)
-                  .filter(a => /\.(otf|ttf|woff2?|eot)/i.test(path.extname(a)))
+            ? fs.readdirSync(fontsDir).filter(a => /\.(otf|ttf|woff2?|eot)/i.test(path.extname(a)))
             : []
     })(),
     images: [],

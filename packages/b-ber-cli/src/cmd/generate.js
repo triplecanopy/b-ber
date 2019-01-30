@@ -21,8 +21,7 @@ const builder = yargs =>
         .usage(`\nUsage: $0 generate\n\n${describe}`)
         .fail((msg, err) => fail(msg, err, yargs))
 
-const handler = () => ({ title, type }) =>
-    ensure().then(() => generate({ title, type }))
+const handler = () => ({ title, type }) => ensure().then(() => generate({ title, type }))
 
 export default {
     command,

@@ -11,10 +11,7 @@ const isBlacklisted = nodeName => blacklistedElementNames.indexOf(nodeName) > -1
 const processFootnoteResponseElement = elem => {
     for (let i = elem.children.length - 1; i >= 0; i--) {
         const child = elem.children[i]
-        if (
-            child.nodeType === window.Node.ELEMENT_NODE &&
-            isBlacklisted(child.nodeName)
-        ) {
+        if (child.nodeType === window.Node.ELEMENT_NODE && isBlacklisted(child.nodeName)) {
             child.parentNode.removeChild(child)
         }
         if (child.nodeName === 'A') {
@@ -60,18 +57,10 @@ class Footnote extends Component {
     }
     componentWillReceiveProps(_, nextContext) {
         const { footnoteVisible } = this.state
-        if (
-            footnoteVisible &&
-            nextContext.overlayElementId !== this.overlayElementId
-        ) {
+        if (footnoteVisible && nextContext.overlayElementId !== this.overlayElementId) {
             this.setState({ footnoteVisible: false })
-        } else if (
-            !footnoteVisible &&
-            nextContext.overlayElementId === this.overlayElementId
-        ) {
-            this.getFootnote().then(() =>
-                this.setState({ footnoteVisible: true }),
-            )
+        } else if (!footnoteVisible && nextContext.overlayElementId === this.overlayElementId) {
+            this.getFootnote().then(() => this.setState({ footnoteVisible: true }))
         }
     }
     getFootnote() {
@@ -87,11 +76,7 @@ class Footnote extends Component {
             const elem = doc.getElementById(id)
 
             if (!elem) {
-                return console.error(
-                    'Could not retrieve footnote %s; Document URL %s',
-                    hash,
-                    this.props.href,
-                )
+                return console.error('Could not retrieve footnote %s; Document URL %s', hash, this.props.href)
             }
 
             this.setState({
@@ -156,17 +141,13 @@ class Footnote extends Component {
                 <span
                     ref={node => (this.footnoteElement = node)}
                     className={classNames('footnote__body', {
-                        'footnote__body--hidden':
-                            !footnoteBody || !footnoteVisible,
+                        'footnote__body--hidden': !footnoteBody || !footnoteVisible,
                     })}
                     style={this.footnoteStyles()}
                     onMouseOut={this.hideFootnote}
                     onBlur={this.hideFootnote}
                 >
-                    <span
-                        className="footnote__content"
-                        dangerouslySetInnerHTML={{ __html: footnoteBody }}
-                    />
+                    <span className="footnote__content" dangerouslySetInnerHTML={{ __html: footnoteBody }} />
                 </span>
             </span>
         )

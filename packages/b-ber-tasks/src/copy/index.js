@@ -53,9 +53,7 @@ const copy = () =>
                         fs.copySync(a.from, a.to, {
                             overwrite: false,
                             errorOnExist: true,
-                            filter: file =>
-                                path.basename(file).charAt(0) !== '.' &&
-                                !ignore[file],
+                            filter: file => path.basename(file).charAt(0) !== '.' && !ignore[file],
                         })
                     } catch (err) {
                         throw err

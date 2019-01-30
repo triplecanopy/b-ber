@@ -42,9 +42,9 @@ class Project {
 - cover:
         in_toc: false
 # Project Contents
-- project-name_title-page
+- project-name-title-page
 - project-name-chapter-01
-- project-name_colophon
+- project-name-colophon
 `,
         }
     }
@@ -169,16 +169,8 @@ class Project {
     static javascripts(src) {
         return [
             {
-                relativePath: Project.relativePath(
-                    src,
-                    '_javascripts',
-                    'application.js',
-                ),
-                absolutePath: Project.absolutePath(
-                    src,
-                    '_javascripts',
-                    'application.js',
-                ),
+                relativePath: Project.relativePath(src, '_javascripts', 'application.js'),
+                absolutePath: Project.absolutePath(src, '_javascripts', 'application.js'),
                 content: `// All user defined functions should be wrapped in a 'domReady' call - or by using a third-party lib like jQuery - for compatibility in reader, web, and e-reader versions.
 // Use the global \`window.bber.env\` variable to limit scripts to particular envionments. See example below
 //
@@ -289,39 +281,23 @@ domReady(main);
     static markdown(src) {
         return [
             {
-                relativePath: Project.relativePath(
-                    src,
-                    '_markdown',
-                    'project-name-title-page.md',
-                ),
-                absolutePath: Project.absolutePath(
-                    src,
-                    '_markdown',
-                    'project-name-title-page.md',
-                ),
+                relativePath: Project.relativePath(src, '_markdown', 'project-name-title-page.md'),
+                absolutePath: Project.absolutePath(src, '_markdown', 'project-name-title-page.md'),
                 content: `---
 title: Project Name Title Page
 type: titlepage
 ---
 
-::: titlepage:project-name_title-page  title:"Project Name Title Page"
+::: titlepage:project-name-title-page  title:"Project Name Title Page"
 
 # Project Title by Author
 
-::: exit:project-name_title-page
+::: exit:project-name-title-page
 `,
             },
             {
-                relativePath: Project.relativePath(
-                    src,
-                    '_markdown',
-                    'project-name-chapter-01.md',
-                ),
-                absolutePath: Project.absolutePath(
-                    src,
-                    '_markdown',
-                    'project-name-chapter-01.md',
-                ),
+                relativePath: Project.relativePath(src, '_markdown', 'project-name-chapter-01.md'),
+                absolutePath: Project.absolutePath(src, '_markdown', 'project-name-chapter-01.md'),
                 content: `---
 title: Project Name Chapter One
 type: bodymatter
@@ -337,22 +313,14 @@ Chapter Contents
 `,
             },
             {
-                relativePath: Project.relativePath(
-                    src,
-                    '_markdown',
-                    'project-name-colophon.md',
-                ),
-                absolutePath: Project.absolutePath(
-                    src,
-                    '_markdown',
-                    'project-name-colophon.md',
-                ),
+                relativePath: Project.relativePath(src, '_markdown', 'project-name-colophon.md'),
+                absolutePath: Project.absolutePath(src, '_markdown', 'project-name-colophon.md'),
                 content: `---
 title: Project Name Colophon
 type: colophon
 ---
 
-::: colophon:project-name_colophon title:"Project Name Colophon"
+::: colophon:project-name-colophon title:"Project Name Colophon"
 
 *Project Title* by Author
 
@@ -375,7 +343,7 @@ Country
 
 *Project Title* is a DRM-free ebook that uses [b-ber](https://github.com/triplecanopy/b-ber), software designed and developed by [Triple Canopy](https://canopycanopycanopy.com).
 
-::: exit:project-name_colophon
+::: exit:project-name-colophon
 `,
             },
         ]

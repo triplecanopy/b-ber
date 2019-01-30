@@ -14,20 +14,14 @@ const createLOILeader = () => {
     const fileName = 'figures-titlepage.xhtml'
     const markup = Template.render('document', Xhtml.loi(), Xhtml.document())
 
-    return fs
-        .writeFile(
-            path.join(state.dist, 'OPS', 'text', `${fileName}`),
-            markup,
-            'utf8',
-        )
-        .then(() => {
-            state.add('guide', {
-                filename: fileName,
-                title: 'Figures',
-                type: 'loi',
-            })
-            log.info(`loi emit default figures titlepage [${fileName}]`)
+    return fs.writeFile(path.join(state.dist, 'OPS', 'text', `${fileName}`), markup, 'utf8').then(() => {
+        state.add('guide', {
+            filename: fileName,
+            title: 'Figures',
+            type: 'loi',
         })
+        log.info(`loi emit default figures titlepage [${fileName}]`)
+    })
 }
 
 const createLOIAsSeparateHTMLFiles = () => {
@@ -37,28 +31,20 @@ const createLOIAsSeparateHTMLFiles = () => {
         const figureStr = figure(data, state.build)
         const markup = Template.render('document', figureStr, Xhtml.document())
 
-        return fs
-            .writeFile(
-                path.join(state.dist, 'OPS', 'text', data.page),
-                markup,
-                'utf8',
-            )
-            .then(() => {
-                const fileData = new SpineItem({
-                    fileName: data.page,
-                    in_toc: false,
-                    ref: data.ref,
-                    pageOrder: data.pageOrder,
-                })
-                state.add('loi', fileData)
-                log.info(`loi linking [${data.source}] to [${data.page}]`)
+        return fs.writeFile(path.join(state.dist, 'OPS', 'text', data.page), markup, 'utf8').then(() => {
+            const fileData = new SpineItem({
+                fileName: data.page,
+                in_toc: false,
+                ref: data.ref,
+                pageOrder: data.pageOrder,
             })
+            state.add('loi', fileData)
+            log.info(`loi linking [${data.source}] to [${data.page}]`)
+        })
     })
 
     return Promise.all(promises).then(() =>
-        state.loi.sort((a, b) =>
-            a.pageOrder < b.pageOrder ? -1 : a.pageOrder > b.pageOrder ? 1 : 0,
-        ),
+        state.loi.sort((a, b) => (a.pageOrder < b.pageOrder ? -1 : a.pageOrder > b.pageOrder ? 1 : 0)),
     )
 }
 
@@ -72,9 +58,7 @@ const createLOIAsSingleHTMLFile = () => {
                 figure(
                     {
                         ...curr,
-                        classes: curr.classes
-                            ? curr.classes.replace(/small/g, 'inline')
-                            : '',
+                        classes: curr.classes ? curr.classes.replace(/small/g, 'inline') : '',
                     },
                     state.build,
                 ),
@@ -85,20 +69,14 @@ const createLOIAsSingleHTMLFile = () => {
     const fileName = 'figures-titlepage.xhtml'
     const markup = Template.render('document', figuresPage, Xhtml.document())
 
-    return fs
-        .writeFile(
-            path.join(state.dist, 'OPS', 'text', `${fileName}`),
-            markup,
-            'utf8',
-        )
-        .then(() => {
-            state.add('guide', {
-                filename: fileName,
-                title: 'Figures',
-                type: 'loi',
-            })
-            log.info(`loi emit figures titlepage [${fileName}]`)
+    return fs.writeFile(path.join(state.dist, 'OPS', 'text', `${fileName}`), markup, 'utf8').then(() => {
+        state.add('guide', {
+            filename: fileName,
+            title: 'Figures',
+            type: 'loi',
         })
+        log.info(`loi emit figures titlepage [${fileName}]`)
+    })
 }
 
 const loi = () => {

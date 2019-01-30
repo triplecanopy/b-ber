@@ -5,19 +5,13 @@ import findIndex from 'lodash/findIndex'
 import ApplicationLoader from './ApplicationLoader'
 
 const dynamicPageTmpl = _ => {
-    throw new Error(
-        '[state.templates#dynamicPageTmpl] has not been initialized in b-ber-modifiers/inject',
-    )
+    throw new Error('[state.templates#dynamicPageTmpl] has not been initialized in b-ber-modifiers/inject')
 }
 const dynamicPageHead = _ => {
-    throw new Error(
-        '[state.templates#dynamicPageHead] has not been initialized in b-ber-modifiers/inject',
-    )
+    throw new Error('[state.templates#dynamicPageHead] has not been initialized in b-ber-modifiers/inject')
 }
 const dynamicPageTail = _ => {
-    throw new Error(
-        '[state.templates#dynamicPageTail] has not been initialized in b-ber-modifiers/inject',
-    )
+    throw new Error('[state.templates#dynamicPageTail] has not been initialized in b-ber-modifiers/inject')
 }
 
 class State extends ApplicationLoader {
@@ -82,9 +76,7 @@ class State extends ApplicationLoader {
     }
 
     _resetEntries() {
-        Object.entries(State.defaults).forEach(
-            ([key, val]) => (this[key] = val),
-        )
+        Object.entries(State.defaults).forEach(([key, val]) => (this[key] = val))
     }
 
     /**
@@ -122,9 +114,7 @@ class State extends ApplicationLoader {
         if (isArray(this[prop])) {
             const index = findIndex(this[prop], val)
             if (index < 0) {
-                throw new TypeError(
-                    `The _property [${val}] could not be found in [state.${prop}]`,
-                )
+                throw new TypeError(`The _property [${val}] could not be found in [state.${prop}]`)
             }
             this[prop].splice(index, 1)
             return

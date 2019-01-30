@@ -63,18 +63,12 @@ class Cover {
         const imageDir = path.join(state.src, '_images')
 
         return fs.readdir(imageDir).then(files => {
-            const _covers = files.filter(a =>
-                path.basename(a).match(new RegExp(this.coverPrefix)),
-            )
+            const _covers = files.filter(a => path.basename(a).match(new RegExp(this.coverPrefix)))
 
             if (!_covers.length) return Promise.resolve()
 
             const promises = _covers.map(a =>
-                fs
-                    .remove(path.join(imageDir, a))
-                    .then(() =>
-                        log.info('remove outdated cover image [%s]', a),
-                    ),
+                fs.remove(path.join(imageDir, a)).then(() => log.info('remove outdated cover image [%s]', a)),
             )
 
             return Promise.all(promises)
@@ -83,18 +77,14 @@ class Cover {
 
     generateDefaultCoverImage() {
         return new Promise(resolve =>
-            childProcess.execFile(
-                phantomjs.path,
-                this.phantomjsArgs,
-                (err, stdout, stderr) => {
-                    if (err) log.error(err)
-                    if (stderr) log.error(stderr)
-                    if (stdout) log.info(stdout)
+            childProcess.execFile(phantomjs.path, this.phantomjsArgs, (err, stdout, stderr) => {
+                if (err) log.error(err)
+                if (stderr) log.error(stderr)
+                if (stdout) log.info(stdout)
 
-                    log.info('cover emit cover image')
-                    resolve()
-                },
-            ),
+                log.info('cover emit cover image')
+                resolve()
+            }),
         )
     }
 
@@ -111,18 +101,12 @@ class Cover {
     generateCoverXHTML() {
         return new Promise(resolve => {
             // get the image dimensions, and pass them to the coverSVG template
-            const { width, height } = imageSize.sync(
-                fs.readFileSync(this.coverImagePath),
-            )
+            const { width, height } = imageSize.sync(fs.readFileSync(this.coverImagePath))
             const href = `images/${encodeURIComponent(this.coverEntry)}`
             const svg = Xhtml.cover({ width, height, href })
 
             // set the content string to be written once resolved
-            this.coverXHTMLContent = Template.render(
-                'page',
-                svg,
-                Xhtml.document(),
-            )
+            this.coverXHTMLContent = Template.render('page', svg, Xhtml.document())
 
             log.info('cover build [cover.xhtml]')
 
@@ -138,14 +122,8 @@ class Cover {
         return new Promise(resolve => {
             let metadata
 
-            this.coverEntry = `${this.coverPrefix}${crypto
-                .randomBytes(20)
-                .toString('hex')}.jpg`
-            this.coverImagePath = path.join(
-                state.src,
-                '_images',
-                this.coverEntry,
-            )
+            this.coverEntry = `${this.coverPrefix}${crypto.randomBytes(20).toString('hex')}.jpg`
+            this.coverImagePath = path.join(state.src, '_images', this.coverEntry)
 
             // check that metadata.yml exists
             log.info('cover verify entry in [metadata.yml]')
@@ -169,19 +147,11 @@ class Cover {
                 // dimensions, and write it to the `text` dir.
 
                 // check that the cover image file exists, throw if not
-                this.coverImagePath = path.join(
-                    state.src,
-                    '_images',
-                    this.coverEntry,
-                )
+                this.coverImagePath = path.join(state.src, '_images', this.coverEntry)
 
                 try {
                     if (!fs.statSync(this.coverImagePath)) {
-                        throw new Error(
-                            `Cover image listed in metadata.yml cannot be found: [${
-                                this.coverImagePath
-                            }]`,
-                        )
+                        throw new Error(`Cover image listed in metadata.yml cannot be found: [${this.coverImagePath}]`)
                     }
                 } catch (err) {
                     log.error(err)

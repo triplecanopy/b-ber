@@ -34,9 +34,7 @@ export function warn(...args) {
     this.newLine()
 
     if (this.logLevel > 3) {
-        process.stdout.write(
-            util.format.call(util, stack.replace(/^Error\s+/, 'Warning ')),
-        )
+        process.stdout.write(util.format.call(util, stack.replace(/^Error\s+/, 'Warning ')))
         this.newLine()
     }
 }

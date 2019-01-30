@@ -51,10 +51,7 @@ function convert(options) {
     })
 
     const settings = { ...defaults, ...options }
-    const bookName = `${settings.fileName}.${settings.fileType.replace(
-        /^\./,
-        '',
-    )}`
+    const bookName = `${settings.fileName}.${settings.fileType.replace(/^\./, '')}`
 
     settings.bookPath = `"${path.resolve(settings.outputPath, bookName)}"`
 

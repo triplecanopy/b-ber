@@ -1,18 +1,17 @@
 /* eslint-disable import/prefer-default-export */
 
-import util from 'util'
-
 export function registerSequence(state, command, sequence) {
-    const message = util.format.call(
-        util,
-        '%s%s %s %s',
-        this.indent(),
-        this.decorate('b-ber', 'whiteBright', 'bgBlack'),
-        this.decorate('Preparing to run', 'black'),
-        this.decorate(sequence.length, 'black'),
-        this.decorate(`task${sequence.length > 1 ? 's' : ''}`, 'black'),
+    const message = this.decorate(
+        this.composeMessage(['Preparing to run', sequence.length, `task${sequence.length > 1 ? 's' : ''}`]),
     )
 
-    process.stdout.write(message)
+    let prefix = ''
+
+    prefix += this.decorate('b-ber', 'whiteBright', 'bgBlack')
+    prefix += ' '
+    prefix += this.decorate('info', 'green')
+    prefix += ' '
+
+    process.stdout.write(`${prefix}${message}`)
     this.newLine()
 }

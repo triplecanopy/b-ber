@@ -6,9 +6,7 @@ export function wrap(arr, space) {
         .reduce((acc, curr) => {
             const a = acc.split('\n')
             const l = a[a.length - 1].length
-            return acc.concat(
-                l > this.consoleWidth ? `\n${space}${curr}, ` : `${curr}, `,
-            )
+            return acc.concat(l > this.consoleWidth ? `\n${space}${curr}, ` : `${curr}, `)
         }, '')
         .slice(0, -2)
 }

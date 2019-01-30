@@ -24,8 +24,7 @@ const pathInfoFromFile = (file, dest) => {
     }
 }
 
-const pathInfoFromFiles = (arr, dest) =>
-    arr.map(file => pathInfoFromFile(file, dest))
+const pathInfoFromFiles = (arr, dest) => arr.map(file => pathInfoFromFile(file, dest))
 
 const flattenSpineFromYAML = arr =>
     arr.reduce((acc, curr) => {

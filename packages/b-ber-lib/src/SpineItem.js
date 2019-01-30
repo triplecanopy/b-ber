@@ -17,9 +17,7 @@ class SpineItem {
 
         this.fileName = fileName
         // this.fileName = `${path.basename(fileName, '.md')}.md`
-        this.pathFragment = SpineItem.isNavigationDocument(this.fileName)
-            ? ''
-            : 'text'
+        this.pathFragment = SpineItem.isNavigationDocument(this.fileName) ? '' : 'text'
         this.relativePath = path.join(this.pathFragment, this.fileName) // relative to OPS
         this.absolutePath = path.join(cwd, this.fileName, this.relativePath)
         this.extension = path.extname(this.fileName)

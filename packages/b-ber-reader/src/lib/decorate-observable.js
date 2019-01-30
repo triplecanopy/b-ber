@@ -38,20 +38,12 @@ export default function observable(target) {
     target.prototype.componentDidMount = function componentDidMount() {
         const { transitionSpeed } = this.props.viewerSettings
 
-        this.calculateNodePositionAfterResize = debounce(
-            this.calculateNodePosition,
-            transitionSpeed,
-            {},
-        ).bind(this)
+        this.calculateNodePositionAfterResize = debounce(this.calculateNodePosition, transitionSpeed, {}).bind(this)
 
-        this.calculateNodePositionAfterMutation = debounce(
-            this.calculateNodePosition,
-            60,
-            {
-                leading: false,
-                trailing: true,
-            },
-        ).bind(this)
+        this.calculateNodePositionAfterMutation = debounce(this.calculateNodePosition, 60, {
+            leading: false,
+            trailing: true,
+        }).bind(this)
 
         if (_componentDidMount) _componentDidMount.call(this, arguments)
 
@@ -68,18 +60,14 @@ export default function observable(target) {
     target.prototype.connectResizeObserver = function connectResizeObserver() {
         if (!this.contentNode) throw new Error("Couldn't find this.contentNode")
 
-        this.__resizeObserver = new ResizeObserver(
-            this.calculateNodePositionAfterResize,
-        )
+        this.__resizeObserver = new ResizeObserver(this.calculateNodePositionAfterResize)
         this.__resizeObserver.observe(this.contentNode)
     }
 
     target.prototype.connectMutationObserver = function connectMutationObserver() {
         if (!this.contentNode) throw new Error("Couldn't find this.contentNode")
 
-        this.__mutationObserver = new window.MutationObserver(
-            this.calculateNodePositionAfterMutation,
-        )
+        this.__mutationObserver = new window.MutationObserver(this.calculateNodePositionAfterMutation)
         this.__mutationObserver.observe(this.contentNode, {
             attributes: true,
             subtree: true,

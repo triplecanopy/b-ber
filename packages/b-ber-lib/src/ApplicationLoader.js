@@ -2,9 +2,7 @@
 
 import path from 'path'
 import fs from 'fs-extra'
-import find from 'lodash/find'
 import mime from 'mime-types'
-import yargs from 'yargs'
 import themes from '@canopycanopycanopy/b-ber-themes'
 import log from '@canopycanopycanopy/b-ber-logger'
 import YamlAdaptor from './YamlAdaptor'
@@ -88,28 +86,17 @@ class ApplicationLoader {
     }
 
     _theme() {
-        // theme prop missing in config
-        if (!this.config.theme) {
-            console.log('if (!this.config.theme) {')
-            log.notice('No [theme] property found in config.yml')
-            log.notice('Using theme [b-ber-theme-serif]')
-            this.theme = themes['b-ber-them-serif']
-            return
-        }
-
         // is set, using a built-in theme
         if (themes[this.config.theme]) {
-            console.log('xxxxxx')
-            console.log('if (themes[this.config.theme]) {')
+            log.notice(`Loaded theme [${this.config.theme}]`)
             this.theme = themes[this.config.theme]
             return
         }
 
         const userThemesPath = path.resolve(cwd, this.config.themes_directory)
-        if (!fs.statSync(userThemesPath)) {
-            console.log('if (!fs.statSync(userThemesPath)) {')
+        if (!fs.existsSync(userThemesPath)) {
             log.notice('No [themes_directory] property found in config.yml')
-            log.notice('Using theme [b-ber-theme-serif]')
+            log.notice('Using default theme [b-ber-theme-serif]')
             this.theme = themes['b-ber-them-serif']
             return
         }
@@ -118,32 +105,18 @@ class ApplicationLoader {
         const userTheme = fs.readdirSync(userThemesPath).find(dirname => dirname === this.config.theme)
 
         if (!userTheme) {
-            console.log('if (!userTheme) {')
-            log.notice(`User defined theme [${this.config.theme}] not found`)
-            return
-        }
-
-        if (!userTheme) {
-            console.log('if (!userTheme) {')
             log.notice(`Could not find user-defined theme [${this.config.theme}]`)
-            log.notice('Using theme [b-ber-theme-serif]')
+            log.notice('Using default theme [b-ber-theme-serif]')
             this.theme = themes['b-ber-them-serif']
             return
         }
 
         try {
             this.theme = require(userTheme)
-            console.log('required')
         } catch (err) {
             log.notice(`There was an error during require [${this.config.theme}]`)
-            log.notice('Using theme [b-ber-theme-serif]')
+            log.notice('Using default theme [b-ber-theme-serif]')
             this.theme = themes['b-ber-them-serif']
-            return
-        }
-
-        if (!this.theme) {
-            console.log('err?')
-            process.exit()
         }
     }
 

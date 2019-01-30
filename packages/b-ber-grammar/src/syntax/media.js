@@ -12,13 +12,11 @@ import { attributesString, attributesObject, htmlId } from './helpers'
 const markerRe = /^(video|audio)/
 const directiveRe = /(audio(?:-inline)?|video(?:-inline)?)(?::([^\s]+)(\s+.*)?)?$/
 
-const toAlias = fpath =>
-    path.basename(path.basename(fpath, path.extname(fpath)))
+const toAlias = fpath => path.basename(path.basename(fpath, path.extname(fpath)))
 
 const isHostedRemotely = asset => /^http/.test(asset)
 
-const isHostedBySupportedThirdParty = asset =>
-    asset.match(/(vimeo|youtube)\.com/)
+const isHostedBySupportedThirdParty = asset => asset.match(/(vimeo|youtube)\.com/)
 
 const validatePosterImage = (_asset, type) => {
     const asset = path.join(state.src, '_images', _asset)
@@ -26,14 +24,9 @@ const validatePosterImage = (_asset, type) => {
     try {
         if (!fs.existsSync(asset)) {
             if (isInlineMedia) {
-                throw new Error(
-                    'bber-directives: inline media directives requires a [poster] attribute, aborting',
-                    1,
-                )
+                throw new Error('bber-directives: inline media directives requires a [poster] attribute, aborting', 1)
             } else {
-                throw new Error(
-                    `bber-directives: Poster image for [${type}] does not exist`,
-                )
+                throw new Error(`bber-directives: Poster image for [${type}] does not exist`)
             }
         }
     } catch (err) {
@@ -57,17 +50,11 @@ const validateLocalMediaSource = (asset, mediaType) => {
 
 const createLocalMediaSources = sources =>
     sources.reduce(
-        (acc, curr) =>
-            acc.concat(
-                `<source src="../media/${path.basename(
-                    curr,
-                )}" type="${mime.lookup(curr)}"/>`,
-            ),
+        (acc, curr) => acc.concat(`<source src="../media/${path.basename(curr)}" type="${mime.lookup(curr)}"/>`),
         '',
     )
 
-const createRemoteMediaSource = sources =>
-    `<source src="${sources[0]}" type="${mime.lookup(sources[0])}"/>`
+const createRemoteMediaSource = sources => `<source src="${sources[0]}" type="${mime.lookup(sources[0])}"/>`
 
 export default {
     plugin: figure,
@@ -87,9 +74,7 @@ export default {
             const [, , id, attrs] = match
 
             let type = match[1]
-            const mediaType =
-                (type.indexOf('-') && type.substring(0, type.indexOf('-'))) ||
-                type
+            const mediaType = (type.indexOf('-') && type.substring(0, type.indexOf('-'))) || type
 
             const attrsObject = attributesObject(attrs, type, {
                 filename,
@@ -97,9 +82,7 @@ export default {
             })
             const media = [...state[mediaType]]
             const children = tokens[idx].children
-            const caption = children
-                ? instance.renderInline(tokens[idx].children)
-                : ''
+            const caption = children ? instance.renderInline(tokens[idx].children) : ''
 
             let sources = []
             let sourceElements = ''
@@ -114,25 +97,19 @@ export default {
 
             if (attrsObject.poster) {
                 poster = validatePosterImage(attrsObject.poster, type)
-                poster = `../images/${encodeURIComponent(
-                    path.basename(poster),
-                )}`
+                poster = `../images/${encodeURIComponent(path.basename(poster))}`
                 attrsObject.poster = poster
             }
 
             const { source } = attrsObject
 
             if (!source) {
-                err = new Error(
-                    `bber-directives: Directive [${type}] requires a [source] attribute, aborting`,
-                )
+                err = new Error(`bber-directives: Directive [${type}] requires a [source] attribute, aborting`)
                 log.error(err)
             }
 
             if (isHostedRemotely(source)) {
-                const supportedThirdParty = isHostedBySupportedThirdParty(
-                    source,
-                )
+                const supportedThirdParty = isHostedBySupportedThirdParty(source)
                 if (supportedThirdParty) {
                     ;[, provider] = supportedThirdParty
                     type = type.replace(/(audio|video)/, 'iframe') // iframe, iframe-inline
@@ -147,14 +124,8 @@ export default {
                 sourceElements = createLocalMediaSources(sources)
             }
 
-            if (
-                !sources.length &&
-                type !== 'iframe' &&
-                type !== 'iframe-inline'
-            ) {
-                err = new Error(
-                    `bber-directives: Could not find matching [${mediaType}] with the basename [${source}]`,
-                )
+            if (!sources.length && type !== 'iframe' && type !== 'iframe-inline') {
+                err = new Error(`bber-directives: Could not find matching [${mediaType}] with the basename [${source}]`)
                 log.error(err)
             }
 
@@ -169,15 +140,10 @@ export default {
                 state.build === 'web' || state.build === 'reader'
                     ? ' webkit-playsinline="webkit-playsinline" playsinline="playsinline"'
                     : ''
-            const commentStart = Html.comment(
-                `START: ${mediaType}:${type}#${figureId};`,
-            )
-            const commentEnd = Html.comment(
-                `END: ${mediaType}:${type}#${figureId};`,
-            )
+            const commentStart = Html.comment(`START: ${mediaType}:${type}#${figureId};`)
+            const commentEnd = Html.comment(`END: ${mediaType}:${type}#${figureId};`)
             const page = `figure-${figureId}.xhtml`
-            const href =
-                state.build === 'reader' ? 'figures-titlepage.xhtml' : page
+            const href = state.build === 'reader' ? 'figures-titlepage.xhtml' : page
 
             switch (type) {
                 case 'iframe':
@@ -211,11 +177,7 @@ export default {
                     return `${commentStart}
                         <section id="${figureId}">
                             <iframe src="${Url.encodeQueryString(source)}" />
-                            ${
-                                caption
-                                    ? `<p class="caption caption__${mediaType}">${caption}</p>`
-                                    : ''
-                            }
+                            ${caption ? `<p class="caption caption__${mediaType}">${caption}</p>` : ''}
                         </section>
                     ${commentEnd}`
 
@@ -232,19 +194,11 @@ export default {
                                 </div>
                                 <p class="media__fallback__${mediaType} media__fallback--text">Your device does not support the HTML5 ${mediaType} API.</p>
                             </${mediaType}>
-                            ${
-                                caption
-                                    ? `<p class="caption caption__${mediaType}">${caption}</p>`
-                                    : ''
-                            }
+                            ${caption ? `<p class="caption caption__${mediaType}">${caption}</p>` : ''}
                         </section>
                         ${commentEnd}`
                 default:
-                    throw new Error(
-                        `Something went wrong parsing [${source}] in [${
-                            context.filename
-                        }]`,
-                    )
+                    throw new Error(`Something went wrong parsing [${source}] in [${context.filename}]`)
             }
         },
     }),

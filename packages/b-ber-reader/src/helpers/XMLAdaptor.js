@@ -50,14 +50,12 @@ class XMLAdaptor {
             if (!item) return resolve({ ...rootNode, __ncx })
 
             const { href } = item.attributes
-            Request.get(Url.resolveRelativeURL(opsURL, href)).then(
-                ({ data }) => {
-                    resolve({
-                        ...rootNode,
-                        __ncx: JSON.parse(xmljs.xml2json(data)),
-                    })
-                },
-            )
+            Request.get(Url.resolveRelativeURL(opsURL, href)).then(({ data }) => {
+                resolve({
+                    ...rootNode,
+                    __ncx: JSON.parse(xmljs.xml2json(data)),
+                })
+            })
         })
     }
     static createSpineItems(rootNode) {
@@ -67,17 +65,12 @@ class XMLAdaptor {
 
             spine = __spine.elements.map(itemref => {
                 const { idref, linear } = itemref.attributes
-                const item = find(
-                    __manifest.elements,
-                    a => a.attributes.id === idref,
-                )
+                const item = find(__manifest.elements, a => a.attributes.id === idref)
                 if (!item || linear !== 'yes') return null // spine item not found in manifest (!) or non-linear
 
                 const { id, href } = item.attributes
                 const mediaType = item.attributes['media-type']
-                const properties = item.attributes.properties
-                    ? item.attributes.properties.split(' ')
-                    : []
+                const properties = item.attributes.properties ? item.attributes.properties.split(' ') : []
                 const spineItem = new SpineItem({
                     id,
                     href,
@@ -94,9 +87,7 @@ class XMLAdaptor {
             if (__ncx) {
                 const { elements } = __ncx.elements[0]
                 const navMap = find(elements, { name: 'navMap' })
-                navMap.elements.forEach(navPoint =>
-                    XMLAdaptor.parseNavPoints(spine, __manifest, navPoint),
-                )
+                navMap.elements.forEach(navPoint => XMLAdaptor.parseNavPoints(spine, __manifest, navPoint))
             }
 
             resolve({ ...rootNode, spine })
@@ -144,10 +135,7 @@ class XMLAdaptor {
 
         let { src } = content.attributes
         src = Url.ensureDecodedURL(src)
-        const item = find(
-            manifest.elements,
-            a => Url.ensureDecodedURL(a.attributes.href) === src,
-        )
+        const item = find(manifest.elements, a => Url.ensureDecodedURL(a.attributes.href) === src)
         if (!item) return console.error(`Could not find manifest item: ${src}`)
 
         const { id } = item.attributes
@@ -167,15 +155,7 @@ class XMLAdaptor {
         if (parent) parent.addChild(spineItem)
 
         const depth_ = depth + 1
-        navPoint.elements.forEach(child =>
-            XMLAdaptor.parseNavPoints(
-                spine,
-                manifest,
-                child,
-                depth_,
-                spineItem,
-            ),
-        )
+        navPoint.elements.forEach(child => XMLAdaptor.parseNavPoints(spine, manifest, child, depth_, spineItem))
     }
 
     static createBookMetadata(rootNode) {
@@ -241,10 +221,7 @@ class XMLAdaptor {
             for (let i = 0; i < links.length; i++) {
                 if (links[i].rel === 'stylesheet') {
                     const base = Url.trimFilenameFromResponse(responseURL)
-                    const url = Url.resolveRelativeURL(
-                        base,
-                        Url.trimSlashes(links[i].getAttribute('href')),
-                    )
+                    const url = Url.resolveRelativeURL(base, Url.trimSlashes(links[i].getAttribute('href')))
 
                     styles.push({ url, base })
                 }
@@ -266,19 +243,13 @@ class XMLAdaptor {
             })
 
             if (logTime) {
-                console.time(
-                    'XMLAdaptor#parseSpineItemResponse: get stylesheets',
-                )
+                console.time('XMLAdaptor#parseSpineItemResponse: get stylesheets')
             }
 
             Promise.all(promises).then(sheets => {
                 if (logTime) {
-                    console.timeEnd(
-                        'XMLAdaptor#parseSpineItemResponse: get stylesheets',
-                    )
-                    console.time(
-                        'XMLAdaptor#parseSpineItemResponse: parse stylesheets',
-                    )
+                    console.timeEnd('XMLAdaptor#parseSpineItemResponse: get stylesheets')
+                    console.time('XMLAdaptor#parseSpineItemResponse: parse stylesheets')
                 }
 
                 const hashedClassName = `_${hash}`
@@ -309,20 +280,12 @@ class XMLAdaptor {
 
                             // these need to be synced with the
                             // HTML structure in Layout.jsx
-                            if (
-                                list &&
-                                node.type === 'TypeSelector' &&
-                                node.name === 'html'
-                            ) {
+                            if (list && node.type === 'TypeSelector' && node.name === 'html') {
                                 node.name = hashedClassName // eslint-disable-line no-param-reassign
                                 node.type = 'ClassSelector' // eslint-disable-line no-param-reassign
                             }
 
-                            if (
-                                list &&
-                                node.type === 'TypeSelector' &&
-                                node.name === 'body'
-                            ) {
+                            if (list && node.type === 'TypeSelector' && node.name === 'body') {
                                 node.name = 'content' // eslint-disable-line no-param-reassign
                                 node.type = 'IdSelector' // eslint-disable-line no-param-reassign
                             }
@@ -345,17 +308,11 @@ class XMLAdaptor {
                                 nodeText = value.value
 
                                 if (value.type !== 'Raw') {
-                                    nodeText = nodeText.substr(
-                                        1,
-                                        nodeText.length - 2,
-                                    ) // trim quotes
+                                    nodeText = nodeText.substr(1, nodeText.length - 2) // trim quotes
                                 }
 
                                 if (Url.isRelativeURL(nodeText)) {
-                                    nodeText = Url.resolveRelativeURL(
-                                        styleSheetURL,
-                                        nodeText,
-                                    )
+                                    nodeText = Url.resolveRelativeURL(styleSheetURL, nodeText)
                                     node.value.value = `"${nodeText}"` // eslint-disable-line no-param-reassign
                                 }
                             }
@@ -366,9 +323,7 @@ class XMLAdaptor {
                 })
 
                 if (logTime) {
-                    console.timeEnd(
-                        'XMLAdaptor#parseSpineItemResponse: parse stylesheets',
-                    )
+                    console.timeEnd('XMLAdaptor#parseSpineItemResponse: parse stylesheets')
                     console.timeEnd('XMLAdaptor#parseSpineItemResponse')
                 }
 

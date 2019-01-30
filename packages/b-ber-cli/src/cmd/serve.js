@@ -17,12 +17,7 @@ const builder = yargs =>
     yargs
         .command('', 'Serve the Web build', () => {}, () => handler(yargs))
         .command('web', 'Serve the Web build', () => {}, () => handler(yargs))
-        .command(
-            'reader',
-            'Serve the Reader build',
-            () => {},
-            () => handler(yargs),
-        )
+        .command('reader', 'Serve the Reader build', () => {}, () => handler(yargs))
         .help('h')
         .alias('h', 'help')
         .usage(`\nUsage: $0 serve\n\n${describe}`)

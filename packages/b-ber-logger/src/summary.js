@@ -26,17 +26,7 @@ function printNavigation(data, context, indent = 0) {
     const indent_ = INDENTATION.repeat(indent)
     function render(_data, _context) {
         _data.forEach(item => {
-            write(
-                [
-                    [
-                        `${indent_}${item.title || '[no title]'} : ${
-                            item.name
-                        }`,
-                        'black',
-                    ],
-                ],
-                _context,
-            )
+            write([[`${indent_}${item.title || '[no title]'} : ${item.name}`]], _context)
 
             if (item.nodes && item.nodes.length) {
                 render(item.nodes, _context)
@@ -50,7 +40,7 @@ function printNavigation(data, context, indent = 0) {
 function writeMetadata(data, context) {
     Object.entries(data).forEach(([, v]) => {
         if (isPlainObject(v)) {
-            write([[`${v.term} : ${v.value}`, 'black']], context)
+            write([[`${v.term} : ${v.value}`]], context)
         }
     })
 }
@@ -59,27 +49,22 @@ function writeConfig(data, context, indent = 0) {
     const indent_ = INDENTATION.repeat(indent)
     Object.entries(data).forEach(([k, v]) => {
         if (typeof v === 'string') {
-            write([[`${indent_}${k} : ${v}`, 'black']], context)
+            write([[`${indent_}${k} : ${v}`]], context)
         }
 
         if (isPlainObject(v)) {
-            write([[`${indent_}${k}`, 'black']], context)
+            write([[`${indent_}${k}`]], context)
             writeConfig(v, context, indent + 1)
         }
     })
 }
 
-export function printSummary({
-    state,
-    formattedStartDate,
-    formattedEndDate,
-    sequenceEnd,
-}) {
-    write([['start        ', 'green'], [formattedStartDate, 'black']], this)
+export function printSummary({ state, formattedStartDate, formattedEndDate, sequenceEnd }) {
+    write([['start        ', 'green'], [formattedStartDate]], this)
 
-    write([['end          ', 'green'], [formattedEndDate, 'black']], this)
+    write([['end          ', 'green'], [formattedEndDate]], this)
 
-    write([['time         ', 'green'], [sequenceEnd, 'black']], this)
+    write([['time         ', 'green'], [sequenceEnd]], this)
 
     write([['configuration', 'green']], this)
 

@@ -4,10 +4,7 @@ import { rand } from '../helpers/utils'
 
 class DocumentProcessor {
     static defaults = {
-        targetClassNames: [
-            ['figure__inline', 'figure__large', 'figure__fullbleed'],
-            ['spread'],
-        ],
+        targetClassNames: [['figure__inline', 'figure__large', 'figure__fullbleed'], ['spread']],
         blacklistedClassNames: [['gallery__item', 'figure__items']],
         markerClassNames: 'marker',
         markerElement: 'span',
@@ -75,15 +72,11 @@ class DocumentProcessor {
     }
 
     classListContainsAll(node, classNames) {
-        return classNames.some(list =>
-            list.every(name => node.classList.contains(name)),
-        )
+        return classNames.some(list => list.every(name => node.classList.contains(name)))
     }
 
     classListContainsNone(node, classNames) {
-        return classNames.some(list =>
-            list.every(name => !node.classList.contains(name)),
-        )
+        return classNames.some(list => list.every(name => !node.classList.contains(name)))
     }
 
     shouldParse(node) {
@@ -179,14 +172,8 @@ class DocumentProcessor {
 
     addMarkerReferenceToChild(node, markerId) {
         for (let i = 0; i < node.children.length; i++) {
-            if (
-                node.children[i].nodeName === 'FIGURE' ||
-                node.children[i].classList.contains('spread__content')
-            ) {
-                node.children[i].setAttribute(
-                    'data-marker-reference-figure',
-                    markerId,
-                )
+            if (node.children[i].nodeName === 'FIGURE' || node.children[i].classList.contains('spread__content')) {
+                node.children[i].setAttribute('data-marker-reference-figure', markerId)
             }
         }
     }
@@ -208,10 +195,7 @@ class DocumentProcessor {
                         node.setAttribute('data-marker-reference', markerId)
                         this.addMarkerReferenceToChild(node, markerId)
                     } else {
-                        console.warn(
-                            'No siblings or children could be found for',
-                            node.nodeName,
-                        )
+                        console.warn('No siblings or children could be found for', node.nodeName)
 
                         const elem = this.createMarker(markerId)
                         elem.setAttribute('data-unbound', true)
@@ -254,16 +238,10 @@ class DocumentProcessor {
         for (let j = 0; j < markers.length; j++) {
             const markerId = markers[j].dataset.marker
             const markerData = typeof markerId !== 'undefined'
-            console.assert(
-                markerData,
-                `Marker ${j} does not have a marker attribute`,
-            )
+            console.assert(markerData, `Marker ${j} does not have a marker attribute`)
 
             const refExists = refHash[markerId]
-            console.assert(
-                refExists,
-                `Reference for marker ${j} (${markerId}) could not be found`,
-            )
+            console.assert(refExists, `Reference for marker ${j} (${markerId}) could not be found`)
 
             if (!markerData) validMarkers = false
             if (!refExists) validRefs = false
@@ -288,10 +266,7 @@ class DocumentProcessor {
             if (!this.validateDocument(nextDoc)) {
                 err = new Error('Invalid markup')
             }
-            xml = xmlString.replace(
-                /<body([^>]*?)>[\s\S]*<\/body>/g,
-                `<body$1>${String(doc.body.innerHTML)}</body>`,
-            )
+            xml = xmlString.replace(/<body([^>]*?)>[\s\S]*<\/body>/g, `<body$1>${String(doc.body.innerHTML)}</body>`)
         })
 
         const result = { xml, doc }

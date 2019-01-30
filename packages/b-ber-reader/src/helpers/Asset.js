@@ -71,10 +71,7 @@ class Asset {
             match = key.match(vendorPrefixRe)
 
             if (match) {
-                key = key.replace(
-                    vendorPrefixRe,
-                    `${vendorPrefixes[match[1]]}-`,
-                )
+                key = key.replace(vendorPrefixRe, `${vendorPrefixes[match[1]]}-`)
                 key = camelCase(key)
                 key = key[0].toUpperCase() + key.slice(1)
             } else {

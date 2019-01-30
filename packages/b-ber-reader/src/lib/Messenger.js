@@ -19,12 +19,7 @@ class Messenger {
         return Messenger.MESSAGE_DOMAIN
     }
 
-    static sendPaginationEvent({
-        spreadIndex,
-        spreadTotal,
-        firstPage,
-        lastPage,
-    }) {
+    static sendPaginationEvent({ spreadIndex, spreadTotal, firstPage, lastPage }) {
         const event = new PageEvent({
             spreadIndex,
             spreadTotal,
@@ -40,10 +35,7 @@ class Messenger {
     }
 
     static sendClickEvent(event) {
-        window.parent.postMessage(
-            { ...event, type: messagesTypes.CLICK_EVENT },
-            Messenger.MESSAGE_DOMAIN,
-        )
+        window.parent.postMessage({ ...event, type: messagesTypes.CLICK_EVENT }, Messenger.MESSAGE_DOMAIN)
     }
 
     static sendKeydownEvent(event) {
@@ -78,9 +70,7 @@ class Messenger {
     }
 
     static clear() {
-        registry.forEach(
-            (entry, key) => entry.handler && Messenger.deregister(key),
-        )
+        registry.forEach((entry, key) => entry.handler && Messenger.deregister(key))
         registry.clear()
     }
 }

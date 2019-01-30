@@ -41,11 +41,7 @@ const render = ({ context = {} }) => (tokens, idx) => {
             // transparent way. refactoring candidate.
             // @issue: https://github.com/triplecanopy/b-ber/issues/204
 
-            if (
-                directive &&
-                directive.type === 'gallery' &&
-                (state.build === 'web' || state.build === 'reader')
-            ) {
+            if (directive && directive.type === 'gallery' && (state.build === 'web' || state.build === 'reader')) {
                 state.remove('cursor', { id })
                 // prettier-ignore
                 result = `
@@ -74,9 +70,7 @@ const render = ({ context = {} }) => (tokens, idx) => {
 
             log.debug(`open directive [${id}]`)
 
-            const comment = Html.comment(
-                `START: section:${type}#${htmlId(id)}; ${filename}:${lineNr}`,
-            )
+            const comment = Html.comment(`START: section:${type}#${htmlId(id)}; ${filename}:${lineNr}`)
             const attrs = attributes(att, type, { filename, lineNr })
             result = `${comment}<section id="${htmlId(id)}"${attrs}>`
         }

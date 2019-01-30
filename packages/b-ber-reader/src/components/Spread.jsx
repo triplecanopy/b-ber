@@ -11,14 +11,7 @@ import { messagesTypes } from '../constants'
 import Viewport from '../helpers/Viewport'
 
 const SpreadStyleBlock = props => {
-    const {
-        spreadPosition,
-        markerRefId,
-        unbound,
-        paddingLeft,
-        recto,
-        markerX,
-    } = props
+    const { spreadPosition, markerRefId, unbound, paddingLeft, recto, markerX } = props
 
     const offsetLeftPrevious = unbound ? 0 : paddingLeft * 2
     const offsetLeftCurrent = unbound ? paddingLeft * 2 : 0
@@ -58,11 +51,7 @@ const SpreadStyleBlock = props => {
         .spread-index__${spreadPosition_ + 2} #spread__${markerRefId} > .spread__content { transform: translateX(${offsetLeftNext}px); }
     `
     return (
-        <style
-            id={`style__${markerRefId}`}
-            data-position={spreadPosition_}
-            data-marker-x={markerX}
-        >
+        <style id={`style__${markerRefId}`} data-position={spreadPosition_} data-marker-x={markerX}>
             {Viewport.isMobile() ? null : styles}
         </style>
     )
@@ -110,16 +99,10 @@ class Spread extends Component {
         this.messageKey = null
 
         this.calculateSpreadOffset = this.calculateSpreadOffset.bind(this)
-        this.updateChildElementPositions = this.updateChildElementPositions.bind(
-            this,
-        )
+        this.updateChildElementPositions = this.updateChildElementPositions.bind(this)
         this.connectResizeObserver = this.connectResizeObserver.bind(this)
         this.disconnectResizeObserver = this.disconnectResizeObserver.bind(this)
-        this.debounceCalculateSpreadOffset = debounce(
-            this.calculateSpreadOffset,
-            this.debounceSpeed,
-            {},
-        ).bind(this)
+        this.debounceCalculateSpreadOffset = debounce(this.calculateSpreadOffset, this.debounceSpeed, {}).bind(this)
     }
     getChildContext() {
         return {
@@ -132,9 +115,7 @@ class Spread extends Component {
     componentWillReceiveProps(_, nextContext) {
         const markerRefId = this.props['data-marker-reference']
         if (nextContext.refs[markerRefId]) {
-            const { verso, recto, x, markerId, unbound } = nextContext.refs[
-                markerRefId
-            ]
+            const { verso, recto, x, markerId, unbound } = nextContext.refs[markerRefId]
 
             if (
                 verso !== this.state.marker.verso ||
@@ -143,10 +124,7 @@ class Spread extends Component {
                 markerId !== this.state.marker.markerId ||
                 unbound !== this.state.marker.unbound
             ) {
-                this.setState(
-                    { marker: nextContext.refs[markerRefId] },
-                    this.updateChildElementPositions,
-                )
+                this.setState({ marker: nextContext.refs[markerRefId] }, this.updateChildElementPositions)
             }
         }
     }
@@ -170,13 +148,9 @@ class Spread extends Component {
     connectResizeObserver() {
         const contentNode = document.querySelector('#content')
         if (!contentNode) {
-            return console.error(
-                'Spread#connectResizeObserver: No #content node',
-            )
+            return console.error('Spread#connectResizeObserver: No #content node')
         }
-        this.resizeObserver = new ResizeObserver(
-            this.debounceCalculateSpreadOffset,
-        )
+        this.resizeObserver = new ResizeObserver(this.debounceCalculateSpreadOffset)
         this.resizeObserver.observe(contentNode)
     }
     disconnectResizeObserver() {

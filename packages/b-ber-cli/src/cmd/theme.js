@@ -14,7 +14,7 @@ const builder = yargs =>
     yargs
         .positional('command', {
             describe: 'Theme command to execute',
-            choices: ['set', 'list', 'ls', 'install'],
+            choices: ['set', 'list', 'install'],
             type: 'string',
         })
         .positional('options', {

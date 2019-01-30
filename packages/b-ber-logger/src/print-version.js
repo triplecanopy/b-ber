@@ -8,7 +8,7 @@ export function printVersion(version) {
         '%s%s %s %s',
         this.indent(),
         this.decorate('b-ber', 'whiteBright', 'bgBlack'),
-        this.decorate('version', 'black'),
+        this.decorate('version'),
         this.decorate(version, 'magenta'),
     )
 

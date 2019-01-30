@@ -39,33 +39,22 @@ class DocumentPreProcessor {
     }
 
     static appendStyleSheets() {
-        state.styleSheets.forEach(
-            a =>
-                state.root.querySelector(`#${a.id}`) === null &&
-                a.appendSheet(state.root),
-        )
+        state.styleSheets.forEach(a => state.root.querySelector(`#${a.id}`) === null && a.appendSheet(state.root))
     }
 
     static appendScripts() {
         state.scripts.forEach(
-            a =>
-                /(?:text|application)\/(?:(x-)?java|ecma)script/.test(a.type) &&
-                a.appendScript(state.root),
+            a => /(?:text|application)\/(?:(x-)?java|ecma)script/.test(a.type) && a.appendScript(state.root),
         )
     }
 
     static createScriptElements() {
-        const scriptElements = Array.prototype.slice.call(
-            state.document.querySelectorAll('script') || [],
-            0,
-        )
+        const scriptElements = Array.prototype.slice.call(state.document.querySelectorAll('script') || [], 0)
         const { requestURI, scripts } = state
 
         if (!scriptElements) return scripts
 
-        state.scripts = scriptElements.map(
-            node => new Script({ node, requestURI }),
-        )
+        state.scripts = scriptElements.map(node => new Script({ node, requestURI }))
 
         return state.scripts
     }
@@ -79,9 +68,7 @@ class DocumentPreProcessor {
 
     static getStyleSheetByMediaOrId({ id, media }) {
         if (!id && !media) {
-            return console.warn(
-                "DocumentPreProcessor#updateStyleSheet requires either and 'id' or a 'media' parameter",
-            )
+            return console.warn("DocumentPreProcessor#updateStyleSheet requires either and 'id' or a 'media' parameter")
         }
 
         let styleSheetId
@@ -91,11 +78,7 @@ class DocumentPreProcessor {
         } else if (media) {
             const _styleSheet = find(this.styleSheets, { media })
             if (!_styleSheet) {
-                return console.warn(
-                    "No styleSheet exists for provided 'id' or 'media'",
-                    id,
-                    media,
-                )
+                return console.warn("No styleSheet exists for provided 'id' or 'media'", id, media)
             }
 
             styleSheetId = _styleSheet.id
@@ -104,20 +87,14 @@ class DocumentPreProcessor {
         const styleSheetElement = state.root.querySelector(`#${styleSheetId}`)
 
         if (!styleSheetElement) {
-            return console.warn(
-                "No styleSheet exists for provided 'id' or 'media'",
-                id,
-                media,
-            )
+            return console.warn("No styleSheet exists for provided 'id' or 'media'", id, media)
         }
 
         return { styleSheetElement, styleSheetId }
     }
 
     static removeStyleSheet({ id, media }) {
-        const {
-            styleSheetElement,
-        } = DocumentPreProcessor.getStyleSheetByMediaOrId({ id, media })
+        const { styleSheetElement } = DocumentPreProcessor.getStyleSheetByMediaOrId({ id, media })
         styleSheetElement.parentNode.removeChild(styleSheetElement)
         state.styleSheets = [...state.styleSheets.filter(a => a.id !== id)]
     }

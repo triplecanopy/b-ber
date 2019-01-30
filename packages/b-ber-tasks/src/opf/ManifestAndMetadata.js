@@ -38,8 +38,7 @@ class ManifestAndMetadata {
      */
     constructor() {
         this.bookmeta = null
-        this.createManifestAndMetadataXML =
-            ManifestAndMetadata.createManifestAndMetadataXML
+        this.createManifestAndMetadataXML = ManifestAndMetadata.createManifestAndMetadataXML
     }
 
     /**
@@ -63,10 +62,7 @@ class ManifestAndMetadata {
                 if (err) throw err
                 // TODO: better testing here, make sure we're not including symlinks, for example
                 // @issue: https://github.com/triplecanopy/b-ber/issues/228
-                const files = [
-                    ...state.remoteAssets,
-                    ...filearr.filter(a => path.basename(a).charAt(0) !== '.'),
-                ]
+                const files = [...state.remoteAssets, ...filearr.filter(a => path.basename(a).charAt(0) !== '.')]
                 const fileObjects = pathInfoFromFiles(files, this.dist) // `pathInfoFromFiles` is creating objects from file names
                 resolve(fileObjects)
             }),
@@ -82,22 +78,16 @@ class ManifestAndMetadata {
         return new Promise(resolve => {
             const strings = { manifest: [], bookmeta: [] }
             const specifiedFonts =
-                {}.hasOwnProperty.call(
-                    state.config,
-                    'ibooks_specified_fonts',
-                ) && state.config.ibooks_specified_fonts === true
+                {}.hasOwnProperty.call(state.config, 'ibooks_specified_fonts') &&
+                state.config.ibooks_specified_fonts === true
 
-            strings.bookmeta = this.bookmeta
-                .map(a => Metadata.meta(a))
-                .filter(Boolean)
+            strings.bookmeta = this.bookmeta.map(a => Metadata.meta(a)).filter(Boolean)
 
             // Add exceptions here as needed
             strings.bookmeta = [
                 ...strings.bookmeta,
                 `<meta property="ibooks:specified-fonts">${specifiedFonts}</meta>`,
-                `<meta property="dcterms:modified">${new Date()
-                    .toISOString()
-                    .replace(/\.\d{3}Z$/, 'Z')}</meta>`, // eslint-disable-line max-len
+                `<meta property="dcterms:modified">${new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')}</meta>`, // eslint-disable-line max-len
                 `<meta name="generator" content="b-ber@${this.version}" />`,
             ]
 
@@ -130,9 +120,7 @@ class ManifestAndMetadata {
                 new File({
                     path: '.tmp',
                     layout: 'body',
-                    contents: new Buffer(
-                        resp.manifest.filter(Boolean).join(''),
-                    ),
+                    contents: new Buffer(resp.manifest.filter(Boolean).join('')),
                 }),
                 { body: Manifest.body() },
             ).contents.toString()

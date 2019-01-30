@@ -8,9 +8,7 @@ class Media extends Component {
         this.state = {
             canPlay: false,
             autoPlay: this.props['data-autoplay'] || false,
-            fullScreen: this.props['data-fullscreen']
-                ? JSON.parse(this.props['data-fullscreen'])
-                : false,
+            fullScreen: this.props['data-fullscreen'] ? JSON.parse(this.props['data-fullscreen']) : false,
             paused: true,
             nodeSpreadIndex: 0,
         }
@@ -63,9 +61,7 @@ class Media extends Component {
         } else {
             // TODO: should account for element offset (margins/padding)
             // @issue: https://github.com/triplecanopy/b-ber/issues/213
-            nodeSpreadIndex = Math.floor(
-                (x - columnGap / 2 - translateX) / windowWidth,
-            )
+            nodeSpreadIndex = Math.floor((x - columnGap / 2 - translateX) / windowWidth)
         }
 
         return nodeSpreadIndex

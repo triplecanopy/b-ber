@@ -64,12 +64,7 @@ export default function bber() {
 
         /* eslint-disable indent */
         const sequence =
-            command === 'build'
-                ? createBuildSequence(argv).reduce(
-                      (a, c) => a.concat(...sequences[c]),
-                      [],
-                  )
-                : [command]
+            command === 'build' ? createBuildSequence(argv).reduce((a, c) => a.concat(...sequences[c]), []) : [command]
         /* eslint-enable indent */
 
         state.update('sequence', sequence)

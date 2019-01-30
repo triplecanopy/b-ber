@@ -20,9 +20,7 @@ class Toc {
         })
     }
     static item(data) {
-        return `<a href="${path.basename(
-            data.relativePath,
-        )}.xhtml">${Html.escape(getTitleOrName(data))}</a>`
+        return `<a href="${path.basename(data.relativePath)}.xhtml">${Html.escape(getTitleOrName(data))}</a>`
     }
 
     static items(data) {
@@ -34,11 +32,7 @@ class Toc {
                         return `
                         <li>
                             ${Toc.item(a)}
-                            ${
-                                a.nodes && a.nodes.length
-                                    ? Toc.items(a.nodes)
-                                    : ''
-                            }
+                            ${a.nodes && a.nodes.length ? Toc.items(a.nodes) : ''}
                         </li>
                     `
                     })

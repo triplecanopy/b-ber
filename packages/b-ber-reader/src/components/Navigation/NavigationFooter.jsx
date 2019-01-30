@@ -4,14 +4,11 @@ import { debug } from '../../config'
 
 const chapterStyles = {
     prev: props =>
-        (!Viewport.isMobile() &&
-            !props.uiOptions.navigation.footer_icons.chapter) ||
-        props.currentSpineItemIndex === 0
+        (!Viewport.isMobile() && !props.uiOptions.navigation.footer_icons.chapter) || props.currentSpineItemIndex === 0
             ? { display: 'none' }
             : {},
     next: props =>
-        (!Viewport.isMobile() &&
-            !props.uiOptions.navigation.footer_icons.chapter) ||
+        (!Viewport.isMobile() && !props.uiOptions.navigation.footer_icons.chapter) ||
         props.currentSpineItemIndex === props.spine.length - 1
             ? { display: 'none' }
             : {},
@@ -27,8 +24,7 @@ const pageStyles = {
     next: props =>
         Viewport.isMobile() ||
         !props.uiOptions.navigation.footer_icons.page ||
-        (props.currentSpineItemIndex === props.spine.length - 1 &&
-            props.spreadIndex === props.spreadTotal)
+        (props.currentSpineItemIndex === props.spine.length - 1 && props.spreadIndex === props.spreadTotal)
             ? { display: 'none' }
             : {},
 }

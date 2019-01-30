@@ -16,25 +16,17 @@ export default function deferrable(target) {
         if (_componentWillMount) _componentWillMount.call(this, arguments)
     }
 
-    target.prototype.registerDeferredCallback = function registerDeferredCallback(
-        callback,
-    ) {
+    target.prototype.registerDeferredCallback = function registerDeferredCallback(callback) {
         if (!callback) this.__deferredCallback = this.__defaultDeferredCallback
         if (debug && verboseOutput) {
-            console.log(
-                `${target.name}#registerDeferredCallback`,
-                callback.name,
-            )
+            console.log(`${target.name}#registerDeferredCallback`, callback.name)
         }
         this.__deferredCallback = callback
     }
 
     target.prototype.deRegisterDeferredCallback = function deRegisterDeferredCallback() {
         if (debug && verboseOutput) {
-            console.log(
-                `${target.name}#deRegisterDeferredCallback`,
-                this.__deferredCallback.name,
-            )
+            console.log(`${target.name}#deRegisterDeferredCallback`, this.__deferredCallback.name)
         }
         this.__deferredCallback = this.__defaultDeferredCallback
     }
@@ -53,19 +45,14 @@ export default function deferrable(target) {
         return true
     }
 
-    target.prototype.registerCanCallDeferred = function registerCanCallDeferred(
-        callback,
-    ) {
+    target.prototype.registerCanCallDeferred = function registerCanCallDeferred(callback) {
         if (!callback || typeof callback !== 'function') return
         this.canCallDeferred = callback
     }
 
     target.prototype.callDeferred = function callDeferred() {
         if (debug && verboseOutput) {
-            console.log(
-                `${target.name}#callDeferred`,
-                this.__deferredCallback.name,
-            )
+            console.log(`${target.name}#callDeferred`, this.__deferredCallback.name)
         }
         this.__deferredCallback.call(this)
         this.deRegisterDeferredCallback()

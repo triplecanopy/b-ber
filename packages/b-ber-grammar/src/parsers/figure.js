@@ -67,9 +67,7 @@ const figurePlugin = (md, name, options = {}) => {
             //
             // there is no caption (open or close); exit and output only the markup
             // for figure
-            if (
-                state.src[state.bMarks[nextLine]].charCodeAt(0) !== marker_char
-            ) {
+            if (state.src[state.bMarks[nextLine]].charCodeAt(0) !== marker_char) {
                 break
             }
 
@@ -103,10 +101,7 @@ const figurePlugin = (md, name, options = {}) => {
         if (_caption_start_pos && _caption_end_pos) {
             // we have both a beginning and end marker for the caption, so we can
             // advance the cursor for further parsing
-            _caption_body = state.src.slice(
-                _caption_start_pos,
-                _caption_end_pos,
-            )
+            _caption_body = state.src.slice(_caption_start_pos, _caption_end_pos)
             _fast_forward = state.bMarks.indexOf(_caption_end_line) + 1
         } else {
             // there's no caption, but we've advanced the cursor, so we just rewind

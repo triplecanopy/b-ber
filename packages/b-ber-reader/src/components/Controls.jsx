@@ -1,11 +1,6 @@
 import React, { Component } from 'react'
 import { NavigationHeader, NavigationFooter } from './Navigation'
-import {
-    SidebarMetadata,
-    SidebarDownloads,
-    SidebarChapters,
-    SidebarSettings,
-} from './Sidebar'
+import { SidebarMetadata, SidebarDownloads, SidebarChapters, SidebarSettings } from './Sidebar'
 import Messenger from '../lib/Messenger'
 import { messagesTypes } from '../constants'
 

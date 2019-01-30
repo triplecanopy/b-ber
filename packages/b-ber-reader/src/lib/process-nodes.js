@@ -1,14 +1,6 @@
 import React from 'react'
 import { ProcessNodeDefinitions } from 'html-to-react'
-import {
-    Link,
-    Footnote,
-    Spread,
-    Marker,
-    Audio,
-    Video,
-    SpreadFigure,
-} from '../components'
+import { Link, Footnote, Spread, Marker, Audio, Video, SpreadFigure } from '../components'
 import { Asset, Url } from '../helpers'
 
 export const isValidNode = () => true
@@ -16,17 +8,10 @@ export const processNodeDefinitions = new ProcessNodeDefinitions(React)
 export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
     {
         shouldProcessNode(node) {
-            return (
-                node.attribs &&
-                node.attribs['epub:type'] &&
-                node.attribs['epub:type'] === 'noteref'
-            )
+            return node.attribs && node.attribs['epub:type'] && node.attribs['epub:type'] === 'noteref'
         },
         processNode(node, children, index) {
-            const href = Url.resolveOverlappingURL(
-                requestedSpineItem.absoluteURL,
-                node.attribs.href,
-            )
+            const href = Url.resolveOverlappingURL(requestedSpineItem.absoluteURL, node.attribs.href)
             const attrs = Asset.convertToReactAttrs(node.attribs)
 
             return React.createElement(
@@ -42,17 +27,10 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
     },
     {
         shouldProcessNode(node) {
-            return (
-                node.attribs &&
-                node.attribs.href &&
-                Url.isRelativeURL(node.attribs.href)
-            )
+            return node.attribs && node.attribs.href && Url.isRelativeURL(node.attribs.href)
         },
         processNode(node, children, index) {
-            const href = Url.resolveOverlappingURL(
-                requestedSpineItem.absoluteURL,
-                node.attribs.href,
-            )
+            const href = Url.resolveOverlappingURL(requestedSpineItem.absoluteURL, node.attribs.href)
             const attrs = Asset.convertToReactAttrs(node.attribs)
 
             return React.createElement(
@@ -81,10 +59,7 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
             return React.createElement(node.name, {
                 ...attrs,
                 key: index,
-                src: Url.resolveOverlappingURL(
-                    requestedSpineItem.absoluteURL,
-                    node.attribs.src,
-                ),
+                src: Url.resolveOverlappingURL(requestedSpineItem.absoluteURL, node.attribs.src),
             })
         },
     },
@@ -120,10 +95,7 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
         processNode(node, children, index) {
             const attrs = Asset.convertToReactAttrs(node.attribs)
             const poster = node.attribs.poster
-                ? Url.resolveOverlappingURL(
-                      requestedSpineItem.absoluteURL,
-                      node.attribs.poster,
-                  )
+                ? Url.resolveOverlappingURL(requestedSpineItem.absoluteURL, node.attribs.poster)
                 : null
             const { autoPlay } = attrs
 
@@ -162,10 +134,7 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
                 {
                     ...attrs,
                     key: index,
-                    xlinkHref: Url.resolveOverlappingURL(
-                        requestedSpineItem.absoluteURL,
-                        attrs.xlinkHref,
-                    ),
+                    xlinkHref: Url.resolveOverlappingURL(requestedSpineItem.absoluteURL, attrs.xlinkHref),
                 },
                 children,
             )
@@ -173,13 +142,7 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
     },
     {
         shouldProcessNode(node) {
-            return (
-                node.type === 'tag' &&
-                {}.hasOwnProperty.call(
-                    node.attribs,
-                    'data-marker-reference-figure',
-                )
-            )
+            return node.type === 'tag' && {}.hasOwnProperty.call(node.attribs, 'data-marker-reference-figure')
         },
         processNode(node, children, index) {
             const attrs = Asset.convertToReactAttrs(node.attribs)
@@ -195,10 +158,7 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
     },
     {
         shouldProcessNode(node) {
-            return (
-                node.type === 'tag' &&
-                {}.hasOwnProperty.call(node.attribs, 'data-marker-reference')
-            )
+            return node.type === 'tag' && {}.hasOwnProperty.call(node.attribs, 'data-marker-reference')
         },
         processNode(node, children, index) {
             const attrs = Asset.convertToReactAttrs(node.attribs)
@@ -215,10 +175,7 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
     },
     {
         shouldProcessNode(node) {
-            return (
-                node.type === 'tag' &&
-                {}.hasOwnProperty.call(node.attribs, 'data-marker')
-            )
+            return node.type === 'tag' && {}.hasOwnProperty.call(node.attribs, 'data-marker')
         },
         processNode(node, children, index) {
             // TODO: this should be cleaned up so that we're processing the
