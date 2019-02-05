@@ -95,7 +95,7 @@ class ApplicationLoader {
 
         const userThemesPath = path.resolve(cwd, this.config.themes_directory)
         if (!fs.existsSync(userThemesPath)) {
-            log.notice('No [themes_directory] property found in config.yml')
+            log.notice(`Could not find themes directory [${userThemesPath}] declared in config.yml`)
             log.notice('Using default theme [b-ber-theme-serif]')
             this.theme = themes['b-ber-them-serif']
             return
