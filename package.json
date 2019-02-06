@@ -22,13 +22,15 @@
         "flush": "yarn flush.lock && yarn flush.modules && yarn flush.rebuild",
         "test.coverage": "rimraf ./coverage && yarn lint && yarn jest --collectCoverage=true",
         "test": "yarn lint && yarn jest",
-        "build": "yarn test && lerna run build",
-        "prettier.check": "./node_modules/.bin/eslint --print-config . | ./node_modules/.bin/eslint-config-prettier-check"
+        "build": "lerna run build",
+        "prettier.check": "./node_modules/.bin/eslint --print-config . | ./node_modules/.bin/eslint-config-prettier-check",
+        "prepare": "yarn test && yarn build",
+        "bootstrap": "yarn build && lerna bootstrap"
     },
     "husky": {
         "hooks": {
             "pre-commit": "yarn lint.changed",
-            "pre-push": "yarn test"
+            "pre-push": "yarn jest"
         }
     },
     "devDependencies": {
