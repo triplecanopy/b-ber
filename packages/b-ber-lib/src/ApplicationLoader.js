@@ -112,7 +112,7 @@ class ApplicationLoader {
         }
 
         try {
-            this.theme = require(userTheme)
+            this.theme = require(path.resolve('node_modules', userTheme)) // require.resolve?
         } catch (err) {
             log.notice(`There was an error during require [${this.config.theme}]`)
             log.notice('Using default theme [b-ber-theme-serif]')
