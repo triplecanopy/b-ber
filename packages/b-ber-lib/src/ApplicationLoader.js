@@ -86,18 +86,14 @@ class ApplicationLoader {
     }
 
     _theme() {
-        // is set, using a built-in theme
-        if (themes[this.config.theme]) {
-            log.notice(`Loaded theme [${this.config.theme}]`)
-            this.theme = themes[this.config.theme]
-            return
-        }
-
+        // ensure themes dir exists
         const userThemesPath = path.resolve(cwd, this.config.themes_directory)
-        if (!fs.existsSync(userThemesPath)) {
-            log.notice(`Could not find themes directory [${userThemesPath}] declared in config.yml`)
-            log.notice('Using default theme [b-ber-theme-serif]')
-            this.theme = themes['b-ber-them-serif']
+        fs.ensureDirSync(userThemesPath)
+
+        // theme is set, using a built-in theme
+        if (themes[this.config.theme]) {
+            log.info(`Loaded theme [${this.config.theme}]`)
+            this.theme = themes[this.config.theme]
             return
         }
 
