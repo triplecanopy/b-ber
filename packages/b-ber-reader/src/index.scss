@@ -333,7 +333,7 @@ a {
     right: 0;
     bottom: 0;
     background: transparent;
-    height: $component-x;
+    height: $component-x + 25px;
     opacity: 1 !important; // sass-lint:disable-line no-important
 
     @media screen and (max-width: $tablet-breakpoint-max) {
@@ -345,7 +345,7 @@ a {
         flex-direction: row;
         align-items: center;
         justify-content: center;
-        height: $component-x;
+        height: $component-x + 25px;
         padding: 0px 10px 0 10px;
 
         li {
@@ -356,9 +356,9 @@ a {
             }
 
             &:nth-child(2),
-            &:nth-child(2) {
+            &:nth-child(3) {
                 button {
-                    font-size: 1.5em;
+                    font-size: 2em;
                 }
             }
 
