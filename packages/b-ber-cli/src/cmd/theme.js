@@ -4,17 +4,19 @@ import { fail, ensure } from '@canopycanopycanopy/b-ber-lib/utils'
 const _command = 'theme <command> [options]'
 const describe = "Manage a project's theme"
 
-const handler = () => args =>
-    ensure().then(() => {
-        const { command, options } = args
-        return Theme[command](options)
-    })
+const handler = args =>
+    ensure()
+        .then(() => {
+            const { command, options } = args
+            return Theme[command](options)
+        })
+        .catch(console.error)
 
 const builder = yargs =>
     yargs
         .positional('command', {
             describe: 'Theme command to execute',
-            choices: ['set', 'list', 'install'],
+            choices: ['set', 'list'],
             type: 'string',
         })
         .positional('options', {
@@ -30,5 +32,5 @@ export default {
     command: _command,
     describe,
     builder,
-    handler: handler(),
+    handler,
 }

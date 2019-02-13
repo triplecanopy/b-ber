@@ -2,79 +2,71 @@
 
 import path from 'path'
 import fs from 'fs-extra'
-import find from 'lodash/find'
 import defaultThemes from '@canopycanopycanopy/b-ber-themes'
 import log from '@canopycanopycanopy/b-ber-logger'
-import { exec } from 'child_process'
 import YamlAdaptor from './YamlAdaptor'
 import state from './State'
 import { safeCopy, safeWrite } from './utils'
 
-const getUserDefinedThemes = () => {
-    const { config } = state
-    const cwd = process.cwd()
-
-    const names = []
-    const themes = {}
-
-    if (!config.themes_directory) return { names, themes }
+const getVendorThemes = () => {
+    const packageJSON = path.join(process.cwd(), 'package.json')
+    const themes = []
 
     try {
-        if (!fs.existsSync(path.join(process.cwd(), config.themes_directory))) {
-            throw new Error(`Themes directory [${config.themes_directory}] does not exist.`)
+        if (!fs.existsSync(packageJSON)) {
+            throw new Error(`Project has no packaged themes`)
         }
     } catch (err) {
         log.warn(err)
-        return { names, themes }
+        return themes
+    }
+
+    const pkg = fs.readJSONSync(packageJSON)
+
+    if (pkg.dependencies) {
+        themes.push(...Object.keys(pkg.dependencies))
+    }
+
+    if (pkg.devDependencies) {
+        themes.push(...Object.keys(pkg.devDependencies))
+    }
+
+    return themes
+}
+
+const getUserThemes = () => {
+    const { config } = state
+    const cwd = process.cwd()
+    const themes = []
+
+    try {
+        if (!fs.existsSync(path.join(cwd, config.themes_directory))) {
+            throw new Error(`Themes directory [${config.themes_directory}] does not exist`)
+        }
+    } catch (err) {
+        log.warn(err)
+        return themes
     }
 
     fs.readdirSync(path.join(cwd, config.themes_directory)).forEach(a => {
-        const modulePath = path.resolve(cwd, config.themes_directory, a)
-
-        if (!fs.lstatSync(modulePath).isDirectory()) return
-
-        // `entryPoint` is either a package.json file, or an index.js script
-        // that exports the theme object theme object schema:
-        //
-        // {
-        //      name: String        required
-        //      entry: String       required
-        //      fonts: Array        required
-        //      images: Array       required
-        //      npmPackage: Object  optional
-        // }
-        //
-
-        try {
-            const userModule = fs.existsSync(path.join(modulePath, 'package.json'))
-                ? require(path.join(modulePath))
-                : require(path.join(modulePath, 'index.js'))
-
-            const moduleName = userModule.name
-
-            names.push(moduleName)
-            themes[moduleName] = userModule
-        } catch (err) {
-            log.notice(err.message)
+        if (fs.lstatSync(path.resolve(cwd, config.themes_directory, a)).isDirectory()) {
+            themes.push(a)
         }
     })
 
-    return { names, themes }
+    return themes
 }
 
 const printThemeList = (themes, current = '') =>
     `${themes
-        .reduce((acc, curr) => acc.concat(`  ${current && current === curr.name ? '✓' : '○'} ${curr.name}\n`), '\n')
+        .reduce((acc, curr) => acc.concat(`  ${current && current === curr ? '✓' : '○'} ${curr}\n`), '\n')
         .slice(0, -1)}\n`
 
 const getThemes = () => {
-    const { config } = state
-    const themes = []
-    const current = config.theme ? config.theme : ''
-    const userThemes = getUserDefinedThemes().themes
-
-    Object.keys(defaultThemes).forEach(a => themes.push(defaultThemes[a]))
-    Object.keys(userThemes).forEach(a => themes.push(userThemes[a]))
+    const current = state.config.theme ? state.config.theme : ''
+    const userThemes = getUserThemes()
+    const vendorThemes = getVendorThemes()
+    const themes = [...Object.keys(defaultThemes), ...userThemes, ...vendorThemes]
 
     return { current, themes }
 }
@@ -86,12 +78,14 @@ const createProjectThemeDirectory = name => {
 
 const copyThemeAssets = theme => {
     const { src } = state.config
+    const cwd = process.cwd()
+
     const themePath = path.dirname(theme.entry)
     const themeSettings = path.join(themePath, '_settings.scss')
-    const settingsPath = path.join(process.cwd(), src, '_stylesheets', theme.name, '_settings.scss')
-    const overridesPath = path.join(process.cwd(), src, '_stylesheets', theme.name, '_overrides.scss')
-    const fontsPath = path.join(process.cwd(), src, '_fonts')
-    const imagesPath = path.join(process.cwd(), src, '_images')
+    const settingsPath = path.join(cwd, src, '_stylesheets', theme.name, '_settings.scss')
+    const overridesPath = path.join(cwd, src, '_stylesheets', theme.name, '_overrides.scss')
+    const fontsPath = path.join(cwd, src, '_fonts')
+    const imagesPath = path.join(cwd, src, '_images')
 
     return safeCopy(themeSettings, settingsPath)
         .then(safeWrite(overridesPath, ''))
@@ -108,13 +102,6 @@ const copyThemeAssets = theme => {
             return Promise.all(promises)
         })
         .catch(log.error)
-}
-
-const copyPackagedThemeDirectory = name => {
-    const { config } = state
-    const from = path.join(process.cwd(), 'node_modules', name)
-    const to = path.join(process.cwd(), config.themes_directory, name)
-    return fs.copy(from, to)
 }
 
 const updateConfig = name => {
@@ -134,76 +121,28 @@ class Theme {
         log.notice('The following themes are available:', '\n', printThemeList(themes, current))
     }
 
-    static install = () =>
-        new Promise(resolve => {
-            const pkg = path.join(process.cwd(), 'package.json')
-            if (!fs.existsSync(pkg)) return
-
-            const { config } = state
-            const { dependencies } = fs.readJsonSync(pkg)
-            const names = []
-            const promises1 = []
-            const promises2 = []
-            const themes = {}
-
-            Object.keys(dependencies).forEach(dep => {
-                if (/^b-ber-theme/.test(dep)) {
-                    names.push(dep)
-                    fs.copySync(
-                        path.join(process.cwd(), 'node_modules', dep),
-                        path.join(process.cwd(), config.themes_directory, dep),
-                    )
-                }
-            })
-
-            names.forEach(name => {
-                promises1.push(
-                    new Promise(rs => {
-                        exec(
-                            'npm i',
-                            {
-                                cwd: path.join(process.cwd(), config.themes_directory, name),
-                            },
-                            (error, stdout, stderr) => {
-                                if (stderr) console.log(stderr.trim())
-                                if (stdout) console.log(stdout.trim())
-                                log.notice('installed theme dependencies', name)
-                                return rs()
-                            },
-                        )
-                    }),
-                )
-            })
-
-            return Promise.all(promises1)
-                .then(() => {
-                    names.forEach(name => {
-                        themes[name] = require(path.resolve(process.cwd(), config.themes_directory, name, 'index.js'))
-                    })
-
-                    Object.entries(themes).forEach(([name, theme]) => {
-                        promises2.push(
-                            createProjectThemeDirectory(name)
-                                .then(() => copyThemeAssets(theme))
-                                .then(() => copyPackagedThemeDirectory(name))
-                                .then(() => log.notice(`installed [${name}]`)),
-                        )
-                    })
-
-                    return Promise.all(promises2).catch(log.error)
-                })
-                .then(resolve)
-                .catch(log.error)
-        })
-
     static set = (name, force = false) => {
-        const { current, themes } = getThemes()
-        const theme = find(themes, { name })
+        const { themes } = getThemes()
+        const cwd = process.cwd()
 
-        if (!theme) return log.notice('Could not find theme', name)
+        let theme
 
-        if (current === name && force !== true) {
-            return log.notice('Current theme is already', name)
+        if (defaultThemes[name]) {
+            theme = defaultThemes[name]
+        } else {
+            try {
+                const userPath = path.join(cwd, state.config.themes_directory, name)
+                const vendorPath = path.join(cwd, 'node_modules', name)
+                const themePath = fs.existsSync(userPath) ? userPath : fs.existsSync(vendorPath) ? vendorPath : null
+
+                if (themes.indexOf(name) < 0 || !themePath) {
+                    throw new Error(`Theme [${name}] is not installed`)
+                }
+
+                theme = require(themePath)
+            } catch (err) {
+                return log.error(err)
+            }
         }
 
         return createProjectThemeDirectory(name)

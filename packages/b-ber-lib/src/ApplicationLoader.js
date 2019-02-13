@@ -97,22 +97,26 @@ class ApplicationLoader {
             return
         }
 
-        // possibly a user defined theme, test if it exists
-        const userTheme = fs.readdirSync(userThemesPath).find(dirname => dirname === this.config.theme)
-
-        if (!userTheme) {
-            log.notice(`Could not find user-defined theme [${this.config.theme}]`)
-            log.notice('Using default theme [b-ber-theme-serif]')
-            this.theme = themes['b-ber-them-serif']
-            return
+        // possibly a user defined theme, check if the directory exists
+        try {
+            if ((this.theme = require(path.resolve(userThemesPath, this.config.theme)))) {
+                log.info(`Loaded theme [${this.config.theme}]`)
+                return
+            }
+        } catch (err) {
+            // noop
         }
 
+        // possibly a theme installed with npm, test the project root
         try {
-            this.theme = require(path.resolve('node_modules', userTheme)) // require.resolve?
+            this.theme = require(path.resolve('node_modules', this.config.theme)) // require.resolve?
         } catch (err) {
-            log.notice(`There was an error during require [${this.config.theme}]`)
-            log.notice('Using default theme [b-ber-theme-serif]')
-            this.theme = themes['b-ber-them-serif']
+            log.warn(`There was an error during require [${this.config.theme}]`)
+            log.warn('Using default theme [b-ber-theme-serif]')
+            log.warn(err.message)
+
+            // error loading theme, set to default
+            this.theme = themes['b-ber-theme-serif']
         }
     }
 

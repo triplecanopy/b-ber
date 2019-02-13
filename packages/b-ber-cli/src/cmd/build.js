@@ -36,7 +36,9 @@ const handler = argv => {
     // finish to ensure that state is updated with the default cover image if
     // none exists. phantomjs can be sped up by disabling wifi connection, see
     // bug report here: https://github.com/ariya/phantomjs/issues/14033
-    ensure({ files }).then(() => run(sequence))
+    ensure({ files })
+        .then(() => run(sequence))
+        .catch(console.error)
 }
 
 const builder = yargs =>
