@@ -1,11 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 
 import util from 'util'
-// import path from 'path'
-
-// function abbrvFilename(filename) {
-//     return path.basename(path.dirname(filename)) + path.sep + path.basename(filename)
-// }
 
 export function composeMessage(args) {
     const message = util.format

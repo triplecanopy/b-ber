@@ -40,7 +40,11 @@ export function decorate(_args, ...props) {
 
     if (this.boringOutput === false) {
         for (let i = props.length - 1; i >= 0; i--) {
-            message = chalk[props[i]](message)
+            if (chalk[props[i]]) {
+                message = chalk[props[i]](message)
+            } else {
+                message = chalk(message)
+            }
         }
     }
 
