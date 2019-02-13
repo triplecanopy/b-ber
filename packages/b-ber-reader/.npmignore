@@ -16,7 +16,6 @@ yarn-error.log*
 /src
 /test
 /epub
-/books.json
 /jest.config.js
 /postcss.config.js
 /webpack.config.development.js
