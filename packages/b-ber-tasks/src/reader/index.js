@@ -55,10 +55,11 @@ class Reader {
     }
     ensureReaderModuleExists() {
         try {
-            this.readerAppPath = path.dirname(path.join(require.resolve(JSON.stringify(this.readerModuleName))))
+            this.readerAppPath = path.dirname(path.join(require.resolve(this.readerModuleName)))
             return Promise.resolve()
         } catch (err) {
             // module not found using require.resolve, so we check if there's a symlinked version available
+            log.warn(`Could not find globally installed module ${this.readerModuleName}`)
         }
 
         const { paths } = module
@@ -77,6 +78,9 @@ class Reader {
 
         try {
             this.readerAppPath = fs.realpathSync(path.join(modulePath, this.readerModuleDistDir))
+            const pkg = fs.readJsonSync(path.join(modulePath, this.readerModuleDistDir, 'package.json'))
+            log.warn(`Loaded ${this.readerModuleName} v${pkg.version}`)
+
             return Promise.resolve()
         } catch (err) {
             log.error(`
