@@ -9,57 +9,11 @@ import { cssHeightDeclarationPropType } from '../lib/custom-prop-types'
 import Messenger from '../lib/Messenger'
 import { messagesTypes } from '../constants'
 import Viewport from '../helpers/Viewport'
-
-const SpreadStyleBlock = props => {
-    const { spreadPosition, markerRefId, unbound, paddingLeft, recto, markerX } = props
-
-    const offsetLeftPrevious = unbound ? 0 : paddingLeft * 2
-    const offsetLeftCurrent = unbound ? paddingLeft * 2 : 0
-    const offsetLeftNext = paddingLeft * -2
-    const spreadPosition_ = recto ? spreadPosition - 1 : spreadPosition
-
-    // prettier-ignore
-    // .figure__items { opacity: 0.5; }
-    // span.marker:before {
-    //     display: block;
-    //     position: absolute;
-    //     top: 0;
-    //     left: 170px;
-    //     height: 30px;
-    //     z-index: 99999;
-    //     width: 150px;
-    //     background: beige;
-    //     color: black;
-    //     font-family: helvetica;
-    //     font-size: 24px;
-    // }
-    // span.marker[data-verso=true]:before { content: 'verso'; }
-    // span.marker[data-recto=true]:before { content: 'recto'; }
-    const styles = `
-
-        .spread-index__${spreadPosition_ - 2} #spread__${markerRefId} > figure,
-        .spread-index__${spreadPosition_ - 2} #spread__${markerRefId} > .spread__content,
-        .spread-index__${spreadPosition_ - 1} #spread__${markerRefId} > figure,
-        .spread-index__${spreadPosition_ - 1} #spread__${markerRefId} > .spread__content { transform: translateX(${offsetLeftPrevious}px); }
-
-        .spread-index__${spreadPosition_}     #spread__${markerRefId} > figure,
-        .spread-index__${spreadPosition_}     #spread__${markerRefId} > .spread__content { transform: translateX(${offsetLeftCurrent}px); }
-
-        .spread-index__${spreadPosition_ + 1} #spread__${markerRefId} > figure,
-        .spread-index__${spreadPosition_ + 1} #spread__${markerRefId} > .spread__content,
-        .spread-index__${spreadPosition_ + 2} #spread__${markerRefId} > figure,
-        .spread-index__${spreadPosition_ + 2} #spread__${markerRefId} > .spread__content { transform: translateX(${offsetLeftNext}px); }
-    `
-    return (
-        <style id={`style__${markerRefId}`} data-position={spreadPosition_} data-marker-x={markerX}>
-            {Viewport.isMobile() ? null : styles}
-        </style>
-    )
-}
+import { SpreadImageStyles } from '.'
 
 class Spread extends Component {
     static contextTypes = {
-        height: cssHeightDeclarationPropType,
+        height: cssHeightDeclarationPropType, // from Layout.jsx
         paddingTop: PropTypes.number,
         paddingLeft: PropTypes.number,
         paddingRight: PropTypes.number,
@@ -77,7 +31,7 @@ class Spread extends Component {
         super(props)
 
         this.state = {
-            height: 0,
+            // height: 0,
 
             // verso and recto relate to the position of the marker node
             verso: false,
@@ -207,19 +161,19 @@ class Spread extends Component {
     }
 
     render() {
-        const { height, spreadPosition } = this.state
+        const { /* height, */ spreadPosition } = this.state
         const markerRefId = this.props['data-marker-reference']
         const { unbound } = this.state.marker
         const { paddingLeft } = this.context
 
         const debugStyles = { background: 'blue' }
 
-        let styles = { height }
+        let styles = {}
         if (debug) styles = { ...styles, ...debugStyles }
 
         return (
             <div {...this.props} id={`spread__${markerRefId}`} style={styles}>
-                <SpreadStyleBlock
+                <SpreadImageStyles
                     recto={this.state.marker.recto}
                     markerRefId={markerRefId}
                     spreadPosition={spreadPosition}

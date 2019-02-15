@@ -7,6 +7,9 @@ jest.mock('@canopycanopycanopy/b-ber-logger', () => ({
     notice() {
         return true
     },
+    info() {
+        return true
+    },
 }))
 
 describe('task: async', () => {

@@ -93,6 +93,10 @@ class DocumentProcessor {
         return this.classListContainsAll(node, this.targetClassNames)
     }
 
+    isMarker(node) {
+        return this.classListContainsAll(node, [['marker']])
+    }
+
     hasChildren(node) {
         return node && node.children && node.children.length
     }
@@ -120,16 +124,15 @@ class DocumentProcessor {
     getSibling(node) {
         if (node === null) return node
         const node_ = node.previousElementSibling
-
         // top of document
         if (!node_) {
             return this.getSibling(node.parentNode)
         }
 
-        // if the sibling is another target, we don't parse it, so we can append
-        // right away
+        // if the sibling is another target, we don't parse it, and can't append
+        // to it since it's going to be absolutely positioned, so return sibling
         if (this.isTarget(node_)) {
-            return node_
+            return this.getSibling(node_)
         }
 
         // not a target, not something we can parse, get siblings
@@ -190,8 +193,17 @@ class DocumentProcessor {
                 if (this.isTarget(node)) {
                     sibling = this.getSibling(node)
                     if (sibling) {
+                        const marker = this.createMarker(markerId)
+
+                        // check to see if the marker we're injecting shares a
+                        // parent with another marker. set a flag if so. this is
+                        // referenced in Marker.jsx
+                        if (sibling.lastElementChild && this.isMarker(sibling.lastElementChild)) {
+                            marker.setAttribute('data-adjacent', true)
+                        }
+
                         // inject into tree
-                        sibling.appendChild(this.createMarker(markerId))
+                        sibling.appendChild(marker)
                         node.setAttribute('data-marker-reference', markerId)
                         this.addMarkerReferenceToChild(node, markerId)
                     } else {

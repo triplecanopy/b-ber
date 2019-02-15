@@ -112,7 +112,8 @@ class Layout extends Component {
         let { height } = this.state
         const { paddingTop, paddingBottom } = this.state
 
-        if (!isNumeric(height)) height = window.innerHeight // make sure we're not treating 'auto' as a number
+        // make sure we're not treating 'auto' as a number
+        if (!isNumeric(height)) height = window.innerHeight
 
         height -= paddingTop
         height -= paddingBottom
@@ -239,6 +240,7 @@ class Layout extends Component {
         const isMobile = Viewport.isMobile()
         const contextClass = isMobile ? 'mobile' : 'desktop'
 
+        // const contentStyles = { ...this.contentStyles() }
         const contentStyles = { ...this.contentStyles(), minHeight: height }
 
         const layoutTransition = transitions({ transitionSpeed })[transition]

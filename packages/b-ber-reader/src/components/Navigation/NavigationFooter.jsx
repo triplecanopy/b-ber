@@ -24,7 +24,7 @@ const pageStyles = {
     next: props =>
         Viewport.isMobile() ||
         !props.uiOptions.navigation.footer_icons.page ||
-        (props.currentSpineItemIndex === props.spine.length - 1 && props.spreadIndex === props.spreadTotal)
+        (props.currentSpineItemIndex === props.spine.length - 1 && props.spreadIndex === props.lastIndex)
             ? { display: 'none' }
             : {},
 }

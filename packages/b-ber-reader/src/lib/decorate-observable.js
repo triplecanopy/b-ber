@@ -6,14 +6,17 @@ import { isNumeric } from '../helpers/Types'
 import { debug, verboseOutput, logTime } from '../config'
 import browser from '../lib/browser'
 
-const ensureRenderTimeout = 0
+// speeds to debounce our mutation and resize observer callbacks. making sure
+// the document is laid out before rendering
+const ENSURE_RENDER_TIMEOUT = 200
+const DEBOUNCE_TIMER = 200
 
-const log = (spreadTotal, contentDimensions, frameHeight, columns) => {
+const log = (lastIndex, contentDimensions, frameHeight, columns) => {
     if (debug && verboseOutput) {
         console.group('Layout#connectResizeObserver')
         console.log(
-            'spreadTotal: %d; contentDimensions: %d; frameHeight %d; columns %d',
-            spreadTotal,
+            'lastIndex: %d; contentDimensions: %d; frameHeight %d; columns %d',
+            lastIndex,
             contentDimensions,
             frameHeight,
             columns,
@@ -36,11 +39,12 @@ export default function observable(target) {
 
     const _componentDidMount = target.prototype.componentDidMount
     target.prototype.componentDidMount = function componentDidMount() {
-        const { transitionSpeed } = this.props.viewerSettings
+        this.calculateNodePositionAfterResize = debounce(this.calculateNodePosition, DEBOUNCE_TIMER, {
+            leading: false,
+            trailing: true,
+        }).bind(this)
 
-        this.calculateNodePositionAfterResize = debounce(this.calculateNodePosition, transitionSpeed, {}).bind(this)
-
-        this.calculateNodePositionAfterMutation = debounce(this.calculateNodePosition, 60, {
+        this.calculateNodePositionAfterMutation = debounce(this.calculateNodePosition, DEBOUNCE_TIMER, {
             leading: false,
             trailing: true,
         }).bind(this)
@@ -68,10 +72,7 @@ export default function observable(target) {
         if (!this.contentNode) throw new Error("Couldn't find this.contentNode")
 
         this.__mutationObserver = new window.MutationObserver(this.calculateNodePositionAfterMutation)
-        this.__mutationObserver.observe(this.contentNode, {
-            attributes: true,
-            subtree: true,
-        })
+        this.__mutationObserver.observe(this.contentNode, { attributes: true, subtree: true })
     }
 
     target.prototype.disconnectResizeObserver = function disconnectResizeObserver() {
@@ -92,55 +93,90 @@ export default function observable(target) {
         this.__mutationObserver.disconnect(this.contentNode)
     }
 
-    target.prototype.calculateNodePosition = function calculateNodePosition(/*entry*/) {
+    target.prototype.calculateNodePosition = function calculateNodePosition(entry) {
+        console.log('mutates', entry)
+
         if (!this.contentNode) throw new Error("Couldn't find this.contentNode")
 
-        const { columns, paddingLeft } = this.state
+        const { columns } = this.state
 
         let contentDimensions
-        let columnCount
-        let spreadTotal
-        let spreadWidth
+        let lastIndex
         let frameHeight
 
-        if (this.props.ready === true) return
+        // TODO: prevent multiple callbacks. good to have this off for debug
+        // if (this.props.ready === true) return
 
         if (logTime) console.time('observable#setReaderState')
 
-        // FF only
+        // total height of document as though it were laid out vertically.
+        // ensure we're getting the largest value
         if (browser.name === 'firefox') {
-            contentDimensions = this.contentNode.offsetWidth - paddingLeft * 2
-            spreadWidth = window.innerWidth - paddingLeft * 2
-            columnCount = contentDimensions / spreadWidth
+            const frame = document.getElementById('frame')
+            const layout = document.getElementById('layout')
 
-            spreadTotal = Math.floor(columnCount)
+            // FF only. we need to find the document height, but firefox
+            // interprets our column layout as having width, so we toggle the
+            // column view to get our dimensions
+            frame.style.overflow = 'scroll'
+            layout.style.columns = 'auto'
+
+            contentDimensions = Math.max(
+                this.contentNode.scrollHeight,
+                this.contentNode.offsetHeight,
+                this.contentNode.clientHeight,
+            )
+
+            frame.style.overflow = 'hidden'
+            layout.style.columns = '2 auto' // TODO: reset using options
         } else {
-            contentDimensions = this.contentNode.offsetHeight
-            frameHeight = this.getFrameHeight()
-
-            // we need to return 0 for column count on mobile to ensure that
-            // chapter navigation works
-            columnCount = contentDimensions / frameHeight
-            if (!isNumeric(columnCount)) columnCount = 0
-
-            spreadTotal = Math.floor(columnCount / columns)
+            contentDimensions = Math.max(
+                this.contentNode.scrollHeight,
+                this.contentNode.offsetHeight,
+                this.contentNode.clientHeight,
+            )
         }
 
-        log(spreadTotal, contentDimensions, frameHeight, columns)
+        // height of the reader frame (viewport - padding top and bottom),
+        // rounded so we get a clean divisor
+        frameHeight = this.getFrameHeight()
 
+        // getFrameHeight will return 'auto' for mobile. set to zero so that
+        // chapter navigation still works
+        if (!isNumeric(frameHeight)) frameHeight = 0
+        frameHeight = Math.round(frameHeight)
+
+        // find the last index by dividing the document length by the frame
+        // height, and then divide the result by 2 to account for the 2
+        // column layout. Math.ceil to only allow whole numbers (each page
+        // must have 2 columns), and to account for dangling lines of text
+        // that will spill over to the next column (contentDimensions /
+        // frameHeight in these cases will be something like 6.1 for a
+        // six-page chapter). minus one since we want it to be a zero-based
+        // index
+        lastIndex = Math.ceil(contentDimensions / frameHeight / 2) - 1
+
+        // never less than 0
+        lastIndex = lastIndex < 0 ? 0 : lastIndex
+
+        log(lastIndex, contentDimensions, frameHeight, columns)
+
+        // check that everything's been added to the DOM. if there's a disparity
+        // in dimensions, hide then show content to trigger our resize
+        // observer's callback
         if (this.__contentDimensions !== contentDimensions) {
             window.clearTimeout(this.timer)
             this.timer = setTimeout(() => {
                 this.__contentDimensions = contentDimensions
 
-                log(spreadTotal, contentDimensions, frameHeight, columns)
+                log(lastIndex, contentDimensions, frameHeight, columns)
 
                 this.contentNode.style.display = 'none'
                 this.contentNode.style.display = 'block'
-            }, ensureRenderTimeout)
+            }, ENSURE_RENDER_TIMEOUT)
         } else {
             if (logTime) console.timeEnd('observable#setReaderState')
-            this.props.setReaderState({ spreadTotal, ready: true })
+            this.props.setReaderState({ lastIndex, ready: true })
         }
     }
 

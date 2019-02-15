@@ -209,6 +209,9 @@ class Marker extends Component {
         this.resizeObserver.disconnect()
     }
 
+    // get the distance between the marker and the top of the next column. we
+    // fill that with padding, and add additional padding to the document to
+    // fill the space that's required by the absolutely positioned spread
     calculateOffsetHeight() {
         let offsetHeight = 0
         if (!this.layoutNode || !this.markerNode || Viewport.isMobile()) {
@@ -216,46 +219,85 @@ class Marker extends Component {
         }
 
         const { verso, recto } = this.state
-        // const markerBottom =
-        //     this.markerNode.offsetTop + this.markerNode.offsetHeight
-        // console.log(
-        //     'xx',
-        //     this.markerNode.offsetTop,
-        //     this.markerNode.offsetHeight,
-        //     this.markerNode.getBoundingClientRect().bottom,
-        // )
-        const markerBottom = this.markerNode.getBoundingClientRect().bottom
         const { paddingTop, paddingBottom } = this.context
-        const padding = paddingTop + paddingBottom
 
-        let { height } = this.context // window.innerHeight
-        if (!isNumeric(height)) height = window.innerHeight
+        let { height } = this.context
 
-        // console.log('recto', recto)
-        // console.log('verso', verso)
-        // console.log('paddingTop, paddingBottom', paddingTop, paddingBottom)
+        const frameHeight = height - paddingTop - paddingBottom
+
+        // the attributes `unbound` and `adjacent` are added by
+        // DocumentProcessor.
+
+        // `unbound` means that this is a fullbleed element with no preceeding
+        // siblings. this occurs when a spread is the first element in the
+        // document. we have to adjust our height calculations in this case
+        // since we don't need to worry about making up the distance between the
+        // marker (which is the last element of the last preceeding element) and
+        // the next column.
+
+        // `adjacent` means that this marker shares a parent with another
+        // marker. this occurs when one spread directly follows another. we have
+        // to adjust our height calculations in these cases because we only want
+        // to make up the distance between the bottom of the marker and the next
+        // column once, and only need to account for the space required by the
+        // spread after the first spread.
+
+        const unbound = JSON.parse(this.props['data-unbound'] || 'false')
+        const adjacent = JSON.parse(this.props['data-adjacent'] || 'false')
+
+        if (!isNumeric(height)) height = 0 // frame height or window.innerHeight ...
 
         if (verso) {
-            offsetHeight = height
-            offsetHeight -= padding
-            offsetHeight += height - paddingTop - markerBottom
-            // offsetHeight += height - paddingTop - this.markerNode.offsetTop
-            // offsetHeight -= markerBottom - paddingTop
+            // marker is on the verso, so we need to add enough space after it to
+            // fill the remaining space after the marker, as well as the following
+            // column. this will push our fullbleed content to the next verso
+
+            // make up the remaining distance only if it hasn't already been
+            // accounted for in the case of adjacent markers
+            if (adjacent) {
+                offsetHeight += frameHeight
+                offsetHeight += frameHeight
+                offsetHeight -= this.markerNode.offsetHeight
+            } else {
+                offsetHeight += frameHeight
+                offsetHeight += frameHeight
+                offsetHeight -= this.markerNode.offsetHeight
+                offsetHeight -= Math.round(this.markerNode.getBoundingClientRect().bottom - paddingTop)
+
+                // add space for the spread element itself, since it's
+                // absolutely positioned. only do this if the spread is
+                // preceeded by another element, since the gap between the
+                // marker and the next column is already enough space for the
+                // spread
+                if (!unbound) {
+                    offsetHeight += frameHeight
+                    offsetHeight += frameHeight
+                }
+            }
         }
 
         if (recto) {
-            offsetHeight = height
-            offsetHeight -= markerBottom
-            offsetHeight -= paddingTop
+            // marker is on the recto, so we need to add enough space after it to
+            // fill only the remaining column
+
+            // make up the remaining distance, again, only if it's not adjacent
+            if (adjacent) {
+                offsetHeight += frameHeight
+                offsetHeight += frameHeight
+                offsetHeight -= this.markerNode.offsetHeight
+            } else {
+                offsetHeight += frameHeight
+                offsetHeight += frameHeight
+                offsetHeight -= this.markerNode.offsetHeight
+
+                // add spread spacing
+                offsetHeight += frameHeight
+                offsetHeight -= Math.round(this.markerNode.getBoundingClientRect().top)
+                offsetHeight += paddingTop
+            }
         }
 
-        if (JSON.parse(this.props['data-unbound']) === true) {
-            console.log('-- unbound')
-            // offsetHeight /= 2
-        }
-
-        offsetHeight = Math.floor(offsetHeight)
-        offsetHeight -= 1 // nudge
+        offsetHeight -= 1
         return offsetHeight
     }
 
@@ -269,6 +311,7 @@ class Marker extends Component {
         let spacerStyles = {
             paddingBottom: offsetHeight,
             display: 'block',
+            backgroundColor: verso ? 'lightblue' : 'lightyellow',
         }
         if (debug) spacerStyles = { ...spacerStyles, ...debugSpacerStyles }
 

@@ -6,12 +6,14 @@ import find from 'lodash/find'
 import { Controls, Frame, Spinner } from '.'
 import { Request, XMLAdaptor, Asset, Url, Cache, Storage } from '../helpers'
 import { ViewerSettings } from '../models'
-import { debug, logTime, verboseOutput, useLocalStorage } from '../config'
+import { logTime, useLocalStorage } from '../config'
+// import { debug, logTime, verboseOutput, useLocalStorage } from '../config'
 import history from '../lib/History'
 import deferrable from '../lib/decorate-deferrable'
 import Messenger from '../lib/Messenger'
 import Viewport from '../helpers/Viewport'
-
+const debug = true
+const verboseOutput = true
 const MAX_RENDER_TIMEOUT = 0
 const MAX_DEFERRED_CALLBACK_TIMEOUT = 0
 
@@ -57,7 +59,7 @@ class Reader extends Component {
 
             // navigation
             spreadIndex: 0,
-            spreadTotal: 0,
+            lastIndex: 0,
             handleEvents: false,
             firstPage: false,
             lastPage: false,
@@ -479,16 +481,16 @@ class Reader extends Component {
 
     handlePageNavigation(increment) {
         let { spreadIndex } = this.state
-        const { spreadTotal } = this.state
+        const { lastIndex } = this.state
         const nextIndex = spreadIndex + increment
 
         if (debug && verboseOutput) {
             console.group('Reader#handlePageNavigation')
-            console.log('spreadIndex: %d; nextIndex: %d; spreadTotal %d', spreadIndex, nextIndex, spreadTotal)
+            console.log('spreadIndex: %d; nextIndex: %d; lastIndex %d', spreadIndex, nextIndex, lastIndex)
             console.groupEnd()
         }
 
-        if (nextIndex > spreadTotal || nextIndex < 0) {
+        if (nextIndex > lastIndex || nextIndex < 0) {
             // move to next or prev chapter
             const sign = Math.sign(increment)
             this.handleChapterNavigation(sign)
@@ -520,10 +522,10 @@ class Reader extends Component {
         let deferredCallback
         if (increment === -1) {
             deferredCallback = () => {
-                const { spreadTotal } = this.state
+                const { lastIndex } = this.state
 
                 this.scrollToTop()
-                this.navigateToSpreadByIndex(spreadTotal)
+                this.navigateToSpreadByIndex(lastIndex)
                 this.enableEventHandling()
                 this.hideSpinner()
 
@@ -687,7 +689,7 @@ class Reader extends Component {
             ready,
             bookURL,
             spreadIndex,
-            spreadTotal,
+            lastIndex,
             viewerSettings,
             pageAnimation,
             handleEvents,
@@ -704,7 +706,7 @@ class Reader extends Component {
                 viewerSettings={viewerSettings}
                 handleEvents={handleEvents}
                 spreadIndex={spreadIndex}
-                spreadTotal={spreadTotal}
+                lastIndex={lastIndex}
                 enablePageTransitions={this.enablePageTransitions}
                 handlePageNavigation={this.handlePageNavigation}
                 updateViewerSettings={this.updateViewerSettings}
@@ -720,7 +722,7 @@ class Reader extends Component {
                     ready={ready}
                     bookURL={bookURL}
                     spreadIndex={spreadIndex}
-                    spreadTotal={spreadTotal}
+                    lastIndex={lastIndex}
                     bookContent={bookContentComponent}
                     pageAnimation={pageAnimation}
                     setReaderState={this._setState}

@@ -1,11 +1,11 @@
 import { messagesTypes } from '../constants'
 
 export default class PageEvent {
-    constructor({ spreadIndex, spreadTotal, firstPage, lastPage }) {
+    constructor({ spreadIndex, lastIndex, firstPage, lastPage }) {
         this.origin = window.location.origin
         this.type = messagesTypes.PAGINATION_EVENT
         this.spreadIndex = spreadIndex
-        this.spreadTotal = spreadTotal
+        this.lastIndex = lastIndex
         this.firstPage = firstPage
         this.lastPage = lastPage
     }
