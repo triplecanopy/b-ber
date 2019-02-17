@@ -6,14 +6,14 @@ import find from 'lodash/find'
 import { Controls, Frame, Spinner } from '.'
 import { Request, XMLAdaptor, Asset, Url, Cache, Storage } from '../helpers'
 import { ViewerSettings } from '../models'
-import { logTime, useLocalStorage } from '../config'
-// import { debug, logTime, verboseOutput, useLocalStorage } from '../config'
+import { debug, verboseOutput, logTime, useLocalStorage } from '../config'
 import history from '../lib/History'
 import deferrable from '../lib/decorate-deferrable'
 import Messenger from '../lib/Messenger'
 import Viewport from '../helpers/Viewport'
-const debug = true
-const verboseOutput = true
+
+// const debug = true
+// const verboseOutput = true
 const MAX_RENDER_TIMEOUT = 0
 const MAX_DEFERRED_CALLBACK_TIMEOUT = 0
 
