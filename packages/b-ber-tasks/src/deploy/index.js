@@ -39,14 +39,17 @@ function deploy({ bucketURL, awsRegion }) {
         // uses 'sync' by default.
         // TODO: allow different upload strategies? 'cp' needs --recursive flag
         // @issue: https://github.com/triplecanopy/b-ber/issues/224
-        const command = `aws s3 sync ${sourceDir} ${bucketURL} \\
-                        --exclude "*" \\
-                        --include "*.epub" \\
-                        --include "*.mobi" \\
-                        --include "*.pdf" \\
-                        --include "project-reader/*" \\
-                        --include "project-web/*" \\
-                        --region ${awsRegion}`
+        const command = [
+            `aws s3 sync ${sourceDir} ${bucketURL}`,
+            '--exclude "*"',
+            '--include "*.epub"',
+            '--include "*.mobi"',
+            '--include "*.pdf"',
+            '--include "project-reader/*"',
+            '--include "project-web/*"',
+            `--region ${awsRegion}`,
+            '--dryrun',
+        ].join(' ')
 
         const proc = exec(command, { cwd })
 
