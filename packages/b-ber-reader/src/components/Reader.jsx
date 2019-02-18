@@ -65,6 +65,7 @@ class Reader extends Component {
             lastChapter: false,
             firstSpread: false,
             lastSpread: false,
+            delta: 0,
 
             // sidebar
             showSidebar: null,
@@ -512,13 +513,12 @@ class Reader extends Component {
             return
         }
 
-        console.log('lastSpreadIndex', lastSpreadIndex)
-
         const firstSpread = nextIndex === 0
         const lastSpread = nextIndex === lastSpreadIndex
+        const spreadDelta = nextIndex > spreadIndex ? 1 : -1
 
         spreadIndex = nextIndex
-        this.setState({ spreadIndex, firstSpread, lastSpread, showSidebar: null }, () => {
+        this.setState({ spreadIndex, firstSpread, lastSpread, spreadDelta, showSidebar: null }, () => {
             this.updateQueryString()
             Messenger.sendPaginationEvent(this.state)
         })
@@ -528,12 +528,11 @@ class Reader extends Component {
         let { currentSpineItemIndex } = this.state
         const { spine } = this.state
         const nextIndex = Number(currentSpineItemIndex) + increment
-
         const firstChapter = nextIndex < 0
         const lastChapter = nextIndex > spine.length - 1
 
         if (firstChapter || lastChapter) {
-            this.setState({ firstChapter, lastChapter })
+            this.setState({ firstChapter, lastChapter }, () => Messenger.sendPaginationEvent(this.state))
             return
         }
 
@@ -541,46 +540,25 @@ class Reader extends Component {
         const currentSpineItem = spine[nextIndex]
         const spreadIndex = 0
 
-        let deferredCallback
-        if (increment === -1) {
-            deferredCallback = () => {
-                console.log('deferred from moving back')
+        let deferredCallback = direction => () => {
+            const { lastSpreadIndex } = this.state
+            const firstSpread = spreadIndex === 0
+            const lastSpread = spreadIndex === lastSpreadIndex
+            const spreadDelta = 0
 
-                const { lastSpreadIndex } = this.state
-                const firstSpread = spreadIndex === 0
-                const lastSpread = spreadIndex === lastSpreadIndex
+            this.setState({ firstChapter, lastChapter, firstSpread, lastSpread, spreadDelta }, () => {
+                this.scrollToTop()
+                if (direction === -1) this.navigateToSpreadByIndex(lastSpreadIndex) // TODO: navigate to last visited page
+                this.enableEventHandling()
+                this.hideSpinner()
 
-                this.setState({ firstChapter, lastChapter, firstSpread, lastSpread }, () => {
-                    this.scrollToTop()
-                    this.navigateToSpreadByIndex(lastSpreadIndex)
-                    this.enableEventHandling()
-                    this.hideSpinner()
+                Messenger.sendPaginationEvent(this.state)
+            })
 
-                    Messenger.sendPaginationEvent(this.state)
-                })
-
-                if (logTime) console.timeEnd('Content Visible')
-            }
-        } else {
-            // this branch smoothes out page transisitions when moving forward
-            deferredCallback = () => {
-                console.log('deferred from moving forward')
-
-                const { lastSpreadIndex } = this.state
-                const firstSpread = spreadIndex === 0
-                const lastSpread = spreadIndex === lastSpreadIndex
-
-                this.setState({ firstChapter, lastChapter, firstSpread, lastSpread }, () => {
-                    this.scrollToTop()
-                    this.enableEventHandling()
-                    this.hideSpinner()
-
-                    Messenger.sendPaginationEvent(this.state)
-                })
-
-                if (logTime) console.timeEnd('Content Visible')
-            }
+            if (logTime) console.timeEnd('Content Visible')
         }
+
+        deferredCallback = deferredCallback(increment)
 
         this.setState(
             {

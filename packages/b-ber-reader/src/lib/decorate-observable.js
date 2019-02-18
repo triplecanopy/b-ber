@@ -170,7 +170,7 @@ export default function observable(target) {
             }, ENSURE_RENDER_TIMEOUT)
         } else {
             if (logTime) console.timeEnd('observable#setReaderState')
-            console.log('decorate calls ready')
+            console.log('decorate-observable calls ready')
             this.props.setReaderState({ lastSpreadIndex, ready: true })
         }
     }

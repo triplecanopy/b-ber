@@ -1,7 +1,7 @@
 import { messagesTypes } from '../constants'
 
 export default class PageEvent {
-    constructor({ spreadIndex, lastSpreadIndex, firstChapter, lastChapter, firstSpread, lastSpread }) {
+    constructor({ spreadIndex, lastSpreadIndex, firstChapter, lastChapter, firstSpread, lastSpread, spreadDelta }) {
         this.origin = window.location.origin
         this.type = messagesTypes.PAGINATION_EVENT
         this.spreadIndex = spreadIndex
@@ -10,5 +10,6 @@ export default class PageEvent {
         this.lastChapter = lastChapter
         this.firstSpread = firstSpread
         this.lastSpread = lastSpread
+        this.spreadDelta = spreadDelta
     }
 }

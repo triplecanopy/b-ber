@@ -56,7 +56,6 @@ export default function deferrable(target) {
             console.log(`${target.name}#callDeferred`, this.__deferredCallback.name)
         }
 
-        console.log('def', this.__deferredCallback.name)
         this.__deferredCallback.call(this)
         this.deRegisterDeferredCallback()
     }
