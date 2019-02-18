@@ -16,6 +16,7 @@ export const messagesTypes = {
     DEFERRED_EVENT: 'DEFERRED_EVENT',
     CLICK_EVENT: 'CLICK_EVENT',
     KEYDOWN_EVENT: 'KEYDOWN_EVENT',
+    NAVIGATION_EVENT: 'NAVIGATION_EVENT',
 }
 
 // Media queries horizontal in px
