@@ -529,7 +529,7 @@ class Reader extends Component {
         const { spine } = this.state
         const nextIndex = Number(currentSpineItemIndex) + increment
         const firstChapter = nextIndex < 0
-        const lastChapter = nextIndex > spine.length - 1
+        let lastChapter = nextIndex > spine.length - 1
 
         if (firstChapter || lastChapter) {
             this.setState({ firstChapter, lastChapter }, () => Messenger.sendPaginationEvent(this.state))
@@ -545,15 +545,25 @@ class Reader extends Component {
             const firstSpread = spreadIndex === 0
             const lastSpread = spreadIndex === lastSpreadIndex
             const spreadDelta = 0
+            lastChapter = currentSpineItemIndex === spine.length - 1
 
-            this.setState({ firstChapter, lastChapter, firstSpread, lastSpread, spreadDelta }, () => {
-                this.scrollToTop()
-                if (direction === -1) this.navigateToSpreadByIndex(lastSpreadIndex) // TODO: navigate to last visited page
-                this.enableEventHandling()
-                this.hideSpinner()
+            this.setState(
+                {
+                    firstChapter,
+                    lastChapter,
+                    firstSpread,
+                    lastSpread,
+                    spreadDelta,
+                },
+                () => {
+                    this.scrollToTop()
+                    if (direction === -1) this.navigateToSpreadByIndex(lastSpreadIndex) // TODO: navigate to last visited page
+                    this.enableEventHandling()
+                    this.hideSpinner()
 
-                Messenger.sendPaginationEvent(this.state)
-            })
+                    Messenger.sendPaginationEvent(this.state)
+                },
+            )
 
             if (logTime) console.timeEnd('Content Visible')
         }
