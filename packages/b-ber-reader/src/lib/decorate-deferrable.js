@@ -3,6 +3,7 @@
 import { debug, verboseOutput } from '../config'
 import { noop } from '../helpers/utils'
 import Messenger from '../lib/Messenger'
+import { DEFERRED_CALLBACK_TIMER } from '../constants'
 
 export default function deferrable(target) {
     const _componentWillMount = target.prototype.componentWillMount
@@ -11,7 +12,7 @@ export default function deferrable(target) {
         this.__defaultDeferredCallback = noop
         this.__deferredCallback = noop
         this.__deferredCallbackTimeout = null
-        this.__deferredCallbackTimer = 200
+        this.__deferredCallbackTimer = DEFERRED_CALLBACK_TIMER
 
         if (_componentWillMount) _componentWillMount.call(this, arguments)
     }
@@ -54,6 +55,8 @@ export default function deferrable(target) {
         if (debug && verboseOutput) {
             console.log(`${target.name}#callDeferred`, this.__deferredCallback.name)
         }
+
+        console.log('def', this.__deferredCallback.name)
         this.__deferredCallback.call(this)
         this.deRegisterDeferredCallback()
     }

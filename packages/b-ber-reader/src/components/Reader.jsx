@@ -59,10 +59,12 @@ class Reader extends Component {
 
             // navigation
             spreadIndex: 0,
-            lastIndex: 0,
+            lastSpreadIndex: 0,
             handleEvents: false,
-            firstPage: false,
-            lastPage: false,
+            firstChapter: false,
+            lastChapter: false,
+            firstSpread: false,
+            lastSpread: false,
 
             // sidebar
             showSidebar: null,
@@ -442,13 +444,25 @@ class Reader extends Component {
                         if (deferredCallback) {
                             this.registerDeferredCallback(deferredCallback)
                         } else {
-                            this.enableEventHandling()
-                            this.hideSpinner()
+                            this.registerDeferredCallback(() => {
+                                const { spine, spreadIndex, currentSpineItemIndex, lastSpreadIndex } = this.state
+                                const firstChapter = currentSpineItemIndex === 0
+                                const lastChapter = currentSpineItemIndex === spine.length - 1
+                                const firstSpread = spreadIndex === 0
+                                const lastSpread = spreadIndex === lastSpreadIndex
+
+                                this.setState({ firstChapter, lastChapter, firstSpread, lastSpread }, () => {
+                                    this.enableEventHandling()
+                                    this.hideSpinner()
+
+                                    Messenger.sendPaginationEvent(this.state)
+                                })
+                            })
                         }
 
                         return setTimeout(() => {
                             if (logTime) {
-                                console.timeEnd('this.setState({ready: true})')
+                                // console.timeEnd('this.setState({ready: true})')
                                 console.timeEnd('Reader#loadSpineItem')
                             }
                             // return this.setState({ready: true}) // TODO: force load
@@ -481,16 +495,16 @@ class Reader extends Component {
 
     handlePageNavigation(increment) {
         let { spreadIndex } = this.state
-        const { lastIndex } = this.state
+        const { lastSpreadIndex } = this.state
         const nextIndex = spreadIndex + increment
 
         if (debug && verboseOutput) {
             console.group('Reader#handlePageNavigation')
-            console.log('spreadIndex: %d; nextIndex: %d; lastIndex %d', spreadIndex, nextIndex, lastIndex)
+            console.log('spreadIndex: %d; nextIndex: %d; lastSpreadIndex %d', spreadIndex, nextIndex, lastSpreadIndex)
             console.groupEnd()
         }
 
-        if (nextIndex > lastIndex || nextIndex < 0) {
+        if (nextIndex > lastSpreadIndex || nextIndex < 0) {
             // move to next or prev chapter
             const sign = Math.sign(increment)
             this.handleChapterNavigation(sign)
@@ -498,8 +512,16 @@ class Reader extends Component {
             return
         }
 
+        console.log('lastSpreadIndex', lastSpreadIndex)
+
+        const firstSpread = nextIndex === 0
+        const lastSpread = nextIndex === lastSpreadIndex
+
         spreadIndex = nextIndex
-        this.setState({ spreadIndex, showSidebar: null }, this.updateQueryString)
+        this.setState({ spreadIndex, firstSpread, lastSpread, showSidebar: null }, () => {
+            this.updateQueryString()
+            Messenger.sendPaginationEvent(this.state)
+        })
     }
 
     handleChapterNavigation(increment) {
@@ -507,11 +529,11 @@ class Reader extends Component {
         const { spine } = this.state
         const nextIndex = Number(currentSpineItemIndex) + increment
 
-        const firstPage = nextIndex < 0
-        const lastPage = nextIndex > spine.length - 1
+        const firstChapter = nextIndex < 0
+        const lastChapter = nextIndex > spine.length - 1
 
-        if (firstPage || lastPage) {
-            this.setState({ firstPage, lastPage }, () => Messenger.sendPaginationEvent(this.state))
+        if (firstChapter || lastChapter) {
+            this.setState({ firstChapter, lastChapter })
             return
         }
 
@@ -522,25 +544,39 @@ class Reader extends Component {
         let deferredCallback
         if (increment === -1) {
             deferredCallback = () => {
-                const { lastIndex } = this.state
+                console.log('deferred from moving back')
 
-                this.scrollToTop()
-                this.navigateToSpreadByIndex(lastIndex)
-                this.enableEventHandling()
-                this.hideSpinner()
+                const { lastSpreadIndex } = this.state
+                const firstSpread = spreadIndex === 0
+                const lastSpread = spreadIndex === lastSpreadIndex
 
-                Messenger.sendPaginationEvent(this.state)
+                this.setState({ firstChapter, lastChapter, firstSpread, lastSpread }, () => {
+                    this.scrollToTop()
+                    this.navigateToSpreadByIndex(lastSpreadIndex)
+                    this.enableEventHandling()
+                    this.hideSpinner()
+
+                    Messenger.sendPaginationEvent(this.state)
+                })
 
                 if (logTime) console.timeEnd('Content Visible')
             }
         } else {
             // this branch smoothes out page transisitions when moving forward
             deferredCallback = () => {
-                this.scrollToTop()
-                this.enableEventHandling()
-                this.hideSpinner()
+                console.log('deferred from moving forward')
 
-                Messenger.sendPaginationEvent(this.state)
+                const { lastSpreadIndex } = this.state
+                const firstSpread = spreadIndex === 0
+                const lastSpread = spreadIndex === lastSpreadIndex
+
+                this.setState({ firstChapter, lastChapter, firstSpread, lastSpread }, () => {
+                    this.scrollToTop()
+                    this.enableEventHandling()
+                    this.hideSpinner()
+
+                    Messenger.sendPaginationEvent(this.state)
+                })
 
                 if (logTime) console.timeEnd('Content Visible')
             }
@@ -552,8 +588,8 @@ class Reader extends Component {
                 currentSpineItem,
                 currentSpineItemIndex,
                 showSidebar: null,
-                firstPage,
-                lastPage,
+                firstChapter,
+                lastChapter,
             },
             () => {
                 this.loadSpineItem(currentSpineItem, deferredCallback)
@@ -689,7 +725,7 @@ class Reader extends Component {
             ready,
             bookURL,
             spreadIndex,
-            lastIndex,
+            lastSpreadIndex,
             viewerSettings,
             pageAnimation,
             handleEvents,
@@ -706,7 +742,7 @@ class Reader extends Component {
                 viewerSettings={viewerSettings}
                 handleEvents={handleEvents}
                 spreadIndex={spreadIndex}
-                lastIndex={lastIndex}
+                lastSpreadIndex={lastSpreadIndex}
                 enablePageTransitions={this.enablePageTransitions}
                 handlePageNavigation={this.handlePageNavigation}
                 updateViewerSettings={this.updateViewerSettings}
@@ -722,7 +758,7 @@ class Reader extends Component {
                     ready={ready}
                     bookURL={bookURL}
                     spreadIndex={spreadIndex}
-                    lastIndex={lastIndex}
+                    lastSpreadIndex={lastSpreadIndex}
                     bookContent={bookContentComponent}
                     pageAnimation={pageAnimation}
                     setReaderState={this._setState}
