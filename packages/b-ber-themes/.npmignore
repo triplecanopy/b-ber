@@ -1,6 +1,7 @@
 .github
 .yarnclean
 yarn.lock
+jest.config.js
 yarn-debug.log*
 yarn-error.log*
 

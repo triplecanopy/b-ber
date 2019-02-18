@@ -27,11 +27,15 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
     },
     {
         shouldProcessNode(node) {
-            return node.attribs && node.attribs.href && Url.isRelativeURL(node.attribs.href)
+            return node.attribs && node.attribs.href
         },
         processNode(node, children, index) {
-            const href = Url.resolveOverlappingURL(requestedSpineItem.absoluteURL, node.attribs.href)
             const attrs = Asset.convertToReactAttrs(node.attribs)
+
+            let { href } = node.attribs
+            if (Url.isRelativeURL(node.attribs.href)) {
+                href = Url.resolveOverlappingURL(requestedSpineItem.absoluteURL, node.attribs.href)
+            }
 
             return React.createElement(
                 Link,

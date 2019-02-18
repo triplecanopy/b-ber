@@ -93,9 +93,7 @@ export default function observable(target) {
         this.__mutationObserver.disconnect(this.contentNode)
     }
 
-    target.prototype.calculateNodePosition = function calculateNodePosition(entry) {
-        console.log('mutates', entry)
-
+    target.prototype.calculateNodePosition = function calculateNodePosition(/* entry */) {
         if (!this.contentNode) throw new Error("Couldn't find this.contentNode")
 
         const { columns } = this.state

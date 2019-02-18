@@ -55,10 +55,14 @@ class Reader {
     }
     ensureReaderModuleExists() {
         try {
-            this.readerAppPath = path.dirname(path.join(require.resolve(JSON.stringify(this.readerModuleName))))
+            this.readerAppPath = path.join(
+                path.dirname(path.join(require.resolve(this.readerModuleName))),
+                this.readerModuleDistDir,
+            )
             return Promise.resolve()
         } catch (err) {
             // module not found using require.resolve, so we check if there's a symlinked version available
+            log.warn(`Could not find globally installed module ${this.readerModuleName}`)
         }
 
         const { paths } = module
@@ -77,6 +81,9 @@ class Reader {
 
         try {
             this.readerAppPath = fs.realpathSync(path.join(modulePath, this.readerModuleDistDir))
+            const pkg = fs.readJsonSync(path.join(modulePath, this.readerModuleDistDir, 'package.json'))
+            log.warn(`Loaded ${this.readerModuleName} v${pkg.version}`)
+
             return Promise.resolve()
         } catch (err) {
             log.error(`
@@ -124,7 +131,11 @@ class Reader {
         return fs.writeJson(path.join(this.apiDir, 'books.json'), manifest)
     }
     copyReaderAppToOutputDir() {
-        return fs.copy(this.readerAppPath, this.dist)
+        const promises = fs
+            .readdirSync(this.readerAppPath)
+            .map(file => fs.copy(path.join(this.readerAppPath, file), path.join(process.cwd(), this.dist, file)))
+
+        return Promise.all(promises).catch(log.error)
     }
 
     injectServerDataIntoTemplate() {

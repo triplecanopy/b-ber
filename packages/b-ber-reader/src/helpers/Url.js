@@ -129,6 +129,12 @@ class Url {
         path_ = path_.length ? `/${path_}/` : '/'
         return path_
     }
+
+    static isExternalURL(url) {
+        if (Url.isRelativeURL(url)) return false
+        const url_ = new window.URL(url)
+        return window.location.origin !== url_.origin
+    }
 }
 
 export default Url
