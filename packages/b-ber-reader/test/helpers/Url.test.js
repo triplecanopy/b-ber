@@ -2,6 +2,24 @@
 
 import Url from '../../src/helpers/Url'
 
+// create mock window
+// https://github.com/facebook/jest/issues/5124
+let originalWindow
+
+beforeEach(() => {
+    originalWindow = global.window
+    global.window = Object.create(window)
+    Object.defineProperty(window, 'location', {
+        value: {
+            origin: 'http://test.com',
+        },
+    })
+})
+
+afterEach(() => {
+    global.window = originalWindow
+})
+
 test('creates a slug', () => {
     const input = 'abc #!$   éß1'
     const output = 'abc-1'
@@ -77,4 +95,13 @@ test('creates an absolute url', () => {
     expect(Url.toAbsoluteUrl('http://example.com/', '/path/to/file/test.jpg')).toBe(
         'http://example.com/path/to/file/test.jpg',
     )
+})
+
+test('tests if an url is external', () => {
+    expect(Url.isExternalURL('/foo/bar.jpg')).toBeFalse()
+    expect(Url.isExternalURL('http://example.com/')).toBeTrue()
+    expect(Url.isExternalURL()).toBeFalse()
+    expect(Url.isExternalURL('http://example.com#anchor')).toBeTrue()
+    expect(Url.isExternalURL('http://test.com/')).toBeFalse()
+    expect(Url.isExternalURL('http://test.com#anchor')).toBeFalse()
 })
