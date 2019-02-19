@@ -1,0 +1,32 @@
+version: 2.0
+
+jobs:
+  build:
+    docker:
+      - image: canopycanopycanopy/b-ber:0.2.0
+    branches:
+      only:
+        - master
+    working_directory: ~/b-ber
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - deps-{{ checksum "package.json" }}
+            - deps-
+      - run: |
+          npm -g config set user root
+          npm i -g lerna
+          yarn
+          lerna bootstrap
+          yarn build
+          yarn test
+          cd ~
+          $BBER --version
+          $BBER new foo
+          cd foo
+          $BBER build
+      - save_cache:
+          paths:
+            - b-ber/node_modules
+          key: deps-{{ checksum "package.json" }}
