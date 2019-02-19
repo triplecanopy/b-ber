@@ -117,12 +117,6 @@ html {
                 #{$font-size-base} + (22.5 - 20) * (100vw - 960px) / (1580 - 960)
             );
         }
-        // To fix: tablet large for iPad Pro
-        //@include break('tablet-large') {
-        //    font-size: calc(
-        //        #{$font-size-base} + (8 - 20) * (100vw - 960px) / (1580 - 960)
-        //    ); 
-        //}
     }
 }
 
