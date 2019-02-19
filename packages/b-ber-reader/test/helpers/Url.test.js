@@ -2,7 +2,7 @@
 
 import Url from '../../src/helpers/Url'
 
-describe('helpers/Url', () => {
+describe('Url', () => {
     test('creates a slug', () => {
         const input = 'abc #!$   éß1'
         const output = 'abc-1'
