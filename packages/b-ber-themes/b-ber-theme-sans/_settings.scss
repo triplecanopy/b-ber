@@ -86,9 +86,3 @@ $landscape-image-height: 4 !default;
 $square-image-height: 4 !default;
 $portrait-image-height: 5 !default;
 $portrait-image--high-height: 5 !default;
-
-// Gallery grid (web & reader)
-$grid-template: [row1-start] 't1 t2 t3 t4 t5 t6 t7 t8 t9 t10 t11 t12' 43%
-    [row1-end] [row2-start] 'b1 b2 b3 b4 b5 b6 b7 b8 b9 b10 b11 b12' 43%
-    [row2-end] disable-line indentation / auto !default;
-$grid-gap: 14% 3% !default;

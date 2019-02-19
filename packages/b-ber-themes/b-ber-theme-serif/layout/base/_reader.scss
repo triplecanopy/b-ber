@@ -36,8 +36,14 @@
             width: 100vw;
         }
     }
+
     // Gallery Styling
-    // This sets up a layout for galleries that contains 12 columns and two rows and is responsive. See settings file to modify.
+    // This sets up a layout for galleries that contains 12 columns and two rows
+    // and is responsive.
+
+    // TODO: Move the grid-template and grid-gap properties to in reader.scss
+    // settings.scss to default variables.
+    // https://github.com/triplecanopy/b-ber/issues/267
     section.gallery .figure__gallery {
         .figure__items {
             display: grid;
