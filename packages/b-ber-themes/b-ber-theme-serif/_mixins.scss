@@ -33,6 +33,10 @@
         @media #{$desktop-short} {
             @content;
         }
+    } @else if $media == 'tablet-large' {
+        @media #{$media-tablet-large} {
+            @content;
+        }
     } @else {
         @if feature-exists('at-error') == true {
             @error "`#{$media}` is not a supported media type."; // sass-lint:disable-line quotes

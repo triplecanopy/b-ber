@@ -96,11 +96,16 @@ html {
     // queries there
     // @issue: https://github.com/triplecanopy/b-ber/issues/241
     #layout {
-        // Covers Mobile and Tablet contexts
+        // Covers Mobile
         font-size: calc(
             #{$font-size-base} + (22 - 20) * (100vw - 320px) / (960 - 320)
         );
 
+        @include break('tablet') {
+            font-size: calc(
+                #{$font-size-base} + (8 - 20) * (100vw - 960px) / (1580 - 960)
+            ); 
+        }
         @include break('desktop') {
             font-size: calc(
                 #{$font-size-base} + (22 - 20) * (100vw - 960px) / (1580 - 960)
@@ -112,6 +117,12 @@ html {
                 #{$font-size-base} + (22.5 - 20) * (100vw - 960px) / (1580 - 960)
             );
         }
+        // To fix: tablet large for iPad Pro
+        //@include break('tablet-large') {
+        //    font-size: calc(
+        //        #{$font-size-base} + (8 - 20) * (100vw - 960px) / (1580 - 960)
+        //    ); 
+        //}
     }
 }
 
