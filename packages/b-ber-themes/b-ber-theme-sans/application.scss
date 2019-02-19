@@ -91,32 +91,8 @@ html {
 }
 
 @if $build == 'reader' {
-    // TODO: the values in the calculations below should be collected into
-    // variables for clarity as well as added to _settings.scss for the media
-    // queries there
-    // @issue: https://github.com/triplecanopy/b-ber/issues/241
     #layout {
-        // Covers Mobile
-        font-size: calc(
-            #{$font-size-base} + (22 - 20) * (100vw - 320px) / (960 - 320)
-        );
-
-        @include break('tablet') {
-            font-size: calc(
-                #{$font-size-base} + (8 - 20) * (100vw - 960px) / (1580 - 960)
-            ); 
-        }
-        @include break('desktop') {
-            font-size: calc(
-                #{$font-size-base} + (22 - 20) * (100vw - 960px) / (1580 - 960)
-            );
-        }
-
-        @include break('wide') {
-            font-size: calc(
-                #{$font-size-base} + (22.5 - 20) * (100vw - 960px) / (1580 - 960)
-            );
-        }
+        @include fluid-type($min-width, $max-width, $min-font, $max-font);
     }
 }
 

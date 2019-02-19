@@ -39,9 +39,15 @@ $debug: false !default;
 $text-indent: true !default;
 $vertical-space: false !default;
 
+// View Port
+$min-width: 320px !default;
+$max-width: 1980px !default;
+
 // Font Size
 $font-size-base: 1em !default;
 $line-height-base: 1.3 !default;
+$min-font: 17px !default;
+$max-font: 21px !default;
 
 // Typgraphic Scale
 //
