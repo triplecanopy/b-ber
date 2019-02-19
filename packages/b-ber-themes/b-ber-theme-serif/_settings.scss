@@ -7,10 +7,10 @@ $media-mobile: 'only screen \
                 and (min-width: 320px) \
                 and (max-width: 680px)' !default;
 $media-tablet: 'only screen \
-                and (min-width: 680px) \
-                and (max-width: 768px)' !default;
+                and (min-width: 768px) \
+                and (min-height: 1024px)' !default;
 $media-desktop: 'only screen \
-                and (min-width: 680px)' !default;
+                and (min-width: 960px)' !default;
 $media-wide: 'only screen \
                 and (min-width: 1590px)' !default;
 $media-tall: 'only screen \
