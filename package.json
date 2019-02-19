@@ -23,9 +23,7 @@
         "test.coverage": "rimraf ./coverage && yarn lint && yarn jest --collectCoverage=true",
         "test": "yarn lint && yarn jest",
         "build": "lerna run build",
-        "prettier.check": "./node_modules/.bin/eslint --print-config . | ./node_modules/.bin/eslint-config-prettier-check",
-        "prepare": "yarn test && yarn build",
-        "bootstrap": "yarn build && lerna bootstrap"
+        "prettier.check": "./node_modules/.bin/eslint --print-config . | ./node_modules/.bin/eslint-config-prettier-check"
     },
     "husky": {
         "hooks": {
