@@ -22,52 +22,54 @@ const xml = {
         </package>`,
 }
 
-test('parses opf data', done => {
-    XMLAdaptor.parseOPF(xml).then(resp => {
-        expect(resp).toEqual({
-            __metadata: expect.objectContaining({
-                name: expect.stringMatching(/^metadata$/),
-                elements: expect.any(Array),
-            }),
-            __manifest: expect.objectContaining({
-                name: expect.stringMatching(/^manifest$/),
-                elements: expect.any(Array),
-            }),
-            __guide: expect.objectContaining({
-                name: expect.stringMatching(/^guide$/),
-                elements: expect.any(Array),
-            }),
-            __spine: expect.objectContaining({
-                name: expect.stringMatching(/^spine$/),
-                elements: expect.any(Array),
-            }),
-        })
-
-        done()
-    })
-})
-
-// parseNCX
-test.skip('parses ncx data', done => {
-    // TODO: stub Request.get
-    // @issue: https://github.com/triplecanopy/b-ber/issues/223
-    done()
-})
-
-test.skip('creates spine object', async done => {
-    const data = await XMLAdaptor.parseOPF(xml)
-
-    XMLAdaptor.createSpineItems(data)
-        .then(resp => XMLAdaptor.parseNCX(resp, opsURL))
-        .then(resp => {
-            expect(resp).toEqual(
-                expect.objectContaining({
-                    __manifest: expect.any(Object),
-                    __spine: expect.any(Object),
-                    // __ncx: expect.any(Object),
+describe('XMLAdaptor', () => {
+    test('parses opf data', done => {
+        XMLAdaptor.parseOPF(xml).then(resp => {
+            expect(resp).toEqual({
+                __metadata: expect.objectContaining({
+                    name: expect.stringMatching(/^metadata$/),
+                    elements: expect.any(Array),
                 }),
-            )
+                __manifest: expect.objectContaining({
+                    name: expect.stringMatching(/^manifest$/),
+                    elements: expect.any(Array),
+                }),
+                __guide: expect.objectContaining({
+                    name: expect.stringMatching(/^guide$/),
+                    elements: expect.any(Array),
+                }),
+                __spine: expect.objectContaining({
+                    name: expect.stringMatching(/^spine$/),
+                    elements: expect.any(Array),
+                }),
+            })
 
             done()
         })
+    })
+
+    // parseNCX
+    test.skip('parses ncx data', done => {
+        // TODO: stub Request.get
+        // @issue: https://github.com/triplecanopy/b-ber/issues/223
+        done()
+    })
+
+    test.skip('creates spine object', async done => {
+        const data = await XMLAdaptor.parseOPF(xml)
+
+        XMLAdaptor.createSpineItems(data)
+            .then(resp => XMLAdaptor.parseNCX(resp, opsURL))
+            .then(resp => {
+                expect(resp).toEqual(
+                    expect.objectContaining({
+                        __manifest: expect.any(Object),
+                        __spine: expect.any(Object),
+                        // __ncx: expect.any(Object),
+                    }),
+                )
+
+                done()
+            })
+    })
 })

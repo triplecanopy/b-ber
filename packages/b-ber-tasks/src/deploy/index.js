@@ -36,11 +36,12 @@ function deploy({ bucketURL, awsRegion }) {
     return new Promise(resolve => {
         const sourceDir = path.resolve(cwd, './')
 
-        // uses 'sync' by default.
-        // TODO: allow different upload strategies? 'cp' needs --recursive flag
+        // uses 'cp' by default.
+        // TODO: allow different upload strategies?
         // @issue: https://github.com/triplecanopy/b-ber/issues/224
         const command = [
-            `aws s3 sync ${sourceDir} ${bucketURL}`,
+            `aws s3 cp ${sourceDir} ${bucketURL}`,
+            '--recursive',
             '--exclude "*"',
             '--include "*.epub"',
             '--include "*.mobi"',
@@ -48,7 +49,6 @@ function deploy({ bucketURL, awsRegion }) {
             '--include "project-reader/*"',
             '--include "project-web/*"',
             `--region ${awsRegion}`,
-            '--dryrun',
         ].join(' ')
 
         const proc = exec(command, { cwd })
