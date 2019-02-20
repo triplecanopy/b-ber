@@ -311,7 +311,7 @@ class Marker extends Component {
         let spacerStyles = {
             paddingBottom: offsetHeight,
             display: 'block',
-            backgroundColor: verso ? 'lightblue' : 'lightyellow',
+            // backgroundColor: verso ? 'lightblue' : 'lightyellow',
         }
         if (debug) spacerStyles = { ...spacerStyles, ...debugSpacerStyles }
 
