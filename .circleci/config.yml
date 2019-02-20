@@ -16,8 +16,8 @@ jobs:
             - yarn-packages-{{ checksum "yarn.lock" }}
             - yarn-packages-
       - run: |
-          yarn config set user root --global
-          yarn add global lerna
+          npm -g config set user root
+          npm i -g lerna
           yarn
           lerna bootstrap
           yarn build
