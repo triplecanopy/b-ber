@@ -12,11 +12,12 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - deps-{{ checksum "package.json" }}
-            - deps-
+            - yarn-packages-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - yarn-packages-{{ checksum "yarn.lock" }}
+            - yarn-packages-
       - run: |
-          npm -g config set user root
-          npm i -g lerna
+          yarn config set user root --global
+          yarn add global lerna
           yarn
           lerna bootstrap
           yarn build
@@ -25,8 +26,10 @@ jobs:
           $BBER --version
           $BBER new foo
           cd foo
+          $BBER theme list
+          $BBER theme set b-ber-theme-serif
           $BBER build
       - save_cache:
           paths:
-            - b-ber/node_modules
-          key: deps-{{ checksum "package.json" }}
+            - ~/.cache/yarn
+          key: yarn-packages-{{ .Branch }}-{{ checksum "yarn.lock" }}
