@@ -32,4 +32,15 @@ jobs:
       - save_cache:
           paths:
             - ~/.cache/yarn
+            - ~/b-ber/node_modules
+            - ~/b-ber/packages/b-ber-cli/node_modules
+            - ~/b-ber/packages/b-ber-grammar/node_modules
+            - ~/b-ber/packages/b-ber-lib/node_modules
+            - ~/b-ber/packages/b-ber-logger/node_modules
+            - ~/b-ber/packages/b-ber-reader/node_modules
+            - ~/b-ber/packages/b-ber-resources/node_modules
+            - ~/b-ber/packages/b-ber-shapes/node_modules
+            - ~/b-ber/packages/b-ber-tasks/node_modules
+            - ~/b-ber/packages/b-ber-templates/node_modules
+            - ~/b-ber/packages/b-ber-themes/node_modules
           key: yarn-packages-{{ .Branch }}-{{ checksum "yarn.lock" }}
