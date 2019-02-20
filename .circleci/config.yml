@@ -12,9 +12,9 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - yarn-packages-{{ .Branch }}-{{ checksum "yarn.lock" }}
-            - yarn-packages-{{ checksum "yarn.lock" }}
-            - yarn-packages-
+            - yarn-packages-v1-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - yarn-packages-v1-{{ checksum "yarn.lock" }}
+            - yarn-packages-v1-
       - run: |
           npm -g config set user root
           npm i -g lerna
@@ -43,4 +43,4 @@ jobs:
             - ~/b-ber/packages/b-ber-tasks/node_modules
             - ~/b-ber/packages/b-ber-templates/node_modules
             - ~/b-ber/packages/b-ber-themes/node_modules
-          key: yarn-packages-{{ .Branch }}-{{ checksum "yarn.lock" }}
+          key: yarn-packages-v1-{{ .Branch }}-{{ checksum "yarn.lock" }}
