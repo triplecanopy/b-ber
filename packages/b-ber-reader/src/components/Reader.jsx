@@ -622,7 +622,6 @@ class Reader extends Component {
 
                     if (logTime) console.timeEnd('Content Visible')
                     // TODO: should match transition speed. all these deferreds should be collected together
-                    // @issue: https://github.com/triplecanopy/b-ber/issues/215
                     // @issue: https://github.com/triplecanopy/b-ber/issues/216
                 }, MAX_DEFERRED_CALLBACK_TIMEOUT)
             }
