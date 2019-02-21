@@ -3,8 +3,8 @@
 </h1>
 
 [![npm Version](https://img.shields.io/npm/v/@canopycanopycanopy/b-ber-cli.svg)](https://www.npmjs.com/search?q=@canopycanopycanopy)
+[![CircleCI](https://circleci.com/gh/triplecanopy/b-ber.svg?style=svg&circle-token=5cea89db36238e6c769862031a42879123deb6dd)](https://circleci.com/gh/triplecanopy/b-ber)
 [![Maintained with Lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lernajs.io/)
-[![CircleCI](https://circleci.com/gh/triplecanopy/b-ber/tree/master.svg?style=svg)](https://circleci.com/gh/triplecanopy/b-ber/tree/master)
 [![Coverage Status](https://coveralls.io/repos/triplecanopy/b-ber/badge.svg?branch=master)](https://coveralls.io/r/%3Caccount%3E/%3Crepository%3E?branch=master)
 
 
