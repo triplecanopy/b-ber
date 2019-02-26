@@ -126,27 +126,33 @@ a {
                 }
                 &.nav__button__downloads {
                     color: $black;
-                    animation: nav__button__downloads 2.5s infinite;
+                    animation: nav__button__downloads__shadow 2.5s infinite, nav__button__downloads__color 2.5s infinite;;
+                    text-shadow: 0px 0px 0px rgba(80, 80, 197, 0);
                     &:hover {
                         animation: none;
                         color: $tc-purple;
                     }
-                    @keyframes nav__button__downloads {
-                        0% {
-                            color: rgba(194, 194, 194, 0.2);
+                    @keyframes nav__button__downloads__shadow {
+                        5% {
+                            text-shadow: 0 0px 5px rgba(105, 105, 252, 1); 
                         }
-                        25% {
-                            color: rgba(194, 194, 194, 0.6);
-                        }
-                        50% {
-                            color: rgba(0, 0, 0, 1);
-                        }
-                        75% {
-                            color: rgba(194, 194, 194, 0.6);
+                        35% {
+                            text-shadow: 0px 5px 10px rgba(105, 105, 252, .5);
                         }
                         100% {
-                            color: rgba(194, 194, 194, 0.2);
+                            text-shadow: 0px 10px 30px rgba(105, 105, 252, 0);
                         }
+                    }
+                    @keyframes nav__button__downloads__color {
+                        0% {
+                            color: rgba(34, 34, 34, 1); 
+                        }
+                        25% {
+                            color: rgba(80, 80, 197, 1);
+                        }
+                        100% {
+                            color: rgba(34, 34, 34, 1); 
+                          }
                     }
                 }
             }
