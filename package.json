@@ -16,6 +16,7 @@
         "lint.changed.js": "DIFF=`git diff-index --name-only HEAD | grep -E \".*\\.jsx?$\"`; if [ \"$DIFF\" ]; then ./node_modules/.bin/eslint $DIFF; fi",
         "lint.changed.scss": "DIFF=`git diff-index --name-only HEAD | grep -E \".*\\.(scss|sass|less|css)$\"`; if [ \"$DIFF\" ]; then node_modules/.bin/sass-lint -c .sasslintrc $DIFF -v -q; fi",
         "lint.changed": "yarn lint.changed.js && yarn lint.changed.scss",
+        "prettier.check": "./node_modules/.bin/eslint --print-config . | ./node_modules/.bin/eslint-config-prettier-check",
         "flush.lock": "ls ./packages | xargs -I {} rimraf ./packages/{}/yarn.lock",
         "flush.modules": "ls ./packages | xargs -I {} rimraf ./packages/{}/node_modules",
         "flush.rebuild": "lerna exec yarn && lerna bootstrap",
@@ -23,7 +24,7 @@
         "test.coverage": "rimraf ./coverage && yarn lint && yarn jest --collectCoverage=true",
         "test": "yarn lint && yarn jest",
         "build": "lerna run build",
-        "prettier.check": "./node_modules/.bin/eslint --print-config . | ./node_modules/.bin/eslint-config-prettier-check"
+        "release": "yarn test && yarn build && lerna publish --canary"
     },
     "husky": {
         "hooks": {
