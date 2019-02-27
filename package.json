@@ -14,7 +14,7 @@
         "lint.scss": "node_modules/.bin/sass-lint -c .sasslintrc './packages/b-ber-themes/b-ber-theme-sans/**/*.scss, ./packages/b-ber-themes/b-ber-theme-serif/**/*.scss' -v -q",
         "lint": "yarn lint.js && yarn lint.scss",
         "lint.changed.js": "DIFF=`git diff-index --name-only HEAD | grep -E \".*\\.jsx?$\"`; if [ \"$DIFF\" ]; then ./node_modules/.bin/eslint $DIFF; fi",
-        "lint.changed.scss": "DIFF=`git diff-index --name-only HEAD | grep -E \"themes.*\\.(scss|sass|less|css)$\"`; if [ \"$DIFF\" ]; then node_modules/.bin/sass-lint -c .sasslintrc $DIFF -v -q; fi",
+        "lint.changed.scss": "DIFF=`git diff-index --name-only HEAD | grep -E \".*\\.(scss|sass|less|css)$\"`; if [ \"$DIFF\" ]; then node_modules/.bin/sass-lint -c .sasslintrc $DIFF -v -q; fi",
         "lint.changed": "yarn lint.changed.js && yarn lint.changed.scss",
         "flush.lock": "ls ./packages | xargs -I {} rimraf ./packages/{}/yarn.lock",
         "flush.modules": "ls ./packages | xargs -I {} rimraf ./packages/{}/node_modules",
