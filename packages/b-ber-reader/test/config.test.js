@@ -1,5 +1,5 @@
 /* global jest,test,expect,jsdom */
-/* eslint-disable global-require,no-empty */
+/* eslint-disable global-require,no-empty,import/no-unresolved */
 
 describe('b-ber-reader development config', () => {
     beforeAll(() => jsdom.reconfigure({ url: 'http://localhost:3000/' }))

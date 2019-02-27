@@ -5,18 +5,14 @@ import ResizeObserver from 'resize-observer-polyfill'
 import { isNumeric } from '../helpers/Types'
 import { debug, verboseOutput, logTime } from '../config'
 import browser from '../lib/browser'
+import { ENSURE_RENDER_TIMEOUT, DEBOUNCE_TIMER } from '../constants'
 
-// speeds to debounce our mutation and resize observer callbacks. making sure
-// the document is laid out before rendering
-const ENSURE_RENDER_TIMEOUT = 200
-const DEBOUNCE_TIMER = 200
-
-const log = (lastIndex, contentDimensions, frameHeight, columns) => {
+const log = (lastSpreadIndex, contentDimensions, frameHeight, columns) => {
     if (debug && verboseOutput) {
         console.group('Layout#connectResizeObserver')
         console.log(
-            'lastIndex: %d; contentDimensions: %d; frameHeight %d; columns %d',
-            lastIndex,
+            'lastSpreadIndex: %d; contentDimensions: %d; frameHeight %d; columns %d',
+            lastSpreadIndex,
             contentDimensions,
             frameHeight,
             columns,
@@ -99,7 +95,7 @@ export default function observable(target) {
         const { columns } = this.state
 
         let contentDimensions
-        let lastIndex
+        let lastSpreadIndex
         let frameHeight
 
         // TODO: prevent multiple callbacks. good to have this off for debug
@@ -152,12 +148,12 @@ export default function observable(target) {
         // frameHeight in these cases will be something like 6.1 for a
         // six-page chapter). minus one since we want it to be a zero-based
         // index
-        lastIndex = Math.ceil(contentDimensions / frameHeight / 2) - 1
+        lastSpreadIndex = Math.ceil(contentDimensions / frameHeight / 2) - 1
 
         // never less than 0
-        lastIndex = lastIndex < 0 ? 0 : lastIndex
+        lastSpreadIndex = lastSpreadIndex < 0 ? 0 : lastSpreadIndex
 
-        log(lastIndex, contentDimensions, frameHeight, columns)
+        log(lastSpreadIndex, contentDimensions, frameHeight, columns)
 
         // check that everything's been added to the DOM. if there's a disparity
         // in dimensions, hide then show content to trigger our resize
@@ -167,14 +163,15 @@ export default function observable(target) {
             this.timer = setTimeout(() => {
                 this.__contentDimensions = contentDimensions
 
-                log(lastIndex, contentDimensions, frameHeight, columns)
+                log(lastSpreadIndex, contentDimensions, frameHeight, columns)
 
                 this.contentNode.style.display = 'none'
                 this.contentNode.style.display = 'block'
             }, ENSURE_RENDER_TIMEOUT)
         } else {
             if (logTime) console.timeEnd('observable#setReaderState')
-            this.props.setReaderState({ lastIndex, ready: true })
+            console.log('decorate-observable calls ready')
+            this.props.setReaderState({ lastSpreadIndex, ready: true })
         }
     }
 

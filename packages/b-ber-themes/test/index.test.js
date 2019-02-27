@@ -12,9 +12,7 @@ describe('b-ber-themes', () => {
         const actualModules = {}
         Object.keys(actualModule).forEach(a => {
             expect(() => {
-                const b = require.requireActual(
-                    `../${actualModule[a].npmPackage.name}`,
-                )
+                const b = require.requireActual(`../${actualModule[a].npmPackage.name}`)
                 actualModules[b.name] = b
             }).not.toThrow()
         })
@@ -27,9 +25,7 @@ describe('b-ber-themes', () => {
         const actualModule = require.requireActual('../index.js')
         const actualModules = {}
         Object.keys(actualModule).forEach(a => {
-            const b = require.requireActual(
-                `../${actualModule[a].npmPackage.name}`,
-            )
+            const b = require.requireActual(`../${actualModule[a].npmPackage.name}`)
             actualModules[b.name] = b
         })
 
@@ -41,17 +37,15 @@ describe('b-ber-themes', () => {
                     const themeKeys = Object.keys(theme)
 
                     const base = {
-                        name: a => expect(a).toBeString(),
-                        entry: a => expect(a).toBeString(),
-                        fonts: a => expect(a).toBeArray(),
-                        images: a => expect(a).toBeArray(),
-                        npmPackage: a => expect(a).toBeObject(),
+                        name: val => expect(val).toBeString(),
+                        entry: val => expect(val).toBeString(),
+                        fonts: val => expect(val).toBeArray(),
+                        images: val => expect(val).toBeArray(),
+                        npmPackage: val => expect(val).toBeObject(),
                     }
 
                     // text existence
-                    Object.keys(base).forEach(a =>
-                        expect(themeKeys).toContain(a),
-                    )
+                    Object.keys(base).forEach(val => expect(themeKeys).toContain(val))
 
                     // check type
                     themeKeys.forEach(key => {
@@ -69,38 +63,7 @@ describe('b-ber-themes', () => {
                         sass.render(
                             {
                                 data: `$build: "epub"; ${contents}`,
-                                includePaths: [
-                                    path.dirname(theme.entry),
-                                    path.dirname(path.dirname(theme.entry)),
-                                ],
-                                importer: (url, prev, done) => {
-                                    if (/^css:/.test(url)) {
-                                        const url_ = url.slice(4)
-
-                                        let cssPath
-
-                                        cssPath = path.join(
-                                            path.dirname(theme.entry),
-                                            `${url_}.css`,
-                                        )
-
-                                        if (!fs.existsSync(cssPath)) {
-                                            cssPath = path.join(
-                                                path.dirname(
-                                                    path.dirname(theme.entry),
-                                                ),
-                                                `${url_}.css`,
-                                            )
-                                        }
-
-                                        const contents = fs.readFileSync(
-                                            cssPath,
-                                            'utf8',
-                                        )
-                                        return done({ contents })
-                                    }
-                                    return done()
-                                },
+                                includePaths: [path.dirname(theme.entry), path.dirname(path.dirname(theme.entry))],
                             },
                             (err, result) => {
                                 expect(err).toBeNil()

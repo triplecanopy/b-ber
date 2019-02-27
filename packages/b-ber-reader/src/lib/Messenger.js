@@ -19,13 +19,25 @@ class Messenger {
         return Messenger.MESSAGE_DOMAIN
     }
 
-    static sendPaginationEvent({ spreadIndex, lastIndex, firstPage, lastPage }) {
+    static sendPaginationEvent({
+        spreadIndex,
+        lastSpreadIndex,
+        firstSpread,
+        lastSpread,
+        firstChapter,
+        lastChapter,
+        spreadDelta,
+    }) {
         const event = new PageEvent({
             spreadIndex,
-            lastIndex,
-            firstPage,
-            lastPage,
+            lastSpreadIndex,
+            firstChapter,
+            lastChapter,
+            firstSpread,
+            lastSpread,
+            spreadDelta,
         })
+
         window.parent.postMessage(event, Messenger.MESSAGE_DOMAIN)
     }
 

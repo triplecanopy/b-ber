@@ -24,7 +24,7 @@ const pageStyles = {
     next: props =>
         Viewport.isMobile() ||
         !props.uiOptions.navigation.footer_icons.page ||
-        (props.currentSpineItemIndex === props.spine.length - 1 && props.spreadIndex === props.lastIndex)
+        (props.currentSpineItemIndex === props.spine.length - 1 && props.spreadIndex === props.lastSpreadIndex)
             ? { display: 'none' }
             : {},
 }
@@ -37,7 +37,7 @@ const NavigationFooter = props => (
                     <button
                         className="material-icons nav__button"
                         style={chapterStyles.prev(props)}
-                        onClick={_ => {
+                        onClick={() => {
                             if (props.handleEvents === false) return
                             props.handleChapterNavigation(-1)
                         }}
@@ -49,7 +49,7 @@ const NavigationFooter = props => (
                     <button
                         className="material-icons nav__button"
                         style={pageStyles.prev(props)}
-                        onClick={_ => {
+                        onClick={() => {
                             if (props.handleEvents === false) return
                             props.enablePageTransitions()
                             props.handlePageNavigation(-1)
@@ -62,7 +62,7 @@ const NavigationFooter = props => (
                     <button
                         className="material-icons nav__button"
                         style={pageStyles.next(props)}
-                        onClick={_ => {
+                        onClick={() => {
                             if (props.handleEvents === false) return
                             props.enablePageTransitions()
                             props.handlePageNavigation(1)
@@ -75,7 +75,7 @@ const NavigationFooter = props => (
                     <button
                         className="material-icons nav__button"
                         style={chapterStyles.next(props)}
-                        onClick={_ => {
+                        onClick={() => {
                             if (props.handleEvents === false) return
                             props.handleChapterNavigation(1)
                         }}

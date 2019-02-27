@@ -139,33 +139,6 @@ const renderCSS = scssString =>
                 ],
                 outputStyle: state.env === 'production' ? 'compressed' : 'nested',
                 errLogToConsole: true,
-                importer: (url, prev, done) => {
-                    if (/^css:/.test(url)) {
-                        const url_ = url.slice(4)
-                        const cwd = process.cwd()
-                        const paths = []
-
-                        let basePath = path.dirname(state.theme.entry)
-                        let cssPath = path.join(basePath, `${url_}.css`)
-
-                        while (!fs.existsSync(cssPath)) {
-                            basePath = path.dirname(basePath)
-                            cssPath = path.join(basePath, `${url_}.css`)
-                            paths.push(cssPath)
-
-                            if (basePath === path.dirname(cwd)) {
-                                log.error(
-                                    'Could not find @imported css. Searched in the following paths:',
-                                    paths.join('\n'),
-                                )
-                            }
-                        }
-
-                        const contents = fs.readFileSync(cssPath, 'utf8')
-                        return done({ contents })
-                    }
-                    return done()
-                },
             },
             (err, result) => {
                 if (err) throw err

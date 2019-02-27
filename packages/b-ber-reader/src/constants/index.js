@@ -1,4 +1,13 @@
 /* eslint-disable prettier/prettier */
+/* prettier-ignore */
+
+// speeds to debounce our mutation and resize observer callbacks. making sure
+// the document is laid out before rendering in decorate-observable.js
+export const ENSURE_RENDER_TIMEOUT = 200
+export const DEBOUNCE_TIMER = 200
+
+// used for calling deferred pagination events in decorate-deferrable.js
+export const DEFERRED_CALLBACK_TIMER = 200
 
 export const transitions = {
     SLIDE: 'slide',
@@ -16,6 +25,7 @@ export const messagesTypes = {
     DEFERRED_EVENT: 'DEFERRED_EVENT',
     CLICK_EVENT: 'CLICK_EVENT',
     KEYDOWN_EVENT: 'KEYDOWN_EVENT',
+    NAVIGATION_EVENT: 'NAVIGATION_EVENT',
 }
 
 // Media queries horizontal in px

@@ -1,0 +1,46 @@
+version: 2.0
+
+jobs:
+  build:
+    docker:
+      - image: canopycanopycanopy/b-ber:0.2.0
+    branches:
+      only:
+        - master
+    working_directory: ~/b-ber
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - yarn-packages-v1-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - yarn-packages-v1-{{ checksum "yarn.lock" }}
+            - yarn-packages-v1-
+      - run: |
+          npm -g config set user root
+          npm i -g lerna
+          yarn
+          lerna bootstrap
+          yarn build
+          yarn test
+          cd ~
+          $BBER --version
+          $BBER new foo
+          cd foo
+          $BBER theme list
+          $BBER theme set b-ber-theme-serif
+          $BBER build
+      - save_cache:
+          paths:
+            - ~/.cache/yarn
+            - ~/b-ber/node_modules
+            - ~/b-ber/packages/b-ber-cli/node_modules
+            - ~/b-ber/packages/b-ber-grammar/node_modules
+            - ~/b-ber/packages/b-ber-lib/node_modules
+            - ~/b-ber/packages/b-ber-logger/node_modules
+            - ~/b-ber/packages/b-ber-reader/node_modules
+            - ~/b-ber/packages/b-ber-resources/node_modules
+            - ~/b-ber/packages/b-ber-shapes/node_modules
+            - ~/b-ber/packages/b-ber-tasks/node_modules
+            - ~/b-ber/packages/b-ber-templates/node_modules
+            - ~/b-ber/packages/b-ber-themes/node_modules
+          key: yarn-packages-v1-{{ .Branch }}-{{ checksum "yarn.lock" }}

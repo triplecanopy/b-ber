@@ -22,6 +22,15 @@ class Controls extends Component {
                 this.props.handleSidebarButtonClick(null)
             }
         }, messagesTypes.CLICK_EVENT)
+
+        Messenger.register(({ data }) => {
+            if (this.props.handleEvents === false) return
+
+            const { scope, delta } = data
+            if (scope !== 'page' && scope !== 'chapter') return
+
+            return scope === 'page' ? this.props.handlePageNavigation(delta) : this.props.handleChapterNavigation(delta)
+        }, messagesTypes.NAVIGATION_EVENT)
     }
 
     componentWillUnmount() {
