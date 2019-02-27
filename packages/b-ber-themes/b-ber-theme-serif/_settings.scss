@@ -8,7 +8,9 @@ $media-mobile: 'only screen \
                 and (max-width: 680px)' !default;
 $media-tablet: 'only screen \
                 and (min-width: 768px) \
-                and (min-height: 1024px)' !default;
+                and (min-height: 1024px) \
+                and (max-width: 768px) \
+                and (max-height: 768px)' !default;
 $media-desktop: 'only screen \
                 and (min-width: 960px)' !default;
 $media-wide: 'only screen \
