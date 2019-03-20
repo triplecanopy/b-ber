@@ -58,4 +58,4 @@ We ask people to respect the code of conduct which can be read [here](https://gi
 
 ## License
 
-[GNU GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html)
+[GNU General Public License v3.0 or later](https://spdx.org/licenses/GPL-3.0-or-later.html)
