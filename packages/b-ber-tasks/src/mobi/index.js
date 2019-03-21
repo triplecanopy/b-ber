@@ -18,12 +18,9 @@ const pageBreakBeforeXPATH = () =>
         '//h:*[@data-gallery-item]',
     ].join('|')
 
-const mobi = () => {
-    const opsPath = path.join(state.dist, 'OPS')
-    const inputPath = path.join(opsPath, 'content.opf')
-
-    return EbookConvert.convert({
-        inputPath,
+const mobi = () =>
+    EbookConvert.convert({
+        inputPath: path.join(path.join(state.dist, 'OPS'), 'content.opf'),
         outputPath: process.cwd(),
         fileType: 'mobi',
         fileName: getBookMetadata('identifier', state),
@@ -37,6 +34,5 @@ const mobi = () => {
             `--page-breaks-before='${pageBreakBeforeXPATH()}'`,
         ],
     }).catch(log.error)
-}
 
 export default mobi
