@@ -207,7 +207,7 @@ class DocumentProcessor {
                         node.setAttribute('data-marker-reference', markerId)
                         this.addMarkerReferenceToChild(node, markerId)
                     } else {
-                        console.warn('No siblings or children could be found for', node.nodeName)
+                        // console.warn('No siblings or children could be found for', node.nodeName)
 
                         const elem = this.createMarker(markerId)
                         elem.setAttribute('data-unbound', true)
