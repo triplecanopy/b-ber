@@ -510,7 +510,7 @@ $web-grid-columns: 12;
         left: 0;
         right: 0;
         bottom: 0;
-        margin:0;
+        margin: 0;
         grid-column: 1 !important; // sass-lint:disable-line no-important
 
         &.figure__large.figure__inline.figure__fullbleed {
@@ -523,8 +523,8 @@ $web-grid-columns: 12;
                     }
                     .figcaption {
                         position: absolute;
-                        left:50px;
-                        bottom:75px;
+                        left: 50px;
+                        bottom: 75px;
                         width: 40%;
                     }
                 }

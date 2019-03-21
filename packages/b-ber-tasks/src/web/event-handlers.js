@@ -17,10 +17,7 @@ function handlePlayButtonClick() {
 }
 
 function bindEventHandlers() {
-    var buttonsPlay = Array.prototype.slice.call(
-        document.querySelectorAll('button.media__controls'),
-        0,
-    )
+    var buttonsPlay = Array.prototype.slice.call(document.querySelectorAll('button.media__controls'), 0)
     for (var i = 0; i < buttonsPlay.length; i++) {
         buttonsPlay[i].addEventListener('click', handlePlayButtonClick, false)
     }
