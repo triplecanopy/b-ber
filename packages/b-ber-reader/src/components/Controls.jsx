@@ -27,9 +27,13 @@ class Controls extends Component {
             if (this.props.handleEvents === false) return
 
             const { scope, delta } = data
-            if (scope !== 'page' && scope !== 'chapter') return
 
-            return scope === 'page' ? this.props.handlePageNavigation(delta) : this.props.handleChapterNavigation(delta)
+            if (scope === 'page') {
+                this.props.enablePageTransitions()
+                return this.props.handlePageNavigation(delta)
+            } else if (scope === 'chapter') {
+                return this.props.handleChapterNavigation(delta)
+            }
         }, messagesTypes.NAVIGATION_EVENT)
     }
 
