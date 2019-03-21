@@ -88,12 +88,11 @@ function registerNavEvents() {
 
 function showContent(lastHeight) {
     var lastHeight = lastHeight || 0
-    var timer = setTimeout(function() {
+    setTimeout(function() {
         var body = document.body
         var height = document.body.offsetHeight
         if (lastHeight !== height) return showContent(height)
 
-        clearTimeout(timer)
         setTimeout(function() {
             body.classList.add('ready')
         }, 0)
