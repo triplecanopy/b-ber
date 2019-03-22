@@ -95,7 +95,7 @@ function showContent(lastHeight) {
 
         setTimeout(function() {
             body.classList.add('ready')
-        }, 0)
+        }, 60)
     }, 60)
 }
 
