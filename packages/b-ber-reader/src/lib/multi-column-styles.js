@@ -1,6 +1,10 @@
 import { debug } from '../config'
 
 export const mediaLarge = (/* { paddingLeft, columnGap } */) => [
+    // {
+    //     selector: 'img',
+    //     declarations: ['opacity: 0.2'],
+    // },
     {
         selector: `.figure__fullbleed figure,
                    .spread .spread__content`,
@@ -34,8 +38,7 @@ export const mediaLarge = (/* { paddingLeft, columnGap } */) => [
 
 export const mediaSmall = (/* {paddingLeft, columnGap} */) => [
     {
-        selector: `.figure__fullbleed figure
-                   .spread .spread__content`,
+        selector: `.figure__fullbleed figure .spread .spread__content`,
         declarations: ['z-index: 11', 'width: 100vw', 'position: relative'],
     },
     {
