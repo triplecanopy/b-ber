@@ -5,6 +5,7 @@ import Media from './Media'
 class Video extends Media {
     static propTypes = {
         'data-autoplay': PropTypes.bool.isRequired,
+        controls: PropTypes.bool.isRequired,
     }
     static contextTypes = {
         spreadIndex: PropTypes.number,

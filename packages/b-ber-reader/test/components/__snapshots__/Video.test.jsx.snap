@@ -2,6 +2,7 @@
 
 exports[`Video renders the component 1`] = `
 <video
+  controls={true}
   data-autoplay={true}
   onCanPlay={[Function]}
   onClick={[Function]}
@@ -10,6 +11,7 @@ exports[`Video renders the component 1`] = `
 
 exports[`Video renders the component 2`] = `
 <video
+  controls={false}
   data-autoplay={false}
   onCanPlay={[Function]}
   onClick={[Function]}
