@@ -343,6 +343,16 @@ a {
             color: $tc-purple;
         }
     }
+    .downloads__title,
+    .downloads__description {
+        display: block;
+    }
+    .downloads__description {
+        display: block;
+        font-size: 0.7rem;
+        font-style: italic;
+        padding-top: 6px;
+    }
 }
 
 .controls__footer {
