@@ -8,11 +8,12 @@ class Link extends Component {
         navigateToChapterByURL: PropTypes.func,
     }
     render() {
-        const { href } = this.props
+        const { className, style, href } = this.props
         return (
             <a
                 href={href}
-                style={this.props.style || {}}
+                style={style || {}}
+                className={className || ''}
                 onClick={e => {
                     e.preventDefault()
                     if (Url.isExternalURL(href)) {

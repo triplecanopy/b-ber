@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import { Link } from '../'
 
 const NestedChapterList = props => {
-    const { items } = props
+    const { current, items } = props
     const depth = props.depth || 0
     const items_ = items.filter(a => a.depth === depth && a.inTOC)
 
@@ -11,10 +11,15 @@ const NestedChapterList = props => {
         <ol>
             {items_.map((item, i) => (
                 <li key={i}>
-                    <Link style={{ textIndent: `${24 * (depth + 1)}px` }} href={item.absoluteURL}>
+                    <Link
+                        href={item.absoluteURL}
+                        className={classNames(`indent--${depth + 1}`, { 'chapter--current': current === item.id })}
+                    >
                         {item.title || `Chapter ${depth}.${i}`}
                     </Link>
-                    {item.children.length > 0 && <NestedChapterList items={item.children} depth={depth + 1} />}
+                    {item.children.length > 0 && (
+                        <NestedChapterList current={current} items={item.children} depth={depth + 1} />
+                    )}
                 </li>
             ))}
         </ol>
@@ -27,7 +32,10 @@ const SidebarChapters = props => (
             'controls__sidebar__chapters--open': props.showSidebar === 'chapters',
         })}
     >
-        <NestedChapterList items={[...props.spine]} />
+        <NestedChapterList
+            current={(props.spine[props.currentSpineItemIndex || 0] || {}).id}
+            items={[...props.spine]}
+        />
     </nav>
 )
 
