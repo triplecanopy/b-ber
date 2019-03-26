@@ -296,6 +296,20 @@ function injectBaseURL(script) {
     return Buffer.from(script_.replace(/%BASE_URL%/g, BASE_URL))
 }
 
+function getStyleBlock() {
+    return `
+        <style>
+            body {
+                opacity: 0;
+                transition: opacity 250ms ease;
+            }
+            body.ready {
+                opacity: 1 !important;
+            }
+        </style>
+    `
+}
+
 function getNavigationToggleScript() {
     return `
         <script type="text/javascript">
@@ -329,6 +343,7 @@ function getEventHandlerScript() {
 function injectNavigationIntoFile(filePath, { tocElement, infoElement }) {
     return new Promise(resolve => {
         const pageNavigation = paginationNavigation(filePath)
+        const styleBlock = getStyleBlock()
         const navigationToggleScript = getNavigationToggleScript()
         const webWorkerScript = getWebWorkerScript()
         const evenHandlerScript = getEventHandlerScript()
@@ -347,7 +362,8 @@ function injectNavigationIntoFile(filePath, { tocElement, infoElement }) {
             contents = data.replace(
                 /(<body[^>]*?>)/,
                 `
-                $1
+                <body style="opacity: 0;">
+                ${styleBlock}
                 <div class="publication">
                 ${headerElement}
                 <div class="publication__contents">
@@ -516,6 +532,7 @@ function createIndexHTML({ tocElement, infoElement }) {
     const navigationToggleScript = getNavigationToggleScript()
     const webWorkerScript = getWebWorkerScript()
     const headerElement = getHeaderElement()
+    const styleBlock = getStyleBlock()
     const robotsMeta = state.config.private
         ? '<meta name="robots" content="noindex,nofollow"/>'
         : '<meta name="robots" content="index,follow"/>'
@@ -534,8 +551,9 @@ function createIndexHTML({ tocElement, infoElement }) {
 
             <head>
                 <title>${title}</title>
+                ${styleBlock}
             </head>
-            <body>
+            <body style="opacity: 0;">
                 ${tocElement}
                 ${infoElement}
                 <div class="publication">

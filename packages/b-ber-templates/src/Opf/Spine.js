@@ -22,6 +22,11 @@ class Spine {
                 const fname = fileId(path.basename(a.fileName, a.extname))
 
                 if (nonLinear) {
+                    if (state.build === 'mobi') {
+                        log.info(`opf templates/spine omitting non-linear asset [${a.fileName}] for mobi build`)
+                        return null
+                    }
+
                     log.info(`opf templates/spine writing non-linear asset [${a.fileName}]`)
                 }
 
@@ -42,6 +47,7 @@ class Spine {
 
                 return Spine.item({ fname, linear })
             })
+            .filter(Boolean)
             .join('')
     }
 }

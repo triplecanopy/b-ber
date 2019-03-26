@@ -181,7 +181,7 @@ class DocumentProcessor {
         }
     }
 
-    walkDocument(doc, callback) {
+    insertMarkers(doc, callback) {
         const nodes = doc.children
 
         for (let i = 0; i < nodes.length; i++) {
@@ -207,7 +207,7 @@ class DocumentProcessor {
                         node.setAttribute('data-marker-reference', markerId)
                         this.addMarkerReferenceToChild(node, markerId)
                     } else {
-                        console.warn('No siblings or children could be found for', node.nodeName)
+                        // console.warn('No siblings or children could be found for', node.nodeName)
 
                         const elem = this.createMarker(markerId)
                         elem.setAttribute('data-unbound', true)
@@ -219,7 +219,7 @@ class DocumentProcessor {
                     }
                 }
                 if (node.children && node.children.length) {
-                    this.walkDocument(node)
+                    this.insertMarkers(node)
                 }
             }
         }
@@ -227,6 +227,46 @@ class DocumentProcessor {
         if (callback && typeof callback === 'function') {
             callback(doc)
         }
+    }
+
+    addUltimateNode(doc) {
+        const blacklist = [
+            'META',
+            'TITLE',
+            'HEAD',
+            'LINK',
+            'SCRIPT',
+            'STYLE',
+            'EM',
+            'I',
+            'STRONG',
+            'B',
+            'SPAN',
+            'IMG',
+            'AUDIO',
+            'VIDEO',
+            'BR',
+            'SUP',
+            'SUB',
+            'IFRAME',
+        ]
+
+        const text = document.createTextNode('')
+        const elem = document.createElement('span')
+        elem.setAttribute('class', 'ultimate')
+        elem.appendChild(text)
+
+        let child
+
+        for (let i = doc.body.childNodes.length - 1; i >= 0; i--) {
+            child = doc.body.childNodes[i]
+            if (!blacklist.includes(child.nodeName) && child.nodeType === window.Node.ELEMENT_NODE) {
+                child.appendChild(elem)
+                return
+            }
+        }
+
+        console.warn('Could not append ultimate node')
     }
 
     // check that all references have markers
@@ -274,10 +314,9 @@ class DocumentProcessor {
         DocumentPreProcessor.createScriptElements()
         DocumentPreProcessor.parseXML()
 
-        this.walkDocument(doc, nextDoc => {
-            if (!this.validateDocument(nextDoc)) {
-                err = new Error('Invalid markup')
-            }
+        this.insertMarkers(doc, nextDoc => {
+            if (!this.validateDocument(nextDoc)) err = new Error('Invalid markup')
+            this.addUltimateNode(doc)
             xml = xmlString.replace(/<body([^>]*?)>[\s\S]*<\/body>/g, `<body$1>${String(doc.body.innerHTML)}</body>`)
         })
 

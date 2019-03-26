@@ -325,9 +325,9 @@ $web-grid-columns: 12;
     .publication__nav {
         @include web-grid-container; // We can't use `display: subgrid` so we re-declare
         transition: width $transition-speed $transition-easing;
-        grid-column: 2 / span 10;
+        grid-column: 1 / span 12;
         grid-row: 3;
-        align-items: baseline;
+        align-items: end;
         z-index: 1;
 
         .publication__nav__link {
@@ -341,18 +341,15 @@ $web-grid-columns: 12;
         .publication__nav__next {
             width: auto;
             height: $dimensions-large-y;
-
-            display: flex;
             align-items: center;
+            display: flex;
             justify-content: center;
         }
         .publication__nav__prev {
             grid-column: 1;
-            justify-content: flex-start;
         }
         .publication__nav__next {
             grid-column: 12;
-            justify-content: flex-end;
         }
     }
 
@@ -494,7 +491,7 @@ $web-grid-columns: 12;
     }
 
     .figure__large.figure__inline {
-        margin: two-lines(0) 0;
+        margin: one-line(0) 0;
     }
 
     figure .figcaption a,
@@ -513,9 +510,10 @@ $web-grid-columns: 12;
         left: 0;
         right: 0;
         bottom: 0;
+        margin: 0;
         grid-column: 1 !important; // sass-lint:disable-line no-important
 
-        &.figure__large.figure__inline {
+        &.figure__large.figure__inline.figure__fullbleed {
             figure {
                 .figure__items {
                     img {
@@ -525,6 +523,9 @@ $web-grid-columns: 12;
                     }
                     .figcaption {
                         position: absolute;
+                        left: 50px;
+                        bottom: 75px;
+                        width: 40%;
                     }
                 }
             }
@@ -550,31 +551,31 @@ $web-grid-columns: 12;
         }
     }
 
-    // Gallery styles
-    section.gallery .figure__fullbleed.figure__gallery {
-        .figure__items {
-            height: 70vh;
-            .gallery__item {
-                img {
-                    height: auto;
-                }
-                .figcaption {
-                    display: block;
-                    padding-top: 8px;
-                    position: initial;
-                }
+    // Mobile Overrides for Galleries, Fullbleed images, and spreads.
+    @include break('mobile') {
+        // Fullbleed
+        .figure__fullbleed.figure__inline--landscape .figure__items {
+            height: auto;
+            margin: 0 auto;
+            width: auto;
+            img {
+                height: auto;
+                object-fit: cover;
+            }
+            .figcaption {
+                bottom: auto;
+                display: inline-block;
+                left: auto;
+                margin: 0;
+                padding: 0;
+                position: relative;
             }
         }
-    }
-
-    .publication__contents {
+        // Spread
         .spread {
-            grid-column: 1 / span 12;
-            margin-top: -5.6em;
-            height: 100vh;
             section {
-                display: block;
-                padding: 5%;
+                height: auto;
+                width: auto;
             }
         }
     }

@@ -63,9 +63,7 @@ section {
 // Text Properties
 p {
     @if $text-indent == true {
-        text-indent: one-em(
-            0
-        ) !important; // sass-lint:disable-line no-important
+        text-indent: one-em(0) !important; // sass-lint:disable-line no-important
         h1 + &,
         h2 + &,
         h3 + &,
@@ -194,9 +192,7 @@ p {
     section.contributors &,
     section.appendix & {
         @if $text-indent != false {
-            text-indent: one-em(
-                0
-            ) !important; // sass-lint:disable-line no-important
+            text-indent: one-em(0) !important; // sass-lint:disable-line no-important
         } @else {
             text-indent: one-em(0);
         }
@@ -216,9 +212,7 @@ p {
     section.frontmatter &,
     section.acknowledgements & {
         @if $text-indent != false {
-            text-indent: one-em(
-                0
-            ) !important; // sass-lint:disable-line no-important
+            text-indent: one-em(0) !important; // sass-lint:disable-line no-important
         } @else {
             text-indent: one-em(0);
         }
@@ -349,22 +343,21 @@ small {
 
 pre {
     @include padding(1, 1, 1, 1, 0);
+    margin-bottom: one-line(0);
     font-size: 1em;
     line-height: 1;
-
     word-wrap: normal;
     white-space: pre;
     overflow: auto;
-
     text-indent: 0 !important; // sass-lint:disable-line no-important
-    border-radius: 3px;
-    font-family: Consolas, Menlo, Courier, monospace;
-    background-color: #f6f8fa;
+    border-radius: 0;
+    font-family: $mono;
+    background-color: $light-grey;
+    break-inside: avoid;
 }
 
 code {
-    @include type-settings(-4);
-    line-height: 1.3;
+    @include type-settings(-5);
 }
 
 i {

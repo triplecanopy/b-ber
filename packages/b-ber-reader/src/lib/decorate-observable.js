@@ -93,6 +93,7 @@ export default function observable(target) {
         if (!this.contentNode) throw new Error("Couldn't find this.contentNode")
 
         const { columns } = this.state
+        const lastNode = document.querySelector('.ultimate')
 
         let contentDimensions
         let lastSpreadIndex
@@ -103,34 +104,6 @@ export default function observable(target) {
 
         if (logTime) console.time('observable#setReaderState')
 
-        // total height of document as though it were laid out vertically.
-        // ensure we're getting the largest value
-        if (browser.name === 'firefox') {
-            const frame = document.getElementById('frame')
-            const layout = document.getElementById('layout')
-
-            // FF only. we need to find the document height, but firefox
-            // interprets our column layout as having width, so we toggle the
-            // column view to get our dimensions
-            frame.style.overflow = 'scroll'
-            layout.style.columns = 'auto'
-
-            contentDimensions = Math.max(
-                this.contentNode.scrollHeight,
-                this.contentNode.offsetHeight,
-                this.contentNode.clientHeight,
-            )
-
-            frame.style.overflow = 'hidden'
-            layout.style.columns = '2 auto' // TODO: reset using options
-        } else {
-            contentDimensions = Math.max(
-                this.contentNode.scrollHeight,
-                this.contentNode.offsetHeight,
-                this.contentNode.clientHeight,
-            )
-        }
-
         // height of the reader frame (viewport - padding top and bottom),
         // rounded so we get a clean divisor
         frameHeight = this.getFrameHeight()
@@ -138,17 +111,34 @@ export default function observable(target) {
         // getFrameHeight will return 'auto' for mobile. set to zero so that
         // chapter navigation still works
         if (!isNumeric(frameHeight)) frameHeight = 0
-        frameHeight = Math.round(frameHeight)
 
-        // find the last index by dividing the document length by the frame
-        // height, and then divide the result by 2 to account for the 2
-        // column layout. Math.ceil to only allow whole numbers (each page
-        // must have 2 columns), and to account for dangling lines of text
-        // that will spill over to the next column (contentDimensions /
-        // frameHeight in these cases will be something like 6.1 for a
-        // six-page chapter). minus one since we want it to be a zero-based
-        // index
-        lastSpreadIndex = Math.ceil(contentDimensions / frameHeight / 2) - 1
+        if (browser.name === 'firefox' && lastNode) {
+            // FF only. we need to find the document height, but firefox
+            // interprets our column layout as having width, so we measure the
+            // distance of the left edge of the last node in our document
+
+            frameHeight *= 2
+            contentDimensions = lastNode.offsetLeft
+            lastSpreadIndex = Math.floor(contentDimensions / frameHeight)
+        } else {
+            contentDimensions = Math.max(
+                this.contentNode.scrollHeight,
+                this.contentNode.offsetHeight,
+                this.contentNode.clientHeight,
+            )
+
+            frameHeight = Math.round(frameHeight)
+
+            // find the last index by dividing the document length by the frame
+            // height, and then divide the result by 2 to account for the 2
+            // column layout. Math.ceil to only allow whole numbers (each page
+            // must have 2 columns), and to account for dangling lines of text
+            // that will spill over to the next column (contentDimensions /
+            // frameHeight in these cases will be something like 6.1 for a
+            // six-page chapter). minus one since we want it to be a zero-based
+            // index
+            lastSpreadIndex = Math.ceil(contentDimensions / frameHeight / 2) - 1
+        }
 
         // never less than 0
         lastSpreadIndex = lastSpreadIndex < 0 ? 0 : lastSpreadIndex
@@ -156,9 +146,10 @@ export default function observable(target) {
         log(lastSpreadIndex, contentDimensions, frameHeight, columns)
 
         // check that everything's been added to the DOM. if there's a disparity
-        // in dimensions, hide then show content to trigger our resize
+        // in dimensions, or the node we use to measure width of the DOM isn't
+        // available, then hide then show content to trigger our resize
         // observer's callback
-        if (this.__contentDimensions !== contentDimensions) {
+        if (this.__contentDimensions !== contentDimensions || lastNode == null) {
             window.clearTimeout(this.timer)
             this.timer = setTimeout(() => {
                 this.__contentDimensions = contentDimensions
@@ -170,7 +161,6 @@ export default function observable(target) {
             }, ENSURE_RENDER_TIMEOUT)
         } else {
             if (logTime) console.timeEnd('observable#setReaderState')
-            console.log('decorate-observable calls ready')
             this.props.setReaderState({ lastSpreadIndex, ready: true })
         }
     }

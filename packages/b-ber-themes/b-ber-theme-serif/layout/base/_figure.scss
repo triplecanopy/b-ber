@@ -21,9 +21,6 @@ figure {
         @include following-paragraph-not-indented;
         display: inline-block;
         text-align: left;
-        a {
-            text-decoration: none;
-        }
     }
 }
 
@@ -205,7 +202,7 @@ p.caption {
 .figure__items {
     width: 100%;
     margin: 0 auto;
-    a {
+    > a {
         text-decoration: none !important; // sass-lint:disable-line no-important
     }
     .epigraph & {

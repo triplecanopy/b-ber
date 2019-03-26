@@ -260,9 +260,11 @@ class Marker extends Component {
                 offsetHeight -= this.markerNode.offsetHeight
             } else {
                 offsetHeight += frameHeight
-                offsetHeight += frameHeight
+                // offsetHeight += frameHeight
                 offsetHeight -= this.markerNode.offsetHeight
                 offsetHeight -= Math.round(this.markerNode.getBoundingClientRect().bottom - paddingTop)
+
+                // console.log('offsetHeight', offsetHeight)
 
                 // add space for the spread element itself, since it's
                 // absolutely positioned. only do this if the spread is
@@ -309,8 +311,9 @@ class Marker extends Component {
         const debugMarkerStyles = { backgroundColor: verso ? 'violet' : 'red' }
 
         let spacerStyles = {
-            paddingBottom: offsetHeight,
+            height: offsetHeight,
             display: 'block',
+            // paddingBottom: offsetHeight,
             // backgroundColor: verso ? 'lightblue' : 'lightyellow',
         }
         if (debug) spacerStyles = { ...spacerStyles, ...debugSpacerStyles }
