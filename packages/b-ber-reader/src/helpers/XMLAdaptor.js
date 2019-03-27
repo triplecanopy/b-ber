@@ -272,11 +272,6 @@ class XMLAdaptor {
                                 value: ' ',
                             })
 
-                            // TODO: the following should be fixed up so that
-                            // they're actually replacing the node, rather than
-                            // modifying props.
-                            // @issue: https://github.com/triplecanopy/b-ber/issues/219
-
                             // these need to be synced with the
                             // HTML structure in Layout.jsx
                             if (list && node.type === 'TypeSelector' && node.name === 'html') {
