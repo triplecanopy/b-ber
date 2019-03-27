@@ -11,7 +11,8 @@ const SidebarDownloads = props => (
             {props.downloads.map((a, i) => (
                 <li key={i}>
                     <a href={a.url} download>
-                        {a.label}
+                        <span className="downloads__title">{a.label}</span>
+                        {a.description && <span className="downloads__description">{a.description}</span>}
                     </a>
                     <button className="material-icons">file_download</button>
                 </li>

@@ -8,6 +8,7 @@ class Media extends Component {
         this.state = {
             canPlay: false,
             autoPlay: this.props['data-autoplay'] || false,
+            controls: this.props.controls || true, // eslint-disable-line react/no-unused-state
             fullScreen: this.props['data-fullscreen'] ? JSON.parse(this.props['data-fullscreen']) : false,
             paused: true,
             nodeSpreadIndex: 0,

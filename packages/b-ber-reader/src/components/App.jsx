@@ -31,7 +31,7 @@ class App extends Component {
             defaultBookURL: props.bookURL || null,
             basePath: props.basePath || '/',
             downloads: props.downloads || [],
-            uiOptions: props.uiOptions || {},
+            uiOptions: props.uiOptions || {}, // eslint-disable-line react/no-unused-state
             search: '',
             loadRemoteLibrary:
                 typeof props.loadRemoteLibrary !== 'undefined'

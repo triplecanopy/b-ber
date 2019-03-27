@@ -73,7 +73,7 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
         },
         processNode(node, children, index) {
             const attrs = Asset.convertToReactAttrs(node.attribs)
-            const { autoPlay } = attrs
+            const { autoPlay, controls } = attrs
 
             let dataAutoPlay = false
             if (typeof autoPlay !== 'undefined') {
@@ -86,6 +86,7 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
                 {
                     ...attrs,
                     'data-autoplay': dataAutoPlay,
+                    controls: typeof controls === 'undefined' ? true : controls,
                     key: index,
                 },
                 children,
@@ -101,7 +102,7 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
             const poster = node.attribs.poster
                 ? Url.resolveOverlappingURL(requestedSpineItem.absoluteURL, node.attribs.poster)
                 : null
-            const { autoPlay } = attrs
+            const { autoPlay, controls } = attrs
 
             let dataAutoPlay = false
             if (typeof autoPlay !== 'undefined') {
@@ -114,6 +115,7 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
                 {
                     ...attrs,
                     'data-autoplay': dataAutoPlay,
+                    controls: typeof controls === 'undefined' ? true : controls,
                     key: index,
                     poster,
                 },
