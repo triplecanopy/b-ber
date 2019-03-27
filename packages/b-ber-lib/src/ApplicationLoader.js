@@ -55,7 +55,10 @@ class ApplicationLoader {
     }
 
     _theme() {
-        // ensure themes dir exists
+        // ensure themes dir exists unless running `new` command, as it's the
+        // only command that's run outside of a project directory
+        if (process.argv.includes('new')) return
+
         const userThemesPath = path.resolve(cwd, this.config.themes_directory)
         fs.ensureDirSync(userThemesPath)
 
