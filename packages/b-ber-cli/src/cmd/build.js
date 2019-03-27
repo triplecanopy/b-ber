@@ -6,7 +6,8 @@ import createBuildSequence from '@canopycanopycanopy/b-ber-shapes/create-build-s
 import Project from '@canopycanopycanopy/b-ber-templates/Project'
 import { ensure } from '@canopycanopycanopy/b-ber-lib/utils'
 
-const command = 'build [|epub|mobi|pdf|reader|sample|web]' // note leading pipe - to ensure we can run the `all` command without arguments
+// note leading pipe - to ensure we can run the `all` command without arguments
+const command = 'build [|epub|mobi|pdf|reader|sample|web]'
 const describe = 'Build a project'
 
 const handler = argv => {
@@ -50,6 +51,7 @@ const builder = yargs =>
         .command('reader', 'Build for the b-ber-reader format', () => {}, handler)
         .command('sample', 'Build a sample Epub', () => {}, handler)
         .command('web', 'Build for web', () => {}, handler)
+        // .command('xml', 'Build for XML', () => {}, handler)
         .help('h')
         .alias('h', 'help')
 

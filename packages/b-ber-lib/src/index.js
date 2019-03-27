@@ -1,5 +1,4 @@
 export { default as EbookConvert } from './EbookConvert'
-export { default as HtmlToPrintReadyHtml } from './HtmlToPrintReadyHtml'
 export { default as HtmlToXml } from './HtmlToXml'
 export { default as ManifestItemProperties } from './ManifestItemProperties'
 export { default as State } from './State'

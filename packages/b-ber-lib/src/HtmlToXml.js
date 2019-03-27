@@ -39,13 +39,6 @@ class HtmlToXml {
         this.output = ''
         this.tagnames = []
         this.noop = false
-
-        this.entries = function* entries(obj) {
-            // eslint-disable-next-line no-restricted-syntax
-            for (const key of Object.keys(obj)) {
-                yield [key, obj[key]]
-            }
-        }
     }
 
     /**
@@ -169,12 +162,12 @@ class HtmlToXml {
                         const tag = []
                         const tagname = _this.tagnames[_this.tagnames.length - 1]
                         if (tagname && _this.blacklistedTags.indexOf(tagname) < 0) {
-                            // eslint-disable-next-line no-restricted-syntax
-                            for (const [key, val] of _this.entries(attrs)) {
-                                if (_this.whitelistedAttrs.indexOf(key) > -1) {
+                            Object.entries(attrs).forEach(([key, val]) => {
+                                if (_this.whitelistedAttrs.includes(key)) {
                                     tag.push(`${key}="${val}"`)
                                 }
-                            }
+                            })
+
                             tag.unshift(tagname)
                             _this.output += `<${tag.join(' ')}>`
                         }

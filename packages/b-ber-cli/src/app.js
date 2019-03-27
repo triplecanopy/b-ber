@@ -86,7 +86,7 @@ export default function bber() {
         .command(commands.opf)
         .command(commands.theme)
         .command(commands.serve)
-        .command(commands.xml)
+        // .command(commands.xml)
         .command(commands.new)
         .command(commands.cover)
         .command(commands.deploy)
