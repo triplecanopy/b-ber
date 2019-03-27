@@ -36,16 +36,20 @@ function deploy({ bucketURL, awsRegion }) {
     return new Promise(resolve => {
         const sourceDir = path.resolve(cwd, './')
 
-        // uses 'sync' by default.
-        // TODO: allow different upload strategies? 'cp' needs --recursive flag
-        const command = `aws s3 sync ${sourceDir} ${bucketURL} \\
-                        --exclude "*" \\
-                        --include "*.epub" \\
-                        --include "*.mobi" \\
-                        --include "*.pdf" \\
-                        --include "project-reader/*" \\
-                        --include "project-web/*" \\
-                        --region ${awsRegion}`
+        // uses 'cp' by default.
+        // TODO: allow different upload strategies?
+        // @issue: https://github.com/triplecanopy/b-ber/issues/224
+        const command = [
+            `aws s3 cp ${sourceDir} ${bucketURL}`,
+            '--recursive',
+            '--exclude "*"',
+            '--include "*.epub"',
+            '--include "*.mobi"',
+            '--include "*.pdf"',
+            '--include "project-reader/*"',
+            '--include "project-web/*"',
+            `--region ${awsRegion}`,
+        ].join(' ')
 
         const proc = exec(command, { cwd })
 
@@ -72,17 +76,9 @@ function deploy({ bucketURL, awsRegion }) {
 
 function ensureEnvVars() {
     return new Promise(resolve => {
-        const {
-            AWS_ACCESS_KEY_ID,
-            AWS_SECRET_ACCESS_KEY,
-            BBER_BUCKET_REGION,
-        } = process.env
+        const { AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, BBER_BUCKET_REGION } = process.env
 
-        if (
-            !AWS_ACCESS_KEY_ID ||
-            !AWS_SECRET_ACCESS_KEY ||
-            !BBER_BUCKET_REGION
-        ) {
+        if (!AWS_ACCESS_KEY_ID || !AWS_SECRET_ACCESS_KEY || !BBER_BUCKET_REGION) {
             log.error(
                 '[AWS_ACCESS_KEY_ID], [AWS_SECRET_ACCESS_KEY] and [BBER_BUCKET_REGION] must be set to deploy the project',
             )
@@ -93,9 +89,7 @@ function ensureEnvVars() {
         const { bucket_url } = config
 
         if (!bucket_url) {
-            log.error(
-                '[bucket_url] must be set in config.yml to deploy the project',
-            )
+            log.error('[bucket_url] must be set in config.yml to deploy the project')
         }
 
         resolve({ bucketURL: bucket_url, awsRegion: BBER_BUCKET_REGION })
@@ -107,10 +101,7 @@ function prompt() {
         ensureAwsCli()
             .then(ensureEnvVars)
             .then(response => {
-                const rl = readline.createInterface(
-                    process.stdin,
-                    process.stdout,
-                )
+                const rl = readline.createInterface(process.stdin, process.stdout)
                 const { bucketURL, awsRegion } = response
 
                 console.log('')

@@ -22,8 +22,6 @@ describe('ViewerSettings', () => {
                 theme: themes.DEFAULT,
                 transition: transitions.SLIDE,
                 transitionSpeed: expect.any(Number),
-                desktopColumnCount: expect.any(Number),
-                mobileColumnCount: expect.any(Number),
             }),
         )
 
@@ -48,9 +46,7 @@ describe('ViewerSettings', () => {
         expect(vs.columns).toEqual(ViewerSettings.defaults.columns)
         expect(vs.columnGap).toBeNumber()
         expect(vs.transition).toEqual(ViewerSettings.defaults.transition)
-        expect(vs.transitionSpeed).toEqual(
-            ViewerSettings.defaults.transitionSpeed,
-        )
+        expect(vs.transitionSpeed).toEqual(ViewerSettings.defaults.transitionSpeed)
         expect(vs.theme).toEqual(ViewerSettings.defaults.theme)
     })
 
@@ -118,9 +114,7 @@ describe('ViewerSettings', () => {
         expect(vs.get('columns')).toBe(ViewerSettings.defaults.columns)
         expect(vs.get('columnGap')).toBeFunction()
         expect(vs.get('transition')).toBe(ViewerSettings.defaults.transition)
-        expect(vs.get('transitionSpeed')).toBe(
-            ViewerSettings.defaults.transitionSpeed,
-        )
+        expect(vs.get('transitionSpeed')).toBe(ViewerSettings.defaults.transitionSpeed)
         expect(vs.get('theme')).toBe(ViewerSettings.defaults.theme)
 
         expect(vs.get()).toEqual(
@@ -134,8 +128,6 @@ describe('ViewerSettings', () => {
                 theme: themes.DEFAULT,
                 transition: transitions.SLIDE,
                 transitionSpeed: expect.any(Number),
-                desktopColumnCount: expect.any(Number),
-                mobileColumnCount: expect.any(Number),
             }),
         )
     })

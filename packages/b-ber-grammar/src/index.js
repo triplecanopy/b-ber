@@ -93,16 +93,8 @@ class MarkdownRenderer {
         const reference = { instance: this.markdownIt, context: this }
 
         this.markdownIt
-            .use(
-                markdownItSection.plugin,
-                markdownItSection.name,
-                markdownItSection.renderer(reference),
-            )
-            .use(
-                markdownItPullquote.plugin,
-                markdownItPullquote.name,
-                markdownItPullquote.renderer(reference),
-            )
+            .use(markdownItSection.plugin, markdownItSection.name, markdownItSection.renderer(reference))
+            .use(markdownItPullquote.plugin, markdownItPullquote.name, markdownItPullquote.renderer(reference))
             .use(markdownItFrontmatter, meta => {
                 const filename = this.filename
                 const YAMLMeta = YamlAdaptor.parse(meta)
@@ -122,8 +114,6 @@ class MarkdownRenderer {
             })
             .use(markdownItFootnote, tokens => {
                 const fileName = this.filename
-
-                // TODO: add footnotes to spine if not already added
                 const entry = find(state.spine, { fileName })
                 const title = entry && entry.title ? entry.title : fileName
 
@@ -167,36 +157,12 @@ class MarkdownRenderer {
                 })
                 state.add('footnotes', { filename: fileName, title, notes })
             })
-            .use(
-                markdownItDialogue.plugin,
-                markdownItDialogue.name,
-                markdownItDialogue.renderer(reference),
-            )
-            .use(
-                markdownItGallery.plugin,
-                markdownItGallery.name,
-                markdownItGallery.renderer(reference),
-            )
-            .use(
-                markdownItSpread.plugin,
-                markdownItSpread.name,
-                markdownItSpread.renderer(reference),
-            )
-            .use(
-                markdownItImage.plugin,
-                markdownItImage.name,
-                markdownItImage.renderer(reference),
-            )
-            .use(
-                markdownItMedia.plugin,
-                markdownItMedia.name,
-                markdownItMedia.renderer(reference),
-            )
-            .use(
-                markdownItLogo.plugin,
-                markdownItLogo.name,
-                markdownItLogo.renderer(reference),
-            )
+            .use(markdownItDialogue.plugin, markdownItDialogue.name, markdownItDialogue.renderer(reference))
+            .use(markdownItGallery.plugin, markdownItGallery.name, markdownItGallery.renderer(reference))
+            .use(markdownItSpread.plugin, markdownItSpread.name, markdownItSpread.renderer(reference))
+            .use(markdownItImage.plugin, markdownItImage.name, markdownItImage.renderer(reference))
+            .use(markdownItMedia.plugin, markdownItMedia.name, markdownItMedia.renderer(reference))
+            .use(markdownItLogo.plugin, markdownItLogo.name, markdownItLogo.renderer(reference))
     }
 
     set filename(name) {

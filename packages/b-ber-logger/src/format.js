@@ -6,22 +6,29 @@ export function wrap(arr, space) {
         .reduce((acc, curr) => {
             const a = acc.split('\n')
             const l = a[a.length - 1].length
-            return acc.concat(
-                l > this.consoleWidth ? `\n${space}${curr}, ` : `${curr}, `,
-            )
+            return acc.concat(l > this.consoleWidth ? `\n${space}${curr}, ` : `${curr}, `)
         }, '')
         .slice(0, -2)
 }
 
 export function floatFormat(n) {
-    const num = parseInt(n, 10)
-    const len = String(num).length - 1
-    const pow = Math.floor(len / 3)
+    const pows = {
+        1: { text: 'B', pow: 0 },
+        2: { text: 'B', pow: 0 },
+        3: { text: 'B', pow: 0 },
+        4: { text: 'Kb', pow: 3 },
+        5: { text: 'Kb', pow: 3 },
+        6: { text: 'Kb', pow: 3 },
+        7: { text: 'Mb', pow: 6 },
+        8: { text: 'Mb', pow: 6 },
+        9: { text: 'Mb', pow: 6 },
+        10: { text: 'Gb', pow: 9 },
+        11: { text: 'Gb', pow: 9 },
+    }
 
-    const pows = ['B', 'Kb', 'Mb', 'Gb', 'Tb', 'Pb']
-
-    const fmt = ((num / 1000) ** pow).toFixed(2)
-    const str = `${fmt} ${pows[pow]}`
+    const len = String(n).length
+    const fmt = (n / Number(`1e${pows[len].pow}`)).toFixed(2)
+    const str = `${fmt} ${pows[len].text}`
 
     return str
 }
@@ -33,7 +40,11 @@ export function decorate(_args, ...props) {
 
     if (this.boringOutput === false) {
         for (let i = props.length - 1; i >= 0; i--) {
-            message = chalk[props[i]](message)
+            if (chalk[props[i]]) {
+                message = chalk[props[i]](message)
+            } else {
+                message = chalk(message)
+            }
         }
     }
 

@@ -1,6 +1,6 @@
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import renderFactory from './factory/block'
-import { attributes, htmlId } from './helpers'
+import { htmlId, attributesObject, attributesString } from './helpers'
 import plugin from '../parsers/gallery'
 
 // define our open and closing markers, used by the `validateOpen` and
@@ -16,7 +16,8 @@ const render = (tokens, idx) => {
 
     if (tokens[idx].nesting === 1 && open) {
         const [, type, id, attrs] = open
-        const attrsString = attributes(attrs, type)
+        const attrsObject = attributesObject(attrs, type)
+        const attrsString = attributesString(attrsObject)
 
         // gallery directive is handled differentenly based on build:
 
@@ -32,10 +33,9 @@ const render = (tokens, idx) => {
         switch (state.build) {
             case 'web':
             case 'reader':
-                // prettier ignore
                 result = `
-                    <section id="${htmlId(id)}" class="gallery">
-                        <div class="figure__large figure__inline figure__fullbleed">
+                    <section id="${htmlId(id)}" ${attrsString}>
+                        <div class="figure__large figure__inline figure__fullbleed figure__gallery">
                             <figure>
                                 <div class="figure__items">`
                 break
@@ -44,8 +44,7 @@ const render = (tokens, idx) => {
             case 'pdf':
             case 'sample':
             default:
-                // prettier-ignore
-                result = `\n<section id="${htmlId(id)}" class="gallery"${attrsString}>`
+                result = `\n<section id="${htmlId(id)}" ${attrsString}>`
                 break
         }
     }

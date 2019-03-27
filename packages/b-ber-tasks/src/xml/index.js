@@ -13,18 +13,7 @@ import * as tasks from '../'
 
 const cwd = process.cwd()
 const parser = new HtmlToXml()
-const sequence = [
-    'clean',
-    'container',
-    'sass',
-    'copy',
-    'scripts',
-    'render',
-    'loi',
-    'footnotes',
-    'inject',
-    'opf',
-]
+const sequence = ['clean', 'container', 'sass', 'copy', 'scripts', 'render', 'loi', 'footnotes', 'inject', 'opf']
 
 const initialize = () =>
     new Promise(resolve => {
@@ -46,25 +35,18 @@ const formatForInDesign = str =>
     })
 
 const writeXML = str => {
-    const fpath = path.join(
-        cwd,
-        `Export-${new Date().toISOString().replace(/:/g, '-')}.xml`,
-    )
+    const fpath = path.join(cwd, `Export-${new Date().toISOString().replace(/:/g, '-')}.xml`)
     return fs.writeFile(fpath, str, 'utf8')
 }
 
-const parseHTMLFiles = (files, parser, dist) =>
+const parseHTMLFiles = (files, parser_, dist) =>
     new Promise(resolve => {
         const dirname = path.join(dist, 'OPS', 'text')
         const promises = files
             .map((a, index, arr) => {
                 let data
 
-                const fname = isPlainObject(a)
-                    ? Object.keys(a)[0]
-                    : typeof a === 'string'
-                        ? a
-                        : null
+                const fname = isPlainObject(a) ? Object.keys(a)[0] : typeof a === 'string' ? a : null
                 const ext = '.xhtml'
 
                 if (!fname) return null
@@ -79,7 +61,7 @@ const parseHTMLFiles = (files, parser, dist) =>
                     return null
                 }
 
-                return parser.parse(data, index, arr)
+                return parser_.parse(data, index, arr)
             })
             .filter(Boolean)
 

@@ -10,14 +10,7 @@ const containerPlugin = (md, name, options = {}) => {
     const render = options.render
 
     function container(state, startLine, endLine, silent) {
-        let pos,
-            nextLine,
-            marker_count,
-            markup,
-            params,
-            token,
-            old_parent,
-            old_line_max
+        let pos, nextLine, marker_count, markup, params, token, old_parent, old_line_max
         let auto_closed = false
         let start = state.bMarks[startLine] + state.tShift[startLine]
         let lineNr = startLine + 1

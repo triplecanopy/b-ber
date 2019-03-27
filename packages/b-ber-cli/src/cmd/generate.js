@@ -1,29 +1,30 @@
 import { generate } from '@canopycanopycanopy/b-ber-tasks'
-import { fail } from '../helpers'
+import { fail, ensure } from '@canopycanopycanopy/b-ber-lib/utils'
 
-const command = 'generate'
+const command = 'generate <title> [type]'
+
 const describe = 'Create a new chapter. Accepts arguments for metadata'
+
 const builder = yargs =>
     yargs
-        .options({
-            title: {
-                describe: 'Chapter title',
-                demandOption: true,
-                type: 'string',
-            },
-            type: {
-                describe: 'Chapter type',
-                default: 'bodymatter',
-                type: 'string',
-            },
+        .positional('title', {
+            describe: 'Page title',
+            type: 'string',
         })
-
+        .positional('type', {
+            describe: 'Page type',
+            choices: ['frontmatter', 'bodymatter', 'backmatter'],
+            type: 'string',
+        })
         .help('h')
         .alias('h', 'help')
         .usage(`\nUsage: $0 generate\n\n${describe}`)
         .fail((msg, err) => fail(msg, err, yargs))
 
-const handler = generate
+const handler = ({ title, type }) =>
+    ensure()
+        .then(() => generate({ title, type }))
+        .catch(console.error)
 
 export default {
     command,

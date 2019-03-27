@@ -7,8 +7,7 @@ import state from '@canopycanopycanopy/b-ber-lib/State'
 class Ncx {
     static head() {
         const entry = find(state.metadata.json(), { term: 'identifier' })
-        const identifier =
-            entry && {}.hasOwnProperty.call(entry, 'value') ? entry.value : ''
+        const identifier = entry && {}.hasOwnProperty.call(entry, 'value') ? entry.value : ''
         return `
             <head>
                 <meta name="dtb:uid" content="${identifier}"/>
@@ -20,8 +19,7 @@ class Ncx {
     }
     static title() {
         const entry = find(state.metadata.json(), { term: 'title' })
-        const title =
-            entry && {}.hasOwnProperty.call(entry, 'value') ? entry.value : ''
+        const title = entry && {}.hasOwnProperty.call(entry, 'value') ? entry.value : ''
         return `
             <docTitle>
                 <text>${Html.escape(title)}</text>
@@ -30,8 +28,7 @@ class Ncx {
     }
     static author() {
         const entry = find(state.metadata.json(), { term: 'creator' })
-        const creator =
-            entry && {}.hasOwnProperty.call(entry, 'value') ? entry.value : ''
+        const creator = entry && {}.hasOwnProperty.call(entry, 'value') ? entry.value : ''
         return `
             <docAuthor>
                 <text>${Html.escape(creator)}</text>
@@ -41,7 +38,7 @@ class Ncx {
     static document() {
         return new File({
             path: 'ncx.document.tmpl',
-            contents: new Buffer(`<?xml version="1.0" encoding="UTF-8"?>
+            contents: Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
                 <ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1">
                     ${Ncx.head()}
                     ${Ncx.title()}
@@ -64,8 +61,8 @@ class Ncx {
     static navPoints(data) {
         let index = 0
 
-        function render(data) {
-            return data
+        function render(_data) {
+            return _data
                 .map(a => {
                     if (a.in_toc === false) return ''
                     index += 1

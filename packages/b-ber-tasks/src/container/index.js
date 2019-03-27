@@ -29,18 +29,14 @@ class Container {
         ]
 
         const promises = files.map(a =>
-            fs
-                .writeFile(path.join(state.dist, a.path), a.content)
-                .then(() => log.info('container emit [%s]', a.path)),
+            fs.writeFile(path.join(state.dist, a.path), a.content).then(() => log.info('container emit [%s]', a.path)),
         )
 
         return Promise.all(promises)
     }
 
     makedirs() {
-        const promises = this.dirs.map(a =>
-            fs.mkdirs(a).then(() => log.info('container emit [%s]', a)),
-        )
+        const promises = this.dirs.map(a => fs.mkdirs(a).then(() => log.info('container emit [%s]', a)))
         return Promise.all(promises)
     }
 

@@ -5,15 +5,14 @@ import ResizeObserver from 'resize-observer-polyfill'
 import { isNumeric } from '../helpers/Types'
 import { debug, verboseOutput, logTime } from '../config'
 import browser from '../lib/browser'
+import { ENSURE_RENDER_TIMEOUT, DEBOUNCE_TIMER } from '../constants'
 
-const ensureRenderTimeout = 0
-
-const log = (spreadTotal, contentDimensions, frameHeight, columns) => {
+const log = (lastSpreadIndex, contentDimensions, frameHeight, columns) => {
     if (debug && verboseOutput) {
         console.group('Layout#connectResizeObserver')
         console.log(
-            'spreadTotal: %d; contentDimensions: %d; frameHeight %d; columns %d',
-            spreadTotal,
+            'lastSpreadIndex: %d; contentDimensions: %d; frameHeight %d; columns %d',
+            lastSpreadIndex,
             contentDimensions,
             frameHeight,
             columns,
@@ -36,22 +35,15 @@ export default function observable(target) {
 
     const _componentDidMount = target.prototype.componentDidMount
     target.prototype.componentDidMount = function componentDidMount() {
-        const { transitionSpeed } = this.props.viewerSettings
+        this.calculateNodePositionAfterResize = debounce(this.calculateNodePosition, DEBOUNCE_TIMER, {
+            leading: false,
+            trailing: true,
+        }).bind(this)
 
-        this.calculateNodePositionAfterResize = debounce(
-            this.calculateNodePosition,
-            transitionSpeed,
-            {},
-        ).bind(this)
-
-        this.calculateNodePositionAfterMutation = debounce(
-            this.calculateNodePosition,
-            60,
-            {
-                leading: false,
-                trailing: true,
-            },
-        ).bind(this)
+        this.calculateNodePositionAfterMutation = debounce(this.calculateNodePosition, DEBOUNCE_TIMER, {
+            leading: false,
+            trailing: true,
+        }).bind(this)
 
         if (_componentDidMount) _componentDidMount.call(this, arguments)
 
@@ -68,22 +60,15 @@ export default function observable(target) {
     target.prototype.connectResizeObserver = function connectResizeObserver() {
         if (!this.contentNode) throw new Error("Couldn't find this.contentNode")
 
-        this.__resizeObserver = new ResizeObserver(
-            this.calculateNodePositionAfterResize,
-        )
+        this.__resizeObserver = new ResizeObserver(this.calculateNodePositionAfterResize)
         this.__resizeObserver.observe(this.contentNode)
     }
 
     target.prototype.connectMutationObserver = function connectMutationObserver() {
         if (!this.contentNode) throw new Error("Couldn't find this.contentNode")
 
-        this.__mutationObserver = new window.MutationObserver(
-            this.calculateNodePositionAfterMutation,
-        )
-        this.__mutationObserver.observe(this.contentNode, {
-            attributes: true,
-            subtree: true,
-        })
+        this.__mutationObserver = new window.MutationObserver(this.calculateNodePositionAfterMutation)
+        this.__mutationObserver.observe(this.contentNode, { attributes: true, subtree: true })
     }
 
     target.prototype.disconnectResizeObserver = function disconnectResizeObserver() {
@@ -104,55 +89,79 @@ export default function observable(target) {
         this.__mutationObserver.disconnect(this.contentNode)
     }
 
-    target.prototype.calculateNodePosition = function calculateNodePosition(/*entry*/) {
+    target.prototype.calculateNodePosition = function calculateNodePosition(/* entry */) {
         if (!this.contentNode) throw new Error("Couldn't find this.contentNode")
 
-        const { columns, paddingLeft } = this.state
+        const { columns } = this.state
+        const lastNode = document.querySelector('.ultimate')
 
         let contentDimensions
-        let columnCount
-        let spreadTotal
-        let spreadWidth
+        let lastSpreadIndex
         let frameHeight
 
-        if (this.props.ready === true) return
+        // TODO: prevent multiple callbacks. good to have this off for debug
+        // if (this.props.ready === true) return
 
         if (logTime) console.time('observable#setReaderState')
 
-        // FF only
-        if (browser.name === 'firefox') {
-            contentDimensions = this.contentNode.offsetWidth - paddingLeft * 2
-            spreadWidth = window.innerWidth - paddingLeft * 2
-            columnCount = contentDimensions / spreadWidth
+        // height of the reader frame (viewport - padding top and bottom),
+        // rounded so we get a clean divisor
+        frameHeight = this.getFrameHeight()
 
-            spreadTotal = Math.floor(columnCount)
+        // getFrameHeight will return 'auto' for mobile. set to zero so that
+        // chapter navigation still works
+        if (!isNumeric(frameHeight)) frameHeight = 0
+
+        if (browser.name === 'firefox' && lastNode) {
+            // FF only. we need to find the document height, but firefox
+            // interprets our column layout as having width, so we measure the
+            // distance of the left edge of the last node in our document
+
+            frameHeight *= 2
+            contentDimensions = lastNode.offsetLeft
+            lastSpreadIndex = Math.floor(contentDimensions / frameHeight)
         } else {
-            contentDimensions = this.contentNode.offsetHeight
-            frameHeight = this.getFrameHeight()
+            contentDimensions = Math.max(
+                this.contentNode.scrollHeight,
+                this.contentNode.offsetHeight,
+                this.contentNode.clientHeight,
+            )
 
-            // we need to return 0 for column count on mobile to ensure that
-            // chapter navigation works
-            let columnCount = contentDimensions / frameHeight
-            if (!isNumeric(columnCount)) columnCount = 0
+            frameHeight = Math.round(frameHeight)
 
-            spreadTotal = Math.floor(columnCount / columns)
+            // find the last index by dividing the document length by the frame
+            // height, and then divide the result by 2 to account for the 2
+            // column layout. Math.ceil to only allow whole numbers (each page
+            // must have 2 columns), and to account for dangling lines of text
+            // that will spill over to the next column (contentDimensions /
+            // frameHeight in these cases will be something like 6.1 for a
+            // six-page chapter). minus one since we want it to be a zero-based
+            // index
+            lastSpreadIndex = Math.ceil(contentDimensions / frameHeight / 2) - 1
         }
 
-        log(spreadTotal, contentDimensions, frameHeight, columns)
+        // never less than 0
+        lastSpreadIndex = lastSpreadIndex < 0 ? 0 : lastSpreadIndex
 
-        if (this.__contentDimensions !== contentDimensions) {
+        log(lastSpreadIndex, contentDimensions, frameHeight, columns)
+
+        // check that everything's been added to the DOM. if there's a disparity
+        // in dimensions, or the node we use to measure width of the DOM isn't
+        // available, then hide then show content to trigger our resize
+        // observer's callback
+        if (this.__contentDimensions !== contentDimensions || lastNode == null) {
             window.clearTimeout(this.timer)
             this.timer = setTimeout(() => {
                 this.__contentDimensions = contentDimensions
 
-                log(spreadTotal, contentDimensions, frameHeight, columns)
+                log(lastSpreadIndex, contentDimensions, frameHeight, columns)
 
                 this.contentNode.style.display = 'none'
                 this.contentNode.style.display = 'block'
-            }, ensureRenderTimeout)
+            }, ENSURE_RENDER_TIMEOUT)
         } else {
             if (logTime) console.timeEnd('observable#setReaderState')
-            this.props.setReaderState({ spreadTotal, ready: true })
+            this.props.setReaderState({ lastSpreadIndex, ready: true })
         }
     }
 

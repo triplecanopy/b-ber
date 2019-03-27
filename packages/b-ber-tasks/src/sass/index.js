@@ -28,27 +28,15 @@ const createSCSSString = () =>
         const { theme } = state
         const themeName = theme.name
 
-        const themeSettingsPath = path.join(
-            state.src,
-            '_stylesheets',
-            themeName,
-            '_settings.scss',
-        )
-        const themeOverridesPath = path.join(
-            state.src,
-            '_stylesheets',
-            themeName,
-            '_overrides.scss',
-        )
+        const themeSettingsPath = path.join(state.src, '_stylesheets', themeName, '_settings.scss')
+        const themeOverridesPath = path.join(state.src, '_stylesheets', themeName, '_overrides.scss')
         const themeStylesPath = theme.entry
 
         try {
             // load user-defined variables
             if (fs.existsSync(themeSettingsPath)) {
                 const variableOverrides = fs.readFileSync(themeSettingsPath)
-                log.info(
-                    `sass use overrides [${path.basename(themeSettingsPath)}]`,
-                )
+                log.info(`sass use overrides [${path.basename(themeSettingsPath)}]`)
                 log.info('sass prepend overrides')
                 chunks.push(variableOverrides)
             }
@@ -73,11 +61,7 @@ const createSCSSString = () =>
             // load user-defined styles
             if (fs.existsSync(themeOverridesPath)) {
                 const styleOverrides = fs.readFileSync(themeOverridesPath)
-                log.info(
-                    `sass use user-defined styles [${path.basename(
-                        themeOverridesPath,
-                    )}]`,
-                )
+                log.info(`sass use user-defined styles [${path.basename(themeOverridesPath)}]`)
                 log.info('sass append user-defined styles')
                 chunks.push(styleOverrides)
             }
@@ -94,8 +78,7 @@ const createSCSSString = () =>
     })
 
 // make sure the compiled output dir exists
-const ensureCSSDir = () =>
-    fs.mkdirp(path.join(state.dist, 'OPS', 'stylesheets'))
+const ensureCSSDir = () => fs.mkdirp(path.join(state.dist, 'OPS', 'stylesheets'))
 
 // copy assets that exist in theme directory to the corresponding directory in
 // _project:
@@ -120,12 +103,10 @@ const copyThemeAssets = () => {
             fs.lstatSync(themePath).isDirectory()
         } catch (err) {
             if (err.code === 'ENOENT') return acc
-            throw new Error(
-                `There was a problem copying [${themePath}] to [${srcPath}]`,
-            )
+            throw new Error(`There was a problem copying [${themePath}] to [${srcPath}]`)
         }
 
-        const fileData = fs
+        const data = fs
             .readdirSync(themePath)
             .filter(a => a.charAt(0) !== '.')
             .map(fileName => ({
@@ -133,7 +114,7 @@ const copyThemeAssets = () => {
                 output: path.join(srcPath, fileName),
             }))
 
-        return acc.concat(fileData)
+        return acc.concat(data)
     }, [])
 
     const promises = fileData.map(({ input, output }) =>
@@ -156,36 +137,8 @@ const renderCSS = scssString =>
                     path.dirname(state.theme.entry),
                     path.dirname(path.dirname(state.theme.entry)),
                 ],
-                outputStyle:
-                    state.env === 'production' ? 'compressed' : 'nested',
+                outputStyle: state.env === 'production' ? 'compressed' : 'nested',
                 errLogToConsole: true,
-                importer: (url, prev, done) => {
-                    if (/^css:/.test(url)) {
-                        const url_ = url.slice(4)
-
-                        let cssPath
-
-                        cssPath = path.join(
-                            path.dirname(state.theme.entry),
-                            `${url_}.css`,
-                        )
-
-                        if (!fs.existsSync(cssPath)) {
-                            cssPath = path.join(
-                                path.dirname(path.dirname(state.theme.entry)),
-                                `${url_}.css`,
-                            )
-                        }
-
-                        if (!fs.existsSync(cssPath)) {
-                            log.error('Could not find @imported css', cssPath)
-                        }
-
-                        const contents = fs.readFileSync(cssPath, 'utf8')
-                        return done({ contents })
-                    }
-                    return done()
-                },
             },
             (err, result) => {
                 if (err) throw err
@@ -202,12 +155,8 @@ const applyPostProcessing = ({ css }) =>
     )
 
 const writeCSSFile = cssString => {
-    const fileName =
-        state.env === 'production' ? `${state.hash}.css` : 'application.css'
-    return fs.writeFile(
-        path.join(state.dist, 'OPS', 'stylesheets', fileName),
-        cssString,
-    )
+    const fileName = state.env === 'production' ? `${state.hash}.css` : 'application.css'
+    return fs.writeFile(path.join(state.dist, 'OPS', 'stylesheets', fileName), cssString)
 }
 
 const sass = () =>

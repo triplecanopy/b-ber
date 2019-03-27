@@ -26,9 +26,7 @@ const serialize = (sequence, tasks) =>
         .reduce((acc, task) => {
             const func = tasks[task] || task
             if (typeof func !== 'function') {
-                throw new Error(
-                    `async#serialize: Invalid parameter [${func}] is [${typeof func}], expected [function]`,
-                )
+                throw new Error(`async#serialize: Invalid parameter [${func}] is [${typeof func}], expected [function]`)
             }
 
             return acc

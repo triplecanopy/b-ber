@@ -1,6 +1,6 @@
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import renderFactory from './factory/block'
-import { attributes, htmlId } from './helpers'
+import { htmlId, attributesObject, attributesString } from './helpers'
 import plugin from '../parsers/gallery'
 
 // define our open and closing markers, used by the `validateOpen` and
@@ -16,7 +16,8 @@ const render = (tokens, idx) => {
 
     if (tokens[idx].nesting === 1 && open) {
         const [, type, id, attrs] = open
-        const attrsString = attributes(attrs, type)
+        const attrsObject = attributesObject(attrs, type)
+        const attrsString = attributesString(attrsObject)
 
         // spread directive is handled differentenly based on build:
 
@@ -41,9 +42,7 @@ const render = (tokens, idx) => {
             case 'pdf':
             case 'sample':
             default:
-                result = `\n<section id="${htmlId(
-                    id
-                )}" class="spread"${attrsString}>`
+                result = `\n<section id="${htmlId(id)}" ${attrsString}>`
                 break
         }
     }

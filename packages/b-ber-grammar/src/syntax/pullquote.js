@@ -4,10 +4,7 @@
 
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
-import {
-    BLOCK_DIRECTIVE_MARKER,
-    BLOCK_DIRECTIVE_MARKER_MIN_LENGTH,
-} from '@canopycanopycanopy/b-ber-shapes/directives'
+import { BLOCK_DIRECTIVE_MARKER, BLOCK_DIRECTIVE_MARKER_MIN_LENGTH } from '@canopycanopycanopy/b-ber-shapes/directives'
 import plugin from '../parsers/section'
 import { attributesObject, attributesString } from './helpers'
 
@@ -35,9 +32,9 @@ export default {
                 const [, , id] = match
                 if (typeof id === 'undefined') {
                     log.error(
-                        `Missing [id] attribute for [${
-                            exports.default.name
-                        }:start] directive ${context.filename}.md:${line}`,
+                        `Missing [id] attribute for [${exports.default.name}:start] directive ${
+                            context.filename
+                        }.md:${line}`,
                     )
                     return false
                 }
@@ -73,9 +70,7 @@ export default {
                         pullquoteIndices.push(id)
                     } else {
                         log.error(
-                            `Duplicate [id] attribute [${id}]. [id]s must be unique ${
-                                context.filename
-                            }.md:${_line}`,
+                            `Duplicate [id] attribute [${id}]. [id]s must be unique ${context.filename}.md:${_line}`,
                         )
                     }
 
@@ -113,11 +108,7 @@ export default {
                         // with the HTML comment and reset the citation to prepare for the
                         // next iteration
                         const comment = `\n<!-- END: section:pullquote#${id} -->\n`
-                        result = citation
-                            ? `<cite>&#8212;&#160;${instance.renderInline(
-                                citation,
-                            )}</cite>`
-                            : ''
+                        result = citation ? `<cite>&#8212;&#160;${instance.renderInline(citation)}</cite>` : ''
                         result += `</section>${comment}`
                         citation = ''
 

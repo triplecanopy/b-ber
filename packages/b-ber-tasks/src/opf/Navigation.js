@@ -22,16 +22,8 @@ import Toc from '@canopycanopycanopy/b-ber-templates/Toc'
 import Ncx from '@canopycanopycanopy/b-ber-templates/Ncx'
 import Guide from '@canopycanopycanopy/b-ber-templates/Opf/Guide'
 import Spine from '@canopycanopycanopy/b-ber-templates/Opf/Spine'
-import {
-    YamlAdaptor,
-    Template,
-    ManifestItemProperties,
-} from '@canopycanopycanopy/b-ber-lib'
-import {
-    flattenSpineFromYAML,
-    nestedContentToYAML,
-    pathInfoFromFiles,
-} from './helpers'
+import { YamlAdaptor, Template, ManifestItemProperties } from '@canopycanopycanopy/b-ber-lib'
+import { flattenSpineFromYAML, nestedContentToYAML, pathInfoFromFiles } from './helpers'
 
 /**
  * @alias module:navigation#Navigation
@@ -52,12 +44,8 @@ class Navigation {
      */
     createEmptyNavDocuments() {
         return new Promise(resolve => {
-            log.info(
-                `opf build navigation documents [${this.navDocs.join(', ')}]`,
-            )
-            const promises = this.navDocs.map(a =>
-                fs.writeFile(path.join(state.dist, 'OPS', a), ''),
-            )
+            log.info(`opf build navigation documents [${this.navDocs.join(', ')}]`)
+            const promises = this.navDocs.map(a => fs.writeFile(path.join(state.dist, 'OPS', a), ''))
             return Promise.all(promises).then(resolve)
         })
     }
@@ -71,17 +59,12 @@ class Navigation {
             rrdir(`${state.dist}${path.sep}OPS`, (err, filearr) => {
                 if (err) throw err
                 // TODO: better testing here, make sure we're not including symlinks, for example
+                // @issue: https://github.com/triplecanopy/b-ber/issues/228
                 const fileObjects = pathInfoFromFiles(filearr, state.dist)
                 // only get html files
-                const xhtmlFileObjects = fileObjects.filter(a =>
-                    ManifestItemProperties.isHTML(a),
-                )
+                const xhtmlFileObjects = fileObjects.filter(a => ManifestItemProperties.isHTML(a))
                 // prepare for diffing
-                const filesFromSystem = uniq(
-                    xhtmlFileObjects.map(a =>
-                        path.basename(a.name, a.extension),
-                    ),
-                )
+                const filesFromSystem = uniq(xhtmlFileObjects.map(a => path.basename(a.name, a.extension)))
                 resolve({ filesFromSystem, fileObjects })
             }),
         )
@@ -116,11 +99,7 @@ class Navigation {
             // eslint-disable-line consistent-return
             const { spine } = state // current build process's spine
             const { spineList } = state.buildTypes[state.build] // spine items pulled in from type.yml file
-            const flow = uniq(
-                spine
-                    .map(a => (a.generated ? null : a.fileName))
-                    .filter(Boolean),
-            ) // one-dimensional flow of the book used for the spine, omitting figures pages
+            const flow = uniq(spine.map(a => (a.generated ? null : a.fileName)).filter(Boolean)) // one-dimensional flow of the book used for the spine, omitting figures pages
 
             const pages = flattenSpineFromYAML(spineList)
             const missingFiles = difference(flow, filesFromSystem) // extra files on system
@@ -132,11 +111,7 @@ class Navigation {
                 if (missingFiles.length) {
                     // there are extra entries in the YAML (i.e., missing XHTML pages)
                     missingEntries.forEach(a => {
-                        log.warn(
-                            `Removing redundant entry [${a}] in ${
-                                state.build
-                            }.yml`,
-                        )
+                        log.warn(`Removing redundant entry [${a}] in ${state.build}.yml`)
                     })
 
                     missingFiles.forEach(item => {
@@ -153,9 +128,7 @@ class Navigation {
                     const yamlpath = path.join(state.src, `${state.build}.yml`)
                     const nestedYamlToc = nestedContentToYAML(state.toc)
                     const content =
-                        isArray(nestedYamlToc) && nestedYamlToc.length === 0
-                            ? ''
-                            : YamlAdaptor.dump(nestedYamlToc)
+                        isArray(nestedYamlToc) && nestedYamlToc.length === 0 ? '' : YamlAdaptor.dump(nestedYamlToc)
 
                     fs.writeFile(yamlpath, content, err => {
                         if (err) throw err
@@ -171,29 +144,20 @@ class Navigation {
                     missingEntries.forEach(name => {
                         if (state.contains('loi', { name }) < 0) {
                             // don't warn for figures pages
-                            log.warn(
-                                `Adding missing entry [${name}] to [${
-                                    state.build
-                                }.yml]`,
-                            )
+                            log.warn(`Adding missing entry [${name}] to [${state.build}.yml]`)
                         }
                     })
 
                     // add the missing entry to the spine
-                    // TODO: add to toc? add to flow/pages?
-                    // TODO: there need to be some handlers for parsing user-facing attrs
                     const missingEntriesWithAttributes = missingEntries
                         .map(fileName => {
-                            if (
-                                state.contains('loi', { name: fileName }) > -1
-                            ) {
+                            if (state.contains('loi', { name: fileName }) > -1) {
                                 return null
                             }
 
                             // TODO: state should handle dot-notation for add/remove
-                            state.buildTypes[state.build].spineList.add(
-                                fileName,
-                            )
+                            // @issue: https://github.com/triplecanopy/b-ber/issues/229
+                            state.buildTypes[state.build].spineList.push(fileName)
 
                             return fileName
                         })
@@ -201,10 +165,9 @@ class Navigation {
 
                     const yamlpath = path.join(state.src, `${state.build}.yml`)
                     const content =
-                        isArray(missingEntriesWithAttributes) &&
-                        missingEntriesWithAttributes.length === 0
+                        isArray(missingEntriesWithAttributes) && missingEntriesWithAttributes.length === 0
                             ? ''
-                            : YamlAdaptor.dump(missingEntriesWithAttributes)
+                            : `\n${YamlAdaptor.dump(missingEntriesWithAttributes)}`
 
                     fs.appendFile(yamlpath, content, err => {
                         if (err) throw err
@@ -268,18 +231,14 @@ class Navigation {
             const strings = {}
             const { spine } = state
 
-            // TODO: find somewhere better for this. we add entries to the spine
-            // programatically, but then they're also found on the system, so we
-            // dedupe them here
+            // We add entries to the spine programatically, but then they're
+            // also found on the system, so we dedupe them here
             const generatedFiles = remove(spine, a => a.generated === true)
             generatedFiles.forEach(a => {
                 if (!find(spine, { fileName: a.fileName })) {
                     spine.push(a)
                 }
             })
-
-            // console.log(spine)
-            // process.exit()
 
             const spineXML = Spine.items(spine)
 
@@ -298,7 +257,7 @@ class Navigation {
      */
     deepMergePromiseArrayValues(args, property) {
         const props = Object.assign({}, ...args.map(a => a[property]))
-        return Object.assign({}, [...args], { [property]: props }) // TODO: this is weird ...
+        return Object.assign({}, [...args], { [property]: props })
     }
 
     writeTocXhtmlFile(args) {
@@ -329,10 +288,7 @@ class Navigation {
 
     normalizeResponseObject(args) {
         return new Promise(resolve => {
-            const normalizedResponse = this.deepMergePromiseArrayValues(
-                args,
-                'strings',
-            )
+            const normalizedResponse = this.deepMergePromiseArrayValues(args, 'strings')
             resolve(normalizedResponse)
         })
     }

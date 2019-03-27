@@ -12,15 +12,15 @@ const pageBreakBeforeXPATH = () =>
     [
         '//h:*[@class="figure__large figure__inline"]',
         '//h:*[@class="figure__large figure__inline"]/following::h:p[1]',
-        '//h:*[@style="page-break-before:always;"]', // TODO: this is too strict if the XHTML changes, calibre supports regex in xpath, should use that
+        // TODO: this is too strict if the XHTML changes, calibre supports regex in xpath, should use that
+        // @issue: https://github.com/triplecanopy/b-ber/issues/227
+        '//h:*[@style="page-break-before:always;"]',
+        '//h:*[@data-gallery-item]',
     ].join('|')
 
-const mobi = () => {
-    const opsPath = path.join(state.dist, 'OPS')
-    const inputPath = path.join(opsPath, 'content.opf')
-
-    return EbookConvert.convert({
-        inputPath,
+const mobi = () =>
+    EbookConvert.convert({
+        inputPath: path.join(path.join(state.dist, 'OPS'), 'content.opf'),
         outputPath: process.cwd(),
         fileType: 'mobi',
         fileName: getBookMetadata('identifier', state),
@@ -34,6 +34,5 @@ const mobi = () => {
             `--page-breaks-before='${pageBreakBeforeXPATH()}'`,
         ],
     }).catch(log.error)
-}
 
 export default mobi

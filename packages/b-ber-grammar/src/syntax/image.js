@@ -5,7 +5,7 @@ import imageSize from 'probe-image-size'
 import log from '@canopycanopycanopy/b-ber-logger'
 import { Html } from '@canopycanopycanopy/b-ber-lib'
 import state from '@canopycanopycanopy/b-ber-lib/State'
-import figTmpl from '@canopycanopycanopy/b-ber-templates/figures'
+import figureTemplate from '@canopycanopycanopy/b-ber-templates/figures'
 import { getImageOrientation } from '@canopycanopycanopy/b-ber-lib/utils'
 import {
     INLINE_DIRECTIVE_MARKER,
@@ -31,11 +31,7 @@ export default {
             const [, , id, source] = match
             if (typeof id === 'undefined' || typeof source === 'undefined') {
                 // image requires `id` and `source`
-                log.error(
-                    `Missing [id] or [source] attribute for [figure] directive${
-                        context.filename
-                    }.md:${line}`,
-                )
+                log.error(`Missing [id] or [source] attribute for [figure] directive${context.filename}.md:${line}`)
                 return false
             }
             return match
@@ -50,17 +46,14 @@ export default {
 
             const [, type, id, attrs] = match
             const children = tokens[idx].children
-            const caption = children
-                ? instance.renderInline(tokens[idx].children)
-                : ''
-            const comment = Html.comment(
-                `START: figure:${type}#${htmlId(id)}; ${filename}:${lineNr}`,
-            )
+            const caption = children ? instance.renderInline(tokens[idx].children) : ''
+            const comment = Html.comment(`START: figure:${type}#${htmlId(id)}; ${filename}:${lineNr}`)
             const attrsObject = attributesObject(attrs, type, {
                 filename,
                 lineNr,
             })
             const asset = path.join(state.src, '_images', attrsObject.source)
+            const mediaType = (type.indexOf('-') && type.substring(0, type.indexOf('-'))) || type
 
             let result, page, href, classNames, ref, imageData // eslint-disable-line one-var
 
@@ -78,14 +71,11 @@ export default {
             // then get the dimensions
             const dimensions = imageSize.sync(fs.readFileSync(asset))
             const { width, height } = dimensions
-            const figureId = htmlId(id) //`_${crypto.randomBytes(20).toString('hex')}`
+            const figureId = htmlId(id)
 
             switch (type) {
                 case 'figure':
-                    classNames = `figure__small figure__small--${getImageOrientation(
-                        width,
-                        height,
-                    )}`
+                    classNames = `figure__small figure__small--${getImageOrientation(width, height)}`
                     ref = context.filename
 
                     if ({}.hasOwnProperty.call(attrsObject, 'classes')) {
@@ -95,10 +85,8 @@ export default {
                     }
 
                     page = `figure${figureId}.xhtml`
-                    href =
-                        state.build === 'reader'
-                            ? 'figures-titlepage.xhtml'
-                            : page
+                    href = state.build === 'reader' ? 'figures-titlepage.xhtml' : page
+
                     state.add('figures', {
                         id: figureId,
                         ...attrsObject,
@@ -106,6 +94,7 @@ export default {
                         page,
                         ref,
                         caption,
+                        mediaType,
                         pageOrder: state.figures.length,
                         mime: mime.lookup(attrsObject.source),
                     })
@@ -113,18 +102,16 @@ export default {
                     result = `${comment}<div class="${attrsObject.classes}">
                             <figure id="ref${figureId}">
                                 <a href="${href}#${figureId}">
-                                    <img src="../images/${encodeURIComponent(
-            attrsObject.source,
-        )}" alt="${attrsObject.alt}"/>
+                                    <img src="../images/${encodeURIComponent(attrsObject.source)}" alt="${
+                        attrsObject.alt
+                    }"/>
                                 </a>
                             </figure>
                         </div>`
                     break
-                case 'figure-inline':
-                    if (!{}.hasOwnProperty.call(attrsObject, 'classes')) {
-                        attrsObject.classes = ''
-                    }
 
+                case 'figure-inline':
+                    attrsObject.classes = attrsObject.classes || ''
                     imageData = {
                         ...attrsObject,
                         id: figureId,
@@ -135,7 +122,7 @@ export default {
                         mime: mime.lookup(attrsObject.source),
                     }
 
-                    result = figTmpl(imageData, state.build)
+                    result = figureTemplate(imageData, state.build)
                     break
                 default:
                     break

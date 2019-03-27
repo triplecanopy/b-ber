@@ -50,29 +50,17 @@ const templateify = files =>
         }
 
         dirName = fileType === '.css' ? 'stylesheets' : 'javascripts'
-        base =
-            /^(http|\/\/)/.test(file) === false
-                ? `..${path.sep}${dirName}${path.sep}`
-                : ''
+        base = /^(http|\/\/)/.test(file) === false ? `..${path.sep}${dirName}${path.sep}` : ''
 
         switch (fileType) {
             case '.js':
                 return file instanceof File
-                    ? Xhtml.script('application/javascript', true).replace(
-                        /\{% body %\}/,
-                        String(file.contents)
-                    )
+                    ? Xhtml.script('application/javascript', true).replace(/\{% body %\}/, String(file.contents))
                     : Xhtml.script().replace(/\{% body %\}/, `${base}${file}`)
             case '.css':
-                return Xhtml.stylesheet().replace(
-                    /\{% body %\}/,
-                    `${base}${file}`
-                )
+                return Xhtml.stylesheet().replace(/\{% body %\}/, `${base}${file}`)
             case '.json-ld':
-                return Xhtml.script('application/ld+json', true).replace(
-                    /\{% body %\}/,
-                    String(file.contents)
-                )
+                return Xhtml.script('application/ld+json', true).replace(/\{% body %\}/, String(file.contents))
             default:
                 throw new Error(`Unsupported filetype: ${file}`)
         }
@@ -94,20 +82,13 @@ const injectTags = args => {
             throw new Error(`Missing end tag for start tag: ${startMatch[0]}`)
         }
 
-        const previousInnerContent = content.substring(
-            start.lastIndex,
-            endMatch.index
-        )
+        const previousInnerContent = content.substring(start.lastIndex, endMatch.index)
         const indent = getLeadingWhitespace(previousInnerContent)
 
         toInject.unshift(startMatch[0])
         toInject.push(endMatch[0])
 
-        result = [
-            content.slice(0, startMatch.index),
-            toInject.join(indent),
-            content.slice(stop.lastIndex),
-        ].join('')
+        result = [content.slice(0, startMatch.index), toInject.join(indent), content.slice(stop.lastIndex)].join('')
     }
 
     return result
@@ -124,7 +105,7 @@ const promiseToReplace = (prop, data, source, file) =>
 
         const result = new File({
             path: source,
-            contents: new Buffer(injectTags({ content, start, stop, data })),
+            contents: Buffer.from(injectTags({ content, start, stop, data })),
         })
 
         resolve(result)
@@ -138,13 +119,9 @@ const mapSources = args => {
         const location = path.join(state.dist, 'OPS', 'text', source)
 
         return promiseToReplace('stylesheets', stylesheets, source)
-            .then(file =>
-                promiseToReplace('javascripts', javascripts, source, file)
-            )
+            .then(file => promiseToReplace('javascripts', javascripts, source, file))
             .then(file => promiseToReplace('metadata', metadata, source, file))
-            .then(file =>
-                fs.writeFile(location, file.contents.toString('utf8'))
-            )
+            .then(file => fs.writeFile(location, file.contents.toString('utf8')))
             .then(() => log.info(`inject emit [${path.basename(location)}]`))
     })
 
@@ -160,9 +137,7 @@ const mapSourcesToDynamicPageTemplate = args => {
     const docs = [dummy.path]
     const promises = docs.map(source =>
         promiseToReplace('stylesheets', stylesheets, source, dummy)
-            .then(file =>
-                promiseToReplace('javascripts', javascripts, source, file)
-            )
+            .then(file => promiseToReplace('javascripts', javascripts, source, file))
             .then(file => promiseToReplace('metadata', metadata, source, file))
             .then(file => {
                 const tmpl = file.contents.toString()
@@ -171,7 +146,7 @@ const mapSourcesToDynamicPageTemplate = args => {
                 state.templates.dynamicPageTmpl = () => tmpl
                 state.templates.dynamicPageHead = () => head
                 state.templates.dynamicPageTail = () => tail
-            })
+            }),
     )
 
     return Promise.all(promises).catch(log.error)
@@ -183,17 +158,11 @@ const inject = async () => {
     const files = {
         xhtml: await getXHTMLFiles(),
         stylesheets: await getResources('stylesheets'),
-        javascripts: [
-            ...(await getResources('javascripts')),
-            ...(await getInlineScripts()),
-        ],
+        javascripts: [...(await getResources('javascripts')), ...(await getInlineScripts())],
         metadata: await getJSONLDMetadata(),
     }
 
-    return Promise.all([
-        mapSources(files),
-        mapSourcesToDynamicPageTemplate(files),
-    ]).catch(log.error)
+    return Promise.all([mapSources(files), mapSourcesToDynamicPageTemplate(files)]).catch(log.error)
 }
 
 export default inject

@@ -1,9 +1,6 @@
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
-import {
-    BLOCK_DIRECTIVE_MARKER,
-    BLOCK_DIRECTIVE_MARKER_MIN_LENGTH,
-} from '@canopycanopycanopy/b-ber-shapes/directives'
+import { BLOCK_DIRECTIVE_MARKER, BLOCK_DIRECTIVE_MARKER_MIN_LENGTH } from '@canopycanopycanopy/b-ber-shapes/directives'
 
 const marker = BLOCK_DIRECTIVE_MARKER
 const minMarkers = BLOCK_DIRECTIVE_MARKER_MIN_LENGTH
@@ -30,9 +27,9 @@ const renderer = ({ context = {}, render, markerOpen, markerClose }) => ({
                 // filename from `context` which we've stored in back in
                 // `md/index.es6`, and passed into our `renderer`
                 log.error(
-                    `Missing [id] attribute for [${
-                        exports.default.name
-                    }:start] directive ${context.filename}.md:${line}`,
+                    `Missing [id] attribute for [${exports.default.name}:start] directive ${
+                        context.filename
+                    }.md:${line}`,
                 )
 
                 // let the parser know that this wasn't a match
@@ -47,16 +44,12 @@ const renderer = ({ context = {}, render, markerOpen, markerClose }) => ({
             const isClosing = type && type === 'exit'
             const inStore = index > -1
 
-            log.debug(
-                `id: ${id}; isOpening: ${isOpening}; isClosing: ${isClosing}; type: ${type}, inStore: ${inStore}`,
-            )
+            log.debug(`id: ${id}; isOpening: ${isOpening}; isClosing: ${isClosing}; type: ${type}, inStore: ${inStore}`)
 
             const location = `${context.filename}.md:${line}`
             if (isOpening && inStore) {
                 // it's a duplicate `id`, throw
-                log.error(
-                    `Duplicate [id] attribute [${id}]. [id]s must be unique at [${location}]`,
-                )
+                log.error(`Duplicate [id] attribute [${id}]. [id]s must be unique at [${location}]`)
             } else if (isClosing && !inStore) {
                 // trying to close an un-opened directive, but it might belong to a
                 // different directive type. regardless, we return the match

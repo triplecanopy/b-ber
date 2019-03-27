@@ -34,10 +34,7 @@ class Timer extends EventEmitter {
 
     prepare() {
         this.sequenceBegin = process.hrtime()
-        this.formattedStartDate = new Date().toLocaleDateString(
-            'en-CA',
-            Timer.dateFormattingOptions,
-        )
+        this.formattedStartDate = new Date().toLocaleDateString('en-CA', Timer.dateFormattingOptions)
         this.taskTimes = []
     }
     start(task) {
@@ -50,9 +47,7 @@ class Timer extends EventEmitter {
 
         const beginMs = Timer.timeFormat(this.taskBegin)
         const endMs = Timer.timeFormat(this.taskEnd)
-        const totalMs = `${(
-            parseFloat(endMs, 10) - parseFloat(beginMs, 10)
-        ).toFixed(3)}ms`
+        const totalMs = `${(parseFloat(endMs, 10) - parseFloat(beginMs, 10)).toFixed(3)}ms`
 
         const taskTime = {
             taskName: task,
@@ -70,10 +65,7 @@ class Timer extends EventEmitter {
 
     done({ state }) {
         const { taskTimes, formattedStartDate } = this
-        const formattedEndDate = new Date().toLocaleDateString(
-            'en-CA',
-            Timer.dateFormattingOptions,
-        )
+        const formattedEndDate = new Date().toLocaleDateString('en-CA', Timer.dateFormattingOptions)
         const sequenceEnd = Timer.timeFormat(process.hrtime(this.sequenceBegin))
 
         this.emit('done', {

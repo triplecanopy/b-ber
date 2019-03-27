@@ -12,10 +12,9 @@ import { Template } from '@canopycanopycanopy/b-ber-lib'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 
 const writeMarkupToFile = (fname, markup) => {
-    fs.writeFile(
-        path.join(state.dist, 'OPS', 'text', `${fname}.xhtml`),
-        markup,
-    ).then(() => log.info(`render xhtml [${path.basename(fname)}.xhtml]`))
+    fs.writeFile(path.join(state.dist, 'OPS', 'text', `${fname}.xhtml`), markup).then(() =>
+        log.info(`render xhtml [${path.basename(fname)}.xhtml]`),
+    )
 }
 
 // convert md to xhtml and wrap with page template
@@ -24,11 +23,7 @@ const createPageLayout = (fileName, data) => {
     const head = Xhtml.head()
     const body = MarkdownRenderer.render(fileName, data)
     const tail = Xhtml.tail()
-    const markup = Template.render(
-        'body',
-        `${head}${body}${tail}`,
-        Xhtml.body(),
-    )
+    const markup = Template.render('body', `${head}${body}${tail}`, Xhtml.body())
 
     return fs
         .mkdirp(textDir)

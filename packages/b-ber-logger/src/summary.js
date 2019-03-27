@@ -15,7 +15,6 @@ function write(msgs, context) {
         `%s%s %s${esses}`,
         context.indent(),
         context.decorate('b-ber', 'whiteBright', 'bgBlack'),
-        context.decorate('summary', 'magenta'),
         ...msgs_,
     )
     process.stdout.write(message)
@@ -24,22 +23,12 @@ function write(msgs, context) {
 
 function printNavigation(data, context, indent = 0) {
     const indent_ = INDENTATION.repeat(indent)
-    function render(data, context) {
-        data.forEach(item => {
-            write(
-                [
-                    [
-                        `${indent_}${item.title || '[no title]'} : ${
-                            item.name
-                        }`,
-                        'black',
-                    ],
-                ],
-                context,
-            )
+    function render(_data, _context) {
+        _data.forEach(item => {
+            write([[`${indent_}${item.title || '[no title]'}: ${item.name}`]], _context)
 
             if (item.nodes && item.nodes.length) {
-                render(item.nodes, context)
+                render(item.nodes, _context)
             }
         })
     }
@@ -50,7 +39,7 @@ function printNavigation(data, context, indent = 0) {
 function writeMetadata(data, context) {
     Object.entries(data).forEach(([, v]) => {
         if (isPlainObject(v)) {
-            write([[`${v.term} : ${v.value}`, 'black']], context)
+            write([[`${v.term}: ${v.value}`]], context)
         }
     })
 }
@@ -59,37 +48,33 @@ function writeConfig(data, context, indent = 0) {
     const indent_ = INDENTATION.repeat(indent)
     Object.entries(data).forEach(([k, v]) => {
         if (typeof v === 'string') {
-            write([[`${indent_}${k} : ${v}`, 'black']], context)
+            write([[`${indent_}${k}: ${v}`]], context)
         }
 
         if (isPlainObject(v)) {
-            write([[`${indent_}${k}`, 'black']], context)
+            write([[`${indent_}${k}`]], context)
             writeConfig(v, context, indent + 1)
         }
     })
 }
 
-export function printSummary({
-    state,
-    formattedStartDate,
-    formattedEndDate,
-    sequenceEnd,
-}) {
-    write([['start        ', 'green'], [formattedStartDate, 'black']], this)
+export function printSummary({ state, formattedStartDate, formattedEndDate, sequenceEnd }) {
+    this.newLine()
+    write([['Stats', 'magenta']], this)
+    write([['Build Start:'], [formattedStartDate]], this)
+    write([['Build End:'], [formattedEndDate]], this)
+    write([['Elapsed:'], [sequenceEnd]], this)
 
-    write([['end          ', 'green'], [formattedEndDate, 'black']], this)
-
-    write([['time         ', 'green'], [sequenceEnd, 'black']], this)
-
-    write([['configuration', 'green']], this)
-
+    this.newLine()
+    write([['Configuration', 'magenta']], this)
     writeConfig(state.config, this)
 
-    write([['metadata     ', 'green']], this)
+    this.newLine()
+    write([['Metadata', 'magenta']], this)
+    writeMetadata(state.metadata, this)
 
-    writeMetadata(state.metadata.json(), this)
-
-    write([['navigation   ', 'green']], this)
+    this.newLine()
+    write([['Navigation', 'magenta']], this)
 
     printNavigation(state.toc, this)
 }

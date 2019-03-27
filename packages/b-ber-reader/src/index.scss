@@ -1,10 +1,15 @@
-$white: #fff;
-$black: #000;
-$tc-purple: #5050c5;
-$lightgrey: #d3d3d3;
+// sass-lint:disable no-important
+
+$white: rgba(255, 255, 255, 1);
+$black: rgba(34, 34, 34, 1);
+$tc-purple: rgba(80, 80, 197, 1);
+$lightgrey: rgba(211, 211, 211, 1);
 $component-x: 35px;
 $padding-y: 47px;
-$mobile-break: 400px;
+
+// The following queries should be kept in sync with constants in src/constants.js
+$mobile-breakpoint-max: 414px; // Max. supported 'mobile' size (iPhone XS/R); Only applies to menu, so not used in constants.js
+$tablet-breakpoint-max: 768px;
 
 $font-serif: Georgia, 'Iowan', Times, serif;
 
@@ -36,20 +41,25 @@ a {
     cursor: pointer;
 }
 
+.footnote__body {
+    visibility: visible;
+    display: block;
+    &.footnote__body--hidden {
+        visibility: hidden;
+    }
+}
+
 // icons
+// prettier-ignore
 @font-face {
     font-family: 'Material Icons';
     font-style: normal;
     font-weight: 400;
-    src: url(~material-design-icons/iconfont/MaterialIcons-Regular.eot?#iefix)
-            format('embedded-opentype'),
-        local('Material Icons'), local('MaterialIcons-Regular'),
-        url(~material-design-icons/iconfont/MaterialIcons-Regular.woff2)
-            format('woff2'),
-        url(~material-design-icons/iconfont/MaterialIcons-Regular.woff)
-            format('woff'),
-        url(~material-design-icons/iconfont/MaterialIcons-Regular.ttf)
-            format('truetype');
+    src: url('~material-design-icons/iconfont/MaterialIcons-Regular.eot?#iefix') format('embedded-opentype'),
+    local('Material Icons'), local('MaterialIcons-Regular'),
+    url('~material-design-icons/iconfont/MaterialIcons-Regular.woff2') format('woff2'),
+    url('~material-design-icons/iconfont/MaterialIcons-Regular.woff') format('woff'),
+    url('~material-design-icons/iconfont/MaterialIcons-Regular.ttf') format('truetype');
 }
 
 .material-icons {
@@ -64,9 +74,9 @@ a {
     word-wrap: normal;
     white-space: nowrap;
     direction: ltr;
-    -webkit-font-smoothing: antialiased;
+    -webkit-font-smoothing: antialiased; // sass-lint:disable-line no-vendor-prefixes
     text-rendering: optimizeLegibility;
-    -moz-osx-font-smoothing: grayscale;
+    -moz-osx-font-smoothing: grayscale; // sass-lint:disable-line no-vendor-prefixes
     font-feature-settings: 'liga';
 }
 
@@ -75,8 +85,8 @@ a {
 .controls * {
     box-sizing: border-box;
     text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased; // sass-lint:disable-line no-vendor-prefixes
+    -moz-osx-font-smoothing: grayscale; // sass-lint:disable-line no-vendor-prefixes
 }
 
 .controls__header {
@@ -96,7 +106,7 @@ a {
         align-items: center;
         justify-content: center;
         height: $component-x;
-        padding: 0px 10px 0 10px;
+        padding: 0 10px;
 
         li {
             display: flex;
@@ -112,11 +122,41 @@ a {
             }
 
             .nav__button {
-                padding: 0 5px;
                 @include transition-fast('color');
-
+                padding: 0 5px;
                 &:hover {
                     color: $tc-purple;
+                }
+                &.nav__button__downloads {
+                    color: $black;
+                    animation: nav__button__downloads__shadow 2.5s infinite, nav__button__downloads__color 2.5s infinite;
+                    text-shadow: 0px 0px 0px rgba(80, 80, 197, 0);
+                    &:hover {
+                        animation: none;
+                        color: $tc-purple;
+                    }
+                    @keyframes nav__button__downloads__shadow {
+                        5% {
+                            text-shadow: 0 0px 5px rgba(105, 105, 252, 1);
+                        }
+                        35% {
+                            text-shadow: 0px 5px 10px rgba(105, 105, 252, 0.5);
+                        }
+                        100% {
+                            text-shadow: 0px 10px 30px rgba(105, 105, 252, 0);
+                        }
+                    }
+                    @keyframes nav__button__downloads__color {
+                        0% {
+                            color: rgba(34, 34, 34, 1);
+                        }
+                        25% {
+                            color: rgba(80, 80, 197, 1);
+                        }
+                        100% {
+                            color: rgba(34, 34, 34, 1);
+                        }
+                    }
                 }
             }
         }
@@ -134,32 +174,48 @@ a {
     ul,
     dl {
         li {
-            text-transform: capitalize;
-
             a,
             button {
                 text-align: left;
                 display: block;
                 width: 100%;
-                padding: calc(#{$padding-y} / 2) calc(#{$padding-y} / 2)
-                    calc(#{$padding-y} / 2) 0;
+                padding: calc(#{$padding-y} / 2);
                 border-bottom: 1px solid $lightgrey;
-                text-indent: calc(#{$padding-y} / 2);
                 overflow: hidden;
                 white-space: nowrap;
                 text-overflow: ellipsis;
                 font-size: 14px;
                 font-family: $font-serif;
-                &:hover {
+                // prettier-ignore
+                &:hover { // sass-lint:disable-line nesting-depth
                     @include transition-fast('color');
                     color: $tc-purple;
+                }
+                // prettier-ignore
+                &.material-icons { // sass-lint:disable-line nesting-depth
+                    font-family: 'Material Icons';
+                    text-align: right;
+                    font-size: 20px;
+                }
+
+                // prettier-ignore
+                &.chapter--current { // sass-lint:disable-line nesting-depth
+                    font-weight: 700;
+                }
+
+                // prettier-ignore
+                @for $i from 1 through 10 { // sass-lint:disable-line nesting-depth
+                    &.indent--#{$i} {
+                        text-indent: ($i - 1) * ($component-x / 2);
+                    }
                 }
             }
 
             ol,
             li,
             dl {
-                a {
+                // prettier-ignore
+                a { // sass-lint:disable-line nesting-depth
                     text-indent: $padding-y;
                 }
             }
@@ -171,16 +227,16 @@ a {
         }
 
         dd {
-            padding: 5px 0 calc(#{$padding-y} / 2) calc(#{$component-x} / 2);
+            padding: 5px calc(#{$component-x} / 2) calc(#{$padding-y} / 2);
             border-bottom: 1px solid $lightgrey;
         }
 
         li,
         dt {
             a {
+                @include transition-fast('color');
                 text-decoration: none;
                 color: $black;
-                @include transition-fast('color');
 
                 //TC SPECIFIC STYLES
                 &:hover {
@@ -202,9 +258,9 @@ a {
     transition: transform 300ms ease;
     transform: translateX(-100%);
     overflow: auto;
-    -webkit-overflow-scrolling: touch;
+    -webkit-overflow-scrolling: touch; // sass-lint:disable-line no-vendor-prefixes
 
-    @media screen and (max-width: $mobile-break) {
+    @media screen and (max-width: $mobile-breakpoint-max) {
         width: 100% !important;
     }
 
@@ -227,9 +283,9 @@ a {
     transition: transform 300ms ease;
     transform: translateX(100%);
     overflow: auto;
-    -webkit-overflow-scrolling: touch;
+    -webkit-overflow-scrolling: touch; // sass-lint:disable-line no-vendor-prefixes
 
-    @media screen and (max-width: $mobile-break) {
+    @media screen and (max-width: $mobile-breakpoint-max) {
         width: 100% !important;
     }
 
@@ -243,7 +299,7 @@ a {
         }
 
         .settings__item__button-group {
-            margin: 10px 0 10px 0;
+            margin: 10px 0;
 
             .grid__input {
                 display: inline-block;
@@ -296,16 +352,20 @@ a {
     right: 0;
     bottom: 0;
     background: transparent;
-    height: $component-x;
+    height: $component-x + 25px;
     opacity: 1 !important;
+
+    @media screen and (max-width: $tablet-breakpoint-max) {
+        background: $white;
+    }
 
     nav ul {
         display: flex;
         flex-direction: row;
         align-items: center;
         justify-content: center;
-        height: $component-x;
-        padding: 0px 10px 0 10px;
+        height: $component-x + 25px;
+        padding: 0px 10px;
 
         li {
             display: flex;
@@ -315,15 +375,15 @@ a {
             }
 
             &:nth-child(2),
-            &:nth-child(2) {
+            &:nth-child(3) {
                 button {
-                    font-size: 1.5em;
+                    font-size: 2em;
                 }
             }
 
             .nav__button {
-                padding: 0 5px;
                 @include transition-fast('color');
+                padding: 0 5px;
 
                 //TC SPECIFIC STYLES
                 &:hover {
@@ -349,11 +409,9 @@ a {
 // https://github.com/tobiasahlin/SpinKit/blob/master/examples/5-pulse.html
 @keyframes pulse {
     0% {
-        -webkit-transform: scale(0);
         transform: scale(0);
     }
     100% {
-        -webkit-transform: scale(1);
         transform: scale(1);
         opacity: 0;
     }
@@ -369,7 +427,6 @@ a {
     padding: 0;
     background-color: $black;
     border-radius: 100%;
-    -webkit-animation: pulse 1s infinite ease-in-out;
     animation: pulse 1s infinite ease-in-out;
 }
 
@@ -397,13 +454,13 @@ a {
     width: 100%;
     pointer-events: none;
     .grid__debug__line {
-        background-color: cornflowerblue;
+        background-color: #6495ed;
         opacity: 0.4;
         position: absolute;
         top: 0;
         bottom: 0;
         width: 1px;
-        color: white;
+        color: #fff;
         padding-top: 50px;
         text-align: center;
     }
@@ -426,3 +483,8 @@ a {
         }
     }
 }
+
+// dev
+// .fullbleed {
+//     opacity: 0.5;
+// }

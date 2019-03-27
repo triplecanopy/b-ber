@@ -37,13 +37,7 @@ class Layout extends Component {
     constructor(props) {
         super(props)
 
-        const {
-            columnGap,
-            paddingTop,
-            paddingLeft,
-            paddingRight,
-            paddingBottom,
-        } = this.props.viewerSettings
+        const { columnGap, paddingTop, paddingLeft, paddingRight, paddingBottom } = this.props.viewerSettings
 
         this.state = {
             margin: 0,
@@ -76,11 +70,7 @@ class Layout extends Component {
         this.bindEventListeners = this.bindEventListeners.bind(this)
         this.unBindEventListeners = this.unBindEventListeners.bind(this)
 
-        this.handleResize = debounce(
-            this.onResizeDone,
-            this.debounceSpeed,
-            {},
-        ).bind(this)
+        this.handleResize = debounce(this.onResizeDone, this.debounceSpeed, {}).bind(this)
     }
 
     getChildContext() {
@@ -122,7 +112,8 @@ class Layout extends Component {
         let { height } = this.state
         const { paddingTop, paddingBottom } = this.state
 
-        if (!isNumeric(height)) height = window.innerHeight // make sure we're not treating 'auto' as a number
+        // make sure we're not treating 'auto' as a number
+        if (!isNumeric(height)) height = window.innerHeight
 
         height -= paddingTop
         height -= paddingBottom
@@ -131,41 +122,29 @@ class Layout extends Component {
     }
 
     getTranslateX(_spreadIndex) {
-        const spreadIndex =
-            typeof _spreadIndex === 'undefined'
-                ? this.props.spreadIndex
-                : _spreadIndex
+        const spreadIndex = typeof _spreadIndex === 'undefined' ? this.props.spreadIndex : _spreadIndex
         const { width, paddingLeft, paddingRight, columnGap } = this.state
         const isMobile = Viewport.isMobile()
 
         let translateX = 0
         if (!isMobile) {
-            translateX =
-                (width - paddingLeft - paddingRight + columnGap) *
-                spreadIndex *
-                -1
+            translateX = (width - paddingLeft - paddingRight + columnGap) * spreadIndex * -1
         }
         if (!isMobile) {
-            translateX =
-                translateX === 0 && Math.sign(1 / translateX) === -1
-                    ? 0
-                    : translateX
+            translateX = translateX === 0 && Math.sign(1 / translateX) === -1 ? 0 : translateX
         } // no -0
 
         return translateX
     }
 
     updateDimensions() {
-        const {
-            paddingLeft,
-            paddingRight,
-            paddingTop,
-            paddingBottom,
-        } = this.props.viewerSettings
+        const { paddingLeft, paddingRight, paddingTop, paddingBottom } = this.props.viewerSettings
+
         const isMobile = Viewport.isMobile()
         const width = window.innerWidth
         const columns = isMobile ? 1 : 2
         const height = isMobile ? 'auto' : window.innerHeight
+
         this.setState({
             width,
             height,
@@ -261,6 +240,7 @@ class Layout extends Component {
         const isMobile = Viewport.isMobile()
         const contextClass = isMobile ? 'mobile' : 'desktop'
 
+        // const contentStyles = { ...this.contentStyles() }
         const contentStyles = { ...this.contentStyles(), minHeight: height }
 
         const layoutTransition = transitions({ transitionSpeed })[transition]
@@ -287,19 +267,11 @@ class Layout extends Component {
                 style={layoutStyles}
                 ref={node => (this.layoutNode = node)}
             >
-                <div
-                    id="content"
-                    style={contentStyles}
-                    ref={node => (this.contentNode = node)}
-                >
+                <div id="content" style={contentStyles} ref={node => (this.contentNode = node)}>
                     <this.props.bookContent {...this.props} {...this.state} />
                 </div>
-                {!isMobile && (
-                    <div className="leaf leaf--left" style={leafLeftStyles} />
-                )}
-                {!isMobile && (
-                    <div className="leaf leaf--right" style={leafRightStyles} />
-                )}
+                {!isMobile && <div className="leaf leaf--left" style={leafLeftStyles} />}
+                {!isMobile && <div className="leaf leaf--right" style={leafRightStyles} />}
             </div>
         )
     }

@@ -9,11 +9,7 @@ const NavigationHeader = props => (
                     <button
                         className="material-icons nav__button nav__button__chapters"
                         onClick={props.destroyReaderComponent}
-                        style={
-                            props.uiOptions.navigation.header_icons.home
-                                ? {}
-                                : { display: 'none' }
-                        }
+                        style={props.uiOptions.navigation.header_icons.home ? {} : { display: 'none' }}
                     >
                         menu
                     </button>
@@ -21,14 +17,8 @@ const NavigationHeader = props => (
                 <li>
                     <button
                         className="material-icons nav__button nav__button__chapters"
-                        onClick={_ =>
-                            props.handleSidebarButtonClick('chapters')
-                        }
-                        style={
-                            props.uiOptions.navigation.header_icons.toc
-                                ? {}
-                                : { display: 'none' }
-                        }
+                        onClick={_ => props.handleSidebarButtonClick('chapters')}
+                        style={props.uiOptions.navigation.header_icons.toc ? {} : { display: 'none' }}
                     >
                         view_list
                     </button>
@@ -36,9 +26,7 @@ const NavigationHeader = props => (
                 <li>
                     <button
                         className="material-icons nav__button nav__button__settings"
-                        onClick={_ =>
-                            props.handleSidebarButtonClick('settings')
-                        }
+                        onClick={_ => props.handleSidebarButtonClick('settings')}
                     >
                         settings
                     </button>
@@ -46,14 +34,8 @@ const NavigationHeader = props => (
                 <li>
                     <button
                         className="material-icons nav__button nav__button__downloads"
-                        onClick={_ =>
-                            props.handleSidebarButtonClick('downloads')
-                        }
-                        style={
-                            props.uiOptions.navigation.header_icons.downloads
-                                ? {}
-                                : { display: 'none' }
-                        }
+                        onClick={_ => props.handleSidebarButtonClick('downloads')}
+                        style={props.uiOptions.navigation.header_icons.downloads ? {} : { display: 'none' }}
                     >
                         file_download
                     </button>
@@ -61,14 +43,8 @@ const NavigationHeader = props => (
                 <li>
                     <button
                         className="material-icons nav__button nav__button__metadata"
-                        onClick={_ =>
-                            props.handleSidebarButtonClick('metadata')
-                        }
-                        style={
-                            props.uiOptions.navigation.header_icons.info
-                                ? {}
-                                : { display: 'none' }
-                        }
+                        onClick={_ => props.handleSidebarButtonClick('metadata')}
+                        style={props.uiOptions.navigation.header_icons.info ? {} : { display: 'none' }}
                     >
                         info_outline
                     </button>

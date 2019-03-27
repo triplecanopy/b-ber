@@ -50,12 +50,12 @@ class XMLAdaptor {
             if (!item) return resolve({ ...rootNode, __ncx })
 
             const { href } = item.attributes
-            Request.get(Url.resolveRelativeURL(opsURL, href)).then(
-                ({ data }) => {
-                    const __ncx = JSON.parse(xmljs.xml2json(data))
-                    resolve({ ...rootNode, __ncx })
-                }
-            )
+            Request.get(Url.resolveRelativeURL(opsURL, href)).then(({ data }) => {
+                resolve({
+                    ...rootNode,
+                    __ncx: JSON.parse(xmljs.xml2json(data)),
+                })
+            })
         })
     }
     static createSpineItems(rootNode) {
@@ -65,17 +65,12 @@ class XMLAdaptor {
 
             spine = __spine.elements.map(itemref => {
                 const { idref, linear } = itemref.attributes
-                const item = find(
-                    __manifest.elements,
-                    a => a.attributes.id === idref
-                )
+                const item = find(__manifest.elements, a => a.attributes.id === idref)
                 if (!item || linear !== 'yes') return null // spine item not found in manifest (!) or non-linear
 
                 const { id, href } = item.attributes
                 const mediaType = item.attributes['media-type']
-                const properties = item.attributes.properties
-                    ? item.attributes.properties.split(' ')
-                    : []
+                const properties = item.attributes.properties ? item.attributes.properties.split(' ') : []
                 const spineItem = new SpineItem({
                     id,
                     href,
@@ -92,9 +87,7 @@ class XMLAdaptor {
             if (__ncx) {
                 const { elements } = __ncx.elements[0]
                 const navMap = find(elements, { name: 'navMap' })
-                navMap.elements.forEach(navPoint =>
-                    XMLAdaptor.parseNavPoints(spine, __manifest, navPoint)
-                )
+                navMap.elements.forEach(navPoint => XMLAdaptor.parseNavPoints(spine, __manifest, navPoint))
             }
 
             resolve({ ...rootNode, spine })
@@ -120,7 +113,7 @@ class XMLAdaptor {
             const { spine } = rootNode
             spine.map(
                 // eslint-disable-next-line no-param-reassign
-                a => (a.absoluteURL = Url.resolveRelativeURL(opsURL, a.href))
+                a => (a.absoluteURL = Url.resolveRelativeURL(opsURL, a.href)),
             )
             resolve({ ...rootNode, spine })
         })
@@ -130,7 +123,7 @@ class XMLAdaptor {
             const { guide } = rootNode
             guide.map(
                 // eslint-disable-next-line no-param-reassign
-                a => (a.absoluteURL = Url.resolveRelativeURL(opsURL, a.href))
+                a => (a.absoluteURL = Url.resolveRelativeURL(opsURL, a.href)),
             )
             resolve({ ...rootNode, guide })
         })
@@ -142,10 +135,7 @@ class XMLAdaptor {
 
         let { src } = content.attributes
         src = Url.ensureDecodedURL(src)
-        const item = find(
-            manifest.elements,
-            a => Url.ensureDecodedURL(a.attributes.href) === src
-        )
+        const item = find(manifest.elements, a => Url.ensureDecodedURL(a.attributes.href) === src)
         if (!item) return console.error(`Could not find manifest item: ${src}`)
 
         const { id } = item.attributes
@@ -165,9 +155,7 @@ class XMLAdaptor {
         if (parent) parent.addChild(spineItem)
 
         const depth_ = depth + 1
-        navPoint.elements.forEach(child =>
-            XMLAdaptor.parseNavPoints(spine, manifest, child, depth_, spineItem)
-        )
+        navPoint.elements.forEach(child => XMLAdaptor.parseNavPoints(spine, manifest, child, depth_, spineItem))
     }
 
     static createBookMetadata(rootNode) {
@@ -190,7 +178,6 @@ class XMLAdaptor {
     }
 
     static parseSpineItemResponse(response) {
-        const { data } = response.data
         const { responseURL } = response.data.request
         const { hash, opsURL, paddingLeft, columnGap } = response
 
@@ -204,7 +191,9 @@ class XMLAdaptor {
                 columnGap,
                 responseURL,
             })
-            const { xml, doc } = documentProcessor.parseXML(data)
+            // TODO: data.data
+            // @issue: https://github.com/triplecanopy/b-ber/issues/217
+            const { xml, doc } = documentProcessor.parseXML(response.data.data)
             const re = /<body[^>]*?>([\s\S]*)<\/body>/
 
             // create react element that will be appended to our #frame element.
@@ -218,24 +207,21 @@ class XMLAdaptor {
             const bookContent = htmlToReactParser.parseWithInstructions(
                 data_,
                 isValidNode,
-                processingInstructions(response)
+                processingInstructions(response),
             )
 
             // scope stylesheets and pass them along to be appended to the DOM
             // as well
 
             // TODO: will also need to grab inline styles and parse similarly
-            // TODO: need to fix page breaks here: "page-break-inside: auto"
+            // @issue: https://github.com/triplecanopy/b-ber/issues/218
             const links = doc.querySelectorAll('link')
             const styles = []
 
             for (let i = 0; i < links.length; i++) {
                 if (links[i].rel === 'stylesheet') {
                     const base = Url.trimFilenameFromResponse(responseURL)
-                    const url = Url.resolveRelativeURL(
-                        base,
-                        Url.trimSlashes(links[i].getAttribute('href'))
-                    )
+                    const url = Url.resolveRelativeURL(base, Url.trimSlashes(links[i].getAttribute('href')))
 
                     styles.push({ url, base })
                 }
@@ -243,33 +229,27 @@ class XMLAdaptor {
 
             styles.forEach(({ url, base }) => {
                 promises.push(
-                    new Promise(resolve => {
+                    new Promise(resolve1 => {
                         const cache = Cache.get(url)
                         if (cache && cache.data) {
-                            return resolve({ base, data: cache.data })
+                            return resolve1({ base, data: cache.data })
                         }
-                        return Request.get(url).then(({ data }) => {
-                            Cache.set(url, data)
-                            return resolve({ base, data })
+                        return Request.get(url).then(response1 => {
+                            Cache.set(url, response1.data)
+                            return resolve1({ base, data: response1.data })
                         })
-                    })
+                    }),
                 )
             })
 
             if (logTime) {
-                console.time(
-                    'XMLAdaptor#parseSpineItemResponse: get stylesheets'
-                )
+                console.time('XMLAdaptor#parseSpineItemResponse: get stylesheets')
             }
 
             Promise.all(promises).then(sheets => {
                 if (logTime) {
-                    console.timeEnd(
-                        'XMLAdaptor#parseSpineItemResponse: get stylesheets'
-                    )
-                    console.time(
-                        'XMLAdaptor#parseSpineItemResponse: parse stylesheets'
-                    )
+                    console.timeEnd('XMLAdaptor#parseSpineItemResponse: get stylesheets')
+                    console.time('XMLAdaptor#parseSpineItemResponse: parse stylesheets')
                 }
 
                 const hashedClassName = `_${hash}`
@@ -296,23 +276,16 @@ class XMLAdaptor {
                             // TODO: the following should be fixed up so that
                             // they're actually replacing the node, rather than
                             // modifying props.
+                            // @issue: https://github.com/triplecanopy/b-ber/issues/219
 
                             // these need to be synced with the
                             // HTML structure in Layout.jsx
-                            if (
-                                list &&
-                                node.type === 'TypeSelector' &&
-                                node.name === 'html'
-                            ) {
+                            if (list && node.type === 'TypeSelector' && node.name === 'html') {
                                 node.name = hashedClassName // eslint-disable-line no-param-reassign
                                 node.type = 'ClassSelector' // eslint-disable-line no-param-reassign
                             }
 
-                            if (
-                                list &&
-                                node.type === 'TypeSelector' &&
-                                node.name === 'body'
-                            ) {
+                            if (list && node.type === 'TypeSelector' && node.name === 'body') {
                                 node.name = 'content' // eslint-disable-line no-param-reassign
                                 node.type = 'IdSelector' // eslint-disable-line no-param-reassign
                             }
@@ -331,21 +304,15 @@ class XMLAdaptor {
                             }
 
                             if (node.type === 'Url') {
-                                ({ value } = node)
+                                ;({ value } = node)
                                 nodeText = value.value
 
                                 if (value.type !== 'Raw') {
-                                    nodeText = nodeText.substr(
-                                        1,
-                                        nodeText.length - 2
-                                    ) // trim quotes
+                                    nodeText = nodeText.substr(1, nodeText.length - 2) // trim quotes
                                 }
 
                                 if (Url.isRelativeURL(nodeText)) {
-                                    nodeText = Url.resolveRelativeURL(
-                                        styleSheetURL,
-                                        nodeText
-                                    )
+                                    nodeText = Url.resolveRelativeURL(styleSheetURL, nodeText)
                                     node.value.value = `"${nodeText}"` // eslint-disable-line no-param-reassign
                                 }
                             }
@@ -356,9 +323,7 @@ class XMLAdaptor {
                 })
 
                 if (logTime) {
-                    console.timeEnd(
-                        'XMLAdaptor#parseSpineItemResponse: parse stylesheets'
-                    )
+                    console.timeEnd('XMLAdaptor#parseSpineItemResponse: parse stylesheets')
                     console.timeEnd('XMLAdaptor#parseSpineItemResponse')
                 }
 

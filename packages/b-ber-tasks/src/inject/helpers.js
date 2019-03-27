@@ -16,7 +16,7 @@ import state from '@canopycanopycanopy/b-ber-lib/State'
 //    the content.opf
 export const dummy = new File({
     path: 'dummy.xhtml',
-    contents: new Buffer(`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+    contents: Buffer.from(`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
         <html xmlns="http://www.w3.org/1999/xhtml"
         xmlns:epub="http://www.idpf.org/2007/ops"
         xmlns:ibooks="http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0"
@@ -25,8 +25,8 @@ export const dummy = new File({
             <title></title>
             ${
                 state.config.private
-                    ? '<meta name="robots" content="noindex,nofollow" />'
-                    : '<meta name="robots" content="index,follow" />'
+                    ? '<meta name="robots" content="noindex,nofollow"/>'
+                    : '<meta name="robots" content="index,follow"/>'
             }
             <meta http-equiv="default-style" content="text/html charset=utf-8"/>
             <!-- inject:css -->
@@ -45,18 +45,15 @@ export const dummy = new File({
 export const getLeadingWhitespace = str => str.match(/^\s*/)[0]
 
 export const getContents = source =>
-    fs
-        .readFile(path.join(state.dist, 'OPS', 'text', source))
-        .then(data => new File({ contents: new Buffer(data) }))
+    fs.readFile(path.join(state.dist, 'OPS', 'text', source)).then(data => new File({ contents: Buffer.from(data) }))
 
-export const getRemoteResources = resource =>
-    Promise.resolve(state.config[`remote_${resource}`] || [])
+export const getRemoteResources = resource => Promise.resolve(state.config[`remote_${resource}`] || [])
 
 export const getResources = type =>
-    Promise.all([
-        fs.readdir(path.join(state.dist, 'OPS', type)),
-        getRemoteResources(type),
-    ]).then(([a, b]) => [...a, ...b])
+    Promise.all([fs.readdir(path.join(state.dist, 'OPS', type)), getRemoteResources(type)]).then(([a, b]) => [
+        ...a,
+        ...b,
+    ])
 
 export function* matchIterator(re, str) {
     let match
@@ -66,10 +63,12 @@ export function* matchIterator(re, str) {
 export const getJSONLDMetadata = () => [
     new File({
         path: 'metadata.json-ld',
-        contents: new Buffer(''),
+        contents: Buffer.from(''),
     }),
 ]
 
+// TODO:
+// @issue: https://github.com/triplecanopy/b-ber/issues/226
 // new Promise(
 //     resolve =>
 //         // eslint-disable-line arrow-body-style
@@ -83,7 +82,7 @@ export const getJSONLDMetadata = () => [
 //             ...args,
 //             new File({
 //                 path: 'metadata.json-ld',
-//                 contents: new Buffer(''),
+//                 contents: Buffer.from(''),
 //             }),
 //         ])
 //     // }
@@ -156,7 +155,7 @@ export const getJSONLDMetadata = () => [
 //             ...args,
 //             new File({
 //                 path: '.tmp',
-//                 contents: new Buffer(body),
+//                 contents: Buffer.from(body),
 //             }),
 //         ])
 //     })
@@ -166,10 +165,6 @@ export const getJSONLDMetadata = () => [
 export const getInlineScripts = () => [
     new File({
         path: 'env.js',
-        contents: new Buffer(
-            `window.bber = window.bber || {}; window.bber.env = '${
-                state.build
-            }';`,
-        ),
+        contents: Buffer.from(`window.bber = window.bber || {}; window.bber.env = '${state.build}';`),
     }),
 ]

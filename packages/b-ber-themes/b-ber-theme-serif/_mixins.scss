@@ -1,53 +1,70 @@
+// sass-lint:disable indentation
 
 //
 // Media Queries
 //
-//
+
 @mixin break($media) {
-    @if $media == 'mobile'  {
-        @media #{$media-mobile} { @content }
-    }
-    @else if $media == 'tablet' {
-        @media #{$media-tablet} { @content }
-    }
-    @else if $media == 'desktop' {
-        @media #{$media-desktop} { @content }
-    }
-    @else if $media == 'tall' {
-        @media #{$media-tall} { @content  }
-    }
-    @else if $media == 'mobile-short' {
-        @media #{$mobile-short} { @content  }
-    }
-    @else if $media == 'desktop-short' {
-        @media #{$desktop-short} { @content  }
-    }
-    @else {
-        @if feature-exists('at-error') == true {
-            @error "`#{$media}` is not a supported media type.";
+    @if $media == 'mobile' {
+        @media #{$media-mobile} {
+            @content;
         }
-        @else {
-            @warn "`#{$media}` is not a supported media type.";
+    } @else if $media == 'tablet' {
+        @media #{$media-tablet} {
+            @content;
+        }
+    } @else if $media == 'desktop' {
+        @media #{$media-desktop} {
+            @content;
+        }
+    } @else if $media == 'wide' {
+        @media #{$media-wide} {
+            @content;
+        }
+    } @else if $media == 'tall' {
+        @media #{$media-tall} {
+            @content;
+        }
+    } @else if $media == 'mobile-short' {
+        @media #{$mobile-short} {
+            @content;
+        }
+    } @else if $media == 'desktop-short' {
+        @media #{$desktop-short} {
+            @content;
+        }
+    } @else if $media == 'tablet-large' {
+        @media #{$media-tablet-large} {
+            @content;
+        }
+    } @else {
+        @if feature-exists('at-error') == true {
+            @error "`#{$media}` is not a supported media type."; // sass-lint:disable-line quotes
+        } @else {
+            @warn "`#{$media}` is not a supported media type."; // sass-lint:disable-line quotes
         }
     }
 }
 
-
-
 //
 // Typography
 //
+
 //
-
-
 // font-face utility mixin
 // @example     @include font-face('Crimson', 'TC-crimson-italic-webfont', ('ttf'), 400, italic);
-@mixin font-face($font-name, $file-name, $formats:('ttf', 'otf'), $weight: 400, $style: normal) {
-    $filepath: "../fonts/" + $file-name;
+@mixin font-face(
+    $font-name,
+    $file-name,
+    $formats: ('ttf', 'otf'),
+    $weight: 400,
+    $style: normal
+) {
+    $filepath: '../fonts/' + $file-name;
     @font-face {
-        font-family: "#{$font-name}";
+        font-family: '#{$font-name}';
         @each $format in $formats {
-            src: url($filepath + "." + $format);
+            src: url($filepath+'.'+$format);
         }
         font: {
             weight: $weight;
@@ -56,36 +73,56 @@
     }
 }
 
+@mixin fluid-type($min-vw, $max-vw, $min-font-size, $max-font-size) {
+    $u1: unit($min-vw);
+    $u2: unit($max-vw);
+    $u3: unit($min-font-size);
+    $u4: unit($max-font-size);
+
+    @if $u1 == $u2 and $u1 == $u3 and $u1 == $u4 {
+        & {
+            font-size: $min-font-size;
+            @media screen and (min-width: $min-vw) {
+                font-size: calc(#{$min-font-size} + #{strip-unit($max-font-size - $min-font-size)} * ((100vw - #{$min-vw}) / #{strip-unit($max-vw - $min-vw)}));
+            }
+            @media screen and (min-width: $max-vw) {
+                font-size: $max-font-size;
+            }
+        }
+    }
+}
+
+@mixin caption {
+    @include type-settings(-7);
+    line-height: 1.3;
+    margin-bottom: 0;
+    text-align: left;
+    text-indent: 0 !important; // sass-lint:disable-line no-important
+}
+
 // General typographic settings
-@mixin hyphens($hyphenation:auto) {
-    -webkit-hyphens: $hyphenation;
+@mixin hyphens($hyphenation: auto) {
     -epub-hyphens: $hyphenation;
     adobe-hyphenate: $hyphenation;
-    -moz-hyphens: $hyphenation;
-    -ms-hyphens: $hyphenation;
     hyphens: $hyphenation;
 }
 
-@mixin widows($n:2) {
+@mixin widows($n: 2) {
     widows: $n;
 }
 
-@mixin orphans($n:1) {
+@mixin orphans($n: 1) {
     orphans: $n;
 }
 
-@mixin text-rendering($value:optimizeLegibility) {
-    text-rendering:$value;
+@mixin text-rendering($value: optimizeLegibility) {
+    text-rendering: $value;
 }
 
 @mixin font-smoothing {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased; // sass-lint:disable-line no-vendor-prefixes
+    -moz-osx-font-smoothing: grayscale; // sass-lint:disable-line no-vendor-prefixes
 }
-
-
-
-
 
 // Remove units from a value
 // @example     strip-unit(1em) // => 1
@@ -100,7 +137,8 @@
 // Calculated by using the global `$line-height-base`
 // @example     line-height(11.390625em) // => 1.037037037
 @function line-height($font-size) {
-    @return ceil($font-size / $line-height-base) * ($line-height-base / $font-size);
+    @return ceil($font-size / $line-height-base) *
+        ($line-height-base / $font-size);
 }
 
 // Returns a value for a single line-height unit in `em`s, relative to the
@@ -130,7 +168,6 @@
     }
 }
 
-
 // Abstract wrappers for element spacing
 // @param $n        int     How many spaces?
 // @param $value    int     The modular scale index of the element
@@ -144,20 +181,39 @@
 // Convenience wrappers for element spacing.
 // @param $value    int     The modular scale index of the element
 // @example         margin-top: one-line(0); // => margin-top: 1.3125em;
-@function one-line($value)      { @return n-lines(1, $value);   }
-@function two-lines($value)     { @return n-lines(2, $value);   }
-@function three-lines($value)   { @return n-lines(3, $value);   }
-@function four-lines($value)    { @return n-lines(4, $value);   }
-@function five-lines($value)    { @return n-lines(5, $value);   }
+@function one-line($value) {
+    @return n-lines(1, $value);
+}
+@function two-lines($value) {
+    @return n-lines(2, $value);
+}
+@function three-lines($value) {
+    @return n-lines(3, $value);
+}
+@function four-lines($value) {
+    @return n-lines(4, $value);
+}
+@function five-lines($value) {
+    @return n-lines(5, $value);
+}
 
 // @param   $value  int     The modular scale index of the element
 // @example         margin-top: one-em(0); // => margin-top: 1em;
-@function one-em($value)        { @return n-ems(1, $value);     }
-@function two-ems($value)       { @return n-ems(2, $value);     }
-@function three-ems($value)     { @return n-ems(3, $value);     }
-@function four-ems($value)      { @return n-ems(4, $value);     }
-@function five-ems($value)      { @return n-ems(5, $value);     }
-
+@function one-em($value) {
+    @return n-ems(1, $value);
+}
+@function two-ems($value) {
+    @return n-ems(2, $value);
+}
+@function three-ems($value) {
+    @return n-ems(3, $value);
+}
+@function four-ems($value) {
+    @return n-ems(4, $value);
+}
+@function five-ems($value) {
+    @return n-ems(5, $value);
+}
 
 // Add padding programatically based on font-size
 // @param $top      int     Number of line-height units at type-settings(0) to add as padding-top
@@ -167,14 +223,10 @@
 // @param $value    int     Elements type-settings index
 // @example         padding: @include padding(1, 1, 1, 1, 0) // => padding: 1em 1.3125em 1em 1.3125em;
 @mixin padding($top, $right, $bottom, $left, $value) {
-    padding:
-        // adjust-line-height-value($value) * ($top * 4) + 0em // to account for halved line-height
-        adjust-line-height-value($value) * $top + 0em
+    padding: adjust-line-height-value($value) * $top + 0em
         adjust-font-size-value($value) * $right + 0em
-        // adjust-line-height-value($value) * ($bottom * 4) + 0em // to account for halved line-height
         adjust-line-height-value($value) * $bottom + 0em
-        adjust-font-size-value($value) * $left + 0em
-    ;
+        adjust-font-size-value($value) * $left + 0em;
 }
 
 // Defaults to 16px, assuming the `html` element's base font size
@@ -182,15 +234,27 @@
     @return strip-unit($value) * strip-unit($root-px) + 0px;
 }
 
-
 @mixin following-paragraph-not-indented {
-    + p { text-indent: 0!important; }
+    + p {
+        text-indent: 0 !important; // sass-lint:disable-line no-important
+    }
+}
+@mixin paragraph-not-indented {
+        text-indent: 0 !important; // sass-lint:disable-line no-important
+        padding-bottom: one-line(0);
 }
 @mixin following-element-has-no-top-padding {
-    + table, + ul, + ol, + dl, + blockquote { padding-top: 0; }
-    + hr { margin-top: one-line(0); }
+    + table,
+    + ul,
+    + ol,
+    + dl,
+    + blockquote {
+        padding-top: 0;
+    }
+    + hr {
+        margin-top: one-line(0);
+    }
 }
-
 
 @mixin bullet-container {
     text-indent: 0;
@@ -202,194 +266,10 @@
     text-indent: one-em(0) * -1;
 }
 
-
 // Alert colours
 $alert: (
-    'info'    : $info,
-    'warning' : $warning,
-    'danger'  : $danger,
-    'success'  : $success,
+    'info': $info,
+    'warning': $warning,
+    'danger': $danger,
+    'success': $success,
 );
-
-// Gallery Styles
-
-@function leftOffset($colStart, $startPos, $grid-columns) {
-    @if $grid-columns == 9 and $colStart > 8 { $colStart: $colStart - 8; } 
-    $columns: $colStart - 1;
-    $gutters: $colStart - 1;
-    @if $startPos == "end" {  $columns: $colStart; }
-    $columnWidth: ($columns) * (65% / ($grid-columns));
-    $gutterWidth: ($gutters) * (35% / ($grid-columns - 1));
-    @return $columnWidth + $gutterWidth;
-}
-
-@function itemWidth($colStart, $startPos, $colEnd, $endPos, $grid-columns) {
-    $columns: $colEnd - $colStart;
-    $gutters: $colEnd - $colStart;
-    @if $startPos == "end" and $endPos == "start" { $columns: $columns - 1 }
-    @if $startPos == "start" and $endPos == "end" { $columns: $columns + 1 }
-    $columnWidth: ($columns) * (65% / ($grid-columns));
-    $gutterWidth: ($gutters) * (35% / ($grid-columns - 1));
-    @return $columnWidth + $gutterWidth;
-}
-
-// If gallery items are on second page, reset left offset
-
-@function mobileOffest($column, $position, $grid-columns){
-    @if $column > 8 { $column: $column - 8; } 
-    @return columnOffest($column, $position, $grid-columns) + gutterOffest($column, $grid-columns);
-}
-
-// If gallery items are on second page, knock under page one content
-// needs minumum pixel fallback for vh values
-
-@function mobileTop($vh, $top, $remainder, $m_colStart){
-    @if $top == 0 { $top : 1 }
-    @if $m_colStart > 8 {
-        @return calc((#{$vh} / #{$remainder}) / (100 / #{$top}) + (#{$vh} / 1.25) );
-    }
-    @else { 
-        @return calc((#{$vh} / #{$remainder}) / (100 / #{$top}) + (#{$vh} / 15) );
-    }
-}
-
-@function calcTop($vh, $top, $remainder){
-    @if $top == 0 { $top : 1 }
-    @return calc((#{$vh} / #{$remainder}) / (100 / #{$top}) );
-}
-
-// Galley Item Mixin Parameters
-
-//  @param $colStart    int                     left    Anchors Left edge of media to column
-//  @param $startPos    string (start | end)    left    Positions media at start or end of @param column
-//  @param $colEnd      int                     width   Anchors Right edge of media to column
-//  @param $endPos      string (start | end)    width   Extends media to either "start or end" of column
-//  @param $top         int (percentage)        top     Accepts percentage from "top"
-
-//  @param $m_colStart    int                     left    Mobile override, defaults to desktop vars if empty
-//  @param $m_startPos    string (start | end)    left    Mobile override, defaults to desktop vars if empty
-//  @param $m_colEnd      int                     width   Mobile override, defaults to desktop vars if empty
-//  @param $m_endPos      string (start | end)    width   Mobile override, defaults to desktop vars if empty
-//  @param $m_top         int (percentage)        top     Mobile override, defaults to desktop vars if empty
-
-// Mixin uses param names for clarity
-
-//  @include galleryItem(
-//      $colStart: number, 
-//      $startPos: string (start | end),
-//      $colEnd: number, 
-//      $endPos: string (start | end), 
-//      $top: number (%),
-
-// Optional Mobile Overrides
-
-//      $m_colStart: number, 
-//      $m_startPos: string (start | end),
-//      $m_colEnd: number, 
-//      $m_endPos: string (start | end), 
-//      $m_top: number (%)
-//  );
-
-@mixin galleryItem($i, $colStart, $startPos, $colEnd, $endPos, $top, 
-    // mobile values default to standard if not passed
-    $m_colStart: $colStart, 
-    $m_startPos: $startPos, 
-    $m_colEnd: $colEnd, 
-    $m_endPos: $endPos, 
-    $m_top: $top){
-    
-    $top: strip-unit($top);
-    $m_top: strip-unit($m_top);
-
-    .gallery__item:nth-child(#{$i}) {
-
-        // mobile settings
-        width: itemWidth($m_colStart, $m_startPos, $m_colEnd, $m_endPos, 9);
-	    left: leftOffset($m_colStart, $m_startPos, 9);
-        margin-top: mobileTop(100vh, $m_top, 1.62, $m_colStart);
-        
-        @include break('mobile-short') { 
-            margin-top: mobileTop(860px, $top, 1.62, $m_colStart);
-        }
-
-        @include break('tablet') {
-            margin-top: mobileTop(200vh, $m_top, 1.62, $m_colStart);
-        }
-
-	    @include break('desktop') { 
-            width: itemWidth($colStart, $startPos, $colEnd, $endPos, 16);
-            left:leftOffset($colStart, $startPos, 16);
-            top: calc(100vh / 7);
-            margin-top: calcTop(100vh, $top, 1.4);
-        }
-
-        @include break('tall') { 
-	    	width: itemWidth($colStart, $startPos, $colEnd, $endPos, 16);
-            left:leftOffset($colStart, $startPos, 16);
-            top: calc(100vh / 5.5);
-            margin-top: calcTop(100vh, $top, 1.62);
-        }
-
-        @include break('desktop-short') { 
-            width: itemWidth($colStart, $startPos, $colEnd, $endPos, 16);
-            left: leftOffset($colStart, $startPos, 16);
-            top: calc(100vh / 7);
-            margin-top: calcTop(780px, $top, 1.62);
-        }
-    }
-}
-
-@mixin galleryBackground($background-color){
-    $totalColumns: 9;
-    
-    @include break('mobile') {
-        height: mobileTop(860px, 110, 1.62, $totalColumns)!important;
-        .figure__large.figure__inline.figure__fullbleed {
-            figure {
-                &:before {
-                    height: mobileTop(860px, 110, 1.62, $totalColumns)!important;
-                }
-            }
-        }
-    }
-
-    @include break('tablet') {
-        height: mobileTop(200vh, 110, 1.62, $totalColumns)!important;
-        .figure__large.figure__inline.figure__fullbleed {
-            figure {
-                &:before {
-                    height: mobileTop(200vh, 110, 1.62, $totalColumns)!important;
-                }
-            }
-        }
-    }
-
-    .figure__large.figure__inline.figure__fullbleed {
-        figure {
-            &:before {
-                height: 100vh;
-                background: $background-color;
-            }
-        }
-    }
-}
-
-@mixin columnAlign($column, $position) {
-    // covers mobile and tablet
-	left: leftOffset($column, $position, 9);
-    
-    @include break('desktop') { 
-		left: leftOffset($column, $position, 16);
-    }
-}
-
-@mixin padToColumn($column, $position, $topPadding) {
-    // covers mobile and tablet
-    padding-left: leftOffset($column, $position, 9);
-    padding-right: leftOffset($column, $position, 9);
-    
-    @include break('desktop') { 
-        padding-left: leftOffset($column, $position, 16);
-        padding-right: leftOffset($column, $position, 9);
-    }
-}

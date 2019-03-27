@@ -8,9 +8,7 @@ class Media extends Component {
         this.state = {
             canPlay: false,
             autoPlay: this.props['data-autoplay'] || false,
-            fullScreen: this.props['data-fullscreen']
-                ? JSON.parse(this.props['data-fullscreen'])
-                : false,
+            fullScreen: this.props['data-fullscreen'] ? JSON.parse(this.props['data-fullscreen']) : false,
             paused: true,
             nodeSpreadIndex: 0,
         }
@@ -25,6 +23,7 @@ class Media extends Component {
         this.handleUpdatedSpreadIndex = this.handleUpdatedSpreadIndex.bind(this)
 
         // TODO: should avoid firing on initial load, when spreadIndex === 0
+        // @issue: https://github.com/triplecanopy/b-ber/issues/213
         this.timer = null
         this.media = null
     }
@@ -61,9 +60,8 @@ class Media extends Component {
             nodeSpreadIndex = (x - translateX) / windowWidth
         } else {
             // TODO: should account for element offset (margins/padding)
-            nodeSpreadIndex = Math.floor(
-                (x - columnGap / 2 - translateX) / windowWidth
-            )
+            // @issue: https://github.com/triplecanopy/b-ber/issues/213
+            nodeSpreadIndex = Math.floor((x - columnGap / 2 - translateX) / windowWidth)
         }
 
         return nodeSpreadIndex

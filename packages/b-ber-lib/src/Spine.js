@@ -21,10 +21,7 @@ class Spine {
                 index = 0
             }
 
-            if (
-                !result[index] ||
-                !{}.hasOwnProperty.call(result[index], 'nodes')
-            ) {
+            if (!result[index] || !{}.hasOwnProperty.call(result[index], 'nodes')) {
                 nodes = this.root[0].nodes
             } else {
                 nodes = result[index].nodes

@@ -19,8 +19,8 @@ export function bind() {
             this.indent(),
             this.decorate('b-ber', 'whiteBright', 'bgBlack'),
             this.decorate('info', 'green'),
-            this.decorate(task, 'black'),
-            this.decorate('start', 'black'),
+            this.decorate(task),
+            this.decorate('start'),
         )
 
         process.stdout.write(message)
@@ -45,7 +45,7 @@ export function bind() {
             this.indent(),
             this.decorate('b-ber', 'whiteBright', 'bgBlack'),
             this.decorate('info', 'green'),
-            this.decorate(task, 'black'),
+            this.decorate(task),
             totalMs,
         )
 

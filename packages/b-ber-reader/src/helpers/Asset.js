@@ -38,12 +38,17 @@ class Asset {
     }
     static removeBookStyles(hash) {
         const link = document.querySelector(`#_${hash}`)
-        if (link) link.parentNode.removeChild(link)
+        if (link) {
+            const href = link.getAttribute('href')
+            if (href && /^blob:/.test(href)) window.URL.revokeObjectURL(href)
+            link.parentNode.removeChild(link)
+        }
     }
     static convertToReactAttrs(attrs) {
         const attrs_ = {}
         Object.entries(attrs).forEach(([key, val]) => {
-            // TODO: handle other boolen attrs not covered by `convert`
+            // This will need to be updated to handle other boolen attrs not
+            // covered by `convert` in case the audio/video API changes
             if (key === 'playsinline') {
                 attrs_.playsInline = val
             } else {
@@ -66,10 +71,7 @@ class Asset {
             match = key.match(vendorPrefixRe)
 
             if (match) {
-                key = key.replace(
-                    vendorPrefixRe,
-                    `${vendorPrefixes[match[1]]}-`,
-                )
+                key = key.replace(vendorPrefixRe, `${vendorPrefixes[match[1]]}-`)
                 key = camelCase(key)
                 key = key[0].toUpperCase() + key.slice(1)
             } else {

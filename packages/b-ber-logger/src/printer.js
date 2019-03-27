@@ -11,9 +11,9 @@ function printNotices(type, task = 'b-ber') {
         this.indent(),
         this.decorate('b-ber', 'whiteBright', 'bgBlack'),
         this.decorate(leader, color),
-        this.decorate(task, 'black'),
-        this.decorate(notices.length, 'black'),
-        this.decorate(type, 'black'),
+        this.decorate(task),
+        this.decorate(notices.length),
+        this.decorate(type),
     )
 
     if (this.logLevel > 2) process.stdout.write(message)

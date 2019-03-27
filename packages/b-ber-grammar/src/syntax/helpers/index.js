@@ -46,8 +46,7 @@ const _directiveOrder = genus =>
         ? 'misc'
         : null
 
-const _requiresAltTag = genus =>
-    DIRECTIVES_REQUIRING_ALT_TAG.indexOf(genus) > -1
+const _requiresAltTag = genus => DIRECTIVES_REQUIRING_ALT_TAG.indexOf(genus) > -1
 
 const _isUnsupportedAttribute = attr => SUPPORTED_ATTRIBUTES.indexOf(attr) < 0
 
@@ -165,11 +164,12 @@ const _extendWithDefaults = (obj, genus) => {
     let taxonomy
     switch (order) {
         case 'block':
+        case 'misc':
             taxonomy = `${_lookUpFamily(genus)} ${genus}` // -> `bodymatter chapter`
-            result.epubTypes = taxonomy
+            if (order === 'block') result.epubTypes = taxonomy
             if ({}.hasOwnProperty.call(obj, 'classes')) {
                 taxonomy = `${_lookUpFamily(result.classes)} ${genus}`
-                result.epubTypes = taxonomy
+                if (order === 'block') result.epubTypes = taxonomy
                 result.classes += ` ${taxonomy}` // -> class="... bodymatter chapter"
             } else {
                 result.classes = taxonomy // -> class="bodymatter chapter"
@@ -185,7 +185,6 @@ const _extendWithDefaults = (obj, genus) => {
 
             return result
 
-        case 'misc':
         default:
             return result
     }
@@ -213,25 +212,19 @@ const attributesObject = (attrs, _genus, context = {}) => {
     }
 
     if (DRAFT_DIRECTIVES.indexOf(genus) > -1) {
-        log.warn(
-            `render [epub:${genus}] is [draft]. substituting with [chapter].`,
-        )
+        log.warn(`render [epub:${genus}] is [draft]. substituting with [chapter]`)
         genus = 'chapter'
     }
 
     if (DEPRECATED_DIRECTIVES.indexOf(genus) > -1) {
-        log.warn(
-            `render [epub:${genus}] is [deprecated]. substituting with [chapter].`,
-        )
+        log.warn(`render [epub:${genus}] is [deprecated]. substituting with [chapter]`)
         genus = 'chapter'
     }
 
     if (attrs && typeof attrs === 'string') {
         forOf(parseAttrs(attrs.trim()), (k, v) => {
             if (_isUnsupportedAttribute(k)) {
-                return log.warn(
-                    `Omitting illegal attribute [${k}] at [${filename}:${lineNr}]`,
-                )
+                return log.warn(`Omitting illegal attribute [${k}] at [${filename}:${lineNr}]`)
             }
 
             attrsObject[k] = v
@@ -267,8 +260,7 @@ const attributesString = obj => _buildAttrString(obj)
  * @param  {Object} context Markdown file where attributes method was called
  * @return {String}
  */
-const attributes = (str, type, context) =>
-    _buildAttrString(attributesObject(str, type, context))
+const attributes = (str, type, context) => _buildAttrString(attributesObject(str, type, context))
 
 /**
  * [description]

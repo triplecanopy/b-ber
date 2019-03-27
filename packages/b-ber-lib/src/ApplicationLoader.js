@@ -2,9 +2,7 @@
 
 import path from 'path'
 import fs from 'fs-extra'
-import find from 'lodash/find'
 import mime from 'mime-types'
-import yargs from 'yargs'
 import themes from '@canopycanopycanopy/b-ber-themes'
 import log from '@canopycanopycanopy/b-ber-logger'
 import Yaml from './Yaml'
@@ -30,6 +28,42 @@ class ApplicationLoader {
     constructor() {
         const scriptPath = path.resolve(__dirname, 'package.json')
         this.npmPackage = JSON.parse(fs.readFileSync(scriptPath), 'utf8')
+
+        this.initialConfig = {
+            env: process.env.NODE_ENV || 'development',
+            src: '_project',
+            dist: 'project',
+            ibooks_specified_fonts: false,
+            theme: 'b-ber-theme-serif',
+            themes_directory: './themes',
+            base_url: '/',
+            remote_url: 'http://localhost:4000/',
+            reader_url: 'http://localhost:4000/project-reader',
+            builds: ['epub', 'mobi', 'pdf'],
+            ui_options: {
+                navigation: {
+                    header_icons: {
+                        info: true,
+                        home: true,
+                        downloads: true,
+                        toc: true,
+                    },
+                    footer_icons: {
+                        chapter: true,
+                        page: true,
+                    },
+                },
+            },
+            private: false,
+            ignore: [],
+            autoprefixer_options: {
+                browsers: ['last 2 versions', '> 2%'],
+                flexbox: 'no-2009',
+            },
+        }
+
+        this.config = { ...this.initialConfig }
+
         this.version = this.npmPackage.version
         this.config = new Config()
     }
@@ -57,66 +91,37 @@ class ApplicationLoader {
     }
 
     _theme() {
-        const themeError = new Error(
-            `There was an error loading theme [${this.theme}]`,
-        )
+        // ensure themes dir exists
+        const userThemesPath = path.resolve(cwd, this.config.themes_directory)
+        fs.ensureDirSync(userThemesPath)
 
-        if ({}.hasOwnProperty.call(themes, this.config.theme)) {
+        // theme is set, using a built-in theme
+        if (themes[this.config.theme]) {
+            log.info(`Loaded theme [${this.config.theme}]`)
             this.theme = themes[this.config.theme]
-        } else {
-            if (!{}.hasOwnProperty.call(this.config, 'themes_directory')) {
-                if (!yargs.argv._[0] || yargs.argv._[0] !== 'theme') {
-                    // user is trying to run a command without defining a theme, so bail
-                    log.error(
-                        "There was an error loading the theme, make sure you've added a [themes_directory] to the [config.yml] if you're using a custom theme.",
-                    )
-                } else {
-                    // user is trying to run a `theme` command, either to set
-                    // or list the available themes.  we don't need the
-                    // `theme` config object for this operation, so continue
-                    // execution
-                    this.theme = {}
-                    return
-                }
-            }
+            return
+        }
 
-            // possibly a user defined theme, test if it exists
-            try {
-                const userThemesPath = path.resolve(
-                    cwd,
-                    this.config.themes_directory,
-                )
-                const userThemes = fs
-                    .readdirSync(userThemesPath)
-                    .reduce((acc, curr) => {
-                        if (
-                            !fs
-                                .lstatSync(path.resolve(userThemesPath, curr))
-                                .isDirectory()
-                        ) {
-                            return acc
-                        }
-                        const themePath = fs.existsSync(
-                            path.resolve(userThemesPath, curr, 'package.json'),
-                        )
-                            ? path.resolve(userThemesPath, curr)
-                            : path.resolve(userThemesPath, curr, 'index.js')
-
-                        const userModule = require(themePath)
-                        return acc.concat(userModule)
-                    }, [])
-
-                const userTheme = find(userThemes, { name: this.config.theme })
-                if (!userTheme) {
-                    log.error(`Could not find theme [${this.config.theme}]`)
-                }
-
-                // exists! set it
-                this.theme = userTheme
+        // possibly a user defined theme, check if the directory exists
+        try {
+            if ((this.theme = require(path.resolve(userThemesPath, this.config.theme)))) {
+                log.info(`Loaded theme [${this.config.theme}]`)
                 return
-            } catch (err) {
-                log.error(themeError)
             }
+        } catch (err) {
+            // noop
+        }
+
+        // possibly a theme installed with npm, test the project root
+        try {
+            this.theme = require(path.resolve('node_modules', this.config.theme)) // require.resolve?
+        } catch (err) {
+            log.warn(`There was an error during require [${this.config.theme}]`)
+            log.warn('Using default theme [b-ber-theme-serif]')
+            log.warn(err.message)
+
+            // error loading theme, set to default
+            this.theme = themes['b-ber-theme-serif']
         }
     }
 
@@ -154,9 +159,7 @@ class ApplicationLoader {
 
         try {
             if (!fs.existsSync(projectDir)) {
-                throw new Error(
-                    `Project directory [${projectDir}] does not exist`,
-                )
+                throw new Error(`Project directory [${projectDir}] does not exist`)
             }
         } catch (err) {
             // Starting a new project, noop

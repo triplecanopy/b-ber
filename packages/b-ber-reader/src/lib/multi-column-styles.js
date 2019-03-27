@@ -1,9 +1,13 @@
 import { debug } from '../config'
 
-export const mediaLarge = ({ paddingLeft, columnGap }) => [
+export const mediaLarge = (/* { paddingLeft, columnGap } */) => [
+    // {
+    //     selector: 'img',
+    //     declarations: ['opacity: 0.2'],
+    // },
     {
         selector: `.figure__fullbleed figure,
-               .spread .spread__content`,
+                   .spread .spread__content`,
         declarations: [
             `opacity: ${debug ? 0.8 : 1}`,
             'top: 0',
@@ -11,12 +15,11 @@ export const mediaLarge = ({ paddingLeft, columnGap }) => [
             'height: 100vh',
             'position: absolute',
             'width: 100vw',
-            `margin-left: ${paddingLeft * -3 + columnGap}px`,
         ],
     },
     {
         selector: `.figure__fullbleed figure .img-wrap img,
-               .figure__fullbleed figure .img-wrap video`,
+                   .figure__fullbleed figure .img-wrap video`,
         declarations: [
             `opacity: ${debug ? 0.4 : 1}`,
             'position: absolute',
@@ -35,13 +38,12 @@ export const mediaLarge = ({ paddingLeft, columnGap }) => [
 
 export const mediaSmall = (/* {paddingLeft, columnGap} */) => [
     {
-        selector: `.figure__fullbleed figure
-               .spread .spread__content`,
+        selector: `.figure__fullbleed figure .spread .spread__content`,
         declarations: ['z-index: 11', 'width: 100vw', 'position: relative'],
     },
     {
         selector: `.figure__fullbleed figure .img-wrap img,
-               .figure__fullbleed figure .img-wrap video`,
+                   .figure__fullbleed figure .img-wrap video`,
         declarations: [
             `opacity: ${debug ? 0.4 : 1}`,
             'object-fit: contain',

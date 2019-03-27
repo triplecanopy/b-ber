@@ -1,20 +1,22 @@
-import Theme from '@canopycanopycanopy/b-ber-lib/theme'
-import { fail } from '../helpers'
+import Theme from '@canopycanopycanopy/b-ber-lib/Theme'
+import { fail, ensure } from '@canopycanopycanopy/b-ber-lib/utils'
 
 const _command = 'theme <command> [options]'
 const describe = "Manage a project's theme"
 
-const handler = args => {
-    const { command, options } = args
-    const cmd = command === 'set' ? 'set' : 'list'
-    return Theme[cmd](options)
-}
+const handler = args =>
+    ensure()
+        .then(() => {
+            const { command, options } = args
+            return Theme[command](options)
+        })
+        .catch(console.error)
 
 const builder = yargs =>
     yargs
         .positional('command', {
             describe: 'Theme command to execute',
-            choices: ['set', 'list', 'ls'],
+            choices: ['set', 'list'],
             type: 'string',
         })
         .positional('options', {

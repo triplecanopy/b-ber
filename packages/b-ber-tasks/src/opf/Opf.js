@@ -49,7 +49,7 @@ class Opf {
                 new File({
                     path: '.tmp',
                     layout: 'body',
-                    contents: new Buffer(`
+                    contents: Buffer.from(`
                         ${metadata}
                         ${manifest}
                         ${spine}

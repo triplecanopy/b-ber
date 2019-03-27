@@ -34,22 +34,8 @@ class HtmlToXml {
                 : defaultElements
 
         this.customElements = elements
-        this.whitelistedAttrs = [
-            'src',
-            'href',
-            'xlink:href',
-            'xmlns',
-            'xmlns:xlink',
-        ]
-        this.blacklistedTags = [
-            'html',
-            'head',
-            'title',
-            'meta',
-            'link',
-            'script',
-            'body',
-        ]
+        this.whitelistedAttrs = ['src', 'href', 'xlink:href', 'xmlns', 'xmlns:xlink']
+        this.blacklistedTags = ['html', 'head', 'title', 'meta', 'link', 'script', 'body']
         this.output = ''
         this.tagnames = []
         this.noop = false
@@ -155,9 +141,7 @@ class HtmlToXml {
                                 break
                             case 'body':
                                 if (attrs && attrs.class) {
-                                    _this.tagnames.push(
-                                        attrs.class.replace(/\s+/g, '-'),
-                                    )
+                                    _this.tagnames.push(attrs.class.replace(/\s+/g, '-'))
                                 }
                                 break
                             case 'div':
@@ -167,11 +151,7 @@ class HtmlToXml {
                                 if (attrs && attrs.class) {
                                     const klasses = attrs.class.split(' ')
                                     for (let i = 0; i < klasses.length; i++) {
-                                        if (
-                                            _this.customElements.indexOf(
-                                                klasses[i],
-                                            ) > -1
-                                        ) {
+                                        if (_this.customElements.indexOf(klasses[i]) > -1) {
                                             tagname = klasses[i]
                                             break
                                         }
@@ -187,12 +167,8 @@ class HtmlToXml {
 
                         if (_this.noop) return
                         const tag = []
-                        const tagname =
-                            _this.tagnames[_this.tagnames.length - 1]
-                        if (
-                            tagname &&
-                            _this.blacklistedTags.indexOf(tagname) < 0
-                        ) {
+                        const tagname = _this.tagnames[_this.tagnames.length - 1]
+                        if (tagname && _this.blacklistedTags.indexOf(tagname) < 0) {
                             // eslint-disable-next-line no-restricted-syntax
                             for (const [key, val] of _this.entries(attrs)) {
                                 if (_this.whitelistedAttrs.indexOf(key) > -1) {
@@ -204,12 +180,8 @@ class HtmlToXml {
                         }
                     },
                     ontext(text) {
-                        const tagname =
-                            _this.tagnames[_this.tagnames.length - 1]
-                        if (
-                            tagname &&
-                            _this.blacklistedTags.indexOf(tagname) < 0
-                        ) {
+                        const tagname = _this.tagnames[_this.tagnames.length - 1]
+                        if (tagname && _this.blacklistedTags.indexOf(tagname) < 0) {
                             _this.output += text
                         }
                     },

@@ -4,7 +4,7 @@ class Pkg {
     static body() {
         return new File({
             path: 'pkg.body.tmpl',
-            contents: new Buffer(`<?xml version="1.0" encoding="UTF-8"?>
+            contents: Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
                 <package
                     version="3.0"
                     xml:lang="en"

@@ -7,8 +7,8 @@ import mime from 'mime-types' // TODO: remove after abstracting toAlias
 import { htmlId, parseAttrs } from '../syntax/helpers'
 
 // TODO: following is taken from media.es, should be exporting it
-const toAlias = fpath =>
-    path.basename(path.basename(fpath, path.extname(fpath)))
+// @issue: https://github.com/triplecanopy/b-ber/issues/203
+const toAlias = fpath => path.basename(path.basename(fpath, path.extname(fpath)))
 
 const addCaption = (md, t, attrs) => {
     if (!attrs.caption) return
@@ -17,10 +17,7 @@ const addCaption = (md, t, attrs) => {
         {
             type: 'block',
             tag: 'div',
-            attrs: [
-                ['class', 'figcaption'],
-                ['data-caption', htmlId(attrs.source)],
-            ],
+            attrs: [['class', 'figcaption'], ['data-caption', htmlId(attrs.source)]],
             nesting: 1,
         },
         {
@@ -45,6 +42,86 @@ const addCaption = (md, t, attrs) => {
     )
 }
 
+const createImageElement = (tok, attrs) => {
+    tok.content = ''
+    tok.children.push({
+        type: 'inline',
+        tag: 'img',
+        attrs: [
+            ['data-image', htmlId(attrs.source)],
+            ['src', `../images/${encodeURIComponent(attrs.source)}`],
+            ['alt', attrs.alt || attrs.source],
+        ],
+        nesting: 0,
+    })
+}
+
+const createMediaElement = (tok, attrs) => {
+    const media = [..._state[attrs.type]]
+    const supportedMediaAttrs = {
+        audio: ['controls', 'loop'],
+        video: ['controls', 'loop', 'fullscreen'],
+    }
+
+    const sources = media.filter(a => toAlias(a) === attrs.source)
+    const mediaAttrs = [[`data-${attrs.type}`, htmlId(attrs.source)]]
+
+    if (attrs.poster) mediaAttrs.push(['poster', `../images/${attrs.poster}`])
+
+    // add boolean attrs
+    supportedMediaAttrs[attrs.type].forEach(a => {
+        if (attrs[a]) mediaAttrs.push([a, a])
+    })
+
+    tok.content = ''
+    tok.children.push(
+        {
+            type: 'block',
+            tag: 'section',
+            attrs: [['class', attrs.type]],
+            nesting: 1,
+        },
+        {
+            type: 'block',
+            tag: attrs.type,
+            attrs: mediaAttrs,
+            nesting: 1,
+        },
+    )
+
+    sources.forEach(source => {
+        tok.children.push({
+            type: 'inline',
+            tag: 'source',
+            attrs: [['src', `../media/${path.basename(source)}`], ['type', mime.lookup(source)]],
+            nesting: 0,
+        })
+    })
+
+    tok.children.push(
+        {
+            type: 'block',
+            tag: attrs.type,
+            nesting: -1,
+        },
+        {
+            type: 'inline', // controls. TODO: add to media core directive
+            tag: 'button',
+            attrs: [
+                ['data-media-type', attrs.type],
+                ['data-media-controls', htmlId(attrs.source)],
+                ['class', 'media__controls media__controls--play'],
+            ],
+            nesting: 0,
+        },
+        {
+            type: 'block',
+            tag: 'section',
+            nesting: -1,
+        },
+    )
+}
+
 const containerPlugin = (md, name, options = {}) => {
     const min_markers = options.minMarkers || 3
     const marker_str = options.marker || ':'
@@ -54,14 +131,7 @@ const containerPlugin = (md, name, options = {}) => {
     const render = options.render
 
     function container(state, startLine, endLine, silent) {
-        let pos,
-            nextLine,
-            marker_count,
-            markup,
-            params,
-            token,
-            old_parent,
-            old_line_max
+        let pos, nextLine, marker_count, markup, params, token, old_parent, old_line_max
         let auto_closed = false
         let start = state.bMarks[startLine] + state.tShift[startLine]
         let lineNr = startLine + 1
@@ -83,9 +153,9 @@ const containerPlugin = (md, name, options = {}) => {
         markup = state.src.slice(start, pos)
         params = state.src.slice(pos, max)
 
-        if (
-            !validateOpen(params, lineNr) /* && !validateClose(params, lineNr)*/
-        ) { return false }
+        if (!validateOpen(params, lineNr) /* && !validateClose(params, lineNr)*/) {
+            return false
+        }
         if (silent) return true // for testing validation
 
         nextLine = startLine
@@ -134,24 +204,14 @@ const containerPlugin = (md, name, options = {}) => {
         // parse child tokens
         // set a flag so that we don't render other directives' children which may use the same syntax
         let childOfGallery = false
-        state.tokens.forEach((t, i) => {
-            if (t.type === 'container_gallery_open') childOfGallery = true
-            if (t.type === 'container_gallery_close') childOfGallery = false
+        state.tokens.forEach((tok, i) => {
+            if (tok.type === 'container_gallery_open') childOfGallery = true
+            if (tok.type === 'container_gallery_close') childOfGallery = false
 
-            if (t.type === 'inline' && childOfGallery) {
-                const matchedContent = t.content.match(/^(::\s?(.+)\s?::)/)
+            if (tok.type === 'inline' && childOfGallery) {
+                const matchedContent = tok.content.match(/^(::\s?(.+)\s?::)/)
                 if (matchedContent) {
                     const attrs = parseAttrs(matchedContent[1])
-                    const media = [..._state.video]
-                    const supportedMediaAttrs = [
-                        'controls',
-                        'loop',
-                        'fullscreen',
-                    ]
-
-                    let sources
-                    let mediaAttrs
-
                     const prev = state.tokens[i - 1]
                     const next = state.tokens[i + 1]
 
@@ -163,108 +223,14 @@ const containerPlugin = (md, name, options = {}) => {
 
                     switch (attrs.type) {
                         case 'image':
-                            t.content = ''
-                            t.children.push({
-                                type: 'inline',
-                                tag: 'img',
-                                attrs: [
-                                    ['data-image', htmlId(attrs.source)],
-                                    [
-                                        'src',
-                                        `../images/${encodeURIComponent(
-                                            attrs.source,
-                                        )}`,
-                                    ],
-                                    ['alt', attrs.alt || attrs.source],
-                                ],
-                                nesting: 0,
-                            })
-
-                            addCaption(md, t, attrs)
-
+                            createImageElement(tok, attrs)
+                            addCaption(md, tok, attrs)
                             break
 
                         case 'video':
-                            mediaAttrs = []
-                            mediaAttrs.push([
-                                'data-video',
-                                htmlId(attrs.source),
-                            ])
-                            if (attrs.poster) {
-                                mediaAttrs.push([
-                                    'poster',
-                                    `../images/${attrs.poster}`,
-                                ])
-                            }
-                            supportedMediaAttrs.forEach(a => {
-                                // add boolean attrs
-                                if (attrs[a]) mediaAttrs.push([a, a])
-                            })
-
-                            t.content = ''
-                            t.children.push(
-                                {
-                                    type: 'block',
-                                    tag: 'section',
-                                    attrs: [['class', 'video']],
-                                    nesting: 1,
-                                },
-                                {
-                                    type: 'block',
-                                    tag: 'video',
-                                    attrs: mediaAttrs,
-                                    nesting: 1,
-                                },
-                            )
-
-                            sources = media.filter(
-                                a => toAlias(a) === attrs.source,
-                            )
-                            sources.forEach(source => {
-                                t.children.push({
-                                    type: 'inline',
-                                    tag: 'source',
-                                    attrs: [
-                                        [
-                                            'src',
-                                            `../media/${path.basename(source)}`,
-                                        ],
-                                        ['type', mime.lookup(source)],
-                                    ],
-                                    nesting: 0,
-                                })
-                            })
-
-                            t.children.push(
-                                {
-                                    type: 'block',
-                                    tag: 'video',
-                                    nesting: -1,
-                                },
-                                {
-                                    type: 'inline', // controls. TODO: add to media core directive
-                                    tag: 'button',
-                                    attrs: [
-                                        [
-                                            'data-media-controls',
-                                            htmlId(attrs.source),
-                                        ],
-                                        [
-                                            'class',
-                                            'media__controls media__controls--play',
-                                        ],
-                                    ],
-                                    nesting: 0,
-                                },
-                                {
-                                    type: 'block',
-                                    tag: 'section',
-                                    nesting: -1,
-                                },
-                            )
-
-                            addCaption(md, t, attrs)
-
+                        case 'audio':
+                            createMediaElement(tok, attrs)
+                            addCaption(md, tok, attrs)
                             break
 
                         default:

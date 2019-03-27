@@ -3,12 +3,8 @@ const INLINE_DIRECTIVE_MARKER = ':'
 const BLOCK_DIRECTIVE_MARKER_MIN_LENGTH = 3
 const INLINE_DIRECTIVE_MARKER_MIN_LENGTH = 3
 
-const BLOCK_DIRECTIVE_FENCE = `${BLOCK_DIRECTIVE_MARKER.repeat(
-    BLOCK_DIRECTIVE_MARKER_MIN_LENGTH,
-)} `
-const INLINE_DIRECTIVE_FENCE = `${INLINE_DIRECTIVE_MARKER.repeat(
-    INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
-)} `
+const BLOCK_DIRECTIVE_FENCE = `${BLOCK_DIRECTIVE_MARKER.repeat(BLOCK_DIRECTIVE_MARKER_MIN_LENGTH)} `
+const INLINE_DIRECTIVE_FENCE = `${INLINE_DIRECTIVE_MARKER.repeat(INLINE_DIRECTIVE_MARKER_MIN_LENGTH)} `
 
 // block
 const FRONTMATTER_DIRECTIVES = [
@@ -32,8 +28,7 @@ const BODYMATTER_DIRECTIVES = [
     'part',
     'volume',
 
-    // TODO: it'll be useful to have some generic container directives available
-    // for secitoning layout
+    // Generic container directives for secitoning layout
     'section',
     'article',
 ]
@@ -49,24 +44,10 @@ const BACKMATTER_DIRECTIVES = [
 ]
 
 // inline
-const INLINE_DIRECTIVES = [
-    'figure',
-    'figure-inline',
-    'logo',
-    'video',
-    'audio',
-    'video-inline',
-    'audio-inline',
-]
+const INLINE_DIRECTIVES = ['figure', 'figure-inline', 'logo', 'video', 'audio', 'video-inline', 'audio-inline']
 
 // misc
-const MISC_DIRECTIVES = [
-    'pullquote',
-    'dialogue',
-    'gallery',
-    'spread',
-    'epigraph',
-]
+const MISC_DIRECTIVES = ['pullquote', 'dialogue', 'gallery', 'spread', 'epigraph']
 
 // belonging to the epub-vocab, but still in draft. see https://idpf.github.io/epub-vocabs/structure/
 const DRAFT_DIRECTIVES = [
@@ -117,16 +98,8 @@ const DEPRECATED_DIRECTIVES = [
 ]
 
 // unions
-const BLOCK_DIRECTIVES = [
-    ...FRONTMATTER_DIRECTIVES,
-    ...BODYMATTER_DIRECTIVES,
-    ...BACKMATTER_DIRECTIVES,
-]
-const ALL_DIRECTIVES = [
-    ...BLOCK_DIRECTIVES,
-    ...INLINE_DIRECTIVES,
-    ...MISC_DIRECTIVES,
-]
+const BLOCK_DIRECTIVES = [...FRONTMATTER_DIRECTIVES, ...BODYMATTER_DIRECTIVES, ...BACKMATTER_DIRECTIVES]
+const ALL_DIRECTIVES = [...BLOCK_DIRECTIVES, ...INLINE_DIRECTIVES, ...MISC_DIRECTIVES]
 
 const SUPPORTED_ATTRIBUTES = [
     'title',

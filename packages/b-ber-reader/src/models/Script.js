@@ -7,10 +7,7 @@ class Script {
         this.type = node.type || 'application/javascript'
         this.src = Script.getScriptSourceFromNodeValue(node)
         this.inline = typeof this.src === 'undefined'
-        this.body =
-            node.childNodes && node.childNodes.length
-                ? node.childNodes[0].nodeValue.trim()
-                : ''
+        this.body = node.childNodes && node.childNodes.length ? node.childNodes[0].nodeValue.trim() : ''
         this.async = false
         this.requestURI = requestURI
     }

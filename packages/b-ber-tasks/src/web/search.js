@@ -111,7 +111,6 @@ function initializeWebWorker() {
         )
     }
 
-    // TODO: better just to show/hide the contents rather than resetting each time
     function resetContents() {
         publicationContents.innerHTML = clonedContents.innerHTML
     }
@@ -126,6 +125,7 @@ function initializeWebWorker() {
             }
 
             // TODO: escape search tokens below, find some settings that work well here
+            // @issue: https://github.com/triplecanopy/b-ber/issues/231
             worker.postMessage({ term: term })
         }, debounceSpeed)
     }

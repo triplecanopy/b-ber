@@ -3,14 +3,9 @@ import classNames from 'classnames'
 
 const SidebarDownloads = props => (
     <nav
-        className={classNames(
-            'controls__sidebar',
-            'controls__sidebar__downloads',
-            {
-                'controls__sidebar__downloads--open':
-                    props.showSidebar === 'downloads',
-            },
-        )}
+        className={classNames('controls__sidebar', 'controls__sidebar__downloads', {
+            'controls__sidebar__downloads--open': props.showSidebar === 'downloads',
+        })}
     >
         <ul>
             {props.downloads.map((a, i) => (

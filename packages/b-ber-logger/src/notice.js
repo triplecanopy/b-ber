@@ -2,7 +2,7 @@
 
 // same as info but always prints to log, i.e., log-level doesn't need to be set.
 export function notice(...args) {
-    const message = this.decorate(this.composeMessage(args), 'black')
+    const message = this.decorate(this.composeMessage(args))
 
     let prefix = ''
 

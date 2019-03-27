@@ -31,9 +31,7 @@ const blackListedProperties = [
 ]
 
 const write = ({ file, content }) =>
-    fs
-        .writeFile(file, content, 'utf8')
-        .then(() => log.info(`mobiCSS write [${path.basename(file)}]`))
+    fs.writeFile(file, content, 'utf8').then(() => log.info(`mobiCSS write [${path.basename(file)}]`))
 
 const process = file =>
     fs.readFile(file, 'utf8').then(data => {
@@ -48,16 +46,8 @@ const process = file =>
                 while (j >= 0) {
                     let jj = 0
                     while (jj < blackListedPrefixes.length) {
-                        if (
-                            rule.selectors[j].slice(
-                                0,
-                                blackListedPrefixes[jj].length,
-                            ) === blackListedPrefixes[jj]
-                        ) {
-                            log.info(
-                                'mobiCSS remove selector',
-                                rule.selectors[j],
-                            )
+                        if (rule.selectors[j].slice(0, blackListedPrefixes[jj].length) === blackListedPrefixes[jj]) {
+                            log.info('mobiCSS remove selector', rule.selectors[j])
                             rule.selectors.splice(j, 1)
                         }
                         jj++ // eslint-disable-line no-plusplus
@@ -76,16 +66,8 @@ const process = file =>
                 if (declarations) {
                     let a = declarations.length - 1
                     while (a >= 0) {
-                        if (
-                            blackListedProperties.indexOf(
-                                declarations[a].property,
-                            ) > -1
-                        ) {
-                            log.info(
-                                `mobiCSS remove property [${
-                                    declarations[a].property
-                                }]`,
-                            )
+                        if (blackListedProperties.indexOf(declarations[a].property) > -1) {
+                            log.info(`mobiCSS remove property [${declarations[a].property}]`)
                             declarations.splice(a, 1)
                         }
                         a-- // eslint-disable-line no-plusplus

@@ -1,11 +1,6 @@
 import React, { Component } from 'react'
 import { NavigationHeader, NavigationFooter } from './Navigation'
-import {
-    SidebarMetadata,
-    SidebarDownloads,
-    SidebarChapters,
-    SidebarSettings,
-} from './Sidebar'
+import { SidebarMetadata, SidebarDownloads, SidebarChapters, SidebarSettings } from './Sidebar'
 import Messenger from '../lib/Messenger'
 import { messagesTypes } from '../constants'
 
@@ -27,6 +22,19 @@ class Controls extends Component {
                 this.props.handleSidebarButtonClick(null)
             }
         }, messagesTypes.CLICK_EVENT)
+
+        Messenger.register(({ data }) => {
+            if (this.props.handleEvents === false) return
+
+            const { scope, delta } = data
+
+            if (scope === 'page') {
+                this.props.enablePageTransitions()
+                return this.props.handlePageNavigation(delta)
+            } else if (scope === 'chapter') {
+                return this.props.handleChapterNavigation(delta)
+            }
+        }, messagesTypes.NAVIGATION_EVENT)
     }
 
     componentWillUnmount() {
@@ -82,11 +90,13 @@ class Controls extends Component {
     bindEvents() {
         document.addEventListener('keydown', this.handleKeyDown, false)
         document.addEventListener('click', this.handleClick, false)
+        document.addEventListener('touchstart', this.handleClick, false)
     }
 
     unbindEvents() {
         document.removeEventListener('keydown', this.handleKeyDown, false)
         document.removeEventListener('click', this.handleClick, false)
+        document.removeEventListener('touchstart', this.handleClick, false)
     }
 
     render() {

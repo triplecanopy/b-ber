@@ -4,6 +4,12 @@ jest.mock('@canopycanopycanopy/b-ber-logger', () => ({
     notify() {
         return true
     },
+    notice() {
+        return true
+    },
+    info() {
+        return true
+    },
 }))
 
 describe('task: async', () => {
@@ -56,8 +62,7 @@ describe('task: async', () => {
             bar: 'bogus',
         }
 
-        const promise = () =>
-            new Promise(() => async.serialize(sequence, tasks))
+        const promise = () => new Promise(() => async.serialize(sequence, tasks))
 
         expect(() => async.serialize(sequence, tasks)).toThrow()
 

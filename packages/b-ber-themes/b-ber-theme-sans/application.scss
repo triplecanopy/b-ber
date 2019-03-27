@@ -1,10 +1,15 @@
+// sass-lint:disable mixins-before-declarations
+
 // Declare namespaces
-@namespace url(http://www.w3.org/1999/xhtml);
-@namespace epub url(http://www.idpf.org/2007/ops);
+@namespace url('http://www.w3.org/1999/xhtml');
+@namespace epub url('http://www.idpf.org/2007/ops');
 
 // Load vendor libs
 // https://github.com/modularscale/modularscale-sass
 @import 'node_modules/modularscale-sass/stylesheets/_modularscale';
+
+// Load syntax highlighting
+@import 'node_modules/highlight.js/src/scss/tomorrow';
 
 // Serif settings
 @import 'settings';
@@ -12,9 +17,6 @@
 // Get these from sibling theme
 @import '../b-ber-theme-serif/mixins';
 @import '../b-ber-theme-serif/debug';
-
-// Load syntax highlighting
-@import 'css:node_modules/highlight.js/styles/tomorrow';
 
 // for validation while building on CLI, not an actual setting
 $build: 'epub' !default;
@@ -57,6 +59,7 @@ $modularscale: (
 
 // Get these from sibling theme
 // TODO: should just grab them from node modules and add the serif theme as a dep
+// @issue: https://github.com/triplecanopy/b-ber/issues/233
 @import '../b-ber-theme-serif/typography/typography';
 @import '../b-ber-theme-serif/layout/layout';
 
@@ -67,9 +70,6 @@ html {
     font-size: 156.25%;
 } // 25px
 
-// TODO: we're overriding the base font size in `.publication_contents` for the
-// web build, but everything should just be sized up to remove redundant
-// override
 @if $build != 'web' {
     html {
         font-size: 100%;
@@ -90,9 +90,15 @@ html {
     }
 }
 
+@if $build == 'reader' {
+    #layout {
+        @include fluid-type($min-width, $max-width, $min-font, $max-font);
+    }
+}
+
 @if $debug == true {
     img {
-        background-color: gainsboro;
+        background-color: #dcdcdc;
     }
 }
 

@@ -4,25 +4,32 @@
     "private": true,
     "license": "GPL-3.0-or-later",
     "engines": {
-        "node": ">= 4.x <= 9.x",
+        "node": ">= 5.x <= 10.x",
         "npm": ">= 2.x <= 6.x",
         "yarn": ">=0.27.5 || <= 1.12.x"
     },
     "scripts": {
         "watch": "lerna run --parallel watch",
-        "lint": "ls ./packages | xargs -I {} ./node_modules/.bin/eslint ./packages/{}/src/**/{*.js,*.jsx}",
+        "lint.js": "ls ./packages | xargs -I {} ./node_modules/.bin/eslint ./packages/{}/src/**/{*.js,*.jsx}",
+        "lint.scss": "node_modules/.bin/sass-lint -c .sasslintrc './packages/b-ber-themes/b-ber-theme-sans/**/*.scss, ./packages/b-ber-themes/b-ber-theme-serif/**/*.scss' -v -q",
+        "lint": "yarn lint.js && yarn lint.scss",
+        "lint.changed.js": "DIFF=`git diff-index --name-only HEAD | grep -E \".*\\.jsx?$\"`; if [ \"$DIFF\" ]; then ./node_modules/.bin/eslint $DIFF; fi",
+        "lint.changed.scss": "DIFF=`git diff-index --name-only HEAD | grep -E \".*\\.(scss|sass|less|css)$\"`; if [ \"$DIFF\" ]; then node_modules/.bin/sass-lint -c .sasslintrc $DIFF -v -q; fi",
+        "lint.changed": "yarn lint.changed.js && yarn lint.changed.scss",
+        "prettier.check": "./node_modules/.bin/eslint --print-config . | ./node_modules/.bin/eslint-config-prettier-check",
         "flush.lock": "ls ./packages | xargs -I {} rimraf ./packages/{}/yarn.lock",
         "flush.modules": "ls ./packages | xargs -I {} rimraf ./packages/{}/node_modules",
         "flush.rebuild": "lerna exec yarn && lerna bootstrap",
         "flush": "yarn flush.lock && yarn flush.modules && yarn flush.rebuild",
-        "test": "rimraf ./coverage && yarn lint && yarn pretty && yarn jest --collectCoverage=true",
-        "pretty": "node scripts/pretty",
-        "build": "yarn test && lerna run build"
+        "test.coverage": "rimraf ./coverage && yarn lint && yarn jest --collectCoverage=true",
+        "test": "yarn lint && yarn jest",
+        "build": "lerna run build",
+        "release": "yarn test && yarn build && lerna publish --canary"
     },
     "husky": {
         "hooks": {
-            "pre-commit": "yarn pretty",
-            "pre-push": "yarn lint && yarn pretty && yarn jest"
+            "pre-commit": "yarn lint.changed",
+            "pre-push": "yarn jest"
         }
     },
     "devDependencies": {
@@ -41,9 +48,11 @@
         "eslint": "^4.19.1",
         "eslint-config-airbnb": "^15.1.0",
         "eslint-config-airbnb-base": "^12.0.0",
+        "eslint-config-prettier": "^3.3.0",
         "eslint-plugin-babel": "^4.1.2",
         "eslint-plugin-import": "^2.7.0",
         "eslint-plugin-jsx-a11y": "^5.1.1",
+        "eslint-plugin-prettier": "^3.0.0",
         "eslint-plugin-react": "^7.3.0",
         "fs-extra": "^6.0.1",
         "husky": "^1.1.3",
@@ -60,7 +69,9 @@
         "minami": "^1.2.3",
         "mocha": "^3.2.0",
         "prettier": "^1.15.1",
+        "resolve-cwd": "^2.0.0",
         "rimraf": "^2.6.2",
+        "sass-lint": "^1.12.1",
         "sinon": "^3.2.1",
         "sinon-chai": "^2.13.0"
     },

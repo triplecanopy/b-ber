@@ -6,12 +6,14 @@ import find from 'lodash/find'
 import { Controls, Frame, Spinner } from '.'
 import { Request, XMLAdaptor, Asset, Url, Cache, Storage } from '../helpers'
 import { ViewerSettings } from '../models'
-import { debug, logTime, verboseOutput, useLocalStorage } from '../config'
+import { debug, verboseOutput, logTime, useLocalStorage } from '../config'
 import history from '../lib/History'
 import deferrable from '../lib/decorate-deferrable'
 import Messenger from '../lib/Messenger'
 import Viewport from '../helpers/Viewport'
 
+// const debug = true
+// const verboseOutput = true
 const MAX_RENDER_TIMEOUT = 0
 const MAX_DEFERRED_CALLBACK_TIMEOUT = 0
 
@@ -24,12 +26,15 @@ const bookContentComponent = () => <div>{getBookContent()}</div>
 @deferrable
 class Reader extends Component {
     static childContextTypes = {
+        viewerSettings: PropTypes.object,
         spreadIndex: PropTypes.number,
         overlayElementId: PropTypes.string,
         navigateToChapterByURL: PropTypes.func,
         registerOverlayElementId: PropTypes.func,
         deRegisterOverlayElementId: PropTypes.func,
         requestDeferredCallbackExecution: PropTypes.func,
+        addRef: PropTypes.func,
+        refs: PropTypes.object,
     }
     constructor(props) {
         super(props)
@@ -54,10 +59,13 @@ class Reader extends Component {
 
             // navigation
             spreadIndex: 0,
-            spreadTotal: 0,
+            lastSpreadIndex: 0,
             handleEvents: false,
-            firstPage: false,
-            lastPage: false,
+            firstChapter: false,
+            lastChapter: false,
+            firstSpread: false,
+            lastSpread: false,
+            delta: 0,
 
             // sidebar
             showSidebar: null,
@@ -67,6 +75,8 @@ class Reader extends Component {
             pageAnimation: false, // disabled by default, and activated in Reader#enablePageTransitions on user action
             overlayElementId: null,
             spinnerVisible: true,
+
+            refs: {},
         }
 
         this.localStorageKey = 'bber_reader'
@@ -92,9 +102,7 @@ class Reader extends Component {
         this.updateQueryString = this.updateQueryString.bind(this)
         this.saveViewerSettings = this.saveViewerSettings.bind(this)
         this.registerOverlayElementId = this.registerOverlayElementId.bind(this)
-        this.deRegisterOverlayElementId = this.deRegisterOverlayElementId.bind(
-            this,
-        )
+        this.deRegisterOverlayElementId = this.deRegisterOverlayElementId.bind(this)
         this.showSpinner = this.showSpinner.bind(this)
         this.hideSpinner = this.hideSpinner.bind(this)
 
@@ -105,27 +113,35 @@ class Reader extends Component {
         this.handleScriptLoad = this.handleScriptLoad.bind(this)
 
         this.debounceResizeSpeed = 400
-        this.handleResizeStart = debounce(
-            this.handleResizeStart,
-            this.debounceResizeSpeed,
-            { leading: true, trailing: false },
-        ).bind(this)
-        this.handleResizeEnd = debounce(
-            this.handleResizeEnd,
-            this.debounceResizeSpeed,
-            { leading: false, trailing: true },
-        ).bind(this)
+
+        this.handleResizeStart = debounce(this.handleResizeStart, this.debounceResizeSpeed, {
+            leading: true,
+            trailing: false,
+        }).bind(this)
+
+        this.handleResizeEnd = debounce(this.handleResizeEnd, this.debounceResizeSpeed, {
+            leading: false,
+            trailing: true,
+        }).bind(this)
+    }
+
+    addRef = ref => {
+        const { refs } = this.state
+        const nextRefs = { ...refs, [ref.markerId]: ref }
+        this.setState({ refs: nextRefs })
     }
 
     getChildContext() {
         return {
+            viewerSettings: this.state.viewerSettings,
+            addRef: this.addRef.bind(this),
+            refs: this.state.refs,
             spreadIndex: this.state.spreadIndex,
             navigateToChapterByURL: this.navigateToChapterByURL,
             overlayElementId: this.state.overlayElementId,
             registerOverlayElementId: this.registerOverlayElementId,
             deRegisterOverlayElementId: this.deRegisterOverlayElementId,
-            requestDeferredCallbackExecution: this
-                .requestDeferredCallbackExecution,
+            requestDeferredCallbackExecution: this.requestDeferredCallbackExecution,
         }
     }
 
@@ -153,11 +169,7 @@ class Reader extends Component {
         const { hash, cssHash, search } = this.state
 
         if (nextProps.search !== search) {
-            const {
-                slug,
-                currentSpineItemIndex,
-                spreadIndex,
-            } = Url.parseQueryString(nextProps.search)
+            const { slug, currentSpineItemIndex, spreadIndex } = Url.parseQueryString(nextProps.search)
             const url = Url.parseQueryString(search)
 
             // load the new spine item if the slug has changed
@@ -189,10 +201,7 @@ class Reader extends Component {
         const { ready } = nextState
         if (ready && ready !== this.state.ready) {
             if (debug && verboseOutput) {
-                console.log(
-                    'Reader#shouldComponentUpdate: requestDeferredCallbackExecution',
-                    `ready: ${ready}`,
-                )
+                console.log('Reader#shouldComponentUpdate: requestDeferredCallbackExecution', `ready: ${ready}`)
             }
             this.requestDeferredCallbackExecution()
         }
@@ -225,11 +234,7 @@ class Reader extends Component {
     }
 
     updateQueryString() {
-        const {
-            currentSpineItem,
-            currentSpineItemIndex,
-            spreadIndex,
-        } = this.state
+        const { currentSpineItem, currentSpineItemIndex, spreadIndex } = this.state
 
         const { slug } = currentSpineItem
         const url = Url.parseQueryString(this.props.search)
@@ -289,18 +294,11 @@ class Reader extends Component {
             return this.loadSpineItem()
         }
 
-        const {
-            currentSpineItem,
-            currentSpineItemIndex,
-            spreadIndex,
-        } = storage[hash]
+        const { currentSpineItem, currentSpineItemIndex, spreadIndex } = storage[hash]
 
-        this.setState(
-            { currentSpineItem, currentSpineItemIndex, spreadIndex },
-            () => {
-                this.loadSpineItem(currentSpineItem)
-            },
-        )
+        this.setState({ currentSpineItem, currentSpineItemIndex, spreadIndex }, () => {
+            this.loadSpineItem(currentSpineItem)
+        })
     }
 
     createStateFromOPF() {
@@ -334,20 +332,13 @@ class Reader extends Component {
             .then(data => {
                 if (logTime) {
                     console.timeEnd('XMLAdaptor.parseNCX(data, opsURL)')
-                    console.time(
-                        'XMLAdaptor.createGuideItems(data),XMLAdaptor.createSpineItems(data)',
-                    )
+                    console.time('XMLAdaptor.createGuideItems(data),XMLAdaptor.createSpineItems(data)')
                 }
-                return Promise.all([
-                    XMLAdaptor.createGuideItems(data),
-                    XMLAdaptor.createSpineItems(data),
-                ])
+                return Promise.all([XMLAdaptor.createGuideItems(data), XMLAdaptor.createSpineItems(data)])
             })
             .then(([a, b]) => {
                 if (logTime) {
-                    console.timeEnd(
-                        'XMLAdaptor.createGuideItems(data),XMLAdaptor.createSpineItems(data)',
-                    )
+                    console.timeEnd('XMLAdaptor.createGuideItems(data),XMLAdaptor.createSpineItems(data)')
                     console.time(
                         'XMLAdaptor.udpateGuideItemURLs(data, opsURL),XMLAdaptor.udpateSpineItemURLs(data, opsURL)',
                     )
@@ -410,9 +401,7 @@ class Reader extends Component {
             // should be cleaned up a bit
             .then(data => {
                 if (logTime) {
-                    console.timeEnd(
-                        'Request.get(requestedSpineItem.absoluteURL)',
-                    )
+                    console.timeEnd('Request.get(requestedSpineItem.absoluteURL)')
                     console.time('XMLAdaptor.parseSpineItemResponse()')
                 }
                 return XMLAdaptor.parseSpineItemResponse({
@@ -449,7 +438,6 @@ class Reader extends Component {
                     {
                         currentSpineItem: requestedSpineItem,
                         spineItemURL: requestedSpineItem.absoluteURL,
-                        // TODO: add initial state?
                     },
                     () => {
                         this.updateQueryString()
@@ -457,16 +445,29 @@ class Reader extends Component {
                         if (deferredCallback) {
                             this.registerDeferredCallback(deferredCallback)
                         } else {
-                            this.enableEventHandling()
-                            this.hideSpinner()
+                            this.registerDeferredCallback(() => {
+                                const { spine, spreadIndex, currentSpineItemIndex, lastSpreadIndex } = this.state
+                                const firstChapter = currentSpineItemIndex === 0
+                                const lastChapter = currentSpineItemIndex === spine.length - 1
+                                const firstSpread = spreadIndex === 0
+                                const lastSpread = spreadIndex === lastSpreadIndex
+
+                                this.setState({ firstChapter, lastChapter, firstSpread, lastSpread }, () => {
+                                    this.enableEventHandling()
+                                    this.hideSpinner()
+
+                                    Messenger.sendPaginationEvent(this.state)
+                                })
+                            })
                         }
 
                         return setTimeout(() => {
                             if (logTime) {
-                                console.timeEnd('this.setState({ready: true})')
+                                // console.timeEnd('this.setState({ready: true})')
                                 console.timeEnd('Reader#loadSpineItem')
                             }
                             // return this.setState({ready: true}) // TODO: force load
+                            // @issue: https://github.com/triplecanopy/b-ber/issues/214
                         }, MAX_RENDER_TIMEOUT)
                     },
                 )
@@ -474,6 +475,7 @@ class Reader extends Component {
             .catch(err => {
                 // Something went wrong loading the book. clear storage for this book
                 // TODO: retry? try to navigate to home
+                // @issue: https://github.com/triplecanopy/b-ber/issues/214
 
                 console.error(err)
 
@@ -494,21 +496,16 @@ class Reader extends Component {
 
     handlePageNavigation(increment) {
         let { spreadIndex } = this.state
-        const { spreadTotal } = this.state
+        const { lastSpreadIndex } = this.state
         const nextIndex = spreadIndex + increment
 
         if (debug && verboseOutput) {
             console.group('Reader#handlePageNavigation')
-            console.log(
-                'spreadIndex: %d; nextIndex: %d; spreadTotal %d',
-                spreadIndex,
-                nextIndex,
-                spreadTotal,
-            )
+            console.log('spreadIndex: %d; nextIndex: %d; lastSpreadIndex %d', spreadIndex, nextIndex, lastSpreadIndex)
             console.groupEnd()
         }
 
-        if (nextIndex > spreadTotal || nextIndex < 0) {
+        if (nextIndex > lastSpreadIndex || nextIndex < 0) {
             // move to next or prev chapter
             const sign = Math.sign(increment)
             this.handleChapterNavigation(sign)
@@ -516,58 +513,62 @@ class Reader extends Component {
             return
         }
 
+        const firstSpread = nextIndex === 0
+        const lastSpread = nextIndex === lastSpreadIndex
+        const spreadDelta = nextIndex > spreadIndex ? 1 : -1
+
         spreadIndex = nextIndex
-        this.setState(
-            { spreadIndex, showSidebar: null },
-            this.updateQueryString,
-        )
+        this.setState({ spreadIndex, firstSpread, lastSpread, spreadDelta, showSidebar: null }, () => {
+            this.updateQueryString()
+            Messenger.sendPaginationEvent(this.state)
+        })
     }
 
     handleChapterNavigation(increment) {
         let { currentSpineItemIndex } = this.state
         const { spine } = this.state
         const nextIndex = Number(currentSpineItemIndex) + increment
+        const firstChapter = nextIndex < 0
+        let lastChapter = nextIndex > spine.length - 1
 
-        const firstPage = nextIndex < 0
-        const lastPage = nextIndex > spine.length - 1
-
-        if (firstPage || lastPage) {
-            this.setState({ firstPage, lastPage }, () =>
-                Messenger.sendPaginationEvent(this.state),
-            )
+        if (firstChapter || lastChapter) {
+            this.setState({ firstChapter, lastChapter }, () => Messenger.sendPaginationEvent(this.state))
             return
         }
 
         currentSpineItemIndex = nextIndex
         const currentSpineItem = spine[nextIndex]
-        const spreadIndex = 0 // TODO: why not getting this from state?
+        const spreadIndex = 0
 
-        let deferredCallback
-        if (increment === -1) {
-            deferredCallback = () => {
-                const { spreadTotal } = this.state
+        let deferredCallback = direction => () => {
+            const { lastSpreadIndex } = this.state
+            const firstSpread = spreadIndex === 0
+            const lastSpread = spreadIndex === lastSpreadIndex
+            const spreadDelta = 0
+            lastChapter = currentSpineItemIndex === spine.length - 1
 
-                this.scrollToTop()
-                this.navigateToSpreadByIndex(spreadTotal)
-                this.enableEventHandling()
-                this.hideSpinner()
+            this.setState(
+                {
+                    firstChapter,
+                    lastChapter,
+                    firstSpread,
+                    lastSpread,
+                    spreadDelta,
+                },
+                () => {
+                    this.scrollToTop()
+                    if (direction === -1) this.navigateToSpreadByIndex(lastSpreadIndex) // TODO: navigate to last visited page
+                    this.enableEventHandling()
+                    this.hideSpinner()
 
-                Messenger.sendPaginationEvent(this.state)
+                    Messenger.sendPaginationEvent(this.state)
+                },
+            )
 
-                if (logTime) console.timeEnd('Content Visible')
-            }
-        } else {
-            // this branch smoothes out page transisitions when moving forward
-            deferredCallback = () => {
-                this.scrollToTop()
-                this.enableEventHandling()
-                this.hideSpinner()
-
-                Messenger.sendPaginationEvent(this.state)
-
-                if (logTime) console.timeEnd('Content Visible')
-            }
+            if (logTime) console.timeEnd('Content Visible')
         }
+
+        deferredCallback = deferredCallback(increment)
 
         this.setState(
             {
@@ -575,8 +576,8 @@ class Reader extends Component {
                 currentSpineItem,
                 currentSpineItemIndex,
                 showSidebar: null,
-                firstPage,
-                lastPage,
+                firstChapter,
+                lastChapter,
             },
             () => {
                 this.loadSpineItem(currentSpineItem, deferredCallback)
@@ -603,7 +604,9 @@ class Reader extends Component {
     navigateToChapterByURL(absoluteURL) {
         const { spine } = this.state
         const url = new window.URL(absoluteURL)
-        const absoluteURL_ = `${url.origin}${url.pathname}` // TODO: handle hashes, query strings
+
+        // Can eventually handle hashes or query strings here
+        const absoluteURL_ = `${url.origin}${url.pathname}`
 
         let deferredCallback
         const { hash } = url
@@ -618,7 +621,9 @@ class Reader extends Component {
                     this.hideSpinner()
 
                     if (logTime) console.timeEnd('Content Visible')
-                }, MAX_DEFERRED_CALLBACK_TIMEOUT) // TODO: should match transition speed. all these deferreds should be collected together
+                    // TODO: should match transition speed. all these deferreds should be collected together
+                    // @issue: https://github.com/triplecanopy/b-ber/issues/216
+                }, MAX_DEFERRED_CALLBACK_TIMEOUT)
             }
         }
 
@@ -654,12 +659,7 @@ class Reader extends Component {
     savePosition() {
         if (useLocalStorage === false) return
 
-        const {
-            hash,
-            currentSpineItem,
-            currentSpineItemIndex,
-            spreadIndex,
-        } = this.state
+        const { hash, currentSpineItem, currentSpineItemIndex, spreadIndex } = this.state
 
         let storage = window.localStorage.getItem(this.localStorageKey)
         if (!storage) storage = JSON.stringify({})
@@ -712,7 +712,7 @@ class Reader extends Component {
             ready,
             bookURL,
             spreadIndex,
-            spreadTotal,
+            lastSpreadIndex,
             viewerSettings,
             pageAnimation,
             handleEvents,
@@ -728,6 +728,8 @@ class Reader extends Component {
                 showSidebar={showSidebar}
                 viewerSettings={viewerSettings}
                 handleEvents={handleEvents}
+                spreadIndex={spreadIndex}
+                lastSpreadIndex={lastSpreadIndex}
                 enablePageTransitions={this.enablePageTransitions}
                 handlePageNavigation={this.handlePageNavigation}
                 updateViewerSettings={this.updateViewerSettings}
@@ -743,7 +745,7 @@ class Reader extends Component {
                     ready={ready}
                     bookURL={bookURL}
                     spreadIndex={spreadIndex}
-                    spreadTotal={spreadTotal}
+                    lastSpreadIndex={lastSpreadIndex}
                     bookContent={bookContentComponent}
                     pageAnimation={pageAnimation}
                     setReaderState={this._setState}

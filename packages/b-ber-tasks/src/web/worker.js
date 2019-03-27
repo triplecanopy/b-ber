@@ -16,6 +16,7 @@ function onRequestReadyStateChange(state = null) {
 }
 
 // TODO: prebuild index during web build, see here: https://lunrjs.com/guides/index_prebuilding.html
+// @issue: https://github.com/triplecanopy/b-ber/issues/231
 function onRequestLoad() {
     records = JSON.parse(this.responseText)
     searchIndex = lunr(function() {

@@ -52,6 +52,7 @@ class WebFlow {
 
     // TODO: the naming scheme for figures is slightly different for figures
     // (the `fileName` property has a file extension). this needs to be fixed
+    // @issue: https://github.com/triplecanopy/b-ber/issues/208
     prepareLoi() {
         this.loi = this.loi.map(a => {
             const b = { ...a }
@@ -84,9 +85,7 @@ class WebFlow {
 function initialize() {
     DIST_PATH = state.dist
     OPS_PATH = path.join(DIST_PATH, 'OPS')
-    BASE_URL = {}.hasOwnProperty.call(state.config, 'base_url')
-        ? addTrailingSlash(state.config.base_url)
-        : '/'
+    BASE_URL = {}.hasOwnProperty.call(state.config, 'base_url') ? addTrailingSlash(state.config.base_url) : '/'
 
     ASSETS_TO_UNLINK = [
         path.join(DIST_PATH, 'mimetype'),
@@ -112,11 +111,7 @@ function moveAssetsToRootDirctory() {
         fs.readdir(OPS_PATH, (err, files) => {
             if (err) throw err
 
-            const dirs = files.filter(
-                f =>
-                    f.charAt(0) !== '.' &&
-                    fs.statSync(path.join(OPS_PATH, f)).isDirectory(),
-            )
+            const dirs = files.filter(f => f.charAt(0) !== '.' && fs.statSync(path.join(OPS_PATH, f)).isDirectory())
 
             dirs.forEach(f => {
                 const frm = path.join(OPS_PATH, f)
@@ -208,10 +203,7 @@ function getHeaderElement(fileName) {
 function createNavigationElement() {
     return new Promise(resolve => {
         const { toc } = state
-        const tocHTML = Toc.items(toc).replace(
-            /a href="/g,
-            `a href="${BASE_URL}text/`,
-        )
+        const tocHTML = Toc.items(toc).replace(/a href="/g, `a href="${BASE_URL}text/`)
         const metadataHTML = getProjectMetadataHTML()
         const title = getProjectTitle()
 
@@ -299,7 +291,21 @@ function injectBaseURL(script) {
         script_ = String(script)
     }
 
-    return new Buffer(script_.replace(/%BASE_URL%/g, BASE_URL))
+    return Buffer.from(script_.replace(/%BASE_URL%/g, BASE_URL))
+}
+
+function getStyleBlock() {
+    return `
+        <style>
+            body {
+                opacity: 0;
+                transition: opacity 250ms ease;
+            }
+            body.ready {
+                opacity: 1 !important;
+            }
+        </style>
+    `
 }
 
 function getNavigationToggleScript() {
@@ -326,9 +332,7 @@ function getEventHandlerScript() {
     return `
         <script type="text/javascript">
         // <![CDATA[
-        ${injectBaseURL(
-            fs.readFileSync(path.join(__dirname, 'event-handlers.js')),
-        )}
+        ${injectBaseURL(fs.readFileSync(path.join(__dirname, 'event-handlers.js')))}
         // ]]>
         </script>
     `
@@ -337,12 +341,11 @@ function getEventHandlerScript() {
 function injectNavigationIntoFile(filePath, { tocElement, infoElement }) {
     return new Promise(resolve => {
         const pageNavigation = paginationNavigation(filePath)
+        const styleBlock = getStyleBlock()
         const navigationToggleScript = getNavigationToggleScript()
         const webWorkerScript = getWebWorkerScript()
         const evenHandlerScript = getEventHandlerScript()
-        const headerElement = getHeaderElement(
-            path.basename(filePath, path.extname(filePath)),
-        )
+        const headerElement = getHeaderElement(path.basename(filePath, path.extname(filePath)))
 
         log.info(`Adding pagination to ${path.basename(filePath)}`)
         fs.readFile(filePath, 'utf8', (err, data) => {
@@ -354,13 +357,11 @@ function injectNavigationIntoFile(filePath, { tocElement, infoElement }) {
             // prepend the dynamically generated elements to body, adding a
             // wrapper around the main publication content. this allows us to
             // create a sliding nav, fixed header, etc.
-            //
-            // TODO: eventually classlist should be parsed, or a more robust
-            // solution implemented
             contents = data.replace(
                 /(<body[^>]*?>)/,
                 `
-                $1
+                <body style="opacity: 0;">
+                ${styleBlock}
                 <div class="publication">
                 ${headerElement}
                 <div class="publication__contents">
@@ -384,8 +385,8 @@ function injectNavigationIntoFile(filePath, { tocElement, infoElement }) {
             `,
             )
 
-            fs.writeFile(filePath, contents, err => {
-                if (err) throw err
+            fs.writeFile(filePath, contents, err1 => {
+                if (err1) throw err1
                 log.info(`web writing ${path.basename(filePath)}`)
                 resolve()
             })
@@ -415,6 +416,7 @@ function injectNavigationIntoFiles(elements) {
 function indexPageContent() {
     return new Promise((resolve, reject) => {
         // TODO: `indexPageContent` should create a `lunr` index for faster parsing down the line
+        // @issue: https://github.com/triplecanopy/b-ber/issues/231
 
         const { spine } = flow
         const promises = []
@@ -425,35 +427,29 @@ function indexPageContent() {
             .filter(a => OMIT_FROM_SEARCH.indexOf(a.fileName) < 0)
             .forEach(entry =>
                 promises.push(
-                    new Promise((resolve, reject) => {
-                        fs.readFile(
-                            path.join(OPS_PATH, `${entry.relativePath}.xhtml`),
-                            'utf8',
-                            (err, data) => {
-                                if (err) reject(err)
+                    new Promise((resolve1, reject1) => {
+                        fs.readFile(path.join(OPS_PATH, `${entry.relativePath}.xhtml`), 'utf8', (err, data) => {
+                            if (err) reject1(err)
 
-                                const $ = cheerio.load(data)
-                                const title = $('h1,h2,h3,h4,h5,h6')
-                                    .first()
-                                    .text()
-                                const body = $('body')
-                                    .text()
-                                    .replace(/\n\s+/g, '\n')
-                                    .trim() // reduce whitespace
-                                const url = `${BASE_URL}text/${
-                                    entry.fileName
-                                }.xhtml`
+                            const $ = cheerio.load(data)
+                            const title = $('h1,h2,h3,h4,h5,h6')
+                                .first()
+                                .text()
+                            const body = $('body')
+                                .text()
+                                .replace(/\n\s+/g, '\n')
+                                .trim() // reduce whitespace
+                            const url = `${BASE_URL}text/${entry.fileName}.xhtml`
 
-                                fileIndex += 1
-                                records.push({
-                                    id: fileIndex,
-                                    title,
-                                    body,
-                                    url,
-                                })
-                                resolve()
-                            },
-                        )
+                            fileIndex += 1
+                            records.push({
+                                id: fileIndex,
+                                title,
+                                body,
+                                url,
+                            })
+                            resolve1()
+                        })
                     }),
                 ),
             )
@@ -485,9 +481,7 @@ function importVendorScripts() {
 
 function writeWebWorker() {
     return new Promise((resolve, reject) => {
-        const worker = injectBaseURL(
-            fs.readFileSync(path.join(__dirname, 'worker.js')),
-        )
+        const worker = injectBaseURL(fs.readFileSync(path.join(__dirname, 'worker.js')))
         fs.writeFile(path.join(DIST_PATH, 'worker.js'), worker, err => {
             if (err) reject(err)
             resolve()
@@ -536,11 +530,13 @@ function createIndexHTML({ tocElement, infoElement }) {
     const navigationToggleScript = getNavigationToggleScript()
     const webWorkerScript = getWebWorkerScript()
     const headerElement = getHeaderElement()
+    const styleBlock = getStyleBlock()
     const robotsMeta = state.config.private
         ? '<meta name="robots" content="noindex,nofollow"/>'
         : '<meta name="robots" content="index,follow"/>'
 
     // TODO: should get dynamic page template here to ensure asset hash on production build
+    // @issue: https://github.com/triplecanopy/b-ber/issues/232
     const indexHTML = `
         <?xml version="1.0" encoding="UTF-8" standalone="no"?>
         <html xmlns="http://www.w3.org/1999/xhtml"
@@ -553,8 +549,9 @@ function createIndexHTML({ tocElement, infoElement }) {
 
             <head>
                 <title>${title}</title>
+                ${styleBlock}
             </head>
-            <body>
+            <body style="opacity: 0;">
                 ${tocElement}
                 ${infoElement}
                 <div class="publication">
@@ -575,6 +572,7 @@ function createIndexHTML({ tocElement, infoElement }) {
 }
 
 // TODO
+// @issue: https://github.com/triplecanopy/b-ber/issues/226
 // function generateWebpubManifest() {}
 
 const web = () =>

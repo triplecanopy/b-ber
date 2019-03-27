@@ -51,9 +51,7 @@ class App extends Component {
         if (!loadRemoteLibrary) return this.goToBookURL(history.location)
 
         Request.getManifest()
-            .then(({ data }) =>
-                this.setState({ books: [...this.state.books, ...data] }),
-            )
+            .then(({ data }) => this.setState({ books: [...this.state.books, ...data] }))
             .then(() => this.goToBookURL(history.location))
     }
 
@@ -75,12 +73,11 @@ class App extends Component {
     }
 
     bindHistoryListener() {
-        console.log('History:', history)
         history.listen((location /* , action */) => {
             const { search } = location
             if (!location.state) {
                 console.warn('No history.location.state')
-                console.warn('Location:', location)
+                if (history.length) return history.goBack()
                 return
             }
 
@@ -100,12 +97,7 @@ class App extends Component {
         return (
             <div>
                 {bookURL ? (
-                    <Reader
-                        bookURL={bookURL}
-                        search={search}
-                        downloads={downloads}
-                        {...this.props}
-                    />
+                    <Reader bookURL={bookURL} search={search} downloads={downloads} {...this.props} />
                 ) : (
                     <Library books={books} handleClick={this.handleClick} />
                 )}

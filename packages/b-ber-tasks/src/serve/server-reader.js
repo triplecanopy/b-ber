@@ -20,9 +20,7 @@ app.use(express.static(dir))
 app.use('/epub', express.static(path.join(dir, 'epub')))
 app.use('/api', api)
 
-app.get('/', (_, res) =>
-    res.sendFile(path.join(dir, 'index.html'), { root: cwd }),
-)
+app.get('/', (_, res) => res.sendFile(path.join(dir, 'index.html'), { root: cwd }))
 
 app.listen(port, _ => {
     console.log('Starting Nodemon')

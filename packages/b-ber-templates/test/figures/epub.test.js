@@ -4,7 +4,7 @@ describe('templates.epub', () => {
     test('creates the markup', () => {
         const data = {
             inline: true,
-            classes: ['test'],
+            classes: 'test',
             pagebreak: '',
             id: 1,
             ref: 1,
@@ -13,10 +13,18 @@ describe('templates.epub', () => {
             caption: 'test',
             attrString: 'autoplay="false"',
             sourceElements: '<source />',
-            mediaType: 'test',
+            mediaType: 'audio-or-video',
             poster: 'test.jpg',
         }
 
+        const dataFiguresPage = Object.assign({}, data, { inline: false })
+        const dataPagebreakBefore = Object.assign({}, data, {
+            pagebreak: 'before',
+        })
+        const dataPagebreakAfter = Object.assign({}, data, {
+            pagebreak: 'after',
+        })
+
         expect(epub.portrait(data)).toMatchSnapshot()
         expect(epub.landscape(data)).toMatchSnapshot()
         expect(epub['portrait-high'](data)).toMatchSnapshot()
@@ -25,33 +33,28 @@ describe('templates.epub', () => {
         expect(epub.video(data)).toMatchSnapshot()
         expect(epub.iframe(data)).toMatchSnapshot()
 
-        data.inline = false
-        expect(epub.portrait(data)).toMatchSnapshot()
-        expect(epub.landscape(data)).toMatchSnapshot()
-        expect(epub['portrait-high'](data)).toMatchSnapshot()
-        expect(epub.square(data)).toMatchSnapshot()
-        expect(epub.audio(data)).toMatchSnapshot()
-        expect(epub.video(data)).toMatchSnapshot()
-        expect(epub.iframe(data)).toMatchSnapshot()
+        expect(epub.portrait(dataFiguresPage)).toMatchSnapshot()
+        expect(epub.landscape(dataFiguresPage)).toMatchSnapshot()
+        expect(epub['portrait-high'](dataFiguresPage)).toMatchSnapshot()
+        expect(epub.square(dataFiguresPage)).toMatchSnapshot()
+        expect(epub.audio(dataFiguresPage)).toMatchSnapshot()
+        expect(epub.video(dataFiguresPage)).toMatchSnapshot()
+        expect(epub.iframe(dataFiguresPage)).toMatchSnapshot()
 
-        data.pagebreak = 'before'
-        expect(epub.portrait(data)).toMatchSnapshot()
-        expect(epub.landscape(data)).toMatchSnapshot()
-        expect(epub['portrait-high'](data)).toMatchSnapshot()
-        expect(epub.square(data)).toMatchSnapshot()
-        expect(epub.audio(data)).toMatchSnapshot()
-        expect(epub.video(data)).toMatchSnapshot()
-        expect(epub.iframe(data)).toMatchSnapshot()
+        expect(epub.portrait(dataPagebreakBefore)).toMatchSnapshot()
+        expect(epub.landscape(dataPagebreakBefore)).toMatchSnapshot()
+        expect(epub['portrait-high'](dataPagebreakBefore)).toMatchSnapshot()
+        expect(epub.square(dataPagebreakBefore)).toMatchSnapshot()
+        expect(epub.audio(dataPagebreakBefore)).toMatchSnapshot()
+        expect(epub.video(dataPagebreakBefore)).toMatchSnapshot()
+        expect(epub.iframe(dataPagebreakBefore)).toMatchSnapshot()
 
-        data.pagebreak = 'after'
-        expect(epub.portrait(data)).toMatchSnapshot()
-        expect(epub.landscape(data)).toMatchSnapshot()
-        expect(epub['portrait-high'](data)).toMatchSnapshot()
-        expect(epub.square(data)).toMatchSnapshot()
-        expect(epub.audio(data)).toMatchSnapshot()
-        expect(epub.video(data)).toMatchSnapshot()
-        expect(epub.iframe(data)).toMatchSnapshot()
-
-
+        expect(epub.portrait(dataPagebreakAfter)).toMatchSnapshot()
+        expect(epub.landscape(dataPagebreakAfter)).toMatchSnapshot()
+        expect(epub['portrait-high'](dataPagebreakAfter)).toMatchSnapshot()
+        expect(epub.square(dataPagebreakAfter)).toMatchSnapshot()
+        expect(epub.audio(dataPagebreakAfter)).toMatchSnapshot()
+        expect(epub.video(dataPagebreakAfter)).toMatchSnapshot()
+        expect(epub.iframe(dataPagebreakAfter)).toMatchSnapshot()
     })
 })

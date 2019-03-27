@@ -34,24 +34,15 @@ class SidebarSettings extends Component {
 
         return (
             <nav
-                className={classNames(
-                    'controls__sidebar',
-                    'controls__sidebar__settings',
-                    {
-                        'controls__sidebar__settings--open':
-                            this.props.showSidebar === 'settings',
-                    },
-                )}
+                className={classNames('controls__sidebar', 'controls__sidebar__settings', {
+                    'controls__sidebar__settings--open': this.props.showSidebar === 'settings',
+                })}
             >
                 <fieldset className="settings__items">
                     <div className="settings__item settings__item--font-size">
                         <label htmlFor="fontSize">Font Size</label>
                         <div className="settings__item__button-group settings__item__button-group--horizontal">
-                            <button
-                                onClick={_ => this.handleFontSizeIncrement(-1)}
-                            >
-                                -
-                            </button>
+                            <button onClick={_ => this.handleFontSizeIncrement(-1)}>-</button>
                             <span>{fontSize}%</span>
                             <input
                                 id="fontSize"
@@ -64,27 +55,19 @@ class SidebarSettings extends Component {
                                     this.setState({ fontSize: e.target.value })
                                 }}
                                 onBlur={_ => {
-                                    let { fontSize } = this.state
-                                    fontSize = Math.round(fontSize * 0.1) * 10
-                                    if (
-                                        fontSize < fontSizeMin ||
-                                        fontSize > fontSizeMax ||
-                                        fontSize % 10 !== 0
-                                    ) {
+                                    let fontSize_ = this.state.fontSize
+                                    fontSize_ = Math.round(fontSize_ * 0.1) * 10
+                                    if (fontSize_ < fontSizeMin || fontSize_ > fontSizeMax || fontSize_ % 10 !== 0) {
                                         return
                                     }
 
-                                    this.setState({ fontSize })
+                                    this.setState({ fontSize: fontSize_ })
                                     this.props.updateViewerSettings({
-                                        fontSize,
+                                        fontSize: fontSize_,
                                     })
                                 }}
                             />
-                            <button
-                                onClick={_ => this.handleFontSizeIncrement(1)}
-                            >
-                                +
-                            </button>
+                            <button onClick={_ => this.handleFontSizeIncrement(1)}>+</button>
                         </div>
                     </div>
                 </fieldset>

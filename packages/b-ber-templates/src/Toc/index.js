@@ -2,16 +2,15 @@
 
 import path from 'path'
 import File from 'vinyl'
-import {Html} from '@canopycanopycanopy/b-ber-lib'
-import {getTitleOrName} from '@canopycanopycanopy/b-ber-lib/utils'
+import { Html } from '@canopycanopycanopy/b-ber-lib'
+import { getTitleOrName } from '@canopycanopycanopy/b-ber-lib/utils'
 import state from '@canopycanopycanopy/b-ber-lib/State'
-
 
 class Toc {
     static document() {
         return new File({
             path: 'toc.document.tmpl',
-            contents: new Buffer(`${state.templates.dynamicPageHead()}
+            contents: Buffer.from(`${state.templates.dynamicPageHead()}
                 <nav id="toc" epub:type="toc">
                     <h2>Table of Contents</h2>
                     {% body %}
@@ -27,16 +26,17 @@ class Toc {
     static items(data) {
         return `
             <ol>
-                ${data.map(a => {
-                    if (a.in_toc === false) return ''
-                    return `
+                ${data
+                    .map(a => {
+                        if (a.in_toc === false) return ''
+                        return `
                         <li>
                             ${Toc.item(a)}
                             ${a.nodes && a.nodes.length ? Toc.items(a.nodes) : ''}
                         </li>
                     `
-                    }).join('')
-                }
+                    })
+                    .join('')}
             </ol>
         `
     }

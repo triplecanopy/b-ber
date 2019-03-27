@@ -3,7 +3,7 @@
 export function info(...args) {
     if (this.logLevel < 4) return
 
-    const message = this.decorate(this.composeMessage(args), 'black')
+    const message = this.decorate(this.composeMessage(args))
 
     let prefix = ''
 

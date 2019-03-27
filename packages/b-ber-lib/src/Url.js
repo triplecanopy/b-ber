@@ -5,7 +5,9 @@ class Url {
 
     static ensureDecoded(str) {
         let str_ = str
-        while (decodeURIComponent(str_) !== str_) { str_ = decodeURIComponent(str_) }
+        while (decodeURIComponent(str_) !== str_) {
+            str_ = decodeURIComponent(str_)
+        }
         return str_
     }
 

@@ -6,6 +6,8 @@ demos
 *.loaders.js
 packages/b-ber-lib/*.js
 packages/b-ber-reader/epub/**/*.js
+packages/b-ber-reader/src/helpers/Viewport.js
+packages/b-ber-reader/src/constants/index.js
 packages/b-ber-resources/*.js
 packages/b-ber-shapes/*.js
 packages/b-ber-shapes/dc/*.js
@@ -20,3 +22,8 @@ packages/b-ber-templates/Toc/*.js
 packages/b-ber-templates/Xhtml/*.js
 packages/b-ber-templates/Xml/*.js
 packages/b-ber-templates/figures/*.js
+packages/b-ber-themes/b-ber-theme-serif/_settings.scss
+packages/b-ber-themes/b-ber-theme-serif/_overrides.scss
+packages/b-ber-themes/b-ber-theme-sans/_settings.scss
+packages/b-ber-themes/b-ber-theme-sans/_overrides.scss
+packages/b-ber-themes/b-ber-theme-serif/_mixins.scss

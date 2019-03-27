@@ -24,26 +24,14 @@ const uglify = contents => {
 }
 
 const optimized = files => {
-    const contents = files
-        .map(a =>
-            fs.readFileSync(
-                path.resolve(cwd, state.src, '_javascripts', a),
-                'utf8'
-            )
-        )
-        .join('')
+    const contents = files.map(a => fs.readFileSync(path.resolve(cwd, state.src, '_javascripts', a), 'utf8')).join('')
     const js = uglify(contents)
     const { hash } = state
     const out = path.join(state.dist, 'OPS', 'javascripts', `${hash}.js`)
 
     return fs
         .writeFile(out, js)
-        .then(() =>
-            log.info(
-                'scripts emit [%s]',
-                `javascripts${path.sep}${path.basename(out)}`
-            )
-        )
+        .then(() => log.info('scripts emit [%s]', `javascripts${path.sep}${path.basename(out)}`))
 }
 
 const unoptimized = files => {
@@ -52,12 +40,7 @@ const unoptimized = files => {
         const output = path.join(state.dist, 'OPS', 'javascripts', file)
         return fs
             .copy(input, output)
-            .then(() =>
-                log.info(
-                    'scripts emit [%s]',
-                    `javascripts${path.sep}${path.basename(output)}`
-                )
-            )
+            .then(() => log.info('scripts emit [%s]', `javascripts${path.sep}${path.basename(output)}`))
     })
 
     return Promise.all(promises).catch(log.error)

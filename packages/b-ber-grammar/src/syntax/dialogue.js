@@ -17,9 +17,7 @@ const render = (tokens, idx) => {
         if (open) {
             const [, type, id, attrs] = open
             const attrsString = attributes(attrs, type)
-            result = `\n<section id="${htmlId(
-                id,
-            )}" class="dialogue"${attrsString}>`
+            result = `\n<section id="${htmlId(id)}" ${attrsString}>`
         }
 
         if (close) {

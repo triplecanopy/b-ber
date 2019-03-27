@@ -4,10 +4,7 @@ import { rand } from '../helpers/utils'
 
 class DocumentProcessor {
     static defaults = {
-        targetClassNames: [
-            ['figure__inline', 'figure__large', 'figure__fullbleed'],
-            ['spread'],
-        ],
+        targetClassNames: [['figure__inline', 'figure__large', 'figure__fullbleed'], ['spread']],
         blacklistedClassNames: [['gallery__item', 'figure__items']],
         markerClassNames: 'marker',
         markerElement: 'span',
@@ -75,15 +72,11 @@ class DocumentProcessor {
     }
 
     classListContainsAll(node, classNames) {
-        return classNames.some(list =>
-            list.every(name => node.classList.contains(name)),
-        )
+        return classNames.some(list => list.every(name => node.classList.contains(name)))
     }
 
     classListContainsNone(node, classNames) {
-        return classNames.some(list =>
-            list.every(name => !node.classList.contains(name)),
-        )
+        return classNames.some(list => list.every(name => !node.classList.contains(name)))
     }
 
     shouldParse(node) {
@@ -98,6 +91,10 @@ class DocumentProcessor {
 
     isTarget(node) {
         return this.classListContainsAll(node, this.targetClassNames)
+    }
+
+    isMarker(node) {
+        return this.classListContainsAll(node, [['marker']])
     }
 
     hasChildren(node) {
@@ -127,16 +124,15 @@ class DocumentProcessor {
     getSibling(node) {
         if (node === null) return node
         const node_ = node.previousElementSibling
-
         // top of document
         if (!node_) {
             return this.getSibling(node.parentNode)
         }
 
-        // if the sibling is another target, we don't parse it, so we can append
-        // right away
+        // if the sibling is another target, we don't parse it, and can't append
+        // to it since it's going to be absolutely positioned, so return sibling
         if (this.isTarget(node_)) {
-            return node_
+            return this.getSibling(node_)
         }
 
         // not a target, not something we can parse, get siblings
@@ -177,7 +173,15 @@ class DocumentProcessor {
         return rand()
     }
 
-    walkDocument(doc, callback) {
+    addMarkerReferenceToChild(node, markerId) {
+        for (let i = 0; i < node.children.length; i++) {
+            if (node.children[i].nodeName === 'FIGURE' || node.children[i].classList.contains('spread__content')) {
+                node.children[i].setAttribute('data-marker-reference-figure', markerId)
+            }
+        }
+    }
+
+    insertMarkers(doc, callback) {
         const nodes = doc.children
 
         for (let i = 0; i < nodes.length; i++) {
@@ -189,25 +193,33 @@ class DocumentProcessor {
                 if (this.isTarget(node)) {
                     sibling = this.getSibling(node)
                     if (sibling) {
+                        const marker = this.createMarker(markerId)
+
+                        // check to see if the marker we're injecting shares a
+                        // parent with another marker. set a flag if so. this is
+                        // referenced in Marker.jsx
+                        if (sibling.lastElementChild && this.isMarker(sibling.lastElementChild)) {
+                            marker.setAttribute('data-adjacent', true)
+                        }
+
                         // inject into tree
-                        sibling.appendChild(this.createMarker(markerId))
+                        sibling.appendChild(marker)
                         node.setAttribute('data-marker-reference', markerId)
+                        this.addMarkerReferenceToChild(node, markerId)
                     } else {
-                        console.warn(
-                            'No siblings or children could be found for',
-                            node.nodeName,
-                        )
+                        // console.warn('No siblings or children could be found for', node.nodeName)
 
                         const elem = this.createMarker(markerId)
                         elem.setAttribute('data-unbound', true)
                         node.parentNode.prepend(elem)
                         node.setAttribute('data-marker-reference', markerId)
+                        this.addMarkerReferenceToChild(node, markerId)
 
                         return
                     }
                 }
                 if (node.children && node.children.length) {
-                    this.walkDocument(node)
+                    this.insertMarkers(node)
                 }
             }
         }
@@ -215,6 +227,46 @@ class DocumentProcessor {
         if (callback && typeof callback === 'function') {
             callback(doc)
         }
+    }
+
+    addUltimateNode(doc) {
+        const blacklist = [
+            'META',
+            'TITLE',
+            'HEAD',
+            'LINK',
+            'SCRIPT',
+            'STYLE',
+            'EM',
+            'I',
+            'STRONG',
+            'B',
+            'SPAN',
+            'IMG',
+            'AUDIO',
+            'VIDEO',
+            'BR',
+            'SUP',
+            'SUB',
+            'IFRAME',
+        ]
+
+        const text = document.createTextNode('')
+        const elem = document.createElement('span')
+        elem.setAttribute('class', 'ultimate')
+        elem.appendChild(text)
+
+        let child
+
+        for (let i = doc.body.childNodes.length - 1; i >= 0; i--) {
+            child = doc.body.childNodes[i]
+            if (!blacklist.includes(child.nodeName) && child.nodeType === window.Node.ELEMENT_NODE) {
+                child.appendChild(elem)
+                return
+            }
+        }
+
+        console.warn('Could not append ultimate node')
     }
 
     // check that all references have markers
@@ -238,16 +290,10 @@ class DocumentProcessor {
         for (let j = 0; j < markers.length; j++) {
             const markerId = markers[j].dataset.marker
             const markerData = typeof markerId !== 'undefined'
-            console.assert(
-                markerData,
-                `Marker ${j} does not have a marker attribute`,
-            )
+            console.assert(markerData, `Marker ${j} does not have a marker attribute`)
 
             const refExists = refHash[markerId]
-            console.assert(
-                refExists,
-                `Reference for marker ${j} (${markerId}) could not be found`,
-            )
+            console.assert(refExists, `Reference for marker ${j} (${markerId}) could not be found`)
 
             if (!markerData) validMarkers = false
             if (!refExists) validRefs = false
@@ -268,18 +314,17 @@ class DocumentProcessor {
         DocumentPreProcessor.createScriptElements()
         DocumentPreProcessor.parseXML()
 
-        this.walkDocument(doc, doc_ => {
-            if (!this.validateDocument(doc_)) err = new Error('Invalid markup')
-            xml = xmlString.replace(
-                /<body([^>]*?)>[\s\S]*<\/body>/g,
-                `<body$1>${String(doc.body.innerHTML)}</body>`,
-            )
+        this.insertMarkers(doc, nextDoc => {
+            if (!this.validateDocument(nextDoc)) err = new Error('Invalid markup')
+            this.addUltimateNode(doc)
+            xml = xmlString.replace(/<body([^>]*?)>[\s\S]*<\/body>/g, `<body$1>${String(doc.body.innerHTML)}</body>`)
         })
 
         const result = { xml, doc }
         if (callback && typeof callback === 'function') {
             return callback(err, result)
         }
+
         return result
     }
 }

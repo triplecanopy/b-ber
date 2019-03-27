@@ -28,16 +28,10 @@ export default {
             const attrsObj = attributesObject(attrs, type, { filename, lineNr })
 
             if (!attrsObj.source) {
-                log.error(
-                    '[source] attribute is required by [logo] directive, aborting',
-                )
+                log.error('[source] attribute is required by [logo] directive, aborting')
             }
 
-            const inputImagePath = path.join(
-                state.src,
-                '_images',
-                attrsObj.source,
-            )
+            const inputImagePath = path.join(state.src, '_images', attrsObj.source)
             const outputImagePath = `../images/${attrsObj.source}`
 
             try {

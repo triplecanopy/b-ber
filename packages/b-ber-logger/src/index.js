@@ -1,12 +1,6 @@
 import Timer from './Timer'
 import { printWarnings, printErrors } from './printer'
-import {
-    indent,
-    incrementIndent,
-    decrementIndent,
-    incrementCounter,
-    decrementCounter,
-} from './indenter'
+import { indent, incrementIndent, decrementIndent, incrementCounter, decrementCounter } from './indenter'
 import { bind } from './listeners'
 import { notify } from './events'
 import { warn } from './warn'

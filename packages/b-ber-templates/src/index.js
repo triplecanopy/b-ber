@@ -6,4 +6,4 @@ import Toc from './Toc'
 import Xhtml from './Xhtml'
 import Xml from './Xml'
 
-export {Ncx, Opf, Ops, Project, Toc, Xhtml, Xml}
+export { Ncx, Opf, Ops, Project, Toc, Xhtml, Xml }

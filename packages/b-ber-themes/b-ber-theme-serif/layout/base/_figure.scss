@@ -1,26 +1,14 @@
-//
-//
-// `.figure__xx` classes are containers for figure elements, the
-// `figure` element itself is styled immediately below
-//
+// `.figure__xx` classes are containers for figure elements. The
+// `figure` element is styled immediately below.
 
-// mixins
 //
-
-@mixin caption {
-    @include type-settings(-5);
-    line-height: 1.55; // TODO: calculate based on tininess
-    margin-bottom: 0;
-    text-align: left;
-    text-indent: 0 !important;
-}
-
 // Element styles
+//
+
 figure {
     @include following-paragraph-not-indented;
     margin: 0 auto;
     padding: 0;
-
     img {
         display: inline-block;
         margin: 0 auto;
@@ -31,12 +19,8 @@ figure {
     .figcaption,
     figcaption {
         @include following-paragraph-not-indented;
-        // width: 50%;
         display: inline-block;
         text-align: left;
-        a {
-            text-decoration: none;
-        }
     }
 }
 
@@ -52,7 +36,6 @@ figure {
 .figure__inline img {
 }
 
-//
 // Base container styles
 .figure__small,
 .figure__medium,
@@ -63,24 +46,17 @@ figure {
 }
 
 .figure__large {
+    // Space is added in the event that readers don't respect the page-break atrribute.
+    @include padding(1, 0, 1, 0, 0);
     page-break-before: always;
     page-break-after: always;
-    @include padding(
-        1,
-        0,
-        1,
-        0,
-        0
-    ); // in case readers don't respect page-break, at least there's a bit of space
 }
 
+// Basic spread styles to have page break. Further styling for Reader found in _reader.scss.
 .spread {
     page-break-inside: avoid;
     page-break-before: always;
     page-break-after: always;
-    section {
-        padding:20% 20% 0 20%; // basic centered spread layout
-    }
 }
 
 #layout.context__desktop {
@@ -90,12 +66,12 @@ figure {
         padding: 0;
     }
     .figure__large {
-        -webkit-column-break-after: always;
-        -webkit-column-break-before: always;
+        -webkit-column-break-after: always; // sass-lint:disable-line no-vendor-prefixes
+        -webkit-column-break-before: always; // sass-lint:disable-line no-vendor-prefixes
     }
     .figure__fullbleed {
-        -webkit-column-break-before: avoid !important;
-        -webkit-column-break-after: avoid !important;
+        -webkit-column-break-before: avoid !important; // sass-lint:disable-line no-important,no-vendor-prefixes
+        -webkit-column-break-after: avoid !important; // sass-lint:disable-line no-important,no-vendor-prefixes
     }
 }
 
@@ -165,30 +141,28 @@ figure {
     }
 }
 
-// Images used in epigraph
+// Images used in epigraph.
 .figure__medium {
     text-align: center;
     page-break-inside: avoid;
-    // height: 350px!important;
+    // height: 350px!important; // sass-lint:disable-line no-important
     height: n-ems(14, 0);
 
     .epigraph & {
-        margin-top: 0 !important;
-        padding-top: 0 !important;
+        margin-top: 0 !important; // sass-lint:disable-line no-important
+        padding-top: 0 !important; // sass-lint:disable-line no-important
         page-break-inside: avoid;
     }
 }
 
 // `figcaption` element and `.figcaption` class both refer to the same
 // element because the `figcaption` element is not supported on some
-// readers
+// readers.
 figcaption,
 .figcaption {
+    @include following-paragraph-not-indented;
     text-align: center;
     width: 100%;
-    @include following-paragraph-not-indented;
-    // @include type-settings(-3);
-
     display: inline-block;
     a {
         text-decoration: none;
@@ -196,25 +170,21 @@ figcaption,
 
     p.small {
         @include caption;
+        width: 90%;
+        a {
+            text-decoration: underline;
+        }
     }
 
     .figure__large & {
-        margin: 0;
-        padding: 0;
-    }
-
-    .figure__fullbleed & {
-        bottom: 70px;
-        display: inline-block;
-        left: 20px;
-        margin: 0;
-        padding: 0;
-        position: absolute;  
     }
 }
 
 p.caption {
     @include caption;
+    a {
+        text-decoration: underline;
+    }
 }
 
 .media__fallback__audio,
@@ -228,11 +198,12 @@ p.caption {
     @include caption;
 }
 
+// Inline figure sizes
 .figure__items {
     width: 100%;
     margin: 0 auto;
-    a {
-        text-decoration: none !important;
+    > a {
+        text-decoration: none !important; // sass-lint:disable-line no-important
     }
     .epigraph & {
         padding-top: 7px;
