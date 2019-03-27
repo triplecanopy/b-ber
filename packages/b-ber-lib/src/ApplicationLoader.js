@@ -12,7 +12,7 @@ import Spine from './Spine'
 const cwd = process.cwd()
 
 class ApplicationLoader {
-    metadata = []
+    metadata = { json: () => [{}] }
     theme = {}
     video = []
     audio = []
@@ -28,42 +28,6 @@ class ApplicationLoader {
     constructor() {
         const scriptPath = path.resolve(__dirname, 'package.json')
         this.npmPackage = JSON.parse(fs.readFileSync(scriptPath), 'utf8')
-
-        this.initialConfig = {
-            env: process.env.NODE_ENV || 'development',
-            src: '_project',
-            dist: 'project',
-            ibooks_specified_fonts: false,
-            theme: 'b-ber-theme-serif',
-            themes_directory: './themes',
-            base_url: '/',
-            remote_url: 'http://localhost:4000/',
-            reader_url: 'http://localhost:4000/project-reader',
-            builds: ['epub', 'mobi', 'pdf'],
-            ui_options: {
-                navigation: {
-                    header_icons: {
-                        info: true,
-                        home: true,
-                        downloads: true,
-                        toc: true,
-                    },
-                    footer_icons: {
-                        chapter: true,
-                        page: true,
-                    },
-                },
-            },
-            private: false,
-            ignore: [],
-            autoprefixer_options: {
-                browsers: ['last 2 versions', '> 2%'],
-                flexbox: 'no-2009',
-            },
-        }
-
-        this.config = { ...this.initialConfig }
-
         this.version = this.npmPackage.version
         this.config = new Config()
     }

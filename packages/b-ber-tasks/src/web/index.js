@@ -17,6 +17,7 @@ import findIndex from 'lodash/findIndex'
 import cheerio from 'cheerio'
 import log from '@canopycanopycanopy/b-ber-logger'
 import state from '@canopycanopycanopy/b-ber-lib/State'
+import { getBookMetadata, addTrailingSlash } from '@canopycanopycanopy/b-ber-lib/utils'
 import Toc from '@canopycanopycanopy/b-ber-templates/Toc'
 
 let ASSETS_TO_UNLINK
@@ -25,15 +26,6 @@ let OPS_PATH
 let OMIT_FROM_SEARCH
 let BASE_URL
 let flow // copy of spine for web task, see `WebFlow` below
-
-function addTrailingSlash(s) {
-    let s_ = s
-    if (s_ === '/') return s_
-    if (s_.charCodeAt(s_.length - 1) !== 47 /* / */) {
-        s_ += '/'
-    }
-    return s_
-}
 
 // class to manage pagination for web layout. when building an epub, figures are
 // handled outside of the spine, mostly so that they can have hashed file names
@@ -85,7 +77,7 @@ class WebFlow {
 function initialize() {
     DIST_PATH = state.dist
     OPS_PATH = path.join(DIST_PATH, 'OPS')
-    BASE_URL = {}.hasOwnProperty.call(state.config, 'base_url') ? addTrailingSlash(state.config.base_url) : '/'
+    BASE_URL = state.config.base_url ? addTrailingSlash(state.config.base_url) : '/'
 
     ASSETS_TO_UNLINK = [
         path.join(DIST_PATH, 'mimetype'),
@@ -142,7 +134,7 @@ function unlinkRedundantAssets() {
 
 function getProjectTitle() {
     let title = ''
-    const titleEntry = find(state.metadata, { term: 'title' })
+    const titleEntry = getBookMetadata('title', state)
     if (titleEntry && titleEntry.value) {
         title = titleEntry.value
     }

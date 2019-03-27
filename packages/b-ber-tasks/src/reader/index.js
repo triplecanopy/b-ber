@@ -95,9 +95,11 @@ class Reader {
             process.exit(1)
         }
     }
+
     createOutputDirs() {
         return fs.ensureDir(this.outputDir).then(() => fs.ensureDir(this.apiDir))
     }
+
     copyEpubToOutputDir() {
         const epubDir = this.createDirname(this.getBookMetadata('identifier'))
         const promises = this.epubAssets.map(item =>
@@ -106,12 +108,14 @@ class Reader {
 
         return Promise.all(promises).catch(log.error)
     }
+
     getBookMetadata(term) {
-        const entry = find(state.metadata, { term })
+        const entry = find(state.metadata.json(), { term })
         if (entry && entry.value) return entry.value
         log.warn(`Could not find metadata value for ${term}`)
         return ''
     }
+
     getProjectConfig(term) {
         const value = state.config[term]
         if (!value) {

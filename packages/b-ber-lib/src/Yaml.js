@@ -44,20 +44,10 @@ const typeCheck = (schema, data = {}) => {
 
     Object.entries(data).forEach(([key, val]) => {
         if (!interfaces[schema][key]) {
-            errors.push(
-                new Error(
-                    `Schema "${schema}" does not support property "${key}"`,
-                ),
-            )
+            errors.push(new Error(`Schema "${schema}" does not support property "${key}"`))
         }
-        if (
-            interfaces[schema][key] &&
-            interfaces[schema][key].required === true &&
-            typeof val === 'undefined'
-        ) {
-            errors.push(
-                new Error(`Schema "${schema}" requires value for"${key}"`),
-            )
+        if (interfaces[schema][key] && interfaces[schema][key].required === true && typeof val === 'undefined') {
+            errors.push(new Error(`Schema "${schema}" requires value for"${key}"`))
         }
     })
 

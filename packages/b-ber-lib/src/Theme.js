@@ -17,7 +17,7 @@ const getVendorThemes = () => {
             throw new Error(`Project has no packaged themes`)
         }
     } catch (err) {
-        log.warn(err)
+        // log.warn(err)
         return themes
     }
 

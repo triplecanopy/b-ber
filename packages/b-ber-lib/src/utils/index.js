@@ -147,3 +147,10 @@ export const ensure = ({ files = [], dirs = [], prefix = '' } = {}) =>
             .then(resolve)
             .catch(log.error),
     )
+
+export const addTrailingSlash = _s => {
+    let s = _s
+    if (s === '/') return s
+    if (s.charCodeAt(s.length - 1) !== 47 /* / */) s += '/'
+    return s
+}

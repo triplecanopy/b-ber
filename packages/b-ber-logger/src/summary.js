@@ -71,7 +71,7 @@ export function printSummary({ state, formattedStartDate, formattedEndDate, sequ
 
     this.newLine()
     write([['Metadata', 'magenta']], this)
-    writeMetadata(state.metadata, this)
+    writeMetadata(state.metadata.json(), this)
 
     this.newLine()
     write([['Navigation', 'magenta']], this)
