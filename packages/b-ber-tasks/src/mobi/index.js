@@ -12,9 +12,7 @@ const pageBreakBeforeXPATH = () =>
     [
         '//h:*[@class="figure__large figure__inline"]',
         '//h:*[@class="figure__large figure__inline"]/following::h:p[1]',
-        // TODO: this is too strict if the XHTML changes, calibre supports regex in xpath, should use that
-        // @issue: https://github.com/triplecanopy/b-ber/issues/227
-        '//h:*[@style="page-break-before:always;"]',
+        '//h:*[re:test(@style, "page-break-before:\\s*?always")]',
         '//h:*[@data-gallery-item]',
     ].join('|')
 
