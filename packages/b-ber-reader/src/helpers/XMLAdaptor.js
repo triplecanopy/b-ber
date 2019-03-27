@@ -178,7 +178,7 @@ class XMLAdaptor {
     }
 
     static parseSpineItemResponse(response) {
-        const { responseURL } = response.data.request
+        const { responseURL } = response.request
         const { hash, opsURL, paddingLeft, columnGap } = response
 
         if (logTime) console.time('XMLAdaptor#parseSpineItemResponse')
@@ -191,9 +191,8 @@ class XMLAdaptor {
                 columnGap,
                 responseURL,
             })
-            // TODO: data.data
-            // @issue: https://github.com/triplecanopy/b-ber/issues/217
-            const { xml, doc } = documentProcessor.parseXML(response.data.data)
+
+            const { xml, doc } = documentProcessor.parseXML(response.data)
             const re = /<body[^>]*?>([\s\S]*)<\/body>/
 
             // create react element that will be appended to our #frame element.

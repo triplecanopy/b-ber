@@ -399,13 +399,15 @@ class Reader extends Component {
         Request.get(requestedSpineItem.absoluteURL)
             // basically we're passing in props to a dehydrated tree here.
             // should be cleaned up a bit
-            .then(data => {
+            .then(response => {
                 if (logTime) {
                     console.timeEnd('Request.get(requestedSpineItem.absoluteURL)')
                     console.time('XMLAdaptor.parseSpineItemResponse()')
                 }
+
                 return XMLAdaptor.parseSpineItemResponse({
-                    data,
+                    data: response.data,
+                    request: response.request,
                     requestedSpineItem,
                     ...this.state,
                     navigateToChapterByURL: this.navigateToChapterByURL,
