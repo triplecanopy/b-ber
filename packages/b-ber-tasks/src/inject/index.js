@@ -8,15 +8,7 @@ import File from 'vinyl'
 import log from '@canopycanopycanopy/b-ber-logger'
 import Xhtml from '@canopycanopycanopy/b-ber-templates/Xhtml'
 import state from '@canopycanopycanopy/b-ber-lib/State'
-import {
-    dummy,
-    getLeadingWhitespace,
-    getContents,
-    getResources,
-    matchIterator,
-    getJSONLDMetadata,
-    getInlineScripts,
-} from './helpers'
+import { dummy, getLeadingWhitespace, getContents, getResources, getJSONLDMetadata, getInlineScripts } from './helpers'
 
 const TOKENS_START = {
     javascripts: new RegExp('<!-- inject:js -->', 'ig'),
@@ -71,10 +63,10 @@ const injectTags = args => {
     const toInject = templateify(data.constructor === Array ? data : [data])
 
     let result = ''
+    let startMatch
     let endMatch
 
-    // eslint-disable-next-line no-restricted-syntax
-    for (const startMatch of matchIterator(start, content)) {
+    while ((startMatch = start.exec(content)) !== null) {
         stop.lastIndex = start.lastIndex
         endMatch = stop.exec(content)
 

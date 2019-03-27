@@ -25,7 +25,7 @@ class Url {
     static parseQueryString(query) {
         const params = new URLSearchParams(query)
         const result = {}
-        for (const [key, val] of params.entries()) result[key] = val // eslint-disable-line
+        params.forEach((val, key) => (result[key] = val))
         return result
     }
 

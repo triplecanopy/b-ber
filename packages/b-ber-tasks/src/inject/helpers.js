@@ -55,11 +55,6 @@ export const getResources = type =>
         ...b,
     ])
 
-export function* matchIterator(re, str) {
-    let match
-    while ((match = re.exec(str)) !== null) yield match
-}
-
 export const getJSONLDMetadata = () => [
     new File({
         path: 'metadata.json-ld',
