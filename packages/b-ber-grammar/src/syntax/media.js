@@ -7,12 +7,10 @@ import { Html, Url } from '@canopycanopycanopy/b-ber-lib'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
 import figure from '../parsers/figure'
-import { attributesString, attributesObject, htmlId } from './helpers'
+import { attributesString, attributesObject, htmlId, toAlias } from './helpers'
 
 const markerRe = /^(video|audio)/
 const directiveRe = /(audio(?:-inline)?|video(?:-inline)?)(?::([^\s]+)(\s+.*)?)?$/
-
-const toAlias = fpath => path.basename(path.basename(fpath, path.extname(fpath)))
 
 const isHostedRemotely = asset => /^http/.test(asset)
 

@@ -1,4 +1,5 @@
 /* eslint-disable no-plusplus, max-statements-per-line, no-continue, no-multi-assign, indent */
+import path from 'path'
 import { forOf } from '@canopycanopycanopy/b-ber-lib/utils'
 import log from '@canopycanopycanopy/b-ber-logger'
 import {
@@ -269,4 +270,6 @@ const attributes = (str, type, context) => _buildAttrString(attributesObject(str
  */
 const htmlId = s => s.replace(/[^0-9a-zA-Z_-]/g, '-')
 
-export { attributes, attributesObject, attributesString, htmlId, parseAttrs }
+const toAlias = fpath => path.basename(path.basename(fpath, path.extname(fpath)))
+
+export { attributes, attributesObject, attributesString, htmlId, parseAttrs, toAlias }

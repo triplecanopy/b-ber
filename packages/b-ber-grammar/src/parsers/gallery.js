@@ -3,12 +3,8 @@
 
 import path from 'path'
 import _state from '@canopycanopycanopy/b-ber-lib/State'
-import mime from 'mime-types' // TODO: remove after abstracting toAlias
-import { htmlId, parseAttrs } from '../syntax/helpers'
-
-// TODO: following is taken from media.es, should be exporting it
-// @issue: https://github.com/triplecanopy/b-ber/issues/203
-const toAlias = fpath => path.basename(path.basename(fpath, path.extname(fpath)))
+import mime from 'mime-types'
+import { htmlId, parseAttrs, toAlias } from '../syntax/helpers'
 
 const addCaption = (md, t, attrs) => {
     if (!attrs.caption) return
