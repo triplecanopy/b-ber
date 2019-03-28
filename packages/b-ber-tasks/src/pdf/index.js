@@ -12,15 +12,17 @@ const pdf = () => {
     // TODO: remove TOC manually since we don't have the option in
     // ebook-convert to skip it. should probably be done elsewhere
     // @issue: https://github.com/triplecanopy/b-ber/issues/230
-    const tocPath = path.join(opsPath, 'text', 'toc.xhtml')
+    const tocPath = path.join(opsPath, 'toc.xhtml')
 
     return fs.remove(tocPath).then(() =>
-        EbookConvert.convert({
-            inputPath,
-            outputPath: process.cwd(),
-            fileType: 'pdf',
-            fileName: getBookMetadata('identifier', state),
-        }).catch(log.error),
+        process.argv.includes('--no-compile')
+            ? Promise.resolve()
+            : EbookConvert.convert({
+                  inputPath,
+                  outputPath: process.cwd(),
+                  fileType: 'pdf',
+                  fileName: getBookMetadata('identifier', state),
+              }).catch(log.error),
     )
 }
 

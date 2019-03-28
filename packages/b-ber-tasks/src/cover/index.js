@@ -106,7 +106,7 @@ class Cover {
             const svg = Xhtml.cover({ width, height, href })
 
             // set the content string to be written once resolved
-            this.coverXHTMLContent = Template.render(svg, Xhtml.document())
+            this.coverXHTMLContent = Template.render(svg, Xhtml.body())
 
             log.info('cover build [cover.xhtml]')
 

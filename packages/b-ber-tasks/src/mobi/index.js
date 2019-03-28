@@ -17,20 +17,22 @@ const pageBreakBeforeXPATH = () =>
     ].join('|')
 
 const mobi = () =>
-    EbookConvert.convert({
-        inputPath: path.join(path.join(state.dist, 'OPS'), 'content.opf'),
-        outputPath: process.cwd(),
-        fileType: 'mobi',
-        fileName: getBookMetadata('identifier', state),
-        flags: [
-            '--mobi-file-type=both',
-            '--disable-font-rescaling',
-            '--no-inline-toc',
-            '--chapter="/"',
-            '--chapter-mark=none',
-            '--disable-remove-fake-margins',
-            `--page-breaks-before='${pageBreakBeforeXPATH()}'`,
-        ],
-    }).catch(log.error)
+    process.argv.includes('--no-compile')
+        ? Promise.resolve()
+        : EbookConvert.convert({
+              inputPath: path.join(path.join(state.dist, 'OPS'), 'content.opf'),
+              outputPath: process.cwd(),
+              fileType: 'mobi',
+              fileName: getBookMetadata('identifier', state),
+              flags: [
+                  '--mobi-file-type=both',
+                  '--disable-font-rescaling',
+                  '--no-inline-toc',
+                  '--chapter="/"',
+                  '--chapter-mark=none',
+                  '--disable-remove-fake-margins',
+                  `--page-breaks-before='${pageBreakBeforeXPATH()}'`,
+              ],
+          }).catch(log.error)
 
 export default mobi

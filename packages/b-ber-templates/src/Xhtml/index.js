@@ -70,10 +70,6 @@ class Xhtml {
             </section>
         `
     }
-
-    static document() {
-        return new File({ contents: Buffer.from('{% body %}') })
-    }
 }
 
 export default Xhtml

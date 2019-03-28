@@ -46,8 +46,6 @@ exports[`templates.Xhtml creates a head element 2`] = `
         "
 `;
 
-exports[`templates.Xhtml creates an html document 1`] = `"{% body %}"`;
-
 exports[`templates.Xhtml creates as link element 1`] = `"<link rel=\\"stylesheet\\" type=\\"text/css\\" href=\\"{% body %}\\"/>"`;
 
 exports[`templates.Xhtml creates as link element 2`] = `"<style>{% body %}</style>"`;

@@ -32,8 +32,4 @@ describe('templates.Xhtml', () => {
     it('creates the loi elements', () => {
         expect(Xhtml.loi()).toMatchSnapshot()
     })
-
-    it('creates an html document', () => {
-        expect(Xhtml.document().contents.toString()).toMatchSnapshot()
-    })
 })

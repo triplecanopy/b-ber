@@ -12,7 +12,7 @@ import Xhtml from '@canopycanopycanopy/b-ber-templates/Xhtml'
 
 const createLOILeader = () => {
     const fileName = 'figures-titlepage.xhtml'
-    const markup = Template.render(Xhtml.loi(), Xhtml.document())
+    const markup = Template.render(Xhtml.loi(), Xhtml.body())
 
     return fs.writeFile(path.join(state.dist, 'OPS', 'text', `${fileName}`), markup, 'utf8').then(() => {
         state.add('guide', {
@@ -29,7 +29,7 @@ const createLOIAsSeparateHTMLFiles = () => {
         // Create image string based on dimensions of image
         // returns square | landscape | portrait | portraitLong
         const figureStr = figure(data, state.build)
-        const markup = Template.render(figureStr, Xhtml.document())
+        const markup = Template.render(figureStr, Xhtml.body())
 
         return fs.writeFile(path.join(state.dist, 'OPS', 'text', data.page), markup, 'utf8').then(() => {
             const fileData = new SpineItem({
@@ -67,7 +67,7 @@ const createLOIAsSingleHTMLFile = () => {
     )
 
     const fileName = 'figures-titlepage.xhtml'
-    const markup = Template.render(figuresPage, Xhtml.document())
+    const markup = Template.render(figuresPage, Xhtml.body())
 
     return fs.writeFile(path.join(state.dist, 'OPS', 'text', `${fileName}`), markup, 'utf8').then(() => {
         state.add('guide', {
