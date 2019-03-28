@@ -24,7 +24,7 @@ class Footnotes {
 
     writeFootnotes() {
         const notes = state.footnotes.reduce((acc, cur) => acc.concat(cur.notes), '')
-        const markup = Template.render('page', notes, Xhtml.document())
+        const markup = Template.render(notes, Xhtml.document())
 
         return fs.writeFile(this.file.path, markup, 'utf8').then(() => {
             const fileData = new SpineItem({

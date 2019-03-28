@@ -9,37 +9,32 @@ class Xhtml {
         const robotsMeta = state.config.private
             ? '<meta name="robots" content="noindex,nofollow"/>'
             : '<meta name="robots" content="index,follow"/>'
-        return `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-            <html xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:epub="http://www.idpf.org/2007/ops"
-                xmlns:ibooks="http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0"
-                epub:prefix="ibooks: http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0">
-            <head>
-                <title></title>
-                <meta http-equiv="default-style" content="text/html charset=utf-8"/>
-                ${robotsMeta}
-                <!-- inject:css -->
-                <!-- end:css -->
-            </head>
-            <body>
-        `
-    }
-    static body() {
+
         return new File({
-            path: 'page.body.tmpl',
-            contents: Buffer.from('{% body %}'),
+            contents: Buffer.from(`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+                <html xmlns="http://www.w3.org/1999/xhtml"
+                    xmlns:epub="http://www.idpf.org/2007/ops"
+                    xmlns:ibooks="http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0"
+                    epub:prefix="ibooks: http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0">
+                <head>
+                    <title></title>
+                    <meta http-equiv="default-style" content="text/html charset=utf-8"/>
+                    ${robotsMeta}
+                    {% body %}
+                </head>
+                <body>
+        `),
         })
     }
-    static tail() {
-        return `
-                <!-- inject:js -->
-                <!-- end:js -->
-                <!-- inject:metadata -->
-                <!-- end:metadata -->
-            </body>
-        </html>
-        `
+
+    static body() {
+        return new File({ contents: Buffer.from('{% body %}') })
     }
+
+    static tail() {
+        return new File({ contents: Buffer.from('{% body %}</body></html>') })
+    }
+
     static cover({ width, height, href }) {
         return `
             <section class="cover" style="text-align: center; padding: 0; margin: 0;">
@@ -49,13 +44,21 @@ class Xhtml {
             </section>
         `
     }
-    static script(type = 'application/javascript', inline = false) {
+
+    static stylesheet(inline = false) {
         return inline
-            ? `<script type="${type}">{% body %}</script>`
-            : `<script type="${type}" src="{% body %}"></script>`
+            ? new File({ contents: Buffer.from('<style>{% body %}</style>') })
+            : new File({ contents: Buffer.from('<link rel="stylesheet" type="text/css" href="{% body %}"/>') })
     }
-    static stylesheet() {
-        return '<link rel="stylesheet" type="text/css" href="{% body %}"/>'
+
+    static javascript(inline = false) {
+        return inline
+            ? new File({ contents: Buffer.from('<script type="application/javascript">{% body %}</script>') })
+            : new File({ contents: Buffer.from('<script type="application/javascript" src="{% body %}"></script>') })
+    }
+
+    static jsonLD() {
+        return new File({ contents: Buffer.from('<script type="application/ld+json">{% body %}</script>') })
     }
 
     static loi() {
@@ -69,13 +72,7 @@ class Xhtml {
     }
 
     static document() {
-        return new File({
-            path: 'xhtml.document.tmpl',
-            contents: Buffer.from(`${Xhtml.head()}
-                    {% body %}
-                ${Xhtml.tail()}
-            `),
-        })
+        return new File({ contents: Buffer.from('{% body %}') })
     }
 }
 

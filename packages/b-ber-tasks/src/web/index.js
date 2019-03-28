@@ -195,7 +195,7 @@ function getHeaderElement(fileName) {
 function createNavigationElement() {
     return new Promise(resolve => {
         const { toc } = state
-        const tocHTML = Toc.items(toc).replace(/a href="/g, `a href="${BASE_URL}text/`)
+        const tocHTML = Toc.items(toc).replace(/a href="/g, `a href="${BASE_URL}`)
         const metadataHTML = getProjectMetadataHTML()
         const title = getProjectTitle()
 

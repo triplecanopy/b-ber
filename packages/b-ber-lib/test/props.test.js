@@ -57,21 +57,15 @@ describe('ManifestItemProperties', () => {
     })
 
     describe('#isDCElement', () => {
-        it(
-            'Tests if the term property of an object exists in the dc/elements object',
-        )
+        it('Tests if the term property of an object exists in the dc/elements object')
     })
 
     describe('#isDCTerm', () => {
-        it(
-            'Tests if the term property of an object exists in the dc/terms object',
-        )
+        it('Tests if the term property of an object exists in the dc/terms object')
     })
 
     describe('#testHTML', () => {
-        it(
-            'Tests if a document contains a script or SVG element, and if it is an Epub navigation document',
-        ) // eslint-disable-line max-len
+        it('Tests if a document contains a script or SVG element, and if it is an Epub navigation document')
     })
 
     describe('#testMeta', () => {

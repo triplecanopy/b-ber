@@ -20,10 +20,8 @@ const writeMarkupToFile = (fname, markup) => {
 // convert md to xhtml and wrap with page template
 const createPageLayout = (fileName, data) => {
     const textDir = path.join(state.dist, 'OPS', 'text')
-    const head = Xhtml.head()
     const body = MarkdownRenderer.render(fileName, data)
-    const tail = Xhtml.tail()
-    const markup = Template.render('body', `${head}${body}${tail}`, Xhtml.body())
+    const markup = Template.render(body, Xhtml.body())
 
     return fs
         .mkdirp(textDir)

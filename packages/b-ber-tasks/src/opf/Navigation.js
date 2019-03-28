@@ -10,7 +10,9 @@
 
 import path from 'path'
 import fs from 'fs-extra'
-import rrdir from 'recursive-readdir'
+import File from 'vinyl'
+import glob from 'glob'
+// import rrdir from 'recursive-readdir'
 import find from 'lodash/find'
 import difference from 'lodash/difference'
 import uniq from 'lodash/uniq'
@@ -24,6 +26,7 @@ import Guide from '@canopycanopycanopy/b-ber-templates/Opf/Guide'
 import Spine from '@canopycanopycanopy/b-ber-templates/Opf/Spine'
 import { YamlAdaptor, Template, ManifestItemProperties } from '@canopycanopycanopy/b-ber-lib'
 import { flattenSpineFromYAML, nestedContentToYAML, pathInfoFromFiles } from './helpers'
+import { getFileObjects } from '../inject'
 
 /**
  * @alias module:navigation#Navigation
@@ -35,7 +38,7 @@ class Navigation {
      * @return {Object}
      */
     constructor() {
-        this.navDocs = ['toc.ncx', 'text/toc.xhtml']
+        this.navDocs = ['toc.ncx', 'toc.xhtml']
     }
 
     /**
@@ -56,15 +59,18 @@ class Navigation {
      */
     getAllXhtmlFiles() {
         return new Promise(resolve =>
-            rrdir(`${state.dist}${path.sep}OPS`, (err, filearr) => {
+            glob(path.join(state.dist, 'OPS', '**', '*.xhtml'), (err, files) => {
                 if (err) throw err
                 // TODO: better testing here, make sure we're not including symlinks, for example
                 // @issue: https://github.com/triplecanopy/b-ber/issues/228
-                const fileObjects = pathInfoFromFiles(filearr, state.dist)
+                const fileObjects = pathInfoFromFiles(files, state.dist)
+
                 // only get html files
                 const xhtmlFileObjects = fileObjects.filter(a => ManifestItemProperties.isHTML(a))
+
                 // prepare for diffing
                 const filesFromSystem = uniq(xhtmlFileObjects.map(a => path.basename(a.name, a.extension)))
+
                 resolve({ filesFromSystem, fileObjects })
             }),
         )
@@ -188,12 +194,18 @@ class Navigation {
 
     createTocStringsFromTemplate({ pages, ...args }) {
         log.info('opf build [toc.xhtml]')
-        return new Promise(resolve => {
+        return new Promise(async resolve => {
             const strings = {}
             const { toc } = state
-            const tocHTML = Toc.items(toc)
+            const files = [
+                {
+                    name: 'toc.xhtml',
+                    data: new File({ contents: Buffer.from(Template.render(Toc.items(toc), Toc.body())) }),
+                },
+            ]
 
-            strings.toc = Template.render('document', tocHTML, Toc.document())
+            const [data] = await getFileObjects(files)
+            strings.toc = data.contents
 
             resolve({ pages, strings, ...args })
         })
@@ -206,7 +218,7 @@ class Navigation {
             const { toc } = state
             const ncxXML = Ncx.navPoints(toc)
 
-            strings.ncx = Template.render('document', ncxXML, Ncx.document())
+            strings.ncx = Template.render(ncxXML, Ncx.document())
 
             resolve({ pages, strings, ...args })
         })
@@ -219,7 +231,7 @@ class Navigation {
             const { spine } = state
             const guideXML = Guide.items(spine)
 
-            strings.guide = Template.render('guide', guideXML, Guide.body())
+            strings.guide = Template.render(guideXML, Guide.body())
 
             resolve({ strings, flow, fileObjects, ...args })
         })
@@ -242,7 +254,7 @@ class Navigation {
 
             const spineXML = Spine.items(spine)
 
-            strings.spine = Template.render('spine', spineXML, Spine.body())
+            strings.spine = Template.render(spineXML, Spine.body())
 
             resolve({ strings, flow, fileObjects, ...args })
         })
@@ -264,7 +276,7 @@ class Navigation {
         return new Promise(resolve => {
             const result = this.deepMergePromiseArrayValues(args, 'strings')
             const { toc } = result.strings
-            const filepath = path.join(state.dist, 'OPS', 'text', 'toc.xhtml')
+            const filepath = path.join(state.dist, 'OPS', 'toc.xhtml')
             fs.writeFile(filepath, toc, err => {
                 if (err) throw err
                 log.info(`opf emit toc.xhtml [${filepath}]`)

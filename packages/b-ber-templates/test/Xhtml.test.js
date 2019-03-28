@@ -3,30 +3,30 @@ import Xhtml from '../src/Xhtml'
 
 describe('templates.Xhtml', () => {
     it('creates a head element', () => {
-
         state.config.private = true
-        expect(Xhtml.head()).toMatchSnapshot()
+        expect(Xhtml.head().contents.toString()).toMatchSnapshot()
 
         state.config.private = false
-        expect(Xhtml.head()).toMatchSnapshot()
+        expect(Xhtml.head().contents.toString()).toMatchSnapshot()
     })
 
     it('creates a body element', () => {
-        expect(Xhtml.body().contents).toMatchSnapshot()
-        expect(Xhtml.body().history).toMatchSnapshot()
-        expect(Xhtml.tail()).toMatchSnapshot()
+        expect(Xhtml.body().contents.toString()).toMatchSnapshot()
+        expect(Xhtml.tail().contents.toString()).toMatchSnapshot()
     })
 
     it('creates a cover page', () => {
-        expect(Xhtml.cover({width: 1, height: 1, href: 'test'})).toMatchSnapshot()
+        expect(Xhtml.cover({ width: 1, height: 1, href: 'test' })).toMatchSnapshot()
     })
 
-    it('creates a script element', () => {
-        expect(Xhtml.script()).toMatchSnapshot()
+    it('creates script elements', () => {
+        expect(Xhtml.javascript().contents.toString()).toMatchSnapshot()
+        expect(Xhtml.javascript(true).contents.toString()).toMatchSnapshot()
     })
 
     it('creates as link element', () => {
-        expect(Xhtml.stylesheet()).toMatchSnapshot()
+        expect(Xhtml.stylesheet().contents.toString()).toMatchSnapshot()
+        expect(Xhtml.stylesheet(true).contents.toString()).toMatchSnapshot()
     })
 
     it('creates the loi elements', () => {
@@ -34,8 +34,6 @@ describe('templates.Xhtml', () => {
     })
 
     it('creates an html document', () => {
-        expect(Xhtml.document().contents).toMatchSnapshot()
-        expect(Xhtml.document().history).toMatchSnapshot()
+        expect(Xhtml.document().contents.toString()).toMatchSnapshot()
     })
-
 })

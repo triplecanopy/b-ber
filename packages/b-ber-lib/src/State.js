@@ -4,16 +4,6 @@ import isArray from 'lodash/isArray'
 import findIndex from 'lodash/findIndex'
 import ApplicationLoader from './ApplicationLoader'
 
-const dynamicPageTmpl = _ => {
-    throw new Error('[state.templates#dynamicPageTmpl] has not been initialized in b-ber-modifiers/inject')
-}
-const dynamicPageHead = _ => {
-    throw new Error('[state.templates#dynamicPageHead] has not been initialized in b-ber-modifiers/inject')
-}
-const dynamicPageTail = _ => {
-    throw new Error('[state.templates#dynamicPageTail] has not been initialized in b-ber-modifiers/inject')
-}
-
 class State extends ApplicationLoader {
     static defaults = {
         guide: [],
@@ -27,10 +17,6 @@ class State extends ApplicationLoader {
         loi: [],
         sequence: [],
         hash: crypto.randomBytes(20).toString('hex'),
-
-        // for dynamically created templates. functions here are overwritten
-        // during build. see b-ber-modifiers/inject#mapSourcesToDynamicPageTemplate
-        templates: { dynamicPageTmpl, dynamicPageHead, dynamicPageTail },
     }
 
     constructor() {
@@ -70,8 +56,6 @@ class State extends ApplicationLoader {
     reset() {
         this._resetEntries()
         this._resetConfig()
-
-        this.templates = { dynamicPageTmpl, dynamicPageHead, dynamicPageTail }
         this.hash = crypto.randomBytes(20).toString('hex')
     }
 

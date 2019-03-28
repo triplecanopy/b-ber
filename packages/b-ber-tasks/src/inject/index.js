@@ -6,155 +6,97 @@ import fs from 'fs-extra'
 import path from 'path'
 import File from 'vinyl'
 import log from '@canopycanopycanopy/b-ber-logger'
-import Xhtml from '@canopycanopycanopy/b-ber-templates/Xhtml'
 import state from '@canopycanopycanopy/b-ber-lib/State'
-import { dummy, getLeadingWhitespace, getContents, getResources, getJSONLDMetadata, getInlineScripts } from './helpers'
+import { Template } from '@canopycanopycanopy/b-ber-lib'
+import Xhtml from '@canopycanopycanopy/b-ber-templates/Xhtml'
 
-const TOKENS_START = {
-    javascripts: new RegExp('<!-- inject:js -->', 'ig'),
-    stylesheets: new RegExp('<!-- inject:css -->', 'ig'),
-    metadata: new RegExp('<!-- inject:metadata -->', 'ig'),
+const getRemoteAssets = type => Promise.resolve(state.config[`remote_${type}`] || [])
+
+const getAssets = type =>
+    Promise.all([fs.readdir(path.join(state.dist, 'OPS', type)), getRemoteAssets(type)]).then(([a, b]) => [...a, ...b])
+
+const getInlineScripts = () => [
+    new File({
+        contents: Buffer.from(`window.bber = window.bber || {}; window.bber.env = '${state.build}';`),
+    }),
+]
+
+const ensureString = objectOrString =>
+    objectOrString instanceof File ? objectOrString.contents.toString() : objectOrString
+
+const relative = (from, to) => path.relative(path.join(...from), path.join(...to))
+
+const render = ({ file, basePath, stylesheets, javascripts, inlineStylesheets, inlineJavascripts, metadata }) => {
+    const stylesheets_ = stylesheets
+        .map(ensureString)
+        .map(f => Template.render(relative([basePath], ['stylesheets', f]), Xhtml.stylesheet()))
+        .join('')
+
+    const inlineStylesheets_ = inlineStylesheets
+        .map(ensureString)
+        .map(f => Template.render(f, Xhtml.stylesheet(true)))
+        .join('')
+
+    const javascripts_ = javascripts
+        .map(ensureString)
+        .map(f => Template.render(relative([basePath], ['javascripts', f]), Xhtml.javascript()))
+        .join('')
+
+    const inlineJavascripts_ = inlineJavascripts
+        .map(ensureString)
+        .map(f => Template.render(f, Xhtml.javascript(true)))
+        .join('')
+
+    const metadata_ = metadata
+        .map(ensureString)
+        .map(f => Template.render(f, Xhtml.jsonLD()))
+        .join('')
+
+    const head = Template.render(`${stylesheets_}${inlineStylesheets_}`, Xhtml.head())
+    const body =
+        file instanceof File
+            ? file.contents.toString()
+            : fs.readFileSync(path.join(state.dist, 'OPS', basePath, file), 'utf8')
+    const tail = Template.render(`${javascripts_}${inlineJavascripts_}${metadata_}`, Xhtml.tail())
+
+    return `${head}${body}${tail}`
 }
 
-const TOKENS_STOP = {
-    javascripts: new RegExp('<!-- end:js -->', 'ig'),
-    stylesheets: new RegExp('<!-- end:css -->', 'ig'),
-    metadata: new RegExp('<!-- end:metadata -->', 'ig'),
+const writeAll = files =>
+    Promise.all(files.map(f => fs.writeFile(path.join(state.dist, 'OPS', 'text', f.filename), f.contents)))
+
+export const getFileObjects = async (files, basePath = '') => {
+    const stylesheets = await getAssets('stylesheets')
+    const javascripts = await getAssets('javascripts')
+    const inlineStylesheets = []
+    const inlineJavascripts = getInlineScripts()
+
+    // TODO:
+    // @issue: https://github.com/triplecanopy/b-ber/issues/226
+    const metadata = []
+
+    const files_ = files.map(file => ({
+        filename: file.name,
+        contents: render({
+            file: file.data,
+            basePath,
+            stylesheets,
+            javascripts,
+            inlineStylesheets,
+            inlineJavascripts,
+            metadata,
+        }),
+    }))
+
+    return files_
 }
-
-/**
- * Replace the contents of the RegExp tokens with asset paths
- * @param  {Array} files Files to inject
- * @return {Array}
- * @throws {Error} If a file does not have a .js or .css extension
- */
-const templateify = files =>
-    files.map(file => {
-        let fileType
-        let base = ''
-        let dirName = ''
-
-        if (file instanceof File) {
-            // file is a vinyl File object
-            fileType = file.path.slice(file.path.lastIndexOf('.'))
-        } else {
-            fileType = path.extname(file).toLowerCase()
-        }
-
-        dirName = fileType === '.css' ? 'stylesheets' : 'javascripts'
-        base = /^(http|\/\/)/.test(file) === false ? `..${path.sep}${dirName}${path.sep}` : ''
-
-        switch (fileType) {
-            case '.js':
-                return file instanceof File
-                    ? Xhtml.script('application/javascript', true).replace(/\{% body %\}/, String(file.contents))
-                    : Xhtml.script().replace(/\{% body %\}/, `${base}${file}`)
-            case '.css':
-                return Xhtml.stylesheet().replace(/\{% body %\}/, `${base}${file}`)
-            case '.json-ld':
-                return Xhtml.script('application/ld+json', true).replace(/\{% body %\}/, String(file.contents))
-            default:
-                throw new Error(`Unsupported filetype: ${file}`)
-        }
-    })
-
-const injectTags = args => {
-    const { content, data, start, stop } = args
-    const toInject = templateify(data.constructor === Array ? data : [data])
-
-    let result = ''
-    let startMatch
-    let endMatch
-
-    while ((startMatch = start.exec(content)) !== null) {
-        stop.lastIndex = start.lastIndex
-        endMatch = stop.exec(content)
-
-        if (!endMatch) {
-            throw new Error(`Missing end tag for start tag: ${startMatch[0]}`)
-        }
-
-        const previousInnerContent = content.substring(start.lastIndex, endMatch.index)
-        const indent = getLeadingWhitespace(previousInnerContent)
-
-        toInject.unshift(startMatch[0])
-        toInject.push(endMatch[0])
-
-        result = [content.slice(0, startMatch.index), toInject.join(indent), content.slice(stop.lastIndex)].join('')
-    }
-
-    return result
-}
-
-const promiseToReplace = (prop, data, source, file) =>
-    new Promise(async resolve => {
-        log.info(`inject ${prop} [${source}]`)
-
-        const stream = file || (await getContents(source))
-        const start = TOKENS_START[prop]
-        const stop = TOKENS_STOP[prop]
-        const content = stream.contents.toString('utf8')
-
-        const result = new File({
-            path: source,
-            contents: Buffer.from(injectTags({ content, start, stop, data })),
-        })
-
-        resolve(result)
-    })
-
-// Iterate over the list of XHTML files, injecting script and style tags
-// inside of the placeholders
-const mapSources = args => {
-    const { xhtml, stylesheets, javascripts, metadata } = args
-    const promises = xhtml.map(source => {
-        const location = path.join(state.dist, 'OPS', 'text', source)
-
-        return promiseToReplace('stylesheets', stylesheets, source)
-            .then(file => promiseToReplace('javascripts', javascripts, source, file))
-            .then(file => promiseToReplace('metadata', metadata, source, file))
-            .then(file => fs.writeFile(location, file.contents.toString('utf8')))
-            .then(() => log.info(`inject emit [${path.basename(location)}]`))
-    })
-
-    return Promise.all(promises).catch(log.error)
-}
-
-// `mapSourcesToDynamicPageTemplate` accomplishes the same as `mapSources`
-// above, but we pass in the vinyl file object (dummy) in the first
-// `promiseToReplace`.  This function then parses the result into `pageHead`
-// and `pageTail` functions and adds them to the `template` object in `state`
-const mapSourcesToDynamicPageTemplate = args => {
-    const { stylesheets, javascripts, metadata } = args
-    const docs = [dummy.path]
-    const promises = docs.map(source =>
-        promiseToReplace('stylesheets', stylesheets, source, dummy)
-            .then(file => promiseToReplace('javascripts', javascripts, source, file))
-            .then(file => promiseToReplace('metadata', metadata, source, file))
-            .then(file => {
-                const tmpl = file.contents.toString()
-                const [head, tail] = tmpl.split('{% body %}')
-
-                state.templates.dynamicPageTmpl = () => tmpl
-                state.templates.dynamicPageHead = () => head
-                state.templates.dynamicPageTail = () => tail
-            }),
-    )
-
-    return Promise.all(promises).catch(log.error)
-}
-
-const getXHTMLFiles = () => fs.readdir(path.join(state.dist, 'OPS', 'text'))
 
 const inject = async () => {
-    const files = {
-        xhtml: await getXHTMLFiles(),
-        stylesheets: await getResources('stylesheets'),
-        javascripts: [...(await getResources('javascripts')), ...(await getInlineScripts())],
-        metadata: await getJSONLDMetadata(),
-    }
+    const basePath = 'text'
+    const files = fs.readdirSync(path.join(state.dist, 'OPS', basePath)).map(f => ({ name: f, data: f }))
+    const fileObjects = await getFileObjects(files, basePath)
 
-    return Promise.all([mapSources(files), mapSourcesToDynamicPageTemplate(files)]).catch(log.error)
+    return writeAll(fileObjects).catch(log.error)
 }
 
 export default inject

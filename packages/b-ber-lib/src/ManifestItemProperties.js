@@ -1,23 +1,21 @@
 import fs from 'fs-extra'
 import mime from 'mime-types'
 import { terms, elements } from '@canopycanopycanopy/b-ber-shapes/dc'
-import state from './State'
 
 /**
  * Mehtods to detect XML media-type properties based on the content of XHTML documents
  * @namespace
  */
 class ManifestItemProperties {
+    static HTMLMimeTypes = ['text/html', 'application/xhtml+xml']
+
     /**
      * Detect if a file is an (X)HTML document
      * @param  {String}  file File path
      * @return {Boolean}
      */
     static isHTML(file) {
-        return Boolean(
-            mime.lookup(file.absolutePath) === 'text/html' ||
-                mime.lookup(file.absolutePath) === 'application/xhtml+xml',
-        )
+        return ManifestItemProperties.HTMLMimeTypes.includes(mime.lookup(file.absolutePath))
     }
 
     /**
@@ -26,11 +24,7 @@ class ManifestItemProperties {
      * @return {Boolean}
      */
     static isNav(file) {
-        return Boolean(
-            (mime.lookup(file.absolutePath) === 'text/html' ||
-                mime.lookup(file.absolutePath) === 'application/xhtml+xml') &&
-                /^toc\./.test(file.name),
-        )
+        return ManifestItemProperties.isHTML(file) && /^toc\./.test(file.name)
     }
 
     /**
@@ -46,23 +40,10 @@ class ManifestItemProperties {
         // results from `state.template.dynamicTail` for now, since we know
         // that the toc was written using that
         // @issue: https://github.com/triplecanopy/b-ber/issues/206
-        if (ManifestItemProperties.isNav(file)) {
-            // the dynamicTail function in state throws an error initially,
-            // though, as the function is assigned during the inject task, so
-            // make sure to handle that
-            let tail = ''
-            try {
-                tail = state.templates.dynamicPageTail()
-            } catch (err) {
-                if (/state.templates#dynamicPageTail/.test(err)) return false
-                throw err
-            }
-
-            return tail.match(/<script/)
-        }
+        if (ManifestItemProperties.isNav(file)) return true
 
         const contents = fs.readFileSync(file.absolutePath, 'utf8')
-        return Boolean(contents.match(/<script/))
+        return contents.match(/<script/) !== null
     }
 
     /**
@@ -73,7 +54,7 @@ class ManifestItemProperties {
     static isSVG(file) {
         if (!ManifestItemProperties.isHTML(file)) return false
         const contents = fs.readFileSync(file.absolutePath, 'utf8')
-        return Boolean(contents.match(/<svg/))
+        return contents.match(/<svg/) !== null
     }
 
     /**
@@ -82,7 +63,7 @@ class ManifestItemProperties {
      * @return {Boolean}
      */
     static isDCElement(data) {
-        return Boolean({}.hasOwnProperty.call(data, 'term') && elements.indexOf(data.term) > -1)
+        return {}.hasOwnProperty.call(data, 'term') && elements.indexOf(data.term) > -1
     }
 
     /**
@@ -91,7 +72,7 @@ class ManifestItemProperties {
      * @return {Boolean}
      */
     static isDCTerm(data) {
-        return Boolean({}.hasOwnProperty.call(data, 'term') && terms.indexOf(data.term) > -1)
+        return {}.hasOwnProperty.call(data, 'term') && terms.indexOf(data.term) > -1
     }
 
     /**
@@ -101,9 +82,9 @@ class ManifestItemProperties {
      */
     static hasRemoteResources(file) {
         if (!ManifestItemProperties.isHTML(file)) return false
-        const fpath = file.absolutePath
-        const contents = fs.readFileSync(fpath, 'utf8')
-        return Boolean(contents.match(/src=(?:['"]{1})?https?/))
+
+        const contents = fs.readFileSync(file.absolutePath, 'utf8')
+        return contents.match(/src=(?:['"]{1})?http/) !== null
     }
 
     /**
@@ -117,9 +98,8 @@ class ManifestItemProperties {
         if (ManifestItemProperties.isNav(file)) props.push('nav')
         if (ManifestItemProperties.isScripted(file)) props.push('scripted')
         if (ManifestItemProperties.isSVG(file)) props.push('svg')
-        if (ManifestItemProperties.hasRemoteResources(file)) {
-            props.push('remote-resources')
-        }
+        if (ManifestItemProperties.hasRemoteResources(file)) props.push('remote-resources')
+
         return props
     }
 
