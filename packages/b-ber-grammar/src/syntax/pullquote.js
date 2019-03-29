@@ -10,7 +10,7 @@ import { attributesObject, attributesString } from './helpers'
 
 const marker = BLOCK_DIRECTIVE_MARKER
 const minMarkers = BLOCK_DIRECTIVE_MARKER_MIN_LENGTH
-const markerOpen = /^(pullquote|exit)(?::([^\s]+)(\s.*)?)?$/
+const markerOpen = /^(pullquote|blockquote|exit)(?::([^\s]+)(\s.*)?)?$/
 const markerClose = /(exit)(?::([\s]+))?/
 
 let _line = null
@@ -53,8 +53,8 @@ export default {
             // we need to append data (citation blocks) from the directive's opening
             // attributes to the end of the element
             if (tokens[idx].nesting === 1) {
-                // either a `pullquote` or an `exit` directive, we keep matches for
-                // both in `open` and `close` vars below
+                // either a `pullquote`, `blockquote` or an `exit` directive, we
+                // keep matches for both in `open` and `close` vars below
                 const open = token.match(markerOpen)
                 const close = token.match(markerClose)
 
@@ -80,20 +80,14 @@ export default {
                         lineNr,
                     })
 
-                    if ({}.hasOwnProperty.call(attrsObject, 'classes')) {
-                        attrsObject.classes = `pullquote ${attrsObject.classes}`
-                    } else {
-                        attrsObject.classes = 'pullquote'
-                    }
-
                     // get citation which we'll use below
                     if ({}.hasOwnProperty.call(attrsObject, 'citation')) {
                         citation = attrsObject.citation
                         delete attrsObject.citation
                     }
 
-                    const attributeStr = ` ${attributesString(attrsObject)}`
-                    const comment = `\n<!-- START: section:pullquote#${id} -->\n`
+                    const attributeStr = attributesString(attrsObject)
+                    const comment = `\n<!-- START: section:${type}#${id} -->\n`
                     result = `${comment}<section${attributeStr}>`
                 }
 
@@ -107,7 +101,7 @@ export default {
                         // it's a match for the exit directive's `id`, output the citation
                         // with the HTML comment and reset the citation to prepare for the
                         // next iteration
-                        const comment = `\n<!-- END: section:pullquote#${id} -->\n`
+                        const comment = `\n<!-- END: section#${id} -->\n`
                         result = citation ? `<cite>&#8212;&#160;${instance.renderInline(citation)}</cite>` : ''
                         result += `</section>${comment}`
                         citation = ''

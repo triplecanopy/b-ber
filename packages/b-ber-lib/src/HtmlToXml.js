@@ -13,6 +13,7 @@ class HtmlToXml {
     constructor(customElements) {
         const defaultElements = [
             'pullquote',
+            'blockquote',
             'epigraph',
             'dialogue',
             'gallery',

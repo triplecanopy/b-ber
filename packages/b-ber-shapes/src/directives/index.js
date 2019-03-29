@@ -47,7 +47,7 @@ const BACKMATTER_DIRECTIVES = [
 const INLINE_DIRECTIVES = ['figure', 'figure-inline', 'logo', 'video', 'audio', 'video-inline', 'audio-inline']
 
 // misc
-const MISC_DIRECTIVES = ['pullquote', 'dialogue', 'gallery', 'spread', 'epigraph']
+const MISC_DIRECTIVES = ['pullquote', 'blockquote', 'dialogue', 'gallery', 'spread', 'epigraph']
 
 // belonging to the epub-vocab, but still in draft. see https://idpf.github.io/epub-vocabs/structure/
 const DRAFT_DIRECTIVES = [
