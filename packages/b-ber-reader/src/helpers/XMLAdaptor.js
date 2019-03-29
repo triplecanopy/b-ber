@@ -305,7 +305,7 @@ class XMLAdaptor {
                                     nodeText = nodeText.substr(1, nodeText.length - 2) // trim quotes
                                 }
 
-                                if (Url.isRelativeURL(nodeText)) {
+                                if (Url.isRelative(nodeText)) {
                                     nodeText = Url.resolveRelativeURL(styleSheetURL, nodeText)
                                     node.value.value = `"${nodeText}"` // eslint-disable-line no-param-reassign
                                 }

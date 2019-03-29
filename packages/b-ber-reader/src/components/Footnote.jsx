@@ -15,7 +15,7 @@ const processFootnoteResponseElement = elem => {
             child.parentNode.removeChild(child)
         }
         if (child.nodeName === 'A') {
-            if (!child.href || Url.isRelativeURL(child.href)) {
+            if (!child.href || Url.isRelative(child.href)) {
                 child.parentNode.removeChild(child)
             } else {
                 const { origin } = new window.URL(child.href)

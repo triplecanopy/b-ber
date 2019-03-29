@@ -47,10 +47,10 @@ describe('Url', () => {
     })
 
     test('tests if a url is relative', () => {
-        expect(Url.isRelativeURL('http://example.com/test.jpg')).toBe(false)
-        expect(Url.isRelativeURL('../test.jpg')).toBe(true)
-        expect(Url.isRelativeURL('test.jpg')).toBe(true)
-        expect(Url.isRelativeURL('../../../test.jpg')).toBe(true)
+        expect(Url.isRelative('http://example.com/test.jpg')).toBe(false)
+        expect(Url.isRelative('../test.jpg')).toBe(true)
+        expect(Url.isRelative('test.jpg')).toBe(true)
+        expect(Url.isRelative('../../../test.jpg')).toBe(true)
     })
 
     test('trims a filename from a url', () => {
@@ -73,11 +73,11 @@ describe('Url', () => {
     })
 
     test('tests if an url is external', () => {
-        expect(Url.isExternalURL('/foo/bar.jpg')).toBeFalse()
-        expect(Url.isExternalURL('http://example.com/')).toBeTrue()
-        expect(Url.isExternalURL()).toBeFalse()
-        expect(Url.isExternalURL('http://example.com#anchor')).toBeTrue()
-        expect(Url.isExternalURL('http://localhost/')).toBeFalse()
-        expect(Url.isExternalURL('http://localhost#anchor')).toBeFalse()
+        expect(Url.isExternal('/foo/bar.jpg')).toBeFalse()
+        expect(Url.isExternal('http://example.com/')).toBeTrue()
+        expect(Url.isExternal()).toBeFalse()
+        expect(Url.isExternal('http://example.com#anchor')).toBeTrue()
+        expect(Url.isExternal('http://localhost/')).toBeFalse()
+        expect(Url.isExternal('http://localhost#anchor')).toBeFalse()
     })
 })

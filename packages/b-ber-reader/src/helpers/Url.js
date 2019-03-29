@@ -36,7 +36,7 @@ class Url {
         return url_
     }
 
-    static isRelativeURL(url) {
+    static isRelative(url) {
         return /^http/.test(url) === false
     }
 
@@ -130,10 +130,36 @@ class Url {
         return path_
     }
 
-    static isExternalURL(url) {
-        if (Url.isRelativeURL(url)) return false
+    // the url is on the same domain as the reader
+    static isInternal(url) {
+        if (Url.isRelative(url)) return false
         const url_ = new window.URL(url)
-        return window.location.origin !== url_.origin
+        return window.location.origin === url_.origin
+    }
+
+    // the url is on the same domain as where the reader is hosted, but the
+    // reader is not on that hosted domain (e.g., it's embedded in an iframe)
+    static isHosted(url) {
+        if (Url.isRelative(url)) return false
+
+        // reader is not in an iframe then just check to see if the URL is internal
+        if (window.location === window.parent.location) return Url.isInternal(url)
+
+        const url_ = new window.URL(url)
+
+        // get the origin from document.referrer since we don't have access to
+        // parent.location, and the embedded iframe will have referrer set to
+        // parent's domain
+        const ref = new window.URL(document.referrer)
+
+        return ref.origin === url_.origin
+    }
+
+    // the url is on a different domain than where the reader is hosted, and
+    // different from the domain that's hosting the reader
+    static isExternal(url) {
+        if (Url.isRelative(url)) return false
+        return Url.isInternal(url) === false && Url.isHosted(url) === false
     }
 }
 

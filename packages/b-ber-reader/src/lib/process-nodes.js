@@ -33,7 +33,7 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
             const attrs = Asset.convertToReactAttrs(node.attribs)
 
             let { href } = node.attribs
-            if (Url.isRelativeURL(node.attribs.href)) {
+            if (Url.isRelative(node.attribs.href)) {
                 href = Url.resolveOverlappingURL(requestedSpineItem.absoluteURL, node.attribs.href)
             }
 
@@ -51,10 +51,7 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
     {
         shouldProcessNode(node) {
             return (
-                /^(img|source)$/.test(node.name) &&
-                node.attribs &&
-                node.attribs.src &&
-                Url.isRelativeURL(node.attribs.src)
+                /^(img|source)$/.test(node.name) && node.attribs && node.attribs.src && Url.isRelative(node.attribs.src)
             )
         },
         processNode(node, children, index) {
@@ -129,7 +126,7 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
                 node.name === 'image' &&
                 node.attribs &&
                 node.attribs['xlink:href'] &&
-                Url.isRelativeURL(node.attribs['xlink:href'])
+                Url.isRelative(node.attribs['xlink:href'])
             )
         },
         processNode(node, children, index) {

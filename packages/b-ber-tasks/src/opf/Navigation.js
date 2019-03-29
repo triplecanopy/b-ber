@@ -117,7 +117,7 @@ class Navigation {
                 if (missingFiles.length) {
                     // there are extra entries in the YAML (i.e., missing XHTML pages)
                     missingEntries.forEach(a => {
-                        log.warn(`Removing redundant entry [${a}] in ${state.build}.yml`)
+                        log.warn(`Removing redundant entry [${a}] in [${state.build}.yml]`)
                     })
 
                     missingFiles.forEach(item => {
