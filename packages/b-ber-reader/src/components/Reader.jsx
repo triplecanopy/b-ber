@@ -593,13 +593,26 @@ class Reader extends Component {
     }
 
     navigateToElementById(hash) {
+        // get the element we need to navigate to in the layout
         const elem = document.querySelector(hash)
+
         if (!elem) return console.warn(`Could not find element ${hash}`)
 
-        const windowWidth = window.innerWidth
-        const { x } = elem.getBoundingClientRect()
-        const spreadIndex = Math.floor(x / windowWidth)
+        const { paddingTop, paddingBottom, columnGap } = this.state.viewerSettings
 
+        // we calculate the frameHeight using the same method in Layout.jsx, by
+        // rounding the window height minus the padding top and bottom of the
+        // reader's frame
+        const height = window.innerHeight
+        const frameHeight = Math.round(height - paddingTop - paddingBottom)
+
+        // find the index of the spread that our element appears on by getting
+        // it's left-most value (accounting for the gutter), and dividing it by
+        // the height of a single column
+        const left = elem.offsetLeft - columnGap
+        const spreadIndex = Math.floor(left / frameHeight / 2)
+
+        // we move to the desired spread when the query string actually updates
         this.setState({ spreadIndex }, this.updateQueryString)
     }
 
@@ -617,6 +630,7 @@ class Reader extends Component {
 
             deferredCallback = () => {
                 setTimeout(() => {
+                    console.log('deferredCallback')
                     // this.enablePageTransitions()
                     this.navigateToElementById(hash)
                     this.enableEventHandling()
