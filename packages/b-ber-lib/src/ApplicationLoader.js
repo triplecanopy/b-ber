@@ -33,7 +33,7 @@ class ApplicationLoader {
     }
 
     _resetConfig() {
-        this.config = new Config()
+        this._config()
     }
 
     _config() {
@@ -142,7 +142,6 @@ class ApplicationLoader {
         }
 
         const spine = new Spine({ src, buildType: type })
-
         const spineList = spine.create(navigationConfigFile)
         const tocEntries = spine.build(spineList, src) // nested navigation
         const spineEntries = spine.flatten(tocEntries) // one-dimensional page flow

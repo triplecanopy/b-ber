@@ -21,7 +21,6 @@ const handler = argv => {
         state.update('build', build)
         state.update('toc', state.buildTypes[build].tocEntries)
         state.update('spine', state.buildTypes[build].spineEntries)
-        state.merge('config', state.buildTypes[build].config)
 
         return tasks.async.serialize(sequences[build], tasks).then(() => {
             if (buildTasks.length) run(buildTasks)
