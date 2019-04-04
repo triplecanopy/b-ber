@@ -4,7 +4,7 @@
     "packages/*"
   ],
   "npmClient": "yarn",
-  "version": "0.1.0-alpha.de5a155f",
+  "version": "0.1.1-alpha.0",
   "command": {
     "publish": {
       "message": "%v"
