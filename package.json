@@ -24,7 +24,8 @@
         "test.coverage": "rimraf ./coverage && yarn lint && yarn jest --collectCoverage=true",
         "test": "yarn lint && yarn jest",
         "build": "lerna run build",
-        "release": "yarn test && yarn build && lerna publish --canary"
+        "publish.canary": "yarn test && yarn build && lerna publish --canary",
+        "publish.alpha": "yarn test && yarn build && lerna publish prepatch"
     },
     "husky": {
         "hooks": {
