@@ -112,14 +112,17 @@ export default function observable(target) {
         // chapter navigation still works
         if (!isNumeric(frameHeight)) frameHeight = 0
 
+        // we need the width of the frame for calculations for FF
+        const frameWidth = this.getFrameWidth()
+
         if (browser.name === 'firefox' && lastNode) {
             // FF only. we need to find the document height, but firefox
             // interprets our column layout as having width, so we measure the
-            // distance of the left edge of the last node in our document
-
-            frameHeight *= 2
-            contentDimensions = lastNode.offsetLeft
-            lastSpreadIndex = Math.floor(contentDimensions / frameHeight)
+            // distance of the left edge of the last node in our document, and
+            // divide it by the number of columns
+            contentDimensions = lastNode.offsetLeft + this.getSingleColumnWidth()
+            lastSpreadIndex = Math.round(contentDimensions / frameWidth)
+            lastSpreadIndex -= 1
         } else {
             contentDimensions = Math.max(
                 this.contentNode.scrollHeight,

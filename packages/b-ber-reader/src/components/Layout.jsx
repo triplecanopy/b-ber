@@ -63,6 +63,8 @@ class Layout extends Component {
         this.contentNode = null
         this.layoutNode = null
 
+        this.getSingleColumnWidth = this.getSingleColumnWidth.bind(this)
+        this.getFrameWidth = this.getFrameWidth.bind(this)
         this.getFrameHeight = this.getFrameHeight.bind(this)
         this.updateDimensions = this.updateDimensions.bind(this)
         this.updateTransform = this.updateTransform.bind(this)
@@ -119,6 +121,16 @@ class Layout extends Component {
         height -= paddingBottom
 
         return height
+    }
+
+    // eslint-disable-next-line class-methods-use-this
+    getFrameWidth() {
+        const { width, paddingLeft, paddingRight, columnGap } = this.state
+        return width - paddingLeft - paddingRight - columnGap
+    }
+
+    getSingleColumnWidth() {
+        return this.getFrameWidth() / 2
     }
 
     getTranslateX(_spreadIndex) {
