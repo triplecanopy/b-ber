@@ -7,11 +7,8 @@
 .travis.yml
 server.js
 .localconfig
-.yarnclean
-yarn.lock
 jest.config.js
-yarn-debug.log*
-yarn-error.log*
+npm-debug.log*
 
 /.eslintrc.json
 /src

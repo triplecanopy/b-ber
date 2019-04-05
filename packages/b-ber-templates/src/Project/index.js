@@ -376,8 +376,6 @@ Created with [b-ber](https://github.com/triplecanopy/b-ber/)
 
 node_modules
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 bber-debug.log*
 
 /project*

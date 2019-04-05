@@ -5,11 +5,11 @@
     "main": "dist/index.js",
     "scripts": {
         "prepare.dist": "BABEL_ENV=production ../../node_modules/.bin/babel -d dist/ src/ --ignore **/__tests__/**",
-        "prepare": "yarn clean && yarn prepare.dist",
+        "prepare": "npm run clean && npm run prepare.dist",
         "clean": "rimraf dist",
-        "build": "yarn prepare",
+        "build": "npm run prepare",
         "watch": "BABEL_ENV=production ../../node_modules/.bin/babel -d dist/ src/ --watch src",
-        "test": "yarn jest"
+        "test": "./node_modules/.bin/jest"
     },
     "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
     "license": "GPL-3.0-or-later",
@@ -19,7 +19,7 @@
     "dependencies": {
         "babel-runtime": "^6.26.0",
         "chalk": "^2.1.0",
-        "lodash": "^4.17.10"
+        "lodash": "^4.17.11"
     },
     "devDependencies": {
         "jest": "^22.4.3",

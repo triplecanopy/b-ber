@@ -6,10 +6,10 @@
     "scripts": {
         "prepare.dist": "BABEL_ENV=production ../../node_modules/.bin/babel -d dist/ src/ --ignore **/__tests__/**",
         "clean": "rimraf dist",
-        "prepare": "yarn clean && yarn prepare.dist",
-        "build": "yarn prepare",
+        "prepare": "npm run clean && npm run prepare.dist",
+        "build": "npm run prepare",
         "watch": "BABEL_ENV=production ../../node_modules/.bin/babel -d dist/ src/ --watch src",
-        "test": "yarn jest"
+        "test": "./node_modules/.bin/jest"
     },
     "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
     "license": "GPL-3.0-or-later",
@@ -26,15 +26,15 @@
         "@canopycanopycanopy/b-ber-shapes": "^0.1.1-alpha.0",
         "@canopycanopycanopy/b-ber-templates": "^0.1.1-alpha.0",
         "babel-runtime": "^6.26.0",
-        "fs-extra": "^6.0.0",
+        "fs-extra": "^7.0.1",
         "highlight.js": "^9.12.0",
-        "layouts": "^2.0.1",
-        "lodash": "^4.17.5",
+        "layouts": "^3.0.1",
+        "lodash": "^4.17.11",
         "markdown-it": "^8.4.1",
         "markdown-it-front-matter": "^0.1.2",
         "mime-types": "^2.1.18",
         "probe-image-size": "^4.0.0",
         "rimraf": "^2.6.2",
-        "vinyl": "^2.1.0"
+        "vinyl": "^2.2.0"
     }
 }

@@ -1,9 +1,6 @@
 .github
-.yarnclean
-yarn.lock
 jest.config.js
-yarn-debug.log*
-yarn-error.log*
+npm-debug.log*
 
 test
 jest.config.js

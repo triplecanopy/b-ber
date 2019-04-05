@@ -3,9 +3,6 @@
 .github
 .gitignore
 demos
-.yarnclean
-yarn.lock
 jest.config.js
-yarn-debug.log*
-yarn-error.log*
+npm-debug.log*
 .editorconfig

@@ -4,33 +4,35 @@
     "private": true,
     "license": "GPL-3.0-or-later",
     "engines": {
-        "node": ">= 5.x <= 10.x",
-        "npm": ">= 2.x <= 6.x",
-        "yarn": ">=0.27.5 || <= 1.12.x"
+        "node": ">= 6.x <= 10.x",
+        "npm": ">= 5.x <= 6.x"
     },
     "scripts": {
         "watch": "lerna run --parallel watch",
         "lint.js": "ls ./packages | xargs -I {} ./node_modules/.bin/eslint ./packages/{}/src/**/{*.js,*.jsx}",
         "lint.scss": "node_modules/.bin/sass-lint -c .sasslintrc './packages/b-ber-themes/b-ber-theme-sans/**/*.scss, ./packages/b-ber-themes/b-ber-theme-serif/**/*.scss' -v -q",
-        "lint": "yarn lint.js && yarn lint.scss",
+        "lint": "npm run lint.js && npm run lint.scss",
         "lint.changed.js": "DIFF=`git diff-index --name-only HEAD | grep -E \".*\\.jsx?$\"`; if [ \"$DIFF\" ]; then ./node_modules/.bin/eslint $DIFF; fi",
         "lint.changed.scss": "DIFF=`git diff-index --name-only HEAD | grep -E \".*\\.(scss|sass|less|css)$\"`; if [ \"$DIFF\" ]; then node_modules/.bin/sass-lint -c .sasslintrc $DIFF -v -q; fi",
-        "lint.changed": "yarn lint.changed.js && yarn lint.changed.scss",
+        "lint.changed": "npm run lint.changed.js && npm run lint.changed.scss",
         "prettier.check": "./node_modules/.bin/eslint --print-config . | ./node_modules/.bin/eslint-config-prettier-check",
-        "flush.lock": "ls ./packages | xargs -I {} rimraf ./packages/{}/yarn.lock",
+        "flush.lock": "ls ./packages | xargs -I {} rimraf ./packages/{}/package-lock.json",
         "flush.modules": "ls ./packages | xargs -I {} rimraf ./packages/{}/node_modules",
-        "flush.rebuild": "lerna exec yarn && lerna bootstrap",
-        "flush": "yarn flush.lock && yarn flush.modules && yarn flush.rebuild",
-        "test.coverage": "rimraf ./coverage && yarn lint && yarn jest --collectCoverage=true",
-        "test": "yarn lint && yarn jest",
+        "flush.rebuild": "lerna exec npm install && lerna bootstrap",
+        "flush": "npm run flush.lock && npm run flush.modules && npm run flush.rebuild",
+        "test.coverage": "rimraf ./coverage && npm run lint && ./node_modules/.bin/jest --collectCoverage=true",
+        "test": "npm run lint && ./node_modules/.bin/jest",
         "build": "lerna run build",
-        "publish.canary": "yarn test && yarn build && lerna publish --canary",
-        "publish.alpha": "yarn test && yarn build && lerna publish prepatch"
+        "publish.canary": "npm test && npm run build && lerna publish --canary",
+        "publish.alpha": "npm test && npm run build && lerna publish prepatch",
+        "outdated": "npm outdated || true && lerna exec --no-bail -- npm outdated",
+        "update": "node_modules/.bin/lernaupdate",
+        "dedupe": "node_modules/.bin/lernaupdate --dedupe"
     },
     "husky": {
         "hooks": {
-            "pre-commit": "yarn lint.changed",
-            "pre-push": "yarn jest"
+            "pre-commit": "npm run lint.changed",
+            "pre-push": "./node_modules/.bin/jest"
         }
     },
     "devDependencies": {
@@ -67,6 +69,7 @@
         "jsdoc": "^3.4.3",
         "jsdoc-strip-async-await": "^0.1.0",
         "lerna": "^3.13.1",
+        "lerna-update-wizard": "^0.11.1",
         "minami": "^1.2.3",
         "mocha": "^3.2.0",
         "prettier": "^1.15.1",

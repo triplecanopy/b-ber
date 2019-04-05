@@ -1,7 +1,7 @@
 /*
 
 Add compiled b-ber reader projects to an epub dir in b-ber-reader. These will be
-served when running `yarn start` from the b-ber-reader dir at
+served when running `npm start` from the b-ber-reader dir at
 http://localhost:4000
 
 */

@@ -6,11 +6,11 @@
     "scripts": {
         "prepare.dist": "BABEL_ENV=production ../../node_modules/.bin/babel -d ./ src/ --ignore test/",
         "clean": "rimraf utils && rimraf *.js",
-        "prepare": "yarn clean && yarn prepare.dist",
-        "build": "yarn prepare",
+        "prepare": "npm run clean && npm run prepare.dist",
+        "build": "npm run prepare",
         "watch": "BABEL_ENV=production ../../node_modules/.bin/babel -d ./ src/ --watch src --watch index.js --ignore test/",
         "start": "./node_modules/.bin/babel-node ./src/index.js --presets es2015,stage-0",
-        "test": "yarn jest"
+        "test": "./node_modules/.bin/jest"
     },
     "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
     "license": "GPL-3.0-or-later",
@@ -28,11 +28,11 @@
         "@canopycanopycanopy/b-ber-themes": "^0.1.1-alpha.0",
         "babel-runtime": "^6.26.0",
         "command-exists": "^1.2.2",
-        "fs-extra": "^5.0.0",
+        "fs-extra": "^7.0.1",
         "htmlparser2": "^3.9.2",
         "js-yaml": "^3.12.0",
         "layouts": "^3.0.1",
-        "lodash": "^4.17.5",
+        "lodash": "^4.17.11",
         "mime-types": "^2.1.18",
         "vinyl": "^2.2.0",
         "yargs": "^11.0.0",
