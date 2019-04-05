@@ -6,7 +6,4 @@ dist
 public
 node_modules
 
-package-lock*
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*

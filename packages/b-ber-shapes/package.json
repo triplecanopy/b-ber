@@ -10,11 +10,11 @@
     },
     "scripts": {
         "prepare.lib": "BABEL_ENV=production ../../node_modules/.bin/babel -d ./ src/ --ignore **/__tests__/**",
-        "prepare": "yarn clean && yarn prepare.lib",
+        "prepare": "npm run clean && npm run prepare.lib",
         "clean": "rimraf dc && rimraf directives && rimraf sequences",
-        "build": "yarn prepare",
+        "build": "npm run prepare",
         "watch": "BABEL_ENV=production ../../node_modules/.bin/babel -d ./ src/ --watch src",
-        "test": "yarn jest"
+        "test": "./node_modules/.bin/jest"
     },
     "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
     "license": "GPL-3.0-or-later",
@@ -28,6 +28,6 @@
     "dependencies": {
         "babel-runtime": "^6.26.0",
         "jest-extended": "^0.7.1",
-        "lodash": "^4.17.10"
+        "lodash": "^4.17.11"
     }
 }

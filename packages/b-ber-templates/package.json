@@ -14,11 +14,11 @@
     },
     "scripts": {
         "prepare.dist": "BABEL_ENV=production ../../node_modules/.bin/babel -d ./ src/ --ignore **/__tests__/**",
-        "prepare": "yarn clean && yarn prepare.dist",
+        "prepare": "npm run clean && npm run prepare.dist",
         "clean": "rimraf ./index.js && rimraf Ncx && rimraf Opf && rimraf Ops && rimraf Project && rimraf Toc && rimraf Xhtml && rimraf Xml && rimraf figures",
-        "build": "yarn prepare",
+        "build": "npm run prepare",
         "watch": "BABEL_ENV=production ../../node_modules/.bin/babel -d ./ src/ --watch src",
-        "test": "yarn jest"
+        "test": "./node_modules/.bin/jest"
     },
     "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
     "license": "GPL-3.0-or-later",
@@ -33,8 +33,8 @@
         "@canopycanopycanopy/b-ber-lib": "^0.1.1-alpha.0",
         "@canopycanopycanopy/b-ber-logger": "^0.1.1-alpha.0",
         "babel-runtime": "^6.26.0",
-        "lodash": "^4.17.5",
+        "lodash": "^4.17.11",
         "mime-types": "^2.1.18",
-        "vinyl": "^2.1.0"
+        "vinyl": "^2.2.0"
     }
 }

@@ -12,16 +12,16 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - yarn-packages-v1-{{ .Branch }}-{{ checksum "yarn.lock" }}
-            - yarn-packages-v1-{{ checksum "yarn.lock" }}
-            - yarn-packages-v1-
+            - npm-packages-v1-{{ .Branch }}-{{ checksum "package-lock.json" }}
+            - npm-packages-v1-{{ checksum "package-lock.json" }}
+            - npm-packages-v1-
       - run: |
           npm -g config set user root
           npm i -g lerna
-          yarn
+          npm i
           lerna bootstrap
-          yarn build
-          yarn test
+          npm run build
+          npm test
           cd ~
           $BBER --version
           $BBER new foo
@@ -31,7 +31,6 @@ jobs:
           $BBER build
       - save_cache:
           paths:
-            - ~/.cache/yarn
             - ~/b-ber/node_modules
             - ~/b-ber/packages/b-ber-cli/node_modules
             - ~/b-ber/packages/b-ber-grammar/node_modules
@@ -43,4 +42,4 @@ jobs:
             - ~/b-ber/packages/b-ber-tasks/node_modules
             - ~/b-ber/packages/b-ber-templates/node_modules
             - ~/b-ber/packages/b-ber-themes/node_modules
-          key: yarn-packages-v1-{{ .Branch }}-{{ checksum "yarn.lock" }}
+          key: npm-packages-v1-{{ .Branch }}-{{ checksum "package-lock.json" }}

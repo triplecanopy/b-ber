@@ -6,8 +6,5 @@ src
 .istanbul.yml
 .jsdoc.json
 .travis.yml
-.yarnclean
-yarn.lock
 jest.config.js
-yarn-debug.log*
-yarn-error.log*
+npm-debug.log*
