@@ -17,7 +17,10 @@ jobs:
             - npm-packages-v1-
       - run: |
           npm -g config set user root
-          npm i -g lerna
+          npm i -g npm@6 lerna
+          node $(node -v)
+          npm $(npm -v)
+          lerna $(lerna -v)
           npm ci
           lerna bootstrap
           npm run build
