@@ -18,9 +18,9 @@ jobs:
       - run: |
           npm -g config set user root
           npm i -g npm@6 lerna
-          node $(node -v)
-          npm $(npm -v)
-          lerna $(lerna -v)
+          echo node $(node -v)
+          echo npm $(npm -v)
+          echo lerna $(lerna -v)
           npm ci
           lerna bootstrap
           npm run build
