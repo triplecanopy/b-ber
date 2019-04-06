@@ -18,7 +18,7 @@ jobs:
       - run: |
           npm -g config set user root
           npm i -g lerna
-          npm i
+          npm ci
           lerna bootstrap
           npm run build
           npm test
