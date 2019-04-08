@@ -5,7 +5,11 @@
  * @return {MarkdownRenderer}
  */
 
-import hlsj from 'highlight.js' // eslint-disable-line import/extensions
+// TODO: Git-hosted and npm-hosted HLJS conflict, so we're requiring HLJS from
+// the src dir. Ideally we'd have our own fork where the dist version _and_ SCSS
+// required by themes is available on npm
+// @issue https://github.com/triplecanopy/b-ber/issues/288
+import hljs from 'highlight.js/src/highlight'
 import { extend, find } from 'lodash'
 import MarkdownIt from 'markdown-it'
 import YamlAdaptor from '@canopycanopycanopy/b-ber-lib/YamlAdaptor'
@@ -70,9 +74,9 @@ class MarkdownRenderer {
             // individual themes to include the highlight.js stylesheets, or to
             // add their own custom styles
             highlight: (str, lang) => {
-                if (lang && hlsj.getLanguage(lang)) {
+                if (lang && hljs.getLanguage(lang)) {
                     try {
-                        return hlsj.highlight(lang, str).value
+                        return hljs.highlight(lang, str).value
                     } catch (_) {
                         /* noop */
                     }
