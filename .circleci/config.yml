@@ -7,6 +7,7 @@ jobs:
     branches:
       only:
         - master
+        - develop
     working_directory: ~/b-ber
     steps:
       - checkout
