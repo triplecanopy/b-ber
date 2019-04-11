@@ -297,6 +297,7 @@ class Marker extends Component {
             }
         }
 
+        offsetHeight = Math.floor(offsetHeight) - 1
         return offsetHeight
     }
 

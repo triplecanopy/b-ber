@@ -5,7 +5,7 @@ import { rand } from '../helpers/utils'
 class DocumentProcessor {
     static defaults = {
         targetClassNames: [['figure__inline', 'figure__large', 'figure__fullbleed'], ['spread']],
-        blacklistedClassNames: [['gallery__item', 'figure__items']],
+        blacklistedClassNames: [['gallery__item', 'figure__items', 'figure__processed']],
         markerClassNames: 'marker',
         markerElement: 'span',
         paddingLeft: 0,
@@ -80,7 +80,6 @@ class DocumentProcessor {
     }
 
     shouldParse(node) {
-        // prettier-ignore
         return (
             node.nodeType === 1 && // is an element
             this.blackListedNodes.names.indexOf(node.nodeName.toUpperCase()) < 0 && // not blacklisted
@@ -205,6 +204,7 @@ class DocumentProcessor {
                         // inject into tree
                         sibling.appendChild(marker)
                         node.setAttribute('data-marker-reference', markerId)
+                        node.classList.add('figure__processed')
                         this.addMarkerReferenceToChild(node, markerId)
                     } else {
                         // console.warn('No siblings or children could be found for', node.nodeName)
@@ -213,9 +213,8 @@ class DocumentProcessor {
                         elem.setAttribute('data-unbound', true)
                         node.parentNode.prepend(elem)
                         node.setAttribute('data-marker-reference', markerId)
+                        node.classList.add('figure__processed')
                         this.addMarkerReferenceToChild(node, markerId)
-
-                        return
                     }
                 }
                 if (node.children && node.children.length) {
