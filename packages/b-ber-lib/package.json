@@ -31,7 +31,7 @@
         "fs-extra": "^7.0.1",
         "htmlparser2": "^3.9.2",
         "js-yaml": "^3.12.0",
-        "layouts": "^3.0.1",
+        "layouts": "^3.0.2",
         "lodash": "^4.17.11",
         "mime-types": "^2.1.18",
         "vinyl": "^2.2.0",
