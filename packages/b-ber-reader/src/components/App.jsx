@@ -32,6 +32,7 @@ class App extends Component {
             basePath: props.basePath || '/',
             downloads: props.downloads || [],
             uiOptions: props.uiOptions || {}, // eslint-disable-line react/no-unused-state
+            useBrowserHistory: props.useBrowserHistory || true,
             search: '',
             loadRemoteLibrary:
                 typeof props.loadRemoteLibrary !== 'undefined'
@@ -56,12 +57,11 @@ class App extends Component {
     }
 
     goToBookURL(location) {
-        const { defaultBookURL, basePath } = this.state
+        const { defaultBookURL, basePath, useBrowserHistory } = this.state
 
         if (!location || !location.state) {
             console.log('No history.location or history.location.state')
-            history.push(Url.createPath(basePath), { bookURL: defaultBookURL })
-            return
+            return useBrowserHistory ? history.push(Url.createPath(basePath), { bookURL: defaultBookURL }) : null
         }
 
         const { books } = this.state
@@ -72,12 +72,13 @@ class App extends Component {
         this.setState({ bookURL })
     }
 
+    // eslint-disable-next-line
     bindHistoryListener() {
+        const { useBrowserHistory } = this.state
         history.listen((location /* , action */) => {
             const { search } = location
             if (!location.state) {
-                console.warn('No history.location.state')
-                if (history.length) return history.goBack()
+                if (useBrowserHistory && history.length) history.goBack()
                 return
             }
 
@@ -86,18 +87,24 @@ class App extends Component {
         })
     }
 
-    // eslint-disable-next-line class-methods-use-this
     handleClick({ title, url }) {
-        const bookURL = url
-        history.push(Url.slug(title), { bookURL })
+        return this.state.useBrowserHistory
+            ? history.push(Url.slug(title), { bookURL: url })
+            : this.setState({ bookURL: url })
     }
 
     render() {
-        const { books, bookURL, search, downloads } = this.state
+        const { books, bookURL, search, downloads, useBrowserHistory } = this.state
         return (
             <div>
                 {bookURL ? (
-                    <Reader bookURL={bookURL} search={search} downloads={downloads} {...this.props} />
+                    <Reader
+                        search={search}
+                        bookURL={bookURL}
+                        downloads={downloads}
+                        useBrowserHistory={useBrowserHistory}
+                        {...this.props}
+                    />
                 ) : (
                     <Library books={books} handleClick={this.handleClick} />
                 )}

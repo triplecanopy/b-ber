@@ -247,13 +247,17 @@ class Reader extends Component {
             spreadIndex,
         })
 
-        this.setState({ search }, () =>
-            history[update]({
-                pathname,
-                search,
-                state,
-            }),
-        )
+        if (this.props.useBrowserHistory) {
+            this.setState({ search }, () =>
+                history[update]({
+                    pathname,
+                    search,
+                    state,
+                }),
+            )
+        } else {
+            this.setState({ search }, () => history.push({ search }))
+        }
     }
 
     showSpinner() {
