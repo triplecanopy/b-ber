@@ -39,6 +39,8 @@ function render() {
     const markdownDir = path.join(state.src, '_markdown')
 
     return fs.readdir(markdownDir).then(files => {
+        // sort the files in the order that they appear in `type.yml`, so that
+        // we process them (and the images they contain) in the correct order
         const promises = files
             .filter(a => a.charAt(0) !== '.')
             .sort((a, b) => {
@@ -49,17 +51,13 @@ function render() {
 
                 return indexA < indexB ? -1 : indexA > indexB ? 1 : 0
             })
-            .reduce(
-                (acc, curr) =>
-                    acc.then(() =>
-                        createXTHMLFile(path.join(markdownDir, curr)).then(() =>
-                            log.info(`render markdown [${path.basename(curr)}]`),
-                        ),
-                    ),
-                Promise.resolve(),
+            .map(a =>
+                createXTHMLFile(path.join(markdownDir, a)).then(() =>
+                    log.info(`render markdown [${path.basename(a)}]`),
+                ),
             )
 
-        return promises.catch(log.error)
+        return Promise.all(promises).catch(log.error)
     })
 }
 
