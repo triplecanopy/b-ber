@@ -602,6 +602,15 @@ class Reader extends Component {
 
         if (!elem) return console.warn(`Could not find element ${hash}`)
 
+        // scroll to vertical position, leave a bit of room for the controls and
+        // whitespace around the element
+        if (Viewport.isMobile()) {
+            const padding = 25
+            const offset = document.querySelector('.controls__header').offsetHeight + padding
+            const top = elem.offsetTop - offset
+            document.getElementById('frame').scrollTo(0, top)
+        }
+
         const { paddingTop, paddingBottom, columnGap } = this.state.viewerSettings
 
         // we calculate the frameHeight using the same method in Layout.jsx, by
