@@ -51,13 +51,17 @@ function render() {
 
                 return indexA < indexB ? -1 : indexA > indexB ? 1 : 0
             })
-            .map(a =>
-                createXTHMLFile(path.join(markdownDir, a)).then(() =>
-                    log.info(`render markdown [${path.basename(a)}]`),
-                ),
+            .reduce(
+                (acc, curr) =>
+                    acc.then(() =>
+                        createXTHMLFile(path.join(markdownDir, curr)).then(() =>
+                            log.info(`render markdown [${path.basename(curr)}]`),
+                        ),
+                    ),
+                Promise.resolve(),
             )
 
-        return Promise.all(promises).catch(log.error)
+        return promises.catch(log.error)
     })
 }
 
