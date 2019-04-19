@@ -35,12 +35,12 @@ class Spine {
                     // entry with attributes
                     const fileName = Object.keys(a)[0]
                     const options = a[Object.keys(a)[0]]
-                    const data = new SpineItem({ fileName, ...options })
+                    const data = new SpineItem({ fileName, ...options, buildType: this.buildType })
                     nodes.push(data)
                 }
             } else {
                 // string entry
-                const data = new SpineItem({ fileName: a })
+                const data = new SpineItem({ fileName: a, buildType: this.buildType })
                 nodes.push(data)
             }
         })

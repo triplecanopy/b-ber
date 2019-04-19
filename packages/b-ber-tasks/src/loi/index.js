@@ -37,6 +37,7 @@ const createLOIAsSeparateHTMLFiles = () => {
                 in_toc: false,
                 ref: data.ref,
                 pageOrder: data.pageOrder,
+                buildType: state.buildType,
             })
             state.add('loi', fileData)
             log.info(`loi linking [${data.source}] to [${data.page}]`)

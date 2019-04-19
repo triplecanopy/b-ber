@@ -50,7 +50,7 @@ const builder = yargs =>
         .command('reader', 'Build for the b-ber-reader format', () => {}, handler)
         .command('sample', 'Build a sample Epub', () => {}, handler)
         .command('web', 'Build for web', () => {}, handler)
-        // .command('xml', 'Build for XML', () => {}, handler)
+        .command('xml', 'Build for XML', () => {}, handler)
         .help('h')
         .alias('h', 'help')
 

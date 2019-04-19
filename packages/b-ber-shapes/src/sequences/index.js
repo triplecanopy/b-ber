@@ -19,6 +19,7 @@ const sequences = {
     web: [...build, 'web'],
     sample: [...build, 'sample'],
     reader: [...build, 'reader'],
+    xml: [...build, 'xml'],
 }
 
 export default sequences

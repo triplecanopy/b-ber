@@ -116,7 +116,7 @@ class ApplicationLoader {
             pdf: this._loadBuildSettings('pdf'),
             web: this._loadBuildSettings('web'),
             reader: this._loadBuildSettings('reader'),
-            // xml: this._loadBuildSettings('xml'),
+            xml: this._loadBuildSettings('xml'),
         }
     }
 

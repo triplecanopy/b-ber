@@ -1,84 +1,54 @@
-/**
- * Export XHTML in the epub output directory as a single XML document
- * @module xml
- */
-
 import path from 'path'
 import fs from 'fs-extra'
 import isPlainObject from 'lodash/isPlainObject'
+import isString from 'lodash/isString'
 import log from '@canopycanopycanopy/b-ber-logger'
 import HtmlToXml from '@canopycanopycanopy/b-ber-lib/HtmlToXml'
 import state from '@canopycanopycanopy/b-ber-lib/State'
-import * as tasks from '../'
+import { getBookMetadata } from '@canopycanopycanopy/b-ber-lib/utils'
 
 const cwd = process.cwd()
-const parser = new HtmlToXml()
-const sequence = ['clean', 'container', 'sass', 'copy', 'scripts', 'render', 'loi', 'footnotes', 'inject', 'opf']
 
-const initialize = () =>
-    new Promise(resolve => {
-        state.update('build', 'epub') // set the proper build vars
-        state.update('toc', state.buildTypes.epub.tocEntries)
-        state.update('spine', state.buildTypes.epub.spineEntries)
-
-        return tasks.async.serialize(sequence, tasks).then(() => {
-            resolve(state.spine.map(n => n.fileName))
-        })
-    })
-
-const formatForInDesign = str =>
-    new Promise(resolve => {
-        let str_ = str
-        str_ = str_.replace(/<!--[\s\S]*?-->/g, '')
-        str_ = str_.replace(/\/pagebreak>[\s\S]*?</g, '/pagebreak><')
-        resolve(str_)
-    })
+const formatForInDesign = str => {
+    let str_ = str
+    str_ = str_.replace(/<!--[\s\S]*?-->/g, '')
+    str_ = str_.replace(/\/pagebreak>[\s\S]*?</g, '/pagebreak><')
+    return Promise.resolve(str_)
+}
 
 const writeXML = str => {
-    const fpath = path.join(cwd, `Export-${new Date().toISOString().replace(/:/g, '-')}.xml`)
+    const uuid = getBookMetadata('identifier', state)
+    const fpath = path.join(cwd, `${uuid}.xml`)
     return fs.writeFile(fpath, str, 'utf8')
 }
 
-const parseHTMLFiles = (files, parser_, dist) =>
+const parseHTMLFiles = files =>
     new Promise(resolve => {
-        const dirname = path.join(dist, 'OPS', 'text')
-        const promises = files
-            .map((a, index, arr) => {
-                let data
-
-                const fname = isPlainObject(a) ? Object.keys(a)[0] : typeof a === 'string' ? a : null
+        const contents = files
+            .reduce((acc, curr) => {
+                const fname = isPlainObject(curr) ? Object.keys(curr)[0] : isString(curr) ? curr : null
                 const ext = '.xhtml'
 
-                if (!fname) return null
+                if (!fname) return acc
 
-                const fpath = path.join(dirname, `${fname}${ext}`)
+                const fpath = `${fname}${ext}`
+                const data = fs.readFileSync(fpath, 'utf8')
 
-                try {
-                    if (!fs.existsSync(fpath)) return null
-                    data = fs.readFileSync(fpath, 'utf8')
-                } catch (err) {
-                    log.warn(err.message)
-                    return null
-                }
+                return acc.concat(`${data}`)
+            }, [])
+            .join('<pagebreak></pagebreak>')
 
-                return parser_.parse(data, index, arr)
-            })
-            .filter(Boolean)
-
-        Promise.all(promises)
-            .catch(log.error)
-            .then(docs => resolve(docs.join('\n')))
+        const parser = new HtmlToXml()
+        parser.onend = resolve
+        parser.parse(contents)
     })
 
-/**
- * [description]
- * @return {Object<Promise|Error>}
- */
-const xml = () =>
-    initialize()
-        .then(manifest => parseHTMLFiles(manifest, parser, state.dist))
+const xml = () => {
+    const files = state.spine.map(entry => entry.absolutePath)
+    return parseHTMLFiles(files)
         .then(formatForInDesign)
         .then(writeXML)
         .catch(log.error)
+}
 
 export default xml
