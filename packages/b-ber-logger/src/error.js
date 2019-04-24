@@ -33,8 +33,10 @@ export function error(...args) {
     })
 
     process.stdout.write(formatted)
-    this.newLine()
-    process.stdout.write(util.format.call(util, stack))
+    if (this.logLevel > 2) {
+        this.newLine()
+        process.stdout.write(util.format.call(util, stack))
+    }
     this.newLine()
     process.stdout.write(this.decorate(`b-ber exited with code ${errCode}`, 'whiteBright', 'bgRed'))
     this.newLine()
