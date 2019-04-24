@@ -1,9 +1,5 @@
 /* eslint-disable camelcase */
 
-/**
- * @module deploy
- */
-
 import path from 'path'
 import readline from 'readline'
 import { exec, execSync } from 'child_process'
@@ -11,6 +7,29 @@ import YamlAdaptor from '@canopycanopycanopy/b-ber-lib/YamlAdaptor'
 import log from '@canopycanopycanopy/b-ber-logger'
 
 const cwd = process.cwd()
+const cmd = 'deploy'
+const args = new Map([
+    ['epub', '--include "*.epub"'],
+    ['mobi', '--include "*.mobi"'],
+    ['pdf', '--include "*.pdf"'],
+    ['reader', '--include "project-reader/*"'],
+    ['web', '--include "project-web/*"'],
+])
+
+function showHelp() {
+    console.log(`
+    Usage: bber ${cmd} <builds>
+
+    Deploy a b-ber project to Amazon S3
+
+    Positionals:
+      builds  Build types                       [epub|mobi|reader|web|pdf]
+
+    Options:
+      --version   Show version number                            [boolean]
+      -h, --help  Show help                                      [boolean]
+    `)
+}
 
 function ensureAwsCli() {
     return new Promise(resolve => {
@@ -32,24 +51,18 @@ function ensureAwsCli() {
     })
 }
 
-function deploy({ bucketURL, awsRegion }) {
+function deploy({ bucketURL, awsRegion, builds }) {
     return new Promise(resolve => {
         const sourceDir = path.resolve(cwd, './')
 
         // uses 'cp' by default.
         // TODO: allow different upload strategies?
         // @issue: https://github.com/triplecanopy/b-ber/issues/224
-        const command = [
-            `aws s3 cp ${sourceDir} ${bucketURL}`,
-            '--recursive',
-            '--exclude "*"',
-            '--include "*.epub"',
-            '--include "*.mobi"',
-            '--include "*.pdf"',
-            '--include "project-reader/*"',
-            '--include "project-web/*"',
-            `--region ${awsRegion}`,
-        ].join(' ')
+        let command = [`aws s3 cp ${sourceDir} ${bucketURL}`, '--recursive', '--exclude "*"', `--region ${awsRegion}`]
+
+        builds.forEach(arg => command.push(args.get(arg)))
+
+        command = command.join(' ')
 
         const proc = exec(command, { cwd })
 
@@ -86,13 +99,13 @@ function ensureEnvVars() {
 
         const configFile = path.resolve(cwd, 'config.yml')
         const config = YamlAdaptor.load(configFile)
-        const { bucket_url } = config
+        const { bucket_url: bucketURL } = config
 
-        if (!bucket_url) {
-            log.error('[bucket_url] must be set in config.yml to deploy the project')
+        if (!bucketURL) {
+            log.error('[bucketURL] must be set in config.yml to deploy the project')
         }
 
-        resolve({ bucketURL: bucket_url, awsRegion: BBER_BUCKET_REGION })
+        resolve({ bucketURL, awsRegion: BBER_BUCKET_REGION })
     })
 }
 
@@ -103,12 +116,22 @@ function prompt() {
             .then(response => {
                 const rl = readline.createInterface(process.stdin, process.stdout)
                 const { bucketURL, awsRegion } = response
+                const builds = process.argv
+                    .slice(process.argv.lastIndexOf(cmd) + 1)
+                    .map(str => str.toLowerCase())
+                    .filter(arg => args.has(arg))
+
+                if (!builds.length) {
+                    showHelp()
+                    process.exit(0)
+                }
 
                 console.log('')
                 console.log('Does the following look OK?')
                 console.log('')
                 console.log(` Bucket URL:    ${bucketURL}`)
                 console.log(` AWS Region:    ${awsRegion}`)
+                console.log(` Builds:        ${builds.join(' ')}`)
                 console.log('')
 
                 rl.setPrompt(' [yN] ')
@@ -116,7 +139,7 @@ function prompt() {
 
                 rl.on('line', data => {
                     if (data === 'y' || data === 'yes') {
-                        return deploy({ bucketURL, awsRegion })
+                        return deploy({ bucketURL, awsRegion, builds })
                             .then(() => rl.close())
                             .then(resolve)
                             .catch(log.error)
