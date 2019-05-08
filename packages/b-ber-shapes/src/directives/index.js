@@ -101,31 +101,84 @@ const DEPRECATED_DIRECTIVES = [
 const BLOCK_DIRECTIVES = [...FRONTMATTER_DIRECTIVES, ...BODYMATTER_DIRECTIVES, ...BACKMATTER_DIRECTIVES]
 const ALL_DIRECTIVES = [...BLOCK_DIRECTIVES, ...INLINE_DIRECTIVES, ...MISC_DIRECTIVES]
 
-const SUPPORTED_ATTRIBUTES = [
-    'title',
-    'classes',
-    'pagebreak',
-    'attributes',
-    'alt',
-    'citation',
-    'source',
-    'sources',
-    'poster',
-    'autoplay',
-    'loop',
-    'controls',
-    'muted',
-    'preload',
-    'autobuffer',
-    'buffered',
-    'mozCurrentSampleOffset',
-    'played',
-    'volume',
-    'crossorigin',
-    'height',
-    'width',
-    // 'attrs',
-]
+// generic HTML5 media attributes copied below
+const mediaAttributes = {
+    source: true,
+    poster: true,
+    autoplay: true,
+    loop: true,
+    controls: true,
+    muted: true,
+    preload: true,
+    autobuffer: true,
+    buffered: true,
+    mozCurrentSampleOffset: true,
+    played: true,
+    volume: true,
+    crossorigin: true,
+}
+
+const SUPPORTED_ATTRIBUTES = {
+    block: {
+        title: true,
+        classes: true,
+        pagebreak: true,
+    },
+
+    // inline
+    figure: {
+        alt: true,
+        caption: true,
+        classes: true,
+        source: true,
+    },
+    'figure-inline': {
+        alt: true,
+        caption: true,
+        classes: true,
+        source: true,
+    },
+    logo: {
+        alt: true,
+        source: true,
+    },
+    video: {
+        ...mediaAttributes,
+    },
+    audio: {
+        ...mediaAttributes,
+    },
+    'video-inline': {
+        ...mediaAttributes,
+    },
+    'audio-inline': {
+        ...mediaAttributes,
+    },
+
+    // misc
+    pullquote: {
+        classes: true,
+        citation: true,
+    },
+    blockquote: {
+        classes: true,
+        citation: true,
+    },
+    dialogue: {
+        classes: true,
+    },
+    gallery: {
+        caption: true,
+        sources: true,
+    },
+    spread: {
+        classes: true,
+    },
+    epigraph: {
+        alt: true,
+        source: true,
+    },
+}
 
 const DIRECTIVES_REQUIRING_ALT_TAG = ['figure', 'figure-inline', 'logo']
 

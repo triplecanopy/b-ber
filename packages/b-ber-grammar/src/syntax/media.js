@@ -102,7 +102,9 @@ export default {
             const { source } = attrsObject
 
             if (!source) {
-                err = new Error(`bber-directives: Directive [${type}] requires a [source] attribute, aborting`)
+                err = new Error(
+                    `bber-directives: Directive [${type}] requires a [source] attribute at [${filename}:${lineNr}]`,
+                )
                 log.error(err)
             }
 
