@@ -19,6 +19,7 @@ const interfaces = {
         theme: { type: 'string', required: false },
         themes_directory: { type: 'string', required: false },
         base_url: { type: 'string', required: false },
+        base_path: { type: 'string', required: false },
         remote_url: { type: 'string', required: false },
         reader_url: { type: 'string', required: false },
         builds: { type: 'array', required: false },
