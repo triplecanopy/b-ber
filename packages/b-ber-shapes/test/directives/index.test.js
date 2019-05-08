@@ -14,8 +14,8 @@ import {
     INLINE_DIRECTIVES,
     MISC_DIRECTIVES,
     ALL_DIRECTIVES,
-    SUPPORTED_ATTRIBUTES,
-    DIRECTIVES_REQUIRING_ALT_TAG,
+    // SUPPORTED_ATTRIBUTES,
+    // DIRECTIVES_REQUIRING_ALT_TAG,
     DRAFT_DIRECTIVES,
     DEPRECATED_DIRECTIVES,
 } from '../../src/directives'
@@ -46,15 +46,6 @@ describe('directives', () => {
             ...BODYMATTER_DIRECTIVES,
             ...BACKMATTER_DIRECTIVES,
         ])
-        expect(ALL_DIRECTIVES).toEqual([
-            ...BLOCK_DIRECTIVES,
-            ...INLINE_DIRECTIVES,
-            ...MISC_DIRECTIVES,
-        ])
-    })
-
-    it('exports lists of attributes', () => {
-        expect(SUPPORTED_ATTRIBUTES).toBeArray()
-        expect(DIRECTIVES_REQUIRING_ALT_TAG).toBeArray()
+        expect(ALL_DIRECTIVES).toEqual([...BLOCK_DIRECTIVES, ...INLINE_DIRECTIVES, ...MISC_DIRECTIVES])
     })
 })
