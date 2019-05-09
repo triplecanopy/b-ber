@@ -1,6 +1,6 @@
 # Table of Contents
-# "in_toc:false" removes the Table of Contents from the built-in navigation of the reader.
-# "linear:false" removes the Table of Contents from the project's contents.
+# "in_toc:false" removes the entry from the built-in navigation of the reader.
+# "linear:false" removes the entry from the project's contents.
 - toc:
         in_toc: false
         linear: false

@@ -49,7 +49,19 @@ const _directiveOrder = genus =>
 
 const _requiresAltTag = genus => DIRECTIVES_REQUIRING_ALT_TAG.indexOf(genus) > -1
 
-const _isUnsupportedAttribute = attr => SUPPORTED_ATTRIBUTES.indexOf(attr) < 0
+const _isUnsupportedAttribute = (genus, attr) => {
+    let key
+    if (BLOCK_DIRECTIVES.indexOf(genus) > -1) {
+        // these are all containers which share the same attributes, so they're
+        // grouped under a single property
+        key = 'block'
+    } else {
+        // this will be the directive name, e.g., figure, video, etc
+        key = genus
+    }
+
+    return SUPPORTED_ATTRIBUTES[key][attr] !== true // bool
+}
 
 const _applyTransforms = (k, v) => {
     switch (k) {
@@ -224,7 +236,7 @@ const attributesObject = (attrs, _genus, context = {}) => {
 
     if (attrs && typeof attrs === 'string') {
         forOf(parseAttrs(attrs.trim()), (k, v) => {
-            if (_isUnsupportedAttribute(k)) {
+            if (_isUnsupportedAttribute(_genus, k)) {
                 return log.warn(`Omitting illegal attribute [${k}] at [${filename}:${lineNr}]`)
             }
 

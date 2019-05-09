@@ -1,5 +1,6 @@
 import React from 'react'
 import classNames from 'classnames'
+import Messenger from '../../lib/Messenger'
 
 const SidebarDownloads = props => (
     <nav
@@ -10,7 +11,7 @@ const SidebarDownloads = props => (
         <ul>
             {props.downloads.map((a, i) => (
                 <li key={i}>
-                    <a href={a.url} download>
+                    <a href={a.url} download onClick={() => Messenger.sendDownloadEvent(a.url)}>
                         <span className="downloads__title">{a.label}</span>
                         {a.description && <span className="downloads__description">{a.description}</span>}
                     </a>
