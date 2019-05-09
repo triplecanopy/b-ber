@@ -11,7 +11,6 @@ const uglifyOptions = state.config.uglify_options || {
         dead_code: true,
         conditionals: true,
         booleans: true,
-        warnings: true,
     },
 }
 
