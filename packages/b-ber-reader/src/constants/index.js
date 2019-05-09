@@ -26,6 +26,7 @@ export const messagesTypes = {
     CLICK_EVENT: 'CLICK_EVENT',
     KEYDOWN_EVENT: 'KEYDOWN_EVENT',
     NAVIGATION_EVENT: 'NAVIGATION_EVENT',
+    DOWNLOAD_EVENT: 'DOWNLOAD_EVENT',
 }
 
 // Media queries horizontal in px

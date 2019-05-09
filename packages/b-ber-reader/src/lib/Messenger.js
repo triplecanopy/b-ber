@@ -50,6 +50,10 @@ class Messenger {
         window.parent.postMessage({ ...event, type: messagesTypes.CLICK_EVENT }, Messenger.MESSAGE_DOMAIN)
     }
 
+    static sendDownloadEvent(url) {
+        window.parent.postMessage({ url, type: messagesTypes.DOWNLOAD_EVENT }, Messenger.MESSAGE_DOMAIN)
+    }
+
     static sendKeydownEvent(event) {
         window.parent.postMessage(
             {
