@@ -7,7 +7,6 @@ import uglifyJS from 'uglify-js'
 const cwd = process.cwd()
 
 const uglifyOptions = state.config.uglify_options || {
-    warnings: true,
     compress: {
         dead_code: true,
         conditionals: true,
