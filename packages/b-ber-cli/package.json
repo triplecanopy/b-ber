@@ -1,6 +1,6 @@
 {
     "name": "@canopycanopycanopy/b-ber-cli",
-    "version": "0.1.4-alpha.0",
+    "version": "0.1.5-alpha.0",
     "description": "",
     "main": "dist/index.js",
     "bin": {
@@ -24,7 +24,7 @@
         "@canopycanopycanopy/b-ber-lib": "^0.1.4-alpha.0",
         "@canopycanopycanopy/b-ber-logger": "^0.1.4-alpha.0",
         "@canopycanopycanopy/b-ber-shapes": "^0.1.4-alpha.0",
-        "@canopycanopycanopy/b-ber-tasks": "^0.1.4-alpha.0",
+        "@canopycanopycanopy/b-ber-tasks": "^0.1.5-alpha.0",
         "@canopycanopycanopy/b-ber-templates": "^0.1.4-alpha.0",
         "babel-runtime": "^6.26.0",
         "fs-extra": "^7.0.1",
