@@ -9,6 +9,8 @@ import uniq from 'lodash/uniq'
 import log from '@canopycanopycanopy/b-ber-logger'
 import sequences from '@canopycanopycanopy/b-ber-shapes/sequences'
 import findIndex from 'lodash/findIndex'
+import ffprobe from 'ffprobe'
+import ffprobeStatic from 'ffprobe-static'
 
 /**
  * Get a file's relative path to the OPS
@@ -43,6 +45,18 @@ export const getImageOrientation = (w, h) => {
     if (widthToHeight === 1) imageType = 'square'
     if (widthToHeight > 1) imageType = 'landscape'
     return imageType
+}
+
+const getAspectRatioClassName = (key = '16:9') =>
+    ({ '4:3': 'video--4x3', '16:9': 'video--16x9', '21:9': 'video--21x9' }[key])
+
+export const getVideoAspectRatio = async filePath => {
+    if (!filePath) return getAspectRatioClassName()
+
+    const { streams } = await ffprobe(filePath, { path: ffprobeStatic.path })
+    if (!streams) return getAspectRatioClassName()
+    const { display_aspect_ratio: aspectRatio } = streams
+    return getAspectRatioClassName(aspectRatio)
 }
 
 /**

@@ -6,6 +6,7 @@ import mime from 'mime-types'
 import { Html, Url } from '@canopycanopycanopy/b-ber-lib'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
+// import { getVideoAspectRatio } from '@canopycanopycanopy/b-ber-lib/utils'
 import figure from '../parsers/figure'
 import { attributesString, attributesObject, htmlId, toAlias } from './helpers'
 
@@ -87,6 +88,7 @@ export default {
             let err = null
             let poster = ''
             let provider = null // eslint-disable-line no-unused-vars
+            let aspecRatioClassName = ''
 
             // add controls attr by default
             if (!{}.hasOwnProperty.call(attrsObject, 'controls')) {
@@ -120,7 +122,7 @@ export default {
 
                 state.add('remoteAssets', source)
             } else if (validateLocalMediaSource(source, mediaType)) {
-                sources = media.filter(_ => toAlias(_) === source)
+                sources = media.filter(a => toAlias(a) === source)
                 sourceElements = createLocalMediaSources(sources)
             }
 
@@ -132,6 +134,17 @@ export default {
             delete attrsObject.source // otherwise we get a `src` tag on our video element
             if (mediaType === 'audio') {
                 delete attrsObject.poster // invalid attr for audio elements
+            }
+
+            if (mediaType === 'video') {
+                // TODO: needs to be done async
+                //
+                // add aspect ratio class name
+                // const aspecRatioClassName = isHostedRemotely(source)
+                //     ? getVideoAspectRatio()
+                //     : getVideoAspectRatio(path.resolve(state.src, `_media/${head(sources)}`))
+
+                aspecRatioClassName = 'video--16x9'
             }
 
             const figureId = htmlId(id)
@@ -184,7 +197,7 @@ export default {
                 case 'audio-inline':
                 case 'video-inline':
                     return `${commentStart}
-                        <section class="${mediaType}">
+                        <section class="${mediaType} ${aspecRatioClassName} figure__large">
                             <${mediaType} id="${figureId}"${attrString}${webOnlyAttrString}>
                                 ${sourceElements}
                                 <div class="media__fallback__${mediaType} media__fallback--image figure__small figure__small--landscape">

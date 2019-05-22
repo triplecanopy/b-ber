@@ -1,12 +1,12 @@
 import { Html, Url } from '@canopycanopycanopy/b-ber-lib'
 import isPlainObject from 'lodash/isPlainObject'
+import uniq from 'lodash/uniq'
 
 const FULLBLEED_CLASS_NAME = 'figure__fullbleed'
 const classNamesArray = data => (data.classes || '').split(' ')
 
 const inlineClasses = (data, ratioName) =>
-    ['figure__large', 'figure__inline', `figure__inline--${ratioName}`]
-        .concat(classNamesArray(data))
+    uniq(['figure__large', 'figure__inline', `figure__inline--${ratioName}`].concat(classNamesArray(data)))
         .filter(Boolean)
         .join(' ')
 
@@ -54,7 +54,7 @@ export const figureTemplate = data =>
 export const media = data =>
     `
     %SECTION_OPEN%
-        <div class="figure__large">
+        <div class="%FIGURE_CLASS_NAMES%">
             <figure id="%ID%">
                 <div class="figure__items">
                     <div class="%MEDIA_TYPE%">
@@ -82,6 +82,11 @@ export const media = data =>
         .replace(
             /%SECTION_OPEN%/,
             data.inline ? '' : '<section epub:type="loi" title="Figures" class="chapter figures">',
+        )
+        // TODO: `figure__inline--square` class should be replaced with media aspect ratio
+        .replace(
+            /%FIGURE_CLASS_NAMES%/,
+            data.inline || data.applyInlineClasses ? 'figure__large figure__inline--square' : 'figure__large',
         )
         .replace(/%ID%/g, data.id)
         .replace(/%MEDIA_TYPE%/g, data.mediaType)

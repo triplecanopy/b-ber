@@ -77,6 +77,24 @@ section.bibliography {
     }
 }
 
+.video {
+    &.video--4x3 {
+        width: 80%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    &.video--16x9 {
+        width: 80%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    &.video--21x0 {
+        width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
 audio,
 video {
     margin: 0;
