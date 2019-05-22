@@ -79,7 +79,7 @@ exports[`templates.epub creates the markup 4`] = `
 exports[`templates.epub creates the markup 5`] = `
 "
     
-        <div class=\\"figure__large\\">
+        <div class=\\"figure__large figure__inline--square\\">
             <figure id=\\"1\\">
                 <div class=\\"figure__items\\">
                     <div class=\\"audio-or-video\\">
@@ -109,7 +109,7 @@ exports[`templates.epub creates the markup 5`] = `
 exports[`templates.epub creates the markup 6`] = `
 "
     
-        <div class=\\"figure__large\\">
+        <div class=\\"figure__large figure__inline--square\\">
             <figure id=\\"1\\">
                 <div class=\\"figure__items\\">
                     <div class=\\"audio-or-video\\">
@@ -268,7 +268,7 @@ exports[`templates.epub creates the markup 12`] = `
 exports[`templates.epub creates the markup 13`] = `
 "
     <section epub:type=\\"loi\\" title=\\"Figures\\" class=\\"chapter figures\\">
-        <div class=\\"figure__large\\">
+        <div class=\\"figure__large figure__inline--square\\">
             <figure id=\\"1\\">
                 <div class=\\"figure__items\\">
                     <div class=\\"audio-or-video\\">
@@ -397,7 +397,7 @@ exports[`templates.epub creates the markup 18`] = `
 exports[`templates.epub creates the markup 19`] = `
 "
     
-        <div class=\\"figure__large\\">
+        <div class=\\"figure__large figure__inline--square\\">
             <figure id=\\"1\\">
                 <div class=\\"figure__items\\">
                     <div class=\\"audio-or-video\\">
@@ -427,7 +427,7 @@ exports[`templates.epub creates the markup 19`] = `
 exports[`templates.epub creates the markup 20`] = `
 "
     
-        <div class=\\"figure__large\\">
+        <div class=\\"figure__large figure__inline--square\\">
             <figure id=\\"1\\">
                 <div class=\\"figure__items\\">
                     <div class=\\"audio-or-video\\">
@@ -556,7 +556,7 @@ exports[`templates.epub creates the markup 25`] = `
 exports[`templates.epub creates the markup 26`] = `
 "
     
-        <div class=\\"figure__large\\">
+        <div class=\\"figure__large figure__inline--square\\">
             <figure id=\\"1\\">
                 <div class=\\"figure__items\\">
                     <div class=\\"audio-or-video\\">
@@ -586,7 +586,7 @@ exports[`templates.epub creates the markup 26`] = `
 exports[`templates.epub creates the markup 27`] = `
 "
     
-        <div class=\\"figure__large\\">
+        <div class=\\"figure__large figure__inline--square\\">
             <figure id=\\"1\\">
                 <div class=\\"figure__items\\">
                     <div class=\\"audio-or-video\\">
