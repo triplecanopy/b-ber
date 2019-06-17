@@ -19,6 +19,9 @@ import log from '@canopycanopycanopy/b-ber-logger'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import { getBookMetadata, addTrailingSlash } from '@canopycanopycanopy/b-ber-lib/utils'
 import Toc from '@canopycanopycanopy/b-ber-templates/Toc'
+import { Url } from '@canopycanopycanopy/b-ber-lib'
+import rrdir from 'recursive-readdir'
+import mime from 'mime-types'
 
 let ASSETS_TO_UNLINK
 let DIST_PATH
@@ -120,6 +123,7 @@ function moveAssetsToRootDirctory() {
         })
     })
 }
+
 function unlinkRedundantAssets() {
     const promises = []
     return new Promise(resolve => {
@@ -238,6 +242,7 @@ function buttonPrev(filePath) {
 
     return html
 }
+
 function buttonNext(filePath) {
     const fileName = path.basename(filePath, '.xhtml')
     const index = findIndex(flow.spine, { fileName })
@@ -258,12 +263,14 @@ function buttonNext(filePath) {
 
     return html
 }
+
 function paginate(filePath) {
     return {
         prev: buttonPrev(filePath),
         next: buttonNext(filePath),
     }
 }
+
 function paginationNavigation(filePath) {
     const { prev, next } = paginate(filePath)
     return `
@@ -330,7 +337,7 @@ function getEventHandlerScript() {
     `
 }
 
-function injectNavigationIntoFile(filePath, { tocElement, infoElement }) {
+function injectPageElementsIntoFile(filePath, { tocElement, infoElement }) {
     return new Promise(resolve => {
         const pageNavigation = paginationNavigation(filePath)
         const styleBlock = getStyleBlock()
@@ -386,7 +393,7 @@ function injectNavigationIntoFile(filePath, { tocElement, infoElement }) {
     })
 }
 
-function injectNavigationIntoFiles(elements) {
+function injectPageElementsIntoFiles(elements) {
     return new Promise(resolve => {
         const textPath = path.join(DIST_PATH, 'text')
         const promises = []
@@ -397,7 +404,7 @@ function injectNavigationIntoFiles(elements) {
             files.forEach(f => {
                 if (!path.extname(f) === '.xhtml') return
                 const filePath = path.resolve(textPath, f)
-                promises.push(injectNavigationIntoFile(filePath, elements))
+                promises.push(injectPageElementsIntoFile(filePath, elements))
             })
 
             Promise.all(promises).then(() => resolve(elements))
@@ -481,6 +488,60 @@ function writeWebWorker() {
     })
 }
 
+function writeWebpubManifest() {
+    return new Promise((resolve, reject) => {
+        const remoteURL = Url.trimSlashes(state.config.remote_url)
+
+        rrdir(state.dist, (err1, files) => {
+            if (err1) reject(err1)
+
+            const readingOrder = state.spine.map(({ name, title }) => ({
+                href: `${remoteURL}/text/${name}.xhtml`,
+                type: 'text/xhtml',
+                title,
+            }))
+
+            const resources = files
+                .filter(file => path.basename(file).charAt(0) !== '.')
+                .map(file => ({
+                    // rel: ...
+                    href: file.replace(`${state.dist}/`, ''),
+                    type: mime.lookup(file),
+                }))
+
+            let manifest = {
+                '@context': 'https://readium.org/webpub-manifest/context.jsonld',
+
+                metadata: {
+                    '@type': 'http://schema.org/Book',
+                    title: getBookMetadata('title', state),
+                    author: getBookMetadata('creator', state),
+                    identifier: getBookMetadata('identifier', state),
+                    language: getBookMetadata('language', state),
+                    publisher: getBookMetadata('publisher', state),
+                    modified: new Date().toISOString(),
+                },
+
+                links: [
+                    { rel: 'self', href: `${remoteURL}/manifest.json`, type: 'application/webpub+json' },
+                    // { rel: 'alternate', href: `${remoteURL}/publication.epub`, type: 'application/epub+zip' },
+                    // { rel: 'search', href: `${remoteURL}/search{?query}`, type: 'text/html', templated: true },
+                ],
+
+                readingOrder,
+                resources,
+            }
+
+            manifest = JSON.stringify(manifest)
+
+            fs.writeFile(path.join(DIST_PATH, 'manifest.json'), manifest, err2 => {
+                if (err2) reject(err2)
+                resolve()
+            })
+        })
+    })
+}
+
 // subtracts 1 from `n` argument since `getPage` refrerences state.spine,
 // which is 0-indexed
 function getPage(_n = -1) {
@@ -537,6 +598,7 @@ function createIndexHTML({ tocElement, infoElement }) {
             epub:prefix="ibooks: http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0">
             <meta http-equiv="default-style" content="text/html charset=utf-8"/>
             ${robotsMeta}
+            <link rel="manifest" type="application/webpub+json" href="${BASE_URL}manifest.json">
             <link rel="stylesheet" type="text/css" href="${BASE_URL}stylesheets/application.css"/>
 
             <head>
@@ -563,10 +625,6 @@ function createIndexHTML({ tocElement, infoElement }) {
     return fs.writeFile(path.resolve(DIST_PATH, 'index.html'), indexHTML)
 }
 
-// TODO
-// @issue: https://github.com/triplecanopy/b-ber/issues/226
-// function generateWebpubManifest() {}
-
 const web = () =>
     initialize()
         .then(unlinkRedundantAssets)
@@ -578,11 +636,12 @@ const web = () =>
         // move files to root directory and create an index.html
         .then(moveAssetsToRootDirctory)
         .then(createNavigationElement)
-        .then(injectNavigationIntoFiles)
+        .then(injectPageElementsIntoFiles)
         .then(createIndexHTML)
 
         // write scripts into HTML files
         .then(importVendorScripts)
+        .then(writeWebpubManifest)
         .then(writeWebWorker)
 
         .catch(log.error)
