@@ -22,9 +22,9 @@
         "test": "npm run lint && ./node_modules/.bin/jest",
         "test.coverage": "rimraf ./coverage && npm run lint && ./node_modules/.bin/jest --collectCoverage=true",
         "build": "lerna run build",
-        "version": "node scripts/version.js",
-        "publish.canary": "npm test && lerna publish --canary --force-publish=\"*\"",
-        "publish.alpha": "npm test && lerna publish prepatch --force-publish=\"*\"",
+        "preversion": "node scripts/version.js",
+        "publish.canary": "npm test && lerna publish --canary --force-publish=*",
+        "publish.alpha": "npm test && lerna publish prepatch --force-publish=*",
         "outdated": "npm outdated || true && lerna exec --no-bail -- npm outdated",
         "update": "node_modules/.bin/lernaupdate",
         "dedupe": "node_modules/.bin/lernaupdate --dedupe"
