@@ -11,6 +11,8 @@ const nextVersion = semver.inc(
     process.env.npm_config_preid || 'alpha',
 )
 
+console.log('Updating independant packages', nextVersion)
+
 const packageFiles = [
     path.resolve('packages/b-ber-themes/b-ber-theme-sans/package.json'),
     path.resolve('packages/b-ber-themes/b-ber-theme-serif/package.json'),
