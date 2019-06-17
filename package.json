@@ -24,7 +24,7 @@
         "test.coverage": "rimraf ./coverage && npm run lint && ./node_modules/.bin/jest --collectCoverage=true",
         "build": "lerna run build",
         "preversion": "node scripts/version.js",
-        "publish": "lerna publish patch --force-publish=*",
+        "publish.patch": "lerna publish patch --force-publish=*",
         "publish.canary": "lerna publish --canary --force-publish=*",
         "outdated": "npm outdated || true && lerna exec --no-bail -- npm outdated",
         "update": "node_modules/.bin/lernaupdate",
