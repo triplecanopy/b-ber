@@ -1,6 +1,5 @@
 {
     "name": "@canopycanopycanopy/b-ber",
-    "version": "0.1.0-alpha.de5a155f",
     "private": true,
     "license": "GPL-3.0-or-later",
     "engines": {
@@ -20,11 +19,12 @@
         "flush.modules": "ls ./packages | xargs -I {} rimraf ./packages/{}/node_modules",
         "flush.rebuild": "lerna exec npm install && lerna bootstrap",
         "flush": "npm run flush.lock && npm run flush.modules && npm run flush.rebuild",
-        "test.coverage": "rimraf ./coverage && npm run lint && ./node_modules/.bin/jest --collectCoverage=true",
         "test": "npm run lint && ./node_modules/.bin/jest",
+        "test.coverage": "rimraf ./coverage && npm run lint && ./node_modules/.bin/jest --collectCoverage=true",
         "build": "lerna run build",
+        "version": "node scripts/version.js",
         "publish.canary": "npm test && lerna publish --canary --force-publish=\"*\"",
-        "publish.alpha": "npm test && lerna publish prepatch",
+        "publish.alpha": "npm test && lerna publish prepatch --force-publish=\"*\"",
         "outdated": "npm outdated || true && lerna exec --no-bail -- npm outdated",
         "update": "node_modules/.bin/lernaupdate",
         "dedupe": "node_modules/.bin/lernaupdate --dedupe"
@@ -75,7 +75,8 @@
         "prettier": "^1.15.1",
         "resolve-cwd": "^2.0.0",
         "rimraf": "^2.6.2",
-        "sass-lint": "^1.12.1"
+        "sass-lint": "^1.12.1",
+        "semver": "^6.1.1"
     },
     "dependencies": {}
 }
