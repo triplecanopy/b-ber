@@ -11,6 +11,8 @@ import sequences from '@canopycanopycanopy/b-ber-shapes/sequences'
 import findIndex from 'lodash/findIndex'
 import ffprobe from 'ffprobe'
 import ffprobeStatic from 'ffprobe-static'
+import mime from 'mime-types'
+import { Url } from '..'
 
 /**
  * Get a file's relative path to the OPS
@@ -167,4 +169,46 @@ export const addTrailingSlash = _s => {
     if (s === '/') return s
     if (s.charCodeAt(s.length - 1) !== 47 /* / */) s += '/'
     return s
+}
+
+export const generateWebpubManifest = (state, files) => {
+    const remoteURL = Url.trimSlashes(state.config.remote_url)
+    const readingOrder = state.spine.map(({ name, title }) => ({
+        href: `${remoteURL}/text/${name}.xhtml`,
+        type: 'text/xhtml',
+        title,
+    }))
+
+    const resources = files
+        .filter(file => path.basename(file).charAt(0) !== '.')
+        .map(file => ({
+            // rel: ...
+            href: file.replace(`${state.dist}/`, ''),
+            type: mime.lookup(file),
+        }))
+
+    const manifest = {
+        '@context': 'https://readium.org/webpub-manifest/context.jsonld',
+
+        metadata: {
+            '@type': 'http://schema.org/Book',
+            title: getBookMetadata('title', state),
+            author: getBookMetadata('creator', state),
+            identifier: getBookMetadata('identifier', state),
+            language: getBookMetadata('language', state),
+            publisher: getBookMetadata('publisher', state),
+            modified: new Date().toISOString(),
+        },
+
+        links: [
+            { rel: 'self', href: `${remoteURL}/manifest.json`, type: 'application/webpub+json' },
+            // { rel: 'alternate', href: `${remoteURL}/publication.epub`, type: 'application/epub+zip' },
+            // { rel: 'search', href: `${remoteURL}/search{?query}`, type: 'text/html', templated: true },
+        ],
+
+        readingOrder,
+        resources,
+    }
+
+    return manifest
 }

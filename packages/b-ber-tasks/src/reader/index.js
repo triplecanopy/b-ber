@@ -6,7 +6,9 @@ import crypto from 'crypto'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import find from 'lodash/find'
 import { Url } from '@canopycanopycanopy/b-ber-lib'
+import { generateWebpubManifest } from '@canopycanopycanopy/b-ber-lib/utils'
 import log from '@canopycanopycanopy/b-ber-logger'
+import rrdir from 'recursive-readdir'
 
 class Reader {
     constructor() {
@@ -24,10 +26,12 @@ class Reader {
                 .then(() => this.ensureReaderModuleExists())
                 .then(() => this.copyEpubToOutputDir())
                 .then(() => this.writeBookManifest())
+                .then(() => this.writeWebpubManifest())
                 .then(() => this.copyReaderAppToOutputDir())
                 .then(() => this.injectServerDataIntoTemplate())
                 .then(() => this.updateLinkedResourcesWithAbsolutePaths())
                 .then(() => this.updateAssetURLsWithAbsolutePaths())
+                .then(() => this.injectWebpubManifestLink())
                 .catch(log.error)
                 .then(resolve)
         })
@@ -124,6 +128,7 @@ class Reader {
         }
         return value
     }
+
     writeBookManifest() {
         const identifier = this.getBookMetadata('identifier')
         const title = this.getBookMetadata('title')
@@ -134,6 +139,32 @@ class Reader {
         // write to an `api` dir in case the app is being deployed statically
         return fs.writeJson(path.join(this.apiDir, 'books.json'), manifest)
     }
+
+    writeWebpubManifest() {
+        const assetsDir = path.join(process.cwd(), this.outputDir, this.getBookMetadata('identifier'), 'OPS')
+        return rrdir(assetsDir)
+            .then(files => {
+                const manifest = generateWebpubManifest(state, files)
+                fs.writeJson(path.join(this.dist, 'manifest.json'), manifest)
+            })
+            .catch(log.error)
+    }
+
+    injectWebpubManifestLink() {
+        const indexHTML = path.join(this.dist, 'index.html')
+
+        let contents
+        contents = fs.readFileSync(indexHTML, 'utf8')
+        contents = contents.replace(
+            /<\/head>/,
+            `<link rel="manifest" type="application/webpub+json" href="${this.getProjectConfig(
+                'reader_url',
+            )}/manifest.json"></head>`,
+        )
+
+        return fs.writeFile(indexHTML, contents)
+    }
+
     copyReaderAppToOutputDir() {
         const promises = fs
             .readdirSync(this.readerAppPath)

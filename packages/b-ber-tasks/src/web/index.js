@@ -17,11 +17,9 @@ import findIndex from 'lodash/findIndex'
 import cheerio from 'cheerio'
 import log from '@canopycanopycanopy/b-ber-logger'
 import state from '@canopycanopycanopy/b-ber-lib/State'
-import { getBookMetadata, addTrailingSlash } from '@canopycanopycanopy/b-ber-lib/utils'
+import { getBookMetadata, addTrailingSlash, generateWebpubManifest } from '@canopycanopycanopy/b-ber-lib/utils'
 import Toc from '@canopycanopycanopy/b-ber-templates/Toc'
-import { Url } from '@canopycanopycanopy/b-ber-lib'
 import rrdir from 'recursive-readdir'
-import mime from 'mime-types'
 
 let ASSETS_TO_UNLINK
 let DIST_PATH
@@ -490,51 +488,12 @@ function writeWebWorker() {
 
 function writeWebpubManifest() {
     return new Promise((resolve, reject) => {
-        const remoteURL = Url.trimSlashes(state.config.remote_url)
-
         rrdir(state.dist, (err1, files) => {
             if (err1) reject(err1)
 
-            const readingOrder = state.spine.map(({ name, title }) => ({
-                href: `${remoteURL}/text/${name}.xhtml`,
-                type: 'text/xhtml',
-                title,
-            }))
+            const manifest = generateWebpubManifest(state, files)
 
-            const resources = files
-                .filter(file => path.basename(file).charAt(0) !== '.')
-                .map(file => ({
-                    // rel: ...
-                    href: file.replace(`${state.dist}/`, ''),
-                    type: mime.lookup(file),
-                }))
-
-            let manifest = {
-                '@context': 'https://readium.org/webpub-manifest/context.jsonld',
-
-                metadata: {
-                    '@type': 'http://schema.org/Book',
-                    title: getBookMetadata('title', state),
-                    author: getBookMetadata('creator', state),
-                    identifier: getBookMetadata('identifier', state),
-                    language: getBookMetadata('language', state),
-                    publisher: getBookMetadata('publisher', state),
-                    modified: new Date().toISOString(),
-                },
-
-                links: [
-                    { rel: 'self', href: `${remoteURL}/manifest.json`, type: 'application/webpub+json' },
-                    // { rel: 'alternate', href: `${remoteURL}/publication.epub`, type: 'application/epub+zip' },
-                    // { rel: 'search', href: `${remoteURL}/search{?query}`, type: 'text/html', templated: true },
-                ],
-
-                readingOrder,
-                resources,
-            }
-
-            manifest = JSON.stringify(manifest)
-
-            fs.writeFile(path.join(DIST_PATH, 'manifest.json'), manifest, err2 => {
+            fs.writeJson(path.join(DIST_PATH, 'manifest.json'), manifest, err2 => {
                 if (err2) reject(err2)
                 resolve()
             })
