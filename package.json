@@ -24,7 +24,7 @@
         "build": "lerna run build",
         "preversion": "node scripts/version.js",
         "publish.canary": "lerna publish --canary --force-publish=*",
-        "publish.alpha": "lerna publish prepatch --force-publish=*",
+        "publish.alpha": "lerna publish patch --force-publish=*",
         "outdated": "npm outdated || true && lerna exec --no-bail -- npm outdated",
         "update": "node_modules/.bin/lernaupdate",
         "dedupe": "node_modules/.bin/lernaupdate --dedupe"
