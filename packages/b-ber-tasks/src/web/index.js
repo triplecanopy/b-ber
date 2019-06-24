@@ -412,9 +412,6 @@ function injectPageElementsIntoFiles(elements) {
 
 function indexPageContent() {
     return new Promise((resolve, reject) => {
-        // TODO: `indexPageContent` should create a `lunr` index for faster parsing down the line
-        // @issue: https://github.com/triplecanopy/b-ber/issues/231
-
         const { spine } = flow
         const promises = []
         const records = []
