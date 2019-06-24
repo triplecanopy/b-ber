@@ -705,7 +705,9 @@ class Reader extends Component {
     }
 
     registerOverlayElementId(overlayElementId) {
-        this.setState({ overlayElementId })
+        if (this.state.overlayElementId !== overlayElementId) {
+            this.setState({ overlayElementId })
+        }
     }
 
     deRegisterOverlayElementId() {

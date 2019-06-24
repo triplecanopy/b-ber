@@ -4,9 +4,9 @@ import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import { Request, Asset, Url } from '../helpers'
 
-const blacklistedElementNames = ['SCRIPT', 'STYLE']
+const blacklistedNodeNames = ['SCRIPT', 'STYLE']
 
-const isBlacklisted = nodeName => blacklistedElementNames.indexOf(nodeName) > -1
+const isBlacklisted = nodeName => blacklistedNodeNames.includes(nodeName)
 
 const processFootnoteResponseElement = elem => {
     for (let i = elem.children.length - 1; i >= 0; i--) {
@@ -64,6 +64,7 @@ class Footnote extends Component {
         }
     }
     getFootnote() {
+        console.log('getting')
         const { footnoteBody } = this.state
         if (footnoteBody) return Promise.resolve()
 
@@ -106,18 +107,34 @@ class Footnote extends Component {
         return top + height > windowHeight - (paddingTop + paddingBottom)
     }
     footnoteStyles() {
-        const { columnWidth } = this.context.viewerSettings
+        const { columnWidth, columnGap, paddingLeft } = this.context.viewerSettings
         const aboveElement = this.getFootnoteOffset()
         const offsetProp = aboveElement ? 'bottom' : 'top'
+
+        // set position left for footnote
+        let left = 0
+        if (this.footnoteContainer) {
+            left = this.footnoteContainer.getBoundingClientRect().x
+
+            // adjust position based on verso or recto position of footnote reference
+            if (left >= window.innerWidth / 2) {
+                left = left * -1 + paddingLeft + columnWidth + columnGap
+            } else {
+                left = left * -1 + paddingLeft
+            }
+        }
 
         return {
             background: 'white',
             position: 'absolute',
-            width: `${columnWidth}px`,
+            width: `${columnWidth + columnGap}px`,
             fontSize: '14px',
             lineHeight: 1.6,
             zIndex: 1000,
             [offsetProp]: '1.5rem',
+            paddingLeft: '1.5em',
+            paddingRight: '1.5em',
+            left,
         }
     }
 
