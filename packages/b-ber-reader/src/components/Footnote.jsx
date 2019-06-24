@@ -64,7 +64,6 @@ class Footnote extends Component {
         }
     }
     getFootnote() {
-        console.log('getting')
         const { footnoteBody } = this.state
         if (footnoteBody) return Promise.resolve()
 
