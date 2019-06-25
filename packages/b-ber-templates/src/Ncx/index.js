@@ -1,5 +1,6 @@
 import File from 'vinyl'
 import find from 'lodash/find'
+import has from 'lodash/has'
 import { Html } from '@canopycanopycanopy/b-ber-lib'
 import { getTitleOrName } from '@canopycanopycanopy/b-ber-lib/utils'
 import state from '@canopycanopycanopy/b-ber-lib/State'
@@ -7,7 +8,7 @@ import state from '@canopycanopycanopy/b-ber-lib/State'
 class Ncx {
     static head() {
         const entry = find(state.metadata.json(), { term: 'identifier' })
-        const identifier = entry && {}.hasOwnProperty.call(entry, 'value') ? entry.value : ''
+        const identifier = entry && has(entry, 'value') ? entry.value : ''
         return `
             <head>
                 <meta name="dtb:uid" content="${identifier}"/>
@@ -19,7 +20,7 @@ class Ncx {
     }
     static title() {
         const entry = find(state.metadata.json(), { term: 'title' })
-        const title = entry && {}.hasOwnProperty.call(entry, 'value') ? entry.value : ''
+        const title = entry && has(entry, 'value') ? entry.value : ''
         return `
             <docTitle>
                 <text>${Html.escape(title)}</text>
@@ -28,7 +29,7 @@ class Ncx {
     }
     static author() {
         const entry = find(state.metadata.json(), { term: 'creator' })
-        const creator = entry && {}.hasOwnProperty.call(entry, 'value') ? entry.value : ''
+        const creator = entry && has(entry, 'value') ? entry.value : ''
         return `
             <docAuthor>
                 <text>${Html.escape(creator)}</text>

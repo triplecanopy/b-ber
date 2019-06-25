@@ -1,5 +1,6 @@
 /* eslint-disable no-plusplus, max-statements-per-line, no-continue, no-multi-assign, indent */
 import path from 'path'
+import has from 'lodash/has'
 import { forOf } from '@canopycanopycanopy/b-ber-lib/utils'
 import log from '@canopycanopycanopy/b-ber-logger'
 import {
@@ -180,7 +181,7 @@ const _extendWithDefaults = (obj, genus) => {
         case 'misc':
             taxonomy = `${_lookUpFamily(genus)} ${genus}` // -> `bodymatter chapter`
             if (order === 'block') result.epubTypes = taxonomy
-            if ({}.hasOwnProperty.call(obj, 'classes')) {
+            if (has(obj, 'classes')) {
                 taxonomy = `${_lookUpFamily(result.classes)} ${genus}`
                 if (order === 'block') result.epubTypes = taxonomy
                 result.classes += ` ${taxonomy}` // -> class="... bodymatter chapter"
@@ -191,7 +192,7 @@ const _extendWithDefaults = (obj, genus) => {
 
         case 'inline':
             if (_requiresAltTag(genus)) {
-                if (!{}.hasOwnProperty.call(obj, 'alt')) {
+                if (!has(obj, 'alt')) {
                     result.alt = result.source
                 }
             }
@@ -248,7 +249,7 @@ const attributesObject = (attrs, _genus, context = {}) => {
     // different from the current `genus` (which might've changed due to it's
     // specification). do this to keep styling consistent
     if (genus !== _genus) {
-        if ({}.hasOwnProperty.call(attrsObject, 'classes')) {
+        if (has(attrsObject, 'classes')) {
             attrsObject.classes += ` ${_genus}`
         } else {
             attrsObject.classes = _genus

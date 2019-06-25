@@ -2,6 +2,7 @@ import path from 'path'
 import fs from 'fs-extra'
 import mime from 'mime-types'
 import imageSize from 'probe-image-size'
+import has from 'lodash/has'
 import log from '@canopycanopycanopy/b-ber-logger'
 import { Html } from '@canopycanopycanopy/b-ber-lib'
 import state from '@canopycanopycanopy/b-ber-lib/State'
@@ -78,7 +79,7 @@ export default {
                     classNames = `figure__small figure__small--${getImageOrientation(width, height)}`
                     ref = context.filename
 
-                    if ({}.hasOwnProperty.call(attrsObject, 'classes')) {
+                    if (has(attrsObject, 'classes')) {
                         attrsObject.classes += ` ${classNames}`
                     } else {
                         attrsObject.classes = classNames

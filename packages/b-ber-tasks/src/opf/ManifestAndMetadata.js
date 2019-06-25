@@ -7,6 +7,7 @@ import path from 'path'
 import renderLayouts from 'layouts'
 import File from 'vinyl'
 import rrdir from 'recursive-readdir'
+import has from 'lodash/has'
 import log from '@canopycanopycanopy/b-ber-logger'
 import Metadata from '@canopycanopycanopy/b-ber-templates/Opf/Metadata'
 import Manifest from '@canopycanopycanopy/b-ber-templates/Opf/Manifest'
@@ -74,8 +75,7 @@ class ManifestAndMetadata {
         return new Promise(resolve => {
             const strings = { manifest: [], bookmeta: [] }
             const specifiedFonts =
-                {}.hasOwnProperty.call(state.config, 'ibooks_specified_fonts') &&
-                state.config.ibooks_specified_fonts === true
+                has(state.config, 'ibooks_specified_fonts') && state.config.ibooks_specified_fonts === true
 
             strings.bookmeta = this.bookmeta.map(a => Metadata.meta(a)).filter(Boolean)
 

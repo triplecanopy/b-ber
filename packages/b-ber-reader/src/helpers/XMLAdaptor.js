@@ -1,4 +1,5 @@
 import xmljs from 'xml-js'
+import has from 'lodash/has'
 import { Parser as HtmlToReactParser } from 'html-to-react'
 import find from 'lodash/find'
 import csstree, { List } from 'css-tree'
@@ -168,7 +169,7 @@ class XMLAdaptor {
             const metadata = new BookMetadata({})
             _metadata.forEach((item, i) => {
                 const key = Object.keys(_metadata[i])
-                if ({}.hasOwnProperty.call(metadata, key)) {
+                if (has(metadata, key)) {
                     metadata.set(key, item[key])
                 }
             })

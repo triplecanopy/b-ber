@@ -4,6 +4,7 @@
 
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
+import has from 'lodash/has'
 import { BLOCK_DIRECTIVE_MARKER, BLOCK_DIRECTIVE_MARKER_MIN_LENGTH } from '@canopycanopycanopy/b-ber-shapes/directives'
 import plugin from '../parsers/section'
 import { attributesObject, attributesString } from './helpers'
@@ -81,7 +82,7 @@ export default {
                     })
 
                     // get citation which we'll use below
-                    if ({}.hasOwnProperty.call(attrsObject, 'citation')) {
+                    if (has(attrsObject, 'citation')) {
                         citation = attrsObject.citation
                         delete attrsObject.citation
                     }

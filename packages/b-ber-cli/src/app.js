@@ -4,6 +4,7 @@ import log from '@canopycanopycanopy/b-ber-logger'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import createBuildSequence from '@canopycanopycanopy/b-ber-shapes/create-build-sequence'
 import sequences from '@canopycanopycanopy/b-ber-shapes/sequences'
+import has from 'lodash/has'
 import * as commands from './cmd'
 
 const lineLength = 70
@@ -53,7 +54,7 @@ export default function bber() {
     const checkCommands = ({ argv }) => {
         const command = argv._[0]
 
-        if (!{}.hasOwnProperty.call(commands, command)) {
+        if (!has(commands, command)) {
             showCustomHelp()
             process.exit(0)
         }

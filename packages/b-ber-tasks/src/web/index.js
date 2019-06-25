@@ -10,6 +10,7 @@ import path from 'path'
 import fs from 'fs-extra'
 import find from 'lodash/find'
 import findIndex from 'lodash/findIndex'
+import has from 'lodash/has'
 import cheerio from 'cheerio'
 import log from '@canopycanopycanopy/b-ber-logger'
 import state from '@canopycanopycanopy/b-ber-lib/State'
@@ -518,7 +519,7 @@ function getCoverImage() {
     const firstPage = getFirstPage()
 
     let coverImageSrc = 'images/'
-    if (coverEntry && {}.hasOwnProperty.call(coverEntry, 'value')) {
+    if (coverEntry && has(coverEntry, 'value')) {
         coverImageSrc += coverEntry.value
     }
 

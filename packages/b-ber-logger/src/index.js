@@ -1,3 +1,4 @@
+import has from 'lodash/has'
 import Timer from './Timer'
 import { printWarnings, printErrors } from './printer'
 import { indent, incrementIndent, decrementIndent, incrementCounter, decrementCounter } from './indenter'
@@ -113,7 +114,7 @@ class Logger extends Timer {
 
         Object.keys(this.settings).forEach(a => {
             const opt = `--${a}`
-            if ({}.hasOwnProperty.call(argv, opt)) {
+            if (has(argv, opt)) {
                 this.settings[a] = argv[opt]
             }
         })

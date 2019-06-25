@@ -1,5 +1,6 @@
 import isArray from 'lodash/isArray'
 import isPlainObject from 'lodash/isPlainObject'
+import has from 'lodash/has'
 import YamlAdaptor from './YamlAdaptor'
 import SpineItem from './SpineItem'
 
@@ -21,7 +22,7 @@ class Spine {
                 index = 0
             }
 
-            if (!result[index] || !{}.hasOwnProperty.call(result[index], 'nodes')) {
+            if (!result[index] || !has(result[index], 'nodes')) {
                 nodes = this.root[0].nodes
             } else {
                 nodes = result[index].nodes

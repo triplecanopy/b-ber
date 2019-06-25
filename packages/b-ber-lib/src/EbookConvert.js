@@ -1,4 +1,5 @@
 import path from 'path'
+import has from 'lodash/has'
 import { exec } from 'child_process'
 import exists from 'command-exists'
 
@@ -45,7 +46,7 @@ function convertDocument({ inputPath, bookPath, flags }) {
 function convert(options) {
     const props = ['inputPath', 'outputPath', 'fileType']
     props.forEach(prop => {
-        if (!{}.hasOwnProperty.call(options, prop)) {
+        if (!has(options, prop)) {
             throw new Error(`Missing required option [${prop}]`)
         }
     })

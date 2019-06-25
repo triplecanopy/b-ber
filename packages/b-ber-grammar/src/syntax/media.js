@@ -3,6 +3,7 @@
 import fs from 'fs-extra'
 import path from 'path'
 import mime from 'mime-types'
+import has from 'lodash/has'
 import { Html, Url } from '@canopycanopycanopy/b-ber-lib'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
@@ -91,7 +92,7 @@ export default {
             let aspecRatioClassName = ''
 
             // add controls attr by default
-            if (!{}.hasOwnProperty.call(attrsObject, 'controls')) {
+            if (!has(attrsObject, 'controls')) {
                 attrsObject.controls = 'controls'
             }
 

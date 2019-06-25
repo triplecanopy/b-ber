@@ -1,5 +1,6 @@
 import fs from 'fs-extra'
 import mime from 'mime-types'
+import has from 'lodash/has'
 import { terms, elements } from '@canopycanopycanopy/b-ber-shapes/dc'
 
 /**
@@ -63,7 +64,7 @@ class ManifestItemProperties {
      * @return {Boolean}
      */
     static isDCElement(data) {
-        return {}.hasOwnProperty.call(data, 'term') && elements.indexOf(data.term) > -1
+        return has(data, 'term') && elements.indexOf(data.term) > -1
     }
 
     /**
@@ -72,7 +73,7 @@ class ManifestItemProperties {
      * @return {Boolean}
      */
     static isDCTerm(data) {
-        return {}.hasOwnProperty.call(data, 'term') && terms.indexOf(data.term) > -1
+        return has(data, 'term') && terms.indexOf(data.term) > -1
     }
 
     /**

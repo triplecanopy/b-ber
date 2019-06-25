@@ -1,4 +1,5 @@
 import React from 'react'
+import has from 'lodash/has'
 import { ProcessNodeDefinitions } from 'html-to-react'
 import { Link, Footnote, Spread, Marker, Audio, Video, SpreadFigure } from '../components'
 import { Asset, Url } from '../helpers'
@@ -145,7 +146,7 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
     },
     {
         shouldProcessNode(node) {
-            return node.type === 'tag' && {}.hasOwnProperty.call(node.attribs, 'data-marker-reference-figure')
+            return node.type === 'tag' && has(node.attribs, 'data-marker-reference-figure')
         },
         processNode(node, children, index) {
             const attrs = Asset.convertToReactAttrs(node.attribs)
@@ -161,7 +162,7 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
     },
     {
         shouldProcessNode(node) {
-            return node.type === 'tag' && {}.hasOwnProperty.call(node.attribs, 'data-marker-reference')
+            return node.type === 'tag' && has(node.attribs, 'data-marker-reference')
         },
         processNode(node, children, index) {
             const attrs = Asset.convertToReactAttrs(node.attribs)
@@ -178,7 +179,7 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
     },
     {
         shouldProcessNode(node) {
-            return node.type === 'tag' && {}.hasOwnProperty.call(node.attribs, 'data-marker')
+            return node.type === 'tag' && has(node.attribs, 'data-marker')
         },
         processNode(node, children, index) {
             // TODO: this should be cleaned up so that we're processing the
