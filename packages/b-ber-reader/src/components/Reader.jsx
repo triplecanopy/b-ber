@@ -163,6 +163,21 @@ class Reader extends Component {
         window.addEventListener('resize', this.handleResize, false)
         window.addEventListener('resize', this.handleResizeStart, false)
         window.addEventListener('resize', this.handleResizeEnd, false)
+        document.addEventListener(
+            'webkitfullscreenchange mozfullscreenchange fullscreenchange',
+            this.handleResize,
+            false,
+        )
+        document.addEventListener(
+            'webkitfullscreenchange mozfullscreenchange fullscreenchange',
+            this.handleResizeStart,
+            false,
+        )
+        document.addEventListener(
+            'webkitfullscreenchange mozfullscreenchange fullscreenchange',
+            this.handleResizeEnd,
+            false,
+        )
     }
 
     componentWillReceiveProps(nextProps) {
