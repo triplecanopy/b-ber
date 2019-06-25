@@ -82,7 +82,7 @@ const render = ({ context = {} }) => (tokens, idx) => {
         const close = tokens[idx].info.trim().split(':')
         if (close.length && close[1]) {
             const [, id] = close
-            if (state.contains('cursor', { id }) > -1) {
+            if (state.contains('cursor', { id })) {
                 // its id still exists in state, so it's open. force close here
                 const comment = Html.comment(`END: section:#${htmlId(id)}`)
                 result = `</section>${comment}`

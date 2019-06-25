@@ -144,7 +144,7 @@ class Navigation {
                     // them to the top-level list of files
 
                     missingEntries.forEach(name => {
-                        if (state.contains('loi', { name }) < 0) {
+                        if (state.contains('loi', { name })) {
                             // don't warn for figures pages
                             log.warn(`Adding missing entry [${name}] to [${state.build}.yml]`)
                         }
@@ -153,7 +153,7 @@ class Navigation {
                     // add the missing entry to the spine
                     const missingEntriesWithAttributes = missingEntries
                         .map(fileName => {
-                            if (state.contains('loi', { name: fileName }) > -1) {
+                            if (state.contains('loi', { name: fileName })) {
                                 return null
                             }
 

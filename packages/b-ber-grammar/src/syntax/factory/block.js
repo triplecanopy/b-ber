@@ -38,7 +38,7 @@ const renderer = ({ context = {}, render, markerOpen, markerClose }) => ({
 
             // we add the `id` to the global state so that we can verify that the
             // container is being properly closed in our `validateClose` method
-            const index = state.contains('cursor', { id })
+            const index = state.indexOf('cursor', { id })
 
             const isOpening = type && type !== 'exit'
             const isClosing = type && type === 'exit'

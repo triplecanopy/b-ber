@@ -64,7 +64,7 @@ export default {
 
                     // we could just state the id in a variable outside of `render`, but
                     // good to keep consistent with the normal handling
-                    const index = state.contains('cursor', { id })
+                    const index = state.indexOf('cursor', { id })
                     if (index < 0) {
                         // state.add('cursor', {id})
                         pullquoteIndices.push(id)

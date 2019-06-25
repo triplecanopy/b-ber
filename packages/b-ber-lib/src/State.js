@@ -2,34 +2,69 @@ import crypto from 'crypto'
 import isPlainObject from 'lodash/isPlainObject'
 import isArray from 'lodash/isArray'
 import findIndex from 'lodash/findIndex'
-import ApplicationLoader from './ApplicationLoader'
+import set from 'lodash/set'
+import get from 'lodash/get'
+import merge from 'lodash/merge'
+import path from 'path'
+import fs from 'fs-extra'
+import mime from 'mime-types'
+import themes from '@canopycanopycanopy/b-ber-themes'
+import log from '@canopycanopycanopy/b-ber-logger'
+import Yaml from './Yaml'
+import Config from './Config'
+import Spine from './Spine'
 
-class State extends ApplicationLoader {
-    static defaults = {
-        guide: [],
-        figures: [],
-        footnotes: [],
-        build: 'epub',
-        cursor: [],
-        spine: [],
-        toc: [],
-        remoteAssets: [],
-        loi: [],
-        sequence: [],
-        hash: crypto.randomBytes(20).toString('hex'),
+const cwd = process.cwd()
+
+class State {
+    metadata = { json: () => [{}] }
+    theme = {}
+    video = []
+    audio = []
+    buildTypes = {
+        sample: {},
+        epub: {},
+        mobi: {},
+        pdf: {},
+        web: {},
+        reader: {},
     }
 
     constructor() {
-        super()
+        const scriptPath = path.resolve(__dirname, 'package.json')
+        this.npmPackage = JSON.parse(fs.readFileSync(scriptPath), 'utf8')
+        this.version = this.npmPackage.version
+        this.config = new Config()
 
-        this._resetEntries()
-        this._resetConfig()
-        this.load()
+        this.resetEntries()
+        this.loadConfig()
+        this.loadConfig()
+        this.loadMetadata()
+        this.loadMedia()
+        this.loadBuilds()
+        this.loadTheme()
+    }
+
+    static get defaults() {
+        return {
+            guide: [],
+            figures: [],
+            footnotes: [],
+            build: 'epub',
+            cursor: [],
+            spine: [],
+            toc: [],
+            remoteAssets: [],
+            loi: [],
+            sequence: [],
+            hash: crypto.randomBytes(20).toString('hex'),
+        }
     }
 
     get src() {
         return this.config.src
     }
+
     get dist() {
         if (this.build && this.buildTypes && this.buildTypes[this.build]) {
             return this.buildTypes[this.build].dist
@@ -45,6 +80,7 @@ class State extends ApplicationLoader {
     set src(val) {
         this.config.src = val
     }
+
     set dist(val) {
         this.config.dist = val
     }
@@ -54,21 +90,14 @@ class State extends ApplicationLoader {
     }
 
     reset() {
-        this._resetEntries()
-        this._resetConfig()
-        this.hash = crypto.randomBytes(20).toString('hex')
+        this.resetEntries()
+        this.loadConfig()
     }
 
-    _resetEntries() {
+    resetEntries() {
         Object.entries(State.defaults).forEach(([key, val]) => (this[key] = val))
     }
 
-    /**
-     * Add an entry to an Object or Array property of State
-     * @param  {String} prop Property name
-     * @param {*}       val Value to add
-     * @return {*}
-     */
     add(prop, val) {
         if (isArray(this[prop])) {
             this[prop] = [...this[prop], val]
@@ -81,19 +110,13 @@ class State extends ApplicationLoader {
         }
 
         if (typeof this[prop] === 'string') {
-            this[prop] = this[prop] + String(val)
+            this[prop] = `${this[prop]}${val}`
             return
         }
 
         throw new Error('Something went wrong in `State#add`')
     }
 
-    /**
-     * Remove an entry from an Object or Array
-     * @param  {String} prop Property name
-     * @param  {*}      val Value to remove
-     * @return {*}
-     */
     remove(prop, val) {
         if (isArray(this[prop])) {
             const index = findIndex(this[prop], val)
@@ -112,51 +135,147 @@ class State extends ApplicationLoader {
         throw new Error('Something went wrong in `State#remove`')
     }
 
-    /**
-     * Merge an Object into a property of State
-     * @param  {String} prop State key
-     * @param  {Object} val  Object to merge into `key`
-     * @return {Object}      Merged object
-     */
     merge(prop, val) {
-        if (!isPlainObject(this[prop]) || !isPlainObject(val)) {
-            throw new Error('Attempting to merge non-object in [State#merge]')
-        }
-        this[prop] = { ...this[prop], ...val }
+        this[prop] = merge(this[prop], val)
+        return this[prop]
     }
 
-    /**
-     * Update a property of State
-     * Accepts nested objects up to one level
-     * @param  {String} prop Property name
-     * @param  {*} val  New value
-     * @return {*}      Updated property
-     * @example         state.update('config.base_url', '/')
-     */
     update(prop, val) {
-        const [key, rest] = prop.split('.')
-        if ({}.hasOwnProperty.call(this, key)) {
-            if (rest) {
-                this[key][rest] = val
-            } else {
-                this[key] = val
+        set(this, prop, val)
+        return get(this, prop)
+    }
+
+    contains(collection, value) {
+        return this.indexOf(collection, value) > -1
+    }
+
+    indexOf(collection, value) {
+        return findIndex(this[collection], value)
+    }
+
+    loadConfig() {
+        if (!fs.existsSync(path.join(cwd, 'config.yml'))) return
+        const config = new Yaml('config')
+        config.load(path.join(cwd, 'config.yml'))
+
+        // not necessary right now to pass around a YAWN instance since we'er
+        // not writing back to config.yml, but may be necessary at some point
+        this.config = new Config(config.json())
+    }
+
+    loadMetadata() {
+        const fpath = path.join(cwd, this.config.src, 'metadata.yml')
+        if (!fs.existsSync(fpath)) return
+
+        this.metadata = new Yaml('metadata')
+        this.metadata.load(fpath)
+    }
+
+    loadTheme() {
+        // ensure themes dir exists unless running `new` command, as it's the
+        // only command that's run outside of a project directory
+        if (process.argv.includes('new')) return
+
+        const userThemesPath = path.resolve(cwd, this.config.themes_directory)
+        fs.ensureDirSync(userThemesPath)
+
+        // theme is set, using a built-in theme
+        if (themes[this.config.theme]) {
+            log.info(`Loaded theme [${this.config.theme}]`)
+            this.theme = themes[this.config.theme]
+            return
+        }
+
+        // possibly a user defined theme, check if the directory exists
+        try {
+            // eslint-disable-next-line global-require, import/no-dynamic-require
+            if ((this.theme = require(path.resolve(userThemesPath, this.config.theme)))) {
+                log.info(`Loaded theme [${this.config.theme}]`)
+                return
+            }
+        } catch (err) {
+            // noop
+        }
+
+        // possibly a theme installed with npm, test the project root
+        try {
+            // eslint-disable-next-line global-require, import/no-dynamic-require
+            this.theme = require(path.resolve('node_modules', this.config.theme)) // require.resolve?
+        } catch (err) {
+            log.warn(`There was an error during require [${this.config.theme}]`)
+            log.warn('Using default theme [b-ber-theme-serif]')
+            log.warn(err.message)
+
+            // error loading theme, set to default
+            this.theme = themes['b-ber-theme-serif']
+        }
+    }
+
+    loadMedia() {
+        const mediaPath = path.join(cwd, this.config.src, '_media')
+        try {
+            if (fs.existsSync(mediaPath)) {
+                const media = fs.readdirSync(mediaPath)
+                const video = media.filter(a => /^video/.test(mime.lookup(a)))
+                const audio = media.filter(a => /^audio/.test(mime.lookup(a)))
+
+                this.video = video
+                this.audio = audio
+            }
+        } catch (err) {
+            throw new Error(err)
+        }
+    }
+
+    loadBuildSettings(type) {
+        const { src, dist } = this.config
+        const projectDir = path.join(cwd, src)
+        const navigationConfigFile = path.join(cwd, src, `${type}.yml`)
+
+        try {
+            if (!fs.existsSync(projectDir)) {
+                throw new Error(`Project directory [${projectDir}] does not exist`)
+            }
+        } catch (err) {
+            // Starting a new project, noop
+            return {
+                src,
+                dist: `${dist}-${type}`,
+                config: {},
+                spineList: [],
+                spineEntries: [],
+                tocEntries: [],
             }
         }
 
-        return this[key]
+        const spine = new Spine({ src, buildType: type })
+        const spineList = spine.create(navigationConfigFile)
+        const tocEntries = spine.build(spineList, src) // nested navigation
+        const spineEntries = spine.flatten(tocEntries) // one-dimensional page flow
+
+        // build-specific config. gets merged into base config during build step
+        const config = this.config[type] ? { ...this.config[type] } : {}
+
+        return {
+            src,
+            dist: `${dist}-${type}`,
+            config,
+            spineList,
+            spineEntries,
+            tocEntries,
+        }
     }
 
-    /**
-     * [contains description]
-     * @param  {String} collection  [description]
-     * @param  {String} value       [description]
-     * @return {Integer}            Returns an index, so checks should be against -1 for existence
-     */
-    contains(collection, value) {
-        if (!isArray(this[collection])) {
-            throw new TypeError('[State#contains] must be called on an array')
+    loadBuilds() {
+        this.buildTypes = {
+            sample: this.loadBuildSettings('sample'),
+            epub: this.loadBuildSettings('epub'),
+            mobi: this.loadBuildSettings('mobi'),
+            pdf: this.loadBuildSettings('pdf'),
+            web: this.loadBuildSettings('web'),
+            reader: this.loadBuildSettings('reader'),
+            xml: this.loadBuildSettings('xml'),
         }
-        return findIndex(this[collection], value)
     }
 }
 
