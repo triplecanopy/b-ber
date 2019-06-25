@@ -1,7 +1,3 @@
-/**
- * @module inject
- */
-
 import fs from 'fs-extra'
 import path from 'path'
 import File from 'vinyl'

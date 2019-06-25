@@ -1,7 +1,3 @@
-/**
- * @module mobi
- */
-
 import path from 'path'
 import log from '@canopycanopycanopy/b-ber-logger'
 import state from '@canopycanopycanopy/b-ber-lib/State'

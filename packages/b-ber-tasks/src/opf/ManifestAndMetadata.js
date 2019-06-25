@@ -1,11 +1,7 @@
 /* eslint-disable class-methods-use-this */
 
-/**
- * Scans directory contents and reads YAML files to create the `manifest` and
- * `metadata` elements in the `content.opf`
- * @see  {@link module:manifestAndMetadata#ManifestAndMetadata}
- * @module manifestAndMetadata
- */
+// Scans directory contents and reads YAML files to create the `manifest` and
+// `metadata` elements in the `content.opf`
 
 import path from 'path'
 import renderLayouts from 'layouts'

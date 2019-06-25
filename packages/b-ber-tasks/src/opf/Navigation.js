@@ -1,12 +1,8 @@
 /* eslint-disable class-methods-use-this */
 
-/**
- * Scans directory contents and reads YAML files to create the `spine` and
- * `guide` elements in the `content.opf`. Writes essential navigation
- * documents (`toc.ncx`, `toc.xhtml`) to the output directory
- * @module navigation
- * @see {@link module:navigation#Navigation}
- */
+// Scans directory contents and reads YAML files to create the `spine` and
+// `guide` elements in the `content.opf`. Writes essential navigation documents
+// (`toc.ncx`, `toc.xhtml`) to the output directory
 
 import path from 'path'
 import fs from 'fs-extra'

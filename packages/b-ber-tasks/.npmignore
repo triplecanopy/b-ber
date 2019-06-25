@@ -3,7 +3,6 @@
 .editorconfig
 .eslintrc
 .istanbul.yml
-.jsdoc.json
 .travis.yml
 jest.config.js
 npm-debug.log*

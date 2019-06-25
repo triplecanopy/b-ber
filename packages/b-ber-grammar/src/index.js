@@ -1,10 +1,3 @@
-/**
- * Returns an instance of the MarkdownRenderer class
- * @module md
- * @see {@link module:md#MarkdownRenderer}
- * @return {MarkdownRenderer}
- */
-
 // TODO: Git-hosted and npm-hosted HLJS conflict, so we're requiring HLJS from
 // the src dir. Ideally we'd have our own fork where the dist version _and_ SCSS
 // required by themes is available on npm

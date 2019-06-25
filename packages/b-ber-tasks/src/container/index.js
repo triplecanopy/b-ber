@@ -1,9 +1,4 @@
-/**
- * @module create
- */
-
 /* eslint-disable class-methods-use-this */
-
 import path from 'path'
 import fs from 'fs-extra'
 import log from '@canopycanopycanopy/b-ber-logger'

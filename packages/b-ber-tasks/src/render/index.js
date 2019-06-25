@@ -1,7 +1,3 @@
-/**
- * @module render
- */
-
 import path from 'path'
 import fs from 'fs-extra'
 import { findIndex } from 'lodash'

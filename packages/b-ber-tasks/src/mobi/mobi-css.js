@@ -1,7 +1,3 @@
-/**
- * @module mobiCss
- */
-
 import fs from 'fs-extra'
 import css from 'css'
 import path from 'path'

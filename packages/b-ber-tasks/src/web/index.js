@@ -1,7 +1,3 @@
-/**
- * @module web
- */
-
 // Since the file structure for the `web` build is quite different from the
 // other (ebook-style) builds, it's better for maintainability to rearrange
 // the ebook-style directory structure rather than inserting a bunch of

@@ -8,9 +8,6 @@ import state from '@canopycanopycanopy/b-ber-lib/State'
 import Theme from '@canopycanopycanopy/b-ber-lib/Theme'
 import { ensure } from '@canopycanopycanopy/b-ber-lib/utils'
 
-/**
- * @class Initializer
- */
 class Initializer {
     /**
      * @constructor

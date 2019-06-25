@@ -1,7 +1,3 @@
-/**
- * @module copy
- */
-
 import path from 'path'
 import fs from 'fs-extra'
 import log from '@canopycanopycanopy/b-ber-logger'

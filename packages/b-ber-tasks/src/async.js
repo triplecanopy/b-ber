@@ -1,7 +1,3 @@
-/**
- * @module async
- */
-
 import log from '@canopycanopycanopy/b-ber-logger'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 

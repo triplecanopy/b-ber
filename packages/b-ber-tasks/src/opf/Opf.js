@@ -1,10 +1,4 @@
-/**
- * Generates metadata, manifest, guide, and spine XML and writes to to
- * `content.opf`. Calls {@link module:manifestAndMetadata} and {@link module:navigation#Navigation}
- * @module opf
- * @see {@link module:opf#Opf}
- * @return {Opf}
- */
+// Generates metadata, manifest, guide, and spine XML and writes to to `content.opf`
 
 import path from 'path'
 import fs from 'fs-extra'

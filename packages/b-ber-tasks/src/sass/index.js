@@ -1,7 +1,3 @@
-/**
- * @module sass
- */
-
 import path from 'path'
 import fs from 'fs-extra'
 import nodeSass from 'node-sass'

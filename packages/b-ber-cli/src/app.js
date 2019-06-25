@@ -1,8 +1,4 @@
 /* eslint-disable no-shadow, no-console, no-unused-vars, no-unused-expressions */
-/**
- * @module cli
- */
-
 import yargs from 'yargs'
 import log from '@canopycanopycanopy/b-ber-logger'
 import state from '@canopycanopycanopy/b-ber-lib/State'

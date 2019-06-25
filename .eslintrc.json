@@ -68,13 +68,7 @@
         "react/require-extension": "off",
         "react/sort-comp": 0,
         "spaced-comment": 0,
-        "strict": 0,
-        "valid-jsdoc": [
-            2,
-            {
-                "requireReturnDescription": false
-            }
-        ]
+        "strict": 0
     },
     "globals": {
         "document": true,

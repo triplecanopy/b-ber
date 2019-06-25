@@ -1,7 +1,3 @@
-/**
- * @class footnotes
- */
-
 import path from 'path'
 import fs from 'fs-extra'
 import state from '@canopycanopycanopy/b-ber-lib/State'

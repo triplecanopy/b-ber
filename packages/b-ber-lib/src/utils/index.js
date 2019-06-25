@@ -1,7 +1,3 @@
-/**
- * @module utils
- */
-
 import fs from 'fs-extra'
 import path from 'path'
 import find from 'lodash/find'
