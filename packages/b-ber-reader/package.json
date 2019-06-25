@@ -8,12 +8,12 @@
         "preversion": "npm test",
         "webpack.src": "npm run clean && NODE_ENV=development webpack --mode development -w --config webpack.config.development.js --progress --profile --colors --verbose",
         "webpack.dist": "npm run clean && NODE_ENV=production webpack --mode production --config webpack.config.production.js --progress --profile --colors",
-        "start": "./node_modules/.bin/concurrently \"npm run webpack.src\" \"nodemon server.js\"",
+        "start": "concurrently \"npm run webpack.src\" \"nodemon server.js\"",
         "clean": "rimraf dist && rimraf public",
         "watch": "npm run clean && NODE_ENV=production webpack --mode production -w --config webpack.config.production.js",
         "build": "npm run webpack.dist",
         "serve": "nodemon server.js",
-        "test": "./node_modules/.bin/jest"
+        "test": "jest"
     },
     "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
     "license": "GPL-3.0-or-later",

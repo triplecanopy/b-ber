@@ -2,8 +2,6 @@
 
 import { Opf, ManifestAndMetadata, Navigation } from '../src/opf'
 
-jest.mock('../../b-ber-lib/src/ApplicationLoader')
-
 const state = jest.genMockFromModule('@canopycanopycanopy/b-ber-lib/State')
 
 let manifestAndMetadata
@@ -74,8 +72,6 @@ describe('ManifestAndMetadata', () => {
         expect(manifestAndMetadata.dist).toBe(dist)
         expect(manifestAndMetadata.version).toBe(version)
 
-        manifestAndMetadata
-            .loadMetadata()
-            .then(() => expect(manifestAndMetadata.bookmeta).toEqual([]))
+        manifestAndMetadata.loadMetadata().then(() => expect(manifestAndMetadata.bookmeta).toEqual([]))
     })
 })

@@ -31,9 +31,16 @@ class State {
     }
 
     constructor() {
-        const scriptPath = path.resolve(__dirname, 'package.json')
-        this.npmPackage = JSON.parse(fs.readFileSync(scriptPath), 'utf8')
-        this.version = this.npmPackage.version
+        let version
+
+        // for testing, since our directory structure is different in dist
+        try {
+            ;({ version } = fs.readJSONSync(require.resolve('./package.json')))
+        } catch (err) {
+            ;({ version } = fs.readJSONSync(require.resolve('../package.json')))
+        }
+
+        this.version = version
         this.config = new Config()
 
         this.resetEntries()

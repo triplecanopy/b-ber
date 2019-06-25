@@ -4,13 +4,13 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "prepare.dist": "BABEL_ENV=production ../../node_modules/.bin/babel -d ./ src/ --ignore test/",
+        "prepare.dist": "BABEL_ENV=production babel -d ./ src/ --ignore test/",
         "clean": "rimraf utils && rimraf *.js",
         "prepare": "npm run clean && npm run prepare.dist",
         "build": "npm run prepare",
-        "watch": "BABEL_ENV=production ../../node_modules/.bin/babel -d ./ src/ --watch src --watch index.js --ignore test/",
-        "start": "./node_modules/.bin/babel-node ./src/index.js --presets es2015,stage-0",
-        "test": "./node_modules/.bin/jest"
+        "watch": "BABEL_ENV=production babel -d ./ src/ --watch src --ignore test/",
+        "start": "babel-node ./src/index.js --presets es2015,stage-0",
+        "test": "jest"
     },
     "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
     "license": "GPL-3.0-or-later",

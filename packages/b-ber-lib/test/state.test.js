@@ -4,7 +4,6 @@ import state from '../src/State'
 
 jest.mock('../src/Spine')
 jest.mock('../src/SpineItem')
-jest.mock('../src/ApplicationLoader')
 
 beforeEach(() => {
     state.reset()

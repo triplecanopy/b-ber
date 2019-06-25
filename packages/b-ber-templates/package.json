@@ -13,12 +13,12 @@
         "Xml": "Xml"
     },
     "scripts": {
-        "prepare.dist": "BABEL_ENV=production ../../node_modules/.bin/babel -d ./ src/ --ignore **/__tests__/**",
+        "prepare.dist": "BABEL_ENV=production babel -d ./ src/ --ignore **/__tests__/**",
         "prepare": "npm run clean && npm run prepare.dist",
         "clean": "rimraf ./index.js && rimraf Ncx && rimraf Opf && rimraf Ops && rimraf Project && rimraf Toc && rimraf Xhtml && rimraf Xml && rimraf figures",
         "build": "npm run prepare",
-        "watch": "BABEL_ENV=production ../../node_modules/.bin/babel -d ./ src/ --watch src",
-        "test": "./node_modules/.bin/jest"
+        "watch": "BABEL_ENV=production babel -d ./ src/ --watch src",
+        "test": "jest"
     },
     "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
     "license": "GPL-3.0-or-later",

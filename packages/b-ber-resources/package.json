@@ -4,8 +4,8 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "test": "npm jest",
-        "prepare.dist": "BABEL_ENV=production ../../node_modules/.bin/babel -d ./ src/ --ignore test/",
+        "test": "jest",
+        "prepare.dist": "BABEL_ENV=production babel -d ./ src/ --ignore test/",
         "clean": "rimraf index.js",
         "prepare": "npm run clean && npm run prepare.dist",
         "build": "npm run prepare"

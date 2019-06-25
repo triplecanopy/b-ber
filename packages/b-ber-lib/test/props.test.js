@@ -6,7 +6,6 @@ import ManifestItemProperties from '../src/ManifestItemProperties'
 
 jest.mock('../src/Spine')
 jest.mock('../src/SpineItem')
-jest.mock('../src/ApplicationLoader')
 
 const html = { absolutePath: path.resolve(__dirname, 'file.xhtml') }
 const nav = {
