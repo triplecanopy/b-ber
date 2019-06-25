@@ -9,9 +9,6 @@ import log from '@canopycanopycanopy/b-ber-logger'
 import Pkg from '@canopycanopycanopy/b-ber-templates/Opf/Pkg'
 import { ManifestAndMetadata, Navigation } from '.'
 
-/**
- * @alias module:opf#Opf
- */
 class Opf {
     static createOpf() {
         return new Promise(resolve => {
@@ -26,13 +23,7 @@ class Opf {
         })
     }
 
-    /**
-     * Create the root `package` element and inject metadata, manifest, and
-     * navigation data
-     * @param  {Object} manifestAndMetadataXML Manifest and metadata XML
-     * @param  {Object} navigationXML          Navigation XML
-     * @return {Promise<Object>}
-     */
+    // Create the root `package` element and inject metadata, manifest, and navigation data
     static createOpfPackageString([manifestAndMetadataXML, navigationXML]) {
         log.info('opf build [package]')
         return new Promise(resolve => {
@@ -57,11 +48,7 @@ class Opf {
         })
     }
 
-    /**
-     * Write the `content.opf` to the output directory
-     * @param  {String} contents The `content.opf` string
-     * @return {Promise<Object>}
-     */
+    // Write the `content.opf` to the output directory
     static writeOpfToDisk(contents) {
         return new Promise(resolve => {
             const opsPath = path.join(state.dist, 'OPS', 'content.opf')

@@ -34,11 +34,7 @@ const _lookUpFamily = genus =>
         ? 'backmatter'
         : ''
 
-/**
- * Determine the directive's classification and parent's type
- * @param  {String}           genus [description]
- * @return {Object<String>}
- */
+// Determine the directive's classification and parent's type
 const _directiveOrder = genus =>
     BLOCK_DIRECTIVES.indexOf(genus) > -1
         ? 'block'
@@ -163,13 +159,8 @@ const _buildAttrString = obj => {
     return s
 }
 
-/**
- * Ensure that attributes required for valid XHTML are present, and that
- * system defaults are merged into user settings
- * @param  {Object} obj   [description]
- * @param  {String} genus [description]
- * @return {Object}
- */
+// Ensure that attributes required for valid XHTML are present, and that system
+// defaults are merged into user settings
 const _extendWithDefaults = (obj, genus) => {
     const result = { ...obj }
     const order = _directiveOrder(genus)
@@ -204,13 +195,7 @@ const _extendWithDefaults = (obj, genus) => {
     }
 }
 
-/**
- * Create an object from attributes in the given directive
- * @param  {String} attrs   The directives attributes string
- * @param  {String} _genus  The type of directive
- * @param  {Object} context Markdown file where attributes method was called
- * @return {String}
- */
+// Create an object from attributes in the given directive
 const attributesObject = (attrs, _genus, context = {}) => {
     const { filename, lineNr } = context
     const attrsObject = {}
@@ -260,27 +245,12 @@ const attributesObject = (attrs, _genus, context = {}) => {
     return mergedAttrs
 }
 
-/**
- * Create a string of attributes for an XHTML element
- * @param  {Object} obj An attributes object
- * @return {String}
- */
+// Create a string of attributes for an XHTML element
 const attributesString = obj => _buildAttrString(obj)
 
-/**
- * Convenience wrapper for creating attributes: String -> Object -> String
- * @param  {String} str     [description]
- * @param  {String} type    [description]
- * @param  {Object} context Markdown file where attributes method was called
- * @return {String}
- */
+// Convenience wrapper for creating attributes: String -> Object -> String
 const attributes = (str, type, context) => _buildAttrString(attributesObject(str, type, context))
 
-/**
- * [description]
- * @param  {String} s [description]
- * @return {String}
- */
 const htmlId = s => s.replace(/[^0-9a-zA-Z_-]/g, '-')
 
 const toAlias = fpath => path.basename(path.basename(fpath, path.extname(fpath)))

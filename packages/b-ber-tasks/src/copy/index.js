@@ -6,12 +6,7 @@ import state from '@canopycanopycanopy/b-ber-lib/State'
 const FILE_SIZE_WARNING_LIMIT = 1500000 // 1.5Mb
 const cwd = process.cwd()
 
-/**
- * Copy directories of assets into the output directory
- * @param {Array|String}  [_fromLocs] From directory/directories
- * @param {String}        [_toLoc] To directory
- * @return {Promise<Object|Error>}
- */
+// Copy directories of assets into the output directory
 const copy = () =>
     new Promise(resolve => {
         // resolve paths in ignore

@@ -10,29 +10,13 @@ import ffprobeStatic from 'ffprobe-static'
 import mime from 'mime-types'
 import { Url } from '..'
 
-/**
- * Get a file's relative path to the OPS
- * @param  {String} fpath File path
- * @param  {String} base  Project's base path
- * @return {String}
- */
+// Get a file's relative path to the OPS
 export const opsPath = (fpath, base) => fpath.replace(new RegExp(`^${base}${path.sep}OPS${path.sep}?`), '')
-
-/**
- * [description]
- * @param  {String} str [description]
- * @return {String}
- */
 
 // https://www.w3.org/TR/xml-names/#Conformance
 export const fileId = str => `_${str.replace(/[^a-zA-Z0-9_-]/g, '_')}`
 
-/**
- * Determine an image's orientation
- * @param  {Number} w Image width
- * @param  {Number} h Image Height
- * @return {String}
- */
+// Determine an image's orientation
 export const getImageOrientation = (w, h) => {
     // assign image class based on w:h ratio
     const widthToHeight = w / h
@@ -57,12 +41,7 @@ export const getVideoAspectRatio = async filePath => {
     return getAspectRatioClassName(aspectRatio)
 }
 
-/**
- * Create an iterator from object's key/value pairs
- * @param {Object} collection   [description]
- * @param {Object} iterator     [description]
- * @return {*}
- */
+// Create an iterator from object's key/value pairs
 export const forOf = (collection, iterator) => Object.entries(collection).forEach(([key, val]) => iterator(key, val))
 
 // TODO: the whole figures/generated pages/user-configurable YAML thing should

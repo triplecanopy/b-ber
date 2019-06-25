@@ -39,24 +39,11 @@ function deepFind(collection, fileName, callback) {
     return collection
 }
 
-/**
- * Transform markdown into XHTML
- * @alias module:md#MarkdownRenderer
- */
 class MarkdownRenderer {
-    /**
-     * @constructor
-     */
     constructor() {
         this.noop = MarkdownRenderer.noop
 
-        /**
-         * Instance of MarkdownIt class
-         * @member
-         * @memberOf module:md#MarkdownRenderer
-         * @see {@link https://github.com/markdown-it/markdown-it}
-         * @type {MarkdownIt}
-         */
+        // Instance of MarkdownIt class
         this.markdownIt = new MarkdownIt({
             html: true,
             xhtmlOut: true,
@@ -79,12 +66,6 @@ class MarkdownRenderer {
             },
         })
 
-        /**
-         * [filename description]
-         * @member
-         * @memberOf module:md#MarkdownRenderer
-         * @type {String}
-         */
         this.filename = ''
 
         const reference = { instance: this.markdownIt, context: this }
@@ -170,11 +151,6 @@ class MarkdownRenderer {
         return this._filename
     }
 
-    /**
-     * [template description]
-     * @param  {Array} meta [description]
-     * @return {String}
-     */
     template(meta) {
         const str = meta
             .split('\n')
@@ -183,12 +159,7 @@ class MarkdownRenderer {
         return `-\n  filename: ${this.filename}\n${str}\n`
     }
 
-    /**
-     * Transforms a markdown file to XHTML
-     * @param  {String} filename [description]
-     * @param  {Object} data     [description]
-     * @return {String}
-     */
+    // Transforms a markdown file to XHTML
     render(filename, data) {
         this.filename = filename
         return this.markdownIt.render(data)

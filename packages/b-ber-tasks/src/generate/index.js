@@ -1,11 +1,4 @@
 /* eslint-disable class-methods-use-this */
-
-/**
- * Returns an instance of the Generate class
- * @see {@link module:generate#Generate}
- * @return {Generate}
- */
-
 import path from 'path'
 import fs from 'fs-extra'
 import YamlAdaptor from '@canopycanopycanopy/b-ber-lib/YamlAdaptor'
@@ -13,10 +6,7 @@ import log from '@canopycanopycanopy/b-ber-logger'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import sequences from '@canopycanopycanopy/b-ber-shapes/sequences'
 
-/**
- * Generate new Markdown documents
- * @alias module:generate#Generate
- */
+// Generate new Markdown documents
 class Generate {
     constructor() {
         this.init = this.init.bind(this)

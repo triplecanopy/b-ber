@@ -3,10 +3,7 @@ import fs from 'fs-extra'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
 
-/**
- * Remove an ebook's output directory and outdated builds
- * @return {Promise<Object|Error>}
- */
+// Remove an ebook's output directory and outdated builds
 const clean = () => {
     const projectRoot = path.dirname(state.dist)
     const fileType = `.${state.build}`

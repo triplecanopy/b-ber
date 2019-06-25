@@ -24,23 +24,12 @@ import { YamlAdaptor, Template, ManifestItemProperties } from '@canopycanopycano
 import { flattenSpineFromYAML, nestedContentToYAML, pathInfoFromFiles } from './helpers'
 import { getFileObjects } from '../inject'
 
-/**
- * @alias module:navigation#Navigation
- */
 class Navigation {
-    /**
-     * [constructor description]
-     * @constructor
-     * @return {Object}
-     */
     constructor() {
         this.navDocs = ['toc.ncx', 'toc.xhtml']
     }
 
-    /**
-     * Remove the `toc.xhtml` and `toc.ncx` from the output directory
-     * @return {Promise<Object|Error>}
-     */
+    // Remove the `toc.xhtml` and `toc.ncx` from the output directory
     createEmptyNavDocuments() {
         return new Promise(resolve => {
             log.info(`opf build navigation documents [${this.navDocs.join(', ')}]`)
@@ -49,10 +38,7 @@ class Navigation {
         })
     }
 
-    /**
-     * Retrieve a list of all XHTML files in the output directory
-     * @return {Promise<Object|Error>}
-     */
+    // Retrieve a list of all XHTML files in the output directory
     getAllXhtmlFiles() {
         return new Promise(resolve =>
             glob(path.join(state.dist, 'OPS', '**', '*.xhtml'), (err, files) => {
@@ -89,13 +75,8 @@ class Navigation {
         return collection
     }
 
-    /**
-     * Resolve discrepancies between files that exist in the output directory and
-     * those that are listed in the YAML manifest
-     * @param  {Array} filesFromSystem XHTML files in the output directory
-     * @param  {Array} filesFromYaml   Entries in the YAML manifest
-     * @return {Promise<Object<Array>|Error>}
-     */
+    // Resolve discrepancies between files that exist in the output directory
+    // and those that are listed in the YAML manifest
     compareXhtmlWithYaml({ filesFromSystem, fileObjects }) {
         return new Promise(resolve => {
             // eslint-disable-line consistent-return
@@ -256,13 +237,9 @@ class Navigation {
         })
     }
 
-    /**
-     * Returns a new object from an array of return values from `Promise.all`.
-     * Deep merges a single property passed in as `property`. Uses `Object.assign`
-     * @param  {Array<Object>} args  The objects to merge
-     * @param  {String} property     The properties of `args` to merge
-     * @return {Object}              Deep merged object
-     */
+    // Returns a new object from an array of return values from `Promise.all`.
+    // Deep merges a single property passed in as `property`. Uses
+    // `Object.assign`
     deepMergePromiseArrayValues(args, property) {
         const props = Object.assign({}, ...args.map(a => a[property]))
         return Object.assign({}, [...args], { [property]: props })
@@ -301,10 +278,7 @@ class Navigation {
         })
     }
 
-    /**
-     * Initialize promise chain to build ebook navigation structure
-     * @return {Promise<Object|Error>}
-     */
+    // Initialize promise chain to build ebook navigation structure
     init() {
         return new Promise(resolve =>
             this.createEmptyNavDocuments()

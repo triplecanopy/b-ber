@@ -14,9 +14,6 @@ import Manifest from '@canopycanopycanopy/b-ber-templates/Opf/Manifest'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import { pathInfoFromFiles } from './helpers'
 
-/**
- * @alias module:manifestAndMetadata#ManifestAndMetadata
- */
 class ManifestAndMetadata {
     // https://github.com/eslint/eslint/issues/7911
     get src() {
@@ -29,19 +26,11 @@ class ManifestAndMetadata {
         return state.version
     }
 
-    /**
-     * @constructor
-     * @return {Object}
-     */
     constructor() {
         this.bookmeta = null
         this.createManifestAndMetadataXML = ManifestAndMetadata.createManifestAndMetadataXML
     }
 
-    /**
-     * [loadMetadata description]
-     * @return {Object<Promise>}
-     */
     loadMetadata() {
         return new Promise(resolve => {
             this.bookmeta = state.metadata.json()
@@ -49,10 +38,7 @@ class ManifestAndMetadata {
         })
     }
 
-    /**
-     * Retrieve lists of files to include in the `content.opf`
-     * @return {Promise<Object<Array>|Error>}
-     */
+    // Retrieve lists of files to include in the `content.opf`
     createManifestObjectFromAssets() {
         return new Promise(resolve =>
             rrdir(`${this.dist}${path.sep}OPS`, (err, filearr) => {
@@ -66,11 +52,6 @@ class ManifestAndMetadata {
         )
     }
 
-    /**
-     * [createManifestAndMetadataFromTemplates description]
-     * @param  {Array} files [description]
-     * @return {Promise<Object|Error>}
-     */
     createManifestAndMetadataFromTemplates(files) {
         return new Promise(resolve => {
             const strings = { manifest: [], bookmeta: [] }
@@ -94,11 +75,6 @@ class ManifestAndMetadata {
         })
     }
 
-    /**
-     * [createManifestAndMetadataXML description]
-     * @param  {Object} resp [description]
-     * @return {Object<Promise|Error>}
-     */
     static createManifestAndMetadataXML(resp) {
         log.info('opf build [manifest]')
         log.info('opf build [metadata]')
@@ -125,10 +101,6 @@ class ManifestAndMetadata {
         })
     }
 
-    /**
-     * [init description]
-     * @return {Object<Promise|Error>}
-     */
     init() {
         return new Promise(resolve =>
             // get the book metadata from state or yaml file

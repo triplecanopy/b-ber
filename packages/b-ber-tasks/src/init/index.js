@@ -9,11 +9,6 @@ import Theme from '@canopycanopycanopy/b-ber-lib/Theme'
 import { ensure } from '@canopycanopycanopy/b-ber-lib/utils'
 
 class Initializer {
-    /**
-     * @constructor
-     * @param  {Object} options Command Line arguments
-     * @return {Object}
-     */
     constructor({ name = '' }) {
         this.src = '_project'
         this.dist = 'project'
@@ -62,11 +57,7 @@ class Initializer {
         return Theme.set(theme, true)
     }
 
-    /**
-     * Write default directories and files to the source directory
-     * @param  {String} name Name of the project
-     * @return {Promise<Object|Error>}
-     */
+    // Write default directories and files to the source directory
     start() {
         this.createAssets()
             .then(() => this.copyImages())

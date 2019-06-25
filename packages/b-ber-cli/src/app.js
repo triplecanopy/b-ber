@@ -9,16 +9,7 @@ import * as commands from './cmd'
 
 const lineLength = 70
 
-/**
- * Start the build
- * @memberOf module:cli
- * @return {Object}
- */
 export default function bber() {
-    /**
-     * Shows custom help if a CLI command fails
-     * @return {String}
-     */
     const showCustomHelp = () =>
         console.log(`
     Usage: bber <command> [options]
@@ -46,11 +37,6 @@ export default function bber() {
     bber version ${state.version}
 `)
 
-    /**
-     * checkCommands
-     * @param  {Object} yargs Yargs module
-     * @return {Object|Error}
-     */
     const checkCommands = ({ argv }) => {
         const command = argv._[0]
 
