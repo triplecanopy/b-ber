@@ -7,7 +7,7 @@ import sequences from '@canopycanopycanopy/b-ber-shapes/sequences'
 import has from 'lodash/has'
 import * as commands from './cmd'
 
-const lineLength = 70
+const LINE_LENGTH = 70
 
 export default function bber() {
     const showCustomHelp = () =>
@@ -21,7 +21,7 @@ export default function bber() {
         .reduce((acc, curr) => {
             const a = acc.split('\n')
             const l = a[a.length - 1].length
-            return acc.concat(l > lineLength ? `\n    ${curr}, ` : `${curr}, `)
+            return acc.concat(l > LINE_LENGTH ? `\n    ${curr}, ` : `${curr}, `)
         }, '')
         .slice(0, -2)}
 
@@ -77,5 +77,5 @@ export default function bber() {
         .help('h')
         .alias('h', 'help')
         .demandCommand()
-        .wrap(lineLength).argv
+        .wrap(LINE_LENGTH).argv
 }

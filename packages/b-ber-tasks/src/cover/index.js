@@ -28,7 +28,7 @@ class Cover {
             ...fileMetadata,
         }
 
-        this.metadataYAML = path.join(state.src, 'metadata.yml')
+        this.metadataYAML = state.src.root('metadata.yml')
 
         this.coverPrefix = '__bber_cover__'
         this.phantomjsArgs = []
@@ -60,7 +60,7 @@ class Cover {
     }
 
     removeDefaultCovers() {
-        const imageDir = path.join(state.src, '_images')
+        const imageDir = state.src.images()
 
         return fs.readdir(imageDir).then(files => {
             const _covers = files.filter(a => path.basename(a).match(new RegExp(this.coverPrefix)))
@@ -89,8 +89,9 @@ class Cover {
     }
 
     writeCoverXHTML() {
-        const textDir = path.join(state.dist, 'OPS', 'text')
-        const coverFilePath = path.join(textDir, 'cover.xhtml')
+        // TODO: ensure text dir
+        const textDir = state.dist.text()
+        const coverFilePath = state.dist.text('cover.xhtml')
 
         return fs
             .mkdirp(textDir)
@@ -123,7 +124,7 @@ class Cover {
             let metadata
 
             this.coverEntry = `${this.coverPrefix}${crypto.randomBytes(20).toString('hex')}.jpg`
-            this.coverImagePath = path.join(state.src, '_images', this.coverEntry)
+            this.coverImagePath = state.src.images(this.coverEntry)
 
             // check that metadata.yml exists
             log.info('cover verify entry in [metadata.yml]')
@@ -147,7 +148,7 @@ class Cover {
                 // dimensions, and write it to the `text` dir.
 
                 // check that the cover image file exists, throw if not
-                this.coverImagePath = path.join(state.src, '_images', this.coverEntry)
+                this.coverImagePath = state.src.images(this.coverEntry)
 
                 try {
                     if (!fs.statSync(this.coverImagePath)) {

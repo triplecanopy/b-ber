@@ -33,7 +33,7 @@ class Navigation {
     createEmptyNavDocuments() {
         return new Promise(resolve => {
             log.info(`opf build navigation documents [${this.navDocs.join(', ')}]`)
-            const promises = this.navDocs.map(a => fs.writeFile(path.join(state.dist, 'OPS', a), ''))
+            const promises = this.navDocs.map(a => fs.writeFile(state.dist.ops(a), ''))
             return Promise.all(promises).then(resolve)
         })
     }
@@ -41,11 +41,11 @@ class Navigation {
     // Retrieve a list of all XHTML files in the output directory
     getAllXhtmlFiles() {
         return new Promise(resolve =>
-            glob(path.join(state.dist, 'OPS', '**', '*.xhtml'), (err, files) => {
+            glob(state.dist.ops('**', '*.xhtml'), (err, files) => {
                 if (err) throw err
                 // TODO: better testing here, make sure we're not including symlinks, for example
                 // @issue: https://github.com/triplecanopy/b-ber/issues/228
-                const fileObjects = pathInfoFromFiles(files, state.dist)
+                const fileObjects = pathInfoFromFiles(files, state.distDir)
 
                 // only get html files
                 const xhtmlFileObjects = fileObjects.filter(a => ManifestItemProperties.isHTML(a))
@@ -108,7 +108,7 @@ class Navigation {
                         state.update('toc', _toc)
                     })
 
-                    const yamlpath = path.join(state.src, `${state.build}.yml`)
+                    const yamlpath = state.src.root(`${state.build}.yml`)
                     const nestedYamlToc = nestedContentToYAML(state.toc)
                     const content =
                         isArray(nestedYamlToc) && nestedYamlToc.length === 0 ? '' : YamlAdaptor.dump(nestedYamlToc)
@@ -146,7 +146,7 @@ class Navigation {
                         })
                         .filter(Boolean)
 
-                    const yamlpath = path.join(state.src, `${state.build}.yml`)
+                    const yamlpath = state.src.root(`${state.build}.yml`)
                     const content =
                         isArray(missingEntriesWithAttributes) && missingEntriesWithAttributes.length === 0
                             ? ''
@@ -249,7 +249,7 @@ class Navigation {
         return new Promise(resolve => {
             const result = this.deepMergePromiseArrayValues(args, 'strings')
             const { toc } = result.strings
-            const filepath = path.join(state.dist, 'OPS', 'toc.xhtml')
+            const filepath = state.dist.ops('toc.xhtml')
             fs.writeFile(filepath, toc, err => {
                 if (err) throw err
                 log.info(`opf emit toc.xhtml [${filepath}]`)
@@ -262,7 +262,7 @@ class Navigation {
         return new Promise(resolve => {
             const result = this.deepMergePromiseArrayValues(args, 'strings')
             const { ncx } = result.strings
-            const filepath = path.join(state.dist, 'OPS', 'toc.ncx')
+            const filepath = state.dist.ops('toc.ncx')
             fs.writeFile(filepath, ncx, err => {
                 if (err) throw err
                 log.info(`opf emit toc.ncx [${filepath}]`)

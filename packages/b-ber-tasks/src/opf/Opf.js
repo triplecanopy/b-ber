@@ -1,6 +1,5 @@
 // Generates metadata, manifest, guide, and spine XML and writes to to `content.opf`
 
-import path from 'path'
 import fs from 'fs-extra'
 import renderLayouts from 'layouts'
 import File from 'vinyl'
@@ -51,7 +50,7 @@ class Opf {
     // Write the `content.opf` to the output directory
     static writeOpfToDisk(contents) {
         return new Promise(resolve => {
-            const opsPath = path.join(state.dist, 'OPS', 'content.opf')
+            const opsPath = state.dist.ops('content.opf')
             fs.writeFile(opsPath, contents, err => {
                 if (err) throw err
                 log.info(`opf emit content.opf [${opsPath}]`)

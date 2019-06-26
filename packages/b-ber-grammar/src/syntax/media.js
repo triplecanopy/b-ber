@@ -19,7 +19,7 @@ const isHostedRemotely = asset => /^http/.test(asset)
 const isHostedBySupportedThirdParty = asset => asset.match(/(vimeo|youtube)\.com/)
 
 const validatePosterImage = (_asset, type) => {
-    const asset = path.join(state.src, '_images', _asset)
+    const asset = state.src.images(_asset)
     const isInlineMedia = /inline/.test(type)
     try {
         if (!fs.existsSync(asset)) {
@@ -143,7 +143,7 @@ export default {
                 // add aspect ratio class name
                 // const aspecRatioClassName = isHostedRemotely(source)
                 //     ? getVideoAspectRatio()
-                //     : getVideoAspectRatio(path.resolve(state.src, `_media/${head(sources)}`))
+                //     : getVideoAspectRatio(path.resolve(state.src.media(head(sources))))
 
                 aspecRatioClassName = 'video--16x9'
             }

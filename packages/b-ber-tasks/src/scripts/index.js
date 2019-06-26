@@ -4,8 +4,6 @@ import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
 import uglifyJS from 'uglify-js'
 
-const cwd = process.cwd()
-
 const uglifyOptions = state.config.uglify_options || {
     compress: {
         dead_code: true,
@@ -22,10 +20,10 @@ const uglify = contents => {
 }
 
 const optimized = files => {
-    const contents = files.map(a => fs.readFileSync(path.resolve(cwd, state.src, '_javascripts', a), 'utf8')).join('')
+    const contents = files.map(file => fs.readFileSync(path.resolve(state.src.javascripts(file)), 'utf8')).join('')
     const js = uglify(contents)
     const { hash } = state
-    const out = path.join(state.dist, 'OPS', 'javascripts', `${hash}.js`)
+    const out = state.dist.javascripts(`${hash}.js`)
 
     return fs
         .writeFile(out, js)
@@ -34,8 +32,8 @@ const optimized = files => {
 
 const unoptimized = files => {
     const promises = files.map(file => {
-        const input = path.join(state.src, '_javascripts', file)
-        const output = path.join(state.dist, 'OPS', 'javascripts', file)
+        const input = state.src.javascripts(file)
+        const output = state.dist.javascripts(file)
         return fs
             .copy(input, output)
             .then(() => log.info('scripts emit [%s]', `javascripts${path.sep}${path.basename(output)}`))
@@ -45,12 +43,12 @@ const unoptimized = files => {
 }
 
 const write = () =>
-    fs.readdir(path.join(state.src, '_javascripts')).then(_files => {
+    fs.readdir(state.src.javascripts()).then(_files => {
         const files = _files.filter(a => path.extname(a) === '.js')
         return (state.env === 'production' ? optimized : unoptimized)(files)
     })
 
-const ensureDir = () => fs.mkdirp(path.join(state.dist, 'OPS', 'javascripts'))
+const ensureDir = () => fs.mkdirp(state.dist.javascripts())
 
 const scripts = () =>
     ensureDir()

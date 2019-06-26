@@ -8,7 +8,7 @@ const epub = () =>
         ? Promise.resolve()
         : zipper
               .create({
-                  input: state.dist,
+                  input: state.distDir,
                   output: process.cwd(),
                   clean: true,
                   fileName: getBookMetadata('identifier', state),

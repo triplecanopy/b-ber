@@ -27,9 +27,7 @@ const handler = argv => {
         })
     }
 
-    const { src } = state
-    const projectPath = path.join(process.cwd(), src)
-
+    const projectPath = path.resolve(state.srcDir)
     const files = [...Project.javascripts(projectPath), ...Project.stylesheets(projectPath)]
 
     // phantomjs takes forever (> 5sec) to exit, but we need to wait for it to

@@ -9,7 +9,7 @@ import Xhtml from '@canopycanopycanopy/b-ber-templates/Xhtml'
 const getRemoteAssets = type => Promise.resolve(state.config[`remote_${type}`] || [])
 
 const getAssets = type =>
-    Promise.all([fs.readdir(path.join(state.dist, 'OPS', type)), getRemoteAssets(type)]).then(([a, b]) => [...a, ...b])
+    Promise.all([fs.readdir(state.dist.ops(type)), getRemoteAssets(type)]).then(([a, b]) => [...a, ...b])
 
 const getInlineScripts = () => [
     new File({
@@ -50,16 +50,13 @@ const render = ({ file, basePath, stylesheets, javascripts, inlineStylesheets, i
 
     const head = Template.render(`${stylesheets_}${inlineStylesheets_}`, Xhtml.head())
     const body =
-        file instanceof File
-            ? file.contents.toString()
-            : fs.readFileSync(path.join(state.dist, 'OPS', basePath, file), 'utf8')
+        file instanceof File ? file.contents.toString() : fs.readFileSync(state.dist.ops(basePath, file), 'utf8')
     const tail = Template.render(`${javascripts_}${inlineJavascripts_}${metadata_}`, Xhtml.tail())
 
     return `${head}${body}${tail}`
 }
 
-const writeAll = files =>
-    Promise.all(files.map(f => fs.writeFile(path.join(state.dist, 'OPS', 'text', f.filename), f.contents)))
+const writeAll = files => Promise.all(files.map(file => fs.writeFile(state.dist.text(file.filename), file.contents)))
 
 export const getFileObjects = async (files, basePath = '') => {
     const stylesheets = await getAssets('stylesheets')
@@ -89,7 +86,7 @@ export const getFileObjects = async (files, basePath = '') => {
 
 const inject = async () => {
     const basePath = 'text'
-    const files = fs.readdirSync(path.join(state.dist, 'OPS', basePath)).map(f => ({ name: f, data: f }))
+    const files = fs.readdirSync(state.dist.ops(basePath)).map(file => ({ name: file, data: file }))
     const fileObjects = await getFileObjects(files, basePath)
 
     return writeAll(fileObjects).catch(log.error)

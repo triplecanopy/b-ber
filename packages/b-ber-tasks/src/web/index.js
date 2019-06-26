@@ -73,7 +73,7 @@ class WebFlow {
 
 // make sure we're using the correct build variables
 function initialize() {
-    DIST_PATH = state.dist
+    DIST_PATH = state.distDir
     OPS_PATH = path.join(DIST_PATH, 'OPS')
     BASE_URL = state.config.base_url ? addTrailingSlash(state.config.base_url) : '/'
 
@@ -482,7 +482,7 @@ function writeWebWorker() {
 
 function writeWebpubManifest() {
     return new Promise((resolve, reject) => {
-        rrdir(state.dist, (err1, files) => {
+        rrdir(state.distDir, (err1, files) => {
             if (err1) reject(err1)
 
             const manifest = generateWebpubManifest(state, files)

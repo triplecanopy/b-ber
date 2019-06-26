@@ -46,8 +46,8 @@ const registerObserver = build =>
                 NODE_ENV: JSON.stringify('development'),
             },
             ignore: ['node_modules', 'dist'],
-            watch: [state.src],
-            args: ['--use_socket_server', '--use_hot_reloader', `--port ${PORT}`, `--dir ${state.dist}`],
+            watch: [state.srcDir],
+            args: ['--use_socket_server', '--use_hot_reloader', `--port ${PORT}`, `--dir ${state.distDir}`],
         })
             .once('start', resolve)
             .on('restart', file => {

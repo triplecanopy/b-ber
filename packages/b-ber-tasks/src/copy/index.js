@@ -19,16 +19,16 @@ const copy = () =>
 
         dirs = [
             {
-                from: path.resolve(state.src, '_images'),
-                to: path.resolve(state.dist, 'OPS', 'images'),
+                from: path.resolve(state.src.images()),
+                to: path.resolve(state.dist.images()),
             },
             {
-                from: path.resolve(state.src, '_fonts'),
-                to: path.resolve(state.dist, 'OPS', 'fonts'),
+                from: path.resolve(state.src.fonts()),
+                to: path.resolve(state.dist.fonts()),
             },
             {
-                from: path.resolve(state.src, '_media'),
-                to: path.resolve(state.dist, 'OPS', 'media'),
+                from: path.resolve(state.src.media()),
+                to: path.resolve(state.dist.media()),
             },
         ]
 

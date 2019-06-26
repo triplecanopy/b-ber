@@ -8,14 +8,14 @@ import { Template } from '@canopycanopycanopy/b-ber-lib'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 
 const writeMarkupToFile = (fname, markup) => {
-    fs.writeFile(path.join(state.dist, 'OPS', 'text', `${fname}.xhtml`), markup).then(() =>
+    fs.writeFile(state.dist.text(`${fname}.xhtml`), markup).then(() =>
         log.info(`render xhtml [${path.basename(fname)}.xhtml]`),
     )
 }
 
 // convert md to xhtml and wrap with page template
 const createPageLayout = (fileName, data) => {
-    const textDir = path.join(state.dist, 'OPS', 'text')
+    const textDir = state.dist.text()
     const body = MarkdownRenderer.render(fileName, data)
     const markup = Template.render(body, Xhtml.body())
 
@@ -32,7 +32,7 @@ const createXTHMLFile = fpath =>
         .catch(log.error)
 
 function render() {
-    const markdownDir = path.join(state.src, '_markdown')
+    const markdownDir = state.src.markdown()
 
     return fs.readdir(markdownDir).then(files => {
         // sort the files in the order that they appear in `type.yml`, so that

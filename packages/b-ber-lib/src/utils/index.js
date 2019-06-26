@@ -158,7 +158,7 @@ export const generateWebpubManifest = (state, files) => {
         .filter(file => path.basename(file).charAt(0) !== '.')
         .map(file => ({
             // rel: ...
-            href: file.replace(`${state.dist}/`, ''),
+            href: file.replace(`${state.distDir}/`, ''),
             type: mime.lookup(file),
         }))
 

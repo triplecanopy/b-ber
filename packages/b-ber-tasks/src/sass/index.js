@@ -24,8 +24,8 @@ const createSCSSString = () =>
         const { theme } = state
         const themeName = theme.name
 
-        const themeSettingsPath = path.join(state.src, '_stylesheets', themeName, '_settings.scss')
-        const themeOverridesPath = path.join(state.src, '_stylesheets', themeName, '_overrides.scss')
+        const themeSettingsPath = state.src.stylesheets(themeName, '_settings.scss')
+        const themeOverridesPath = state.src.stylesheets(themeName, '_overrides.scss')
         const themeStylesPath = theme.entry
 
         try {
@@ -74,7 +74,7 @@ const createSCSSString = () =>
     })
 
 // make sure the compiled output dir exists
-const ensureCSSDir = () => fs.mkdirp(path.join(state.dist, 'OPS', 'stylesheets'))
+const ensureCSSDir = () => fs.mkdirp(state.dist.stylesheets())
 
 // copy assets that exist in theme directory to the corresponding directory in
 // _project:
@@ -91,7 +91,7 @@ const copyThemeAssets = () => {
 
     const fileData = ASSET_DIRNAMES.reduce((acc, curr) => {
         const themePath = path.resolve(path.dirname(theme.entry), curr)
-        const srcPath = path.join(state.src, `_${curr}`)
+        const srcPath = state.src.root(`_${curr}`)
 
         fs.mkdirpSync(srcPath)
 
@@ -129,7 +129,7 @@ const renderCSS = scssString =>
             {
                 data: `$build: "${state.build}";${scssString}`,
                 includePaths: [
-                    path.join(state.src, '_stylesheets'),
+                    state.src.stylesheets(),
                     path.dirname(state.theme.entry),
                     path.dirname(path.dirname(state.theme.entry)),
                 ],
@@ -152,7 +152,7 @@ const applyPostProcessing = ({ css }) =>
 
 const writeCSSFile = cssString => {
     const fileName = state.env === 'production' ? `${state.hash}.css` : 'application.css'
-    return fs.writeFile(path.join(state.dist, 'OPS', 'stylesheets', fileName), cssString)
+    return fs.writeFile(state.dist.stylesheets(fileName), cssString)
 }
 
 const sass = () =>

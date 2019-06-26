@@ -1,5 +1,4 @@
 import fs from 'fs-extra'
-import path from 'path'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
 import figure from '../parsers/figure'
@@ -31,7 +30,7 @@ export default {
                 log.error('[source] attribute is required by [logo] directive, aborting')
             }
 
-            const inputImagePath = path.join(state.src, '_images', attrsObj.source)
+            const inputImagePath = state.src.images(attrsObj.source)
             const outputImagePath = `../images/${attrsObj.source}`
 
             try {

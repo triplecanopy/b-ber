@@ -1,4 +1,3 @@
-import path from 'path'
 import log from '@canopycanopycanopy/b-ber-logger'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import EbookConvert from '@canopycanopycanopy/b-ber-lib/EbookConvert'
@@ -16,7 +15,7 @@ const mobi = () =>
     process.argv.includes('--no-compile')
         ? Promise.resolve()
         : EbookConvert.convert({
-              inputPath: path.join(path.join(state.dist, 'OPS'), 'content.opf'),
+              inputPath: state.dist.ops('content.opf'),
               outputPath: process.cwd(),
               fileType: 'mobi',
               fileName: getBookMetadata('identifier', state),

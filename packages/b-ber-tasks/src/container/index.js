@@ -7,7 +7,7 @@ import state from '@canopycanopycanopy/b-ber-lib/State'
 
 class Container {
     get dirs() {
-        return [path.join(state.dist, 'OPS'), path.join(state.dist, 'META-INF')]
+        return [state.dist.ops(), state.dist.root('META-INF')]
     }
 
     constructor() {
@@ -23,15 +23,17 @@ class Container {
             { path: 'mimetype', content: Xml.mimetype() },
         ]
 
-        const promises = files.map(a =>
-            fs.writeFile(path.join(state.dist, a.path), a.content).then(() => log.info('container emit [%s]', a.path)),
+        const promises = files.map(file =>
+            fs
+                .writeFile(state.dist.root(file.path), file.content)
+                .then(() => log.info('container emit [%s]', file.path)),
         )
 
         return Promise.all(promises)
     }
 
     makedirs() {
-        const promises = this.dirs.map(a => fs.mkdirs(a).then(() => log.info('container emit [%s]', a)))
+        const promises = this.dirs.map(dir => fs.mkdirs(dir).then(() => log.info('container emit [%s]', dir)))
         return Promise.all(promises)
     }
 

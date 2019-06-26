@@ -30,6 +30,27 @@ class State {
         reader: {},
     }
 
+    src = {
+        root: (...args) => path.join(this.srcDir, ...args),
+        images: (...args) => path.join(this.srcDir, '_images', ...args),
+        markdown: (...args) => path.join(this.srcDir, '_markdown', ...args),
+        stylesheets: (...args) => path.join(this.srcDir, '_stylesheets', ...args),
+        javascripts: (...args) => path.join(this.srcDir, '_javascripts', ...args),
+        fonts: (...args) => path.join(this.srcDir, '_fonts', ...args),
+        media: (...args) => path.join(this.srcDir, '_media', ...args),
+    }
+
+    dist = {
+        root: (...args) => path.join(this.distDir, ...args),
+        ops: (...args) => path.join(this.distDir, 'OPS', ...args),
+        text: (...args) => path.join(this.distDir, 'OPS', 'text', ...args),
+        images: (...args) => path.join(this.distDir, 'OPS', 'images', ...args),
+        stylesheets: (...args) => path.join(this.distDir, 'OPS', 'stylesheets', ...args),
+        javascripts: (...args) => path.join(this.distDir, 'OPS', 'javascripts', ...args),
+        fonts: (...args) => path.join(this.distDir, 'OPS', 'fonts', ...args),
+        media: (...args) => path.join(this.distDir, 'OPS', 'media', ...args),
+    }
+
     constructor() {
         let version
 
@@ -68,28 +89,28 @@ class State {
         }
     }
 
-    get src() {
+    get srcDir() {
         return this.config.src
     }
 
-    get dist() {
+    set srcDir(val) {
+        this.config.src = val
+    }
+
+    get distDir() {
         if (this.build && this.buildTypes && this.buildTypes[this.build]) {
             return this.buildTypes[this.build].dist
         }
         return this.config.dist
     }
 
+    set distDir(val) {
+        this.config.dist = val
+    }
+
     // eslint-disable-next-line class-methods-use-this
     get env() {
         return process.env.NODE_ENV || 'development'
-    }
-
-    set src(val) {
-        this.config.src = val
-    }
-
-    set dist(val) {
-        this.config.dist = val
     }
 
     set env(val) {

@@ -1,4 +1,3 @@
-import path from 'path'
 import fs from 'fs-extra'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
@@ -9,7 +8,7 @@ class Footnotes {
     get file() {
         return {
             name: this.baseName,
-            path: path.join(state.dist, 'OPS', 'text', `${this.baseName}.xhtml`),
+            path: state.dist.text(`${this.baseName}.xhtml`),
         }
     }
 

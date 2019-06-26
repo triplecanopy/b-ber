@@ -1,4 +1,3 @@
-import path from 'path'
 import fs from 'fs-extra'
 import mime from 'mime-types'
 import imageSize from 'probe-image-size'
@@ -53,7 +52,7 @@ export default {
                 filename,
                 lineNr,
             })
-            const asset = path.join(state.src, '_images', attrsObject.source)
+            const asset = state.src.images(attrsObject.source)
             const mediaType = (type.indexOf('-') && type.substring(0, type.indexOf('-'))) || type
 
             let result, page, href, classNames, ref, imageData // eslint-disable-line one-var

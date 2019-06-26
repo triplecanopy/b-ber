@@ -78,11 +78,11 @@ const process = file =>
     })
 
 const mobiCSS = () => {
-    const stylesheetsPath = path.join(state.dist, 'OPS', 'stylesheets')
+    const stylesheetsPath = state.dist.stylesheets()
     return fs.readdir(stylesheetsPath).then(files =>
         Promise.all(
-            files.map(a => {
-                const file = path.join(state.dist, 'OPS', 'stylesheets', a)
+            files.map(stylesheet => {
+                const file = state.dist.stylesheets(stylesheet)
                 log.info(`mobiCSS process [${path.basename(file)}]`)
                 return process(file).then(write)
             }),

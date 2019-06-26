@@ -39,8 +39,8 @@ class Generate {
         const buildTypes = Object.keys(sequences)
 
         const promises = buildTypes.map(type => {
-            const navigationYAML = path.join(state.src, `${type}.yml`)
-            const pageMeta = YamlAdaptor.load(path.join(state.src, `${type}.yml`)) || []
+            const navigationYAML = state.src.root(`${type}.yml`)
+            const pageMeta = YamlAdaptor.load(state.src.root(`${type}.yml`)) || []
             const index = pageMeta.indexOf(fileName)
 
             if (index > -1) {
@@ -54,7 +54,8 @@ class Generate {
     }
 
     init(metadata) {
-        const markdownDir = path.join(state.src, '_markdown')
+        // TODO: ensure markdown dir
+        const markdownDir = state.src.markdown()
         return fs
             .mkdirp(markdownDir)
             .then(() => this.createFile({ markdownDir, metadata }))

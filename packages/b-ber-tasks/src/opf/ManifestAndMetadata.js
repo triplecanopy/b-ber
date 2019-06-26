@@ -15,17 +15,6 @@ import state from '@canopycanopycanopy/b-ber-lib/State'
 import { pathInfoFromFiles } from './helpers'
 
 class ManifestAndMetadata {
-    // https://github.com/eslint/eslint/issues/7911
-    get src() {
-        return state.src
-    }
-    get dist() {
-        return state.dist
-    }
-    get version() {
-        return state.version
-    }
-
     constructor() {
         this.bookmeta = null
         this.createManifestAndMetadataXML = ManifestAndMetadata.createManifestAndMetadataXML
@@ -41,12 +30,12 @@ class ManifestAndMetadata {
     // Retrieve lists of files to include in the `content.opf`
     createManifestObjectFromAssets() {
         return new Promise(resolve =>
-            rrdir(`${this.dist}${path.sep}OPS`, (err, filearr) => {
+            rrdir(state.dist.ops(), (err, filearr) => {
                 if (err) throw err
                 // TODO: better testing here, make sure we're not including symlinks, for example
                 // @issue: https://github.com/triplecanopy/b-ber/issues/228
                 const files = [...state.remoteAssets, ...filearr.filter(a => path.basename(a).charAt(0) !== '.')]
-                const fileObjects = pathInfoFromFiles(files, this.dist) // `pathInfoFromFiles` is creating objects from file names
+                const fileObjects = pathInfoFromFiles(files, state.distDir) // `pathInfoFromFiles` is creating objects from file names
                 resolve(fileObjects)
             }),
         )
@@ -65,7 +54,7 @@ class ManifestAndMetadata {
                 ...strings.bookmeta,
                 `<meta property="ibooks:specified-fonts">${specifiedFonts}</meta>`,
                 `<meta property="dcterms:modified">${new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')}</meta>`, // eslint-disable-line max-len
-                `<meta name="generator" content="b-ber@${this.version}" />`,
+                `<meta name="generator" content="b-ber@${state.version}" />`,
             ]
 
             files.forEach((file, idx) => {

@@ -1,5 +1,4 @@
 import fs from 'fs-extra'
-import path from 'path'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
 import { SpineItem, Template } from '@canopycanopycanopy/b-ber-lib'
@@ -10,7 +9,7 @@ const createLOILeader = () => {
     const fileName = 'figures-titlepage.xhtml'
     const markup = Template.render(Xhtml.loi(), Xhtml.body())
 
-    return fs.writeFile(path.join(state.dist, 'OPS', 'text', `${fileName}`), markup, 'utf8').then(() => {
+    return fs.writeFile(state.dist.text(fileName), markup, 'utf8').then(() => {
         state.add('guide', {
             filename: fileName,
             title: 'Figures',
@@ -27,7 +26,7 @@ const createLOIAsSeparateHTMLFiles = () => {
         const figureStr = figure(data, state.build)
         const markup = Template.render(figureStr, Xhtml.body())
 
-        return fs.writeFile(path.join(state.dist, 'OPS', 'text', data.page), markup, 'utf8').then(() => {
+        return fs.writeFile(state.dist.text(data.page), markup, 'utf8').then(() => {
             const fileData = new SpineItem({
                 fileName: data.page,
                 in_toc: false,
@@ -66,7 +65,7 @@ const createLOIAsSingleHTMLFile = () => {
     const fileName = 'figures-titlepage.xhtml'
     const markup = Template.render(figuresPage, Xhtml.body())
 
-    return fs.writeFile(path.join(state.dist, 'OPS', 'text', `${fileName}`), markup, 'utf8').then(() => {
+    return fs.writeFile(state.dist.text(fileName), markup, 'utf8').then(() => {
         state.add('guide', {
             filename: fileName,
             title: 'Figures',
