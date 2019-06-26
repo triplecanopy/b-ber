@@ -1,6 +1,6 @@
-import isArray from 'lodash/isArray'
 import isPlainObject from 'lodash/isPlainObject'
-import has from 'lodash/has'
+import head from 'lodash/head'
+import tail from 'lodash/tail'
 import YamlAdaptor from './YamlAdaptor'
 import SpineItem from './SpineItem'
 
@@ -8,54 +8,48 @@ class Spine {
     constructor({ src, buildType }) {
         this.src = src
         this.buildType = buildType
-        this.root = [{ nodes: [] }]
     }
 
-    build(arr, result) {
-        arr.forEach(a => {
-            let index
-            let nodes
-
-            if (isArray(result) && result.length - 1 > -1) {
-                index = result.length - 1
-            } else {
-                index = 0
-            }
-
-            if (!result[index] || !has(result[index], 'nodes')) {
-                nodes = this.root[0].nodes
-            } else {
-                nodes = result[index].nodes
-            }
-
-            if (isPlainObject(a)) {
-                if (Object.keys(a)[0] === 'section') {
-                    // nested section
-                    this.build(a[Object.keys(a)[0]], nodes)
+    build(entries = []) {
+        const { buildType } = this
+        return entries.map(entry => {
+            // create new spine item
+            let node
+            // check if it either has nested entries or attributes that have
+            // been assigned in the yaml file
+            if (isPlainObject(entry)) {
+                // we know that nested navigation is wrapped in a `section`
+                // object so we check against that
+                const { section } = entry
+                if (section) {
+                    // entry has nested navigation. set the filename and recurse
+                    // over the child nodes
+                    node = new SpineItem({
+                        fileName: head(section),
+                        nodes: this.build(tail(section)),
+                        buildType,
+                    })
                 } else {
-                    // entry with attributes
-                    const fileName = Object.keys(a)[0]
-                    const options = a[Object.keys(a)[0]]
-                    const data = new SpineItem({ fileName, ...options, buildType: this.buildType })
-                    nodes.push(data)
+                    // entry has attributes
+                    const [[fileName, { ...options }]] = Object.entries(entry)
+                    node = new SpineItem({ fileName, buildType, ...options })
                 }
             } else {
-                // string entry
-                const data = new SpineItem({ fileName: a, buildType: this.buildType })
-                nodes.push(data)
+                // just a plain file name
+                const fileName = entry
+                node = new SpineItem({ fileName, buildType })
             }
-        })
 
-        return this.root[0].nodes
+            return node
+        })
     }
 
-    flatten(arr, result = []) {
-        arr.forEach(a => {
-            result.push(a)
-            if (a.nodes && a.nodes.length) this.flatten(a.nodes, result)
-        })
-
-        return result
+    flatten(arr) {
+        return arr.reduce((acc, curr) => {
+            const { nodes, ...rest } = curr
+            const acc_ = acc.concat(rest)
+            return nodes && nodes.length ? acc_.concat(this.flatten(nodes)) : acc_
+        }, [])
     }
 
     // eslint-disable-next-line class-methods-use-this
