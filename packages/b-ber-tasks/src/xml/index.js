@@ -44,7 +44,7 @@ const parseHTMLFiles = files =>
     })
 
 const xml = () => {
-    const files = state.spine.map(entry => entry.absolutePath)
+    const files = state.spine.flattened.map(entry => entry.absolutePath)
     return parseHTMLFiles(files)
         .then(formatForInDesign)
         .then(writeXML)

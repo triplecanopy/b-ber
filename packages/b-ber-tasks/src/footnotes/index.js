@@ -29,7 +29,8 @@ class Footnotes {
                 generated: true,
                 buildType: state.build,
             })
-            state.add('spine', fileData)
+
+            state.add('spine.flattened', fileData)
             log.info(`create default footnotes page [${this.file.name}.xhtml]`)
         })
     }

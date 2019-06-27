@@ -15,7 +15,6 @@ import Yaml from './Yaml'
 import Config from './Config'
 import Spine from './Spine'
 
-const cwd = process.cwd()
 const randomHash = () => crypto.randomBytes(20).toString('hex')
 
 const SRC_DIR_IMAGES = '_images'
@@ -42,7 +41,7 @@ class State {
         }
     }
 
-    metadata = { json: () => [{}] }
+    metadata = { json: () => [{}] } // mocks the YAML api
     theme = {}
     video = []
     audio = []
@@ -181,11 +180,10 @@ class State {
             ;({ version } = fs.readJSONSync(require.resolve('../package.json')))
         }
 
-        this.version = version
-        this.config = new Config()
+        set(this, 'version', version)
+        set(this, 'config', new Config())
 
-        this.resetEntries()
-        this.loadConfig()
+        this.reset()
         this.loadMetadata()
         this.loadMedia()
         this.loadBuilds()
@@ -193,58 +191,46 @@ class State {
     }
 
     reset() {
-        this.resetEntries()
+        Object.entries(State.defaults).forEach(([key, val]) => set(this, key, val))
         this.loadConfig()
     }
 
-    resetEntries() {
-        Object.entries(State.defaults).forEach(([key, val]) => (this[key] = val))
+    add(prop, value) {
+        const prevValue = get(this, prop)
+
+        if (isArray(prevValue)) {
+            set(this, prop, [...prevValue, value])
+        } else if (isPlainObject(prevValue)) {
+            set(this, prop, { ...prevValue, value })
+        } else if (typeof prevValue === 'string') {
+            set(this, prop, `${prevValue}${value}`)
+        } else {
+            log.error(`Cannot add [${value}] to [state.${prop}]`)
+        }
     }
 
-    add(prop, val) {
-        if (isArray(this[prop])) {
-            this[prop] = [...this[prop], val]
-            return
-        }
+    remove(prop, value) {
+        const prevValue = get(this, prop)
 
-        if (isPlainObject(this[prop])) {
-            this[prop] = { ...this[prop], val }
-            return
+        if (isArray(prevValue)) {
+            const arr = [...prevValue]
+            remove(arr, value)
+            set(this, prop, arr)
+        } else if (isPlainObject(prevValue)) {
+            const { [value]: _, ...rest } = prevValue // eslint-disable-line no-unused-vars
+            set(this, prop, rest)
+        } else {
+            log.error(`Cannot remove [${value}] from [state.${prop}]`)
         }
-
-        if (typeof this[prop] === 'string') {
-            this[prop] = `${this[prop]}${val}`
-            return
-        }
-
-        log.error(`Cannot add [${val}] to [state.${prop}]`)
     }
 
-    remove(prop, val) {
-        if (isArray(this[prop])) {
-            const arr = [...this[prop]]
-            remove(arr, val)
-            this[prop] = arr
-            return
-        }
-
-        if (isPlainObject(this[prop])) {
-            const { [val]: _, ...rest } = this[prop] // eslint-disable-line no-unused-vars
-            this[prop] = rest
-            return
-        }
-
-        log.error(`Cannot remove [${val}] from [state.${prop}]`)
-    }
-
-    merge(prop, val) {
-        this[prop] = merge(this[prop], val)
-        return this[prop]
+    merge(prop, value) {
+        const oldValue = get(this, prop)
+        set(this, prop, merge(oldValue, value))
     }
 
     update(prop, val) {
         set(this, prop, val)
-        return get(this, prop)
     }
 
     contains(collection, value) {
@@ -256,20 +242,20 @@ class State {
     }
 
     loadConfig() {
-        if (!fs.existsSync(path.join(cwd, 'config.yml'))) return
+        if (!fs.existsSync(path.resolve('config.yml'))) return
         const config = new Yaml('config')
-        config.load(path.join(cwd, 'config.yml'))
+        config.load(path.resolve('config.yml'))
 
         // not necessary right now to pass around a YAWN instance since we'er
         // not writing back to config.yml, but may be necessary at some point
-        this.config = new Config(config.json())
+        set(this, 'config', new Config(config.json()))
     }
 
     loadMetadata() {
-        const fpath = path.join(cwd, this.config.src, 'metadata.yml')
+        const fpath = path.resolve(this.config.src, 'metadata.yml')
         if (!fs.existsSync(fpath)) return
 
-        this.metadata = new Yaml('metadata')
+        set(this, 'metadata', new Yaml('metadata'))
         this.metadata.load(fpath)
     }
 
@@ -278,13 +264,13 @@ class State {
         // only command that's run outside of a project directory
         if (process.argv.includes('new')) return
 
-        const userThemesPath = path.resolve(cwd, this.config.themes_directory)
+        const userThemesPath = path.resolve(this.config.themes_directory)
         fs.ensureDirSync(userThemesPath)
 
         // theme is set, using a built-in theme
         if (themes[this.config.theme]) {
             log.info(`Loaded theme [${this.config.theme}]`)
-            this.theme = themes[this.config.theme]
+            set(this, 'theme', themes[this.config.theme])
             return
         }
 
@@ -295,48 +281,51 @@ class State {
                 log.info(`Loaded theme [${this.config.theme}]`)
                 return
             }
-        } catch (err) {
+        } catch (_) {
             // noop
         }
 
         // possibly a theme installed with npm, test the project root
         try {
             // eslint-disable-next-line global-require, import/no-dynamic-require
-            this.theme = require(path.resolve('node_modules', this.config.theme)) // require.resolve?
+            set(this, 'theme', require(path.resolve('node_modules', this.config.theme))) // require.resolve?
         } catch (err) {
             log.warn(`There was an error during require [${this.config.theme}]`)
             log.warn('Using default theme [b-ber-theme-serif]')
             log.warn(err.message)
 
             // error loading theme, set to default
-            this.theme = themes['b-ber-theme-serif']
+            set(this, 'theme', themes['b-ber-theme-serif'])
         }
     }
 
     loadMedia() {
-        const mediaPath = path.join(cwd, this.config.src, '_media')
+        const mediaPath = path.resolve(this.config.src, '_media')
+
         try {
             if (fs.existsSync(mediaPath)) {
                 const media = fs.readdirSync(mediaPath)
                 const video = media.filter(a => /^video/.test(mime.lookup(a)))
                 const audio = media.filter(a => /^audio/.test(mime.lookup(a)))
 
-                this.video = video
-                this.audio = audio
+                set(this, 'video', video)
+                set(this, 'audio', audio)
             }
         } catch (err) {
-            throw new Error(err)
+            log.error(err)
         }
     }
 
     loadBuildSettings(type) {
+        if (process.argv.includes('new')) return
+
         const { src, dist } = this.config
-        const projectDir = path.join(cwd, src)
-        const navigationConfigFile = path.join(cwd, src, `${type}.yml`)
+        const projectDir = path.resolve(src)
+        const navigationConfigFile = path.resolve(src, `${type}.yml`)
 
         try {
             if (!fs.existsSync(projectDir)) {
-                throw new Error(`Project directory [${projectDir}] does not exist`)
+                log.error(`Project directory [${projectDir}] does not exist`)
             }
         } catch (err) {
             // Starting a new project, noop
