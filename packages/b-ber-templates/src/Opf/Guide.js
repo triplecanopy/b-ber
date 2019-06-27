@@ -1,3 +1,4 @@
+import path from 'path'
 import File from 'vinyl'
 import { Html } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
@@ -13,22 +14,18 @@ class Guide {
     static item({ type, title, href }) {
         return `<reference type="${type}" title="${title}" href="${href}"/>`
     }
+
     static items(data) {
-        return data
-            .map(a => {
-                let item = ''
-                let type
-                if ((type = a.type)) {
-                    log.info(`guide adding landmark [${a.fileName}] as [${type}]`)
+        return data.reduce((acc, curr) => {
+            if (!curr.type) return acc
+            log.info(`guide adding landmark [${curr.filename}] as [${curr.type}]`)
 
-                    const title = Html.escape(a.title)
-                    const href = `${encodeURI(a.relativePath)}.xhtml`
-                    item = Guide.item({ type, title, href })
-                }
+            const { type } = curr
+            const title = Html.escape(curr.title)
+            const href = `text/${encodeURI(path.basename(curr.filename, '.xhtml'))}.xhtml` // TODO: fixme
 
-                return item
-            })
-            .join('')
+            return Guide.item({ type, title, href })
+        }, '')
     }
 }
 

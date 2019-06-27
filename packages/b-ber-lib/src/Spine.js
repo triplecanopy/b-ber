@@ -5,9 +5,13 @@ import YamlAdaptor from './YamlAdaptor'
 import SpineItem from './SpineItem'
 
 class Spine {
-    constructor({ src, buildType }) {
+    constructor({ src, buildType, navigationConfigFile }) {
         this.src = src
         this.buildType = buildType
+
+        this.declared = this.create(navigationConfigFile)
+        this.nested = this.build(this.declared, src) // nested navigation
+        this.flattened = this.flatten(this.nested) // one-dimensional page flow
     }
 
     build(entries = []) {

@@ -5,6 +5,7 @@ import findIndex from 'lodash/findIndex'
 import set from 'lodash/set'
 import get from 'lodash/get'
 import merge from 'lodash/merge'
+import remove from 'lodash/remove'
 import path from 'path'
 import fs from 'fs-extra'
 import mime from 'mime-types'
@@ -15,13 +16,40 @@ import Config from './Config'
 import Spine from './Spine'
 
 const cwd = process.cwd()
+const randomHash = () => crypto.randomBytes(20).toString('hex')
+
+const SRC_DIR_IMAGES = '_images'
+const SRC_DIR_MARKDOWN = '_markdown'
+const SRC_DIR_STYLESHEETS = '_stylesheets'
+const SRC_DIR_JAVASCRIPTS = '_javascripts'
+const SRC_DIR_FONTS = '_fonts'
+const SRC_DIR_MEDIA = '_media'
+
+const DIST_DIR_OPS = 'OPS'
+const DIST_DIR_TEXT = 'text'
+const DIST_DIR_IMAGES = 'images'
+const DIST_DIR_STYLESHEETS = 'stylesheets'
+const DIST_DIR_JAVASCRIPTS = 'javascripts'
+const DIST_DIR_FONTS = 'fonts'
+const DIST_DIR_MEDIA = 'media'
 
 class State {
+    static get defaults() {
+        return {
+            build: 'epub',
+            sequence: [],
+            hash: randomHash(),
+        }
+    }
+
     metadata = { json: () => [{}] }
     theme = {}
     video = []
     audio = []
-    buildTypes = {
+    build = 'epub'
+    sequence = []
+    hash = randomHash()
+    builds = {
         sample: {},
         epub: {},
         mobi: {},
@@ -30,25 +58,117 @@ class State {
         reader: {},
     }
 
+    get spine() {
+        return this.builds[this.build].spine
+    }
+
+    set spine(val) {
+        this.builds[this.build].spine = val
+    }
+
+    get guide() {
+        return this.builds[this.build].guide
+    }
+
+    set guide(val) {
+        this.builds[this.build].guide = val
+    }
+
+    get figures() {
+        return this.builds[this.build].figures
+    }
+
+    set figures(val) {
+        this.builds[this.build].figures = val
+    }
+
+    get footnotes() {
+        return this.builds[this.build].footnotes
+    }
+
+    set footnotes(val) {
+        this.builds[this.build].footnotes = val
+    }
+
+    get cursor() {
+        return this.builds[this.build].cursor
+    }
+
+    set cursor(val) {
+        this.builds[this.build].cursor = val
+    }
+
+    get toc() {
+        return this.builds[this.build].toc
+    }
+
+    set toc(val) {
+        this.builds[this.build].toc = val
+    }
+
+    get remoteAssets() {
+        return this.builds[this.build].remoteAssets
+    }
+
+    set remoteAssets(val) {
+        this.builds[this.build].remoteAssets = val
+    }
+
+    get loi() {
+        return this.builds[this.build].loi
+    }
+
+    set loi(val) {
+        this.builds[this.build].loi = val
+    }
+
+    get srcDir() {
+        return this.config.src
+    }
+
+    set srcDir(val) {
+        this.config.src = val
+    }
+
+    get distDir() {
+        if (this.build && this.builds && this.builds[this.build]) {
+            return this.builds[this.build].dist
+        }
+        return this.config.dist
+    }
+
+    set distDir(val) {
+        this.config.dist = val
+    }
+
+    // eslint-disable-next-line class-methods-use-this
+    get env() {
+        return process.env.NODE_ENV || 'development'
+    }
+
+    set env(val) {
+        this.config.env = val
+    }
+
     src = {
         root: (...args) => path.join(this.srcDir, ...args),
-        images: (...args) => path.join(this.srcDir, '_images', ...args),
-        markdown: (...args) => path.join(this.srcDir, '_markdown', ...args),
-        stylesheets: (...args) => path.join(this.srcDir, '_stylesheets', ...args),
-        javascripts: (...args) => path.join(this.srcDir, '_javascripts', ...args),
-        fonts: (...args) => path.join(this.srcDir, '_fonts', ...args),
-        media: (...args) => path.join(this.srcDir, '_media', ...args),
+        images: (...args) => path.join(this.srcDir, SRC_DIR_IMAGES, ...args),
+        markdown: (...args) => path.join(this.srcDir, SRC_DIR_MARKDOWN, ...args),
+        stylesheets: (...args) => path.join(this.srcDir, SRC_DIR_STYLESHEETS, ...args),
+        javascripts: (...args) => path.join(this.srcDir, SRC_DIR_JAVASCRIPTS, ...args),
+        fonts: (...args) => path.join(this.srcDir, SRC_DIR_FONTS, ...args),
+        media: (...args) => path.join(this.srcDir, SRC_DIR_MEDIA, ...args),
     }
 
     dist = {
         root: (...args) => path.join(this.distDir, ...args),
-        ops: (...args) => path.join(this.distDir, 'OPS', ...args),
-        text: (...args) => path.join(this.distDir, 'OPS', 'text', ...args),
-        images: (...args) => path.join(this.distDir, 'OPS', 'images', ...args),
-        stylesheets: (...args) => path.join(this.distDir, 'OPS', 'stylesheets', ...args),
-        javascripts: (...args) => path.join(this.distDir, 'OPS', 'javascripts', ...args),
-        fonts: (...args) => path.join(this.distDir, 'OPS', 'fonts', ...args),
-        media: (...args) => path.join(this.distDir, 'OPS', 'media', ...args),
+        ops: (...args) => path.join(this.distDir, DIST_DIR_OPS, ...args),
+        text: (...args) => path.join(this.distDir, DIST_DIR_OPS, DIST_DIR_TEXT, ...args),
+        images: (...args) => path.join(this.distDir, DIST_DIR_OPS, DIST_DIR_IMAGES, ...args),
+        stylesheets: (...args) => path.join(this.distDir, DIST_DIR_OPS, DIST_DIR_STYLESHEETS, ...args),
+        javascripts: (...args) => path.join(this.distDir, DIST_DIR_OPS, DIST_DIR_JAVASCRIPTS, ...args),
+        fonts: (...args) => path.join(this.distDir, DIST_DIR_OPS, DIST_DIR_FONTS, ...args),
+        media: (...args) => path.join(this.distDir, DIST_DIR_OPS, DIST_DIR_MEDIA, ...args),
     }
 
     constructor() {
@@ -66,55 +186,10 @@ class State {
 
         this.resetEntries()
         this.loadConfig()
-        this.loadConfig()
         this.loadMetadata()
         this.loadMedia()
         this.loadBuilds()
         this.loadTheme()
-    }
-
-    static get defaults() {
-        return {
-            guide: [],
-            figures: [],
-            footnotes: [],
-            build: 'epub',
-            cursor: [],
-            spine: [],
-            toc: [],
-            remoteAssets: [],
-            loi: [],
-            sequence: [],
-            hash: crypto.randomBytes(20).toString('hex'),
-        }
-    }
-
-    get srcDir() {
-        return this.config.src
-    }
-
-    set srcDir(val) {
-        this.config.src = val
-    }
-
-    get distDir() {
-        if (this.build && this.buildTypes && this.buildTypes[this.build]) {
-            return this.buildTypes[this.build].dist
-        }
-        return this.config.dist
-    }
-
-    set distDir(val) {
-        this.config.dist = val
-    }
-
-    // eslint-disable-next-line class-methods-use-this
-    get env() {
-        return process.env.NODE_ENV || 'development'
-    }
-
-    set env(val) {
-        this.config.env = val
     }
 
     reset() {
@@ -142,25 +217,24 @@ class State {
             return
         }
 
-        throw new Error('Something went wrong in `State#add`')
+        log.error(`Cannot add [${val}] to [state.${prop}]`)
     }
 
     remove(prop, val) {
         if (isArray(this[prop])) {
-            const index = findIndex(this[prop], val)
-            if (index < 0) {
-                throw new TypeError(`The _property [${val}] could not be found in [state.${prop}]`)
-            }
-            this[prop].splice(index, 1)
+            const arr = [...this[prop]]
+            remove(arr, val)
+            this[prop] = arr
             return
         }
 
         if (isPlainObject(this[prop])) {
-            delete this[prop][val]
+            const { [val]: _, ...rest } = this[prop] // eslint-disable-line no-unused-vars
+            this[prop] = rest
             return
         }
 
-        throw new Error('Something went wrong in `State#remove`')
+        log.error(`Cannot remove [${val}] from [state.${prop}]`)
     }
 
     merge(prop, val) {
@@ -270,16 +344,18 @@ class State {
                 src,
                 dist: `${dist}-${type}`,
                 config: {},
-                spineList: [],
-                spineEntries: [],
-                tocEntries: [],
+                guide: [],
+                spine: [],
+                toc: [],
+                cursor: [],
+                figures: [],
+                footnotes: [],
+                remoteAssets: [],
+                loi: [],
             }
         }
 
-        const spine = new Spine({ src, buildType: type })
-        const spineList = spine.create(navigationConfigFile)
-        const tocEntries = spine.build(spineList, src) // nested navigation
-        const spineEntries = spine.flatten(tocEntries) // one-dimensional page flow
+        const spine = new Spine({ src, buildType: type, navigationConfigFile })
 
         // build-specific config. gets merged into base config during build step
         const config = this.config[type] ? { ...this.config[type] } : {}
@@ -288,14 +364,19 @@ class State {
             src,
             dist: `${dist}-${type}`,
             config,
-            spineList,
-            spineEntries,
-            tocEntries,
+            guide: [],
+            spine,
+            toc: spine.nested,
+            cursor: [],
+            figures: [],
+            footnotes: [],
+            remoteAssets: [],
+            loi: [],
         }
     }
 
     loadBuilds() {
-        this.buildTypes = {
+        this.builds = {
             sample: this.loadBuildSettings('sample'),
             epub: this.loadBuildSettings('epub'),
             mobi: this.loadBuildSettings('mobi'),

@@ -36,9 +36,9 @@ class Generate {
     writePageMeta({ fileName }) {
         // TODO: this should eventually just be one 'nav' file that's read from for all builds
         // @issue: https://github.com/triplecanopy/b-ber/issues/225
-        const buildTypes = Object.keys(sequences)
+        const builds = Object.keys(sequences)
 
-        const promises = buildTypes.map(type => {
+        const promises = builds.map(type => {
             const navigationYAML = state.src.root(`${type}.yml`)
             const pageMeta = YamlAdaptor.load(state.src.root(`${type}.yml`)) || []
             const index = pageMeta.indexOf(fileName)

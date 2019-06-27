@@ -67,7 +67,7 @@ class WebFlow {
     }
 
     removeNonLinearEntriesFromSpine() {
-        this.spine = this.spine.filter(a => a.linear)
+        this.spine = this.spine.flattened.filter(a => a.linear)
     }
 }
 

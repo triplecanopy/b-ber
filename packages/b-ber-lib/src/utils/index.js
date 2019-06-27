@@ -148,7 +148,7 @@ export const addTrailingSlash = _s => {
 
 export const generateWebpubManifest = (state, files) => {
     const remoteURL = Url.trimSlashes(state.config.remote_url)
-    const readingOrder = state.spine.map(({ name, title }) => ({
+    const readingOrder = state.spine.flattened.map(({ name, title }) => ({
         href: `${remoteURL}/text/${name}.xhtml`,
         type: 'text/xhtml',
         title,

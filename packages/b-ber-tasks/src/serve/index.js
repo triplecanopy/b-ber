@@ -28,8 +28,6 @@ const createSequence = build => [...SEQUENCE, build]
 const restart = build =>
     new Promise(resolve => {
         state.update('build', build)
-        state.update('toc', state.buildTypes[build].tocEntries)
-        state.update('spine', state.buildTypes[build].spineEntries)
         state.update('config.base_url', '/')
         state.update('config.remote_url', `http://localhost:${PORT}`)
         state.update('config.reader_url', `http://localhost:${PORT}`)

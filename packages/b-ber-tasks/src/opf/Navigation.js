@@ -80,11 +80,10 @@ class Navigation {
     compareXhtmlWithYaml({ filesFromSystem, fileObjects }) {
         return new Promise(resolve => {
             // eslint-disable-line consistent-return
-            const { spine } = state // current build process's spine
-            const { spineList } = state.buildTypes[state.build] // spine items pulled in from type.yml file
-            const flow = uniq(spine.map(a => (a.generated ? null : a.fileName)).filter(Boolean)) // one-dimensional flow of the book used for the spine, omitting figures pages
+            const { declared, flattened } = state.spine // spine items pulled in from type.yml file and the flattened entries
+            const flow = uniq(flattened.map(a => (a.generated ? null : a.fileName)).filter(Boolean)) // one-dimensional flow of the book used for the spine, omitting figures pages
 
-            const pages = flattenSpineFromYAML(spineList)
+            const pages = flattenSpineFromYAML(declared)
             const missingFiles = difference(flow, filesFromSystem) // extra files on system
             const missingEntries = difference(filesFromSystem, pages) // extra entries in YAML
 
@@ -98,8 +97,8 @@ class Navigation {
                     })
 
                     missingFiles.forEach(item => {
-                        remove(spine, { fileName: item })
-                        state.update('spine', spine)
+                        remove(flattened, { fileName: item })
+                        state.update('spine', flattened)
 
                         const _flowIndex = flow.indexOf(item)
                         flow.splice(_flowIndex, 1)
@@ -140,7 +139,7 @@ class Navigation {
 
                             // TODO: state should handle dot-notation for add/remove
                             // @issue: https://github.com/triplecanopy/b-ber/issues/229
-                            state.buildTypes[state.build].spineList.push(fileName)
+                            state.spine.declared.push(fileName)
 
                             return fileName
                         })
@@ -205,8 +204,7 @@ class Navigation {
         log.info('opf build [guide]')
         return new Promise(resolve => {
             const strings = {}
-            const { spine } = state
-            const guideXML = Guide.items(spine)
+            const guideXML = Guide.items(state.guide)
 
             strings.guide = Template.render(guideXML, Guide.body())
 
@@ -218,18 +216,20 @@ class Navigation {
         log.info('opf build [spine]')
         return new Promise(resolve => {
             const strings = {}
-            const { spine } = state
+            // const { spine } = state
+            const { flattened } = state.spine
 
             // We add entries to the spine programatically, but then they're
             // also found on the system, so we dedupe them here
-            const generatedFiles = remove(spine, a => a.generated === true)
+            // TODO: but also, this is super confusing ...
+            const generatedFiles = remove(flattened, a => a.generated === true)
             generatedFiles.forEach(a => {
-                if (!find(spine, { fileName: a.fileName })) {
-                    spine.push(a)
+                if (!find(flattened, { fileName: a.fileName })) {
+                    flattened.push(a)
                 }
             })
 
-            const spineXML = Spine.items(spine)
+            const spineXML = Spine.items(flattened)
 
             strings.spine = Template.render(spineXML, Spine.body())
 
