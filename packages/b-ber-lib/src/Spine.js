@@ -1,6 +1,4 @@
 import isPlainObject from 'lodash/isPlainObject'
-import head from 'lodash/head'
-import tail from 'lodash/tail'
 import YamlAdaptor from './YamlAdaptor'
 import SpineItem from './SpineItem'
 
@@ -16,36 +14,39 @@ class Spine {
 
     build(entries = []) {
         const { buildType } = this
-        return entries.map(entry => {
+        return entries.reduce((acc, curr, index) => {
             // create new spine item
             let node
             // check if it either has nested entries or attributes that have
             // been assigned in the yaml file
-            if (isPlainObject(entry)) {
+            if (isPlainObject(curr)) {
                 // we know that nested navigation is wrapped in a `section`
                 // object so we check against that
-                const { section } = entry
+                const { section } = curr
                 if (section) {
-                    // entry has nested navigation. set the filename and recurse
-                    // over the child nodes
-                    node = new SpineItem({
-                        fileName: head(section),
-                        nodes: this.build(tail(section)),
-                        buildType,
-                    })
-                } else {
-                    // entry has attributes
-                    const [[fileName, { ...options }]] = Object.entries(entry)
-                    node = new SpineItem({ fileName, buildType, ...options })
+                    // curr has nested navigation. attach the nodes to the
+                    // previous entry in the tree by querying the last index
+                    let _index = 0
+                    while (typeof acc[index - _index] === 'undefined' && _index !== acc.length) {
+                        _index += 1
+                    }
+
+                    // add the nodes recursively and return the tree
+                    acc[index - _index].nodes = this.build(section)
+                    return acc
                 }
+
+                // curr has attributes
+                const [[fileName, { ...options }]] = Object.entries(curr)
+                node = new SpineItem({ fileName, buildType, ...options })
             } else {
                 // just a plain file name
-                const fileName = entry
+                const fileName = curr
                 node = new SpineItem({ fileName, buildType })
             }
 
-            return node
-        })
+            return acc.concat(node)
+        }, [])
     }
 
     flatten(arr) {

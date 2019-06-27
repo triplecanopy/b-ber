@@ -105,12 +105,12 @@ const copyThemeAssets = theme => {
     return safeCopy(themeSettings, settingsPath)
         .then(safeWrite(overridesPath, ''))
         .then(() => {
-            if (!theme.fonts.length) return Promise.resolve()
+            if (!theme.fonts.length) return
             const promises = theme.fonts.map(a => safeCopy(path.join(themePath, 'fonts', a), path.join(fontsPath, a)))
             return Promise.all(promises)
         })
         .then(() => {
-            if (!theme.images.length) return Promise.resolve()
+            if (!theme.images.length) return
             const promises = theme.images.map(a =>
                 safeCopy(path.join(themePath, 'images', a), path.join(imagesPath, a)),
             )
@@ -176,7 +176,6 @@ class Theme {
             .then(() => updateConfig(name))
             .then(() => {
                 if (force !== true) log.notice('Updated theme to', name)
-                return Promise.resolve()
             })
             .catch(log.error)
     }

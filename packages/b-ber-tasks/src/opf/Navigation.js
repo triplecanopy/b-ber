@@ -31,11 +31,9 @@ class Navigation {
 
     // Remove the `toc.xhtml` and `toc.ncx` from the output directory
     createEmptyNavDocuments() {
-        return new Promise(resolve => {
-            log.info(`opf build navigation documents [${this.navDocs.join(', ')}]`)
-            const promises = this.navDocs.map(a => fs.writeFile(state.dist.ops(a), ''))
-            return Promise.all(promises).then(resolve)
-        })
+        log.info(`opf build navigation documents [${this.navDocs.join(', ')}]`)
+        const promises = this.navDocs.map(doc => fs.writeFile(state.dist.ops(doc), ''))
+        return Promise.all(promises)
     }
 
     // Retrieve a list of all XHTML files in the output directory
@@ -60,9 +58,7 @@ class Navigation {
 
     deepRemove(collection, fileName) {
         const found = remove(collection, { fileName })
-        if (found.length) {
-            return collection
-        }
+        if (found.length) return collection
 
         collection.forEach(item => {
             // check against prop names
@@ -78,163 +74,151 @@ class Navigation {
     // Resolve discrepancies between files that exist in the output directory
     // and those that are listed in the YAML manifest
     compareXhtmlWithYaml({ filesFromSystem, fileObjects }) {
-        return new Promise(resolve => {
-            // eslint-disable-line consistent-return
-            const { declared, flattened } = state.spine // spine items pulled in from type.yml file and the flattened entries
-            const flow = uniq(flattened.map(a => (a.generated ? null : a.fileName)).filter(Boolean)) // one-dimensional flow of the book used for the spine, omitting figures pages
+        // eslint-disable-line consistent-return
+        const { declared, flattened } = state.spine // spine items pulled in from type.yml file and the flattened entries
+        const flow = uniq(flattened.map(a => (a.generated ? null : a.fileName)).filter(Boolean)) // one-dimensional flow of the book used for the spine, omitting figures pages
+        const pages = flattenSpineFromYAML(declared)
+        const missingFiles = difference(flow, filesFromSystem) // extra files on system
+        const missingEntries = difference(filesFromSystem, pages) // extra entries in YAML
 
-            const pages = flattenSpineFromYAML(declared)
-            const missingFiles = difference(flow, filesFromSystem) // extra files on system
-            const missingEntries = difference(filesFromSystem, pages) // extra entries in YAML
+        if (missingFiles.length || missingEntries.length) {
+            // there are discrepencies between the files on the system and files
+            // declared in the `state.build`.yml file
+            if (missingFiles.length) {
+                // there are extra entries in the YAML (i.e., missing XHTML pages)
+                missingEntries.forEach(entry => log.warn(`Removing redundant entry [${entry}] in [${state.build}.yml]`))
 
-            if (missingFiles.length || missingEntries.length) {
-                // there are discrepencies between the files on the system and files
-                // declared in the `state.build`.yml file
-                if (missingFiles.length) {
-                    // there are extra entries in the YAML (i.e., missing XHTML pages)
-                    missingEntries.forEach(a => {
-                        log.warn(`Removing redundant entry [${a}] in [${state.build}.yml]`)
-                    })
+                missingFiles.forEach(fileName => {
+                    remove(flattened, { fileName })
+                    state.update('spine.flattened', flattened)
 
-                    missingFiles.forEach(item => {
-                        remove(flattened, { fileName: item })
-                        state.update('spine', flattened)
+                    const _flowIndex = flow.indexOf(fileName)
+                    flow.splice(_flowIndex, 1)
 
-                        const _flowIndex = flow.indexOf(item)
-                        flow.splice(_flowIndex, 1)
+                    const _toc = this.deepRemove(state.toc, fileName)
+                    state.update('toc', _toc)
+                })
 
-                        const _toc = this.deepRemove(state.toc, item)
-                        state.update('toc', _toc)
-                    })
+                const yamlpath = state.src.root(`${state.build}.yml`)
+                const nestedYamlToc = nestedContentToYAML(state.toc)
 
-                    const yamlpath = state.src.root(`${state.build}.yml`)
-                    const nestedYamlToc = nestedContentToYAML(state.toc)
-                    const content =
-                        isArray(nestedYamlToc) && nestedYamlToc.length === 0 ? '' : YamlAdaptor.dump(nestedYamlToc)
+                const content =
+                    isArray(nestedYamlToc) && nestedYamlToc.length === 0 ? '' : YamlAdaptor.dump(nestedYamlToc)
 
-                    fs.writeFile(yamlpath, content, err => {
-                        if (err) throw err
-                        log.info(`opf emit ${state.build}.yml`)
-                    })
-                }
-
-                if (missingEntries.length) {
-                    // there are missing entries in the YAML (i.e., extra XHTML pages),
-                    // but we don't know where to interleave them, so we just append
-                    // them to the top-level list of files
-
-                    missingEntries.forEach(name => {
-                        if (state.contains('loi', { name })) {
-                            // don't warn for figures pages
-                            log.warn(`Adding missing entry [${name}] to [${state.build}.yml]`)
-                        }
-                    })
-
-                    // add the missing entry to the spine
-                    const missingEntriesWithAttributes = missingEntries
-                        .map(fileName => {
-                            if (state.contains('loi', { name: fileName })) {
-                                return null
-                            }
-
-                            // TODO: state should handle dot-notation for add/remove
-                            // @issue: https://github.com/triplecanopy/b-ber/issues/229
-                            state.spine.declared.push(fileName)
-
-                            return fileName
-                        })
-                        .filter(Boolean)
-
-                    const yamlpath = state.src.root(`${state.build}.yml`)
-                    const content =
-                        isArray(missingEntriesWithAttributes) && missingEntriesWithAttributes.length === 0
-                            ? ''
-                            : `\n${YamlAdaptor.dump(missingEntriesWithAttributes)}`
-
-                    fs.appendFile(yamlpath, content, err => {
-                        if (err) throw err
-                    })
-                }
+                log.info(`opf emit ${state.build}.yml`)
+                fs.writeFile(yamlpath, content).catch(log.error)
             }
 
-            const filesFromYaml = { entries: pages, flow }
-            resolve({
-                pages,
-                flow,
-                fileObjects,
-                filesFromSystem,
-                filesFromYaml,
-            })
-        })
+            if (missingEntries.length) {
+                // there are missing entries in the YAML (i.e., extra XHTML pages),
+                // but we don't know where to interleave them, so we just append
+                // them to the top-level list of files
+
+                missingEntries.forEach(name => {
+                    if (state.contains('loi', { name })) {
+                        // don't warn for figures pages
+                        log.warn(`Adding missing entry [${name}] to [${state.build}.yml]`)
+                    }
+                })
+
+                // add the missing entry to the spine
+                const missingEntriesWithAttributes = missingEntries
+                    .map(fileName => {
+                        if (state.contains('loi', { name: fileName })) {
+                            return null
+                        }
+
+                        // TODO: state should handle dot-notation for add/remove
+                        // @issue: https://github.com/triplecanopy/b-ber/issues/229
+                        state.spine.declared.push(fileName)
+
+                        return fileName
+                    })
+                    .filter(Boolean)
+
+                const yamlpath = state.src.root(`${state.build}.yml`)
+                const content =
+                    isArray(missingEntriesWithAttributes) && missingEntriesWithAttributes.length === 0
+                        ? ''
+                        : `\n${YamlAdaptor.dump(missingEntriesWithAttributes)}`
+
+                fs.appendFile(yamlpath, content).catch(log.error)
+            }
+        }
+
+        const filesFromYaml = { entries: pages, flow }
+        return {
+            pages,
+            flow,
+            fileObjects,
+            filesFromSystem,
+            filesFromYaml,
+        }
     }
 
-    createTocStringsFromTemplate({ pages, ...args }) {
+    async createTocStringsFromTemplate({ pages, ...args }) {
         log.info('opf build [toc.xhtml]')
-        return new Promise(async resolve => {
-            const strings = {}
-            const { toc } = state
-            const files = [
-                {
-                    name: 'toc.xhtml',
-                    data: new File({ contents: Buffer.from(Template.render(Toc.items(toc), Toc.body())) }),
-                },
-            ]
 
-            const [data] = await getFileObjects(files)
-            strings.toc = data.contents
+        const strings = {}
+        const { toc } = state
+        const files = [
+            {
+                name: 'toc.xhtml',
+                data: new File({ contents: Buffer.from(Template.render(Toc.items(toc), Toc.body())) }),
+            },
+        ]
 
-            resolve({ pages, strings, ...args })
-        })
+        const [data] = await getFileObjects(files)
+        strings.toc = data.contents
+
+        return { pages, strings, ...args }
     }
 
     createNcxStringsFromTemplate({ pages, ...args }) {
         log.info('opf build [toc.ncx]')
-        return new Promise(resolve => {
-            const strings = {}
-            const { toc } = state
-            const ncxXML = Ncx.navPoints(toc)
 
-            strings.ncx = Template.render(ncxXML, Ncx.document())
+        const strings = {}
+        const { toc } = state
+        const ncxXML = Ncx.navPoints(toc)
 
-            resolve({ pages, strings, ...args })
-        })
+        strings.ncx = Template.render(ncxXML, Ncx.document())
+
+        return { pages, strings, ...args }
     }
 
     createGuideStringsFromTemplate({ flow, fileObjects, ...args }) {
         log.info('opf build [guide]')
-        return new Promise(resolve => {
-            const strings = {}
-            const guideXML = Guide.items(state.guide)
 
-            strings.guide = Template.render(guideXML, Guide.body())
+        const strings = {}
+        const guideXML = Guide.items(state.guide)
 
-            resolve({ strings, flow, fileObjects, ...args })
-        })
+        strings.guide = Template.render(guideXML, Guide.body())
+
+        return { strings, flow, fileObjects, ...args }
     }
 
     createSpineStringsFromTemplate({ flow, fileObjects, ...args }) {
         log.info('opf build [spine]')
-        return new Promise(resolve => {
-            const strings = {}
-            // const { spine } = state
-            const { flattened } = state.spine
 
-            // We add entries to the spine programatically, but then they're
-            // also found on the system, so we dedupe them here
-            // TODO: but also, this is super confusing ...
-            const generatedFiles = remove(flattened, a => a.generated === true)
-            generatedFiles.forEach(a => {
-                if (!find(flattened, { fileName: a.fileName })) {
-                    flattened.push(a)
-                }
-            })
+        const strings = {}
+        // const { spine } = state
+        const { flattened } = state.spine
 
-            const spineXML = Spine.items(flattened)
-
-            strings.spine = Template.render(spineXML, Spine.body())
-
-            resolve({ strings, flow, fileObjects, ...args })
+        // We add entries to the spine programatically, but then they're
+        // also found on the system, so we dedupe them here
+        // TODO: but also, this is super confusing ...
+        const generatedFiles = remove(flattened, a => a.generated === true)
+        generatedFiles.forEach(a => {
+            if (!find(flattened, { fileName: a.fileName })) {
+                flattened.push(a)
+            }
         })
+
+        const spineXML = Spine.items(flattened)
+
+        strings.spine = Template.render(spineXML, Spine.body())
+
+        return { strings, flow, fileObjects, ...args }
     }
 
     // Returns a new object from an array of return values from `Promise.all`.
@@ -246,41 +230,30 @@ class Navigation {
     }
 
     writeTocXhtmlFile(args) {
-        return new Promise(resolve => {
-            const result = this.deepMergePromiseArrayValues(args, 'strings')
-            const { toc } = result.strings
-            const filepath = state.dist.ops('toc.xhtml')
-            fs.writeFile(filepath, toc, err => {
-                if (err) throw err
-                log.info(`opf emit toc.xhtml [${filepath}]`)
-                resolve(result)
-            })
-        })
+        const result = this.deepMergePromiseArrayValues(args, 'strings')
+        const { toc } = result.strings
+        const filepath = state.dist.ops('toc.xhtml')
+
+        log.info(`opf emit toc.xhtml [${filepath}]`)
+        return fs.writeFile(filepath, toc).then(() => result)
     }
 
     writeTocNcxFile(args) {
-        return new Promise(resolve => {
-            const result = this.deepMergePromiseArrayValues(args, 'strings')
-            const { ncx } = result.strings
-            const filepath = state.dist.ops('toc.ncx')
-            fs.writeFile(filepath, ncx, err => {
-                if (err) throw err
-                log.info(`opf emit toc.ncx [${filepath}]`)
-                resolve(result)
-            })
-        })
+        const result = this.deepMergePromiseArrayValues(args, 'strings')
+        const { ncx } = result.strings
+        const filepath = state.dist.ops('toc.ncx')
+
+        log.info(`opf emit toc.ncx [${filepath}]`)
+        return fs.writeFile(filepath, ncx).then(() => result)
     }
 
     normalizeResponseObject(args) {
-        return new Promise(resolve => {
-            const normalizedResponse = this.deepMergePromiseArrayValues(args, 'strings')
-            resolve(normalizedResponse)
-        })
+        return this.deepMergePromiseArrayValues(args, 'strings')
     }
 
     // Initialize promise chain to build ebook navigation structure
     init() {
-        return new Promise(resolve =>
+        return (
             this.createEmptyNavDocuments()
                 .then(resp => this.getAllXhtmlFiles(resp))
                 .then(resp => this.compareXhtmlWithYaml(resp))
@@ -306,7 +279,6 @@ class Navigation {
                 // along to write the `content.opf`
                 .then(resp => this.normalizeResponseObject(resp))
                 .catch(log.error)
-                .then(resolve),
         )
     }
 }

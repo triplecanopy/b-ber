@@ -40,10 +40,10 @@ function render() {
         const promises = files
             .filter(a => a.charAt(0) !== '.')
             .sort((a, b) => {
-                const filenameA = path.basename(a, '.md')
-                const filenameB = path.basename(b, '.md')
-                const indexA = findIndex(state.spine, { fileName: filenameA })
-                const indexB = findIndex(state.spine, { fileName: filenameB })
+                const fileNameA = path.basename(a, '.md')
+                const fileNameB = path.basename(b, '.md')
+                const indexA = findIndex(state.spine, { fileName: fileNameA })
+                const indexB = findIndex(state.spine, { fileName: fileNameB })
 
                 return indexA < indexB ? -1 : indexA > indexB ? 1 : 0
             })

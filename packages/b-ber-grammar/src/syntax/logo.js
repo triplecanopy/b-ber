@@ -20,11 +20,11 @@ export default {
             const match = tokens[idx].info.trim().match(directiveRe)
             if (!match) return ''
 
-            const filename = `_markdown/${context.filename}.md`
+            const fileName = `_markdown/${context.fileName}.md`
             const lineNr = tokens[idx].map ? tokens[idx].map[0] : null
             const [, type, id, attrs] = match
 
-            const attrsObj = attributesObject(attrs, type, { filename, lineNr })
+            const attrsObj = attributesObject(attrs, type, { fileName, lineNr })
 
             if (!attrsObj.source) {
                 log.error('[source] attribute is required by [logo] directive, aborting')

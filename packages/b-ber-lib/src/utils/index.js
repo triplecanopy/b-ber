@@ -132,12 +132,9 @@ const ensureFiles = (files, prefix) => {
 
 // make sure all necessary files and directories exist
 export const ensure = ({ files = [], dirs = [], prefix = '' } = {}) =>
-    new Promise(resolve =>
-        ensureDirs(dirs, prefix)
-            .then(() => ensureFiles(files, prefix))
-            .then(resolve)
-            .catch(log.error),
-    )
+    ensureDirs(dirs, prefix)
+        .then(() => ensureFiles(files, prefix))
+        .catch(log.error)
 
 export const addTrailingSlash = _s => {
     let s = _s

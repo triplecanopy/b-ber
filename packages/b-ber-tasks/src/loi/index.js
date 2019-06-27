@@ -1,78 +1,56 @@
 import fs from 'fs-extra'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
-import { SpineItem, Template } from '@canopycanopycanopy/b-ber-lib'
+import sortBy from 'lodash/sortBy'
+import { SpineItem, GuideItem, Template } from '@canopycanopycanopy/b-ber-lib'
 import figure from '@canopycanopycanopy/b-ber-templates/figures'
 import Xhtml from '@canopycanopycanopy/b-ber-templates/Xhtml'
 
 const createLOILeader = () => {
     const fileName = 'figures-titlepage.xhtml'
     const markup = Template.render(Xhtml.loi(), Xhtml.body())
+    const guideItem = new GuideItem({ fileName, title: 'Figures', type: 'loi' })
 
-    return fs.writeFile(state.dist.text(fileName), markup, 'utf8').then(() => {
-        state.add('guide', {
-            filename: fileName,
-            title: 'Figures',
-            type: 'loi',
-        })
-        log.info(`loi emit default figures titlepage [${fileName}]`)
-    })
+    state.add('guide', guideItem)
+    log.info(`loi emit default figures titlepage [${fileName}]`)
+    return fs.writeFile(state.dist.text(fileName), markup, 'utf8')
+}
+
+// only called in `reader` build
+const createLOIAsSingleHTMLFile = () => {
+    const classes = item => (item.classes ? item.classes.replace(/small/g, 'inline') : '')
+    const figuresPage = state.figures.reduce(
+        (acc, curr) => acc.concat(figure({ ...curr, classes: classes(curr) }, state.build)),
+        Xhtml.loi(),
+    )
+
+    const fileName = 'figures-titlepage.xhtml'
+    const markup = Template.render(figuresPage, Xhtml.body())
+    const guideItem = new GuideItem({ fileName, title: 'Figures', type: 'loi' })
+
+    state.add('guide', guideItem)
+    log.info(`loi emit figures titlepage [${fileName}]`)
+    return fs.writeFile(state.dist.text(fileName), markup, 'utf8')
 }
 
 const createLOIAsSeparateHTMLFiles = () => {
     const promises = state.figures.map(data => {
         // Create image string based on dimensions of image
         // returns square | landscape | portrait | portraitLong
-        const figureStr = figure(data, state.build)
-        const markup = Template.render(figureStr, Xhtml.body())
+        const figures = figure(data, state.build)
+        const markup = Template.render(figures, Xhtml.body())
+        const { page: fileName, ref, pageOrder } = data
+        const in_toc = false //eslint-disable-line camelcase
+        const buildType = state.build
+        const spineItem = new SpineItem({ fileName, in_toc, ref, pageOrder, buildType })
 
-        return fs.writeFile(state.dist.text(data.page), markup, 'utf8').then(() => {
-            const fileData = new SpineItem({
-                fileName: data.page,
-                in_toc: false,
-                ref: data.ref,
-                pageOrder: data.pageOrder,
-                buildType: state.build,
-            })
-            state.add('loi', fileData)
-            log.info(`loi linking [${data.source}] to [${data.page}]`)
-        })
+        state.add('loi', spineItem)
+        log.info(`loi linking [${data.source}] to [${data.page}]`)
+
+        return fs.writeFile(state.dist.text(data.page), markup, 'utf8')
     })
 
-    return Promise.all(promises).then(() =>
-        state.loi.sort((a, b) => (a.pageOrder < b.pageOrder ? -1 : a.pageOrder > b.pageOrder ? 1 : 0)),
-    )
-}
-
-// only called in `reader` build
-const createLOIAsSingleHTMLFile = () => {
-    let figuresPage = ''
-    figuresPage += Xhtml.loi()
-    figuresPage += state.figures.reduce(
-        (acc, curr) =>
-            acc.concat(
-                figure(
-                    {
-                        ...curr,
-                        classes: curr.classes ? curr.classes.replace(/small/g, 'inline') : '',
-                    },
-                    state.build,
-                ),
-            ),
-        '',
-    )
-
-    const fileName = 'figures-titlepage.xhtml'
-    const markup = Template.render(figuresPage, Xhtml.body())
-
-    return fs.writeFile(state.dist.text(fileName), markup, 'utf8').then(() => {
-        state.add('guide', {
-            filename: fileName,
-            title: 'Figures',
-            type: 'loi',
-        })
-        log.info(`loi emit figures titlepage [${fileName}]`)
-    })
+    return Promise.all(promises).then(() => state.update('loi', sortBy(state.loi, 'pageOrder')))
 }
 
 const loi = () => {

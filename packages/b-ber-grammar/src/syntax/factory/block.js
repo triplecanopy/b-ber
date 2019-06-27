@@ -24,11 +24,11 @@ const renderer = ({ context = {}, render, markerOpen, markerClose }) => ({
             const [, type, id] = match
             if (typeof id === 'undefined') {
                 // the directive's missing an `id` attribute, so we extract the
-                // filename from `context` which we've stored in back in
+                // fileName from `context` which we've stored in back in
                 // `md/index.es6`, and passed into our `renderer`
                 log.error(
                     `Missing [id] attribute for [${exports.default.name}:start] directive ${
-                        context.filename
+                        context.fileName
                     }.md:${line}`,
                 )
 
@@ -46,7 +46,7 @@ const renderer = ({ context = {}, render, markerOpen, markerClose }) => ({
 
             log.debug(`id: ${id}; isOpening: ${isOpening}; isClosing: ${isClosing}; type: ${type}, inStore: ${inStore}`)
 
-            const location = `${context.filename}.md:${line}`
+            const location = `${context.fileName}.md:${line}`
             if (isOpening && inStore) {
                 // it's a duplicate `id`, throw
                 log.error(`Duplicate [id] attribute [${id}]. [id] must be unique at [${location}]`)

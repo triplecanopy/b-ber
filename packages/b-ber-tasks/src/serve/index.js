@@ -36,30 +36,26 @@ const restart = build =>
     })
 
 const registerObserver = build =>
-    new Promise(resolve =>
-        nodemon({
-            script: path.join(__dirname, `server-${build}.js`),
-            ext: 'md js scss',
-            env: {
-                NODE_ENV: JSON.stringify('development'),
-            },
-            ignore: ['node_modules', 'dist'],
-            watch: [state.srcDir],
-            args: ['--use_socket_server', '--use_hot_reloader', `--port ${PORT}`, `--dir ${state.distDir}`],
-        })
-            .once('start', resolve)
-            .on('restart', file => {
-                clearTimeout(timer)
-                files.push(file)
-                timer = setTimeout(() => {
-                    log.info('Restarting server due to changes')
-                    log.info(`${files.join('\n')}`)
+    nodemon({
+        script: path.join(__dirname, `server-${build}.js`),
+        ext: 'md js scss',
+        env: {
+            NODE_ENV: JSON.stringify('development'),
+        },
+        ignore: ['node_modules', 'dist'],
+        watch: [state.srcDir],
+        args: ['--use_socket_server', '--use_hot_reloader', `--port ${PORT}`, `--dir ${state.distDir}`],
+    }).on('restart', file => {
+        clearTimeout(timer)
+        files.push(file)
+        timer = setTimeout(() => {
+            log.info('Restarting server due to changes')
+            log.info(`${files.join('\n')}`)
 
-                    files = []
-                    restart(build)
-                }, DEBOUNCE_SPEED)
-            }),
-    )
+            files = []
+            restart(build)
+        }, DEBOUNCE_SPEED)
+    })
 
 const serve = ({ build }) => {
     restart(build).then(() => registerObserver(build))

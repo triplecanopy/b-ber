@@ -69,7 +69,7 @@ export default {
             const match = tokens[idx].info.trim().match(directiveRe)
             if (!match) return ''
 
-            const filename = `_markdown/${context.filename}.md`
+            const fileName = `_markdown/${context.fileName}.md`
             const lineNr = tokens[idx].map ? tokens[idx].map[0] : null
             const [, , id, attrs] = match
 
@@ -77,7 +77,7 @@ export default {
             const mediaType = (type.indexOf('-') && type.substring(0, type.indexOf('-'))) || type
 
             const attrsObject = attributesObject(attrs, type, {
-                filename,
+                fileName,
                 lineNr,
             })
             const media = [...state[mediaType]]
@@ -106,7 +106,7 @@ export default {
 
             if (!source) {
                 err = new Error(
-                    `bber-directives: Directive [${type}] requires a [source] attribute at [${filename}:${lineNr}]`,
+                    `bber-directives: Directive [${type}] requires a [source] attribute at [${fileName}:${lineNr}]`,
                 )
                 log.error(err)
             }
@@ -169,7 +169,7 @@ export default {
                         attrString,
                         sourceElements,
                         page,
-                        ref: context.filename,
+                        ref: context.fileName,
                         caption,
                         mime: mediaType,
                         pageOrder: state.figures.length,
@@ -212,7 +212,7 @@ export default {
                         </section>
                         ${commentEnd}`
                 default:
-                    throw new Error(`Something went wrong parsing [${source}] in [${context.filename}]`)
+                    throw new Error(`Something went wrong parsing [${source}] in [${context.fileName}]`)
             }
         },
     }),

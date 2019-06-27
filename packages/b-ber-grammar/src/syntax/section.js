@@ -19,7 +19,7 @@ const markerClose = /(exit)(?::([^\s]+))?/
 // testing
 const render = ({ context = {} }) => (tokens, idx) => {
     const lineNr = tokens[idx].map ? tokens[idx].map[0] : null
-    const filename = `_markdown/${context.filename}.md`
+    const fileName = `_markdown/${context.fileName}.md`
 
     let result = ''
 
@@ -70,8 +70,8 @@ const render = ({ context = {} }) => (tokens, idx) => {
 
             log.debug(`open directive [${id}]`)
 
-            const comment = Html.comment(`START: section:${type}#${htmlId(id)}; ${filename}:${lineNr}`)
-            const attrs = attributes(att, type, { filename, lineNr })
+            const comment = Html.comment(`START: section:${type}#${htmlId(id)}; ${fileName}:${lineNr}`)
+            const attrs = attributes(att, type, { fileName, lineNr })
             result = `${comment}<section id="${htmlId(id)}"${attrs}>`
         }
     } else {

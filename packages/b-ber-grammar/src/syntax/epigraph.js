@@ -20,7 +20,7 @@ const attrsRe = /(?:(image|caption|citation)\s["]([^"]+)["])/g
 export default {
     plugin: figure,
     name: 'epigraph',
-    renderer: ({ instance, context = { filename: '' } }) => ({
+    renderer: ({ instance, context = { fileName: '' } }) => ({
         marker: ':',
         minMarkers: 3,
         validate(params) {
@@ -38,7 +38,7 @@ export default {
                 }
 
                 if (!attrs.image && !attrs.caption) {
-                    log.error(`[${context.filename}.md] <epigraph> Malformed directive.`)
+                    log.error(`[${context.fileName}.md] <epigraph> Malformed directive.`)
                     result = ''
                 } else if (!attrs.image && attrs.caption) {
                     const captions = attrs.caption.split('|').map(_ => _.trim())

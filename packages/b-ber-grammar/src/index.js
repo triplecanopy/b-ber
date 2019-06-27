@@ -7,6 +7,7 @@ import { extend, find } from 'lodash'
 import MarkdownIt from 'markdown-it'
 import YamlAdaptor from '@canopycanopycanopy/b-ber-lib/YamlAdaptor'
 import state from '@canopycanopycanopy/b-ber-lib/State'
+import { GuideItem } from '@canopycanopycanopy/b-ber-lib'
 import markdownItFrontmatter from 'markdown-it-front-matter'
 import markdownItFootnote from './parsers/footnote'
 import markdownItSection from './syntax/section'
@@ -66,7 +67,7 @@ class MarkdownRenderer {
             },
         })
 
-        this.filename = ''
+        this.fileName = ''
 
         const reference = { instance: this.markdownIt, context: this }
 
@@ -74,24 +75,24 @@ class MarkdownRenderer {
             .use(markdownItSection.plugin, markdownItSection.name, markdownItSection.renderer(reference))
             .use(markdownItPullquote.plugin, markdownItPullquote.name, markdownItPullquote.renderer(reference))
             .use(markdownItFrontmatter, meta => {
-                const filename = this.filename
+                const fileName = this.fileName
                 const YAMLMeta = YamlAdaptor.parse(meta)
 
-                state.add('guide', { filename, ...YAMLMeta })
+                state.add('guide', new GuideItem({ fileName, ...YAMLMeta }))
 
-                const spineEntry = find(state.spine, { fileName: filename })
+                const spineEntry = find(state.spine, { fileName })
 
                 // merge the found entry in the state and spine so that we
                 // can access the metadata later. since deepFind is
                 // expensive, don't try unless we know that the entry
                 // exists
                 if (spineEntry) {
-                    deepFind(state.spine, filename, a => extend(a, YAMLMeta))
-                    deepFind(state.toc, filename, a => extend(a, YAMLMeta))
+                    deepFind(state.spine, fileName, a => extend(a, YAMLMeta))
+                    deepFind(state.toc, fileName, a => extend(a, YAMLMeta))
                 }
             })
             .use(markdownItFootnote, tokens => {
-                const fileName = this.filename
+                const fileName = this.fileName
                 const entry = find(state.spine, { fileName })
                 const title = entry && entry.title ? entry.title : fileName
 
@@ -133,7 +134,7 @@ class MarkdownRenderer {
                 const notes = this.markdownIt.renderer.render(tokens, 0, {
                     reference: `${fileName}.xhtml`,
                 })
-                state.add('footnotes', { filename: fileName, title, notes })
+                state.add('footnotes', { fileName, title, notes })
             })
             .use(markdownItDialogue.plugin, markdownItDialogue.name, markdownItDialogue.renderer(reference))
             .use(markdownItGallery.plugin, markdownItGallery.name, markdownItGallery.renderer(reference))
@@ -143,12 +144,12 @@ class MarkdownRenderer {
             .use(markdownItLogo.plugin, markdownItLogo.name, markdownItLogo.renderer(reference))
     }
 
-    set filename(name) {
-        this._filename = name
+    set fileName(name) {
+        this._fileName = name
     }
 
-    get filename() {
-        return this._filename
+    get fileName() {
+        return this._fileName
     }
 
     template(meta) {
@@ -156,12 +157,12 @@ class MarkdownRenderer {
             .split('\n')
             .map(a => `  ${a}`)
             .join('\n')
-        return `-\n  filename: ${this.filename}\n${str}\n`
+        return `-\n  fileName: ${this.fileName}\n${str}\n`
     }
 
     // Transforms a markdown file to XHTML
-    render(filename, data) {
-        this.filename = filename
+    render(fileName, data) {
+        this.fileName = fileName
         return this.markdownIt.render(data)
     }
 }

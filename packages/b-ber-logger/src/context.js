@@ -1,8 +1,8 @@
 import Timer from './Timer'
 
-function ctx(filename) {
-    return filename
-    // return path.basename(path.dirname(filename)) + path.sep + path.basename(filename, path.extname(filename))
+function ctx(fileName) {
+    return fileName
+    // return path.basename(path.dirname(fileName)) + path.sep + path.basename(fileName, path.extname(fileName))
 }
 
 export function counter() {

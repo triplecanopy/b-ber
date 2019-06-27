@@ -31,24 +31,20 @@ function showHelp() {
     `)
 }
 
-function ensureAwsCli() {
-    return new Promise(resolve => {
-        try {
-            execSync('aws --version > /dev/null 2>&1', { cwd })
-        } catch (err) {
-            console.log('')
-            console.log(err.message)
-            console.log('')
-            console.log('AWS CLI must be installed to run deploy')
-            console.log(
-                'See installation instructions here: https://docs.aws.amazon.com/cli/latest/userguide/installing.html',
-            )
-            console.log('')
-            process.exit(1)
-        }
-
-        resolve()
-    })
+async function ensureAwsCli() {
+    try {
+        execSync('aws --version > /dev/null 2>&1', { cwd })
+    } catch (err) {
+        console.log('')
+        console.log(err.message)
+        console.log('')
+        console.log('AWS CLI must be installed to run deploy')
+        console.log(
+            'See installation instructions here: https://docs.aws.amazon.com/cli/latest/userguide/installing.html',
+        )
+        console.log('')
+        process.exit(1)
+    }
 }
 
 function deploy({ bucketURL, awsRegion, builds }) {
@@ -88,70 +84,65 @@ function deploy({ bucketURL, awsRegion, builds }) {
 }
 
 function ensureEnvVars() {
-    return new Promise(resolve => {
-        const { AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, BBER_BUCKET_REGION } = process.env
+    const { AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, BBER_BUCKET_REGION } = process.env
 
-        if (!AWS_ACCESS_KEY_ID || !AWS_SECRET_ACCESS_KEY || !BBER_BUCKET_REGION) {
-            log.error(
-                '[AWS_ACCESS_KEY_ID], [AWS_SECRET_ACCESS_KEY] and [BBER_BUCKET_REGION] must be set to deploy the project',
-            )
-        }
+    if (!AWS_ACCESS_KEY_ID || !AWS_SECRET_ACCESS_KEY || !BBER_BUCKET_REGION) {
+        log.error(
+            '[AWS_ACCESS_KEY_ID], [AWS_SECRET_ACCESS_KEY] and [BBER_BUCKET_REGION] must be set to deploy the project',
+        )
+    }
 
-        const configFile = path.resolve(cwd, 'config.yml')
-        const config = YamlAdaptor.load(configFile)
-        const { bucket_url: bucketURL } = config
+    const configFile = path.resolve(cwd, 'config.yml')
+    const config = YamlAdaptor.load(configFile)
+    const { bucket_url: bucketURL } = config
 
-        if (!bucketURL) {
-            log.error('[bucketURL] must be set in config.yml to deploy the project')
-        }
+    if (!bucketURL) {
+        log.error('[bucketURL] must be set in config.yml to deploy the project')
+    }
 
-        resolve({ bucketURL, awsRegion: BBER_BUCKET_REGION })
-    })
+    return { bucketURL, awsRegion: BBER_BUCKET_REGION }
 }
 
 function prompt() {
-    return new Promise(resolve =>
-        ensureAwsCli()
-            .then(ensureEnvVars)
-            .then(response => {
-                const rl = readline.createInterface(process.stdin, process.stdout)
-                const { bucketURL, awsRegion } = response
-                const builds = process.argv
-                    .slice(process.argv.lastIndexOf(cmd) + 1)
-                    .map(str => str.toLowerCase())
-                    .filter(arg => args.has(arg))
+    return ensureAwsCli()
+        .then(ensureEnvVars)
+        .then(response => {
+            const rl = readline.createInterface(process.stdin, process.stdout)
+            const { bucketURL, awsRegion } = response
+            const builds = process.argv
+                .slice(process.argv.lastIndexOf(cmd) + 1)
+                .map(str => str.toLowerCase())
+                .filter(arg => args.has(arg))
 
-                if (!builds.length) {
-                    showHelp()
-                    process.exit(0)
+            if (!builds.length) {
+                showHelp()
+                process.exit(0)
+            }
+
+            console.log('')
+            console.log('Does the following look OK?')
+            console.log('')
+            console.log(` Bucket URL:    ${bucketURL}`)
+            console.log(` AWS Region:    ${awsRegion}`)
+            console.log(` Builds:        ${builds.join(' ')}`)
+            console.log('')
+
+            rl.setPrompt(' [yN] ')
+            rl.prompt()
+
+            rl.on('line', data => {
+                if (data === 'y' || data === 'yes') {
+                    return deploy({ bucketURL, awsRegion, builds })
+                        .then(() => rl.close())
+                        .catch(log.error)
                 }
-
+                rl.close()
+            }).on('close', () => {
                 console.log('')
-                console.log('Does the following look OK?')
-                console.log('')
-                console.log(` Bucket URL:    ${bucketURL}`)
-                console.log(` AWS Region:    ${awsRegion}`)
-                console.log(` Builds:        ${builds.join(' ')}`)
-                console.log('')
-
-                rl.setPrompt(' [yN] ')
-                rl.prompt()
-
-                rl.on('line', data => {
-                    if (data === 'y' || data === 'yes') {
-                        return deploy({ bucketURL, awsRegion, builds })
-                            .then(() => rl.close())
-                            .then(resolve)
-                            .catch(log.error)
-                    }
-                    rl.close()
-                }).on('close', () => {
-                    console.log('')
-                    process.exit(0)
-                })
+                process.exit(0)
             })
-            .catch(log.error),
-    )
+        })
+        .catch(log.error)
 }
 
 const main = () => prompt()

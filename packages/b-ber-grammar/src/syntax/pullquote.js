@@ -34,7 +34,7 @@ export default {
                 if (typeof id === 'undefined') {
                     log.error(
                         `Missing [id] attribute for [${exports.default.name}:start] directive ${
-                            context.filename
+                            context.fileName
                         }.md:${line}`,
                     )
                     return false
@@ -43,7 +43,7 @@ export default {
             return match
         },
         render(tokens, idx) {
-            const filename = `_markdown/${context.filename}.md`
+            const fileName = `_markdown/${context.fileName}.md`
             const lineNr = tokens[idx].map ? tokens[idx].map[0] : null
 
             let result = ''
@@ -71,13 +71,13 @@ export default {
                         pullquoteIndices.push(id)
                     } else {
                         log.error(
-                            `Duplicate [id] attribute [${id}]. [id]s must be unique ${context.filename}.md:${_line}`,
+                            `Duplicate [id] attribute [${id}]. [id]s must be unique ${context.fileName}.md:${_line}`,
                         )
                     }
 
                     // parse attrs as normal
                     const attrsObject = attributesObject(attrs, type, {
-                        filename,
+                        fileName,
                         lineNr,
                     })
 

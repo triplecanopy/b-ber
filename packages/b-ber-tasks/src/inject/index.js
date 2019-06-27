@@ -56,7 +56,7 @@ const render = ({ file, basePath, stylesheets, javascripts, inlineStylesheets, i
     return `${head}${body}${tail}`
 }
 
-const writeAll = files => Promise.all(files.map(file => fs.writeFile(state.dist.text(file.filename), file.contents)))
+const writeAll = files => Promise.all(files.map(file => fs.writeFile(state.dist.text(file.fileName), file.contents)))
 
 export const getFileObjects = async (files, basePath = '') => {
     const stylesheets = await getAssets('stylesheets')
@@ -69,7 +69,7 @@ export const getFileObjects = async (files, basePath = '') => {
     const metadata = []
 
     const files_ = files.map(file => ({
-        filename: file.name,
+        fileName: file.name,
         contents: render({
             file: file.data,
             basePath,

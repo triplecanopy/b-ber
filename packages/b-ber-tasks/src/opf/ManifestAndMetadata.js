@@ -20,11 +20,8 @@ class ManifestAndMetadata {
         this.createManifestAndMetadataXML = ManifestAndMetadata.createManifestAndMetadataXML
     }
 
-    loadMetadata() {
-        return new Promise(resolve => {
-            this.bookmeta = state.metadata.json()
-            resolve()
-        })
+    async loadMetadata() {
+        this.bookmeta = state.metadata.json()
     }
 
     // Retrieve lists of files to include in the `content.opf`
@@ -42,57 +39,53 @@ class ManifestAndMetadata {
     }
 
     createManifestAndMetadataFromTemplates(files) {
-        return new Promise(resolve => {
-            const strings = { manifest: [], bookmeta: [] }
-            const specifiedFonts =
-                has(state.config, 'ibooks_specified_fonts') && state.config.ibooks_specified_fonts === true
+        const strings = { manifest: [], bookmeta: [] }
+        const specifiedFonts =
+            has(state.config, 'ibooks_specified_fonts') && state.config.ibooks_specified_fonts === true
 
-            strings.bookmeta = this.bookmeta.map(a => Metadata.meta(a)).filter(Boolean)
+        strings.bookmeta = this.bookmeta.map(a => Metadata.meta(a)).filter(Boolean)
 
-            // Add exceptions here as needed
-            strings.bookmeta = [
-                ...strings.bookmeta,
-                `<meta property="ibooks:specified-fonts">${specifiedFonts}</meta>`,
-                `<meta property="dcterms:modified">${new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')}</meta>`, // eslint-disable-line max-len
-                `<meta name="generator" content="b-ber@${state.version}" />`,
-            ]
+        // Add exceptions here as needed
+        strings.bookmeta = [
+            ...strings.bookmeta,
+            `<meta property="ibooks:specified-fonts">${specifiedFonts}</meta>`,
+            `<meta property="dcterms:modified">${new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')}</meta>`, // eslint-disable-line max-len
+            `<meta name="generator" content="b-ber@${state.version}" />`,
+        ]
 
-            files.forEach((file, idx) => {
-                strings.manifest.push(Manifest.item(file))
-                if (idx === files.length - 1) resolve(strings)
-            })
-        })
+        files.forEach(file => strings.manifest.push(Manifest.item(file)))
+
+        return strings
     }
 
     static createManifestAndMetadataXML(resp) {
         log.info('opf build [manifest]')
         log.info('opf build [metadata]')
-        return new Promise(resolve => {
-            const _metadata = renderLayouts(
-                new File({
-                    path: '.tmp',
-                    layout: 'body',
-                    contents: Buffer.from(resp.bookmeta.join('')),
-                }),
-                { body: Metadata.body() },
-            ).contents.toString()
 
-            const manifest = renderLayouts(
-                new File({
-                    path: '.tmp',
-                    layout: 'body',
-                    contents: Buffer.from(resp.manifest.filter(Boolean).join('')),
-                }),
-                { body: Manifest.body() },
-            ).contents.toString()
+        const _metadata = renderLayouts(
+            new File({
+                path: '.tmp',
+                layout: 'body',
+                contents: Buffer.from(resp.bookmeta.join('')),
+            }),
+            { body: Metadata.body() },
+        ).contents.toString()
 
-            resolve({ metadata: _metadata, manifest })
-        })
+        const manifest = renderLayouts(
+            new File({
+                path: '.tmp',
+                layout: 'body',
+                contents: Buffer.from(resp.manifest.filter(Boolean).join('')),
+            }),
+            { body: Manifest.body() },
+        ).contents.toString()
+
+        return { metadata: _metadata, manifest }
     }
 
     init() {
-        return new Promise(resolve =>
-            // get the book metadata from state or yaml file
+        // get the book metadata from state or yaml file
+        return (
             this.loadMetadata()
 
                 // get lists of files to include in the `content.opf`
@@ -104,12 +97,7 @@ class ManifestAndMetadata {
                 // create the manifest and metadata from templating strings.manifest and
                 // strings.metadata
                 .then(resp => this.createManifestAndMetadataXML(resp))
-
-                // handle err
                 .catch(log.error)
-
-                // next
-                .then(resolve),
         )
     }
 }

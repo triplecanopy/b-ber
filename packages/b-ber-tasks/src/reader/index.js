@@ -21,20 +21,17 @@ class Reader {
         this.readerModuleDistDir = 'dist'
         this.readerAppPath = null
 
-        return new Promise(resolve => {
-            this.createOutputDirs()
-                .then(() => this.ensureReaderModuleExists())
-                .then(() => this.copyEpubToOutputDir())
-                .then(() => this.writeBookManifest())
-                .then(() => this.writeWebpubManifest())
-                .then(() => this.copyReaderAppToOutputDir())
-                .then(() => this.injectServerDataIntoTemplate())
-                .then(() => this.updateLinkedResourcesWithAbsolutePaths())
-                .then(() => this.updateAssetURLsWithAbsolutePaths())
-                .then(() => this.injectWebpubManifestLink())
-                .catch(log.error)
-                .then(resolve)
-        })
+        return this.createOutputDirs()
+            .then(() => this.ensureReaderModuleExists())
+            .then(() => this.copyEpubToOutputDir())
+            .then(() => this.writeBookManifest())
+            .then(() => this.writeWebpubManifest())
+            .then(() => this.copyReaderAppToOutputDir())
+            .then(() => this.injectServerDataIntoTemplate())
+            .then(() => this.updateLinkedResourcesWithAbsolutePaths())
+            .then(() => this.updateAssetURLsWithAbsolutePaths())
+            .then(() => this.injectWebpubManifestLink())
+            .catch(log.error)
     }
 
     get remoteURL() {
@@ -46,19 +43,21 @@ class Reader {
         }
         return state.config.remote_url || 'http://localhost:4000/'
     }
+
     createDirname(s) {
         if (!s || typeof s !== 'string') {
             return crypto.randomBytes(20).toString('hex')
         }
         return s.replace(/[^0-9a-zA-Z-]/g, '-')
     }
+
     ensureReaderModuleExists() {
         try {
             this.readerAppPath = path.join(
                 path.dirname(path.join(require.resolve(this.readerModuleName))),
                 this.readerModuleDistDir,
             )
-            return Promise.resolve()
+            return
         } catch (err) {
             // module not found using require.resolve, so we check if there's a symlinked version available
             log.warn(`Could not find globally installed module ${this.readerModuleName}`)
@@ -83,7 +82,7 @@ class Reader {
             const pkg = fs.readJsonSync(path.join(modulePath, this.readerModuleDistDir, 'package.json'))
             log.warn(`Loaded ${this.readerModuleName} v${pkg.version}`)
 
-            return Promise.resolve()
+            return
         } catch (err) {
             log.error(`
                 A symlinked version of ${this.readerModuleName} was found but is inaccessible.
@@ -105,7 +104,7 @@ class Reader {
             fs.move(state.dist.root(item), path.join(this.outputDir, epubDir, item)),
         )
 
-        return Promise.all(promises).catch(log.error)
+        return Promise.all(promises)
     }
 
     getBookMetadata(term) {
@@ -137,12 +136,10 @@ class Reader {
 
     writeWebpubManifest() {
         const assetsDir = path.join(process.cwd(), this.outputDir, this.getBookMetadata('identifier'), 'OPS')
-        return rrdir(assetsDir)
-            .then(files => {
-                const manifest = generateWebpubManifest(state, files)
-                fs.writeJson(state.dist.root('manifest.json'), manifest)
-            })
-            .catch(log.error)
+        return rrdir(assetsDir).then(files => {
+            const manifest = generateWebpubManifest(state, files)
+            fs.writeJson(state.dist.root('manifest.json'), manifest)
+        })
     }
 
     injectWebpubManifestLink() {
@@ -165,7 +162,7 @@ class Reader {
             .readdirSync(this.readerAppPath)
             .map(file => fs.copy(path.join(this.readerAppPath, file), path.resolve(state.dist.root(file))))
 
-        return Promise.all(promises).catch(log.error)
+        return Promise.all(promises)
     }
 
     injectServerDataIntoTemplate() {

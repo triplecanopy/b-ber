@@ -39,7 +39,7 @@ const unoptimized = files => {
             .then(() => log.info('scripts emit [%s]', `javascripts${path.sep}${path.basename(output)}`))
     })
 
-    return Promise.all(promises).catch(log.error)
+    return Promise.all(promises)
 }
 
 const write = () =>

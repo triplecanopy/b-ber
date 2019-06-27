@@ -100,19 +100,15 @@ class Cover {
     }
 
     generateCoverXHTML() {
-        return new Promise(resolve => {
-            // get the image dimensions, and pass them to the coverSVG template
-            const { width, height } = imageSize.sync(fs.readFileSync(this.coverImagePath))
-            const href = `images/${encodeURIComponent(this.coverEntry)}`
-            const svg = Xhtml.cover({ width, height, href })
+        // get the image dimensions, and pass them to the coverSVG template
+        const { width, height } = imageSize.sync(fs.readFileSync(this.coverImagePath))
+        const href = `images/${encodeURIComponent(this.coverEntry)}`
+        const svg = Xhtml.cover({ width, height, href })
 
-            // set the content string to be written once resolved
-            this.coverXHTMLContent = Template.render(svg, Xhtml.body())
+        // set the content string to be written once resolved
+        this.coverXHTMLContent = Template.render(svg, Xhtml.body())
 
-            log.info('cover build [cover.xhtml]')
-
-            resolve()
-        })
+        log.info('cover build [cover.xhtml]')
     }
 
     addCoverToMetadata() {
@@ -120,64 +116,63 @@ class Cover {
     }
 
     createCoverImage() {
-        return new Promise(resolve => {
-            let metadata
+        let metadata
 
-            this.coverEntry = `${this.coverPrefix}${crypto.randomBytes(20).toString('hex')}.jpg`
+        this.coverEntry = `${this.coverPrefix}${crypto.randomBytes(20).toString('hex')}.jpg`
+        this.coverImagePath = state.src.images(this.coverEntry)
+
+        // check that metadata.yml exists
+        log.info('cover verify entry in [metadata.yml]')
+        try {
+            metadata = YamlAdaptor.load(this.metadataYAML)
+        } catch (err) {
+            log.error(err)
+        }
+
+        // check if cover if referenced
+        const coverListedInMetadata = getBookMetadata('cover', state)
+
+        if (coverListedInMetadata) {
+            // TODO: fixme, for generated covers
+            // @issue: https://github.com/triplecanopy/b-ber/issues/208
+            this.coverEntry = coverListedInMetadata.replace(/_jpg$/, '.jpg')
+            log.info('cover verify image [%s]', this.coverEntry)
+
+            // there's a reference to a cover image so we create a cover.xhtml file
+            // containing an SVG-wrapped `image` element with the appropriate cover
+            // dimensions, and write it to the `text` dir.
+
+            // check that the cover image file exists, throw if not
             this.coverImagePath = state.src.images(this.coverEntry)
 
-            // check that metadata.yml exists
-            log.info('cover verify entry in [metadata.yml]')
             try {
-                metadata = YamlAdaptor.load(this.metadataYAML)
+                if (!fs.statSync(this.coverImagePath)) {
+                    throw new Error(`Cover image listed in metadata.yml cannot be found: [${this.coverImagePath}]`)
+                }
             } catch (err) {
                 log.error(err)
             }
 
-            // check if cover if referenced
-            const coverListedInMetadata = getBookMetadata('cover', state)
+            return this.generateCoverXHTML()
+        } // end if cover exists
 
-            if (coverListedInMetadata) {
-                // TODO: fixme, for generated covers
-                // @issue: https://github.com/triplecanopy/b-ber/issues/208
-                this.coverEntry = coverListedInMetadata.replace(/_jpg$/, '.jpg')
-                log.info('cover verify image [%s]', this.coverEntry)
+        // if there's no cover referenced in the metadata.yml, we create one
+        // that displays the book's metadata (title, generator version, etc)
+        // and add it to metadata.yml
+        log.warn('cover emit [%s]', this.coverEntry)
 
-                // there's a reference to a cover image so we create a cover.xhtml file
-                // containing an SVG-wrapped `image` element with the appropriate cover
-                // dimensions, and write it to the `text` dir.
+        const coverMetadata = {
+            term: 'cover',
+            value: this.coverEntry,
+            // value: fileId(this.coverEntry).slice(1),
+        }
 
-                // check that the cover image file exists, throw if not
-                this.coverImagePath = state.src.images(this.coverEntry)
+        // state.add('metadata', coverMetadata)
+        state.metadata.add(coverMetadata)
 
-                try {
-                    if (!fs.statSync(this.coverImagePath)) {
-                        throw new Error(`Cover image listed in metadata.yml cannot be found: [${this.coverImagePath}]`)
-                    }
-                } catch (err) {
-                    log.error(err)
-                }
+        this.metadata = { ...coverMetadata, ...this.metadata, ...metadata }
 
-                return this.generateCoverXHTML().then(resolve)
-            } // end if cover exists
-
-            // if there's no cover referenced in the metadata.yml, we create one
-            // that displays the book's metadata (title, generator version, etc)
-            // and add it to metadata.yml
-            log.warn('cover emit [%s]', this.coverEntry)
-
-            const coverMetadata = {
-                term: 'cover',
-                value: this.coverEntry,
-                // value: fileId(this.coverEntry).slice(1),
-            }
-
-            // state.add('metadata', coverMetadata)
-            state.metadata.add(coverMetadata)
-
-            this.metadata = { ...coverMetadata, ...this.metadata, ...metadata }
-
-            const content = `
+        const content = `
 <html>
 <body>
 <p>${this.metadata.title}</p>
@@ -189,15 +184,13 @@ class Cover {
 </html>
 `
 
-            this.phantomjsArgs.push(content, this.coverImagePath)
+        this.phantomjsArgs.push(content, this.coverImagePath)
 
-            return this.removeDefaultCovers()
-                .then(() => this.generateDefaultCoverImage())
-                .then(() => this.generateCoverXHTML())
-                .then(() => this.addCoverToMetadata())
-                .catch(log.error)
-                .then(resolve)
-        })
+        return this.removeDefaultCovers()
+            .then(() => this.generateDefaultCoverImage())
+            .then(() => this.generateCoverXHTML())
+            .then(() => this.addCoverToMetadata())
+            .catch(log.error)
     }
 
     init() {

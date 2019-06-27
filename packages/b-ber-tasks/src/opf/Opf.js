@@ -10,53 +10,44 @@ import { ManifestAndMetadata, Navigation } from '.'
 
 class Opf {
     static createOpf() {
-        return new Promise(resolve => {
-            const manifestAndMetadata = new ManifestAndMetadata()
-            const navigation = new Navigation()
+        const manifestAndMetadata = new ManifestAndMetadata()
+        const navigation = new Navigation()
 
-            Promise.all([manifestAndMetadata.init(), navigation.init()])
-                .then(Opf.createOpfPackageString)
-                .then(Opf.writeOpfToDisk)
-                .catch(log.error)
-                .then(resolve)
-        })
+        return Promise.all([manifestAndMetadata.init(), navigation.init()])
+            .then(Opf.createOpfPackageString)
+            .then(Opf.writeOpfToDisk)
+            .catch(log.error)
     }
 
     // Create the root `package` element and inject metadata, manifest, and navigation data
     static createOpfPackageString([manifestAndMetadataXML, navigationXML]) {
         log.info('opf build [package]')
-        return new Promise(resolve => {
-            const { metadata, manifest } = manifestAndMetadataXML
-            const { spine, guide } = navigationXML.strings
 
-            const opfString = renderLayouts(
-                new File({
-                    path: '.tmp',
-                    layout: 'body',
-                    contents: Buffer.from(`
+        const { metadata, manifest } = manifestAndMetadataXML
+        const { spine, guide } = navigationXML.strings
+
+        const opfString = renderLayouts(
+            new File({
+                path: '.tmp',
+                layout: 'body',
+                contents: Buffer.from(`
                         ${metadata}
                         ${manifest}
                         ${spine}
                         ${guide}
-                    `),
-                }),
-                { body: Pkg.body() },
-            ).contents.toString()
+                `),
+            }),
+            { body: Pkg.body() },
+        ).contents.toString()
 
-            resolve(opfString)
-        })
+        return opfString
     }
 
     // Write the `content.opf` to the output directory
     static writeOpfToDisk(contents) {
-        return new Promise(resolve => {
-            const opsPath = state.dist.ops('content.opf')
-            fs.writeFile(opsPath, contents, err => {
-                if (err) throw err
-                log.info(`opf emit content.opf [${opsPath}]`)
-                resolve(contents)
-            })
-        })
+        const opsPath = state.dist.ops('content.opf')
+        log.info(`opf emit content.opf [${opsPath}]`)
+        fs.writeFile(opsPath, contents).then(() => contents)
     }
 }
 

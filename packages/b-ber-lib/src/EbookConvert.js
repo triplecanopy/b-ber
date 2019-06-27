@@ -2,6 +2,7 @@ import path from 'path'
 import has from 'lodash/has'
 import { exec } from 'child_process'
 import exists from 'command-exists'
+import log from '@canopycanopycanopy/b-ber-logger'
 
 const command = 'ebook-convert'
 
@@ -56,12 +57,9 @@ function convert(options) {
 
     settings.bookPath = `"${path.resolve(settings.outputPath, bookName)}"`
 
-    return new Promise((resolve, reject) =>
-        checkForCalibre()
-            .then(() => convertDocument(settings))
-            .catch(reject)
-            .then(resolve),
-    )
+    return checkForCalibre()
+        .then(() => convertDocument(settings))
+        .catch(log.error)
 }
 
 export default { convert }

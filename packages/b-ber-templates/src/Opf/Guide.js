@@ -18,11 +18,11 @@ class Guide {
     static items(data) {
         return data.reduce((acc, curr) => {
             if (!curr.type) return acc
-            log.info(`guide adding landmark [${curr.filename}] as [${curr.type}]`)
+            log.info(`guide adding landmark [${curr.fileName}] as [${curr.type}]`)
 
             const { type } = curr
             const title = Html.escape(curr.title)
-            const href = `text/${encodeURI(path.basename(curr.filename, '.xhtml'))}.xhtml` // TODO: fixme
+            const href = `text/${encodeURI(path.basename(curr.fileName, '.xhtml'))}.xhtml` // TODO: fixme
 
             return acc.concat(Guide.item({ type, title, href }))
         }, '')

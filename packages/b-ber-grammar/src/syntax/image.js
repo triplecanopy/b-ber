@@ -19,7 +19,7 @@ const imageOpenRegExp = /(figure(?:-inline)?)(?::([^\s]+)(\s?.*)?)?$/
 export default {
     plugin: figure,
     name: 'figure',
-    renderer: ({ instance, context = { filename: '' } }) => ({
+    renderer: ({ instance, context = { fileName: '' } }) => ({
         marker: INLINE_DIRECTIVE_MARKER,
         minMarkers: INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
         markerOpen: imageOpenRegExp,
@@ -31,7 +31,7 @@ export default {
             const [, , id, source] = match
             if (typeof id === 'undefined' || typeof source === 'undefined') {
                 // image requires `id` and `source`
-                log.error(`Missing [id] or [source] attribute for [figure] directive${context.filename}.md:${line}`)
+                log.error(`Missing [id] or [source] attribute for [figure] directive${context.fileName}.md:${line}`)
                 return false
             }
             return match
@@ -40,16 +40,16 @@ export default {
         render(tokens, idx) {
             if (tokens[idx].type === 'container_figure_close') return ''
 
-            const filename = `_markdown/${context.filename}.md`
+            const fileName = `_markdown/${context.fileName}.md`
             const lineNr = tokens[idx].map ? tokens[idx].map[0] : null
             const match = tokens[idx].info.trim().match(imageOpenRegExp)
 
             const [, type, id, attrs] = match
             const children = tokens[idx].children
             const caption = children ? instance.renderInline(tokens[idx].children) : ''
-            const comment = Html.comment(`START: figure:${type}#${htmlId(id)}; ${filename}:${lineNr}`)
+            const comment = Html.comment(`START: figure:${type}#${htmlId(id)}; ${fileName}:${lineNr}`)
             const attrsObject = attributesObject(attrs, type, {
-                filename,
+                fileName,
                 lineNr,
             })
             const asset = state.src.images(attrsObject.source)
@@ -76,7 +76,7 @@ export default {
             switch (type) {
                 case 'figure':
                     classNames = `figure__small figure__small--${getImageOrientation(width, height)}`
-                    ref = context.filename
+                    ref = context.fileName
 
                     if (has(attrsObject, 'classes')) {
                         attrsObject.classes += ` ${classNames}`

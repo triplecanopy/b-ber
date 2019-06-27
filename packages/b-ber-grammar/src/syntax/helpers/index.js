@@ -197,17 +197,17 @@ const _extendWithDefaults = (obj, genus) => {
 
 // Create an object from attributes in the given directive
 const attributesObject = (attrs, _genus, context = {}) => {
-    const { filename, lineNr } = context
+    const { fileName, lineNr } = context
     const attrsObject = {}
 
     let genus = _genus
 
     if (!genus || typeof genus !== 'string') {
-        log.error(`No directive provided: ${filename}:${lineNr}`)
+        log.error(`No directive provided: ${fileName}:${lineNr}`)
     }
 
     if (ALL_DIRECTIVES.indexOf(genus) < 0) {
-        log.error(`Invalid directive: [${genus}] at ${filename}:${lineNr}`)
+        log.error(`Invalid directive: [${genus}] at ${fileName}:${lineNr}`)
     }
 
     if (DRAFT_DIRECTIVES.indexOf(genus) > -1) {
@@ -223,7 +223,7 @@ const attributesObject = (attrs, _genus, context = {}) => {
     if (attrs && typeof attrs === 'string') {
         forOf(parseAttrs(attrs.trim()), (k, v) => {
             if (_isUnsupportedAttribute(_genus, k)) {
-                return log.warn(`Omitting illegal attribute [${k}] at [${filename}:${lineNr}]`)
+                return log.warn(`Omitting illegal attribute [${k}] at [${fileName}:${lineNr}]`)
             }
 
             attrsObject[k] = v
