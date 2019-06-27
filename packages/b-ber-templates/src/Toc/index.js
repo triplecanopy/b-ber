@@ -17,17 +17,14 @@ class Toc {
     static items(data) {
         return `
             <ol>
-                ${data.reduce(
-                    (acc, curr) =>
-                        curr.in_toc === false
-                            ? acc
-                            : acc.concat(`
-                            <li>
-                                ${Toc.item(curr)}
-                                ${curr.nodes && curr.nodes.length ? Toc.items(curr.nodes) : ''}
-                            </li>`),
-                    '',
-                )}
+                ${data.reduce((acc, curr) => {
+                    if (curr.in_toc === false) return acc
+                    return acc.concat(`
+                        <li>
+                            ${Toc.item(curr)}
+                            ${curr.nodes && curr.nodes.length ? Toc.items(curr.nodes) : ''}
+                        </li>`)
+                }, '')}
             </ol>
         `
     }

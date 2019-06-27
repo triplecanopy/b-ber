@@ -24,7 +24,7 @@ class Guide {
             const title = Html.escape(curr.title)
             const href = `text/${encodeURI(path.basename(curr.filename, '.xhtml'))}.xhtml` // TODO: fixme
 
-            return Guide.item({ type, title, href })
+            return acc.concat(Guide.item({ type, title, href }))
         }, '')
     }
 }
