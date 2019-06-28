@@ -66,29 +66,7 @@ export const getBookMetadata = (term, state) => {
     return ''
 }
 
-export const safeCopy = (from, to) => {
-    try {
-        if (fs.existsSync(to)) {
-            throw new Error('EEXIST')
-        }
-    } catch (err) {
-        if (err.message === 'EEXIST') return Promise.resolve()
-    }
-
-    return fs.copy(from, to)
-}
-
-export const safeWrite = (dest, data) => {
-    try {
-        if (fs.existsSync(dest)) {
-            throw new Error('EEXIST')
-        }
-    } catch (err) {
-        if (err.message === 'EEXIST') return Promise.resolve()
-    }
-
-    return fs.writeFile(dest, data)
-}
+export const safeWrite = (dest, data) => (fs.existsSync(dest) ? Promise.resolve() : fs.writeFile(dest, data))
 
 export const fail = (msg, err, yargs) => {
     yargs.showHelp()
@@ -114,10 +92,9 @@ const ensureDirs = (dirs, prefix) => {
 }
 
 const ensureFiles = (files, prefix) => {
-    const cwd = process.cwd()
     const files_ = Object.keys(sequences)
-        .map(a => ({
-            absolutePath: path.join(cwd, prefix, '_project', `${a}.yml`),
+        .map(file => ({
+            absolutePath: path.resolve(prefix, '_project', `${file}.yml`),
             content: '',
         }))
         .filter(({ absolutePath }) => findIndex(files, { absolutePath }) < 0)

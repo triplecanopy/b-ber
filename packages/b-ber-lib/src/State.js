@@ -243,6 +243,7 @@ class State {
 
     loadConfig() {
         if (!fs.existsSync(path.resolve('config.yml'))) return
+
         const config = new Yaml('config')
         config.load(path.resolve('config.yml'))
 
@@ -300,20 +301,15 @@ class State {
     }
 
     loadMedia() {
+        if (process.argv.includes('new')) return
+
         const mediaPath = path.resolve(this.config.src, '_media')
+        const media = fs.readdirSync(mediaPath)
+        const video = media.filter(a => /^video/.test(mime.lookup(a)))
+        const audio = media.filter(a => /^audio/.test(mime.lookup(a)))
 
-        try {
-            if (fs.existsSync(mediaPath)) {
-                const media = fs.readdirSync(mediaPath)
-                const video = media.filter(a => /^video/.test(mime.lookup(a)))
-                const audio = media.filter(a => /^audio/.test(mime.lookup(a)))
-
-                set(this, 'video', video)
-                set(this, 'audio', audio)
-            }
-        } catch (err) {
-            log.error(err)
-        }
+        set(this, 'video', video)
+        set(this, 'audio', audio)
     }
 
     loadBuildSettings(type) {
@@ -323,26 +319,7 @@ class State {
         const projectDir = path.resolve(src)
         const navigationConfigFile = path.resolve(src, `${type}.yml`)
 
-        try {
-            if (!fs.existsSync(projectDir)) {
-                log.error(`Project directory [${projectDir}] does not exist`)
-            }
-        } catch (err) {
-            // Starting a new project, noop
-            return {
-                src,
-                dist: `${dist}-${type}`,
-                config: {},
-                guide: [],
-                spine: [],
-                toc: [],
-                cursor: [],
-                figures: [],
-                footnotes: [],
-                remoteAssets: [],
-                loi: [],
-            }
-        }
+        if (!fs.existsSync(projectDir)) log.error(`Project directory [${projectDir}] does not exist`)
 
         const spine = new Spine({ src, buildType: type, navigationConfigFile })
 

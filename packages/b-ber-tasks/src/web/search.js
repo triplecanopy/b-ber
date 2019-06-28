@@ -5,62 +5,54 @@
 // It initializes the WebWorker and manages search results.
 //
 
-var searchInput = null
-var searchButton = null
-var searchButtonOpen = null
-var searchButtonClose = null
-var publicationContents = null
-var clonedContents = null
+;(function() {
+    var searchInput = null
+    var searchButton = null
+    var searchButtonOpen = null
+    var searchButtonClose = null
+    var publicationContents = null
+    var clonedContents = null
 
-function closeSearchBar() {
-    if (!searchInput || !searchButtonClose) return
-    searchInput.classList.remove('publication__search__input--expanded')
-    searchButtonClose.classList.remove(
-        'publication__search__button--close--visible',
-    )
-    searchInput.value = ''
-}
-function openSearchBar() {
-    if (!searchInput || !searchButtonClose) return
-    searchInput.classList.add('publication__search__input--expanded')
-    searchButtonClose.classList.add(
-        'publication__search__button--close--visible',
-    )
-    searchInput.focus()
-}
-function toggleSearchBar() {
-    if (!searchInput || !searchButtonClose) return
-    if (
-        searchInput.classList.contains('publication__search__input--expanded')
-    ) {
-        closeSearchBar()
-    } else {
-        openSearchBar()
+    function closeSearchBar() {
+        if (!searchInput || !searchButtonClose) return
+        searchInput.classList.remove('publication__search__input--expanded')
+        searchButtonClose.classList.remove('publication__search__button--close--visible')
+        searchInput.value = ''
     }
-}
-
-function bindEventHandlers() {
-    searchInput = document.querySelector('.publication__search__input')
-    searchButtonOpen = document.querySelector(
-        '.publication__search__button--open',
-    )
-    searchButtonClose = document.querySelector(
-        '.publication__search__button--close',
-    )
-    publicationContents = document.querySelector('.publication__contents')
-    clonedContents = publicationContents.cloneNode(true)
-
-    if (window.Worker) {
-        initializeWebWorker()
+    function openSearchBar() {
+        if (!searchInput || !searchButtonClose) return
+        searchInput.classList.add('publication__search__input--expanded')
+        searchButtonClose.classList.add('publication__search__button--close--visible')
+        searchInput.focus()
+    }
+    function toggleSearchBar() {
+        if (!searchInput || !searchButtonClose) return
+        if (searchInput.classList.contains('publication__search__input--expanded')) {
+            closeSearchBar()
+        } else {
+            openSearchBar()
+        }
     }
 
-    // grow/shrink input on click
-    searchButtonOpen.addEventListener('click', openSearchBar, false)
-    searchButtonClose.addEventListener('click', closeSearchBar, false)
-    publicationContents.addEventListener('click', closeSearchBar, false)
+    function bindEventHandlers() {
+        searchInput = document.querySelector('.publication__search__input')
+        searchButtonOpen = document.querySelector('.publication__search__button--open')
+        searchButtonClose = document.querySelector('.publication__search__button--close')
+        publicationContents = document.querySelector('.publication__contents')
+        clonedContents = publicationContents.cloneNode(true)
 
-    // keyboard events
-    document.addEventListener(
+        if (window.Worker) {
+            initializeWebWorker()
+        }
+
+        // grow/shrink input on click
+        searchButtonOpen.addEventListener('click', openSearchBar, false)
+        searchButtonClose.addEventListener('click', closeSearchBar, false)
+        publicationContents.addEventListener('click', closeSearchBar, false)
+
+        // keyboard events
+        // prettier-ignore
+        document.addEventListener(
         'keyup',
         function(e) {
             if (e && e.which) {
@@ -69,18 +61,19 @@ function bindEventHandlers() {
                 }
             }
         },
-        false,
+        false
     )
-}
+    }
 
-function initializeWebWorker() {
-    var worker = new Worker('%BASE_URL%' + 'worker.js') // BASE_URL added dynamically on build
-    var timer
-    var debounceSpeed = 30
+    function initializeWebWorker() {
+        var worker = new Worker('%BASE_URL%' + 'worker.js') // BASE_URL added dynamically on build
+        var timer
+        var debounceSpeed = 30
 
-    if (!searchInput || !publicationContents) return
+        if (!searchInput || !publicationContents) return
 
-    function parseSearchResults(results) {
+        // prettier-ignore
+        function parseSearchResults(results) {
         return (
             results.reduce(function(acc, curr) {
                 return acc.concat(
@@ -90,58 +83,50 @@ function initializeWebWorker() {
                         curr.url +
                         '"> \
                         ' +
-                        (curr.title
-                            ? '<h1 class="search__result__title">' +
-                              curr.title +
-                              '</h1>'
-                            : '') +
+                        (curr.title ? '<h1 class="search__result__title">' + curr.title + '</h1>' : '') +
                         ' \
                         ' +
-                        (curr.body
-                            ? '<div class="search__result__body">' +
-                              curr.body +
-                              '</div>'
-                            : '') +
+                        (curr.body ? '<div class="search__result__body">' + curr.body + '</div>' : '') +
                         ' \
                     </a> \
                 </div> \
-            ',
-                )
+            ')
             }, '<section class="search__results">') + '</section>'
         )
     }
 
-    function resetContents() {
-        publicationContents.innerHTML = clonedContents.innerHTML
-    }
+        function resetContents() {
+            publicationContents.innerHTML = clonedContents.innerHTML
+        }
 
-    function debounceSearch() {
-        clearTimeout(timer)
-        setTimeout(function() {
-            var term = searchInput.value.trim()
-            if (!term) {
-                resetContents()
-                return
+        function debounceSearch() {
+            clearTimeout(timer)
+            setTimeout(function() {
+                var term = searchInput.value.trim()
+                if (!term) {
+                    resetContents()
+                    return
+                }
+
+                // TODO: escape search tokens below, find some settings that work well here
+                // @issue: https://github.com/triplecanopy/b-ber/issues/231
+                worker.postMessage({ term: term })
+            }, debounceSpeed)
+        }
+
+        worker.addEventListener('message', function(e) {
+            if (!e.data) return
+            if (e.data.readyState && e.data.readyState > 3) {
+                searchInput.removeAttribute('disabled')
             }
+            if (e.data.results) {
+                publicationContents.innerHTML = parseSearchResults(e.data.results)
+            }
+        })
 
-            // TODO: escape search tokens below, find some settings that work well here
-            // @issue: https://github.com/triplecanopy/b-ber/issues/231
-            worker.postMessage({ term: term })
-        }, debounceSpeed)
+        searchInput.addEventListener('keyup', debounceSearch)
     }
 
-    worker.addEventListener('message', function(e) {
-        if (!e.data) return
-        if (e.data.readyState && e.data.readyState > 3) {
-            searchInput.removeAttribute('disabled')
-        }
-        if (e.data.results) {
-            publicationContents.innerHTML = parseSearchResults(e.data.results)
-        }
-    })
-
-    searchInput.addEventListener('keyup', debounceSearch)
-}
-
-// bootstrap
-window.addEventListener('load', bindEventHandlers, false)
+    // bootstrap
+    window.addEventListener('load', bindEventHandlers, false)
+})()

@@ -152,10 +152,7 @@ const parseAttrs = s => {
 // -> prop="val"
 const _buildAttrString = obj => {
     let s = ''
-    forOf(obj, (k, v) => {
-        s += _applyTransforms(k, v)
-    })
-
+    Object.entries(obj).forEach(([key, val]) => (s += _applyTransforms(key, val)))
     return s
 }
 

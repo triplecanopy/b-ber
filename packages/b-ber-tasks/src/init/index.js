@@ -16,9 +16,7 @@ class Initializer {
         this.path = path.join(name, this.src)
         this.builds = Object.keys(sequences)
 
-        if (fs.existsSync(this.path)) {
-            log.error(`Project [${name}] already exits, aborting`)
-        }
+        if (fs.existsSync(this.path)) log.error(`Project [${name}] already exits, aborting`)
     }
 
     createAssets = () => {

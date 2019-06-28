@@ -5,8 +5,10 @@ const localConfig = (_ => {
     try {
         // eslint-disable-next-line global-require
         _config = require('../.localconfig')
-    } catch (err) {
-        /* noop */
+
+        // eslint-disable-next-line no-shadow
+    } catch (_) {
+        // noop
     }
     return _config
 })()

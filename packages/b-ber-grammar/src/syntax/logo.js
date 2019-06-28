@@ -33,13 +33,7 @@ export default {
             const inputImagePath = state.src.images(attrsObj.source)
             const outputImagePath = `../images/${attrsObj.source}`
 
-            try {
-                if (!fs.existsSync(inputImagePath)) {
-                    throw new Error(`Image [${attrsObj.source}] does not exist`)
-                }
-            } catch (err) {
-                log.warn(err)
-            }
+            if (!fs.existsSync(inputImagePath)) log.warn(`Image [${attrsObj.source}] does not exist`)
 
             delete attrsObj.source // since we need the path relative to `images`
             const attrString = attributesString(attrsObj, type)

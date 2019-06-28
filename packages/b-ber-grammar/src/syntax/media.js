@@ -21,16 +21,13 @@ const isHostedBySupportedThirdParty = asset => asset.match(/(vimeo|youtube)\.com
 const validatePosterImage = (_asset, type) => {
     const asset = state.src.images(_asset)
     const isInlineMedia = /inline/.test(type)
-    try {
-        if (!fs.existsSync(asset)) {
-            if (isInlineMedia) {
-                throw new Error('bber-directives: inline media directives requires a [poster] attribute, aborting', 1)
-            } else {
-                throw new Error(`bber-directives: Poster image for [${type}] does not exist`)
-            }
+
+    if (!fs.existsSync(asset)) {
+        if (isInlineMedia) {
+            log.error('bber-directives: inline media directives requires a [poster] attribute, aborting')
+        } else {
+            log.error(`bber-directives: Poster image for [${type}] does not exist`)
         }
-    } catch (err) {
-        log.error(err, Number(isInlineMedia))
     }
 
     return asset

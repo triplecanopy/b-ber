@@ -29,7 +29,6 @@ class Cover {
         }
 
         this.metadataYAML = state.src.root('metadata.yml')
-
         this.coverPrefix = '__bber_cover__'
         this.phantomjsArgs = []
         this.coverXHTMLContent = ''

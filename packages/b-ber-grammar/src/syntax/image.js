@@ -57,16 +57,8 @@ export default {
 
             let result, page, href, classNames, ref, imageData // eslint-disable-line one-var
 
-            // make sure image exists ...
-            try {
-                if (!fs.existsSync(asset)) {
-                    throw new Error(`Image not found [${asset}]`)
-                }
-            } catch (err) {
-                log.error(err.message)
-                result = Html.comment(`Image not found [${asset}]`)
-                return result
-            }
+            // make sure image exists
+            if (!fs.existsSync(asset)) log.error(`Image not found [${asset}]`)
 
             // then get the dimensions
             const dimensions = imageSize.sync(fs.readFileSync(asset))

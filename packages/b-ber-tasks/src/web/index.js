@@ -17,6 +17,7 @@ import state from '@canopycanopycanopy/b-ber-lib/State'
 import { getBookMetadata, addTrailingSlash, generateWebpubManifest } from '@canopycanopycanopy/b-ber-lib/utils'
 import Toc from '@canopycanopycanopy/b-ber-templates/Toc'
 import rrdir from 'recursive-readdir'
+import Template from './Template'
 
 let ASSETS_TO_UNLINK
 let DIST_PATH
@@ -140,43 +141,12 @@ function getChapterTitle(fileName) {
 }
 
 function getProjectMetadataHTML() {
-    return `
-        <dl>
-            ${state.metadata.json().reduce(
-                (acc, curr) =>
-                    acc.concat(`
-                        <dt>${curr.term}</dt>
-                        <dd>${curr.value}</dd>
-                    `),
-                '',
-            )}
-        </dl>
-    `
+    return Template.metadata(state.metadata.json())
 }
 
 function getHeaderElement(fileName) {
     const title = getChapterTitle(fileName)
-    return `
-        <header class="publication__header" role="navigation">
-            <div class="header__item header__item__toggle header__item__toggle--toc">
-                <button class="material-icons">view_list</button>
-            </div>
-
-            <div class="header__item header__item__title">
-                <h1>${title}</h1>
-            </div>
-
-            <div class="header__item publication__search">
-                <button class="material-icons publication__search__button publication__search__button--open">search</button>
-                <input type="text" disabled="disabled" class="publication__search__input" placeholder="" value=""></input>
-                <button class="material-icons publication__search__button publication__search__button--close">close</button>
-            </div>
-
-            <div class="header__item header__item__toggle header__item__toggle--info">
-                <button class="material-icons">info</button>
-            </div>
-        </header>
-    `
+    return Template.header(title)
 }
 
 function createNavigationElement() {
@@ -185,20 +155,8 @@ function createNavigationElement() {
     const metadataHTML = getProjectMetadataHTML()
     const title = getProjectTitle()
 
-    const tocElement = `
-        <nav class="publication__toc" role="navigation">
-            <div class="publication__title">
-                <a href="${BASE_URL}">${title}</a>
-            </div>
-            ${tocHTML}
-        </nav>
-    `
-
-    const infoElement = `
-        <nav class="publication__info" role="navigation">
-            ${metadataHTML}
-        </nav>
-    `
+    const tocElement = Template.toc(BASE_URL, title, tocHTML)
+    const infoElement = Template.info(metadataHTML)
 
     return { tocElement, infoElement }
 }
@@ -212,13 +170,7 @@ function buttonPrev(filePath) {
 
     if (index > -1 && flow.spine[prevIndex]) {
         const href = `${flow.spine[prevIndex].fileName}.xhtml`
-        html = `
-            <div class="publication__nav__prev">
-                <a class="publication__nav__link" href="${BASE_URL}text/${href}">
-                    <i class="material-icons">arrow_back</i>
-                </a>
-            </div>
-        `
+        html = Template.prev(BASE_URL, href)
     }
 
     return html
@@ -233,13 +185,7 @@ function buttonNext(filePath) {
 
     if (index > -1 && flow.spine[nextIndex]) {
         const href = `${flow.spine[nextIndex].fileName}.xhtml`
-        html = `
-            <div class="publication__nav__next">
-                <a class="publication__nav__link" href="${BASE_URL}text/${href}">
-                    <i class="material-icons">arrow_forward</i>
-                </a>
-            </div>
-        `
+        html = Template.next(BASE_URL, href)
     }
 
     return html
@@ -254,12 +200,7 @@ function paginate(filePath) {
 
 function paginationNavigation(filePath) {
     const { prev, next } = paginate(filePath)
-    return `
-        <nav class="publication__nav" role="navigation">
-            ${prev}
-            ${next}
-        </nav>
-    `
+    return Template.pagination(prev, next)
 }
 
 function injectBaseURL(script) {
@@ -268,47 +209,22 @@ function injectBaseURL(script) {
 }
 
 function getStyleBlock() {
-    return `
-        <style>
-            body {
-                opacity: 0;
-                transition: opacity 250ms ease;
-            }
-            body.ready {
-                opacity: 1 !important;
-            }
-        </style>
-    `
+    return Template.styles()
 }
 
 function getNavigationToggleScript() {
-    return `
-        <script type="text/javascript">
-        // <![CDATA[
-        ${injectBaseURL(fs.readFileSync(path.join(__dirname, 'navigation.js')))}
-        // ]]>
-        </script>
-    `
+    const content = injectBaseURL(fs.readFileSync(path.join(__dirname, 'navigation.js')))
+    return Template.scripts(content)
 }
 
 function getWebWorkerScript() {
-    return `
-        <script type="text/javascript">
-        // <![CDATA[
-        ${injectBaseURL(fs.readFileSync(path.join(__dirname, 'search.js')))}
-        // ]]>
-        </script>
-    `
+    const content = injectBaseURL(fs.readFileSync(path.join(__dirname, 'search.js')))
+    return Template.scripts(content)
 }
 
 function getEventHandlerScript() {
-    return `
-        <script type="text/javascript">
-        // <![CDATA[
-        ${injectBaseURL(fs.readFileSync(path.join(__dirname, 'event-handlers.js')))}
-        // ]]>
-        </script>
-    `
+    const content = injectBaseURL(fs.readFileSync(path.join(__dirname, 'event-handlers.js')))
+    return Template.scripts(content)
 }
 
 function injectPageElementsIntoFile(filePath, { tocElement, infoElement }) {
@@ -329,32 +245,20 @@ function injectPageElementsIntoFile(filePath, { tocElement, infoElement }) {
     // prepend the dynamically generated elements to body, adding a
     // wrapper around the main publication content. this allows us to
     // create a sliding nav, fixed header, etc.
-    contents = data.replace(
-        /(<body[^>]*?>)/,
-        `
-            <body style="opacity: 0;">
-            ${styleBlock}
-            <div class="publication">
-            ${headerElement}
-            <div class="publication__contents">
-        `,
-    )
+    contents = data.replace(/(<body[^>]*?>)/, Template.body(styleBlock, headerElement))
 
     // close the wrapper element, adding a little javascript for the
     // navigation toggle. should be moved to core when stable
     contents = contents.replace(
         /(<\/body>)/,
-        `
-            </div> <!-- / .publication__contents -->
-            ${pageNavigation}
-            </div> <!-- / .publication -->
-            ${tocElement}
-            ${infoElement}
-            ${navigationToggleScript}
-            ${webWorkerScript}
-            ${evenHandlerScript}
-            $1
-        `,
+        Template.footer(
+            pageNavigation,
+            tocElement,
+            infoElement,
+            navigationToggleScript,
+            webWorkerScript,
+            evenHandlerScript,
+        ),
     )
 
     log.info(`web writing ${path.basename(filePath)}`)
@@ -387,11 +291,7 @@ function indexPageContent() {
                     .first()
                     .text()
 
-                const body = $('body')
-                    .text()
-                    .replace(/\n\s+/g, '\n')
-                    .trim() // reduce whitespace
-
+                const body = $('body').text()
                 const url = `${BASE_URL}text/${entry.fileName}.xhtml`
 
                 fileIndex += 1
@@ -433,13 +333,7 @@ function writeWebpubManifest() {
 // which is 0-indexed
 function getPage(_n = -1) {
     const n = _n - 1
-    let url = '#'
-    try {
-        url = `${BASE_URL}text/${flow.spine[n].fileName}.xhtml`
-    } catch (err) {
-        throw err
-    }
-
+    const url = `${BASE_URL}text/${flow.spine[n].fileName}.xhtml`
     return url
 }
 
@@ -457,11 +351,7 @@ function getCoverImage() {
         coverImageSrc += coverEntry.value
     }
 
-    return `
-        <a class="cover__image__link" href="${firstPage}">
-            <img class="cover__image" src="${coverImageSrc}" alt="Cover" />
-        </a>
-    `
+    return Template.cover(firstPage, coverImageSrc)
 }
 
 function createIndexHTML({ tocElement, infoElement }) {
@@ -471,43 +361,22 @@ function createIndexHTML({ tocElement, infoElement }) {
     const webWorkerScript = getWebWorkerScript()
     const headerElement = getHeaderElement()
     const styleBlock = getStyleBlock()
-    const robotsMeta = state.config.private
-        ? '<meta name="robots" content="noindex,nofollow"/>'
-        : '<meta name="robots" content="index,follow"/>'
+    const robotsMeta = Template.robots(state.config.private)
 
     // TODO: should get dynamic page template here to ensure asset hash on production build
     // @issue: https://github.com/triplecanopy/b-ber/issues/232
-    const indexHTML = `
-        <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-        <html xmlns="http://www.w3.org/1999/xhtml"
-            xmlns:epub="http://www.idpf.org/2007/ops"
-            xmlns:ibooks="http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0"
-            epub:prefix="ibooks: http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0">
-            <meta http-equiv="default-style" content="text/html charset=utf-8"/>
-            ${robotsMeta}
-            <link rel="manifest" type="application/webpub+json" href="${BASE_URL}manifest.json">
-            <link rel="stylesheet" type="text/css" href="${BASE_URL}stylesheets/application.css"/>
-
-            <head>
-                <title>${title}</title>
-                ${styleBlock}
-            </head>
-            <body style="opacity: 0;">
-                ${tocElement}
-                ${infoElement}
-                <div class="publication">
-                    ${headerElement}
-                    <div class="publication__contents">
-                        <section>
-                            ${coverImage}
-                        </section>
-                    </div>
-                </div>
-                ${navigationToggleScript}
-                ${webWorkerScript}
-            </body>
-        </html>
-    `
+    const indexHTML = Template.index(
+        BASE_URL,
+        robotsMeta,
+        title,
+        styleBlock,
+        tocElement,
+        infoElement,
+        headerElement,
+        coverImage,
+        navigationToggleScript,
+        webWorkerScript,
+    )
 
     return fs.writeFile(path.resolve(DIST_PATH, 'index.html'), indexHTML)
 }

@@ -27,47 +27,30 @@ const createSCSSString = () => {
     const themeOverridesPath = state.src.stylesheets(themeName, '_overrides.scss')
     const themeStylesPath = theme.entry
 
-    try {
-        // load user-defined variables
-        if (fs.existsSync(themeSettingsPath)) {
-            const variableOverrides = fs.readFileSync(themeSettingsPath)
-            log.info(`sass use overrides [${path.basename(themeSettingsPath)}]`)
-            log.info('sass prepend overrides')
-            chunks.push(variableOverrides)
-        }
-    } catch (err) {
-        log.info('sass building without user-defined overrides')
+    // load user-defined variables
+    if (fs.existsSync(themeSettingsPath)) {
+        const variableOverrides = fs.readFileSync(themeSettingsPath)
+        log.info(`sass use overrides [${path.basename(themeSettingsPath)}]`)
+        log.info('sass prepend overrides')
+        chunks.push(variableOverrides)
     }
 
-    try {
-        // load theme styles
-        if (fs.existsSync(themeStylesPath)) {
-            const themeStyles = fs.readFileSync(themeStylesPath)
-            log.info(`sass attempt build with [${themeName}] theme`)
-            chunks.push(themeStyles)
-        }
-    } catch (err) {
-        log.error(
-            `Could not find theme [${themeName}]. Make sure the theme exists and contains a valid [application.scss]`,
-        )
+    // load theme styles
+    if (fs.existsSync(themeStylesPath)) {
+        const themeStyles = fs.readFileSync(themeStylesPath)
+        log.info(`sass attempt build with [${themeName}] theme`)
+        chunks.push(themeStyles)
     }
 
-    try {
-        // load user-defined styles
-        if (fs.existsSync(themeOverridesPath)) {
-            const styleOverrides = fs.readFileSync(themeOverridesPath)
-            log.info(`sass use user-defined styles [${path.basename(themeOverridesPath)}]`)
-            log.info('sass append user-defined styles')
-            chunks.push(styleOverrides)
-        }
-    } catch (err) {
-        log.info('scss building without user-defined styles')
+    // load user-defined styles
+    if (fs.existsSync(themeOverridesPath)) {
+        const styleOverrides = fs.readFileSync(themeOverridesPath)
+        log.info(`sass use user-defined styles [${path.basename(themeOverridesPath)}]`)
+        log.info('sass append user-defined styles')
+        chunks.push(styleOverrides)
     }
 
-    if (chunks.length < 1) {
-        const err = new Error('No readable stylesheets were found.')
-        log.error(err)
-    }
+    if (chunks.length < 1) log.error('No readable stylesheets were found')
 
     return Buffer.concat(chunks)
 }

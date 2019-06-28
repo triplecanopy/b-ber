@@ -22,13 +22,7 @@ class Generate {
         const fileName = `${title.replace(/[^a-z0-9_-]/gi, '-')}.md`
         const filePath = path.join(markdownDir, fileName)
 
-        try {
-            if (fs.existsSync(filePath)) {
-                throw new Error(`_markdown${path.sep}${fileName} already exists, aborting`)
-            }
-        } catch (err) {
-            throw err
-        }
+        if (fs.existsSync(filePath)) log.error(`_markdown${path.sep}${fileName} already exists, aborting`)
 
         return fs.writeFile(filePath, frontmatter).then(() => ({ fileName }))
     }
