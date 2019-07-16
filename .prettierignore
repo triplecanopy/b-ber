@@ -1,8 +1,11 @@
-vendor
+*.min.js
+**/node_modules/**
+
 dist
 demo
 demos
 *.config.js
+*.config.*.js
 *.loaders.js
 packages/b-ber-lib/*.js
 packages/b-ber-reader/epub/**/*.js
@@ -27,3 +30,4 @@ packages/b-ber-themes/b-ber-theme-serif/_overrides.scss
 packages/b-ber-themes/b-ber-theme-sans/_settings.scss
 packages/b-ber-themes/b-ber-theme-sans/_overrides.scss
 packages/b-ber-themes/b-ber-theme-serif/_mixins.scss
+packages/b-ber-lib/utils/*.js

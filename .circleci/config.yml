@@ -1,49 +1,49 @@
 version: 2.0
 
 jobs:
-  build:
-    docker:
-      - image: canopycanopycanopy/b-ber:0.2.0
-    branches:
-      only:
-        - master
-        - develop
-    working_directory: ~/b-ber
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - npm-packages-v1-{{ .Branch }}-{{ checksum "package-lock.json" }}
-            - npm-packages-v1-{{ checksum "package-lock.json" }}
-            - npm-packages-v1-
-      - run: |
-          npm -g config set user root
-          npm i -g npm@6 lerna
-          echo node $(node -v)
-          echo npm $(npm -v)
-          echo lerna $(lerna -v)
-          npm ci
-          lerna bootstrap
-          npm run build
-          npm test
-          cd ~
-          $BBER --version
-          $BBER new foo
-          cd foo
-          $BBER theme list
-          $BBER theme set b-ber-theme-serif
-          $BBER build
-      - save_cache:
-          paths:
-            - ~/b-ber/node_modules
-            - ~/b-ber/packages/b-ber-cli/node_modules
-            - ~/b-ber/packages/b-ber-grammar/node_modules
-            - ~/b-ber/packages/b-ber-lib/node_modules
-            - ~/b-ber/packages/b-ber-logger/node_modules
-            - ~/b-ber/packages/b-ber-reader/node_modules
-            - ~/b-ber/packages/b-ber-resources/node_modules
-            - ~/b-ber/packages/b-ber-shapes/node_modules
-            - ~/b-ber/packages/b-ber-tasks/node_modules
-            - ~/b-ber/packages/b-ber-templates/node_modules
-            - ~/b-ber/packages/b-ber-themes/node_modules
-          key: npm-packages-v1-{{ .Branch }}-{{ checksum "package-lock.json" }}
+    build:
+        docker:
+            - image: canopycanopycanopy/b-ber:0.2.0
+        branches:
+            only:
+                - master
+                - develop
+        working_directory: ~/b-ber
+        steps:
+            - checkout
+            - restore_cache:
+                  keys:
+                      - npm-packages-v1-{{ .Branch }}-{{ checksum "package-lock.json" }}
+                      - npm-packages-v1-{{ checksum "package-lock.json" }}
+                      - npm-packages-v1-
+            - run: |
+                  npm -g config set user root
+                  npm i -g npm@6 lerna
+                  echo node $(node -v)
+                  echo npm $(npm -v)
+                  echo lerna $(lerna -v)
+                  npm ci
+                  lerna bootstrap
+                  npm run build
+                  npm test
+                  cd ~
+                  $BBER --version
+                  $BBER new foo
+                  cd foo
+                  $BBER theme list
+                  $BBER theme set b-ber-theme-serif
+                  $BBER build
+            - save_cache:
+                  paths:
+                      - ~/b-ber/node_modules
+                      - ~/b-ber/packages/b-ber-cli/node_modules
+                      - ~/b-ber/packages/b-ber-grammar/node_modules
+                      - ~/b-ber/packages/b-ber-lib/node_modules
+                      - ~/b-ber/packages/b-ber-logger/node_modules
+                      - ~/b-ber/packages/b-ber-reader/node_modules
+                      - ~/b-ber/packages/b-ber-resources/node_modules
+                      - ~/b-ber/packages/b-ber-shapes/node_modules
+                      - ~/b-ber/packages/b-ber-tasks/node_modules
+                      - ~/b-ber/packages/b-ber-templates/node_modules
+                      - ~/b-ber/packages/b-ber-themes/node_modules
+                  key: npm-packages-v1-{{ .Branch }}-{{ checksum "package-lock.json" }}

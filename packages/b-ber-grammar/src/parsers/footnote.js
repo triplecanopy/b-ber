@@ -165,8 +165,7 @@ module.exports = function footnote_plugin(md, callback) {
         }
 
         if (pos === start + 2) return false // no empty footnote labels
-        if (pos + 1 >= max || state.src.charCodeAt(++pos) !== 0x3a /* : */)
-            return false
+        if (pos + 1 >= max || state.src.charCodeAt(++pos) !== 0x3a /* : */) return false
         if (silent) return true
         pos++
 
@@ -190,10 +189,7 @@ module.exports = function footnote_plugin(md, callback) {
         oldParentType = state.parentType
 
         posAfterColon = pos
-        initial = offset =
-            state.sCount[startLine] +
-            pos -
-            (state.bMarks[startLine] + state.tShift[startLine])
+        initial = offset = state.sCount[startLine] + pos - (state.bMarks[startLine] + state.tShift[startLine])
 
         while (pos < max) {
             ch = state.src.charCodeAt(pos)
@@ -265,12 +261,7 @@ module.exports = function footnote_plugin(md, callback) {
             if (!state.env.footnotes.list) state.env.footnotes.list = []
             footnoteId = state.env.footnotes.list.length
 
-            state.md.inline.parse(
-                state.src.slice(labelStart, labelEnd),
-                state.md,
-                state.env,
-                (tokens = []),
-            )
+            state.md.inline.parse(state.src.slice(labelStart, labelEnd), state.md, state.env, (tokens = []))
 
             token = state.push('footnote_ref', '', 0)
             token.meta = { id: footnoteId }
@@ -313,8 +304,7 @@ module.exports = function footnote_plugin(md, callback) {
         pos++
 
         label = state.src.slice(start + 2, pos - 1)
-        if (typeof state.env.footnotes.refs[':' + label] === 'undefined')
-            return false
+        if (typeof state.env.footnotes.refs[':' + label] === 'undefined') return false
 
         if (!silent) {
             if (!state.env.footnotes.list) state.env.footnotes.list = []
@@ -408,9 +398,7 @@ module.exports = function footnote_plugin(md, callback) {
             }
 
             state.tokens = state.tokens.concat(tokens)
-            if (
-                state.tokens[state.tokens.length - 1].type === 'paragraph_close'
-            ) {
+            if (state.tokens[state.tokens.length - 1].type === 'paragraph_close') {
                 lastParagraph = state.tokens.pop()
             } else {
                 lastParagraph = null

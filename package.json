@@ -8,32 +8,40 @@
         "npm": ">= 5.x <= 6.x"
     },
     "scripts": {
-        "watch": "lerna run --parallel watch",
-        "lint.js": "ls ./packages | xargs -I {} eslint ./packages/{}/src/**/{*.js,*.jsx}",
-        "lint.scss": "sass-lint -c .sasslintrc './packages/b-ber-themes/b-ber-theme-sans/scss/**/*.scss, ./packages/b-ber-themes/b-ber-theme-serif/scss/**/*.scss' -v -q",
-        "lint": "npm run lint.js && npm run lint.scss",
-        "lint.changed.js": "DIFF=`git diff-index --name-only HEAD | grep -E \".*\\.jsx?$\"`; if [ \"$DIFF\" ]; then eslint $DIFF; fi",
-        "lint.changed.scss": "DIFF=`git diff-index --name-only HEAD | grep -E \"packages.*\\.(scss|sass)$\"`; if [ \"$DIFF\" ]; then sass-lint -c .sasslintrc $DIFF -v -q; fi",
-        "lint.changed": "npm run lint.changed.js && npm run lint.changed.scss",
-        "prettier.check": "eslint --print-config . | eslint-config-prettier-check",
-        "flush.lock": "ls ./packages | xargs -I {} rimraf ./packages/{}/package-lock.json",
-        "flush.modules": "ls ./packages | xargs -I {} rimraf ./packages/{}/node_modules",
-        "flush.rebuild": "lerna exec npm install && lerna bootstrap",
-        "flush": "npm run flush.lock && npm run flush.modules && npm run flush.rebuild",
-        "test": "npm run lint && jest",
-        "jest": "jest",
-        "test.coverage": "rimraf ./coverage && npm run lint && jest --collectCoverage=true",
-        "build": "lerna run build",
+        "watch": "lerna run watch --no-sort --stream --concurrency 999",
+        "build": "lerna run build --stream",
+        "check:code": "eslint --ignore-path .gitignore --ignore-path .prettierignore --ext .js,.jsx .",
+        "check:other": "npm run prettier -- --check",
+        "check": "npm-run-all -p lint:code lint:other",
+        "format:code": "npm run check:code -- --fix",
+        "format:other": "npm run prettier -- --write",
+        "prettier": "prettier \"**/*.{md,scss,yaml,yml}\"",
+        "test": "npm-run-all -p lint jest",
+        "test:coverage": "rimraf ./coverage && jest --collectCoverage=true",
         "preversion": "node scripts/version.js",
-        "publish.patch": "lerna publish patch --force-publish=*",
-        "publish.canary": "lerna publish --canary --force-publish=*",
+        "publish:canary": "lerna publish --canary --force-publish=*",
+        "publish:patch": "lerna publish patch --force-publish=*",
         "outdated": "npm outdated || true && lerna exec --no-bail -- npm outdated",
         "update": "lernaupdate",
         "dedupe": "lernaupdate --dedupe"
     },
+    "lint-staged": {
+        "*.{js,jsx}": [
+            "eslint --ignore-path .gitignore --ignore-path .prettierignore --fix",
+            "git add"
+        ],
+        "*.{md,css,scss,yaml,yml}": [
+            "prettier --write",
+            "git add"
+        ],
+        "*.svg": [
+            "svgo --pretty --indent=2 --config=svgo.yml --multipass",
+            "git add"
+        ]
+    },
     "husky": {
         "hooks": {
-            "pre-commit": "npm run lint.changed"
+            "pre-commit": "lint-staged"
         }
     },
     "devDependencies": {
@@ -70,8 +78,10 @@
         "jest-extended": "^0.7.1",
         "lerna": "^3.13.1",
         "lerna-update-wizard": "^0.11.1",
+        "lint-staged": "^9.2.0",
         "minami": "^1.2.3",
         "mocha": "^3.2.0",
+        "npm-run-all": "^4.1.5",
         "prettier": "^1.15.1",
         "resolve-cwd": "^2.0.0",
         "rimraf": "^2.6.2",

@@ -13,6 +13,5 @@ describe('Spinner', () => {
 
         tree = renderer.create(<Spinner spinnerVisible={false} />).toJSON()
         expect(tree).toMatchSnapshot()
-
     })
 })

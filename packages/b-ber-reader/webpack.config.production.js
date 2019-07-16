@@ -38,10 +38,7 @@ module.exports = {
                             loader: 'postcss-loader',
                             options: {
                                 ident: 'postcss',
-                                plugins: [
-                                    require('autoprefixer')(),
-                                    require('cssnano')(),
-                                ],
+                                plugins: [require('autoprefixer')(), require('cssnano')()],
                             },
                         },
                         { loader: 'sass-loader' },

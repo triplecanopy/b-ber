@@ -19,12 +19,12 @@ To get started, please visit the wiki [here](https://github.com/triplecanopy/b-b
 
 ## Summary of Features
 
-- Builds ePubs, Mobis, PDFs, static websites in both horizontal and vertical orientation, and XML files that can be imported into desktop publishing software;
-- Generated output follows the [EPUB 3.0 specification](http://idpf.org/epub/30);
-- Creates and embeds rich metadata in JSON-LD;
-- Creates metadata that conforms to the [webpub specification](https://w3c.github.io/dpub-pwp-ucr/) for web-based publications;
-- Can be styled through overrides or custom themes;
-- TK Can be used as a utility library by accessing its component modules.
+-   Builds ePubs, Mobis, PDFs, static websites in both horizontal and vertical orientation, and XML files that can be imported into desktop publishing software;
+-   Generated output follows the [EPUB 3.0 specification](http://idpf.org/epub/30);
+-   Creates and embeds rich metadata in JSON-LD;
+-   Creates metadata that conforms to the [webpub specification](https://w3c.github.io/dpub-pwp-ucr/) for web-based publications;
+-   Can be styled through overrides or custom themes;
+-   TK Can be used as a utility library by accessing its component modules.
 
 A demo project for all the build types can be downloaded TK here.
 
@@ -32,14 +32,14 @@ A demo project for all the build types can be downloaded TK here.
 
 In addition to bug fixes and ongoing maintenance, below are some currently known [enhancements](https://github.com/triplecanopy/b-ber/labels/enhancement) that we plan on devleoping for future releases:
 
-- Further styling and testing for outputed formats;
-- Extended metadata;
-- Develop system to generate pages from metadata and create templating system;
-- Create a more 'pluggable' interface:
-    - Allow users to create and integrate their own markdown-it plugins;
-    - Allow users to create their own b-ber extensions.
-- Modularize b-ber:
-    - b-ber packages can continue to be extracted from the core b-ber package for maintenance and customization.
+-   Further styling and testing for outputed formats;
+-   Extended metadata;
+-   Develop system to generate pages from metadata and create templating system;
+-   Create a more 'pluggable' interface:
+    -   Allow users to create and integrate their own markdown-it plugins;
+    -   Allow users to create their own b-ber extensions.
+-   Modularize b-ber:
+    -   b-ber packages can continue to be extracted from the core b-ber package for maintenance and customization.
 
 ## Reporting Bugs
 
