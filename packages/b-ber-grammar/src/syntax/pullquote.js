@@ -66,8 +66,7 @@ export default {
                     // good to keep consistent with the normal handling
                     const index = state.contains('cursor', { id })
                     if (index < 0) {
-                        // state.add('cursor', {id})
-                        pullquoteIndices.push(id)
+                        pullquoteIndices.push({ id, type })
                     } else {
                         log.error(
                             `Duplicate [id] attribute [${id}]. [id]s must be unique ${context.filename}.md:${_line}`,
@@ -87,23 +86,28 @@ export default {
                     }
 
                     const attributeStr = attributesString(attrsObject)
+                    const elementName = type === 'pullquote' ? 'section' : 'blockquote'
                     const comment = `\n<!-- START: section:${type}#${id} -->\n`
-                    result = `${comment}<section${attributeStr}>`
+                    result = `${comment}<${elementName}${attributeStr}>`
                 }
 
                 if (close) {
                     // it's an exit to a pullquote. grab the id from the list of
                     // indices
-                    const id = pullquoteIndices[pullquoteIndices.length - 1]
+                    const { id, type } = pullquoteIndices[pullquoteIndices.length - 1]
+                    const elementName = type === 'pullquote' ? 'section' : 'blockquote'
 
                     // check that the id matches our token
                     if (id && token.match(new RegExp(`exit:${id}`))) {
                         // it's a match for the exit directive's `id`, output the citation
                         // with the HTML comment and reset the citation to prepare for the
                         // next iteration
-                        const comment = `\n<!-- END: section#${id} -->\n`
-                        result = citation ? `<cite>&#8212;&#160;${instance.renderInline(citation)}</cite>` : ''
-                        result += `</section>${comment}`
+                        const comment = `\n<!-- END: section:${type}#${id} -->\n`
+
+                        result = citation
+                            ? `<footer><cite>&#8212;&#160;${instance.renderInline(citation)}</cite></footer>`
+                            : ''
+                        result += `</${elementName}>${comment}`
                         citation = ''
 
                         // update indices
