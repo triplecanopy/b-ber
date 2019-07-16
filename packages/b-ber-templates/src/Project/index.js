@@ -373,6 +373,7 @@ Created with [b-ber](https://github.com/triplecanopy/b-ber/)
 *.epub
 *.mobi
 *.pdf
+*.xml
 
 node_modules
 npm-debug.log*
