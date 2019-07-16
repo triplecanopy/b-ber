@@ -10,7 +10,7 @@ jest.mock('@canopycanopycanopy/b-ber-lib/utils', () => ({
     fail: jest.fn(),
 }))
 
-jest.mock('@canopycanopycanopy/b-ber-lib/state', () => ({}))
+jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({}))
 
 describe('cover', () => {
     it('exports a yargs command object', () => {
