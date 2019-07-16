@@ -32,8 +32,7 @@
     },
     "husky": {
         "hooks": {
-            "pre-commit": "npm run lint.changed",
-            "pre-push": "./node_modules/.bin/jest"
+            "pre-commit": "npm run lint.changed"
         }
     },
     "devDependencies": {
