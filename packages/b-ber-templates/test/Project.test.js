@@ -1,5 +1,6 @@
 /* global test,expect */
 
+import fs from 'fs-extra'
 import path from 'path'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import YamlAdaptor from '@canopycanopycanopy/b-ber-lib/YamlAdaptor'
@@ -11,6 +12,8 @@ jest.mock('@canopycanopycanopy/b-ber-lib/State', () => {
     const config = new Config()
     return { config }
 })
+
+afterAll(() => fs.remove('_project'))
 
 describe('templates.Project', () => {
     test('it creates the source directories', () => {

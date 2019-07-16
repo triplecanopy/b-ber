@@ -12,6 +12,7 @@
         "access": "public"
     },
     "dependencies": {
+        "fs-extra": "^8.1.0",
         "highlight.js": "git+https://github.com/msimmer/highlight.js.git",
         "modularscale-sass": "^3.0.3"
     },

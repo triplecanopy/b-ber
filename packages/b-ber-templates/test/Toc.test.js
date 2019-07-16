@@ -1,6 +1,9 @@
+import fs from 'fs-extra'
 import Toc from '../src/Toc'
 
 jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({}))
+
+afterAll(() => fs.remove('_project'))
 
 describe('templates.Toc', () => {
     it('creates an anchor element', () => {

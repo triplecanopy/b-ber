@@ -1,3 +1,4 @@
+import fs from 'fs-extra'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import Xhtml from '../src/Xhtml'
 
@@ -7,6 +8,8 @@ jest.mock('@canopycanopycanopy/b-ber-lib/State', () => {
     const config = new Config()
     return { config }
 })
+
+afterAll(() => fs.remove('_project'))
 
 describe('templates.Xhtml', () => {
     it('creates a head element', () => {

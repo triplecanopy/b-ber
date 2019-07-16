@@ -1,6 +1,9 @@
+import fs from 'fs-extra'
 import mobi from '../../src/figures/mobi'
 
 jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({}))
+
+afterAll(() => fs.remove('_project'))
 
 describe('templates.mobi', () => {
     test('creates the markup', () => {

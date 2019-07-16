@@ -1,3 +1,4 @@
+import fs from 'fs-extra'
 import async from '../src/async'
 
 jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
@@ -18,6 +19,8 @@ jest.mock('@canopycanopycanopy/b-ber-logger', () => ({
         return true
     },
 }))
+
+afterAll(() => Promise.all([fs.remove('_project'), fs.remove('themes')]))
 
 describe('task: async', () => {
     // expect(1).toBe(1)

@@ -1,4 +1,5 @@
 /* global jest,test,expect */
+import fs from 'fs-extra'
 import { Opf, ManifestAndMetadata, Navigation } from '../src/opf'
 
 jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
@@ -10,6 +11,8 @@ let manifestAndMetadata
 let src = 'src'
 let dist = 'dist'
 let version = '0.0.0'
+
+afterAll(() => Promise.all([fs.remove('_project'), fs.remove('themes')]))
 
 describe('Opf', () => {
     test('it loads the module', () => {

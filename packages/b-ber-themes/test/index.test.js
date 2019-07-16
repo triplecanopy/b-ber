@@ -1,8 +1,10 @@
 /* global test,expect */
 
-import fs from 'fs'
+import fs from 'fs-extra'
 import path from 'path'
 import sass from 'node-sass'
+
+afterAll(() => fs.remove('themes'))
 
 describe('b-ber-themes', () => {
     test('it exports the themes', () => {
