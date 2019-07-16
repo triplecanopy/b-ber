@@ -94,7 +94,7 @@ async function initialize() {
     flow = new WebFlow({ spine, loi })
 }
 
-function moveAssetsToRootDirctory() {
+async function moveAssetsToRootDirctory() {
     const files = fs.readdirSync(OPS_PATH)
     const dirs = files.filter(file => file.charAt(0) !== '.' && fs.statSync(path.join(OPS_PATH, file)).isDirectory())
     const promises = dirs.map(dir => {
@@ -106,9 +106,8 @@ function moveAssetsToRootDirctory() {
     })
 
     // remove the OPS dir once all the moving assets have been moved
-    promises.push(fs.remove(OPS_PATH))
-
-    return Promise.all(promises)
+    await Promise.all(promises)
+    return fs.remove(OPS_PATH)
 }
 
 function unlinkRedundantAssets() {
