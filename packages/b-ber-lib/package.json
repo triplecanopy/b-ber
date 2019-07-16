@@ -1,6 +1,6 @@
 {
     "name": "@canopycanopycanopy/b-ber-lib",
-    "version": "0.1.6",
+    "version": "0.1.7",
     "description": "",
     "main": "index.js",
     "scripts": {
@@ -23,9 +23,9 @@
         "rimraf": "^2.6.2"
     },
     "dependencies": {
-        "@canopycanopycanopy/b-ber-logger": "^0.1.6",
-        "@canopycanopycanopy/b-ber-shapes": "^0.1.6",
-        "@canopycanopycanopy/b-ber-themes": "^0.1.6",
+        "@canopycanopycanopy/b-ber-logger": "^0.1.7",
+        "@canopycanopycanopy/b-ber-shapes": "^0.1.7",
+        "@canopycanopycanopy/b-ber-themes": "^0.1.7",
         "babel-runtime": "^6.26.0",
         "command-exists": "^1.2.2",
         "ffprobe": "^1.1.0",
