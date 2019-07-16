@@ -1,5 +1,7 @@
 import mobi from '../../src/figures/mobi'
 
+jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({}))
+
 describe('templates.mobi', () => {
     test('creates the markup', () => {
         const data = {
@@ -47,7 +49,5 @@ describe('templates.mobi', () => {
         expect(mobi.audio(data)).toMatchSnapshot()
         expect(mobi.video(data)).toMatchSnapshot()
         expect(mobi.iframe(data)).toMatchSnapshot()
-
-
     })
 })

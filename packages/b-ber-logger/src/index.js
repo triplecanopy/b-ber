@@ -62,7 +62,7 @@ class Logger extends Timer {
         // options
         this.settings = {
             quiet: false,
-            verbose: false,
+            verbose: true,
             debug: false,
             summary: Logger.defaults.summary,
             'no-color': Logger.defaults.boringOutput,

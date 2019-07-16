@@ -1,6 +1,6 @@
 module.exports = {
   name: 'b-ber-resources',
-  verbose: false,
+  verbose: true,
   setupTestFrameworkScriptFile: 'jest-extended',
   testURL: 'http://localhost/',
 }

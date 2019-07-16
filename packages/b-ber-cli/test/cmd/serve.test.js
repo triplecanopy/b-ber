@@ -6,6 +6,11 @@ jest.mock('@canopycanopycanopy/b-ber-tasks', () => ({
     serve: jest.fn(),
 }))
 
+jest.mock('@canopycanopycanopy/b-ber-lib/utils', () => ({
+    fail: jest.fn(),
+    ensure: jest.fn(),
+}))
+
 describe('serve', () => {
     it('exports a yargs command object', () => {
         expect(serve).toEqual(

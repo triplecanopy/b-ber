@@ -2,8 +2,15 @@
 
 import theme from '../../src/cmd/theme'
 
+jest.mock('@canopycanopycanopy/b-ber-lib/Theme', () => ({}))
+
 jest.mock('@canopycanopycanopy/b-ber-tasks', () => ({
     theme: jest.fn(),
+}))
+
+jest.mock('@canopycanopycanopy/b-ber-lib/utils', () => ({
+    fail: jest.fn(),
+    ensure: jest.fn(),
 }))
 
 describe('theme', () => {

@@ -21,6 +21,7 @@
         "flush.rebuild": "lerna exec npm install && lerna bootstrap",
         "flush": "npm run flush.lock && npm run flush.modules && npm run flush.rebuild",
         "test": "npm run lint && jest",
+        "jest": "jest",
         "test.coverage": "rimraf ./coverage && npm run lint && jest --collectCoverage=true",
         "build": "lerna run build",
         "preversion": "node scripts/version.js",

@@ -3,13 +3,13 @@
 
 // we test against events emitted with `process`, so we run them in a separate
 // thread to prevent conflicts with our test suite
-const {spawn} = require('child_process')
+const { spawn } = require('child_process')
 
 // prevent _promise2.default ... errors in the scripts passed to child_process.
 // jest uses babel to transpile our code at runtime, which replaces native
 // Promise with the implementation in babel-core. this causes errors since our
 // cp doesn't have access to babel
-const {Promise} = global
+const { Promise } = global
 
 // helper to convert our test functions to string. we eval them in a child
 // process so that we can track events emitted from `process`
@@ -37,14 +37,13 @@ function logger_writeToConsole(message) {
 // the following functions emulate a typical b-ber task, are passed as strings
 // and eval'd during tests
 function task_1(throwTopLevelError = false, throwNestedError = false) {
-
     return new Promise(resolve => {
         const result = 1
 
         const cwd = process.cwd()
         const dirs = ['./']
         const methodName = throwNestedError ? 'mkdir' : 'mkdirp'
-        const promises = dirs.map((a) => fs[methodName](path.join(cwd, a)).catch(logger_handleFatalError)) // eslint-disable-line no-undef
+        const promises = dirs.map(a => fs[methodName](path.join(cwd, a)).catch(logger_handleFatalError)) // eslint-disable-line no-undef
 
         if (throwTopLevelError) throw new Error('err message')
 
@@ -57,7 +56,7 @@ function task_2(response) {
         const result = response + 1
         const cwd = process.cwd()
         const dirs = ['./']
-        const promises = dirs.map((a) => fs.mkdirp(path.join(cwd, a)).catch(logger_handleFatalError)) // eslint-disable-line no-undef
+        const promises = dirs.map(a => fs.mkdirp(path.join(cwd, a)).catch(logger_handleFatalError)) // eslint-disable-line no-undef
 
         Promise.all(promises).then(() => resolve(result))
     })
@@ -121,9 +120,7 @@ function createScript(callable) {
 
 // finally our test suite
 describe('b-ber api', () => {
-
     test('runs commands without errors', done => {
-
         expect.assertions(3)
 
         const script = createScript(run_withoutErrors)
@@ -145,11 +142,9 @@ describe('b-ber api', () => {
             expect(stdErrors).toBe(null)
             done()
         })
-
     })
 
     test('handles top-level errors', done => {
-
         expect.assertions(3)
 
         const script = createScript(run_withTopLevelErrors)
@@ -171,11 +166,9 @@ describe('b-ber api', () => {
             expect(stdErrors).toBe(null)
             done()
         })
-
     })
 
     test('handles nested errors', done => {
-
         expect.assertions(3)
 
         const script = createScript(run_withNestedErrors)
@@ -197,6 +190,5 @@ describe('b-ber api', () => {
             expect(stdErrors).toBe(null)
             done()
         })
-
     })
 })

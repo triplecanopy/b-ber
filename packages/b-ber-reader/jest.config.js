@@ -1,6 +1,6 @@
 module.exports = {
     name: 'b-ber-reader',
-    verbose: false,
+    verbose: true,
     setupTestFrameworkScriptFile: 'jest-extended',
     testEnvironment: 'jest-environment-jsdom-global',
     testURL: 'http://localhost/',

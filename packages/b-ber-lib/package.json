@@ -5,7 +5,7 @@
     "main": "index.js",
     "scripts": {
         "prepare.dist": "BABEL_ENV=production babel -d ./ src/ --ignore test/",
-        "clean": "rimraf utils && rimraf *.js",
+        "clean": "rimraf utils && rimraf ApplicationLoader.js Config.js EbookConvert.js Html.js HtmlToXml.js ManifestItemProperties.js Spine.js SpineItem.js State.js Template.js Theme.js Url.js Yaml.js YamlAdaptor.js index.js",
         "prepare": "npm run clean && npm run prepare.dist",
         "build": "npm run prepare",
         "watch": "BABEL_ENV=production babel -d ./ src/ --watch src --ignore test/",

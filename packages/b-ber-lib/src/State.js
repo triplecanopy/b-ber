@@ -304,6 +304,8 @@ class State {
         if (process.argv.includes('new')) return
 
         const mediaPath = path.resolve(this.config.src, '_media')
+        fs.ensureDirSync(mediaPath)
+
         const media = fs.readdirSync(mediaPath)
         const video = media.filter(a => /^video/.test(mime.lookup(a)))
         const audio = media.filter(a => /^audio/.test(mime.lookup(a)))
@@ -354,5 +356,4 @@ class State {
     }
 }
 
-const state = new State()
-export default state
+export default new State()

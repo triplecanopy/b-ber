@@ -1,5 +1,9 @@
 import async from '../src/async'
 
+jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
+    metadata: { json: () => [{}] },
+}))
+
 jest.mock('@canopycanopycanopy/b-ber-logger', () => ({
     notify() {
         return true
@@ -10,9 +14,13 @@ jest.mock('@canopycanopycanopy/b-ber-logger', () => ({
     info() {
         return true
     },
+    error() {
+        return true
+    },
 }))
 
 describe('task: async', () => {
+    // expect(1).toBe(1)
     it('runs commands in sequence', done => {
         expect.assertions(3)
 

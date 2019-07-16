@@ -6,6 +6,11 @@ jest.mock('@canopycanopycanopy/b-ber-tasks', () => ({
     xml: jest.fn(),
 }))
 
+jest.mock('@canopycanopycanopy/b-ber-lib/utils', () => ({
+    fail: jest.fn(),
+    ensure: jest.fn(),
+}))
+
 describe('xml', () => {
     it('exports a yargs command object', () => {
         expect(xml).toEqual(

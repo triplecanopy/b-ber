@@ -1,5 +1,7 @@
 import epub from '../../src/figures/epub'
 
+jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({}))
+
 describe('templates.epub', () => {
     test('creates the markup', () => {
         const data = {

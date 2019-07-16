@@ -1,8 +1,9 @@
 /* global jest,test,expect */
-
 import { Opf, ManifestAndMetadata, Navigation } from '../src/opf'
 
-const state = jest.genMockFromModule('@canopycanopycanopy/b-ber-lib/State')
+jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
+    metadata: { json: () => [{}] },
+}))
 
 let manifestAndMetadata
 
@@ -52,15 +53,6 @@ describe('ManifestAndMetadata', () => {
         manifestAndMetadata.src = src
         manifestAndMetadata.dist = dist
         manifestAndMetadata.version = version
-
-        Object.defineProperties(state, {
-            metadata: {
-                get: () => [],
-                set: () => {},
-                enumerable: true,
-                configurable: true,
-            },
-        })
     })
 
     test('it loads the module', () => {

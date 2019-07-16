@@ -1,23 +1,28 @@
 /* global expect */
 
-import state from '../src/State'
+import fs from 'fs-extra'
 
 jest.mock('../src/Spine')
 jest.mock('../src/SpineItem')
 
-beforeEach(() => {
-    state.reset()
-    Object.defineProperty(state, 'buildTypes', {
-        // quicker than making up an entire mock
-        value: {},
-        writable: true,
-        enumerable: true,
-    })
-})
+// Since the State module exports an instance of state, and checks are done in
+// State's constructor against the file system, we create the necessary dirs in
+// `beforeAll` to run tests and remove them in teardown
+
+let state
+
+beforeAll(() =>
+    // eslint-disable-next-line global-require
+    fs.mkdirp('_project/_media').then(() => (state = require('../src/State').default)),
+)
+
+afterAll(() => Promise.all([fs.remove('_project'), fs.remove('themes')]))
 
 describe('State', () => {
     describe('#add', () => {
         it('Should add an item to an array or object', () => {
+            state.reset()
+
             const a = 'foo'
             const o = { foo: 1 }
 
@@ -32,6 +37,7 @@ describe('State', () => {
 
     describe('#remove', () => {
         it('Should remove an item from an array or object', () => {
+            state.reset()
             state.add('sequence', { foo: 1 })
             state.remove('sequence', { foo: 1 })
             expect(state.sequence).toEqual([])
@@ -40,6 +46,7 @@ describe('State', () => {
 
     describe('#merge', () => {
         it('Should merge two objects', () => {
+            state.reset()
             state.merge('buildTypes', { foo: 1 })
             state.merge('buildTypes', { bar: 2 })
             expect(state.buildTypes).toHaveProperty('foo', 1)
@@ -49,6 +56,7 @@ describe('State', () => {
 
     describe('#update', () => {
         it('Should set the value of a property', done => {
+            state.reset()
             const addFoo = callback => {
                 state.add('sequence', 'foo')
                 callback()

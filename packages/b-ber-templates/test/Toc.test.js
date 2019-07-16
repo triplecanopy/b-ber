@@ -1,11 +1,6 @@
 import Toc from '../src/Toc'
 
-jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
-    templates: {
-        dynamicPageHead: () => {},
-        dynamicPageTail: () => {},
-    },
-}))
+jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({}))
 
 describe('templates.Toc', () => {
     it('creates an anchor element', () => {

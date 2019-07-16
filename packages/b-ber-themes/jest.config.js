@@ -1,6 +1,6 @@
 module.exports = {
     name: 'b-ber-themes',
-    verbose: false,
+    verbose: true,
     setupTestFrameworkScriptFile: 'jest-extended',
     testURL: 'http://localhost/',
 }

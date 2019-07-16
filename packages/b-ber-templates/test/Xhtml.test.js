@@ -1,6 +1,13 @@
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import Xhtml from '../src/Xhtml'
 
+jest.mock('@canopycanopycanopy/b-ber-lib/State', () => {
+    // eslint-disable-next-line global-require
+    const Config = require('@canopycanopycanopy/b-ber-lib/Config').default
+    const config = new Config()
+    return { config }
+})
+
 describe('templates.Xhtml', () => {
     it('creates a head element', () => {
         state.config.private = true
