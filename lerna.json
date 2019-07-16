@@ -8,7 +8,7 @@
             "message": "%v"
         },
         "version": {
-            "allowBranch": "master"
+            "allowBranch": ["master", "develop"]
         }
     }
 }
