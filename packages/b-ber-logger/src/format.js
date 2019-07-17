@@ -1,5 +1,6 @@
 import util from 'util'
 import chalk from 'chalk'
+import isArray from 'lodash/isArray'
 
 export function wrap(arr, space) {
     return arr
@@ -34,7 +35,7 @@ export function floatFormat(n) {
 }
 
 export function decorate(_args, ...props) {
-    const args = _args && _args.constructor === Array ? _args : [_args]
+    const args = _args && isArray(_args) ? _args : [_args]
 
     let message = util.format.call(util, ...args)
 

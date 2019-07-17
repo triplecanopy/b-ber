@@ -5,40 +5,32 @@ module.exports = api => {
 
     const envOptsNoTargets = {
         corejs: 3,
-        exclude: [],
+        // debug = true,
         loose: true,
         modules: 'commonjs',
         useBuiltIns: 'usage',
     }
 
     const envOpts = Object.assign({}, envOptsNoTargets)
-
-    // let convertESM = true
-    // let ignoreLib = true
-    // let includeRuntime = false
     const nodeVersion = '6'
 
     switch (env) {
         // Configs used during bundling builds.
         case 'production':
             // Config during builds before publish.
-            // envOpts.debug = true
             envOpts.targets = {
                 node: nodeVersion,
-                // esmodules: true,
+                browsers: 'last 2 versions, > 2%',
             }
             break
         case 'development':
-            // envOpts.debug = true
             envOpts.targets = {
                 node: 'current',
-                // esmodules: true,
             }
             break
         case 'test':
             envOpts.targets = {
                 node: 'current',
-                // esmodules: true,
             }
             break
         default:
@@ -47,19 +39,13 @@ module.exports = api => {
 
     return {
         // babelrcRoots: ['.', 'packages/*'],
-        ignore: [
-            'node_modules',
-            // ignoreLib ? "packages/*/lib" : null,
-        ],
+        ignore: ['node_modules'],
         presets: [['@babel/env', envOpts], '@babel/preset-react'],
         plugins: [
             ['@babel/plugin-proposal-decorators', { legacy: true }],
+            ['@babel/transform-modules-commonjs', { lazy: true }],
             '@babel/plugin-proposal-class-properties',
             '@babel/plugin-proposal-object-rest-spread',
-            '@babel/plugin-proposal-function-bind',
-
-            // Explicitly use the lazy version of CommonJS modules.
-            //   convertESM ? ["@babel/transform-modules-commonjs", { lazy: true }] : null,
         ].filter(Boolean),
     }
 }

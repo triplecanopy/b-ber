@@ -18,6 +18,7 @@ class Ncx {
             </head>
         `
     }
+
     static title() {
         const entry = find(state.metadata.json(), { term: 'title' })
         const title = entry && has(entry, 'value') ? entry.value : ''
@@ -27,6 +28,7 @@ class Ncx {
             </docTitle>
         `
     }
+
     static author() {
         const entry = find(state.metadata.json(), { term: 'creator' })
         const creator = entry && has(entry, 'value') ? entry.value : ''
@@ -36,6 +38,7 @@ class Ncx {
             </docAuthor>
         `
     }
+
     static document() {
         return new File({
             path: 'ncx.document.tmpl',
@@ -51,6 +54,7 @@ class Ncx {
             `),
         })
     }
+
     static navPoint(data) {
         return `
             <navLabel>
@@ -59,22 +63,22 @@ class Ncx {
             <content src="${data.relativePath}.xhtml" />
         `
     }
+
     static navPoints(data) {
         let index = 0
 
-        function render(_data) {
-            return _data
-                .map(a => {
-                    if (a.in_toc === false) return ''
-                    index += 1
-                    return `
+        function render(nodes) {
+            if (!nodes || !nodes.length) return ''
+            return nodes.reduce((acc, curr) => {
+                if (curr.in_toc === false) return acc
+                index += 1
+                return acc.concat(`
                     <navPoint id="navPoint-${index}" playOrder="${index}">
-                        ${Ncx.navPoint(a)}
-                        ${a.nodes && a.nodes.length ? render(a.nodes) : ''}
+                        ${Ncx.navPoint(curr)}
+                        ${render(curr.nodes)}
                     </navPoint>
-                `
-                })
-                .join('')
+                `)
+            }, '')
         }
 
         const xml = render(data)

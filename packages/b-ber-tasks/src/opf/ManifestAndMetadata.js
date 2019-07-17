@@ -17,7 +17,6 @@ import { pathInfoFromFiles } from './helpers'
 class ManifestAndMetadata {
     constructor() {
         this.bookmeta = null
-        this.createManifestAndMetadataXML = ManifestAndMetadata.createManifestAndMetadataXML
     }
 
     async loadMetadata() {
@@ -25,44 +24,39 @@ class ManifestAndMetadata {
     }
 
     // Retrieve lists of files to include in the `content.opf`
-    createManifestObjectFromAssets() {
-        return new Promise(resolve =>
-            rrdir(state.dist.ops(), (err, filearr) => {
-                if (err) throw err
-                // TODO: better testing here, make sure we're not including symlinks, for example
-                // @issue: https://github.com/triplecanopy/b-ber/issues/228
-                const files = [...state.remoteAssets, ...filearr.filter(a => path.basename(a).charAt(0) !== '.')]
-                const fileObjects = pathInfoFromFiles(files, state.distDir) // `pathInfoFromFiles` is creating objects from file names
-                resolve(fileObjects)
-            }),
-        )
+    async createManifestObjectFromAssets() {
+        let files = await rrdir(state.dist.ops())
+
+        // TODO: better testing here, make sure we're not including symlinks, for example
+        // @issue: https://github.com/triplecanopy/b-ber/issues/228
+        files = [...state.remoteAssets, ...files.filter(file => path.basename(file).charAt(0) !== '.')]
+        const fileObjects = pathInfoFromFiles(files, state.distDir)
+        return fileObjects
     }
 
     createManifestAndMetadataFromTemplates(files) {
-        const strings = { manifest: [], bookmeta: [] }
+        const manifest = files.map(file => Manifest.item(file))
+
         const specifiedFonts =
             has(state.config, 'ibooks_specified_fonts') && state.config.ibooks_specified_fonts === true
-
-        strings.bookmeta = this.bookmeta.map(a => Metadata.meta(a)).filter(Boolean)
+        const modified = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')
+        const generator = `b-ber@${state.version}`
 
         // Add exceptions here as needed
-        strings.bookmeta = [
-            ...strings.bookmeta,
+        const bookmeta = [
+            ...this.bookmeta.map(value => Metadata.meta(value)).filter(Boolean),
             `<meta property="ibooks:specified-fonts">${specifiedFonts}</meta>`,
-            `<meta property="dcterms:modified">${new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')}</meta>`, // eslint-disable-line max-len
-            `<meta name="generator" content="b-ber@${state.version}" />`,
+            `<meta property="dcterms:modified">${modified}</meta>`,
+            `<meta name="generator" content="${generator}" />`,
         ]
 
-        files.forEach(file => strings.manifest.push(Manifest.item(file)))
-
-        return strings
+        return { manifest, bookmeta }
     }
 
-    static createManifestAndMetadataXML(resp) {
-        log.info('opf build [manifest]')
+    createManifestAndMetadataXML(resp) {
         log.info('opf build [metadata]')
 
-        const _metadata = renderLayouts(
+        const metadata = renderLayouts(
             new File({
                 path: '.tmp',
                 layout: 'body',
@@ -70,6 +64,8 @@ class ManifestAndMetadata {
             }),
             { body: Metadata.body() },
         ).contents.toString()
+
+        log.info('opf build [manifest]')
 
         const manifest = renderLayouts(
             new File({
@@ -80,7 +76,7 @@ class ManifestAndMetadata {
             { body: Manifest.body() },
         ).contents.toString()
 
-        return { metadata: _metadata, manifest }
+        return { metadata, manifest }
     }
 
     init() {

@@ -15,8 +15,15 @@ class Opf {
 
         return Promise.all([manifestAndMetadata.init(), navigation.init()])
             .then(Opf.createOpfPackageString)
-            .then(Opf.writeOpfToDisk)
+            .then(Opf.writeOPF)
             .catch(log.error)
+    }
+
+    static writeOPF(contents) {
+        const opsPath = state.dist.ops('content.opf')
+        log.info(`opf emit content.opf [${opsPath}]`)
+
+        return fs.writeFile(opsPath, contents)
     }
 
     // Create the root `package` element and inject metadata, manifest, and navigation data
@@ -24,7 +31,7 @@ class Opf {
         log.info('opf build [package]')
 
         const { metadata, manifest } = manifestAndMetadataXML
-        const { spine, guide } = navigationXML.strings
+        const { guide, spine } = navigationXML
 
         const opfString = renderLayouts(
             new File({
@@ -41,13 +48,6 @@ class Opf {
         ).contents.toString()
 
         return opfString
-    }
-
-    // Write the `content.opf` to the output directory
-    static writeOpfToDisk(contents) {
-        const opsPath = state.dist.ops('content.opf')
-        log.info(`opf emit content.opf [${opsPath}]`)
-        fs.writeFile(opsPath, contents).then(() => contents)
     }
 }
 
