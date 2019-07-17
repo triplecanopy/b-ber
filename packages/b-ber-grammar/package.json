@@ -9,7 +9,7 @@
         "prepare": "npm run clean && npm run prepare.dist",
         "build": "npm run prepare",
         "watch": "BABEL_ENV=production babel -d dist/ src/ --watch src",
-        "test": "jest"
+        "test": "npm run jest"
     },
     "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
     "license": "GPL-3.0-or-later",
@@ -17,8 +17,8 @@
         "access": "public"
     },
     "devDependencies": {
-        "jest": "^22.4.3",
-        "rimraf": "^2.6.2"
+        "jest": "^24.8.0",
+        "rimraf": "^2.6.3"
     },
     "dependencies": {
         "@canopycanopycanopy/b-ber-lib": "^0.1.7",

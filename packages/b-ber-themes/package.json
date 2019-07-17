@@ -17,9 +17,9 @@
         "modularscale-sass": "^3.0.3"
     },
     "devDependencies": {
-        "jest": "^22.4.3",
+        "jest": "^24.8.0",
         "jest-extended": "^0.7.1",
         "node-sass": "^4.11.0",
-        "rimraf": "^2.6.2"
+        "rimraf": "^2.6.3"
     }
 }
