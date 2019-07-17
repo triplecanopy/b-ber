@@ -11,7 +11,7 @@
         "clean": "rimraf dist",
         "prepare": "npm run clean && npm run prepare:dist",
         "build": "npm run prepare",
-        "watch": "BABEL_ENV=production babel -d dist/ src/ --watch src",
+        "watch": "BABEL_ENV=production babel --config-file ../../babel.config.js -d dist/ src/ --watch src",
         "start": "babel-node --config-file ../../babel.config.js --trace-warnings ./src/index.js",
         "test": "jest"
     },

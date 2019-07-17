@@ -11,7 +11,7 @@ import state from '@canopycanopycanopy/b-ber-lib/State'
 const ASSET_DIRNAMES = ['fonts', 'images']
 
 const autoprefixerOptions = state.config.autoprefixer_options || {
-    browsers: ['last 2 versions', '> 2%'],
+    overrideBrowserslist: ['last 2 versions', '> 2%'],
     flexbox: 'no-2009',
 }
 

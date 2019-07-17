@@ -3,7 +3,7 @@
 import path from 'path'
 import fs from 'fs-extra'
 import crypto from 'crypto'
-import childProcess from 'child_process'
+import { execFile } from 'child_process'
 import imageSize from 'probe-image-size'
 import phantomjs from 'phantomjs-prebuilt'
 import log from '@canopycanopycanopy/b-ber-logger'
@@ -61,22 +61,21 @@ class Cover {
     removeDefaultCovers() {
         const imageDir = state.src.images()
 
-        return fs.readdir(imageDir).then(files => {
-            const _covers = files.filter(a => path.basename(a).match(new RegExp(this.coverPrefix)))
+        const files = fs.readdirSync(imageDir)
+        const covers = files.filter(file => path.basename(file).match(new RegExp(this.coverPrefix)))
 
-            if (!_covers.length) return Promise.resolve()
+        if (!covers.length) return Promise.resolve()
 
-            const promises = _covers.map(a =>
-                fs.remove(path.join(imageDir, a)).then(() => log.info('remove outdated cover image [%s]', a)),
-            )
+        const promises = covers.map(file =>
+            fs.remove(path.join(imageDir, file)).then(() => log.info('remove outdated cover image [%s]', file)),
+        )
 
-            return Promise.all(promises)
-        })
+        return Promise.all(promises)
     }
 
     generateDefaultCoverImage() {
         return new Promise(resolve =>
-            childProcess.execFile(phantomjs.path, this.phantomjsArgs, (err, stdout, stderr) => {
+            execFile(phantomjs.path, this.phantomjsArgs, (err, stdout, stderr) => {
                 if (err) log.error(err)
                 if (stderr) log.error(stderr)
                 if (stdout) log.info(stdout)

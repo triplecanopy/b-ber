@@ -42,8 +42,10 @@
         "probe-image-size": "^4.0.0",
         "recursive-readdir": "^2.2.2",
         "serve-index": "^1.9.1",
+        "system": "^2.0.1",
         "uglify-js": "^3.4.0",
         "vinyl": "^2.2.0",
+        "webpage": "^0.3.0",
         "yargs": "^11.0.0"
     },
     "devDependencies": {

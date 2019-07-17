@@ -33,7 +33,7 @@ class Config {
         private: false,
         ignore: [],
         autoprefixer_options: {
-            browsers: ['last 2 versions', '> 2%'],
+            overrideBrowserslist: ['last 2 versions', '> 2%'],
             flexbox: 'no-2009',
         },
     }

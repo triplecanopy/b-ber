@@ -33,9 +33,7 @@ export default {
                 const [, , id] = match
                 if (typeof id === 'undefined') {
                     log.error(
-                        `Missing [id] attribute for [${exports.default.name}:start] directive ${
-                            context.fileName
-                        }.md:${line}`,
+                        `Missing [id] attribute for [${exports.default.name}:start] directive ${context.fileName}.md:${line}`,
                     )
                     return false
                 }
