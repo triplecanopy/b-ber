@@ -1,7 +1,7 @@
 /* globals document, phantom */
 /* eslint-disable no-var,prefer-destructuring,prefer-arrow-callback */
 
-// PhantomJS is picky about JS (no `let`, no `destrurcturing`, etc) or it hangs,
+// PhantomJS is picky about JS (no `let`, no destrurcturing, etc) or it hangs,
 // so we're using pre ES2015 syntax
 
 var system = require('system')
@@ -22,7 +22,7 @@ page.settings.webSecurityEnabled = false
 page.evaluate(function createPage() {
     var body = document.body
     var spans = document.getElementsByTagName('span')
-    var i = 0
+    var i
 
     body.style.backgroundColor = '#5050C5'
     body.style.margin = '100px'
