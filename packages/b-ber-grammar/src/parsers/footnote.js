@@ -1,66 +1,40 @@
-/* eslint-disable */
-/*! Modified from: markdown-it-footnote 3.0.1 https://github.com//markdown-it/markdown-it-footnote @license MIT */
-'use strict'
+/* eslint-disable no-param-reassign,no-plusplus */
 
-import state from '@canopycanopycanopy/b-ber-lib/State'
-import { isArray } from 'lodash'
+/*
+Modified version of markdown-it-footnote@3.0.1
+https://github.com//markdown-it/markdown-it-footnote
+MIT license
+*/
 
-// Process footnotes
-//
+import isArray from 'lodash/isArray'
 
-////////////////////////////////////////////////////////////////////////////////
-// Renderer partials
-
-function render_footnote_anchor_name(tokens, idx, options, env /*, slf*/) {
-    var n = Number(tokens[idx].meta.id + 1).toString()
-    var prefix = ''
-
-    if (typeof env.docId === 'string') {
-        prefix = '-' + env.docId + '-'
-    }
-
-    return prefix + n
+function renderFootnoteAnchorName(tokens, idx, options, env /*, slf*/) {
+    const n = Number(tokens[idx].meta.id + 1).toString()
+    return typeof env.docId === 'string' ? `-${env.docId}-${n}` : ''
 }
 
-function render_footnote_caption(tokens, idx, options /*, env, slf*/) {
-    var n = Number(tokens[idx].meta.id + 1).toString()
-
-    if (tokens[idx].meta.subId > 0) {
-        n += ':' + tokens[idx].meta.subId
-    }
-
-    return n
+function renderFootnoteCaption(tokens, idx /*,options, env, slf*/) {
+    const n = Number(tokens[idx].meta.id + 1).toString()
+    return tokens[idx].meta.subId > 0 ? `${n}:${tokens[idx].meta.subId}` : n
 }
 
-function render_footnote_ref(tokens, idx, options, env, slf) {
-    var caption = slf.rules.footnote_caption(tokens, idx, options, env, slf)
-    var ref = tokens[idx].meta.label
-
-    if (tokens[idx].meta.subId > 0) {
-        refid += ':' + tokens[idx].meta.subId
-    }
-
+function renderFootnoteRef(tokens, idx, options, env, slf) {
+    const caption = slf.rules.footnote_caption(tokens, idx, options, env, slf)
+    const ref = tokens[idx].meta.label
     return `<a epub:type="noteref" class="footnote-ref" href="notes.xhtml#fn${ref}" id="fnref${ref}">${caption}</a>`
 }
 
-function render_footnote_block_open(tokens, idx, options) {
-    return `<ol class="footnotes">
-    `
+function renderFootnoteBlockOpen(/*tokens, idx, options */) {
+    return '<ol class="footnotes">'
 }
 
-function render_footnote_block_close() {
-    return `</ol>
-    `
+function renderFootnoteBlockClose() {
+    return '</ol>'
 }
 
-function render_footnote_open(tokens, idx, options, env, slf) {
-    var id = slf.rules.footnote_anchor_name(tokens, idx, options, env, slf)
-    var ref = tokens[idx].meta.label
-    var childIndex = idx + 2
-
-    if (tokens[idx].meta.subId > 0) {
-        id += ':' + tokens[idx].meta.subId
-    }
+function renderFootnoteOpen(tokens, idx, options, env /*,slf */) {
+    const ref = tokens[idx].meta.label
+    const childIndex = idx + 2
 
     // push the backlink into the parent paragraph
     if (tokens[childIndex]) {
@@ -99,57 +73,43 @@ function render_footnote_open(tokens, idx, options, env, slf) {
         )
     }
 
-    return `<li class="footnote" epub:type="footnote" id="fn${ref}">
-    `
+    return `<li class="footnote" epub:type="footnote" id="fn${ref}">`
 }
 
-function render_footnote_close() {
-    return `</li>
-    `
+function renderFootnoteClose() {
+    return '</li>'
 }
 
-function render_footnote_anchor(tokens, idx, options, env, slf) {
-    var id = slf.rules.footnote_anchor_name(tokens, idx, options, env, slf)
-
-    if (tokens[idx].meta.subId > 0) {
-        id += ':' + tokens[idx].meta.subId
-    }
-
+function renderFootnoteAnchor(/*tokens, idx, options,env, slf */) {
     /* ↩ with escape code to prevent display as Apple Emoji on iOS */
     // return ' <a href="#fnref' + id + '">\u21a9\uFE0E</a>';
     return ''
 }
 
-module.exports = function footnote_plugin(md, callback) {
-    var parseLinkLabel = md.helpers.parseLinkLabel,
-        isSpace = md.utils.isSpace
+module.exports = function footnotePlugin(md, callback) {
+    const { parseLinkLabel } = md.helpers
+    const { isSpace } = md.utils
 
-    md.renderer.rules.footnote_ref = render_footnote_ref
-    md.renderer.rules.footnote_block_open = render_footnote_block_open
-    md.renderer.rules.footnote_block_close = render_footnote_block_close
-    md.renderer.rules.footnote_open = render_footnote_open
-    md.renderer.rules.footnote_close = render_footnote_close
-    md.renderer.rules.footnote_anchor = render_footnote_anchor
+    md.renderer.rules.footnote_ref = renderFootnoteRef
+    md.renderer.rules.footnote_block_open = renderFootnoteBlockOpen
+    md.renderer.rules.footnote_block_close = renderFootnoteBlockClose
+    md.renderer.rules.footnote_open = renderFootnoteOpen
+    md.renderer.rules.footnote_close = renderFootnoteClose
+    md.renderer.rules.footnote_anchor = renderFootnoteAnchor
 
     // helpers (only used in other rules, no tokens are attached to those)
-    md.renderer.rules.footnote_caption = render_footnote_caption
-    md.renderer.rules.footnote_anchor_name = render_footnote_anchor_name
+    md.renderer.rules.footnote_caption = renderFootnoteCaption
+    md.renderer.rules.footnoteAnchorName = renderFootnoteAnchorName
 
     // Process footnote block definition
-    function footnote_def(state, startLine, endLine, silent) {
-        var oldBMark,
-            oldTShift,
-            oldSCount,
-            oldParentType,
-            pos,
-            label,
-            token,
-            initial,
-            offset,
-            ch,
-            posAfterColon,
-            start = state.bMarks[startLine] + state.tShift[startLine],
-            max = state.eMarks[startLine]
+    function footnoteDef(state, startLine, endLine, silent) {
+        const start = state.bMarks[startLine] + state.tShift[startLine]
+        const max = state.eMarks[startLine]
+
+        let pos
+        let token
+        let offset
+        let ch
 
         // line should be at least 5 chars - "[^x]:"
         if (start + 4 > max) return false
@@ -169,27 +129,27 @@ module.exports = function footnote_plugin(md, callback) {
         if (silent) return true
         pos++
 
-        //
-        // footnote is found, start parsing footnote body here
-        //
+        // Footnote is found, start parsing footnote body here
 
         if (!state.env.footnotes) state.env.footnotes = {}
         if (!state.env.footnotes.refs) state.env.footnotes.refs = {}
-        label = state.src.slice(start + 2, pos - 2)
-        state.env.footnotes.refs[':' + label] = -1
+        const label = state.src.slice(start + 2, pos - 2)
+
+        state.env.footnotes.refs[`:${label}`] = -1
 
         token = new state.Token('footnote_reference_open', '', 1)
-        token.meta = { label: label }
+        token.meta = { label }
         token.level = state.level++
         state.tokens.push(token)
 
-        oldBMark = state.bMarks[startLine]
-        oldTShift = state.tShift[startLine]
-        oldSCount = state.sCount[startLine]
-        oldParentType = state.parentType
+        const oldBMark = state.bMarks[startLine]
+        const oldTShift = state.tShift[startLine]
+        const oldSCount = state.sCount[startLine]
+        const oldParentType = state.parentType
+        const posAfterColon = pos
 
-        posAfterColon = pos
-        initial = offset = state.sCount[startLine] + pos - (state.bMarks[startLine] + state.tShift[startLine])
+        // eslint-disable-next-line no-multi-assign
+        const initial = (offset = state.sCount[startLine] + pos - (state.bMarks[startLine] + state.tShift[startLine]))
 
         while (pos < max) {
             ch = state.src.charCodeAt(pos)
@@ -234,28 +194,26 @@ module.exports = function footnote_plugin(md, callback) {
     }
 
     // Process inline footnotes (^[...])
-    function footnote_inline(state, silent) {
-        var labelStart,
-            labelEnd,
-            footnoteId,
-            token,
-            tokens,
-            max = state.posMax,
-            start = state.pos
+    function footnoteInline(state, silent) {
+        const max = state.posMax
+        const start = state.pos
+
+        let footnoteId
+        let token
+        let tokens
 
         if (start + 2 >= max) return false
         if (state.src.charCodeAt(start) !== 0x5e /* ^ */) return false
         if (state.src.charCodeAt(start + 1) !== 0x5b /* [ */) return false
 
-        labelStart = start + 2
-        labelEnd = parseLinkLabel(state, start + 1)
+        const labelStart = start + 2
+        const labelEnd = parseLinkLabel(state, start + 1)
 
-        // parser failed to find ']', so it's not a valid note
+        // Failed to find ']', so it's not a valid note
         if (labelEnd < 0) return false
 
-        // We found the end of the link, and know for a fact it's a valid link;
-        // so all that's left to do is to call tokenizer.
-        //
+        // Found the end of the link, and know for a fact it's a valid link; so
+        // all that's left to do is to call tokenizer.
         if (!silent) {
             if (!state.env.footnotes) state.env.footnotes = {}
             if (!state.env.footnotes.list) state.env.footnotes.list = []
@@ -266,7 +224,7 @@ module.exports = function footnote_plugin(md, callback) {
             token = state.push('footnote_ref', '', 0)
             token.meta = { id: footnoteId }
 
-            state.env.footnotes.list[footnoteId] = { tokens: tokens }
+            state.env.footnotes.list[footnoteId] = { tokens }
         }
 
         state.pos = labelEnd + 1
@@ -275,14 +233,14 @@ module.exports = function footnote_plugin(md, callback) {
     }
 
     // Process footnote references ([^...])
-    function footnote_ref(state, silent) {
-        var label,
-            pos,
-            footnoteId,
-            footnoteSubId,
-            token,
-            max = state.posMax,
-            start = state.pos
+    function footnoteRef(state, silent) {
+        const max = state.posMax
+        const start = state.pos
+
+        let pos
+        let footnoteId
+        let footnoteSubId
+        let token
 
         // should be at least 4 chars - "[^x]"
         if (start + 3 > max) return false
@@ -294,37 +252,35 @@ module.exports = function footnote_plugin(md, callback) {
         for (pos = start + 2; pos < max; pos++) {
             if (state.src.charCodeAt(pos) === 0x20) return false
             if (state.src.charCodeAt(pos) === 0x0a) return false
-            if (state.src.charCodeAt(pos) === 0x5d /* ] */) {
-                break
-            }
+            if (state.src.charCodeAt(pos) === 0x5d /* ] */) break
         }
 
         if (pos === start + 2) return false // no empty footnote labels
         if (pos >= max) return false
         pos++
 
-        label = state.src.slice(start + 2, pos - 1)
-        if (typeof state.env.footnotes.refs[':' + label] === 'undefined') return false
+        const label = state.src.slice(start + 2, pos - 1)
+        if (typeof state.env.footnotes.refs[`:${label}`] === 'undefined') return false
 
         if (!silent) {
             if (!state.env.footnotes.list) state.env.footnotes.list = []
 
-            if (state.env.footnotes.refs[':' + label] < 0) {
+            if (state.env.footnotes.refs[`:${label}`] < 0) {
                 footnoteId = state.env.footnotes.list.length
                 state.env.footnotes.list[footnoteId] = {
-                    label: label,
+                    label,
                     count: 0,
                 }
-                state.env.footnotes.refs[':' + label] = footnoteId
+                state.env.footnotes.refs[`:${label}`] = footnoteId
             } else {
-                footnoteId = state.env.footnotes.refs[':' + label]
+                footnoteId = state.env.footnotes.refs[`:${label}`]
             }
 
             footnoteSubId = state.env.footnotes.list[footnoteId].count
             state.env.footnotes.list[footnoteId].count++
 
             token = state.push('footnote_ref', '', 0)
-            token.meta = { id: footnoteId, subId: footnoteSubId, label: label }
+            token.meta = { id: footnoteId, subId: footnoteSubId, label }
         }
 
         state.pos = pos
@@ -333,24 +289,24 @@ module.exports = function footnote_plugin(md, callback) {
     }
 
     // Glue footnote tokens to end of token stream
-    function footnote_tail(state) {
-        var i,
-            l,
-            j,
-            t,
-            lastParagraph,
-            list,
-            token,
-            tokens,
-            current,
-            currentLabel,
-            insideRef = false,
-            refTokens = {},
-            footnoteTokens = []
+    function footnoteTail(state) {
+        const refTokens = {}
+
+        let i
+        let l
+        let j
+        let t
+        let lastParagraph
+        let token
+        let tokens
+        let current
+        let currentLabel
+        let insideRef = false
+        let footnoteTokens = []
 
         if (!state.env.footnotes) return
 
-        state.tokens = state.tokens.filter(function(tok) {
+        state.tokens = state.tokens.filter(tok => {
             if (tok.type === 'footnote_reference_open') {
                 insideRef = true
                 current = []
@@ -360,7 +316,7 @@ module.exports = function footnote_plugin(md, callback) {
             if (tok.type === 'footnote_reference_close') {
                 insideRef = false
                 // prepend ':' to avoid conflict with Object.prototype members
-                refTokens[':' + currentLabel] = current
+                refTokens[`:${currentLabel}`] = current
                 return false
             }
             if (insideRef) current.push(tok)
@@ -368,7 +324,7 @@ module.exports = function footnote_plugin(md, callback) {
         })
 
         if (!state.env.footnotes.list) return
-        list = state.env.footnotes.list
+        const { list } = state.env.footnotes
 
         token = new state.Token('footnote_block_open', '', 1)
         state.tokens.push(token)
@@ -394,7 +350,7 @@ module.exports = function footnote_plugin(md, callback) {
                 token.block = true
                 tokens.push(token)
             } else if (list[i].label) {
-                tokens = refTokens[':' + list[i].label]
+                tokens = refTokens[`:${list[i].label}`]
             }
 
             state.tokens = state.tokens.concat(tokens)
@@ -456,10 +412,8 @@ module.exports = function footnote_plugin(md, callback) {
         callback(footnoteTokens)
     }
 
-    md.block.ruler.before('reference', 'footnote_def', footnote_def, {
-        alt: ['paragraph', 'reference'],
-    })
-    md.inline.ruler.after('image', 'footnote_inline', footnote_inline)
-    md.inline.ruler.after('footnote_inline', 'footnote_ref', footnote_ref)
-    md.core.ruler.after('inline', 'footnote_tail', footnote_tail)
+    md.block.ruler.before('reference', 'footnote_def', footnoteDef, { alt: ['paragraph', 'reference'] })
+    md.inline.ruler.after('image', 'footnote_inline', footnoteInline)
+    md.inline.ruler.after('footnote_inline', 'footnote_ref', footnoteRef)
+    md.core.ruler.after('inline', 'footnote_tail', footnoteTail)
 }

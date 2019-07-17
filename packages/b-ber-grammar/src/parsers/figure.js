@@ -1,34 +1,38 @@
-/* eslint-disable camelcase, one-var, prefer-const, no-param-reassign, no-multi-spaces, no-continue */
+/* eslint-disable  no-param-reassign */
+
 const figurePlugin = (md, name, options = {}) => {
-    const min_markers = /*options.minMarkers || */ 3
-    const marker_str = /*options.marker || */ ':'
-    const marker_char = marker_str.charCodeAt(0)
-    const marker_len = marker_str.length
+    const minMarkers = /*options.minMarkers || */ 3
+    const markerStr = /*options.marker || */ ':'
+    const markerChar = markerStr.charCodeAt(0)
+    const markerLen = markerStr.length
     const { validate, render } = options
 
     function container(state, startLine, endLine, silent) {
         const start = state.bMarks[startLine] + state.tShift[startLine]
         const max = state.eMarks[startLine]
-        let pos, nextLine, marker_count, markup, params, token
+        let pos
+        let nextLine
+        let token
 
         // Check out the first character quickly,
         // this should filter out most of non-containers
-        if (marker_char !== state.src.charCodeAt(start)) return false
+        if (markerChar !== state.src.charCodeAt(start)) return false
 
         // Check out the rest of the marker string
         for (pos = start + 1; pos <= max; pos++) {
-            if (marker_str[(pos - start) % marker_len] !== state.src[pos]) {
+            if (markerStr[(pos - start) % markerLen] !== state.src[pos]) {
                 break
             }
         }
 
-        marker_count = Math.floor((pos - start) / marker_len)
-        if (marker_count < min_markers) return false
-        pos -= (pos - start) % marker_len
+        const markerCount = Math.floor((pos - start) / markerLen)
+        if (markerCount < minMarkers) return false
+        pos -= (pos - start) % markerLen
 
-        markup = state.src.slice(start, pos)
-        params = state.src.slice(pos, max)
+        const markup = state.src.slice(start, pos)
+        const params = state.src.slice(pos, max)
         if (!validate(params, state.line + 1)) return false
+
         // Since start is found, we can report success here in validation mode
         if (silent) return true
 
@@ -40,14 +44,14 @@ const figurePlugin = (md, name, options = {}) => {
         // - check chars at pos to see if they match caption start
         // if not, continue
 
-        let _cap_marker_len = min_markers - 1
+        const _capMarkerLen = minMarkers - 1
 
-        let _caption_start_pos
-        let _caption_end_pos
-        let _caption_end_line
-        let _fast_forward
+        let _capStartPos
+        let _capEndPos
+        let _capEndLine
+        let _fastForward
 
-        let _caption_body
+        let _capBody
 
         let _cursor
 
@@ -66,7 +70,7 @@ const figurePlugin = (md, name, options = {}) => {
             //
             // there is no caption (open or close); exit and output only the markup
             // for figure
-            if (state.src[state.bMarks[nextLine]].charCodeAt(0) !== marker_char) {
+            if (state.src[state.bMarks[nextLine]].charCodeAt(0) !== markerChar) {
                 break
             }
 
@@ -74,20 +78,20 @@ const figurePlugin = (md, name, options = {}) => {
             _cursor = state.bMarks[nextLine]
 
             // this is sort of inelegant, but it's an easy way to fake a lookahead
-            let _curr_char = state.src[_cursor].charCodeAt(0)
-            let _next_char = state.src[_cursor + 1].charCodeAt(0)
+            const _currChar = state.src[_cursor].charCodeAt(0)
+            const _nextChar = state.src[_cursor + 1].charCodeAt(0)
 
             // two markers on the next line mean that there's a caption
-            if (_curr_char === marker_char && _next_char === marker_char) {
-                if (typeof _caption_start_pos === 'undefined') {
-                    _caption_start_pos = _cursor + _cap_marker_len // state the start index
-                } else if (typeof _caption_start_pos !== 'undefined') {
+            if (_currChar === markerChar && _nextChar === markerChar) {
+                if (typeof _capStartPos === 'undefined') {
+                    _capStartPos = _cursor + _capMarkerLen // state the start index
+                } else if (typeof _capStartPos !== 'undefined') {
                     // a caption is being captured, so we know we're still in the
                     // opening image marker
 
                     // eslint-disable-next-line
-                    _caption_end_pos = _cursor + 2 - _cap_marker_len // state the end index
-                    _caption_end_line = _cursor
+                    _capEndPos = _cursor + 2 - _capMarkerLen // state the end index
+                    _capEndLine = _cursor
                     break
                 }
             }
@@ -97,11 +101,11 @@ const figurePlugin = (md, name, options = {}) => {
         // - slice the string from src at beginning and end
         // - add it to the image token so that it can be parsed in `render` method
 
-        if (_caption_start_pos && _caption_end_pos) {
+        if (_capStartPos && _capEndPos) {
             // we have both a beginning and end marker for the caption, so we can
             // advance the cursor for further parsing
-            _caption_body = state.src.slice(_caption_start_pos, _caption_end_pos)
-            _fast_forward = state.bMarks.indexOf(_caption_end_line) + 1
+            _capBody = state.src.slice(_capStartPos, _capEndPos)
+            _fastForward = state.bMarks.indexOf(_capEndLine) + 1
         } else {
             // there's no caption, but we've advanced the cursor, so we just rewind
             // it to where it initially matched our image directive
@@ -114,7 +118,7 @@ const figurePlugin = (md, name, options = {}) => {
         token.markup = markup
         token.block = true
         token.info = params
-        token.children = _caption_body
+        token.children = _capBody
         token.map = [startLine, nextLine]
 
         // add ending token since we're using a `container` plugin as an inline
@@ -122,7 +126,7 @@ const figurePlugin = (md, name, options = {}) => {
 
         // then,
         // - increment the pointer to the caption end if applicable
-        state.line = _fast_forward || nextLine
+        state.line = _fastForward || nextLine
 
         return true
     }
