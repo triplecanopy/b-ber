@@ -1,6 +1,3 @@
-/* eslint-disable prettier/prettier */
-/* prettier-ignore */
-
 // speeds to debounce our mutation and resize observer callbacks. making sure
 // the document is laid out before rendering in decorate-observable.js
 export const ENSURE_RENDER_TIMEOUT = 200
@@ -102,6 +99,7 @@ export const MOBILE_COLUMN_COUNT = 9
 //
 // ['30px', 'auto', '30px', 'auto']
 
+// prettier-ignore
 export const VIEWPORT_DIMENSIONS_MATRIX = [
     ['60px', '30px', '60px', '30px'], [18, 'auto', 15, 'auto'], [22, 'auto', 18, 'auto'], // => sm x sm, md x sm, lg x sm
     ['60px', '30px', '60px', '30px'], [15, 'auto', 10, 'auto'], [15, 'auto', 10, 'auto'], // => sm x md, md x md, lg x md

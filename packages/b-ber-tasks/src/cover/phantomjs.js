@@ -3,9 +3,10 @@
 const system = require('system')
 const page = require('webpage').create()
 
-const args = system.args
+const { args } = system
 const outFile = args[2]
 
+// eslint-disable-next-line prefer-destructuring
 page.content = args[1]
 page.viewportSize = { width: 1600, height: 2400 }
 
@@ -15,7 +16,7 @@ page.settings.loadImages = false
 page.settings.webSecurityEnabled = false
 
 page.evaluate(() => {
-    const body = document.body
+    const { body } = document
     const spans = document.getElementsByTagName('span')
 
     body.style.backgroundColor = '#5050C5'

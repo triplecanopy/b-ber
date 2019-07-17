@@ -8,6 +8,6 @@ jest.config.js
 npm-debug.log*
 
 /src
-/test
+/__tests__
 /copy.sh
 /jest.config.js

@@ -1,5 +1,5 @@
 /src
-/test
+/__tests__
 .github
 .babelrc
 .editorconfig

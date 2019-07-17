@@ -4,8 +4,7 @@ const figurePlugin = (md, name, options = {}) => {
     const marker_str = /*options.marker || */ ':'
     const marker_char = marker_str.charCodeAt(0)
     const marker_len = marker_str.length
-    const validate = options.validate
-    const render = options.render
+    const { validate, render } = options
 
     function container(state, startLine, endLine, silent) {
         const start = state.bMarks[startLine] + state.tShift[startLine]

@@ -1,5 +1,3 @@
-/* eslint-disable prettier/prettier */
-
 import head from 'lodash/head'
 
 import {
@@ -19,12 +17,14 @@ import { isNumeric } from '../helpers/Types'
 class Viewport {
     // used to get position X in matrix
     static horizontalSmall = () => window.innerWidth <= BREAKPOINT_HORIZONTAL_SMALL
-    static horizontalMedium = () => window.innerWidth > BREAKPOINT_HORIZONTAL_SMALL && window.innerWidth < BREAKPOINT_HORIZONTAL_LARGE
+    static horizontalMedium = () =>
+        window.innerWidth > BREAKPOINT_HORIZONTAL_SMALL && window.innerWidth < BREAKPOINT_HORIZONTAL_LARGE
     static horizontalLarge = () => window.innerWidth >= BREAKPOINT_HORIZONTAL_LARGE
 
     // used to get position Y in matrix
     static verticalSmall = () => window.innerHeight <= BREAKPOINT_VERTICAL_SMALL
-    static verticalMedium = () => window.innerHeight > BREAKPOINT_VERTICAL_SMALL && window.innerHeight < BREAKPOINT_VERTICAL_LARGE
+    static verticalMedium = () =>
+        window.innerHeight > BREAKPOINT_VERTICAL_SMALL && window.innerHeight < BREAKPOINT_VERTICAL_LARGE
     static verticalLarge = () => window.innerHeight >= BREAKPOINT_VERTICAL_LARGE
 
     // utility breakpoint
@@ -41,37 +41,25 @@ class Viewport {
         if (Viewport.verticalLarge()) return 2
     }
 
-    static getBreakpointXY = () => [
-        Viewport.getBreakpointX(),
-        Viewport.getBreakpointY(),
-    ]
+    static getBreakpointXY = () => [Viewport.getBreakpointX(), Viewport.getBreakpointY()]
 
-    static getColumnCount = () =>
-        Viewport.isMobile() ? MOBILE_COLUMN_COUNT : DESKTOP_COLUMN_COUNT
+    static getColumnCount = () => (Viewport.isMobile() ? MOBILE_COLUMN_COUNT : DESKTOP_COLUMN_COUNT)
 
     // flexible columns, flexible gutters.
     // gutter is hard-coded to be 20% of a column's width
-    static getGutterWidth = () =>
-        (35 / (Viewport.getColumnCount() - 1) / 100) * window.innerWidth
-    static getColumnWidth = () =>
-        (65 / Viewport.getColumnCount() / 100) * window.innerWidth
+    static getGutterWidth = () => (35 / (Viewport.getColumnCount() - 1) / 100) * window.innerWidth
+    static getColumnWidth = () => (65 / Viewport.getColumnCount() / 100) * window.innerWidth
 
     static getHorizontalSpacingAuto = () => {
         const width = window.innerWidth
         const padding = Viewport.getColumnWidth() + Viewport.getGutterWidth()
-        return width - padding * 2 > LAYOUT_MAX_WIDTH
-            ? (width - LAYOUT_MAX_WIDTH) / 2
-            : padding
+        return width - padding * 2 > LAYOUT_MAX_WIDTH ? (width - LAYOUT_MAX_WIDTH) / 2 : padding
     }
-    static getVerticalSpacingAuto = () =>
-        (window.innerHeight - LAYOUT_MAX_HEIGHT) / 2
+    static getVerticalSpacingAuto = () => (window.innerHeight - LAYOUT_MAX_HEIGHT) / 2
 
     static getPixelValue = str => {
         if (str.substring(str.length - 2) !== 'px') {
-            return console.error(
-                'Unsupported value provided for reader position:',
-                str,
-            )
+            return console.error('Unsupported value provided for reader position:', str)
         }
 
         return parseInt(str, 10)
@@ -79,34 +67,22 @@ class Viewport {
 
     static getVerticalValueFromString = str => {
         const str_ = str.trim().toLowerCase()
-        return str_ === 'auto'
-            ? Viewport.getVerticalSpacingAuto()
-            : Viewport.getPixelValue(str_)
+        return str_ === 'auto' ? Viewport.getVerticalSpacingAuto() : Viewport.getPixelValue(str_)
     }
 
     static getHorizontalValueFromString = str => {
         const str_ = str.trim().toLowerCase()
-        return str_ === 'auto'
-            ? Viewport.getHorizontalSpacingAuto()
-            : Viewport.getPixelValue(str_)
+        return str_ === 'auto' ? Viewport.getHorizontalSpacingAuto() : Viewport.getPixelValue(str_)
     }
 
     static getVerticalSpacing = (top, bottom) => ({
-        top: isNumeric(top)
-            ? window.innerHeight * (top / 100)
-            : Viewport.getVerticalValueFromString(top),
-        bottom: isNumeric(bottom)
-            ? window.innerHeight * (bottom / 100)
-            : Viewport.getVerticalValueFromString(bottom),
+        top: isNumeric(top) ? window.innerHeight * (top / 100) : Viewport.getVerticalValueFromString(top),
+        bottom: isNumeric(bottom) ? window.innerHeight * (bottom / 100) : Viewport.getVerticalValueFromString(bottom),
     })
 
     static getHorizontalSpacing = (left, right) => ({
-        left: isNumeric(left)
-            ? window.innerWidth * (left / 100)
-            : Viewport.getHorizontalValueFromString(left),
-        right: isNumeric(right)
-            ? window.innerWidth * (right / 100)
-            : Viewport.getHorizontalValueFromString(right),
+        left: isNumeric(left) ? window.innerWidth * (left / 100) : Viewport.getHorizontalValueFromString(left),
+        right: isNumeric(right) ? window.innerWidth * (right / 100) : Viewport.getHorizontalValueFromString(right),
     })
 
     static getDimensions = ([x, y]) =>
@@ -119,8 +95,7 @@ class Viewport {
                 })),
         )
 
-    static getDimensionsFromMatrix = () =>
-        Viewport.getDimensions(Viewport.getBreakpointXY())
+    static getDimensionsFromMatrix = () => Viewport.getDimensions(Viewport.getBreakpointXY())
 
     static optimized = () => Viewport.getDimensionsFromMatrix()
 }

@@ -5,3 +5,4 @@ npm-debug.log*
 /utils
 /*.js
 !/jest.config.js
+!/jest-transform-upward.js

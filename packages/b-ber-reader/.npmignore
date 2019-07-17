@@ -11,7 +11,7 @@ npm-debug.log*
 
 /.eslintrc.json
 /src
-/test
+/__tests__
 /epub
 /jest.config.js
 /postcss.config.js

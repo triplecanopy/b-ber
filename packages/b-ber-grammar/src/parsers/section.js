@@ -5,9 +5,8 @@ const containerPlugin = (md, name, options = {}) => {
     const marker_str = options.marker || ':'
     const marker_char = marker_str.charCodeAt(0)
     const marker_len = marker_str.length
-    const validateOpen = options.validateOpen
+    const { validateOpen, render } = options
     // const validateClose = options.validateClose
-    const render = options.render
 
     function container(state, startLine, endLine, silent) {
         let pos, nextLine, marker_count, markup, params, token, old_parent, old_line_max

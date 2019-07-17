@@ -45,7 +45,7 @@ export default {
             const match = tokens[idx].info.trim().match(imageOpenRegExp)
 
             const [, type, id, attrs] = match
-            const children = tokens[idx].children
+            const { children } = tokens[idx]
             const caption = children ? instance.renderInline(tokens[idx].children) : ''
             const comment = Html.comment(`START: figure:${type}#${htmlId(id)}; ${fileName}:${lineNr}`)
             const attrsObject = attributesObject(attrs, type, {

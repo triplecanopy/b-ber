@@ -82,7 +82,7 @@ export default {
 
                     // get citation which we'll use below
                     if (has(attrsObject, 'citation')) {
-                        citation = attrsObject.citation
+                        ;({ citation } = attrsObject)
                         delete attrsObject.citation
                     }
 

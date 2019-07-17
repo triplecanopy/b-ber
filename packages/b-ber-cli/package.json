@@ -7,12 +7,12 @@
         "bber": "dist/index.js"
     },
     "scripts": {
-        "prepare.dist": "BABEL_ENV=production babel -d dist/ src/ --ignore **/__tests__/**",
+        "prepare:dist": "BABEL_ENV=production babel --config-file ../../babel.config.js -d dist/ src/ --ignore **/__tests__/**",
         "clean": "rimraf dist",
-        "prepare": "npm run clean && npm run prepare.dist",
+        "prepare": "npm run clean && npm run prepare:dist",
         "build": "npm run prepare",
         "watch": "BABEL_ENV=production babel -d dist/ src/ --watch src",
-        "start": "babel-node --trace-warnings ./src/index.js --presets es2015,stage-0",
+        "start": "babel-node --config-file ../../babel.config.js --trace-warnings ./src/index.js",
         "test": "jest"
     },
     "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
@@ -21,17 +21,20 @@
         "access": "public"
     },
     "dependencies": {
+        "@babel/runtime": "^7.5.4",
         "@canopycanopycanopy/b-ber-lib": "^0.1.7",
         "@canopycanopycanopy/b-ber-logger": "^0.1.7",
         "@canopycanopycanopy/b-ber-shapes": "^0.1.7",
         "@canopycanopycanopy/b-ber-tasks": "^0.1.7",
         "@canopycanopycanopy/b-ber-templates": "^0.1.7",
-        "babel-runtime": "^6.26.0",
         "fs-extra": "^8.1.0",
         "lodash": "^4.17.11",
         "yargs": "^11.0.0"
     },
     "devDependencies": {
+        "@babel/cli": "^7.5.0",
+        "@babel/core": "^7.5.4",
+        "@babel/node": "^7.5.0",
         "jest": "^24.8.0",
         "rimraf": "^2.6.3"
     }

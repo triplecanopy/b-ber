@@ -4,11 +4,11 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "prepare.dist": "BABEL_ENV=production babel -d ./ src/ --ignore test/",
-        "clean": "rimraf utils && rimraf ApplicationLoader.js Config.js EbookConvert.js Html.js HtmlToXml.js ManifestItemProperties.js Spine.js SpineItem.js State.js Template.js Theme.js Url.js Yaml.js YamlAdaptor.js index.js",
-        "prepare": "npm run clean && npm run prepare.dist",
+        "prepare:dist": "BABEL_ENV=production babel --config-file ../../babel.config.js -d ./ src/ --ignore **/__tests__/**",
+        "clean": "rimraf utils && rimraf ApplicationLoader.js GuideItem.js Config.js EbookConvert.js Html.js HtmlToXml.js ManifestItemProperties.js Spine.js SpineItem.js State.js Template.js Theme.js Url.js Yaml.js YamlAdaptor.js index.js",
+        "prepare": "npm run clean && npm run prepare:dist",
         "build": "npm run prepare",
-        "watch": "BABEL_ENV=production babel -d ./ src/ --watch src --ignore test/",
+        "watch": "BABEL_ENV=production babel --config-file ../../babel.config.js -d ./ src/ --watch src --ignore **/__tests__/**",
         "start": "babel-node ./src/index.js --presets es2015,stage-0",
         "test": "jest"
     },
@@ -18,6 +18,7 @@
         "access": "public"
     },
     "devDependencies": {
+        "@babel/cli": "^7.5.0",
         "jest": "^24.8.0",
         "mock-fs": "^4.4.2",
         "rimraf": "^2.6.3"

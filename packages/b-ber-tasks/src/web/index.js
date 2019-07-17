@@ -134,7 +134,9 @@ function getChapterTitle(fileName) {
 
     let title = ''
     const entry = find(flow.spine, { fileName })
-    if (entry && entry.title) title = entry.title
+    if (entry && entry.title) {
+        ;({ title } = entry)
+    }
 
     return title
 }

@@ -108,6 +108,7 @@ class Logger extends Timer {
         // parse args
         const argv = process.argv.reduce((acc, curr) => {
             const [k, v] = curr.split('=')
+            // eslint-disable-next-line no-restricted-globals
             acc[k] = typeof v === 'undefined' ? true : !isNaN(v) ? Number(v) : v
             return acc
         }, {})

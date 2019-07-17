@@ -4,12 +4,12 @@
     "description": "",
     "main": "dist/index.js",
     "scripts": {
-        "prepare.dist": "BABEL_ENV=production babel -d dist/ src/ --ignore **/__tests__/**",
+        "prepare:dist": "BABEL_ENV=production babel --config-file ../../babel.config.js -d dist/ src/ --ignore **/__tests__/**",
         "clean": "rimraf dist",
-        "prepare": "npm run clean && npm run prepare.dist",
+        "prepare": "npm run clean && npm run prepare:dist",
         "build": "npm run prepare",
-        "watch": "BABEL_ENV=production babel -d dist/ src/ --watch src",
-        "test": "npm run jest"
+        "watch": "BABEL_ENV=production babel --config-file ../../babel.config.js -d dist/ src/ --watch src",
+        "test": "jest"
     },
     "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
     "license": "GPL-3.0-or-later",
@@ -17,6 +17,7 @@
         "access": "public"
     },
     "devDependencies": {
+        "@babel/cli": "^7.5.0",
         "jest": "^24.8.0",
         "rimraf": "^2.6.3"
     },

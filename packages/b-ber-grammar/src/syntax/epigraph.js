@@ -34,6 +34,7 @@ export default {
                 // opening tag
                 let matches
                 while ((matches = attrsRe.exec(tokens[idx].info.trim())) !== null) {
+                    // eslint-disable-next-line prefer-destructuring
                     attrs[matches[1]] = matches[2]
                 }
 

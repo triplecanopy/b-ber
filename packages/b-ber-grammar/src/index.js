@@ -75,7 +75,7 @@ class MarkdownRenderer {
             .use(markdownItSection.plugin, markdownItSection.name, markdownItSection.renderer(reference))
             .use(markdownItPullquote.plugin, markdownItPullquote.name, markdownItPullquote.renderer(reference))
             .use(markdownItFrontmatter, meta => {
-                const fileName = this.fileName
+                const { fileName } = this
                 const YAMLMeta = YamlAdaptor.parse(meta)
 
                 state.add('guide', new GuideItem({ fileName, ...YAMLMeta }))
@@ -92,7 +92,7 @@ class MarkdownRenderer {
                 }
             })
             .use(markdownItFootnote, tokens => {
-                const fileName = this.fileName
+                const { fileName } = this
                 const entry = find(state.spine, { fileName })
                 const title = entry && entry.title ? entry.title : fileName
 

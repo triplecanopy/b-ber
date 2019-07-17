@@ -122,6 +122,7 @@ class Spread extends Component {
             // height = height / 2 - 1
         }
 
+        // eslint-disable-next-line react/no-unused-state
         this.setState({ height }, this.updateChildElementPositions)
     }
 

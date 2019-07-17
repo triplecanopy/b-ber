@@ -17,6 +17,7 @@
         "modularscale-sass": "^3.0.3"
     },
     "devDependencies": {
+        "@babel/cli": "^7.5.0",
         "jest": "^24.8.0",
         "jest-extended": "^0.7.1",
         "node-sass": "^4.11.0",

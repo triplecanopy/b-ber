@@ -2,7 +2,6 @@
 
 import XMLAdaptor from '../../src/helpers/XMLAdaptor'
 
-const opsURL = 'http://localhost:8080/OPS'
 const xml = {
     data: `<?xml version="1.0" encoding="UTF-8"?>
         <package version="3.0" xml:lang="en" unique-identifier="uuid" xmlns="http://www.idpf.org/2007/opf" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" prefix="ibooks: http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0/">
@@ -49,27 +48,27 @@ describe('XMLAdaptor', () => {
     })
 
     // parseNCX
-    test.skip('parses ncx data', done => {
-        // TODO: stub Request.get
-        // @issue: https://github.com/triplecanopy/b-ber/issues/223
-        done()
-    })
+    // @issue: https://github.com/triplecanopy/b-ber/issues/223
+    test.todo('parses ncx data')
 
-    test.skip('creates spine object', async done => {
-        const data = await XMLAdaptor.parseOPF(xml)
+    // TODO: resolve network error
+    test.todo('creates spine object')
 
-        XMLAdaptor.createSpineItems(data)
-            .then(resp => XMLAdaptor.parseNCX(resp, opsURL))
-            .then(resp => {
-                expect(resp).toEqual(
-                    expect.objectContaining({
-                        __manifest: expect.any(Object),
-                        __spine: expect.any(Object),
-                        // __ncx: expect.any(Object),
-                    }),
-                )
+    // test('creates spine object', done => {
+    //     XMLAdaptor.parseOPF(xml).then(data =>
+    //         XMLAdaptor.createSpineItems(data)
+    //             .then(resp => XMLAdaptor.parseNCX(resp, opsURL))
+    //             .then(resp => {
+    //                 expect(resp).toEqual(
+    //                     expect.objectContaining({
+    //                         __manifest: expect.any(Object),
+    //                         __spine: expect.any(Object),
+    //                         // __ncx: expect.any(Object),
+    //                     }),
+    //                 )
 
-                done()
-            })
-    })
+    //                 done()
+    //             }),
+    //     )
+    // })
 })

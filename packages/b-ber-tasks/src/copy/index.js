@@ -43,7 +43,7 @@ const copy = () => {
             .then(files => {
                 const baseTo = `${path.basename(dir.to)}`
                 files.forEach(file => {
-                    const size = fs.statSync(path.join(dir.to, file)).size
+                    const { size } = fs.statSync(path.join(dir.to, file))
 
                     log.info('copy [%s - {%d}]', `${baseTo}/${file}`, size)
 

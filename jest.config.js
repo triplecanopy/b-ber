@@ -1,7 +1,7 @@
 module.exports = {
     name: 'b-ber',
     verbose: true,
-    setupTestFrameworkScriptFile: 'jest-extended',
+    setupFilesAfterEnv: ['jest-extended'],
     collectCoverage: false,
     collectCoverageFrom: [
         '**/*.{js,jsx}',
@@ -29,12 +29,9 @@ module.exports = {
         '!**/b-ber-templates/Xml/*.js',
         '!**/b-ber-templates/figures/*.js',
     ],
-    coveragePathIgnorePatterns: [
-        '<rootDir>/packages/b-ber-connect/',
-        '<rootDir>/coverage/',
-        '<rootDir>/demos/',
-    ],
+    coveragePathIgnorePatterns: ['<rootDir>/packages/b-ber-connect/', '<rootDir>/coverage/', '<rootDir>/demos/'],
     coverageReporters: ['html', 'lcov', 'json'],
+    moduleFileExtensions: ['js', 'jsx', 'json'],
     testEnvironment: 'jest-environment-jsdom-global',
     testURL: 'http://localhost/',
 }

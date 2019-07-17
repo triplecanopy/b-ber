@@ -78,7 +78,7 @@ export default {
                 lineNr,
             })
             const media = [...state[mediaType]]
-            const children = tokens[idx].children
+            const { children } = tokens[idx]
             const caption = children ? instance.renderInline(tokens[idx].children) : ''
 
             let sources = []
