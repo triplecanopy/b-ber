@@ -34,12 +34,11 @@ const validatePosterImage = (_asset, type) => {
 }
 
 const validateLocalMediaSource = (asset, mediaType) => {
-    const media = [...state[mediaType]].map(a => toAlias(a))
+    const media = [...state[mediaType]].map(file => toAlias(file))
     if (!asset.length || media.indexOf(asset) < 0) {
-        const err = new Error(
-            `bber-directives: Could not find [${mediaType}] matching [${asset}], make sure it's included in the [_media] directory`,
-        ) // eslint-disable-line max-len
-        log.error(err)
+        log.error(
+            `Could not find [${mediaType}] matching [${asset}], make sure it's included in the [_media] directory`,
+        )
     }
 
     return asset
@@ -72,11 +71,7 @@ export default {
 
             let type = match[1]
             const mediaType = (type.indexOf('-') && type.substring(0, type.indexOf('-'))) || type
-
-            const attrsObject = attributesObject(attrs, type, {
-                fileName,
-                lineNr,
-            })
+            const attrsObject = attributesObject(attrs, type, { fileName, lineNr })
             const media = [...state[mediaType]]
             const { children } = tokens[idx]
             const caption = children ? instance.renderInline(tokens[idx].children) : ''
@@ -89,9 +84,7 @@ export default {
             let aspecRatioClassName = ''
 
             // add controls attr by default
-            if (!has(attrsObject, 'controls')) {
-                attrsObject.controls = 'controls'
-            }
+            if (!has(attrsObject, 'controls')) attrsObject.controls = 'controls'
 
             if (attrsObject.poster) {
                 poster = validatePosterImage(attrsObject.poster, type)
@@ -100,13 +93,7 @@ export default {
             }
 
             const { source } = attrsObject
-
-            if (!source) {
-                err = new Error(
-                    `bber-directives: Directive [${type}] requires a [source] attribute at [${fileName}:${lineNr}]`,
-                )
-                log.error(err)
-            }
+            if (!source) log.error(`Directive [${type}] requires a [source] attribute at [${fileName}:${lineNr}]`)
 
             if (isHostedRemotely(source)) {
                 const supportedThirdParty = isHostedBySupportedThirdParty(source)

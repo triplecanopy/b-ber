@@ -5,51 +5,46 @@ import plugin from '../parsers/gallery'
 
 // define our open and closing markers, used by the `validateOpen` and
 // `validateClose` methods in the `renderFactory`
-const markerOpen = /^(gallery)(?::([^\s]+)(\s.*)?)?$/
-const markerClose = /^(exit)(?::([^\s]+))?/
+const MARKER_OPEN_RE = /^(gallery)(?::([^\s]+)(\s.*)?)?$/
+const MARKER_CLOSE_RE = /^(exit)(?::([^\s]+))?/
 
 // a simple `render` function that gets passed into our `renderFactory` is
 // responsible for the HTML output.
 const render = (tokens, idx) => {
-    const open = tokens[idx].info.trim().match(markerOpen)
-    let result = ''
+    const token = tokens[idx].info.trim().match(MARKER_OPEN_RE)
 
-    if (tokens[idx].nesting === 1 && open) {
-        const [, type, id, attrs] = open
-        const attrsObject = attributesObject(attrs, type)
-        const attrsString = attributesString(attrsObject)
+    if (tokens[idx].nesting !== 1 || !token) return ''
 
-        // gallery directive is handled differentenly based on build:
+    const [, type, id, attrs] = token
+    const attrsObject = attributesObject(attrs, type)
+    const attrsString = attributesString(attrsObject)
 
-        //  web: drop all assets (images, videos, etc) into a `fullscreen`
-        //      container so that they can be positioned using custom CSS
+    // gallery directive is handled differentenly based on build:
 
-        //  epub, mobi: drop all assets into a section.gallery container
-        //      that is initialized as a slider via JS if available.
-        //      defaults to a simple sequence of images
+    //  web: drop all assets (images, videos, etc) into a `fullscreen`
+    //      container so that they can be positioned using custom CSS
 
-        //  pdf: sequence of images
+    //  epub, mobi: drop all assets into a section.gallery container
+    //      that is initialized as a slider via JS if available.
+    //      defaults to a simple sequence of images
 
-        switch (state.build) {
-            case 'web':
-            case 'reader':
-                result = `
-                    <section id="${htmlId(id)}" ${attrsString}>
-                        <div class="figure__large figure__inline figure__fullbleed figure__gallery">
-                            <figure>
-                                <div class="figure__items">`
-                break
-            case 'epub':
-            case 'mobi':
-            case 'pdf':
-            case 'sample':
-            default:
-                result = `\n<section id="${htmlId(id)}" ${attrsString}>`
-                break
-        }
+    //  pdf: sequence of images
+
+    switch (state.build) {
+        case 'web':
+        case 'reader':
+            return `
+                <section id="${htmlId(id)}" ${attrsString}>
+                <div class="figure__large figure__inline figure__fullbleed figure__gallery">
+                <figure>
+                <div class="figure__items">`
+        case 'epub':
+        case 'mobi':
+        case 'pdf':
+        case 'sample':
+        default:
+            return `<section id="${htmlId(id)}" ${attrsString}>`
     }
-
-    return result
 }
 
 export default {
@@ -58,8 +53,8 @@ export default {
     renderer: args =>
         renderFactory({
             ...args,
-            markerOpen,
-            markerClose,
+            markerOpen: MARKER_OPEN_RE,
+            markerClose: MARKER_CLOSE_RE,
             render,
         }),
 }

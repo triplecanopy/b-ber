@@ -10,90 +10,97 @@ import { attributes, htmlId } from './helpers'
 // this matches *all* container-type directives, and outputs the appropriate
 // HTML based on user-defined attributes
 const containers = BLOCK_DIRECTIVES.join('|')
-const markerOpen = new RegExp(`^(${containers}|exit)(?::([^\\s]+)(\\s.*)?)?$`) // treat `exit` like an opening marker since we're using it as such
-const markerClose = /(exit)(?::([^\s]+))?/
+const MARKER_OPEN_RE = new RegExp(`^(${containers}|exit)(?::([^\\s]+)(\\s.*)?)?$`) // treat `exit` like an opening marker since we're using it as such
+const MARKER_CLOSE_RE = /(exit)(?::([^\s]+))?/
 
 // since `context` needs to be available in this `render` method, we curry it
 // in and pass the resulting function to the `renderFactory` below. we also
 // set a default for `context` since we'll need some of its properties during
 // testing
-const render = ({ context = {} }) => (tokens, idx) => {
-    const lineNr = tokens[idx].map ? tokens[idx].map[0] : null
-    const fileName = `_markdown/${context.fileName}.md`
 
-    let result = ''
+function isGallery(directive) {
+    return directive && directive.type === 'gallery' && (state.build === 'web' || state.build === 'reader')
+}
 
-    if (tokens[idx].nesting === 1) {
-        // token open, we ignore closing tokens and let `exit` handle those
-        const close = tokens[idx].info.trim().match(markerClose)
-        const open = tokens[idx].info.trim().match(markerOpen)
+function isSpread(directive) {
+    return directive && directive.type === 'spread' && (state.build === 'web' || state.build === 'reader')
+}
 
-        if (close) {
-            const [, type, id] = close
+function handleExitDirective(token) {
+    const [, type, id] = token
 
-            log.debug(`exit directive [${id}]`)
+    log.debug(`exit directive [${id}]`)
 
-            const comment = Html.comment(`END: section:${type}#${htmlId(id)}`)
-            const directive = find(state.cursor, { id })
+    const comment = Html.comment(`END: section:${type}#${htmlId(id)}`)
+    const directive = find(state.cursor, { id })
 
-            // TODO: the parser needs to be more discerning. should include
-            // checking the attr types and the calls to open/close in a more
-            // transparent way. refactoring candidate.
-            // @issue: https://github.com/triplecanopy/b-ber/issues/204
+    state.remove('cursor', { id })
 
-            if (directive && directive.type === 'gallery' && (state.build === 'web' || state.build === 'reader')) {
-                state.remove('cursor', { id })
-                // prettier-ignore
-                result = `
-                                </div>
-                            </figure>
-                        </div>
-                    </section>
-                    ${comment}`
-            } else if (
-                directive &&
-                directive.type === 'spread' &&
-                (state.build === 'web' || state.build === 'reader')
-            ) {
-                state.remove('cursor', { id })
-                result = `
-                        </div>
-                    </div>${comment}`
-            } else {
-                state.remove('cursor', { id })
-                result = `</section>${comment}`
-            }
-        } else {
-            // destructure the attributes from matches, omitting `matches[0]` since
-            // we're only interested in the captures
-            const [, type, id, att] = open
-
-            log.debug(`open directive [${id}]`)
-
-            const comment = Html.comment(`START: section:${type}#${htmlId(id)}; ${fileName}:${lineNr}`)
-            const attrs = attributes(att, type, { fileName, lineNr })
-            result = `${comment}<section id="${htmlId(id)}"${attrs}>`
-        }
-    } else {
-        // tokens `nesting` prop is -1. we should be closing the html element
-        // here, but probably have done so above since we're treating `exit`
-        // directives as openers. check to see if the element has in fact been
-        // closed
-        const close = tokens[idx].info.trim().split(':')
-        if (close.length && close[1]) {
-            const [, id] = close
-            if (state.contains('cursor', { id })) {
-                // its id still exists in state, so it's open. force close here
-                const comment = Html.comment(`END: section:#${htmlId(id)}`)
-                result = `</section>${comment}`
-
-                // remove the id
-                state.remove('cursor', { id })
-            }
-        }
+    if (isGallery(directive)) {
+        // prettier-ignore
+        return `</div>
+                </figure>
+                </div>
+                </section>
+                ${comment}`
     }
 
+    if (isSpread(directive)) {
+        return `</div>
+                </div>
+                ${comment}`
+    }
+
+    return `</section>${comment}`
+}
+
+function openElement(token, fileName, lineNumber) {
+    // destructure the attributes from matches, omitting `matches[0]` since
+    // we're only interested in the captures
+    const [, type, id, attr] = token
+
+    log.debug(`open directive [${id}]`)
+
+    const comment = Html.comment(`START: section:${type}#${htmlId(id)}; ${fileName}:${lineNumber}`)
+    const attrs = attributes(attr, type, { fileName, lineNumber })
+    return `${comment}<section id="${htmlId(id)}"${attrs}>`
+}
+
+function closeElement(marker) {
+    // tokens `nesting` prop is -1. we should be closing the html element
+    // here, but probably have done so above since we're treating `exit`
+    // directives as openers. check to see if the element has in fact been
+    // closed
+
+    const token = marker.split(':')
+    if (token.length < 2) return ''
+
+    const [, id] = token
+    if (!state.contains('cursor', { id })) return ''
+
+    // its id still exists in state, so it's open. force close here
+    const comment = Html.comment(`END: section:#${htmlId(id)}`)
+    const result = `</section>${comment}`
+
+    // remove the id
+    state.remove('cursor', { id })
+
     return result
+}
+
+const render = ({ context = {} }) => (tokens, index) => {
+    const token = tokens[index]
+    const lineNumber = token.map ? token.map[0] : null
+    const fileName = `_markdown/${context.fileName}.md`
+    const marker = token.info.trim()
+
+    if (token.nesting !== 1) return closeElement(marker)
+
+    // token open, we ignore closing tokens and let `exit` handle those
+    const tokenClose = marker.match(MARKER_CLOSE_RE)
+    const tokenOpen = marker.match(MARKER_OPEN_RE)
+
+    return tokenClose ? handleExitDirective(tokenClose) : openElement(tokenOpen, fileName, lineNumber)
 }
 
 export default {
@@ -102,8 +109,8 @@ export default {
     renderer: args =>
         renderFactory({
             ...args,
-            markerOpen,
-            markerClose,
+            markerOpen: MARKER_OPEN_RE,
+            markerClose: MARKER_CLOSE_RE,
             render: render(args),
         }),
 }

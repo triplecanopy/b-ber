@@ -4,27 +4,28 @@ import { attributes, htmlId } from './helpers'
 
 // define our open and closing markers, used by the `validateOpen` and
 // `validateClose` methods in the `renderFactory`
-const markerOpen = /^(dialogue)(?::([^\s]+)(\s.*)?)?$/
-const markerClose = /^(exit)(?::([^\s]+))?/
+const MARKER_OPEN_RE = /^(dialogue)(?::([^\s]+)(\s.*)?)?$/
+const MARKER_CLOSE_RE = /^(exit)(?::([^\s]+))?/
+
+function handleOpen(token) {
+    const [, type, id, attrs] = token
+    const attrsString = attributes(attrs, type)
+    return `<section id="${htmlId(id)}" ${attrsString}>`
+}
+
+function handleClose() {
+    return '</section>'
+}
 
 // a simple `render` function that gets passed into our `renderFactory` is
 // responsible for the HTML output.
 const render = (tokens, idx) => {
-    let result = ''
-    if (tokens[idx].nesting === 1) {
-        const open = tokens[idx].info.trim().match(markerOpen)
-        const close = tokens[idx].info.trim().match(markerClose)
-        if (open) {
-            const [, type, id, attrs] = open
-            const attrsString = attributes(attrs, type)
-            result = `\n<section id="${htmlId(id)}" ${attrsString}>`
-        }
+    if (tokens[idx].nesting !== 1) return ''
 
-        if (close) {
-            result = '\n</section>'
-        }
-    }
-    return result
+    const marker = tokens[idx].info.trim()
+    const tokenOpen = marker.match(MARKER_OPEN_RE)
+
+    return tokenOpen ? handleOpen(tokenOpen) : handleClose()
 }
 
 export default {
@@ -33,8 +34,8 @@ export default {
     renderer: args =>
         renderFactory({
             ...args,
-            markerOpen,
-            markerClose,
+            markerOpen: MARKER_OPEN_RE,
+            markerClose: MARKER_CLOSE_RE,
             render,
         }),
 }

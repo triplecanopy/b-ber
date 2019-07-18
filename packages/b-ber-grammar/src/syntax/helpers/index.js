@@ -179,10 +179,8 @@ const _extendWithDefaults = (obj, genus) => {
             return result
 
         case 'inline':
-            if (_requiresAltTag(genus)) {
-                if (!has(obj, 'alt')) {
-                    result.alt = result.source
-                }
+            if (_requiresAltTag(genus) && !has(obj, 'alt')) {
+                result.alt = result.source
             }
 
             return result
