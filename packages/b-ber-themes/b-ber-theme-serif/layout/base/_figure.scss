@@ -65,6 +65,20 @@ figure {
     .spread {
         padding: 0;
     }
+
+    // TODO: the following vendor prefixed rules don't seem to do anything - we
+    // need to determine if they can be removed altogether, or if we should
+    // replace them with the following code:
+
+    // .figure__large {
+    //     break-after: always;
+    //     break-before: always;
+    // }
+    // .figure__fullbleed {
+    //     break-before: avoid !important;
+    //     break-after: avoid !important;
+    // }
+
     .figure__large {
         -webkit-column-break-after: always; // sass-lint:disable-line no-vendor-prefixes
         -webkit-column-break-before: always; // sass-lint:disable-line no-vendor-prefixes
