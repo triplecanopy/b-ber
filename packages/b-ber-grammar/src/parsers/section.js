@@ -15,7 +15,7 @@ const containerPlugin = (md, name, options = {}) => {
     // const validateClose = options.validateClose
 
     function container(state, startLine, endLine, silent) {
-        const lineNr = startLine + 1
+        const lineNumber = startLine + 1
 
         let pos
         let nextLine
@@ -40,7 +40,7 @@ const containerPlugin = (md, name, options = {}) => {
         const markup = state.src.slice(start, pos)
         const params = state.src.slice(pos, max)
 
-        if (!validateOpen(params, lineNr)) return false
+        if (!validateOpen(params, lineNumber)) return false
         if (silent) return true // for testing validation
 
         nextLine = startLine

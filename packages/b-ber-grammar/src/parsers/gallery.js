@@ -9,7 +9,7 @@ MIT license
 import path from 'path'
 import _state from '@canopycanopycanopy/b-ber-lib/State'
 import mime from 'mime-types'
-import { htmlId, parseAttrs, toAlias } from '../syntax/helpers'
+import { htmlId, parseAttrs, toAlias } from '../syntax/helpers/attributes'
 
 const addCaption = (md, t, attrs) => {
     if (!attrs.caption) return
@@ -131,7 +131,7 @@ const containerPlugin = (md, name, options = {}) => {
     const { validateOpen, render } = options
 
     function container(state, startLine, endLine, silent) {
-        const lineNr = startLine + 1
+        const lineNumber = startLine + 1
 
         let pos
         let nextLine
@@ -156,7 +156,7 @@ const containerPlugin = (md, name, options = {}) => {
         const markup = state.src.slice(start, pos)
         const params = state.src.slice(pos, max)
 
-        if (!validateOpen(params, lineNr) /* && !validateClose(params, lineNr)*/) {
+        if (!validateOpen(params, lineNumber) /* && !validateClose(params, lineNumber)*/) {
             return false
         }
         if (silent) return true // for testing validation

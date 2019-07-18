@@ -1,34 +1,35 @@
 import fs from 'fs-extra'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
+import {
+    INLINE_DIRECTIVE_MARKER,
+    INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
+} from '@canopycanopycanopy/b-ber-shapes/directives'
 import figure from '../parsers/figure'
-import { attributesString, attributesObject, htmlId } from './helpers'
+import { attributesString, attributesObject, htmlId } from './helpers/attributes'
 
-const markerRe = /^logo/
-const directiveRe = /(logo)(?::([^\s]+)(\s?.*)?)?$/
+const MARKER_RE = /^logo/
+const DIRECTIVE_RE = /(logo)(?::([^\s]+)(\s?.*)?)?$/
 
 export default {
     plugin: figure,
     name: 'logo',
     renderer: ({ context }) => ({
-        marker: ':',
-        minMarkers: 3,
+        marker: INLINE_DIRECTIVE_MARKER,
+        minMarkers: INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
         validate(params) {
-            return params.trim().match(markerRe)
+            return params.trim().match(MARKER_RE)
         },
-        render(tokens, idx) {
-            const match = tokens[idx].info.trim().match(directiveRe)
+        render(tokens, index) {
+            const match = tokens[index].info.trim().match(DIRECTIVE_RE)
             if (!match) return ''
 
             const fileName = `_markdown/${context.fileName}.md`
-            const lineNr = tokens[idx].map ? tokens[idx].map[0] : null
+            const lineNumber = tokens[index].map ? tokens[index].map[0] : null
             const [, type, id, attrs] = match
+            const attrsObj = attributesObject(attrs, type, { fileName, lineNumber })
 
-            const attrsObj = attributesObject(attrs, type, { fileName, lineNr })
-
-            if (!attrsObj.source) {
-                log.error('[source] attribute is required by [logo] directive, aborting')
-            }
+            if (!attrsObj.source) log.error('[source] attribute is required by [logo] directive, aborting')
 
             const inputImagePath = state.src.images(attrsObj.source)
             const outputImagePath = `../images/${attrsObj.source}`
@@ -38,10 +39,9 @@ export default {
             delete attrsObj.source // since we need the path relative to `images`
             const attrString = attributesString(attrsObj, type)
 
-            return `
-                <figure id="${htmlId(id)}" class="logo">
+            return `<figure id="${htmlId(id)}" class="logo">
                     <img style="width:120px;" src="${outputImagePath}" ${attrString}/>
-                </figure>`
+                    </figure>`
         },
     }),
 }

@@ -1,14 +1,14 @@
 import state from '@canopycanopycanopy/b-ber-lib/State'
-import renderFactory from './factory/block'
-import { htmlId, attributesObject, attributesString } from './helpers'
+import createRenderer from './helpers/factory'
+import { htmlId, attributesObject, attributesString } from './helpers/attributes'
 import plugin from '../parsers/gallery'
 
 // define our open and closing markers, used by the `validateOpen` and
-// `validateClose` methods in the `renderFactory`
+// `validateClose` methods in the `createRenderer`
 const MARKER_OPEN_RE = /^(spread)(?::([^\s]+)(\s.*)?)?$/
 const MARKER_CLOSE_RE = /^(exit)(?::([^\s]+))?/
 
-// a simple `render` function that gets passed into our `renderFactory` is
+// a simple `render` function that gets passed into our `createRenderer` is
 // responsible for the HTML output.
 const render = (tokens, index) => {
     const token = tokens[index].info.trim().match(MARKER_OPEN_RE)
@@ -49,7 +49,7 @@ export default {
     plugin,
     name: 'spread',
     renderer: args =>
-        renderFactory({
+        createRenderer({
             ...args,
             markerOpen: MARKER_OPEN_RE,
             markerClose: MARKER_CLOSE_RE,

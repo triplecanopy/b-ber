@@ -344,15 +344,8 @@ class State {
     }
 
     loadBuilds() {
-        this.builds = {
-            sample: this.loadBuildSettings('sample'),
-            epub: this.loadBuildSettings('epub'),
-            mobi: this.loadBuildSettings('mobi'),
-            pdf: this.loadBuildSettings('pdf'),
-            web: this.loadBuildSettings('web'),
-            reader: this.loadBuildSettings('reader'),
-            xml: this.loadBuildSettings('xml'),
-        }
+        const builds = ['sample', 'epub', 'mobi', 'pdf', 'web', 'reader', 'xml']
+        builds.forEach(build => set(this.builds, build, this.loadBuildSettings(build)))
     }
 }
 

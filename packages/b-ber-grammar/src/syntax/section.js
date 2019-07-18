@@ -4,8 +4,8 @@ import { BLOCK_DIRECTIVES } from '@canopycanopycanopy/b-ber-shapes/directives'
 import log from '@canopycanopycanopy/b-ber-logger'
 import find from 'lodash/find'
 import plugin from '../parsers/section'
-import renderFactory from './factory/block'
-import { attributes, htmlId } from './helpers'
+import createRenderer from './helpers/factory'
+import { attributes, htmlId } from './helpers/attributes'
 
 // this matches *all* container-type directives, and outputs the appropriate
 // HTML based on user-defined attributes
@@ -14,7 +14,7 @@ const MARKER_OPEN_RE = new RegExp(`^(${containers}|exit)(?::([^\\s]+)(\\s.*)?)?$
 const MARKER_CLOSE_RE = /(exit)(?::([^\s]+))?/
 
 // since `context` needs to be available in this `render` method, we curry it
-// in and pass the resulting function to the `renderFactory` below. we also
+// in and pass the resulting function to the `createRenderer` below. we also
 // set a default for `context` since we'll need some of its properties during
 // testing
 
@@ -107,7 +107,7 @@ export default {
     plugin,
     name: 'section',
     renderer: args =>
-        renderFactory({
+        createRenderer({
             ...args,
             markerOpen: MARKER_OPEN_RE,
             markerClose: MARKER_CLOSE_RE,

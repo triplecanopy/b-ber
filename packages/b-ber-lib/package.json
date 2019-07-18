@@ -29,8 +29,6 @@
         "@canopycanopycanopy/b-ber-themes": "^0.1.7",
         "babel-runtime": "^6.26.0",
         "command-exists": "^1.2.2",
-        "ffprobe": "^1.1.0",
-        "ffprobe-static": "^3.0.0",
         "fs-extra": "^8.1.0",
         "htmlparser2": "^3.9.2",
         "js-yaml": "^3.12.0",

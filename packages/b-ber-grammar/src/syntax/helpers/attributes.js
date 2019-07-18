@@ -1,4 +1,5 @@
-/* eslint-disable no-plusplus, max-statements-per-line, no-continue, no-multi-assign, indent */
+/* eslint-disable no-plusplus, no-continue*/
+
 import path from 'path'
 import has from 'lodash/has'
 import { forOf } from '@canopycanopycanopy/b-ber-lib/utils'
@@ -130,8 +131,12 @@ const parseAttrs = s => {
             // token is ending delimiter since we've advanced our pointer
             key = key.trim() // trim whitespace, allowing for multiple spaces
             if (key) out[key] = str
-            str = key = ''
-            open = delim = null
+
+            str = ''
+            key = ''
+            open = null
+            delim = null
+
             continue
         }
 
@@ -192,17 +197,17 @@ const _extendWithDefaults = (obj, genus) => {
 
 // Create an object from attributes in the given directive
 const attributesObject = (attrs, _genus, context = {}) => {
-    const { fileName, lineNr } = context
+    const { fileName, lineNumber } = context
     const attrsObject = {}
 
     let genus = _genus
 
     if (!genus || typeof genus !== 'string') {
-        log.error(`No directive provided: ${fileName}:${lineNr}`)
+        log.error(`No directive provided: ${fileName}:${lineNumber}`)
     }
 
     if (ALL_DIRECTIVES.indexOf(genus) < 0) {
-        log.error(`Invalid directive: [${genus}] at ${fileName}:${lineNr}`)
+        log.error(`Invalid directive: [${genus}] at ${fileName}:${lineNumber}`)
     }
 
     if (DRAFT_DIRECTIVES.indexOf(genus) > -1) {
@@ -218,7 +223,7 @@ const attributesObject = (attrs, _genus, context = {}) => {
     if (attrs && typeof attrs === 'string') {
         forOf(parseAttrs(attrs.trim()), (k, v) => {
             if (_isUnsupportedAttribute(_genus, k)) {
-                return log.warn(`Omitting illegal attribute [${k}] at [${fileName}:${lineNr}]`)
+                return log.warn(`Omitting illegal attribute [${k}] at [${fileName}:${lineNumber}]`)
             }
 
             attrsObject[k] = v

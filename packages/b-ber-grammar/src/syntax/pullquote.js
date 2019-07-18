@@ -7,7 +7,7 @@ import log from '@canopycanopycanopy/b-ber-logger'
 import has from 'lodash/has'
 import { BLOCK_DIRECTIVE_MARKER, BLOCK_DIRECTIVE_MARKER_MIN_LENGTH } from '@canopycanopycanopy/b-ber-shapes/directives'
 import plugin from '../parsers/section'
-import { attributesObject, attributesString } from './helpers'
+import { attributesObject, attributesString } from './helpers/attributes'
 
 const MARKER_OPEN_RE = /^(pullquote|blockquote|exit)(?::([^\s]+)(\s.*)?)?$/
 const MARKER_CLOSE_RE = /(exit)(?::([\s]+))?/

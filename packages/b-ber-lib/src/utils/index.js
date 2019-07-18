@@ -5,8 +5,8 @@ import uniq from 'lodash/uniq'
 import log from '@canopycanopycanopy/b-ber-logger'
 import sequences from '@canopycanopycanopy/b-ber-shapes/sequences'
 import findIndex from 'lodash/findIndex'
-import ffprobe from 'ffprobe'
-import ffprobeStatic from 'ffprobe-static'
+// import ffprobe from 'ffprobe'
+// import ffprobeStatic from 'ffprobe-static'
 import mime from 'mime-types'
 import { Url } from '..'
 
@@ -29,17 +29,17 @@ export const getImageOrientation = (w, h) => {
     return imageType
 }
 
-const getAspectRatioClassName = (key = '16:9') =>
-    ({ '4:3': 'video--4x3', '16:9': 'video--16x9', '21:9': 'video--21x9' }[key])
+// const getAspectRatioClassName = (key = '16:9') =>
+//     ({ '4:3': 'video--4x3', '16:9': 'video--16x9', '21:9': 'video--21x9' }[key])
 
-export const getVideoAspectRatio = async filePath => {
-    if (!filePath) return getAspectRatioClassName()
+// export const getVideoAspectRatio = async filePath => {
+//     if (!filePath) return getAspectRatioClassName()
 
-    const { streams } = await ffprobe(filePath, { path: ffprobeStatic.path })
-    if (!streams) return getAspectRatioClassName()
-    const { display_aspect_ratio: aspectRatio } = streams
-    return getAspectRatioClassName(aspectRatio)
-}
+//     const { streams } = await ffprobe(filePath, { path: ffprobeStatic.path })
+//     if (!streams) return getAspectRatioClassName()
+//     const { display_aspect_ratio: aspectRatio } = streams
+//     return getAspectRatioClassName(aspectRatio)
+// }
 
 // Create an iterator from object's key/value pairs
 export const forOf = (collection, iterator) => Object.entries(collection).forEach(([key, val]) => iterator(key, val))
@@ -160,4 +160,20 @@ export const generateWebpubManifest = (state, files) => {
     }
 
     return manifest
+}
+
+export function deepFind(collection, fileName, callback) {
+    const found = find(collection, { fileName })
+    if (found) return callback ? callback(found) : found
+
+    collection.forEach(item => {
+        // check against prop names
+        if (item.nodes && item.nodes.length) {
+            return deepFind(item.nodes, fileName)
+        }
+
+        return item
+    })
+
+    return collection
 }

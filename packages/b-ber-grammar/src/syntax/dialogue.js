@@ -1,9 +1,9 @@
 import plugin from '../parsers/dialogue'
-import renderFactory from './factory/block'
-import { attributes, htmlId } from './helpers'
+import createRenderer from './helpers/factory'
+import { attributes, htmlId } from './helpers/attributes'
 
 // define our open and closing markers, used by the `validateOpen` and
-// `validateClose` methods in the `renderFactory`
+// `validateClose` methods in the `createRenderer`
 const MARKER_OPEN_RE = /^(dialogue)(?::([^\s]+)(\s.*)?)?$/
 const MARKER_CLOSE_RE = /^(exit)(?::([^\s]+))?/
 
@@ -17,7 +17,7 @@ function handleClose() {
     return '</section>'
 }
 
-// a simple `render` function that gets passed into our `renderFactory` is
+// a simple `render` function that gets passed into our `createRenderer` is
 // responsible for the HTML output.
 const render = (tokens, idx) => {
     if (tokens[idx].nesting !== 1) return ''
@@ -32,7 +32,7 @@ export default {
     plugin,
     name: 'dialogue',
     renderer: args =>
-        renderFactory({
+        createRenderer({
             ...args,
             markerOpen: MARKER_OPEN_RE,
             markerClose: MARKER_CLOSE_RE,
