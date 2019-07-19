@@ -1,7 +1,7 @@
 import fs from 'fs-extra'
 import mime from 'mime-types'
 import has from 'lodash/has'
-import { terms, elements } from '@canopycanopycanopy/b-ber-shapes/dc'
+import { terms, elements } from '@canopycanopycanopy/b-ber-shapes-dublin-core'
 
 // Class to detect XML media-type properties based on the content of XHTML documents
 class ManifestItemProperties {
@@ -54,7 +54,7 @@ class ManifestItemProperties {
         if (!ManifestItemProperties.isHTML(file)) return false
 
         const contents = fs.readFileSync(file.absolutePath, 'utf8')
-        return contents.match(/src=(?:['"]{1})?http/) !== null
+        return contents.match(/src=(?:['"]{1})?(?:http|\/\/)/) !== null
     }
 
     // Test if an XHTML file is a navigation document, contains JavaScript or SVG

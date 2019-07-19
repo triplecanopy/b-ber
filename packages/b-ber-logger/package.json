@@ -25,5 +25,19 @@
         "@babel/cli": "^7.5.0",
         "jest": "^24.8.0",
         "rimraf": "^2.6.3"
-    }
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/triplecanopy/b-ber.git"
+    },
+    "bugs": {
+        "url": "https://github.com/triplecanopy/b-ber/issues"
+    },
+    "contributors": [
+        {
+            "name": "Maxwell Simmer",
+            "email": "maxwellsimmer.com@gmail.com",
+            "url": "https://maxwellsimmer.com"
+        }
+    ]
 }

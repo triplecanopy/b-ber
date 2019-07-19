@@ -8,8 +8,8 @@
         "npm": ">= 5.x <= 6.x"
     },
     "scripts": {
-        "watch": "lerna run watch --no-sort --parallel --concurrency 999",
-        "build": "lerna run build --stream",
+        "watch": "lerna run watch --parallel",
+        "build": "lerna run build --parallel",
         "check:code": "echo \"Checking code...\" && eslint --ignore-path .gitignore --ignore-path .prettierignore --ext .js,.jsx .",
         "check:other": "npm run prettier -- --check",
         "check": "npm-run-all -s check:code check:other",
@@ -25,7 +25,7 @@
         "publish:patch": "lerna publish patch --force-publish=*",
         "outdated": "npm outdated || true && lerna exec --no-bail -- npm outdated",
         "deps:update": "lernaupdate",
-        "deps:clean": "rimraf ./package-lock.json ./node_modules && npm i && lerna exec -- rm -rf ./package-lock.json ./node_modules && lerna exec -- npm i",
+        "deps:clean": "rimraf ./package-lock.json ./node_modules && lerna exec -- rm -rf ./package-lock.json ./node_modules",
         "deps:dedupe": "lernaupdate --dedupe"
     },
     "lint-staged": {

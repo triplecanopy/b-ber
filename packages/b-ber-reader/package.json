@@ -92,5 +92,19 @@
         "setimmediate": "^1.0.5",
         "url-search-params-polyfill": "^4.0.0",
         "xml-js": "^1.6.2"
-    }
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/triplecanopy/b-ber.git"
+    },
+    "bugs": {
+        "url": "https://github.com/triplecanopy/b-ber/issues"
+    },
+    "contributors": [
+        {
+            "name": "Maxwell Simmer",
+            "email": "maxwellsimmer.com@gmail.com",
+            "url": "https://maxwellsimmer.com"
+        }
+    ]
 }

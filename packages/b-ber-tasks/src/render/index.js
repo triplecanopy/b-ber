@@ -1,7 +1,7 @@
 import path from 'path'
 import fs from 'fs-extra'
 import { findIndex } from 'lodash'
-import MarkdownRenderer from '@canopycanopycanopy/b-ber-grammar'
+import MarkdownRenderer from '@canopycanopycanopy/b-ber-markdown-renderer'
 import Xhtml from '@canopycanopycanopy/b-ber-templates/Xhtml'
 import log from '@canopycanopycanopy/b-ber-logger'
 import { Template } from '@canopycanopycanopy/b-ber-lib'

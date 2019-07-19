@@ -6,6 +6,11 @@ export function notice(...args) {
 
     let prefix = ''
 
+    if (this.logLevel > 2) {
+        prefix += this.decorate(`[${new Date().toISOString()}]`, 'gray')
+        prefix += ' '
+    }
+
     prefix += this.decorate('b-ber', 'whiteBright', 'bgBlack')
     prefix += ' '
     prefix += this.decorate('info', 'green')

@@ -38,11 +38,32 @@ jobs:
                       - ~/b-ber/node_modules
                       - ~/b-ber/packages/b-ber-cli/node_modules
                       - ~/b-ber/packages/b-ber-grammar/node_modules
+                      - ~/b-ber-grammar-attributes/node_modules
+                      - ~/b-ber-grammar-dialogue/node_modules
+                      - ~/b-ber-grammar-epigraph/node_modules
+                      - ~/b-ber-grammar-footnotes/node_modules
+                      - ~/b-ber-grammar-frontmatter/node_modules
+                      - ~/b-ber-grammar-gallery/node_modules
+                      - ~/b-ber-grammar-image/node_modules
+                      - ~/b-ber-grammar-logo/node_modules
+                      - ~/b-ber-grammar-media/node_modules
+                      - ~/b-ber-grammar-pullquote/node_modules
+                      - ~/b-ber-grammar-renderer/node_modules
+                      - ~/b-ber-grammar-section/node_modules
+                      - ~/b-ber-grammar-spread/node_modules
                       - ~/b-ber/packages/b-ber-lib/node_modules
                       - ~/b-ber/packages/b-ber-logger/node_modules
+                      - ~/b-ber-markdown-renderer/node_modules
+                      - ~/b-ber-parser-dialogue/node_modules
+                      - ~/b-ber-parser-figure/node_modules
+                      - ~/b-ber-parser-footnotes/node_modules
+                      - ~/b-ber-parser-gallery/node_modules
+                      - ~/b-ber-parser-section/node_modules
                       - ~/b-ber/packages/b-ber-reader/node_modules
                       - ~/b-ber/packages/b-ber-resources/node_modules
-                      - ~/b-ber/packages/b-ber-shapes/node_modules
+                      - ~/b-ber/packages/b-ber-shapes-dublin-core/node_modules
+                      - ~/b-ber/packages/b-ber-shapes-directives/node_modules
+                      - ~/b-ber/packages/b-ber-shapes-sequences/node_modules
                       - ~/b-ber/packages/b-ber-tasks/node_modules
                       - ~/b-ber/packages/b-ber-templates/node_modules
                       - ~/b-ber/packages/b-ber-themes/node_modules

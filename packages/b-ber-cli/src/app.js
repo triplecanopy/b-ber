@@ -2,8 +2,8 @@
 import yargs from 'yargs'
 import log from '@canopycanopycanopy/b-ber-logger'
 import state from '@canopycanopycanopy/b-ber-lib/State'
-import createBuildSequence from '@canopycanopycanopy/b-ber-shapes/create-build-sequence'
-import sequences from '@canopycanopycanopy/b-ber-shapes/sequences'
+import createBuildSequence from '@canopycanopycanopy/b-ber-shapes-sequences/create-build-sequence'
+import sequences from '@canopycanopycanopy/b-ber-shapes-sequences/sequences'
 import has from 'lodash/has'
 import * as commands from './cmd'
 

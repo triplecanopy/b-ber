@@ -23,5 +23,19 @@
     "dependencies": {
         "babel-runtime": "^6.26.0",
         "fs-extra": "^8.1.0"
-    }
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/triplecanopy/b-ber.git"
+    },
+    "bugs": {
+        "url": "https://github.com/triplecanopy/b-ber/issues"
+    },
+    "contributors": [
+        {
+            "name": "Maxwell Simmer",
+            "email": "maxwellsimmer.com@gmail.com",
+            "url": "https://maxwellsimmer.com"
+        }
+    ]
 }

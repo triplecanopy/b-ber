@@ -25,7 +25,8 @@
     },
     "dependencies": {
         "@canopycanopycanopy/b-ber-logger": "^0.1.7",
-        "@canopycanopycanopy/b-ber-shapes": "^0.1.7",
+        "@canopycanopycanopy/b-ber-shapes-dublin-core": "^0.1.7",
+        "@canopycanopycanopy/b-ber-shapes-sequences": "^0.1.7",
         "@canopycanopycanopy/b-ber-themes": "^0.1.7",
         "babel-runtime": "^6.26.0",
         "command-exists": "^1.2.2",
@@ -38,5 +39,19 @@
         "vinyl": "^2.2.0",
         "yargs": "^11.0.0",
         "yawn-yaml": "^1.3.4"
-    }
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/triplecanopy/b-ber.git"
+    },
+    "bugs": {
+        "url": "https://github.com/triplecanopy/b-ber/issues"
+    },
+    "contributors": [
+        {
+            "name": "Maxwell Simmer",
+            "email": "maxwellsimmer.com@gmail.com",
+            "url": "https://maxwellsimmer.com"
+        }
+    ]
 }

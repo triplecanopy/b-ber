@@ -115,9 +115,7 @@ class Logger extends Timer {
 
         Object.keys(this.settings).forEach(a => {
             const opt = `--${a}`
-            if (has(argv, opt)) {
-                this.settings[a] = argv[opt]
-            }
+            if (has(argv, opt)) this.settings[a] = argv[opt]
         })
 
         this.configure()

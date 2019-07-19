@@ -13,18 +13,18 @@ export function bind() {
             return
         }
 
-        const message = util.format.call(
-            util,
-            '%s%s %s %s %s',
-            this.indent(),
-            this.decorate('b-ber', 'whiteBright', 'bgBlack'),
-            this.decorate('info', 'green'),
-            this.decorate(task),
-            this.decorate('start'),
-        )
+        // const message = util.format.call(
+        //     util,
+        //     '%s%s %s %s %s',
+        //     this.indent(),
+        //     this.decorate('b-ber', 'whiteBright', 'bgBlack'),
+        //     this.decorate('info', 'green'),
+        //     this.decorate(task),
+        //     this.decorate('start'),
+        // )
 
-        process.stdout.write(message)
-        this.newLine()
+        // process.stdout.write(message)
+        // this.newLine()
 
         this.incrementIndent()
     })
@@ -41,8 +41,9 @@ export function bind() {
 
         const message = util.format.call(
             util,
-            '%s%s %s %s done - %s',
+            '%s%s %s %s %s done (%s)',
             this.indent(),
+            this.decorate(`[${new Date().toISOString()}]`, 'gray'),
             this.decorate('b-ber', 'whiteBright', 'bgBlack'),
             this.decorate('info', 'green'),
             this.decorate(task),
@@ -51,10 +52,17 @@ export function bind() {
 
         process.stdout.write(message)
         this.newLine()
+
+        if (this.logLevel > 4) {
+            const { stack } = new Error()
+            process.stdout.write(util.format.call(util, stack.replace(/^Error\s+/, 'Info ')))
+            this.newLine()
+        }
     })
 
     this.on('done', data => {
-        // eslint-disable-line no-unused-vars
+        if (this.logLevel < 1) return
+
         const message = util.format.call(
             util,
             '%s%s %s %s',

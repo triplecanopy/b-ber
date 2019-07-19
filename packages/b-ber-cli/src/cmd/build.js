@@ -1,8 +1,8 @@
 import path from 'path'
 import * as tasks from '@canopycanopycanopy/b-ber-tasks'
 import state from '@canopycanopycanopy/b-ber-lib/State'
-import sequences from '@canopycanopycanopy/b-ber-shapes/sequences'
-import createBuildSequence from '@canopycanopycanopy/b-ber-shapes/create-build-sequence'
+import createBuildSequence from '@canopycanopycanopy/b-ber-shapes-sequences/create-build-sequence'
+import sequences from '@canopycanopycanopy/b-ber-shapes-sequences/sequences'
 import Project from '@canopycanopycanopy/b-ber-templates/Project'
 import { ensure } from '@canopycanopycanopy/b-ber-lib/utils'
 

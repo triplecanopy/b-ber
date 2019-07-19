@@ -1,0 +1,6 @@
+.DS_Store
+node_modules
+npm-debug.log*
+/sequences
+/create-build-sequence.js
+/index.js

@@ -22,6 +22,7 @@ function printNotices(type, task = 'b-ber') {
 export function printWarnings(task) {
     printNotices.call(this, 'warnings', task)
 }
+
 export function printErrors(task) {
     printNotices.call(this, 'errors', task)
 }

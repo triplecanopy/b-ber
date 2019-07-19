@@ -49,7 +49,7 @@ const copy = () => {
 
                     if (size > FILE_SIZE_WARNING_LIMIT) {
                         log.warn(
-                            '[%s - {%d}] exceeds recommended file size of {%d}',
+                            'copy [%s - {%d}] exceeds recommended file size of {%d}',
                             file,
                             size,
                             FILE_SIZE_WARNING_LIMIT,

@@ -5,17 +5,18 @@ import util from 'util'
 export function warn(...args) {
     if (this.logLevel < 2) return
 
-    let message = this.composeMessage(args)
-
-    if (args[0] instanceof Error) {
-        message = this.composeMessage([args[0].message])
-    } else {
-        message = this.composeMessage(args)
-    }
+    let message
+    message = this.composeMessage(args)
+    message = args[0] instanceof Error ? this.composeMessage([args[0].message]) : this.composeMessage(args)
 
     const { stack } = new Error()
 
     let prefix = ''
+
+    if (this.logLevel > 2) {
+        prefix += this.decorate(`[${new Date().toISOString()}]`, 'gray')
+        prefix += ' '
+    }
 
     prefix += this.decorate('b-ber', 'whiteBright', 'bgBlack')
     prefix += ' '
@@ -36,5 +37,6 @@ export function warn(...args) {
     if (this.logLevel > 3) {
         process.stdout.write(util.format.call(util, stack.replace(/^Error\s+/, 'Warning ')))
         this.newLine()
+        if (this.logLevel > 4) this.newLine()
     }
 }

@@ -1,12 +1,12 @@
 module.exports = api => {
-    console.log('Loading root babel.config.js %s', __dirname)
+    console.log('Loading root babel.config.js from %s', __dirname)
 
     const env = api.env()
 
     const envOptsNoTargets = {
         corejs: 3,
         // debug = true,
-        loose: true,
+        // loose: true,
         modules: 'commonjs',
         useBuiltIns: 'usage',
     }
@@ -43,7 +43,7 @@ module.exports = api => {
         presets: [['@babel/env', envOpts], '@babel/preset-react'],
         plugins: [
             ['@babel/plugin-proposal-decorators', { legacy: true }],
-            ['@babel/transform-modules-commonjs', { lazy: true }],
+            ['@babel/transform-modules-commonjs', { lazy: env !== 'test' }], // fixes jest 'cannot find module' error
             '@babel/plugin-proposal-class-properties',
             '@babel/plugin-proposal-object-rest-spread',
         ].filter(Boolean),
