@@ -1,7 +1,11 @@
 import fs from 'fs-extra'
 import Toc from '../src/Toc'
 
-jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({}))
+jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
+    spine: {
+        frontMatter: new Map(),
+    },
+}))
 
 afterAll(() => fs.remove('_project'))
 

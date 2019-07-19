@@ -27,11 +27,11 @@ describe('State', () => {
             const o = { foo: 1 }
 
             state.add('sequence', a)
-            state.add('cursor', o)
+            state.add('video', o)
 
             expect(state.sequence.length).toBe(1)
-            expect(state.cursor.length).toBe(1)
-            expect(state.cursor[0]).toHaveProperty('foo')
+            expect(state.video.length).toBe(1)
+            expect(state.video[0]).toHaveProperty('foo')
         })
     })
 
