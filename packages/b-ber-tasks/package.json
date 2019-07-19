@@ -18,15 +18,16 @@
         "access": "public"
     },
     "dependencies": {
-        "@canopycanopycanopy/b-ber-markdown-renderer": "^0.1.7",
         "@canopycanopycanopy/b-ber-lib": "^0.1.7",
         "@canopycanopycanopy/b-ber-logger": "^0.1.7",
+        "@canopycanopycanopy/b-ber-markdown-renderer": "^0.1.7",
         "@canopycanopycanopy/b-ber-reader": "^0.1.7",
         "@canopycanopycanopy/b-ber-resources": "^0.1.7",
         "@canopycanopycanopy/b-ber-shapes-sequences": "^0.1.7",
         "@canopycanopycanopy/b-ber-templates": "^0.1.7",
         "autoprefixer": "^9.6.1",
         "cheerio": "^1.0.0-rc.2",
+        "core-js": "^3.1.4",
         "css": "^2.2.1",
         "epub-zipper": "^1.2.11",
         "express": "^4.16.4",

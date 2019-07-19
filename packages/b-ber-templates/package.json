@@ -34,6 +34,7 @@
     "dependencies": {
         "@canopycanopycanopy/b-ber-lib": "^0.1.7",
         "@canopycanopycanopy/b-ber-logger": "^0.1.7",
+        "core-js": "^3.1.4",
         "fs-extra": "^8.1.0",
         "lodash": "^4.17.11",
         "mime-types": "^2.1.18",
