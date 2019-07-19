@@ -1,6 +1,7 @@
 /* eslint-disable camelcase */
 
 import path from 'path'
+import startCase from 'lodash/startCase'
 
 class SpineItem {
     static isNavigationDocument(fileName) {
@@ -21,7 +22,7 @@ class SpineItem {
         this.generated = Boolean(generated)
         this.nodes = nodes || []
         this.ref = ref || null // TODO: what's this? @issue: https://github.com/triplecanopy/b-ber/issues/207
-        this.title = title || `${fileName[0].toUpperCase()}${fileName.slice(1)}`
+        this.title = title || startCase(fileName.toLowerCase())
 
         // dynamicly created props
         this.relativePath = SpineItem.isNavigationDocument(this.fileName) // relative to OPS
@@ -31,7 +32,7 @@ class SpineItem {
         this.extension = path.extname(this.fileName)
         this.name = path.basename(this.fileName, this.extension)
         this.remotePath = ''
-        this.type = ''
+        this.type = '' // frontmatter, backmatter, ec
     }
 }
 

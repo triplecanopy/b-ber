@@ -51,12 +51,10 @@ export const forOf = (collection, iterator) => Object.entries(collection).forEac
 // @issue: https://github.com/triplecanopy/b-ber/issues/208
 //
 // this is provisional, will just cause more confusion in the future
-export const getTitleOrName = page => {
-    if (page.name === 'figures-titlepage') {
-        return 'Figures'
-    }
-
-    return page.title || page.name
+export const getTitle = (page, state) => {
+    if (page.name === 'figures-titlepage') return 'Figures'
+    const meta = state.spine.frontMatter.get(page.name)
+    return meta && meta.title ? meta.title : page.title || page.name
 }
 
 export const getBookMetadata = (term, state) => {
@@ -160,20 +158,4 @@ export const generateWebpubManifest = (state, files) => {
     }
 
     return manifest
-}
-
-export function deepFind(collection, fileName, callback) {
-    const found = find(collection, { fileName })
-    if (found) return callback ? callback(found) : found
-
-    collection.forEach(item => {
-        // check against prop names
-        if (item.nodes && item.nodes.length) {
-            return deepFind(item.nodes, fileName)
-        }
-
-        return item
-    })
-
-    return collection
 }

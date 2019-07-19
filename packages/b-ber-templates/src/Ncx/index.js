@@ -2,7 +2,7 @@ import File from 'vinyl'
 import find from 'lodash/find'
 import has from 'lodash/has'
 import { Html } from '@canopycanopycanopy/b-ber-lib'
-import { getTitleOrName } from '@canopycanopycanopy/b-ber-lib/utils'
+import { getTitle } from '@canopycanopycanopy/b-ber-lib/utils'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 
 class Ncx {
@@ -58,7 +58,7 @@ class Ncx {
     static navPoint(data) {
         return `
             <navLabel>
-                <text>${Html.escape(getTitleOrName(data))}</text>
+                <text>${Html.escape(getTitle(data, state))}</text>
             </navLabel>
             <content src="${data.relativePath}.xhtml" />
         `

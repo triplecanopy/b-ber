@@ -6,6 +6,7 @@ class Spine {
     constructor({ src, buildType, navigationConfigFile }) {
         this.src = src
         this.buildType = buildType
+        this.frontMatter = new Map()
 
         this.declared = this.create(navigationConfigFile)
         this.nested = this.build(this.declared, src) // nested navigation
@@ -38,10 +39,12 @@ class Spine {
 
                 // curr has attributes
                 const [[fileName, { ...options }]] = Object.entries(curr)
+                this.frontMatter.set(fileName, {})
                 node = new SpineItem({ fileName, buildType, ...options })
             } else {
                 // just a plain file name
                 const fileName = curr
+                this.frontMatter.set(fileName, {})
                 node = new SpineItem({ fileName, buildType })
             }
 

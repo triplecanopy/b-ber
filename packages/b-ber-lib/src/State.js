@@ -17,6 +17,8 @@ import Spine from './Spine'
 
 const randomHash = () => crypto.randomBytes(20).toString('hex')
 
+const skipInitialization = () => process.argv.length < 3 || process.argv.includes('new')
+
 const SRC_DIR_IMAGES = '_images'
 const SRC_DIR_MARKDOWN = '_markdown'
 const SRC_DIR_STYLESHEETS = '_stylesheets'
@@ -263,7 +265,7 @@ class State {
     loadTheme() {
         // ensure themes dir exists unless running `new` command, as it's the
         // only command that's run outside of a project directory
-        if (process.argv.includes('new')) return
+        if (skipInitialization()) return
 
         const userThemesPath = path.resolve(this.config.themes_directory)
         fs.ensureDirSync(userThemesPath)
@@ -301,7 +303,7 @@ class State {
     }
 
     loadMedia() {
-        if (process.argv.includes('new')) return
+        if (skipInitialization()) return
 
         const mediaPath = path.resolve(this.config.src, '_media')
         fs.ensureDirSync(mediaPath)
@@ -315,7 +317,7 @@ class State {
     }
 
     loadBuildSettings(type) {
-        if (process.argv.includes('new')) return
+        if (skipInitialization()) return
 
         const { src, dist } = this.config
         const projectDir = path.resolve(src)
