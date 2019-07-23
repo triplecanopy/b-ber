@@ -1,9 +1,0 @@
-src
-.github
-.babelrc
-.editorconfig
-.eslintrc
-.istanbul.yml
-.travis.yml
-jest.config.js
-npm-debug.log*

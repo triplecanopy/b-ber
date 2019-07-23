@@ -1,3 +1,3 @@
-describe('b-ber-grammar', () => {
+describe('b-ber-parser-section', () => {
     test.todo('Requires tests')
 })

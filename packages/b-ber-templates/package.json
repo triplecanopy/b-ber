@@ -36,10 +36,23 @@
         "@canopycanopycanopy/b-ber-logger": "^0.1.7",
         "core-js": "^3.1.4",
         "fs-extra": "^8.1.0",
-        "lodash": "^4.17.11",
+        "lodash.isplainobject": "latest",
+        "lodash.uniq": "latest",
+        "lodash.find": "latest",
+        "lodash.has": "latest",
         "mime-types": "^2.1.18",
         "vinyl": "^2.2.0"
     },
+    "files": [
+        "figures",
+        "Ncx",
+        "Opf",
+        "Ops",
+        "Project",
+        "Toc",
+        "Xhtml",
+        "Xml"
+    ],
     "repository": {
         "type": "git",
         "url": "git+https://github.com/triplecanopy/b-ber.git"

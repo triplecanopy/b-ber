@@ -1,16 +1,15 @@
-/* eslint-disable global-require */
 const path = require('path')
 const webpack = require('webpack')
 const loaders = require('./webpack.loaders')
 
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
-// const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer')
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 
 module.exports = {
     target: 'web',
     context: path.join(__dirname, 'src'),
-    entry: ['@babel/polyfill', './index.jsx'],
+    entry: './index.jsx',
     output: {
         publicPath: '/',
         path: path.join(__dirname, 'dist'),
@@ -23,10 +22,23 @@ module.exports = {
         rules: [
             {
                 test: /\.jsx?$/,
-                exclude: /(node_modules|public|dist|test)/,
+                exclude: /(node_modules|public|dist|test|__tests__)/,
                 loader: 'babel-loader',
                 options: {
-                    presets: ['@babel/preset-env', '@babel/preset-react'],
+                    presets: [
+                        [
+                            '@babel/preset-env',
+                            {
+                                corejs: 3,
+                                modules: 'commonjs',
+                                targets: {
+                                    browsers: 'last 2 versions, > 2%',
+                                },
+                                useBuiltIns: 'usage',
+                            },
+                        ],
+                        '@babel/preset-react',
+                    ],
                     plugins: [
                         ['@babel/plugin-proposal-decorators', { legacy: true }],
                         '@babel/plugin-proposal-class-properties',
@@ -46,6 +58,7 @@ module.exports = {
                             loader: 'postcss-loader',
                             options: {
                                 ident: 'postcss',
+                                // eslint-disable-next-line global-require
                                 plugins: [require('autoprefixer')(), require('cssnano')()],
                             },
                         },
@@ -59,15 +72,16 @@ module.exports = {
     },
 
     plugins: [
+        new BundleAnalyzerPlugin({
+            openAnalyzer: false, // report.html
+            analyzerMode: 'static',
+        }),
+
         new webpack.DefinePlugin({
             'process.env': {
                 NODE_ENV: JSON.stringify('production'),
             },
         }),
-
-        // new BundleAnalyzerPlugin({
-        //     openAnalyzer: true,
-        // }),
 
         new webpack.NoEmitOnErrorsPlugin(),
 

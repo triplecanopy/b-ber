@@ -1,10 +1,9 @@
 /* eslint-disable import/prefer-default-export */
 
 import util from 'util'
-import isArray from 'lodash/isArray'
 
 export function error(_args) {
-    const args = isArray(_args) ? _args : [_args]
+    const args = Array.isArray(_args) ? _args : [_args]
 
     if (this.logLevel < 1) return
     const errCode = 1

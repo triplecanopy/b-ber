@@ -24,6 +24,10 @@
         "node-sass": "^4.11.0",
         "rimraf": "^2.6.3"
     },
+    "files": [
+        "b-ber-theme-sans",
+        "b-ber-theme-serif"
+    ],
     "repository": {
         "type": "git",
         "url": "git+https://github.com/triplecanopy/b-ber.git"

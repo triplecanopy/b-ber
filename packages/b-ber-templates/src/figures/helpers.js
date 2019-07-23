@@ -1,6 +1,6 @@
 import { Url } from '@canopycanopycanopy/b-ber-lib'
-import isPlainObject from 'lodash/isPlainObject'
-import uniq from 'lodash/uniq'
+import isPlainObject from 'lodash.isplainobject'
+import uniq from 'lodash.uniq'
 
 const FULLBLEED_CLASS_NAME = 'figure__fullbleed'
 const classNamesArray = data => (data.classes || '').split(' ')

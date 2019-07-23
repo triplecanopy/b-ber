@@ -1,4 +1,4 @@
-const localConfig = (_ => {
+const localConfig = (() => {
     let _config = {}
     if (/^localhost/.test(window.location.host) === false) return _config
 

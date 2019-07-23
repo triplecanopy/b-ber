@@ -12,7 +12,7 @@ module.exports = api => {
     }
 
     const envOpts = Object.assign({}, envOptsNoTargets)
-    const nodeVersion = '6'
+    const nodeVersion = '10'
 
     switch (env) {
         // Configs used during bundling builds.
@@ -20,7 +20,7 @@ module.exports = api => {
             // Config during builds before publish.
             envOpts.targets = {
                 node: nodeVersion,
-                browsers: 'last 2 versions, > 2%',
+                // browsers: 'last 2 versions, > 2%',
             }
             break
         case 'development':

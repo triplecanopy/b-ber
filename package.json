@@ -4,8 +4,8 @@
     "private": true,
     "license": "GPL-3.0-or-later",
     "engines": {
-        "node": ">= 6.x <= 10.x",
-        "npm": ">= 5.x <= 6.x"
+        "node": ">= 10.x",
+        "npm": ">= 6.x"
     },
     "scripts": {
         "watch": "lerna run watch --parallel",

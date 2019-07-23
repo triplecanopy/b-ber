@@ -94,6 +94,10 @@
         "url-search-params-polyfill": "^4.0.0",
         "xml-js": "^1.6.2"
     },
+    "files": [
+        "dist",
+        "server.js"
+    ],
     "repository": {
         "type": "git",
         "url": "git+https://github.com/triplecanopy/b-ber.git"

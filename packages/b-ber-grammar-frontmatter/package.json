@@ -23,17 +23,11 @@
     },
     "dependencies": {
         "@canopycanopycanopy/b-ber-lib": "^0.1.7",
-        "core-js": "^3.1.4",
-        "fs-extra": "^8.1.0",
-        "highlight.js": "git+https://github.com/msimmer/highlight.js.git",
-        "layouts": "^3.0.2",
-        "lodash": "^4.17.11",
-        "markdown-it": "^8.4.1",
-        "markdown-it-front-matter": "^0.1.2",
-        "mime-types": "^2.1.18",
-        "probe-image-size": "^4.0.0",
-        "vinyl": "^2.2.0"
+        "core-js": "^3.1.4"
     },
+    "files": [
+        "dist"
+    ],
     "repository": {
         "type": "git",
         "url": "git+https://github.com/triplecanopy/b-ber.git"

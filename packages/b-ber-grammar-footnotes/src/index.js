@@ -1,4 +1,4 @@
-import { find } from 'lodash'
+import find from 'lodash.find'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 
 export default function markdownItFootnotePlugin(self) {

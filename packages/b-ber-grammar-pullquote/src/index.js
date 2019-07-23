@@ -4,7 +4,7 @@
 
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
-import has from 'lodash/has'
+import has from 'lodash.has'
 import { BLOCK_DIRECTIVE_MARKER, BLOCK_DIRECTIVE_MARKER_MIN_LENGTH } from '@canopycanopycanopy/b-ber-shapes-directives'
 import plugin from '@canopycanopycanopy/b-ber-parser-section'
 import { attributesObject, attributesString } from '@canopycanopycanopy/b-ber-grammar-attributes'

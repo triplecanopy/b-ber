@@ -1,7 +1,7 @@
 /* eslint-disable no-plusplus, no-continue*/
 
 import path from 'path'
-import has from 'lodash/has'
+import has from 'lodash.has'
 import { forOf } from '@canopycanopycanopy/b-ber-lib/utils'
 import log from '@canopycanopycanopy/b-ber-logger'
 import {

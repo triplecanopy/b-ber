@@ -1,4 +1,4 @@
-import find from 'lodash/find'
+import find from 'lodash.find'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import { Html } from '@canopycanopycanopy/b-ber-lib'
 import { BLOCK_DIRECTIVES } from '@canopycanopycanopy/b-ber-shapes-directives'

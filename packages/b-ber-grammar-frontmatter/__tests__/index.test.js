@@ -1,3 +1,3 @@
-describe('b-ber-grammar', () => {
+describe('b-ber-grammar-frontmatter', () => {
     test.todo('Requires tests')
 })

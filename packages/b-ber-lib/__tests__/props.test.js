@@ -27,47 +27,27 @@ beforeAll(() => {
 afterAll(() => mock.restore())
 
 describe('ManifestItemProperties', () => {
-    describe('#isHTML', () => {
-        it('Tests if a document is an (X)HTML file', done => {
-            expect(ManifestItemProperties.isHTML(html)).toBe(true)
-            done()
-        })
+    it('Tests if a document is an (X)HTML file', () => {
+        expect(ManifestItemProperties.isHTML(html)).toBe(true)
     })
 
-    describe('#isNav', () => {
-        it('Tests if a document is an Epub navigation document', done => {
-            expect(ManifestItemProperties.isNav(nav)).toBe(true)
-            done()
-        })
+    it('Tests if a document is an Epub navigation document', () => {
+        expect(ManifestItemProperties.isNav(nav)).toBe(true)
     })
 
-    describe('#isScripted', () => {
-        it('Tests if a document contains a script element', done => {
-            expect(ManifestItemProperties.isScripted(scriptFile)).toBe(true)
-            done()
-        })
+    it('Tests if a document contains a script element', () => {
+        expect(ManifestItemProperties.isScripted(scriptFile)).toBe(true)
     })
 
-    describe('#isSVG', () => {
-        it('Tests if a document contains an SVG element', done => {
-            expect(ManifestItemProperties.isSVG(svgFile)).toBe(true)
-            done()
-        })
+    it('Tests if a document contains an SVG element', () => {
+        expect(ManifestItemProperties.isSVG(svgFile)).toBe(true)
     })
 
-    describe('#isDCElement', () => {
-        it.todo('Tests if the term property of an object exists in the dc/elements object')
-    })
+    it.todo('Tests if the term property of an object exists in the dc/elements object')
 
-    describe('#isDCTerm', () => {
-        it.todo('Tests if the term property of an object exists in the dc/terms object')
-    })
+    it.todo('Tests if the term property of an object exists in the dc/terms object')
 
-    describe('#testHTML', () => {
-        it.todo('Tests if a document contains a script or SVG element, and if it is an Epub navigation document')
-    })
+    it.todo('Tests if a document contains a script or SVG element, and if it is an Epub navigation document')
 
-    describe('#testMeta', () => {
-        it.todo('Returns an object with tested term and element properties values')
-    })
+    it.todo('Returns an object with tested term and element properties values')
 })

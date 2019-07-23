@@ -19,55 +19,47 @@ beforeAll(() =>
 afterAll(() => Promise.all([fs.remove('_project'), fs.remove('themes')]))
 
 describe('State', () => {
-    describe('#add', () => {
-        it('Should add an item to an array or object', () => {
-            state.reset()
+    it('adds to an array or object', () => {
+        state.reset()
 
-            const a = 'foo'
-            const o = { foo: 1 }
+        const a = 'foo'
+        const o = { foo: 1 }
 
-            state.add('sequence', a)
-            state.add('video', o)
+        state.add('sequence', a)
+        state.add('video', o)
 
+        expect(state.sequence.length).toBe(1)
+        expect(state.video.length).toBe(1)
+        expect(state.video[0]).toHaveProperty('foo')
+    })
+
+    it('removes from an array or object', () => {
+        state.reset()
+        state.add('sequence', { foo: 1 })
+        state.remove('sequence', { foo: 1 })
+        expect(state.sequence).toEqual([])
+    })
+
+    it('merges two objects', () => {
+        state.reset()
+        state.merge('buildTypes', { foo: 1 })
+        state.merge('buildTypes', { bar: 2 })
+        expect(state.buildTypes).toHaveProperty('foo', 1)
+        expect(state.buildTypes).toHaveProperty('bar', 2)
+    })
+
+    it('updates a value', done => {
+        state.reset()
+        const addFoo = callback => {
+            state.add('sequence', 'foo')
+            callback()
+        }
+
+        addFoo(() => {
+            state.update('sequence', ['bar'])
             expect(state.sequence.length).toBe(1)
-            expect(state.video.length).toBe(1)
-            expect(state.video[0]).toHaveProperty('foo')
-        })
-    })
-
-    describe('#remove', () => {
-        it('Should remove an item from an array or object', () => {
-            state.reset()
-            state.add('sequence', { foo: 1 })
-            state.remove('sequence', { foo: 1 })
-            expect(state.sequence).toEqual([])
-        })
-    })
-
-    describe('#merge', () => {
-        it('Should merge two objects', () => {
-            state.reset()
-            state.merge('buildTypes', { foo: 1 })
-            state.merge('buildTypes', { bar: 2 })
-            expect(state.buildTypes).toHaveProperty('foo', 1)
-            expect(state.buildTypes).toHaveProperty('bar', 2)
-        })
-    })
-
-    describe('#update', () => {
-        it('Should set the value of a property', done => {
-            state.reset()
-            const addFoo = callback => {
-                state.add('sequence', 'foo')
-                callback()
-            }
-
-            addFoo(() => {
-                state.update('sequence', ['bar'])
-                expect(state.sequence.length).toBe(1)
-                expect(state.sequence).toContain('bar')
-                done()
-            })
+            expect(state.sequence).toContain('bar')
+            done()
         })
     })
 })

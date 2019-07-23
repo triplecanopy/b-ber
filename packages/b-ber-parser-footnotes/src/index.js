@@ -6,8 +6,6 @@ https://github.com//markdown-it/markdown-it-footnote
 MIT license
 */
 
-import isArray from 'lodash/isArray'
-
 function renderFootnoteAnchorName(tokens, idx, options, env /*, slf*/) {
     const n = Number(tokens[idx].meta.id + 1).toString()
     return typeof env.docId === 'string' ? `-${env.docId}-${n}` : ''
@@ -38,7 +36,7 @@ function renderFootnoteOpen(tokens, idx, options, env /*,slf */) {
 
     // push the backlink into the parent paragraph
     if (tokens[childIndex]) {
-        if (!isArray(tokens[childIndex].children)) {
+        if (!Array.isArray(tokens[childIndex].children)) {
             tokens[childIndex].children = []
         }
         tokens[childIndex].children.push(
