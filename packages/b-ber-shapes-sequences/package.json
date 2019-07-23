@@ -24,9 +24,7 @@
         "jest": "^24.8.0",
         "rimraf": "^2.6.3"
     },
-    "dependencies": {
-        "core-js": "^3.1.4"
-    },
+    "dependencies": {},
     "files": [
         "sequences",
         "create-build-sequence.js"

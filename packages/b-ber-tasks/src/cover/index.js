@@ -4,7 +4,7 @@ import path from 'path'
 import fs from 'fs-extra'
 import crypto from 'crypto'
 import { execFile } from 'child_process'
-import imageSize from 'probe-image-size'
+import sizeOf from 'image-size'
 import phantomjs from 'phantomjs-prebuilt'
 import log from '@canopycanopycanopy/b-ber-logger'
 import state from '@canopycanopycanopy/b-ber-lib/State'
@@ -99,7 +99,7 @@ class Cover {
 
     generateCoverXHTML() {
         // get the image dimensions, and pass them to the coverSVG template
-        const { width, height } = imageSize.sync(fs.readFileSync(this.coverImagePath))
+        const { width, height } = sizeOf(this.coverImagePath)
         const href = `images/${encodeURIComponent(this.coverEntry)}`
         const svg = Xhtml.cover({ width, height, href })
 

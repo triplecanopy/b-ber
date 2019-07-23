@@ -28,10 +28,9 @@
         "@canopycanopycanopy/b-ber-parser-figure": "^0.1.7",
         "@canopycanopycanopy/b-ber-shapes-directives": "^0.1.7",
         "@canopycanopycanopy/b-ber-templates": "^0.1.7",
-        "core-js": "^3.1.4",
         "fs-extra": "^8.1.0",
-        "mime-types": "^2.1.18",
-        "probe-image-size": "^4.0.0"
+        "image-size": "^0.7.4",
+        "mime-types": "^2.1.18"
     },
     "files": [
         "dist"

@@ -40,12 +40,6 @@ $success: #5050c5 !default;
     $grey: $black;
 }
 
-// TODO: highlight.js theme name. Eventually this will pull in the appropriate CSS
-// from highlight.js. Currently there's no way to use dynamic imports with SCSS,
-// so this will either have to be managed elsewhere
-// $syntax-highlighting: 'dracula'                             !default;
-// @issue: https://github.com/triplecanopy/b-ber/issues/234
-
 // Layout
 $debug: false !default;
 $text-indent: true !default;

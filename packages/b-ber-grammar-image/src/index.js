@@ -1,5 +1,5 @@
 import fs from 'fs-extra'
-import imageSize from 'probe-image-size'
+import sizeOf from 'image-size'
 import log from '@canopycanopycanopy/b-ber-logger'
 import { Html } from '@canopycanopycanopy/b-ber-lib'
 import state from '@canopycanopycanopy/b-ber-lib/State'
@@ -26,9 +26,9 @@ function prepare({ token, match, instance, context, fileName, lineNumber }) {
     if (!fs.existsSync(asset)) log.error(`Image not found [${asset}]`)
 
     // then get the dimensions
-    const dimensions = imageSize.sync(fs.readFileSync(asset))
+    const { width, height } = sizeOf(asset)
 
-    return { ...dimensions, caption, comment, context, attrsObject, asset, mediaType, id: figureId }
+    return { width, height, caption, comment, context, attrsObject, asset, mediaType, id: figureId }
 }
 
 const validate = ({ context = { fileName: '' } }) => (params, line) => {

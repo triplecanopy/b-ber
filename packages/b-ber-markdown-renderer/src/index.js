@@ -1,8 +1,3 @@
-// TODO: Git-hosted and npm-hosted HLJS conflict, so we're requiring HLJS from
-// the src dir. Ideally we'd have our own fork where the dist version _and_ SCSS
-// required by themes is available on npm
-// @issue https://github.com/triplecanopy/b-ber/issues/288
-import hljs from 'highlight.js/src/highlight'
 import MarkdownIt from 'markdown-it'
 import markdownItFrontmatter from 'markdown-it-front-matter'
 import markdownItFootnote from '@canopycanopycanopy/b-ber-parser-footnotes'
@@ -16,6 +11,7 @@ import markdownItGallery from '@canopycanopycanopy/b-ber-grammar-gallery'
 import markdownItSpread from '@canopycanopycanopy/b-ber-grammar-spread'
 import markdownItFrontmatterPlugin from '@canopycanopycanopy/b-ber-grammar-frontmatter'
 import markdownItFootnotePlugin from '@canopycanopycanopy/b-ber-grammar-footnotes'
+import hljs from './highlightjs'
 
 class MarkdownRenderer {
     constructor() {
@@ -29,9 +25,8 @@ class MarkdownRenderer {
             breaks: false,
             linkify: false,
 
-            // Syntax highlighting is done with highlight.js. It's up to
-            // individual themes to include the highlight.js stylesheets, or to
-            // add their own custom styles
+            // Syntax highlighting is done with highlight.js. It's up to add
+            // their own custom styles
             highlight: (str, lang) => {
                 if (lang && hljs.getLanguage(lang)) {
                     try {

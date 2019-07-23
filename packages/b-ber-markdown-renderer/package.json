@@ -34,8 +34,6 @@
         "@canopycanopycanopy/b-ber-grammar-spread": "^0.1.7",
         "@canopycanopycanopy/b-ber-parser-footnotes": "^0.1.7",
         "@canopycanopycanopy/b-ber-parser-gallery": "^0.1.7",
-        "core-js": "^3.1.4",
-        "highlight.js": "git+https://github.com/msimmer/highlight.js.git",
         "markdown-it": "^8.4.1",
         "markdown-it-front-matter": "^0.1.2"
     },

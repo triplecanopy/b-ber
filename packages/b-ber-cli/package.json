@@ -27,7 +27,6 @@
         "@canopycanopycanopy/b-ber-shapes-sequences": "^0.1.7",
         "@canopycanopycanopy/b-ber-tasks": "^0.1.7",
         "@canopycanopycanopy/b-ber-templates": "^0.1.7",
-        "core-js": "^3.1.4",
         "fs-extra": "^8.1.0",
         "lodash.has": "latest",
         "yargs": "^11.0.0"

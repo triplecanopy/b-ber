@@ -27,7 +27,6 @@
         "@canopycanopycanopy/b-ber-logger": "^0.1.7",
         "@canopycanopycanopy/b-ber-parser-section": "^0.1.7",
         "@canopycanopycanopy/b-ber-shapes-directives": "^0.1.7",
-        "core-js": "^3.1.4",
         "lodash.has": "latest"
     },
     "files": [

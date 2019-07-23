@@ -23,8 +23,7 @@
     },
     "dependencies": {
         "@canopycanopycanopy/b-ber-lib": "^0.1.7",
-        "lodash.find": "latest",
-        "core-js": "^3.1.4"
+        "lodash.find": "latest"
     },
     "files": [
         "dist"

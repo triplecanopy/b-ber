@@ -23,8 +23,7 @@
     },
     "dependencies": {
         "@canopycanopycanopy/b-ber-logger": "^0.1.7",
-        "@canopycanopycanopy/b-ber-parser-figure": "^0.1.7",
-        "core-js": "^3.1.4"
+        "@canopycanopycanopy/b-ber-parser-figure": "^0.1.7"
     },
     "files": [
         "dist"
