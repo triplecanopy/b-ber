@@ -65,6 +65,7 @@ class MarkdownRenderer {
             .split('\n')
             .map(value => `  ${value}`)
             .join('\n')
+
         return `-\n  fileName: ${this.fileName}\n${str}\n`
     }
 

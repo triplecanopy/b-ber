@@ -1,9 +1,9 @@
 /* global expect,jest */
 
-import opf from '../../src/cmd/opf'
+import _new from '../../src/commands/new'
 
 jest.mock('@canopycanopycanopy/b-ber-tasks', () => ({
-    opf: jest.fn(),
+    _new: jest.fn(),
 }))
 
 jest.mock('@canopycanopycanopy/b-ber-lib/utils', () => ({
@@ -11,9 +11,9 @@ jest.mock('@canopycanopycanopy/b-ber-lib/utils', () => ({
     ensure: jest.fn(),
 }))
 
-describe('opf', () => {
+describe('new', () => {
     it('exports a yargs command object', () => {
-        expect(opf).toEqual(
+        expect(_new).toEqual(
             expect.objectContaining({
                 command: expect.anything(),
                 describe: expect.any(String),

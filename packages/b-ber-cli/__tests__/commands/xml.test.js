@@ -1,20 +1,19 @@
 /* global expect,jest */
 
-import cover from '../../src/cmd/cover'
+import xml from '../../src/commands/xml'
 
 jest.mock('@canopycanopycanopy/b-ber-tasks', () => ({
-    cover: jest.fn(),
+    xml: jest.fn(),
 }))
 
 jest.mock('@canopycanopycanopy/b-ber-lib/utils', () => ({
     fail: jest.fn(),
+    ensure: jest.fn(),
 }))
 
-jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({}))
-
-describe('cover', () => {
+describe('xml', () => {
     it('exports a yargs command object', () => {
-        expect(cover).toEqual(
+        expect(xml).toEqual(
             expect.objectContaining({
                 command: expect.anything(),
                 describe: expect.any(String),

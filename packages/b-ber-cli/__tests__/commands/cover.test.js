@@ -1,19 +1,20 @@
 /* global expect,jest */
 
-import serve from '../../src/cmd/serve'
+import cover from '../../src/commands/cover'
 
 jest.mock('@canopycanopycanopy/b-ber-tasks', () => ({
-    serve: jest.fn(),
+    cover: jest.fn(),
 }))
 
 jest.mock('@canopycanopycanopy/b-ber-lib/utils', () => ({
     fail: jest.fn(),
-    ensure: jest.fn(),
 }))
 
-describe('serve', () => {
+jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({}))
+
+describe('cover', () => {
     it('exports a yargs command object', () => {
-        expect(serve).toEqual(
+        expect(cover).toEqual(
             expect.objectContaining({
                 command: expect.anything(),
                 describe: expect.any(String),

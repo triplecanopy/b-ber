@@ -1,11 +1,9 @@
 /* global expect,jest */
 
-import theme from '../../src/cmd/theme'
-
-jest.mock('@canopycanopycanopy/b-ber-lib/Theme', () => ({}))
+import generate from '../../src/commands/generate'
 
 jest.mock('@canopycanopycanopy/b-ber-tasks', () => ({
-    theme: jest.fn(),
+    generate: jest.fn(),
 }))
 
 jest.mock('@canopycanopycanopy/b-ber-lib/utils', () => ({
@@ -13,9 +11,9 @@ jest.mock('@canopycanopycanopy/b-ber-lib/utils', () => ({
     ensure: jest.fn(),
 }))
 
-describe('theme', () => {
+describe('generate', () => {
     it('exports a yargs command object', () => {
-        expect(theme).toEqual(
+        expect(generate).toEqual(
             expect.objectContaining({
                 command: expect.anything(),
                 describe: expect.any(String),

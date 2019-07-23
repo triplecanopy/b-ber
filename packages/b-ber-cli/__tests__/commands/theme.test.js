@@ -1,9 +1,11 @@
 /* global expect,jest */
 
-import xml from '../../src/cmd/xml'
+import theme from '../../src/commands/theme'
+
+jest.mock('@canopycanopycanopy/b-ber-lib/Theme', () => ({}))
 
 jest.mock('@canopycanopycanopy/b-ber-tasks', () => ({
-    xml: jest.fn(),
+    theme: jest.fn(),
 }))
 
 jest.mock('@canopycanopycanopy/b-ber-lib/utils', () => ({
@@ -11,9 +13,9 @@ jest.mock('@canopycanopycanopy/b-ber-lib/utils', () => ({
     ensure: jest.fn(),
 }))
 
-describe('xml', () => {
+describe('theme', () => {
     it('exports a yargs command object', () => {
-        expect(xml).toEqual(
+        expect(theme).toEqual(
             expect.objectContaining({
                 command: expect.anything(),
                 describe: expect.any(String),

@@ -1,9 +1,9 @@
 /* global expect,jest */
 
-import generate from '../../src/cmd/generate'
+import serve from '../../src/commands/serve'
 
 jest.mock('@canopycanopycanopy/b-ber-tasks', () => ({
-    generate: jest.fn(),
+    serve: jest.fn(),
 }))
 
 jest.mock('@canopycanopycanopy/b-ber-lib/utils', () => ({
@@ -11,9 +11,9 @@ jest.mock('@canopycanopycanopy/b-ber-lib/utils', () => ({
     ensure: jest.fn(),
 }))
 
-describe('generate', () => {
+describe('serve', () => {
     it('exports a yargs command object', () => {
-        expect(generate).toEqual(
+        expect(serve).toEqual(
             expect.objectContaining({
                 command: expect.anything(),
                 describe: expect.any(String),

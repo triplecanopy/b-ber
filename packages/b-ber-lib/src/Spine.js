@@ -7,9 +7,10 @@ class Spine {
         this.src = src
         this.buildType = buildType
         this.frontMatter = new Map()
+        this.navigationConfigFile = navigationConfigFile
 
-        this.declared = this.create(navigationConfigFile)
-        this.nested = this.build(this.declared, src) // nested navigation
+        this.declared = this.create()
+        this.nested = this.build(this.declared) // nested navigation
         this.flattened = this.flatten(this.nested) // one-dimensional page flow
     }
 
@@ -39,11 +40,13 @@ class Spine {
 
                 // curr has attributes
                 const [[fileName, { ...options }]] = Object.entries(curr)
+                // also set frontmatter for easy access later
                 this.frontMatter.set(fileName, {})
                 node = new SpineItem({ fileName, buildType, ...options })
             } else {
                 // just a plain file name
                 const fileName = curr
+                // also set frontmatter for easy access later
                 this.frontMatter.set(fileName, {})
                 node = new SpineItem({ fileName, buildType })
             }
@@ -60,9 +63,8 @@ class Spine {
         }, [])
     }
 
-    // eslint-disable-next-line class-methods-use-this
-    create(navigationConfigFile) {
-        return YamlAdaptor.load(navigationConfigFile)
+    create() {
+        return YamlAdaptor.load(this.navigationConfigFile)
     }
 }
 

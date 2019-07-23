@@ -5,7 +5,7 @@ import state from '@canopycanopycanopy/b-ber-lib/State'
 import createBuildSequence from '@canopycanopycanopy/b-ber-shapes-sequences/create-build-sequence'
 import sequences from '@canopycanopycanopy/b-ber-shapes-sequences/sequences'
 import has from 'lodash/has'
-import * as commands from './cmd'
+import * as commands from './commands'
 
 const LINE_LENGTH = 70
 
@@ -45,10 +45,8 @@ export default function bber() {
             process.exit(0)
         }
 
-        /* eslint-disable indent */
         const sequence =
             command === 'build' ? createBuildSequence(argv).reduce((a, c) => a.concat(...sequences[c]), []) : [command]
-        /* eslint-enable indent */
 
         state.update('sequence', sequence)
         log.registerSequence(state, command, sequence)
