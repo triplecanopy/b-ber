@@ -1,4 +1,4 @@
-import { Html, Url } from '@canopycanopycanopy/b-ber-lib'
+import { Url } from '@canopycanopycanopy/b-ber-lib'
 import isPlainObject from 'lodash/isPlainObject'
 import uniq from 'lodash/uniq'
 
@@ -19,7 +19,7 @@ const createStyleAttribute = data => {
 export const figureTemplate = data =>
     `
     %SECTION_OPEN%
-        <div class="%FIGURE_CLASS_NAMES%" %PAGE_BREAK_STYLES%>
+        <div class="%FIGURE_CLASS_NAMES%">
             <figure id="%ID%">
                 <div class="figure__items" %FIGURE_STYLES%>
                     %LINK_OPEN%
@@ -38,7 +38,6 @@ export const figureTemplate = data =>
             data.inline ? '' : '<section epub:type="loi" title="Figures" class="chapter figures">',
         )
         .replace(/%FIGURE_CLASS_NAMES%/, data.inline || data.applyInlineClasses ? data.classes : 'figure__large')
-        .replace(/%PAGE_BREAK_STYLES%/, Html.pagebreakAttribute(data))
         .replace(/%ID%/g, data.id)
         .replace(/%FIGURE_STYLES%/, createStyleAttribute(data.figureStyles))
         .replace(/%IMAGE_STYLES%/, createStyleAttribute(data.imageStyles))

@@ -67,10 +67,6 @@ const _applyTransforms = (k, v) => {
             return ` class="${v}"`
         case 'epubTypes':
             return ` epub:type="${v}"`
-        case 'pagebreak':
-            return v === 'both'
-                ? ' style="page-break-before:always; page-break-after:always;"'
-                : ` style="page-break-${v}:always;"`
         case 'attrs':
             return ''
         case 'source':

@@ -122,7 +122,6 @@ const SUPPORTED_ATTRIBUTES = {
     block: {
         title: true,
         classes: true,
-        pagebreak: true,
     },
 
     // inline

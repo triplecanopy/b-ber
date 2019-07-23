@@ -7,7 +7,7 @@ const pageBreakBeforeXPATH = () =>
     [
         '//h:*[@class="figure__large figure__inline"]',
         '//h:*[@class="figure__large figure__inline"]/following::h:p[1]',
-        '//h:*[re:test(@style, "page-break-before:\\s*?always")]',
+        '//h:*[re:test(@class, "break-before")]',
         '//h:*[@data-gallery-item]',
     ].join('|')
 
@@ -15,6 +15,7 @@ const mobi = () =>
     process.argv.includes('--no-compile')
         ? Promise.resolve()
         : EbookConvert.convert({
+              // https://manual.calibre-ebook.com/generated/en/ebook-convert.html#mobi-output-options
               inputPath: state.dist.ops('content.opf'),
               outputPath: process.cwd(),
               fileType: 'mobi',

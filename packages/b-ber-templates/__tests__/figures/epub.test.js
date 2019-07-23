@@ -10,7 +10,6 @@ describe('templates.epub', () => {
         const data = {
             inline: true,
             classes: 'test',
-            pagebreak: '',
             id: 1,
             ref: 1,
             alt: 'test',
@@ -23,12 +22,7 @@ describe('templates.epub', () => {
         }
 
         const dataFiguresPage = Object.assign({}, data, { inline: false })
-        const dataPagebreakBefore = Object.assign({}, data, {
-            pagebreak: 'before',
-        })
-        const dataPagebreakAfter = Object.assign({}, data, {
-            pagebreak: 'after',
-        })
+        const dataPagebreakBefore = Object.assign({}, data, { classes: 'break-before' })
 
         expect(epub.portrait(data)).toMatchSnapshot()
         expect(epub.landscape(data)).toMatchSnapshot()
@@ -53,13 +47,5 @@ describe('templates.epub', () => {
         expect(epub.audio(dataPagebreakBefore)).toMatchSnapshot()
         expect(epub.video(dataPagebreakBefore)).toMatchSnapshot()
         expect(epub.iframe(dataPagebreakBefore)).toMatchSnapshot()
-
-        expect(epub.portrait(dataPagebreakAfter)).toMatchSnapshot()
-        expect(epub.landscape(dataPagebreakAfter)).toMatchSnapshot()
-        expect(epub['portrait-high'](dataPagebreakAfter)).toMatchSnapshot()
-        expect(epub.square(dataPagebreakAfter)).toMatchSnapshot()
-        expect(epub.audio(dataPagebreakAfter)).toMatchSnapshot()
-        expect(epub.video(dataPagebreakAfter)).toMatchSnapshot()
-        expect(epub.iframe(dataPagebreakAfter)).toMatchSnapshot()
     })
 })
