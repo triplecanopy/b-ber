@@ -14,7 +14,9 @@ const getFigureInlineClasses = (data, ratioName) =>
 
 const getMediaInlineClasses = data =>
     data.inline || data.applyInlineClasses
-        ? 'figure__large figure__large--media figure__inline--square'
+        ? uniq(['figure__large', 'figure__large--media', 'figure__inline--square'].concat(getClassNamesArray(data)))
+              .filter(Boolean)
+              .join(' ')
         : 'figure__large figure__large--media figure__large--square'
 
 const getSectionOpen = ({ inline }) =>

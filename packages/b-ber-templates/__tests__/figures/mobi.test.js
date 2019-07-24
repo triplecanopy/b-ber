@@ -15,6 +15,10 @@ describe('templates.mobi', () => {
             alt: 'test',
             source: 'test',
             caption: 'test',
+            attrString: 'autoplay="false"',
+            sourceElements: '<source />',
+            mediaType: 'audio-or-video',
+            poster: 'test.jpg',
         }
 
         const dataFiguresPage = Object.assign({}, data, { inline: false })
