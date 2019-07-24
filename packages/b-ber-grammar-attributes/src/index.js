@@ -219,7 +219,7 @@ const attributesObject = (attrs, _genus, context = {}) => {
     if (attrs && typeof attrs === 'string') {
         forOf(parseAttrs(attrs.trim()), (k, v) => {
             if (_isUnsupportedAttribute(_genus, k)) {
-                return log.warn(`Omitting illegal attribute [${k}] at [${fileName}:${lineNumber}]`)
+                return log.warn(`render omitting unsupported attribute [${k}] at [${fileName}:${lineNumber}]`)
             }
 
             attrsObject[k] = v
