@@ -38,6 +38,9 @@
         "jest": "^24.8.0",
         "rimraf": "^2.6.3"
     },
+    "files": [
+        "dist"
+    ],
     "repository": {
         "type": "git",
         "url": "git+https://github.com/triplecanopy/b-ber.git"

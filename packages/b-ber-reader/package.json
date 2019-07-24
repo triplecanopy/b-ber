@@ -94,6 +94,7 @@
     },
     "files": [
         "dist",
+        "!dist/report.html",
         "server.js"
     ],
     "repository": {
