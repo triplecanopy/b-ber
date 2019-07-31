@@ -9,7 +9,7 @@
 // the src dir. Ideally we'd have our own fork where the dist version _and_ SCSS
 // required by themes is available on npm
 // @issue https://github.com/triplecanopy/b-ber/issues/288
-import hljs from 'highlight.js/src/highlight'
+// import hljs from 'highlight.js/src/highlight'
 import { extend, find } from 'lodash'
 import MarkdownIt from 'markdown-it'
 import YamlAdaptor from '@canopycanopycanopy/b-ber-lib/YamlAdaptor'
@@ -73,17 +73,17 @@ class MarkdownRenderer {
             // Syntax highlighting is done with highlight.js. It's up to
             // individual themes to include the highlight.js stylesheets, or to
             // add their own custom styles
-            highlight: (str, lang) => {
-                if (lang && hljs.getLanguage(lang)) {
-                    try {
-                        return hljs.highlight(lang, str).value
-                    } catch (_) {
-                        /* noop */
-                    }
-                }
+            // highlight: (str, lang) => {
+            //     if (lang && hljs.getLanguage(lang)) {
+            //         try {
+            //             return hljs.highlight(lang, str).value
+            //         } catch (_) {
+            //             /* noop */
+            //         }
+            //     }
 
-                return ''
-            },
+            //     return ''
+            // },
         })
 
         /**

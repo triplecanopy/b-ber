@@ -27,7 +27,6 @@
         "@canopycanopycanopy/b-ber-templates": "^0.1.7",
         "babel-runtime": "^6.26.0",
         "fs-extra": "^7.0.1",
-        "highlight.js": "git+https://github.com/msimmer/highlight.js.git",
         "layouts": "^3.0.2",
         "lodash": "^4.17.11",
         "markdown-it": "^8.4.1",

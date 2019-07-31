@@ -12,7 +12,6 @@
         "access": "public"
     },
     "dependencies": {
-        "highlight.js": "git+https://github.com/msimmer/highlight.js.git",
         "modularscale-sass": "^3.0.3"
     },
     "devDependencies": {
