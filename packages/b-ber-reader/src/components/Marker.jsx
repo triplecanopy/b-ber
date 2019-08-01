@@ -87,7 +87,7 @@ class Marker extends Component {
             {
                 leading: false,
                 trailing: true,
-            },
+            }
         ).bind(this)
 
         this.calculateNodePosition()
@@ -175,7 +175,7 @@ class Marker extends Component {
                 position,
                 _position,
                 x,
-                paddingLeft,
+                paddingLeft
             )
             console.groupEnd()
         }
@@ -195,7 +195,7 @@ class Marker extends Component {
                 markerId: this.props['data-marker'],
                 unbound: JSON.parse(this.props['data-unbound']),
             },
-            this.updateRef,
+            this.updateRef
         )
     }
 

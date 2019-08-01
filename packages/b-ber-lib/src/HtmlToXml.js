@@ -125,7 +125,7 @@ class HtmlToXml {
                     _this.onend(_this.output)
                 },
             },
-            { decodeEntities: false },
+            { decodeEntities: false }
         )
 
         parser.write(content)

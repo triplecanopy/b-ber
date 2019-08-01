@@ -35,7 +35,7 @@ export const figureTemplate = data =>
 `
         .replace(
             /%SECTION_OPEN%/,
-            data.inline ? '' : '<section epub:type="loi" title="Figures" class="chapter figures">',
+            data.inline ? '' : '<section epub:type="loi" title="Figures" class="chapter figures">'
         )
         .replace(/%FIGURE_CLASS_NAMES%/, data.inline || data.applyInlineClasses ? data.classes : 'figure__large')
         .replace(/%PAGE_BREAK_STYLES%/, Html.pagebreakAttribute(data))
@@ -81,12 +81,12 @@ export const media = data =>
     `
         .replace(
             /%SECTION_OPEN%/,
-            data.inline ? '' : '<section epub:type="loi" title="Figures" class="chapter figures">',
+            data.inline ? '' : '<section epub:type="loi" title="Figures" class="chapter figures">'
         )
         // TODO: `figure__inline--square` class should be replaced with media aspect ratio
         .replace(
             /%FIGURE_CLASS_NAMES%/,
-            data.inline || data.applyInlineClasses ? 'figure__large figure__inline--square' : 'figure__large',
+            data.inline || data.applyInlineClasses ? 'figure__large figure__inline--square' : 'figure__large'
         )
         .replace(/%ID%/g, data.id)
         .replace(/%MEDIA_TYPE%/g, data.mediaType)
@@ -120,7 +120,7 @@ export const iframe = data =>
     `
         .replace(
             /%SECTION_OPEN%/,
-            data.inline ? '' : '<section epub:type="loi" title="Figures" class="chapter figures">',
+            data.inline ? '' : '<section epub:type="loi" title="Figures" class="chapter figures">'
         )
         .replace(/%ID%/g, data.id)
         .replace(/%SRC%/g, Url.encodeQueryString(data.source))

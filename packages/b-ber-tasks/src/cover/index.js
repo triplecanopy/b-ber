@@ -68,7 +68,7 @@ class Cover {
             if (!_covers.length) return Promise.resolve()
 
             const promises = _covers.map(a =>
-                fs.remove(path.join(imageDir, a)).then(() => log.info('remove outdated cover image [%s]', a)),
+                fs.remove(path.join(imageDir, a)).then(() => log.info('remove outdated cover image [%s]', a))
             )
 
             return Promise.all(promises)
@@ -84,7 +84,7 @@ class Cover {
 
                 log.info('cover emit cover image')
                 resolve()
-            }),
+            })
         )
     }
 

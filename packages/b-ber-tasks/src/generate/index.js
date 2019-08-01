@@ -25,7 +25,7 @@ class Generate {
     createFile({ markdownDir, metadata }) {
         const frontmatter = `---\n${Object.entries(metadata).reduce(
             (acc, [k, v]) => (v ? acc.concat(`${k}: ${v}\n`) : acc),
-            '',
+            ''
         )}---\n`
 
         const { title } = metadata

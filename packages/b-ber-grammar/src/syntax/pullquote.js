@@ -32,9 +32,7 @@ export default {
                 const [, , id] = match
                 if (typeof id === 'undefined') {
                     log.error(
-                        `Missing [id] attribute for [${exports.default.name}:start] directive ${
-                            context.filename
-                        }.md:${line}`,
+                        `Missing [id] attribute for [${exports.default.name}:start] directive ${context.filename}.md:${line}`
                     )
                     return false
                 }
@@ -70,7 +68,7 @@ export default {
                         pullquoteIndices.push(id)
                     } else {
                         log.error(
-                            `Duplicate [id] attribute [${id}]. [id]s must be unique ${context.filename}.md:${_line}`,
+                            `Duplicate [id] attribute [${id}]. [id]s must be unique ${context.filename}.md:${_line}`
                         )
                     }
 

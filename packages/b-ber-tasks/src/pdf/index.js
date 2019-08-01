@@ -22,7 +22,7 @@ const pdf = () => {
                   outputPath: process.cwd(),
                   fileType: 'pdf',
                   fileName: getBookMetadata('identifier', state),
-              }).catch(log.error),
+              }).catch(log.error)
     )
 }
 

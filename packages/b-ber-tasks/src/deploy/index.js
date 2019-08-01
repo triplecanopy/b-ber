@@ -41,7 +41,7 @@ function ensureAwsCli() {
             console.log('')
             console.log('AWS CLI must be installed to run deploy')
             console.log(
-                'See installation instructions here: https://docs.aws.amazon.com/cli/latest/userguide/installing.html',
+                'See installation instructions here: https://docs.aws.amazon.com/cli/latest/userguide/installing.html'
             )
             console.log('')
             process.exit(1)
@@ -93,7 +93,7 @@ function ensureEnvVars() {
 
         if (!AWS_ACCESS_KEY_ID || !AWS_SECRET_ACCESS_KEY || !BBER_BUCKET_REGION) {
             log.error(
-                '[AWS_ACCESS_KEY_ID], [AWS_SECRET_ACCESS_KEY] and [BBER_BUCKET_REGION] must be set to deploy the project',
+                '[AWS_ACCESS_KEY_ID], [AWS_SECRET_ACCESS_KEY] and [BBER_BUCKET_REGION] must be set to deploy the project'
             )
         }
 
@@ -150,7 +150,7 @@ function prompt() {
                     process.exit(0)
                 })
             })
-            .catch(log.error),
+            .catch(log.error)
     )
 }
 

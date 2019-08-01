@@ -112,7 +112,7 @@ const copyThemeAssets = theme => {
         .then(() => {
             if (!theme.images.length) return Promise.resolve()
             const promises = theme.images.map(a =>
-                safeCopy(path.join(themePath, 'images', a), path.join(imagesPath, a)),
+                safeCopy(path.join(themePath, 'images', a), path.join(imagesPath, a))
             )
             return Promise.all(promises)
         })
@@ -138,7 +138,7 @@ class Theme {
         if (duplicates.length) {
             log.notice('Duplicate themes have been found in both the [node_modules] and [themes] directory')
             log.notice(
-                'Resolve this issue by either removing the duplicate directory from [themes] or by running [npm rm <location> <package>]',
+                'Resolve this issue by either removing the duplicate directory from [themes] or by running [npm rm <location> <package>]'
             )
         }
     }

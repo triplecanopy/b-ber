@@ -65,7 +65,7 @@ class ManifestAndMetadata {
                 const files = [...state.remoteAssets, ...filearr.filter(a => path.basename(a).charAt(0) !== '.')]
                 const fileObjects = pathInfoFromFiles(files, this.dist) // `pathInfoFromFiles` is creating objects from file names
                 resolve(fileObjects)
-            }),
+            })
         )
     }
 
@@ -113,7 +113,7 @@ class ManifestAndMetadata {
                     layout: 'body',
                     contents: Buffer.from(resp.bookmeta.join('')),
                 }),
-                { body: Metadata.body() },
+                { body: Metadata.body() }
             ).contents.toString()
 
             const manifest = renderLayouts(
@@ -122,7 +122,7 @@ class ManifestAndMetadata {
                     layout: 'body',
                     contents: Buffer.from(resp.manifest.filter(Boolean).join('')),
                 }),
-                { body: Manifest.body() },
+                { body: Manifest.body() }
             ).contents.toString()
 
             resolve({ metadata: _metadata, manifest })
@@ -152,7 +152,7 @@ class ManifestAndMetadata {
                 .catch(log.error)
 
                 // next
-                .then(resolve),
+                .then(resolve)
         )
     }
 }

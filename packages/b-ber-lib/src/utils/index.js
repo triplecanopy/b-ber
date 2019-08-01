@@ -132,7 +132,7 @@ const ensureDirs = (dirs, prefix) => {
             `${prefix}/_project/_media`,
             `${prefix}/_project/_stylesheets`,
             `${prefix}/themes`,
-        ].concat(dirs),
+        ].concat(dirs)
     ).map(a => fs.ensureDir(path.join(cwd, a)))
 
     return Promise.all(dirs_)
@@ -150,7 +150,7 @@ const ensureFiles = (files, prefix) => {
         .reduce(
             (acc, curr) =>
                 fs.existsSync(curr.absolutePath) ? acc : acc.concat(fs.writeFile(curr.absolutePath, curr.content)),
-            [],
+            []
         )
     return Promise.all(files_)
 }
@@ -161,7 +161,7 @@ export const ensure = ({ files = [], dirs = [], prefix = '' } = {}) =>
         ensureDirs(dirs, prefix)
             .then(() => ensureFiles(files, prefix))
             .then(resolve)
-            .catch(log.error),
+            .catch(log.error)
     )
 
 export const addTrailingSlash = _s => {

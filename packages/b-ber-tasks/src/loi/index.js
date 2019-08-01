@@ -45,7 +45,7 @@ const createLOIAsSeparateHTMLFiles = () => {
     })
 
     return Promise.all(promises).then(() =>
-        state.loi.sort((a, b) => (a.pageOrder < b.pageOrder ? -1 : a.pageOrder > b.pageOrder ? 1 : 0)),
+        state.loi.sort((a, b) => (a.pageOrder < b.pageOrder ? -1 : a.pageOrder > b.pageOrder ? 1 : 0))
     )
 }
 
@@ -61,10 +61,10 @@ const createLOIAsSingleHTMLFile = () => {
                         ...curr,
                         classes: curr.classes ? curr.classes.replace(/small/g, 'inline') : '',
                     },
-                    state.build,
-                ),
+                    state.build
+                )
             ),
-        '',
+        ''
     )
 
     const fileName = 'figures-titlepage.xhtml'

@@ -39,7 +39,7 @@ class Spine {
                     if (state.loi.length) {
                         let loi = `<itemref idref="${fname}_xhtml" linear="${linear}"/>`
                         state.loi.forEach(
-                            figure => (loi += `<itemref idref="${fileId(figure.fileName)}" linear="yes"/>`),
+                            figure => (loi += `<itemref idref="${fileId(figure.fileName)}" linear="yes"/>`)
                         )
                         return loi
                     }

@@ -53,7 +53,7 @@ const createSCSSString = () =>
             }
         } catch (err) {
             log.error(
-                `Could not find theme [${themeName}]. Make sure the theme exists and contains a valid [application.scss]`,
+                `Could not find theme [${themeName}]. Make sure the theme exists and contains a valid [application.scss]`
             )
         }
 
@@ -121,7 +121,7 @@ const copyThemeAssets = () => {
         fs.copy(input, output, {
             overwrite: false,
             errorOnExist: false,
-        }),
+        })
     )
 
     return Promise.all(promises).catch(log.error)
@@ -143,15 +143,15 @@ const renderCSS = scssString =>
             (err, result) => {
                 if (err) throw err
                 resolve(result)
-            },
-        ),
+            }
+        )
     )
 
 const applyPostProcessing = ({ css }) =>
     new Promise(resolve =>
         postcss(autoprefixer(autoprefixerOptions))
             .process(css, { from: undefined })
-            .then(resolve),
+            .then(resolve)
     )
 
 const writeCSSFile = cssString => {

@@ -26,7 +26,7 @@ class Toc {
                                 ${Toc.item(curr)}
                                 ${curr.nodes && curr.nodes.length ? Toc.items(curr.nodes) : ''}
                             </li>`),
-                    '',
+                    ''
                 )}
             </ol>
         `

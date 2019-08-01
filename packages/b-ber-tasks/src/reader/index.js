@@ -61,7 +61,7 @@ class Reader {
         try {
             this.readerAppPath = path.join(
                 path.dirname(path.join(require.resolve(this.readerModuleName))),
-                this.readerModuleDistDir,
+                this.readerModuleDistDir
             )
             return Promise.resolve()
         } catch (err) {
@@ -92,9 +92,7 @@ class Reader {
         } catch (err) {
             log.error(`
                 A symlinked version of ${this.readerModuleName} was found but is inaccessible.
-                Try running npm i -S ${
-                    this.readerModuleName
-                }, or rebuilding the reader package if running this command in a development environment
+                Try running npm i -S ${this.readerModuleName}, or rebuilding the reader package if running this command in a development environment
             `)
             process.exit(1)
         }
@@ -107,7 +105,7 @@ class Reader {
     copyEpubToOutputDir() {
         const epubDir = this.createDirname(this.getBookMetadata('identifier'))
         const promises = this.epubAssets.map(item =>
-            fs.move(path.join(this.dist, item), path.join(this.outputDir, epubDir, item)),
+            fs.move(path.join(this.dist, item), path.join(this.outputDir, epubDir, item))
         )
 
         return Promise.all(promises).catch(log.error)
@@ -158,8 +156,8 @@ class Reader {
         contents = contents.replace(
             /<\/head>/,
             `<link rel="manifest" type="application/webpub+json" href="${this.getProjectConfig(
-                'reader_url',
-            )}/manifest.json"></head>`,
+                'reader_url'
+            )}/manifest.json"></head>`
         )
 
         return fs.writeFile(indexHTML, contents)
@@ -176,7 +174,7 @@ class Reader {
     injectServerDataIntoTemplate() {
         const indexHTML = path.join(this.dist, 'index.html')
         const bookURL = `${this.getProjectConfig('reader_url').replace(/$\/+/, '')}/epub/${this.getBookMetadata(
-            'identifier',
+            'identifier'
         )}`
         const serverData = {
             books: [

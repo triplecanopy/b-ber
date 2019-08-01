@@ -21,7 +21,7 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
                     key: index,
                     href,
                 },
-                children,
+                children
             )
         },
     },
@@ -44,7 +44,7 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
                     key: index,
                     href,
                 },
-                children,
+                children
             )
         },
     },
@@ -86,7 +86,7 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
                     controls: typeof controls === 'undefined' ? true : controls,
                     key: index,
                 },
-                children,
+                children
             )
         },
     },
@@ -116,7 +116,7 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
                     key: index,
                     poster,
                 },
-                children,
+                children
             )
         },
     },
@@ -139,7 +139,7 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
                     key: index,
                     xlinkHref: Url.resolveOverlappingURL(requestedSpineItem.absoluteURL, attrs.xlinkHref),
                 },
-                children,
+                children
             )
         },
     },
@@ -155,7 +155,7 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
                     ...attrs,
                     key: index,
                 },
-                children,
+                children
             )
         },
     },
@@ -172,7 +172,7 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
                     ...attrs,
                     key: index,
                 },
-                children,
+                children
             )
         },
     },
@@ -201,7 +201,7 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
                     ...attrs,
                     key: index,
                 },
-                children,
+                children
             )
         },
     },

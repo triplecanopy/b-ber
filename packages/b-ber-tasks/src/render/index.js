@@ -13,7 +13,7 @@ import state from '@canopycanopycanopy/b-ber-lib/State'
 
 const writeMarkupToFile = (fname, markup) => {
     fs.writeFile(path.join(state.dist, 'OPS', 'text', `${fname}.xhtml`), markup).then(() =>
-        log.info(`render xhtml [${path.basename(fname)}.xhtml]`),
+        log.info(`render xhtml [${path.basename(fname)}.xhtml]`)
     )
 }
 
@@ -55,10 +55,10 @@ function render() {
                 (acc, curr) =>
                     acc.then(() =>
                         createXTHMLFile(path.join(markdownDir, curr)).then(() =>
-                            log.info(`render markdown [${path.basename(curr)}]`),
-                        ),
+                            log.info(`render markdown [${path.basename(curr)}]`)
+                        )
                     ),
-                Promise.resolve(),
+                Promise.resolve()
             )
 
         return promises.catch(log.error)

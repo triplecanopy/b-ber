@@ -18,8 +18,8 @@ function checkForCalibre() {
             if (err || !ok) {
                 return reject(
                     new Error(
-                        "Error: calibre's ebook-convert must be installed. Download calibre here: https://calibre-ebook.com/",
-                    ),
+                        "Error: calibre's ebook-convert must be installed. Download calibre here: https://calibre-ebook.com/"
+                    )
                 )
             }
             resolve()
@@ -37,7 +37,7 @@ function convertDocument({ inputPath, bookPath, flags }) {
                 if (stderr !== '') process.stdout.write(stderr)
                 if (stdout !== '') process.stdout.write(stdout)
                 resolve()
-            },
+            }
         )
     })
 }
@@ -59,7 +59,7 @@ function convert(options) {
         checkForCalibre()
             .then(() => convertDocument(settings))
             .catch(reject)
-            .then(resolve),
+            .then(resolve)
     )
 }
 

@@ -163,7 +163,7 @@ function getProjectMetadataHTML() {
                         <dt>${curr.term}</dt>
                         <dd>${curr.value}</dd>
                     `),
-                '',
+                ''
             )}
         </dl>
     `
@@ -362,7 +362,7 @@ function injectPageElementsIntoFile(filePath, { tocElement, infoElement }) {
                 <div class="publication">
                 ${headerElement}
                 <div class="publication__contents">
-            `,
+            `
             )
 
             // close the wrapper element, adding a little javascript for the
@@ -379,7 +379,7 @@ function injectPageElementsIntoFile(filePath, { tocElement, infoElement }) {
                 ${webWorkerScript}
                 ${evenHandlerScript}
                 $1
-            `,
+            `
             )
 
             fs.writeFile(filePath, contents, err1 => {
@@ -444,8 +444,8 @@ function indexPageContent() {
                             })
                             resolve1()
                         })
-                    }),
-                ),
+                    })
+                )
             )
 
         Promise.all(promises)

@@ -39,7 +39,7 @@ const validateLocalMediaSource = (asset, mediaType) => {
     const media = [...state[mediaType]].map(a => toAlias(a))
     if (!asset.length || media.indexOf(asset) < 0) {
         const err = new Error(
-            `bber-directives: Could not find [${mediaType}] matching [${asset}], make sure it's included in the [_media] directory`,
+            `bber-directives: Could not find [${mediaType}] matching [${asset}], make sure it's included in the [_media] directory`
         ) // eslint-disable-line max-len
         log.error(err)
     }
@@ -50,7 +50,7 @@ const validateLocalMediaSource = (asset, mediaType) => {
 const createLocalMediaSources = sources =>
     sources.reduce(
         (acc, curr) => acc.concat(`<source src="../media/${path.basename(curr)}" type="${mime.lookup(curr)}"/>`),
-        '',
+        ''
     )
 
 const createRemoteMediaSource = sources => `<source src="${sources[0]}" type="${mime.lookup(sources[0])}"/>`
@@ -105,7 +105,7 @@ export default {
 
             if (!source) {
                 err = new Error(
-                    `bber-directives: Directive [${type}] requires a [source] attribute at [${filename}:${lineNr}]`,
+                    `bber-directives: Directive [${type}] requires a [source] attribute at [${filename}:${lineNr}]`
                 )
                 log.error(err)
             }

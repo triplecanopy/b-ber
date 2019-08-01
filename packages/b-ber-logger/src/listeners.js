@@ -20,7 +20,7 @@ export function bind() {
             this.decorate('b-ber', 'whiteBright', 'bgBlack'),
             this.decorate('info', 'green'),
             this.decorate(task),
-            this.decorate('start'),
+            this.decorate('start')
         )
 
         process.stdout.write(message)
@@ -46,7 +46,7 @@ export function bind() {
             this.decorate('b-ber', 'whiteBright', 'bgBlack'),
             this.decorate('info', 'green'),
             this.decorate(task),
-            totalMs,
+            totalMs
         )
 
         process.stdout.write(message)
@@ -61,7 +61,7 @@ export function bind() {
             this.indent(),
             this.decorate('b-ber', 'whiteBright', 'bgBlack'),
             this.decorate('info', 'green'),
-            this.decorate('Build succeeded', 'green'),
+            this.decorate('Build succeeded', 'green')
         )
 
         process.stdout.write(message)

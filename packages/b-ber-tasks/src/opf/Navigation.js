@@ -72,7 +72,7 @@ class Navigation {
                 const filesFromSystem = uniq(xhtmlFileObjects.map(a => path.basename(a.name, a.extension)))
 
                 resolve({ filesFromSystem, fileObjects })
-            }),
+            })
         )
     }
 
@@ -320,7 +320,7 @@ class Navigation {
                         this.createNcxStringsFromTemplate(resp),
                         this.createGuideStringsFromTemplate(resp),
                         this.createSpineStringsFromTemplate(resp),
-                    ]),
+                    ])
                 )
 
                 .then(resp =>
@@ -330,13 +330,13 @@ class Navigation {
                         // information to the next method in the chain
                         this.writeTocXhtmlFile(resp),
                         this.writeTocNcxFile(resp),
-                    ]),
+                    ])
                 )
                 // merge the values from the arrays returned above and pass the response
                 // along to write the `content.opf`
                 .then(resp => this.normalizeResponseObject(resp))
                 .catch(log.error)
-                .then(resolve),
+                .then(resolve)
         )
     }
 }

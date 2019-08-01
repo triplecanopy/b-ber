@@ -69,13 +69,13 @@ const copy = () =>
                                 '[%s - {%d}] exceeds recommended file size of {%d}',
                                 file,
                                 size,
-                                FILE_SIZE_WARNING_LIMIT,
+                                FILE_SIZE_WARNING_LIMIT
                             )
                         }
                     })
 
                     resolve1()
-                }),
+                })
             )
         })
 

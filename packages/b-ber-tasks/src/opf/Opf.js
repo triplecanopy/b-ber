@@ -56,7 +56,7 @@ class Opf {
                         ${guide}
                     `),
                 }),
-                { body: Pkg.body() },
+                { body: Pkg.body() }
             ).contents.toString()
 
             resolve(opfString)
