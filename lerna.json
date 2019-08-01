@@ -1,8 +1,10 @@
 {
     "lerna": "3.13.1",
-    "packages": ["packages/*"],
+    "packages": [
+        "packages/*"
+    ],
     "npmClient": "npm",
-    "version": "0.1.7",
+    "version": "0.1.8",
     "command": {
         "publish": {
             "message": "%v"
