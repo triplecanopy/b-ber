@@ -117,7 +117,7 @@ class Cover {
                 ctx.fillText('b-ber version', this.marginLeft, this.getPosY())
                 ctx.fillText(state.version, this.marginLeft, this.getPosY())
 
-                return PureImage.encodePNGToStream(img, fs.createWriteStream(this.coverImagePath))
+                return PureImage.encodeJPEGToStream(img, fs.createWriteStream(this.coverImagePath))
                     .then(() => {
                         log.info('cover generated image [%s]', this.coverImagePath)
                         resolve()
