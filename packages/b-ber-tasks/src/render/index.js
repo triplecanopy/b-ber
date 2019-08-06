@@ -1,6 +1,5 @@
 import path from 'path'
 import fs from 'fs-extra'
-import { findIndex } from 'lodash'
 import MarkdownRenderer from '@canopycanopycanopy/b-ber-markdown-renderer'
 import Xhtml from '@canopycanopycanopy/b-ber-templates/Xhtml'
 import log from '@canopycanopycanopy/b-ber-logger'
@@ -42,8 +41,8 @@ function render() {
             .sort((a, b) => {
                 const fileNameA = path.basename(a, '.md')
                 const fileNameB = path.basename(b, '.md')
-                const indexA = findIndex(state.spine, { fileName: fileNameA })
-                const indexB = findIndex(state.spine, { fileName: fileNameB })
+                const indexA = state.indexOf('spine.flattened', { fileName: fileNameA })
+                const indexB = state.indexOf('spine.flattened', { fileName: fileNameB })
 
                 return indexA < indexB ? -1 : indexA > indexB ? 1 : 0
             })

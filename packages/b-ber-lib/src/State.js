@@ -192,12 +192,12 @@ class State {
         this.loadTheme()
     }
 
-    reset() {
+    reset = () => {
         Object.entries(State.defaults).forEach(([key, val]) => set(this, key, val))
         this.loadConfig()
     }
 
-    add(prop, value) {
+    add = (prop, value) => {
         const prevValue = get(this, prop)
 
         if (isArray(prevValue)) {
@@ -211,7 +211,7 @@ class State {
         }
     }
 
-    remove(prop, value) {
+    remove = (prop, value) => {
         const prevValue = get(this, prop)
 
         if (isArray(prevValue)) {
@@ -226,24 +226,26 @@ class State {
         }
     }
 
-    merge(prop, value) {
+    merge = (prop, value) => {
         const oldValue = get(this, prop)
         set(this, prop, merge(oldValue, value))
     }
 
-    update(prop, val) {
+    update = (prop, val) => {
         set(this, prop, val)
     }
 
-    contains(collection, value) {
+    contains = (coll, value) => {
+        const collection = get(this, coll)
         return this.indexOf(collection, value) > -1
     }
 
-    indexOf(collection, value) {
-        return findIndex(this[collection], value)
+    indexOf = (coll, pred) => {
+        const collection = get(this, coll)
+        return findIndex(collection, pred)
     }
 
-    loadConfig() {
+    loadConfig = () => {
         if (!fs.existsSync(path.resolve('config.yml'))) return
 
         const config = new Yaml('config')
@@ -254,7 +256,7 @@ class State {
         set(this, 'config', new Config(config.json()))
     }
 
-    loadMetadata() {
+    loadMetadata = () => {
         const fpath = path.resolve(this.config.src, 'metadata.yml')
         if (!fs.existsSync(fpath)) return
 
@@ -262,7 +264,7 @@ class State {
         this.metadata.load(fpath)
     }
 
-    loadTheme() {
+    loadTheme = () => {
         // ensure themes dir exists unless running `new` command, as it's the
         // only command that's run outside of a project directory
         if (skipInitialization()) return
@@ -302,7 +304,7 @@ class State {
         }
     }
 
-    loadMedia() {
+    loadMedia = () => {
         if (skipInitialization()) return
 
         const mediaPath = path.resolve(this.config.src, '_media')
@@ -316,7 +318,7 @@ class State {
         set(this, 'audio', audio)
     }
 
-    loadBuildSettings(type) {
+    loadBuildSettings = type => {
         if (skipInitialization()) return
 
         const { src, dist } = this.config
@@ -345,7 +347,7 @@ class State {
         }
     }
 
-    loadBuilds() {
+    loadBuilds = () => {
         const builds = ['sample', 'epub', 'mobi', 'pdf', 'web', 'reader', 'xml']
         builds.forEach(build => set(this.builds, build, this.loadBuildSettings(build)))
     }
