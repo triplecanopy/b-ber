@@ -28,10 +28,6 @@ const handler = argv => {
     const projectPath = path.resolve(state.srcDir)
     const files = [...Project.javascripts(projectPath), ...Project.stylesheets(projectPath)]
 
-    // phantomjs takes forever (> 5sec) to exit, but we need to wait for it to
-    // finish to ensure that state is updated with the default cover image if
-    // none exists. phantomjs can be sped up by disabling wifi connection, see
-    // bug report here: https://github.com/ariya/phantomjs/issues/14033
     ensure({ files })
         .then(() => run(sequence))
         .catch(console.error)

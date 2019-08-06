@@ -11,6 +11,7 @@ declare -a browserFiles=(
 declare -a nodeFiles=(
     "src/serve/server-web.js"
     "src/serve/server-reader.js"
+    "src/cover/OpenSans-Regular.ttf"
 )
 
 for file in "${browserFiles[@]}"
