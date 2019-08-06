@@ -15,7 +15,7 @@ function write(msgs, context) {
         `%s%s %s${esses}`,
         context.indent(),
         context.decorate('b-ber', 'whiteBright', 'bgBlack'),
-        ...msgs_,
+        ...msgs_
     )
     process.stdout.write(message)
     context.newLine()

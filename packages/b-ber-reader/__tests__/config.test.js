@@ -10,7 +10,7 @@ describe('b-ber-reader development config', () => {
             expect.objectContaining({
                 debug: expect.any(Boolean),
                 verboseOutput: expect.any(Boolean),
-            }),
+            })
         )
     })
 
@@ -39,7 +39,7 @@ describe('b-ber-reader production config', () => {
             expect.objectContaining({
                 debug: expect.any(Boolean),
                 verboseOutput: expect.any(Boolean),
-            }),
+            })
         )
     })
 

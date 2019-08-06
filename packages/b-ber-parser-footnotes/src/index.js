@@ -67,7 +67,7 @@ function renderFootnoteOpen(tokens, idx, options, env /*,slf */) {
                 type: 'inline',
                 tag: 'span',
                 nesting: -1,
-            },
+            }
         )
     }
 

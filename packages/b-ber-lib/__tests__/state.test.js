@@ -13,7 +13,7 @@ let state
 
 beforeAll(() =>
     // eslint-disable-next-line global-require
-    fs.mkdirp('_project/_media').then(() => (state = require('../src/State').default)),
+    fs.mkdirp('_project/_media').then(() => (state = require('../src/State').default))
 )
 
 afterAll(() => Promise.all([fs.remove('_project'), fs.remove('themes')]))

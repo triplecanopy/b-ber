@@ -75,8 +75,8 @@ describe('b-ber-themes', () => {
                                 expect(result.stats.includedFiles).toBeArray()
 
                                 done()
-                            },
-                        ),
+                            }
+                        )
                     ).not.toThrow()
                 })
             })

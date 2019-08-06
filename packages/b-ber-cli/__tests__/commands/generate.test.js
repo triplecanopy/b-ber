@@ -19,7 +19,7 @@ describe('generate', () => {
                 describe: expect.any(String),
                 builder: expect.any(Function),
                 handler: expect.any(Function),
-            }),
+            })
         )
     })
 })

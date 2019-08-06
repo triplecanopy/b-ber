@@ -21,7 +21,7 @@ const createLOIAsSingleHTMLFile = () => {
     const classes = item => (item.classes ? item.classes.replace(/small/g, 'inline') : '')
     const figuresPage = state.figures.reduce(
         (acc, curr) => acc.concat(figure({ ...curr, classes: classes(curr) }, state.build)),
-        Xhtml.loi(),
+        Xhtml.loi()
     )
 
     const fileName = 'figures-titlepage.xhtml'

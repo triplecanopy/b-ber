@@ -6,9 +6,6 @@
     "command": {
         "publish": {
             "message": "%v"
-        },
-        "version": {
-            "allowBranch": ["master", "develop"]
         }
     }
 }

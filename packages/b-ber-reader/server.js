@@ -24,7 +24,7 @@ manifest = manifest.map(dir => ({
     url: `http://localhost:${PORT}/${BASE_DIR}/${dir}`,
     cover: url.resolve(
         `http://localhost:${PORT}/${BASE_DIR}/${dir}/OPS/images/`,
-        fs.readdirSync(`./${BASE_DIR}/${dir}/OPS/images`).find(img => /__bber_cover__/.test(img)) || '',
+        fs.readdirSync(`./${BASE_DIR}/${dir}/OPS/images`).find(img => /__bber_cover__/.test(img)) || ''
     ),
     id: String(Math.random()).slice(2),
 }))

@@ -55,7 +55,7 @@ class Reader {
         try {
             this.readerAppPath = path.join(
                 path.dirname(path.join(require.resolve(this.readerModuleName))),
-                this.readerModuleDistDir,
+                this.readerModuleDistDir
             )
             return
         } catch (err) {
@@ -99,7 +99,7 @@ class Reader {
     copyEpubToOutputDir() {
         const epubDir = this.createDirname(this.getBookMetadata('identifier'))
         const promises = this.epubAssets.map(item =>
-            fs.move(state.dist.root(item), path.join(this.outputDir, epubDir, item)),
+            fs.move(state.dist.root(item), path.join(this.outputDir, epubDir, item))
         )
 
         return Promise.all(promises)
@@ -148,8 +148,8 @@ class Reader {
         contents = contents.replace(
             /<\/head>/,
             `<link rel="manifest" type="application/webpub+json" href="${this.getProjectConfig(
-                'reader_url',
-            )}/manifest.json"></head>`,
+                'reader_url'
+            )}/manifest.json"></head>`
         )
 
         return fs.writeFile(indexHTML, contents)
@@ -166,7 +166,7 @@ class Reader {
     injectServerDataIntoTemplate() {
         const indexHTML = state.dist.root('index.html')
         const bookURL = `${this.getProjectConfig('reader_url').replace(/$\/+/, '')}/epub/${this.getBookMetadata(
-            'identifier',
+            'identifier'
         )}`
         const serverData = {
             books: [

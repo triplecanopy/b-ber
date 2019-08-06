@@ -37,7 +37,7 @@ const copy = () => {
                     overwrite: false,
                     // errorOnExist: true,
                     filter: file => path.basename(file).charAt(0) !== '.' && !ignore[file],
-                }),
+                })
             )
             .then(() => fs.readdir(dir.to))
             .then(files => {
@@ -52,11 +52,11 @@ const copy = () => {
                             'copy [%s - {%d}] exceeds recommended file size of {%d}',
                             file,
                             size,
-                            FILE_SIZE_WARNING_LIMIT,
+                            FILE_SIZE_WARNING_LIMIT
                         )
                     }
                 })
-            }),
+            })
     )
 
     return Promise.all(promises).catch(log.error)

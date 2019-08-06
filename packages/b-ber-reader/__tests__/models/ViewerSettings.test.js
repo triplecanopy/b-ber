@@ -22,7 +22,7 @@ describe('ViewerSettings', () => {
                 theme: themes.DEFAULT,
                 transition: transitions.SLIDE,
                 transitionSpeed: expect.any(Number),
-            }),
+            })
         )
 
         vs = new ViewerSettings({ fontSize: 1 })
@@ -30,7 +30,7 @@ describe('ViewerSettings', () => {
         expect(vs.settings).toEqual(
             expect.objectContaining({
                 fontSize: 1,
-            }),
+            })
         )
     })
 
@@ -128,7 +128,7 @@ describe('ViewerSettings', () => {
                 theme: themes.DEFAULT,
                 transition: transitions.SLIDE,
                 transitionSpeed: expect.any(Number),
-            }),
+            })
         )
     })
 

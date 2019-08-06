@@ -53,7 +53,7 @@ export default {
                                     `<div class="pullquote full-width">
                                 <p>${escapeHtml(caption)}</p>
                                 ${citations[idx2] ? `<cite>&#x2014;${escapeHtml(citations[idx2])}</cite>` : ''}
-                            </div>`,
+                            </div>`
                             )
                             .join(''),
                         '</section>',
@@ -66,11 +66,11 @@ export default {
                         '<figure style="height: auto;">',
                         '<div class="figure__items" style="width: 100%; margin: 0 auto;">',
                         `<img class="landscape" alt="${attrs.image}" src="../images/${escapeHtml(
-                            attrs.image,
+                            attrs.image
                         )}" style="width: 100%; max-width: 100%; height: auto;"/>`,
                         attrs.caption
                             ? `<div class="figcaption" style="width: 100%; max-width: 100%; height: auto;"><p class="small">${escapeHtml(
-                                  attrs.caption,
+                                  attrs.caption
                               )}</p></div>`
                             : '',
                         '</div>',

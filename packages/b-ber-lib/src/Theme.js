@@ -116,7 +116,7 @@ class Theme {
         if (duplicates.length) {
             log.notice('Duplicate themes have been found in both the [node_modules] and [themes] directory')
             log.notice(
-                'Resolve this issue by either removing the duplicate directory from [themes] or by running [npm rm <location> <package>]',
+                'Resolve this issue by either removing the duplicate directory from [themes] or by running [npm rm <location> <package>]'
             )
         }
     }

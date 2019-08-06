@@ -8,7 +8,7 @@ const { exec } = require('child_process')
 const nextVersion = semver.inc(
     process.env.npm_config_version,
     process.env.npm_config_bump,
-    process.env.npm_config_preid || 'alpha',
+    process.env.npm_config_preid || 'alpha'
 )
 
 console.log('Updating independant packages', nextVersion)

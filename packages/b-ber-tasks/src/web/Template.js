@@ -32,7 +32,7 @@ class Template {
                             <dt>${curr.term}</dt>
                             <dd>${curr.value}</dd>
                         `),
-                    '',
+                    ''
                 )}
             </dl>
         `
@@ -158,7 +158,7 @@ class Template {
         headerElement,
         coverImage,
         navigationToggleScript,
-        webWorkerScript,
+        webWorkerScript
     ) {
         return `
             <?xml version="1.0" encoding="UTF-8" standalone="no"?>

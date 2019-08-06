@@ -85,8 +85,8 @@ const mobiCSS = () => {
                 const file = state.dist.stylesheets(stylesheet)
                 log.info(`mobiCSS process [${path.basename(file)}]`)
                 return process(file).then(write)
-            }),
-        ).catch(log.error),
+            })
+        ).catch(log.error)
     )
 }
 

@@ -92,7 +92,7 @@ class Viewport {
                 .map(([top, right, bottom, left]) => ({
                     ...Viewport.getVerticalSpacing(top, bottom),
                     ...Viewport.getHorizontalSpacing(left, right),
-                })),
+                }))
         )
 
     static getDimensionsFromMatrix = () => Viewport.getDimensions(Viewport.getBreakpointXY())

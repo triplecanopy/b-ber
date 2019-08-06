@@ -99,7 +99,7 @@ const copyThemeAssets = () => {
         fs.copy(input, output, {
             overwrite: false,
             errorOnExist: false,
-        }),
+        })
     )
 
     return Promise.all(promises)
@@ -121,8 +121,8 @@ const renderCSS = scssString =>
             (err, result) => {
                 if (err) throw err
                 resolve(result)
-            },
-        ),
+            }
+        )
     )
 
 const applyPostProcessing = ({ css }) => postcss(autoprefixer(autoprefixerOptions)).process(css, { from: undefined })

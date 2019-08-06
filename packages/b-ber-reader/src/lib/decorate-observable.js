@@ -15,7 +15,7 @@ const log = (lastSpreadIndex, contentDimensions, frameHeight, columns) => {
             lastSpreadIndex,
             contentDimensions,
             frameHeight,
-            columns,
+            columns
         ) // eslint-disable-line indent
         console.groupEnd()
     }
@@ -127,7 +127,7 @@ export default function observable(target) {
             contentDimensions = Math.max(
                 this.contentNode.scrollHeight,
                 this.contentNode.offsetHeight,
-                this.contentNode.clientHeight,
+                this.contentNode.clientHeight
             )
 
             frameHeight = Math.round(frameHeight)

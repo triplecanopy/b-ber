@@ -83,7 +83,7 @@ const ensureDirs = (dirs, prefix) => {
             `${prefix}/_project/_media`,
             `${prefix}/_project/_stylesheets`,
             `${prefix}/themes`,
-        ].concat(dirs),
+        ].concat(dirs)
     ).map(a => fs.ensureDir(path.join(cwd, a)))
 
     return Promise.all(dirs_)
@@ -100,7 +100,7 @@ const ensureFiles = (files, prefix) => {
         .reduce(
             (acc, curr) =>
                 fs.existsSync(curr.absolutePath) ? acc : acc.concat(fs.writeFile(curr.absolutePath, curr.content)),
-            [],
+            []
         )
     return Promise.all(files_)
 }

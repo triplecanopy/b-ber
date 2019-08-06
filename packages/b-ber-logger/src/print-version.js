@@ -9,7 +9,7 @@ export function printVersion(version) {
         this.indent(),
         this.decorate('b-ber', 'whiteBright', 'bgBlack'),
         this.decorate('version'),
-        this.decorate(version, 'blueBright'),
+        this.decorate(version, 'blueBright')
     )
 
     process.stdout.write(message)

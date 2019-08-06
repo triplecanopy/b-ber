@@ -40,8 +40,8 @@ class Spine {
                     return acc.concat(
                         state.loi.reduce(
                             (acc2, curr2) => acc2.concat(Spine.item({ ...curr2, linear: true })),
-                            Spine.item(curr),
-                        ),
+                            Spine.item(curr)
+                        )
                     )
                 }
             }

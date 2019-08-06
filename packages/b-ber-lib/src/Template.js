@@ -9,7 +9,7 @@ class Template {
                 layout: 'template',
                 contents: Buffer.from(contents),
             }),
-            { template },
+            { template }
         ).contents.toString()
 }
 

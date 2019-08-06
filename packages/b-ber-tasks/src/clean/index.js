@@ -14,7 +14,7 @@ const clean = () => {
         .map(b => fs.remove(path.join(projectRoot, b)).then(() => log.info('clean remove [%s]', b)))
 
     return Promise.all(promises).then(() =>
-        fs.remove(state.distDir).then(() => log.info('clean remove [%s]', state.distDir)),
+        fs.remove(state.distDir).then(() => log.info('clean remove [%s]', state.distDir))
     )
 }
 

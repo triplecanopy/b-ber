@@ -39,7 +39,7 @@ const addCaption = (md, t, attrs) => {
             type: 'block',
             tag: 'div',
             nesting: -1,
-        },
+        }
     )
 }
 
@@ -87,7 +87,7 @@ const createMediaElement = (tok, attrs) => {
             tag: attrs.type,
             attrs: mediaAttrs,
             nesting: 1,
-        },
+        }
     )
 
     sources.forEach(source => {
@@ -119,7 +119,7 @@ const createMediaElement = (tok, attrs) => {
             type: 'block',
             tag: 'section',
             nesting: -1,
-        },
+        }
     )
 }
 

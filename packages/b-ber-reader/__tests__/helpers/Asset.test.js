@@ -18,7 +18,7 @@ describe('Asset', () => {
             Asset.convertToReactAttrs({
                 'data-foo': 'bar',
                 style: 'font-family: times',
-            }),
+            })
         ).toEqual({ 'data-foo': 'bar', style: { fontFamily: 'times' } })
 
         expect(Asset.convertToReactAttrs({ style: 'height: 10px; border: 0' })).toEqual({
@@ -29,7 +29,7 @@ describe('Asset', () => {
             Asset.convertToReactAttrs({
                 style:
                     '-webkit-overflow-scrolling: touch; -ms-user-select: none; -moz-transition-delay: 1s; -o-perspective: 100px;',
-            }),
+            })
         ).toEqual({
             style: {
                 WebkitOverflowScrolling: 'touch',

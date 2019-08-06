@@ -26,7 +26,7 @@ describe('BookMetaData', () => {
                 language: expect.any(String),
                 rights: expect.any(String),
                 identifier: expect.any(String),
-            }),
+            })
         )
 
         expect(bookMetadata.creator).toBe('b')

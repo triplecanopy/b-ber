@@ -30,7 +30,7 @@ export const validateLocalMediaSource = (asset, mediaType) => {
     const media = [...state[mediaType]].map(file => toAlias(file))
     if (!asset.length || media.indexOf(asset) < 0) {
         log.error(
-            `Could not find [${mediaType}] matching [${asset}], make sure it's included in the [_media] directory`,
+            `Could not find [${mediaType}] matching [${asset}], make sure it's included in the [_media] directory`
         )
     }
 
@@ -40,7 +40,7 @@ export const validateLocalMediaSource = (asset, mediaType) => {
 export const createLocalMediaSources = sources =>
     sources.reduce(
         (acc, curr) => acc.concat(`<source src="../media/${path.basename(curr)}" type="${mime.lookup(curr)}"/>`),
-        '',
+        ''
     )
 
 export const createRemoteMediaSource = sources => `<source src="${sources[0]}" type="${mime.lookup(sources[0])}"/>`

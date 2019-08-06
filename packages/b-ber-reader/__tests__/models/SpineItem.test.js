@@ -28,7 +28,7 @@ describe('SpineItem', () => {
                 depth: expect.any(Number),
                 children: expect.any(Array),
                 addChild: expect.any(Function),
-            }),
+            })
         )
 
         spineItem.addChild(1)

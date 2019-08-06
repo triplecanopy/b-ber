@@ -221,7 +221,7 @@ class Navigation {
                     this.createNcxStringsFromTemplate(resp),
                     this.createGuideStringsFromTemplate(resp),
                     this.createSpineStringsFromTemplate(resp),
-                ]),
+                ])
             )
             .then(resp => this.writeFiles(resp))
             .catch(log.error)

@@ -120,7 +120,7 @@ const containerPlugin = (md, name, options = {}) => {
                             type: 'inline',
                             tag: 'span',
                             nesting: -1,
-                        },
+                        }
                     )
                 }
             }

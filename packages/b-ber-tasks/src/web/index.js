@@ -258,8 +258,8 @@ function injectPageElementsIntoFile(filePath, { tocElement, infoElement }) {
             infoElement,
             navigationToggleScript,
             webWorkerScript,
-            evenHandlerScript,
-        ),
+            evenHandlerScript
+        )
     )
 
     log.info(`web writing ${path.basename(filePath)}`)
@@ -297,7 +297,7 @@ function indexPageContent() {
 
                 fileIndex += 1
                 records.push({ id: fileIndex, title, body, url })
-            }),
+            })
         )
 
     return Promise.all(promises).then(() => JSON.stringify(records))
@@ -376,7 +376,7 @@ function createIndexHTML({ tocElement, infoElement }) {
         headerElement,
         coverImage,
         navigationToggleScript,
-        webWorkerScript,
+        webWorkerScript
     )
 
     return fs.writeFile(path.resolve(DIST_PATH, 'index.html'), indexHTML)

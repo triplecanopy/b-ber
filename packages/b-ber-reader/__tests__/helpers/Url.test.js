@@ -35,14 +35,14 @@ describe('Url', () => {
         expect(Url.resolveRelativeURL('http://example.com/foo/bar', '../')).toBe('http://example.com/foo/')
         expect(Url.resolveRelativeURL('http://example.com/foo/bar', '../../baz')).toBe('http://example.com/baz')
         expect(Url.resolveRelativeURL('http://example.com/', 'foo/?bar=some val')).toBe(
-            'http://example.com/foo/?bar=some%20val',
+            'http://example.com/foo/?bar=some%20val'
         )
     })
 
     test('resolves overlapping urls', () => {
         expect(Url.resolveOverlappingURL('http://example.com/foo', 'foo/bar')).toBe('http://example.com/foo/bar')
         expect(Url.resolveOverlappingURL('http://example.com/foo/bar/baz', '/bar/baz')).toBe(
-            'http://example.com/foo/bar/baz',
+            'http://example.com/foo/bar/baz'
         )
     })
 
@@ -56,19 +56,19 @@ describe('Url', () => {
     test('trims a filename from a url', () => {
         expect(Url.trimFilenameFromResponse('http://example.com/test.jpg')).toBe('http://example.com')
         expect(Url.trimFilenameFromResponse('http://example.com/path/to/file/test.jpg')).toBe(
-            'http://example.com/path/to/file',
+            'http://example.com/path/to/file'
         )
     })
 
     test('creates an absolute url', () => {
         expect(Url.toAbsoluteUrl('http://example.com/', 'path/to/file/test.jpg')).toBe(
-            'http://example.com/path/to/file/test.jpg',
+            'http://example.com/path/to/file/test.jpg'
         )
         expect(Url.toAbsoluteUrl('http://example.com', 'path/to/file/test.jpg')).toBe(
-            'http://example.com/path/to/file/test.jpg',
+            'http://example.com/path/to/file/test.jpg'
         )
         expect(Url.toAbsoluteUrl('http://example.com/', '/path/to/file/test.jpg')).toBe(
-            'http://example.com/path/to/file/test.jpg',
+            'http://example.com/path/to/file/test.jpg'
         )
     })
 

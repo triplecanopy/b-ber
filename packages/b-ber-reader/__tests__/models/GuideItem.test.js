@@ -12,7 +12,7 @@ describe('GuideItem', () => {
                 title: expect.any(String),
                 href: expect.any(String),
                 absoluteURL: expect.any(String),
-            }),
+            })
         )
     })
 })

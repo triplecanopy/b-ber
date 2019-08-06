@@ -13,7 +13,7 @@ export default function markdownItFootnotePlugin(self) {
             { type: 'block', tag: 'section', attrs: [['class', 'footnotes break-after']], nesting: 1, block: true },
             { type: 'block', tag: 'h1', nesting: 1, block: true },
             { type: 'text', block: false, content: title },
-            { type: 'block', tag: 'h1', nesting: -1 },
+            { type: 'block', tag: 'h1', nesting: -1 }
         )
 
         // add closing section tag

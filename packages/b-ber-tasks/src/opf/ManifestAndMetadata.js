@@ -62,7 +62,7 @@ class ManifestAndMetadata {
                 layout: 'body',
                 contents: Buffer.from(resp.bookmeta.join('')),
             }),
-            { body: Metadata.body() },
+            { body: Metadata.body() }
         ).contents.toString()
 
         log.info('opf build [manifest]')
@@ -73,7 +73,7 @@ class ManifestAndMetadata {
                 layout: 'body',
                 contents: Buffer.from(resp.manifest.filter(Boolean).join('')),
             }),
-            { body: Manifest.body() },
+            { body: Manifest.body() }
         ).contents.toString()
 
         return { metadata, manifest }
