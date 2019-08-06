@@ -14,23 +14,10 @@ export default function bber() {
         console.log(`
     Usage: bber <command> [options]
 
-    Where <command> is one of:
-
-    ${Object.keys(commands)
-        .sort()
-        .reduce((acc, curr) => {
-            const a = acc.split('\n')
-            const l = a[a.length - 1].length
-            return acc.concat(l > LINE_LENGTH ? `\n    ${curr}, ` : `${curr}, `)
-        }, '')
-        .slice(0, -2)}
-
-    Some common commands are:
-
-        bber new        Start a new project
-        bber generate   Create a new chapter. Accepts arguments for metadata.
-        bber serve      Preview the publication's contents in a browser
-        bber build      Create an ePub, mobi, PDF, or all file formats
+    bber new        Start a new project
+    bber generate   Create a new chapter. Accepts arguments for metadata.
+    bber serve      Preview the publication's contents in a browser
+    bber build      Create an ePub, mobi, PDF, or all file formats
 
     For more information on a command, enter bber <command> --help
 
