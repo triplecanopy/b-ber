@@ -5,10 +5,14 @@ import { getBookMetadata } from '@canopycanopycanopy/b-ber-lib/utils'
 
 const pageBreakBeforeXPATH = () =>
     [
-        '//h:*[@class="figure__large figure__inline"]',
-        '//h:*[@class="figure__large figure__inline"]/following::h:p[1]',
-        '//h:*[re:test(@class, "break-before")]',
-        '//h:*[@data-gallery-item]',
+        // eslint-disable-next-line no-useless-escape
+        '//h:*\[@class="figure__large figure__inline"\]', // prettier-ignore
+        // eslint-disable-next-line no-useless-escape
+        '//h:*\[@class="figure__large figure__inline"\]/following::h:p[1]', // prettier-ignore
+        // eslint-disable-next-line no-useless-escape
+        '//h:*\[contains(@class, "break-before")\]', // prettier-ignore
+        // eslint-disable-next-line no-useless-escape
+        '//h:*\[@data-gallery-item\]', // prettier-ignore
     ].join('|')
 
 const mobi = () =>
