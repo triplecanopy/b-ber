@@ -25,7 +25,9 @@
         "publish:patch": "lerna publish patch",
         "outdated": "npm outdated || true && lerna exec --no-bail -- npm outdated",
         "deps:update": "lernaupdate",
-        "deps:clean": "rimraf ./package-lock.json ./node_modules && lerna exec -- rm -rf ./package-lock.json ./node_modules",
+        "deps:lock": "rimraf ./package-lock.json && lerna exec -- rm -rf ./package-lock.json",
+        "deps:clean": "rimraf ./node_modules && lerna exec -- rm -rf ./node_modules",
+        "deps:rebuild": "npm run deps:clean && npm i && lerna bootstrap",
         "deps:dedupe": "lernaupdate --dedupe"
     },
     "lint-staged": {
