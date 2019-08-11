@@ -112,11 +112,7 @@ class Navigation {
                 const missingEntriesWithAttributes = missingEntries.reduce((acc, name) => {
                     if (state.contains('loi', { name })) return acc
 
-                    // TODO: state should handle dot-notation for add/remove
-                    // @issue: https://github.com/triplecanopy/b-ber/issues/229
-                    // state.spine.declared.push(name)
                     state.add('spine.declared', name)
-
                     return acc.concat(name)
                 }, [])
 
