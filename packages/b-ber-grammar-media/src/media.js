@@ -83,7 +83,7 @@ export function createMediaInline({
     caption,
 }) {
     return `${commentStart}
-            <section class="${mediaType} ${aspecRatioClassName} figure__large">
+            <section class="${mediaType} ${aspecRatioClassName} figure__large figure__inline">
             <${mediaType} id="${id}"${attrString}${webOnlyAttrString}>
             ${sourceElements}
             <div class="media__fallback__${mediaType} media__fallback--image figure__small figure__small--landscape">
