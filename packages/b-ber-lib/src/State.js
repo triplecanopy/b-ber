@@ -235,10 +235,7 @@ class State {
         set(this, prop, val)
     }
 
-    contains = (coll, value) => {
-        const collection = get(this, coll)
-        return this.indexOf(collection, value) > -1
-    }
+    contains = (coll, value) => this.indexOf(coll, value) > -1
 
     indexOf = (coll, pred) => {
         const collection = get(this, coll)
