@@ -5,6 +5,7 @@ import createBuildSequence from '@canopycanopycanopy/b-ber-shapes-sequences/crea
 import sequences from '@canopycanopycanopy/b-ber-shapes-sequences/sequences'
 import Project from '@canopycanopycanopy/b-ber-templates/Project'
 import { ensure } from '@canopycanopycanopy/b-ber-lib/utils'
+import log from '@canopycanopycanopy/b-ber-logger'
 
 // note leading pipe - to ensure we can run the `all` command without arguments
 const command = 'build [|epub|mobi|pdf|reader|sample|web]'
@@ -12,7 +13,12 @@ const describe = 'Build a project'
 
 const handler = argv => {
     process.env.NODE_ENV = process.env.NODE_ENV || 'development'
+
     const sequence = createBuildSequence(argv)
+    const subSequence = sequence.reduce((a, c) => a.concat(...sequences[c]), [])
+
+    state.update('sequence', subSequence)
+    log.registerSequence(state, command, subSequence)
 
     const run = buildTasks => {
         const build = buildTasks.shift()

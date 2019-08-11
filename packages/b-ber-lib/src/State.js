@@ -17,7 +17,17 @@ import Spine from './Spine'
 
 const randomHash = () => crypto.randomBytes(20).toString('hex')
 
-const skipInitialization = () => process.argv.length < 3 || process.argv.includes('new')
+const skipInitialization = () => {
+    const { argv } = process
+
+    // prettier-ignore
+    return (
+        argv.includes('--help') ||  // if a help flag is set
+        argv.includes('-h') ||      // if a help alias is set
+        argv.length < 3 ||          // if there are insufficient arguments
+        argv.includes('new')        // if it's a new project
+    )
+}
 
 const SRC_DIR_IMAGES = '_images'
 const SRC_DIR_MARKDOWN = '_markdown'
