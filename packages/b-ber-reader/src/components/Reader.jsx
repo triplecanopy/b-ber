@@ -166,17 +166,17 @@ class Reader extends Component {
         document.addEventListener(
             'webkitfullscreenchange mozfullscreenchange fullscreenchange',
             this.handleResize,
-            false,
+            false
         )
         document.addEventListener(
             'webkitfullscreenchange mozfullscreenchange fullscreenchange',
             this.handleResizeStart,
-            false,
+            false
         )
         document.addEventListener(
             'webkitfullscreenchange mozfullscreenchange fullscreenchange',
             this.handleResizeEnd,
-            false,
+            false
         )
     }
 
@@ -268,7 +268,7 @@ class Reader extends Component {
                     pathname,
                     search,
                     state,
-                }),
+                })
             )
         } else {
             this.setState({ search }, () => history.push({ search }))
@@ -359,7 +359,7 @@ class Reader extends Component {
                 if (logTime) {
                     console.timeEnd('XMLAdaptor.createGuideItems(data),XMLAdaptor.createSpineItems(data)')
                     console.time(
-                        'XMLAdaptor.udpateGuideItemURLs(data, opsURL),XMLAdaptor.udpateSpineItemURLs(data, opsURL)',
+                        'XMLAdaptor.udpateGuideItemURLs(data, opsURL),XMLAdaptor.udpateSpineItemURLs(data, opsURL)'
                     )
                 }
                 const data = { ...a, ...b }
@@ -371,7 +371,7 @@ class Reader extends Component {
             .then(([a, b]) => {
                 if (logTime) {
                     console.timeEnd(
-                        'XMLAdaptor.udpateGuideItemURLs(data, opsURL),XMLAdaptor.udpateSpineItemURLs(data, opsURL)',
+                        'XMLAdaptor.udpateGuideItemURLs(data, opsURL),XMLAdaptor.udpateSpineItemURLs(data, opsURL)'
                     )
                 }
                 return XMLAdaptor.createBookMetadata({ ...a, ...b })
@@ -490,7 +490,7 @@ class Reader extends Component {
                             // return this.setState({ready: true}) // TODO: force load
                             // @issue: https://github.com/triplecanopy/b-ber/issues/214
                         }, MAX_RENDER_TIMEOUT)
-                    },
+                    }
                 )
             })
             .catch(err => {
@@ -583,7 +583,7 @@ class Reader extends Component {
                     this.hideSpinner()
 
                     Messenger.sendPaginationEvent(this.state)
-                },
+                }
             )
 
             if (logTime) console.timeEnd('Content Visible')
@@ -603,7 +603,7 @@ class Reader extends Component {
             () => {
                 this.loadSpineItem(currentSpineItem, deferredCallback)
                 this.savePosition()
-            },
+            }
         )
     }
 
@@ -695,7 +695,7 @@ class Reader extends Component {
             () => {
                 this.loadSpineItem(currentSpineItem, deferredCallback)
                 this.savePosition()
-            },
+            }
         )
     }
 

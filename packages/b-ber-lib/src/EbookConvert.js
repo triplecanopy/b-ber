@@ -1,6 +1,8 @@
 import path from 'path'
+import has from 'lodash/has'
 import { exec } from 'child_process'
 import exists from 'command-exists'
+import log from '@canopycanopycanopy/b-ber-logger'
 
 const command = 'ebook-convert'
 
@@ -18,8 +20,8 @@ function checkForCalibre() {
             if (err || !ok) {
                 return reject(
                     new Error(
-                        "Error: calibre's ebook-convert must be installed. Download calibre here: https://calibre-ebook.com/",
-                    ),
+                        "Error: calibre's ebook-convert must be installed. Download calibre here: https://calibre-ebook.com/"
+                    )
                 )
             }
             resolve()
@@ -37,7 +39,7 @@ function convertDocument({ inputPath, bookPath, flags }) {
                 if (stderr !== '') process.stdout.write(stderr)
                 if (stdout !== '') process.stdout.write(stdout)
                 resolve()
-            },
+            }
         )
     })
 }
@@ -45,7 +47,7 @@ function convertDocument({ inputPath, bookPath, flags }) {
 function convert(options) {
     const props = ['inputPath', 'outputPath', 'fileType']
     props.forEach(prop => {
-        if (!{}.hasOwnProperty.call(options, prop)) {
+        if (!has(options, prop)) {
             throw new Error(`Missing required option [${prop}]`)
         }
     })
@@ -55,12 +57,9 @@ function convert(options) {
 
     settings.bookPath = `"${path.resolve(settings.outputPath, bookName)}"`
 
-    return new Promise((resolve, reject) =>
-        checkForCalibre()
-            .then(() => convertDocument(settings))
-            .catch(reject)
-            .then(resolve),
-    )
+    return checkForCalibre()
+        .then(() => convertDocument(settings))
+        .catch(log.error)
 }
 
 export default { convert }

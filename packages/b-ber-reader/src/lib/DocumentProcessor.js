@@ -151,7 +151,7 @@ class DocumentProcessor {
 
     setMarkerStyles(elem) {
         Object.entries(this.markerStyles).forEach(
-            ([key, val]) => (elem.style[key] = val), // eslint-disable-line no-param-reassign
+            ([key, val]) => (elem.style[key] = val) // eslint-disable-line no-param-reassign
         )
     }
 

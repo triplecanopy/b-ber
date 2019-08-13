@@ -1,8 +1,0 @@
-.babelrc
-.eslintrc
-.github
-.gitignore
-demos
-jest.config.js
-npm-debug.log*
-.editorconfig

@@ -2,42 +2,49 @@
 
 import util from 'util'
 
-export function error(...args) {
+export function error(_args) {
+    const args = Array.isArray(_args) ? _args : [_args]
+
     if (this.logLevel < 1) return
     const errCode = 1
 
     let message
     let stack
+    let err
+    let formatted
 
-    if (args[0] instanceof Error) {
-        message = this.composeMessage([args[0].message])
-        ;({ stack } = args[0])
-    } else {
-        message = this.composeMessage(args)
-        ;({ stack } = new Error())
+    while ((err = args.shift())) {
+        if (err instanceof Error) {
+            message = this.composeMessage([err.message])
+            ;({ stack } = err)
+        } else {
+            message = this.composeMessage([err])
+            ;({ stack } = new Error())
+        }
+
+        let prefix = ''
+
+        prefix += this.decorate('b-ber', 'whiteBright', 'bgBlack')
+        prefix += ' '
+        prefix += this.decorate('ERR!', 'whiteBright', 'bgRed')
+
+        formatted = util.format.apply(util, ['%s %s', prefix, message])
+
+        this.taskErrors += 1
+        this.errors.push({
+            stack,
+            message,
+            formatted,
+        })
     }
 
-    let prefix = ''
-
-    prefix += this.decorate('b-ber', 'whiteBright', 'bgBlack')
-    prefix += ' '
-    prefix += this.decorate('ERR!', 'whiteBright', 'bgRed')
-
-    const formatted = util.format.apply(util, ['%s %s', prefix, message])
-
-    this.taskErrors += 1
-    this.errors.push({
-        stack,
-        message,
-        formatted,
+    this.errors.forEach(processedErr => {
+        process.stdout.write(processedErr.formatted)
+        this.newLine()
+        process.stdout.write(util.format.call(util, processedErr.stack))
+        this.newLine()
     })
 
-    process.stdout.write(formatted)
-    if (this.logLevel > 2) {
-        this.newLine()
-        process.stdout.write(util.format.call(util, stack))
-    }
-    this.newLine()
     process.stdout.write(this.decorate(`b-ber exited with code ${errCode}`, 'whiteBright', 'bgRed'))
     this.newLine()
     process.exit(errCode)

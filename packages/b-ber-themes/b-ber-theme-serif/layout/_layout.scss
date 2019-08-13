@@ -13,12 +13,37 @@
 @import 'base/reader'; // conditional styles
 @import 'base/print'; // for print views and PDF generation
 
-.break-before {
-    page-break-before: always !important; // sass-lint:disable-line no-important
-}
 .break-after {
-    page-break-after: always !important; // sass-lint:disable-line no-important
+    @if $build == 'reader' {
+        @include break('desktop') {
+            // Reader: Chrome & Safari
+            break-after: column;
+
+            // FireFox: TBD.
+            // `break`ing in the column context in FireFox is unsupported, so shims
+            // will need to be added on a per-project basis until we find a reliable
+            // way of dealing with this
+            @-moz-document url-prefix() {
+            }
+        }
+    } @else {
+        // Epub, Mobi, PDF ...
+        page-break-after: always;
+    }
 }
-.uppercase {
-    text-transform: uppercase !important; // sass-lint:disable-line no-important
+
+.break-before {
+    @if $build == 'reader' {
+        @include break('desktop') {
+            // Reader: Chrome & Safari
+            break-before: column;
+
+            // FireFox: TBD.
+            @-moz-document url-prefix() {
+            }
+        }
+    } @else {
+        // Epub, Mobi, PDF ...
+        page-break-before: always;
+    }
 }

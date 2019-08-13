@@ -62,7 +62,7 @@ class Messenger {
                 metaKey: event.metaKey,
                 type: messagesTypes.KEYDOWN_EVENT,
             },
-            Messenger.MESSAGE_DOMAIN,
+            Messenger.MESSAGE_DOMAIN
         )
     }
 

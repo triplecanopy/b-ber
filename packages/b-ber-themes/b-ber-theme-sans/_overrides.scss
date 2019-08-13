@@ -129,7 +129,8 @@ section.contributors p,
 section.appendix p,
 .pullquote p,
 .pullquote cite,
-blockquote p {
+blockquote p,
+blockquote cite {
     @include type-settings(-1);
 }
 

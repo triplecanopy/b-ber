@@ -13,35 +13,27 @@ import rrdir from 'recursive-readdir'
 class Reader {
     constructor() {
         this.outputDirName = 'epub'
-        this.outputDir = path.join(this.dist, this.outputDirName)
-        this.apiDir = path.join(this.dist, 'api')
+        this.outputDir = state.dist.root(this.outputDirName)
+        this.apiDir = state.dist.root('api')
         this.epubAssets = ['META-INF', 'OPS', 'mimetype']
 
         this.readerModuleName = '@canopycanopycanopy/b-ber-reader'
         this.readerModuleDistDir = 'dist'
         this.readerAppPath = null
 
-        return new Promise(resolve => {
-            this.createOutputDirs()
-                .then(() => this.ensureReaderModuleExists())
-                .then(() => this.copyEpubToOutputDir())
-                .then(() => this.writeBookManifest())
-                .then(() => this.writeWebpubManifest())
-                .then(() => this.copyReaderAppToOutputDir())
-                .then(() => this.injectServerDataIntoTemplate())
-                .then(() => this.updateLinkedResourcesWithAbsolutePaths())
-                .then(() => this.updateAssetURLsWithAbsolutePaths())
-                .then(() => this.injectWebpubManifestLink())
-                .catch(log.error)
-                .then(resolve)
-        })
+        return this.createOutputDirs()
+            .then(() => this.ensureReaderModuleExists())
+            .then(() => this.copyEpubToOutputDir())
+            .then(() => this.writeBookManifest())
+            .then(() => this.writeWebpubManifest())
+            .then(() => this.copyReaderAppToOutputDir())
+            .then(() => this.injectServerDataIntoTemplate())
+            .then(() => this.updateLinkedResourcesWithAbsolutePaths())
+            .then(() => this.updateAssetURLsWithAbsolutePaths())
+            .then(() => this.injectWebpubManifestLink())
+            .catch(log.error)
     }
-    get src() {
-        return state.src
-    }
-    get dist() {
-        return state.dist
-    }
+
     get remoteURL() {
         if (
             process.env.NODE_ENV === 'production' &&
@@ -51,19 +43,21 @@ class Reader {
         }
         return state.config.remote_url || 'http://localhost:4000/'
     }
+
     createDirname(s) {
         if (!s || typeof s !== 'string') {
             return crypto.randomBytes(20).toString('hex')
         }
         return s.replace(/[^0-9a-zA-Z-]/g, '-')
     }
+
     ensureReaderModuleExists() {
         try {
             this.readerAppPath = path.join(
                 path.dirname(path.join(require.resolve(this.readerModuleName))),
-                this.readerModuleDistDir,
+                this.readerModuleDistDir
             )
-            return Promise.resolve()
+            return
         } catch (err) {
             // module not found using require.resolve, so we check if there's a symlinked version available
             log.warn(`Could not find globally installed module ${this.readerModuleName}`)
@@ -88,13 +82,11 @@ class Reader {
             const pkg = fs.readJsonSync(path.join(modulePath, this.readerModuleDistDir, 'package.json'))
             log.warn(`Loaded ${this.readerModuleName} v${pkg.version}`)
 
-            return Promise.resolve()
+            return
         } catch (err) {
             log.error(`
                 A symlinked version of ${this.readerModuleName} was found but is inaccessible.
-                Try running npm i -S ${
-                    this.readerModuleName
-                }, or rebuilding the reader package if running this command in a development environment
+                Try running npm i -S ${this.readerModuleName}, or rebuilding the reader package if running this command in a development environment
             `)
             process.exit(1)
         }
@@ -107,10 +99,10 @@ class Reader {
     copyEpubToOutputDir() {
         const epubDir = this.createDirname(this.getBookMetadata('identifier'))
         const promises = this.epubAssets.map(item =>
-            fs.move(path.join(this.dist, item), path.join(this.outputDir, epubDir, item)),
+            fs.move(state.dist.root(item), path.join(this.outputDir, epubDir, item))
         )
 
-        return Promise.all(promises).catch(log.error)
+        return Promise.all(promises)
     }
 
     getBookMetadata(term) {
@@ -142,24 +134,22 @@ class Reader {
 
     writeWebpubManifest() {
         const assetsDir = path.join(process.cwd(), this.outputDir, this.getBookMetadata('identifier'), 'OPS')
-        return rrdir(assetsDir)
-            .then(files => {
-                const manifest = generateWebpubManifest(state, files)
-                fs.writeJson(path.join(this.dist, 'manifest.json'), manifest)
-            })
-            .catch(log.error)
+        return rrdir(assetsDir).then(files => {
+            const manifest = generateWebpubManifest(state, files)
+            fs.writeJson(state.dist.root('manifest.json'), manifest)
+        })
     }
 
     injectWebpubManifestLink() {
-        const indexHTML = path.join(this.dist, 'index.html')
+        const indexHTML = state.dist.root('index.html')
 
         let contents
         contents = fs.readFileSync(indexHTML, 'utf8')
         contents = contents.replace(
             /<\/head>/,
             `<link rel="manifest" type="application/webpub+json" href="${this.getProjectConfig(
-                'reader_url',
-            )}/manifest.json"></head>`,
+                'reader_url'
+            )}/manifest.json"></head>`
         )
 
         return fs.writeFile(indexHTML, contents)
@@ -168,15 +158,15 @@ class Reader {
     copyReaderAppToOutputDir() {
         const promises = fs
             .readdirSync(this.readerAppPath)
-            .map(file => fs.copy(path.join(this.readerAppPath, file), path.join(process.cwd(), this.dist, file)))
+            .map(file => fs.copy(path.join(this.readerAppPath, file), path.resolve(state.dist.root(file))))
 
-        return Promise.all(promises).catch(log.error)
+        return Promise.all(promises)
     }
 
     injectServerDataIntoTemplate() {
-        const indexHTML = path.join(this.dist, 'index.html')
+        const indexHTML = state.dist.root('index.html')
         const bookURL = `${this.getProjectConfig('reader_url').replace(/$\/+/, '')}/epub/${this.getBookMetadata(
-            'identifier',
+            'identifier'
         )}`
         const serverData = {
             books: [
@@ -202,9 +192,9 @@ class Reader {
     }
 
     updateLinkedResourcesWithAbsolutePaths() {
-        const indexContents = fs.readFileSync(path.join(this.dist, 'index.html'), 'utf8')
+        const indexContents = fs.readFileSync(state.dist.root('index.html'), 'utf8')
         const versionHash = indexContents.match(/link href="\/(\w+\.css)"/)[1]
-        const stylesheet = path.join(this.dist, versionHash)
+        const stylesheet = state.dist.root(versionHash)
 
         let contents
         contents = fs.readFileSync(stylesheet, 'utf8')
@@ -214,7 +204,7 @@ class Reader {
     }
 
     updateAssetURLsWithAbsolutePaths() {
-        const indexHTML = path.join(this.dist, 'index.html')
+        const indexHTML = state.dist.root('index.html')
 
         let contents
         contents = fs.readFileSync(indexHTML, 'utf8')

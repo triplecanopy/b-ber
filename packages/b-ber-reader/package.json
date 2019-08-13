@@ -6,14 +6,14 @@
     "scripts": {
         "prepublish": "npm test",
         "preversion": "npm test",
-        "webpack.src": "npm run clean && NODE_ENV=development webpack --mode development -w --config webpack.config.development.js --progress --profile --colors --verbose",
-        "webpack.dist": "npm run clean && NODE_ENV=production webpack --mode production --config webpack.config.production.js --progress --profile --colors",
-        "start": "./node_modules/.bin/concurrently \"npm run webpack.src\" \"nodemon server.js\"",
+        "webpack:src": "npm run clean && NODE_ENV=development webpack --mode development -w --config webpack.config.development.js --progress --profile --colors --verbose",
+        "webpack:dist": "npm run clean && NODE_ENV=production webpack --mode production --config webpack.config.production.js --progress --profile --colors",
+        "start": "concurrently \"npm run webpack:src\" \"nodemon server.js\"",
         "clean": "rimraf dist && rimraf public",
         "watch": "npm run clean && NODE_ENV=production webpack --mode production -w --config webpack.config.production.js",
-        "build": "npm run webpack.dist",
+        "build": "npm run webpack:dist",
         "serve": "nodemon server.js",
-        "test": "./node_modules/.bin/jest"
+        "test": "jest"
     },
     "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
     "license": "GPL-3.0-or-later",
@@ -21,15 +21,18 @@
         "access": "public"
     },
     "devDependencies": {
-        "babel-cli": "^6.26.0",
-        "babel-core": "^6.26.0",
+        "@babel/cli": "^7.5.0",
+        "@babel/core": "^7.5.4",
+        "@babel/plugin-proposal-class-properties": "^7.5.0",
+        "@babel/plugin-proposal-decorators": "^7.4.4",
+        "@babel/plugin-proposal-object-rest-spread": "^7.5.4",
+        "@babel/plugin-transform-runtime": "^7.5.0",
+        "@babel/preset-env": "^7.5.4",
+        "@babel/preset-es2015": "^7.0.0-beta.53",
+        "@babel/preset-react": "^7.0.0",
+        "@babel/preset-stage-0": "^7.0.0",
         "babel-eslint": "^8.2.2",
-        "babel-loader": "^7.1.4",
-        "babel-plugin-transform-class-properties": "^6.24.1",
-        "babel-plugin-transform-decorators-legacy": "^1.3.4",
-        "babel-preset-env": "^1.6.1",
-        "babel-preset-react": "^6.24.1",
-        "babel-preset-stage-0": "^6.24.1",
+        "babel-loader": "^8.0.6",
         "concurrently": "^3.5.1",
         "css-loader": "^0.28.10",
         "eslint": "^4.19.1",
@@ -43,7 +46,7 @@
         "extract-text-webpack-plugin": "^4.0.0-beta.0",
         "file-loader": "^1.1.11",
         "html-webpack-plugin": "^3.0.6",
-        "jest": "^22.4.3",
+        "jest": "^24.8.0",
         "jest-environment-jsdom": "^23.1.0",
         "jest-environment-jsdom-global": "^1.1.0",
         "material-design-icons": "^3.0.1",
@@ -54,7 +57,7 @@
         "postcss-import": "^11.1.0",
         "postcss-loader": "^2.1.1",
         "react-test-renderer": "^16.4.0",
-        "rimraf": "^2.6.2",
+        "rimraf": "^2.6.3",
         "sass-loader": "^7.0.3",
         "style-loader": "^0.20.2",
         "sugarss": "^1.0.1",
@@ -69,9 +72,8 @@
     "dependencies": {
         "autoprefixer": "^9.6.1",
         "axios": "^0.18.0",
-        "babel-polyfill": "^6.26.0",
-        "camel-case": "^3.0.0",
         "classnames": "^2.2.5",
+        "core-js": "^3.1.4",
         "css-tree": "^1.0.0-alpha.28",
         "cssnano": "^4.1.10",
         "detect-browser": "^2.1.0",
@@ -89,5 +91,24 @@
         "setimmediate": "^1.0.5",
         "url-search-params-polyfill": "^4.0.0",
         "xml-js": "^1.6.2"
-    }
+    },
+    "files": [
+        "dist",
+        "!dist/report.html",
+        "server.js"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/triplecanopy/b-ber.git"
+    },
+    "bugs": {
+        "url": "https://github.com/triplecanopy/b-ber/issues"
+    },
+    "contributors": [
+        {
+            "name": "Maxwell Simmer",
+            "email": "maxwellsimmer.com@gmail.com",
+            "url": "https://maxwellsimmer.com"
+        }
+    ]
 }

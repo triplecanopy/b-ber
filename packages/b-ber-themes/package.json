@@ -4,7 +4,7 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "test": "./node_modules/.bin/jest"
+        "test": "jest"
     },
     "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
     "license": "GPL-3.0-or-later",
@@ -12,12 +12,32 @@
         "access": "public"
     },
     "dependencies": {
+        "fs-extra": "^8.1.0",
         "modularscale-sass": "^3.0.3"
     },
     "devDependencies": {
-        "jest": "^22.4.3",
+        "@babel/cli": "^7.5.0",
+        "jest": "^24.8.0",
         "jest-extended": "^0.7.1",
         "node-sass": "^4.11.0",
-        "rimraf": "^2.6.2"
-    }
+        "rimraf": "^2.6.3"
+    },
+    "files": [
+        "b-ber-theme-sans",
+        "b-ber-theme-serif"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/triplecanopy/b-ber.git"
+    },
+    "bugs": {
+        "url": "https://github.com/triplecanopy/b-ber/issues"
+    },
+    "contributors": [
+        {
+            "name": "Maxwell Simmer",
+            "email": "maxwellsimmer.com@gmail.com",
+            "url": "https://maxwellsimmer.com"
+        }
+    ]
 }

@@ -286,7 +286,8 @@ p {
 }
 
 cite {
-    .pullquote & {
+    .pullquote &,
+    blockquote & {
         @include following-paragraph-not-indented;
         @include type-settings(-4);
         font-weight: normal;

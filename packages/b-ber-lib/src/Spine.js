@@ -1,65 +1,70 @@
-import isArray from 'lodash/isArray'
 import isPlainObject from 'lodash/isPlainObject'
 import YamlAdaptor from './YamlAdaptor'
 import SpineItem from './SpineItem'
 
 class Spine {
-    constructor({ src, buildType }) {
+    constructor({ src, buildType, navigationConfigFile }) {
         this.src = src
         this.buildType = buildType
-        this.root = [{ nodes: [] }]
+        this.frontMatter = new Map()
+        this.navigationConfigFile = navigationConfigFile
+
+        this.declared = this.create()
+        this.nested = this.build(this.declared) // nested navigation
+        this.flattened = this.flatten(this.nested) // one-dimensional page flow
     }
 
-    build(arr, result) {
-        arr.forEach(a => {
-            let index
-            let nodes
+    build(entries = []) {
+        const { buildType } = this
+        return entries.reduce((acc, curr, index) => {
+            // create new spine item
+            let node
+            // check if it either has nested entries or attributes that have
+            // been assigned in the yaml file
+            if (isPlainObject(curr)) {
+                // we know that nested navigation is wrapped in a `section`
+                // object so we check against that
+                const { section } = curr
+                if (section) {
+                    // curr has nested navigation. attach the nodes to the
+                    // previous entry in the tree by querying the last index
+                    let _index = 0
+                    while (typeof acc[index - _index] === 'undefined' && _index !== acc.length) {
+                        _index += 1
+                    }
 
-            if (isArray(result) && result.length - 1 > -1) {
-                index = result.length - 1
-            } else {
-                index = 0
-            }
-
-            if (!result[index] || !{}.hasOwnProperty.call(result[index], 'nodes')) {
-                nodes = this.root[0].nodes
-            } else {
-                nodes = result[index].nodes
-            }
-
-            if (isPlainObject(a)) {
-                if (Object.keys(a)[0] === 'section') {
-                    // nested section
-                    this.build(a[Object.keys(a)[0]], nodes)
-                } else {
-                    // entry with attributes
-                    const fileName = Object.keys(a)[0]
-                    const options = a[Object.keys(a)[0]]
-                    const data = new SpineItem({ fileName, ...options, buildType: this.buildType })
-                    nodes.push(data)
+                    // add the nodes recursively and return the tree
+                    acc[index - _index].nodes = this.build(section)
+                    return acc
                 }
+
+                // curr has attributes
+                const [[fileName, { ...options }]] = Object.entries(curr)
+                // also set frontmatter for easy access later
+                this.frontMatter.set(fileName, {})
+                node = new SpineItem({ fileName, buildType, ...options })
             } else {
-                // string entry
-                const data = new SpineItem({ fileName: a, buildType: this.buildType })
-                nodes.push(data)
+                // just a plain file name
+                const fileName = curr
+                // also set frontmatter for easy access later
+                this.frontMatter.set(fileName, {})
+                node = new SpineItem({ fileName, buildType })
             }
-        })
 
-        return this.root[0].nodes
+            return acc.concat(node)
+        }, [])
     }
 
-    flatten(arr, result = []) {
-        arr.forEach(a => {
-            result.push(a)
-            if (a.nodes && a.nodes.length) this.flatten(a.nodes, result)
-        })
-
-        return result
+    flatten(arr) {
+        return arr.reduce((acc, curr) => {
+            const { nodes, ...rest } = curr
+            const acc_ = acc.concat(rest)
+            return nodes && nodes.length ? acc_.concat(this.flatten(nodes)) : acc_
+        }, [])
     }
 
-    // eslint-disable-next-line class-methods-use-this
-    create(navigationConfigFile) {
-        return YamlAdaptor.load(navigationConfigFile)
+    create() {
+        return YamlAdaptor.load(this.navigationConfigFile)
     }
 }
 

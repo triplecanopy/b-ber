@@ -65,6 +65,20 @@ figure {
     .spread {
         padding: 0;
     }
+
+    // TODO: the following vendor prefixed rules don't seem to do anything - we
+    // need to determine if they can be removed altogether, or if we should
+    // replace them with the following code:
+
+    // .figure__large {
+    //     break-after: always;
+    //     break-before: always;
+    // }
+    // .figure__fullbleed {
+    //     break-before: avoid !important;
+    //     break-after: avoid !important;
+    // }
+
     .figure__large {
         -webkit-column-break-after: always; // sass-lint:disable-line no-vendor-prefixes
         -webkit-column-break-before: always; // sass-lint:disable-line no-vendor-prefixes
@@ -175,9 +189,6 @@ figcaption,
             text-decoration: underline;
         }
     }
-
-    .figure__large & {
-    }
 }
 
 p.caption {
@@ -219,5 +230,298 @@ p.caption {
     }
     .figure__inline--portrait-high & {
         width: 48%;
+    }
+}
+
+//
+// updates re: https://github.com/triplecanopy/b-ber/issues/295
+//
+
+// figure with media styles
+.figure__large.figure__large--iframe,
+.figure__large.figure__large--media {
+    figure {
+        .figure__items {
+            .figcaption {
+                max-width: 100%;
+            }
+        }
+    }
+}
+
+// figure with image styles
+@if $build == 'reader' {
+    // portrait
+    .figure__large.figure__inline.figure__inline--portrait,
+    .figure__large.figure__large--portrait {
+        figure {
+            .figure__items {
+                width: 60%;
+                margin: 0 auto;
+                img.portrait,
+                img.fullbleed {
+                    width: 100%;
+                    max-width: 100%;
+                    height: auto;
+                }
+                .figcaption {
+                    width: 100%;
+                    max-width: 100%;
+                    height: auto;
+                    .small {
+                    }
+                }
+            }
+        }
+    }
+
+    // landscape
+    .figure__large.figure__inline.figure__inline--landscape,
+    .figure__large.figure__large--landscape {
+        figure {
+            .figure__items {
+                width: 100%;
+                img.landscape,
+                img.fullbleed {
+                    max-width: 100%;
+                }
+                .figcaption {
+                    max-width: 100%;
+                    .small {
+                    }
+                }
+            }
+        }
+    }
+
+    // portrait-high
+    .figure__large.figure__inline.figure__inline--portrait-high,
+    .figure__large.figure__large--portrait-high {
+        figure {
+            .figure__items {
+                width: 48%;
+                margin: 0 auto;
+                img.portrait-high,
+                img.fullbleed {
+                    width: 100%;
+                    max-width: 100%;
+                    height: auto;
+                }
+                .figcaption {
+                    width: 100%;
+                    max-width: 100%;
+                    height: auto;
+                    .small {
+                    }
+                }
+            }
+        }
+    }
+
+    // square
+    .figure__large.figure__inline.figure__inline--square,
+    .figure__large.figure__large--square {
+        figure {
+            .figure__items {
+                width: 80%;
+                margin: 0 auto;
+                img.square,
+                img.fullbleed {
+                    width: 100%;
+                    max-width: 100%;
+                    height: auto;
+                }
+                .figcaption {
+                    width: 100%;
+                    max-width: 100%;
+                    height: auto;
+                    .small {
+                    }
+                }
+            }
+        }
+    }
+} @else if $build == 'mobi' {
+    // portrait
+    .figure__large.figure__inline.figure__inline--portrait,
+    .figure__large.figure__large--portrait {
+        figure {
+            .figure__items {
+                width: 70%;
+                margin: 0 auto;
+                img.portrait,
+                img.fullbleed {
+                    width: 100%;
+                    max-width: 100%;
+                    height: auto;
+                }
+                .figcaption {
+                    width: 100%;
+                    max-width: 100%;
+                    height: auto;
+                    .small {
+                    }
+                }
+            }
+        }
+    }
+
+    // landscape
+    .figure__large.figure__inline.figure__inline--landscape,
+    .figure__large.figure__large--landscape {
+        figure {
+            .figure__items {
+                img.landscape,
+                img.fullbleed {
+                    max-width: 100%;
+                }
+                .figcaption {
+                    max-width: 100%;
+                    .small {
+                    }
+                }
+            }
+        }
+    }
+
+    // portrait-high
+    .figure__large.figure__inline.figure__inline--portrait-high,
+    .figure__large.figure__large--portrait-high {
+        figure {
+            .figure__items {
+                width: 60%;
+                margin: 0 auto;
+                img.portrait-high,
+                img.fullbleed {
+                    width: 100%;
+                    max-width: 100%;
+                    height: auto;
+                }
+                .figcaption {
+                    width: 100%;
+                    max-width: 100%;
+                    height: auto;
+                    .small {
+                    }
+                }
+            }
+        }
+    }
+
+    // square
+    .figure__large.figure__inline.figure__inline--square,
+    .figure__large.figure__large--square {
+        figure {
+            .figure__items {
+                width: 85%;
+                margin: 0 auto;
+                img.square,
+                img.fullbleed {
+                    width: 100%;
+                    max-width: 100%;
+                    height: auto;
+                }
+                .figcaption {
+                    width: 100%;
+                    max-width: 100%;
+                    height: auto;
+                    .small {
+                    }
+                }
+            }
+        }
+    }
+} @else {
+    // fallback for all other builds for each of the different possible image
+    // formats
+
+    // portrait
+    .figure__large.figure__inline.figure__inline--portrait,
+    .figure__large.figure__large--portrait {
+        figure {
+            .figure__items {
+                width: 70%;
+                margin: 0 auto;
+                img.portrait,
+                img.fullbleed {
+                    width: 100%;
+                    max-width: 100%;
+                    height: auto;
+                }
+                .figcaption {
+                    width: 100%;
+                    max-width: 100%;
+                    height: auto;
+                    .small {
+                    }
+                }
+            }
+        }
+    }
+
+    // landscape
+    .figure__large.figure__inline.figure__inline--landscape,
+    .figure__large.figure__large--landscape {
+        figure {
+            .figure__items {
+                img.landscape,
+                img.fullbleed {
+                    max-width: 100%;
+                }
+                .figcaption {
+                    max-width: 100%;
+                    .small {
+                    }
+                }
+            }
+        }
+    }
+
+    // portrait-high
+    .figure__large.figure__inline.figure__inline--portrait-high,
+    .figure__large.figure__large--portrait-high {
+        figure {
+            .figure__items {
+                width: 60%;
+                margin: 0 auto;
+                img.portrait-high,
+                img.fullbleed {
+                    width: 100%;
+                    max-width: 100%;
+                    height: auto;
+                }
+                .figcaption {
+                    width: 100%;
+                    max-width: 100%;
+                    height: auto;
+                    .small {
+                    }
+                }
+            }
+        }
+    }
+
+    // square
+    .figure__large.figure__inline.figure__inline--square,
+    .figure__large.figure__large--square {
+        figure {
+            .figure__items {
+                width: 85%;
+                margin: 0 auto;
+                img.square,
+                img.fullbleed {
+                    width: 100%;
+                    max-width: 100%;
+                    height: auto;
+                }
+                .figcaption {
+                    width: 100%;
+                    max-width: 100%;
+                    height: auto;
+                    .small {
+                    }
+                }
+            }
+        }
     }
 }

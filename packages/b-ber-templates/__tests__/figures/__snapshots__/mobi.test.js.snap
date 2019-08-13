@@ -1,0 +1,562 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`templates.mobi creates the markup 1`] = `
+"
+    
+        <div class=\\"figure__large figure__inline figure__inline--portrait test\\">
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\">
+                    
+    <span>
+        <img class=\\"portrait\\" alt=\\"test\\" src=\\"../images/test\\"/>
+    </span>
+        <div class=\\"figcaption\\">
+            <p class=\\"small\\">
+                test
+                
+                
+            </p>
+        </div>
+    </div>
+    
+                </div>
+            </figure>
+        </div>
+    
+"
+`;
+
+exports[`templates.mobi creates the markup 2`] = `
+"
+    
+        <div class=\\"figure__large figure__inline figure__inline--landscape test\\">
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\">
+                    
+    <span>
+        <img class=\\"portrait\\" alt=\\"test\\" src=\\"../images/test\\"/>
+    </span>
+        <div class=\\"figcaption\\">
+            <p class=\\"small\\">
+                test
+                
+                
+            </p>
+        </div>
+    </div>
+    
+                </div>
+            </figure>
+        </div>
+    
+"
+`;
+
+exports[`templates.mobi creates the markup 3`] = `
+"
+    
+        <div class=\\"figure__large figure__inline figure__inline--portrait-high test\\">
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\">
+                    
+    <span>
+        <img class=\\"portrait\\" alt=\\"test\\" src=\\"../images/test\\"/>
+    </span>
+        <div class=\\"figcaption\\">
+            <p class=\\"small\\">
+                test
+                
+                
+            </p>
+        </div>
+    </div>
+    
+                </div>
+            </figure>
+        </div>
+    
+"
+`;
+
+exports[`templates.mobi creates the markup 4`] = `
+"
+    
+        <div class=\\"figure__large figure__inline figure__inline--square test\\">
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\">
+                    
+    <span>
+        <img class=\\"portrait\\" alt=\\"test\\" src=\\"../images/test\\"/>
+    </span>
+        <div class=\\"figcaption\\">
+            <p class=\\"small\\">
+                test
+                
+                
+            </p>
+        </div>
+    </div>
+    
+                </div>
+            </figure>
+        </div>
+    
+"
+`;
+
+exports[`templates.mobi creates the markup 5`] = `
+"
+    
+        <div class=\\"figure__large figure__large--media figure__inline--square test\\">
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\">
+                    <div class=\\"audio-or-video\\">
+                        <audio-or-video autoplay=\\"false\\">
+                            <source />
+                            <div class=\\"media__fallback__audio-or-video media__fallback--image figure__small--landscape figure__small\\">
+                                <figure>
+                                    <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
+                                </figure>
+                            </div>
+                            <p class=\\"media__fallback__audio-or-video media__fallback--text\\">Your device does not support the HTML5 audio-or-video API.</p>
+                        </audio-or-video>
+                    </div>
+                    <div class=\\"figcaption\\">
+                        <p class=\\"small\\">
+                            test<br/>
+                            <a href=\\"1.xhtml#ref1\\">Return</a>
+                        </p>
+                    </div>
+                </div>
+            </figure>
+        </div>
+    
+    "
+`;
+
+exports[`templates.mobi creates the markup 6`] = `
+"
+    
+        <div class=\\"figure__large figure__large--media figure__inline--square test\\">
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\">
+                    <div class=\\"audio-or-video\\">
+                        <audio-or-video autoplay=\\"false\\">
+                            <source />
+                            <div class=\\"media__fallback__audio-or-video media__fallback--image figure__small--landscape figure__small\\">
+                                <figure>
+                                    <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
+                                </figure>
+                            </div>
+                            <p class=\\"media__fallback__audio-or-video media__fallback--text\\">Your device does not support the HTML5 audio-or-video API.</p>
+                        </audio-or-video>
+                    </div>
+                    <div class=\\"figcaption\\">
+                        <p class=\\"small\\">
+                            test<br/>
+                            <a href=\\"1.xhtml#ref1\\">Return</a>
+                        </p>
+                    </div>
+                </div>
+            </figure>
+        </div>
+    
+    "
+`;
+
+exports[`templates.mobi creates the markup 7`] = `
+"
+    
+        <div class=\\"figure__large figure__large--iframe\\">
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\">
+                    <div class=\\"iframe\\">
+                        <iframe src=\\"test\\" />
+                    </div>
+
+                    <div class=\\"figcaption\\">
+                        <p class=\\"small\\">
+                            test<br/>
+                            <a href=\\"1.xhtml#ref1\\">Return</a>
+                        </p>
+                    </div>
+                </div>
+            </figure>
+        </div>
+    
+    "
+`;
+
+exports[`templates.mobi creates the markup 8`] = `
+"
+    <section epub:type=\\"loi\\" title=\\"Figures\\" class=\\"chapter figures\\">
+        <div class=\\"figure__large figure__large--portrait\\">
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\">
+                    
+    <span>
+        <img class=\\"portrait\\" alt=\\"test\\" src=\\"../images/test\\"/>
+    </span>
+        <div class=\\"figcaption\\">
+            <p class=\\"small\\">
+                test
+                <br/>
+                <a href=\\"1.xhtml#ref1\\">Return</a>
+            </p>
+        </div>
+    </div>
+    
+                </div>
+            </figure>
+        </div>
+    </section>
+"
+`;
+
+exports[`templates.mobi creates the markup 9`] = `
+"
+    <section epub:type=\\"loi\\" title=\\"Figures\\" class=\\"chapter figures\\">
+        <div class=\\"figure__large figure__large--landscape\\">
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\">
+                    
+    <span>
+        <img class=\\"portrait\\" alt=\\"test\\" src=\\"../images/test\\"/>
+    </span>
+        <div class=\\"figcaption\\">
+            <p class=\\"small\\">
+                test
+                <br/>
+                <a href=\\"1.xhtml#ref1\\">Return</a>
+            </p>
+        </div>
+    </div>
+    
+                </div>
+            </figure>
+        </div>
+    </section>
+"
+`;
+
+exports[`templates.mobi creates the markup 10`] = `
+"
+    <section epub:type=\\"loi\\" title=\\"Figures\\" class=\\"chapter figures\\">
+        <div class=\\"figure__large figure__large--portrait-high\\">
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\">
+                    
+    <span>
+        <img class=\\"portrait\\" alt=\\"test\\" src=\\"../images/test\\"/>
+    </span>
+        <div class=\\"figcaption\\">
+            <p class=\\"small\\">
+                test
+                <br/>
+                <a href=\\"1.xhtml#ref1\\">Return</a>
+            </p>
+        </div>
+    </div>
+    
+                </div>
+            </figure>
+        </div>
+    </section>
+"
+`;
+
+exports[`templates.mobi creates the markup 11`] = `
+"
+    <section epub:type=\\"loi\\" title=\\"Figures\\" class=\\"chapter figures\\">
+        <div class=\\"figure__large figure__large--square\\">
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\">
+                    
+    <span>
+        <img class=\\"portrait\\" alt=\\"test\\" src=\\"../images/test\\"/>
+    </span>
+        <div class=\\"figcaption\\">
+            <p class=\\"small\\">
+                test
+                <br/>
+                <a href=\\"1.xhtml#ref1\\">Return</a>
+            </p>
+        </div>
+    </div>
+    
+                </div>
+            </figure>
+        </div>
+    </section>
+"
+`;
+
+exports[`templates.mobi creates the markup 12`] = `
+"
+    <section epub:type=\\"loi\\" title=\\"Figures\\" class=\\"chapter figures\\">
+        <div class=\\"figure__large figure__large--media figure__inline--square test\\">
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\">
+                    <div class=\\"audio-or-video\\">
+                        <audio-or-video autoplay=\\"false\\">
+                            <source />
+                            <div class=\\"media__fallback__audio-or-video media__fallback--image figure__small--landscape figure__small\\">
+                                <figure>
+                                    <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
+                                </figure>
+                            </div>
+                            <p class=\\"media__fallback__audio-or-video media__fallback--text\\">Your device does not support the HTML5 audio-or-video API.</p>
+                        </audio-or-video>
+                    </div>
+                    <div class=\\"figcaption\\">
+                        <p class=\\"small\\">
+                            test<br/>
+                            <a href=\\"1.xhtml#ref1\\">Return</a>
+                        </p>
+                    </div>
+                </div>
+            </figure>
+        </div>
+    </section>
+    "
+`;
+
+exports[`templates.mobi creates the markup 13`] = `
+"
+    <section epub:type=\\"loi\\" title=\\"Figures\\" class=\\"chapter figures\\">
+        <div class=\\"figure__large figure__large--media figure__inline--square test\\">
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\">
+                    <div class=\\"audio-or-video\\">
+                        <audio-or-video autoplay=\\"false\\">
+                            <source />
+                            <div class=\\"media__fallback__audio-or-video media__fallback--image figure__small--landscape figure__small\\">
+                                <figure>
+                                    <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
+                                </figure>
+                            </div>
+                            <p class=\\"media__fallback__audio-or-video media__fallback--text\\">Your device does not support the HTML5 audio-or-video API.</p>
+                        </audio-or-video>
+                    </div>
+                    <div class=\\"figcaption\\">
+                        <p class=\\"small\\">
+                            test<br/>
+                            <a href=\\"1.xhtml#ref1\\">Return</a>
+                        </p>
+                    </div>
+                </div>
+            </figure>
+        </div>
+    </section>
+    "
+`;
+
+exports[`templates.mobi creates the markup 14`] = `
+"
+    <section epub:type=\\"loi\\" title=\\"Figures\\" class=\\"chapter figures\\">
+        <div class=\\"figure__large figure__large--iframe\\">
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\">
+                    <div class=\\"iframe\\">
+                        <iframe src=\\"test\\" />
+                    </div>
+
+                    <div class=\\"figcaption\\">
+                        <p class=\\"small\\">
+                            test<br/>
+                            <a href=\\"1.xhtml#ref1\\">Return</a>
+                        </p>
+                    </div>
+                </div>
+            </figure>
+        </div>
+    </section>
+    "
+`;
+
+exports[`templates.mobi creates the markup 15`] = `
+"
+    
+        <div class=\\"figure__large figure__inline figure__inline--portrait break-before\\">
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\">
+                    
+    <span>
+        <img class=\\"portrait\\" alt=\\"test\\" src=\\"../images/test\\"/>
+    </span>
+        <div class=\\"figcaption\\">
+            <p class=\\"small\\">
+                test
+                
+                
+            </p>
+        </div>
+    </div>
+    
+                </div>
+            </figure>
+        </div>
+    
+"
+`;
+
+exports[`templates.mobi creates the markup 16`] = `
+"
+    
+        <div class=\\"figure__large figure__inline figure__inline--landscape break-before\\">
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\">
+                    
+    <span>
+        <img class=\\"portrait\\" alt=\\"test\\" src=\\"../images/test\\"/>
+    </span>
+        <div class=\\"figcaption\\">
+            <p class=\\"small\\">
+                test
+                
+                
+            </p>
+        </div>
+    </div>
+    
+                </div>
+            </figure>
+        </div>
+    
+"
+`;
+
+exports[`templates.mobi creates the markup 17`] = `
+"
+    
+        <div class=\\"figure__large figure__inline figure__inline--portrait-high break-before\\">
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\">
+                    
+    <span>
+        <img class=\\"portrait\\" alt=\\"test\\" src=\\"../images/test\\"/>
+    </span>
+        <div class=\\"figcaption\\">
+            <p class=\\"small\\">
+                test
+                
+                
+            </p>
+        </div>
+    </div>
+    
+                </div>
+            </figure>
+        </div>
+    
+"
+`;
+
+exports[`templates.mobi creates the markup 18`] = `
+"
+    
+        <div class=\\"figure__large figure__inline figure__inline--square break-before\\">
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\">
+                    
+    <span>
+        <img class=\\"portrait\\" alt=\\"test\\" src=\\"../images/test\\"/>
+    </span>
+        <div class=\\"figcaption\\">
+            <p class=\\"small\\">
+                test
+                
+                
+            </p>
+        </div>
+    </div>
+    
+                </div>
+            </figure>
+        </div>
+    
+"
+`;
+
+exports[`templates.mobi creates the markup 19`] = `
+"
+    
+        <div class=\\"figure__large figure__large--media figure__inline--square break-before\\">
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\">
+                    <div class=\\"audio-or-video\\">
+                        <audio-or-video autoplay=\\"false\\">
+                            <source />
+                            <div class=\\"media__fallback__audio-or-video media__fallback--image figure__small--landscape figure__small\\">
+                                <figure>
+                                    <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
+                                </figure>
+                            </div>
+                            <p class=\\"media__fallback__audio-or-video media__fallback--text\\">Your device does not support the HTML5 audio-or-video API.</p>
+                        </audio-or-video>
+                    </div>
+                    <div class=\\"figcaption\\">
+                        <p class=\\"small\\">
+                            test<br/>
+                            <a href=\\"1.xhtml#ref1\\">Return</a>
+                        </p>
+                    </div>
+                </div>
+            </figure>
+        </div>
+    
+    "
+`;
+
+exports[`templates.mobi creates the markup 20`] = `
+"
+    
+        <div class=\\"figure__large figure__large--media figure__inline--square break-before\\">
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\">
+                    <div class=\\"audio-or-video\\">
+                        <audio-or-video autoplay=\\"false\\">
+                            <source />
+                            <div class=\\"media__fallback__audio-or-video media__fallback--image figure__small--landscape figure__small\\">
+                                <figure>
+                                    <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
+                                </figure>
+                            </div>
+                            <p class=\\"media__fallback__audio-or-video media__fallback--text\\">Your device does not support the HTML5 audio-or-video API.</p>
+                        </audio-or-video>
+                    </div>
+                    <div class=\\"figcaption\\">
+                        <p class=\\"small\\">
+                            test<br/>
+                            <a href=\\"1.xhtml#ref1\\">Return</a>
+                        </p>
+                    </div>
+                </div>
+            </figure>
+        </div>
+    
+    "
+`;
+
+exports[`templates.mobi creates the markup 21`] = `
+"
+    
+        <div class=\\"figure__large figure__large--iframe\\">
+            <figure id=\\"1\\">
+                <div class=\\"figure__items\\">
+                    <div class=\\"iframe\\">
+                        <iframe src=\\"test\\" />
+                    </div>
+
+                    <div class=\\"figcaption\\">
+                        <p class=\\"small\\">
+                            test<br/>
+                            <a href=\\"1.xhtml#ref1\\">Return</a>
+                        </p>
+                    </div>
+                </div>
+            </figure>
+        </div>
+    
+    "
+`;

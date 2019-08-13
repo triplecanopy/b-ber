@@ -26,6 +26,7 @@ const pathInfoFromFile = (file, dest) => {
 
 const pathInfoFromFiles = (arr, dest) => arr.map(file => pathInfoFromFile(file, dest))
 
+// TODO: move into Spine class
 const flattenSpineFromYAML = arr =>
     arr.reduce((acc, curr) => {
         if (isPlainObject(curr)) {
@@ -37,27 +38,23 @@ const flattenSpineFromYAML = arr =>
         return acc.concat(curr)
     }, [])
 
-const nestedContentToYAML = (arr, result = []) => {
-    arr.forEach(a => {
+// TODO: move into Spine class? although it's called against the toc
+const nestedContentToYAML = arr =>
+    arr.reduce((acc, curr) => {
         const model = {}
 
-        // TODO: check for custom attrs somewhere else.
-        // @issue: https://github.com/triplecanopy/b-ber/issues/208
-        if (a.linear === false || a.in_toc === false) {
-            if (a.in_toc === false) model.in_toc = false
-            if (a.linear === false) model.linear = false
-            result.push({ [a.fileName]: model })
+        if (curr.linear === false || curr.in_toc === false) {
+            if (curr.linear === false) model.linear = false
+            if (curr.in_toc === false) model.in_toc = false
+            acc.push({ [curr.fileName]: model })
         } else {
-            result.push(a.fileName)
-            if (a.nodes && a.nodes.length) {
-                model.section = []
-                result.push(model)
-                nestedContentToYAML(a.nodes, model.section)
+            acc.push(curr.fileName)
+            if (curr.nodes && curr.nodes.length) {
+                acc.push({ section: nestedContentToYAML(curr.nodes) })
             }
         }
-    })
 
-    return result
-}
+        return acc
+    }, [])
 
 export { pathInfoFromFiles, flattenSpineFromYAML, nestedContentToYAML }

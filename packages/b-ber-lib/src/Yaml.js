@@ -1,6 +1,7 @@
 import fs from 'fs-extra'
 import find from 'lodash/find'
 import isPlainObject from 'lodash/isPlainObject'
+import log from '@canopycanopycanopy/b-ber-logger'
 
 const YAWN = require('yawn-yaml/cjs')
 
@@ -52,11 +53,7 @@ const typeCheck = (schema, data = {}) => {
         }
     })
 
-    if (errors.length) {
-        errors.forEach(err => {
-            throw err
-        })
-    }
+    if (errors.length) log.error(errors)
 }
 
 class Yaml {

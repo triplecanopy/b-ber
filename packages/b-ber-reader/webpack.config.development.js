@@ -9,7 +9,7 @@ const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 module.exports = {
     target: 'web',
     context: path.join(__dirname, 'src'),
-    entry: ['babel-polyfill', './index.jsx'],
+    entry: './index.jsx',
     devtool: 'source-map',
     output: {
         publicPath: '/',
@@ -23,8 +23,30 @@ module.exports = {
         rules: [
             {
                 test: /\.jsx?$/,
-                exclude: /(node_modules|public|dist|test)/,
+                exclude: /(node_modules|public|dist|test|__tests__)/,
                 loader: 'babel-loader',
+                options: {
+                    presets: [
+                        [
+                            '@babel/preset-env',
+                            {
+                                debug: false,
+                                corejs: 3,
+                                modules: 'commonjs',
+                                targets: {
+                                    browsers: 'last 2 versions, > 2%',
+                                },
+                                useBuiltIns: 'usage',
+                            },
+                        ],
+                        '@babel/preset-react',
+                    ],
+                    plugins: [
+                        ['@babel/plugin-proposal-decorators', { legacy: true }],
+                        '@babel/plugin-proposal-class-properties',
+                        '@babel/plugin-proposal-object-rest-spread',
+                    ],
+                },
             },
 
             {

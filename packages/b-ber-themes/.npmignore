@@ -1,6 +1,4 @@
-.github
-jest.config.js
-npm-debug.log*
-
-test
-jest.config.js
+.DS_Store
+.gitignore
+demo
+demo.scss

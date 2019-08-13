@@ -1,8 +1,3 @@
-/**
- * @module mobi
- */
-
-import path from 'path'
 import log from '@canopycanopycanopy/b-ber-logger'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import EbookConvert from '@canopycanopycanopy/b-ber-lib/EbookConvert'
@@ -10,17 +5,22 @@ import { getBookMetadata } from '@canopycanopycanopy/b-ber-lib/utils'
 
 const pageBreakBeforeXPATH = () =>
     [
-        '//h:*[@class="figure__large figure__inline"]',
-        '//h:*[@class="figure__large figure__inline"]/following::h:p[1]',
-        '//h:*[re:test(@style, "page-break-before:\\s*?always")]',
-        '//h:*[@data-gallery-item]',
+        // eslint-disable-next-line no-useless-escape
+        '//h:*\[@class="figure__large figure__inline"\]', // prettier-ignore
+        // eslint-disable-next-line no-useless-escape
+        '//h:*\[@class="figure__large figure__inline"\]/following::h:p[1]', // prettier-ignore
+        // eslint-disable-next-line no-useless-escape
+        '//h:*\[contains(@class, "break-before")\]', // prettier-ignore
+        // eslint-disable-next-line no-useless-escape
+        '//h:*\[@data-gallery-item\]', // prettier-ignore
     ].join('|')
 
 const mobi = () =>
     process.argv.includes('--no-compile')
         ? Promise.resolve()
         : EbookConvert.convert({
-              inputPath: path.join(path.join(state.dist, 'OPS'), 'content.opf'),
+              // https://manual.calibre-ebook.com/generated/en/ebook-convert.html#mobi-output-options
+              inputPath: state.dist.ops('content.opf'),
               outputPath: process.cwd(),
               fileType: 'mobi',
               fileName: getBookMetadata('identifier', state),

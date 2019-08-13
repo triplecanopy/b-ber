@@ -1,16 +1,11 @@
 {
-    "lerna": "3.13.1",
-    "packages": [
-        "packages/*"
-    ],
+    "lerna": "3.15.0",
+    "packages": ["packages/*"],
     "npmClient": "npm",
     "version": "0.1.7",
     "command": {
         "publish": {
             "message": "%v"
-        },
-        "version": {
-            "allowBranch": "master"
         }
     }
 }

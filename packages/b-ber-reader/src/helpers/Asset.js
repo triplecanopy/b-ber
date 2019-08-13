@@ -2,7 +2,7 @@
 import convert from 'react-attr-converter'
 import quote from 'quote'
 import jsStringEscape from 'js-string-escape'
-import camelCase from 'camel-case'
+import camelCase from 'lodash/camelCase'
 import { isNumeric } from './Types'
 
 const quote_ = quote({ quotes: "'" })

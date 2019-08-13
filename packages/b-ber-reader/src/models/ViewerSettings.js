@@ -1,11 +1,12 @@
 import isPlainObject from 'lodash/isPlainObject'
+import has from 'lodash/has'
 import { isNumeric } from '../helpers/Types'
 import { transitions, themes } from '../constants'
 import Viewport from '../helpers/Viewport'
 
 const __extendExistingProps = (target, ref, obj, opts = { enumerable: true }) => {
     Object.entries(ref).forEach(([key, val]) => {
-        const value = {}.hasOwnProperty.call(obj, key) ? obj[key] : val
+        const value = has(obj, key) ? obj[key] : val
         Object.defineProperty(target, key, { value, ...opts })
     })
     return target
@@ -170,7 +171,7 @@ class ViewerSettings {
 
             // TODO: this should be extracted and process other props
             // @issue: https://github.com/triplecanopy/b-ber/issues/222
-            if ({}.hasOwnProperty.call(objectOrString_, 'fontSize')) {
+            if (has(objectOrString_, 'fontSize')) {
                 if (!isNumeric(objectOrString_.fontSize)) {
                     objectOrString_.fontSize = parseFloat(objectOrString_.fontSize, 10)
                 }

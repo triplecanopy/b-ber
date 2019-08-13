@@ -13,7 +13,7 @@ const formatForInDesign = str => {
     let str_ = str
     str_ = str_.replace(/<!--[\s\S]*?-->/g, '')
     str_ = str_.replace(/\/pagebreak>[\s\S]*?</g, '/pagebreak><')
-    return Promise.resolve(str_)
+    return str_
 }
 
 const writeXML = str => {
@@ -44,7 +44,7 @@ const parseHTMLFiles = files =>
     })
 
 const xml = () => {
-    const files = state.spine.map(entry => entry.absolutePath)
+    const files = state.spine.flattened.map(entry => entry.absolutePath)
     return parseHTMLFiles(files)
         .then(formatForInDesign)
         .then(writeXML)

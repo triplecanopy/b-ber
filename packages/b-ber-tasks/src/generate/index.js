@@ -1,22 +1,12 @@
 /* eslint-disable class-methods-use-this */
-
-/**
- * Returns an instance of the Generate class
- * @see {@link module:generate#Generate}
- * @return {Generate}
- */
-
 import path from 'path'
 import fs from 'fs-extra'
 import YamlAdaptor from '@canopycanopycanopy/b-ber-lib/YamlAdaptor'
 import log from '@canopycanopycanopy/b-ber-logger'
 import state from '@canopycanopycanopy/b-ber-lib/State'
-import sequences from '@canopycanopycanopy/b-ber-shapes/sequences'
+import sequences from '@canopycanopycanopy/b-ber-shapes-sequences/sequences'
 
-/**
- * Generate new Markdown documents
- * @alias module:generate#Generate
- */
+// Generate new Markdown documents
 class Generate {
     constructor() {
         this.init = this.init.bind(this)
@@ -25,20 +15,14 @@ class Generate {
     createFile({ markdownDir, metadata }) {
         const frontmatter = `---\n${Object.entries(metadata).reduce(
             (acc, [k, v]) => (v ? acc.concat(`${k}: ${v}\n`) : acc),
-            '',
+            ''
         )}---\n`
 
         const { title } = metadata
         const fileName = `${title.replace(/[^a-z0-9_-]/gi, '-')}.md`
         const filePath = path.join(markdownDir, fileName)
 
-        try {
-            if (fs.existsSync(filePath)) {
-                throw new Error(`_markdown${path.sep}${fileName} already exists, aborting`)
-            }
-        } catch (err) {
-            throw err
-        }
+        if (fs.existsSync(filePath)) log.error(`_markdown${path.sep}${fileName} already exists, aborting`)
 
         return fs.writeFile(filePath, frontmatter).then(() => ({ fileName }))
     }
@@ -46,11 +30,11 @@ class Generate {
     writePageMeta({ fileName }) {
         // TODO: this should eventually just be one 'nav' file that's read from for all builds
         // @issue: https://github.com/triplecanopy/b-ber/issues/225
-        const buildTypes = Object.keys(sequences)
+        const builds = Object.keys(sequences)
 
-        const promises = buildTypes.map(type => {
-            const navigationYAML = path.join(state.src, `${type}.yml`)
-            const pageMeta = YamlAdaptor.load(path.join(state.src, `${type}.yml`)) || []
+        const promises = builds.map(type => {
+            const navigationYAML = state.src.root(`${type}.yml`)
+            const pageMeta = YamlAdaptor.load(state.src.root(`${type}.yml`)) || []
             const index = pageMeta.indexOf(fileName)
 
             if (index > -1) {
@@ -64,7 +48,8 @@ class Generate {
     }
 
     init(metadata) {
-        const markdownDir = path.join(state.src, '_markdown')
+        // TODO: ensure markdown dir
+        const markdownDir = state.src.markdown()
         return fs
             .mkdirp(markdownDir)
             .then(() => this.createFile({ markdownDir, metadata }))

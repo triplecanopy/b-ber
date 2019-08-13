@@ -1,7 +1,3 @@
-/**
- * @module web
- */
-
 // Since the file structure for the `web` build is quite different from the
 // other (ebook-style) builds, it's better for maintainability to rearrange
 // the ebook-style directory structure rather than inserting a bunch of
@@ -14,12 +10,14 @@ import path from 'path'
 import fs from 'fs-extra'
 import find from 'lodash/find'
 import findIndex from 'lodash/findIndex'
+import has from 'lodash/has'
 import cheerio from 'cheerio'
 import log from '@canopycanopycanopy/b-ber-logger'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import { getBookMetadata, addTrailingSlash, generateWebpubManifest } from '@canopycanopycanopy/b-ber-lib/utils'
 import Toc from '@canopycanopycanopy/b-ber-templates/Toc'
 import rrdir from 'recursive-readdir'
+import Template from './Template'
 
 let ASSETS_TO_UNLINK
 let DIST_PATH
@@ -70,13 +68,13 @@ class WebFlow {
     }
 
     removeNonLinearEntriesFromSpine() {
-        this.spine = this.spine.filter(a => a.linear)
+        this.spine = this.spine.flattened.filter(a => a.linear)
     }
 }
 
 // make sure we're using the correct build variables
-function initialize() {
-    DIST_PATH = state.dist
+async function initialize() {
+    DIST_PATH = state.distDir
     OPS_PATH = path.join(DIST_PATH, 'OPS')
     BASE_URL = state.config.base_url ? addTrailingSlash(state.config.base_url) : '/'
 
@@ -94,44 +92,31 @@ function initialize() {
 
     const { spine, loi } = state
     flow = new WebFlow({ spine, loi })
-
-    return Promise.resolve()
 }
 
-function moveAssetsToRootDirctory() {
-    const promises = []
-    return new Promise(resolve => {
-        fs.readdir(OPS_PATH, (err, files) => {
-            if (err) throw err
+async function moveAssetsToRootDirctory() {
+    const files = fs.readdirSync(OPS_PATH)
+    const dirs = files.filter(file => file.charAt(0) !== '.' && fs.statSync(path.join(OPS_PATH, file)).isDirectory())
+    const promises = dirs.map(dir => {
+        const from = path.join(OPS_PATH, dir)
+        const to = path.join(DIST_PATH, dir)
 
-            const dirs = files.filter(f => f.charAt(0) !== '.' && fs.statSync(path.join(OPS_PATH, f)).isDirectory())
-
-            dirs.forEach(f => {
-                const frm = path.join(OPS_PATH, f)
-                const to = path.join(DIST_PATH, f)
-
-                log.info('Moving [%s]', f)
-                promises.push(fs.move(frm, to))
-            })
-
-            Promise.all(promises).then(() => {
-                // remove the OPS dir once all the moving assets have been moved
-                fs.remove(OPS_PATH).then(resolve)
-            })
-        })
+        log.info('Moving [%s]', dir)
+        return fs.move(from, to)
     })
+
+    // remove the OPS dir once all the moving assets have been moved
+    await Promise.all(promises)
+    return fs.remove(OPS_PATH)
 }
 
 function unlinkRedundantAssets() {
-    const promises = []
-    return new Promise(resolve => {
-        ASSETS_TO_UNLINK.forEach(f => {
-            log.info('Removing [%s]', path.basename(f))
-            promises.push(fs.remove(f))
-        })
-
-        Promise.all(promises).then(resolve)
+    const promises = ASSETS_TO_UNLINK.map(file => {
+        log.info('Removing [%s]', path.basename(file))
+        return fs.remove(file)
     })
+
+    return Promise.all(promises)
 }
 
 function getProjectTitle() {
@@ -149,75 +134,32 @@ function getChapterTitle(fileName) {
 
     let title = ''
     const entry = find(flow.spine, { fileName })
-    if (entry && entry.title) title = entry.title
+    if (entry && entry.title) {
+        ;({ title } = entry)
+    }
 
     return title
 }
 
 function getProjectMetadataHTML() {
-    return `
-        <dl>
-            ${state.metadata.json().reduce(
-                (acc, curr) =>
-                    acc.concat(`
-                        <dt>${curr.term}</dt>
-                        <dd>${curr.value}</dd>
-                    `),
-                '',
-            )}
-        </dl>
-    `
+    return Template.metadata(state.metadata.json())
 }
 
 function getHeaderElement(fileName) {
     const title = getChapterTitle(fileName)
-    return `
-        <header class="publication__header" role="navigation">
-            <div class="header__item header__item__toggle header__item__toggle--toc">
-                <button class="material-icons">view_list</button>
-            </div>
-
-            <div class="header__item header__item__title">
-                <h1>${title}</h1>
-            </div>
-
-            <div class="header__item publication__search">
-                <button class="material-icons publication__search__button publication__search__button--open">search</button>
-                <input type="text" disabled="disabled" class="publication__search__input" placeholder="" value=""></input>
-                <button class="material-icons publication__search__button publication__search__button--close">close</button>
-            </div>
-
-            <div class="header__item header__item__toggle header__item__toggle--info">
-                <button class="material-icons">info</button>
-            </div>
-        </header>
-    `
+    return Template.header(title)
 }
 
 function createNavigationElement() {
-    return new Promise(resolve => {
-        const { toc } = state
-        const tocHTML = Toc.items(toc).replace(/a href="/g, `a href="${BASE_URL}`)
-        const metadataHTML = getProjectMetadataHTML()
-        const title = getProjectTitle()
+    const { toc } = state
+    const tocHTML = Toc.items(toc).replace(/a href="/g, `a href="${BASE_URL}`)
+    const metadataHTML = getProjectMetadataHTML()
+    const title = getProjectTitle()
 
-        const tocElement = `
-            <nav class="publication__toc" role="navigation">
-                <div class="publication__title">
-                    <a href="${BASE_URL}">${title}</a>
-                </div>
-                ${tocHTML}
-            </nav>
-        `
+    const tocElement = Template.toc(BASE_URL, title, tocHTML)
+    const infoElement = Template.info(metadataHTML)
 
-        const infoElement = `
-            <nav class="publication__info" role="navigation">
-                ${metadataHTML}
-            </nav>
-        `
-
-        resolve({ tocElement, infoElement })
-    })
+    return { tocElement, infoElement }
 }
 
 function buttonPrev(filePath) {
@@ -229,13 +171,7 @@ function buttonPrev(filePath) {
 
     if (index > -1 && flow.spine[prevIndex]) {
         const href = `${flow.spine[prevIndex].fileName}.xhtml`
-        html = `
-            <div class="publication__nav__prev">
-                <a class="publication__nav__link" href="${BASE_URL}text/${href}">
-                    <i class="material-icons">arrow_back</i>
-                </a>
-            </div>
-        `
+        html = Template.prev(BASE_URL, href)
     }
 
     return html
@@ -250,13 +186,7 @@ function buttonNext(filePath) {
 
     if (index > -1 && flow.spine[nextIndex]) {
         const href = `${flow.spine[nextIndex].fileName}.xhtml`
-        html = `
-            <div class="publication__nav__next">
-                <a class="publication__nav__link" href="${BASE_URL}text/${href}">
-                    <i class="material-icons">arrow_forward</i>
-                </a>
-            </div>
-        `
+        html = Template.next(BASE_URL, href)
     }
 
     return html
@@ -271,229 +201,131 @@ function paginate(filePath) {
 
 function paginationNavigation(filePath) {
     const { prev, next } = paginate(filePath)
-    return `
-        <nav class="publication__nav" role="navigation">
-            ${prev}
-            ${next}
-        </nav>
-    `
+    return Template.pagination(prev, next)
 }
 
 function injectBaseURL(script) {
-    let script_ = ''
-
-    if (typeof script === 'string') {
-        script_ = script
-    } else if (Buffer.isBuffer(script)) {
-        script_ = String(script)
-    }
-
+    const script_ = typeof script === 'string' ? script : String(script)
     return Buffer.from(script_.replace(/%BASE_URL%/g, BASE_URL))
 }
 
 function getStyleBlock() {
-    return `
-        <style>
-            body {
-                opacity: 0;
-                transition: opacity 250ms ease;
-            }
-            body.ready {
-                opacity: 1 !important;
-            }
-        </style>
-    `
+    return Template.styles()
 }
 
 function getNavigationToggleScript() {
-    return `
-        <script type="text/javascript">
-        // <![CDATA[
-        ${injectBaseURL(fs.readFileSync(path.join(__dirname, 'navigation.js')))}
-        // ]]>
-        </script>
-    `
+    const content = injectBaseURL(fs.readFileSync(path.join(__dirname, 'navigation.js')))
+    return Template.scripts(content)
 }
 
 function getWebWorkerScript() {
-    return `
-        <script type="text/javascript">
-        // <![CDATA[
-        ${injectBaseURL(fs.readFileSync(path.join(__dirname, 'search.js')))}
-        // ]]>
-        </script>
-    `
+    const content = injectBaseURL(fs.readFileSync(path.join(__dirname, 'search.js')))
+    return Template.scripts(content)
 }
 
 function getEventHandlerScript() {
-    return `
-        <script type="text/javascript">
-        // <![CDATA[
-        ${injectBaseURL(fs.readFileSync(path.join(__dirname, 'event-handlers.js')))}
-        // ]]>
-        </script>
-    `
+    const content = injectBaseURL(fs.readFileSync(path.join(__dirname, 'event-handlers.js')))
+    return Template.scripts(content)
 }
 
 function injectPageElementsIntoFile(filePath, { tocElement, infoElement }) {
-    return new Promise(resolve => {
-        const pageNavigation = paginationNavigation(filePath)
-        const styleBlock = getStyleBlock()
-        const navigationToggleScript = getNavigationToggleScript()
-        const webWorkerScript = getWebWorkerScript()
-        const evenHandlerScript = getEventHandlerScript()
-        const headerElement = getHeaderElement(path.basename(filePath, path.extname(filePath)))
+    const pageNavigation = paginationNavigation(filePath)
+    const styleBlock = getStyleBlock()
+    const navigationToggleScript = getNavigationToggleScript()
+    const webWorkerScript = getWebWorkerScript()
+    const evenHandlerScript = getEventHandlerScript()
+    const headerElement = getHeaderElement(path.basename(filePath, path.extname(filePath)))
 
-        log.info(`Adding pagination to ${path.basename(filePath)}`)
-        fs.readFile(filePath, 'utf8', (err, data) => {
-            if (err) throw err
+    log.info(`Adding pagination to ${path.basename(filePath)}`)
 
-            // prepare to modify publication content
-            let contents
+    const data = fs.readFileSync(filePath, 'utf8')
 
-            // prepend the dynamically generated elements to body, adding a
-            // wrapper around the main publication content. this allows us to
-            // create a sliding nav, fixed header, etc.
-            contents = data.replace(
-                /(<body[^>]*?>)/,
-                `
-                <body style="opacity: 0;">
-                ${styleBlock}
-                <div class="publication">
-                ${headerElement}
-                <div class="publication__contents">
-            `,
-            )
+    // prepare to modify publication content
+    let contents
 
-            // close the wrapper element, adding a little javascript for the
-            // navigation toggle. should be moved to core when stable
-            contents = contents.replace(
-                /(<\/body>)/,
-                `
-                </div> <!-- / .publication__contents -->
-                ${pageNavigation}
-                </div> <!-- / .publication -->
-                ${tocElement}
-                ${infoElement}
-                ${navigationToggleScript}
-                ${webWorkerScript}
-                ${evenHandlerScript}
-                $1
-            `,
-            )
+    // prepend the dynamically generated elements to body, adding a
+    // wrapper around the main publication content. this allows us to
+    // create a sliding nav, fixed header, etc.
+    contents = data.replace(/(<body[^>]*?>)/, Template.body(styleBlock, headerElement))
 
-            fs.writeFile(filePath, contents, err1 => {
-                if (err1) throw err1
-                log.info(`web writing ${path.basename(filePath)}`)
-                resolve()
-            })
-        })
-    })
+    // close the wrapper element, adding a little javascript for the
+    // navigation toggle. should be moved to core when stable
+    contents = contents.replace(
+        /(<\/body>)/,
+        Template.footer(
+            pageNavigation,
+            tocElement,
+            infoElement,
+            navigationToggleScript,
+            webWorkerScript,
+            evenHandlerScript
+        )
+    )
+
+    log.info(`web writing ${path.basename(filePath)}`)
+
+    return fs.writeFile(filePath, contents)
 }
 
 function injectPageElementsIntoFiles(elements) {
-    return new Promise(resolve => {
-        const textPath = path.join(DIST_PATH, 'text')
-        const promises = []
-
-        fs.readdir(textPath, (err, files) => {
-            if (err) throw err
-
-            files.forEach(f => {
-                if (!path.extname(f) === '.xhtml') return
-                const filePath = path.resolve(textPath, f)
-                promises.push(injectPageElementsIntoFile(filePath, elements))
-            })
-
-            Promise.all(promises).then(() => resolve(elements))
-        })
+    const textPath = path.join(DIST_PATH, 'text')
+    const files = fs.readdirSync(textPath).filter(file => path.extname(file) === '.xhtml')
+    const promises = files.map(file => {
+        const filePath = path.resolve(textPath, file)
+        return injectPageElementsIntoFile(filePath, elements)
     })
+
+    return Promise.all(promises).then(() => elements)
 }
 
 function indexPageContent() {
-    return new Promise((resolve, reject) => {
-        const { spine } = flow
-        const promises = []
-        const records = []
+    const { spine } = flow
+    const records = []
 
-        let fileIndex = -1
-        spine
-            .filter(a => OMIT_FROM_SEARCH.indexOf(a.fileName) < 0)
-            .forEach(entry =>
-                promises.push(
-                    new Promise((resolve1, reject1) => {
-                        fs.readFile(path.join(OPS_PATH, `${entry.relativePath}.xhtml`), 'utf8', (err, data) => {
-                            if (err) reject1(err)
+    let fileIndex = -1
+    const promises = spine
+        .filter(a => OMIT_FROM_SEARCH.indexOf(a.fileName) < 0)
+        .map(entry =>
+            fs.readFile(path.join(OPS_PATH, `${entry.relativePath}.xhtml`), 'utf8').then(data => {
+                const $ = cheerio.load(data)
+                const title = $('h1,h2,h3,h4,h5,h6')
+                    .first()
+                    .text()
 
-                            const $ = cheerio.load(data)
-                            const title = $('h1,h2,h3,h4,h5,h6')
-                                .first()
-                                .text()
-                            const body = $('body')
-                                .text()
-                                .replace(/\n\s+/g, '\n')
-                                .trim() // reduce whitespace
-                            const url = `${BASE_URL}text/${entry.fileName}.xhtml`
+                const body = $('body').text()
+                const url = `${BASE_URL}text/${entry.fileName}.xhtml`
 
-                            fileIndex += 1
-                            records.push({
-                                id: fileIndex,
-                                title,
-                                body,
-                                url,
-                            })
-                            resolve1()
-                        })
-                    }),
-                ),
-            )
+                fileIndex += 1
+                records.push({ id: fileIndex, title, body, url })
+            })
+        )
 
-        Promise.all(promises)
-            .catch(err => reject(err))
-            .then(() => resolve(JSON.stringify(records)))
-    })
+    return Promise.all(promises).then(() => JSON.stringify(records))
 }
 
 function writeJSONPageData(json) {
-    return new Promise((resolve, reject) => {
-        fs.writeFile(path.join(DIST_PATH, 'search-index.json'), json, err => {
-            if (err) reject(err)
-            resolve()
-        })
-    })
+    return fs.writeFile(path.join(DIST_PATH, 'search-index.json'), json)
 }
 
 function importVendorScripts() {
-    return new Promise((resolve, reject) => {
-        const lunrPath = require.resolve('lunr')
-        const outputPath = path.join(DIST_PATH, 'lunr.js')
-        fs.copy(lunrPath, outputPath)
-            .catch(err => reject(err))
-            .then(resolve)
-    })
+    const lunrPath = require.resolve('lunr')
+    const outputPath = path.join(DIST_PATH, 'lunr.js')
+    return fs.copy(lunrPath, outputPath)
 }
 
 function writeWebWorker() {
-    return new Promise((resolve, reject) => {
-        const worker = injectBaseURL(fs.readFileSync(path.join(__dirname, 'worker.js')))
-        fs.writeFile(path.join(DIST_PATH, 'worker.js'), worker, err => {
-            if (err) reject(err)
-            resolve()
-        })
-    })
+    const worker = injectBaseURL(fs.readFileSync(path.join(__dirname, 'worker.js')))
+    return fs.writeFile(path.join(DIST_PATH, 'worker.js'), worker)
 }
 
 function writeWebpubManifest() {
     return new Promise((resolve, reject) => {
-        rrdir(state.dist, (err1, files) => {
+        rrdir(state.distDir, (err1, files) => {
             if (err1) reject(err1)
 
             const manifest = generateWebpubManifest(state, files)
 
-            fs.writeJson(path.join(DIST_PATH, 'manifest.json'), manifest, err2 => {
-                if (err2) reject(err2)
-                resolve()
-            })
+            fs.writeJson(path.join(DIST_PATH, 'manifest.json'), manifest).then(resolve)
         })
     })
 }
@@ -502,13 +334,7 @@ function writeWebpubManifest() {
 // which is 0-indexed
 function getPage(_n = -1) {
     const n = _n - 1
-    let url = '#'
-    try {
-        url = `${BASE_URL}text/${flow.spine[n].fileName}.xhtml`
-    } catch (err) {
-        throw err
-    }
-
+    const url = `${BASE_URL}text/${flow.spine[n].fileName}.xhtml`
     return url
 }
 
@@ -522,15 +348,11 @@ function getCoverImage() {
     const firstPage = getFirstPage()
 
     let coverImageSrc = 'images/'
-    if (coverEntry && {}.hasOwnProperty.call(coverEntry, 'value')) {
+    if (coverEntry && has(coverEntry, 'value')) {
         coverImageSrc += coverEntry.value
     }
 
-    return `
-        <a class="cover__image__link" href="${firstPage}">
-            <img class="cover__image" src="${coverImageSrc}" alt="Cover" />
-        </a>
-    `
+    return Template.cover(firstPage, coverImageSrc)
 }
 
 function createIndexHTML({ tocElement, infoElement }) {
@@ -540,43 +362,22 @@ function createIndexHTML({ tocElement, infoElement }) {
     const webWorkerScript = getWebWorkerScript()
     const headerElement = getHeaderElement()
     const styleBlock = getStyleBlock()
-    const robotsMeta = state.config.private
-        ? '<meta name="robots" content="noindex,nofollow"/>'
-        : '<meta name="robots" content="index,follow"/>'
+    const robotsMeta = Template.robots(state.config.private)
 
     // TODO: should get dynamic page template here to ensure asset hash on production build
     // @issue: https://github.com/triplecanopy/b-ber/issues/232
-    const indexHTML = `
-        <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-        <html xmlns="http://www.w3.org/1999/xhtml"
-            xmlns:epub="http://www.idpf.org/2007/ops"
-            xmlns:ibooks="http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0"
-            epub:prefix="ibooks: http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0">
-            <meta http-equiv="default-style" content="text/html charset=utf-8"/>
-            ${robotsMeta}
-            <link rel="manifest" type="application/webpub+json" href="${BASE_URL}manifest.json">
-            <link rel="stylesheet" type="text/css" href="${BASE_URL}stylesheets/application.css"/>
-
-            <head>
-                <title>${title}</title>
-                ${styleBlock}
-            </head>
-            <body style="opacity: 0;">
-                ${tocElement}
-                ${infoElement}
-                <div class="publication">
-                    ${headerElement}
-                    <div class="publication__contents">
-                        <section>
-                            ${coverImage}
-                        </section>
-                    </div>
-                </div>
-                ${navigationToggleScript}
-                ${webWorkerScript}
-            </body>
-        </html>
-    `
+    const indexHTML = Template.index(
+        BASE_URL,
+        robotsMeta,
+        title,
+        styleBlock,
+        tocElement,
+        infoElement,
+        headerElement,
+        coverImage,
+        navigationToggleScript,
+        webWorkerScript
+    )
 
     return fs.writeFile(path.resolve(DIST_PATH, 'index.html'), indexHTML)
 }

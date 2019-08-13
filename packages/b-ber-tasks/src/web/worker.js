@@ -10,7 +10,8 @@ var searchIndex
 var records = []
 var readyState = 0
 
-function onRequestReadyStateChange(state = null) {
+function onRequestReadyStateChange(state) {
+    if (!state) state = null
     readyState = state || this.readyState
     postMessage({ readyState: readyState })
 }
@@ -63,61 +64,26 @@ function parseSearchResults(results) {
             resultsObject = {}
             resultsObject.url = records[result.ref].url
 
-            Object.keys(result.matchData.metadata[term]).forEach(function(
-                fieldName,
-            ) {
+            Object.keys(result.matchData.metadata[term]).forEach(function(fieldName) {
                 var text = ''
                 var lastIndex = 0
 
-                for (
-                    var i = 0;
-                    i <
-                    result.matchData.metadata[term][fieldName].position.length;
-                    i++
-                ) {
+                for (var i = 0; i < result.matchData.metadata[term][fieldName].position.length; i++) {
                     if (!records[result.ref][fieldName]) continue // guard for fuzzy searches ... should be handled better
 
-                    var begin =
-                        result.matchData.metadata[term][fieldName].position[
-                            i
-                        ][0]
-                    var length =
-                        result.matchData.metadata[term][fieldName].position[
-                            i
-                        ][1]
+                    var begin = result.matchData.metadata[term][fieldName].position[i][0]
+                    var length = result.matchData.metadata[term][fieldName].position[i][1]
 
                     lastIndex = begin - textOffset
 
                     var prefix = lastIndex > 0 ? '...' : ''
-                    var before = records[result.ref][fieldName].slice(
-                        lastIndex,
-                        begin,
-                    )
-                    var marked =
-                        markerStart +
-                        records[result.ref][fieldName].slice(
-                            begin,
-                            begin + length,
-                        ) +
-                        markerEnd
-                    var after = records[result.ref][fieldName].slice(
-                        begin + length,
-                        begin + length + textOffset,
-                    )
-                    var suffix =
-                        begin + length + textOffset >
-                        records[result.ref][fieldName].length
-                            ? ''
-                            : '...'
+                    var before = records[result.ref][fieldName].slice(lastIndex, begin)
+                    var marked = markerStart + records[result.ref][fieldName].slice(begin, begin + length) + markerEnd
+                    var after = records[result.ref][fieldName].slice(begin + length, begin + length + textOffset)
+                    var suffix = begin + length + textOffset > records[result.ref][fieldName].length ? '' : '...'
 
                     text +=
-                        '<span class="search__result__text">' +
-                        prefix +
-                        before +
-                        marked +
-                        after +
-                        suffix +
-                        '</span>'
+                        '<span class="search__result__text">' + prefix + before + marked + after + suffix + '</span>'
                     lastIndex = begin + length
                 }
 

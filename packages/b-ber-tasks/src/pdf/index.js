@@ -6,7 +6,7 @@ import EbookConvert from '@canopycanopycanopy/b-ber-lib/EbookConvert'
 import { getBookMetadata } from '@canopycanopycanopy/b-ber-lib/utils'
 
 const pdf = () => {
-    const opsPath = path.join(state.dist, 'OPS')
+    const opsPath = state.dist.ops()
     const inputPath = path.join(opsPath, 'content.opf')
 
     // TODO: remove TOC manually since we don't have the option in
@@ -22,7 +22,7 @@ const pdf = () => {
                   outputPath: process.cwd(),
                   fileType: 'pdf',
                   fileName: getBookMetadata('identifier', state),
-              }).catch(log.error),
+              }).catch(log.error)
     )
 }
 

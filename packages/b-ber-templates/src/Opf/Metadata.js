@@ -25,8 +25,8 @@ class Metadata {
         if (term && element && data.term_property && data.term_property_value) {
             res.push(
                 `<meta refines="#${itemid}" property="${data.term_property}">${Html.escape(
-                    data.term_property_value,
-                )}</meta>`,
+                    data.term_property_value
+                )}</meta>`
             )
         }
 

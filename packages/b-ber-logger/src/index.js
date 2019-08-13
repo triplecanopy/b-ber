@@ -1,3 +1,4 @@
+import has from 'lodash.has'
 import Timer from './Timer'
 import { printWarnings, printErrors } from './printer'
 import { indent, incrementIndent, decrementIndent, incrementCounter, decrementCounter } from './indenter'
@@ -107,15 +108,14 @@ class Logger extends Timer {
         // parse args
         const argv = process.argv.reduce((acc, curr) => {
             const [k, v] = curr.split('=')
+            // eslint-disable-next-line no-restricted-globals
             acc[k] = typeof v === 'undefined' ? true : !isNaN(v) ? Number(v) : v
             return acc
         }, {})
 
         Object.keys(this.settings).forEach(a => {
             const opt = `--${a}`
-            if ({}.hasOwnProperty.call(argv, opt)) {
-                this.settings[a] = argv[opt]
-            }
+            if (has(argv, opt)) this.settings[a] = argv[opt]
         })
 
         this.configure()

@@ -1,6 +1,7 @@
 module.exports = {
     name: 'b-ber-logger',
-    verbose: false,
-    setupTestFrameworkScriptFile: 'jest-extended',
+    verbose: true,
+    setupFilesAfterEnv: ['jest-extended'],
     testURL: 'http://localhost/',
+    transform: { '^.+\\.jsx?$': './jest-transform-upward.js' },
 }

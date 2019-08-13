@@ -1,22 +1,14 @@
 import fs from 'fs-extra'
 import path from 'path'
 import log from '@canopycanopycanopy/b-ber-logger'
-import sequences from '@canopycanopycanopy/b-ber-shapes/sequences'
+import sequences from '@canopycanopycanopy/b-ber-shapes-sequences/sequences'
 import getAssets from '@canopycanopycanopy/b-ber-resources'
 import Project from '@canopycanopycanopy/b-ber-templates/Project'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import Theme from '@canopycanopycanopy/b-ber-lib/Theme'
 import { ensure } from '@canopycanopycanopy/b-ber-lib/utils'
 
-/**
- * @class Initializer
- */
 class Initializer {
-    /**
-     * @constructor
-     * @param  {Object} options Command Line arguments
-     * @return {Object}
-     */
     constructor({ name = '' }) {
         this.src = '_project'
         this.dist = 'project'
@@ -24,9 +16,7 @@ class Initializer {
         this.path = path.join(name, this.src)
         this.builds = Object.keys(sequences)
 
-        if (fs.existsSync(this.path)) {
-            log.error(`Project [${name}] already exits, aborting`)
-        }
+        if (fs.existsSync(this.path)) log.error(`Project [${name}] already exits, aborting`)
     }
 
     createAssets = () => {
@@ -65,11 +55,7 @@ class Initializer {
         return Theme.set(theme, true)
     }
 
-    /**
-     * Write default directories and files to the source directory
-     * @param  {String} name Name of the project
-     * @return {Promise<Object|Error>}
-     */
+    // Write default directories and files to the source directory
     start() {
         this.createAssets()
             .then(() => this.copyImages())

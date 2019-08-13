@@ -1,7 +1,8 @@
 import path from 'path'
 import File from 'vinyl'
+import state from '@canopycanopycanopy/b-ber-lib/State'
 import { Html } from '@canopycanopycanopy/b-ber-lib'
-import { getTitleOrName } from '@canopycanopycanopy/b-ber-lib/utils'
+import { getTitle } from '@canopycanopycanopy/b-ber-lib/utils'
 
 class Toc {
     static body() {
@@ -11,23 +12,20 @@ class Toc {
     }
 
     static item(data) {
-        return `<a href="text/${path.basename(data.relativePath)}.xhtml">${Html.escape(getTitleOrName(data))}</a>`
+        return `<a href="text/${path.basename(data.relativePath)}.xhtml">${Html.escape(getTitle(data, state))}</a>`
     }
 
     static items(data) {
         return `
             <ol>
-                ${data.reduce(
-                    (acc, curr) =>
-                        curr.in_toc === false
-                            ? acc
-                            : acc.concat(`
-                            <li>
-                                ${Toc.item(curr)}
-                                ${curr.nodes && curr.nodes.length ? Toc.items(curr.nodes) : ''}
-                            </li>`),
-                    '',
-                )}
+                ${data.reduce((acc, curr) => {
+                    if (curr.in_toc === false) return acc
+                    return acc.concat(`
+                        <li>
+                            ${Toc.item(curr)}
+                            ${curr.nodes && curr.nodes.length ? Toc.items(curr.nodes) : ''}
+                        </li>`)
+                }, '')}
             </ol>
         `
     }

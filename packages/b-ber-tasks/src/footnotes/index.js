@@ -1,8 +1,3 @@
-/**
- * @class footnotes
- */
-
-import path from 'path'
 import fs from 'fs-extra'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
@@ -13,7 +8,7 @@ class Footnotes {
     get file() {
         return {
             name: this.baseName,
-            path: path.join(state.dist, 'OPS', 'text', `${this.baseName}.xhtml`),
+            path: state.dist.text(`${this.baseName}.xhtml`),
         }
     }
 
@@ -32,9 +27,10 @@ class Footnotes {
                 in_toc: false,
                 linear: false,
                 generated: true,
-                buildType: state.buildType,
+                buildType: state.build,
             })
-            state.add('spine', fileData)
+
+            state.add('spine.flattened', fileData)
             log.info(`create default footnotes page [${this.file.name}.xhtml]`)
         })
     }

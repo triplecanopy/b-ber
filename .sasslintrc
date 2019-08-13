@@ -117,11 +117,7 @@
         "no-misspelled-properties": [
             1,
             {
-                "extra-properties": [
-                    "font-smoothing",
-                    "-epub-hyphens",
-                    "adobe-hyphenate"
-                ]
+                "extra-properties": ["font-smoothing", "-epub-hyphens", "adobe-hyphenate"]
             }
         ],
         "no-qualifying-elements": [

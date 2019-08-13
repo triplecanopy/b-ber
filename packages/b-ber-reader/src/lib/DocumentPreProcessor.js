@@ -44,7 +44,7 @@ class DocumentPreProcessor {
 
     static appendScripts() {
         state.scripts.forEach(
-            a => /(?:text|application)\/(?:(x-)?java|ecma)script/.test(a.type) && a.appendScript(state.root),
+            a => /(?:text|application)\/(?:(x-)?java|ecma)script/.test(a.type) && a.appendScript(state.root)
         )
     }
 

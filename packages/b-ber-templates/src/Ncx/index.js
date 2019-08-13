@@ -1,13 +1,14 @@
 import File from 'vinyl'
-import find from 'lodash/find'
+import find from 'lodash.find'
+import has from 'lodash.has'
 import { Html } from '@canopycanopycanopy/b-ber-lib'
-import { getTitleOrName } from '@canopycanopycanopy/b-ber-lib/utils'
+import { getTitle } from '@canopycanopycanopy/b-ber-lib/utils'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 
 class Ncx {
     static head() {
         const entry = find(state.metadata.json(), { term: 'identifier' })
-        const identifier = entry && {}.hasOwnProperty.call(entry, 'value') ? entry.value : ''
+        const identifier = entry && has(entry, 'value') ? entry.value : ''
         return `
             <head>
                 <meta name="dtb:uid" content="${identifier}"/>
@@ -17,24 +18,27 @@ class Ncx {
             </head>
         `
     }
+
     static title() {
         const entry = find(state.metadata.json(), { term: 'title' })
-        const title = entry && {}.hasOwnProperty.call(entry, 'value') ? entry.value : ''
+        const title = entry && has(entry, 'value') ? entry.value : ''
         return `
             <docTitle>
                 <text>${Html.escape(title)}</text>
             </docTitle>
         `
     }
+
     static author() {
         const entry = find(state.metadata.json(), { term: 'creator' })
-        const creator = entry && {}.hasOwnProperty.call(entry, 'value') ? entry.value : ''
+        const creator = entry && has(entry, 'value') ? entry.value : ''
         return `
             <docAuthor>
                 <text>${Html.escape(creator)}</text>
             </docAuthor>
         `
     }
+
     static document() {
         return new File({
             path: 'ncx.document.tmpl',
@@ -50,30 +54,31 @@ class Ncx {
             `),
         })
     }
+
     static navPoint(data) {
         return `
             <navLabel>
-                <text>${Html.escape(getTitleOrName(data))}</text>
+                <text>${Html.escape(getTitle(data, state))}</text>
             </navLabel>
             <content src="${data.relativePath}.xhtml" />
         `
     }
+
     static navPoints(data) {
         let index = 0
 
-        function render(_data) {
-            return _data
-                .map(a => {
-                    if (a.in_toc === false) return ''
-                    index += 1
-                    return `
+        function render(nodes) {
+            if (!nodes || !nodes.length) return ''
+            return nodes.reduce((acc, curr) => {
+                if (curr.in_toc === false) return acc
+                index += 1
+                return acc.concat(`
                     <navPoint id="navPoint-${index}" playOrder="${index}">
-                        ${Ncx.navPoint(a)}
-                        ${a.nodes && a.nodes.length ? render(a.nodes) : ''}
+                        ${Ncx.navPoint(curr)}
+                        ${render(curr.nodes)}
                     </navPoint>
-                `
-                })
-                .join('')
+                `)
+            }, '')
         }
 
         const xml = render(data)

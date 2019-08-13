@@ -1,4 +1,5 @@
 import xmljs from 'xml-js'
+import has from 'lodash/has'
 import { Parser as HtmlToReactParser } from 'html-to-react'
 import find from 'lodash/find'
 import csstree, { List } from 'css-tree'
@@ -113,7 +114,7 @@ class XMLAdaptor {
             const { spine } = rootNode
             spine.map(
                 // eslint-disable-next-line no-param-reassign
-                a => (a.absoluteURL = Url.resolveRelativeURL(opsURL, a.href)),
+                a => (a.absoluteURL = Url.resolveRelativeURL(opsURL, a.href))
             )
             resolve({ ...rootNode, spine })
         })
@@ -123,7 +124,7 @@ class XMLAdaptor {
             const { guide } = rootNode
             guide.map(
                 // eslint-disable-next-line no-param-reassign
-                a => (a.absoluteURL = Url.resolveRelativeURL(opsURL, a.href)),
+                a => (a.absoluteURL = Url.resolveRelativeURL(opsURL, a.href))
             )
             resolve({ ...rootNode, guide })
         })
@@ -168,7 +169,7 @@ class XMLAdaptor {
             const metadata = new BookMetadata({})
             _metadata.forEach((item, i) => {
                 const key = Object.keys(_metadata[i])
-                if ({}.hasOwnProperty.call(metadata, key)) {
+                if (has(metadata, key)) {
                     metadata.set(key, item[key])
                 }
             })
@@ -206,7 +207,7 @@ class XMLAdaptor {
             const bookContent = htmlToReactParser.parseWithInstructions(
                 data_,
                 isValidNode,
-                processingInstructions(response),
+                processingInstructions(response)
             )
 
             // scope stylesheets and pass them along to be appended to the DOM
@@ -237,7 +238,7 @@ class XMLAdaptor {
                             Cache.set(url, response1.data)
                             return resolve1({ base, data: response1.data })
                         })
-                    }),
+                    })
                 )
             })
 

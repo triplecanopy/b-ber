@@ -1,7 +1,3 @@
-/**
- * @module epub
- */
-
 import zipper from 'epub-zipper'
 import log from '@canopycanopycanopy/b-ber-logger'
 import state from '@canopycanopycanopy/b-ber-lib/State'
@@ -12,7 +8,7 @@ const epub = () =>
         ? Promise.resolve()
         : zipper
               .create({
-                  input: state.dist,
+                  input: state.distDir,
                   output: process.cwd(),
                   clean: true,
                   fileName: getBookMetadata('identifier', state),

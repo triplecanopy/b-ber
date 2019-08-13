@@ -5,14 +5,10 @@ import Viewport from '../helpers/Viewport'
 import { showGrid, showBreakpoints } from '../config'
 
 const BreakpointTable = props => (
-    <span style={{ display: 'table', float: 'left', paddingLeft: 15 }}>
-        {props.children}
-    </span>
+    <span style={{ display: 'table', float: 'left', paddingLeft: 15 }}>{props.children}</span>
 )
 
-const BreakpointRow = props => (
-    <span style={{ display: 'table-row' }}>{props.children}</span>
-)
+const BreakpointRow = props => <span style={{ display: 'table-row' }}>{props.children}</span>
 const BreakpointColumn = props => (
     <React.Fragment>
         {typeof props.cond === 'undefined' ? (
@@ -41,11 +37,7 @@ const VerticalGrid = () => {
     return (
         <div className="grid__debug">
             {lines.map((_, i) => (
-                <span
-                    key={i}
-                    style={{ left: paddingLeft * i, width: columnWidth }}
-                    className="grid__debug__line"
-                >
+                <span key={i} style={{ left: paddingLeft * i, width: columnWidth }} className="grid__debug__line">
                     {i + 1}
                 </span>
             ))}
@@ -69,21 +61,16 @@ class DebugGrid extends Component {
                             <BreakpointTable>
                                 <BreakpointRow>
                                     <BreakpointColumn>&nbsp;</BreakpointColumn>
-                                    <BreakpointColumn>
-                                        Breakpoint X:
-                                    </BreakpointColumn>
+                                    <BreakpointColumn>Breakpoint X:</BreakpointColumn>
                                     <BreakpointColumn>
                                         {Viewport.horizontalSmall() && 'SMALL'}
-                                        {Viewport.horizontalMedium() &&
-                                            'MEDIUM'}
+                                        {Viewport.horizontalMedium() && 'MEDIUM'}
                                         {Viewport.horizontalLarge() && 'LARGE'}
                                     </BreakpointColumn>
                                 </BreakpointRow>
                                 <BreakpointRow>
                                     <BreakpointColumn>&nbsp;</BreakpointColumn>
-                                    <BreakpointColumn>
-                                        Breakpoint Y:
-                                    </BreakpointColumn>
+                                    <BreakpointColumn>Breakpoint Y:</BreakpointColumn>
                                     <BreakpointColumn>
                                         {Viewport.verticalSmall() && 'SMALL'}
                                         {Viewport.verticalMedium() && 'MEDIUM'}
@@ -93,66 +80,21 @@ class DebugGrid extends Component {
                             </BreakpointTable>
                             <BreakpointTable>
                                 <BreakpointRow>
-                                    <BreakpointColumn
-                                        cond={
-                                            Viewport.horizontalSmall() &&
-                                            Viewport.verticalSmall()
-                                        }
-                                    />
-                                    <BreakpointColumn
-                                        cond={
-                                            Viewport.horizontalMedium() &&
-                                            Viewport.verticalSmall()
-                                        }
-                                    />
-                                    <BreakpointColumn
-                                        cond={
-                                            Viewport.horizontalLarge() &&
-                                            Viewport.verticalSmall()
-                                        }
-                                    />
+                                    <BreakpointColumn cond={Viewport.horizontalSmall() && Viewport.verticalSmall()} />
+                                    <BreakpointColumn cond={Viewport.horizontalMedium() && Viewport.verticalSmall()} />
+                                    <BreakpointColumn cond={Viewport.horizontalLarge() && Viewport.verticalSmall()} />
                                 </BreakpointRow>
 
                                 <BreakpointRow>
-                                    <BreakpointColumn
-                                        cond={
-                                            Viewport.horizontalSmall() &&
-                                            Viewport.verticalMedium()
-                                        }
-                                    />
-                                    <BreakpointColumn
-                                        cond={
-                                            Viewport.horizontalMedium() &&
-                                            Viewport.verticalMedium()
-                                        }
-                                    />
-                                    <BreakpointColumn
-                                        cond={
-                                            Viewport.horizontalLarge() &&
-                                            Viewport.verticalMedium()
-                                        }
-                                    />
+                                    <BreakpointColumn cond={Viewport.horizontalSmall() && Viewport.verticalMedium()} />
+                                    <BreakpointColumn cond={Viewport.horizontalMedium() && Viewport.verticalMedium()} />
+                                    <BreakpointColumn cond={Viewport.horizontalLarge() && Viewport.verticalMedium()} />
                                 </BreakpointRow>
 
                                 <BreakpointRow>
-                                    <BreakpointColumn
-                                        cond={
-                                            Viewport.horizontalSmall() &&
-                                            Viewport.verticalLarge()
-                                        }
-                                    />
-                                    <BreakpointColumn
-                                        cond={
-                                            Viewport.horizontalMedium() &&
-                                            Viewport.verticalLarge()
-                                        }
-                                    />
-                                    <BreakpointColumn
-                                        cond={
-                                            Viewport.horizontalLarge() &&
-                                            Viewport.verticalLarge()
-                                        }
-                                    />
+                                    <BreakpointColumn cond={Viewport.horizontalSmall() && Viewport.verticalLarge()} />
+                                    <BreakpointColumn cond={Viewport.horizontalMedium() && Viewport.verticalLarge()} />
+                                    <BreakpointColumn cond={Viewport.horizontalLarge() && Viewport.verticalLarge()} />
                                 </BreakpointRow>
                             </BreakpointTable>
                         </div>

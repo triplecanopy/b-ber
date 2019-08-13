@@ -13,7 +13,7 @@ function printNotices(type, task = 'b-ber') {
         this.decorate(leader, color),
         this.decorate(task),
         this.decorate(notices.length),
-        this.decorate(type),
+        this.decorate(type)
     )
 
     if (this.logLevel > 2) process.stdout.write(message)
@@ -22,6 +22,7 @@ function printNotices(type, task = 'b-ber') {
 export function printWarnings(task) {
     printNotices.call(this, 'warnings', task)
 }
+
 export function printErrors(task) {
     printNotices.call(this, 'errors', task)
 }

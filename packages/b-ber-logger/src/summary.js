@@ -1,7 +1,7 @@
 /* eslint-disable import/prefer-default-export */
 
 import util from 'util'
-import isPlainObject from 'lodash/isPlainObject'
+import isPlainObject from 'lodash.isplainobject'
 
 const INDENTATION = '  '
 
@@ -15,7 +15,7 @@ function write(msgs, context) {
         `%s%s %s${esses}`,
         context.indent(),
         context.decorate('b-ber', 'whiteBright', 'bgBlack'),
-        ...msgs_,
+        ...msgs_
     )
     process.stdout.write(message)
     context.newLine()
@@ -60,21 +60,21 @@ function writeConfig(data, context, indent = 0) {
 
 export function printSummary({ state, formattedStartDate, formattedEndDate, sequenceEnd }) {
     this.newLine()
-    write([['Stats', 'magenta']], this)
+    write([['Stats', 'blueBright']], this)
     write([['Build Start:'], [formattedStartDate]], this)
     write([['Build End:'], [formattedEndDate]], this)
     write([['Elapsed:'], [sequenceEnd]], this)
 
     this.newLine()
-    write([['Configuration', 'magenta']], this)
+    write([['Configuration', 'blueBright']], this)
     writeConfig(state.config, this)
 
     this.newLine()
-    write([['Metadata', 'magenta']], this)
+    write([['Metadata', 'blueBright']], this)
     writeMetadata(state.metadata.json(), this)
 
     this.newLine()
-    write([['Navigation', 'magenta']], this)
+    write([['Navigation', 'blueBright']], this)
 
     printNavigation(state.toc, this)
 }
