@@ -1,6 +1,6 @@
 {
     "name": "@canopycanopycanopy/b-ber-shapes-dublin-core",
-    "version": "0.1.7",
+    "version": "1.0.0",
     "description": "",
     "main": "index.js",
     "scripts": {
@@ -21,7 +21,6 @@
         "jest": "^24.8.0",
         "rimraf": "^2.6.3"
     },
-    "dependencies": {},
     "files": [
         "terms.js",
         "elements.js"

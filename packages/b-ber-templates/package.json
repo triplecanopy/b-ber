@@ -1,6 +1,6 @@
 {
     "name": "@canopycanopycanopy/b-ber-templates",
-    "version": "0.1.7",
+    "version": "1.0.0",
     "description": "",
     "main": "index.js",
     "directories": {
@@ -32,12 +32,12 @@
         "rimraf": "^2.6.3"
     },
     "dependencies": {
-        "@canopycanopycanopy/b-ber-lib": "^0.1.7",
-        "@canopycanopycanopy/b-ber-logger": "^0.1.7",
+        "@canopycanopycanopy/b-ber-lib": "^1.0.0",
+        "@canopycanopycanopy/b-ber-logger": "^1.0.0",
         "fs-extra": "^8.1.0",
-        "lodash.uniq": "latest",
         "lodash.find": "latest",
         "lodash.has": "latest",
+        "lodash.uniq": "latest",
         "mime-types": "^2.1.18",
         "vinyl": "^2.2.0"
     },
