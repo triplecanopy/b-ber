@@ -6,6 +6,9 @@
     "command": {
         "publish": {
             "message": "%v"
+        },
+        "version": {
+            "exact": true
         }
     }
 }
