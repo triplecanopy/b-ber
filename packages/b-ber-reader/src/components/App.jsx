@@ -96,7 +96,6 @@ class App extends Component {
 
     render() {
         const { books, bookURL, search, downloads, useBrowserHistory, cache } = this.state
-        console.log('this.state', this.state)
         return (
             <div>
                 {bookURL ? (
