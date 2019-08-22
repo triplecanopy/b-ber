@@ -19,6 +19,7 @@ class Asset {
             hash = (hash << 5) - hash + chr
             hash |= 0
         }
+        hash >>>= 0 // no negative numbers
         return String(hash)
     }
     static createId() {
