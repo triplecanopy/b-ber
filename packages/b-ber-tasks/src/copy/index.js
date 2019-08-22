@@ -1,5 +1,6 @@
 import path from 'path'
 import fs from 'fs-extra'
+import isArray from 'lodash/isArray'
 import log from '@canopycanopycanopy/b-ber-logger'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 
@@ -8,10 +9,13 @@ const cwd = process.cwd()
 
 // Copy directories of assets into the output directory
 const copy = () => {
-    // resolve paths in ignore
     let { ignore } = state.config
-    if (ignore.constructor !== Array) ignore = []
-    ignore = ignore.map(file => path.resolve(cwd, file))
+    if (!isArray(ignore)) ignore = []
+
+    ignore = ignore.reduce((acc, curr) => {
+        acc[path.resolve(cwd, curr)] = true
+        return acc
+    }, {})
 
     const dirs = [
         {
@@ -26,7 +30,7 @@ const copy = () => {
             from: path.resolve(state.src.media()),
             to: path.resolve(state.dist.media()),
         },
-    ].filter(dir => ignore.indexOf(dir.from) < 0)
+    ].filter(dir => !ignore[dir.from])
 
     const promises = dirs.map(dir =>
         fs
@@ -35,7 +39,6 @@ const copy = () => {
             .then(() =>
                 fs.copy(dir.from, dir.to, {
                     overwrite: false,
-                    // errorOnExist: true,
                     filter: file => path.basename(file).charAt(0) !== '.' && !ignore[file],
                 })
             )
