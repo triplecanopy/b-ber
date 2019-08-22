@@ -153,7 +153,7 @@ class Reader extends Component {
             if (useLocalStorage === false) return this.loadSpineItem()
 
             const storage = Storage.get(this.localStorageKey)
-            if (!storage || this.state.cache === false) return this.loadSpineItem()
+            if (!storage) return this.loadSpineItem()
 
             this.updateViewerSettings(storage.viewerSettings)
             this.loadInitialSpineItem(storage)
@@ -284,7 +284,7 @@ class Reader extends Component {
     }
 
     updateViewerSettings(settings = {}) {
-        if (useLocalStorage === false) return
+        if (useLocalStorage === false || this.state.cache === false) return
 
         const viewerSettings = new ViewerSettings()
         viewerSettings.put(settings)
@@ -294,7 +294,7 @@ class Reader extends Component {
     // currently viewer settings are global (for all books) although they could
     // be scoped to individual books using the books' hash
     saveViewerSettings() {
-        if (useLocalStorage === false) return
+        if (useLocalStorage === false || this.state.cache === false) return
 
         const viewerSettings = { ...this.state.viewerSettings.settings }
         const storage = Storage.get(this.localStorageKey)
@@ -475,6 +475,7 @@ class Reader extends Component {
                                 const lastSpread = spreadIndex === lastSpreadIndex
 
                                 this.setState({ firstChapter, lastChapter, firstSpread, lastSpread }, () => {
+                                    this.savePosition()
                                     this.enableEventHandling()
                                     this.hideSpinner()
 
@@ -485,7 +486,6 @@ class Reader extends Component {
 
                         return setTimeout(() => {
                             if (logTime) {
-                                // console.timeEnd('this.setState({ready: true})')
                                 console.timeEnd('Reader#loadSpineItem')
                             }
                             // return this.setState({ready: true}) // TODO: force load
@@ -505,8 +505,6 @@ class Reader extends Component {
                 const { hash } = this.state
                 delete storage[hash]
                 Storage.set(this.localStorageKey, storage)
-
-                // this.loadSpineItem()
             })
     }
 
