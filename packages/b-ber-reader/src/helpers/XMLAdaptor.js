@@ -180,7 +180,7 @@ class XMLAdaptor {
 
     static parseSpineItemResponse(response) {
         const { responseURL } = response.request
-        const { hash, opsURL, paddingLeft, columnGap } = response
+        const { hash, opsURL, paddingLeft, columnGap, cache: useLocalStorageCache } = response
 
         if (logTime) console.time('XMLAdaptor#parseSpineItemResponse')
 
@@ -231,11 +231,12 @@ class XMLAdaptor {
                 promises.push(
                     new Promise(resolve1 => {
                         const cache = Cache.get(url)
-                        if (cache && cache.data) {
+                        if (useLocalStorageCache && cache && cache.data) {
                             return resolve1({ base, data: cache.data })
                         }
+
                         return Request.get(url).then(response1 => {
-                            Cache.set(url, response1.data)
+                            if (useLocalStorageCache) Cache.set(url, response1.data)
                             return resolve1({ base, data: response1.data })
                         })
                     })

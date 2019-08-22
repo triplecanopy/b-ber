@@ -32,6 +32,7 @@ class App extends Component {
             basePath: props.basePath || '/',
             downloads: props.downloads || [],
             uiOptions: props.uiOptions || {}, // eslint-disable-line react/no-unused-state
+            cache: typeof props.cache !== 'undefined' ? props.cache : true,
             useBrowserHistory: props.useBrowserHistory || true,
             search: '',
             loadRemoteLibrary:
@@ -94,7 +95,8 @@ class App extends Component {
     }
 
     render() {
-        const { books, bookURL, search, downloads, useBrowserHistory } = this.state
+        const { books, bookURL, search, downloads, useBrowserHistory, cache } = this.state
+        console.log('this.state', this.state)
         return (
             <div>
                 {bookURL ? (
@@ -103,6 +105,7 @@ class App extends Component {
                         bookURL={bookURL}
                         downloads={downloads}
                         useBrowserHistory={useBrowserHistory}
+                        cache={cache}
                         {...this.props}
                     />
                 ) : (

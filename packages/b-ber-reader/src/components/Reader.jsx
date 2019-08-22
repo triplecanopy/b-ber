@@ -52,6 +52,7 @@ class Reader extends Component {
             currentSpineItem: null,
             currentSpineItemIndex: 0,
             search: '',
+            cache: this.props.cache,
 
             // layout
             hash: Asset.createHash(this.props.bookURL),
@@ -152,7 +153,7 @@ class Reader extends Component {
             if (useLocalStorage === false) return this.loadSpineItem()
 
             const storage = Storage.get(this.localStorageKey)
-            if (!storage) return this.loadSpineItem()
+            if (!storage || this.state.cache === false) return this.loadSpineItem()
 
             this.updateViewerSettings(storage.viewerSettings)
             this.loadInitialSpineItem(storage)

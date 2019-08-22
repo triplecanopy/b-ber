@@ -8,6 +8,7 @@ class Config {
         env: process.env.NODE_ENV || 'development',
         src: '_project',
         dist: 'project',
+        cache: true,
         ibooks_specified_fonts: false,
         theme: 'b-ber-theme-serif',
         themes_directory: './themes',

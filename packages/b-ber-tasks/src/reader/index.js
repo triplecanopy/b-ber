@@ -9,6 +9,7 @@ import { Url } from '@canopycanopycanopy/b-ber-lib'
 import { generateWebpubManifest } from '@canopycanopycanopy/b-ber-lib/utils'
 import log from '@canopycanopycanopy/b-ber-logger'
 import rrdir from 'recursive-readdir'
+import has from 'lodash/has'
 
 class Reader {
     constructor() {
@@ -113,12 +114,11 @@ class Reader {
     }
 
     getProjectConfig(term) {
-        const value = state.config[term]
-        if (!value) {
-            log.warn(`Could not find config value for ${term}`)
-            return ''
+        if (!has(state.config, term)) {
+            log.warn(`Invalid property for config: ${term}`)
         }
-        return value
+
+        return state.config[term]
     }
 
     writeBookManifest() {
@@ -182,6 +182,7 @@ class Reader {
             basePath: this.getProjectConfig('base_path'),
             loadRemoteLibrary: false,
             uiOptions: this.getProjectConfig('ui_options'),
+            cache: this.getProjectConfig('cache'),
         }
 
         let contents
