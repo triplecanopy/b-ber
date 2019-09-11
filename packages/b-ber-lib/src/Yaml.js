@@ -23,7 +23,7 @@ const interfaces = {
         base_path: { type: 'string', required: false },
         remote_url: { type: 'string', required: false },
         reader_url: { type: 'string', required: false },
-        builds: { type: 'array', required: false },
+        downloads: { type: 'array', required: false },
         ui_options: { type: 'object', required: false },
         private: { type: 'boolean', required: false },
         ignore: { type: 'array', required: false },

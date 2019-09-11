@@ -1,6 +1,22 @@
 import React from 'react'
 import { debug } from '../../config'
 
+const ListItemDownloads = props => {
+    if (!props.downloads || !props.downloads.length) return null
+
+    return (
+        <li>
+            <button
+                className="material-icons nav__button nav__button__downloads"
+                onClick={_ => props.handleSidebarButtonClick('downloads')}
+                style={props.uiOptions.navigation.header_icons.downloads ? {} : { display: 'none' }}
+            >
+                file_download
+            </button>
+        </li>
+    )
+}
+
 const NavigationHeader = props => (
     <header className="controls__header" style={debug ? { opacity: 0.4 } : {}}>
         <nav>
@@ -31,15 +47,9 @@ const NavigationHeader = props => (
                         settings
                     </button>
                 </li>
-                <li>
-                    <button
-                        className="material-icons nav__button nav__button__downloads"
-                        onClick={_ => props.handleSidebarButtonClick('downloads')}
-                        style={props.uiOptions.navigation.header_icons.downloads ? {} : { display: 'none' }}
-                    >
-                        file_download
-                    </button>
-                </li>
+
+                <ListItemDownloads {...props} />
+
                 <li>
                     <button
                         className="material-icons nav__button nav__button__metadata"

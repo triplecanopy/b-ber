@@ -178,7 +178,7 @@ class Reader {
             ],
             bookURL,
             projectURL: this.getProjectConfig('remote_url'),
-            downloads: this.getProjectConfig('builds'),
+            downloads: this.getProjectConfig('downloads'),
             basePath: this.getProjectConfig('base_path'),
             loadRemoteLibrary: false,
             uiOptions: this.getProjectConfig('ui_options'),

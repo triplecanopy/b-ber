@@ -16,7 +16,7 @@ class Config {
         base_path: '/',
         remote_url: 'http://localhost:4000/',
         reader_url: 'http://localhost:4000/project-reader',
-        builds: ['epub', 'mobi', 'pdf'],
+        downloads: [],
         ui_options: {
             navigation: {
                 header_icons: {
