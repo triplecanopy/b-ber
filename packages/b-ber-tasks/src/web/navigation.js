@@ -39,6 +39,7 @@
         var tocButton = document.querySelector('.header__item__toggle--toc button')
         var infoButton = document.querySelector('.header__item__toggle--info button')
         var publicationContent = document.querySelector('.publication__contents')
+        var searchInput = document.querySelector('.publication__search__input')
 
         // slide handlers
         // prettier-ignore
