@@ -111,13 +111,6 @@ export const ensure = ({ files = [], dirs = [], prefix = '' } = {}) =>
         .then(() => ensureFiles(files, prefix))
         .catch(log.error)
 
-export const addTrailingSlash = _s => {
-    let s = _s
-    if (s === '/') return s
-    if (s.charCodeAt(s.length - 1) !== 47 /* / */) s += '/'
-    return s
-}
-
 export const generateWebpubManifest = (state, files) => {
     const remoteURL = Url.trimSlashes(state.config.remote_url)
     const readingOrder = state.spine.flattened.map(({ name, title }) => ({

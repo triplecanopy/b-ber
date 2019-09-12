@@ -14,7 +14,8 @@ import has from 'lodash/has'
 import cheerio from 'cheerio'
 import log from '@canopycanopycanopy/b-ber-logger'
 import state from '@canopycanopycanopy/b-ber-lib/State'
-import { getBookMetadata, addTrailingSlash, generateWebpubManifest } from '@canopycanopycanopy/b-ber-lib/utils'
+import { Url } from '@canopycanopycanopy/b-ber-lib'
+import { getBookMetadata, generateWebpubManifest } from '@canopycanopycanopy/b-ber-lib/utils'
 import Toc from '@canopycanopycanopy/b-ber-templates/Toc'
 import rrdir from 'recursive-readdir'
 import Template from './Template'
@@ -76,7 +77,7 @@ class WebFlow {
 async function initialize() {
     DIST_PATH = state.distDir
     OPS_PATH = path.join(DIST_PATH, 'OPS')
-    BASE_URL = state.config.base_url ? addTrailingSlash(state.config.base_url) : '/'
+    BASE_URL = Url.addTrailingSlash(state.config.base_url)
 
     ASSETS_TO_UNLINK = [
         path.join(DIST_PATH, 'mimetype'),

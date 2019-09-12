@@ -142,14 +142,13 @@ class Reader {
 
     injectWebpubManifestLink() {
         const indexHTML = state.dist.root('index.html')
+        const readerURL = Url.addTrailingSlash(this.getProjectConfig('reader_url'))
 
         let contents
         contents = fs.readFileSync(indexHTML, 'utf8')
         contents = contents.replace(
             /<\/head>/,
-            `<link rel="manifest" type="application/webpub+json" href="${this.getProjectConfig(
-                'reader_url'
-            )}/manifest.json"></head>`
+            `<link rel="manifest" type="application/webpub+json" href="${readerURL}manifest.json"></head>`
         )
 
         return fs.writeFile(indexHTML, contents)
@@ -165,9 +164,9 @@ class Reader {
 
     injectServerDataIntoTemplate() {
         const indexHTML = state.dist.root('index.html')
-        const bookURL = `${this.getProjectConfig('reader_url').replace(/$\/+/, '')}/epub/${this.getBookMetadata(
-            'identifier'
-        )}`
+        const readerURL = Url.addTrailingSlash(this.getProjectConfig('reader_url'))
+        const identifier = this.getBookMetadata('identifier')
+        const bookURL = `${readerURL}epub/${identifier}`
         const serverData = {
             books: [
                 {
@@ -177,9 +176,9 @@ class Reader {
                 },
             ],
             bookURL,
-            projectURL: this.getProjectConfig('remote_url'),
+            projectURL: Url.addTrailingSlash(this.getProjectConfig('remote_url')),
             downloads: this.getProjectConfig('downloads'),
-            basePath: this.getProjectConfig('base_path'),
+            basePath: Url.addTrailingSlash(this.getProjectConfig('base_path')),
             loadRemoteLibrary: false,
             uiOptions: this.getProjectConfig('ui_options'),
             cache: this.getProjectConfig('cache'),
@@ -196,20 +195,22 @@ class Reader {
         const indexContents = fs.readFileSync(state.dist.root('index.html'), 'utf8')
         const versionHash = indexContents.match(/link href="\/(\w+\.css)"/)[1]
         const stylesheet = state.dist.root(versionHash)
+        const readerURL = Url.addTrailingSlash(this.getProjectConfig('reader_url'))
 
         let contents
         contents = fs.readFileSync(stylesheet, 'utf8')
-        contents = contents.replace(/url\(\//g, `url(${this.getProjectConfig('reader_url')}/`)
+        contents = contents.replace(/url\(\//g, `url(${readerURL}`)
 
         return fs.writeFile(stylesheet, contents)
     }
 
     updateAssetURLsWithAbsolutePaths() {
         const indexHTML = state.dist.root('index.html')
+        const readerURL = Url.removeTrailingSlash(this.getProjectConfig('reader_url'))
 
         let contents
         contents = fs.readFileSync(indexHTML, 'utf8')
-        contents = contents.replace(/(src|href)="(\/[^"]+?)"/g, `$1="${this.getProjectConfig('reader_url')}$2"`)
+        contents = contents.replace(/(src|href)="(\/[^"]+?)"/g, `$1="${readerURL}$2"`)
 
         return fs.writeFile(indexHTML, contents)
     }
