@@ -1,5 +1,8 @@
 // sass-lint:disable indentation
 
+// Some dicts for use in functions below
+$alphabet: ('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z');
+
 //
 // Media Queries
 //
@@ -213,6 +216,60 @@
 }
 @function five-ems($value) {
     @return n-ems(5, $value);
+}
+
+// CSS Grid functions
+// Height of each row as percentage of window height
+$grid-row-height-percentage: (100% - $grid-row-gap-percentage) / $grid-column-count;
+
+@function grid-template-repeater($char, $n) {
+    $str: '';
+
+    @for $i from 1 through $n {
+        $str: $str + $char + $i + ' ';
+    }
+
+    @return unquote($str);
+}
+
+// Creates rows for the CSS grid-template property
+// prettier-ignore
+@function grid-template($column-count: $grid-column-count, $row-size: 'auto') {
+    $str: '';
+    @for $i from 1 through $grid-row-count {
+        $letter: nth($alphabet, $i);
+        $column-names: grid-template-repeater($letter, $column-count);
+        $str: $str + "[row-#{$i}-start] '#{$column-names}' #{$row-size} [row-#{$i}-end] ";
+    }
+
+    $str: $str + '/ auto';
+    @return unquote($str);
+}
+
+// Creates the vertical and horizontal gaps (gutters) for the CSS grid-gap property
+// prettier-ignore
+@function grid-gap() {
+    @return unquote("#{strip-unit($grid-row-gap-percentage) * 1%} #{strip-unit($grid-column-gap-percentage) * 1%}");
+}
+
+@mixin grid-layout {
+    $row-height: (100% - strip-unit($grid-row-gap-percentage)) / $grid-row-count;
+
+    display: grid;
+    grid-template: grid-template($grid-column-count, $row-height);
+    grid-gap: grid-gap();
+
+    @include break('mobile') {
+        grid-template: grid-template(round($grid-column-count / 2), 'auto');
+    }
+}
+
+@function grid-item() {
+    @if $grid-column-end != '' {
+        @return unquote("#{$grid-column-start} / #{$grid-column-end}");
+    } @else {
+        @return unquote("#{$grid-column-start}");
+    }
 }
 
 // Add padding programatically based on font-size

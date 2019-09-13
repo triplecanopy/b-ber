@@ -37,27 +37,18 @@
         }
     }
 
-    // Gallery Styling
-    // This sets up a layout for galleries that contains 12 columns and two rows
-    // and is responsive.
+    // Gallery Styling This sets up a layout for galleries that contains 12
+    // columns and two rows by default and is responsive.
 
-    // TODO: Move the grid-template and grid-gap properties to in reader.scss
-    // settings.scss to default variables.
-    // https://github.com/triplecanopy/b-ber/issues/267
     section.gallery .figure__gallery {
         .figure__items {
-            display: grid;
-            grid-template:
-                [row1-start] 't1 t2 t3 t4 t5 t6 t7 t8 t9 t10 t11 t12' 43% [row1-end]
-                [row2-start] 'b1 b2 b3 b4 b5 b6 b7 b8 b9 b10 b11 b12' 43% [row2-end]
-                / auto;
-            grid-gap: 14% 3%;
+            @include grid-layout;
+            width: 85vw;
             height: 75vh;
             margin-top: 75px;
-            padding: 0px;
-            width: 85vw;
+            padding: 0;
             .gallery__item {
-                grid-column: span 4;
+                grid-column: grid-item();
             }
         }
     }
@@ -66,12 +57,7 @@
     @include break('mobile') {
         // Gallery
         section.gallery .figure__gallery .figure__items {
-            grid-template:
-                [row1-start] 't1 t2 t3 t4 t5 t6' auto [row1-end]
-                [row2-start] 'b1 b2 b3 b4 b5 b6' auto [row2-end]
-                / auto;
             margin-top: 0;
-            grid-gap: 14% 3%;
         }
         // Fullbleed
         .figure__fullbleed.figure__inline--landscape .figure__items {
