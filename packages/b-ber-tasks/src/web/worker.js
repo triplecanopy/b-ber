@@ -61,30 +61,30 @@ function parseSearchResults(results) {
     if (!results || !results.length) return output
     results.forEach(function(result) {
         Object.keys(result.matchData.metadata).forEach(function(term) {
+            var match = result.matchData.metadata[term]
+
             resultsObject = {}
             resultsObject.url = records[result.ref].url
 
-            Object.keys(result.matchData.metadata[term]).forEach(function(fieldName) {
-                var text = ''
-                var lastIndex = 0
+            Object.keys(match).forEach(function(fieldName) {
+                var position = match[fieldName].position
 
-                for (var i = 0; i < result.matchData.metadata[term][fieldName].position.length; i++) {
-                    if (!records[result.ref][fieldName]) continue // guard for fuzzy searches ... should be handled better
+                for (var i = 0; i < position.length; i++) {
+                    var content = records[result.ref][fieldName].trim()
+                    if (!content) continue // guard for fuzzy searches ... should be handled better
 
-                    var begin = result.matchData.metadata[term][fieldName].position[i][0]
-                    var length = result.matchData.metadata[term][fieldName].position[i][1]
+                    var begin = position[i][0]
+                    var length = position[i][1]
 
-                    lastIndex = begin - textOffset
+                    var firstIndex = begin - textOffset
 
-                    var prefix = lastIndex > 0 ? '...' : ''
-                    var before = records[result.ref][fieldName].slice(lastIndex, begin)
-                    var marked = markerStart + records[result.ref][fieldName].slice(begin, begin + length) + markerEnd
-                    var after = records[result.ref][fieldName].slice(begin + length, begin + length + textOffset)
-                    var suffix = begin + length + textOffset > records[result.ref][fieldName].length ? '' : '...'
+                    var prefix = firstIndex < 0 ? '...' : ''
+                    var before = content.slice(firstIndex, begin)
+                    var marked = markerStart + content.slice(begin, begin + length) + markerEnd
+                    var after = content.slice(begin + length, begin + length + textOffset)
+                    var suffix = begin + length + textOffset > content.length ? '' : '...'
 
-                    text +=
-                        '<span class="search__result__text">' + prefix + before + marked + after + suffix + '</span>'
-                    lastIndex = begin + length
+                    text = '<span class="search__result__text">' + prefix + before + marked + after + suffix + '</span>'
                 }
 
                 resultsObject[fieldName] = text
@@ -98,7 +98,6 @@ function parseSearchResults(results) {
 }
 
 function doSearch(term) {
-    // var results = searchIndex.search(term);
     var results = searchIndex.query(function(q) {
         q.term(term, {
             fields: ['title', 'body'],
@@ -110,8 +109,7 @@ function doSearch(term) {
         })
     })
 
-    var data = parseSearchResults(results)
-    return data
+    return parseSearchResults(results)
 }
 
 getSearchIndex()

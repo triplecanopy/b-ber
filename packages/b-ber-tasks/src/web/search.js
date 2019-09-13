@@ -19,12 +19,14 @@
         searchButtonClose.classList.remove('publication__search__button--close--visible')
         searchInput.value = ''
     }
+
     function openSearchBar() {
         if (!searchInput || !searchButtonClose) return
         searchInput.classList.add('publication__search__input--expanded')
         searchButtonClose.classList.add('publication__search__button--close--visible')
         searchInput.focus()
     }
+
     function toggleSearchBar() {
         if (!searchInput || !searchButtonClose) return
         if (searchInput.classList.contains('publication__search__input--expanded')) {
@@ -51,49 +53,39 @@
         publicationContents.addEventListener('click', closeSearchBar, false)
 
         // keyboard events
-        // prettier-ignore
         document.addEventListener(
-        'keyup',
-        function(e) {
-            if (e && e.which) {
-                if (e.which === 27 /* ESC */) {
+            'keyup',
+            function(e) {
+                if (e && e.which && e.which === 27 /* ESC */) {
                     closeSearchBar()
                 }
-            }
-        },
-        false
-    )
+            },
+            false
+        )
     }
 
     function initializeWebWorker() {
         var worker = new Worker('%BASE_URL%' + 'worker.js') // BASE_URL added dynamically on build
         var timer
-        var debounceSpeed = 30
+        var debounceSpeed = 200
 
         if (!searchInput || !publicationContents) return
 
         // prettier-ignore
         function parseSearchResults(results) {
-        return (
-            results.reduce(function(acc, curr) {
-                return acc.concat(
-                    ' \
-                <div class="search__result"> \
-                    <a class="search__result__link" href="' +
-                        curr.url +
-                        '"> \
-                        ' +
-                        (curr.title ? '<h1 class="search__result__title">' + curr.title + '</h1>' : '') +
-                        ' \
-                        ' +
-                        (curr.body ? '<div class="search__result__body">' + curr.body + '</div>' : '') +
-                        ' \
-                    </a> \
-                </div> \
-            ')
-            }, '<section class="search__results">') + '</section>'
-        )
-    }
+            return (
+                results.reduce(function(acc, curr) {
+                    return acc.concat(' \
+                        <div class="search__result"> \
+                            <a class="search__result__link" href="' + curr.url + '"> \
+                                ' + (curr.title ? '<h1 class="search__result__title">' + curr.title + '</h1>' : '') + ' \
+                                ' + (curr.body ? '<div class="search__result__body">' + curr.body + '</div>' : '') + ' \
+                            </a> \
+                        </div>'
+                    )
+                }, '<section class="search__results">') + '</section>'
+            )
+        }
 
         function resetContents() {
             publicationContents.innerHTML = clonedContents.innerHTML
@@ -101,7 +93,7 @@
 
         function debounceSearch() {
             clearTimeout(timer)
-            setTimeout(function() {
+            timer = setTimeout(function() {
                 var term = searchInput.value.trim()
                 if (!term) {
                     resetContents()
