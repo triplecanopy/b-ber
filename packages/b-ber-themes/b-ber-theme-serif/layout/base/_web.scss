@@ -1,7 +1,7 @@
 // sass-lint:disable mixins-before-declarations,nesting-depth
 
 // Web build. These styles will be added to the main stylesheet when running
-// `bber build --web`.
+// `bber build web`.
 //
 // Currently this file contains all the elements for the web build. This should
 // eventually be split up into the chrome with UX elements (including Material
@@ -18,20 +18,15 @@
 // updated in individual themes, or by porting the SCSS below into a child
 // theme.
 
-// Default vertical column count. If this is changed, values below need to be
-// manually updated as well.
-
-$web-grid-columns: 12;
-
 // Some mixins can be found below. These are declared above the `@if $build == ...` styles,
 // since we can't declare mixins in a conditional statement in SCSS.
 @mixin web-grid-container {
     display: grid;
-    grid-template-columns: repeat($web-grid-columns, 1fr);
+    grid-template-columns: repeat($grid-column-count, 1fr);
 }
 
 @mixin web-grid-full-width {
-    grid-column: 1 / span $web-grid-columns;
+    grid-column: 1 / span $grid-column-count;
 }
 
 @mixin web-navigation-link {
@@ -98,7 +93,7 @@ $web-grid-columns: 12;
         transition: padding-right $transition-speed $transition-easing;
 
         display: grid;
-        grid-template-columns: repeat($web-grid-columns, 1fr);
+        grid-template-columns: repeat($grid-column-count, 1fr);
         grid-template-rows: $dimensions-large-y auto $dimensions-extra-large-y * 0.75;
         grid-gap: 0;
     }
@@ -460,9 +455,7 @@ $web-grid-columns: 12;
     // side of the text around the found search term.
     .search__result__text {
         display: inline-block;
-        // TODO: using `padding` mixin
-        // @issue: https://github.com/triplecanopy/b-ber/issues/235
-        padding: 0.3621em 0;
+        padding: 5px 0;
     }
 
     // Media queries
