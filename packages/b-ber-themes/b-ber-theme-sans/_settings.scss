@@ -89,3 +89,28 @@ $landscape-image-height: 4 !default;
 $square-image-height: 4 !default;
 $portrait-image-height: 5 !default;
 $portrait-image--high-height: 5 !default;
+
+// CSS Grid settings for Reader view
+$grid-row-count: 2 !default; // Number of rows
+$grid-column-count: 12 !default; // Number of columns
+$grid-row-gap-percentage: 14 !default; // Height of the gap between rows
+$grid-column-gap-percentage: 3 !default; // Width of the gap between columns (the gutter)
+
+// Grid items' size and location. Declaring both start and end properties will
+// result in the following:
+//
+// $grid-column-start: 1;
+// $grid-column-end: 2;
+//
+// 1 / 2
+//
+// If only the start property is required, omit the second by setting it to an
+// empty string:
+//
+// $grid-column-start: 'span 1';
+// $grid-column-end: '';
+//
+// span 1
+//
+$grid-column-start: 'span 4' !default;
+$grid-column-end: '' !default;
