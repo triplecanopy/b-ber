@@ -26,10 +26,11 @@
         "publish:latest": "lerna publish --dist-tag latest",
         "publish:stable": "lerna publish --dist-tag stable",
         "outdated": "npm outdated || true && lerna exec --no-bail -- npm outdated",
+        "clean:lockfiles": "rm ./package-lock.json && lerna exec -- rm ./package-lock.json",
+        "clean:modules": "rm -rf ./node_modules && lerna exec -- rm -rf ./node_modules",
+        "deps:rebuild": "npm run clean:modules && npm i && lerna bootstrap",
+        "deps:purge": "npm run clean:modules && npm run clean:lockfiles && npm i && lerna bootstrap",
         "deps:update": "lernaupdate",
-        "deps:lock": "rimraf ./package-lock.json && lerna exec -- rm -rf ./package-lock.json",
-        "deps:clean": "rimraf ./node_modules && lerna exec -- rm -rf ./node_modules",
-        "deps:rebuild": "npm run deps:clean && npm i && lerna bootstrap",
         "deps:dedupe": "lernaupdate --dedupe"
     },
     "lint-staged": {
