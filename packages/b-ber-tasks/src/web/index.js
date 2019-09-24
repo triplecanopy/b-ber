@@ -171,7 +171,7 @@ function buttonPrev(filePath) {
     let html = ''
 
     if (index > -1 && flow.spine[prevIndex]) {
-        const href = `${flow.spine[prevIndex].fileName}.xhtml`
+        const href = `${flow.spine[prevIndex].fileName}.html`
         html = Template.prev(BASE_URL, href)
     }
 
@@ -186,7 +186,7 @@ function buttonNext(filePath) {
     let html = ''
 
     if (index > -1 && flow.spine[nextIndex]) {
-        const href = `${flow.spine[nextIndex].fileName}.xhtml`
+        const href = `${flow.spine[nextIndex].fileName}.html`
         html = Template.next(BASE_URL, href)
     }
 
@@ -279,6 +279,19 @@ function injectPageElementsIntoFiles(elements) {
     return Promise.all(promises).then(() => elements)
 }
 
+// Fixes hot-reloading issue with XHTML files
+function renameXHTMLToHTML() {
+    const textPath = path.join(DIST_PATH, 'text')
+    const files = fs.readdirSync(textPath).filter(file => path.extname(file) === '.xhtml')
+    const promises = files.map(file => {
+        const from = path.resolve(textPath, file)
+        const to = path.resolve(textPath, `${path.basename(file, '.xhtml')}.html`)
+        return fs.move(from, to)
+    })
+
+    return Promise.all(promises)
+}
+
 function indexPageContent() {
     const { spine } = flow
     const records = []
@@ -294,7 +307,7 @@ function indexPageContent() {
                     .text()
 
                 const body = $('body').text()
-                const url = `${BASE_URL}text/${entry.fileName}.xhtml`
+                const url = `${BASE_URL}text/${entry.fileName}.html`
 
                 fileIndex += 1
                 records.push({ id: fileIndex, title, body, url })
@@ -335,7 +348,7 @@ function writeWebpubManifest() {
 // which is 0-indexed
 function getPage(_n = -1) {
     const n = _n - 1
-    const url = `${BASE_URL}text/${flow.spine[n].fileName}.xhtml`
+    const url = `${BASE_URL}text/${flow.spine[n].fileName}.html`
     return url
 }
 
@@ -395,6 +408,7 @@ const web = () =>
         .then(moveAssetsToRootDirctory)
         .then(createNavigationElement)
         .then(injectPageElementsIntoFiles)
+        .then(renameXHTMLToHTML)
         .then(createIndexHTML)
 
         // write scripts into HTML files
