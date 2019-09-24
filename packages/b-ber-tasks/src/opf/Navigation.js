@@ -72,58 +72,57 @@ class Navigation {
         const pages = flattenSpineFromYAML(declared)
         const missingFiles = difference(flow, filesFromSystem) // extra files on system
         const missingEntries = difference(filesFromSystem, pages) // extra entries in YAML
+        const tocFile = fs.existsSync(state.src.root(`${state.build}.yml`))
+            ? state.src.root(`${state.build}.yml`)
+            : state.src.root('toc.yml')
 
-        if (missingFiles.length || missingEntries.length) {
-            // there are discrepencies between the files on the system and files
-            // declared in the `state.build`.yml file
-            if (missingFiles.length) {
-                // there are extra entries in the YAML (i.e., missing XHTML pages)
-                missingEntries.forEach(entry => log.warn(`Removing redundant entry [${entry}] in [${state.build}.yml]`))
+        // Check if there are discrepencies between the files on the system and
+        // files declared in the `state.build`.yml file
+        if (missingFiles.length) {
+            // there are extra entries in the YAML (i.e., missing XHTML pages)
+            missingEntries.forEach(entry =>
+                log.warn(`Removing redundant entry [${entry}] in [${path.basename(tocFile)}]`)
+            )
 
-                missingFiles.forEach(fileName => {
-                    remove(flattened, { fileName })
-                    state.update('spine.flattened', flattened)
+            missingFiles.forEach(fileName => {
+                remove(flattened, { fileName })
+                state.update('spine.flattened', flattened)
 
-                    const _flowIndex = flow.indexOf(fileName)
-                    flow.splice(_flowIndex, 1)
+                const _flowIndex = flow.indexOf(fileName)
+                flow.splice(_flowIndex, 1)
 
-                    const _toc = this.deepRemove(state.toc, fileName)
-                    state.update('toc', _toc)
-                })
+                const _toc = this.deepRemove(state.toc, fileName)
+                state.update('toc', _toc)
+            })
 
-                const yamlpath = state.src.root(`${state.build}.yml`)
-                const nestedYamlToc = nestedContentToYAML(state.toc)
+            const nestedYamlToc = nestedContentToYAML(state.toc)
+            const content = isArray(nestedYamlToc) && nestedYamlToc.length === 0 ? '' : YamlAdaptor.dump(nestedYamlToc)
 
-                const content =
-                    isArray(nestedYamlToc) && nestedYamlToc.length === 0 ? '' : YamlAdaptor.dump(nestedYamlToc)
+            log.info(`opf emit ${path.basename(tocFile)}`)
+            fs.writeFileSync(tocFile, content).catch(log.error)
+        }
 
-                log.info(`opf emit ${state.build}.yml`)
-                fs.writeFile(yamlpath, content).catch(log.error)
-            }
+        if (missingEntries.length) {
+            // there are missing entries in the YAML (i.e., extra XHTML pages),
+            // but we don't know where to interleave them, so we just append
+            // them to the top-level list of files
 
-            if (missingEntries.length) {
-                // there are missing entries in the YAML (i.e., extra XHTML pages),
-                // but we don't know where to interleave them, so we just append
-                // them to the top-level list of files
+            missingEntries.forEach(name => log.info(`Adding missing entry [${name}] to [${path.basename(tocFile)}]`))
 
-                missingEntries.forEach(name => log.info(`Adding missing entry [${name}] to [${state.build}.yml]`))
+            // add the missing entry to the spine
+            const missingEntriesWithAttributes = missingEntries.reduce((acc, name) => {
+                if (state.contains('loi', { name })) return acc
 
-                // add the missing entry to the spine
-                const missingEntriesWithAttributes = missingEntries.reduce((acc, name) => {
-                    if (state.contains('loi', { name })) return acc
+                state.add('spine.declared', name)
+                return acc.concat(name)
+            }, [])
 
-                    state.add('spine.declared', name)
-                    return acc.concat(name)
-                }, [])
+            const content =
+                isArray(missingEntriesWithAttributes) && missingEntriesWithAttributes.length === 0
+                    ? ''
+                    : `\n${YamlAdaptor.dump(missingEntriesWithAttributes)}`
 
-                const yamlpath = state.src.root(`${state.build}.yml`)
-                const content =
-                    isArray(missingEntriesWithAttributes) && missingEntriesWithAttributes.length === 0
-                        ? ''
-                        : `\n${YamlAdaptor.dump(missingEntriesWithAttributes)}`
-
-                fs.appendFile(yamlpath, content).catch(log.error)
-            }
+            fs.appendFileSync(tocFile, content)
         }
 
         const filesFromYaml = { entries: pages, flow }
