@@ -32,7 +32,17 @@ const watch = build => {
     browserSync.init({
         watch: true,
         port,
-        server: path.resolve(`project-${build}`),
+        server: {
+            baseDir: path.resolve(`project-${build}`),
+            middleware: (req, res, next) => {
+                // Set headers for XHTML files to allow document.write
+                if (/\.xhtml/.test(req.url)) {
+                    res.setHeader('Content-Type', 'text/html; charset=UTF-8')
+                }
+
+                next()
+            },
+        },
         plugins: [
             {
                 module: 'bs-html-injector',

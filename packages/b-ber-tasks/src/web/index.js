@@ -171,7 +171,7 @@ function buttonPrev(filePath) {
     let html = ''
 
     if (index > -1 && flow.spine[prevIndex]) {
-        const href = `${flow.spine[prevIndex].fileName}.html`
+        const href = `${flow.spine[prevIndex].fileName}.xhtml`
         html = Template.prev(BASE_URL, href)
     }
 
@@ -186,7 +186,7 @@ function buttonNext(filePath) {
     let html = ''
 
     if (index > -1 && flow.spine[nextIndex]) {
-        const href = `${flow.spine[nextIndex].fileName}.html`
+        const href = `${flow.spine[nextIndex].fileName}.xhtml`
         html = Template.next(BASE_URL, href)
     }
 
@@ -229,7 +229,8 @@ function getEventHandlerScript() {
     return Template.scripts(content)
 }
 
-function injectPageElementsIntoFile(filePath, { tocElement, infoElement }) {
+function injectPageElementsIntoFile(filePath) {
+    const { tocElement, infoElement } = createNavigationElement()
     const pageNavigation = paginationNavigation(filePath)
     const styleBlock = getStyleBlock()
     const navigationToggleScript = getNavigationToggleScript()
@@ -279,19 +280,6 @@ function injectPageElementsIntoFiles(elements) {
     return Promise.all(promises).then(() => elements)
 }
 
-// Fixes hot-reloading issue with XHTML files
-function renameXHTMLToHTML() {
-    const textPath = path.join(DIST_PATH, 'text')
-    const files = fs.readdirSync(textPath).filter(file => path.extname(file) === '.xhtml')
-    const promises = files.map(file => {
-        const from = path.resolve(textPath, file)
-        const to = path.resolve(textPath, `${path.basename(file, '.xhtml')}.html`)
-        return fs.move(from, to)
-    })
-
-    return Promise.all(promises)
-}
-
 function indexPageContent() {
     const { spine } = flow
     const records = []
@@ -307,7 +295,7 @@ function indexPageContent() {
                     .text()
 
                 const body = $('body').text()
-                const url = `${BASE_URL}text/${entry.fileName}.html`
+                const url = `${BASE_URL}text/${entry.fileName}.xhtml`
 
                 fileIndex += 1
                 records.push({ id: fileIndex, title, body, url })
@@ -348,7 +336,7 @@ function writeWebpubManifest() {
 // which is 0-indexed
 function getPage(_n = -1) {
     const n = _n - 1
-    const url = `${BASE_URL}text/${flow.spine[n].fileName}.html`
+    const url = `${BASE_URL}text/${flow.spine[n].fileName}.xhtml`
     return url
 }
 
@@ -369,7 +357,8 @@ function getCoverImage() {
     return Template.cover(firstPage, coverImageSrc)
 }
 
-function createIndexHTML({ tocElement, infoElement }) {
+function createIndexHTML() {
+    const { tocElement, infoElement } = createNavigationElement()
     const title = getProjectTitle()
     const coverImage = getCoverImage()
     const navigationToggleScript = getNavigationToggleScript()
@@ -406,9 +395,7 @@ const web = () =>
 
         // move files to root directory and create an index.html
         .then(moveAssetsToRootDirctory)
-        .then(createNavigationElement)
         .then(injectPageElementsIntoFiles)
-        .then(renameXHTMLToHTML)
         .then(createIndexHTML)
 
         // write scripts into HTML files
