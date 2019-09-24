@@ -102,7 +102,7 @@ class Project {
             relativePath: Project.relativePath(src, '..', '.gitignore'),
             absolutePath: Project.absolutePath(src, '..', '.gitignore'),
             // eslint-disable-next-line global-require
-            content: require('./.gitignore.js'),
+            content: require('./gitignore.js'),
         }
     }
 }
