@@ -330,13 +330,21 @@ class State {
 
         const { src, dist } = this.config
         const projectDir = path.resolve(src)
-        const navigationConfigFile = path.resolve(src, `${type}.yml`)
 
         if (!fs.existsSync(projectDir)) log.error(`Project directory [${projectDir}] does not exist`)
 
+        // One TOC to rule them all (toc.yml). A user can override the TOC for a
+        // specific build by including a <type>.yml file, which will be loaded
+        // instead of toc.yml below.
+        const navigationConfigFileDefaultPath = path.resolve(src, 'toc.yml')
+        const navigationConfigFilePath = path.resolve(src, `${type}.yml`)
+        const navigationConfigFile = fs.existsSync(navigationConfigFilePath)
+            ? navigationConfigFilePath
+            : navigationConfigFileDefaultPath
+
         const spine = new Spine({ src, buildType: type, navigationConfigFile })
 
-        // build-specific config. gets merged into base config during build step
+        // Build-specific config. gets merged into base config during build step
         const config = this.config[type] ? { ...this.config[type] } : {}
 
         return {

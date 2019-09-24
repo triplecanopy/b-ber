@@ -38,7 +38,7 @@ describe('templates.Project', () => {
         const projectDir = '/_project'
         const projectPath = path.join(cwd, projectDir)
 
-        expect(Project.typeYAML(projectPath).content).not.toMatch(/^\s+-/)
+        expect(Project.tocYAML(projectPath).content).not.toMatch(/^\s+-/)
         expect(Project.metadataYAML(projectPath).content).not.toMatch(/^\s+-/)
     })
 

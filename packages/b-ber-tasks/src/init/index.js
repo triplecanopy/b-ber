@@ -21,7 +21,7 @@ class Initializer {
 
     createAssets = () => {
         const files = [
-            ...this.builds.map(a => Project.typeYAML(this.path, a)),
+            Project.tocYAML(this.path),
             Project.configYAML(this.path),
             Project.metadataYAML(this.path),
             ...Project.javascripts(this.path),
