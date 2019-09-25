@@ -36,7 +36,7 @@ const watch = build => {
             baseDir: path.resolve(`project-${build}`),
             middleware: (req, res, next) => {
                 // Set headers for XHTML files to allow document.write
-                if (/\.xhtml/.test(req.url)) {
+                if (/\.xhtml$/.test(req.url)) {
                     res.setHeader('Content-Type', 'text/html; charset=UTF-8')
                 }
 
