@@ -38,7 +38,7 @@
         "lodash.find": "latest",
         "lodash.has": "latest",
         "lodash.uniq": "latest",
-        "mime-types": "^2.1.18",
+        "mime-types": "^2.1.24",
         "vinyl": "^2.2.0"
     },
     "files": [

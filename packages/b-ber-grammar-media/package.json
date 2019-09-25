@@ -29,7 +29,7 @@
         "@canopycanopycanopy/b-ber-shapes-directives": "1.0.2",
         "fs-extra": "^8.1.0",
         "lodash.has": "latest",
-        "mime-types": "^2.1.18"
+        "mime-types": "^2.1.24"
     },
     "files": [
         "dist"

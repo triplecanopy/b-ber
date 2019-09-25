@@ -11,9 +11,8 @@ import { ManifestAndMetadata, Navigation } from '.'
 class Opf {
     static createOpf() {
         const manifestAndMetadata = new ManifestAndMetadata()
-        const navigation = new Navigation()
 
-        return Promise.all([manifestAndMetadata.init(), navigation.init()])
+        return Promise.all([manifestAndMetadata.init(), Navigation.init()])
             .then(Opf.createOpfPackageString)
             .then(Opf.writeOPF)
             .catch(log.error)

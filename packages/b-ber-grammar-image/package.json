@@ -30,7 +30,7 @@
         "@canopycanopycanopy/b-ber-templates": "1.0.3",
         "fs-extra": "^8.1.0",
         "image-size": "^0.7.4",
-        "mime-types": "^2.1.18"
+        "mime-types": "^2.1.24"
     },
     "files": [
         "dist"
