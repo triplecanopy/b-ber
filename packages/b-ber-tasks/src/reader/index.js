@@ -141,7 +141,7 @@ class Reader {
     }
 
     injectWebpubManifestLink() {
-        const indexHTML = state.dist.root('index.xhtml')
+        const indexHTML = state.dist.root('index.html')
         const readerURL = Url.addTrailingSlash(this.getProjectConfig('reader_url'))
 
         let contents
@@ -163,7 +163,7 @@ class Reader {
     }
 
     injectServerDataIntoTemplate() {
-        const indexHTML = state.dist.root('index.xhtml')
+        const indexHTML = state.dist.root('index.html')
         const readerURL = Url.addTrailingSlash(this.getProjectConfig('reader_url'))
         const identifier = this.getBookMetadata('identifier')
         const bookURL = `${readerURL}epub/${identifier}`
@@ -192,7 +192,7 @@ class Reader {
     }
 
     updateLinkedResourcesWithAbsolutePaths() {
-        const indexContents = fs.readFileSync(state.dist.root('index.xhtml'), 'utf8')
+        const indexContents = fs.readFileSync(state.dist.root('index.html'), 'utf8')
         const versionHash = indexContents.match(/link href="\/(\w+\.css)"/)[1]
         const stylesheet = state.dist.root(versionHash)
         const readerURL = Url.addTrailingSlash(this.getProjectConfig('reader_url'))
@@ -205,7 +205,7 @@ class Reader {
     }
 
     updateAssetURLsWithAbsolutePaths() {
-        const indexHTML = state.dist.root('index.xhtml')
+        const indexHTML = state.dist.root('index.html')
         const readerURL = Url.removeTrailingSlash(this.getProjectConfig('reader_url'))
 
         let contents
