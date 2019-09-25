@@ -22,6 +22,7 @@ const prepare = [
 const make = build => {
     state.update('build', build)
     state.update('config.base_url', '/')
+    state.update('config.base_path', '/')
     state.update('config.remote_url', `http://localhost:${port}`)
     state.update('config.reader_url', `http://localhost:${port}`)
 
