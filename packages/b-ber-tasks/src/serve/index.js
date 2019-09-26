@@ -3,7 +3,7 @@ import state from '@canopycanopycanopy/b-ber-lib/State'
 import sequences from '@canopycanopycanopy/b-ber-shapes-sequences/sequences'
 import debounce from 'lodash/debounce'
 import { create } from 'browser-sync'
-import * as tasks from '../'
+import { serialize } from '../'
 
 const browserSync = create()
 const port = 4000
@@ -16,7 +16,7 @@ const make = build => {
     state.update('config.remote_url', `http://localhost:${port}`)
     state.update('config.reader_url', `http://localhost:${port}`)
 
-    return tasks.async.serialize(sequences[build], tasks)
+    return serialize(sequences[build])
 }
 
 const reload = build => make(build).then(browserSync.reload)

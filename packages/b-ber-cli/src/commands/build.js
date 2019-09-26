@@ -1,5 +1,5 @@
 import path from 'path'
-import * as tasks from '@canopycanopycanopy/b-ber-tasks'
+import { serialize } from '@canopycanopycanopy/b-ber-tasks'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import createBuildSequence from '@canopycanopycanopy/b-ber-shapes-sequences/create-build-sequence'
 import sequences from '@canopycanopycanopy/b-ber-shapes-sequences/sequences'
@@ -26,7 +26,7 @@ const handler = argv => {
         state.reset()
         state.update('build', build)
 
-        return tasks.async.serialize(sequences[build], tasks).then(() => {
+        return serialize(sequences[build]).then(() => {
             if (buildTasks.length) run(buildTasks)
         })
     }
