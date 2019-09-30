@@ -84,7 +84,7 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
                 {
                     ...attrs,
                     'data-autoplay': dataAutoPlay,
-                    controls: typeof controls === 'undefined' ? true : controls,
+                    controls: typeof controls !== 'undefined',
                     key: index,
                 },
                 children
@@ -113,7 +113,7 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
                 {
                     ...attrs,
                     'data-autoplay': dataAutoPlay,
-                    controls: typeof controls === 'undefined' ? true : controls,
+                    controls: typeof controls !== 'undefined',
                     key: index,
                     poster,
                 },

@@ -1,32 +1,27 @@
+/* eslint-disable jsx-a11y/media-has-caption,no-unused-vars */
+
 import React from 'react'
-import PropTypes from 'prop-types'
 import Media from './Media'
+import withNodePosition from './withNodePosition'
 
 class Audio extends Media {
-    static propTypes = {
-        'data-autoplay': PropTypes.bool.isRequired,
-        controls: PropTypes.bool.isRequired,
-    }
-    static contextTypes = {
-        spreadIndex: PropTypes.number,
-        columnGap: PropTypes.number,
-        translateX: PropTypes.number,
-        paddingLeft: PropTypes.number,
-        paddingRight: PropTypes.number,
-    }
-
     render() {
+        const {
+            elemRef,
+            verso,
+            recto,
+            edgePosition,
+            spreadIndex,
+            edgePositionVariance,
+            elementEdgeLeft,
+            ...rest
+        } = this.props
         return (
-            <audio // eslint-disable-line jsx-a11y/media-has-caption
-                ref={node => (this.media = node)}
-                onCanPlay={this.handleOnCanPlay}
-                {...this.props}
-            >
-                {/* <track kind='captions' src='sampleCaptions.vtt' srcLang='en' /> */}
+            <audio ref={elemRef} {...rest}>
                 {this.props.children}
             </audio>
         )
     }
 }
 
-export default Audio
+export default withNodePosition(Audio, { useParentDimensions: true })

@@ -1,114 +1,51 @@
-import { Component } from 'react'
-import Viewport from '../helpers/Viewport'
+import PropTypes from 'prop-types'
+import React from 'react'
 
-class Media extends Component {
-    constructor(props) {
-        super(props)
+class Media extends React.Component {
+    static contextTypes = {
+        spreadIndex: PropTypes.number,
+        viewLoaded: PropTypes.bool,
+        lastSpread: PropTypes.bool,
+    }
 
-        this.state = {
-            canPlay: false,
-            autoPlay: this.props['data-autoplay'] || false,
-            controls: this.props.controls || true, // eslint-disable-line react/no-unused-state
-            fullScreen: this.props['data-fullscreen'] ? JSON.parse(this.props['data-fullscreen']) : false,
-            paused: true,
-            nodeSpreadIndex: 0,
+    state = {
+        autoPlay: this.props['data-autoplay'],
+        paused: true,
+    }
+
+    componentWillReceiveProps(nextProps, nextContext) {
+        // Play the media on spread change if autoplay is true
+        if (!this.state.autoPlay) return
+
+        // Don't play the media unless the chapter is visible
+        if (!nextContext.viewLoaded) return
+
+        const { paused } = this.state
+
+        // Don't play the media unless it's sufficiently loaded
+        if (this.props.elemRef.current.readyState < 3) return console.warn('Media not loaded')
+
+        // b-ber jumps from spreadIndex n to 0 quickly and causes a blip before
+        // the chapter changes, so account for that here
+        if (nextContext.lastSpread && nextContext.spreadIndex === 0) return
+
+        // Play the media if it's located on the current spread
+        if (nextProps.spreadIndex === nextContext.spreadIndex && paused === true) {
+            this.setState({ paused: false }, () => {
+                // The `play` method returns a promise and errors out if the
+                // user hasn't interacted with the page yet on Chrome and
+                // Safari. This prevents the error, although it doesn't play the
+                // media
+                const p = this.props.elemRef.current.play()
+                if (p) p.catch(() => {})
+            })
         }
 
-        this.handleOnCanPlay = this.handleOnCanPlay.bind(this)
-        this.handleOnClick = this.handleOnClick.bind(this)
-        this.play = this.play.bind(this)
-        this.pause = this.pause.bind(this)
-
-        this.getNodeSpreadIndex = this.getNodeSpreadIndex.bind(this)
-        this.setNodeSpreadIndex = this.setNodeSpreadIndex.bind(this)
-        this.handleUpdatedSpreadIndex = this.handleUpdatedSpreadIndex.bind(this)
-
-        // TODO: should avoid firing on initial load, when spreadIndex === 0
-        // @issue: https://github.com/triplecanopy/b-ber/issues/213
-        this.timer = null
-        this.media = null
-    }
-
-    componentDidMount() {
-        this.getNodeSpreadIndex()
-    }
-
-    componentWillReceiveProps() {
-        window.clearTimeout(this.timer)
-        this.timer = setTimeout(() => {
-            const index = this.getNodeSpreadIndex()
-            if (index !== this.state.nodeSpreadIndex) {
-                this.setNodeSpreadIndex(index)
-            }
-            this.handleUpdatedSpreadIndex(index)
-        }, this.context.transitionSpeed)
-    }
-
-    componentWillUnmount() {
-        window.clearTimeout(this.timer)
-    }
-
-    getNodeSpreadIndex() {
-        if (!this.media || !this.context) return
-
-        const { x } = this.media.getBoundingClientRect()
-        const { columnGap, translateX } = this.context
-        const { fullScreen } = this.state
-        const windowWidth = window.innerWidth
-
-        let nodeSpreadIndex
-        if (fullScreen) {
-            nodeSpreadIndex = (x - translateX) / windowWidth
-        } else {
-            // TODO: should account for element offset (margins/padding)
-            // @issue: https://github.com/triplecanopy/b-ber/issues/213
-            nodeSpreadIndex = Math.floor((x - columnGap / 2 - translateX) / windowWidth)
-        }
-
-        return nodeSpreadIndex
-    }
-
-    setNodeSpreadIndex(nodeSpreadIndex) {
-        this.setState({ nodeSpreadIndex })
-    }
-
-    handleUpdatedSpreadIndex(index) {
-        if (!this.state.autoPlay || Viewport.isMobile()) return
-
-        const { spreadIndex } = this.context
-        const { canPlay, paused } = this.state
-
-        if (spreadIndex === index && paused && canPlay) {
-            this.play()
-        } else if (spreadIndex !== index && !paused) {
-            this.pause()
-        }
-    }
-
-    handleOnCanPlay() {
-        this.setState({ canPlay: true })
-    }
-    handleOnClick() {
-        if (!this.media || !this.state.canPlay) return
-        if (this.media.paused) {
-            this.play()
-            return
-        }
-
-        this.pause()
-    }
-    play() {
-        if (!this.media) return
-        if (this.media.paused && this.state.canPlay) {
-            this.media.play()
-            this.setState({ paused: false })
-        }
-    }
-    pause() {
-        if (!this.media) return
-        if (!this.media.paused && this.state.canPlay) {
-            this.media.pause()
-            this.setState({ paused: true })
+        // Otherwise pause the media
+        if (nextProps.spreadIndex !== nextContext.spreadIndex && paused === false) {
+            this.setState({ paused: true }, () => {
+                this.props.elemRef.current.pause()
+            })
         }
     }
 }

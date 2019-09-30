@@ -35,6 +35,8 @@ class Reader extends Component {
         requestDeferredCallbackExecution: PropTypes.func,
         addRef: PropTypes.func,
         refs: PropTypes.object,
+        viewLoaded: PropTypes.bool,
+        lastSpread: PropTypes.bool,
     }
     constructor(props) {
         super(props)
@@ -76,6 +78,7 @@ class Reader extends Component {
             pageAnimation: false, // disabled by default, and activated in Reader#enablePageTransitions on user action
             overlayElementId: null,
             spinnerVisible: true,
+            viewLoaded: false,
 
             refs: {},
         }
@@ -143,6 +146,8 @@ class Reader extends Component {
             registerOverlayElementId: this.registerOverlayElementId,
             deRegisterOverlayElementId: this.deRegisterOverlayElementId,
             requestDeferredCallbackExecution: this.requestDeferredCallbackExecution,
+            viewLoaded: this.state.viewLoaded,
+            lastSpread: this.state.lastSpread,
         }
     }
 
@@ -240,6 +245,7 @@ class Reader extends Component {
         this.disablePageTransitions()
         if (!debug) this.showSpinner()
     }
+
     handleResizeEnd() {
         if (!debug) this.hideSpinner()
     }
@@ -277,10 +283,11 @@ class Reader extends Component {
     }
 
     showSpinner() {
-        this.setState({ spinnerVisible: true })
+        this.setState({ spinnerVisible: true, viewLoaded: false })
     }
+
     hideSpinner() {
-        this.setState({ spinnerVisible: false })
+        this.setState({ spinnerVisible: false, viewLoaded: true })
     }
 
     updateViewerSettings(settings = {}) {
