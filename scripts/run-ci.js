@@ -4,9 +4,9 @@ const querystring = require('querystring')
 const baseURL = process.env.BBER_CI_BASE_URL
 const dist = (process.env.npm_config_dist_tag || '').toUpperCase()
 
-if (!dist) return
-
 console.log('Running remote tests...')
+
+if (!dist) return console.log('No dist-tag, aborting.')
 
 const id = process.env[`BBER_CI_ID_${dist}`]
 const ref = process.env[`BBER_CI_REF_${dist}`]

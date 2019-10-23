@@ -28,21 +28,27 @@ class Generate {
     }
 
     writePageMeta({ fileName }) {
-        // TODO: this should eventually just be one 'nav' file that's read from for all builds
-        // @issue: https://github.com/triplecanopy/b-ber/issues/225
+        const tocFile = state.src.root('toc.yml')
+        const pageMeta = YamlAdaptor.load(tocFile) || []
+        const index = pageMeta.indexOf(fileName)
+        const content = `\n- ${path.basename(fileName, '.md')}`
+
+        if (index > -1) {
+            throw new Error(`${fileName} already exists in [${path.basename(tocFile)}]. Aborting`)
+        }
+
+        // Add entry to main toc.yml
+        const promises = [fs.appendFile(tocFile, content)]
+
+        // If overrides toc files exist then write to them too
         const builds = Object.keys(sequences)
-
-        const promises = builds.map(type => {
-            const navigationYAML = state.src.root(`${type}.yml`)
-            const pageMeta = YamlAdaptor.load(state.src.root(`${type}.yml`)) || []
-            const index = pageMeta.indexOf(fileName)
-
-            if (index > -1) {
-                throw new Error(`${fileName} already exists in [${type}.yml]. Aborting`)
-            }
-
-            return fs.appendFile(navigationYAML, `\n- ${path.basename(fileName, '.md')}`)
-        })
+        builds.reduce(
+            (acc, curr) =>
+                fs.existsSync(state.src.root(`${curr}.yml`))
+                    ? acc.concat(fs.appendFile(state.src.root(`${curr}.yml`), content))
+                    : acc,
+            promises
+        )
 
         return Promise.all(promises).then(() => ({ fileName }))
     }

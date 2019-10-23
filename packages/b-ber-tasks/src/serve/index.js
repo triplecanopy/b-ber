@@ -1,67 +1,63 @@
 import path from 'path'
-import nodemon from 'nodemon'
-import log from '@canopycanopycanopy/b-ber-logger'
 import state from '@canopycanopycanopy/b-ber-lib/State'
-import * as tasks from '../'
+import sequences from '@canopycanopycanopy/b-ber-shapes-sequences/sequences'
+import debounce from 'lodash/debounce'
+import { create } from 'browser-sync'
+import { serialize } from '../'
 
-const PORT = 4000
-const DEBOUNCE_SPEED = 400
-const SEQUENCE = [
-    'clean',
-    'cover',
-    'container',
-    'sass',
-    'copy',
-    'scripts',
-    'render',
-    'loi',
-    'footnotes',
-    'inject',
-    'opf',
-]
+const browserSync = create()
+const port = 4000
+const debounceSpeed = 500
 
-let timer
-let files = []
+const make = build => {
+    state.update('build', build)
+    state.update('config.base_url', '/')
+    state.update('config.base_path', '/')
+    state.update('config.remote_url', `http://localhost:${port}`)
+    state.update('config.reader_url', `http://localhost:${port}`)
 
-const createSequence = build => [...SEQUENCE, build]
-
-const restart = build =>
-    new Promise(resolve => {
-        state.update('build', build)
-        state.update('config.base_url', '/')
-        state.update('config.remote_url', `http://localhost:${PORT}`)
-        state.update('config.reader_url', `http://localhost:${PORT}`)
-
-        return tasks.async.serialize(createSequence(build), tasks).then(resolve)
-    })
-
-const registerObserver = build =>
-    nodemon({
-        script: path.join(__dirname, `server-${build}.js`),
-        ext: 'md js scss',
-        env: {
-            NODE_ENV: JSON.stringify('development'),
-        },
-        ignore: ['node_modules', 'dist'],
-        watch: [state.srcDir],
-        args: ['--use_socket_server', '--use_hot_reloader', `--port ${PORT}`, `--dir ${state.distDir}`],
-    }).on('restart', file => {
-        clearTimeout(timer)
-        files.push(file)
-        timer = setTimeout(() => {
-            log.info('Restarting server due to changes')
-            log.info(`${files.join('\n')}`)
-
-            files = []
-            restart(build)
-        }, DEBOUNCE_SPEED)
-    })
-
-const serve = ({ build }) => {
-    restart(build).then(() => registerObserver(build))
-
-    process.once('SIGTERM', () => process.exit(0))
-    process.once('SIGINT', () => process.exit(0))
+    return serialize(sequences[build])
 }
+
+const reload = build => make(build).then(browserSync.reload)
+
+const watch = build => {
+    browserSync.init({
+        port,
+        server: {
+            baseDir: path.resolve(`project-${build}`),
+            middleware: (req, res, next) => {
+                // Set headers for XHTML files to allow document.write
+                if (/\.xhtml$/.test(req.url)) {
+                    res.setHeader('Content-Type', 'text/html; charset=UTF-8')
+                }
+
+                next()
+            },
+        },
+        plugins: [
+            {
+                module: 'bs-html-injector',
+                options: {
+                    files: [
+                        {
+                            match: [
+                                path.resolve('_project', '**', '*.scss'),
+                                path.resolve('_project', '**', '*.js'),
+                                path.resolve('_project', '**', '*.md'),
+                            ],
+                            fn: debounce(() => reload(build), debounceSpeed, {
+                                leading: false,
+                                trailing: true,
+                            }),
+                        },
+                    ],
+                },
+            },
+        ],
+    })
+}
+
+const serve = ({ build }) => make(build).then(() => watch(build))
 
 export default serve

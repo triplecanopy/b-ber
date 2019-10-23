@@ -12,7 +12,8 @@ class Toc {
     }
 
     static item(data) {
-        return `<a href="text/${path.basename(data.relativePath)}.xhtml">${Html.escape(getTitle(data, state))}</a>`
+        const url = `text/${path.basename(data.relativePath)}.xhtml`
+        return `<a href="${url}">${Html.escape(getTitle(data, state))}</a>`
     }
 
     static items(data) {

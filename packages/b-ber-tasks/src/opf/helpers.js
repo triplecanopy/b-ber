@@ -1,7 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 import path from 'path'
 import { opsPath } from '@canopycanopycanopy/b-ber-lib/utils'
-import isPlainObject from 'lodash/isPlainObject'
 
 const isRemote = file => /^http/.test(file)
 
@@ -26,18 +25,6 @@ const pathInfoFromFile = (file, dest) => {
 
 const pathInfoFromFiles = (arr, dest) => arr.map(file => pathInfoFromFile(file, dest))
 
-// TODO: move into Spine class
-const flattenSpineFromYAML = arr =>
-    arr.reduce((acc, curr) => {
-        if (isPlainObject(curr)) {
-            if (Object.keys(curr)[0] === 'section') {
-                return acc.concat(flattenSpineFromYAML(curr.section))
-            }
-            return acc.concat(Object.keys(curr)[0])
-        }
-        return acc.concat(curr)
-    }, [])
-
 // TODO: move into Spine class? although it's called against the toc
 const nestedContentToYAML = arr =>
     arr.reduce((acc, curr) => {
@@ -57,4 +44,4 @@ const nestedContentToYAML = arr =>
         return acc
     }, [])
 
-export { pathInfoFromFiles, flattenSpineFromYAML, nestedContentToYAML }
+export { pathInfoFromFiles, nestedContentToYAML }

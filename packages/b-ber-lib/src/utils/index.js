@@ -3,7 +3,6 @@ import path from 'path'
 import find from 'lodash/find'
 import uniq from 'lodash/uniq'
 import log from '@canopycanopycanopy/b-ber-logger'
-import sequences from '@canopycanopycanopy/b-ber-shapes-sequences/sequences'
 import findIndex from 'lodash/findIndex'
 // import ffprobe from 'ffprobe'
 // import ffprobeStatic from 'ffprobe-static'
@@ -90,11 +89,12 @@ const ensureDirs = (dirs, prefix) => {
 }
 
 const ensureFiles = (files, prefix) => {
-    const files_ = Object.keys(sequences)
-        .map(file => ({
-            absolutePath: path.resolve(prefix, '_project', `${file}.yml`),
+    const files_ = [
+        {
+            absolutePath: path.resolve(prefix, '_project', 'toc.yml'),
             content: '',
-        }))
+        },
+    ]
         .filter(({ absolutePath }) => findIndex(files, { absolutePath }) < 0)
         .concat(files)
         .reduce(

@@ -1,8 +1,16 @@
 import fs from 'fs-extra'
-import async from '../src/async'
+import serialize from '../src/serialize'
+import * as tasks from '../'
 
 jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
     metadata: { json: () => [{}] },
+}))
+
+jest.mock('../', () => ({
+    foo: jest.fn(() => Promise.resolve(1)),
+    bar: jest.fn(() => Promise.resolve(2)),
+    baz: jest.fn(() => Promise.resolve(3)),
+    bat: 'bogus',
 }))
 
 jest.mock('@canopycanopycanopy/b-ber-logger', () => ({
@@ -22,20 +30,13 @@ jest.mock('@canopycanopycanopy/b-ber-logger', () => ({
 
 afterAll(() => Promise.all([fs.remove('_project'), fs.remove('themes')]))
 
-describe('task: async', () => {
-    // expect(1).toBe(1)
+describe('task: serialize', () => {
     it('runs commands in sequence', done => {
         expect.assertions(3)
 
         const sequence = ['foo', 'bar', 'baz']
 
-        const tasks = {
-            foo: jest.fn(() => Promise.resolve()),
-            bar: jest.fn(() => Promise.resolve()),
-            baz: jest.fn(() => Promise.resolve()),
-        }
-
-        async.serialize(sequence, tasks).then(() => {
+        serialize(sequence).then(() => {
             expect(tasks.foo).toHaveBeenCalled()
             expect(tasks.bar).toHaveBeenCalled()
             expect(tasks.baz).toHaveBeenCalled()
@@ -48,13 +49,7 @@ describe('task: async', () => {
 
         const sequence = ['foo', 'bar', 'baz']
 
-        const tasks = {
-            foo: jest.fn(() => Promise.resolve(1)),
-            bar: jest.fn(a => Promise.resolve(a + 1)),
-            baz: jest.fn(a => Promise.resolve(a + 1)),
-        }
-
-        async.serialize(sequence, tasks).then(result => {
+        serialize(sequence).then(result => {
             expect(tasks.foo).toHaveBeenCalled()
             expect(tasks.bar).toHaveBeenCalledWith(1)
             expect(tasks.baz).toHaveBeenCalledWith(2)
@@ -66,16 +61,11 @@ describe('task: async', () => {
     it('throws on invalid params', done => {
         expect.assertions(3)
 
-        const sequence = ['foo', 'bar']
+        const sequence = ['foo', 'bar', 'baz', 'bat']
 
-        const tasks = {
-            foo: jest.fn(() => Promise.resolve()),
-            bar: 'bogus',
-        }
+        const promise = () => new Promise(() => serialize(sequence))
 
-        const promise = () => new Promise(() => async.serialize(sequence, tasks))
-
-        expect(() => async.serialize(sequence, tasks)).toThrow()
+        expect(() => serialize(sequence)).toThrow()
 
         promise().catch(err => {
             expect(err.name).toBe('Error')

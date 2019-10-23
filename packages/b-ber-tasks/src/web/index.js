@@ -229,7 +229,8 @@ function getEventHandlerScript() {
     return Template.scripts(content)
 }
 
-function injectPageElementsIntoFile(filePath, { tocElement, infoElement }) {
+function injectPageElementsIntoFile(filePath) {
+    const { tocElement, infoElement } = createNavigationElement()
     const pageNavigation = paginationNavigation(filePath)
     const styleBlock = getStyleBlock()
     const navigationToggleScript = getNavigationToggleScript()
@@ -356,7 +357,8 @@ function getCoverImage() {
     return Template.cover(firstPage, coverImageSrc)
 }
 
-function createIndexHTML({ tocElement, infoElement }) {
+function createIndexHTML() {
+    const { tocElement, infoElement } = createNavigationElement()
     const title = getProjectTitle()
     const coverImage = getCoverImage()
     const navigationToggleScript = getNavigationToggleScript()
@@ -393,7 +395,6 @@ const web = () =>
 
         // move files to root directory and create an index.html
         .then(moveAssetsToRootDirctory)
-        .then(createNavigationElement)
         .then(injectPageElementsIntoFiles)
         .then(createIndexHTML)
 

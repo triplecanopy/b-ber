@@ -1,4 +1,7 @@
+import path from 'path'
+import glob from 'glob'
 import isPlainObject from 'lodash/isPlainObject'
+import difference from 'lodash/difference'
 import YamlAdaptor from './YamlAdaptor'
 import SpineItem from './SpineItem'
 
@@ -9,9 +12,9 @@ class Spine {
         this.frontMatter = new Map()
         this.navigationConfigFile = navigationConfigFile
 
-        this.declared = this.create()
-        this.nested = this.build(this.declared) // nested navigation
-        this.flattened = this.flatten(this.nested) // one-dimensional page flow
+        this.entries = this.create()
+        this.nested = this.build(this.entries) // nested navigation
+        this.flattened = this.flattenNodes(this.nested) // one-dimensional page flow
     }
 
     build(entries = []) {
@@ -55,16 +58,35 @@ class Spine {
         }, [])
     }
 
-    flatten(arr) {
+    flattenNodes(arr) {
         return arr.reduce((acc, curr) => {
             const { nodes, ...rest } = curr
             const acc_ = acc.concat(rest)
-            return nodes && nodes.length ? acc_.concat(this.flatten(nodes)) : acc_
+            return nodes && nodes.length ? acc_.concat(this.flattenNodes(nodes)) : acc_
+        }, [])
+    }
+
+    flattenYAML(data) {
+        return data.reduce((acc, curr) => {
+            if (isPlainObject(curr)) {
+                if (Object.keys(curr)[0] === 'section') {
+                    return acc.concat(this.flattenYAML(curr.section))
+                }
+                return acc.concat(Object.keys(curr)[0])
+            }
+            return acc.concat(curr)
         }, [])
     }
 
     create() {
-        return YamlAdaptor.load(this.navigationConfigFile)
+        const pattern = path.resolve(this.src, '_markdown', '*.md')
+        const declaredFiles = YamlAdaptor.load(this.navigationConfigFile)
+        const flattenedFiles = this.flattenYAML(declaredFiles)
+        const systemFileNames = glob.sync(pattern).map(file => path.basename(file, '.md'))
+        const missingEntries = difference(systemFileNames, flattenedFiles)
+        const entries = declaredFiles.concat(missingEntries)
+
+        return entries
     }
 }
 
