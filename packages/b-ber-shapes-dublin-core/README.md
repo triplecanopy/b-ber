@@ -5,5 +5,5 @@ The `b-ber-shapes-dublin-core` package contains lists of [Dublin Core](https://w
 ## Install
 
 ```
-npm i -g @canopycanopycanopy/b-ber-shapes-dublin-core
+$ npm i -g @canopycanopycanopy/b-ber-shapes-dublin-core
 ```

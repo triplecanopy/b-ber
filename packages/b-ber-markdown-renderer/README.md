@@ -5,5 +5,5 @@ The `b-ber-markdown-renderer` package is used internally to register the Markdow
 ## Install
 
 ```
-npm i -g @canopycanopycanopy/b-ber-markdown-renderer
+$ npm i -g @canopycanopycanopy/b-ber-markdown-renderer
 ```

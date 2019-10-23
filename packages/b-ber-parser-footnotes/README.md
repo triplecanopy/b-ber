@@ -5,5 +5,5 @@ The `b-ber-parser-footnotes` package is used internally parse footnotes in Markd
 ## Install
 
 ```
-npm i -g @canopycanopycanopy/b-ber-parser-footnotes
+$ npm i -g @canopycanopycanopy/b-ber-parser-footnotes
 ```

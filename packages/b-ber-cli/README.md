@@ -1,6 +1,6 @@
 # `@canopycanopycanopy/b-ber-cli`
 
-The **b-ber** CLI tool is called `bber`. `b-ber-cli` is the entry point for all of the `bber` commands.
+The b-ber CLI tool is called `bber`. `b-ber-cli` is the entry point for all of the `bber` commands.
 
 ## Install
 
@@ -19,39 +19,39 @@ bber
 Information about each of the commands can be displayed by running:
 
 ```
-bber <command> --help
+$ bber <command> --help
 ```
 
 ### Commands
 
 #### `new`
 
-Start a new project.
+The `new` command initiates a new project.
 
 ```
-bber new <name>
+$ bber new <name>
 ```
 
 #### `generate`
 
-Create a new chapter.
+The `generate` command creates a new chapter.
 
 ```
-bber generate <title> [type]
+$ bber generate <title> [type]
 ```
 
 #### `serve`
 
-Preview a publication's contents in a browser.
+The `serve` command previews a publication's contents in a browser.
 
 ```
-bber serve <type>
+$ bber serve <type>
 ```
 
 #### `build`
 
-Create an ePub, mobi, PDF or all file formats.
+The `build` command creates an EPUB, Mobi, PDF, or all file formats.
 
 ```
-bber build [type]
+$ bber build [type]
 ```
