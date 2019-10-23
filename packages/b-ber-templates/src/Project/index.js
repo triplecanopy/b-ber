@@ -137,11 +137,11 @@ class Project {
 - term: language
   value: en-US
 - term: rights
-  value: © YYYY
+  value: © 2018
 - term: format
   value: epub+zip
 - term: date
-  value: YYYY-MM-DD
+  value: 2018-01-01
 - term: publisher
   value: Publisher
 - term: tableOfContents
@@ -288,7 +288,7 @@ title: Project Name Title Page
 type: titlepage
 ---
 
-::: titlepage:project-name-title-page
+::: titlepage:project-name-title-page  title:"Project Name Title Page"
 
 # Project Title by Author
 
@@ -303,7 +303,7 @@ title: Project Name Chapter One
 type: bodymatter
 ---
 
-::: chapter:project-name_chapter-one
+::: chapter:project-name_chapter-one title:"Project Name Chapter One"
 
 # Chapter Title
 
@@ -320,15 +320,15 @@ title: Project Name Colophon
 type: colophon
 ---
 
-::: colophon:project-name-colophon
+::: colophon:project-name-colophon title:"Project Name Colophon"
 
 *Project Title* by Author
 
-Published by Publisher, YYYY
+Published by Publisher, 2017
 
 ::: subchapter:credits
 
-© YYYY *Project Title*, by Author. Texts and images copyright the author, unless otherwise stated.
+© 2016 *Project Title*, by Author. Texts and images copyright the author, unless otherwise stated.
 
 ::: exit:credits
 
