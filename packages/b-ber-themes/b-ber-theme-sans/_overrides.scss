@@ -144,14 +144,14 @@ section.dialogue p.interlocutor-parent .interlocutor {
 
 sup,
 a.footnote-ref,
-.footnote__container a,
+.footnote__container > a,
 sub {
     @include type-settings(-3);
 }
 
 sup,
 a.footnote-ref,
-.footnote__container a {
+.footnote__container > a {
     top: -0.8em;
 }
 
