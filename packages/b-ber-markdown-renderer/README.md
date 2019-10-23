@@ -1,3 +1,9 @@
-# `b-ber-markdown-renderer`
+# `@canopycanopycanopy/b-ber-markdown-renderer`
 
-This project is currently very alpha. README coming soon!
+The `b-ber-markdown-renderer` package is used internally to register the Markdown plugins and manage the rendering of Markdown to HTML.
+
+## Install
+
+```
+$ npm i -g @canopycanopycanopy/b-ber-markdown-renderer
+```

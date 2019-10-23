@@ -1,3 +1,9 @@
-# `b-ber-parser-footnotes`
+# `@canopycanopycanopy/b-ber-parser-footnotes`
 
-This project is currently very alpha. README coming soon!
+The `b-ber-parser-footnotes` package is used internally parse footnotes in Markdown.
+
+## Install
+
+```
+$ npm i -g @canopycanopycanopy/b-ber-parser-footnotes
+```

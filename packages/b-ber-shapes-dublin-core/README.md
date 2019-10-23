@@ -1,3 +1,9 @@
-# `b-ber-shapes-dublin-core`
+# `@canopycanopycanopy/b-ber-shapes-dublin-core`
 
-This project is currently very alpha. README coming soon!
+The `b-ber-shapes-dublin-core` package contains lists of [Dublin Core](https://www.dublincore.org) terms and elements.
+
+## Install
+
+```
+$ npm i -g @canopycanopycanopy/b-ber-shapes-dublin-core
+```
