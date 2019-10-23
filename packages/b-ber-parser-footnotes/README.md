@@ -1,6 +1,6 @@
 # `@canopycanopycanopy/b-ber-parser-footnotes`
 
-The `b-ber-parser-footnotes` package is used internally parse the `footnotes` custom Markdown extension (directive). More information about **b-ber** directives can be found in the [wiki](https://github.com/triplecanopy/b-ber/wiki/all-directives).
+The `b-ber-parser-footnotes` package is used internally parse footnotes in Markdown.
 
 ## Install
 

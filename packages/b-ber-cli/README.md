@@ -10,13 +10,13 @@ npm i -g @canopycanopycanopy/b-ber-cli
 
 ### Usage
 
-Information about the CLI tool can be displayed by running
+Information about the CLI tool can be displayed by running:
 
 ```
 bber
 ```
 
-Information about each of the commands can be displayed by running
+Information about each of the commands can be displayed by running:
 
 ```
 bber <command> --help
@@ -42,7 +42,7 @@ bber generate <title> [type]
 
 #### `serve`
 
-Preview the publication's contents in a browser.
+Preview a publication's contents in a browser.
 
 ```
 bber serve <type>
@@ -50,7 +50,7 @@ bber serve <type>
 
 #### `build`
 
-Create an ePub, mobi, PDF, or all file formats.
+Create an ePub, mobi, PDF or all file formats.
 
 ```
 bber build [type]

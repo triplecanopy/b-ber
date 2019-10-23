@@ -1,6 +1,6 @@
 # `@canopycanopycanopy/b-ber-logger`
 
-`b-ber-logger is **b-ber**'s console logger.
+`b-ber-logger` is **b-ber**'s console logger.
 
 ## Install
 
