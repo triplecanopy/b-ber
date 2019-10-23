@@ -1,3 +1,9 @@
-# `b-ber-tasks`
+# `@canopycanopycanopy/b-ber-tasks`
 
-This project is currently very alpha. README coming soon!
+The `b-ber-tasks` package contains modules used for **b-ber**'s I/O operations.
+
+## Install
+
+```
+npm i -g @canopycanopycanopy/b-ber-tasks
+```

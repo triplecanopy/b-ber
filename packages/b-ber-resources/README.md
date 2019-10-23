@@ -1,3 +1,9 @@
-# `b-ber-resources`
+# `@canopycanopycanopy/b-ber-resources`
 
-This project is currently very alpha. README coming soon!
+The `b-ber-resources` package contains assets for newly initialized **b-ber** projects.
+
+## Install
+
+```
+npm i -g @canopycanopycanopy/b-ber-resources
+```
