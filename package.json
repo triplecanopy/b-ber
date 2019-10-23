@@ -10,6 +10,7 @@
     "scripts": {
         "watch": "lerna run watch --parallel",
         "build": "lerna run build --parallel",
+        "bootstrap": "lerna bootstrap",
         "check:code": "echo \"Checking code...\" && eslint --ignore-path .gitignore --ignore-path .prettierignore --ext .js,.jsx .",
         "check:other": "npm run prettier -- --check",
         "check": "npm-run-all -s check:code check:other",
