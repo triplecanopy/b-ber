@@ -1,6 +1,6 @@
 {
     "name": "@canopycanopycanopy/b-ber-grammar-renderer",
-    "version": "1.0.6",
+    "version": "1.0.7",
     "description": "",
     "main": "dist/index.js",
     "scripts": {
@@ -22,9 +22,9 @@
         "rimraf": "^2.6.3"
     },
     "dependencies": {
-        "@canopycanopycanopy/b-ber-lib": "1.0.6",
-        "@canopycanopycanopy/b-ber-logger": "1.0.6",
-        "@canopycanopycanopy/b-ber-shapes-directives": "1.0.6"
+        "@canopycanopycanopy/b-ber-lib": "1.0.7",
+        "@canopycanopycanopy/b-ber-logger": "1.0.7",
+        "@canopycanopycanopy/b-ber-shapes-directives": "1.0.7"
     },
     "files": [
         "dist"
