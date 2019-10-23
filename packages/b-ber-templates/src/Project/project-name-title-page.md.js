@@ -3,7 +3,7 @@ title: Project Name Title Page
 type: titlepage
 ---
 
-::: titlepage:project-name-title-page  title:"Project Name Title Page"
+::: titlepage:project-name-title-page
 
 # Project Title by Author
 

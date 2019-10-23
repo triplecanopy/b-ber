@@ -83,11 +83,11 @@ module.exports = `# ============================================================
 - term: language
   value: en-US
 - term: rights
-  value: © 2018
+  value: © YYYY
 - term: format
   value: epub+zip
 - term: date
-  value: 2018-01-01
+  value: YYYY-MM-DD
 - term: publisher
   value: Publisher
 - term: tableOfContents
