@@ -8,6 +8,9 @@ const ELEMENT_EDGE_VERSO_MAX = 52
 const ELEMENT_EDGE_RECTO_MIN = 0
 const ELEMENT_EDGE_RECTO_MAX = 2
 
+// TODO: This is a refined version of what's in Marker.jsx. The Marker class
+// should be wrapped with this HOC.
+
 function withNodePosition(WrappedComponent, { useParentDimensions }) {
     return class extends React.Component {
         static contextTypes = {
@@ -43,12 +46,21 @@ function withNodePosition(WrappedComponent, { useParentDimensions }) {
             this.calculateNodePosition()
         }
 
+        componentWillUnmount() {
+            this.disconnectObservers()
+        }
+
         connectObserver() {
             const elem = useParentDimensions
                 ? this.elemRef.current && this.elemRef.current.parentElement
                 : this.elemRef.current
             this.resizeObserver = new ResizeObserver(this.calculateNodePositionAfterResize)
             this.resizeObserver.observe(elem)
+        }
+
+        disconnectObservers() {
+            clearTimeout(this.timer)
+            this.resizeObserver.disconnect()
         }
 
         // eslint-disable-next-line class-methods-use-this
@@ -143,15 +155,6 @@ function withNodePosition(WrappedComponent, { useParentDimensions }) {
                 edgePositionVariance, // position
                 elementEdgeLeft, // x
             })
-
-            // return {
-            //     verso,
-            //     recto,
-            //     edgePosition, // _position
-            //     spreadIndex,
-            //     edgePositionVariance, // position
-            //     elementEdgeLeft, // x
-            // }
         }
 
         render() {
