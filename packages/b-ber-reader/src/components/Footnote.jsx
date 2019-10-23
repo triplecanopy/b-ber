@@ -50,6 +50,7 @@ class Footnote extends Component {
         this.getFootnote = this.getFootnote.bind(this)
         this.showFootnote = this.showFootnote.bind(this)
         this.hideFootnote = this.hideFootnote.bind(this)
+        this.toggleFootnote = this.toggleFootnote.bind(this)
 
         this.overlayElementId = Asset.createId()
         this.footnoteElement = null
@@ -84,12 +85,16 @@ class Footnote extends Component {
             })
         })
     }
+    toggleFootnote(e) {
+        if (e) e.preventDefault()
+        return this.state.footnoteVisible ? this.hideFootnote() : this.showFootnote()
+    }
     showFootnote(e) {
-        e.preventDefault()
+        if (e) e.preventDefault()
         this.context.registerOverlayElementId(this.overlayElementId)
     }
     hideFootnote(e) {
-        e.preventDefault()
+        if (e) e.preventDefault()
         this.context.deRegisterOverlayElementId()
     }
     getFootnoteOffset() {
@@ -149,7 +154,7 @@ class Footnote extends Component {
                     href={this.props.href}
                     onMouseOver={this.showFootnote}
                     onFocus={this.showFootnote}
-                    onClick={e => e.preventDefault()}
+                    onClick={this.toggleFootnote}
                 >
                     {this.props.children}
                 </a>
@@ -160,8 +165,6 @@ class Footnote extends Component {
                         'footnote__body--hidden': !footnoteBody || !footnoteVisible,
                     })}
                     style={this.footnoteStyles()}
-                    onMouseOut={this.hideFootnote}
-                    onBlur={this.hideFootnote}
                 >
                     <span className="footnote__content" dangerouslySetInnerHTML={{ __html: footnoteBody }} />
                 </span>
