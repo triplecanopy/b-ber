@@ -1,7 +1,0 @@
-body {
-    @if $build == 'web' {
-        color: $info;
-    } @else {
-        color: $black;
-    }
-}

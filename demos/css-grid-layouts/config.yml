@@ -1,4 +1,0 @@
-env: development
-theme: b-ber-theme-serif
-src: _project
-dist: project

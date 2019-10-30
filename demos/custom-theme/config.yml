@@ -1,5 +1,0 @@
-env: development
-theme: my-theme
-src: _project
-dist: project
-themes_directory: ./my-themes
