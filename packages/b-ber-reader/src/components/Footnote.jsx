@@ -89,6 +89,8 @@ class Footnote extends Component {
                 return console.error('Could not retrieve footnote %s; Document URL %s', hash, this.props.href)
             }
 
+            console.log(elem)
+
             this.setState({
                 footnoteBody: processFootnoteResponseElement(elem),
             })
