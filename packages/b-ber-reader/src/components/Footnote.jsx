@@ -145,10 +145,11 @@ class Footnote extends Component {
         styles.left = this.footnoteContainer.getBoundingClientRect().x
 
         // Adjust position based on verso or recto position of footnote reference
-        styles.left =
-            styles.left >= window.innerWidth / 2
-                ? (styles.left = styles.left * -1 + paddingLeft + columnWidth + columnGap)
-                : (styles.left = styles.left * -1 + paddingLeft)
+        styles.left = Viewport.isMobile()
+            ? (styles.left = styles.left * -1 + paddingLeft)
+            : styles.left >= window.innerWidth / 2
+            ? (styles.left = styles.left * -1 + paddingLeft + columnWidth + columnGap)
+            : (styles.left = styles.left * -1 + paddingLeft)
 
         return styles
     }
