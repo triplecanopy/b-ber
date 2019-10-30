@@ -28,16 +28,7 @@ A demo project for all the build types can be downloaded TK here.
 
 ## Project Roadmap
 
-In addition to bug fixes and ongoing maintenance, below are some currently known [enhancements](https://github.com/triplecanopy/b-ber/labels/enhancement) that we plan on devleoping for future releases:
-
--   Further styling and testing for outputed formats;
--   Extended metadata;
--   Develop system to generate pages from metadata and create templating system;
--   Create a more 'pluggable' interface:
-    -   Allow users to create and integrate their own markdown-it plugins;
-    -   Allow users to create their own b-ber extensions.
--   Modularize b-ber:
-    -   b-ber packages can continue to be extracted from the core b-ber package for maintenance and customization.
+Project Roadmap coming soon.
 
 ## Reporting Bugs
 
