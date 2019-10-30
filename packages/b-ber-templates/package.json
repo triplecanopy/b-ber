@@ -1,6 +1,6 @@
 {
     "name": "@canopycanopycanopy/b-ber-templates",
-    "version": "1.0.7",
+    "version": "1.0.8",
     "description": "",
     "main": "index.js",
     "directories": {
@@ -32,8 +32,8 @@
         "rimraf": "^2.6.3"
     },
     "dependencies": {
-        "@canopycanopycanopy/b-ber-lib": "1.0.7",
-        "@canopycanopycanopy/b-ber-logger": "1.0.7",
+        "@canopycanopycanopy/b-ber-lib": "1.0.8",
+        "@canopycanopycanopy/b-ber-logger": "1.0.8",
         "fs-extra": "^8.1.0",
         "lodash.find": "latest",
         "lodash.has": "latest",
