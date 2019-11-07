@@ -1,6 +1,6 @@
 {
     "name": "@canopycanopycanopy/b-ber-markdown-renderer",
-    "version": "1.0.8",
+    "version": "1.0.9",
     "description": "",
     "main": "dist/index.js",
     "scripts": {
@@ -22,18 +22,18 @@
         "rimraf": "^2.6.3"
     },
     "dependencies": {
-        "@canopycanopycanopy/b-ber-grammar-dialogue": "1.0.8",
-        "@canopycanopycanopy/b-ber-grammar-footnotes": "1.0.8",
-        "@canopycanopycanopy/b-ber-grammar-frontmatter": "1.0.8",
-        "@canopycanopycanopy/b-ber-grammar-gallery": "1.0.8",
-        "@canopycanopycanopy/b-ber-grammar-image": "1.0.8",
-        "@canopycanopycanopy/b-ber-grammar-logo": "1.0.8",
-        "@canopycanopycanopy/b-ber-grammar-media": "1.0.8",
-        "@canopycanopycanopy/b-ber-grammar-pullquote": "1.0.8",
-        "@canopycanopycanopy/b-ber-grammar-section": "1.0.8",
-        "@canopycanopycanopy/b-ber-grammar-spread": "1.0.8",
-        "@canopycanopycanopy/b-ber-parser-footnotes": "1.0.8",
-        "@canopycanopycanopy/b-ber-parser-gallery": "1.0.8",
+        "@canopycanopycanopy/b-ber-grammar-dialogue": "1.0.9",
+        "@canopycanopycanopy/b-ber-grammar-footnotes": "1.0.9",
+        "@canopycanopycanopy/b-ber-grammar-frontmatter": "1.0.9",
+        "@canopycanopycanopy/b-ber-grammar-gallery": "1.0.9",
+        "@canopycanopycanopy/b-ber-grammar-image": "1.0.9",
+        "@canopycanopycanopy/b-ber-grammar-logo": "1.0.9",
+        "@canopycanopycanopy/b-ber-grammar-media": "1.0.9",
+        "@canopycanopycanopy/b-ber-grammar-pullquote": "1.0.9",
+        "@canopycanopycanopy/b-ber-grammar-section": "1.0.9",
+        "@canopycanopycanopy/b-ber-grammar-spread": "1.0.9",
+        "@canopycanopycanopy/b-ber-parser-footnotes": "1.0.9",
+        "@canopycanopycanopy/b-ber-parser-gallery": "1.0.9",
         "markdown-it": "^8.4.1",
         "markdown-it-front-matter": "^0.1.2"
     },
