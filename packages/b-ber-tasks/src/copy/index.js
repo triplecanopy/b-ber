@@ -52,10 +52,9 @@ const copy = () => {
 
                     if (size > FILE_SIZE_WARNING_LIMIT) {
                         log.warn(
-                            'copy [%s - {%d}] exceeds recommended file size of {%d}',
+                            'copy [%s - {%d}] Large file sizes may cause performance issues in some output formats',
                             file,
-                            size,
-                            FILE_SIZE_WARNING_LIMIT
+                            size
                         )
                     }
                 })
