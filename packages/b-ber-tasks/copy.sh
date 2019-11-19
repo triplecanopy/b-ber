@@ -9,7 +9,7 @@ declare -a browserFiles=(
 )
 
 declare -a nodeFiles=(
-    "src/cover/OpenSans-Regular.ttf"
+    "src/cover/freeuniversal-bold-webfont.ttf"
 )
 
 for file in "${browserFiles[@]}"

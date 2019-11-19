@@ -1,3 +1,9 @@
-# `b-ber-shapes-directives`
+# `@canopycanopycanopy/b-ber-shapes-directives`
 
-This project is currently very alpha. README coming soon!
+The `b-ber-shapes-directives` package contains hashes of custom attributes and is used internally in rendering Markdown into HTML.
+
+## Install
+
+```
+$ npm i -g @canopycanopycanopy/b-ber-shapes-directives
+```

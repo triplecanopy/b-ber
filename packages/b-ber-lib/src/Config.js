@@ -12,7 +12,7 @@ class Config {
         ibooks_specified_fonts: false,
         theme: 'b-ber-theme-serif',
         themes_directory: './themes',
-        base_url: '/',
+        base_url: 'http://localhost:4000/project-web',
         base_path: '/',
         remote_url: 'http://localhost:4000/',
         reader_url: 'http://localhost:4000/project-reader',

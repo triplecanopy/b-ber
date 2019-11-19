@@ -1,6 +1,6 @@
 {
     "name": "@canopycanopycanopy/b-ber-grammar-footnotes",
-    "version": "1.0.5",
+    "version": "1.0.9",
     "description": "",
     "main": "dist/index.js",
     "scripts": {
@@ -22,7 +22,7 @@
         "rimraf": "^2.6.3"
     },
     "dependencies": {
-        "@canopycanopycanopy/b-ber-lib": "1.0.5",
+        "@canopycanopycanopy/b-ber-lib": "1.0.9",
         "lodash.find": "latest"
     },
     "files": [

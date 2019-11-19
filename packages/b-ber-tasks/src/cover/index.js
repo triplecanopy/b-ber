@@ -40,10 +40,10 @@ class Cover {
         this.marginTop = this.fontSize * 2
         this.colorBackground = '#5050c5'
         this.colorText = '#ffffff'
-        this.fontName = 'Open Sans'
+        this.fontName = 'Free Universal'
 
         // important! file name needs to be added to copy.sh
-        this.fontFile = 'OpenSans-Regular.ttf'
+        this.fontFile = 'freeuniversal-bold-webfont.ttf'
 
         // increments paragraph Y position
         this.posY = 0
@@ -64,11 +64,13 @@ class Cover {
 
     // eslint-disable-next-line class-methods-use-this
     YAMLToObject() {
-        const data = {}
-        state.metadata.json().forEach(a => {
-            if (a.term && a.value) data[a.term] = a.value
-        })
-        return data
+        return state.metadata.json().reduce((acc, curr) => {
+            if (curr.term && curr.value) {
+                acc[curr.term] = curr.value
+            }
+
+            return acc
+        }, {})
     }
 
     removeDefaultCovers() {
@@ -85,6 +87,27 @@ class Cover {
         return Promise.all(promises)
     }
 
+    wrapText(ctx, text) {
+        const maxWidth = this.width - this.marginLeft * 2
+        const words = text.split(' ')
+        let line = ''
+
+        for (let n = 0; n < words.length; n++) {
+            const testLine = `${line}${words[n]} `
+            const metrics = ctx.measureText(testLine)
+            const testWidth = metrics.width
+
+            if (testWidth > maxWidth && n > 0) {
+                ctx.fillText(line, this.marginLeft, this.getPosY())
+                line = `${words[n]} `
+            } else {
+                line = testLine
+            }
+        }
+
+        ctx.fillText(line, this.marginLeft, this.getPosY())
+    }
+
     generateDefaultCoverImage() {
         return new Promise(resolve => {
             const img = PureImage.make(this.width, this.height)
@@ -99,19 +122,20 @@ class Cover {
                 ctx.fillStyle = this.colorText
 
                 // add text
+                ctx.fillText('Title', this.marginLeft, this.getPosY())
                 ctx.fillText(this.metadata.title, this.marginLeft, this.getPosY())
                 ctx.fillText('', this.marginLeft, this.getPosY())
 
-                ctx.fillText('Creator:', this.marginLeft, this.getPosY())
+                ctx.fillText('Creator', this.marginLeft, this.getPosY())
                 ctx.fillText(this.metadata.creator, this.marginLeft, this.getPosY())
                 ctx.fillText('', this.marginLeft, this.getPosY())
 
-                ctx.fillText('Date Modified:', this.marginLeft, this.getPosY())
-                ctx.fillText(this.metadata['date-modified'], this.marginLeft, this.getPosY())
+                ctx.fillText('Publisher', this.marginLeft, this.getPosY())
+                ctx.fillText(this.metadata.publisher, this.marginLeft, this.getPosY())
                 ctx.fillText('', this.marginLeft, this.getPosY())
 
-                ctx.fillText('Identifier:', this.marginLeft, this.getPosY())
-                ctx.fillText(this.metadata.identifier, this.marginLeft, this.getPosY())
+                ctx.fillText('Description', this.marginLeft, this.getPosY())
+                this.wrapText(ctx, this.metadata.description)
                 ctx.fillText('', this.marginLeft, this.getPosY())
 
                 ctx.fillText('b-ber version', this.marginLeft, this.getPosY())
@@ -176,7 +200,7 @@ class Cover {
             this.coverImagePath = state.src.images(this.coverEntry)
 
             if (!fs.existsSync(this.coverImagePath)) {
-                log.error('cover image listed in metadata.yml cannot be found [%s]', this.coverImagePath)
+                log.error('Cover image listed in metadata.yml cannot be found')
             }
 
             return this.generateCoverXHTML()

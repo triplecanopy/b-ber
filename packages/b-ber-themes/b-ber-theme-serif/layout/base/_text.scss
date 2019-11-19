@@ -406,7 +406,7 @@ a.footnote-ref {
 }
 
 .footnote__container {
-    a {
+    > a {
         @extend sup;
     }
     .footnote__body {

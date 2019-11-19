@@ -44,6 +44,15 @@ a {
 .footnote__body {
     visibility: visible;
     display: block;
+
+    background: $white;
+    padding-left: 1.5em;
+    padding-right: 1.5em;
+    position: absolute;
+    font-size: 14px;
+    line-height: 1.6;
+    z-index: 1000;
+
     &.footnote__body--hidden {
         visibility: hidden;
     }

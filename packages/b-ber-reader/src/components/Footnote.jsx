@@ -1,31 +1,35 @@
+/* eslint-disable jsx-a11y/mouse-events-have-key-events */
 /* eslint-disable jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import { Request, Asset, Url } from '../helpers'
+import Viewport from '../helpers/Viewport'
 
 const blacklistedNodeNames = ['SCRIPT', 'STYLE']
 
-const isBlacklisted = nodeName => blacklistedNodeNames.includes(nodeName)
+const isBlacklistedName = name => blacklistedNodeNames.includes(name)
+
+const isBlacklistedNode = node => node.nodeType === window.Node.ELEMENT_NODE && isBlacklistedName(node.nodeName)
+
+const processAnchorNode = node => {
+    if (!node.href || Url.isRelative(node.href)) return node.parentNode.removeChild(node)
+
+    const { origin } = new window.URL(node.href)
+
+    return new RegExp(window.location.origin).test(origin)
+        ? node.parentNode.removeChild(node) // Remove internal links
+        : node.setAttribute('target', '_blank') // Ensure external links open in new page
+}
 
 const processFootnoteResponseElement = elem => {
     for (let i = elem.children.length - 1; i >= 0; i--) {
         const child = elem.children[i]
-        if (child.nodeType === window.Node.ELEMENT_NODE && isBlacklisted(child.nodeName)) {
-            child.parentNode.removeChild(child)
-        }
-        if (child.nodeName === 'A') {
-            if (!child.href || Url.isRelative(child.href)) {
-                child.parentNode.removeChild(child)
-            } else {
-                const { origin } = new window.URL(child.href)
-                if (new RegExp(window.location.origin).test(origin)) {
-                    child.parentNode.removeChild(child) // remove internal links
-                } else {
-                    child.setAttribute('target', '_blank') // ensure external links open in new page
-                }
-            }
-        }
+
+        // Remove any nodes that should not be injected into footnotes
+        if (isBlacklistedNode(child)) child.parentNode.removeChild(child)
+
+        if (child.nodeName === 'A') processAnchorNode(child)
 
         if (child.children.length) processFootnoteResponseElement(child)
     }
@@ -50,6 +54,9 @@ class Footnote extends Component {
         this.getFootnote = this.getFootnote.bind(this)
         this.showFootnote = this.showFootnote.bind(this)
         this.hideFootnote = this.hideFootnote.bind(this)
+        this.toggleFootnote = this.toggleFootnote.bind(this)
+        this.handleOnMouseOver = this.handleOnMouseOver.bind(this)
+        this.handleDocumentClick = this.handleDocumentClick.bind(this)
 
         this.overlayElementId = Asset.createId()
         this.footnoteElement = null
@@ -62,6 +69,9 @@ class Footnote extends Component {
         } else if (!footnoteVisible && nextContext.overlayElementId === this.overlayElementId) {
             this.getFootnote().then(() => this.setState({ footnoteVisible: true }))
         }
+    }
+    componentWillUnmount() {
+        document.addEventListener('click', this.handleDocumentClick)
     }
     getFootnote() {
         const { footnoteBody } = this.state
@@ -79,17 +89,33 @@ class Footnote extends Component {
                 return console.error('Could not retrieve footnote %s; Document URL %s', hash, this.props.href)
             }
 
+            console.log(elem)
+
             this.setState({
                 footnoteBody: processFootnoteResponseElement(elem),
             })
         })
     }
+    handleOnMouseOver(e) {
+        if (e) e.preventDefault()
+        if (Viewport.isMobile()) return
+        this.toggleFootnote()
+    }
+    handleDocumentClick(e) {
+        if (e.target.nodeName === 'A') return
+        this.hideFootnote()
+    }
+    toggleFootnote(e) {
+        if (e) e.preventDefault()
+        return this.state.footnoteVisible ? this.hideFootnote() : this.showFootnote()
+    }
     showFootnote(e) {
-        e.preventDefault()
+        if (e) e.preventDefault()
         this.context.registerOverlayElementId(this.overlayElementId)
+        document.addEventListener('click', this.handleDocumentClick)
     }
     hideFootnote(e) {
-        e.preventDefault()
+        if (e) e.preventDefault()
         this.context.deRegisterOverlayElementId()
     }
     getFootnoteOffset() {
@@ -109,32 +135,25 @@ class Footnote extends Component {
         const { columnWidth, columnGap, paddingLeft } = this.context.viewerSettings
         const aboveElement = this.getFootnoteOffset()
         const offsetProp = aboveElement ? 'bottom' : 'top'
+        const left = 0
+        const width = Viewport.isMobile() ? window.innerWidth - paddingLeft * 2 : `${columnWidth + columnGap}px`
 
-        // set position left for footnote
-        let left = 0
-        if (this.footnoteContainer) {
-            left = this.footnoteContainer.getBoundingClientRect().x
+        const styles = { width, left, [offsetProp]: '1.5rem' }
 
-            // adjust position based on verso or recto position of footnote reference
-            if (left >= window.innerWidth / 2) {
-                left = left * -1 + paddingLeft + columnWidth + columnGap
-            } else {
-                left = left * -1 + paddingLeft
-            }
-        }
+        // Return default styles if no node exists
+        if (!this.footnoteContainer) return styles
 
-        return {
-            background: 'white',
-            position: 'absolute',
-            width: `${columnWidth + columnGap}px`,
-            fontSize: '14px',
-            lineHeight: 1.6,
-            zIndex: 1000,
-            [offsetProp]: '1.5rem',
-            paddingLeft: '1.5em',
-            paddingRight: '1.5em',
-            left,
-        }
+        // Set position left for footnote
+        styles.left = this.footnoteContainer.getBoundingClientRect().x
+
+        // Adjust position based on verso or recto position of footnote reference
+        styles.left = Viewport.isMobile()
+            ? (styles.left = styles.left * -1 + paddingLeft)
+            : styles.left >= window.innerWidth / 2
+            ? (styles.left = styles.left * -1 + paddingLeft + columnWidth + columnGap)
+            : (styles.left = styles.left * -1 + paddingLeft)
+
+        return styles
     }
 
     render() {
@@ -145,23 +164,15 @@ class Footnote extends Component {
                 className="footnote__container"
                 style={{ display: 'inline', position: 'relative' }}
             >
-                <a
-                    href={this.props.href}
-                    onMouseOver={this.showFootnote}
-                    onFocus={this.showFootnote}
-                    onClick={e => e.preventDefault()}
-                >
+                <a href={this.props.href} onMouseOver={this.handleOnMouseOver} onClick={this.toggleFootnote}>
                     {this.props.children}
                 </a>
-
                 <span
                     ref={node => (this.footnoteElement = node)}
                     className={classNames('footnote__body', {
                         'footnote__body--hidden': !footnoteBody || !footnoteVisible,
                     })}
                     style={this.footnoteStyles()}
-                    onMouseOut={this.hideFootnote}
-                    onBlur={this.hideFootnote}
                 >
                     <span className="footnote__content" dangerouslySetInnerHTML={{ __html: footnoteBody }} />
                 </span>

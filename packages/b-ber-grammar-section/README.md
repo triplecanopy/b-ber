@@ -1,3 +1,9 @@
-# `b-ber-grammar-section`
+# `@canopycanopycanopy/b-ber-grammar-section`
 
-This project is currently very alpha. README coming soon!
+The `b-ber-grammar-section` package is used internally by b-ber to render custom Markdown extensions (directives) which contain content. More information about b-ber directives can be found in the [All directives](https://github.com/triplecanopy/b-ber/wiki/all-directives) page in the b-ber [Wiki](https://github.com/triplecanopy/b-ber/wiki).
+
+## Install
+
+```
+$ npm i -g @canopycanopycanopy/b-ber-grammar-section
+```

@@ -1,3 +1,9 @@
-# `b-ber-reader`
+# `@canopycanopycanopy/b-ber-reader`
 
-This project is currently very alpha. README coming soon!
+The `b-ber-reader` package is used to render a horizontally scrolling HTML view in a browser. It includes a user-interface to navigate through a published project, display a project metadata, and to download related project assets.
+
+## Install
+
+```
+$ npm i -g @canopycanopycanopy/b-ber-reader
+```

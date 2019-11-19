@@ -9,24 +9,26 @@
 
 b-ber is both a method and an application for producing publications in a variety of formats—EPUB 3, Mobi/KF8, static website, PDF, and XML file, which can be imported into InDesign for print layouts—from a single source that consists of plain-text files and other assets. B-ber also functions as a browser-based EPUB reader, which explains the name.
 
-While there are other frameworks for exporting content to different formats, b-ber introduces a unique paradigm for writing and marking up a text. The ability to produce multiple formats and to style each accordingly is made possible by the source of b-ber projects, which is composed of plaintext files, SASS and Javascript files, media, and other configuration files that are written in YAML. These plaintext files, the main text (and instructions) of a b-ber project, are written in Markdown with custom directives. b-ber extends the Markdown with custom directives that are derived from the [EPUB 3 Structural Semantic Vocabulary](https://idpf.github.io/epub-vocabs/structure/). We selected a subset of terms from that vocabulary that allows for a rich markup language that is still easily readable for writers and editors but contains the majority of structural elements required for a published work. In addition to the directives based off the EPUB 3 Structural Semantic Vocabulary and following the same principles of readability, we developed an additional set of directives for handling different media layouts and interactive paradigms.
+While there are other frameworks for exporting content to different formats, b-ber introduces a unique paradigm for writing and marking up a text. The ability to produce multiple formats and to style each accordingly is made possible by the source of b-ber projects, which is composed of plaintext files, SCSS and JavaScript files, media, and other configuration files that are written in YAML. These plaintext files, the main text (and instructions) of a b-ber project, are written in Markdown with custom directives. b-ber extends the Markdown with custom directives that are derived from the [EPUB 3 Structural Semantic Vocabulary](https://idpf.github.io/epub-vocabs/structure/). We selected a subset of terms from that vocabulary that allows for a rich markup language that is still easily readable for writers and editors but contains the majority of structural elements required for a published work. In addition to the directives based off the EPUB 3 Structural Semantic Vocabulary and following the same principles of readability, we developed an additional set of directives for handling different media layouts and interactive paradigms.
 
 b-ber facilitates control of the design of publications on the level of individual formats by accounting for the specific characteristics of EPUBs, websites, PDFs, etc. B-ber’s architecture allows for the styles included in each theme to be “scoped” to different build types. In other words, the text and media treatments for an EPUB can differ from those for a browser-based version of the same publication. Existing themes, developed by Triple Canopy, include combinations of styles, typefaces, and media layouts. Alternatively, publishers can design and develop their own themes for b-ber. They can also override any of these styles at the level of the individual publication in order to craft a layout that conforms to the needs of the work. By offering high-level design flexibility and format-specific customization, b-ber enables authors, editors, designers, and technologists to simultaneously consider the ideal manifestation of a publication and the multiplicity of scenarios in which it will be encountered.
 
-b-ber  is written in Javascript (with themes written in Sass) and distributed on npm. b-ber can be run on a personal computer or on a server. The documentation in the wiki is written for both beginners who would like to author projects as well as developers who would like to contribute to the codebase. In addition to the Wiki, the repository includes further documentation and the code is heavily commented.
+The b-ber framework is written in JavaScript (with themes written in SCSS) and distributed on npm. b-ber can be run on a personal computer or on a server. The documentation in the wiki is written for both beginners who would like to author projects as well as developers who would like to contribute to the codebase. In addition to the wiki, the repository includes further documentation and the code is heavily commented.
 
 To get started, please visit the wiki [here](https://github.com/triplecanopy/b-ber/blob/master/triplecanopy/b-ber/wiki/getting-started).
 
 ## Summary of Features
 
-- Produces publications in a variety of formats—EPUB 3, Mobi/KF8, static website, PDF, and XML file, which can be imported into InDesign for print layouts—from a single source that consists of plain-text files and other assets;
-- Can produce a browser-based EPUB reader;
-- The design of publications are set by themes and publication-specific themes;  
-- Generated output follows the [EPUB 3.0 specification](http://idpf.org/epub/30);
-- Creates and embeds rich metadata in JSON-LD;
-- Creates metadata that conforms to the [webpub specification](https://w3c.github.io/dpub-pwp-ucr/) for web-based publications.
+-   Builds ePubs, Mobis, PDFs, static websites in both horizontal and vertical orientation, and XML files that can be imported into desktop publishing software;
+-   Generated output follows the [EPUB 3.0 specification](http://idpf.org/epub/30);
+-   Creates and links metadata that conforms to the [webpub specification](https://w3c.github.io/dpub-pwp-ucr/) for web-based publications;
+-   Can be styled through overrides or custom themes;
 
 A demo project for all the build types can be downloaded TK here.
+
+## Project Roadmap
+
+Project Roadmap coming soon.
 
 ## Reporting Bugs
 

@@ -1,3 +1,9 @@
-# `b-ber-parser-gallery`
+# `@canopycanopycanopy/b-ber-parser-gallery`
 
-This project is currently very alpha. README coming soon!
+The `b-ber-parser-gallery` package is used internally parse the `gallery` custom Markdown extension (directive). More information about b-ber directives can be found in the [All directives](https://github.com/triplecanopy/b-ber/wiki/all-directives) page in the b-ber [Wiki](https://github.com/triplecanopy/b-ber/wiki).
+
+## Install
+
+```
+$ npm i -g @canopycanopycanopy/b-ber-parser-gallery
+```
