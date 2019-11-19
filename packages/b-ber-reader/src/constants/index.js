@@ -7,23 +7,23 @@ export const DEBOUNCE_TIMER = 200
 export const DEFERRED_CALLBACK_TIMER = 200
 
 export const transitions = {
-    SLIDE: 'slide',
-    FADE: 'fade',
+  SLIDE: 'slide',
+  FADE: 'fade',
 }
 
 export const themes = {
-    DEFAULT: 'default',
-    LIGHT: 'light',
-    DARK: 'dark',
+  DEFAULT: 'default',
+  LIGHT: 'light',
+  DARK: 'dark',
 }
 
 export const messagesTypes = {
-    PAGINATION_EVENT: 'PAGINATION_EVENT',
-    DEFERRED_EVENT: 'DEFERRED_EVENT',
-    CLICK_EVENT: 'CLICK_EVENT',
-    KEYDOWN_EVENT: 'KEYDOWN_EVENT',
-    NAVIGATION_EVENT: 'NAVIGATION_EVENT',
-    DOWNLOAD_EVENT: 'DOWNLOAD_EVENT',
+  PAGINATION_EVENT: 'PAGINATION_EVENT',
+  DEFERRED_EVENT: 'DEFERRED_EVENT',
+  CLICK_EVENT: 'CLICK_EVENT',
+  KEYDOWN_EVENT: 'KEYDOWN_EVENT',
+  NAVIGATION_EVENT: 'NAVIGATION_EVENT',
+  DOWNLOAD_EVENT: 'DOWNLOAD_EVENT',
 }
 
 // Media queries horizontal in px
@@ -108,4 +108,5 @@ export const VIEWPORT_DIMENSIONS_MATRIX = [
 
 // used in DocumentPreProcessor for appended stylesheets
 export const MEDIA_QUERY_SMALL = `only screen and (min-width: ${BREAKPOINT_HORIZONTAL_SMALL}px)`
-export const MEDIA_QUERY_LARGE = `only screen and (max-width: ${BREAKPOINT_HORIZONTAL_SMALL + 1}px)`
+export const MEDIA_QUERY_LARGE = `only screen and (max-width: ${BREAKPOINT_HORIZONTAL_SMALL +
+  1}px)`

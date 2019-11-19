@@ -4,11 +4,11 @@ import Xml from '../src/Xml'
 afterAll(() => fs.remove('_project'))
 
 describe('templates.Xml', () => {
-    test('container matches the snapshot', () => {
-        expect(Xml.container()).toMatchSnapshot()
-    })
+  test('container matches the snapshot', () => {
+    expect(Xml.container()).toMatchSnapshot()
+  })
 
-    test('mimetype matches the snapshot', () => {
-        expect(Xml.mimetype()).toMatchSnapshot()
-    })
+  test('mimetype matches the snapshot', () => {
+    expect(Xml.mimetype()).toMatchSnapshot()
+  })
 })

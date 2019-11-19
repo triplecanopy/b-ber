@@ -14,48 +14,48 @@ $tablet-breakpoint-max: 768px;
 $font-serif: Georgia, 'Iowan', Times, serif;
 
 @mixin transition-fast($property) {
-    transition: $property 100ms ease;
+  transition: $property 100ms ease;
 }
 
 // base
 * {
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  padding: 0;
 }
 
 ul,
 ol {
-    list-style: none;
+  list-style: none;
 }
 
 button {
-    cursor: pointer;
-    appearance: none;
-    background: transparent;
-    border: 0;
-    display: block;
-    outline: none;
+  cursor: pointer;
+  appearance: none;
+  background: transparent;
+  border: 0;
+  display: block;
+  outline: none;
 }
 
 a {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .footnote__body {
-    visibility: visible;
-    display: block;
+  visibility: visible;
+  display: block;
 
-    background: $white;
-    padding-left: 1.5em;
-    padding-right: 1.5em;
-    position: absolute;
-    font-size: 14px;
-    line-height: 1.6;
-    z-index: 1000;
+  background: $white;
+  padding-left: 1.5em;
+  padding-right: 1.5em;
+  position: absolute;
+  font-size: 14px;
+  line-height: 1.6;
+  z-index: 1000;
 
-    &.footnote__body--hidden {
-        visibility: hidden;
-    }
+  &.footnote__body--hidden {
+    visibility: hidden;
+  }
 }
 
 // icons
@@ -72,435 +72,436 @@ a {
 }
 
 .material-icons {
-    display: inline-block;
-    font-family: 'Material Icons';
-    font-weight: normal;
-    font-style: normal;
-    font-size: 20px;
-    line-height: 1;
-    text-transform: none;
-    letter-spacing: normal;
-    word-wrap: normal;
-    white-space: nowrap;
-    direction: ltr;
-    -webkit-font-smoothing: antialiased; // sass-lint:disable-line no-vendor-prefixes
-    text-rendering: optimizeLegibility;
-    -moz-osx-font-smoothing: grayscale; // sass-lint:disable-line no-vendor-prefixes
-    font-feature-settings: 'liga';
+  display: inline-block;
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 20px;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased; // sass-lint:disable-line no-vendor-prefixes
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale; // sass-lint:disable-line no-vendor-prefixes
+  font-feature-settings: 'liga';
 }
 
 // UI
 .controls,
 .controls * {
-    box-sizing: border-box;
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased; // sass-lint:disable-line no-vendor-prefixes
-    -moz-osx-font-smoothing: grayscale; // sass-lint:disable-line no-vendor-prefixes
+  box-sizing: border-box;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased; // sass-lint:disable-line no-vendor-prefixes
+  -moz-osx-font-smoothing: grayscale; // sass-lint:disable-line no-vendor-prefixes
 }
 
 .controls__header {
-    z-index: 1;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    background: $white;
-    border-bottom: 1px solid $lightgrey;
+  z-index: 1;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: $white;
+  border-bottom: 1px solid $lightgrey;
+  height: $component-x;
+  opacity: 1 !important;
+
+  nav ul {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
     height: $component-x;
-    opacity: 1 !important;
+    padding: 0 10px;
 
-    nav ul {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-        height: $component-x;
-        padding: 0 10px;
+    li {
+      display: flex;
+      min-width: 25px;
 
-        li {
-            display: flex;
-            min-width: 25px;
+      &:nth-child(2) {
+        flex: 1;
+      }
 
-            &:nth-child(2) {
-                flex: 1;
-            }
+      //TC SPECIFIC STYLES
+      &:nth-child(3) {
+        display: none;
+      }
 
-            //TC SPECIFIC STYLES
-            &:nth-child(3) {
-                display: none;
-            }
-
-            .nav__button {
-                @include transition-fast('color');
-                padding: 0 5px;
-                &:hover {
-                    color: $tc-purple;
-                }
-                &.nav__button__downloads {
-                    color: $black;
-                    animation: nav__button__downloads__shadow 2.5s infinite, nav__button__downloads__color 2.5s infinite;
-                    text-shadow: 0px 0px 0px rgba(80, 80, 197, 0);
-                    &:hover {
-                        animation: none;
-                        color: $tc-purple;
-                    }
-                    @keyframes nav__button__downloads__shadow {
-                        5% {
-                            text-shadow: 0 0px 5px rgba(105, 105, 252, 1);
-                        }
-                        35% {
-                            text-shadow: 0px 5px 10px rgba(105, 105, 252, 0.5);
-                        }
-                        100% {
-                            text-shadow: 0px 10px 30px rgba(105, 105, 252, 0);
-                        }
-                    }
-                    @keyframes nav__button__downloads__color {
-                        0% {
-                            color: rgba(34, 34, 34, 1);
-                        }
-                        25% {
-                            color: rgba(80, 80, 197, 1);
-                        }
-                        100% {
-                            color: rgba(34, 34, 34, 1);
-                        }
-                    }
-                }
-            }
+      .nav__button {
+        @include transition-fast('color');
+        padding: 0 5px;
+        &:hover {
+          color: $tc-purple;
         }
+        &.nav__button__downloads {
+          color: $black;
+          animation: nav__button__downloads__shadow 2.5s infinite,
+            nav__button__downloads__color 2.5s infinite;
+          text-shadow: 0px 0px 0px rgba(80, 80, 197, 0);
+          &:hover {
+            animation: none;
+            color: $tc-purple;
+          }
+          @keyframes nav__button__downloads__shadow {
+            5% {
+              text-shadow: 0 0px 5px rgba(105, 105, 252, 1);
+            }
+            35% {
+              text-shadow: 0px 5px 10px rgba(105, 105, 252, 0.5);
+            }
+            100% {
+              text-shadow: 0px 10px 30px rgba(105, 105, 252, 0);
+            }
+          }
+          @keyframes nav__button__downloads__color {
+            0% {
+              color: rgba(34, 34, 34, 1);
+            }
+            25% {
+              color: rgba(80, 80, 197, 1);
+            }
+            100% {
+              color: rgba(34, 34, 34, 1);
+            }
+          }
+        }
+      }
     }
+  }
 }
 
 .controls__sidebar {
-    z-index: 1;
-    font-family: $font-serif;
-    font-weight: 400;
-    font-size: 14px;
-    padding-bottom: $component-x;
+  z-index: 1;
+  font-family: $font-serif;
+  font-weight: 400;
+  font-size: 14px;
+  padding-bottom: $component-x;
 
-    ol,
-    ul,
-    dl {
-        li {
-            a,
-            button {
-                text-align: left;
-                display: block;
-                width: 100%;
-                padding: calc(#{$padding-y} / 2);
-                border-bottom: 1px solid $lightgrey;
-                overflow: hidden;
-                white-space: nowrap;
-                text-overflow: ellipsis;
-                font-size: 14px;
-                font-family: $font-serif;
-                // prettier-ignore
-                &:hover { // sass-lint:disable-line nesting-depth
+  ol,
+  ul,
+  dl {
+    li {
+      a,
+      button {
+        text-align: left;
+        display: block;
+        width: 100%;
+        padding: calc(#{$padding-y} / 2);
+        border-bottom: 1px solid $lightgrey;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        font-size: 14px;
+        font-family: $font-serif;
+        // prettier-ignore
+        &:hover { // sass-lint:disable-line nesting-depth
                     @include transition-fast('color');
                     color: $tc-purple;
                 }
-                // prettier-ignore
-                &.material-icons { // sass-lint:disable-line nesting-depth
+        // prettier-ignore
+        &.material-icons { // sass-lint:disable-line nesting-depth
                     font-family: 'Material Icons';
                     text-align: right;
                     font-size: 20px;
                 }
 
-                // prettier-ignore
-                &.chapter--current { // sass-lint:disable-line nesting-depth
+        // prettier-ignore
+        &.chapter--current { // sass-lint:disable-line nesting-depth
                     font-weight: 700;
                 }
 
-                // prettier-ignore
-                @for $i from 1 through 10 { // sass-lint:disable-line nesting-depth
+        // prettier-ignore
+        @for $i from 1 through 10 { // sass-lint:disable-line nesting-depth
                     &.indent--#{$i} {
                         text-indent: ($i - 1) * ($component-x / 2);
                     }
                 }
-            }
+      }
 
-            ol,
-            li,
-            dl {
-                // prettier-ignore
-                a { // sass-lint:disable-line nesting-depth
+      ol,
+      li,
+      dl {
+        // prettier-ignore
+        a { // sass-lint:disable-line nesting-depth
                     text-indent: $padding-y;
                 }
-            }
-        }
-
-        dt {
-            padding: calc(#{$padding-y} / 2) 0 0 calc(#{$component-x} / 2);
-            text-transform: capitalize;
-        }
-
-        dd {
-            padding: 5px calc(#{$component-x} / 2) calc(#{$padding-y} / 2);
-            border-bottom: 1px solid $lightgrey;
-        }
-
-        li,
-        dt {
-            a {
-                @include transition-fast('color');
-                text-decoration: none;
-                color: $black;
-
-                //TC SPECIFIC STYLES
-                &:hover {
-                    color: $tc-purple;
-                }
-            }
-        }
+      }
     }
+
+    dt {
+      padding: calc(#{$padding-y} / 2) 0 0 calc(#{$component-x} / 2);
+      text-transform: capitalize;
+    }
+
+    dd {
+      padding: 5px calc(#{$component-x} / 2) calc(#{$padding-y} / 2);
+      border-bottom: 1px solid $lightgrey;
+    }
+
+    li,
+    dt {
+      a {
+        @include transition-fast('color');
+        text-decoration: none;
+        color: $black;
+
+        //TC SPECIFIC STYLES
+        &:hover {
+          color: $tc-purple;
+        }
+      }
+    }
+  }
 }
 
 .controls__sidebar__chapters {
-    position: fixed;
-    z-index: 2;
-    top: $component-x;
-    height: 100vh;
-    background: $white;
-    border-right: 1px solid $lightgrey;
-    width: calc(#{$component-x} * 10);
-    transition: transform 300ms ease;
-    transform: translateX(-100%);
-    overflow: auto;
-    -webkit-overflow-scrolling: touch; // sass-lint:disable-line no-vendor-prefixes
+  position: fixed;
+  z-index: 2;
+  top: $component-x;
+  height: 100vh;
+  background: $white;
+  border-right: 1px solid $lightgrey;
+  width: calc(#{$component-x} * 10);
+  transition: transform 300ms ease;
+  transform: translateX(-100%);
+  overflow: auto;
+  -webkit-overflow-scrolling: touch; // sass-lint:disable-line no-vendor-prefixes
 
-    @media screen and (max-width: $mobile-breakpoint-max) {
-        width: 100% !important;
-    }
+  @media screen and (max-width: $mobile-breakpoint-max) {
+    width: 100% !important;
+  }
 
-    &.controls__sidebar__chapters--open {
-        transform: translateX(0);
-    }
+  &.controls__sidebar__chapters--open {
+    transform: translateX(0);
+  }
 }
 
 .controls__sidebar__metadata,
 .controls__sidebar__downloads,
 .controls__sidebar__settings {
-    position: fixed;
-    z-index: 2;
-    top: $component-x;
-    right: 0;
-    height: 100vh;
-    background: $white;
-    border-left: 1px solid $lightgrey;
-    width: calc(#{$component-x} * 10);
-    transition: transform 300ms ease;
-    transform: translateX(100%);
-    overflow: auto;
-    -webkit-overflow-scrolling: touch; // sass-lint:disable-line no-vendor-prefixes
+  position: fixed;
+  z-index: 2;
+  top: $component-x;
+  right: 0;
+  height: 100vh;
+  background: $white;
+  border-left: 1px solid $lightgrey;
+  width: calc(#{$component-x} * 10);
+  transition: transform 300ms ease;
+  transform: translateX(100%);
+  overflow: auto;
+  -webkit-overflow-scrolling: touch; // sass-lint:disable-line no-vendor-prefixes
 
-    @media screen and (max-width: $mobile-breakpoint-max) {
-        width: 100% !important;
+  @media screen and (max-width: $mobile-breakpoint-max) {
+    width: 100% !important;
+  }
+
+  &.controls__sidebar__metadata--open,
+  &.controls__sidebar__downloads--open,
+  &.controls__sidebar__settings--open {
+    transform: translateX(0);
+
+    label {
+      font-weight: bold;
     }
 
-    &.controls__sidebar__metadata--open,
-    &.controls__sidebar__downloads--open,
-    &.controls__sidebar__settings--open {
-        transform: translateX(0);
+    .settings__item__button-group {
+      margin: 10px 0;
 
-        label {
-            font-weight: bold;
-        }
+      .grid__input {
+        display: inline-block;
+        margin-left: 5px;
+        padding: 2px;
+        border: 1px solid $lightgrey;
+      }
 
-        .settings__item__button-group {
-            margin: 10px 0;
-
-            .grid__input {
-                display: inline-block;
-                margin-left: 5px;
-                padding: 2px;
-                border: 1px solid $lightgrey;
-            }
-
-            .grid__input:hover {
-                background: $lightgrey;
-                border: 1px solid $black;
-            }
-        }
+      .grid__input:hover {
+        background: $lightgrey;
+        border: 1px solid $black;
+      }
     }
+  }
 }
 
 .controls__sidebar__downloads {
-    height: auto !important;
-    padding-bottom: 0 !important;
+  height: auto !important;
+  padding-bottom: 0 !important;
 
-    ul li {
-        display: flex;
-    }
+  ul li {
+    display: flex;
+  }
 
-    li {
-        position: relative;
-    }
+  li {
+    position: relative;
+  }
 
-    button {
-        padding-right: calc(#{$component-x} / 2);
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-    }
+  button {
+    padding-right: calc(#{$component-x} / 2);
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+  }
 
-    a {
-        position: relative;
-        z-index: 1;
-        &:hover + button {
-            color: $tc-purple;
-        }
+  a {
+    position: relative;
+    z-index: 1;
+    &:hover + button {
+      color: $tc-purple;
     }
-    .downloads__title,
-    .downloads__description {
-        display: block;
-    }
-    .downloads__description {
-        display: block;
-        font-size: 0.7rem;
-        font-style: italic;
-        padding-top: 6px;
-    }
+  }
+  .downloads__title,
+  .downloads__description {
+    display: block;
+  }
+  .downloads__description {
+    display: block;
+    font-size: 0.7rem;
+    font-style: italic;
+    padding-top: 6px;
+  }
 }
 
 .controls__footer {
-    z-index: 1;
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: transparent;
+  z-index: 1;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: transparent;
+  height: $component-x + 25px;
+  opacity: 1 !important;
+
+  @media screen and (max-width: $tablet-breakpoint-max) {
+    background: $white;
+  }
+
+  nav ul {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
     height: $component-x + 25px;
-    opacity: 1 !important;
+    padding: 0px 10px;
 
-    @media screen and (max-width: $tablet-breakpoint-max) {
-        background: $white;
-    }
+    li {
+      display: flex;
 
-    nav ul {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-        height: $component-x + 25px;
-        padding: 0px 10px;
+      &:nth-child(2) {
+        flex: 1;
+      }
 
-        li {
-            display: flex;
-
-            &:nth-child(2) {
-                flex: 1;
-            }
-
-            &:nth-child(2),
-            &:nth-child(3) {
-                button {
-                    font-size: 2em;
-                }
-            }
-
-            .nav__button {
-                @include transition-fast('color');
-                padding: 0 5px;
-
-                //TC SPECIFIC STYLES
-                &:hover {
-                    color: $tc-purple;
-                }
-            }
+      &:nth-child(2),
+      &:nth-child(3) {
+        button {
+          font-size: 2em;
         }
+      }
+
+      .nav__button {
+        @include transition-fast('color');
+        padding: 0 5px;
+
+        //TC SPECIFIC STYLES
+        &:hover {
+          color: $tc-purple;
+        }
+      }
     }
+  }
 }
 
 .spinner {
-    width: 100vw;
-    height: 100vh;
-    position: fixed;
-    display: none;
-    background: $white;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  display: none;
+  background: $white;
 }
 
 .spinner--visible {
-    display: block;
+  display: block;
 }
 
 // https://github.com/tobiasahlin/SpinKit/blob/master/examples/5-pulse.html
 @keyframes pulse {
-    0% {
-        transform: scale(0);
-    }
-    100% {
-        transform: scale(1);
-        opacity: 0;
-    }
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
 }
 
 .spinner__detail {
-    position: absolute;
-    top: calc(50% - 20px);
-    left: calc(50% - 20px);
-    width: 40px;
-    height: 40px;
-    margin: 0;
-    padding: 0;
-    background-color: $black;
-    border-radius: 100%;
-    animation: pulse 1s infinite ease-in-out;
+  position: absolute;
+  top: calc(50% - 20px);
+  left: calc(50% - 20px);
+  width: 40px;
+  height: 40px;
+  margin: 0;
+  padding: 0;
+  background-color: $black;
+  border-radius: 100%;
+  animation: pulse 1s infinite ease-in-out;
 }
 
 .leaf {
-    position: fixed;
-    top: 0;
-    height: 100vh;
-    z-index: 10;
-    background-color: $white;
-    &.leaf--left {
-        left: 0;
-    }
-    &.leaf--right {
-        right: 0;
-    }
+  position: fixed;
+  top: 0;
+  height: 100vh;
+  z-index: 10;
+  background-color: $white;
+  &.leaf--left {
+    left: 0;
+  }
+  &.leaf--right {
+    right: 0;
+  }
 }
 
 // debug
 
 .grid__debug {
-    position: fixed;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100%;
+  pointer-events: none;
+  .grid__debug__line {
+    background-color: #6495ed;
+    opacity: 0.4;
+    position: absolute;
     top: 0;
-    left: 0;
-    height: 100vh;
-    width: 100%;
-    pointer-events: none;
-    .grid__debug__line {
-        background-color: #6495ed;
-        opacity: 0.4;
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        width: 1px;
-        color: #fff;
-        padding-top: 50px;
-        text-align: center;
-    }
+    bottom: 0;
+    width: 1px;
+    color: #fff;
+    padding-top: 50px;
+    text-align: center;
+  }
 }
 
 @media print {
-    .controls__header,
-    .controls__footer,
-    .leaf {
-        display: none !important;
+  .controls__header,
+  .controls__footer,
+  .leaf {
+    display: none !important;
+  }
+  #frame {
+    position: static !important;
+    overflow: visible !important;
+    #layout {
+      transform: none !important;
+      height: auto !important;
+      width: auto !important;
+      columns: unset !important;
     }
-    #frame {
-        position: static !important;
-        overflow: visible !important;
-        #layout {
-            transform: none !important;
-            height: auto !important;
-            width: auto !important;
-            columns: unset !important;
-        }
-    }
+  }
 }
 
 // dev

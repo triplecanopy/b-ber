@@ -1,10 +1,10 @@
 import File from 'vinyl'
 
 class Pkg {
-    static body() {
-        return new File({
-            path: 'pkg.body.tmpl',
-            contents: Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
+  static body() {
+    return new File({
+      path: 'pkg.body.tmpl',
+      contents: Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
                 <package
                     version="3.0"
                     xml:lang="en"
@@ -17,8 +17,8 @@ class Pkg {
                     {% body %}
                 </package>
             `),
-        })
-    }
+    })
+  }
 }
 
 export default Pkg

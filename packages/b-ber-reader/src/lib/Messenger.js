@@ -5,90 +5,96 @@ import { PageEvent, DeferredEvent } from '../models'
 const registry = new Map()
 
 class Messenger {
-    static MESSAGE_DOMAIN = '*'
+  static MESSAGE_DOMAIN = '*'
 
-    static getListeners() {
-        return registry
-    }
+  static getListeners() {
+    return registry
+  }
 
-    static getConstants() {
-        return messagesTypes
-    }
+  static getConstants() {
+    return messagesTypes
+  }
 
-    static getDomain() {
-        return Messenger.MESSAGE_DOMAIN
-    }
+  static getDomain() {
+    return Messenger.MESSAGE_DOMAIN
+  }
 
-    static sendPaginationEvent({
-        spreadIndex,
-        lastSpreadIndex,
-        firstSpread,
-        lastSpread,
-        firstChapter,
-        lastChapter,
-        spreadDelta,
-    }) {
-        const event = new PageEvent({
-            spreadIndex,
-            lastSpreadIndex,
-            firstChapter,
-            lastChapter,
-            firstSpread,
-            lastSpread,
-            spreadDelta,
-        })
+  static sendPaginationEvent({
+    spreadIndex,
+    lastSpreadIndex,
+    firstSpread,
+    lastSpread,
+    firstChapter,
+    lastChapter,
+    spreadDelta,
+  }) {
+    const event = new PageEvent({
+      spreadIndex,
+      lastSpreadIndex,
+      firstChapter,
+      lastChapter,
+      firstSpread,
+      lastSpread,
+      spreadDelta,
+    })
 
-        window.parent.postMessage(event, Messenger.MESSAGE_DOMAIN)
-    }
+    window.parent.postMessage(event, Messenger.MESSAGE_DOMAIN)
+  }
 
-    static sendDeferredEvent() {
-        const event = new DeferredEvent()
-        window.parent.postMessage(event, Messenger.MESSAGE_DOMAIN)
-    }
+  static sendDeferredEvent() {
+    const event = new DeferredEvent()
+    window.parent.postMessage(event, Messenger.MESSAGE_DOMAIN)
+  }
 
-    static sendClickEvent(event) {
-        window.parent.postMessage({ ...event, type: messagesTypes.CLICK_EVENT }, Messenger.MESSAGE_DOMAIN)
-    }
+  static sendClickEvent(event) {
+    window.parent.postMessage(
+      { ...event, type: messagesTypes.CLICK_EVENT },
+      Messenger.MESSAGE_DOMAIN
+    )
+  }
 
-    static sendDownloadEvent(url) {
-        window.parent.postMessage({ url, type: messagesTypes.DOWNLOAD_EVENT }, Messenger.MESSAGE_DOMAIN)
-    }
+  static sendDownloadEvent(url) {
+    window.parent.postMessage(
+      { url, type: messagesTypes.DOWNLOAD_EVENT },
+      Messenger.MESSAGE_DOMAIN
+    )
+  }
 
-    static sendKeydownEvent(event) {
-        window.parent.postMessage(
-            {
-                ...event,
-                keyCode: event.keyCode,
-                metaKey: event.metaKey,
-                type: messagesTypes.KEYDOWN_EVENT,
-            },
-            Messenger.MESSAGE_DOMAIN
-        )
-    }
+  static sendKeydownEvent(event) {
+    window.parent.postMessage(
+      {
+        ...event,
+        keyCode: event.keyCode,
+        metaKey: event.metaKey,
+        type: messagesTypes.KEYDOWN_EVENT,
+      },
+      Messenger.MESSAGE_DOMAIN
+    )
+  }
 
-    static register(callback, type = null) {
-        const key = rand()
-        const event = 'message'
-        const handler = e => (!type || type === e.data.type) && callback(e)
+  static register(callback, type = null) {
+    const key = rand()
+    const event = 'message'
+    const handler = e => (!type || type === e.data.type) && callback(e)
 
-        registry.set(key, { event, type, handler, callback })
-        window.addEventListener(event, handler, false)
+    registry.set(key, { event, type, handler, callback })
+    window.addEventListener(event, handler, false)
 
-        return key
-    }
+    return key
+  }
 
-    static deregister(key) {
-        if (!key) return
+  static deregister(key) {
+    if (!key) return
 
-        const { handler } = registry.get(key)
-        window.removeEventListener('message', handler, false)
-        registry.delete(key)
-    }
+    const { handler } = registry.get(key)
+    window.removeEventListener('message', handler, false)
+    registry.delete(key)
+  }
 
-    static clear() {
-        registry.forEach((entry, key) => entry.handler && Messenger.deregister(key))
-        registry.clear()
-    }
+  static clear() {
+    registry.forEach((entry, key) => entry.handler && Messenger.deregister(key))
+    registry.clear()
+  }
 }
 
 export default Messenger

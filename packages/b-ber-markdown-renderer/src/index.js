@@ -14,61 +14,93 @@ import markdownItFootnotePlugin from '@canopycanopycanopy/b-ber-grammar-footnote
 import hljs from './highlightjs'
 
 class MarkdownRenderer {
-    constructor() {
-        this.noop = MarkdownRenderer.noop
-        this.fileName = ''
+  constructor() {
+    this.noop = MarkdownRenderer.noop
+    this.fileName = ''
 
-        // Instance of MarkdownIt class
-        this.markdownIt = new MarkdownIt({
-            html: true,
-            xhtmlOut: true,
-            breaks: false,
-            linkify: false,
+    // Instance of MarkdownIt class
+    this.markdownIt = new MarkdownIt({
+      html: true,
+      xhtmlOut: true,
+      breaks: false,
+      linkify: false,
 
-            // Syntax highlighting is done with highlight.js. It's up to add
-            // their own custom styles
-            highlight: (str, lang) => {
-                if (lang && hljs.getLanguage(lang)) {
-                    try {
-                        return hljs.highlight(lang, str).value
-                    } catch (_) {
-                        /* noop */
-                    }
-                }
+      // Syntax highlighting is done with highlight.js. It's up to add
+      // their own custom styles
+      highlight: (str, lang) => {
+        if (lang && hljs.getLanguage(lang)) {
+          try {
+            return hljs.highlight(lang, str).value
+          } catch (_) {
+            /* noop */
+          }
+        }
 
-                return ''
-            },
-        })
+        return ''
+      },
+    })
 
-        const reference = { instance: this.markdownIt, context: this }
+    const reference = { instance: this.markdownIt, context: this }
 
-        this.markdownIt
-            .use(markdownItSection.plugin, markdownItSection.name, markdownItSection.renderer(reference))
-            .use(markdownItPullquote.plugin, markdownItPullquote.name, markdownItPullquote.renderer(reference))
-            .use(markdownItFrontmatter, markdownItFrontmatterPlugin(this))
-            .use(markdownItFootnote, markdownItFootnotePlugin(this))
-            .use(markdownItDialogue.plugin, markdownItDialogue.name, markdownItDialogue.renderer(reference))
-            .use(markdownItGallery.plugin, markdownItGallery.name, markdownItGallery.renderer(reference))
-            .use(markdownItSpread.plugin, markdownItSpread.name, markdownItSpread.renderer(reference))
-            .use(markdownItImage.plugin, markdownItImage.name, markdownItImage.renderer(reference))
-            .use(markdownItMedia.plugin, markdownItMedia.name, markdownItMedia.renderer(reference))
-            .use(markdownItLogo.plugin, markdownItLogo.name, markdownItLogo.renderer(reference))
-    }
+    this.markdownIt
+      .use(
+        markdownItSection.plugin,
+        markdownItSection.name,
+        markdownItSection.renderer(reference)
+      )
+      .use(
+        markdownItPullquote.plugin,
+        markdownItPullquote.name,
+        markdownItPullquote.renderer(reference)
+      )
+      .use(markdownItFrontmatter, markdownItFrontmatterPlugin(this))
+      .use(markdownItFootnote, markdownItFootnotePlugin(this))
+      .use(
+        markdownItDialogue.plugin,
+        markdownItDialogue.name,
+        markdownItDialogue.renderer(reference)
+      )
+      .use(
+        markdownItGallery.plugin,
+        markdownItGallery.name,
+        markdownItGallery.renderer(reference)
+      )
+      .use(
+        markdownItSpread.plugin,
+        markdownItSpread.name,
+        markdownItSpread.renderer(reference)
+      )
+      .use(
+        markdownItImage.plugin,
+        markdownItImage.name,
+        markdownItImage.renderer(reference)
+      )
+      .use(
+        markdownItMedia.plugin,
+        markdownItMedia.name,
+        markdownItMedia.renderer(reference)
+      )
+      .use(
+        markdownItLogo.plugin,
+        markdownItLogo.name,
+        markdownItLogo.renderer(reference)
+      )
+  }
 
-    template(meta) {
-        const str = meta
-            .split('\n')
-            .map(value => `  ${value}`)
-            .join('\n')
+  template(meta) {
+    const str = meta
+      .split('\n')
+      .map(value => `  ${value}`)
+      .join('\n')
 
-        return `-\n  fileName: ${this.fileName}\n${str}\n`
-    }
+    return `-\n  fileName: ${this.fileName}\n${str}\n`
+  }
 
-    // Transforms a markdown file to XHTML
-    render(fileName, data) {
-        this.fileName = fileName
-        return this.markdownIt.render(data)
-    }
+  // Transforms a markdown file to XHTML
+  render(fileName, data) {
+    this.fileName = fileName
+    return this.markdownIt.render(data)
+  }
 }
 
 const markdownRenderer = new MarkdownRenderer()

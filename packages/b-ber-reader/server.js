@@ -20,13 +20,15 @@ const app = express()
 let manifest
 manifest = fs.readdirSync(`./${BASE_DIR}`).filter(a => /^\./.test(a) === false)
 manifest = manifest.map(dir => ({
-    title: dir,
-    url: `http://localhost:${PORT}/${BASE_DIR}/${dir}`,
-    cover: url.resolve(
-        `http://localhost:${PORT}/${BASE_DIR}/${dir}/OPS/images/`,
-        fs.readdirSync(`./${BASE_DIR}/${dir}/OPS/images`).find(img => /__bber_cover__/.test(img)) || ''
-    ),
-    id: String(Math.random()).slice(2),
+  title: dir,
+  url: `http://localhost:${PORT}/${BASE_DIR}/${dir}`,
+  cover: url.resolve(
+    `http://localhost:${PORT}/${BASE_DIR}/${dir}/OPS/images/`,
+    fs
+      .readdirSync(`./${BASE_DIR}/${dir}/OPS/images`)
+      .find(img => /__bber_cover__/.test(img)) || ''
+  ),
+  id: String(Math.random()).slice(2),
 }))
 
 const api = router.get('/books.json', (_, res) => res.json(manifest))
@@ -34,7 +36,9 @@ const api = router.get('/books.json', (_, res) => res.json(manifest))
 app.use(express.static('public'))
 app.use(`/${BASE_DIR}`, express.static(path.join(__dirname, BASE_DIR)))
 app.use('/api', api)
-app.get('*', (_, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')))
+app.get('*', (_, res) =>
+  res.sendFile(path.join(__dirname, 'public', 'index.html'))
+)
 app.listen(PORT)
 
 console.log(`Listening on http://localhost:${PORT}/`)

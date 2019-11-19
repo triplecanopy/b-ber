@@ -15,163 +15,172 @@ import { YamlAdaptor, Template } from '@canopycanopycanopy/b-ber-lib'
 import { getFileObjects } from '../inject'
 
 class Navigation {
-    // Remove the `toc.xhtml` and `toc.ncx` from the output directory
-    static createEmptyNavDocuments() {
-        const navDocs = ['toc.ncx', 'toc.xhtml']
+  // Remove the `toc.xhtml` and `toc.ncx` from the output directory
+  static createEmptyNavDocuments() {
+    const navDocs = ['toc.ncx', 'toc.xhtml']
 
-        log.info(`opf build navigation documents [${navDocs.join(', ')}]`)
+    log.info(`opf build navigation documents [${navDocs.join(', ')}]`)
 
-        const promises = navDocs.map(doc => fs.writeFile(state.dist.ops(doc), ''))
-        return Promise.all(promises)
+    const promises = navDocs.map(doc => fs.writeFile(state.dist.ops(doc), ''))
+    return Promise.all(promises)
+  }
+
+  // Resolve discrepancies between files that exist in the output directory
+  // and those that are listed in the YAML manifest
+  static compareXhtmlWithYaml() {
+    // Get the XHTML file names
+    const files = glob
+      .sync(state.dist.ops('**', '*.xhtml'))
+      .map(file => path.basename(file, '.xhtml'))
+
+    // Set up our promise chain
+    const promises = [Promise.resolve()]
+
+    const missing = []
+    const redundant = []
+
+    // Check if we need to compare agains the global toc.yml, or an
+    // overrides (type.yml) file
+    const tocFile = fs.existsSync(state.src.root(`${state.build}.yml`))
+      ? state.src.root(`${state.build}.yml`)
+      : state.src.root('toc.yml')
+
+    // Load the TOC from the YAML file directly. We know that the spine
+    // contains the correct entries since we load any files that haven't
+    // been declared in the TOC when initializing the Spine object, so no
+    // need to update anything there
+    const tocEntries = state.spine.flattenYAML(YamlAdaptor.load(tocFile))
+
+    // Files on the system that are not included in the TOC
+    const missingEntries = difference(files, tocEntries)
+
+    // Add the missing entries to the YAML file (either toc.yml or type.yml)
+    missingEntries.forEach(name => {
+      if (state.contains('loi', { name })) return
+      missing.push(name)
+      promises.push(fs.appendFile(tocFile, `\n- ${name}`))
+    })
+
+    // Files in the TOC that don't exist in the project directory
+    const redundantEntries = difference(tocEntries, files)
+
+    // Notify the user of any entries that are listed in the YAML file but
+    // not present on the system. The user has to resolve these conflicts
+    // manually because deeply nested structures can't be reliably
+    // processed.
+    redundantEntries.forEach(name => redundant.push(name))
+
+    if (missing.length) {
+      missing.forEach(name =>
+        log.warn(
+          'opf [%s] was not declared in the TOC. Adding [%s] to [%s]',
+          name,
+          name,
+          path.basename(tocFile)
+        )
+      )
     }
 
-    // Resolve discrepancies between files that exist in the output directory
-    // and those that are listed in the YAML manifest
-    static compareXhtmlWithYaml() {
-        // Get the XHTML file names
-        const files = glob.sync(state.dist.ops('**', '*.xhtml')).map(file => path.basename(file, '.xhtml'))
-
-        // Set up our promise chain
-        const promises = [Promise.resolve()]
-
-        const missing = []
-        const redundant = []
-
-        // Check if we need to compare agains the global toc.yml, or an
-        // overrides (type.yml) file
-        const tocFile = fs.existsSync(state.src.root(`${state.build}.yml`))
-            ? state.src.root(`${state.build}.yml`)
-            : state.src.root('toc.yml')
-
-        // Load the TOC from the YAML file directly. We know that the spine
-        // contains the correct entries since we load any files that haven't
-        // been declared in the TOC when initializing the Spine object, so no
-        // need to update anything there
-        const tocEntries = state.spine.flattenYAML(YamlAdaptor.load(tocFile))
-
-        // Files on the system that are not included in the TOC
-        const missingEntries = difference(files, tocEntries)
-
-        // Add the missing entries to the YAML file (either toc.yml or type.yml)
-        missingEntries.forEach(name => {
-            if (state.contains('loi', { name })) return
-            missing.push(name)
-            promises.push(fs.appendFile(tocFile, `\n- ${name}`))
-        })
-
-        // Files in the TOC that don't exist in the project directory
-        const redundantEntries = difference(tocEntries, files)
-
-        // Notify the user of any entries that are listed in the YAML file but
-        // not present on the system. The user has to resolve these conflicts
-        // manually because deeply nested structures can't be reliably
-        // processed.
-        redundantEntries.forEach(name => redundant.push(name))
-
-        if (missing.length) {
-            missing.forEach(name =>
-                log.warn(
-                    'opf [%s] was not declared in the TOC. Adding [%s] to [%s]',
-                    name,
-                    name,
-                    path.basename(tocFile)
-                )
-            )
-        }
-
-        if (redundant.length) {
-            log.error(`Files declared in the TOC do not exist in the _markdown directory
-                       The following entries must be removed manually from [${path.basename(tocFile)}]:
+    if (redundant.length) {
+      log.error(`Files declared in the TOC do not exist in the _markdown directory
+                       The following entries must be removed manually from [${path.basename(
+                         tocFile
+                       )}]:
                        ${redundant.map(name => `[${name}]`).join('\n')}`)
-        }
-
-        return Promise.all(promises)
     }
 
-    static async createTocStringsFromTemplate() {
-        log.info('opf build [toc.xhtml]')
+    return Promise.all(promises)
+  }
 
-        const { toc } = state
-        const data = new File({ contents: Buffer.from(Template.render(Toc.items(toc), Toc.body())) })
-        const file = [{ name: 'toc.xhtml', data }]
-        const [{ contents }] = await getFileObjects(file)
+  static async createTocStringsFromTemplate() {
+    log.info('opf build [toc.xhtml]')
 
-        return contents
-    }
+    const { toc } = state
+    const data = new File({
+      contents: Buffer.from(Template.render(Toc.items(toc), Toc.body())),
+    })
+    const file = [{ name: 'toc.xhtml', data }]
+    const [{ contents }] = await getFileObjects(file)
 
-    static createNcxStringsFromTemplate() {
-        log.info('opf build [toc.ncx]')
+    return contents
+  }
 
-        const { toc } = state
-        const ncxXML = Ncx.navPoints(toc)
+  static createNcxStringsFromTemplate() {
+    log.info('opf build [toc.ncx]')
 
-        return Template.render(ncxXML, Ncx.document())
-    }
+    const { toc } = state
+    const ncxXML = Ncx.navPoints(toc)
 
-    static createGuideStringsFromTemplate() {
-        log.info('opf build [guide]')
+    return Template.render(ncxXML, Ncx.document())
+  }
 
-        const guideXML = Guide.items(state.guide)
+  static createGuideStringsFromTemplate() {
+    log.info('opf build [guide]')
 
-        return Template.render(guideXML, Guide.body())
-    }
+    const guideXML = Guide.items(state.guide)
 
-    static createSpineStringsFromTemplate() {
-        log.info('opf build [spine]')
+    return Template.render(guideXML, Guide.body())
+  }
 
-        const { flattened } = state.spine
+  static createSpineStringsFromTemplate() {
+    log.info('opf build [spine]')
 
-        // We add entries to the spine programatically, but then they're
-        // also found on the system, so we dedupe them here
-        // TODO: but also, this is super confusing ...
-        const generatedFiles = remove(flattened, file => file.generated === true)
+    const { flattened } = state.spine
 
-        generatedFiles.forEach(file => {
-            if (!find(flattened, { fileName: file.fileName })) {
-                flattened.push(file)
-            }
-        })
+    // We add entries to the spine programatically, but then they're
+    // also found on the system, so we dedupe them here
+    // TODO: but also, this is super confusing ...
+    const generatedFiles = remove(flattened, file => file.generated === true)
 
-        const spineXML = Spine.items(flattened)
+    generatedFiles.forEach(file => {
+      if (!find(flattened, { fileName: file.fileName })) {
+        flattened.push(file)
+      }
+    })
 
-        return Template.render(spineXML, Spine.body())
-    }
+    const spineXML = Spine.items(flattened)
 
-    static writeTocXhtmlFile(toc) {
-        const filepath = state.dist.ops('toc.xhtml')
+    return Template.render(spineXML, Spine.body())
+  }
 
-        log.info(`opf emit toc.xhtml [${filepath}]`)
+  static writeTocXhtmlFile(toc) {
+    const filepath = state.dist.ops('toc.xhtml')
 
-        return fs.writeFile(filepath, toc)
-    }
+    log.info(`opf emit toc.xhtml [${filepath}]`)
 
-    static writeTocNcxFile(ncx) {
-        const filepath = state.dist.ops('toc.ncx')
+    return fs.writeFile(filepath, toc)
+  }
 
-        log.info(`opf emit toc.ncx [${filepath}]`)
+  static writeTocNcxFile(ncx) {
+    const filepath = state.dist.ops('toc.ncx')
 
-        return fs.writeFile(filepath, ncx)
-    }
+    log.info(`opf emit toc.ncx [${filepath}]`)
 
-    static async writeFiles([toc, ncx, guide, spine]) {
-        await Promise.all([Navigation.writeTocXhtmlFile(toc), Navigation.writeTocNcxFile(ncx)])
-        return { spine, guide }
-    }
+    return fs.writeFile(filepath, ncx)
+  }
 
-    static init() {
-        return Navigation.createEmptyNavDocuments()
-            .then(() => Navigation.compareXhtmlWithYaml())
-            .then(() =>
-                Promise.all([
-                    Navigation.createTocStringsFromTemplate(),
-                    Navigation.createNcxStringsFromTemplate(),
-                    Navigation.createGuideStringsFromTemplate(),
-                    Navigation.createSpineStringsFromTemplate(),
-                ])
-            )
-            .then(resp => Navigation.writeFiles(resp))
-            .catch(log.error)
-    }
+  static async writeFiles([toc, ncx, guide, spine]) {
+    await Promise.all([
+      Navigation.writeTocXhtmlFile(toc),
+      Navigation.writeTocNcxFile(ncx),
+    ])
+    return { spine, guide }
+  }
+
+  static init() {
+    return Navigation.createEmptyNavDocuments()
+      .then(() => Navigation.compareXhtmlWithYaml())
+      .then(() =>
+        Promise.all([
+          Navigation.createTocStringsFromTemplate(),
+          Navigation.createNcxStringsFromTemplate(),
+          Navigation.createGuideStringsFromTemplate(),
+          Navigation.createSpineStringsFromTemplate(),
+        ])
+      )
+      .then(resp => Navigation.writeFiles(resp))
+      .catch(log.error)
+  }
 }
 
 export default Navigation

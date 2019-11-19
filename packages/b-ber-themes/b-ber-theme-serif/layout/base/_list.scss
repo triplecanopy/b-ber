@@ -1,82 +1,82 @@
 ul {
-    @include type-settings(-2);
-    padding: one-line(-2) 0 one-line(-2) two-ems(0);
-    @include following-element-has-no-top-padding; // sass-lint:disable-line mixins-before-declarations
-    list-style: disc;
-    text-indent: 0;
-    margin: 0;
+  @include type-settings(-2);
+  padding: one-line(-2) 0 one-line(-2) two-ems(0);
+  @include following-element-has-no-top-padding; // sass-lint:disable-line mixins-before-declarations
+  list-style: disc;
+  text-indent: 0;
+  margin: 0;
 
-    ul,
-    ol {
-        padding: 0 0 0 two-ems(0);
-    }
+  ul,
+  ol {
+    padding: 0 0 0 two-ems(0);
+  }
+
+  @if $build == web {
+    list-style: none;
+  }
+
+  li {
+    text-indent: 0;
 
     @if $build == web {
-        list-style: none;
+      text-indent: -0.6em;
+      padding-left: 0.6em;
+      &:before {
+        content: '-';
+        display: inline-block;
+        position: relative;
+        left: -0.3em;
+      }
     }
+  }
 
-    li {
-        text-indent: 0;
-
-        @if $build == web {
-            text-indent: -0.6em;
-            padding-left: 0.6em;
-            &:before {
-                content: '-';
-                display: inline-block;
-                position: relative;
-                left: -0.3em;
-            }
-        }
-    }
-
-    * {
-        @include type-settings(0);
-        line-height: line-height(ms(-2));
-    }
+  * {
+    @include type-settings(0);
+    line-height: line-height(ms(-2));
+  }
 }
 
 ol,
 dl {
-    @include type-settings(-2);
-    padding: one-line(-2) 0 one-line(-2) two-ems(0);
-    @include following-element-has-no-top-padding; // sass-lint:disable-line mixins-before-declarations
-    list-style: decimal;
-    text-indent: 0;
-    margin: 0;
+  @include type-settings(-2);
+  padding: one-line(-2) 0 one-line(-2) two-ems(0);
+  @include following-element-has-no-top-padding; // sass-lint:disable-line mixins-before-declarations
+  list-style: decimal;
+  text-indent: 0;
+  margin: 0;
 
-    ul,
-    ol,
-    dl {
-        padding: 0 0 0 two-ems(0);
+  ul,
+  ol,
+  dl {
+    padding: 0 0 0 two-ems(0);
+  }
+
+  li,
+  dt,
+  dd {
+    padding-top: 0;
+
+    @if $build == web {
+      text-indent: -0.6em;
+      padding-left: 0.6em;
     }
+  }
 
-    li,
-    dt,
-    dd {
-        padding-top: 0;
-
-        @if $build == web {
-            text-indent: -0.6em;
-            padding-left: 0.6em;
-        }
+  // Section styles
+  section.colophon &,
+  section.appendix &,
+  section.backmatter & {
+    @include padding(0, 1, 0, 1, -1);
+    li {
+      @include following-paragraph-not-indented;
+      font-weight: normal;
+      font-style: normal;
+      text-indent: 0;
     }
+  }
 
-    // Section styles
-    section.colophon &,
-    section.appendix &,
-    section.backmatter & {
-        @include padding(0, 1, 0, 1, -1);
-        li {
-            @include following-paragraph-not-indented;
-            font-weight: normal;
-            font-style: normal;
-            text-indent: 0;
-        }
-    }
-
-    * {
-        @include type-settings(0);
-        line-height: line-height(ms(-2));
-    }
+  * {
+    @include type-settings(0);
+    line-height: line-height(ms(-2));
+  }
 }

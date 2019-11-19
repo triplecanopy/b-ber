@@ -19,10 +19,10 @@ To get started, please visit the wiki [here](https://github.com/triplecanopy/b-b
 
 ## Summary of Features
 
--   Builds ePubs, Mobis, PDFs, static websites in both horizontal and vertical orientation, and XML files that can be imported into desktop publishing software;
--   Generated output follows the [EPUB 3.0 specification](http://idpf.org/epub/30);
--   Creates and links metadata that conforms to the [webpub specification](https://w3c.github.io/dpub-pwp-ucr/) for web-based publications;
--   Can be styled through overrides or custom themes;
+- Builds ePubs, Mobis, PDFs, static websites in both horizontal and vertical orientation, and XML files that can be imported into desktop publishing software;
+- Generated output follows the [EPUB 3.0 specification](http://idpf.org/epub/30);
+- Creates and links metadata that conforms to the [webpub specification](https://w3c.github.io/dpub-pwp-ucr/) for web-based publications;
+- Can be styled through overrides or custom themes;
 
 A demo project for all the build types can be downloaded TK here.
 

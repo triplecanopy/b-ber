@@ -10,45 +10,49 @@ import { getBookMetadata } from '@canopycanopycanopy/b-ber-lib/utils'
 const cwd = process.cwd()
 
 const formatForInDesign = str => {
-    let str_ = str
-    str_ = str_.replace(/<!--[\s\S]*?-->/g, '')
-    str_ = str_.replace(/\/pagebreak>[\s\S]*?</g, '/pagebreak><')
-    return str_
+  let str_ = str
+  str_ = str_.replace(/<!--[\s\S]*?-->/g, '')
+  str_ = str_.replace(/\/pagebreak>[\s\S]*?</g, '/pagebreak><')
+  return str_
 }
 
 const writeXML = str => {
-    const uuid = getBookMetadata('identifier', state)
-    const fpath = path.join(cwd, `${uuid}.xml`)
-    return fs.writeFile(fpath, str, 'utf8')
+  const uuid = getBookMetadata('identifier', state)
+  const fpath = path.join(cwd, `${uuid}.xml`)
+  return fs.writeFile(fpath, str, 'utf8')
 }
 
 const parseHTMLFiles = files =>
-    new Promise(resolve => {
-        const contents = files
-            .reduce((acc, curr) => {
-                const fname = isPlainObject(curr) ? Object.keys(curr)[0] : isString(curr) ? curr : null
-                const ext = '.xhtml'
+  new Promise(resolve => {
+    const contents = files
+      .reduce((acc, curr) => {
+        const fname = isPlainObject(curr)
+          ? Object.keys(curr)[0]
+          : isString(curr)
+          ? curr
+          : null
+        const ext = '.xhtml'
 
-                if (!fname) return acc
+        if (!fname) return acc
 
-                const fpath = `${fname}${ext}`
-                const data = fs.readFileSync(fpath, 'utf8')
+        const fpath = `${fname}${ext}`
+        const data = fs.readFileSync(fpath, 'utf8')
 
-                return acc.concat(`${data}`)
-            }, [])
-            .join('<pagebreak></pagebreak>')
+        return acc.concat(`${data}`)
+      }, [])
+      .join('<pagebreak></pagebreak>')
 
-        const parser = new HtmlToXml()
-        parser.onend = resolve
-        parser.parse(contents)
-    })
+    const parser = new HtmlToXml()
+    parser.onend = resolve
+    parser.parse(contents)
+  })
 
 const xml = () => {
-    const files = state.spine.flattened.map(entry => entry.absolutePath)
-    return parseHTMLFiles(files)
-        .then(formatForInDesign)
-        .then(writeXML)
-        .catch(log.error)
+  const files = state.spine.flattened.map(entry => entry.absolutePath)
+  return parseHTMLFiles(files)
+    .then(formatForInDesign)
+    .then(writeXML)
+    .catch(log.error)
 }
 
 export default xml

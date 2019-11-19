@@ -12,49 +12,52 @@ const command = 'build [|epub|mobi|pdf|reader|sample|web]'
 const describe = 'Build a project'
 
 const handler = argv => {
-    process.env.NODE_ENV = process.env.NODE_ENV || 'development'
+  process.env.NODE_ENV = process.env.NODE_ENV || 'development'
 
-    const sequence = createBuildSequence(argv)
-    const subSequence = sequence.reduce((a, c) => a.concat(...sequences[c]), [])
+  const sequence = createBuildSequence(argv)
+  const subSequence = sequence.reduce((a, c) => a.concat(...sequences[c]), [])
 
-    state.update('sequence', subSequence)
-    log.registerSequence(state, command, subSequence)
+  state.update('sequence', subSequence)
+  log.registerSequence(state, command, subSequence)
 
-    const run = buildTasks => {
-        const build = buildTasks.shift()
+  const run = buildTasks => {
+    const build = buildTasks.shift()
 
-        state.reset()
-        state.update('build', build)
+    state.reset()
+    state.update('build', build)
 
-        return serialize(sequences[build]).then(() => {
-            if (buildTasks.length) run(buildTasks)
-        })
-    }
+    return serialize(sequences[build]).then(() => {
+      if (buildTasks.length) run(buildTasks)
+    })
+  }
 
-    const projectPath = path.resolve(state.srcDir)
-    const files = [...Project.javascripts(projectPath), ...Project.stylesheets(projectPath)]
+  const projectPath = path.resolve(state.srcDir)
+  const files = [
+    ...Project.javascripts(projectPath),
+    ...Project.stylesheets(projectPath),
+  ]
 
-    ensure({ files })
-        .then(() => run(sequence))
-        .catch(console.error)
+  ensure({ files })
+    .then(() => run(sequence))
+    .catch(console.error)
 }
 
 const builder = yargs =>
-    yargs
-        .command('', 'Build all formats', () => {}, handler)
-        .command('epub', 'Build an Epub', () => {}, handler)
-        .command('mobi', 'Build a Mobi', () => {}, handler)
-        .command('pdf', 'Build a PDF', () => {}, handler)
-        .command('reader', 'Build for the b-ber-reader format', () => {}, handler)
-        .command('sample', 'Build a sample Epub', () => {}, handler)
-        .command('web', 'Build for web', () => {}, handler)
-        .command('xml', 'Build for XML', () => {}, handler)
-        .help('h')
-        .alias('h', 'help')
+  yargs
+    .command('', 'Build all formats', () => {}, handler)
+    .command('epub', 'Build an Epub', () => {}, handler)
+    .command('mobi', 'Build a Mobi', () => {}, handler)
+    .command('pdf', 'Build a PDF', () => {}, handler)
+    .command('reader', 'Build for the b-ber-reader format', () => {}, handler)
+    .command('sample', 'Build a sample Epub', () => {}, handler)
+    .command('web', 'Build for web', () => {}, handler)
+    .command('xml', 'Build for XML', () => {}, handler)
+    .help('h')
+    .alias('h', 'help')
 
 export default {
-    command,
-    describe,
-    builder,
-    handler,
+  command,
+  describe,
+  builder,
+  handler,
 }

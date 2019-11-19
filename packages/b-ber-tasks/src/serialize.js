@@ -19,34 +19,36 @@ import * as tasks from '../'
 //
 
 const validate = fn => {
-    if (typeof fn !== 'function') {
-        throw new Error(`async#serialize: Invalid parameter [${fn}] is [${typeof fn}], expected [function]`)
-    }
+  if (typeof fn !== 'function') {
+    throw new Error(
+      `async#serialize: Invalid parameter [${fn}] is [${typeof fn}], expected [function]`
+    )
+  }
 }
 
 const done = resp => {
-    log.notify('done', { state })
-    return resp
+  log.notify('done', { state })
+  return resp
 }
 
 const taskReducer = (acc, curr) => {
-    const fn = tasks[curr] || curr
-    validate(fn)
+  const fn = tasks[curr] || curr
+  validate(fn)
 
-    return acc.then(resp => {
-        log.notify('start', curr)
+  return acc.then(resp => {
+    log.notify('start', curr)
 
-        return fn(resp).then(resp2 => {
-            log.notify('stop', curr)
-            return resp2
-        })
+    return fn(resp).then(resp2 => {
+      log.notify('stop', curr)
+      return resp2
     })
+  })
 }
 
 const serialize = sequence =>
-    sequence
-        .reduce(taskReducer, Promise.resolve())
-        .then(done)
-        .catch(log.error)
+  sequence
+    .reduce(taskReducer, Promise.resolve())
+    .then(done)
+    .catch(log.error)
 
 export default serialize

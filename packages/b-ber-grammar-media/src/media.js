@@ -9,50 +9,59 @@ import { toAlias } from '@canopycanopycanopy/b-ber-grammar-attributes'
 
 export const isHostedRemotely = asset => /^http/.test(asset)
 
-export const isHostedBySupportedThirdParty = asset => asset.match(/(vimeo|youtube)\.com/)
+export const isHostedBySupportedThirdParty = asset =>
+  asset.match(/(vimeo|youtube)\.com/)
 
 export const validatePosterImage = (_asset, type) => {
-    const asset = state.src.images(_asset)
-    const isInlineMedia = /inline/.test(type)
+  const asset = state.src.images(_asset)
+  const isInlineMedia = /inline/.test(type)
 
-    if (!fs.existsSync(asset)) {
-        if (isInlineMedia) {
-            log.error('bber-directives: inline media directives requires a [poster] attribute, aborting')
-        } else {
-            log.error(`bber-directives: Poster image for [${type}] does not exist`)
-        }
+  if (!fs.existsSync(asset)) {
+    if (isInlineMedia) {
+      log.error(
+        'bber-directives: inline media directives requires a [poster] attribute, aborting'
+      )
+    } else {
+      log.error(`bber-directives: Poster image for [${type}] does not exist`)
     }
+  }
 
-    return asset
+  return asset
 }
 
 export const validateLocalMediaSource = (asset, mediaType) => {
-    const media = [...state[mediaType]].map(file => toAlias(file))
-    if (!asset.length || media.indexOf(asset) < 0) {
-        log.error(
-            `Could not find [${mediaType}] matching [${asset}], make sure it's included in the [_media] directory`
-        )
-    }
+  const media = [...state[mediaType]].map(file => toAlias(file))
+  if (!asset.length || media.indexOf(asset) < 0) {
+    log.error(
+      `Could not find [${mediaType}] matching [${asset}], make sure it's included in the [_media] directory`
+    )
+  }
 
-    return asset
+  return asset
 }
 
 export const createLocalMediaSources = sources =>
-    sources.reduce(
-        (acc, curr) => acc.concat(`<source src="../media/${path.basename(curr)}" type="${mime.lookup(curr)}"/>`),
-        ''
-    )
+  sources.reduce(
+    (acc, curr) =>
+      acc.concat(
+        `<source src="../media/${path.basename(curr)}" type="${mime.lookup(
+          curr
+        )}"/>`
+      ),
+    ''
+  )
 
-export const createRemoteMediaSource = sources => `<source src="${sources[0]}" type="${mime.lookup(sources[0])}"/>`
+export const createRemoteMediaSource = sources =>
+  `<source src="${sources[0]}" type="${mime.lookup(sources[0])}"/>`
 
 export function getWebOnlyAttributesString() {
-    return state.build === 'web' || state.build === 'reader'
-        ? ' webkit-playsinline="webkit-playsinline" playsinline="playsinline"'
-        : ''
+  return state.build === 'web' || state.build === 'reader'
+    ? ' webkit-playsinline="webkit-playsinline" playsinline="playsinline"'
+    : ''
 }
 
 export function createMedia({ id, href, poster }) {
-    return `<div class="figure__small figure__small--landscape">
+  return `<div class="figure__small figure__small--landscape">
             <figure id="ref${id}">
             <a href="${href}#${id}">
             <img src="${poster}" alt=""/>
@@ -61,28 +70,39 @@ export function createMedia({ id, href, poster }) {
             </div>`
 }
 
-export function createIFrame({ commentStart, commentEnd, id, source, caption, mediaType }) {
-    return `${commentStart}
+export function createIFrame({
+  commentStart,
+  commentEnd,
+  id,
+  source,
+  caption,
+  mediaType,
+}) {
+  return `${commentStart}
             <section id="${id}">
             <iframe src="${Url.encodeQueryString(source)}" />
-            ${caption ? `<p class="caption caption__${mediaType}">${caption}</p>` : ''}
+            ${
+              caption
+                ? `<p class="caption caption__${mediaType}">${caption}</p>`
+                : ''
+            }
             </section>
             ${commentEnd}`
 }
 
 export function createMediaInline({
-    commentStart,
-    commentEnd,
-    mediaType,
-    aspecRatioClassName,
-    id,
-    attrString,
-    webOnlyAttrString,
-    sourceElements,
-    poster,
-    caption,
+  commentStart,
+  commentEnd,
+  mediaType,
+  aspecRatioClassName,
+  id,
+  attrString,
+  webOnlyAttrString,
+  sourceElements,
+  poster,
+  caption,
 }) {
-    return `${commentStart}
+  return `${commentStart}
             <section class="${mediaType} ${aspecRatioClassName} figure__large figure__inline">
             <${mediaType} id="${id}"${attrString}${webOnlyAttrString}>
             ${sourceElements}
@@ -93,7 +113,11 @@ export function createMediaInline({
             </div>
             <p class="media__fallback__${mediaType} media__fallback--text">Your device does not support the HTML5 ${mediaType} API.</p>
             </${mediaType}>
-            ${caption ? `<p class="caption caption__${mediaType}">${caption}</p>` : ''}
+            ${
+              caption
+                ? `<p class="caption caption__${mediaType}">${caption}</p>`
+                : ''
+            }
             </section>
             ${commentEnd}`
 }

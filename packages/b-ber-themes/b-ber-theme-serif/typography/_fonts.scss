@@ -1,18 +1,18 @@
 @if $build == 'web' {
-    @import url('//fonts.googleapis.com/css?family=Material+Icons');
+  @import url('//fonts.googleapis.com/css?family=Material+Icons');
 }
 
 .icon-font {
-    font-weight: normal;
-    font-style: normal;
-    font-size: 24px;
-    line-height: 1;
-    letter-spacing: normal;
-    text-transform: none;
-    display: inline-block;
-    white-space: nowrap;
-    word-wrap: normal;
-    // direction: ltr; // breaks epub validation
-    font-feature-settings: 'liga';
-    font-smoothing: antialiased;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  // direction: ltr; // breaks epub validation
+  font-feature-settings: 'liga';
+  font-smoothing: antialiased;
 }

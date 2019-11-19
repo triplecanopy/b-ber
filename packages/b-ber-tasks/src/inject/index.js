@@ -6,90 +6,131 @@ import state from '@canopycanopycanopy/b-ber-lib/State'
 import { Template } from '@canopycanopycanopy/b-ber-lib'
 import Xhtml from '@canopycanopycanopy/b-ber-templates/Xhtml'
 
-const getRemoteAssets = type => Promise.resolve(state.config[`remote_${type}`] || [])
+const getRemoteAssets = type =>
+  Promise.resolve(state.config[`remote_${type}`] || [])
 
 const getAssets = type =>
-    Promise.all([fs.readdir(state.dist.ops(type)), getRemoteAssets(type)]).then(([a, b]) => [...a, ...b])
+  Promise.all([fs.readdir(state.dist.ops(type)), getRemoteAssets(type)]).then(
+    ([a, b]) => [...a, ...b]
+  )
 
 const getInlineScripts = () => [
-    new File({
-        contents: Buffer.from(`window.bber = window.bber || {}; window.bber.env = '${state.build}';`),
-    }),
+  new File({
+    contents: Buffer.from(
+      `window.bber = window.bber || {}; window.bber.env = '${state.build}';`
+    ),
+  }),
 ]
 
 const ensureString = objectOrString =>
-    objectOrString instanceof File ? objectOrString.contents.toString() : objectOrString
+  objectOrString instanceof File
+    ? objectOrString.contents.toString()
+    : objectOrString
 
-const relative = (from, to) => path.relative(path.join(...from), path.join(...to))
+const relative = (from, to) =>
+  path.relative(path.join(...from), path.join(...to))
 
-const render = ({ file, basePath, stylesheets, javascripts, inlineStylesheets, inlineJavascripts, metadata }) => {
-    const stylesheets_ = stylesheets
-        .map(ensureString)
-        .map(f => Template.render(relative([basePath], ['stylesheets', f]), Xhtml.stylesheet()))
-        .join('')
+const render = ({
+  file,
+  basePath,
+  stylesheets,
+  javascripts,
+  inlineStylesheets,
+  inlineJavascripts,
+  metadata,
+}) => {
+  const stylesheets_ = stylesheets
+    .map(ensureString)
+    .map(f =>
+      Template.render(
+        relative([basePath], ['stylesheets', f]),
+        Xhtml.stylesheet()
+      )
+    )
+    .join('')
 
-    const inlineStylesheets_ = inlineStylesheets
-        .map(ensureString)
-        .map(f => Template.render(f, Xhtml.stylesheet(true)))
-        .join('')
+  const inlineStylesheets_ = inlineStylesheets
+    .map(ensureString)
+    .map(f => Template.render(f, Xhtml.stylesheet(true)))
+    .join('')
 
-    const javascripts_ = javascripts
-        .map(ensureString)
-        .map(f => Template.render(relative([basePath], ['javascripts', f]), Xhtml.javascript()))
-        .join('')
+  const javascripts_ = javascripts
+    .map(ensureString)
+    .map(f =>
+      Template.render(
+        relative([basePath], ['javascripts', f]),
+        Xhtml.javascript()
+      )
+    )
+    .join('')
 
-    const inlineJavascripts_ = inlineJavascripts
-        .map(ensureString)
-        .map(f => Template.render(f, Xhtml.javascript(true)))
-        .join('')
+  const inlineJavascripts_ = inlineJavascripts
+    .map(ensureString)
+    .map(f => Template.render(f, Xhtml.javascript(true)))
+    .join('')
 
-    const metadata_ = metadata
-        .map(ensureString)
-        .map(f => Template.render(f, Xhtml.jsonLD()))
-        .join('')
+  const metadata_ = metadata
+    .map(ensureString)
+    .map(f => Template.render(f, Xhtml.jsonLD()))
+    .join('')
 
-    const head = Template.render(`${stylesheets_}${inlineStylesheets_}`, Xhtml.head())
-    const body =
-        file instanceof File ? file.contents.toString() : fs.readFileSync(state.dist.ops(basePath, file), 'utf8')
-    const tail = Template.render(`${javascripts_}${inlineJavascripts_}${metadata_}`, Xhtml.tail())
+  const head = Template.render(
+    `${stylesheets_}${inlineStylesheets_}`,
+    Xhtml.head()
+  )
+  const body =
+    file instanceof File
+      ? file.contents.toString()
+      : fs.readFileSync(state.dist.ops(basePath, file), 'utf8')
+  const tail = Template.render(
+    `${javascripts_}${inlineJavascripts_}${metadata_}`,
+    Xhtml.tail()
+  )
 
-    return `${head}${body}${tail}`
+  return `${head}${body}${tail}`
 }
 
-const writeAll = files => Promise.all(files.map(file => fs.writeFile(state.dist.text(file.fileName), file.contents)))
+const writeAll = files =>
+  Promise.all(
+    files.map(file =>
+      fs.writeFile(state.dist.text(file.fileName), file.contents)
+    )
+  )
 
 export const getFileObjects = async (files, basePath = '') => {
-    const stylesheets = await getAssets('stylesheets')
-    const javascripts = await getAssets('javascripts')
-    const inlineStylesheets = []
-    const inlineJavascripts = getInlineScripts()
+  const stylesheets = await getAssets('stylesheets')
+  const javascripts = await getAssets('javascripts')
+  const inlineStylesheets = []
+  const inlineJavascripts = getInlineScripts()
 
-    // TODO:
-    // @issue: https://github.com/triplecanopy/b-ber/issues/226
-    const metadata = []
+  // TODO:
+  // @issue: https://github.com/triplecanopy/b-ber/issues/226
+  const metadata = []
 
-    const files_ = files.map(file => ({
-        fileName: file.name,
-        contents: render({
-            file: file.data,
-            basePath,
-            stylesheets,
-            javascripts,
-            inlineStylesheets,
-            inlineJavascripts,
-            metadata,
-        }),
-    }))
+  const files_ = files.map(file => ({
+    fileName: file.name,
+    contents: render({
+      file: file.data,
+      basePath,
+      stylesheets,
+      javascripts,
+      inlineStylesheets,
+      inlineJavascripts,
+      metadata,
+    }),
+  }))
 
-    return files_
+  return files_
 }
 
 const inject = async () => {
-    const basePath = 'text'
-    const files = fs.readdirSync(state.dist.ops(basePath)).map(file => ({ name: file, data: file }))
-    const fileObjects = await getFileObjects(files, basePath)
+  const basePath = 'text'
+  const files = fs
+    .readdirSync(state.dist.ops(basePath))
+    .map(file => ({ name: file, data: file }))
+  const fileObjects = await getFileObjects(files, basePath)
 
-    return writeAll(fileObjects).catch(log.error)
+  return writeAll(fileObjects).catch(log.error)
 }
 
 export default inject

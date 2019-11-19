@@ -1,69 +1,69 @@
 version: 2.0
 
 jobs:
-    build:
-        docker:
-            - image: canopycanopycanopy/b-ber:0.2.0
-        branches:
-            only:
-                - master
-                - develop
-        working_directory: ~/b-ber
-        steps:
-            - checkout
-            - restore_cache:
-                  keys:
-                      - npm-packages-v1-{{ .Branch }}-{{ checksum "package-lock.json" }}
-                      - npm-packages-v1-{{ checksum "package-lock.json" }}
-                      - npm-packages-v1-
-            - run: |
-                  npm -g config set user root
-                  npm i -g npm@6 lerna
-                  echo node $(node -v)
-                  echo npm $(npm -v)
-                  echo lerna $(lerna -v)
-                  npm ci
-                  lerna bootstrap
-                  npm run build
-                  npm test
-                  cd ~
-                  $BBER --version
-                  $BBER new foo
-                  cd foo
-                  $BBER theme list
-                  $BBER theme set b-ber-theme-serif
-                  $BBER build
-            - save_cache:
-                  paths:
-                      - ~/b-ber/node_modules
-                      - ~/b-ber/packages/b-ber-cli/node_modules
-                      - ~/b-ber/packages/b-ber-grammar-attributes/node_modules
-                      - ~/b-ber/packages/b-ber-grammar-dialogue/node_modules
-                      - ~/b-ber/packages/b-ber-grammar-epigraph/node_modules
-                      - ~/b-ber/packages/b-ber-grammar-footnotes/node_modules
-                      - ~/b-ber/packages/b-ber-grammar-frontmatter/node_modules
-                      - ~/b-ber/packages/b-ber-grammar-gallery/node_modules
-                      - ~/b-ber/packages/b-ber-grammar-image/node_modules
-                      - ~/b-ber/packages/b-ber-grammar-logo/node_modules
-                      - ~/b-ber/packages/b-ber-grammar-media/node_modules
-                      - ~/b-ber/packages/b-ber-grammar-pullquote/node_modules
-                      - ~/b-ber/packages/b-ber-grammar-renderer/node_modules
-                      - ~/b-ber/packages/b-ber-grammar-section/node_modules
-                      - ~/b-ber/packages/b-ber-grammar-spread/node_modules
-                      - ~/b-ber/packages/b-ber-lib/node_modules
-                      - ~/b-ber/packages/b-ber-logger/node_modules
-                      - ~/b-ber/packages/b-ber-markdown-renderer/node_modules
-                      - ~/b-ber/packages/b-ber-parser-dialogue/node_modules
-                      - ~/b-ber/packages/b-ber-parser-figure/node_modules
-                      - ~/b-ber/packages/b-ber-parser-footnotes/node_modules
-                      - ~/b-ber/packages/b-ber-parser-gallery/node_modules
-                      - ~/b-ber/packages/b-ber-parser-section/node_modules
-                      - ~/b-ber/packages/b-ber-reader/node_modules
-                      - ~/b-ber/packages/b-ber-resources/node_modules
-                      - ~/b-ber/packages/b-ber-shapes-dublin-core/node_modules
-                      - ~/b-ber/packages/b-ber-shapes-directives/node_modules
-                      - ~/b-ber/packages/b-ber-shapes-sequences/node_modules
-                      - ~/b-ber/packages/b-ber-tasks/node_modules
-                      - ~/b-ber/packages/b-ber-templates/node_modules
-                      - ~/b-ber/packages/b-ber-themes/node_modules
-                  key: npm-packages-v1-{{ .Branch }}-{{ checksum "package-lock.json" }}
+  build:
+    docker:
+      - image: canopycanopycanopy/b-ber:0.2.0
+    branches:
+      only:
+        - master
+        - develop
+    working_directory: ~/b-ber
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - npm-packages-v1-{{ .Branch }}-{{ checksum "package-lock.json" }}
+            - npm-packages-v1-{{ checksum "package-lock.json" }}
+            - npm-packages-v1-
+      - run: |
+          npm -g config set user root
+          npm i -g npm@6 lerna
+          echo node $(node -v)
+          echo npm $(npm -v)
+          echo lerna $(lerna -v)
+          npm ci
+          lerna bootstrap
+          npm run build
+          npm test
+          cd ~
+          $BBER --version
+          $BBER new foo
+          cd foo
+          $BBER theme list
+          $BBER theme set b-ber-theme-serif
+          $BBER build
+      - save_cache:
+          paths:
+            - ~/b-ber/node_modules
+            - ~/b-ber/packages/b-ber-cli/node_modules
+            - ~/b-ber/packages/b-ber-grammar-attributes/node_modules
+            - ~/b-ber/packages/b-ber-grammar-dialogue/node_modules
+            - ~/b-ber/packages/b-ber-grammar-epigraph/node_modules
+            - ~/b-ber/packages/b-ber-grammar-footnotes/node_modules
+            - ~/b-ber/packages/b-ber-grammar-frontmatter/node_modules
+            - ~/b-ber/packages/b-ber-grammar-gallery/node_modules
+            - ~/b-ber/packages/b-ber-grammar-image/node_modules
+            - ~/b-ber/packages/b-ber-grammar-logo/node_modules
+            - ~/b-ber/packages/b-ber-grammar-media/node_modules
+            - ~/b-ber/packages/b-ber-grammar-pullquote/node_modules
+            - ~/b-ber/packages/b-ber-grammar-renderer/node_modules
+            - ~/b-ber/packages/b-ber-grammar-section/node_modules
+            - ~/b-ber/packages/b-ber-grammar-spread/node_modules
+            - ~/b-ber/packages/b-ber-lib/node_modules
+            - ~/b-ber/packages/b-ber-logger/node_modules
+            - ~/b-ber/packages/b-ber-markdown-renderer/node_modules
+            - ~/b-ber/packages/b-ber-parser-dialogue/node_modules
+            - ~/b-ber/packages/b-ber-parser-figure/node_modules
+            - ~/b-ber/packages/b-ber-parser-footnotes/node_modules
+            - ~/b-ber/packages/b-ber-parser-gallery/node_modules
+            - ~/b-ber/packages/b-ber-parser-section/node_modules
+            - ~/b-ber/packages/b-ber-reader/node_modules
+            - ~/b-ber/packages/b-ber-resources/node_modules
+            - ~/b-ber/packages/b-ber-shapes-dublin-core/node_modules
+            - ~/b-ber/packages/b-ber-shapes-directives/node_modules
+            - ~/b-ber/packages/b-ber-shapes-sequences/node_modules
+            - ~/b-ber/packages/b-ber-tasks/node_modules
+            - ~/b-ber/packages/b-ber-templates/node_modules
+            - ~/b-ber/packages/b-ber-themes/node_modules
+          key: npm-packages-v1-{{ .Branch }}-{{ checksum "package-lock.json" }}

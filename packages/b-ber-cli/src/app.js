@@ -5,8 +5,8 @@ import * as commands from './commands'
 const LINE_LENGTH = 70
 
 export default function bber() {
-    const showCustomHelp = () =>
-        console.log(`
+  const showCustomHelp = () =>
+    console.log(`
     Usage: bber <command> [options]
 
     bber new        Start a new project
@@ -19,19 +19,19 @@ export default function bber() {
     bber version ${state.version}
 `)
 
-    return yargs
-        .command(commands.build)
-        .command(commands.generate)
-        .command(commands.opf)
-        .command(commands.theme)
-        .command(commands.serve)
-        .command(commands.new)
-        .command(commands.cover)
-        .command(commands.deploy)
+  return yargs
+    .command(commands.build)
+    .command(commands.generate)
+    .command(commands.opf)
+    .command(commands.theme)
+    .command(commands.serve)
+    .command(commands.new)
+    .command(commands.cover)
+    .command(commands.deploy)
 
-        .help(false)
-        .fail(showCustomHelp)
+    .help(false)
+    .fail(showCustomHelp)
 
-        .demandCommand()
-        .wrap(LINE_LENGTH).argv
+    .demandCommand()
+    .wrap(LINE_LENGTH).argv
 }

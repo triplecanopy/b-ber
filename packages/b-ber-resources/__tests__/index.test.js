@@ -1,3 +1,3 @@
 describe('b-ber-resources', () => {
-    test.todo('Requires tests')
+  test.todo('Requires tests')
 })

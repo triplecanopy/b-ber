@@ -1,3 +1,3 @@
 describe('b-ber-grammar-footnotes', () => {
-    test.todo('Requires tests')
+  test.todo('Requires tests')
 })

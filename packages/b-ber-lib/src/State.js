@@ -18,10 +18,10 @@ import Spine from './Spine'
 const randomHash = () => crypto.randomBytes(20).toString('hex')
 
 const skipInitialization = () => {
-    const { argv } = process
+  const { argv } = process
 
-    // prettier-ignore
-    return (
+  // prettier-ignore
+  return (
         argv.includes('--help') ||  // if a help flag is set
         argv.includes('-h') ||      // if a help alias is set
         argv.length < 3 ||          // if there are insufficient arguments
@@ -45,327 +45,342 @@ const DIST_DIR_FONTS = 'fonts'
 const DIST_DIR_MEDIA = 'media'
 
 class State {
-    static get defaults() {
-        return {
-            build: 'epub',
-            sequence: [],
-            hash: randomHash(),
-        }
+  static get defaults() {
+    return {
+      build: 'epub',
+      sequence: [],
+      hash: randomHash(),
+    }
+  }
+
+  metadata = { json: () => [{}] } // mocks the YAML api
+  theme = {}
+  video = []
+  audio = []
+  build = 'epub'
+  sequence = []
+  hash = randomHash()
+  builds = {
+    sample: {},
+    epub: {},
+    mobi: {},
+    pdf: {},
+    web: {},
+    reader: {},
+  }
+
+  get spine() {
+    return this.builds[this.build].spine
+  }
+
+  set spine(val) {
+    this.builds[this.build].spine = val
+  }
+
+  get guide() {
+    return this.builds[this.build].guide
+  }
+
+  set guide(val) {
+    this.builds[this.build].guide = val
+  }
+
+  get figures() {
+    return this.builds[this.build].figures
+  }
+
+  set figures(val) {
+    this.builds[this.build].figures = val
+  }
+
+  get footnotes() {
+    return this.builds[this.build].footnotes
+  }
+
+  set footnotes(val) {
+    this.builds[this.build].footnotes = val
+  }
+
+  get cursor() {
+    return this.builds[this.build].cursor
+  }
+
+  set cursor(val) {
+    this.builds[this.build].cursor = val
+  }
+
+  get toc() {
+    return this.builds[this.build].toc
+  }
+
+  set toc(val) {
+    this.builds[this.build].toc = val
+  }
+
+  get remoteAssets() {
+    return this.builds[this.build].remoteAssets
+  }
+
+  set remoteAssets(val) {
+    this.builds[this.build].remoteAssets = val
+  }
+
+  get loi() {
+    return this.builds[this.build].loi
+  }
+
+  set loi(val) {
+    this.builds[this.build].loi = val
+  }
+
+  get srcDir() {
+    return this.config.src
+  }
+
+  set srcDir(val) {
+    this.config.src = val
+  }
+
+  get distDir() {
+    if (this.build && this.builds && this.builds[this.build]) {
+      return this.builds[this.build].dist
+    }
+    return this.config.dist
+  }
+
+  set distDir(val) {
+    this.config.dist = val
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  get env() {
+    return process.env.NODE_ENV || 'development'
+  }
+
+  set env(val) {
+    this.config.env = val
+  }
+
+  src = {
+    root: (...args) => path.join(this.srcDir, ...args),
+    images: (...args) => path.join(this.srcDir, SRC_DIR_IMAGES, ...args),
+    markdown: (...args) => path.join(this.srcDir, SRC_DIR_MARKDOWN, ...args),
+    stylesheets: (...args) =>
+      path.join(this.srcDir, SRC_DIR_STYLESHEETS, ...args),
+    javascripts: (...args) =>
+      path.join(this.srcDir, SRC_DIR_JAVASCRIPTS, ...args),
+    fonts: (...args) => path.join(this.srcDir, SRC_DIR_FONTS, ...args),
+    media: (...args) => path.join(this.srcDir, SRC_DIR_MEDIA, ...args),
+  }
+
+  dist = {
+    root: (...args) => path.join(this.distDir, ...args),
+    ops: (...args) => path.join(this.distDir, DIST_DIR_OPS, ...args),
+    text: (...args) =>
+      path.join(this.distDir, DIST_DIR_OPS, DIST_DIR_TEXT, ...args),
+    images: (...args) =>
+      path.join(this.distDir, DIST_DIR_OPS, DIST_DIR_IMAGES, ...args),
+    stylesheets: (...args) =>
+      path.join(this.distDir, DIST_DIR_OPS, DIST_DIR_STYLESHEETS, ...args),
+    javascripts: (...args) =>
+      path.join(this.distDir, DIST_DIR_OPS, DIST_DIR_JAVASCRIPTS, ...args),
+    fonts: (...args) =>
+      path.join(this.distDir, DIST_DIR_OPS, DIST_DIR_FONTS, ...args),
+    media: (...args) =>
+      path.join(this.distDir, DIST_DIR_OPS, DIST_DIR_MEDIA, ...args),
+  }
+
+  constructor() {
+    let version
+
+    // for testing, since our directory structure is different in dist
+    try {
+      ;({ version } = fs.readJSONSync(require.resolve('./package.json')))
+    } catch (err) {
+      ;({ version } = fs.readJSONSync(require.resolve('../package.json')))
     }
 
-    metadata = { json: () => [{}] } // mocks the YAML api
-    theme = {}
-    video = []
-    audio = []
-    build = 'epub'
-    sequence = []
-    hash = randomHash()
-    builds = {
-        sample: {},
-        epub: {},
-        mobi: {},
-        pdf: {},
-        web: {},
-        reader: {},
+    set(this, 'version', version)
+    set(this, 'config', new Config())
+
+    this.reset()
+    this.loadMetadata()
+    this.loadMedia()
+    this.loadBuilds()
+    this.loadTheme()
+  }
+
+  reset = () => {
+    Object.entries(State.defaults).forEach(([key, val]) => set(this, key, val))
+    this.loadConfig()
+  }
+
+  add = (prop, value) => {
+    const prevValue = get(this, prop)
+
+    if (isArray(prevValue)) {
+      set(this, prop, [...prevValue, value])
+    } else if (isPlainObject(prevValue)) {
+      set(this, prop, { ...prevValue, value })
+    } else if (typeof prevValue === 'string') {
+      set(this, prop, `${prevValue}${value}`)
+    } else {
+      log.error(`Cannot add [${value}] to [state.${prop}]`)
+    }
+  }
+
+  remove = (prop, value) => {
+    const prevValue = get(this, prop)
+
+    if (isArray(prevValue)) {
+      const arr = [...prevValue]
+      remove(arr, value)
+      set(this, prop, arr)
+    } else if (isPlainObject(prevValue)) {
+      const { [value]: _, ...rest } = prevValue // eslint-disable-line no-unused-vars
+      set(this, prop, rest)
+    } else {
+      log.error(`Cannot remove [${value}] from [state.${prop}]`)
+    }
+  }
+
+  merge = (prop, value) => {
+    const oldValue = get(this, prop)
+    set(this, prop, merge(oldValue, value))
+  }
+
+  update = (prop, val) => {
+    set(this, prop, val)
+  }
+
+  contains = (coll, value) => this.indexOf(coll, value) > -1
+
+  indexOf = (coll, pred) => {
+    const collection = get(this, coll)
+    return findIndex(collection, pred)
+  }
+
+  loadConfig = () => {
+    if (!fs.existsSync(path.resolve('config.yml'))) return
+
+    const config = new Yaml('config')
+    config.load(path.resolve('config.yml'))
+
+    // not necessary right now to pass around a YAWN instance since we'er
+    // not writing back to config.yml, but may be necessary at some point
+    set(this, 'config', new Config(config.json()))
+  }
+
+  loadMetadata = () => {
+    const fpath = path.resolve(this.config.src, 'metadata.yml')
+    if (!fs.existsSync(fpath)) return
+
+    set(this, 'metadata', new Yaml('metadata'))
+    this.metadata.load(fpath)
+  }
+
+  loadTheme = () => {
+    // ensure themes dir exists unless running `new` command, as it's the
+    // only command that's run outside of a project directory
+    if (skipInitialization()) return
+
+    const userThemesPath = path.resolve(this.config.themes_directory)
+    fs.ensureDirSync(userThemesPath)
+
+    // theme is set, using a built-in theme
+    if (themes[this.config.theme]) {
+      log.info(`Loaded theme [${this.config.theme}]`)
+      set(this, 'theme', themes[this.config.theme])
+      return
     }
 
-    get spine() {
-        return this.builds[this.build].spine
+    // possibly a user defined theme, check if the directory exists
+    try {
+      if (
+        (this.theme = require(path.resolve(userThemesPath, this.config.theme))) // eslint-disable-line global-require, import/no-dynamic-require
+      ) {
+        log.info(`Loaded theme [${this.config.theme}]`)
+        return
+      }
+    } catch (_) {
+      // noop
     }
 
-    set spine(val) {
-        this.builds[this.build].spine = val
+    // possibly a theme installed with npm, test the project root
+    try {
+      set(
+        this,
+        'theme',
+        require(path.resolve('node_modules', this.config.theme)) // eslint-disable-line global-require, import/no-dynamic-require
+      ) // require.resolve?
+    } catch (err) {
+      log.warn(`There was an error during require [${this.config.theme}]`)
+      log.warn('Using default theme [b-ber-theme-serif]')
+      log.warn(err.message)
+
+      // error loading theme, set to default
+      set(this, 'theme', themes['b-ber-theme-serif'])
     }
+  }
 
-    get guide() {
-        return this.builds[this.build].guide
+  loadMedia = () => {
+    if (skipInitialization()) return
+
+    const mediaPath = path.resolve(this.config.src, '_media')
+    fs.ensureDirSync(mediaPath)
+
+    const media = fs.readdirSync(mediaPath)
+    const video = media.filter(a => /^video/.test(mime.lookup(a)))
+    const audio = media.filter(a => /^audio/.test(mime.lookup(a)))
+
+    set(this, 'video', video)
+    set(this, 'audio', audio)
+  }
+
+  loadBuildSettings = type => {
+    if (skipInitialization()) return
+
+    const { src, dist } = this.config
+    const projectDir = path.resolve(src)
+
+    if (!fs.existsSync(projectDir))
+      log.error(`Project directory [${projectDir}] does not exist`)
+
+    // One TOC to rule them all (toc.yml). A user can override the TOC for a
+    // specific build by including a <type>.yml file, which will be loaded
+    // instead of toc.yml below.
+    const navigationConfigFileDefaultPath = path.resolve(src, 'toc.yml')
+    const navigationConfigFilePath = path.resolve(src, `${type}.yml`)
+    const navigationConfigFile = fs.existsSync(navigationConfigFilePath)
+      ? navigationConfigFilePath
+      : navigationConfigFileDefaultPath
+
+    const spine = new Spine({ src, buildType: type, navigationConfigFile })
+
+    // Build-specific config. gets merged into base config during build step
+    const config = this.config[type] ? { ...this.config[type] } : {}
+
+    return {
+      src,
+      dist: `${dist}-${type}`,
+      config,
+      guide: [],
+      spine,
+      toc: spine.nested,
+      cursor: [],
+      figures: [],
+      footnotes: [],
+      remoteAssets: [],
+      loi: [],
     }
+  }
 
-    set guide(val) {
-        this.builds[this.build].guide = val
-    }
-
-    get figures() {
-        return this.builds[this.build].figures
-    }
-
-    set figures(val) {
-        this.builds[this.build].figures = val
-    }
-
-    get footnotes() {
-        return this.builds[this.build].footnotes
-    }
-
-    set footnotes(val) {
-        this.builds[this.build].footnotes = val
-    }
-
-    get cursor() {
-        return this.builds[this.build].cursor
-    }
-
-    set cursor(val) {
-        this.builds[this.build].cursor = val
-    }
-
-    get toc() {
-        return this.builds[this.build].toc
-    }
-
-    set toc(val) {
-        this.builds[this.build].toc = val
-    }
-
-    get remoteAssets() {
-        return this.builds[this.build].remoteAssets
-    }
-
-    set remoteAssets(val) {
-        this.builds[this.build].remoteAssets = val
-    }
-
-    get loi() {
-        return this.builds[this.build].loi
-    }
-
-    set loi(val) {
-        this.builds[this.build].loi = val
-    }
-
-    get srcDir() {
-        return this.config.src
-    }
-
-    set srcDir(val) {
-        this.config.src = val
-    }
-
-    get distDir() {
-        if (this.build && this.builds && this.builds[this.build]) {
-            return this.builds[this.build].dist
-        }
-        return this.config.dist
-    }
-
-    set distDir(val) {
-        this.config.dist = val
-    }
-
-    // eslint-disable-next-line class-methods-use-this
-    get env() {
-        return process.env.NODE_ENV || 'development'
-    }
-
-    set env(val) {
-        this.config.env = val
-    }
-
-    src = {
-        root: (...args) => path.join(this.srcDir, ...args),
-        images: (...args) => path.join(this.srcDir, SRC_DIR_IMAGES, ...args),
-        markdown: (...args) => path.join(this.srcDir, SRC_DIR_MARKDOWN, ...args),
-        stylesheets: (...args) => path.join(this.srcDir, SRC_DIR_STYLESHEETS, ...args),
-        javascripts: (...args) => path.join(this.srcDir, SRC_DIR_JAVASCRIPTS, ...args),
-        fonts: (...args) => path.join(this.srcDir, SRC_DIR_FONTS, ...args),
-        media: (...args) => path.join(this.srcDir, SRC_DIR_MEDIA, ...args),
-    }
-
-    dist = {
-        root: (...args) => path.join(this.distDir, ...args),
-        ops: (...args) => path.join(this.distDir, DIST_DIR_OPS, ...args),
-        text: (...args) => path.join(this.distDir, DIST_DIR_OPS, DIST_DIR_TEXT, ...args),
-        images: (...args) => path.join(this.distDir, DIST_DIR_OPS, DIST_DIR_IMAGES, ...args),
-        stylesheets: (...args) => path.join(this.distDir, DIST_DIR_OPS, DIST_DIR_STYLESHEETS, ...args),
-        javascripts: (...args) => path.join(this.distDir, DIST_DIR_OPS, DIST_DIR_JAVASCRIPTS, ...args),
-        fonts: (...args) => path.join(this.distDir, DIST_DIR_OPS, DIST_DIR_FONTS, ...args),
-        media: (...args) => path.join(this.distDir, DIST_DIR_OPS, DIST_DIR_MEDIA, ...args),
-    }
-
-    constructor() {
-        let version
-
-        // for testing, since our directory structure is different in dist
-        try {
-            ;({ version } = fs.readJSONSync(require.resolve('./package.json')))
-        } catch (err) {
-            ;({ version } = fs.readJSONSync(require.resolve('../package.json')))
-        }
-
-        set(this, 'version', version)
-        set(this, 'config', new Config())
-
-        this.reset()
-        this.loadMetadata()
-        this.loadMedia()
-        this.loadBuilds()
-        this.loadTheme()
-    }
-
-    reset = () => {
-        Object.entries(State.defaults).forEach(([key, val]) => set(this, key, val))
-        this.loadConfig()
-    }
-
-    add = (prop, value) => {
-        const prevValue = get(this, prop)
-
-        if (isArray(prevValue)) {
-            set(this, prop, [...prevValue, value])
-        } else if (isPlainObject(prevValue)) {
-            set(this, prop, { ...prevValue, value })
-        } else if (typeof prevValue === 'string') {
-            set(this, prop, `${prevValue}${value}`)
-        } else {
-            log.error(`Cannot add [${value}] to [state.${prop}]`)
-        }
-    }
-
-    remove = (prop, value) => {
-        const prevValue = get(this, prop)
-
-        if (isArray(prevValue)) {
-            const arr = [...prevValue]
-            remove(arr, value)
-            set(this, prop, arr)
-        } else if (isPlainObject(prevValue)) {
-            const { [value]: _, ...rest } = prevValue // eslint-disable-line no-unused-vars
-            set(this, prop, rest)
-        } else {
-            log.error(`Cannot remove [${value}] from [state.${prop}]`)
-        }
-    }
-
-    merge = (prop, value) => {
-        const oldValue = get(this, prop)
-        set(this, prop, merge(oldValue, value))
-    }
-
-    update = (prop, val) => {
-        set(this, prop, val)
-    }
-
-    contains = (coll, value) => this.indexOf(coll, value) > -1
-
-    indexOf = (coll, pred) => {
-        const collection = get(this, coll)
-        return findIndex(collection, pred)
-    }
-
-    loadConfig = () => {
-        if (!fs.existsSync(path.resolve('config.yml'))) return
-
-        const config = new Yaml('config')
-        config.load(path.resolve('config.yml'))
-
-        // not necessary right now to pass around a YAWN instance since we'er
-        // not writing back to config.yml, but may be necessary at some point
-        set(this, 'config', new Config(config.json()))
-    }
-
-    loadMetadata = () => {
-        const fpath = path.resolve(this.config.src, 'metadata.yml')
-        if (!fs.existsSync(fpath)) return
-
-        set(this, 'metadata', new Yaml('metadata'))
-        this.metadata.load(fpath)
-    }
-
-    loadTheme = () => {
-        // ensure themes dir exists unless running `new` command, as it's the
-        // only command that's run outside of a project directory
-        if (skipInitialization()) return
-
-        const userThemesPath = path.resolve(this.config.themes_directory)
-        fs.ensureDirSync(userThemesPath)
-
-        // theme is set, using a built-in theme
-        if (themes[this.config.theme]) {
-            log.info(`Loaded theme [${this.config.theme}]`)
-            set(this, 'theme', themes[this.config.theme])
-            return
-        }
-
-        // possibly a user defined theme, check if the directory exists
-        try {
-            // eslint-disable-next-line global-require, import/no-dynamic-require
-            if ((this.theme = require(path.resolve(userThemesPath, this.config.theme)))) {
-                log.info(`Loaded theme [${this.config.theme}]`)
-                return
-            }
-        } catch (_) {
-            // noop
-        }
-
-        // possibly a theme installed with npm, test the project root
-        try {
-            // eslint-disable-next-line global-require, import/no-dynamic-require
-            set(this, 'theme', require(path.resolve('node_modules', this.config.theme))) // require.resolve?
-        } catch (err) {
-            log.warn(`There was an error during require [${this.config.theme}]`)
-            log.warn('Using default theme [b-ber-theme-serif]')
-            log.warn(err.message)
-
-            // error loading theme, set to default
-            set(this, 'theme', themes['b-ber-theme-serif'])
-        }
-    }
-
-    loadMedia = () => {
-        if (skipInitialization()) return
-
-        const mediaPath = path.resolve(this.config.src, '_media')
-        fs.ensureDirSync(mediaPath)
-
-        const media = fs.readdirSync(mediaPath)
-        const video = media.filter(a => /^video/.test(mime.lookup(a)))
-        const audio = media.filter(a => /^audio/.test(mime.lookup(a)))
-
-        set(this, 'video', video)
-        set(this, 'audio', audio)
-    }
-
-    loadBuildSettings = type => {
-        if (skipInitialization()) return
-
-        const { src, dist } = this.config
-        const projectDir = path.resolve(src)
-
-        if (!fs.existsSync(projectDir)) log.error(`Project directory [${projectDir}] does not exist`)
-
-        // One TOC to rule them all (toc.yml). A user can override the TOC for a
-        // specific build by including a <type>.yml file, which will be loaded
-        // instead of toc.yml below.
-        const navigationConfigFileDefaultPath = path.resolve(src, 'toc.yml')
-        const navigationConfigFilePath = path.resolve(src, `${type}.yml`)
-        const navigationConfigFile = fs.existsSync(navigationConfigFilePath)
-            ? navigationConfigFilePath
-            : navigationConfigFileDefaultPath
-
-        const spine = new Spine({ src, buildType: type, navigationConfigFile })
-
-        // Build-specific config. gets merged into base config during build step
-        const config = this.config[type] ? { ...this.config[type] } : {}
-
-        return {
-            src,
-            dist: `${dist}-${type}`,
-            config,
-            guide: [],
-            spine,
-            toc: spine.nested,
-            cursor: [],
-            figures: [],
-            footnotes: [],
-            remoteAssets: [],
-            loi: [],
-        }
-    }
-
-    loadBuilds = () => {
-        const builds = ['sample', 'epub', 'mobi', 'pdf', 'web', 'reader', 'xml']
-        builds.forEach(build => set(this.builds, build, this.loadBuildSettings(build)))
-    }
+  loadBuilds = () => {
+    const builds = ['sample', 'epub', 'mobi', 'pdf', 'web', 'reader', 'xml']
+    builds.forEach(build =>
+      set(this.builds, build, this.loadBuildSettings(build))
+    )
+  }
 }
 
 export default new State()

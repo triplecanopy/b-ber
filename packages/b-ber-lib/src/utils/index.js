@@ -10,22 +10,23 @@ import mime from 'mime-types'
 import { Url } from '..'
 
 // Get a file's relative path to the OPS
-export const opsPath = (fpath, base) => fpath.replace(new RegExp(`^${base}${path.sep}OPS${path.sep}?`), '')
+export const opsPath = (fpath, base) =>
+  fpath.replace(new RegExp(`^${base}${path.sep}OPS${path.sep}?`), '')
 
 // https://www.w3.org/TR/xml-names/#Conformance
 export const fileId = str => `_${str.replace(/[^a-zA-Z0-9_-]/g, '_')}`
 
 // Determine an image's orientation
 export const getImageOrientation = (w, h) => {
-    // assign image class based on w:h ratio
-    const widthToHeight = w / h
-    let imageType = null
+  // assign image class based on w:h ratio
+  const widthToHeight = w / h
+  let imageType = null
 
-    if (widthToHeight < 0.61) imageType = 'portrait-high'
-    if (widthToHeight >= 0.61 && widthToHeight < 1) imageType = 'portrait'
-    if (widthToHeight === 1) imageType = 'square'
-    if (widthToHeight > 1) imageType = 'landscape'
-    return imageType
+  if (widthToHeight < 0.61) imageType = 'portrait-high'
+  if (widthToHeight >= 0.61 && widthToHeight < 1) imageType = 'portrait'
+  if (widthToHeight === 1) imageType = 'square'
+  if (widthToHeight > 1) imageType = 'landscape'
+  return imageType
 }
 
 // const getAspectRatioClassName = (key = '16:9') =>
@@ -41,7 +42,8 @@ export const getImageOrientation = (w, h) => {
 // }
 
 // Create an iterator from object's key/value pairs
-export const forOf = (collection, iterator) => Object.entries(collection).forEach(([key, val]) => iterator(key, val))
+export const forOf = (collection, iterator) =>
+  Object.entries(collection).forEach(([key, val]) => iterator(key, val))
 
 // TODO: the whole figures/generated pages/user-configurable YAML thing should
 // be worked out better. one reason is below, where we need the title of a
@@ -51,104 +53,111 @@ export const forOf = (collection, iterator) => Object.entries(collection).forEac
 //
 // this is provisional, will just cause more confusion in the future
 export const getTitle = (page, state) => {
-    if (page.name === 'figures-titlepage') return 'Figures'
-    const meta = state.spine.frontMatter.get(page.name)
-    return meta && meta.title ? meta.title : page.title || page.name
+  if (page.name === 'figures-titlepage') return 'Figures'
+  const meta = state.spine.frontMatter.get(page.name)
+  return meta && meta.title ? meta.title : page.title || page.name
 }
 
 export const getBookMetadata = (term, state) => {
-    const entry = find(state.metadata.json(), { term })
-    if (entry && entry.value) return entry.value
-    log.warn(`Could not find metadata value for ${term}`)
-    return ''
+  const entry = find(state.metadata.json(), { term })
+  if (entry && entry.value) return entry.value
+  log.warn(`Could not find metadata value for ${term}`)
+  return ''
 }
 
-export const safeWrite = (dest, data) => (fs.existsSync(dest) ? Promise.resolve() : fs.writeFile(dest, data))
+export const safeWrite = (dest, data) =>
+  fs.existsSync(dest) ? Promise.resolve() : fs.writeFile(dest, data)
 
 export const fail = (msg, err, yargs) => {
-    yargs.showHelp()
-    process.exit(0)
+  yargs.showHelp()
+  process.exit(0)
 }
 
 const ensureDirs = (dirs, prefix) => {
-    const cwd = process.cwd()
-    const dirs_ = uniq(
-        [
-            `${prefix}/_project`,
-            `${prefix}/_project/_fonts`,
-            `${prefix}/_project/_images`,
-            `${prefix}/_project/_javascripts`,
-            `${prefix}/_project/_markdown`,
-            `${prefix}/_project/_media`,
-            `${prefix}/_project/_stylesheets`,
-            `${prefix}/themes`,
-        ].concat(dirs)
-    ).map(a => fs.ensureDir(path.join(cwd, a)))
+  const cwd = process.cwd()
+  const dirs_ = uniq(
+    [
+      `${prefix}/_project`,
+      `${prefix}/_project/_fonts`,
+      `${prefix}/_project/_images`,
+      `${prefix}/_project/_javascripts`,
+      `${prefix}/_project/_markdown`,
+      `${prefix}/_project/_media`,
+      `${prefix}/_project/_stylesheets`,
+      `${prefix}/themes`,
+    ].concat(dirs)
+  ).map(a => fs.ensureDir(path.join(cwd, a)))
 
-    return Promise.all(dirs_)
+  return Promise.all(dirs_)
 }
 
 const ensureFiles = (files, prefix) => {
-    const files_ = [
-        {
-            absolutePath: path.resolve(prefix, '_project', 'toc.yml'),
-            content: '',
-        },
-    ]
-        .filter(({ absolutePath }) => findIndex(files, { absolutePath }) < 0)
-        .concat(files)
-        .reduce(
-            (acc, curr) =>
-                fs.existsSync(curr.absolutePath) ? acc : acc.concat(fs.writeFile(curr.absolutePath, curr.content)),
-            []
-        )
-    return Promise.all(files_)
+  const files_ = [
+    {
+      absolutePath: path.resolve(prefix, '_project', 'toc.yml'),
+      content: '',
+    },
+  ]
+    .filter(({ absolutePath }) => findIndex(files, { absolutePath }) < 0)
+    .concat(files)
+    .reduce(
+      (acc, curr) =>
+        fs.existsSync(curr.absolutePath)
+          ? acc
+          : acc.concat(fs.writeFile(curr.absolutePath, curr.content)),
+      []
+    )
+  return Promise.all(files_)
 }
 
 // make sure all necessary files and directories exist
 export const ensure = ({ files = [], dirs = [], prefix = '' } = {}) =>
-    ensureDirs(dirs, prefix)
-        .then(() => ensureFiles(files, prefix))
-        .catch(log.error)
+  ensureDirs(dirs, prefix)
+    .then(() => ensureFiles(files, prefix))
+    .catch(log.error)
 
 export const generateWebpubManifest = (state, files) => {
-    const remoteURL = Url.trimSlashes(state.config.remote_url)
-    const readingOrder = state.spine.flattened.map(({ name, title }) => ({
-        href: `${remoteURL}/text/${name}.xhtml`,
-        type: 'text/xhtml',
-        title,
+  const remoteURL = Url.trimSlashes(state.config.remote_url)
+  const readingOrder = state.spine.flattened.map(({ name, title }) => ({
+    href: `${remoteURL}/text/${name}.xhtml`,
+    type: 'text/xhtml',
+    title,
+  }))
+
+  const resources = files
+    .filter(file => path.basename(file).charAt(0) !== '.')
+    .map(file => ({
+      // rel: ...
+      href: file.replace(`${state.distDir}/`, ''),
+      type: mime.lookup(file),
     }))
 
-    const resources = files
-        .filter(file => path.basename(file).charAt(0) !== '.')
-        .map(file => ({
-            // rel: ...
-            href: file.replace(`${state.distDir}/`, ''),
-            type: mime.lookup(file),
-        }))
+  const manifest = {
+    '@context': 'https://readium.org/webpub-manifest/context.jsonld',
 
-    const manifest = {
-        '@context': 'https://readium.org/webpub-manifest/context.jsonld',
+    metadata: {
+      '@type': 'http://schema.org/Book',
+      title: getBookMetadata('title', state),
+      author: getBookMetadata('creator', state),
+      identifier: getBookMetadata('identifier', state),
+      language: getBookMetadata('language', state),
+      publisher: getBookMetadata('publisher', state),
+      modified: new Date().toISOString(),
+    },
 
-        metadata: {
-            '@type': 'http://schema.org/Book',
-            title: getBookMetadata('title', state),
-            author: getBookMetadata('creator', state),
-            identifier: getBookMetadata('identifier', state),
-            language: getBookMetadata('language', state),
-            publisher: getBookMetadata('publisher', state),
-            modified: new Date().toISOString(),
-        },
+    links: [
+      {
+        rel: 'self',
+        href: `${remoteURL}/manifest.json`,
+        type: 'application/webpub+json',
+      },
+      // { rel: 'alternate', href: `${remoteURL}/publication.epub`, type: 'application/epub+zip' },
+      // { rel: 'search', href: `${remoteURL}/search{?query}`, type: 'text/html', templated: true },
+    ],
 
-        links: [
-            { rel: 'self', href: `${remoteURL}/manifest.json`, type: 'application/webpub+json' },
-            // { rel: 'alternate', href: `${remoteURL}/publication.epub`, type: 'application/epub+zip' },
-            // { rel: 'search', href: `${remoteURL}/search{?query}`, type: 'text/html', templated: true },
-        ],
+    readingOrder,
+    resources,
+  }
 
-        readingOrder,
-        resources,
-    }
-
-    return manifest
+  return manifest
 }
