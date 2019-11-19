@@ -12,8 +12,8 @@
 @import 'settings';
 
 // Get these from sibling theme
-@import '../b-ber-theme-serif/mixins';
-@import '../b-ber-theme-serif/debug';
+@import 'node_modules/@canopycanopycanopy/b-ber-theme-serif/mixins';
+@import 'node_modules/@canopycanopycanopy/b-ber-theme-serif/debug';
 
 // for validation while building on CLI, not an actual setting
 $build: 'epub' !default;
@@ -55,8 +55,8 @@ $modularscale: (
 );
 
 // Get these from sibling theme
-@import '../b-ber-theme-serif/typography/typography';
-@import '../b-ber-theme-serif/layout/layout';
+@import 'node_modules/@canopycanopycanopy/b-ber-theme-serif/typography/typography';
+@import 'node_modules/@canopycanopycanopy/b-ber-theme-serif/layout/layout';
 
 // base styles
 //

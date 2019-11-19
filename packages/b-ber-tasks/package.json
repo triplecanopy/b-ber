@@ -1,73 +1,73 @@
 {
-    "name": "@canopycanopycanopy/b-ber-tasks",
-    "version": "1.0.9",
-    "description": "",
-    "main": "dist/index.js",
-    "scripts": {
-        "prepare:dist": "BABEL_ENV=production babel --config-file ../../babel.config.js -d dist/ src/ --ignore **/__tests__/**,src/web/search.js,src/web/worker.js,src/web/navigation.js,src/web/event-handlers.js,src/serve/server.js && npm run copy",
-        "copy": "./copy.sh",
-        "clean": "rimraf dist",
-        "prepare": "npm run clean && npm run prepare:dist",
-        "build": "npm run prepare",
-        "watch": "npm run copy && BABEL_ENV=production babel --config-file ../../babel.config.js -d dist/ src/ --watch src --ignore **/__tests__/**,src/web/search.js,src/web/worker.js,src/web/navigation.js,src/web/event-handlers.js,src/serve/server.js",
-        "test": "jest"
-    },
-    "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
-    "license": "GPL-3.0-or-later",
-    "publishConfig": {
-        "access": "public"
-    },
-    "dependencies": {
-        "@canopycanopycanopy/b-ber-lib": "1.0.9",
-        "@canopycanopycanopy/b-ber-logger": "1.0.9",
-        "@canopycanopycanopy/b-ber-markdown-renderer": "1.0.9",
-        "@canopycanopycanopy/b-ber-reader": "1.0.9",
-        "@canopycanopycanopy/b-ber-resources": "1.0.9",
-        "@canopycanopycanopy/b-ber-shapes-sequences": "1.0.9",
-        "@canopycanopycanopy/b-ber-templates": "1.0.9",
-        "autoprefixer": "^9.6.1",
-        "browser-sync": "^2.26.7",
-        "bs-html-injector": "^3.0.3",
-        "cheerio": "^1.0.0-rc.2",
-        "core-js": "^3.1.4",
-        "css": "^2.2.1",
-        "epub-zipper": "^1.2.15",
-        "fs-extra": "^8.1.0",
-        "glob": "^7.1.4",
-        "image-size": "^0.7.4",
-        "layouts": "^3.0.2",
-        "lodash": "^4.17.11",
-        "lunr": "^2.1.6",
-        "node-sass": "^4.11.0",
-        "postcss": "^7.0.14",
-        "pureimage": "^0.1.6",
-        "recursive-readdir": "^2.2.2",
-        "system": "^2.0.1",
-        "uglify-js": "^3.4.0",
-        "vinyl": "^2.2.0",
-        "webpage": "^0.3.0"
-    },
-    "devDependencies": {
-        "@babel/cli": "^7.5.0",
-        "jest": "^24.8.0",
-        "mock-fs": "^4.4.2",
-        "rimraf": "^2.6.3"
-    },
-    "files": [
-        "dist"
-    ],
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/triplecanopy/b-ber.git"
-    },
-    "bugs": {
-        "url": "https://github.com/triplecanopy/b-ber/issues"
-    },
-    "contributors": [
-        {
-            "name": "Maxwell Simmer",
-            "email": "maxwellsimmer.com@gmail.com",
-            "url": "https://maxwellsimmer.com"
-        }
-    ]
+  "name": "@canopycanopycanopy/b-ber-tasks",
+  "version": "1.0.9",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "prepare:dist": "BABEL_ENV=production babel --config-file ../../babel.config.js -d dist/ src/ --ignore **/__tests__/**,src/web/search.js,src/web/worker.js,src/web/navigation.js,src/web/event-handlers.js,src/serve/server.js && npm run copy",
+    "copy": "./copy.sh",
+    "clean": "rimraf dist",
+    "prepare": "npm run clean && npm run prepare:dist",
+    "build": "npm run prepare",
+    "watch": "npm run copy && BABEL_ENV=production babel --config-file ../../babel.config.js -d dist/ src/ --watch src --ignore **/__tests__/**,src/web/search.js,src/web/worker.js,src/web/navigation.js,src/web/event-handlers.js,src/serve/server.js",
+    "test": "jest"
+  },
+  "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
+  "license": "GPL-3.0-or-later",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@canopycanopycanopy/b-ber-lib": "1.0.9",
+    "@canopycanopycanopy/b-ber-logger": "1.0.9",
+    "@canopycanopycanopy/b-ber-markdown-renderer": "1.0.9",
+    "@canopycanopycanopy/b-ber-reader": "1.0.9",
+    "@canopycanopycanopy/b-ber-resources": "1.0.9",
+    "@canopycanopycanopy/b-ber-shapes-sequences": "1.0.9",
+    "@canopycanopycanopy/b-ber-templates": "1.0.9",
+    "autoprefixer": "^9.6.1",
+    "browser-sync": "^2.26.7",
+    "bs-html-injector": "^3.0.3",
+    "cheerio": "^1.0.0-rc.2",
+    "core-js": "^3.1.4",
+    "css": "^2.2.1",
+    "epub-zipper": "^1.2.15",
+    "fs-extra": "^8.1.0",
+    "glob": "^7.1.4",
+    "image-size": "^0.7.4",
+    "layouts": "^3.0.2",
+    "lodash": "^4.17.11",
+    "lunr": "^2.1.6",
+    "node-sass": "^4.11.0",
+    "postcss": "^7.0.14",
+    "pureimage": "^0.1.6",
+    "recursive-readdir": "^2.2.2",
+    "system": "^2.0.1",
+    "uglify-js": "^3.4.0",
+    "vinyl": "^2.2.0",
+    "webpage": "^0.3.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.5.0",
+    "jest": "^24.8.0",
+    "mock-fs": "^4.4.2",
+    "rimraf": "^2.6.3"
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/triplecanopy/b-ber.git"
+  },
+  "bugs": {
+    "url": "https://github.com/triplecanopy/b-ber/issues"
+  },
+  "contributors": [
+    {
+      "name": "Maxwell Simmer",
+      "email": "maxwellsimmer.com@gmail.com",
+      "url": "https://maxwellsimmer.com"
+    }
+  ]
 }

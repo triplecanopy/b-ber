@@ -37,7 +37,7 @@ $success: #5050c5 !default;
 
 // Set `$grey` in case of e-ink readers
 @if $build == 'mobi' {
-    $grey: $black;
+  $grey: $black;
 }
 
 // Layout

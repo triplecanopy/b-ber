@@ -3,23 +3,30 @@
 import path from 'path'
 import fs from 'fs-extra'
 import { uniq } from 'lodash'
-import defaultThemes from '@canopycanopycanopy/b-ber-themes'
+import themeSerif from '@canopycanopycanopy/b-ber-theme-serif'
+import themeSans from '@canopycanopycanopy/b-ber-theme-sans'
 import log from '@canopycanopycanopy/b-ber-logger'
 import YamlAdaptor from './YamlAdaptor'
 import state from './State'
 import { safeWrite } from './utils'
 
+const defaultThemes = {
+  'b-ber-theme-serif': themeSerif,
+  'b-ber-theme-sans': themeSans,
+}
+
 // get any themes installed via npm.
 const getVendorThemes = () => {
   const packageJSON = path.resolve('package.json')
-  const themes = []
+  if (!fs.existsSync(packageJSON)) return []
 
-  if (!fs.existsSync(packageJSON)) return themes
+  let themes = []
+  let { dependencies, devDependencies } = fs.readJSONSync(packageJSON)
+  dependencies = dependencies ? Object.keys(dependencies) : []
+  devDependencies = devDependencies ? Object.keys(devDependencies) : []
 
-  const pkg = fs.readJSONSync(packageJSON)
-
-  if (pkg.dependencies) themes.push(...Object.keys(pkg.dependencies))
-  if (pkg.devDependencies) themes.push(...Object.keys(pkg.devDependencies))
+  themes = themes.concat(dependencies, devDependencies)
+  themes = themes.filter(name => /^b-ber-theme/.test(name))
 
   return themes
 }

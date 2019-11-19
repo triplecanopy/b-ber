@@ -9,11 +9,17 @@ import remove from 'lodash/remove'
 import path from 'path'
 import fs from 'fs-extra'
 import mime from 'mime-types'
-import themes from '@canopycanopycanopy/b-ber-themes'
+import themeSerif from '@canopycanopycanopy/b-ber-theme-serif'
+import themeSans from '@canopycanopycanopy/b-ber-theme-sans'
 import log from '@canopycanopycanopy/b-ber-logger'
 import Yaml from './Yaml'
 import Config from './Config'
 import Spine from './Spine'
+
+const themes = {
+  'b-ber-theme-serif': themeSerif,
+  'b-ber-theme-sans': themeSans,
+}
 
 const randomHash = () => crypto.randomBytes(20).toString('hex')
 
