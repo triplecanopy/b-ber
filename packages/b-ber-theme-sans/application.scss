@@ -6,14 +6,14 @@
 
 // Load vendor libs
 // https://github.com/modularscale/modularscale-sass
-@import 'node_modules/modularscale-sass/stylesheets/_modularscale';
+@import '~modularscale-sass/stylesheets/_modularscale';
 
 // Serif settings
 @import 'settings';
 
 // Get these from sibling theme
-@import 'node_modules/@canopycanopycanopy/b-ber-theme-serif/mixins';
-@import 'node_modules/@canopycanopycanopy/b-ber-theme-serif/debug';
+@import '~@canopycanopycanopy/b-ber-theme-serif/mixins';
+@import '~@canopycanopycanopy/b-ber-theme-serif/debug';
 
 // for validation while building on CLI, not an actual setting
 $build: 'epub' !default;
@@ -55,8 +55,8 @@ $modularscale: (
 );
 
 // Get these from sibling theme
-@import 'node_modules/@canopycanopycanopy/b-ber-theme-serif/typography/typography';
-@import 'node_modules/@canopycanopycanopy/b-ber-theme-serif/layout/layout';
+@import '~@canopycanopycanopy/b-ber-theme-serif/typography/typography';
+@import '~@canopycanopycanopy/b-ber-theme-serif/layout/layout';
 
 // base styles
 //

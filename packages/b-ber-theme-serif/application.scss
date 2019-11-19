@@ -6,7 +6,7 @@
 
 // Load vendor libs
 // https://github.com/modularscale/modularscale-sass
-@import 'node_modules/modularscale-sass/stylesheets/_modularscale';
+@import '~modularscale-sass/stylesheets/_modularscale';
 
 @import 'settings';
 @import 'mixins';

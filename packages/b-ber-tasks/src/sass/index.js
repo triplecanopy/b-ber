@@ -5,6 +5,7 @@ import postcss from 'postcss'
 import autoprefixer from 'autoprefixer'
 import log from '@canopycanopycanopy/b-ber-logger'
 import state from '@canopycanopycanopy/b-ber-lib/State'
+import importer from 'node-sass-custom-importer'
 
 // dirnames that may be referenced in the theme. we copy over assets when
 // running the sass task
@@ -113,6 +114,11 @@ const renderCSS = scssString =>
   new Promise(resolve =>
     nodeSass.render(
       {
+        // importer allows use of '~' to denote node_modules directory in SCSS files
+        // https://github.com/delacruz-dev/node-sass-custom-importer
+        importer,
+        // Add build vars at runtime with the SCSS buffer (which is transformed
+        // to string in the backticks)
         data: `$build: "${state.build}";${scssString}`,
         includePaths: [
           state.src.stylesheets(),
