@@ -71,7 +71,7 @@ class Spine {
     }, [])
   }
 
-  flattenYAML(data) {
+  flattenYAML(data = []) {
     return data.reduce((acc, curr) => {
       if (isPlainObject(curr)) {
         if (Object.keys(curr)[0] === 'section') {

@@ -21,7 +21,8 @@ class YamlAdaptor {
     } catch (err) {
       log.error(err)
     }
-    return yaml.safeLoad(data)
+
+    return data ? yaml.safeLoad(data) : []
   }
 
   static dump(str) {
