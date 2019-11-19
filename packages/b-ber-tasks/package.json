@@ -9,7 +9,7 @@
         "clean": "rimraf dist",
         "prepare": "npm run clean && npm run prepare:dist",
         "build": "npm run prepare",
-        "watch": "BABEL_ENV=production babel --config-file ../../babel.config.js -d dist/ src/ --watch src --ignore **/__tests__/**,src/web/search.js,src/web/worker.js,src/web/navigation.js,src/web/event-handlers.js,src/serve/server.js",
+        "watch": "npm run copy && BABEL_ENV=production babel --config-file ../../babel.config.js -d dist/ src/ --watch src --ignore **/__tests__/**,src/web/search.js,src/web/worker.js,src/web/navigation.js,src/web/event-handlers.js,src/serve/server.js",
         "test": "jest"
     },
     "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
