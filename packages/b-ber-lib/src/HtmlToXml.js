@@ -1,152 +1,169 @@
-import htmlparser from 'htmlparser2'
-import isArray from 'lodash/isArray'
+import { Parser } from 'htmlparser2'
 
-class HtmlToXml {
-  constructor(customElements) {
-    const defaultElements = [
-      'pullquote',
-      'blockquote',
-      'epigraph',
-      'dialogue',
-      'gallery',
-      'spread',
-      'colophon',
-      'appendix',
-      'subtitle',
-      'frontmatter',
-      'backmatter',
-      'meta-content',
-      'bibliography',
-      'masthead',
-      'figcaption',
-      'subchapter',
-    ]
+class HtmlToXmlParser {
+  constructor({ content, onEndCallback }) {
+    this.customElementNames = {
+      pullquote: true,
+      blockquote: true,
+      epigraph: true,
+      dialogue: true,
+      gallery: true,
+      spread: true,
+      colophon: true,
+      appendix: true,
+      subtitle: true,
+      frontmatter: true,
+      backmatter: true,
+      'meta-content': true,
+      bibliography: true,
+      masthead: true,
+      figcaption: true,
+      subchapter: true,
+    }
 
-    this.customElements =
-      customElements && isArray(customElements)
-        ? [...customElements, ...defaultElements]
-        : defaultElements
-    this.whitelistedAttrs = [
-      'src',
-      'href',
-      'xlink:href',
-      'xmlns',
-      'xmlns:xlink',
-    ]
-    this.blacklistedTags = [
-      'html',
-      'head',
-      'title',
-      'meta',
-      'link',
-      'script',
-      'body',
-    ]
+    this.whitelistedAttributes = {
+      src: true,
+      href: true,
+      'xlink:href': true,
+      xmlns: true,
+      'xmlns:xlink': true,
+    }
+
+    this.blacklistedTagNames = {
+      html: true,
+      head: true,
+      title: true,
+      meta: true,
+      link: true,
+      script: true,
+      body: true,
+    }
+
+    this.containingTagNames = {
+      div: true,
+      span: true,
+      section: true,
+    }
+
+    this.content = content
+    this.onEndCallback = onEndCallback
+
     this.output = ''
-    this.tagnames = []
-    this.noop = false
+    this.tagList = []
+
+    this.onopentag = this.onopentag.bind(this)
+    this.ontext = this.ontext.bind(this)
+    this.onclosetag = this.onclosetag.bind(this)
+    this.onend = this.onend.bind(this)
   }
 
-  appendXMLDeclaration() {
+  writeXMLDeclaration() {
     this.output += '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
-    return this
   }
 
-  prependBody() {
-    this.output += '<body>'
-    return this
+  // eslint-disable-next-line class-methods-use-this
+  renameAttribute(name, attribute) {
+    const elementAttributeNames = {
+      img: { src: 'href' },
+    }
+    if (!elementAttributeNames[name]) return attribute
+    return elementAttributeNames[name][attribute] || attribute
   }
 
-  appendBody() {
-    this.output += '</body>'
-    return this
+  writeTagOpen(name, attributes = {}) {
+    let tag = [name]
+
+    tag = Object.entries(attributes).reduce(
+      (acc, [key, val]) =>
+        this.whitelistedAttributes[key]
+          ? acc.concat(`${this.renameAttribute(name, key)}="${val}"`)
+          : acc,
+      tag
+    )
+
+    tag = tag.join(' ')
+    this.output += `<${tag}>`
   }
 
-  appendComment(fname) {
-    this.output += `\n<!-- \n${fname}\n -->\n\n`
-    return this
+  writeTagClose(name) {
+    this.output += `</${name}>`
+    this.output += '\n'
   }
 
-  parse(content) {
-    const _this = this // eslint-disable-line consistent-this
-    _this.appendXMLDeclaration()
-    // _this.appendComment(arr[index])
-    _this.prependBody()
+  addTag(name) {
+    this.tagList.push(name)
+  }
 
-    const parser = new htmlparser.Parser(
+  removeTag() {
+    return this.tagList.pop()
+  }
+
+  getTag() {
+    if (!this.tagList.length) return null
+    return this.tagList[this.tagList.length - 1]
+  }
+
+  onopentag(name, attributes) {
+    if (this.blacklistedTagNames[name]) return
+
+    if (name === 'body') {
+      if (attributes && attributes.class) {
+        // eslint-disable-next-line no-param-reassign
+        name = attributes.class.replace(/\s+/g, '-')
+      }
+    } else if (this.containingTagNames[name]) {
+      if (attributes && attributes.class) {
+        const classNames = attributes.class.split(' ')
+
+        for (let i = 0; i < classNames.length; i++) {
+          if (this.customElementNames[classNames[i]]) {
+            // eslint-disable-next-line no-param-reassign
+            name = classNames[i]
+          }
+        }
+      }
+    }
+
+    this.addTag(name)
+    this.writeTagOpen(name, attributes)
+  }
+
+  ontext(text) {
+    if (!text.trim()) return
+
+    const name = this.getTag()
+    if (!name || this.blacklistedTagNames[name]) return
+
+    this.output += text
+  }
+
+  onclosetag() {
+    const name = this.removeTag()
+    if (name) this.writeTagClose(name)
+  }
+
+  onend() {
+    this.writeTagClose('body')
+    this.onEndCallback(this.output)
+  }
+
+  parse() {
+    this.writeXMLDeclaration()
+    this.writeTagOpen('body')
+
+    const parser = new Parser(
       {
-        onopentag(name, attrs) {
-          _this.noop = false
-          switch (name) {
-            case 'html':
-            case 'head':
-            case 'title':
-            case 'meta':
-            case 'link':
-            case 'script':
-              _this.noop = true
-              break
-            case 'body':
-              if (attrs && attrs.class) {
-                _this.tagnames.push(attrs.class.replace(/\s+/g, '-'))
-              }
-              break
-            case 'div':
-            case 'span':
-            case 'section': {
-              let tagname = name
-              if (attrs && attrs.class) {
-                const klasses = attrs.class.split(' ')
-                for (let i = 0; i < klasses.length; i++) {
-                  if (_this.customElements.indexOf(klasses[i]) > -1) {
-                    tagname = klasses[i]
-                    break
-                  }
-                }
-              }
-              _this.tagnames.push(tagname)
-              break
-            }
-            default:
-              _this.tagnames.push(name)
-              break
-          }
-
-          if (_this.noop) return
-          const tag = []
-          const tagname = _this.tagnames[_this.tagnames.length - 1]
-          if (tagname && _this.blacklistedTags.indexOf(tagname) < 0) {
-            Object.entries(attrs).forEach(([key, val]) => {
-              if (_this.whitelistedAttrs.includes(key)) {
-                tag.push(`${key}="${val}"`)
-              }
-            })
-
-            tag.unshift(tagname)
-            _this.output += `<${tag.join(' ')}>`
-          }
-        },
-        ontext(text) {
-          const tagname = _this.tagnames[_this.tagnames.length - 1]
-          if (tagname && _this.blacklistedTags.indexOf(tagname) < 0) {
-            _this.output += text
-          }
-        },
-        onclosetag() {
-          const tagname = _this.tagnames.pop()
-          if (tagname) _this.output += `</${tagname}>`
-        },
-        onend() {
-          _this.appendBody()
-          _this.onend(_this.output)
-        },
+        onclosetag: this.onclosetag,
+        onopentag: this.onopentag,
+        ontext: this.ontext,
+        onend: this.onend,
       },
       { decodeEntities: false }
     )
 
-    parser.write(content)
+    parser.write(this.content)
     parser.end()
   }
 }
 
-export default HtmlToXml
+export default HtmlToXmlParser
