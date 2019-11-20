@@ -59,7 +59,7 @@ class WebFlow {
 
   getFiguresPageIndex() {
     const fileName = 'figures-titlepage'
-    return findIndex(this.spine, { fileName })
+    return findIndex(this.spine.flattened, { fileName })
   }
 
   addFiguresToSpine() {
@@ -68,7 +68,7 @@ class WebFlow {
     const figuresPageIndex = this.getFiguresPageIndex()
     if (figuresPageIndex < 0) return
 
-    this.spine.splice(figuresPageIndex + 1, 0, ...this.loi)
+    this.spine.flattened.splice(figuresPageIndex + 1, 0, ...this.loi)
   }
 
   removeNonLinearEntriesFromSpine() {
