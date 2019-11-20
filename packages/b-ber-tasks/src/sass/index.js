@@ -5,7 +5,6 @@ import postcss from 'postcss'
 import autoprefixer from 'autoprefixer'
 import log from '@canopycanopycanopy/b-ber-logger'
 import state from '@canopycanopycanopy/b-ber-lib/State'
-import importer from 'node-sass-custom-importer'
 
 // dirnames that may be referenced in the theme. we copy over assets when
 // running the sass task
@@ -110,16 +109,41 @@ const copyThemeAssets = () => {
   return Promise.all(promises)
 }
 
+function resolveImportedModule(url) {
+  const importTree = url.split(path.sep)
+  const moduleName = importTree.shift()
+
+  const modulePath = require.resolve(moduleName, {
+    paths: [path.join(path.dirname(state.theme.entry))],
+  })
+
+  // No path was provided, return the imported node module
+  if (!importTree.length) {
+    return modulePath
+  }
+
+  // User is importing a specific file, find it and return its location
+  const moduleIndex = modulePath.indexOf(moduleName) + moduleName.length
+  const packagePath = modulePath.slice(0, moduleIndex)
+  const importedModule = path.join(packagePath, ...importTree)
+
+  return importedModule
+}
+
 const renderCSS = scssString =>
   new Promise(resolve =>
     nodeSass.render(
       {
-        // importer allows use of '~' to denote node_modules directory in SCSS files
-        // https://github.com/delacruz-dev/node-sass-custom-importer
-        importer,
+        // Importer allows use of '~' to denote node_modules directory in SCSS files
+        importer: (url, file, done) =>
+          url[0] === '~'
+            ? done({ file: resolveImportedModule(url.replace('~', '')) })
+            : done({ file: url }),
+
         // Add build vars at runtime with the SCSS buffer (which is transformed
         // to string in the backticks)
         data: `$build: "${state.build}";${scssString}`,
+
         includePaths: [
           state.src.stylesheets(),
           path.dirname(state.theme.entry),

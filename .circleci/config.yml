@@ -65,5 +65,6 @@ jobs:
             - ~/b-ber/packages/b-ber-shapes-sequences/node_modules
             - ~/b-ber/packages/b-ber-tasks/node_modules
             - ~/b-ber/packages/b-ber-templates/node_modules
-            - ~/b-ber/packages/b-ber-themes/node_modules
+            - ~/b-ber/packages/b-ber-theme-serif/node_modules
+            - ~/b-ber/packages/b-ber-theme-sans/node_modules
           key: npm-packages-v1-{{ .Branch }}-{{ checksum "package-lock.json" }}
