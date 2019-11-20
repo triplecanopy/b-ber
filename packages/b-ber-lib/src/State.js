@@ -1,6 +1,7 @@
 import crypto from 'crypto'
 import isPlainObject from 'lodash/isPlainObject'
 import isArray from 'lodash/isArray'
+import find from 'lodash/find'
 import findIndex from 'lodash/findIndex'
 import set from 'lodash/set'
 import get from 'lodash/get'
@@ -260,6 +261,11 @@ class State {
   }
 
   contains = (coll, value) => this.indexOf(coll, value) > -1
+
+  find = (coll, pred) => {
+    const collection = get(this, coll)
+    return find(collection, pred)
+  }
 
   indexOf = (coll, pred) => {
     const collection = get(this, coll)

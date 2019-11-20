@@ -7,8 +7,8 @@ export default function markdownItFootnotePlugin(self) {
     const entry = find(state.spine, { fileName })
     const title = entry && entry.title ? entry.title : fileName
 
-    // add footnote container and heading. we're doing this here instead
-    // of in `footnotes.js` because we need some file info (just the title :/)
+    // Add footnote container and heading. Doing this here instead of in
+    // `footnotes.js` because we need the file's title
     tokens.unshift(
       {
         type: 'block',
@@ -28,6 +28,7 @@ export default function markdownItFootnotePlugin(self) {
     const notes = self.markdownIt.renderer.render(tokens, 0, {
       reference: `${fileName}.xhtml`,
     })
+
     state.add('footnotes', { fileName, title, notes })
   }
 }
