@@ -57,26 +57,29 @@ class Navigation {
     // Add the missing entries to the YAML file (either toc.yml or type.yml)
     missingEntries.forEach(name => {
       if (state.contains('loi', { name })) return
-      const entry = state.find('spine.flattened', { name })
 
-      // Get attributes that may have been dynamically added to the entry and
-      // list them in the YAML
-      const { linear, in_toc } = entry // eslint-disable-line camelcase
-      const attributes = {}
-      if (linear === false) attributes.linear = false
-      if (in_toc === false) attributes.in_toc = false // eslint-disable-line camelcase
+      const entry = state.find('spine.flattened', { name })
 
       let yamlString = `\n- ${name}`
 
       // If the entry has default attributes only write the name, otherwise
       // write the attributes along with the name
-      if (Object.keys(attributes).length) {
-        const space = '\n    '
-        yamlString += ':'
-        yamlString = Object.entries(attributes).reduce(
-          (acc, [key, val]) => acc.concat(`${space}${key}: ${val}`),
-          yamlString
-        )
+      if (entry) {
+        // Get attributes that may have been dynamically added to the entry and
+        // list them in the YAML
+        const { linear, in_toc } = entry // eslint-disable-line camelcase
+        const attributes = {}
+        if (linear === false) attributes.linear = false
+        if (in_toc === false) attributes.in_toc = false // eslint-disable-line camelcase
+
+        if (Object.keys(attributes).length) {
+          const space = '\n    '
+          yamlString += ':'
+          yamlString = Object.entries(attributes).reduce(
+            (acc, [key, val]) => acc.concat(`${space}${key}: ${val}`),
+            yamlString
+          )
+        }
       }
 
       missing.push(name)
