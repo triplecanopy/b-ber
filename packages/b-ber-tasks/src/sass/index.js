@@ -111,7 +111,9 @@ const copyThemeAssets = () => {
 
 function resolveImportedModule(url) {
   const importTree = url.split(path.sep)
-  const moduleName = importTree.shift()
+
+  let moduleName = importTree.shift()
+  if (moduleName[0] === '@') moduleName += `/${importTree.shift()}` // Allow scoped packages
 
   const modulePath = require.resolve(moduleName, {
     paths: [path.join(path.dirname(state.theme.entry))],
