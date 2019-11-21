@@ -1,4 +1,6 @@
+import path from 'path'
 import { Parser } from 'htmlparser2'
+import state from './State'
 
 class HtmlToXmlParser {
   constructor({ content, onEndCallback }) {
@@ -27,6 +29,7 @@ class HtmlToXmlParser {
       'xlink:href': true,
       xmlns: true,
       'xmlns:xlink': true,
+      class: true,
     }
 
     this.blacklistedTagNames = {
@@ -45,6 +48,17 @@ class HtmlToXmlParser {
       section: true,
     }
 
+    this.elementAttributeNames = {
+      img: { src: 'href' },
+    }
+
+    this.elementAttributeTransformers = {
+      img: {
+        src: value =>
+          `file://${path.resolve(state.dist.images(path.basename(value)))}`,
+      },
+    }
+
     this.content = content
     this.onEndCallback = onEndCallback
 
@@ -61,13 +75,20 @@ class HtmlToXmlParser {
     this.output += '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
   }
 
-  // eslint-disable-next-line class-methods-use-this
   renameAttribute(name, attribute) {
-    const elementAttributeNames = {
-      img: { src: 'href' },
+    if (!this.elementAttributeNames[name]) return attribute
+    return this.elementAttributeNames[name][attribute] || attribute
+  }
+
+  transformAttributeValue(name, attribute, value) {
+    if (
+      !this.elementAttributeTransformers[name] ||
+      !this.elementAttributeTransformers[name][attribute]
+    ) {
+      return value
     }
-    if (!elementAttributeNames[name]) return attribute
-    return elementAttributeNames[name][attribute] || attribute
+
+    return this.elementAttributeTransformers[name][attribute](value)
   }
 
   writeTagOpen(name, attributes = {}) {
@@ -76,7 +97,12 @@ class HtmlToXmlParser {
     tag = Object.entries(attributes).reduce(
       (acc, [key, val]) =>
         this.whitelistedAttributes[key]
-          ? acc.concat(`${this.renameAttribute(name, key)}="${val}"`)
+          ? acc.concat(
+              `${this.renameAttribute(
+                name,
+                key
+              )}="${this.transformAttributeValue(name, key, val)}"`
+            )
           : acc,
       tag
     )
@@ -158,7 +184,9 @@ class HtmlToXmlParser {
         ontext: this.ontext,
         onend: this.onend,
       },
-      { decodeEntities: false }
+      {
+        decodeEntities: false,
+      }
     )
 
     parser.write(this.content)
