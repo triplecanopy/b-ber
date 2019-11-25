@@ -2,6 +2,7 @@ import path from 'path'
 import fs from 'fs-extra'
 import isPlainObject from 'lodash/isPlainObject'
 import isString from 'lodash/isString'
+import findIndex from 'lodash/findIndex'
 import log from '@canopycanopycanopy/b-ber-logger'
 import HtmlToXmlParser from '@canopycanopycanopy/b-ber-lib/HtmlToXml'
 import state from '@canopycanopycanopy/b-ber-lib/State'
@@ -38,9 +39,17 @@ const parseHTMLFiles = files =>
   })
 
 const xml = () => {
-  const files = state.spine.flattened
-    .map(entry => `${entry.absolutePath}${fileExtension}`)
-    .concat(state.loi.map(entry => entry.absolutePath))
+  let files = [...state.spine.flattened]
+  const figuresTitlePageIndex = findIndex(files, {
+    fileName: 'figures-titlepage',
+  })
+
+  files = files.map(entry => `${entry.absolutePath}${fileExtension}`)
+
+  if (figuresTitlePageIndex > 0 && state.loi.length) {
+    const loi = state.loi.map(entry => entry.absolutePath)
+    files.splice(figuresTitlePageIndex + 1, 0, ...loi)
+  }
 
   return parseHTMLFiles(files)
     .then(writeXML)

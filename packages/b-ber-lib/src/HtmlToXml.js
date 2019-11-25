@@ -23,6 +23,65 @@ class HtmlToXmlParser {
       subchapter: true,
     }
 
+    this.inlineElementNames = {
+      pagebreak: true,
+      a: false,
+      abbr: true,
+      acronym: true,
+      audio: false,
+      b: true,
+      bdi: true,
+      bdo: true,
+      big: true,
+      br: false,
+      button: false,
+      canvas: true,
+      cite: true,
+      code: true,
+      data: true,
+      datalist: true,
+      del: true,
+      dfn: true,
+      em: true,
+      embed: false,
+      i: true,
+      iframe: false,
+      img: false,
+      input: false,
+      ins: true,
+      kbd: true,
+      label: false,
+      map: true,
+      mark: true,
+      meter: true,
+      noscript: false,
+      object: false,
+      output: true,
+      picture: false,
+      progress: false,
+      q: true,
+      ruby: true,
+      s: true,
+      samp: true,
+      script: false,
+      select: false,
+      slot: true,
+      small: true,
+      span: true,
+      strong: true,
+      sub: true,
+      sup: true,
+      svg: true,
+      template: true,
+      textarea: false,
+      time: true,
+      u: true,
+      tt: true,
+      var: true,
+      video: false,
+      wbr: true,
+    }
+
     this.whitelistedAttributes = {
       src: true,
       href: true,
@@ -40,6 +99,8 @@ class HtmlToXmlParser {
       link: true,
       script: true,
       body: true,
+      video: true,
+      audio: true,
     }
 
     this.containingTagNames = {
@@ -50,12 +111,17 @@ class HtmlToXmlParser {
 
     this.elementAttributeNames = {
       img: { src: 'href' },
+      source: { src: 'href' },
     }
 
     this.elementAttributeTransformers = {
       img: {
         src: value =>
           `file://${path.resolve(state.dist.images(path.basename(value)))}`,
+      },
+      source: {
+        src: value =>
+          `file://${path.resolve(state.dist.media(path.basename(value)))}`,
       },
     }
 
@@ -69,6 +135,10 @@ class HtmlToXmlParser {
     this.ontext = this.ontext.bind(this)
     this.onclosetag = this.onclosetag.bind(this)
     this.onend = this.onend.bind(this)
+  }
+
+  writePageBreak() {
+    this.output += '<pagebreak></pagebreak>'
   }
 
   writeXMLDeclaration() {
@@ -107,13 +177,23 @@ class HtmlToXmlParser {
       tag
     )
 
+    if (attributes.class) {
+      const classNames = new Set(attributes.class.split(' '))
+      if (
+        (classNames.has('figure__large') && classNames.has('figure__inline')) ||
+        classNames.has('gallery__item')
+      ) {
+        this.writePageBreak()
+      }
+    }
+
     tag = tag.join(' ')
     this.output += `<${tag}>`
   }
 
   writeTagClose(name) {
     this.output += `</${name}>`
-    this.output += '\n'
+    if (!this.inlineElementNames[name]) this.output += '\n'
   }
 
   addTag(name) {
@@ -129,16 +209,26 @@ class HtmlToXmlParser {
     return this.tagList[this.tagList.length - 1]
   }
 
-  onopentag(name, attributes) {
+  onopentag(name, attributes = {}) {
     if (this.blacklistedTagNames[name]) return
 
     if (name === 'body') {
-      if (attributes && attributes.class) {
+      // Special case for body
+      if (attributes.class) {
         // eslint-disable-next-line no-param-reassign
         name = attributes.class.replace(/\s+/g, '-')
       }
+    } else if (name === 'source') {
+      // Handle both audio and video elements' source tags. The audio and video
+      // elements themselves are blacklisted, so the child sources are used as
+      // the XML tags for the mp3/mp4s. Only allow mp3/mp4 file extensions since
+      // those are the only formats supported by INDD.
+      if (!attributes.src || !/\.mp[34]$/i.test(attributes.src)) {
+        return
+      }
     } else if (this.containingTagNames[name]) {
-      if (attributes && attributes.class) {
+      // Generic tag
+      if (attributes.class) {
         const classNames = attributes.class.split(' ')
 
         for (let i = 0; i < classNames.length; i++) {
