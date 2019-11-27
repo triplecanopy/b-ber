@@ -46,7 +46,7 @@ const xml = () => {
 
   files = files.map(entry => `${entry.absolutePath}${fileExtension}`)
 
-  if (figuresTitlePageIndex > 0 && state.loi.length) {
+  if (figuresTitlePageIndex > -1 && state.loi.length) {
     const loi = state.loi.map(entry => entry.absolutePath)
     files.splice(figuresTitlePageIndex + 1, 0, ...loi)
   }
