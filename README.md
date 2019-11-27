@@ -1,3 +1,12 @@
+<h1>
+    <img alt="b-ber" src="https://user-images.githubusercontent.com/4243474/38133122-2af4f794-340e-11e8-8ac9-9b46afecfd9b.png" width="100" alt="b-ber">
+</h1>
+
+[![npm Version](https://img.shields.io/npm/v/@canopycanopycanopy/b-ber-cli.svg)](https://www.npmjs.com/search?q=@canopycanopycanopy)
+[![CircleCI](https://circleci.com/gh/triplecanopy/b-ber.svg?style=svg&circle-token=5cea89db36238e6c769862031a42879123deb6dd)](https://circleci.com/gh/triplecanopy/b-ber)
+[![Maintained with Lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lernajs.io/)
+[![Coverage Status](https://coveralls.io/repos/triplecanopy/b-ber/badge.svg?branch=master)](https://coveralls.io/r/%3Caccount%3E/%3Crepository%3E?branch=master)
+
 b-ber is both a method and an application for producing publications in a variety of formats—EPUB 3, Mobi/KF8, static website, PDF, and XML file, which can be imported into InDesign for print layouts—from a single source that consists of plain-text files and other assets. b-ber also functions as a browser-based EPUB reader, which explains the name.
 
 To get started using b-ber, please visit the [wiki](https://github.com/triplecanopy/b-ber/wiki). To see projects produced with b-ber, please visit our [b-ber demo repository](https://github.com/triplecanopy/b-ber-demos) or [view projects online](https://www.canopycanopycanopy.com/browse?page=1&types=bber_project&sort=published_at_desc) at Triple Canopy.
