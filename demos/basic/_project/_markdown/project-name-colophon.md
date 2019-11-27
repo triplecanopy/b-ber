@@ -3,7 +3,7 @@ title: Project Name Colophon
 type: colophon
 ---
 
-::: colophon:project-name-colophon title:"Project Name Colophon"
+::: colophon:project-name-colophon
 
 *Project Title* by Author
 

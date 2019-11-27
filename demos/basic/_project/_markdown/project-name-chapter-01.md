@@ -3,7 +3,7 @@ title: Project Name Chapter One
 type: bodymatter
 ---
 
-::: chapter:project-name_chapter-one title:"Project Name Chapter One"
+::: chapter:project-name_chapter-one
 
 # Chapter Title
 
