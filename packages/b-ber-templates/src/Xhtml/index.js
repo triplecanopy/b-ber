@@ -6,24 +6,23 @@ class Xhtml {
     // TODO
     // @issue: https://github.com/triplecanopy/b-ber/issues/232
 
-    const robotsMeta = state.config.private
-      ? '<meta name="robots" content="noindex,nofollow"/>'
-      : '<meta name="robots" content="index,follow"/>'
+    const prefix = state.config.private ? 'no' : ''
+    const robots = `<meta name="robots" content="${prefix}index,${prefix}follow"/>`
 
     return new File({
       contents: Buffer.from(`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-                <html xmlns="http://www.w3.org/1999/xhtml"
-                    xmlns:epub="http://www.idpf.org/2007/ops"
-                    xmlns:ibooks="http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0"
-                    epub:prefix="ibooks: http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0">
-                <head>
-                    <title></title>
-                    <meta http-equiv="default-style" content="text/html charset=utf-8"/>
-                    ${robotsMeta}
-                    {% body %}
-                </head>
-                <body>
-        `),
+        <html xmlns="http://www.w3.org/1999/xhtml"
+          xmlns:epub="http://www.idpf.org/2007/ops"
+          xmlns:ibooks="http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0"
+          epub:prefix="ibooks: http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0">
+        <head>
+          <title></title>
+          <meta http-equiv="default-style" content="text/html charset=utf-8"/>
+          ${robots}
+          {% body %}
+        </head>
+        <body>
+      `),
     })
   }
 
@@ -37,12 +36,12 @@ class Xhtml {
 
   static cover({ width, height, href }) {
     return `
-            <section class="cover" style="text-align: center; padding: 0; margin: 0;">
-                <svg xmlns="http://www.w3.org/2000/svg" height="100%" preserveAspectRatio="xMidYMid meet" version="1.1" viewBox="0 0 ${width} ${height}" width="100%" xmlns:xlink="http://www.w3.org/1999/xlink">
-                    <image width="${width}" height="${height}" xlink:href="../${href}"/>
-                </svg>
-            </section>
-        `
+      <section class="cover" style="text-align: center; padding: 0; margin: 0;">
+        <svg xmlns="http://www.w3.org/2000/svg" height="100%" preserveAspectRatio="xMidYMid meet" version="1.1" viewBox="0 0 ${width} ${height}" width="100%" xmlns:xlink="http://www.w3.org/1999/xlink">
+          <image width="${width}" height="${height}" xlink:href="../${href}"/>
+        </svg>
+      </section>
+    `
   }
 
   static stylesheet(inline = false) {
@@ -79,12 +78,12 @@ class Xhtml {
 
   static loi() {
     return `
-            <section epub:type="loi" title="Figures" class="chapter figures">
-                <header>
-                    <h1>Figures</h1>
-                </header>
-            </section>
-        `
+      <section epub:type="loi" class="chapter figures">
+        <header>
+          <h1>Figures</h1>
+        </header>
+      </section>
+    `
   }
 }
 

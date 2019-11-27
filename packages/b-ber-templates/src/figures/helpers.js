@@ -32,9 +32,7 @@ const getMediaInlineClasses = data =>
     : 'figure__large figure__large--media figure__large--square'
 
 const getSectionOpen = ({ inline }) =>
-  inline
-    ? ''
-    : '<section epub:type="loi" title="Figures" class="chapter figures">'
+  inline ? '' : '<section epub:type="loi" class="chapter figures">'
 
 const getImageClassName = (data, ratioName) =>
   getClassNamesArray(data).includes(FULLBLEED_CLASS_NAME)

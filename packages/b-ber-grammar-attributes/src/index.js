@@ -170,14 +170,23 @@ const _extendWithDefaults = (obj, genus) => {
     case 'block':
     case 'misc':
       taxonomy = `${_lookUpFamily(genus)} ${genus}` // -> `bodymatter chapter`
-      if (order === 'block') result.epubTypes = taxonomy
+
+      if (order === 'block') {
+        result.epubTypes = taxonomy
+      }
+
       if (has(obj, 'classes')) {
         taxonomy = `${_lookUpFamily(result.classes)} ${genus}`
-        if (order === 'block') result.epubTypes = taxonomy
+
+        if (order === 'block') {
+          result.epubTypes = taxonomy
+        }
+
         result.classes += ` ${taxonomy}` // -> class="... bodymatter chapter"
       } else {
         result.classes = taxonomy // -> class="bodymatter chapter"
       }
+
       return result
 
     case 'inline':

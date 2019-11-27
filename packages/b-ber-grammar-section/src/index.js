@@ -52,16 +52,14 @@ function handleExitDirective(token) {
   if (isGallery(directive)) {
     // prettier-ignore
     return `</div>
-                </figure>
-                </div>
-                </section>
-                ${comment}`
+            </figure>
+            </div>
+            </section>${comment}`
   }
 
   if (isSpread(directive)) {
     return `</div>
-                </div>
-                ${comment}`
+            </div>${comment}`
   }
 
   return `</section>${comment}`
@@ -77,6 +75,7 @@ function openElement(token, fileName, lineNumber) {
   const comment = Html.comment(
     `START: section:${type}#${htmlId(id)}; ${fileName}:${lineNumber}`
   )
+
   const attrs = attributes(attr, type, { fileName, lineNumber })
   return `${comment}<section id="${htmlId(id)}"${attrs}>`
 }
