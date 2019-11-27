@@ -7,11 +7,11 @@ type: colophon
 
 *Project Title* by Author
 
-Published by Publisher, 2017
+Published by Publisher, 2019
 
 ::: subchapter:credits
 
-© 2016 *Project Title*, by Author. Texts and images copyright the author, unless otherwise stated.
+© 2019 *Project Title*, by Author. Texts and images copyright the author, unless otherwise stated.
 
 ::: exit:credits
 
