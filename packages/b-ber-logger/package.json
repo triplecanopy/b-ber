@@ -1,46 +1,46 @@
 {
-    "name": "@canopycanopycanopy/b-ber-logger",
-    "version": "1.0.9",
-    "description": "",
-    "main": "dist/index.js",
-    "scripts": {
-        "prepare:dist": "BABEL_ENV=production babel --config-file ../../babel.config.js -d dist/ src/ --ignore **/__tests__/**",
-        "prepare": "npm run clean && npm run prepare:dist",
-        "clean": "rimraf dist",
-        "build": "npm run prepare",
-        "watch": "BABEL_ENV=production babel --config-file ../../babel.config.js -d dist/ src/ --watch src",
-        "test": "jest"
-    },
-    "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
-    "license": "GPL-3.0-or-later",
-    "publishConfig": {
-        "access": "public"
-    },
-    "dependencies": {
-        "chalk": "^2.1.0",
-        "lodash.has": "latest",
-        "lodash.isplainobject": "latest"
-    },
-    "devDependencies": {
-        "@babel/cli": "^7.5.0",
-        "jest": "^24.8.0",
-        "rimraf": "^2.6.3"
-    },
-    "files": [
-        "dist"
-    ],
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/triplecanopy/b-ber.git"
-    },
-    "bugs": {
-        "url": "https://github.com/triplecanopy/b-ber/issues"
-    },
-    "contributors": [
-        {
-            "name": "Maxwell Simmer",
-            "email": "maxwellsimmer.com@gmail.com",
-            "url": "https://maxwellsimmer.com"
-        }
-    ]
+  "name": "@canopycanopycanopy/b-ber-logger",
+  "version": "1.0.10",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "prepare:dist": "BABEL_ENV=production babel --config-file ../../babel.config.js -d dist/ src/ --ignore **/__tests__/**",
+    "prepare": "npm run clean && npm run prepare:dist",
+    "clean": "rimraf dist",
+    "build": "npm run prepare",
+    "watch": "BABEL_ENV=production babel --config-file ../../babel.config.js -d dist/ src/ --watch src",
+    "test": "jest"
+  },
+  "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
+  "license": "GPL-3.0-or-later",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "chalk": "^2.1.0",
+    "lodash.has": "latest",
+    "lodash.isplainobject": "latest"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.5.0",
+    "jest": "^24.8.0",
+    "rimraf": "^2.6.3"
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/triplecanopy/b-ber.git"
+  },
+  "bugs": {
+    "url": "https://github.com/triplecanopy/b-ber/issues"
+  },
+  "contributors": [
+    {
+      "name": "Maxwell Simmer",
+      "email": "maxwellsimmer.com@gmail.com",
+      "url": "https://maxwellsimmer.com"
+    }
+  ]
 }

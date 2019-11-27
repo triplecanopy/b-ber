@@ -1,44 +1,44 @@
 {
-    "name": "@canopycanopycanopy/b-ber-resources",
-    "version": "1.0.9",
-    "description": "",
-    "main": "index.js",
-    "scripts": {
-        "test": "jest",
-        "prepare:dist": "BABEL_ENV=production babel --config-file ../../babel.config.js -d ./ src/ --ignore **/__tests__/**",
-        "clean": "rimraf index.js",
-        "prepare": "npm run clean && npm run prepare:dist",
-        "build": "npm run prepare"
-    },
-    "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
-    "license": "GPL-3.0-or-later",
-    "publishConfig": {
-        "access": "public"
-    },
-    "devDependencies": {
-        "@babel/cli": "^7.5.0",
-        "jest": "^24.8.0",
-        "rimraf": "^2.6.3"
-    },
-    "dependencies": {
-        "fs-extra": "^8.1.0"
-    },
-    "files": [
-        "b-ber-logo.png",
-        "default-publishers-logo.png"
-    ],
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/triplecanopy/b-ber.git"
-    },
-    "bugs": {
-        "url": "https://github.com/triplecanopy/b-ber/issues"
-    },
-    "contributors": [
-        {
-            "name": "Maxwell Simmer",
-            "email": "maxwellsimmer.com@gmail.com",
-            "url": "https://maxwellsimmer.com"
-        }
-    ]
+  "name": "@canopycanopycanopy/b-ber-resources",
+  "version": "1.0.10",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "prepare:dist": "BABEL_ENV=production babel --config-file ../../babel.config.js -d ./ src/ --ignore **/__tests__/**",
+    "clean": "rimraf index.js",
+    "prepare": "npm run clean && npm run prepare:dist",
+    "build": "npm run prepare"
+  },
+  "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
+  "license": "GPL-3.0-or-later",
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.5.0",
+    "jest": "^24.8.0",
+    "rimraf": "^2.6.3"
+  },
+  "dependencies": {
+    "fs-extra": "^8.1.0"
+  },
+  "files": [
+    "b-ber-logo.png",
+    "default-publishers-logo.png"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/triplecanopy/b-ber.git"
+  },
+  "bugs": {
+    "url": "https://github.com/triplecanopy/b-ber/issues"
+  },
+  "contributors": [
+    {
+      "name": "Maxwell Simmer",
+      "email": "maxwellsimmer.com@gmail.com",
+      "url": "https://maxwellsimmer.com"
+    }
+  ]
 }

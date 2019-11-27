@@ -1,68 +1,68 @@
 {
-    "name": "@canopycanopycanopy/b-ber-templates",
-    "version": "1.0.9",
-    "description": "",
-    "main": "index.js",
-    "directories": {
-        "Ncx": "Ncx",
-        "Opf": "Opf",
-        "Ops": "Ops",
-        "Project": "Project",
-        "Toc": "Toc",
-        "Xhtml": "Xhtml",
-        "Xml": "Xml"
-    },
-    "scripts": {
-        "prepare:dist": "BABEL_ENV=production babel --config-file ../../babel.config.js -d ./ src/ --ignore **/__tests__/**",
-        "prepare": "npm run clean && npm run prepare:dist",
-        "clean": "rimraf ./index.js && rimraf Ncx && rimraf Opf && rimraf Ops && rimraf Project && rimraf Toc && rimraf Xhtml && rimraf Xml && rimraf figures",
-        "build": "npm run prepare",
-        "watch": "BABEL_ENV=production babel --config-file ../../babel.config.js -d ./ src/ --watch src",
-        "test": "jest"
-    },
-    "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
-    "license": "GPL-3.0-or-later",
-    "publishConfig": {
-        "access": "public"
-    },
-    "devDependencies": {
-        "@babel/cli": "^7.5.0",
-        "@babel/runtime": "^7.5.4",
-        "jest": "^24.8.0",
-        "rimraf": "^2.6.3"
-    },
-    "dependencies": {
-        "@canopycanopycanopy/b-ber-lib": "1.0.9",
-        "@canopycanopycanopy/b-ber-logger": "1.0.9",
-        "fs-extra": "^8.1.0",
-        "lodash.find": "latest",
-        "lodash.has": "latest",
-        "lodash.uniq": "latest",
-        "mime-types": "^2.1.24",
-        "vinyl": "^2.2.0"
-    },
-    "files": [
-        "figures",
-        "Ncx",
-        "Opf",
-        "Ops",
-        "Project",
-        "Toc",
-        "Xhtml",
-        "Xml"
-    ],
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/triplecanopy/b-ber.git"
-    },
-    "bugs": {
-        "url": "https://github.com/triplecanopy/b-ber/issues"
-    },
-    "contributors": [
-        {
-            "name": "Maxwell Simmer",
-            "email": "maxwellsimmer.com@gmail.com",
-            "url": "https://maxwellsimmer.com"
-        }
-    ]
+  "name": "@canopycanopycanopy/b-ber-templates",
+  "version": "1.0.10",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "Ncx": "Ncx",
+    "Opf": "Opf",
+    "Ops": "Ops",
+    "Project": "Project",
+    "Toc": "Toc",
+    "Xhtml": "Xhtml",
+    "Xml": "Xml"
+  },
+  "scripts": {
+    "prepare:dist": "BABEL_ENV=production babel --config-file ../../babel.config.js -d ./ src/ --ignore **/__tests__/**",
+    "prepare": "npm run clean && npm run prepare:dist",
+    "clean": "rimraf ./index.js && rimraf Ncx && rimraf Opf && rimraf Ops && rimraf Project && rimraf Toc && rimraf Xhtml && rimraf Xml && rimraf figures",
+    "build": "npm run prepare",
+    "watch": "BABEL_ENV=production babel --config-file ../../babel.config.js -d ./ src/ --watch src",
+    "test": "jest"
+  },
+  "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
+  "license": "GPL-3.0-or-later",
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.5.0",
+    "@babel/runtime": "^7.5.4",
+    "jest": "^24.8.0",
+    "rimraf": "^2.6.3"
+  },
+  "dependencies": {
+    "@canopycanopycanopy/b-ber-lib": "1.0.10",
+    "@canopycanopycanopy/b-ber-logger": "1.0.10",
+    "fs-extra": "^8.1.0",
+    "lodash.find": "latest",
+    "lodash.has": "latest",
+    "lodash.uniq": "latest",
+    "mime-types": "^2.1.24",
+    "vinyl": "^2.2.0"
+  },
+  "files": [
+    "figures",
+    "Ncx",
+    "Opf",
+    "Ops",
+    "Project",
+    "Toc",
+    "Xhtml",
+    "Xml"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/triplecanopy/b-ber.git"
+  },
+  "bugs": {
+    "url": "https://github.com/triplecanopy/b-ber/issues"
+  },
+  "contributors": [
+    {
+      "name": "Maxwell Simmer",
+      "email": "maxwellsimmer.com@gmail.com",
+      "url": "https://maxwellsimmer.com"
+    }
+  ]
 }
