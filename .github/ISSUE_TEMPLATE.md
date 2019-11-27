@@ -2,6 +2,8 @@
 
 ## Actual Behavior
 
+## Suggested Fix(es)
+
 ## Project Repository
 
 -   A repo containing a project that exhibits this issue
