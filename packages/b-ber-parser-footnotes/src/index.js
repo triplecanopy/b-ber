@@ -42,7 +42,10 @@ function renderFootnoteOpen(tokens, idx, options, env /*,slf */) {
     tokens[childIndex].children.push(
       {
         type: 'inline',
-        attrs: [['hidden', 'hidden'], ['class', 'hidden-backlink']],
+        attrs: [
+          ['hidden', 'hidden'],
+          ['class', 'hidden-backlink'],
+        ],
         tag: 'span',
         nesting: 1,
         block: false,

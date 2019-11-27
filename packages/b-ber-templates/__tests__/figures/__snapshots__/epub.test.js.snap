@@ -169,7 +169,7 @@ exports[`templates.epub creates the markup 7`] = `
 
 exports[`templates.epub creates the markup 8`] = `
 "
-    <section epub:type=\\"loi\\" title=\\"Figures\\" class=\\"chapter figures\\">
+    <section epub:type=\\"loi\\" class=\\"chapter figures\\">
         <div class=\\"figure__large figure__large--portrait\\">
             <figure id=\\"1\\">
                 <div class=\\"figure__items\\">
@@ -190,7 +190,7 @@ exports[`templates.epub creates the markup 8`] = `
 
 exports[`templates.epub creates the markup 9`] = `
 "
-    <section epub:type=\\"loi\\" title=\\"Figures\\" class=\\"chapter figures\\">
+    <section epub:type=\\"loi\\" class=\\"chapter figures\\">
         <div class=\\"figure__large figure__large--landscape\\">
             <figure id=\\"1\\">
                 <div class=\\"figure__items\\">
@@ -211,7 +211,7 @@ exports[`templates.epub creates the markup 9`] = `
 
 exports[`templates.epub creates the markup 10`] = `
 "
-    <section epub:type=\\"loi\\" title=\\"Figures\\" class=\\"chapter figures\\">
+    <section epub:type=\\"loi\\" class=\\"chapter figures\\">
         <div class=\\"figure__large figure__large--portrait-high\\">
             <figure id=\\"1\\">
                 <div class=\\"figure__items\\">
@@ -232,7 +232,7 @@ exports[`templates.epub creates the markup 10`] = `
 
 exports[`templates.epub creates the markup 11`] = `
 "
-    <section epub:type=\\"loi\\" title=\\"Figures\\" class=\\"chapter figures\\">
+    <section epub:type=\\"loi\\" class=\\"chapter figures\\">
         <div class=\\"figure__large figure__large--square\\">
             <figure id=\\"1\\">
                 <div class=\\"figure__items\\">
@@ -253,7 +253,7 @@ exports[`templates.epub creates the markup 11`] = `
 
 exports[`templates.epub creates the markup 12`] = `
 "
-    <section epub:type=\\"loi\\" title=\\"Figures\\" class=\\"chapter figures\\">
+    <section epub:type=\\"loi\\" class=\\"chapter figures\\">
         <div class=\\"figure__large figure__large--media figure__inline--square test\\">
             <figure id=\\"1\\">
                 <div class=\\"figure__items\\">
@@ -283,7 +283,7 @@ exports[`templates.epub creates the markup 12`] = `
 
 exports[`templates.epub creates the markup 13`] = `
 "
-    <section epub:type=\\"loi\\" title=\\"Figures\\" class=\\"chapter figures\\">
+    <section epub:type=\\"loi\\" class=\\"chapter figures\\">
         <div class=\\"figure__large figure__large--media figure__inline--square test\\">
             <figure id=\\"1\\">
                 <div class=\\"figure__items\\">
@@ -313,7 +313,7 @@ exports[`templates.epub creates the markup 13`] = `
 
 exports[`templates.epub creates the markup 14`] = `
 "
-    <section epub:type=\\"loi\\" title=\\"Figures\\" class=\\"chapter figures\\">
+    <section epub:type=\\"loi\\" class=\\"chapter figures\\">
         <div class=\\"figure__large figure__large--iframe\\">
             <figure id=\\"1\\">
                 <div class=\\"figure__items\\">

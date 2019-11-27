@@ -64,7 +64,8 @@ class Footnote extends Component {
     this.footnoteElement = null
     this.footnoteContainer = null
   }
-  componentWillReceiveProps(_, nextContext) {
+  // eslint-disable-next-line camelcase
+  UNSAFE_componentWillReceiveProps(_, nextContext) {
     const { footnoteVisible } = this.state
     if (
       footnoteVisible &&

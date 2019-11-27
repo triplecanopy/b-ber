@@ -13,7 +13,8 @@ class Media extends React.Component {
     paused: true,
   }
 
-  componentWillReceiveProps(nextProps, nextContext) {
+  // eslint-disable-next-line camelcase
+  UNSAFE_componentWillReceiveProps(nextProps, nextContext) {
     // Play the media on spread change if autoplay is true
     if (!this.state.autoPlay) return
 

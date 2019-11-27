@@ -104,7 +104,8 @@ class Layout extends Component {
     this.bindEventListeners()
   }
 
-  componentWillReceiveProps(nextProps) {
+  // eslint-disable-next-line camelcase
+  UNSAFE_componentWillReceiveProps(nextProps) {
     const { spreadIndex } = nextProps
     this.updateTransform(spreadIndex)
   }

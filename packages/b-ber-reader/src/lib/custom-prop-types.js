@@ -35,7 +35,8 @@ export function __cssHeightDeclarationPropType(
 ) {
   if (
     !isNumeric(props[propName]) &&
-    (typeof props[propName] === 'string' && props[propName] !== 'auto')
+    typeof props[propName] === 'string' &&
+    props[propName] !== 'auto'
   ) {
     return new Error(
       `${propName} in ${componentName} is not a valid CSS height value`

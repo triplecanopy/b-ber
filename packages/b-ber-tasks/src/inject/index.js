@@ -10,9 +10,10 @@ const getRemoteAssets = type =>
   Promise.resolve(state.config[`remote_${type}`] || [])
 
 const getAssets = type =>
-  Promise.all([fs.readdir(state.dist.ops(type)), getRemoteAssets(type)]).then(
-    ([a, b]) => [...a, ...b]
-  )
+  Promise.all([
+    fs.readdir(state.dist.ops(type)),
+    getRemoteAssets(type),
+  ]).then(([a, b]) => [...a, ...b])
 
 const getInlineScripts = () => [
   new File({

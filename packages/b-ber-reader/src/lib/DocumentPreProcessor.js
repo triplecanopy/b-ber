@@ -113,9 +113,9 @@ class DocumentPreProcessor {
   }
 
   static removeStyleSheet({ id, media }) {
-    const { styleSheetElement } = DocumentPreProcessor.getStyleSheetByMediaOrId(
-      { id, media }
-    )
+    const {
+      styleSheetElement,
+    } = DocumentPreProcessor.getStyleSheetByMediaOrId({ id, media })
     styleSheetElement.parentNode.removeChild(styleSheetElement)
     state.styleSheets = [...state.styleSheets.filter(a => a.id !== id)]
   }

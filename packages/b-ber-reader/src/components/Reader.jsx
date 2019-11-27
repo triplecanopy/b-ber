@@ -194,7 +194,8 @@ class Reader extends Component {
     )
   }
 
-  componentWillReceiveProps(nextProps) {
+  // eslint-disable-next-line camelcase
+  UNSAFE_componentWillReceiveProps(nextProps) {
     const { hash, cssHash, search } = this.state
 
     if (nextProps.search !== search) {

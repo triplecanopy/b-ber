@@ -22,7 +22,10 @@ const addCaption = (md, t, attrs) => {
     {
       type: 'block',
       tag: 'div',
-      attrs: [['class', 'figcaption'], ['data-caption', htmlId(attrs.source)]],
+      attrs: [
+        ['class', 'figcaption'],
+        ['data-caption', htmlId(attrs.source)],
+      ],
       nesting: 1,
     },
     {

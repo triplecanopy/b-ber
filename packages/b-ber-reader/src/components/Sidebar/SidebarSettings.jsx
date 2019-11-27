@@ -14,7 +14,8 @@ class SidebarSettings extends Component {
 
     this.handleFontSizeIncrement = this.handleFontSizeIncrement.bind(this)
   }
-  componentWillReceiveProps(nextProps) {
+  // eslint-disable-next-line camelcase
+  UNSAFE_componentWillReceiveProps(nextProps) {
     const fontSize = nextProps.viewerSettings.get('fontSize')
     if (fontSize !== this.state.fontSize) this.setState({ fontSize })
   }
