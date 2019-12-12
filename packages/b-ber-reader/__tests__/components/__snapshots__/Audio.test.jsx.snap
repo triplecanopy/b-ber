@@ -4,6 +4,7 @@ exports[`Audio renders the component 1`] = `
 <audio
   controls={true}
   data-autoplay={true}
+  id="foo"
 />
 `;
 
@@ -11,5 +12,6 @@ exports[`Audio renders the component 2`] = `
 <audio
   controls={false}
   data-autoplay={false}
+  id="foo"
 />
 `;
