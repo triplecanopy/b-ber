@@ -1,9 +1,9 @@
 .DS_Store
 .tmp
-epub
-/lib
+epub/*
+!epub/.keep
 dist
 public
 node_modules
-
 npm-debug.log*
+yarn-debug.log*

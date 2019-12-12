@@ -52,7 +52,7 @@ test('asserts validity', done => {
   const processor = new DocumentProcessor()
   const html = errorHtml
 
-  processor.parseXML(html, _ => {
+  processor.parseXML(html, () => {
     expect(console.assert).toHaveBeenCalledTimes(3)
     done()
   })
