@@ -24,8 +24,9 @@ class Media extends React.Component {
     const { paused } = this.state
 
     // Don't play the media unless it's sufficiently loaded
-    if (this.props.elemRef.current.readyState < 3)
+    if (this.props.elemRef.current.readyState < 3) {
       return console.warn('Media not loaded')
+    }
 
     // b-ber jumps from spreadIndex n to 0 quickly and causes a blip before
     // the chapter changes, so account for that here

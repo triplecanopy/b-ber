@@ -1,8 +1,9 @@
-/* eslint-disable jsx-a11y/media-has-caption,no-unused-vars */
+/* eslint-disable no-unused-vars */
 
 import React from 'react'
 import Media from './Media'
 import withNodePosition from './withNodePosition'
+import VideoElement from './VideoElement'
 
 class Video extends Media {
   render() {
@@ -16,11 +17,8 @@ class Video extends Media {
       elementEdgeLeft,
       ...rest
     } = this.props
-    return (
-      <video ref={elemRef} {...rest}>
-        {this.props.children}
-      </video>
-    )
+
+    return <VideoElement elementKey={rest.id} elementRef={elemRef} {...rest} />
   }
 }
 

@@ -1,8 +1,9 @@
-/* eslint-disable jsx-a11y/media-has-caption,no-unused-vars */
+/* eslint-disable no-unused-vars */
 
 import React from 'react'
 import Media from './Media'
 import withNodePosition from './withNodePosition'
+import AudioElement from './AudioElement'
 
 class Audio extends Media {
   render() {
@@ -16,11 +17,8 @@ class Audio extends Media {
       elementEdgeLeft,
       ...rest
     } = this.props
-    return (
-      <audio ref={elemRef} {...rest}>
-        {this.props.children}
-      </audio>
-    )
+
+    return <AudioElement elementKey={rest.id} elementRef={elemRef} {...rest} />
   }
 }
 

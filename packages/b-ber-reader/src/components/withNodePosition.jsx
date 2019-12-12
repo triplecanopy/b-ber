@@ -55,12 +55,22 @@ function withNodePosition(WrappedComponent, { useParentDimensions }) {
     }
 
     connectObserver() {
-      const elem = useParentDimensions
-        ? this.elemRef.current && this.elemRef.current.parentElement
-        : this.elemRef.current
+      let elem
+      if (useParentDimensions) {
+        elem =
+          this.elemRef.current && this.elemRef.current.parentElement
+            ? this.elemRef.current.parentElement
+            : null
+      } else {
+        elem = this.elemRef.current
+      }
+
+      if (!elem) return console.error('No element to conenct to ResizeObserver')
+
       this.resizeObserver = new ResizeObserver(
         this.calculateNodePositionAfterResize
       )
+
       this.resizeObserver.observe(elem)
     }
 
@@ -84,9 +94,15 @@ function withNodePosition(WrappedComponent, { useParentDimensions }) {
     // the spread that it appears on.
     calculateNodePosition() {
       // Calculate position of either the attached node (ref), or its parent element
-      const elem = useParentDimensions
-        ? this.elemRef.current && this.elemRef.current.parentElement
-        : this.elemRef.current
+      let elem
+      if (useParentDimensions) {
+        elem =
+          this.elemRef.current && this.elemRef.current.parentElement
+            ? this.elemRef.current.parentElement
+            : null
+      } else {
+        elem = this.elemRef.current
+      }
 
       if (!elem) return console.error('Element does not exist')
 
