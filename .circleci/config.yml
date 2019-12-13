@@ -17,7 +17,6 @@ jobs:
           keys:
             - npm-packages-v1-{{ .Branch }}-{{ checksum "BBER_CACHE_KEY" }}
             - npm-packages-v1-{{ checksum "BBER_CACHE_KEY" }}
-            - npm-packages-v1-
       - run: |
           npm -g config set user root
           npm i -g npm@6 lerna
