@@ -11,7 +11,8 @@ jobs:
     working_directory: ~/b-ber
     steps:
       - checkout
-      - echo $(find . -type f -name package.json -not -path "*/node_modules*" -exec md5sum {} \; | md5sum | cut -d' ' -f1) >> BBER_CACHE_KEY
+      - run: |
+          echo $(find . -type f -name package.json -not -path "*/node_modules*" -exec md5sum {} \; | md5sum | cut -d' ' -f1) >> BBER_CACHE_KEY
       - restore_cache:
           keys:
             - npm-packages-v1-{{ .Branch }}-{{ checksum "BBER_CACHE_KEY" }}
