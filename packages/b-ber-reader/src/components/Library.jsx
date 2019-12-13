@@ -5,7 +5,7 @@ const Library = props => (
     {props.books.map((book, i) => (
       <button
         key={i}
-        onClick={_ => props.handleClick(book)}
+        onClick={() => props.handleClick(book)}
         style={{
           width: 200,
           height: 300,

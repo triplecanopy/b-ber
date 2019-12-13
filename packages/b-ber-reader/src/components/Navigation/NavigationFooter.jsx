@@ -9,6 +9,7 @@ const chapterStyles = {
     props.currentSpineItemIndex === 0
       ? { display: 'none' }
       : {},
+
   next: props =>
     (!Viewport.isMobile() &&
       !props.uiOptions.navigation.footer_icons.chapter) ||
@@ -24,6 +25,7 @@ const pageStyles = {
     (props.currentSpineItemIndex === 0 && props.spreadIndex === 0)
       ? { display: 'none' }
       : {},
+
   next: props =>
     Viewport.isMobile() ||
     !props.uiOptions.navigation.footer_icons.page ||

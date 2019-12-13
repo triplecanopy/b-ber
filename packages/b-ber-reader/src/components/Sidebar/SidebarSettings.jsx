@@ -11,15 +11,18 @@ class SidebarSettings extends Component {
       fontSizeMax: 250,
       fontSizeStep: 10,
     }
-
-    this.handleFontSizeIncrement = this.handleFontSizeIncrement.bind(this)
   }
   // eslint-disable-next-line camelcase
   UNSAFE_componentWillReceiveProps(nextProps) {
     const fontSize = nextProps.viewerSettings.get('fontSize')
     if (fontSize !== this.state.fontSize) this.setState({ fontSize })
   }
-  handleFontSizeIncrement(increment) {
+
+  handleFontSizeIncrement = () => this.handleFontSizeChange(1)
+
+  handleFontSizeDecrement = () => this.handleFontSizeChange(-1)
+
+  handleFontSizeChange = increment => {
     const { fontSizeMin, fontSizeMax, fontSizeStep } = this.state
     let { fontSize } = this.state
     fontSize = parseInt(fontSize, 10)
@@ -30,6 +33,26 @@ class SidebarSettings extends Component {
     this.setState({ fontSize })
     this.props.updateViewerSettings({ fontSize })
   }
+
+  handleOnChange = e => this.setState({ fontSize: e.target.value })
+  handleOnBlur = () => {
+    const { fontSizeMin, fontSizeMax } = this.state
+    let { fontSize } = this.state
+
+    fontSize = Math.round(fontSize * 0.1) * 10
+
+    if (
+      fontSize < fontSizeMin ||
+      fontSize > fontSizeMax ||
+      fontSize % 10 !== 0
+    ) {
+      return
+    }
+
+    this.setState({ fontSize })
+    this.props.updateViewerSettings({ fontSize })
+  }
+
   render() {
     const { fontSize, fontSizeMin, fontSizeMax, fontSizeStep } = this.state
 
@@ -48,7 +71,7 @@ class SidebarSettings extends Component {
           <div className="settings__item settings__item--font-size">
             <label htmlFor="fontSize">Font Size</label>
             <div className="settings__item__button-group settings__item__button-group--horizontal">
-              <button onClick={_ => this.handleFontSizeIncrement(-1)}>-</button>
+              <button onClick={this.handleFontSizeDecrement}>-</button>
               <span>{fontSize}%</span>
               <input
                 id="fontSize"
@@ -57,27 +80,10 @@ class SidebarSettings extends Component {
                 min={fontSizeMin}
                 max={fontSizeMax}
                 step={fontSizeStep}
-                onChange={e => {
-                  this.setState({ fontSize: e.target.value })
-                }}
-                onBlur={_ => {
-                  let fontSize_ = this.state.fontSize
-                  fontSize_ = Math.round(fontSize_ * 0.1) * 10
-                  if (
-                    fontSize_ < fontSizeMin ||
-                    fontSize_ > fontSizeMax ||
-                    fontSize_ % 10 !== 0
-                  ) {
-                    return
-                  }
-
-                  this.setState({ fontSize: fontSize_ })
-                  this.props.updateViewerSettings({
-                    fontSize: fontSize_,
-                  })
-                }}
+                onChange={this.handleOnChange}
+                onBlur={this.handleOnBlur}
               />
-              <button onClick={_ => this.handleFontSizeIncrement(1)}>+</button>
+              <button onClick={this.handleFontSizeIncrement}>+</button>
             </div>
           </div>
         </fieldset>

@@ -1,25 +1,26 @@
-/* global jest,test,expect */
-
 import React from 'react'
 import renderer from 'react-test-renderer'
 import Video from '../../src/components/Video'
 
-const createOptions = () => ({
-  createNodeMock: element =>
-    element.type === 'video' ? document.createElement('video') : null,
-})
-
 describe('Video', () => {
+  // Clean up logging from HOC during tests
+  beforeEach(() => (console.error = jest.fn()))
+  afterEach(() => jest.clearAllMocks())
+
   test('renders the component', () => {
     let props
     let tree
 
-    props = { 'data-autoplay': true, controls: true }
-    tree = renderer.create(<Video {...props} />, createOptions()).toJSON()
+    const ref = React.createRef()
+
+    props = { id: 'foo', 'data-autoplay': true, controls: true }
+    tree = renderer.create(<Video elemRef={ref} {...props} />).toJSON()
+
     expect(tree).toMatchSnapshot()
 
-    props = { 'data-autoplay': false, controls: false }
-    tree = renderer.create(<Video {...props} />, createOptions()).toJSON()
+    props = { id: 'foo', 'data-autoplay': false, controls: false }
+    tree = renderer.create(<Video elemRef={ref} {...props} />).toJSON()
+
     expect(tree).toMatchSnapshot()
   })
 })

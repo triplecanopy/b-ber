@@ -9,15 +9,13 @@ const SidebarMetadata = props => (
   >
     <dl>
       {Object.keys(props.metadata).map((key, i) => {
-        if (key && props.metadata[key]) {
-          return (
-            <div key={i}>
-              <dt>{key}</dt>
-              <dd>{props.metadata[key]}</dd>
-            </div>
-          )
-        }
-        return null
+        if (!key || !props.metadata[key]) return null
+        return (
+          <div key={i}>
+            <dt>{key}</dt>
+            <dd>{props.metadata[key]}</dd>
+          </div>
+        )
       })}
     </dl>
   </nav>
