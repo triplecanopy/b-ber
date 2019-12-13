@@ -11,10 +11,11 @@ jobs:
     working_directory: ~/b-ber
     steps:
       - checkout
+      - echo $(find . -type f -name package.json -not -path "*/node_modules*" -exec md5sum {} \; | md5sum | cut -d' ' -f1) >> BBER_CACHE_KEY
       - restore_cache:
           keys:
-            - npm-packages-v1-{{ .Branch }}-{{ checksum "package-lock.json" }}
-            - npm-packages-v1-{{ checksum "package-lock.json" }}
+            - npm-packages-v1-{{ .Branch }}-{{ checksum "BBER_CACHE_KEY" }}
+            - npm-packages-v1-{{ checksum "BBER_CACHE_KEY" }}
             - npm-packages-v1-
       - run: |
           npm -g config set user root
@@ -67,4 +68,4 @@ jobs:
             - ~/b-ber/packages/b-ber-templates/node_modules
             - ~/b-ber/packages/b-ber-theme-serif/node_modules
             - ~/b-ber/packages/b-ber-theme-sans/node_modules
-          key: npm-packages-v1-{{ .Branch }}-{{ checksum "package-lock.json" }}
+          key: npm-packages-v1-{{ .Branch }}-{{ checksum "BBER_CACHE_KEY" }}
