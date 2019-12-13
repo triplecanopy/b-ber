@@ -16,7 +16,7 @@ While there are other frameworks for exporting content to different formats, b-b
 
 b-ber facilitates control of the design of publications on the level of individual formats by accounting for the specific characteristics of EPUBs, websites, PDFs, etc. b-ber’s architecture allows for the styles included in each theme to be “scoped” to different build types. In other words, the text and media treatments for an EPUB can differ from those for a browser-based version of the same publication. Existing themes, developed by Triple Canopy, include combinations of styles, typefaces, and media layouts. Alternatively, publishers can design and develop their own themes for b-ber. They can also override any of these styles at the level of the individual publication in order to craft a layout that conforms to the needs of the work. By offering high-level design flexibility and format-specific customization, b-ber enables authors, editors, designers, and technologists to simultaneously consider the ideal manifestation of a publication and the multiplicity of scenarios in which it will be encountered.
 
-The b-ber framework is written in JavaScript (with themes written in SCSS) and distributed on npm. b-ber can be run on a personal computer or on a server. The documentation in the wiki is written for both beginners who would like to author projects as well as developers who would like to contribute to the codebase. In addition to the wiki, the repository includes further documentation and the code is heavily commented.
+The b-ber framework is written in JavaScript, with themes written in SCSS, and distributed on npm. b-ber can be run on a personal computer or on a server. The documentation in the wiki is written for both beginners who would like to author projects as well as developers who would like to contribute to the codebase. In addition to the wiki, the repository includes further documentation and the code is heavily commented.
 
 Find out more in the [b-ber wiki](https://github.com/triplecanopy/b-ber/blob/master/triplecanopy/b-ber/wiki/getting-started).
 
@@ -37,7 +37,7 @@ Issues should be [reported](https://github.com/triplecanopy/b-ber/issues) in the
 
 ## Contribution Guidelines
 
-Pull requests are welcome. If you plan to contribute to b-ber's [development](https://github.com/triplecanopy/b-ber/wiki/Installing-b-ber-for-Development) please send a notification to [b-ber@canopycanopycanopy.com](mailto:b-ber@canopycanopycanopy.com), so that we are aware of any contributions you plan on making. There is no explicit style-guide, but a style of coding that's consistent with the existing codebase should be maintained.
+Pull requests are welcome. If you plan to contribute to b-ber's [development](https://github.com/triplecanopy/b-ber/wiki/Installing-b-ber-for-Development), please send an email to [b-ber@canopycanopycanopy.com](mailto:b-ber@canopycanopycanopy.com), so that we are aware of any contributions you plan on making. There is no explicit style-guide, but a style of coding that's consistent with the existing codebase should be maintained.
 
 ## Code of Conduct
 
