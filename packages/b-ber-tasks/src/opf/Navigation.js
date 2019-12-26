@@ -109,9 +109,10 @@ class Navigation {
     if (redundant.length) {
       let message =
         'Files declared in the TOC do not exist in the _markdown directory'
-      message += 'The following entries must be removed manually from '
-      message += `[${path.basename(tocFile)}]:`
-      message += redundant.map(name => `[${name}]`).join('\n')
+      message += `\nThe following entries must be removed manually from [${path.basename(
+        tocFile
+      )}]:`
+      message += `\n${redundant.map(name => `[${name}]`).join('\n')}`
 
       log.error(message)
     }

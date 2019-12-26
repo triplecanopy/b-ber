@@ -43,6 +43,7 @@ class ManifestAndMetadata {
     const specifiedFonts =
       has(state.config, 'ibooks_specified_fonts') &&
       state.config.ibooks_specified_fonts === true
+
     const modified = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z')
     const generator = `b-ber@${state.version}`
 
