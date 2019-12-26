@@ -1,24 +1,37 @@
 class Storage {
   static get(key) {
-    let storage
+    let storage = '{}'
 
-    storage = window.localStorage.getItem(key)
-    if (!storage) storage = JSON.stringify({})
+    try {
+      storage = window.localStorage.getItem(key)
+    } catch (_) {
+      console.warn('window.localStorage is unavailable')
+    }
 
     storage = JSON.parse(storage)
     return storage
   }
 
-  static set(key, value) {
-    let value_ = value
-    if (typeof value_ !== 'string') value_ = JSON.stringify(value_)
-    window.localStorage.setItem(key, value_)
+  static set(key, val) {
+    let value = val
+    if (typeof value !== 'string') value = JSON.stringify(value)
+
+    try {
+      window.localStorage.setItem(key, value)
+    } catch (_) {
+      console.warn('window.localStorage is unavailable')
+    }
   }
 
   static clear(key = '') {
     const key_ = String(key)
     if (!key_) return
-    window.localStorage.removeItem(key)
+
+    try {
+      window.localStorage.removeItem(key)
+    } catch (_) {
+      console.warn('window.localStorage is unavailable')
+    }
   }
 }
 

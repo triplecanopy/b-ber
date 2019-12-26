@@ -4,7 +4,7 @@ const loaders = require('./webpack.loaders')
 
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
-const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
+// const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 
 module.exports = {
   target: 'web',
@@ -63,10 +63,10 @@ module.exports = {
   },
 
   plugins: [
-    new BundleAnalyzerPlugin({
-      openAnalyzer: false, // report.html
-      analyzerMode: 'static',
-    }),
+    // new BundleAnalyzerPlugin({
+    //   openAnalyzer: false, // report.html
+    //   analyzerMode: 'static',
+    // }),
 
     new webpack.DefinePlugin({
       'process.env': {

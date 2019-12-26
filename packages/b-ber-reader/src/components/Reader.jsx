@@ -166,9 +166,11 @@ class Reader extends Component {
       if (useLocalStorage === false) return this.loadSpineItem()
 
       const storage = Storage.get(this.localStorageKey)
-      if (!storage) return this.loadSpineItem()
 
-      this.updateViewerSettings(storage.viewerSettings)
+      if (storage.viewerSettings) {
+        this.updateViewerSettings(storage.viewerSettings)
+      }
+
       this.loadInitialSpineItem(storage)
     })
   }
@@ -320,7 +322,10 @@ class Reader extends Component {
     const viewerSettings = { ...this.state.viewerSettings.settings }
     const storage = Storage.get(this.localStorageKey)
 
-    if (!storage.viewerSettings) storage.viewerSettings = {}
+    if (!storage.viewerSettings) {
+      storage.viewerSettings = {}
+    }
+
     storage.viewerSettings = {
       ...storage.viewerSettings,
       ...viewerSettings,
@@ -545,6 +550,7 @@ class Reader extends Component {
         const storage = Storage.get(this.localStorageKey)
         const { hash } = this.state
         delete storage[hash]
+
         Storage.set(this.localStorageKey, storage)
       })
   }
@@ -760,14 +766,10 @@ class Reader extends Component {
       spreadIndex,
     } = this.state
 
-    let storage = window.localStorage.getItem(this.localStorageKey)
-    if (!storage) storage = JSON.stringify({})
-
-    storage = JSON.parse(storage)
+    const storage = Storage.get(this.localStorageKey)
     storage[hash] = { currentSpineItem, currentSpineItemIndex, spreadIndex }
 
-    const storage_ = JSON.stringify(storage)
-    window.localStorage.setItem(this.localStorageKey, storage_)
+    Storage.set(this.localStorageKey, storage)
   }
 
   // eslint-disable-next-line class-methods-use-this

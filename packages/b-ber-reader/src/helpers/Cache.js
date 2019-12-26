@@ -7,16 +7,17 @@ class Cache {
     const hash = Asset.createHash(url)
     const storage = Storage.get(Cache.localStorageKey)
 
-    return storage[hash]
+    return storage && storage[hash] ? storage[hash] : null
   }
 
   static set(url, data) {
     const hash = Asset.createHash(url)
     const storage = Storage.get(Cache.localStorageKey)
 
-    storage[hash] = { data }
-
-    Storage.set(Cache.localStorageKey, storage)
+    if (storage) {
+      storage[hash] = { data }
+      Storage.set(Cache.localStorageKey, storage)
+    }
   }
 
   static clear() {

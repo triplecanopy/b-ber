@@ -249,6 +249,7 @@ class XMLAdaptor {
         promises.push(
           new Promise(resolve1 => {
             const cache = Cache.get(url)
+
             if (useLocalStorageCache && cache && cache.data) {
               return resolve1({ base, data: cache.data })
             }
