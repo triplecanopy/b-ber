@@ -36,8 +36,12 @@ class Url {
     return url_
   }
 
+  static isMailTo(url) {
+    return /^mailto:/.test(url) === true
+  }
+
   static isRelative(url) {
-    return /^http/.test(url) === false
+    return /^http/.test(url) === false && Url.isMailTo(url) === false
   }
 
   static stripTrailingSlash(url) {
