@@ -37,7 +37,7 @@ class Url {
   }
 
   static isMailTo(url) {
-    return /^mailto:/.test(url) === true
+    return /^mailto:/.test(url)
   }
 
   static isRelative(url) {
