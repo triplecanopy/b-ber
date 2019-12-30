@@ -16,11 +16,13 @@ const Frame = props => {
     border: 0,
     fontSize,
   }
+
   const desktopStyles = { overflow: 'hidden' }
   const mobileStyles = { WebkitOverflowScrolling: 'touch', overflow: 'auto' }
   const styles = Viewport.isMobile()
     ? { ...baseStyles, ...mobileStyles }
     : { ...baseStyles, ...desktopStyles }
+
   return (
     <div id="frame" className={`_${props.hash}`} style={styles}>
       <Layout {...props} />

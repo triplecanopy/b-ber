@@ -182,7 +182,9 @@ class Marker extends Component {
         .replace(/(\[object |\])/g, '')
         .replace(/Record/, 'Observer')
         .replace(/Entry/, '')
+
       const versoOrRecto = verso ? 'verso' : 'recto'
+
       console.group('Marker#calculateNodePosition')
       console.log(`Initiator: ${initiator}`)
       console.log(`Marker: ${this.markerNode.dataset.marker}`)

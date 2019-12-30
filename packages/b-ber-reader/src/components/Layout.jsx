@@ -1,16 +1,14 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import debounce from 'lodash/debounce'
-import pick from 'lodash/pick'
 import transitions from '../lib/transition-styles'
 import Viewport from '../helpers/Viewport'
-import { isNumeric } from '../helpers/Types'
 import { cssHeightDeclarationPropType } from '../lib/custom-prop-types'
-import observable from '../lib/decorate-observable'
 import { debug } from '../config'
 import browser from '../lib/browser'
+import withObservers from '../lib/with-observers'
+import withDimensions from '../lib/with-dimensions'
 
-@observable
 class Layout extends Component {
   static propTypes = {
     viewerSettings: PropTypes.shape({
@@ -24,6 +22,7 @@ class Layout extends Component {
       theme: PropTypes.string.isRequired,
     }).isRequired,
   }
+
   static childContextTypes = {
     height: cssHeightDeclarationPropType,
     columnGap: PropTypes.number,
@@ -37,42 +36,22 @@ class Layout extends Component {
   constructor(props) {
     super(props)
 
-    const {
-      columnGap,
-      paddingTop,
-      paddingLeft,
-      paddingRight,
-      paddingBottom,
-    } = this.props.viewerSettings
-
     this.state = {
       margin: 0,
       border: 0,
-      paddingTop,
-      paddingLeft,
-      paddingRight,
-      paddingBottom,
       boxSizing: 'border-box',
 
-      width: 0,
-      height: 0,
       transform: 'translateX(0)',
       translateX: 0,
 
       columnWidth: 'auto',
       columnCount: 2,
-      columnGap,
       columnFill: 'auto',
     }
 
     this.debounceSpeed = 60
-    this.contentNode = null
     this.layoutNode = null
 
-    this.getSingleColumnWidth = this.getSingleColumnWidth.bind(this)
-    this.getFrameWidth = this.getFrameWidth.bind(this)
-    this.getFrameHeight = this.getFrameHeight.bind(this)
-    this.updateDimensions = this.updateDimensions.bind(this)
     this.updateTransform = this.updateTransform.bind(this)
     this.onResizeDone = this.onResizeDone.bind(this)
     this.bindEventListeners = this.bindEventListeners.bind(this)
@@ -87,19 +66,20 @@ class Layout extends Component {
 
   getChildContext() {
     return {
-      height: this.state.height,
-      columnGap: this.state.columnGap,
+      height: this.props.height,
+      columnGap: this.props.columnGap,
+      paddingTop: this.props.paddingTop,
+      paddingLeft: this.props.paddingLeft,
+      paddingRight: this.props.paddingRight,
+      paddingBottom: this.props.paddingBottom,
+
       translateX: this.state.translateX,
-      paddingTop: this.state.paddingTop,
-      paddingLeft: this.state.paddingLeft,
-      paddingRight: this.state.paddingRight,
-      paddingBottom: this.state.paddingBottom,
       transitionSpeed: this.props.viewerSettings.transitionSpeed,
     }
   }
 
   componentDidMount() {
-    this.updateDimensions()
+    this.props.updateDimensions()
     this.updateTransform()
     this.bindEventListeners()
   }
@@ -115,33 +95,8 @@ class Layout extends Component {
   }
 
   onResizeDone() {
-    this.updateDimensions()
-    // this.updateTransform()
-  }
-
-  getFrameHeight() {
-    if (Viewport.isMobile()) return 'auto'
-
-    let { height } = this.state
-    const { paddingTop, paddingBottom } = this.state
-
-    // make sure we're not treating 'auto' as a number
-    if (!isNumeric(height)) height = window.innerHeight
-
-    height -= paddingTop
-    height -= paddingBottom
-
-    return height
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  getFrameWidth() {
-    const { width, paddingLeft, paddingRight, columnGap } = this.state
-    return width - paddingLeft - paddingRight - columnGap
-  }
-
-  getSingleColumnWidth() {
-    return this.getFrameWidth() / 2
+    this.props.updateDimensions()
+    this.updateTransform()
   }
 
   getTranslateX(_spreadIndex) {
@@ -149,52 +104,29 @@ class Layout extends Component {
       typeof _spreadIndex === 'undefined'
         ? this.props.spreadIndex
         : _spreadIndex
-    const { width, paddingLeft, paddingRight, columnGap } = this.state
+
+    const { width, paddingLeft, paddingRight, columnGap } = this.props
     const isMobile = Viewport.isMobile()
 
     let translateX = 0
     if (!isMobile) {
       translateX =
         (width - paddingLeft - paddingRight + columnGap) * spreadIndex * -1
-    }
-    if (!isMobile) {
+
+      // no -0
       translateX =
         translateX === 0 && Math.sign(1 / translateX) === -1 ? 0 : translateX
-    } // no -0
+    }
 
     return translateX
   }
 
-  updateDimensions() {
-    const {
-      paddingLeft,
-      paddingRight,
-      paddingTop,
-      paddingBottom,
-    } = this.props.viewerSettings
-
-    const isMobile = Viewport.isMobile()
-    const width = window.innerWidth
-    const columns = isMobile ? 1 : 2
-    const height = isMobile ? 'auto' : window.innerHeight
-
-    this.setState({
-      width,
-      height,
-      columns,
-      paddingLeft,
-      paddingRight,
-      paddingTop,
-      paddingBottom,
-    })
-  }
-
   bindEventListeners() {
-    window.addEventListener('resize', this.handleResize, false)
+    window.addEventListener('resize', this.handleResize)
   }
 
   unBindEventListeners() {
-    window.removeEventListener('resize', this.handleResize, false)
+    window.removeEventListener('resize', this.handleResize)
   }
 
   updateTransform(spreadIndex) {
@@ -205,22 +137,34 @@ class Layout extends Component {
   }
 
   layoutStyles() {
+    const {
+      width,
+      height,
+      columns,
+      columnGap,
+      paddingTop,
+      paddingLeft,
+      paddingRight,
+      paddingBottom,
+    } = this.props
+
+    const { margin, border, boxSizing, columnFill, transform } = this.state
+
     return {
-      ...pick(this.state, [
-        'margin',
-        'border',
-        'paddingTop',
-        'paddingLeft',
-        'paddingRight',
-        'paddingBottom',
-        'columnGap',
-        'boxSizing',
-        'width',
-        'height',
-        'columns',
-        'columnFill',
-        'transform',
-      ]),
+      width,
+      height,
+      columnGap,
+      paddingTop,
+      paddingLeft,
+      paddingRight,
+      paddingBottom,
+
+      margin,
+      border,
+      boxSizing,
+      columns,
+      columnFill,
+      transform,
     }
   }
 
@@ -266,16 +210,12 @@ class Layout extends Component {
   }
 
   render() {
-    const height = this.getFrameHeight()
-    const { pageAnimation, spreadIndex } = this.props
-    const { paddingLeft, paddingRight } = this.state
+    const height = this.props.getFrameHeight()
+    const { pageAnimation, spreadIndex, paddingLeft, paddingRight } = this.props
     const { transition, transitionSpeed } = this.props.viewerSettings
     const isMobile = Viewport.isMobile()
     const contextClass = isMobile ? 'mobile' : 'desktop'
-
-    // const contentStyles = { ...this.contentStyles() }
     const contentStyles = { ...this.contentStyles(), minHeight: height }
-
     const layoutTransition = transitions({ transitionSpeed })[transition]
 
     let layoutStyles = { ...this.layoutStyles(), ...layoutTransition }
@@ -300,12 +240,8 @@ class Layout extends Component {
         style={layoutStyles}
         ref={node => (this.layoutNode = node)}
       >
-        <div
-          id="content"
-          style={contentStyles}
-          ref={node => (this.contentNode = node)}
-        >
-          <this.props.bookContent {...this.props} {...this.state} />
+        <div id="content" style={contentStyles} ref={this.props.innerRef}>
+          <this.props.BookContent {...this.props} {...this.state} />
         </div>
         {!isMobile && (
           <div className="leaf leaf--left" style={leafLeftStyles} />
@@ -318,4 +254,4 @@ class Layout extends Component {
   }
 }
 
-export default Layout
+export default withDimensions(withObservers(Layout))

@@ -8,7 +8,7 @@ import { Request, XMLAdaptor, Asset, Url, Cache, Storage } from '../helpers'
 import { ViewerSettings } from '../models'
 import { debug, verboseOutput, logTime, useLocalStorage } from '../config'
 import history from '../lib/History'
-import deferrable from '../lib/decorate-deferrable'
+import withDeferredCallbacks from '../lib/with-deferred-callbacks'
 import Messenger from '../lib/Messenger'
 import Viewport from '../helpers/Viewport'
 
@@ -17,13 +17,10 @@ import Viewport from '../helpers/Viewport'
 const MAX_RENDER_TIMEOUT = 0
 const MAX_DEFERRED_CALLBACK_TIMEOUT = 0
 
-let _bookContent = null
+const book = { content: null }
 
-const getBookContent = () => _bookContent
+const BookContent = () => <div>{book.content}</div>
 
-const bookContentComponent = () => <div>{getBookContent()}</div>
-
-@deferrable
 class Reader extends Component {
   static childContextTypes = {
     viewerSettings: PropTypes.object,
@@ -153,7 +150,8 @@ class Reader extends Component {
       overlayElementId: this.state.overlayElementId,
       registerOverlayElementId: this.registerOverlayElementId,
       deRegisterOverlayElementId: this.deRegisterOverlayElementId,
-      requestDeferredCallbackExecution: this.requestDeferredCallbackExecution,
+      requestDeferredCallbackExecution: this.props
+        .requestDeferredCallbackExecution,
       viewLoaded: this.state.viewLoaded,
       lastSpread: this.state.lastSpread,
     }
@@ -161,7 +159,7 @@ class Reader extends Component {
 
   componentWillMount() {
     Cache.clear() // clear initially for now. still caches styles for subsequent pages
-    this.registerCanCallDeferred(() => this.state.ready)
+
     this.createStateFromOPF().then(() => {
       if (useLocalStorage === false) return this.loadSpineItem()
 
@@ -176,23 +174,20 @@ class Reader extends Component {
   }
 
   componentDidMount() {
-    window.addEventListener('resize', this.handleResize, false)
-    window.addEventListener('resize', this.handleResizeStart, false)
-    window.addEventListener('resize', this.handleResizeEnd, false)
+    window.addEventListener('resize', this.handleResize)
+    window.addEventListener('resize', this.handleResizeStarthandleResize)
+    window.addEventListener('resize', this.handleResizeEndhandleResize)
     document.addEventListener(
       'webkitfullscreenchange mozfullscreenchange fullscreenchange',
-      this.handleResize,
-      false
+      this.handleResize
     )
     document.addEventListener(
       'webkitfullscreenchange mozfullscreenchange fullscreenchange',
-      this.handleResizeStart,
-      false
+      this.handleResizeStart
     )
     document.addEventListener(
       'webkitfullscreenchange mozfullscreenchange fullscreenchange',
-      this.handleResizeEnd,
-      false
+      this.handleResizeEnd
     )
   }
 
@@ -233,6 +228,7 @@ class Reader extends Component {
 
   shouldComponentUpdate(_, nextState) {
     const { ready } = nextState
+
     if (ready && ready !== this.state.ready) {
       if (debug && verboseOutput) {
         console.log(
@@ -240,7 +236,8 @@ class Reader extends Component {
           `ready: ${ready}`
         )
       }
-      this.requestDeferredCallbackExecution()
+
+      this.props.requestDeferredCallbackExecution()
     }
 
     return true
@@ -482,7 +479,7 @@ class Reader extends Component {
         const { hash } = this.state
         let { cssHash } = this.state
 
-        _bookContent = bookContent
+        book.content = bookContent
 
         if (cssHash === null) {
           cssHash = hash
@@ -492,8 +489,6 @@ class Reader extends Component {
         this.setState({ cssHash })
       })
       .then(() => {
-        if (logTime) console.time('this.setState({ready: true})')
-
         this.setState(
           {
             currentSpineItem: requestedSpineItem,
@@ -503,9 +498,9 @@ class Reader extends Component {
             this.updateQueryString()
 
             if (deferredCallback) {
-              this.registerDeferredCallback(deferredCallback)
+              this.props.registerDeferredCallback(deferredCallback)
             } else {
-              this.registerDeferredCallback(() => {
+              this.props.registerDeferredCallback(() => {
                 const {
                   spine,
                   spreadIndex,
@@ -849,7 +844,7 @@ class Reader extends Component {
           bookURL={bookURL}
           spreadIndex={spreadIndex}
           lastSpreadIndex={lastSpreadIndex}
-          bookContent={bookContentComponent}
+          BookContent={BookContent}
           pageAnimation={pageAnimation}
           setReaderState={this._setState}
           viewerSettings={viewerSettings}
@@ -860,4 +855,4 @@ class Reader extends Component {
   }
 }
 
-export default Reader
+export default withDeferredCallbacks(Reader)
