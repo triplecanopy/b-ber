@@ -2,19 +2,8 @@ import React from 'react'
 import Viewport from '../helpers/Viewport'
 import { isNumeric } from '../helpers/Types'
 
-function withDimensions(WrappedComponent) {
-  return class extends React.Component {
-    state = {
-      width: 0,
-      height: 0,
-      columns: 2,
-      columnGap: 0,
-      paddingTop: 0,
-      paddingLeft: 0,
-      paddingRight: 0,
-      paddingBottom: 0,
-    }
-
+const withDimensions = WrappedComponent => {
+  class WrapperComponent extends React.Component {
     constructor(props) {
       super(props)
 
@@ -24,29 +13,9 @@ function withDimensions(WrappedComponent) {
       this.updateDimensions = this.updateDimensions.bind(this)
     }
 
-    componentWillMount() {
-      const {
-        width,
-        height,
-        columnGap,
-        paddingTop,
-        paddingLeft,
-        paddingRight,
-        paddingBottom,
-      } = this.props.viewerSettings
-
-      this.setState(
-        {
-          width,
-          height,
-          columnGap,
-          paddingTop,
-          paddingLeft,
-          paddingRight,
-          paddingBottom,
-        },
-        () => this.updateDimensions()
-      )
+    // eslint-disable-next-line camelcase
+    UNSAFE_componentWillMount() {
+      this.updateDimensions()
     }
 
     updateDimensions() {
@@ -56,7 +25,7 @@ function withDimensions(WrappedComponent) {
       const height = isMobile ? 'auto' : window.innerHeight
       const columns = isMobile ? 1 : 2
 
-      this.setState({
+      this.props.update({
         width,
         height,
         columns,
@@ -66,8 +35,8 @@ function withDimensions(WrappedComponent) {
     getFrameHeight() {
       if (Viewport.isMobile()) return 'auto'
 
-      let { height } = this.state
-      const { paddingTop, paddingBottom } = this.state
+      let { height } = this.props.viewerSettings
+      const { paddingTop, paddingBottom } = this.props.viewerSettings
 
       // make sure we're not treating 'auto' as a number
       if (!isNumeric(height)) height = window.innerHeight
@@ -79,7 +48,13 @@ function withDimensions(WrappedComponent) {
     }
 
     getFrameWidth() {
-      const { width, paddingLeft, paddingRight, columnGap } = this.state
+      const {
+        width,
+        paddingLeft,
+        paddingRight,
+        columnGap,
+      } = this.props.viewerSettings
+
       return width - paddingLeft - paddingRight - columnGap
     }
 
@@ -94,12 +69,13 @@ function withDimensions(WrappedComponent) {
           getFrameWidth={this.getFrameWidth}
           getSingleColumnWidth={this.getSingleColumnWidth}
           updateDimensions={this.updateDimensions}
-          {...this.state}
           {...this.props}
         />
       )
     }
   }
+
+  return WrapperComponent
 }
 
 export default withDimensions

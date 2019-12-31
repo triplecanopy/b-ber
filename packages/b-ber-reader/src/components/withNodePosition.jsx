@@ -1,7 +1,7 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import ResizeObserver from 'resize-observer-polyfill'
 import debounce from 'lodash/debounce'
+import { connect } from 'react-redux'
 
 const ELEMENT_EDGE_VERSO_MIN = 48
 const ELEMENT_EDGE_VERSO_MAX = 52
@@ -11,13 +11,8 @@ const ELEMENT_EDGE_RECTO_MAX = 2
 // TODO: This is a refined version of what's in Marker.jsx. The Marker class
 // should be wrapped with this HOC.
 
-function withNodePosition(WrappedComponent, { useParentDimensions }) {
-  return class extends React.Component {
-    static contextTypes = {
-      columnGap: PropTypes.number,
-      paddingLeft: PropTypes.number,
-    }
-
+const withNodePosition = (WrappedComponent, { useParentDimensions }) => {
+  class WrapperComponent extends React.Component {
     state = {
       verso: null,
       recto: null,
@@ -106,7 +101,7 @@ function withNodePosition(WrappedComponent, { useParentDimensions }) {
 
       if (!elem) return console.error('Element does not exist')
 
-      const { paddingLeft, columnGap } = this.context
+      const { paddingLeft, columnGap } = this.props.viewerSettings
       const {
         marginLeft,
         paddingLeft: elementPaddingLeft,
@@ -193,15 +188,19 @@ function withNodePosition(WrappedComponent, { useParentDimensions }) {
     }
 
     render() {
+      // eslint-disable-next-line no-unused-vars
+      const { viewerSettings, ...rest } = this.props
+
       return (
-        <WrappedComponent
-          elemRef={this.elemRef}
-          {...this.state}
-          {...this.props}
-        />
+        <WrappedComponent elemRef={this.elemRef} {...this.state} {...rest} />
       )
     }
   }
+
+  return connect(
+    ({ viewerSettings }) => ({ viewerSettings }),
+    () => ({})
+  )(WrapperComponent)
 }
 
 export default withNodePosition

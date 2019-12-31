@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import debounce from 'lodash/debounce'
 import transitions from '../lib/transition-styles'
@@ -9,7 +9,7 @@ import browser from '../lib/browser'
 import withObservers from '../lib/with-observers'
 import withDimensions from '../lib/with-dimensions'
 
-class Layout extends Component {
+class Layout extends React.Component {
   static propTypes = {
     viewerSettings: PropTypes.shape({
       paddingTop: PropTypes.number.isRequired,
@@ -25,14 +25,9 @@ class Layout extends Component {
 
   static childContextTypes = {
     height: cssHeightDeclarationPropType,
-    columnGap: PropTypes.number,
     translateX: PropTypes.number,
-    paddingTop: PropTypes.number,
-    paddingLeft: PropTypes.number,
-    paddingRight: PropTypes.number,
-    paddingBottom: PropTypes.number,
-    transitionSpeed: PropTypes.number,
   }
+
   constructor(props) {
     super(props)
 
@@ -44,8 +39,8 @@ class Layout extends Component {
       transform: 'translateX(0)',
       translateX: 0,
 
-      columnWidth: 'auto',
-      columnCount: 2,
+      // columnWidth: 'auto',
+      // columnCount: 2,
       columnFill: 'auto',
     }
 
@@ -66,15 +61,16 @@ class Layout extends Component {
 
   getChildContext() {
     return {
-      height: this.props.height,
-      columnGap: this.props.columnGap,
-      paddingTop: this.props.paddingTop,
-      paddingLeft: this.props.paddingLeft,
-      paddingRight: this.props.paddingRight,
-      paddingBottom: this.props.paddingBottom,
+      height: this.props.viewerSettings.height,
+
+      // columnGap: this.props.columnGap,
+      // paddingTop: this.props.paddingTop,
+      // paddingLeft: this.props.paddingLeft,
+      // paddingRight: this.props.paddingRight,
+      // paddingBottom: this.props.paddingBottom,
 
       translateX: this.state.translateX,
-      transitionSpeed: this.props.viewerSettings.transitionSpeed,
+      // transitionSpeed: this.props.viewerSettings.transitionSpeed,
     }
   }
 
@@ -105,7 +101,13 @@ class Layout extends Component {
         ? this.props.spreadIndex
         : _spreadIndex
 
-    const { width, paddingLeft, paddingRight, columnGap } = this.props
+    const {
+      width,
+      paddingLeft,
+      paddingRight,
+      columnGap,
+    } = this.props.viewerSettings
+
     const isMobile = Viewport.isMobile()
 
     let translateX = 0
@@ -146,7 +148,7 @@ class Layout extends Component {
       paddingLeft,
       paddingRight,
       paddingBottom,
-    } = this.props
+    } = this.props.viewerSettings
 
     const { margin, border, boxSizing, columnFill, transform } = this.state
 
@@ -211,10 +213,17 @@ class Layout extends Component {
 
   render() {
     const height = this.props.getFrameHeight()
-    const { pageAnimation, spreadIndex, paddingLeft, paddingRight } = this.props
-    const { transition, transitionSpeed } = this.props.viewerSettings
+    const { pageAnimation, spreadIndex } = this.props
+
+    const {
+      transition,
+      transitionSpeed,
+      paddingLeft,
+      paddingRight,
+    } = this.props.viewerSettings
+
     const isMobile = Viewport.isMobile()
-    const contextClass = isMobile ? 'mobile' : 'desktop'
+    const viewClassName = isMobile ? 'mobile' : 'desktop'
     const contentStyles = { ...this.contentStyles(), minHeight: height }
     const layoutTransition = transitions({ transitionSpeed })[transition]
 
@@ -236,7 +245,7 @@ class Layout extends Component {
     return (
       <div
         id="layout"
-        className={`spread-index__${spreadIndex} context__${contextClass}`}
+        className={`spread-index__${spreadIndex} view__${viewClassName}`}
         style={layoutStyles}
         ref={node => (this.layoutNode = node)}
       >
@@ -244,10 +253,10 @@ class Layout extends Component {
           <this.props.BookContent {...this.props} {...this.state} />
         </div>
         {!isMobile && (
-          <div className="leaf leaf--left" style={leafLeftStyles} />
-        )}
-        {!isMobile && (
-          <div className="leaf leaf--right" style={leafRightStyles} />
+          <React.Fragment>
+            <div className="leaf leaf--left" style={leafLeftStyles} />
+            <div className="leaf leaf--right" style={leafRightStyles} />
+          </React.Fragment>
         )}
       </div>
     )

@@ -1,5 +1,6 @@
 /* eslint-disable class-methods-use-this,react/sort-comp */
-import React, { Component } from 'react'
+import React from 'react'
+import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import ResizeObserver from 'resize-observer-polyfill'
 import debounce from 'lodash/debounce'
@@ -11,14 +12,9 @@ import { messagesTypes } from '../constants'
 import Viewport from '../helpers/Viewport'
 import { SpreadImageStyles } from '.'
 
-class Spread extends Component {
+class Spread extends React.Component {
   static contextTypes = {
     height: cssHeightDeclarationPropType, // from Layout.jsx
-    paddingTop: PropTypes.number,
-    paddingLeft: PropTypes.number,
-    paddingRight: PropTypes.number,
-    paddingBottom: PropTypes.number,
-    columnGap: PropTypes.number,
     refs: PropTypes.object,
   }
   static childContextTypes = {
@@ -94,7 +90,9 @@ class Spread extends Component {
       }
     }
   }
-  componentWillMount() {
+
+  // eslint-disable-next-line camelcase
+  UNSAFE_componentWillMount() {
     // Adds listener for our 'ready' event that's fired in
     // decorate-observable.js. This is used to update the absolutely
     // positioned images in fullbleed panels which function properly on
@@ -124,7 +122,7 @@ class Spread extends Component {
   }
   calculateSpreadOffset() {
     let { height } = this.context
-    const { paddingTop, paddingBottom } = this.context
+    const { paddingTop, paddingBottom } = this.props.viewerSettings
     const padding = paddingTop + paddingBottom
 
     height = isNumeric(height) ? height * 2 - padding * 2 : height
@@ -148,7 +146,7 @@ class Spread extends Component {
     // @issue: https://github.com/triplecanopy/b-ber/issues/216
     const transform = 'transition: transform 400ms ease'
     const width = window.innerWidth
-    const { paddingLeft, paddingRight, columnGap } = this.context
+    const { paddingLeft, paddingRight, columnGap } = this.props.viewerSettings
     const layoutWidth = width - paddingLeft - paddingRight + columnGap // not sure why we're adding columnGap in here ...
     const spreadPosition = Math.round((x + paddingLeft) / layoutWidth) + 1
 
@@ -174,10 +172,14 @@ class Spread extends Component {
   }
 
   render() {
-    const { /* height, */ spreadPosition } = this.state
+    const { spreadPosition } = this.state
     const markerRefId = this.props['data-marker-reference']
     const { unbound } = this.state.marker
-    const { paddingLeft } = this.context
+    const { paddingLeft } = this.props.viewerSettings
+
+    // TODO
+    // eslint-disable-next-line no-unused-vars
+    const { viewerSettings, ...rest } = this.props
 
     const debugStyles = { background: 'blue' }
 
@@ -185,7 +187,7 @@ class Spread extends Component {
     if (debug) styles = { ...styles, ...debugStyles }
 
     return (
-      <div {...this.props} id={`spread__${markerRefId}`} style={styles}>
+      <div {...rest} id={`spread__${markerRefId}`} style={styles}>
         <SpreadImageStyles
           recto={this.state.marker.recto}
           markerRefId={markerRefId}
@@ -200,4 +202,7 @@ class Spread extends Component {
   }
 }
 
-export default Spread
+export default connect(
+  ({ viewerSettings }) => ({ viewerSettings }),
+  () => ({})
+)(Spread)

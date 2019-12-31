@@ -19,7 +19,8 @@ class Controls extends Component {
     this.handleClick = this.handleClick.bind(this)
   }
 
-  componentWillMount() {
+  // eslint-disable-next-line camelcase
+  UNSAFE_componentWillMount() {
     this.bindEvents()
 
     Messenger.register(e => {

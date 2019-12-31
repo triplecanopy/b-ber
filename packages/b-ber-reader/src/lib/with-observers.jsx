@@ -20,7 +20,7 @@ const log = (lastSpreadIndex, contentDimensions, frameHeight, columns) => {
   }
 }
 
-function withObservers(WrappedComponent) {
+const withObservers = WrappedComponent => {
   let timer = null
   let resizeObserver = null
   let mutationObserver = null

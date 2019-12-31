@@ -1,22 +1,24 @@
-import React, { Component } from 'react'
+import React from 'react'
 import classNames from 'classnames'
 
-class SidebarSettings extends Component {
+class SidebarSettings extends React.Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      fontSize: this.props.viewerSettings.get('fontSize'),
+      fontSize: parseInt(this.props.viewerSettings.fontSize, 10),
       fontSizeMin: 50,
       fontSizeMax: 250,
       fontSizeStep: 10,
     }
   }
+
+  // TODO
   // eslint-disable-next-line camelcase
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    const fontSize = nextProps.viewerSettings.get('fontSize')
-    if (fontSize !== this.state.fontSize) this.setState({ fontSize })
-  }
+  // UNSAFE_componentWillReceiveProps(nextProps) {
+  //   const { fontSize } = nextProps.viewerSettings
+  //   if (fontSize !== this.state.fontSize) this.setState({ fontSize })
+  // }
 
   handleFontSizeIncrement = () => this.handleFontSizeChange(1)
 
@@ -31,10 +33,13 @@ class SidebarSettings extends Component {
     if (fontSize < fontSizeMin || fontSize > fontSizeMax) return
 
     this.setState({ fontSize })
-    this.props.updateViewerSettings({ fontSize })
+
+    this.props.update({ fontSize })
+    this.props.save()
   }
 
   handleOnChange = e => this.setState({ fontSize: e.target.value })
+
   handleOnBlur = () => {
     const { fontSizeMin, fontSizeMax } = this.state
     let { fontSize } = this.state
@@ -50,7 +55,9 @@ class SidebarSettings extends Component {
     }
 
     this.setState({ fontSize })
-    this.props.updateViewerSettings({ fontSize })
+
+    this.props.update({ fontSize })
+    this.props.save()
   }
 
   render() {

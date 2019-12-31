@@ -9,7 +9,6 @@ import Viewport from '../helpers/Viewport'
 
 const SpreadImageStyles = props => {
   const { spreadPosition, markerRefId, paddingLeft, recto, unbound } = props
-
   const translateLeftPrevious = paddingLeft * 2
   const translateLeftCurrent = 0
   const translateLeftNext = paddingLeft * -2
@@ -21,22 +20,23 @@ const SpreadImageStyles = props => {
 
   // prettier-ignore
   const styles = `
-        /* previous pages */
-        .spread-index__${spreadPosition_ - 2} #spread__${markerRefId} > figure,
-        .spread-index__${spreadPosition_ - 2} #spread__${markerRefId} > .spread__content,
-        .spread-index__${spreadPosition_ - 1} #spread__${markerRefId} > figure,
-        .spread-index__${spreadPosition_ - 1} #spread__${markerRefId} > .spread__content { transform: translateX(${translateLeftPrevious}px); }
+    /* previous pages */
+    .spread-index__${spreadPosition_ - 2} #spread__${markerRefId} > figure,
+    .spread-index__${spreadPosition_ - 2} #spread__${markerRefId} > .spread__content,
+    .spread-index__${spreadPosition_ - 1} #spread__${markerRefId} > figure,
+    .spread-index__${spreadPosition_ - 1} #spread__${markerRefId} > .spread__content { transform: translateX(${translateLeftPrevious}px); }
 
-        /* current page */
-        .spread-index__${spreadPosition_}     #spread__${markerRefId} > figure,
-        .spread-index__${spreadPosition_}     #spread__${markerRefId} > .spread__content { transform: translateX(${translateLeftCurrent}px); }
+    /* current page */
+    .spread-index__${spreadPosition_}     #spread__${markerRefId} > figure,
+    .spread-index__${spreadPosition_}     #spread__${markerRefId} > .spread__content { transform: translateX(${translateLeftCurrent}px); }
 
-        /* next pages */
-        .spread-index__${spreadPosition_ + 1} #spread__${markerRefId} > figure,
-        .spread-index__${spreadPosition_ + 1} #spread__${markerRefId} > .spread__content,
-        .spread-index__${spreadPosition_ + 2} #spread__${markerRefId} > figure,
-        .spread-index__${spreadPosition_ + 2} #spread__${markerRefId} > .spread__content { transform: translateX(${translateLeftNext}px); }
-    `
+    /* next pages */
+    .spread-index__${spreadPosition_ + 1} #spread__${markerRefId} > figure,
+    .spread-index__${spreadPosition_ + 1} #spread__${markerRefId} > .spread__content,
+    .spread-index__${spreadPosition_ + 2} #spread__${markerRefId} > figure,
+    .spread-index__${spreadPosition_ + 2} #spread__${markerRefId} > .spread__content { transform: translateX(${translateLeftNext}px); }
+  `
+
   return (
     <style id={`style__${markerRefId}`} data-position={spreadPosition_}>
       {Viewport.isMobile() ? null : styles}

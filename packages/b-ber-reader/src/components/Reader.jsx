@@ -1,16 +1,19 @@
 import React, { Component } from 'react'
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import findIndex from 'lodash/findIndex'
 import debounce from 'lodash/debounce'
 import find from 'lodash/find'
 import { Controls, Frame, Spinner } from '.'
 import { Request, XMLAdaptor, Asset, Url, Cache, Storage } from '../helpers'
-import { ViewerSettings } from '../models'
 import { debug, verboseOutput, logTime, useLocalStorage } from '../config'
 import history from '../lib/History'
 import withDeferredCallbacks from '../lib/with-deferred-callbacks'
 import Messenger from '../lib/Messenger'
 import Viewport from '../helpers/Viewport'
+import { save, update } from '../actions/viewer-settings'
+import { ViewerSettings } from '../models'
 
 // const debug = true
 // const verboseOutput = true
@@ -19,7 +22,7 @@ const MAX_DEFERRED_CALLBACK_TIMEOUT = 0
 
 const book = { content: null }
 
-const BookContent = () => <div>{book.content}</div>
+const BookContent = () => <div key="book-content">{book.content}</div>
 
 class Reader extends Component {
   static childContextTypes = {
@@ -71,7 +74,6 @@ class Reader extends Component {
       showSidebar: null,
 
       // view
-      viewerSettings: new ViewerSettings(),
       pageAnimation: false, // disabled by default, and activated in Reader#enablePageTransitions on user action
       overlayElementId: null,
       spinnerVisible: true,
@@ -85,7 +87,6 @@ class Reader extends Component {
     this.createStateFromOPF = this.createStateFromOPF.bind(this)
     this.loadSpineItem = this.loadSpineItem.bind(this)
     this.savePosition = this.savePosition.bind(this)
-    this.updateViewerSettings = this.updateViewerSettings.bind(this)
     this.loadInitialSpineItem = this.loadInitialSpineItem.bind(this)
 
     this._setState = this._setState.bind(this)
@@ -101,7 +102,6 @@ class Reader extends Component {
     this.disableEventHandling = this.disableEventHandling.bind(this)
     this.closeSidebars = this.closeSidebars.bind(this)
     this.updateQueryString = this.updateQueryString.bind(this)
-    this.saveViewerSettings = this.saveViewerSettings.bind(this)
     this.registerOverlayElementId = this.registerOverlayElementId.bind(this)
     this.deRegisterOverlayElementId = this.deRegisterOverlayElementId.bind(this)
     this.showSpinner = this.showSpinner.bind(this)
@@ -142,7 +142,8 @@ class Reader extends Component {
 
   getChildContext() {
     return {
-      viewerSettings: this.state.viewerSettings,
+      viewerSettings: this.props.viewerSettings,
+
       addRef: this.addRef.bind(this),
       refs: this.state.refs,
       spreadIndex: this.state.spreadIndex,
@@ -157,17 +158,19 @@ class Reader extends Component {
     }
   }
 
-  componentWillMount() {
-    Cache.clear() // clear initially for now. still caches styles for subsequent pages
+  // eslint-disable-next-line camelcase
+  UNSAFE_componentWillMount() {
+    Cache.clear() // clear initially for now. Still caches styles for subsequent pages
+
+    // TODO
+    const storage = Storage.get(this.localStorageKey) || {}
+
+    if (useLocalStorage !== false && storage.viewerSettings) {
+      this.props.update(storage.viewerSettings)
+    }
 
     this.createStateFromOPF().then(() => {
       if (useLocalStorage === false) return this.loadSpineItem()
-
-      const storage = Storage.get(this.localStorageKey)
-
-      if (storage.viewerSettings) {
-        this.updateViewerSettings(storage.viewerSettings)
-      }
 
       this.loadInitialSpineItem(storage)
     })
@@ -250,8 +253,9 @@ class Reader extends Component {
   }
 
   handleResize() {
+    // TODO
     const viewerSettings = new ViewerSettings()
-    this.setState({ viewerSettings })
+    this.props.update(viewerSettings.get())
   }
 
   handleResizeStart() {
@@ -303,37 +307,9 @@ class Reader extends Component {
     this.setState({ spinnerVisible: false, viewLoaded: true })
   }
 
-  updateViewerSettings(settings = {}) {
-    if (useLocalStorage === false || this.state.cache === false) return
-
-    const viewerSettings = new ViewerSettings()
-    viewerSettings.put(settings)
-    this.setState({ viewerSettings }, this.saveViewerSettings)
-  }
-
-  // currently viewer settings are global (for all books) although they could
-  // be scoped to individual books using the books' hash
-  saveViewerSettings() {
-    if (useLocalStorage === false || this.state.cache === false) return
-
-    const viewerSettings = { ...this.state.viewerSettings.settings }
-    const storage = Storage.get(this.localStorageKey)
-
-    if (!storage.viewerSettings) {
-      storage.viewerSettings = {}
-    }
-
-    storage.viewerSettings = {
-      ...storage.viewerSettings,
-      ...viewerSettings,
-    }
-
-    Storage.set(this.localStorageKey, storage)
-  }
-
   loadInitialSpineItem(storage = {}) {
     const { hash } = this.state
-    if (!storage[hash] || !storage[hash].currentSpineItem) {
+    if (!storage || !storage[hash] || !storage[hash].currentSpineItem) {
       return this.loadSpineItem()
     }
 
@@ -466,8 +442,8 @@ class Reader extends Component {
           requestedSpineItem,
           ...this.state,
           navigateToChapterByURL: this.navigateToChapterByURL,
-          paddingLeft: this.state.viewerSettings.paddingLeft,
-          columnGap: this.state.viewerSettings.columnGap,
+          paddingLeft: this.props.viewerSettings.paddingLeft,
+          columnGap: this.props.viewerSettings.columnGap,
         })
       })
 
@@ -507,6 +483,7 @@ class Reader extends Component {
                   currentSpineItemIndex,
                   lastSpreadIndex,
                 } = this.state
+
                 const firstChapter = currentSpineItemIndex === 0
                 const lastChapter = currentSpineItemIndex === spine.length - 1
                 const firstSpread = spreadIndex === 0
@@ -542,7 +519,7 @@ class Reader extends Component {
 
         console.error(err)
 
-        const storage = Storage.get(this.localStorageKey)
+        const storage = Storage.get(this.localStorageKey) || {}
         const { hash } = this.state
         delete storage[hash]
 
@@ -629,7 +606,12 @@ class Reader extends Component {
         },
         () => {
           this.scrollToTop()
-          if (direction === -1) this.navigateToSpreadByIndex(lastSpreadIndex) // TODO: navigate to last visited page
+
+          if (direction === -1) {
+            // TODO: navigate to last visited page
+            this.navigateToSpreadByIndex(lastSpreadIndex)
+          }
+
           this.enableEventHandling()
           this.hideSpinner()
 
@@ -675,10 +657,11 @@ class Reader extends Component {
       const offset =
         document.querySelector('.controls__header').offsetHeight + padding
       const top = elem.offsetTop - offset
+
       document.getElementById('frame').scrollTo(0, top)
     }
 
-    const { paddingTop, paddingBottom, columnGap } = this.state.viewerSettings
+    const { paddingTop, paddingBottom, columnGap } = this.props.viewerSettings
 
     // we calculate the frameHeight using the same method in Layout.jsx, by
     // rounding the window height minus the padding top and bottom of the
@@ -761,7 +744,7 @@ class Reader extends Component {
       spreadIndex,
     } = this.state
 
-    const storage = Storage.get(this.localStorageKey)
+    const storage = Storage.get(this.localStorageKey) || {}
     storage[hash] = { currentSpineItem, currentSpineItemIndex, spreadIndex }
 
     Storage.set(this.localStorageKey, storage)
@@ -811,7 +794,6 @@ class Reader extends Component {
       bookURL,
       spreadIndex,
       lastSpreadIndex,
-      viewerSettings,
       pageAnimation,
       handleEvents,
       spinnerVisible,
@@ -824,19 +806,20 @@ class Reader extends Component {
         currentSpineItemIndex={currentSpineItemIndex}
         metadata={metadata}
         showSidebar={showSidebar}
-        viewerSettings={viewerSettings}
         handleEvents={handleEvents}
         spreadIndex={spreadIndex}
         lastSpreadIndex={lastSpreadIndex}
         enablePageTransitions={this.enablePageTransitions}
         handlePageNavigation={this.handlePageNavigation}
-        updateViewerSettings={this.updateViewerSettings}
         destroyReaderComponent={this.destroyReaderComponent}
         handleChapterNavigation={this.handleChapterNavigation}
         handleSidebarButtonClick={this.handleSidebarButtonClick}
         navigateToChapterByURL={this.navigateToChapterByURL}
         downloads={this.props.downloads}
         uiOptions={this.props.uiOptions}
+        viewerSettings={this.props.viewerSettings}
+        update={this.props.update}
+        save={this.props.save}
       >
         <Frame
           hash={hash}
@@ -846,8 +829,9 @@ class Reader extends Component {
           lastSpreadIndex={lastSpreadIndex}
           BookContent={BookContent}
           pageAnimation={pageAnimation}
+          viewerSettings={this.props.viewerSettings}
+          update={this.props.update}
           setReaderState={this._setState}
-          viewerSettings={viewerSettings}
         />
         <Spinner spinnerVisible={spinnerVisible} />
       </Controls>
@@ -855,4 +839,7 @@ class Reader extends Component {
   }
 }
 
-export default withDeferredCallbacks(Reader)
+export default connect(
+  ({ viewerSettings }) => ({ viewerSettings }),
+  dispatch => bindActionCreators({ save, update }, dispatch)
+)(withDeferredCallbacks(Reader))
