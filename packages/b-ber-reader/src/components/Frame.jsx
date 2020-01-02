@@ -14,7 +14,7 @@ const Frame = props => {
     margin: 0,
     padding: 0,
     border: 0,
-    fontSize,
+    fontSize: `${fontSize}%`, // TODO
   }
 
   const desktopStyles = { overflow: 'hidden' }

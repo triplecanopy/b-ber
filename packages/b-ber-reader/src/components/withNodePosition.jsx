@@ -2,24 +2,29 @@ import React from 'react'
 import ResizeObserver from 'resize-observer-polyfill'
 import debounce from 'lodash/debounce'
 import { connect } from 'react-redux'
+import DocumentPreProcessor from '../lib/DocumentPreProcessor'
 
 const ELEMENT_EDGE_VERSO_MIN = 48
 const ELEMENT_EDGE_VERSO_MAX = 52
 const ELEMENT_EDGE_RECTO_MIN = 0
-const ELEMENT_EDGE_RECTO_MAX = 2
+const ELEMENT_EDGE_RECTO_MAX = 5
+// const ELEMENT_EDGE_RECTO_MAX = 2
 
 // TODO: This is a refined version of what's in Marker.jsx. The Marker class
 // should be wrapped with this HOC.
 
-const withNodePosition = (WrappedComponent, { useParentDimensions }) => {
+const withNodePosition = (
+  WrappedComponent,
+  { useParentDimensions, isMarker }
+) => {
   class WrapperComponent extends React.Component {
     state = {
       verso: null,
       recto: null,
-      edgePosition: null, // _position
+      edgePosition: null,
       spreadIndex: null,
-      edgePositionVariance: null, // position
-      elementEdgeLeft: null, // x
+      edgePositionVariance: null,
+      elementEdgeLeft: null,
     }
 
     constructor(props) {
@@ -170,6 +175,13 @@ const withNodePosition = (WrappedComponent, { useParentDimensions }) => {
         this.timer = setTimeout(this.calculateNodePosition, 500)
       }
 
+      // TODO
+      if (isMarker) {
+        DocumentPreProcessor.removeStyleSheets()
+        DocumentPreProcessor.createStyleSheets({ paddingLeft, columnGap })
+        DocumentPreProcessor.appendStyleSheets()
+      }
+
       // TODO: may want to debounce this call, or write up 'swap' functions in
       // DocumentPreProcessor in case of flickering, but seems OK rn
       // @issue: https://github.com/triplecanopy/b-ber/issues/212
@@ -180,19 +192,23 @@ const withNodePosition = (WrappedComponent, { useParentDimensions }) => {
       this.setState({
         verso,
         recto,
-        edgePosition, // _position
+        edgePosition,
         spreadIndex,
-        edgePositionVariance, // position
-        elementEdgeLeft, // x
+        edgePositionVariance,
+        elementEdgeLeft,
       })
     }
 
     render() {
       // eslint-disable-next-line no-unused-vars
-      const { viewerSettings, ...rest } = this.props
+      // const { viewerSettings, ...rest } = this.props
 
       return (
-        <WrappedComponent elemRef={this.elemRef} {...this.state} {...rest} />
+        <WrappedComponent
+          elemRef={this.elemRef}
+          {...this.state}
+          {...this.props}
+        />
       )
     }
   }

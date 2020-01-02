@@ -4,12 +4,14 @@ import PropTypes from 'prop-types'
 class SpreadFigure extends React.Component {
   static contextTypes = {
     left: PropTypes.string,
-    // transform: PropTypes.string,
-    // recto: PropTypes.bool,
-    // verso: PropTypes.bool,
+    transform: PropTypes.string,
+    recto: PropTypes.bool,
+    verso: PropTypes.bool,
   }
 
   render() {
+    // console.log('figure', this.props['data-marker-reference-figure'])
+
     const { children, ...rest } = this.props
     const { left } = this.context
 

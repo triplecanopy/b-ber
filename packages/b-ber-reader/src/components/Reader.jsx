@@ -33,7 +33,7 @@ class Reader extends Component {
     registerOverlayElementId: PropTypes.func,
     deRegisterOverlayElementId: PropTypes.func,
     requestDeferredCallbackExecution: PropTypes.func,
-    addRef: PropTypes.func,
+    // addRef: PropTypes.func,
     refs: PropTypes.object,
     viewLoaded: PropTypes.bool,
     lastSpread: PropTypes.bool,
@@ -134,17 +134,17 @@ class Reader extends Component {
     ).bind(this)
   }
 
-  addRef = ref => {
-    const { refs } = this.state
-    const nextRefs = { ...refs, [ref.markerId]: ref }
-    this.setState({ refs: nextRefs })
-  }
+  // addRef = ref => {
+  //   const { refs } = this.state
+  //   const nextRefs = { ...refs, [ref.markerId]: ref }
+  //   this.setState({ refs: nextRefs })
+  // }
 
   getChildContext() {
     return {
       viewerSettings: this.props.viewerSettings,
 
-      addRef: this.addRef.bind(this),
+      // addRef: this.addRef.bind(this),
       refs: this.state.refs,
       spreadIndex: this.state.spreadIndex,
       navigateToChapterByURL: this.navigateToChapterByURL,
