@@ -4,7 +4,8 @@
 **/demo/**
 **/demos/**
 packages/b-ber-lib/*.js
-packages/b-ber-reader/epub/**/*.js
+packages/b-ber-reader/epub/
+packages/b-ber-reader/public/
 packages/b-ber-resources/index.js
 packages/b-ber-shapes-dublin-core/elements.js
 packages/b-ber-shapes-dublin-core/terms.js

@@ -339,7 +339,7 @@ class DocumentProcessor {
       this.addUltimateNode(doc)
       xml = xmlString.replace(
         /<body([^>]*?)>[\s\S]*<\/body>/g,
-        `<body$1>${String(doc.body.innerHTML)}</body>`
+        (_, match) => `<body${match}>${doc.body.innerHTML}</body>`
       )
     })
 
