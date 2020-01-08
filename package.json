@@ -21,6 +21,7 @@
     "jest": "jest",
     "test:coverage": "rimraf ./coverage && jest --collectCoverage=true",
     "test": "npm run check && jest",
+    "prepare": "npm run build",
     "postpublish": "node scripts/run-ci.js",
     "publish:canary": "lerna publish --canary --force-publish=*",
     "publish:latest": "lerna publish --dist-tag latest",
