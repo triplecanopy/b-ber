@@ -1,17 +1,18 @@
 module.exports = `# ==============================================================================
 # Project Metadata
 # Please see http://dublincore.org/documents/dcmi-terms/ for information on terms
-# and ususage. TK Please note that additional metadata can be entered and parsed
-# if following the outline below.
+# and usage. Additional metadata can be entered and parsed if following the
+# formatting below.
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
 # Title and Description
 # ------------------------------------------------------------------------------
+
 - term: title
   value: Project Title
-  term_property: title-type
-  term_property_value: main
+  refines:
+    - title-type: main
 
 - term: description
   value: Project description.
@@ -25,13 +26,13 @@ module.exports = `# ============================================================
 
 - term: creator
   value: Last Name, First Name
-  term_property: role
-  term_property_value: aut
+  refines:
+    - role: aut
 
 - term: contributor
   value: b-ber
-  term_property: role
-  term_property_value: mrk
+  refines:
+    - role: mrk
 
 # ------------------------------------------------------------------------------
 # Collaborators (editors, developers, designers, researchers, etc.)
@@ -39,42 +40,43 @@ module.exports = `# ============================================================
 
 - term: contributor
   value: Last Name, First Name
-  term_property: role
-  term_property_value: edt
+  refines:
+    - role: edt
 
 - term: contributor
   value: Last Name, First Name
-  term_property: role
-  term_property_value: drt
+  refines:
+    - role: drt
 
 - term: contributor
   value: Last Name, First Name
-  term_property: role
-  term_property_value: ard
+  refines:
+    - role: ard
+
 - term: contributor
   value: Last Name, First Name
-  term_property: role
-  term_property_value: pmn
+  refines:
+    - role: pmn
+
 - term: contributor
   value: Last Name, First Name
-  term_property: role
-  term_property_value: pmn
+  refines:
+    - role: prg
+
 - term: contributor
   value: Last Name, First Name
-  term_property: role
-  term_property_value: prg
+  refines:
+    - role: dsr
+
 - term: contributor
   value: Last Name, First Name
-  term_property: role
-  term_property_value: dsr
+  refines:
+    - role: mrk
+
 - term: contributor
   value: Last Name, First Name
-  term_property: role
-  term_property_value: mrk
-- term: contributor
-  value: Last Name, First Name
-  term_property: role
-  term_property_value: rtm
+  refines:
+    - role: rtm
 
 # ------------------------------------------------------------------------------
 # Publication Information
@@ -82,16 +84,21 @@ module.exports = `# ============================================================
 
 - term: language
   value: en-US
+
 - term: rights
   value: © YYYY
+
 - term: format
   value: epub+zip
+
 - term: date
   value: YYYY-MM-DD
+
 - term: publisher
   value: Publisher
+
 - term: tableOfContents
-  value: 'Chapter One; Chapter Two; etc.'
+  value: Chapter One; Chapter Two; etc.
 
 # ------------------------------------------------------------------------------
 # Additional Metadata
@@ -99,14 +106,18 @@ module.exports = `# ============================================================
 
 - term: temporal
   value: time
+
 - term: spatial
   value: Project Title Location
+
 - term: subject
   value: Project Title Subject
 
 # ------------------------------------------------------------------------------
-# Cover
+# Cover and Book ID (UUID, ISBN, ISSN, ASIN, etc.)
 # ------------------------------------------------------------------------------
+
 - term: identifier
   value: %IDENTIFIER%
+
 `
