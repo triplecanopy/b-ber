@@ -65,6 +65,14 @@ function prepare({ token, marker, context, instance, fileName, lineNumber }) {
     attrsObject.controls = 'controls'
   }
 
+  // Allow for custom controls for reader and web builds where the value is a
+  // string, all other builds set to `controls=controls` for epub validation.
+  // The value `controls=no` gets stripped out in b-ber-grammar-attributes.
+  if (state.build !== 'reader' && state.build !== 'web') {
+    attrsObject.controls =
+      attrsObject.controls === 'no' ? attrsObject.controls : 'controls'
+  }
+
   if (isHostedRemotely(source)) {
     const supportedThirdParty = isHostedBySupportedThirdParty(source)
     if (supportedThirdParty) {
