@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import ResizeObserver from 'resize-observer-polyfill'
 import debounce from 'lodash/debounce'
+import { unlessDefined } from '../helpers/utils'
 
 const ELEMENT_EDGE_VERSO_MIN = 48
 const ELEMENT_EDGE_VERSO_MAX = 52
@@ -11,7 +12,24 @@ const ELEMENT_EDGE_RECTO_MAX = 2
 // TODO: This is a refined version of what's in Marker.jsx. The Marker class
 // should be wrapped with this HOC.
 
-function withNodePosition(WrappedComponent, { useParentDimensions }) {
+// options =  {
+//
+//    useParentDimensions: bool
+//
+//    Should the calculations for the spread postion be based on the element
+//    that the ref is attached to, or the ref's parent container.
+//    Default false.
+//
+//
+//    useAdjustedColumnWidth: bool
+//
+//    Should the calculations be based on an element that sits inside of the
+//    columns or one that stretches the width of the viewport.
+//    Default false.
+//
+// }
+
+function withNodePosition(WrappedComponent, options) {
   return class extends React.Component {
     static contextTypes = {
       columnGap: PropTypes.number,
@@ -23,6 +41,7 @@ function withNodePosition(WrappedComponent, { useParentDimensions }) {
       recto: null,
       edgePosition: null, // _position
       spreadIndex: null,
+      currentSpreadIndex: null,
       edgePositionVariance: null, // position
       elementEdgeLeft: null, // x
     }
@@ -34,6 +53,20 @@ function withNodePosition(WrappedComponent, { useParentDimensions }) {
       this.elemRef = React.createRef()
       this.calculateNodePosition = this.calculateNodePosition.bind(this)
       this.calculateNodePositionAfterResize = () => {}
+
+      this.settings = {
+        useParentDimensions: unlessDefined(
+          this.props.useParentDimensions,
+          options.useParentDimensions,
+          false
+        ),
+
+        useAdjustedColumnWidth: unlessDefined(
+          this.props.useAdjustedColumnWidth,
+          options.useAdjustedColumnWidth,
+          true
+        ),
+      }
     }
 
     componentDidMount() {
@@ -47,7 +80,7 @@ function withNodePosition(WrappedComponent, { useParentDimensions }) {
       ).bind(this)
 
       this.connectObserver()
-      this.calculateNodePosition()
+      // this.calculateNodePosition()
     }
 
     componentWillUnmount() {
@@ -55,6 +88,7 @@ function withNodePosition(WrappedComponent, { useParentDimensions }) {
     }
 
     connectObserver() {
+      const { useParentDimensions } = this.settings
       let elem
       if (useParentDimensions) {
         elem =
@@ -94,6 +128,7 @@ function withNodePosition(WrappedComponent, { useParentDimensions }) {
     // the spread that it appears on.
     calculateNodePosition() {
       // Calculate position of either the attached node (ref), or its parent element
+      const { useParentDimensions, useAdjustedColumnWidth } = this.settings
       let elem
       if (useParentDimensions) {
         elem =
@@ -107,16 +142,25 @@ function withNodePosition(WrappedComponent, { useParentDimensions }) {
       if (!elem) return console.error('Element does not exist')
 
       const { paddingLeft, columnGap } = this.context
-      const {
-        marginLeft,
-        paddingLeft: elementPaddingLeft,
-      } = window.getComputedStyle(elem)
 
-      // Get the left edge of the element, taking into account padding and margins
-      const elementEdgeLeft =
-        elem.offsetLeft -
-        parseFloat(marginLeft) -
-        parseFloat(elementPaddingLeft)
+      let marginLeft
+      let elementPaddingLeft
+      let elementEdgeLeft
+
+      if (useAdjustedColumnWidth) {
+        const computedStyle = window.getComputedStyle(elem)
+        // eslint-disable-next-line prefer-destructuring
+        marginLeft = computedStyle.marginLeft
+        elementPaddingLeft = computedStyle.paddingLeft
+
+        // Get the left edge of the element, taking into account padding and margins
+        elementEdgeLeft =
+          elem.offsetLeft -
+          parseFloat(marginLeft) -
+          parseFloat(elementPaddingLeft)
+      } else {
+        elementEdgeLeft = elem.getBoundingClientRect().x
+      }
 
       // We test whether the element's left offset is divisible by the
       // visible frame width. A remainder means that the element is
@@ -130,8 +174,13 @@ function withNodePosition(WrappedComponent, { useParentDimensions }) {
 
       // Calculate for the left edge of the element as if it were in the
       // recto position
-      const elementEdgeLeftInRecto =
-        elementEdgeLeft - columnGap - columnWidth - paddingLeft
+      let elementEdgeLeftInRecto
+      if (useAdjustedColumnWidth) {
+        elementEdgeLeftInRecto =
+          elementEdgeLeft - columnGap - columnWidth - paddingLeft
+      } else {
+        elementEdgeLeftInRecto = elementEdgeLeft
+      }
 
       // Calculate the position (verso or recto) of the element by
       // dividing by the visible frame. If we're left with a remainder,
@@ -158,7 +207,7 @@ function withNodePosition(WrappedComponent, { useParentDimensions }) {
 
       // Calculate the spread that the element appears on by rounding the
       // position
-      const spreadIndex = Math.ceil(Number(edgePosition.toFixed(2)))
+      const spreadIndex = Math.round(Number(edgePosition.toFixed(2)))
 
       // In the case that the marker's edge is not within the allowable
       // range (during a transition or resize), calculateNodePosition
@@ -172,7 +221,7 @@ function withNodePosition(WrappedComponent, { useParentDimensions }) {
         (verso === false && recto === false)
       ) {
         console.warn('Recalculating layout')
-        this.timer = setTimeout(this.calculateNodePosition, 500)
+        // this.timer = setTimeout(this.calculateNodePosition, 500)
       }
 
       // TODO: may want to debounce this call, or write up 'swap' functions in

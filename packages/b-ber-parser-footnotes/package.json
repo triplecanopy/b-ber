@@ -25,7 +25,8 @@
     "@canopycanopycanopy/b-ber-lib": "1.0.19",
     "@canopycanopycanopy/b-ber-logger": "1.0.19",
     "@canopycanopycanopy/b-ber-shapes-directives": "1.0.19",
-    "@canopycanopycanopy/b-ber-templates": "1.0.19"
+    "@canopycanopycanopy/b-ber-templates": "1.0.19",
+    "lodash.isundefined": "^3.0.1"
   },
   "files": [
     "dist"

@@ -69,26 +69,42 @@ section.bibliography {
 }
 
 .audio,
-.video {
+.video,
+.vimeo {
   @include padding(1, 1, 1, 1, 0);
   text-align: center;
   .figure__large & {
     padding: 0;
   }
+
+  img {
+    width: 100%;
+  }
 }
 
-.video {
-  &.video--4x3 {
-    width: 80%;
+.video,
+.vimeo {
+  &.video--4x3,
+  &.vimeo--4x3 {
+    @if $build == 'web' {
+      width: 100%;
+    } @else {
+      width: 80%;
+    }
+    @include break('mobile') {
+      width: 100%;
+    }
     margin-left: auto;
     margin-right: auto;
   }
-  &.video--16x9 {
-    width: 80%;
+  &.video--16x9,
+  &.vimeo--16x9 {
+    width: 100%;
     margin-left: auto;
     margin-right: auto;
   }
-  &.video--21x0 {
+  &.video--21x9,
+  &.vimeo--21x9 {
     width: 100%;
     margin-left: auto;
     margin-right: auto;
@@ -96,11 +112,50 @@ section.bibliography {
 }
 
 audio,
-video {
+video,
+.embed {
   margin: 0;
   padding: 0;
   display: inline-block;
   width: 100%;
+}
+
+.vimeo {
+  // Outer container
+
+  &.vimeo--4x3 .embed.supported {
+    padding-top: 3 / 4 * 100%;
+  }
+
+  &.vimeo--16x9 .embed.supported {
+    padding-top: 9 / 16 * 100%;
+  }
+
+  &.vimeo--21x9 .embed.supported {
+    padding-top: 9 / 21 * 100%;
+  }
+
+  // Inner container
+  .embed.supported {
+    position: relative;
+
+    // Inner elements. Note that images should be the same aspect ratio as the
+    // video
+    iframe,
+    img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    img {
+      z-index: 1;
+    }
+  }
 }
 
 aside.note {

@@ -88,6 +88,7 @@
     "react": "^16.2.0",
     "react-attr-converter": "^0.3.1",
     "react-dom": "^16.2.0",
+    "react-player": "^1.15.2",
     "resize-observer-polyfill": "^1.5.0",
     "setimmediate": "^1.0.5",
     "url-search-params-polyfill": "^4.0.0",

@@ -19,7 +19,8 @@
   "dependencies": {
     "chalk": "^2.1.0",
     "lodash.has": "latest",
-    "lodash.isplainobject": "latest"
+    "lodash.isplainobject": "latest",
+    "lodash.isundefined": "^3.0.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.5.0",

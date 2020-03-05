@@ -2,24 +2,24 @@
 
 # keep in sync with scripts in package.json
 declare -a browserFiles=(
-    "src/web/search.js"
-    "src/web/worker.js"
-    "src/web/navigation.js"
-    "src/web/event-handlers.js"
+  "src/web/search.js"
+  "src/web/worker.js"
+  "src/web/navigation.js"
+  "src/web/event-handlers.js"
 )
 
 declare -a nodeFiles=(
-    "src/cover/freeuniversal-bold-webfont.ttf"
+  "src/cover/freeuniversal-bold-webfont.ttf"
 )
 
 for file in "${browserFiles[@]}"
 do
-    out="${file/src/dist}"
-    node_modules/.bin/uglifyjs $file -o $out
+  out="${file/src/dist}"
+  node_modules/.bin/uglifyjs $file -o $out
 done
 
 for file in "${nodeFiles[@]}"
 do
-    out="${file/src/dist}"
-    cp $file $out
+  out="${file/src/dist}"
+  cp $file $out
 done

@@ -30,6 +30,7 @@
     "@canopycanopycanopy/b-ber-templates": "1.0.19",
     "fs-extra": "^8.1.0",
     "image-size": "^0.7.4",
+    "lodash.isundefined": "^3.0.1",
     "mime-types": "^2.1.24"
   },
   "files": [

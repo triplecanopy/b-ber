@@ -1,7 +1,9 @@
 import fs from 'fs-extra'
+import 'image-size'
 import mobi from '../../src/figures/mobi'
 
-jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({}))
+jest.mock('@canopycanopycanopy/b-ber-lib/State')
+jest.mock('image-size', () => jest.fn(() => ({ width: 10, height: 10 })))
 
 afterAll(() => fs.remove('_project'))
 
@@ -13,7 +15,7 @@ describe('templates.mobi', () => {
       id: 1,
       ref: 1,
       alt: 'test',
-      source: 'test',
+      source: 'test.jpg',
       caption: 'test',
       attrString: 'autoplay="false"',
       sourceElements: '<source />',
@@ -33,6 +35,7 @@ describe('templates.mobi', () => {
     expect(mobi.audio(data)).toMatchSnapshot()
     expect(mobi.video(data)).toMatchSnapshot()
     expect(mobi.iframe(data)).toMatchSnapshot()
+    expect(mobi.vimeo(data)).toMatchSnapshot()
 
     expect(mobi.portrait(dataFiguresPage)).toMatchSnapshot()
     expect(mobi.landscape(dataFiguresPage)).toMatchSnapshot()
@@ -41,6 +44,7 @@ describe('templates.mobi', () => {
     expect(mobi.audio(dataFiguresPage)).toMatchSnapshot()
     expect(mobi.video(dataFiguresPage)).toMatchSnapshot()
     expect(mobi.iframe(dataFiguresPage)).toMatchSnapshot()
+    expect(mobi.vimeo(dataFiguresPage)).toMatchSnapshot()
 
     expect(mobi.portrait(dataPagebreakBefore)).toMatchSnapshot()
     expect(mobi.landscape(dataPagebreakBefore)).toMatchSnapshot()
@@ -49,5 +53,6 @@ describe('templates.mobi', () => {
     expect(mobi.audio(dataPagebreakBefore)).toMatchSnapshot()
     expect(mobi.video(dataPagebreakBefore)).toMatchSnapshot()
     expect(mobi.iframe(dataPagebreakBefore)).toMatchSnapshot()
+    expect(mobi.vimeo(dataPagebreakBefore)).toMatchSnapshot()
   })
 })

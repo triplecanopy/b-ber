@@ -2,6 +2,7 @@
 
 import path from 'path'
 import has from 'lodash.has'
+import { Url } from '@canopycanopycanopy/b-ber-lib'
 import { forOf } from '@canopycanopycanopy/b-ber-lib/utils'
 import log from '@canopycanopycanopy/b-ber-logger'
 import {
@@ -19,7 +20,7 @@ import {
 } from '@canopycanopycanopy/b-ber-shapes-directives'
 
 //
-// querying hierarchies gets confusing, so we're using biological taxonomic
+// Querying hierarchies gets confusing, so we're using biological taxonomic
 // rank as an analogue for classification. which is obvs less confusing...
 //
 // Class    -> Order  -> Family       -> Genus
@@ -75,7 +76,7 @@ const _applyTransforms = (k, v) => {
 
     // media controls enabled by default
     case 'controls':
-      return v === 'no' ? '' : ` ${k}="${k}"`
+      return v === 'no' ? '' : ` ${k}="${v}"`
 
     // boolean attrs for audio/video elements
     case 'autoplay':
@@ -152,11 +153,26 @@ const parseAttrs = s => {
 }
 
 // -> prop="val"
-const _buildAttrString = obj => {
-  let s = ''
-  Object.entries(obj).forEach(([key, val]) => (s += _applyTransforms(key, val)))
-  return s
-}
+// Pass reference object in to only add keys/values that exist on reference
+const _buildAttrString = (obj, reference) =>
+  Object.entries(obj).reduce(
+    (acc, [key, val]) =>
+      !reference || has(reference, key)
+        ? acc.concat(_applyTransforms(key, val))
+        : acc,
+    ''
+  )
+
+// -> ?foo=bar&baz=bat
+// Pass reference object in to only add keys/values that exist on reference
+const _buildAttrQueryString = (obj, reference) =>
+  Object.entries(obj).reduce((acc, [key, val]) => {
+    const prefix = acc.length ? '&amp;' : '?'
+    const encodedVal = encodeURIComponent(Url.ensureDecoded(val))
+    return !reference || has(reference, key)
+      ? acc.concat(`${prefix}${key}=${encodedVal}`)
+      : acc
+  }, '')
 
 // Ensure that attributes required for valid XHTML are present, and that system
 // defaults are merged into user settings
@@ -240,7 +256,7 @@ const attributesObject = (attrs, _genus, context = {}) => {
     })
   }
 
-  // add original `_genus` as a class to the attrs object in case it's
+  // Add original `_genus` as a class to the attrs object in case it's
   // different from the current `genus` (which might've changed due to it's
   // specification). do this to keep styling consistent
   if (genus !== _genus) {
@@ -256,7 +272,11 @@ const attributesObject = (attrs, _genus, context = {}) => {
 }
 
 // Create a string of attributes for an XHTML element
-const attributesString = obj => _buildAttrString(obj)
+const attributesString = (obj, reference) => _buildAttrString(obj, reference)
+
+// Create a query string of attributes for an iframe src
+const attributesQueryString = (obj, reference) =>
+  _buildAttrQueryString(obj, reference)
 
 // Convenience wrapper for creating attributes: String -> Object -> String
 const attributes = (str, type, context) =>
@@ -271,6 +291,7 @@ export {
   attributes,
   attributesObject,
   attributesString,
+  attributesQueryString,
   htmlId,
   parseAttrs,
   toAlias,

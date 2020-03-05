@@ -7,39 +7,44 @@ import {
 } from '@canopycanopycanopy/b-ber-grammar-attributes'
 import plugin from '@canopycanopycanopy/b-ber-parser-gallery'
 
-// define our open and closing markers, used by the `validateOpen` and
-// `validateClose` methods in the `createRenderer`
+// Define the open and closing markers, used by the `validateOpen` and
+// `validateClose` methods in `createRenderer`
 const MARKER_OPEN_RE = /^(spread)(?::([^\s]+)(\s.*)?)?$/
 const MARKER_CLOSE_RE = /^(exit)(?::([^\s]+))?/
 
-// a simple `render` function that gets passed into our `createRenderer` is
+// The `render` function that gets passed into our `createRenderer` is
 // responsible for the HTML output.
-const render = (tokens, index) => {
-  const token = tokens[index].info.trim().match(MARKER_OPEN_RE)
+const render = ({ context = {} }) => (tokens, index) => {
+  const token = tokens[index]
+  const info = token.info.trim().match(MARKER_OPEN_RE)
 
-  if (tokens[index].nesting !== 1 || !token) return ''
+  if (token.nesting !== 1 || !info) return ''
 
-  const [, type, id, attrs] = token
-  const attrsObject = attributesObject(attrs, type)
+  const lineNumber = token.map ? token.map[0] : null
+  const fileName = `_markdown/${context.fileName}.md`
+  const location = { fileName, lineNumber }
+
+  const [, type, id, attrs] = info
+  const attrsObject = attributesObject(attrs, type, location)
   const attrsString = attributesString(attrsObject)
 
-  // spread directive is handled differentenly based on build:
-
-  //  web: drop all assets (images, videos, etc) into a `fullscreen`
-  //      container so that they can be positioned using custom CSS
-
-  //  epub, mobi: drop all assets into a section.spread container
-  //      that is initialized as a slider via JS if available.
-  //      defaults to a simple sequence of images
-
-  //  pdf: sequence of images
+  // Spread directive is handled differentenly based on build:
+  //
+  //  reader, web: Drop all assets (images, videos, etc) into a `fullscreen`
+  //    container so that they can be positioned using custom CSS
+  //
+  //  epub, mobi: Drop all assets into a section.spread container that is
+  //    initialized as a slider via JS if available. defaults to a simple sequence
+  //    of images
+  //
+  //  pdf: Sequence of images
 
   switch (state.build) {
     case 'web':
     case 'reader':
       return `
-                <div class="spread">
-                <div id="${htmlId(id)}" class="spread__content">`
+        <div ${attrsString}>
+          <div id="${htmlId(id)}" class="spread__content">`
     case 'epub':
     case 'mobi':
     case 'pdf':
@@ -57,6 +62,6 @@ export default {
       ...args,
       markerOpen: MARKER_OPEN_RE,
       markerClose: MARKER_CLOSE_RE,
-      render,
+      render: render(args),
     }),
 }

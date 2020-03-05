@@ -27,7 +27,8 @@
     "@canopycanopycanopy/b-ber-logger": "1.0.19",
     "@canopycanopycanopy/b-ber-parser-section": "1.0.19",
     "@canopycanopycanopy/b-ber-shapes-directives": "1.0.19",
-    "lodash.has": "latest"
+    "lodash.has": "latest",
+    "lodash.isundefined": "^3.0.1"
   },
   "files": [
     "dist"

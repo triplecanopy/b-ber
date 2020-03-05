@@ -110,3 +110,9 @@ export const VIEWPORT_DIMENSIONS_MATRIX = [
 export const MEDIA_QUERY_SMALL = `only screen and (min-width: ${BREAKPOINT_HORIZONTAL_SMALL}px)`
 export const MEDIA_QUERY_LARGE = `only screen and (max-width: ${BREAKPOINT_HORIZONTAL_SMALL +
   1}px)`
+
+export const MEDIA_PLAYBACK_RATES = {
+  SLOW: 0.6,
+  NORMAL: 1.0,
+  FAST: 1.3,
+}

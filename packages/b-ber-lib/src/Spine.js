@@ -1,5 +1,6 @@
 import path from 'path'
 import glob from 'glob'
+import isUndefined from 'lodash/isUndefined'
 import isPlainObject from 'lodash/isPlainObject'
 import difference from 'lodash/difference'
 import YamlAdaptor from './YamlAdaptor'
@@ -32,10 +33,7 @@ class Spine {
           // curr has nested navigation. attach the nodes to the
           // previous entry in the tree by querying the last index
           let _index = 0
-          while (
-            typeof acc[index - _index] === 'undefined' &&
-            _index !== acc.length
-          ) {
+          while (isUndefined(acc[index - _index]) && _index !== acc.length) {
             _index += 1
           }
 

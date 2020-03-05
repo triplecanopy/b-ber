@@ -1,6 +1,7 @@
 import fs from 'fs-extra'
 import find from 'lodash/find'
 import isPlainObject from 'lodash/isPlainObject'
+import isUndefined from 'lodash/isUndefined'
 import log from '@canopycanopycanopy/b-ber-logger'
 
 const YAWN = require('yawn-yaml/cjs')
@@ -30,6 +31,7 @@ const interfaces = {
     autoprefixer_options: { type: 'array', required: false },
     // TODO: fill this in with missing options
   },
+  media: {},
 }
 
 function YawnAPI() {
@@ -53,7 +55,7 @@ const typeCheck = (schema, data = {}) => {
     if (
       interfaces[schema][key] &&
       interfaces[schema][key].required === true &&
-      typeof val === 'undefined'
+      isUndefined(val)
     ) {
       errors.push(new Error(`Schema "${schema}" requires value for"${key}"`))
     }
@@ -68,7 +70,7 @@ class Yaml {
   strict = true
 
   constructor(schema, strict) {
-    this.strict = typeof strict !== 'undefined' ? strict : this.strict
+    this.strict = isUndefined(strict) ? strict : this.strict
     if (this.strict) typeCheck(schema)
     this.schema = schema
   }

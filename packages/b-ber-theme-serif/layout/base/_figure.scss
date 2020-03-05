@@ -114,6 +114,7 @@ figure {
   }
 
   a {
+    text-decoration: none !important;
     margin: 0 auto;
   }
 
@@ -178,16 +179,14 @@ figcaption,
   text-align: center;
   width: 100%;
   display: inline-block;
-  a {
-    text-decoration: none;
-  }
 
   p.small {
     @include caption;
     width: 90%;
-    a {
-      text-decoration: underline;
-    }
+  }
+
+  a {
+    text-decoration: underline;
   }
 }
 
@@ -198,8 +197,13 @@ p.caption {
   }
 }
 
+.media__fallback {
+}
+
 .media__fallback__audio,
-.media__fallback__video {
+.media__fallback__video,
+.media__fallback__vimeo,
+.media__fallback__iframe {
 }
 
 .media__fallback--image {
@@ -214,7 +218,7 @@ p.caption {
   width: 100%;
   margin: 0 auto;
   > a {
-    text-decoration: none !important; // sass-lint:disable-line no-important
+    text-decoration: none;
   }
   .epigraph & {
     padding-top: 7px;
@@ -277,10 +281,19 @@ p.caption {
 
   // landscape
   .figure__large.figure__inline.figure__inline--landscape,
-  .figure__large.figure__large--landscape {
+  .figure__large.figure__large--landscape,
+  .figure__large.figure__large--16x9,
+  .figure__large.figure__large--21x9 {
     figure {
       .figure__items {
         width: 100%;
+        .vimeo {
+          width: 100%;
+        }
+        iframe {
+          width: 100%;
+          height: 100%;
+        }
         img.landscape,
         img.fullbleed {
           max-width: 100%;
@@ -320,11 +333,19 @@ p.caption {
 
   // square
   .figure__large.figure__inline.figure__inline--square,
-  .figure__large.figure__large--square {
+  .figure__large.figure__large--square,
+  .figure__large.figure__large--4x3 {
     figure {
       .figure__items {
         width: 80%;
         margin: 0 auto;
+        .vimeo {
+          width: 100%;
+        }
+        iframe {
+          width: 100%;
+          height: 100%;
+        }
         img.square,
         img.fullbleed {
           width: 100%;

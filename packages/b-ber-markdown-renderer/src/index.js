@@ -5,12 +5,14 @@ import markdownItSection from '@canopycanopycanopy/b-ber-grammar-section'
 import markdownItPullquote from '@canopycanopycanopy/b-ber-grammar-pullquote'
 import markdownItLogo from '@canopycanopycanopy/b-ber-grammar-logo'
 import markdownItImage from '@canopycanopycanopy/b-ber-grammar-image'
-import markdownItMedia from '@canopycanopycanopy/b-ber-grammar-media'
+import markdownItAudioVideo from '@canopycanopycanopy/b-ber-grammar-audio-video'
+import markdownItVimeo from '@canopycanopycanopy/b-ber-grammar-vimeo'
 import markdownItDialogue from '@canopycanopycanopy/b-ber-grammar-dialogue'
 import markdownItGallery from '@canopycanopycanopy/b-ber-grammar-gallery'
 import markdownItSpread from '@canopycanopycanopy/b-ber-grammar-spread'
 import markdownItFrontmatterPlugin from '@canopycanopycanopy/b-ber-grammar-frontmatter'
 import markdownItFootnotePlugin from '@canopycanopycanopy/b-ber-grammar-footnotes'
+import mediaDirectivePreProcessor from '@canopycanopycanopy/b-ber-grammar-media'
 import hljs from './highlightjs'
 
 class MarkdownRenderer {
@@ -25,14 +27,13 @@ class MarkdownRenderer {
       breaks: false,
       linkify: false,
 
-      // Syntax highlighting is done with highlight.js. It's up to add
-      // their own custom styles
+      // Syntax highlighting using highlight.js
       highlight: (str, lang) => {
         if (lang && hljs.getLanguage(lang)) {
           try {
             return hljs.highlight(lang, str).value
           } catch (_) {
-            /* noop */
+            // noop
           }
         }
 
@@ -76,9 +77,14 @@ class MarkdownRenderer {
         markdownItImage.renderer(reference)
       )
       .use(
-        markdownItMedia.plugin,
-        markdownItMedia.name,
-        markdownItMedia.renderer(reference)
+        markdownItAudioVideo.plugin,
+        markdownItAudioVideo.name,
+        markdownItAudioVideo.renderer(reference)
+      )
+      .use(
+        markdownItVimeo.plugin,
+        markdownItVimeo.name,
+        markdownItVimeo.renderer(reference)
       )
       .use(
         markdownItLogo.plugin,
@@ -96,10 +102,17 @@ class MarkdownRenderer {
     return `-\n  fileName: ${this.fileName}\n${str}\n`
   }
 
+  // Runs transformations on the Markdown to prepare it for rendering
+  // eslint-disable-next-line class-methods-use-this
+  prepare(data) {
+    return mediaDirectivePreProcessor.render(data)
+  }
+
   // Transforms a markdown file to XHTML
   render(fileName, data) {
     this.fileName = fileName
-    return this.markdownIt.render(data)
+    const transformedData = this.prepare(data)
+    return this.markdownIt.render(transformedData)
   }
 }
 

@@ -166,14 +166,7 @@ const containerPlugin = (md, name, options = {}) => {
     const markup = state.src.slice(start, pos)
     const params = state.src.slice(pos, max)
 
-    if (
-      !validateOpen(
-        params,
-        lineNumber
-      ) /* && !validateClose(params, lineNumber)*/
-    ) {
-      return false
-    }
+    if (!validateOpen(params, lineNumber)) return false
     if (silent) return true // for testing validation
 
     nextLine = startLine

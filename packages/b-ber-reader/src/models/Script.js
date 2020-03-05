@@ -1,3 +1,4 @@
+import isUndefined from 'lodash/isUndefined'
 import { rand } from '../helpers/utils'
 import { Url } from '../helpers'
 
@@ -6,7 +7,7 @@ class Script {
     this.id = node.id || `_${rand()}`
     this.type = node.type || 'application/javascript'
     this.src = Script.getScriptSourceFromNodeValue(node)
-    this.inline = typeof this.src === 'undefined'
+    this.inline = isUndefined(this.src)
     this.body =
       node.childNodes && node.childNodes.length
         ? node.childNodes[0].nodeValue.trim()

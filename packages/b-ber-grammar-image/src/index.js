@@ -1,5 +1,6 @@
 import fs from 'fs-extra'
 import sizeOf from 'image-size'
+import isUndefined from 'lodash.isundefined'
 import log from '@canopycanopycanopy/b-ber-logger'
 import { Html } from '@canopycanopycanopy/b-ber-lib'
 import state from '@canopycanopycanopy/b-ber-lib/State'
@@ -28,10 +29,10 @@ function prepare({ token, match, instance, context, fileName, lineNumber }) {
   const mediaType =
     (type.indexOf('-') && type.substring(0, type.indexOf('-'))) || type
 
-  // make sure image exists
+  // Make sure image exists
   if (!fs.existsSync(asset)) log.error(`Image not found [${asset}]`)
 
-  // then get the dimensions
+  // Get the image dimensions
   const { width, height } = sizeOf(asset)
 
   return {
@@ -52,8 +53,8 @@ const validate = ({ context = { fileName: '' } }) => (params, line) => {
   if (!match) return false
 
   const [, , id, source] = match
-  if (typeof id === 'undefined' || typeof source === 'undefined') {
-    // image requires `id` and `source`
+  if (isUndefined(id) || isUndefined(source)) {
+    // Images require `id` and `source`
     log.error(
       `Missing [id] or [source] attribute for [figure] directive${context.fileName}.md:${line}`
     )

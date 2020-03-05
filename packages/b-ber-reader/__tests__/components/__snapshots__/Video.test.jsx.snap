@@ -3,15 +3,21 @@
 exports[`Video renders the component 1`] = `
 <video
   controls={true}
+  currentSpreadIndex={null}
   data-autoplay={true}
   id="foo"
+  onEnded={[Function]}
+  onLoadedMetadata={[Function]}
 />
 `;
 
 exports[`Video renders the component 2`] = `
 <video
   controls={false}
+  currentSpreadIndex={null}
   data-autoplay={false}
   id="foo"
+  onEnded={[Function]}
+  onLoadedMetadata={[Function]}
 />
 `;

@@ -1,3 +1,4 @@
+import isUndefined from 'lodash.isundefined'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
 import {
@@ -22,7 +23,7 @@ const renderer = ({ context = {}, render, markerOpen, markerClose }) => ({
 
     // it's a directive! now check to see if it's well-formed.
     const [, type, id] = match
-    if (typeof id === 'undefined') {
+    if (isUndefined(id)) {
       // the directive's missing an `id` attribute, so we extract the
       // fileName from `context` which we've stored in back in
       // `md/index.es6`, and passed into our `renderer`

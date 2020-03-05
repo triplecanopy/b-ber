@@ -30,7 +30,7 @@ let OMIT_FROM_SEARCH
 let BASE_URL
 let flow // copy of spine for web task, see `WebFlow` below
 
-// class to manage pagination for web layout. when building an epub, figures are
+// Class to manage pagination for web layout. when building an epub, figures are
 // handled outside of the spine, mostly so that they can have hashed file names
 // (since they're generated on the fly), and so that the individual figures
 // pages are not listed in the YAML files. the `WebFlow` class creates a new
@@ -45,9 +45,9 @@ class WebFlow {
     this.removeNonLinearEntriesFromSpine()
   }
 
-  // TODO: the naming scheme for figures is slightly different for figures
-  // (the `fileName` property has a file extension). this needs to be fixed
-  // @issue: https://github.com/triplecanopy/b-ber/issues/208
+  // TODO: the naming scheme for figures is slightly different for figures (the
+  // `fileName` property has a file extension). @issue:
+  // https://github.com/triplecanopy/b-ber/issues/208
   prepareLoi() {
     this.loi = this.loi.map(a => {
       const b = { ...a }
@@ -76,7 +76,7 @@ class WebFlow {
   }
 }
 
-// make sure we're using the correct build variables
+// Make sure we're using the correct build variables
 async function initialize() {
   DIST_PATH = state.distDir
   OPS_PATH = path.join(DIST_PATH, 'OPS')
@@ -90,7 +90,7 @@ async function initialize() {
   ]
 
   OMIT_FROM_SEARCH = [
-    // list of spine item entry `fileName`s
+    // List of spine item entry `fileName`s
     'toc',
   ]
 
@@ -113,7 +113,7 @@ async function moveAssetsToRootDirctory() {
     return fs.move(from, to)
   })
 
-  // remove the OPS dir once all the moving assets have been moved
+  // Remove the OPS dir once all the moving assets have been moved
   await Promise.all(promises)
   return fs.remove(OPS_PATH)
 }
@@ -257,10 +257,10 @@ function injectPageElementsIntoFile(filePath) {
 
   const data = fs.readFileSync(filePath, 'utf8')
 
-  // prepare to modify publication content
+  // Prepare to modify publication content
   let contents
 
-  // prepend the dynamically generated elements to body, adding a
+  // Prepend the dynamically generated elements to body, adding a
   // wrapper around the main publication content. this allows us to
   // create a sliding nav, fixed header, etc.
   contents = data.replace(
@@ -268,7 +268,7 @@ function injectPageElementsIntoFile(filePath) {
     Template.body(styleBlock, headerElement)
   )
 
-  // close the wrapper element, adding a little javascript for the
+  // Close the wrapper element, adding a little javascript for the
   // navigation toggle. should be moved to core when stable
   contents = contents.replace(
     /(<\/body>)/,

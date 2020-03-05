@@ -35,6 +35,7 @@
     "@canopycanopycanopy/b-ber-lib": "1.0.19",
     "@canopycanopycanopy/b-ber-logger": "1.0.19",
     "fs-extra": "^8.1.0",
+    "image-size": "^0.8.3",
     "lodash.find": "latest",
     "lodash.has": "latest",
     "lodash.uniq": "latest",

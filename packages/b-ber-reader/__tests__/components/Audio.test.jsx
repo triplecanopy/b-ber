@@ -1,10 +1,14 @@
 import React from 'react'
 import renderer from 'react-test-renderer'
-import Audio from '../../src/components/Audio'
+import Audio from '../../src/components/Media/Audio'
 
 describe('Audio', () => {
   // Clean up logging from HOC during tests
-  beforeEach(() => (console.error = jest.fn()))
+  beforeEach(() => {
+    console.warn = jest.fn()
+    console.error = jest.fn()
+  })
+
   afterEach(() => jest.clearAllMocks())
 
   test('renders the component', () => {

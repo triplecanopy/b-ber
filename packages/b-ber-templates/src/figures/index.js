@@ -3,21 +3,25 @@ import log from '@canopycanopycanopy/b-ber-logger'
 import epub from './epub'
 import mobi from './mobi'
 import reader from './reader'
+import web from './web'
 
-const figures = { epub, mobi, reader }
+const figures = { epub, mobi, reader, web }
 
 const isImage = mime => /^image/.test(mime)
 const isAudio = mime => /^audio/.test(mime)
 const isVideo = mime => /^video/.test(mime)
 const isIframe = type => type === 'iframe'
+const isVimeo = type => type === 'vimeo'
 
-const figure = (data, env) => {
+const figure = (data, buildType) => {
   const { width, height, mime, type } = data
-  const _env = !env || !figures[env] ? 'epub' : env
+  const build = !buildType || !figures[buildType] ? 'epub' : buildType
 
   let format = null
   if (isIframe(type)) {
     format = 'iframe'
+  } else if (isVimeo(type)) {
+    format = 'vimeo'
   } else if (isImage(mime)) {
     format = getImageOrientation(width, height)
   } else if (isAudio(mime)) {
@@ -32,7 +36,7 @@ const figure = (data, env) => {
     )
   }
 
-  return figures[_env][format](data)
+  return figures[build][format](data)
 }
 
 export default figure

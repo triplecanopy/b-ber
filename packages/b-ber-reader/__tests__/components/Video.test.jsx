@@ -1,10 +1,14 @@
 import React from 'react'
 import renderer from 'react-test-renderer'
-import Video from '../../src/components/Video'
+import Video from '../../src/components/Media/Video'
 
 describe('Video', () => {
   // Clean up logging from HOC during tests
-  beforeEach(() => (console.error = jest.fn()))
+  beforeEach(() => {
+    console.warn = jest.fn()
+    console.error = jest.fn()
+  })
+
   afterEach(() => jest.clearAllMocks())
 
   test('renders the component', () => {

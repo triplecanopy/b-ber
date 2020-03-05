@@ -72,8 +72,8 @@ class Spread extends Component {
       verso: this.state.verso,
     }
   }
-  // eslint-disable-next-line camelcase
-  UNSAFE_componentWillReceiveProps(_, nextContext) {
+
+  componentWillReceiveProps(_, nextContext) {
     const markerRefId = this.props['data-marker-reference']
     if (nextContext.refs[markerRefId]) {
       const { verso, recto, x, markerId, unbound } = nextContext.refs[

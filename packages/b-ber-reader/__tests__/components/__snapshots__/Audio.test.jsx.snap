@@ -3,15 +3,21 @@
 exports[`Audio renders the component 1`] = `
 <audio
   controls={true}
+  currentSpreadIndex={null}
   data-autoplay={true}
   id="foo"
+  onEnded={[Function]}
+  onLoadedMetadata={[Function]}
 />
 `;
 
 exports[`Audio renders the component 2`] = `
 <audio
   controls={false}
+  currentSpreadIndex={null}
   data-autoplay={false}
   id="foo"
+  onEnded={[Function]}
+  onLoadedMetadata={[Function]}
 />
 `;

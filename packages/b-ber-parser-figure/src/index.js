@@ -1,3 +1,5 @@
+import isUndefined from 'lodash.isundefined'
+
 /* eslint-disable  no-param-reassign */
 
 const figurePlugin = (md, name, options = {}) => {
@@ -83,14 +85,14 @@ const figurePlugin = (md, name, options = {}) => {
 
       // two markers on the next line mean that there's a caption
       if (_currChar === markerChar && _nextChar === markerChar) {
-        if (typeof _capStartPos === 'undefined') {
+        if (isUndefined(_capStartPos)) {
           _capStartPos = _cursor + _capMarkerLen // state the start index
-        } else if (typeof _capStartPos !== 'undefined') {
+        } else if (!isUndefined(_capStartPos)) {
           // a caption is being captured, so we know we're still in the
           // opening image marker
 
           // eslint-disable-next-line
-                    _capEndPos = _cursor + 2 - _capMarkerLen // state the end index
+          _capEndPos = _cursor + 2 - _capMarkerLen // state the end index
           _capEndLine = _cursor
           break
         }

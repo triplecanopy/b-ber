@@ -1,5 +1,6 @@
 import React from 'react'
 import has from 'lodash/has'
+import isUndefined from 'lodash/isUndefined'
 import { ProcessNodeDefinitions } from 'html-to-react'
 import {
   Link,
@@ -9,6 +10,7 @@ import {
   Audio,
   Video,
   SpreadFigure,
+  Vimeo,
 } from '../components'
 import { Asset, Url } from '../helpers'
 
@@ -16,6 +18,8 @@ export const isValidNode = () => true
 export const processNodeDefinitions = new ProcessNodeDefinitions(React)
 export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
   {
+    replaceChildren: true,
+
     shouldProcessNode(node) {
       return (
         node.attribs &&
@@ -98,7 +102,7 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
       const { autoPlay, controls } = attrs
 
       let dataAutoPlay = false
-      if (typeof autoPlay !== 'undefined') {
+      if (!isUndefined(autoPlay)) {
         dataAutoPlay = true
         delete attrs.autoPlay
       }
@@ -108,7 +112,7 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
         {
           ...attrs,
           'data-autoplay': dataAutoPlay,
-          controls: typeof controls !== 'undefined',
+          controls: !isUndefined(controls),
           key: index,
         },
         children
@@ -130,7 +134,7 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
       const { autoPlay, controls } = attrs
 
       let dataAutoPlay = false
-      if (typeof autoPlay !== 'undefined') {
+      if (!isUndefined(autoPlay)) {
         dataAutoPlay = true
         delete attrs.autoPlay
       }
@@ -140,10 +144,54 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
         {
           ...attrs,
           'data-autoplay': dataAutoPlay,
-          controls: typeof controls !== 'undefined',
+          controls: !isUndefined(controls),
           key: index,
           poster,
         },
+        children
+      )
+    },
+  },
+  {
+    // Vimeo directive.
+    // Data attributes are added during `bber build`
+    shouldProcessNode(node) {
+      return node.name === 'iframe' && node.attribs['data-vimeo']
+    },
+    processNode(node, children, index) {
+      const attrs = Asset.convertToReactAttrs(node.attribs)
+      let posterImage = null
+
+      if (node.attribs['data-vimeo-poster']) {
+        posterImage = Url.resolveOverlappingURL(
+          requestedSpineItem.absoluteURL,
+          node.attribs['data-vimeo-poster']
+        )
+      }
+
+      delete attrs['data-vimeo']
+      delete attrs['data-vimeo-poster']
+
+      // Recurse back up the DOM to find if this element is a child of a spread.
+      // If so, pass in `useAdjustedColumnWidth = false` to configure the
+      // `withNodePosition` HOC. This is pretty obscure, should be handled more
+      // transparently
+      let nodeParent = node.parent
+      while (nodeParent) {
+        if (
+          nodeParent.type === 'tag' &&
+          nodeParent.attribs['data-marker-reference-figure']
+        ) {
+          attrs.useAdjustedColumnWidth = false
+          break
+        }
+
+        nodeParent = nodeParent.parent
+      }
+
+      return React.createElement(
+        Vimeo,
+        { ...attrs, key: index, posterImage },
         children
       )
     },

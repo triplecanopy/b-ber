@@ -1,11 +1,14 @@
-// sass-lint:disable no-important
+// sass-lint:disable no-important,nesting-depth
 
 $white: rgba(255, 255, 255, 1);
 $black: rgba(34, 34, 34, 1);
-$tc-purple: rgba(80, 80, 197, 1);
+$violet: rgba(80, 80, 197, 1);
 $lightgrey: rgba(211, 211, 211, 1);
 $component-x: 35px;
 $padding-y: 47px;
+
+$ease: ease-out;
+$speed: 200ms;
 
 // The following queries should be kept in sync with constants in src/constants.js
 $mobile-breakpoint-max: 414px; // Max. supported 'mobile' size (iPhone XS/R); Only applies to menu, so not used in constants.js
@@ -134,7 +137,7 @@ a {
         @include transition-fast('color');
         padding: 0 5px;
         &:hover {
-          color: $tc-purple;
+          color: $violet;
         }
         &.nav__button__downloads {
           color: $black;
@@ -143,7 +146,7 @@ a {
           text-shadow: 0px 0px 0px rgba(80, 80, 197, 0);
           &:hover {
             animation: none;
-            color: $tc-purple;
+            color: $violet;
           }
           @keyframes nav__button__downloads__shadow {
             5% {
@@ -196,38 +199,35 @@ a {
         text-overflow: ellipsis;
         font-size: 14px;
         font-family: $font-serif;
-        // prettier-ignore
-        &:hover { // sass-lint:disable-line nesting-depth
-                    @include transition-fast('color');
-                    color: $tc-purple;
-                }
-        // prettier-ignore
-        &.material-icons { // sass-lint:disable-line nesting-depth
-                    font-family: 'Material Icons';
-                    text-align: right;
-                    font-size: 20px;
-                }
 
-        // prettier-ignore
-        &.chapter--current { // sass-lint:disable-line nesting-depth
-                    font-weight: 700;
-                }
+        &:hover {
+          @include transition-fast('color');
+          color: $violet;
+        }
 
-        // prettier-ignore
-        @for $i from 1 through 10 { // sass-lint:disable-line nesting-depth
-                    &.indent--#{$i} {
-                        text-indent: ($i - 1) * ($component-x / 2);
-                    }
-                }
+        &.material-icons {
+          font-family: 'Material Icons';
+          text-align: right;
+          font-size: 20px;
+        }
+
+        &.chapter--current {
+          font-weight: 700;
+        }
+
+        @for $i from 1 through 10 {
+          &.indent--#{$i} {
+            text-indent: ($i - 1) * ($component-x / 2);
+          }
+        }
       }
 
       ol,
       li,
       dl {
-        // prettier-ignore
-        a { // sass-lint:disable-line nesting-depth
-                    text-indent: $padding-y;
-                }
+        a {
+          text-indent: $padding-y;
+        }
       }
     }
 
@@ -250,7 +250,7 @@ a {
 
         //TC SPECIFIC STYLES
         &:hover {
-          color: $tc-purple;
+          color: $violet;
         }
       }
     }
@@ -350,7 +350,7 @@ a {
     position: relative;
     z-index: 1;
     &:hover + button {
-      color: $tc-purple;
+      color: $violet;
     }
   }
   .downloads__title,
@@ -407,7 +407,7 @@ a {
 
         //TC SPECIFIC STYLES
         &:hover {
-          color: $tc-purple;
+          color: $violet;
         }
       }
     }
@@ -501,6 +501,117 @@ a {
       width: auto !important;
       columns: unset !important;
     }
+  }
+}
+
+// Vimeo directive
+// TODO Wrapper element has inline `overflow` style
+[data-vimeo-initialized] {
+  overflow: unset !important;
+}
+
+// Vimeo poster image
+.poster--vimeo {
+  z-index: 0 !important;
+  opacity: 0;
+  transition: opacity $speed $ease;
+  &.visible {
+    z-index: 1 !important;
+    opacity: 1;
+  }
+}
+
+.media__controls {
+  display: flex;
+  align-items: center;
+
+  font-size: 11px;
+  font-family: Arial, Helvetica, sans-serif;
+
+  a,
+  input,
+  button {
+    padding: 8px;
+  }
+
+  .media__time {
+    display: flex;
+  }
+}
+
+// Range input
+// https://css-tricks.com/sliding-nightmare-understanding-range-input/
+$track-w: 100%;
+$track-h: 0.25em;
+$thumb-d: 1.5em;
+$track-c: #ccc;
+$thumb-c: #222;
+
+@mixin track() {
+  box-sizing: border-box;
+  border: none;
+  width: $track-w;
+  height: $track-h;
+  background: $track-c;
+}
+
+@mixin thumb() {
+  box-sizing: border-box;
+  border: none;
+  width: $thumb-d;
+  height: $thumb-d;
+  border-radius: 50%;
+  background: $thumb-c;
+}
+
+.media__slider {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  position: relative;
+  // width: $track-w;
+  // height: 3.5 * $thumb-d;
+  font: 1em/1 arial, sans-serif;
+}
+
+input[type='range'] {
+  &,
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+  }
+
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  min-height: $thumb-d;
+  background: transparent;
+  font: inherit;
+  outline: none;
+
+  &::-webkit-slider-runnable-track {
+    @include track;
+  }
+  &::-moz-range-track {
+    @include track;
+  }
+  &::-ms-track {
+    @include track;
+  }
+
+  &::-webkit-slider-thumb {
+    margin-top: 0.5 * ($track-h - $thumb-d);
+    @include thumb;
+  }
+  &::-moz-range-thumb {
+    @include thumb;
+  }
+  &::-ms-thumb {
+    margin-top: 0;
+    @include thumb;
+  }
+
+  &::-ms-tooltip {
+    display: none;
   }
 }
 
