@@ -1,6 +1,6 @@
 {
   "name": "@canopycanopycanopy/b-ber-grammar-epigraph",
-  "version": "1.0.19",
+  "version": "1.0.20",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -22,8 +22,8 @@
     "rimraf": "^2.6.3"
   },
   "dependencies": {
-    "@canopycanopycanopy/b-ber-logger": "1.0.19",
-    "@canopycanopycanopy/b-ber-parser-figure": "1.0.19"
+    "@canopycanopycanopy/b-ber-logger": "1.0.20",
+    "@canopycanopycanopy/b-ber-parser-figure": "1.0.20"
   },
   "files": [
     "dist"
