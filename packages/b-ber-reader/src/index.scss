@@ -28,7 +28,11 @@ $font-size: 14px;
 
 $spinner-size: 40px;
 
-@mixin transition($property, $speed: $speed-fast, $easing: $transition-easing) {
+@mixin transition(
+  $property,
+  $speed: $transition-speed-fast,
+  $easing: $transition-easing
+) {
   transition: $property $speed $easing;
 }
 

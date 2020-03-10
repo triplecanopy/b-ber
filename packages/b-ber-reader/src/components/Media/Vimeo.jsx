@@ -59,10 +59,11 @@ class Vimeo extends React.Component {
       queryString
     )
 
-    // Extract autoplay property for use during page change events
-    const { autoplay } = playerOptions
-
     playerOptions = this.transformVimeoProps(playerOptions)
+
+    // Extract autoplay property for use during page change events. Do this
+    // after `transformVimeoProps` to ensure boolean attrs
+    const { autoplay } = playerOptions
 
     this.setState({ url, posterImage, autoplay, playerOptions })
   }
@@ -102,7 +103,16 @@ class Vimeo extends React.Component {
 
   handleUpdateVolume = () => {}
 
-  transformVimeoProps = props => omit(props, Vimeo.blacklistedProps)
+  transformVimeoProps = props => {
+    // Remove blacklisted props
+    const options = omit(props, Vimeo.blacklistedProps)
+
+    // Transform strings to booleans
+    options.loop = options.loop === 'true'
+    options.autoplay = options.autoplay === 'true'
+
+    return options
+  }
 
   getReactPlayerPropsFromQueryStringParameters = queryString =>
     Url.parseQueryString(queryString)
