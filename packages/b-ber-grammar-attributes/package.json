@@ -1,6 +1,6 @@
 {
   "name": "@canopycanopycanopy/b-ber-grammar-attributes",
-  "version": "1.0.22",
+  "version": "1.0.23",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -17,9 +17,9 @@
     "access": "public"
   },
   "dependencies": {
-    "@canopycanopycanopy/b-ber-lib": "1.0.22",
-    "@canopycanopycanopy/b-ber-logger": "1.0.22",
-    "@canopycanopycanopy/b-ber-shapes-directives": "1.0.22",
+    "@canopycanopycanopy/b-ber-lib": "1.0.23",
+    "@canopycanopycanopy/b-ber-logger": "1.0.23",
+    "@canopycanopycanopy/b-ber-shapes-directives": "1.0.23",
     "lodash.has": "latest"
   },
   "devDependencies": {
