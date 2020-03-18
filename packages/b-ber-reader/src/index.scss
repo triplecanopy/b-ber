@@ -581,7 +581,7 @@ button {
 
 // Vimeo poster image
 .poster--vimeo {
-  @include transition(opacity, z-index $transition-speed-normal);
+  @include transition(opacity, $transition-speed-normal);
   z-index: 1 !important;
   opacity: 0;
 
