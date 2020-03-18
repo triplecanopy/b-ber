@@ -14,6 +14,7 @@ $transition-speed-fast: 100ms;
 $transition-easing: ease;
 
 $anmiation-speed-normal: 250ms;
+$anmiation-speed-slow: 2500ms;
 
 // The following media queries should be kept in sync with constants in
 // src/constants.js
@@ -28,12 +29,52 @@ $font-size: 14px;
 
 $spinner-size: 40px;
 
-@mixin transition(
-  $property,
-  $speed: $transition-speed-fast,
-  $easing: $transition-easing
-) {
-  transition: $property $speed $easing;
+// @mixin transition(
+//   $property,
+//   $speed: $transition-speed-fast,
+//   $easing: $transition-easing
+// ) {
+//   transition: $property $speed $easing;
+// }
+
+// Usage:   @include transition(width, height 0.3s ease-in-out);
+// Output:  transition(width 0.2s, height 0.3s ease-in-out);
+//
+// Pass in any number of transitions
+@mixin transition($transitions...) {
+  $unfoldedTransitions: ();
+  @each $transition in $transitions {
+    $unfoldedTransitions: append(
+      $unfoldedTransitions,
+      unfoldTransition($transition),
+      comma
+    );
+  }
+
+  transition: $unfoldedTransitions;
+}
+
+@function unfoldTransition($transition) {
+  // Default values
+  $property: all;
+  $duration: $transition-speed-fast;
+  $easing: $transition-easing; // Browser default is ease, which is what we want
+  $delay: null; // Browser default is 0, which is what we want
+  $defaultProperties: ($property, $duration, $easing, $delay);
+
+  // Grab transition properties if they exist
+  $unfoldedTransition: ();
+  @for $i from 1 through length($defaultProperties) {
+    $p: null;
+    @if $i <= length($transition) {
+      $p: nth($transition, $i);
+    } @else {
+      $p: nth($defaultProperties, $i);
+    }
+    $unfoldedTransition: append($unfoldedTransition, $p);
+  }
+
+  @return $unfoldedTransition;
 }
 
 @mixin border($position: '', $color: $grey-light) {
@@ -193,7 +234,7 @@ button {
       }
 
       .nav__button {
-        @include transition('color');
+        @include transition(color);
         padding: 0 5px;
 
         &:hover {
@@ -202,9 +243,9 @@ button {
 
         &.nav__button__downloads {
           color: $black;
-          animation: nav__button__downloads__shadow $anmiation-speed-normal
+          animation: nav__button__downloads__shadow $anmiation-speed-slow
               infinite,
-            nav__button__downloads__color $anmiation-speed-normal infinite;
+            nav__button__downloads__color $anmiation-speed-slow infinite;
 
           &:hover {
             animation: none;
@@ -241,7 +282,7 @@ button {
         font-family: $font-serif;
 
         &:hover {
-          @include transition('color');
+          @include transition(color);
           color: $violet;
         }
 
@@ -284,7 +325,7 @@ button {
     li,
     dt {
       a {
-        @include transition('color');
+        @include transition(color);
         text-decoration: none;
         color: $black;
 
@@ -297,7 +338,7 @@ button {
 }
 
 .controls__sidebar__chapters {
-  @include transition('transform', $transition-speed-slow);
+  @include transition(transform, $transition-speed-slow);
   @include border('right');
   position: fixed;
   z-index: 2;
@@ -321,7 +362,7 @@ button {
 .controls__sidebar__metadata,
 .controls__sidebar__downloads,
 .controls__sidebar__settings {
-  @include transition('transform', $transition-speed-slow);
+  @include transition(transform, $transition-speed-slow);
   @include border('left');
   position: fixed;
   z-index: 2;
@@ -441,7 +482,7 @@ button {
       }
 
       .nav__button {
-        @include transition('color');
+        @include transition(color);
         padding: 0 5px;
 
         &:hover {
@@ -540,12 +581,16 @@ button {
 
 // Vimeo poster image
 .poster--vimeo {
-  @include transition('opacity', $transition-speed-normal);
-  z-index: 0 !important;
+  @include transition(opacity, z-index $transition-speed-normal);
+  z-index: 1 !important;
   opacity: 0;
 
+  &.controls {
+    pointer-events: none;
+  }
+
   &.visible {
-    z-index: 1 !important;
+    pointer-events: initial !important;
     opacity: 1;
   }
 }
