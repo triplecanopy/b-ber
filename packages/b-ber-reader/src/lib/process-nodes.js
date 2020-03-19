@@ -86,7 +86,6 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
       const attrs = Asset.convertToReactAttrs(node.attribs)
       const { id, autoPlay, controls } = attrs
       const key = id
-      console.log('Audio', attrs)
 
       let dataAutoPlay = false
       if (!isUndefined(autoPlay)) {
@@ -114,7 +113,6 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
       const attrs = Asset.convertToReactAttrs(node.attribs)
       const { id, autoPlay, controls } = attrs
       const key = id
-      console.log('Video', attrs)
 
       const poster = node.attribs.poster
         ? Url.resolveOverlappingURL(

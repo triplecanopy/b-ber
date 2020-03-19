@@ -51,6 +51,7 @@ class Vimeo extends React.Component {
   state = {
     url: '',
     controls: true, // TODO custom controls tbd
+    muted: false, // Not sure why this needs to be duplicated on the ReactPlayer
     playing: false,
     autoplay: true,
     posterImage: null,
@@ -68,18 +69,21 @@ class Vimeo extends React.Component {
 
     playerOptions = this.transformVimeoProps(playerOptions)
 
+    console.log(playerOptions)
+
     // Extract autoplay property for use during page change events. Do this
     // after `transformVimeoProps` to ensure boolean attrs
     const { autoplay, ...rest } = playerOptions
 
     // Controls is needed both in state and in playerOptions
-    const { controls } = playerOptions
+    const { controls, muted } = playerOptions
 
     this.setState({
       url,
-      posterImage,
-      autoplay,
+      muted,
       controls,
+      autoplay,
+      posterImage,
       playerOptions: { ...rest },
     })
   }
@@ -138,6 +142,9 @@ class Vimeo extends React.Component {
       nextOptions.controls = this.state.controls
     }
 
+    // Autoplay on mobile
+    nextOptions.playsinline = true
+
     return nextOptions
   }
 
@@ -147,7 +154,14 @@ class Vimeo extends React.Component {
   getVimeoURLAndQueryParamters = url => url.split('?')
 
   render() {
-    const { url, controls, playing, posterImage, playerOptions } = this.state
+    const {
+      url,
+      controls,
+      muted,
+      playing,
+      posterImage,
+      playerOptions,
+    } = this.state
 
     return (
       <div
@@ -163,9 +177,10 @@ class Vimeo extends React.Component {
           url={url}
           width="100%"
           height="100%"
+          muted={muted}
           playing={playing}
-          playsinline={true}
           controls={controls}
+          playsinline={true}
           config={{ vimeo: playerOptions }}
           onPause={this.handlePause}
           onEnded={this.handleEnded}
