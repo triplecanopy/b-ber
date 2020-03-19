@@ -117,7 +117,7 @@ export const media = data =>
         <figure id="%ID%">
           <div class="figure__items">
             <div class="%MEDIA_TYPE%">
-              <%MEDIA_TYPE% %ELEMENT_ATTRIBUTES%>
+              <%MEDIA_TYPE% id="%MEDIA_TYPE%-%ID%" %ELEMENT_ATTRIBUTES%>
                 %SOURCE_ELEMENTS%
                 <div class="media__fallback__%MEDIA_TYPE% media__fallback--image">
                   <figure>
