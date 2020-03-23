@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import findIndex from 'lodash/findIndex'
 import debounce from 'lodash/debounce'
 import find from 'lodash/find'
+import isInteger from 'lodash/isInteger'
 import { Controls, Frame, Spinner } from '.'
 import { Request, XMLAdaptor, Asset, Url, Cache, Storage } from '../helpers'
 import { ViewerSettings } from '../models'
@@ -821,6 +822,15 @@ class Reader extends Component {
       spinnerVisible,
     } = this.state
 
+    let slug = ''
+    if (
+      spine &&
+      isInteger(currentSpineItemIndex) &&
+      spine[currentSpineItemIndex]
+    ) {
+      ;({ slug } = spine[currentSpineItemIndex])
+    }
+
     return (
       <Controls
         guide={guide}
@@ -843,6 +853,7 @@ class Reader extends Component {
         uiOptions={this.props.uiOptions}
       >
         <Frame
+          slug={slug}
           hash={hash}
           ready={ready}
           bookURL={bookURL}

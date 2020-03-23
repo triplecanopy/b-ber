@@ -3,17 +3,24 @@ import PropTypes from 'prop-types'
 import omit from 'lodash/omit'
 import classNames from 'classnames'
 import ReactPlayer from 'react-player'
+import has from 'lodash/has'
 import withNodePosition from '../withNodePosition'
 import Url from '../../helpers/Url'
 
-const VimeoPosterImage = ({ src, playing, handleUpdatePlaying }) => {
+const VimeoPosterImage = ({ src, playing, controls, handleUpdatePlaying }) => {
   if (!src) return null
 
   // TODO how to handle play/pause/end? poster image reappears?
   return (
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions
     <img
-      className={classNames('poster poster--vimeo', { visible: !playing })}
+      className={classNames('poster poster--vimeo', {
+        // Don't show poster image if the video is playing
+        visible: !playing,
+        // Disable pointer-events on the poster image if using native controls
+        // and the video is playing
+        controls,
+      })}
       onClick={handleUpdatePlaying}
       src={src}
       alt=""
@@ -39,11 +46,12 @@ class Vimeo extends React.Component {
   }
 
   // Props that are on the vimeo player which must be managed by state
-  static blacklistedProps = ['controls', 'autoplay', 'autopause', 'playsinline']
+  static blacklistedProps = ['autopause' /* , 'controls' */]
 
   state = {
     url: '',
     controls: true, // TODO custom controls tbd
+    muted: false, // Not sure why this needs to be duplicated on the ReactPlayer
     playing: false,
     autoplay: true,
     posterImage: null,
@@ -61,11 +69,23 @@ class Vimeo extends React.Component {
 
     playerOptions = this.transformVimeoProps(playerOptions)
 
+    console.log(playerOptions)
+
     // Extract autoplay property for use during page change events. Do this
     // after `transformVimeoProps` to ensure boolean attrs
-    const { autoplay } = playerOptions
+    const { autoplay, ...rest } = playerOptions
 
-    this.setState({ url, posterImage, autoplay, playerOptions })
+    // Controls is needed both in state and in playerOptions
+    const { controls, muted } = playerOptions
+
+    this.setState({
+      url,
+      muted,
+      controls,
+      autoplay,
+      posterImage,
+      playerOptions: { ...rest },
+    })
   }
 
   componentWillReceiveProps(_, nextContext) {
@@ -107,11 +127,25 @@ class Vimeo extends React.Component {
     // Remove blacklisted props
     const options = omit(props, Vimeo.blacklistedProps)
 
-    // Transform strings to booleans
-    options.loop = options.loop === 'true'
-    options.autoplay = options.autoplay === 'true'
+    // Cast boolean attributes
+    const truthy = new Set(['true', '1'])
+    const falsey = new Set(['false', '0'])
+    const bools = new Set([...truthy, ...falsey])
 
-    return options
+    const nextOptions = Object.entries(options).reduce((acc, [key, value]) => {
+      acc[key] = bools.has(value) ? truthy.has(value) : value
+      return acc
+    }, {})
+
+    // Set default controls
+    if (!has(nextOptions, 'controls')) {
+      nextOptions.controls = this.state.controls
+    }
+
+    // Autoplay on mobile
+    nextOptions.playsinline = true
+
+    return nextOptions
   }
 
   getReactPlayerPropsFromQueryStringParameters = queryString =>
@@ -120,7 +154,14 @@ class Vimeo extends React.Component {
   getVimeoURLAndQueryParamters = url => url.split('?')
 
   render() {
-    const { url, controls, playing, posterImage, playerOptions } = this.state
+    const {
+      url,
+      controls,
+      muted,
+      playing,
+      posterImage,
+      playerOptions,
+    } = this.state
 
     return (
       <div
@@ -129,15 +170,17 @@ class Vimeo extends React.Component {
         <VimeoPosterImage
           src={posterImage}
           playing={playing}
+          controls={controls}
           handleUpdatePlaying={this.handleUpdatePlaying}
         />
         <ReactPlayer
           url={url}
           width="100%"
           height="100%"
+          muted={muted}
           playing={playing}
-          playsinline={true}
           controls={controls}
+          playsinline={true}
           config={{ vimeo: playerOptions }}
           onPause={this.handlePause}
           onEnded={this.handleEnded}

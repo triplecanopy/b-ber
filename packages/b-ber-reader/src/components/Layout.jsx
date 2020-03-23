@@ -266,7 +266,7 @@ class Layout extends Component {
 
   render() {
     const height = this.getFrameHeight()
-    const { pageAnimation, spreadIndex } = this.props
+    const { pageAnimation, spreadIndex, slug } = this.props
     const { paddingLeft, paddingRight } = this.state
     const { transition, transitionSpeed } = this.props.viewerSettings
     const isMobile = Viewport.isMobile()
@@ -295,7 +295,7 @@ class Layout extends Component {
     return (
       <div
         id="layout"
-        className={`spread-index__${spreadIndex} context__${contextClass}`}
+        className={`spread-index__${spreadIndex} context__${contextClass} ${slug}`}
         style={layoutStyles}
         ref={node => (this.layoutNode = node)}
       >

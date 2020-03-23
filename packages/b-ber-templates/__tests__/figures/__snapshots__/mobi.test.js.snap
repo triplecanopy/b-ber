@@ -111,7 +111,7 @@ exports[`templates.mobi creates the markup 5`] = `
         <figure id=\\"1\\">
           <div class=\\"figure__items\\">
             <div class=\\"audio-or-video\\">
-              <audio-or-video autoplay=\\"false\\">
+              <audio-or-video id=\\"audio-or-video-1\\" autoplay=\\"false\\">
                 <source />
                 <div class=\\"media__fallback__audio-or-video media__fallback--image\\">
                   <figure>
@@ -141,7 +141,7 @@ exports[`templates.mobi creates the markup 6`] = `
         <figure id=\\"1\\">
           <div class=\\"figure__items\\">
             <div class=\\"audio-or-video\\">
-              <audio-or-video autoplay=\\"false\\">
+              <audio-or-video id=\\"audio-or-video-1\\" autoplay=\\"false\\">
                 <source />
                 <div class=\\"media__fallback__audio-or-video media__fallback--image\\">
                   <figure>
@@ -317,7 +317,7 @@ exports[`templates.mobi creates the markup 13`] = `
         <figure id=\\"1\\">
           <div class=\\"figure__items\\">
             <div class=\\"audio-or-video\\">
-              <audio-or-video autoplay=\\"false\\">
+              <audio-or-video id=\\"audio-or-video-1\\" autoplay=\\"false\\">
                 <source />
                 <div class=\\"media__fallback__audio-or-video media__fallback--image\\">
                   <figure>
@@ -347,7 +347,7 @@ exports[`templates.mobi creates the markup 14`] = `
         <figure id=\\"1\\">
           <div class=\\"figure__items\\">
             <div class=\\"audio-or-video\\">
-              <audio-or-video autoplay=\\"false\\">
+              <audio-or-video id=\\"audio-or-video-1\\" autoplay=\\"false\\">
                 <source />
                 <div class=\\"media__fallback__audio-or-video media__fallback--image\\">
                   <figure>
@@ -523,7 +523,7 @@ exports[`templates.mobi creates the markup 21`] = `
         <figure id=\\"1\\">
           <div class=\\"figure__items\\">
             <div class=\\"audio-or-video\\">
-              <audio-or-video autoplay=\\"false\\">
+              <audio-or-video id=\\"audio-or-video-1\\" autoplay=\\"false\\">
                 <source />
                 <div class=\\"media__fallback__audio-or-video media__fallback--image\\">
                   <figure>
@@ -553,7 +553,7 @@ exports[`templates.mobi creates the markup 22`] = `
         <figure id=\\"1\\">
           <div class=\\"figure__items\\">
             <div class=\\"audio-or-video\\">
-              <audio-or-video autoplay=\\"false\\">
+              <audio-or-video id=\\"audio-or-video-1\\" autoplay=\\"false\\">
                 <source />
                 <div class=\\"media__fallback__audio-or-video media__fallback--image\\">
                   <figure>
