@@ -3,7 +3,7 @@ class Storage {
     let storage = '{}'
 
     try {
-      storage = window.localStorage.getItem(key)
+      storage = window.localStorage.getItem(key) || storage
     } catch (_) {
       console.warn('window.localStorage is unavailable')
     }

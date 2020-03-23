@@ -13,12 +13,10 @@ class SidebarSettings extends React.Component {
     }
   }
 
-  // TODO
-  // eslint-disable-next-line camelcase
-  // UNSAFE_componentWillReceiveProps(nextProps) {
-  //   const { fontSize } = nextProps.viewerSettings
-  //   if (fontSize !== this.state.fontSize) this.setState({ fontSize })
-  // }
+  componentWillReceiveProps(nextProps) {
+    const fontSize = nextProps.viewerSettings.get('fontSize')
+    if (fontSize !== this.state.fontSize) this.setState({ fontSize })
+  }
 
   handleFontSizeIncrement = () => this.handleFontSizeChange(1)
 

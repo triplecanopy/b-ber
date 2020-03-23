@@ -1,5 +1,7 @@
 /* eslint-disable no-param-reassign,no-plusplus */
 
+import isUndefined from 'lodash.isundefined'
+
 /*
 Modified version of markdown-it-footnote@3.0.1
 https://github.com//markdown-it/markdown-it-footnote
@@ -270,8 +272,7 @@ module.exports = function footnotePlugin(md, callback) {
     pos++
 
     const label = state.src.slice(start + 2, pos - 1)
-    if (typeof state.env.footnotes.refs[`:${label}`] === 'undefined')
-      return false
+    if (isUndefined(state.env.footnotes.refs[`:${label}`])) return false
 
     if (!silent) {
       if (!state.env.footnotes.list) state.env.footnotes.list = []

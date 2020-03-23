@@ -1,4 +1,4 @@
-import { media, iframe, figure } from './helpers'
+import { media, iframe, figure, unsupported } from './helpers'
 
 const epub = {
   portrait: data => figure({ data, ratioName: 'portrait' }),
@@ -8,6 +8,7 @@ const epub = {
   audio: data => media({ ...data, applyInlineClasses: true }),
   video: data => media({ ...data, applyInlineClasses: true }),
   iframe: data => iframe({ ...data, applyInlineClasses: true }),
+  vimeo: data => unsupported({ data, applyInlineClasses: true }),
 }
 
 export default epub

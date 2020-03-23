@@ -6,119 +6,129 @@
 //
 
 ;(function() {
-    var searchInput = null
-    var searchButton = null
-    var searchButtonOpen = null
-    var searchButtonClose = null
-    var publicationContents = null
-    var clonedContents = null
+  var searchInput = null
+  var searchButton = null
+  var searchButtonOpen = null
+  var searchButtonClose = null
+  var publicationContents = null
+  var clonedContents = null
 
-    function closeSearchBar() {
-        if (!searchInput || !searchButtonClose) return
-        searchInput.classList.remove('publication__search__input--expanded')
-        searchButtonClose.classList.remove('publication__search__button--close--visible')
-        searchInput.value = ''
+  function closeSearchBar() {
+    if (!searchInput || !searchButtonClose) return
+    searchInput.classList.remove('publication__search__input--expanded')
+    searchButtonClose.classList.remove(
+      'publication__search__button--close--visible'
+    )
+    searchInput.value = ''
+  }
+
+  function openSearchBar() {
+    if (!searchInput || !searchButtonClose) return
+    searchInput.classList.add('publication__search__input--expanded')
+    searchButtonClose.classList.add(
+      'publication__search__button--close--visible'
+    )
+    searchInput.focus()
+  }
+
+  function toggleSearchBar() {
+    if (!searchInput || !searchButtonClose) return
+    if (
+      searchInput.classList.contains('publication__search__input--expanded')
+    ) {
+      closeSearchBar()
+    } else {
+      openSearchBar()
+    }
+  }
+
+  function bindEventHandlers() {
+    searchInput = document.querySelector('.publication__search__input')
+    searchButtonOpen = document.querySelector(
+      '.publication__search__button--open'
+    )
+    searchButtonClose = document.querySelector(
+      '.publication__search__button--close'
+    )
+    publicationContents = document.querySelector('.publication__contents')
+    clonedContents = publicationContents.cloneNode(true)
+
+    if (window.Worker) {
+      initializeWebWorker()
     }
 
-    function openSearchBar() {
-        if (!searchInput || !searchButtonClose) return
-        searchInput.classList.add('publication__search__input--expanded')
-        searchButtonClose.classList.add('publication__search__button--close--visible')
-        searchInput.focus()
+    // Expand/collapse input on click
+    searchButtonOpen.addEventListener('click', openSearchBar, false)
+    searchButtonClose.addEventListener('click', closeSearchBar, false)
+    publicationContents.addEventListener('click', closeSearchBar, false)
+
+    // keyboard events
+    document.addEventListener(
+      'keyup',
+      function(e) {
+        if (e && e.which && e.which === 27 /* ESC */) {
+          closeSearchBar()
+        }
+      },
+      false
+    )
+  }
+
+  function initializeWebWorker() {
+    var worker = new Worker('%BASE_URL%' + 'worker.js') // BASE_URL added dynamically on build
+    var timer
+    var debounceSpeed = 200
+
+    if (!searchInput || !publicationContents) return
+
+    // prettier-ignore
+    function parseSearchResults(results) {
+      return (
+        results.reduce(function(acc, curr) {
+          return acc.concat(' \
+            <div class="search__result"> \
+              <a class="search__result__link" href="' + curr.url + '"> \
+                ' + (curr.title ? '<h1 class="search__result__title">' + curr.title + '</h1>' : '') + ' \
+                ' + (curr.body ? '<div class="search__result__body">' + curr.body + '</div>' : '') + ' \
+              </a> \
+            </div>'
+          )
+        }, '<section class="search__results">') + '</section>'
+      )
     }
 
-    function toggleSearchBar() {
-        if (!searchInput || !searchButtonClose) return
-        if (searchInput.classList.contains('publication__search__input--expanded')) {
-            closeSearchBar()
-        } else {
-            openSearchBar()
-        }
+    function resetContents() {
+      publicationContents.innerHTML = clonedContents.innerHTML
     }
 
-    function bindEventHandlers() {
-        searchInput = document.querySelector('.publication__search__input')
-        searchButtonOpen = document.querySelector('.publication__search__button--open')
-        searchButtonClose = document.querySelector('.publication__search__button--close')
-        publicationContents = document.querySelector('.publication__contents')
-        clonedContents = publicationContents.cloneNode(true)
-
-        if (window.Worker) {
-            initializeWebWorker()
+    function debounceSearch() {
+      clearTimeout(timer)
+      timer = setTimeout(function() {
+        var term = searchInput.value.trim()
+        if (!term) {
+          resetContents()
+          return
         }
 
-        // grow/shrink input on click
-        searchButtonOpen.addEventListener('click', openSearchBar, false)
-        searchButtonClose.addEventListener('click', closeSearchBar, false)
-        publicationContents.addEventListener('click', closeSearchBar, false)
-
-        // keyboard events
-        document.addEventListener(
-            'keyup',
-            function(e) {
-                if (e && e.which && e.which === 27 /* ESC */) {
-                    closeSearchBar()
-                }
-            },
-            false
-        )
+        // TODO: escape search tokens below, find some settings that work well here
+        // @issue: https://github.com/triplecanopy/b-ber/issues/231
+        worker.postMessage({ term: term })
+      }, debounceSpeed)
     }
 
-    function initializeWebWorker() {
-        var worker = new Worker('%BASE_URL%' + 'worker.js') // BASE_URL added dynamically on build
-        var timer
-        var debounceSpeed = 200
+    worker.addEventListener('message', function(e) {
+      if (!e.data) return
+      if (e.data.readyState && e.data.readyState > 3) {
+        searchInput.removeAttribute('disabled')
+      }
+      if (e.data.results) {
+        publicationContents.innerHTML = parseSearchResults(e.data.results)
+      }
+    })
 
-        if (!searchInput || !publicationContents) return
+    searchInput.addEventListener('keyup', debounceSearch)
+  }
 
-        // prettier-ignore
-        function parseSearchResults(results) {
-            return (
-                results.reduce(function(acc, curr) {
-                    return acc.concat(' \
-                        <div class="search__result"> \
-                            <a class="search__result__link" href="' + curr.url + '"> \
-                                ' + (curr.title ? '<h1 class="search__result__title">' + curr.title + '</h1>' : '') + ' \
-                                ' + (curr.body ? '<div class="search__result__body">' + curr.body + '</div>' : '') + ' \
-                            </a> \
-                        </div>'
-                    )
-                }, '<section class="search__results">') + '</section>'
-            )
-        }
-
-        function resetContents() {
-            publicationContents.innerHTML = clonedContents.innerHTML
-        }
-
-        function debounceSearch() {
-            clearTimeout(timer)
-            timer = setTimeout(function() {
-                var term = searchInput.value.trim()
-                if (!term) {
-                    resetContents()
-                    return
-                }
-
-                // TODO: escape search tokens below, find some settings that work well here
-                // @issue: https://github.com/triplecanopy/b-ber/issues/231
-                worker.postMessage({ term: term })
-            }, debounceSpeed)
-        }
-
-        worker.addEventListener('message', function(e) {
-            if (!e.data) return
-            if (e.data.readyState && e.data.readyState > 3) {
-                searchInput.removeAttribute('disabled')
-            }
-            if (e.data.results) {
-                publicationContents.innerHTML = parseSearchResults(e.data.results)
-            }
-        })
-
-        searchInput.addEventListener('keyup', debounceSearch)
-    }
-
-    // bootstrap
-    window.addEventListener('load', bindEventHandlers, false)
+  // bootstrap
+  window.addEventListener('load', bindEventHandlers, false)
 })()

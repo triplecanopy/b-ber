@@ -1,0 +1,51 @@
+{
+  "name": "@canopycanopycanopy/b-ber-grammar-audio-video",
+  "version": "1.0.22",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "prepare:dist": "BABEL_ENV=production babel --config-file ../../babel.config.js -d dist/ src/ --ignore **/__tests__/**",
+    "clean": "rimraf dist",
+    "prepare": "npm run clean && npm run prepare:dist",
+    "build": "npm run prepare",
+    "watch": "BABEL_ENV=production babel --config-file ../../babel.config.js -d dist/ src/ --watch src",
+    "test": "jest"
+  },
+  "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
+  "license": "GPL-3.0-or-later",
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.5.0",
+    "jest": "^24.8.0",
+    "rimraf": "^2.6.3"
+  },
+  "dependencies": {
+    "@canopycanopycanopy/b-ber-grammar-attributes": "1.0.22",
+    "@canopycanopycanopy/b-ber-lib": "1.0.22",
+    "@canopycanopycanopy/b-ber-logger": "1.0.22",
+    "@canopycanopycanopy/b-ber-parser-figure": "1.0.22",
+    "@canopycanopycanopy/b-ber-shapes-directives": "1.0.22",
+    "fs-extra": "^8.1.0",
+    "lodash.has": "latest",
+    "mime-types": "^2.1.24"
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/triplecanopy/b-ber.git"
+  },
+  "bugs": {
+    "url": "https://github.com/triplecanopy/b-ber/issues"
+  },
+  "contributors": [
+    {
+      "name": "Maxwell Simmer",
+      "email": "maxwellsimmer.com@gmail.com",
+      "url": "https://maxwellsimmer.com"
+    }
+  ]
+}

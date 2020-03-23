@@ -5,6 +5,7 @@
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
 import has from 'lodash.has'
+import isUndefined from 'lodash.isundefined'
 import {
   BLOCK_DIRECTIVE_MARKER,
   BLOCK_DIRECTIVE_MARKER_MIN_LENGTH,
@@ -90,7 +91,7 @@ const validateOpen = ({ context }) => (params, line) => {
   if (!match || match.length < 3) return false
 
   const [, , id] = match
-  if (typeof id === 'undefined') {
+  if (isUndefined(id)) {
     log.error(
       `Missing [id] for [${exports.default.name}:start] at ${context.fileName}.md:${line}`
     )

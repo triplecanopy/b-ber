@@ -2,13 +2,23 @@ const BLOCK_DIRECTIVE_MARKER = ':'
 const INLINE_DIRECTIVE_MARKER = ':'
 const BLOCK_DIRECTIVE_MARKER_MIN_LENGTH = 3
 const INLINE_DIRECTIVE_MARKER_MIN_LENGTH = 3
+const SECONDARY_INLINE_DIRECTIVE_MARKER_MIN_LENGTH = 2
 
 const BLOCK_DIRECTIVE_FENCE = `${BLOCK_DIRECTIVE_MARKER.repeat(
   BLOCK_DIRECTIVE_MARKER_MIN_LENGTH
 )} `
+
 const INLINE_DIRECTIVE_FENCE = `${INLINE_DIRECTIVE_MARKER.repeat(
   INLINE_DIRECTIVE_MARKER_MIN_LENGTH
 )} `
+
+const SECONDARY_INLINE_DIRECTIVE_FENCE_OPEN = `${INLINE_DIRECTIVE_MARKER.repeat(
+  SECONDARY_INLINE_DIRECTIVE_MARKER_MIN_LENGTH
+)} `
+
+const SECONDARY_INLINE_DIRECTIVE_FENCE_CLOSE = `${INLINE_DIRECTIVE_MARKER.repeat(
+  SECONDARY_INLINE_DIRECTIVE_MARKER_MIN_LENGTH
+)}`
 
 // block
 const FRONTMATTER_DIRECTIVES = [
@@ -53,9 +63,11 @@ const INLINE_DIRECTIVES = [
   'figure-inline',
   'logo',
   'video',
-  'audio',
   'video-inline',
+  'audio',
   'audio-inline',
+  'vimeo',
+  'vimeo-inline',
 ]
 
 // misc
@@ -128,10 +140,7 @@ const ALL_DIRECTIVES = [
   ...MISC_DIRECTIVES,
 ]
 
-// generic HTML5 media attributes copied below
-const mediaAttributes = {
-  source: true,
-  poster: true,
+const HTML5AudiovideoAttributes = {
   autoplay: true,
   loop: true,
   controls: true,
@@ -143,6 +152,37 @@ const mediaAttributes = {
   played: true,
   volume: true,
   crossorigin: true,
+}
+
+// Attributes that are used in the vimeo and vimeo-inline directives and passed
+// to vimeo via query string
+const vimeoEmbedAttributes = {
+  autopause: true,
+  autoplay: true,
+  background: true,
+  byline: true,
+  color: true,
+  controls: true,
+  dnt: true,
+  fun: true,
+  loop: true,
+  muted: true,
+  playsinline: true,
+  portrait: true,
+  quality: true,
+  speed: true,
+  '#t': true,
+  texttrack: true,
+  title: true,
+  transparent: true,
+}
+
+// b-ber attributes for audio, video and vimeo directives
+const bBerAudiovideoAttributes = {
+  classes: true,
+  source: true,
+  poster: true,
+  aspectratio: true,
 }
 
 const SUPPORTED_ATTRIBUTES = {
@@ -169,16 +209,28 @@ const SUPPORTED_ATTRIBUTES = {
     source: true,
   },
   video: {
-    ...mediaAttributes,
-  },
-  audio: {
-    ...mediaAttributes,
+    ...HTML5AudiovideoAttributes,
+    ...bBerAudiovideoAttributes,
   },
   'video-inline': {
-    ...mediaAttributes,
+    ...HTML5AudiovideoAttributes,
+    ...bBerAudiovideoAttributes,
+  },
+  audio: {
+    ...HTML5AudiovideoAttributes,
+    ...bBerAudiovideoAttributes,
   },
   'audio-inline': {
-    ...mediaAttributes,
+    ...HTML5AudiovideoAttributes,
+    ...bBerAudiovideoAttributes,
+  },
+  vimeo: {
+    ...vimeoEmbedAttributes,
+    ...bBerAudiovideoAttributes,
+  },
+  'vimeo-inline': {
+    ...vimeoEmbedAttributes,
+    ...bBerAudiovideoAttributes,
   },
 
   // misc
@@ -213,6 +265,8 @@ export {
   INLINE_DIRECTIVE_MARKER,
   BLOCK_DIRECTIVE_FENCE,
   INLINE_DIRECTIVE_FENCE,
+  SECONDARY_INLINE_DIRECTIVE_FENCE_OPEN,
+  SECONDARY_INLINE_DIRECTIVE_FENCE_CLOSE,
   BLOCK_DIRECTIVE_MARKER_MIN_LENGTH,
   INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
   FRONTMATTER_DIRECTIVES,

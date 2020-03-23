@@ -1,4 +1,6 @@
 /* eslint-disable class-methods-use-this */
+
+import isUndefined from 'lodash/isUndefined'
 import DocumentPreProcessor from './DocumentPreProcessor'
 import { rand } from '../helpers/utils'
 
@@ -18,16 +20,16 @@ class DocumentProcessor {
     responseURL: window.location.host,
   }
   constructor(options = {}) {
-    // initialize
+    // Initialize
     if (!DocumentPreProcessor.getRootDocument()) {
       DocumentPreProcessor.setRootDocument(document)
     }
 
-    // cleanup
+    // Cleanup
     DocumentPreProcessor.removeStyleSheets()
     DocumentPreProcessor.removeScripts()
 
-    // settings
+    // Settings
     this.settings = { ...DocumentProcessor.defaults, ...options }
 
     DocumentPreProcessor.setRequestURI(this.settings.responseURL)
@@ -90,9 +92,9 @@ class DocumentProcessor {
 
   shouldParse(node) {
     return (
-      node.nodeType === 1 && // is an element
-      this.blackListedNodes.names.indexOf(node.nodeName.toUpperCase()) < 0 && // not blacklisted
-      node.classList.contains(this.markerClassNames) !== true && // not a marker
+      node.nodeType === 1 && // Is an element
+      this.blackListedNodes.names.indexOf(node.nodeName.toUpperCase()) < 0 && // Not blacklisted
+      node.classList.contains(this.markerClassNames) !== true && // Not a marker
       this.classListContainsNone(node, this.blacklistedClassNames)
     )
   }
@@ -113,7 +115,7 @@ class DocumentProcessor {
     let node = null
 
     for (let i = children.length - 1; i >= 0; i--) {
-      // start at bottom
+      // Start at bottom
       node = children[i]
       if (!this.shouldParse(node)) continue // eslint-disable-line no-continue
 
@@ -121,11 +123,11 @@ class DocumentProcessor {
         return this.getLastChild(node.children)
       }
 
-      // exit early since we're at the last node in the collection
+      // Exit early since this is the last node in the collection
       return node
     }
 
-    // fallback to parent in case we couldn't parse any of the children
+    // Fallback to parent in case no children could be parsed
     return children[children.length - 1].parentNode
   }
 
@@ -137,23 +139,23 @@ class DocumentProcessor {
       return this.getSibling(node.parentNode)
     }
 
-    // if the sibling is another target, we don't parse it, and can't append
-    // to it since it's going to be absolutely positioned, so return sibling
+    // If the sibling is another target, it can't be parses, and can't be appended
+    // to since it's going to be absolutely positioned, so return sibling
     if (this.isTarget(node_)) {
       return this.getSibling(node_)
     }
 
-    // not a target, not something we can parse, get siblings
+    // Not a target, not parseable, get siblings
     if (!this.shouldParse(node_)) {
       return this.getSibling(node_)
     }
 
-    // no children, append to node_
+    // No children, append to node_
     if (!this.hasChildren(node_)) {
       return node_
     }
 
-    // node can be parsed, find the last child and append marker
+    // Node can be parsed, find the last child and append marker
     const lastChild = this.getLastChild(node_.children)
     return lastChild
   }
@@ -206,9 +208,9 @@ class DocumentProcessor {
           if (sibling) {
             const marker = this.createMarker(markerId)
 
-            // check to see if the marker we're injecting shares a
-            // parent with another marker. set a flag if so. this is
-            // referenced in Marker.jsx
+            // Check to see if the marker being injected shares a parent with
+            // another marker and set a flag if so. This is referenced in
+            // Marker.jsx
             if (
               sibling.lastElementChild &&
               this.isMarker(sibling.lastElementChild)
@@ -216,7 +218,7 @@ class DocumentProcessor {
               marker.setAttribute('data-adjacent', true)
             }
 
-            // inject into tree
+            // Inject into tree
             sibling.appendChild(marker)
             node.setAttribute('data-marker-reference', markerId)
             node.classList.add('figure__processed')
@@ -286,7 +288,7 @@ class DocumentProcessor {
     console.warn('Could not append ultimate node')
   }
 
-  // check that all references have markers
+  // Check that all references have markers
   validateDocument(doc) {
     const markers = doc.querySelectorAll('[data-marker]')
     const refs = doc.querySelectorAll('[data-marker-reference]')
@@ -306,7 +308,7 @@ class DocumentProcessor {
 
     for (let j = 0; j < markers.length; j++) {
       const markerId = markers[j].dataset.marker
-      const markerData = typeof markerId !== 'undefined'
+      const markerData = !isUndefined(markerId)
       console.assert(markerData, `Marker ${j} does not have a marker attribute`)
 
       const refExists = refHash[markerId]
@@ -339,7 +341,7 @@ class DocumentProcessor {
       this.addUltimateNode(doc)
       xml = xmlString.replace(
         /<body([^>]*?)>[\s\S]*<\/body>/g,
-        `<body$1>${String(doc.body.innerHTML)}</body>`
+        (_, match) => `<body${match}>${doc.body.innerHTML}</body>`
       )
     })
 

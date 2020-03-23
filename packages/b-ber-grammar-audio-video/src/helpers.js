@@ -4,8 +4,13 @@ import mime from 'mime-types'
 import { Url } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import state from '@canopycanopycanopy/b-ber-lib/State'
-// import { getVideoAspectRatio } from '@canopycanopycanopy/b-ber-lib/utils'
 import { toAlias } from '@canopycanopycanopy/b-ber-grammar-attributes'
+// import { getVideoAspectRatio } from '@canopycanopycanopy/b-ber-lib/utils'
+
+export const getMediaType = type => {
+  const index = type.indexOf('-')
+  return index > -1 ? type.substring(0, index) : type
+}
 
 export const isHostedRemotely = asset => /^http/.test(asset)
 
@@ -61,13 +66,14 @@ export function getWebOnlyAttributesString() {
 }
 
 export function createMedia({ id, href, poster }) {
-  return `<div class="figure__small figure__small--landscape">
-            <figure id="ref${id}">
-            <a href="${href}#${id}">
-            <img src="${poster}" alt=""/>
-            </a>
-            </figure>
-            </div>`
+  return `
+    <div class="figure__small figure__small--landscape">
+      <figure id="ref${id}">
+        <a href="${href}#${id}">
+          <img src="${poster}" alt=""/>
+        </a>
+      </figure>
+    </div>`
 }
 
 export function createIFrame({
@@ -78,23 +84,24 @@ export function createIFrame({
   caption,
   mediaType,
 }) {
-  return `${commentStart}
-            <section id="${id}">
-            <iframe src="${Url.encodeQueryString(source)}" />
-            ${
-              caption
-                ? `<p class="caption caption__${mediaType}">${caption}</p>`
-                : ''
-            }
-            </section>
-            ${commentEnd}`
+  return `
+    ${commentStart}
+      <section id="${id}">
+        <iframe src="${Url.encodeQueryString(source)}" />
+          ${
+            caption
+              ? `<p class="caption caption__${mediaType}">${caption}</p>`
+              : ''
+          }
+      </section>
+    ${commentEnd}`
 }
 
 export function createMediaInline({
   commentStart,
   commentEnd,
   mediaType,
-  aspecRatioClassName,
+  aspectRatioClassName,
   id,
   attrString,
   webOnlyAttrString,
@@ -102,22 +109,27 @@ export function createMediaInline({
   poster,
   caption,
 }) {
-  return `${commentStart}
-            <section class="${mediaType} ${aspecRatioClassName} figure__large figure__inline">
-            <${mediaType} id="${id}"${attrString}${webOnlyAttrString}>
-            ${sourceElements}
-            <div class="media__fallback__${mediaType} media__fallback--image figure__small figure__small--landscape">
-            <figure>
-            <img src="${poster}" alt="Media fallback image"/>
-            </figure>
-            </div>
-            <p class="media__fallback__${mediaType} media__fallback--text">Your device does not support the HTML5 ${mediaType} API.</p>
-            </${mediaType}>
-            ${
-              caption
-                ? `<p class="caption caption__${mediaType}">${caption}</p>`
-                : ''
-            }
-            </section>
-            ${commentEnd}`
+  return `
+    ${commentStart}
+      <section class="${mediaType} ${aspectRatioClassName} figure__large figure__inline">
+        <${mediaType} id="${id}"${attrString}${webOnlyAttrString}>
+          ${sourceElements}
+          ${
+            poster
+              ? `<div class="media__fallback media__fallback__${mediaType} media__fallback--image">
+                  <figure>
+                    <img src="${poster}" alt="Media fallback image"/>
+                  </figure>
+                </div>`
+              : ''
+          }
+          <p class="media__fallback media__fallback__${mediaType} media__fallback--text">Your device does not support the HTML5 ${mediaType} API.</p>
+        </${mediaType}>
+        ${
+          caption
+            ? `<p class="caption caption__${mediaType}">${caption}</p>`
+            : ''
+        }
+      </section>
+    ${commentEnd}`
 }

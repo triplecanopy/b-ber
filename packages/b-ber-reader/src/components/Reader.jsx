@@ -5,6 +5,7 @@ import PropTypes from 'prop-types'
 import findIndex from 'lodash/findIndex'
 import debounce from 'lodash/debounce'
 import find from 'lodash/find'
+import isInteger from 'lodash/isInteger'
 import { Controls, Frame, Spinner } from '.'
 import { Request, XMLAdaptor, Asset, Url, Cache, Storage } from '../helpers'
 import { debug, verboseOutput, logTime, useLocalStorage } from '../config'
@@ -194,8 +195,7 @@ class Reader extends Component {
     )
   }
 
-  // eslint-disable-next-line camelcase
-  UNSAFE_componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps) {
     const { hash, cssHash, search } = this.state
 
     if (nextProps.search !== search) {
@@ -278,7 +278,7 @@ class Reader extends Component {
     const { slug } = currentSpineItem
     const url = Url.parseQueryString(this.props.search)
     const { pathname, state } = history.location
-    const update = !url.slug || url.slug === slug ? 'replace' : 'push'
+    const updateMethod = !url.slug || url.slug === slug ? 'replace' : 'push'
 
     const search = Url.buildQueryString({
       slug,
@@ -288,7 +288,7 @@ class Reader extends Component {
 
     if (this.props.useBrowserHistory) {
       this.setState({ search }, () =>
-        history[update]({
+        history[updateMethod]({
           pathname,
           search,
           state,
@@ -799,6 +799,15 @@ class Reader extends Component {
       spinnerVisible,
     } = this.state
 
+    let slug = ''
+    if (
+      spine &&
+      isInteger(currentSpineItemIndex) &&
+      spine[currentSpineItemIndex]
+    ) {
+      ;({ slug } = spine[currentSpineItemIndex])
+    }
+
     return (
       <Controls
         guide={guide}
@@ -822,6 +831,7 @@ class Reader extends Component {
         save={this.props.save}
       >
         <Frame
+          slug={slug}
           hash={hash}
           ready={ready}
           bookURL={bookURL}

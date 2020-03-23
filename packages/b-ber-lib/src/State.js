@@ -64,6 +64,7 @@ class State {
   theme = {}
   video = []
   audio = []
+  media = {}
   build = 'epub'
   sequence = []
   hash = randomHash()
@@ -212,6 +213,7 @@ class State {
 
     this.reset()
     this.loadMetadata()
+    this.loadAudioVideo()
     this.loadMedia()
     this.loadBuilds()
     this.loadTheme()
@@ -291,6 +293,17 @@ class State {
     this.metadata.load(fpath)
   }
 
+  loadMedia = () => {
+    const fpath = path.resolve(this.config.src, 'media.yml')
+    if (!fs.existsSync(fpath)) return
+
+    let media = new Yaml('media')
+    media.load(fpath)
+    media = media.json()
+
+    set(this, 'media', media)
+  }
+
   loadTheme = () => {
     // ensure themes dir exists unless running `new` command, as it's the
     // only command that's run outside of a project directory
@@ -335,7 +348,7 @@ class State {
     }
   }
 
-  loadMedia = () => {
+  loadAudioVideo = () => {
     if (skipInitialization()) return
 
     const mediaPath = path.resolve(this.config.src, '_media')

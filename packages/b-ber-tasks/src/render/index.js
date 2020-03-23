@@ -12,7 +12,7 @@ const writeMarkupToFile = (fname, markup) => {
   )
 }
 
-// convert md to xhtml and wrap with page template
+// Convert Markdown to HTML and wrap with page template
 const createPageLayout = (fileName, data) => {
   const textDir = state.dist.text()
   const body = MarkdownRenderer.render(fileName, data)
@@ -34,8 +34,8 @@ function render() {
   const markdownDir = state.src.markdown()
 
   return fs.readdir(markdownDir).then(files => {
-    // sort the files in the order that they appear in `type.yml`, so that
-    // we process them (and the images they contain) in the correct order
+    // Sort the files in the order that they appear in `type.yml`, so that they
+    // and the images they contain are processed in the correct order
     const promises = files
       .filter(a => a.charAt(0) !== '.')
       .sort((a, b) => {

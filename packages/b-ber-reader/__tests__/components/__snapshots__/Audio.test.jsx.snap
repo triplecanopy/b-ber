@@ -5,6 +5,8 @@ exports[`Audio renders the component 1`] = `
   controls={true}
   data-autoplay={true}
   id="foo"
+  onEnded={[Function]}
+  onLoadedMetadata={[Function]}
 />
 `;
 
@@ -13,5 +15,7 @@ exports[`Audio renders the component 2`] = `
   controls={false}
   data-autoplay={false}
   id="foo"
+  onEnded={[Function]}
+  onLoadedMetadata={[Function]}
 />
 `;

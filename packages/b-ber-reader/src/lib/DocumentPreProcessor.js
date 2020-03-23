@@ -4,11 +4,11 @@ import { MediaStyleSheet, Script } from '../models'
 import { MEDIA_QUERY_LARGE, MEDIA_QUERY_SMALL } from '../constants'
 
 const state = {
-  root: null, // app context, used for styles
+  root: null, // App context, used for styles
   document: null, // content context, used for (removing) scripts
   styleSheets: [], // MediaStyleSheet list
-  scripts: [], // scripts
-  requestURI: '', // original domain of the request
+  scripts: [], // Scripts
+  requestURI: '', // Original domain of the request
 }
 
 class DocumentPreProcessor {
@@ -40,17 +40,17 @@ class DocumentPreProcessor {
 
   static appendStyleSheets() {
     state.styleSheets.forEach(
-      a =>
-        state.root.querySelector(`#${a.id}`) === null &&
-        a.appendSheet(state.root)
+      sheet =>
+        state.root.querySelector(`#${sheet.id}`) === null &&
+        sheet.appendSheet(state.root)
     )
   }
 
   static appendScripts() {
     state.scripts.forEach(
-      a =>
-        /(?:text|application)\/(?:(x-)?java|ecma)script/.test(a.type) &&
-        a.appendScript(state.root)
+      script =>
+        /(?:text|application)\/(?:(x-)?java|ecma)script/.test(script.type) &&
+        script.appendScript(state.root)
     )
   }
 

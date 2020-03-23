@@ -67,7 +67,7 @@ class Spread extends React.Component {
   }
 
   // eslint-disable-next-line camelcase
-  UNSAFE_componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps) {
     const markerId = this.props['data-marker-reference']
     const marker = nextProps.markers[markerId]
 

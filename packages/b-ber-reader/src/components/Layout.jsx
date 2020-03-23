@@ -80,8 +80,7 @@ class Layout extends React.Component {
     this.bindEventListeners()
   }
 
-  // eslint-disable-next-line camelcase
-  UNSAFE_componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps) {
     const { spreadIndex } = nextProps
     this.updateTransform(spreadIndex)
   }
@@ -213,7 +212,7 @@ class Layout extends React.Component {
 
   render() {
     const height = this.props.getFrameHeight()
-    const { pageAnimation, spreadIndex } = this.props
+    const { pageAnimation, spreadIndex, slug } = this.props
 
     const {
       transition,
@@ -223,7 +222,7 @@ class Layout extends React.Component {
     } = this.props.viewerSettings
 
     const isMobile = Viewport.isMobile()
-    const viewClassName = isMobile ? 'mobile' : 'desktop'
+    const contextClass = isMobile ? 'mobile' : 'desktop'
     const contentStyles = { ...this.contentStyles(), minHeight: height }
     const layoutTransition = transitions({ transitionSpeed })[transition]
 
@@ -245,7 +244,7 @@ class Layout extends React.Component {
     return (
       <div
         id="layout"
-        className={`spread-index__${spreadIndex} view__${viewClassName}`}
+        className={`spread-index__${spreadIndex} context__${contextClass} ${slug}`}
         style={layoutStyles}
         ref={node => (this.layoutNode = node)}
       >
