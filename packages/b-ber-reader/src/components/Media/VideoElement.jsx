@@ -10,17 +10,21 @@ const VideoElement = ({
   controls,
   children,
   ...mediaAttributes
-}) => (
-  <video
-    onLoadedMetadata={handleLoad}
-    onEnded={handleEnded}
-    controls={controls}
-    key={elementKey}
-    ref={elementRef}
-    {...mediaAttributes}
-  >
-    {children}
-  </video>
-)
+}) => {
+  console.log('mediaAttributes', mediaAttributes)
+
+  return (
+    <video
+      onLoadedMetadata={handleLoad}
+      onEnded={handleEnded}
+      controls={controls}
+      key={elementKey}
+      ref={elementRef}
+      {...mediaAttributes}
+    >
+      {children}
+    </video>
+  )
+}
 
 export default VideoElement

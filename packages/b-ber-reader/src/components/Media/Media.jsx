@@ -270,6 +270,7 @@ class Media extends React.Component {
       MediaComponent,
       mediaType,
       autoPlay,
+      currentSpreadIndex,
       controls: controlsAttribute,
 
       // `rest` includes React.Children, and the HTML5 media attributes except
