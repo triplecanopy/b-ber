@@ -1,6 +1,5 @@
 import React from 'react'
 import classNames from 'classnames'
-import { Link } from '../'
 
 const NestedChapterList = props => {
   const { current, items } = props
@@ -11,19 +10,21 @@ const NestedChapterList = props => {
     <ol>
       {items_.map((item, i) => (
         <li key={i}>
-          <Link
-            href={item.absoluteURL}
+          <button
+            onClick={() => props.navigateToChapterByURL(item.absoluteURL)}
             className={classNames(`indent--${depth + 1}`, {
               'chapter--current': current === item.id,
             })}
           >
             {item.title || `Chapter ${depth}.${i}`}
-          </Link>
+          </button>
+
           {item.children.length > 0 && (
             <NestedChapterList
               current={current}
               items={item.children}
               depth={depth + 1}
+              navigateToChapterByURL={props.navigateToChapterByURL}
             />
           )}
         </li>
@@ -39,8 +40,9 @@ const SidebarChapters = props => (
     })}
   >
     <NestedChapterList
-      current={(props.spine[props.currentSpineItemIndex || 0] || {}).id}
       items={[...props.spine]}
+      current={(props.spine[props.currentSpineItemIndex || 0] || {}).id}
+      navigateToChapterByURL={props.navigateToChapterByURL}
     />
   </nav>
 )
