@@ -1,10 +1,11 @@
-// speeds to debounce our mutation and resize observer callbacks. making sure
+// Speeds to debounce our mutation and resize observer callbacks. making sure
 // the document is laid out before rendering in decorate-observable.js
-export const ENSURE_RENDER_TIMEOUT = 200
-export const DEBOUNCE_TIMER = 200
+export const ENSURE_RENDER_TIMEOUT = 60
+export const RESIZE_DEBOUNCE_TIMER = 60
+export const MUTATION_DEBOUNCE_TIMER = 60
 
-// used for calling deferred pagination events in decorate-deferrable.js
-export const DEFERRED_CALLBACK_TIMER = 200
+// Used for calling deferred pagination events in decorate-deferrable.js
+export const DEFERRED_CALLBACK_TIMER = 60
 
 export const transitions = {
   SLIDE: 'slide',
@@ -106,7 +107,7 @@ export const VIEWPORT_DIMENSIONS_MATRIX = [
     ['60px', '30px', '60px', '30px'], [30, 'auto', 20, 'auto'], [15, 'auto', 10, 'auto'], // => sm x lg, md x lg, lg x lg
 ]
 
-// used in DocumentPreProcessor for appended stylesheets
+// Used in DocumentPreProcessor for appended stylesheets
 export const MEDIA_QUERY_SMALL = `only screen and (min-width: ${BREAKPOINT_HORIZONTAL_SMALL}px)`
 export const MEDIA_QUERY_LARGE = `only screen and (max-width: ${BREAKPOINT_HORIZONTAL_SMALL +
   1}px)`

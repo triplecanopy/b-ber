@@ -29,7 +29,9 @@ const ELEMENT_EDGE_RECTO_MAX = 5
 //    columns or one that stretches the width of the viewport.
 //    Default false.
 //
+//
 //    isMarker: bool
+//    TODO description
 //
 // }
 
@@ -92,10 +94,9 @@ const withNodePosition = (WrappedComponent, options) => {
       const { useParentDimensions } = this.settings
       let elem
       if (useParentDimensions) {
-        elem =
-          this.elemRef.current && this.elemRef.current.parentElement
-            ? this.elemRef.current.parentElement
-            : null
+        elem = this.elemRef.current?.parentElement
+          ? this.elemRef.current.parentElement
+          : null
       } else {
         elem = this.elemRef.current
       }
@@ -137,10 +138,9 @@ const withNodePosition = (WrappedComponent, options) => {
 
       let elem
       if (useParentDimensions) {
-        elem =
-          this.elemRef.current && this.elemRef.current.parentElement
-            ? this.elemRef.current.parentElement
-            : null
+        elem = this.elemRef.current?.parentElement
+          ? this.elemRef.current.parentElement
+          : null
       } else {
         elem = this.elemRef.current
       }
@@ -255,9 +255,6 @@ const withNodePosition = (WrappedComponent, options) => {
     }
 
     render() {
-      // eslint-disable-next-line no-unused-vars
-      // const { viewerSettings, ...rest } = this.props
-
       return (
         <WrappedComponent
           elemRef={this.elemRef}
@@ -269,7 +266,7 @@ const withNodePosition = (WrappedComponent, options) => {
   }
 
   return connect(
-    ({ viewerSettings }) => ({ viewerSettings }),
+    ({ viewerSettings, view }) => ({ viewerSettings, view }),
     () => ({})
   )(WrapperComponent)
 }

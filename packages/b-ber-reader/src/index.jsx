@@ -17,7 +17,7 @@ const store = createStore(
 
 delete window.__SERVER_DATA__
 const script = document.querySelector('#__server_data__')
-if (script && script.parentNode) script.parentNode.removeChild(script)
+if (script?.parentNode) script.parentNode.removeChild(script)
 
 render(
   <Provider store={store}>

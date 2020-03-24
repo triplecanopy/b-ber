@@ -14,7 +14,7 @@ class SidebarSettings extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const fontSize = nextProps.viewerSettings.get('fontSize')
+    const { fontSize } = nextProps.viewerSettings
     if (fontSize !== this.state.fontSize) this.setState({ fontSize })
   }
 

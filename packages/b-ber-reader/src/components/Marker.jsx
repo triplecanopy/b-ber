@@ -7,7 +7,7 @@ import PropTypes from 'prop-types'
 import { isNumeric } from '../helpers/Types'
 import { debug /*, verboseOutput */ } from '../config'
 import Viewport from '../helpers/Viewport'
-import withNodePosition from './withNodePosition'
+import withNodePosition from './with-node-position'
 import { update } from '../actions/markers'
 
 class Marker extends React.Component {

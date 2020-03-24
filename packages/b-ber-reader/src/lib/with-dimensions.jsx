@@ -14,7 +14,7 @@ const withDimensions = WrappedComponent => {
     }
 
     // eslint-disable-next-line camelcase
-    UNSAFE_componentWillMount() {
+    componentWillMount() {
       this.updateDimensions()
     }
 

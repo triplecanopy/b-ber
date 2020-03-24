@@ -4,12 +4,12 @@ import classNames from 'classnames'
 const NestedChapterList = props => {
   const { current, items } = props
   const depth = props.depth || 0
-  const items_ = items.filter(a => a.depth === depth && a.inTOC)
+  const items_ = items.filter(item => item.depth === depth && item.inTOC)
 
   return (
     <ol>
       {items_.map((item, i) => (
-        <li key={i}>
+        <li key={item.id}>
           <button
             onClick={() => props.navigateToChapterByURL(item.absoluteURL)}
             className={classNames(`indent--${depth + 1}`, {

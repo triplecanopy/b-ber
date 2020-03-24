@@ -19,9 +19,11 @@ describe('ViewerSettings', () => {
         paddingBottom: expect.any(Function),
         fontSize: expect.any(Number),
         columnGap: expect.any(Function),
+        columnWidth: expect.any(Function),
         theme: themes.DEFAULT,
         transition: transitions.SLIDE,
         transitionSpeed: expect.any(Number),
+        width: expect.any(Number),
       })
     )
 
@@ -121,12 +123,13 @@ describe('ViewerSettings', () => {
 
     expect(vs.get()).toEqual(
       expect.objectContaining({
-        paddingTop: expect.any(Function),
-        paddingLeft: expect.any(Function),
-        paddingRight: expect.any(Function),
-        paddingBottom: expect.any(Function),
-        fontSize: expect.any(Number),
-        columnGap: expect.any(Function),
+        paddingTop: expect.any(Number),
+        paddingLeft: expect.any(Number),
+        paddingRight: expect.any(Number),
+        paddingBottom: expect.any(Number),
+        fontSize: expect.any(String),
+        columnGap: expect.any(Number),
+        columnWidth: expect.any(Number),
         theme: themes.DEFAULT,
         transition: transitions.SLIDE,
         transitionSpeed: expect.any(Number),
@@ -161,7 +164,7 @@ describe('ViewerSettings', () => {
     expect(vs.fontSize).toBe('1.1%')
 
     vs.put('fontSize', '100.0')
-    expect(vs.fontSize).toBe('100.0%')
+    expect(vs.fontSize).toBe('100%')
 
     vs.put({ fontSize: '100', paddingBottom: 1 })
     expect(vs.fontSize).toBe('100%')

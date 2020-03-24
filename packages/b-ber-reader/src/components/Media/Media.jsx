@@ -2,13 +2,12 @@
 
 import React from 'react'
 import PropTypes from 'prop-types'
-import withNodePosition from '../withNodePosition'
+import withNodePosition from '../with-node-position'
 import MediaControls from './Controls/MediaControls'
 
 class Media extends React.Component {
   static contextTypes = {
     spreadIndex: PropTypes.number,
-    viewLoaded: PropTypes.bool,
     lastSpread: PropTypes.bool,
   }
 
@@ -41,7 +40,7 @@ class Media extends React.Component {
     if (!this.state.autoPlay) return
 
     // Don't play the media unless the chapter is visible
-    if (!nextContext.viewLoaded) return
+    if (!nextProps.view.loaded) return
 
     const { paused } = this.state
 
@@ -180,7 +179,7 @@ class Media extends React.Component {
     })
   }
 
-  // shim
+  // Shim
   // eslint-disable-next-line class-methods-use-this
   fullscreenElement() {
     return (
@@ -271,6 +270,8 @@ class Media extends React.Component {
       mediaType,
       autoPlay,
       currentSpreadIndex,
+      view,
+      viewerSettings,
       controls: controlsAttribute,
 
       // `rest` includes React.Children, and the HTML5 media attributes except

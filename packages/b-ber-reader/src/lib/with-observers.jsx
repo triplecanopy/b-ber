@@ -2,9 +2,13 @@ import React from 'react'
 import debounce from 'lodash/debounce'
 import ResizeObserver from 'resize-observer-polyfill'
 import { isNumeric } from '../helpers/Types'
-import { debug, verboseOutput, logTime } from '../config'
+import { debug, verboseOutput } from '../config'
 import browser from './browser'
-import { ENSURE_RENDER_TIMEOUT, DEBOUNCE_TIMER } from '../constants'
+import {
+  ENSURE_RENDER_TIMEOUT,
+  RESIZE_DEBOUNCE_TIMER,
+  MUTATION_DEBOUNCE_TIMER,
+} from '../constants'
 
 const log = (lastSpreadIndex, contentDimensions, frameHeight, columns) => {
   if (debug && verboseOutput) {
@@ -20,22 +24,25 @@ const log = (lastSpreadIndex, contentDimensions, frameHeight, columns) => {
   }
 }
 
+const validateRef = node => {
+  if (!node || !node.current) {
+    throw new Error('Cannot observe', node)
+  }
+}
+
 const withObservers = WrappedComponent => {
   let timer = null
   let resizeObserver = null
   let mutationObserver = null
   let previousContentDimensions = 0
 
-  return class extends React.Component {
-    constructor() {
-      super()
-      this.node = null // Ref
-    }
+  class WrapperComponent extends React.Component {
+    node = React.createRef()
 
     componentDidMount() {
       this.calculateNodePositionAfterResize = debounce(
         this.calculateNodePosition,
-        DEBOUNCE_TIMER,
+        RESIZE_DEBOUNCE_TIMER,
         {
           leading: false,
           trailing: true,
@@ -44,7 +51,7 @@ const withObservers = WrappedComponent => {
 
       this.calculateNodePositionAfterMutation = debounce(
         this.calculateNodePosition,
-        DEBOUNCE_TIMER,
+        MUTATION_DEBOUNCE_TIMER,
         {
           leading: false,
           trailing: true,
@@ -59,20 +66,20 @@ const withObservers = WrappedComponent => {
     }
 
     connectResizeObserver() {
-      if (!this.node) throw new Error('Cannot observe', this.node)
+      validateRef(this.node)
 
       resizeObserver = new ResizeObserver(this.calculateNodePositionAfterResize)
-      resizeObserver.observe(this.node)
+      resizeObserver.observe(this.node.current)
     }
 
     connectMutationObserver() {
-      if (!this.node) throw new Error('Cannot observe', this.node)
+      validateRef(this.node)
 
       mutationObserver = new window.MutationObserver(
         this.calculateNodePositionAfterMutation
       )
 
-      mutationObserver.observe(this.node, {
+      mutationObserver.observe(this.node.current, {
         attributes: true,
         subtree: true,
       })
@@ -89,17 +96,17 @@ const withObservers = WrappedComponent => {
     }
 
     unobserveResizeObserver() {
-      if (!this.node) throw new Error('Cannot observe', this.node)
-      resizeObserver.unobserve(this.node)
+      validateRef(this.node)
+      resizeObserver.unobserve(this.node.current)
     }
 
     unobserveMutationObserver() {
-      if (!this.node) throw new Error('Cannot observe', this.node)
-      mutationObserver.disconnect(this.node)
+      validateRef(this.node)
+      mutationObserver.disconnect(this.node.current)
     }
 
     calculateNodePosition() {
-      if (!this.node) throw new Error('Cannot observe', this.node)
+      validateRef(this.node)
 
       const { columns } = this.props
       const lastNode = document.querySelector('.ultimate')
@@ -108,10 +115,8 @@ const withObservers = WrappedComponent => {
       let lastSpreadIndex
       let frameHeight
 
-      // TODO: prevent multiple callbacks. good to have this off for debug
+      // TODO prevent multiple callbacks. good to have this off for debug
       // if (this.props.ready === true) return
-
-      if (logTime) console.time('observable#setReaderState')
 
       // Height of the reader frame (viewport - padding top and bottom),
       // rounded so we get a natural divisor
@@ -141,9 +146,9 @@ const withObservers = WrappedComponent => {
         lastSpreadIndex -= 1
       } else {
         contentDimensions = Math.max(
-          this.node.scrollHeight,
-          this.node.offsetHeight,
-          this.node.clientHeight
+          this.node.current.scrollHeight,
+          this.node.current.offsetHeight,
+          this.node.current.clientHeight
         )
 
         frameHeight = Math.round(frameHeight)
@@ -175,13 +180,14 @@ const withObservers = WrappedComponent => {
 
           log(lastSpreadIndex, contentDimensions, frameHeight, columns)
 
-          this.node.style.display = 'none'
-          this.node.style.display = 'block'
+          this.node.current.style.display = 'none'
+          this.node.current.style.display = 'block'
         }, ENSURE_RENDER_TIMEOUT)
       } else {
-        if (logTime) console.timeEnd('observable#setReaderState')
-
-        this.props.setReaderState({ lastSpreadIndex, ready: true })
+        // TODO move `lastSpreadIndex` to Redux
+        this.props.setReaderState({ lastSpreadIndex }, () => {
+          this.props.load()
+        })
       }
     }
 
@@ -201,11 +207,11 @@ const withObservers = WrappedComponent => {
     }
 
     render() {
-      return (
-        <WrappedComponent {...this.props} innerRef={ref => (this.node = ref)} />
-      )
+      return <WrappedComponent {...this.props} innerRef={this.node} />
     }
   }
+
+  return WrapperComponent
 }
 
 export default withObservers

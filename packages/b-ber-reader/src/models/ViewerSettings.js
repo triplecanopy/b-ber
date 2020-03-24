@@ -26,7 +26,10 @@ class ViewerSettings {
 
   constructor(options = {}) {
     Object.defineProperty(this, 'settings', {
-      value: extendExistingProps({}, ViewerSettings.defaults, options),
+      value: extendExistingProps({}, ViewerSettings.defaults, options, {
+        enumerable: true,
+        writable: true,
+      }),
       enumerable: true,
     })
 

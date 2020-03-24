@@ -4,7 +4,7 @@ import omit from 'lodash/omit'
 import classNames from 'classnames'
 import ReactPlayer from 'react-player'
 import has from 'lodash/has'
-import withNodePosition from '../withNodePosition'
+import withNodePosition from '../with-node-position'
 import Url from '../../helpers/Url'
 
 const VimeoPosterImage = ({ src, playing, controls, handleUpdatePlaying }) => {
@@ -40,8 +40,6 @@ const VimeoPlayerControls = (/*
 
 class Vimeo extends React.Component {
   static contextTypes = {
-    spreadIndex: PropTypes.number,
-    viewLoaded: PropTypes.bool,
     lastSpread: PropTypes.bool,
   }
 
@@ -69,8 +67,6 @@ class Vimeo extends React.Component {
 
     playerOptions = this.transformVimeoProps(playerOptions)
 
-    console.log(playerOptions)
-
     // Extract autoplay property for use during page change events. Do this
     // after `transformVimeoProps` to ensure boolean attrs
     const { autoplay, ...rest } = playerOptions
@@ -88,16 +84,17 @@ class Vimeo extends React.Component {
     })
   }
 
-  componentWillReceiveProps(_, nextContext) {
+  componentWillReceiveProps(nextProps) {
     // Only elements with an autoplay attribute
     if (!this.state.autoplay) return
 
     // Only if the view is fully rendered
-    if (!nextContext.viewLoaded) return
+    if (!nextProps.view.loaded) return
 
     let { currentSpreadIndex } = this.state
     const { spreadIndex: elementSpreadIndex } = this.props
-    const { spreadIndex: nextSpreadIndex } = nextContext
+    const { spreadIndex: nextSpreadIndex } = nextProps
+    // const { spreadIndex: nextSpreadIndex } = nextContext
 
     // Only if user is navigating to a new spread
     if (currentSpreadIndex === nextSpreadIndex) return

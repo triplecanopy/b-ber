@@ -2,6 +2,11 @@ import React from 'react'
 import classNames from 'classnames'
 import Messenger from '../../lib/Messenger'
 
+const SidebarDownloadDescription = ({ description }) =>
+  description ? (
+    <span className="downloads__description">{description}</span>
+  ) : null
+
 const SidebarDownloads = props => (
   <nav
     className={classNames('controls__sidebar', 'controls__sidebar__downloads', {
@@ -9,17 +14,15 @@ const SidebarDownloads = props => (
     })}
   >
     <ul>
-      {props.downloads.map((a, i) => (
-        <li key={i}>
+      {props.downloads.map(download => (
+        <li key={download.url}>
           <a
-            href={a.url}
             download
-            onClick={() => Messenger.sendDownloadEvent(a.url)}
+            href={download.url}
+            onClick={() => Messenger.sendDownloadEvent(download.url)}
           >
-            <span className="downloads__title">{a.label}</span>
-            {a.description && (
-              <span className="downloads__description">{a.description}</span>
-            )}
+            <span className="downloads__title">{download.label}</span>
+            <SidebarDownloadDescription description={props.description} />
           </a>
           <button className="material-icons">file_download</button>
         </li>

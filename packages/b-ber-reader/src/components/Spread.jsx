@@ -108,7 +108,7 @@ class Spread extends React.Component {
   // }
 
   // eslint-disable-next-line camelcase
-  // UNSAFE_componentWillMount() {
+  // componentWillMount() {
   //   // Adds listener for our 'ready' event that's fired in
   //   // decorate-observable.js. This is used to update the absolutely
   //   // positioned images in fullbleed panels which function properly on
@@ -192,8 +192,6 @@ class Spread extends React.Component {
     }
 
     left = `${left}px`
-
-    console.log(left)
 
     this.setState({
       left,
