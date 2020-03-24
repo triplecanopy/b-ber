@@ -13,8 +13,8 @@ import history from '../lib/History'
 import withDeferredCallbacks from '../lib/with-deferred-callbacks'
 import Messenger from '../lib/Messenger'
 import Viewport from '../helpers/Viewport'
-import { save, update } from '../actions/viewer-settings'
-import { load, unload } from '../actions/view'
+import * as viewerSettingsActions from '../actions/viewer-settings'
+import * as viewActions from '../actions/view'
 import { ViewerSettings } from '../models'
 
 const book = { content: null }
@@ -120,7 +120,7 @@ class Reader extends Component {
     const storage = Storage.get(this.localStorageKey) || {}
 
     if (useLocalStorage !== false && storage.viewerSettings) {
-      this.props.update(storage.viewerSettings)
+      this.props.viewerSettingsActions.update(storage.viewerSettings)
     }
 
     this.createStateFromOPF().then(() => {
@@ -213,22 +213,17 @@ class Reader extends Component {
 
   handleResize = () => {
     const viewerSettings = new ViewerSettings()
-    this.props.update(viewerSettings.get())
+    this.props.viewerSettingsActions.update(viewerSettings.get())
   }
 
   handleResizeStart = () => {
-    this.props.unload()
+    this.props.viewActions.unload()
     this.disablePageTransitions()
     this.showSpinner()
   }
 
   handleResizeEnd = () => {
     this.hideSpinner()
-  }
-
-  scrollToTop = () => {
-    if (!Viewport.isMobile()) return
-    document.getElementById('frame').scrollTo(0, 0) // TODO scroll via ref
   }
 
   updateQueryString = callback => {
@@ -339,7 +334,7 @@ class Reader extends Component {
   }
 
   freeze = () => {
-    this.props.unload()
+    this.props.viewActions.unload()
     this.setState({
       showSidebar: null,
       handleEvents: false,
@@ -368,7 +363,7 @@ class Reader extends Component {
         this.savePosition()
         this.enableEventHandling()
         this.hideSpinner()
-        this.props.load()
+        this.props.viewActions.load()
 
         Messenger.sendPaginationEvent(this.state)
       }
@@ -508,15 +503,13 @@ class Reader extends Component {
           spreadDelta,
         },
         () => {
-          this.scrollToTop()
-
           if (direction === -1) {
             this.navigateToSpreadByIndex(lastSpreadIndex)
           }
 
           this.enableEventHandling()
           this.hideSpinner()
-          this.props.load()
+          this.props.viewActions.load()
 
           Messenger.sendPaginationEvent(this.state)
         }
@@ -546,12 +539,12 @@ class Reader extends Component {
   }
 
   navigateToElementById = hash => {
-    // get the element we need to navigate to in the layout
+    // Get the element to which the page will scroll in the layout
     const elem = document.querySelector(hash)
 
     if (!elem) return console.warn(`Could not find element ${hash}`)
 
-    // scroll to vertical position, leave a bit of room for the controls and
+    // Scroll to vertical position, leave a bit of room for the controls and
     // whitespace around the element
     if (Viewport.isMobile()) {
       const padding = 25
@@ -559,7 +552,9 @@ class Reader extends Component {
         document.querySelector('.controls__header').offsetHeight + padding
       const top = elem.offsetTop - offset
 
-      document.getElementById('frame').scrollTo(0, top) // TODO ref?
+      console.log('top', top)
+
+      document.getElementById('frame').scrollTo(0, top) // TODO should be handled in Frame.jsx
     }
 
     const { paddingTop, paddingBottom, columnGap } = this.props.viewerSettings
@@ -595,7 +590,7 @@ class Reader extends Component {
         this.navigateToElementById(hash)
         this.enableEventHandling()
         this.hideSpinner()
-        this.props.load()
+        this.props.viewActions.load()
       }
     }
 
@@ -712,8 +707,8 @@ class Reader extends Component {
         downloads={this.props.downloads}
         uiOptions={this.props.uiOptions}
         viewerSettings={this.props.viewerSettings}
-        update={this.props.update}
-        save={this.props.save}
+        update={this.props.viewerSettingsActions.update}
+        save={this.props.viewerSettingsActions.save}
       >
         <Frame
           slug={slug}
@@ -724,12 +719,12 @@ class Reader extends Component {
           BookContent={BookContent}
           pageAnimation={pageAnimation}
           viewerSettings={this.props.viewerSettings}
-          update={this.props.update}
+          update={this.props.viewerSettingsActions.update}
           setReaderState={this._setState}
           // Can't wrap layout or the withObservable HOC in a way that preserves
           // refs, so pass down `view` and `load` as props
           view={this.props.view}
-          load={this.props.load}
+          load={this.props.viewActions.load}
         />
         <Spinner spinnerVisible={spinnerVisible} />
       </Controls>
@@ -737,7 +732,14 @@ class Reader extends Component {
   }
 }
 
+const mapStateToProps = ({ viewerSettings, view }) => ({ viewerSettings, view })
+
+const mapDispatchToProps = dispatch => ({
+  viewerSettingsActions: bindActionCreators(viewerSettingsActions, dispatch),
+  viewActions: bindActionCreators(viewActions, dispatch),
+})
+
 export default connect(
-  ({ viewerSettings, view }) => ({ viewerSettings, view }),
-  dispatch => bindActionCreators({ save, update, load, unload }, dispatch)
+  mapStateToProps,
+  mapDispatchToProps
 )(withDeferredCallbacks(Reader))

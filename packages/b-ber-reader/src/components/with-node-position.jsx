@@ -9,10 +9,6 @@ const ELEMENT_EDGE_VERSO_MIN = 48
 const ELEMENT_EDGE_VERSO_MAX = 52
 const ELEMENT_EDGE_RECTO_MIN = 0
 const ELEMENT_EDGE_RECTO_MAX = 5
-// const ELEMENT_EDGE_RECTO_MAX = 2
-
-// TODO: This is a refined version of what's in Marker.jsx. The Marker class
-// should be wrapped with this HOC.
 
 // options =  {
 //
@@ -31,7 +27,8 @@ const ELEMENT_EDGE_RECTO_MAX = 5
 //
 //
 //    isMarker: bool
-//    TODO description
+//
+//    Whether the wrapped component is a Marker component
 //
 // }
 
@@ -230,19 +227,12 @@ const withNodePosition = (WrappedComponent, options) => {
         // this.timer = setTimeout(this.calculateNodePosition, 500)
       }
 
-      // TODO
+      // TODO Marker component specific code needs to be handled better here
       if (isMarker) {
         DocumentPreProcessor.removeStyleSheets()
         DocumentPreProcessor.createStyleSheets({ paddingLeft, columnGap })
         DocumentPreProcessor.appendStyleSheets()
       }
-
-      // TODO: may want to debounce this call, or write up 'swap' functions in
-      // DocumentPreProcessor in case of flickering, but seems OK rn
-      // @issue: https://github.com/triplecanopy/b-ber/issues/212
-      // DocumentPreProcessor.removeStyleSheets()
-      // DocumentPreProcessor.createStyleSheets({ paddingLeft, columnGap })
-      // DocumentPreProcessor.appendStyleSheets()
 
       this.setState({
         verso,

@@ -10,7 +10,6 @@ import Url from '../../helpers/Url'
 const VimeoPosterImage = ({ src, playing, controls, handleUpdatePlaying }) => {
   if (!src) return null
 
-  // TODO how to handle play/pause/end? poster image reappears?
   return (
     // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions
     <img
@@ -94,7 +93,6 @@ class Vimeo extends React.Component {
     let { currentSpreadIndex } = this.state
     const { spreadIndex: elementSpreadIndex } = this.props
     const { spreadIndex: nextSpreadIndex } = nextProps
-    // const { spreadIndex: nextSpreadIndex } = nextContext
 
     // Only if user is navigating to a new spread
     if (currentSpreadIndex === nextSpreadIndex) return

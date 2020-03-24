@@ -7,7 +7,6 @@ import { Url, Request, Cache } from '.'
 import { BookMetadata, SpineItem, GuideItem } from '../models'
 import { processingInstructions, isValidNode } from '../lib/process-nodes'
 import DocumentProcessor from '../lib/DocumentProcessor'
-import { logTime } from '../config'
 
 class XMLAdaptor {
   static opfURL(url) {
@@ -197,8 +196,6 @@ class XMLAdaptor {
       cache: useLocalStorageCache,
     } = response
 
-    if (logTime) console.time('XMLAdaptor#parseSpineItemResponse')
-
     return new Promise(resolve => {
       const promises = []
       const htmlToReactParser = new HtmlToReactParser()
@@ -211,7 +208,7 @@ class XMLAdaptor {
       const { xml, doc } = documentProcessor.parseXML(response.data)
       const re = /<body[^>]*?>([\s\S]*)<\/body>/
 
-      // create react element that will be appended to our #frame element.
+      // Create react element that will be appended to our #frame element.
       // we wrap this in a Promise so that we can resolve the content and
       // styles at the same time
       let data_
@@ -225,10 +222,10 @@ class XMLAdaptor {
         processingInstructions(response)
       )
 
-      // scope stylesheets and pass them along to be appended to the DOM
+      // Scope stylesheets and pass them along to be appended to the DOM
       // as well
 
-      // TODO: will also need to grab inline styles and parse similarly
+      // TODO will also need to grab inline styles and parse similarly
       // @issue: https://github.com/triplecanopy/b-ber/issues/218
       const links = doc.querySelectorAll('link')
       const styles = []
@@ -262,16 +259,7 @@ class XMLAdaptor {
         )
       })
 
-      if (logTime) {
-        console.time('XMLAdaptor#parseSpineItemResponse: get stylesheets')
-      }
-
       Promise.all(promises).then(sheets => {
-        if (logTime) {
-          console.timeEnd('XMLAdaptor#parseSpineItemResponse: get stylesheets')
-          console.time('XMLAdaptor#parseSpineItemResponse: parse stylesheets')
-        }
-
         const hashedClassName = `_${hash}`
         let scopedCSS = ''
         sheets.forEach(({ base, data }) => {
@@ -344,13 +332,6 @@ class XMLAdaptor {
 
           scopedCSS += csstree.generate(ast)
         })
-
-        if (logTime) {
-          console.timeEnd(
-            'XMLAdaptor#parseSpineItemResponse: parse stylesheets'
-          )
-          console.timeEnd('XMLAdaptor#parseSpineItemResponse')
-        }
 
         resolve({ bookContent, scopedCSS })
       })

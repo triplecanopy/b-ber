@@ -200,14 +200,13 @@ class ViewerSettings {
     this.settings.theme = val
   }
 
-  // stores vals as numbers
+  // Stores values as numbers
   set fontSize(val) {
     let val_ = val
     if (!isNumeric(val_)) val_ = parseFloat(val_, 10)
     this.settings.fontSize = val_
   }
 
-  // TODO: remove
   get(key = '') {
     if (key) return this.settings[key]
 
@@ -242,23 +241,12 @@ class ViewerSettings {
         }
       }
 
-      // TODO
-
+      // TODO This seems acceptable sinc async-await will require regenerator-runtime anyway
       // eslint-disable-next-line no-restricted-syntax
-      for (const key in objectOrString) {
-        if (has(this, key)) {
-          console.log('update', key, objectOrString[key])
-
-          this[key] = objectOrString[key]
-        }
+      for (const [key, value] of objectOrString) {
+        this[key] = value
       }
 
-      // extendExistingProps(
-      //   this.settings,
-      //   ViewerSettings.defaults,
-      //   objectOrString_
-      // )
-      // this.settings = { ...this.settings, ...options }
       return
     }
     if (typeof objectOrString === 'string') {

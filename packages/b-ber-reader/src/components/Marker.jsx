@@ -1,14 +1,13 @@
 /* eslint-disable no-unused-vars */
-
 import React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import PropTypes from 'prop-types'
 import { isNumeric } from '../helpers/Types'
-import { debug /*, verboseOutput */ } from '../config'
+import { debug } from '../config'
 import Viewport from '../helpers/Viewport'
 import withNodePosition from './with-node-position'
-import { update } from '../actions/markers'
+import * as markerActions from '../actions/markers'
 
 class Marker extends React.Component {
   constructor(props) {
@@ -16,7 +15,7 @@ class Marker extends React.Component {
 
     const markerId = this.props['data-marker']
     if (markerId) {
-      this.props.update({
+      this.props.markerActions.update({
         recto: false,
         verso: false,
         elementEdgeLeft: 0,
@@ -25,30 +24,10 @@ class Marker extends React.Component {
       })
     }
 
-    // this.updateRef = this.updateRef.bind(this)
     this.calculateOffsetHeight = this.calculateOffsetHeight.bind(this)
-
-    // refs
-    // TODO: should be passed via props @issue: https://github.com/triplecanopy/b-ber/issues/210
-    // this.layoutNode = null
-    // this.markerNode = null
   }
 
-  // updateRef() {
-  //   const { recto, verso } = this.props
-  //   const { elementEdgeLeft, markerId, unbound } = this.state
-
-  //   this.context.addRef({
-  //     recto,
-  //     verso,
-  //     x: elementEdgeLeft,
-  //     markerId,
-  //     unbound,
-  //   })
-  // }
-
-  // eslint-disable-next-line camelcase
-  UNSAFE_componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps) {
     const markerId = this.props['data-marker']
     const { recto, verso, elementEdgeLeft } = nextProps
 
@@ -58,7 +37,7 @@ class Marker extends React.Component {
         verso !== this.props.verso ||
         elementEdgeLeft !== this.props.elementEdgeLeft)
     ) {
-      this.props.update({
+      this.props.markerActions.update({
         markerId,
         recto,
         verso,
@@ -67,9 +46,9 @@ class Marker extends React.Component {
     }
   }
 
-  // get the distance between the marker and the top of the next column. we
-  // fill that with padding, and add additional padding to the document to
-  // fill the space that's required by the absolutely positioned spread
+  // Get the distance between the marker and the top of the next column. Fill
+  // that with padding, and add additional padding to the document to fill the
+  // space that's required by the absolutely positioned spread
   calculateOffsetHeight() {
     let offsetHeight = 0
 
@@ -87,18 +66,18 @@ class Marker extends React.Component {
     let { height } = this.props.viewerSettings
     const frameHeight = height - paddingTop - paddingBottom
 
-    // the attributes `unbound` and `adjacent` are added by
+    // The attributes `unbound` and `adjacent` are added by
     // DocumentProcessor.
 
     // `unbound` means that this is a fullbleed element with no preceeding
-    // siblings. this occurs when a spread is the first element in the
-    // document. we have to adjust our height calculations in this case
+    // siblings. This occurs when a spread is the first element in the
+    // document. The height calculations have to be adjusted in this case
     // since we don't need to worry about making up the distance between the
     // marker (which is the last element of the last preceeding element) and
     // the next column.
 
     // `adjacent` means that this marker shares a parent with another
-    // marker. this occurs when one spread directly follows another. we have
+    // marker. This occurs when one spread directly follows another. We have
     // to adjust our height calculations in these cases because we only want
     // to make up the distance between the bottom of the marker and the next
     // column once, and only need to account for the space required by the
@@ -110,11 +89,11 @@ class Marker extends React.Component {
     if (!isNumeric(height)) height = 0 // frame height or window.innerHeight ...
 
     if (verso) {
-      // marker is on the verso, so we need to add enough space after it to
+      // Marker is on the verso, so we need to add enough space after it to
       // fill the remaining space after the marker, as well as the following
       // column. this will push our fullbleed content to the next verso
 
-      // make up the remaining distance only if it hasn't already been
+      // Make up the remaining distance only if it hasn't already been
       // accounted for in the case of adjacent markers
       if (adjacent) {
         offsetHeight += frameHeight
@@ -128,8 +107,8 @@ class Marker extends React.Component {
           this.props.elemRef.current.getBoundingClientRect().bottom - paddingTop
         )
 
-        // add space for the spread element itself, since it's
-        // absolutely positioned. only do this if the spread is
+        // Add space for the spread element itself, since it's
+        // absolutely positioned. Only do this if the spread is
         // preceeded by another element, since the gap between the
         // marker and the next column is already enough space for the
         // spread
@@ -141,10 +120,10 @@ class Marker extends React.Component {
     }
 
     if (recto) {
-      // marker is on the recto, so we need to add enough space after it to
+      // Marker is on the recto, so we need to add enough space after it to
       // fill only the remaining column
 
-      // make up the remaining distance, again, only if it's not adjacent
+      // Make up the remaining distance, again, only if it's not adjacent
       if (adjacent) {
         offsetHeight += frameHeight
         offsetHeight += frameHeight
@@ -154,7 +133,7 @@ class Marker extends React.Component {
         offsetHeight += frameHeight
         offsetHeight -= this.props.elemRef.current.offsetHeight
 
-        // add spread spacing
+        // Add spread spacing
         offsetHeight += frameHeight
         offsetHeight -= Math.round(
           this.props.elemRef.current.getBoundingClientRect().top
@@ -174,7 +153,7 @@ class Marker extends React.Component {
         verso !== marker.verso ||
         unbound !== marker.unbound)
     ) {
-      this.props.update({
+      this.props.markerActions.update({
         markerId,
         recto,
         verso,
@@ -219,5 +198,5 @@ class Marker extends React.Component {
 
 export default connect(
   ({ markers }) => ({ markers }),
-  dispatch => bindActionCreators({ update }, dispatch)
+  dispatch => ({ markerActions: bindActionCreators(markerActions, dispatch) })
 )(withNodePosition(Marker, { isMarker: true }))

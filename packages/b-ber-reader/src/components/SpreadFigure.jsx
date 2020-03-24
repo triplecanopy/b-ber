@@ -5,8 +5,6 @@ class SpreadFigure extends React.Component {
   static contextTypes = { left: PropTypes.string }
 
   render() {
-    // console.log('figure', this.props['data-marker-reference-figure'])
-
     const { children, ...rest } = this.props
     const { left } = this.context
 

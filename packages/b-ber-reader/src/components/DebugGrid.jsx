@@ -1,8 +1,6 @@
-/* eslint-disable */
-
 import React, { Component } from 'react'
 import Viewport from '../helpers/Viewport'
-import { showGrid, showBreakpoints } from '../config'
+import { debug, showGrid, showBreakpoints } from '../config'
 
 const BreakpointTable = props => (
   <span style={{ display: 'table', float: 'left', paddingLeft: 15 }}>
@@ -55,6 +53,8 @@ const VerticalGrid = () => {
 
 class DebugGrid extends Component {
   render() {
+    if (!debug) return null
+
     return (
       <React.Fragment>
         {showBreakpoints && (

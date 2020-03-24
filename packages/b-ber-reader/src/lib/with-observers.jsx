@@ -24,8 +24,8 @@ const log = (lastSpreadIndex, contentDimensions, frameHeight, columns) => {
   }
 }
 
-const validateRef = node => {
-  if (!node || !node.current) {
+const assertRef = node => {
+  if (!node?.current) {
     throw new Error('Cannot observe', node)
   }
 }
@@ -66,14 +66,14 @@ const withObservers = WrappedComponent => {
     }
 
     connectResizeObserver() {
-      validateRef(this.node)
+      assertRef(this.node)
 
       resizeObserver = new ResizeObserver(this.calculateNodePositionAfterResize)
       resizeObserver.observe(this.node.current)
     }
 
     connectMutationObserver() {
-      validateRef(this.node)
+      assertRef(this.node)
 
       mutationObserver = new window.MutationObserver(
         this.calculateNodePositionAfterMutation
@@ -96,17 +96,17 @@ const withObservers = WrappedComponent => {
     }
 
     unobserveResizeObserver() {
-      validateRef(this.node)
+      assertRef(this.node)
       resizeObserver.unobserve(this.node.current)
     }
 
     unobserveMutationObserver() {
-      validateRef(this.node)
+      assertRef(this.node)
       mutationObserver.disconnect(this.node.current)
     }
 
     calculateNodePosition() {
-      validateRef(this.node)
+      assertRef(this.node)
 
       const { columns } = this.props
       const lastNode = document.querySelector('.ultimate')
