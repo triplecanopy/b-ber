@@ -42,6 +42,7 @@ module.exports = {
       },
     ],
     'no-return-assign': 0,
+    'no-restricted-syntax': [0, 'ForOfStatement'],
     'no-underscore-dangle': 0,
     'no-unused-vars': [
       2,

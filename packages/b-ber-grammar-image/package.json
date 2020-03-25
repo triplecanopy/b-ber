@@ -17,7 +17,9 @@
     "access": "public"
   },
   "devDependencies": {
-    "@babel/cli": "^7.5.0",
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.0",
+    "@babel/preset-env": "^7.9.0",
     "jest": "^24.8.0",
     "rimraf": "^2.6.3"
   },
@@ -29,7 +31,7 @@
     "@canopycanopycanopy/b-ber-shapes-directives": "1.0.22",
     "@canopycanopycanopy/b-ber-templates": "1.0.22",
     "fs-extra": "^8.1.0",
-    "image-size": "^0.7.4",
+    "image-size": "^0.8.3",
     "lodash.isundefined": "^3.0.1",
     "mime-types": "^2.1.24"
   },

@@ -1,7 +1,6 @@
 const path = require('path')
 const webpack = require('webpack')
 const loaders = require('./webpack.loaders')
-
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 
@@ -28,8 +27,10 @@ module.exports = {
             [
               '@babel/preset-env',
               {
+                debug: false,
+                bugfixes: true,
                 corejs: 3,
-                modules: 'commonjs',
+                modules: 'auto',
                 targets: {
                   browsers: 'last 2 versions, > 2%',
                 },

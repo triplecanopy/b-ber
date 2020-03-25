@@ -21,7 +21,6 @@
     "access": "public"
   },
   "dependencies": {
-    "@babel/runtime": "^7.5.4",
     "@canopycanopycanopy/b-ber-lib": "1.0.22",
     "@canopycanopycanopy/b-ber-logger": "1.0.22",
     "@canopycanopycanopy/b-ber-shapes-sequences": "1.0.22",
@@ -32,9 +31,11 @@
     "yargs": "^13.3.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.5.0",
-    "@babel/core": "^7.5.4",
-    "@babel/node": "^7.5.0",
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.0",
+    "@babel/node": "^7.8.7",
+    "@babel/preset-env": "^7.9.0",
+    "@babel/runtime-corejs3": "^7.9.2",
     "jest": "^24.8.0",
     "rimraf": "^2.6.3"
   },

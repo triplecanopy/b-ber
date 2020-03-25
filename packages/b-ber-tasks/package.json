@@ -29,12 +29,11 @@
     "browser-sync": "^2.26.7",
     "bs-html-injector": "^3.0.3",
     "cheerio": "^1.0.0-rc.2",
-    "core-js": "^3.1.4",
     "css": "^2.2.1",
     "epub-zipper": "^1.4.0",
     "fs-extra": "^8.1.0",
     "glob": "^7.1.4",
-    "image-size": "^0.7.4",
+    "image-size": "^0.8.3",
     "layouts": "^3.0.2",
     "lodash": "^4.17.11",
     "lunr": "^2.1.6",
@@ -48,7 +47,10 @@
     "webpage": "^0.3.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.5.0",
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.0",
+    "@babel/preset-env": "^7.9.0",
+    "@babel/runtime-corejs3": "^7.9.2",
     "jest": "^24.8.0",
     "mock-fs": "^4.4.2",
     "rimraf": "^2.6.3"

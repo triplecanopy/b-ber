@@ -21,5 +21,9 @@
   "dependencies": {
     "@canopycanopycanopy/b-ber-theme-serif": "1.0.22",
     "modularscale-sass": "^3.0.10"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.9.0",
+    "@babel/preset-env": "^7.9.0"
   }
 }

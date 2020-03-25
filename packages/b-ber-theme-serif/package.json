@@ -20,5 +20,9 @@
   },
   "dependencies": {
     "modularscale-sass": "^3.0.10"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.9.0",
+    "@babel/preset-env": "^7.9.0"
   }
 }

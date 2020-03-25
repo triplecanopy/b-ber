@@ -241,9 +241,7 @@ class ViewerSettings {
         }
       }
 
-      // TODO This seems acceptable sinc async-await will require regenerator-runtime anyway
-      // eslint-disable-next-line no-restricted-syntax
-      for (const [key, value] of objectOrString) {
+      for (const [key, value] of Object.entries(objectOrString)) {
         this[key] = value
       }
 
