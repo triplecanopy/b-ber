@@ -9,11 +9,8 @@ import { App } from './components'
 import './lib/polyfills'
 import './index.scss'
 
-const store = createStore(
-  combinedReducers,
-  window.__SERVER_DATA__,
-  compose(applyMiddleware(thunk))
-)
+const store = createStore(combinedReducers, compose(applyMiddleware(thunk)))
+const props = window.__SERVER_DATA__
 
 delete window.__SERVER_DATA__
 const script = document.querySelector('#__server_data__')
@@ -21,7 +18,7 @@ if (script?.parentNode) script.parentNode.removeChild(script)
 
 render(
   <Provider store={store}>
-    <App />
+    <App {...props} />
   </Provider>,
   document.getElementById('root')
 )

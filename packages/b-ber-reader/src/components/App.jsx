@@ -40,10 +40,6 @@ class App extends Component {
           ? props.loadRemoteLibrary
           : /^localhost/.test(window.location.host),
     }
-
-    this.handleClick = this.handleClick.bind(this)
-    this.bindHistoryListener = this.bindHistoryListener.bind(this)
-    this.goToBookURL = this.goToBookURL.bind(this)
   }
 
   componentDidMount() {
@@ -59,11 +55,15 @@ class App extends Component {
       .then(() => this.goToBookURL(history.location))
   }
 
-  goToBookURL(location) {
+  goToBookURL = location => {
     const { defaultBookURL, basePath, useBrowserHistory } = this.state
 
     if (!location || !location.state) {
       console.log('No history.location or history.location.state')
+
+      console.log(this.props)
+      console.log(this.state)
+
       return useBrowserHistory
         ? history.push(Url.createPath(basePath), { bookURL: defaultBookURL })
         : null
@@ -78,8 +78,9 @@ class App extends Component {
   }
 
   // eslint-disable-next-line
-    bindHistoryListener() {
+  bindHistoryListener = () => {
     const { useBrowserHistory } = this.state
+
     history.listen((location /* , action */) => {
       const { search } = location
       if (!location.state) {
@@ -92,11 +93,10 @@ class App extends Component {
     })
   }
 
-  handleClick({ title, url }) {
-    return this.state.useBrowserHistory
+  handleClick = ({ title, url }) =>
+    this.state.useBrowserHistory
       ? history.push(Url.slug(title), { bookURL: url })
       : this.setState({ bookURL: url })
-  }
 
   render() {
     const {
