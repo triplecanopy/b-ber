@@ -32,7 +32,7 @@ module.exports = {
                 debug: false,
                 bugfixes: true,
                 corejs: 3,
-                modules: 'auto',
+                modules: 'commonjs', // https://github.com/webpack/webpack/issues/4039
                 targets: {
                   browsers: 'last 2 versions, > 2%',
                 },
