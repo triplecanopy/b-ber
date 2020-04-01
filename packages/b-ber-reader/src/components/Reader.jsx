@@ -552,8 +552,6 @@ class Reader extends Component {
         document.querySelector('.controls__header').offsetHeight + padding
       const top = elem.offsetTop - offset
 
-      console.log('top', top)
-
       document.getElementById('frame').scrollTo(0, top) // TODO should be handled in Frame.jsx
     }
 
