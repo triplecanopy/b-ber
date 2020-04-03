@@ -34,6 +34,7 @@ class App extends Component {
       uiOptions: props.uiOptions || {}, // eslint-disable-line react/no-unused-state
       cache: typeof props.cache !== 'undefined' ? props.cache : true,
       useBrowserHistory: props.useBrowserHistory || true,
+      pathname: '',
       search: '',
       loadRemoteLibrary:
         typeof props.loadRemoteLibrary !== 'undefined'
@@ -42,75 +43,128 @@ class App extends Component {
     }
   }
 
-  componentDidMount() {
+  async componentWillMount() {
+    const { data: books } = await Request.getManifest()
+    const params = new URLSearchParams(window.location)
+
+    const title = params.get('pathname').slice(1)
+    const url = this.props.bookURL
+
+    // TODO if not title && not url ...
+    const pred = title ? { title } : { url }
+    const book = find(books, pred)
+
+    // console.log(pred, title)
+
+    const search = params.get('search')
+    // const book = find(books, { title })
+    const bookURL = book ? book.url : null
+
     this.bindHistoryListener()
+    // console.log('props', this.props)
+    // console.log('books, bookURL, search', books, bookURL, search)
 
-    const { loadRemoteLibrary } = this.state
-    if (!loadRemoteLibrary) return this.goToBookURL(history.location)
-
-    Request.getManifest()
-      .then(({ data }) =>
-        this.setState({ books: [...this.state.books, ...data] })
-      )
-      .then(() => this.goToBookURL(history.location))
+    this.setState({ books, bookURL, search })
   }
 
-  goToBookURL = location => {
-    const { defaultBookURL, basePath, useBrowserHistory } = this.state
+  // componentDidMount() {
+  //   this.bindHistoryListener()
 
-    if (!location || !location.state) {
-      console.log('No history.location or history.location.state')
+  //   const { loadRemoteLibrary } = this.state
+  //   if (!loadRemoteLibrary) return this.goToBookURL(history.location)
 
-      console.log(this.props)
-      console.log(this.state)
+  //   console.log(history)
+  //   return
 
-      return useBrowserHistory
-        ? history.push(Url.createPath(basePath), { bookURL: defaultBookURL })
-        : null
-    }
+  //   Request.getManifest()
+  //     .then(({ data }) =>
+  //       this.setState({ books: [...this.state.books, ...data] })
+  //     )
+  //     .then(() => this.goToBookURL(history.location))
+  // }
 
-    const { books } = this.state
-    let { bookURL } = location.state
+  // goToBookURL = location => {
+  //   const { defaultBookURL, basePath, useBrowserHistory } = this.state
 
-    if (!find(books, { url: bookURL })) bookURL = defaultBookURL
+  //   if (!location || !location.state) {
+  //     console.log('No history.location or history.location.state')
 
-    this.setState({ bookURL })
-  }
+  //     console.log(this.props)
+  //     console.log(this.state)
 
-  // eslint-disable-next-line
+  //     return useBrowserHistory
+  //       ? history.push(Url.createPath(basePath), { bookURL: defaultBookURL })
+  //       : null
+  //   }
+
+  //   const { books } = this.state
+  //   let { bookURL } = location.state
+
+  //   if (!find(books, { url: bookURL })) bookURL = defaultBookURL
+
+  //   this.setState({ bookURL })
+  // }
+
+  // // eslint-disable-next-line
   bindHistoryListener = () => {
-    const { useBrowserHistory } = this.state
+    // const { useBrowserHistory } = this.state
+    history.listen((location, action) => {
+      //   // const { search } = location
+      console.log('-- history updates', action, location)
+      const { pathname, search } = location
 
-    history.listen((location /* , action */) => {
-      const { search } = location
-      if (!location.state) {
-        if (useBrowserHistory && history.length) history.goBack()
-        return
+      if (location.state?.bookURL === null) {
+        console.log('---- go', pathname)
+
+        return history.go(pathname) // Reload
       }
 
-      this.goToBookURL(location)
-      this.setState({ search: search.slice(1) })
+      // if (!location.state?.bookURL) {
+      //   console.log('-- no state... refresh?')
+      // }
+
+      // if (pathname === '/') {
+      //   console.log('-- reload')
+
+      //   return history.go(pathname) // Reload
+      // }
+
+      this.setState({ pathname, search })
+
+      //   // if (!location.state) {
+      //   //   if (useBrowserHistory && history.length) history.goBack()
+      //   //   return
+      //   // }
+      //   // this.goToBookURL(location)
+      //   // this.setState({ search: search.slice(1) })
     })
   }
 
-  handleClick = ({ title, url }) =>
-    this.state.useBrowserHistory
-      ? history.push(Url.slug(title), { bookURL: url })
-      : this.setState({ bookURL: url })
+  handleClick = ({ title, url: bookURL }) => {
+    history.push(Url.slug(title)) // Set pathname
+    this.setState({ bookURL }) // Tell the reader to load data from bookURL
+  }
+
+  // handleClick = ({ title, url }) =>
+  //   this.state.useBrowserHistory
+  //     ? history.push(Url.slug(title), { bookURL: url })
+  //     : this.setState({ bookURL: url })
 
   render() {
     const {
       books,
       bookURL,
+      pathname,
       search,
       downloads,
       useBrowserHistory,
       cache,
     } = this.state
     return (
-      <div>
+      <React.Fragment>
         {bookURL ? (
           <Reader
+            pathname={pathname}
             search={search}
             bookURL={bookURL}
             downloads={downloads}
@@ -121,7 +175,7 @@ class App extends Component {
         ) : (
           <Library books={books} handleClick={this.handleClick} />
         )}
-      </div>
+      </React.Fragment>
     )
   }
 }

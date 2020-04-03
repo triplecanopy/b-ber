@@ -48,7 +48,7 @@ class Reader extends Component {
       spineItemURL: '',
       currentSpineItem: null,
       currentSpineItemIndex: 0,
-      search: '',
+      // search: '',
       cache: this.props.cache,
 
       // Layout
@@ -124,9 +124,36 @@ class Reader extends Component {
     }
 
     this.createStateFromOPF().then(() => {
-      if (useLocalStorage === false) return this.loadSpineItem()
+      console.log('create state from opf')
 
-      this.loadInitialSpineItem(storage)
+      const params = new URLSearchParams(this.props.search)
+      const slug = params.get('slug')
+      const currentSpineItemIndex = findIndex(this.state.spine, { slug })
+      const currentSpineItem = this.state.spine[currentSpineItemIndex]
+      const spreadIndex = 0
+
+      const location = { currentSpineItem, currentSpineItemIndex, spreadIndex }
+
+      // TODO if location ...
+      // TODO same as loadInitialSpineItem. add params
+      if (location && currentSpineItem) {
+        console.log('loads spine from URL params', location)
+        this.setState(
+          { currentSpineItem, currentSpineItemIndex, spreadIndex },
+          () => this.loadSpineItem(currentSpineItem)
+        )
+        return
+      }
+
+      // if (useLocalStorage === false) {
+      console.log('loading default spine item')
+
+      return this.loadSpineItem()
+      // }
+
+      // console.log('loading spine from storage')
+
+      // this.loadInitialSpineItem(storage)
     })
   }
 
@@ -173,29 +200,54 @@ class Reader extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { loaded } = nextProps.view
-    const { hash, cssHash, search } = this.state
+    console.log('componentWillReceiveProps')
+    console.log(nextProps)
 
+    const { loaded } = nextProps.view
+    const { hash, cssHash /*, search */ } = this.state
+    const { search } = this.props
     if (nextProps.search !== search) {
+      console.log('updates search', nextProps.search, search)
+
       const { slug, currentSpineItemIndex, spreadIndex } = Url.parseQueryString(
         nextProps.search
       )
 
+      console.log('from nextProps', slug, currentSpineItemIndex, spreadIndex)
+
       const url = Url.parseQueryString(search)
 
-      // Load the new spine item if the slug has changed
-      if (url?.slug !== slug) {
-        const spineItem = find(this.state.spine, { slug })
-        return this.loadSpineItem(spineItem)
-      }
+      console.log('from props.search', url)
 
+      // Load the new spine item if the slug has changed
+      // if (url?.slug && slug && url.slug !== slug) {
+      //   const spineItem = find(this.state.spine, { slug })
+      //   console.log('will load from nextProps', spineItem)
+
+      //   return this.loadSpineItem(spineItem)
+      // }
       // Otherwise update the query string
-      this.setState({
-        slug,
-        currentSpineItemIndex,
-        spreadIndex: Number(spreadIndex),
-        search: nextProps.search,
-      })
+      this.setState(
+        {
+          slug,
+          currentSpineItemIndex,
+          spreadIndex: Number(spreadIndex),
+          // search: nextProps.search,
+        },
+        () => {
+          console.log('updated from nextProps')
+
+          // TODO clean ths up
+          if (url?.slug && slug && url.slug !== slug) {
+            const spineItem = find(this.state.spine, { slug })
+            console.log('will load from nextProps', spineItem)
+
+            return this.loadSpineItem(spineItem)
+          }
+
+          // console.log(this.state)
+        }
+      )
     }
 
     if (hash === null || cssHash === null) {
@@ -227,10 +279,15 @@ class Reader extends Component {
   }
 
   updateQueryString = callback => {
+    console.log('updateQueryString')
+
     const { currentSpineItem, currentSpineItemIndex, spreadIndex } = this.state
     const { slug } = currentSpineItem
     const url = Url.parseQueryString(this.props.search)
-    const { pathname, state } = history.location
+    // const url = Url.parseQueryString(this.state.search)
+    const { pathname } = this.props
+    // const { pathname, state } = history.location
+    // const { state } = history.location
     const updateMethod = !url.slug || url.slug === slug ? 'replace' : 'push'
 
     const search = Url.buildQueryString({
@@ -239,24 +296,26 @@ class Reader extends Component {
       spreadIndex,
     })
 
-    if (this.props.useBrowserHistory) {
-      this.setState({ search }, () => {
-        history[updateMethod]({
-          pathname,
-          search,
-          state,
-        })
+    console.log('calls history with', updateMethod)
 
-        if (callback) callback()
-      })
-      return
-    }
-
-    this.setState({ search }, () => {
-      history.push({ search })
-
-      if (callback) callback()
+    // if (this.props.useBrowserHistory) {
+    // this.setState({ search }, () => {
+    history[updateMethod]({
+      pathname,
+      search,
+      state: { bookURL: this.state.bookURL },
     })
+
+    if (callback) callback()
+    // })
+    //   return
+    // }
+
+    // this.setState({ search }, () => {
+    //   history.push({ search })
+
+    //   if (callback) callback()
+    // })
   }
 
   showSpinner = () => {
@@ -425,6 +484,12 @@ class Reader extends Component {
         spineItemURL: requestedSpineItem.absoluteURL,
       },
       () => {
+        console.log(
+          'udpated state from loadSpine item. wants to update query string'
+        )
+
+        console.log('deferred callback?', deferredCallback)
+
         this.updateQueryString(() => {
           if (deferredCallback) {
             this.props.registerDeferredCallback(deferredCallback)
@@ -641,6 +706,7 @@ class Reader extends Component {
 
   // eslint-disable-next-line class-methods-use-this
   destroyReaderComponent = () => {
+    // history.push('/')
     history.push('/', { bookURL: null })
   }
 
