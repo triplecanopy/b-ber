@@ -48,7 +48,6 @@ class Reader extends Component {
       spineItemURL: '',
       currentSpineItem: null,
       currentSpineItemIndex: 0,
-      // search: '',
       cache: this.props.cache,
 
       // Layout
@@ -114,47 +113,67 @@ class Reader extends Component {
     }
   }
 
-  componentWillMount() {
-    Cache.clear() // Clear initially (for now). Still caches styles for subsequent pages
+  // When the reader mounts, navigate to the desired location. The location is
+  // determined by checking the following in this order:
+  //
+  // 1. The pathname and query string entered manually or via a link in the
+  //    browser bar
+  // 2. The values stored in localStorage from the last time the user loaded the
+  //    book, if at ll
+  // 3. If neither of the above conditions are met, then the first page of the
+  //    book is loaded
+  async componentWillMount() {
+    // Clear cache initially (for now). Still caches styles for subsequent pages
+    Cache.clear()
 
     const storage = Storage.get(this.localStorageKey) || {}
 
+    // Update the custom viewer settings (font size, line height, etc) for the
+    // current book. Viewer settings can be exposed to the user in the future
     if (useLocalStorage !== false && storage.viewerSettings) {
       this.props.viewerSettingsActions.update(storage.viewerSettings)
     }
 
-    this.createStateFromOPF().then(() => {
-      console.log('create state from opf')
+    // Load the spine, guide, and metadata
+    await this.createStateFromOPF()
 
-      const params = new URLSearchParams(this.props.search)
-      const slug = params.get('slug')
-      const currentSpineItemIndex = findIndex(this.state.spine, { slug })
-      const currentSpineItem = this.state.spine[currentSpineItemIndex]
-      const spreadIndex = 0
+    // Check the current query string if one exists
+    const params = new URLSearchParams(this.props.search)
+    const slug = params.get('slug')
 
-      const location = { currentSpineItem, currentSpineItemIndex, spreadIndex }
+    const { spine, hash } = this.state
 
-      // TODO if location ...
-      // TODO same as loadInitialSpineItem. add params
-      if (location && currentSpineItem) {
-        console.log('loads spine from URL params', location)
-        this.setState(
-          { currentSpineItem, currentSpineItemIndex, spreadIndex },
-          () => this.loadSpineItem(currentSpineItem)
-        )
-        return
-      }
+    let currentSpineItemIndex = findIndex(spine, { slug })
+    let currentSpineItem = spine[currentSpineItemIndex]
+    let spreadIndex = 0
 
-      // if (useLocalStorage === false) {
-      console.log('loading default spine item')
+    if (currentSpineItem) {
+      this.setState(
+        { currentSpineItem, currentSpineItemIndex, spreadIndex },
+        () => this.loadSpineItem(currentSpineItem)
+      )
 
-      return this.loadSpineItem()
-      // }
+      return
+    }
 
-      // console.log('loading spine from storage')
+    // Location can't be determined from the query string. Load from location
+    // in localStorage
+    if (useLocalStorage !== false && storage?.[hash]?.currentSpineItem) {
+      ;({ currentSpineItem, currentSpineItemIndex, spreadIndex } = storage[
+        hash
+      ])
 
-      // this.loadInitialSpineItem(storage)
-    })
+      this.setState(
+        { currentSpineItem, currentSpineItemIndex, spreadIndex },
+        () => this.loadSpineItem(currentSpineItem)
+      )
+
+      return
+    }
+
+    // There is no entry in localStorage for the current book, load the first
+    // page of the first chapter
+    this.loadSpineItem()
   }
 
   componentDidMount() {
@@ -200,56 +219,40 @@ class Reader extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log('componentWillReceiveProps')
-    console.log(nextProps)
-
     const { loaded } = nextProps.view
-    const { hash, cssHash /*, search */ } = this.state
+    const { hash, cssHash } = this.state
     const { search } = this.props
-    if (nextProps.search !== search) {
-      console.log('updates search', nextProps.search, search)
 
+    // The query string has changed in that either
+    // 1. There is a new slug (chapter). Load the page asynchronously and let
+    //    the post-loaded callbacks update the postion
+    // 2. There is a new spread index (page). Update state to initialize the
+    //    page transition
+    if (nextProps.search !== search) {
       const { slug, currentSpineItemIndex, spreadIndex } = Url.parseQueryString(
         nextProps.search
       )
 
-      console.log('from nextProps', slug, currentSpineItemIndex, spreadIndex)
+      const prevURL = Url.parseQueryString(search)
 
-      const url = Url.parseQueryString(search)
+      // Load the new spine item if the slug has changed. `loadSpineItem`
+      // updates the query string, so we can return immediately after this
+      // branch
+      if (prevURL?.slug && slug && prevURL.slug !== slug) {
+        const spineItem = find(this.state.spine, { slug })
+        this.loadSpineItem(spineItem)
+        return
+      }
 
-      console.log('from props.search', url)
-
-      // Load the new spine item if the slug has changed
-      // if (url?.slug && slug && url.slug !== slug) {
-      //   const spineItem = find(this.state.spine, { slug })
-      //   console.log('will load from nextProps', spineItem)
-
-      //   return this.loadSpineItem(spineItem)
-      // }
-      // Otherwise update the query string
-      this.setState(
-        {
-          slug,
-          currentSpineItemIndex,
-          spreadIndex: Number(spreadIndex),
-          // search: nextProps.search,
-        },
-        () => {
-          console.log('updated from nextProps')
-
-          // TODO clean ths up
-          if (url?.slug && slug && url.slug !== slug) {
-            const spineItem = find(this.state.spine, { slug })
-            console.log('will load from nextProps', spineItem)
-
-            return this.loadSpineItem(spineItem)
-          }
-
-          // console.log(this.state)
-        }
-      )
+      // Update state for the new location
+      this.setState({
+        slug,
+        currentSpineItemIndex,
+        spreadIndex: Number(spreadIndex),
+      })
     }
 
+    // CSS updates
     if (hash === null || cssHash === null) {
       const state = {}
       if (hash === null) state.hash = nextProps.hash
@@ -279,69 +282,30 @@ class Reader extends Component {
   }
 
   updateQueryString = callback => {
-    console.log('updateQueryString')
-
     const { currentSpineItem, currentSpineItemIndex, spreadIndex } = this.state
+    const { pathname, search } = this.props
     const { slug } = currentSpineItem
-    const url = Url.parseQueryString(this.props.search)
-    // const url = Url.parseQueryString(this.state.search)
-    const { pathname } = this.props
-    // const { pathname, state } = history.location
-    // const { state } = history.location
+    const url = Url.parseQueryString(search)
     const updateMethod = !url.slug || url.slug === slug ? 'replace' : 'push'
 
-    const search = Url.buildQueryString({
+    const nextSearch = Url.buildQueryString({
       slug,
       currentSpineItemIndex,
       spreadIndex,
     })
 
-    console.log('calls history with', updateMethod)
-
-    // if (this.props.useBrowserHistory) {
-    // this.setState({ search }, () => {
     history[updateMethod]({
       pathname,
-      search,
+      search: nextSearch,
       state: { bookURL: this.state.bookURL },
     })
 
     if (callback) callback()
-    // })
-    //   return
-    // }
-
-    // this.setState({ search }, () => {
-    //   history.push({ search })
-
-    //   if (callback) callback()
-    // })
   }
 
-  showSpinner = () => {
-    this.setState({ spinnerVisible: true })
-  }
+  showSpinner = () => this.setState({ spinnerVisible: true })
 
-  hideSpinner = () => {
-    this.setState({ spinnerVisible: false })
-  }
-
-  loadInitialSpineItem = (storage = {}) => {
-    const { hash } = this.state
-
-    if (!storage?.[hash]?.currentSpineItem) return this.loadSpineItem()
-
-    const { currentSpineItem, currentSpineItemIndex, spreadIndex } = storage[
-      hash
-    ]
-
-    this.setState(
-      { currentSpineItem, currentSpineItemIndex, spreadIndex },
-      () => {
-        this.loadSpineItem(currentSpineItem)
-      }
-    )
-  }
+  hideSpinner = () => this.setState({ spinnerVisible: false })
 
   createStateFromOPF = async () => {
     const { bookURL } = this.state
@@ -372,25 +336,15 @@ class Reader extends Component {
     this.setState(data)
   }
 
-  enablePageTransitions = () => {
-    this.setState({ pageAnimation: true })
-  }
+  enablePageTransitions = () => this.setState({ pageAnimation: true })
 
-  disablePageTransitions = () => {
-    this.setState({ pageAnimation: false })
-  }
+  disablePageTransitions = () => this.setState({ pageAnimation: false })
 
-  enableEventHandling = () => {
-    this.setState({ handleEvents: true })
-  }
+  enableEventHandling = () => this.setState({ handleEvents: true })
 
-  disableEventHandling = () => {
-    this.setState({ handleEvents: false })
-  }
+  disableEventHandling = () => this.setState({ handleEvents: false })
 
-  closeSidebars = () => {
-    this.setState({ showSidebar: null })
-  }
+  closeSidebars = () => this.setState({ showSidebar: null })
 
   freeze = () => {
     this.props.viewActions.unload()
@@ -483,22 +437,14 @@ class Reader extends Component {
         currentSpineItem: requestedSpineItem,
         spineItemURL: requestedSpineItem.absoluteURL,
       },
-      () => {
-        console.log(
-          'udpated state from loadSpine item. wants to update query string'
+      () =>
+        // Update the query string to trigger a page transition and call the
+        // deferredCallback if one is set, or `showSpineItem` if not
+        this.updateQueryString(() =>
+          this.props.registerDeferredCallback(
+            deferredCallback || this.showSpineItem
+          )
         )
-
-        console.log('deferred callback?', deferredCallback)
-
-        this.updateQueryString(() => {
-          if (deferredCallback) {
-            this.props.registerDeferredCallback(deferredCallback)
-            return
-          }
-
-          this.props.registerDeferredCallback(this.showSpineItem)
-        })
-      }
     )
   }
 
@@ -704,22 +650,19 @@ class Reader extends Component {
     Storage.set(this.localStorageKey, storage)
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  destroyReaderComponent = () => {
-    // history.push('/')
-    history.push('/', { bookURL: null })
-  }
+  // TODO the location.state.bookURL prop is how we're signal to the reader that
+  // there is a book loaded, but that the pathname is '/'. Would be good to have
+  // this standardized
+  destroyReaderComponent = () => history.push('/', { bookURL: null })
 
   registerOverlayElementId = overlayElementId => {
     if (this.state.overlayElementId === overlayElementId) return
     this.setState({ overlayElementId })
   }
 
-  deRegisterOverlayElementId = () => {
-    this.setState({ overlayElementId: null })
-  }
+  deRegisterOverlayElementId = () => this.setState({ overlayElementId: null })
 
-  // TODO redux
+  // TODO whatever this is doing should be handled by Redux
   _setState = (state, callback) => {
     this.setState({ ...state }, () => {
       if (callback) callback()
