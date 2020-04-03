@@ -50,8 +50,9 @@ class Vimeo extends React.Component {
 
   state = {
     url: '',
-    controls: true, // TODO custom controls tbd
+    loop: false, // Not sure why this needs to be duplicated on the ReactPlayer
     muted: false, // Not sure why this needs to be duplicated on the ReactPlayer
+    controls: true, // TODO custom controls tbd
     playing: false,
     autoplay: true,
     posterImage: null,
@@ -76,10 +77,11 @@ class Vimeo extends React.Component {
     const { autoplay, ...rest } = playerOptions
 
     // Controls is needed both in state and in playerOptions
-    const { controls, muted } = playerOptions
+    const { controls, muted, loop } = playerOptions
 
     this.setState({
       url,
+      loop,
       muted,
       controls,
       autoplay,
@@ -156,8 +158,9 @@ class Vimeo extends React.Component {
   render() {
     const {
       url,
-      controls,
+      loop,
       muted,
+      controls,
       playing,
       posterImage,
       playerOptions,
@@ -177,6 +180,7 @@ class Vimeo extends React.Component {
           url={url}
           width="100%"
           height="100%"
+          loop={loop}
           muted={muted}
           playing={playing}
           controls={controls}
