@@ -6,6 +6,7 @@ import ReactPlayer from 'react-player'
 import has from 'lodash/has'
 import withNodePosition from '../with-node-position'
 import Url from '../../helpers/Url'
+import Viewport from '../../helpers/Viewport'
 
 const VimeoPosterImage = ({ src, playing, controls, handleUpdatePlaying }) => {
   if (!src) return null
@@ -45,6 +46,8 @@ class Vimeo extends React.Component {
   // Props that are on the vimeo player which must be managed by state
   static blacklistedProps = ['autopause' /* , 'controls' */]
 
+  iframePlaceholder = React.createRef()
+
   state = {
     url: '',
     controls: true, // TODO custom controls tbd
@@ -54,6 +57,15 @@ class Vimeo extends React.Component {
     posterImage: null,
     playerOptions: {},
     currentSpreadIndex: null,
+
+    // There's a bug in Chrome 81.0.4044.92 that causes iframes on a different
+    // domain than the host not to load in multiple column layouts. Following
+    // props are used for element positioning in the work-around commened on
+    // below.
+    iframePlaceholderTop: 0,
+    iframePlaceholderLeft: 0,
+    iframePlaceholderWidth: 0,
+    iframePlaceholderHeight: 0,
   }
 
   componentWillMount() {
@@ -81,7 +93,19 @@ class Vimeo extends React.Component {
       posterImage,
       playerOptions: { ...rest },
     })
+
+    window.addEventListener('resize', this.handleResize)
   }
+
+  componentDidMount() {
+    this.updateIframePosition()
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.handleResize)
+  }
+
+  handleResize = () => this.updateIframePosition()
 
   componentWillReceiveProps(nextProps) {
     // Only elements with an autoplay attribute
@@ -148,6 +172,51 @@ class Vimeo extends React.Component {
 
   getVimeoURLAndQueryParamters = url => url.split('?')
 
+  // Recursive call to update "floating" iframe position. The elements shift
+  // around before render and can't be managed reliably in state, so dirty poll
+  // the placeholder position to check if the floating element's position
+  // matches, and call again if not.
+  updateIframePosition = () => {
+    if (Viewport.isMobile()) return
+
+    const node = this.iframePlaceholder.current
+    const {
+      iframePlaceholderTop,
+      iframePlaceholderLeft,
+      iframePlaceholderWidth,
+      iframePlaceholderHeight,
+    } = this.state
+
+    const { top, left, width, height } = node.getBoundingClientRect()
+
+    // Account for the layout element's offset which confuses calculations after
+    // resize
+    const layoutElem = document.querySelector('#layout')
+    const matrix = window
+      .getComputedStyle(layoutElem)
+      .transform.replace(/(?:^matrix\(|\)$)/g, '')
+      .split(',')
+      .map(n => Number(n.trim()))
+
+    const transformLeft = Math.abs(matrix[4])
+
+    if (
+      iframePlaceholderLeft !== left - transformLeft ||
+      iframePlaceholderTop !== top ||
+      iframePlaceholderWidth !== width ||
+      iframePlaceholderHeight !== height
+    ) {
+      this.setState({
+        iframePlaceholderTop: top,
+        iframePlaceholderLeft: left + transformLeft,
+        iframePlaceholderWidth: width,
+        iframePlaceholderHeight: height,
+      })
+
+      setTimeout(this.updateIframePosition, 60)
+    }
+  }
+
   render() {
     const {
       url,
@@ -156,36 +225,64 @@ class Vimeo extends React.Component {
       playing,
       posterImage,
       playerOptions,
+      iframePlaceholderTop: top,
+      iframePlaceholderLeft: left,
+      iframePlaceholderWidth: width,
+      iframePlaceholderHeight: height,
     } = this.state
 
+    const mobile = Viewport.isMobile()
+    const position = mobile ? 'static' : 'absolute' // Only run re-positioning on desktop
+
+    // .iframe-placeholder styles
+    // TODO only accounts for 16:9 aspect ratio
+    const paddingTop = mobile ? 0 : `${(9 / 16) * 100}%`
+
     return (
-      <div
-        ref={this.props.elemRef /* Used to calculate spread position in HOC */}
-      >
-        <VimeoPosterImage
-          src={posterImage}
-          playing={playing}
-          controls={controls}
-          handleUpdatePlaying={this.handleUpdatePlaying}
+      <React.Fragment>
+        {
+          // The iframePlaceholder element is a statically positioned div that
+          // fills the space that should be occupied by the ReactPlayer iframe.
+          // The iframe is absolutely positioned and is set to top and left
+          // positions of the placeholder. This is to address a bug in Chrome 81
+          // that prevents iframes from loading in multiple column layouts.
+        }
+        <div
+          style={{ paddingTop }}
+          className="iframe-placeholder"
+          ref={this.iframePlaceholder}
         />
-        <ReactPlayer
-          url={url}
-          width="100%"
-          height="100%"
-          muted={muted}
-          playing={playing}
-          controls={controls}
-          playsinline={true}
-          config={{ vimeo: playerOptions }}
-          onPause={this.handlePause}
-          onEnded={this.handleEnded}
-        />
-        <VimeoPlayerControls
-          handleUpdatePlaying={this.handleUpdatePlaying}
-          handleUpdatePosition={this.handleUpdatePosition}
-          handleUpdateVolume={this.handleUpdateVolume}
-        />
-      </div>
+
+        {/* Ref is used to calculate spread position in HOC */}
+        <div
+          style={{ top, left, width, height, position }}
+          ref={this.props.elemRef}
+        >
+          <VimeoPosterImage
+            src={posterImage}
+            playing={playing}
+            controls={controls}
+            handleUpdatePlaying={this.handleUpdatePlaying}
+          />
+          <ReactPlayer
+            url={url}
+            width="100%"
+            height="100%"
+            muted={muted}
+            playing={playing}
+            controls={controls}
+            playsinline={true}
+            config={{ vimeo: playerOptions }}
+            onPause={this.handlePause}
+            onEnded={this.handleEnded}
+          />
+          <VimeoPlayerControls
+            handleUpdatePlaying={this.handleUpdatePlaying}
+            handleUpdatePosition={this.handleUpdatePosition}
+            handleUpdateVolume={this.handleUpdateVolume}
+          />
+        </div>
+      </React.Fragment>
     )
   }
 }
