@@ -26,7 +26,7 @@ const log = (lastSpreadIndex, contentDimensions, frameHeight, columns) => {
 
 const assertRef = node => {
   if (!node?.current) {
-    throw new Error('Cannot observe node:', node || typeof node)
+    throw new Error('Cannot observe', node)
   }
 }
 
