@@ -2,7 +2,7 @@ import React from 'react'
 import ResizeObserver from 'resize-observer-polyfill'
 import debounce from 'lodash/debounce'
 import { connect } from 'react-redux'
-import DocumentPreProcessor from '../lib/DocumentPreProcessor'
+import DocumentPreProcessor from './DocumentPreProcessor'
 import { unlessDefined } from '../helpers/utils'
 
 const ELEMENT_EDGE_VERSO_MIN = 48

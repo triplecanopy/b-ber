@@ -3,7 +3,7 @@ import renderer from 'react-test-renderer'
 import Audio from '../../src/components/Media/Audio'
 
 jest.mock(
-  '../../src/components/with-node-position',
+  '../../src/lib/with-node-position',
   () => WrappedComponent => props => <WrappedComponent {...props} />
 )
 

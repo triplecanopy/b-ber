@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React from 'react'
 import PropTypes from 'prop-types'
-import withNodePosition from '../with-node-position'
+import withNodePosition from '../../lib/with-node-position'
 import MediaControls from './Controls/MediaControls'
 
 class Media extends React.Component {

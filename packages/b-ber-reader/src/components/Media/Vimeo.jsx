@@ -4,7 +4,7 @@ import omit from 'lodash/omit'
 import classNames from 'classnames'
 import ReactPlayer from 'react-player'
 import has from 'lodash/has'
-import withNodePosition from '../with-node-position'
+import withNodePosition from '../../lib/with-node-position'
 import Url from '../../helpers/Url'
 
 const VimeoPosterImage = ({ src, playing, controls, handleUpdatePlaying }) => {
