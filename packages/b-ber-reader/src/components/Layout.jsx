@@ -3,11 +3,18 @@ import PropTypes from 'prop-types'
 import debounce from 'lodash/debounce'
 import transitions from '../lib/transition-styles'
 import Viewport from '../helpers/Viewport'
-import { cssHeightDeclarationPropType } from '../lib/custom-prop-types'
 import { debug } from '../config'
 import browser from '../lib/browser'
 import withObservers from '../lib/with-observers'
 import withDimensions from '../lib/with-dimensions'
+
+const Leaves = ({ leafLeftStyles, leafRightStyles }) =>
+  Viewport.isMobile() ? null : (
+    <React.Fragment>
+      <div className="leaf leaf--left" style={leafLeftStyles} />
+      <div className="leaf leaf--right" style={leafRightStyles} />
+    </React.Fragment>
+  )
 
 class Layout extends React.Component {
   static propTypes = {
@@ -23,47 +30,23 @@ class Layout extends React.Component {
     }).isRequired,
   }
 
-  static childContextTypes = {
-    height: cssHeightDeclarationPropType,
-    translateX: PropTypes.number,
+  state = {
+    margin: 0,
+    border: 0,
+    boxSizing: 'border-box',
+    transform: 'translateX(0)',
+    translateX: 0,
+    columnFill: 'auto',
   }
 
-  constructor(props) {
-    super(props)
+  constructor() {
+    super()
 
-    this.state = {
-      margin: 0,
-      border: 0,
-      boxSizing: 'border-box',
+    const debounceSpeed = 60
 
-      transform: 'translateX(0)',
-      translateX: 0,
-
-      // columnWidth: 'auto',
-      // columnCount: 2,
-      columnFill: 'auto',
-    }
-
-    this.debounceSpeed = 60
-    this.layoutNode = null
-
-    this.updateTransform = this.updateTransform.bind(this)
-    this.onResizeDone = this.onResizeDone.bind(this)
-    this.bindEventListeners = this.bindEventListeners.bind(this)
-    this.unBindEventListeners = this.unBindEventListeners.bind(this)
-
-    this.handleResize = debounce(
-      this.onResizeDone,
-      this.debounceSpeed,
-      {}
-    ).bind(this)
-  }
-
-  getChildContext() {
-    return {
-      height: this.props.viewerSettings.height,
-      translateX: this.state.translateX,
-    }
+    this.handleResize = debounce(this.onResizeDone, debounceSpeed, {}).bind(
+      this
+    )
   }
 
   componentDidMount() {
@@ -81,7 +64,7 @@ class Layout extends React.Component {
     this.unBindEventListeners()
   }
 
-  onResizeDone() {
+  onResizeDone = () => {
     this.props.updateDimensions()
     this.updateTransform()
   }
@@ -122,7 +105,7 @@ class Layout extends React.Component {
     window.removeEventListener('resize', this.handleResize)
   }
 
-  updateTransform(spreadIndex) {
+  updateTransform = spreadIndex => {
     const translateX = this.getTranslateX(spreadIndex)
     const transform = `translateX(${translateX}px)`
 
@@ -158,14 +141,6 @@ class Layout extends React.Component {
       columns,
       columnFill,
       transform,
-    }
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  contentStyles() {
-    return {
-      padding: 0,
-      margin: 0,
     }
   }
 
@@ -213,9 +188,9 @@ class Layout extends React.Component {
       paddingRight,
     } = this.props.viewerSettings
 
-    const isMobile = Viewport.isMobile()
-    const contextClass = isMobile ? 'mobile' : 'desktop'
-    const contentStyles = { ...this.contentStyles(), minHeight: height }
+    const contextClass = Viewport.isMobile() ? 'mobile' : 'desktop'
+    const defaultContentStyles = { padding: 0, margin: 0 }
+    const contentStyles = { ...defaultContentStyles, minHeight: height }
     const layoutTransition = transitions({ transitionSpeed })[transition]
 
     let layoutStyles = { ...this.layoutStyles(), ...layoutTransition }
@@ -236,19 +211,17 @@ class Layout extends React.Component {
     return (
       <div
         id="layout"
-        className={`spread-index__${spreadIndex} context__${contextClass} ${slug}`}
         style={layoutStyles}
-        ref={node => (this.layoutNode = node)}
+        className={`spread-index__${spreadIndex} context__${contextClass} ${slug}`}
       >
         <div id="content" style={contentStyles} ref={this.props.innerRef}>
           <this.props.BookContent {...this.props} {...this.state} />
         </div>
-        {!isMobile && (
-          <React.Fragment>
-            <div className="leaf leaf--left" style={leafLeftStyles} />
-            <div className="leaf leaf--right" style={leafRightStyles} />
-          </React.Fragment>
-        )}
+
+        <Leaves
+          leafLeftStyles={leafLeftStyles}
+          leafRightStyles={leafRightStyles}
+        />
       </div>
     )
   }

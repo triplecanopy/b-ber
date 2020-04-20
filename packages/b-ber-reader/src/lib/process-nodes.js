@@ -18,14 +18,8 @@ export const isValidNode = () => true
 export const processNodeDefinitions = new ProcessNodeDefinitions(React)
 export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
   {
-    replaceChildren: true,
-
     shouldProcessNode(node) {
-      return (
-        node.attribs &&
-        node.attribs['epub:type'] &&
-        node.attribs['epub:type'] === 'noteref'
-      )
+      return node?.attribs?.['epub:type'] === 'noteref'
     },
     processNode(node, children) {
       const href = Url.resolveOverlappingURL(

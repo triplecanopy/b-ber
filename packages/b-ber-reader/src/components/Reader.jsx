@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import PropTypes from 'prop-types'
 import findIndex from 'lodash/findIndex'
 import debounce from 'lodash/debounce'
 import find from 'lodash/find'
@@ -23,17 +22,6 @@ const book = { content: null }
 const BookContent = () => <div key="book-content">{book.content}</div>
 
 class Reader extends Component {
-  static childContextTypes = {
-    viewerSettings: PropTypes.object,
-    spreadIndex: PropTypes.number,
-    overlayElementId: PropTypes.string,
-    navigateToChapterByURL: PropTypes.func,
-    registerOverlayElementId: PropTypes.func,
-    deRegisterOverlayElementId: PropTypes.func,
-    requestDeferredCallbackExecution: PropTypes.func,
-    refs: PropTypes.object,
-    lastSpread: PropTypes.bool,
-  }
   constructor(props) {
     super(props)
 
@@ -70,10 +58,7 @@ class Reader extends Component {
 
       // View
       pageAnimation: false, // Disabled by default, and activated in Reader.enablePageTransitions on user action
-      overlayElementId: null,
       spinnerVisible: true,
-
-      refs: {},
     }
 
     this.localStorageKey = 'bber_reader'
@@ -96,22 +81,6 @@ class Reader extends Component {
         trailing: true,
       }
     ).bind(this)
-  }
-
-  getChildContext() {
-    return {
-      viewerSettings: this.props.viewerSettings,
-      refs: this.state.refs,
-      spreadIndex: this.state.spreadIndex,
-      navigateToChapterByURL: this.navigateToChapterByURL,
-      overlayElementId: this.state.overlayElementId,
-      registerOverlayElementId: this.registerOverlayElementId,
-      deRegisterOverlayElementId: this.deRegisterOverlayElementId,
-      requestDeferredCallbackExecution: this.props
-        .requestDeferredCallbackExecution,
-
-      lastSpread: this.state.lastSpread,
-    }
   }
 
   // When the reader mounts, navigate to the desired location. The location is
@@ -403,7 +372,6 @@ class Reader extends Component {
         request,
         requestedSpineItem,
         ...this.state,
-        navigateToChapterByURL: this.navigateToChapterByURL,
         paddingLeft: this.props.viewerSettings.paddingLeft,
         columnGap: this.props.viewerSettings.columnGap,
       })
@@ -656,13 +624,6 @@ class Reader extends Component {
   // this standardized
   destroyReaderComponent = () => history.push('/', { bookURL: null })
 
-  registerOverlayElementId = overlayElementId => {
-    if (this.state.overlayElementId === overlayElementId) return
-    this.setState({ overlayElementId })
-  }
-
-  deRegisterOverlayElementId = () => this.setState({ overlayElementId: null })
-
   // TODO whatever this is doing should be handled by Redux
   _setState = (state, callback) => {
     this.setState({ ...state }, () => {
@@ -719,7 +680,13 @@ class Reader extends Component {
         update={this.props.viewerSettingsActions.update}
         save={this.props.viewerSettingsActions.save}
       >
-        <ReaderContext.Provider value={{ spreadIndex, lastSpread }}>
+        <ReaderContext.Provider
+          value={{
+            spreadIndex,
+            lastSpread,
+            navigateToChapterByURL: this.navigateToChapterByURL,
+          }}
+        >
           <Frame
             slug={slug}
             hash={hash}
