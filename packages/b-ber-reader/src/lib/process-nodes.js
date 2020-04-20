@@ -149,8 +149,13 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
     processNode(node, children) {
       const attrs = Asset.convertToReactAttrs(node.attribs)
       const key = attrs.src
+      const aspectRatios = new Set(['16x9', '4x3'])
 
       let posterImage = null
+      const aspectRatio = new Map([
+        ['x', 16],
+        ['y', 9],
+      ])
 
       if (node.attribs['data-vimeo-poster']) {
         posterImage = Url.resolveOverlappingURL(
@@ -159,8 +164,18 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
         )
       }
 
+      if (
+        node.attribs['data-aspect-ratio'] &&
+        aspectRatios.has(node.attribs['data-aspect-ratio'])
+      ) {
+        const [x, y] = node.attribs['data-aspect-ratio'].split('x').map(Number)
+        aspectRatio.set('x', x)
+        aspectRatio.set('y', y)
+      }
+
       delete attrs['data-vimeo']
       delete attrs['data-vimeo-poster']
+      delete attrs['data-aspect-ratio']
 
       // Recurse back up the DOM to find if this element is a child of a spread.
       // If so, pass in `useAdjustedColumnWidth = false` to configure the
@@ -181,7 +196,7 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
 
       return React.createElement(
         Vimeo,
-        { ...attrs, key, posterImage },
+        { ...attrs, key, posterImage, aspectRatio },
         children
       )
     },

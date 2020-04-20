@@ -5,7 +5,14 @@ import ReactPlayer from 'react-player'
 import has from 'lodash/has'
 import withNodePosition from '../../lib/with-node-position'
 import ReaderContext from '../../lib/reader-context'
+import browser from '../../lib/browser'
 import Url from '../../helpers/Url'
+import Viewport from '../../helpers/Viewport'
+
+// Chrome 81
+// Conditional chaining for testing env
+const isChrome81 =
+  browser?.name === 'chrome' && browser?.version === '81.0.4044'
 
 const VimeoPosterImage = ({ src, playing, controls, handleUpdatePlaying }) => {
   if (!src) return null
@@ -43,6 +50,8 @@ class Vimeo extends React.Component {
   // Props that are on the vimeo player which must be managed by state
   static blacklistedProps = ['autopause' /* , 'controls' */]
 
+  iframePlaceholder = React.createRef() // Chrome 81
+
   state = {
     url: '',
     loop: false, // Not sure why this needs to be duplicated on the ReactPlayer
@@ -53,10 +62,23 @@ class Vimeo extends React.Component {
     posterImage: null,
     playerOptions: {},
     currentSpreadIndex: null,
+    aspectRatio: new Map([
+      ['x', 16],
+      ['y', 9],
+    ]),
+
+    // There's a bug in Chrome 81.0.4044.92 that causes iframes on a different
+    // domain than the host not to load in multiple column layouts. Following
+    // props are used for element positioning in the work-around commened on
+    // below.
+    iframePlaceholderTop: 0,
+    iframePlaceholderLeft: 0,
+    iframePlaceholderWidth: 0,
+    iframePlaceholderHeight: 0,
   }
 
   componentWillMount() {
-    const { src, posterImage } = this.props
+    const { src, posterImage, aspectRatio } = this.props
     const [url, queryString] = this.getVimeoURLAndQueryParamters(src)
 
     let playerOptions = this.getReactPlayerPropsFromQueryStringParameters(
@@ -79,8 +101,26 @@ class Vimeo extends React.Component {
       controls,
       autoplay,
       posterImage,
+      aspectRatio,
       playerOptions: { ...rest },
     })
+
+    window.addEventListener('resize', this.handleResize)
+  }
+
+  componentDidMount() {
+    if (!isChrome81) return
+    this.updateIframePosition() // Chrome 81
+  }
+
+  componentWillUnmount() {
+    if (!isChrome81) return
+    window.removeEventListener('resize', this.handleResize) // Chrome 81
+  }
+
+  handleResize = () => {
+    if (!isChrome81) return
+    this.updateIframePosition() // Chrome 81
   }
 
   componentWillReceiveProps(nextProps, nextContext) {
@@ -152,6 +192,51 @@ class Vimeo extends React.Component {
 
   getVimeoURLAndQueryParamters = url => url.split('?')
 
+  // Recursive call to update "floating" iframe position. The elements shift
+  // around before render and can't be managed reliably in state, so dirty poll
+  // the placeholder position to check if the floating element's position
+  // matches, and call again if not.
+  updateIframePosition = () => {
+    if (Viewport.isMobile()) return
+
+    const node = this.iframePlaceholder.current
+    const {
+      iframePlaceholderTop,
+      iframePlaceholderLeft,
+      iframePlaceholderWidth,
+      iframePlaceholderHeight,
+    } = this.state
+
+    const { top, left, width, height } = node.getBoundingClientRect()
+
+    // Account for the layout element's offset which confuses calculations after
+    // resize
+    const layoutElem = document.querySelector('#layout')
+    const matrix = window
+      .getComputedStyle(layoutElem)
+      .transform.replace(/(?:^matrix\(|\)$)/g, '')
+      .split(',')
+      .map(n => Number(n.trim()))
+
+    const transformLeft = Math.abs(matrix[4])
+
+    if (
+      iframePlaceholderLeft !== left - transformLeft ||
+      iframePlaceholderTop !== top ||
+      iframePlaceholderWidth !== width ||
+      iframePlaceholderHeight !== height
+    ) {
+      this.setState({
+        iframePlaceholderTop: top,
+        iframePlaceholderLeft: left + transformLeft,
+        iframePlaceholderWidth: width,
+        iframePlaceholderHeight: height,
+      })
+
+      setTimeout(this.updateIframePosition, 60)
+    }
+  }
+
   render() {
     const {
       url,
@@ -161,37 +246,93 @@ class Vimeo extends React.Component {
       playing,
       posterImage,
       playerOptions,
+      aspectRatio,
+
+      // Chrome 81
+      iframePlaceholderTop: top,
+      iframePlaceholderLeft: left,
+      iframePlaceholderWidth: width,
+      iframePlaceholderHeight: height,
     } = this.state
 
+    // Chrome 81
+    let placeholderStyles = {}
+    let paddingTop
+
+    if (isChrome81) {
+      const mobile = Viewport.isMobile()
+      const position = mobile ? 'static' : 'absolute' // Only run re-positioning on desktop
+      const x = aspectRatio.get('x')
+      const y = aspectRatio.get('y')
+
+      placeholderStyles = { top, left, width, height, position }
+
+      // .iframe-placeholder styles
+      paddingTop = mobile ? 0 : `${(y / x) * 100}%`
+    }
+
     return (
-      <div
-        ref={this.props.elemRef /* Used to calculate spread position in HOC */}
-      >
-        <VimeoPosterImage
-          src={posterImage}
-          playing={playing}
-          controls={controls}
-          handleUpdatePlaying={this.handleUpdatePlaying}
-        />
-        <ReactPlayer
-          url={url}
-          width="100%"
-          height="100%"
-          loop={loop}
-          muted={muted}
-          playing={playing}
-          controls={controls}
-          playsinline={true}
-          config={{ vimeo: playerOptions }}
-          onPause={this.handlePause}
-          onEnded={this.handleEnded}
-        />
-        <VimeoPlayerControls
-          handleUpdatePlaying={this.handleUpdatePlaying}
-          handleUpdatePosition={this.handleUpdatePosition}
-          handleUpdateVolume={this.handleUpdateVolume}
-        />
-      </div>
+      <React.Fragment>
+        {/*
+            The iframePlaceholder element is a statically positioned div that
+            fills the space that should be occupied by the ReactPlayer iframe.
+            The iframe is absolutely positioned and is set to top and left
+            positions of the placeholder. This is to address a bug in Chrome 81
+            that prevents iframes from loading in multiple column layouts.
+        */
+        isChrome81 && (
+          <div
+            style={{ paddingTop }}
+            className="iframe-placeholder"
+            ref={this.iframePlaceholder}
+          />
+        )}
+
+        {/*
+            The parent container also needs to be styled to properly render the
+            layout. Inject inline styles here.
+        */
+        isChrome81 && (
+          <style>{`
+            .context__desktop .vimeo.figure__large.figure__inline .embed.supported {
+              padding-top: 0 !important;
+              position: static !important;
+            }
+
+            .context__desktop .spread-with-fullbleed-media .vimeo.figure__large.figure__inline .embed.supported {
+              position: relative !important;
+            }
+          `}</style>
+        )}
+
+        {/* Ref is used to calculate spread position in HOC */}
+        <div style={placeholderStyles} ref={this.props.elemRef}>
+          <VimeoPosterImage
+            src={posterImage}
+            playing={playing}
+            controls={controls}
+            handleUpdatePlaying={this.handleUpdatePlaying}
+          />
+          <ReactPlayer
+            url={url}
+            width="100%"
+            height="100%"
+            loop={loop}
+            muted={muted}
+            playing={playing}
+            controls={controls}
+            playsinline={true}
+            config={{ vimeo: playerOptions }}
+            onPause={this.handlePause}
+            onEnded={this.handleEnded}
+          />
+          <VimeoPlayerControls
+            handleUpdatePlaying={this.handleUpdatePlaying}
+            handleUpdatePosition={this.handleUpdatePosition}
+            handleUpdateVolume={this.handleUpdateVolume}
+          />
+        </div>
+      </React.Fragment>
     )
   }
 }
