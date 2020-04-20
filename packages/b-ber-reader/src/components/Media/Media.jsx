@@ -1,14 +1,12 @@
 /* eslint-disable no-unused-vars */
+
 import React from 'react'
-import PropTypes from 'prop-types'
+import ReaderContext from '../../lib/reader-context'
 import withNodePosition from '../../lib/with-node-position'
 import MediaControls from './Controls/MediaControls'
 
 class Media extends React.Component {
-  static contextTypes = {
-    spreadIndex: PropTypes.number,
-    lastSpread: PropTypes.bool,
-  }
+  static contextType = ReaderContext
 
   static controlsConfig = new Set(['simple', 'normal', 'full'])
 
@@ -32,6 +30,12 @@ class Media extends React.Component {
     timeElapsed: '0:00',
     timeRemaining: '0:00',
     currentSrc: '',
+  }
+
+  componentWillMount() {
+    if (this.props['data-autoplay'] === true) {
+      this.setState({ autoPlay: true })
+    }
   }
 
   componentWillReceiveProps(nextProps, nextContext) {
@@ -72,16 +76,14 @@ class Media extends React.Component {
     }
   }
 
-  play = () => {
+  play = () =>
     this.setState({ paused: false }, () => {
       this.props.elemRef.current.play()
       this.updateControlsUI()
     })
-  }
 
-  pause = () => {
+  pause = () =>
     this.setState({ paused: true }, () => this.props.elemRef.current.pause())
-  }
 
   updateTime = step => {
     const { duration } = this.state
@@ -114,12 +116,11 @@ class Media extends React.Component {
     )
   }
 
-  updatePlaybackRate = playbackRate => {
+  updatePlaybackRate = playbackRate =>
     this.setState(
       { playbackRate },
       () => (this.props.elemRef.current.playbackRate = this.state.playbackRate)
     )
-  }
 
   // @param   seconds float
   // @return  string

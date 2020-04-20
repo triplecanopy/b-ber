@@ -11,6 +11,7 @@ import { Request, XMLAdaptor, Asset, Url, Cache, Storage } from '../helpers'
 import { useLocalStorage } from '../config'
 import history from '../lib/History'
 import withDeferredCallbacks from '../lib/with-deferred-callbacks'
+import ReaderContext from '../lib/reader-context'
 import Messenger from '../lib/Messenger'
 import Viewport from '../helpers/Viewport'
 import * as viewerSettingsActions from '../actions/viewer-settings'
@@ -678,6 +679,7 @@ class Reader extends Component {
       showSidebar,
       hash,
       bookURL,
+      lastSpread,
       spreadIndex,
       lastSpreadIndex,
       pageAnimation,
@@ -717,22 +719,24 @@ class Reader extends Component {
         update={this.props.viewerSettingsActions.update}
         save={this.props.viewerSettingsActions.save}
       >
-        <Frame
-          slug={slug}
-          hash={hash}
-          bookURL={bookURL}
-          spreadIndex={spreadIndex}
-          lastSpreadIndex={lastSpreadIndex}
-          BookContent={BookContent}
-          pageAnimation={pageAnimation}
-          viewerSettings={this.props.viewerSettings}
-          update={this.props.viewerSettingsActions.update}
-          setReaderState={this._setState}
-          // Can't wrap layout or the withObservable HOC in a way that preserves
-          // refs, so pass down `view` and `load` as props
-          view={this.props.view}
-          load={this.props.viewActions.load}
-        />
+        <ReaderContext.Provider value={{ spreadIndex, lastSpread }}>
+          <Frame
+            slug={slug}
+            hash={hash}
+            bookURL={bookURL}
+            spreadIndex={spreadIndex}
+            lastSpreadIndex={lastSpreadIndex}
+            BookContent={BookContent}
+            pageAnimation={pageAnimation}
+            viewerSettings={this.props.viewerSettings}
+            update={this.props.viewerSettingsActions.update}
+            setReaderState={this._setState}
+            // Can't wrap layout or the withObservable HOC in a way that preserves
+            // refs, so pass down `view` and `load` as props
+            view={this.props.view}
+            load={this.props.viewActions.load}
+          />
+        </ReaderContext.Provider>
         <Spinner spinnerVisible={spinnerVisible} />
       </Controls>
     )

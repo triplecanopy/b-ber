@@ -1,10 +1,10 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import omit from 'lodash/omit'
 import classNames from 'classnames'
 import ReactPlayer from 'react-player'
 import has from 'lodash/has'
 import withNodePosition from '../../lib/with-node-position'
+import ReaderContext from '../../lib/reader-context'
 import Url from '../../helpers/Url'
 
 const VimeoPosterImage = ({ src, playing, controls, handleUpdatePlaying }) => {
@@ -38,9 +38,7 @@ const VimeoPlayerControls = (/*
   null
 
 class Vimeo extends React.Component {
-  static contextTypes = {
-    lastSpread: PropTypes.bool,
-  }
+  static contextType = ReaderContext
 
   // Props that are on the vimeo player which must be managed by state
   static blacklistedProps = ['autopause' /* , 'controls' */]
@@ -85,7 +83,7 @@ class Vimeo extends React.Component {
     })
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps, nextContext) {
     // Only elements with an autoplay attribute
     if (!this.state.autoplay) return
 
@@ -93,18 +91,22 @@ class Vimeo extends React.Component {
     if (!nextProps.view.loaded) return
 
     let { currentSpreadIndex } = this.state
+
+    // The index that the element is rendered on as calculated by withNodePosition
     const { spreadIndex: elementSpreadIndex } = this.props
-    const { spreadIndex: nextSpreadIndex } = nextProps
+
+    // The spread index that's currently in view
+    const { spreadIndex: visibleSpreadIndex } = nextContext
 
     // Only if user is navigating to a new spread
-    if (currentSpreadIndex === nextSpreadIndex) return
+    if (currentSpreadIndex === visibleSpreadIndex) return
 
     // Update the `currentSpreadIndex` so that the user can continue to interact
     // with the video (play/pause) as normal
-    currentSpreadIndex = nextSpreadIndex
+    currentSpreadIndex = visibleSpreadIndex
 
     // Play or pause the video. If `elementSpreadIndex`
-    const playing = elementSpreadIndex === nextSpreadIndex
+    const playing = elementSpreadIndex === visibleSpreadIndex
 
     this.setState({ playing, currentSpreadIndex })
   }
