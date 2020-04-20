@@ -62,15 +62,7 @@ class Layout extends React.Component {
   getChildContext() {
     return {
       height: this.props.viewerSettings.height,
-
-      // columnGap: this.props.columnGap,
-      // paddingTop: this.props.paddingTop,
-      // paddingLeft: this.props.paddingLeft,
-      // paddingRight: this.props.paddingRight,
-      // paddingBottom: this.props.paddingBottom,
-
       translateX: this.state.translateX,
-      // transitionSpeed: this.props.viewerSettings.transitionSpeed,
     }
   }
 
@@ -178,10 +170,10 @@ class Layout extends React.Component {
   }
 
   leafStyles(position /* <left|right> */) {
-    // our overlay styles for hiding content in the 'padding' range. FF
-    // animations 'jump' when animating a transform, so we use 'left' and
-    // 'right' properties in that case. in either case, need to move the
-    // leaves in the opposite direction as the containing element
+    // Overlay styles for hiding content in the 'padding' range. FF animations
+    // 'jump' when animating a transform, so we use 'left' and 'right'
+    // properties in that case. in either case, need to move the leaves in the
+    // opposite direction as the containing element
 
     const { transitionSpeed } = this.props.viewerSettings
 
@@ -233,8 +225,8 @@ class Layout extends React.Component {
       width: paddingRight,
     }
 
-    // disable transition animation by default. enabling transition requires
-    // user action, like clicking 'next'
+    // Disable transition animation by default. Enabling transition requires
+    // user action, e.g. clicking 'next'
     if (!pageAnimation) {
       layoutStyles = { ...layoutStyles, transition: 'none' }
       leafLeftStyles = { ...leafLeftStyles, transition: 'none' }
