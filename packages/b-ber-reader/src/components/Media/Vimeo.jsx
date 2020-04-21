@@ -199,6 +199,11 @@ class Vimeo extends React.Component {
   updateIframePosition = () => {
     if (Viewport.isMobile()) return
 
+    if (!this.iframePlaceholder?.current) {
+      console.warn('Could not find iframePlaceholder node')
+      return
+    }
+
     const node = this.iframePlaceholder.current
     const {
       iframePlaceholderTop,
@@ -250,7 +255,7 @@ class Vimeo extends React.Component {
 
       // Chrome 81
       iframePlaceholderTop: top,
-      iframePlaceholderLeft: left,
+      // iframePlaceholderLeft: left,
       iframePlaceholderWidth: width,
       iframePlaceholderHeight: height,
     } = this.state
@@ -265,11 +270,13 @@ class Vimeo extends React.Component {
       const x = aspectRatio.get('x')
       const y = aspectRatio.get('y')
 
-      placeholderStyles = { top, left, width, height, position }
+      placeholderStyles = { top, width, height, position }
 
       // .iframe-placeholder styles
       paddingTop = mobile ? 0 : `${(y / x) * 100}%`
     }
+
+    // console.log(top, left, width, height)
 
     return (
       <React.Fragment>
@@ -282,6 +289,7 @@ class Vimeo extends React.Component {
         */
         isChrome81 && (
           <div
+            key={`placholder-${url}`}
             style={{ paddingTop }}
             className="iframe-placeholder"
             ref={this.iframePlaceholder}
@@ -297,6 +305,7 @@ class Vimeo extends React.Component {
             .context__desktop .vimeo.figure__large.figure__inline .embed.supported {
               padding-top: 0 !important;
               position: static !important;
+              transform: none !important;
             }
 
             .context__desktop .spread-with-fullbleed-media .vimeo.figure__large.figure__inline .embed.supported {
@@ -306,7 +315,7 @@ class Vimeo extends React.Component {
         )}
 
         {/* Ref is used to calculate spread position in HOC */}
-        <div style={placeholderStyles} ref={this.props.elemRef}>
+        <div style={placeholderStyles} key={url} ref={this.props.elemRef}>
           <VimeoPosterImage
             src={posterImage}
             playing={playing}
