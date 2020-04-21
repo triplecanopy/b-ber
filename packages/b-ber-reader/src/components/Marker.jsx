@@ -4,7 +4,6 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import PropTypes from 'prop-types'
 import { isNumeric } from '../helpers/Types'
-import { debug } from '../config'
 import Viewport from '../helpers/Viewport'
 import withNodePosition from '../lib/with-node-position'
 import * as markerActions from '../actions/markers'
@@ -138,7 +137,8 @@ class Marker extends React.Component {
       }
     }
 
-    offsetHeight = Math.floor(offsetHeight) - 3
+    // Minus one line to prevent overflow, which adds a "blank page"
+    offsetHeight = Math.floor(offsetHeight) - 21
 
     const markerId = this.props['data-marker']
     const marker = this.props.markers[markerId]
@@ -162,20 +162,9 @@ class Marker extends React.Component {
 
   render() {
     const { verso, recto } = this.props
-    const offsetHeight = this.calculateOffsetHeight()
-
-    const debugSpacerStyles = { background: 'coral' }
-    const debugMarkerStyles = { backgroundColor: verso ? 'violet' : 'red' }
-
-    let spacerStyles = {
-      height: offsetHeight,
-      display: 'block',
-    }
-
-    if (debug) spacerStyles = { ...spacerStyles, ...debugSpacerStyles }
-
-    let markerStyles = { ...this.props.style }
-    if (debug) markerStyles = { ...markerStyles, ...debugMarkerStyles }
+    const height = this.calculateOffsetHeight()
+    const spacerStyles = { height, display: 'block' }
+    const markerStyles = { ...this.props.style }
 
     return (
       <span>

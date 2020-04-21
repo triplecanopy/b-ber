@@ -44,13 +44,16 @@ const withNodePosition = (WrappedComponent, options) => {
       elementEdgeLeft: null, // x
     }
 
+    elemRef = React.createRef()
+
     constructor(props) {
       super(props)
 
-      this.timer = null
-      this.elemRef = React.createRef()
-      this.calculateNodePosition = this.calculateNodePosition.bind(this)
-      this.calculateNodePositionAfterResize = () => {}
+      this.calculateNodePositionAfterResize = debounce(
+        this.calculateNodePosition,
+        200,
+        { leading: false, trailing: true }
+      ).bind(this)
 
       this.settings = {
         useParentDimensions: unlessDefined(
@@ -70,15 +73,6 @@ const withNodePosition = (WrappedComponent, options) => {
     }
 
     componentDidMount() {
-      this.calculateNodePositionAfterResize = debounce(
-        this.calculateNodePosition,
-        0,
-        {
-          leading: false,
-          trailing: true,
-        }
-      ).bind(this)
-
       this.connectObserver()
     }
 
@@ -86,8 +80,9 @@ const withNodePosition = (WrappedComponent, options) => {
       this.disconnectObservers()
     }
 
-    connectObserver() {
+    getElement() {
       const { useParentDimensions } = this.settings
+
       let elem
       if (useParentDimensions) {
         elem = this.elemRef.current?.parentElement
@@ -96,6 +91,12 @@ const withNodePosition = (WrappedComponent, options) => {
       } else {
         elem = this.elemRef.current
       }
+
+      return elem
+    }
+
+    connectObserver() {
+      const elem = this.getElement()
 
       if (!elem) return console.error('No element to conenct to ResizeObserver')
 
@@ -107,7 +108,6 @@ const withNodePosition = (WrappedComponent, options) => {
     }
 
     disconnectObservers() {
-      clearTimeout(this.timer)
       this.resizeObserver.disconnect()
     }
 
@@ -124,22 +124,11 @@ const withNodePosition = (WrappedComponent, options) => {
 
     // Determine if the element is verso or recto and calculate the index of
     // the spread that it appears on.
-    calculateNodePosition() {
+    calculateNodePosition = () => {
       // Calculate position of either the attached node (ref), or its parent element
-      const {
-        useParentDimensions,
-        useAdjustedColumnWidth,
-        isMarker,
-      } = this.settings
+      const { useAdjustedColumnWidth, isMarker } = this.settings
 
-      let elem
-      if (useParentDimensions) {
-        elem = this.elemRef.current?.parentElement
-          ? this.elemRef.current.parentElement
-          : null
-      } else {
-        elem = this.elemRef.current
-      }
+      const elem = this.getElement()
 
       if (!elem) return console.error('Element does not exist')
 
@@ -213,7 +202,15 @@ const withNodePosition = (WrappedComponent, options) => {
       // usually due to it being positioned via CSS, so make the best guess as
       // to its position by rounding down to the approximate spread.
       let spreadIndex = Number(edgePosition.toFixed(2))
-      if (this.elementEdgeIsInAllowableRange(edgePositionVariance) === false) {
+
+      if (
+        this.elementEdgeIsInAllowableRange(edgePositionVariance) === false ||
+        (verso === false && recto === false)
+      ) {
+        console.warn(
+          'Approximating the spread that the node appears on becuase its position cannot be reliably determined. This is usually due to an element being positioned using relative or absolute styles in the project CSS'
+        )
+
         spreadIndex = Math.floor(spreadIndex)
       } else {
         spreadIndex = Math.round(spreadIndex)

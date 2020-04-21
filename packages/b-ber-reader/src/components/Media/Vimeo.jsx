@@ -276,8 +276,6 @@ class Vimeo extends React.Component {
       paddingTop = mobile ? 0 : `${(y / x) * 100}%`
     }
 
-    // console.log(top, left, width, height)
-
     return (
       <React.Fragment>
         {/*
