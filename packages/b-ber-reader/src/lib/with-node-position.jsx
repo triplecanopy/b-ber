@@ -80,7 +80,6 @@ const withNodePosition = (WrappedComponent, options) => {
       ).bind(this)
 
       this.connectObserver()
-      // this.calculateNodePosition()
     }
 
     componentWillUnmount() {
@@ -156,7 +155,8 @@ const withNodePosition = (WrappedComponent, options) => {
         marginLeft = computedStyle.marginLeft
         elementPaddingLeft = computedStyle.paddingLeft
 
-        // Get the left edge of the element, taking into account padding and margins
+        // Get the left edge of the element, taking into account padding and
+        // margins
         elementEdgeLeft =
           elem.offsetLeft -
           parseFloat(marginLeft) -
@@ -165,7 +165,7 @@ const withNodePosition = (WrappedComponent, options) => {
         elementEdgeLeft = elem.getBoundingClientRect().x
       }
 
-      // We test whether the element's left offset is divisible by the
+      // Test whether the element's left offset is divisible by the
       // visible frame width. A remainder means that the element is
       // positioned at 1/2 of the page width, or 'recto'
 
@@ -209,22 +209,14 @@ const withNodePosition = (WrappedComponent, options) => {
         edgePositionVariance <= ELEMENT_EDGE_RECTO_MAX
 
       // Calculate the spread that the element appears on by rounding the
-      // position
-      const spreadIndex = Math.round(Number(edgePosition.toFixed(2)))
-
-      // In the case that the marker's edge is not within the allowable
-      // range (during a transition or resize), calculateNodePosition
-      // calls itself again
-
-      // TODO: there should be a guard in place to ensure that this
-      // doesn't end up calling itself forever @issue:
-      // https://github.com/triplecanopy/b-ber/issues/211
-      if (
-        this.elementEdgeIsInAllowableRange(edgePositionVariance) === false ||
-        (verso === false && recto === false)
-      ) {
-        console.warn('Recalculating layout')
-        // this.timer = setTimeout(this.calculateNodePosition, 500)
+      // position. If the node's edge isn't in the allowable range then it's
+      // usually due to it being positioned via CSS, so make the best guess as
+      // to its position by rounding down to the approximate spread.
+      let spreadIndex = Number(edgePosition.toFixed(2))
+      if (this.elementEdgeIsInAllowableRange(edgePositionVariance) === false) {
+        spreadIndex = Math.floor(spreadIndex)
+      } else {
+        spreadIndex = Math.round(spreadIndex)
       }
 
       // TODO Marker component specific code needs to be handled better here

@@ -52,11 +52,7 @@ class Marker extends React.Component {
   calculateOffsetHeight() {
     let offsetHeight = 0
 
-    if (
-      !this.props.elemRef ||
-      !this.props.elemRef.current ||
-      Viewport.isMobile()
-    ) {
+    if (!this.props.elemRef?.current || Viewport.isMobile()) {
       return offsetHeight
     }
 
@@ -86,7 +82,7 @@ class Marker extends React.Component {
     const unbound = JSON.parse(this.props['data-unbound'] || 'false')
     const adjacent = JSON.parse(this.props['data-adjacent'] || 'false')
 
-    if (!isNumeric(height)) height = 0 // frame height or window.innerHeight ...
+    if (!isNumeric(height)) height = 0 // frame height or window.innerHeight
 
     if (verso) {
       // Marker is on the verso, so we need to add enough space after it to
@@ -142,7 +138,7 @@ class Marker extends React.Component {
       }
     }
 
-    offsetHeight = Math.floor(offsetHeight) - 1
+    offsetHeight = Math.floor(offsetHeight) - 3
 
     const markerId = this.props['data-marker']
     const marker = this.props.markers[markerId]
