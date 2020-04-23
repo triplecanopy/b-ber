@@ -162,7 +162,7 @@ const withNodePosition = (WrappedComponent, options) => {
           parseFloat(marginLeft) -
           parseFloat(elementPaddingLeft)
       } else {
-        elementEdgeLeft = elem.getBoundingClientRect().x
+        elementEdgeLeft = elem.getBoundingClientRect().x - paddingLeft
       }
 
       // We test whether the element's left offset is divisible by the
@@ -174,6 +174,8 @@ const withNodePosition = (WrappedComponent, options) => {
 
       // Width of the visible portion of the layout
       const innerFrameWidth = window.innerWidth - paddingLeft * 2 + columnGap
+
+      console.log(`paddingLeft: ${paddingLeft}`, `columnGap: ${columnGap}`)
 
       // Calculate for the left edge of the element as if it were in the
       // recto position
@@ -201,12 +203,19 @@ const withNodePosition = (WrappedComponent, options) => {
       )
 
       // Verify that the variance in the calculations is within an allowable range
-      const verso =
-        edgePositionVariance >= ELEMENT_EDGE_VERSO_MIN &&
-        edgePositionVariance <= ELEMENT_EDGE_VERSO_MAX
-      const recto =
-        edgePositionVariance >= ELEMENT_EDGE_RECTO_MIN &&
-        edgePositionVariance <= ELEMENT_EDGE_RECTO_MAX
+      let verso
+      let recto
+      if (useAdjustedColumnWidth) {
+        verso =
+          edgePositionVariance >= ELEMENT_EDGE_VERSO_MIN &&
+          edgePositionVariance <= ELEMENT_EDGE_VERSO_MAX
+        recto =
+          edgePositionVariance >= ELEMENT_EDGE_RECTO_MIN &&
+          edgePositionVariance <= ELEMENT_EDGE_RECTO_MAX
+      } else {
+        verso = true
+        recto = false
+      }
 
       // Calculate the spread that the element appears on by rounding the
       // position
@@ -219,12 +228,54 @@ const withNodePosition = (WrappedComponent, options) => {
       // TODO: there should be a guard in place to ensure that this
       // doesn't end up calling itself forever @issue:
       // https://github.com/triplecanopy/b-ber/issues/211
+
       if (
-        this.elementEdgeIsInAllowableRange(edgePositionVariance) === false ||
+        (useAdjustedColumnWidth &&
+          this.elementEdgeIsInAllowableRange(edgePositionVariance) === false) ||
+        (useAdjustedColumnWidth === false &&
+          edgePositionVariance < 93 &&
+          edgePositionVariance > 7) ||
         (verso === false && recto === false)
       ) {
-        console.warn('Recalculating layout')
-        // this.timer = setTimeout(this.calculateNodePosition, 500)
+        console.log('Recalculating layout')
+        console.log(elem)
+        console.log(
+          `useAdjustedColumnWidth: ${useAdjustedColumnWidth}`,
+          `verso: ${verso}`,
+          `recto: ${recto}`,
+          `edgePosition: ${edgePosition}`,
+          `elementEdgeLeftInRecto: ${elementEdgeLeftInRecto}`,
+          `edgePositionVariance: ${edgePositionVariance}`,
+          `elem.offsetLeft: ${elem.offsetLeft}`,
+          `spreadIndex: ${spreadIndex}`
+        )
+
+        this.timer = setTimeout(this.calculateNodePosition, 500)
+        console.log('---------')
+      } else {
+        if (!elem.classList.contains('marker')) {
+          console.log('OK')
+          console.log(elem)
+          console.log(
+            `useAdjustedColumnWidth: ${useAdjustedColumnWidth}`,
+            `verso: ${verso}`,
+            `recto: ${recto}`,
+            `edgePosition: ${edgePosition}`,
+            `elementEdgeLeftInRecto: ${elementEdgeLeftInRecto}`,
+            `edgePositionVariance: ${edgePositionVariance}`,
+            `elem.offsetLeft: ${elem.offsetLeft}`,
+            `spreadIndex: ${spreadIndex}`
+          )
+        }
+
+        this.setState({
+          verso,
+          recto,
+          edgePosition,
+          spreadIndex,
+          edgePositionVariance,
+          elementEdgeLeft,
+        })
       }
 
       // TODO Marker component specific code needs to be handled better here
@@ -233,15 +284,6 @@ const withNodePosition = (WrappedComponent, options) => {
         DocumentPreProcessor.createStyleSheets({ paddingLeft, columnGap })
         DocumentPreProcessor.appendStyleSheets()
       }
-
-      this.setState({
-        verso,
-        recto,
-        edgePosition,
-        spreadIndex,
-        edgePositionVariance,
-        elementEdgeLeft,
-      })
     }
 
     render() {

@@ -142,7 +142,9 @@ class Marker extends React.Component {
       }
     }
 
-    offsetHeight = Math.floor(offsetHeight) - 1
+    offsetHeight = Math.floor(offsetHeight)
+    if (!unbound && !adjacent) offsetHeight -= 27 // One line of text to prevent overlowing to "blank pages"
+    if (adjacent) offsetHeight += 27 / 2
 
     const markerId = this.props['data-marker']
     const marker = this.props.markers[markerId]
