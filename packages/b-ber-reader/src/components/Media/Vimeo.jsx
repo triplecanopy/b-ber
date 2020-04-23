@@ -5,6 +5,7 @@ import ReactPlayer from 'react-player'
 import has from 'lodash/has'
 import withNodePosition from '../../lib/with-node-position'
 import ReaderContext from '../../lib/reader-context'
+// import DeferredContext from '../../lib/deferred-context'
 import browser from '../../lib/browser'
 import Url from '../../helpers/Url'
 import Viewport from '../../helpers/Viewport'
@@ -62,6 +63,7 @@ class Vimeo extends React.Component {
     posterImage: null,
     playerOptions: {},
     currentSpreadIndex: null,
+    // willPlayOnReady: false,
     aspectRatio: new Map([
       ['x', 16],
       ['y', 9],
@@ -124,6 +126,13 @@ class Vimeo extends React.Component {
   }
 
   componentWillReceiveProps(nextProps, nextContext) {
+    // `view.pendingDeferred` is a simple flag to determine if the deferred
+    // callbacks in Reader have all executed. It allows components to wait that
+    // page transitions are complete before running. Used here to ensure that
+    // the player doesn't start while elements on the page are still shifting
+    // around during layout.
+    if (nextProps.view.pendingDeferred) return
+
     // Only elements with an autoplay attribute
     if (!this.state.autoplay) return
 
@@ -147,6 +156,14 @@ class Vimeo extends React.Component {
 
     // Play or pause the video. If `elementSpreadIndex`
     const playing = elementSpreadIndex === visibleSpreadIndex
+
+    // spreadIndex: 0, lastSpread: true
+    console.log(
+      `currentSpreadIndex: ${currentSpreadIndex}`,
+      `playing: ${playing}`,
+      this.context,
+      nextContext
+    )
 
     this.setState({ playing, currentSpreadIndex })
   }
@@ -276,9 +293,11 @@ class Vimeo extends React.Component {
       paddingTop = mobile ? 0 : `${(y / x) * 100}%`
     }
 
-    // console.log(top, left, width, height)
-
     return (
+      // <ReaderContext.Consumer>
+      //   {() => (
+      // <DeferredContext.Consumer>
+      // {({ called }) => (
       <React.Fragment>
         {/*
             The iframePlaceholder element is a statically positioned div that
@@ -342,6 +361,10 @@ class Vimeo extends React.Component {
           />
         </div>
       </React.Fragment>
+      //   )}
+      // </DeferredContext.Consumer>
+      //   )}
+      // </ReaderContext.Consumer>
     )
   }
 }

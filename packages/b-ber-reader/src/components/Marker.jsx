@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import PropTypes from 'prop-types'
 import { isNumeric } from '../helpers/Types'
-import { debug } from '../config'
+// import { debug } from '../config'
 import Viewport from '../helpers/Viewport'
 import withNodePosition from '../lib/with-node-position'
 import * as markerActions from '../actions/markers'
@@ -169,6 +169,8 @@ class Marker extends React.Component {
   render() {
     const { verso, recto } = this.props
     const offsetHeight = this.calculateOffsetHeight()
+
+    const debug = true
 
     const debugSpacerStyles = { background: 'coral' }
     const debugMarkerStyles = { backgroundColor: verso ? 'violet' : 'red' }

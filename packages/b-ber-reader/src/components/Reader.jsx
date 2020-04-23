@@ -243,6 +243,8 @@ class Reader extends Component {
 
   handleResizeStart = () => {
     this.props.viewActions.unload()
+    this.props.viewActions.deferredCallbackQueueReset()
+
     this.disablePageTransitions()
     this.showSpinner()
   }
@@ -318,6 +320,8 @@ class Reader extends Component {
 
   freeze = () => {
     this.props.viewActions.unload()
+    this.props.viewActions.deferredCallbackQueueReset()
+
     this.setState({
       showSidebar: null,
       handleEvents: false,
@@ -471,7 +475,7 @@ class Reader extends Component {
       const { lastSpreadIndex } = this.state
       const firstSpread = spreadIndex === 0
       const lastSpread = spreadIndex === lastSpreadIndex
-      const spreadDelta = 0
+      const spreadDelta = direction
       lastChapter = currentSpineItemIndex === spine.length - 1
 
       this.setState(

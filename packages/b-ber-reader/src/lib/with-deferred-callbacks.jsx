@@ -1,12 +1,15 @@
 import React from 'react'
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+import debounce from 'lodash/debounce'
 import Messenger from './Messenger'
+import * as viewActions from '../actions/view'
 import { DEFERRED_CALLBACK_TIMER } from '../constants'
 
 function withDeferredCallbacks(WrappedComponent) {
   let deferredCallbacks = []
-  let deferredCallbackTimeout = null
 
-  return class extends React.Component {
+  class WrapperComponent extends React.Component {
     // eslint-disable-next-line class-methods-use-this
     registerDeferredCallback(callback) {
       if (!callback) throw new Error('No callback provided')
@@ -18,20 +21,18 @@ function withDeferredCallbacks(WrappedComponent) {
       deferredCallbacks = []
     }
 
-    requestDeferredCallbackExecution() {
-      clearTimeout(deferredCallbackTimeout)
-
-      deferredCallbackTimeout = setTimeout(() => {
+    requestDeferredCallbackExecution = debounce(
+      () => {
         Messenger.sendDeferredEvent()
-
-        // This needs calculateNodePosition() to have been called in Layout (via
-        // decorate-observable) to resolve
         return this.callDeferred()
-      }, DEFERRED_CALLBACK_TIMER)
-    }
+      },
+      DEFERRED_CALLBACK_TIMER,
+      { leading: false, trailing: true }
+    )
 
     callDeferred() {
       deferredCallbacks.forEach(callback => callback())
+      this.props.viewActions.deferredCallbackQueueResolve()
       this.deRegisterDeferredCallback()
     }
 
@@ -49,6 +50,11 @@ function withDeferredCallbacks(WrappedComponent) {
       )
     }
   }
+
+  return connect(
+    () => ({}),
+    dispatch => ({ viewActions: bindActionCreators(viewActions, dispatch) })
+  )(WrapperComponent)
 }
 
 export default withDeferredCallbacks

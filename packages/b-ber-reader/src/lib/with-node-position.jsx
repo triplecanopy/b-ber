@@ -175,8 +175,6 @@ const withNodePosition = (WrappedComponent, options) => {
       // Width of the visible portion of the layout
       const innerFrameWidth = window.innerWidth - paddingLeft * 2 + columnGap
 
-      console.log(`paddingLeft: ${paddingLeft}`, `columnGap: ${columnGap}`)
-
       // Calculate for the left edge of the element as if it were in the
       // recto position
       let elementEdgeLeftInRecto
@@ -224,11 +222,6 @@ const withNodePosition = (WrappedComponent, options) => {
       // In the case that the marker's edge is not within the allowable
       // range (during a transition or resize), calculateNodePosition
       // calls itself again
-
-      // TODO: there should be a guard in place to ensure that this
-      // doesn't end up calling itself forever @issue:
-      // https://github.com/triplecanopy/b-ber/issues/211
-
       if (
         (useAdjustedColumnWidth &&
           this.elementEdgeIsInAllowableRange(edgePositionVariance) === false) ||
@@ -238,36 +231,8 @@ const withNodePosition = (WrappedComponent, options) => {
         (verso === false && recto === false)
       ) {
         console.log('Recalculating layout')
-        console.log(elem)
-        console.log(
-          `useAdjustedColumnWidth: ${useAdjustedColumnWidth}`,
-          `verso: ${verso}`,
-          `recto: ${recto}`,
-          `edgePosition: ${edgePosition}`,
-          `elementEdgeLeftInRecto: ${elementEdgeLeftInRecto}`,
-          `edgePositionVariance: ${edgePositionVariance}`,
-          `elem.offsetLeft: ${elem.offsetLeft}`,
-          `spreadIndex: ${spreadIndex}`
-        )
-
-        this.timer = setTimeout(this.calculateNodePosition, 500)
-        console.log('---------')
+        this.timer = setTimeout(this.calculateNodePosition, 400) // TODO
       } else {
-        if (!elem.classList.contains('marker')) {
-          console.log('OK')
-          console.log(elem)
-          console.log(
-            `useAdjustedColumnWidth: ${useAdjustedColumnWidth}`,
-            `verso: ${verso}`,
-            `recto: ${recto}`,
-            `edgePosition: ${edgePosition}`,
-            `elementEdgeLeftInRecto: ${elementEdgeLeftInRecto}`,
-            `edgePositionVariance: ${edgePositionVariance}`,
-            `elem.offsetLeft: ${elem.offsetLeft}`,
-            `spreadIndex: ${spreadIndex}`
-          )
-        }
-
         this.setState({
           verso,
           recto,
