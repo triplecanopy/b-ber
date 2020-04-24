@@ -270,6 +270,7 @@ class DocumentProcessor {
     const text = document.createTextNode('')
     const elem = document.createElement('span')
     elem.setAttribute('class', 'ultimate')
+    elem.setAttribute('data-ultimate', 'true')
     elem.appendChild(text)
 
     let child

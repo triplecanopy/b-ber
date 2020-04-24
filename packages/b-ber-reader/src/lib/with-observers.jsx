@@ -175,8 +175,9 @@ const withObservers = WrappedComponent => {
       } else {
         // TODO move `lastSpreadIndex` to Redux
         this.props.setReaderState({ lastSpreadIndex }, () => {
-          console.log('no load here')
-          this.props.load()
+          console.log('would load in observer hoc')
+
+          // this.props.load()
         })
       }
     }

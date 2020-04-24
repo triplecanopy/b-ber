@@ -9,12 +9,7 @@ export const unload = () => ({
   type: actionTypes.UNLOAD,
 })
 
-export const deferredCallbackQueueResolve = () => ({
-  type: actionTypes.UPDATE_DEFERRED_STATUS,
-  payload: false,
-})
-
-export const deferredCallbackQueueReset = () => ({
-  type: actionTypes.UPDATE_DEFERRED_STATUS,
-  payload: true,
+export const setUltimateLeft = pos => ({
+  type: 'SET_POS',
+  payload: pos,
 })

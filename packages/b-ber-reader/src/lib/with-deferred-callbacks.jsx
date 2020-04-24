@@ -32,7 +32,9 @@ function withDeferredCallbacks(WrappedComponent) {
 
     callDeferred() {
       deferredCallbacks.forEach(callback => callback())
-      this.props.viewActions.deferredCallbackQueueResolve()
+      console.log('resolves')
+
+      // this.props.viewActions.deferredCallbackQueueResolve()
       this.deRegisterDeferredCallback()
     }
 

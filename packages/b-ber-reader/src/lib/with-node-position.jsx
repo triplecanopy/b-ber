@@ -42,6 +42,8 @@ const withNodePosition = (WrappedComponent, options) => {
       currentSpreadIndex: null,
       edgePositionVariance: null, // position
       elementEdgeLeft: null, // x
+
+      ultimateLeft: 0,
     }
 
     constructor(props) {
@@ -80,11 +82,21 @@ const withNodePosition = (WrappedComponent, options) => {
       ).bind(this)
 
       this.connectObserver()
-      // this.calculateNodePosition()
     }
 
     componentWillUnmount() {
       this.disconnectObservers()
+    }
+
+    componentWillReceiveProps(nextProps) {
+      if (this.props.view.left !== nextProps.view.left) {
+        console.log('calls calculate node position from willReceiveprops')
+
+        this.setState(
+          { ultimateLeft: nextProps.view.left },
+          this.calculateNodePosition
+        )
+      }
     }
 
     connectObserver() {
@@ -108,7 +120,6 @@ const withNodePosition = (WrappedComponent, options) => {
     }
 
     disconnectObservers() {
-      clearTimeout(this.timer)
       this.resizeObserver.disconnect()
     }
 
@@ -162,10 +173,26 @@ const withNodePosition = (WrappedComponent, options) => {
           parseFloat(marginLeft) -
           parseFloat(elementPaddingLeft)
       } else {
-        elementEdgeLeft = elem.getBoundingClientRect().x - paddingLeft
+        const layoutElem = document.querySelector('#layout')
+        const matrix = window
+          .getComputedStyle(layoutElem)
+          .transform.replace(/(?:^matrix\(|\)$)/g, '')
+          .split(',')
+          .map(n => Number(n.trim()))
+
+        const transformLeft = Math.abs(matrix[4])
+
+        // console.log('transformLeft', transformLeft)
+
+        elementEdgeLeft =
+          elem.getBoundingClientRect().x + Math.abs(transformLeft)
       }
 
-      // We test whether the element's left offset is divisible by the
+      // if (!elem.classList.contains('marker')) {
+      //   console.log('elementEdgeLeft', elementEdgeLeft)
+      // }
+
+      // Test whether the element's left offset is divisible by the
       // visible frame width. A remainder means that the element is
       // positioned at 1/2 of the page width, or 'recto'
 
@@ -174,6 +201,68 @@ const withNodePosition = (WrappedComponent, options) => {
 
       // Width of the visible portion of the layout
       const innerFrameWidth = window.innerWidth - paddingLeft * 2 + columnGap
+
+      if (useAdjustedColumnWidth === false) {
+        // clearTimeout(this.timer)
+        // this.timer = setTimeout(() => {
+        // const ult = document.querySelector('.ultimate')
+        // console.log(ult)
+
+        // if (!ult) {
+        //   console.log('no ult')
+        //   elem.style.display = 'none'
+        //   elem.style.display = 'block'
+
+        //   return
+        // }
+
+        let finalSpreadEdgeLeft
+
+        const colsAsIndexes =
+          Math.floor(this.state.ultimateLeft / innerFrameWidth) - 1
+        // const colsAsIndexes = Math.floor(ult.offsetLeft / innerFrameWidth) - 1
+        if (colsAsIndexes % 2 !== 0) {
+          // odd colsAsIndexes
+          finalSpreadEdgeLeft = this.state.ultimateLeft - innerFrameWidth / 2
+        } else {
+          finalSpreadEdgeLeft = this.state.ultimateLeft - innerFrameWidth
+        }
+
+        const spreadThatElementAppearsOn =
+          this.state.ultimateLeft / innerFrameWidth -
+          (this.state.ultimateLeft - elementEdgeLeft) / innerFrameWidth
+
+        // spreadThatElementAppearsOn = Math.round(spreadThatElementAppearsOn)
+
+        // const spreadThatElementAppearsOn =
+        //   (finalSpreadEdgeLeft - Math.round(elementEdgeLeft)) /
+        //     innerFrameWidth -
+        //   1
+
+        // console.log('elem', elem)
+        // console.log('ult.offsetLeft', ult.offsetLeft)
+        // console.log('elementEdgeLeft', elementEdgeLeft)
+        // console.log('colsAsIndexes', colsAsIndexes)
+        console.log('spreadThatElementAppearsOn', spreadThatElementAppearsOn)
+        console.log(
+          'spreadThatElementAppearsOnRounded',
+          Math.round(spreadThatElementAppearsOn)
+        )
+        console.log('finalSpreadEdgeLeft', finalSpreadEdgeLeft)
+        // console.log('-----')
+        // }, 1000)
+
+        this.setState({
+          verso: true,
+          recto: false,
+          // edgePosition,
+          spreadIndex: Math.round(spreadThatElementAppearsOn),
+          // edgePositionVariance,
+          // elementEdgeLeft,
+        })
+
+        return
+      }
 
       // Calculate for the left edge of the element as if it were in the
       // recto position
@@ -231,17 +320,19 @@ const withNodePosition = (WrappedComponent, options) => {
         (verso === false && recto === false)
       ) {
         console.log('Recalculating layout')
-        this.timer = setTimeout(this.calculateNodePosition, 400) // TODO
-      } else {
-        this.setState({
-          verso,
-          recto,
-          edgePosition,
-          spreadIndex,
-          edgePositionVariance,
-          elementEdgeLeft,
-        })
+
+        elem.style.display = 'none'
+        elem.style.display = 'block'
       }
+
+      this.setState({
+        verso,
+        recto,
+        edgePosition,
+        spreadIndex,
+        edgePositionVariance,
+        elementEdgeLeft,
+      })
 
       // TODO Marker component specific code needs to be handled better here
       if (isMarker) {

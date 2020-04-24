@@ -1,6 +1,6 @@
 import * as actionTypes from '../constants/view'
 
-const initialState = { loaded: false, pendingDeferred: true }
+const initialState = { loaded: false, left: 0 }
 
 const view = (state = initialState, action) => {
   switch (action.type) {
@@ -9,9 +9,8 @@ const view = (state = initialState, action) => {
 
     case actionTypes.UNLOAD:
       return { ...state, loaded: false }
-
-    case actionTypes.UPDATE_DEFERRED_STATUS:
-      return { ...state, pendingDeferred: action.payload }
+    case 'SET_POS':
+      return { ...state, left: action.payload }
 
     default:
       return state

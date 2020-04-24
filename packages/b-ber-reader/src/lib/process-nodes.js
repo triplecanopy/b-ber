@@ -11,6 +11,7 @@ import {
   Video,
   SpreadFigure,
   Vimeo,
+  Ultimate,
 } from '../components'
 import { Asset, Url } from '../helpers'
 
@@ -230,6 +231,19 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
       const key = `spread-figure-${attrs['data-marker-reference-figure']}`
 
       return React.createElement(SpreadFigure, { ...attrs, key }, children)
+    },
+  },
+  {
+    shouldProcessNode(node) {
+      return node.type === 'tag' && has(node.attribs, 'data-ultimate')
+    },
+    processNode(node, children) {
+      console.log('yes')
+
+      // const attrs = Asset.convertToReactAttrs(node.attribs)
+      // const key = `spread-figure-${attrs['data-marker-reference-figure']}`
+
+      return React.createElement(Ultimate, {}, children)
     },
   },
   {

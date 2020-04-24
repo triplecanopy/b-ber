@@ -243,7 +243,6 @@ class Reader extends Component {
 
   handleResizeStart = () => {
     this.props.viewActions.unload()
-    this.props.viewActions.deferredCallbackQueueReset()
 
     this.disablePageTransitions()
     this.showSpinner()
@@ -320,7 +319,6 @@ class Reader extends Component {
 
   freeze = () => {
     this.props.viewActions.unload()
-    this.props.viewActions.deferredCallbackQueueReset()
 
     this.setState({
       showSidebar: null,
@@ -350,7 +348,7 @@ class Reader extends Component {
         this.savePosition()
         this.enableEventHandling()
         this.hideSpinner()
-        this.props.viewActions.load()
+        // this.props.viewActions.load()
 
         Messenger.sendPaginationEvent(this.state)
       }
@@ -493,7 +491,7 @@ class Reader extends Component {
 
           this.enableEventHandling()
           this.hideSpinner()
-          this.props.viewActions.load()
+          // this.props.viewActions.load()
 
           Messenger.sendPaginationEvent(this.state)
         }
@@ -572,7 +570,7 @@ class Reader extends Component {
         this.navigateToElementById(hash)
         this.enableEventHandling()
         this.hideSpinner()
-        this.props.viewActions.load()
+        // this.props.viewActions.load()
       }
     }
 
@@ -705,7 +703,7 @@ class Reader extends Component {
             // Can't wrap layout or the withObservable HOC in a way that preserves
             // refs, so pass down `view` and `load` as props
             view={this.props.view}
-            load={this.props.viewActions.load}
+            // load={this.props.viewActions.load}
           />
         </ReaderContext.Provider>
         <Spinner spinnerVisible={spinnerVisible} />

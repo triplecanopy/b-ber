@@ -126,18 +126,11 @@ class Vimeo extends React.Component {
   }
 
   componentWillReceiveProps(nextProps, nextContext) {
-    // `view.pendingDeferred` is a simple flag to determine if the deferred
-    // callbacks in Reader have all executed. It allows components to wait that
-    // page transitions are complete before running. Used here to ensure that
-    // the player doesn't start while elements on the page are still shifting
-    // around during layout.
-    if (nextProps.view.pendingDeferred) return
-
     // Only elements with an autoplay attribute
-    if (!this.state.autoplay) return
+    if (!this.state.autoplay) return // console.log('no auto')
 
     // Only if the view is fully rendered
-    if (!nextProps.view.loaded) return
+    if (!nextProps.view.loaded) return // console.log('not loaded')
 
     let { currentSpreadIndex } = this.state
 
@@ -148,7 +141,10 @@ class Vimeo extends React.Component {
     const { spreadIndex: visibleSpreadIndex } = nextContext
 
     // Only if user is navigating to a new spread
-    if (currentSpreadIndex === visibleSpreadIndex) return
+    if (currentSpreadIndex === visibleSpreadIndex) {
+      // return console.log('not navigating')
+      return
+    }
 
     // Update the `currentSpreadIndex` so that the user can continue to interact
     // with the video (play/pause) as normal
@@ -159,10 +155,12 @@ class Vimeo extends React.Component {
 
     // spreadIndex: 0, lastSpread: true
     console.log(
+      `elementSpreadIndex: ${elementSpreadIndex}`,
+      `visibleSpreadIndex: ${visibleSpreadIndex}`,
       `currentSpreadIndex: ${currentSpreadIndex}`,
-      `playing: ${playing}`,
-      this.context,
-      nextContext
+      `playing: ${playing}`
+      // this.context,
+      // nextContext
     )
 
     this.setState({ playing, currentSpreadIndex })
