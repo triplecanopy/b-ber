@@ -224,8 +224,6 @@ class DocumentProcessor {
             node.classList.add('figure__processed')
             this.addMarkerReferenceToChild(node, markerId)
           } else {
-            // console.warn('No siblings or children could be found for', node.nodeName)
-
             const elem = this.createMarker(markerId)
             elem.setAttribute('data-unbound', true)
             node.parentNode.prepend(elem)
@@ -339,6 +337,7 @@ class DocumentProcessor {
 
     this.insertMarkers(doc, nextDoc => {
       if (!this.validateDocument(nextDoc)) err = new Error('Invalid markup')
+
       this.addUltimateNode(doc)
       xml = xmlString.replace(
         /<body([^>]*?)>[\s\S]*<\/body>/g,

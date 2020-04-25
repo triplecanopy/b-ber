@@ -16,6 +16,7 @@ import Viewport from '../helpers/Viewport'
 import * as viewerSettingsActions from '../actions/viewer-settings'
 import * as viewActions from '../actions/view'
 import { ViewerSettings } from '../models'
+import { unlessDefined } from '../helpers/utils'
 
 const book = { content: null }
 
@@ -92,7 +93,7 @@ class Reader extends Component {
   //    book, if at ll
   // 3. If neither of the above conditions are met, then the first page of the
   //    book is loaded
-  async componentWillMount() {
+  async UNSAFE_componentWillMount() {
     // Clear cache initially (for now). Still caches styles for subsequent pages
     Cache.clear()
 
@@ -188,7 +189,7 @@ class Reader extends Component {
     )
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     const { loaded } = nextProps.view
     const { hash, cssHash } = this.state
     const { search } = this.props
@@ -243,7 +244,6 @@ class Reader extends Component {
 
   handleResizeStart = () => {
     this.props.viewActions.unload()
-
     this.disablePageTransitions()
     this.showSpinner()
   }
@@ -319,7 +319,6 @@ class Reader extends Component {
 
   freeze = () => {
     this.props.viewActions.unload()
-
     this.setState({
       showSidebar: null,
       handleEvents: false,
@@ -348,7 +347,6 @@ class Reader extends Component {
         this.savePosition()
         this.enableEventHandling()
         this.hideSpinner()
-        // this.props.viewActions.load()
 
         Messenger.sendPaginationEvent(this.state)
       }
@@ -491,7 +489,6 @@ class Reader extends Component {
 
           this.enableEventHandling()
           this.hideSpinner()
-          // this.props.viewActions.load()
 
           Messenger.sendPaginationEvent(this.state)
         }
@@ -570,7 +567,6 @@ class Reader extends Component {
         this.navigateToElementById(hash)
         this.enableEventHandling()
         this.hideSpinner()
-        // this.props.viewActions.load()
       }
     }
 
@@ -603,6 +599,31 @@ class Reader extends Component {
         this.savePosition()
       }
     )
+  }
+
+  getTranslateX = _spreadIndex => {
+    const spreadIndex = unlessDefined(_spreadIndex, this.state.spreadIndex)
+
+    const {
+      width,
+      paddingLeft,
+      paddingRight,
+      columnGap,
+    } = this.props.viewerSettings
+
+    const isMobile = Viewport.isMobile()
+
+    let translateX = 0
+    if (!isMobile) {
+      translateX =
+        (width - paddingLeft - paddingRight + columnGap) * spreadIndex * -1
+
+      // no -0
+      translateX =
+        translateX === 0 && Math.sign(1 / translateX) === -1 ? 0 : translateX
+    }
+
+    return translateX
   }
 
   savePosition = () => {
@@ -684,8 +705,9 @@ class Reader extends Component {
       >
         <ReaderContext.Provider
           value={{
-            spreadIndex,
             lastSpread,
+            spreadIndex,
+            getTranslateX: this.getTranslateX,
             navigateToChapterByURL: this.navigateToChapterByURL,
           }}
         >
@@ -701,9 +723,8 @@ class Reader extends Component {
             update={this.props.viewerSettingsActions.update}
             setReaderState={this._setState}
             // Can't wrap layout or the withObservable HOC in a way that preserves
-            // refs, so pass down `view` and `load` as props
+            // refs, so pass down `view` as props
             view={this.props.view}
-            // load={this.props.viewActions.load}
           />
         </ReaderContext.Provider>
         <Spinner spinnerVisible={spinnerVisible} />

@@ -3,12 +3,14 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as viewActions from '../actions/view'
 
-const intervalSpeed = 60
+const { requestAnimationFrame, cancelAnimationFrame } = window
 
 class Ultimate extends React.Component {
   node = React.createRef()
-  interval = null
-  state = { left: 0, leftChecks: [] }
+
+  rAF = null
+  maxChecks = 5
+  state = { prevLefts: [] }
 
   componentDidMount() {
     this.poll()
@@ -18,7 +20,7 @@ class Ultimate extends React.Component {
     this.cancel()
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (this.props.view.loaded === true && nextProps.view.loaded === false) {
       console.log('starts polling')
       this.poll()
@@ -27,38 +29,36 @@ class Ultimate extends React.Component {
 
   cancel = () => {
     console.log('cancel polling')
-    clearInterval(this.interval)
+    cancelAnimationFrame(this.rAF)
   }
 
   poll = () => {
-    this.interval = setInterval(() => {
-      if (!this.node?.current) return
+    this.rAF = requestAnimationFrame(this.poll)
 
-      let { leftChecks } = this.state
-      const left = this.node.current.offsetLeft
+    if (!this.node?.current) return
 
-      if (leftChecks.length < 5) {
-        if (leftChecks.some(n => n !== left)) {
-          leftChecks = [left]
-        } else {
-          leftChecks.push(left)
-        }
+    let { prevLefts } = this.state
+    const ultimateOffsetLeft = this.node.current.offsetLeft
 
-        // console.log('leftChecks', leftChecks)
+    if (prevLefts.length < this.maxChecks) {
+      prevLefts = prevLefts.some(n => n !== ultimateOffsetLeft)
+        ? [ultimateOffsetLeft]
+        : prevLefts.concat(ultimateOffsetLeft)
 
-        this.setState({ leftChecks })
-      } else {
-        console.log('updates', left)
-        leftChecks = []
-        this.setState({ left, leftChecks }, () => {
-          console.log('calls load from ultimate')
+      this.setState({ prevLefts })
+      return
+    }
 
-          this.props.viewActions.load()
-          this.props.viewActions.setUltimateLeft(left)
-          this.cancel()
-        })
-      }
-    }, intervalSpeed)
+    console.log('updates', ultimateOffsetLeft)
+
+    prevLefts = []
+    this.setState({ prevLefts }, () => {
+      this.props.viewActions.load()
+      this.props.viewActions.updateUltimateNodePosition({
+        ultimateOffsetLeft,
+      })
+      this.cancel()
+    })
   }
 
   render() {

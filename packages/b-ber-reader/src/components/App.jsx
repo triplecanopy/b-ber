@@ -8,12 +8,14 @@ class App extends Component {
   static defaultProps = {
     uiOptions: {
       navigation: {
+        // eslint-disable-next-line camelcase
         header_icons: {
           home: true,
           toc: true,
           downloads: true,
           info: true,
         },
+        // eslint-disable-next-line camelcase
         footer_icons: {
           chapter: true,
           page: true,
@@ -42,7 +44,7 @@ class App extends Component {
     }
   }
 
-  async componentWillMount() {
+  async UNSAFE_componentWillMount() {
     const { data: books } = await Request.getManifest()
     const params = new URLSearchParams(window.location)
 

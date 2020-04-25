@@ -32,13 +32,13 @@ class Media extends React.Component {
     currentSrc: '',
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     if (this.props['data-autoplay'] === true) {
       this.setState({ autoPlay: true })
     }
   }
 
-  componentWillReceiveProps(nextProps, nextContext) {
+  UNSAFE_componentWillReceiveProps(nextProps, nextContext) {
     // Play the media on spread update if autoplay is true
     if (!this.state.autoPlay) return
 
@@ -262,9 +262,7 @@ class Media extends React.Component {
       elemRef,
       verso,
       recto,
-      edgePosition,
       spreadIndex,
-      edgePositionVariance,
       elementEdgeLeft,
       MediaComponent,
       mediaType,

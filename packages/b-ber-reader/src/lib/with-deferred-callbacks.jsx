@@ -10,14 +10,12 @@ function withDeferredCallbacks(WrappedComponent) {
   let deferredCallbacks = []
 
   class WrapperComponent extends React.Component {
-    // eslint-disable-next-line class-methods-use-this
-    registerDeferredCallback(callback) {
+    registerDeferredCallback = callback => {
       if (!callback) throw new Error('No callback provided')
       deferredCallbacks.push(callback)
     }
 
-    // eslint-disable-next-line class-methods-use-this
-    deRegisterDeferredCallback() {
+    deRegisterDeferredCallback = () => {
       deferredCallbacks = []
     }
 
@@ -30,11 +28,8 @@ function withDeferredCallbacks(WrappedComponent) {
       { leading: false, trailing: true }
     )
 
-    callDeferred() {
+    callDeferred = () => {
       deferredCallbacks.forEach(callback => callback())
-      console.log('resolves')
-
-      // this.props.viewActions.deferredCallbackQueueResolve()
       this.deRegisterDeferredCallback()
     }
 

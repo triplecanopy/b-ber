@@ -104,7 +104,7 @@ const withObservers = WrappedComponent => {
       assertRef(this.node)
 
       const { columns } = this.props
-      const lastNode = document.querySelector('.ultimate')
+      const lastNode = document.querySelector('.ultimate') // TODO redux
 
       let contentDimensions
       let lastSpreadIndex
@@ -174,11 +174,7 @@ const withObservers = WrappedComponent => {
         this.node.current.style.display = 'block'
       } else {
         // TODO move `lastSpreadIndex` to Redux
-        this.props.setReaderState({ lastSpreadIndex }, () => {
-          console.log('would load in observer hoc')
-
-          // this.props.load()
-        })
+        this.props.setReaderState({ lastSpreadIndex })
       }
     }
 

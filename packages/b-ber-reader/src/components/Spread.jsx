@@ -16,7 +16,7 @@ class Spread extends React.Component {
     unbound: false,
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     const markerId = this.props['data-marker-reference']
     const marker = nextProps.markers[markerId]
 

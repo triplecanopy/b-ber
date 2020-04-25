@@ -9,7 +9,7 @@ export const unload = () => ({
   type: actionTypes.UNLOAD,
 })
 
-export const setUltimateLeft = pos => ({
-  type: 'SET_POS',
-  payload: pos,
+export const updateUltimateNodePosition = position => ({
+  type: actionTypes.UPDATE_ULTIMATE_NODE_POSITION,
+  payload: position,
 })
