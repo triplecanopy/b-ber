@@ -119,7 +119,8 @@ class Vimeo extends React.Component {
     currentSpreadIndex = visibleSpreadIndex
 
     // Play or pause the video
-    const playing = elementSpreadIndex === visibleSpreadIndex
+    const playing =
+      elementSpreadIndex === visibleSpreadIndex && !Viewport.isMobile()
 
     console.log(
       `elementSpreadIndex: ${elementSpreadIndex}`,
@@ -234,7 +235,7 @@ class Vimeo extends React.Component {
     } = this.state
 
     // Chrome 81
-    let placeholderStyles = {}
+    let iframeContainerStyles = {}
     let paddingTop
 
     if (isChrome81) {
@@ -243,7 +244,7 @@ class Vimeo extends React.Component {
       const x = aspectRatio.get('x')
       const y = aspectRatio.get('y')
 
-      placeholderStyles = { top, width, height, position }
+      iframeContainerStyles = mobile ? {} : { top, width, height, position }
 
       // .iframe-placeholder styles
       paddingTop = mobile ? 0 : `${(y / x) * 100}%`
@@ -286,7 +287,7 @@ class Vimeo extends React.Component {
         )}
 
         {/* Ref is used to calculate spread position in HOC */}
-        <div style={placeholderStyles} key={url} ref={this.props.elemRef}>
+        <div style={iframeContainerStyles} key={url} ref={this.props.elemRef}>
           <VimeoPosterImage
             src={posterImage}
             playing={playing}
