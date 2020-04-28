@@ -1,11 +1,14 @@
 import axios from 'axios'
+import Url from './Url'
 
 class Request {
   static get(url) {
     return axios.get(url)
   }
-  static getManifest() {
-    return Request.get('/api/books.json')
+
+  static getManifest(basePath = '') {
+    const url = `${Url.stripTrailingSlash(basePath)}/api/books.json`
+    return Request.get(url)
   }
 }
 

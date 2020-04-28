@@ -109,7 +109,7 @@ class Reader extends Component {
     await this.createStateFromOPF()
 
     // Check the current query string if one exists
-    const params = new URLSearchParams(this.props.search)
+    const params = new URLSearchParams(this.props.search) // TODO this.props or window location?
     const slug = params.get('slug')
 
     const { spine, hash } = this.state
@@ -733,7 +733,11 @@ class Reader extends Component {
   }
 }
 
-const mapStateToProps = ({ viewerSettings, view }) => ({ viewerSettings, view })
+const mapStateToProps = ({ readerSettings, viewerSettings, view }) => ({
+  readerSettings,
+  viewerSettings,
+  view,
+})
 
 const mapDispatchToProps = dispatch => ({
   viewerSettingsActions: bindActionCreators(viewerSettingsActions, dispatch),

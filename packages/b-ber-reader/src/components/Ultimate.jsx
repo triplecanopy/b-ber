@@ -22,13 +22,11 @@ class Ultimate extends React.Component {
 
   UNSAFE_componentWillReceiveProps(nextProps) {
     if (this.props.view.loaded === true && nextProps.view.loaded === false) {
-      console.log('starts polling')
       this.poll()
     }
   }
 
   cancel = () => {
-    console.log('cancel polling')
     cancelAnimationFrame(this.rAF)
   }
 
@@ -48,8 +46,6 @@ class Ultimate extends React.Component {
       this.setState({ prevLefts })
       return
     }
-
-    console.log('updates', ultimateOffsetLeft)
 
     prevLefts = []
     this.setState({ prevLefts }, () => {

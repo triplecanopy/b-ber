@@ -1,72 +1,55 @@
 import React, { Component } from 'react'
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
 import find from 'lodash/find'
 import { Reader, Library } from '.'
 import { Request, Url } from '../helpers'
 import history from '../lib/History'
+import * as readerSettingsActions from '../actions/reader-settings'
 
 class App extends Component {
-  static defaultProps = {
-    uiOptions: {
-      navigation: {
-        // eslint-disable-next-line camelcase
-        header_icons: {
-          home: true,
-          toc: true,
-          downloads: true,
-          info: true,
-        },
-        // eslint-disable-next-line camelcase
-        footer_icons: {
-          chapter: true,
-          page: true,
-        },
-      },
-    },
-  }
-
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      books: props.books || [],
-      bookURL: props.bookURL || null,
-      // defaultBookURL: props.bookURL || null,
-      // basePath: props.basePath || '/',
-      downloads: props.downloads || [],
-      uiOptions: props.uiOptions || {}, // eslint-disable-line react/no-unused-state
-      cache: typeof props.cache !== 'undefined' ? props.cache : true,
-      pathname: '',
-      search: '',
-      // loadRemoteLibrary:
-      //   typeof props.loadRemoteLibrary !== 'undefined'
-      //     ? props.loadRemoteLibrary
-      //     : /^localhost/.test(window.location.host),
-    }
+  state = {
+    pathname: '',
+    search: '',
   }
 
   async UNSAFE_componentWillMount() {
-    const { data: books } = await Request.getManifest()
-    const params = new URLSearchParams(window.location)
+    let books = []
+    try {
+      const resp = await Request.getManifest()
+      books = resp.data
+    } catch (err) {
+      console.error('Could not load manifest from API', err)
+    }
 
+    const params = new URLSearchParams(window.location)
     const search = params.get('search')
     const title = params.get('pathname').slice(1)
-    const url = this.props.bookURL
+
+    let { bookURL, projectURL } = this.props.readerSettings
+    if (!projectURL) projectURL = '' // Path from which to load api/books.json
 
     // TODO if not title && not url ...
-    const pred = title ? { title } : { url }
+    const pred = title ? { title } : { url: bookURL }
     const book = find(books, pred)
-    const bookURL = book ? book.url : null
+
+    bookURL = book ? book.url : ''
 
     this.bindHistoryListener()
-    this.setState({ books, bookURL, search })
+
+    this.setState({ search }, () => {
+      this.props.readerSettingsActions.updateBooks(books)
+      this.props.readerSettingsActions.updateBookURL(bookURL)
+      this.props.readerSettingsActions.updateProjectURL(projectURL)
+    })
   }
 
   bindHistoryListener = () => {
-    history.listen((location /*, action */) => {
+    history.listen(location => {
       const { pathname, search } = location
 
-      if (location.state?.bookURL === null) {
-        history.go(pathname) // Reload
+      if (!location.state?.bookURL) {
+        this.props.readerSettingsActions.updateBookURL('')
         return
       }
 
@@ -75,29 +58,33 @@ class App extends Component {
   }
 
   handleClick = ({ title, url: bookURL }) => {
-    history.push(Url.slug(title)) // Set pathname
-    this.setState({ bookURL }) // Tell the reader to load data from bookURL
+    // Set pathname
+    history.push(Url.slug(title))
+
+    // Tell the reader to load data from bookURL
+    this.props.readerSettingsActions.updateBookURL(bookURL)
   }
 
   render() {
-    const { books, bookURL, pathname, search, downloads, cache } = this.state
+    const { pathname, search } = this.state
+    const { bookURL, books, ...rest } = this.props.readerSettings
+
+    if (!bookURL) {
+      return <Library books={books} handleClick={this.handleClick} />
+    }
+
     return (
-      <React.Fragment>
-        {bookURL ? (
-          <Reader
-            pathname={pathname}
-            search={search}
-            bookURL={bookURL}
-            downloads={downloads}
-            cache={cache}
-            {...this.props}
-          />
-        ) : (
-          <Library books={books} handleClick={this.handleClick} />
-        )}
-      </React.Fragment>
+      <Reader pathname={pathname} search={search} bookURL={bookURL} {...rest} />
     )
   }
 }
 
-export default App
+const mapStateToProps = ({ readerSettings }) => ({
+  readerSettings,
+})
+
+const mapDispatchToProps = dispatch => ({
+  readerSettingsActions: bindActionCreators(readerSettingsActions, dispatch),
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(App)
