@@ -13,10 +13,12 @@ function withDeferredCallbacks(WrappedComponent) {
     registerDeferredCallback = callback => {
       if (!callback) throw new Error('No callback provided')
       deferredCallbacks.push(callback)
+      this.props.viewActions.queueDeferredCallbacks()
     }
 
     deRegisterDeferredCallback = () => {
       deferredCallbacks = []
+      setImmediate(() => this.props.viewActions.dequeueDeferredCallbacks())
     }
 
     requestDeferredCallbackExecution = debounce(

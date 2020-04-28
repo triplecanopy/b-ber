@@ -100,6 +100,7 @@ class Vimeo extends React.Component {
 
     // Only if the view is fully rendered
     if (!this.props.view.loaded) return
+    if (this.props.view.pendingDeferredCallbacks) return
 
     let { currentSpreadIndex } = this.state
 
