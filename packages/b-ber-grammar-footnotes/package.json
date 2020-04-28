@@ -1,6 +1,6 @@
 {
   "name": "@canopycanopycanopy/b-ber-grammar-footnotes",
-  "version": "1.0.24-alpha.0",
+  "version": "1.0.24-alpha.1",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -24,7 +24,7 @@
     "rimraf": "^2.6.3"
   },
   "dependencies": {
-    "@canopycanopycanopy/b-ber-lib": "1.0.24-alpha.0",
+    "@canopycanopycanopy/b-ber-lib": "1.0.24-alpha.1",
     "lodash.find": "latest"
   },
   "files": [
@@ -43,5 +43,6 @@
       "email": "maxwellsimmer.com@gmail.com",
       "url": "https://maxwellsimmer.com"
     }
-  ]
+  ],
+  "gitHead": "9936fe3f4af76aa7b67ce10c2ed3a32b7de6ce6c"
 }
