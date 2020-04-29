@@ -258,17 +258,7 @@ class Vimeo extends React.Component {
             The iframe is absolutely positioned and is set to top and left
             positions of the placeholder. This is to address a bug in Chrome 81
             that prevents iframes from loading in multiple column layouts.
-        */
-        isChrome81 && (
-          <div
-            key={`placholder-${url}`}
-            style={{ paddingTop }}
-            className="iframe-placeholder"
-            ref={this.iframePlaceholder}
-          />
-        )}
 
-        {/*
             The parent container also needs to be styled to properly render the
             layout. Inject inline styles here.
         */
@@ -283,7 +273,21 @@ class Vimeo extends React.Component {
             .context__desktop .spread-with-fullbleed-media .vimeo.figure__large.figure__inline .embed.supported {
               position: relative !important;
             }
+
+            .context__desktop .spread-with-fullbleed-media .vimeo.figure__large.figure__inline .embed.supported iframe,
+            .context__desktop .spread-with-fullbleed-media .vimeo.figure__large.figure__inline .embed.supported .iframe-placeholder + div {
+              top: 0 !important;
+            }
           `}</style>
+        )}
+
+        {isChrome81 && (
+          <div
+            key={`placholder-${url}`}
+            style={{ paddingTop }}
+            className="iframe-placeholder"
+            ref={this.iframePlaceholder}
+          />
         )}
 
         {/* Ref is used to calculate spread position in HOC */}
