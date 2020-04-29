@@ -46,6 +46,7 @@ const createLOIAsSeparateHTMLFiles = () => {
     const buildType = state.build
     const spineItem = new SpineItem({
       fileName,
+      // eslint-disable-next-line camelcase
       in_toc,
       ref,
       pageOrder,

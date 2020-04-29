@@ -1,5 +1,3 @@
-/* global jest,test,expect */
-
 import BookMetadata from '../../src/models/BookMetadata'
 
 describe('BookMetaData', () => {

@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import fs from 'fs-extra'
 import find from 'lodash/find'
 import isPlainObject from 'lodash/isPlainObject'

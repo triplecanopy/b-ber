@@ -1,5 +1,3 @@
-/* global test,expect */
-
 import fs from 'fs-extra'
 import path from 'path'
 import state from '@canopycanopycanopy/b-ber-lib/State'

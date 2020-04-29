@@ -1,5 +1,3 @@
-/* global expect,jest */
-
 import xml from '../../src/commands/xml'
 
 jest.mock('@canopycanopycanopy/b-ber-tasks', () => ({

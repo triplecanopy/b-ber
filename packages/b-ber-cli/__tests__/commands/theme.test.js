@@ -1,5 +1,3 @@
-/* global expect,jest */
-
 import theme from '../../src/commands/theme'
 
 jest.mock('@canopycanopycanopy/b-ber-lib/Theme', () => ({}))

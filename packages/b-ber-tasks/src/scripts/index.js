@@ -6,6 +6,7 @@ import uglifyJS from 'uglify-js'
 
 const uglifyOptions = state.config.uglify_options || {
   compress: {
+    // eslint-disable-next-line camelcase
     dead_code: true,
     conditionals: true,
     booleans: true,

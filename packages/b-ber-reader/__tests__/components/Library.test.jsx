@@ -1,4 +1,4 @@
-/* global jest,test,expect,jsdom */
+/* global jsdom */
 /* eslint-disable prefer-destructuring */
 
 import React from 'react'

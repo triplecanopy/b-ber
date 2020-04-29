@@ -1,4 +1,3 @@
-/* global jest,test,expect */
 /* eslint-disable react/require-default-props,react/no-unused-prop-types */
 
 import React, { Component } from 'react'

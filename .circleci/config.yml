@@ -19,14 +19,14 @@ jobs:
             - npm-packages-v1-{{ checksum "BBER_CACHE_KEY" }}
       - run: |
           npm -g config set user root
-          npm i -g npm@6 lerna
-          echo node $(node -v)
+          npm i -g npm@6
+          echo NodeJS $(node -v)
           echo npm $(npm -v)
-          echo lerna $(lerna -v)
+          echo Lerna $(lerna -v)
           npm ci
-          lerna bootstrap
-          npm run build
-          npm test
+          npm run bootstrap -- --concurrency=2
+          npm run build -- --concurrency=2
+          npm test -- --maxWorkers=2
           cd ~
           $BBER --version
           $BBER new foo

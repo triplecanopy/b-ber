@@ -1,5 +1,3 @@
-/* global test,expect */
-
 import Asset from '../../src/helpers/Asset'
 
 describe('Asset', () => {

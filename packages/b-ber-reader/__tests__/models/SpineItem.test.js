@@ -1,5 +1,3 @@
-/* global jest,test,expect */
-
 import SpineItem from '../../src/models/SpineItem'
 
 describe('SpineItem', () => {

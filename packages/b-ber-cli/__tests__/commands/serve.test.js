@@ -1,5 +1,3 @@
-/* global expect,jest */
-
 import serve from '../../src/commands/serve'
 
 jest.mock('@canopycanopycanopy/b-ber-tasks', () => ({

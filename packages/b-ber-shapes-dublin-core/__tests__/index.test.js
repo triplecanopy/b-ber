@@ -1,5 +1,3 @@
-/* global expect */
-
 import { elements, terms } from '../src'
 
 describe('dublin-core', () => {

@@ -1,5 +1,3 @@
-/* global test,expect */
-
 import Url from '../../src/helpers/Url'
 
 describe('Url', () => {

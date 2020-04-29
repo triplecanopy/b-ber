@@ -1,4 +1,3 @@
-/* global jest,test,expect */
 import fs from 'fs-extra'
 import { Opf, ManifestAndMetadata, Navigation } from '../src/opf'
 

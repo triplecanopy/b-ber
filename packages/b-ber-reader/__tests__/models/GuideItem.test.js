@@ -1,5 +1,3 @@
-/* global jest,test,expect */
-
 import GuideItem from '../../src/models/GuideItem'
 
 describe('GuideItem', () => {
