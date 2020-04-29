@@ -4,13 +4,13 @@ module.exports = {
   env: {
     es6: true,
     jest: true,
-    mocha: true,
     node: true,
   },
   plugins: ['babel', 'import', 'react', 'prettier'],
   rules: {
     'prettier/prettier': 'error',
     'arrow-parens': 0,
+    camelcase: [2, { allow: ['^UNSAFE_'] }],
     'consistent-return': 0,
     'import/extensions': [2, 'never'],
     'jsx-a11y/href-no-hash': 0,
@@ -42,6 +42,7 @@ module.exports = {
       },
     ],
     'no-return-assign': 0,
+    'no-restricted-syntax': [0, 'ForOfStatement'],
     'no-underscore-dangle': 0,
     'no-unused-vars': [
       2,

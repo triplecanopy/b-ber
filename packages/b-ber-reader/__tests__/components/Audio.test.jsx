@@ -2,6 +2,11 @@ import React from 'react'
 import renderer from 'react-test-renderer'
 import Audio from '../../src/components/Media/Audio'
 
+jest.mock(
+  '../../src/lib/with-node-position',
+  () => WrappedComponent => props => <WrappedComponent {...props} />
+)
+
 describe('Audio', () => {
   // Clean up logging from HOC during tests
   beforeEach(() => {

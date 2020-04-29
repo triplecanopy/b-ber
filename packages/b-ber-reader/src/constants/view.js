@@ -1,0 +1,6 @@
+/* eslint-disable import/prefer-default-export */
+export const LOAD = 'LOAD'
+export const UNLOAD = 'UNLOAD'
+export const UPDATE_ULTIMATE_NODE_POSITION = 'UPDATE_ULTIMATE_NODE_POSITION'
+export const QUEUE_DEFERRED_CALLBACKS = 'QUEUE_DEFERRED_CALLBACKS'
+export const DEQUEUE_DEFERRED_CALLBACKS = 'DEQUEUE_DEFERRED_CALLBACKS'

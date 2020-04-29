@@ -159,7 +159,7 @@ class DocumentPreProcessor {
   }
 
   static parseXML(callback) {
-    // TODO
+    // TODO errors should be handled
     // @issue: https://github.com/triplecanopy/b-ber/issues/220
     const err = null
 

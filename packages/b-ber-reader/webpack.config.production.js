@@ -1,7 +1,6 @@
 const path = require('path')
 const webpack = require('webpack')
 const loaders = require('./webpack.loaders')
-
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 
@@ -28,8 +27,10 @@ module.exports = {
             [
               '@babel/preset-env',
               {
+                debug: false,
+                bugfixes: true,
                 corejs: 3,
-                modules: 'commonjs',
+                modules: 'commonjs', // https://github.com/webpack/webpack/issues/4039
                 targets: {
                   browsers: 'last 2 versions, > 2%',
                 },
@@ -39,9 +40,9 @@ module.exports = {
             '@babel/preset-react',
           ],
           plugins: [
-            ['@babel/plugin-proposal-decorators', { legacy: true }],
             '@babel/plugin-proposal-class-properties',
             '@babel/plugin-proposal-object-rest-spread',
+            '@babel/plugin-proposal-optional-chaining',
           ],
         },
       },

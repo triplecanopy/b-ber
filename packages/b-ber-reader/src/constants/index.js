@@ -1,10 +1,8 @@
-// speeds to debounce our mutation and resize observer callbacks. making sure
+// Speeds to debounce our mutation and resize observer callbacks. making sure
 // the document is laid out before rendering in decorate-observable.js
-export const ENSURE_RENDER_TIMEOUT = 200
-export const DEBOUNCE_TIMER = 200
-
-// used for calling deferred pagination events in decorate-deferrable.js
-export const DEFERRED_CALLBACK_TIMER = 200
+export const RESIZE_DEBOUNCE_TIMER = 60
+export const MUTATION_DEBOUNCE_TIMER = 60
+export const DEFERRED_CALLBACK_TIMER = 60
 
 export const transitions = {
   SLIDE: 'slide',
@@ -101,12 +99,12 @@ export const MOBILE_COLUMN_COUNT = 9
 
 // prettier-ignore
 export const VIEWPORT_DIMENSIONS_MATRIX = [
-    ['60px', '30px', '60px', '30px'], [18, 'auto', 15, 'auto'], [22, 'auto', 18, 'auto'], // => sm x sm, md x sm, lg x sm
-    ['60px', '30px', '60px', '30px'], [15, 'auto', 10, 'auto'], [15, 'auto', 10, 'auto'], // => sm x md, md x md, lg x md
-    ['60px', '30px', '60px', '30px'], [30, 'auto', 20, 'auto'], [15, 'auto', 10, 'auto'], // => sm x lg, md x lg, lg x lg
+  ['60px', '30px', '60px', '30px'], [18, 'auto', 15, 'auto'], [22, 'auto', 18, 'auto'], // => box 1: sm x sm | box 2: md x sm | box 3: lg x sm
+  ['60px', '30px', '60px', '30px'], [12, 'auto', 8, 'auto'], [12, 'auto', 9, 'auto'], // => box 4: sm x md | box 5: md x md | box 6: lg x md
+  ['60px', '30px', '60px', '30px'], [11, 'auto', 8, 'auto'], [11, 'auto', 8, 'auto'], // => box 7: sm x lg | box 8: md x lg | box 9: lg x lg
 ]
 
-// used in DocumentPreProcessor for appended stylesheets
+// Used in DocumentPreProcessor for appended stylesheets
 export const MEDIA_QUERY_SMALL = `only screen and (min-width: ${BREAKPOINT_HORIZONTAL_SMALL}px)`
 export const MEDIA_QUERY_LARGE = `only screen and (max-width: ${BREAKPOINT_HORIZONTAL_SMALL +
   1}px)`

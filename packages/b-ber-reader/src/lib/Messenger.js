@@ -78,7 +78,7 @@ class Messenger {
     const handler = e => (!type || type === e.data.type) && callback(e)
 
     registry.set(key, { event, type, handler, callback })
-    window.addEventListener(event, handler, false)
+    window.addEventListener(event, handler)
 
     return key
   }
@@ -87,7 +87,7 @@ class Messenger {
     if (!key) return
 
     const { handler } = registry.get(key)
-    window.removeEventListener('message', handler, false)
+    window.removeEventListener('message', handler)
     registry.delete(key)
   }
 

@@ -1,6 +1,6 @@
 {
   "name": "@canopycanopycanopy/b-ber-shapes-dublin-core",
-  "version": "1.0.23",
+  "version": "1.0.24-alpha.2",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -16,8 +16,13 @@
   "publishConfig": {
     "access": "public"
   },
+  "dependencies": {
+    "@babel/runtime-corejs3": "^7.9.2"
+  },
   "devDependencies": {
-    "@babel/cli": "^7.5.0",
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.0",
+    "@babel/preset-env": "^7.9.0",
     "jest": "^24.8.0",
     "rimraf": "^2.6.3"
   },
@@ -38,5 +43,6 @@
       "email": "maxwellsimmer.com@gmail.com",
       "url": "https://maxwellsimmer.com"
     }
-  ]
+  ],
+  "gitHead": "9936fe3f4af76aa7b67ce10c2ed3a32b7de6ce6c"
 }

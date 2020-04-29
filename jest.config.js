@@ -35,7 +35,6 @@ module.exports = {
     '!**/webpack.config.*.js',
   ],
   coveragePathIgnorePatterns: [
-    '<rootDir>/packages/b-ber-connect/',
     '<rootDir>/coverage/',
     '<rootDir>/demos/',
     '<rootDir>/scripts/',

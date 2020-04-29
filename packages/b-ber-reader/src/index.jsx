@@ -1,13 +1,24 @@
 import React from 'react'
 import { render } from 'react-dom'
+import { createStore, applyMiddleware, compose } from 'redux'
+import { Provider } from 'react-redux'
+import thunk from 'redux-thunk'
+import combinedReducers from './reducers'
 import { App } from './components'
 
 import './lib/polyfills'
 import './index.scss'
 
-const { __SERVER_DATA__ } = window
+const store = createStore(combinedReducers, compose(applyMiddleware(thunk)))
+const props = window.__SERVER_DATA__
+
 delete window.__SERVER_DATA__
 const script = document.querySelector('#__server_data__')
-if (script && script.parentNode) script.parentNode.removeChild(script)
+if (script?.parentNode) script.parentNode.removeChild(script)
 
-render(<App {...__SERVER_DATA__} />, document.getElementById('root'))
+render(
+  <Provider store={store}>
+    <App {...props} />
+  </Provider>,
+  document.getElementById('root')
+)

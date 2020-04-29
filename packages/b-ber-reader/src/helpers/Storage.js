@@ -5,7 +5,7 @@ class Storage {
     try {
       storage = window.localStorage.getItem(key) || storage
     } catch (_) {
-      console.warn('window.localStorage is unavailable')
+      console.warn('window.localStorage is unavailable.')
     }
 
     storage = JSON.parse(storage)

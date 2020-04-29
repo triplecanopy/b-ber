@@ -11,6 +11,7 @@ import {
   Video,
   SpreadFigure,
   Vimeo,
+  Ultimate,
 } from '../components'
 import { Asset, Url } from '../helpers'
 
@@ -18,14 +19,8 @@ export const isValidNode = () => true
 export const processNodeDefinitions = new ProcessNodeDefinitions(React)
 export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
   {
-    replaceChildren: true,
-
     shouldProcessNode(node) {
-      return (
-        node.attribs &&
-        node.attribs['epub:type'] &&
-        node.attribs['epub:type'] === 'noteref'
-      )
+      return node?.attribs?.['epub:type'] === 'noteref'
     },
     processNode(node, children) {
       const href = Url.resolveOverlappingURL(
@@ -149,8 +144,13 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
     processNode(node, children) {
       const attrs = Asset.convertToReactAttrs(node.attribs)
       const key = attrs.src
+      const aspectRatios = new Set(['16x9', '4x3'])
 
       let posterImage = null
+      const aspectRatio = new Map([
+        ['x', 16],
+        ['y', 9],
+      ])
 
       if (node.attribs['data-vimeo-poster']) {
         posterImage = Url.resolveOverlappingURL(
@@ -159,11 +159,21 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
         )
       }
 
+      if (
+        node.attribs['data-aspect-ratio'] &&
+        aspectRatios.has(node.attribs['data-aspect-ratio'])
+      ) {
+        const [x, y] = node.attribs['data-aspect-ratio'].split('x').map(Number)
+        aspectRatio.set('x', x)
+        aspectRatio.set('y', y)
+      }
+
       delete attrs['data-vimeo']
       delete attrs['data-vimeo-poster']
+      delete attrs['data-aspect-ratio']
 
       // Recurse back up the DOM to find if this element is a child of a spread.
-      // If so, pass in `useAdjustedColumnWidth = false` to configure the
+      // If so, pass in `useElementOffsetLeft = false` to configure the
       // `withNodePosition` HOC. This is pretty obscure, should be handled more
       // transparently
       let nodeParent = node.parent
@@ -172,7 +182,7 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
           nodeParent.type === 'tag' &&
           nodeParent.attribs['data-marker-reference-figure']
         ) {
-          attrs.useAdjustedColumnWidth = false
+          attrs.useElementOffsetLeft = false
           break
         }
 
@@ -181,7 +191,7 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
 
       return React.createElement(
         Vimeo,
-        { ...attrs, key, posterImage },
+        { ...attrs, key, posterImage, aspectRatio },
         children
       )
     },
@@ -221,6 +231,14 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
       const key = `spread-figure-${attrs['data-marker-reference-figure']}`
 
       return React.createElement(SpreadFigure, { ...attrs, key }, children)
+    },
+  },
+  {
+    shouldProcessNode(node) {
+      return node.type === 'tag' && has(node.attribs, 'data-ultimate')
+    },
+    processNode(node, children) {
+      return React.createElement(Ultimate, {}, children)
     },
   },
   {

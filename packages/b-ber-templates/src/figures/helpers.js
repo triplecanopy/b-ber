@@ -190,6 +190,7 @@ export const vimeo = data =>
                 <iframe
                   data-vimeo="true"
                   data-vimeo-poster="%POSTER_IMAGE_SRC%"
+                  data-aspect-ratio="%ASPECT_RATIO%"
                   src="%SRC%" webkitallowfullscreen="webkitallowfullscreen" mozallowfullscreen="mozallowfullscreen" allowfullscreen="allowfullscreen" frameborder="0" />
               </div>
             </div>
@@ -207,7 +208,7 @@ export const vimeo = data =>
     `
     .replace(/%SECTION_OPEN%/, getSectionOpen(data))
     .replace(/%ID%/g, data.id)
-    .replace(/%ASPECT_RATIO%/, data.aspectRatio)
+    .replace(/%ASPECT_RATIO%/g, data.aspectRatio)
 
     // Poster image for b-ber-reader is pulled from the `data-vimeo-poster`
     // attribute

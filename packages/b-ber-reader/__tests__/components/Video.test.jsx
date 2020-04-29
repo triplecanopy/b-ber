@@ -2,6 +2,11 @@ import React from 'react'
 import renderer from 'react-test-renderer'
 import Video from '../../src/components/Media/Video'
 
+jest.mock(
+  '../../src/lib/with-node-position',
+  () => WrappedComponent => props => <WrappedComponent {...props} />
+)
+
 describe('Video', () => {
   // Clean up logging from HOC during tests
   beforeEach(() => {

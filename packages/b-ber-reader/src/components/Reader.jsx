@@ -1,44 +1,28 @@
 import React, { Component } from 'react'
-import PropTypes from 'prop-types'
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
 import findIndex from 'lodash/findIndex'
 import debounce from 'lodash/debounce'
 import find from 'lodash/find'
 import isInteger from 'lodash/isInteger'
 import { Controls, Frame, Spinner } from '.'
 import { Request, XMLAdaptor, Asset, Url, Cache, Storage } from '../helpers'
-import { ViewerSettings } from '../models'
-import { debug, verboseOutput, logTime, useLocalStorage } from '../config'
+import { useLocalStorage } from '../config'
 import history from '../lib/History'
-import deferrable from '../lib/decorate-deferrable'
+import withDeferredCallbacks from '../lib/with-deferred-callbacks'
+import ReaderContext from '../lib/reader-context'
 import Messenger from '../lib/Messenger'
 import Viewport from '../helpers/Viewport'
+import * as viewerSettingsActions from '../actions/viewer-settings'
+import * as viewActions from '../actions/view'
+import { ViewerSettings } from '../models'
+import { unlessDefined } from '../helpers/utils'
 
-// const debug = true
-// const verboseOutput = true
-const MAX_RENDER_TIMEOUT = 0
-const MAX_DEFERRED_CALLBACK_TIMEOUT = 0
+const book = { content: null }
 
-let _bookContent = null
+const BookContent = () => <div key="book-content">{book.content}</div>
 
-const getBookContent = () => _bookContent
-
-const bookContentComponent = () => <div>{getBookContent()}</div>
-
-@deferrable
 class Reader extends Component {
-  static childContextTypes = {
-    viewerSettings: PropTypes.object,
-    spreadIndex: PropTypes.number,
-    overlayElementId: PropTypes.string,
-    navigateToChapterByURL: PropTypes.func,
-    registerOverlayElementId: PropTypes.func,
-    deRegisterOverlayElementId: PropTypes.func,
-    requestDeferredCallbackExecution: PropTypes.func,
-    addRef: PropTypes.func,
-    refs: PropTypes.object,
-    viewLoaded: PropTypes.bool,
-    lastSpread: PropTypes.bool,
-  }
   constructor(props) {
     super(props)
 
@@ -54,14 +38,13 @@ class Reader extends Component {
       spineItemURL: '',
       currentSpineItem: null,
       currentSpineItemIndex: 0,
-      search: '',
       cache: this.props.cache,
 
-      // layout
+      // Layout
       hash: Asset.createHash(this.props.bookURL),
       cssHash: null,
 
-      // navigation
+      // Navigation
       spreadIndex: 0,
       lastSpreadIndex: 0,
       handleEvents: false,
@@ -71,52 +54,15 @@ class Reader extends Component {
       lastSpread: false,
       delta: 0,
 
-      // sidebar
+      // Sidebar
       showSidebar: null,
 
-      // view
-      viewerSettings: new ViewerSettings(),
-      pageAnimation: false, // disabled by default, and activated in Reader#enablePageTransitions on user action
-      overlayElementId: null,
+      // View
+      pageAnimation: false, // Disabled by default, and activated in Reader.enablePageTransitions on user action
       spinnerVisible: true,
-      viewLoaded: false,
-
-      refs: {},
     }
 
     this.localStorageKey = 'bber_reader'
-
-    this.createStateFromOPF = this.createStateFromOPF.bind(this)
-    this.loadSpineItem = this.loadSpineItem.bind(this)
-    this.savePosition = this.savePosition.bind(this)
-    this.updateViewerSettings = this.updateViewerSettings.bind(this)
-    this.loadInitialSpineItem = this.loadInitialSpineItem.bind(this)
-
-    this._setState = this._setState.bind(this)
-    this.handleSidebarButtonClick = this.handleSidebarButtonClick.bind(this)
-    this.handleChapterNavigation = this.handleChapterNavigation.bind(this)
-    this.handlePageNavigation = this.handlePageNavigation.bind(this)
-    this.navigateToChapterByURL = this.navigateToChapterByURL.bind(this)
-    this.navigateToElementById = this.navigateToElementById.bind(this)
-    this.destroyReaderComponent = this.destroyReaderComponent.bind(this)
-    this.enablePageTransitions = this.enablePageTransitions.bind(this)
-    this.disablePageTransitions = this.disablePageTransitions.bind(this)
-    this.enableEventHandling = this.enableEventHandling.bind(this)
-    this.disableEventHandling = this.disableEventHandling.bind(this)
-    this.closeSidebars = this.closeSidebars.bind(this)
-    this.updateQueryString = this.updateQueryString.bind(this)
-    this.saveViewerSettings = this.saveViewerSettings.bind(this)
-    this.registerOverlayElementId = this.registerOverlayElementId.bind(this)
-    this.deRegisterOverlayElementId = this.deRegisterOverlayElementId.bind(this)
-    this.showSpinner = this.showSpinner.bind(this)
-    this.hideSpinner = this.hideSpinner.bind(this)
-
-    this.handleResize = this.handleResize.bind(this)
-
-    this.handleScriptCreate = this.handleScriptCreate.bind(this)
-    this.handleScriptError = this.handleScriptError.bind(this)
-    this.handleScriptLoad = this.handleScriptLoad.bind(this)
-
     this.debounceResizeSpeed = 400
 
     this.handleResizeStart = debounce(
@@ -138,458 +84,362 @@ class Reader extends Component {
     ).bind(this)
   }
 
-  addRef = ref => {
-    const { refs } = this.state
-    const nextRefs = { ...refs, [ref.markerId]: ref }
-    this.setState({ refs: nextRefs })
-  }
+  // When the reader mounts, navigate to the desired location. The location is
+  // determined by checking the following in this order:
+  //
+  // 1. The pathname and query string entered manually or via a link in the
+  //    browser bar
+  // 2. The values stored in localStorage from the last time the user loaded the
+  //    book, if at ll
+  // 3. If neither of the above conditions are met, then the first page of the
+  //    book is loaded
+  async UNSAFE_componentWillMount() {
+    // Clear cache initially (for now). Still caches styles for subsequent pages
+    Cache.clear()
 
-  getChildContext() {
-    return {
-      viewerSettings: this.state.viewerSettings,
-      addRef: this.addRef.bind(this),
-      refs: this.state.refs,
-      spreadIndex: this.state.spreadIndex,
-      navigateToChapterByURL: this.navigateToChapterByURL,
-      overlayElementId: this.state.overlayElementId,
-      registerOverlayElementId: this.registerOverlayElementId,
-      deRegisterOverlayElementId: this.deRegisterOverlayElementId,
-      requestDeferredCallbackExecution: this.requestDeferredCallbackExecution,
-      viewLoaded: this.state.viewLoaded,
-      lastSpread: this.state.lastSpread,
+    const storage = Storage.get(this.localStorageKey) || {}
+
+    // Update the custom viewer settings (font size, line height, etc) for the
+    // current book. Viewer settings can be exposed to the user in the future
+    if (useLocalStorage !== false && storage.viewerSettings) {
+      this.props.viewerSettingsActions.update(storage.viewerSettings)
     }
-  }
 
-  componentWillMount() {
-    Cache.clear() // clear initially for now. still caches styles for subsequent pages
-    this.registerCanCallDeferred(() => this.state.ready)
-    this.createStateFromOPF().then(() => {
-      if (useLocalStorage === false) return this.loadSpineItem()
+    // Load the spine, guide, and metadata
+    await this.createStateFromOPF()
 
-      const storage = Storage.get(this.localStorageKey)
+    // Check the current query string if one exists
+    const params = new URLSearchParams(this.props.search)
+    const slug = params.get('slug')
 
-      if (storage.viewerSettings) {
-        this.updateViewerSettings(storage.viewerSettings)
-      }
+    const { spine, hash } = this.state
 
-      this.loadInitialSpineItem(storage)
-    })
+    let currentSpineItemIndex = findIndex(spine, { slug })
+    let currentSpineItem = spine[currentSpineItemIndex]
+    let spreadIndex = 0
+
+    if (currentSpineItem) {
+      this.setState(
+        { currentSpineItem, currentSpineItemIndex, spreadIndex },
+        () => this.loadSpineItem(currentSpineItem)
+      )
+
+      return
+    }
+
+    // Location can't be determined from the query string. Load from location
+    // in localStorage
+    if (useLocalStorage !== false && storage?.[hash]?.currentSpineItem) {
+      ;({ currentSpineItem, currentSpineItemIndex, spreadIndex } = storage[
+        hash
+      ])
+
+      this.setState(
+        { currentSpineItem, currentSpineItemIndex, spreadIndex },
+        () => this.loadSpineItem(currentSpineItem)
+      )
+
+      return
+    }
+
+    // There is no entry in localStorage for the current book, load the first
+    // page of the first chapter
+    this.loadSpineItem()
   }
 
   componentDidMount() {
-    window.addEventListener('resize', this.handleResize, false)
-    window.addEventListener('resize', this.handleResizeStart, false)
-    window.addEventListener('resize', this.handleResizeEnd, false)
+    window.addEventListener('resize', this.handleResize)
+    window.addEventListener('resize', this.handleResizeStart)
+    window.addEventListener('resize', this.handleResizeEnd)
+
     document.addEventListener(
       'webkitfullscreenchange mozfullscreenchange fullscreenchange',
-      this.handleResize,
-      false
+      this.handleResize
     )
     document.addEventListener(
       'webkitfullscreenchange mozfullscreenchange fullscreenchange',
-      this.handleResizeStart,
-      false
+      this.handleResizeStart
     )
     document.addEventListener(
       'webkitfullscreenchange mozfullscreenchange fullscreenchange',
-      this.handleResizeEnd,
-      false
+      this.handleResizeEnd
     )
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const { hash, cssHash, search } = this.state
-
-    if (nextProps.search !== search) {
-      const { slug, currentSpineItemIndex, spreadIndex } = Url.parseQueryString(
-        nextProps.search
-      )
-      const url = Url.parseQueryString(search)
-
-      // load the new spine item if the slug has changed
-      if (url.slug && url.slug !== slug) {
-        const spineItem = find(this.state.spine, { slug })
-        return this.loadSpineItem(spineItem)
-      }
-
-      // otherwise update the query string
-      const spreadIndex_ = Number(spreadIndex)
-      this.setState({
-        slug,
-        currentSpineItemIndex,
-        spreadIndex: spreadIndex_,
-        search: nextProps.search,
-      })
-    }
-
-    if (hash === null) {
-      this.setState({ hash: nextProps.hash })
-    }
-
-    if (cssHash === null) {
-      this.setState({ scopedCSS: nextProps.cssHash })
-    }
-  }
-
-  shouldComponentUpdate(_, nextState) {
-    const { ready } = nextState
-    if (ready && ready !== this.state.ready) {
-      if (debug && verboseOutput) {
-        console.log(
-          'Reader#shouldComponentUpdate: requestDeferredCallbackExecution',
-          `ready: ${ready}`
-        )
-      }
-      this.requestDeferredCallbackExecution()
-    }
-
-    return true
   }
 
   componentWillUnmount() {
     const { cssHash } = this.state
     this.setState({ hash: null, cssHash: null })
     Asset.removeBookStyles(cssHash)
+
+    window.removeEventListener('resize', this.handleResize)
+    window.removeEventListener('resize', this.handleResizeStart)
+    window.removeEventListener('resize', this.handleResizeEnd)
+
+    document.removeEventListener(
+      'webkitfullscreenchange mozfullscreenchange fullscreenchange',
+      this.handleResize
+    )
+    document.removeEventListener(
+      'webkitfullscreenchange mozfullscreenchange fullscreenchange',
+      this.handleResizeStart
+    )
+    document.removeEventListener(
+      'webkitfullscreenchange mozfullscreenchange fullscreenchange',
+      this.handleResizeEnd
+    )
   }
 
-  handleResize() {
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    const { loaded } = nextProps.view
+    const { hash, cssHash } = this.state
+    const { search } = this.props
+
+    // The query string has changed in that either
+    // 1. There is a new slug (chapter). Load the page asynchronously and let
+    //    the post-loaded callbacks update the postion
+    // 2. There is a new spread index (page). Update state to initialize the
+    //    page transition
+    if (nextProps.search !== search) {
+      const { slug, currentSpineItemIndex, spreadIndex } = Url.parseQueryString(
+        nextProps.search
+      )
+
+      const prevURL = Url.parseQueryString(search)
+
+      // Load the new spine item if the slug has changed. `loadSpineItem`
+      // updates the query string, so we can return immediately after this
+      // branch
+      if (prevURL?.slug && slug && prevURL.slug !== slug) {
+        const spineItem = find(this.state.spine, { slug })
+        this.loadSpineItem(spineItem)
+        return
+      }
+
+      // Update state for the new location
+      this.setState({
+        slug,
+        currentSpineItemIndex,
+        spreadIndex: Number(spreadIndex),
+      })
+    }
+
+    // CSS updates
+    if (hash === null || cssHash === null) {
+      const state = {}
+      if (hash === null) state.hash = nextProps.hash
+      if (cssHash === null) state.scopedCSS = nextProps.cssHash
+      this.setState(state)
+    }
+
+    // Render the view
+    if (loaded && loaded !== this.props.view.loaded) {
+      this.props.requestDeferredCallbackExecution()
+    }
+  }
+
+  handleResize = () => {
     const viewerSettings = new ViewerSettings()
-    this.setState({ viewerSettings })
+    this.props.viewerSettingsActions.update(viewerSettings.get())
   }
 
-  handleResizeStart() {
+  handleResizeStart = () => {
+    this.props.viewActions.unload()
     this.disablePageTransitions()
-    if (!debug) this.showSpinner()
+    this.showSpinner()
   }
 
-  handleResizeEnd() {
-    if (!debug) this.hideSpinner()
+  handleResizeEnd = () => {
+    this.hideSpinner()
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  scrollToTop() {
-    if (Viewport.isMobile()) document.getElementById('frame').scrollTo(0, 0)
-  }
-
-  updateQueryString() {
+  updateQueryString = callback => {
     const { currentSpineItem, currentSpineItemIndex, spreadIndex } = this.state
-
+    const { pathname, search } = this.props
     const { slug } = currentSpineItem
-    const url = Url.parseQueryString(this.props.search)
-    const { pathname, state } = history.location
-    const update = !url.slug || url.slug === slug ? 'replace' : 'push'
+    const url = Url.parseQueryString(search)
+    const updateMethod = !url.slug || url.slug === slug ? 'replace' : 'push'
 
-    const search = Url.buildQueryString({
+    const nextSearch = Url.buildQueryString({
       slug,
       currentSpineItemIndex,
       spreadIndex,
     })
 
-    if (this.props.useBrowserHistory) {
-      this.setState({ search }, () =>
-        history[update]({
-          pathname,
-          search,
-          state,
-        })
-      )
-    } else {
-      this.setState({ search }, () => history.push({ search }))
-    }
+    history[updateMethod]({
+      pathname,
+      search: nextSearch,
+      state: { bookURL: this.state.bookURL },
+    })
+
+    if (callback) callback()
   }
 
-  showSpinner() {
-    this.setState({ spinnerVisible: true, viewLoaded: false })
-  }
+  showSpinner = () => this.setState({ spinnerVisible: true })
 
-  hideSpinner() {
-    this.setState({ spinnerVisible: false, viewLoaded: true })
-  }
+  hideSpinner = () => this.setState({ spinnerVisible: false })
 
-  updateViewerSettings(settings = {}) {
-    if (useLocalStorage === false || this.state.cache === false) return
-
-    const viewerSettings = new ViewerSettings()
-    viewerSettings.put(settings)
-    this.setState({ viewerSettings }, this.saveViewerSettings)
-  }
-
-  // currently viewer settings are global (for all books) although they could
-  // be scoped to individual books using the books' hash
-  saveViewerSettings() {
-    if (useLocalStorage === false || this.state.cache === false) return
-
-    const viewerSettings = { ...this.state.viewerSettings.settings }
-    const storage = Storage.get(this.localStorageKey)
-
-    if (!storage.viewerSettings) {
-      storage.viewerSettings = {}
-    }
-
-    storage.viewerSettings = {
-      ...storage.viewerSettings,
-      ...viewerSettings,
-    }
-
-    Storage.set(this.localStorageKey, storage)
-  }
-
-  loadInitialSpineItem(storage = {}) {
-    const { hash } = this.state
-    if (!storage[hash] || !storage[hash].currentSpineItem) {
-      return this.loadSpineItem()
-    }
-
-    const { currentSpineItem, currentSpineItemIndex, spreadIndex } = storage[
-      hash
-    ]
-
-    this.setState(
-      { currentSpineItem, currentSpineItemIndex, spreadIndex },
-      () => {
-        this.loadSpineItem(currentSpineItem)
-      }
-    )
-  }
-
-  createStateFromOPF() {
+  createStateFromOPF = async () => {
     const { bookURL } = this.state
     const opfURL = XMLAdaptor.opfURL(bookURL)
     const opsURL = XMLAdaptor.opsURL(bookURL)
 
     this.setState({ opsURL })
 
-    if (logTime) {
-      console.time('Reader#createStateFromOPF')
-      console.time('Request.get(opfURL)')
-    }
+    let data
+    let guideItems
+    let spineItems
 
-    return Request.get(opfURL)
-      .then(data => {
-        if (logTime) {
-          console.timeEnd('Request.get(opfURL)')
-          console.time('XMLAdaptor.parseOPF()')
-        }
+    data = await Request.get(opfURL)
+    data = await XMLAdaptor.parseOPF(data)
+    data = await XMLAdaptor.parseNCX(data, opsURL)
+    ;[guideItems, spineItems] = await Promise.all([
+      XMLAdaptor.createGuideItems(data),
+      XMLAdaptor.createSpineItems(data),
+    ])
+    data = { ...guideItems, ...spineItems }
+    ;[guideItems, spineItems] = await Promise.all([
+      XMLAdaptor.udpateGuideItemURLs(data, opsURL),
+      XMLAdaptor.udpateSpineItemURLs(data, opsURL),
+    ])
+    data = { ...guideItems, ...spineItems }
+    data = await XMLAdaptor.createBookMetadata(data)
 
-        return XMLAdaptor.parseOPF(data)
-      })
-      .then(data => {
-        if (logTime) {
-          console.timeEnd('XMLAdaptor.parseOPF()')
-          console.time('XMLAdaptor.parseNCX(data, opsURL)')
-        }
-        return XMLAdaptor.parseNCX(data, opsURL)
-      })
-      .then(data => {
-        if (logTime) {
-          console.timeEnd('XMLAdaptor.parseNCX(data, opsURL)')
-          console.time(
-            'XMLAdaptor.createGuideItems(data),XMLAdaptor.createSpineItems(data)'
-          )
-        }
-        return Promise.all([
-          XMLAdaptor.createGuideItems(data),
-          XMLAdaptor.createSpineItems(data),
-        ])
-      })
-      .then(([a, b]) => {
-        if (logTime) {
-          console.timeEnd(
-            'XMLAdaptor.createGuideItems(data),XMLAdaptor.createSpineItems(data)'
-          )
-          console.time(
-            'XMLAdaptor.udpateGuideItemURLs(data, opsURL),XMLAdaptor.udpateSpineItemURLs(data, opsURL)'
-          )
-        }
-        const data = { ...a, ...b }
-        return Promise.all([
-          XMLAdaptor.udpateGuideItemURLs(data, opsURL),
-          XMLAdaptor.udpateSpineItemURLs(data, opsURL),
-        ])
-      })
-      .then(([a, b]) => {
-        if (logTime) {
-          console.timeEnd(
-            'XMLAdaptor.udpateGuideItemURLs(data, opsURL),XMLAdaptor.udpateSpineItemURLs(data, opsURL)'
-          )
-        }
-        return XMLAdaptor.createBookMetadata({ ...a, ...b })
-      })
-      .then(data => {
-        if (logTime) console.timeEnd('Reader#createStateFromOPF')
-        return this.setState({ ...data })
-      })
-      .catch(console.error)
+    this.setState(data)
   }
 
-  enablePageTransitions() {
-    this.setState({ pageAnimation: true })
-  }
-  disablePageTransitions() {
-    this.setState({ pageAnimation: false })
-  }
-  enableEventHandling() {
-    this.setState({ handleEvents: true })
-  }
-  disableEventHandling() {
-    this.setState({ handleEvents: false })
-  }
-  closeSidebars() {
-    this.setState({ showSidebar: null })
+  enablePageTransitions = () => this.setState({ pageAnimation: true })
+
+  disablePageTransitions = () => this.setState({ pageAnimation: false })
+
+  enableEventHandling = () => this.setState({ handleEvents: true })
+
+  disableEventHandling = () => this.setState({ handleEvents: false })
+
+  closeSidebars = () => this.setState({ showSidebar: null })
+
+  freeze = () => {
+    this.props.viewActions.unload()
+    this.setState({
+      showSidebar: null,
+      handleEvents: false,
+      pageAnimation: false,
+      spinnerVisible: true,
+    })
   }
 
-  loadSpineItem(spineItem, deferredCallback) {
+  // Shows content and enables UI once book content has been loaded
+  showSpineItem = () => {
+    const {
+      spine,
+      spreadIndex,
+      currentSpineItemIndex,
+      lastSpreadIndex,
+    } = this.state
+
+    const firstChapter = currentSpineItemIndex === 0
+    const lastChapter = currentSpineItemIndex === spine.length - 1
+    const firstSpread = spreadIndex === 0
+    const lastSpread = spreadIndex === lastSpreadIndex
+
+    this.setState(
+      { firstChapter, lastChapter, firstSpread, lastSpread },
+      () => {
+        this.savePosition()
+        this.enableEventHandling()
+        this.hideSpinner()
+
+        Messenger.sendPaginationEvent(this.state)
+      }
+    )
+  }
+
+  // Makes requests to load book content
+  loadSpineItem = async (spineItem, deferredCallback) => {
+    let { hash, cssHash } = this.state
     let requestedSpineItem = spineItem
     if (!requestedSpineItem) [requestedSpineItem] = this.state.spine
 
-    this.setState({ ready: false })
-    this.closeSidebars()
-    this.disableEventHandling()
-    this.disablePageTransitions()
-    this.showSpinner()
+    this.freeze()
 
-    if (logTime) {
-      console.time('Content Visible')
-      console.time('Reader#loadSpineItem')
-      console.time('Request.get(requestedSpineItem.absoluteURL)')
+    let content
+
+    try {
+      const { data, request } = await Request.get(
+        requestedSpineItem.absoluteURL
+      )
+      content = await XMLAdaptor.parseSpineItemResponse({
+        data,
+        request,
+        requestedSpineItem,
+        ...this.state,
+        paddingLeft: this.props.viewerSettings.paddingLeft,
+        columnGap: this.props.viewerSettings.columnGap,
+      })
+    } catch (err) {
+      // Something went wrong loading the book. Clear storage for this book
+
+      // TODO retry? try to navigate to home?
+      // @issue: https://github.com/triplecanopy/b-ber/issues/214
+      console.error(err)
+
+      const storage = Storage.get(this.localStorageKey) || {}
+      ;({ hash } = this.state)
+
+      delete storage[hash]
+      Storage.set(this.localStorageKey, storage)
+
+      return
     }
 
-    Request.get(requestedSpineItem.absoluteURL)
-      // basically we're passing in props to a dehydrated tree here.
-      // should be cleaned up a bit
-      .then(response => {
-        if (logTime) {
-          console.timeEnd('Request.get(requestedSpineItem.absoluteURL)')
-          console.time('XMLAdaptor.parseSpineItemResponse()')
-        }
+    const { bookContent, scopedCSS } = content
 
-        return XMLAdaptor.parseSpineItemResponse({
-          data: response.data,
-          request: response.request,
-          requestedSpineItem,
-          ...this.state,
-          navigateToChapterByURL: this.navigateToChapterByURL,
-          paddingLeft: this.state.viewerSettings.paddingLeft,
-          columnGap: this.state.viewerSettings.columnGap,
-        })
-      })
+    book.content = bookContent
 
-      .then(({ bookContent, scopedCSS }) => {
-        if (logTime) {
-          console.timeEnd('XMLAdaptor.parseSpineItemResponse()')
-        }
+    if (cssHash === null) {
+      cssHash = hash
+      Asset.appendBookStyles(scopedCSS, hash)
+    }
 
-        const { hash } = this.state
-        let { cssHash } = this.state
-
-        _bookContent = bookContent
-
-        if (cssHash === null) {
-          cssHash = hash
-          Asset.appendBookStyles(scopedCSS, hash)
-        }
-
-        this.setState({ cssHash })
-      })
-      .then(() => {
-        if (logTime) console.time('this.setState({ready: true})')
-
-        this.setState(
-          {
-            currentSpineItem: requestedSpineItem,
-            spineItemURL: requestedSpineItem.absoluteURL,
-          },
-          () => {
-            this.updateQueryString()
-
-            if (deferredCallback) {
-              this.registerDeferredCallback(deferredCallback)
-            } else {
-              this.registerDeferredCallback(() => {
-                const {
-                  spine,
-                  spreadIndex,
-                  currentSpineItemIndex,
-                  lastSpreadIndex,
-                } = this.state
-                const firstChapter = currentSpineItemIndex === 0
-                const lastChapter = currentSpineItemIndex === spine.length - 1
-                const firstSpread = spreadIndex === 0
-                const lastSpread = spreadIndex === lastSpreadIndex
-
-                this.setState(
-                  { firstChapter, lastChapter, firstSpread, lastSpread },
-                  () => {
-                    this.savePosition()
-                    this.enableEventHandling()
-                    this.hideSpinner()
-
-                    Messenger.sendPaginationEvent(this.state)
-                  }
-                )
-              })
-            }
-
-            return setTimeout(() => {
-              if (logTime) {
-                console.timeEnd('Reader#loadSpineItem')
-              }
-              // return this.setState({ready: true}) // TODO: force load
-              // @issue: https://github.com/triplecanopy/b-ber/issues/214
-            }, MAX_RENDER_TIMEOUT)
-          }
+    this.setState(
+      {
+        cssHash,
+        currentSpineItem: requestedSpineItem,
+        spineItemURL: requestedSpineItem.absoluteURL,
+      },
+      () =>
+        // Update the query string to trigger a page transition and call the
+        // deferredCallback if one is set, or `showSpineItem` if not
+        this.updateQueryString(() =>
+          this.props.registerDeferredCallback(
+            deferredCallback || this.showSpineItem
+          )
         )
-      })
-      .catch(err => {
-        // Something went wrong loading the book. clear storage for this book
-        // TODO: retry? try to navigate to home
-        // @issue: https://github.com/triplecanopy/b-ber/issues/214
-
-        console.error(err)
-
-        const storage = Storage.get(this.localStorageKey)
-        const { hash } = this.state
-        delete storage[hash]
-
-        Storage.set(this.localStorageKey, storage)
-      })
+    )
   }
 
-  handleSidebarButtonClick(value) {
+  handleSidebarButtonClick = value => {
     let { showSidebar } = this.state
     showSidebar = value === showSidebar ? null : value
     this.setState({ showSidebar })
   }
 
-  handlePageNavigation(increment) {
+  handlePageNavigation = increment => {
     let { spreadIndex } = this.state
     const { lastSpreadIndex } = this.state
     const nextIndex = spreadIndex + increment
 
-    if (debug && verboseOutput) {
-      console.group('Reader#handlePageNavigation')
-      console.log(
-        'spreadIndex: %d; nextIndex: %d; lastSpreadIndex %d',
-        spreadIndex,
-        nextIndex,
-        lastSpreadIndex
-      )
-      console.groupEnd()
-    }
-
     if (nextIndex > lastSpreadIndex || nextIndex < 0) {
-      // move to next or prev chapter
+      // Move to next or prev chapter
       const sign = Math.sign(increment)
       this.handleChapterNavigation(sign)
-
       return
     }
 
     const firstSpread = nextIndex === 0
     const lastSpread = nextIndex === lastSpreadIndex
     const spreadDelta = nextIndex > spreadIndex ? 1 : -1
-
     spreadIndex = nextIndex
+
     this.setState(
       { spreadIndex, firstSpread, lastSpread, spreadDelta, showSidebar: null },
       () => {
@@ -599,7 +449,7 @@ class Reader extends Component {
     )
   }
 
-  handleChapterNavigation(increment) {
+  handleChapterNavigation = increment => {
     let { currentSpineItemIndex } = this.state
     const { spine } = this.state
     const nextIndex = Number(currentSpineItemIndex) + increment
@@ -621,7 +471,7 @@ class Reader extends Component {
       const { lastSpreadIndex } = this.state
       const firstSpread = spreadIndex === 0
       const lastSpread = spreadIndex === lastSpreadIndex
-      const spreadDelta = 0
+      const spreadDelta = direction
       lastChapter = currentSpineItemIndex === spine.length - 1
 
       this.setState(
@@ -633,16 +483,16 @@ class Reader extends Component {
           spreadDelta,
         },
         () => {
-          this.scrollToTop()
-          if (direction === -1) this.navigateToSpreadByIndex(lastSpreadIndex) // TODO: navigate to last visited page
+          if (direction === -1) {
+            this.navigateToSpreadByIndex(lastSpreadIndex)
+          }
+
           this.enableEventHandling()
           this.hideSpinner()
 
           Messenger.sendPaginationEvent(this.state)
         }
       )
-
-      if (logTime) console.timeEnd('Content Visible')
     }
 
     deferredCallback = deferredCallback(increment)
@@ -663,78 +513,73 @@ class Reader extends Component {
     )
   }
 
-  navigateToSpreadByIndex(spreadIndex) {
+  navigateToSpreadByIndex = spreadIndex => {
     this.setState({ spreadIndex }, this.updateQueryString)
   }
 
-  navigateToElementById(hash) {
-    // get the element we need to navigate to in the layout
+  navigateToElementById = hash => {
+    // Get the element to which the page will scroll in the layout
     const elem = document.querySelector(hash)
 
     if (!elem) return console.warn(`Could not find element ${hash}`)
 
-    // scroll to vertical position, leave a bit of room for the controls and
+    // Scroll to vertical position, leave a bit of room for the controls and
     // whitespace around the element
     if (Viewport.isMobile()) {
       const padding = 25
       const offset =
         document.querySelector('.controls__header').offsetHeight + padding
       const top = elem.offsetTop - offset
-      document.getElementById('frame').scrollTo(0, top)
+
+      document.getElementById('frame').scrollTo(0, top) // TODO should be handled in Frame.jsx
     }
 
-    const { paddingTop, paddingBottom, columnGap } = this.state.viewerSettings
+    const { paddingTop, paddingBottom, columnGap } = this.props.viewerSettings
 
-    // we calculate the frameHeight using the same method in Layout.jsx, by
+    // Calculate the frameHeight using the same method in Layout.jsx, by
     // rounding the window height minus the padding top and bottom of the
     // reader's frame
     const height = window.innerHeight
     const frameHeight = Math.round(height - paddingTop - paddingBottom)
 
-    // find the index of the spread that our element appears on by getting
+    // Find the index of the spread that our element appears on by getting
     // it's left-most value (accounting for the gutter), and dividing it by
     // the height of a single column
     const left = elem.offsetLeft - columnGap
     const spreadIndex = Math.floor(left / frameHeight / 2)
 
-    // we move to the desired spread when the query string actually updates
+    // Move to the desired spread when the query string actually updates
     this.setState({ spreadIndex }, this.updateQueryString)
   }
 
-  navigateToChapterByURL(absoluteURL) {
+  navigateToChapterByURL = absoluteURL => {
     const { spine } = this.state
     const url = new window.URL(absoluteURL)
 
     // Can eventually handle hashes or query strings here
-    const absoluteURL_ = `${url.origin}${url.pathname}`
+    const nextAbsolutURL = `${url.origin}${url.pathname}`
 
     let deferredCallback
     const { hash } = url
+
     if (hash) {
-      if (logTime) console.time('deferredCallback')
-
       deferredCallback = () => {
-        setTimeout(() => {
-          // this.enablePageTransitions()
-          this.navigateToElementById(hash)
-          this.enableEventHandling()
-          this.hideSpinner()
-
-          if (logTime) console.timeEnd('Content Visible')
-          // TODO: should match transition speed. all these deferreds should be collected together
-          // @issue: https://github.com/triplecanopy/b-ber/issues/216
-        }, MAX_DEFERRED_CALLBACK_TIMEOUT)
+        this.navigateToElementById(hash)
+        this.enableEventHandling()
+        this.hideSpinner()
       }
     }
 
     const currentSpineItemIndex = findIndex(spine, {
-      absoluteURL: absoluteURL_,
+      absoluteURL: nextAbsolutURL,
     })
+
     if (currentSpineItemIndex === this.state.currentSpineItemIndex) {
       return this.closeSidebars()
     }
+
     if (currentSpineItemIndex < 0) {
-      console.warn(`No spine item found for ${absoluteURL_}`)
+      console.warn(`No spine item found for ${nextAbsolutURL}`)
       return
     }
 
@@ -756,7 +601,32 @@ class Reader extends Component {
     )
   }
 
-  savePosition() {
+  getTranslateX = _spreadIndex => {
+    const spreadIndex = unlessDefined(_spreadIndex, this.state.spreadIndex)
+
+    const {
+      width,
+      paddingLeft,
+      paddingRight,
+      columnGap,
+    } = this.props.viewerSettings
+
+    const isMobile = Viewport.isMobile()
+
+    let translateX = 0
+    if (!isMobile) {
+      translateX =
+        (width - paddingLeft - paddingRight + columnGap) * spreadIndex * -1
+
+      // no -0
+      translateX =
+        translateX === 0 && Math.sign(1 / translateX) === -1 ? 0 : translateX
+    }
+
+    return translateX
+  }
+
+  savePosition = () => {
     if (useLocalStorage === false) return
 
     const {
@@ -766,42 +636,22 @@ class Reader extends Component {
       spreadIndex,
     } = this.state
 
-    const storage = Storage.get(this.localStorageKey)
+    const storage = Storage.get(this.localStorageKey) || {}
     storage[hash] = { currentSpineItem, currentSpineItemIndex, spreadIndex }
 
     Storage.set(this.localStorageKey, storage)
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  destroyReaderComponent() {
-    history.push('/', { bookURL: null })
-  }
+  // TODO the location.state.bookURL prop is how we're signal to the reader that
+  // there is a book loaded, but that the pathname is '/'. Would be good to have
+  // this standardized
+  destroyReaderComponent = () => history.push('/', { bookURL: null })
 
-  registerOverlayElementId(overlayElementId) {
-    if (this.state.overlayElementId !== overlayElementId) {
-      this.setState({ overlayElementId })
-    }
-  }
-
-  deRegisterOverlayElementId() {
-    this.setState({ overlayElementId: null })
-  }
-
-  _setState(props) {
-    this.setState({ ...props })
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  handleScriptCreate() {
-    console.log('handleScriptCreate')
-  }
-  // eslint-disable-next-line class-methods-use-this
-  handleScriptError() {
-    console.log('handleScriptError')
-  }
-  // eslint-disable-next-line class-methods-use-this
-  handleScriptLoad() {
-    console.log('handleScriptLoad')
+  // TODO whatever this is doing should be handled by Redux
+  _setState = (state, callback) => {
+    this.setState({ ...state }, () => {
+      if (callback) callback()
+    })
   }
 
   render() {
@@ -812,17 +662,17 @@ class Reader extends Component {
       currentSpineItemIndex,
       showSidebar,
       hash,
-      ready,
       bookURL,
+      lastSpread,
       spreadIndex,
       lastSpreadIndex,
-      viewerSettings,
       pageAnimation,
       handleEvents,
       spinnerVisible,
     } = this.state
 
     let slug = ''
+
     if (
       spine &&
       isInteger(currentSpineItemIndex) &&
@@ -838,36 +688,59 @@ class Reader extends Component {
         currentSpineItemIndex={currentSpineItemIndex}
         metadata={metadata}
         showSidebar={showSidebar}
-        viewerSettings={viewerSettings}
         handleEvents={handleEvents}
         spreadIndex={spreadIndex}
         lastSpreadIndex={lastSpreadIndex}
         enablePageTransitions={this.enablePageTransitions}
         handlePageNavigation={this.handlePageNavigation}
-        updateViewerSettings={this.updateViewerSettings}
         destroyReaderComponent={this.destroyReaderComponent}
         handleChapterNavigation={this.handleChapterNavigation}
         handleSidebarButtonClick={this.handleSidebarButtonClick}
         navigateToChapterByURL={this.navigateToChapterByURL}
         downloads={this.props.downloads}
         uiOptions={this.props.uiOptions}
+        viewerSettings={this.props.viewerSettings}
+        update={this.props.viewerSettingsActions.update}
+        save={this.props.viewerSettingsActions.save}
       >
-        <Frame
-          slug={slug}
-          hash={hash}
-          ready={ready}
-          bookURL={bookURL}
-          spreadIndex={spreadIndex}
-          lastSpreadIndex={lastSpreadIndex}
-          bookContent={bookContentComponent}
-          pageAnimation={pageAnimation}
-          setReaderState={this._setState}
-          viewerSettings={viewerSettings}
-        />
+        <ReaderContext.Provider
+          value={{
+            lastSpread,
+            spreadIndex,
+            getTranslateX: this.getTranslateX,
+            navigateToChapterByURL: this.navigateToChapterByURL,
+          }}
+        >
+          <Frame
+            slug={slug}
+            hash={hash}
+            bookURL={bookURL}
+            spreadIndex={spreadIndex}
+            lastSpreadIndex={lastSpreadIndex}
+            BookContent={BookContent}
+            pageAnimation={pageAnimation}
+            viewerSettings={this.props.viewerSettings}
+            update={this.props.viewerSettingsActions.update}
+            setReaderState={this._setState}
+            // Can't wrap layout or the withObservable HOC in a way that preserves
+            // refs, so pass down `view` as props
+            view={this.props.view}
+          />
+        </ReaderContext.Provider>
         <Spinner spinnerVisible={spinnerVisible} />
       </Controls>
     )
   }
 }
 
-export default Reader
+const mapStateToProps = ({ viewerSettings, view }) => ({ viewerSettings, view })
+
+const mapDispatchToProps = dispatch => ({
+  viewerSettingsActions: bindActionCreators(viewerSettingsActions, dispatch),
+  viewActions: bindActionCreators(viewActions, dispatch),
+})
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withDeferredCallbacks(Reader))

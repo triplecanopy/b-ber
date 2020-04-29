@@ -19,7 +19,8 @@ class Controls extends Component {
     this.handleClick = this.handleClick.bind(this)
   }
 
-  componentWillMount() {
+  // eslint-disable-next-line camelcase
+  UNSAFE_componentWillMount() {
     this.bindEvents()
 
     Messenger.register(e => {
@@ -93,15 +94,15 @@ class Controls extends Component {
   }
 
   bindEvents() {
-    document.addEventListener('keydown', this.handleKeyDown, false)
-    document.addEventListener('click', this.handleClick, false)
-    document.addEventListener('touchstart', this.handleClick, false)
+    document.addEventListener('keydown', this.handleKeyDown)
+    document.addEventListener('click', this.handleClick)
+    document.addEventListener('touchstart', this.handleClick)
   }
 
   unbindEvents() {
-    document.removeEventListener('keydown', this.handleKeyDown, false)
-    document.removeEventListener('click', this.handleClick, false)
-    document.removeEventListener('touchstart', this.handleClick, false)
+    document.removeEventListener('keydown', this.handleKeyDown)
+    document.removeEventListener('click', this.handleClick)
+    document.removeEventListener('touchstart', this.handleClick)
   }
 
   render() {
