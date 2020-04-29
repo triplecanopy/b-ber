@@ -1,5 +1,3 @@
-/* global test,expect */
-
 import XMLAdaptor from '../../src/helpers/XMLAdaptor'
 
 const xml = {

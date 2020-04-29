@@ -241,6 +241,8 @@ class ViewerSettings {
         }
       }
 
+      // https://github.com/eslint/eslint/issues/12117
+      // eslint-disable-next-line no-unused-vars
       for (const [key, value] of Object.entries(objectOrString)) {
         this[key] = value
       }

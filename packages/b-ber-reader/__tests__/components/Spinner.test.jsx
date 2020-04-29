@@ -1,5 +1,3 @@
-/* global jest,test,expect */
-
 import React from 'react'
 import renderer from 'react-test-renderer'
 import Spinner from '../../src/components/Spinner'

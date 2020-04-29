@@ -1,5 +1,3 @@
-/* global expect,jest */
-
 import cover from '../../src/commands/cover'
 
 jest.mock('@canopycanopycanopy/b-ber-tasks', () => ({

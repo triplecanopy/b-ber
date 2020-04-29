@@ -1,5 +1,3 @@
-/* global test,expect */
-
 import { isNumeric, isInt, isFloat } from '../../src/helpers/Types'
 
 describe('Types', () => {

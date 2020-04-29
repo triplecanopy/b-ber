@@ -1,5 +1,3 @@
-/* global jest,test,expect */
-
 import ViewerSettings from '../../src/models/ViewerSettings'
 import { transitions, themes } from '../../src/constants'
 

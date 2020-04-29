@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import fs from 'fs-extra'
 import Toc from '../src/Toc'
 

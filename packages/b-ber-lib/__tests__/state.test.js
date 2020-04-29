@@ -1,5 +1,3 @@
-/* global expect */
-
 import fs from 'fs-extra'
 
 jest.mock('../src/Spine')

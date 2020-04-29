@@ -1,5 +1,3 @@
-/* global expect,jest */
-
 import generate from '../../src/commands/generate'
 
 jest.mock('@canopycanopycanopy/b-ber-tasks', () => ({

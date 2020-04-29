@@ -1,5 +1,3 @@
-/* global jest,test,expect */
-
 import DocumentProcessor from '../../src/lib/DocumentProcessor'
 
 const errorHtml = `<!doctype html>

@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 /* eslint-disable no-param-reassign,no-plusplus */
 
 import isUndefined from 'lodash.isundefined'

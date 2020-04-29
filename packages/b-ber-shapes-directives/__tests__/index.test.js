@@ -1,5 +1,3 @@
-/* global expect */
-
 import {
   BLOCK_DIRECTIVE_MARKER,
   INLINE_DIRECTIVE_MARKER,

@@ -27,6 +27,7 @@ class Footnotes {
     return fs.writeFile(this.file.path, markup, 'utf8').then(() => {
       const fileData = new SpineItem({
         fileName: this.file.name,
+        // eslint-disable-next-line camelcase
         in_toc: false,
         linear: false,
         generated: true,

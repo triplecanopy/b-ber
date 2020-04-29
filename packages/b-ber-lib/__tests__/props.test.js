@@ -1,5 +1,3 @@
-/* global expect,beforeAll,afterAll */
-
 import path from 'path'
 import mock from 'mock-fs'
 import ManifestItemProperties from '../src/ManifestItemProperties'

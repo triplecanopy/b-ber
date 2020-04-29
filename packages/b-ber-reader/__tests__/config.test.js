@@ -1,4 +1,4 @@
-/* global jest,test,expect,jsdom */
+/* global jsdom */
 /* eslint-disable global-require,no-empty,import/no-unresolved */
 
 describe('b-ber-reader development config', () => {

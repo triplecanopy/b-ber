@@ -1,5 +1,3 @@
-/* global expect,jest */
-
 import opf from '../../src/commands/opf'
 
 jest.mock('@canopycanopycanopy/b-ber-tasks', () => ({

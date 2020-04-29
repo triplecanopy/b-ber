@@ -33,6 +33,7 @@ const nestedContentToYAML = arr =>
 
     if (curr.linear === false || curr.in_toc === false) {
       if (curr.linear === false) model.linear = false
+      // eslint-disable-next-line camelcase
       if (curr.in_toc === false) model.in_toc = false
       acc.push({ [curr.fileName]: model })
     } else {
