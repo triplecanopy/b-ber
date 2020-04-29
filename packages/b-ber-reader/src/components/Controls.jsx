@@ -20,7 +20,7 @@ class Controls extends Component {
   }
 
   // eslint-disable-next-line camelcase
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.bindEvents()
 
     Messenger.register(e => {

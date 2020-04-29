@@ -26,7 +26,7 @@ class Marker extends React.Component {
     this.calculateOffsetHeight = this.calculateOffsetHeight.bind(this)
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     const markerId = this.props['data-marker']
     const { recto, verso, elementEdgeLeft } = nextProps
 
@@ -137,8 +137,9 @@ class Marker extends React.Component {
       }
     }
 
-    // Minus one line to prevent overflow, which adds a "blank page"
-    offsetHeight = Math.floor(offsetHeight) - 21
+    offsetHeight = Math.floor(offsetHeight)
+    if (!unbound && !adjacent) offsetHeight -= 21 // One line of text to prevent overlowing to "blank pages"
+    if (adjacent) offsetHeight += 21 / 2
 
     const markerId = this.props['data-marker']
     const marker = this.props.markers[markerId]
@@ -162,9 +163,22 @@ class Marker extends React.Component {
 
   render() {
     const { verso, recto } = this.props
-    const height = this.calculateOffsetHeight()
-    const spacerStyles = { height, display: 'block' }
-    const markerStyles = { ...this.props.style }
+    const offsetHeight = this.calculateOffsetHeight()
+
+    const debug = false // dev
+
+    const debugSpacerStyles = { background: 'coral' }
+    const debugMarkerStyles = { backgroundColor: verso ? 'violet' : 'red' }
+
+    let spacerStyles = {
+      height: offsetHeight,
+      display: 'block',
+    }
+
+    if (debug) spacerStyles = { ...spacerStyles, ...debugSpacerStyles }
+
+    let markerStyles = { ...this.props.style }
+    if (debug) markerStyles = { ...markerStyles, ...debugMarkerStyles }
 
     return (
       <span>

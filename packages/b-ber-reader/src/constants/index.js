@@ -1,10 +1,7 @@
 // Speeds to debounce our mutation and resize observer callbacks. making sure
 // the document is laid out before rendering in decorate-observable.js
-export const ENSURE_RENDER_TIMEOUT = 60
 export const RESIZE_DEBOUNCE_TIMER = 60
 export const MUTATION_DEBOUNCE_TIMER = 60
-
-// Used for calling deferred pagination events in decorate-deferrable.js
 export const DEFERRED_CALLBACK_TIMER = 60
 
 export const transitions = {

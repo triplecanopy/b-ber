@@ -3,10 +3,11 @@ import PropTypes from 'prop-types'
 import debounce from 'lodash/debounce'
 import transitions from '../lib/transition-styles'
 import Viewport from '../helpers/Viewport'
-import { debug } from '../config'
 import browser from '../lib/browser'
 import withObservers from '../lib/with-observers'
 import withDimensions from '../lib/with-dimensions'
+import ReaderContext from '../lib/reader-context'
+import { RESIZE_DEBOUNCE_TIMER } from '../constants'
 
 const Leaves = ({ leafLeftStyles, leafRightStyles }) =>
   Viewport.isMobile() ? null : (
@@ -17,6 +18,8 @@ const Leaves = ({ leafLeftStyles, leafRightStyles }) =>
   )
 
 class Layout extends React.Component {
+  static contextType = ReaderContext
+
   static propTypes = {
     viewerSettings: PropTypes.shape({
       paddingTop: PropTypes.number.isRequired,
@@ -35,18 +38,17 @@ class Layout extends React.Component {
     border: 0,
     boxSizing: 'border-box',
     transform: 'translateX(0)',
-    translateX: 0,
     columnFill: 'auto',
   }
 
   constructor() {
     super()
 
-    const debounceSpeed = 60
-
-    this.handleResize = debounce(this.onResizeDone, debounceSpeed, {}).bind(
-      this
-    )
+    this.handleResize = debounce(
+      this.onResizeDone,
+      RESIZE_DEBOUNCE_TIMER,
+      {}
+    ).bind(this)
   }
 
   componentDidMount() {
@@ -55,7 +57,7 @@ class Layout extends React.Component {
     this.bindEventListeners()
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     const { spreadIndex } = nextProps
     this.updateTransform(spreadIndex)
   }
@@ -69,34 +71,6 @@ class Layout extends React.Component {
     this.updateTransform()
   }
 
-  getTranslateX(_spreadIndex) {
-    const spreadIndex =
-      typeof _spreadIndex === 'undefined'
-        ? this.props.spreadIndex
-        : _spreadIndex
-
-    const {
-      width,
-      paddingLeft,
-      paddingRight,
-      columnGap,
-    } = this.props.viewerSettings
-
-    const isMobile = Viewport.isMobile()
-
-    let translateX = 0
-    if (!isMobile) {
-      translateX =
-        (width - paddingLeft - paddingRight + columnGap) * spreadIndex * -1
-
-      // no -0
-      translateX =
-        translateX === 0 && Math.sign(1 / translateX) === -1 ? 0 : translateX
-    }
-
-    return translateX
-  }
-
   bindEventListeners() {
     window.addEventListener('resize', this.handleResize)
   }
@@ -106,10 +80,10 @@ class Layout extends React.Component {
   }
 
   updateTransform = spreadIndex => {
-    const translateX = this.getTranslateX(spreadIndex)
+    const translateX = this.context.getTranslateX(spreadIndex)
     const transform = `translateX(${translateX}px)`
 
-    this.setState({ transform, translateX })
+    this.setState({ transform })
   }
 
   layoutStyles() {
@@ -155,7 +129,7 @@ class Layout extends React.Component {
     let styles = {}
     let positionX = 0
 
-    positionX = this.getTranslateX()
+    positionX = this.context.getTranslateX()
 
     if (browser.name === 'firefox') {
       if (position === 'left') positionX *= -1
@@ -171,8 +145,6 @@ class Layout extends React.Component {
         transition: `transform ${transitionSpeed}ms ease 0s`,
       }
     }
-
-    if (debug) styles = { ...styles, opacity: 0.4, backgroundColor: 'blue' }
 
     return styles
   }
@@ -215,7 +187,7 @@ class Layout extends React.Component {
         className={`spread-index__${spreadIndex} context__${contextClass} ${slug}`}
       >
         <div id="content" style={contentStyles} ref={this.props.innerRef}>
-          <this.props.BookContent {...this.props} {...this.state} />
+          <this.props.BookContent />
         </div>
 
         <Leaves

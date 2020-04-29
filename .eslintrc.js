@@ -10,6 +10,7 @@ module.exports = {
   rules: {
     'prettier/prettier': 'error',
     'arrow-parens': 0,
+    camelcase: [2, { allow: ['^UNSAFE_'] }],
     'consistent-return': 0,
     'import/extensions': [2, 'never'],
     'jsx-a11y/href-no-hash': 0,

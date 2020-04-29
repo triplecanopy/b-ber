@@ -5,7 +5,7 @@ import Viewport from '../helpers/Viewport'
 class Frame extends React.Component {
   node = React.createRef()
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (
       !Viewport.isMobile() ||
       !this.node?.current ||

@@ -1,6 +1,5 @@
 import React from 'react'
 import omit from 'lodash/omit'
-import classNames from 'classnames'
 import ReactPlayer from 'react-player'
 import has from 'lodash/has'
 import withNodePosition from '../../lib/with-node-position'
@@ -8,41 +7,13 @@ import ReaderContext from '../../lib/reader-context'
 import browser from '../../lib/browser'
 import Url from '../../helpers/Url'
 import Viewport from '../../helpers/Viewport'
+import VimeoPosterImage from './VimeoPosterImage'
+import VimeoPlayerControls from './VimeoPlayerControls'
 
 // Chrome 81
 // Conditional chaining for testing env
 const isChrome81 =
   browser?.name === 'chrome' && browser?.version === '81.0.4044'
-
-const VimeoPosterImage = ({ src, playing, controls, handleUpdatePlaying }) => {
-  if (!src) return null
-
-  return (
-    // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions
-    <img
-      className={classNames('poster poster--vimeo', {
-        // Don't show poster image if the video is playing
-        visible: !playing,
-        // Disable pointer-events on the poster image if using native controls
-        // and the video is playing
-        controls,
-      })}
-      onClick={handleUpdatePlaying}
-      src={src}
-      alt=""
-    />
-  )
-}
-
-// TODO this will implement/be replaced with Media/Controls components
-const VimeoPlayerControls = (/*
-  {
-    handleUpdatePlaying,
-    handleUpdatePosition,
-    handleUpdateVolume,
-  }
-*/) =>
-  null
 
 class Vimeo extends React.Component {
   static contextType = ReaderContext
@@ -77,7 +48,7 @@ class Vimeo extends React.Component {
     iframePlaceholderHeight: 0,
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     const { src, posterImage, aspectRatio } = this.props
     const [url, queryString] = this.getVimeoURLAndQueryParamters(src)
 
@@ -123,17 +94,19 @@ class Vimeo extends React.Component {
     this.updateIframePosition() // Chrome 81
   }
 
-  componentWillReceiveProps(nextProps, nextContext) {
+  UNSAFE_componentWillReceiveProps(nextProps, nextContext) {
     // Only elements with an autoplay attribute
     if (!this.state.autoplay) return
 
     // Only if the view is fully rendered
-    if (!nextProps.view.loaded) return
+    if (!this.props.view.loaded) return
+    if (this.props.view.pendingDeferredCallbacks) return
 
     let { currentSpreadIndex } = this.state
 
-    // The index that the element is rendered on as calculated by withNodePosition
-    const { spreadIndex: elementSpreadIndex } = this.props
+    // The index that the element is rendered on as calculated by
+    // withNodePosition
+    const { spreadIndex: elementSpreadIndex } = nextProps
 
     // The spread index that's currently in view
     const { spreadIndex: visibleSpreadIndex } = nextContext
@@ -145,8 +118,16 @@ class Vimeo extends React.Component {
     // with the video (play/pause) as normal
     currentSpreadIndex = visibleSpreadIndex
 
-    // Play or pause the video. If `elementSpreadIndex`
-    const playing = elementSpreadIndex === visibleSpreadIndex
+    // Play or pause the video
+    const playing =
+      elementSpreadIndex === visibleSpreadIndex && !Viewport.isMobile()
+
+    console.log(
+      `elementSpreadIndex: ${elementSpreadIndex}`,
+      `visibleSpreadIndex: ${visibleSpreadIndex}`,
+      `currentSpreadIndex: ${currentSpreadIndex}`,
+      `playing: ${playing}`
+    )
 
     this.setState({ playing, currentSpreadIndex })
   }
@@ -193,9 +174,9 @@ class Vimeo extends React.Component {
   getVimeoURLAndQueryParamters = url => url.split('?')
 
   // Recursive call to update "floating" iframe position. The elements shift
-  // around before render and can't be managed reliably in state, so dirty poll
-  // the placeholder position to check if the floating element's position
-  // matches, and call again if not.
+  // around before render and can't be managed reliably in state, so poll the
+  // placeholder position to check if the floating element's position matches,
+  // and call again if not.
   updateIframePosition = () => {
     if (Viewport.isMobile()) return
 
@@ -216,14 +197,7 @@ class Vimeo extends React.Component {
 
     // Account for the layout element's offset which confuses calculations after
     // resize
-    const layoutElem = document.querySelector('#layout')
-    const matrix = window
-      .getComputedStyle(layoutElem)
-      .transform.replace(/(?:^matrix\(|\)$)/g, '')
-      .split(',')
-      .map(n => Number(n.trim()))
-
-    const transformLeft = Math.abs(matrix[4])
+    const transformLeft = Math.abs(this.context.getTranslateX())
 
     if (
       iframePlaceholderLeft !== left - transformLeft ||
@@ -261,7 +235,7 @@ class Vimeo extends React.Component {
     } = this.state
 
     // Chrome 81
-    let placeholderStyles = {}
+    let iframeContainerStyles = {}
     let paddingTop
 
     if (isChrome81) {
@@ -270,7 +244,7 @@ class Vimeo extends React.Component {
       const x = aspectRatio.get('x')
       const y = aspectRatio.get('y')
 
-      placeholderStyles = { top, width, height, position }
+      iframeContainerStyles = mobile ? {} : { top, width, height, position }
 
       // .iframe-placeholder styles
       paddingTop = mobile ? 0 : `${(y / x) * 100}%`
@@ -313,7 +287,7 @@ class Vimeo extends React.Component {
         )}
 
         {/* Ref is used to calculate spread position in HOC */}
-        <div style={placeholderStyles} key={url} ref={this.props.elemRef}>
+        <div style={iframeContainerStyles} key={url} ref={this.props.elemRef}>
           <VimeoPosterImage
             src={posterImage}
             playing={playing}

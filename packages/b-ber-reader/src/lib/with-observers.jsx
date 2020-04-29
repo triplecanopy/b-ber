@@ -4,11 +4,7 @@ import ResizeObserver from 'resize-observer-polyfill'
 import { isNumeric } from '../helpers/Types'
 import { debug, verboseOutput } from '../config'
 import browser from './browser'
-import {
-  ENSURE_RENDER_TIMEOUT,
-  RESIZE_DEBOUNCE_TIMER,
-  MUTATION_DEBOUNCE_TIMER,
-} from '../constants'
+import { RESIZE_DEBOUNCE_TIMER, MUTATION_DEBOUNCE_TIMER } from '../constants'
 
 const log = (lastSpreadIndex, contentDimensions, frameHeight, columns) => {
   if (debug && verboseOutput) {
@@ -31,7 +27,6 @@ const assertRef = node => {
 }
 
 const withObservers = WrappedComponent => {
-  let timer = null
   let resizeObserver = null
   let mutationObserver = null
   let previousContentDimensions = 0
@@ -109,7 +104,7 @@ const withObservers = WrappedComponent => {
       assertRef(this.node)
 
       const { columns } = this.props
-      const lastNode = document.querySelector('.ultimate')
+      const lastNode = document.querySelector('.ultimate') // TODO redux
 
       let contentDimensions
       let lastSpreadIndex
@@ -174,20 +169,12 @@ const withObservers = WrappedComponent => {
       // available, then hide then show content to trigger the resize observer's
       // callback
       if (previousContentDimensions !== contentDimensions || lastNode == null) {
-        clearTimeout(timer)
-        timer = setTimeout(() => {
-          previousContentDimensions = contentDimensions
-
-          log(lastSpreadIndex, contentDimensions, frameHeight, columns)
-
-          this.node.current.style.display = 'none'
-          this.node.current.style.display = 'block'
-        }, ENSURE_RENDER_TIMEOUT)
+        previousContentDimensions = contentDimensions
+        this.node.current.style.display = 'none'
+        this.node.current.style.display = 'block'
       } else {
         // TODO move `lastSpreadIndex` to Redux
-        this.props.setReaderState({ lastSpreadIndex }, () => {
-          this.props.load()
-        })
+        this.props.setReaderState({ lastSpreadIndex })
       }
     }
 
