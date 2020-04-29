@@ -1,29 +1,30 @@
 import React from 'react'
 import classNames from 'classnames'
-import { Link } from '../'
 
 const NestedChapterList = props => {
   const { current, items } = props
   const depth = props.depth || 0
-  const items_ = items.filter(a => a.depth === depth && a.inTOC)
+  const items_ = items.filter(item => item.depth === depth && item.inTOC)
 
   return (
     <ol>
       {items_.map((item, i) => (
-        <li key={i}>
-          <Link
-            href={item.absoluteURL}
+        <li key={item.id}>
+          <button
+            onClick={() => props.navigateToChapterByURL(item.absoluteURL)}
             className={classNames(`indent--${depth + 1}`, {
               'chapter--current': current === item.id,
             })}
           >
             {item.title || `Chapter ${depth}.${i}`}
-          </Link>
+          </button>
+
           {item.children.length > 0 && (
             <NestedChapterList
               current={current}
               items={item.children}
               depth={depth + 1}
+              navigateToChapterByURL={props.navigateToChapterByURL}
             />
           )}
         </li>
@@ -39,8 +40,9 @@ const SidebarChapters = props => (
     })}
   >
     <NestedChapterList
-      current={(props.spine[props.currentSpineItemIndex || 0] || {}).id}
       items={[...props.spine]}
+      current={(props.spine[props.currentSpineItemIndex || 0] || {}).id}
+      navigateToChapterByURL={props.navigateToChapterByURL}
     />
   </nav>
 )

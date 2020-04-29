@@ -1,5 +1,5 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
+import React from 'react'
+import ReaderContext from '../lib/reader-context'
 import Url from '../helpers/Url'
 
 // The Link component has to account for several different possibilities when
@@ -7,33 +7,35 @@ import Url from '../helpers/Url'
 // reader), hosted (same domain as the domain that the reader is hosted on, but
 // the reader itself hosted elsewhere and embedded in an iframe), and external.
 
-class Link extends Component {
-  static contextTypes = {
-    spreadIndex: PropTypes.number,
-    navigateToChapterByURL: PropTypes.func,
-  }
+const Link = props => (
+  <ReaderContext.Consumer>
+    {({ navigateToChapterByURL }) => {
+      let { className, style } = props
 
-  render() {
-    const { className, style, href } = this.props
-    const target = Url.isExternal(href) ? '_blank' : '_top'
+      className = className || ''
+      style = style || {}
 
-    return (
-      <a
-        href={href}
-        style={style || {}}
-        className={className || ''}
-        target={target}
-        onClick={e => {
-          if (Url.isRelative(href) || Url.isInternal(href)) {
-            e.preventDefault()
-            this.context.navigateToChapterByURL(href)
-          }
-        }}
-      >
-        {this.props.children}
-      </a>
-    )
-  }
-}
+      const { href } = props
+      const target = Url.isExternal(href) ? '_blank' : '_top'
+
+      return (
+        <a
+          href={href}
+          style={style}
+          target={target}
+          className={className}
+          onClick={e => {
+            if (Url.isRelative(href) || Url.isInternal(href)) {
+              e.preventDefault()
+              navigateToChapterByURL(href)
+            }
+          }}
+        >
+          {props.children}
+        </a>
+      )
+    }}
+  </ReaderContext.Consumer>
+)
 
 export default Link

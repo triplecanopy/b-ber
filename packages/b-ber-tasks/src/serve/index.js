@@ -9,7 +9,7 @@ const browserSync = create()
 const port = 4000
 const debounceSpeed = 500
 
-const make = build => {
+const update = build => {
   state.update('build', build)
   state.update('config.base_url', '/')
   state.update('config.base_path', '/')
@@ -19,7 +19,7 @@ const make = build => {
   return serialize(sequences[build])
 }
 
-const reload = build => make(build).then(browserSync.reload)
+const reload = build => update(build).then(browserSync.reload)
 
 const watch = build => {
   browserSync.init({
@@ -58,6 +58,6 @@ const watch = build => {
   })
 }
 
-const serve = ({ build }) => make(build).then(() => watch(build))
+const serve = ({ build }) => update(build).then(() => watch(build))
 
 export default serve

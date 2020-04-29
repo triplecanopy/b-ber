@@ -1,26 +1,141 @@
 // sass-lint:disable no-important,nesting-depth
-
 $white: rgba(255, 255, 255, 1);
 $black: rgba(34, 34, 34, 1);
+$blue: rgba(105, 105, 252, 1);
 $violet: rgba(80, 80, 197, 1);
-$lightgrey: rgba(211, 211, 211, 1);
-$component-x: 35px;
-$padding-y: 47px;
+$grey-light: rgba(211, 211, 211, 1);
 
-$ease: ease-out;
-$speed: 200ms;
+$small: 35px;
+$medium: 47px;
 
-// The following queries should be kept in sync with constants in src/constants.js
-$mobile-breakpoint-max: 414px; // Max. supported 'mobile' size (iPhone XS/R); Only applies to menu, so not used in constants.js
+$transition-speed-slow: 300ms;
+$transition-speed-normal: 200ms;
+$transition-speed-fast: 100ms;
+$transition-easing: ease;
+
+$anmiation-speed-normal: 250ms;
+$anmiation-speed-slow: 2500ms;
+
+// The following media queries should be kept in sync with constants in
+// src/constants.js
+
+// Max. supported 'mobile' size (iPhone XS/R); Only applies to menu, so not used
+// in constants.js
+$mobile-breakpoint-max: 414px;
 $tablet-breakpoint-max: 768px;
 
 $font-serif: Georgia, 'Iowan', Times, serif;
+$font-size: 14px;
 
-@mixin transition-fast($property) {
-  transition: $property 100ms ease;
+$spinner-size: 40px;
+
+// @mixin transition(
+//   $property,
+//   $speed: $transition-speed-fast,
+//   $easing: $transition-easing
+// ) {
+//   transition: $property $speed $easing;
+// }
+
+// Usage:   @include transition(width, height 0.3s ease-in-out);
+// Output:  transition(width 0.2s, height 0.3s ease-in-out);
+//
+// Pass in any number of transitions
+@mixin transition($transitions...) {
+  $unfoldedTransitions: ();
+  @each $transition in $transitions {
+    $unfoldedTransitions: append(
+      $unfoldedTransitions,
+      unfoldTransition($transition),
+      comma
+    );
+  }
+
+  transition: $unfoldedTransitions;
 }
 
-// base
+@function unfoldTransition($transition) {
+  // Default values
+  $property: all;
+  $duration: $transition-speed-fast;
+  $easing: $transition-easing; // Browser default is ease, which is what we want
+  $delay: null; // Browser default is 0, which is what we want
+  $defaultProperties: ($property, $duration, $easing, $delay);
+
+  // Grab transition properties if they exist
+  $unfoldedTransition: ();
+  @for $i from 1 through length($defaultProperties) {
+    $p: null;
+    @if $i <= length($transition) {
+      $p: nth($transition, $i);
+    } @else {
+      $p: nth($defaultProperties, $i);
+    }
+    $unfoldedTransition: append($unfoldedTransition, $p);
+  }
+
+  @return $unfoldedTransition;
+}
+
+@mixin border($position: '', $color: $grey-light) {
+  @if $position != '' {
+    border-#{$position}: 1px solid $color;
+  } @else {
+    border: 1px solid $color;
+  }
+}
+
+// Icons
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: url('~material-design-icons/iconfont/MaterialIcons-Regular.eot?#iefix')
+      format('embedded-opentype'),
+    local('Material Icons'), local('MaterialIcons-Regular'),
+    url('~material-design-icons/iconfont/MaterialIcons-Regular.woff2')
+      format('woff2'),
+    url('~material-design-icons/iconfont/MaterialIcons-Regular.woff')
+      format('woff'),
+    url('~material-design-icons/iconfont/MaterialIcons-Regular.ttf')
+      format('truetype');
+}
+
+// https://github.com/tobiasahlin/SpinKit/blob/master/examples/5-pulse.html
+@keyframes pulse {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+@keyframes nav__button__downloads__shadow {
+  5% {
+    text-shadow: 0 0 5px rgba($blue, 1);
+  }
+  35% {
+    text-shadow: 0 5px 10px rgba($blue, 0.5);
+  }
+  100% {
+    text-shadow: 0 10px 30px rgba($blue, 0);
+  }
+}
+
+@keyframes nav__button__downloads__color {
+  0% {
+    color: $black;
+  }
+  25% {
+    color: $violet;
+  }
+  100% {
+    color: $black;
+  }
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -31,8 +146,12 @@ ol {
   list-style: none;
 }
 
+a,
 button {
   cursor: pointer;
+}
+
+button {
   appearance: none;
   background: transparent;
   border: 0;
@@ -40,38 +159,20 @@ button {
   outline: none;
 }
 
-a {
-  cursor: pointer;
-}
-
 .footnote__body {
   visibility: visible;
   display: block;
-
   background: $white;
   padding-left: 1.5em;
   padding-right: 1.5em;
   position: absolute;
-  font-size: 14px;
+  font-size: $font-size;
   line-height: 1.6;
   z-index: 1000;
 
   &.footnote__body--hidden {
     visibility: hidden;
   }
-}
-
-// icons
-// prettier-ignore
-@font-face {
-    font-family: 'Material Icons';
-    font-style: normal;
-    font-weight: 400;
-    src: url('~material-design-icons/iconfont/MaterialIcons-Regular.eot?#iefix') format('embedded-opentype'),
-    local('Material Icons'), local('MaterialIcons-Regular'),
-    url('~material-design-icons/iconfont/MaterialIcons-Regular.woff2') format('woff2'),
-    url('~material-design-icons/iconfont/MaterialIcons-Regular.woff') format('woff'),
-    url('~material-design-icons/iconfont/MaterialIcons-Regular.ttf') format('truetype');
 }
 
 .material-icons {
@@ -102,14 +203,14 @@ a {
 }
 
 .controls__header {
+  @include border('bottom');
   z-index: 1;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   background: $white;
-  border-bottom: 1px solid $lightgrey;
-  height: $component-x;
+  height: $small;
   opacity: 1 !important;
 
   nav ul {
@@ -117,7 +218,7 @@ a {
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    height: $component-x;
+    height: $small;
     padding: 0 10px;
 
     li {
@@ -128,47 +229,27 @@ a {
         flex: 1;
       }
 
-      //TC SPECIFIC STYLES
       &:nth-child(3) {
         display: none;
       }
 
       .nav__button {
-        @include transition-fast('color');
+        @include transition(color);
         padding: 0 5px;
+
         &:hover {
           color: $violet;
         }
+
         &.nav__button__downloads {
           color: $black;
-          animation: nav__button__downloads__shadow 2.5s infinite,
-            nav__button__downloads__color 2.5s infinite;
-          text-shadow: 0px 0px 0px rgba(80, 80, 197, 0);
+          animation: nav__button__downloads__shadow $anmiation-speed-slow
+              infinite,
+            nav__button__downloads__color $anmiation-speed-slow infinite;
+
           &:hover {
             animation: none;
             color: $violet;
-          }
-          @keyframes nav__button__downloads__shadow {
-            5% {
-              text-shadow: 0 0px 5px rgba(105, 105, 252, 1);
-            }
-            35% {
-              text-shadow: 0px 5px 10px rgba(105, 105, 252, 0.5);
-            }
-            100% {
-              text-shadow: 0px 10px 30px rgba(105, 105, 252, 0);
-            }
-          }
-          @keyframes nav__button__downloads__color {
-            0% {
-              color: rgba(34, 34, 34, 1);
-            }
-            25% {
-              color: rgba(80, 80, 197, 1);
-            }
-            100% {
-              color: rgba(34, 34, 34, 1);
-            }
           }
         }
       }
@@ -180,8 +261,8 @@ a {
   z-index: 1;
   font-family: $font-serif;
   font-weight: 400;
-  font-size: 14px;
-  padding-bottom: $component-x;
+  font-size: $font-size;
+  padding-bottom: $small;
 
   ol,
   ul,
@@ -189,19 +270,19 @@ a {
     li {
       a,
       button {
+        @include border('bottom');
         text-align: left;
         display: block;
         width: 100%;
-        padding: calc(#{$padding-y} / 2);
-        border-bottom: 1px solid $lightgrey;
+        padding: calc(#{$medium} / 2);
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
-        font-size: 14px;
+        font-size: $font-size;
         font-family: $font-serif;
 
         &:hover {
-          @include transition-fast('color');
+          @include transition(color);
           color: $violet;
         }
 
@@ -217,7 +298,7 @@ a {
 
         @for $i from 1 through 10 {
           &.indent--#{$i} {
-            text-indent: ($i - 1) * ($component-x / 2);
+            text-indent: ($i - 1) * ($small / 2);
           }
         }
       }
@@ -226,29 +307,28 @@ a {
       li,
       dl {
         a {
-          text-indent: $padding-y;
+          text-indent: $medium;
         }
       }
     }
 
     dt {
-      padding: calc(#{$padding-y} / 2) 0 0 calc(#{$component-x} / 2);
+      padding: calc(#{$medium} / 2) 0 0 calc(#{$small} / 2);
       text-transform: capitalize;
     }
 
     dd {
-      padding: 5px calc(#{$component-x} / 2) calc(#{$padding-y} / 2);
-      border-bottom: 1px solid $lightgrey;
+      @include border('bottom');
+      padding: 5px calc(#{$small} / 2) calc(#{$medium} / 2);
     }
 
     li,
     dt {
       a {
-        @include transition-fast('color');
+        @include transition(color);
         text-decoration: none;
         color: $black;
 
-        //TC SPECIFIC STYLES
         &:hover {
           color: $violet;
         }
@@ -258,14 +338,14 @@ a {
 }
 
 .controls__sidebar__chapters {
+  @include transition(transform, $transition-speed-slow);
+  @include border('right');
   position: fixed;
   z-index: 2;
-  top: $component-x;
+  top: $small;
   height: 100vh;
   background: $white;
-  border-right: 1px solid $lightgrey;
-  width: calc(#{$component-x} * 10);
-  transition: transform 300ms ease;
+  width: calc(#{$small} * 10);
   transform: translateX(-100%);
   overflow: auto;
   -webkit-overflow-scrolling: touch; // sass-lint:disable-line no-vendor-prefixes
@@ -282,15 +362,15 @@ a {
 .controls__sidebar__metadata,
 .controls__sidebar__downloads,
 .controls__sidebar__settings {
+  @include transition(transform, $transition-speed-slow);
+  @include border('left');
   position: fixed;
   z-index: 2;
-  top: $component-x;
+  top: $small;
   right: 0;
   height: 100vh;
   background: $white;
-  border-left: 1px solid $lightgrey;
-  width: calc(#{$component-x} * 10);
-  transition: transform 300ms ease;
+  width: calc(#{$small} * 10);
   transform: translateX(100%);
   overflow: auto;
   -webkit-overflow-scrolling: touch; // sass-lint:disable-line no-vendor-prefixes
@@ -312,15 +392,15 @@ a {
       margin: 10px 0;
 
       .grid__input {
+        @include border;
         display: inline-block;
         margin-left: 5px;
         padding: 2px;
-        border: 1px solid $lightgrey;
       }
 
       .grid__input:hover {
-        background: $lightgrey;
-        border: 1px solid $black;
+        @include border($color: $black);
+        background: $grey-light;
       }
     }
   }
@@ -339,7 +419,7 @@ a {
   }
 
   button {
-    padding-right: calc(#{$component-x} / 2);
+    padding-right: calc(#{$small} / 2);
     position: absolute;
     top: 0;
     right: 0;
@@ -372,7 +452,7 @@ a {
   right: 0;
   bottom: 0;
   background: transparent;
-  height: $component-x + 25px;
+  height: $small + 25px;
   opacity: 1 !important;
 
   @media screen and (max-width: $tablet-breakpoint-max) {
@@ -384,8 +464,8 @@ a {
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    height: $component-x + 25px;
-    padding: 0px 10px;
+    height: $small + 25px;
+    padding: 0 10px;
 
     li {
       display: flex;
@@ -402,10 +482,9 @@ a {
       }
 
       .nav__button {
-        @include transition-fast('color');
+        @include transition(color);
         padding: 0 5px;
 
-        //TC SPECIFIC STYLES
         &:hover {
           color: $violet;
         }
@@ -426,23 +505,12 @@ a {
   display: block;
 }
 
-// https://github.com/tobiasahlin/SpinKit/blob/master/examples/5-pulse.html
-@keyframes pulse {
-  0% {
-    transform: scale(0);
-  }
-  100% {
-    transform: scale(1);
-    opacity: 0;
-  }
-}
-
 .spinner__detail {
   position: absolute;
-  top: calc(50% - 20px);
-  left: calc(50% - 20px);
-  width: 40px;
-  height: 40px;
+  top: calc(50% - #{$spinner-size});
+  left: calc(50% - #{$spinner-size});
+  width: $spinner-size;
+  height: $spinner-size;
   margin: 0;
   padding: 0;
   background-color: $black;
@@ -456,16 +524,17 @@ a {
   height: 100vh;
   z-index: 10;
   background-color: $white;
+
   &.leaf--left {
     left: 0;
   }
+
   &.leaf--right {
     right: 0;
   }
 }
 
-// debug
-
+// Debug
 .grid__debug {
   position: fixed;
   top: 0;
@@ -512,11 +581,16 @@ a {
 
 // Vimeo poster image
 .poster--vimeo {
-  z-index: 0 !important;
+  @include transition(opacity, $transition-speed-normal);
+  z-index: 1 !important;
   opacity: 0;
-  transition: opacity $speed $ease;
+
+  &.controls {
+    pointer-events: none;
+  }
+
   &.visible {
-    z-index: 1 !important;
+    pointer-events: initial !important;
     opacity: 1;
   }
 }
@@ -547,7 +621,7 @@ $thumb-d: 1.5em;
 $track-c: #ccc;
 $thumb-c: #222;
 
-@mixin track() {
+@mixin track {
   box-sizing: border-box;
   border: none;
   width: $track-w;
@@ -555,7 +629,7 @@ $thumb-c: #222;
   background: $track-c;
 }
 
-@mixin thumb() {
+@mixin thumb {
   box-sizing: border-box;
   border: none;
   width: $thumb-d;
@@ -569,8 +643,6 @@ $thumb-c: #222;
   display: flex;
   align-items: center;
   position: relative;
-  // width: $track-w;
-  // height: 3.5 * $thumb-d;
   font: 1em/1 arial, sans-serif;
 }
 
@@ -614,18 +686,3 @@ input[type='range'] {
     display: none;
   }
 }
-
-// dev
-// .fullbleed {
-//     opacity: 0.2;
-// }
-
-// careful! this disrupts page flow, can add another spread if visible
-// .ultimate {
-//     background-color: red;
-//     height: 1px;
-//     width: 100px;
-//     z-index: 999;
-//     position: relative;
-//     display: block;
-// }

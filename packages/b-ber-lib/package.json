@@ -1,6 +1,6 @@
 {
   "name": "@canopycanopycanopy/b-ber-lib",
-  "version": "1.0.22",
+  "version": "1.0.24-alpha.2",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -18,19 +18,21 @@
     "access": "public"
   },
   "devDependencies": {
-    "@babel/cli": "^7.5.0",
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.0",
+    "@babel/preset-env": "^7.9.0",
     "jest": "^24.8.0",
     "mock-fs": "^4.4.2",
     "rimraf": "^2.6.3"
   },
   "dependencies": {
-    "@canopycanopycanopy/b-ber-logger": "1.0.22",
-    "@canopycanopycanopy/b-ber-shapes-dublin-core": "1.0.22",
-    "@canopycanopycanopy/b-ber-shapes-sequences": "1.0.22",
-    "@canopycanopycanopy/b-ber-theme-sans": "1.0.22",
-    "@canopycanopycanopy/b-ber-theme-serif": "1.0.22",
+    "@babel/runtime-corejs3": "^7.9.2",
+    "@canopycanopycanopy/b-ber-logger": "1.0.24-alpha.2",
+    "@canopycanopycanopy/b-ber-shapes-dublin-core": "1.0.24-alpha.2",
+    "@canopycanopycanopy/b-ber-shapes-sequences": "1.0.24-alpha.2",
+    "@canopycanopycanopy/b-ber-theme-sans": "1.0.24-alpha.2",
+    "@canopycanopycanopy/b-ber-theme-serif": "1.0.24-alpha.2",
     "command-exists": "^1.2.2",
-    "core-js": "^3.1.4",
     "fs-extra": "^8.1.0",
     "glob": "^7.1.4",
     "htmlparser2": "^3.9.2",
@@ -72,5 +74,6 @@
       "email": "maxwellsimmer.com@gmail.com",
       "url": "https://maxwellsimmer.com"
     }
-  ]
+  ],
+  "gitHead": "9936fe3f4af76aa7b67ce10c2ed3a32b7de6ce6c"
 }

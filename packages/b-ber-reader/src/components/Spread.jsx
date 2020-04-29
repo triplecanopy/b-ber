@@ -1,156 +1,80 @@
-/* eslint-disable class-methods-use-this,react/sort-comp */
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
-import ResizeObserver from 'resize-observer-polyfill'
-import debounce from 'lodash/debounce'
+import React from 'react'
+import { connect } from 'react-redux'
 import { debug } from '../config'
 import { isNumeric } from '../helpers/Types'
-import { cssHeightDeclarationPropType } from '../lib/custom-prop-types'
-import Messenger from '../lib/Messenger'
-import { messagesTypes } from '../constants'
 import Viewport from '../helpers/Viewport'
 import { SpreadImageStyles } from '.'
+import SpreadContext from '../lib/spread-context'
 
-class Spread extends Component {
-  static contextTypes = {
-    height: cssHeightDeclarationPropType, // from Layout.jsx
-    paddingTop: PropTypes.number,
-    paddingLeft: PropTypes.number,
-    paddingRight: PropTypes.number,
-    paddingBottom: PropTypes.number,
-    columnGap: PropTypes.number,
-    refs: PropTypes.object,
+class Spread extends React.Component {
+  state = {
+    left: '0px',
+    spreadPosition: 0,
+    recto: false,
+    verso: false,
+    elementEdgeLeft: 0,
+    unbound: false,
   }
-  static childContextTypes = {
-    left: PropTypes.string,
-    transform: PropTypes.string,
-    recto: PropTypes.bool,
-    verso: PropTypes.bool,
-  }
-  constructor(props) {
-    super(props)
 
-    this.state = {
-      // height: 0,
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    const markerId = this.props['data-marker-reference']
+    const marker = nextProps.markers[markerId]
 
-      // verso and recto relate to the position of the marker node
-      verso: false,
-      recto: false,
-      left: '',
-      transform: '',
+    if (!marker) return
 
-      spreadPosition: 0,
-      marker: {
-        verso: false,
-        recto: false,
-        x: 0,
-        markerId: '',
-        unbound: false,
-      },
-    }
+    const { recto, verso, elementEdgeLeft, unbound } = marker
 
-    this.debounceSpeed = 60
-    this.messageKey = null
-
-    this.calculateSpreadOffset = this.calculateSpreadOffset.bind(this)
-    this.updateChildElementPositions = this.updateChildElementPositions.bind(
-      this
-    )
-    this.connectResizeObserver = this.connectResizeObserver.bind(this)
-    this.disconnectResizeObserver = this.disconnectResizeObserver.bind(this)
-    this.debounceCalculateSpreadOffset = debounce(
-      this.calculateSpreadOffset,
-      this.debounceSpeed,
-      {}
-    ).bind(this)
-  }
-  getChildContext() {
-    return {
-      left: this.state.left,
-      transform: this.state.transform,
-      recto: this.state.recto,
-      verso: this.state.verso,
+    // TODO most of this state is unused below, it's just being checked against
+    // to determine if `updateChildElementPositions` should fire
+    if (
+      recto !== this.state.recto ||
+      verso !== this.state.verso ||
+      elementEdgeLeft !== this.state.elementEdgeLeft ||
+      unbound !== this.state.unbound
+    ) {
+      this.setState(
+        { recto, verso, elementEdgeLeft, unbound },
+        this.updateChildElementPositions
+      )
     }
   }
 
-  componentWillReceiveProps(_, nextContext) {
-    const markerRefId = this.props['data-marker-reference']
-    if (nextContext.refs[markerRefId]) {
-      const { verso, recto, x, markerId, unbound } = nextContext.refs[
-        markerRefId
-      ]
-
-      if (
-        verso !== this.state.marker.verso ||
-        recto !== this.state.marker.recto ||
-        x !== this.state.marker.x ||
-        markerId !== this.state.marker.markerId ||
-        unbound !== this.state.marker.unbound
-      ) {
-        this.setState(
-          { marker: nextContext.refs[markerRefId] },
-          this.updateChildElementPositions
-        )
-      }
-    }
-  }
-  componentWillMount() {
-    // Adds listener for our 'ready' event that's fired in
-    // decorate-observable.js. This is used to update the absolutely
-    // positioned images in fullbleed panels which function properly on
-    // Chrome, so we only need it for FF and Safari
-    this.messageKey = Messenger.register(() => {
-      this.updateChildElementPositions()
-    }, messagesTypes.DEFERRED_EVENT)
-  }
   componentDidMount() {
-    this.connectResizeObserver()
-    setImmediate(this.updateChildElementPositions)
+    this.updateChildElementPositions()
   }
-  componentWillUnmount() {
-    this.disconnectResizeObserver()
-    Messenger.deregister(this.messageKey)
-  }
-  connectResizeObserver() {
-    const contentNode = document.querySelector('#content')
-    if (!contentNode) {
-      return console.error('Spread#connectResizeObserver: No #content node')
-    }
-    this.resizeObserver = new ResizeObserver(this.debounceCalculateSpreadOffset)
-    this.resizeObserver.observe(contentNode)
-  }
-  disconnectResizeObserver() {
-    this.resizeObserver.disconnect()
-  }
-  calculateSpreadOffset() {
-    let { height } = this.context
-    const { paddingTop, paddingBottom } = this.context
+
+  calculateSpreadOffset = () => {
+    let { height } = this.props.viewerSettings
+    const { paddingTop, paddingBottom } = this.props.viewerSettings
     const padding = paddingTop + paddingBottom
 
     height = isNumeric(height) ? height * 2 - padding * 2 : height
     if (isNumeric(height)) height -= 1 // nudge to prevent overflow onto next spread
 
-    if (this.state.marker.unbound === true) {
-      // height = height / 2 - 1
-    }
-
-    // eslint-disable-next-line react/no-unused-state
-    this.setState({ height }, this.updateChildElementPositions)
+    this.updateChildElementPositions()
   }
 
-  // Spread#updateChildElementPositions lays out absolutely positioned images
+  // Spread.updateChildElementPositions lays out absolutely positioned images
   // over fullbleed placeholders for FF and Safari. This is Chrome's default
   // behaviour but we update there as well for consistency
-  updateChildElementPositions() {
-    const { verso, recto, x, unbound } = this.state.marker
+  updateChildElementPositions = () => {
+    const markerId = this.props['data-marker-reference']
+    const marker = this.props.markers[markerId]
+
+    if (!marker) {
+      return console.error('Cannot update child positions: No marker')
+    }
+
+    const { /* verso, */ recto, elementEdgeLeft, unbound } = marker
     // set this after loading to prevent figures drifing around on initial page load
     // TODO: should be passing in transition speed
     // @issue: https://github.com/triplecanopy/b-ber/issues/216
-    const transform = 'transition: transform 400ms ease'
+    // const transform = 'transition: transform 400ms ease'
     const width = window.innerWidth
-    const { paddingLeft, paddingRight, columnGap } = this.context
+    const { paddingLeft, paddingRight, columnGap } = this.props.viewerSettings
     const layoutWidth = width - paddingLeft - paddingRight + columnGap // not sure why we're adding columnGap in here ...
-    const spreadPosition = Math.round((x + paddingLeft) / layoutWidth) + 1
+    const spreadPosition =
+      Math.round((elementEdgeLeft + paddingLeft) / layoutWidth) + 1
 
     let left = 0
 
@@ -164,20 +88,22 @@ class Spread extends Component {
 
     left = `${left}px`
 
-    this.setState({
-      left,
-      recto,
-      verso,
-      transform,
-      spreadPosition,
-    })
+    this.setState({ left, spreadPosition })
   }
 
   render() {
-    const { /* height, */ spreadPosition } = this.state
-    const markerRefId = this.props['data-marker-reference']
-    const { unbound } = this.state.marker
-    const { paddingLeft } = this.context
+    const { left } = this.state
+    const markerId = this.props['data-marker-reference']
+    const marker = this.props.markers[markerId]
+    if (!marker) return null
+
+    const { spreadPosition } = this.state
+    const { recto, elementEdgeLeft, unbound } = marker
+    const { paddingLeft } = this.props.viewerSettings
+
+    // TODO removing HTML attrs from props
+    // eslint-disable-next-line no-unused-vars
+    const { viewerSettings, markers, ...rest } = this.props
 
     const debugStyles = { background: 'blue' }
 
@@ -185,19 +111,27 @@ class Spread extends Component {
     if (debug) styles = { ...styles, ...debugStyles }
 
     return (
-      <div {...this.props} id={`spread__${markerRefId}`} style={styles}>
+      <div {...rest} id={`spread__${markerId}`} style={styles}>
         <SpreadImageStyles
-          recto={this.state.marker.recto}
-          markerRefId={markerRefId}
+          recto={recto}
+          markerRefId={markerId}
           spreadPosition={spreadPosition}
           unbound={unbound}
           paddingLeft={paddingLeft}
-          markerX={this.state.marker.x}
+          markerX={elementEdgeLeft}
         />
-        {this.props.children}
+        <SpreadContext.Provider value={left}>
+          {this.props.children}
+        </SpreadContext.Provider>
       </div>
     )
   }
 }
 
-export default Spread
+export default connect(
+  ({ viewerSettings, markers }) => ({
+    viewerSettings,
+    markers,
+  }),
+  () => ({})
+)(Spread)

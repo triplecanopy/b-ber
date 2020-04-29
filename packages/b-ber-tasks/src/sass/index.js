@@ -109,8 +109,12 @@ const copyThemeAssets = () => {
   return Promise.all(promises)
 }
 
-function resolveImportedModule(url) {
-  const importTree = url.split(path.sep)
+function resolveImportedModule(importPath) {
+  const trimmedImportPath = importPath.slice(1)
+  let importTree = trimmedImportPath.split(path.sep)
+
+  // Remove empty entries caused by leading/trailing slashes
+  importTree = importTree.filter(Boolean)
 
   let moduleName = importTree.shift()
   if (moduleName[0] === '@') moduleName += `/${importTree.shift()}` // Allow scoped packages
@@ -120,9 +124,7 @@ function resolveImportedModule(url) {
   })
 
   // No path was provided, return the imported node module
-  if (!importTree.length) {
-    return modulePath
-  }
+  if (!importTree.length) return modulePath
 
   // User is importing a specific file, find it and return its location
   const moduleIndex = modulePath.indexOf(moduleName) + moduleName.length
@@ -139,7 +141,7 @@ const renderCSS = scssString =>
         // Importer allows use of '~' to denote node_modules directory in SCSS files
         importer: (url, file, done) =>
           url[0] === '~'
-            ? done({ file: resolveImportedModule(url.replace('~', '')) })
+            ? done({ file: resolveImportedModule(url) })
             : done({ file: url }),
 
         // Add build vars at runtime with the SCSS buffer (which is transformed

@@ -94,7 +94,12 @@ function render(data) {
 
     if (!state.media[id]) throwMissingIDError({ id, build })
     if (!state.media[id][build]) throMissingBuildTypeError({ id, build })
-    ;({ str, delta } = replace({ type, id, build, str, begin, end }))
+
+    const nextDocumentData = replace({ type, id, build, str, begin, end })
+
+    // eslint-disable-next-line prefer-destructuring
+    str = nextDocumentData.str
+    delta += nextDocumentData.delta
   }
 
   return str

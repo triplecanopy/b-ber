@@ -22,7 +22,7 @@ const MARKER_CLOSE_RE = /(exit)(?::([\s]+))?/
 let citation = ''
 const pullquoteIndices = [] // track these separately
 
-function handleOpen(token, fileName, lineNumber) {
+function handleOpen(token, context, fileName, lineNumber) {
   // the pullquote opens
   const [, type, id, attrs] = token
 
@@ -119,7 +119,7 @@ const render = ({ instance, context }) => (tokens, idx) => {
   return tokenClose
     ? handleClose(token, instance)
     : tokenOpen
-    ? handleOpen(tokenOpen, fileName, lineNumber)
+    ? handleOpen(tokenOpen, context, fileName, lineNumber)
     : ''
 }
 

@@ -401,7 +401,8 @@ b {
   }
 }
 
-a.footnote-ref {
+a.footnote-ref,
+span.footnote-ref {
   @extend sup;
 }
 

@@ -117,7 +117,7 @@ export const media = data =>
         <figure id="%ID%">
           <div class="figure__items">
             <div class="%MEDIA_TYPE%">
-              <%MEDIA_TYPE% %ELEMENT_ATTRIBUTES%>
+              <%MEDIA_TYPE% id="%MEDIA_TYPE%-%ID%" %ELEMENT_ATTRIBUTES%>
                 %SOURCE_ELEMENTS%
                 <div class="media__fallback__%MEDIA_TYPE% media__fallback--image">
                   <figure>
@@ -190,6 +190,7 @@ export const vimeo = data =>
                 <iframe
                   data-vimeo="true"
                   data-vimeo-poster="%POSTER_IMAGE_SRC%"
+                  data-aspect-ratio="%ASPECT_RATIO%"
                   src="%SRC%" webkitallowfullscreen="webkitallowfullscreen" mozallowfullscreen="mozallowfullscreen" allowfullscreen="allowfullscreen" frameborder="0" />
               </div>
             </div>
@@ -207,7 +208,7 @@ export const vimeo = data =>
     `
     .replace(/%SECTION_OPEN%/, getSectionOpen(data))
     .replace(/%ID%/g, data.id)
-    .replace(/%ASPECT_RATIO%/, data.aspectRatio)
+    .replace(/%ASPECT_RATIO%/g, data.aspectRatio)
 
     // Poster image for b-ber-reader is pulled from the `data-vimeo-poster`
     // attribute

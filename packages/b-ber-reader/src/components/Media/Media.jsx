@@ -1,16 +1,12 @@
 /* eslint-disable no-unused-vars */
 
 import React from 'react'
-import PropTypes from 'prop-types'
-import withNodePosition from '../withNodePosition'
+import ReaderContext from '../../lib/reader-context'
+import withNodePosition from '../../lib/with-node-position'
 import MediaControls from './Controls/MediaControls'
 
 class Media extends React.Component {
-  static contextTypes = {
-    spreadIndex: PropTypes.number,
-    viewLoaded: PropTypes.bool,
-    lastSpread: PropTypes.bool,
-  }
+  static contextType = ReaderContext
 
   static controlsConfig = new Set(['simple', 'normal', 'full'])
 
@@ -36,12 +32,18 @@ class Media extends React.Component {
     currentSrc: '',
   }
 
-  componentWillReceiveProps(nextProps, nextContext) {
+  UNSAFE_componentWillMount() {
+    if (this.props['data-autoplay'] === true) {
+      this.setState({ autoPlay: true })
+    }
+  }
+
+  UNSAFE_componentWillReceiveProps(nextProps, nextContext) {
     // Play the media on spread update if autoplay is true
     if (!this.state.autoPlay) return
 
     // Don't play the media unless the chapter is visible
-    if (!nextContext.viewLoaded) return
+    if (!nextProps.view.loaded) return
 
     const { paused } = this.state
 
@@ -74,16 +76,14 @@ class Media extends React.Component {
     }
   }
 
-  play = () => {
+  play = () =>
     this.setState({ paused: false }, () => {
       this.props.elemRef.current.play()
       this.updateControlsUI()
     })
-  }
 
-  pause = () => {
+  pause = () =>
     this.setState({ paused: true }, () => this.props.elemRef.current.pause())
-  }
 
   updateTime = step => {
     const { duration } = this.state
@@ -116,12 +116,11 @@ class Media extends React.Component {
     )
   }
 
-  updatePlaybackRate = playbackRate => {
+  updatePlaybackRate = playbackRate =>
     this.setState(
       { playbackRate },
       () => (this.props.elemRef.current.playbackRate = this.state.playbackRate)
     )
-  }
 
   // @param   seconds float
   // @return  string
@@ -180,7 +179,7 @@ class Media extends React.Component {
     })
   }
 
-  // shim
+  // Shim
   // eslint-disable-next-line class-methods-use-this
   fullscreenElement() {
     return (
@@ -263,13 +262,14 @@ class Media extends React.Component {
       elemRef,
       verso,
       recto,
-      edgePosition,
       spreadIndex,
-      edgePositionVariance,
       elementEdgeLeft,
       MediaComponent,
       mediaType,
       autoPlay,
+      currentSpreadIndex,
+      view,
+      viewerSettings,
       controls: controlsAttribute,
 
       // `rest` includes React.Children, and the HTML5 media attributes except

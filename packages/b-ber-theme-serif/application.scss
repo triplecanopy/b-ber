@@ -58,13 +58,13 @@ $modularscale: (
 //
 
 html {
-  font-size: 156.25%;
-} // 25px
+  font-size: 156.25%; // 25px
+}
 
 @if $build != 'web' {
   html {
-    font-size: 100%;
-  } // still 25px
+    font-size: 100%; // 16px
+  }
   body {
     padding: 0 one-em(0) * 0.5;
   }

@@ -1,19 +1,18 @@
 import React from 'react'
-import PropTypes from 'prop-types'
+import SpreadContext from '../lib/spread-context'
 
-class SpreadFigure extends React.Component {
-  static contextTypes = { left: PropTypes.string }
+const SpreadFigure = props => (
+  <SpreadContext.Consumer>
+    {left => {
+      const { children, ...rest } = props
 
-  render() {
-    const { children, ...rest } = this.props
-    const { left } = this.context
-
-    return (
-      <figure style={{ left }} {...rest}>
-        {children}
-      </figure>
-    )
-  }
-}
+      return (
+        <figure style={{ left }} {...rest}>
+          {children}
+        </figure>
+      )
+    }}
+  </SpreadContext.Consumer>
+)
 
 export default SpreadFigure
