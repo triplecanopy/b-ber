@@ -244,7 +244,27 @@ class Vimeo extends React.Component {
       const x = aspectRatio.get('x')
       const y = aspectRatio.get('y')
 
-      iframeContainerStyles = mobile ? {} : { top, width, height, position }
+      // Styles for inline videos
+      if (!mobile) iframeContainerStyles = { top, width, height, position }
+
+      // Styles for fullscreen videos
+      if (!mobile && width > window.innerWidth) {
+        const landscape = window.innerWidth >= window.innerHeight
+
+        iframeContainerStyles.top = '50%'
+        iframeContainerStyles.left = '50%'
+        iframeContainerStyles.transform = 'translateX(-50%) translateY(-50%)'
+
+        if (landscape) {
+          iframeContainerStyles.width = '100vw'
+          iframeContainerStyles.height = '100vw'
+          iframeContainerStyles.minWidth = `${(x / y) * 100}vh`
+        } else {
+          iframeContainerStyles.width = `${(y / x) * 100}vw`
+          iframeContainerStyles.height = '100vw'
+          iframeContainerStyles.minHeight = '100%'
+        }
+      }
 
       // .iframe-placeholder styles
       paddingTop = mobile ? 0 : `${(y / x) * 100}%`
