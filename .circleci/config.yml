@@ -7,7 +7,6 @@ jobs:
     branches:
       only:
         - master
-        - develop
     working_directory: ~/b-ber
     steps:
       - checkout
@@ -18,14 +17,12 @@ jobs:
             - npm-packages-v1-{{ .Branch }}-{{ checksum "BBER_CACHE_KEY" }}
             - npm-packages-v1-{{ checksum "BBER_CACHE_KEY" }}
       - run: |
-          npm -g config set user root
-          npm i -g npm@6
           echo NodeJS $(node -v)
           echo npm $(npm -v)
-          echo Lerna $(lerna -v)
-          npm ci
-          npm run bootstrap -- --concurrency=2
-          npm run build -- --concurrency=2
+          npm ci --ignore-scripts
+          echo Lerna $(./node_modules/.bin/lerna -v)
+          ./node_modules/.bin/lerna run build --scope=@canopycanopycanopy/b-ber-reader
+          ./node_modules/.bin/lerna run build --scope=@canopycanopycanopy/{b-ber-cli,b-ber-grammar-attributes,b-ber-grammar-audio-video,b-ber-grammar-dialogue,b-ber-grammar-epigraph,b-ber-grammar-footnotes,b-ber-grammar-frontmatter,b-ber-grammar-gallery,b-ber-grammar-image,b-ber-grammar-logo,b-ber-grammar-media,b-ber-grammar-pullquote,b-ber-grammar-renderer,b-ber-grammar-section,b-ber-grammar-spread,b-ber-grammar-vimeo,b-ber-lib,b-ber-logger,b-ber-markdown-renderer,b-ber-parser-dialogue,b-ber-parser-figure,b-ber-parser-footnotes,b-ber-parser-gallery,b-ber-parser-section,b-ber-resources,b-ber-shapes-directives,b-ber-shapes-dublin-core,b-ber-shapes-sequences,b-ber-tasks,b-ber-templates,b-ber-theme-sans,b-ber-theme-serif} --concurrency=2 
           npm test -- --maxWorkers=2
           cd ~
           $BBER --version
@@ -33,7 +30,7 @@ jobs:
           cd foo
           $BBER theme list
           $BBER theme set b-ber-theme-serif
-          $BBER build
+          $BBER build reader web
       - save_cache:
           paths:
             - ~/b-ber/node_modules
