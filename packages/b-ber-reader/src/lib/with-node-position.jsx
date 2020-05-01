@@ -41,7 +41,7 @@ const withNodePosition = (WrappedComponent, options) => {
       verso: null,
       recto: null,
       spreadIndex: null,
-      currentSpreadIndex: null,
+      currentSpreadIndex: null, // TODO used?
       elementEdgeLeft: null,
     }
 
@@ -74,7 +74,10 @@ const withNodePosition = (WrappedComponent, options) => {
     }
 
     componentDidMount() {
-      if (!this.settings.useElementOffsetLeft) return
+      if (!this.settings.useElementOffsetLeft) {
+        this.calculateNodePositionUsingBoundingClientRect()
+        return
+      }
 
       this.calculateNodePositionAfterResize = debounce(
         this.calculateNodePositionUsingOffsetLeft,
@@ -91,11 +94,13 @@ const withNodePosition = (WrappedComponent, options) => {
       this.disconnectObservers()
     }
 
-    componentDidUpdate(prevProps) {
+    componentWillReceiveProps(nextProps) {
       if (this.settings.useElementOffsetLeft) return
-      if (
-        prevProps.view.ultimateOffsetLeft === this.props.view.ultimateOffsetLeft
-      ) {
+
+      const { ultimateOffsetLeft: nextUltimateOffsetLeft } = nextProps
+      const { ultimateOffsetLeft } = this.props.view
+
+      if (nextUltimateOffsetLeft === ultimateOffsetLeft) {
         return
       }
 
@@ -149,7 +154,7 @@ const withNodePosition = (WrappedComponent, options) => {
       // Calculate position of either the attached node (ref), or its parent element
       const node = this.getRef()
 
-      if (!node) return console.error('Element does not exist')
+      if (!node) return console.error('Element does not exist') // TODO necessary to check again?
 
       const { isMarker } = this.settings
       const { paddingLeft, columnGap } = this.props.viewerSettings
@@ -216,7 +221,7 @@ const withNodePosition = (WrappedComponent, options) => {
         this.elementEdgeIsInAllowableRange(edgePositionVariance) === false ||
         (verso === false && recto === false)
       ) {
-        console.log('Recalculating layout')
+        console.warn('Recalculating layout')
 
         node.style.display = 'none'
         node.style.display = 'block'
@@ -244,7 +249,7 @@ const withNodePosition = (WrappedComponent, options) => {
     calculateNodePositionUsingBoundingClientRect = () => {
       const node = this.getRef()
 
-      if (!node) return console.error('Element does not exist')
+      if (!node) return console.error('Element does not exist') // TODO necessary to check again?
 
       // Get the left-most edge of the ultimate node. It can either be in
       // position verso or recto. Since the ultimate node is inline (a `span`
@@ -274,8 +279,6 @@ const withNodePosition = (WrappedComponent, options) => {
 
       // Account for slop
       elementSpreadIndex = Math.round(elementSpreadIndex)
-
-      // console.log('elementSpreadIndex', elementSpreadIndex)
 
       this.setState({
         verso: true,

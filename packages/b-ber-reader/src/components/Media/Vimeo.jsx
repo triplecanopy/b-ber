@@ -43,7 +43,6 @@ class Vimeo extends React.Component {
     // props are used for element positioning in the work-around commened on
     // below.
     iframePlaceholderTop: 0,
-    iframePlaceholderLeft: 0,
     iframePlaceholderWidth: 0,
     iframePlaceholderHeight: 0,
   }
@@ -122,13 +121,6 @@ class Vimeo extends React.Component {
     const playing =
       elementSpreadIndex === visibleSpreadIndex && !Viewport.isMobile()
 
-    console.log(
-      `elementSpreadIndex: ${elementSpreadIndex}`,
-      `visibleSpreadIndex: ${visibleSpreadIndex}`,
-      `currentSpreadIndex: ${currentSpreadIndex}`,
-      `playing: ${playing}`
-    )
-
     this.setState({ playing, currentSpreadIndex })
   }
 
@@ -188,26 +180,19 @@ class Vimeo extends React.Component {
     const node = this.iframePlaceholder.current
     const {
       iframePlaceholderTop,
-      iframePlaceholderLeft,
       iframePlaceholderWidth,
       iframePlaceholderHeight,
     } = this.state
 
-    const { top, left, width, height } = node.getBoundingClientRect()
-
-    // Account for the layout element's offset which confuses calculations after
-    // resize
-    const transformLeft = Math.abs(this.context.getTranslateX())
+    const { top, width, height } = node.getBoundingClientRect()
 
     if (
-      iframePlaceholderLeft !== left - transformLeft ||
       iframePlaceholderTop !== top ||
       iframePlaceholderWidth !== width ||
       iframePlaceholderHeight !== height
     ) {
       this.setState({
         iframePlaceholderTop: top,
-        iframePlaceholderLeft: left + transformLeft,
         iframePlaceholderWidth: width,
         iframePlaceholderHeight: height,
       })
@@ -229,7 +214,6 @@ class Vimeo extends React.Component {
 
       // Chrome 81
       iframePlaceholderTop: top,
-      // iframePlaceholderLeft: left,
       iframePlaceholderWidth: width,
       iframePlaceholderHeight: height,
     } = this.state

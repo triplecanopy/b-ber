@@ -4,18 +4,20 @@ const initialState = {
   loaded: false,
   pendingDeferredCallbacks: true,
   ultimateOffsetLeft: 0,
+  lastSpreadIndex: 0,
 }
 
 const view = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.LOAD:
-      return { ...state, loaded: true }
-
     case actionTypes.UNLOAD:
-      return { ...state, loaded: false }
+      return { ...state, loaded: action.payload }
 
     case actionTypes.UPDATE_ULTIMATE_NODE_POSITION:
       return { ...state, ...action.payload }
+
+    case actionTypes.UPDATE_LAST_SPREAD_INDEX:
+      return { ...state, lastSpreadIndex: action.payload }
 
     case actionTypes.QUEUE_DEFERRED_CALLBACKS:
     case actionTypes.DEQUEUE_DEFERRED_CALLBACKS:

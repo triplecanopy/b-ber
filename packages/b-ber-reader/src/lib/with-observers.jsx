@@ -1,10 +1,13 @@
 import React from 'react'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 import debounce from 'lodash/debounce'
 import ResizeObserver from 'resize-observer-polyfill'
 import { isNumeric } from '../helpers/Types'
 import { debug, verboseOutput } from '../config'
 import browser from './browser'
 import { RESIZE_DEBOUNCE_TIMER, MUTATION_DEBOUNCE_TIMER } from '../constants'
+import * as viewActions from '../actions/view'
 
 const log = (lastSpreadIndex, contentDimensions, frameHeight, columns) => {
   if (debug && verboseOutput) {
@@ -173,8 +176,7 @@ const withObservers = WrappedComponent => {
         this.node.current.style.display = 'none'
         this.node.current.style.display = 'block'
       } else {
-        // TODO move `lastSpreadIndex` to Redux
-        this.props.setReaderState({ lastSpreadIndex })
+        this.props.viewActions.updateLastSpreadIndex(lastSpreadIndex)
       }
     }
 
@@ -198,7 +200,10 @@ const withObservers = WrappedComponent => {
     }
   }
 
-  return WrapperComponent
+  return connect(
+    () => ({}),
+    dispatch => ({ viewActions: bindActionCreators(viewActions, dispatch) })
+  )(WrapperComponent)
 }
 
 export default withObservers

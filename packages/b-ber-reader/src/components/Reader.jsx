@@ -46,7 +46,6 @@ class Reader extends Component {
 
       // Navigation
       spreadIndex: 0,
-      lastSpreadIndex: 0,
       handleEvents: false,
       firstChapter: false,
       lastChapter: false,
@@ -190,7 +189,12 @@ class Reader extends Component {
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
-    const { loaded } = nextProps.view
+    const {
+      loaded: nextLoaded,
+      lastSpreadIndex: nextLastSpreadIndex,
+      pendingDeferredCallbacks: nextPendingDeferredCallbacks,
+    } = nextProps.view
+
     const { hash, cssHash } = this.state
     const { search } = this.props
 
@@ -232,7 +236,11 @@ class Reader extends Component {
     }
 
     // Render the view
-    if (loaded && loaded !== this.props.view.loaded) {
+    if (
+      nextLoaded &&
+      nextLastSpreadIndex !== -1 &&
+      nextPendingDeferredCallbacks === true
+    ) {
       this.props.requestDeferredCallbackExecution()
     }
   }
@@ -244,13 +252,12 @@ class Reader extends Component {
 
   handleResizeStart = () => {
     this.props.viewActions.unload()
+    this.props.viewActions.updateLastSpreadIndex(-1)
     this.disablePageTransitions()
     this.showSpinner()
   }
 
-  handleResizeEnd = () => {
-    this.hideSpinner()
-  }
+  handleResizeEnd = () => this.hideSpinner()
 
   updateQueryString = callback => {
     const { currentSpineItem, currentSpineItemIndex, spreadIndex } = this.state
@@ -319,6 +326,7 @@ class Reader extends Component {
 
   freeze = () => {
     this.props.viewActions.unload()
+    this.props.viewActions.updateLastSpreadIndex(-1)
     this.setState({
       showSidebar: null,
       handleEvents: false,
@@ -329,12 +337,8 @@ class Reader extends Component {
 
   // Shows content and enables UI once book content has been loaded
   showSpineItem = () => {
-    const {
-      spine,
-      spreadIndex,
-      currentSpineItemIndex,
-      lastSpreadIndex,
-    } = this.state
+    const { spine, spreadIndex, currentSpineItemIndex } = this.state
+    const { lastSpreadIndex } = this.props.view
 
     const firstChapter = currentSpineItemIndex === 0
     const lastChapter = currentSpineItemIndex === spine.length - 1
@@ -425,7 +429,8 @@ class Reader extends Component {
 
   handlePageNavigation = increment => {
     let { spreadIndex } = this.state
-    const { lastSpreadIndex } = this.state
+
+    const { lastSpreadIndex } = this.props.view
     const nextIndex = spreadIndex + increment
 
     if (nextIndex > lastSpreadIndex || nextIndex < 0) {
@@ -464,14 +469,16 @@ class Reader extends Component {
     }
 
     currentSpineItemIndex = nextIndex
+
     const currentSpineItem = spine[nextIndex]
     const spreadIndex = 0
 
     let deferredCallback = direction => () => {
-      const { lastSpreadIndex } = this.state
+      const { lastSpreadIndex } = this.props.view
       const firstSpread = spreadIndex === 0
       const lastSpread = spreadIndex === lastSpreadIndex
       const spreadDelta = direction
+
       lastChapter = currentSpineItemIndex === spine.length - 1
 
       this.setState(
@@ -645,16 +652,11 @@ class Reader extends Component {
   // TODO the location.state.bookURL prop is how we're signal to the reader that
   // there is a book loaded, but that the pathname is '/'. Would be good to have
   // this standardized
-  destroyReaderComponent = () => history.push('/', { bookURL: null })
-
-  // TODO whatever this is doing should be handled by Redux
-  _setState = (state, callback) => {
-    this.setState({ ...state }, () => {
-      if (callback) callback()
-    })
-  }
+  destroyReaderComponent = () => history.push('/', { bookURL: '' })
 
   render() {
+    const { lastSpreadIndex } = this.props.view
+
     const {
       metadata,
       guide,
@@ -665,7 +667,6 @@ class Reader extends Component {
       bookURL,
       lastSpread,
       spreadIndex,
-      lastSpreadIndex,
       pageAnimation,
       handleEvents,
       spinnerVisible,
@@ -721,7 +722,6 @@ class Reader extends Component {
             pageAnimation={pageAnimation}
             viewerSettings={this.props.viewerSettings}
             update={this.props.viewerSettingsActions.update}
-            setReaderState={this._setState}
             // Can't wrap layout or the withObservable HOC in a way that preserves
             // refs, so pass down `view` as props
             view={this.props.view}

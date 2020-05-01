@@ -24,38 +24,31 @@ class App extends Component {
 
     const params = new URLSearchParams(window.location)
     const search = params.get('search')
-    const title = params.get('pathname').slice(1)
+    const pathname = params.get('pathname').slice(1)
 
     let { bookURL, projectURL } = this.props.readerSettings
     if (!projectURL) projectURL = '' // Path from which to load api/books.json
 
     // TODO if not title && not url ...
-    const pred = title ? { title } : { url: bookURL }
+    const pred = pathname ? { title: pathname } : { url: bookURL }
     const book = find(books, pred)
 
     bookURL = book ? book.url : ''
 
-    this.bindHistoryListener()
-
-    this.setState({ search }, () => {
+    this.setState({ search, pathname }, () => {
+      this.bindHistoryListener()
       this.props.readerSettingsActions.updateBooks(books)
       this.props.readerSettingsActions.updateBookURL(bookURL)
       this.props.readerSettingsActions.updateProjectURL(projectURL)
     })
   }
 
-  bindHistoryListener = () => {
+  bindHistoryListener = () =>
     history.listen(location => {
-      const { pathname, search } = location
-
       if (!location.state?.bookURL) {
-        this.props.readerSettingsActions.updateBookURL('')
-        return
+        this.props.readerSettingsActions.updateBookURL('') // TODO can be moved to Reader
       }
-
-      this.setState({ pathname, search })
     })
-  }
 
   handleClick = ({ title, url: bookURL }) => {
     // Set pathname
