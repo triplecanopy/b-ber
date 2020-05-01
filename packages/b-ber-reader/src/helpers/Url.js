@@ -56,6 +56,10 @@ class Url {
     return `${Url.stripTrailingSlash(url)}/`
   }
 
+  static addLeadingSlash(url) {
+    return `/${Url.trimSlashes(url)}`
+  }
+
   static trimFilenameFromResponse(url) {
     let url_ = Url.trimSlashes(url)
     url_ = url_.slice(0, url_.lastIndexOf('/'))

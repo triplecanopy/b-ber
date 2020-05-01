@@ -51,8 +51,8 @@ class App extends Component {
     })
 
   handleClick = ({ title, url: bookURL }) => {
-    // Set pathname
-    history.push(Url.slug(title))
+    const pathname = Url.slug(title)
+    this.setState({ pathname })
 
     // Tell the reader to load data from bookURL
     this.props.readerSettingsActions.updateBookURL(bookURL)

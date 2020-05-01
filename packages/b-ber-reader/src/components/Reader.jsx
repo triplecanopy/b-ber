@@ -260,7 +260,13 @@ class Reader extends Component {
   handleResizeEnd = () => this.hideSpinner()
 
   updateQueryString = callback => {
-    const { currentSpineItem, currentSpineItemIndex, spreadIndex } = this.state
+    const {
+      bookURL,
+      spreadIndex,
+      currentSpineItem,
+      currentSpineItemIndex,
+    } = this.state
+
     const { pathname, search } = this.props
     const { slug } = currentSpineItem
     const url = Url.parseQueryString(search)
@@ -273,9 +279,9 @@ class Reader extends Component {
     })
 
     history[updateMethod]({
-      pathname,
+      pathname: Url.addLeadingSlash(pathname),
       search: nextSearch,
-      state: { bookURL: this.state.bookURL },
+      state: { bookURL },
     })
 
     if (callback) callback()
