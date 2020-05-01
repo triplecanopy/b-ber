@@ -4,7 +4,6 @@ import { connect } from 'react-redux'
 import find from 'lodash/find'
 import { Reader, Library } from '.'
 import { Request, Url } from '../helpers'
-import history from '../lib/History'
 import * as readerSettingsActions from '../actions/reader-settings'
 
 class App extends Component {
@@ -36,19 +35,11 @@ class App extends Component {
     bookURL = book ? book.url : ''
 
     this.setState({ search, pathname }, () => {
-      this.bindHistoryListener()
       this.props.readerSettingsActions.updateBooks(books)
       this.props.readerSettingsActions.updateBookURL(bookURL)
       this.props.readerSettingsActions.updateProjectURL(projectURL)
     })
   }
-
-  bindHistoryListener = () =>
-    history.listen(location => {
-      if (!location.state?.bookURL) {
-        this.props.readerSettingsActions.updateBookURL('') // TODO can be moved to Reader
-      }
-    })
 
   handleClick = ({ title, url: bookURL }) => {
     const pathname = Url.slug(title)

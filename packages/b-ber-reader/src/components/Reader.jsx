@@ -13,10 +13,11 @@ import withDeferredCallbacks from '../lib/with-deferred-callbacks'
 import ReaderContext from '../lib/reader-context'
 import Messenger from '../lib/Messenger'
 import Viewport from '../helpers/Viewport'
-import * as viewerSettingsActions from '../actions/viewer-settings'
-import * as viewActions from '../actions/view'
 import { ViewerSettings } from '../models'
 import { unlessDefined } from '../helpers/utils'
+import * as viewActions from '../actions/view'
+import * as viewerSettingsActions from '../actions/viewer-settings'
+import * as readerSettingsActions from '../actions/reader-settings'
 
 const book = { content: null }
 
@@ -108,7 +109,7 @@ class Reader extends Component {
     await this.createStateFromOPF()
 
     // Check the current query string if one exists
-    const params = new URLSearchParams(this.props.search) // TODO this.props or window location?
+    const params = new URLSearchParams(this.props.search)
     const slug = params.get('slug')
 
     const { spine, hash } = this.state
@@ -658,7 +659,10 @@ class Reader extends Component {
   // TODO the location.state.bookURL prop is how we're signal to the reader that
   // there is a book loaded, but that the pathname is '/'. Would be good to have
   // this standardized
-  destroyReaderComponent = () => history.push('/', { bookURL: '' })
+  destroyReaderComponent = () => {
+    this.props.readerSettingsActions.updateBookURL('')
+    history.push('/')
+  }
 
   render() {
     const { lastSpreadIndex } = this.props.view
@@ -747,6 +751,7 @@ const mapStateToProps = ({ readerSettings, viewerSettings, view }) => ({
 
 const mapDispatchToProps = dispatch => ({
   viewerSettingsActions: bindActionCreators(viewerSettingsActions, dispatch),
+  readerSettingsActions: bindActionCreators(readerSettingsActions, dispatch),
   viewActions: bindActionCreators(viewActions, dispatch),
 })
 
