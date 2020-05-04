@@ -1,6 +1,6 @@
 {
   "name": "@canopycanopycanopy/b-ber-markdown-renderer",
-  "version": "1.1.2",
+  "version": "1.1.4",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -24,7 +24,7 @@
     "rimraf": "^2.6.3"
   },
   "dependencies": {
-    "@canopycanopycanopy/b-ber-grammar-audio-video": "1.1.2",
+    "@canopycanopycanopy/b-ber-grammar-audio-video": "1.1.4",
     "@canopycanopycanopy/b-ber-grammar-dialogue": "1.1.2",
     "@canopycanopycanopy/b-ber-grammar-footnotes": "1.1.2",
     "@canopycanopycanopy/b-ber-grammar-frontmatter": "1.1.2",
