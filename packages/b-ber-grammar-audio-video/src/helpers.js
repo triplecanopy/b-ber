@@ -19,16 +19,9 @@ export const isHostedBySupportedThirdParty = asset =>
 
 export const validatePosterImage = (_asset, type) => {
   const asset = state.src.images(_asset)
-  const isInlineMedia = /inline/.test(type)
 
   if (!fs.existsSync(asset)) {
-    if (isInlineMedia) {
-      log.error(
-        'bber-directives: inline media directives requires a [poster] attribute, aborting'
-      )
-    } else {
-      log.error(`bber-directives: Poster image for [${type}] does not exist`)
-    }
+    log.error(`bber-directives: Poster image for [${type}] does not exist`)
   }
 
   return asset
