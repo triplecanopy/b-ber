@@ -33,7 +33,13 @@ class Frame extends React.Component {
     }
 
     const desktopStyles = { overflow: 'hidden' }
-    const mobileStyles = { WebkitOverflowScrolling: 'touch', overflow: 'auto' }
+
+    const mobileStyles = {
+      WebkitOverflowScrolling: 'touch',
+      overflowY: 'auto',
+      overflowX: 'hidden',
+    }
+
     const styles = Viewport.isMobile()
       ? { ...baseStyles, ...mobileStyles }
       : { ...baseStyles, ...desktopStyles }
