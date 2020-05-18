@@ -96,6 +96,7 @@ export function createVimeoInline({
   mediaType,
   attrString,
   attrQuery,
+  aspectRatio,
   aspectRatioClassName,
   source,
   poster,
@@ -109,6 +110,7 @@ export function createVimeoInline({
           <iframe
             data-vimeo="true"
             data-vimeo-poster="${poster}"
+            data-aspect-ratio="${aspectRatio}"
             src="https://player.vimeo.com/video/${source}${attrQuery}"
             webkitallowfullscreen="webkitallowfullscreen"
             mozallowfullscreen="mozallowfullscreen"
