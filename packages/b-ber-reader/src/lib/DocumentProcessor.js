@@ -54,7 +54,7 @@ class DocumentProcessor {
     }
 
     this.blackListedNodes = {
-      names: [
+      names: new Set([
         'META',
         'TITLE',
         'HEAD',
@@ -74,7 +74,7 @@ class DocumentProcessor {
         'SUB',
         'IFRAME',
         'FIGURE',
-      ],
+      ]),
     }
   }
 
@@ -93,8 +93,8 @@ class DocumentProcessor {
   shouldParse(node) {
     return (
       node.nodeType === 1 && // Is an element
-      this.blackListedNodes.names.indexOf(node.nodeName.toUpperCase()) < 0 && // Not blacklisted
-      node.classList.contains(this.markerClassNames) !== true && // Not a marker
+      this.blackListedNodes.names.has(node.nodeName.toUpperCase()) === false && // Not blacklisted
+      node.classList.contains(this.markerClassNames) === false && // Not a marker
       this.classListContainsNone(node, this.blacklistedClassNames)
     )
   }
@@ -243,8 +243,19 @@ class DocumentProcessor {
     }
   }
 
+  isElementNode(node) {
+    return node.nodeType === window.Node.ELEMENT_NODE
+  }
+
+  removeBottomSpacing(node) {
+    // eslint-disable-next-line no-param-reassign
+    node.style.marginBottom = '0'
+    // eslint-disable-next-line no-param-reassign
+    node.style.paddingBottom = '0'
+  }
+
   addUltimateNode(doc) {
-    const blacklist = [
+    const blacklist = new Set([
       'META',
       'TITLE',
       'HEAD',
@@ -263,22 +274,34 @@ class DocumentProcessor {
       'SUP',
       'SUB',
       'IFRAME',
-    ]
+    ])
 
     const text = document.createTextNode('')
     const elem = document.createElement('span')
+
     elem.setAttribute('class', 'ultimate')
     elem.setAttribute('data-ultimate', 'true')
     elem.appendChild(text)
 
     let child
+    let lastChild
 
     for (let i = doc.body.childNodes.length - 1; i >= 0; i--) {
       child = doc.body.childNodes[i]
-      if (
-        !blacklist.includes(child.nodeName) &&
-        child.nodeType === window.Node.ELEMENT_NODE
-      ) {
+
+      if (!blacklist.has(child.nodeName) && this.isElementNode(child)) {
+        // Remove margin and padding from child, and loop through the child
+        // element, removing all of its last-childs' bottom spacing as well.
+        // This helps prevent "blank pages" at the end of chapters
+
+        this.removeBottomSpacing(child)
+
+        lastChild = child.lastElementChild
+        while (lastChild) {
+          this.removeBottomSpacing(lastChild)
+          lastChild = lastChild.lastElementChild
+        }
+
         child.appendChild(elem)
         return
       }
