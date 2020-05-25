@@ -293,12 +293,13 @@ class DocumentProcessor {
         // Remove margin and padding from child, and loop through the child
         // element, removing all of its last-childs' bottom spacing as well.
         // This helps prevent "blank pages" at the end of chapters
-
         this.removeBottomSpacing(child)
 
         lastChild = child.lastElementChild
         while (lastChild) {
-          this.removeBottomSpacing(lastChild)
+          if (!lastChild.classList.contains('spread__content')) {
+            this.removeBottomSpacing(lastChild)
+          }
           lastChild = lastChild.lastElementChild
         }
 
