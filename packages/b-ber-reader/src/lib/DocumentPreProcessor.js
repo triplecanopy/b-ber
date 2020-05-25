@@ -55,9 +55,8 @@ class DocumentPreProcessor {
   }
 
   static createScriptElements() {
-    const scriptElements = Array.prototype.slice.call(
-      state.document.querySelectorAll('script') || [],
-      0
+    const scriptElements = Array.from(
+      state.document.querySelectorAll('script') || []
     )
     const { requestURI, scripts } = state
 

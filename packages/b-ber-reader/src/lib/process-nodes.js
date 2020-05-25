@@ -278,7 +278,7 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
   },
   {
     // Anything else
-    shouldProcessNode(/*node*/) {
+    shouldProcessNode() {
       return true
     },
     processNode: processNodeDefinitions.processDefaultNode,

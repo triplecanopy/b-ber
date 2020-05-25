@@ -18,6 +18,7 @@ class XMLAdaptor {
     url_ = window.encodeURI(url_)
     return url_
   }
+
   static opsURL(url) {
     let url_ = url
     url_ = Url.stripTrailingSlash(url_)
@@ -26,6 +27,7 @@ class XMLAdaptor {
     url_ = window.encodeURI(url_)
     return url_
   }
+
   static parseOPF(xml) {
     return new Promise(resolve => {
       const pkg = JSON.parse(xmljs.xml2json(xml.data))
@@ -39,6 +41,7 @@ class XMLAdaptor {
       resolve(response)
     })
   }
+
   static parseNCX(rootNode, opsURL) {
     const { __manifest, __spine } = rootNode
     const __ncx = null
@@ -58,6 +61,7 @@ class XMLAdaptor {
       })
     })
   }
+
   static createSpineItems(rootNode) {
     const { __manifest, __spine, __ncx } = rootNode
     return new Promise(resolve => {
@@ -97,6 +101,7 @@ class XMLAdaptor {
       resolve({ ...rootNode, spine })
     })
   }
+
   static createGuideItems(rootNode) {
     const { __guide } = rootNode
     return new Promise(resolve => {
@@ -112,6 +117,7 @@ class XMLAdaptor {
       resolve({ ...rootNode, guide })
     })
   }
+
   static udpateSpineItemURLs(rootNode, opsURL) {
     return new Promise(resolve => {
       const { spine } = rootNode
@@ -122,6 +128,7 @@ class XMLAdaptor {
       resolve({ ...rootNode, spine })
     })
   }
+
   static udpateGuideItemURLs(rootNode, opsURL) {
     return new Promise(resolve => {
       const { guide } = rootNode
@@ -186,7 +193,76 @@ class XMLAdaptor {
     })
   }
 
-  static parseSpineItemResponse(response) {
+  static createScopedCSS(sheets, scope, opsURL) {
+    let scopedCSS = ''
+
+    sheets.forEach(({ base, data }) => {
+      const styleSheetURL = Url.resolveRelativeURL(opsURL, base)
+      const tree = csstree.parse(data)
+
+      csstree.walk(tree, {
+        enter: (node, item, list) => {
+          let value
+          let nodeText
+
+          const scopedClassName = List.createItem({
+            name: scope,
+            type: 'ClassSelector',
+          })
+
+          const whiteSpace = List.createItem({
+            type: 'WhiteSpace',
+            value: ' ',
+          })
+
+          // these need to be synced with the
+          // HTML structure in Layout.jsx
+          if (list && node.type === 'TypeSelector' && node.name === 'html') {
+            node.name = scope // eslint-disable-line no-param-reassign
+            node.type = 'ClassSelector' // eslint-disable-line no-param-reassign
+          }
+
+          if (list && node.type === 'TypeSelector' && node.name === 'body') {
+            node.name = 'content' // eslint-disable-line no-param-reassign
+            node.type = 'IdSelector' // eslint-disable-line no-param-reassign
+          }
+
+          if (
+            list &&
+            node.name !== scope &&
+            list.head.data.name !== scope &&
+            (node.type === 'TypeSelector' ||
+              node.type === 'IdSelector' ||
+              node.type === 'ClassSelector' ||
+              node.type === 'AttributeSelector')
+          ) {
+            list.prepend(whiteSpace)
+            list.prepend(scopedClassName)
+          }
+
+          if (node.type === 'Url') {
+            ;({ value } = node)
+            nodeText = value.value
+
+            if (value.type !== 'Raw') {
+              nodeText = nodeText.substr(1, nodeText.length - 2) // trim quotes
+            }
+
+            if (Url.isRelative(nodeText)) {
+              nodeText = Url.resolveRelativeURL(styleSheetURL, nodeText)
+              node.value.value = `"${nodeText}"` // eslint-disable-line no-param-reassign
+            }
+          }
+        },
+      })
+
+      scopedCSS += csstree.generate(tree)
+    })
+
+    return scopedCSS
+  }
+
+  static async parseSpineItemResponse(response) {
     const { responseURL } = response.request
     const {
       hash,
@@ -196,146 +272,82 @@ class XMLAdaptor {
       cache: useLocalStorageCache,
     } = response
 
-    return new Promise(resolve => {
-      const promises = []
-      const htmlToReactParser = new HtmlToReactParser()
-      const documentProcessor = new DocumentProcessor({
-        paddingLeft,
-        columnGap,
-        responseURL,
-      })
-
-      const { xml, doc } = documentProcessor.parseXML(response.data)
-      const re = /<body[^>]*?>([\s\S]*)<\/body>/
-
-      // Create react element that will be appended to our #frame element.
-      // we wrap this in a Promise so that we can resolve the content and
-      // styles at the same time
-      let data_
-      data_ = xml.match(re)
-      data_ = data_[1] // eslint-disable-line prefer-destructuring
-      data_ = data_.replace(/>\s*?</g, '><')
-
-      const bookContent = htmlToReactParser.parseWithInstructions(
-        data_,
-        isValidNode,
-        processingInstructions(response)
-      )
-
-      // Scope stylesheets and pass them along to be appended to the DOM
-      // as well
-
-      // TODO will also need to grab inline styles and parse similarly
-      // @issue: https://github.com/triplecanopy/b-ber/issues/218
-      const links = doc.querySelectorAll('link')
-      const styles = []
-
-      for (let i = 0; i < links.length; i++) {
-        if (links[i].rel === 'stylesheet') {
-          const base = Url.trimFilenameFromResponse(responseURL)
-          const url = Url.resolveRelativeURL(
-            base,
-            Url.trimSlashes(links[i].getAttribute('href'))
-          )
-
-          styles.push({ url, base })
-        }
-      }
-
-      styles.forEach(({ url, base }) => {
-        promises.push(
-          new Promise(resolve1 => {
-            const cache = Cache.get(url)
-
-            if (useLocalStorageCache && cache && cache.data) {
-              return resolve1({ base, data: cache.data })
-            }
-
-            return Request.get(url).then(response1 => {
-              if (useLocalStorageCache) Cache.set(url, response1.data)
-              return resolve1({ base, data: response1.data })
-            })
-          })
-        )
-      })
-
-      Promise.all(promises).then(sheets => {
-        const hashedClassName = `_${hash}`
-        let scopedCSS = ''
-        sheets.forEach(({ base, data }) => {
-          const sheet = data
-          const styleSheetURL = Url.resolveRelativeURL(opsURL, base)
-          const ast = csstree.parse(sheet)
-
-          csstree.walk(ast, {
-            enter: (node, item, list) => {
-              let value
-              let nodeText
-
-              const scopedClassName = List.createItem({
-                name: hashedClassName,
-                type: 'ClassSelector',
-              })
-              const whiteSpace = List.createItem({
-                type: 'WhiteSpace',
-                value: ' ',
-              })
-
-              // these need to be synced with the
-              // HTML structure in Layout.jsx
-              if (
-                list &&
-                node.type === 'TypeSelector' &&
-                node.name === 'html'
-              ) {
-                node.name = hashedClassName // eslint-disable-line no-param-reassign
-                node.type = 'ClassSelector' // eslint-disable-line no-param-reassign
-              }
-
-              if (
-                list &&
-                node.type === 'TypeSelector' &&
-                node.name === 'body'
-              ) {
-                node.name = 'content' // eslint-disable-line no-param-reassign
-                node.type = 'IdSelector' // eslint-disable-line no-param-reassign
-              }
-
-              if (
-                list &&
-                node.name !== hashedClassName &&
-                list.head.data.name !== hashedClassName &&
-                (node.type === 'TypeSelector' ||
-                  node.type === 'IdSelector' ||
-                  node.type === 'ClassSelector' ||
-                  node.type === 'AttributeSelector')
-              ) {
-                list.prepend(whiteSpace)
-                list.prepend(scopedClassName)
-              }
-
-              if (node.type === 'Url') {
-                ;({ value } = node)
-                nodeText = value.value
-
-                if (value.type !== 'Raw') {
-                  nodeText = nodeText.substr(1, nodeText.length - 2) // trim quotes
-                }
-
-                if (Url.isRelative(nodeText)) {
-                  nodeText = Url.resolveRelativeURL(styleSheetURL, nodeText)
-                  node.value.value = `"${nodeText}"` // eslint-disable-line no-param-reassign
-                }
-              }
-            },
-          })
-
-          scopedCSS += csstree.generate(ast)
-        })
-
-        resolve({ bookContent, scopedCSS })
-      })
+    const htmlToReactParser = new HtmlToReactParser()
+    const documentProcessor = new DocumentProcessor({
+      paddingLeft,
+      columnGap,
+      responseURL,
     })
+
+    const { xml, doc } = documentProcessor.parseXML(response.data)
+    const re = /<body[^>]*?>([\s\S]*)<\/body>/
+
+    // Create react element that will be appended to our #frame element.
+    // we wrap this in a Promise so that we can resolve the content and
+    // styles at the same time
+    let data_
+    data_ = xml.match(re)
+    data_ = data_[1] // eslint-disable-line prefer-destructuring
+    data_ = data_.replace(/>\s*?</g, '><')
+
+    const bookContent = htmlToReactParser.parseWithInstructions(
+      data_,
+      isValidNode,
+      processingInstructions(response)
+    )
+
+    // Scope stylesheets and any inline styles and pass them along to be
+    // appended to the DOM as well
+    const links = Array.from(doc.querySelectorAll('link'))
+    const inlineStyles = Array.from(doc.querySelectorAll('style'))
+
+    const styles = links.reduce((acc, curr) => {
+      if (curr.rel !== 'stylesheet') return acc
+
+      const base = Url.trimFilenameFromResponse(responseURL)
+      const href = Url.trimSlashes(curr.getAttribute('href'))
+      const url = Url.resolveRelativeURL(base, href)
+
+      return acc.concat({ url, base })
+    }, [])
+
+    const promises = styles.map(
+      ({ url, base }) =>
+        new Promise(resolve1 => {
+          const cache = Cache.get(url)
+
+          if (useLocalStorageCache && cache?.data) {
+            return resolve1({ base, data: cache.data })
+          }
+
+          return Request.get(url).then(response1 => {
+            if (useLocalStorageCache) Cache.set(url, response1.data)
+            return resolve1({ base, data: response1.data })
+          })
+        })
+    )
+
+    let sheets = await Promise.all(promises)
+
+    // Remove inline style elements while extracting their contents to add to
+    // the chapter stylesheet
+    sheets = inlineStyles.reduce((acc, node) => {
+      const { textContent: data } = node
+
+      if (!data) return acc
+
+      const base = Url.trimFilenameFromResponse(responseURL)
+      return acc.concat({ base, data })
+    }, sheets)
+
+    const hashedClassName = `_${hash}`
+    const scopedCSS = XMLAdaptor.createScopedCSS(
+      sheets,
+      hashedClassName,
+      opsURL
+    )
+
+    return { bookContent, scopedCSS }
   }
 }
 
