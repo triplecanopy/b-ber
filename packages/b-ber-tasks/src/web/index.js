@@ -89,10 +89,8 @@ async function initialize() {
     path.join(DIST_PATH, 'OPS/toc.ncx'),
   ]
 
-  OMIT_FROM_SEARCH = [
-    // List of spine item entry `fileName`s
-    'toc',
-  ]
+  // List of spine item entry `fileName`s
+  OMIT_FROM_SEARCH = ['toc']
 
   const { spine, loi } = state
   flow = new WebFlow({ spine, loi })
@@ -130,6 +128,7 @@ function unlinkRedundantAssets() {
 function getProjectTitle() {
   let title = ''
   const titleEntry = getBookMetadata('title', state)
+
   if (titleEntry && titleEntry.value) {
     title = titleEntry.value
   }
@@ -140,13 +139,10 @@ function getProjectTitle() {
 function getChapterTitle(fileName) {
   if (typeof fileName !== 'string') return getProjectTitle()
 
-  let title = ''
-  const entry = find(flow.spine, { fileName })
-  if (entry && entry.title) {
-    ;({ title } = entry)
-  }
+  const meta = state.spine.frontMatter.get(fileName)
+  if (!meta?.title) return getProjectTitle()
 
-  return title
+  return meta.title
 }
 
 function getProjectMetadataHTML() {
