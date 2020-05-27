@@ -183,12 +183,15 @@ class DocumentProcessor {
     return rand()
   }
 
+  isMarkerReferenceNode(node) {
+    return (
+      node.classList.contains('spread__content') || node.nodeName === 'FIGURE'
+    )
+  }
+
   addMarkerReferenceToChild(node, markerId) {
     for (let i = 0; i < node.children.length; i++) {
-      if (
-        node.children[i].nodeName === 'FIGURE' ||
-        node.children[i].classList.contains('spread__content')
-      ) {
+      if (this.isMarkerReferenceNode(node.children[i])) {
         node.children[i].setAttribute('data-marker-reference-figure', markerId)
       }
     }
@@ -297,9 +300,12 @@ class DocumentProcessor {
 
         lastChild = child.lastElementChild
         while (lastChild) {
-          if (!lastChild.classList.contains('spread__content')) {
+          // Check against some attributes to ensure we're not breaking the
+          // spread layout
+          if (!this.isMarkerReferenceNode(lastChild)) {
             this.removeBottomSpacing(lastChild)
           }
+
           lastChild = lastChild.lastElementChild
         }
 
