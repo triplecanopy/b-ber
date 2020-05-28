@@ -13,7 +13,7 @@ const ref = process.env[`BBER_CI_REF_${dist}`]
 const token = process.env[`BBER_CI_TOKEN_${dist}`]
 
 if (!id || !ref || !token) {
-  console.log('CI environment variables not configured')
+  console.log('CI environment variables not configured.')
   return
 }
 
