@@ -1,6 +1,6 @@
 {
   "name": "@canopycanopycanopy/b-ber-tasks",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -21,7 +21,7 @@
     "@babel/runtime-corejs3": "^7.9.2",
     "@canopycanopycanopy/b-ber-lib": "1.1.2",
     "@canopycanopycanopy/b-ber-logger": "1.1.1",
-    "@canopycanopycanopy/b-ber-markdown-renderer": "1.1.4",
+    "@canopycanopycanopy/b-ber-markdown-renderer": "1.1.6",
     "@canopycanopycanopy/b-ber-reader": "1.1.5",
     "@canopycanopycanopy/b-ber-resources": "1.1.1",
     "@canopycanopycanopy/b-ber-shapes-sequences": "1.1.1",
