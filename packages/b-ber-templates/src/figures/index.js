@@ -12,16 +12,16 @@ const isAudio = mime => /^audio/.test(mime)
 const isVideo = mime => /^video/.test(mime)
 const isIframe = type => type === 'iframe'
 const isVimeo = type => type === 'vimeo'
+const isSoundcloud = type => type === 'soundcloud'
 
 const figure = (data, buildType) => {
   const { width, height, mime, type } = data
   const build = !buildType || !figures[buildType] ? 'epub' : buildType
 
   let format = null
-  if (isIframe(type)) {
-    format = 'iframe'
-  } else if (isVimeo(type)) {
-    format = 'vimeo'
+
+  if (isIframe(type) || isVimeo(type) || isSoundcloud(type)) {
+    format = type
   } else if (isImage(mime)) {
     format = getImageOrientation(width, height)
   } else if (isAudio(mime)) {

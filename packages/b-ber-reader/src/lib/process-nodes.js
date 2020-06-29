@@ -197,6 +197,17 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
     },
   },
   {
+    // TODO impl.
+    // Soundcloud directive.
+    // Data attributes are added during `bber build`
+    shouldProcessNode(node) {
+      return node.name === 'iframe' && node.attribs['data-soundcloud']
+    },
+    processNode(/* node, children */) {
+      return null
+    },
+  },
+  {
     shouldProcessNode(node) {
       return (
         node.name === 'image' &&

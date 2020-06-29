@@ -9,6 +9,7 @@ const epub = {
   video: data => media({ ...data, applyInlineClasses: true }),
   iframe: data => iframe({ ...data, applyInlineClasses: true }),
   vimeo: data => unsupported({ data, applyInlineClasses: true }),
+  soundcloud: data => unsupported({ data, applyInlineClasses: true }),
 }
 
 export default epub

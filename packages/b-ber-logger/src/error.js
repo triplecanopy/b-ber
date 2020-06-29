@@ -41,8 +41,11 @@ export function error(_args) {
   this.errors.forEach(processedErr => {
     process.stdout.write(processedErr.formatted)
     this.newLine()
-    process.stdout.write(util.format.call(util, processedErr.stack))
-    this.newLine()
+
+    if (this.logLevel > 3) {
+      process.stdout.write(util.format.call(util, processedErr.stack))
+      this.newLine()
+    }
   })
 
   process.stdout.write(

@@ -7,6 +7,7 @@ import markdownItLogo from '@canopycanopycanopy/b-ber-grammar-logo'
 import markdownItImage from '@canopycanopycanopy/b-ber-grammar-image'
 import markdownItAudioVideo from '@canopycanopycanopy/b-ber-grammar-audio-video'
 import markdownItVimeo from '@canopycanopycanopy/b-ber-grammar-vimeo'
+import markdownItSoundcloud from '@canopycanopycanopy/b-ber-grammar-soundcloud'
 import markdownItDialogue from '@canopycanopycanopy/b-ber-grammar-dialogue'
 import markdownItGallery from '@canopycanopycanopy/b-ber-grammar-gallery'
 import markdownItSpread from '@canopycanopycanopy/b-ber-grammar-spread'
@@ -85,6 +86,11 @@ class MarkdownRenderer {
         markdownItVimeo.plugin,
         markdownItVimeo.name,
         markdownItVimeo.renderer(reference)
+      )
+      .use(
+        markdownItSoundcloud.plugin,
+        markdownItSoundcloud.name,
+        markdownItSoundcloud.renderer(reference)
       )
       .use(
         markdownItLogo.plugin,

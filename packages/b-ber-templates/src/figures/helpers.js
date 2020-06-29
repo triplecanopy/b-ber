@@ -235,6 +235,9 @@ export const vimeo = data =>
     .replace(/%REF%/, data.ref)
     .replace(/%SECTION_CLOSE%/, data.inline ? '' : '</section>')
 
+// TODO impl.
+export const soundcloud = (/* data */) => ''
+
 export const figure = ({
   data,
   ratioName,

@@ -1,4 +1,4 @@
-import { media, iframe, figure, vimeo } from './helpers'
+import { media, iframe, figure, vimeo, soundcloud } from './helpers'
 
 const web = {
   portrait: data => figure({ data, ratioName: 'portrait' }),
@@ -9,6 +9,7 @@ const web = {
   video: data => media({ ...data, applyInlineClasses: true }),
   iframe: data => iframe({ ...data, applyInlineClasses: true }),
   vimeo: data => vimeo({ ...data, applyInlineClasses: true }),
+  soundcloud: data => soundcloud({ ...data, applyInlineClasses: true }),
 }
 
 export default web

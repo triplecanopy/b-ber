@@ -1,5 +1,5 @@
 {
-  "name": "@canopycanopycanopy/b-ber-markdown-renderer",
+  "name": "@canopycanopycanopy/b-ber-grammar-soundcloud",
   "version": "1.1.6",
   "description": "",
   "main": "dist/index.js",
@@ -24,23 +24,13 @@
     "rimraf": "^2.6.3"
   },
   "dependencies": {
-    "@canopycanopycanopy/b-ber-grammar-audio-video": "1.1.4",
-    "@canopycanopycanopy/b-ber-grammar-dialogue": "1.1.2",
-    "@canopycanopycanopy/b-ber-grammar-footnotes": "1.1.2",
-    "@canopycanopycanopy/b-ber-grammar-frontmatter": "1.1.2",
-    "@canopycanopycanopy/b-ber-grammar-gallery": "1.1.2",
-    "@canopycanopycanopy/b-ber-grammar-image": "1.1.2",
-    "@canopycanopycanopy/b-ber-grammar-logo": "1.1.2",
-    "@canopycanopycanopy/b-ber-grammar-media": "1.1.2",
-    "@canopycanopycanopy/b-ber-grammar-pullquote": "1.1.2",
-    "@canopycanopycanopy/b-ber-grammar-section": "1.1.2",
-    "@canopycanopycanopy/b-ber-grammar-spread": "1.1.2",
-    "@canopycanopycanopy/b-ber-grammar-vimeo": "1.1.6",
-    "@canopycanopycanopy/b-ber-grammar-soundcloud": "1.1.6",
-    "@canopycanopycanopy/b-ber-parser-footnotes": "1.1.2",
-    "@canopycanopycanopy/b-ber-parser-gallery": "1.1.2",
-    "markdown-it": "^8.4.1",
-    "markdown-it-front-matter": "^0.1.2"
+    "@canopycanopycanopy/b-ber-grammar-attributes": "1.1.2",
+    "@canopycanopycanopy/b-ber-lib": "1.1.2",
+    "@canopycanopycanopy/b-ber-logger": "1.1.1",
+    "@canopycanopycanopy/b-ber-parser-figure": "1.1.2",
+    "@canopycanopycanopy/b-ber-shapes-directives": "1.1.2",
+    "fs-extra": "^8.1.0",
+    "lodash.isundefined": "^3.0.1"
   },
   "files": [
     "dist"

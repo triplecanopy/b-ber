@@ -1,4 +1,4 @@
-import { media, iframe, figure, vimeo } from './helpers'
+import { media, iframe, figure, vimeo, soundcloud } from './helpers'
 
 const reader = {
   landscape: data =>
@@ -13,6 +13,7 @@ const reader = {
   video: data => media({ ...data, applyInlineClasses: true }),
   iframe: data => iframe({ ...data, applyInlineClasses: true }),
   vimeo: data => vimeo({ ...data, applyInlineClasses: true }),
+  soundcloud: data => soundcloud({ ...data, applyInlineClasses: true }),
 }
 
 export default reader
