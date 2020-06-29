@@ -184,7 +184,8 @@ const vimeoEmbedAttributes = {
 const soundcloudEmbedAttributes = {
   classes: true,
   poster: true,
-  url: true,
+  source: true,
+  kind: true,
   autoplay: true,
   color: true,
   buying: true,

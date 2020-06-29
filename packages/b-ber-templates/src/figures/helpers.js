@@ -235,8 +235,50 @@ export const vimeo = data =>
     .replace(/%REF%/, data.ref)
     .replace(/%SECTION_CLOSE%/, data.inline ? '' : '</section>')
 
-// TODO impl.
-export const soundcloud = (/* data */) => ''
+export const soundcloud = data =>
+  `
+    %SECTION_OPEN%
+      <div class="figure__large figure__large--soundcloud">
+        <figure id="%ID%">
+          <div class="figure__items">
+            <div class="soundcloud">
+              <div class="embed %SUPPORT_CLASS_NAME%">
+                <iframe
+                  data-soundcloud="true"
+                  src="%SRC%"
+                  webkitallowfullscreen="webkitallowfullscreen"
+                  mozallowfullscreen="mozallowfullscreen"
+                  allowfullscreen="allowfullscreen"
+                  allow="autoplay"
+                  frameborder="0"
+                  scrolling="no"
+                />
+              </div>
+            </div>
+
+            <div class="figcaption">
+              <p class="small">
+                %CAPTION%
+                <a href="%REF%.xhtml#ref%ID%">Return</a>
+              </p>
+            </div>
+          </div>
+        </figure>
+      </div>
+    %SECTION_CLOSE%
+    `
+    .replace(/%SECTION_OPEN%/, getSectionOpen(data))
+    .replace(/%ID%/g, data.id)
+    .replace(
+      /%SUPPORT_CLASS_NAME%/,
+      state.build === 'reader' || state.build === 'web'
+        ? 'supported'
+        : 'unsupported'
+    )
+    .replace(/%SRC%/, `https://w.soundcloud.com/player/${data.attrQuery}`)
+    .replace(/%CAPTION%/, data.caption ? `${data.caption}<br/>` : '')
+    .replace(/%REF%/, data.ref)
+    .replace(/%SECTION_CLOSE%/, data.inline ? '' : '</section>')
 
 export const figure = ({
   data,

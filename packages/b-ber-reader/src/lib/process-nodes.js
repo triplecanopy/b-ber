@@ -11,6 +11,7 @@ import {
   Video,
   SpreadFigure,
   Vimeo,
+  Soundcloud,
   Ultimate,
 } from '../components'
 import { Asset, Url } from '../helpers'
@@ -197,14 +198,18 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
     },
   },
   {
-    // TODO impl.
     // Soundcloud directive.
     // Data attributes are added during `bber build`
     shouldProcessNode(node) {
       return node.name === 'iframe' && node.attribs['data-soundcloud']
     },
-    processNode(/* node, children */) {
-      return null
+    processNode(node, children) {
+      const attrs = Asset.convertToReactAttrs(node.attribs)
+      const key = attrs.src
+
+      delete attrs['data-soundcloud']
+
+      return React.createElement(Soundcloud, { ...attrs, key }, children)
     },
   },
   {

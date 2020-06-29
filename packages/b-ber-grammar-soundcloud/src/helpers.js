@@ -16,20 +16,19 @@ const ensureBoolean = val => val === 'yes'
 
 const ensureMatch = (name, re) => val => {
   if (!re.test(val)) {
-    let message = `Invalid attribute. [${name}] must match [${re}]`
-    message +=
-      '\nSee the Soundcloud Widget API documentation for more information https://developers.soundcloud.com/docs/api/html5-widget#parameters'
-    log.error(message)
+    log.error(`Invalid attribute. [${name}] must match [${re}]`)
   }
 
   return val
 }
 
+// TODO should split out validation elsewhere
 export const soundcloudAttributesTransformer = {
+  // Prepend # for color hex
   url: ensureMatch('url', /^http/),
-  autoplay: ensureBoolean,
   color: val =>
     `#${ensureMatch('color', /^(?:[a-fA-F0-9]{3}|[a-fA-F0-9]{6})$/)(val)}`,
+  autoplay: ensureBoolean,
   buying: ensureBoolean,
   sharing: ensureBoolean,
   download: ensureBoolean,
@@ -97,7 +96,6 @@ export function createSoundcloudInline({
     ${commentStart}
       <section class="${mediaType} figure__large figure__inline">
         <div id="${id}"${attrString}>
-          ${' ' /* state.build !== 'reader' ? renderPosterImage(poster) : '' */}
           <iframe
             data-soundcloud="true"
             data-soundcloud-poster="${poster}"

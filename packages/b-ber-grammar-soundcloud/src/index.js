@@ -37,10 +37,11 @@ function prepare({ token, marker, context, instance, fileName, lineNumber }) {
   const attrsObject = attributesObject(attrs, type, { fileName, lineNumber })
   const caption = token.children ? instance.renderInline(token.children) : ''
 
-  if (!attrsObject.url)
+  if (!attrsObject.source) {
     log.error(
-      `Directive [${type}] requires a [url] attribute at [${fileName}:${lineNumber}]`
+      `Directive [${type}] requires a [source] attribute at [${fileName}:${lineNumber}]`
     )
+  }
 
   // Set update poster image path or set to empty string if one wasn't specified
   if (attrsObject.poster) {
@@ -56,6 +57,26 @@ function prepare({ token, marker, context, instance, fileName, lineNumber }) {
   if (!attrsObject.classes) attrsObject.classes = ''
   const supportedPrefix = supported(state.build) ? '' : 'un'
   attrsObject.classes += ` embed ${supportedPrefix}supported`
+
+  // Create `url` parameter for query string from `source` and `kind` attributes
+  const kinds = ['track', 'playlist']
+  const kind = attrsObject.kind ? attrsObject.kind : 'track'
+  if (!kinds.includes(kind)) {
+    log.error(
+      `Directive [${type}] requires a [kind] attribute to be one of [${kinds.join()}] at [${fileName}:${lineNumber}]`
+    )
+  }
+
+  // Base embed URL
+  let url = 'https://api.soundcloud.com'
+
+  // Pluralize
+  url += `/${kind}s`
+
+  // Add track/playlist ID
+  url += `/${attrsObject.source}`
+
+  attrsObject.url = url
 
   const figureId = htmlId(id)
   const attrString = attributesString(attrsObject, bBerAttributes)
