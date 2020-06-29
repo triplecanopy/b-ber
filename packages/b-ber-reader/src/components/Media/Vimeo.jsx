@@ -2,13 +2,19 @@ import React from 'react'
 import omit from 'lodash/omit'
 import ReactPlayer from 'react-player'
 import has from 'lodash/has'
+import VimeoPosterImage from './VimeoPosterImage'
+import VimeoPlayerControls from './VimeoPlayerControls'
 import withNodePosition from '../../lib/with-node-position'
 import ReaderContext from '../../lib/reader-context'
 import browser from '../../lib/browser'
 import Url from '../../helpers/Url'
 import Viewport from '../../helpers/Viewport'
-import VimeoPosterImage from './VimeoPosterImage'
-import VimeoPlayerControls from './VimeoPlayerControls'
+import {
+  getURLAndQueryParamters,
+  getPlayerPropsFromQueryString,
+  transformQueryParamsToProps,
+  getPlayingStateOnUpdate,
+} from '../../helpers/media'
 
 // Chrome 81
 // Conditional chaining for testing env
@@ -49,16 +55,14 @@ class Vimeo extends React.Component {
 
   UNSAFE_componentWillMount() {
     const { src, posterImage, aspectRatio } = this.props
-    const [url, queryString] = this.getVimeoURLAndQueryParamters(src)
+    const [url, queryString] = getURLAndQueryParamters(src)
 
-    let playerOptions = this.getReactPlayerPropsFromQueryStringParameters(
-      queryString
-    )
+    let playerOptions = getPlayerPropsFromQueryString(queryString)
 
-    playerOptions = this.transformVimeoProps(playerOptions)
+    playerOptions = transformQueryParamsToProps(playerOptions)
 
     // Extract autoplay property for use during page change events. Do this
-    // after `transformVimeoProps` to ensure boolean attrs
+    // after `transformQueryParamsToProps` to ensure boolean attrs
     const { autoplay, ...rest } = playerOptions
 
     // Controls is needed both in state and in playerOptions
@@ -94,48 +98,29 @@ class Vimeo extends React.Component {
   }
 
   UNSAFE_componentWillReceiveProps(nextProps, nextContext) {
-    // Only elements with an autoplay attribute
-    if (!this.state.autoplay) return
+    const nextState = getPlayingStateOnUpdate(
+      this.state,
+      this.props,
+      nextProps,
+      nextContext
+    )
 
-    // Only if the view is fully rendered
-    if (!this.props.view.loaded) return
-    if (this.props.view.pendingDeferredCallbacks) return
+    if (!nextState) return
 
-    let { currentSpreadIndex } = this.state
-
-    // The index that the element is rendered on as calculated by
-    // withNodePosition
-    const { spreadIndex: elementSpreadIndex } = nextProps
-
-    // The spread index that's currently in view
-    const { spreadIndex: visibleSpreadIndex } = nextContext
-
-    // Only if user is navigating to a new spread
-    if (currentSpreadIndex === visibleSpreadIndex) return
-
-    // Update the `currentSpreadIndex` so that the user can continue to interact
-    // with the video (play/pause) as normal
-    currentSpreadIndex = visibleSpreadIndex
-
-    // Play or pause the video
-    const playing =
-      elementSpreadIndex === visibleSpreadIndex && !Viewport.isMobile()
-
-    this.setState({ playing, currentSpreadIndex })
+    this.setState(nextState)
   }
 
-  handleUpdatePlaying = () =>
-    this.setState(state => ({ ...state, playing: !state.playing }))
+  handleUpdatePlaying = () => this.setState({ playing: !this.state.playing })
 
-  handlePause = () => this.setState(state => ({ ...state, playing: false }))
+  handlePause = () => this.setState({ playing: false })
 
-  handleEnded = () => this.setState(state => ({ ...state, playing: false }))
+  handleEnded = () => this.setState({ playing: false })
 
   handleUpdatePosition = () => {}
 
   handleUpdateVolume = () => {}
 
-  transformVimeoProps = props => {
+  transformQueryParamsToProps = props => {
     // Remove blacklisted props
     const options = omit(props, Vimeo.blacklistedProps)
 
@@ -160,10 +145,10 @@ class Vimeo extends React.Component {
     return nextOptions
   }
 
-  getReactPlayerPropsFromQueryStringParameters = queryString =>
+  getPlayerPropsFromQueryString = queryString =>
     Url.parseQueryString(queryString)
 
-  getVimeoURLAndQueryParamters = url => url.split('?')
+  getURLAndQueryParamters = url => url.split('?')
 
   // Recursive call to update "floating" iframe position. The elements shift
   // around before render and can't be managed reliably in state, so poll the

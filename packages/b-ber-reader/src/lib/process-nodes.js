@@ -209,6 +209,21 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
 
       delete attrs['data-soundcloud']
 
+      // Required for play-on-page-change for fullbleed. See Vimeo instructions
+      // above
+      let nodeParent = node.parent
+      while (nodeParent) {
+        if (
+          nodeParent.type === 'tag' &&
+          nodeParent.attribs['data-marker-reference-figure']
+        ) {
+          attrs.useElementOffsetLeft = false
+          break
+        }
+
+        nodeParent = nodeParent.parent
+      }
+
       return React.createElement(Soundcloud, { ...attrs, key }, children)
     },
   },

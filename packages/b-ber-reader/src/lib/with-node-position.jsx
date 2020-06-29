@@ -33,7 +33,7 @@ const ELEMENT_EDGE_RECTO_MAX = 5
 //
 // }
 
-const withNodePosition = (WrappedComponent, options) => {
+const withNodePosition = (WrappedComponent, options = {}) => {
   class WrapperComponent extends React.Component {
     static contextType = ReaderContext
 
