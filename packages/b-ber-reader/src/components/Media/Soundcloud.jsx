@@ -2,6 +2,7 @@ import React from 'react'
 import ReactPlayer from 'react-player'
 import withNodePosition from '../../lib/with-node-position'
 import ReaderContext from '../../lib/reader-context'
+import Viewport from '../../helpers/Viewport'
 import {
   getURLAndQueryParamters,
   getPlayerPropsFromQueryString,
@@ -52,12 +53,31 @@ class Soundcloud extends React.Component {
     this.setState(nextState)
   }
 
+  componentDidMount() {
+    window.addEventListener('blur', this.focusWindow)
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('blur', this.focusWindow)
+  }
+
+  // Prevent iframe from stealing focus
+  focusWindow = () => setTimeout(() => window.focus(), 60)
+
   handlePause = () => this.setState({ playing: false })
 
   handleEnded = () => this.setState({ playing: false })
 
   render() {
     const { url, /*controls, */ playing, playerOptions } = this.state
+    const { kind } = this.props
+
+    // TODO set default height for playlists. currently 50% frame height
+    let height = '100%'
+    if (kind === 'playlists') {
+      const { top, bottom } = Viewport.optimized()
+      height = (window.innerHeight - top - bottom) / 2
+    }
 
     return (
       <React.Fragment>
@@ -66,7 +86,7 @@ class Soundcloud extends React.Component {
           <ReactPlayer
             url={url}
             width="100%"
-            height="100%"
+            height={height}
             playing={playing}
             playsinline={true}
             config={{ soundcloud: playerOptions }}

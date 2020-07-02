@@ -191,11 +191,18 @@ const soundcloudEmbedAttributes = {
   buying: true,
   sharing: true,
   download: true,
-  showartwork: true,
-  showplaycount: true,
-  showuser: true,
-  starttrack: true,
-  singleactive: true,
+  // eslint-disable-next-line camelcase
+  hide_related: true,
+  // eslint-disable-next-line camelcase
+  show_artwork: true,
+  // eslint-disable-next-line camelcase
+  show_playcount: true,
+  // eslint-disable-next-line camelcase
+  show_user: true,
+  // eslint-disable-next-line camelcase
+  start_track: true,
+  // eslint-disable-next-line camelcase
+  single_active: true,
 }
 
 // b-ber attributes for audio, video and vimeo directives

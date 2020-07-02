@@ -245,7 +245,10 @@ export const soundcloud = data =>
               <div class="embed %SUPPORT_CLASS_NAME%">
                 <iframe
                   data-soundcloud="true"
+                  data-kind="%KIND%"
                   src="%SRC%"
+                  width="100%"
+                  height="%HEIGHT%"
                   webkitallowfullscreen="webkitallowfullscreen"
                   mozallowfullscreen="mozallowfullscreen"
                   allowfullscreen="allowfullscreen"
@@ -276,6 +279,8 @@ export const soundcloud = data =>
         : 'unsupported'
     )
     .replace(/%SRC%/, `https://w.soundcloud.com/player/${data.attrQuery}`)
+    .replace(/%KIND%/, data.kind)
+    .replace(/%HEIGHT%/, data.height)
     .replace(/%CAPTION%/, data.caption ? `${data.caption}<br/>` : '')
     .replace(/%REF%/, data.ref)
     .replace(/%SECTION_CLOSE%/, data.inline ? '' : '</section>')

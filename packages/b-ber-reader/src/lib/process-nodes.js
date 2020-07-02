@@ -207,7 +207,8 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
       const attrs = Asset.convertToReactAttrs(node.attribs)
       const key = attrs.src
 
-      delete attrs['data-soundcloud']
+      attrs.kind = attrs['data-kind']
+      delete attrs['data-kind']
 
       // Required for play-on-page-change for fullbleed. See Vimeo instructions
       // above

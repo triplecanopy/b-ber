@@ -67,6 +67,10 @@ function prepare({ token, marker, context, instance, fileName, lineNumber }) {
     )
   }
 
+  // Height needs to be set on the iframe to allow for playlist tracks
+  // to be visible
+  const height = kind === 'playlist' ? '314' : 'auto'
+
   // Base embed URL
   let url = 'https://api.soundcloud.com'
 
@@ -106,6 +110,8 @@ function prepare({ token, marker, context, instance, fileName, lineNumber }) {
     pageOrder: state.figures.length,
     poster: attrsObject.poster,
     type,
+    height,
+    kind,
   }
 }
 

@@ -32,11 +32,18 @@ export const soundcloudAttributesTransformer = {
   buying: ensureBoolean,
   sharing: ensureBoolean,
   download: ensureBoolean,
-  showartwork: ensureBoolean,
-  showplaycount: ensureBoolean,
-  showuser: ensureBoolean,
-  starttrack: ensureMatch('starttrack', /^[0-9]+$/),
-  singleactive: ensureBoolean,
+  // eslint-disable-next-line camelcase
+  hide_related: ensureBoolean,
+  // eslint-disable-next-line camelcase
+  show_artwork: ensureBoolean,
+  // eslint-disable-next-line camelcase
+  show_playcount: ensureBoolean,
+  // eslint-disable-next-line camelcase
+  show_user: ensureBoolean,
+  // eslint-disable-next-line camelcase
+  start_track: ensureMatch('starttrack', /^[0-9]+$/),
+  // eslint-disable-next-line camelcase
+  single_active: ensureBoolean,
 }
 
 export const transformAttributes = (obj, transformer) => {
@@ -89,8 +96,9 @@ export function createSoundcloudInline({
   mediaType,
   attrString,
   attrQuery,
-  poster,
   caption,
+  height,
+  kind,
 }) {
   return `
     ${commentStart}
@@ -98,8 +106,10 @@ export function createSoundcloudInline({
         <div id="${id}"${attrString}>
           <iframe
             data-soundcloud="true"
-            data-soundcloud-poster="${poster}"
+            data-kind="${kind}"
             src="https://w.soundcloud.com/player/${attrQuery}"
+            width="100%"
+            height="${height}"
             webkitallowfullscreen="webkitallowfullscreen"
             mozallowfullscreen="mozallowfullscreen"
             allowfullscreen="allowfullscreen"
