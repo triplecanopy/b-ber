@@ -60,16 +60,13 @@ const comparison = (() => {
   return (fn, a, b) => fns[fn].call(null, a, b)
 })()
 
-export const isBrowser = (name, operator = '', majorVersion = '') => {
+export const isBrowser = (name, operator = '', majorVersion = 0) => {
   if (!browser || browser.name !== name) return false
 
   // Simple check if is a specific browser, e.g., isBrowser('safari')
   if (!operator || !majorVersion) return true
 
-  let { version } = browser
+  const [major] = browser.version.split('.').map(Number)
 
-  ;[version] = version.split('.')
-  version = Number(version)
-
-  return comparison(operator, version, majorVersion)
+  return comparison(operator, major, majorVersion)
 }
