@@ -59,7 +59,7 @@ function prepare({ token, marker, context, instance, fileName, lineNumber }) {
   attrsObject.classes += ` embed ${supportedPrefix}supported`
 
   // Create `url` parameter for query string from `source` and `kind` attributes
-  const kinds = ['track', 'playlist']
+  const kinds = ['track', 'playlist', 'user']
   const kind = attrsObject.kind ? attrsObject.kind : 'track'
   if (!kinds.includes(kind)) {
     log.error(
@@ -69,7 +69,8 @@ function prepare({ token, marker, context, instance, fileName, lineNumber }) {
 
   // Height needs to be set on the iframe to allow for playlist tracks
   // to be visible
-  const height = kind === 'playlist' ? '314' : 'auto'
+  // TODO best way to set height?
+  const height = kind === 'playlist' || kind === 'user' ? '314' : 'auto'
 
   // Base embed URL
   let url = 'https://api.soundcloud.com'

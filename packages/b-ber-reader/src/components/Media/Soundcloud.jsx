@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactPlayer from 'react-player'
 import withNodePosition from '../../lib/with-node-position'
+import withIframePosition from '../../lib/with-iframe-position'
 import ReaderContext from '../../lib/reader-context'
 import Viewport from '../../helpers/Viewport'
 import {
@@ -9,6 +10,10 @@ import {
   transformQueryParamsToProps,
   getPlayingStateOnUpdate,
 } from '../../helpers/media'
+import { isBrowser } from '../../helpers/utils'
+
+// Enable absolutely positioned iframe layout for specific browsers/versions
+const iframePositioningEnabled = isBrowser('chrome', 'gte', 81)
 
 class Soundcloud extends React.Component {
   static contextType = ReaderContext
@@ -69,23 +74,64 @@ class Soundcloud extends React.Component {
   handleEnded = () => this.setState({ playing: false })
 
   render() {
-    const { url, /*controls, */ playing, playerOptions } = this.state
+    const {
+      /*controls, */
+      url,
+      playing,
+      playerOptions,
+    } = this.state
+
+    const { iframePlaceholderTop, iframePlaceholderWidth } = this.props
+
+    let iframeContainerStyles = {}
+    let width = '100%'
+
+    // Set styles for absolutely positioned desktop elements for browser
+    // behaviour
+    if (iframePositioningEnabled) {
+      const mobile = Viewport.isMobile()
+      const position = mobile ? 'static' : 'absolute' // Only run re-positioning on desktop
+
+      iframeContainerStyles = {
+        top: iframePlaceholderTop,
+        width: iframePlaceholderWidth,
+        position,
+      }
+
+      width = iframePlaceholderWidth
+    }
+
     const { kind } = this.props
 
-    // TODO set default height for playlists. currently 50% frame height
-    let height = '100%'
-    if (kind === 'playlists') {
+    // TODO set default height for tracks and playlists. tracks currently 150px,
+    // playlists are 50% frame height
+    let height = 150
+    if (kind === 'playlists' || kind === 'users') {
       const { top, bottom } = Viewport.optimized()
       height = (window.innerHeight - top - bottom) / 2
     }
 
     return (
       <React.Fragment>
-        {/* Ref is used to calculate spread position in HOC */}
-        <div key={url} ref={this.props.elemRef}>
+        {/* Styles for iframe layout */}
+        {iframePositioningEnabled && (
+          <style>{this.props.iframeStyleBlock()}</style>
+        )}
+
+        {/* See Vimeo.jsx for details about the iframe-placeholder element */}
+        {iframePositioningEnabled && (
+          <div
+            key={`placholder-${url}`}
+            style={{ paddingTop: height }}
+            className="iframe-placeholder"
+            ref={this.props.innerRef}
+          />
+        )}
+
+        <div style={iframeContainerStyles} key={url} ref={this.props.elemRef}>
           <ReactPlayer
             url={url}
-            width="100%"
+            width={width}
             height={height}
             playing={playing}
             playsinline={true}
@@ -100,4 +146,6 @@ class Soundcloud extends React.Component {
   }
 }
 
-export default withNodePosition(Soundcloud)
+export default withNodePosition(
+  withIframePosition(Soundcloud, { enabled: iframePositioningEnabled })
+)

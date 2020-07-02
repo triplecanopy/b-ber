@@ -1,13 +1,10 @@
 import React from 'react'
-import omit from 'lodash/omit'
 import ReactPlayer from 'react-player'
-import has from 'lodash/has'
 import VimeoPosterImage from './VimeoPosterImage'
 import VimeoPlayerControls from './VimeoPlayerControls'
 import withNodePosition from '../../lib/with-node-position'
+import withIframePosition from '../../lib/with-iframe-position'
 import ReaderContext from '../../lib/reader-context'
-import browser from '../../lib/browser'
-import Url from '../../helpers/Url'
 import Viewport from '../../helpers/Viewport'
 import {
   getURLAndQueryParamters,
@@ -15,19 +12,15 @@ import {
   transformQueryParamsToProps,
   getPlayingStateOnUpdate,
 } from '../../helpers/media'
+import { isBrowser } from '../../helpers/utils'
 
-// Chrome 81
-// Conditional chaining for testing env
-const isChrome81 =
-  browser?.name === 'chrome' && browser?.version === '81.0.4044'
+const iframePositioningEnabled = isBrowser('chrome', 'eq', 81)
 
 class Vimeo extends React.Component {
   static contextType = ReaderContext
 
   // Props that are on the vimeo player which must be managed by state
   static blacklistedProps = ['autopause' /* , 'controls' */]
-
-  iframePlaceholder = React.createRef() // Chrome 81
 
   state = {
     url: '',
@@ -43,23 +36,16 @@ class Vimeo extends React.Component {
       ['x', 16],
       ['y', 9],
     ]),
-
-    // There's a bug in Chrome 81.0.4044.92 that causes iframes on a different
-    // domain than the host not to load in multiple column layouts. Following
-    // props are used for element positioning in the work-around commened on
-    // below.
-    iframePlaceholderTop: 0,
-    iframePlaceholderWidth: 0,
-    iframePlaceholderHeight: 0,
   }
 
   UNSAFE_componentWillMount() {
     const { src, posterImage, aspectRatio } = this.props
     const [url, queryString] = getURLAndQueryParamters(src)
 
-    let playerOptions = getPlayerPropsFromQueryString(queryString)
-
-    playerOptions = transformQueryParamsToProps(playerOptions)
+    const playerOptions = transformQueryParamsToProps(
+      getPlayerPropsFromQueryString(queryString),
+      Vimeo.blacklistedProps
+    )
 
     // Extract autoplay property for use during page change events. Do this
     // after `transformQueryParamsToProps` to ensure boolean attrs
@@ -78,23 +64,6 @@ class Vimeo extends React.Component {
       aspectRatio,
       playerOptions: { ...rest },
     })
-
-    window.addEventListener('resize', this.handleResize)
-  }
-
-  componentDidMount() {
-    if (!isChrome81) return
-    this.updateIframePosition() // Chrome 81
-  }
-
-  componentWillUnmount() {
-    if (!isChrome81) return
-    window.removeEventListener('resize', this.handleResize) // Chrome 81
-  }
-
-  handleResize = () => {
-    if (!isChrome81) return
-    this.updateIframePosition() // Chrome 81
   }
 
   UNSAFE_componentWillReceiveProps(nextProps, nextContext) {
@@ -120,72 +89,6 @@ class Vimeo extends React.Component {
 
   handleUpdateVolume = () => {}
 
-  transformQueryParamsToProps = props => {
-    // Remove blacklisted props
-    const options = omit(props, Vimeo.blacklistedProps)
-
-    // Cast boolean attributes
-    const truthy = new Set(['true', '1'])
-    const falsey = new Set(['false', '0'])
-    const bools = new Set([...truthy, ...falsey])
-
-    const nextOptions = Object.entries(options).reduce((acc, [key, value]) => {
-      acc[key] = bools.has(value) ? truthy.has(value) : value
-      return acc
-    }, {})
-
-    // Set default controls
-    if (!has(nextOptions, 'controls')) {
-      nextOptions.controls = this.state.controls
-    }
-
-    // Autoplay on mobile
-    nextOptions.playsinline = true
-
-    return nextOptions
-  }
-
-  getPlayerPropsFromQueryString = queryString =>
-    Url.parseQueryString(queryString)
-
-  getURLAndQueryParamters = url => url.split('?')
-
-  // Recursive call to update "floating" iframe position. The elements shift
-  // around before render and can't be managed reliably in state, so poll the
-  // placeholder position to check if the floating element's position matches,
-  // and call again if not.
-  updateIframePosition = () => {
-    if (Viewport.isMobile()) return
-
-    if (!this.iframePlaceholder?.current) {
-      console.warn('Could not find iframePlaceholder node')
-      return
-    }
-
-    const node = this.iframePlaceholder.current
-    const {
-      iframePlaceholderTop,
-      iframePlaceholderWidth,
-      iframePlaceholderHeight,
-    } = this.state
-
-    const { top, width, height } = node.getBoundingClientRect()
-
-    if (
-      iframePlaceholderTop !== top ||
-      iframePlaceholderWidth !== width ||
-      iframePlaceholderHeight !== height
-    ) {
-      this.setState({
-        iframePlaceholderTop: top,
-        iframePlaceholderWidth: width,
-        iframePlaceholderHeight: height,
-      })
-
-      setTimeout(this.updateIframePosition, 60)
-    }
-  }
-
   render() {
     const {
       url,
@@ -196,18 +99,19 @@ class Vimeo extends React.Component {
       posterImage,
       playerOptions,
       aspectRatio,
+    } = this.state
 
-      // Chrome 81
+    const {
       iframePlaceholderTop: top,
       iframePlaceholderWidth: width,
       iframePlaceholderHeight: height,
-    } = this.state
+    } = this.props
 
     // Chrome 81
     let iframeContainerStyles = {}
     let paddingTop
 
-    if (isChrome81) {
+    if (iframePositioningEnabled) {
       const mobile = Viewport.isMobile()
       const position = mobile ? 'static' : 'absolute' // Only run re-positioning on desktop
       const x = aspectRatio.get('x')
@@ -251,31 +155,16 @@ class Vimeo extends React.Component {
             The parent container also needs to be styled to properly render the
             layout. Inject inline styles here.
         */
-        isChrome81 && (
-          <style>{`
-            .context__desktop .vimeo.figure__large.figure__inline .embed.supported {
-              padding-top: 0 !important;
-              position: static !important;
-              transform: none !important;
-            }
-
-            .context__desktop .spread-with-fullbleed-media .vimeo.figure__large.figure__inline .embed.supported {
-              position: relative !important;
-            }
-
-            .context__desktop .spread-with-fullbleed-media .vimeo.figure__large.figure__inline .embed.supported iframe,
-            .context__desktop .spread-with-fullbleed-media .vimeo.figure__large.figure__inline .embed.supported .iframe-placeholder + div {
-              top: 0 !important;
-            }
-          `}</style>
+        iframePositioningEnabled && (
+          <style>{this.props.iframeStyleBlock()}</style>
         )}
 
-        {isChrome81 && (
+        {iframePositioningEnabled && (
           <div
             key={`placholder-${url}`}
             style={{ paddingTop }}
             className="iframe-placeholder"
-            ref={this.iframePlaceholder}
+            ref={this.props.innerRef}
           />
         )}
 
@@ -311,4 +200,7 @@ class Vimeo extends React.Component {
   }
 }
 
-export default withNodePosition(Vimeo, { useParentDimensions: true })
+export default withNodePosition(
+  withIframePosition(Vimeo, { enabled: iframePositioningEnabled }),
+  { useParentDimensions: true }
+)

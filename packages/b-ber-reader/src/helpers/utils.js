@@ -2,6 +2,12 @@ import isUndefined from 'lodash/isUndefined'
 import isArray from 'lodash/isArray'
 import isPlainObject from 'lodash/isPlainObject'
 import has from 'lodash/has'
+import eq from 'lodash/eq'
+import gt from 'lodash/gt'
+import gte from 'lodash/gte'
+import lt from 'lodash/lt'
+import lte from 'lodash/lte'
+import browser from '../lib/browser'
 
 export const noop = () => {}
 
@@ -47,4 +53,23 @@ export const mergeDeep = (target, ...args) => {
   }
 
   return target
+}
+
+const comparison = (() => {
+  const fns = { eq, gt, gte, lt, lte }
+  return (fn, a, b) => fns[fn].call(null, a, b)
+})()
+
+export const isBrowser = (name, operator = '', majorVersion = '') => {
+  if (!browser || browser.name !== name) return false
+
+  // Simple check if is a specific browser, e.g., isBrowser('safari')
+  if (!operator || !majorVersion) return true
+
+  let { version } = browser
+
+  ;[version] = version.split('.')
+  version = Number(version)
+
+  return comparison(operator, version, majorVersion)
 }
