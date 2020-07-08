@@ -1,6 +1,6 @@
 {
   "name": "@canopycanopycanopy/b-ber-markdown-renderer",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -35,7 +35,7 @@
     "@canopycanopycanopy/b-ber-grammar-pullquote": "1.1.2",
     "@canopycanopycanopy/b-ber-grammar-section": "1.1.2",
     "@canopycanopycanopy/b-ber-grammar-spread": "1.1.2",
-    "@canopycanopycanopy/b-ber-grammar-vimeo": "1.1.6",
+    "@canopycanopycanopy/b-ber-grammar-vimeo": "1.1.7",
     "@canopycanopycanopy/b-ber-grammar-soundcloud": "1.1.6",
     "@canopycanopycanopy/b-ber-parser-footnotes": "1.1.2",
     "@canopycanopycanopy/b-ber-parser-gallery": "1.1.2",
