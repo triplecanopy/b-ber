@@ -23,7 +23,7 @@ class Soundcloud extends React.Component {
     // controls: true, // TODO custom controls tbd
     playing: false,
     autoplay: false,
-    playerOptions: {},
+    options: {},
     currentSpreadIndex: null,
   }
 
@@ -31,18 +31,18 @@ class Soundcloud extends React.Component {
     const { src } = this.props
 
     const queryString = getURLAndQueryParamters(src)[1]
-    const playerOptions = transformQueryParamsToProps(
+    const options = transformQueryParamsToProps(
       getPlayerPropsFromQueryString(queryString)
     )
 
     // Extract autoplay property for use during page change events. Do this
     // after `transformQueryParamsToProps` to ensure boolean attrs
-    const { url, autoplay, ...rest } = playerOptions
+    const { url, autoplay, ...rest } = options
 
-    // Controls is needed both in state and in playerOptions
-    // const { controls } = playerOptions
+    // Controls is needed both in state and in options
+    // const { controls } = options
 
-    this.setState({ url, autoplay, playerOptions: { ...rest } })
+    this.setState({ url, autoplay, options: rest })
   }
 
   UNSAFE_componentWillReceiveProps(nextProps, nextContext) {
@@ -78,7 +78,7 @@ class Soundcloud extends React.Component {
       /*controls, */
       url,
       playing,
-      playerOptions,
+      options,
     } = this.state
 
     const { iframePlaceholderTop, iframePlaceholderWidth } = this.props
@@ -135,7 +135,7 @@ class Soundcloud extends React.Component {
             height={height}
             playing={playing}
             playsinline={true}
-            config={{ soundcloud: playerOptions }}
+            config={{ soundcloud: { options } }}
             // controls={controls}
             onPause={this.handlePause}
             onEnded={this.handleEnded}
