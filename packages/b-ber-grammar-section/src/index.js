@@ -12,10 +12,13 @@ import {
 
 // this matches *all* container-type directives, and outputs the appropriate
 // HTML based on user-defined attributes
-const containers = BLOCK_DIRECTIVES.join('|')
+const containers = Array.from(BLOCK_DIRECTIVES).join('|')
+
+// treat `exit` like an opening marker since we're using it as such
 const MARKER_OPEN_RE = new RegExp(
   `^(${containers}|exit)(?::([^\\s]+)(\\s.*)?)?$`
-) // treat `exit` like an opening marker since we're using it as such
+)
+
 const MARKER_CLOSE_RE = /(exit)(?::([^\s]+))?/
 
 // since `context` needs to be available in this `render` method, we curry it

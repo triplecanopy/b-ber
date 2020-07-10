@@ -21,7 +21,7 @@ const SECONDARY_INLINE_DIRECTIVE_FENCE_CLOSE = `${INLINE_DIRECTIVE_MARKER.repeat
 )}`
 
 // block
-const FRONTMATTER_DIRECTIVES = [
+const FRONTMATTER_DIRECTIVES = new Set([
   'frontmatter',
   'halftitlepage',
   'titlepage',
@@ -30,8 +30,9 @@ const FRONTMATTER_DIRECTIVES = [
   'foreword',
   'preface',
   'acknowledgments',
-]
-const BODYMATTER_DIRECTIVES = [
+])
+
+const BODYMATTER_DIRECTIVES = new Set([
   'bodymatter',
   'introduction',
   'prologue',
@@ -45,8 +46,9 @@ const BODYMATTER_DIRECTIVES = [
   // Generic container directives for secitoning layout
   'section',
   'article',
-]
-const BACKMATTER_DIRECTIVES = [
+])
+
+const BACKMATTER_DIRECTIVES = new Set([
   'backmatter',
   'afterword',
   'loi',
@@ -55,10 +57,10 @@ const BACKMATTER_DIRECTIVES = [
   'credits',
   'contributors',
   'colophon',
-]
+])
 
 // inline
-const INLINE_DIRECTIVES = [
+const INLINE_DIRECTIVES = new Set([
   'figure',
   'figure-inline',
   'logo',
@@ -70,20 +72,22 @@ const INLINE_DIRECTIVES = [
   'vimeo-inline',
   'soundcloud',
   'soundcloud-inline',
-]
+  'iframe',
+  'iframe-inline',
+])
 
 // misc
-const MISC_DIRECTIVES = [
+const MISC_DIRECTIVES = new Set([
   'pullquote',
   'blockquote',
   'dialogue',
   'gallery',
   'spread',
   'epigraph',
-]
+])
 
 // belonging to the epub-vocab, but still in draft. see https://idpf.github.io/epub-vocabs/structure/
-const DRAFT_DIRECTIVES = [
+const DRAFT_DIRECTIVES = new Set([
   'abstract',
   'toc-brief',
   'credits',
@@ -115,9 +119,9 @@ const DRAFT_DIRECTIVES = [
   'glossref',
   'backlink',
   'credit',
-]
+])
 
-const DEPRECATED_DIRECTIVES = [
+const DEPRECATED_DIRECTIVES = new Set([
   'subchapter',
   'help',
   'marginalia',
@@ -128,19 +132,20 @@ const DEPRECATED_DIRECTIVES = [
   'rearnote',
   'rearnotes',
   'annoref',
-]
+])
 
 // unions
-const BLOCK_DIRECTIVES = [
+const BLOCK_DIRECTIVES = new Set([
   ...FRONTMATTER_DIRECTIVES,
   ...BODYMATTER_DIRECTIVES,
   ...BACKMATTER_DIRECTIVES,
-]
-const ALL_DIRECTIVES = [
+])
+
+const ALL_DIRECTIVES = new Set([
   ...BLOCK_DIRECTIVES,
   ...INLINE_DIRECTIVES,
   ...MISC_DIRECTIVES,
-]
+])
 
 const HTML5AudiovideoAttributes = {
   autoplay: true,
@@ -266,6 +271,22 @@ const SUPPORTED_ATTRIBUTES = {
   'soundcloud-inline': {
     ...soundcloudEmbedAttributes,
   },
+  iframe: {
+    title: true,
+    width: true,
+    height: true,
+    source: true,
+    classes: true,
+    poster: true,
+  },
+  'iframe-inline': {
+    title: true,
+    width: true,
+    height: true,
+    source: true,
+    classes: true,
+    poster: true,
+  },
 
   // misc
   pullquote: {
@@ -292,7 +313,11 @@ const SUPPORTED_ATTRIBUTES = {
   },
 }
 
-const DIRECTIVES_REQUIRING_ALT_TAG = ['figure', 'figure-inline', 'logo']
+const DIRECTIVES_REQUIRING_ALT_TAG = new Set([
+  'figure',
+  'figure-inline',
+  'logo',
+])
 
 export {
   BLOCK_DIRECTIVE_MARKER,

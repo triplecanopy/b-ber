@@ -157,7 +157,18 @@ export const iframe = data =>
         <figure id="%ID%">
           <div class="figure__items">
             <div class="iframe">
-              <iframe src="%SRC%" webkitallowfullscreen="webkitallowfullscreen" mozallowfullscreen="mozallowfullscreen" allowfullscreen="allowfullscreen" frameborder="0" />
+              <iframe
+                src="%SRC%"
+                title="%TITLE%"
+                width="%WIDTH%"
+                height="%HEIGHT%"
+                webkitallowfullscreen="webkitallowfullscreen"
+                mozallowfullscreen="mozallowfullscreen"
+                allowfullscreen="allowfullscreen"
+                allow="autoplay"
+                frameborder="0"
+                scrolling="no"
+              />
             </div>
 
             <div class="figcaption">
@@ -174,6 +185,9 @@ export const iframe = data =>
     .replace(/%SECTION_OPEN%/, getSectionOpen(data))
     .replace(/%ID%/g, data.id)
     .replace(/%SRC%/g, Url.encodeQueryString(data.source))
+    .replace(/%TITLE%/g, data.title)
+    .replace(/%WIDTH%/g, data.width)
+    .replace(/%HEIGHT%/g, data.height)
     .replace(/%CAPTION%/g, data.caption ? `${data.caption}<br/>` : '')
     .replace(/%REF%/g, data.ref)
     .replace(/%SECTION_CLOSE%/g, data.inline ? '' : '</section>')

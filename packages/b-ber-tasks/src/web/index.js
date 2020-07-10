@@ -345,7 +345,7 @@ function writeWebpubManifest() {
     rrdir(state.distDir, (err1, files) => {
       if (err1) reject(err1)
 
-      const manifest = generateWebpubManifest(state, files)
+      const manifest = generateWebpubManifest(files)
 
       fs.writeJson(path.join(DIST_PATH, 'manifest.json'), manifest).then(
         resolve

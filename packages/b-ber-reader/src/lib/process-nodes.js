@@ -12,6 +12,7 @@ import {
   SpreadFigure,
   Vimeo,
   Soundcloud,
+  Iframe,
   Ultimate,
 } from '../components'
 import { Asset, Url } from '../helpers'
@@ -226,6 +227,34 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
       }
 
       return React.createElement(Soundcloud, { ...attrs, key }, children)
+    },
+  },
+  {
+    // Soundcloud directive.
+    // Data attributes are added during `bber build`
+    shouldProcessNode(node) {
+      return node.name === 'iframe'
+    },
+    processNode(node, children) {
+      const attrs = Asset.convertToReactAttrs(node.attribs)
+      const key = attrs.src
+
+      // Required for play-on-page-change for fullbleed. See Vimeo instructions
+      // above
+      let nodeParent = node.parent
+      while (nodeParent) {
+        if (
+          nodeParent.type === 'tag' &&
+          nodeParent.attribs['data-marker-reference-figure']
+        ) {
+          attrs.useElementOffsetLeft = false
+          break
+        }
+
+        nodeParent = nodeParent.parent
+      }
+
+      return React.createElement(Iframe, { ...attrs, key }, children)
     },
   },
   {

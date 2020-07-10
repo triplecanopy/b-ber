@@ -28,30 +28,29 @@ import {
 //
 
 const _lookUpFamily = genus =>
-  FRONTMATTER_DIRECTIVES.indexOf(genus) > -1
+  FRONTMATTER_DIRECTIVES.has(genus)
     ? 'frontmatter'
-    : BODYMATTER_DIRECTIVES.indexOf(genus) > -1
+    : BODYMATTER_DIRECTIVES.has(genus)
     ? 'bodymatter'
-    : BACKMATTER_DIRECTIVES.indexOf(genus) > -1
+    : BACKMATTER_DIRECTIVES.has(genus)
     ? 'backmatter'
     : ''
 
 // Determine the directive's classification and parent's type
 const _directiveOrder = genus =>
-  BLOCK_DIRECTIVES.indexOf(genus) > -1
+  BLOCK_DIRECTIVES.has(genus)
     ? 'block'
-    : INLINE_DIRECTIVES.indexOf(genus) > -1
+    : INLINE_DIRECTIVES.has(genus)
     ? 'inline'
-    : MISC_DIRECTIVES.indexOf(genus) > -1
+    : MISC_DIRECTIVES.has(genus)
     ? 'misc'
     : null
 
-const _requiresAltTag = genus =>
-  DIRECTIVES_REQUIRING_ALT_TAG.indexOf(genus) > -1
+const _requiresAltTag = genus => DIRECTIVES_REQUIRING_ALT_TAG.has(genus)
 
 const _isUnsupportedAttribute = (genus, attr) => {
   let key
-  if (BLOCK_DIRECTIVES.indexOf(genus) > -1) {
+  if (BLOCK_DIRECTIVES.has(genus)) {
     // these are all containers which share the same attributes, so they're
     // grouped under a single property
     key = 'block'
@@ -60,7 +59,7 @@ const _isUnsupportedAttribute = (genus, attr) => {
     key = genus
   }
 
-  return SUPPORTED_ATTRIBUTES[key][attr] !== true // bool
+  return SUPPORTED_ATTRIBUTES[key][attr] !== true
 }
 
 const _applyTransforms = (k, v) => {
@@ -228,16 +227,16 @@ const attributesObject = (attrs, _genus, context = {}) => {
     log.error(`No directive provided: ${fileName}:${lineNumber}`)
   }
 
-  if (ALL_DIRECTIVES.indexOf(genus) < 0) {
+  if (!ALL_DIRECTIVES.has(genus)) {
     log.error(`Invalid directive: [${genus}] at ${fileName}:${lineNumber}`)
   }
 
-  if (DRAFT_DIRECTIVES.indexOf(genus) > -1) {
+  if (DRAFT_DIRECTIVES.has(genus)) {
     log.warn(`render [epub:${genus}] is [draft]. substituting with [chapter]`)
     genus = 'chapter'
   }
 
-  if (DEPRECATED_DIRECTIVES.indexOf(genus) > -1) {
+  if (DEPRECATED_DIRECTIVES.has(genus)) {
     log.warn(
       `render [epub:${genus}] is [deprecated]. substituting with [chapter]`
     )

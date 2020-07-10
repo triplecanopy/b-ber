@@ -154,7 +154,7 @@ class Reader {
       'OPS'
     )
     return rrdir(assetsDir).then(files => {
-      const manifest = generateWebpubManifest(state, files)
+      const manifest = generateWebpubManifest(files)
       fs.writeJson(state.dist.root('manifest.json'), manifest)
     })
   }

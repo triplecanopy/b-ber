@@ -7,7 +7,7 @@ import findIndex from 'lodash/findIndex'
 // import ffprobe from 'ffprobe'
 // import ffprobeStatic from 'ffprobe-static'
 import mime from 'mime-types'
-import { Url } from '..'
+import { Url, State as state } from '..'
 
 // Get a file's relative path to the OPS
 export const opsPath = (fpath, base) =>
@@ -52,13 +52,13 @@ export const forOf = (collection, iterator) =>
 // @issue: https://github.com/triplecanopy/b-ber/issues/208
 //
 // this is provisional, will just cause more confusion in the future
-export const getTitle = (page, state) => {
+export const getTitle = page => {
   if (page.name === 'figures-titlepage') return 'Figures'
   const meta = state.spine.frontMatter.get(page.name)
   return meta && meta.title ? meta.title : page.title || page.name
 }
 
-export const getBookMetadata = (term, state) => {
+export const getBookMetadata = term => {
   const entry = find(state.metadata.json(), { term })
   if (entry && entry.value) return entry.value
   log.warn(`Could not find metadata value for ${term}`)
@@ -116,7 +116,7 @@ export const ensure = ({ files = [], dirs = [], prefix = '' } = {}) =>
     .then(() => ensureFiles(files, prefix))
     .catch(log.error)
 
-export const generateWebpubManifest = (state, files) => {
+export const generateWebpubManifest = files => {
   const remoteURL = Url.trimSlashes(state.config.remote_url)
   const readingOrder = state.spine.flattened.map(({ name, title }) => ({
     href: `${remoteURL}/text/${name}.xhtml`,
@@ -160,4 +160,75 @@ export const generateWebpubManifest = (state, files) => {
   }
 
   return manifest
+}
+
+// b-ber-grammar-* utilities
+export const validatePosterImage = (asset, type) => {
+  const assetPath = state.src.images(asset)
+
+  if (!fs.existsSync(assetPath)) {
+    log.error(`bber-directives: Poster image for [${type}] does not exist`)
+  }
+
+  return asset
+}
+
+export const renderPosterImage = poster =>
+  poster ? `<img src="${poster}" alt="Poster Image"/>` : ''
+
+export const renderCaption = (caption, mediaType) =>
+  caption ? `<p class="caption caption__${mediaType}">${caption}</p>` : ''
+
+export const getMediaType = type => {
+  const index = type.indexOf('-')
+  return index > -1 ? type.substring(0, index) : type
+}
+
+// Only render unsupported HTML for inline embeds since the unsupported figure
+// in the LOI is handled by b-ber-templates. Not great UI to have to click to
+// the LOI to see that something is unsupported, but vimeo directives should
+// mostly be managed by media.yml which supports fallbacks.
+export function createUnsupportedInline({
+  id,
+  commentStart,
+  commentEnd,
+  attrString,
+  mediaType,
+  poster,
+}) {
+  return `
+    ${commentStart}
+    <section class="${mediaType} figure__large figure__inline">
+      <div id="${id}" ${attrString}>
+        <div class="media__fallback media__fallback__${mediaType} media__fallback--image">
+          <figure>
+            ${renderPosterImage(poster)}
+          </figure>
+        </div>
+        <p class="media__fallback media__fallback__${mediaType} media__fallback--text">Your device does not support embedded media.</p>
+      </div>
+    </section>
+    ${commentEnd}`
+}
+
+export function ensureSource(obj, type, fileName, lineNumber) {
+  if (!obj.source) {
+    log.error(
+      `Directive [${type}] requires a [source] attribute at [${fileName}:${lineNumber}]`
+    )
+  }
+}
+
+export function ensurePoster(obj, type) {
+  if (!obj.poster) return
+
+  validatePosterImage(obj.poster, type)
+  // eslint-disable-next-line no-param-reassign
+  obj.poster = `../images/${encodeURIComponent(path.basename(obj.poster))}`
+}
+
+// Add mediaType to classes
+export function ensureSupportedClassNames(obj, supported) {
+  // eslint-disable-next-line no-param-reassign
+  obj.classes += ` embed ${supported(state.build) ? '' : 'un'}supported`
 }

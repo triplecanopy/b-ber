@@ -8,6 +8,7 @@ import markdownItImage from '@canopycanopycanopy/b-ber-grammar-image'
 import markdownItAudioVideo from '@canopycanopycanopy/b-ber-grammar-audio-video'
 import markdownItVimeo from '@canopycanopycanopy/b-ber-grammar-vimeo'
 import markdownItSoundcloud from '@canopycanopycanopy/b-ber-grammar-soundcloud'
+import markdownItIframe from '@canopycanopycanopy/b-ber-grammar-iframe'
 import markdownItDialogue from '@canopycanopycanopy/b-ber-grammar-dialogue'
 import markdownItGallery from '@canopycanopycanopy/b-ber-grammar-gallery'
 import markdownItSpread from '@canopycanopycanopy/b-ber-grammar-spread'
@@ -16,9 +17,11 @@ import markdownItFootnotePlugin from '@canopycanopycanopy/b-ber-grammar-footnote
 import mediaDirectivePreProcessor from '@canopycanopycanopy/b-ber-grammar-media'
 import hljs from './highlightjs'
 
+const LINE_BREAK = '\n'
+const SPACE = ' '
+
 class MarkdownRenderer {
   constructor() {
-    this.noop = MarkdownRenderer.noop
     this.fileName = ''
 
     // Instance of MarkdownIt class
@@ -93,6 +96,11 @@ class MarkdownRenderer {
         markdownItSoundcloud.renderer(reference)
       )
       .use(
+        markdownItIframe.plugin,
+        markdownItIframe.name,
+        markdownItIframe.renderer(reference)
+      )
+      .use(
         markdownItLogo.plugin,
         markdownItLogo.name,
         markdownItLogo.renderer(reference)
@@ -101,11 +109,13 @@ class MarkdownRenderer {
 
   template(meta) {
     const str = meta
-      .split('\n')
-      .map(value => `  ${value}`)
-      .join('\n')
+      .split(LINE_BREAK)
+      .map(value => `${SPACE.repeat(2)}${value}`)
+      .join(LINE_BREAK)
 
-    return `-\n  fileName: ${this.fileName}\n${str}\n`
+    return `-${LINE_BREAK}${SPACE.repeat(2)}fileName: ${
+      this.fileName
+    }${LINE_BREAK}${str}${LINE_BREAK}`
   }
 
   // Runs transformations on the Markdown to prepare it for rendering
