@@ -8,7 +8,7 @@ import { isBrowser } from '../../helpers/utils'
 // Enable absolutely positioned iframe layout for specific browsers/versions
 const iframePositioningEnabled = isBrowser('chrome', 'gte', 81)
 
-class Soundcloud extends React.Component {
+class Iframe extends React.Component {
   static contextType = ReaderContext
 
   componentDidMount() {
@@ -31,7 +31,7 @@ class Soundcloud extends React.Component {
       iframePlaceholderWidth,
     } = this.props
 
-    let { width } = this.props
+    const { width } = this.props
 
     let iframeContainerStyles = {}
     // let width = '100%'
@@ -44,11 +44,12 @@ class Soundcloud extends React.Component {
 
       iframeContainerStyles = {
         top: iframePlaceholderTop,
-        width: iframePlaceholderWidth,
+        width,
+        maxWidth: iframePlaceholderWidth,
         position,
       }
 
-      width = iframePlaceholderWidth
+      // width = iframePlaceholderWidth
     }
 
     // TODO set default height for tracks and playlists. tracks currently 150px,
@@ -64,7 +65,7 @@ class Soundcloud extends React.Component {
       <React.Fragment>
         {/* Styles for iframe layout */}
         {iframePositioningEnabled && (
-          <style>{this.props.iframeStyleBlock()}</style>
+          <style>{this.props.iframeStyleBlock('iframe')}</style>
         )}
 
         {/* See Vimeo.jsx for details about the iframe-placeholder element */}
@@ -85,7 +86,7 @@ class Soundcloud extends React.Component {
             height={height}
             webkitallowfullscreen="webkitallowfullscreen"
             mozallowfullscreen="mozallowfullscreen"
-            allowFullscreen="allowfullscreen"
+            allowFullScreen="allowfullscreen"
             allow="autoplay"
             frameBorder="0"
             scrolling="no"
@@ -97,5 +98,5 @@ class Soundcloud extends React.Component {
 }
 
 export default withNodePosition(
-  withIframePosition(Soundcloud, { enabled: iframePositioningEnabled })
+  withIframePosition(Iframe, { enabled: iframePositioningEnabled })
 )

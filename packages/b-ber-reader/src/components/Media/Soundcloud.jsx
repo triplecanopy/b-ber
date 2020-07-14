@@ -115,7 +115,7 @@ class Soundcloud extends React.Component {
       <React.Fragment>
         {/* Styles for iframe layout */}
         {iframePositioningEnabled && (
-          <style>{this.props.iframeStyleBlock()}</style>
+          <style>{this.props.iframeStyleBlock('soundcloud')}</style>
         )}
 
         {/* See Vimeo.jsx for details about the iframe-placeholder element */}

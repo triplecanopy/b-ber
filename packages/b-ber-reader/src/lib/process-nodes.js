@@ -239,6 +239,8 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
       const attrs = Asset.convertToReactAttrs(node.attribs)
       const key = attrs.src
 
+      attrs.spreadLayout = false
+
       // Required for play-on-page-change for fullbleed. See Vimeo instructions
       // above
       let nodeParent = node.parent
@@ -248,6 +250,7 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
           nodeParent.attribs['data-marker-reference-figure']
         ) {
           attrs.useElementOffsetLeft = false
+          attrs.spreadLayout = true
           break
         }
 

@@ -68,22 +68,23 @@ const withIframePosition = (WrappedComponent, options = { enabled: false }) =>
       }
     }
 
-    iframeStyleBlock = () => {
+    // @param name is the directive type, e.g., iframe, vimeo, soundcloud
+    iframeStyleBlock = (name = 'iframe') => {
       if (!options.enabled) return ''
 
       return `
-        .context__desktop .vimeo.figure__large.figure__inline .embed.supported {
+        .context__desktop .${name}.figure__large.figure__inline .embed.supported {
           padding-top: 0 !important;
           position: static !important;
           transform: none !important;
         }
 
-        .context__desktop .spread-with-fullbleed-media .vimeo.figure__large.figure__inline .embed.supported {
+        .context__desktop .spread-with-fullbleed-media .${name}.figure__large.figure__inline .embed.supported {
           position: relative !important;
         }
 
-        .context__desktop .spread-with-fullbleed-media .vimeo.figure__large.figure__inline .embed.supported iframe,
-        .context__desktop .spread-with-fullbleed-media .vimeo.figure__large.figure__inline .embed.supported .iframe-placeholder + div {
+        .context__desktop .spread-with-fullbleed-media .${name}.figure__large.figure__inline .embed.supported iframe,
+        .context__desktop .spread-with-fullbleed-media .${name}.figure__large.figure__inline .embed.supported .iframe-placeholder + div {
           top: 0 !important;
         }
       `

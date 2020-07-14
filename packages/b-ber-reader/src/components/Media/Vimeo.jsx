@@ -156,7 +156,7 @@ class Vimeo extends React.Component {
             layout. Inject inline styles here.
         */
         iframePositioningEnabled && (
-          <style>{this.props.iframeStyleBlock()}</style>
+          <style>{this.props.iframeStyleBlock('vimeo')}</style>
         )}
 
         {iframePositioningEnabled && (
