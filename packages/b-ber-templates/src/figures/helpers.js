@@ -1,7 +1,6 @@
 import sizeOf from 'image-size'
 import uniq from 'lodash.uniq'
 import state from '@canopycanopycanopy/b-ber-lib/State'
-import { Url } from '@canopycanopycanopy/b-ber-lib'
 import { getImageOrientation } from '@canopycanopycanopy/b-ber-lib/utils'
 
 const FULLBLEED_CLASS_NAME = 'figure__fullbleed'
@@ -184,7 +183,7 @@ export const iframe = data =>
     `
     .replace(/%SECTION_OPEN%/, getSectionOpen(data))
     .replace(/%ID%/g, data.id)
-    .replace(/%SRC%/g, Url.encodeQueryString(data.source))
+    .replace(/%SRC%/g, data.source)
     .replace(/%TITLE%/g, data.title)
     .replace(/%WIDTH%/g, data.width)
     .replace(/%HEIGHT%/g, data.height)

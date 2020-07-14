@@ -1,5 +1,5 @@
 import state from '@canopycanopycanopy/b-ber-lib/State'
-import { Html } from '@canopycanopycanopy/b-ber-lib'
+import { Html, Url } from '@canopycanopycanopy/b-ber-lib'
 import {
   getMediaType,
   renderCaption,
@@ -58,7 +58,7 @@ export function prepare({
     mediaType,
     mime: null,
     pageOrder: state.figures.length,
-    source: attrsObject.source,
+    source: Url.ensureDecoded(attrsObject.source),
     poster: attrsObject.poster,
     width: attrsObject.width,
     height: attrsObject.height,
