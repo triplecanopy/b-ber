@@ -34,7 +34,6 @@ class Iframe extends React.Component {
     const { width } = this.props
 
     let iframeContainerStyles = {}
-    // let width = '100%'
 
     // Set styles for absolutely positioned desktop elements for browser
     // behaviour
@@ -45,15 +44,12 @@ class Iframe extends React.Component {
       iframeContainerStyles = {
         top: iframePlaceholderTop,
         width,
-        maxWidth: iframePlaceholderWidth,
+        maxWidth: mobile ? '100%' : iframePlaceholderWidth,
         position,
       }
-
-      // width = iframePlaceholderWidth
     }
 
-    // TODO set default height for tracks and playlists. tracks currently 150px,
-    // playlists are 50% frame height
+    // TODO set height?
     // const height = 150
     // let height = 150
     // if (kind === 'playlists' || kind === 'users') {
