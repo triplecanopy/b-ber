@@ -151,7 +151,18 @@ exports[`templates.epub creates the markup 7`] = `
         <figure id=\\"1\\">
           <div class=\\"figure__items\\">
             <div class=\\"iframe\\">
-              <iframe src=\\"test\\" webkitallowfullscreen=\\"webkitallowfullscreen\\" mozallowfullscreen=\\"mozallowfullscreen\\" allowfullscreen=\\"allowfullscreen\\" frameborder=\\"0\\" />
+              <iframe
+                src=\\"test\\"
+                title=\\"test-title\\"
+                width=\\"test-width\\"
+                height=\\"test-height\\"
+                webkitallowfullscreen=\\"webkitallowfullscreen\\"
+                mozallowfullscreen=\\"mozallowfullscreen\\"
+                allowfullscreen=\\"allowfullscreen\\"
+                allow=\\"autoplay\\"
+                frameborder=\\"0\\"
+                scrolling=\\"no\\"
+              />
             </div>
 
             <div class=\\"figcaption\\">
@@ -318,7 +329,18 @@ exports[`templates.epub creates the markup 14`] = `
         <figure id=\\"1\\">
           <div class=\\"figure__items\\">
             <div class=\\"iframe\\">
-              <iframe src=\\"test\\" webkitallowfullscreen=\\"webkitallowfullscreen\\" mozallowfullscreen=\\"mozallowfullscreen\\" allowfullscreen=\\"allowfullscreen\\" frameborder=\\"0\\" />
+              <iframe
+                src=\\"test\\"
+                title=\\"test-title\\"
+                width=\\"test-width\\"
+                height=\\"test-height\\"
+                webkitallowfullscreen=\\"webkitallowfullscreen\\"
+                mozallowfullscreen=\\"mozallowfullscreen\\"
+                allowfullscreen=\\"allowfullscreen\\"
+                allow=\\"autoplay\\"
+                frameborder=\\"0\\"
+                scrolling=\\"no\\"
+              />
             </div>
 
             <div class=\\"figcaption\\">
@@ -485,7 +507,18 @@ exports[`templates.epub creates the markup 21`] = `
         <figure id=\\"1\\">
           <div class=\\"figure__items\\">
             <div class=\\"iframe\\">
-              <iframe src=\\"test\\" webkitallowfullscreen=\\"webkitallowfullscreen\\" mozallowfullscreen=\\"mozallowfullscreen\\" allowfullscreen=\\"allowfullscreen\\" frameborder=\\"0\\" />
+              <iframe
+                src=\\"test\\"
+                title=\\"test-title\\"
+                width=\\"test-width\\"
+                height=\\"test-height\\"
+                webkitallowfullscreen=\\"webkitallowfullscreen\\"
+                mozallowfullscreen=\\"mozallowfullscreen\\"
+                allowfullscreen=\\"allowfullscreen\\"
+                allow=\\"autoplay\\"
+                frameborder=\\"0\\"
+                scrolling=\\"no\\"
+              />
             </div>
 
             <div class=\\"figcaption\\">

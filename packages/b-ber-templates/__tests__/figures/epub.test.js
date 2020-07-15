@@ -19,6 +19,9 @@ describe('templates.epub', () => {
       sourceElements: '<source />',
       mediaType: 'audio-or-video',
       poster: 'test.jpg',
+      title: 'test-title',
+      width: 'test-width',
+      height: 'test-height',
     }
 
     const dataFiguresPage = Object.assign({}, data, { inline: false })

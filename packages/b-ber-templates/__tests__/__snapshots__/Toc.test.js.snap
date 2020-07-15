@@ -82,22 +82,24 @@ Object {
 
 exports[`templates.Toc creates a nested list 1`] = `
 "
-            <ol>
-                
-                        <li>
-                            <a href=\\"text/test.xhtml\\">Test</a>
-                            
-            <ol>
-                
-                        <li>
-                            <a href=\\"text/test-child.xhtml\\">Test Child</a>
-                            
-                        </li>
-            </ol>
+      <ol>
         
-                        </li>
-            </ol>
-        "
+            <li>
+              <a href=\\"text/test.xhtml\\">Test</a>
+              
+      <ol>
+        
+            <li>
+              <a href=\\"text/test-child.xhtml\\">Test Child</a>
+              
+            </li>
+          
+      </ol>
+  
+            </li>
+          
+      </ol>
+  "
 `;
 
 exports[`templates.Toc creates an anchor element 1`] = `"<a href=\\"text/test.xhtml\\">Test</a>"`;
