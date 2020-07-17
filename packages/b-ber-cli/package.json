@@ -1,6 +1,6 @@
 {
   "name": "@canopycanopycanopy/b-ber-cli",
-  "version": "1.1.8",
+  "version": "1.1.9",
   "description": "",
   "main": "dist/index.js",
   "bin": {
@@ -25,7 +25,7 @@
     "@canopycanopycanopy/b-ber-lib": "1.1.8",
     "@canopycanopycanopy/b-ber-logger": "1.1.8",
     "@canopycanopycanopy/b-ber-shapes-sequences": "1.1.1",
-    "@canopycanopycanopy/b-ber-tasks": "1.1.8",
+    "@canopycanopycanopy/b-ber-tasks": "1.1.9",
     "@canopycanopycanopy/b-ber-templates": "1.1.8",
     "fs-extra": "^8.1.0",
     "lodash.has": "latest",
