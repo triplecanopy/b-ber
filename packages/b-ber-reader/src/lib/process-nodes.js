@@ -16,6 +16,7 @@ import {
   Ultimate,
 } from '../components'
 import { Asset, Url } from '../helpers'
+import { rand } from '../helpers/utils'
 
 export const isValidNode = () => true
 export const processNodeDefinitions = new ProcessNodeDefinitions(React)
@@ -25,24 +26,27 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
       return node?.attribs?.['epub:type'] === 'noteref'
     },
     processNode(node, children) {
+      const attrs = Asset.convertToReactAttrs(node.attribs)
+      const key = rand()
       const href = Url.resolveOverlappingURL(
         requestedSpineItem.absoluteURL,
         node.attribs.href
       )
-
-      const attrs = Asset.convertToReactAttrs(node.attribs)
-      const key = attrs.href
 
       return React.createElement(Footnote, { ...attrs, key, href }, children)
     },
   },
   {
     shouldProcessNode(node) {
-      return node.attribs && node.attribs.href
+      return (
+        node.attribs?.href &&
+        (!node.attribs?.['epub:type'] ||
+          node.attribs?.['epub:type'] !== 'noteref')
+      )
     },
     processNode(node, children) {
       const attrs = Asset.convertToReactAttrs(node.attribs)
-      const key = attrs.href
+      const key = rand()
 
       let { href } = node.attribs
       if (Url.isRelative(node.attribs.href)) {
@@ -66,7 +70,7 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
     },
     processNode(node) {
       const attrs = Asset.convertToReactAttrs(node.attribs)
-      const key = attrs.src
+      const key = rand()
       const src = Url.resolveOverlappingURL(
         requestedSpineItem.absoluteURL,
         node.attribs.src
@@ -145,7 +149,7 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
     },
     processNode(node, children) {
       const attrs = Asset.convertToReactAttrs(node.attribs)
-      const key = attrs.src
+      const key = rand()
       const aspectRatios = new Set(['16x9', '4x3'])
 
       let posterImage = null
@@ -206,7 +210,7 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
     },
     processNode(node, children) {
       const attrs = Asset.convertToReactAttrs(node.attribs)
-      const key = attrs.src
+      const key = rand()
 
       attrs.kind = attrs['data-kind']
       delete attrs['data-kind']
@@ -237,7 +241,7 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
     },
     processNode(node, children) {
       const attrs = Asset.convertToReactAttrs(node.attribs)
-      const key = attrs.src
+      const key = rand()
 
       attrs.spreadLayout = false
 
@@ -271,7 +275,7 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
     },
     processNode(node, children) {
       const attrs = Asset.convertToReactAttrs(node.attribs)
-      const key = attrs.xlinkHref
+      const key = rand()
       const xlinkHref = Url.resolveOverlappingURL(
         requestedSpineItem.absoluteURL,
         attrs.xlinkHref
