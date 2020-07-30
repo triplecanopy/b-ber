@@ -20,12 +20,12 @@
     "access": "public"
   },
   "dependencies": {
-    "@babel/runtime-corejs3": "^7.9.2"
+    "@babel/runtime-corejs3": "^7.10.5"
   },
   "devDependencies": {
-    "@babel/cli": "^7.8.4",
-    "@babel/core": "^7.9.0",
-    "@babel/preset-env": "^7.9.0",
+    "@babel/cli": "^7.10.5",
+    "@babel/core": "^7.10.5",
+    "@babel/preset-env": "^7.10.4",
     "jest": "^24.8.0",
     "rimraf": "^2.6.3"
   },

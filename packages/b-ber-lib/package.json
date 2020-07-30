@@ -18,15 +18,15 @@
     "access": "public"
   },
   "devDependencies": {
-    "@babel/cli": "^7.8.4",
-    "@babel/core": "^7.9.0",
-    "@babel/preset-env": "^7.9.0",
+    "@babel/cli": "^7.10.5",
+    "@babel/core": "^7.10.5",
+    "@babel/preset-env": "^7.10.4",
     "jest": "^24.8.0",
     "mock-fs": "^4.4.2",
     "rimraf": "^2.6.3"
   },
   "dependencies": {
-    "@babel/runtime-corejs3": "^7.9.2",
+    "@babel/runtime-corejs3": "^7.10.5",
     "@canopycanopycanopy/b-ber-logger": "1.1.8",
     "@canopycanopycanopy/b-ber-shapes-dublin-core": "1.1.2",
     "@canopycanopycanopy/b-ber-shapes-sequences": "1.1.1",
@@ -38,7 +38,7 @@
     "htmlparser2": "^3.9.2",
     "js-yaml": "^3.12.0",
     "layouts": "^3.0.2",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.19",
     "mime-types": "^2.1.24",
     "vinyl": "^2.2.0",
     "yargs": "^13.3.0",
