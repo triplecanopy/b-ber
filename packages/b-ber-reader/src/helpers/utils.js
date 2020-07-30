@@ -8,6 +8,7 @@ import gte from 'lodash/gte'
 import lt from 'lodash/lt'
 import lte from 'lodash/lte'
 import browser from '../lib/browser'
+import { MEDIA_CONTROLS_PRESETS } from '../constants'
 
 export const noop = () => {}
 
@@ -70,3 +71,10 @@ export const isBrowser = (name, operator = '', majorVersion = 0) => {
 
   return comparison(operator, major, majorVersion)
 }
+
+// If the user has passed in a preset value defined in
+// MEDIA_CONTROLS_PRESETS then pass that value into the media player.
+// Otherwise use the value of the controls attribute to determine weather
+// to show or hide the default HTML5 controls
+export const getControlsPreset = ({ controls }) =>
+  MEDIA_CONTROLS_PRESETS.has(controls) ? controls : !isUndefined(controls)

@@ -114,3 +114,5 @@ export const MEDIA_PLAYBACK_RATES = {
   NORMAL: 1.0,
   FAST: 1.3,
 }
+
+export const MEDIA_CONTROLS_PRESETS = new Set(['simple', 'normal', 'full'])

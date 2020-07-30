@@ -16,7 +16,7 @@ import {
   Ultimate,
 } from '../components'
 import { Asset, Url } from '../helpers'
-import { rand } from '../helpers/utils'
+import { rand, getControlsPreset } from '../helpers/utils'
 
 export const isValidNode = () => true
 export const processNodeDefinitions = new ProcessNodeDefinitions(React)
@@ -85,7 +85,8 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
     },
     processNode(node, children) {
       const attrs = Asset.convertToReactAttrs(node.attribs)
-      const { id, autoPlay, controls } = attrs
+      const { id, autoPlay } = attrs
+      const controls = getControlsPreset(attrs)
       const key = id
 
       let dataAutoPlay = false
@@ -99,7 +100,7 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
         {
           ...attrs,
           'data-autoplay': dataAutoPlay,
-          controls: !isUndefined(controls),
+          controls,
           key,
         },
         children
@@ -112,7 +113,8 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
     },
     processNode(node, children) {
       const attrs = Asset.convertToReactAttrs(node.attribs)
-      const { id, autoPlay, controls } = attrs
+      const { id, autoPlay } = attrs
+      const controls = getControlsPreset(attrs)
       const key = id
 
       const poster = node.attribs.poster
@@ -133,7 +135,7 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
         {
           ...attrs,
           'data-autoplay': dataAutoPlay,
-          controls: !isUndefined(controls),
+          controls,
           key,
           poster,
         },

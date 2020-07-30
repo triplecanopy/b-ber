@@ -4,11 +4,10 @@ import React from 'react'
 import ReaderContext from '../../lib/reader-context'
 import withNodePosition from '../../lib/with-node-position'
 import MediaControls from './Controls/MediaControls'
+import { MEDIA_CONTROLS_PRESETS } from '../../constants'
 
 class Media extends React.Component {
   static contextType = ReaderContext
-
-  static controlsConfig = new Set(['simple', 'normal', 'full'])
 
   // Seconds to skip when clicking fast-forward/rewind
   static skipStep = 2
@@ -330,7 +329,7 @@ class Media extends React.Component {
 
     if (!controlsAttribute) {
       controls = false
-    } else if (Media.controlsConfig.has(controlsAttribute)) {
+    } else if (MEDIA_CONTROLS_PRESETS.has(controlsAttribute)) {
       config = controlsAttribute
       controls = false
     }
