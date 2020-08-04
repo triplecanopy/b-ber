@@ -72,6 +72,18 @@ class Messenger {
     )
   }
 
+  static sendScrollEvent(event, scrollTop, documentHeight) {
+    window.parent.postMessage(
+      {
+        ...event,
+        scrollTop,
+        documentHeight,
+        type: messagesTypes.SCROLL_EVENT,
+      },
+      Messenger.MESSAGE_DOMAIN
+    )
+  }
+
   static register(callback, type = null) {
     const key = rand()
     const event = 'message'

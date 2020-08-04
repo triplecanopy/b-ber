@@ -2,6 +2,7 @@ import React from 'react'
 import { Layout, DebugGrid } from '.'
 import Viewport from '../helpers/Viewport'
 import { layouts } from '../constants'
+import Messenger from '../lib/Messenger'
 
 class Frame extends React.Component {
   node = React.createRef()
@@ -17,6 +18,24 @@ class Frame extends React.Component {
     }
 
     this.node.current.scrollTo(0, 0)
+  }
+
+  handleScroll = e => {
+    const documentHeight = Math.max(
+      this.node.current.scrollHeight,
+      this.node.current.offsetHeight,
+      this.node.current.clientHeight
+    )
+
+    Messenger.sendScrollEvent(e, e.target.scrollTop, documentHeight)
+  }
+
+  componentDidMount() {
+    this.node.current.addEventListener('scroll', this.handleScroll)
+  }
+
+  componentWillUnmount() {
+    this.node.current.removeEventListener('scroll', this.handleScroll)
   }
 
   render() {
