@@ -7,10 +7,10 @@ import browser from '../lib/browser'
 import withObservers from '../lib/with-observers'
 import withDimensions from '../lib/with-dimensions'
 import ReaderContext from '../lib/reader-context'
-import { RESIZE_DEBOUNCE_TIMER } from '../constants'
+import { RESIZE_DEBOUNCE_TIMER, layouts } from '../constants'
 
-const Leaves = ({ leafLeftStyles, leafRightStyles }) =>
-  Viewport.isMobile() ? null : (
+const Leaves = ({ layout, leafLeftStyles, leafRightStyles }) =>
+  layout === layouts.SCROLL || Viewport.isMobile() ? null : (
     <React.Fragment>
       <div className="leaf leaf--left" style={leafLeftStyles} />
       <div className="leaf leaf--right" style={leafRightStyles} />
@@ -151,7 +151,7 @@ class Layout extends React.Component {
 
   render() {
     const height = this.props.getFrameHeight()
-    const { pageAnimation, spreadIndex, slug } = this.props
+    const { pageAnimation, spreadIndex, slug, layout } = this.props
 
     const {
       transition,
@@ -160,7 +160,9 @@ class Layout extends React.Component {
       paddingRight,
     } = this.props.viewerSettings
 
-    const contextClass = Viewport.isMobile() ? 'mobile' : 'desktop'
+    const contextClass =
+      layout === layouts.SCROLL || Viewport.isMobile() ? 'mobile' : 'desktop'
+
     const defaultContentStyles = { padding: 0, margin: 0 }
     const contentStyles = { ...defaultContentStyles, minHeight: height }
     const layoutTransition = transitions({ transitionSpeed })[transition]
@@ -191,6 +193,7 @@ class Layout extends React.Component {
         </div>
 
         <Leaves
+          layout={layout}
           leafLeftStyles={leafLeftStyles}
           leafRightStyles={leafRightStyles}
         />

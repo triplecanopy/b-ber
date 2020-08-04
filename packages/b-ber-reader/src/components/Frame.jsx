@@ -1,6 +1,7 @@
 import React from 'react'
 import { Layout, DebugGrid } from '.'
 import Viewport from '../helpers/Viewport'
+import { layouts } from '../constants'
 
 class Frame extends React.Component {
   node = React.createRef()
@@ -40,9 +41,10 @@ class Frame extends React.Component {
       overflowX: 'hidden',
     }
 
-    const styles = Viewport.isMobile()
-      ? { ...baseStyles, ...mobileStyles }
-      : { ...baseStyles, ...desktopStyles }
+    const styles =
+      this.props.layout === layouts.SCROLL || Viewport.isMobile()
+        ? { ...baseStyles, ...mobileStyles }
+        : { ...baseStyles, ...desktopStyles }
 
     return (
       <div

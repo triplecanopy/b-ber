@@ -17,6 +17,7 @@ const Link = props => (
 
       const { href } = props
       const target = Url.isExternal(href) ? '_blank' : '_top'
+      // TODO add rel="nooperner noreferrer"
 
       return (
         <a

@@ -1,6 +1,7 @@
 import React from 'react'
 import Viewport from '../helpers/Viewport'
 import { isNumeric } from '../helpers/Types'
+import { layouts } from '../constants'
 
 const withDimensions = WrappedComponent => {
   class WrapperComponent extends React.Component {
@@ -19,21 +20,20 @@ const withDimensions = WrappedComponent => {
     }
 
     updateDimensions() {
-      const isMobile = Viewport.isMobile()
+      const scrollingLayout =
+        this.props.layout === layouts.SCROLL || Viewport.isMobile()
 
       const width = window.innerWidth
-      const height = isMobile ? 'auto' : window.innerHeight
-      const columns = isMobile ? 1 : 2
+      const height = scrollingLayout ? 'auto' : window.innerHeight
+      const columns = scrollingLayout ? 1 : 2
 
-      this.props.update({
-        width,
-        height,
-        columns,
-      })
+      this.props.update({ width, height, columns })
     }
 
     getFrameHeight() {
-      if (Viewport.isMobile()) return 'auto'
+      if (this.props.layout === layouts.SCROLL || Viewport.isMobile()) {
+        return 'auto'
+      }
 
       let { height } = this.props.viewerSettings
       const { paddingTop, paddingBottom } = this.props.viewerSettings

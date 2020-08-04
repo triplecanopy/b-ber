@@ -5,6 +5,7 @@ import { isNumeric } from '../helpers/Types'
 import Viewport from '../helpers/Viewport'
 import { SpreadImageStyles } from '.'
 import SpreadContext from '../lib/spread-context'
+import { layouts } from '../constants'
 
 class Spread extends React.Component {
   state = {
@@ -76,9 +77,10 @@ class Spread extends React.Component {
     const spreadPosition =
       Math.round((elementEdgeLeft + paddingLeft) / layoutWidth) + 1
 
-    let left = 0
+    const { layout } = this.props.readerSettings
 
-    if (!Viewport.isMobile()) {
+    let left = 0
+    if (!Viewport.isMobile() && layout !== layouts.SCROLL) {
       left = layoutWidth * spreadPosition
       if (recto) left -= layoutWidth
       if (unbound) left = 0
@@ -100,10 +102,11 @@ class Spread extends React.Component {
     const { spreadPosition } = this.state
     const { recto, elementEdgeLeft, unbound } = marker
     const { paddingLeft } = this.props.viewerSettings
+    const { layout } = this.props.readerSettings
 
     // TODO removing HTML attrs from props
     // eslint-disable-next-line no-unused-vars
-    const { viewerSettings, markers, ...rest } = this.props
+    const { viewerSettings, readerSettings, markers, ...rest } = this.props
 
     const debugStyles = { background: 'blue' }
 
@@ -119,8 +122,10 @@ class Spread extends React.Component {
           unbound={unbound}
           paddingLeft={paddingLeft}
           markerX={elementEdgeLeft}
+          layout={layout}
         />
-        <SpreadContext.Provider value={left}>
+
+        <SpreadContext.Provider value={{ left, layout }}>
           {this.props.children}
         </SpreadContext.Provider>
       </div>
@@ -129,7 +134,8 @@ class Spread extends React.Component {
 }
 
 export default connect(
-  ({ viewerSettings, markers }) => ({
+  ({ readerSettings, viewerSettings, markers }) => ({
+    readerSettings,
     viewerSettings,
     markers,
   }),

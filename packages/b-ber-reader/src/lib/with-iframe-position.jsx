@@ -1,5 +1,6 @@
 import React from 'react'
 import Viewport from '../helpers/Viewport'
+import { layouts } from '../constants'
 
 const withIframePosition = (WrappedComponent, options = { enabled: false }) =>
   class WrapperComponent extends React.Component {
@@ -37,7 +38,9 @@ const withIframePosition = (WrappedComponent, options = { enabled: false }) =>
     // placeholder position to check if the floating element's position matches,
     // and call again if not.
     updateIframePosition = () => {
-      if (Viewport.isMobile()) return
+      if (this.props.layout === layouts.SCROLL_LAYOUT || Viewport.isMobile()) {
+        return
+      }
 
       if (!this.iframePlaceholder) {
         console.warn('Could not find iframePlaceholder node')

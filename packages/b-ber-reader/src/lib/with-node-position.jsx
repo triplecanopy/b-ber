@@ -299,7 +299,11 @@ const withNodePosition = (WrappedComponent, options = {}) => {
   }
 
   return connect(
-    ({ viewerSettings, view }) => ({ viewerSettings, view }),
+    ({ readerSettings, viewerSettings, view }) => ({
+      readerSettings,
+      viewerSettings,
+      view,
+    }),
     () => ({})
   )(WrapperComponent)
 }

@@ -206,6 +206,7 @@ class Reader {
       loadRemoteLibrary: false,
       uiOptions: this.getProjectConfig('ui_options'),
       cache: this.getProjectConfig('cache'),
+      layout: this.getProjectConfig('layout'),
     }
 
     let contents

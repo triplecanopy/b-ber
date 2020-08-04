@@ -37,6 +37,7 @@ class Config {
       overrideBrowserslist: ['last 2 versions', '> 2%'],
       flexbox: 'no-2009',
     },
+    layout: 'columns',
   }
 
   constructor(options = {}) {

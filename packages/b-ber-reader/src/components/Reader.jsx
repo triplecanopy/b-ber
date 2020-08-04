@@ -18,6 +18,7 @@ import { unlessDefined } from '../helpers/utils'
 import * as viewActions from '../actions/view'
 import * as viewerSettingsActions from '../actions/viewer-settings'
 import * as readerSettingsActions from '../actions/reader-settings'
+import { layouts } from '../constants'
 
 const book = { content: null }
 
@@ -539,7 +540,8 @@ class Reader extends Component {
 
     // Scroll to vertical position, leave a bit of room for the controls and
     // whitespace around the element
-    if (Viewport.isMobile()) {
+    const { layout } = this.props.readerSettings
+    if (layout === layouts.SCROLL || Viewport.isMobile()) {
       const padding = 25
       const offset =
         document.querySelector('.controls__header').offsetHeight + padding
@@ -625,10 +627,12 @@ class Reader extends Component {
       columnGap,
     } = this.props.viewerSettings
 
-    const isMobile = Viewport.isMobile()
+    const { layout } = this.props.readerSettings
+
+    const isScrolling = layout === layouts.SCROLL || Viewport.isMobile()
 
     let translateX = 0
-    if (!isMobile) {
+    if (!isScrolling) {
       translateX =
         (width - paddingLeft - paddingRight + columnGap) * spreadIndex * -1
 
@@ -665,6 +669,7 @@ class Reader extends Component {
   }
 
   render() {
+    const { downloads, uiOptions, viewerSettings, view, layout } = this.props
     const { lastSpreadIndex } = this.props.view
 
     const {
@@ -708,9 +713,10 @@ class Reader extends Component {
         handleChapterNavigation={this.handleChapterNavigation}
         handleSidebarButtonClick={this.handleSidebarButtonClick}
         navigateToChapterByURL={this.navigateToChapterByURL}
-        downloads={this.props.downloads}
-        uiOptions={this.props.uiOptions}
-        viewerSettings={this.props.viewerSettings}
+        downloads={downloads}
+        uiOptions={uiOptions}
+        viewerSettings={viewerSettings}
+        layout={layout}
         update={this.props.viewerSettingsActions.update}
         save={this.props.viewerSettingsActions.save}
       >
@@ -730,11 +736,12 @@ class Reader extends Component {
             lastSpreadIndex={lastSpreadIndex}
             BookContent={BookContent}
             pageAnimation={pageAnimation}
+            layout={layout}
             viewerSettings={this.props.viewerSettings}
             update={this.props.viewerSettingsActions.update}
             // Can't wrap layout or the withObservable HOC in a way that preserves
             // refs, so pass down `view` as props
-            view={this.props.view}
+            view={view}
           />
         </ReaderContext.Provider>
         <Spinner spinnerVisible={spinnerVisible} />

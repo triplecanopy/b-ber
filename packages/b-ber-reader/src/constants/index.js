@@ -116,3 +116,5 @@ export const MEDIA_PLAYBACK_RATES = {
 }
 
 export const MEDIA_CONTROLS_PRESETS = new Set(['simple', 'normal', 'full'])
+
+export const layouts = { SCROLL: 'scroll', COLUMNS: 'columns' }

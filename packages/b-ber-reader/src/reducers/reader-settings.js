@@ -23,6 +23,7 @@ export const initialState = {
     },
   },
   cache: true, // TODO handled based on build?
+  layout: 'columns',
 }
 
 const readerSettings = (state = initialState, action) => {

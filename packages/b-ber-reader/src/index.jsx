@@ -4,7 +4,7 @@ import { createStore, applyMiddleware, compose } from 'redux'
 import { Provider } from 'react-redux'
 import thunk from 'redux-thunk'
 import combinedReducers from './reducers'
-import { initialState as initialReaderState } from './reducers/reader-settings'
+import { initialState as initialReaderSettings } from './reducers/reader-settings'
 import { mergeDeep } from './helpers/utils'
 import { App } from './components'
 
@@ -12,10 +12,9 @@ import './lib/polyfills'
 import './index.scss'
 
 const serverData = window.__SERVER_DATA__ || {}
-
 const store = createStore(
   combinedReducers,
-  { readerSettings: mergeDeep(initialReaderState, serverData) },
+  { readerSettings: mergeDeep(initialReaderSettings, serverData) },
   compose(applyMiddleware(thunk))
 )
 

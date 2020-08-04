@@ -7,6 +7,7 @@ import log from '@canopycanopycanopy/b-ber-logger'
 
 const YAWN = require('yawn-yaml/cjs')
 
+// TODO set up decoder
 const interfaces = {
   metadata: {
     term: { type: 'string', required: true },
@@ -29,7 +30,8 @@ const interfaces = {
     ui_options: { type: 'object', required: false },
     private: { type: 'boolean', required: false },
     ignore: { type: 'array', required: false },
-    autoprefixer_options: { type: 'array', required: false },
+    autoprefixer_options: { type: 'object', required: false },
+    layout: { type: 'string', required: false },
     // TODO: fill this in with missing options
   },
   media: {},

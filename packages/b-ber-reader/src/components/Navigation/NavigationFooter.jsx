@@ -1,6 +1,6 @@
 import React from 'react'
 import Viewport from '../../helpers/Viewport'
-import { debug } from '../../config'
+import { layouts } from '../../constants'
 
 const chapterStyles = {
   prev: props =>
@@ -20,6 +20,7 @@ const chapterStyles = {
 
 const pageStyles = {
   prev: props =>
+    props.layout === layouts.SCROLL ||
     Viewport.isMobile() ||
     !props.uiOptions.navigation.footer_icons.page ||
     (props.currentSpineItemIndex === 0 && props.spreadIndex === 0)
@@ -27,6 +28,7 @@ const pageStyles = {
       : {},
 
   next: props =>
+    props.layout === layouts.SCROLL ||
     Viewport.isMobile() ||
     !props.uiOptions.navigation.footer_icons.page ||
     (props.currentSpineItemIndex === props.spine.length - 1 &&
@@ -36,7 +38,7 @@ const pageStyles = {
 }
 
 const NavigationFooter = props => (
-  <footer className="controls__footer" style={debug ? { opacity: 0.4 } : {}}>
+  <footer className="controls__footer">
     <nav>
       <ul>
         <li>

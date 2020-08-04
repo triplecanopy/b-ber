@@ -3,7 +3,7 @@ import SpreadContext from '../lib/spread-context'
 
 const SpreadFigure = props => (
   <SpreadContext.Consumer>
-    {left => {
+    {({ left }) => {
       const { children, ...rest } = props
 
       return (
