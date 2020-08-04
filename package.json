@@ -18,6 +18,7 @@
     "format:other": "npm run prettier -- --write",
     "format": "npm-run-all -p format:code format:other",
     "prettier": "prettier \"**/*.{md,scss,yaml,yml}\"",
+    "lerna": "lerna",
     "jest": "jest",
     "test:coverage": "rimraf ./coverage && jest --collectCoverage=true",
     "test": "npm run check && jest",
