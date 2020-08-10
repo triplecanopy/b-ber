@@ -59,7 +59,7 @@ const _isUnsupportedAttribute = (genus, attr) => {
     key = genus
   }
 
-  return SUPPORTED_ATTRIBUTES[key][attr] !== true
+  return !SUPPORTED_ATTRIBUTES[key] || SUPPORTED_ATTRIBUTES[key][attr] !== true
 }
 
 const _applyTransforms = (k, v) => {
@@ -245,7 +245,7 @@ const attributesObject = (attrs, _genus, context = {}) => {
 
   if (attrs && typeof attrs === 'string') {
     forOf(parseAttrs(attrs.trim()), (k, v) => {
-      if (_isUnsupportedAttribute(_genus, k)) {
+      if (_isUnsupportedAttribute(genus, k)) {
         return log.warn(
           `render omitting unsupported attribute [${k}] at [${fileName}:${lineNumber}]`
         )

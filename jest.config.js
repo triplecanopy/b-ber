@@ -31,6 +31,7 @@ module.exports = {
     '!**/b-ber-templates/Xhtml/*.js',
     '!**/b-ber-templates/Xml/*.js',
     '!**/b-ber-templates/figures/*.js',
+    '!**/b-ber-markdown-renderer/src/highlightjs/**/*.js',
     '!**/jest-transform-upward.js',
     '!**/webpack.config.*.js',
   ],
