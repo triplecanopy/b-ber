@@ -32,6 +32,7 @@ const interfaces = {
     ignore: { type: 'array', required: false },
     autoprefixer_options: { type: 'object', required: false },
     layout: { type: 'string', required: false },
+    group_footnotes: { type: 'boolean', required: false },
     // TODO: fill this in with missing options
   },
   media: {},

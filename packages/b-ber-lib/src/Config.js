@@ -38,6 +38,7 @@ class Config {
       flexbox: 'no-2009',
     },
     layout: 'columns',
+    group_footnotes: true,
   }
 
   constructor(options = {}) {

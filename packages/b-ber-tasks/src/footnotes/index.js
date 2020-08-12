@@ -17,26 +17,26 @@ class Footnotes {
     this.init = this.init.bind(this)
   }
 
-  writeFootnotes() {
+  async writeFootnotes() {
     const notes = state.footnotes.reduce(
       (acc, cur) => acc.concat(cur.notes),
       ''
     )
+
     const markup = Template.render(notes, Xhtml.body())
+    await fs.writeFile(this.file.path, markup, 'utf8')
 
-    return fs.writeFile(this.file.path, markup, 'utf8').then(() => {
-      const fileData = new SpineItem({
-        fileName: this.file.name,
-        // eslint-disable-next-line camelcase
-        in_toc: false,
-        linear: false,
-        generated: true,
-        buildType: state.build,
-      })
-
-      state.add('spine.flattened', fileData)
-      log.info(`create default footnotes page [${this.file.name}.xhtml]`)
+    const fileData = new SpineItem({
+      fileName: this.file.name,
+      // eslint-disable-next-line camelcase
+      in_toc: false,
+      linear: false,
+      generated: true,
+      buildType: state.build,
     })
+
+    state.add('spine.flattened', fileData)
+    log.info(`create default footnotes page [${this.file.name}.xhtml]`)
   }
 
   init() {

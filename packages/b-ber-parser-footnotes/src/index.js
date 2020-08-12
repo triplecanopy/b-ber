@@ -2,6 +2,7 @@
 /* eslint-disable no-param-reassign,no-plusplus */
 
 import isUndefined from 'lodash.isundefined'
+import bberState from '@canopycanopycanopy/b-ber-lib/State'
 
 /*
 Modified version of markdown-it-footnote@3.0.1
@@ -25,8 +26,11 @@ function renderFootnoteRef(tokens, idx, options, env, slf) {
   return `<a epub:type="noteref" class="footnote-ref" href="notes.xhtml#fn${ref}" id="fnref${ref}">${caption}</a>`
 }
 
-function renderFootnoteBlockOpen(/*tokens, idx, options */) {
-  return '<ol class="footnotes">'
+// Keep track of footnotes that have been rendered to start new ordered lists at
+// proper count
+let counter = 1
+function renderFootnoteBlockOpen(/* tokens, idx, options */) {
+  return `<ol class="footnotes" start=${counter}>`
 }
 
 function renderFootnoteBlockClose() {
@@ -36,6 +40,9 @@ function renderFootnoteBlockClose() {
 function renderFootnoteOpen(tokens, idx, options, env /*,slf */) {
   const ref = tokens[idx].meta.label
   const childIndex = idx + 2
+
+  // Increment counter for ordered lists
+  if (!bberState.config.group_footnotes) counter += 1
 
   // push the backlink into the parent paragraph
   if (tokens[childIndex]) {
