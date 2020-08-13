@@ -150,12 +150,13 @@ class Footnote extends React.Component {
     const isMobile = Viewport.isMobile()
     const aboveElement = this.getFootnoteOffset()
     const offsetProp = aboveElement ? 'bottom' : 'top'
+    const offset = offsetProp === 'bottom' ? '1rem' : '1.5rem'
     const left = 0
     const width = isMobile
       ? window.innerWidth - paddingLeft * 2
       : `${columnWidth + columnGap}px`
 
-    const styles = { width, left, [offsetProp]: '1.5rem' }
+    const styles = { width, left, [offsetProp]: offset }
 
     // Return default styles if no node exists
     if (!this.footnoteContainer?.current) return styles

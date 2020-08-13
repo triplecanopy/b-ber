@@ -10,13 +10,24 @@ https://github.com//markdown-it/markdown-it-footnote
 MIT license
 */
 
+// Keep track of footnotes that have been rendered to start new ordered lists at
+// proper count
+let groupedListCounter = 1
+let groupedListItemCounter = 1
+
 function renderFootnoteAnchorName(tokens, idx, options, env /*, slf*/) {
   const n = Number(tokens[idx].meta.id + 1).toString()
   return typeof env.docId === 'string' ? `-${env.docId}-${n}` : ''
 }
 
 function renderFootnoteCaption(tokens, idx /*,options, env, slf*/) {
-  const n = Number(tokens[idx].meta.id + 1).toString()
+  let n
+  if (!bberState.config.group_footnotes) {
+    n = groupedListItemCounter
+    groupedListItemCounter += 1
+  } else {
+    n = Number(tokens[idx].meta.id + 1).toString()
+  }
   return tokens[idx].meta.subId > 0 ? `${n}:${tokens[idx].meta.subId}` : n
 }
 
@@ -26,11 +37,8 @@ function renderFootnoteRef(tokens, idx, options, env, slf) {
   return `<a epub:type="noteref" class="footnote-ref" href="notes.xhtml#fn${ref}" id="fnref${ref}">${caption}</a>`
 }
 
-// Keep track of footnotes that have been rendered to start new ordered lists at
-// proper count
-let counter = 1
 function renderFootnoteBlockOpen(/* tokens, idx, options */) {
-  return `<ol class="footnotes" start=${counter}>`
+  return `<ol class="footnotes" start="${groupedListCounter}">`
 }
 
 function renderFootnoteBlockClose() {
@@ -41,8 +49,8 @@ function renderFootnoteOpen(tokens, idx, options, env /*,slf */) {
   const ref = tokens[idx].meta.label
   const childIndex = idx + 2
 
-  // Increment counter for ordered lists
-  if (!bberState.config.group_footnotes) counter += 1
+  // Increment groupedListCounter for ordered lists
+  if (!bberState.config.group_footnotes) groupedListCounter += 1
 
   // push the backlink into the parent paragraph
   if (tokens[childIndex]) {
