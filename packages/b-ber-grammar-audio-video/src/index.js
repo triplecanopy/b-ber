@@ -144,6 +144,7 @@ function prepare({ token, marker, context, instance, fileName, lineNumber }) {
     poster,
     source,
     type,
+    controls: attrsObject.controls,
   }
 }
 

@@ -101,10 +101,11 @@ export function createMediaInline({
   sourceElements,
   poster,
   caption,
+  controls,
 }) {
   return `
     ${commentStart}
-      <section class="${mediaType} ${aspectRatioClassName} figure__large figure__inline">
+      <section class="${mediaType} ${aspectRatioClassName} figure__large figure__large__controls--${controls} figure__inline">
         <${mediaType} id="${id}"${attrString}${webOnlyAttrString}>
           ${sourceElements}
           ${
