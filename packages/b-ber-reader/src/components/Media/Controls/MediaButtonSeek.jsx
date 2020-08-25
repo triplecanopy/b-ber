@@ -1,10 +1,15 @@
 import React from 'react'
 
-const MediaButtonSeek = props => (
-  <React.Fragment>
-    <button onClick={props.timeForward}>forward</button>
-    <button onClick={props.timeBack}>back</button>
-  </React.Fragment>
+const MediaButtonSeekForward = props => (
+  <button className="material-icons" onClick={props.timeForward}>
+    forward_30
+  </button>
 )
 
-export default MediaButtonSeek
+const MediaButtonSeekBack = props => (
+  <button className="material-icons" onClick={props.timeBack}>
+    replay_30
+  </button>
+)
+
+export { MediaButtonSeekForward, MediaButtonSeekBack }

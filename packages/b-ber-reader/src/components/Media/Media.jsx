@@ -9,8 +9,9 @@ import { MEDIA_CONTROLS_PRESETS } from '../../constants'
 class Media extends React.Component {
   static contextType = ReaderContext
 
-  // Seconds to skip when clicking fast-forward/rewind
-  static skipStep = 2
+  // Seconds to skip when clicking fast-forward/rewind. Ensure that this is
+  // consistent with Material icon
+  static skipStep = 30
 
   state = {
     autoPlay: this.props.autoPlay || false,
@@ -26,8 +27,8 @@ class Media extends React.Component {
     muted: false,
     // readyState: 0,
     progress: 0,
-    timeElapsed: '0:00',
-    timeRemaining: '0:00',
+    timeElapsed: '00:00',
+    timeRemaining: '00:00',
     currentSrc: '',
   }
 
@@ -96,10 +97,8 @@ class Media extends React.Component {
     })
   }
 
-  updateVolume = sign => {
-    let { volume } = this.state
-    volume = parseFloat((volume + 0.1 * sign).toFixed(10))
-    volume = Math.max(0, Math.min(volume, 1))
+  updateVolume = e => {
+    const volume = e.currentTarget.value
 
     this.setState(
       { volume },
@@ -153,19 +152,13 @@ class Media extends React.Component {
   }
 
   updateProgress = () => {
-    if (this.state.paused) return
     const progress = this.props.elemRef.current.currentTime
-
     this.setState({ progress })
   }
 
   timeForward = () => this.updateTime(Media.skipStep)
 
   timeBack = () => this.updateTime(Media.skipStep * -1)
-
-  volumeUp = () => this.updateVolume(1)
-
-  volumeDown = () => this.updateVolume(-1)
 
   seek = e => {
     const { duration } = this.state
@@ -269,6 +262,7 @@ class Media extends React.Component {
       currentSpreadIndex,
       view,
       viewerSettings,
+      readerSettings,
       controls: controlsAttribute,
 
       // `rest` includes React.Children, and the HTML5 media attributes except
@@ -351,8 +345,7 @@ class Media extends React.Component {
           pause={this.pause}
           timeForward={this.timeForward}
           timeBack={this.timeBack}
-          volumeUp={this.volumeUp}
-          volumeDown={this.volumeDown}
+          updateVolume={this.updateVolume}
           updateLoop={this.updateLoop}
           updatePlaybackRate={this.updatePlaybackRate}
           seek={this.seek}
@@ -364,6 +357,8 @@ class Media extends React.Component {
           timeElapsed={this.state.timeElapsed}
           timeRemaining={this.state.timeRemaining}
           paused={this.state.paused}
+          playbackRate={this.state.playbackRate}
+          volume={this.state.volume}
         />
       </React.Fragment>
     )

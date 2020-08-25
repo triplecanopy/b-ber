@@ -24,8 +24,11 @@ $anmiation-speed-slow: 2500ms;
 $mobile-breakpoint-max: 414px;
 $tablet-breakpoint-max: 768px;
 
-$font-serif: Georgia, 'Iowan', Times, serif;
-$font-size: 14px;
+$font-family-serif: Georgia, 'Iowan', Times, serif;
+$font-size-serif: 14px;
+
+$font-family-sans: Arial, Helvetica, sans-serif;
+$font-size-sans: 0.8rem;
 
 $spinner-size: 40px;
 
@@ -166,7 +169,7 @@ button {
   padding-left: 1.5em;
   padding-right: 1.5em;
   position: absolute;
-  font-size: $font-size;
+  font-size: $font-size-serif;
   line-height: 1.6;
   z-index: 1000;
 
@@ -259,9 +262,9 @@ button {
 
 .controls__sidebar {
   z-index: 1;
-  font-family: $font-serif;
+  font-family: $font-family-serif;
   font-weight: 400;
-  font-size: $font-size;
+  font-size: $font-size-serif;
   padding-bottom: $small;
 
   ol,
@@ -278,8 +281,8 @@ button {
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
-        font-size: $font-size;
-        font-family: $font-serif;
+        font-size: $font-size-serif;
+        font-family: $font-family-serif;
 
         &:hover {
           @include transition(color);
@@ -595,31 +598,71 @@ button {
   }
 }
 
+// Media controls
+$media-element-padding: 6px;
+
+// Vars for range input
+$track-w: 100%;
+$track-h: 0.25rem;
+$thumb-d: 0.8rem;
+$track-c: #ccc;
+$thumb-c: #222;
+
 .media__controls {
   display: flex;
   align-items: center;
 
-  font-size: 11px;
-  font-family: Arial, Helvetica, sans-serif;
+  font-size: $font-size-sans;
+  font-family: $font-family-sans;
+
+  border: 1px solid $thumb-c;
+  border-radius: $media-element-padding;
+  padding-top: $media-element-padding;
+  padding-bottom: $media-element-padding;
+  padding-left: $media-element-padding;
 
   a,
-  input,
+  input:not([type='range']),
   button {
-    padding: 8px;
+    padding-right: $media-element-padding;
+  }
+
+  a,
+  button {
+    text-decoration: none !important;
+    transition: color $transition-speed-normal $transition-easing;
+  }
+
+  a.hover,
+  a:hover,
+  button.hover,
+  button:hover {
+    color: $violet !important;
   }
 
   .media__time {
     display: flex;
+    padding: $media-element-padding;
+  }
+
+  + .caption__audio {
+    margin-top: 0.5rem;
+  }
+}
+
+.slider__volume {
+  width: 0;
+  flex-grow: 0;
+  visibility: hidden;
+  transition: flex-grow $transition-speed-normal $transition-easing;
+  &.open {
+    visibility: visible;
+    flex-grow: 1;
   }
 }
 
 // Range input
 // https://css-tricks.com/sliding-nightmare-understanding-range-input/
-$track-w: 100%;
-$track-h: 0.25em;
-$thumb-d: 1.5em;
-$track-c: #ccc;
-$thumb-c: #222;
 
 @mixin track {
   box-sizing: border-box;
@@ -631,11 +674,19 @@ $thumb-c: #222;
 
 @mixin thumb {
   box-sizing: border-box;
+  position: relative;
+  z-index: 1;
   border: none;
   width: $thumb-d;
   height: $thumb-d;
   border-radius: 50%;
-  background: $thumb-c;
+  background-color: $thumb-c;
+
+  transition: background-color $transition-speed-normal $transition-easing;
+
+  &:hover {
+    background-color: $violet;
+  }
 }
 
 .media__slider {
@@ -643,7 +694,9 @@ $thumb-c: #222;
   display: flex;
   align-items: center;
   position: relative;
+
   font: 1em/1 arial, sans-serif;
+  margin: $media-element-padding;
 }
 
 input[type='range'] {
@@ -659,6 +712,7 @@ input[type='range'] {
   background: transparent;
   font: inherit;
   outline: none;
+  max-width: 100%;
 
   &::-webkit-slider-runnable-track {
     @include track;
@@ -684,5 +738,27 @@ input[type='range'] {
 
   &::-ms-tooltip {
     display: none;
+  }
+}
+
+.media__slider--before {
+  background: $black;
+  height: $track-h;
+  position: absolute;
+  left: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+// Mobile layout
+.media__stacked {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+
+  .media__stacked__row {
+    display: flex;
+    flex: 1 0 100%;
+    padding-right: $media-element-padding;
   }
 }

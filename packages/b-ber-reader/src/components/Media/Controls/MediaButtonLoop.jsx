@@ -1,7 +1,9 @@
 import React from 'react'
 
 const MediaButtonLoop = props => (
-  <button onClick={props.updateLoop}>updateLoop</button>
+  <button className="material-icons" onClick={props.updateLoop}>
+    repeat
+  </button>
 )
 
 export default MediaButtonLoop

@@ -1,8 +1,8 @@
 import React from 'react'
 
 const MediaButtonDownload = props => (
-  <a href={props.currentSrc} download={true}>
-    download
+  <a className="material-icons" href={props.currentSrc} download={true}>
+    file_download
   </a>
 )
 

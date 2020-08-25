@@ -5,20 +5,18 @@ import MediaRangeSlider from './MediaRangeSlider'
 
 const AudioControlsSimple = props => (
   <React.Fragment>
-    <MediaTime
-      timeElapsed={props.timeElapsed}
-      timeRemaining={props.timeRemaining}
-    />
     <MediaButtonPlayPause
       paused={props.paused}
       pause={props.pause}
       play={props.play}
     />
+    <MediaTime time={props.timeElapsed} />
     <MediaRangeSlider
       duration={props.duration}
       progress={props.progress}
       seek={props.seek}
     />
+    <MediaTime time={props.timeRemaining} />
   </React.Fragment>
 )
 

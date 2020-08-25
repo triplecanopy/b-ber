@@ -1,21 +1,30 @@
 import React from 'react'
-import AudioControlsSimple from './AudioControlsSimple'
-import MediaButtonSeek from './MediaButtonSeek'
+import { MediaButtonSeekForward, MediaButtonSeekBack } from './MediaButtonSeek'
 import MediaButtonVolume from './MediaButtonVolume'
-import MediaButtonDownload from './MediaButtonDownload'
+import MediaButtonPlayPause from './MediaButtonPlayPause'
+import MediaTime from './MediaTime'
+import MediaRangeSlider from './MediaRangeSlider'
 
 const AudioControlsNormal = props => (
   <React.Fragment>
-    <AudioControlsSimple {...props} />
-    <MediaButtonSeek
-      timeForward={props.timeForward}
-      timeBack={props.timeBack}
+    <MediaButtonSeekBack timeBack={props.timeBack} />
+    <MediaButtonPlayPause
+      paused={props.paused}
+      pause={props.pause}
+      play={props.play}
     />
+    <MediaButtonSeekForward timeForward={props.timeForward} />
+    <MediaTime time={props.timeElapsed} />
+    <MediaRangeSlider
+      duration={props.duration}
+      progress={props.progress}
+      seek={props.seek}
+    />
+    <MediaTime time={props.timeRemaining} />
     <MediaButtonVolume
-      volumeUp={props.volumeUp}
-      volumeDown={props.volumeDown}
+      volume={props.volume}
+      updateVolume={props.updateVolume}
     />
-    <MediaButtonDownload currentSrc={props.currentSrc} />
   </React.Fragment>
 )
 
