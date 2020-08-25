@@ -7,6 +7,7 @@ import MediaTime from './MediaTime'
 import MediaRangeSlider from './MediaRangeSlider'
 import MediaButtonDownload from './MediaButtonDownload'
 import MediaButtonVolume from './MediaButtonVolume'
+import Viewport from '../../../helpers/Viewport'
 
 const AudioControlsFullStacked = props => (
   <div className="media__stacked">
@@ -19,6 +20,12 @@ const AudioControlsFullStacked = props => (
       />
       <MediaTime time={props.timeRemaining} />
     </div>
+
+    {/* Divider line */}
+    <div className="media__stacked__separator">
+      <div className="media__stacked__separator--line" />
+    </div>
+
     <div className="media__stacked__row">
       <MediaButtonSeekBack timeBack={props.timeBack} />
       <MediaButtonPlayPause
@@ -36,6 +43,9 @@ const AudioControlsFullStacked = props => (
         playbackNormal={props.playbackNormal}
         playbackFast={props.playbackFast}
       />
+
+      {/* Spacer */}
+      <div style={{ marginRight: 'auto' }} />
 
       <MediaButtonVolume
         volume={props.volume}
@@ -83,4 +93,11 @@ const AudioControlsFull = props => (
   </React.Fragment>
 )
 
-export default AudioControlsFullStacked
+const AudioControls = props =>
+  Viewport.isMobile() ? (
+    <AudioControlsFullStacked {...props} />
+  ) : (
+    <AudioControlsFull {...props} />
+  )
+
+export default AudioControls
