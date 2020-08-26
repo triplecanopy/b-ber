@@ -603,10 +603,10 @@ $media-element-padding: 6px;
 
 // Vars for range input
 $track-w: 100%;
-$track-h: 0.25rem;
-$thumb-d: 0.8rem;
-$track-c: #ccc;
-$thumb-c: #222;
+$track-h: 2px;
+$thumb-d: 12px;
+$track-c: #d7d7d7;
+$thumb-c: #272727;
 
 .media__controls {
   display: flex;
@@ -617,14 +617,19 @@ $thumb-c: #222;
 
   border: 1px solid $thumb-c;
   border-radius: $media-element-padding;
-  padding-top: $media-element-padding;
-  padding-bottom: $media-element-padding;
-  padding-left: $media-element-padding;
+  padding: 9px 3px 9px 12px;
 
   a,
   input:not([type='range']),
   button {
-    padding-right: $media-element-padding;
+    padding-right: $media-element-padding * 2;
+  }
+
+  .media__time {
+    display: flex;
+    padding: 0 $media-element-padding * 2 0 0;
+    font-size: 14px;
+    user-select: none;
   }
 
   a,
@@ -638,11 +643,6 @@ $thumb-c: #222;
   button.hover,
   button:hover {
     color: $violet !important;
-  }
-
-  .media__time {
-    display: flex;
-    padding: $media-element-padding;
   }
 
   + .caption__audio {
@@ -696,7 +696,7 @@ $thumb-c: #222;
   position: relative;
 
   font: 1em/1 arial, sans-serif;
-  margin: $media-element-padding;
+  margin: 6px 15px 6px 3px;
 }
 
 input[type='range'] {
@@ -766,10 +766,10 @@ input[type='range'] {
 
   .media__stacked__separator {
     position: relative;
-    width: 100%;
-    margin-left: -$media-element-padding;
-    margin-top: $media-element-padding;
-    margin-bottom: $media-element-padding;
+    width: calc(100% + 10px);
+    margin-left: -13px;
+    margin-top: $media-element-padding * 1.5;
+    margin-bottom: $media-element-padding * 1.5;
     .media__stacked__separator--line {
       width: calc(100% + 7px); // Optics
       background: $black;
@@ -788,4 +788,24 @@ input[type='range'] {
 .times__media__playback-rate {
   position: relative;
   top: 1px;
+}
+
+// Buttons
+.media__button__play {
+  font-size: 24px;
+}
+
+.media__button__volume_up,
+.media__button__file_download {
+  font-size: 17px;
+}
+
+.media__button__forward_30,
+.media__button__replay_30 {
+  font-size: 18px;
+}
+
+// FF for range slider
+:-moz-ui-invalid {
+  box-shadow: none;
 }

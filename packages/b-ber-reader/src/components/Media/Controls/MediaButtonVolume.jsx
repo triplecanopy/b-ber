@@ -20,7 +20,9 @@ class MediaButtonVolume extends React.Component {
           />
         </div>
         <button
-          className={classNames('material-icons', { hover: open })}
+          className={classNames('material-icons media__button__volume_up', {
+            hover: open,
+          })}
           onClick={this.toggle}
         >
           volume_up
