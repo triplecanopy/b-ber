@@ -35,7 +35,7 @@ const AudioControlsFullStacked = props => (
       />
       <MediaButtonSeekForward timeForward={props.timeForward} />
 
-      <MediaButtonLoop updateLoop={props.updateLoop} />
+      <MediaButtonLoop loop={props.loop} updateLoop={props.updateLoop} />
 
       <MediaButtonPlaybackRate
         playbackRate={props.playbackRate}
@@ -67,7 +67,7 @@ const AudioControlsFull = props => (
     />
     <MediaButtonSeekForward timeForward={props.timeForward} />
 
-    <MediaButtonLoop updateLoop={props.updateLoop} />
+    <MediaButtonLoop loop={props.loop} updateLoop={props.updateLoop} />
 
     <MediaButtonPlaybackRate
       playbackRate={props.playbackRate}

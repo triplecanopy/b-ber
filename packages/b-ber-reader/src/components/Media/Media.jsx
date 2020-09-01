@@ -4,7 +4,7 @@ import React from 'react'
 import ReaderContext from '../../lib/reader-context'
 import withNodePosition from '../../lib/with-node-position'
 import MediaControls from './Controls/MediaControls'
-import { MEDIA_CONTROLS_PRESETS } from '../../constants'
+import { MEDIA_CONTROLS_PRESETS, MEDIA_PLAYBACK_RATES } from '../../constants'
 
 class Media extends React.Component {
   static contextType = ReaderContext
@@ -18,7 +18,7 @@ class Media extends React.Component {
     paused: true,
     loop: false,
     volume: 1,
-    playbackRate: 1.0,
+    playbackRate: MEDIA_PLAYBACK_RATES.NORMAL,
     currentTime: 0,
     duration: 0,
     // eslint-disable-next-line react/no-unused-state
@@ -359,6 +359,7 @@ class Media extends React.Component {
           paused={this.state.paused}
           playbackRate={this.state.playbackRate}
           volume={this.state.volume}
+          loop={this.state.loop}
         />
       </React.Fragment>
     )

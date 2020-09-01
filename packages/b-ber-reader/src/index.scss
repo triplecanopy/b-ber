@@ -265,7 +265,6 @@ button {
   font-family: $font-family-serif;
   font-weight: 400;
   font-size: $font-size-serif;
-  padding-bottom: $small;
 
   ol,
   ul,
@@ -346,9 +345,9 @@ button {
   position: fixed;
   z-index: 2;
   top: $small;
-  height: 100vh;
-  background: $white;
+  height: calc(100vh - #{$small});
   width: calc(#{$small} * 10);
+  background: $white;
   transform: translateX(-100%);
   overflow: auto;
   -webkit-overflow-scrolling: touch; // sass-lint:disable-line no-vendor-prefixes
@@ -791,7 +790,8 @@ input[type='range'] {
 }
 
 // Buttons
-.media__button__play {
+.media__button__play,
+.media__button__pause {
   font-size: 24px;
 }
 

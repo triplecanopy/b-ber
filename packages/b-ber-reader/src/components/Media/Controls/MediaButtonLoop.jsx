@@ -1,7 +1,11 @@
 import React from 'react'
+import classNames from 'classnames'
 
 const MediaButtonLoop = props => (
-  <button className="material-icons" onClick={props.updateLoop}>
+  <button
+    className={classNames('material-icons', { hover: props.loop })}
+    onClick={props.updateLoop}
+  >
     repeat
   </button>
 )
