@@ -37,7 +37,6 @@ describe('templates.reader', () => {
     expect(reader.video(data)).toMatchSnapshot()
     expect(reader.iframe(data)).toMatchSnapshot()
     expect(reader.vimeo(data)).toMatchSnapshot()
-    expect(reader.soundcloud(data)).toMatchSnapshot()
 
     expect(reader.portrait(dataFiguresPage)).toMatchSnapshot()
     expect(reader.landscape(dataFiguresPage)).toMatchSnapshot()

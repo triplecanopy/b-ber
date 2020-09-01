@@ -11,7 +11,6 @@ const mobi = {
   video: data => media({ ...data, applyInlineClasses: true }),
   iframe: data => unsupported({ data, applyInlineClasses: true }),
   vimeo: data => unsupported({ data, applyInlineClasses: true }),
-  soundcloud: data => unsupported({ data, applyInlineClasses: true }),
 }
 
 export default mobi

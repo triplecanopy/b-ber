@@ -70,8 +70,6 @@ const INLINE_DIRECTIVES = new Set([
   'audio-inline',
   'vimeo',
   'vimeo-inline',
-  'soundcloud',
-  'soundcloud-inline',
   'iframe',
   'iframe-inline',
 ])
@@ -184,32 +182,6 @@ const vimeoEmbedAttributes = {
   transparent: true,
 }
 
-// Attributes that are used in the soundcloud and soundcloud-inline directives and passed
-// to the Soundcloud API
-const soundcloudEmbedAttributes = {
-  classes: true,
-  poster: true,
-  source: true,
-  kind: true,
-  autoplay: true,
-  color: true,
-  buying: true,
-  sharing: true,
-  download: true,
-  // eslint-disable-next-line camelcase
-  hide_related: true,
-  // eslint-disable-next-line camelcase
-  show_artwork: true,
-  // eslint-disable-next-line camelcase
-  show_playcount: true,
-  // eslint-disable-next-line camelcase
-  show_user: true,
-  // eslint-disable-next-line camelcase
-  start_track: true,
-  // eslint-disable-next-line camelcase
-  single_active: true,
-}
-
 // b-ber attributes for audio, video and vimeo directives
 const bBerAudiovideoAttributes = {
   classes: true,
@@ -264,12 +236,6 @@ const SUPPORTED_ATTRIBUTES = {
   'vimeo-inline': {
     ...vimeoEmbedAttributes,
     ...bBerAudiovideoAttributes,
-  },
-  soundcloud: {
-    ...soundcloudEmbedAttributes,
-  },
-  'soundcloud-inline': {
-    ...soundcloudEmbedAttributes,
   },
   iframe: {
     title: true,

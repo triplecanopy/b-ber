@@ -71,7 +71,7 @@ const withIframePosition = (WrappedComponent, options = { enabled: false }) =>
       }
     }
 
-    // @param name is the directive type, e.g., iframe, vimeo, soundcloud
+    // @param name is the directive type, e.g., iframe, vimeo
     iframeStyleBlock = (name = 'iframe') => {
       if (!options.enabled) return ''
 

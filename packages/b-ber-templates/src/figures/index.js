@@ -12,7 +12,6 @@ const isAudio = mime => /^audio/.test(mime)
 const isVideo = mime => /^video/.test(mime)
 const isIframe = type => type === 'iframe'
 const isVimeo = type => type === 'vimeo'
-const isSoundcloud = type => type === 'soundcloud'
 
 const figure = (data, buildType) => {
   const { width, height, mime, type } = data
@@ -20,7 +19,7 @@ const figure = (data, buildType) => {
 
   let format = null
 
-  if (isIframe(type) || isVimeo(type) || isSoundcloud(type)) {
+  if (isIframe(type) || isVimeo(type)) {
     format = type
   } else if (isImage(mime)) {
     format = getImageOrientation(width, height)

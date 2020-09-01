@@ -210,43 +210,6 @@ exports[`templates.web creates the markup 8`] = `
 
 exports[`templates.web creates the markup 9`] = `
 "
-    
-      <div class=\\"figure__large figure__large--soundcloud\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
-            <div class=\\"soundcloud\\">
-              <div class=\\"embed unsupported\\">
-                <iframe
-                  data-soundcloud=\\"true\\"
-                  data-kind=\\"undefined\\"
-                  src=\\"https://w.soundcloud.com/player/undefined\\"
-                  width=\\"100%\\"
-                  height=\\"test-height\\"
-                  webkitallowfullscreen=\\"webkitallowfullscreen\\"
-                  mozallowfullscreen=\\"mozallowfullscreen\\"
-                  allowfullscreen=\\"allowfullscreen\\"
-                  allow=\\"autoplay\\"
-                  frameborder=\\"0\\"
-                  scrolling=\\"no\\"
-                />
-              </div>
-            </div>
-
-            <div class=\\"figcaption\\">
-              <p class=\\"small\\">
-                test<br/>
-                <a href=\\"1.xhtml#ref1\\">Return</a>
-              </p>
-            </div>
-          </div>
-        </figure>
-      </div>
-    
-    "
-`;
-
-exports[`templates.web creates the markup 10`] = `
-"
     <section epub:type=\\"loi\\" class=\\"chapter figures\\">
       <div class=\\"figure__large figure__large--portrait\\">
         <figure id=\\"1\\">
@@ -266,7 +229,7 @@ exports[`templates.web creates the markup 10`] = `
 "
 `;
 
-exports[`templates.web creates the markup 11`] = `
+exports[`templates.web creates the markup 10`] = `
 "
     <section epub:type=\\"loi\\" class=\\"chapter figures\\">
       <div class=\\"figure__large figure__large--landscape\\">
@@ -287,7 +250,7 @@ exports[`templates.web creates the markup 11`] = `
 "
 `;
 
-exports[`templates.web creates the markup 12`] = `
+exports[`templates.web creates the markup 11`] = `
 "
     <section epub:type=\\"loi\\" class=\\"chapter figures\\">
       <div class=\\"figure__large figure__large--portrait-high\\">
@@ -308,7 +271,7 @@ exports[`templates.web creates the markup 12`] = `
 "
 `;
 
-exports[`templates.web creates the markup 13`] = `
+exports[`templates.web creates the markup 12`] = `
 "
     <section epub:type=\\"loi\\" class=\\"chapter figures\\">
       <div class=\\"figure__large figure__large--square\\">
@@ -327,6 +290,36 @@ exports[`templates.web creates the markup 13`] = `
       </div>
     </section>
 "
+`;
+
+exports[`templates.web creates the markup 13`] = `
+"
+    <section epub:type=\\"loi\\" class=\\"chapter figures\\">
+      <div class=\\"figure__large figure__large--media figure__inline--square test\\">
+        <figure id=\\"1\\">
+          <div class=\\"figure__items\\">
+            <div class=\\"audio-or-video\\">
+              <audio-or-video id=\\"audio-or-video-1\\" autoplay=\\"false\\">
+                <source />
+                <div class=\\"media__fallback__audio-or-video media__fallback--image\\">
+                  <figure>
+                    <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
+                  </figure>
+                </div>
+                <p class=\\"media__fallback__audio-or-video media__fallback--text\\">Your device does not support the HTML5 audio-or-video API.</p>
+              </audio-or-video>
+            </div>
+            <div class=\\"figcaption\\">
+              <p class=\\"small\\">
+                test<br/>
+                <a href=\\"1.xhtml#ref1\\">Return</a>
+              </p>
+            </div>
+          </div>
+        </figure>
+      </div>
+    </section>
+    "
 `;
 
 exports[`templates.web creates the markup 14`] = `
@@ -362,36 +355,6 @@ exports[`templates.web creates the markup 14`] = `
 exports[`templates.web creates the markup 15`] = `
 "
     <section epub:type=\\"loi\\" class=\\"chapter figures\\">
-      <div class=\\"figure__large figure__large--media figure__inline--square test\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
-            <div class=\\"audio-or-video\\">
-              <audio-or-video id=\\"audio-or-video-1\\" autoplay=\\"false\\">
-                <source />
-                <div class=\\"media__fallback__audio-or-video media__fallback--image\\">
-                  <figure>
-                    <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
-                  </figure>
-                </div>
-                <p class=\\"media__fallback__audio-or-video media__fallback--text\\">Your device does not support the HTML5 audio-or-video API.</p>
-              </audio-or-video>
-            </div>
-            <div class=\\"figcaption\\">
-              <p class=\\"small\\">
-                test<br/>
-                <a href=\\"1.xhtml#ref1\\">Return</a>
-              </p>
-            </div>
-          </div>
-        </figure>
-      </div>
-    </section>
-    "
-`;
-
-exports[`templates.web creates the markup 16`] = `
-"
-    <section epub:type=\\"loi\\" class=\\"chapter figures\\">
       <div class=\\"figure__large figure__large--iframe\\">
         <figure id=\\"1\\">
           <div class=\\"figure__items\\">
@@ -423,7 +386,7 @@ exports[`templates.web creates the markup 16`] = `
     "
 `;
 
-exports[`templates.web creates the markup 17`] = `
+exports[`templates.web creates the markup 16`] = `
 "
     
       <div class=\\"figure__large figure__inline figure__inline--portrait break-before\\">
@@ -444,7 +407,7 @@ exports[`templates.web creates the markup 17`] = `
 "
 `;
 
-exports[`templates.web creates the markup 18`] = `
+exports[`templates.web creates the markup 17`] = `
 "
     
       <div class=\\"figure__large figure__inline figure__inline--landscape break-before\\">
@@ -465,7 +428,7 @@ exports[`templates.web creates the markup 18`] = `
 "
 `;
 
-exports[`templates.web creates the markup 19`] = `
+exports[`templates.web creates the markup 18`] = `
 "
     
       <div class=\\"figure__large figure__inline figure__inline--portrait-high break-before\\">
@@ -486,7 +449,7 @@ exports[`templates.web creates the markup 19`] = `
 "
 `;
 
-exports[`templates.web creates the markup 20`] = `
+exports[`templates.web creates the markup 19`] = `
 "
     
       <div class=\\"figure__large figure__inline figure__inline--square break-before\\">
@@ -505,6 +468,36 @@ exports[`templates.web creates the markup 20`] = `
       </div>
     
 "
+`;
+
+exports[`templates.web creates the markup 20`] = `
+"
+    
+      <div class=\\"figure__large figure__large--media figure__inline--square break-before\\">
+        <figure id=\\"1\\">
+          <div class=\\"figure__items\\">
+            <div class=\\"audio-or-video\\">
+              <audio-or-video id=\\"audio-or-video-1\\" autoplay=\\"false\\">
+                <source />
+                <div class=\\"media__fallback__audio-or-video media__fallback--image\\">
+                  <figure>
+                    <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
+                  </figure>
+                </div>
+                <p class=\\"media__fallback__audio-or-video media__fallback--text\\">Your device does not support the HTML5 audio-or-video API.</p>
+              </audio-or-video>
+            </div>
+            <div class=\\"figcaption\\">
+              <p class=\\"small\\">
+                test<br/>
+                <a href=\\"1.xhtml#ref1\\">Return</a>
+              </p>
+            </div>
+          </div>
+        </figure>
+      </div>
+    
+    "
 `;
 
 exports[`templates.web creates the markup 21`] = `
@@ -538,36 +531,6 @@ exports[`templates.web creates the markup 21`] = `
 `;
 
 exports[`templates.web creates the markup 22`] = `
-"
-    
-      <div class=\\"figure__large figure__large--media figure__inline--square break-before\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
-            <div class=\\"audio-or-video\\">
-              <audio-or-video id=\\"audio-or-video-1\\" autoplay=\\"false\\">
-                <source />
-                <div class=\\"media__fallback__audio-or-video media__fallback--image\\">
-                  <figure>
-                    <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
-                  </figure>
-                </div>
-                <p class=\\"media__fallback__audio-or-video media__fallback--text\\">Your device does not support the HTML5 audio-or-video API.</p>
-              </audio-or-video>
-            </div>
-            <div class=\\"figcaption\\">
-              <p class=\\"small\\">
-                test<br/>
-                <a href=\\"1.xhtml#ref1\\">Return</a>
-              </p>
-            </div>
-          </div>
-        </figure>
-      </div>
-    
-    "
-`;
-
-exports[`templates.web creates the markup 23`] = `
 "
     
       <div class=\\"figure__large figure__large--iframe\\">

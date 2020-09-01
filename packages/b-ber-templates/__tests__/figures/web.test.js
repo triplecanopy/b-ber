@@ -37,7 +37,6 @@ describe('templates.web', () => {
     expect(web.video(data)).toMatchSnapshot()
     expect(web.iframe(data)).toMatchSnapshot()
     expect(web.vimeo(data)).toMatchSnapshot()
-    expect(web.soundcloud(data)).toMatchSnapshot()
 
     expect(web.portrait(dataFiguresPage)).toMatchSnapshot()
     expect(web.landscape(dataFiguresPage)).toMatchSnapshot()
