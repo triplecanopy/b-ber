@@ -111,9 +111,9 @@ export const MEDIA_QUERY_LARGE = `only screen and (max-width: ${BREAKPOINT_HORIZ
   1}px)`
 
 export const MEDIA_PLAYBACK_RATES = {
-  SLOW: 0.6,
+  SLOW: 0.5,
   NORMAL: 1.0,
-  FAST: 1.3,
+  FAST: 1.5,
 }
 
 export const MEDIA_CONTROLS_PRESETS = new Set(['simple', 'normal', 'full'])

@@ -9,7 +9,7 @@ const MediaButtonPlaybackRate = props => {
           className="button__media__playback-rate"
           onClick={props.playbackNormal}
         >
-          2<span className="times__media__playback-rate">&times;</span>
+          0.5<span className="times__media__playback-rate">&times;</span>
         </button>
       )
     case MEDIA_PLAYBACK_RATES.NORMAL:
@@ -18,7 +18,7 @@ const MediaButtonPlaybackRate = props => {
           className="button__media__playback-rate"
           onClick={props.playbackFast}
         >
-          3<span className="times__media__playback-rate">&times;</span>
+          1<span className="times__media__playback-rate">&times;</span>
         </button>
       )
     case MEDIA_PLAYBACK_RATES.FAST:
@@ -27,7 +27,7 @@ const MediaButtonPlaybackRate = props => {
           className="button__media__playback-rate"
           onClick={props.playbackSlow}
         >
-          1<span className="times__media__playback-rate">&times;</span>
+          1.5<span className="times__media__playback-rate">&times;</span>
         </button>
       )
     default:
