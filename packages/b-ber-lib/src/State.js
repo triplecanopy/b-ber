@@ -29,11 +29,11 @@ const skipInitialization = () => {
 
   // prettier-ignore
   return (
-        argv.includes('--help') ||  // if a help flag is set
-        argv.includes('-h') ||      // if a help alias is set
-        argv.length < 3 ||          // if there are insufficient arguments
-        argv.includes('new')        // if it's a new project
-    )
+    argv.includes('--help') ||  // if a help flag is set
+    argv.includes('-h') ||      // if a help alias is set
+    argv.length < 3 ||          // if there are insufficient arguments
+    argv.includes('new')        // if it's a new project
+  )
 }
 
 const SRC_DIR_IMAGES = '_images'

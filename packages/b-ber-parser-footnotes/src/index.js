@@ -12,8 +12,54 @@ MIT license
 
 // Keep track of footnotes that have been rendered to start new ordered lists at
 // proper count
-let groupedListCounter = 1
-let groupedListItemCounter = 1
+class Counter {
+  constructor() {
+    this.build = null
+
+    this.list = 1
+    this.item = 1
+  }
+
+  restartCounter(build) {
+    if (this.build === null) {
+      this.build = build
+    }
+
+    if (build !== this.build) {
+      this.build = build
+      this.list = 1
+      this.item = 1
+
+      return true
+    }
+
+    return false
+  }
+
+  groupedListCounter(grouped, build) {
+    if (this.restartCounter(build)) {
+      return this.list
+    }
+
+    if (!grouped) {
+      return this.item
+    }
+
+    return this.list
+  }
+
+  groupedListItemCounter(build) {
+    if (this.restartCounter(build)) {
+      return this.item
+    }
+
+    this.item += 1
+
+    return this.item
+  }
+}
+
+const counter = new Counter()
 
 function renderFootnoteAnchorName(tokens, idx, options, env /*, slf*/) {
   const n = Number(tokens[idx].meta.id + 1).toString()
@@ -21,13 +67,7 @@ function renderFootnoteAnchorName(tokens, idx, options, env /*, slf*/) {
 }
 
 function renderFootnoteCaption(tokens, idx /*,options, env, slf*/) {
-  let n
-  if (!bberState.config.group_footnotes) {
-    n = groupedListItemCounter
-    groupedListItemCounter += 1
-  } else {
-    n = Number(tokens[idx].meta.id + 1).toString()
-  }
+  const n = counter.groupedListItemCounter(bberState.build)
   return tokens[idx].meta.subId > 0 ? `${n}:${tokens[idx].meta.subId}` : n
 }
 
@@ -38,7 +78,11 @@ function renderFootnoteRef(tokens, idx, options, env, slf) {
 }
 
 function renderFootnoteBlockOpen(/* tokens, idx, options */) {
-  return `<ol class="footnotes" start="${groupedListCounter}">`
+  const start = counter.groupedListCounter(
+    bberState.config.group_footnotes,
+    bberState.build
+  )
+  return `<ol class="footnotes" start="${start}">`
 }
 
 function renderFootnoteBlockClose() {
@@ -48,9 +92,6 @@ function renderFootnoteBlockClose() {
 function renderFootnoteOpen(tokens, idx, options, env /*,slf */) {
   const ref = tokens[idx].meta.label
   const childIndex = idx + 2
-
-  // Increment groupedListCounter for ordered lists
-  if (!bberState.config.group_footnotes) groupedListCounter += 1
 
   // push the backlink into the parent paragraph
   if (tokens[childIndex]) {
