@@ -11,6 +11,7 @@ const debounceSpeed = 500
 
 const update = build => {
   state.update('build', build)
+  state.update('footnotes', [])
   state.update('config.base_url', '/')
   state.update('config.base_path', '/')
   state.update('config.remote_url', `http://localhost:${port}`)

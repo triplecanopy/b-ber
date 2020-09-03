@@ -14,42 +14,46 @@ MIT license
 // proper count
 class Counter {
   constructor() {
-    this.build = null
-
+    this.page = -1
     this.list = 1
     this.item = 1
   }
 
-  restartCounter(build) {
-    if (this.build === null || build !== this.build) {
-      this.build = build
-      this.list = 1
+  listCounter(grouped, page) {
+    // Reset all counters if the footnotes list is empty. This occurs when
+    // running `bber serve`
+    if (page === 0) {
+      this.page = -1
       this.item = 1
-
-      return true
-    }
-
-    return false
-  }
-
-  groupedListCounter(grouped, build) {
-    if (this.restartCounter(build)) {
-      return this.list
+      this.list = 1
     }
 
     if (!grouped) {
       return this.item
     }
 
+    if (page !== this.page) {
+      this.list = 1
+    } else {
+      this.list += 1
+    }
+
     return this.list
   }
 
-  groupedListItemCounter(build) {
-    if (this.restartCounter(build)) {
-      return this.item
+  listItemCounter(grouped, page) {
+    if (!grouped) {
+      const n = this.item
+      this.item += 1
+      return n
     }
 
-    this.item += 1
+    if (page !== this.page) {
+      this.page = page
+      this.item = 1
+    } else {
+      this.item += 1
+    }
 
     return this.item
   }
@@ -65,7 +69,10 @@ function renderFootnoteAnchorName(tokens, idx, options, env /*, slf*/) {
 function renderFootnoteCaption(tokens, idx /*,options, env, slf*/) {
   let n
   if (!bberState.config.group_footnotes) {
-    n = counter.groupedListItemCounter(bberState.build) - 1
+    n = counter.listItemCounter(
+      bberState.config.group_footnotes,
+      bberState.footnotes.length
+    )
   } else {
     n = Number(tokens[idx].meta.id + 1)
   }
@@ -80,9 +87,9 @@ function renderFootnoteRef(tokens, idx, options, env, slf) {
 }
 
 function renderFootnoteBlockOpen(/* tokens, idx, options */) {
-  const start = counter.groupedListCounter(
+  const start = counter.listCounter(
     bberState.config.group_footnotes,
-    bberState.build
+    bberState.footnotes.length
   )
   return `<ol class="footnotes" start="${start}">`
 }
