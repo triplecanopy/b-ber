@@ -21,11 +21,7 @@ class Counter {
   }
 
   restartCounter(build) {
-    if (this.build === null) {
-      this.build = build
-    }
-
-    if (build !== this.build) {
+    if (this.build === null || build !== this.build) {
       this.build = build
       this.list = 1
       this.item = 1
@@ -67,7 +63,13 @@ function renderFootnoteAnchorName(tokens, idx, options, env /*, slf*/) {
 }
 
 function renderFootnoteCaption(tokens, idx /*,options, env, slf*/) {
-  const n = counter.groupedListItemCounter(bberState.build)
+  let n
+  if (!bberState.config.group_footnotes) {
+    n = counter.groupedListItemCounter(bberState.build) - 1
+  } else {
+    n = Number(tokens[idx].meta.id + 1)
+  }
+
   return tokens[idx].meta.subId > 0 ? `${n}:${tokens[idx].meta.subId}` : n
 }
 
