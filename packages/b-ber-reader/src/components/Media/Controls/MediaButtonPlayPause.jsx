@@ -6,7 +6,10 @@ const MediaButtonPlayPause = props =>
       play_arrow
     </button>
   ) : (
-    <button className="material-icons" onClick={props.pause}>
+    <button
+      className="material-icons media__button__pause"
+      onClick={props.pause}
+    >
       pause
     </button>
   )

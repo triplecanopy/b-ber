@@ -780,8 +780,11 @@ input[type='range'] {
 .button__media__playback-rate {
   position: relative;
   top: 1px;
+
   font-size: 0.7rem;
   font-weight: 700;
+
+  width: 33px;
 }
 
 .times__media__playback-rate {
@@ -798,6 +801,11 @@ input[type='range'] {
 .media__button__volume_up,
 .media__button__file_download {
   font-size: 17px;
+}
+
+.media__button__file_download {
+  position: relative;
+  top: 1px;
 }
 
 .media__button__forward_30,
