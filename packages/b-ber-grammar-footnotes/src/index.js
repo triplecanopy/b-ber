@@ -1,11 +1,10 @@
-import find from 'lodash.find'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 
 export default function markdownItFootnotePlugin(self) {
   return function plugin(tokens) {
     const { fileName } = self
-    const entry = find(state.spine, { fileName })
-    const title = entry && entry.title ? entry.title : fileName
+    const entry = state.find('spine.flattened', { fileName })
+    const title = entry?.title || fileName
 
     // Add footnote container and heading. Doing this here instead of in
     // `footnotes.js` because we need the file's title
