@@ -1,0 +1,248 @@
+// Audio controls
+$media-font-family-sans: $sans;
+$media-font-size-sans: 0.8rem;
+$media-transition-speed-normal: 200ms;
+$media-transition-easing: ease;
+
+$color-action: $success;
+
+$media-element-padding: 6px;
+
+// Vars for range input
+$track-w: 100%;
+$track-h: 2px;
+$thumb-d: 12px;
+$track-c: #d7d7d7;
+$thumb-c: #272727;
+
+// Remove page/column break from audio player
+#layout.context__desktop {
+  .audio.figure__inline.figure__large,
+  .audio.figure__inline.figure__large,
+  .audio.figure__inline.figure__large {
+    margin: 2.6em 0em;
+
+    page-break-before: avoid;
+    page-break-after: avoid;
+    -webkit-column-break-before: avoid;
+    -webkit-column-break-after: avoid;
+  }
+}
+
+.media__controls {
+  display: flex;
+  align-items: center;
+
+  font-size: $media-font-size-sans;
+  font-family: $media-font-family-sans;
+
+  border: 1px solid $thumb-c;
+  border-radius: $media-element-padding;
+  padding: 9px 3px 9px 12px;
+
+  a,
+  input:not([type='range']),
+  button {
+    padding-right: $media-element-padding * 2;
+  }
+
+  .media__time {
+    display: flex;
+    padding: 0 $media-element-padding * 2 0 0;
+    font-size: 14px;
+    user-select: none;
+  }
+
+  a,
+  button {
+    text-decoration: none !important;
+    transition: color $media-transition-speed-normal $media-transition-easing;
+  }
+
+  a.hover,
+  a:hover,
+  button.hover,
+  button:hover {
+    color: $color-action !important;
+  }
+
+  + .caption__audio {
+    margin-top: 0.5rem;
+  }
+}
+
+.slider__volume {
+  width: 0;
+  flex-grow: 0;
+  overflow: hidden;
+  transition: flex-grow $media-transition-speed-normal $media-transition-easing;
+  &.open {
+    overflow: visible;
+    flex-grow: 1;
+  }
+}
+
+// Range input
+// https://css-tricks.com/sliding-nightmare-understanding-range-input/
+
+@mixin track {
+  box-sizing: border-box;
+  border: none;
+  width: $track-w;
+  height: $track-h;
+  background: $track-c;
+}
+
+@mixin thumb {
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1;
+  border: none;
+  width: $thumb-d;
+  height: $thumb-d;
+  border-radius: 50%;
+  background-color: $thumb-c;
+
+  transition: background-color $media-transition-speed-normal
+    $media-transition-easing;
+
+  &:hover {
+    background-color: $color-action;
+  }
+}
+
+.media__slider {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  position: relative;
+
+  font-size: 1em;
+  font-family: $media-font-family-sans;
+  line-height: 1;
+
+  margin: 6px 15px 6px 3px;
+}
+
+input[type='range'] {
+  &,
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+  }
+
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  min-height: $thumb-d;
+  background: transparent;
+  font: inherit;
+  outline: none;
+  width: 100%;
+  max-width: 100%;
+
+  &::-webkit-slider-runnable-track {
+    @include track;
+  }
+  &::-moz-range-track {
+    @include track;
+  }
+  &::-ms-track {
+    @include track;
+  }
+
+  &::-webkit-slider-thumb {
+    margin-top: 0.5 * ($track-h - $thumb-d);
+    @include thumb;
+  }
+  &::-moz-range-thumb {
+    @include thumb;
+  }
+  &::-ms-thumb {
+    margin-top: 0;
+    @include thumb;
+  }
+
+  &::-ms-tooltip {
+    display: none;
+  }
+}
+
+.media__slider--before {
+  background: $black;
+  height: $track-h;
+  position: absolute;
+  left: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+// Mobile layout
+.media__stacked {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+
+  .media__stacked__row {
+    display: flex;
+    flex: 1 0 100%;
+    align-items: center;
+    padding-right: $media-element-padding;
+  }
+
+  .media__stacked__separator {
+    position: relative;
+    width: calc(100% + 10px);
+    margin-left: -13px;
+    margin-top: $media-element-padding * 1.5;
+    margin-bottom: $media-element-padding * 1.5;
+    .media__stacked__separator--line {
+      width: calc(100% + 7px); // Optics
+      background: $black;
+      height: 1px;
+    }
+  }
+}
+
+.button__media__playback-rate {
+  position: relative;
+  top: 1px;
+
+  font-family: $media-font-family-sans;
+  font-size: 0.7rem;
+  font-weight: 700;
+  font-variation-settings: 'wght' 700;
+  letter-spacing: 0.035em;
+
+  width: 33px;
+}
+
+.times__media__playback-rate {
+  position: relative;
+  top: 1px;
+}
+
+// Buttons
+.media__button__play,
+.media__button__pause {
+  font-size: 24px;
+}
+
+.media__button__volume_up,
+.media__button__file_download {
+  font-size: 17px;
+}
+
+.media__button__file_download {
+  position: relative;
+  top: 1px;
+}
+
+.media__button__forward_30,
+.media__button__replay_30 {
+  font-size: 18px;
+}
+
+// FF for range slider
+:-moz-ui-invalid {
+  box-shadow: none;
+}
