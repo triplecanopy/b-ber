@@ -39,6 +39,7 @@ class Config {
     },
     layout: 'columns',
     group_footnotes: true,
+    pdf_options: {},
   }
 
   constructor(options = {}) {

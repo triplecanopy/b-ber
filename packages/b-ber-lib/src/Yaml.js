@@ -33,6 +33,7 @@ const interfaces = {
     autoprefixer_options: { type: 'object', required: false },
     layout: { type: 'string', required: false },
     group_footnotes: { type: 'boolean', required: false },
+    pdf_options: { type: 'object', required: false },
     // TODO: fill this in with missing options
   },
   media: {},
