@@ -66,6 +66,7 @@ const validate = ({ context = { fileName: '' } }) => (params, line) => {
 
 const render = ({ instance, context }) => (tokens, index) => {
   const token = tokens[index]
+
   if (token.type === 'container_figure_close') return ''
 
   const fileName = `_markdown/${context.fileName}.md`
@@ -80,6 +81,19 @@ const render = ({ instance, context }) => (tokens, index) => {
     fileName,
     lineNumber,
   })
+
+  console.log('')
+  console.log('')
+  console.log('-------- xxxxxxxxxxx')
+  console.log('')
+  console.log('')
+  if (token.type === 'container_gallery_figure_open') {
+    console.log('')
+    console.log('')
+    console.log('-------- gallery figure')
+    console.log('')
+    console.log('')
+  }
 
   return type === 'figure'
     ? createFigure(args)

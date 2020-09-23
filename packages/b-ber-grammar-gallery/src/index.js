@@ -23,25 +23,25 @@ const render = (tokens, idx) => {
   const attrsObject = attributesObject(attrs, type)
   const attrsString = attributesString(attrsObject)
 
-  // gallery directive is handled differentenly based on build:
+  // The gallery directive is handled differentenly based on build:
 
-  //  web: drop all assets (images, videos, etc) into a `fullscreen`
+  //  web: Assets (images, videos, etc) are added to a `fullscreen`
   //      container so that they can be positioned using custom CSS
 
-  //  epub, mobi: drop all assets into a section.gallery container
+  //  epub, mobi: Assets are added to a `section.gallery` container
   //      that is initialized as a slider via JS if available.
-  //      defaults to a simple sequence of images
+  //      Defaults to a simple sequence of images
 
-  //  pdf: sequence of images
+  //  pdf: A sequence of images
 
   switch (state.build) {
     case 'web':
     case 'reader':
       return `
-                <section id="${htmlId(id)}" ${attrsString}>
-                <div class="figure__large figure__inline figure__fullbleed figure__gallery">
-                <figure>
-                <div class="figure__items">`
+        <section id="${htmlId(id)}" ${attrsString}>
+          <div class="figure__large figure__inline figure__fullbleed figure__gallery">
+            <figure>
+              <div class="figure__items">`
     case 'epub':
     case 'mobi':
     case 'pdf':

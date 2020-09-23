@@ -138,6 +138,11 @@ const figurePlugin = (md, name, options = {}) => {
   })
   md.renderer.rules[`container_${name}_open`] = render
   md.renderer.rules[`container_${name}_close`] = render // not used, but keeping things consistent
+
+  // eslint-disable-next-line camelcase
+  md.renderer.rules.container_figure_gallery_open = render
+  // eslint-disable-next-line camelcase
+  md.renderer.rules.container_figure_gallery_close = render
 }
 
 export default figurePlugin

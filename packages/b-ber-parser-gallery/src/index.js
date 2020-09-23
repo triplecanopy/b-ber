@@ -219,36 +219,48 @@ const containerPlugin = (md, name, options = {}) => {
       if (tok.type === 'container_gallery_open') childOfGallery = true
       if (tok.type === 'container_gallery_close') childOfGallery = false
 
-      if (tok.type === 'inline' && childOfGallery) {
-        const matchedContent = tok.content.match(/^(::\s?(.+)\s?::)/)
-        if (matchedContent) {
-          const attrs = parseAttrs(matchedContent[1])
-          const prev = state.tokens[i - 1]
-          const next = state.tokens[i + 1]
+      // console.log(tok)
 
-          prev.tag = 'div'
-          prev.attrSet('class', 'gallery__item')
-          prev.attrSet('data-gallery-item', attrs.item)
+      if (childOfGallery) {
+        if (tok.type === 'container_figure_open') {
+          tok.type = 'container_gallery_figure_open'
+        }
 
-          next.tag = 'div'
-
-          switch (attrs.type) {
-            case 'image':
-              createImageElement(tok, attrs)
-              addCaption(md, tok, attrs)
-              break
-
-            case 'video':
-            case 'audio':
-              createMediaElement(tok, attrs)
-              addCaption(md, tok, attrs)
-              break
-
-            default:
-              break
-          }
+        if (tok.type === 'container_figure_close') {
+          tok.type = 'container_gallery_figure_close'
         }
       }
+
+      // if (tok.type === 'inline' && childOfGallery) {
+      //   const matchedContent = tok.content.match(/^(::\s?(.+)\s?::)/)
+      //   if (matchedContent) {
+      //     const attrs = parseAttrs(matchedContent[1])
+      //     const prev = state.tokens[i - 1]
+      //     const next = state.tokens[i + 1]
+
+      //     prev.tag = 'div'
+      //     prev.attrSet('class', 'gallery__item')
+      //     prev.attrSet('data-gallery-item', attrs.item)
+
+      //     next.tag = 'div'
+
+      //     switch (attrs.type) {
+      //       case 'image':
+      //         createImageElement(tok, attrs)
+      //         addCaption(md, tok, attrs)
+      //         break
+
+      //       case 'video':
+      //       case 'audio':
+      //         createMediaElement(tok, attrs)
+      //         addCaption(md, tok, attrs)
+      //         break
+
+      //       default:
+      //         break
+      //     }
+      //   }
+      // }
     })
 
     return true
@@ -259,6 +271,11 @@ const containerPlugin = (md, name, options = {}) => {
   })
   md.renderer.rules[`container_${name}_open`] = render
   md.renderer.rules[`container_${name}_close`] = render
+
+  // eslint-disable-next-line camelcase
+  // md.renderer.rules.container_figure_gallery_open = render
+  // // eslint-disable-next-line camelcase
+  // md.renderer.rules.container_figure_gallery_close = render
 }
 
 export default containerPlugin
