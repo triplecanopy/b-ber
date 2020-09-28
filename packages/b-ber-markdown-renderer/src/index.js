@@ -74,10 +74,23 @@ class MarkdownRenderer {
         markdownItSpread.name,
         markdownItSpread.renderer(reference)
       )
+
+      // Use the same plugin for gallery images as images, but assign a different
+      // name (second argument) that acts as a flag during render
+      .use(
+        markdownItImage.plugin,
+        'gallery_figure',
+        markdownItImage.renderer(reference)
+      )
       .use(
         markdownItImage.plugin,
         markdownItImage.name,
         markdownItImage.renderer(reference)
+      )
+      .use(
+        markdownItAudioVideo.plugin,
+        'gallery_audio_video',
+        markdownItAudioVideo.renderer(reference)
       )
       .use(
         markdownItAudioVideo.plugin,

@@ -127,3 +127,39 @@ export function createMediaInline({
       </section>
     ${commentEnd}`
 }
+
+export function createMediaGallery({
+  commentStart,
+  commentEnd,
+  mediaType,
+  aspectRatioClassName,
+  id,
+  attrString,
+  webOnlyAttrString,
+  sourceElements,
+  poster,
+  caption,
+  controls,
+}) {
+  return `
+    ${commentStart}
+    <figure class="${mediaType} ${aspectRatioClassName} figure__gallery figure__gallery__${mediaType} figure__gallery__${mediaType}__controls--${controls}">
+      <${mediaType} id="${id}"${attrString}${webOnlyAttrString}>
+        ${sourceElements}
+        ${
+          poster
+            ? `<div class="media__fallback media__fallback__${mediaType} media__fallback--image">
+                <figure>
+                  <img src="${poster}" alt="Media fallback image"/>
+                </figure>
+              </div>`
+            : ''
+        }
+        <p class="media__fallback media__fallback__${mediaType} media__fallback--text">Your device does not support the HTML5 ${mediaType} API.</p>
+      </${mediaType}>
+      ${
+        caption ? `<p class="caption caption__${mediaType}">${caption}</p>` : ''
+      }
+    </figure>
+    ${commentEnd}`
+}

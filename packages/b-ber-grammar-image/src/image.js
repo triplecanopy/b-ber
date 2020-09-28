@@ -20,15 +20,18 @@ export function createFigure({
   const ref = context.fileName
   const mime = mimeTypes.lookup(attrsObject.source)
   const pageOrder = state.figures.length
-  const { classes, ...rest } = attrsObject
-  const classes_ = classes ? classes.concat(` ${classNames}`) : classNames
+
+  const { classes: userClassNames, ...rest } = attrsObject
+  const classes = userClassNames
+    ? `${userClassNames} ${classNames}`
+    : classNames
 
   const page = `figure${id}.xhtml`
   const href = state.build === 'reader' ? 'figures-titlepage.xhtml' : page
 
   state.add('figures', {
     ...rest,
-    classes: classes_,
+    classes,
     id,
     width,
     height,
@@ -40,19 +43,17 @@ export function createFigure({
     mime,
   })
 
-  const result = `
-        ${comment}
-        <div class="${classes_}">
-        <figure id="ref${id}">
+  // prettier-ignore
+  return `
+    ${comment}
+    <div class="${classes}">
+      <figure id="ref${id}">
         <a href="${href}#${id}">
-        <img src="../images/${encodeURIComponent(attrsObject.source)}" alt="${
-    attrsObject.alt
-  }"/>
+          <img src="../images/${encodeURIComponent(attrsObject.source)}" alt="${attrsObject.alt}"/>
         </a>
-        </figure>
-        </div>`
-
-  return result
+      </figure>
+    </div>
+  `
 }
 
 export function createFigureInline({
@@ -79,4 +80,16 @@ export function createFigureInline({
     },
     state.build
   )
+}
+
+export function createFigureGallery({ attrsObject, id, caption }) {
+  // prettier-ignore
+  return `
+    <figure id="${id}" class="figure__gallery">
+      <div class="figure__gallery__image">
+        <img src="../images/${encodeURIComponent(attrsObject.source)}" alt="${attrsObject.alt}"/>
+      </div>
+      <figcaption>${caption}</figcaption>
+    </figure>
+  `
 }

@@ -39,9 +39,8 @@ const render = (tokens, idx) => {
     case 'reader':
       return `
         <section id="${htmlId(id)}" ${attrsString}>
-          <div class="figure__large figure__inline figure__fullbleed figure__gallery">
-            <figure>
-              <div class="figure__items">`
+          <div class="figure__large figure__inline figure__fullbleed gallery">
+      `
     case 'epub':
     case 'mobi':
     case 'pdf':

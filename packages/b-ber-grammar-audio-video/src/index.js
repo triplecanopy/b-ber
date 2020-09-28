@@ -26,6 +26,7 @@ import {
   createIFrame,
   createMediaInline,
   getMediaType,
+  createMediaGallery,
 } from './helpers'
 
 const MARKER_RE = /^(video|audio)/
@@ -153,6 +154,11 @@ const render = ({ instance, context }) => (tokens, index) => {
   const marker = token.info.trim().match(DIRECTIVE_RE)
   if (!marker) return ''
 
+  // For figures contained in a `gallery` directive
+  if (token.type === 'container_gallery_audio_video_close') {
+    return ''
+  }
+
   const fileName = `_markdown/${context.fileName}.md`
   const lineNumber = token.map ? token.map[0] : null
   const type = marker[1]
@@ -164,6 +170,10 @@ const render = ({ instance, context }) => (tokens, index) => {
     fileName,
     lineNumber,
   })
+
+  if (token.type === 'container_gallery_audio_video_open') {
+    return createMediaGallery(args)
+  }
 
   switch (type) {
     case 'iframe':

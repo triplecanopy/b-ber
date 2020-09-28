@@ -6,133 +6,6 @@ https://github.com//markdown-it/markdown-it-container
 MIT license
 */
 
-import path from 'path'
-import _state from '@canopycanopycanopy/b-ber-lib/State'
-import mime from 'mime-types'
-import {
-  htmlId,
-  parseAttrs,
-  toAlias,
-} from '@canopycanopycanopy/b-ber-grammar-attributes'
-
-const addCaption = (md, t, attrs) => {
-  if (!attrs.caption) return
-
-  t.children.push(
-    {
-      type: 'block',
-      tag: 'div',
-      attrs: [
-        ['class', 'figcaption'],
-        ['data-caption', htmlId(attrs.source)],
-      ],
-      nesting: 1,
-    },
-    {
-      type: 'block',
-      tag: 'p',
-      attrs: [['class', 'small']],
-      nesting: 1,
-    },
-
-    ...md.parseInline(attrs.caption, {})[0].children,
-
-    {
-      type: 'block',
-      tag: 'p',
-      nesting: -1,
-    },
-    {
-      type: 'block',
-      tag: 'div',
-      nesting: -1,
-    }
-  )
-}
-
-const createImageElement = (tok, attrs) => {
-  tok.content = ''
-  tok.children.push({
-    type: 'inline',
-    tag: 'img',
-    attrs: [
-      ['data-image', htmlId(attrs.source)],
-      ['src', `../images/${encodeURIComponent(attrs.source)}`],
-      ['alt', attrs.alt || attrs.source],
-    ],
-    nesting: 0,
-  })
-}
-
-const createMediaElement = (tok, attrs) => {
-  const media = [..._state[attrs.type]]
-  const supportedMediaAttrs = {
-    audio: ['controls', 'loop'],
-    video: ['controls', 'loop', 'fullscreen'],
-  }
-
-  const sources = media.filter(a => toAlias(a) === attrs.source)
-  const mediaAttrs = [[`data-${attrs.type}`, htmlId(attrs.source)]]
-
-  if (attrs.poster) mediaAttrs.push(['poster', `../images/${attrs.poster}`])
-
-  // add boolean attrs
-  supportedMediaAttrs[attrs.type].forEach(a => {
-    if (attrs[a]) mediaAttrs.push([a, a])
-  })
-
-  tok.content = ''
-  tok.children.push(
-    {
-      type: 'block',
-      tag: 'section',
-      attrs: [['class', attrs.type]],
-      nesting: 1,
-    },
-    {
-      type: 'block',
-      tag: attrs.type,
-      attrs: mediaAttrs,
-      nesting: 1,
-    }
-  )
-
-  sources.forEach(source => {
-    tok.children.push({
-      type: 'inline',
-      tag: 'source',
-      attrs: [
-        ['src', `../media/${path.basename(source)}`],
-        ['type', mime.lookup(source)],
-      ],
-      nesting: 0,
-    })
-  })
-
-  tok.children.push(
-    {
-      type: 'block',
-      tag: attrs.type,
-      nesting: -1,
-    },
-    {
-      type: 'inline', // controls. TODO: add to media core directive
-      tag: 'button',
-      attrs: [
-        ['data-media-type', attrs.type],
-        ['data-media-controls', htmlId(attrs.source)],
-        ['class', 'media__controls media__controls--play'],
-      ],
-      nesting: 0,
-    },
-    {
-      type: 'block',
-      tag: 'section',
-      nesting: -1,
-    }
-  )
-}
-
 const containerPlugin = (md, name, options = {}) => {
   const minMarkers = options.minMarkers || 3
   const markerStr = options.marker || ':'
@@ -212,57 +85,6 @@ const containerPlugin = (md, name, options = {}) => {
     state.lineMax = oldLineMax
     state.line = nextLine + (autoClosed ? 1 : 0)
 
-    // parse child tokens
-    // set a flag so that we don't render other directives' children which may use the same syntax
-    let childOfGallery = false
-    state.tokens.forEach((tok, i) => {
-      if (tok.type === 'container_gallery_open') childOfGallery = true
-      if (tok.type === 'container_gallery_close') childOfGallery = false
-
-      // console.log(tok)
-
-      if (childOfGallery) {
-        if (tok.type === 'container_figure_open') {
-          tok.type = 'container_gallery_figure_open'
-        }
-
-        if (tok.type === 'container_figure_close') {
-          tok.type = 'container_gallery_figure_close'
-        }
-      }
-
-      // if (tok.type === 'inline' && childOfGallery) {
-      //   const matchedContent = tok.content.match(/^(::\s?(.+)\s?::)/)
-      //   if (matchedContent) {
-      //     const attrs = parseAttrs(matchedContent[1])
-      //     const prev = state.tokens[i - 1]
-      //     const next = state.tokens[i + 1]
-
-      //     prev.tag = 'div'
-      //     prev.attrSet('class', 'gallery__item')
-      //     prev.attrSet('data-gallery-item', attrs.item)
-
-      //     next.tag = 'div'
-
-      //     switch (attrs.type) {
-      //       case 'image':
-      //         createImageElement(tok, attrs)
-      //         addCaption(md, tok, attrs)
-      //         break
-
-      //       case 'video':
-      //       case 'audio':
-      //         createMediaElement(tok, attrs)
-      //         addCaption(md, tok, attrs)
-      //         break
-
-      //       default:
-      //         break
-      //     }
-      //   }
-      // }
-    })
-
     return true
   }
 
@@ -271,11 +93,6 @@ const containerPlugin = (md, name, options = {}) => {
   })
   md.renderer.rules[`container_${name}_open`] = render
   md.renderer.rules[`container_${name}_close`] = render
-
-  // eslint-disable-next-line camelcase
-  // md.renderer.rules.container_figure_gallery_open = render
-  // // eslint-disable-next-line camelcase
-  // md.renderer.rules.container_figure_gallery_close = render
 }
 
 export default containerPlugin

@@ -55,8 +55,6 @@ function handleExitDirective(token) {
   if (isGallery(directive)) {
     // prettier-ignore
     return `</div>
-            </figure>
-            </div>
             </section>${comment}`
   }
 

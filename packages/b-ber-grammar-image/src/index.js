@@ -13,7 +13,7 @@ import {
   htmlId,
 } from '@canopycanopycanopy/b-ber-grammar-attributes'
 import figure from '@canopycanopycanopy/b-ber-parser-figure'
-import { createFigure, createFigureInline } from './image'
+import { createFigure, createFigureInline, createFigureGallery } from './image'
 
 const MARKER_OPEN_RE = /(figure(?:-inline)?)(?::([^\s]+)(\s?.*)?)?$/
 
@@ -67,7 +67,8 @@ const validate = ({ context = { fileName: '' } }) => (params, line) => {
 const render = ({ instance, context }) => (tokens, index) => {
   const token = tokens[index]
 
-  if (token.type === 'container_figure_close') return ''
+  // For figures contained in a `gallery` directive
+  if (token.type === 'container_gallery_figure_close') return ''
 
   const fileName = `_markdown/${context.fileName}.md`
   const lineNumber = token.map ? token.map[0] : null
@@ -82,24 +83,15 @@ const render = ({ instance, context }) => (tokens, index) => {
     lineNumber,
   })
 
-  console.log('')
-  console.log('')
-  console.log('-------- xxxxxxxxxxx')
-  console.log('')
-  console.log('')
   if (token.type === 'container_gallery_figure_open') {
-    console.log('')
-    console.log('')
-    console.log('-------- gallery figure')
-    console.log('')
-    console.log('')
+    return createFigureGallery(args)
   }
 
-  return type === 'figure'
-    ? createFigure(args)
-    : type === 'figure-inline'
-    ? createFigureInline(args)
-    : ''
+  if (type === 'figure') {
+    return createFigure(args)
+  }
+
+  return createFigureInline(args)
 }
 export default {
   plugin: figure,
