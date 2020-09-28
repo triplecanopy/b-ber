@@ -85,7 +85,7 @@ export function createFigureInline({
 export function createFigureGallery({ attrsObject, id, caption }) {
   // prettier-ignore
   return `
-    <figure id="${id}" class="figure__gallery">
+    <figure id="${id}" class="figure__gallery ${attrsObject.classes || ''}">
       <div class="figure__gallery__image">
         <img src="../images/${encodeURIComponent(attrsObject.source)}" alt="${attrsObject.alt}"/>
       </div>
