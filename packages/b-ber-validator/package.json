@@ -1,0 +1,40 @@
+{
+  "name": "@canopycanopycanopy/b-ber-validator",
+  "version": "1.1.11",
+  "description": "A b-ber syntax validator",
+  "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
+  "contributors": [
+    {
+      "name": "Maxwell Simmer",
+      "email": "maxwellsimmer.com@gmail.com",
+      "url": "https://maxwellsimmer.com"
+    }
+  ],
+  "homepage": "https://github.com/triplecanopy/b-ber#readme",
+  "license": "GPL-3.0-or-later",
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/triplecanopy/b-ber.git"
+  },
+  "scripts": {
+    "prepare:dist": "BABEL_ENV=production babel --config-file ../../babel.config.js -d dist/ src/ --ignore **/__tests__/**",
+    "clean": "rimraf dist",
+    "prepare": "npm run clean && npm run prepare:dist",
+    "build": "npm run prepare",
+    "watch": "BABEL_ENV=production babel --config-file ../../babel.config.js -d dist/ src/ --watch src",
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "bugs": {
+    "url": "https://github.com/triplecanopy/b-ber/issues"
+  },
+  "dependencies": {
+    "@masala/parser": "^1.0.0"
+  }
+}
