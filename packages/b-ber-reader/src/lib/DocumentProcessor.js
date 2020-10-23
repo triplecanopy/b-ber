@@ -61,6 +61,7 @@ class DocumentProcessor {
         'LINK',
         'SCRIPT',
         'STYLE',
+        'A',
         'EM',
         'I',
         'STRONG',
