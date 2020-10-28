@@ -248,15 +248,11 @@ class Reader extends Component {
   }
 
   handleResize = () => {
-    if (Viewport.isMobile() && Viewport.isTouch()) return
-
     const viewerSettings = new ViewerSettings()
     this.props.viewerSettingsActions.update(viewerSettings.get())
   }
 
   handleResizeStart = () => {
-    if (Viewport.isMobile() && Viewport.isTouch()) return
-
     this.props.viewActions.unload()
     this.props.viewActions.updateLastSpreadIndex(-1)
     this.disablePageTransitions()
