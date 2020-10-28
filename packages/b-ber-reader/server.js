@@ -2,7 +2,7 @@
 
 Add compiled b-ber reader projects to an epub dir in b-ber-reader. These will be
 served when running `npm start` from the b-ber-reader dir at
-http://localhost:4000
+http://192.168.88.143:4000
 
 */
 
@@ -21,9 +21,9 @@ let manifest
 manifest = fs.readdirSync(`./${BASE_DIR}`).filter(a => /^\./.test(a) === false)
 manifest = manifest.map(dir => ({
   title: dir,
-  url: `http://localhost:${PORT}/${BASE_DIR}/${dir}`,
+  url: `http://192.168.88.143:${PORT}/${BASE_DIR}/${dir}`,
   cover: url.resolve(
-    `http://localhost:${PORT}/${BASE_DIR}/${dir}/OPS/images/`,
+    `http://192.168.88.143:${PORT}/${BASE_DIR}/${dir}/OPS/images/`,
     fs
       .readdirSync(`./${BASE_DIR}/${dir}/OPS/images`)
       .find(img => /__bber_cover__/.test(img)) || ''
@@ -41,4 +41,4 @@ app.get('*', (_, res) =>
 )
 app.listen(PORT)
 
-console.log(`Listening on http://localhost:${PORT}/`)
+console.log(`Listening on http://192.168.88.143:${PORT}/`)

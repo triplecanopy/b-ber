@@ -33,6 +33,10 @@ class Viewport {
 
   // utility breakpoint
   static isMobile = () => Viewport.horizontalSmall()
+  static isTouch = () =>
+    'ontouchstart' in window /* iOS and Android */ ||
+    window.navigator.msPointerEnabled /* Win8 */ ||
+    'ontouchstart' in document.documentElement
 
   static getBreakpointX = () => {
     if (Viewport.horizontalSmall()) return 0
