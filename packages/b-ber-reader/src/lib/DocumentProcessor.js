@@ -75,6 +75,7 @@ class DocumentProcessor {
         'SUB',
         'IFRAME',
         'FIGURE',
+        'CITE',
       ]),
     }
   }
