@@ -3,10 +3,8 @@
 </h1>
 
 [![npm Version](https://img.shields.io/npm/v/@canopycanopycanopy/b-ber-cli.svg)](https://www.npmjs.com/search?q=@canopycanopycanopy)
-[![CircleCI](https://img.shields.io/circleci/build/github/triplecanopy/b-ber/master.svg?label=circle&maxAge=43200)](https://circleci.com/gh/triplecanopy/b-ber)
+[![CircleCI](https://img.shields.io/circleci/build/github/triplecanopy/b-ber/main.svg?label=circle&maxAge=43200)](https://circleci.com/gh/triplecanopy/b-ber)
 [![Maintained with Lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
-
-<!-- [![Coverage Status](https://coveralls.io/repos/triplecanopy/b-ber/badge.svg?branch=master)](https://coveralls.io/r/%3Caccount%3E/%3Crepository%3E?branch=master) -->
 
 b-ber is both a method and an application for producing publications in a variety of formats—EPUB 3, Mobi/KF8, static website, PDF, and XML file, which can be imported into InDesign for print layouts—from a single source that consists of plain-text files and other assets. b-ber also functions as a browser-based EPUB reader, which explains the name.
 
@@ -18,7 +16,7 @@ b-ber facilitates control of the design of publications on the level of individu
 
 The b-ber framework is written in JavaScript, with themes written in SCSS, and distributed on npm. b-ber can be run on a personal computer or on a server. The documentation in the wiki is written for both beginners who would like to author projects as well as developers who would like to contribute to the codebase. In addition to the wiki, the repository includes further documentation and the code is heavily commented.
 
-Find out more in the [b-ber wiki](https://github.com/triplecanopy/b-ber/blob/master/triplecanopy/b-ber/wiki/getting-started).
+Find out more in the [b-ber wiki](https://github.com/triplecanopy/b-ber/wiki).
 
 ## Summary of Features
 
@@ -41,7 +39,7 @@ Pull requests are welcome. If you plan to contribute to b-ber's [development](ht
 
 ## Code of Conduct
 
-We ask people to respect the code of conduct which can be read [here](https://github.com/triplecanopy/b-ber/blob/master/CODE_OF_CONDUCT.md).
+We ask people to respect the code of conduct which can be read [here](https://github.com/triplecanopy/b-ber/blob/main/CODE_OF_CONDUCT.md).
 
 ## License
 
