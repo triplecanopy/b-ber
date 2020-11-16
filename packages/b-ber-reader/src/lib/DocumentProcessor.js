@@ -76,6 +76,7 @@ class DocumentProcessor {
         'IFRAME',
         'FIGURE',
         'CITE',
+        'BLOCKQUOTE',
       ]),
     }
   }
