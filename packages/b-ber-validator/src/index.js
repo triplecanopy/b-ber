@@ -1,4 +1,5 @@
 const util = require('util')
+const tests = require('./tests')
 
 // // every parsing function will have this signature
 // type Parser<T> = (ctx: Context) => Result<T>
@@ -28,13 +29,14 @@ const util = require('util')
 //   ctx: Ctx,
 // }>
 
-// some convenience methods to build `Result`s for us
+// Convenience methods to build `Result`s for us
+
 function success(ctx, value) {
   return { success: true, value, ctx }
 }
 
-function failure(ctx, expected) {
-  return { success: false, expected, ctx }
+function failure(ctx, expected, fatal = false) {
+  return { success: false, expected, ctx, fatal }
 }
 
 function str(match, expected = '') {
@@ -48,32 +50,37 @@ function str(match, expected = '') {
   }
 }
 
-const close = (parser, matchIndex) => ctx => {
-  const res = parser(ctx)
-  if (!res.success) return res
-  const { ctx: nextCtx, value } = res
-  const match = value[matchIndex]
-  const nextValue = value.concat(match)
-  const endIdx = nextCtx.index + match.length
+// Try each matcher in order, starting from the same point in the input.
+// Return the first one that succeeds, or return the failure that got furthest
+// in the input string. which failure to return is a matter of taste, we
+// prefer the furthest failure because. it tends be the most useful/complete
+// error message.
 
-  if (nextCtx.text.substring(nextCtx.index, endIdx) === match) {
-    return success({ ...ctx, index: endIdx }, nextValue)
-  }
-
-  return failure(ctx, nextValue)
-}
-
-// try each matcher in order, starting from the same point in the input. return the first one that succeeds.
-// or return the failure that got furthest in the input string.
-// which failure to return is a matter of taste, we prefer the furthest failure because.
-// it tends be the most useful / complete error message.
+// Returns fatal error!
 function any(parsers) {
   return ctx => {
     let furthestRes = null
     for (const parser of parsers) {
       const res = parser(ctx)
       if (res.success) return res
-      if (!furthestRes || furthestRes.ctx.index < res.ctx.index) {
+      if (res.fatal) return res
+      if (!furthestRes || furthestRes.ctx.index > res.ctx.index) {
+        furthestRes = res
+      }
+    }
+    return furthestRes
+  }
+}
+
+// Does not return fatal error
+function any2(parsers) {
+  return ctx => {
+    let furthestRes = null
+    for (const parser of parsers) {
+      const res = parser(ctx)
+      if (res.success) return res
+      // if (res.fatal) return res
+      if (!furthestRes || furthestRes.ctx.index > res.ctx.index) {
         furthestRes = res
       }
     }
@@ -83,10 +90,10 @@ function any(parsers) {
 
 // match a parser, or succeed with null
 function optional(parser) {
-  return any([parser, ctx => success(ctx, null)])
+  return any2([parser, ctx => success(ctx, null)])
 }
 
-// match a regexp or fail
+// Match a regexp or fail
 function regex(re, expected) {
   return ctx => {
     re.lastIndex = ctx.index
@@ -99,8 +106,8 @@ function regex(re, expected) {
   }
 }
 
-// look for 0 or more of something, until we can't parse any more.
-//  note that this function never fails, it will instead succeed
+// Look for 0 or more of something, until we can't parse any more.
+// Note that this function never fails, it will instead succeed
 // with an empty array.
 function many(parser) {
   return ctx => {
@@ -108,15 +115,23 @@ function many(parser) {
     let nextCtx = ctx
     while (true) {
       const res = parser(nextCtx)
-      if (!res.success) break
+      if (!res.success) {
+        if (res.fatal) {
+          // errors.push(res.expected)
+          return res
+        }
+
+        break
+      }
+
       values.push(res.value)
       nextCtx = res.ctx
     }
+
     return success(nextCtx, values)
   }
 }
 
-// TODO define `values` array
 function not(parser) {
   return ctx => {
     const values = []
@@ -125,21 +140,16 @@ function not(parser) {
     while (nextCtx.index < nextCtx.text.length) {
       const res = parser(nextCtx)
 
-      if (res.success) {
-        // values.push(res.value)
-        // nextCtx = res.ctx
-        // console.log(nextCtx.text.slice(nextCtx.index))
-        return success(nextCtx, values)
-      }
+      if (res.success) return success(nextCtx)
 
-      nextCtx.index += 1 //res.expected.length
+      nextCtx.index += 1
     }
 
     return success(nextCtx, values)
   }
 }
 
-// look for an exact sequence of parsers, or fail
+// Look for an exact sequence of parsers, or fail
 function sequence(parsers) {
   return ctx => {
     const values = []
@@ -154,18 +164,14 @@ function sequence(parsers) {
   }
 }
 
-// a convenience method that will map a Success to callback, to let us do common things like build AST nodes from input strings.
+// Convenience method that will map a Success to callback, to let us do
+// common things like build AST nodes from input strings.
 function map(parser, fn) {
   return ctx => {
     const res = parser(ctx)
     return res.success ? success(res.ctx, fn(res.value)) : res
   }
 }
-
-// function flatMap(parser, fn) {
-//   return ctx => {
-//   }
-// }
 
 function lazy(parserFn) {
   return ctx => parserFn()(ctx)
@@ -179,99 +185,142 @@ function eos() {
       : failure(ctx, 'End of string')
 }
 
-// const text = `
-// ::: name:idA foo:bar baz:"some text"
+// eol function doesn't advance index
+function EOL() {}
+function eol() {
+  return ctx => {
+    const match = '\n'
+    const endIdx = ctx.index + match.length
+    if (
+      ctx.index === ctx.text.length ||
+      ctx.text.substring(ctx.index, endIdx) === match
+    ) {
+      return success(ctx, new EOL())
+    }
 
-// ::: name:idB foo:bar baz:"some text"
-
-// body
-
-// ::: exit:idB
-
-// ::: exit:idA
-// `
-
-// const text = `
-
-// ::: name:xxInline foo:bar baz:"some text"
-
-// ::: name:idA foo:bar baz:"some text"
-
-// aaaa
-
-// ::: name:idB foo:bar baz:"some text"
-
-// xx
-
-// ::: exit:idB
-
-// bbbbb
-
-// ::: exit:idA
-
-const text = `
-
-::: name:idA foo:bar baz:"some text"
-::: exit:idA
-
-::: name:xxInline foo:bar baz:"some text"
-
-`
+    return failure(ctx, 'End of line', true)
+  }
+}
 
 const space = str(' ')
+const spaces = many(space)
 const newLine = str('\n')
 const carriageReturn = str('\r')
 const whiteSpace = any([space, newLine, carriageReturn])
 const whiteSpaces = many(whiteSpace)
 
-const fence = str('::: ')
+const fence = str('\n::: ')
 const word = regex(/[a-zA-Z_-]+/g)
 const words = many(regex(/[a-zA-Z_-]+\s?/g))
 const quote = any([str('"'), str("'")])
 const sep = str(':')
 const ident = regex(/[a-zA-Z_-]+/g)
-
-const attr = any([
-  sequence([space, word, sep, word]),
-  close(
-    map(sequence([space, word, sep, quote, words]), (...args) => args.flat()),
-    3
-  ),
-])
-
-const attrs = many(attr)
 const body = not(fence)
 const exit = str('exit')
 
+const close = (parser, matchIndex) => ctx => {
+  const res = parser(ctx)
+  if (!res.success) return res
+
+  const { ctx: nextCtx, value } = res
+  const match = value[matchIndex]
+  const nextValue = value.concat(match)
+  const endIdx = nextCtx.index + match.length
+  const closingIdent = nextCtx.text.substring(nextCtx.index, endIdx)
+
+  if (closingIdent === match) {
+    return success({ ...ctx, index: endIdx }, nextValue)
+  }
+
+  return failure(
+    { ...ctx, index: endIdx },
+    `Closing ident ${closingIdent} does not match opening ident ${match}`,
+    true
+  )
+}
+
+function attr() {
+  const quoteIndex = 3
+  return any([
+    sequence([space, word, sep, word]),
+    close(
+      map(sequence([space, word, sep, quote, words]), (...args) => args.flat()),
+      quoteIndex
+    ),
+  ])
+}
+
+const attrs = sequence([many(attr()), optional(spaces), eol()])
+
+// TODO fill these in, and add block directive names
+const inlineDirectiveName = any([str('image')])
+
+function inline() {
+  return sequence([fence, inlineDirectiveName, sep, ident, attrs])
+}
+
 function block() {
+  const identIndex = 3
   return close(
     map(
       sequence([
         fence,
         word,
         sep,
-        ident, // preserve index for close
+        ident, // Preserve index for exit token
         attrs,
-        newLine,
-        body,
-        optional(lazy(block)),
-        body,
+        optional(any([lazy(directives), body])),
         fence,
         exit,
         sep,
       ]),
       (...args) => args.flat()
     ),
-    3
+    identIndex
   )
 }
 
-const inline = sequence([fence, word, sep, ident, attrs, newLine])
+function directives() {
+  return any([
+    sequence([body, inline(), body]),
+    sequence([body, block(), body]),
+  ])
+}
 
-// const parser = sequence([body, block(), body, eos()])
-const parser = sequence([body, any([block(), inline]), body, eos()])
-// const parser = sequence([str('foo'), eos()])
-const res = parser({ text, index: 0 })
+const parser = sequence([many(directives()), eos()])
 
-console.log(util.inspect(res, false, null, true))
-console.log('\n\n--->', res.success)
+// Tests
+let err = false
+for (let i = 0; i < tests.length; i++) {
+  const res = parser({ text: tests[i].text, index: 0 })
+  // const res = parser({ text, index: 0 })
+
+  // console.log(res)
+  if (res.success === false) {
+    console.log('='.repeat(70))
+    console.log()
+    console.log(tests[i].name)
+    console.log()
+
+    const lines = res.ctx.text.slice(0, res.ctx.index).split('\n')
+    const line = lines[lines.length - 1]
+    const len = line.length - 2 > 0 ? line.length - 2 : 0
+
+    console.log(res.expected)
+    console.log('On line', lines.length)
+    console.log()
+    console.log(line)
+    console.log(' '.repeat(len), '^')
+  }
+
+  if (res.success !== tests[i].success) {
+    console.log('Error in', tests[i].name)
+    console.log(util.inspect(res, false, null, true))
+
+    err = true
+  }
+}
+
+if (!err) {
+  console.log('\nAll tests passed')
+}

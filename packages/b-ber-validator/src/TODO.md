@@ -1,0 +1,5 @@
+- [x] Add error messages
+- [x] Add string output at error location
+- [ ] Add list of allowed directive names
+- [ ] Add tests
+- [ ] Add support for inline directive followed by captions (i.e., `:: caption text`)
