@@ -182,7 +182,50 @@ Some text
 
 `
 
-module.exports = [
+const test18 = `
+
+::: image:idA foo:bar baz:"some text"
+:: some text
+::
+
+`
+
+const test19 = `
+
+::: image:idA foo:bar baz:"some text"
+
+:: some text
+::
+
+`
+
+const test20 = `
+
+::: image:idA foo:bar baz:"some text"
+:: some text
+
+::
+
+`
+
+const test21 = `
+
+
+::: name:idA foo:bar baz:"some text"
+
+::: name:idB foo:bar baz:"some text"
+
+::: image:idA foo:bar baz:"some text"
+:: some text
+::
+
+::: exit:idB
+::: exit:idA
+
+
+`
+
+export default [
   {
     name: 'Test 1',
     text: test1,
@@ -266,6 +309,26 @@ module.exports = [
   {
     name: 'Test 17',
     text: test17,
+    success: true,
+  },
+  {
+    name: 'Test 18',
+    text: test18,
+    success: true,
+  },
+  {
+    name: 'Test 19',
+    text: test19,
+    success: false,
+  },
+  {
+    name: 'Test 20',
+    text: test20,
+    success: false,
+  },
+  {
+    name: 'Test 21',
+    text: test21,
     success: true,
   },
 ]
