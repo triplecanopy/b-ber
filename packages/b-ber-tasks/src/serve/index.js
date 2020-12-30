@@ -73,7 +73,7 @@ const init = build =>
 const serve = async ({ build, external }) => {
   const location = external ? 'external' : 'local'
 
-  await init(build, location)
+  await init(build)
 
   const url = browserSync.getOption('urls').get(location)
 
