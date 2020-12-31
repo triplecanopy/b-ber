@@ -28,6 +28,7 @@ export default function bber() {
     .command(commands.new)
     .command(commands.cover)
     .command(commands.deploy)
+    .command(commands.check)
 
     .help(false)
     .fail(showCustomHelp)

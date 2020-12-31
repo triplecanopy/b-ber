@@ -8,17 +8,21 @@ import { Context, Failure, Parser, Result } from 'b-ber-validator'
 
 // Returns fatal error!
 
-export function oneOrMany(parsers: Parser<any>[]) {
+export function oneOf(parsers: Parser<any>[]) {
   return (ctx: Context) => {
     let furthestRes = {} as Result<any>
+
     for (const parser of parsers) {
       const res = parser(ctx)
+
       if (res.success) return res
       if ((res as Failure).fatal) return res
+
       if (!furthestRes?.ctx || furthestRes.ctx.index > res.ctx.index) {
         furthestRes = res
       }
     }
+
     return furthestRes
   }
 }

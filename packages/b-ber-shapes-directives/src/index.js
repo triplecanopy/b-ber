@@ -72,6 +72,8 @@ const INLINE_DIRECTIVES = new Set([
   'vimeo-inline',
   'iframe',
   'iframe-inline',
+  'media',
+  'media-inline',
 ])
 
 // misc

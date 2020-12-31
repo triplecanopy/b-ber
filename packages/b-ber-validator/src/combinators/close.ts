@@ -20,7 +20,7 @@ export const close = (parser: Parser<any>, matchIndex: number) => (
 
   return failure(
     { ...ctx, index: endIdx },
-    `Closing ident ${closingIdent} does not match opening ident ${match}`,
+    `Closing ident ${closingIdent.trim()} to match opening ident ${match.trim()}`,
     true
   )
 }
