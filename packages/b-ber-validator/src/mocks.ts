@@ -280,7 +280,7 @@ xx
 
 xx
 
-::: exit:idB
+::: exit:idB   
 
 `
 
@@ -320,6 +320,7 @@ const test28 = `
 // ::: exit:omega-quote
 // `
 
+// TODO
 const test29 = `
 ::: chapter:gallery-3x
 
@@ -336,6 +337,7 @@ const test29 = `
 ::: exit:gallery-3x
 `
 
+// TODO
 const test30 = `
 
 ::: chapter:dialogue
@@ -361,6 +363,16 @@ const test31 = `
 xx
 
 :::exit:fragment-5-1
+
+`
+
+const test32 = `
+
+::: subchapter:xx
+
+xx
+
+::: exit:xxx
 
 `
 
@@ -518,6 +530,11 @@ export default [
   {
     name: 'Test 31',
     text: test31,
+    success: false,
+  },
+  {
+    name: 'Test 32',
+    text: test32,
     success: false,
   },
 ]

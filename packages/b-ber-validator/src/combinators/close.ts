@@ -9,18 +9,23 @@ export const close = (parser: Parser<any>, matchIndex: number) => (
   if (!res.success) return res
 
   const { ctx: nextCtx, value } = res as Success<any>
-  const match = value[matchIndex]
-  const nextValue = value.concat(match)
-  const endIdx = nextCtx.index + match.length
-  const closingIdent = nextCtx.text.substring(nextCtx.index, endIdx)
 
-  if (closingIdent === match) {
+  const openingIdent = value[matchIndex]
+  const nextValue = value.concat(openingIdent)
+  const endIdx = nextCtx.index + openingIdent.length
+
+  const openingRe = new RegExp(`${openingIdent}(?![^\\s])`, 'g') // Allow dangling whitespace
+  openingRe.lastIndex = nextCtx.index
+
+  const closingMatch = openingRe.exec(nextCtx.text)
+
+  if (closingMatch?.index === nextCtx.index) {
     return success({ ...ctx, index: endIdx }, nextValue)
   }
 
   return failure(
     { ...ctx, index: endIdx },
-    `Closing ident ${closingIdent.trim()} to match opening ident ${match.trim()}`,
+    `Closing identifier to match opening identifier ${openingIdent.trim()}`,
     true
   )
 }
