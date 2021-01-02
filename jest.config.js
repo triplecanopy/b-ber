@@ -1,6 +1,6 @@
 module.exports = {
   name: 'b-ber',
-  verbose: true,
+  verbose: false,
   setupFilesAfterEnv: ['jest-extended'],
   collectCoverage: false,
   collectCoverageFrom: [
@@ -43,7 +43,12 @@ module.exports = {
     '<rootDir>/scripts/',
   ],
   coverageReporters: ['html', 'lcov', 'json'],
-  moduleFileExtensions: ['js', 'jsx', 'json'],
+  moduleFileExtensions: ['ts', 'js', 'jsx', 'json'],
   testEnvironment: 'jest-environment-jsdom-global',
+  testPathIgnorePatterns: ['__mocks__'],
   testURL: 'http://localhost/',
+  transform: {
+    '^.+\\.tsx?$': 'ts-jest',
+    '^.+\\.jsx?$': 'babel-jest',
+  },
 }

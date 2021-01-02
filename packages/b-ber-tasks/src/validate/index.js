@@ -2,7 +2,7 @@ import fs from 'fs-extra'
 import path from 'path'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
-import validator, { colors, report } from '@canopycanopycanopy/b-ber-validator'
+import validator, { report } from '@canopycanopycanopy/b-ber-validator'
 
 const validate = async ({ project }) => {
   const markdownPath = path.resolve(
@@ -25,20 +25,17 @@ const validate = async ({ project }) => {
     const res = validator({ text: data, index: 0 })
 
     if (res.success === false) {
-      console.log()
-      console.log(colors.fgred, `Error in ${path.basename(file)}`)
-
       report(path.basename(file), res)
       errors.push(res)
     } else {
-      log.info('Validates Ok %s', path.basename(file))
+      log.info('Syntax valid %s', path.basename(file))
     }
   })
 
   await Promise.all(check)
 
   if (!errors.length) {
-    log.notice('Markdown valid')
+    log.notice('Directives valid')
   }
 
   log.info(errors)

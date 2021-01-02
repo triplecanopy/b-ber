@@ -3,39 +3,42 @@ import colors from './colors'
 
 export default function report(name: string, res: Failure) {
   console.log(colors.reset, '')
+  console.log(colors.fgred, `Error in ${name}`)
+  console.log(colors.reset, '')
 
-  let tmpA = ''
-  let tmpB = ''
-  let tmpAA = []
-  let tmpBB = []
+  let beforeStr = ''
+  let afterStr = ''
+  let beforeArr = []
+  let afterArr = []
 
   const { text, index } = res.ctx
 
   // Up to error
-  tmpA = text.slice(0, index)
-  tmpB = text.slice(index)
+  beforeStr = text.slice(0, index)
+  afterStr = text.slice(index)
 
   const line = text.slice(
-    tmpA.lastIndexOf('\n') + 1,
-    index + tmpB.indexOf('\n') + 1
+    beforeStr.lastIndexOf('\n') + 1,
+    index + afterStr.indexOf('\n') + 1
   )
 
-  tmpAA = tmpA.split('\n')
-  tmpBB = tmpB.split('\n')
+  beforeArr = beforeStr.split('\n')
+  afterArr = afterStr.split('\n')
 
-  const len = tmpAA[tmpAA.length - 1].length
-  const space = len - 1 > 0 ? len - 1 : 0
-  const lineNumber = tmpAA.length
+  const spacesLen = beforeArr[beforeArr.length - 1].length
+  const lineNumber = beforeArr.length
+  const carat = `${' '.repeat(spacesLen)}^`
 
-  tmpAA.pop()
-  tmpAA = tmpAA.slice(-3)
-  tmpBB = tmpBB.slice(1, 3)
+  beforeArr.pop()
+  beforeArr = beforeArr.slice(-3)
+  afterArr = afterArr.slice(1, 3)
 
   console.log('Expected', res.expected)
   console.log('On line', lineNumber)
-  console.log(colors.dim, tmpAA.join('\n'))
+  console.log(colors.reset, '')
+  console.log(colors.dim, beforeArr.join('\n'))
   console.log(colors.reset, line)
-  console.log(' '.repeat(space), '^')
-  console.log(colors.dim, tmpBB.join('\n'))
+  console.log(colors.reset, carat)
+  console.log(colors.dim, afterArr.join('\n'))
   console.log(colors.reset, '')
 }
