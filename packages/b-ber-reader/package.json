@@ -71,7 +71,7 @@
   },
   "dependencies": {
     "autoprefixer": "^9.6.1",
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "classnames": "^2.2.5",
     "css-tree": "^1.0.0-alpha.28",
     "cssnano": "^4.1.10",
