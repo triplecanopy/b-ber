@@ -2,7 +2,7 @@
 
 Add compiled b-ber reader projects to an epub dir in b-ber-reader. These will be
 served when running `npm start` from the b-ber-reader dir at
-http://localhost:4000
+http://localhost:4000 or at the provided hostname and port
 
 */
 
@@ -12,7 +12,7 @@ const path = require('path')
 const express = require('express') // eslint-disable-line import/no-extraneous-dependencies
 
 const HOST = process.env.BBER_HOST || 'localhost'
-const PORT = 4000
+const PORT = process.env.BBER_PORT || 4000
 const BASE_DIR = 'epub'
 const baseURL = `http://${HOST}:${PORT}/`
 

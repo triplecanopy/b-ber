@@ -145,6 +145,11 @@ $spinner-size: 40px;
   touch-action: manipulation;
 }
 
+body {
+  // Prevent font size change on mobile landscape
+  -webkit-text-size-adjust: none;
+}
+
 ul,
 ol {
   list-style: none;

@@ -19,11 +19,17 @@ const withDimensions = WrappedComponent => {
       this.updateDimensions()
     }
 
+    getWidth = scrollingLayout => {
+      if (!scrollingLayout) return window.innerWidth
+      const landscapeOrientation = window.innerHeight < window.innerWidth
+      return landscapeOrientation ? window.screen.height : window.screen.width
+    }
+
     updateDimensions() {
       const scrollingLayout =
         this.props.layout === layouts.SCROLL || Viewport.isMobile()
 
-      const width = window.innerWidth
+      const width = this.getWidth(scrollingLayout)
       const height = scrollingLayout ? 'auto' : window.innerHeight
       const columns = scrollingLayout ? 1 : 2
 
