@@ -165,6 +165,32 @@ class Reader extends Component {
       'webkitfullscreenchange mozfullscreenchange fullscreenchange',
       this.handleResizeEnd
     )
+
+    // Disable mobile zoom - check to see how many fingers are on the screen
+    document.addEventListener(
+      'touchstart',
+      e => {
+        if (e.touches.length > 1) {
+          e.preventDefault()
+        }
+      },
+      { passive: false, capture: false }
+    )
+
+    // Disable tap-to-zoom - prevent events on everything except buttons, links, etc
+    const interactiveElements = new Set(['A', 'INPUT', 'BUTTON'])
+    document.addEventListener(
+      'touchend',
+      e => {
+        if (!interactiveElements.has(e.target.nodeName)) {
+          e.preventDefault()
+        }
+      },
+      {
+        passive: false,
+        capture: false,
+      }
+    )
   }
 
   componentWillUnmount() {

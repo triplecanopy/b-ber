@@ -142,6 +142,7 @@ $spinner-size: 40px;
 * {
   margin: 0;
   padding: 0;
+  touch-action: manipulation;
 }
 
 ul,
