@@ -20,6 +20,7 @@ import { eos } from './combinators/eos'
 import { close } from './combinators/close'
 import { required } from './combinators/required'
 import { constrained } from './combinators/constrained'
+import { flat } from './lib/flat'
 
 const space = string(' ', 'Space')
 const spaces = many(space)
@@ -44,9 +45,7 @@ function attr() {
   return oneOf([
     sequence([space, ascii, sep, ascii]),
     close(
-      map(sequence([space, ascii, sep, quote, words]), (...args) =>
-        args.flat()
-      ),
+      map(sequence([space, ascii, sep, quote, words]), (...args) => flat(args)),
       quoteIndex
     ),
   ])
@@ -114,7 +113,7 @@ function block(): Parser<any> {
         exit,
         required(sep),
       ]),
-      (...args) => args.flat()
+      (...args) => flat(args)
     ),
     identIndex
   )

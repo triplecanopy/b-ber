@@ -1,5 +1,6 @@
 import validator from '../src'
 import * as mocks from '../__mocks__'
+import { flat } from '../src/lib/flat'
 
 const check = text => validator({ text, index: 0 })
 
@@ -146,4 +147,25 @@ describe('b-ber-validator', () => {
 
   test.todo('parses a gallery directive')
   test.todo('parses a dialogue directive')
+})
+
+describe('b-ber-validator/lib/flat', () => {
+  beforeAll(() => {
+    delete Array.prototype.flat
+  })
+
+  it('flattens an array', () => {
+    const res = flat([1, [2]])
+    expect(res).toEqual([1, 2])
+  })
+
+  it('accepts arguments for depth', () => {
+    const res1 = flat([1, [2, [3]]], 1)
+    const res2 = flat([1, [2, [3]]], 2)
+
+    expect(res1).toEqual([1, 2, [3]])
+    expect(res2).toEqual([1, 2, 3])
+  })
+
+  test.todo('falls back to the polyfill')
 })
