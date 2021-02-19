@@ -7,7 +7,7 @@ class Counter {
     this.page = -1
     this.list = 1
     this.item = 1
-    this.refs = new Map()
+    this.refs = []
   }
 
   listCounter(grouped, page) {
@@ -49,16 +49,16 @@ class Counter {
     return this.item
   }
 
-  findOrCreateRef = id => {
-    if (!this.refs.has(id)) {
-      const hash = crypto.randomBytes(8).toString('hex')
-      const idRef = `-${id}-${hash}`
+  setRef = label => {
+    const hash = crypto.randomBytes(8).toString('hex')
+    const idRef = `-${label}-${hash}`
 
-      this.refs.set(id, idRef)
-    }
+    this.refs.push(idRef)
 
-    return this.refs.get(id)
+    return idRef
   }
+
+  getRef = () => this.refs.shift()
 }
 
 export default Counter

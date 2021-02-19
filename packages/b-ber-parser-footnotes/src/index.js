@@ -13,12 +13,12 @@ MIT license
 
 const counter = new Counter()
 
-function renderFootnoteAnchorName(tokens, idx, options, env /*, slf*/) {
+function renderFootnoteAnchorName(tokens, idx, _options, env, _slf) {
   const n = Number(tokens[idx].meta.id + 1).toString()
   return typeof env.docId === 'string' ? `-${env.docId}-${n}` : ''
 }
 
-function renderFootnoteCaption(tokens, idx /*,options, env, slf*/) {
+function renderFootnoteCaption(tokens, idx, _options, _env, _slf) {
   let n
   if (!bberState.config.group_footnotes) {
     n = counter.listItemCounter(
@@ -34,7 +34,8 @@ function renderFootnoteCaption(tokens, idx /*,options, env, slf*/) {
 
 function renderFootnoteRef(tokens, idx, options, env, slf) {
   const caption = slf.rules.footnote_caption(tokens, idx, options, env, slf)
-  const ref = counter.findOrCreateRef(tokens[idx].meta.label)
+  const ref = counter.getRef()
+
   return `<a epub:type="noteref" class="footnote-ref" href="notes.xhtml#fn${ref}" id="fnref${ref}">${caption}</a>`
 }
 
@@ -51,7 +52,7 @@ function renderFootnoteBlockClose() {
 }
 
 function renderFootnoteOpen(tokens, idx, _options, env, _self) {
-  const ref = counter.findOrCreateRef(tokens[idx].meta.label)
+  const ref = counter.setRef(tokens[idx].meta.label)
   const childIndex = idx + 2
 
   // push the backlink into the parent paragraph
@@ -147,8 +148,9 @@ module.exports = function footnotePlugin(md, callback) {
     }
 
     if (pos === start + 2) return false // no empty footnote labels
-    if (pos + 1 >= max || state.src.charCodeAt(++pos) !== 0x3a /* : */)
+    if (pos + 1 >= max || state.src.charCodeAt(++pos) !== 0x3a /* : */) {
       return false
+    }
     if (silent) return true
     pos++
 
