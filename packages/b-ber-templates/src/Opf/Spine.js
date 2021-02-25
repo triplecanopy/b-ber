@@ -32,10 +32,9 @@ class Spine {
         log.info(`opf templates/spine writing non-linear asset [${fileName}]`)
       }
 
-      if (fileName.match(/figure/)) {
-        // TODO: this should be handled more transparently, rn it feels a bit like a side-effect
-        // https://github.com/triplecanopy/b-ber/issues/208
-
+      // There should be a measure in place to prevent users naming files
+      // with "reserved" file names
+      if (fileName === 'figures-titlepage') {
         log.info('opf templates/spine writing [loi]')
 
         if (state.loi.length) {
