@@ -1,6 +1,6 @@
 {
   "name": "@canopycanopycanopy/b-ber-grammar-dialogue",
-  "version": "1.1.14",
+  "version": "1.1.15",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -24,9 +24,9 @@
     "rimraf": "^2.6.3"
   },
   "dependencies": {
-    "@canopycanopycanopy/b-ber-grammar-attributes": "1.1.14",
-    "@canopycanopycanopy/b-ber-grammar-renderer": "1.1.14",
-    "@canopycanopycanopy/b-ber-parser-dialogue": "1.1.14"
+    "@canopycanopycanopy/b-ber-grammar-attributes": "1.1.15",
+    "@canopycanopycanopy/b-ber-grammar-renderer": "1.1.15",
+    "@canopycanopycanopy/b-ber-parser-dialogue": "1.1.15"
   },
   "files": [
     "dist"
