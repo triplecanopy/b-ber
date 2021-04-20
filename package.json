@@ -8,8 +8,8 @@
     "npm": ">= 6.x"
   },
   "scripts": {
-    "watch": "lerna run watch --parallel",
-    "build": "lerna run build --parallel",
+    "watch": "lerna run watch --stream",
+    "build": "lerna run build --stream",
     "bootstrap": "lerna bootstrap",
     "check:code": "echo \"Checking code...\" && eslint --ignore-path .gitignore --ignore-path .prettierignore --ext .js,.jsx .",
     "check:other": "npm run prettier -- --check",
