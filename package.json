@@ -27,10 +27,6 @@
     "publish:canary": "lerna publish --canary",
     "publish:latest": "lerna publish",
     "outdated": "npm outdated || true && lerna exec --no-bail -- npm outdated",
-    "clean:lockfiles": "rm ./package-lock.json && lerna exec -- rm ./package-lock.json",
-    "clean:modules": "rm -rf ./node_modules && lerna exec -- rm -rf ./node_modules",
-    "deps:rebuild": "npm run clean:modules && npm i && lerna bootstrap",
-    "deps:purge": "npm run clean:modules && npm run clean:lockfiles && npm i && lerna bootstrap",
     "deps:update": "lernaupdate",
     "deps:dedupe": "lernaupdate --dedupe"
   },

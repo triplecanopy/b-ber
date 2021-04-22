@@ -68,7 +68,7 @@ export const getBookMetadata = term => {
 export const safeWrite = (dest, data) =>
   fs.existsSync(dest) ? Promise.resolve() : fs.writeFile(dest, data)
 
-export const fail = (msg, err, yargs) => {
+export const fail = (_msg, _err, yargs) => {
   yargs.showHelp()
   process.exit(0)
 }

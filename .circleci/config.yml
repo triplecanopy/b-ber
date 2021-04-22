@@ -6,7 +6,7 @@ jobs:
       - image: canopycanopycanopy/b-ber:0.3.1
     branches:
       only:
-        - master
+        - main
     working_directory: ~/b-ber
     steps:
       - checkout
