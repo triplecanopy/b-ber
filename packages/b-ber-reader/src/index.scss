@@ -142,6 +142,12 @@ $spinner-size: 40px;
 * {
   margin: 0;
   padding: 0;
+  touch-action: manipulation;
+}
+
+body {
+  // Prevent font size change on mobile landscape
+  -webkit-text-size-adjust: none;
 }
 
 ul,
@@ -176,6 +182,12 @@ button {
   &.footnote__body--hidden {
     visibility: hidden;
   }
+}
+
+// .footnote__content {}
+
+.footnote__content--count {
+  padding-right: 10px;
 }
 
 .material-icons {
