@@ -1,6 +1,6 @@
 {
   "name": "@canopycanopycanopy/b-ber-lib",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "@babel/runtime-corejs3": "^7.10.5",
-    "@canopycanopycanopy/b-ber-logger": "1.2.0",
+    "@canopycanopycanopy/b-ber-logger": "1.2.1",
     "@canopycanopycanopy/b-ber-shapes-dublin-core": "1.2.0",
     "@canopycanopycanopy/b-ber-shapes-sequences": "1.2.0",
     "@canopycanopycanopy/b-ber-theme-sans": "1.2.0",
