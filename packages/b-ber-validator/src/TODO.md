@@ -3,5 +3,5 @@
 - [x] Add list of allowed directive names
 - [x] Add support for inline directive followed by captions (i.e., `:: caption text`)
 - [ ] Gallery directives
-- [ ] Dialogue directives
-- [ ] Add tests
+- [x] Dialogue directives
+- [x] Add tests

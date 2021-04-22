@@ -96,6 +96,16 @@ function inline() {
   ])
 }
 
+function speaker() {
+  return sequence([
+    fenceInline,
+    many(sequence([regex(/[^\s:]+/g, 'Word'), space])),
+    regex(/::(?!:)/g, '::'),
+    regex(/[^\n]+/g, 'Not newline'),
+    eol(),
+  ])
+}
+
 function block(): Parser<any> {
   const identIndex = 3
   return close(
@@ -122,6 +132,7 @@ function block(): Parser<any> {
 function directives() {
   return many(
     oneOf([
+      sequence([optional(body), speaker(), optional(body)]),
       sequence([optional(body), inline(), optional(body)]),
       sequence([optional(body), block(), optional(body)]),
     ])

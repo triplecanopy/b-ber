@@ -229,3 +229,51 @@ export const test30 = `
 export const test31 = `
 ::: figure-inline:idA
 `
+
+export const test32 = `
+::: dialogue:idA
+
+::: exit:idA
+`
+
+export const test33 = `
+::: dialogue:idA
+
+:: foo bar :: baz foo bar abz
+
+:: bar baz :: baz foo bar abz
+
+::: exit:idA
+`
+
+export const test34 = `
+::: dialogue:idA
+
+:: foo bar :
+
+::: exit:idA
+`
+
+export const test35 = `
+::: dialogue:idA
+
+:: foo bar
+
+::: exit:idA
+`
+
+export const test36 = `
+::: dialogue:idA
+
+::foo bar:: foo bar abz
+
+::: exit:idA
+`
+
+export const test37 = `
+::: dialogue:idA
+
+:: foo bar:: foo bar abz
+
+::: exit:idA
+`

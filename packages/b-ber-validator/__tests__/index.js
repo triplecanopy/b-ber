@@ -145,8 +145,23 @@ describe('b-ber-validator', () => {
     expect(res2.success).toBe(true)
   })
 
+  it('parses a dialogue directive', () => {
+    const res1 = check(mocks.test32)
+    const res2 = check(mocks.test33)
+    const res3 = check(mocks.test34)
+    const res4 = check(mocks.test35)
+    const res5 = check(mocks.test36)
+    const res6 = check(mocks.test37)
+
+    expect(res1.success).toBe(true)
+    expect(res2.success).toBe(true)
+    expect(res3.success).toBe(false)
+    expect(res4.success).toBe(false)
+    expect(res5.success).toBe(false)
+    expect(res6.success).toBe(false)
+  })
+
   test.todo('parses a gallery directive')
-  test.todo('parses a dialogue directive')
 })
 
 describe('b-ber-validator/lib/flat', () => {
