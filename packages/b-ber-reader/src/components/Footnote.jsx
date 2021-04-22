@@ -23,9 +23,9 @@ const processAnchorNode = node => {
     : node.setAttribute('target', '_blank') // Ensure external links open in new page
 }
 
-const processFootnoteResponseElement = elem => {
-  for (let i = elem.children.length - 1; i >= 0; i--) {
-    const child = elem.children[i]
+const processFootnoteResponseElement = (node, count) => {
+  for (let i = node.children.length - 1; i >= 0; i--) {
+    const child = node.children[i]
 
     // Remove any nodes that should not be injected into footnotes
     if (isBlacklistedNode(child)) child.parentNode.removeChild(child)
@@ -35,7 +35,16 @@ const processFootnoteResponseElement = elem => {
     if (child.children.length) processFootnoteResponseElement(child)
   }
 
-  return elem.innerHTML
+  if (typeof count !== 'undefined') {
+    const countNode = document.createElement('span')
+    const countText = document.createTextNode(count)
+
+    countNode.classList.add('footnote__content--count')
+    countNode.appendChild(countText)
+    node.prepend(countNode)
+  }
+
+  return node.innerHTML
 }
 
 class Footnote extends React.Component {
@@ -74,7 +83,23 @@ class Footnote extends React.Component {
       return
     }
 
-    content = processFootnoteResponseElement(elem)
+    // Get the rendered number of the footnote to place in the footnote body
+    let parent = elem.parentNode
+    while (parent && parent.nodeName !== 'UL' && parent.nodeName !== 'OL') {
+      parent = parent.parentNode
+    }
+
+    let count
+    if (parent) {
+      const start = Number(parent.getAttribute('start')) || 1
+      const index = Array.prototype.indexOf.call(parent.children, elem)
+
+      count = start + index
+    }
+
+    // Don't need to pass in the list element, so only pass in its children.
+    // Also used to inject the `count` element into the footnote body
+    content = processFootnoteResponseElement(elem.firstChild, count)
 
     this.setState({ content })
   }

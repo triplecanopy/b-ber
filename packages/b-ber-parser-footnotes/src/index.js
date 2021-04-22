@@ -3,6 +3,7 @@
 
 import isUndefined from 'lodash.isundefined'
 import bberState from '@canopycanopycanopy/b-ber-lib/State'
+import Counter from './counter'
 
 /*
 Modified version of markdown-it-footnote@3.0.1
@@ -10,63 +11,14 @@ https://github.com//markdown-it/markdown-it-footnote
 MIT license
 */
 
-// Keep track of footnotes that have been rendered to start new ordered lists at
-// proper count
-class Counter {
-  constructor() {
-    this.page = -1
-    this.list = 1
-    this.item = 1
-  }
-
-  listCounter(grouped, page) {
-    // Reset all counters if the footnotes list is empty. This occurs when
-    // running `bber serve`
-    if (page === 0) {
-      this.page = -1
-      this.item = 1
-      this.list = 1
-    }
-
-    if (!grouped) {
-      return this.item
-    }
-
-    if (page !== this.page) {
-      this.list = 1
-    } else {
-      this.list += 1
-    }
-
-    return this.list
-  }
-
-  listItemCounter(grouped, page) {
-    if (!grouped) {
-      const n = this.item
-      this.item += 1
-      return n
-    }
-
-    if (page !== this.page) {
-      this.page = page
-      this.item = 1
-    } else {
-      this.item += 1
-    }
-
-    return this.item
-  }
-}
-
 const counter = new Counter()
 
-function renderFootnoteAnchorName(tokens, idx, options, env /*, slf*/) {
+function renderFootnoteAnchorName(tokens, idx, _options, env, _slf) {
   const n = Number(tokens[idx].meta.id + 1).toString()
   return typeof env.docId === 'string' ? `-${env.docId}-${n}` : ''
 }
 
-function renderFootnoteCaption(tokens, idx /*,options, env, slf*/) {
+function renderFootnoteCaption(tokens, idx, _options, _env, _slf) {
   let n
   if (!bberState.config.group_footnotes) {
     n = counter.listItemCounter(
@@ -82,7 +34,8 @@ function renderFootnoteCaption(tokens, idx /*,options, env, slf*/) {
 
 function renderFootnoteRef(tokens, idx, options, env, slf) {
   const caption = slf.rules.footnote_caption(tokens, idx, options, env, slf)
-  const ref = tokens[idx].meta.label
+  const ref = counter.getRef()
+
   return `<a epub:type="noteref" class="footnote-ref" href="notes.xhtml#fn${ref}" id="fnref${ref}">${caption}</a>`
 }
 
@@ -98,8 +51,8 @@ function renderFootnoteBlockClose() {
   return '</ol>'
 }
 
-function renderFootnoteOpen(tokens, idx, options, env /*,slf */) {
-  const ref = tokens[idx].meta.label
+function renderFootnoteOpen(tokens, idx, _options, env, _self) {
+  const ref = counter.setRef(tokens[idx].meta.label)
   const childIndex = idx + 2
 
   // push the backlink into the parent paragraph
@@ -107,6 +60,7 @@ function renderFootnoteOpen(tokens, idx, options, env /*,slf */) {
     if (!Array.isArray(tokens[childIndex].children)) {
       tokens[childIndex].children = []
     }
+
     tokens[childIndex].children.push(
       {
         type: 'inline',
@@ -194,8 +148,9 @@ module.exports = function footnotePlugin(md, callback) {
     }
 
     if (pos === start + 2) return false // no empty footnote labels
-    if (pos + 1 >= max || state.src.charCodeAt(++pos) !== 0x3a /* : */)
+    if (pos + 1 >= max || state.src.charCodeAt(++pos) !== 0x3a /* : */) {
       return false
+    }
     if (silent) return true
     pos++
 
