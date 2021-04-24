@@ -1,6 +1,6 @@
 {
   "name": "@canopycanopycanopy/b-ber-validator",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "A b-ber syntax validator",
   "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
   "contributors": [

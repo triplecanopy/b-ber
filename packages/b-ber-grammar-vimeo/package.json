@@ -1,6 +1,6 @@
 {
   "name": "@canopycanopycanopy/b-ber-grammar-vimeo",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -24,11 +24,11 @@
     "rimraf": "^2.6.3"
   },
   "dependencies": {
-    "@canopycanopycanopy/b-ber-grammar-attributes": "1.2.1",
-    "@canopycanopycanopy/b-ber-lib": "1.2.1",
-    "@canopycanopycanopy/b-ber-logger": "1.2.1",
-    "@canopycanopycanopy/b-ber-parser-figure": "1.2.1",
-    "@canopycanopycanopy/b-ber-shapes-directives": "1.2.0",
+    "@canopycanopycanopy/b-ber-grammar-attributes": "1.2.2",
+    "@canopycanopycanopy/b-ber-lib": "1.2.2",
+    "@canopycanopycanopy/b-ber-logger": "1.2.2",
+    "@canopycanopycanopy/b-ber-parser-figure": "1.2.2",
+    "@canopycanopycanopy/b-ber-shapes-directives": "1.2.2",
     "fs-extra": "^8.1.0",
     "lodash.isundefined": "^3.0.1"
   },
