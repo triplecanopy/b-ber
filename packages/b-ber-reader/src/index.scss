@@ -142,6 +142,12 @@ $spinner-size: 40px;
 * {
   margin: 0;
   padding: 0;
+  touch-action: manipulation;
+}
+
+body {
+  // Prevent font size change on mobile landscape
+  -webkit-text-size-adjust: none;
 }
 
 ul,

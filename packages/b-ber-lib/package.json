@@ -1,6 +1,6 @@
 {
   "name": "@canopycanopycanopy/b-ber-lib",
-  "version": "1.1.14",
+  "version": "1.2.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -21,17 +21,17 @@
     "@babel/cli": "^7.10.5",
     "@babel/core": "^7.10.5",
     "@babel/preset-env": "^7.10.4",
-    "jest": "^24.8.0",
+    "jest": "^26.6.3",
     "mock-fs": "^4.4.2",
     "rimraf": "^2.6.3"
   },
   "dependencies": {
     "@babel/runtime-corejs3": "^7.10.5",
-    "@canopycanopycanopy/b-ber-logger": "1.1.14",
-    "@canopycanopycanopy/b-ber-shapes-dublin-core": "1.1.13",
-    "@canopycanopycanopy/b-ber-shapes-sequences": "1.1.13",
-    "@canopycanopycanopy/b-ber-theme-sans": "1.1.12",
-    "@canopycanopycanopy/b-ber-theme-serif": "1.1.12",
+    "@canopycanopycanopy/b-ber-logger": "1.2.1",
+    "@canopycanopycanopy/b-ber-shapes-dublin-core": "1.2.0",
+    "@canopycanopycanopy/b-ber-shapes-sequences": "1.2.0",
+    "@canopycanopycanopy/b-ber-theme-sans": "1.2.0",
+    "@canopycanopycanopy/b-ber-theme-serif": "1.2.0",
     "command-exists": "^1.2.2",
     "fs-extra": "^8.1.0",
     "glob": "^7.1.4",

@@ -1,6 +1,4 @@
 module.exports = api => {
-  console.log('Loading root babel.config.js from %s\n', __dirname)
-
   const env = api.env()
 
   const supportedNodeVersion = '10'

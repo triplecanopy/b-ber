@@ -63,13 +63,15 @@ class XMLAdaptor {
   }
 
   static createSpineItems(rootNode) {
-    const { __manifest, __spine, __ncx } = rootNode
+    const { __manifest, __spine, __ncx, __guide } = rootNode
+
     return new Promise(resolve => {
       let spine
 
       spine = __spine.elements.map(itemref => {
         const { idref, linear } = itemref.attributes
         const item = find(__manifest.elements, a => a.attributes.id === idref)
+
         if (!item || linear !== 'yes') return null // spine item not found in manifest (!) or non-linear
 
         const { id, href } = item.attributes
@@ -77,6 +79,24 @@ class XMLAdaptor {
         const properties = item.attributes.properties
           ? item.attributes.properties.split(' ')
           : []
+
+        // TODO the `guide` element should have more information if possible, to match
+        // or exceed the data in the NCX so that we only have to parse one XML structure.
+        // Currently this is just being used to add the `title` and `slug` attributes
+        // that are missing from items excluded from the TOC, and therefore not in the NCX
+        const guideItem = find(
+          __guide.elements,
+          a => a.attributes.href === href
+        )
+
+        let title = ''
+        let slug = ''
+
+        if (guideItem) {
+          ;({ title } = guideItem.attributes)
+          slug = Url.slug(title)
+        }
+
         const spineItem = new SpineItem({
           id,
           href,
@@ -84,12 +104,16 @@ class XMLAdaptor {
           properties,
           idref,
           linear,
+          title,
+          slug,
         })
+
         return spineItem
       })
 
       spine = spine.filter(Boolean) // remove non-linear and invalid entries
 
+      // Get info about each spine item, e.g., the title, if it's nested, etc
       if (__ncx) {
         const { elements } = __ncx.elements[0]
         const navMap = find(elements, { name: 'navMap' })
@@ -161,8 +185,9 @@ class XMLAdaptor {
     const title = find(text.elements, { type: 'text' }).text
     const slug = Url.slug(title)
 
-    spineItem.set('title', title)
-    spineItem.set('slug', slug)
+    if (!spineItem.title) spineItem.set('title', title)
+    if (!spineItem.slug) spineItem.set('slug', slug)
+
     spineItem.set('depth', depth)
     spineItem.set('inTOC', true)
 

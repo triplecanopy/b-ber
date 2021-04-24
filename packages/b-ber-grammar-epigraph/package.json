@@ -1,6 +1,6 @@
 {
   "name": "@canopycanopycanopy/b-ber-grammar-epigraph",
-  "version": "1.1.14",
+  "version": "1.2.1",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -20,12 +20,12 @@
     "@babel/cli": "^7.10.5",
     "@babel/core": "^7.10.5",
     "@babel/preset-env": "^7.10.4",
-    "jest": "^24.8.0",
+    "jest": "^26.6.3",
     "rimraf": "^2.6.3"
   },
   "dependencies": {
-    "@canopycanopycanopy/b-ber-logger": "1.1.14",
-    "@canopycanopycanopy/b-ber-parser-figure": "1.1.14"
+    "@canopycanopycanopy/b-ber-logger": "1.2.1",
+    "@canopycanopycanopy/b-ber-parser-figure": "1.2.1"
   },
   "files": [
     "dist"

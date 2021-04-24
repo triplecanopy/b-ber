@@ -139,7 +139,7 @@ const renderCSS = scssString =>
     nodeSass.render(
       {
         // Importer allows use of '~' to denote node_modules directory in SCSS files
-        importer: (url, file, done) =>
+        importer: (url, _file, done) =>
           url[0] === '~'
             ? done({ file: resolveImportedModule(url) })
             : done({ file: url }),
@@ -166,10 +166,11 @@ const renderCSS = scssString =>
 const applyPostProcessing = ({ css }) =>
   postcss(autoprefixer(autoprefixerOptions)).process(css, { from: undefined })
 
-const writeCSSFile = cssString => {
+const writeCSSFile = ({ css }) => {
   const fileName =
     state.env === 'production' ? `${state.hash}.css` : 'application.css'
-  return fs.writeFile(state.dist.stylesheets(fileName), cssString)
+
+  return fs.writeFile(state.dist.stylesheets(fileName), css)
 }
 
 const sass = () =>

@@ -1,6 +1,6 @@
 {
   "name": "@canopycanopycanopy/b-ber-grammar-gallery",
-  "version": "1.1.14",
+  "version": "1.2.1",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -20,14 +20,14 @@
     "@babel/cli": "^7.10.5",
     "@babel/core": "^7.10.5",
     "@babel/preset-env": "^7.10.4",
-    "jest": "^24.8.0",
+    "jest": "^26.6.3",
     "rimraf": "^2.6.3"
   },
   "dependencies": {
-    "@canopycanopycanopy/b-ber-grammar-attributes": "1.1.14",
-    "@canopycanopycanopy/b-ber-grammar-renderer": "1.1.14",
-    "@canopycanopycanopy/b-ber-lib": "1.1.14",
-    "@canopycanopycanopy/b-ber-parser-gallery": "1.1.14"
+    "@canopycanopycanopy/b-ber-grammar-attributes": "1.2.1",
+    "@canopycanopycanopy/b-ber-grammar-renderer": "1.2.1",
+    "@canopycanopycanopy/b-ber-lib": "1.2.1",
+    "@canopycanopycanopy/b-ber-parser-gallery": "1.2.1"
   },
   "files": [
     "dist"

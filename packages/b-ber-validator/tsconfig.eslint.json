@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "src/**/*.ts",
+    "__mocks__/**/*.js",
+    "__tests__/**/*.js",
+    "jest.config.js",
+    "jest-transform-upward.js"
+  ],
+  "exclude": ["node_modules"]
+}
