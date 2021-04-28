@@ -25,17 +25,13 @@ Find out more in the [b-ber wiki](https://github.com/triplecanopy/b-ber/wiki).
 - Creates and links metadata that conforms to the [webpub specification](https://w3c.github.io/dpub-pwp-ucr/) for web-based publications;
 - Can be styled through overrides or custom themes.
 
-## Project Roadmap
-
-The project roadmap will be coming soon.
-
 ## Reporting Bugs
 
 Issues should be [reported](https://github.com/triplecanopy/b-ber/issues) in the b-ber project repository. Please use the template when creating a new issue. Issues should be tagged with the appropriately scoped label (`b-ber/create`, `b-ber/theme`, etc.) if it's clear where the issue originates. Other labels (`bug`, `enhancement`, etc.) should also be used when applicable.
 
 ## Contribution Guidelines
 
-Pull requests are welcome. If you plan to contribute to b-ber's [development](https://github.com/triplecanopy/b-ber/wiki/Installing-b-ber-for-Development), please send an email to [b-ber@canopycanopycanopy.com](mailto:b-ber@canopycanopycanopy.com), so that we are aware of any contributions you plan on making. There is no explicit style-guide, but a style of coding that's consistent with the existing codebase should be maintained.
+Pull requests are welcome. If you plan to contribute to b-ber's [development](https://github.com/triplecanopy/b-ber/wiki/Installing-b-ber-for-Development), please send an email to [b-ber@canopycanopycanopy.com](mailto:b-ber@canopycanopycanopy.com) or find us on our [Discord channel](https://discord.gg/96d3h3bC3Z), so that we are aware of any contributions you plan on making. There is no explicit style-guide, but a style of coding that's consistent with the existing codebase should be maintained.
 
 ## Code of Conduct
 
