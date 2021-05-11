@@ -521,8 +521,8 @@ button {
 
 .spinner__detail {
   position: absolute;
-  top: calc(50% - #{$spinner-size});
-  left: calc(50% - #{$spinner-size});
+  top: calc(50% - #{$spinner-size / 2});
+  left: calc(50% - #{$spinner-size / 2});
   width: $spinner-size;
   height: $spinner-size;
   margin: 0;
