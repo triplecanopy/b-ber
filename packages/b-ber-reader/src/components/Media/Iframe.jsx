@@ -6,7 +6,7 @@ import Viewport from '../../helpers/Viewport'
 import { isBrowser } from '../../helpers/utils'
 
 // Enable absolutely positioned iframe layout for specific browsers/versions
-const iframePositioningEnabled = isBrowser('chrome', 'gte', 81)
+const iframePositioningEnabled = isBrowser('chrome', 'eq', 81)
 
 class Iframe extends React.Component {
   static contextType = ReaderContext
