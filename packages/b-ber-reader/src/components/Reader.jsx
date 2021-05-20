@@ -45,6 +45,7 @@ class Reader extends Component {
       // Layout
       hash: Asset.createHash(this.props.bookURL),
       cssHash: null,
+      disableMobileResizeEvents: 'ontouchstart' in document.documentElement,
 
       // Navigation
       spreadIndex: 0,
@@ -165,6 +166,32 @@ class Reader extends Component {
       'webkitfullscreenchange mozfullscreenchange fullscreenchange',
       this.handleResizeEnd
     )
+
+    // Disable mobile zoom - check to see how many fingers are on the screen
+    // document.addEventListener(
+    //   'touchstart',
+    //   e => {
+    //     if (e.touches.length > 1) {
+    //       e.preventDefault()
+    //     }
+    //   },
+    //   { passive: false, capture: false }
+    // )
+
+    // Disable tap-to-zoom - prevent events on everything except buttons, links, etc
+    // const interactiveElements = new Set(['A', 'INPUT', 'BUTTON'])
+    // document.addEventListener(
+    //   'touchend',
+    //   e => {
+    //     if (!interactiveElements.has(e.target.nodeName)) {
+    //       e.preventDefault()
+    //     }
+    //   },
+    //   {
+    //     passive: false,
+    //     capture: false,
+    //   }
+    // )
   }
 
   componentWillUnmount() {
@@ -248,11 +275,15 @@ class Reader extends Component {
   }
 
   handleResize = () => {
+    if (this.state.disableMobileResizeEvents) return
+
     const viewerSettings = new ViewerSettings()
     this.props.viewerSettingsActions.update(viewerSettings.get())
   }
 
   handleResizeStart = () => {
+    if (this.state.disableMobileResizeEvents) return
+
     this.props.viewActions.unload()
     this.props.viewActions.updateLastSpreadIndex(-1)
     this.disablePageTransitions()
@@ -260,7 +291,11 @@ class Reader extends Component {
     this.showSpinner()
   }
 
-  handleResizeEnd = () => this.hideSpinner()
+  handleResizeEnd = () => {
+    if (this.state.disableMobileResizeEvents) return
+
+    this.hideSpinner()
+  }
 
   updateQueryString = callback => {
     const {

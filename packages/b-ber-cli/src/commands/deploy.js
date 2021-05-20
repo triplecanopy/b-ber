@@ -15,10 +15,10 @@ const builder = yargs =>
       choices: ['epub', 'mobi', 'reader', 'web', 'pdf', 'xml'],
       type: 'string',
     })
-    .fail((msg, err) => fail(msg, err, yargs))
     .help('h')
     .alias('h', 'help')
     .usage(`\nUsage: $0 deploy\n\n${describe}`)
+    .fail((msg, err) => fail(msg, err, yargs))
 
 const handler = deploy
 

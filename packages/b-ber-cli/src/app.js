@@ -13,6 +13,7 @@ export default function bber() {
     bber generate   Create a new chapter. Accepts arguments for metadata.
     bber serve      Preview the publication's contents in a browser
     bber build      Create an ePub, mobi, PDF, or all file formats
+    bber check      Validate a project’s markdown
 
     For more information on a command, enter bber <command> --help
 
@@ -28,6 +29,7 @@ export default function bber() {
     .command(commands.new)
     .command(commands.cover)
     .command(commands.deploy)
+    .command(commands.check)
 
     .help(false)
     .fail(showCustomHelp)

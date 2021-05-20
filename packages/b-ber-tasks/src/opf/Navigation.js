@@ -89,6 +89,13 @@ class Navigation {
     // Files in the TOC that don't exist in the project directory
     const redundantEntries = difference(tocEntries, files)
 
+    // Strip out `cover` entry during PDF build since it's handled separately
+    // in the project's config.yml
+    if (state.build === 'pdf') {
+      const coverIndex = redundantEntries.indexOf('cover')
+      if (coverIndex > -1) redundantEntries.splice(coverIndex, 1)
+    }
+
     // Notify the user of any entries that are listed in the YAML file but
     // not present on the system. The user has to resolve these conflicts
     // manually because deeply nested structures can't be reliably

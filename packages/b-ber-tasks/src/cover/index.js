@@ -42,7 +42,7 @@ class Cover {
     this.colorText = '#ffffff'
     this.fontName = 'Free Universal'
 
-    // important! file name needs to be added to copy.sh
+    // File name needs to be added to copy.sh
     this.fontFile = 'freeuniversal-bold-webfont.ttf'
 
     // increments paragraph Y position
@@ -56,7 +56,7 @@ class Cover {
     return this.posY
   }
 
-  // if running in sequence with other builds, necessary to flush the state
+  // Necessary to flush the state if running in sequence with other builds
   loadInitialState = async () => {
     this.posY = 0
     this.coverXHTMLContent = ''
@@ -163,23 +163,27 @@ class Cover {
     })
   }
 
-  writeCoverXHTML() {
+  writeCoverXHTML = async () => {
+    // Omit cover.xhtml from the PDF build to allow users to define special
+    // treatment for the cover in config.yml
+    if (state.build === 'pdf') return
+
     const textDir = state.dist.text()
     const coverFilePath = state.dist.text('cover.xhtml')
 
-    return fs
-      .mkdirp(textDir)
-      .then(() => fs.writeFile(coverFilePath, this.coverXHTMLContent))
-      .then(() => log.info('cover wrote XML [cover.xhtml]'))
+    await fs.mkdirp(textDir)
+    await fs.writeFile(coverFilePath, this.coverXHTMLContent)
+
+    log.info('cover wrote XML [cover.xhtml]')
   }
 
   generateCoverXHTML() {
-    // get the image dimensions, and pass them to the coverSVG template
+    // Get the image dimensions and pass them to the coverSVG template
     const { width, height } = sizeOf(this.coverImagePath)
     const href = `images/${encodeURIComponent(this.coverEntry)}`
     const svg = Xhtml.cover({ width, height, href })
 
-    // set the content string to be written once resolved
+    // Set the content string to be written once resolved
     this.coverXHTMLContent = Template.render(svg, Xhtml.body())
     log.info('cover build [cover.xhtml]')
   }
@@ -194,10 +198,10 @@ class Cover {
       .toString('hex')}.jpg`
     this.coverImagePath = state.src.images(this.coverEntry)
 
-    // load metadata.yml
+    // Load metadata.yml
     const metadata = YamlAdaptor.load(this.metadataYAML)
 
-    // check if cover if referenced
+    // Check if cover if referenced
     const coverListedInMetadata = getBookMetadata('cover', state)
 
     if (coverListedInMetadata) {
@@ -206,9 +210,9 @@ class Cover {
       this.coverEntry = coverListedInMetadata.replace(/_jpg$/, '.jpg')
       log.info('cover verify image [%s]', this.coverEntry)
 
-      // there's a reference to a cover image so we create a cover.xhtml file
+      // There's a reference to a cover image, so create a cover.xhtml file
       // containing an SVG-wrapped `image` element with the appropriate cover
-      // dimensions, and write it to the `text` dir.
+      // dimensions and write it to the `text` dir.
 
       // check that the cover image file exists, throw if not
       this.coverImagePath = state.src.images(this.coverEntry)
@@ -218,9 +222,9 @@ class Cover {
       }
 
       return this.generateCoverXHTML()
-    } // end if cover exists
+    }
 
-    // if there's no cover referenced in the metadata.yml, we create one
+    // If there's no cover referenced in the metadata.yml, create one
     // that displays the book's metadata (title, generator version, etc)
     // and add it to metadata.yml
     log.info('cover generated image [%s]', this.coverEntry)

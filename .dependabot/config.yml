@@ -3,7 +3,7 @@ update_configs:
   - package_manager: 'javascript'
     directory: '/'
     update_schedule: 'weekly'
-    target_branch: 'canary'
+    target_branch: 'main'
     allowed_updates:
       - match:
           update_type: 'security'

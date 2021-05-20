@@ -1,0 +1,7 @@
+- [x] Add error messages
+- [x] Add string output at error location
+- [x] Add list of allowed directive names
+- [x] Add support for inline directive followed by captions (i.e., `:: caption text`)
+- [ ] Gallery directives
+- [x] Dialogue directives
+- [x] Add tests

@@ -1,10 +1,10 @@
 module.exports = {
   name: 'b-ber',
-  verbose: true,
+  verbose: false,
   setupFilesAfterEnv: ['jest-extended'],
   collectCoverage: false,
   collectCoverageFrom: [
-    '**/*.{js,jsx}',
+    '**/*.{js,jsx,ts,tsx}',
     '!**/node_modules/**',
     '!**/vendor/**',
     '!**/dist/**',
@@ -43,7 +43,16 @@ module.exports = {
     '<rootDir>/scripts/',
   ],
   coverageReporters: ['html', 'lcov', 'json'],
-  moduleFileExtensions: ['js', 'jsx', 'json'],
+  moduleFileExtensions: ['ts', 'js', 'jsx', 'json'],
   testEnvironment: 'jest-environment-jsdom-global',
+  testPathIgnorePatterns: ['__mocks__'],
   testURL: 'http://localhost/',
+  moduleNameMapper: {
+    '@canopycanopycanopy/b-ber-shapes-directives':
+      '<rootDir>/packages/b-ber-shapes-directives',
+  },
+  transform: {
+    '^.+\\.tsx?$': 'ts-jest',
+    '^.+\\.jsx?$': 'babel-jest',
+  },
 }
