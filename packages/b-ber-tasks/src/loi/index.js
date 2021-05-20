@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import fs from 'fs-extra'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
@@ -7,12 +8,40 @@ import figure from '@canopycanopycanopy/b-ber-templates/figures'
 import Xhtml from '@canopycanopycanopy/b-ber-templates/Xhtml'
 
 const createLOILeader = () => {
-  const fileName = 'figures-titlepage.xhtml'
-  const markup = Template.render(Xhtml.loi(), Xhtml.body())
-  const guideItem = new GuideItem({ fileName, title: 'Figures', type: 'loi' })
+  const baseName = 'figures-titlepage'
+  const fileName = `${baseName}.xhtml`
 
+  // Create LOI page markup
+  const markup = Template.render(Xhtml.loi(), Xhtml.body())
+
+  // Add guide item to content.opf
+  const guideItem = new GuideItem({ fileName, title: 'Figures', type: 'loi' })
   state.add('guide', guideItem)
+
+  // Check if the figures titlepage has been declared
+  const index = state.indexOf(
+    'spine.flattened',
+    item => item.fileName === baseName
+  )
+
+  // If not, add it to state.spine so that it can be referenced
+  // in the content.opf
+  if (index < 0) {
+    const item = {
+      fileName: baseName,
+      in_toc: true,
+      ref: null,
+      pageOrder: -1,
+      generated: true,
+    }
+
+    state.add('spine.entries', baseName)
+    state.add('spine.nested', new SpineItem(item))
+    state.add('spine.flattened', item)
+  }
+
   log.info(`loi emit default figures titlepage [${fileName}]`)
+
   return fs.writeFile(state.dist.text(fileName), markup, 'utf8')
 }
 
@@ -46,7 +75,6 @@ const createLOIAsSeparateHTMLFiles = () => {
     const buildType = state.build
     const spineItem = new SpineItem({
       fileName,
-      // eslint-disable-next-line camelcase
       in_toc,
       ref,
       pageOrder,
