@@ -15,21 +15,19 @@ const args = new Map([
   ['web', '--include "project-web/*"'],
 ])
 
-// set far off cache for all files
+// Set far off cache for all files
 const cacheArgsBucket = [
   '--recursive',
+  '--acl public-read',
   '--metadata-directive REPLACE',
   '--expires 2034-01-01T00:00:00Z',
-  '--acl public-read',
   '--cache-control max-age=31536000,public',
 ]
 
-// set immediate re-fetch for XML, JSON and downloads
+// Set immediate re-fetch for XML, JSON and downloads
 const cacheArgsFiles = [
   '--recursive',
   '--exclude "*"',
-  '--include "*.html"',
-  '--include "*.xhtml"',
   '--include "*.ncx"',
   '--include "*.opf"',
   '--include "*.json"',
@@ -38,8 +36,23 @@ const cacheArgsFiles = [
   '--include "*.pdf"',
   '--include "*.xml"',
   '--metadata-directive REPLACE',
-  '--expires 1970-01-01T00:00:00Z',
   '--acl public-read',
+  '--expires 1970-01-01T00:00:00Z',
+  '--cache-control max-age=0,public',
+]
+
+// Also invalidate cache for X/HTML, but requires settings
+// `content-type` to prevent the browser from downloading them
+// directly
+const cacheArgsHTML = [
+  '--recursive',
+  '--exclude "*"',
+  '--include "*.html"',
+  '--include "*.xhtml"',
+  '--acl public-read',
+  '--metadata-directive REPLACE',
+  '--content-type text/html',
+  '--expires 1970-01-01T00:00:00Z',
   '--cache-control max-age=0,public',
 ]
 
@@ -186,6 +199,7 @@ function main({ builds, yes }) {
     })
     .then(() => setCachePolicy(config, cacheArgsBucket))
     .then(() => setCachePolicy(config, cacheArgsFiles))
+    .then(() => setCachePolicy(config, cacheArgsHTML))
     .catch(log.error)
 }
 
