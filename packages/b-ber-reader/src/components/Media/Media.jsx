@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unused-state */
 /* eslint-disable no-unused-vars */
 
 import React from 'react'
@@ -21,9 +22,7 @@ class Media extends React.Component {
     playbackRate: MEDIA_PLAYBACK_RATES.NORMAL,
     currentTime: 0,
     duration: 0,
-    // eslint-disable-next-line react/no-unused-state
     seeking: false,
-    // eslint-disable-next-line react/no-unused-state
     muted: false,
     // readyState: 0,
     progress: 0,
@@ -43,7 +42,19 @@ class Media extends React.Component {
     if (!this.state.autoPlay) return
 
     // Don't play the media unless the chapter is visible
-    if (!nextProps.view.loaded) return
+    if (!nextProps.view.loaded || nextProps.view.pendingDeferredCallbacks) {
+      return
+    }
+
+    // b-ber jumps from spreadIndex n to 0 quickly and causes a blip before
+    // the chapter updates, so account for that here
+    if (
+      nextContext.lastSpread &&
+      nextContext.spreadIndex === 0 &&
+      nextProps.view.lastSpreadIndex !== this.props.lastSpreadIndex
+    ) {
+      return
+    }
 
     const { paused } = this.state
 
@@ -51,10 +62,6 @@ class Media extends React.Component {
     if (this.props.elemRef.current.readyState < 3) {
       return console.warn('Media not loaded')
     }
-
-    // b-ber jumps from spreadIndex n to 0 quickly and causes a blip before
-    // the chapter updates, so account for that here
-    if (nextContext.lastSpread && nextContext.spreadIndex === 0) return
 
     // Play the media if it's located on the current spread
     if (nextProps.spreadIndex === nextContext.spreadIndex && paused === true) {
@@ -64,7 +71,12 @@ class Media extends React.Component {
         // Safari. This prevents the error, although it doesn't play the
         // media
         const p = this.props.elemRef.current.play()
-        if (p) p.catch(() => {})
+
+        if (p) {
+          p.catch(() => {})
+
+          this.updateControlsUI()
+        }
       })
     }
 
@@ -135,6 +147,8 @@ class Media extends React.Component {
   }
 
   updateControlsUI = () => {
+    if (this.props.elemRef.current === null) return
+
     this.updateTimeStamps()
     this.updateProgress()
 
@@ -161,7 +175,6 @@ class Media extends React.Component {
   timeBack = () => this.updateTime(Media.skipStep * -1)
 
   seek = e => {
-    const { duration } = this.state
     const progress = Number(e.target.value)
     const currentTime = progress
 
@@ -233,9 +246,7 @@ class Media extends React.Component {
     const timeRemaining = this.displayTime(duration)
 
     this.setState({
-      // eslint-disable-next-line react/no-unused-state
       seeking,
-      // eslint-disable-next-line react/no-unused-state
       muted,
       currentTime,
       duration,
@@ -258,7 +269,6 @@ class Media extends React.Component {
       elementEdgeLeft,
       MediaComponent,
       mediaType,
-      autoPlay,
       currentSpreadIndex,
       view,
       viewerSettings,
