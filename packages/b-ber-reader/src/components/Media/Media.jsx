@@ -40,7 +40,6 @@ class Media extends React.Component {
   UNSAFE_componentWillReceiveProps(nextProps, nextContext) {
     // Play the media on spread update if autoplay is true
     if (!this.state.autoPlay) return
-
     // Don't play the media unless the chapter is visible
     if (!nextProps.view.loaded || nextProps.view.pendingDeferredCallbacks) {
       return
@@ -51,7 +50,7 @@ class Media extends React.Component {
     if (
       nextContext.lastSpread &&
       nextContext.spreadIndex === 0 &&
-      nextProps.view.lastSpreadIndex !== this.props.lastSpreadIndex
+      nextProps.view.lastSpreadIndex === this.props.lastSpreadIndex
     ) {
       return
     }
