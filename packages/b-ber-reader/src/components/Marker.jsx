@@ -192,7 +192,8 @@ class Marker extends React.Component {
     let spacerStyles = { height: offsetHeight, display: 'block' }
     let markerStyles = { ...this.props.style }
 
-    const debug = true // dev
+    const debug = false // dev
+
     const debugSpacerStyles = {
       background: 'coral',
       position: 'relative',
