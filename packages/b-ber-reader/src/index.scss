@@ -831,3 +831,11 @@ input[type='range'] {
 :-moz-ui-invalid {
   box-shadow: none;
 }
+
+.marker[data-final='true'] + .marker__spacer {
+  margin-bottom: -100vh;
+}
+
+.figure__large:nth-last-child(2) {
+  break-after: avoid !important;
+}

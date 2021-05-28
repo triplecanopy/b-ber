@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable class-methods-use-this */
 
 import isUndefined from 'lodash/isUndefined'
@@ -46,7 +47,7 @@ class DocumentProcessor {
       top: 0,
       left: 0,
       width: '100%',
-      fontSize: 0,
+      // fontSize: 0,
       lineHeight: 0,
       textindent: 0,
       margin: 0,
@@ -175,6 +176,8 @@ class DocumentProcessor {
     elem.setAttribute('class', this.markerClassNames)
     elem.setAttribute('data-marker', id)
     elem.setAttribute('data-unbound', false)
+    elem.setAttribute('data-final', false)
+
     elem.appendChild(text)
     this.setMarkerStyles(elem)
 
@@ -230,10 +233,13 @@ class DocumentProcessor {
             this.addMarkerReferenceToChild(node, markerId)
           } else {
             const elem = this.createMarker(markerId)
+
             elem.setAttribute('data-unbound', true)
+
             node.parentNode.prepend(elem)
             node.setAttribute('data-marker-reference', markerId)
             node.classList.add('figure__processed')
+
             this.addMarkerReferenceToChild(node, markerId)
           }
         }
@@ -253,9 +259,7 @@ class DocumentProcessor {
   }
 
   removeBottomSpacing(node) {
-    // eslint-disable-next-line no-param-reassign
     node.style.marginBottom = '0'
-    // eslint-disable-next-line no-param-reassign
     node.style.paddingBottom = '0'
   }
 
@@ -319,6 +323,16 @@ class DocumentProcessor {
     console.warn('Could not append ultimate node')
   }
 
+  addIndicesToMarkers(doc) {
+    const markers = doc.querySelectorAll('[data-marker]')
+    const len = markers.length
+
+    for (let i = 0; i < len; i++) {
+      markers[i].setAttribute('data-index', i)
+      markers[i].setAttribute('data-final', i === len - 1)
+    }
+  }
+
   // Check that all references have markers
   validateDocument(doc) {
     const markers = doc.querySelectorAll('[data-marker]')
@@ -359,6 +373,7 @@ class DocumentProcessor {
     const parser = new window.DOMParser()
     const doc = parser.parseFromString(xmlString, 'text/html')
     const { paddingLeft, columnGap } = this.settings
+
     let xml
     let err = null
 
@@ -367,10 +382,14 @@ class DocumentProcessor {
     DocumentPreProcessor.createScriptElements()
     DocumentPreProcessor.parseXML()
 
-    this.insertMarkers(doc, nextDoc => {
-      if (!this.validateDocument(nextDoc)) err = new Error('Invalid markup')
+    this.insertMarkers(doc, result => {
+      if (!this.validateDocument(result)) {
+        err = new Error('Invalid markup')
+      }
 
       this.addUltimateNode(doc)
+      this.addIndicesToMarkers(doc)
+
       xml = xmlString.replace(
         /<body([^>]*?)>[\s\S]*<\/body>/g,
         (_, match) => `<body${match}>${doc.body.innerHTML}</body>`
@@ -378,6 +397,7 @@ class DocumentProcessor {
     })
 
     const result = { xml, doc }
+
     if (callback && typeof callback === 'function') {
       return callback(err, result)
     }

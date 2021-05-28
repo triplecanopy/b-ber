@@ -2,7 +2,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import PropTypes from 'prop-types'
 import { isNumeric } from '../helpers/Types'
 import Viewport from '../helpers/Viewport'
 import withNodePosition from '../lib/with-node-position'
@@ -60,6 +59,8 @@ class Marker extends React.Component {
       return offsetHeight
     }
 
+    const elem = this.props.elemRef.current
+
     const { verso, recto } = this.props
     const { paddingTop, paddingBottom } = this.props.viewerSettings
 
@@ -98,13 +99,13 @@ class Marker extends React.Component {
       if (adjacent) {
         offsetHeight += frameHeight
         offsetHeight += frameHeight
-        offsetHeight -= this.props.elemRef.current.offsetHeight
+        offsetHeight -= elem.offsetHeight
       } else {
         offsetHeight += frameHeight
         offsetHeight += frameHeight
-        offsetHeight -= this.props.elemRef.current.offsetHeight
+        offsetHeight -= elem.offsetHeight
         offsetHeight -= Math.round(
-          this.props.elemRef.current.getBoundingClientRect().bottom - paddingTop
+          elem.getBoundingClientRect().bottom - paddingTop
         )
 
         // Add space for the spread element itself, since it's
@@ -127,27 +128,45 @@ class Marker extends React.Component {
       if (adjacent) {
         offsetHeight += frameHeight
         offsetHeight += frameHeight
-        offsetHeight -= this.props.elemRef.current.offsetHeight
+        offsetHeight -= elem.offsetHeight
       } else {
         offsetHeight += frameHeight
         offsetHeight += frameHeight
-        offsetHeight -= this.props.elemRef.current.offsetHeight
+        offsetHeight -= elem.offsetHeight
 
         // Add spread spacing
         offsetHeight += frameHeight
-        offsetHeight -= Math.round(
-          this.props.elemRef.current.getBoundingClientRect().top
-        )
+        offsetHeight -= Math.round(elem.getBoundingClientRect().top)
         offsetHeight += paddingTop
       }
     }
 
+    // Causes overflow (blank page) on FF, and there's no reason for the
+    // space to stretch all the way to the bottom of the frame
+    if (JSON.parse(this.props['data-final']) === true) {
+      offsetHeight -= frameHeight
+    }
+
     offsetHeight = Math.floor(offsetHeight)
-    if (!unbound && !adjacent) offsetHeight -= 21 // One line of text to prevent overlowing to "blank pages"
-    if (adjacent) offsetHeight += 21 / 2
 
     const markerId = this.props['data-marker']
     const marker = this.props.markers[markerId]
+
+    const fontSize = parseFloat(window.getComputedStyle(elem).fontSize)
+
+    offsetHeight -= fontSize
+
+    // if (!unbound && !adjacent) {
+    //   console.log(markerId, '!unbound && !adjacent')
+    //   offsetHeight -= 21 // One line of text to prevent overlowing to "blank pages"
+    // }
+    // if (adjacent) {
+    //   console.log(markerId, 'adjacent')
+    //   // offsetHeight += 21 / 2
+    // }
+
+    // const markerId = this.props['data-marker']
+    // const marker = this.props.markers[markerId]
 
     if (
       marker &&
@@ -170,19 +189,18 @@ class Marker extends React.Component {
     const { verso, recto } = this.props
     const offsetHeight = this.calculateOffsetHeight()
 
-    const debug = false // dev
+    let spacerStyles = { height: offsetHeight, display: 'block' }
+    let markerStyles = { ...this.props.style }
 
-    const debugSpacerStyles = { background: 'coral' }
+    const debug = true // dev
+    const debugSpacerStyles = {
+      background: 'coral',
+      position: 'relative',
+      zIndex: 100001,
+    }
     const debugMarkerStyles = { backgroundColor: verso ? 'violet' : 'red' }
 
-    let spacerStyles = {
-      height: offsetHeight,
-      display: 'block',
-    }
-
     if (debug) spacerStyles = { ...spacerStyles, ...debugSpacerStyles }
-
-    let markerStyles = { ...this.props.style }
     if (debug) markerStyles = { ...markerStyles, ...debugMarkerStyles }
 
     return (
@@ -190,6 +208,8 @@ class Marker extends React.Component {
         <span
           data-verso={verso}
           data-recto={recto}
+          data-index={this.props['data-index']}
+          data-final={this.props['data-final']}
           style={markerStyles}
           className={this.props.className}
           ref={this.props.elemRef}

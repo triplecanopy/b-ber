@@ -183,7 +183,6 @@ const withNodePosition = (WrappedComponent, options = {}) => {
 
       // Calculate for the left edge of the element as if it were in the
       // recto position
-
       const elementEdgeLeftInRecto =
         elementEdgeLeft - columnGap - columnWidth - paddingLeft
 
