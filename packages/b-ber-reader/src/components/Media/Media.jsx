@@ -17,6 +17,7 @@ class Media extends React.Component {
   state = {
     autoPlay: this.props.autoPlay || false,
     paused: true,
+    userInitiatedPause: false,
     loop: false,
     volume: 1,
     playbackRate: MEDIA_PLAYBACK_RATES.NORMAL,
@@ -40,22 +41,23 @@ class Media extends React.Component {
   UNSAFE_componentWillReceiveProps(nextProps, nextContext) {
     // Play the media on spread update if autoplay is true
     if (!this.state.autoPlay) return
+
     // Don't play the media unless the chapter is visible
-    if (!nextProps.view.loaded || nextProps.view.pendingDeferredCallbacks) {
+    if (!this.props.view.loaded || this.props.view.pendingDeferredCallbacks) {
       return
     }
 
     // b-ber jumps from spreadIndex n to 0 quickly and causes a blip before
     // the chapter updates, so account for that here
-    if (
-      nextContext.lastSpread &&
-      nextContext.spreadIndex === 0 &&
-      nextProps.view.lastSpreadIndex === this.props.lastSpreadIndex
-    ) {
-      return
-    }
+    // if (
+    //   nextContext.lastSpread &&
+    //   nextContext.spreadIndex === 0
+    //   // && nextProps.view.lastSpreadIndex !== this.props.view.lastSpreadIndex
+    // ) {
+    //   return
+    // }
 
-    const { paused } = this.state
+    const { paused, userInitiatedPause } = this.state
 
     // Don't play the media unless it's sufficiently loaded
     if (this.props.elemRef.current.readyState < 3) {
@@ -63,7 +65,11 @@ class Media extends React.Component {
     }
 
     // Play the media if it's located on the current spread
-    if (nextProps.spreadIndex === nextContext.spreadIndex && paused === true) {
+    if (
+      nextProps.spreadIndex === nextContext.spreadIndex &&
+      paused === true &&
+      userInitiatedPause === false
+    ) {
       this.setState({ paused: false }, () => {
         // The `play` method returns a promise and errors out if the
         // user hasn't interacted with the page yet on Chrome and
@@ -88,13 +94,15 @@ class Media extends React.Component {
   }
 
   play = () =>
-    this.setState({ paused: false }, () => {
+    this.setState({ paused: false, userInitiatedPause: false }, () => {
       this.props.elemRef.current.play()
       this.updateControlsUI()
     })
 
   pause = () =>
-    this.setState({ paused: true }, () => this.props.elemRef.current.pause())
+    this.setState({ paused: true, userInitiatedPause: true }, () =>
+      this.props.elemRef.current.pause()
+    )
 
   updateTime = step => {
     const { duration } = this.state
