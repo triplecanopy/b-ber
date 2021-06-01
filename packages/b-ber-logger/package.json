@@ -1,6 +1,6 @@
 {
   "name": "@canopycanopycanopy/b-ber-logger",
-  "version": "1.2.2",
+  "version": "1.2.4",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
