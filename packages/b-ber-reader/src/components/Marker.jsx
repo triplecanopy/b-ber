@@ -7,6 +7,7 @@ import Viewport from '../helpers/Viewport'
 import withNodePosition from '../lib/with-node-position'
 import * as markerActions from '../actions/markers'
 import { layouts } from '../constants'
+import browser from '../lib/browser'
 
 class Marker extends React.Component {
   constructor(props) {
@@ -141,11 +142,14 @@ class Marker extends React.Component {
       }
     }
 
-    // Causes overflow (blank page) on FF, and there's no reason for the
+    // Causes overflow (blank page) on Firefox, and there's no reason for the
     // space to stretch all the way to the bottom of the frame
-    if (JSON.parse(this.props['data-final']) === true) {
-      offsetHeight -= frameHeight
-    }
+    // if (
+    //   JSON.parse(this.props['data-final']) === true &&
+    //   this.props.view.lastSpreadIndex === this.props.spreadIndex
+    // ) {
+    //   offsetHeight -= frameHeight / 2
+    // }
 
     offsetHeight = Math.floor(offsetHeight)
 
@@ -198,6 +202,7 @@ class Marker extends React.Component {
       background: 'coral',
       position: 'relative',
       zIndex: 100001,
+      opacity: '0.4',
     }
     const debugMarkerStyles = { backgroundColor: verso ? 'violet' : 'red' }
 

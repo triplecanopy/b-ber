@@ -201,6 +201,8 @@ const withNodePosition = (WrappedComponent, options = {}) => {
         (edgePosition % 1).toFixed(2).substring(2)
       )
 
+      // console.log('edgePositionVariance', edgePositionVariance)
+
       // Verify that the variance in the calculations is within an allowable range
       const verso =
         edgePositionVariance >= ELEMENT_EDGE_VERSO_MIN &&
@@ -211,7 +213,15 @@ const withNodePosition = (WrappedComponent, options = {}) => {
 
       // Calculate the spread that the element appears on by rounding the
       // position
+
+      // TODO return range? i.e., { spreadStart: 0, spreadEnd: 1 } Returning
+      // a rounded number means that the index will never be 0
       const spreadIndex = Math.round(Number(edgePosition.toFixed(2)))
+
+      // console.log('edgePosition', edgePosition)
+      // console.log('edgePosition.fixed', edgePosition.toFixed(2))
+      // console.log('spreadIndex', spreadIndex)
+      // console.log('verso', verso)
 
       // In the case that the marker's edge is not within the allowable
       // range (during a transition or resize), calculateNodePosition
