@@ -269,7 +269,7 @@ class Media extends React.Component {
     })
   }
 
-  handleEnded = () => this.setState({ paused: true })
+  handleEnded = () => this.setState({ paused: true, userInitiatedPause: true })
 
   render() {
     const {
