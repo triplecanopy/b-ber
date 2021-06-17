@@ -47,8 +47,9 @@ class Media extends React.Component {
     }
 
     // Don't play the media unless it's sufficiently loaded
-    if (this.props.elemRef.current.readyState < 3) {
+    if (this.props.elemRef.current.readyState < 2) {
       console.warn('Media not loaded')
+      // this.props.elemRef.current.addEventListener('')
       return
     }
 
