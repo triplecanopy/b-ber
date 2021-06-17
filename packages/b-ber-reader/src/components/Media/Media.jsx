@@ -42,17 +42,34 @@ class Media extends React.Component {
     if (!this.state.autoPlay) return
 
     // Don't play the media unless the chapter is visible
-    if (!nextProps.view.loaded || nextProps.view.pendingDeferredCallbacks) {
-      return
-    }
+    // if (!nextProps.view.loaded || nextProps.view.pendingDeferredCallbacks) {
+    //   return
+    // }
+
+    const _this = this
+    this.props.elemRef.current.addEventListener('canplay', function listener() {
+      _this.onCanPlay(nextProps, nextContext)
+      _this.props.elemRef.current.removeEventListener('canplay', listener)
+    })
 
     // Don't play the media unless it's sufficiently loaded
-    if (this.props.elemRef.current.readyState < 2) {
-      console.warn('Media not loaded')
-      // this.props.elemRef.current.addEventListener('')
-      return
-    }
+    // if (this.props.elemRef.current.readyState < 2) {
+    //   console.log('Media not loaded')
 
+    // console.log('add', this.props.elemRef.current)
+
+    // this.props.elemRef.current.preload = 'metadata'
+    // this.props.elemRef.current.addEventListener('canplay', () =>
+    //   this.onCanPlay(nextProps, nextContext)
+    // )
+
+    //   return
+    // }
+
+    // this.onCanPlay(nextProps, nextContext)
+  }
+
+  onCanPlay = (nextProps, nextContext) => {
     const { paused, userInitiatedPause } = this.state
 
     // b-ber jumps from spreadIndex n to 0 quickly and causes a blip before
@@ -252,6 +269,9 @@ class Media extends React.Component {
       muted,
       currentSrc,
     } = this.props.elemRef.current
+
+    this.props.elemRef.current.preload = 'auto'
+    console.log('load')
 
     const timeRemaining = this.displayTime(duration)
 
