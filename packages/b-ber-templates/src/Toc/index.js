@@ -1,4 +1,3 @@
-import path from 'path'
 import File from 'vinyl'
 import { Html } from '@canopycanopycanopy/b-ber-lib'
 import { getTitle } from '@canopycanopycanopy/b-ber-lib/utils'
@@ -13,7 +12,7 @@ class Toc {
   }
 
   static item(data) {
-    const url = `text/${path.basename(data.relativePath)}.xhtml`
+    const url = `${data.relativePath}.xhtml`
     return `<a href="${url}">${Html.escape(getTitle(data))}</a>`
   }
 
