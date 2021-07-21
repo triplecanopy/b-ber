@@ -6,8 +6,7 @@ const command = 'serve [build] [opts]'
 const describe = 'Preview a project in the browser using the `reader` build.'
 
 const handler = yargs => {
-  const build = (yargs._[1] || 'reader').toLowerCase()
-  const { external } = yargs
+  const { external, build } = yargs
 
   log.notice(`Serving [b-ber-${build}]`)
 
