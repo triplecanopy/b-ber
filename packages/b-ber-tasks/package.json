@@ -1,6 +1,6 @@
 {
   "name": "@canopycanopycanopy/b-ber-tasks",
-  "version": "1.2.8",
+  "version": "1.2.9",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -19,13 +19,13 @@
   },
   "dependencies": {
     "@babel/runtime-corejs3": "^7.10.5",
-    "@canopycanopycanopy/b-ber-lib": "1.2.4",
-    "@canopycanopycanopy/b-ber-logger": "1.2.4",
-    "@canopycanopycanopy/b-ber-markdown-renderer": "1.2.4",
-    "@canopycanopycanopy/b-ber-reader": "1.2.8",
+    "@canopycanopycanopy/b-ber-lib": "1.2.9",
+    "@canopycanopycanopy/b-ber-logger": "1.2.9",
+    "@canopycanopycanopy/b-ber-markdown-renderer": "1.2.9",
+    "@canopycanopycanopy/b-ber-reader": "1.2.9",
     "@canopycanopycanopy/b-ber-resources": "1.2.2",
     "@canopycanopycanopy/b-ber-shapes-sequences": "1.2.2",
-    "@canopycanopycanopy/b-ber-templates": "1.2.4",
+    "@canopycanopycanopy/b-ber-templates": "1.2.9",
     "@canopycanopycanopy/b-ber-validator": "1.2.2",
     "autoprefixer": "^9.6.1",
     "browser-sync": "^2.26.12",
