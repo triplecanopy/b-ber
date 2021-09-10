@@ -13,6 +13,7 @@ class DocumentProcessor {
     ],
     blacklistedClassNames: [
       ['gallery__item', 'figure__items', 'figure__processed'],
+      ['pullquote'],
     ],
     markerClassNames: 'marker',
     markerElement: 'span',

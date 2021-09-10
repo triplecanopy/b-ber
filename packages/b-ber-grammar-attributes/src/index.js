@@ -217,11 +217,11 @@ const _extendWithDefaults = (obj, genus) => {
 }
 
 // Create an object from attributes in the given directive
-const attributesObject = (attrs, _genus, context = {}) => {
+const attributesObject = (attrs, origGenus, context = {}) => {
   const { fileName, lineNumber } = context
   const attrsObject = {}
 
-  let genus = _genus
+  let genus = origGenus
 
   if (!genus || typeof genus !== 'string') {
     log.error(`No directive provided: ${fileName}:${lineNumber}`)
@@ -245,7 +245,7 @@ const attributesObject = (attrs, _genus, context = {}) => {
 
   if (attrs && typeof attrs === 'string') {
     forOf(parseAttrs(attrs.trim()), (k, v) => {
-      if (_isUnsupportedAttribute(genus, k)) {
+      if (_isUnsupportedAttribute(origGenus, k)) {
         return log.warn(
           `render omitting unsupported attribute [${k}] at [${fileName}:${lineNumber}]`
         )
@@ -255,14 +255,14 @@ const attributesObject = (attrs, _genus, context = {}) => {
     })
   }
 
-  // Add original `_genus` as a class to the attrs object in case it's
+  // Add original `origGenus` as a class to the attrs object in case it's
   // different from the current `genus` (which might've changed due to it's
   // specification). do this to keep styling consistent
-  if (genus !== _genus) {
+  if (genus !== origGenus) {
     if (has(attrsObject, 'classes')) {
-      attrsObject.classes += ` ${_genus}`
+      attrsObject.classes += ` ${origGenus}`
     } else {
-      attrsObject.classes = _genus
+      attrsObject.classes = origGenus
     }
   }
 
