@@ -177,7 +177,7 @@ const withObservers = WrappedComponent => {
         lastSpreadIndex = Math.round(contentDimensions / frameHeight / 2) - 1
       }
 
-      // never less than 0
+      // Never less than 0
       lastSpreadIndex = lastSpreadIndex < 0 ? 0 : lastSpreadIndex
 
       log(lastSpreadIndex, contentDimensions, frameHeight, columns)

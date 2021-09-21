@@ -158,9 +158,10 @@ class Marker extends React.Component {
     const markerId = this.props['data-marker']
     const marker = this.props.markers[markerId]
 
+    // Subtract one line of text to prevent overlowing to "blank pages"
     const fontSize = parseFloat(window.getComputedStyle(elem).fontSize)
 
-    // offsetHeight -= fontSize
+    offsetHeight -= fontSize
 
     // if (!unbound && !adjacent) {
     //   console.log(markerId, '!unbound && !adjacent')
@@ -174,7 +175,7 @@ class Marker extends React.Component {
 
     //   offsetHeight += fontSize
 
-    //   //   // offsetHeight += 21 / 2
+    //   // offsetHeight += 21 / 2
     // }
 
     // const markerId = this.props['data-marker']

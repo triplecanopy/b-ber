@@ -235,10 +235,18 @@ class DocumentProcessor {
             // Check to see if the marker being injected shares a parent with
             // another marker and set a flag if so. This is referenced in
             // Marker.jsx
+
             if (
               sibling.lastElementChild &&
               this.isMarker(sibling.lastElementChild)
             ) {
+              // console.log(
+              //   'sibling.lastElementChild',
+              //   sibling.lastElementChild,
+              //   this.isMarker(sibling.lastElementChild),
+              //   marker
+              // )
+
               marker.setAttribute('data-adjacent', true)
             }
 

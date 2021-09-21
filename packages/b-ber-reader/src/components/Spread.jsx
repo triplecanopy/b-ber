@@ -100,7 +100,7 @@ class Spread extends React.Component {
     if (!marker) return null
 
     const { spreadPosition } = this.state
-    const { recto, elementEdgeLeft, unbound } = marker
+    const { recto, unbound /*, elementEdgeLeft */ } = marker
     const { paddingLeft } = this.props.viewerSettings
     const { layout } = this.props.readerSettings
 
@@ -119,10 +119,10 @@ class Spread extends React.Component {
           recto={recto}
           markerRefId={markerId}
           spreadPosition={spreadPosition}
-          unbound={unbound}
           paddingLeft={paddingLeft}
-          markerX={elementEdgeLeft}
+          unbound={unbound}
           layout={layout}
+          // markerX={elementEdgeLeft}
         />
 
         <SpreadContext.Provider value={{ left, layout }}>
