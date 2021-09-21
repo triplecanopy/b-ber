@@ -149,7 +149,13 @@ const withObservers = WrappedComponent => {
           this.node.current.clientHeight
         )
 
+        // console.log('contentDimensions', contentDimensions)
+
+        // console.log('orig frameHeight', frameHeight)
+
         frameHeight = Math.round(frameHeight)
+
+        // console.log('next frameHeight', frameHeight)
 
         // Find the last index by dividing the document length by the frame
         // height, and then divide the result by 2 to account for the 2
@@ -159,7 +165,16 @@ const withObservers = WrappedComponent => {
         // frameHeight in these cases will be something like 6.1 for a
         // six-page chapter). Minus one since we want it to be a zero-based
         // index
-        lastSpreadIndex = Math.ceil(contentDimensions / frameHeight / 2) - 1
+
+        // console.log(contentDimensions / frameHeight)
+        // console.log(contentDimensions / frameHeight / 2)
+        // console.log(Math.ceil(contentDimensions / frameHeight / 2))
+        // console.log(contentDimensions, previousContentDimensions)
+        // console.log(contentDimensions / 100)
+
+        // contentDimensions -= contentDimensions / 100
+
+        lastSpreadIndex = Math.round(contentDimensions / frameHeight / 2) - 1
       }
 
       // never less than 0

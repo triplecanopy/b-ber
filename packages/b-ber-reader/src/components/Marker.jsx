@@ -148,6 +148,8 @@ class Marker extends React.Component {
     //   JSON.parse(this.props['data-final']) === true &&
     //   this.props.view.lastSpreadIndex === this.props.spreadIndex
     // ) {
+    //   console.log('------', this.props['data-marker'], 'data-final')
+
     //   offsetHeight -= frameHeight / 2
     // }
 
@@ -158,15 +160,21 @@ class Marker extends React.Component {
 
     const fontSize = parseFloat(window.getComputedStyle(elem).fontSize)
 
-    offsetHeight -= fontSize
+    // offsetHeight -= fontSize
 
     // if (!unbound && !adjacent) {
     //   console.log(markerId, '!unbound && !adjacent')
-    //   offsetHeight -= 21 // One line of text to prevent overlowing to "blank pages"
+
+    //   offsetHeight -= fontSize
+
+    //   //   offsetHeight -= 21 // One line of text to prevent overlowing to "blank pages"
     // }
     // if (adjacent) {
     //   console.log(markerId, 'adjacent')
-    //   // offsetHeight += 21 / 2
+
+    //   offsetHeight += fontSize
+
+    //   //   // offsetHeight += 21 / 2
     // }
 
     // const markerId = this.props['data-marker']

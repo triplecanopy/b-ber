@@ -89,6 +89,9 @@ class DocumentProcessor {
     )
   }
 
+  classListContainsAny = (node, classNames) =>
+    classNames.some(name => node.classList.contains(name))
+
   classListContainsNone(node, classNames) {
     return classNames.some(list =>
       list.every(name => !node.classList.contains(name))
@@ -109,7 +112,14 @@ class DocumentProcessor {
   }
 
   isMarker(node) {
-    return this.classListContainsAll(node, [['marker']])
+    return this.classListContainsAll(node, [[this.markerClassNames]])
+  }
+
+  isMarkerReferenceNode(node) {
+    return (
+      this.classListContainsAny(node, ['spread__content']) ||
+      node.nodeName === 'FIGURE'
+    )
   }
 
   hasChildren(node) {
@@ -122,7 +132,9 @@ class DocumentProcessor {
     for (let i = children.length - 1; i >= 0; i--) {
       // Start at bottom
       node = children[i]
-      if (!this.shouldParse(node)) continue // eslint-disable-line no-continue
+      if (!this.shouldParse(node)) {
+        continue // eslint-disable-line no-continue
+      }
 
       if (this.hasChildren(node)) {
         return this.getLastChild(node.children)
@@ -138,30 +150,32 @@ class DocumentProcessor {
 
   getSibling(node) {
     if (node === null) return node
-    const node_ = node.previousElementSibling
-    // top of document
-    if (!node_) {
+
+    const { previousElementSibling } = node
+
+    // Top of document
+    if (!previousElementSibling) {
       return this.getSibling(node.parentNode)
     }
 
-    // If the sibling is another target, it can't be parses, and can't be appended
+    // If the sibling is another target, it can't be parsed, and can't be appended
     // to since it's going to be absolutely positioned, so return sibling
-    if (this.isTarget(node_)) {
-      return this.getSibling(node_)
+    if (this.isTarget(previousElementSibling)) {
+      return this.getSibling(previousElementSibling)
     }
 
     // Not a target, not parseable, get siblings
-    if (!this.shouldParse(node_)) {
-      return this.getSibling(node_)
+    if (!this.shouldParse(previousElementSibling)) {
+      return this.getSibling(previousElementSibling)
     }
 
-    // No children, append to node_
-    if (!this.hasChildren(node_)) {
-      return node_
+    // No children, append to previousElementSibling
+    if (!this.hasChildren(previousElementSibling)) {
+      return previousElementSibling
     }
 
     // Node can be parsed, find the last child and append marker
-    const lastChild = this.getLastChild(node_.children)
+    const lastChild = this.getLastChild(previousElementSibling.children)
     return lastChild
   }
 
@@ -190,12 +204,6 @@ class DocumentProcessor {
     return rand()
   }
 
-  isMarkerReferenceNode(node) {
-    return (
-      node.classList.contains('spread__content') || node.nodeName === 'FIGURE'
-    )
-  }
-
   addMarkerReferenceToChild(node, markerId) {
     for (let i = 0; i < node.children.length; i++) {
       if (this.isMarkerReferenceNode(node.children[i])) {
@@ -205,16 +213,22 @@ class DocumentProcessor {
   }
 
   insertMarkers(doc, callback) {
-    const nodes = doc.children
+    // Filter nodes that have been dynamically inserted into the DOM
+    const nodes = Array.from(doc.children).filter(node => !this.isMarker(node))
 
     for (let i = 0; i < nodes.length; i++) {
       const node = nodes[i]
       const markerId = this.createMarkerId()
+
       let sibling
 
-      if (this.shouldParse(node)) {
-        if (this.isTarget(node)) {
+      const shouldParse = this.shouldParse(node)
+      const isTarget = this.isTarget(node)
+
+      if (shouldParse) {
+        if (isTarget) {
           sibling = this.getSibling(node)
+
           if (sibling) {
             const marker = this.createMarker(markerId)
 
@@ -245,6 +259,7 @@ class DocumentProcessor {
             this.addMarkerReferenceToChild(node, markerId)
           }
         }
+
         if (node.children && node.children.length) {
           this.insertMarkers(node)
         }
