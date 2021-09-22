@@ -17,8 +17,17 @@ const SpreadImageStyles = props => {
   // If an image is recto or unbound, then set it to be centered on the
   // upcoming screen, since the figure's position is calculated based on the
   // marker, and the marker in those cases will be one page behind
-  const adjustedSpreadPosition =
-    recto || unbound ? spreadPosition - 1 : spreadPosition
+
+  // const adjustedSpreadPosition =
+  //   recto || unbound ? spreadPosition - 1 : spreadPosition
+
+  // const adjustedSpreadPosition = spreadPosition
+
+  const adjustedSpreadPosition = unbound ? spreadPosition - 1 : spreadPosition
+
+  // const adjustedSpreadPosition = recto ? spreadPosition - 1 : spreadPosition
+
+  // console.log('recto || unbound', recto, unbound, spreadPosition)
 
   // prettier-ignore
   const styles = props.layout === layouts.SCROLL || Viewport.isMobile() ? null : `

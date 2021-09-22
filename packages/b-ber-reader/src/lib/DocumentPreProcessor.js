@@ -157,6 +157,19 @@ class DocumentPreProcessor {
     return state.root
   }
 
+  // Add a node directly at the body tag - this fixes issues with spread markers
+  // not being able to find a node to attach to when doing layout for the reader
+  // static addFirstNode() {
+  //   const text = document.createTextNode('')
+  //   const elem = document.createElement('div')
+
+  //   elem.setAttribute('class', 'initial')
+  //   elem.setAttribute('data-initial', 'true')
+  //   elem.appendChild(text)
+
+  //   state.document.body.insertBefore(elem, state.document.body.firstChild)
+  // }
+
   static parseXML(callback) {
     // TODO errors should be handled
     // @issue: https://github.com/triplecanopy/b-ber/issues/220

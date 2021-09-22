@@ -74,18 +74,23 @@ class Spread extends React.Component {
     const width = window.innerWidth
     const { paddingLeft, paddingRight, columnGap } = this.props.viewerSettings
     const layoutWidth = width - paddingLeft - paddingRight + columnGap // not sure why we're adding columnGap in here ...
-    const spreadPosition =
-      Math.round((elementEdgeLeft + paddingLeft) / layoutWidth) + 1
+    // const spreadPosition =
+    //   Math.round((elementEdgeLeft + paddingLeft) / layoutWidth) + 1
+
+    const spreadPosition = Math.ceil(elementEdgeLeft / layoutWidth)
+    // console.log('spreadPosition', elementEdgeLeft / layoutWidth, spreadPosition)
 
     const { layout } = this.props.readerSettings
+
+    console.log('unbound', unbound, marker)
 
     let left = 0
     if (!Viewport.isMobile() && layout !== layouts.SCROLL) {
       left = layoutWidth * spreadPosition
-      if (recto) left -= layoutWidth
+      // if (recto) left -= layoutWidth
       if (unbound) left = 0
     } else {
-      left = 0
+      // left = 0
     }
 
     left = `${left}px`

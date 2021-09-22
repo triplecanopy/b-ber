@@ -14,6 +14,7 @@ class DocumentProcessor {
     blacklistedClassNames: [
       ['gallery__item', 'figure__items', 'figure__processed'],
       ['pullquote'],
+      ['initial'],
     ],
     markerClassNames: 'marker',
     markerElement: 'span',
@@ -240,13 +241,6 @@ class DocumentProcessor {
               sibling.lastElementChild &&
               this.isMarker(sibling.lastElementChild)
             ) {
-              // console.log(
-              //   'sibling.lastElementChild',
-              //   sibling.lastElementChild,
-              //   this.isMarker(sibling.lastElementChild),
-              //   marker
-              // )
-
               marker.setAttribute('data-adjacent', true)
             }
 
@@ -288,7 +282,7 @@ class DocumentProcessor {
     node.style.paddingBottom = '0'
   }
 
-  addUltimateNode(doc) {
+  addLastNode(doc) {
     const blacklist = new Set([
       'META',
       'TITLE',
@@ -405,6 +399,7 @@ class DocumentProcessor {
     DocumentPreProcessor.setContextDocument(doc)
     DocumentPreProcessor.createStyleSheets({ paddingLeft, columnGap })
     DocumentPreProcessor.createScriptElements()
+    // DocumentPreProcessor.addFirstNode()
     DocumentPreProcessor.parseXML()
 
     this.insertMarkers(doc, result => {
@@ -412,7 +407,7 @@ class DocumentProcessor {
         err = new Error('Invalid markup')
       }
 
-      this.addUltimateNode(doc)
+      this.addLastNode(doc)
       this.addIndicesToMarkers(doc)
 
       xml = xmlString.replace(

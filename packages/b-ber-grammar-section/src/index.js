@@ -10,21 +10,20 @@ import {
   htmlId,
 } from '@canopycanopycanopy/b-ber-grammar-attributes'
 
-// this matches *all* container-type directives, and outputs the appropriate
+// This matches *all* container-type directives, and outputs the appropriate
 // HTML based on user-defined attributes
 const containers = Array.from(BLOCK_DIRECTIVES).join('|')
 
-// treat `exit` like an opening marker since we're using it as such
+// Treat `exit` like an opening marker
 const MARKER_OPEN_RE = new RegExp(
   `^(${containers}|exit)(?::([^\\s]+)(\\s.*)?)?$`
 )
 
 const MARKER_CLOSE_RE = /(exit)(?::([^\s]+))?/
 
-// since `context` needs to be available in this `render` method, we curry it
-// in and pass the resulting function to the `createRenderer` below. we also
-// set a default for `context` since we'll need some of its properties during
-// testing
+// `context` must be available in this `render` method and is passed
+// into `createRenderer` below. Default for `context` is set for use
+// during tests
 
 function isGallery(directive) {
   return (
@@ -62,7 +61,16 @@ function handleExitDirective(token) {
 
   if (isSpread(directive)) {
     return `</div>
-            </div>${comment}`
+            </div>
+
+            ${
+              state.build === 'reader'
+                ? `<!-- Empty node required for spread markers -->
+                   <div></div>`
+                : ''
+            }
+
+            ${comment}`
   }
 
   return `</section>${comment}`

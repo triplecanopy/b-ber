@@ -67,7 +67,9 @@
     "webpack-cleanup-plugin": "^0.5.1",
     "webpack-cli": "^3.1.1",
     "webpack-dashboard": "^1.1.1",
-    "webpack-node-externals": "^1.6.0"
+    "webpack-node-externals": "^1.6.0",
+    "xml-js": "^1.6.11",
+    "xmljs": "^0.3.2"
   },
   "dependencies": {
     "autoprefixer": "^9.6.1",
