@@ -77,7 +77,7 @@ function handleExitDirective(token) {
 }
 
 function openElement(token, fileName, lineNumber) {
-  // destructure the attributes from matches, omitting `matches[0]` since
+  // Destructure the attributes from matches, omitting `matches[0]` since
   // we're only interested in the captures
   const [, type, id, attr] = token
 
