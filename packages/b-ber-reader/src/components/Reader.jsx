@@ -73,6 +73,7 @@ class Reader extends Component {
 
     this.localStorageKey = 'bber_reader'
     this.debounceResizeSpeed = 400
+    this.resizeEndTimer = null
 
     this.handleResizeStart = debounce(
       this.handleResizeStart,
@@ -293,7 +294,11 @@ class Reader extends Component {
 
     const { spreadIndex } = this.state
     const { lastSpreadIndex } = this.props.view
-    const relativeSpreadPosition = spreadIndex / lastSpreadIndex
+
+    let relativeSpreadPosition = 0
+    if (spreadIndex > 0 && lastSpreadIndex > 0) {
+      relativeSpreadPosition = spreadIndex / lastSpreadIndex
+    }
 
     // Save the relative position (float) to calculate next position
     // after resize
@@ -314,13 +319,23 @@ class Reader extends Component {
     const { spreadIndex, relativeSpreadPosition } = this.state
     const { lastSpreadIndex } = this.props.view
 
+    // Could stackoverflow here if lastSpreadIndex stays at -1,
+    // but `updateLastSpreadIndex` eventually sets lastSpreadIndex
+    // to something reasonable
+    if (lastSpreadIndex < 0) {
+      window.clearTimeout(this.resizeEndTimer)
+      this.resizeEndTimer = setTimeout(() => this.handleResizeEnd(), 200)
+      return
+    }
+
     let nextSpreadIndex = spreadIndex * relativeSpreadPosition
 
     // No negative
     nextSpreadIndex = nextSpreadIndex < 1 ? 0 : nextSpreadIndex
 
     // Round to closest position
-    nextSpreadIndex = Math.round(nextSpreadIndex)
+    // Bit of heuristics here, this seems to work relatively well
+    nextSpreadIndex = Math.ceil(nextSpreadIndex) + 2
 
     // Not greater than last spread index
     nextSpreadIndex =
