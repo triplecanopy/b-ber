@@ -48,7 +48,13 @@ class Reader extends Component {
       disableMobileResizeEvents: 'ontouchstart' in document.documentElement,
 
       // Navigation
+      // Current spread index
       spreadIndex: 0,
+
+      // Used to calculate next spread position after resize to keep
+      // the user at/close to the previous reading position
+      relativeSpreadPosition: 0.0,
+
       handleEvents: false,
       firstChapter: false,
       lastChapter: false,
@@ -60,7 +66,8 @@ class Reader extends Component {
       showSidebar: null,
 
       // View
-      pageAnimation: false, // Disabled by default, and activated in Reader.enablePageTransitions on user action
+      // Disabled by default, and activated in Reader.enablePageTransitions on user action
+      pageAnimation: false,
       spinnerVisible: true,
     }
 
@@ -284,15 +291,42 @@ class Reader extends Component {
   handleResizeStart = () => {
     if (this.state.disableMobileResizeEvents) return
 
-    this.props.viewActions.unload()
-    this.props.viewActions.updateLastSpreadIndex(-1)
-    this.disablePageTransitions()
+    const { spreadIndex } = this.state
+    const { lastSpreadIndex } = this.props.view
+    const relativeSpreadPosition = spreadIndex / lastSpreadIndex
 
-    this.showSpinner()
+    // Save the relative position (float) to calculate next position
+    // after resize
+    this.setState({ relativeSpreadPosition }, () => {
+      this.props.viewActions.unload()
+      this.props.viewActions.updateLastSpreadIndex(-1)
+      this.disablePageTransitions()
+
+      this.showSpinner()
+    })
   }
 
   handleResizeEnd = () => {
     if (this.state.disableMobileResizeEvents) return
+
+    // Adjust users position so that they're on/close to the page
+    // before resize
+    const { spreadIndex, relativeSpreadPosition } = this.state
+    const { lastSpreadIndex } = this.props.view
+
+    let nextSpreadIndex = spreadIndex * relativeSpreadPosition
+
+    // No negative
+    nextSpreadIndex = nextSpreadIndex < 1 ? 0 : nextSpreadIndex
+
+    // Round to closest position
+    nextSpreadIndex = Math.round(nextSpreadIndex)
+
+    // Not greater than last spread index
+    nextSpreadIndex =
+      nextSpreadIndex > lastSpreadIndex ? lastSpreadIndex : nextSpreadIndex
+
+    this.navigateToSpreadByIndex(nextSpreadIndex)
 
     this.hideSpinner()
   }

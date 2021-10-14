@@ -66,7 +66,7 @@ class Spread extends React.Component {
       return console.error('Cannot update child positions: No marker')
     }
 
-    const { /* verso, */ recto, elementEdgeLeft, unbound } = marker
+    const { /* verso,  recto,*/ elementEdgeLeft, unbound } = marker
     // set this after loading to prevent figures drifing around on initial page load
     // TODO: should be passing in transition speed
     // @issue: https://github.com/triplecanopy/b-ber/issues/216
@@ -81,8 +81,6 @@ class Spread extends React.Component {
     // console.log('spreadPosition', elementEdgeLeft / layoutWidth, spreadPosition)
 
     const { layout } = this.props.readerSettings
-
-    console.log('unbound', unbound, marker)
 
     let left = 0
     if (!Viewport.isMobile() && layout !== layouts.SCROLL) {
