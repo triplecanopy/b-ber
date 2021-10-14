@@ -171,11 +171,15 @@ const withNodePosition = (WrappedComponent, options = {}) => {
       const { isMarker } = this.settings
       const { paddingLeft, columnGap } = this.props.viewerSettings
 
-      const computedStyle = window.getComputedStyle(node)
+      // Get the offset of the node's (the marker's) parent's (span's) parent (element in
+      // the document that it's been inserted into)
+      const computedParentStyle = window.getComputedStyle(
+        node.parentElement.parentElement
+      )
 
       // eslint-disable-next-line prefer-destructuring
-      const marginLeft = computedStyle.marginLeft
-      const elementPaddingLeft = computedStyle.paddingLeft
+      const marginLeft = computedParentStyle.marginLeft
+      const elementPaddingLeft = computedParentStyle.paddingLeft
 
       // Get the left edge of the element, taking into account padding and margins
       const elementEdgeLeft =

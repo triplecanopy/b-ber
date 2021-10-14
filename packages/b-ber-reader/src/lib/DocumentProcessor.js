@@ -80,6 +80,7 @@ class DocumentProcessor {
         'FIGURE',
         'CITE',
         'BLOCKQUOTE',
+        'LI',
       ]),
     }
   }
