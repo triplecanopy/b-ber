@@ -12,27 +12,32 @@ import {
   MOBILE_COLUMN_COUNT,
 } from '../constants'
 
-import { isNumeric } from '../helpers/Types'
+import { isNumeric } from './Types'
 
 class Viewport {
   // used to get position X in matrix
   static horizontalSmall = () =>
     window.innerWidth <= BREAKPOINT_HORIZONTAL_SMALL
+
   static horizontalMedium = () =>
     window.innerWidth > BREAKPOINT_HORIZONTAL_SMALL &&
     window.innerWidth < BREAKPOINT_HORIZONTAL_LARGE
+
   static horizontalLarge = () =>
     window.innerWidth >= BREAKPOINT_HORIZONTAL_LARGE
 
   // used to get position Y in matrix
   static verticalSmall = () => window.innerHeight <= BREAKPOINT_VERTICAL_SMALL
+
   static verticalMedium = () =>
     window.innerHeight > BREAKPOINT_VERTICAL_SMALL &&
     window.innerHeight < BREAKPOINT_VERTICAL_LARGE
+
   static verticalLarge = () => window.innerHeight >= BREAKPOINT_VERTICAL_LARGE
 
   // utility breakpoint
   static isMobile = () => Viewport.horizontalSmall()
+
   static isTouch = () =>
     'ontouchstart' in window /* iOS and Android */ ||
     window.navigator.msPointerEnabled /* Win8 */ ||
@@ -43,6 +48,7 @@ class Viewport {
     if (Viewport.horizontalMedium()) return 1
     if (Viewport.horizontalLarge()) return 2
   }
+
   static getBreakpointY = () => {
     if (Viewport.verticalSmall()) return 0
     if (Viewport.verticalMedium()) return 1
@@ -57,10 +63,33 @@ class Viewport {
   static getColumnCount = () =>
     Viewport.isMobile() ? MOBILE_COLUMN_COUNT : DESKTOP_COLUMN_COUNT
 
-  // flexible columns, flexible gutters.
-  // gutter is hard-coded to be 20% of a column's width
-  static getGutterWidth = () =>
-    (35 / (Viewport.getColumnCount() - 1) / 100) * window.innerWidth
+  // Flexible columns, flexible gutters.
+
+  // static getGutterWidth = () => {
+  //   const gutterWidth =
+  //     (35 / (Viewport.getColumnCount() - 1) / 100) * window.innerWidth
+
+  //   console.log('gutterWidth', gutterWidth)
+
+  //   return gutterWidth
+  // }
+
+  // 50% of the width of one column. Not sure if it makes sense here to
+  // measure the columns against the width of the window, or the width
+  // of the visible frame.
+  static getGutterWidth = () => {
+    // const frameWidth = Math.min(window.innerWidth, LAYOUT_MAX_WIDTH)
+    const columnWidth = window.innerWidth / Viewport.getColumnCount()
+    const gutterWidth = columnWidth * 0.5
+
+    // console.log('Viewport.getColumnCount()', Viewport.getColumnCount())
+    // console.log('frameWidth', frameWidth)
+    // console.log('columnWidth', columnWidth)
+    console.log('gutterWidth', gutterWidth)
+
+    return gutterWidth
+  }
+
   static getColumnWidth = () =>
     (65 / Viewport.getColumnCount() / 100) * window.innerWidth
 
@@ -71,6 +100,7 @@ class Viewport {
       ? (width - LAYOUT_MAX_WIDTH) / 2
       : padding
   }
+
   static getVerticalSpacingAuto = () =>
     (window.innerHeight - LAYOUT_MAX_HEIGHT) / 2
 
