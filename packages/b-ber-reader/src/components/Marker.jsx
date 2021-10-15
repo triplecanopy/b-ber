@@ -63,7 +63,7 @@ class Marker extends React.Component {
     const elem = this.props.elemRef.current
 
     const { verso, recto } = this.props
-    const { paddingTop, paddingBottom } = this.props.viewerSettings
+    const { paddingTop, paddingBottom, fontSize } = this.props.viewerSettings
 
     let { height } = this.props.viewerSettings
     const frameHeight = height - paddingTop - paddingBottom
@@ -158,10 +158,20 @@ class Marker extends React.Component {
     const markerId = this.props['data-marker']
     const marker = this.props.markers[markerId]
 
-    // Subtract one line of text to prevent overlowing to "blank pages"
-    const fontSize = parseFloat(window.getComputedStyle(elem).fontSize)
+    // Subtract one line of text to prevent overlowing to "blank pages".
 
-    offsetHeight -= fontSize
+    const lineHeight = 1.3 // document.documentElement element is set to 'normal', so approximate
+    const fontSizePx = parseFloat(window.getComputedStyle(elem).fontSize)
+
+    // console.log(fontSize, fontSizePx, lineHeight, fontSizePx * lineHeight)
+
+    // Account for slight variations in how much content it takes to create
+    // a new column
+    if (browser.name === 'safari') {
+      offsetHeight -= Math.floor(fontSizePx * lineHeight)
+    } else {
+      offsetHeight -= fontSizePx
+    }
 
     // if (!unbound && !adjacent) {
     //   console.log(markerId, '!unbound && !adjacent')
