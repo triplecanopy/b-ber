@@ -32,14 +32,6 @@ $font-size-sans: 0.8rem;
 
 $spinner-size: 40px;
 
-// @mixin transition(
-//   $property,
-//   $speed: $transition-speed-fast,
-//   $easing: $transition-easing
-// ) {
-//   transition: $property $speed $easing;
-// }
-
 // Usage:   @include transition(width, height 0.3s ease-in-out);
 // Output:  transition(width 0.2s, height 0.3s ease-in-out);
 //
@@ -206,6 +198,12 @@ button {
   text-rendering: optimizeLegibility;
   -moz-osx-font-smoothing: grayscale; // sass-lint:disable-line no-vendor-prefixes
   font-feature-settings: 'liga';
+}
+
+#layout {
+  // Safari
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
 }
 
 // UI
@@ -533,6 +531,10 @@ button {
 }
 
 .leaf {
+  // Safari
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+
   position: fixed;
   top: 0;
   height: 100vh;

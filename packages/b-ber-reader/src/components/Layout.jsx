@@ -37,7 +37,7 @@ class Layout extends React.Component {
     margin: 0,
     border: 0,
     boxSizing: 'border-box',
-    transform: 'translateX(0)',
+    transform: 'translateX(0) translate3d(0, 0, 0)',
     columnFill: 'auto',
   }
 
@@ -81,7 +81,7 @@ class Layout extends React.Component {
 
   updateTransform = spreadIndex => {
     const translateX = this.context.getTranslateX(spreadIndex)
-    const transform = `translateX(${translateX}px)`
+    const transform = `translateX(${translateX}px) translate3d(0, 0, 0)`
 
     this.setState({ transform })
   }
@@ -139,7 +139,7 @@ class Layout extends React.Component {
       }
     } else {
       positionX *= -1
-      const transform = `translateX(${positionX}px)`
+      const transform = `translateX(${positionX}px) translate3d(0, 0, 0)`
       styles = {
         transform,
         transition: `transform ${transitionSpeed}ms ease 0s`,

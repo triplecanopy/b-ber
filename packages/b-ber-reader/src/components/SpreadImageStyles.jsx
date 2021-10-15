@@ -9,7 +9,7 @@ import { layouts } from '../constants'
 // the page where the figure is placed
 
 const SpreadImageStyles = props => {
-  const { spreadPosition, markerRefId, paddingLeft, recto, unbound } = props
+  const { spreadPosition, markerRefId, paddingLeft, unbound } = props
   const translateLeftPrevious = paddingLeft * 2
   const translateLeftCurrent = 0
   const translateLeftNext = paddingLeft * -2
@@ -35,17 +35,29 @@ const SpreadImageStyles = props => {
     .spread-index__${adjustedSpreadPosition - 2} #spread__${markerRefId} > figure,
     .spread-index__${adjustedSpreadPosition - 2} #spread__${markerRefId} > .spread__content,
     .spread-index__${adjustedSpreadPosition - 1} #spread__${markerRefId} > figure,
-    .spread-index__${adjustedSpreadPosition - 1} #spread__${markerRefId} > .spread__content { transform: translateX(${translateLeftPrevious}px); }
+    .spread-index__${adjustedSpreadPosition - 1} #spread__${markerRefId} > .spread__content {
+      backface-visibility: hidden;
+      transform: translateX(${translateLeftPrevious}px) translate3d(0, 0, 0);
+      transform-style: preserve-3d;
+    }
 
     /* Current page */
     .spread-index__${adjustedSpreadPosition}     #spread__${markerRefId} > figure,
-    .spread-index__${adjustedSpreadPosition}     #spread__${markerRefId} > .spread__content { transform: translateX(${translateLeftCurrent}px); }
+    .spread-index__${adjustedSpreadPosition}     #spread__${markerRefId} > .spread__content {
+      backface-visibility: hidden;
+      transform-style: preserve-3d;
+      transform: translateX(${translateLeftCurrent}px) translate3d(0, 0, 0);
+    }
 
     /* Next pages */
     .spread-index__${adjustedSpreadPosition + 1} #spread__${markerRefId} > figure,
     .spread-index__${adjustedSpreadPosition + 1} #spread__${markerRefId} > .spread__content,
     .spread-index__${adjustedSpreadPosition + 2} #spread__${markerRefId} > figure,
-    .spread-index__${adjustedSpreadPosition + 2} #spread__${markerRefId} > .spread__content { transform: translateX(${translateLeftNext}px); }
+    .spread-index__${adjustedSpreadPosition + 2} #spread__${markerRefId} > .spread__content {
+      backface-visibility: hidden;
+      transform-style: preserve-3d;
+      transform: translateX(${translateLeftNext}px) translate3d(0, 0, 0);
+    }
   `
 
   return (
