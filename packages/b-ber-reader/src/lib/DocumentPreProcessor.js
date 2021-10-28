@@ -24,16 +24,18 @@ class DocumentPreProcessor {
     state.requestURI = requestURI
   }
 
-  static createStyleSheets({ paddingLeft, columnGap }) {
+  static createStyleSheets() {
     state.styleSheets = [
       ...state.styleSheets,
+
       new MediaStyleSheet({
         media: MEDIA_QUERY_LARGE,
-        rules: [...mediaSmall({ paddingLeft, columnGap })],
+        rules: [...mediaSmall()],
       }),
+
       new MediaStyleSheet({
         media: MEDIA_QUERY_SMALL,
-        rules: [...mediaLarge({ paddingLeft, columnGap })],
+        rules: [...mediaLarge()],
       }),
     ]
   }
@@ -139,7 +141,7 @@ class DocumentPreProcessor {
     }
   }
 
-  // exchange an existing media stylesheet for a new one that targets the
+  // Exchange an existing media stylesheet for a new one that targets the
   // same media
   static swapStyleSheet(/* media */) {}
 
@@ -156,19 +158,6 @@ class DocumentPreProcessor {
   static getRootDocument() {
     return state.root
   }
-
-  // Add a node directly at the body tag - this fixes issues with spread markers
-  // not being able to find a node to attach to when doing layout for the reader
-  // static addFirstNode() {
-  //   const text = document.createTextNode('')
-  //   const elem = document.createElement('div')
-
-  //   elem.setAttribute('class', 'initial')
-  //   elem.setAttribute('data-initial', 'true')
-  //   elem.appendChild(text)
-
-  //   state.document.body.insertBefore(elem, state.document.body.firstChild)
-  // }
 
   static parseXML(callback) {
     // TODO errors should be handled

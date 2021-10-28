@@ -1,3 +1,4 @@
+/* eslint-disable lines-between-class-members */
 /* eslint-disable no-param-reassign */
 /* eslint-disable class-methods-use-this */
 
@@ -7,7 +8,7 @@ import { rand } from '../helpers/utils'
 
 class DocumentProcessor {
   static defaults = {
-    targetClassNames: [
+    fullbleedClassNames: [
       ['figure__inline', 'figure__large', 'figure__fullbleed'],
       ['spread'],
     ],
@@ -18,8 +19,6 @@ class DocumentProcessor {
     ],
     markerClassNames: 'marker',
     markerElement: 'span',
-    paddingLeft: 0,
-    columnGap: 0,
     responseURL: window.location.host,
   }
   constructor(options = {}) {
@@ -37,7 +36,7 @@ class DocumentProcessor {
 
     DocumentPreProcessor.setRequestURI(this.settings.responseURL)
 
-    this.targetClassNames = this.settings.targetClassNames
+    this.fullbleedClassNames = this.settings.fullbleedClassNames
     this.blacklistedClassNames = this.settings.blacklistedClassNames
     this.markerClassNames = this.settings.markerClassNames
     this.markerElement = this.settings.markerElement
@@ -109,8 +108,8 @@ class DocumentProcessor {
     )
   }
 
-  isTarget(node) {
-    return this.classListContainsAll(node, this.targetClassNames)
+  isFullbleed(node) {
+    return this.classListContainsAll(node, this.fullbleedClassNames)
   }
 
   isMarker(node) {
@@ -162,7 +161,7 @@ class DocumentProcessor {
 
     // If the sibling is another target, it can't be parsed, and can't be appended
     // to since it's going to be absolutely positioned, so return sibling
-    if (this.isTarget(previousElementSibling)) {
+    if (this.isFullbleed(previousElementSibling)) {
       return this.getSibling(previousElementSibling)
     }
 
@@ -225,10 +224,10 @@ class DocumentProcessor {
       let sibling
 
       const shouldParse = this.shouldParse(node)
-      const isTarget = this.isTarget(node)
+      const isFullbleed = this.isFullbleed(node)
 
       if (shouldParse) {
-        if (isTarget) {
+        if (isFullbleed) {
           sibling = this.getSibling(node)
 
           if (sibling) {
@@ -353,6 +352,31 @@ class DocumentProcessor {
     }
   }
 
+  // The `break-after` class should not exist on elements
+  // preceeding a spread
+  removeBreakAfterClasses(doc) {
+    const nodes = Array.from(doc.children).filter(
+      node => !this.isMarker(node) && node.nodeType === 1
+    )
+
+    for (let i = 0; i < nodes.length; i++) {
+      const node = nodes[i]
+      const sibling = node.nextElementSibling
+
+      if (
+        node.classList.contains('break-after') &&
+        sibling &&
+        this.isFullbleed(sibling)
+      ) {
+        node.classList.remove('break-after')
+      }
+
+      if (node.children && node.children.length) {
+        this.removeBreakAfterClasses(node)
+      }
+    }
+  }
+
   // Check that all references have markers
   validateDocument(doc) {
     const markers = doc.querySelectorAll('[data-marker]')
@@ -392,15 +416,13 @@ class DocumentProcessor {
   parseXML(xmlString, callback) {
     const parser = new window.DOMParser()
     const doc = parser.parseFromString(xmlString, 'text/html')
-    const { paddingLeft, columnGap } = this.settings
 
     let xml
     let err = null
 
     DocumentPreProcessor.setContextDocument(doc)
-    DocumentPreProcessor.createStyleSheets({ paddingLeft, columnGap })
+    DocumentPreProcessor.createStyleSheets()
     DocumentPreProcessor.createScriptElements()
-    // DocumentPreProcessor.addFirstNode()
     DocumentPreProcessor.parseXML()
 
     this.insertMarkers(doc, result => {
@@ -410,6 +432,7 @@ class DocumentProcessor {
 
       this.addLastNode(doc)
       this.addIndicesToMarkers(doc)
+      this.removeBreakAfterClasses(doc)
 
       xml = xmlString.replace(
         /<body([^>]*?)>[\s\S]*<\/body>/g,
