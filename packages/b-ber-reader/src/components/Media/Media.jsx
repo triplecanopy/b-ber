@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-vars */
+/* eslint-disable no-unused-vars,react/no-unused-state */
 
 import React from 'react'
 import ReaderContext from '../../lib/reader-context'
@@ -21,15 +21,14 @@ class Media extends React.Component {
     playbackRate: MEDIA_PLAYBACK_RATES.NORMAL,
     currentTime: 0,
     duration: 0,
-    // eslint-disable-next-line react/no-unused-state
     seeking: false,
-    // eslint-disable-next-line react/no-unused-state
     muted: false,
     // readyState: 0,
     progress: 0,
     timeElapsed: '00:00',
     timeRemaining: '00:00',
     currentSrc: '',
+    userInitiatedPause: false,
   }
 
   UNSAFE_componentWillMount() {
@@ -43,51 +42,86 @@ class Media extends React.Component {
     if (!this.state.autoPlay) return
 
     // Don't play the media unless the chapter is visible
-    if (!nextProps.view.loaded) return
+    // if (!nextProps.view.loaded || nextProps.view.pendingDeferredCallbacks) {
+    //   return
+    // }
 
-    const { paused } = this.state
+    const _this = this
+    this.props.elemRef.current.addEventListener('canplay', function listener() {
+      _this.onCanPlay(nextProps, nextContext)
+      _this.props.elemRef.current.removeEventListener('canplay', listener)
+    })
 
     // Don't play the media unless it's sufficiently loaded
-    if (this.props.elemRef.current.readyState < 3) {
-      return console.warn('Media not loaded')
-    }
+    // if (this.props.elemRef.current.readyState < 2) {
+    //   console.log('Media not loaded')
+
+    // console.log('add', this.props.elemRef.current)
+
+    // this.props.elemRef.current.preload = 'metadata'
+    // this.props.elemRef.current.addEventListener('canplay', () =>
+    //   this.onCanPlay(nextProps, nextContext)
+    // )
+
+    //   return
+    // }
+
+    // this.onCanPlay(nextProps, nextContext)
+  }
+
+  onCanPlay = (nextProps, nextContext) => {
+    const { paused, userInitiatedPause } = this.state
 
     // b-ber jumps from spreadIndex n to 0 quickly and causes a blip before
     // the chapter updates, so account for that here
-    if (nextContext.lastSpread && nextContext.spreadIndex === 0) return
+    // if (nextContext.lastSpread && nextContext.spreadIndex === 0) return
 
     // Play the media if it's located on the current spread
-    if (nextProps.spreadIndex === nextContext.spreadIndex && paused === true) {
-      this.setState({ paused: false }, () => {
-        // The `play` method returns a promise and errors out if the
-        // user hasn't interacted with the page yet on Chrome and
-        // Safari. This prevents the error, although it doesn't play the
-        // media
-        const p = this.props.elemRef.current.play()
-        if (p) p.catch(() => {})
-      })
+
+    if (
+      paused === true &&
+      userInitiatedPause === false &&
+      nextProps.spreadIndex === nextContext.spreadIndex
+    ) {
+      this.setState({ paused: false }, () => this.playMedia())
     }
 
     // Otherwise pause the media
     if (nextProps.spreadIndex !== nextContext.spreadIndex && paused === false) {
-      this.setState({ paused: true }, () => {
-        this.props.elemRef.current.pause()
-      })
+      this.setState({ paused: true }, () => this.pauseMedia())
     }
   }
 
+  playMedia = () => {
+    // The `play` method returns a promise and errors out if the
+    // user hasn't interacted with the page yet on Chrome and
+    // Safari. This prevents the error, although it doesn't play the
+    // media
+
+    const p = this.props.elemRef.current.play()
+    if (p) p.catch(() => {})
+
+    this.updateControlsUI()
+  }
+
+  pauseMedia = () => {
+    this.props.elemRef.current.pause()
+  }
+
   play = () =>
-    this.setState({ paused: false }, () => {
-      this.props.elemRef.current.play()
-      this.updateControlsUI()
-    })
+    this.setState({ paused: false, userInitiatedPause: false }, () =>
+      this.playMedia()
+    )
 
   pause = () =>
-    this.setState({ paused: true }, () => this.props.elemRef.current.pause())
+    this.setState({ paused: true, userInitiatedPause: true }, () =>
+      this.pauseMedia()
+    )
 
   updateTime = step => {
     const { duration } = this.state
     let { currentTime } = this.state
+
     currentTime = parseFloat((currentTime + step).toFixed(10))
     currentTime = Math.max(0, Math.min(currentTime, duration))
 
@@ -138,13 +172,17 @@ class Media extends React.Component {
     this.updateTimeStamps()
     this.updateProgress()
 
+    // Call recursively if playing and if the element still exists
     if (this.state.paused) return
+    if (!this.props.elemRef?.current) return
 
-    // Call recursively if playing
     setTimeout(this.updateControlsUI.bind(this), 1000)
   }
 
   updateTimeStamps = () => {
+    // Check that the element exists since this is called in a timeout
+    if (!this.props.elemRef?.current) return
+
     const { currentTime } = this.props.elemRef.current
     const timeElapsed = this.displayTime(currentTime)
 
@@ -152,6 +190,9 @@ class Media extends React.Component {
   }
 
   updateProgress = () => {
+    // Check that the element exists since this is called in a timeout
+    if (!this.props.elemRef?.current) return
+
     const progress = this.props.elemRef.current.currentTime
     this.setState({ progress })
   }
@@ -161,7 +202,6 @@ class Media extends React.Component {
   timeBack = () => this.updateTime(Media.skipStep * -1)
 
   seek = e => {
-    const { duration } = this.state
     const progress = Number(e.target.value)
     const currentTime = progress
 
@@ -230,6 +270,9 @@ class Media extends React.Component {
       currentSrc,
     } = this.props.elemRef.current
 
+    this.props.elemRef.current.preload = 'auto'
+    console.log('load')
+
     const timeRemaining = this.displayTime(duration)
 
     this.setState({
@@ -247,7 +290,7 @@ class Media extends React.Component {
     })
   }
 
-  handleEnded = () => this.setState({ paused: true })
+  handleEnded = () => this.setState({ paused: true, userInitiatedPause: true })
 
   render() {
     const {
@@ -366,4 +409,7 @@ class Media extends React.Component {
   }
 }
 
-export default withNodePosition(Media, { useParentDimensions: true })
+export default withNodePosition(Media, {
+  useParentDimensions: true,
+  // useFullscreenElementWidth: true,
+})

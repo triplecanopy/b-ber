@@ -43,6 +43,7 @@ class WebFlow {
     this.prepareLoi()
     this.addFiguresToSpine()
     this.removeNonLinearEntriesFromSpine()
+    this.removeTocFromSpine()
   }
 
   // TODO: the naming scheme for figures is slightly different for figures (the
@@ -74,6 +75,10 @@ class WebFlow {
   removeNonLinearEntriesFromSpine() {
     this.spine = this.spine.flattened.filter(a => a.linear)
   }
+
+  removeTocFromSpine() {
+    this.spine = this.spine.filter(a => a.fileName !== 'toc')
+  }
 }
 
 // Make sure we're using the correct build variables
@@ -103,6 +108,7 @@ async function moveAssetsToRootDirctory() {
       file.charAt(0) !== '.' &&
       fs.statSync(path.join(OPS_PATH, file)).isDirectory()
   )
+
   const promises = dirs.map(dir => {
     const from = path.join(OPS_PATH, dir)
     const to = path.join(DIST_PATH, dir)
@@ -155,7 +161,10 @@ function getHeaderElement(fileName) {
 }
 
 function createNavigationElement() {
-  const { toc } = state
+  const { toc: prevToc } = state
+
+  // Filter out toc entry if it exists
+  const toc = prevToc.filter(item => item.fileName !== 'toc')
   const tocHTML = Toc.items(toc).replace(/a href="/g, `a href="${BASE_URL}`)
   const metadataHTML = getProjectMetadataHTML()
   const title = getProjectTitle()

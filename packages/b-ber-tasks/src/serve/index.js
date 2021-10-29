@@ -72,12 +72,13 @@ const init = build =>
 
 const serve = async ({ build, external }) => {
   const location = external ? 'external' : 'local'
+  const build_ = build ?? 'reader'
 
-  await init(build)
+  await init(build_)
 
   const url = browserSync.getOption('urls').get(location)
 
-  update = config(build)(url)
+  update = config(build_)(url)
 
   await update()
 

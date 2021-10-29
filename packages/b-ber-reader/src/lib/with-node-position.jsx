@@ -27,6 +27,12 @@ const ELEMENT_EDGE_RECTO_MAX = 5
 //    Default false.
 //
 //
+//    useFullscreenElementWidth: bool
+//
+//    Should the calculations be based on an element that it outside of the
+//    normal flow of columns, e.g., a fullscreen element
+//
+//
 //    isMarker: bool
 //
 //    Whether the wrapped component is a Marker component
@@ -67,6 +73,12 @@ const withNodePosition = (WrappedComponent, options = {}) => {
           this.props.useElementOffsetLeft,
           options.useElementOffsetLeft,
           true
+        ),
+
+        useFullscreenElementWidth: unlessDefined(
+          this.props.useFullscreenElementWidth,
+          options.useFullscreenElementWidth,
+          false
         ),
 
         isMarker: unlessDefined(options.isMarker, false),
@@ -183,9 +195,15 @@ const withNodePosition = (WrappedComponent, options = {}) => {
 
       // Calculate for the left edge of the element as if it were in the
       // recto position
+      let elementEdgeLeftInRecto = elementEdgeLeft - columnGap - columnWidth
 
-      const elementEdgeLeftInRecto =
-        elementEdgeLeft - columnGap - columnWidth - paddingLeft
+      // Subtract the left padding of the frame only if the element that is
+      // being queried is "inline", i.e., inside of a normal column of flowing
+      // text
+      // if (this.settings.useFullscreenElementWidth === false) {
+      if (node.offsetWidth !== window.innerWidth) {
+        elementEdgeLeftInRecto -= paddingLeft
+      }
 
       // Calculate the position (verso or recto) of the element by
       // dividing by the visible frame. If we're left with a remainder,
@@ -212,7 +230,10 @@ const withNodePosition = (WrappedComponent, options = {}) => {
 
       // Calculate the spread that the element appears on by rounding the
       // position
-      const spreadIndex = Math.round(Number(edgePosition.toFixed(2)))
+
+      // TODO return range? i.e., { spreadStart: 0, spreadEnd: 1 } Returning
+      // a rounded number means that the index will never be 0
+      const spreadIndex = Math.floor(Number(edgePosition.toFixed(2)))
 
       // In the case that the marker's edge is not within the allowable
       // range (during a transition or resize), calculateNodePosition
@@ -221,8 +242,6 @@ const withNodePosition = (WrappedComponent, options = {}) => {
         this.elementEdgeIsInAllowableRange(edgePositionVariance) === false ||
         (verso === false && recto === false)
       ) {
-        console.warn('Recalculating layout')
-
         node.style.display = 'none'
         node.style.display = 'block'
       }
