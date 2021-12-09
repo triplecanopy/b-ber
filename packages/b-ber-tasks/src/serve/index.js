@@ -3,10 +3,16 @@ import state from '@canopycanopycanopy/b-ber-lib/State'
 import sequences from '@canopycanopycanopy/b-ber-shapes-sequences/sequences'
 import debounce from 'lodash/debounce'
 import { create } from 'browser-sync'
-import { serialize } from '../'
+import { serialize } from '..'
+
+// function getRandomInt(nmin, nmax) {
+//   const min = Math.ceil(nmin)
+//   const max = Math.floor(nmax)
+//   return Math.floor(Math.random() * (max - min) + min) //The maximum is exclusive and the minimum is inclusive
+// }
 
 const browserSync = create()
-const port = 4000
+const port = 4000 // getRandomInt(4000, 5000)
 const debounceSpeed = 500
 
 const config = build => url => () => {

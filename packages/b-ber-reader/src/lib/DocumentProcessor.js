@@ -94,7 +94,7 @@ class DocumentProcessor {
     classNames.some(name => node.classList.contains(name))
 
   classListContainsNone(node, classNames) {
-    return classNames.some(list =>
+    return classNames.every(list =>
       list.every(name => !node.classList.contains(name))
     )
   }

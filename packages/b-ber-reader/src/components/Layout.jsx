@@ -1,3 +1,7 @@
+/* eslint-disable react/state-in-constructor */
+/* eslint-disable react/static-property-placement */
+/* eslint-disable react/jsx-fragments */
+
 import React from 'react'
 import PropTypes from 'prop-types'
 import debounce from 'lodash/debounce'

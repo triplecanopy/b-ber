@@ -28,6 +28,8 @@ class Marker extends React.Component {
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
+    // console.log('UNSAFE_componentWillReceiveProps');
+
     const markerId = this.props['data-marker']
     const { recto, verso, elementEdgeLeft } = nextProps
 
@@ -42,6 +44,27 @@ class Marker extends React.Component {
         recto,
         verso,
         elementEdgeLeft,
+      })
+    }
+  }
+
+  componentDidUpdate() {
+    const unbound = JSON.parse(this.props['data-unbound'] || 'false')
+    const markerId = this.props['data-marker']
+    const marker = this.props.markers[markerId]
+    const { verso, recto } = this.props
+
+    if (
+      marker &&
+      (recto !== marker.recto ||
+        verso !== marker.verso ||
+        unbound !== marker.unbound)
+    ) {
+      this.props.markerActions.update({
+        markerId,
+        recto,
+        verso,
+        unbound,
       })
     }
   }
@@ -144,7 +167,11 @@ class Marker extends React.Component {
 
     // Causes overflow (blank page) on Firefox, and there's no reason for the
     // space to stretch all the way to the bottom of the frame
+
+    // console.log(this.props.view.lastSpreadIndex, this.props.spreadIndex)
+
     // if (
+    //   browser.name === 'firefox' &&
     //   JSON.parse(this.props['data-final']) === true &&
     //   this.props.view.lastSpreadIndex === this.props.spreadIndex
     // ) {
@@ -155,8 +182,8 @@ class Marker extends React.Component {
 
     offsetHeight = Math.floor(offsetHeight)
 
-    const markerId = this.props['data-marker']
-    const marker = this.props.markers[markerId]
+    // const markerId = this.props['data-marker']
+    // const marker = this.props.markers[markerId]
 
     // Subtract one line of text to prevent overlowing to "blank pages".
 
@@ -191,19 +218,19 @@ class Marker extends React.Component {
     // const markerId = this.props['data-marker']
     // const marker = this.props.markers[markerId]
 
-    if (
-      marker &&
-      (recto !== marker.recto ||
-        verso !== marker.verso ||
-        unbound !== marker.unbound)
-    ) {
-      this.props.markerActions.update({
-        markerId,
-        recto,
-        verso,
-        unbound,
-      })
-    }
+    // if (
+    //   marker &&
+    //   (recto !== marker.recto ||
+    //     verso !== marker.verso ||
+    //     unbound !== marker.unbound)
+    // ) {
+    //   this.props.markerActions.update({
+    //     markerId,
+    //     recto,
+    //     verso,
+    //     unbound,
+    //   })
+    // }
 
     return offsetHeight
   }
