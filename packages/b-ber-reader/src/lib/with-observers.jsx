@@ -1,3 +1,5 @@
+// window.innerWidth 2320 window.innerHeight 1234
+
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react'
 import { connect } from 'react-redux'
@@ -119,6 +121,9 @@ const withObservers = WrappedComponent => {
       let contentDimensions
       let lastSpreadIndex
       let frameHeight
+      let nodeEdgeRight
+
+      const { paddingLeft, columnGap } = this.props.viewerSettings
 
       // TODO prevent multiple callbacks. good to have this off for debug
       // if (this.props.ready === true) return
@@ -147,7 +152,7 @@ const withObservers = WrappedComponent => {
         // document, and divide it by the number of columns
 
         // Determine if the last node is on recto or verso
-        const { paddingLeft /*, columnGap */ } = this.props.viewerSettings
+        // const { paddingLeft, columnGap } = this.props.viewerSettings
 
         // console.log('paddingLeft, columnGap', paddingLeft, columnGap)
 
@@ -157,12 +162,12 @@ const withObservers = WrappedComponent => {
         // const lastNodePositionToLeftEdge = Math.round(
         //   lastNodeClientLeft - columnGap - paddingLeft
         // )
-        // const approximateColumnWidth = Math.round(
-        //   this.props.getSingleColumnWidth()
-        // )
+        const approximateColumnWidth = Math.round(
+          this.props.getSingleColumnWidth()
+        )
 
         // console.log(
-        //   lastNodePositionToLeftEdge,
+
         //   approximateColumnWidth,
         //   lastNodePositionToLeftEdge % approximateColumnWidth
         // )
@@ -209,14 +214,14 @@ const withObservers = WrappedComponent => {
         //   document.querySelector('#content').offsetWidth -
         //     document.querySelector('.ultimate').offsetLeft
         // )
-        console.log(
-          'dims',
-          lastNode.getBoundingClientRect().right + paddingLeft,
-          frameWidth,
-          (lastNode.getBoundingClientRect().right + paddingLeft) / frameWidth,
-          (lastNode.getBoundingClientRect().right + paddingLeft) /
-            window.innerWidth
-        )
+        // console.log(
+        //   'dims',
+        //   lastNode.getBoundingClientRect().right + paddingLeft,
+        //   frameWidth,
+        //   (lastNode.getBoundingClientRect().right + paddingLeft) / frameWidth,
+        //   (lastNode.getBoundingClientRect().right + paddingLeft) /
+        //     window.innerWidth
+        // )
 
         // This is just used for checking to see if the layout should
         // be recalculated
@@ -237,10 +242,22 @@ const withObservers = WrappedComponent => {
         // lastSpreadIndex -= 1
         // lastSpreadIndex = Math.round(posLeft)
 
-        const nodeEdgeRight =
-          lastNode.getBoundingClientRect().right + paddingLeft
+        nodeEdgeRight = lastNode.offsetLeft + lastNode.offsetWidth + paddingLeft
 
-        lastSpreadIndex = Math.floor(nodeEdgeRight / frameWidth) - 1
+        // console.log(
+        //   'dim',
+        //   frameWidth,
+        //   nodeEdgeRight,
+        //   lastNode.getBoundingClientRect().right - paddingLeft,
+        //   (lastNode.getBoundingClientRect().right - paddingLeft) / frameWidth
+        // )
+
+        const d = nodeEdgeRight / (frameWidth + paddingLeft)
+        const x = Math.round((d + Number.EPSILON) * 10) / 10
+
+        console.log(nodeEdgeRight, d, x)
+
+        lastSpreadIndex = Math.round(x) - 1
 
         console.log('lastSpreadIndex', lastSpreadIndex)
       } else {

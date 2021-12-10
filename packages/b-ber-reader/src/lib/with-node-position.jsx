@@ -1,10 +1,11 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import React from 'react'
 import ResizeObserver from 'resize-observer-polyfill'
 import debounce from 'lodash/debounce'
 import { connect } from 'react-redux'
 import DocumentPreProcessor from './DocumentPreProcessor'
 import { unlessDefined } from '../helpers/utils'
-import ReaderContext from '../lib/reader-context'
+import ReaderContext from './reader-context'
 
 const ELEMENT_EDGE_VERSO_MIN = 48
 const ELEMENT_EDGE_VERSO_MAX = 52
