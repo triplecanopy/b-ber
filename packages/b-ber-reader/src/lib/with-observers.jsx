@@ -257,7 +257,7 @@ const withObservers = WrappedComponent => {
 
         console.log(nodeEdgeRight, d, x)
 
-        lastSpreadIndex = Math.round(x) - 1
+        lastSpreadIndex = x - 1
 
         console.log('lastSpreadIndex', lastSpreadIndex)
       } else {
