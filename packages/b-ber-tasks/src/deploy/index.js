@@ -15,11 +15,13 @@ const args = new Map([
   ['web', '--include "project-web/*"'],
 ])
 
-// Set far off cache for all files
+// Set far off cache for all files. Must not use `--metadata-directive REPLACE` or files
+// will just download in the browser without being served
+// https://stackoverflow.com/questions/10435334/set-cache-control-for-entire-s3-bucket-automatically-using-bucket-policies
 const cacheArgsBucket = [
   '--recursive',
   '--acl public-read',
-  '--metadata-directive REPLACE',
+  // '--metadata-directive REPLACE',
   '--expires 2034-01-01T00:00:00Z',
   '--cache-control max-age=31536000,public',
 ]
@@ -35,7 +37,7 @@ const cacheArgsFiles = [
   '--include "*.mobi"',
   '--include "*.pdf"',
   '--include "*.xml"',
-  '--metadata-directive REPLACE',
+  // '--metadata-directive REPLACE',
   '--acl public-read',
   '--expires 1970-01-01T00:00:00Z',
   '--cache-control max-age=0,public',
