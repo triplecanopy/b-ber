@@ -35,7 +35,7 @@ const validate = async ({ project }) => {
   await Promise.all(check)
 
   if (!errors.length) {
-    log.notice('Directives valid')
+    log.info('Directives valid')
   }
 
   log.info(errors)

@@ -60,6 +60,7 @@ module.exports = {
     ],
     'operator-linebreak': 0,
     'padded-blocks': 0,
+    'react/destructuring-assignment': 0,
     'react/jsx-boolean-value': 0,
     'react/jsx-indent': 0,
     'react/no-array-index-key': 0,

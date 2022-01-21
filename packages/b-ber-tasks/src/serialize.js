@@ -1,6 +1,6 @@
 import log from '@canopycanopycanopy/b-ber-logger'
 import state from '@canopycanopycanopy/b-ber-lib/State'
-import * as tasks from '../'
+import * as tasks from '..'
 
 // This is basically the engine of our application. `serialize` is responsible
 // for taking in the list of tasks that need to be run, calling their

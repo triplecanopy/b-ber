@@ -3,7 +3,7 @@ import state from '@canopycanopycanopy/b-ber-lib/State'
 import sequences from '@canopycanopycanopy/b-ber-shapes-sequences/sequences'
 import debounce from 'lodash/debounce'
 import { create } from 'browser-sync'
-import { serialize } from '../'
+import { serialize } from '..'
 
 const browserSync = create()
 const port = 4000
