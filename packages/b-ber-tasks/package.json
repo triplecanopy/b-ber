@@ -39,7 +39,7 @@
     "layouts": "^3.0.2",
     "lodash": "^4.17.19",
     "lunr": "^2.1.6",
-    "node-sass": "^4.11.0",
+    "node-sass": "^7.0.0",
     "postcss": "^7.0.14",
     "pureimage": "^0.1.6",
     "recursive-readdir": "^2.2.2",
