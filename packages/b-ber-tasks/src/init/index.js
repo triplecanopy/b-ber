@@ -9,21 +9,23 @@ import Theme from '@canopycanopycanopy/b-ber-lib/Theme'
 import { ensure } from '@canopycanopycanopy/b-ber-lib/utils'
 
 class Initializer {
-  constructor({ name = '' }) {
+  constructor({ name = '', config }) {
     this.src = '_project'
     this.dist = 'project'
     this.name = name
+    this.config = config
     this.path = path.join(name, this.src)
     this.builds = Object.keys(sequences)
 
-    if (fs.existsSync(this.path))
+    if (fs.existsSync(this.path)) {
       log.error(`Project [${name}] already exits, aborting`)
+    }
   }
 
   createAssets = () => {
     const files = [
       Project.tocYAML(this.path),
-      Project.configYAML(this.path),
+      Project.configYAML(this.path, this.config),
       Project.metadataYAML(this.path),
       ...Project.javascripts(this.path),
       ...Project.stylesheets(this.path),

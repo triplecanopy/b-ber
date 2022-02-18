@@ -1,3 +1,5 @@
+/* eslint-disable global-require */
+/* eslint-disable import/extensions */
 import path from 'path'
 import crypto from 'crypto'
 import state from '@canopycanopycanopy/b-ber-lib/State'
@@ -24,11 +26,11 @@ class Project {
     return path.resolve(path.dirname(src), path.basename(src), ...rest)
   }
 
-  static configYAML(src) {
+  static configYAML(src, config = {}) {
     return {
       relativePath: Project.relativePath(src, '..', 'config.yml'),
       absolutePath: Project.absolutePath(src, '..', 'config.yml'),
-      content: YamlAdaptor.dump(state.config),
+      content: YamlAdaptor.dump({ ...state.config, ...config }),
     }
   }
 
@@ -36,7 +38,6 @@ class Project {
     return {
       relativePath: Project.relativePath(src, 'toc.yml'),
       absolutePath: Project.absolutePath(src, 'toc.yml'),
-      // eslint-disable-next-line global-require
       content: require('./toc.yml.js'),
     }
   }
@@ -45,7 +46,6 @@ class Project {
     return {
       relativePath: Project.relativePath(src, 'metadata.yml'),
       absolutePath: Project.absolutePath(src, 'metadata.yml'),
-      // eslint-disable-next-line global-require
       content: require('./metadata.yml.js').replace(
         /%IDENTIFIER%/,
         crypto.randomBytes(20).toString('hex')
@@ -66,7 +66,6 @@ class Project {
           '_javascripts',
           'application.js'
         ),
-        // eslint-disable-next-line global-require
         content: require('./application.js.js'),
       },
     ]
@@ -85,7 +84,6 @@ class Project {
           '_markdown',
           'project-name-title-page.md'
         ),
-        // eslint-disable-next-line global-require
         content: require('./project-name-title-page.md.js'),
       },
       {
@@ -99,7 +97,6 @@ class Project {
           '_markdown',
           'project-name-chapter-01.md'
         ),
-        // eslint-disable-next-line global-require
         content: require('./project-name-chapter-01.md.js'),
       },
       {
@@ -113,7 +110,6 @@ class Project {
           '_markdown',
           'project-name-colophon.md'
         ),
-        // eslint-disable-next-line global-require
         content: require('./project-name-colophon.md.js'),
       },
     ]
@@ -127,7 +123,6 @@ class Project {
     return {
       relativePath: Project.relativePath(src, '..', 'README.md'),
       absolutePath: Project.absolutePath(src, '..', 'README.md'),
-      // eslint-disable-next-line global-require
       content: require('./README.md.js').replace(
         /%PROJECT_NAME%/,
         path.basename(process.cwd())
@@ -139,7 +134,6 @@ class Project {
     return {
       relativePath: Project.relativePath(src, '..', '.gitignore'),
       absolutePath: Project.absolutePath(src, '..', '.gitignore'),
-      // eslint-disable-next-line global-require
       content: require('./gitignore.js'),
     }
   }
