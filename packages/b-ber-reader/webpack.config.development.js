@@ -1,9 +1,9 @@
 const path = require('path')
 const webpack = require('webpack')
-const loaders = require('./webpack.loaders')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
+const loaders = require('./webpack.loaders')
 
 module.exports = {
   target: 'web',
@@ -54,7 +54,15 @@ module.exports = {
         exclude: /(node_modules|public|dist|test)/,
         use: ExtractTextPlugin.extract({
           fallback: 'style-loader',
-          use: [{ loader: 'css-loader' }, { loader: 'sass-loader' }],
+          use: [
+            { loader: 'css-loader' },
+            {
+              loader: 'sass-loader',
+              options: {
+                implementation: require('sass'),
+              },
+            },
+          ],
         }),
       },
 

@@ -1,8 +1,8 @@
 const path = require('path')
 const webpack = require('webpack')
-const loaders = require('./webpack.loaders')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
+const loaders = require('./webpack.loaders')
 
 module.exports = {
   target: 'web',
@@ -58,11 +58,15 @@ module.exports = {
               loader: 'postcss-loader',
               options: {
                 ident: 'postcss',
-                // eslint-disable-next-line global-require
                 plugins: [require('autoprefixer')(), require('cssnano')()],
               },
             },
-            { loader: 'sass-loader' },
+            {
+              loader: 'sass-loader',
+              options: {
+                implementation: require('sass'),
+              },
+            },
           ],
         }),
       },
