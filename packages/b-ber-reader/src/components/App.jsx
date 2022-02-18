@@ -7,26 +7,27 @@ import { Request, Url } from '../helpers'
 import * as readerSettingsActions from '../actions/reader-settings'
 
 class App extends Component {
+  // eslint-disable-next-line react/state-in-constructor
   state = {
     pathname: '',
     search: '',
   }
 
   async UNSAFE_componentWillMount() {
-    let books = []
-    try {
-      const resp = await Request.getManifest()
-      books = resp.data
-    } catch (err) {
-      console.error('Could not load manifest from API', err)
-    }
-
     const params = new URLSearchParams(window.location)
     const search = params.get('search')
     const pathname = params.get('pathname').slice(1)
 
     let { bookURL, projectURL } = this.props.readerSettings
     if (!projectURL) projectURL = '' // Path from which to load api/books.json
+
+    let books = []
+    try {
+      const resp = await Request.getManifest(projectURL)
+      books = resp.data
+    } catch (err) {
+      console.error('Could not load manifest from API', err)
+    }
 
     // TODO if not title && not url ...
     const pred = pathname ? { title: pathname } : { url: bookURL }
@@ -58,6 +59,7 @@ class App extends Component {
     }
 
     return (
+      // eslint-disable-next-line react/jsx-props-no-spreading
       <Reader pathname={pathname} search={search} bookURL={bookURL} {...rest} />
     )
   }

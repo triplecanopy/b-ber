@@ -76,10 +76,25 @@ class Url {
       return '/'
     }
 
-    const url_ = Url.addTrailingSlash(url)
-    const path_ = Url.trimSlashes(path)
+    const nextPath = Url.trimSlashes(path)
+    let nextUrl = url
 
-    let { href } = new window.URL(path_, url_)
+    // Test that URL is actually an URL and not a fragment. If it is,
+    // then construct the complete URL based on location
+    if (/^http/.test(nextUrl) !== true) {
+      // Create the absolute URL
+      nextUrl = Url.resolveRelativeURL(
+        `${window.location.origin}${window.location.pathname}`,
+        nextUrl
+      )
+
+      // Return the result of the absolute URL with the original path
+      return Url.resolveRelativeURL(nextUrl, nextPath)
+    }
+
+    nextUrl = Url.addTrailingSlash(url)
+
+    let { href } = new window.URL(nextPath, nextUrl)
     href = Url.ensureDecodedURL(href)
     return encodeURI(href)
   }
