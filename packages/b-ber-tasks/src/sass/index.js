@@ -1,6 +1,6 @@
 import path from 'path'
 import fs from 'fs-extra'
-import nodeSass from 'node-sass'
+import dartSass from 'sass'
 import postcss from 'postcss'
 import autoprefixer from 'autoprefixer'
 import log from '@canopycanopycanopy/b-ber-logger'
@@ -136,7 +136,7 @@ function resolveImportedModule(importPath) {
 
 const renderCSS = scssString =>
   new Promise(resolve =>
-    nodeSass.render(
+    dartSass.render(
       {
         // Importer allows use of '~' to denote node_modules directory in SCSS files
         importer: (url, _file, done) =>
@@ -153,7 +153,7 @@ const renderCSS = scssString =>
           path.dirname(state.theme.entry),
           path.dirname(path.dirname(state.theme.entry)),
         ],
-        outputStyle: state.env === 'production' ? 'compressed' : 'nested',
+        outputStyle: state.env === 'production' ? 'compressed' : 'expanded',
         errLogToConsole: true,
       },
       (err, result) => {
