@@ -46,7 +46,8 @@
     "system": "^2.0.1",
     "uglify-js": "^3.10.0",
     "vinyl": "^2.2.0",
-    "webpage": "^0.3.0"
+    "webpage": "^0.3.0",
+    "xmlhttprequest-ssl": "^2.0.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.10.5",

@@ -75,6 +75,7 @@
     "css-tree": "^1.0.0-alpha.28",
     "cssnano": "^4.1.10",
     "detect-browser": "^2.1.0",
+    "handlebars": "^4.7.7",
     "history": "^4.7.2",
     "html-to-react": "^1.4.3",
     "js-string-escape": "^1.0.1",
@@ -93,7 +94,8 @@
     "sass": "^1.49.8",
     "setimmediate": "^1.0.5",
     "url-search-params-polyfill": "^4.0.0",
-    "xml-js": "^1.6.2"
+    "xml-js": "^1.6.2",
+    "xmlhttprequest-ssl": "^2.0.0"
   },
   "files": [
     "dist",
