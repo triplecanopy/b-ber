@@ -39,8 +39,10 @@
     "@canopycanopycanopy/b-ber-grammar-vimeo": "1.2.10",
     "@canopycanopycanopy/b-ber-parser-footnotes": "1.2.10",
     "@canopycanopycanopy/b-ber-parser-gallery": "1.2.10",
+    "lodash": "^4.17.21",
     "markdown-it": "^8.4.1",
-    "markdown-it-front-matter": "^0.1.2"
+    "markdown-it-front-matter": "^0.1.2",
+    "tar": "^6.1.11"
   },
   "files": [
     "dist"

@@ -32,8 +32,10 @@
     "@canopycanopycanopy/b-ber-templates": "1.2.10",
     "fs-extra": "^8.1.0",
     "image-size": "^0.8.3",
+    "lodash": "^4.17.21",
     "lodash.isundefined": "^3.0.1",
-    "mime-types": "^2.1.24"
+    "mime-types": "^2.1.24",
+    "tar": "^6.1.11"
   },
   "files": [
     "dist"

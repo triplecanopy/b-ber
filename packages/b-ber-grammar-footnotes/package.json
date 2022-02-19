@@ -25,7 +25,9 @@
   },
   "dependencies": {
     "@canopycanopycanopy/b-ber-lib": "1.2.10",
-    "lodash.find": "latest"
+    "lodash": "^4.17.21",
+    "lodash.find": "latest",
+    "tar": "^6.1.11"
   },
   "files": [
     "dist"

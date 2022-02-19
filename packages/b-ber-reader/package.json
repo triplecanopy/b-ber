@@ -79,7 +79,7 @@
     "history": "^4.7.2",
     "html-to-react": "^1.4.3",
     "js-string-escape": "^1.0.1",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.21",
     "object-fit-images": "^3.2.3",
     "prop-types": "^15.6.1",
     "quote": "^0.4.0",
@@ -93,6 +93,7 @@
     "resize-observer-polyfill": "^1.5.0",
     "sass": "^1.49.8",
     "setimmediate": "^1.0.5",
+    "tar": "^6.1.11",
     "url-search-params-polyfill": "^4.0.0",
     "xml-js": "^1.6.2",
     "xmlhttprequest-ssl": "^2.0.0"

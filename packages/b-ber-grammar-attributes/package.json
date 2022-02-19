@@ -20,7 +20,9 @@
     "@canopycanopycanopy/b-ber-lib": "1.2.10",
     "@canopycanopycanopy/b-ber-logger": "1.2.10",
     "@canopycanopycanopy/b-ber-shapes-directives": "1.2.2",
-    "lodash.has": "latest"
+    "lodash": "^4.17.21",
+    "lodash.has": "latest",
+    "tar": "^6.1.11"
   },
   "devDependencies": {
     "@babel/cli": "^7.10.5",

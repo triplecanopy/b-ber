@@ -26,7 +26,9 @@
   "dependencies": {
     "@canopycanopycanopy/b-ber-grammar-attributes": "1.2.10",
     "@canopycanopycanopy/b-ber-grammar-renderer": "1.2.10",
-    "@canopycanopycanopy/b-ber-parser-dialogue": "1.2.10"
+    "@canopycanopycanopy/b-ber-parser-dialogue": "1.2.10",
+    "lodash": "^4.17.21",
+    "tar": "^6.1.11"
   },
   "files": [
     "dist"

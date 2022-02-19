@@ -23,7 +23,9 @@
     "rimraf": "^2.6.3"
   },
   "dependencies": {
-    "fs-extra": "^8.1.0"
+    "fs-extra": "^8.1.0",
+    "lodash": "^4.17.21",
+    "tar": "^6.1.11"
   },
   "files": [
     "b-ber-logo.png",

@@ -17,7 +17,9 @@
     "access": "public"
   },
   "dependencies": {
-    "@babel/runtime-corejs3": "^7.10.5"
+    "@babel/runtime-corejs3": "^7.10.5",
+    "lodash": "^4.17.21",
+    "tar": "^6.1.11"
   },
   "devDependencies": {
     "@babel/cli": "^7.10.5",
