@@ -28,7 +28,7 @@
     "@canopycanopycanopy/b-ber-templates": "1.2.10",
     "@canopycanopycanopy/b-ber-validator": "1.2.2",
     "autoprefixer": "^9.6.1",
-    "browser-sync": "^2.26.12",
+    "browser-sync": "^2.27.7",
     "bs-html-injector": "^3.0.3",
     "cheerio": "^1.0.0-rc.2",
     "css": "^2.2.1",
