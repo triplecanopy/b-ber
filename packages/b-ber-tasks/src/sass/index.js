@@ -110,23 +110,40 @@ const copyThemeAssets = () => {
 }
 
 function resolveImportedModule(importPath) {
+  // Remove preceeding tilde
   const trimmedImportPath = importPath.slice(1)
+
+  // Get the import path as an array
   let importTree = trimmedImportPath.split(path.sep)
 
   // Remove empty entries caused by leading/trailing slashes
   importTree = importTree.filter(Boolean)
 
+  // Define both the scope and the name - the scope will be
+  // used to resolve the import and get the necessary path, the
+  // name will be used to construct the final file path
+  let moduleScope = ''
   let moduleName = importTree.shift()
-  if (moduleName[0] === '@') moduleName += `/${importTree.shift()}` // Allow scoped packages
 
-  const modulePath = require.resolve(moduleName, {
+  // Allow scoped packages
+  if (moduleName[0] === '@') {
+    moduleScope = moduleName
+    moduleName = importTree.shift()
+  }
+
+  // @foo/bar | foo
+  const moduleNameWithScope = path.join(moduleScope, moduleName)
+
+  // Get the module
+  const modulePath = require.resolve(moduleNameWithScope, {
     paths: [path.join(path.dirname(state.theme.entry))],
   })
 
   // No path was provided, return the imported node module
   if (!importTree.length) return modulePath
 
-  // User is importing a specific file, find it and return its location
+  // User is importing a specific file, find it and return its location. Remove
+  // the modules scope from the name when finding the path
   const moduleIndex = modulePath.indexOf(moduleName) + moduleName.length
   const packagePath = modulePath.slice(0, moduleIndex)
   const importedModule = path.join(packagePath, ...importTree)
@@ -139,10 +156,11 @@ const renderCSS = scssString =>
     dartSass.render(
       {
         // Importer allows use of '~' to denote node_modules directory in SCSS files
-        importer: (url, _file, done) =>
-          url[0] === '~'
-            ? done({ file: resolveImportedModule(url) })
-            : done({ file: url }),
+        importer: (url, _file, done) => {
+          const file = url[0] === '~' ? resolveImportedModule(url) : url
+
+          return done({ file })
+        },
 
         // Add build vars at runtime with the SCSS buffer (which is transformed
         // to string in the backticks)
