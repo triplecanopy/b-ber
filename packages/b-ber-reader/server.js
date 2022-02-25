@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /*
 
 Add compiled b-ber reader projects to an epub dir in b-ber-reader. These will be
@@ -46,7 +47,6 @@ const manifest = bookDirs.map(dir => ({
 }))
 
 const api = router.get('/books.json', (_, res) => {
-  console.log('manifest', manifest)
   return res.json(manifest)
 })
 
@@ -56,6 +56,6 @@ app.use('/api', api)
 app.get('*', (_, res) =>
   res.sendFile(path.join(__dirname, 'public', 'index.html'))
 )
-app.listen(PORT, '0.0.0.0')
-
-console.log(`Listening on ${baseURL}`)
+app.listen(PORT, HOST, () => {
+  console.log(`Listening on ${baseURL}`)
+})
