@@ -1,2 +1,2 @@
-// required for module resolution
+// Required for module resolution
 module.exports = {}
