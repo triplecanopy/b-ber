@@ -9,7 +9,8 @@
     "clean": "rimraf dist",
     "test": "echo \"TODO update tests\" # jest",
     "serve": "npm run build && nodemon server.js",
-    "build": "npm run clean && webpack --config ./webpack.config.js --mode production"
+    "xbuild": "npm run clean && webpack --config ./webpack.config.js --mode production",
+    "build": "npm run clean && webpack --config ./webpack.config.js --mode development"
   },
   "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
   "license": "GPL-3.0-or-later",

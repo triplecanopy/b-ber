@@ -4,6 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 module.exports = {
   context: path.resolve(__dirname, 'src'),
   entry: './index.js',
+  devtool: 'source-map',
   module: {
     rules: [
       {
@@ -32,6 +33,12 @@ module.exports = {
   },
   resolve: {
     extensions: ['.js', '.jsx'],
+
+    // https://github.com/facebook/react/issues/13991
+    alias: {
+      react: path.resolve('./node_modules/react'),
+      'react-dom': path.resolve('./node_modules/react-dom'),
+    },
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
