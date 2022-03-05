@@ -7,8 +7,7 @@ module.exports = {
     index: './index.jsx',
     styles: './index.scss',
   },
-  // devtool: process.env.NODE_ENV === 'production' ? 'none' : 'source-map',
-  devtool: 'source-map',
+  devtool: process.env.NODE_ENV === 'production' ? 'none' : 'source-map',
   output: {
     publicPath: '/',
     path: path.resolve(__dirname, '..', 'dist'),
