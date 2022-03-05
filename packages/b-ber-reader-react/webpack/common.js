@@ -6,9 +6,6 @@ module.exports = {
   entry: {
     index: './index.jsx',
     styles: './index.scss',
-    'index.min': './index.jsx',
-    'app.min': './reader.jsx',
-    'styles.min': './index.scss',
   },
   devtool: process.env.NODE_ENV === 'production' ? 'none' : 'source-map',
   output: {

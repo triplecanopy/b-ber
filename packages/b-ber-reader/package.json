@@ -7,8 +7,9 @@
     "prepublish": "npm test",
     "preversion": "npm test",
     "clean": "rimraf dist",
-    "build": "npm run clean",
-    "test": "[[ -d dist ]] && [[ $(ls dist | egrep '\\.css|\\.js|\\.html' | wc -l) = 3 ]]"
+    "test": "echo \"TODO update tests\" # jest",
+    "serve": "npm run build && nodemon server.js",
+    "build": "npm run clean && webpack --config ./webpack.config.js --mode production"
   },
   "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
   "license": "GPL-3.0-or-later",
@@ -16,8 +17,24 @@
     "access": "public"
   },
   "devDependencies": {
-    "@canopycanopycanopy/b-ber-reader-react": "1.2.12",
-    "rimraf": "^2.6.3"
+    "@babel/core": "^7.16.0",
+    "@babel/preset-env": "^7.16.0",
+    "@babel/preset-react": "^7.16.0",
+    "@canopycanopycanopy/b-ber-reader-react": "file:../b-ber-reader-react/canopycanopycanopy-b-ber-reader-react-1.2.12.tgz",
+    "babel-loader": "^8.2.3",
+    "css-loader": "^6.5.1",
+    "express": "^4.17.3",
+    "html-webpack-plugin": "^5.5.0",
+    "nodemon": "^2.0.15",
+    "rimraf": "^2.6.3",
+    "style-loader": "^3.3.1",
+    "url-loader": "^4.1.1",
+    "webpack": "^5.64.3",
+    "webpack-cli": "^4.9.1"
+  },
+  "dependencies": {
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0"
   },
   "files": [
     "dist"

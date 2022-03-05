@@ -12,5 +12,3 @@
 #
 
 npm run webpack:dist "$1"
-mkdir -p ../b-ber-reader/dist
-cp -r dist/. ../b-ber-reader/dist/

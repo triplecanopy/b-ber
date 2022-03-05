@@ -45,10 +45,7 @@ const manifest = bookDirs.map(dir => ({
   cover: cover(dir),
 }))
 
-const api = router.get('/books.json', (_, res) => {
-  console.log('manifest', manifest)
-  return res.json(manifest)
-})
+const api = router.get('/books.json', (_, res) => res.json(manifest))
 
 app.use(express.static('dist'))
 app.use(`/${BASE_DIR}`, express.static(path.join(__dirname, BASE_DIR)))
