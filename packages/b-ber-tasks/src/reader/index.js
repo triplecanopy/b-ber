@@ -22,17 +22,19 @@ class Reader {
     this.readerModuleDistDir = 'dist'
     this.readerAppPath = null
 
-    return this.createOutputDirs()
-      .then(() => this.ensureReaderModuleExists())
-      .then(() => this.copyEpubToOutputDir())
-      .then(() => this.writeBookManifest())
-      .then(() => this.writeWebpubManifest())
-      .then(() => this.copyReaderAppToOutputDir())
-      .then(() => this.injectServerDataIntoTemplate())
-      .then(() => this.updateLinkedResourcesWithAbsolutePaths())
-      .then(() => this.updateAssetURLsWithAbsolutePaths())
-      .then(() => this.injectWebpubManifestLink())
-      .catch(log.error)
+    return (
+      this.createOutputDirs()
+        .then(() => this.ensureReaderModuleExists())
+        .then(() => this.copyEpubToOutputDir())
+        .then(() => this.writeBookManifest())
+        .then(() => this.writeWebpubManifest())
+        .then(() => this.copyReaderAppToOutputDir())
+        .then(() => this.injectServerDataIntoTemplate())
+        // .then(() => this.updateLinkedResourcesWithAbsolutePaths())
+        .then(() => this.updateAssetURLsWithAbsolutePaths())
+        .then(() => this.injectWebpubManifestLink())
+        .catch(log.error)
+    )
   }
 
   get remoteURL() {
@@ -219,6 +221,7 @@ class Reader {
     return fs.writeFile(indexHTML, contents)
   }
 
+  // Update URLs in CSS
   updateLinkedResourcesWithAbsolutePaths() {
     const indexContents = fs.readFileSync(state.dist.root('index.html'), 'utf8')
     const versionHash = indexContents.match(/link href="\/(\w+\.css)"/)[1]
