@@ -8,14 +8,12 @@ export const initialState = {
   // loadRemoteLibrary: true, // TODO unused
   uiOptions: {
     navigation: {
-      // eslint-disable-next-line camelcase
       header_icons: {
         home: true,
         toc: true,
         downloads: true,
         info: true,
       },
-      // eslint-disable-next-line camelcase
       footer_icons: {
         chapter: true,
         page: true,

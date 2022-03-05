@@ -6,27 +6,58 @@ module.exports = [
   {
     test: /\.(eot|woff2?|otf|ttf|svg)$/,
     exclude: /(dist|test|__tests__|epub)/,
-    loader: 'url-loader?limit=10000&mimetype=application/octet-stream',
+    use: {
+      loader: 'url-loader',
+      options: {
+        limit: 1000,
+        name: 'fonts/[name].[ext]',
+        publicPath: '.',
+      },
+    },
   },
   {
     test: /\.svg$/,
     exclude: [...exclude, path.resolve(__dirname, '..', 'assets', 'fonts')],
-    loader: 'url-loader?limit=10000&mimetype=image/svg+xml',
+    use: {
+      loader: 'url-loader',
+      options: {
+        limit: 1000,
+        mimetype: 'image/svg+xml',
+      },
+    },
   },
   {
     test: /\.gif/,
     exclude,
-    loader: 'url-loader?limit=10000&mimetype=image/gif',
+    use: {
+      loader: 'url-loader',
+      options: {
+        limit: 1000,
+        mimetype: 'image/gif',
+      },
+    },
   },
   {
     test: /\.jpe?g/,
     exclude,
-    loader: 'url-loader?limit=10000&mimetype=image/jpg',
+    use: {
+      loader: 'url-loader',
+      options: {
+        limit: 1000,
+        mimetype: 'image/jpg',
+      },
+    },
   },
   {
     test: /\.png/,
     exclude,
-    loader: 'url-loader?limit=10000&mimetype=image/png',
+    use: {
+      loader: 'url-loader',
+      options: {
+        limit: 1000,
+        mimetype: 'image/png',
+      },
+    },
   },
   {
     test: /\.jsx?$/,
@@ -40,7 +71,10 @@ module.exports = [
             debug: false,
             bugfixes: true,
             corejs: 3,
-            modules: 'commonjs', // https://github.com/webpack/webpack/issues/4039
+
+            // https://github.com/webpack/webpack/issues/4039
+            modules: 'commonjs',
+
             targets: {
               browsers: 'last 2 versions, > 2%',
             },

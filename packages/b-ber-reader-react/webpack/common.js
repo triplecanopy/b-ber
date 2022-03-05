@@ -1,22 +1,43 @@
 const path = require('path')
 
-const devtool = process.env.NODE_ENV === 'production' ? 'none' : 'source-map'
-const filename =
-  process.env.NODE_ENV === 'production' ? '[hash].js' : '[name].js'
-
 module.exports = {
   target: 'web',
   context: path.resolve(__dirname, '..', 'src'),
   entry: {
-    app: './index.jsx',
-    css: './index.scss',
+    index: './index.jsx',
+    styles: './index.scss',
+    'index.min': './index.jsx',
+    'app.min': './reader.jsx',
+    'styles.min': './index.scss',
   },
-  devtool,
+  devtool: process.env.NODE_ENV === 'production' ? 'none' : 'source-map',
   output: {
     publicPath: '/',
     path: path.resolve(__dirname, '..', 'dist'),
-    filename,
+    filename: data =>
+      /\.min/.test(data.chunk.name) ? '[name].[hash].js' : '[name].js',
+    libraryTarget: 'umd',
   },
+
+  // Use external version of React
+  // https://github.com/facebook/react/issues/13991
+  // Still unable to use `npm link`, but the project can be loaded from a
+  // tarball for development
+  externals: {
+    react: {
+      commonjs: 'react',
+      commonjs2: 'react',
+      amd: 'react',
+      root: 'React',
+    },
+    'react-dom': {
+      commonjs: 'react-dom',
+      commonjs2: 'react-dom',
+      amd: 'react-dom',
+      root: 'ReactDOM',
+    },
+  },
+
   resolve: {
     extensions: ['.js', '.jsx'],
   },
