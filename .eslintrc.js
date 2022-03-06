@@ -13,6 +13,14 @@ module.exports = {
     camelcase: [2, { allow: ['^UNSAFE_'] }],
     'consistent-return': 0,
     'import/extensions': [2, 'never'],
+    'import/no-extraneous-dependencies': [
+      'error',
+      {
+        devDependencies: true,
+        optionalDependencies: false,
+        peerDependencies: false,
+      },
+    ],
     'jsx-a11y/href-no-hash': 0,
     'jsx-a11y/label-has-for': [
       2,
