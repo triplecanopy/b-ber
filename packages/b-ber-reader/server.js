@@ -1,8 +1,8 @@
 /*
 
-Add compiled b-ber reader projects to an epub dir in b-ber-reader. These will be
-served when running `npm start` from the b-ber-reader dir at
-http://localhost:4000 or at the provided hostname and port
+Add compiled b-ber reader projects to an epub dir in b-ber-reader-react.
+These will be served when running `npm start` from the b-ber-reader-react
+dir at http://localhost:4000 or at the provided hostname and port
 
 */
 
@@ -45,16 +45,13 @@ const manifest = bookDirs.map(dir => ({
   cover: cover(dir),
 }))
 
-const api = router.get('/books.json', (_, res) => {
-  console.log('manifest', manifest)
-  return res.json(manifest)
-})
+const api = router.get('/books.json', (_, res) => res.json(manifest))
 
-app.use(express.static('public'))
+app.use(express.static('dist'))
 app.use(`/${BASE_DIR}`, express.static(path.join(__dirname, BASE_DIR)))
 app.use('/api', api)
 app.get('*', (_, res) =>
-  res.sendFile(path.join(__dirname, 'public', 'index.html'))
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'))
 )
 app.listen(PORT, '0.0.0.0')
 

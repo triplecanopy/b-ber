@@ -1,7 +1,0 @@
-module.exports = {
-  debug: false,
-  showBreakpoints: false,
-  showGrid: false,
-  useLocalStorage: true,
-  verboseOutput: false,
-}
