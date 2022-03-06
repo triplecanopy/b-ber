@@ -18,6 +18,10 @@ async function main() {
 
     const { devDependencies } = await fs.readJSON(file)
 
+    Object.entries(devDependencies).forEach(([key]) => {
+      if (/@canopycanopycanopy/.test(key)) delete devDependencies[key]
+    })
+
     return devDependencies ? (await acc).concat(devDependencies) : acc
   }, Promise.resolve([baseDeps]))
 
