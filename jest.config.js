@@ -47,10 +47,6 @@ module.exports = {
   testEnvironment: 'jest-environment-jsdom-global',
   testPathIgnorePatterns: ['__mocks__'],
   testURL: 'http://localhost/',
-  moduleNameMapper: {
-    '@canopycanopycanopy/b-ber-shapes-directives':
-      '<rootDir>/packages/b-ber-shapes-directives',
-  },
   transform: {
     '^.+\\.tsx?$': 'ts-jest',
     '^.+\\.jsx?$': 'babel-jest',

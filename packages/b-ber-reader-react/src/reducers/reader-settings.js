@@ -1,3 +1,5 @@
+/* eslint-disable camelcase */
+
 import * as actionTypes from '../constants/reader-settings'
 
 export const initialState = {

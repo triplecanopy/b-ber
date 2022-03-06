@@ -13,14 +13,7 @@ module.exports = {
     camelcase: [2, { allow: ['^UNSAFE_'] }],
     'consistent-return': 0,
     'import/extensions': [2, 'never'],
-    'import/no-extraneous-dependencies': [
-      'error',
-      {
-        devDependencies: true,
-        optionalDependencies: false,
-        peerDependencies: false,
-      },
-    ],
+    'import/no-extraneous-dependencies': 0,
     'jsx-a11y/href-no-hash': 0,
     'jsx-a11y/label-has-for': [
       2,
@@ -70,6 +63,7 @@ module.exports = {
     'padded-blocks': 0,
     'react/destructuring-assignment': 0,
     'react/jsx-boolean-value': 0,
+    'react/jsx-filename-extension': 0,
     'react/jsx-indent': 0,
     'react/no-array-index-key': 0,
     'react/no-danger': 0,

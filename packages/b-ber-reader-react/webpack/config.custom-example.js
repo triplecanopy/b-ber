@@ -1,5 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
-
 const { clone, setWith } = require('lodash')
 const prevConfig = require('./config.development')
 

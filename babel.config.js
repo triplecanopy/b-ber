@@ -1,7 +1,7 @@
 module.exports = api => {
   const env = api.env()
 
-  const supportedNodeVersion = '10'
+  const supportedNodeVersion = '16'
   const targetNodeTargets =
     env === 'production' ? supportedNodeVersion : 'current'
 
@@ -54,10 +54,11 @@ module.exports = api => {
       '@babel/plugin-proposal-optional-chaining',
     ],
 
-    // Override options for reader. See https://babeljs.io/docs/en/options#merging
+    // Override options for reader.
+    // See https://babeljs.io/docs/en/options#merging
     overrides: [
       {
-        test: './packages/b-ber-reader',
+        test: /b-ber-reader/,
         presets: [['@babel/env', envOptsReader], '@babel/preset-react'],
         plugins: [
           // Disabled for web builds

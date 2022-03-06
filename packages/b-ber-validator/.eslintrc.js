@@ -13,6 +13,7 @@ module.exports = {
     sourceType: 'module',
     tsconfigRootDir: __dirname,
     project: ['./tsconfig.eslint.json'],
+    createDefaultProgram: true,
   },
   extends: [
     'plugin:@typescript-eslint/recommended',

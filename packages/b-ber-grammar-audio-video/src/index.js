@@ -44,7 +44,7 @@ function prepare({ token, marker, context, instance, fileName, lineNumber }) {
   let sourceElements = ''
   let err = null
   let poster = ''
-  let provider = null // eslint-disable-line no-unused-vars
+  // let provider = null
   let aspectRatio = '16x9'
   let aspectRatioClassName = ''
 
@@ -76,7 +76,7 @@ function prepare({ token, marker, context, instance, fileName, lineNumber }) {
   if (isHostedRemotely(source)) {
     const supportedThirdParty = isHostedBySupportedThirdParty(source)
     if (supportedThirdParty) {
-      ;[, provider] = supportedThirdParty
+      // ;[, provider] = supportedThirdParty
       type = type.replace(/(audio|video)/, 'iframe') // iframe, iframe-inline
     } else {
       sources = [source]

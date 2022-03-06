@@ -13,6 +13,10 @@ module.exports = {
     path: path.resolve(__dirname, '..', 'dist'),
     filename: data =>
       /\.min/.test(data.chunk.name) ? '[name].[hash].js' : '[name].js',
+
+    library: {
+      root: 'BberReader',
+    },
     libraryTarget: 'umd',
   },
 

@@ -1,5 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
-
 const {
   DefinePlugin,
   HotModuleReplacementPlugin,

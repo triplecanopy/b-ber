@@ -14,7 +14,7 @@
     "build": "./scripts/build.sh",
     "serve": "nodemon server.js",
     "test:watch": "jest --watch",
-    "test": "echo \"TODO update tests\" # jest",
+    "test": "jest",
     "webpack": "webpack",
     "bundle": "npm run build && npm pack"
   },
@@ -103,7 +103,8 @@
     "react-dom": "^16.2.0"
   },
   "files": [
-    "dist"
+    "dist",
+    "index.d.ts"
   ],
   "repository": {
     "type": "git",
