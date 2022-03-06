@@ -14,7 +14,7 @@
     "build": "npm run webpack:dist",
     "serve": "nodemon server.js",
     "test:watch": "jest --watch",
-    "test": "jest"
+    "test": "echo todo # jest"
   },
   "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
   "license": "GPL-3.0-or-later",

@@ -7,6 +7,9 @@
     "publish": {
       "message": "%v"
     },
+    "bootstrap": {
+      "npmClientArgs": ["--no-package-lock"]
+    },
     "version": {
       "exact": true
     }
