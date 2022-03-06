@@ -8,7 +8,7 @@ module.exports = {
     rules: [
       {
         test: /\.(eot|woff2?|otf|ttf|svg)$/,
-        exclude: /(dist|test|__tests__|epub)/,
+        exclude: /(test|__tests__|epub)/,
         use: [
           {
             loader: 'url-loader',
@@ -35,8 +35,8 @@ module.exports = {
 
     // https://github.com/facebook/react/issues/13991
     alias: {
-      react: path.resolve('./node_modules/react'),
-      'react-dom': path.resolve('./node_modules/react-dom'),
+      react: path.resolve('../../node_modules/react'),
+      'react-dom': path.resolve('../../node_modules/react-dom'),
     },
   },
   output: {
