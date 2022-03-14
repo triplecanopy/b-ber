@@ -20,7 +20,9 @@ class App extends Component {
     let { bookURL, projectURL } = this.props.readerSettings
 
     // Path from which to load api/books.json
-    if (!projectURL) projectURL = ''
+    if (!projectURL) {
+      ;({ origin: projectURL } = new URL(bookURL))
+    }
 
     let books = []
 

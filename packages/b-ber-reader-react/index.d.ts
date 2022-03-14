@@ -42,11 +42,11 @@ export enum Layout {
 }
 
 export interface BberReaderProps {
-  books: Book[]
   bookURL: string
-  projectURL: string
+  projectURL?: string
+  books?: Book[]
   downloads?: Download[]
-  basePath: string
+  basePath?: string
   loadRemoteLibrary?: boolean
   uiOptions?: UI
   cache?: boolean
