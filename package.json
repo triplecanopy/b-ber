@@ -117,7 +117,7 @@
     "prop-types": "^15.6.1",
     "react-test-renderer": "^16.4.0",
     "resize-observer-polyfill": "^1.5.0",
-    "rimraf": "^2.6.3",
+    "rimraf": "^2.7.1",
     "sass-lint": "^1.12.1",
     "sass-loader": "^7.0.3",
     "sass": "^1.49.8",
