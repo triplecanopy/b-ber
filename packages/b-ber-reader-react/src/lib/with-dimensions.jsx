@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-props-no-spreading */
+
 import React from 'react'
 import Viewport from '../helpers/Viewport'
 import { isNumeric } from '../helpers/Types'
@@ -20,8 +22,19 @@ const withDimensions = WrappedComponent => {
     }
 
     getWidth = scrollingLayout => {
+      // Column layout, return the window width
       if (!scrollingLayout) return window.innerWidth
-      const landscapeOrientation = window.innerHeight < window.innerWidth
+
+      // Scrolling layout, but not a mobile device, return the window width
+      if (/mobi/i.test(window.navigator.userAgent) === false) {
+        return window.innerWidth
+      }
+
+      // Get the device orientation and return either the screen height or width
+      const { matches: landscapeOrientation } = window.matchMedia(
+        '(orientation: landscape)'
+      )
+
       return landscapeOrientation ? window.screen.height : window.screen.width
     }
 

@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /*
 
 Add compiled b-ber reader projects to an epub dir in b-ber-reader-react.
@@ -53,6 +54,6 @@ app.use('/api', api)
 app.get('*', (_, res) =>
   res.sendFile(path.join(__dirname, 'dist', 'index.html'))
 )
-app.listen(PORT, '0.0.0.0')
-
-console.log(`Listening on ${baseURL}`)
+app.listen(PORT, HOST, () => {
+  console.log(`Listening on ${baseURL}`)
+})
