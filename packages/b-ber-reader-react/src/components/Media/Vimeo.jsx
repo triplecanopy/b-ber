@@ -26,7 +26,7 @@ class Vimeo extends React.Component {
     url: '',
     loop: false, // Not sure why this needs to be duplicated on the ReactPlayer
     muted: false, // Not sure why this needs to be duplicated on the ReactPlayer
-    controls: true, // TODO custom controls tbd
+    controls: true,
     playing: false,
     autoplay: true,
     posterImage: null,
@@ -185,7 +185,7 @@ class Vimeo extends React.Component {
             playing={playing}
             controls={controls}
             playsinline={true}
-            config={{ vimeo: playerOptions }}
+            config={{ vimeo: { playerOptions } }}
             onPause={this.handlePause}
             onEnded={this.handleEnded}
           />
