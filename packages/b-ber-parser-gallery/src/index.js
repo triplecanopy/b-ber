@@ -255,7 +255,7 @@ const containerPlugin = (md, name, options = {}) => {
   }
 
   md.block.ruler.before('fence', `container_${name}`, container, {
-    alt: ['paragraph', 'reference', 'blockquote', 'list'],
+    alt: ['paragraph', 'reference', 'blockquote'],
   })
   md.renderer.rules[`container_${name}_open`] = render
   md.renderer.rules[`container_${name}_close`] = render

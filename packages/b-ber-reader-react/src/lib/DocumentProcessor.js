@@ -1,3 +1,4 @@
+/* eslint-disable lines-between-class-members */
 /* eslint-disable no-param-reassign */
 /* eslint-disable class-methods-use-this */
 
@@ -7,17 +8,17 @@ import { rand } from '../helpers/utils'
 
 class DocumentProcessor {
   static defaults = {
-    targetClassNames: [
+    fullbleedClassNames: [
       ['figure__inline', 'figure__large', 'figure__fullbleed'],
       ['spread'],
     ],
     blacklistedClassNames: [
       ['gallery__item', 'figure__items', 'figure__processed'],
+      ['pullquote'],
+      ['initial'],
     ],
     markerClassNames: 'marker',
     markerElement: 'span',
-    paddingLeft: 0,
-    columnGap: 0,
     responseURL: window.location.host,
   }
 
@@ -36,7 +37,7 @@ class DocumentProcessor {
 
     DocumentPreProcessor.setRequestURI(this.settings.responseURL)
 
-    this.targetClassNames = this.settings.targetClassNames
+    this.fullbleedClassNames = this.settings.fullbleedClassNames
     this.blacklistedClassNames = this.settings.blacklistedClassNames
     this.markerClassNames = this.settings.markerClassNames
     this.markerElement = this.settings.markerElement
@@ -78,6 +79,8 @@ class DocumentProcessor {
         'IFRAME',
         'FIGURE',
         'CITE',
+        'BLOCKQUOTE',
+        'LI',
       ]),
     }
   }
@@ -88,8 +91,11 @@ class DocumentProcessor {
     )
   }
 
+  classListContainsAny = (node, classNames) =>
+    classNames.some(name => node.classList.contains(name))
+
   classListContainsNone(node, classNames) {
-    return classNames.some(list =>
+    return classNames.every(list =>
       list.every(name => !node.classList.contains(name))
     )
   }
@@ -103,12 +109,19 @@ class DocumentProcessor {
     )
   }
 
-  isTarget(node) {
-    return this.classListContainsAll(node, this.targetClassNames)
+  isFullbleed(node) {
+    return this.classListContainsAll(node, this.fullbleedClassNames)
   }
 
   isMarker(node) {
-    return this.classListContainsAll(node, [['marker']])
+    return this.classListContainsAll(node, [[this.markerClassNames]])
+  }
+
+  isMarkerReferenceNode(node) {
+    return (
+      this.classListContainsAny(node, ['spread__content']) ||
+      node.nodeName === 'FIGURE'
+    )
   }
 
   hasChildren(node) {
@@ -121,7 +134,9 @@ class DocumentProcessor {
     for (let i = children.length - 1; i >= 0; i--) {
       // Start at bottom
       node = children[i]
-      if (!this.shouldParse(node)) continue // eslint-disable-line no-continue
+      if (!this.shouldParse(node)) {
+        continue // eslint-disable-line no-continue
+      }
 
       if (this.hasChildren(node)) {
         return this.getLastChild(node.children)
@@ -137,30 +152,32 @@ class DocumentProcessor {
 
   getSibling(node) {
     if (node === null) return node
-    const node_ = node.previousElementSibling
-    // top of document
-    if (!node_) {
+
+    const { previousElementSibling } = node
+
+    // Top of document
+    if (!previousElementSibling) {
       return this.getSibling(node.parentNode)
     }
 
-    // If the sibling is another target, it can't be parses, and can't be appended
+    // If the sibling is another target, it can't be parsed, and can't be appended
     // to since it's going to be absolutely positioned, so return sibling
-    if (this.isTarget(node_)) {
-      return this.getSibling(node_)
+    if (this.isFullbleed(previousElementSibling)) {
+      return this.getSibling(previousElementSibling)
     }
 
     // Not a target, not parseable, get siblings
-    if (!this.shouldParse(node_)) {
-      return this.getSibling(node_)
+    if (!this.shouldParse(previousElementSibling)) {
+      return this.getSibling(previousElementSibling)
     }
 
-    // No children, append to node_
-    if (!this.hasChildren(node_)) {
-      return node_
+    // No children, append to previousElementSibling
+    if (!this.hasChildren(previousElementSibling)) {
+      return previousElementSibling
     }
 
     // Node can be parsed, find the last child and append marker
-    const lastChild = this.getLastChild(node_.children)
+    const lastChild = this.getLastChild(previousElementSibling.children)
     return lastChild
   }
 
@@ -189,12 +206,6 @@ class DocumentProcessor {
     return rand()
   }
 
-  isMarkerReferenceNode(node) {
-    return (
-      node.classList.contains('spread__content') || node.nodeName === 'FIGURE'
-    )
-  }
-
   addMarkerReferenceToChild(node, markerId) {
     for (let i = 0; i < node.children.length; i++) {
       if (this.isMarkerReferenceNode(node.children[i])) {
@@ -204,22 +215,29 @@ class DocumentProcessor {
   }
 
   insertMarkers(doc, callback) {
-    const nodes = doc.children
+    // Filter nodes that have been dynamically inserted into the DOM
+    const nodes = Array.from(doc.children).filter(node => !this.isMarker(node))
 
     for (let i = 0; i < nodes.length; i++) {
       const node = nodes[i]
       const markerId = this.createMarkerId()
+
       let sibling
 
-      if (this.shouldParse(node)) {
-        if (this.isTarget(node)) {
+      const shouldParse = this.shouldParse(node)
+      const isFullbleed = this.isFullbleed(node)
+
+      if (shouldParse) {
+        if (isFullbleed) {
           sibling = this.getSibling(node)
+
           if (sibling) {
             const marker = this.createMarker(markerId)
 
             // Check to see if the marker being injected shares a parent with
             // another marker and set a flag if so. This is referenced in
             // Marker.jsx
+
             if (
               sibling.lastElementChild &&
               this.isMarker(sibling.lastElementChild)
@@ -244,6 +262,7 @@ class DocumentProcessor {
             this.addMarkerReferenceToChild(node, markerId)
           }
         }
+
         if (node.children && node.children.length) {
           this.insertMarkers(node)
         }
@@ -264,7 +283,7 @@ class DocumentProcessor {
     node.style.paddingBottom = '0'
   }
 
-  addUltimateNode(doc) {
+  addLastNode(doc) {
     const blacklist = new Set([
       'META',
       'TITLE',
@@ -334,6 +353,31 @@ class DocumentProcessor {
     }
   }
 
+  // The `break-after` class should not exist on elements
+  // preceeding a spread
+  removeBreakAfterClasses(doc) {
+    const nodes = Array.from(doc.children).filter(
+      node => !this.isMarker(node) && node.nodeType === 1
+    )
+
+    for (let i = 0; i < nodes.length; i++) {
+      const node = nodes[i]
+      const sibling = node.nextElementSibling
+
+      if (
+        node.classList.contains('break-after') &&
+        sibling &&
+        this.isFullbleed(sibling)
+      ) {
+        node.classList.remove('break-after')
+      }
+
+      if (node.children && node.children.length) {
+        this.removeBreakAfterClasses(node)
+      }
+    }
+  }
+
   // Check that all references have markers
   validateDocument(doc) {
     const markers = doc.querySelectorAll('[data-marker]')
@@ -373,13 +417,12 @@ class DocumentProcessor {
   parseXML(xmlString, callback) {
     const parser = new window.DOMParser()
     const doc = parser.parseFromString(xmlString, 'text/html')
-    const { paddingLeft, columnGap } = this.settings
 
     let xml
     let err = null
 
     DocumentPreProcessor.setContextDocument(doc)
-    DocumentPreProcessor.createStyleSheets({ paddingLeft, columnGap })
+    DocumentPreProcessor.createStyleSheets()
     DocumentPreProcessor.createScriptElements()
     DocumentPreProcessor.parseXML()
 
@@ -388,8 +431,9 @@ class DocumentProcessor {
         err = new Error('Invalid markup')
       }
 
-      this.addUltimateNode(doc)
+      this.addLastNode(doc)
       this.addIndicesToMarkers(doc)
+      this.removeBreakAfterClasses(doc)
 
       xml = xmlString.replace(
         /<body([^>]*?)>[\s\S]*<\/body>/g,

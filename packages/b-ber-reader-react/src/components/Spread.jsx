@@ -66,7 +66,7 @@ class Spread extends React.Component {
       return console.error('Cannot update child positions: No marker')
     }
 
-    const { /* verso, */ recto, elementEdgeLeft, unbound } = marker
+    const { /* verso,  recto,*/ elementEdgeLeft, unbound } = marker
     // set this after loading to prevent figures drifing around on initial page load
     // TODO: should be passing in transition speed
     // @issue: https://github.com/triplecanopy/b-ber/issues/216
@@ -74,18 +74,21 @@ class Spread extends React.Component {
     const width = window.innerWidth
     const { paddingLeft, paddingRight, columnGap } = this.props.viewerSettings
     const layoutWidth = width - paddingLeft - paddingRight + columnGap // not sure why we're adding columnGap in here ...
-    const spreadPosition =
-      Math.round((elementEdgeLeft + paddingLeft) / layoutWidth) + 1
+    // const spreadPosition =
+    //   Math.round((elementEdgeLeft + paddingLeft) / layoutWidth) + 1
+
+    const spreadPosition = Math.ceil(elementEdgeLeft / layoutWidth)
+    // console.log('spreadPosition', elementEdgeLeft / layoutWidth, spreadPosition)
 
     const { layout } = this.props.readerSettings
 
     let left = 0
     if (!Viewport.isMobile() && layout !== layouts.SCROLL) {
       left = layoutWidth * spreadPosition
-      if (recto) left -= layoutWidth
+      // if (recto) left -= layoutWidth
       if (unbound) left = 0
     } else {
-      left = 0
+      // left = 0
     }
 
     left = `${left}px`
@@ -100,7 +103,7 @@ class Spread extends React.Component {
     if (!marker) return null
 
     const { spreadPosition } = this.state
-    const { recto, elementEdgeLeft, unbound } = marker
+    const { recto, unbound /*, elementEdgeLeft */ } = marker
     const { paddingLeft } = this.props.viewerSettings
     const { layout } = this.props.readerSettings
 
@@ -119,10 +122,10 @@ class Spread extends React.Component {
           recto={recto}
           markerRefId={markerId}
           spreadPosition={spreadPosition}
-          unbound={unbound}
           paddingLeft={paddingLeft}
-          markerX={elementEdgeLeft}
+          unbound={unbound}
           layout={layout}
+          // markerX={elementEdgeLeft}
         />
 
         <SpreadContext.Provider value={{ left, layout }}>

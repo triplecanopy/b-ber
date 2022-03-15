@@ -63,10 +63,17 @@ class Viewport {
   static getColumnCount = () =>
     Viewport.isMobile() ? MOBILE_COLUMN_COUNT : DESKTOP_COLUMN_COUNT
 
-  // flexible columns, flexible gutters.
-  // gutter is hard-coded to be 20% of a column's width
-  static getGutterWidth = () =>
-    (35 / (Viewport.getColumnCount() - 1) / 100) * window.innerWidth
+  // Flexible columns, flexible gutters.
+  // 50% of the width of one column. Not sure if it makes sense here to
+  // measure the columns against the width of the window, or the width
+  // of the visible frame.
+  static getGutterWidth = () => {
+    // const frameWidth = Math.min(window.innerWidth, LAYOUT_MAX_WIDTH)
+    const columnWidth = window.innerWidth / Viewport.getColumnCount()
+    const gutterWidth = columnWidth * 0.5
+
+    return gutterWidth
+  }
 
   static getColumnWidth = () =>
     (65 / Viewport.getColumnCount() / 100) * window.innerWidth

@@ -24,16 +24,18 @@ class DocumentPreProcessor {
     state.requestURI = requestURI
   }
 
-  static createStyleSheets({ paddingLeft, columnGap }) {
+  static createStyleSheets() {
     state.styleSheets = [
       ...state.styleSheets,
+
       new MediaStyleSheet({
         media: MEDIA_QUERY_LARGE,
-        rules: [...mediaSmall({ paddingLeft, columnGap })],
+        rules: [...mediaSmall()],
       }),
+
       new MediaStyleSheet({
         media: MEDIA_QUERY_SMALL,
-        rules: [...mediaLarge({ paddingLeft, columnGap })],
+        rules: [...mediaLarge()],
       }),
     ]
   }
@@ -139,7 +141,7 @@ class DocumentPreProcessor {
     }
   }
 
-  // exchange an existing media stylesheet for a new one that targets the
+  // Exchange an existing media stylesheet for a new one that targets the
   // same media
   static swapStyleSheet(/* media */) {}
 

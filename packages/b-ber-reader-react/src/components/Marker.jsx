@@ -28,6 +28,8 @@ class Marker extends React.Component {
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
+    // console.log('UNSAFE_componentWillReceiveProps');
+
     const markerId = this.props['data-marker']
     const { recto, verso, elementEdgeLeft } = nextProps
 
@@ -42,6 +44,27 @@ class Marker extends React.Component {
         recto,
         verso,
         elementEdgeLeft,
+      })
+    }
+  }
+
+  componentDidUpdate() {
+    const unbound = JSON.parse(this.props['data-unbound'] || 'false')
+    const markerId = this.props['data-marker']
+    const marker = this.props.markers[markerId]
+    const { verso, recto } = this.props
+
+    if (
+      marker &&
+      (recto !== marker.recto ||
+        verso !== marker.verso ||
+        unbound !== marker.unbound)
+    ) {
+      this.props.markerActions.update({
+        markerId,
+        recto,
+        verso,
+        unbound,
       })
     }
   }
@@ -63,7 +86,7 @@ class Marker extends React.Component {
     const elem = this.props.elemRef.current
 
     const { verso, recto } = this.props
-    const { paddingTop, paddingBottom } = this.props.viewerSettings
+    const { paddingTop, paddingBottom, fontSize } = this.props.viewerSettings
 
     let { height } = this.props.viewerSettings
     const frameHeight = height - paddingTop - paddingBottom
@@ -144,47 +167,70 @@ class Marker extends React.Component {
 
     // Causes overflow (blank page) on Firefox, and there's no reason for the
     // space to stretch all the way to the bottom of the frame
+
+    // console.log(this.props.view.lastSpreadIndex, this.props.spreadIndex)
+
     // if (
+    //   browser.name === 'firefox' &&
     //   JSON.parse(this.props['data-final']) === true &&
     //   this.props.view.lastSpreadIndex === this.props.spreadIndex
     // ) {
+    //   console.log('------', this.props['data-marker'], 'data-final')
+
     //   offsetHeight -= frameHeight / 2
     // }
 
     offsetHeight = Math.floor(offsetHeight)
 
-    const markerId = this.props['data-marker']
-    const marker = this.props.markers[markerId]
+    // const markerId = this.props['data-marker']
+    // const marker = this.props.markers[markerId]
 
-    const fontSize = parseFloat(window.getComputedStyle(elem).fontSize)
+    // Subtract one line of text to prevent overlowing to "blank pages".
 
-    offsetHeight -= fontSize
+    const lineHeight = 1.3 // document.documentElement element is set to 'normal', so approximate
+    const fontSizePx = parseFloat(window.getComputedStyle(elem).fontSize)
+
+    // console.log(fontSize, fontSizePx, lineHeight, fontSizePx * lineHeight)
+
+    // Account for slight variations in how much content it takes to create
+    // a new column
+    if (browser.name === 'safari') {
+      offsetHeight -= Math.floor(fontSizePx * lineHeight)
+    } else {
+      offsetHeight -= fontSizePx
+    }
 
     // if (!unbound && !adjacent) {
     //   console.log(markerId, '!unbound && !adjacent')
-    //   offsetHeight -= 21 // One line of text to prevent overlowing to "blank pages"
+
+    //   offsetHeight -= fontSize
+
+    //   //   offsetHeight -= 21 // One line of text to prevent overlowing to "blank pages"
     // }
     // if (adjacent) {
     //   console.log(markerId, 'adjacent')
+
+    //   offsetHeight += fontSize
+
     //   // offsetHeight += 21 / 2
     // }
 
     // const markerId = this.props['data-marker']
     // const marker = this.props.markers[markerId]
 
-    if (
-      marker &&
-      (recto !== marker.recto ||
-        verso !== marker.verso ||
-        unbound !== marker.unbound)
-    ) {
-      this.props.markerActions.update({
-        markerId,
-        recto,
-        verso,
-        unbound,
-      })
-    }
+    // if (
+    //   marker &&
+    //   (recto !== marker.recto ||
+    //     verso !== marker.verso ||
+    //     unbound !== marker.unbound)
+    // ) {
+    //   this.props.markerActions.update({
+    //     markerId,
+    //     recto,
+    //     verso,
+    //     unbound,
+    //   })
+    // }
 
     return offsetHeight
   }

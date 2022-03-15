@@ -6,7 +6,7 @@ import { create } from 'browser-sync'
 import { serialize } from '..'
 
 const browserSync = create()
-const port = 4000
+const port = 4000 // getRandomInt(4000, 5000)
 const debounceSpeed = 500
 
 const config = build => url => () => {

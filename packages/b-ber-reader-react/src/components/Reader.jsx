@@ -48,7 +48,13 @@ class Reader extends Component {
       disableMobileResizeEvents: 'ontouchstart' in document.documentElement,
 
       // Navigation
+      // Current spread index
       spreadIndex: 0,
+
+      // Used to calculate next spread position after resize to keep
+      // the user at/close to the previous reading position
+      relativeSpreadPosition: 0.0,
+
       handleEvents: false,
       firstChapter: false,
       lastChapter: false,
@@ -60,12 +66,14 @@ class Reader extends Component {
       showSidebar: null,
 
       // View
-      pageAnimation: false, // Disabled by default, and activated in Reader.enablePageTransitions on user action
+      // Disabled by default, and activated in Reader.enablePageTransitions on user action
+      pageAnimation: false,
       spinnerVisible: true,
     }
 
     this.localStorageKey = 'bber_reader'
     this.debounceResizeSpeed = 400
+    this.resizeEndTimer = null
 
     this.handleResizeStart = debounce(
       this.handleResizeStart,
@@ -284,15 +292,56 @@ class Reader extends Component {
   handleResizeStart = () => {
     if (this.state.disableMobileResizeEvents) return
 
-    this.props.viewActions.unload()
-    this.props.viewActions.updateLastSpreadIndex(-1)
-    this.disablePageTransitions()
+    const { spreadIndex } = this.state
+    const { lastSpreadIndex } = this.props.view
 
-    this.showSpinner()
+    let relativeSpreadPosition = 0
+    if (spreadIndex > 0 && lastSpreadIndex > 0) {
+      relativeSpreadPosition = spreadIndex / lastSpreadIndex
+    }
+
+    // Save the relative position (float) to calculate next position
+    // after resize
+    this.setState({ relativeSpreadPosition }, () => {
+      this.props.viewActions.unload()
+      this.props.viewActions.updateLastSpreadIndex(-1)
+      this.disablePageTransitions()
+
+      this.showSpinner()
+    })
   }
 
   handleResizeEnd = () => {
     if (this.state.disableMobileResizeEvents) return
+
+    // Adjust users position so that they're on/close to the page
+    // before resize
+    const { spreadIndex, relativeSpreadPosition } = this.state
+    const { lastSpreadIndex } = this.props.view
+
+    // Could stackoverflow here if lastSpreadIndex stays at -1,
+    // but `updateLastSpreadIndex` eventually sets lastSpreadIndex
+    // to something reasonable
+    if (lastSpreadIndex < 0) {
+      window.clearTimeout(this.resizeEndTimer)
+      this.resizeEndTimer = setTimeout(() => this.handleResizeEnd(), 200)
+      return
+    }
+
+    let nextSpreadIndex = spreadIndex * relativeSpreadPosition
+
+    // No negative
+    nextSpreadIndex = nextSpreadIndex < 1 ? 0 : nextSpreadIndex
+
+    // Round to closest position
+    // Bit of heuristics here, this seems to work relatively well
+    nextSpreadIndex = Math.ceil(nextSpreadIndex) + 2
+
+    // Not greater than last spread index
+    nextSpreadIndex =
+      nextSpreadIndex > lastSpreadIndex ? lastSpreadIndex : nextSpreadIndex
+
+    this.navigateToSpreadByIndex(nextSpreadIndex)
 
     this.hideSpinner()
   }

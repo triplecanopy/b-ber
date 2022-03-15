@@ -1,3 +1,6 @@
+// window.innerWidth 2320 window.innerHeight 1234
+
+/* eslint-disable react/jsx-props-no-spreading */
 import React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
@@ -109,9 +112,18 @@ const withObservers = WrappedComponent => {
       const { columns } = this.props
       const lastNode = document.querySelector('.ultimate') // TODO redux
 
+      if (lastNode) {
+        lastNode.style.background = 'pink'
+        lastNode.style.height = '1px'
+        lastNode.style.display = 'block'
+      }
+
       let contentDimensions
       let lastSpreadIndex
       let frameHeight
+      let nodeEdgeRight
+
+      const { paddingLeft, columnGap } = this.props.viewerSettings
 
       // TODO prevent multiple callbacks. good to have this off for debug
       // if (this.props.ready === true) return
@@ -138,10 +150,116 @@ const withObservers = WrappedComponent => {
         // but firefox interprets our column layout as having width, so we
         // measure the distance of the left edge of the last node in our
         // document, and divide it by the number of columns
+
+        // Determine if the last node is on recto or verso
+        // const { paddingLeft, columnGap } = this.props.viewerSettings
+
+        // console.log('paddingLeft, columnGap', paddingLeft, columnGap)
+
+        // // const { left: lastNodeClientLeft } = lastNode.getBoundingClientRect()
+        // const lastNodeClientLeft = lastNode.offsetLeft
+
+        // const lastNodePositionToLeftEdge = Math.round(
+        //   lastNodeClientLeft - columnGap - paddingLeft
+        // )
+        const approximateColumnWidth = Math.round(
+          this.props.getSingleColumnWidth()
+        )
+
+        // console.log(
+
+        //   approximateColumnWidth,
+        //   lastNodePositionToLeftEdge % approximateColumnWidth
+        // )
+
+        // if (lastNodePositionToLeftEdge === approximateColumnWidth) {
+        //   contentDimensions =
+        //     lastNode.offsetLeft - this.props.getSingleColumnWidth()
+        // } else {
+        //   contentDimensions =
+        //     lastNode.offsetLeft + this.props.getSingleColumnWidth()
+        //   }
+
+        // const x = Number(
+        //   String(
+        //     Math.round(
+        //       (lastNode.offsetLeft / window.innerWidth + Number.EPSILON) * 100
+        //     ) / 100
+        //   )
+        // )
+
+        // const recto = x > 4 && x <= 6
+
+        // console.log(recto, lastNode.offsetLeft / window.innerWidth, x)
+
+        // const posLeft =
+        //   (lastNode.getBoundingClientRect().left + columnGap + paddingLeft) /
+        //   window.innerWidth
+
+        // console.log(
+        //   'dim',
+        //   lastNode.getBoundingClientRect().left + columnGap + paddingLeft,
+        //   window.innerWidth,
+        //   contentDimensions
+        // )
+
+        // console.log(
+        //   'dims',
+        //   // frameWidth,
+        //   // frameWidth - paddingLeft * 2 - columnGap,
+        //   // frameWidth / 2,
+        //   (frameWidth - paddingLeft * 2 - columnGap) / 2,
+        //   document.querySelector('#content').offsetWidth,
+        //   document.querySelector('.ultimate').offsetLeft,
+        //   document.querySelector('#content').offsetWidth -
+        //     document.querySelector('.ultimate').offsetLeft
+        // )
+        // console.log(
+        //   'dims',
+        //   lastNode.getBoundingClientRect().right + paddingLeft,
+        //   frameWidth,
+        //   (lastNode.getBoundingClientRect().right + paddingLeft) / frameWidth,
+        //   (lastNode.getBoundingClientRect().right + paddingLeft) /
+        //     window.innerWidth
+        // )
+
+        // This is just used for checking to see if the layout should
+        // be recalculated
         contentDimensions =
-          lastNode.offsetLeft + this.props.getSingleColumnWidth()
-        lastSpreadIndex = Math.round(contentDimensions / frameWidth)
-        lastSpreadIndex -= 1
+          lastNode.offsetLeft - this.props.getSingleColumnWidth()
+
+        // contentDimensions = recto
+        //   ? lastNode.offsetLeft - this.props.getSingleColumnWidth()
+        //   : lastNode.offsetLeft + this.props.getSingleColumnWidth()
+
+        // console.log(
+        //   lastNode.offsetLeft,
+        //   this.props.getSingleColumnWidth(),
+        //   contentDimensions / frameWidth
+        // )
+
+        // lastSpreadIndex = Math.round(contentDimensions / frameWidth)
+        // lastSpreadIndex -= 1
+        // lastSpreadIndex = Math.round(posLeft)
+
+        nodeEdgeRight = lastNode.offsetLeft + lastNode.offsetWidth + paddingLeft
+
+        // console.log(
+        //   'dim',
+        //   frameWidth,
+        //   nodeEdgeRight,
+        //   lastNode.getBoundingClientRect().right - paddingLeft,
+        //   (lastNode.getBoundingClientRect().right - paddingLeft) / frameWidth
+        // )
+
+        const d = nodeEdgeRight / (frameWidth + paddingLeft)
+        const x = Math.round((d + Number.EPSILON) * 10) / 10
+
+        console.log(nodeEdgeRight, d, x)
+
+        lastSpreadIndex = x - 1
+
+        console.log('lastSpreadIndex', lastSpreadIndex)
       } else {
         contentDimensions = Math.max(
           this.node.current.scrollHeight,
@@ -149,7 +267,13 @@ const withObservers = WrappedComponent => {
           this.node.current.clientHeight
         )
 
-        frameHeight = Math.round(frameHeight)
+        // console.log('contentDimensions', contentDimensions)
+
+        // console.log('orig frameHeight', frameHeight)
+
+        // frameHeight = Math.round(frameHeight)
+
+        // console.log('next frameHeight', frameHeight)
 
         // Find the last index by dividing the document length by the frame
         // height, and then divide the result by 2 to account for the 2
@@ -159,10 +283,30 @@ const withObservers = WrappedComponent => {
         // frameHeight in these cases will be something like 6.1 for a
         // six-page chapter). Minus one since we want it to be a zero-based
         // index
-        lastSpreadIndex = Math.ceil(contentDimensions / frameHeight / 2) - 1
+
+        // console.log(contentDimensions / frameHeight)
+        // console.log(contentDimensions / frameHeight / 2)
+        // console.log(Math.ceil(contentDimensions / frameHeight / 2))
+        // console.log(contentDimensions, previousContentDimensions)
+        // console.log(contentDimensions / 100)
+
+        // contentDimensions -= contentDimensions / 100
+
+        const pages = contentDimensions / frameHeight / 2
+
+        // Round to 10th. Allows a bit of slop when using Math.ceil,
+        // e.g., 2.0001 -> 2.0 instead of 2.0001 -> 3
+        const round = Math.round((pages + Number.EPSILON) * 10) / 10
+        const ceil = Math.ceil(round)
+
+        // console.log('pages', pages)
+        // console.log('ceil', ceil)
+        // console.log('spread', ceil - 1)
+
+        lastSpreadIndex = ceil - 1
       }
 
-      // never less than 0
+      // Never less than 0
       lastSpreadIndex = lastSpreadIndex < 0 ? 0 : lastSpreadIndex
 
       log(lastSpreadIndex, contentDimensions, frameHeight, columns)
@@ -172,6 +316,8 @@ const withObservers = WrappedComponent => {
       // available, then hide then show content to trigger the resize observer's
       // callback
       if (previousContentDimensions !== contentDimensions || lastNode == null) {
+        console.log('recalc')
+
         previousContentDimensions = contentDimensions
         this.node.current.style.display = 'none'
         this.node.current.style.display = 'block'
