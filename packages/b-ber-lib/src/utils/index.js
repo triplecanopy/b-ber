@@ -116,21 +116,84 @@ export const ensure = ({ files = [], dirs = [], prefix = '' } = {}) =>
     .then(() => ensureFiles(files, prefix))
     .catch(log.error)
 
+const trimLeadingSlash = s => s.replace(/^\//, '')
+
+export const resolveIntersectingUrl = (u, p) => {
+  const url = new URL(u)
+
+  const { pathname } = url
+
+  let urlParts = pathname.split('/').filter(Boolean)
+  let pathParts = p.split('/').filter(Boolean)
+
+  // Remove filename if there is one
+  if (/\./.test(urlParts[urlParts.length - 1])) {
+    urlParts.pop()
+  }
+
+  // Find indices where to slice arrays
+  let intersectionIndices = []
+  for (let i = 0; i < urlParts.length; i++) {
+    for (let j = 0; j < pathParts.length; j++) {
+      if (urlParts[i] === pathParts[j]) {
+        intersectionIndices = [i, j]
+        break
+      }
+    }
+  }
+
+  const [uIdx, pIdx] = intersectionIndices
+
+  urlParts = urlParts.slice(0, uIdx)
+  pathParts = pathParts.slice(pIdx)
+
+  const intersection = urlParts.concat(pathParts)
+
+  url.pathname = intersection.join('/')
+
+  return url.href
+}
+
+const webpubManifestResource = base => file => {
+  const href = resolveIntersectingUrl(base, file)
+
+  return {
+    href,
+    type: mime.lookup(file),
+  }
+}
+
+const webpubManifestReadingOrderItem = base => ({ title, file }) => {
+  const href = resolveIntersectingUrl(base, file)
+
+  return {
+    href,
+    title,
+    type: 'text/xhtml',
+  }
+}
+
+// https://github.com/readium/webpub-manifest
 export const generateWebpubManifest = files => {
   const remoteURL = Url.trimSlashes(state.config.remote_url)
-  const readingOrder = state.spine.flattened.map(({ name, title }) => ({
-    href: `${remoteURL}/text/${name}.xhtml`,
-    type: 'text/xhtml',
-    title,
-  }))
+
+  // Build a map to sort the files according to the position in the spine
+  const fileMap = new Map(files.map(f => [path.basename(f), f]))
+
+  // Create the items for the manifest's reading order
+  const readingOrderItems = state.spine.flattened.reduce((acc, curr) => {
+    const file = fileMap.get(`${curr.fileName}.xhtml`)
+
+    return !file ? acc : acc.concat({ file, title: curr.title })
+  }, [])
+
+  const readingOrder = readingOrderItems.map(
+    webpubManifestReadingOrderItem(remoteURL)
+  )
 
   const resources = files
     .filter(file => path.basename(file).charAt(0) !== '.')
-    .map(file => ({
-      // rel: ...
-      href: file.replace(`${state.distDir}/`, ''),
-      type: mime.lookup(file),
-    }))
+    .map(webpubManifestResource(remoteURL))
 
   const manifest = {
     '@context': 'https://readium.org/webpub-manifest/context.jsonld',
@@ -148,7 +211,7 @@ export const generateWebpubManifest = files => {
     links: [
       {
         rel: 'self',
-        href: `${remoteURL}/manifest.json`,
+        href: `${remoteURL}/${trimLeadingSlash(state.distDir)}/manifest.json`,
         type: 'application/webpub+json',
       },
       // { rel: 'alternate', href: `${remoteURL}/publication.epub`, type: 'application/epub+zip' },
