@@ -17,20 +17,52 @@ class App extends Component {
     const search = params.get('search')
     const pathname = params.get('pathname').slice(1)
 
+    const { manifestURL } = this.props.readerSettings
     let { bookURL, projectURL } = this.props.readerSettings
+    let books = []
+
+    if (manifestURL && bookURL) {
+      throw new Error(
+        'Multiple endpoints. Specify either `manifestURL` or `bookURL`'
+      )
+    }
+
+    if (manifestURL) {
+      // Find the path to the books root directory. Assuming that the content.opf
+      // is in root/OPS/, we can navigate back from there. Support for loading
+      // books from a webpub manifest should be implemented properly in the future.
+      // Books with a different full-path specified in the container.xml will of
+      // course fail
+      try {
+        const resp = await Request.get(manifestURL)
+        const { data } = resp
+
+        const { href: opfURL } = data.resources.find(
+          res => res.type === 'application/oebps-package+xml'
+        )
+
+        bookURL = opfURL
+          .split('/')
+          .slice(0, -2)
+          .join('/')
+
+        // Must be called before state is set
+        this.props.readerSettingsActions.updateBookURL(bookURL)
+      } catch (err) {
+        console.error('Error loading Webpub manifest', err)
+      }
+    }
 
     // Path from which to load api/books.json
     if (!projectURL) {
-      ;({ origin: projectURL } = new URL(bookURL))
+      projectURL = new URL(bookURL).origin
     }
 
-    let books = []
-
     try {
-      const resp = await Request.getManifest(projectURL)
+      const resp = await Request.getBooks(projectURL)
       books = resp.data
     } catch (err) {
-      console.warn('Could not load manifest from API', err)
+      console.warn('Could not load books from API', err)
     }
 
     // TODO if not title && not url ...

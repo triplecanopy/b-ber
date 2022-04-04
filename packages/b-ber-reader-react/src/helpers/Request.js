@@ -6,7 +6,7 @@ class Request {
     return axios.get(url)
   }
 
-  static getManifest(basePath = '') {
+  static getBooks(basePath = '') {
     const url = `${Url.stripTrailingSlash(basePath)}/api/books.json`
     return Request.get(url)
   }

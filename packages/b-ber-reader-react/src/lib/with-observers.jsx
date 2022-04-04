@@ -317,7 +317,7 @@ const withObservers = WrappedComponent => {
       // available, then hide then show content to trigger the resize observer's
       // callback
       if (previousContentDimensions !== contentDimensions || lastNode == null) {
-        console.log('recalc')
+        console.log('Recalculate layout')
 
         previousContentDimensions = contentDimensions
         this.node.current.style.display = 'none'
