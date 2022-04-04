@@ -83,6 +83,7 @@ const withObservers = WrappedComponent => {
       mutationObserver.observe(this.node.current, {
         attributes: true,
         subtree: true,
+        childList: true,
       })
     }
 

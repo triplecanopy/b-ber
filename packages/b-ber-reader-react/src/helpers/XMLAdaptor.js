@@ -12,7 +12,7 @@ class XMLAdaptor {
   static opfURL(url) {
     let url_ = url
     url_ = Url.stripTrailingSlash(url_)
-    url_ += '/OPS'
+    url_ += '/OPS' // epub.version === '2' ? 'OEBPS' : 'OPS';
     url_ += '/content.opf'
 
     url_ = window.encodeURI(url_)
