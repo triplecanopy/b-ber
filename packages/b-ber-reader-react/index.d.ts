@@ -41,8 +41,9 @@ export enum Layout {
   COLUMNS = 'columns',
 }
 
-export interface BberReaderProps {
-  bookURL: string
+interface OptionalBberReaderProps {
+  bookURL?: string
+  manifestURL?: string
   projectURL?: string
   books?: Book[]
   downloads?: Download[]
@@ -52,5 +53,19 @@ export interface BberReaderProps {
   cache?: boolean
   layout?: Layout
 }
+
+type RequireOneOf<T, Keys extends keyof T = keyof T> = Pick<
+  T,
+  Exclude<keyof T, Keys>
+> &
+  {
+    [K in Keys]-?: Required<Pick<T, K>> &
+      Partial<Record<Exclude<Keys, K>, undefined>>
+  }[Keys]
+
+export type BberReaderProps = RequireOneOf<
+  OptionalBberReaderProps,
+  'bookURL' | 'manifestURL'
+>
 
 export default function BberReader(props?: BberReaderProps): JSX.Element
