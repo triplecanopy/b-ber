@@ -1,4 +1,5 @@
 import React from 'react'
+import { isPlainObject } from 'lodash'
 import { Layout, DebugGrid } from '.'
 import Viewport from '../helpers/Viewport'
 import { layouts } from '../constants'
@@ -38,9 +39,10 @@ class Frame extends React.Component {
     this.node.current.removeEventListener('scroll', this.handleScroll)
   }
 
-  render() {
+  style() {
     const { fontSize } = this.props.viewerSettings
-    const baseStyles = {
+
+    let style = {
       position: 'absolute',
       top: 0,
       left: 0,
@@ -52,27 +54,53 @@ class Frame extends React.Component {
       fontSize: `${fontSize}%`, // TODO standardize how fontSize is stored and loaded from viewerSettings
     }
 
-    const desktopStyles = { overflow: 'hidden' }
-
-    const mobileStyles = {
-      WebkitOverflowScrolling: 'touch',
-      overflowY: 'auto',
-      overflowX: 'hidden',
+    if (this.props.layout === layouts.SCROLL || Viewport.isMobile()) {
+      // Mobile
+      style = {
+        ...style,
+        WebkitOverflowScrolling: 'touch',
+        overflowY: 'auto',
+        overflowX: 'hidden',
+      }
+    } else {
+      // Desktop
+      style = {
+        ...style,
+        overflow: 'hidden',
+      }
     }
 
-    const styles =
-      this.props.layout === layouts.SCROLL || Viewport.isMobile()
-        ? { ...baseStyles, ...mobileStyles }
-        : { ...baseStyles, ...desktopStyles }
+    if (this.props.style && isPlainObject(this.props.style)) {
+      style = {
+        ...style,
+        ...this.props.style,
+      }
+    }
 
+    return style
+  }
+
+  className() {
+    let className = `_${this.props.hash}`
+
+    if (this.props.className && typeof this.props.className === 'string') {
+      className = `${className} ${this.props.className}`
+    }
+
+    return className
+  }
+
+  render() {
     return (
       <div
         id="frame"
-        className={`_${this.props.hash}`}
-        style={styles}
+        className={this.className()}
+        style={this.style()}
         ref={this.node}
       >
+        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
         <Layout {...this.props} />
+        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
         <DebugGrid {...this.props} />
       </div>
     )

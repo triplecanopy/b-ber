@@ -1,6 +1,6 @@
-declare module '@canopycanopycanopy/b-ber-reader-react'
+import React from 'react'
 
-export as namespace BberReader
+declare module '@canopycanopycanopy/b-ber-reader-react'
 
 export interface Book {
   title: string
@@ -74,6 +74,9 @@ interface OptionalBberReaderProps {
 export type BberReaderProps = RequireOneOf<
   OptionalBberReaderProps,
   'bookURL' | 'manifestURL'
->
+> &
+  React.HTMLAttributes<HTMLDivElement>
 
-export default function BberReader(props?: BberReaderProps): JSX.Element
+declare const BberReader: React.FunctionComponent<BberReaderProps>
+
+export default BberReader

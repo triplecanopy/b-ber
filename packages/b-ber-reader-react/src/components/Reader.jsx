@@ -837,6 +837,8 @@ class Reader extends Component {
             // Can't wrap layout or the withObservable HOC in a way that preserves
             // refs, so pass down `view` as props
             view={view}
+            style={this.props.style}
+            className={this.props.className}
           />
         </ReaderContext.Provider>
         <Spinner spinnerVisible={spinnerVisible} />

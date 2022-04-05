@@ -99,16 +99,29 @@ class App extends Component {
 
   render() {
     const { pathname, search } = this.state
-    const { bookURL, books, ...rest } = this.props.readerSettings
+    const {
+      bookURL,
+      books,
+      style,
+      className,
+      ...rest
+    } = this.props.readerSettings
 
     if (!bookURL) {
       return <Library books={books} handleClick={this.handleClick} />
     }
 
-    // TODO shouldn't be passing in readerSettings as a spread here
     return (
-      // eslint-disable-next-line react/jsx-props-no-spreading
-      <Reader pathname={pathname} search={search} bookURL={bookURL} {...rest} />
+      <Reader
+        pathname={pathname}
+        search={search}
+        bookURL={bookURL}
+        style={style}
+        className={className}
+        // TODO shouldn't be passing in readerSettings as a spread here
+        // eslint-disable-next-line react/jsx-props-no-spreading
+        {...rest}
+      />
     )
   }
 }

@@ -3,16 +3,18 @@
 import * as actionTypes from '../constants/reader-settings'
 
 export const initialState = {
+  // loadRemoteLibrary: true, // TODO unused
   books: [],
   bookURL: '',
   downloads: [],
   projectURL: '',
-  // loadRemoteLibrary: true, // TODO unused
   paramKeys: {
     slug: 'slug',
     currentSpineItemIndex: 'currentSpineItemIndex',
     spreadIndex: 'spreadIndex',
   },
+  style: {},
+  className: '',
   uiOptions: {
     navigation: {
       header_icons: {
