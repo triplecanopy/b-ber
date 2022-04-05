@@ -41,6 +41,22 @@ export enum Layout {
   COLUMNS = 'columns',
 }
 
+type RequireOneOf<T, Keys extends keyof T = keyof T> = Pick<
+  T,
+  Exclude<keyof T, Keys>
+> &
+  {
+    [K in Keys]-?: Required<Pick<T, K>> &
+      Partial<Record<Exclude<Keys, K>, undefined>>
+  }[Keys]
+
+// Used for renaming the query parameters
+export interface BberReaderQueryParameterKeys {
+  slug?: string
+  currentSpineItemIndex?: string
+  spreadIndex?: string
+}
+
 interface OptionalBberReaderProps {
   bookURL?: string
   manifestURL?: string
@@ -52,16 +68,8 @@ interface OptionalBberReaderProps {
   uiOptions?: UI
   cache?: boolean
   layout?: Layout
+  paramKeys?: BberReaderQueryParameterKeys
 }
-
-type RequireOneOf<T, Keys extends keyof T = keyof T> = Pick<
-  T,
-  Exclude<keyof T, Keys>
-> &
-  {
-    [K in Keys]-?: Required<Pick<T, K>> &
-      Partial<Record<Exclude<Keys, K>, undefined>>
-  }[Keys]
 
 export type BberReaderProps = RequireOneOf<
   OptionalBberReaderProps,

@@ -8,6 +8,11 @@ export const initialState = {
   downloads: [],
   projectURL: '',
   // loadRemoteLibrary: true, // TODO unused
+  paramKeys: {
+    slug: 'slug',
+    currentSpineItemIndex: 'currentSpineItemIndex',
+    spreadIndex: 'spreadIndex',
+  },
   uiOptions: {
     navigation: {
       header_icons: {
@@ -26,7 +31,7 @@ export const initialState = {
   layout: 'columns',
 }
 
-const readerSettings = (state = initialState, action) => {
+const readerSettings = (state = initialState, action = {}) => {
   switch (action.type) {
     case actionTypes.BOOKS_UPDATE:
       return { ...state, books: [...action.payload] }
@@ -42,6 +47,15 @@ const readerSettings = (state = initialState, action) => {
 
     case actionTypes.UI_OPTIONS_UPDATE:
       return { ...state, uiOptions: { ...action.payload } }
+
+    case actionTypes.QUERY_PARAM_KEYS_UPDATE:
+      return {
+        ...state,
+        paramKeys: {
+          ...state.paramKeys,
+          ...action.payload,
+        },
+      }
 
     default:
       return state

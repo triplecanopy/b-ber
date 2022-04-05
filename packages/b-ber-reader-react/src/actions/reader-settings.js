@@ -25,3 +25,8 @@ export const updateUIOptions = options => ({
   type: actionTypes.UI_OPTIONS_UPDATE,
   payload: options,
 })
+
+export const updateQueryParameterKeys = data => ({
+  type: actionTypes.QUERY_PARAM_KEYS_UPDATE,
+  payload: data,
+})

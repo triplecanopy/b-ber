@@ -22,7 +22,9 @@ import { layouts } from '../constants'
 
 const book = { content: null }
 
-const BookContent = () => <div key="book-content">{book.content}</div>
+function BookContent() {
+  return <div key="book-content">{book.content}</div>
+}
 
 class Reader extends Component {
   constructor(props) {
@@ -120,7 +122,8 @@ class Reader extends Component {
 
     // Check the current query string if one exists
     const params = new URLSearchParams(this.props.search)
-    const slug = params.get('slug')
+
+    const slug = params.get(this.props.readerSettings.paramKeys.slug)
 
     const { spine, hash } = this.state
 
@@ -241,16 +244,20 @@ class Reader extends Component {
     // 2. There is a new spread index (page). Update state to initialize the
     //    page transition
     if (nextProps.search !== search) {
-      const { slug, currentSpineItemIndex, spreadIndex } = Url.parseQueryString(
-        nextProps.search
-      )
+      const nextParams = Url.parseQueryString(nextProps.search)
+      const slug = nextParams[this.props.readerSettings.paramKeys.slug]
+      const currentSpineItemIndex =
+        nextParams[this.props.readerSettings.paramKeys.currentSpineItemIndex]
+      const spreadIndex =
+        nextParams[this.props.readerSettings.paramKeys.spreadIndex]
 
-      const prevURL = Url.parseQueryString(search)
+      const prevParams = Url.parseQueryString(search)
+      const prevSlug = prevParams[this.props.readerSettings.paramKeys.slug]
 
       // Load the new spine item if the slug has changed. `loadSpineItem`
       // updates the query string, so we can return immediately after this
       // branch
-      if (prevURL?.slug && slug && prevURL.slug !== slug) {
+      if (prevSlug && slug && prevSlug !== slug) {
         const spineItem = find(this.state.spine, { slug })
         this.loadSpineItem(spineItem)
         return
@@ -357,12 +364,14 @@ class Reader extends Component {
     const { pathname, search } = this.props
     const { slug } = currentSpineItem
     const url = Url.parseQueryString(search)
-    const updateMethod = !url.slug || url.slug === slug ? 'replace' : 'push'
+    const prevSlug = url[this.props.readerSettings.paramKeys.slug]
+    const updateMethod = !prevSlug || prevSlug === slug ? 'replace' : 'push'
 
     const nextSearch = Url.buildQueryString({
-      slug,
-      currentSpineItemIndex,
-      spreadIndex,
+      [this.props.readerSettings.paramKeys.slug]: slug,
+      [this.props.readerSettings.paramKeys
+        .currentSpineItemIndex]: currentSpineItemIndex,
+      [this.props.readerSettings.paramKeys.spreadIndex]: spreadIndex,
     })
 
     history[updateMethod]({
@@ -413,7 +422,7 @@ class Reader extends Component {
 
   enableEventHandling = () => this.setState({ handleEvents: true })
 
-  disableEventHandling = () => this.setState({ handleEvents: false })
+  // disableEventHandling = () => this.setState({ handleEvents: false })
 
   closeSidebars = () => this.setState({ showSidebar: null })
 
@@ -806,6 +815,7 @@ class Reader extends Component {
         save={this.props.viewerSettingsActions.save}
       >
         <ReaderContext.Provider
+          // eslint-disable-next-line react/jsx-no-constructed-context-values
           value={{
             lastSpread,
             spreadIndex,

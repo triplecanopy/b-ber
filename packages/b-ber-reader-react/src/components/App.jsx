@@ -7,9 +7,13 @@ import { Request, Url } from '../helpers'
 import * as readerSettingsActions from '../actions/reader-settings'
 
 class App extends Component {
-  state = {
-    pathname: '',
-    search: '',
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      pathname: '',
+      search: '',
+    }
   }
 
   async UNSAFE_componentWillMount() {
@@ -18,7 +22,7 @@ class App extends Component {
     const pathname = params.get('pathname').slice(1)
 
     const { manifestURL } = this.props.readerSettings
-    let { bookURL, projectURL } = this.props.readerSettings
+    let { paramKeys, bookURL, projectURL } = this.props.readerSettings
     let books = []
 
     if (manifestURL && bookURL) {
@@ -71,10 +75,17 @@ class App extends Component {
 
     bookURL = book ? book.url : ''
 
+    // Get overridden query string paremeter keys
+    paramKeys = {
+      ...this.state.paramKeys,
+      ...(paramKeys || {}),
+    }
+
     this.setState({ search, pathname }, () => {
       this.props.readerSettingsActions.updateBooks(books)
       this.props.readerSettingsActions.updateBookURL(bookURL)
       this.props.readerSettingsActions.updateProjectURL(projectURL)
+      this.props.readerSettingsActions.updateQueryParameterKeys(paramKeys)
     })
   }
 
@@ -94,7 +105,9 @@ class App extends Component {
       return <Library books={books} handleClick={this.handleClick} />
     }
 
+    // TODO shouldn't be passing in readerSettings as a spread here
     return (
+      // eslint-disable-next-line react/jsx-props-no-spreading
       <Reader pathname={pathname} search={search} bookURL={bookURL} {...rest} />
     )
   }
