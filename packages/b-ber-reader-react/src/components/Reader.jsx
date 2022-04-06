@@ -367,16 +367,26 @@ class Reader extends Component {
     const prevSlug = url[this.props.readerSettings.paramKeys.slug]
     const updateMethod = !prevSlug || prevSlug === slug ? 'replace' : 'push'
 
-    const nextSearch = Url.buildQueryString({
-      [this.props.readerSettings.paramKeys.slug]: slug,
-      [this.props.readerSettings.paramKeys
-        .currentSpineItemIndex]: currentSpineItemIndex,
-      [this.props.readerSettings.paramKeys.spreadIndex]: spreadIndex,
-    })
+    const nextSearch = new window.URLSearchParams(search)
+
+    nextSearch.set(
+      Url.queryStringKey(this.props.readerSettings.paramKeys.slug),
+      Url.queryStringValue(slug)
+    )
+    nextSearch.set(
+      Url.queryStringKey(
+        this.props.readerSettings.paramKeys.currentSpineItemIndex
+      ),
+      Url.queryStringValue(currentSpineItemIndex)
+    )
+    nextSearch.set(
+      Url.queryStringKey(this.props.readerSettings.paramKeys.spreadIndex),
+      Url.queryStringValue(spreadIndex)
+    )
 
     history[updateMethod]({
       pathname: Url.addLeadingSlash(pathname),
-      search: nextSearch,
+      search: nextSearch.toString(),
       state: { bookURL },
     })
 

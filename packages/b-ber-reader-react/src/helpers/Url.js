@@ -10,14 +10,20 @@ class Url {
       .replace(/-+/g, '-')
   }
 
+  static queryStringKey(key) {
+    return encodeURIComponent(key)
+  }
+
+  static queryStringValue(val) {
+    return encodeURIComponent(
+      val && val.constructor === Array ? JSON.stringify(val) : val
+    )
+  }
+
   static buildQueryString(data) {
     const result = []
     Object.entries(data).forEach(([key, val]) =>
-      result.push(
-        `${encodeURIComponent(key)}=${encodeURIComponent(
-          val && val.constructor === Array ? JSON.stringify(val) : val
-        )}`
-      )
+      result.push(`${Url.queryStringKey(key)}=${Url.queryStringValue(val)}`)
     )
     return result.join('&')
   }

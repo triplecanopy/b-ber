@@ -19,7 +19,7 @@ class App extends Component {
   async UNSAFE_componentWillMount() {
     const params = new URLSearchParams(window.location)
     const search = params.get('search')
-    const pathname = params.get('pathname').slice(1)
+    const pathname = params.get('pathname').slice(1) // TODO not used?
 
     const { manifestURL } = this.props.readerSettings
     let { paramKeys, bookURL, projectURL } = this.props.readerSettings
