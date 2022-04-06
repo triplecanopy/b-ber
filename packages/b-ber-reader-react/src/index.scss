@@ -131,33 +131,14 @@ $spinner-size: 40px;
   }
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  touch-action: manipulation;
-}
-
+// TODO how to handle this
 body {
   // Prevent font size change on mobile landscape
   -webkit-text-size-adjust: none;
-}
 
-ul,
-ol {
-  list-style: none;
-}
-
-a,
-button {
-  cursor: pointer;
-}
-
-button {
-  appearance: none;
-  background: transparent;
-  border: 0;
-  display: block;
-  outline: none;
+  margin: 0;
+  padding: 0;
+  touch-action: manipulation;
 }
 
 // TODO .bber-footnote__body
@@ -208,12 +189,36 @@ button {
 }
 
 // UI
-.bber-controls,
-.bber-controls * {
-  box-sizing: border-box;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased; // sass-lint:disable-line no-vendor-prefixes
-  -moz-osx-font-smoothing: grayscale; // sass-lint:disable-line no-vendor-prefixes
+.bber-controls {
+  ul,
+  ol {
+    list-style: none;
+  }
+
+  a,
+  button {
+    cursor: pointer;
+  }
+
+  button {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    display: block;
+    outline: none;
+  }
+
+  &,
+  & * {
+    margin: 0;
+    padding: 0;
+    touch-action: manipulation;
+
+    box-sizing: border-box;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased; // sass-lint:disable-line no-vendor-prefixes
+    -moz-osx-font-smoothing: grayscale; // sass-lint:disable-line no-vendor-prefixes
+  }
 }
 
 .bber-controls__header {
