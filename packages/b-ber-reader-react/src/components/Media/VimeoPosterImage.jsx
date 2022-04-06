@@ -9,10 +9,10 @@ function VimeoPosterImage({ src, playing, controls, handleUpdatePlaying }) {
     <img
       className={classNames('bber-poster bber-poster--vimeo', {
         // Don't show poster image if the video is playing
-        visible: !playing,
+        'bber-visible': !playing,
         // Disable pointer-events on the poster image if using native controls
         // and the video is playing
-        controls,
+        'bber-controls': controls,
       })}
       onClick={handleUpdatePlaying}
       src={src}

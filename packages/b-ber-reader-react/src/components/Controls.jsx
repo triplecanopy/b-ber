@@ -54,8 +54,8 @@ class Controls extends Component {
     Messenger.sendClickEvent(e)
 
     if (
-      e.target.closest('.controls__sidebar') === null &&
-      e.target.closest('.nav__button') === null &&
+      e.target.closest('.bber-controls__sidebar') === null &&
+      e.target.closest('.bber-nav__button') === null &&
       this.props.showSidebar
     ) {
       this.props.handleSidebarButtonClick(null)

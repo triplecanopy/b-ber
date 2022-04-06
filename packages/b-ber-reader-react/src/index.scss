@@ -160,6 +160,7 @@ button {
   outline: none;
 }
 
+// TODO .bber-footnote__body
 .footnote__body {
   visibility: visible;
   display: block;
@@ -207,15 +208,15 @@ button {
 }
 
 // UI
-.controls,
-.controls * {
+.bber-controls,
+.bber-controls * {
   box-sizing: border-box;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased; // sass-lint:disable-line no-vendor-prefixes
   -moz-osx-font-smoothing: grayscale; // sass-lint:disable-line no-vendor-prefixes
 }
 
-.controls__header {
+.bber-controls__header {
   @include border('bottom');
   z-index: 1;
   position: fixed;
@@ -246,7 +247,7 @@ button {
         display: none;
       }
 
-      .nav__button {
+      .bber-nav__button {
         @include transition(color);
         padding: 0 5px;
 
@@ -254,7 +255,7 @@ button {
           color: $violet;
         }
 
-        &.nav__button__downloads {
+        &.bber-nav__button__downloads {
           color: $black;
           animation: nav__button__downloads__shadow $anmiation-speed-slow
               infinite,
@@ -270,7 +271,7 @@ button {
   }
 }
 
-.controls__sidebar {
+.bber-controls__sidebar {
   z-index: 1;
   font-family: $font-family-serif;
   font-weight: 400;
@@ -304,12 +305,12 @@ button {
           font-size: 20px;
         }
 
-        &.chapter--current {
+        &.bber-chapter--current {
           font-weight: 700;
         }
 
         @for $i from 1 through 10 {
-          &.indent--#{$i} {
+          &.bber-indent--#{$i} {
             text-indent: ($i - 1) * ($small / 2);
           }
         }
@@ -349,7 +350,7 @@ button {
   }
 }
 
-.controls__sidebar__chapters {
+.bber-controls__sidebar__chapters {
   @include transition(transform, $transition-speed-slow);
   @include border('right');
   position: fixed;
@@ -366,14 +367,14 @@ button {
     width: 100% !important;
   }
 
-  &.controls__sidebar__chapters--open {
+  &.bber-controls__sidebar__chapters--open {
     transform: translateX(0);
   }
 }
 
-.controls__sidebar__metadata,
-.controls__sidebar__downloads,
-.controls__sidebar__settings {
+.bber-controls__sidebar__metadata,
+.bber-controls__sidebar__downloads,
+.bber-controls__sidebar__settings {
   @include transition(transform, $transition-speed-slow);
   @include border('left');
   position: fixed;
@@ -391,26 +392,28 @@ button {
     width: 100% !important;
   }
 
-  &.controls__sidebar__metadata--open,
-  &.controls__sidebar__downloads--open,
-  &.controls__sidebar__settings--open {
+  &.bber-controls__sidebar__metadata--open,
+  &.bber-controls__sidebar__downloads--open,
+  &.bber-controls__sidebar__settings--open {
     transform: translateX(0);
 
     label {
       font-weight: bold;
     }
 
-    .settings__item__button-group {
+    .bber-settings__item__button-group {
       margin: 10px 0;
 
-      .grid__input {
+      // TODO used?
+      .bber-grid__input {
         @include border;
         display: inline-block;
         margin-left: 5px;
         padding: 2px;
       }
 
-      .grid__input:hover {
+      // TODO used?
+      .bber-grid__input:hover {
         @include border($color: $black);
         background: $grey-light;
       }
@@ -418,7 +421,7 @@ button {
   }
 }
 
-.controls__sidebar__downloads {
+.bber-controls__sidebar__downloads {
   height: auto !important;
   padding-bottom: 0 !important;
 
@@ -445,11 +448,13 @@ button {
       color: $violet;
     }
   }
-  .downloads__title,
-  .downloads__description {
+
+  .bber-downloads__title,
+  .bber-downloads__description {
     display: block;
   }
-  .downloads__description {
+
+  .bber-downloads__description {
     display: block;
     font-size: 0.7rem;
     font-style: italic;
@@ -457,7 +462,7 @@ button {
   }
 }
 
-.controls__footer {
+.bber-controls__footer {
   z-index: 1;
   position: fixed;
   left: 0;
@@ -493,7 +498,7 @@ button {
         }
       }
 
-      .nav__button {
+      .bber-nav__button {
         @include transition(color);
         padding: 0 5px;
 
@@ -505,7 +510,7 @@ button {
   }
 }
 
-.spinner {
+.bber-spinner {
   width: 100vw;
   height: 100vh;
   position: fixed;
@@ -513,11 +518,11 @@ button {
   background: $white;
 }
 
-.spinner--visible {
+.bber-spinner--visible {
   display: block;
 }
 
-.spinner__detail {
+.bber-spinner__detail {
   position: absolute;
   top: calc(50% - #{$spinner-size / 2});
   left: calc(50% - #{$spinner-size / 2});
@@ -530,7 +535,7 @@ button {
   animation: pulse 1s infinite ease-in-out;
 }
 
-.leaf {
+.bber-leaf {
   // Safari
   transform-style: preserve-3d;
   backface-visibility: hidden;
@@ -541,24 +546,25 @@ button {
   z-index: 10;
   background-color: $white;
 
-  &.leaf--left {
+  &.bber-leaf--left {
     left: 0;
   }
 
-  &.leaf--right {
+  &.bber-leaf--right {
     right: 0;
   }
 }
 
 // Debug
-.grid__debug {
+.bber-grid__debug {
   position: fixed;
   top: 0;
   left: 0;
   height: 100vh;
   width: 100%;
   pointer-events: none;
-  .grid__debug__line {
+
+  .bber-grid__debug__line {
     background-color: #6495ed;
     opacity: 0.4;
     position: absolute;
@@ -572,14 +578,16 @@ button {
 }
 
 @media print {
-  .controls__header,
-  .controls__footer,
-  .leaf {
+  .bber-controls__header,
+  .bber-controls__footer,
+  .bber-leaf {
     display: none !important;
   }
+
   #frame {
     position: static !important;
     overflow: visible !important;
+
     #layout {
       transform: none !important;
       height: auto !important;
@@ -596,16 +604,16 @@ button {
 }
 
 // Vimeo poster image
-.poster--vimeo {
+.bber-poster--vimeo {
   @include transition(opacity, $transition-speed-normal);
   z-index: 1 !important;
   opacity: 0;
 
-  &.controls {
+  &.bber-controls {
     pointer-events: none;
   }
 
-  &.visible {
+  &.bber-visible {
     pointer-events: initial !important;
     opacity: 1;
   }
@@ -621,7 +629,7 @@ $thumb-d: 12px;
 $track-c: #d7d7d7;
 $thumb-c: #272727;
 
-.media__controls {
+.bber-media__controls {
   display: flex;
   align-items: center;
 
@@ -638,7 +646,7 @@ $thumb-c: #272727;
     padding-right: $media-element-padding * 2;
   }
 
-  .media__time {
+  .bber-media__time {
     display: flex;
     padding: 0 $media-element-padding * 2 0 0;
     font-size: 14px;
@@ -651,24 +659,26 @@ $thumb-c: #272727;
     transition: color $transition-speed-normal $transition-easing;
   }
 
-  a.hover,
+  a.bber-hover,
   a:hover,
-  button.hover,
+  button.bber-hover,
   button:hover {
     color: $violet !important;
   }
 
-  + .caption__audio {
+  // TODO used?
+  + .bber-caption__audio {
     margin-top: 0.5rem;
   }
 }
 
-.slider__volume {
+.bber-slider__volume {
   width: 0;
   flex-grow: 0;
   overflow: hidden;
   transition: flex-grow $transition-speed-normal $transition-easing;
-  &.open {
+
+  &.bber-open {
     overflow: visible;
     flex-grow: 1;
   }
@@ -702,7 +712,7 @@ $thumb-c: #272727;
   }
 }
 
-.media__slider {
+.bber-media__slider {
   flex: 1;
   display: flex;
   align-items: center;
@@ -755,7 +765,7 @@ input[type='range'] {
   }
 }
 
-.media__slider--before {
+.bber-media__slider--before {
   background: $black;
   height: $track-h;
   position: absolute;
@@ -765,25 +775,26 @@ input[type='range'] {
 }
 
 // Mobile layout
-.media__stacked {
+.bber-media__stacked {
   width: 100%;
   display: flex;
   flex-wrap: wrap;
 
-  .media__stacked__row {
+  .bber-media__stacked__row {
     display: flex;
     flex: 1 0 100%;
     align-items: center;
     padding-right: $media-element-padding;
   }
 
-  .media__stacked__separator {
+  .bber-media__stacked__separator {
     position: relative;
     width: calc(100% + 10px);
     margin-left: -13px;
     margin-top: $media-element-padding * 1.5;
     margin-bottom: $media-element-padding * 1.5;
-    .media__stacked__separator--line {
+
+    .bber-media__stacked__separator--line {
       width: calc(100% + 7px); // Optics
       background: $black;
       height: 1px;
@@ -791,7 +802,7 @@ input[type='range'] {
   }
 }
 
-.button__media__playback-rate {
+.bber-button__media__playback-rate {
   position: relative;
   top: 1px;
 
@@ -803,37 +814,33 @@ input[type='range'] {
   width: 33px;
 }
 
-.times__media__playback-rate {
+.bber-times__media__playback-rate {
   position: relative;
   top: 1px;
 }
 
 // Buttons
-.media__button__play,
-.media__button__pause {
+.bber-media__button__play,
+.bber-media__button__pause {
   font-size: 24px;
 }
 
-.media__button__volume_up,
-.media__button__file_download {
+.bber-media__button__volume_up,
+.bber-media__button__file_download {
   font-size: 17px;
 }
 
-.media__button__file_download {
+.bber-media__button__file_download {
   position: relative;
   top: 1px;
 }
 
-.media__button__forward_30,
-.media__button__replay_30 {
+.bber-media__button__forward_30,
+.bber-media__button__replay_30 {
   font-size: 18px;
 }
 
 // FF for range slider
 :-moz-ui-invalid {
   box-shadow: none;
-}
-
-img {
-  opacity: 0.4 !important;
 }

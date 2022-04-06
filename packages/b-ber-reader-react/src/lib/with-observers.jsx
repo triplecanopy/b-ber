@@ -113,18 +113,18 @@ const withObservers = WrappedComponent => {
       const { columns } = this.props
       const lastNode = document.querySelector('.bber-ultimate') // TODO redux
 
-      if (lastNode) {
-        lastNode.style.background = 'pink'
-        lastNode.style.height = '1px'
-        lastNode.style.display = 'block'
-      }
+      // if (lastNode) {
+      //   lastNode.style.background = 'pink'
+      //   lastNode.style.height = '1px'
+      //   lastNode.style.display = 'block'
+      // }
 
       let contentDimensions
       let lastSpreadIndex
       let frameHeight
       let nodeEdgeRight
 
-      const { paddingLeft, columnGap } = this.props.viewerSettings
+      const { paddingLeft /*, columnGap */ } = this.props.viewerSettings
 
       // TODO prevent multiple callbacks. good to have this off for debug
       // if (this.props.ready === true) return
@@ -163,9 +163,12 @@ const withObservers = WrappedComponent => {
         // const lastNodePositionToLeftEdge = Math.round(
         //   lastNodeClientLeft - columnGap - paddingLeft
         // )
+
+        /*
         const approximateColumnWidth = Math.round(
           this.props.getSingleColumnWidth()
         )
+         */
 
         // console.log(
 

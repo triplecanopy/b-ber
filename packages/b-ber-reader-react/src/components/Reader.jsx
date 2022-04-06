@@ -638,7 +638,7 @@ class Reader extends Component {
     if (layout === layouts.SCROLL || Viewport.isMobile()) {
       const padding = 25
       const offset =
-        document.querySelector('.controls__header').offsetHeight + padding
+        document.querySelector('.bber-controls__header').offsetHeight + padding
       const top = elem.offsetTop - offset
 
       document.getElementById('frame').scrollTo(0, top) // TODO should be handled in Frame.jsx
