@@ -52,6 +52,11 @@ class App extends Component {
 
         // Must be called before state is set
         this.props.readerSettingsActions.updateBookURL(bookURL)
+
+        // Set the projectURL if not set to prevent 404 to /api/books.json
+        if (!projectURL) {
+          projectURL = manifestURL.slice(0, manifestURL.lastIndexOf('/'))
+        }
       } catch (err) {
         console.error('Error loading Webpub manifest', err)
       }
