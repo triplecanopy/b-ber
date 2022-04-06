@@ -2,20 +2,20 @@
 
 exports[`Spinner renders the component 1`] = `
 <div
-  className="spinner spinner--visible"
+  className="bber-spinner bber-spinner--visible"
 >
   <div
-    className="spinner__detail"
+    className="bber-spinner__detail"
   />
 </div>
 `;
 
 exports[`Spinner renders the component 2`] = `
 <div
-  className="spinner"
+  className="bber-spinner"
 >
   <div
-    className="spinner__detail"
+    className="bber-spinner__detail"
   />
 </div>
 `;
