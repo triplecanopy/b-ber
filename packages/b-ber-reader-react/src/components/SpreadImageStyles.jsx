@@ -8,7 +8,7 @@ import { layouts } from '../constants'
 // scrolls. end effect is that it 'wipes' into/out of view, and is centered on
 // the page where the figure is placed
 
-const SpreadImageStyles = props => {
+function SpreadImageStyles(props) {
   const { spreadPosition, markerRefId, paddingLeft, unbound } = props
   const translateLeftPrevious = paddingLeft * 2
   const translateLeftCurrent = 0
@@ -32,28 +32,28 @@ const SpreadImageStyles = props => {
   // prettier-ignore
   const styles = props.layout === layouts.SCROLL || Viewport.isMobile() ? null : `
     /* Previous pages */
-    .spread-index__${adjustedSpreadPosition - 2} #spread__${markerRefId} > figure,
-    .spread-index__${adjustedSpreadPosition - 2} #spread__${markerRefId} > .spread__content,
-    .spread-index__${adjustedSpreadPosition - 1} #spread__${markerRefId} > figure,
-    .spread-index__${adjustedSpreadPosition - 1} #spread__${markerRefId} > .spread__content {
+    .bber-spread-index__${adjustedSpreadPosition - 2} #spread__${markerRefId} > figure,
+    .bber-spread-index__${adjustedSpreadPosition - 2} #spread__${markerRefId} > .spread__content,
+    .bber-spread-index__${adjustedSpreadPosition - 1} #spread__${markerRefId} > figure,
+    .bber-spread-index__${adjustedSpreadPosition - 1} #spread__${markerRefId} > .spread__content {
       backface-visibility: hidden;
       transform: translateX(${translateLeftPrevious}px) translate3d(0, 0, 0);
       transform-style: preserve-3d;
     }
 
     /* Current page */
-    .spread-index__${adjustedSpreadPosition}     #spread__${markerRefId} > figure,
-    .spread-index__${adjustedSpreadPosition}     #spread__${markerRefId} > .spread__content {
+    .bber-spread-index__${adjustedSpreadPosition} #spread__${markerRefId} > figure,
+    .bber-spread-index__${adjustedSpreadPosition} #spread__${markerRefId} > .spread__content {
       backface-visibility: hidden;
       transform-style: preserve-3d;
       transform: translateX(${translateLeftCurrent}px) translate3d(0, 0, 0);
     }
 
     /* Next pages */
-    .spread-index__${adjustedSpreadPosition + 1} #spread__${markerRefId} > figure,
-    .spread-index__${adjustedSpreadPosition + 1} #spread__${markerRefId} > .spread__content,
-    .spread-index__${adjustedSpreadPosition + 2} #spread__${markerRefId} > figure,
-    .spread-index__${adjustedSpreadPosition + 2} #spread__${markerRefId} > .spread__content {
+    .bber-spread-index__${adjustedSpreadPosition + 1} #spread__${markerRefId} > figure,
+    .bber-spread-index__${adjustedSpreadPosition + 1} #spread__${markerRefId} > .spread__content,
+    .bber-spread-index__${adjustedSpreadPosition + 2} #spread__${markerRefId} > figure,
+    .bber-spread-index__${adjustedSpreadPosition + 2} #spread__${markerRefId} > .spread__content {
       backface-visibility: hidden;
       transform-style: preserve-3d;
       transform: translateX(${translateLeftNext}px) translate3d(0, 0, 0);

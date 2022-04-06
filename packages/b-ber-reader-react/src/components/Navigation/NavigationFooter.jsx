@@ -37,63 +37,65 @@ const pageStyles = {
       : {},
 }
 
-const NavigationFooter = props => (
-  <footer className="controls__footer">
-    <nav>
-      <ul>
-        <li>
-          <button
-            className="material-icons nav__button"
-            style={chapterStyles.prev(props)}
-            onClick={() => {
-              if (props.handleEvents === false) return
-              props.handleChapterNavigation(-1)
-            }}
-          >
-            arrow_back
-          </button>
-        </li>
-        <li>
-          <button
-            className="material-icons nav__button"
-            style={pageStyles.prev(props)}
-            onClick={() => {
-              if (props.handleEvents === false) return
-              props.enablePageTransitions()
-              props.handlePageNavigation(-1)
-            }}
-          >
-            chevron_left
-          </button>
-        </li>
-        <li>
-          <button
-            className="material-icons nav__button"
-            style={pageStyles.next(props)}
-            onClick={() => {
-              if (props.handleEvents === false) return
-              props.enablePageTransitions()
-              props.handlePageNavigation(1)
-            }}
-          >
-            chevron_right
-          </button>
-        </li>
-        <li>
-          <button
-            className="material-icons nav__button"
-            style={chapterStyles.next(props)}
-            onClick={() => {
-              if (props.handleEvents === false) return
-              props.handleChapterNavigation(1)
-            }}
-          >
-            arrow_forward
-          </button>
-        </li>
-      </ul>
-    </nav>
-  </footer>
-)
+function NavigationFooter(props) {
+  return (
+    <footer className="bber-controls__footer">
+      <nav>
+        <ul>
+          <li>
+            <button
+              className="material-icons bber-nav__button"
+              style={chapterStyles.prev(props)}
+              onClick={() => {
+                if (props.handleEvents === false) return
+                props.handleChapterNavigation(-1)
+              }}
+            >
+              arrow_back
+            </button>
+          </li>
+          <li>
+            <button
+              className="material-icons bber-nav__button"
+              style={pageStyles.prev(props)}
+              onClick={() => {
+                if (props.handleEvents === false) return
+                props.enablePageTransitions()
+                props.handlePageNavigation(-1)
+              }}
+            >
+              chevron_left
+            </button>
+          </li>
+          <li>
+            <button
+              className="material-icons bber-nav__button"
+              style={pageStyles.next(props)}
+              onClick={() => {
+                if (props.handleEvents === false) return
+                props.enablePageTransitions()
+                props.handlePageNavigation(1)
+              }}
+            >
+              chevron_right
+            </button>
+          </li>
+          <li>
+            <button
+              className="material-icons bber-nav__button"
+              style={chapterStyles.next(props)}
+              onClick={() => {
+                if (props.handleEvents === false) return
+                props.handleChapterNavigation(1)
+              }}
+            >
+              arrow_forward
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </footer>
+  )
+}
 
 export default NavigationFooter

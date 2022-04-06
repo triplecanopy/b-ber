@@ -163,7 +163,7 @@ class Vimeo extends React.Component {
           <div
             key={`placholder-${url}`}
             style={{ paddingTop }}
-            className="iframe-placeholder"
+            className="bber-iframe-placeholder"
             ref={this.props.innerRef}
           />
         )}

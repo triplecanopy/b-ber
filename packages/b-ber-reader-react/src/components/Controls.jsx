@@ -108,7 +108,7 @@ class Controls extends Component {
 
   render() {
     return (
-      <div className="controls">
+      <div className="bber-controls">
         <NavigationHeader {...this.props} />
         <SidebarChapters {...this.props} />
         <SidebarDownloads {...this.props} />

@@ -12,7 +12,9 @@ class MediaButtonVolume extends React.Component {
 
     return (
       <>
-        <div className={classNames('slider__volume', { open })}>
+        <div
+          className={classNames('bber-slider__volume', { open: 'bber-open' })}
+        >
           <MediaRangeSlider
             duration={1} // max vol
             progress={this.props.volume} // current vol
@@ -20,9 +22,12 @@ class MediaButtonVolume extends React.Component {
           />
         </div>
         <button
-          className={classNames('material-icons media__button__volume_up', {
-            hover: open,
-          })}
+          className={classNames(
+            'material-icons bber-media__button__volume_up',
+            {
+              hover: open,
+            }
+          )}
           onClick={this.toggle}
         >
           volume_up

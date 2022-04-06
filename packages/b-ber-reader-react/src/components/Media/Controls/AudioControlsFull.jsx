@@ -9,24 +9,59 @@ import MediaButtonDownload from './MediaButtonDownload'
 import MediaButtonVolume from './MediaButtonVolume'
 import Viewport from '../../../helpers/Viewport'
 
-const AudioControlsFullStacked = props => (
-  <div className="media__stacked">
-    <div className="media__stacked__row">
-      <MediaTime time={props.timeElapsed} />
-      <MediaRangeSlider
-        duration={props.duration}
-        progress={props.progress}
-        seek={props.seek}
-      />
-      <MediaTime time={props.timeRemaining} />
-    </div>
+function AudioControlsFullStacked(props) {
+  return (
+    <div className="bber-media__stacked">
+      <div className="bber-media__stacked__row">
+        <MediaTime time={props.timeElapsed} />
+        <MediaRangeSlider
+          duration={props.duration}
+          progress={props.progress}
+          seek={props.seek}
+        />
+        <MediaTime time={props.timeRemaining} />
+      </div>
 
-    {/* Divider line */}
-    <div className="media__stacked__separator">
-      <div className="media__stacked__separator--line" />
-    </div>
+      {/* Divider line */}
+      <div className="bber-media__stacked__separator">
+        <div className="bber-media__stacked__separator--line" />
+      </div>
 
-    <div className="media__stacked__row">
+      <div className="bber-media__stacked__row">
+        <MediaButtonSeekBack timeBack={props.timeBack} />
+        <MediaButtonPlayPause
+          paused={props.paused}
+          pause={props.pause}
+          play={props.play}
+        />
+        <MediaButtonSeekForward timeForward={props.timeForward} />
+
+        <MediaButtonLoop loop={props.loop} updateLoop={props.updateLoop} />
+
+        <MediaButtonPlaybackRate
+          playbackRate={props.playbackRate}
+          playbackSlow={props.playbackSlow}
+          playbackNormal={props.playbackNormal}
+          playbackFast={props.playbackFast}
+        />
+
+        {/* Spacer */}
+        <div style={{ marginRight: 'auto' }} />
+
+        <MediaButtonVolume
+          volume={props.volume}
+          updateVolume={props.updateVolume}
+        />
+
+        <MediaButtonDownload currentSrc={props.currentSrc} />
+      </div>
+    </div>
+  )
+}
+
+function AudioControlsFull(props) {
+  return (
+    <>
       <MediaButtonSeekBack timeBack={props.timeBack} />
       <MediaButtonPlayPause
         paused={props.paused}
@@ -44,8 +79,13 @@ const AudioControlsFullStacked = props => (
         playbackFast={props.playbackFast}
       />
 
-      {/* Spacer */}
-      <div style={{ marginRight: 'auto' }} />
+      <MediaTime time={props.timeElapsed} />
+      <MediaRangeSlider
+        duration={props.duration}
+        progress={props.progress}
+        seek={props.seek}
+      />
+      <MediaTime time={props.timeRemaining} />
 
       <MediaButtonVolume
         volume={props.volume}
@@ -53,51 +93,16 @@ const AudioControlsFullStacked = props => (
       />
 
       <MediaButtonDownload currentSrc={props.currentSrc} />
-    </div>
-  </div>
-)
+    </>
+  )
+}
 
-const AudioControlsFull = props => (
-  <>
-    <MediaButtonSeekBack timeBack={props.timeBack} />
-    <MediaButtonPlayPause
-      paused={props.paused}
-      pause={props.pause}
-      play={props.play}
-    />
-    <MediaButtonSeekForward timeForward={props.timeForward} />
-
-    <MediaButtonLoop loop={props.loop} updateLoop={props.updateLoop} />
-
-    <MediaButtonPlaybackRate
-      playbackRate={props.playbackRate}
-      playbackSlow={props.playbackSlow}
-      playbackNormal={props.playbackNormal}
-      playbackFast={props.playbackFast}
-    />
-
-    <MediaTime time={props.timeElapsed} />
-    <MediaRangeSlider
-      duration={props.duration}
-      progress={props.progress}
-      seek={props.seek}
-    />
-    <MediaTime time={props.timeRemaining} />
-
-    <MediaButtonVolume
-      volume={props.volume}
-      updateVolume={props.updateVolume}
-    />
-
-    <MediaButtonDownload currentSrc={props.currentSrc} />
-  </>
-)
-
-const AudioControls = props =>
-  Viewport.isMobile() ? (
+function AudioControls(props) {
+  return Viewport.isMobile() ? (
     <AudioControlsFullStacked {...props} />
   ) : (
     <AudioControlsFull {...props} />
   )
+}
 
 export default AudioControls

@@ -111,7 +111,7 @@ const withObservers = WrappedComponent => {
       assertRef(this.node)
 
       const { columns } = this.props
-      const lastNode = document.querySelector('.ultimate') // TODO redux
+      const lastNode = document.querySelector('.bber-ultimate') // TODO redux
 
       if (lastNode) {
         lastNode.style.background = 'pink'
@@ -211,9 +211,9 @@ const withObservers = WrappedComponent => {
         //   // frameWidth / 2,
         //   (frameWidth - paddingLeft * 2 - columnGap) / 2,
         //   document.querySelector('#content').offsetWidth,
-        //   document.querySelector('.ultimate').offsetLeft,
+        //   document.querySelector('.bber-ultimate').offsetLeft,
         //   document.querySelector('#content').offsetWidth -
-        //     document.querySelector('.ultimate').offsetLeft
+        //     document.querySelector('.bber-ultimate').offsetLeft
         // )
         // console.log(
         //   'dims',

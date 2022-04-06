@@ -1,14 +1,14 @@
 import React from 'react'
 import { debug } from '../../config'
 
-const ListItemDownloads = props => {
+function ListItemDownloads(props) {
   if (!props.downloads || !props.downloads.length) return null
   const { header_icons: headerIcons } = props.uiOptions.navigation
 
   return (
     <li>
       <button
-        className="material-icons nav__button nav__button__downloads"
+        className="material-icons bber-nav__button bber-nav__button__downloads"
         onClick={() => props.handleSidebarButtonClick('downloads')}
         style={headerIcons.downloads ? {} : { display: 'none' }}
       >
@@ -18,15 +18,18 @@ const ListItemDownloads = props => {
   )
 }
 
-const NavigationHeader = props => {
+function NavigationHeader(props) {
   const { header_icons: headerIcons } = props.uiOptions.navigation
   return (
-    <header className="controls__header" style={debug ? { opacity: 0.4 } : {}}>
+    <header
+      className="bber-controls__header"
+      style={debug ? { opacity: 0.4 } : {}}
+    >
       <nav>
         <ul>
           <li>
             <button
-              className="material-icons nav__button nav__button__chapters"
+              className="material-icons bber-nav__button bber-nav__button__chapters"
               onClick={props.destroyReaderComponent}
               style={headerIcons.home ? {} : { display: 'none' }}
             >
@@ -35,7 +38,7 @@ const NavigationHeader = props => {
           </li>
           <li>
             <button
-              className="material-icons nav__button nav__button__chapters"
+              className="material-icons bber-nav__button bber-nav__button__chapters"
               onClick={() => props.handleSidebarButtonClick('chapters')}
               style={headerIcons.toc ? {} : { display: 'none' }}
             >
@@ -44,7 +47,7 @@ const NavigationHeader = props => {
           </li>
           <li>
             <button
-              className="material-icons nav__button nav__button__settings"
+              className="material-icons bber-nav__button bber-nav__button__settings"
               onClick={() => props.handleSidebarButtonClick('settings')}
             >
               settings
@@ -55,7 +58,7 @@ const NavigationHeader = props => {
 
           <li>
             <button
-              className="material-icons nav__button nav__button__metadata"
+              className="material-icons bber-nav__button bber-nav__button__metadata"
               onClick={() => props.handleSidebarButtonClick('metadata')}
               style={headerIcons.info ? {} : { display: 'none' }}
             >

@@ -1,5 +1,7 @@
 import React from 'react'
 
-const MediaTime = ({ time }) => <div className="media__time">{time}</div>
+function MediaTime({ time }) {
+  return <div className="bber-media__time">{time}</div>
+}
 
 export default MediaTime

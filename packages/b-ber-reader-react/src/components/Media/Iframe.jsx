@@ -69,7 +69,7 @@ class Iframe extends React.Component {
           <div
             key={`placholder-${src}`}
             style={{ paddingTop: height }}
-            className="iframe-placeholder"
+            className="bber-iframe-placeholder"
             ref={this.props.innerRef}
           />
         )}

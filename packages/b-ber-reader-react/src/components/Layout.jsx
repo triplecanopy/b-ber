@@ -13,13 +13,14 @@ import withDimensions from '../lib/with-dimensions'
 import ReaderContext from '../lib/reader-context'
 import { RESIZE_DEBOUNCE_TIMER, layouts } from '../constants'
 
-const Leaves = ({ layout, leafLeftStyles, leafRightStyles }) =>
-  layout === layouts.SCROLL || Viewport.isMobile() ? null : (
+function Leaves({ layout, leafLeftStyles, leafRightStyles }) {
+  return layout === layouts.SCROLL || Viewport.isMobile() ? null : (
     <>
-      <div className="leaf leaf--left" style={leafLeftStyles} />
-      <div className="leaf leaf--right" style={leafRightStyles} />
+      <div className="bber-leaf bber-leaf--left" style={leafLeftStyles} />
+      <div className="bber-leaf bber-leaf--right" style={leafRightStyles} />
     </>
   )
+}
 
 class Layout extends React.Component {
   static contextType = ReaderContext
@@ -190,7 +191,7 @@ class Layout extends React.Component {
       <div
         id="layout"
         style={layoutStyles}
-        className={`spread-index__${spreadIndex} context__${contextClass} ${slug}`}
+        className={`bber-spread-index__${spreadIndex} bber-context__${contextClass} ${slug}`}
       >
         <div id="content" style={contentStyles} ref={this.props.innerRef}>
           <this.props.BookContent />

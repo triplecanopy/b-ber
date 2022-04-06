@@ -266,7 +266,7 @@ class Marker extends React.Component {
           className={this.props.className}
           ref={this.props.elemRef}
         />
-        <span className="marker__spacer" style={spacerStyles} />
+        <span className="bber-marker__spacer" style={spacerStyles} />
       </span>
     )
   }

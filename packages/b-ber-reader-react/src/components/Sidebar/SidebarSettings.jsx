@@ -64,18 +64,18 @@ class SidebarSettings extends React.Component {
     return (
       <nav
         className={classNames(
-          'controls__sidebar',
-          'controls__sidebar__settings',
+          'bber-controls__sidebar',
+          'bber-controls__sidebar__settings',
           {
-            'controls__sidebar__settings--open':
+            'bber-controls__sidebar__settings--open':
               this.props.showSidebar === 'settings',
           }
         )}
       >
-        <fieldset className="settings__items">
-          <div className="settings__item settings__item--font-size">
+        <fieldset className="bber-settings__items">
+          <div className="bber-settings__item bber-settings__item--font-size">
             <label htmlFor="fontSize">Font Size</label>
-            <div className="settings__item__button-group settings__item__button-group--horizontal">
+            <div className="bber-settings__item__button-group bber-settings__item__button-group--horizontal">
               <button onClick={this.handleFontSizeDecrement}>-</button>
               <span>{fontSize}%</span>
               <input

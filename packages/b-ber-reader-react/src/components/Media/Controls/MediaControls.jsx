@@ -19,9 +19,9 @@ class MediaControls extends React.Component {
     return (
       <div
         className={classNames(
-          'media__controls',
-          `media__controls--${mediaType}`,
-          `media__controls--${config}`
+          'bber-media__controls',
+          `bber-media__controls--${mediaType}`,
+          `bber-media__controls--${config}`
         )}
       >
         <AudioVideoControls

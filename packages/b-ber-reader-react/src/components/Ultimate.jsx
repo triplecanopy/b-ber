@@ -61,7 +61,7 @@ class Ultimate extends React.Component {
 
   render() {
     return (
-      <span ref={this.node} className="ultimate">
+      <span ref={this.node} className="bber-ultimate">
         {this.props.children}
       </span>
     )
