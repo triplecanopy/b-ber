@@ -1,11 +1,10 @@
 const path = require('path')
 
-const exclude = [/(node_modules|dist|test|__tests__|epub)/]
+const exclude = [/node_modules/]
 
 module.exports = [
   {
     test: /\.(eot|woff2?|otf|ttf|svg)$/,
-    exclude: /(dist|test|__tests__|epub)/,
     use: {
       loader: 'url-loader',
       options: {

@@ -15,7 +15,7 @@ module.exports = {
 
       {
         test: /\.scss$/,
-        exclude: /(node_modules|dist|test|__tests__|epub)/,
+        exclude: /node_modules/,
         use: [
           MiniCssExtractPlugin.loader,
           { loader: 'css-loader' },

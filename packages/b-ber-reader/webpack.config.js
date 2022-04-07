@@ -8,7 +8,6 @@ module.exports = {
     rules: [
       {
         test: /\.(eot|woff2?|otf|ttf|svg)$/,
-        exclude: /(test|__tests__|epub)/,
         use: [
           {
             loader: 'url-loader',
