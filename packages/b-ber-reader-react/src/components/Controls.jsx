@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import { NavigationHeader, NavigationFooter } from './Navigation'
 import {
   SidebarMetadata,
   SidebarDownloads,
   SidebarChapters,
-  SidebarSettings,
+  // SidebarSettings,
 } from './Sidebar'
 import Messenger from '../lib/Messenger'
 import { messagesTypes } from '../constants'
@@ -107,20 +108,84 @@ class Controls extends Component {
   }
 
   render() {
+    const { readerSettings } = this.props
+
+    const Header = readerSettings.NavigationHeader || NavigationHeader
+    const Footer = readerSettings.NavigationFooter || NavigationFooter
+    const Chapters = readerSettings.SidebarChapters || SidebarChapters
+    const Downloads = readerSettings.SidebarDownloads || SidebarDownloads
+    const Metadata = readerSettings.SidebarMetadata || SidebarMetadata
+    // const Settings = readerSettings.SidebarSettings || SidebarSettings
+
+    const {
+      destroyReaderComponent,
+      handleSidebarButtonClick,
+      downloads,
+      uiOptions,
+      currentSpineItemIndex,
+      spine,
+      layout,
+      metadata,
+      showSidebar,
+      spreadIndex,
+      lastSpreadIndex,
+      handleEvents,
+      handleChapterNavigation,
+      enablePageTransitions,
+      handlePageNavigation,
+      navigateToChapterByURL,
+      // viewerSettings,
+      // update,
+      // save,
+    } = this.props
+
     return (
       <div className="bber-controls">
-        <NavigationHeader {...this.props} />
-        <SidebarChapters {...this.props} />
-        <SidebarDownloads {...this.props} />
-        <SidebarMetadata {...this.props} />
-        <SidebarSettings {...this.props} />
+        <Header
+          destroyReaderComponent={destroyReaderComponent}
+          handleSidebarButtonClick={handleSidebarButtonClick}
+          downloads={downloads}
+          uiOptions={uiOptions}
+        />
+
+        <Chapters
+          showSidebar={showSidebar}
+          spine={spine}
+          currentSpineItemIndex={currentSpineItemIndex}
+          navigateToChapterByURL={navigateToChapterByURL}
+        />
+
+        <Downloads showSidebar={showSidebar} downloads={downloads} />
+
+        <Metadata showSidebar={showSidebar} metadata={metadata} />
+
+        {/* <Settings
+          viewerSettings={viewerSettings}
+          update={update}
+          save={save}
+          showSidebar={showSidebar}
+        /> */}
 
         {this.props.children}
 
-        <NavigationFooter {...this.props} />
+        <Footer
+          uiOptions={uiOptions}
+          currentSpineItemIndex={currentSpineItemIndex}
+          spine={spine}
+          layout={layout}
+          spreadIndex={spreadIndex}
+          lastSpreadIndex={lastSpreadIndex}
+          handleEvents={handleEvents}
+          handleChapterNavigation={handleChapterNavigation}
+          enablePageTransitions={enablePageTransitions}
+          handlePageNavigation={handlePageNavigation}
+        />
       </div>
     )
   }
 }
 
-export default Controls
+export default connect(
+  ({ readerSettings }) => ({ readerSettings }),
+  () => ({})
+)(Controls)

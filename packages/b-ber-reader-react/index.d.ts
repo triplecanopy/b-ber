@@ -57,6 +57,108 @@ export interface BberReaderQueryParameterKeys {
   spreadIndex?: string
 }
 
+interface Download {
+  label: string
+  title: string
+  url: string
+  description?: string
+}
+
+interface UiOptionsNavigationHeaderIcons {
+  home?: boolean
+  toc?: boolean
+  downloads?: boolean
+  info?: boolean
+}
+
+interface UiOptionsNavigationFooterIcons {
+  chapter?: boolean
+  page?: boolean
+}
+
+interface UiOptionsNavigation {
+  header_icons?: UiOptionsNavigationHeaderIcons
+  footer_icons?: UiOptionsNavigationFooterIcons
+}
+
+interface UiOptions {
+  navigation?: UiOptionsNavigation
+}
+
+interface NavigationHeaderProps {
+  destroyReaderComponent: () => void
+  handleSidebarButtonClick: () => void
+  downloads: Download[]
+  uiOptions: UiOptions
+}
+
+enum Layout {
+  SCROLL = 'scroll',
+  COLUMNS = 'columns',
+}
+
+interface SpineItem {
+  absoluteURL: string
+  children: SpineItem[]
+  depth: number
+  href: string
+  id: string
+  idref: string
+  inTOC: boolean
+  linear: string
+  mediaType: string
+  properties: string[]
+  slug: string
+  title: string
+}
+
+type Spine = SpineItem[]
+
+interface Metadata {
+  title: string
+  creator: string
+  date: string
+  publisher: string
+  description: string
+  language: string
+  rights: string
+  identifier: string
+}
+
+interface NavigationFooterProps {
+  uiOptions: UiOptions
+  currentSpineItemIndex: number
+  spine: Spine
+  layout: Layout
+  spreadIndex: number
+  lastSpreadIndex: number
+  handleEvents: boolean
+  handleChapterNavigation: boolean
+  enablePageTransitions: boolean
+  handlePageNavigation: boolean
+}
+
+interface SidebarChaptersProps {
+  showSidebar: boolean
+  spine: Spine
+  currentSpineItemIndex: number
+  navigateToChapterByURL: () => void
+}
+
+interface SidebarDownloadsProps {
+  showSidebar: boolean
+  downloads: Download[]
+}
+
+interface SidebarMetadataProps {
+  showSidebar: boolean
+  metadata: Metadata
+}
+
+// interface SidebarSettingsProps {}
+
+type UiReaderProp<T> = React.Component<T> | ((props: T) => JSX.Element)
+
 interface OptionalBberReaderProps {
   bookURL?: string
   manifestURL?: string
@@ -70,6 +172,13 @@ interface OptionalBberReaderProps {
   layout?: Layout
   paramKeys?: BberReaderQueryParameterKeys
   disableBodyStyles?: boolean
+
+  NavigationHeader?: UiReaderProp<NavigationHeaderProps>
+  NavigationFooter?: UiReaderProp<NavigationFooterProps>
+  SidebarChapters?: UiReaderProp<SidebarChaptersProps>
+  SidebarDownloads?: UiReaderProp<SidebarDownloadsProps>
+  SidebarMetadata?: UiReaderProp<SidebarMetadataProps>
+  // SidebarSettings?: UiReaderProp<SidebarSettingsProps>
 }
 
 export type BberReaderProps = RequireOneOf<

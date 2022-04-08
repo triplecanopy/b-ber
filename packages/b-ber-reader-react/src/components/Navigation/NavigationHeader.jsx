@@ -1,3 +1,5 @@
+/* eslint-disable react/button-has-type */
+
 import React from 'react'
 import { debug } from '../../config'
 
@@ -18,7 +20,7 @@ function ListItemDownloads(props) {
   )
 }
 
-function NavigationHeader(props) {
+export function NavigationHeader(props) {
   const { header_icons: headerIcons } = props.uiOptions.navigation
   return (
     <header
@@ -54,6 +56,7 @@ function NavigationHeader(props) {
             </button>
           </li>
 
+          {/* eslint-disable-next-line react/jsx-props-no-spreading */}
           <ListItemDownloads {...props} />
 
           <li>

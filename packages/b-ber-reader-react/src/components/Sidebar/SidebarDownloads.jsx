@@ -1,3 +1,5 @@
+/* eslint-disable react/button-has-type */
+
 import React from 'react'
 import classNames from 'classnames'
 import Messenger from '../../lib/Messenger'
@@ -29,7 +31,7 @@ function SidebarDownloads(props) {
               onClick={() => Messenger.sendDownloadEvent(download.url)}
             >
               <span className="bber-downloads__title">{download.label}</span>
-              <SidebarDownloadDescription description={props.description} />
+              <SidebarDownloadDescription description={download.description} />
             </a>
             <button className="material-icons">file_download</button>
           </li>

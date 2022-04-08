@@ -4,18 +4,21 @@ import * as actionTypes from '../constants/reader-settings'
 
 export const initialState = {
   // loadRemoteLibrary: true, // TODO unused
+
   books: [],
   bookURL: '',
   downloads: [],
   projectURL: '',
   disableBodyStyles: false,
-  paramKeys: {
-    slug: 'slug',
-    currentSpineItemIndex: 'currentSpineItemIndex',
-    spreadIndex: 'spreadIndex',
-  },
-  style: {},
-  className: '',
+
+  // Components for rendering the reader's UI
+  NavigationHeader: null,
+  NavigationFooter: null,
+  SidebarChapters: null,
+  SidebarDownloads: null,
+  SidebarMetadata: null,
+  SidebarSettings: null,
+
   uiOptions: {
     navigation: {
       header_icons: {
@@ -30,6 +33,18 @@ export const initialState = {
       },
     },
   },
+
+  // Query param customization
+  paramKeys: {
+    slug: 'slug',
+    currentSpineItemIndex: 'currentSpineItemIndex',
+    spreadIndex: 'spreadIndex',
+  },
+
+  // Layout component style/class
+  style: {},
+  className: '',
+
   cache: true, // TODO handled based on build?
   layout: 'columns',
 }
