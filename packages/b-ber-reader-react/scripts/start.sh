@@ -11,7 +11,4 @@
 # npm start webpack/config.custom.js
 #
 
-CMD_1="npm run webpack:src $1"
-CMD_2="npm run serve"
-
-concurrently "$CMD_1" "$CMD_2"
+npm run watch "$1"

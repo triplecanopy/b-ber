@@ -8,7 +8,35 @@ const plugins = require('./plugins')
 
 module.exports = {
   ...common,
+
+  mode: 'production',
+
+  entry: {
+    index: './index.jsx',
+    styles: './index.scss',
+  },
+
+  // Use external version of React
+  // https://github.com/facebook/react/issues/13991
+  // Still unable to use `npm link`, but the project can be loaded from a
+  // tarball for development
+  externals: {
+    react: {
+      commonjs: 'react',
+      commonjs2: 'react',
+      amd: 'react',
+      root: 'React',
+    },
+    'react-dom': {
+      commonjs: 'react-dom',
+      commonjs2: 'react-dom',
+      amd: 'react-dom',
+      root: 'ReactDOM',
+    },
+  },
+
   plugins,
+
   module: {
     rules: [
       ...loaders,

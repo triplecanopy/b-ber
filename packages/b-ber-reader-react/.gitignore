@@ -14,4 +14,8 @@ webpack/*
 !webpack/config.production.js
 !webpack/config.custom-example.js
 
+dev/*
+!dev/index.ejs
+!dev/index.example.js
+
 /*.tgz

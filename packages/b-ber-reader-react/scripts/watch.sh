@@ -11,7 +11,7 @@
 # npm watch webpack/config.custom.js
 #
 
-CONFIG=$([[ -z $1 ]] && echo "webpack/config.production.js" || echo "$1")
+CONFIG=$([[ -z $1 ]] && echo "webpack/config.development.js" || echo "$1")
 
 npm run clean
-NODE_ENV=production webpack --mode production -w --config "$CONFIG"
+NODE_ENV=development webpack-dev-server --config "$CONFIG"
