@@ -69,6 +69,7 @@ interface OptionalBberReaderProps {
   cache?: boolean
   layout?: Layout
   paramKeys?: BberReaderQueryParameterKeys
+  disableBodyStyles?: boolean
 }
 
 export type BberReaderProps = RequireOneOf<

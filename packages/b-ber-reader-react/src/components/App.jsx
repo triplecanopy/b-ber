@@ -21,7 +21,7 @@ class App extends Component {
     const search = params.get('search')
     const pathname = params.get('pathname').slice(1) // TODO not used?
 
-    const { manifestURL } = this.props.readerSettings
+    const { manifestURL, disableBodyStyles } = this.props.readerSettings
     let { paramKeys, bookURL, projectURL } = this.props.readerSettings
     let books = []
 
@@ -29,6 +29,17 @@ class App extends Component {
       throw new Error(
         'Multiple endpoints. Specify either `manifestURL` or `bookURL`'
       )
+    }
+
+    if (disableBodyStyles !== true) {
+      // Add styles to body element in case the reader is running stand-alone
+
+      // Prevent font size change on mobile landscape
+      document.body.style['-webkit-text-size-adjust'] = 'none'
+
+      document.body.style['touch-action'] = 'manipulation'
+      document.body.style.margin = '0'
+      document.body.style.padding = '0'
     }
 
     if (manifestURL) {

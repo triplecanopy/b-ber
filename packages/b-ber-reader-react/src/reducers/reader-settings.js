@@ -8,6 +8,7 @@ export const initialState = {
   bookURL: '',
   downloads: [],
   projectURL: '',
+  disableBodyStyles: false,
   paramKeys: {
     slug: 'slug',
     currentSpineItemIndex: 'currentSpineItemIndex',

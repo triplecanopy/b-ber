@@ -131,16 +131,6 @@ $spinner-size: 40px;
   }
 }
 
-// TODO how to handle this
-body {
-  // Prevent font size change on mobile landscape
-  -webkit-text-size-adjust: none;
-
-  margin: 0;
-  padding: 0;
-  touch-action: manipulation;
-}
-
 // TODO .bber-footnote__body
 .footnote__body {
   visibility: visible;
