@@ -1,13 +1,9 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { NavigationHeader, NavigationFooter } from './Navigation'
-import {
-  SidebarMetadata,
-  SidebarDownloads,
-  SidebarChapters,
-  // SidebarSettings,
-} from './Sidebar'
+import { SidebarMetadata, SidebarDownloads, SidebarChapters } from './Sidebar'
 import Messenger from '../lib/Messenger'
+import withNavigationActions from '../lib/with-navigation-actions'
 import { messagesTypes } from '../constants'
 
 class Controls extends Component {
@@ -111,7 +107,9 @@ class Controls extends Component {
     const { readerSettings } = this.props
 
     const Header = readerSettings.NavigationHeader || NavigationHeader
-    const Footer = readerSettings.NavigationFooter || NavigationFooter
+    const Footer = withNavigationActions(
+      readerSettings.NavigationFooter || NavigationFooter
+    )
     const Chapters = readerSettings.SidebarChapters || SidebarChapters
     const Downloads = readerSettings.SidebarDownloads || SidebarDownloads
     const Metadata = readerSettings.SidebarMetadata || SidebarMetadata

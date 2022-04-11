@@ -143,6 +143,10 @@ interface NavigationFooterProps {
   handleChapterNavigation: (increment: number) => void
   enablePageTransitions: () => void
   handlePageNavigation: (increment: number) => void
+  goToPrevChapter: () => void
+  goToNextChapter: () => void
+  goToPrevPage: () => void
+  goToNextPage: () => void
 }
 
 interface SidebarChaptersProps {

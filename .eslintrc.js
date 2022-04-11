@@ -62,6 +62,7 @@ module.exports = {
     ],
     'operator-linebreak': 0,
     'padded-blocks': 0,
+    'react/button-has-type': 0,
     'react/destructuring-assignment': 0,
     'react/jsx-boolean-value': 0,
     'react/jsx-filename-extension': 0,

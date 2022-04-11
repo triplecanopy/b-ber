@@ -2,39 +2,40 @@ import React from 'react'
 import Viewport from '../../helpers/Viewport'
 import { layouts } from '../../constants'
 
-const chapterStyles = {
-  prev: props =>
-    (!Viewport.isMobile() &&
-      !props.uiOptions.navigation.footer_icons.chapter) ||
-    props.currentSpineItemIndex === 0
-      ? { display: 'none' }
-      : {},
+const styles = {
+  chapter: {
+    prev: props =>
+      (!Viewport.isMobile() &&
+        !props.uiOptions.navigation.footer_icons.chapter) ||
+      props.currentSpineItemIndex === 0
+        ? { display: 'none' }
+        : {},
 
-  next: props =>
-    (!Viewport.isMobile() &&
-      !props.uiOptions.navigation.footer_icons.chapter) ||
-    props.currentSpineItemIndex === props.spine.length - 1
-      ? { display: 'none' }
-      : {},
-}
+    next: props =>
+      (!Viewport.isMobile() &&
+        !props.uiOptions.navigation.footer_icons.chapter) ||
+      props.currentSpineItemIndex === props.spine.length - 1
+        ? { display: 'none' }
+        : {},
+  },
+  page: {
+    prev: props =>
+      props.layout === layouts.SCROLL ||
+      Viewport.isMobile() ||
+      !props.uiOptions.navigation.footer_icons.page ||
+      (props.currentSpineItemIndex === 0 && props.spreadIndex === 0)
+        ? { display: 'none' }
+        : {},
 
-const pageStyles = {
-  prev: props =>
-    props.layout === layouts.SCROLL ||
-    Viewport.isMobile() ||
-    !props.uiOptions.navigation.footer_icons.page ||
-    (props.currentSpineItemIndex === 0 && props.spreadIndex === 0)
-      ? { display: 'none' }
-      : {},
-
-  next: props =>
-    props.layout === layouts.SCROLL ||
-    Viewport.isMobile() ||
-    !props.uiOptions.navigation.footer_icons.page ||
-    (props.currentSpineItemIndex === props.spine.length - 1 &&
-      props.spreadIndex === props.lastSpreadIndex)
-      ? { display: 'none' }
-      : {},
+    next: props =>
+      props.layout === layouts.SCROLL ||
+      Viewport.isMobile() ||
+      !props.uiOptions.navigation.footer_icons.page ||
+      (props.currentSpineItemIndex === props.spine.length - 1 &&
+        props.spreadIndex === props.lastSpreadIndex)
+        ? { display: 'none' }
+        : {},
+  },
 }
 
 function NavigationFooter(props) {
@@ -45,11 +46,8 @@ function NavigationFooter(props) {
           <li>
             <button
               className="material-icons bber-nav__button"
-              style={chapterStyles.prev(props)}
-              onClick={() => {
-                if (props.handleEvents === false) return
-                props.handleChapterNavigation(-1)
-              }}
+              style={styles.chapter.prev(props)}
+              onClick={props.goToPrevChapter}
             >
               arrow_back
             </button>
@@ -57,12 +55,8 @@ function NavigationFooter(props) {
           <li>
             <button
               className="material-icons bber-nav__button"
-              style={pageStyles.prev(props)}
-              onClick={() => {
-                if (props.handleEvents === false) return
-                props.enablePageTransitions()
-                props.handlePageNavigation(-1)
-              }}
+              style={styles.page.prev(props)}
+              onClick={props.goToPrevPage}
             >
               chevron_left
             </button>
@@ -70,12 +64,8 @@ function NavigationFooter(props) {
           <li>
             <button
               className="material-icons bber-nav__button"
-              style={pageStyles.next(props)}
-              onClick={() => {
-                if (props.handleEvents === false) return
-                props.enablePageTransitions()
-                props.handlePageNavigation(1)
-              }}
+              style={styles.page.next(props)}
+              onClick={props.goToNextPage}
             >
               chevron_right
             </button>
@@ -83,11 +73,8 @@ function NavigationFooter(props) {
           <li>
             <button
               className="material-icons bber-nav__button"
-              style={chapterStyles.next(props)}
-              onClick={() => {
-                if (props.handleEvents === false) return
-                props.handleChapterNavigation(1)
-              }}
+              style={styles.chapter.next(props)}
+              onClick={props.goToNextChapter}
             >
               arrow_forward
             </button>
