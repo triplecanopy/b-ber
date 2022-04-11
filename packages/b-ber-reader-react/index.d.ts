@@ -53,8 +53,8 @@ type RequireOneOf<T, Keys extends keyof T = keyof T> = Pick<
 // Used for renaming the query parameters
 export interface BberReaderQueryParameterKeys {
   slug?: string
-  currentSpineItemIndex?: string
-  spreadIndex?: string
+  currentSpineItemIndex?: number
+  spreadIndex?: number
 }
 
 interface Download {
@@ -85,9 +85,16 @@ interface UiOptions {
   navigation?: UiOptionsNavigation
 }
 
+enum SidebarName {
+  CHAPTERS = 'chapters',
+  DOWNLOADS = 'downloads',
+  METADATA = 'metadata',
+  // SETTINGS = 'settings',
+}
+
 interface NavigationHeaderProps {
   destroyReaderComponent: () => void
-  handleSidebarButtonClick: () => void
+  handleSidebarButtonClick: (name: SidebarName | null) => void
   downloads: Download[]
   uiOptions: UiOptions
 }
@@ -133,25 +140,25 @@ interface NavigationFooterProps {
   spreadIndex: number
   lastSpreadIndex: number
   handleEvents: boolean
-  handleChapterNavigation: boolean
-  enablePageTransitions: boolean
-  handlePageNavigation: boolean
+  handleChapterNavigation: (increment: number) => void
+  enablePageTransitions: () => void
+  handlePageNavigation: (increment: number) => void
 }
 
 interface SidebarChaptersProps {
-  showSidebar: boolean
+  showSidebar: SidebarName | null
   spine: Spine
   currentSpineItemIndex: number
-  navigateToChapterByURL: () => void
+  navigateToChapterByURL: (url: string) => void
 }
 
 interface SidebarDownloadsProps {
-  showSidebar: boolean
+  showSidebar: SidebarName | null
   downloads: Download[]
 }
 
 interface SidebarMetadataProps {
-  showSidebar: boolean
+  showSidebar: SidebarName | null
   metadata: Metadata
 }
 
