@@ -180,17 +180,17 @@ $spinner-size: 40px;
 
 // UI
 .bber-controls {
-  ul,
-  ol {
+  .bber-ul,
+  .bber-ol {
     list-style: none;
   }
 
-  a,
-  button {
+  .bber-a,
+  .bber-button {
     cursor: pointer;
   }
 
-  button {
+  .bber-button {
     appearance: none;
     background: transparent;
     border: 0;
@@ -222,7 +222,7 @@ $spinner-size: 40px;
   height: $small;
   opacity: 1 !important;
 
-  nav ul {
+  .bber-nav .bber-ul {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -230,7 +230,7 @@ $spinner-size: 40px;
     height: $small;
     padding: 0 10px;
 
-    li {
+    .bber-li {
       display: flex;
       min-width: 25px;
 
@@ -272,12 +272,12 @@ $spinner-size: 40px;
   font-weight: 400;
   font-size: $font-size-serif;
 
-  ol,
-  ul,
-  dl {
-    li {
-      a,
-      button {
+  .bber-ol,
+  .bber-ul,
+  .bber-dl {
+    .bber-li {
+      .bber-a,
+      .bber-button {
         @include border('bottom');
         text-align: left;
         display: block;
@@ -311,28 +311,28 @@ $spinner-size: 40px;
         }
       }
 
-      ol,
-      li,
-      dl {
-        a {
+      .bber-ol,
+      .bber-li,
+      .bber-dl {
+        .bber-a {
           text-indent: $medium;
         }
       }
     }
 
-    dt {
+    .bber-dt {
       padding: calc(#{$medium} / 2) 0 0 calc(#{$small} / 2);
       text-transform: capitalize;
     }
 
-    dd {
+    .bber-dd {
       @include border('bottom');
       padding: 5px calc(#{$small} / 2) calc(#{$medium} / 2);
     }
 
-    li,
-    dt {
-      a {
+    .bber-li,
+    .bber-dt {
+      .bber-a {
         @include transition(color);
         text-decoration: none;
         color: $black;
@@ -392,7 +392,7 @@ $spinner-size: 40px;
   &.bber-controls__sidebar__settings--open {
     transform: translateX(0);
 
-    label {
+    .bber-label {
       font-weight: bold;
     }
 
@@ -420,15 +420,15 @@ $spinner-size: 40px;
   height: auto !important;
   padding-bottom: 0 !important;
 
-  ul li {
+  .bber-ul .bber-li {
     display: flex;
   }
 
-  li {
+  .bber-li {
     position: relative;
   }
 
-  button {
+  .bber-button {
     padding-right: calc(#{$small} / 2);
     position: absolute;
     top: 0;
@@ -436,7 +436,7 @@ $spinner-size: 40px;
     bottom: 0;
   }
 
-  a {
+  .bber-a {
     position: relative;
     z-index: 1;
     &:hover + button {
@@ -471,7 +471,7 @@ $spinner-size: 40px;
     background: $white;
   }
 
-  nav ul {
+  .bber-nav .bber-ul {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -479,7 +479,7 @@ $spinner-size: 40px;
     height: $small + 25px;
     padding: 0 10px;
 
-    li {
+    .bber-li {
       display: flex;
 
       &:nth-child(2) {
@@ -488,7 +488,7 @@ $spinner-size: 40px;
 
       &:nth-child(2),
       &:nth-child(3) {
-        button {
+        .bber-button {
           font-size: 2em;
         }
       }
@@ -648,16 +648,16 @@ $thumb-c: #272727;
     user-select: none;
   }
 
-  a,
-  button {
+  .bber-a,
+  .bber-button {
     text-decoration: none !important;
     transition: color $transition-speed-normal $transition-easing;
   }
 
-  a.bber-hover,
-  a:hover,
-  button.bber-hover,
-  button:hover {
+  .bber-a.bber-hover,
+  .bber-a:hover,
+  .bber-button.bber-hover,
+  .bber-button:hover {
     color: $violet !important;
   }
 
@@ -717,7 +717,7 @@ $thumb-c: #272727;
   margin: 6px 15px 6px 3px;
 }
 
-input[type='range'] {
+.bber-input[type='range'] {
   &,
   &::-webkit-slider-thumb {
     -webkit-appearance: none;

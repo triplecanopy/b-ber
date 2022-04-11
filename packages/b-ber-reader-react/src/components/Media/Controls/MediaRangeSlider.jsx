@@ -8,6 +8,7 @@ function MediaRangeSlider(props) {
         style={{ width: `${(props.progress / props.duration) * 100}%` }}
       />
       <input
+        className="bber-input"
         type="range"
         min="0"
         max={props.duration}

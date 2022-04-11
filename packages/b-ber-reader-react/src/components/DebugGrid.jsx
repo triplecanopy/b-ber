@@ -14,22 +14,20 @@ function BreakpointRow(props) {
   return <span style={{ display: 'table-row' }}>{props.children}</span>
 }
 function BreakpointColumn(props) {
+  if (typeof props.cond === 'undefined') {
+    return <span style={{ display: 'table-cell' }}>{props.children}</span>
+  }
+
   return (
-    <>
-      {typeof props.cond === 'undefined' ? (
-        <span style={{ display: 'table-cell' }}>{props.children}</span>
-      ) : (
-        <span
-          style={{
-            display: 'table-cell',
-            border: '1px solid',
-            height: 20,
-            width: 20,
-            backgroundColor: props.cond ? 'red' : '',
-          }}
-        />
-      )}
-    </>
+    <span
+      style={{
+        display: 'table-cell',
+        border: '1px solid',
+        height: 20,
+        width: 20,
+        backgroundColor: props.cond ? 'red' : '',
+      }}
+    />
   )
 }
 

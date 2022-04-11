@@ -3,9 +3,13 @@ import classNames from 'classnames'
 import MediaRangeSlider from './MediaRangeSlider'
 
 class MediaButtonVolume extends React.Component {
-  state = { open: false }
+  constructor() {
+    super()
 
-  toggle = () => this.setState({ open: !this.state.open })
+    this.state = { open: false }
+  }
+
+  toggle = () => this.setState(state => ({ open: !state.open }))
 
   render() {
     const { open } = this.state
@@ -23,7 +27,7 @@ class MediaButtonVolume extends React.Component {
         </div>
         <button
           className={classNames(
-            'material-icons bber-media__button__volume_up',
+            'bber-button material-icons bber-media__button__volume_up',
             { 'bber-hover': open }
           )}
           onClick={this.toggle}

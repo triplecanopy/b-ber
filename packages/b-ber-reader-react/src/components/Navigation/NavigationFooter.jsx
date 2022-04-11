@@ -41,38 +41,38 @@ const styles = {
 function NavigationFooter(props) {
   return (
     <footer className="bber-controls__footer">
-      <nav>
-        <ul>
-          <li>
+      <nav className="bber-nav">
+        <ul className="bber-ul">
+          <li className="bber-li">
             <button
-              className="material-icons bber-nav__button"
+              className="bber-button material-icons bber-nav__button"
               style={styles.chapter.prev(props)}
               onClick={props.goToPrevChapter}
             >
               arrow_back
             </button>
           </li>
-          <li>
+          <li className="bber-li">
             <button
-              className="material-icons bber-nav__button"
+              className="bber-button material-icons bber-nav__button"
               style={styles.page.prev(props)}
               onClick={props.goToPrevPage}
             >
               chevron_left
             </button>
           </li>
-          <li>
+          <li className="bber-li">
             <button
-              className="material-icons bber-nav__button"
+              className="bber-button material-icons bber-nav__button"
               style={styles.page.next(props)}
               onClick={props.goToNextPage}
             >
               chevron_right
             </button>
           </li>
-          <li>
+          <li className="bber-li">
             <button
-              className="material-icons bber-nav__button"
+              className="bber-button material-icons bber-nav__button"
               style={styles.chapter.next(props)}
               onClick={props.goToNextChapter}
             >

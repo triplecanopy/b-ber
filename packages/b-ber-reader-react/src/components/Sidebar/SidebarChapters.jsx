@@ -7,12 +7,12 @@ function NestedChapterList(props) {
   const items_ = items.filter(item => item.depth === depth && item.inTOC)
 
   return (
-    <ol>
+    <ol className="bber-ol">
       {items_.map((item, i) => (
-        <li key={item.id}>
+        <li className="bber-li" key={item.id}>
           <button
             onClick={() => props.navigateToChapterByURL(item.absoluteURL)}
-            className={classNames(`bber-indent--${depth + 1}`, {
+            className={classNames(`bber-button bber-indent--${depth + 1}`, {
               'bber-chapter--current': current === item.id,
             })}
           >
@@ -37,6 +37,7 @@ function SidebarChapters(props) {
   return (
     <nav
       className={classNames(
+        'bber-nav',
         'bber-controls__sidebar',
         'bber-controls__sidebar__chapters',
         {

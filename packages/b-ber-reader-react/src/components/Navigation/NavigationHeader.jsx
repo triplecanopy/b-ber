@@ -1,16 +1,15 @@
 /* eslint-disable react/button-has-type */
 
 import React from 'react'
-import { debug } from '../../config'
 
 function ListItemDownloads(props) {
   if (!props.downloads || !props.downloads.length) return null
   const { header_icons: headerIcons } = props.uiOptions.navigation
 
   return (
-    <li>
+    <li className="bber-li">
       <button
-        className="material-icons bber-nav__button bber-nav__button__downloads"
+        className="bber-button material-icons bber-nav__button bber-nav__button__downloads"
         onClick={() => props.handleSidebarButtonClick('downloads')}
         style={headerIcons.downloads ? {} : { display: 'none' }}
       >
@@ -23,33 +22,30 @@ function ListItemDownloads(props) {
 export function NavigationHeader(props) {
   const { header_icons: headerIcons } = props.uiOptions.navigation
   return (
-    <header
-      className="bber-controls__header"
-      style={debug ? { opacity: 0.4 } : {}}
-    >
-      <nav>
-        <ul>
-          <li>
+    <header className="bber-controls__header">
+      <nav className="bber-nav">
+        <ul className="bber-ul">
+          <li className="bber-li">
             <button
-              className="material-icons bber-nav__button bber-nav__button__chapters"
+              className="bber-button material-icons bber-nav__button bber-nav__button__chapters"
               onClick={props.destroyReaderComponent}
               style={headerIcons.home ? {} : { display: 'none' }}
             >
               menu
             </button>
           </li>
-          <li>
+          <li className="bber-li">
             <button
-              className="material-icons bber-nav__button bber-nav__button__chapters"
+              className="bber-button material-icons bber-nav__button bber-nav__button__chapters"
               onClick={() => props.handleSidebarButtonClick('chapters')}
               style={headerIcons.toc ? {} : { display: 'none' }}
             >
               view_list
             </button>
           </li>
-          <li>
+          <li className="bber-li">
             <button
-              className="material-icons bber-nav__button bber-nav__button__settings"
+              className="bber-button material-icons bber-nav__button bber-nav__button__settings"
               onClick={() => props.handleSidebarButtonClick('settings')}
             >
               settings
@@ -59,9 +55,9 @@ export function NavigationHeader(props) {
           {/* eslint-disable-next-line react/jsx-props-no-spreading */}
           <ListItemDownloads {...props} />
 
-          <li>
+          <li className="bber-li">
             <button
-              className="material-icons bber-nav__button bber-nav__button__metadata"
+              className="bber-button material-icons bber-nav__button bber-nav__button__metadata"
               onClick={() => props.handleSidebarButtonClick('metadata')}
               style={headerIcons.info ? {} : { display: 'none' }}
             >

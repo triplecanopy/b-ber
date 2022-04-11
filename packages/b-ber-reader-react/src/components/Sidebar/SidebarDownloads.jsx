@@ -14,6 +14,7 @@ function SidebarDownloads(props) {
   return (
     <nav
       className={classNames(
+        'bber-nav',
         'bber-controls__sidebar',
         'bber-controls__sidebar__downloads',
         {
@@ -22,10 +23,11 @@ function SidebarDownloads(props) {
         }
       )}
     >
-      <ul>
+      <ul className="bber-ul">
         {props.downloads.map(download => (
-          <li key={download.url}>
+          <li className="bber-li" key={download.url}>
             <a
+              className="bber-a"
               download
               href={download.url}
               onClick={() => Messenger.sendDownloadEvent(download.url)}
@@ -33,7 +35,9 @@ function SidebarDownloads(props) {
               <span className="bber-downloads__title">{download.label}</span>
               <SidebarDownloadDescription description={download.description} />
             </a>
-            <button className="material-icons">file_download</button>
+            <button className="bber-button material-icons">
+              file_download
+            </button>
           </li>
         ))}
       </ul>

@@ -5,6 +5,7 @@ function SidebarMetadata(props) {
   return (
     <nav
       className={classNames(
+        'bber-nav',
         'bber-controls__sidebar',
         'bber-controls__sidebar__metadata',
         {
@@ -13,13 +14,13 @@ function SidebarMetadata(props) {
         }
       )}
     >
-      <dl>
+      <dl className="bber-dl">
         {Object.keys(props.metadata).map((key, i) => {
           if (!key || !props.metadata[key]) return null
           return (
             <div key={i}>
-              <dt>{key}</dt>
-              <dd>{props.metadata[key]}</dd>
+              <dt className="bber-dt">{key}</dt>
+              <dd className="bber-dd">{props.metadata[key]}</dd>
             </div>
           )
         })}

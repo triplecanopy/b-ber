@@ -3,14 +3,14 @@ import React from 'react'
 function MediaButtonPlayPause(props) {
   return props.paused ? (
     <button
-      className="material-icons bber-media__button__play"
+      className="bber-button material-icons bber-media__button__play"
       onClick={props.play}
     >
       play_arrow
     </button>
   ) : (
     <button
-      className="material-icons bber-media__button__pause"
+      className="bber-button material-icons bber-media__button__pause"
       onClick={props.pause}
     >
       pause
