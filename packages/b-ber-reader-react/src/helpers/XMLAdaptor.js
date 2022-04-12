@@ -3,7 +3,9 @@ import has from 'lodash/has'
 import { Parser as HtmlToReactParser } from 'html-to-react'
 import find from 'lodash/find'
 import csstree, { List } from 'css-tree'
-import { Url, Request, Cache } from '.'
+import Url from './Url'
+import Request from './Request'
+import Cache from './Cache'
 import { BookMetadata, SpineItem, GuideItem } from '../models'
 import { processingInstructions, isValidNode } from '../lib/process-nodes'
 import DocumentProcessor from '../lib/DocumentProcessor'
@@ -11,6 +13,7 @@ import DocumentProcessor from '../lib/DocumentProcessor'
 class XMLAdaptor {
   static opfURL(url) {
     let url_ = url
+
     url_ = Url.stripTrailingSlash(url_)
     url_ += '/OPS' // epub.version === '2' ? 'OEBPS' : 'OPS';
     url_ += '/content.opf'
@@ -21,6 +24,7 @@ class XMLAdaptor {
 
   static opsURL(url) {
     let url_ = url
+
     url_ = Url.stripTrailingSlash(url_)
     url_ += '/OPS'
 
@@ -47,10 +51,16 @@ class XMLAdaptor {
     const __ncx = null
     return new Promise(resolve => {
       const { toc } = __spine.attributes
-      if (!toc) return resolve({ ...rootNode, __ncx })
+      if (!toc) {
+        resolve({ ...rootNode, __ncx })
+        return
+      }
 
       const item = find(__manifest.elements, a => a.attributes.id === toc)
-      if (!item) return resolve({ ...rootNode, __ncx })
+      if (!item) {
+        resolve({ ...rootNode, __ncx })
+        return
+      }
 
       const { href } = item.attributes
       Request.get(Url.resolveRelativeURL(opsURL, href)).then(({ data }) => {
@@ -130,7 +140,8 @@ class XMLAdaptor {
     const { __guide } = rootNode
     return new Promise(resolve => {
       if (!__guide.elements || !__guide.elements.length) {
-        return resolve({ ...rootNode, guide: [] })
+        resolve({ ...rootNode, guide: [] })
+        return
       }
 
       const guide = __guide.elements.map(reference => {
@@ -289,6 +300,7 @@ class XMLAdaptor {
 
   static async parseSpineItemResponse(response) {
     const { responseURL } = response.request
+
     const {
       hash,
       opsURL,
@@ -338,32 +350,39 @@ class XMLAdaptor {
 
     const promises = styles.map(
       ({ url, base }) =>
-        new Promise(resolve1 => {
+        new Promise(rs => {
           const cache = Cache.get(url)
 
           if (useLocalStorageCache && cache?.data) {
-            return resolve1({ base, data: cache.data })
+            console.log('Loads CSS from cache %s', url)
+
+            rs({ base, data: cache.data })
+            return
           }
 
-          return Request.get(url).then(response1 => {
-            if (useLocalStorageCache) Cache.set(url, response1.data)
-            return resolve1({ base, data: response1.data })
+          Request.get(url).then(rsp => {
+            if (useLocalStorageCache) {
+              console.log('No CSS cache - setting cache for %s', url)
+              Cache.set(url, rsp.data)
+            }
+
+            rs({ base, data: rsp.data })
           })
         })
     )
 
-    let sheets = await Promise.all(promises)
+    const linkedSheets = await Promise.all(promises)
 
     // Remove inline style elements while extracting their contents to add to
     // the chapter stylesheet
-    sheets = inlineStyles.reduce((acc, node) => {
+    const sheets = inlineStyles.reduce((acc, node) => {
       const { textContent: data } = node
 
       if (!data) return acc
 
       const base = Url.trimFilenameFromResponse(responseURL)
       return acc.concat({ base, data })
-    }, sheets)
+    }, linkedSheets)
 
     const hashedClassName = `_${hash}`
     const scopedCSS = XMLAdaptor.createScopedCSS(

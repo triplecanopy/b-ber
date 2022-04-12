@@ -1,5 +1,7 @@
 class Storage {
-  static get(key) {
+  static localStorageKey = 'bber_reader'
+
+  static get(key = Storage.localStorageKey) {
     let storage = '{}'
 
     try {
@@ -12,7 +14,7 @@ class Storage {
     return storage
   }
 
-  static set(key, val) {
+  static set(val, key = Storage.localStorageKey) {
     let value = val
     if (typeof value !== 'string') value = JSON.stringify(value)
 
@@ -23,7 +25,7 @@ class Storage {
     }
   }
 
-  static clear(key = '') {
+  static clear(key = Storage.localStorageKey) {
     const key_ = String(key)
     if (!key_) return
 

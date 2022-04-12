@@ -4,7 +4,7 @@ import { ViewerSettings } from '../models'
 const settings = new ViewerSettings()
 const initialState = settings.get()
 
-const viewerSettings = (state = initialState, action) => {
+const viewerSettings = (state = initialState, action = {}) => {
   switch (action.type) {
     case actionTypes.SETTINGS_UPDATE:
     case actionTypes.SETTINGS_SAVE:

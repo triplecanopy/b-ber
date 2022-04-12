@@ -1,4 +1,5 @@
-import { Asset, Storage } from '.'
+import Asset from './Asset'
+import Storage from './Storage'
 
 class Cache {
   static localStorageKey = 'bber_cache'
@@ -16,7 +17,7 @@ class Cache {
 
     if (storage) {
       storage[hash] = { data }
-      Storage.set(Cache.localStorageKey, storage)
+      Storage.set(storage, Cache.localStorageKey)
     }
   }
 

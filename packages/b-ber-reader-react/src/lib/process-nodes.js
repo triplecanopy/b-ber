@@ -14,7 +14,8 @@ import {
   Iframe,
   Ultimate,
 } from '../components'
-import { Asset, Url } from '../helpers'
+import Asset from '../helpers/Asset'
+import Url from '../helpers/Url'
 import { rand, getControlsPreset } from '../helpers/utils'
 
 export const isValidNode = () => true

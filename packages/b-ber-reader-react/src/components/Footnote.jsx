@@ -1,7 +1,9 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import classNames from 'classnames'
-import { Request, Asset, Url } from '../helpers'
+import Request from '../helpers/Request'
+import Asset from '../helpers/Asset'
+import Url from '../helpers/Url'
 import Viewport from '../helpers/Viewport'
 
 const blacklistedNodeNames = ['SCRIPT', 'STYLE']
@@ -48,15 +50,19 @@ const processFootnoteResponseElement = (node, count) => {
 }
 
 class Footnote extends React.Component {
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      content: '',
+      visible: false,
+      footnote: Asset.createId(),
+    }
+  }
+
   footnoteContainer = React.createRef()
 
   footnoteElement = React.createRef()
-
-  state = {
-    content: '',
-    visible: false,
-    footnote: Asset.createId(),
-  }
 
   // Unbind hideFootnote handler in case unmounting while footnote is visible
   componentWillUnmount() {

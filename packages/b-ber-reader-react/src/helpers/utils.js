@@ -1,3 +1,6 @@
+/* eslint-disable no-continue */
+/* eslint-disable no-param-reassign */
+
 import isUndefined from 'lodash/isUndefined'
 import isArray from 'lodash/isArray'
 import isPlainObject from 'lodash/isPlainObject'
@@ -42,10 +45,15 @@ export const mergeDeep = (target, ...args) => {
       // https://github.com/eslint/eslint/issues/12117
       // eslint-disable-next-line no-unused-vars
       for (const [key, val] of Object.entries(args[i])) {
-        // eslint-disable-next-line no-continue
         if (!has(args[i], key)) continue
-        // eslint-disable-next-line no-param-reassign
-        target[key] = mergeDeep(target[key], val)
+
+        if (typeof target[key] !== typeof val) {
+          // Overwrite target if they're not the same type
+          target[key] = val
+        } else {
+          // Otherwise merge the objects
+          target[key] = mergeDeep(target[key], val)
+        }
       }
     } else {
       // eslint-disable-next-line no-param-reassign

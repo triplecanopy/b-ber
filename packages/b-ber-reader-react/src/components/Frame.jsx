@@ -4,6 +4,7 @@ import { Layout, DebugGrid } from '.'
 import Viewport from '../helpers/Viewport'
 import { layouts } from '../constants'
 import Messenger from '../lib/Messenger'
+import Asset from '../helpers/Asset'
 
 class Frame extends React.Component {
   node = React.createRef()
@@ -81,7 +82,8 @@ class Frame extends React.Component {
   }
 
   className() {
-    let className = `_${this.props.hash}`
+    const hash = Asset.createHash(this.props.bookURL)
+    let className = `_${hash}`
 
     if (this.props.className && typeof this.props.className === 'string') {
       className = `${className} ${this.props.className}`

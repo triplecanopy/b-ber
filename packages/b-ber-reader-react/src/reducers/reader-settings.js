@@ -1,5 +1,6 @@
 /* eslint-disable camelcase */
 
+import { locationStates } from '../actions/reader-location'
 import * as actionTypes from '../constants/reader-settings'
 
 export const initialState = {
@@ -35,11 +36,15 @@ export const initialState = {
   },
 
   // Query param customization
-  paramKeys: {
+  searchParamKeys: {
     slug: 'slug',
     currentSpineItemIndex: 'currentSpineItemIndex',
     spreadIndex: 'spreadIndex',
   },
+
+  // Query param behaviour
+  locationState: locationStates.QUERY_PARAMS,
+  searchParams: '',
 
   // Layout component style/class
   style: {},
@@ -51,28 +56,10 @@ export const initialState = {
 
 const readerSettings = (state = initialState, action = {}) => {
   switch (action.type) {
-    case actionTypes.BOOKS_UPDATE:
-      return { ...state, books: [...action.payload] }
-
-    case actionTypes.BOOK_URL_UPDATE:
-      return { ...state, bookURL: action.payload }
-
-    case actionTypes.PROJECT_URL_UPDATE:
-      return { ...state, projectURL: action.payload }
-
-    case actionTypes.DOWNLOADS_UPDATE:
-      return { ...state, downloads: [...action.payload] }
-
-    case actionTypes.UI_OPTIONS_UPDATE:
-      return { ...state, uiOptions: { ...action.payload } }
-
-    case actionTypes.QUERY_PARAM_KEYS_UPDATE:
+    case actionTypes.SETTINGS_UPDATE:
       return {
         ...state,
-        paramKeys: {
-          ...state.paramKeys,
-          ...action.payload,
-        },
+        ...action.payload,
       }
 
     default:

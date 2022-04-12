@@ -33,10 +33,12 @@ class Asset {
     const blob = new window.Blob([css], { type: 'text/css' })
     const link = document.createElement('link')
     const head = document.querySelector('head')
+
     link.rel = 'stylesheet'
     link.type = 'text/css'
     link.id = `_${hash}`
     link.href = window.URL.createObjectURL(blob)
+
     head.appendChild(link)
   }
 
@@ -66,7 +68,8 @@ class Asset {
 
     const style = {}
     const vendorPrefixes = { moz: 'Moz', webkit: 'Webkit', o: 'O' }
-    const vendorPrefixRe = new RegExp('^-(moz|webkit|o)-')
+    const vendorPrefixRe = /^-(moz|webkit|o)-/
+
     attrs.style.split(';').map(a => {
       let [key, val] = a.split(':').map(b => b.trim())
       let match = null

@@ -1,28 +1,15 @@
 import React, { Component } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import find from 'lodash/find'
-import { Reader, Library } from '.'
-import { Request, Url } from '../helpers'
+import { Reader /*, Library */ } from '.'
+import Request from '../helpers/Request'
 import * as readerSettingsActions from '../actions/reader-settings'
+import * as readerLocationActions from '../actions/reader-location'
 
 class App extends Component {
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      pathname: '',
-      search: '',
-    }
-  }
-
   async UNSAFE_componentWillMount() {
-    const params = new URLSearchParams(window.location)
-    const search = params.get('search')
-    const pathname = params.get('pathname').slice(1) // TODO not used?
-
     const { manifestURL, disableBodyStyles } = this.props.readerSettings
-    let { paramKeys, bookURL, projectURL } = this.props.readerSettings
+    let { bookURL, projectURL } = this.props.readerSettings
     let books = []
 
     if (manifestURL && bookURL) {
@@ -36,7 +23,6 @@ class App extends Component {
 
       // Prevent font size change on mobile landscape
       document.body.style['-webkit-text-size-adjust'] = 'none'
-
       document.body.style['touch-action'] = 'manipulation'
       document.body.style.margin = '0'
       document.body.style.padding = '0'
@@ -62,7 +48,7 @@ class App extends Component {
           .join('/')
 
         // Must be called before state is set
-        this.props.readerSettingsActions.updateBookURL(bookURL)
+        this.props.readerSettingsActions.updateSettings({ bookURL })
 
         // Set the projectURL if not set to prevent 404 to /api/books.json
         if (!projectURL) {
@@ -73,9 +59,12 @@ class App extends Component {
       }
     }
 
-    // Path from which to load api/books.json
-    if (!projectURL) {
-      projectURL = new URL(bookURL).origin
+    if (bookURL && !projectURL) {
+      // Path from which to load api/books.json
+      projectURL = bookURL
+        .split('/')
+        .slice(0, -2)
+        .join('/')
     }
 
     try {
@@ -85,69 +74,42 @@ class App extends Component {
       console.warn('Could not load books from API', err)
     }
 
-    // TODO if not title && not url ...
-    const pred = pathname ? { title: pathname } : { url: bookURL }
-    const book = find(books, pred)
+    console.log('---- books', books)
+    console.log('---- bookURL', bookURL)
+    console.log('---- projectURL', projectURL)
 
-    bookURL = book ? book.url : ''
-
-    // Get overridden query string paremeter keys
-    paramKeys = {
-      ...this.state.paramKeys,
-      ...(paramKeys || {}),
-    }
-
-    this.setState({ search, pathname }, () => {
-      this.props.readerSettingsActions.updateBooks(books)
-      this.props.readerSettingsActions.updateBookURL(bookURL)
-      this.props.readerSettingsActions.updateProjectURL(projectURL)
-      this.props.readerSettingsActions.updateQueryParameterKeys(paramKeys)
+    this.props.readerSettingsActions.updateSettings({
+      books,
+      bookURL,
+      projectURL,
     })
-  }
 
-  handleClick = ({ title, url: bookURL }) => {
-    const pathname = Url.slug(title)
-    this.setState({ pathname })
-
-    // Tell the reader to load data from bookURL
-    this.props.readerSettingsActions.updateBookURL(bookURL)
+    this.props.readerLocationActions.setInitialSearchParams()
   }
 
   render() {
-    const { pathname, search } = this.state
-    const {
-      bookURL,
-      books,
-      style,
-      className,
-      ...rest
-    } = this.props.readerSettings
+    const { searchParams } = this.props.readerLocation
+    const { bookURL } = this.props.readerSettings
 
-    if (!bookURL) {
-      return <Library books={books} handleClick={this.handleClick} />
-    }
+    if (!searchParams || !bookURL) return null
+
+    const { style, className, ...rest } = this.props.readerSettings
 
     return (
-      <Reader
-        pathname={pathname}
-        search={search}
-        bookURL={bookURL}
-        style={style}
-        className={className}
-        // TODO shouldn't be passing in readerSettings as a spread here
-        // eslint-disable-next-line react/jsx-props-no-spreading
-        {...rest}
-      />
+      // eslint-disable-next-line react/jsx-props-no-spreading
+      <Reader style={style} className={className} {...rest} />
     )
   }
 }
 
-const mapStateToProps = ({ readerSettings }) => ({
+const mapStateToProps = ({ readerSettings, readerLocation }) => ({
   readerSettings,
+  readerLocation,
 })
 
 const mapDispatchToProps = dispatch => ({
   readerSettingsActions: bindActionCreators(readerSettingsActions, dispatch),
+  readerLocationActions: bindActionCreators(readerLocationActions, dispatch),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(App)

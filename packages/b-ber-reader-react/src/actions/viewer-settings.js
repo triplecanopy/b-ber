@@ -4,8 +4,6 @@ import Storage from '../helpers/Storage'
 
 // const useLocalStorage = false // TODO
 
-const LOCALSTORAGE_KEY = 'bber_reader'
-
 export const load = () => dispatch => {
   // TODO
   // const storage = Storage.set(LOCALSTORAGE_KEY)
@@ -22,7 +20,7 @@ export const save = () => (dispatch, getState) => {
   const { viewerSettings } = getState()
   const storage = { viewerSettings }
 
-  Storage.set(LOCALSTORAGE_KEY, storage)
+  Storage.set(storage)
 
   return dispatch({
     type: actionTypes.SETTINGS_SAVE,
