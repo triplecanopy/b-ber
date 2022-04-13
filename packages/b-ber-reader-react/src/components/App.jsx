@@ -74,9 +74,9 @@ class App extends Component {
       console.warn('Could not load books from API', err)
     }
 
-    console.log('---- books', books)
-    console.log('---- bookURL', bookURL)
-    console.log('---- projectURL', projectURL)
+    // console.log('---- books', books)
+    // console.log('---- bookURL', bookURL)
+    // console.log('---- projectURL', projectURL)
 
     this.props.readerSettingsActions.updateSettings({
       books,

@@ -2,7 +2,9 @@ import head from 'lodash/head'
 
 import {
   BREAKPOINT_HORIZONTAL_SMALL,
+  BREAKPOINT_HORIZONTAL_MEDIUM,
   BREAKPOINT_HORIZONTAL_LARGE,
+  BREAKPOINT_HORIZONTAL_X_LARGE,
   BREAKPOINT_VERTICAL_SMALL,
   BREAKPOINT_VERTICAL_LARGE,
   LAYOUT_MAX_HEIGHT,
@@ -10,6 +12,8 @@ import {
   VIEWPORT_DIMENSIONS_MATRIX,
   DESKTOP_COLUMN_COUNT,
   MOBILE_COLUMN_COUNT,
+  HORIZONTAL_BREAKPOINT_COUNT,
+  VERTICAL_BREAKPOINT_COUNT,
 } from '../constants'
 
 import { isNumeric } from './Types'
@@ -20,11 +24,15 @@ class Viewport {
     window.innerWidth <= BREAKPOINT_HORIZONTAL_SMALL
 
   static horizontalMedium = () =>
-    window.innerWidth > BREAKPOINT_HORIZONTAL_SMALL &&
+    window.innerWidth >= BREAKPOINT_HORIZONTAL_MEDIUM &&
     window.innerWidth < BREAKPOINT_HORIZONTAL_LARGE
 
   static horizontalLarge = () =>
-    window.innerWidth >= BREAKPOINT_HORIZONTAL_LARGE
+    window.innerWidth >= BREAKPOINT_HORIZONTAL_LARGE &&
+    window.innerWidth < BREAKPOINT_HORIZONTAL_X_LARGE
+
+  static horizontalXLarge = () =>
+    window.innerWidth >= BREAKPOINT_HORIZONTAL_X_LARGE
 
   // used to get position Y in matrix
   static verticalSmall = () => window.innerHeight <= BREAKPOINT_VERTICAL_SMALL
@@ -44,9 +52,22 @@ class Viewport {
     'ontouchstart' in document.documentElement
 
   static getBreakpointX = () => {
-    if (Viewport.horizontalSmall()) return 0
-    if (Viewport.horizontalMedium()) return 1
-    if (Viewport.horizontalLarge()) return 2
+    if (Viewport.horizontalSmall()) {
+      console.log('Viewport.horizontalSmall')
+      return 0
+    }
+    if (Viewport.horizontalMedium()) {
+      console.log('Viewport.horizontalMedium')
+      return 1
+    }
+    if (Viewport.horizontalLarge()) {
+      console.log('Viewport.horizontalLarge')
+      return 2
+    }
+    if (Viewport.horizontalXLarge()) {
+      console.log('Viewport.horizontalXLarge')
+      return 3
+    }
   }
 
   static getBreakpointY = () => {
@@ -118,6 +139,7 @@ class Viewport {
     top: isNumeric(top)
       ? window.innerHeight * (top / 100)
       : Viewport.getVerticalValueFromString(top),
+
     bottom: isNumeric(bottom)
       ? window.innerHeight * (bottom / 100)
       : Viewport.getVerticalValueFromString(bottom),
@@ -127,19 +149,30 @@ class Viewport {
     left: isNumeric(left)
       ? window.innerWidth * (left / 100)
       : Viewport.getHorizontalValueFromString(left),
+
     right: isNumeric(right)
       ? window.innerWidth * (right / 100)
       : Viewport.getHorizontalValueFromString(right),
   })
 
+  static filterDimensionsX = x => (_, i) =>
+    (i % HORIZONTAL_BREAKPOINT_COUNT) - x === 0
+
+  static filterDimensionsY = y => (_, i) =>
+    (i % VERTICAL_BREAKPOINT_COUNT) - y === 0
+
+  // prettier-ignore
   static getDimensions = ([x, y]) =>
     head(
-      VIEWPORT_DIMENSIONS_MATRIX.filter((_, i) => (i % 3) - x === 0)
-        .filter((_, i) => (i % 3) - y === 0)
-        .map(([top, right, bottom, left]) => ({
-          ...Viewport.getVerticalSpacing(top, bottom),
-          ...Viewport.getHorizontalSpacing(left, right),
-        }))
+      VIEWPORT_DIMENSIONS_MATRIX
+        .filter(Viewport.filterDimensionsX(x))
+        .filter(Viewport.filterDimensionsY(y))
+        .map(
+          ([top, right, bottom, left]) => ({
+            ...Viewport.getVerticalSpacing(top, bottom),
+            ...Viewport.getHorizontalSpacing(left, right),
+          })
+        )
     )
 
   static getDimensionsFromMatrix = () =>

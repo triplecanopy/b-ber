@@ -354,7 +354,7 @@ class XMLAdaptor {
           const cache = Cache.get(url)
 
           if (useLocalStorageCache && cache?.data) {
-            console.log('Loads CSS from cache %s', url)
+            // console.log('Loads CSS from cache %s', url)
 
             rs({ base, data: cache.data })
             return

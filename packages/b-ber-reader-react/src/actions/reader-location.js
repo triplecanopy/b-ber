@@ -148,7 +148,7 @@ export const updateLocation = location => (dispatch, getState) => {
   const prevState = getState()
   const { locationState } = prevState.readerSettings
 
-  console.log('Update location', location)
+  // console.log('Update location', location)
 
   if (locationState === locationStates.QUERY_PARAMS) {
     return dispatch(updateQueryString(location))
