@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { Reader /*, Library */ } from '.'
+import { Reader } from '.'
 import Request from '../helpers/Request'
 import * as readerSettingsActions from '../actions/reader-settings'
 import * as readerLocationActions from '../actions/reader-location'
@@ -13,7 +13,7 @@ class App extends Component {
     let books = []
 
     if (manifestURL && bookURL) {
-      throw new Error(
+      console.error(
         'Multiple endpoints. Specify either `manifestURL` or `bookURL`'
       )
     }

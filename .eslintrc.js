@@ -15,6 +15,7 @@ module.exports = {
     'consistent-return': 0,
     'import/extensions': [2, 'never'],
     'import/no-extraneous-dependencies': 0,
+    'import/prefer-default-export': 0,
     'jsx-a11y/href-no-hash': 0,
     'jsx-a11y/label-has-for': [
       2,

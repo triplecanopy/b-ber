@@ -1,11 +1,14 @@
 /* eslint-disable react/jsx-props-no-spreading */
 
 import React from 'react'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import * as userInterfaceActions from '../actions/user-interface'
 
-const withNavigationActions = WrappedComponent =>
+const withNavigationActions = WrappedComponent => {
   class WrapperComponent extends React.Component {
     goToPrevChapter = () => {
-      if (this.props.handleEvents === false) return
+      if (this.props.userInterface.handleEvents === false) return
       this.props.handleChapterNavigation(-1)
     }
 
@@ -15,14 +18,14 @@ const withNavigationActions = WrappedComponent =>
     }
 
     goToPrevPage = () => {
-      if (this.props.handleEvents === false) return
-      this.props.enablePageTransitions()
+      if (this.props.userInterface.handleEvents === false) return
+      this.props.userInterfaceActions.enablePageTransitions()
       this.props.handlePageNavigation(-1)
     }
 
     goToNextPage = () => {
-      if (this.props.handleEvents === false) return
-      this.props.enablePageTransitions()
+      if (this.props.userInterface.handleEvents === false) return
+      this.props.userInterfaceActions.enablePageTransitions()
       this.props.handlePageNavigation(1)
     }
 
@@ -38,5 +41,13 @@ const withNavigationActions = WrappedComponent =>
       )
     }
   }
+
+  return connect(
+    ({ userInterface }) => ({ userInterface }),
+    dispatch => ({
+      userInterfaceActions: bindActionCreators(userInterfaceActions, dispatch),
+    })
+  )(WrapperComponent)
+}
 
 export default withNavigationActions

@@ -1,8 +1,12 @@
 /* eslint-disable react/jsx-props-no-spreading */
+
 import React from 'react'
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
 import Viewport from '../helpers/Viewport'
 import { isNumeric } from '../helpers/Types'
 import { layouts } from '../constants'
+import * as viewerSettingsActions from '../actions/viewer-settings'
 
 const withDimensions = WrappedComponent => {
   class WrapperComponent extends React.Component {
@@ -45,7 +49,7 @@ const withDimensions = WrappedComponent => {
       const height = scrollingLayout ? 'auto' : window.innerHeight
       const columns = scrollingLayout ? 1 : 2
 
-      this.props.update({ width, height, columns })
+      this.props.viewerSettingsActions.update({ width, height, columns })
     }
 
     getFrameHeight() {
@@ -93,7 +97,16 @@ const withDimensions = WrappedComponent => {
     }
   }
 
-  return WrapperComponent
+  // return WrapperComponent
+  return connect(
+    ({ viewerSettings }) => ({ viewerSettings }),
+    dispatch => ({
+      viewerSettingsActions: bindActionCreators(
+        viewerSettingsActions,
+        dispatch
+      ),
+    })
+  )(WrapperComponent)
 }
 
 export default withDimensions

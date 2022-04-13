@@ -5,6 +5,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import debounce from 'lodash/debounce'
+import { connect } from 'react-redux'
 import transitions from '../lib/transition-styles'
 import Viewport from '../helpers/Viewport'
 import browser from '../lib/browser'
@@ -156,7 +157,8 @@ class Layout extends React.Component {
 
   render() {
     const height = this.props.getFrameHeight()
-    const { pageAnimation, spreadIndex, slug, layout } = this.props
+    const { spreadIndex, slug, layout } = this.props
+    const { enableTransitions } = this.props.userInterface
 
     const {
       transition,
@@ -181,7 +183,7 @@ class Layout extends React.Component {
 
     // Disable transition animation by default. Enabling transition requires
     // user action, e.g. clicking 'next'
-    if (!pageAnimation) {
+    if (!enableTransitions) {
       layoutStyles = { ...layoutStyles, transition: 'none' }
       leafLeftStyles = { ...leafLeftStyles, transition: 'none' }
       leafRightStyles = { ...leafRightStyles, transition: 'none' }
@@ -207,4 +209,7 @@ class Layout extends React.Component {
   }
 }
 
-export default withDimensions(withObservers(Layout))
+export default connect(
+  ({ userInterface }) => ({ userInterface }),
+  () => ({})
+)(withDimensions(withObservers(Layout)))

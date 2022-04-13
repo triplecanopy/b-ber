@@ -1,5 +1,6 @@
 import React from 'react'
 import { isPlainObject } from 'lodash'
+import { connect } from 'react-redux'
 import { Layout, DebugGrid } from '.'
 import Viewport from '../helpers/Viewport'
 import { layouts } from '../constants'
@@ -82,7 +83,7 @@ class Frame extends React.Component {
   }
 
   className() {
-    const hash = Asset.createHash(this.props.bookURL)
+    const hash = Asset.createHash(this.props.readerSettings.bookURL)
     let className = `_${hash}`
 
     if (this.props.className && typeof this.props.className === 'string') {
@@ -109,4 +110,7 @@ class Frame extends React.Component {
   }
 }
 
-export default Frame
+export default connect(
+  ({ readerSettings, viewerSettings }) => ({ readerSettings, viewerSettings }),
+  () => ({})
+)(Frame)

@@ -4,6 +4,7 @@ import viewerSettings from './viewer-settings'
 import readerLocation from './reader-location'
 import markers from './markers'
 import view from './view'
+import userInterface from './user-interface'
 
 const reducers = {
   readerSettings,
@@ -11,6 +12,7 @@ const reducers = {
   readerLocation,
   markers,
   view,
+  userInterface,
 }
 
 const combinedReducers = combineReducers(reducers)

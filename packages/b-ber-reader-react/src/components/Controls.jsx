@@ -1,10 +1,12 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 import { NavigationHeader, NavigationFooter } from './Navigation'
 import { SidebarMetadata, SidebarDownloads, SidebarChapters } from './Sidebar'
 import Messenger from '../lib/Messenger'
 import withNavigationActions from '../lib/with-navigation-actions'
 import { messagesTypes } from '../constants'
+import * as userInterfaceActions from '../actions/user-interface'
 
 class Controls extends Component {
   constructor(props) {
@@ -27,14 +29,15 @@ class Controls extends Component {
     }, messagesTypes.CLICK_EVENT)
 
     Messenger.register(({ data }) => {
-      if (this.props.handleEvents === false) return
+      if (this.props.userInterface.handleEvents === false) return
 
       const { scope, delta } = data
 
       if (scope === 'page') {
-        this.props.enablePageTransitions()
+        this.props.userInterfaceActions.enablePageTransitions()
         return this.props.handlePageNavigation(delta)
       }
+
       if (scope === 'chapter') {
         return this.props.handleChapterNavigation(delta)
       }
@@ -46,7 +49,7 @@ class Controls extends Component {
   }
 
   handleClick(e) {
-    if (this.props.handleEvents === false) return
+    if (this.props.userInterface.handleEvents === false) return
 
     Messenger.sendClickEvent(e)
 
@@ -60,19 +63,19 @@ class Controls extends Component {
   }
 
   handleKeyDown(e) {
-    if (this.props.handleEvents === false) return
+    if (this.props.userInterface.handleEvents === false) return
     if (!e || typeof e.which === 'undefined') return
 
     Messenger.sendKeydownEvent(e)
 
     switch (e.which) {
       case 37 /* arrow left */:
-        this.props.enablePageTransitions()
+        this.props.userInterfaceActions.enablePageTransitions()
         this.props.handlePageNavigation(-1)
         this.props.handleSidebarButtonClick(null)
         break
       case 39 /* arrow right */:
-        this.props.enablePageTransitions()
+        this.props.userInterfaceActions.enablePageTransitions()
         this.props.handlePageNavigation(1)
         this.props.handleSidebarButtonClick(null)
         break
@@ -113,7 +116,6 @@ class Controls extends Component {
     const Chapters = readerSettings.SidebarChapters || SidebarChapters
     const Downloads = readerSettings.SidebarDownloads || SidebarDownloads
     const Metadata = readerSettings.SidebarMetadata || SidebarMetadata
-    // const Settings = readerSettings.SidebarSettings || SidebarSettings
 
     const {
       destroyReaderComponent,
@@ -127,15 +129,13 @@ class Controls extends Component {
       showSidebar,
       spreadIndex,
       lastSpreadIndex,
-      handleEvents,
       handleChapterNavigation,
-      enablePageTransitions,
       handlePageNavigation,
       navigateToChapterByURL,
-      // viewerSettings,
-      // update,
-      // save,
     } = this.props
+
+    const { enablePageTransitions } = this.props.userInterfaceActions
+    const { handleEvents } = this.props.userInterface
 
     return (
       <div className="bber-controls">
@@ -157,13 +157,6 @@ class Controls extends Component {
 
         <Metadata showSidebar={showSidebar} metadata={metadata} />
 
-        {/* <Settings
-          viewerSettings={viewerSettings}
-          update={update}
-          save={save}
-          showSidebar={showSidebar}
-        /> */}
-
         {this.props.children}
 
         <Footer
@@ -184,6 +177,12 @@ class Controls extends Component {
 }
 
 export default connect(
-  ({ readerSettings }) => ({ readerSettings }),
-  () => ({})
+  ({ readerSettings, viewerSettings, userInterface }) => ({
+    readerSettings,
+    viewerSettings,
+    userInterface,
+  }),
+  dispatch => ({
+    userInterfaceActions: bindActionCreators(userInterfaceActions, dispatch),
+  })
 )(Controls)
