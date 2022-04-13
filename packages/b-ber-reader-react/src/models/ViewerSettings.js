@@ -12,19 +12,46 @@ const extendExistingProps = (target, ref, obj, opts = { enumerable: true }) => {
   return target
 }
 
+const valueOf = maybeFunction =>
+  typeof maybeFunction === 'function' ? maybeFunction.call() : maybeFunction
+
 class ViewerSettings {
   static defaults = {
+    // width
+    // height
+    // paddingTop
+    // paddingLeft
+    // paddingRight
+    // paddingBottom
+    // paddingX
+    // paddingY
+    // columns
+    // columnGap
+    // columnWidth
+    // transition
+    // theme
+    // transitionSpeed
+    // fontSize
+
     width: 0,
     height: 0,
-    fontSize: 120,
+    fontSize: '120%',
 
-    // theme settings. transition speed must be set in ms
+    // Theme settings, transition speed in ms
     theme: themes.DEFAULT,
     transition: transitions.SLIDE,
     transitionSpeed: 400,
+    columns: 2,
+
+    columnGap: () => Viewport.getGutterWidth(),
+    paddingLeft: () => Viewport.optimized().left,
+    paddingRight: () => Viewport.optimized().right,
+    paddingTop: () => Viewport.optimized().top,
+    paddingBottom: () => Viewport.optimized().bottom,
   }
 
   constructor(options = {}) {
+    // Create the settings object by extending static default values above
     Object.defineProperty(this, 'settings', {
       value: extendExistingProps({}, ViewerSettings.defaults, options, {
         enumerable: true,
@@ -33,16 +60,8 @@ class ViewerSettings {
       enumerable: true,
     })
 
-    this.put = this.put.bind(this)
-    this.get = this.get.bind(this)
-
-    this.columnGap = () => Viewport.getGutterWidth()
-
-    this.paddingLeft = () => Viewport.optimized().left
-    this.paddingRight = () => Viewport.optimized().right
-    this.paddingTop = () => Viewport.optimized().top
-    this.paddingBottom = () => Viewport.optimized().bottom
-
+    // `columnWidth` relies on calculations from the lenses so must be in
+    // the constructor rather than in defaults
     this.columnWidth = () =>
       window.innerWidth / 2 - this.columnGap - this.paddingLeft
   }
@@ -51,169 +70,135 @@ class ViewerSettings {
     return this.settings.width
   }
 
+  set width(val) {
+    this.settings.width = val
+  }
+
   get height() {
     return this.settings.height
   }
 
-  // responsive
-  get gridColumns() {
-    return typeof this.settings.gridColumns === 'function'
-      ? this.settings.gridColumns()
-      : this.settings.gridColumns
-  }
-
-  get gridColumnWidth() {
-    return typeof this.settings.gridColumnWidth === 'function'
-      ? this.settings.gridColumnWidth()
-      : this.settings.gridColumnWidth
-  }
-
-  get gridGutterWidth() {
-    return typeof this.settings.gridGutterWidth === 'function'
-      ? this.settings.gridGutterWidth()
-      : this.settings.gridGutterWidth
+  set height(val) {
+    this.settings.height = val
   }
 
   get paddingTop() {
-    return typeof this.settings.paddingTop === 'function'
-      ? this.settings.paddingTop()
-      : this.settings.paddingTop
-  }
-
-  get paddingLeft() {
-    return typeof this.settings.paddingLeft === 'function'
-      ? this.settings.paddingLeft()
-      : this.settings.paddingLeft
-  }
-
-  get paddingRight() {
-    return typeof this.settings.paddingRight === 'function'
-      ? this.settings.paddingRight()
-      : this.settings.paddingRight
-  }
-
-  get paddingBottom() {
-    return typeof this.settings.paddingBottom === 'function'
-      ? this.settings.paddingBottom()
-      : this.settings.paddingBottom
-  }
-
-  get paddingX() {
-    return this.settings.paddingLeft() + this.settings.paddingRight()
-  }
-
-  get paddingY() {
-    return this.settings.paddingTop() + this.settings.paddingBottom()
-  }
-
-  get columns() {
-    return this.settings.columns
-  }
-
-  get columnGap() {
-    return typeof this.settings.columnGap === 'function'
-      ? this.settings.columnGap()
-      : this.settings.columnGap
-  }
-
-  get columnWidth() {
-    return typeof this.settings.columnWidth === 'function'
-      ? this.settings.columnWidth()
-      : this.settings.columnWidth
-  }
-
-  get transition() {
-    return this.settings.transition
-  }
-
-  get transitionSpeed() {
-    return this.settings.transitionSpeed
-  }
-
-  get theme() {
-    return this.settings.theme
-  }
-
-  // returns n as a string (percentage)
-  get fontSize() {
-    return `${this.settings.fontSize}%`
-  }
-
-  set gridColumns(val) {
-    this.settings.gridColumns = val
-  }
-
-  set gridColumnWidth(val) {
-    this.settings.gridColumnWidth = val
-  }
-
-  set gridGutterWidth(val) {
-    this.settings.gridGutterWidth = val
-  }
-
-  set columnGap(val) {
-    this.settings.columnGap = val
-  }
-
-  set columnWidth(val) {
-    this.settings.columnWidth = val
+    return valueOf(this.settings.paddingTop)
   }
 
   set paddingTop(val) {
     this.settings.paddingTop = val
   }
 
+  get paddingLeft() {
+    return valueOf(this.settings.paddingLeft)
+  }
+
   set paddingLeft(val) {
     this.settings.paddingLeft = val
+  }
+
+  get paddingRight() {
+    return valueOf(this.settings.paddingRight)
   }
 
   set paddingRight(val) {
     this.settings.paddingRight = val
   }
 
+  get paddingBottom() {
+    return valueOf(this.settings.paddingBottom)
+  }
+
   set paddingBottom(val) {
     this.settings.paddingBottom = val
   }
 
-  // expects array of values
-  set padding(values) {
-    const [top, right, bottom, left] = values
-    if (isNumeric(top)) this.settings.paddingTop = top
-    if (isNumeric(right)) this.settings.paddingRight = right
-    if (isNumeric(bottom)) this.settings.paddingBottom = bottom
-    if (isNumeric(left)) this.settings.paddingLeft = left
+  get paddingX() {
+    return this.paddingLeft + this.paddingRight
+  }
+
+  get paddingY() {
+    return this.paddingTop + this.paddingBottom
+  }
+
+  get columns() {
+    return this.settings.columns
   }
 
   set columns(val) {
     this.settings.columns = val
   }
 
+  get columnGap() {
+    return valueOf(this.settings.columnGap)
+  }
+
+  set columnGap(val) {
+    this.settings.columnGap = val
+  }
+
+  get columnWidth() {
+    return valueOf(this.settings.columnWidth)
+  }
+
+  set columnWidth(val) {
+    this.settings.columnWidth = val
+  }
+
+  get transition() {
+    return this.settings.transition
+  }
+
   set transition(val) {
     this.settings.transition = val
   }
 
-  set transitionSpeed(val) {
-    this.settings.transitionSpeed = val
+  get theme() {
+    return this.settings.theme
   }
 
   set theme(val) {
     this.settings.theme = val
   }
 
-  // Stores values as numbers
-  set fontSize(val) {
-    let val_ = val
-    if (!isNumeric(val_)) val_ = parseFloat(val_, 10)
-    this.settings.fontSize = val_
+  get transitionSpeed() {
+    return this.settings.transitionSpeed
   }
 
-  get(key = '') {
-    if (key) return this.settings[key]
+  set transitionSpeed(val) {
+    this.settings.transitionSpeed = val
+  }
+
+  get fontSize() {
+    return this.settings.fontSize
+  }
+
+  set fontSize(val) {
+    this.settings.fontSize = val
+  }
+
+  // expects array of values
+  set padding(values) {
+    const [top, right, bottom, left] = values
+
+    if (isNumeric(top)) this.settings.paddingTop = top
+    if (isNumeric(right)) this.settings.paddingRight = right
+    if (isNumeric(bottom)) this.settings.paddingBottom = bottom
+    if (isNumeric(left)) this.settings.paddingLeft = left
+  }
+
+  get = (key = '') => {
+    if (key) {
+      if (!has(this.settings, key)) {
+        console.error('Attempting to access undefined key %s', key)
+        return
+      }
+
+      return this[key]
+    }
 
     return {
-      gridColumns: this.gridColumns,
-      gridColumnWidth: this.gridColumnWidth,
-      gridGutterWidth: this.gridGutterWidth,
       width: this.width,
       height: this.height,
       paddingTop: this.paddingTop,
@@ -230,31 +215,24 @@ class ViewerSettings {
     }
   }
 
-  put(objectOrString = {}, val = null) {
-    if (isPlainObject(objectOrString)) {
-      // TODO: this should be extracted and process other props
-      // @issue: https://github.com/triplecanopy/b-ber/issues/222
-      if (has(objectOrString, 'fontSize')) {
-        if (!isNumeric(objectOrString.fontSize)) {
-          // eslint-disable-next-line no-param-reassign
-          objectOrString.fontSize = parseFloat(objectOrString.fontSize, 10)
-        }
-      }
-
+  put = (objectOrKey = {}, value = null) => {
+    if (isPlainObject(objectOrKey)) {
       // https://github.com/eslint/eslint/issues/12117
       // eslint-disable-next-line no-unused-vars
-      for (const [key, value] of Object.entries(objectOrString)) {
-        this[key] = value
+      for (const [key, val] of Object.entries(objectOrKey)) {
+        if (has(this.settings, key)) this[key] = val
       }
-
-      return
+    } else if (typeof objectOrKey === 'string') {
+      if (has(this.settings, objectOrKey)) {
+        this[objectOrKey] = value
+      }
+    } else {
+      console.error(
+        'Could not update viewer settings with key: %s val: %s',
+        objectOrKey,
+        value
+      )
     }
-    if (typeof objectOrString === 'string') {
-      this[objectOrString] = val
-      return
-    }
-
-    console.error('Invalid params: could not update settings')
   }
 }
 

@@ -15,7 +15,7 @@ describe('ViewerSettings', () => {
         paddingLeft: expect.any(Function),
         paddingRight: expect.any(Function),
         paddingBottom: expect.any(Function),
-        fontSize: expect.any(Number),
+        fontSize: expect.any(String),
         columnGap: expect.any(Function),
         columnWidth: expect.any(Function),
         theme: themes.DEFAULT,
@@ -93,26 +93,19 @@ describe('ViewerSettings', () => {
 
     expect(typeof vs.fontSize).toBe('string')
 
-    vs.fontSize = 100
+    vs.fontSize = '100%'
     expect(vs.fontSize).toBe('100%')
-
-    vs.fontSize = '100'
-    expect(vs.fontSize).toBe('100%')
-
-    vs.fontSize = null
-    expect(typeof vs.fontSize).toBe('string')
-    expect(vs.fontSize).toMatch(/%$/)
   })
 
   it('gets properties by key', () => {
     const vs = new ViewerSettings({})
 
-    expect(vs.get('paddingTop')).toBeFunction()
-    expect(vs.get('paddingLeft')).toBeFunction()
-    expect(vs.get('paddingRight')).toBeFunction()
-    expect(vs.get('paddingBottom')).toBeFunction()
+    expect(vs.get('paddingTop')).toBeNumber()
+    expect(vs.get('paddingLeft')).toBeNumber()
+    expect(vs.get('paddingRight')).toBeNumber()
+    expect(vs.get('paddingBottom')).toBeNumber()
     expect(vs.get('columns')).toBe(ViewerSettings.defaults.columns)
-    expect(vs.get('columnGap')).toBeFunction()
+    expect(vs.get('columnGap')).toBeNumber()
     expect(vs.get('transition')).toBe(ViewerSettings.defaults.transition)
     expect(vs.get('transitionSpeed')).toBe(
       ViewerSettings.defaults.transitionSpeed
@@ -138,37 +131,54 @@ describe('ViewerSettings', () => {
   it('sets properties by key', () => {
     const vs = new ViewerSettings({})
 
+    vs.put('width', 1)
+    vs.put('height', 1)
     vs.put('paddingTop', 1)
     vs.put('paddingLeft', 1)
     vs.put('paddingRight', 1)
     vs.put('paddingBottom', 1)
+    // vs.put('paddingX', 1)
+    // vs.put('paddingY', 1)
     vs.put('columns', 1)
     vs.put('columnGap', 1)
+    vs.put('columnWidth', 1)
     vs.put('transition', 1)
-    vs.put('transitionSpeed', 1)
     vs.put('theme', 1)
+    vs.put('transitionSpeed', 1)
+    vs.put('fontSize', 1)
 
+    expect(vs.width).toBe(1)
+    expect(vs.height).toBe(1)
     expect(vs.paddingTop).toBe(1)
     expect(vs.paddingLeft).toBe(1)
     expect(vs.paddingRight).toBe(1)
     expect(vs.paddingBottom).toBe(1)
+    expect(vs.paddingX).toBe(2)
+    expect(vs.paddingY).toBe(2)
     expect(vs.columns).toBe(1)
     expect(vs.columnGap).toBe(1)
+    expect(vs.columnWidth).toBe(1)
     expect(vs.transition).toBe(1)
-    expect(vs.transitionSpeed).toBe(1)
     expect(vs.theme).toBe(1)
+    expect(vs.transitionSpeed).toBe(1)
+    expect(vs.fontSize).toBe(1)
 
-    vs.put('fontSize', 1.1)
-    expect(vs.fontSize).toBe('1.1%')
-
-    vs.put('fontSize', '100.0')
+    vs.put({ fontSize: '100%', paddingTop: 10, paddingBottom: 10 })
     expect(vs.fontSize).toBe('100%')
+    expect(vs.paddingBottom).toBe(10)
+    expect(vs.paddingY).toBe(20)
 
-    vs.put({ fontSize: '100', paddingBottom: 1 })
-    expect(vs.fontSize).toBe('100%')
-    expect(vs.paddingBottom).toBe(1)
+    vs.put('paddingLeft', () => 11)
+    expect(vs.paddingLeft).toBe(11)
+    expect(vs.paddingX).toBe(12)
 
     vs.put(['bogus'])
+    expect(console.error).toHaveBeenCalled()
+
+    vs.put({ bogus: 1 })
+    expect(console.error).toHaveBeenCalled()
+
+    vs.put('bogus', 1)
     expect(console.error).toHaveBeenCalled()
   })
 })

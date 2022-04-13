@@ -1,5 +1,5 @@
 import React from 'react'
-import { isPlainObject } from 'lodash'
+import isPlainObject from 'lodash/isPlainObject'
 import { connect } from 'react-redux'
 import { Layout, DebugGrid } from '.'
 import Viewport from '../helpers/Viewport'
@@ -53,7 +53,7 @@ class Frame extends React.Component {
       margin: 0,
       padding: 0,
       border: 0,
-      fontSize: `${fontSize}%`, // TODO standardize how fontSize is stored and loaded from viewerSettings
+      fontSize,
     }
 
     if (this.props.layout === layouts.SCROLL || Viewport.isMobile()) {
@@ -72,7 +72,7 @@ class Frame extends React.Component {
       }
     }
 
-    if (this.props.style && isPlainObject(this.props.style)) {
+    if (isPlainObject(this.props.style)) {
       style = {
         ...style,
         ...this.props.style,
