@@ -170,6 +170,16 @@ interface SidebarMetadataProps {
 
 type UiReaderProp<T> = React.Component<T> | ((props: T) => JSX.Element)
 
+enum LocationState {
+  MEMORY = 'memory',
+  LOCAL_STORAGE = 'localStorage',
+  QUERY_PARAMS = 'queryParams',
+}
+
+type KeysValues<T> = { [P in keyof T]: T[P] }
+
+type SearchParams = string | KeysValues<BberReaderQueryParameterKeys>
+
 interface OptionalBberReaderProps {
   bookURL?: string
   manifestURL?: string
@@ -190,6 +200,9 @@ interface OptionalBberReaderProps {
   SidebarDownloads?: UiReaderProp<SidebarDownloadsProps>
   SidebarMetadata?: UiReaderProp<SidebarMetadataProps>
   // SidebarSettings?: UiReaderProp<SidebarSettingsProps>
+
+  locationState?: LocationState
+  searchParams?: SearchParams
 }
 
 export type BberReaderProps = RequireOneOf<
