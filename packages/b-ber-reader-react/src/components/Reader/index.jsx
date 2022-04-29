@@ -127,30 +127,32 @@ class Reader extends Component {
 
   async UNSAFE_componentWillMount() {
     // Load the spine, guide, and metadata
-    await this.createStateFromOPF()
+    this.createStateFromOPF(() => {
+      const { spine } = this.state
+      const { readerSettings, readerLocation } = this.props
 
-    const { spine } = this.state
-    const { readerSettings, readerLocation } = this.props
-
-    // Check the current query string if one exists
-    const params = new URLSearchParams(readerLocation.searchParams)
-    const currentSpineItemIndex = params.get(
-      readerSettings.searchParamKeys.currentSpineItemIndex
-    )
-    const currentSpineItem = spine[currentSpineItemIndex]
-    const spreadIndex = 0
-
-    if (currentSpineItem) {
-      this.setState(
-        { currentSpineItem, currentSpineItemIndex, spreadIndex },
-        () => this.loadSpineItem(currentSpineItem)
+      // Check the current query string if one exists
+      const params = new URLSearchParams(readerLocation.searchParams)
+      const currentSpineItemIndex = params.get(
+        readerSettings.searchParamKeys.currentSpineItemIndex
       )
+      const currentSpineItem = spine[currentSpineItemIndex]
+      const spreadIndex = 0
 
-      return
-    }
+      // console.log('currentSpineItem', currentSpineItem)
 
-    // Fallback to load the first page of the first chapter
-    this.loadSpineItem()
+      if (currentSpineItem) {
+        this.setState(
+          { currentSpineItem, currentSpineItemIndex, spreadIndex },
+          () => this.loadSpineItem(currentSpineItem)
+        )
+
+        return
+      }
+
+      // Fallback to load the first page of the first chapter
+      this.loadSpineItem()
+    })
   }
 
   componentWillUnmount() {
