@@ -53,7 +53,7 @@ export const updateQueryString = location => (dispatch, getState) => {
 
   const updateMethod = !prevSlug || prevSlug === nextSlug ? 'replace' : 'push'
 
-  history[updateMethod](location)
+  history[updateMethod]({ search: nextSearchParams })
 
   return dispatch({
     type: actionTypes.LOCATION_UPDATE,
@@ -87,8 +87,6 @@ export const setInitialSearchParams = () => (dispatch, getState) => {
       searchParamKeys
     ).toString()
   }
-
-  console.log('prevSearchParams', prevSearchParams)
 
   let location = { searchParams: '' }
 
@@ -147,8 +145,6 @@ export const setInitialSearchParams = () => (dispatch, getState) => {
 export const updateLocation = location => (dispatch, getState) => {
   const prevState = getState()
   const { locationState } = prevState.readerSettings
-
-  console.log('Update location', location)
 
   if (locationState === locationStates.QUERY_PARAMS) {
     return dispatch(updateQueryString(location))
