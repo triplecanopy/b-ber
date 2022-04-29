@@ -170,11 +170,7 @@ interface SidebarMetadataProps {
 
 type UiReaderProp<T> = React.Component<T> | ((props: T) => JSX.Element)
 
-enum LocationState {
-  MEMORY = 'memory',
-  LOCAL_STORAGE = 'localStorage',
-  QUERY_PARAMS = 'queryParams',
-}
+type LocationState = 'memory' | 'localStorage' | 'queryParams'
 
 type KeysValues<T> = { [P in keyof T]: T[P] }
 
@@ -191,7 +187,7 @@ interface OptionalBberReaderProps {
   uiOptions?: UI
   cache?: boolean
   layout?: Layout
-  paramKeys?: BberReaderQueryParameterKeys
+  searchParamKeys?: BberReaderQueryParameterKeys
   disableBodyStyles?: boolean
 
   NavigationHeader?: UiReaderProp<NavigationHeaderProps>
