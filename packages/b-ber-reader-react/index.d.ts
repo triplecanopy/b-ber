@@ -85,7 +85,7 @@ export interface UiOptions {
   navigation?: UiOptionsNavigation
 }
 
-enum SidebarName {
+export enum SidebarName {
   CHAPTERS = 'chapters',
   DOWNLOADS = 'downloads',
   METADATA = 'metadata',
@@ -94,14 +94,9 @@ enum SidebarName {
 
 export interface NavigationHeaderProps {
   destroyReaderComponent: () => void
-  handleSidebarButtonClick: (name: SidebarName | null) => void
+  handleSidebarButtonClick: (name: `${SidebarName}` | null) => void
   downloads: Download[]
   uiOptions: UiOptions
-}
-
-enum Layout {
-  SCROLL = 'scroll',
-  COLUMNS = 'columns',
 }
 
 export interface SpineItem {
@@ -136,7 +131,7 @@ export interface NavigationFooterProps {
   uiOptions: UiOptions
   currentSpineItemIndex: number
   spine: Spine
-  layout: Layout
+  layout: `${Layout}`
   spreadIndex: number
   lastSpreadIndex: number
   handleEvents: boolean
@@ -186,7 +181,7 @@ export interface OptionalBberReaderProps {
   loadRemoteLibrary?: boolean
   uiOptions?: UI
   cache?: boolean
-  layout?: Layout
+  layout?: `${Layout}`
   searchParamKeys?: BberReaderQueryParameterKeys
   disableBodyStyles?: boolean
 
