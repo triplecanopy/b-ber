@@ -34,7 +34,7 @@ export function handlePageNavigation(increment) {
 export function handleChapterNavigation(increment) {
   let { currentSpineItemIndex } = this.state
   const { spine } = this.state
-  const nextIndex = Number(currentSpineItemIndex) + increment
+  const nextIndex = currentSpineItemIndex + increment
   const firstChapter = nextIndex < 0
   let lastChapter = nextIndex > spine.length - 1
 

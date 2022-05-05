@@ -133,13 +133,11 @@ class Reader extends Component {
 
       // Check the current query string if one exists
       const params = new URLSearchParams(readerLocation.searchParams)
-      const currentSpineItemIndex = params.get(
-        readerSettings.searchParamKeys.currentSpineItemIndex
+      const currentSpineItemIndex = Number(
+        params.get(readerSettings.searchParamKeys.currentSpineItemIndex)
       )
       const currentSpineItem = spine[currentSpineItemIndex]
       const spreadIndex = 0
-
-      // console.log('currentSpineItem', currentSpineItem)
 
       if (currentSpineItem) {
         this.setState(
@@ -186,12 +184,14 @@ class Reader extends Component {
       const nextParams = Url.parseQueryString(nextSearchParams)
 
       const slug = nextParams[this.props.readerSettings.searchParamKeys.slug]
-      const currentSpineItemIndex =
+      const currentSpineItemIndex = Number(
         nextParams[
           this.props.readerSettings.searchParamKeys.currentSpineItemIndex
         ]
-      const spreadIndex =
+      )
+      const spreadIndex = Number(
         nextParams[this.props.readerSettings.searchParamKeys.spreadIndex]
+      )
 
       const prevParams = Url.parseQueryString(prevSearchParams)
       const prevSlug =
@@ -210,7 +210,7 @@ class Reader extends Component {
       this.setState({
         slug,
         currentSpineItemIndex,
-        spreadIndex: Number(spreadIndex),
+        spreadIndex,
       })
     }
 
