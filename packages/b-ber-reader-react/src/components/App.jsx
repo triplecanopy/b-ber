@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
+import find from 'lodash/find'
 import { Reader } from '.'
 import Request from '../helpers/Request'
 import * as readerSettingsActions from '../actions/reader-settings'
@@ -78,10 +79,30 @@ class App extends Component {
     console.log('---- bookURL', bookURL)
     console.log('---- projectURL', projectURL)
 
+    // This is a bit confusing since an array of books can be returned, but the
+    // settings for a single book need to be applied. This will need to be addressed
+    // to either remove or re-enable the library functionality
+    // There should also be a better way of syncing up the ID that exists in the book
+    // other than just testing against the directory path, but since b-ber uses the
+    // same value for both.
+    const id = bookURL
+      .split('/')
+      .filter(Boolean)
+      .pop()
+    const book = find(books, { id })
+    const projectConfig = {}
+
+    if (book) {
+      projectConfig.layout = book.layout
+      projectConfig.downloads = book.downloads
+      projectConfig.uiOptions = book.ui_options
+    }
+
     this.props.readerSettingsActions.updateSettings({
       books,
       bookURL,
       projectURL,
+      ...projectConfig,
     })
 
     this.props.readerLocationActions.setInitialSearchParams()
