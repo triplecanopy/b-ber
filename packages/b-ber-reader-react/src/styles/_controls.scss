@@ -329,16 +329,36 @@
         flex: 1;
       }
 
-      &:nth-child(2),
-      &:nth-child(3) {
-        .bber-button {
-          font-size: 2em;
-        }
-      }
-
       .bber-nav__button {
-        @include transition(color);
-        padding: 0 5px;
+        svg path {
+          @include transition(fill, stroke);
+
+          fill: $black;
+        }
+
+        &:hover {
+          svg path {
+            fill: $violet;
+          }
+        }
+
+        &.bber-nav__button--page-prev {
+          position: fixed;
+          top: 50vh;
+          transform: translateY(-50%);
+          left: 15px;
+          padding: 0;
+          margin: 0;
+        }
+
+        &.bber-nav__button--page-next {
+          position: fixed;
+          top: 50vh;
+          transform: translateY(-50%);
+          right: 15px;
+          padding: 0;
+          margin: 0;
+        }
 
         &:hover {
           color: $violet;

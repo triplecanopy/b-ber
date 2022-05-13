@@ -1,40 +1,33 @@
 import React from 'react'
 import Viewport from '../../helpers/Viewport'
 import { layouts } from '../../constants'
+import { ChapterNext, PageNext } from './Icon'
 
-const styles = {
+const show = {
   chapter: {
     prev: props =>
-      (!Viewport.isMobile() &&
-        !props.uiOptions.navigation.footer_icons.chapter) ||
-      props.currentSpineItemIndex === 0
-        ? { display: 'none' }
-        : {},
+      (Viewport.isMobile() ||
+        props.uiOptions.navigation.footer_icons.chapter) &&
+      props.currentSpineItemIndex !== 0,
 
     next: props =>
-      (!Viewport.isMobile() &&
-        !props.uiOptions.navigation.footer_icons.chapter) ||
-      props.currentSpineItemIndex === props.spine.length - 1
-        ? { display: 'none' }
-        : {},
+      (Viewport.isMobile() ||
+        props.uiOptions.navigation.footer_icons.chapter) &&
+      props.currentSpineItemIndex !== props.spine.length - 1,
   },
   page: {
     prev: props =>
-      props.layout === layouts.SCROLL ||
-      Viewport.isMobile() ||
-      !props.uiOptions.navigation.footer_icons.page ||
-      (props.currentSpineItemIndex === 0 && props.spreadIndex === 0)
-        ? { display: 'none' }
-        : {},
+      props.layout !== layouts.SCROLL &&
+      !Viewport.isMobile() &&
+      props.uiOptions.navigation.footer_icons.page &&
+      (props.currentSpineItemIndex !== 0 || props.spreadIndex !== 0),
 
     next: props =>
-      props.layout === layouts.SCROLL ||
-      Viewport.isMobile() ||
-      !props.uiOptions.navigation.footer_icons.page ||
-      (props.currentSpineItemIndex === props.spine.length - 1 &&
-        props.spreadIndex === props.lastSpreadIndex)
-        ? { display: 'none' }
-        : {},
+      props.layout !== layouts.SCROLL &&
+      !Viewport.isMobile() &&
+      props.uiOptions.navigation.footer_icons.page &&
+      (props.currentSpineItemIndex !== props.spine.length - 1 ||
+        props.spreadIndex !== props.lastSpreadIndex),
   },
 }
 
@@ -44,40 +37,44 @@ function NavigationFooter(props) {
       <nav className="bber-nav">
         <ul className="bber-ul">
           <li className="bber-li">
-            <button
-              className="bber-button material-icons bber-nav__button"
-              style={styles.chapter.prev(props)}
-              onClick={props.goToPrevChapter}
-            >
-              arrow_back
-            </button>
+            {show.chapter.prev(props) && (
+              <button
+                className="bber-button bber-nav__button"
+                onClick={props.goToPrevChapter}
+              >
+                arrow_back
+              </button>
+            )}
           </li>
           <li className="bber-li">
-            <button
-              className="bber-button material-icons bber-nav__button"
-              style={styles.page.prev(props)}
-              onClick={props.goToPrevPage}
-            >
-              chevron_left
-            </button>
+            {show.page.prev(props) && (
+              <button
+                className="bber-button bber-nav__button bber-nav__button--page-prev"
+                onClick={props.goToPrevPage}
+              >
+                chevron_left
+              </button>
+            )}
           </li>
           <li className="bber-li">
-            <button
-              className="bber-button material-icons bber-nav__button"
-              style={styles.page.next(props)}
-              onClick={props.goToNextPage}
-            >
-              chevron_right
-            </button>
+            {show.page.next(props) && (
+              <button
+                className="bber-button bber-nav__button bber-nav__button--page-next"
+                onClick={props.goToNextPage}
+              >
+                <PageNext />
+              </button>
+            )}
           </li>
           <li className="bber-li">
-            <button
-              className="bber-button material-icons bber-nav__button"
-              style={styles.chapter.next(props)}
-              onClick={props.goToNextChapter}
-            >
-              arrow_forward
-            </button>
+            {show.chapter.next(props) && (
+              <button
+                className="bber-button bber-nav__button"
+                onClick={props.goToNextChapter}
+              >
+                <ChapterNext />
+              </button>
+            )}
           </li>
         </ul>
       </nav>
