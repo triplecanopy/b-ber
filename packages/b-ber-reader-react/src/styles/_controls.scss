@@ -65,6 +65,8 @@
 
       .bber-nav__button {
         @include border($color: $black);
+        @include transition(background-color);
+
         box-sizing: border-box;
 
         background-color: $white;
@@ -99,14 +101,16 @@
         }
 
         &:hover {
+          background-color: $black;
+
           svg path,
           svg polygon {
-            fill: $violet;
-            stroke: $violet;
+            fill: $white;
+            stroke: $white;
           }
 
           svg circle {
-            stroke: $violet;
+            stroke: $white;
           }
         }
       }
@@ -333,12 +337,14 @@
         svg path {
           @include transition(fill, stroke);
 
+          stroke: $white;
           fill: $black;
         }
 
         &:hover {
           svg path {
-            fill: $violet;
+            stroke: $black;
+            fill: $white;
           }
         }
 
