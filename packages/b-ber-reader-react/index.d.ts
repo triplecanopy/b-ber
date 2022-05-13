@@ -95,8 +95,13 @@ export enum SidebarName {
 export interface NavigationHeaderProps {
   destroyReaderComponent: () => void
   handleSidebarButtonClick: (name: `${SidebarName}` | null) => void
+  navigateToChapterByURL: (url: string) => void
   downloads: Download[]
   uiOptions: UiOptions
+  showSidebar: SidebarName | null
+  spine: Spine
+  currentSpineItemIndex:number
+  metadata: Metadata
 }
 
 export interface SpineItem {

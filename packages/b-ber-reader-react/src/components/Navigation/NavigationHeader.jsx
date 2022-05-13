@@ -1,68 +1,117 @@
+/* eslint-disable camelcase */
 /* eslint-disable react/button-has-type */
 
+import classNames from 'classnames'
 import React from 'react'
-
-function ListItemDownloads(props) {
-  if (!props.downloads || !props.downloads.length) return null
-  const { header_icons: headerIcons } = props.uiOptions.navigation
-
-  return (
-    <li className="bber-li">
-      <button
-        className="bber-button material-icons bber-nav__button bber-nav__button__downloads"
-        onClick={() => props.handleSidebarButtonClick('downloads')}
-        style={headerIcons.downloads ? {} : { display: 'none' }}
-      >
-        file_download
-      </button>
-    </li>
-  )
-}
+import { SidebarChapters, SidebarDownloads, SidebarMetadata } from '../Sidebar'
+import { Close, Download, Home, Info, Menu } from './Icon'
 
 export function NavigationHeader(props) {
-  const { header_icons: headerIcons } = props.uiOptions.navigation
+  if (!props || !props.uiOptions?.navigation?.header_icons) return null
+
+  const {
+    showSidebar,
+    downloads,
+    spine,
+    currentSpineItemIndex,
+    navigateToChapterByURL,
+    metadata,
+  } = props
+
+  const { toc, home, info } = props.uiOptions.navigation.header_icons
+  const settings = false // Never implemented. Maybe some day?
+
+  const handleChapterClick = () => props.handleSidebarButtonClick('chapters')
+  const handleSettingsClick = () => props.handleSidebarButtonClick('settings')
+  const handleMetadataClick = () => props.handleSidebarButtonClick('metadata')
+  const handleDownloadsClick = () => props.handleSidebarButtonClick('downloads')
+
   return (
     <header className="bber-controls__header">
       <nav className="bber-nav">
         <ul className="bber-ul">
-          <li className="bber-li">
-            <button
-              className="bber-button material-icons bber-nav__button bber-nav__button__chapters"
-              onClick={props.destroyReaderComponent}
-              style={headerIcons.home ? {} : { display: 'none' }}
-            >
-              menu
-            </button>
-          </li>
-          <li className="bber-li">
-            <button
-              className="bber-button material-icons bber-nav__button bber-nav__button__chapters"
-              onClick={() => props.handleSidebarButtonClick('chapters')}
-              style={headerIcons.toc ? {} : { display: 'none' }}
-            >
-              view_list
-            </button>
-          </li>
-          <li className="bber-li">
-            <button
-              className="bber-button material-icons bber-nav__button bber-nav__button__settings"
-              onClick={() => props.handleSidebarButtonClick('settings')}
-            >
-              settings
-            </button>
-          </li>
-
-          {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-          <ListItemDownloads {...props} />
+          {home && (
+            <li className="bber-li bber-li-home">
+              <button
+                className="bber-button bber-nav__button"
+                onClick={props.destroyReaderComponent}
+              >
+                <Home />
+              </button>
+            </li>
+          )}
 
           <li className="bber-li">
-            <button
-              className="bber-button material-icons bber-nav__button bber-nav__button__metadata"
-              onClick={() => props.handleSidebarButtonClick('metadata')}
-              style={headerIcons.info ? {} : { display: 'none' }}
-            >
-              info_outline
-            </button>
+            <ul className="bber-ul">
+              {toc && (
+                <li className="bber-li bber-li-toc">
+                  <button
+                    className={classNames('bber-button', 'bber-nav__button', {
+                      'bber-nav__button--open': showSidebar === 'chapters',
+                    })}
+                    onClick={handleChapterClick}
+                  >
+                    {showSidebar === 'chapters' ? <Close /> : <Menu />}
+                  </button>
+
+                  <SidebarChapters
+                    showSidebar={showSidebar}
+                    spine={spine}
+                    currentSpineItemIndex={currentSpineItemIndex}
+                    navigateToChapterByURL={navigateToChapterByURL}
+                  />
+                </li>
+              )}
+
+              {downloads.length > 0 && (
+                <li className="bber-li bber-li-downloads">
+                  <button
+                    className={classNames('bber-button', 'bber-nav__button', {
+                      'bber-nav__button--open': showSidebar === 'downloads',
+                    })}
+                    onClick={handleDownloadsClick}
+                  >
+                    {showSidebar === 'downloads' ? <Close /> : <Download />}
+                  </button>
+
+                  <SidebarDownloads
+                    showSidebar={showSidebar}
+                    downloads={downloads}
+                  />
+                </li>
+              )}
+
+              {settings && (
+                <li className="bber-li bber-li-settings">
+                  <button
+                    className={classNames('bber-button', 'bber-nav__button', {
+                      'bber-nav__button--open': showSidebar === 'settings',
+                    })}
+                    onClick={handleSettingsClick}
+                  >
+                    <Home />
+                  </button>
+                </li>
+              )}
+
+              {info && (
+                <li className="bber-li bber-li-info">
+                  <button
+                    className={classNames('bber-button', 'bber-nav__button', {
+                      'bber-nav__button--open': showSidebar === 'metadata',
+                    })}
+                    onClick={handleMetadataClick}
+                  >
+                    {showSidebar === 'metadata' ? <Close /> : <Info />}
+                  </button>
+
+                  <SidebarMetadata
+                    showSidebar={showSidebar}
+                    metadata={metadata}
+                  />
+                </li>
+              )}
+            </ul>
           </li>
         </ul>
       </nav>
