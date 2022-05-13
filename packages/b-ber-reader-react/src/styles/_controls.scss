@@ -1,0 +1,349 @@
+.bber-controls {
+  .bber-ul,
+  .bber-ol {
+    list-style: none;
+  }
+
+  .bber-a,
+  .bber-button {
+    cursor: pointer;
+  }
+
+  .bber-button {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    display: block;
+    outline: none;
+  }
+
+  &,
+  & * {
+    margin: 0;
+    padding: 0;
+    touch-action: manipulation;
+
+    box-sizing: border-box;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased; // sass-lint:disable-line no-vendor-prefixes
+    -moz-osx-font-smoothing: grayscale; // sass-lint:disable-line no-vendor-prefixes
+  }
+}
+
+.bber-controls__header {
+  z-index: 1;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: transparent;
+  height: 0;
+  opacity: 1 !important;
+
+  > .bber-nav > .bber-ul {
+    box-sizing: border-box;
+
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+
+    height: 0;
+    margin: 15px 15px 0;
+
+    .bber-li {
+      display: flex;
+      position: relative;
+
+      &.bber-li-home {
+        flex: 1;
+      }
+
+      > .bber-ul > .bber-li {
+        margin-bottom: 10px;
+      }
+
+      .bber-nav__button {
+        @include border($color: $black);
+        box-sizing: border-box;
+
+        background-color: $white;
+        border-radius: 50%;
+
+        width: 40px;
+        height: 40px;
+
+        padding: 5px;
+        position: relative;
+
+        &.bber-nav__button--open {
+          z-index: 2;
+        }
+
+        svg {
+          position: relative;
+        }
+
+        svg path,
+        svg polygon {
+          @include transition(fill, stroke);
+
+          fill: $black;
+          stroke: $black;
+        }
+
+        svg circle {
+          @include transition(fill, stroke);
+
+          stroke: $black;
+        }
+
+        &:hover {
+          svg path,
+          svg polygon {
+            fill: $violet;
+            stroke: $violet;
+          }
+
+          svg circle {
+            stroke: $violet;
+          }
+        }
+      }
+    }
+  }
+}
+
+.bber-controls__sidebar {
+  font-family: $font-family-serif;
+  font-weight: 400;
+  font-size: $font-size-serif;
+
+  .bber-ol,
+  .bber-ul,
+  .bber-dl {
+    .bber-li {
+      .bber-a,
+      .bber-button {
+        @include border('bottom');
+        text-align: left;
+        display: block;
+        width: 100%;
+        padding: calc(#{$medium} / 2);
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        font-size: $font-size-serif;
+        font-family: $font-family-serif;
+
+        &:hover {
+          @include transition(color);
+          color: $violet;
+        }
+
+        &.material-icons {
+          font-family: 'Material Icons';
+          text-align: right;
+          font-size: 20px;
+        }
+
+        &.bber-chapter--current {
+          font-weight: 700;
+        }
+
+        @for $i from 1 through 10 {
+          &.bber-indent--#{$i} {
+            text-indent: ($i - 1) * ($small / 2);
+          }
+        }
+      }
+
+      .bber-ol,
+      .bber-li,
+      .bber-dl {
+        .bber-a {
+          text-indent: $medium;
+        }
+      }
+    }
+
+    .bber-dt {
+      padding: calc(#{$medium} / 2) 0 0 calc(#{$small} / 2);
+      text-transform: capitalize;
+    }
+
+    .bber-dd {
+      @include border('bottom');
+      padding: 5px calc(#{$small} / 2) calc(#{$medium} / 2);
+    }
+
+    .bber-li,
+    .bber-dt {
+      .bber-a {
+        @include transition(color);
+        text-decoration: none;
+        color: $black;
+
+        &:hover {
+          color: $violet;
+        }
+      }
+    }
+  }
+}
+
+.bber-controls__sidebar {
+  font-family: $font-family-serif;
+  font-weight: 400;
+  font-size: $font-size-serif;
+
+  .bber-ol,
+  .bber-ul,
+  .bber-dl {
+    .bber-li {
+      .bber-a,
+      .bber-button {
+        @include border('bottom');
+        text-align: left;
+        display: block;
+        width: 100%;
+        padding: calc(#{$medium} / 2);
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        font-size: $font-size-serif;
+        font-family: $font-family-serif;
+
+        &:hover {
+          @include transition(color);
+          color: $violet;
+        }
+
+        &.material-icons {
+          font-family: 'Material Icons';
+          text-align: right;
+          font-size: 20px;
+        }
+
+        &.bber-chapter--current {
+          font-weight: 700;
+        }
+
+        @for $i from 1 through 10 {
+          &.bber-indent--#{$i} {
+            text-indent: ($i - 1) * ($small / 2);
+          }
+        }
+      }
+
+      .bber-ol,
+      .bber-li,
+      .bber-dl {
+        .bber-a {
+          text-indent: $medium;
+        }
+      }
+    }
+
+    .bber-dt {
+      padding: calc(#{$medium} / 2) 0 0 calc(#{$small} / 2);
+      text-transform: capitalize;
+    }
+
+    .bber-dd {
+      @include border('bottom');
+      padding: 5px calc(#{$small} / 2) calc(#{$medium} / 2);
+    }
+
+    .bber-li,
+    .bber-dt {
+      .bber-a {
+        @include transition(color);
+        text-decoration: none;
+        color: $black;
+
+        &:hover {
+          color: $violet;
+        }
+      }
+    }
+  }
+}
+
+.bber-controls__sidebar__chapters,
+.bber-controls__sidebar__metadata,
+.bber-controls__sidebar__downloads,
+.bber-controls__sidebar__settings {
+  @include border($color: $black);
+  display: none;
+  position: absolute;
+
+  right: -15px;
+  top: 12px;
+  height: auto;
+
+  background: $white;
+  min-width: 350px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch; // sass-lint:disable-line no-vendor-prefixes
+
+  @media screen and (max-width: $mobile-breakpoint-max) {
+    width: 100% !important;
+  }
+
+  &.bber-controls__sidebar__chapters--open,
+  &.bber-controls__sidebar__metadata--open,
+  &.bber-controls__sidebar__downloads--open,
+  &.bber-controls__sidebar__settings--open {
+    display: block;
+    z-index: 1;
+  }
+}
+
+.bber-controls__footer {
+  z-index: 1;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: transparent;
+  height: $small + 25px;
+  opacity: 1 !important;
+
+  @media screen and (max-width: $tablet-breakpoint-max) {
+    background: $white;
+  }
+
+  .bber-nav .bber-ul {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    height: $small + 25px;
+    padding: 0 10px;
+
+    .bber-li {
+      display: flex;
+
+      &:nth-child(2) {
+        flex: 1;
+      }
+
+      &:nth-child(2),
+      &:nth-child(3) {
+        .bber-button {
+          font-size: 2em;
+        }
+      }
+
+      .bber-nav__button {
+        @include transition(color);
+        padding: 0 5px;
+
+        &:hover {
+          color: $violet;
+        }
+      }
+    }
+  }
+}

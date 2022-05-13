@@ -1,0 +1,247 @@
+// Vimeo directive
+// TODO Wrapper element has inline `overflow` style
+[data-vimeo-initialized] {
+  overflow: unset !important;
+}
+
+// Vimeo poster image
+.bber-poster--vimeo {
+  @include transition(opacity, $transition-speed-normal);
+  z-index: 1 !important;
+  opacity: 0;
+
+  &.bber-controls {
+    pointer-events: none;
+  }
+
+  &.bber-visible {
+    pointer-events: initial !important;
+    opacity: 1;
+  }
+}
+
+// Media controls
+$media-element-padding: 6px;
+
+// Vars for range input
+$track-w: 100%;
+$track-h: 2px;
+$thumb-d: 12px;
+$track-c: #d7d7d7;
+$thumb-c: #272727;
+
+.bber-media__controls {
+  display: flex;
+  align-items: center;
+
+  font-size: $font-size-sans;
+  font-family: $font-family-sans;
+
+  border: 1px solid $thumb-c;
+  border-radius: $media-element-padding;
+  padding: 9px 3px 9px 12px;
+
+  a,
+  input:not([type='range']),
+  button {
+    padding-right: $media-element-padding * 2;
+  }
+
+  .bber-media__time {
+    display: flex;
+    padding: 0 $media-element-padding * 2 0 0;
+    font-size: 14px;
+    user-select: none;
+  }
+
+  .bber-a,
+  .bber-button {
+    text-decoration: none !important;
+    transition: color $transition-speed-normal $transition-easing;
+  }
+
+  .bber-a.bber-hover,
+  .bber-a:hover,
+  .bber-button.bber-hover,
+  .bber-button:hover {
+    color: $violet !important;
+  }
+
+  // TODO used?
+  + .bber-caption__audio {
+    margin-top: 0.5rem;
+  }
+}
+
+.bber-slider__volume {
+  width: 0;
+  flex-grow: 0;
+  overflow: hidden;
+  transition: flex-grow $transition-speed-normal $transition-easing;
+
+  &.bber-open {
+    overflow: visible;
+    flex-grow: 1;
+  }
+}
+
+// Range input
+// https://css-tricks.com/sliding-nightmare-understanding-range-input/
+
+@mixin track {
+  box-sizing: border-box;
+  border: none;
+  width: $track-w;
+  height: $track-h;
+  background: $track-c;
+}
+
+@mixin thumb {
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1;
+  border: none;
+  width: $thumb-d;
+  height: $thumb-d;
+  border-radius: 50%;
+  background-color: $thumb-c;
+
+  transition: background-color $transition-speed-normal $transition-easing;
+
+  &:hover {
+    background-color: $violet;
+  }
+}
+
+.bber-media__slider {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  position: relative;
+
+  font: 1em/1 arial, sans-serif;
+  margin: 6px 15px 6px 3px;
+}
+
+.bber-input[type='range'] {
+  &,
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+  }
+
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  min-height: $thumb-d;
+  background: transparent;
+  font: inherit;
+  outline: none;
+  width: 100%;
+  max-width: 100%;
+
+  &::-webkit-slider-runnable-track {
+    @include track;
+  }
+  &::-moz-range-track {
+    @include track;
+  }
+  &::-ms-track {
+    @include track;
+  }
+
+  &::-webkit-slider-thumb {
+    margin-top: 0.5 * ($track-h - $thumb-d);
+    @include thumb;
+  }
+  &::-moz-range-thumb {
+    @include thumb;
+  }
+  &::-ms-thumb {
+    margin-top: 0;
+    @include thumb;
+  }
+
+  &::-ms-tooltip {
+    display: none;
+  }
+}
+
+.bber-media__slider--before {
+  background: $black;
+  height: $track-h;
+  position: absolute;
+  left: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+// Mobile layout
+.bber-media__stacked {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+
+  .bber-media__stacked__row {
+    display: flex;
+    flex: 1 0 100%;
+    align-items: center;
+    padding-right: $media-element-padding;
+  }
+
+  .bber-media__stacked__separator {
+    position: relative;
+    width: calc(100% + 10px);
+    margin-left: -13px;
+    margin-top: $media-element-padding * 1.5;
+    margin-bottom: $media-element-padding * 1.5;
+
+    .bber-media__stacked__separator--line {
+      width: calc(100% + 7px); // Optics
+      background: $black;
+      height: 1px;
+    }
+  }
+}
+
+.bber-button__media__playback-rate {
+  position: relative;
+  top: 1px;
+
+  font-size: 0.7rem;
+  font-weight: 700;
+  font-variation-settings: 'wght' 700;
+  letter-spacing: 0.035em;
+
+  width: 33px;
+}
+
+.bber-times__media__playback-rate {
+  position: relative;
+  top: 1px;
+}
+
+// Buttons
+.bber-media__button__play,
+.bber-media__button__pause {
+  font-size: 24px;
+}
+
+.bber-media__button__volume_up,
+.bber-media__button__file_download {
+  font-size: 17px;
+}
+
+.bber-media__button__file_download {
+  position: relative;
+  top: 1px;
+}
+
+.bber-media__button__forward_30,
+.bber-media__button__replay_30 {
+  font-size: 18px;
+}
+
+// FF for range slider
+:-moz-ui-invalid {
+  box-shadow: none;
+}

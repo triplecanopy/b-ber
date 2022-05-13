@@ -1,0 +1,25 @@
+#layout {
+  // Safari
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}
+
+.bber-leaf {
+  // Safari
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+
+  position: fixed;
+  top: 0;
+  height: 100vh;
+  z-index: 10;
+  background-color: $white;
+
+  &.bber-leaf--left {
+    left: 0;
+  }
+
+  &.bber-leaf--right {
+    right: 0;
+  }
+}

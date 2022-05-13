@@ -1,0 +1,19 @@
+@media print {
+  .bber-controls__header,
+  .bber-controls__footer,
+  .bber-leaf {
+    display: none !important;
+  }
+
+  #frame {
+    position: static !important;
+    overflow: visible !important;
+
+    #layout {
+      transform: none !important;
+      height: auto !important;
+      width: auto !important;
+      columns: unset !important;
+    }
+  }
+}
