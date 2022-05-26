@@ -59,7 +59,7 @@
         display: flex;
 
         > .bber-li {
-          margin-right: 10px;
+          margin-right: 7px;
 
           &:last-child {
             margin-right: 0;
@@ -151,12 +151,16 @@
         text-align: left;
         display: block;
         width: 100%;
-        padding: calc(#{$medium} / 2);
+        padding: $medium / 2;
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
         font-size: $font-size-serif;
         font-family: $font-family-serif;
+
+        @media screen and (max-width: $tablet-breakpoint-max) {
+          padding: $medium / 2 16px !important;
+        }
 
         &:hover {
           @include transition(color);
