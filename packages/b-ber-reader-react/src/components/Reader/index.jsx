@@ -284,8 +284,11 @@ class Reader extends Component {
   getSlug() {
     const { spine, currentSpineItemIndex } = this.state
 
-    if (isInteger(currentSpineItemIndex) && spine?.[currentSpineItemIndex]) {
-      return spine[currentSpineItemIndex]
+    if (
+      isInteger(currentSpineItemIndex) &&
+      spine?.[currentSpineItemIndex]?.slug
+    ) {
+      return spine[currentSpineItemIndex].slug
     }
 
     return ''
