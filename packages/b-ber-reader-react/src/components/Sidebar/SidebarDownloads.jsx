@@ -11,10 +11,10 @@ function SidebarDownloadLink({ url, label, description }) {
   return (
     <li className="bber-li">
       <a className="bber-a" download href={url} onClick={handleClick}>
-        <span className="bber-downloads__title">{label}</span>
+        <div className="bber-downloads__title">{label}</div>
 
         {description && (
-          <span className="bber-downloads__description">{description}</span>
+          <div className="bber-downloads__description">{description}</div>
         )}
       </a>
     </li>

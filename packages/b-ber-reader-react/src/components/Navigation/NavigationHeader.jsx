@@ -11,14 +11,14 @@ export function NavigationHeader(props) {
 
   const {
     showSidebar,
-    downloads,
+    downloads: downloadItems,
     spine,
     currentSpineItemIndex,
     navigateToChapterByURL,
     metadata,
   } = props
 
-  const { toc, home, info } = props.uiOptions.navigation.header_icons
+  const { toc, home, info, downloads } = props.uiOptions.navigation.header_icons
   const settings = false // Never implemented. Maybe some day?
 
   const handleChapterClick = () => props.handleSidebarButtonClick('chapters')
@@ -30,16 +30,16 @@ export function NavigationHeader(props) {
     <header className="bber-controls__header">
       <nav className="bber-nav">
         <ul className="bber-ul">
-          {home && (
-            <li className="bber-li bber-li-home">
+          <li className="bber-li bber-li-home">
+            {home && (
               <button
                 className="bber-button bber-nav__button"
                 onClick={props.destroyReaderComponent}
               >
                 <Home />
               </button>
-            </li>
-          )}
+            )}
+          </li>
 
           <li className="bber-li">
             <ul className="bber-ul">
@@ -63,7 +63,7 @@ export function NavigationHeader(props) {
                 </li>
               )}
 
-              {downloads.length > 0 && (
+              {downloads && downloadItems.length > 0 && (
                 <li className="bber-li bber-li-downloads">
                   <button
                     className={classNames('bber-button', 'bber-nav__button', {
@@ -76,7 +76,7 @@ export function NavigationHeader(props) {
 
                   <SidebarDownloads
                     showSidebar={showSidebar}
-                    downloads={downloads}
+                    downloads={downloadItems}
                   />
                 </li>
               )}

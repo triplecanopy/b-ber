@@ -31,7 +31,7 @@
 }
 
 .bber-controls__header {
-  z-index: 1;
+  z-index: 2;
   position: fixed;
   top: 0;
   left: 0;
@@ -53,6 +53,7 @@
 
     .bber-li {
       display: flex;
+      flex-direction: column;
       position: relative;
 
       &.bber-li-home {
@@ -157,6 +158,10 @@
 
         @for $i from 1 through 10 {
           &.bber-indent--#{$i} {
+            @if $i == 1 {
+              font-weight: 700;
+            }
+
             text-indent: ($i - 1) * ($small / 2);
           }
         }
@@ -302,6 +307,10 @@
     display: block;
     z-index: 1;
   }
+}
+
+.bber-downloads__description {
+  padding-top: 5px;
 }
 
 .bber-controls__footer {

@@ -1,7 +1,7 @@
 import React from 'react'
 import Viewport from '../../helpers/Viewport'
 import { layouts } from '../../constants'
-import { ChapterNext, PageNext } from './Icon'
+import { ChapterNext, ChapterPrevious, PageNext, PagePrevious } from './Icon'
 
 const show = {
   chapter: {
@@ -42,7 +42,7 @@ function NavigationFooter(props) {
                 className="bber-button bber-nav__button"
                 onClick={props.goToPrevChapter}
               >
-                arrow_back
+                <ChapterPrevious />
               </button>
             )}
           </li>
@@ -52,7 +52,7 @@ function NavigationFooter(props) {
                 className="bber-button bber-nav__button bber-nav__button--page-prev"
                 onClick={props.goToPrevPage}
               >
-                chevron_left
+                <PagePrevious />
               </button>
             )}
           </li>
