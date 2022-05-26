@@ -1,26 +1,52 @@
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import classNames from 'classnames'
+import { connect } from 'react-redux'
 
 function SidebarMetadata(props) {
+  if (props.readerSettings.SidebarMetadata) {
+    return props.readerSettings.SidebarMetadata(props)
+  }
+
+  if (props.showSidebar !== 'metadata') return null
+
+  const node = useRef()
+
+  const [maxHeight, setMaxHeight] = useState('0px')
+
+  const updateMaxHeight = () => {
+    const { y } = node.current.getBoundingClientRect()
+    setMaxHeight(window.innerHeight - y)
+  }
+
+  useEffect(() => {
+    updateMaxHeight()
+  }, [node])
+
+  useEffect(() => {
+    window.addEventListener('resize', updateMaxHeight)
+
+    return () => window.removeEventListener('resize', updateMaxHeight)
+  }, [])
+
   return (
     <nav
+      ref={node}
+      style={{ maxHeight }}
       className={classNames(
         'bber-nav',
         'bber-controls__sidebar',
         'bber-controls__sidebar__metadata',
-        {
-          'bber-controls__sidebar__metadata--open':
-            props.showSidebar === 'metadata',
-        }
+        'bber-controls__sidebar__metadata--open'
       )}
     >
       <dl className="bber-dl">
-        {Object.keys(props.metadata).map((key, i) => {
-          if (!key || !props.metadata[key]) return null
+        {Object.entries(props.metadata).map(([key, value]) => {
+          if (!key || !value) return null
+
           return (
-            <div key={i}>
+            <div key={key}>
               <dt className="bber-dt">{key}</dt>
-              <dd className="bber-dd">{props.metadata[key]}</dd>
+              <dd className="bber-dd">{value}</dd>
             </div>
           )
         })}
@@ -29,4 +55,6 @@ function SidebarMetadata(props) {
   )
 }
 
-export default SidebarMetadata
+export default connect(({ readerSettings }) => ({ readerSettings }))(
+  SidebarMetadata
+)

@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 /* eslint-disable class-methods-use-this */
 
 import fs from 'fs-extra'
@@ -22,6 +23,7 @@ class Reader {
     this.readerModuleDistDir = 'dist'
     this.readerAppPath = null
 
+    // eslint-disable-next-line no-constructor-return
     return (
       this.createOutputDirs()
         .then(() => this.ensureReaderModuleExists())
@@ -121,13 +123,19 @@ class Reader {
   }
 
   getBookMetadata(term) {
+    if (!term) return state.metadata.json()
+
     const entry = find(state.metadata.json(), { term })
     if (entry && entry.value) return entry.value
+
     log.warn(`Could not find metadata value for ${term}`)
+
     return ''
   }
 
   getProjectConfig(term) {
+    if (!term) return state.config
+
     if (!has(state.config, term)) {
       log.warn(`Invalid property for config: ${term}`)
     }
@@ -136,15 +144,22 @@ class Reader {
   }
 
   writeBookManifest() {
-    const identifier = this.getBookMetadata('identifier')
+    // Get metadata for books.json
+    const id = this.getBookMetadata('identifier')
     const title = this.getBookMetadata('title')
+
     const url = `${Url.trimSlashes(this.remoteURL)}/${
       this.outputDirName
-    }/${this.createDirname(identifier)}`
-    const cover = `${url}/OPS/images/${this.getBookMetadata('cover')}`
-    const manifest = [{ title, url, cover, id: identifier }]
+    }/${this.createDirname(id)}`
 
-    // write to an `api` dir in case the app is being deployed statically
+    const cover = `${url}/OPS/images/${this.getBookMetadata('cover')}`
+
+    // Get config required by reader for books.json
+    const { downloads, ui_options, layout } = this.getProjectConfig()
+
+    const manifest = [{ title, url, cover, id, downloads, ui_options, layout }]
+
+    // Write to an `api` dir in case the app is being deployed statically
     return fs.writeJson(path.join(this.apiDir, 'books.json'), manifest)
   }
 

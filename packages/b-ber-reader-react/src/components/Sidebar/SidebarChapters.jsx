@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import classNames from 'classnames'
+import { connect } from 'react-redux'
 
 function NestedChapterList(props) {
   const { current, items } = props
@@ -34,16 +35,40 @@ function NestedChapterList(props) {
 }
 
 function SidebarChapters(props) {
+  if (props.readerSettings.SidebarChapters) {
+    return props.readerSettings.SidebarChapters(props)
+  }
+
+  if (props.showSidebar !== 'chapters') return null
+
+  const node = useRef()
+
+  const [maxHeight, setMaxHeight] = useState('0px')
+
+  const updateMaxHeight = () => {
+    const { y } = node.current.getBoundingClientRect()
+    setMaxHeight(window.innerHeight - y)
+  }
+
+  useEffect(() => {
+    updateMaxHeight()
+  }, [node])
+
+  useEffect(() => {
+    window.addEventListener('resize', updateMaxHeight)
+
+    return () => window.removeEventListener('resize', updateMaxHeight)
+  }, [])
+
   return (
     <nav
+      ref={node}
+      style={{ maxHeight }}
       className={classNames(
         'bber-nav',
         'bber-controls__sidebar',
         'bber-controls__sidebar__chapters',
-        {
-          'bber-controls__sidebar__chapters--open':
-            props.showSidebar === 'chapters',
-        }
+        'bber-controls__sidebar__chapters--open'
       )}
     >
       <NestedChapterList
@@ -55,4 +80,6 @@ function SidebarChapters(props) {
   )
 }
 
-export default SidebarChapters
+export default connect(({ readerSettings }) => ({ readerSettings }))(
+  SidebarChapters
+)

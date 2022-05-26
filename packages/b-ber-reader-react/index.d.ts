@@ -41,7 +41,7 @@ export enum Layout {
   COLUMNS = 'columns',
 }
 
-type RequireOneOf<T, Keys extends keyof T = keyof T> = Pick<
+export type RequireOneOf<T, Keys extends keyof T = keyof T> = Pick<
   T,
   Exclude<keyof T, Keys>
 > &
@@ -57,54 +57,54 @@ export interface BberReaderQueryParameterKeys {
   spreadIndex?: number
 }
 
-interface Download {
+export interface Download {
   label: string
   title: string
   url: string
   description?: string
 }
 
-interface UiOptionsNavigationHeaderIcons {
+export interface UiOptionsNavigationHeaderIcons {
   home?: boolean
   toc?: boolean
   downloads?: boolean
   info?: boolean
 }
 
-interface UiOptionsNavigationFooterIcons {
+export interface UiOptionsNavigationFooterIcons {
   chapter?: boolean
   page?: boolean
 }
 
-interface UiOptionsNavigation {
+export interface UiOptionsNavigation {
   header_icons?: UiOptionsNavigationHeaderIcons
   footer_icons?: UiOptionsNavigationFooterIcons
 }
 
-interface UiOptions {
+export interface UiOptions {
   navigation?: UiOptionsNavigation
 }
 
-enum SidebarName {
+export enum SidebarName {
   CHAPTERS = 'chapters',
   DOWNLOADS = 'downloads',
   METADATA = 'metadata',
   // SETTINGS = 'settings',
 }
 
-interface NavigationHeaderProps {
+export interface NavigationHeaderProps {
   destroyReaderComponent: () => void
-  handleSidebarButtonClick: (name: SidebarName | null) => void
+  handleSidebarButtonClick: (name: `${SidebarName}` | null) => void
+  navigateToChapterByURL: (url: string) => void
   downloads: Download[]
   uiOptions: UiOptions
+  showSidebar: SidebarName | null
+  spine: Spine
+  currentSpineItemIndex:number
+  metadata: Metadata
 }
 
-enum Layout {
-  SCROLL = 'scroll',
-  COLUMNS = 'columns',
-}
-
-interface SpineItem {
+export interface SpineItem {
   absoluteURL: string
   children: SpineItem[]
   depth: number
@@ -119,9 +119,9 @@ interface SpineItem {
   title: string
 }
 
-type Spine = SpineItem[]
+export type Spine = SpineItem[]
 
-interface Metadata {
+export interface Metadata {
   title: string
   creator: string
   date: string
@@ -132,11 +132,11 @@ interface Metadata {
   identifier: string
 }
 
-interface NavigationFooterProps {
+export interface NavigationFooterProps {
   uiOptions: UiOptions
   currentSpineItemIndex: number
   spine: Spine
-  layout: Layout
+  layout: `${Layout}`
   spreadIndex: number
   lastSpreadIndex: number
   handleEvents: boolean
@@ -149,38 +149,34 @@ interface NavigationFooterProps {
   goToNextPage: () => void
 }
 
-interface SidebarChaptersProps {
+export interface SidebarChaptersProps {
   showSidebar: SidebarName | null
   spine: Spine
   currentSpineItemIndex: number
   navigateToChapterByURL: (url: string) => void
 }
 
-interface SidebarDownloadsProps {
+export interface SidebarDownloadsProps {
   showSidebar: SidebarName | null
   downloads: Download[]
 }
 
-interface SidebarMetadataProps {
+export interface SidebarMetadataProps {
   showSidebar: SidebarName | null
   metadata: Metadata
 }
 
 // interface SidebarSettingsProps {}
 
-type UiReaderProp<T> = React.Component<T> | ((props: T) => JSX.Element)
+export type UiReaderProp<T> = React.Component<T> | ((props: T) => JSX.Element)
 
-enum LocationState {
-  MEMORY = 'memory',
-  LOCAL_STORAGE = 'localStorage',
-  QUERY_PARAMS = 'queryParams',
-}
+export type LocationState = 'memory' | 'localStorage' | 'queryParams'
 
-type KeysValues<T> = { [P in keyof T]: T[P] }
+export type KeysValues<T> = { [P in keyof T]: T[P] }
 
-type SearchParams = string | KeysValues<BberReaderQueryParameterKeys>
+export type SearchParams = string | KeysValues<BberReaderQueryParameterKeys>
 
-interface OptionalBberReaderProps {
+export interface OptionalBberReaderProps {
   bookURL?: string
   manifestURL?: string
   projectURL?: string
@@ -190,8 +186,8 @@ interface OptionalBberReaderProps {
   loadRemoteLibrary?: boolean
   uiOptions?: UI
   cache?: boolean
-  layout?: Layout
-  paramKeys?: BberReaderQueryParameterKeys
+  layout?: `${Layout}`
+  searchParamKeys?: BberReaderQueryParameterKeys
   disableBodyStyles?: boolean
 
   NavigationHeader?: UiReaderProp<NavigationHeaderProps>

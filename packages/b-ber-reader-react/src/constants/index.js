@@ -120,9 +120,9 @@ export const VERTICAL_BREAKPOINT_COUNT = 3
 
 // prettier-ignore
 export const VIEWPORT_DIMENSIONS_MATRIX = [
-  ['60px', '30px', '60px', '30px'], [18, 'auto', 15, 'auto'], [22, 'auto', 18, 'auto'], [22, 'auto', 18, 'auto'], // => sm x sm | md x sm | lg x sm | xl x sm
-  ['60px', '30px', '60px', '30px'], [12, 'auto', 8, 'auto'],  [12, 'auto', 9, 'auto'],  [12, 'auto', 9, 'auto'],  // => sm x md | md x md | lg x md | xl x md
-  ['60px', '30px', '60px', '30px'], [11, 'auto', 8, 'auto'],  [11, 'auto', 8, 'auto'],  [11, 'auto', 8, 'auto']   // => sm x lg | md x lg | lg x lg | xl x lg
+  ['75px', '30px', '60px', '30px'], [18, 'auto', 15, 'auto'], [22, 'auto', 18, 'auto'], [22, 'auto', 18, 'auto'], // => sm x sm | md x sm | lg x sm | xl x sm
+  ['75px', '30px', '60px', '30px'], [12, 'auto', 8, 'auto'],  [12, 'auto', 9, 'auto'],  [12, 'auto', 9, 'auto'],  // => sm x md | md x md | lg x md | xl x md
+  ['75px', '30px', '60px', '30px'], [11, 'auto', 8, 'auto'],  [11, 'auto', 8, 'auto'],  [11, 'auto', 8, 'auto']   // => sm x lg | md x lg | lg x lg | xl x lg
 ]
 
 // Used in DocumentPreProcessor for appended stylesheets

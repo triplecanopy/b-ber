@@ -127,30 +127,30 @@ class Reader extends Component {
 
   async UNSAFE_componentWillMount() {
     // Load the spine, guide, and metadata
-    await this.createStateFromOPF()
+    this.createStateFromOPF(() => {
+      const { spine } = this.state
+      const { readerSettings, readerLocation } = this.props
 
-    const { spine } = this.state
-    const { readerSettings, readerLocation } = this.props
-
-    // Check the current query string if one exists
-    const params = new URLSearchParams(readerLocation.searchParams)
-    const currentSpineItemIndex = params.get(
-      readerSettings.searchParamKeys.currentSpineItemIndex
-    )
-    const currentSpineItem = spine[currentSpineItemIndex]
-    const spreadIndex = 0
-
-    if (currentSpineItem) {
-      this.setState(
-        { currentSpineItem, currentSpineItemIndex, spreadIndex },
-        () => this.loadSpineItem(currentSpineItem)
+      // Check the current query string if one exists
+      const params = new URLSearchParams(readerLocation.searchParams)
+      const currentSpineItemIndex = Number(
+        params.get(readerSettings.searchParamKeys.currentSpineItemIndex)
       )
+      const currentSpineItem = spine[currentSpineItemIndex]
+      const spreadIndex = 0
 
-      return
-    }
+      if (currentSpineItem) {
+        this.setState(
+          { currentSpineItem, currentSpineItemIndex, spreadIndex },
+          () => this.loadSpineItem(currentSpineItem)
+        )
 
-    // Fallback to load the first page of the first chapter
-    this.loadSpineItem()
+        return
+      }
+
+      // Fallback to load the first page of the first chapter
+      this.loadSpineItem()
+    })
   }
 
   componentWillUnmount() {
@@ -184,12 +184,14 @@ class Reader extends Component {
       const nextParams = Url.parseQueryString(nextSearchParams)
 
       const slug = nextParams[this.props.readerSettings.searchParamKeys.slug]
-      const currentSpineItemIndex =
+      const currentSpineItemIndex = Number(
         nextParams[
           this.props.readerSettings.searchParamKeys.currentSpineItemIndex
         ]
-      const spreadIndex =
+      )
+      const spreadIndex = Number(
         nextParams[this.props.readerSettings.searchParamKeys.spreadIndex]
+      )
 
       const prevParams = Url.parseQueryString(prevSearchParams)
       const prevSlug =
@@ -208,7 +210,7 @@ class Reader extends Component {
       this.setState({
         slug,
         currentSpineItemIndex,
-        spreadIndex: Number(spreadIndex),
+        spreadIndex,
       })
     }
 
@@ -282,8 +284,11 @@ class Reader extends Component {
   getSlug() {
     const { spine, currentSpineItemIndex } = this.state
 
-    if (isInteger(currentSpineItemIndex) && spine?.[currentSpineItemIndex]) {
-      return spine[currentSpineItemIndex]
+    if (
+      isInteger(currentSpineItemIndex) &&
+      spine?.[currentSpineItemIndex]?.slug
+    ) {
+      return spine[currentSpineItemIndex].slug
     }
 
     return ''

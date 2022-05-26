@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { NavigationHeader, NavigationFooter } from './Navigation'
-import { SidebarMetadata, SidebarDownloads, SidebarChapters } from './Sidebar'
 import Messenger from '../lib/Messenger'
 import withNavigationActions from '../lib/with-navigation-actions'
 import { messagesTypes } from '../constants'
@@ -113,9 +112,6 @@ class Controls extends Component {
     const Footer = withNavigationActions(
       readerSettings.NavigationFooter || NavigationFooter
     )
-    const Chapters = readerSettings.SidebarChapters || SidebarChapters
-    const Downloads = readerSettings.SidebarDownloads || SidebarDownloads
-    const Metadata = readerSettings.SidebarMetadata || SidebarMetadata
 
     const {
       destroyReaderComponent,
@@ -144,18 +140,12 @@ class Controls extends Component {
           handleSidebarButtonClick={handleSidebarButtonClick}
           downloads={downloads}
           uiOptions={uiOptions}
-        />
-
-        <Chapters
           showSidebar={showSidebar}
           spine={spine}
           currentSpineItemIndex={currentSpineItemIndex}
           navigateToChapterByURL={navigateToChapterByURL}
+          metadata={metadata}
         />
-
-        <Downloads showSidebar={showSidebar} downloads={downloads} />
-
-        <Metadata showSidebar={showSidebar} metadata={metadata} />
 
         {this.props.children}
 

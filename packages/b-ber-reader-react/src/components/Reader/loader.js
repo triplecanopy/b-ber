@@ -6,7 +6,7 @@ import Messenger from '../../lib/Messenger'
 
 export const book = { content: null }
 
-export async function createStateFromOPF() {
+export async function createStateFromOPF(callback) {
   const { bookURL } = this.props.readerSettings
 
   const opfURL = XMLAdaptor.opfURL(bookURL)
@@ -33,7 +33,10 @@ export async function createStateFromOPF() {
   data = { ...guideItems, ...spineItems }
   data = await XMLAdaptor.createBookMetadata(data)
 
-  this.setState({ opsURL, ...data })
+  // console.log('opsURL, ...data')
+  // console.log(opsURL, data)
+
+  this.setState({ opsURL, ...data }, callback)
 }
 
 // Shows content and enables UI once book content has been loaded
@@ -61,6 +64,9 @@ export function showSpineItem() {
 // Makes requests to load book content
 export async function loadSpineItem(spineItem, deferredCallback) {
   const hash = Asset.createHash(this.props.readerSettings.bookURL)
+
+  // console.log('this.state', this.state)
+  // console.log('spineItem', spineItem)
 
   let requestedSpineItem = spineItem
   if (!requestedSpineItem) [requestedSpineItem] = this.state.spine
