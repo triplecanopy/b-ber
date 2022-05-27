@@ -1,4 +1,5 @@
 import head from 'lodash/head'
+import last from 'lodash/last'
 
 import {
   BREAKPOINT_HORIZONTAL_SMALL,
@@ -9,11 +10,12 @@ import {
   BREAKPOINT_VERTICAL_LARGE,
   LAYOUT_MAX_HEIGHT,
   LAYOUT_MAX_WIDTH,
-  VIEWPORT_DIMENSIONS_MATRIX,
+  FRAME_PADDING,
   DESKTOP_COLUMN_COUNT,
   MOBILE_COLUMN_COUNT,
   HORIZONTAL_BREAKPOINT_COUNT,
   VERTICAL_BREAKPOINT_COUNT,
+  FRAME_SIZE,
 } from '../constants'
 
 import { isNumeric } from './Types'
@@ -53,27 +55,48 @@ class Viewport {
 
   static getBreakpointX = () => {
     if (Viewport.horizontalSmall()) {
-      console.log('Viewport.horizontalSmall')
+      // console.log(
+      //   'only screen and (min-width: 769px) and (max-width: 1140px)',
+      //   0,
+      //   window.innerWidth
+      // )
       return 0
     }
     if (Viewport.horizontalMedium()) {
-      console.log('Viewport.horizontalMedium')
+      // console.log(
+      //   'only screen and (min-width: 1141px) and (max-width: 1440px)',
+      //   1,
+      //   window.innerWidth
+      // )
       return 1
     }
     if (Viewport.horizontalLarge()) {
-      console.log('Viewport.horizontalLarge')
+      // console.log(
+      //   'only screen and (min-width: 1441px) and (max-width: 1920px)',
+      //   2,
+      //   window.innerWidth
+      // )
       return 2
     }
     if (Viewport.horizontalXLarge()) {
-      console.log('Viewport.horizontalXLarge')
+      // console.log('only screen and (min-width: 1921px)', 3, window.innerWidth)
       return 3
     }
   }
 
   static getBreakpointY = () => {
-    if (Viewport.verticalSmall()) return 0
-    if (Viewport.verticalMedium()) return 1
-    if (Viewport.verticalLarge()) return 2
+    if (Viewport.verticalSmall()) {
+      console.log('Viewport.verticalSmall', 0)
+      return 0
+    }
+    if (Viewport.verticalMedium()) {
+      console.log('Viewport.verticalMedium', 1)
+      return 1
+    }
+    if (Viewport.verticalLarge()) {
+      console.log('Viewport.verticalLarge', 2)
+      return 2
+    }
   }
 
   static getBreakpointXY = () => [
@@ -99,16 +122,46 @@ class Viewport {
   static getColumnWidth = () =>
     (65 / Viewport.getColumnCount() / 100) * window.innerWidth
 
-  static getHorizontalSpacingAuto = () => {
+  static getHorizontalSpacingAuto = (x, y) => {
     const width = window.innerWidth
     const padding = Viewport.getColumnWidth() + Viewport.getGutterWidth()
-    return width - padding * 2 > LAYOUT_MAX_WIDTH
-      ? (width - LAYOUT_MAX_WIDTH) / 2
-      : padding
+
+    const frameSize = head(
+      FRAME_SIZE.filter(Viewport.filterDimensionsX(x)).filter(
+        Viewport.filterDimensionsY(y)
+      )
+    )
+
+    const maxWidth = head(frameSize)
+
+    // console.log('maxWidth', maxWidth)
+
+    if (maxWidth === 'auto') {
+      return width - padding * 2 > LAYOUT_MAX_WIDTH
+        ? (width - LAYOUT_MAX_WIDTH) / 2
+        : padding
+    }
+
+    return (window.innerWidth - maxWidth) / 2
   }
 
-  static getVerticalSpacingAuto = () =>
-    (window.innerHeight - LAYOUT_MAX_HEIGHT) / 2
+  static getVerticalSpacingAuto = (x, y) => {
+    const frameSize = head(
+      FRAME_SIZE.filter(Viewport.filterDimensionsX(x)).filter(
+        Viewport.filterDimensionsY(y)
+      )
+    )
+
+    const maxHeight = last(frameSize)
+
+    console.log('maxHeight', maxHeight)
+
+    if (maxHeight === 'auto') {
+      return (window.innerHeight - LAYOUT_MAX_HEIGHT) / 2
+    }
+
+    return (window.innerHeight - maxHeight) / 2
+  }
 
   static getPixelValue = str => {
     if (str.substring(str.length - 2) !== 'px') {
@@ -121,38 +174,38 @@ class Viewport {
     return parseInt(str, 10)
   }
 
-  static getVerticalValueFromString = str => {
+  static getVerticalValueFromString = (str, x, y) => {
     const str_ = str.trim().toLowerCase()
     return str_ === 'auto'
-      ? Viewport.getVerticalSpacingAuto()
+      ? Viewport.getVerticalSpacingAuto(x, y)
       : Viewport.getPixelValue(str_)
   }
 
-  static getHorizontalValueFromString = str => {
+  static getHorizontalValueFromString = (str, x, y) => {
     const str_ = str.trim().toLowerCase()
     return str_ === 'auto'
-      ? Viewport.getHorizontalSpacingAuto()
+      ? Viewport.getHorizontalSpacingAuto(x, y)
       : Viewport.getPixelValue(str_)
   }
 
-  static getVerticalSpacing = (top, bottom) => ({
+  static getVerticalSpacing = (top, bottom, x, y) => ({
     top: isNumeric(top)
       ? window.innerHeight * (top / 100)
-      : Viewport.getVerticalValueFromString(top),
+      : Viewport.getVerticalValueFromString(top, x, y),
 
     bottom: isNumeric(bottom)
       ? window.innerHeight * (bottom / 100)
-      : Viewport.getVerticalValueFromString(bottom),
+      : Viewport.getVerticalValueFromString(bottom, x, y),
   })
 
-  static getHorizontalSpacing = (left, right) => ({
+  static getHorizontalSpacing = (left, right, x, y) => ({
     left: isNumeric(left)
       ? window.innerWidth * (left / 100)
-      : Viewport.getHorizontalValueFromString(left),
+      : Viewport.getHorizontalValueFromString(left, x, y),
 
     right: isNumeric(right)
       ? window.innerWidth * (right / 100)
-      : Viewport.getHorizontalValueFromString(right),
+      : Viewport.getHorizontalValueFromString(right, x, y),
   })
 
   static filterDimensionsX = x => (_, i) =>
@@ -161,19 +214,23 @@ class Viewport {
   static filterDimensionsY = y => (_, i) =>
     (i % VERTICAL_BREAKPOINT_COUNT) - y === 0
 
-  // prettier-ignore
-  static getDimensions = ([x, y]) =>
-    head(
-      VIEWPORT_DIMENSIONS_MATRIX
-        .filter(Viewport.filterDimensionsX(x))
+  static getDimensions = ([x, y]) => {
+    // console.log('x %d y %d', x, y)
+    // console.log(
+    //   FRAME_PADDING.filter(Viewport.filterDimensionsX(x)).filter(
+    //     Viewport.filterDimensionsY(y)
+    //   )[0]
+    // )
+
+    return head(
+      FRAME_PADDING.filter(Viewport.filterDimensionsX(x))
         .filter(Viewport.filterDimensionsY(y))
-        .map(
-          ([top, right, bottom, left]) => ({
-            ...Viewport.getVerticalSpacing(top, bottom),
-            ...Viewport.getHorizontalSpacing(left, right),
-          })
-        )
+        .map(([top, right, bottom, left]) => ({
+          ...Viewport.getVerticalSpacing(top, bottom, x, y),
+          ...Viewport.getHorizontalSpacing(left, right, x, y),
+        }))
     )
+  }
 
   static getDimensionsFromMatrix = () =>
     Viewport.getDimensions(Viewport.getBreakpointXY())
