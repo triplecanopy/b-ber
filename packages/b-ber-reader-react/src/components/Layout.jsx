@@ -167,8 +167,16 @@ class Layout extends React.Component {
       paddingRight,
     } = this.props.viewerSettings
 
-    const contextClass =
-      layout === layouts.SCROLL || Viewport.isMobile() ? 'mobile' : 'desktop'
+    // Ultimately new classes should be added for the layout property to end up with
+    // combinations of contexts and layouts, like `.context__desktop.layout__scroll`,
+    // `.context__desktop.layout__columns`, `.context__mobile.layout__scroll`, etc.
+    let contextClass = ''
+
+    if (layout === layouts.SCROLL) {
+      contextClass = 'scroll'
+    } else {
+      contextClass = Viewport.isMobile() ? 'mobile' : 'desktop'
+    }
 
     const defaultContentStyles = { padding: 0, margin: 0 }
     const contentStyles = { ...defaultContentStyles, minHeight: height }
