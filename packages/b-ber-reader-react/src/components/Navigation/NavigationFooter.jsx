@@ -1,6 +1,5 @@
 import React from 'react'
 import Viewport from '../../helpers/Viewport'
-import { layouts } from '../../constants'
 import { ChapterNext, ChapterPrevious, PageNext, PagePrevious } from './Icon'
 
 const show = {
@@ -17,14 +16,12 @@ const show = {
   },
   page: {
     prev: props =>
-      props.layout !== layouts.SCROLL &&
-      !Viewport.isMobile() &&
+      !Viewport.verticallyScrolling(props) &&
       props.uiOptions.navigation.footer_icons.page &&
       (props.currentSpineItemIndex !== 0 || props.spreadIndex !== 0),
 
     next: props =>
-      props.layout !== layouts.SCROLL &&
-      !Viewport.isMobile() &&
+      !Viewport.verticallyScrolling(props) &&
       props.uiOptions.navigation.footer_icons.page &&
       (props.currentSpineItemIndex !== props.spine.length - 1 ||
         props.spreadIndex !== props.lastSpreadIndex),

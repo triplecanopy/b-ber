@@ -1,5 +1,4 @@
 import { findIndex } from 'lodash'
-import { layouts } from '../../constants'
 import Url from '../../helpers/Url'
 import Viewport from '../../helpers/Viewport'
 import Messenger from '../../lib/Messenger'
@@ -111,9 +110,7 @@ export function navigateToElementById(id) {
 
   // Scroll to vertical position, leave a bit of room for the controls and
   // whitespace around the element
-  const { layout } = this.props.readerSettings
-
-  if (layout === layouts.SCROLL || Viewport.isMobile()) {
+  if (Viewport.verticallyScrolling(this.props.readerSettings)) {
     const padding = 25
     const offset =
       document.querySelector('.bber-controls__header').offsetHeight + padding

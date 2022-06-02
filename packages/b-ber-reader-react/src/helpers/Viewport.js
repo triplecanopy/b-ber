@@ -16,6 +16,8 @@ import {
   HORIZONTAL_BREAKPOINT_COUNT,
   VERTICAL_BREAKPOINT_COUNT,
   FRAME_SIZE,
+  MINIMUM_ONE_COLUMN_ASPECT_RATIO,
+  layouts,
 } from '../constants'
 
 import { isNumeric } from './Types'
@@ -236,6 +238,11 @@ class Viewport {
     Viewport.getDimensions(Viewport.getBreakpointXY())
 
   static optimized = () => Viewport.getDimensionsFromMatrix()
+
+  static verticallyScrolling = ({ layout }) =>
+    Viewport.isMobile() ||
+    layout === layouts.SCROLL ||
+    window.innerWidth / window.innerHeight >= MINIMUM_ONE_COLUMN_ASPECT_RATIO
 }
 
 export default Viewport

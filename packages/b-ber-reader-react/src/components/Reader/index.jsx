@@ -13,7 +13,6 @@ import withDeferredCallbacks from '../../lib/with-deferred-callbacks'
 import ReaderContext from '../../lib/reader-context'
 import Viewport from '../../helpers/Viewport'
 import { unlessDefined } from '../../helpers/utils'
-import { layouts } from '../../constants'
 import * as viewActions from '../../actions/view'
 import * as viewerSettingsActions from '../../actions/viewer-settings'
 import * as readerSettingsActions from '../../actions/reader-settings'
@@ -256,9 +255,7 @@ class Reader extends Component {
       columnGap,
     } = this.props.viewerSettings
 
-    const { layout } = this.props.readerSettings
-
-    const isScrolling = layout === layouts.SCROLL || Viewport.isMobile()
+    const isScrolling = Viewport.verticallyScrolling(this.props.readerSettings)
 
     let translateX = 0
     if (!isScrolling) {

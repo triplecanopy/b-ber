@@ -55,6 +55,9 @@ export const BREAKPOINT_VERTICAL_LARGE = 860
 export const LAYOUT_MAX_HEIGHT = 480
 export const LAYOUT_MAX_WIDTH = 1921
 
+// Enforce a single column scrolling layout on awkward screen sizes
+export const MINIMUM_ONE_COLUMN_ASPECT_RATIO = 13 / 5
+
 // Columns
 export const DESKTOP_COLUMN_COUNT = 16
 export const MOBILE_COLUMN_COUNT = 9

@@ -1,20 +1,23 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { debug } from '../config'
-import { isNumeric } from '../helpers/Types'
+// import { isNumeric } from '../helpers/Types'
 import Viewport from '../helpers/Viewport'
 import { SpreadImageStyles } from '.'
 import SpreadContext from '../lib/spread-context'
-import { layouts } from '../constants'
 
 class Spread extends React.Component {
-  state = {
-    left: '0px',
-    spreadPosition: 0,
-    recto: false,
-    verso: false,
-    elementEdgeLeft: 0,
-    unbound: false,
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      left: '0px',
+      spreadPosition: 0,
+      recto: false,
+      verso: false,
+      elementEdgeLeft: 0,
+      unbound: false,
+    }
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
@@ -44,16 +47,16 @@ class Spread extends React.Component {
     this.updateChildElementPositions()
   }
 
-  calculateSpreadOffset = () => {
-    let { height } = this.props.viewerSettings
-    const { paddingTop, paddingBottom } = this.props.viewerSettings
-    const padding = paddingTop + paddingBottom
+  // calculateSpreadOffset = () => {
+  //   let { height } = this.props.viewerSettings
+  //   const { paddingTop, paddingBottom } = this.props.viewerSettings
+  //   const padding = paddingTop + paddingBottom
 
-    height = isNumeric(height) ? height * 2 - padding * 2 : height
-    if (isNumeric(height)) height -= 1 // nudge to prevent overflow onto next spread
+  //   height = isNumeric(height) ? height * 2 - padding * 2 : height
+  //   if (isNumeric(height)) height -= 1 // nudge to prevent overflow onto next spread
 
-    this.updateChildElementPositions()
-  }
+  //   this.updateChildElementPositions()
+  // }
 
   // Spread.updateChildElementPositions lays out absolutely positioned images
   // over fullbleed placeholders for FF and Safari. This is Chrome's default
@@ -80,10 +83,8 @@ class Spread extends React.Component {
     const spreadPosition = Math.ceil(elementEdgeLeft / layoutWidth)
     // console.log('spreadPosition', elementEdgeLeft / layoutWidth, spreadPosition)
 
-    const { layout } = this.props.readerSettings
-
     let left = 0
-    if (!Viewport.isMobile() && layout !== layouts.SCROLL) {
+    if (!Viewport.verticallyScrolling(this.props.readerSettings)) {
       left = layoutWidth * spreadPosition
       // if (recto) left -= layoutWidth
       if (unbound) left = 0
@@ -117,6 +118,7 @@ class Spread extends React.Component {
     if (debug) styles = { ...styles, ...debugStyles }
 
     return (
+      // eslint-disable-next-line react/jsx-props-no-spreading
       <div {...rest} id={`spread__${markerId}`} style={styles}>
         <SpreadImageStyles
           recto={recto}
@@ -128,6 +130,7 @@ class Spread extends React.Component {
           // markerX={elementEdgeLeft}
         />
 
+        {/* eslint-disable-next-line react/jsx-no-constructed-context-values */}
         <SpreadContext.Provider value={{ left, layout }}>
           {this.props.children}
         </SpreadContext.Provider>

@@ -1,6 +1,5 @@
 import React from 'react'
 import Viewport from '../helpers/Viewport'
-import { layouts } from '../constants'
 
 const withIframePosition = (WrappedComponent, options = { enabled: false }) =>
   class WrapperComponent extends React.Component {
@@ -9,10 +8,14 @@ const withIframePosition = (WrappedComponent, options = { enabled: false }) =>
     // There's a bug in Chrome 81 that causes iframes on a different domain than
     // the host not to load in multiple column layouts. Following props are used
     // for element positioning in the work-around commened on below.
-    state = {
-      iframePlaceholderTop: 0,
-      iframePlaceholderWidth: 0,
-      iframePlaceholderHeight: 0,
+    constructor(props) {
+      super(props)
+
+      this.state = {
+        iframePlaceholderTop: 0,
+        iframePlaceholderWidth: 0,
+        iframePlaceholderHeight: 0,
+      }
     }
 
     UNSAFE_componentWillMount() {
@@ -38,7 +41,7 @@ const withIframePosition = (WrappedComponent, options = { enabled: false }) =>
     // placeholder position to check if the floating element's position matches,
     // and call again if not.
     updateIframePosition = () => {
-      if (this.props.layout === layouts.SCROLL_LAYOUT || Viewport.isMobile()) {
+      if (Viewport.verticallyScrolling(this.props)) {
         return
       }
 
@@ -96,7 +99,9 @@ const withIframePosition = (WrappedComponent, options = { enabled: false }) =>
     render() {
       return (
         <WrappedComponent
+          // eslint-disable-next-line react/jsx-props-no-spreading
           {...this.props}
+          // eslint-disable-next-line react/jsx-props-no-spreading
           {...this.state}
           iframeStyleBlock={this.iframeStyleBlock}
           innerRef={ref => (this.iframePlaceholder = ref)}

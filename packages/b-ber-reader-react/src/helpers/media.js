@@ -1,7 +1,6 @@
 import omit from 'lodash/omit'
 import Url from './Url'
 import Viewport from './Viewport'
-import { layouts } from '../constants'
 
 export const getPlayerPropsFromQueryString = queryString =>
   Url.parseQueryString(queryString)
@@ -61,8 +60,7 @@ export const getPlayingStateOnUpdate = (
   // Play or pause the video
   const playing =
     elementSpreadIndex === visibleSpreadIndex &&
-    !Viewport.isMobile() &&
-    props.readerSettings.layout !== layouts.SCROLL
+    !Viewport.verticallyScrolling(props.readerSettings)
 
   return { playing, currentSpreadIndex }
 }

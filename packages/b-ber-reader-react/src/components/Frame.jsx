@@ -3,7 +3,6 @@ import isPlainObject from 'lodash/isPlainObject'
 import { connect } from 'react-redux'
 import { Layout, DebugGrid } from '.'
 import Viewport from '../helpers/Viewport'
-import { layouts } from '../constants'
 import Messenger from '../lib/Messenger'
 import Asset from '../helpers/Asset'
 
@@ -56,7 +55,7 @@ class Frame extends React.Component {
       fontSize,
     }
 
-    if (this.props.layout === layouts.SCROLL || Viewport.isMobile()) {
+    if (Viewport.verticallyScrolling(this.props)) {
       // Mobile
       style = {
         ...style,

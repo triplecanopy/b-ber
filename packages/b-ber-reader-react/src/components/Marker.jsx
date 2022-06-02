@@ -6,7 +6,6 @@ import { isNumeric } from '../helpers/Types'
 import Viewport from '../helpers/Viewport'
 import withNodePosition from '../lib/with-node-position'
 import * as markerActions from '../actions/markers'
-import { layouts } from '../constants'
 import browser from '../lib/browser'
 
 class Marker extends React.Component {
@@ -77,8 +76,7 @@ class Marker extends React.Component {
 
     if (
       !this.props.elemRef?.current ||
-      Viewport.isMobile() ||
-      this.props.readerSettings.layout === layouts.SCROLL
+      Viewport.verticallyScrolling(this.props.readerSettings)
     ) {
       return offsetHeight
     }

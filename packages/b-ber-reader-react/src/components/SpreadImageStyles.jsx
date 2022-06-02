@@ -1,6 +1,5 @@
 import React from 'react'
 import Viewport from '../helpers/Viewport'
-import { layouts } from '../constants'
 
 // Figures in spreads are positioned absolutely, so the fullbleed images
 // contained inside them overflow on either side. we create a style block for
@@ -30,7 +29,7 @@ function SpreadImageStyles(props) {
   // console.log('recto || unbound', recto, unbound, spreadPosition)
 
   // prettier-ignore
-  const styles = props.layout === layouts.SCROLL || Viewport.isMobile() ? null : `
+  const styles = Viewport.verticallyScrolling(props) ? null : `
     /* Previous pages */
     .bber-spread-index__${adjustedSpreadPosition - 2} #spread__${markerRefId} > figure,
     .bber-spread-index__${adjustedSpreadPosition - 2} #spread__${markerRefId} > .spread__content,
