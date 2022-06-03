@@ -90,8 +90,8 @@
         background-color: $white;
         border-radius: 50%;
 
-        width: 40px;
-        height: 40px;
+        width: clamp(40px, 5vw, 55px);
+        height: clamp(40px, 5vw, 55px);
 
         padding: 5px;
         position: relative;
@@ -102,6 +102,14 @@
 
         svg {
           position: relative;
+          object-fit: contain;
+          width: 43%;
+          height: 43%;
+
+          @media screen and (max-width: $tablet-breakpoint-max) {
+            width: 50%;
+            height: 50%;
+          }
         }
 
         svg path,
@@ -138,7 +146,7 @@
 
 .bber-controls__sidebar {
   font-family: $font-family-serif;
-  font-weight: 400;
+  font-weight: 300;
   font-size: $font-size-serif;
 
   .bber-ol,
@@ -162,27 +170,12 @@
           padding: $medium / 2 16px !important;
         }
 
-        &:hover {
-          @include transition(color);
-          color: $violet;
-        }
-
-        &.material-icons {
-          font-family: 'Material Icons';
-          text-align: right;
-          font-size: 20px;
-        }
-
         &.bber-chapter--current {
-          font-weight: 700;
+          font-weight: 500;
         }
 
         @for $i from 1 through 10 {
           &.bber-indent--#{$i} {
-            @if $i == 1 {
-              font-weight: 700;
-            }
-
             text-indent: ($i - 1) * ($small / 2);
           }
         }
@@ -210,13 +203,8 @@
     .bber-li,
     .bber-dt {
       .bber-a {
-        @include transition(color);
         text-decoration: none;
         color: $black;
-
-        &:hover {
-          color: $violet;
-        }
       }
     }
   }
@@ -224,7 +212,7 @@
 
 .bber-controls__sidebar {
   font-family: $font-family-serif;
-  font-weight: 400;
+  font-weight: 300;
   font-size: $font-size-serif;
 
   .bber-ol,
@@ -243,20 +231,10 @@
         text-overflow: ellipsis;
         font-size: $font-size-serif;
         font-family: $font-family-serif;
-
-        &:hover {
-          @include transition(color);
-          color: $violet;
-        }
-
-        &.material-icons {
-          font-family: 'Material Icons';
-          text-align: right;
-          font-size: 20px;
-        }
+        font-weight: 300;
 
         &.bber-chapter--current {
-          font-weight: 700;
+          font-weight: 500;
         }
 
         @for $i from 1 through 10 {
@@ -288,13 +266,8 @@
     .bber-li,
     .bber-dt {
       .bber-a {
-        @include transition(color);
         text-decoration: none;
         color: $black;
-
-        &:hover {
-          color: $violet;
-        }
       }
     }
   }
@@ -351,7 +324,6 @@
   @media screen and (max-width: $tablet-breakpoint-max) {
     background: $white;
     height: 42px;
-    border-top: 1px solid $black;
   }
 
   .bber-nav .bber-ul {

@@ -1,6 +1,6 @@
 // sass-lint:disable no-important,nesting-depth
 $white: rgba(255, 255, 255, 1);
-$black: rgba(34, 34, 34, 1);
+$black: #333333;
 $blue: rgba(105, 105, 252, 1);
 $violet: rgba(80, 80, 197, 1);
 $grey-light: rgba(211, 211, 211, 1);
@@ -24,7 +24,7 @@ $anmiation-speed-slow: 2500ms;
 $mobile-breakpoint-max: 414px;
 $tablet-breakpoint-max: 768px;
 
-$font-family-serif: Georgia, 'Iowan', Times, serif;
+$font-family-serif: CrimsonPro, Georgia, 'Iowan', Times, serif;
 $font-size-serif: 14px;
 
 $font-family-sans: Arial, Helvetica, sans-serif;
