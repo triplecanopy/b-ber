@@ -6,6 +6,7 @@
 
   .bber-a,
   .bber-button {
+    color: $black;
     cursor: pointer;
   }
 
@@ -90,10 +91,10 @@
         background-color: $white;
         border-radius: 50%;
 
-        width: clamp(40px, 5vw, 55px);
-        height: clamp(40px, 5vw, 55px);
+        width: clamp(35px, 3vw, 45px);
+        height: clamp(35px, 3vw, 45px);
 
-        padding: 5px;
+        padding: 7px 5px 5px;
         position: relative;
 
         &.bber-nav__button--open {
@@ -107,8 +108,8 @@
           height: 43%;
 
           @media screen and (max-width: $tablet-breakpoint-max) {
-            width: 50%;
-            height: 50%;
+            width: 63%;
+            height: 63%;
           }
         }
 
@@ -146,8 +147,9 @@
 
 .bber-controls__sidebar {
   font-family: $font-family-serif;
-  font-weight: 300;
+  font-weight: 400;
   font-size: $font-size-serif;
+  letter-spacing: 0.02em;
 
   .bber-ol,
   .bber-ul,
@@ -171,7 +173,7 @@
         }
 
         &.bber-chapter--current {
-          font-weight: 500;
+          font-weight: 600;
         }
 
         @for $i from 1 through 10 {
@@ -212,8 +214,9 @@
 
 .bber-controls__sidebar {
   font-family: $font-family-serif;
-  font-weight: 300;
+  font-weight: 400;
   font-size: $font-size-serif;
+  letter-spacing: 0.02em;
 
   .bber-ol,
   .bber-ul,
@@ -231,10 +234,11 @@
         text-overflow: ellipsis;
         font-size: $font-size-serif;
         font-family: $font-family-serif;
-        font-weight: 300;
+        font-weight: 400;
+        letter-spacing: 0.02em;
 
         &.bber-chapter--current {
-          font-weight: 500;
+          font-weight: 600;
         }
 
         @for $i from 1 through 10 {

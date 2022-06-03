@@ -86,8 +86,8 @@ export const Menu = () => (
 
 export const PageNext = () => (
   <svg
-    // width="24px"
-    // height="36px"
+    width="24px"
+    height="36px"
     viewBox="0 0 24 36"
     version="1.1"
     xmlns="http://www.w3.org/2000/svg"
@@ -107,8 +107,8 @@ export const PageNext = () => (
 export const PagePrevious = () => (
   <svg
     style={{ transform: 'scale(-1)' }}
-    // width="24px"
-    // height="36px"
+    width="24px"
+    height="36px"
     viewBox="0 0 24 36"
     version="1.1"
     xmlns="http://www.w3.org/2000/svg"
@@ -127,8 +127,8 @@ export const PagePrevious = () => (
 
 export const ChapterNext = () => (
   <svg
-    // width="16px"
-    // height="24px"
+    width="16px"
+    height="24px"
     viewBox="0 0 16 24"
     version="1.1"
     xmlns="http://www.w3.org/2000/svg"
@@ -148,8 +148,8 @@ export const ChapterNext = () => (
 export const ChapterPrevious = () => (
   <svg
     style={{ transform: 'scale(-1)' }}
-    // width="16px"
-    // height="24px"
+    width="16px"
+    height="24px"
     viewBox="0 0 16 24"
     version="1.1"
     xmlns="http://www.w3.org/2000/svg"
