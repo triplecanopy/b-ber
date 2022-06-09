@@ -112,7 +112,7 @@ class Vimeo extends React.Component {
     let paddingTop
 
     if (iframePositioningEnabled) {
-      const mobile = Viewport.isMobile()
+      const mobile = Viewport.isSingleColumn()
       const position = mobile ? 'static' : 'absolute' // Only run re-positioning on desktop
       const x = aspectRatio.get('x')
       const y = aspectRatio.get('y')

@@ -1,6 +1,6 @@
 import { debug } from '../config'
 
-export const mediaLarge = () => [
+export const mediaSliding = () => [
   {
     selector: `.figure__fullbleed figure,
                .spread .spread__content`,
@@ -32,7 +32,7 @@ export const mediaLarge = () => [
   },
 ]
 
-export const mediaSmall = () => [
+export const mediaScrolling = () => [
   {
     selector: `.figure__fullbleed figure .spread .spread__content`,
     declarations: ['z-index: 11', 'width: 100vw', 'position: relative'],

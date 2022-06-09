@@ -113,13 +113,13 @@ class Footnote extends React.Component {
 
   handleOnMouseOver = e => {
     if (e) e.preventDefault()
-    if (Viewport.isMobile()) return
+    if (Viewport.isSingleColumn()) return
     this.toggleFootnote()
   }
 
   // Hide footnote if user hovers over a different note
   handleOnMouseMove = e => {
-    if (Viewport.isMobile()) return
+    if (Viewport.isSingleColumn()) return
 
     if (
       e.target.nodeName === 'SPAN' &&
@@ -179,12 +179,12 @@ class Footnote extends React.Component {
 
   footnoteStyles() {
     const { columnWidth, columnGap, paddingLeft } = this.props.viewerSettings
-    const isMobile = Viewport.isMobile()
+    const isSingleColumn = Viewport.isSingleColumn()
     const aboveElement = this.getFootnoteOffset()
     const offsetProp = aboveElement ? 'bottom' : 'top'
     const offset = offsetProp === 'bottom' ? '1rem' : '1.5rem'
     const left = 0
-    const width = isMobile
+    const width = isSingleColumn
       ? window.innerWidth - paddingLeft * 2
       : `${columnWidth + columnGap}px`
 
@@ -197,7 +197,7 @@ class Footnote extends React.Component {
     styles.left = this.footnoteContainer.current.getBoundingClientRect().x
 
     // Adjust position based on verso or recto position of footnote reference
-    styles.left = isMobile
+    styles.left = isSingleColumn
       ? (styles.left = styles.left * -1 + paddingLeft)
       : styles.left >= window.innerWidth / 2
       ? (styles.left = styles.left * -1 + paddingLeft + columnWidth + columnGap)

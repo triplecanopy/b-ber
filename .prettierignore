@@ -25,3 +25,4 @@ packages/b-ber-templates/Xml/*.js
 packages/b-ber-templates/figures/*.js
 packages/b-ber-lib/utils/*.js
 packages/b-ber-markdown-renderer/src/highlightjs
+packages/b-ber-reader-react/src/constants/index.js

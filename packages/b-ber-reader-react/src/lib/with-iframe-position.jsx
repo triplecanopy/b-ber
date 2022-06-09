@@ -41,7 +41,7 @@ const withIframePosition = (WrappedComponent, options = { enabled: false }) =>
     // placeholder position to check if the floating element's position matches,
     // and call again if not.
     updateIframePosition = () => {
-      if (Viewport.verticallyScrolling(this.props)) {
+      if (Viewport.isVerticallyScrolling(this.props)) {
         return
       }
 

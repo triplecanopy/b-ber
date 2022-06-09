@@ -255,7 +255,9 @@ class Reader extends Component {
       columnGap,
     } = this.props.viewerSettings
 
-    const isScrolling = Viewport.verticallyScrolling(this.props.readerSettings)
+    const isScrolling = Viewport.isVerticallyScrolling(
+      this.props.readerSettings
+    )
 
     let translateX = 0
     if (!isScrolling) {

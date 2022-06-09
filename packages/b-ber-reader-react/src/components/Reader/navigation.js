@@ -110,7 +110,7 @@ export function navigateToElementById(id) {
 
   // Scroll to vertical position, leave a bit of room for the controls and
   // whitespace around the element
-  if (Viewport.verticallyScrolling(this.props.readerSettings)) {
+  if (Viewport.isVerticallyScrolling(this.props.readerSettings)) {
     const padding = 25
     const offset =
       document.querySelector('.bber-controls__header').offsetHeight + padding

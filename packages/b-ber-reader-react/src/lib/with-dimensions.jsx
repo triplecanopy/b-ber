@@ -41,7 +41,7 @@ const withDimensions = WrappedComponent => {
     }
 
     updateDimensions() {
-      const scrollingLayout = Viewport.verticallyScrolling(this.props)
+      const scrollingLayout = Viewport.isVerticallyScrolling(this.props)
       const width = this.getWidth(scrollingLayout)
       const height = scrollingLayout ? 'auto' : window.innerHeight
       const columns = scrollingLayout ? 1 : 2
@@ -50,7 +50,7 @@ const withDimensions = WrappedComponent => {
     }
 
     getFrameHeight() {
-      if (Viewport.verticallyScrolling(this.props)) {
+      if (Viewport.isVerticallyScrolling(this.props)) {
         return 'auto'
       }
 

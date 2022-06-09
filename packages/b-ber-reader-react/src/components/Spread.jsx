@@ -84,7 +84,7 @@ class Spread extends React.Component {
     // console.log('spreadPosition', elementEdgeLeft / layoutWidth, spreadPosition)
 
     let left = 0
-    if (!Viewport.verticallyScrolling(this.props.readerSettings)) {
+    if (!Viewport.isVerticallyScrolling(this.props.readerSettings)) {
       left = layoutWidth * spreadPosition
       // if (recto) left -= layoutWidth
       if (unbound) left = 0

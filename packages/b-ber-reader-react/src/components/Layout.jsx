@@ -15,7 +15,7 @@ import ReaderContext from '../lib/reader-context'
 import { RESIZE_DEBOUNCE_TIMER, layouts } from '../constants'
 
 function Leaves({ layout, leafLeftStyles, leafRightStyles }) {
-  return Viewport.verticallyScrolling({ layout }) ? null : (
+  return Viewport.isVerticallyScrolling({ layout }) ? null : (
     <>
       <div className="bber-leaf bber-leaf--left" style={leafLeftStyles} />
       <div className="bber-leaf bber-leaf--right" style={leafRightStyles} />
@@ -175,7 +175,7 @@ class Layout extends React.Component {
     if (layout === layouts.SCROLL) {
       contextClass = 'scroll'
     } else {
-      contextClass = Viewport.verticallyScrolling({ layout })
+      contextClass = Viewport.isVerticallyScrolling({ layout })
         ? 'mobile'
         : 'desktop'
     }

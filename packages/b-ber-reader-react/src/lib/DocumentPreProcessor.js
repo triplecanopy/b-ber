@@ -1,7 +1,7 @@
 import find from 'lodash/find'
-import { mediaSmall, mediaLarge } from './multi-column-styles'
+import { mediaSliding, mediaScrolling } from './multi-column-styles'
 import { MediaStyleSheet, Script } from '../models'
-import { MEDIA_QUERY_LARGE, MEDIA_QUERY_SMALL } from '../constants'
+import { MEDIA_QUERY_SCROLLING, MEDIA_QUERY_SLIDING } from '../constants'
 
 const state = {
   root: null, // App context, used for styles
@@ -29,13 +29,13 @@ class DocumentPreProcessor {
       ...state.styleSheets,
 
       new MediaStyleSheet({
-        media: MEDIA_QUERY_LARGE,
-        rules: [...mediaSmall()],
+        media: MEDIA_QUERY_SLIDING,
+        rules: [...mediaSliding()],
       }),
 
       new MediaStyleSheet({
-        media: MEDIA_QUERY_SMALL,
-        rules: [...mediaLarge()],
+        media: MEDIA_QUERY_SCROLLING,
+        rules: [...mediaScrolling()],
       }),
     ]
 

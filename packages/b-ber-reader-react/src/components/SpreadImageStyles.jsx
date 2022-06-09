@@ -29,7 +29,7 @@ function SpreadImageStyles(props) {
   // console.log('recto || unbound', recto, unbound, spreadPosition)
 
   // prettier-ignore
-  const styles = Viewport.verticallyScrolling(props) ? null : `
+  const styles = Viewport.isVerticallyScrolling(props) ? null : `
     /* Previous pages */
     .spread-index__${adjustedSpreadPosition - 2} #spread__${markerRefId} > figure,
     .spread-index__${adjustedSpreadPosition - 2} #spread__${markerRefId} > .spread__content,

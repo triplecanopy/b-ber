@@ -76,7 +76,7 @@ class Marker extends React.Component {
 
     if (
       !this.props.elemRef?.current ||
-      Viewport.verticallyScrolling(this.props.readerSettings)
+      Viewport.isVerticallyScrolling(this.props.readerSettings)
     ) {
       return offsetHeight
     }

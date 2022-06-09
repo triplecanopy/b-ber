@@ -60,7 +60,7 @@ export const getPlayingStateOnUpdate = (
   // Play or pause the video
   const playing =
     elementSpreadIndex === visibleSpreadIndex &&
-    !Viewport.verticallyScrolling(props.readerSettings)
+    !Viewport.isVerticallyScrolling(props.readerSettings)
 
   return { playing, currentSpreadIndex }
 }

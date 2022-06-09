@@ -98,7 +98,7 @@ function AudioControlsFull(props) {
 }
 
 function AudioControls(props) {
-  return Viewport.isMobile() ? (
+  return Viewport.isSingleColumn() ? (
     <AudioControlsFullStacked {...props} />
   ) : (
     <AudioControlsFull {...props} />

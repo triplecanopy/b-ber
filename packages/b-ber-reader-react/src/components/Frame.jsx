@@ -11,7 +11,7 @@ class Frame extends React.Component {
 
   UNSAFE_componentWillReceiveProps(nextProps) {
     if (
-      !Viewport.isMobile() ||
+      !Viewport.isSingleColumn() ||
       !this.node?.current ||
       nextProps.view.loaded === false ||
       this.props.view.loaded === nextProps.view.loaded
@@ -55,7 +55,7 @@ class Frame extends React.Component {
       fontSize,
     }
 
-    if (Viewport.verticallyScrolling(this.props)) {
+    if (Viewport.isVerticallyScrolling(this.props)) {
       // Mobile
       style = {
         ...style,

@@ -1,26 +1,25 @@
 import {
-  BREAKPOINT_HORIZONTAL_SMALL,
-  MINIMUM_ONE_COLUMN_ASPECT_RATIO,
   layouts,
   horizontalBreakpoints,
-  mediaQueryDesktopMd,
+  MEDIA_QUERY_DESKTOP_MD,
+  MEDIA_QUERY_MIN_SCROLLING_ASPECT_RATIO,
 } from '../constants'
 
 class Viewport {
-  // used to get position X in matrix
-  // TODO remove
-  static horizontalSmall = () =>
-    window.innerWidth <= BREAKPOINT_HORIZONTAL_SMALL
-
-  // Utility breakpoint
-  // TODO fix me - where is this used and what is the effect
-  static isMobile = () => Viewport.horizontalSmall()
+  static isMinimumScrollingAspectRatio = () =>
+    window.matchMedia(MEDIA_QUERY_MIN_SCROLLING_ASPECT_RATIO).matches
 
   static isSingleColumn = () => {
     const css = Viewport.getCss()
 
-    return parseInt(css.columns, 10) === 1
+    return (
+      parseInt(css.columns, 10) === 1 ||
+      Viewport.isMinimumScrollingAspectRatio()
+    )
   }
+
+  static isVerticallyScrolling = ({ layout }) =>
+    Viewport.isSingleColumn() || layout === layouts.SCROLL
 
   static isTouch = () =>
     'ontouchstart' in window /* iOS and Android */ ||
@@ -81,12 +80,12 @@ class Viewport {
 
   // Returns CSS to be applied to use to calculate various frame dimensions
   static getCss = () => {
-    let css = horizontalBreakpoints.get(mediaQueryDesktopMd)
+    let css = horizontalBreakpoints.get(MEDIA_QUERY_DESKTOP_MD)
 
     // eslint-disable-next-line no-unused-vars
-    for (const [query, data] of horizontalBreakpoints) {
+    for (const [query, styles] of horizontalBreakpoints) {
       if (window.matchMedia(query).matches) {
-        css = { ...data }
+        css = { ...styles }
         break
       }
     }
@@ -94,7 +93,7 @@ class Viewport {
     return css
   }
 
-  static getDimensions = () => {
+  static getStyles = () => {
     const css = Viewport.getCss()
 
     const {
@@ -123,12 +122,7 @@ class Viewport {
     return styles
   }
 
-  static styles = () => Viewport.getDimensions()
-
-  static verticallyScrolling = ({ layout }) =>
-    Viewport.isSingleColumn() ||
-    layout === layouts.SCROLL ||
-    window.innerWidth / window.innerHeight >= MINIMUM_ONE_COLUMN_ASPECT_RATIO
+  static styles = () => Viewport.getStyles()
 }
 
 export default Viewport

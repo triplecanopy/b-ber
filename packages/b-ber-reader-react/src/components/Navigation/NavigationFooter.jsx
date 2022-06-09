@@ -5,23 +5,23 @@ import { ChapterNext, ChapterPrevious, PageNext, PagePrevious } from './Icon'
 const show = {
   chapter: {
     prev: props =>
-      (Viewport.isMobile() ||
+      (Viewport.isSingleColumn() ||
         props.uiOptions.navigation.footer_icons.chapter) &&
       props.currentSpineItemIndex !== 0,
 
     next: props =>
-      (Viewport.isMobile() ||
+      (Viewport.isSingleColumn() ||
         props.uiOptions.navigation.footer_icons.chapter) &&
       props.currentSpineItemIndex !== props.spine.length - 1,
   },
   page: {
     prev: props =>
-      !Viewport.verticallyScrolling(props) &&
+      !Viewport.isVerticallyScrolling(props) &&
       props.uiOptions.navigation.footer_icons.page &&
       (props.currentSpineItemIndex !== 0 || props.spreadIndex !== 0),
 
     next: props =>
-      !Viewport.verticallyScrolling(props) &&
+      !Viewport.isVerticallyScrolling(props) &&
       props.uiOptions.navigation.footer_icons.page &&
       (props.currentSpineItemIndex !== props.spine.length - 1 ||
         props.spreadIndex !== props.lastSpreadIndex),

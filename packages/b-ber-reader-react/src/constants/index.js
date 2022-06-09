@@ -4,16 +4,9 @@ export const RESIZE_DEBOUNCE_TIMER = 60
 export const MUTATION_DEBOUNCE_TIMER = 60
 export const DEFERRED_CALLBACK_TIMER = 60
 
-export const transitions = {
-  SLIDE: 'slide',
-  FADE: 'fade',
-}
+export const transitions = { SLIDE: 'slide', FADE: 'fade' }
 
-export const themes = {
-  DEFAULT: 'default',
-  LIGHT: 'light',
-  DARK: 'dark',
-}
+export const themes = { DEFAULT: 'default', LIGHT: 'light', DARK: 'dark' }
 
 export const messagesTypes = {
   PAGINATION_EVENT: 'PAGINATION_EVENT',
@@ -25,58 +18,25 @@ export const messagesTypes = {
   SCROLL_EVENT: 'SCROLL_EVENT',
 }
 
-// Media queries from TC theme. The XL isn't currently used (except for in the
-// `LAYOUT_MAX_WIDTH`), may not be necessary
-//
-//
-// Mobile
-// $mq-xs: "only screen and (max-width: 768px)";
-// Tablet
-// $mq-sm: "only screen and (min-width: 769px) and (max-width: 1140px)";
-// Desktop 1
-// $mq-md: "only screen and (min-width: 1141px) and (max-width: 1440px)";
-// Desktop 2
-// $mq-lg: "only screen and (min-width: 1441px) and (max-width: 1920px)";
-// Desktop 3
-// $mq-xl: "only screen and (min-width: 1921px)";
-
-// Media queries horizontal in px
-export const BREAKPOINT_HORIZONTAL_SMALL = 900
-
-// Enforce a single column scrolling layout on awkward screen sizes
-export const MINIMUM_ONE_COLUMN_ASPECT_RATIO = 13 / 5
-
-// Columns
-// export const DESKTOP_COLUMN_COUNT = 16
-// export const MOBILE_COLUMN_COUNT = 9
-
-// Used in DocumentPreProcessor for appended stylesheets
-// prettier-ignore
-export const MEDIA_QUERY_SMALL = `only screen and (min-width: ${BREAKPOINT_HORIZONTAL_SMALL}px)`
-// prettier-ignore
-export const MEDIA_QUERY_LARGE = `only screen and (max-width: ${BREAKPOINT_HORIZONTAL_SMALL +  1}px)`
-
-export const MEDIA_PLAYBACK_RATES = {
-  SLOW: 0.5,
-  NORMAL: 1.0,
-  FAST: 1.5,
-}
-
+export const MEDIA_PLAYBACK_RATES = { SLOW: 0.5, NORMAL: 1.0, FAST: 1.5 }
 export const MEDIA_CONTROLS_PRESETS = new Set(['simple', 'normal', 'full'])
 
 export const layouts = { SCROLL: 'scroll', COLUMNS: 'columns' }
 
-// Media Queries
+// Enforce a single column scrolling layout on awkward screen sizes
+export const MEDIA_QUERY_MIN_SCROLLING_ASPECT_RATIO = 'only screen and (min-aspect-ratio: 13 / 5)'
 
-export const mediaQueryMobile = 'only screen and (max-width: 768px)'
-export const mediaQueryTablet =
-  'only screen and (min-width: 768px) and (max-width: 1140px)'
-export const mediaQueryDesktopSm =
-  'only screen and (min-width: 1140px) and (max-width: 1140px)'
-export const mediaQueryDesktopMd =
-  'only screen and (min-width: 1140px) and (max-width: 1440px)'
-export const mediaQueryDesktopLg = 'only screen and (min-width: 1440px)'
-export const mediaQueryDesktopXl = 'only screen and (min-width: 1920px)'
+// Media queries for various horizontal screen sizes
+export const MEDIA_QUERY_MOBILE      = 'only screen and (max-width: 768px)'
+export const MEDIA_QUERY_TABLET      = 'only screen and (min-width: 768px) and (max-width: 1140px)'
+export const MEDIA_QUERY_DESKTOP_SM  = 'only screen and (min-width: 1140px) and (max-width: 1140px)'
+export const MEDIA_QUERY_DESKTOP_MD  = 'only screen and (min-width: 1140px) and (max-width: 1440px)'
+export const MEDIA_QUERY_DESKTOP_LG  = 'only screen and (min-width: 1440px) and (max-width: 1920px)'
+export const MEDIA_QUERY_DESKTOP_XL  = 'only screen and (min-width: 1920px)'
+
+// Media queries used in DocumentPreProcessor for generated stylesheets
+export const MEDIA_QUERY_SCROLLING = 'only screen and (max-width: 1140px), (min-aspect-ratio: 13 / 5)'
+export const MEDIA_QUERY_SLIDING   = 'only screen and (min-width: 1140px) and (max-aspect-ratio: 13 / 5)'
 
 /**
  *
@@ -85,7 +45,7 @@ export const mediaQueryDesktopXl = 'only screen and (min-width: 1920px)'
  */
 export const horizontalBreakpoints = new Map([
   [
-    mediaQueryMobile,
+    MEDIA_QUERY_MOBILE,
     {
       maxWidth: '100%',
       maxHeight: 'auto',
@@ -98,7 +58,7 @@ export const horizontalBreakpoints = new Map([
     },
   ],
   [
-    mediaQueryTablet,
+    MEDIA_QUERY_TABLET,
     {
       maxWidth: '738px',
       maxHeight: 'auto',
@@ -111,7 +71,7 @@ export const horizontalBreakpoints = new Map([
     },
   ],
   [
-    mediaQueryDesktopSm,
+    MEDIA_QUERY_DESKTOP_SM,
     {
       maxWidth: '900px',
       maxHeight: '500px',
@@ -124,7 +84,7 @@ export const horizontalBreakpoints = new Map([
     },
   ],
   [
-    mediaQueryDesktopMd,
+    MEDIA_QUERY_DESKTOP_MD, // TODO not called? See above
     {
       maxWidth: '1080px',
       maxHeight: '720px',
@@ -137,7 +97,7 @@ export const horizontalBreakpoints = new Map([
     },
   ],
   [
-    mediaQueryDesktopLg,
+    MEDIA_QUERY_DESKTOP_LG,
     {
       maxWidth: '1280px',
       maxHeight: '750px',
@@ -150,7 +110,7 @@ export const horizontalBreakpoints = new Map([
     },
   ],
   [
-    mediaQueryDesktopXl,
+    MEDIA_QUERY_DESKTOP_XL,
     {
       maxWidth: '1680px',
       maxHeight: '900px',
@@ -161,38 +121,5 @@ export const horizontalBreakpoints = new Map([
       paddingTop: 0,
       paddingBottom: 0,
     },
-  ],
-])
-
-/**
- *
- * Vertical Spacing
- *
- */
-// TODO are these used?
-export const verticalBreakpoints = new Map([
-  [
-    'only screen and (min-height: 500px)',
-    [
-      {
-        maxHeight: '500px',
-      },
-    ],
-  ],
-  [
-    'only screen and (max-height: 500px)',
-    [
-      {
-        maxHeight: '720px',
-      },
-    ],
-  ],
-  [
-    'only screen and (max-height: 350px)',
-    [
-      {
-        maxHeight: '750px',
-      },
-    ],
   ],
 ])
