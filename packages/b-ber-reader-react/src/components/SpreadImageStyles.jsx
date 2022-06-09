@@ -31,28 +31,28 @@ function SpreadImageStyles(props) {
   // prettier-ignore
   const styles = Viewport.verticallyScrolling(props) ? null : `
     /* Previous pages */
-    .bber-spread-index__${adjustedSpreadPosition - 2} #spread__${markerRefId} > figure,
-    .bber-spread-index__${adjustedSpreadPosition - 2} #spread__${markerRefId} > .spread__content,
-    .bber-spread-index__${adjustedSpreadPosition - 1} #spread__${markerRefId} > figure,
-    .bber-spread-index__${adjustedSpreadPosition - 1} #spread__${markerRefId} > .spread__content {
+    .spread-index__${adjustedSpreadPosition - 2} #spread__${markerRefId} > figure,
+    .spread-index__${adjustedSpreadPosition - 2} #spread__${markerRefId} > .spread__content,
+    .spread-index__${adjustedSpreadPosition - 1} #spread__${markerRefId} > figure,
+    .spread-index__${adjustedSpreadPosition - 1} #spread__${markerRefId} > .spread__content {
       backface-visibility: hidden;
       transform: translateX(${translateLeftPrevious}px) translate3d(0, 0, 0);
       transform-style: preserve-3d;
     }
 
     /* Current page */
-    .bber-spread-index__${adjustedSpreadPosition} #spread__${markerRefId} > figure,
-    .bber-spread-index__${adjustedSpreadPosition} #spread__${markerRefId} > .spread__content {
+    .spread-index__${adjustedSpreadPosition} #spread__${markerRefId} > figure,
+    .spread-index__${adjustedSpreadPosition} #spread__${markerRefId} > .spread__content {
       backface-visibility: hidden;
       transform-style: preserve-3d;
       transform: translateX(${translateLeftCurrent}px) translate3d(0, 0, 0);
     }
 
     /* Next pages */
-    .bber-spread-index__${adjustedSpreadPosition + 1} #spread__${markerRefId} > figure,
-    .bber-spread-index__${adjustedSpreadPosition + 1} #spread__${markerRefId} > .spread__content,
-    .bber-spread-index__${adjustedSpreadPosition + 2} #spread__${markerRefId} > figure,
-    .bber-spread-index__${adjustedSpreadPosition + 2} #spread__${markerRefId} > .spread__content {
+    .spread-index__${adjustedSpreadPosition + 1} #spread__${markerRefId} > figure,
+    .spread-index__${adjustedSpreadPosition + 1} #spread__${markerRefId} > .spread__content,
+    .spread-index__${adjustedSpreadPosition + 2} #spread__${markerRefId} > figure,
+    .spread-index__${adjustedSpreadPosition + 2} #spread__${markerRefId} > .spread__content {
       backface-visibility: hidden;
       transform-style: preserve-3d;
       transform: translateX(${translateLeftNext}px) translate3d(0, 0, 0);

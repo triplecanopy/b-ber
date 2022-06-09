@@ -79,18 +79,18 @@ const withIframePosition = (WrappedComponent, options = { enabled: false }) =>
       if (!options.enabled) return ''
 
       return `
-        .bber-context__desktop .${name}.figure__large.figure__inline .embed.supported {
+        .context__desktop .${name}.figure__large.figure__inline .embed.supported {
           padding-top: 0 !important;
           position: static !important;
           transform: none !important;
         }
 
-        .bber-context__desktop .spread-with-fullbleed-media .${name}.figure__large.figure__inline .embed.supported {
+        .context__desktop .spread-with-fullbleed-media .${name}.figure__large.figure__inline .embed.supported {
           position: relative !important;
         }
 
-        .bber-context__desktop .spread-with-fullbleed-media .${name}.figure__large.figure__inline .embed.supported iframe,
-        .bber-context__desktop .spread-with-fullbleed-media .${name}.figure__large.figure__inline .embed.supported .bber-iframe-placeholder + div {
+        .context__desktop .spread-with-fullbleed-media .${name}.figure__large.figure__inline .embed.supported iframe,
+        .context__desktop .spread-with-fullbleed-media .${name}.figure__large.figure__inline .embed.supported .bber-iframe-placeholder + div {
           top: 0 !important;
         }
       `

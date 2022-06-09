@@ -203,7 +203,7 @@ class Layout extends React.Component {
       <div
         id="layout"
         style={layoutStyles}
-        className={`bber-spread-index__${spreadIndex} bber-context__${contextClass} ${slug}`}
+        className={`spread-index__${spreadIndex} context__${contextClass} ${slug}`}
       >
         <div id="content" style={contentStyles} ref={this.props.innerRef}>
           <this.props.BookContent />
