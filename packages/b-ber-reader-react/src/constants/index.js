@@ -41,129 +41,14 @@ export const messagesTypes = {
 // $mq-xl: "only screen and (min-width: 1921px)";
 
 // Media queries horizontal in px
-export const BREAKPOINT_HORIZONTAL_SMALL = 768
-export const BREAKPOINT_HORIZONTAL_MEDIUM = 769
-export const BREAKPOINT_HORIZONTAL_LARGE = 1141
-export const BREAKPOINT_HORIZONTAL_X_LARGE = 1441
-
-// Media queries vertical in px
-export const BREAKPOINT_VERTICAL_SMALL = 480
-export const BREAKPOINT_VERTICAL_MEDIUM = 768
-export const BREAKPOINT_VERTICAL_LARGE = 860
-
-// Max horizontal and vertical dimensions
-export const LAYOUT_MAX_HEIGHT = 480
-export const LAYOUT_MAX_WIDTH = 1921
+export const BREAKPOINT_HORIZONTAL_SMALL = 900
 
 // Enforce a single column scrolling layout on awkward screen sizes
 export const MINIMUM_ONE_COLUMN_ASPECT_RATIO = 13 / 5
 
 // Columns
-export const DESKTOP_COLUMN_COUNT = 16
-export const MOBILE_COLUMN_COUNT = 9
-
-// Number of breakpoints
-export const HORIZONTAL_BREAKPOINT_COUNT = 4
-export const VERTICAL_BREAKPOINT_COUNT = 3
-
-// The padding for each of the combinations of the horizontal and vertical
-// values is set by declaring the top, right, bottom, and left values in each
-// of the boxes in the grid below:
-//
-//        Sm. X     Med. X   Lg. X    Xl. X
-//      |---------|--------|--------|--------|
-//      |         |        |        |        |
-//      |    1    |   2    |   3    |   4    | Sm. Y
-//      |         |        |        |        |
-//      |---------|--------|--------|--------|
-//      |         |        |        |        |
-//      |    5    |   6    |   7    |   8    | Md. Y
-//      |         |        |        |        |
-//      |---------|--------|--------|--------|
-//      |         |        |        |        |
-//      |    9    |   10   |   11   |   12   | Lg. Y
-//      |         |        |        |        |
-//      |---------|--------|--------|--------|
-//
-
-// Where box 1 represents the smallest of both horizontal and vertical media
-// queries, and box 9 the largest.
-//
-// In CSS, box 1 would look like
-// @media (max-width: 768px and max-height: 480px) {}
-
-// Box 7 would look like
-// @media (max-width: 768px and min-height: 860px) {}
-
-// Box 9 would look like
-// @media (min-width: 1290px and min-height: 860px) {}
-
-// Each box contains four values for the padding of the element, in typical CSS
-// style (top, right, bottom, left). Each value is a number representing a
-// percentage. The following would add 30% padding to the top and bottom of the
-// reader's frame, and 15% padding to each side:
-//
-// [ 30, 15, 30, 15 ]
-//
-// The value 'auto' is also accepted. When used for a vertical value, it will
-// cause the reader's frame to become fixed at a pre-determined size, i.e.,
-// LAYOUT_MAX_WIDTH and LAYOUT_MAX_HEIGHT, both declared above.
-//
-// When 'auto' is used for a horizontal value, it will add one column + one
-// gutter width of padding to the reader's frame.
-//
-// [ 'auto', 30, 'auto', 30 ]
-// [ 'auto', 'auto', 'auto', 'auto' ]
-// [ 15, 'auto', 30, 'auto' ]
-//
-// Values in px are also accepted, and must be passed in as a string. The
-// following would add 30px to the top and bottom of the reader's frame
-//
-// ['30px', 'auto', '30px', 'auto']
-
-// prettier-ignore
-export const FRAME_PADDING = [
-  ['75px', '15px', '60px', '15px'], ['auto', 'auto', 'auto', 'auto'], ['auto', 'auto', 'auto', 'auto'], ['auto', 'auto', 'auto', 'auto'], // => sm x sm | md x sm | lg x sm | xl x sm
-  ['75px', '15px', '60px', '15px'], ['auto', 'auto', 'auto', 'auto'], ['auto', 'auto', 'auto', 'auto'], ['auto', 'auto', 'auto', 'auto'], // => sm x md | md x md | lg x md | xl x md
-  ['75px', '15px', '60px', '15px'], ['auto', 'auto', 'auto', 'auto'], ['auto', 'auto', 'auto', 'auto'], ['auto', 'auto', 'auto', 'auto']  // => sm x lg | md x lg | lg x lg | xl x lg
-]
-
-// export const FRAME_PADDING = [
-//   ['75px', '15px', '60px', '15px'], [18, 'auto', 15, 'auto'], [22, 'auto', 18, 'auto'], [22, 'auto', 18, 'auto'], // => sm x sm | md x sm | lg x sm | xl x sm
-//   ['75px', '15px', '60px', '15px'], [12, 'auto', 8, 'auto'],  [12, 'auto', 9, 'auto'],  [12, 'auto', 9, 'auto'],  // => sm x md | md x md | lg x md | xl x md
-//   ['75px', '15px', '60px', '15px'], [11, 'auto', 8, 'auto'],  [11, 'auto', 8, 'auto'],  [11, 'auto', 8, 'auto']   // => sm x lg | md x lg | lg x lg | xl x lg
-// ]
-
-// TODO copy viewport sizes from above and set max. width/height for each media query.
-// these can then be pulled into `getVerticalSpacingAuto` to have 'fixed' dimensions at
-// each media query. for this to work, the media query in the matrix above will need to
-// be set to 'auto'
-
-//
-// Mobile
-// $mq-xs: "only screen and (max-width: 768px)";
-// Tablet
-// $mq-sm: "only screen and (min-width: 769px) and (max-width: 1140px)";
-// Desktop 1
-// $mq-md: "only screen and (min-width: 1141px) and (max-width: 1440px)";
-// Desktop 2
-// $mq-lg: "only screen and (min-width: 1441px) and (max-width: 1920px)";
-// Desktop 3
-// $mq-xl: "only screen and (min-width: 1921px)";
-
-// prettier-ignore
-// export const FRAME_SIZE = [
-//   ['auto', 'auto'], [580, 240], [940, 240], [1240, 240], // => sm x sm | md x sm | lg x sm | xl x sm
-//   ['auto', 'auto'], [580, 480], [940, 480], [1240, 480], // => sm x md | md x md | lg x md | xl x md
-//   ['auto', 'auto'], [580, 780], [940, 780], [1240, 780], // => sm x lg | md x lg | lg x lg | xl x lg
-// ]
-
-// prettier-ignore
-export const FRAME_SIZE = [
-  ['auto', 'auto'], ['auto', 'auto'], [940, 240], [1240, 240], // => sm x sm | md x sm | lg x sm | xl x sm
-  ['auto', 'auto'], ['auto', 'auto'], [940, 480], [1240, 480], // => sm x md | md x md | lg x md | xl x md
-  ['auto', 'auto'], ['auto', 'auto'], [940, 780], [1240, 780], // => sm x lg | md x lg | lg x lg | xl x lg
-]
+// export const DESKTOP_COLUMN_COUNT = 16
+// export const MOBILE_COLUMN_COUNT = 9
 
 // Used in DocumentPreProcessor for appended stylesheets
 // prettier-ignore
@@ -180,3 +65,134 @@ export const MEDIA_PLAYBACK_RATES = {
 export const MEDIA_CONTROLS_PRESETS = new Set(['simple', 'normal', 'full'])
 
 export const layouts = { SCROLL: 'scroll', COLUMNS: 'columns' }
+
+// Media Queries
+
+export const mediaQueryMobile = 'only screen and (max-width: 768px)'
+export const mediaQueryTablet =
+  'only screen and (min-width: 768px) and (max-width: 1140px)'
+export const mediaQueryDesktopSm =
+  'only screen and (min-width: 1140px) and (max-width: 1140px)'
+export const mediaQueryDesktopMd =
+  'only screen and (min-width: 1140px) and (max-width: 1440px)'
+export const mediaQueryDesktopLg = 'only screen and (min-width: 1440px)'
+export const mediaQueryDesktopXl = 'only screen and (min-width: 1920px)'
+
+/**
+ *
+ * Horizontal Spacing
+ *
+ */
+export const horizontalBreakpoints = new Map([
+  [
+    mediaQueryMobile,
+    {
+      maxWidth: '100%',
+      maxHeight: 'auto',
+      columnGap: '45px',
+      columns: 1,
+      paddingLeft: '15px',
+      paddingRight: '15px',
+      paddingTop: 0,
+      paddingBottom: '80px', // Offset for bottom nav
+    },
+  ],
+  [
+    mediaQueryTablet,
+    {
+      maxWidth: '738px',
+      maxHeight: 'auto',
+      columnGap: '45px',
+      columns: 1,
+      paddingLeft: 0,
+      paddingRight: 0,
+      paddingTop: 0,
+      paddingBottom: '80px', // Offset for bottom nav
+    },
+  ],
+  [
+    mediaQueryDesktopSm,
+    {
+      maxWidth: '900px',
+      maxHeight: '500px',
+      columnGap: '45px',
+      columns: 2,
+      paddingLeft: 0,
+      paddingRight: 0,
+      paddingTop: 0,
+      paddingBottom: 0,
+    },
+  ],
+  [
+    mediaQueryDesktopMd,
+    {
+      maxWidth: '1080px',
+      maxHeight: '720px',
+      columnGap: '45px',
+      columns: 2,
+      paddingLeft: 0,
+      paddingRight: 0,
+      paddingTop: 0,
+      paddingBottom: 0,
+    },
+  ],
+  [
+    mediaQueryDesktopLg,
+    {
+      maxWidth: '1280px',
+      maxHeight: '750px',
+      columnGap: '45px',
+      columns: 2,
+      paddingLeft: 0,
+      paddingRight: 0,
+      paddingTop: 0,
+      paddingBottom: 0,
+    },
+  ],
+  [
+    mediaQueryDesktopXl,
+    {
+      maxWidth: '1680px',
+      maxHeight: '900px',
+      columnGap: '125px',
+      columns: 2,
+      paddingLeft: 0,
+      paddingRight: 0,
+      paddingTop: 0,
+      paddingBottom: 0,
+    },
+  ],
+])
+
+/**
+ *
+ * Vertical Spacing
+ *
+ */
+// TODO are these used?
+export const verticalBreakpoints = new Map([
+  [
+    'only screen and (min-height: 500px)',
+    [
+      {
+        maxHeight: '500px',
+      },
+    ],
+  ],
+  [
+    'only screen and (max-height: 500px)',
+    [
+      {
+        maxHeight: '720px',
+      },
+    ],
+  ],
+  [
+    'only screen and (max-height: 350px)',
+    [
+      {
+        maxHeight: '750px',
+      },
+    ],
+  ],
+])

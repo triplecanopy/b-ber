@@ -1,7 +1,7 @@
 import React from 'react'
 import isPlainObject from 'lodash/isPlainObject'
 import { connect } from 'react-redux'
-import { Layout, DebugGrid } from '.'
+import { Layout } from '.'
 import Viewport from '../helpers/Viewport'
 import Messenger from '../lib/Messenger'
 import Asset from '../helpers/Asset'
@@ -102,8 +102,6 @@ class Frame extends React.Component {
       >
         {/* eslint-disable-next-line react/jsx-props-no-spreading */}
         <Layout {...this.props} />
-        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-        <DebugGrid {...this.props} />
       </div>
     )
   }

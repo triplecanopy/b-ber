@@ -35,7 +35,7 @@ class ViewerSettings {
 
     width: 0,
     height: 0,
-    fontSize: '120%',
+    fontSize: '120%', // TODO not working, unused
 
     // Theme settings, transition speed in ms
     theme: themes.DEFAULT,
@@ -43,11 +43,11 @@ class ViewerSettings {
     transitionSpeed: 400,
     columns: 2,
 
-    columnGap: () => Viewport.getGutterWidth(),
-    paddingLeft: () => Viewport.optimized().left,
-    paddingRight: () => Viewport.optimized().right,
-    paddingTop: () => Viewport.optimized().top,
-    paddingBottom: () => Viewport.optimized().bottom,
+    columnGap: () => Viewport.styles().columnGap,
+    paddingLeft: () => Viewport.styles().paddingLeft,
+    paddingRight: () => Viewport.styles().paddingRight,
+    paddingTop: () => Viewport.styles().paddingTop,
+    paddingBottom: () => Viewport.styles().paddingBottom,
   }
 
   constructor(options = {}) {

@@ -38,6 +38,8 @@ class DocumentPreProcessor {
         rules: [...mediaLarge()],
       }),
     ]
+
+    console.log('createStyleSheets', state.styleSheets)
   }
 
   static appendStyleSheets() {
