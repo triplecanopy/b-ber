@@ -30,16 +30,14 @@ class DocumentPreProcessor {
 
       new MediaStyleSheet({
         media: MEDIA_QUERY_SLIDING,
-        rules: [...mediaSliding()],
+        styles: mediaSliding,
       }),
 
       new MediaStyleSheet({
         media: MEDIA_QUERY_SCROLLING,
-        rules: [...mediaScrolling()],
+        styles: mediaScrolling,
       }),
     ]
-
-    console.log('createStyleSheets', state.styleSheets)
   }
 
   static appendStyleSheets() {
@@ -81,7 +79,7 @@ class DocumentPreProcessor {
   static getStyleSheetByMediaOrId({ id, media }) {
     if (!id && !media) {
       return console.warn(
-        "DocumentPreProcessor#updateStyleSheet requires either and 'id' or a 'media' parameter"
+        'DocumentPreProcessor#updateStyleSheet requires either an `id` or a `media` parameter'
       )
     }
 
@@ -93,7 +91,7 @@ class DocumentPreProcessor {
       const _styleSheet = find(this.styleSheets, { media })
       if (!_styleSheet) {
         return console.warn(
-          "No styleSheet exists for provided 'id' or 'media'",
+          'No styleSheet exists for provided `id` or `media`',
           id,
           media
         )
@@ -106,7 +104,7 @@ class DocumentPreProcessor {
 
     if (!styleSheetElement) {
       return console.warn(
-        "No styleSheet exists for provided 'id' or 'media'",
+        'No styleSheet exists for provided `id` or `media`',
         id,
         media
       )

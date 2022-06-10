@@ -1,34 +1,33 @@
 import { rand } from '../helpers/utils'
 
 class MediaStyleSheet {
-  constructor({ id, media, rules }) {
+  constructor({ id, media, styles }) {
     this.id = id || `_${rand()}`
     this.media = media
-    this.rules = rules
-    this.elem = null
+    this.styles = styles
+    this.node = null
   }
 
-  insertRules(doc) {
-    this.rules.forEach(a =>
-      this.elem.appendChild(
-        doc.createTextNode(`${a.selector} { ${a.declarations.join(';')} }`)
-      )
-    )
+  writeCss(doc) {
+    const css = doc.createTextNode(this.styles)
+
+    this.node.appendChild(css)
   }
 
   appendSheet(doc) {
-    this.elem = doc.createElement('style')
+    this.node = doc.createElement('style')
 
-    this.elem.setAttribute('id', this.id)
-    this.elem.setAttribute('media', this.media)
-    this.elem.appendChild(doc.createTextNode('')) // WebKit hack
+    this.node.setAttribute('id', this.id)
+    this.node.setAttribute('media', this.media)
+    this.node.appendChild(doc.createTextNode('')) // WebKit
 
-    this.insertRules(doc)
-    doc.body.appendChild(this.elem)
+    this.writeCss(doc)
+
+    doc.body.appendChild(this.node)
   }
 
   removeSheet(doc) {
-    doc.body.removeChild(this.elem)
+    doc.body.removeChild(this.node)
   }
 }
 
