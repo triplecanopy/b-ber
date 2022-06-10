@@ -3,6 +3,20 @@ import { transitions, themes } from '../../src/constants'
 
 console.error = jest.fn()
 
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: jest.fn().mockImplementation(query => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: jest.fn(), // Deprecated
+    removeListener: jest.fn(), // Deprecated
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
+  })),
+})
+
 describe('ViewerSettings', () => {
   test('creates the viewer settings', () => {
     let vs
@@ -15,7 +29,7 @@ describe('ViewerSettings', () => {
         paddingLeft: expect.any(Function),
         paddingRight: expect.any(Function),
         paddingBottom: expect.any(Function),
-        fontSize: expect.any(String),
+        fontSize: expect.any(Function),
         columnGap: expect.any(Function),
         columnWidth: expect.any(Function),
         theme: themes.DEFAULT,
