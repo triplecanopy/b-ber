@@ -35,7 +35,6 @@ class ViewerSettings {
 
     width: 0,
     height: 0,
-    fontSize: '120%', // TODO not working, unused
 
     // Theme settings, transition speed in ms
     theme: themes.DEFAULT,
@@ -43,6 +42,7 @@ class ViewerSettings {
     transitionSpeed: 400,
     columns: 2,
 
+    fontSize: () => Viewport.styles().fontSize,
     columnGap: () => Viewport.styles().columnGap,
     paddingLeft: () => Viewport.styles().paddingLeft,
     paddingRight: () => Viewport.styles().paddingRight,
@@ -171,7 +171,7 @@ class ViewerSettings {
   }
 
   get fontSize() {
-    return this.settings.fontSize
+    return valueOf(this.settings.fontSize)
   }
 
   set fontSize(val) {

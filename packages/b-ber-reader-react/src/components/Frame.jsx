@@ -41,8 +41,6 @@ class Frame extends React.Component {
   }
 
   style() {
-    const { fontSize } = this.props.viewerSettings
-
     let style = {
       position: 'absolute',
       top: 0,
@@ -52,30 +50,20 @@ class Frame extends React.Component {
       margin: 0,
       padding: 0,
       border: 0,
-      fontSize,
     }
 
     if (Viewport.isVerticallyScrolling(this.props)) {
       // Mobile
-      style = {
-        ...style,
-        WebkitOverflowScrolling: 'touch',
-        overflowY: 'auto',
-        overflowX: 'hidden',
-      }
+      style.WebkitOverflowScrolling = 'touch'
+      style.overflowY = 'auto'
+      style.overflowX = 'hidden'
     } else {
       // Desktop
-      style = {
-        ...style,
-        overflow: 'hidden',
-      }
+      style.overflow = 'hidden'
     }
 
     if (isPlainObject(this.props.style)) {
-      style = {
-        ...style,
-        ...this.props.style,
-      }
+      style = { ...style, ...this.props.style }
     }
 
     return style

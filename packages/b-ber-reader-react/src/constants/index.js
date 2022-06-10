@@ -55,6 +55,7 @@ export const horizontalBreakpoints = new Map([
       paddingRight: '15px',
       paddingTop: 0,
       paddingBottom: '80px', // Offset for bottom nav
+      fontSize: 'clamp(130%, 1.5vw, 160%)',
     },
   ],
   [
@@ -68,6 +69,7 @@ export const horizontalBreakpoints = new Map([
       paddingRight: 0,
       paddingTop: 0,
       paddingBottom: '80px', // Offset for bottom nav
+      fontSize: 'clamp(130%, 1.5vw, 160%)',
     },
   ],
   [
@@ -81,6 +83,7 @@ export const horizontalBreakpoints = new Map([
       paddingRight: 0,
       paddingTop: 0,
       paddingBottom: 0,
+      fontSize: '137%', // 21.92px
     },
   ],
   [
@@ -94,6 +97,7 @@ export const horizontalBreakpoints = new Map([
       paddingRight: 0,
       paddingTop: 0,
       paddingBottom: 0,
+      fontSize: '137%', // 21.92px
     },
   ],
   [
@@ -107,6 +111,7 @@ export const horizontalBreakpoints = new Map([
       paddingRight: 0,
       paddingTop: 0,
       paddingBottom: 0,
+      fontSize: '155%', // 24.8px
     },
   ],
   [
@@ -120,6 +125,7 @@ export const horizontalBreakpoints = new Map([
       paddingRight: 0,
       paddingTop: 0,
       paddingBottom: 0,
+      fontSize: '195%', // 31.2px
     },
   ],
 ])

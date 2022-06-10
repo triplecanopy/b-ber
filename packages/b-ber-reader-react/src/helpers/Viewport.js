@@ -107,6 +107,7 @@ class Viewport {
       paddingRight,
       paddingTop,
       paddingBottom,
+      fontSize,
     } = css
 
     const horizontalPadding = Viewport.getHorizontalSpacing(maxWidth)
@@ -118,6 +119,7 @@ class Viewport {
       paddingTop: verticalPadding + parseInt(paddingTop, 10),
       paddingBottom: verticalPadding + parseInt(paddingBottom, 10),
       columnGap: parseInt(columnGap, 10),
+      fontSize,
       columns,
     }
 

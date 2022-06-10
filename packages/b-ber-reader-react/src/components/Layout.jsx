@@ -102,6 +102,7 @@ class Layout extends React.Component {
       paddingLeft,
       paddingRight,
       paddingBottom,
+      fontSize,
     } = this.props.viewerSettings
 
     const { margin, border, boxSizing, columnFill, transform } = this.state
@@ -121,6 +122,7 @@ class Layout extends React.Component {
       columns,
       columnFill,
       transform,
+      fontSize,
     }
   }
 
