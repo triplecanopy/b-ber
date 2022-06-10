@@ -10,7 +10,7 @@ class Viewport {
     window.matchMedia(MEDIA_QUERY_MIN_SCROLLING_ASPECT_RATIO).matches
 
   static isSingleColumn = () => {
-    const css = Viewport.getCss()
+    const { css } = Viewport.getCss()
 
     return (
       parseInt(css.columns, 10) === 1 ||
@@ -80,21 +80,23 @@ class Viewport {
 
   // Returns CSS to be applied to use to calculate various frame dimensions
   static getCss = () => {
-    let css = horizontalBreakpoints.get(MEDIA_QUERY_DESKTOP_MD)
+    let mediaQuery = MEDIA_QUERY_DESKTOP_MD
+    let css = horizontalBreakpoints.get(mediaQuery)
 
     // eslint-disable-next-line no-unused-vars
     for (const [query, styles] of horizontalBreakpoints) {
       if (window.matchMedia(query).matches) {
         css = { ...styles }
+        mediaQuery = query
         break
       }
     }
 
-    return css
+    return { css, mediaQuery }
   }
 
   static getStyles = () => {
-    const css = Viewport.getCss()
+    const { css } = Viewport.getCss()
 
     const {
       maxWidth,
