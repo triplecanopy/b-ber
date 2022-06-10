@@ -84,7 +84,7 @@ describe('b-ber-grammar-attributes', () => {
       epubTypes: 'bodymatter chapter',
     })
 
-    expect(spyError).toHaveBeenCalledTimes(4)
+    expect(spyError).toHaveBeenCalledTimes(11)
     expect(spyWarn).toHaveBeenCalledTimes(5)
   })
 

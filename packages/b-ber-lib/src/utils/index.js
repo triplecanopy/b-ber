@@ -41,10 +41,6 @@ export const getImageOrientation = (w, h) => {
 //     return getAspectRatioClassName(aspectRatio)
 // }
 
-// Create an iterator from object's key/value pairs
-export const forOf = (collection, iterator) =>
-  Object.entries(collection).forEach(([key, val]) => iterator(key, val))
-
 // TODO: the whole figures/generated pages/user-configurable YAML thing should
 // be worked out better. one reason is below, where we need the title of a
 // generated page, but since metadata is attached in the frontmatter YAML of an

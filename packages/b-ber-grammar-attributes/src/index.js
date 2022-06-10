@@ -3,7 +3,6 @@
 import path from 'path'
 import has from 'lodash.has'
 import { Url } from '@canopycanopycanopy/b-ber-lib'
-import { forOf } from '@canopycanopycanopy/b-ber-lib/utils'
 import log from '@canopycanopycanopy/b-ber-logger'
 import {
   BLOCK_DIRECTIVES,
@@ -51,11 +50,11 @@ const _requiresAltTag = genus => DIRECTIVES_REQUIRING_ALT_TAG.has(genus)
 const _isUnsupportedAttribute = (genus, attr) => {
   let key
   if (BLOCK_DIRECTIVES.has(genus)) {
-    // these are all containers which share the same attributes, so they're
+    // These are all containers which share the same attributes, so they're
     // grouped under a single property
     key = 'block'
   } else {
-    // this will be the directive name, e.g., figure, video, etc
+    // This will be the directive name, e.g., figure, video, etc
     key = genus
   }
 
@@ -244,15 +243,20 @@ const attributesObject = (attrs, origGenus, context = {}) => {
   }
 
   if (attrs && typeof attrs === 'string') {
-    forOf(parseAttrs(attrs.trim()), (k, v) => {
-      if (_isUnsupportedAttribute(origGenus, k)) {
-        return log.warn(
-          `render omitting unsupported attribute [${k}] at [${fileName}:${lineNumber}]`
+    const parsedAttrs = Object.entries(parseAttrs(attrs.trim()))
+
+    // eslint-disable-next-line no-unused-vars
+    for (const [key, val] of parsedAttrs) {
+      if (_isUnsupportedAttribute(genus, key)) {
+        log.warn(
+          `render omitting unsupported attribute [${key}] at [${fileName}:${lineNumber}]`
         )
+
+        continue
       }
 
-      attrsObject[k] = v
-    })
+      attrsObject[key] = val
+    }
   }
 
   // Add original `origGenus` as a class to the attrs object in case it's
