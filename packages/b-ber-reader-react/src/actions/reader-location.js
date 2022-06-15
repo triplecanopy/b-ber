@@ -14,7 +14,7 @@ import history from '../lib/History'
 
 export const locationStates = {
   MEMORY: 'memory',
-  QUERY_PARAMS: 'queryParams',
+  QUERY_PARAMS: 'searchParams',
   LOCAL_STORAGE: 'localStorage',
 }
 
