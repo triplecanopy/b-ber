@@ -56,8 +56,8 @@ $thumb-c: #272727;
 
   .bber-a,
   .bber-button {
+    @include transition(color $transition-speed-normal $transition-easing);
     text-decoration: none !important;
-    transition: color $transition-speed-normal $transition-easing;
   }
 
   .bber-a.bber-hover,
@@ -74,10 +74,10 @@ $thumb-c: #272727;
 }
 
 .bber-slider__volume {
+  @include transition(flex-grow $transition-speed-normal $transition-easing);
   width: 0;
   flex-grow: 0;
   overflow: hidden;
-  transition: flex-grow $transition-speed-normal $transition-easing;
 
   &.bber-open {
     overflow: visible;
@@ -97,6 +97,10 @@ $thumb-c: #272727;
 }
 
 @mixin thumb {
+  @include transition(
+    background-color $transition-speed-normal $transition-easing
+  );
+
   box-sizing: border-box;
   position: relative;
   z-index: 1;
@@ -105,8 +109,6 @@ $thumb-c: #272727;
   height: $thumb-d;
   border-radius: 50%;
   background-color: $thumb-c;
-
-  transition: background-color $transition-speed-normal $transition-easing;
 
   &:hover {
     background-color: $violet;

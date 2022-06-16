@@ -45,3 +45,42 @@
     border: 1px solid $color;
   }
 }
+
+$mq-mobile: 'only screen and (max-width: 768px)';
+$mq-tablet: 'only screen and (min-width: 768px) and (max-width: 1140px)';
+$mq-reader-scroll: 'only screen and (max-width: 1140px), (min-aspect-ratio: 13 / 5)';
+$mq-reader-slide: 'only screen and (min-width: 1140px) and (max-aspect-ratio: 13 / 5)';
+
+$break-map: (
+  'mobile': $mq-mobile,
+  'tablet': $mq-tablet,
+  'reader-scroll': $mq-reader-scroll,
+  'reader-slide': $mq-reader-slide,
+);
+
+// Media query mixin. Accepts multiple arguments. Called with a single value,
+// or a comma separated list of values:
+//
+// @include break-at('mobile') { ... }
+// @include break-at('mobile', 'tablet') { .. }
+@mixin break-at($media...) {
+  $query: '';
+
+  @for $i from 1 through length($media) {
+    $value: map-get($break-map, nth($media, $i));
+
+    @if not $value {
+      @error "`#{$media}` is not a supported media query name.";
+    }
+
+    @if $query != '' {
+      $query: '#{$query}, #{$value}';
+    } @else {
+      $query: $value;
+    }
+  }
+
+  @media #{$query} {
+    @content;
+  }
+}

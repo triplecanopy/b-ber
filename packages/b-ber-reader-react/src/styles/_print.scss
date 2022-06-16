@@ -8,12 +8,12 @@
   #frame {
     position: static !important;
     overflow: visible !important;
+  }
 
-    #layout {
-      transform: none !important;
-      height: auto !important;
-      width: auto !important;
-      columns: unset !important;
-    }
+  #layout {
+    transform: none !important;
+    height: auto !important;
+    width: auto !important;
+    columns: unset !important;
   }
 }

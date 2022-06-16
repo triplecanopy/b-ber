@@ -1,3 +1,16 @@
+@use 'sass:math';
+
+// https://github.com/tobiasahlin/SpinKit/blob/master/examples/5-pulse.html
+@keyframes pulse {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
 .bber-spinner {
   width: 100vw;
   height: 100vh;
@@ -12,21 +25,10 @@
   display: block;
 }
 
-// https://github.com/tobiasahlin/SpinKit/blob/master/examples/5-pulse.html
-@keyframes pulse {
-  0% {
-    transform: scale(0);
-  }
-  100% {
-    transform: scale(1);
-    opacity: 0;
-  }
-}
-
 .bber-spinner__detail {
   position: absolute;
-  top: calc(50% - #{$spinner-size / 2});
-  left: calc(50% - #{$spinner-size / 2});
+  top: calc(50% - #{math.div($spinner-size, 2)});
+  left: calc(50% - #{math.div($spinner-size, 2)});
   width: $spinner-size;
   height: $spinner-size;
   margin: 0;

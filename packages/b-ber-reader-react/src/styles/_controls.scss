@@ -1,3 +1,5 @@
+@use 'sass:math';
+
 .bber-controls {
   .bber-ul,
   .bber-ol {
@@ -37,9 +39,9 @@
   top: 0;
   left: 0;
   right: 0;
-  background-color: transparent;
   height: 0;
   opacity: 1 !important;
+  background-color: transparent;
 
   > .bber-nav > .bber-ul {
     box-sizing: border-box;
@@ -51,11 +53,11 @@
     height: 0;
     margin: 15px 15px 0;
 
-    @media screen and (max-width: $tablet-breakpoint-max) {
+    @include break-at('mobile', 'tablet') {
       margin: 10px 10px 0;
     }
 
-    @media screen and (max-width: $tablet-breakpoint-max) {
+    @include break-at('mobile', 'tablet') {
       > .bber-li > .bber-ul {
         display: flex;
 
@@ -107,7 +109,7 @@
           width: 43%;
           height: 43%;
 
-          @media screen and (max-width: $tablet-breakpoint-max) {
+          @include break-at('mobile', 'tablet') {
             width: 63%;
             height: 63%;
           }
@@ -161,15 +163,15 @@
         text-align: left;
         display: block;
         width: 100%;
-        padding: $medium / 2;
+        padding: math.div($medium, 2);
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
         font-size: $font-size-serif;
         font-family: $font-family-serif;
 
-        @media screen and (max-width: $tablet-breakpoint-max) {
-          padding: $medium / 2 16px !important;
+        @include break-at('mobile', 'tablet') {
+          padding: math.div($medium, 2) 16px !important;
         }
 
         &.bber-chapter--current {
@@ -178,7 +180,7 @@
 
         @for $i from 1 through 10 {
           &.bber-indent--#{$i} {
-            text-indent: ($i - 1) * ($small / 2);
+            text-indent: ($i - 1) * math.div($small, 2);
           }
         }
       }
@@ -193,13 +195,13 @@
     }
 
     .bber-dt {
-      padding: calc(#{$medium} / 2) 0 0 calc(#{$small} / 2);
+      padding: math.div($medium, 2) 0 0 math.div($small, 2);
       text-transform: capitalize;
     }
 
     .bber-dd {
       @include border('bottom');
-      padding: 5px calc(#{$small} / 2) calc(#{$medium} / 2);
+      padding: 5px math.div($small, 2) math.div($medium, 2);
     }
 
     .bber-li,
@@ -228,7 +230,7 @@
         text-align: left;
         display: block;
         width: 100%;
-        padding: calc(#{$medium} / 2);
+        padding: math.div($medium, 2);
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
@@ -243,7 +245,7 @@
 
         @for $i from 1 through 10 {
           &.bber-indent--#{$i} {
-            text-indent: ($i - 1) * ($small / 2);
+            text-indent: ($i - 1) * math.div($small, 2);
           }
         }
       }
@@ -258,13 +260,13 @@
     }
 
     .bber-dt {
-      padding: calc(#{$medium} / 2) 0 0 calc(#{$small} / 2);
+      padding: math.div($medium, 2) 0 0 math.div($small, 2);
       text-transform: capitalize;
     }
 
     .bber-dd {
       @include border('bottom');
-      padding: 5px calc(#{$small} / 2) calc(#{$medium} / 2);
+      padding: 5px math.div($small, 2) math.div($medium, 2);
     }
 
     .bber-li,
@@ -294,7 +296,7 @@
   overflow-y: auto;
   -webkit-overflow-scrolling: touch; // sass-lint:disable-line no-vendor-prefixes
 
-  @media screen and (max-width: $tablet-breakpoint-max) {
+  @include break-at('mobile', 'tablet') {
     width: 100vw !important;
     left: 0;
     right: 0;
@@ -325,7 +327,7 @@
   height: $small + 25px;
   opacity: 1 !important;
 
-  @media screen and (max-width: $tablet-breakpoint-max) {
+  @include break-at('mobile', 'tablet') {
     background: $white;
     height: 42px;
   }
@@ -338,7 +340,7 @@
     height: $small + 25px;
     padding: 0 10px;
 
-    @media screen and (max-width: $tablet-breakpoint-max) {
+    @include break-at('mobile', 'tablet') {
       height: 42px;
     }
 
