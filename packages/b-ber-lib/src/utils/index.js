@@ -119,7 +119,14 @@ export const ensure = ({ files = [], dirs = [], prefix = '' } = {}) =>
 const trimLeadingSlash = s => s.replace(/^\//, '')
 
 export const resolveIntersectingUrl = (u, p) => {
-  const url = new URL(u)
+  let url
+
+  try {
+    url = new URL(u)
+  } catch (err) {
+    log.warn(`${err.message}: "${u}"`)
+    return u
+  }
 
   const { pathname } = url
 
