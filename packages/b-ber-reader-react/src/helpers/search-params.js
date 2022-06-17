@@ -1,11 +1,13 @@
+export const getUrlParams = stringOrMap =>
+  stringOrMap instanceof URLSearchParams
+    ? stringOrMap
+    : new URLSearchParams(stringOrMap)
+
 // Test if params are valid
 export const hasSearchParams = (stringOrMap, searchParamKeys) => {
   if (!stringOrMap) return false
 
-  const params =
-    stringOrMap instanceof URLSearchParams
-      ? stringOrMap
-      : new URLSearchParams(stringOrMap)
+  const params = getUrlParams(stringOrMap)
 
   const {
     currentSpineItemIndex: currentSpineItemIndexKey,
@@ -23,10 +25,7 @@ export const hasSearchParams = (stringOrMap, searchParamKeys) => {
 
 // Remove all non-bber params
 export const stripSearchParams = (stringOrMap, searchParamKeys) => {
-  const params =
-    stringOrMap instanceof URLSearchParams
-      ? stringOrMap
-      : new URLSearchParams(stringOrMap)
+  const params = getUrlParams(stringOrMap)
 
   const {
     currentSpineItemIndex: currentSpineItemIndexKey,
@@ -36,8 +35,10 @@ export const stripSearchParams = (stringOrMap, searchParamKeys) => {
 
   const allowed = new Set([currentSpineItemIndexKey, spreadIndexKey, slugKey])
 
-  params.forEach((_val, key) => {
-    if (!allowed.has(key)) params.delete(key)
+  params.forEach((_, key) => {
+    if (!allowed.has(key)) {
+      params.delete(key)
+    }
   })
 
   return params
@@ -45,10 +46,7 @@ export const stripSearchParams = (stringOrMap, searchParamKeys) => {
 
 // Ensure required values are set
 export const ensureSearchParams = (stringOrMap, searchParamKeys) => {
-  const params =
-    stringOrMap instanceof URLSearchParams
-      ? stringOrMap
-      : new URLSearchParams(stringOrMap)
+  const params = getUrlParams(stringOrMap)
 
   const {
     currentSpineItemIndex: currentSpineItemIndexKey,
@@ -61,6 +59,35 @@ export const ensureSearchParams = (stringOrMap, searchParamKeys) => {
 
   if (!params.has(spreadIndexKey)) {
     params.set(spreadIndexKey, 0)
+  }
+
+  return params
+}
+
+// Exclude b-ber params
+export const excludeSearchParams = (stringOrMap, searchParamKeys) => {
+  const params = getUrlParams(stringOrMap)
+
+  const {
+    currentSpineItemIndex: currentSpineItemIndexKey,
+    spreadIndex: spreadIndexKey,
+    slug: slugKey,
+  } = searchParamKeys
+
+  params.delete(currentSpineItemIndexKey)
+  params.delete(spreadIndexKey)
+  params.delete(slugKey)
+
+  return params
+}
+
+export const appendExternalParams = (stringOrMap, searchParamKeys) => {
+  const params = getUrlParams(stringOrMap)
+  const external = excludeSearchParams(window.location.search, searchParamKeys)
+
+  // eslint-disable-next-line no-unused-vars
+  for (const [key, val] of external) {
+    params.set(key, val)
   }
 
   return params

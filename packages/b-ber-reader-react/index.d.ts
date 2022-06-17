@@ -170,7 +170,7 @@ export interface SidebarMetadataProps {
 
 export type UiReaderProp<T> = React.Component<T> | ((props: T) => JSX.Element)
 
-export type LocationState = 'memory' | 'localStorage' | 'queryParams'
+export type LocationState = 'memory' | 'localStorage' | 'searchParams'
 
 export type KeysValues<T> = { [P in keyof T]: T[P] }
 

@@ -7,7 +7,7 @@ export const getPlayerPropsFromQueryString = queryString =>
 
 export const getURLAndQueryParamters = url => url.split('?')
 
-export const transformQueryParamsToProps = (props, blacklist = []) => {
+export const transformSearchParamsToProps = (props, blacklist = []) => {
   // Remove blacklisted props
   let options = props
   if (blacklist.length) options = omit(props, blacklist)

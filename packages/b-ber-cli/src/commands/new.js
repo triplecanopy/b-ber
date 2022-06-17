@@ -67,6 +67,11 @@ const builder = yargs =>
       type: 'string',
       // default: 'http://localhost:4000/project-reader',
     })
+    .option('base_url', {
+      describe: 'URL to map assets for the web build',
+      type: 'string',
+      // default: '',
+    })
     .option('bucket_url', {
       describe:
         'The S3 bucket URL where the remote project will be deployed to if hosting on S3',

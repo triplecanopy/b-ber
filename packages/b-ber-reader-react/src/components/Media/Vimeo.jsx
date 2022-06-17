@@ -9,7 +9,7 @@ import Viewport from '../../helpers/Viewport'
 import {
   getURLAndQueryParamters,
   getPlayerPropsFromQueryString,
-  transformQueryParamsToProps,
+  transformSearchParamsToProps,
   getPlayingStateOnUpdate,
 } from '../../helpers/media'
 import { isBrowser } from '../../helpers/utils'
@@ -42,13 +42,13 @@ class Vimeo extends React.Component {
     const { src, posterImage, aspectRatio } = this.props
     const [url, queryString] = getURLAndQueryParamters(src)
 
-    const playerOptions = transformQueryParamsToProps(
+    const playerOptions = transformSearchParamsToProps(
       getPlayerPropsFromQueryString(queryString),
       Vimeo.blacklistedProps
     )
 
     // Extract autoplay property for use during page change events. Do this
-    // after `transformQueryParamsToProps` to ensure boolean attrs
+    // after `transformSearchParamsToProps` to ensure boolean attrs
     const { autoplay, ...rest } = playerOptions
 
     // Controls is needed both in state and in playerOptions

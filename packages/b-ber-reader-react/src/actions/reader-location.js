@@ -4,8 +4,8 @@ import isPlainObject from 'lodash/isPlainObject'
 import * as actionTypes from '../constants/reader-location'
 import {
   hasSearchParams,
-  stripSearchParams,
   ensureSearchParams,
+  appendExternalParams,
 } from '../helpers/search-params'
 import Asset from '../helpers/Asset'
 import Storage from '../helpers/Storage'
@@ -14,7 +14,7 @@ import history from '../lib/History'
 
 export const locationStates = {
   MEMORY: 'memory',
-  QUERY_PARAMS: 'queryParams',
+  QUERY_PARAMS: 'searchParams',
   LOCAL_STORAGE: 'localStorage',
 }
 
@@ -53,7 +53,12 @@ export const updateQueryString = location => (dispatch, getState) => {
 
   const updateMethod = !prevSlug || prevSlug === nextSlug ? 'replace' : 'push'
 
-  history[updateMethod]({ search: nextSearchParams })
+  const search = appendExternalParams(
+    nextSearchParams,
+    searchParamKeys
+  ).toString()
+
+  history[updateMethod]({ search })
 
   return dispatch({
     type: actionTypes.LOCATION_UPDATE,
@@ -103,15 +108,16 @@ export const setInitialSearchParams = () => (dispatch, getState) => {
       hasSearchParams(window.location.search, searchParamKeys)
     ) {
       searchParams = new URLSearchParams(window.location.search)
-      searchParams = stripSearchParams(searchParams, searchParamKeys)
+      // searchParams = stripSearchParams(searchParams, searchParamKeys)
     } else {
       const hash = Asset.createHash(bookURL)
       const storage = Storage.get() || {}
 
-      searchParams = storage[hash]?.location?.search || ''
+      searchParams = storage[hash]?.location?.searchParams || ''
     }
 
     searchParams = ensureSearchParams(searchParams, searchParamKeys)
+    searchParams = appendExternalParams(searchParams, searchParamKeys)
 
     location = { searchParams: searchParams.toString() }
   } else if (locationState === locationStates.LOCAL_STORAGE) {
