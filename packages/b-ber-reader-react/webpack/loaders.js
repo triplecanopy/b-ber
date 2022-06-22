@@ -60,7 +60,7 @@ module.exports = [
   },
   {
     test: /\.jsx?$/,
-    exclude,
+    exclude: /node_modules\/(?!(css-tree)\/).*/,
     loader: 'babel-loader',
     options: {
       presets: [
@@ -70,6 +70,7 @@ module.exports = [
             debug: false,
             bugfixes: true,
             corejs: 3,
+            useBuiltIns: 'usage',
 
             // https://github.com/webpack/webpack/issues/4039
             modules: 'commonjs',
@@ -77,7 +78,6 @@ module.exports = [
             targets: {
               browsers: 'last 2 versions, > 2%',
             },
-            useBuiltIns: 'usage',
           },
         ],
         '@babel/preset-react',

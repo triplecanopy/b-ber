@@ -2,7 +2,13 @@ import xmljs from 'xml-js'
 import has from 'lodash/has'
 import { Parser as HtmlToReactParser } from 'html-to-react'
 import find from 'lodash/find'
-import csstree, { List } from 'css-tree'
+
+import { List } from 'css-tree/lib/utils'
+// import * as parse from 'css-tree/lib/parser'
+import parse from 'css-tree/lib/parser'
+import walk from 'css-tree/lib/walker'
+import generate from 'css-tree/lib/generator'
+
 import Url from './Url'
 import Request from './Request'
 import Cache from './Cache'
@@ -234,11 +240,10 @@ class XMLAdaptor {
 
     sheets.forEach(({ base, data }) => {
       const styleSheetURL = Url.resolveRelativeURL(opsURL, base)
-      const tree = csstree.parse(data)
+      const tree = parse(data)
 
-      csstree.walk(tree, {
+      walk(tree, {
         enter: (node, item, list) => {
-          let value
           let nodeText
 
           const scopedClassName = List.createItem({
@@ -277,22 +282,18 @@ class XMLAdaptor {
           }
 
           if (node.type === 'Url') {
-            ;({ value } = node)
-            nodeText = value.value
-
-            if (value.type !== 'Raw') {
-              nodeText = nodeText.substr(1, nodeText.length - 2) // trim quotes
-            }
+            nodeText = node.value.replace(/(?:^['"]+|['"]+$)/g, '')
 
             if (Url.isRelative(nodeText)) {
               nodeText = Url.resolveRelativeURL(styleSheetURL, nodeText)
-              node.value.value = `"${nodeText}"` // eslint-disable-line no-param-reassign
+              // node.value = `"${nodeText}"` // eslint-disable-line no-param-reassign
+              node.value = nodeText // eslint-disable-line no-param-reassign
             }
           }
         },
       })
 
-      scopedCSS += csstree.generate(tree)
+      scopedCSS += generate(tree)
     })
 
     return scopedCSS
