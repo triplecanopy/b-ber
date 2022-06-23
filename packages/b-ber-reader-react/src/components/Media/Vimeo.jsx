@@ -1,5 +1,5 @@
 import React from 'react'
-import ReactPlayer from 'react-player'
+import ReactPlayer from 'react-player/vimeo'
 import VimeoPosterImage from './VimeoPosterImage'
 import VimeoPlayerControls from './VimeoPlayerControls'
 import withNodePosition from '../../lib/with-node-position'
@@ -12,7 +12,7 @@ import {
   transformSearchParamsToProps,
   getPlayingStateOnUpdate,
 } from '../../helpers/media'
-import { isBrowser } from '../../helpers/utils'
+import { isBrowser, unlessDefined } from '../../helpers/utils'
 
 const iframePositioningEnabled = isBrowser('chrome', 'eq', 81)
 
@@ -22,20 +22,24 @@ class Vimeo extends React.Component {
   // Props that are on the vimeo player which must be managed by state
   static blacklistedProps = ['autopause' /* , 'controls' */]
 
-  state = {
-    url: '',
-    loop: false, // Not sure why this needs to be duplicated on the ReactPlayer
-    muted: false, // Not sure why this needs to be duplicated on the ReactPlayer
-    controls: true,
-    playing: false,
-    autoplay: true,
-    posterImage: null,
-    playerOptions: {},
-    currentSpreadIndex: null,
-    aspectRatio: new Map([
-      ['x', 16],
-      ['y', 9],
-    ]),
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      url: '',
+      loop: false, // Not sure why this needs to be duplicated on the ReactPlayer
+      muted: false, // Not sure why this needs to be duplicated on the ReactPlayer
+      controls: true,
+      playing: false,
+      autoplay: true,
+      posterImage: null,
+      playerOptions: {},
+      currentSpreadIndex: null,
+      aspectRatio: new Map([
+        ['x', 16],
+        ['y', 9],
+      ]),
+    }
   }
 
   UNSAFE_componentWillMount() {
@@ -54,16 +58,16 @@ class Vimeo extends React.Component {
     // Controls is needed both in state and in playerOptions
     const { controls, muted, loop } = playerOptions
 
-    this.setState({
+    this.setState(state => ({
       url,
-      loop,
-      muted,
-      controls,
-      autoplay,
+      loop: unlessDefined(loop, state.loop),
+      muted: unlessDefined(muted, state.muted),
+      controls: unlessDefined(controls, state.controls),
+      autoplay: unlessDefined(autoplay, state.autoplay),
       posterImage,
       aspectRatio,
       playerOptions: { ...rest },
-    })
+    }))
   }
 
   UNSAFE_componentWillReceiveProps(nextProps, nextContext) {
@@ -79,7 +83,8 @@ class Vimeo extends React.Component {
     this.setState(nextState)
   }
 
-  handleUpdatePlaying = () => this.setState({ playing: !this.state.playing })
+  handleUpdatePlaying = () =>
+    this.setState(({ playing }) => ({ playing: !playing }))
 
   handlePause = () => this.setState({ playing: false })
 

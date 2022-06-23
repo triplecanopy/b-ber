@@ -6,7 +6,7 @@ import { create } from 'browser-sync'
 import { serialize } from '..'
 
 const browserSync = create()
-const port = 4000 // getRandomInt(4000, 5000)
+const port = 4000
 const debounceSpeed = 500
 
 const config = build => url => () => {
@@ -25,60 +25,63 @@ let update = async () => {}
 
 const reload = () => update().then(browserSync.reload)
 
-const init = build =>
-  new Promise(resolve =>
-    browserSync.init(
-      {
-        port,
-        open: false, // Opens browser programatically below
-        // reloadDelay: 2000
-        // reloadDebounce: 2000
-        // reloadThrottle: 2000
-        server: {
-          baseDir: path.resolve(`project-${build}`),
-          middleware: (req, res, next) => {
-            // Set headers for XHTML files to allow document.write
-            if (/\.xhtml$/.test(req.url)) {
-              res.setHeader('Content-Type', 'text/html; charset=UTF-8')
-            }
-
-            next()
-          },
+const browserSyncPlugins = [
+  {
+    module: 'bs-html-injector',
+    options: {
+      files: [
+        {
+          match: [
+            path.resolve('_project', '**', '*.scss'),
+            path.resolve('_project', '**', '*.js'),
+            path.resolve('_project', '**', '*.md'),
+          ],
+          fn: debounce(() => reload(), debounceSpeed, {
+            leading: false,
+            trailing: true,
+          }),
         },
-        plugins: [
-          {
-            module: 'bs-html-injector',
-            options: {
-              files: [
-                {
-                  match: [
-                    path.resolve('_project', '**', '*.scss'),
-                    path.resolve('_project', '**', '*.js'),
-                    path.resolve('_project', '**', '*.md'),
-                  ],
-                  fn: debounce(() => reload(), debounceSpeed, {
-                    leading: false,
-                    trailing: true,
-                  }),
-                },
-              ],
-            },
-          },
-        ],
+      ],
+    },
+  },
+]
+
+const browserSyncMiddleware = (req, res, next) => {
+  // Set headers for XHTML files to allow document.write
+  if (/\.xhtml$/.test(req.url)) {
+    res.setHeader('Content-Type', 'text/html; charset=UTF-8')
+  }
+
+  next()
+}
+
+const init = build =>
+  new Promise(resolve => {
+    const options = {
+      port,
+      open: false, // Opens browser programatically below
+      // reloadDelay: 2000
+      // reloadDebounce: 2000
+      // reloadThrottle: 2000
+      server: {
+        baseDir: path.resolve(`project-${build}`),
+        middleware: browserSyncMiddleware,
       },
-      resolve
-    )
-  )
+      plugins: browserSyncPlugins,
+    }
 
-const serve = async ({ build, external }) => {
+    browserSync.init(options, resolve)
+  })
+
+const serve = async ({ build: buildOption, external }) => {
   const location = external ? 'external' : 'local'
-  const build_ = build ?? 'reader'
+  const build = buildOption ?? 'reader'
 
-  await init(build_)
+  await init(build)
 
   const url = browserSync.getOption('urls').get(location)
 
-  update = config(build_)(url)
+  update = config(build)(url)
 
   await update()
 

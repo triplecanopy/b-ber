@@ -17,6 +17,7 @@ webpack/*
 dev/*
 !dev/index.ejs
 !dev/index.example.js
+.env*
 
 /*.tgz
 /tmp

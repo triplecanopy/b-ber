@@ -37,14 +37,14 @@ function SpreadImageStyles(props) {
     .spread-index__${adjustedSpreadPosition - 1} #spread__${markerRefId} > .spread__content {
       backface-visibility: hidden;
       transform: translateX(${translateLeftPrevious}px) translate3d(0, 0, 0);
-      transform-style: preserve-3d;
+      /*transform-style: preserve-3d;*/
     }
 
     /* Current page */
     .spread-index__${adjustedSpreadPosition} #spread__${markerRefId} > figure,
     .spread-index__${adjustedSpreadPosition} #spread__${markerRefId} > .spread__content {
       backface-visibility: hidden;
-      transform-style: preserve-3d;
+      /*transform-style: preserve-3d;*/
       transform: translateX(${translateLeftCurrent}px) translate3d(0, 0, 0);
     }
 
@@ -54,7 +54,7 @@ function SpreadImageStyles(props) {
     .spread-index__${adjustedSpreadPosition + 2} #spread__${markerRefId} > figure,
     .spread-index__${adjustedSpreadPosition + 2} #spread__${markerRefId} > .spread__content {
       backface-visibility: hidden;
-      transform-style: preserve-3d;
+      /*transform-style: preserve-3d;*/
       transform: translateX(${translateLeftNext}px) translate3d(0, 0, 0);
     }
   `

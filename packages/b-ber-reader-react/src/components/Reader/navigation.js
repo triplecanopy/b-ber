@@ -1,4 +1,4 @@
-import { findIndex } from 'lodash'
+import findIndex from 'lodash/findIndex'
 import Url from '../../helpers/Url'
 import Viewport from '../../helpers/Viewport'
 import Messenger from '../../lib/Messenger'
