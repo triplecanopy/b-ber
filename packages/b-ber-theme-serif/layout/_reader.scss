@@ -39,10 +39,9 @@
 
   // Gallery Styling This sets up a layout for galleries that contains 12
   // columns and two rows by default and is responsive.
-
   section.gallery .figure__gallery {
     .figure__items {
-      @include grid-layout;
+      // @include grid-layout;
       width: 85vw;
       height: 75vh;
       margin-top: 75px;
@@ -54,7 +53,7 @@
   }
 
   // Mobile Overrides for Fullbleed, spreads, and galleries.
-  @include break('mobile') {
+  @include break-at('xs') {
     // Gallery
     section.gallery .figure__gallery .figure__items {
       margin-top: 0;

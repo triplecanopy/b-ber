@@ -47,7 +47,7 @@ figure {
 
 .figure__large {
   // Space is added in the event that readers don't respect the page-break atrribute.
-  @include padding(1, 0, 1, 0, 0);
+  @include padding('text-large', 1, 0, 1, 0);
   page-break-before: always;
   page-break-after: always;
 }
@@ -102,7 +102,7 @@ figure {
   &.figure__small--square,
   &.figure__small--portrait,
   &.figure__small--portrait-high {
-    @include padding(1, 0, 1, 0, 0);
+    @include padding('text-large', 1, 0, 1, 0);
     h1 + & {
       padding-top: 0;
     }

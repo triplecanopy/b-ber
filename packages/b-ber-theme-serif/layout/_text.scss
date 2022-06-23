@@ -4,49 +4,49 @@
 
 // Text Sizes
 h1 {
-  @include type-settings(0);
+  @include text-large;
   margin-top: 0;
   margin-bottom: 0;
   padding-top: one-line(0);
   padding-bottom: one-line(0);
 }
 h2 {
-  @include type-settings(0);
+  @include text-large;
   margin-top: 0;
   margin-bottom: 0;
   padding-top: one-line(0);
   padding-bottom: one-line(0);
 }
 h3 {
-  @include type-settings(0);
+  @include text-large;
   margin-top: 0;
   margin-bottom: 0;
   padding-top: one-line(0);
   padding-bottom: one-line(0);
 }
 h4 {
-  @include type-settings(0);
+  @include text-large;
   margin-top: 0;
   margin-bottom: 0;
   padding-top: one-line(0);
   padding-bottom: one-line(0);
 }
 h5 {
-  @include type-settings(0);
+  @include text-large;
   margin-top: 0;
   margin-bottom: 0;
   padding-top: one-line(0);
   padding-bottom: one-line(0);
 }
 h6 {
-  @include type-settings(0);
+  @include text-large;
   margin-top: 0;
   margin-bottom: 0;
   padding-top: one-line(0);
   padding-bottom: one-line(0);
 }
 p {
-  @include type-settings(0);
+  @include text-large;
 }
 
 section {
@@ -92,7 +92,7 @@ h4,
 h5,
 h6 {
   @include hyphens(none);
-  @include type-settings(0);
+  @include text-large;
   @include following-paragraph-not-indented;
   text-indent: 0;
   text-transform: none;
@@ -111,7 +111,7 @@ a:visited {
 h1 {
   padding-bottom: four-lines(0);
   section & {
-    @include padding(0, 0, 4, 0, 0);
+    @include padding('text-large', 0, 0, 4, 0);
   }
 
   &.book-title,
@@ -120,8 +120,8 @@ h1 {
   }
 
   section.backmatter & {
-    @include type-settings(-1);
-    @include padding(2, 0, 2, 0, -1);
+    @include text-medium;
+    @include padding('text-medium', 2, 0, 2, 0);
   }
 
   section.titlepage & {
@@ -139,19 +139,19 @@ h1 {
   section.credits &,
   section.contributors &,
   section.appendix & {
-    @include padding(0, 0, 4, 0, -1);
+    @include padding('text-medium', 0, 0, 4, 0);
     @include following-paragraph-not-indented;
   }
 }
 
 h2 {
   section & {
-    @include padding(0, 0, 1, 0, 0);
+    @include padding('text-large', 0, 0, 1, 0);
   }
 
   section.backmatter & {
-    @include type-settings(-1);
-    @include padding(1, 0, 0, 0, -1);
+    @include text-medium;
+    @include padding('text-medium', 1, 0, 0, 0);
   }
 
   section.titlepage & {
@@ -163,25 +163,25 @@ h2 {
   section.credits &,
   section.contributors &,
   section.appendix & {
-    @include type-settings(-1);
-    @include padding(0, 0, 1, 0, -1);
+    @include text-medium;
+    @include padding('text-medium', 0, 0, 1, 0);
     @include following-paragraph-not-indented;
   }
 }
 
 h3 {
   section.titlepage & {
-    @include type-settings(-4);
+    @include text-xsmall;
     padding-bottom: one-line(-4);
   }
 }
 
 p {
-  @include type-settings(0);
+  @include text-large;
   text-indent: one-em(0);
 
   blockquote & {
-    @include type-settings(-2);
+    @include text-small;
     text-indent: 0 !important; // sass-lint:disable-line no-important
     margin-bottom: 0 !important; // sass-lint:disable-line no-important
   }
@@ -198,14 +198,14 @@ p {
       text-indent: one-em(0);
     }
     @include following-paragraph-not-indented;
-    @include type-settings(-2);
-    @include padding(0, 0, 1, 0, -2);
+    @include text-small;
+    @include padding('text-small', 0, 0, 1, 0);
   }
 
   section.colophon & {
     @include following-paragraph-not-indented;
-    @include type-settings(-2);
-    @include padding(0, 0, 1, 0, -2);
+    @include text-small;
+    @include padding('text-small', 0, 0, 1, 0);
     text-indent: 0 !important; // sass-lint:disable-line no-important
   }
 
@@ -221,17 +221,17 @@ p {
   }
 
   section.frontmatter.dedication & {
-    @include type-settings(0);
-    @include padding(0, 1, 1, 0, 0);
+    @include text-large;
+    @include padding('text-large', 0, 1, 1, 0);
     text-indent: 0;
   }
 
   section.dialogue & {
     &.interlocutor-parent {
-      @include padding(1, 0, 0, 0, 0);
+      @include padding('text-large', 1, 0, 0, 0);
       margin-top: 0;
       .interlocutor {
-        @include type-settings(-8);
+        @include sup-text;
         line-height: 1;
         font-family: $sans;
         font-weight: bold;
@@ -255,7 +255,7 @@ p {
 
   .pullquote & {
     @include following-paragraph-not-indented;
-    @include type-settings(-4);
+    @include text-xsmall;
     text-indent: 0 !important; // sass-lint:disable-line no-important
     margin-bottom: 0 !important; // sass-lint:disable-line no-important
     font-style: italic;
@@ -268,7 +268,7 @@ p {
 
   .epigraph .pullquote & {
     @include following-paragraph-not-indented;
-    @include type-settings(0);
+    @include text-large;
     float: none;
     width: 100%;
     margin-top: 0 !important; // sass-lint:disable-line no-important
@@ -290,7 +290,7 @@ cite {
   .pullquote &,
   blockquote & {
     @include following-paragraph-not-indented;
-    @include type-settings(-4);
+    @include text-xsmall;
     font-weight: normal;
     font-style: normal;
     text-indent: 0;
@@ -305,7 +305,7 @@ cite {
   }
   .epigraph .pullquote & {
     @include following-paragraph-not-indented;
-    @include type-settings(0);
+    @include text-large;
     float: none;
     width: 100%;
     text-align: center;
@@ -320,7 +320,7 @@ cite {
 // Inline elements
 sup,
 sub {
-  @include type-settings(-8);
+  @include sup-text;
   line-height: 1;
   color: $black;
   vertical-align: baseline;
@@ -344,7 +344,7 @@ small {
 }
 
 pre {
-  @include padding(1, 1, 1, 1, 0);
+  @include padding('text-large', 1, 1, 1, 1);
   margin-bottom: one-line(0);
   font-size: 1em;
   line-height: 1;
@@ -411,7 +411,7 @@ span.footnote-ref {
     @extend sup;
   }
   .footnote__body {
-    @include padding(1, 0, 1, 0, 0);
+    @include padding('text-large', 1, 0, 1, 0);
   }
 }
 

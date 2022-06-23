@@ -101,7 +101,7 @@
   // Publication title is the first element in the TOC panel.
   .publication__title {
     @include web-navigation-link;
-    @include type-settings(-2);
+    @include text-small;
     height: $dimensions-large-x;
     display: flex;
     align-items: center;
@@ -124,7 +124,7 @@
     justify-content: flex-end;
 
     .publication__search__input {
-      @include type-settings(-2);
+      @include text-small;
       border: 0;
       display: block;
       margin: 0;
@@ -156,7 +156,7 @@
 
   // The table of contents, which is an ordered, nested list.
   .publication__toc {
-    @include type-settings(-7);
+    @include caption-text;
     transform: translateX(-100%);
     position: fixed;
     z-index: 2;
@@ -200,7 +200,7 @@
   }
 
   .publication__info {
-    @include type-settings(-7);
+    @include caption-text;
     transform: translateX(100%);
     position: fixed;
     z-index: 1;
@@ -274,7 +274,7 @@
 
   // Header styles
   .publication__header {
-    @include type-settings(-7);
+    @include caption-text;
     @include web-grid-full-width;
     grid-row: 1;
 
@@ -294,7 +294,7 @@
 
     h1 {
       @include web-navigation-link;
-      @include type-settings(-2);
+      @include text-small;
       padding: 0;
       margin: 0;
     }
@@ -361,36 +361,36 @@
   // easily by using container directives, like `::: chapter`.
   //
   .publication__contents {
-    @include padding(4, 0, 3, 0, 0);
-    grid-row: 2;
+    @include padding('text-large', 4, 0, 3, 0);
+    // grid-row: 2;
 
-    @include web-grid-container; // We can't use `display: subgrid` so it is re-declared.
-    @include web-grid-full-width; // `publication__contents` spans the entire page
-    grid-template-rows: max-content; // https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template-rows
-    * {
-      @include web-grid-full-width;
-    } // All elements (except for `sections`, see below) also span the entire page.
+    // @include web-grid-container; // We can't use `display: subgrid` so it is re-declared.
+    // @include web-grid-full-width; // `publication__contents` spans the entire page
+    // grid-template-rows: max-content; // https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template-rows
+    // * {
+    //   @include web-grid-full-width;
+    // } // All elements (except for `sections`, see below) also span the entire page.
 
-    section {
-      // `section` elements are also CSS Grid containers.
-      @include web-grid-container;
-      @include web-grid-full-width;
-      *:not(section) {
-        // All child elements of a `section` (except for other `section`s)
-        // span a smaller area by default. This allows overrides to be
-        // easily applied to child elements in `_overrides.scss` to create
-        // more complex layouts.
+    // section {
+    //   // `section` elements are also CSS Grid containers.
+    //   @include web-grid-container;
+    //   @include web-grid-full-width;
+    //   *:not(section) {
+    //     // All child elements of a `section` (except for other `section`s)
+    //     // span a smaller area by default. This allows overrides to be
+    //     // easily applied to child elements in `_overrides.scss` to create
+    //     // more complex layouts.
 
-        grid-column: 4 / span 6;
+    //     grid-column: 4 / span 6;
 
-        @include break('mobile') {
-          grid-column: 2 / span 10;
-        }
-        @include break('tablet') {
-          grid-column: 2 / span 10;
-        }
-      }
-    }
+    //     @include break-at('xs') {
+    //       grid-column: 2 / span 10;
+    //     }
+    //     @include break-at('sm') {
+    //       grid-column: 2 / span 10;
+    //     }
+    //   }
+    // }
 
     // Logic for overlay when sidebar open
     &:before {
@@ -459,7 +459,7 @@
   }
 
   // Media queries
-  @include break('mobile') {
+  @include break-at('xs') {
     // Sidebars
     .publication__toc,
     .publication__info {
@@ -545,7 +545,7 @@
   }
 
   // Mobile Overrides for Galleries, Fullbleed images, and spreads.
-  @include break('mobile') {
+  @include break-at('xs') {
     // Fullbleed
     .figure__fullbleed.figure__inline--landscape .figure__items {
       height: auto;

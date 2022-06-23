@@ -1,5 +1,20 @@
+@use 'sass:math';
+
+// Set @page margin for e-readers
+@page {
+  margin: em-to-px($font-size-base * 2);
+}
+
+html {
+  @if $build == 'reader' {
+    font-size: 62.5%; // 10px
+  } @else {
+    font-size: 150%; // 24px
+  }
+}
+
 body {
-  @include type-settings(0);
+  @include text-large;
   @include hyphens;
   @include widows;
   @include orphans;
@@ -13,7 +28,7 @@ body {
 
 blockquote {
   @include following-element-has-no-top-padding;
-  @include padding(1, 1, 1, 1, 0);
+  @include padding('text-large', 1, 1, 1, 1);
   margin: 0;
   font-size: one-em(0);
 }
@@ -56,14 +71,14 @@ section.bibliography {
     margin-bottom: 0;
   }
   h3 {
-    @include type-settings(0);
-    @include padding(0, 0, 1, 0, 0);
+    @include text-large;
+    @include padding('text-large', 0, 0, 1, 0);
   }
   h1 + .subchapter > h3 {
     padding-top: 0;
   }
   p {
-    @include padding(0, 0, 1, 0, 0);
+    @include padding('text-large', 0, 0, 1, 0);
     text-indent: 0;
   }
 }
@@ -71,7 +86,7 @@ section.bibliography {
 .audio,
 .video,
 .vimeo {
-  @include padding(1, 1, 1, 1, 0);
+  @include padding('text-large', 1, 1, 1, 1);
   text-align: center;
   .figure__large & {
     padding: 0;
@@ -91,7 +106,7 @@ section.bibliography {
     } @else {
       width: 80%;
     }
-    @include break('mobile') {
+    @include break-at('xs') {
       width: 100%;
     }
     margin-left: auto;
@@ -124,15 +139,15 @@ video,
   // Outer container
 
   &.vimeo--4x3 .embed.supported {
-    padding-top: 3 / 4 * 100%;
+    padding-top: math.div(3, 4) * 100%;
   }
 
   &.vimeo--16x9 .embed.supported {
-    padding-top: 9 / 16 * 100%;
+    padding-top: math.div(9, 16) * 100%;
   }
 
   &.vimeo--21x9 .embed.supported {
-    padding-top: 9 / 21 * 100%;
+    padding-top: math.div(9, 21) * 100%;
   }
 
   // Inner container
@@ -159,7 +174,7 @@ video,
 }
 
 aside.note {
-  @include padding(0, 0, 1, 0, 0);
+  @include padding('text-large', 0, 0, 1, 0);
   text-align: left;
   margin: 0;
   p {
@@ -171,7 +186,7 @@ aside.note {
 }
 
 .pullquote {
-  @include padding(0, 1, 1, 1, 0);
+  @include padding('text-large', 0, 1, 1, 1);
   text-indent: 0;
   font-size: one-em(0);
 
@@ -185,7 +200,7 @@ aside.note {
   }
 
   .epigraph & {
-    @include padding(0, 1, 2, 1, 0);
+    @include padding('text-large', 0, 1, 2, 1);
     float: none;
     margin-top: 0;
   }
@@ -217,7 +232,7 @@ section.backmatter {
 
 section.staff {
   h3 {
-    @include type-settings(-1);
+    @include text-medium;
     text-align: left;
     margin: 0;
     padding: 0;
@@ -226,7 +241,7 @@ section.staff {
 }
 
 .masthead h2 {
-  @include type-settings(-1);
+  @include text-medium;
   font-weight: 700;
   font-family: inherit;
   padding-top: 0;

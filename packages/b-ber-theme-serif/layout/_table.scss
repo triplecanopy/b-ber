@@ -3,7 +3,7 @@
 }
 
 table {
-  @include type-settings(-6);
+  @include table-text;
   page-break-inside: avoid;
   border-collapse: collapse;
   border-spacing: 0;
@@ -16,7 +16,7 @@ table {
     }
     th,
     td {
-      @include type-settings(0);
+      @include text-large;
       font-family: $sans;
       text-align: left;
       padding: one-em(0);

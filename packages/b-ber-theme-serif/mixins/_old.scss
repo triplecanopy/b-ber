@@ -290,7 +290,7 @@ $grid-row-height-percentage: (100% - $grid-row-gap-percentage) /
   grid-template: grid-template($grid-column-count, $row-height);
   grid-gap: grid-gap();
 
-  @include break('mobile') {
+  @include break-at('xs') {
     grid-template: grid-template(round($grid-column-count / 2), 'auto');
   }
 }
@@ -309,7 +309,7 @@ $grid-row-height-percentage: (100% - $grid-row-gap-percentage) /
 // @param $bottom   int     Number of line-height units at type-settings(0) to add as padding-bottom
 // @param $right    int     Number of `em`s at type-settings(0) to add as padding-right
 // @param $value    int     Elements type-settings index
-// @example         padding: @include padding(1, 1, 1, 1, 0) // => padding: 1em 1.3125em 1em 1.3125em;
+// @example         padding: @include padding(1, 1, 1, 1, 0); // => padding: 1em 1.3125em 1em 1.3125em;
 @mixin padding($top, $right, $bottom, $left, $value) {
   padding: adjust-line-height-value($value) * $top + 0em
     adjust-font-size-value($value) * $right + 0em
