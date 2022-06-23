@@ -10,6 +10,7 @@ import { ensure } from '@canopycanopycanopy/b-ber-lib/utils'
 import log from '@canopycanopycanopy/b-ber-logger'
 import {
   blacklistedConfigOptions,
+  parseConfigFile,
   withConfigOptions,
 } from '../lib/config-options'
 
@@ -19,13 +20,20 @@ const describe = 'Build a project'
 
 const noop = () => {}
 
-const handler = argv => {
+const handler = async argv => {
   process.env.NODE_ENV = process.env.NODE_ENV || 'development'
 
-  const { _: desiredSequences, $0, ...configOptions } = argv
-  const configEntries = Object.entries(configOptions)
+  const { _: desiredSequences, $0, config, ...configOptions } = argv
   const sequence = createBuildSequence(desiredSequences)
   const subSequence = sequence.reduce((a, c) => a.concat(...sequences[c]), [])
+
+  // Set up the config object that's going to be passed into the `init` function
+  let projectConfig = {}
+
+  // Check if a config files has been specified
+  if (config) projectConfig = await parseConfigFile(config)
+
+  projectConfig = { ...projectConfig, ...configOptions }
 
   state.update('sequence', subSequence)
   log.registerSequence(state, command, subSequence)
@@ -38,7 +46,7 @@ const handler = argv => {
     state.update('build', build)
 
     // Apply the config options that may have been passed in via CLI flags
-    for (const [key, val] of configEntries) {
+    for (const [key, val] of Object.entries(projectConfig)) {
       if (!state.has(`config.${key}`)) {
         log.warn('Invalid configuration option [%s]', key)
         continue

@@ -4,6 +4,11 @@
 // downloads                no JSON support
 // ui_options               no JSON support
 
+import fs from 'fs-extra'
+import path from 'path'
+import YamlAdaptor from '@canopycanopycanopy/b-ber-lib/YamlAdaptor'
+import log from '@canopycanopycanopy/b-ber-logger'
+
 export function withConfigOptions(yargs) {
   return yargs
     .option('env', {
@@ -98,3 +103,22 @@ export const blacklistedConfigOptions = new Set([
   'downloads',
   'ui_options',
 ])
+
+export const parseConfigFile = async configFile => {
+  const ext = path.extname(configFile)
+  const configPath = path.resolve(process.cwd(), configFile)
+
+  if (!(await fs.pathExists(configPath))) {
+    log.error(`Could not find config at [${configPath}]`)
+  }
+
+  if (/^\.(?:ya?ml|json)/i.test(ext) === false) {
+    log.error('Config file must have a .json or .yaml/.yml file extension')
+  }
+
+  const contents = await fs.readFile(configPath)
+
+  if (/^\.ya?ml/i.test(ext)) return YamlAdaptor.parse(contents)
+
+  return JSON.parse(contents)
+}
