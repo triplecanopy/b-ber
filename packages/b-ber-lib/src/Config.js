@@ -34,7 +34,7 @@ class Config {
     private: false,
     ignore: [],
     autoprefixer_options: {
-      overrideBrowserslist: ['last 2 versions', '> 2%'],
+      overrideBrowserslist: ['defaults', '> 1%', 'not dead', 'not IE 11'],
       flexbox: 'no-2009',
     },
     layout: 'columns',

@@ -11,7 +11,7 @@ import state from '@canopycanopycanopy/b-ber-lib/State'
 const ASSET_DIRNAMES = ['fonts', 'images']
 
 const autoprefixerOptions = state.config.autoprefixer_options || {
-  overrideBrowserslist: ['last 2 versions', '> 2%'],
+  overrideBrowserslist: ['defaults', '> 1%', 'not dead', 'not IE 11'],
   flexbox: 'no-2009',
 }
 
@@ -152,7 +152,7 @@ function resolveImportedModule(importPath) {
 }
 
 const renderCSS = scssString =>
-  new Promise(resolve =>
+  new Promise(resolve => {
     dartSass.render(
       {
         // Importer allows use of '~' to denote node_modules directory in SCSS files
@@ -179,7 +179,7 @@ const renderCSS = scssString =>
         resolve(result)
       }
     )
-  )
+  })
 
 const applyPostProcessing = ({ css }) =>
   postcss(autoprefixer(autoprefixerOptions)).process(css, { from: undefined })
