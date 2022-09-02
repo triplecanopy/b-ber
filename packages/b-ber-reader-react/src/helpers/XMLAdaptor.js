@@ -352,14 +352,14 @@ class XMLAdaptor {
     const promises = styles.map(
       ({ url, base }) =>
         new Promise(rs => {
-          const cache = Cache.get(url)
+          // const cache = Cache.get(url)
 
-          if (useLocalStorageCache && cache?.data) {
-            console.log('Loads CSS from cache %s', url)
+          // if (useLocalStorageCache && cache?.data) {
+          //   console.log('Loads CSS from cache %s', url)
 
-            rs({ base, data: cache.data })
-            return
-          }
+          //   rs({ base, data: cache.data })
+          //   return
+          // }
 
           Request.get(url).then(rsp => {
             if (useLocalStorageCache) {
