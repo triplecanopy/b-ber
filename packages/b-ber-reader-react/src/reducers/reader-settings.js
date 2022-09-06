@@ -51,7 +51,7 @@ export const initialState = {
   className: '',
 
   cache: true, // TODO handled based on build?
-  layout: 'columns',
+  layout: '',
 }
 
 const readerSettings = (state = initialState, action = {}) => {

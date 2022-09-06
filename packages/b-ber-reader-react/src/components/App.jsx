@@ -92,11 +92,18 @@ class App extends Component {
     const book = find(books, { id })
     const projectConfig = {}
 
+    // Extend projectConfig with data returned from API
     if (book) {
       projectConfig.layout = book.layout
       projectConfig.downloads = book.downloads
       projectConfig.uiOptions = book.ui_options
     }
+
+    // projectConfig has layout set manually if it's not defined in
+    // either the API data or the React component as prop. This should
+    // be handled programatically
+    projectConfig.layout =
+      this.props.readerSettings.layout || projectConfig.layout || 'columns'
 
     this.props.readerSettingsActions.updateSettings({
       books,

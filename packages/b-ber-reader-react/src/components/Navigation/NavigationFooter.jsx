@@ -1,18 +1,37 @@
 import React from 'react'
+import { layouts } from '../../constants'
 import Viewport from '../../helpers/Viewport'
 import { ChapterNext, ChapterPrevious, PageNext, PagePrevious } from './Icon'
 
 const show = {
   chapter: {
-    prev: props =>
-      (Viewport.isSingleColumn() ||
-        props.uiOptions.navigation.footer_icons.chapter) &&
-      props.currentSpineItemIndex !== 0,
+    prev: props => {
+      // Don't show if on the first page
+      if (props.currentSpineItemIndex < 1) return false
 
-    next: props =>
-      (Viewport.isSingleColumn() ||
-        props.uiOptions.navigation.footer_icons.chapter) &&
-      props.currentSpineItemIndex !== props.spine.length - 1,
+      // Only show if the user has not set `footer_icons.chapter` to
+      // false, or if it's a scrolling layout
+      return (
+        props.uiOptions.navigation.footer_icons.chapter ||
+        props.layout === layouts.SCROLL ||
+        Viewport.isSingleColumn() ||
+        Viewport.isMobile()
+      )
+    },
+
+    next: props => {
+      // Don't show if on the last page
+      if (props.currentSpineItemIndex >= props.spine.length - 1) return false
+
+      // Only show if the user has not set `footer_icons.chapter` to
+      // false, or if it's a scrolling layout
+      return (
+        props.uiOptions.navigation.footer_icons.chapter ||
+        props.layout === layouts.SCROLL ||
+        Viewport.isSingleColumn() ||
+        Viewport.isMobile()
+      )
+    },
   },
   page: {
     prev: props =>
