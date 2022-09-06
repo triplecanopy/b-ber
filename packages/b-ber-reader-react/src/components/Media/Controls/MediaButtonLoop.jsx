@@ -4,7 +4,9 @@ import classNames from 'classnames'
 function MediaButtonLoop(props) {
   return (
     <button
-      className={classNames('material-icons', { 'bber-hover': props.loop })}
+      className={classNames('bber-button material-icons', {
+        'bber-hover': props.loop,
+      })}
       onClick={props.updateLoop}
     >
       repeat
