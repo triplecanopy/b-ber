@@ -1,5 +1,4 @@
 import React from 'react'
-import { layouts } from '../../constants'
 import Viewport from '../../helpers/Viewport'
 import { ChapterNext, ChapterPrevious, PageNext, PagePrevious } from './Icon'
 
@@ -13,9 +12,7 @@ const show = {
       // false, or if it's a scrolling layout
       return (
         props.uiOptions.navigation.footer_icons.chapter ||
-        props.layout === layouts.SCROLL ||
-        Viewport.isSingleColumn() ||
-        Viewport.isMobile()
+        Viewport.isVerticallyScrolling(props)
       )
     },
 
@@ -27,9 +24,7 @@ const show = {
       // false, or if it's a scrolling layout
       return (
         props.uiOptions.navigation.footer_icons.chapter ||
-        props.layout === layouts.SCROLL ||
-        Viewport.isSingleColumn() ||
-        Viewport.isMobile()
+        Viewport.isVerticallyScrolling(props)
       )
     },
   },

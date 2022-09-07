@@ -26,19 +26,19 @@ class Iframe extends React.Component {
     const {
       src,
       title,
+      width,
       height,
+      viewerSettings,
       iframePlaceholderTop,
       iframePlaceholderWidth,
     } = this.props
-
-    const { width } = this.props
 
     let iframeContainerStyles = {}
 
     // Set styles for absolutely positioned desktop elements for browser
     // behaviour
     if (iframePositioningEnabled) {
-      const mobile = Viewport.isMobile()
+      const mobile = Viewport.isSingleColumn(viewerSettings)
       const position = mobile ? 'static' : 'absolute' // Only run re-positioning on desktop
 
       iframeContainerStyles = {

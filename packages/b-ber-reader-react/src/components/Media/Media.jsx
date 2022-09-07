@@ -271,7 +271,6 @@ class Media extends React.Component {
     } = this.props.elemRef.current
 
     this.props.elemRef.current.preload = 'auto'
-    console.log('load')
 
     const timeRemaining = this.displayTime(duration)
 
