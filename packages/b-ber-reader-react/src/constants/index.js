@@ -4,8 +4,10 @@ export const RESIZE_DEBOUNCE_TIMER = 60
 export const MUTATION_DEBOUNCE_TIMER = 60
 export const DEFERRED_CALLBACK_TIMER = 60
 
+// Fade transition not implemented
 export const transitions = { SLIDE: 'slide', FADE: 'fade' }
 
+// Light and dark themes not implemented
 export const themes = { DEFAULT: 'default', LIGHT: 'light', DARK: 'dark' }
 
 export const messagesTypes = {
@@ -53,7 +55,7 @@ export const horizontalBreakpoints = new Map([
       columns: 1,
       paddingLeft: '15px',
       paddingRight: '15px',
-      paddingTop: 0,
+      paddingTop: '15px',
       paddingBottom: '80px', // Offset for bottom nav
       fontSize: 'clamp(130%, 1.5vw, 160%)',
     },
@@ -67,7 +69,7 @@ export const horizontalBreakpoints = new Map([
       columns: 1,
       paddingLeft: 0,
       paddingRight: 0,
-      paddingTop: 0,
+      paddingTop: '15px',
       paddingBottom: '80px', // Offset for bottom nav
       fontSize: 'clamp(130%, 1.5vw, 160%)',
     },
