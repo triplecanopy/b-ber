@@ -3,39 +3,39 @@
 //
 // Pass in any number of transitions
 @mixin transition($transitions...) {
-  $unfoldedTransitions: ();
+  $unfolded-transition: ();
   @each $transition in $transitions {
-    $unfoldedTransitions: append(
-      $unfoldedTransitions,
-      unfoldTransition($transition),
+    $unfolded-transition: append(
+      $unfolded-transition,
+      unfold-transition($transition),
       comma
     );
   }
 
-  transition: $unfoldedTransitions;
+  transition: $unfolded-transition;
 }
 
-@function unfoldTransition($transition) {
+@function unfold-transition($transition) {
   // Default values
   $property: all;
   $duration: $transition-speed-fast;
   $easing: $transition-easing; // Browser default is ease, which is what we want
   $delay: null; // Browser default is 0, which is what we want
-  $defaultProperties: ($property, $duration, $easing, $delay);
+  $default-properties: ($property, $duration, $easing, $delay);
 
   // Grab transition properties if they exist
-  $unfoldedTransition: ();
-  @for $i from 1 through length($defaultProperties) {
+  $unfolded-transition: ();
+  @for $i from 1 through length($default-properties) {
     $p: null;
     @if $i <= length($transition) {
       $p: nth($transition, $i);
     } @else {
-      $p: nth($defaultProperties, $i);
+      $p: nth($default-properties, $i);
     }
-    $unfoldedTransition: append($unfoldedTransition, $p);
+    $unfolded-transition: append($unfolded-transition, $p);
   }
 
-  @return $unfoldedTransition;
+  @return $unfolded-transition;
 }
 
 @mixin border($position: '', $color: $grey-light) {
@@ -46,20 +46,31 @@
   }
 }
 
+// Mobile
 $mq-mobile: 'only screen and (max-width: 768px)';
 $mq-tablet: 'only screen and (min-width: 768px) and (max-width: 1140px)';
+$mq-desktop-sm: 'only screen and (min-width: 1140px) and (max-width: 1140px)';
+$mq-desktop-md: 'only screen and (min-width: 1140px) and (max-width: 1440px)';
+$mq-desktop-lg: 'only screen and (min-width: 1440px) and (max-width: 1920px)';
+$mq-desktop-xl: 'only screen and (min-width: 1920px)';
 $mq-reader-scroll: 'only screen and (max-width: 1140px), (min-aspect-ratio: 13 / 5)';
 $mq-reader-slide: 'only screen and (min-width: 1140px) and (max-aspect-ratio: 13 / 5)';
 
 $break-map: (
   'mobile': $mq-mobile,
   'tablet': $mq-tablet,
+  'desktop-sm': $mq-desktop-sm,
+  'desktop-md': $mq-desktop-md,
+  'desktop-lg': $mq-desktop-lg,
+  'desktop-xl': $mq-desktop-xl,
   'reader-scroll': $mq-reader-scroll,
   'reader-slide': $mq-reader-slide,
 );
 
-// Media query mixin. Accepts multiple arguments. Called with a single value,
-// or a comma separated list of values:
+// Media query mixin. Accepts multiple arguments. Because the media queries are
+// relatively specific, it's simpler to wrap styles in multiple queries than to
+// work from a 'global' base (i.e., a 'mobile-first' strategy). Called with
+// a single value, or a comma separated list of values:
 //
 // @include break-at('mobile') { ... }
 // @include break-at('mobile', 'tablet') { .. }
