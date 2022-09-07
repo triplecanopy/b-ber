@@ -40,6 +40,7 @@ $thumb-c: #272727;
   border: 1px solid $thumb-c;
   border-radius: $media-element-padding;
   padding: 9px 3px 9px 12px;
+  background-color: $white;
 
   a,
   input:not([type='range']),
@@ -67,9 +68,8 @@ $thumb-c: #272727;
     color: $violet !important;
   }
 
-  // TODO used?
   + .bber-caption__audio {
-    margin-top: 0.5rem;
+    margin-top: 8px;
   }
 }
 
