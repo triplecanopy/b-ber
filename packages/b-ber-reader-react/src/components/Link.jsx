@@ -1,4 +1,5 @@
 import React from 'react'
+import { connect } from 'react-redux'
 import ReaderContext from '../lib/reader-context'
 import Url from '../helpers/Url'
 
@@ -16,7 +17,9 @@ const Link = props => (
       style = style || {}
 
       const { href } = props
-      const target = Url.isExternal(href) ? '_blank' : '_top'
+      const external = Url.isExternal(href, props.readerSettings.projectURL)
+      const target = external ? '_blank' : '_top'
+
       // TODO add rel="nooperner noreferrer"
 
       return (
@@ -26,10 +29,10 @@ const Link = props => (
           target={target}
           className={className}
           onClick={e => {
-            if (Url.isRelative(href) || Url.isInternal(href)) {
-              e.preventDefault()
-              navigateToChapterByURL(href)
-            }
+            if (!external) return
+
+            e.preventDefault()
+            navigateToChapterByURL(href)
           }}
         >
           {props.children}
@@ -39,4 +42,8 @@ const Link = props => (
   </ReaderContext.Consumer>
 )
 
-export default Link
+// export default Link
+export default connect(
+  ({ readerSettings }) => ({ readerSettings }),
+  () => ({})
+)(Link)
