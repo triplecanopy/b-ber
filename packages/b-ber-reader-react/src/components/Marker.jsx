@@ -185,18 +185,19 @@ class Marker extends React.Component {
 
     // Subtract one line of text to prevent overlowing to "blank pages".
 
-    const lineHeight = 1.3 // document.documentElement element is set to 'normal', so approximate
+    const lineHeight = 1.5 // document.documentElement element is set to 'normal', so approximate
     const fontSizePx = parseFloat(window.getComputedStyle(elem).fontSize)
 
     // console.log(fontSize, fontSizePx, lineHeight, fontSizePx * lineHeight)
 
     // Account for slight variations in how much content it takes to create
     // a new column
-    if (browser.name === 'safari') {
-      offsetHeight -= Math.floor(fontSizePx * lineHeight)
-    } else {
-      offsetHeight -= fontSizePx
-    }
+    // if (browser.name === 'safari') {
+    //   offsetHeight -= Math.floor(fontSizePx * lineHeight)
+    // } else {
+    //   offsetHeight -= fontSizePx
+    // }
+    offsetHeight -= Math.floor(fontSizePx * lineHeight)
 
     // if (!unbound && !adjacent) {
     //   console.log(markerId, '!unbound && !adjacent')

@@ -86,11 +86,19 @@ describe('Url', () => {
   })
 
   test('tests if an url is external', () => {
-    expect(Url.isExternal('/foo/bar.jpg')).toBeFalse()
-    expect(Url.isExternal('http://example.com/')).toBeTrue()
+    expect(Url.isExternal('/foo/bar.jpg', '')).toBeFalse()
+    expect(
+      Url.isExternal('http://example.com/foo', 'http://example.com/')
+    ).toBeTrue()
     expect(Url.isExternal()).toBeFalse()
-    expect(Url.isExternal('http://example.com#anchor')).toBeTrue()
-    expect(Url.isExternal('http://localhost/')).toBeFalse()
-    expect(Url.isExternal('http://localhost#anchor')).toBeFalse()
+    expect(
+      Url.isExternal('http://example.com#anchor', 'http://example.com')
+    ).toBeTrue()
+    expect(
+      Url.isExternal('http://localhost/', 'http://example.com')
+    ).toBeFalse()
+    expect(
+      Url.isExternal('http://localhost#anchor', 'http://example.com')
+    ).toBeFalse()
   })
 })

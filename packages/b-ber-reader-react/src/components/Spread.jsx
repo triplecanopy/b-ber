@@ -77,6 +77,7 @@ class Spread extends React.Component {
     const width = window.innerWidth
     const { paddingLeft, paddingRight, columnGap } = this.props.viewerSettings
     const layoutWidth = width - paddingLeft - paddingRight + columnGap // not sure why we're adding columnGap in here ...
+
     // const spreadPosition =
     //   Math.round((elementEdgeLeft + paddingLeft) / layoutWidth) + 1
 
