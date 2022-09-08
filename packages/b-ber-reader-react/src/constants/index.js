@@ -57,7 +57,7 @@ export const horizontalBreakpoints = new Map([
       paddingRight: '15px',
       paddingTop: '15px',
       paddingBottom: '80px', // Offset for bottom nav
-      fontSize: 'clamp(130%, 1.5vw, 160%)',
+      fontSize: 'clamp(140%, 1.5vw, 160%)',
     },
   ],
   [
@@ -71,11 +71,11 @@ export const horizontalBreakpoints = new Map([
       paddingRight: 0,
       paddingTop: '15px',
       paddingBottom: '80px', // Offset for bottom nav
-      fontSize: 'clamp(130%, 1.5vw, 160%)',
+      fontSize: 'clamp(150%, 1.5vw, 160%)',
     },
   ],
   [
-    MEDIA_QUERY_DESKTOP_SM,
+    MEDIA_QUERY_DESKTOP_SM, // TODO not called? See above
     {
       maxWidth: '900px',
       maxHeight: '500px',
@@ -89,38 +89,38 @@ export const horizontalBreakpoints = new Map([
     },
   ],
   [
-    MEDIA_QUERY_DESKTOP_MD, // TODO not called? See above
+    MEDIA_QUERY_DESKTOP_MD,
     {
       maxWidth: '1080px',
-      maxHeight: '720px',
-      columnGap: '45px',
+      maxHeight: '600px',
+      columnGap: '65px',
       columns: 2,
       paddingLeft: 0,
       paddingRight: 0,
       paddingTop: 0,
       paddingBottom: 0,
-      fontSize: '137%', // 21.92px
+      fontSize: '130%', // 20.8px
     },
   ],
   [
     MEDIA_QUERY_DESKTOP_LG,
     {
       maxWidth: '1280px',
-      maxHeight: '750px',
-      columnGap: '45px',
+      maxHeight: '675px',
+      columnGap: '80px',
       columns: 2,
       paddingLeft: 0,
       paddingRight: 0,
       paddingTop: 0,
       paddingBottom: 0,
-      fontSize: '155%', // 24.8px
+      fontSize: '150%', // 24px
     },
   ],
   [
     MEDIA_QUERY_DESKTOP_XL,
     {
       maxWidth: '1680px',
-      maxHeight: '900px',
+      maxHeight: '880px',
       columnGap: '125px',
       columns: 2,
       paddingLeft: 0,
