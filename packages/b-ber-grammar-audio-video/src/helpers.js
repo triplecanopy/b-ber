@@ -83,7 +83,7 @@ export function createIFrame({
         <iframe src="${Url.encodeQueryString(source)}" />
           ${
             caption
-              ? `<p class="bber-caption bber-caption__${mediaType}">${caption}</p>`
+              ? `<p class="caption caption__${mediaType}">${caption}</p>`
               : ''
           }
       </section>
@@ -121,7 +121,7 @@ export function createMediaInline({
         </${mediaType}>
         ${
           caption
-            ? `<p class="bber-caption bber-caption__${mediaType}">${caption}</p>`
+            ? `<p class="caption caption__${mediaType}">${caption}</p>`
             : ''
         }
       </section>

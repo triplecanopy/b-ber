@@ -247,9 +247,7 @@ export const renderPosterImage = poster =>
   poster ? `<img src="${poster}" alt="Poster Image"/>` : ''
 
 export const renderCaption = (caption, mediaType) =>
-  caption
-    ? `<p class="bber-caption bber-caption__${mediaType}">${caption}</p>`
-    : ''
+  caption ? `<p class="caption caption__${mediaType}">${caption}</p>` : ''
 
 export const getMediaType = type => {
   const index = type.indexOf('-')
