@@ -6,6 +6,7 @@ import {
   MEDIA_QUERY_MOBILE,
   MEDIA_QUERY_TABLET,
   MEDIA_QUERY_DESKTOP,
+  columns,
 } from '../constants'
 
 class Viewport {
@@ -25,8 +26,7 @@ class Viewport {
     const { css } = Viewport.getCss()
 
     return (
-      parseInt(css.columns, 10) === 1 ||
-      Viewport.isMinimumScrollingAspectRatio()
+      css.columns === columns.ONE || Viewport.isMinimumScrollingAspectRatio()
     )
   }
 
@@ -114,7 +114,7 @@ class Viewport {
       maxWidth,
       maxHeight,
       columnGap,
-      columns,
+      columns: cssColumns,
       paddingLeft,
       paddingRight,
       paddingTop,
@@ -132,7 +132,7 @@ class Viewport {
       paddingBottom: verticalPadding + parseInt(paddingBottom, 10),
       columnGap: parseInt(columnGap, 10),
       fontSize,
-      columns,
+      columns: cssColumns,
     }
 
     return styles

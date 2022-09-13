@@ -25,6 +25,11 @@ export const MEDIA_CONTROLS_PRESETS = new Set(['simple', 'normal', 'full'])
 
 export const layouts = { SCROLL: 'scroll', COLUMNS: 'columns' }
 
+// CSS declarations for columns on Layout container. 'auto auto' is required
+// instead of 1, 1 auto, etc as numeric values tend to break the layout on
+// Chrome when using 'layout: scroll' in the project config
+export const columns = { ONE: 'auto auto', TWO: '2 auto' }
+
 // Enforce a single column scrolling layout on awkward screen sizes
 export const MEDIA_QUERY_MIN_SCROLLING_ASPECT_RATIO = 'only screen and (min-aspect-ratio: 13 / 5)'
 
@@ -53,7 +58,7 @@ export const horizontalBreakpoints = new Map([
       maxWidth: '100%',
       maxHeight: 'auto',
       columnGap: '45px',
-      columns: 1,
+      columns: columns.ONE,
       paddingLeft: '15px',
       paddingRight: '15px',
       paddingTop: '15px',
@@ -67,7 +72,7 @@ export const horizontalBreakpoints = new Map([
       maxWidth: '738px',
       maxHeight: 'auto',
       columnGap: '45px',
-      columns: 1,
+      columns: columns.ONE,
       paddingLeft: 0,
       paddingRight: 0,
       paddingTop: '15px',
@@ -81,7 +86,7 @@ export const horizontalBreakpoints = new Map([
       maxWidth: '900px',
       maxHeight: '500px',
       columnGap: '45px',
-      columns: 2,
+      columns: columns.TWO,
       paddingLeft: 0,
       paddingRight: 0,
       paddingTop: 0,
@@ -95,7 +100,7 @@ export const horizontalBreakpoints = new Map([
       maxWidth: '1080px',
       maxHeight: '600px',
       columnGap: '65px',
-      columns: 2,
+      columns: columns.TWO,
       paddingLeft: 0,
       paddingRight: 0,
       paddingTop: 0,
@@ -109,7 +114,7 @@ export const horizontalBreakpoints = new Map([
       maxWidth: '1280px',
       maxHeight: '675px',
       columnGap: '80px',
-      columns: 2,
+      columns: columns.TWO,
       paddingLeft: 0,
       paddingRight: 0,
       paddingTop: 0,
@@ -123,7 +128,7 @@ export const horizontalBreakpoints = new Map([
       maxWidth: '1680px',
       maxHeight: '880px',
       columnGap: '125px',
-      columns: 2,
+      columns: columns.TWO,
       paddingLeft: 0,
       paddingRight: 0,
       paddingTop: 0,
@@ -132,3 +137,4 @@ export const horizontalBreakpoints = new Map([
     },
   ],
 ])
+

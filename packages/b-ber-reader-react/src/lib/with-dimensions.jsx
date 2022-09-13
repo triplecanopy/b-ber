@@ -6,6 +6,7 @@ import { connect } from 'react-redux'
 import Viewport from '../helpers/Viewport'
 import { isNumeric } from '../helpers/Types'
 import * as viewerSettingsActions from '../actions/viewer-settings'
+import { columns } from '../constants'
 
 const withDimensions = WrappedComponent => {
   class WrapperComponent extends React.Component {
@@ -44,9 +45,13 @@ const withDimensions = WrappedComponent => {
       const scrollingLayout = Viewport.isVerticallyScrolling(this.props)
       const width = this.getWidth(scrollingLayout)
       const height = scrollingLayout ? 'auto' : window.innerHeight
-      const columns = scrollingLayout ? 1 : 2
+      const nextColumns = scrollingLayout ? columns.ONE : columns.TWO
 
-      this.props.viewerSettingsActions.update({ width, height, columns })
+      this.props.viewerSettingsActions.update({
+        width,
+        height,
+        columns: nextColumns,
+      })
     }
 
     getFrameHeight() {

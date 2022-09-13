@@ -1,7 +1,7 @@
 import isPlainObject from 'lodash/isPlainObject'
 import has from 'lodash/has'
 import { isNumeric } from '../helpers/Types'
-import { transitions, themes } from '../constants'
+import { transitions, themes, columns } from '../constants'
 import Viewport from '../helpers/Viewport'
 
 const extendExistingProps = (target, ref, obj, opts = { enumerable: true }) => {
@@ -40,7 +40,7 @@ class ViewerSettings {
     theme: themes.DEFAULT,
     transition: transitions.SLIDE,
     transitionSpeed: 400,
-    columns: 2,
+    columns: columns.TWO,
 
     fontSize: () => Viewport.styles().fontSize,
     columnGap: () => Viewport.styles().columnGap,
