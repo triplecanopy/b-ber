@@ -169,19 +169,26 @@ class Layout extends React.Component {
       paddingRight,
     } = this.props.viewerSettings
 
-    // Ultimately new classes should be added for the layout property to end up with
-    // combinations of contexts and layouts, like `.context__desktop.layout__scroll`,
-    // `.context__desktop.layout__columns`, `.context__mobile.layout__scroll`, etc.
-    let contextClass = ''
+    // Set up context__* class names based on screen dimensions and
+    // project configuration
+    const contextClasses = []
 
-    if (layout === layouts.SCROLL) {
-      contextClass = 'scroll'
-    } else {
-      contextClass = Viewport.isVerticallyScrolling({ layout })
-        ? 'mobile'
-        : 'desktop'
+    if (Viewport.isVerticallyScrolling({ layout })) {
+      contextClasses.push('scroll')
     }
 
+    if (Viewport.isMediaQueryDesktop()) {
+      contextClasses.push('desktop')
+    } else {
+      contextClasses.push('mobile')
+    }
+
+    // Map to string for className below
+    const contextClassNames = contextClasses
+      .map(name => `context__${name}`)
+      .join(' ')
+
+    // Setup inline styles
     const defaultContentStyles = { padding: 0, margin: 0 }
     const contentStyles = { ...defaultContentStyles, minHeight: height }
     const layoutTransition = transitions({ transitionSpeed })[transition]
@@ -205,7 +212,7 @@ class Layout extends React.Component {
       <div
         id="layout"
         style={layoutStyles}
-        className={`spread-index__${spreadIndex} context__${contextClass} ${slug}`}
+        className={`spread-index__${spreadIndex} ${contextClassNames} ${slug}`}
       >
         <div id="content" style={contentStyles} ref={this.props.innerRef}>
           <this.props.BookContent />

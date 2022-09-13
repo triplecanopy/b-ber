@@ -3,9 +3,21 @@ import {
   horizontalBreakpoints,
   MEDIA_QUERY_DESKTOP_MD,
   MEDIA_QUERY_MIN_SCROLLING_ASPECT_RATIO,
+  MEDIA_QUERY_MOBILE,
+  MEDIA_QUERY_TABLET,
+  MEDIA_QUERY_DESKTOP,
 } from '../constants'
 
 class Viewport {
+  static isMediaQueryMobile = () =>
+    window.matchMedia(MEDIA_QUERY_MOBILE).matches
+
+  static isMediaQueryTablet = () =>
+    window.matchMedia(MEDIA_QUERY_TABLET).matches
+
+  static isMediaQueryDesktop = () =>
+    window.matchMedia(MEDIA_QUERY_DESKTOP).matches
+
   static isMinimumScrollingAspectRatio = () =>
     window.matchMedia(MEDIA_QUERY_MIN_SCROLLING_ASPECT_RATIO).matches
 

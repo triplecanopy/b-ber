@@ -31,6 +31,7 @@ export const MEDIA_QUERY_MIN_SCROLLING_ASPECT_RATIO = 'only screen and (min-aspe
 // Media queries for various horizontal screen sizes
 export const MEDIA_QUERY_MOBILE      = 'only screen and (max-width: 768px)'
 export const MEDIA_QUERY_TABLET      = 'only screen and (min-width: 768px) and (max-width: 1140px)'
+export const MEDIA_QUERY_DESKTOP     = 'only screen and (min-width: 1140px)'
 export const MEDIA_QUERY_DESKTOP_SM  = 'only screen and (min-width: 1140px) and (max-width: 1140px)'
 export const MEDIA_QUERY_DESKTOP_MD  = 'only screen and (min-width: 1140px) and (max-width: 1440px)'
 export const MEDIA_QUERY_DESKTOP_LG  = 'only screen and (min-width: 1440px) and (max-width: 1920px)'
