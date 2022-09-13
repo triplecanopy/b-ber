@@ -75,7 +75,7 @@ const init = build =>
 
 const serve = async ({ build: buildOption, external }) => {
   const location = external ? 'external' : 'local'
-  const build = buildOption ?? 'reader'
+  const build = buildOption || 'reader'
 
   await init(build)
 
