@@ -12,7 +12,11 @@ import browser from '../lib/browser'
 import withObservers from '../lib/with-observers'
 import withDimensions from '../lib/with-dimensions'
 import ReaderContext from '../lib/reader-context'
-import { RESIZE_DEBOUNCE_TIMER, layouts } from '../constants'
+import {
+  RESIZE_DEBOUNCE_TIMER,
+  breakpoints,
+  MEDIA_QUERY_MOBILE,
+} from '../constants'
 
 function Leaves({ layout, leafLeftStyles, leafRightStyles }) {
   return Viewport.isVerticallyScrolling({ layout }) ? null : (
@@ -106,16 +110,30 @@ class Layout extends React.Component {
     } = this.props.viewerSettings
 
     const { margin, border, boxSizing, columnFill, transform } = this.state
+    const { layout } = this.props
+
+    // Override padding top/bottom if the project has been configured
+    // to scroll vertically, since the padding from the media queries
+    // is no longer appropriate
+    let nextPaddingTop = paddingTop
+    let nextPaddingBottom = paddingBottom
+
+    if (Viewport.isVerticalScrollConfigured(layout)) {
+      // Get padding from mobile entry in breakpoint map
+      const breakpoint = breakpoints.get(MEDIA_QUERY_MOBILE)
+
+      nextPaddingTop = breakpoint.paddingTop
+      nextPaddingBottom = breakpoint.paddingBottom
+    }
 
     return {
       width,
       height,
       columnGap,
-      paddingTop,
+      paddingTop: nextPaddingTop,
       paddingLeft,
       paddingRight,
-      paddingBottom,
-
+      paddingBottom: nextPaddingBottom,
       margin,
       border,
       boxSizing,

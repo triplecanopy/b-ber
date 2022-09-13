@@ -1,6 +1,6 @@
 import {
   layouts,
-  horizontalBreakpoints,
+  breakpoints,
   MEDIA_QUERY_DESKTOP_MD,
   MEDIA_QUERY_MIN_SCROLLING_ASPECT_RATIO,
   MEDIA_QUERY_MOBILE,
@@ -30,8 +30,10 @@ class Viewport {
     )
   }
 
+  static isVerticalScrollConfigured = layout => layout === layouts.SCROLL
+
   static isVerticallyScrolling = ({ layout }) =>
-    Viewport.isSingleColumn() || layout === layouts.SCROLL
+    Viewport.isSingleColumn() || Viewport.isVerticalScrollConfigured(layout)
 
   static isTouch = () =>
     'ontouchstart' in window /* iOS and Android */ ||
@@ -93,10 +95,10 @@ class Viewport {
   // Returns CSS to be applied to use to calculate various frame dimensions
   static getCss = () => {
     let mediaQuery = MEDIA_QUERY_DESKTOP_MD
-    let css = horizontalBreakpoints.get(mediaQuery)
+    let css = breakpoints.get(mediaQuery)
 
     // eslint-disable-next-line no-unused-vars
-    for (const [query, styles] of horizontalBreakpoints) {
+    for (const [query, styles] of breakpoints) {
       if (window.matchMedia(query).matches) {
         css = { ...styles }
         mediaQuery = query

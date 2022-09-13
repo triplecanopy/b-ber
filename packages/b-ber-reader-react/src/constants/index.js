@@ -48,10 +48,10 @@ export const MEDIA_QUERY_SLIDING   = 'only screen and (min-width: 1140px) and (m
 
 /**
  *
- * Horizontal Spacing
+ * Breakpoints
  *
  */
-export const horizontalBreakpoints = new Map([
+export const breakpoints = new Map([
   [
     MEDIA_QUERY_MOBILE,
     {
