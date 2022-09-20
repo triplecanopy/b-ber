@@ -11,7 +11,7 @@ import generate from 'css-tree/lib/generator'
 
 import Url from './Url'
 import Request from './Request'
-import Cache from './Cache'
+// import Cache from './Cache'
 import { BookMetadata, SpineItem, GuideItem } from '../models'
 import { processingInstructions, isValidNode } from '../lib/process-nodes'
 import DocumentProcessor from '../lib/DocumentProcessor'
@@ -69,7 +69,7 @@ class XMLAdaptor {
       }
 
       const { href } = item.attributes
-      Request.get(Url.resolveRelativeURL(opsURL, href)).then(({ data }) => {
+      Request.getText(Url.resolveRelativeURL(opsURL, href)).then(({ data }) => {
         resolve({
           ...rootNode,
           __ncx: JSON.parse(xmljs.xml2json(data)),
@@ -300,14 +300,14 @@ class XMLAdaptor {
   }
 
   static async parseSpineItemResponse(response) {
-    const { responseURL } = response.request
+    const { url: responseURL } = response.request
 
     const {
       hash,
       opsURL,
       paddingLeft,
       columnGap,
-      cache: useLocalStorageCache,
+      // cache: useLocalStorageCache,
     } = response
 
     const htmlToReactParser = new HtmlToReactParser()
@@ -360,7 +360,7 @@ class XMLAdaptor {
           //   return
           // }
 
-          Request.get(url).then(rsp => {
+          Request.getText(url).then(rsp => {
             // if (useLocalStorageCache) {
             //   console.log('No CSS cache - setting cache for %s', url)
             //   Cache.set(url, rsp.data)

@@ -76,7 +76,7 @@ class Footnote extends React.Component {
     const { hash } = new window.URL(this.props.href)
     const id = hash.slice(1)
 
-    const { data } = await Request.get(this.props.href)
+    const { data } = await Request.getText(this.props.href)
     const parser = new window.DOMParser()
     const doc = parser.parseFromString(data, 'text/html')
     const elem = doc.getElementById(id)
