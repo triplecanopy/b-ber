@@ -74,10 +74,6 @@ module.exports = [
 
             // https://github.com/webpack/webpack/issues/4039
             modules: 'commonjs',
-
-            targets: {
-              browsers: 'last 2 versions, > 2%',
-            },
           },
         ],
         '@babel/preset-react',

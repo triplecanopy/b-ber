@@ -36,9 +36,8 @@ class App extends Component {
       // Books with a different full-path specified in the container.xml will of
       // course fail
       try {
-        const resp = await Request.get(manifestURL)
+        const resp = await Request.getJson(manifestURL)
         const { data } = resp
-
         const { href: opfURL } = data.resources.find(
           res => res.type === 'application/oebps-package+xml'
         )

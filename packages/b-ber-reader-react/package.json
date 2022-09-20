@@ -70,6 +70,7 @@
     "style-loader": "^0.20.2",
     "sugarss": "^1.0.1",
     "tar": "^6.1.11",
+    "terser-webpack-plugin": "^4.2.3",
     "url-loader": "^1.0.1",
     "webpack": "^4.20.2",
     "webpack-bundle-analyzer": "^3.3.2",

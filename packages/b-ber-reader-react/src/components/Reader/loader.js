@@ -16,7 +16,7 @@ export async function createStateFromOPF(callback) {
   let guideItems
   let spineItems
 
-  data = await Request.get(opfURL)
+  data = await Request.getText(opfURL)
   data = await XMLAdaptor.parseOPF(data)
   data = await XMLAdaptor.parseNCX(data, opsURL)
   ;[guideItems, spineItems] = await Promise.all([
@@ -77,7 +77,9 @@ export async function loadSpineItem(spineItem, deferredCallback) {
 
   try {
     const { cache, opsURL } = this.state
-    const { data, request } = await Request.get(requestedSpineItem.absoluteURL)
+    const { data, request } = await Request.getText(
+      requestedSpineItem.absoluteURL
+    )
 
     content = await XMLAdaptor.parseSpineItemResponse({
       data,
