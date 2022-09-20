@@ -1,6 +1,6 @@
 {
   "name": "@canopycanopycanopy/b-ber-grammar-frontmatter",
-  "version": "1.2.15",
+  "version": "1.2.16",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -25,7 +25,7 @@
     "rimraf": "^2.7.1"
   },
   "dependencies": {
-    "@canopycanopycanopy/b-ber-lib": "1.2.15",
+    "@canopycanopycanopy/b-ber-lib": "1.2.16",
     "lodash": "^4.17.21",
     "tar": "^6.1.11"
   },
