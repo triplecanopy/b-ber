@@ -3,11 +3,14 @@ import has from 'lodash/has'
 import { Parser as HtmlToReactParser } from 'html-to-react'
 import find from 'lodash/find'
 
-import { List } from 'css-tree/lib/utils'
-// import * as parse from 'css-tree/lib/parser'
-import parse from 'css-tree/lib/parser'
-import walk from 'css-tree/lib/walker'
-import generate from 'css-tree/lib/generator'
+// eslint-disable-next-line import/no-unresolved
+import * as utils from 'css-tree/utils'
+// eslint-disable-next-line import/no-unresolved
+import parse from 'css-tree/parser'
+// eslint-disable-next-line import/no-unresolved
+import walk from 'css-tree/walker'
+// eslint-disable-next-line import/no-unresolved
+import generate from 'css-tree/generator'
 
 import Url from './Url'
 import Request from './Request'
@@ -246,12 +249,12 @@ class XMLAdaptor {
         enter: (node, item, list) => {
           let nodeText
 
-          const scopedClassName = List.createItem({
+          const scopedClassName = utils.List.createItem({
             name: scope,
             type: 'ClassSelector',
           })
 
-          const whiteSpace = List.createItem({
+          const whiteSpace = utils.List.createItem({
             type: 'WhiteSpace',
             value: ' ',
           })

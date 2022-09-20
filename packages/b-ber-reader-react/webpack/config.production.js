@@ -1,7 +1,6 @@
 /* eslint-disable global-require */
 
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const TerserPlugin = require('terser-webpack-plugin')
 
 const common = require('./common')
 const loaders = require('./loaders')
@@ -38,7 +37,6 @@ module.exports = {
 
   optimization: {
     minimize: true,
-    minimizer: [new TerserPlugin()],
   },
 
   plugins,
