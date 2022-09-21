@@ -21,6 +21,7 @@ module.exports = {
     extensions: ['.js', '.jsx'],
     fallback: {
       stream: require.resolve('stream-browserify'), // sax-js
+      buffer: require.resolve('buffer'), // stream-browserify
       os: require.resolve('os-browserify/browser'), // detect-browser
     },
   },

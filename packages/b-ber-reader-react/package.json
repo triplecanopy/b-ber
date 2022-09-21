@@ -36,6 +36,7 @@
     "autoprefixer": "^9.6.1",
     "babel-eslint": "^8.2.2",
     "babel-loader": "^8.2.3",
+    "buffer": "^6.0.3",
     "concurrently": "^3.5.1",
     "core-js": "^3.6.4",
     "css-loader": "^0.28.10",
@@ -85,7 +86,6 @@
     "xmlhttprequest-ssl": "^2.0.0"
   },
   "dependencies": {
-    "axios": "^0.21.1",
     "classnames": "^2.2.5",
     "css-tree": "^2.1.0",
     "detect-browser": "^2.1.0",
