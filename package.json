@@ -27,6 +27,7 @@
     "postpublish": "node scripts/run-ci.js",
     "publish:canary": "lerna publish --canary",
     "publish:latest": "lerna publish",
+    "publish:lts-2": "[[ $(git rev-parse --abbrev-ref HEAD) != lts-2 ]] && echo \"ERR: Publishing lts-2 can only be done on the lts-2 branch\" && exit 1 || npm run lerna publish -- --dist-tag lts-2",
     "outdated": "npm outdated || true && lerna exec --no-bail -- npm outdated",
     "deps:update": "lernaupdate",
     "deps:dedupe": "lernaupdate --dedupe",
