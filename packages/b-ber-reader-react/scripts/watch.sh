@@ -14,4 +14,4 @@
 CONFIG=$([[ -z $1 ]] && echo "webpack/config.development.js" || echo "$1")
 
 npm run clean
-NODE_ENV=development webpack-dev-server --config "$CONFIG"
+NODE_ENV=development webpack serve --config "$CONFIG"

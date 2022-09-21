@@ -11,6 +11,7 @@ module.exports = [
         limit: 1000,
         name: 'fonts/[name].[ext]',
         publicPath: '.',
+        esModule: false,
       },
     },
   },

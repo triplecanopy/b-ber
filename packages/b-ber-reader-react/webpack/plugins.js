@@ -1,11 +1,11 @@
 const { DefinePlugin, NoEmitOnErrorsPlugin } = require('webpack')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const FixStyleOnlyEntriesPlugin = require('webpack-fix-style-only-entries')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
+const RemoveEmptyScriptsPlugin = require('webpack-remove-empty-scripts')
 
 const plugins = [
-  // Remove css.js files from the generated package and HTML
-  new FixStyleOnlyEntriesPlugin(),
+  // Remove empty CSS files from the generated package and HTML
+  new RemoveEmptyScriptsPlugin(),
   new DefinePlugin({
     'process.env': {
       NODE_ENV: JSON.stringify(process.env.NODE_ENV || 'development'),

@@ -21,3 +21,4 @@ dev/*
 
 /*.tgz
 /tmp
+/stats.json

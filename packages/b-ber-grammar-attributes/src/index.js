@@ -262,6 +262,7 @@ const attributesObject = (attrs, origGenus, context = {}) => {
   // Add original `origGenus` as a class to the attrs object in case it's
   // different from the current `genus` (which might've changed due to it's
   // specification). do this to keep styling consistent
+
   if (genus !== origGenus) {
     if (has(attrsObject, 'classes')) {
       attrsObject.classes += ` ${origGenus}`

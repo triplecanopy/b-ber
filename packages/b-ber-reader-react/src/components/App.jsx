@@ -74,10 +74,6 @@ class App extends Component {
       console.warn('Could not load books from API', err)
     }
 
-    // console.log('---- books', books)
-    // console.log('---- bookURL', bookURL)
-    // console.log('---- projectURL', projectURL)
-
     // This is a bit confusing since an array of books can be returned, but the
     // settings for a single book need to be applied. This will need to be addressed
     // to either remove or re-enable the library functionality

@@ -14,6 +14,7 @@ module.exports = {
             options: {
               limit: 1000,
               mimetype: 'application/octet-stream',
+              esModule: false,
             },
           },
         ],
