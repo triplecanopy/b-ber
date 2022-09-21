@@ -56,6 +56,7 @@ const _isUnsupportedAttribute = (genus, attr) => {
     key = 'block'
   } else {
     // this will be the directive name, e.g., figure, video, etc
+
     key = genus
   }
 
@@ -245,7 +246,7 @@ const attributesObject = (attrs, origGenus, context = {}) => {
 
   if (attrs && typeof attrs === 'string') {
     forOf(parseAttrs(attrs.trim()), (k, v) => {
-      if (_isUnsupportedAttribute(origGenus, k)) {
+      if (_isUnsupportedAttribute(genus, k)) {
         return log.warn(
           `render omitting unsupported attribute [${k}] at [${fileName}:${lineNumber}]`
         )
@@ -258,6 +259,7 @@ const attributesObject = (attrs, origGenus, context = {}) => {
   // Add original `origGenus` as a class to the attrs object in case it's
   // different from the current `genus` (which might've changed due to it's
   // specification). do this to keep styling consistent
+
   if (genus !== origGenus) {
     if (has(attrsObject, 'classes')) {
       attrsObject.classes += ` ${origGenus}`
