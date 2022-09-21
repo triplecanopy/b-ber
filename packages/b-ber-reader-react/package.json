@@ -1,6 +1,6 @@
 {
   "name": "@canopycanopycanopy/b-ber-reader-react",
-  "version": "1.2.12",
+  "version": "2.0.0",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
