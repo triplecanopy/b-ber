@@ -1,0 +1,169 @@
+// Returns a unitless line-height value, relative to an element's font size.
+// Calculated by using the global `$line-height-base`
+// @example     line-height(11.390625em) // => 1.037037037
+@function line-height($font-size) {
+  @return $line-height-base * 1em * math.div($line-height-base, $font-size);
+}
+
+// Returns a value for a single line-height unit in `em`s, relative to the
+// element's font-size. Useful for consistently spacing top/bottom
+// margin/padding
+// @example     adjust-line-height-value(0) // => 1.3125em
+// @example     adjust-line-height-value(6) // => 0.1152263374em
+@function adjust-line-height-value($value) {
+  @return math.div($line-height-base, strip-unit(ms($value))) + 0em;
+}
+
+// Returns relative em value representing the base font size that is
+// adjusted for the elements font size. Examples below assume the
+// $font-size-base is 1.6em
+// @example     adjust-font-size-value(0)   => 1em             // 16px
+// @example     adjust-font-size-value(-1)  => 1.066666667em   // 16px
+// @example     adjust-font-size-value(-2)  => 1.1377777785em  // 16px
+@function adjust-font-size-value($value) {
+  @return math.div(strip-unit($font-size-base), strip-unit(ms($value))) + 0em;
+}
+
+// Compose typographic styles
+@mixin type-settings($value) {
+  font-size: ms($value);
+  line-height: line-height(ms($value));
+
+  @if $vertical-space == true {
+    margin-bottom: adjust-line-height-value($value);
+  }
+}
+
+// Abstract wrappers for element spacing
+// @param $n        int     How many spaces?
+// @param $value    int     The modular scale index of the element
+@function n-lines($n, $value) {
+  @return adjust-line-height-value($value) * $n + 0em;
+}
+
+@function n-ems($n, $value) {
+  @return adjust-font-size-value($value) * $n + 0em;
+}
+
+// Convenience wrappers for element spacing.
+// @param $value    int     The modular scale index of the element
+// @example         margin-top: one-line(0); // => margin-top: 1.3125em;
+@function one-line($value) {
+  @return n-lines(1, $value);
+}
+@function two-lines($value) {
+  @return n-lines(2, $value);
+}
+@function three-lines($value) {
+  @return n-lines(3, $value);
+}
+@function four-lines($value) {
+  @return n-lines(4, $value);
+}
+@function five-lines($value) {
+  @return n-lines(5, $value);
+}
+
+// @param   $value  int     The modular scale index of the element
+// @example         margin-top: one-em(0); // => margin-top: 1em;
+@function one-em($value) {
+  @return n-ems(1, $value);
+}
+@function two-ems($value) {
+  @return n-ems(2, $value);
+}
+@function three-ems($value) {
+  @return n-ems(3, $value);
+}
+@function four-ems($value) {
+  @return n-ems(4, $value);
+}
+@function five-ems($value) {
+  @return n-ems(5, $value);
+}
+
+// Add padding and margins programmatically based on font-size
+// @param $value                                string                  Elements type-settings name
+// @param $top[, $left[, $bottom[, $right]]]    int, int, int, int      Number of line-height/font-size units
+@function spacing($value, $args) {
+  $result: ();
+
+  @if length($args) > 4 {
+    @error "`*-margin' and `*-padding' mixins expect maximum four arguments";
+  } @else if length($args) == 1 {
+    $y: adjust-line-height-value($value) * nth($args, 1) + 0em;
+    $x: adjust-font-size-value($value) * nth($args, 1) + 0em;
+
+    $result: ($y $x $y $x);
+  } @else if length($args) == 2 {
+    $y: adjust-line-height-value($value) * nth($args, 1) + 0em;
+    $x: adjust-font-size-value($value) * nth($args, 2) + 0em;
+
+    $result: ($y $x $y $x);
+  } @else if length($args) == 3 {
+    $y1: adjust-line-height-value($value) * nth($args, 1) + 0em;
+    $x: adjust-font-size-value($value) * nth($args, 2) + 0em;
+    $y2: adjust-line-height-value($value) * nth($args, 3) + 0em;
+
+    $result: ($y1 $x $y2 0);
+  } @else {
+    $y1: adjust-line-height-value($value) * nth($args, 1) + 0em;
+    $x1: adjust-font-size-value($value) * nth($args, 2) + 0em;
+    $y2: adjust-line-height-value($value) * nth($args, 3) + 0em;
+    $x2: adjust-font-size-value($value) * nth($args, 4) + 0em;
+
+    $result: ($y1 $x1 $y2 $x2);
+  }
+
+  @return $result;
+}
+
+// Type settings for specific elements
+@mixin caption-text {
+  @include type-settings(-7);
+}
+
+@mixin table-text {
+  @include type-settings(-6);
+}
+
+@mixin sup-text {
+  @include type-settings(-8);
+}
+
+// Generic type settings
+@mixin text-large {
+  @include type-settings(0);
+}
+
+@mixin text-medium {
+  @include type-settings(-1);
+}
+
+@mixin text-small {
+  @include type-settings(-2);
+}
+
+@mixin text-xsmall {
+  @include type-settings(-4);
+}
+
+$type-settings-map: (
+  'text-large': 0,
+  'text-medium': -1,
+  'text-small': -2,
+  'text-xsmall': -4,
+);
+
+// @example     @include margin('text-small', 0, 1);      // => margin: 0em 1em 0em 1em;
+// @example     @include margin('text-small', 1);         // => margin: 1em 1em 1em 1em;
+// @example     @include margin('text-small', 0, 1, 1);   // => margin: 0em 1em 1em 0em;
+@mixin margin($name, $args...) {
+  $numeric-value: map-get($type-settings-map, $name);
+  margin: spacing($numeric-value, $args);
+}
+
+@mixin padding($name, $args...) {
+  $numeric-value: map-get($type-settings-map, $name);
+  padding: spacing($numeric-value, $args);
+}

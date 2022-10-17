@@ -1,6 +1,6 @@
 {
   "name": "@canopycanopycanopy/b-ber-templates",
-  "version": "1.2.16",
+  "version": "3.0.0",
   "description": "",
   "main": "index.js",
   "directories": {
@@ -29,13 +29,14 @@
     "@babel/cli": "^7.10.5",
     "@babel/core": "^7.10.5",
     "@babel/preset-env": "^7.10.4",
+    "browserslist": "^4.17.4",
     "jest": "^26.6.3",
-    "rimraf": "^2.6.3"
+    "rimraf": "^2.7.1"
   },
   "dependencies": {
     "@babel/runtime-corejs3": "^7.10.5",
-    "@canopycanopycanopy/b-ber-lib": "1.2.16",
-    "@canopycanopycanopy/b-ber-logger": "1.2.16",
+    "@canopycanopycanopy/b-ber-lib": "3.0.0",
+    "@canopycanopycanopy/b-ber-logger": "3.0.0",
     "fs-extra": "^8.1.0",
     "image-size": "^0.8.3",
     "lodash": "^4.17.21",

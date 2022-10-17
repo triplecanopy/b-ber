@@ -85,12 +85,12 @@ exports[`templates.Toc creates a nested list 1`] = `
       <ol>
         
             <li>
-              <a href=\\"text/test.xhtml\\">Test</a>
+              <a href=\\"test.xhtml\\">Test</a>
               
       <ol>
         
             <li>
-              <a href=\\"text/test-child.xhtml\\">Test Child</a>
+              <a href=\\"test-child.xhtml\\">Test Child</a>
               
             </li>
           
@@ -102,6 +102,6 @@ exports[`templates.Toc creates a nested list 1`] = `
   "
 `;
 
-exports[`templates.Toc creates an anchor element 1`] = `"<a href=\\"text/test.xhtml\\">Test</a>"`;
+exports[`templates.Toc creates an anchor element 1`] = `"<a href=\\"test.xhtml\\">Test</a>"`;
 
-exports[`templates.Toc creates an ordered list 1`] = `"<a href=\\"text/l1.xhtml\\">Test</a>"`;
+exports[`templates.Toc creates an ordered list 1`] = `"<a href=\\"l1.xhtml\\">Test</a>"`;

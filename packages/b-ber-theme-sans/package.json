@@ -1,6 +1,6 @@
 {
   "name": "@canopycanopycanopy/b-ber-theme-sans",
-  "version": "1.2.16",
+  "version": "3.0.0",
   "description": "A sans theme for b-ber projects",
   "main": "index.js",
   "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
@@ -20,14 +20,15 @@
     "clean": "echo OK"
   },
   "dependencies": {
-    "@canopycanopycanopy/b-ber-theme-serif": "1.2.16",
+    "@canopycanopycanopy/b-ber-theme-serif": "3.0.0",
     "lodash": "^4.17.21",
     "modularscale-sass": "^3.0.10"
   },
   "devDependencies": {
     "@babel/cli": "^7.10.5",
     "@babel/core": "^7.10.5",
-    "@babel/preset-env": "^7.10.4"
+    "@babel/preset-env": "^7.10.4",
+    "browserslist": "^4.17.4"
   },
   "gitHead": "9936fe3f4af76aa7b67ce10c2ed3a32b7de6ce6c"
 }

@@ -1,0 +1,603 @@
+// sass-lint:disable mixins-before-declarations,nesting-depth
+
+// Web build. These styles will be added to the main stylesheet when running
+// `bber build web`.
+//
+// Currently this file contains all the elements for the web build. This should
+// eventually be split up into the chrome with UX elements (including Material
+// design icon fonts and other vendor assets), and the styles for the page
+// content itself. This *also* means that the web build task in
+// bber-output/web/index.es should be updated to distinguish between the UX and
+// content as well. Then users can add their own UI.
+//
+// The b-ber web layout uses CSS Grid for a multi-column layout. The default
+// styles create a container with three rows (header, content, and footer), and
+// twelve vertical columns.
+//
+// In addition, the web build creates navigation and info panels that can be
+// updated in individual themes, or by porting the SCSS below into a child
+// theme.
+
+// Some mixins can be found below. These are declared above the `@if $build == ...` styles,
+// since we can't declare mixins in a conditional statement in SCSS.
+@mixin web-grid-container {
+  display: grid;
+  grid-template-columns: repeat($grid-column-count, 1fr);
+}
+
+@mixin web-grid-full-width {
+  grid-column: 1 / span $grid-column-count;
+}
+
+@mixin web-navigation-link {
+  // These are the links that appear in the navigation sidebar (the table of contents).
+  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+  text-decoration: none;
+  color: $black;
+  letter-spacing: 0.02em;
+}
+
+// Conditional styles for the web build. The `web` variable is set dynamically
+// during build when running `bber build --web`
+@if $build == 'web' {
+  // Some base styles
+  body {
+    padding: 0;
+  }
+  button {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    padding: 5px;
+    outline: none;
+    cursor: pointer;
+
+    &:hover {
+      color: $success;
+    }
+    &:active,
+    &:focus {
+      outline: none;
+    }
+  }
+
+  // Variables for spacing, sizing, and transitions.
+  //
+  // Show/hide the navigation panels (TOC and info sidebar).
+  $transition-speed: 250ms;
+  $transition-easing: ease;
+
+  // Basic spacing
+  $dimensions-extra-large-x: 128px;
+  $dimensions-extra-large-y: 128px;
+
+  $dimensions-large-x: $dimensions-extra-large-x / 2;
+  $dimensions-large-y: $dimensions-extra-large-y / 2;
+
+  $dimensions-medium-x: $dimensions-large-x / 2;
+  $dimensions-medium-y: $dimensions-large-y / 2;
+
+  $dimensions-small-x: $dimensions-medium-x / 2;
+  $dimensions-small-y: $dimensions-medium-y / 2;
+
+  $cell-large-width: $dimensions-extra-large-x * 3;
+
+  // The `publication` element is the main CSS Grid, it contains both vertical
+  // and horizontal grid elements.
+  .publication {
+    min-height: 100vh;
+    position: relative;
+    margin: 0;
+    padding: 0;
+    transition: padding-right $transition-speed $transition-easing;
+
+    display: grid;
+    grid-template-columns: repeat($grid-column-count, 1fr);
+    grid-template-rows: $dimensions-large-y auto $dimensions-extra-large-y * 0.75;
+    grid-gap: 0;
+  }
+
+  // Publication title is the first element in the TOC panel.
+  .publication__title {
+    @include web-navigation-link;
+    @include text-small;
+    height: $dimensions-large-x;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    border-bottom: 1px solid $grey;
+    text-indent: one-em(0);
+    padding-left: 15px; // mimic layout of list elements in TOC
+    font-weight: 700;
+  }
+
+  // Search bar
+  .publication__search {
+    position: absolute;
+    left: 70%; // This is effectively the width of the serach bar when expanded since it's pinned right.
+    right: $dimensions-large-x;
+    height: $dimensions-large-x;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: flex-end;
+
+    .publication__search__input {
+      @include text-small;
+      border: 0;
+      display: block;
+      margin: 0;
+      padding: 0 0 5px;
+      width: 0;
+      outline: none;
+      background-color: $white;
+      transition: width $transition-speed $transition-easing;
+      border-bottom: 1px solid $black;
+      &.publication__search__input--expanded {
+        margin-left: 10px; // optics
+        width: $cell-large-width;
+      }
+    }
+    .publication__search__button {
+      padding: 10px;
+      position: relative;
+      right: -10px;
+    }
+    .publication__search__button--close {
+      position: absolute;
+      visibility: hidden;
+      right: -15px;
+      &.publication__search__button--close--visible {
+        visibility: visible;
+      }
+    }
+  }
+
+  // The table of contents, which is an ordered, nested list.
+  .publication__toc {
+    @include caption-text;
+    transform: translateX(-100%);
+    position: fixed;
+    z-index: 2;
+    top: 0;
+    bottom: 0;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch; // sass-lint:disable-line no-vendor-prefixes
+    border-right: 1px solid $grey;
+    background-color: $white;
+    width: $cell-large-width;
+    transition: transform $transition-speed $transition-easing;
+    ol,
+    ul,
+    li,
+    a {
+      @include web-navigation-link;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    & > ol {
+      padding-right: 15px;
+    }
+    ol li,
+    ul li {
+      white-space: nowrap; // Hide the overflow on longer TOC entries, will become
+      // problematic for deeply nested structures.
+      text-overflow: ellipsis;
+      overflow: hidden;
+      margin: 5px 0;
+      &:last-child {
+        margin: 0;
+      }
+    }
+    ol ul,
+    ol ol {
+      padding: 0 0 0 one-em(0);
+    }
+  }
+
+  .publication__info {
+    @include caption-text;
+    transform: translateX(100%);
+    position: fixed;
+    z-index: 1;
+    top: $dimensions-large-x;
+    bottom: 0;
+    right: 0;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch; // sass-lint:disable-line no-vendor-prefixes
+    border-left: 1px solid $grey;
+    background-color: $white;
+    width: $cell-large-width;
+    transition: transform $transition-speed $transition-easing;
+
+    dt,
+    dd {
+      @include web-navigation-link;
+    }
+    & > dl {
+      padding-right: 15px;
+    }
+    dl dt,
+    dl dd {
+      white-space: nowrap; // Hide the overflow on longer TOC entries, which could become
+      // problematic for deeply nested structures.
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+    dl dt {
+      text-transform: capitalize;
+      margin: 5px 0;
+      &:last-child {
+        margin: 0;
+      }
+    }
+    dl dd {
+      margin: 5px 0 one-line(0);
+      &:last-child {
+        margin: 0;
+      }
+    }
+
+    dl dl {
+      padding: 0 0 0 one-em(0);
+    }
+
+    dt {
+      font-weight: 700;
+    }
+  }
+
+  body.toc--visible {
+    // The `toc--visible` class is toggled via JavaScript in
+    // the footer of the generated HTML pages.
+    .publication__toc {
+      transform: translateX(0);
+    }
+    .publication__contents:before {
+      visibility: visible;
+      opacity: 0.5;
+    }
+  }
+
+  body.info--visible {
+    .publication__info {
+      transform: translateX(0);
+    }
+    .publication {
+      padding-right: $cell-large-width;
+    }
+  }
+
+  // Header styles
+  .publication__header {
+    @include caption-text;
+    @include web-grid-full-width;
+    grid-row: 1;
+
+    margin: 0;
+    padding: 0;
+    top: 0;
+    left: 0;
+    height: $dimensions-large-y;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.26);
+    position: fixed;
+    width: 100%;
+    z-index: 2;
+    background-color: $white;
+
+    h1 {
+      @include web-navigation-link;
+      @include text-small;
+      padding: 0;
+      margin: 0;
+    }
+
+    .header__item__title {
+    }
+    .header__item__toggle {
+      // Toggle nav buttons
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .header__item__toggle--toc {
+      left: $dimensions-small-x;
+    }
+    .header__item__toggle--info {
+      right: $dimensions-small-x;
+    }
+  }
+
+  // Prev / next arrows in the footer
+  .publication__nav {
+    @include web-grid-container; // We can't use `display: subgrid` so we re-declare
+    transition: width $transition-speed $transition-easing;
+    grid-column: 1 / span 12;
+    grid-row: 3;
+    align-items: end;
+    z-index: 1;
+
+    .publication__nav__link {
+      color: $black;
+      &:hover {
+        color: $success;
+      }
+    }
+
+    .publication__nav__prev,
+    .publication__nav__next {
+      width: auto;
+      height: $dimensions-large-y;
+      align-items: center;
+      display: flex;
+      justify-content: center;
+    }
+    .publication__nav__prev {
+      grid-column: 1;
+    }
+    .publication__nav__next {
+      grid-column: 12;
+    }
+  }
+
+  // All of the publication's content gets dropped into the
+  // `publication__contents` element during web task.
+  //
+  // For the CSS Grid layout to function propertly (i.e., allow a user to
+  // apply styles to child elements in the layout such as full-bleed images),
+  // we set the `publication__contents` to span the entire n columns, and then
+  // apply a smaller default column-span to all of the containing elements.
+  //
+  // This also means that, for the layout to function properly, *all elements
+  // should be wrapped in `section` elements*. b-ber allows a user to do this
+  // easily by using container directives, like `::: chapter`.
+  //
+  .publication__contents {
+    @include padding('text-large', 4, 0, 3, 0);
+    // grid-row: 2;
+
+    // @include web-grid-container; // We can't use `display: subgrid` so it is re-declared.
+    // @include web-grid-full-width; // `publication__contents` spans the entire page
+    // grid-template-rows: max-content; // https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template-rows
+    // * {
+    //   @include web-grid-full-width;
+    // } // All elements (except for `sections`, see below) also span the entire page.
+
+    // section {
+    //   // `section` elements are also CSS Grid containers.
+    //   @include web-grid-container;
+    //   @include web-grid-full-width;
+    //   *:not(section) {
+    //     // All child elements of a `section` (except for other `section`s)
+    //     // span a smaller area by default. This allows overrides to be
+    //     // easily applied to child elements in `_overrides.scss` to create
+    //     // more complex layouts.
+
+    //     grid-column: 4 / span 6;
+
+    //     @include break-at('xs') {
+    //       grid-column: 2 / span 10;
+    //     }
+    //     @include break-at('sm') {
+    //       grid-column: 2 / span 10;
+    //     }
+    //   }
+    // }
+
+    // Logic for overlay when sidebar open
+    &:before {
+      content: '';
+      visibility: hidden;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      opacity: 0;
+      background-color: $black;
+      transition: opacity $transition-speed $transition-easing;
+    }
+  }
+
+  // The first page (index.html) of the generated web build is the
+  // publication's cover image, which is wrapped in a link that leads to the
+  // first page of text.
+  .cover__image__link {
+    display: block;
+    text-align: center;
+    height: calc(100vh - #{n-lines(8, 0)} - #{$dimensions-large-y});
+  }
+  .cover__image {
+    max-height: 100%;
+  }
+
+  // Search results layout. Search results are added and removed to/from the
+  // `publication__contents` element dynamically on search.
+  .search__results {
+    margin-top: three-lines(0) * -1;
+    margin-bottom: two-lines(0);
+  }
+  .search__result {
+    @include type-settings(-5);
+    line-height: 1.35;
+    margin-bottom: one-line(0);
+
+    * {
+      margin: 0;
+      padding: 0;
+      font-weight: 400;
+      font-style: normal;
+      text-indent: 0;
+      text-align: left;
+    }
+  }
+  .search__result__link {
+    text-decoration: none;
+    color: $black;
+
+    mark {
+      // Search terms that are found in the text are highlighted bold.
+      color: $black;
+      font-weight: 700;
+      background-color: transparent;
+    }
+  }
+
+  // The context around the found search term, i.e., 100 characters on either
+  // side of the text around the found search term.
+  .search__result__text {
+    display: inline-block;
+    padding: 5px 0;
+  }
+
+  // Media queries
+  @include break-at('xs') {
+    // Sidebars
+    .publication__toc,
+    .publication__info {
+      border-right: 0;
+      width: 100%;
+    }
+
+    .publication__toc {
+      top: $dimensions-large-x;
+      z-index: 1;
+    }
+
+    .publication__search {
+      left: 42px;
+    }
+
+    body.info--visible {
+      .publication {
+        padding-right: 0;
+      }
+    }
+  }
+
+  .figure__large.figure__inline {
+    margin: one-line(0) 0;
+  }
+
+  figure .figcaption a,
+  figure figcaption a,
+  .figure__items a {
+    color: $black;
+    text-decoration: underline !important; // sass-lint:disable-line no-important
+  }
+
+  // Fullbleed. fullbleed panels are completely customizeable, so set to
+  // position: absoulte for full control over child positioning below. Can be
+  // used to add sub-grids.
+  .figure__fullbleed:not(.figure__small) {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: 0;
+    grid-column: 1 !important; // sass-lint:disable-line no-important
+
+    &.figure__large.figure__inline.figure__fullbleed {
+      figure {
+        .figure__items {
+          img {
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
+          }
+          .figcaption {
+            position: absolute;
+            left: 50px;
+            bottom: 75px;
+            width: 40%;
+          }
+        }
+      }
+    }
+
+    figure {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+
+      .figure__items {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+      }
+      .figure__items img,
+      .figure__items video {
+      }
+    }
+  }
+
+  // Mobile Overrides for Galleries, Fullbleed images, and spreads.
+  @include break-at('xs') {
+    // Fullbleed
+    .figure__fullbleed.figure__inline--landscape .figure__items {
+      height: auto;
+      margin: 0 auto;
+      width: auto;
+      img {
+        height: auto;
+        object-fit: cover;
+      }
+      .figcaption {
+        bottom: auto;
+        display: inline-block;
+        left: auto;
+        margin: 0;
+        padding: 0;
+        position: relative;
+      }
+    }
+    // Spread
+    .spread {
+      section {
+        height: auto;
+        width: auto;
+      }
+    }
+  }
+
+  // Media
+  section.video {
+    position: relative;
+  }
+  button.media__controls {
+    @extend .icon-font;
+    position: absolute;
+    font-size: 3rem;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+
+    &.media__controls--pause {
+      &:before {
+        content: 'pause_circle_outline';
+      }
+    }
+    &.media__controls--play {
+      &:before {
+        content: 'play_circle_outline';
+      }
+    }
+  }
+} // endif build == web

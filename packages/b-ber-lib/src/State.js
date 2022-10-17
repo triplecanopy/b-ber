@@ -6,6 +6,7 @@ import find from 'lodash/find'
 import findIndex from 'lodash/findIndex'
 import set from 'lodash/set'
 import get from 'lodash/get'
+import has from 'lodash/has'
 import merge from 'lodash/merge'
 import remove from 'lodash/remove'
 import path from 'path'
@@ -269,6 +270,10 @@ class State {
 
   update = (prop, val) => {
     set(this, prop, val)
+  }
+
+  has = prop => {
+    return has(this, prop)
   }
 
   contains = (coll, value) => this.indexOf(coll, value) > -1

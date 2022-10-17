@@ -1,6 +1,6 @@
 {
   "name": "@canopycanopycanopy/b-ber-tasks",
-  "version": "1.2.16",
+  "version": "3.0.0",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -19,14 +19,14 @@
   },
   "dependencies": {
     "@babel/runtime-corejs3": "^7.10.5",
-    "@canopycanopycanopy/b-ber-lib": "1.2.16",
-    "@canopycanopycanopy/b-ber-logger": "1.2.16",
-    "@canopycanopycanopy/b-ber-markdown-renderer": "1.2.16",
-    "@canopycanopycanopy/b-ber-reader": "1.2.16",
-    "@canopycanopycanopy/b-ber-resources": "1.2.16",
-    "@canopycanopycanopy/b-ber-shapes-sequences": "1.2.16",
-    "@canopycanopycanopy/b-ber-templates": "1.2.16",
-    "@canopycanopycanopy/b-ber-validator": "1.2.16",
+    "@canopycanopycanopy/b-ber-lib": "3.0.0",
+    "@canopycanopycanopy/b-ber-logger": "3.0.0",
+    "@canopycanopycanopy/b-ber-markdown-renderer": "3.0.0",
+    "@canopycanopycanopy/b-ber-reader": "3.0.0",
+    "@canopycanopycanopy/b-ber-resources": "3.0.0",
+    "@canopycanopycanopy/b-ber-shapes-sequences": "3.0.0",
+    "@canopycanopycanopy/b-ber-templates": "3.0.0",
+    "@canopycanopycanopy/b-ber-validator": "3.0.0",
     "autoprefixer": "^9.6.1",
     "browser-sync": "^2.27.7",
     "bs-html-injector": "^3.0.3",
@@ -54,9 +54,10 @@
     "@babel/cli": "^7.10.5",
     "@babel/core": "^7.10.5",
     "@babel/preset-env": "^7.10.4",
-    "jest": "^24.8.0",
+    "browserslist": "^4.17.4",
+    "jest": "^26.6.3",
     "mock-fs": "^4.4.2",
-    "rimraf": "^2.6.3"
+    "rimraf": "^2.7.1"
   },
   "files": [
     "dist"

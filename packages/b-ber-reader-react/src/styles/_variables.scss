@@ -1,0 +1,25 @@
+// sass-lint:disable no-important,nesting-depth
+$white: rgba(255, 255, 255, 1);
+$black: #333333;
+$blue: rgba(105, 105, 252, 1);
+$violet: rgba(80, 80, 197, 1);
+$grey-light: rgba(211, 211, 211, 1);
+
+$small: 35px;
+$medium: 47px;
+
+$transition-speed-slow: 300ms;
+$transition-speed-normal: 200ms;
+$transition-speed-fast: 100ms;
+$transition-easing: ease;
+
+$anmiation-speed-normal: 250ms;
+$anmiation-speed-slow: 2500ms;
+
+$font-family-serif: CrimsonPro, Georgia, 'Iowan', Times, serif;
+$font-size-serif: 16px;
+
+$font-family-sans: Arial, Helvetica, sans-serif;
+$font-size-sans: 0.8rem;
+
+$spinner-size: 40px;

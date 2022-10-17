@@ -1,0 +1,73 @@
+@use "sass:math";
+
+// Remove units from a value
+// @example     strip-unit(1em) // => 1
+@function strip-unit($value) {
+  @if type-of($value) == 'number' and not unitless($value) {
+    // This looks bizare but needs to be divided by 1<unit> to yield an int
+    @return math.div($value, ($value * 0 + 1));
+  }
+
+  @return $value;
+}
+
+// Defaults to 16px, assuming the `html` element's base font size
+@function em-to-px($value, $root-px: 16px) {
+  @return strip-unit($value) * strip-unit($root-px) + 0px;
+}
+
+// Utility function to cast a string to a number.
+// https://www.sassmeister.com/gist/9fa19d254864f33d4a80
+@function to-number($value) {
+  @if type-of($value) == 'number' {
+    @return $value;
+  } @else if type-of($value) != 'string' {
+    @error "Value for `to-number' must be a number or a string.";
+  }
+
+  $result: 0;
+  $digits: 0;
+  $minus: str-slice($value, 1, 1) == '-';
+  $numbers: (
+    '0': 0,
+    '1': 1,
+    '2': 2,
+    '3': 3,
+    '4': 4,
+    '5': 5,
+    '6': 6,
+    '7': 7,
+    '8': 8,
+    '9': 9,
+  );
+
+  @for $i from if($minus, 2, 1) through str-length($value) {
+    $character: str-slice($value, $i, $i);
+
+    @if not(index(map-keys($numbers), $character) or $character == '.') {
+      @return to-length(if($minus, -$result, $result), str-slice($value, $i));
+    }
+
+    @if $character == '.' {
+      $digits: 1;
+    } @else if $digits == 0 {
+      $result: $result * 10 + map-get($numbers, $character);
+    } @else {
+      $digits: $digits * 10;
+      $result: $result + map-get($numbers, $character) / $digits;
+    }
+  }
+
+  @return if($minus, -$result, $result);
+}
+
+// Utility function for extracting values from an aspect ratio string. '16x9'
+// yields (16, 9). Used for class names and calculations for video dimensions.
+@function aspect-ratio-values($string) {
+  $i: str-index($string, 'x');
+
+  $a: to-number(str-slice($string, 1, $i - 1));
+  $b: to-number(str-slice($string, $i + 1));
+
+  @return ($a, $b);
+}

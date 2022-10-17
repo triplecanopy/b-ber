@@ -3,7 +3,6 @@
 import path from 'path'
 import has from 'lodash.has'
 import { Url } from '@canopycanopycanopy/b-ber-lib'
-import { forOf } from '@canopycanopycanopy/b-ber-lib/utils'
 import log from '@canopycanopycanopy/b-ber-logger'
 import {
   BLOCK_DIRECTIVES,
@@ -51,11 +50,11 @@ const _requiresAltTag = genus => DIRECTIVES_REQUIRING_ALT_TAG.has(genus)
 const _isUnsupportedAttribute = (genus, attr) => {
   let key
   if (BLOCK_DIRECTIVES.has(genus)) {
-    // these are all containers which share the same attributes, so they're
+    // These are all containers which share the same attributes, so they're
     // grouped under a single property
     key = 'block'
   } else {
-    // this will be the directive name, e.g., figure, video, etc
+    // This will be the directive name, e.g., figure, video, etc
     key = genus
   }
 
@@ -217,11 +216,11 @@ const _extendWithDefaults = (obj, genus) => {
 }
 
 // Create an object from attributes in the given directive
-const attributesObject = (attrs, _genus, context = {}) => {
+const attributesObject = (attrs, origGenus, context = {}) => {
   const { fileName, lineNumber } = context
   const attrsObject = {}
 
-  let genus = _genus
+  let genus = origGenus
 
   if (!genus || typeof genus !== 'string') {
     log.error(`No directive provided: ${fileName}:${lineNumber}`)
@@ -244,25 +243,31 @@ const attributesObject = (attrs, _genus, context = {}) => {
   }
 
   if (attrs && typeof attrs === 'string') {
-    forOf(parseAttrs(attrs.trim()), (k, v) => {
-      if (_isUnsupportedAttribute(genus, k)) {
-        return log.warn(
-          `render omitting unsupported attribute [${k}] at [${fileName}:${lineNumber}]`
+    const parsedAttrs = Object.entries(parseAttrs(attrs.trim()))
+
+    // eslint-disable-next-line no-unused-vars
+    for (const [key, val] of parsedAttrs) {
+      if (_isUnsupportedAttribute(genus, key)) {
+        log.warn(
+          `render omitting unsupported attribute [${key}] at [${fileName}:${lineNumber}]`
         )
+
+        continue
       }
 
-      attrsObject[k] = v
-    })
+      attrsObject[key] = val
+    }
   }
 
-  // Add original `_genus` as a class to the attrs object in case it's
+  // Add original `origGenus` as a class to the attrs object in case it's
   // different from the current `genus` (which might've changed due to it's
   // specification). do this to keep styling consistent
-  if (genus !== _genus) {
+
+  if (genus !== origGenus) {
     if (has(attrsObject, 'classes')) {
-      attrsObject.classes += ` ${_genus}`
+      attrsObject.classes += ` ${origGenus}`
     } else {
-      attrsObject.classes = _genus
+      attrsObject.classes = origGenus
     }
   }
 

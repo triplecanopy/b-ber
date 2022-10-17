@@ -1,4 +1,5 @@
 module.exports = {
+  root: true,
   parser: 'babel-eslint',
   extends: ['airbnb', 'prettier', 'prettier/react', 'prettier/standard'],
   env: {
@@ -13,6 +14,8 @@ module.exports = {
     camelcase: [2, { allow: ['^UNSAFE_'] }],
     'consistent-return': 0,
     'import/extensions': [2, 'never'],
+    'import/no-extraneous-dependencies': 0,
+    'import/prefer-default-export': 0,
     'jsx-a11y/href-no-hash': 0,
     'jsx-a11y/label-has-for': [
       2,
@@ -60,8 +63,11 @@ module.exports = {
     ],
     'operator-linebreak': 0,
     'padded-blocks': 0,
+    'react/button-has-type': 0,
     'react/destructuring-assignment': 0,
+    'react/function-component-definition': 0,
     'react/jsx-boolean-value': 0,
+    'react/jsx-filename-extension': 0,
     'react/jsx-indent': 0,
     'react/no-array-index-key': 0,
     'react/no-danger': 0,

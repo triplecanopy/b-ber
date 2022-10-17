@@ -16,6 +16,10 @@ jest.mock('@canopycanopycanopy/b-ber-logger', () => ({
   info: jest.fn(),
 }))
 
+afterEach(() => {
+  jest.clearAllMocks()
+})
+
 describe('b-ber-grammar-attributes', () => {
   it('gets the file name from a path', () => {
     const fileName = 'foo'
@@ -58,12 +62,6 @@ describe('b-ber-grammar-attributes', () => {
   })
 
   it('validates an attributes object', () => {
-    const spyError = jest.spyOn(log, 'error')
-    const spyWarn = jest.spyOn(log, 'warn')
-
-    expect(() => attributesObject('classes:foo', null)).toThrow()
-    expect(() => attributesObject('classes:foo', 'bogus')).toThrow()
-
     expect(attributesObject('classes:foo', 'abstract')).toEqual({
       classes: 'foo abstract  chapter',
       epubTypes: ' chapter',
@@ -83,9 +81,19 @@ describe('b-ber-grammar-attributes', () => {
       classes: 'bodymatter chapter',
       epubTypes: 'bodymatter chapter',
     })
+  })
 
-    expect(spyError).toHaveBeenCalledTimes(4)
-    expect(spyWarn).toHaveBeenCalledTimes(5)
+  it('logs errors on invalid attributes object', () => {
+    const spyError = jest.spyOn(log, 'error')
+    const spyWarn = jest.spyOn(log, 'warn')
+
+    // This logs 2 errors since the test suite doesn't bail after it encounters
+    // the first error
+    expect(() => attributesObject('classes:foo', null)).toThrow()
+    expect(() => attributesObject('classes:foo', 'bogus')).toThrow()
+
+    expect(spyError).toHaveBeenCalledTimes(3)
+    expect(spyWarn).toHaveBeenCalledTimes(2)
   })
 
   it('converts an object literal to HTML attribtues', () => {

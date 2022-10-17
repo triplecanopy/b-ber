@@ -1,0 +1,45 @@
+@mixin caption {
+  @include caption-text;
+  line-height: 1.3;
+  margin-bottom: 0;
+  text-align: left;
+  text-indent: 0 !important;
+}
+
+@mixin bullet-container {
+  text-indent: 0;
+  margin-left: one-em(0);
+}
+
+@mixin bullet {
+  display: inline-block;
+  text-indent: one-em(0) * -1;
+}
+
+// Utility for sizing video iframe. Dimensions are variable based on whether the
+// view is 'portrait' or 'landscape'. Called in media queries.
+@mixin iframe($orientation, $ratio-a, $ratio-b) {
+  $width: 100%;
+  $height: 100%;
+  $left: 50%;
+  $transform: translateX(-50%);
+
+  @if $orientation == 'portrait' {
+    $width: $ratio-a / $ratio-b * 100vh;
+    $height: 100vh;
+  } @else if $orientation == 'landscape' {
+    $width: 100vw;
+    $height: $ratio-b / $ratio-a * 100vw;
+  } @else {
+    @error "`iframe' mixin requires either `portrait' or `landscape' parameter.";
+  }
+
+  width: 100% !important;
+  min-width: $width;
+
+  height: $height !important;
+  min-height: 100%;
+
+  left: $left !important;
+  transform: $transform !important;
+}

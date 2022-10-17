@@ -1,0 +1,51 @@
+@mixin hyphens($hyphenation: auto) {
+  -epub-hyphens: $hyphenation;
+  adobe-hyphenate: $hyphenation;
+  hyphens: $hyphenation;
+}
+
+@mixin widows($n: 2) {
+  widows: $n;
+}
+
+@mixin orphans($n: 1) {
+  orphans: $n;
+}
+
+@mixin text-rendering($value: optimizeLegibility) {
+  text-rendering: $value;
+}
+
+@mixin font-smoothing {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+}
+
+@mixin variant-wght($weight-variant, $weight-static) {
+  font-weight: $weight-static; // Fallback
+  font-variation-settings: 'wght' $weight-variant;
+}
+
+@mixin following-paragraph-not-indented {
+  + p {
+    text-indent: 0 !important;
+  }
+}
+
+@mixin paragraph-not-indented {
+  margin-bottom: one-line(0);
+  text-indent: 0 !important;
+}
+
+@mixin following-element-has-no-top-padding {
+  + table,
+  + ul,
+  + ol,
+  + dl,
+  + blockquote {
+    margin-top: 0;
+  }
+  + hr {
+    margin-top: one-line(0);
+  }
+}

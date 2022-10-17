@@ -1,6 +1,6 @@
 {
   "name": "@canopycanopycanopy/b-ber-theme-serif",
-  "version": "1.2.16",
+  "version": "3.0.0",
   "description": "A serif theme for b-ber projects",
   "main": "index.js",
   "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
@@ -17,16 +17,16 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "clean": "echo OK"
+    "clean": "echo OK",
+    "sass": "sass",
+    "watch:sass": "sass --watch application.scss application.css",
+    "build:sass": "sass application.scss application.css"
   },
   "dependencies": {
-    "lodash": "^4.17.21",
     "modularscale-sass": "^3.0.10"
   },
   "devDependencies": {
-    "@babel/cli": "^7.10.5",
-    "@babel/core": "^7.10.5",
-    "@babel/preset-env": "^7.10.4"
+    "sass": "^1.49.8"
   },
   "gitHead": "9936fe3f4af76aa7b67ce10c2ed3a32b7de6ce6c"
 }
