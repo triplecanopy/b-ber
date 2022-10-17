@@ -1,3 +1,4 @@
+/* eslint-disable no-continue */
 import crypto from 'crypto'
 import isPlainObject from 'lodash/isPlainObject'
 import isArray from 'lodash/isArray'
@@ -61,13 +62,21 @@ class State {
   }
 
   metadata = { json: () => [{}] } // mocks the YAML api
+
   theme = {}
+
   video = []
+
   audio = []
+
   media = {}
+
   build = 'epub'
+
   sequence = []
+
   hash = randomHash()
+
   builds = {
     sample: {},
     epub: {},
@@ -305,45 +314,53 @@ class State {
   }
 
   loadTheme = () => {
-    // ensure themes dir exists unless running `new` command, as it's the
+    // Ensure themes dir exists unless running `new` command, as it's the
     // only command that's run outside of a project directory
     if (skipInitialization()) return
 
     const userThemesPath = path.resolve(this.config.themes_directory)
+
     fs.ensureDirSync(userThemesPath)
 
-    // theme is set, using a built-in theme
+    // Add modules path that references the current b-ber project's theme dir
+    module.paths.push(userThemesPath)
+
+    const cwd = process.cwd()
+    const cwdArr = cwd.split('/')
+
+    const modulePaths = new Set([...module.paths])
+
+    let cwdPath
+
+    // Add modules paths that reference the current b-ber project
+    do {
+      cwdPath = `${cwdArr.join('/')}/node_modules`
+      if (modulePaths.has(cwdPath)) continue
+      module.paths.push(cwdPath)
+    } while (cwdArr.pop())
+
+    log.info('Using the following module paths')
+    module.paths.forEach(p => log.info(`[${p}]`))
+
+    // Theme is set, using a built-in theme
     if (themes[this.config.theme]) {
-      log.info(`Loaded theme [${this.config.theme}]`)
       set(this, 'theme', themes[this.config.theme])
+      log.info(`Loaded theme [${this.config.theme}]`)
+
       return
     }
 
-    // possibly a user defined theme, check if the directory exists
+    // Possibly a user defined theme, or one installed with npm
     try {
-      if (
-        (this.theme = require(path.resolve(userThemesPath, this.config.theme))) // eslint-disable-line global-require, import/no-dynamic-require
-      ) {
-        log.info(`Loaded theme [${this.config.theme}]`)
-        return
-      }
-    } catch (_) {
-      // noop
-    }
-
-    // possibly a theme installed with npm, test the project root
-    try {
-      set(
-        this,
-        'theme',
-        require(path.resolve('node_modules', this.config.theme)) // eslint-disable-line global-require, import/no-dynamic-require
-      ) // require.resolve?
+      // eslint-disable-next-line global-require, import/no-dynamic-require
+      set(this, 'theme', require(this.config.theme))
+      log.info(`Loaded theme [${this.config.theme}]`)
     } catch (err) {
       log.warn(`There was an error during require [${this.config.theme}]`)
       log.warn('Using default theme [b-ber-theme-serif]')
       log.warn(err.message)
 
-      // error loading theme, set to default
+      // Error loading theme, set to default
       set(this, 'theme', themes['b-ber-theme-serif'])
     }
   }
