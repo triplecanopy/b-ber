@@ -1,6 +1,6 @@
 {
   "name": "@canopycanopycanopy/b-ber-grammar-iframe",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -25,11 +25,11 @@
     "rimraf": "^2.7.1"
   },
   "dependencies": {
-    "@canopycanopycanopy/b-ber-grammar-attributes": "3.0.2",
-    "@canopycanopycanopy/b-ber-lib": "3.0.2",
-    "@canopycanopycanopy/b-ber-logger": "3.0.2",
-    "@canopycanopycanopy/b-ber-parser-figure": "3.0.2",
-    "@canopycanopycanopy/b-ber-shapes-directives": "3.0.2",
+    "@canopycanopycanopy/b-ber-grammar-attributes": "3.0.3",
+    "@canopycanopycanopy/b-ber-lib": "3.0.3",
+    "@canopycanopycanopy/b-ber-logger": "3.0.3",
+    "@canopycanopycanopy/b-ber-parser-figure": "3.0.3",
+    "@canopycanopycanopy/b-ber-shapes-directives": "3.0.3",
     "fs-extra": "^8.1.0",
     "lodash": "^4.17.21",
     "lodash.isundefined": "^3.0.1",
