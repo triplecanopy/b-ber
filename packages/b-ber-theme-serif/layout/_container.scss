@@ -5,11 +5,9 @@
   margin: em-to-px($font-size-base * 2);
 }
 
-html {
-  @if $build == 'reader' {
-    font-size: 62.5%; // 10px
-  } @else {
-    font-size: 150%; // 24px
+@if $build == 'epub' {
+  html {
+    font-size: 62.5%;
   }
 }
 
