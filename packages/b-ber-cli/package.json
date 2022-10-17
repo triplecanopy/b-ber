@@ -1,6 +1,6 @@
 {
   "name": "@canopycanopycanopy/b-ber-cli",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "",
   "main": "dist/index.js",
   "bin": {
@@ -22,11 +22,11 @@
   },
   "dependencies": {
     "@babel/runtime-corejs3": "^7.10.5",
-    "@canopycanopycanopy/b-ber-lib": "3.0.1",
-    "@canopycanopycanopy/b-ber-logger": "3.0.1",
-    "@canopycanopycanopy/b-ber-shapes-sequences": "3.0.1",
-    "@canopycanopycanopy/b-ber-tasks": "3.0.1",
-    "@canopycanopycanopy/b-ber-templates": "3.0.1",
+    "@canopycanopycanopy/b-ber-lib": "3.0.2",
+    "@canopycanopycanopy/b-ber-logger": "3.0.2",
+    "@canopycanopycanopy/b-ber-shapes-sequences": "3.0.2",
+    "@canopycanopycanopy/b-ber-tasks": "3.0.2",
+    "@canopycanopycanopy/b-ber-templates": "3.0.2",
     "fs-extra": "^8.1.0",
     "lodash": "^4.17.21",
     "lodash.has": "latest",
