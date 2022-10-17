@@ -1,6 +1,6 @@
 {
   "name": "@canopycanopycanopy/b-ber-grammar-pullquote",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -25,11 +25,11 @@
     "rimraf": "^2.7.1"
   },
   "dependencies": {
-    "@canopycanopycanopy/b-ber-grammar-attributes": "2.0.0",
-    "@canopycanopycanopy/b-ber-lib": "2.0.0",
-    "@canopycanopycanopy/b-ber-logger": "2.0.0",
-    "@canopycanopycanopy/b-ber-parser-section": "2.0.0",
-    "@canopycanopycanopy/b-ber-shapes-directives": "2.0.0",
+    "@canopycanopycanopy/b-ber-grammar-attributes": "2.0.1",
+    "@canopycanopycanopy/b-ber-lib": "2.0.1",
+    "@canopycanopycanopy/b-ber-logger": "2.0.1",
+    "@canopycanopycanopy/b-ber-parser-section": "2.0.1",
+    "@canopycanopycanopy/b-ber-shapes-directives": "2.0.1",
     "lodash": "^4.17.21",
     "lodash.has": "latest",
     "lodash.isundefined": "^3.0.1",

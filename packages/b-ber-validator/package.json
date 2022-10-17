@@ -1,6 +1,6 @@
 {
   "name": "@canopycanopycanopy/b-ber-validator",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "A b-ber syntax validator",
   "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
   "contributors": [
@@ -36,7 +36,7 @@
     "url": "https://github.com/triplecanopy/b-ber/issues"
   },
   "devDependencies": {
-    "@canopycanopycanopy/b-ber-shapes-directives": "2.0.0",
+    "@canopycanopycanopy/b-ber-shapes-directives": "2.0.1",
     "@types/node": "^14.14.7",
     "@typescript-eslint/eslint-plugin": "^4.8.1",
     "@typescript-eslint/parser": "^4.8.1",
