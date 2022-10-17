@@ -258,10 +258,11 @@ const withObservers = WrappedComponent => {
 
         const d = nodeEdgeRight / (frameWidth + paddingLeft)
         const x = Math.round((d + Number.EPSILON) * 10) / 10
+        const nextX = Math.ceil(x)
 
-        console.log(nodeEdgeRight, d, x)
+        console.log(nodeEdgeRight, d, x, nextX)
 
-        lastSpreadIndex = x - 1
+        lastSpreadIndex = nextX - 1
 
         console.log('lastSpreadIndex', lastSpreadIndex)
       } else {
