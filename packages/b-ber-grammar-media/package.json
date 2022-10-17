@@ -1,6 +1,6 @@
 {
   "name": "@canopycanopycanopy/b-ber-grammar-media",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -26,9 +26,9 @@
   },
   "dependencies": {
     "@babel/runtime-corejs3": "^7.10.5",
-    "@canopycanopycanopy/b-ber-lib": "2.0.1",
-    "@canopycanopycanopy/b-ber-logger": "2.0.1",
-    "@canopycanopycanopy/b-ber-shapes-directives": "2.0.1",
+    "@canopycanopycanopy/b-ber-lib": "2.0.2",
+    "@canopycanopycanopy/b-ber-logger": "2.0.2",
+    "@canopycanopycanopy/b-ber-shapes-directives": "2.0.2",
     "lodash": "^4.17.21",
     "tar": "^6.1.11"
   },
