@@ -1,3 +1,4 @@
+/* eslint-disable no-continue */
 /* eslint-disable global-require, import/no-dynamic-require */
 
 import path from 'path'
@@ -147,36 +148,36 @@ class Theme {
   }
 
   static set = (name, force = false) => {
-    const { themes } = getThemes()
-
     let theme
+
+    const cwd = process.cwd()
+    const cwdArr = cwd.split('/')
+    const modulePaths = new Set([...module.paths])
+
+    let cwdPath
+
+    // Add modules paths that reference the current b-ber project
+    do {
+      cwdPath = `${cwdArr.join('/')}/node_modules`
+      if (modulePaths.has(cwdPath)) continue
+
+      module.paths.push(cwdPath)
+    } while (cwdArr.pop())
 
     if (defaultThemes[name]) {
       theme = defaultThemes[name]
     } else {
-      // check for both vendor and user paths
-      const userPath = path.resolve(state.config.themes_directory, name)
-      const vendorPath = path.resolve('node_modules', name)
-
-      // prefer the user path if both exist, since a user might've
-      // copied over the vendor theme and is changing it
-      const themePath = fs.existsSync(userPath)
-        ? userPath
-        : fs.existsSync(vendorPath)
-        ? vendorPath
-        : null
-
-      if (themes.indexOf(name) < 0 || !themePath) {
-        log.error(`Theme [${name}] is not installed`)
+      try {
+        theme = require(name)
+      } catch (err) {
+        log.error(`Could not load theme [${name}]`)
       }
-
-      theme = require(themePath)
     }
 
     return createProjectThemeDirectory(name)
       .then(() => copyThemeAssets(theme))
       .then(() => updateConfig(name))
-      .then(() => !force && log.notice('Updated theme to', name))
+      .then(() => !force && log.notice(`Updated theme [${name}]`))
       .catch(log.error)
   }
 }

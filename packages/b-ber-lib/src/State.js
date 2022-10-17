@@ -332,7 +332,6 @@ class State {
 
     const cwd = process.cwd()
     const cwdArr = cwd.split('/')
-
     const modulePaths = new Set([...module.paths])
 
     let cwdPath
@@ -341,11 +340,9 @@ class State {
     do {
       cwdPath = `${cwdArr.join('/')}/node_modules`
       if (modulePaths.has(cwdPath)) continue
+
       module.paths.push(cwdPath)
     } while (cwdArr.pop())
-
-    log.info('Using the following module paths')
-    module.paths.forEach(p => log.info(`[${p}]`))
 
     // Theme is set, using a built-in theme
     if (themes[this.config.theme]) {
