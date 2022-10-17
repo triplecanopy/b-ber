@@ -37,7 +37,7 @@ const cacheArgsFiles = [
   '--include "*.mobi"',
   '--include "*.pdf"',
   '--include "*.xml"',
-  // '--metadata-directive REPLACE',
+  '--metadata-directive REPLACE',
   '--acl public-read',
   '--expires 1970-01-01T00:00:00Z',
   '--cache-control max-age=0,public',
