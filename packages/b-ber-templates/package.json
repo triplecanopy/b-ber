@@ -1,6 +1,6 @@
 {
   "name": "@canopycanopycanopy/b-ber-templates",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "",
   "main": "index.js",
   "directories": {
@@ -35,8 +35,8 @@
   },
   "dependencies": {
     "@babel/runtime-corejs3": "^7.10.5",
-    "@canopycanopycanopy/b-ber-lib": "2.0.2",
-    "@canopycanopycanopy/b-ber-logger": "2.0.2",
+    "@canopycanopycanopy/b-ber-lib": "2.0.3",
+    "@canopycanopycanopy/b-ber-logger": "2.0.3",
     "fs-extra": "^8.1.0",
     "image-size": "^0.8.3",
     "lodash": "^4.17.21",
