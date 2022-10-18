@@ -100,9 +100,9 @@ export const MOBILE_COLUMN_COUNT = 9
 
 // prettier-ignore
 export const VIEWPORT_DIMENSIONS_MATRIX = [
-  ['75px', '15px', '60px', '15px'], [18, 'auto', 15, 'auto'], [22, 'auto', 18, 'auto'], // => box 1: sm x sm | box 2: md x sm | box 3: lg x sm
-  ['75px', '15px', '60px', '15px'], [12, 'auto', 8, 'auto'],  [12, 'auto', 9, 'auto'],  // => box 4: sm x md | box 5: md x md | box 6: lg x md
-  ['75px', '15px', '60px', '15px'], [11, 'auto', 8, 'auto'],  [11, 'auto', 8, 'auto'],  // => box 7: sm x lg | box 8: md x lg | box 9: lg x lg
+  ['75px', '15px', '60px', '15px'], [15, 'auto', 15, 'auto'], [18, 'auto', 18, 'auto'], // => box 1: sm x sm | box 2: md x sm | box 3: lg x sm
+  ['75px', '15px', '60px', '15px'], [8, 'auto', 8, 'auto'],   [9, 'auto', 9, 'auto'],   // => box 4: sm x md | box 5: md x md | box 6: lg x md
+  ['75px', '15px', '60px', '15px'], [8, 'auto', 8, 'auto'],   [8, 'auto', 8, 'auto'],   // => box 7: sm x lg | box 8: md x lg | box 9: lg x lg
 ]
 
 // Used in DocumentPreProcessor for appended stylesheets
