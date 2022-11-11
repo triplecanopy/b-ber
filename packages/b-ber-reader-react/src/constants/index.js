@@ -61,7 +61,7 @@ export const breakpoints = new Map([
       columns: columns.ONE,
       paddingLeft: '15px',
       paddingRight: '15px',
-      paddingTop: '15px',
+      paddingTop: '55px',
       paddingBottom: '80px', // Offset for bottom nav
       fontSize: 'clamp(140%, 1.5vw, 160%)',
     },
@@ -75,7 +75,7 @@ export const breakpoints = new Map([
       columns: columns.ONE,
       paddingLeft: 0,
       paddingRight: 0,
-      paddingTop: '15px',
+      paddingTop: '55px',
       paddingBottom: '80px', // Offset for bottom nav
       fontSize: 'clamp(150%, 1.5vw, 160%)',
     },
