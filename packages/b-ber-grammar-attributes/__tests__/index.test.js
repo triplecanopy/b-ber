@@ -101,7 +101,7 @@ describe('b-ber-grammar-attributes', () => {
 
     expect(
       attributesString({ classes: 'foo', autoplay: 'yes', controls: 'yes' })
-    ).toEqual(' class="foo" autoplay="autoplay" controls="yes"')
+    ).toEqual(' class="foo" autoplay="autoplay" controls="controls"')
 
     expect(
       attributesString({
