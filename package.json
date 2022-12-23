@@ -32,7 +32,8 @@
     "deps:update": "lernaupdate",
     "deps:dedupe": "lernaupdate --dedupe",
     "reader:shim": "echo \"Adding shim for b-ber-reader...\" && cd packages/b-ber-reader && npm i",
-    "browserlist:update": "npx browserslist@latest --update-db"
+    "browserlist:update": "npx browserslist@latest --update-db",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0"
   },
   "lint-staged": {
     "*.{js,jsx}": [
@@ -82,6 +83,7 @@
     "buffer": "^6.0.3",
     "classnames": "^2.2.5",
     "concurrently": "^3.5.1",
+    "conventional-changelog-cli": "^2.2.2",
     "core-js": "^3.6.4",
     "coveralls": "^3.0.1",
     "css-loader": "^0.28.10",
