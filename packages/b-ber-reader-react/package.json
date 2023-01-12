@@ -80,7 +80,7 @@
     "webpack-bundle-analyzer": "^4.6.1",
     "webpack-cleanup-plugin": "^0.5.1",
     "webpack-cli": "^4.10.0",
-    "webpack-dashboard": "^1.1.1",
+    "webpack-dashboard": "^3.3.7",
     "webpack-dev-server": "^3.11.3",
     "webpack-remove-empty-scripts": "^1.0.1",
     "xmlhttprequest-ssl": "^2.0.0"
