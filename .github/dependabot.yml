@@ -1,0 +1,16 @@
+version: 2
+
+updates:
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+    target-branch: 'develop'
+
+    # Only require security updates, disable version updates
+    open-pull-requests-limit: 0
+
+    labels:
+      - 'security'
+    assignees:
+      - 'msimmer'
