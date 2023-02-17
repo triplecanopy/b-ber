@@ -5,8 +5,7 @@ jobs:
     docker:
       - image: canopycanopycanopy/b-ber:0.3.1
     branches:
-      only:
-        - main
+      only: main
     working_directory: ~/b-ber
     steps:
       - checkout
@@ -27,9 +26,10 @@ jobs:
           # Limit concurrency on CI
           npm run lerna bootstrap -- --no-ci --concurrency=2
 
-          # Build reader separately as it's resource intensive
-          npm run lerna run build -- --scope=@canopycanopycanopy/b-ber-reader
-          npm run lerna run build -- --scope="@canopycanopycanopy/{$(ls packages -xm --width=0 | sed 's/ //g' | sed -E 's/b-ber-reader,?//')}" --concurrency=2
+          # Build readers separately since they're interdependent and require deps installed at package dir for b-ber-reader
+          npm run lerna run build -- --scope=@canopycanopycanopy/b-ber-reader-react
+          npm run reader:shim
+          npm run lerna run build -- --scope="@canopycanopycanopy/{$(ls packages -xm --width=0 | sed 's/ //g' | sed -E 's/b-ber-reader-react,?//')}" --concurrency=2
           npm test -- --maxWorkers=2
 
           cd ~
@@ -58,6 +58,7 @@ jobs:
             - ~/b-ber/packages/b-ber-grammar-vimeo/node_modules
             - ~/b-ber/packages/b-ber-shapes-directives/node_modules
             - ~/b-ber/packages/b-ber-reader/node_modules
+            - ~/b-ber/packages/b-ber-reader-react/node_modules
             - ~/b-ber/packages/b-ber-grammar-dialogue/node_modules
             - ~/b-ber/packages/b-ber-grammar-image/node_modules
             - ~/b-ber/packages/b-ber-theme-serif/node_modules
