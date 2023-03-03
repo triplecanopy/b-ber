@@ -3,7 +3,7 @@ version: 2.0
 jobs:
   build:
     docker:
-      - image: canopycanopycanopy/b-ber:0.3.1
+      - image: canopycanopycanopy/b-ber:0.3.3
     branches:
       only: main
     working_directory: ~/b-ber
