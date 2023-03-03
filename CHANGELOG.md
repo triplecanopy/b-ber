@@ -1,3 +1,13 @@
+## [3.0.6](https://github.com/triplecanopy/b-ber/compare/v3.0.5...v3.0.6) (2023-03-03)
+
+### Bug Fixes
+
+- fixes build scripts ([6f431a9](https://github.com/triplecanopy/b-ber/commit/6f431a905b9c11123a214381f587902c5e2980dd))
+
+### Features
+
+- adds changelog ([b65e3f7](https://github.com/triplecanopy/b-ber/commit/b65e3f734dedad4049f1e84d45386b3fe4c38b03))
+
 ## [3.0.5](https://github.com/triplecanopy/b-ber/compare/v3.0.4...v3.0.5) (2022-11-30)
 
 ### Features
