@@ -1,26 +1,27 @@
 // Audio controls
-$media-font-family-sans: $sans;
+$media-font-family-sans: $font-sans;
 $media-font-size-sans: 0.8rem;
 $media-transition-speed-normal: 200ms;
 $media-transition-easing: ease;
 
-$color-action: $success;
-
 $media-element-padding: 6px;
 
 // Vars for range input
-$track-w: 100%;
-$track-h: 2px;
-$thumb-d: 12px;
-$track-c: #d7d7d7;
-$thumb-c: #272727;
+$track-width: 100%;
+$track-height: 2px;
+
+$thumb-size: 12px;
+
+$track-color: #d7d7d7;
+$thumb-color: #272727;
+$thumb-color-active: #5050c5;
 
 // Remove page/column break from audio player
 #layout.context__desktop {
   .audio.figure__inline.figure__large,
   .audio.figure__inline.figure__large,
   .audio.figure__inline.figure__large {
-    margin: 2.6em 0em;
+    @include margin('text-default', 2, 0);
 
     page-break-before: avoid;
     page-break-after: avoid;
@@ -36,7 +37,7 @@ $thumb-c: #272727;
   font-size: $media-font-size-sans;
   font-family: $media-font-family-sans;
 
-  border: 1px solid $thumb-c;
+  border: 1px solid $thumb-color;
   border-radius: $media-element-padding;
   padding: 9px 3px 9px 12px;
 
@@ -63,7 +64,7 @@ $thumb-c: #272727;
   a:hover,
   button.hover,
   button:hover {
-    color: $color-action !important;
+    color: $thumb-color-active !important;
   }
 
   + .caption__audio {
@@ -88,9 +89,9 @@ $thumb-c: #272727;
 @mixin track {
   box-sizing: border-box;
   border: none;
-  width: $track-w;
-  height: $track-h;
-  background: $track-c;
+  width: $track-width;
+  height: $track-height;
+  background: $track-color;
 }
 
 @mixin thumb {
@@ -98,16 +99,16 @@ $thumb-c: #272727;
   position: relative;
   z-index: 1;
   border: none;
-  width: $thumb-d;
-  height: $thumb-d;
+  width: $thumb-size;
+  height: $thumb-size;
   border-radius: 50%;
-  background-color: $thumb-c;
+  background-color: $thumb-color;
 
   transition: background-color $media-transition-speed-normal
     $media-transition-easing;
 
   &:hover {
-    background-color: $color-action;
+    background-color: $thumb-color-active;
   }
 }
 
@@ -133,7 +134,7 @@ input[type='range'] {
   flex: 1;
   margin: 0;
   padding: 0;
-  min-height: $thumb-d;
+  min-height: $thumb-size;
   background: transparent;
   font: inherit;
   outline: none;
@@ -151,7 +152,7 @@ input[type='range'] {
   }
 
   &::-webkit-slider-thumb {
-    margin-top: 0.5 * ($track-h - $thumb-d);
+    margin-top: 0.5 * ($track-height - $thumb-size);
     @include thumb;
   }
   &::-moz-range-thumb {
@@ -169,7 +170,7 @@ input[type='range'] {
 
 .media__slider--before {
   background: $black;
-  height: $track-h;
+  height: $track-height;
   position: absolute;
   left: 0;
   z-index: 0;
@@ -195,6 +196,7 @@ input[type='range'] {
     margin-left: -13px;
     margin-top: $media-element-padding * 1.5;
     margin-bottom: $media-element-padding * 1.5;
+
     .media__stacked__separator--line {
       width: calc(100% + 7px); // Optics
       background: $black;

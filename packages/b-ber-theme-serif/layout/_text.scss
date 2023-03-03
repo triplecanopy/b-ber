@@ -1,87 +1,133 @@
-// sass-lint:disable no-mergeable-selectors
-
 // Block elements
 
 // Text Sizes
 h1 {
-  @include text-large;
-  margin-top: 0;
-  margin-bottom: 0;
-  padding-top: one-line(0);
-  padding-bottom: one-line(0);
-}
-h2 {
-  @include text-large;
-  margin-top: 0;
-  margin-bottom: 0;
-  padding-top: one-line(0);
-  padding-bottom: one-line(0);
-}
-h3 {
-  @include text-large;
-  margin-top: 0;
-  margin-bottom: 0;
-  padding-top: one-line(0);
-  padding-bottom: one-line(0);
-}
-h4 {
-  @include text-large;
-  margin-top: 0;
-  margin-bottom: 0;
-  padding-top: one-line(0);
-  padding-bottom: one-line(0);
-}
-h5 {
-  @include text-large;
-  margin-top: 0;
-  margin-bottom: 0;
-  padding-top: one-line(0);
-  padding-bottom: one-line(0);
-}
-h6 {
-  @include text-large;
-  margin-top: 0;
-  margin-bottom: 0;
-  padding-top: one-line(0);
-  padding-bottom: one-line(0);
-}
-p {
-  @include text-large;
+  @include type-settings(10);
+  @include variant-weight(200, 400);
+  @include following-paragraph-not-indented;
+  @include hyphens(none);
+  line-height: 0.95em;
+  text-indent: 0;
+  text-transform: none;
+  text-align: left;
+  font-style: normal;
+
+  margin-top: one-line(0);
+  margin-bottom: one-line(0);
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
-section {
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    padding-top: 0;
+h2 {
+  @include type-settings(5);
+  @include variant-weight(200, 400);
+  @include following-paragraph-not-indented;
+  @include hyphens(none);
+  text-indent: 0;
+  text-transform: none;
+  text-align: left;
+  font-style: normal;
+
+  margin-top: one-line(0);
+  margin-bottom: one-line(0);
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+h3 {
+  @include type-settings(5);
+  @include variant-weight(200, 400);
+
+  text-align: left;
+  padding-top: 0;
+  padding-bottom: 0;
+  margin-bottom: one-line(0);
+  margin-top: two-lines(0);
+}
+
+h4 {
+  @include type-settings(5);
+  @include variant-weight(200, 400);
+  @include following-paragraph-not-indented;
+  @include hyphens(none);
+
+  text-indent: 0;
+  text-transform: none;
+  text-align: left;
+  font-style: normal;
+
+  padding-top: 0;
+  padding-bottom: 0;
+  margin-top: two-lines(0);
+  margin-bottom: one-line(0);
+}
+
+h5 {
+  @include type-settings(5);
+  @include variant-weight(200, 400);
+  @include following-paragraph-not-indented;
+  @include hyphens(none);
+
+  text-indent: 0;
+  text-transform: none;
+  text-align: left;
+  font-style: normal;
+
+  padding-top: 0;
+  padding-bottom: 0;
+  margin-top: two-lines(0);
+  margin-bottom: one-line(0);
+}
+
+h6 {
+  @include type-settings(5);
+  @include variant-weight(200, 400);
+  @include following-paragraph-not-indented;
+  @include hyphens(none);
+
+  text-indent: 0;
+  text-transform: none;
+  text-align: left;
+  font-style: normal;
+
+  padding-top: 0;
+  padding-bottom: 0;
+  margin-top: two-lines(0);
+  margin-bottom: one-line(0);
+}
+
+h1,
+h2 {
+  section & {
+    @include margin('text-medium', 0, 0, 1);
+  }
+
+  section.backmatter & {
+    @include text-medium;
+    @include margin('text-medium', 1, 0, 0, 0);
+  }
+
+  section.titlepage & {
+    padding-bottom: 0;
+  }
+
+  section.afterword &,
+  section.seriespage &,
+  section.credits &,
+  section.contributors &,
+  section.appendix & {
+    @include text-medium;
+    @include margin('text-medium', 0, 0, 1);
+    @include following-paragraph-not-indented;
   }
 }
 
-// Text Properties
-p {
-  @if $text-indent == true {
-    text-indent: one-em(0) !important; // sass-lint:disable-line no-important
-    h1 + &,
-    h2 + &,
-    h3 + &,
-    h4 + &,
-    h5 + &,
-    h6 + & {
-      text-indent: 0 !important; // sass-lint:disable-line no-important
-    }
-  } @else {
-    text-indent: 0 !important; // sass-lint:disable-line no-important
-    h1 + &,
-    h2 + &,
-    h3 + &,
-    h4 + &,
-    h5 + &,
-    h6 + & {
-      text-indent: 0 !important; // sass-lint:disable-line no-important
-    }
+h3,
+h4,
+h5,
+h6 {
+  section.titlepage & {
+    @include text-xsmall;
   }
 }
 
@@ -91,14 +137,107 @@ h3,
 h4,
 h5,
 h6 {
-  @include hyphens(none);
-  @include text-large;
-  @include following-paragraph-not-indented;
-  text-indent: 0;
-  text-transform: none;
-  text-align: center;
-  font-weight: 400;
-  font-style: normal;
+  section.frontmatter p {
+    text-indent: 0 !important;
+  }
+  em {
+    @include variant-weight-bold;
+  }
+}
+
+section {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin-top: 0;
+  }
+
+  p:first-child {
+    text-indent: 0;
+  }
+}
+
+p {
+  @include text-default;
+}
+
+// Text Properties
+p {
+  @if $text-indent == true {
+    text-indent: $text-indent-size;
+    h1 + &,
+    h2 + &,
+    h3 + &,
+    h4 + &,
+    h5 + &,
+    h6 + & {
+      text-indent: 0 !important;
+    }
+  } @else {
+    text-indent: 0 !important;
+    h1 + &,
+    h2 + &,
+    h3 + &,
+    h4 + &,
+    h5 + &,
+    h6 + & {
+      text-indent: 0 !important;
+    }
+  }
+}
+
+.frontmatter.halftitlepage,
+.frontmatter.titlepage {
+  h1,
+  .authors {
+    @include variant-weight-bold;
+  }
+
+  h1 {
+    margin-bottom: 0px;
+  }
+
+  h1,
+  h2,
+  .authors {
+    padding-right: 0.15em;
+  }
+
+  h3 {
+    display: inline-block;
+    margin-top: 0;
+  }
+
+  // h1,
+  // .authors,
+  // .subhead,
+  // .project-context {}
+
+  .subhead p {
+    min-width: 258px; // TODO why is this hard-coded in px?
+    font-size: 1em; // TODO why is this hard-coded in em?
+    margin-top: one-line(0);
+    margin-bottom: one-line(0);
+    text-indent: 0 !important;
+    padding-right: 1em;
+  }
+
+  .project-context {
+    @include text-default;
+
+    .project-type {
+      display: none;
+    }
+
+    .published-datetime {
+      @include text-default;
+      display: block;
+      padding-top: 0;
+    }
+  }
 }
 
 a,
@@ -108,82 +247,35 @@ a:visited {
   text-decoration: underline;
 }
 
-h1 {
-  padding-bottom: four-lines(0);
-  section & {
-    @include padding('text-large', 0, 0, 4, 0);
-  }
-
-  &.book-title,
-  &.figures-title {
-    padding: 0;
-  }
-
-  section.backmatter & {
-    @include text-medium;
-    @include padding('text-medium', 2, 0, 2, 0);
-  }
-
-  section.titlepage & {
-    padding-bottom: 0;
-  }
-
-  section.preface &,
-  section.frontmatter &,
-  section.acknowledgements & {
-    @include following-paragraph-not-indented;
-  }
-
-  section.afterword &,
-  section.seriespage &,
-  section.credits &,
-  section.contributors &,
-  section.appendix & {
-    @include padding('text-medium', 0, 0, 4, 0);
-    @include following-paragraph-not-indented;
-  }
+section > h3:first-child,
+section > h4:first-child,
+section > h5:first-child,
+section > h6:first-child {
+  margin-top: 0;
 }
 
-h2 {
-  section & {
-    @include padding('text-large', 0, 0, 1, 0);
-  }
-
-  section.backmatter & {
-    @include text-medium;
-    @include padding('text-medium', 1, 0, 0, 0);
-  }
-
-  section.titlepage & {
-    padding-bottom: one-line(0);
-  }
-
-  section.afterword &,
-  section.seriespage &,
-  section.credits &,
-  section.contributors &,
-  section.appendix & {
-    @include text-medium;
-    @include padding('text-medium', 0, 0, 1, 0);
-    @include following-paragraph-not-indented;
-  }
-}
-
-h3 {
-  section.titlepage & {
-    @include text-xsmall;
-    padding-bottom: one-line(-4);
+.published-datetime {
+  .bodymatter &,
+  .backmatter & {
+    @include type-settings(-5);
+    line-height: 1.3; // TODO: calculate based on tininess
+    display: block;
+    margin-top: one-line(0);
   }
 }
 
 p {
-  @include text-large;
-  text-indent: one-em(0);
+  @include text-default;
+  text-indent: $text-indent-size;
 
   blockquote & {
-    @include text-small;
-    text-indent: 0 !important; // sass-lint:disable-line no-important
-    margin-bottom: 0 !important; // sass-lint:disable-line no-important
+    @include text-default;
+    text-indent: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
+  blockquote + & {
+    text-indent: 0 !important;
   }
 
   section.backmatter &,
@@ -192,52 +284,89 @@ p {
   section.credits &,
   section.contributors &,
   section.appendix & {
-    @if $text-indent != false {
-      text-indent: one-em(0) !important; // sass-lint:disable-line no-important
+    @if $text-indent == true {
+      text-indent: $text-indent-size;
     } @else {
-      text-indent: one-em(0);
+      text-indent: 0;
     }
+
     @include following-paragraph-not-indented;
     @include text-small;
-    @include padding('text-small', 0, 0, 1, 0);
+    @include margin('text-small', 0, 0, 1);
   }
 
   section.colophon & {
     @include following-paragraph-not-indented;
     @include text-small;
-    @include padding('text-small', 0, 0, 1, 0);
-    text-indent: 0 !important; // sass-lint:disable-line no-important
+    @include margin('text-small', 0, 0, 1);
+    text-indent: 0 !important;
   }
 
   section.preface &,
   section.frontmatter &,
   section.acknowledgements & {
-    @if $text-indent != false {
-      text-indent: one-em(0) !important; // sass-lint:disable-line no-important
+    @if $text-indent == true {
+      text-indent: $text-indent-size;
     } @else {
-      text-indent: one-em(0);
+      text-indent: 0;
     }
-    padding-bottom: 0;
+
+    margin-bottom: 0;
+  }
+
+  section.frontmatter h1 &,
+  section.frontmatter h2 &,
+  section.frontmatter h3 &,
+  section.frontmatter h4 &,
+  section.frontmatter h5 &,
+  section.frontmatter h6 & {
+    text-indent: 0 !important;
   }
 
   section.frontmatter.dedication & {
-    @include text-large;
-    @include padding('text-large', 0, 1, 1, 0);
+    @include text-default;
+    @include margin('text-default', 0, 1, 1);
     text-indent: 0;
   }
 
   section.dialogue & {
     &.interlocutor-parent {
-      @include padding('text-large', 1, 0, 0, 0);
-      margin-top: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+      margin-bottom: one-line(0);
+
+      ~ p {
+        padding-top: 0;
+        padding-bottom: 0;
+        margin-top: one-line(0) * -1;
+        margin-bottom: one-line(0);
+      }
+
+      + p.interlocutor-parent {
+        margin-top: 0;
+        margin-bottom: one-line(0);
+      }
+
       .interlocutor {
-        @include sup-text;
+        @include type-settings(-12);
+        @include variant-weight(600, 600);
+
         line-height: 1;
-        font-family: $sans;
-        font-weight: bold;
+        letter-spacing: 0.05em;
+        margin-right: one-em(0);
+
         text-transform: uppercase;
         vertical-align: baseline;
+
+        @if $build == 'web' {
+          margin-right: two-ems(0);
+        }
       }
+    }
+
+    & + p.interlocutor-parent {
+      // Removes negative margin if a parent is after sub-paragraph
+      margin-top: 0;
     }
   }
 
@@ -245,7 +374,7 @@ p {
   section.afterword & {
     &:first-child,
     &:first-child {
-      text-indent: 0 !important; // sass-lint:disable-line no-important
+      text-indent: 0 !important;
     }
   }
 
@@ -255,11 +384,10 @@ p {
 
   .pullquote & {
     @include following-paragraph-not-indented;
-    @include text-xsmall;
-    text-indent: 0 !important; // sass-lint:disable-line no-important
-    margin-bottom: 0 !important; // sass-lint:disable-line no-important
-    font-style: italic;
-    font-weight: normal;
+    @include text-default;
+    @include variant-weight-regular;
+    text-indent: 0 !important;
+    margin-bottom: 0 !important;
   }
 
   .pullquote + & {
@@ -268,20 +396,28 @@ p {
 
   .epigraph .pullquote & {
     @include following-paragraph-not-indented;
-    @include text-large;
+    @include text-default;
     float: none;
     width: 100%;
-    margin-top: 0 !important; // sass-lint:disable-line no-important
-    padding-top: 0 !important; // sass-lint:disable-line no-important
-    text-indent: 0 !important; // sass-lint:disable-line no-important
-    text-align: center;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    text-indent: 0 !important;
+    text-align: left;
   }
 
   &.interlocutor-parent {
-    text-indent: 0 !important; // sass-lint:disable-line no-important
+    text-indent: 0 !important;
     margin-top: one-line(0);
     &:first-child {
       margin-top: 0;
+    }
+  }
+
+  section.paragraphs-not-indented & {
+    @include paragraph-not-indented;
+    &:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
     }
   }
 }
@@ -290,26 +426,24 @@ cite {
   .pullquote &,
   blockquote & {
     @include following-paragraph-not-indented;
-    @include text-xsmall;
-    font-weight: normal;
+    @include text-default;
+    @include variant-weight-regular;
+    @include margin('text-default', 1, 0, 0, 0);
     font-style: normal;
     text-indent: 0;
     display: block;
-    text-align: right;
-    width: 75%;
-    margin-left: 25%;
   }
+
   .pullquote.full-width & {
     margin-left: 0;
     width: 100%;
   }
+
   .epigraph .pullquote & {
     @include following-paragraph-not-indented;
-    @include text-large;
+    @include text-default;
     float: none;
     width: 100%;
-    text-align: center;
-    margin-left: 0;
   }
 }
 
@@ -317,86 +451,108 @@ cite {
   margin-top: 0;
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  + .blockquote,
+  + .pullquote,
+  + .figure__inline,
+  + .figure__small {
+    + p {
+      text-indent: 0;
+    }
+  }
+}
+
 // Inline elements
 sup,
 sub {
-  @include sup-text;
+  @include text-xsmall;
   line-height: 1;
   color: $black;
   vertical-align: baseline;
   text-decoration: none;
   position: relative;
-  left: 1px;
+  left: 0px;
+
   &:hover {
     text-decoration: underline;
   }
 }
 
 sup {
-  top: one-em(-8) * -1.25;
+  top: -0.45em !important;
 }
+
 sub {
-  bottom: one-em(-8) * -1;
+  bottom: -0.25em !important;
 }
 
 small {
-  @include type-settings(-3);
+  @include text-xsmall;
 }
 
 pre {
-  @include padding('text-large', 1, 1, 1, 1);
-  margin-bottom: one-line(0);
-  font-size: 1em;
-  line-height: 1;
+  @include text-default;
+  @include margin('text-default', 1);
+  line-height: 1.3;
+
   word-wrap: normal;
   white-space: pre;
   overflow: auto;
-  text-indent: 0 !important; // sass-lint:disable-line no-important
-  border-radius: 0;
-  font-family: $mono;
-  background-color: $light-grey;
-  break-inside: avoid;
+
+  text-indent: 0 !important;
+  border-radius: 3px;
+  font-family: Consolas, Menlo, Courier, monospace;
+  background-color: #f6f8fa;
 }
 
 code {
-  @include type-settings(-5);
+  font-size: 1em;
 }
 
 i {
-  font-weight: 400;
+  @include variant-weight-regular;
   font-style: italic;
   font-family: inherit;
+
   b,
   strong {
-    font-weight: 700;
+    @include variant-weight-bold;
     font-style: italic;
   }
 }
 
 em {
-  font-weight: 400;
+  @include variant-weight-regular;
   font-style: italic;
   font-family: inherit;
+
   b,
   strong {
-    font-weight: 700;
+    @include variant-weight-bold;
     font-style: italic;
   }
+
   em,
   .pullquote p & {
-    font-weight: 400;
+    @include variant-weight-regular;
     font-style: normal;
   }
 }
 
 strong,
 b {
-  font-weight: 700;
+  @include variant-weight-bold;
   font-style: normal;
   font-family: inherit;
+
   em,
   i {
-    font-weight: 700;
+    @include variant-weight-bold;
     font-style: italic;
   }
 }
@@ -410,13 +566,19 @@ span.footnote-ref {
   > a {
     @extend sup;
   }
+
   .footnote__body {
-    @include padding('text-large', 1, 0, 1, 0);
+    @include margin('text-default', 1);
+
+    .footnote__content p:first-child {
+      text-indent: 0 !important;
+    }
   }
 }
 
 aside.footnote {
   margin-left: one-em(0);
+
   a.footnote-link {
     display: inline-block;
     text-indent: one-em(0) * -1;
@@ -428,16 +590,61 @@ ol.footnotes {
   li {
     padding: 0;
     margin: 0;
-    text-indent: 0 !important; // sass-lint:disable-line no-important
+    text-indent: 0 !important;
     font-size: 1em; // children, since we need to include paras in the li elements
     p {
-      text-indent: 0 !important; // sass-lint:disable-line no-important
+      text-indent: 0 !important;
     }
     a {
-      text-decoration: none !important; // sass-lint:disable-line no-important
+      text-decoration: none !important;
     }
     span.hidden-backlink {
       display: inline;
     }
+  }
+}
+
+// Old style numbers
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+li,
+ol,
+cite,
+blockquote {
+  font-variant-numeric: oldstyle-nums;
+  .footnote__number,
+  span.interlocutor {
+    font-variant-numeric: normal;
+  }
+}
+
+// Project information
+.project-information p {
+  @include text-small;
+  @include margin('text-default', 0, 0, 1, 0);
+  @extend .break-after;
+  hyphens: none;
+
+  // TODO confusing, and already declared above with type-settings
+  line-height: 1.2em;
+
+  // TODO one-em should be called with type-settings value (-2)
+  padding-right: one-em(0);
+
+  font-style: italic;
+  text-indent: 0;
+  width: 80%;
+
+  em {
+    font-style: normal;
+  }
+
+  @include break-at('mobile') {
+    width: 100%;
   }
 }

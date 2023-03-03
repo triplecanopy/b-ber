@@ -1,7 +1,15 @@
-// sass-lint:disable indentation
-
 @if $build == 'reader' {
-  // Caption styling.
+  @import url('https://fast.fonts.net/t/1.css?apiType=css&projectid=e0440ba3-afc3-44c5-a60e-ab4a60294604');
+
+  $mobile-layout-padding-y: 80px;
+
+  #content {
+    @include variant-weight(400, 400);
+  }
+
+  // Reader styles for Spread layout on desktop and mobile
+
+  // Caption styling for reader.
   figure {
     .figcaption,
     figcaption {
@@ -9,7 +17,6 @@
       display: block;
     }
   }
-  $line-height-base: 1.4;
 
   // Fullbleed Image styling.
   .figure__fullbleed.figure__inline--landscape .figure__items {
@@ -36,24 +43,32 @@
       width: 100vw;
     }
   }
-
   // Gallery Styling This sets up a layout for galleries that contains 12
   // columns and two rows by default and is responsive.
+
   section.gallery .figure__gallery {
     .figure__items {
       // @include grid-layout;
       width: 85vw;
       height: 75vh;
+      margin: auto;
       margin-top: 75px;
       padding: 0;
-      .gallery__item {
-        grid-column: grid-item();
+
+      .figcaption {
+        width: 100% !important;
       }
     }
   }
 
+  // Footnotes
+  ol.footnotes {
+    padding: 0;
+    list-style: none;
+  }
+
   // Mobile Overrides for Fullbleed, spreads, and galleries.
-  @include break-at('xs') {
+  @include break-at('mobile') {
     // Gallery
     section.gallery .figure__gallery .figure__items {
       margin-top: 0;
@@ -81,6 +96,200 @@
       section {
         height: auto;
         width: auto;
+      }
+    }
+  }
+
+  // Reader styles for Spread layout on desktop and mobile
+  .spread-with-fullbleed-media {
+    @include break-at('mobile') {
+      height: calc(100vh - #{$mobile-layout-padding-y}) !important;
+    }
+
+    figure {
+      background-color: #000;
+      height: 100vh !important;
+      margin-top: 0;
+
+      .vimeo.vimeo--4x3.figure__large.figure__inline,
+      .vimeo.vimeo--4x3 .embed.supported,
+      .vimeo.vimeo--16x9.figure__large.figure__inline,
+      .vimeo.vimeo--16x9 .embed.supported,
+      .vimeo.vimeo--21x9.figure__large.figure__inline,
+      .vimeo.vimeo--21x9 .embed.supported {
+        width: 89vw;
+        padding: 0;
+      }
+
+      @include break-at('mobile') {
+        padding-top: 0;
+        margin-top: 0;
+        position: relative;
+        left: -30px !important;
+        // Yields negative top
+        // TODO is this calculation correct with new media queries?
+        top: $mobile-layout-padding-y;
+        width: 100vw;
+        height: 100vh !important;
+      }
+
+      iframe {
+        height: 100vh !important;
+        top: -21px !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        @include break-at('mobile') {
+          // TODO what's this calculation?
+          height: calc(100vh - 150px) !important;
+        }
+      }
+    }
+  }
+
+  // Titlepage
+
+  #title-page-spread {
+    // TODO: where to put this? Could setup variable in theme/settings?
+    // @include fullbleed-background-image(
+    //   'Caleb-Waldorf_Working-on-Our-Thoughts_Hands-Duo.jpg',
+    //   $background-size: cover
+    // );
+
+    > ul {
+      font-family: 'Neue Haas Grotesk', 'Neue Haas Grotesk W01', $font-sans;
+    }
+
+    color: $white;
+
+    a {
+      text-decoration: none;
+      color: $white;
+
+      &:hover {
+        text-decoration: none;
+        border-bottom: 1px solid $white;
+      }
+    }
+
+    ul {
+      // TODO should probably be on `li`, same with line-height
+      @include type-settings(-7);
+
+      list-style: none;
+      width: 100vw;
+      padding: 20px 5vw;
+      min-width: 0;
+
+      display: flex;
+      justify-content: space-between;
+
+      font-family: $font-sans; // TODO is this the correct font-family?
+      margin: 0;
+
+      @include break-at('mobile') {
+        // TODO: why isn't this overriding the type-settings line-height?
+        line-height: 1.4em;
+
+        padding: 55px 4vw 20px 4vw;
+        justify-content: flex-start;
+        flex-direction: column;
+      }
+
+      @include break-at('tablet') {
+        padding-top: 55px;
+      }
+
+      li {
+        position: relative;
+      }
+    }
+
+    #title-dek {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+
+      height: 85vh;
+      margin: 0;
+
+      @include break-at('mobile') {
+        align-items: flex-start;
+        justify-content: flex-start;
+
+        // TODO 42px below should probably be footer height
+        height: calc(90vh - 42px);
+        padding: 20px 4vw;
+      }
+
+      h1,
+      h2 {
+        @include type-settings(23);
+        @include variant-weight(300, 400);
+        line-height: 0.9em;
+
+        text-align: center;
+        width: 85vw;
+        margin: 0 auto;
+        position: relative;
+
+        @include break-at('mobile') {
+          @include type-settings(11);
+          line-height: 0.98em;
+
+          text-align: left;
+          width: 100vw;
+        }
+      }
+
+      p {
+        width: 40vw;
+        margin: 2em auto 0;
+        position: relative;
+
+        @include break-at('mobile') {
+          width: auto;
+          margin: 1em 0;
+        }
+      }
+    }
+  }
+
+  // Scrolling layout
+  #layout.context__scroll {
+    #content {
+      @include break-at('desktop') {
+        width: 50%;
+      }
+
+      .figure__large {
+        @include padding('text-default', 2, 0);
+        margin: 0;
+        width: 100%;
+
+        .figure__items {
+          width: 100%;
+        }
+      }
+
+      .figure__fullwidth {
+        @include padding('text-default', 2, 0);
+        margin: 0;
+        width: 100%;
+
+        @include break-at('desktop') {
+          width: 200%;
+        }
+
+        .figure__items {
+          width: 100%;
+
+          img {
+            width: 100%;
+          }
+        }
       }
     }
   }

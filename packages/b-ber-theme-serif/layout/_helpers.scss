@@ -1,34 +1,33 @@
 .break-after {
   @if $build == 'reader' {
-    @include break-at('md') {
-      // Reader: Chrome & Safari
+    @include break-at('desktop') {
+      // Browsers supporting break-after: column
+      // https://developer.mozilla.org/en-US/docs/Web/CSS/break-after#support_in_multi-column_layout
       break-after: column;
 
-      // FireFox: TBD.
-      // `break`ing in the column context in FireFox is unsupported, so shims
-      // will need to be added on a per-project basis until we find a reliable
-      // way of dealing with this
-      @-moz-document url-prefix() {
+      // `break`ing in the column context in FireFox is unsupported, target
+      // other browsers here too
+      @supports not (break-after: column) {
+        margin-bottom: 100vh !important;
       }
     }
   } @else {
-    // Epub, Mobi, PDF ...
+    // Epub, Mobi, PDF, Web
     page-break-after: always;
   }
 }
 
 .break-before {
   @if $build == 'reader' {
-    @include break-at('md') {
-      // Reader: Chrome & Safari
+    @include break-at('desktop') {
       break-before: column;
 
-      // FireFox: TBD.
-      @-moz-document url-prefix() {
+      @supports not (break-before: column) {
+        margin-top: 100vh !important;
       }
     }
   } @else {
-    // Epub, Mobi, PDF ...
+    // Epub, Mobi, PDF, Web
     page-break-before: always;
   }
 }

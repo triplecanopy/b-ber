@@ -5,16 +5,19 @@
 // Load vendor libs
 // https://github.com/modularscale/modularscale-sass
 @import '~modularscale-sass/stylesheets/_modularscale';
-// @import '../../node_modules/modularscale-sass/stylesheets/_modularscale.scss';
 
 // For validation while building on CLI, not used in production
 $build: 'epub' !default;
 
 @import 'settings';
-@import 'mixins';
+@import '~@canopycanopycanopy/b-ber-theme-mixins/application';
 
 // for validation while building on CLI, not an actual setting
 $build: 'epub' !default;
+
+.foo {
+  font-size: $font-size-base;
+}
 
 // Initialize Modular Scale
 //

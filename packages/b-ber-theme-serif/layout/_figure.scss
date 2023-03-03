@@ -9,6 +9,7 @@ figure {
   @include following-paragraph-not-indented;
   margin: 0 auto;
   padding: 0;
+
   img {
     display: inline-block;
     margin: 0 auto;
@@ -24,17 +25,16 @@ figure {
   }
 }
 
-.figure__small img {
-}
-.figure__medium img {
-}
+// .figure__small img {}
+// .figure__medium img {}
+
 .figure__large img {
   &.landscape {
     width: 100%;
   }
 }
-.figure__inline img {
-}
+
+// .figure__inline img {}
 
 // Base container styles
 .figure__small,
@@ -47,9 +47,36 @@ figure {
 
 .figure__large {
   // Space is added in the event that readers don't respect the page-break atrribute.
-  @include padding('text-large', 1, 0, 1, 0);
+  @include margin('text-default', 0, 0, 1, 0);
+  @include padding('text-default', 1, 0, 0);
+
   page-break-before: always;
   page-break-after: always;
+
+  // Firefox shim
+  @if $build == 'reader' {
+    @include break-at('desktop-sm') {
+      @supports not (break-after: column) {
+        margin-bottom: 100vh;
+      }
+    }
+  }
+
+  @if $build == 'mobi' or $build == 'epub' {
+    padding: 0;
+  }
+}
+
+// LOI page Firefox - add a break after the LOI title
+@if $build == 'reader' {
+  @include break-at('desktop-sm') {
+    @supports not (break-after: column) {
+      // .chapter.figures[epub|type="loi"]:first-child {
+      .chapter.figures:first-child {
+        margin-bottom: 100vh;
+      }
+    }
+  }
 }
 
 // Basic spread styles to have page break. Further styling for Reader found in _reader.scss.
@@ -60,32 +87,24 @@ figure {
 }
 
 #layout.context__desktop {
-  // desktop context only
+  // Desktop context only
   .figure__large,
   .spread {
     padding: 0;
   }
-
-  // TODO: the following vendor prefixed rules don't seem to do anything - we
-  // need to determine if they can be removed altogether, or if we should
-  // replace them with the following code:
-
-  // .figure__large {
-  //     break-after: always;
-  //     break-before: always;
-  // }
-  // .figure__fullbleed {
-  //     break-before: avoid !important;
-  //     break-after: avoid !important;
-  // }
-
   .figure__large {
-    -webkit-column-break-after: always; // sass-lint:disable-line no-vendor-prefixes
-    -webkit-column-break-before: always; // sass-lint:disable-line no-vendor-prefixes
+    break-after: column;
+    break-before: column;
   }
   .figure__fullbleed {
-    -webkit-column-break-before: avoid !important; // sass-lint:disable-line no-important,no-vendor-prefixes
-    -webkit-column-break-after: avoid !important; // sass-lint:disable-line no-important,no-vendor-prefixes
+    margin: 0;
+    break-after: unset;
+    break-before: unset;
+    .figcaption {
+      width: 35%;
+      bottom: 70px;
+      left: 40px;
+    }
   }
 }
 
@@ -97,12 +116,12 @@ figure {
 
 // Containers for inline images (used in text flow)
 .figure__small {
-  // sizes for the images
+  // Sizes for the images
   &.figure__small--landscape,
   &.figure__small--square,
   &.figure__small--portrait,
   &.figure__small--portrait-high {
-    @include padding('text-large', 1, 0, 1, 0);
+    @include margin('text-default', 1, 0);
     h1 + & {
       padding-top: 0;
     }
@@ -120,14 +139,14 @@ figure {
 
   + blockquote,
   + blockquote.dialogue {
-    padding-top: 0;
+    margin-top: 0;
   }
 
   &.figure__small--landscape {
     figure,
     a,
     img {
-      height: n-lines($landscape-image-height, 0);
+      height: n-lines(8, 0);
     }
   }
 
@@ -135,7 +154,7 @@ figure {
     figure,
     a,
     img {
-      height: n-lines($square-image-height, 0);
+      height: n-lines(8, 0);
     }
   }
 
@@ -143,7 +162,7 @@ figure {
     figure,
     a,
     img {
-      height: n-lines($portrait-image-height, 0);
+      height: n-lines(10, 0);
     }
   }
 
@@ -151,8 +170,12 @@ figure {
     figure,
     a,
     img {
-      height: n-lines($portrait-image--high-height, 0);
+      height: n-lines(10, 0);
     }
+  }
+
+  .dialogue & {
+    margin-bottom: two-lines(0);
   }
 }
 
@@ -197,17 +220,12 @@ p.caption {
   }
 }
 
-.media__fallback {
-}
-
-.media__fallback__audio,
-.media__fallback__video,
-.media__fallback__vimeo,
-.media__fallback__iframe {
-}
-
-.media__fallback--image {
-}
+// .media__fallback {}
+// .media__fallback__audio,
+// .media__fallback__video,
+// .media__fallback__vimeo,
+// .media__fallback__iframe {}
+// .media__fallback--image {}
 
 .media__fallback--text {
   @include caption;
@@ -216,32 +234,41 @@ p.caption {
 // Inline figure sizes
 .figure__items {
   width: 100%;
-  margin: 0 auto;
+  margin: 0;
+  @if $build == 'mobi' or $build == 'epub' {
+    margin: 0 !important;
+  }
+
   > a {
     text-decoration: none;
   }
+
   .epigraph & {
     padding-top: 7px;
   }
-  .figure__inline--square & {
-    width: 80%;
-  }
-  .figure__inline--landscape & {
+
+  .figure__inline--square &,
+  .figure__large--square & {
     width: 100%;
   }
-  .figure__inline--portrait & {
+
+  .figure__inline--landscape &,
+  .figure__large--landscape & {
+    width: 100%;
+  }
+
+  .figure__inline--portrait &,
+  .figure__large--portrait & {
     width: 60%;
   }
-  .figure__inline--portrait-high & {
+
+  .figure__inline--portrait-high &,
+  .figure__large--portrait-high & {
     width: 48%;
   }
 }
 
-//
-// updates re: https://github.com/triplecanopy/b-ber/issues/295
-//
-
-// figure with media styles
+// Figure with media styles
 .figure__large.figure__large--iframe,
 .figure__large.figure__large--media {
   figure {
@@ -253,15 +280,24 @@ p.caption {
   }
 }
 
+// Full width audio/video elements
+.figure__large.figure__large--media {
+  figure {
+    .figure__items {
+      width: 100%;
+    }
+  }
+}
+
 // figure with image styles
 @if $build == 'reader' {
-  // portrait
+  // Portrait
   .figure__large.figure__inline.figure__inline--portrait,
   .figure__large.figure__large--portrait {
     figure {
       .figure__items {
-        width: 60%;
-        margin: 0 auto;
+        width: 70%;
+        margin: 0;
         img.portrait,
         img.fullbleed {
           width: 100%;
@@ -272,14 +308,14 @@ p.caption {
           width: 100%;
           max-width: 100%;
           height: auto;
-          .small {
-          }
+
+          // .small {}
         }
       }
     }
   }
 
-  // landscape
+  // Landscape
   .figure__large.figure__inline.figure__inline--landscape,
   .figure__large.figure__large--landscape,
   .figure__large.figure__large--16x9,
@@ -300,20 +336,20 @@ p.caption {
         }
         .figcaption {
           max-width: 100%;
-          .small {
-          }
+
+          // .small {}
         }
       }
     }
   }
 
-  // portrait-high
+  // Portrait High
   .figure__large.figure__inline.figure__inline--portrait-high,
   .figure__large.figure__large--portrait-high {
     figure {
       .figure__items {
-        width: 48%;
-        margin: 0 auto;
+        width: 55%;
+        margin: 0;
         img.portrait-high,
         img.fullbleed {
           width: 100%;
@@ -324,28 +360,31 @@ p.caption {
           width: 100%;
           max-width: 100%;
           height: auto;
-          .small {
-          }
+
+          // .small {}
         }
       }
     }
   }
 
-  // square
+  // Square
   .figure__large.figure__inline.figure__inline--square,
   .figure__large.figure__large--square,
   .figure__large.figure__large--4x3 {
     figure {
       .figure__items {
-        width: 80%;
-        margin: 0 auto;
+        width: 100%;
+        margin: 0;
+
         .vimeo {
           width: 100%;
         }
+
         iframe {
           width: 100%;
           height: 100%;
         }
+
         img.square,
         img.fullbleed {
           width: 100%;
@@ -356,20 +395,20 @@ p.caption {
           width: 100%;
           max-width: 100%;
           height: auto;
-          .small {
-          }
+
+          // .small {}
         }
       }
     }
   }
 } @else if $build == 'mobi' {
-  // portrait
+  // Portrait
   .figure__large.figure__inline.figure__inline--portrait,
   .figure__large.figure__large--portrait {
     figure {
       .figure__items {
         width: 70%;
-        margin: 0 auto;
+        margin: 0;
         img.portrait,
         img.fullbleed {
           width: 100%;
@@ -380,14 +419,14 @@ p.caption {
           width: 100%;
           max-width: 100%;
           height: auto;
-          .small {
-          }
+
+          // .small {}
         }
       }
     }
   }
 
-  // landscape
+  // Landscape
   .figure__large.figure__inline.figure__inline--landscape,
   .figure__large.figure__large--landscape {
     figure {
@@ -398,20 +437,20 @@ p.caption {
         }
         .figcaption {
           max-width: 100%;
-          .small {
-          }
+
+          // .small {}
         }
       }
     }
   }
 
-  // portrait-high
+  // Portrait High
   .figure__large.figure__inline.figure__inline--portrait-high,
   .figure__large.figure__large--portrait-high {
     figure {
       .figure__items {
         width: 60%;
-        margin: 0 auto;
+        margin: 0;
         img.portrait-high,
         img.fullbleed {
           width: 100%;
@@ -422,20 +461,20 @@ p.caption {
           width: 100%;
           max-width: 100%;
           height: auto;
-          .small {
-          }
+
+          // .small {}
         }
       }
     }
   }
 
-  // square
+  // Square
   .figure__large.figure__inline.figure__inline--square,
   .figure__large.figure__large--square {
     figure {
       .figure__items {
         width: 85%;
-        margin: 0 auto;
+        margin: 0;
         img.square,
         img.fullbleed {
           width: 100%;
@@ -446,8 +485,8 @@ p.caption {
           width: 100%;
           max-width: 100%;
           height: auto;
-          .small {
-          }
+
+          // .small {}
         }
       }
     }
@@ -456,13 +495,13 @@ p.caption {
   // fallback for all other builds for each of the different possible image
   // formats
 
-  // portrait
+  // Portrait
   .figure__large.figure__inline.figure__inline--portrait,
   .figure__large.figure__large--portrait {
     figure {
       .figure__items {
         width: 70%;
-        margin: 0 auto;
+        margin: 0;
         img.portrait,
         img.fullbleed {
           width: 100%;
@@ -473,14 +512,14 @@ p.caption {
           width: 100%;
           max-width: 100%;
           height: auto;
-          .small {
-          }
+
+          // .small {}
         }
       }
     }
   }
 
-  // landscape
+  // Landscape
   .figure__large.figure__inline.figure__inline--landscape,
   .figure__large.figure__large--landscape {
     figure {
@@ -491,20 +530,20 @@ p.caption {
         }
         .figcaption {
           max-width: 100%;
-          .small {
-          }
+
+          // .small {}
         }
       }
     }
   }
 
-  // portrait-high
+  // Portrait High
   .figure__large.figure__inline.figure__inline--portrait-high,
   .figure__large.figure__large--portrait-high {
     figure {
       .figure__items {
         width: 60%;
-        margin: 0 auto;
+        margin: 0;
         img.portrait-high,
         img.fullbleed {
           width: 100%;
@@ -515,20 +554,20 @@ p.caption {
           width: 100%;
           max-width: 100%;
           height: auto;
-          .small {
-          }
+
+          // .small {}
         }
       }
     }
   }
 
-  // square
+  // Square
   .figure__large.figure__inline.figure__inline--square,
   .figure__large.figure__large--square {
     figure {
       .figure__items {
         width: 85%;
-        margin: 0 auto;
+        margin: 0;
         img.square,
         img.fullbleed {
           width: 100%;
@@ -539,10 +578,27 @@ p.caption {
           width: 100%;
           max-width: 100%;
           height: auto;
-          .small {
-          }
+
+          // .small {}
         }
       }
+    }
+  }
+}
+
+// Remove hanging margins on last element in figures section to prevent "blank
+// pages"
+@if $build== 'reader' {
+  .chapter.figures:last-of-type {
+    .figure__large.figure__large--square,
+    .figure__large.figure__large--landscape,
+    .figure__large.figure__large--portrait,
+    .figure__large.figure__large--portrait-high,
+    .figure__large.figure__large--media,
+    .figure__large.figure__large--vimeo {
+      -webkit-column-break-after: avoid !important;
+      -moz-column-break-after: avoid !important;
+      break-after: avoid !important;
     }
   }
 }

@@ -1,5 +1,3 @@
-// sass-lint:disable mixins-before-declarations,nesting-depth
-
 // Web build. These styles will be added to the main stylesheet when running
 // `bber build web`.
 //
@@ -20,14 +18,14 @@
 
 // Some mixins can be found below. These are declared above the `@if $build == ...` styles,
 // since we can't declare mixins in a conditional statement in SCSS.
-@mixin web-grid-container {
-  display: grid;
-  grid-template-columns: repeat($grid-column-count, 1fr);
-}
+// @mixin web-grid-container {
+//   display: grid;
+//   grid-template-columns: repeat($grid-column-count, 1fr);
+// }
 
-@mixin web-grid-full-width {
-  grid-column: 1 / span $grid-column-count;
-}
+// @mixin web-grid-full-width {
+//   grid-column: 1 / span $grid-column-count;
+// }
 
 @mixin web-navigation-link {
   // These are the links that appear in the navigation sidebar (the table of contents).
@@ -40,6 +38,25 @@
 // Conditional styles for the web build. The `web` variable is set dynamically
 // during build when running `bber build --web`
 @if $build == 'web' {
+  // Container type styles
+  html {
+    font-size: 156.25%; // 25px
+  }
+
+  body {
+    padding: 0;
+  }
+
+  .publication__contents {
+    font-size: 80%; // 20px
+  }
+
+  @include break-at('mobile') {
+    .publication__contents {
+      font-size: 68%; // 17px
+    }
+  }
+
   // Some base styles
   body {
     padding: 0;
@@ -92,24 +109,24 @@
     padding: 0;
     transition: padding-right $transition-speed $transition-easing;
 
-    display: grid;
-    grid-template-columns: repeat($grid-column-count, 1fr);
-    grid-template-rows: $dimensions-large-y auto $dimensions-extra-large-y * 0.75;
-    grid-gap: 0;
+    // display: grid;
+    // grid-template-columns: repeat($grid-column-count, 1fr);
+    // grid-template-rows: $dimensions-large-y auto $dimensions-extra-large-y * 0.75;
+    // grid-gap: 0;
   }
 
   // Publication title is the first element in the TOC panel.
   .publication__title {
     @include web-navigation-link;
     @include text-small;
+    @include variant-weight-bold;
     height: $dimensions-large-x;
     display: flex;
     align-items: center;
     flex-direction: row;
-    border-bottom: 1px solid $grey;
+    border-bottom: 1px solid $grey-0;
     text-indent: one-em(0);
     padding-left: 15px; // mimic layout of list elements in TOC
-    font-weight: 700;
   }
 
   // Search bar
@@ -156,18 +173,19 @@
 
   // The table of contents, which is an ordered, nested list.
   .publication__toc {
-    @include caption-text;
+    @include text-small;
     transform: translateX(-100%);
     position: fixed;
     z-index: 2;
     top: 0;
     bottom: 0;
     overflow: auto;
-    -webkit-overflow-scrolling: touch; // sass-lint:disable-line no-vendor-prefixes
-    border-right: 1px solid $grey;
+    -webkit-overflow-scrolling: touch;
+    border-right: 1px solid $grey-0;
     background-color: $white;
     width: $cell-large-width;
     transition: transform $transition-speed $transition-easing;
+
     ol,
     ul,
     li,
@@ -182,9 +200,11 @@
     & > ol {
       padding-right: 15px;
     }
+
     ol li,
     ul li {
       white-space: nowrap; // Hide the overflow on longer TOC entries, will become
+
       // problematic for deeply nested structures.
       text-overflow: ellipsis;
       overflow: hidden;
@@ -193,14 +213,16 @@
         margin: 0;
       }
     }
+
     ol ul,
     ol ol {
-      padding: 0 0 0 one-em(0);
+      // padding: 0 0 0 one-em(0);
+      @include padding('text-default', 0, 0, 0, 1);
     }
   }
 
   .publication__info {
-    @include caption-text;
+    @include text-small;
     transform: translateX(100%);
     position: fixed;
     z-index: 1;
@@ -208,8 +230,8 @@
     bottom: 0;
     right: 0;
     overflow: auto;
-    -webkit-overflow-scrolling: touch; // sass-lint:disable-line no-vendor-prefixes
-    border-left: 1px solid $grey;
+    -webkit-overflow-scrolling: touch;
+    border-left: 1px solid $grey-0;
     background-color: $white;
     width: $cell-large-width;
     transition: transform $transition-speed $transition-easing;
@@ -218,9 +240,11 @@
     dd {
       @include web-navigation-link;
     }
+
     & > dl {
       padding-right: 15px;
     }
+
     dl dt,
     dl dd {
       white-space: nowrap; // Hide the overflow on longer TOC entries, which could become
@@ -228,6 +252,7 @@
       text-overflow: ellipsis;
       overflow: hidden;
     }
+
     dl dt {
       text-transform: capitalize;
       margin: 5px 0;
@@ -235,6 +260,7 @@
         margin: 0;
       }
     }
+
     dl dd {
       margin: 5px 0 one-line(0);
       &:last-child {
@@ -243,11 +269,12 @@
     }
 
     dl dl {
-      padding: 0 0 0 one-em(0);
+      // padding: 0 0 0 one-em(0);
+      @include padding('text-default', 0, 0, 0, 1);
     }
 
     dt {
-      font-weight: 700;
+      @include variant-weight-bold;
     }
   }
 
@@ -257,6 +284,7 @@
     .publication__toc {
       transform: translateX(0);
     }
+
     .publication__contents:before {
       visibility: visible;
       opacity: 0.5;
@@ -274,10 +302,7 @@
 
   // Header styles
   .publication__header {
-    @include caption-text;
-    @include web-grid-full-width;
-    grid-row: 1;
-
+    @include text-small;
     margin: 0;
     padding: 0;
     top: 0;
@@ -299,8 +324,8 @@
       margin: 0;
     }
 
-    .header__item__title {
-    }
+    // .header__item__title {}
+
     .header__item__toggle {
       // Toggle nav buttons
       position: absolute;
@@ -318,11 +343,11 @@
 
   // Prev / next arrows in the footer
   .publication__nav {
-    @include web-grid-container; // We can't use `display: subgrid` so we re-declare
+    // @include web-grid-container; // We can't use `display: subgrid` so we re-declare
     transition: width $transition-speed $transition-easing;
-    grid-column: 1 / span 12;
-    grid-row: 3;
-    align-items: end;
+    // grid-column: 2 / span 10;
+    // grid-row: 3;
+    align-items: baseline;
     z-index: 1;
 
     .publication__nav__link {
@@ -336,15 +361,18 @@
     .publication__nav__next {
       width: auto;
       height: $dimensions-large-y;
-      align-items: center;
+
       display: flex;
+      align-items: center;
       justify-content: center;
     }
     .publication__nav__prev {
-      grid-column: 1;
+      // grid-column: 1;
+      justify-content: flex-start;
     }
     .publication__nav__next {
-      grid-column: 12;
+      // grid-column: 12;
+      justify-content: flex-end;
     }
   }
 
@@ -361,34 +389,34 @@
   // easily by using container directives, like `::: chapter`.
   //
   .publication__contents {
-    @include padding('text-large', 4, 0, 3, 0);
+    @include margin('text-default', 4, 0, 3, 0);
     // grid-row: 2;
-
     // @include web-grid-container; // We can't use `display: subgrid` so it is re-declared.
     // @include web-grid-full-width; // `publication__contents` spans the entire page
     // grid-template-rows: max-content; // https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template-rows
+
     // * {
-    //   @include web-grid-full-width;
+    //   // @include web-grid-full-width;
     // } // All elements (except for `sections`, see below) also span the entire page.
 
     // section {
     //   // `section` elements are also CSS Grid containers.
-    //   @include web-grid-container;
-    //   @include web-grid-full-width;
+    //   // @include web-grid-container;
+    //   // @include web-grid-full-width;
     //   *:not(section) {
     //     // All child elements of a `section` (except for other `section`s)
     //     // span a smaller area by default. This allows overrides to be
     //     // easily applied to child elements in `_overrides.scss` to create
     //     // more complex layouts.
 
-    //     grid-column: 4 / span 6;
+    //     // grid-column: 4 / span 6;
 
-    //     @include break-at('xs') {
-    //       grid-column: 2 / span 10;
-    //     }
-    //     @include break-at('sm') {
-    //       grid-column: 2 / span 10;
-    //     }
+    //     // @include break-at('mobile') {
+    //     //   grid-column: 2 / span 10;
+    //     // }
+    //     // @include break-at('tablet') {
+    //     //   grid-column: 2 / span 10;
+    //     // }
     //   }
     // }
 
@@ -415,6 +443,7 @@
     text-align: center;
     height: calc(100vh - #{n-lines(8, 0)} - #{$dimensions-large-y});
   }
+
   .cover__image {
     max-height: 100%;
   }
@@ -431,22 +460,23 @@
     margin-bottom: one-line(0);
 
     * {
+      @include variant-weight-regular;
       margin: 0;
       padding: 0;
-      font-weight: 400;
       font-style: normal;
       text-indent: 0;
       text-align: left;
     }
   }
+
   .search__result__link {
     text-decoration: none;
     color: $black;
 
     mark {
       // Search terms that are found in the text are highlighted bold.
+      @include variant-weight-bold;
       color: $black;
-      font-weight: 700;
       background-color: transparent;
     }
   }
@@ -459,7 +489,7 @@
   }
 
   // Media queries
-  @include break-at('xs') {
+  @include break-at('mobile') {
     // Sidebars
     .publication__toc,
     .publication__info {
@@ -484,14 +514,14 @@
   }
 
   .figure__large.figure__inline {
-    margin: one-line(0) 0;
+    margin: two-lines(0) 0;
   }
 
   figure .figcaption a,
   figure figcaption a,
   .figure__items a {
     color: $black;
-    text-decoration: underline !important; // sass-lint:disable-line no-important
+    text-decoration: underline !important;
   }
 
   // Fullbleed. fullbleed panels are completely customizeable, so set to
@@ -503,10 +533,9 @@
     left: 0;
     right: 0;
     bottom: 0;
-    margin: 0;
-    grid-column: 1 !important; // sass-lint:disable-line no-important
+    // grid-column: 1 !important;
 
-    &.figure__large.figure__inline.figure__fullbleed {
+    &.figure__large.figure__inline {
       figure {
         .figure__items {
           img {
@@ -516,9 +545,6 @@
           }
           .figcaption {
             position: absolute;
-            left: 50px;
-            bottom: 75px;
-            width: 40%;
           }
         }
       }
@@ -538,37 +564,37 @@
         right: 0;
         bottom: 0;
       }
-      .figure__items img,
-      .figure__items video {
+
+      // .figure__items img,
+      // .figure__items video {}
+    }
+  }
+
+  // Gallery styles
+  section.gallery .figure__fullbleed.figure__gallery {
+    .figure__items {
+      height: 70vh;
+      .gallery__item {
+        img {
+          height: auto;
+        }
+        .figcaption {
+          display: block;
+          padding-top: 8px;
+          position: initial;
+        }
       }
     }
   }
 
-  // Mobile Overrides for Galleries, Fullbleed images, and spreads.
-  @include break-at('xs') {
-    // Fullbleed
-    .figure__fullbleed.figure__inline--landscape .figure__items {
-      height: auto;
-      margin: 0 auto;
-      width: auto;
-      img {
-        height: auto;
-        object-fit: cover;
-      }
-      .figcaption {
-        bottom: auto;
-        display: inline-block;
-        left: auto;
-        margin: 0;
-        padding: 0;
-        position: relative;
-      }
-    }
-    // Spread
+  .publication__contents {
     .spread {
+      // grid-column: 1 / span 12;
+      margin-top: -5.6em;
+      height: 100vh;
       section {
-        height: auto;
-        width: auto;
+        display: block;
+        padding: 5%;
       }
     }
   }
@@ -577,6 +603,7 @@
   section.video {
     position: relative;
   }
+
   button.media__controls {
     @extend .icon-font;
     position: absolute;
@@ -594,10 +621,11 @@
         content: 'pause_circle_outline';
       }
     }
+
     &.media__controls--play {
       &:before {
         content: 'play_circle_outline';
       }
     }
   }
-} // endif build == web
+} // endif build == 'web'

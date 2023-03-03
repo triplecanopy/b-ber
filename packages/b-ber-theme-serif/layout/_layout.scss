@@ -1,10 +1,10 @@
 hr {
   @include following-paragraph-not-indented;
   @include following-element-has-no-top-padding;
-  width: 25%;
-  background-color: $grey;
+  width: 6%;
+  background-color: $grey-1;
   padding: 0;
-  margin: one-line(0) auto;
+  margin: two-lines(0) auto;
   height: 1px;
   border: 0;
 }

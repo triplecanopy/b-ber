@@ -1,26 +1,29 @@
 ul {
-  @include text-small;
-  padding: one-line(-2) 0 one-line(-2) two-ems(0);
-  @include following-element-has-no-top-padding; // sass-lint:disable-line mixins-before-declarations
+  @include text-default;
+  @include margin('text-default', 1, 0);
+  @include padding('text-default', 0, 0, 0, 2);
+  @include following-element-has-no-top-padding;
   list-style: disc;
   text-indent: 0;
-  margin: 0;
 
   ul,
-  ol {
-    padding: 0 0 0 two-ems(0);
+  ol,
+  dl {
+    font-size: 1em;
+    margin: 0;
   }
 
-  @if $build == web {
+  @if $build == 'web' {
     list-style: none;
   }
 
   li {
     text-indent: 0;
 
-    @if $build == web {
+    @if $build == 'web' {
       text-indent: -0.6em;
       padding-left: 0.6em;
+
       &:before {
         content: '-';
         display: inline-block;
@@ -29,34 +32,32 @@ ul {
       }
     }
   }
-
-  * {
-    @include text-large;
-    line-height: line-height(ms(-2));
-  }
 }
 
 ol,
 dl {
-  @include text-small;
-  padding: one-line(-2) 0 one-line(-2) two-ems(0);
-  @include following-element-has-no-top-padding; // sass-lint:disable-line mixins-before-declarations
+  @include text-default;
+  @include margin('text-default', 1, 0);
+  @include padding('text-default', 0, 0, 0, 2);
+  @include following-element-has-no-top-padding;
+  // font-size: 1em; // Set on container so that child elements render at the correct size
   list-style: decimal;
   text-indent: 0;
-  margin: 0;
 
   ul,
   ol,
   dl {
-    padding: 0 0 0 two-ems(0);
+    font-size: 1em;
+    margin: 0;
   }
 
   li,
   dt,
   dd {
+    // @include text-default;
     padding-top: 0;
 
-    @if $build == web {
+    @if $build == 'web' {
       text-indent: -0.6em;
       padding-left: 0.6em;
     }
@@ -66,17 +67,116 @@ dl {
   section.colophon &,
   section.appendix &,
   section.backmatter & {
-    @include padding('text-medium', 0, 1, 0, 1);
+    @include margin('text-medium', 0, 1);
+
     li {
       @include following-paragraph-not-indented;
-      font-weight: normal;
+      @include variant-weight-regular;
       font-style: normal;
       text-indent: 0;
     }
   }
+}
 
-  * {
-    @include text-large;
-    line-height: line-height(ms(-2));
+@mixin paragraph-not-indented {
+  text-indent: 0 !important; // sass-lint:disable-line no-important
+  margin-bottom: one-line(0);
+}
+
+// Default Poem Styles
+section.poem {
+  ol {
+    @include margin('text-default', 0, 0, 1, 0);
+    padding: 0;
+    list-style: inside none;
+    hyphens: none;
+
+    li {
+      @include padding('text-default', 0, 2, 0);
+      // @include text-default;
+      padding-left: 1em;
+      margin-left: -0.5em;
+      text-indent: -0.5em;
+    }
+  }
+
+  p + & {
+    margin-top: one-line(0); // target poems situated in subchapters
+  }
+
+  @include break-at('mobile') {
+    ol li {
+      @include padding('text-default', 0, 0, 0, 1);
+    }
+  }
+}
+
+// Poem with no hanging indent and bottom margin. Note: breaking this out for code legibility as we may need vaiability in styling for poetry formats
+section.poem.no-hanging-indent li {
+  margin-left: 0;
+  padding-left: 0;
+  margin-bottom: one-line(0);
+  text-indent: 0;
+}
+
+// Poem Styles for Mobile Reader
+@if $build == 'reader' {
+  @include break-at('mobile') {
+    section.poem {
+      break-after: avoid !important;
+      p,
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6,
+      ol {
+        @include text-default;
+      }
+
+      section.pullquote {
+        cite {
+          @include text-default;
+        }
+      }
+    }
+
+    section.letter {
+      p {
+        @include paragraph-not-indented;
+        // May want to consider making this the same font size as poems, but let's see during testing.
+        @include text-default;
+      }
+    }
+  }
+}
+
+ul,
+ol,
+dl {
+  &:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  li,
+  dt,
+  dd {
+    &:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+  }
+}
+
+blockquote >,
+.pullquote > {
+  ul,
+  ol,
+  dl {
+    &:first-child {
+      padding-top: 0;
+    }
   }
 }

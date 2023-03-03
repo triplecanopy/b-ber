@@ -11,7 +11,7 @@
 $build: 'epub' !default;
 
 @import 'settings';
-@import '~@canopycanopycanopy/b-ber-theme-serif/mixins';
+@import '~@canopycanopycanopy/b-ber-theme-mixins/application';
 
 // for validation while building on CLI, not an actual setting
 $build: 'epub' !default;
@@ -25,8 +25,8 @@ $modularscale: (
   ratio: $minor-second,
 );
 
-@import 'typography';
-@import 'layout';
+@import '~@canopycanopycanopy/b-ber-theme-serif/typography';
+@import '~@canopycanopycanopy/b-ber-theme-serif/layout';
 
 // Set `$grey-0` in case of e-ink readers
 @if $build == 'mobi' {

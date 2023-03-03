@@ -1,0 +1,36 @@
+@if $build == 'epub' {
+  html {
+    font-size: 62.5%;
+  }
+
+  body {
+    font-family: $font-serif;
+  }
+
+  .frontmatter.titlepage {
+    #title-page-spread {
+      background: none;
+
+      ul {
+        @include type-settings(0);
+        list-style: none;
+        padding: 0;
+        margin-bottom: two-ems(0);
+      }
+
+      #title-dek {
+        h1,
+        h2 {
+          @include type-settings(18);
+          @include variant-weight(300, 300);
+          line-height: 0.9em;
+          margin-bottom: 0;
+        }
+
+        p {
+          margin-top: two-ems(0);
+        }
+      }
+    }
+  }
+}
