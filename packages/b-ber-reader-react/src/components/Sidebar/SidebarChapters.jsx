@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React from 'react'
 import classNames from 'classnames'
 import { connect } from 'react-redux'
+import useMaxHeight from '../../hooks/use-max-height'
 
 function NestedChapterList(props) {
   const { current, items } = props
@@ -41,28 +42,11 @@ function SidebarChapters(props) {
 
   if (props.showSidebar !== 'chapters') return null
 
-  const node = useRef()
-
-  const [maxHeight, setMaxHeight] = useState('0px')
-
-  const updateMaxHeight = () => {
-    const { y } = node.current.getBoundingClientRect()
-    setMaxHeight(window.innerHeight - y)
-  }
-
-  useEffect(() => {
-    updateMaxHeight()
-  }, [node])
-
-  useEffect(() => {
-    window.addEventListener('resize', updateMaxHeight)
-
-    return () => window.removeEventListener('resize', updateMaxHeight)
-  }, [])
+  const [ref, maxHeight] = useMaxHeight()
 
   return (
     <nav
-      ref={node}
+      ref={ref}
       style={{ maxHeight }}
       className={classNames(
         'bber-nav',

@@ -1,9 +1,10 @@
 /* eslint-disable react/button-has-type */
 
-import React, { useEffect, useRef, useState } from 'react'
+import React from 'react'
 import { connect } from 'react-redux'
 import classNames from 'classnames'
 import Messenger from '../../lib/Messenger'
+import useMaxHeight from '../../hooks/use-max-height'
 
 function SidebarDownloadLink({ url, label, description }) {
   const handleClick = () => Messenger.sendDownloadEvent(url)
@@ -28,28 +29,11 @@ function SidebarDownloads(props) {
 
   if (props.showSidebar !== 'downloads') return null
 
-  const node = useRef()
-
-  const [maxHeight, setMaxHeight] = useState('0px')
-
-  const updateMaxHeight = () => {
-    const { y } = node.current.getBoundingClientRect()
-    setMaxHeight(window.innerHeight - y)
-  }
-
-  useEffect(() => {
-    updateMaxHeight()
-  }, [node])
-
-  useEffect(() => {
-    window.addEventListener('resize', updateMaxHeight)
-
-    return () => window.removeEventListener('resize', updateMaxHeight)
-  }, [])
+  const [ref, maxHeight] = useMaxHeight()
 
   return (
     <nav
-      ref={node}
+      ref={ref}
       style={{ maxHeight }}
       className={classNames(
         'bber-nav',
