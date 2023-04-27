@@ -1,27 +1,26 @@
-const BLOCK_DIRECTIVE_MARKER = ':'
-const INLINE_DIRECTIVE_MARKER = ':'
-const BLOCK_DIRECTIVE_MARKER_MIN_LENGTH = 3
-const INLINE_DIRECTIVE_MARKER_MIN_LENGTH = 3
-const SECONDARY_INLINE_DIRECTIVE_MARKER_MIN_LENGTH = 2
+export const BLOCK_DIRECTIVE_MARKER = ':'
+export const INLINE_DIRECTIVE_MARKER = ':'
+export const BLOCK_DIRECTIVE_MARKER_MIN_LENGTH = 3
+export const INLINE_DIRECTIVE_MARKER_MIN_LENGTH = 3
+export const SECONDARY_INLINE_DIRECTIVE_MARKER_MIN_LENGTH = 2
 
-const BLOCK_DIRECTIVE_FENCE = `${BLOCK_DIRECTIVE_MARKER.repeat(
+export const BLOCK_DIRECTIVE_FENCE = `${BLOCK_DIRECTIVE_MARKER.repeat(
   BLOCK_DIRECTIVE_MARKER_MIN_LENGTH
 )} `
 
-const INLINE_DIRECTIVE_FENCE = `${INLINE_DIRECTIVE_MARKER.repeat(
+export const INLINE_DIRECTIVE_FENCE = `${INLINE_DIRECTIVE_MARKER.repeat(
   INLINE_DIRECTIVE_MARKER_MIN_LENGTH
 )} `
 
-const SECONDARY_INLINE_DIRECTIVE_FENCE_OPEN = `${INLINE_DIRECTIVE_MARKER.repeat(
+export const SECONDARY_INLINE_DIRECTIVE_FENCE_OPEN = `${INLINE_DIRECTIVE_MARKER.repeat(
   SECONDARY_INLINE_DIRECTIVE_MARKER_MIN_LENGTH
 )} `
 
-const SECONDARY_INLINE_DIRECTIVE_FENCE_CLOSE = `${INLINE_DIRECTIVE_MARKER.repeat(
+export const SECONDARY_INLINE_DIRECTIVE_FENCE_CLOSE = `${INLINE_DIRECTIVE_MARKER.repeat(
   SECONDARY_INLINE_DIRECTIVE_MARKER_MIN_LENGTH
 )}`
 
-// block
-const FRONTMATTER_DIRECTIVES = new Set([
+export const FRONTMATTER_DIRECTIVES = new Set([
   'frontmatter',
   'halftitlepage',
   'titlepage',
@@ -32,7 +31,7 @@ const FRONTMATTER_DIRECTIVES = new Set([
   'acknowledgments',
 ])
 
-const BODYMATTER_DIRECTIVES = new Set([
+export const BODYMATTER_DIRECTIVES = new Set([
   'bodymatter',
   'introduction',
   'prologue',
@@ -48,7 +47,7 @@ const BODYMATTER_DIRECTIVES = new Set([
   'article',
 ])
 
-const BACKMATTER_DIRECTIVES = new Set([
+export const BACKMATTER_DIRECTIVES = new Set([
   'backmatter',
   'afterword',
   'loi',
@@ -59,7 +58,7 @@ const BACKMATTER_DIRECTIVES = new Set([
   'colophon',
 ])
 
-const INLINE_DIRECTIVES = new Set([
+export const INLINE_DIRECTIVES = new Set([
   'figure',
   'figure-inline',
   'logo',
@@ -75,7 +74,7 @@ const INLINE_DIRECTIVES = new Set([
   'media-inline',
 ])
 
-const MISC_DIRECTIVES = new Set([
+export const MISC_DIRECTIVES = new Set([
   'pullquote',
   'blockquote',
   'dialogue',
@@ -85,7 +84,7 @@ const MISC_DIRECTIVES = new Set([
 ])
 
 // belonging to the epub-vocab, but still in draft. see https://idpf.github.io/epub-vocabs/structure/
-const DRAFT_DIRECTIVES = new Set([
+export const DRAFT_DIRECTIVES = new Set([
   'abstract',
   'toc-brief',
   'credits',
@@ -119,7 +118,7 @@ const DRAFT_DIRECTIVES = new Set([
   'credit',
 ])
 
-const DEPRECATED_DIRECTIVES = new Set([
+export const DEPRECATED_DIRECTIVES = new Set([
   'subchapter',
   'help',
   'marginalia',
@@ -132,191 +131,179 @@ const DEPRECATED_DIRECTIVES = new Set([
   'annoref',
 ])
 
-// unions
-const BLOCK_DIRECTIVES = new Set([
+
+export const BLOCK_DIRECTIVES = new Set([
   ...FRONTMATTER_DIRECTIVES,
   ...BODYMATTER_DIRECTIVES,
   ...BACKMATTER_DIRECTIVES,
 ])
 
-const ALL_DIRECTIVES = new Set([
+export const ALL_DIRECTIVES = new Set([
   ...BLOCK_DIRECTIVES,
   ...INLINE_DIRECTIVES,
   ...MISC_DIRECTIVES,
 ])
 
-const HTML5AudiovideoAttributes = {
-  autoplay: true,
-  loop: true,
-  controls: true,
-  muted: true,
-  preload: true,
-  autobuffer: true,
-  buffered: true,
-  mozCurrentSampleOffset: true,
-  played: true,
-  volume: true,
-  crossorigin: true,
-}
+export const htmlAudioVideoAttributes = new Set([
+  'autoplay',
+  'loop',
+  'controls',
+  'muted',
+  'preload',
+  'autobuffer',
+  'buffered',
+  'mozCurrentSampleOffset',
+  'played',
+  'volume',
+  'crossorigin',
+])
 
-const htmlIframeAttributes = {
-  title: true,
-  width: true,
-  height: true,
-  allow: true,
-  // allowfullscreen: true,
-  loading: true,
-  name: true,
-  referrerpolicy: true,
-  sandbox: true,
-  // src: true,
-  srcdoc: true,
-  scrolling: true,
-  frameborder: true,
-}
+export const htmlIframeAttributes = new Set([
+  'title',
+  'width',
+  'height',
+  'allow',
+  'loading',
+  'name',
+  'referrerpolicy',
+  'sandbox',
+  'srcdoc',
+  'scrolling',
+  'frameborder',
+])
 
 // Attributes that are used in the vimeo and vimeo-inline directives and passed
 // to vimeo via query string
-const vimeoEmbedAttributes = {
-  autopause: true,
-  autoplay: true,
-  background: true,
-  byline: true,
-  color: true,
-  controls: true,
-  dnt: true,
-  fun: true,
-  loop: true,
-  muted: true,
-  playsinline: true,
-  portrait: true,
-  quality: true,
-  speed: true,
-  '#t': true,
-  texttrack: true,
-  title: true,
-  transparent: true,
-}
+export const vimeoEmbedAttributes = new Set([
+  'autopause',
+  'autoplay',
+  'background',
+  'byline',
+  'color',
+  'controls',
+  'dnt',
+  'fun',
+  'loop',
+  'muted',
+  'playsinline',
+  'portrait',
+  'quality',
+  'speed',
+  '#t',
+  'texttrack',
+  'title',
+  'transparent',
+])
 
 // b-ber attributes for audio, video and vimeo directives
-const bBerAudiovideoAttributes = {
-  classes: true,
-  source: true,
-  poster: true,
-  aspectratio: true,
+export const bBerAudioVideoAttributes = new Set([
+  'classes',
+  'source',
+  'poster',
+  'aspectratio',
+])
+
+export const SUPPORTED_ATTRIBUTES = {
+  block: new Set([
+    'title',
+    'classes',
+  ]),
+
+  figure: new Set([
+    'alt',
+    'caption',
+    'classes',
+    'source'
+  ]),
+
+  'figure-inline': new Set([
+    'alt',
+    'caption',
+    'classes',
+    'source'
+  ]),
+
+  logo: new Set([
+    'alt',
+    'source'
+  ]),
+
+  video: new Set([
+    ...htmlAudioVideoAttributes,
+    ...bBerAudioVideoAttributes
+  ]),
+
+  'video-inline': new Set([
+    ...htmlAudioVideoAttributes,
+    ...bBerAudioVideoAttributes
+  ]),
+
+  audio: new Set([
+    ...htmlAudioVideoAttributes,
+    ...bBerAudioVideoAttributes
+  ]),
+
+  'audio-inline': new Set([
+    ...htmlAudioVideoAttributes,
+    ...bBerAudioVideoAttributes
+  ]),
+
+  vimeo: new Set([
+    ...vimeoEmbedAttributes,
+    ...bBerAudioVideoAttributes,
+  ]),
+
+  'vimeo-inline': new Set([
+    ...vimeoEmbedAttributes,
+    ...bBerAudioVideoAttributes,
+  ]),
+
+
+  iframe: new Set([
+    ...htmlIframeAttributes,
+    'source',
+    'classes',
+    'poster',
+  ]),
+
+  'iframe-inline': new Set([
+    ...htmlIframeAttributes,
+    'source',
+    'classes',
+    'poster',
+  ]),
+
+  pullquote: new Set([
+    'classes',
+    'citation',
+  ]),
+
+  blockquote: new Set([
+    'classes',
+    'citation',
+  ]),
+
+  dialogue: new Set([
+    'classes',
+  ]),
+
+  gallery: new Set([
+    'caption',
+    'sources',
+  ]),
+
+  spread: new Set([
+    'classes',
+  ]),
+
+  epigraph: new Set([
+    'alt',
+    'source',
+  ]),
 }
 
-const SUPPORTED_ATTRIBUTES = {
-  block: {
-    title: true,
-    classes: true,
-  },
-
-  // inline
-  figure: {
-    alt: true,
-    caption: true,
-    classes: true,
-    source: true,
-  },
-  'figure-inline': {
-    alt: true,
-    caption: true,
-    classes: true,
-    source: true,
-  },
-  logo: {
-    alt: true,
-    source: true,
-  },
-  video: {
-    ...HTML5AudiovideoAttributes,
-    ...bBerAudiovideoAttributes,
-  },
-  'video-inline': {
-    ...HTML5AudiovideoAttributes,
-    ...bBerAudiovideoAttributes,
-  },
-  audio: {
-    ...HTML5AudiovideoAttributes,
-    ...bBerAudiovideoAttributes,
-  },
-  'audio-inline': {
-    ...HTML5AudiovideoAttributes,
-    ...bBerAudiovideoAttributes,
-  },
-  vimeo: {
-    ...vimeoEmbedAttributes,
-    ...bBerAudiovideoAttributes,
-  },
-  'vimeo-inline': {
-    ...vimeoEmbedAttributes,
-    ...bBerAudiovideoAttributes,
-  },
-
-  iframe: {
-    ...htmlIframeAttributes,
-    source: true,
-    classes: true,
-    poster: true,
-  },
-  'iframe-inline': {
-    ...htmlIframeAttributes,
-    source: true,
-    classes: true,
-    poster: true,
-  },
-
-  // misc
-  pullquote: {
-    classes: true,
-    citation: true,
-  },
-  blockquote: {
-    classes: true,
-    citation: true,
-  },
-  dialogue: {
-    classes: true,
-  },
-  gallery: {
-    caption: true,
-    sources: true,
-  },
-  spread: {
-    classes: true,
-  },
-  epigraph: {
-    alt: true,
-    source: true,
-  },
-}
-
-const DIRECTIVES_REQUIRING_ALT_TAG = new Set([
+export const DIRECTIVES_REQUIRING_ALT_TAG = new Set([
   'figure',
   'figure-inline',
   'logo',
 ])
-
-export {
-  htmlIframeAttributes,
-  BLOCK_DIRECTIVE_MARKER,
-  INLINE_DIRECTIVE_MARKER,
-  BLOCK_DIRECTIVE_FENCE,
-  INLINE_DIRECTIVE_FENCE,
-  SECONDARY_INLINE_DIRECTIVE_FENCE_OPEN,
-  SECONDARY_INLINE_DIRECTIVE_FENCE_CLOSE,
-  BLOCK_DIRECTIVE_MARKER_MIN_LENGTH,
-  INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
-  FRONTMATTER_DIRECTIVES,
-  BODYMATTER_DIRECTIVES,
-  BACKMATTER_DIRECTIVES,
-  BLOCK_DIRECTIVES,
-  INLINE_DIRECTIVES,
-  MISC_DIRECTIVES,
-  ALL_DIRECTIVES,
-  SUPPORTED_ATTRIBUTES,
-  DIRECTIVES_REQUIRING_ALT_TAG,
-  DRAFT_DIRECTIVES,
-  DEPRECATED_DIRECTIVES,
-}

@@ -91,7 +91,7 @@ export function createIframeInline(data) {
   const defaults = { allow: 'fullscreen autoplay', frameborder: '0' }
   const iframeAttrs = Object.entries({ ...defaults, ...rest }).reduce(
     (acc, [key, val]) => {
-      if (!htmlIframeAttributes[key] || val === '') return acc
+      if (!htmlIframeAttributes.has(key) || val === '') return acc
       return acc.concat(`${key}="${val}"`)
     },
     []
