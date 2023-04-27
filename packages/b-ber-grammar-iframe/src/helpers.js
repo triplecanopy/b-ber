@@ -13,6 +13,7 @@ import {
   attributesObject,
   htmlId,
 } from '@canopycanopycanopy/b-ber-grammar-attributes'
+import { htmlIframeAttributes } from '@canopycanopycanopy/b-ber-shapes-directives'
 
 export function supported(build) {
   return build === 'reader' || build === 'web'
@@ -46,6 +47,7 @@ export function prepare({
   ensureSupportedClassNames(attrsObject, supported)
 
   return {
+    ...attrsObject,
     id: figureId,
     attrString: attributesString(attrsObject, { classes: true }),
     commentStart: Html.comment(`START: ${mediaType}:${type}#${figureId};`),
@@ -60,9 +62,6 @@ export function prepare({
     pageOrder: state.figures.length,
     source: Url.ensureDecoded(attrsObject.source),
     poster: attrsObject.poster,
-    width: attrsObject.width,
-    height: attrsObject.height,
-    title: attrsObject.title,
   }
 }
 
@@ -77,34 +76,33 @@ export function createIframe({ id, href, poster }) {
     </div>`
 }
 
-export function createIframeInline({
-  id,
-  commentStart,
-  commentEnd,
-  mediaType,
-  attrString,
-  source,
-  caption,
-  width,
-  height,
-  title,
-}) {
+export function createIframeInline(data) {
+  const {
+    id,
+    commentStart,
+    commentEnd,
+    mediaType,
+    attrString: containerAttrsString,
+    source,
+    caption,
+    ...rest
+  } = data
+
+  const defaults = { allow: 'fullscreen autoplay', frameborder: '0' }
+  const iframeAttrs = Object.entries({ ...defaults, ...rest }).reduce(
+    (acc, [key, val]) => {
+      if (!htmlIframeAttributes[key] || val === '') return acc
+      return acc.concat(`${key}="${val}"`)
+    },
+    []
+  )
+  const iframeAttrsString = iframeAttrs.join(' ')
+
   return `
     ${commentStart}
       <section class="${mediaType} figure__large figure__inline">
-        <div id="${id}"${attrString}>
-          <iframe
-            src="${source}"
-            title="${title}"
-            width="${width}"
-            height="${height}"
-            webkitallowfullscreen="webkitallowfullscreen"
-            mozallowfullscreen="mozallowfullscreen"
-            allowfullscreen="allowfullscreen"
-            allow="autoplay"
-            frameborder="0"
-            scrolling="no"
-          >
+        <div id="${id}"${containerAttrsString}>
+          <iframe src="${source}" ${iframeAttrsString}>
           </iframe>
         </div>
         ${renderCaption(caption, mediaType)}

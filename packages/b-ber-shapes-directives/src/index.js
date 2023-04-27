@@ -59,7 +59,6 @@ const BACKMATTER_DIRECTIVES = new Set([
   'colophon',
 ])
 
-// inline
 const INLINE_DIRECTIVES = new Set([
   'figure',
   'figure-inline',
@@ -76,7 +75,6 @@ const INLINE_DIRECTIVES = new Set([
   'media-inline',
 ])
 
-// misc
 const MISC_DIRECTIVES = new Set([
   'pullquote',
   'blockquote',
@@ -161,6 +159,22 @@ const HTML5AudiovideoAttributes = {
   crossorigin: true,
 }
 
+const htmlIframeAttributes = {
+  title: true,
+  width: true,
+  height: true,
+  allow: true,
+  // allowfullscreen: true,
+  loading: true,
+  name: true,
+  referrerpolicy: true,
+  sandbox: true,
+  // src: true,
+  srcdoc: true,
+  scrolling: true,
+  frameborder: true,
+}
+
 // Attributes that are used in the vimeo and vimeo-inline directives and passed
 // to vimeo via query string
 const vimeoEmbedAttributes = {
@@ -239,18 +253,15 @@ const SUPPORTED_ATTRIBUTES = {
     ...vimeoEmbedAttributes,
     ...bBerAudiovideoAttributes,
   },
+
   iframe: {
-    title: true,
-    width: true,
-    height: true,
+    ...htmlIframeAttributes,
     source: true,
     classes: true,
     poster: true,
   },
   'iframe-inline': {
-    title: true,
-    width: true,
-    height: true,
+    ...htmlIframeAttributes,
     source: true,
     classes: true,
     poster: true,
@@ -288,6 +299,7 @@ const DIRECTIVES_REQUIRING_ALT_TAG = new Set([
 ])
 
 export {
+  htmlIframeAttributes,
   BLOCK_DIRECTIVE_MARKER,
   INLINE_DIRECTIVE_MARKER,
   BLOCK_DIRECTIVE_FENCE,
