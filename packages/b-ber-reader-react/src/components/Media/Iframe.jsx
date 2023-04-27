@@ -24,14 +24,13 @@ class Iframe extends React.Component {
 
   render() {
     const {
-      src,
-      title,
-      width,
-      height,
+      attrs,
       viewerSettings,
       iframePlaceholderTop,
       iframePlaceholderWidth,
     } = this.props
+
+    const { src, title, width, height } = attrs
 
     let iframeContainerStyles = {}
 
@@ -48,14 +47,6 @@ class Iframe extends React.Component {
         position,
       }
     }
-
-    // TODO set height?
-    // const height = 150
-    // let height = 150
-    // if (kind === 'playlists' || kind === 'users') {
-    //   const { top, bottom } = Viewport.optimized()
-    //   height = (window.innerHeight - top - bottom) / 2
-    // }
 
     return (
       <>
@@ -78,14 +69,8 @@ class Iframe extends React.Component {
           <iframe
             src={src}
             title={title}
-            width={width}
-            height={height}
-            webkitallowfullscreen="webkitallowfullscreen"
-            mozallowfullscreen="mozallowfullscreen"
-            allowFullScreen="allowfullscreen"
-            allow="autoplay"
-            frameBorder="0"
-            scrolling="no"
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            {...attrs}
           />
         </div>
       </>
