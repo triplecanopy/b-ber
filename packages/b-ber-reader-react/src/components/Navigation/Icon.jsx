@@ -3,9 +3,6 @@ import React from 'react'
 export const Home = () => (
   <svg
     style={{ top: 1 }}
-    // style={{ width: '22px', top: -2 }}
-    // width="32px"
-    // height="32px"
     viewBox="0 0 32 32"
     version="1.1"
     xmlns="http://www.w3.org/2000/svg"
@@ -20,12 +17,7 @@ export const Home = () => (
 )
 
 export const Download = () => (
-  <svg
-    // style={{ width: '12px', top: 1 }}
-    viewBox="0 0 18 22"
-    version="1.1"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg viewBox="0 0 18 22" version="1.1" xmlns="http://www.w3.org/2000/svg">
     <g stroke="none" strokeWidth="0" fill="none" fillRule="evenodd">
       <g transform="translate(-6.000000, -3.000000)" fill="#000000">
         <path d="M23.75,11.25 L18.75,11.25 L18.75,3.75 L11.25,3.75 L11.25,11.25 L6.25,11.25 L15,20 L23.75,11.25 L23.75,11.25 Z M6.25,22.5 L6.25,25 L23.75,25 L23.75,22.5 L6.25,22.5 L6.25,22.5 Z" />
@@ -35,12 +27,7 @@ export const Download = () => (
 )
 
 export const Close = () => (
-  <svg
-    // style={{ width: '12px', top: 1 }}
-    viewBox="0 0 12 13"
-    version="1.1"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg viewBox="0 0 12 13" version="1.1" xmlns="http://www.w3.org/2000/svg">
     <g stroke="none" strokeWidth="0" fill="none" fillRule="evenodd">
       <g
         transform="translate(0.000000, 0.422836)"
@@ -56,7 +43,6 @@ export const Close = () => (
 export const Info = () => (
   <svg
     style={{ top: 1 }}
-    // style={{ width: '20px', top: 1 }}
     viewBox="0 0 26 26"
     version="1.1"
     xmlns="http://www.w3.org/2000/svg"
@@ -70,12 +56,7 @@ export const Info = () => (
 )
 
 export const Menu = () => (
-  <svg
-    // style={{ width: '14px', top: 1 }}
-    viewBox="0 0 22 18"
-    version="1.1"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg viewBox="0 0 22 18" version="1.1" xmlns="http://www.w3.org/2000/svg">
     <g stroke="none" strokeWidth="0" fill="none" fillRule="evenodd">
       <g transform="translate(-5.000000, -6.192388)" fill="#000000">
         <path d="M5,17.5 L10,17.5 L10,12.5 L5,12.5 L5,17.5 L5,17.5 Z M5,23.75 L10,23.75 L10,18.75 L5,18.75 L5,23.75 L5,23.75 Z M5,11.25 L10,11.25 L10,6.25 L5,6.25 L5,11.25 L5,11.25 Z M11.25,17.5 L26.25,17.5 L26.25,12.5 L11.25,12.5 L11.25,17.5 L11.25,17.5 Z M11.25,23.75 L26.25,23.75 L26.25,18.75 L11.25,18.75 L11.25,23.75 L11.25,23.75 Z M11.25,6.25 L11.25,11.25 L26.25,11.25 L26.25,6.25 L11.25,6.25 L11.25,6.25 Z" />

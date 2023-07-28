@@ -11,6 +11,7 @@ packages/b-ber-shapes-dublin-core/elements.js
 packages/b-ber-shapes-dublin-core/terms.js
 packages/b-ber-shapes-dublin-core/index.js
 packages/b-ber-shapes-directives/index.js
+packages/b-ber-shapes-directives/src/index.js
 packages/b-ber-shapes-sequences/index.js
 packages/b-ber-shapes-sequences/create-build-sequence.js
 packages/b-ber-shapes-sequences/sequences/index.js

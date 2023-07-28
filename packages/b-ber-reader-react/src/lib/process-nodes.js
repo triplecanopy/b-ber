@@ -214,7 +214,8 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
       const attrs = Asset.convertToReactAttrs(node.attribs)
       const key = rand()
 
-      attrs.spreadLayout = false
+      let spreadLayout = false
+      let useElementOffsetLeft = true
 
       // Required for play-on-page-change for fullbleed. See Vimeo instructions
       // above
@@ -224,15 +225,19 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
           nodeParent.type === 'tag' &&
           nodeParent.attribs['data-marker-reference-figure']
         ) {
-          attrs.useElementOffsetLeft = false
-          attrs.spreadLayout = true
+          useElementOffsetLeft = false
+          spreadLayout = true
           break
         }
 
         nodeParent = nodeParent.parent
       }
 
-      return React.createElement(Iframe, { ...attrs, key }, children)
+      return React.createElement(
+        Iframe,
+        { useElementOffsetLeft, spreadLayout, attrs, key },
+        children
+      )
     },
   },
   {

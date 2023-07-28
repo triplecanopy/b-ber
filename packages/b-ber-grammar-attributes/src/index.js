@@ -58,7 +58,7 @@ const _isUnsupportedAttribute = (genus, attr) => {
     key = genus
   }
 
-  return !SUPPORTED_ATTRIBUTES[key] || SUPPORTED_ATTRIBUTES[key][attr] !== true
+  return !SUPPORTED_ATTRIBUTES[key] || !SUPPORTED_ATTRIBUTES[key].has(attr)
 }
 
 const _applyTransforms = (k, v) => {
