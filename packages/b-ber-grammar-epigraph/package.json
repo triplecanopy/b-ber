@@ -1,6 +1,6 @@
 {
   "name": "@canopycanopycanopy/b-ber-grammar-epigraph",
-  "version": "3.0.6",
+  "version": "3.0.7",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -26,7 +26,7 @@
   },
   "dependencies": {
     "@canopycanopycanopy/b-ber-logger": "3.0.6",
-    "@canopycanopycanopy/b-ber-parser-figure": "3.0.6",
+    "@canopycanopycanopy/b-ber-parser-figure": "3.0.7",
     "lodash": "^4.17.21",
     "tar": "^6.1.11"
   },
