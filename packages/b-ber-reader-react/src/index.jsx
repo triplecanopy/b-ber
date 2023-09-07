@@ -6,8 +6,13 @@ import combinedReducers from './reducers'
 import { initialState as initialReaderSettings } from './reducers/reader-settings'
 import { mergeDeep } from './helpers/utils'
 import { App } from './components'
+import version from './lib/version'
 
 import './lib/polyfills'
+
+const Version = () => (
+  <meta name="generator" content={`b-ber-react-reader: ${version}`} />
+)
 
 const ConnectedApp = (props = {}) => {
   const store = createStore(
@@ -18,6 +23,7 @@ const ConnectedApp = (props = {}) => {
 
   return (
     <Provider store={store}>
+      <Version />
       <App />
     </Provider>
   )

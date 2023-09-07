@@ -6,6 +6,7 @@
   "scripts": {
     "prepublish": "npm test",
     "preversion": "npm test",
+    "version": "node ./scripts/version.js",
     "webpack:src": "./scripts/webpack.sh",
     "webpack:dist": "NODE_ENV=production ./scripts/webpack.sh",
     "clean": "rimraf dist && rimraf stats.json",
