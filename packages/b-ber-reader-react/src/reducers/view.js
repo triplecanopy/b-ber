@@ -2,12 +2,13 @@ import * as actionTypes from '../constants/view'
 
 const initialState = {
   loaded: false,
-  pendingDeferredCallbacks: true,
+  // pendingDeferredCallbacks: true,
   ultimateOffsetLeft: 0,
   lastSpreadIndex: 0,
 }
 
 const view = (state = initialState, action) => {
+  // console.log('view', action)
   switch (action.type) {
     case actionTypes.LOAD:
     case actionTypes.UNLOAD:
@@ -23,7 +24,7 @@ const view = (state = initialState, action) => {
     case actionTypes.DEQUEUE_DEFERRED_CALLBACKS:
       return {
         ...state,
-        pendingDeferredCallbacks: action.payload,
+        // pendingDeferredCallbacks: action.payload,
       }
 
     default:

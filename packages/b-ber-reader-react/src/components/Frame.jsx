@@ -23,13 +23,12 @@ class Frame extends React.Component {
   }
 
   handleScroll = e => {
-    const documentHeight = Math.max(
-      this.node.current.scrollHeight,
-      this.node.current.offsetHeight,
-      this.node.current.clientHeight
-    )
-
-    Messenger.sendScrollEvent(e, e.target.scrollTop, documentHeight)
+    // const documentHeight = Math.max(
+    //   this.node.current.scrollHeight,
+    //   this.node.current.offsetHeight,
+    //   this.node.current.clientHeight
+    // )
+    // Messenger.sendScrollEvent(e, e.target.scrollTop, documentHeight)
   }
 
   componentDidMount() {

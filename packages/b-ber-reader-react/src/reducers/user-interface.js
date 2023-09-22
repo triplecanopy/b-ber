@@ -4,6 +4,10 @@ const initialState = {
   enableTransitions: false,
   handleEvents: false,
   spinnerVisible: true,
+
+  // enableTransitions: true,
+  // handleEvents: true,
+  // spinnerVisible: true,
 }
 
 const markers = (state = initialState, action = {}) => {

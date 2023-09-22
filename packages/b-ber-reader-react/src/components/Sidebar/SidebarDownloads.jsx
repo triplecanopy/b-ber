@@ -7,7 +7,7 @@ import Messenger from '../../lib/Messenger'
 import useMaxHeight from '../../hooks/use-max-height'
 
 function SidebarDownloadLink({ url, label, description }) {
-  const handleClick = () => Messenger.sendDownloadEvent(url)
+  const handleClick = () => {}
 
   return (
     <li className="bber-li">

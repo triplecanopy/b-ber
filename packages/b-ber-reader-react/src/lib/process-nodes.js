@@ -282,7 +282,7 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
       return node.type === 'tag' && has(node.attribs, 'data-ultimate')
     },
     processNode(node, children) {
-      return React.createElement(Ultimate, {}, children)
+      return React.createElement(Ultimate, { key: rand() }, children)
     },
   },
   {

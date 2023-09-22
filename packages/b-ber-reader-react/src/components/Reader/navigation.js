@@ -25,22 +25,25 @@ export function handlePageNavigation(increment) {
     { spreadIndex, firstSpread, lastSpread, spreadDelta, showSidebar: null },
     () => {
       this.updateQueryString()
-      Messenger.sendPaginationEvent(this.state)
+      // Messenger.sendPaginationEvent(this.state)
     }
   )
 }
 
 export function handleChapterNavigation(increment) {
+  console.log('handleChapterNavigation', increment)
+
   let { currentSpineItemIndex } = this.state
   const { spine } = this.state
   const nextIndex = currentSpineItemIndex + increment
   const firstChapter = nextIndex < 0
-  let lastChapter = nextIndex > spine.length - 1
+  const lastChapter = nextIndex > spine.length - 1
 
   if (firstChapter || lastChapter) {
-    this.setState({ firstChapter, lastChapter }, () =>
-      Messenger.sendPaginationEvent(this.state)
-    )
+    this.setState({ firstChapter, lastChapter })
+    // this.setState({ firstChapter, lastChapter }, () =>
+    //   Messenger.sendPaginationEvent(this.state)
+    // )
     return
   }
 
@@ -49,38 +52,40 @@ export function handleChapterNavigation(increment) {
   const currentSpineItem = spine[nextIndex]
   const spreadIndex = 0
 
-  let deferredCallback = direction => () => {
-    const { lastSpreadIndex } = this.props.view
-    const firstSpread = spreadIndex === 0
-    const lastSpread = spreadIndex === lastSpreadIndex
-    const spreadDelta = direction
+  // TODO move this logic
+  // let deferredCallback = direction => () => {
+  //   const { lastSpreadIndex } = this.props.view
+  //   const firstSpread = spreadIndex === 0
+  //   const lastSpread = spreadIndex === lastSpreadIndex
+  //   const spreadDelta = direction
 
-    lastChapter = currentSpineItemIndex === spine.length - 1
+  //   lastChapter = currentSpineItemIndex === spine.length - 1
 
-    this.setState(
-      {
-        firstChapter,
-        lastChapter,
-        firstSpread,
-        lastSpread,
-        spreadDelta,
-      },
-      () => {
-        if (direction === -1) {
-          this.navigateToSpreadByIndex(lastSpreadIndex)
-        }
+  //   this.setState(
+  //     {
+  //       firstChapter,
+  //       lastChapter,
+  //       firstSpread,
+  //       lastSpread,
+  //       spreadDelta,
+  //     },
+  //     () => {
+  //       if (direction === -1) {
+  //         this.navigateToSpreadByIndex(lastSpreadIndex)
+  //       }
 
-        this.props.userInterfaceActions.update({
-          handleEvents: true,
-          spinnerVisible: false,
-        })
+  //       console.log('this.props.userInterfaceActions.update')
+  //       this.props.userInterfaceActions.update({
+  //         handleEvents: true,
+  //         spinnerVisible: false,
+  //       })
 
-        Messenger.sendPaginationEvent(this.state)
-      }
-    )
-  }
+  //       Messenger.sendPaginationEvent(this.state)
+  //     }
+  //   )
+  // }
 
-  deferredCallback = deferredCallback(increment)
+  // deferredCallback = deferredCallback(increment)
 
   this.setState(
     {
@@ -90,9 +95,10 @@ export function handleChapterNavigation(increment) {
       showSidebar: null,
       firstChapter,
       lastChapter,
+      spreadDelta: increment,
     },
     () => {
-      this.loadSpineItem(currentSpineItem, deferredCallback)
+      this.loadSpineItem(currentSpineItem /*, deferredCallback */)
       this.savePosition()
     }
   )
@@ -144,19 +150,20 @@ export function navigateToChapterByURL(absoluteURL) {
   // Can eventually handle hashes or query strings here
   const nextAbsolutURL = `${url.origin}${url.pathname}`
 
-  let deferredCallback
+  // let deferredCallback
   const { hash: id } = url
 
-  if (id) {
-    deferredCallback = () => {
-      this.navigateToElementById(id)
+  // TODO move this logic
+  // if (id) {
+  //   deferredCallback = () => {
+  //     this.navigateToElementById(id)
 
-      this.props.userInterfaceActions.update({
-        handleEvents: true,
-        spinnerVisible: false,
-      })
-    }
-  }
+  //     this.props.userInterfaceActions.update({
+  //       handleEvents: true,
+  //       spinnerVisible: false,
+  //     })
+  //   }
+  // }
 
   const currentSpineItemIndex = findIndex(spine, {
     absoluteURL: nextAbsolutURL,
@@ -183,7 +190,7 @@ export function navigateToChapterByURL(absoluteURL) {
       spreadIndex,
     },
     () => {
-      this.loadSpineItem(currentSpineItem, deferredCallback)
+      this.loadSpineItem(currentSpineItem /*, deferredCallback */)
       this.savePosition()
     }
   )

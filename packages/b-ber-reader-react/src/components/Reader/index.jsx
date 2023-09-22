@@ -75,7 +75,7 @@ class Reader extends Component {
       lastChapter: false,
       firstSpread: false,
       lastSpread: false,
-      delta: 0,
+      // delta: 0,
 
       // Sidebar
       showSidebar: null,
@@ -165,11 +165,11 @@ class Reader extends Component {
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
-    const {
-      loaded: nextLoaded,
-      lastSpreadIndex: nextLastSpreadIndex,
-      pendingDeferredCallbacks: nextPendingDeferredCallbacks,
-    } = nextProps.view
+    // const {
+    //   loaded: nextLoaded,
+    //   lastSpreadIndex: nextLastSpreadIndex,
+    //   pendingDeferredCallbacks: nextPendingDeferredCallbacks,
+    // } = nextProps.view
 
     const { searchParams: prevSearchParams } = this.props.readerLocation
     const { searchParams: nextSearchParams } = nextProps.readerLocation
@@ -180,6 +180,8 @@ class Reader extends Component {
     // 2. There is a new spread index (page). Update state to initialize the
     //    page transition
     if (nextSearchParams !== prevSearchParams) {
+      console.log('willreceiveprops if', nextProps.view)
+
       const nextParams = Url.parseQueryString(nextSearchParams)
 
       const slug = nextParams[this.props.readerSettings.searchParamKeys.slug]
@@ -213,14 +215,16 @@ class Reader extends Component {
       })
     }
 
+    console.log('willreceiveprops else', nextProps.view)
+
     // Render the view
-    if (
-      nextLoaded &&
-      nextLastSpreadIndex !== -1 &&
-      nextPendingDeferredCallbacks === true
-    ) {
-      this.props.requestDeferredCallbackExecution()
-    }
+    // if (
+    //   nextLoaded &&
+    //   nextLastSpreadIndex !== -1 &&
+    //   nextPendingDeferredCallbacks === true
+    // ) {
+    //   this.props.requestDeferredCallbackExecution()
+    // }
   }
 
   // eslint-disable-next-line react/no-unused-class-component-methods
@@ -230,6 +234,7 @@ class Reader extends Component {
     this.props.viewActions.unload()
     this.props.viewActions.updateLastSpreadIndex(-1)
 
+    console.log('this.props.userInterfaceActions.update')
     this.props.userInterfaceActions.update({
       handleEvents: false,
       enableTransitions: false,
@@ -347,8 +352,8 @@ class Reader extends Component {
             style={style}
             className={className}
           />
+          <Spinner />
         </ReaderContext.Provider>
-        <Spinner />
       </Controls>
     )
   }

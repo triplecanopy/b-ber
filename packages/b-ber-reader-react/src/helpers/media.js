@@ -39,7 +39,7 @@ export const getPlayingStateOnUpdate = (
 
   // Only if the view is fully rendered
   if (!props.view.loaded) return false
-  if (nextProps.view.pendingDeferredCallbacks) return false
+  // if (nextProps.view.pendingDeferredCallbacks) return false
 
   let { currentSpreadIndex } = state
 

@@ -107,7 +107,7 @@ const withNodePosition = (WrappedComponent, options = {}) => {
       this.disconnectObservers()
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
       if (this.settings.useElementOffsetLeft) return
 
       const { ultimateOffsetLeft: nextUltimateOffsetLeft } = nextProps

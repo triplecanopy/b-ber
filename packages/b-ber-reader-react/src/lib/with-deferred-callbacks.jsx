@@ -23,7 +23,7 @@ function withDeferredCallbacks(WrappedComponent) {
 
     requestDeferredCallbackExecution = debounce(
       () => {
-        Messenger.sendDeferredEvent()
+        // Messenger.sendDeferredEvent()
         return this.callDeferred()
       },
       DEFERRED_CALLBACK_TIMER,

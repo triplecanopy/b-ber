@@ -21,26 +21,26 @@ class Controls extends Component {
   UNSAFE_componentWillMount() {
     this.bindEvents()
 
-    Messenger.register(e => {
-      if (!e.origin || e.origin !== window.location.origin) {
-        this.props.handleSidebarButtonClick(null)
-      }
-    }, messagesTypes.CLICK_EVENT)
+    // Messenger.register(e => {
+    //   if (!e.origin || e.origin !== window.location.origin) {
+    //     this.props.handleSidebarButtonClick(null)
+    //   }
+    // }, messagesTypes.CLICK_EVENT)
 
-    Messenger.register(({ data }) => {
-      if (this.props.userInterface.handleEvents === false) return
+    // Messenger.register(({ data }) => {
+    //   if (this.props.userInterface.handleEvents === false) return
 
-      const { scope, delta } = data
+    //   const { scope, delta } = data
 
-      if (scope === 'page') {
-        this.props.userInterfaceActions.enablePageTransitions()
-        return this.props.handlePageNavigation(delta)
-      }
+    //   if (scope === 'page') {
+    //     this.props.userInterfaceActions.enablePageTransitions()
+    //     return this.props.handlePageNavigation(delta)
+    //   }
 
-      if (scope === 'chapter') {
-        return this.props.handleChapterNavigation(delta)
-      }
-    }, messagesTypes.NAVIGATION_EVENT)
+    //   if (scope === 'chapter') {
+    //     return this.props.handleChapterNavigation(delta)
+    //   }
+    // }, messagesTypes.NAVIGATION_EVENT)
   }
 
   componentWillUnmount() {
@@ -50,7 +50,7 @@ class Controls extends Component {
   handleClick(e) {
     if (this.props.userInterface.handleEvents === false) return
 
-    Messenger.sendClickEvent(e)
+    // Messenger.sendClickEvent(e)
 
     if (
       e.target.closest('.bber-controls__sidebar') === null &&
@@ -65,7 +65,7 @@ class Controls extends Component {
     if (this.props.userInterface.handleEvents === false) return
     if (!e || typeof e.which === 'undefined') return
 
-    Messenger.sendKeydownEvent(e)
+    // Messenger.sendKeydownEvent(e)
 
     switch (e.which) {
       case 37 /* arrow left */:

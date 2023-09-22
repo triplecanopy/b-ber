@@ -49,15 +49,20 @@ export function showSpineItem() {
   const firstSpread = spreadIndex === 0
   const lastSpread = spreadIndex === lastSpreadIndex
 
+  console.log('showSpineItem')
+
   this.setState({ firstChapter, lastChapter, firstSpread, lastSpread }, () => {
+    console.log('showSpineItem:after setstate')
+
     this.savePosition()
 
+    console.log('this.props.userInterfaceActions.update')
     this.props.userInterfaceActions.update({
       handleEvents: true,
       spinnerVisible: false,
     })
 
-    Messenger.sendPaginationEvent(this.state)
+    // Messenger.sendPaginationEvent(this.state)
   })
 }
 
@@ -67,6 +72,8 @@ export async function loadSpineItem(spineItem, deferredCallback) {
 
   // console.log('this.state', this.state)
   // console.log('spineItem', spineItem)
+
+  console.log('loadSpineItem')
 
   let requestedSpineItem = spineItem
   if (!requestedSpineItem) [requestedSpineItem] = this.state.spine
@@ -118,13 +125,20 @@ export async function loadSpineItem(spineItem, deferredCallback) {
       currentSpineItem: requestedSpineItem,
       spineItemURL: requestedSpineItem.absoluteURL,
     },
-    () =>
+    () => {
       // Update the query string to trigger a page transition and call the
       // deferredCallback if one is set, or `showSpineItem` if not
-      this.updateQueryString(() =>
-        this.props.registerDeferredCallback(
-          deferredCallback || this.showSpineItem
-        )
-      )
+
+      console.log('loadSpineItem setstate:after')
+      this.updateQueryString(() => {
+        console.log('loadSpineItem setstate:after updateqs', deferredCallback)
+
+        this.showSpineItem()
+
+        // this.props.registerDeferredCallback(
+        //   deferredCallback || this.showSpineItem
+        // )
+      })
+    }
   )
 }
