@@ -2,7 +2,6 @@ import React from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import debounce from 'lodash/debounce'
-import Messenger from './Messenger'
 import * as viewActions from '../actions/view'
 import { DEFERRED_CALLBACK_TIMER } from '../constants'
 
@@ -22,10 +21,7 @@ function withDeferredCallbacks(WrappedComponent) {
     }
 
     requestDeferredCallbackExecution = debounce(
-      () => {
-        // Messenger.sendDeferredEvent()
-        return this.callDeferred()
-      },
+      () => this.callDeferred(),
       DEFERRED_CALLBACK_TIMER,
       { leading: false, trailing: true }
     )

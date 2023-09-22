@@ -1,7 +1,6 @@
 import findIndex from 'lodash/findIndex'
 import Url from '../../helpers/Url'
 import Viewport from '../../helpers/Viewport'
-import Messenger from '../../lib/Messenger'
 
 export function handlePageNavigation(increment) {
   let { spreadIndex } = this.state
@@ -25,7 +24,6 @@ export function handlePageNavigation(increment) {
     { spreadIndex, firstSpread, lastSpread, spreadDelta, showSidebar: null },
     () => {
       this.updateQueryString()
-      // Messenger.sendPaginationEvent(this.state)
     }
   )
 }
@@ -41,9 +39,6 @@ export function handleChapterNavigation(increment) {
 
   if (firstChapter || lastChapter) {
     this.setState({ firstChapter, lastChapter })
-    // this.setState({ firstChapter, lastChapter }, () =>
-    //   Messenger.sendPaginationEvent(this.state)
-    // )
     return
   }
 
@@ -79,8 +74,6 @@ export function handleChapterNavigation(increment) {
   //         handleEvents: true,
   //         spinnerVisible: false,
   //       })
-
-  //       Messenger.sendPaginationEvent(this.state)
   //     }
   //   )
   // }

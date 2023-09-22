@@ -2,9 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { NavigationHeader, NavigationFooter } from './Navigation'
-import Messenger from '../lib/Messenger'
 import withNavigationActions from '../lib/with-navigation-actions'
-import { messagesTypes } from '../constants'
 import * as userInterfaceActions from '../actions/user-interface'
 
 class Controls extends Component {
@@ -20,27 +18,6 @@ class Controls extends Component {
   // eslint-disable-next-line camelcase
   UNSAFE_componentWillMount() {
     this.bindEvents()
-
-    // Messenger.register(e => {
-    //   if (!e.origin || e.origin !== window.location.origin) {
-    //     this.props.handleSidebarButtonClick(null)
-    //   }
-    // }, messagesTypes.CLICK_EVENT)
-
-    // Messenger.register(({ data }) => {
-    //   if (this.props.userInterface.handleEvents === false) return
-
-    //   const { scope, delta } = data
-
-    //   if (scope === 'page') {
-    //     this.props.userInterfaceActions.enablePageTransitions()
-    //     return this.props.handlePageNavigation(delta)
-    //   }
-
-    //   if (scope === 'chapter') {
-    //     return this.props.handleChapterNavigation(delta)
-    //   }
-    // }, messagesTypes.NAVIGATION_EVENT)
   }
 
   componentWillUnmount() {
@@ -49,8 +26,6 @@ class Controls extends Component {
 
   handleClick(e) {
     if (this.props.userInterface.handleEvents === false) return
-
-    // Messenger.sendClickEvent(e)
 
     if (
       e.target.closest('.bber-controls__sidebar') === null &&
@@ -64,8 +39,6 @@ class Controls extends Component {
   handleKeyDown(e) {
     if (this.props.userInterface.handleEvents === false) return
     if (!e || typeof e.which === 'undefined') return
-
-    // Messenger.sendKeydownEvent(e)
 
     switch (e.which) {
       case 37 /* arrow left */:

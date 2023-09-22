@@ -2,7 +2,6 @@ import Asset from '../../helpers/Asset'
 import Request from '../../helpers/Request'
 import Storage from '../../helpers/Storage'
 import XMLAdaptor from '../../helpers/XMLAdaptor'
-import Messenger from '../../lib/Messenger'
 
 export const book = { content: null }
 
@@ -61,8 +60,6 @@ export function showSpineItem() {
       handleEvents: true,
       spinnerVisible: false,
     })
-
-    // Messenger.sendPaginationEvent(this.state)
   })
 }
 

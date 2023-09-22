@@ -3,7 +3,6 @@ import isPlainObject from 'lodash/isPlainObject'
 import { connect } from 'react-redux'
 import { Layout } from '.'
 import Viewport from '../helpers/Viewport'
-import Messenger from '../lib/Messenger'
 import Asset from '../helpers/Asset'
 
 class Frame extends React.Component {
@@ -22,14 +21,7 @@ class Frame extends React.Component {
     this.node.current.scrollTo(0, 0)
   }
 
-  handleScroll = e => {
-    // const documentHeight = Math.max(
-    //   this.node.current.scrollHeight,
-    //   this.node.current.offsetHeight,
-    //   this.node.current.clientHeight
-    // )
-    // Messenger.sendScrollEvent(e, e.target.scrollTop, documentHeight)
-  }
+  handleScroll = e => {}
 
   componentDidMount() {
     this.node.current.addEventListener('scroll', this.handleScroll)

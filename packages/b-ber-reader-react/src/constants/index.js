@@ -10,16 +10,6 @@ export const transitions = { SLIDE: 'slide', FADE: 'fade' }
 // Light and dark themes not implemented
 export const themes = { DEFAULT: 'default', LIGHT: 'light', DARK: 'dark' }
 
-export const messagesTypes = {
-  PAGINATION_EVENT: 'PAGINATION_EVENT',
-  DEFERRED_EVENT: 'DEFERRED_EVENT',
-  CLICK_EVENT: 'CLICK_EVENT',
-  KEYDOWN_EVENT: 'KEYDOWN_EVENT',
-  NAVIGATION_EVENT: 'NAVIGATION_EVENT',
-  DOWNLOAD_EVENT: 'DOWNLOAD_EVENT',
-  SCROLL_EVENT: 'SCROLL_EVENT',
-}
-
 export const MEDIA_PLAYBACK_RATES = { SLOW: 0.5, NORMAL: 1.0, FAST: 1.5 }
 export const MEDIA_CONTROLS_PRESETS = new Set(['simple', 'normal', 'full'])
 

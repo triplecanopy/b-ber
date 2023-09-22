@@ -3,7 +3,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import classNames from 'classnames'
-import Messenger from '../../lib/Messenger'
 import useMaxHeight from '../../hooks/use-max-height'
 
 function SidebarDownloadLink({ url, label, description }) {
