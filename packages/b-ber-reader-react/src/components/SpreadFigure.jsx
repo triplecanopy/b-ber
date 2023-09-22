@@ -20,7 +20,11 @@ const SpreadFigure = props => {
             : offset
 
         return (
-          <figure id={props.id} style={{ left, opacity, marginLeft }}>
+          <figure
+            id={props.id}
+            style={{ left, opacity, marginLeft }}
+            className={props.className || ''}
+          >
             {props.children}
           </figure>
         )
