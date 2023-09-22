@@ -9,28 +9,17 @@
 @import 'styles/footnote';
 @import 'styles/layout';
 
-// .xx {
-//   // break-before: column;
-//   // break-after: column;
-//   break-inside: avoid;
-//   // height: 600px;
-//   // height: 675px;
-//   height: calc(600px * 2);
-//   // height: calc(675px * 2);
-//   background-color: pink;
-// }
-
-// .yy {
-//   position: absolute;
-//   top: 0;
-//   // left: 3543px;
-//   // left: 4214px;
-//   z-index: 100001;
-//   margin-left: -108px;
-// }
-
-.c-spread {
+.bber-spread {
   break-inside: avoid;
   background-color: pink;
-  // height: calc(600px * 2);
+
+  > figure {
+    @include transition(margin-left, opacity);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 100001;
+  }
 }

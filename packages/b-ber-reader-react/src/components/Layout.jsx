@@ -7,12 +7,12 @@ import classNames from 'classnames'
 import transitions from '../lib/transition-styles'
 import Viewport from '../helpers/Viewport'
 import browser from '../lib/browser'
-import withObservers from '../lib/with-observers'
+import withLastSpreadIndex from '../lib/with-last-spread-index'
 import withDimensions from '../lib/with-dimensions'
 import ReaderContext from '../lib/reader-context'
 import {
-  RESIZE_DEBOUNCE_TIMER,
   breakpoints,
+  RESIZE_DEBOUNCE_TIMER,
   MEDIA_QUERY_MOBILE,
 } from '../constants'
 
@@ -223,4 +223,4 @@ function Layout(props) {
 export default connect(
   ({ userInterface }) => ({ userInterface }),
   () => ({})
-)(withDimensions(withObservers(Layout)))
+)(withDimensions(withLastSpreadIndex(Layout)))

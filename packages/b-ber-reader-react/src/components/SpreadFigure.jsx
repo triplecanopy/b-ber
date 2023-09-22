@@ -1,32 +1,32 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import SpreadContext from '../lib/spread-context'
+import ReaderContext from '../lib/reader-context'
 
-const SpreadFigure = props => (
-  <SpreadContext.Consumer>
-    {/* {({ left }) => { */}
-    {() => {
-      const {
-        children,
-        id,
-        'data-marker-reference-figure': dataMarkerReferenceFigure,
-      } = props
+const SpreadFigure = props => {
+  const readerContext = useContext(ReaderContext)
 
-      return (
-        <figure
-          id={id}
-          data-marker-reference-figure={dataMarkerReferenceFigure}
-        >
-          {children}
-        </figure>
-      )
+  return (
+    <SpreadContext.Consumer>
+      {({ left }) => {
+        const translateX = readerContext.getTranslateX()
+        // const opacity = 1 // Math.abs(translateX) === left ? 1 : 0
+        const opacity = 0.5
+        const offset = window.innerWidth / 2
+        const marginLeft =
+          Math.abs(translateX) === left
+            ? 0
+            : Math.abs(translateX) > left
+            ? offset * -1
+            : offset
 
-      // return (
-      //   <figure style={{ left }} {...rest}>
-      //     {children}
-      //   </figure>
-      // )
-    }}
-  </SpreadContext.Consumer>
-)
+        return (
+          <figure id={props.id} style={{ left, opacity, marginLeft }}>
+            {props.children}
+          </figure>
+        )
+      }}
+    </SpreadContext.Consumer>
+  )
+}
 
 export default SpreadFigure

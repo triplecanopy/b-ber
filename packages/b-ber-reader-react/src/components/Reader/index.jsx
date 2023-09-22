@@ -342,7 +342,7 @@ class Reader extends Component {
             lastSpreadIndex={view.lastSpreadIndex}
             BookContent={BookContent}
             layout={layout}
-            // Can't wrap layout or the withObservable HOC in a way that preserves
+            // Can't wrap layout or the withLastSpreadIndex HOC in a way that preserves
             // refs, so pass down `view` as props
             view={view}
             style={style}
