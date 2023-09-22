@@ -21,16 +21,6 @@ class Frame extends React.Component {
     this.node.current.scrollTo(0, 0)
   }
 
-  handleScroll = e => {}
-
-  componentDidMount() {
-    this.node.current.addEventListener('scroll', this.handleScroll)
-  }
-
-  componentWillUnmount() {
-    this.node.current.removeEventListener('scroll', this.handleScroll)
-  }
-
   style() {
     let style = {
       position: 'absolute',
