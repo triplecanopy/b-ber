@@ -21,11 +21,10 @@ export function handleResizeStart() {
   // Save the relative position (float) to calculate next position
   // after resize
   this.setState({ relativeSpreadPosition }, () => {
-    this.props.viewActions.unload()
-    this.props.viewActions.updateLastSpreadIndex(-1)
-
-    this.props.userInterfaceActions.disablePageTransitions()
-    this.props.userInterfaceActions.showSpinner()
+    // this.props.viewActions.unload()
+    // this.props.viewActions.updateLastSpreadIndex(-1)
+    // this.props.userInterfaceActions.disablePageTransitions()
+    // this.props.userInterfaceActions.showSpinner()
   })
 }
 
@@ -34,44 +33,37 @@ export function handleResizeEnd() {
 
   // Adjust users position so that they're on/close to the page
   // before resize
-  const { spreadIndex, relativeSpreadPosition } = this.state
+  const { /*spreadIndex, */ relativeSpreadPosition } = this.state
   const { lastSpreadIndex } = this.props.view
 
-  // Could stackoverflow here if lastSpreadIndex stays at -1,
-  // but `updateLastSpreadIndex` eventually sets lastSpreadIndex
-  // to something reasonable
-  if (lastSpreadIndex < 0) {
-    window.clearTimeout(this.resizeEndTimer)
-    this.resizeEndTimer = setTimeout(() => this.handleResizeEnd(), 200)
-    return
-  }
+  // Calculate approx. position
+  let nextSpreadIndex = Math.round(lastSpreadIndex * relativeSpreadPosition)
 
-  let nextSpreadIndex = spreadIndex * relativeSpreadPosition
+  // Clamp to min/max spread indexes
+  nextSpreadIndex = Math.max(0, Math.min(nextSpreadIndex, lastSpreadIndex))
 
-  // No negative
-  nextSpreadIndex = nextSpreadIndex < 1 ? 0 : nextSpreadIndex
+  // console.log(
+  //   'resize end curr/rel/calc/last spread index',
+  //   spreadIndex,
+  //   relativeSpreadPosition,
+  //   nextSpreadIndex,
+  //   lastSpreadIndex
+  // )
 
-  // Round to closest position, adjust if needed
-  // nextSpreadIndex = Math.ceil(nextSpreadIndex) + 1
-
-  // Not greater than last spread index
-  nextSpreadIndex =
-    nextSpreadIndex > lastSpreadIndex ? lastSpreadIndex : nextSpreadIndex
-
+  // Navigate
   this.navigateToSpreadByIndex(nextSpreadIndex)
-
-  this.props.userInterfaceActions.hideSpinner()
+  // this.props.userInterfaceActions.hideSpinner()
 }
 
 export function bindResizeHandlers() {
-  window.removeEventListener('resize', this.handleResize)
+  // window.removeEventListener('resize', this.handleResize)
   window.removeEventListener('resize', this.handleResizeStart)
   window.removeEventListener('resize', this.handleResizeEnd)
 
-  document.removeEventListener(
-    'webkitfullscreenchange mozfullscreenchange fullscreenchange',
-    this.handleResize
-  )
+  // document.removeEventListener(
+  //   'webkitfullscreenchange mozfullscreenchange fullscreenchange',
+  //   this.handleResize
+  // )
   document.removeEventListener(
     'webkitfullscreenchange mozfullscreenchange fullscreenchange',
     this.handleResizeStart
@@ -83,14 +75,14 @@ export function bindResizeHandlers() {
 }
 
 export function unbindResizeHandlers() {
-  window.addEventListener('resize', this.handleResize)
+  // window.addEventListener('resize', this.handleResize)
   window.addEventListener('resize', this.handleResizeStart)
   window.addEventListener('resize', this.handleResizeEnd)
 
-  document.addEventListener(
-    'webkitfullscreenchange mozfullscreenchange fullscreenchange',
-    this.handleResize
-  )
+  // docusment.addEventListener(
+  //   'webkitfullscreenchange mozfullscreenchange fullscreenchange',
+  //   this.handleResize
+  // )
   document.addEventListener(
     'webkitfullscreenchange mozfullscreenchange fullscreenchange',
     this.handleResizeStart

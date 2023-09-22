@@ -2,18 +2,16 @@ import React from 'react'
 import has from 'lodash/has'
 import isUndefined from 'lodash/isUndefined'
 import { ProcessNodeDefinitions } from 'html-to-react'
-import {
-  Link,
-  Footnote,
-  Spread,
-  Marker,
-  Audio,
-  Video,
-  SpreadFigure,
-  Vimeo,
-  Iframe,
-  Ultimate,
-} from '../components'
+import Link from '../components/Link'
+import Footnote from '../components/Footnote'
+import Spread from '../components/Spread'
+import Marker from '../components/Marker'
+import Audio from '../components/Media/Audio'
+import Video from '../components/Media/Video'
+import SpreadFigure from '../components/SpreadFigure'
+import Vimeo from '../components/Media/Vimeo'
+import Iframe from '../components/Media/Iframe'
+import Ultimate from '../components/Ultimate'
 import Asset from '../helpers/Asset'
 import Url from '../helpers/Url'
 import { rand, getControlsPreset } from '../helpers/utils'

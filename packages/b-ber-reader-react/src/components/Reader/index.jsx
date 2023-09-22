@@ -6,10 +6,12 @@ import { connect } from 'react-redux'
 import find from 'lodash/find'
 import debounce from 'lodash/debounce'
 import isInteger from 'lodash/isInteger'
-import { Controls, Frame, Spinner } from '..'
+import Controls from '../Controls'
+import Frame from '../Frame'
+import Spinner from '../Spinner'
 import Asset from '../../helpers/Asset'
 import Url from '../../helpers/Url'
-import withDeferredCallbacks from '../../lib/with-deferred-callbacks'
+// import withDeferredCallbacks from '../../lib/with-deferred-callbacks'
 import ReaderContext from '../../lib/reader-context'
 import Viewport from '../../helpers/Viewport'
 import { unlessDefined } from '../../helpers/utils'
@@ -92,7 +94,7 @@ class Reader extends Component {
     this.updateQueryString = updateQueryString.bind(this)
     this.savePosition = savePosition.bind(this)
 
-    this.debounceResizeSpeed = 400
+    // this.debounceResizeSpeed = 400
     this.resizeEndTimer = null
 
     this.bindResizeHandlers = bindResizeHandlers.bind(this)
@@ -101,23 +103,17 @@ class Reader extends Component {
     this.handleResizeStart = handleResizeStart.bind(this)
     this.handleResizeEnd = handleResizeEnd.bind(this)
 
-    this.handleResizeStart = debounce(
-      this.handleResizeStart,
-      this.debounceResizeSpeed,
-      {
-        leading: true,
-        trailing: false,
-      }
-    ).bind(this)
+    // TODO set timer appropriately
+    this.handleResizeStart = debounce(this.handleResizeStart, 1000, {
+      leading: true,
+      trailing: false,
+    }).bind(this)
 
-    this.handleResizeEnd = debounce(
-      this.handleResizeEnd,
-      this.debounceResizeSpeed,
-      {
-        leading: false,
-        trailing: true,
-      }
-    ).bind(this)
+    // TODO set timer appropriately
+    this.handleResizeEnd = debounce(this.handleResizeEnd, 1000, {
+      leading: false,
+      trailing: true,
+    }).bind(this)
 
     this.createStateFromOPF = createStateFromOPF.bind(this)
     this.showSpineItem = showSpineItem.bind(this)
@@ -381,7 +377,9 @@ const mapDispatchToProps = dispatch => ({
   userInterfaceActions: bindActionCreators(userInterfaceActions, dispatch),
 })
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withDeferredCallbacks(Reader))
+// export default connect(
+//   mapStateToProps,
+//   mapDispatchToProps
+// )(withDeferredCallbacks(Reader))
+
+export default connect(mapStateToProps, mapDispatchToProps)(Reader)

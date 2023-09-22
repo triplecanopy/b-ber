@@ -2,11 +2,11 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { isNumeric } from '../helpers/Types'
-import Viewport from '../helpers/Viewport'
+// import { isNumeric } from '../helpers/Types'
+// import Viewport from '../helpers/Viewport'
 import withNodePosition from '../lib/with-node-position'
 import * as markerActions from '../actions/markers'
-import browser from '../lib/browser'
+// import browser from '../lib/browser'
 
 class Marker extends React.Component {
   // constructor(props) {
