@@ -8,14 +8,14 @@ const SpreadFigure = props => {
   return (
     <SpreadContext.Consumer>
       {({ left }) => {
-        const translateX = readerContext.getTranslateX()
+        const absTranslateX = Math.abs(readerContext.getTranslateX())
         // const opacity = 1 // Math.abs(translateX) === left ? 1 : 0
         const opacity = 0.5
         const offset = window.innerWidth / 2
         const marginLeft =
-          Math.abs(translateX) === left
+          absTranslateX === left
             ? 0
-            : Math.abs(translateX) > left
+            : absTranslateX > left
             ? offset * -1
             : offset
 

@@ -204,7 +204,13 @@ function Spread(props) {
         props.viewerSettings.paddingLeft,
       layout: props.layout,
     }),
-    [left, verso, props.viewerSettings.paddingLeft, props.layout]
+    [
+      left,
+      verso,
+      props.viewerSettings.paddingLeft,
+      props.viewerSettings.columnGap,
+      props.layout,
+    ]
   )
 
   const {
