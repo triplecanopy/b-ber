@@ -69,12 +69,15 @@ export const breakpoints = new Map([
   [
     MEDIA_QUERY_TABLET,
     {
-      maxWidth: '738px',
+      // maxWidth: '738px',
+      maxWidth: '100%',
       maxHeight: 'auto',
       columnGap: '45px',
       columns: columns.ONE,
-      paddingLeft: 0,
-      paddingRight: 0,
+      // paddingLeft: 0,
+      // paddingRight: 0,
+      paddingLeft: '15px',
+      paddingRight: '15px',
       paddingTop: '55px',
       paddingBottom: '80px', // Offset for bottom nav
       fontSize: 'clamp(150%, 1.5vw, 160%)',
