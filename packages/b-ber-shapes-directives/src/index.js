@@ -183,6 +183,7 @@ export const vimeoEmbedAttributes = new Set([
   'controls',
   'dnt',
   'fun',
+  'h',
   'loop',
   'muted',
   'playsinline',

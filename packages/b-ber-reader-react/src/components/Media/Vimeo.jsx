@@ -52,14 +52,18 @@ class Vimeo extends React.Component {
     )
 
     // Extract autoplay property for use during page change events. Do this
-    // after `transformSearchParamsToProps` to ensure boolean attrs
-    const { autoplay, ...rest } = playerOptions
+    // after `transformSearchParamsToProps` to ensure boolean attrs. Also extract
+    // the `h` param (used for 'unlisted' videos) since that value will need to
+    // be appended to the video's URL for the video to properly load.
+    const { autoplay, h, ...rest } = playerOptions
 
     // Controls is needed both in state and in playerOptions
     const { controls, muted, loop } = playerOptions
 
+    const nextUrl = h ? `${url}?h=${h}` : url
+
     this.setState(state => ({
-      url,
+      url: nextUrl,
       loop: unlessDefined(loop, state.loop),
       muted: unlessDefined(muted, state.muted),
       controls: unlessDefined(controls, state.controls),

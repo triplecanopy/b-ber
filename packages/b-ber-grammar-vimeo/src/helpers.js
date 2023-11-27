@@ -34,6 +34,7 @@ export const vimeoAttributesTransformer = {
   controls: ensureBoolean,
   dnt: ensureBoolean,
   fun: ensureBoolean,
+  h: ensureMatch('h', /^\w+$/),
   loop: ensureBoolean,
   muted: ensureBoolean,
   playsinline: ensureBoolean,
