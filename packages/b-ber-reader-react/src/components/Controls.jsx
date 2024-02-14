@@ -8,51 +8,57 @@ import { messagesTypes } from '../constants'
 import * as userInterfaceActions from '../actions/user-interface'
 
 function Controls(props) {
-  const handleClick = e => {
-    if (props.userInterface.handleEvents === false) return
+  const handleClick = useCallback(
+    e => {
+      if (props.userInterface.handleEvents === false) return
 
-    Messenger.sendClickEvent(e)
+      Messenger.sendClickEvent(e)
 
-    if (
-      e.target.closest('.bber-controls__sidebar') === null &&
-      e.target.closest('.bber-nav__button') === null &&
-      props.showSidebar
-    ) {
-      props.handleSidebarButtonClick(null)
-    }
-  }
-
-  const handleKeyDown = e => {
-    if (props.userInterface.handleEvents === false) return
-    if (!e || typeof e.which === 'undefined') return
-
-    Messenger.sendKeydownEvent(e)
-
-    switch (e.which) {
-      case 37 /* arrow left */:
-        props.userInterfaceActions.enablePageTransitions()
-        props.handlePageNavigation(-1)
+      if (
+        e.target.closest('.bber-controls__sidebar') === null &&
+        e.target.closest('.bber-nav__button') === null &&
+        props.showSidebar
+      ) {
         props.handleSidebarButtonClick(null)
-        break
-      case 39 /* arrow right */:
-        props.userInterfaceActions.enablePageTransitions()
-        props.handlePageNavigation(1)
-        props.handleSidebarButtonClick(null)
-        break
-      case 27 /* ESC */:
-        props.handleSidebarButtonClick(null)
-        break
-      case 80 /* p */:
-        if (e.metaKey) {
-          e.preventDefault()
-          e.stopImmediatePropagation()
-          window.print()
-        }
-        break
-      default:
-        break
-    }
-  }
+      }
+    },
+    [props.userInterface.handleEvents]
+  )
+
+  const handleKeyDown = useCallback(
+    e => {
+      if (props.userInterface.handleEvents === false) return
+      if (!e || typeof e.which === 'undefined') return
+
+      Messenger.sendKeydownEvent(e)
+
+      switch (e.which) {
+        case 37 /* arrow left */:
+          props.userInterfaceActions.enablePageTransitions()
+          props.handlePageNavigation(-1)
+          props.handleSidebarButtonClick(null)
+          break
+        case 39 /* arrow right */:
+          props.userInterfaceActions.enablePageTransitions()
+          props.handlePageNavigation(1)
+          props.handleSidebarButtonClick(null)
+          break
+        case 27 /* ESC */:
+          props.handleSidebarButtonClick(null)
+          break
+        case 80 /* p */:
+          if (e.metaKey) {
+            e.preventDefault()
+            e.stopImmediatePropagation()
+            window.print()
+          }
+          break
+        default:
+          break
+      }
+    },
+    [props.userInterface.handleEvents]
+  )
 
   useEffect(() => {
     document.addEventListener('keydown', handleKeyDown)
@@ -85,7 +91,7 @@ function Controls(props) {
       document.removeEventListener('click', handleClick)
       document.removeEventListener('touchstart', handleClick)
     }
-  }, [])
+  }, [handleKeyDown, handleClick])
 
   const { readerSettings } = props
 
