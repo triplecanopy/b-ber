@@ -85,7 +85,7 @@ function Controls(props) {
       document.removeEventListener('click', handleClick)
       document.removeEventListener('touchstart', handleClick)
     }
-  }, [])
+  }, [props.userInterface.handleEvents, props.showSidebar])
 
   const { readerSettings } = props
 
