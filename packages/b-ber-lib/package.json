@@ -44,7 +44,7 @@
     "tar": "^6.1.11",
     "vinyl": "^2.2.0",
     "yargs": "^13.3.0",
-    "yawn-yaml": "^1.3.4"
+    "yawn-yaml": "1.5.0"
   },
   "files": [
     "utils",
