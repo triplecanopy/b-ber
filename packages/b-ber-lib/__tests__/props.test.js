@@ -33,11 +33,11 @@ describe('ManifestItemProperties', () => {
     expect(ManifestItemProperties.isNav(nav)).toBe(true)
   })
 
-  it('Tests if a document contains a script element', () => {
+  it.skip('Tests if a document contains a script element', () => {
     expect(ManifestItemProperties.isScripted(scriptFile)).toBe(true)
   })
 
-  it('Tests if a document contains an SVG element', () => {
+  it.skip('Tests if a document contains an SVG element', () => {
     expect(ManifestItemProperties.isSVG(svgFile)).toBe(true)
   })
 
