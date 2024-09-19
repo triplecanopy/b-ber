@@ -1,6 +1,6 @@
 {
   "name": "@canopycanopycanopy/b-ber-parser-gallery",
-  "version": "3.0.8",
+  "version": "3.0.9",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -25,11 +25,11 @@
     "rimraf": "^2.7.1"
   },
   "dependencies": {
-    "@canopycanopycanopy/b-ber-grammar-attributes": "3.0.8",
-    "@canopycanopycanopy/b-ber-lib": "3.0.8",
-    "@canopycanopycanopy/b-ber-logger": "3.0.8",
-    "@canopycanopycanopy/b-ber-shapes-directives": "3.0.8",
-    "@canopycanopycanopy/b-ber-templates": "3.0.8",
+    "@canopycanopycanopy/b-ber-grammar-attributes": "3.0.9",
+    "@canopycanopycanopy/b-ber-lib": "3.0.9",
+    "@canopycanopycanopy/b-ber-logger": "3.0.9",
+    "@canopycanopycanopy/b-ber-shapes-directives": "3.0.9",
+    "@canopycanopycanopy/b-ber-templates": "3.0.9",
     "lodash": "^4.17.21",
     "mime-types": "^2.1.24",
     "tar": "^6.1.11"
