@@ -11,28 +11,28 @@ import Url from '../helpers/Url'
 const Link = props => (
   <ReaderContext.Consumer>
     {({ navigateToChapterByURL }) => {
-      let { className, style } = props
+      const { className, style } = props
 
-      className = className || ''
-      style = style || {}
+      const nextClassName = className || ''
+      const nextStyle = style || {}
 
       const { href } = props
       const external = Url.isExternal(href, props.readerSettings.projectURL)
       const target = external ? '_blank' : '_top'
-
-      // TODO add rel="nooperner noreferrer"
+      const rel = external ? 'nooperner noreferrer' : ''
 
       return (
         <a
           href={href}
-          style={style}
           target={target}
-          className={className}
+          rel={rel}
+          style={nextStyle}
+          className={nextClassName}
           onClick={e => {
-            if (!external) return
-
-            e.preventDefault()
-            navigateToChapterByURL(href)
+            if (!external) {
+              e.preventDefault()
+              navigateToChapterByURL(href)
+            }
           }}
         >
           {props.children}
