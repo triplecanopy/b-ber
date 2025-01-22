@@ -17,7 +17,18 @@ const Link = props => (
       const nextStyle = style || {}
 
       const { href } = props
-      const external = Url.isExternal(href, props.readerSettings.projectURL)
+
+      // Links outside of publication
+      const externalToPublication = Url.isExternal(
+        href,
+        props.readerSettings.projectURL
+      )
+
+      // Links outside of host domain
+      const externalToHost = Url.isExternal(href, window.location.href)
+
+      const external = externalToPublication && externalToHost
+
       const target = external ? '_blank' : '_top'
       const rel = external ? 'nooperner noreferrer' : ''
 
