@@ -11,7 +11,6 @@ import Frame from '../Frame'
 import Spinner from '../Spinner'
 import Asset from '../../helpers/Asset'
 import Url from '../../helpers/Url'
-// import withDeferredCallbacks from '../../lib/with-deferred-callbacks'
 import ReaderContext from '../../lib/reader-context'
 import Viewport from '../../helpers/Viewport'
 import { unlessDefined } from '../../helpers/utils'
@@ -376,10 +375,5 @@ const mapDispatchToProps = dispatch => ({
   viewActions: bindActionCreators(viewActions, dispatch),
   userInterfaceActions: bindActionCreators(userInterfaceActions, dispatch),
 })
-
-// export default connect(
-//   mapStateToProps,
-//   mapDispatchToProps
-// )(withDeferredCallbacks(Reader))
 
 export default connect(mapStateToProps, mapDispatchToProps)(Reader)
