@@ -211,6 +211,16 @@ class Reader extends Component {
     }
 
     console.log('willreceiveprops else', nextProps.view)
+    console.log(
+      'this.props.userInterfaceActions',
+      this.props.userInterfaceActions
+    )
+
+    if (nextProps.view.loaded && nextProps.view.lastSpreadIndex > -1) {
+      console.log('this.props.userInterfaceActions.update')
+
+      console.log('--- ok show')
+    }
 
     // Render the view
     // if (
@@ -230,6 +240,7 @@ class Reader extends Component {
     this.props.viewActions.updateLastSpreadIndex(-1)
 
     console.log('this.props.userInterfaceActions.update')
+
     this.props.userInterfaceActions.update({
       handleEvents: false,
       enableTransitions: false,

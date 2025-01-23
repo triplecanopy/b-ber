@@ -26,16 +26,7 @@ const withLastSpreadIndex = WrappedComponent => {
           // but firefox interprets our column layout as having width, so we
           // measure the distance of the left edge of the last node in our
           // document, and divide it by the number of columns
-          nextContentDimensions = lastNode.offsetLeft //- props.getSingleColumnWidth()
-          // nextContentDimensions = Math.max(1, nextContentDimensions)
-
-          //   nodeEdgeRight = lastNode.offsetLeft + lastNode.offsetWidth + paddingLeft
-          //   const d = nodeEdgeRight / (frameWidth + paddingLeft)
-          //   const x = Math.round((d + Number.EPSILON) * 10) / 10
-          //   const nextX = Math.ceil(x)
-          //   console.log(nodeEdgeRight, d, x, nextX)
-          //   lastSpreadIndex = nextX - 1
-          //   console.log('lastSpreadIndex', lastSpreadIndex)
+          nextContentDimensions = lastNode.offsetLeft
         } else {
           nextContentDimensions = Math.max(
             node.current.scrollHeight,

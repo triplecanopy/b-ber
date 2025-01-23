@@ -56,6 +56,7 @@ export function showSpineItem() {
     this.savePosition()
 
     console.log('this.props.userInterfaceActions.update')
+
     this.props.userInterfaceActions.update({
       handleEvents: true,
       spinnerVisible: false,
@@ -66,9 +67,6 @@ export function showSpineItem() {
 // Makes requests to load book content
 export async function loadSpineItem(spineItem, deferredCallback) {
   const hash = Asset.createHash(this.props.readerSettings.bookURL)
-
-  // console.log('this.state', this.state)
-  // console.log('spineItem', spineItem)
 
   console.log('loadSpineItem')
 
