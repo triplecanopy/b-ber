@@ -6,6 +6,7 @@ const defaultContext = {
   spreadIndex: 0,
   getTranslateX: () => 0,
   navigateToChapterByURL: noop,
+  getSpineItemByAbsoluteUrl: noop,
 }
 
 const ReaderContext = React.createContext(defaultContext)
