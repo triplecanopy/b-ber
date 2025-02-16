@@ -18,6 +18,7 @@ export function handlePageNavigation(increment) {
   const firstSpread = nextIndex === 0
   const lastSpread = nextIndex === lastSpreadIndex
   const spreadDelta = nextIndex > spreadIndex ? 1 : -1
+
   spreadIndex = nextIndex
 
   this.setState(
@@ -32,6 +33,7 @@ export function handleChapterNavigation(increment) {
   console.log('handleChapterNavigation', increment)
 
   let { currentSpineItemIndex } = this.state
+
   const { spine } = this.state
   const nextIndex = currentSpineItemIndex + increment
   const firstChapter = nextIndex < 0
@@ -89,6 +91,7 @@ export function handleChapterNavigation(increment) {
       firstChapter,
       lastChapter,
       spreadDelta: increment,
+      chapterDelta: increment,
     },
     () => {
       this.loadSpineItem(currentSpineItem /*, deferredCallback */)
@@ -144,7 +147,7 @@ export function navigateToChapterByURL(absoluteURL) {
   const nextAbsolutURL = `${url.origin}${url.pathname}`
 
   // let deferredCallback
-  const { hash: id } = url
+  // const { hash: id } = url
 
   // TODO move this logic
   // if (id) {

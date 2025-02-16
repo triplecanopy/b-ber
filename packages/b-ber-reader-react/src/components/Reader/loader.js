@@ -57,10 +57,10 @@ export function showSpineItem() {
 
     console.log('this.props.userInterfaceActions.update')
 
-    this.props.userInterfaceActions.update({
-      handleEvents: true,
-      spinnerVisible: false,
-    })
+    // this.props.userInterfaceActions.update({
+    //   handleEvents: true,
+    //   spinnerVisible: false,
+    // })
   })
 }
 

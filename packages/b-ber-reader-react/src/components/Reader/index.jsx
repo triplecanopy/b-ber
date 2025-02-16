@@ -68,6 +68,10 @@ class Reader extends Component {
       // Current spread index
       spreadIndex: 0,
 
+      // Position relative to chapter navigation
+      chapterDelta: 0,
+      // spreadDelta: 0,
+
       // Used to calculate next spread position after resize to keep
       // the user at/close to the previous reading position
       relativeSpreadPosition: 0.0,
@@ -220,6 +224,16 @@ class Reader extends Component {
       console.log('this.props.userInterfaceActions.update')
 
       console.log('--- ok show')
+
+      console.log('this.state.spreadDelta', this.state.chapterDelta)
+
+      if (this.state.chapterDelta < 0) {
+        console.log('moving back')
+
+        this.setState({ chapterDelta: 0 }, () =>
+          this.navigateToSpreadByIndex(nextProps.view.lastSpreadIndex)
+        )
+      }
     }
 
     // Render the view
@@ -236,6 +250,8 @@ class Reader extends Component {
   closeSidebars = () => this.setState({ showSidebar: null })
 
   freeze = () => {
+    console.log('--- reader calls unload')
+
     this.props.viewActions.unload()
     this.props.viewActions.updateLastSpreadIndex(-1)
 

@@ -2,6 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as viewActions from '../actions/view'
+import * as userInterfaceActions from '../actions/user-interface'
 
 const { requestAnimationFrame, cancelAnimationFrame } = window
 
@@ -10,8 +11,9 @@ class Ultimate extends React.Component {
 
   rAF = null
 
-  maxChecks = 5
+  maxChecks = 100
 
+  // eslint-disable-next-line react/state-in-constructor
   state = { prevLefts: [] }
 
   componentDidMount() {
@@ -35,7 +37,9 @@ class Ultimate extends React.Component {
   poll = () => {
     this.rAF = requestAnimationFrame(this.poll)
 
-    if (!this.node?.current) return
+    if (!this.node?.current) return console.log('prevlefts no node')
+
+    console.log('poll ...')
 
     let { prevLefts } = this.state
     const ultimateOffsetLeft = this.node.current.offsetLeft
@@ -50,11 +54,22 @@ class Ultimate extends React.Component {
     }
 
     prevLefts = []
+
     this.setState({ prevLefts }, () => {
+      console.log('--- ultimate calls load')
+
+      // Hides spinner and makes app visible
       this.props.viewActions.load()
+
       this.props.viewActions.updateUltimateNodePosition({
         ultimateOffsetLeft,
       })
+
+      this.props.userInterfaceActions.update({
+        handleEvents: true,
+        spinnerVisible: false,
+      })
+
       this.cancel()
     })
   }
@@ -70,5 +85,8 @@ class Ultimate extends React.Component {
 
 export default connect(
   ({ view }) => ({ view }),
-  dispatch => ({ viewActions: bindActionCreators(viewActions, dispatch) })
+  dispatch => ({
+    userInterfaceActions: bindActionCreators(userInterfaceActions, dispatch),
+    viewActions: bindActionCreators(viewActions, dispatch),
+  })
 )(Ultimate)

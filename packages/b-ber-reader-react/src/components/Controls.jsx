@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux'
 import { NavigationHeader, NavigationFooter } from './Navigation'
 import withNavigationActions from '../lib/with-navigation-actions'
 import * as userInterfaceActions from '../actions/user-interface'
+import * as viewActions from '../actions/view'
 
 function Controls(props) {
   const handleClick = e => {
@@ -24,11 +25,13 @@ function Controls(props) {
 
     switch (e.which) {
       case 37 /* arrow left */:
+        props.viewActions.unload()
         props.userInterfaceActions.enablePageTransitions()
         props.handlePageNavigation(-1)
         props.handleSidebarButtonClick(null)
         break
       case 39 /* arrow right */:
+        props.viewActions.unload()
         props.userInterfaceActions.enablePageTransitions()
         props.handlePageNavigation(1)
         props.handleSidebarButtonClick(null)
@@ -125,5 +128,6 @@ export default connect(
   }),
   dispatch => ({
     userInterfaceActions: bindActionCreators(userInterfaceActions, dispatch),
+    viewActions: bindActionCreators(viewActions, dispatch),
   })
 )(Controls)
