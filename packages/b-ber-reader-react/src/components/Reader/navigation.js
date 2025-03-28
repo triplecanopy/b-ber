@@ -189,6 +189,17 @@ export function navigateToChapterByURL(absoluteURL) {
   )
 }
 
+export function getSpineItemByAbsoluteUrl(absoluteURL) {
+  const { spine } = this.state
+  const url = new window.URL(absoluteURL)
+
+  // Can eventually handle hashes or query strings here
+  const nextAbsolutURL = `${url.origin}${url.pathname}`
+  const spineItemIndex = findIndex(spine, { absoluteURL: nextAbsolutURL })
+
+  return spineItemIndex
+}
+
 export function updateQueryString(callback) {
   const { spreadIndex, currentSpineItem, currentSpineItemIndex } = this.state
   const { slug } = currentSpineItem

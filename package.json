@@ -9,7 +9,7 @@
   },
   "scripts": {
     "watch": "lerna run watch --stream",
-    "build": "npm run lerna run build -- --scope=@canopycanopycanopy/b-ber-reader-react && npm run reader:shim && npm run lerna run build -- --scope=\"@canopycanopycanopy/{$(ls packages -xm --width=0 | sed 's/ //g' | sed -E 's/b-ber-reader-react,?//')}\"",
+    "build": "npm run lerna run build -- --scope=@canopycanopycanopy/b-ber-reader-react && npm run reader:shim && npm run lerna run build -- --scope=\"@canopycanopycanopy/{$(echo `ls packages` | sed 's/ /,/g' | sed -E 's/b-ber-reader-react,?//')}\"",
     "bootstrap": "lerna bootstrap --hoist",
     "bootstrap:clean": "lerna clean --yes  && npm i && lerna bootstrap --hoist && npm run reader:shim && npm run build",
     "check:code": "echo \"todo\" # \"Checking code...\" && eslint --ignore-path .gitignore --ignore-path .prettierignore --ext .js,.jsx .",
@@ -166,5 +166,6 @@
     "webpack-remove-empty-scripts": "^1.0.1",
     "xml-js": "^1.6.2",
     "xmlhttprequest-ssl": "^2.0.0"
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }
