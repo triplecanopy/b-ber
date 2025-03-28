@@ -1,6 +1,6 @@
 {
   "name": "@canopycanopycanopy/b-ber-grammar-gallery",
-  "version": "3.0.9",
+  "version": "3.0.10",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -25,10 +25,10 @@
     "rimraf": "^2.7.1"
   },
   "dependencies": {
-    "@canopycanopycanopy/b-ber-grammar-attributes": "3.0.9",
-    "@canopycanopycanopy/b-ber-grammar-renderer": "3.0.9",
-    "@canopycanopycanopy/b-ber-lib": "3.0.9",
-    "@canopycanopycanopy/b-ber-parser-gallery": "3.0.9",
+    "@canopycanopycanopy/b-ber-grammar-attributes": "3.0.10",
+    "@canopycanopycanopy/b-ber-grammar-renderer": "3.0.10",
+    "@canopycanopycanopy/b-ber-lib": "3.0.10",
+    "@canopycanopycanopy/b-ber-parser-gallery": "3.0.10",
     "lodash": "^4.17.21",
     "tar": "^6.1.11"
   },
