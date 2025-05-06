@@ -36,8 +36,8 @@
     "webpack-cli": "^4.10.0"
   },
   "dependencies": {
-    "react": "^18",
-    "react-dom": "^18"
+    "react": "^19",
+    "react-dom": "^19"
   },
   "files": [
     "dist"

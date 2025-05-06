@@ -1,21 +1,20 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Video renders the component 1`] = `
-<video
-  controls={true}
-  data-autoplay={true}
-  id="foo"
-  onEnded={[Function]}
-  onLoadedMetadata={[Function]}
-/>
+<div>
+  <video
+    controls=""
+    data-autoplay="true"
+    id="foo"
+  />
+</div>
 `;
 
 exports[`Video renders the component 2`] = `
-<video
-  controls={false}
-  data-autoplay={false}
-  id="foo"
-  onEnded={[Function]}
-  onLoadedMetadata={[Function]}
-/>
+<div>
+  <video
+    data-autoplay="false"
+    id="foo"
+  />
+</div>
 `;
