@@ -1,7 +1,7 @@
 import React from 'react'
 import { Provider } from 'react-redux'
 import configureMockStore from 'redux-mock-store'
-import renderer from 'react-test-renderer'
+import { render } from '@testing-library/react'
 import Spinner from '../../src/components/Spinner'
 
 const mockStore = configureMockStore()
@@ -15,15 +15,13 @@ describe('Spinner', () => {
       },
     })
 
-    tree = renderer
-      .create(
-        <Provider store={store}>
-          <Spinner />
-        </Provider>
-      )
-      .toJSON()
+    tree = render(
+      <Provider store={store}>
+        <Spinner />
+      </Provider>
+    )
 
-    expect(tree).toMatchSnapshot()
+    expect(tree.container).toMatchSnapshot()
 
     store = mockStore({
       userInterface: {
@@ -31,14 +29,12 @@ describe('Spinner', () => {
       },
     })
 
-    tree = renderer
-      .create(
-        <Provider store={store}>
-          <Spinner />
-        </Provider>
-      )
-      .toJSON()
+    tree = render(
+      <Provider store={store}>
+        <Spinner />
+      </Provider>
+    )
 
-    expect(tree).toMatchSnapshot()
+    expect(tree.container).toMatchSnapshot()
   })
 })
