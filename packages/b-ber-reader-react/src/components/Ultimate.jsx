@@ -39,7 +39,7 @@ class Ultimate extends React.Component {
 
     if (!this.node?.current) return console.log('prevlefts no node')
 
-    console.log('poll ...')
+    // console.log('poll ...')
 
     let { prevLefts } = this.state
     const ultimateOffsetLeft = this.node.current.offsetLeft

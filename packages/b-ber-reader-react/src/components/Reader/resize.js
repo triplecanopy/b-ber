@@ -4,11 +4,16 @@ export function handleResize() {
   if (this.state.disableMobileResizeEvents) return
 
   const viewerSettings = new ViewerSettings()
+
   this.props.viewerSettingsActions.update(viewerSettings.get())
 }
 
 export function handleResizeStart() {
   if (this.state.disableMobileResizeEvents) return
+
+  // Hide the UI behind the spinnner while the window is being resized and
+  // dimensions recalculated
+  this.freeze()
 
   const { spreadIndex } = this.state
   const { lastSpreadIndex } = this.props.view
@@ -56,14 +61,14 @@ export function handleResizeEnd() {
 }
 
 export function bindResizeHandlers() {
-  // window.removeEventListener('resize', this.handleResize)
+  window.removeEventListener('resize', this.handleResize)
   window.removeEventListener('resize', this.handleResizeStart)
   window.removeEventListener('resize', this.handleResizeEnd)
 
-  // document.removeEventListener(
-  //   'webkitfullscreenchange mozfullscreenchange fullscreenchange',
-  //   this.handleResize
-  // )
+  document.removeEventListener(
+    'webkitfullscreenchange mozfullscreenchange fullscreenchange',
+    this.handleResize
+  )
   document.removeEventListener(
     'webkitfullscreenchange mozfullscreenchange fullscreenchange',
     this.handleResizeStart
@@ -75,7 +80,7 @@ export function bindResizeHandlers() {
 }
 
 export function unbindResizeHandlers() {
-  // window.addEventListener('resize', this.handleResize)
+  window.addEventListener('resize', this.handleResize)
   window.addEventListener('resize', this.handleResizeStart)
   window.addEventListener('resize', this.handleResizeEnd)
 

@@ -61,11 +61,11 @@ const withLastSpreadIndex = WrappedComponent => {
 
       // Never less than 0
       nextLastSpreadIndex = nextLastSpreadIndex < 0 ? 0 : nextLastSpreadIndex
-      console.log('update spread index', lastSpreadIndex)
+      // console.log('update spread index', lastSpreadIndex)
 
       setLastSpreadIndex(nextLastSpreadIndex)
 
-      console.log('commit lastspreadindex', nextLastSpreadIndex)
+      // console.log('commit lastspreadindex', nextLastSpreadIndex)
       props.viewActions.updateLastSpreadIndex(nextLastSpreadIndex)
     }, [contentDimensions])
 

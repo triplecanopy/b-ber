@@ -181,7 +181,7 @@ class Reader extends Component {
     // 2. There is a new spread index (page). Update state to initialize the
     //    page transition
     if (nextSearchParams !== prevSearchParams) {
-      console.log('willreceiveprops if', nextProps.view)
+      // console.log('willreceiveprops if', nextProps.view)
 
       const nextParams = Url.parseQueryString(nextSearchParams)
 
@@ -216,21 +216,21 @@ class Reader extends Component {
       })
     }
 
-    console.log('willreceiveprops else', nextProps.view)
-    console.log(
-      'this.props.userInterfaceActions',
-      this.props.userInterfaceActions
-    )
+    // console.log('willreceiveprops else', nextProps.view)
+    // console.log(
+    //   'this.props.userInterfaceActions',
+    //   this.props.userInterfaceActions
+    // )
 
     if (nextProps.view.loaded && nextProps.view.lastSpreadIndex > -1) {
-      console.log('this.props.userInterfaceActions.update')
+      // console.log('this.props.userInterfaceActions.update')
 
       console.log('--- ok show')
 
-      console.log('this.state.spreadDelta', this.state.chapterDelta)
+      // console.log('this.state.spreadDelta', this.state.chapterDelta)
 
       if (this.state.chapterDelta < 0) {
-        console.log('moving back')
+        // console.log('moving back')
 
         this.setState({ chapterDelta: 0 }, () =>
           this.navigateToSpreadByIndex(nextProps.view.lastSpreadIndex)

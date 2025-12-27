@@ -51,11 +51,11 @@ export function showSpineItem() {
   console.log('showSpineItem')
 
   this.setState({ firstChapter, lastChapter, firstSpread, lastSpread }, () => {
-    console.log('showSpineItem:after setstate')
+    // console.log('showSpineItem:after setstate')
 
     this.savePosition()
 
-    console.log('this.props.userInterfaceActions.update')
+    // console.log('this.props.userInterfaceActions.update')
 
     // this.props.userInterfaceActions.update({
     //   handleEvents: true,
@@ -124,9 +124,9 @@ export async function loadSpineItem(spineItem, deferredCallback) {
       // Update the query string to trigger a page transition and call the
       // deferredCallback if one is set, or `showSpineItem` if not
 
-      console.log('loadSpineItem setstate:after')
+      // console.log('loadSpineItem setstate:after')
       this.updateQueryString(() => {
-        console.log('loadSpineItem setstate:after updateqs', deferredCallback)
+        // console.log('loadSpineItem setstate:after updateqs', deferredCallback)
 
         this.showSpineItem()
 
