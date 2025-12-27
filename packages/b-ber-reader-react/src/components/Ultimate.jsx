@@ -56,8 +56,6 @@ class Ultimate extends React.Component {
     prevLefts = []
 
     this.setState({ prevLefts }, () => {
-      console.log('--- ultimate calls load')
-
       // Hides spinner and makes app visible
       this.props.viewActions.load()
 

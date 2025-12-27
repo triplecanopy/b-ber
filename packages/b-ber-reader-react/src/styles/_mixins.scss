@@ -49,7 +49,7 @@
 // Mobile
 $mq-mobile: 'only screen and (max-width: 768px)';
 $mq-tablet: 'only screen and (min-width: 768px) and (max-width: 1140px)';
-$mq-desktop-sm: 'only screen and (min-width: 1140px) and (max-width: 1140px)';
+$mq-desktop-sm: 'only screen and (min-width: 1140px) and (max-width: 1140px)'; // Unused
 $mq-desktop-md: 'only screen and (min-width: 1140px) and (max-width: 1440px)';
 $mq-desktop-lg: 'only screen and (min-width: 1440px) and (max-width: 1920px)';
 $mq-desktop-xl: 'only screen and (min-width: 1920px)';

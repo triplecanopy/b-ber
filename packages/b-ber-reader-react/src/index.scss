@@ -13,13 +13,61 @@
   break-inside: avoid;
   background-color: pink;
 
-  > figure {
-    @include transition(margin-left, opacity);
-    position: absolute;
+  @include break-at('desktop-md') {
+    > figure {
+      @include transition(margin-left, opacity);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 100001;
+    }
+  }
+}
+
+body {
+  &::before {
+    position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 100001;
+    z-index: 99999;
+    background-color: white;
+    color: black;
+    font-size: 24px;
+    font-family: Arial, Helvetica, sans-serif;
   }
+
+  @include break-at('mobile') {
+    &::before {
+      content: 'mobile';
+    }
+  }
+  @include break-at('tablet') {
+    &::before {
+      content: 'tablet';
+    }
+  }
+  @include break-at('desktop-sm') {
+    &::before {
+      content: 'desktop-sm';
+    }
+  }
+  @include break-at('desktop-md') {
+    &::before {
+      content: 'desktop-md';
+    }
+  }
+  @include break-at('desktop-lg') {
+    &::before {
+      content: 'desktop-lg';
+    }
+  }
+  @include break-at('desktop-xl') {
+    &::before {
+      content: 'desktop-xl';
+    }
+  }
+  // @include break-at('reader-scroll') { &::before { content: 'reader-scroll' } }
+  // @include break-at('reader-slide') { &::before { content: 'reader-slide' } }
 }

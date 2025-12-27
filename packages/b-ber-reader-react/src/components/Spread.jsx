@@ -8,6 +8,7 @@ import React, {
 import { connect } from 'react-redux'
 import SpreadContext from '../lib/spread-context'
 import browser from '../lib/browser'
+import Viewport from '../helpers/Viewport'
 
 function Spread(props) {
   const node = useRef(null)
@@ -51,26 +52,33 @@ function Spread(props) {
     setMultiplier(nextMultiplier)
   }, [offset])
 
-  const spreadContextValue = useMemo(
-    () => ({
-      left:
+  const spreadContextValue = useMemo(() => {
+    const isScrolling = Viewport.isVerticallyScrolling(props.readerSettings)
+
+    let nextLeft = 0
+
+    if (!isScrolling) {
+      nextLeft =
         left +
         (verso
           ? 0
           : window.innerWidth * 0.5 -
             props.viewerSettings.paddingLeft +
             props.viewerSettings.columnGap / 2) -
-        props.viewerSettings.paddingLeft,
+        props.viewerSettings.paddingLeft
+    }
+
+    return {
+      left: nextLeft,
       layout: props.layout,
-    }),
-    [
-      left,
-      verso,
-      props.viewerSettings.paddingLeft,
-      props.viewerSettings.columnGap,
-      props.layout,
-    ]
-  )
+    }
+  }, [
+    left,
+    verso,
+    props.viewerSettings.paddingLeft,
+    props.viewerSettings.columnGap,
+    props.layout,
+  ])
 
   const columnBreakStyles = useMemo(() => {
     if (browser.name !== 'safari') return {}
