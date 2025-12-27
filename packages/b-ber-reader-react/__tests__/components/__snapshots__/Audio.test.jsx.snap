@@ -1,21 +1,20 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Audio renders the component 1`] = `
-<audio
-  controls={true}
-  data-autoplay={true}
-  id="foo"
-  onEnded={[Function]}
-  onLoadedMetadata={[Function]}
-/>
+<div>
+  <audio
+    controls=""
+    data-autoplay="true"
+    id="foo"
+  />
+</div>
 `;
 
 exports[`Audio renders the component 2`] = `
-<audio
-  controls={false}
-  data-autoplay={false}
-  id="foo"
-  onEnded={[Function]}
-  onLoadedMetadata={[Function]}
-/>
+<div>
+  <audio
+    data-autoplay="false"
+    id="foo"
+  />
+</div>
 `;

@@ -1,8 +1,9 @@
+/* eslint-disable react/jsx-props-no-spreading */
 /* global jsdom */
 /* eslint-disable prefer-destructuring */
 
 import React from 'react'
-import renderer from 'react-test-renderer'
+import { fireEvent, render } from '@testing-library/react'
 import Library from '../../src/components/Library'
 import history from '../../src/lib/History'
 
@@ -15,16 +16,15 @@ describe('Library', () => {
       handleClick: ({ title, url }) => history.push(title, { bookURL: url }),
     }
 
-    const component = renderer.create(<Library {...props} />)
-    const root = component.root
+    const component = render(<Library {...props} />)
+    const { container } = component
 
-    const tree = component.toJSON()
-    expect(tree).toMatchSnapshot()
+    expect(container).toMatchSnapshot()
 
-    const button = root.findByType('button')
-    expect(button.props.style.backgroundImage).toMatch(/^url\(cover-1.jpg\)/)
+    const button = container.querySelector('button')
+    expect(button.style.backgroundImage).toMatch(/^url\(cover-1.jpg\)/)
 
-    button.props.onClick()
+    fireEvent.click(button)
     expect(window.location.href).toBe('http://localhost:3000/Book%201')
   })
 })

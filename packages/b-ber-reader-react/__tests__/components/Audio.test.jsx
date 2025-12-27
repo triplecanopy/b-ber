@@ -1,5 +1,7 @@
+/* eslint-disable react/jsx-props-no-spreading */
+
 import React from 'react'
-import renderer from 'react-test-renderer'
+import { render } from '@testing-library/react'
 import Audio from '../../src/components/Media/Audio'
 
 jest.mock(
@@ -23,13 +25,13 @@ describe('Audio', () => {
     const ref = React.createRef()
 
     props = { id: 'foo', 'data-autoplay': true, controls: true }
-    tree = renderer.create(<Audio elemRef={ref} {...props} />).toJSON()
+    tree = render(<Audio elemRef={ref} {...props} />)
 
-    expect(tree).toMatchSnapshot()
+    expect(tree.container).toMatchSnapshot()
 
     props = { id: 'foo', 'data-autoplay': false, controls: false }
-    tree = renderer.create(<Audio elemRef={ref} {...props} />).toJSON()
+    tree = render(<Audio elemRef={ref} {...props} />)
 
-    expect(tree).toMatchSnapshot()
+    expect(tree.container).toMatchSnapshot()
   })
 })

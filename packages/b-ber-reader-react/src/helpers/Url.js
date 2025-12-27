@@ -172,12 +172,11 @@ class Url {
     try {
       // Create URL objects to validate the URL that was passed in and the
       // URL to reference, then compare the existence of cmp in url
-      const nextUrl = new URL(url)
-      const nextCmp = new URL(cmp)
+      const { host: urlHost } = new URL(url)
+      const { host: cmpHost } = new URL(cmp)
 
-      return nextUrl.href.slice(0, nextCmp.href.length) === nextCmp.href
+      return urlHost !== cmpHost
     } catch (err) {
-      // Default to `false`
       console.error(err)
       return true
     }

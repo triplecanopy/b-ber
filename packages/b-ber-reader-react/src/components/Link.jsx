@@ -3,39 +3,58 @@ import { connect } from 'react-redux'
 import ReaderContext from '../lib/reader-context'
 import Url from '../helpers/Url'
 
-// The Link component has to account for several different possibilities when
-// handling hrefs; if a url is relative, if it's internal (same domain as the
-// reader), hosted (same domain as the domain that the reader is hosted on, but
-// the reader itself hosted elsewhere and embedded in an iframe), and external.
+// The Link component accounts for several different possibilities when directing
+// users with relation to the publication and hosting domain
 
 const Link = props => (
   <ReaderContext.Consumer>
-    {({ navigateToChapterByURL }) => {
-      let { className, style } = props
+    {({ getSpineItemByAbsoluteUrl, navigateToChapterByURL }) => {
+      const { className, href, readerSettings, style, children } = props
 
-      className = className || ''
-      style = style || {}
+      const nextClassName = className || ''
+      const nextStyle = style || {}
 
-      const { href } = props
-      const external = Url.isExternal(href, props.readerSettings.projectURL)
-      const target = external ? '_blank' : '_top'
+      // Check if internal to publication. Verify by getting the spine item index
+      // by the links href. In this case, default link behaviour is suppressed
+      // and navigation is handled by b-ber routing logic
+      const spineItemIndex = getSpineItemByAbsoluteUrl(href)
+      const internalToPublication = spineItemIndex > -1
 
-      // TODO add rel="nooperner noreferrer"
+      // Check if the link is on the same domain that's hosting the project by comparing URLs.
+      // In this case, the link will open in a new browser tab
+      const externalToHost = Url.isExternal(href, window.location.href)
+
+      // Check if the link is on the same host but outside of the publication. Check against the
+      // projectUrl, a value that is either user-defined in the config file or inferred from the
+      // manifestUrl, and that points to the host domain. In this case the link will open in the
+      // current window
+      const internalToHost = Url.isExternal(href, readerSettings.projectURL)
+
+      let target = ''
+      let rel = ''
+
+      if (externalToHost && !internalToPublication) {
+        target = '_blank'
+        rel = 'nooperner noreferrer'
+      } else if (internalToHost) {
+        target = '_top'
+      }
 
       return (
         <a
           href={href}
-          style={style}
           target={target}
-          className={className}
+          rel={rel}
+          style={nextStyle}
+          className={nextClassName}
           onClick={e => {
-            if (!external) return
-
-            e.preventDefault()
-            navigateToChapterByURL(href)
+            if (internalToPublication) {
+              e.preventDefault()
+              navigateToChapterByURL(href)
+            }
           }}
         >
-          {props.children}
+          {children}
         </a>
       )
     }}

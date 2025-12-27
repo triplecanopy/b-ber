@@ -27,6 +27,7 @@ import {
   navigateToChapterByURL,
   updateQueryString,
   savePosition,
+  getSpineItemByAbsoluteUrl,
 } from './navigation'
 import {
   handleResize,
@@ -94,6 +95,7 @@ class Reader extends Component {
     this.navigateToSpreadByIndex = navigateToSpreadByIndex.bind(this)
     this.navigateToElementById = navigateToElementById.bind(this)
     this.navigateToChapterByURL = navigateToChapterByURL.bind(this)
+    this.getSpineItemByAbsoluteUrl = getSpineItemByAbsoluteUrl.bind(this)
     this.updateQueryString = updateQueryString.bind(this)
     this.savePosition = savePosition.bind(this)
 
@@ -360,6 +362,7 @@ class Reader extends Component {
             spreadIndex,
             getTranslateX: this.getTranslateX,
             navigateToChapterByURL: this.navigateToChapterByURL,
+            getSpineItemByAbsoluteUrl: this.getSpineItemByAbsoluteUrl,
           }}
         >
           <Frame

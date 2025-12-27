@@ -1,21 +1,25 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Spinner renders the component 1`] = `
-<div
-  className="bber-spinner bber-spinner--visible"
->
+<div>
   <div
-    className="bber-spinner__detail"
-  />
+    class="bber-spinner bber-spinner--visible"
+  >
+    <div
+      class="bber-spinner__detail"
+    />
+  </div>
 </div>
 `;
 
 exports[`Spinner renders the component 2`] = `
-<div
-  className="bber-spinner"
->
+<div>
   <div
-    className="bber-spinner__detail"
-  />
+    class="bber-spinner"
+  >
+    <div
+      class="bber-spinner__detail"
+    />
+  </div>
 </div>
 `;

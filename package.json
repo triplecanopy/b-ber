@@ -78,7 +78,6 @@
     "babel-eslint": "^8.2.2",
     "babel-jest": "^24.8.0",
     "babel-loader": "^8.2.3",
-    "better-sqlite3": "^7.0.1",
     "browserslist": "^4.17.4",
     "buffer": "^6.0.3",
     "classnames": "^2.2.5",
@@ -134,13 +133,13 @@
     "prettier": "^1.15.1",
     "prop-types": "^15.6.1",
     "quote": "^0.4.0",
-    "react": "^17.0.2",
+    "react": "^19",
     "react-attr-converter": "^0.3.1",
-    "react-dom": "^17.0.2",
+    "react-dom": "^19",
     "react-player": "^2.10.1",
-    "react-redux": "^7.1.3",
-    "redux": "^4.0.5",
-    "redux-thunk": "^2.3.0",
+    "react-redux": "^9.2.0",
+    "redux": "^5.0.0",
+    "redux-thunk": "^3.1.0",
     "resize-observer-polyfill": "^1.5.0",
     "rimraf": "^2.7.1",
     "sass": "^1.49.8",
@@ -166,5 +165,6 @@
     "webpack-remove-empty-scripts": "^1.0.1",
     "xml-js": "^1.6.2",
     "xmlhttprequest-ssl": "^2.0.0"
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

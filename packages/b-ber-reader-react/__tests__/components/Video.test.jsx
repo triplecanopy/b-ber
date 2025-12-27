@@ -1,5 +1,7 @@
+/* eslint-disable react/jsx-props-no-spreading */
+
 import React from 'react'
-import renderer from 'react-test-renderer'
+import { render } from '@testing-library/react'
 import Video from '../../src/components/Media/Video'
 
 jest.mock(
@@ -23,13 +25,13 @@ describe('Video', () => {
     const ref = React.createRef()
 
     props = { id: 'foo', 'data-autoplay': true, controls: true }
-    tree = renderer.create(<Video elemRef={ref} {...props} />).toJSON()
+    tree = render(<Video elemRef={ref} {...props} />)
 
-    expect(tree).toMatchSnapshot()
+    expect(tree.container).toMatchSnapshot()
 
     props = { id: 'foo', 'data-autoplay': false, controls: false }
-    tree = renderer.create(<Video elemRef={ref} {...props} />).toJSON()
+    tree = render(<Video elemRef={ref} {...props} />)
 
-    expect(tree).toMatchSnapshot()
+    expect(tree.container).toMatchSnapshot()
   })
 })

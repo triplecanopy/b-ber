@@ -89,16 +89,14 @@ describe('Url', () => {
     expect(Url.isExternal('/foo/bar.jpg', '')).toBeFalse()
     expect(
       Url.isExternal('http://example.com/foo', 'http://example.com/')
-    ).toBeTrue()
+    ).toBeFalse()
     expect(Url.isExternal()).toBeFalse()
     expect(
       Url.isExternal('http://example.com#anchor', 'http://example.com')
-    ).toBeTrue()
-    expect(
-      Url.isExternal('http://localhost/', 'http://example.com')
     ).toBeFalse()
+    expect(Url.isExternal('http://localhost/', 'http://example.com')).toBeTrue()
     expect(
       Url.isExternal('http://localhost#anchor', 'http://example.com')
-    ).toBeFalse()
+    ).toBeTrue()
   })
 })
