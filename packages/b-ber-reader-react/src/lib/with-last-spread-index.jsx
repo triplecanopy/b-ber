@@ -12,6 +12,10 @@ const withLastSpreadIndex = WrappedComponent => {
     const [lastSpreadIndex, setLastSpreadIndex] = useState(0)
 
     useEffect(() => {
+      setContentDimensions(0)
+    }, [props.slug])
+
+    useEffect(() => {
       const timer = setInterval(() => {
         const lastNode = document.querySelector('.bber-ultimate') // TODO redux
 

@@ -1,48 +1,58 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import Viewport from '../../helpers/Viewport'
 import { ChapterNext, ChapterPrevious, PageNext, PagePrevious } from './Icon'
 
-const show = {
-  chapter: {
-    prev: props => {
-      // Don't show if on the first page
-      if (props.currentSpineItemIndex < 1) return false
-
-      // Only show if the user has not set `footer_icons.chapter` to
-      // false, or if it's a scrolling layout
-      return (
-        props.uiOptions.navigation.footer_icons.chapter ||
-        Viewport.isVerticallyScrolling(props)
-      )
-    },
-
-    next: props => {
-      // Don't show if on the last page
-      if (props.currentSpineItemIndex >= props.spine.length - 1) return false
-
-      // Only show if the user has not set `footer_icons.chapter` to
-      // false, or if it's a scrolling layout
-      return (
-        props.uiOptions.navigation.footer_icons.chapter ||
-        Viewport.isVerticallyScrolling(props)
-      )
-    },
-  },
-  page: {
-    prev: props =>
-      !Viewport.isVerticallyScrolling(props) &&
-      props.uiOptions.navigation.footer_icons.page &&
-      (props.currentSpineItemIndex !== 0 || props.spreadIndex !== 0),
-
-    next: props =>
-      !Viewport.isVerticallyScrolling(props) &&
-      props.uiOptions.navigation.footer_icons.page &&
-      (props.currentSpineItemIndex !== props.spine.length - 1 ||
-        props.spreadIndex !== props.lastSpreadIndex),
-  },
-}
-
 function NavigationFooter(props) {
+  const show = useMemo(
+    () => ({
+      chapter: {
+        prev: p => {
+          // Don't show if on the first page
+          if (p.currentSpineItemIndex < 1) return false
+
+          // Only show if the user has not set `footer_icons.chapter` to
+          // false, or if it's a scrolling layout
+          return (
+            p.uiOptions.navigation.footer_icons.chapter ||
+            Viewport.isVerticallyScrolling(p)
+          )
+        },
+
+        next: p => {
+          // Don't show if on the last page
+          if (p.currentSpineItemIndex >= p.spine.length - 1) return false
+
+          // Only show if the user has not set `footer_icons.chapter` to
+          // false, or if it's a scrolling layout
+          return (
+            p.uiOptions.navigation.footer_icons.chapter ||
+            Viewport.isVerticallyScrolling(p)
+          )
+        },
+      },
+      page: {
+        prev: p =>
+          !Viewport.isVerticallyScrolling(p) &&
+          p.uiOptions.navigation.footer_icons.page &&
+          (p.currentSpineItemIndex !== 0 || p.spreadIndex !== 0),
+
+        next: p =>
+          !Viewport.isVerticallyScrolling(p) &&
+          p.uiOptions.navigation.footer_icons.page &&
+          (p.currentSpineItemIndex !== p.spine.length - 1 ||
+            p.spreadIndex !== p.lastSpreadIndex),
+      },
+    }),
+    [
+      props.currentSpineItemIndex,
+      props.uiOptions.navigation.footer_icons.chapter,
+      props.spine.length,
+      props.uiOptions.navigation.footer_icons.page,
+      props.spreadIndex,
+      props.lastSpreadIndex,
+    ]
+  )
+
   return (
     <footer className="bber-controls__footer">
       <nav className="bber-nav">
