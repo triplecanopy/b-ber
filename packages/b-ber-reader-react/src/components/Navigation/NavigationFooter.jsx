@@ -46,12 +46,14 @@ function NavigationFooter(props) {
     [
       props.currentSpineItemIndex,
       props.uiOptions.navigation.footer_icons.chapter,
-      props.spine.length,
+      props.spine?.length,
       props.uiOptions.navigation.footer_icons.page,
       props.spreadIndex,
       props.lastSpreadIndex,
     ]
   )
+
+  if (!props.spine) return null
 
   return (
     <footer className="bber-controls__footer">

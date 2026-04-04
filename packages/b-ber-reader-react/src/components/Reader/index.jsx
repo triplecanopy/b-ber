@@ -1,6 +1,4 @@
-/* eslint-disable react/no-unused-state */
-/* eslint-disable react/no-unused-class-component-methods */
-import React, { Component } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import find from 'lodash/find'
@@ -43,249 +41,169 @@ import {
   book,
 } from './loader'
 
+// Renders the current chapter's React element tree. Content is written to the
+// module-level `book` object by loader.js and re-rendered when Reader state
+// changes. See IMPROVEMENT_PLAN.md C4 for the known issue with this approach.
 function BookContent() {
   return <div key="book-content">{book.content}</div>
 }
 
-class Reader extends Component {
-  constructor(props) {
-    super(props)
+// ─── Reader ──────────────────────────────────────────────────────────────────
+//
+// Main orchestrator component. Manages spine/chapter loading, page navigation,
+// sidebar visibility, and resize handling.
+//
+// MIGRATION NOTE (Option A, Phase 3): This was previously a class component.
+// It has been converted to a functional component using the following strategy:
+//
+//   - Local state is managed with useState; a setState shim preserves the
+//     class-style partial-merge and callback semantics that the external
+//     navigation/loader/resize modules rely on.
+//
+//   - Those external modules (navigation.js, resize.js, loader.js) continue
+//     to use `this.state`, `this.props`, and `this.setState` internally. Rather
+//     than rewriting them in this step, they are bound to a stable `selfRef`
+//     object whose getters always return the latest state and props via refs.
+//     This keeps the diff minimal and the external modules unchanged.
+//
+//   - Deprecated lifecycle methods have been replaced:
+//       UNSAFE_componentWillMount       → useEffect (empty deps, guarded)
+//       componentDidMount               → useEffect (empty deps)
+//       componentWillUnmount            → useEffect cleanup
+//       UNSAFE_componentWillReceiveProps → two targeted useEffect hooks
+//
+//   - ReaderContext.Provider value is now memoized (fixes IMPROVEMENT_PLAN H5).
+//
+// The external modules (navigation.js, resize.js, loader.js) and the selfRef
+// pattern are intermediate steps. In a later phase (Option A, Phase 3 / v2
+// architecture) they will be extracted into custom hooks and the selfRef
+// indirection will be removed.
 
-    this.state = {
-      __metadata: [],
-      __spine: [],
-      __guide: [],
+function Reader(props) {
+  // ─── Local state ───────────────────────────────────────────────────────────
+  const [state, setReactState] = useState({
+    __metadata: [],
+    __spine: [],
+    __guide: [],
 
-      opsURL: '',
-      spine: [],
-      guide: [],
-      metadata: [],
-      spineItemURL: '',
-      currentSpineItem: null,
-      currentSpineItemIndex: 0,
-      cache: this.props.cache,
+    opsURL: '',
+    spine: [],
+    guide: [],
+    metadata: [],
+    spineItemURL: '',
+    currentSpineItem: null,
+    currentSpineItemIndex: 0,
+    cache: props.cache,
 
-      // Navigation
-      // Current spread index
-      spreadIndex: 0,
+    // Navigation
+    spreadIndex: 0,
+    chapterDelta: 0,
+    relativeSpreadPosition: 0.0,
 
-      // Position relative to chapter navigation
-      chapterDelta: 0,
-      // spreadDelta: 0,
+    firstChapter: false,
+    lastChapter: false,
+    firstSpread: false,
+    lastSpread: false,
 
-      // Used to calculate next spread position after resize to keep
-      // the user at/close to the previous reading position
-      relativeSpreadPosition: 0.0,
+    // Sidebar
+    showSidebar: null,
 
-      firstChapter: false,
-      lastChapter: false,
-      firstSpread: false,
-      lastSpread: false,
-      // delta: 0,
+    // Resize — disable resize events on touch devices to avoid spurious
+    // triggering from the on-screen keyboard appearing/disappearing
+    disableMobileResizeEvents: 'ontouchstart' in document.documentElement,
+  })
 
-      // Sidebar
-      showSidebar: null,
+  // ─── Live refs ─────────────────────────────────────────────────────────────
+  // Keep refs that always hold the latest state and props. The external modules
+  // (navigation.js, loader.js, resize.js) read `this.state` and `this.props`
+  // synchronously inside async callbacks, so they must always see current
+  // values — a regular closure would capture a stale snapshot.
+  const stateRef = useRef(state)
+  stateRef.current = state
 
-      // Resize
-      disableMobileResizeEvents: 'ontouchstart' in document.documentElement,
-    }
+  const propsRef = useRef(props)
+  propsRef.current = props
 
-    this.handlePageNavigation = handlePageNavigation.bind(this)
-    this.handleChapterNavigation = handleChapterNavigation.bind(this)
-    this.navigateToSpreadByIndex = navigateToSpreadByIndex.bind(this)
-    this.navigateToElementById = navigateToElementById.bind(this)
-    this.navigateToChapterByURL = navigateToChapterByURL.bind(this)
-    this.getSpineItemByAbsoluteUrl = getSpineItemByAbsoluteUrl.bind(this)
-    this.updateQueryString = updateQueryString.bind(this)
-    this.savePosition = savePosition.bind(this)
+  // ─── setState shim ─────────────────────────────────────────────────────────
+  // The external modules call `this.setState(partialState, callback)`.
+  // This shim:
+  //   1. Merges partial state (matching class setState's shallow-merge behavior)
+  //   2. Keeps stateRef in sync so synchronous reads within the same call stack
+  //      see the pending update rather than the previous render's snapshot
+  //   3. Queues the callback to fire after the component re-renders with the
+  //      new state (approximating class setState's callback timing)
+  const pendingCallbacksRef = useRef([])
 
-    // this.debounceResizeSpeed = 400
-    this.resizeEndTimer = null
+  // Flush any queued setState callbacks after every render. By the time this
+  // effect runs, the state update has been committed to the DOM.
+  useEffect(() => {
+    if (pendingCallbacksRef.current.length === 0) return
+    const cbs = pendingCallbacksRef.current.splice(0)
+    cbs.forEach(cb => cb?.())
+  })
 
-    this.bindResizeHandlers = bindResizeHandlers.bind(this)
-    this.unbindResizeHandlers = unbindResizeHandlers.bind(this)
-    this.handleResize = handleResize.bind(this)
-    this.handleResizeStart = handleResizeStart.bind(this)
-    this.handleResizeEnd = handleResizeEnd.bind(this)
-
-    // TODO set timer appropriately
-    this.handleResizeStart = debounce(this.handleResizeStart, 1000, {
-      leading: true,
-      trailing: false,
-    }).bind(this)
-
-    // TODO set timer appropriately
-    this.handleResizeEnd = debounce(this.handleResizeEnd, 1000, {
-      leading: false,
-      trailing: true,
-    }).bind(this)
-
-    this.createStateFromOPF = createStateFromOPF.bind(this)
-    this.showSpineItem = showSpineItem.bind(this)
-    this.loadSpineItem = loadSpineItem.bind(this)
-  }
-
-  async UNSAFE_componentWillMount() {
-    // Load the spine, guide, and metadata
-    this.createStateFromOPF(() => {
-      const { spine } = this.state
-      const { readerSettings, readerLocation } = this.props
-
-      // Check the current query string if one exists
-      const params = new URLSearchParams(readerLocation.searchParams)
-      const currentSpineItemIndex = Number(
-        params.get(readerSettings.searchParamKeys.currentSpineItemIndex)
-      )
-      const currentSpineItem = spine[currentSpineItemIndex]
-      const spreadIndex = 0
-
-      if (currentSpineItem) {
-        this.setState(
-          { currentSpineItem, currentSpineItemIndex, spreadIndex },
-          () => this.loadSpineItem(currentSpineItem)
-        )
-
-        return
-      }
-
-      // Fallback to load the first page of the first chapter
-      this.loadSpineItem()
+  const setState = useCallback((update, callback) => {
+    if (callback) pendingCallbacksRef.current.push(callback)
+    setReactState(prev => {
+      const next =
+        typeof update === 'function' ? update(prev) : { ...prev, ...update }
+      // Sync stateRef immediately so that code reading `this.state`
+      // synchronously after calling `this.setState` (within the same tick)
+      // sees the intended next value
+      stateRef.current = next
+      return next
     })
-  }
+  }, [])
 
-  componentWillUnmount() {
-    const hash = Asset.createHash(this.props.readerSettings.bookURL)
+  // ─── Instance methods ──────────────────────────────────────────────────────
+  // These were class instance methods. They are defined before selfRef is
+  // populated so they can be referenced in the selfRef initializer below.
 
-    Asset.removeBookStyles(hash)
+  const closeSidebars = useCallback(() => {
+    setState({ showSidebar: null })
+  }, [setState])
 
-    this.bindResizeHandlers()
-  }
-
-  componentDidMount() {
-    this.unbindResizeHandlers()
-  }
-
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    // const {
-    //   loaded: nextLoaded,
-    //   lastSpreadIndex: nextLastSpreadIndex,
-    //   pendingDeferredCallbacks: nextPendingDeferredCallbacks,
-    // } = nextProps.view
-
-    const { searchParams: prevSearchParams } = this.props.readerLocation
-    const { searchParams: nextSearchParams } = nextProps.readerLocation
-
-    // The query string has changed in that either
-    // 1. There is a new slug (chapter). Load the page asynchronously and let
-    //    the post-loaded callbacks update the postion
-    // 2. There is a new spread index (page). Update state to initialize the
-    //    page transition
-    if (nextSearchParams !== prevSearchParams) {
-      // console.log('willreceiveprops if', nextProps.view)
-
-      const nextParams = Url.parseQueryString(nextSearchParams)
-
-      const slug = nextParams[this.props.readerSettings.searchParamKeys.slug]
-      const currentSpineItemIndex = Number(
-        nextParams[
-          this.props.readerSettings.searchParamKeys.currentSpineItemIndex
-        ]
-      )
-      const spreadIndex = Number(
-        nextParams[this.props.readerSettings.searchParamKeys.spreadIndex]
-      )
-
-      const prevParams = Url.parseQueryString(prevSearchParams)
-      const prevSlug =
-        prevParams[this.props.readerSettings.searchParamKeys.slug]
-
-      // Load the new spine item if the slug has changed. `loadSpineItem`
-      // updates the query string, so we can return immediately after this
-      // branch
-      if (prevSlug && slug && prevSlug !== slug) {
-        const spineItem = find(this.state.spine, { slug })
-        this.loadSpineItem(spineItem)
-        return
-      }
-
-      // Update state for the new location
-      this.setState({
-        slug,
-        currentSpineItemIndex,
-        spreadIndex,
-      })
-    }
-
-    // console.log('willreceiveprops else', nextProps.view)
-    // console.log(
-    //   'this.props.userInterfaceActions',
-    //   this.props.userInterfaceActions
-    // )
-
-    if (nextProps.view.loaded && nextProps.view.lastSpreadIndex > -1) {
-      // console.log('this.props.userInterfaceActions.update')
-
-      console.log('--- ok show')
-
-      // console.log('this.state.spreadDelta', this.state.chapterDelta)
-
-      if (this.state.chapterDelta < 0) {
-        // console.log('moving back')
-
-        this.setState({ chapterDelta: 0 }, () =>
-          this.navigateToSpreadByIndex(nextProps.view.lastSpreadIndex)
-        )
-      }
-    }
-
-    // Render the view
-    // if (
-    //   nextLoaded &&
-    //   nextLastSpreadIndex !== -1 &&
-    //   nextPendingDeferredCallbacks === true
-    // ) {
-    //   this.props.requestDeferredCallbackExecution()
-    // }
-  }
-
-  // eslint-disable-next-line react/no-unused-class-component-methods
-  closeSidebars = () => this.setState({ showSidebar: null })
-
-  freeze = () => {
+  const freeze = useCallback(() => {
     console.log('--- reader calls unload')
 
-    this.props.viewActions.unload()
-    this.props.viewActions.updateLastSpreadIndex(-1)
+    propsRef.current.viewActions.unload()
+    propsRef.current.viewActions.updateLastSpreadIndex(-1)
 
     console.log('this.props.userInterfaceActions.update')
 
-    this.props.userInterfaceActions.update({
+    propsRef.current.userInterfaceActions.update({
       handleEvents: false,
       enableTransitions: false,
       spinnerVisible: true,
     })
 
-    this.setState({ showSidebar: null })
-  }
+    setState({ showSidebar: null })
+  }, [setState])
 
-  handleSidebarButtonClick = value => {
-    let { showSidebar } = this.state
-    showSidebar = value === showSidebar ? null : value
-    this.setState({ showSidebar })
-  }
+  const handleSidebarButtonClick = useCallback(
+    value => {
+      setState(prev => ({
+        showSidebar: value === prev.showSidebar ? null : value,
+      }))
+    },
+    [setState]
+  )
 
-  getTranslateX = spreadIndex => {
-    const nextSpreadIndex = unlessDefined(spreadIndex, this.state.spreadIndex)
+  const getTranslateX = useCallback(spreadIndex => {
+    const nextSpreadIndex = unlessDefined(
+      spreadIndex,
+      stateRef.current.spreadIndex
+    )
 
     const {
       width,
       paddingLeft,
       paddingRight,
       columnGap,
-    } = this.props.viewerSettings
+    } = propsRef.current.viewerSettings
 
     const isScrolling = Viewport.isVerticallyScrolling(
-      this.props.readerSettings
+      propsRef.current.readerSettings
     )
 
     let translateX = 0
@@ -293,24 +211,22 @@ class Reader extends Component {
       translateX =
         (width - paddingLeft - paddingRight + columnGap) * nextSpreadIndex * -1
 
-      // no -0
+      // Avoid -0
       translateX =
         translateX === 0 && Math.sign(1 / translateX) === -1 ? 0 : translateX
     }
 
     return translateX
-  }
+  }, [])
 
-  // TODO the location.state.bookURL prop is how we're signal to the reader that
-  // there is a book loaded, but that the pathname is '/'. Would be good to have
-  // this standardized
-  destroyReaderComponent = () => {
-    this.props.readerSettingsActions.updateSettings({ bookURL: '' })
-    // history.push('/')
-  }
+  const destroyReaderComponent = useCallback(() => {
+    // TODO: the location.state.bookURL prop is how we signal to the reader that
+    // there is a book loaded but the pathname is '/'. Would be good to standardize
+    propsRef.current.readerSettingsActions.updateSettings({ bookURL: '' })
+  }, [])
 
-  getSlug() {
-    const { spine, currentSpineItemIndex } = this.state
+  const getSlug = useCallback(() => {
+    const { spine, currentSpineItemIndex } = stateRef.current
 
     if (
       isInteger(currentSpineItemIndex) &&
@@ -320,68 +236,272 @@ class Reader extends Component {
     }
 
     return ''
+  }, [])
+
+  // ─── selfRef ───────────────────────────────────────────────────────────────
+  // A stable object that the external modules are bound to in place of `this`.
+  // Property getters delegate to the live refs defined above, so the bound
+  // functions always read current state and props regardless of when they run.
+  //
+  // Initialized once on the first render (the `if (!selfRef.current)` guard
+  // prevents re-initialization on subsequent renders). All methods that would
+  // have been `this.method` in the class are attached here.
+  //
+  // This is an intentional intermediate pattern for the migration. In the v2
+  // architecture, the logic in navigation.js, loader.js, and resize.js will
+  // move into custom hooks and this indirection will be removed.
+  const selfRef = useRef(null)
+  const resizeEndTimerRef = useRef(null)
+
+  if (!selfRef.current) {
+    const self = {
+      get state() {
+        return stateRef.current
+      },
+      get props() {
+        return propsRef.current
+      },
+      // resizeEndTimer is an instance property used across resize handlers
+      get resizeEndTimer() {
+        return resizeEndTimerRef.current
+      },
+      set resizeEndTimer(v) {
+        resizeEndTimerRef.current = v
+      },
+    }
+
+    // Delegate to the stable callbacks defined above. Wrapping in an arrow
+    // function (rather than assigning directly) ensures that if any of the
+    // useCallback references were to change, selfRef still calls the current
+    // version. In practice all of these are stable due to useCallback.
+    self.setState = (update, cb) => setState(update, cb)
+    self.closeSidebars = () => closeSidebars()
+    self.freeze = () => freeze()
+    self.handleSidebarButtonClick = v => handleSidebarButtonClick(v)
+    self.getTranslateX = v => getTranslateX(v)
+    self.destroyReaderComponent = () => destroyReaderComponent()
+    self.getSlug = () => getSlug()
+
+    // Bind external module functions. These functions use `this.state`,
+    // `this.props`, `this.setState`, and sibling methods on `this` — all of
+    // which are satisfied by the getters and methods on `self` above.
+    self.createStateFromOPF = createStateFromOPF.bind(self)
+    self.showSpineItem = showSpineItem.bind(self)
+    self.loadSpineItem = loadSpineItem.bind(self)
+
+    self.updateQueryString = updateQueryString.bind(self)
+    self.savePosition = savePosition.bind(self)
+    self.handlePageNavigation = handlePageNavigation.bind(self)
+    self.handleChapterNavigation = handleChapterNavigation.bind(self)
+    self.navigateToSpreadByIndex = navigateToSpreadByIndex.bind(self)
+    self.navigateToElementById = navigateToElementById.bind(self)
+    self.navigateToChapterByURL = navigateToChapterByURL.bind(self)
+    self.getSpineItemByAbsoluteUrl = getSpineItemByAbsoluteUrl.bind(self)
+
+    self.handleResize = handleResize.bind(self)
+    self.handleResizeStart = handleResizeStart.bind(self)
+    self.handleResizeEnd = handleResizeEnd.bind(self)
+    self.bindResizeHandlers = bindResizeHandlers.bind(self)
+    self.unbindResizeHandlers = unbindResizeHandlers.bind(self)
+
+    // Debounce resize start/end (matching the original constructor config)
+    // TODO: 1000ms is a magic number — see IMPROVEMENT_PLAN.md H4
+    self.handleResizeStart = debounce(self.handleResizeStart, 1000, {
+      leading: true,
+      trailing: false,
+    })
+    self.handleResizeEnd = debounce(self.handleResizeEnd, 1000, {
+      leading: false,
+      trailing: true,
+    })
+
+    selfRef.current = self
   }
 
-  render() {
-    const { downloads, uiOptions, view, layout, style, className } = this.props
+  // ─── Initialization ────────────────────────────────────────────────────────
+  // Replaces UNSAFE_componentWillMount. Loads spine, guide, and metadata from
+  // the OPF, then loads the chapter indicated by the current location params.
+  //
+  // NOTE: unlike UNSAFE_componentWillMount (which ran before first render),
+  // useEffect runs after the first render. This means the reader is briefly
+  // empty before the OPF fetch begins. The spinner is not shown during this
+  // window — that is a pre-existing issue documented as bug C5 in
+  // IMPROVEMENT_PLAN.md and is not introduced by this migration.
+  //
+  // The hasInitializedRef guard prevents double-invocation in React 18
+  // Strict Mode, which mounts components twice in development.
+  const hasInitializedRef = useRef(false)
 
-    const {
-      metadata,
-      guide,
-      spine,
-      currentSpineItemIndex,
-      showSidebar,
-      lastSpread,
-      spreadIndex,
-    } = this.state
+  useEffect(() => {
+    if (hasInitializedRef.current) return
+    hasInitializedRef.current = true
 
-    const slug = this.getSlug()
+    selfRef.current.createStateFromOPF(() => {
+      const { spine } = stateRef.current
+      const { readerSettings, readerLocation } = propsRef.current
 
-    return (
-      <Controls
-        guide={guide}
-        spine={spine}
-        currentSpineItemIndex={currentSpineItemIndex}
-        metadata={metadata}
-        showSidebar={showSidebar}
-        spreadIndex={spreadIndex}
-        lastSpreadIndex={view.lastSpreadIndex}
-        handlePageNavigation={this.handlePageNavigation}
-        destroyReaderComponent={this.destroyReaderComponent}
-        handleChapterNavigation={this.handleChapterNavigation}
-        handleSidebarButtonClick={this.handleSidebarButtonClick}
-        navigateToChapterByURL={this.navigateToChapterByURL}
-        downloads={downloads}
-        uiOptions={uiOptions}
-        layout={layout}
-      >
-        <ReaderContext.Provider
-          // eslint-disable-next-line react/jsx-no-constructed-context-values
-          value={{
-            lastSpread,
-            spreadIndex,
-            getTranslateX: this.getTranslateX,
-            navigateToChapterByURL: this.navigateToChapterByURL,
-            getSpineItemByAbsoluteUrl: this.getSpineItemByAbsoluteUrl,
-          }}
-        >
-          <Frame
-            slug={slug}
-            spreadIndex={spreadIndex}
-            lastSpreadIndex={view.lastSpreadIndex}
-            BookContent={BookContent}
-            layout={layout}
-            // Can't wrap layout or the withLastSpreadIndex HOC in a way that preserves
-            // refs, so pass down `view` as props
-            view={view}
-            style={style}
-            className={className}
-          />
-          <Spinner />
-        </ReaderContext.Provider>
-      </Controls>
+      const params = new URLSearchParams(readerLocation.searchParams)
+      const currentSpineItemIndex = Number(
+        params.get(readerSettings.searchParamKeys.currentSpineItemIndex)
+      )
+      const currentSpineItem = spine[currentSpineItemIndex]
+      const spreadIndex = 0
+
+      if (currentSpineItem) {
+        setState({ currentSpineItem, currentSpineItemIndex, spreadIndex }, () =>
+          selfRef.current.loadSpineItem(currentSpineItem)
+        )
+        return
+      }
+
+      // Fallback: load the first page of the first chapter
+      selfRef.current.loadSpineItem()
+    })
+  }, [])
+
+  // ─── Resize handlers ───────────────────────────────────────────────────────
+  // Replaces componentDidMount (bind) and componentWillUnmount (unbind).
+  //
+  // NOTE: bindResizeHandlers / unbindResizeHandlers names are inverted in the
+  // source — see IMPROVEMENT_PLAN.md H4. Behavior is preserved here as-is to
+  // avoid a behavioral change in this migration step.
+  useEffect(() => {
+    selfRef.current.unbindResizeHandlers() // actually adds listeners (see H4)
+
+    return () => {
+      selfRef.current.bindResizeHandlers() // actually removes listeners (see H4)
+
+      const hash = Asset.createHash(propsRef.current.readerSettings.bookURL)
+      Asset.removeBookStyles(hash)
+    }
+  }, [])
+
+  // ─── React to location search param changes ────────────────────────────────
+  // Replaces the searchParams branch of UNSAFE_componentWillReceiveProps.
+  // When the Redux location changes:
+  //   - If the slug changed, load the new spine item (chapter navigation)
+  //   - Otherwise, update state to trigger the page transition
+  const prevSearchParamsRef = useRef(props.readerLocation.searchParams)
+
+  useEffect(() => {
+    const prevSearchParams = prevSearchParamsRef.current
+    const nextSearchParams = props.readerLocation.searchParams
+    prevSearchParamsRef.current = nextSearchParams
+
+    // Guard against re-running with the same value (e.g. React Strict Mode
+    // double-invocation, or an unrelated Redux update)
+    if (nextSearchParams === prevSearchParams) return
+
+    const nextParams = Url.parseQueryString(nextSearchParams)
+    const { searchParamKeys } = propsRef.current.readerSettings
+
+    const slug = nextParams[searchParamKeys.slug]
+    const currentSpineItemIndex = Number(
+      nextParams[searchParamKeys.currentSpineItemIndex]
     )
-  }
+    const spreadIndex = Number(nextParams[searchParamKeys.spreadIndex])
+
+    const prevParams = Url.parseQueryString(prevSearchParams)
+    const prevSlug = prevParams[searchParamKeys.slug]
+
+    // Slug changed → load the new chapter. loadSpineItem updates the query
+    // string itself, so return immediately
+    if (prevSlug && slug && prevSlug !== slug) {
+      const spineItem = find(stateRef.current.spine, { slug })
+      selfRef.current.loadSpineItem(spineItem)
+      return
+    }
+
+    // Same chapter, different spread → update navigation state, which will
+    // trigger a transform update in Layout
+    setState({ slug, currentSpineItemIndex, spreadIndex })
+  }, [props.readerLocation.searchParams])
+
+  // ─── React to view.loaded / lastSpreadIndex changes ────────────────────────
+  // Replaces the view.loaded branch of UNSAFE_componentWillReceiveProps.
+  // When a chapter finishes loading and the layout has stabilized (signalled by
+  // Ultimate dispatching view.load()), navigate to the last spread if we
+  // arrived here via backwards chapter navigation.
+  useEffect(() => {
+    if (props.view.loaded && props.view.lastSpreadIndex > -1) {
+      console.log('--- ok show')
+
+      if (stateRef.current.chapterDelta < 0) {
+        setState({ chapterDelta: 0 }, () =>
+          selfRef.current.navigateToSpreadByIndex(
+            propsRef.current.view.lastSpreadIndex
+          )
+        )
+      }
+    }
+  }, [props.view.loaded, props.view.lastSpreadIndex])
+
+  // ─── Context value ─────────────────────────────────────────────────────────
+  // Previously an object literal in JSX (recreated on every render, causing all
+  // context consumers to re-render unnecessarily). Now memoized so consumers
+  // only re-render when spreadIndex, lastSpread, or the stable callbacks change.
+  // Fixes IMPROVEMENT_PLAN.md H5.
+  const readerContextValue = useMemo(
+    () => ({
+      lastSpread: state.lastSpread,
+      spreadIndex: state.spreadIndex,
+      getTranslateX,
+      navigateToChapterByURL: selfRef.current.navigateToChapterByURL,
+      getSpineItemByAbsoluteUrl: selfRef.current.getSpineItemByAbsoluteUrl,
+    }),
+    [state.lastSpread, state.spreadIndex, getTranslateX]
+  )
+
+  // ─── Render ────────────────────────────────────────────────────────────────
+  const { downloads, uiOptions, view, layout, style, className } = props
+
+  const {
+    metadata,
+    guide,
+    spine,
+    currentSpineItemIndex,
+    showSidebar,
+    // lastSpread,
+    spreadIndex,
+  } = state
+
+  const slug = getSlug()
+
+  return (
+    <Controls
+      guide={guide}
+      spine={spine}
+      currentSpineItemIndex={currentSpineItemIndex}
+      metadata={metadata}
+      showSidebar={showSidebar}
+      spreadIndex={spreadIndex}
+      lastSpreadIndex={view.lastSpreadIndex}
+      handlePageNavigation={selfRef.current.handlePageNavigation}
+      destroyReaderComponent={destroyReaderComponent}
+      handleChapterNavigation={selfRef.current.handleChapterNavigation}
+      handleSidebarButtonClick={handleSidebarButtonClick}
+      navigateToChapterByURL={selfRef.current.navigateToChapterByURL}
+      downloads={downloads}
+      uiOptions={uiOptions}
+      layout={layout}
+    >
+      <ReaderContext.Provider value={readerContextValue}>
+        <Frame
+          slug={slug}
+          spreadIndex={spreadIndex}
+          lastSpreadIndex={view.lastSpreadIndex}
+          BookContent={BookContent}
+          layout={layout}
+          // Can't wrap Layout or the withLastSpreadIndex HOC in a way that
+          // preserves refs, so pass `view` down as props
+          view={view}
+          style={style}
+          className={className}
+        />
+        <Spinner />
+      </ReaderContext.Provider>
+    </Controls>
+  )
 }
 
 const mapStateToProps = ({

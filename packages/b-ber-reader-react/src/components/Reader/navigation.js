@@ -205,6 +205,9 @@ export function getSpineItemByAbsoluteUrl(absoluteURL) {
 
 export function updateQueryString(callback) {
   const { spreadIndex, currentSpineItem, currentSpineItemIndex } = this.state
+
+  if (!currentSpineItem) return
+
   const { slug } = currentSpineItem
   const { searchParams } = this.props.readerLocation
   const nextSearchParams = new window.URLSearchParams(searchParams)
