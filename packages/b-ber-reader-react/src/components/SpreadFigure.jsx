@@ -7,26 +7,29 @@ const SpreadFigure = props => {
 
   return (
     <SpreadContext.Consumer>
-      {({ left }) => {
+      {({ left: origLeft }) => {
         const absTranslateX = Math.abs(readerContext.getTranslateX())
-        // const opacity = 1 // Math.abs(translateX) === left ? 1 : 0
 
         // Account for minute differences in measurement
-        const adjustedLeft = Math.floor(left)
+        const left = Math.floor(origLeft)
 
-        const opacity = 0.5
+        // const opacity = 0.5
         const offset = window.innerWidth / 2
         const marginLeft =
-          absTranslateX === adjustedLeft
+          absTranslateX === left
             ? 0
-            : absTranslateX > adjustedLeft
+            : absTranslateX > left
             ? offset * -1
             : offset
 
         return (
           <figure
             id={props.id}
-            style={{ left: adjustedLeft, opacity, marginLeft }}
+            style={{
+              left,
+              // opacity,
+              marginLeft,
+            }}
             className={props.className || ''}
           >
             {props.children}

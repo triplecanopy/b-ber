@@ -11,7 +11,7 @@
 
 .bber-spread {
   break-inside: avoid;
-  background-color: pink;
+  // background-color: pink;
 
   @include break-at('desktop-md') {
     > figure {

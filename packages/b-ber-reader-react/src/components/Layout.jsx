@@ -65,8 +65,8 @@ function getLayoutStyles(props, state) {
 
 function getLeafStyles(
   position /* <left|right> */,
-  translateX,
-  transitionSpeed
+  translateX
+  // transitionSpeed
 ) {
   // Overlay styles for hiding content in the 'padding' range. FF animations
   // 'jump' when animating a transform, so we use 'left' and 'right'
@@ -82,17 +82,22 @@ function getLeafStyles(
   // let translateX = this.context.getTranslateX()
 
   if (browser.name === 'firefox') {
-    if (position === 'left') nextTranslateX *= -1
+    if (position === 'left') {
+      nextTranslateX *= -1
+    }
+
     styles = {
       [position]: `${nextTranslateX}px`,
-      transition: `${position} ${transitionSpeed}ms ease 0s`,
+      // transition: `${position} ${transitionSpeed}ms ease 0s`,
     }
   } else {
     nextTranslateX *= -1
+
     const transform = `translateX(${nextTranslateX}px) translate3d(0, 0, 0)`
+
     styles = {
       transform,
-      transition: `transform ${transitionSpeed}ms ease 0s`,
+      // transition: `transform ${transitionSpeed}ms ease 0s`,
     }
   }
 
