@@ -68,10 +68,20 @@ export function showSpineItem() {
 export async function loadSpineItem(spineItem, deferredCallback) {
   const hash = Asset.createHash(this.props.readerSettings.bookURL)
 
-  console.log('loadSpineItem')
-
   let requestedSpineItem = spineItem
+
+  // Fall back to the first spine item when no explicit item is provided
+  // (e.g. initial load with no saved position)
   if (!requestedSpineItem) [requestedSpineItem] = this.state.spine
+
+  // Guard: spine may be empty if called before createStateFromOPF has
+  // completed. This should not happen in normal flow (the initialization
+  // effect now shows the spinner with handleEvents:false before the OPF
+  // fetch begins), but defensive checks prevent a crash if it does.
+  if (!requestedSpineItem) {
+    console.warn('loadSpineItem: called before spine was populated — skipping')
+    return
+  }
 
   this.freeze()
 
@@ -95,7 +105,9 @@ export async function loadSpineItem(spineItem, deferredCallback) {
     })
   } catch (err) {
     // Something went wrong loading the book. Clear storage for this book
-
+    // and re-enable the UI so the reader is not left in a frozen state.
+    // Addresses IMPROVEMENT_PLAN.md M2.
+    //
     // TODO retry? try to navigate to home?
     // @issue: https://github.com/triplecanopy/b-ber/issues/214
     console.error(err)
@@ -104,6 +116,13 @@ export async function loadSpineItem(spineItem, deferredCallback) {
 
     delete storage[hash]
     Storage.set(storage)
+
+    // Re-enable the UI — freeze() was called before the try block and the
+    // spinner would otherwise remain visible indefinitely after a failure
+    this.props.userInterfaceActions.update({
+      handleEvents: true,
+      spinnerVisible: false,
+    })
 
     return
   }

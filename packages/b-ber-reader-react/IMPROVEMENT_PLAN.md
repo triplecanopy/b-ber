@@ -371,15 +371,16 @@ The goal is to migrate from the current stack (React class components, deprecate
 
 **Phase 2: Replace polling with observers**
 
-- [ ] Replace `Ultimate.jsx` RAF loop with a `ResizeObserver` or `MutationObserver` on the sentinel element
-- [ ] Replace `withLastSpreadIndex` `setInterval` with `ResizeObserver`
+- [x] Replace `Ultimate.jsx` RAF loop with a `ResizeObserver` or `MutationObserver` on the sentinel element
+- [x] Replace `withLastSpreadIndex` `setInterval` with `ResizeObserver`
 - [ ] Replace per-`Spread` `setInterval` with a single layout observer propagated via context
 
 **Phase 3: Migrate deprecated React patterns**
 
-- [ ] Convert `App.jsx` from `UNSAFE_componentWillMount` to `componentDidMount`
-- [ ] Convert `Reader/index.jsx` from class to functional component using `useReducer` for local state
-- [ ] Replace `UNSAFE_componentWillReceiveProps` in `Reader` and `Ultimate` with `useEffect` + `useRef` previous-value tracking
+- [x] Convert `App.jsx` from `UNSAFE_componentWillMount` to `componentDidMount`
+- [x] Convert `Reader/index.jsx` from class to functional component using `useReducer` for local state
+- [x] Replace `UNSAFE_componentWillReceiveProps` in `Ultimate` with `useEffect` + `useRef` previous-value tracking
+- [ ] Replace `UNSAFE_componentWillReceiveProps` in `Reader` with `useEffect` + `useRef` previous-value tracking
 - [ ] Memoize `ReaderContext.Provider` value
 
 **Phase 4: TypeScript adoption**

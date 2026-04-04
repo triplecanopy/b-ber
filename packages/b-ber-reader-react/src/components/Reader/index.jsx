@@ -322,11 +322,11 @@ function Reader(props) {
   // Replaces UNSAFE_componentWillMount. Loads spine, guide, and metadata from
   // the OPF, then loads the chapter indicated by the current location params.
   //
-  // NOTE: unlike UNSAFE_componentWillMount (which ran before first render),
-  // useEffect runs after the first render. This means the reader is briefly
-  // empty before the OPF fetch begins. The spinner is not shown during this
-  // window — that is a pre-existing issue documented as bug C5 in
-  // IMPROVEMENT_PLAN.md and is not introduced by this migration.
+  // Unlike UNSAFE_componentWillMount (which ran synchronously before the first
+  // render), useEffect runs after the first render. To prevent the user from
+  // interacting with an uninitialised reader during the OPF network fetch, we
+  // show the spinner immediately at the start of this effect. This addresses
+  // IMPROVEMENT_PLAN.md bug C5.
   //
   // The hasInitializedRef guard prevents double-invocation in React 18
   // Strict Mode, which mounts components twice in development.
@@ -335,6 +335,15 @@ function Reader(props) {
   useEffect(() => {
     if (hasInitializedRef.current) return
     hasInitializedRef.current = true
+
+    // Show the spinner immediately so the user sees a loading indicator
+    // during the OPF/NCX network requests. The spinner will be hidden by
+    // Ultimate.jsx once the layout has stabilised after the first chapter
+    // loads (see Ultimate.jsx poll() → userInterfaceActions.update).
+    propsRef.current.userInterfaceActions.update({
+      spinnerVisible: true,
+      handleEvents: false,
+    })
 
     selfRef.current.createStateFromOPF(() => {
       const { spine } = stateRef.current
@@ -381,6 +390,21 @@ function Reader(props) {
   // When the Redux location changes:
   //   - If the slug changed, load the new spine item (chapter navigation)
   //   - Otherwise, update state to trigger the page transition
+  //
+  // DOUBLE-LOAD PREVENTION: When internal navigation occurs (handleChapterNavigation
+  // → loadSpineItem → updateQueryString), the slug in the search params changes
+  // AND the currentSpineItem in Reader state has already been updated to the new
+  // chapter (handleChapterNavigation sets currentSpineItem before calling
+  // loadSpineItem). We detect this case by comparing the incoming slug to
+  // currentSpineItem.slug — if they match, the load is already in progress and
+  // we skip calling loadSpineItem a second time.
+  //
+  // External navigation (browser back/forward, deep links) arrives with a slug
+  // that does NOT match the current currentSpineItem.slug, so those still
+  // trigger a load correctly.
+  //
+  // NOTE: The original class component had the same double-load pattern via
+  // UNSAFE_componentWillReceiveProps. This fix removes that redundancy.
   const prevSearchParamsRef = useRef(props.readerLocation.searchParams)
 
   useEffect(() => {
@@ -404,11 +428,21 @@ function Reader(props) {
     const prevParams = Url.parseQueryString(prevSearchParams)
     const prevSlug = prevParams[searchParamKeys.slug]
 
-    // Slug changed → load the new chapter. loadSpineItem updates the query
-    // string itself, so return immediately
+    // Slug changed → determine whether the load was triggered internally
+    // (by handleChapterNavigation / navigateToChapterByURL) or externally
+    // (browser back/forward, deep link)
     if (prevSlug && slug && prevSlug !== slug) {
-      const spineItem = find(stateRef.current.spine, { slug })
-      selfRef.current.loadSpineItem(spineItem)
+      // If the Reader's currentSpineItem already points to the new slug,
+      // the load was triggered internally and loadSpineItem has already been
+      // called. Skip the redundant second load.
+      const alreadyLoading = stateRef.current.currentSpineItem?.slug === slug
+
+      if (!alreadyLoading) {
+        // External navigation: find the spine item and load it
+        const spineItem = find(stateRef.current.spine, { slug })
+        selfRef.current.loadSpineItem(spineItem)
+      }
+
       return
     }
 
