@@ -30,8 +30,6 @@ export function handlePageNavigation(increment) {
 }
 
 export function handleChapterNavigation(increment) {
-  console.log('handleChapterNavigation', increment)
-
   let { currentSpineItemIndex } = this.state
 
   const { spine } = this.state

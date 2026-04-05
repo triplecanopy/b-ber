@@ -209,7 +209,7 @@ function Layout(props) {
           minHeight: height,
         }}
       >
-        <props.BookContent />
+        <props.BookContent key={props.spineItemURL} />
       </div>
 
       <Leaves

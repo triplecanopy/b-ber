@@ -48,8 +48,6 @@ export function showSpineItem() {
   const firstSpread = spreadIndex === 0
   const lastSpread = spreadIndex === lastSpreadIndex
 
-  console.log('showSpineItem')
-
   this.setState({ firstChapter, lastChapter, firstSpread, lastSpread }, () => {
     // console.log('showSpineItem:after setstate')
 

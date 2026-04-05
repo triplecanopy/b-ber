@@ -164,12 +164,8 @@ function Reader(props) {
   }, [setState])
 
   const freeze = useCallback(() => {
-    console.log('--- reader calls unload')
-
     propsRef.current.viewActions.unload()
     propsRef.current.viewActions.updateLastSpreadIndex(-1)
-
-    console.log('this.props.userInterfaceActions.update')
 
     propsRef.current.userInterfaceActions.update({
       handleEvents: false,
@@ -458,8 +454,6 @@ function Reader(props) {
   // arrived here via backwards chapter navigation.
   useEffect(() => {
     if (props.view.loaded && props.view.lastSpreadIndex > -1) {
-      console.log('--- ok show')
-
       if (stateRef.current.chapterDelta < 0) {
         setState({ chapterDelta: 0 }, () =>
           selfRef.current.navigateToSpreadByIndex(
@@ -497,6 +491,7 @@ function Reader(props) {
     showSidebar,
     // lastSpread,
     spreadIndex,
+    spineItemURL,
   } = state
 
   const slug = getSlug()
@@ -531,6 +526,7 @@ function Reader(props) {
           view={view}
           style={style}
           className={className}
+          spineItemURL={spineItemURL}
         />
         <Spinner />
       </ReaderContext.Provider>

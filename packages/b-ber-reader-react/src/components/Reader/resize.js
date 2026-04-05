@@ -1,9 +1,16 @@
 import { ViewerSettings } from '../../models'
+import Viewport from '../../helpers/Viewport'
 
 export function handleResize() {
   if (this.state.disableMobileResizeEvents) return
 
   const viewerSettings = new ViewerSettings()
+  const scrollingLayout = Viewport.isVerticallyScrolling(
+    this.props.readerSettings
+  )
+
+  viewerSettings.width = window.innerWidth
+  viewerSettings.height = scrollingLayout ? 'auto' : window.innerHeight
 
   this.props.viewerSettingsActions.update(viewerSettings.get())
 }

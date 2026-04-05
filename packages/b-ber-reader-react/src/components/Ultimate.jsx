@@ -9,6 +9,11 @@ import * as userInterfaceActions from '../actions/user-interface'
 // if it hasn't changed since the previous check, layout is considered stable.
 const STABILITY_CHECK_INTERVAL_MS = 100
 
+// Maximum time (ms) to wait for layout stability before forcing onStable().
+// Guards against infinite loops when offsetLeft keeps changing (e.g. slow
+// font loads, animated CSS, or external layout interference).
+const MAX_WAIT_MS = 1500
+
 // Ultimate — layout-stability sentinel
 //
 // This component is rendered at the end of each chapter's HTML content (via
@@ -64,17 +69,25 @@ function Ultimate({
   const lastOffsetLeftRef = useRef(null)
   // setTimeout handle for the pending stability check
   const timerRef = useRef(null)
+  // Timestamp (Date.now()) recorded when startWatching() begins. Used to
+  // enforce MAX_WAIT_MS: if layout has not stabilised within that window,
+  // onStable() is called unconditionally so the spinner always hides.
+  const startTimeRef = useRef(0)
 
   // Declare layout stable: dispatch Redux actions that unhide the spinner and
   // re-enable event handling.
+  //
+  // NOTE: always dispatch regardless of whether nodeRef.current is available.
+  // If the node is absent (e.g. the sentinel unmounted between startWatching
+  // and onStable firing), we still must hide the spinner — using 0 as a
+  // fallback for ultimateOffsetLeft. Failing silently here leaves the UI
+  // permanently locked.
   const onStable = () => {
     if (!activeRef.current) return
     activeRef.current = false
 
     const node = nodeRef.current
-    if (!node) return
-
-    const ultimateOffsetLeft = node.offsetLeft
+    const ultimateOffsetLeft = node ? node.offsetLeft : 0
 
     vaRef.current.load()
     vaRef.current.updateUltimateNodePosition({ ultimateOffsetLeft })
@@ -83,20 +96,44 @@ function Ultimate({
 
   // Schedule a stability check after STABILITY_CHECK_INTERVAL_MS.
   // On each tick:
-  //   - Read the sentinel's current offsetLeft
-  //   - If unchanged since last tick → layout is stable → call onStable()
-  //   - If changed → record new value, reschedule
+  //   - If MAX_WAIT_MS has elapsed → force onStable() regardless
+  //   - If the sentinel node is absent → reschedule (it may appear shortly)
+  //   - If offsetLeft is unchanged since last tick → layout is stable → call onStable()
+  //   - Otherwise → record new value, reschedule
   //
   // The self-rescheduling means it will loop until stable, handling cases where
-  // CSS columns layout takes multiple frames to settle.
+  // CSS columns layout takes multiple frames to settle. MAX_WAIT_MS ensures
+  // onStable() always fires even when layout never settles (e.g. slow fonts,
+  // animated CSS, or any external factor that keeps offsetLeft changing).
+  //
+  // Critically: we never silently exit without calling onStable() — doing so
+  // would leave the spinner permanently locked. If the node is absent we keep
+  // rescheduling; if MAX_WAIT_MS elapses we force-dispatch regardless.
   const scheduleCheck = () => {
     timerRef.current = setTimeout(() => {
-      if (!activeRef.current || !nodeRef.current) return
+      if (!activeRef.current) return
 
-      const currentOffsetLeft = nodeRef.current.offsetLeft
+      const elapsed = Date.now() - startTimeRef.current
+
+      // Force resolution after MAX_WAIT_MS regardless of layout state
+      if (elapsed >= MAX_WAIT_MS) {
+        onStable()
+        return
+      }
+
+      const node = nodeRef.current
+
+      // Node not yet in DOM (or momentarily absent during a remount) — keep
+      // waiting. MAX_WAIT_MS above ensures we don't loop forever.
+      if (!node) {
+        scheduleCheck()
+        return
+      }
+
+      const currentOffsetLeft = node.offsetLeft
 
       if (currentOffsetLeft === lastOffsetLeftRef.current) {
-        // offsetLeft is the same as the previous tick — layout is stable
+        // offsetLeft is stable — declare stable
         onStable()
       } else {
         // offsetLeft changed — columns are still reflowing, try again
@@ -108,18 +145,23 @@ function Ultimate({
 
   // Begin watching for layout stability. Safe to call multiple times — the
   // previous timer is always cleared before starting a new one.
+  //
+  // We do NOT gate on nodeRef.current here: if the sentinel happens to be
+  // absent at the moment startWatching is called (e.g. a rapid unmount/remount
+  // during StrictMode or a chapter transition), scheduleCheck will keep
+  // rescheduling until the node appears or MAX_WAIT_MS forces resolution.
   const startWatching = () => {
     if (timerRef.current) {
       clearTimeout(timerRef.current)
       timerRef.current = null
     }
-    if (!nodeRef.current) return
 
     activeRef.current = true
     // Start with null so the first check always records a baseline value and
     // reschedules, giving the browser at least one full interval to complete
     // any in-progress layout before we test for stability.
     lastOffsetLeftRef.current = null
+    startTimeRef.current = Date.now()
 
     scheduleCheck()
   }

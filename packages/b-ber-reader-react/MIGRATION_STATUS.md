@@ -1,6 +1,6 @@
 # Reader Migration Status
 
-_Last updated: 2026-04-04 (pass 4 — bug fixes)_
+_Last updated: 2026-04-05 (pass 5 — spinner/navigation fixes)_
 
 ## Context
 
@@ -233,6 +233,75 @@ where the border-box size (`minHeight`) genuinely changes.
 
 ---
 
+---
+
+## Bugs Fixed in This Pass (Pass 5)
+
+### 9 — `Ultimate.jsx`: stability loop never terminates when offsetLeft keeps changing
+
+**File:** `src/components/Ultimate.jsx`
+
+**Problem:** The `scheduleCheck` setTimeout loop only called `onStable()` when
+two consecutive `offsetLeft` readings were identical. If anything kept shifting
+the sentinel's position (slow font loads, animated CSS, `Spread.jsx`'s
+`setInterval` updating its multiplier during initial layout), the loop would
+reschedule indefinitely, never calling `onStable()`. This kept
+`userInterface.spinnerVisible = true` and `userInterface.handleEvents = false`
+permanently — the spinner never hid, new chapter content was invisible behind
+the spinner, and keyboard navigation was blocked.
+
+**Fix:** Added `MAX_WAIT_MS = 3000` and a `startTimeRef` that records
+`Date.now()` when `startWatching()` begins. In each `scheduleCheck` tick, if
+`Date.now() - startTimeRef.current >= MAX_WAIT_MS`, `onStable()` is called
+unconditionally. This guarantees the spinner always hides within 3 seconds at
+the absolute worst case, even if layout never fully settles. Normal loads
+(stable in 1–2 ticks) are unaffected.
+
+---
+
+### 10 — `resize.js` `handleResize`: dispatched zero dimensions on every resize
+
+**File:** `src/components/Reader/resize.js`
+
+**Problem:** `new ViewerSettings().get()` returns `{ width: 0, height: 0, ... }`
+because `ViewerSettings.defaults.width = 0` and `ViewerSettings.defaults.height = 0`.
+On every window resize event `handleResize` dispatched zeroed dimensions,
+temporarily corrupting layout until `withDimensions.updateDimensions()` corrected
+them on the next paint. This also caused `getFrameHeight()` to return a negative
+value when called between the bad dispatch and the correction.
+
+**Fix:** Explicitly set `viewerSettings.width = window.innerWidth` and
+`viewerSettings.height = scrollingLayout ? 'auto' : window.innerHeight` before
+calling `.get()`, matching the behaviour of `withDimensions.updateDimensions()`.
+
+---
+
+### 11 — Debug `console.log` statements (M5)
+
+**Files:** `src/components/Reader/index.jsx`, `src/components/Reader/navigation.js`,
+`src/components/Reader/loader.js`
+
+**Problem:** Several debug log statements left over from the class-to-functional
+migration were producing noise in the console on every chapter load and navigation.
+
+**Fix:** Removed `'--- reader calls unload'`, `'this.props.userInterfaceActions.update'`,
+`'--- ok show'` from `Reader/index.jsx`; `'handleChapterNavigation'` from
+`navigation.js`; `'showSpineItem'` from `loader.js`.
+
+---
+
+## Files Changed (Pass 5)
+
+| File                                  | Change                                                                                    |
+| ------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `src/components/Ultimate.jsx`         | Add `MAX_WAIT_MS = 3000` fallback; track `startTimeRef`; force `onStable()` after timeout |
+| `src/components/Reader/resize.js`     | Fix `handleResize` to set `width`/`height` from `window.inner*` before `.get()`           |
+| `src/components/Reader/index.jsx`     | Remove debug `console.log` statements (M5)                                                |
+| `src/components/Reader/navigation.js` | Remove `console.log('handleChapterNavigation')` (M5)                                      |
+| `src/components/Reader/loader.js`     | Remove `console.log('showSpineItem')` (M5)                                                |
+
+---
+
 ## Known Remaining Issues
 
 These were pre-existing and are documented in `IMPROVEMENT_PLAN.md`. They were
@@ -240,11 +309,8 @@ not introduced by the functional-component migration and are not addressed in
 this pass:
 
 - `book.content` mutation bypasses React rendering (C4)
-- `withLastSpreadIndex` `setInterval` polling at 1s with `console.log` (H2)
 - Per-`Spread` `setInterval` polling (H3)
 - `bindResizeHandlers` / `unbindResizeHandlers` names are inverted (H4)
-- Division-by-zero in `withLastSpreadIndex` for scroll layout (H1)
-- Remaining debug `console.log` statements throughout (M5)
 - The `selfRef` / `stateRef` indirection in `Reader/index.jsx` is a temporary
   migration pattern. In a later phase the external modules (`navigation.js`,
   `loader.js`, `resize.js`) should be converted to custom hooks and the shim
@@ -254,22 +320,20 @@ this pass:
 
 ## Next Steps
 
-1. **Verify Bug 1 fix** — load the app, confirm the spinner hides automatically
-   (~100–200ms after content is ready) without any window resize required.
-2. **Verify Bug 2 fix** — navigate forward/backward between chapters, confirm
-   no flash of old chapter content and that the new chapter renders cleanly in
-   one pass (spinner → new content).
-3. **Verify `lastSpreadIndex` correctness** — in a multi-spread chapter, confirm
-   that the "last page" navigation control is enabled only on the actual last
-   spread, not on spread 0 of every chapter.
-4. **Verify scroll layout** — confirm `lastSpreadIndex = 0` is dispatched in
-   scroll/mobile mode (H1 fix) and that navigation still works correctly.
-5. **Verify backward chapter navigation** — navigate backward, confirm landing
+1. **Verify spinner fix** — load the app, confirm the spinner hides automatically
+   without any window resize required. Worst case: 3s (MAX_WAIT_MS), typical: ~200ms.
+2. **Verify chapter navigation** — navigate forward/backward between chapters,
+   confirm spinner shows then hides cleanly and new chapter content renders.
+3. **Verify keyboard navigation** — press arrow keys, confirm pages and chapters
+   advance correctly (was blocked by `handleEvents: false`).
+4. **Verify `lastSpreadIndex` correctness** — in a multi-spread chapter, confirm
+   the "last page" control is enabled only on the actual last spread.
+5. **Verify scroll layout** — confirm `lastSpreadIndex = 0` in scroll/mobile mode
+   and that navigation still works correctly.
+6. **Verify backward chapter navigation** — navigate backward, confirm landing
    on the last spread of the previous chapter.
-6. **Replace per-`Spread` `setInterval`** with a `ResizeObserver` — the last
+7. **Replace per-`Spread` `setInterval`** with a `ResizeObserver` — the last
    remaining Phase 2 item (IMPROVEMENT_PLAN.md Phase 2).
-7. **Remove remaining debug `console.log` statements** — see IMPROVEMENT_PLAN.md
-   M5 for the full list (`Reader/index.jsx`, `navigation.js`, `loader.js`).
 8. **Fix the `bindResizeHandlers` / `unbindResizeHandlers` naming** (H4) —
    low risk, high clarity improvement.
 9. **Convert external modules to hooks** — extract `navigation.js`,

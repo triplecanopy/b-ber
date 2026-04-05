@@ -50,6 +50,7 @@ function Frame(props) {
         readerSettings={props.readerSettings}
         slug={props.slug}
         spreadIndex={props.spreadIndex}
+        spineItemURL={props.spineItemURL}
         style={props.style}
         view={props.view}
         viewerSettings={props.viewerSettings}
