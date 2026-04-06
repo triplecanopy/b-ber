@@ -373,7 +373,7 @@ The goal is to migrate from the current stack (React class components, deprecate
 
 - [x] Replace `Ultimate.jsx` RAF loop with a `ResizeObserver` or `MutationObserver` on the sentinel element
 - [x] Replace `withLastSpreadIndex` `setInterval` with `ResizeObserver`
-- [ ] Replace per-`Spread` `setInterval` with a single layout observer propagated via context
+- [x] Replace per-`Spread` `setInterval` with a single layout observer propagated via context
 
 **Phase 3: Migrate deprecated React patterns**
 

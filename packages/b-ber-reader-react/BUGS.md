@@ -10,7 +10,7 @@ this is reproduced whenever the app loads initially. the loader never hides, des
 
 the loader hides when the content is ready. additionally, the loader should always appear when a user changes chapters, and then hide again when the new chapter is loaded and the layout is complete (images and fonts loaded and there is no layout shift - when the layout is "stable")
 
-## [ ] full-bleed "spreads" are out of sync with visible page
+## [x] full-bleed "spreads" are out of sync with visible page
 
 ### Current Behaviour
 
