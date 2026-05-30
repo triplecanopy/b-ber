@@ -132,7 +132,7 @@ These are tracked as `TASK-001.open.md` within each package's `tasks/` directory
 | Package                    | Starting coverage | Current | Target | Status      |
 | -------------------------- | ----------------- | ------- | ------ | ----------- |
 | b-ber-lib                  | 17%               | 56%     | ≥ 70%  | in progress |
-| b-ber-tasks                | ~0%               | 0%      | ≥ 60%  | not started |
+| b-ber-tasks                | ~0%               | ~15%    | ~25%\* | in progress |
 | b-ber-logger               | 0%                | 0%      | ≥ 60%  | not started |
 | b-ber-markdown-renderer    | 0%                | 0%      | ≥ 60%  | not started |
 | b-ber-cli                  | 24%               | 24%     | ≥ 60%  | not started |
@@ -142,7 +142,11 @@ These are tracked as `TASK-001.open.md` within each package's `tasks/` directory
 | b-ber-parser-\* (5 pkgs)   | 0%                | 0%      | ≥ 60%  | not started |
 | b-ber-reader-react         | mixed             | mixed   | ≥ 60%  | not started |
 
-Priority order: b-ber-tasks → b-ber-logger → b-ber-templates → grammar/parser stubs → reader-react.
+Priority order: b-ber-logger → b-ber-templates → grammar/parser stubs → reader-react.
+
+\*b-ber-tasks: most pipeline steps (web, reader, pdf, sass, epub, etc.) require a full project
+directory + external tools (Calibre, wkhtmltopdf). Realistic ceiling for pure unit tests is ~25%.
+This is documented in packages/b-ber-tasks/tasks/TASK-001.open.md.
 
 ---
 
