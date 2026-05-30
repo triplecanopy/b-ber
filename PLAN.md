@@ -133,7 +133,7 @@ These are tracked as `TASK-001.open.md` within each package's `tasks/` directory
 | -------------------------- | ----------------- | ------- | ------ | ----------- |
 | b-ber-lib                  | 17%               | 56%     | ≥ 70%  | in progress |
 | b-ber-tasks                | ~0%               | ~15%    | ~25%\* | in progress |
-| b-ber-logger               | 0%                | 0%      | ≥ 60%  | not started |
+| b-ber-logger               | 0%                | 73%     | ≥ 60%  | in progress |
 | b-ber-markdown-renderer    | 0%                | 0%      | ≥ 60%  | not started |
 | b-ber-cli                  | 24%               | 24%     | ≥ 60%  | not started |
 | b-ber-templates            | mixed             | mixed   | ≥ 60%  | not started |

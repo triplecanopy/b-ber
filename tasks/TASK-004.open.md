@@ -30,7 +30,7 @@ must have at least one test that would catch the breakage.
   | b-ber-grammar-\* (14 others)      | 0%        | `test.todo` stubs                        |
   | b-ber-parser-\* (all 5)           | 0%        | `test.todo` stubs                        |
   | b-ber-lib/src                     | 56%       | 9 new test files (2026-05-30)            |
-  | b-ber-logger/src                  | 0%        | `test.todo` stub                         |
+  | b-ber-logger/src                  | 73%       | 64 tests added (2026-05-30)              |
   | b-ber-markdown-renderer/src       | 0%        | `test.todo` stub                         |
   | b-ber-tasks/src (most modules)    | ~15%      | 5 new test files; pipeline steps blocked |
   | b-ber-reader-react/src/models     | 81%       | good                                     |
