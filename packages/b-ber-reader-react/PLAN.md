@@ -1,0 +1,113 @@
+# b-ber-reader-react — Project Plan
+
+_Last updated: 2026-05-30_
+
+---
+
+## What This Is
+
+A side-scrolling EPUB viewer built in React + Redux. It renders EPUB content parsed
+from OPF/NCX manifests into a CSS `columns`-based layout, using a `translateX`
+transform to simulate page-turning. A secondary scroll layout mode serves mobile.
+
+**Key architecture:**
+
+- Entry: `src/index.jsx` → `App.jsx` → `Reader/index.jsx` (functional component)
+- Layout engine: `Layout.jsx` wrapped by two HOCs: `withDimensions` and `withLastSpreadIndex`
+- Content: parsed from HTML → React via `html-to-react`, written to module-level `book` object
+- State: split between Redux (location, UI, viewer settings) and Reader's `useState`
+- Stability detection: `Ultimate.jsx` polls `offsetLeft` via `setTimeout` loop to detect
+  when layout is stable, then unlocks the UI
+
+---
+
+## Current Status
+
+### Completed work
+
+| Task     | Description                                                                              | Status   |
+| -------- | ---------------------------------------------------------------------------------------- | -------- |
+| TASK-001 | Reader/index.jsx class → functional component                                            | complete |
+| TASK-002 | Post-migration regressions (NavigationFooter crash, double load, error handler)          | complete |
+| TASK-003 | Ultimate.jsx modernization (RAF → setTimeout stability loop, functional component)       | complete |
+| TASK-004 | withLastSpreadIndex: setInterval → ResizeObserver + MutationObserver                     | complete |
+| TASK-005 | Pass 5 fixes (resize zeros, stability timeout, console.log cleanup)                      | complete |
+| TASK-006 | Bug 1: loader never hides — fixed via spineItemURL key on BookContent                    | complete |
+| TASK-007 | Bug 2: full-bleed spreads out of sync — fixed via viewerSettingsRef + sub-pixel rounding | complete |
+
+### Open tasks
+
+| Task     | Description                                                 | Priority |
+| -------- | ----------------------------------------------------------- | -------- |
+| TASK-008 | Fix remaining bugs: chapters re-render, keyboard navigation | high     |
+| TASK-009 | Phase 1 housekeeping: dead code, naming fix, ErrorBoundary  | medium   |
+| TASK-010 | Replace per-Spread setInterval with ResizeObserver          | medium   |
+| TASK-011 | Regression/smoke test infrastructure                        | complete |
+| TASK-012 | Subdirectory documentation                                  | low      |
+| TASK-013 | TypeScript adoption                                         | low      |
+| TASK-014 | Redux modernization (Redux Toolkit or Context API)          | low      |
+| TASK-015 | Document local dev setup for agents                         | complete |
+| TASK-016 | Expand test project URLs in dev/index.js                    | low      |
+
+---
+
+## Modernization Phases
+
+### Phase 1 — Housekeeping (TASK-009)
+
+Low-risk cleanup with no behavioural change:
+
+- [ ] Remove commented-out dead code (navigation.js deferredCallback blocks)
+- [ ] Rename `bindResizeHandlers` / `unbindResizeHandlers` to accurate names
+- [ ] Add top-level `ErrorBoundary`
+- [ ] Remove unused `markers` subscription from `Spread.jsx`
+- [ ] Replace random ID in `Spread.jsx` with deterministic approach
+- [ ] Document verso/recto multiplier rationale in `Spread.jsx`
+
+### Phase 2 — Replace polling with observers (mostly complete)
+
+- [x] Replace `Ultimate.jsx` RAF loop with observer-driven approach
+- [x] Replace `withLastSpreadIndex` setInterval with ResizeObserver + MutationObserver
+- [x] Replace per-Spread setInterval with ResizeObserver (done in TASK-007; TASK-010 is verification only)
+
+### Phase 3 — Migrate deprecated React patterns (mostly complete)
+
+- [x] Convert `App.jsx` from UNSAFE_componentWillMount to componentDidMount
+- [x] Convert `Reader/index.jsx` from class to functional component
+- [x] Replace UNSAFE_componentWillReceiveProps in Ultimate with useEffect
+- [ ] Replace UNSAFE_componentWillReceiveProps in Reader with useEffect (see TASK-008)
+- [ ] Memoize ReaderContext.Provider value (H5 — may already be done, verify)
+- [ ] Extract navigation.js, loader.js, resize.js into custom hooks; remove selfRef shim
+
+### Phase 4 — TypeScript adoption (TASK-013)
+
+Not started. Migrate bottom-up: helpers → models → constants → actions/reducers →
+leaf components → HOCs → layout → navigation/sidebar → Reader → App.
+
+### Phase 5 — Redux modernization (TASK-014)
+
+Not started. Prerequisite: TypeScript adoption (Phase 4). Options: Redux Toolkit or
+Context + useReducer. Move `book.content` global into Redux state.
+
+---
+
+## Known Issues (not yet tasked)
+
+- `book.content` module-level mutation bypasses React rendering pipeline (IMPROVEMENT_PLAN C4)
+- `withLastSpreadIndex` L2: `setContentDimensions(0)` on slug change may trigger spurious dispatch (may be addressed — verify)
+- `navigateToElementById`: hardcoded DOM selectors and unexplained `/2` division (H7)
+- Layout.jsx: `debounce` called in render body creates new function on every render (H6)
+- No loading state model (idle / loading-manifest / loading-chapter / ready / error)
+
+---
+
+## Development
+
+```bash
+npm start      # webpack dev server
+npm test       # jest unit tests
+npm run build  # production build
+```
+
+See `AGENTS.md` for agent working standards and task format.
+See `tasks/` for all task PRDs.
