@@ -1,6 +1,6 @@
 # TASK-003: Research type consolidation strategy across the monorepo
 
-**Status:** in progress
+**Status:** complete
 **Scope:** monorepo
 **Priority:** medium
 
@@ -19,7 +19,7 @@ for how to organize types going forward.
 - [x] Evaluate placement options (A–D).
 - [x] Decide whether types need to be published.
 - [x] Write recommendation with rationale (see Research Findings below).
-- [ ] Open implementation tasks once the strategy is chosen.
+- [x] Open implementation tasks: covered by TASK-009 (shapes-directives first).
 
 ## Research Findings
 

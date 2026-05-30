@@ -1,6 +1,6 @@
 # TASK-001: Research and recommend a webpack replacement
 
-**Status:** in progress
+**Status:** complete
 **Scope:** monorepo
 **Priority:** medium
 
@@ -34,7 +34,7 @@ Candidates to evaluate:
 - [x] Identify any b-ber-specific blockers (e.g. custom loaders, webpack plugins in use)
 - [x] Write a recommendation: which tool, migration order (reader-react first?),
       rough effort estimate
-- [ ] Open follow-up implementation tasks once a tool is chosen
+- [x] Open follow-up implementation tasks: TASK-006 (reader-react), TASK-007 (b-ber-reader)
 
 ## Research Findings
 

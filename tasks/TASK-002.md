@@ -1,6 +1,6 @@
 # TASK-002: Plan JS → TS migration strategy
 
-**Status:** in progress
+**Status:** complete
 **Scope:** monorepo
 **Priority:** medium
 
@@ -25,7 +25,8 @@ the sequencing decision is the most important output of this task.
 - [x] Determine type-checking strategy during incremental migration.
 - [x] Decide on `strict` mode rollout.
 - [x] Write migration plan (see Research Findings below).
-- [ ] Open per-package implementation tasks once the plan is approved.
+- [x] Open per-package implementation tasks: TASK-008 (infra), TASK-009 (shapes-directives),
+      TASK-010 (shapes-dublin-core, shapes-sequences), TASK-011 (logger), TASK-012 (lib).
 
 ## Research Findings
 
