@@ -1,6 +1,6 @@
 # TASK-014: Research and set up GitHub issue tracking integration
 
-**Status:** not started
+**Status:** in progress
 **Scope:** monorepo
 **Priority:** medium
 
@@ -26,8 +26,8 @@ issues from within this development environment, and sets it up.
 
 ### Option A: `gh` CLI (recommended)
 
-The `gh` CLI is GitHub's official command-line tool. It is **not currently
-installed** but is trivially available via Homebrew.
+The `gh` CLI is GitHub's official command-line tool. **Installed and authenticated
+(SSH + browser OAuth, 2026-05-30).**
 
 ```bash
 brew install gh
@@ -101,11 +101,10 @@ PRs to issues, querying issue metadata during planning).
 
 ## Subtasks
 
-- [ ] Install `gh` CLI: `brew install gh`
-- [ ] Authenticate: run `! gh auth login` in the Claude Code session
+- [x] Install `gh` CLI: `brew install gh`
+- [x] Authenticate: run `! gh auth login` in the Claude Code session
       (the `!` prefix runs the interactive command in the terminal)
-- [ ] Verify: `gh issue list` should return the current open issues (or an
-      empty list if none exist yet)
+- [x] Verify: `gh issue list` returns existing open issues (confirmed 2026-05-30)
 - [ ] Retroactively create and close GitHub issues for all completed root tasks:
   - TASK-001 (webpack replacement research) — closed
   - TASK-002 (JS→TS migration strategy) — closed
