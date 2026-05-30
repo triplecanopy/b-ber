@@ -1,6 +1,7 @@
 module.exports = {
   name: 'b-ber',
   verbose: false,
+  setupFiles: ['./packages/b-ber-reader-react/jest.setup.js'],
   setupFilesAfterEnv: ['jest-extended'],
   collectCoverage: false,
   collectCoverageFrom: [
@@ -45,6 +46,10 @@ module.exports = {
   coverageReporters: ['html', 'lcov', 'json'],
   moduleFileExtensions: ['ts', 'js', 'jsx', 'json'],
   testEnvironment: 'jest-environment-jsdom-global',
+  testMatch: [
+    '**/__tests__/**/*.test.{js,jsx,ts,tsx}',
+    '**/__tests__/index.{js,ts}',
+  ],
   testPathIgnorePatterns: ['__mocks__'],
   testURL: 'http://localhost/',
   transform: {
