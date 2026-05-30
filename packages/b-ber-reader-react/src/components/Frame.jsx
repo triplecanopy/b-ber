@@ -13,7 +13,7 @@ function Frame(props) {
     if (!Viewport.isSingleColumn() || !node?.current) return
 
     node.current.scrollTo(0, 0)
-  }, [props.view.loaded])
+  }, [props.slug])
 
   return (
     <div

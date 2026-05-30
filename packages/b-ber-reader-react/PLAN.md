@@ -39,7 +39,7 @@ transform to simulate page-turning. A secondary scroll layout mode serves mobile
 
 | Task     | Description                                                 | Priority |
 | -------- | ----------------------------------------------------------- | -------- |
-| TASK-008 | Fix remaining bugs: chapters re-render, keyboard navigation | high     |
+| TASK-008 | Fix remaining bugs: chapters re-render, keyboard navigation | complete |
 | TASK-009 | Phase 1 housekeeping: dead code, naming fix, ErrorBoundary  | medium   |
 | TASK-010 | Replace per-Spread setInterval with ResizeObserver          | medium   |
 | TASK-011 | Regression/smoke test infrastructure                        | complete |
@@ -75,8 +75,8 @@ Low-risk cleanup with no behavioural change:
 - [x] Convert `App.jsx` from UNSAFE_componentWillMount to componentDidMount
 - [x] Convert `Reader/index.jsx` from class to functional component
 - [x] Replace UNSAFE_componentWillReceiveProps in Ultimate with useEffect
-- [ ] Replace UNSAFE_componentWillReceiveProps in Reader with useEffect (see TASK-008)
-- [ ] Memoize ReaderContext.Provider value (H5 — may already be done, verify)
+- [x] Replace UNSAFE_componentWillReceiveProps in Reader with useEffect (TASK-008)
+- [x] Memoize ReaderContext.Provider value (H5 — done in TASK-001 migration)
 - [ ] Extract navigation.js, loader.js, resize.js into custom hooks; remove selfRef shim
 
 ### Phase 4 — TypeScript adoption (TASK-013)

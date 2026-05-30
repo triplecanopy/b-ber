@@ -164,7 +164,14 @@ function Reader(props) {
   }, [setState])
 
   const freeze = useCallback(() => {
-    propsRef.current.viewActions.unload()
+    // Reset lastSpreadIndex so the backward-chapter effect doesn't navigate
+    // to a stale last-spread while the new chapter is loading.
+    // We do NOT call viewActions.unload() here: doing so would trigger
+    // Ultimate's view.loaded effect and restart the stability watch on the
+    // OLD chapter's Ultimate instance, which then fires onStable() ~200ms
+    // later — hiding the spinner before the new chapter has loaded. The NEW
+    // Ultimate instance (mounted when BookContent remounts after the fetch)
+    // runs its own stability cycle and calls onStable() at the right time.
     propsRef.current.viewActions.updateLastSpreadIndex(-1)
 
     propsRef.current.userInterfaceActions.update({
