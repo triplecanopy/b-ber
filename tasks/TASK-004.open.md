@@ -1,6 +1,6 @@
 # TASK-004: Improve monorepo-wide test coverage
 
-**Status:** not started
+**Status:** in progress
 **Scope:** monorepo
 **Priority:** high
 
@@ -18,31 +18,63 @@ must have at least one test that would catch the breakage.
 
 ## Subtasks
 
-- [ ] Run the current test suite across all packages and capture a baseline:
-  - Which packages have tests at all?
-  - Which packages have zero tests?
-  - For packages that have tests, what is the current line/branch coverage?
-    (Add a coverage reporter if one is not already configured.)
-- [ ] Rank packages by refactoring risk × coverage gap:
-  - High-churn packages with low coverage are the highest priority.
-  - Packages with no tests at all are blocked from the JS→TS migration
-    until baseline tests exist.
-- [ ] For each package in the audit, open a package-level task
-      (`packages/<name>/tasks/TASK-NNN.open.md`) with:
-  - Current coverage summary.
-  - List of untested public APIs or code paths.
-  - Specific tests to add (happy path + known edge cases).
-- [ ] Prioritize test tasks in this order:
-  1. `b-ber-lib` — shared utilities; breakage here cascades everywhere.
-  2. `b-ber-tasks` — build pipeline; hard to debug regressions without tests.
-  3. Grammar packages — each directive type needs at least one
-     input→output round-trip test.
-  4. Parser packages — similar to grammar packages.
-  5. `b-ber-reader-react` — UI behavior; smoke tests already started
-     (see existing reader-react tasks); expand to cover nav, state, and
-     rendering edge cases.
-  6. CLI and templates — lower priority; integration tests may suffice.
-- [ ] Once per-package tasks are open, track completion here.
+- [x] Run the current test suite across all packages and capture a baseline.
+      Overall: 17.88% statements / 13.96% branches / 18.3% lines (18 May 2026).
+      4 test suites failing (all b-ber-reader-react, `window.matchMedia` mock missing).
+      Root jest config `collectCoverage: false` — run with `--coverage` to get numbers.
+
+  | Package                           | Src stmts | State                                     |
+  | --------------------------------- | --------- | ----------------------------------------- |
+  | b-ber-grammar-attributes          | 95%       | real tests                                |
+  | b-ber-grammar-media               | 90%       | real tests                                |
+  | b-ber-grammar-\* (14 others)      | 0%        | `test.todo` stubs                         |
+  | b-ber-parser-\* (all 5)           | 0%        | `test.todo` stubs                         |
+  | b-ber-lib/src                     | 17%       | partial (State tested; props all skipped) |
+  | b-ber-logger/src                  | 0%        | `test.todo` stub                          |
+  | b-ber-markdown-renderer/src       | 0%        | `test.todo` stub                          |
+  | b-ber-tasks/src (most modules)    | 0%        | minimal (opf: 5%, inject: 20%)            |
+  | b-ber-reader-react/src/models     | 81%       | good                                      |
+  | b-ber-reader-react/src/helpers    | 32%       | partial                                   |
+  | b-ber-reader-react/src/components | 2%        | nearly none                               |
+  | b-ber-reader-react/src/hooks      | 0%        | none                                      |
+  | b-ber-reader-react/src/reducers   | 0%        | none                                      |
+  | b-ber-validator/src               | 69%       | combinators 100%; report.ts 7%            |
+  | b-ber-templates/src               | mixed     | Toc/Xml 100%; Ncx/Opf 0%                  |
+  | b-ber-cli/src/commands            | 24%       | shape-only, no handler tests              |
+  | b-ber-reader (legacy)             | 0%        | no tests at all                           |
+  | b-ber-theme-\*                    | n/a       | SCSS only                                 |
+
+- [x] Rank packages by refactoring risk × coverage gap — see table above.
+- [x] Open per-package implementation tasks:
+  - `b-ber-lib`: packages/b-ber-lib/tasks/TASK-001.open.md
+  - `b-ber-tasks`: packages/b-ber-tasks/tasks/TASK-001.open.md
+  - `b-ber-reader-react`: packages/b-ber-reader-react/tasks/TASK-018.open.md
+  - `b-ber-logger`: packages/b-ber-logger/tasks/TASK-001.open.md
+  - `b-ber-markdown-renderer`: packages/b-ber-markdown-renderer/tasks/TASK-001.open.md
+  - `b-ber-cli`: packages/b-ber-cli/tasks/TASK-001.open.md
+  - `b-ber-templates`: packages/b-ber-templates/tasks/TASK-001.open.md
+  - `b-ber-validator`: packages/b-ber-validator/tasks/TASK-001.open.md
+  - `b-ber-grammar-audio-video`: packages/b-ber-grammar-audio-video/tasks/TASK-001.open.md
+  - `b-ber-grammar-dialogue`: packages/b-ber-grammar-dialogue/tasks/TASK-001.open.md
+  - `b-ber-grammar-epigraph`: packages/b-ber-grammar-epigraph/tasks/TASK-001.open.md
+  - `b-ber-grammar-footnotes`: packages/b-ber-grammar-footnotes/tasks/TASK-001.open.md
+  - `b-ber-grammar-frontmatter`: packages/b-ber-grammar-frontmatter/tasks/TASK-001.open.md
+  - `b-ber-grammar-gallery`: packages/b-ber-grammar-gallery/tasks/TASK-001.open.md
+  - `b-ber-grammar-iframe`: packages/b-ber-grammar-iframe/tasks/TASK-001.open.md
+  - `b-ber-grammar-image`: packages/b-ber-grammar-image/tasks/TASK-001.open.md
+  - `b-ber-grammar-logo`: packages/b-ber-grammar-logo/tasks/TASK-001.open.md
+  - `b-ber-grammar-pullquote`: packages/b-ber-grammar-pullquote/tasks/TASK-001.open.md
+  - `b-ber-grammar-renderer`: packages/b-ber-grammar-renderer/tasks/TASK-001.open.md
+  - `b-ber-grammar-section`: packages/b-ber-grammar-section/tasks/TASK-001.open.md
+  - `b-ber-grammar-spread`: packages/b-ber-grammar-spread/tasks/TASK-001.open.md
+  - `b-ber-grammar-vimeo`: packages/b-ber-grammar-vimeo/tasks/TASK-001.open.md
+  - `b-ber-parser-dialogue`: packages/b-ber-parser-dialogue/tasks/TASK-001.open.md
+  - `b-ber-parser-figure`: packages/b-ber-parser-figure/tasks/TASK-001.open.md
+  - `b-ber-parser-footnotes`: packages/b-ber-parser-footnotes/tasks/TASK-001.open.md
+  - `b-ber-parser-gallery`: packages/b-ber-parser-gallery/tasks/TASK-001.open.md
+  - `b-ber-parser-section`: packages/b-ber-parser-section/tasks/TASK-001.open.md
+- [ ] Once per-package tasks are complete, re-run coverage baseline and
+      confirm overall statement coverage ≥ 60% before closing this task.
 
 ## Notes
 
