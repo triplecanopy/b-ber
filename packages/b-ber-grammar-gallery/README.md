@@ -1,9 +1,20 @@
-# `@canopycanopycanopy/b-ber-grammar-gallery`
+# b-ber-grammar-gallery
 
-The `b-ber-grammar-gallery` package renders b-ber's custom `gallery` Markdown extension (directive) into HTML. More information about b-ber directives can be found in the [All directives](https://github.com/triplecanopy/b-ber/wiki/all-directives) page in the b-ber [Wiki](https://github.com/triplecanopy/b-ber/wiki).
+Handles the `gallery` / `exit` block directive pair. A `gallery` opening marker wraps its content in a build-target-aware container: for `reader` and `web` builds it emits a fullscreen gallery scaffold (`<section>` > `<div class="figure__gallery">` > `<figure>` > `<div class="figure__items">`); for EPUB, Mobi, PDF, and sample builds it emits a plain `<section>` that may be initialized as a slider by JavaScript if available. The exit marker (handled by `b-ber-grammar-section`) closes the open elements. Uses `b-ber-parser-gallery` as the MarkdownIt plugin and delegates open/close validation to `b-ber-grammar-renderer`.
 
-## Install
+## Usage
+
+Registered as a MarkdownIt plugin by the rendering engine:
+
+```js
+import gallery from '@canopycanopycanopy/b-ber-grammar-gallery'
+// { plugin, name: 'gallery', renderer }
+```
+
+## Dev
 
 ```
-$ npm i -g @canopycanopycanopy/b-ber-grammar-gallery
+npm test
 ```
+
+Tests are in `__tests__/index.test.js`.

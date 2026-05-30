@@ -1,9 +1,20 @@
-# `@canopycanopycanopy/b-ber-grammar-frontmatter`
+# b-ber-grammar-frontmatter
 
-The `b-ber-grammar-frontmatter` package renders b-ber's custom `frontmatter` Markdown extension (directive) into HTML. More information about b-ber directives can be found in the [All directives](https://github.com/triplecanopy/b-ber/wiki/all-directives) page in the b-ber [Wiki](https://github.com/triplecanopy/b-ber/wiki).
+Handles YAML front matter blocks in Markdown source files. This package is a MarkdownIt front matter plugin callback (not a container directive). When MarkdownIt encounters a YAML front matter block at the top of a file, the plugin parses the YAML using `YamlAdaptor`, creates a `GuideItem` from the parsed metadata, adds it to `state.guide`, and merges the metadata into the matching spine entry in `state.spine.frontMatter`. The data stored here is later used by `b-ber-templates` when generating EPUB manifest and guide entries.
 
-## Install
+## Usage
+
+Registered as a MarkdownIt front matter callback by the rendering engine:
+
+```js
+import frontmatter from '@canopycanopycanopy/b-ber-grammar-frontmatter'
+// default export is a factory: (self) => plugin(meta)
+```
+
+## Dev
 
 ```
-$ npm i -g @canopycanopycanopy/b-ber-grammar-frontmatter
+npm test
 ```
+
+Tests are in `__tests__/index.test.js`.

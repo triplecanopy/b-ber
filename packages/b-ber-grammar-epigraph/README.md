@@ -1,9 +1,20 @@
-# `@canopycanopycanopy/b-ber-grammar-epigraph`
+# b-ber-grammar-epigraph
 
-The `b-ber-grammar-epigraph` package renders b-ber's custom `epigraph` Markdown extension (directive) into HTML. More information about b-ber directives can be found in the [All directives](https://github.com/triplecanopy/b-ber/wiki/all-directives) page in the b-ber [Wiki](https://github.com/triplecanopy/b-ber/wiki).
+Handles the `epigraph` inline directive. Supports two forms: an image-based epigraph (`image "file.jpg"` with optional `caption`) that emits a full-width `<section epub:type="epigraph">` containing a figure and image element; and a text-only epigraph (`caption "..." citation "..."`) that emits one or more `<div class="pullquote full-width">` blocks with optional `<cite>` elements inside the epigraph section. Captions and citations support pipe-delimited (`|`) multi-value lists for producing multiple pull-quote blocks from a single directive. Uses `b-ber-parser-figure` as the MarkdownIt plugin.
 
-## Install
+## Usage
+
+Registered as a MarkdownIt plugin by the rendering engine. The exported object provides `plugin`, `name`, and a `renderer` factory:
+
+```js
+import epigraph from '@canopycanopycanopy/b-ber-grammar-epigraph'
+// { plugin, name: 'epigraph', renderer }
+```
+
+## Dev
 
 ```
-$ npm i -g @canopycanopycanopy/b-ber-grammar-epigraph
+npm test
 ```
+
+Tests are in `__tests__/index.test.js`.
