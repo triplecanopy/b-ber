@@ -203,6 +203,64 @@ Rules:
 
 ---
 
+## Branch Strategy
+
+### Integration branch
+
+There is one long-lived branch above `main` used for planning, documentation,
+and task coordination. Its name follows the pattern `feat/<cycle-name>` (e.g.
+`feat/upgrades`). All research tasks, task PRDs, and cross-cutting docs commits
+land here before being merged to `main`.
+
+Agents should commit planning and documentation work to whichever integration
+branch is currently active. Check `git branch --show-current` if unsure.
+
+### Feature branches
+
+Implementation tasks that touch the build system, change package outputs, or
+span many files should use a dedicated feature branch off the integration branch.
+This keeps the work isolated and reversible — if something breaks, the branch can
+be abandoned without affecting other work in progress.
+
+**When to use a feature branch:**
+
+- Build system changes (bundler migration, tsconfig infrastructure)
+- TypeScript conversion of one or more packages
+- Node.js modernization work (async/await refactor, fs-extra replacement)
+- Any change where a clean revert is more valuable than a simpler history
+
+**When to commit directly to the integration branch:**
+
+- Task PRD creation or updates
+- AGENTS.md / CLAUDE.md / README updates
+- Research findings
+- Small, self-contained bug fixes with no blast radius
+
+### Naming convention
+
+```
+feat/<descriptive-slug>          # implementation work
+feat/<descriptive-slug>-<pkg>    # per-package slice of a larger migration
+```
+
+**Examples in use:**
+
+```
+feat/upgrades           # current planning integration branch
+feat/vite-migration     # webpack → Vite (TASK-006, TASK-007)
+feat/ts-stage-1         # TypeScript Stage 1 (TASK-008 through TASK-012)
+feat/ts-stage-2         # TypeScript Stage 2 (parsers, grammars)
+feat/node-modernization-tasks   # Node.js modernization for b-ber-tasks
+```
+
+### Merge policy
+
+Feature branches merge into the integration branch (not directly to `main`).
+The integration branch merges to `main` when a coherent set of work is complete
+and `npm test` passes cleanly. Do not force-push to `main`.
+
+---
+
 ## Code Standards
 
 These apply to all JavaScript/TypeScript in the monorepo.
