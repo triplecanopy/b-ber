@@ -4,6 +4,11 @@ Agent working standards for the `b-ber` monorepo. This document describes the
 repository structure, package inventory, task system, commit conventions, and
 coding standards that apply across all packages.
 
+**Start here:** Read `PLAN.md` at the repo root before starting any task. It
+shows what is in progress, what is blocked, the dependency graph, and which
+branches are pending merge. This file (AGENTS.md) contains the standards and
+conventions; PLAN.md contains the current state.
+
 Package-specific AGENTS.md files extend this document with package-local
 details (architecture, dev commands, open tasks). Always read both this file
 and the relevant package AGENTS.md before starting work.
@@ -293,7 +298,9 @@ Before marking any task complete:
 1. `npm test` passes in the affected package(s)
 2. The task PRD is updated (subtasks checked, status set to `complete`)
 3. Changes committed with a conventional commit message
-4. If the task changes how the monorepo is configured or structured: update this file
+4. `PLAN.md` is updated: task status table, coverage table if applicable,
+   and "What To Do Next" if the completed task unblocks something new
+5. If the task changes how the monorepo is configured or structured: update this file
 
 ---
 
