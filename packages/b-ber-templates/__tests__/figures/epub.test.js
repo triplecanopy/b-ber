@@ -1,7 +1,12 @@
 import fs from 'fs-extra'
+import 'image-size'
 import epub from '../../src/figures/epub'
 
-jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({}))
+jest.mock('image-size', () => jest.fn(() => ({ width: 100, height: 150 })))
+jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
+  build: 'epub',
+  src: { images: path => path },
+}))
 
 afterAll(() => fs.remove('_project'))
 
@@ -24,10 +29,8 @@ describe('templates.epub', () => {
       height: 'test-height',
     }
 
-    const dataFiguresPage = Object.assign({}, data, { inline: false })
-    const dataPagebreakBefore = Object.assign({}, data, {
-      classes: 'break-before',
-    })
+    const dataFiguresPage = { ...data, inline: false }
+    const dataPagebreakBefore = { ...data, classes: 'break-before' }
 
     expect(epub.portrait(data)).toMatchSnapshot()
     expect(epub.landscape(data)).toMatchSnapshot()
@@ -52,5 +55,25 @@ describe('templates.epub', () => {
     expect(epub.audio(dataPagebreakBefore)).toMatchSnapshot()
     expect(epub.video(dataPagebreakBefore)).toMatchSnapshot()
     expect(epub.iframe(dataPagebreakBefore)).toMatchSnapshot()
+  })
+
+  test('vimeo() renders unsupported figure markup using poster image', () => {
+    const data = {
+      inline: true,
+      classes: 'test',
+      id: 1,
+      ref: 1,
+      alt: 'test',
+      source: '123456',
+      caption: 'test',
+      attrString: '',
+      attrQuery: '',
+      sourceElements: '',
+      mediaType: 'vimeo',
+      poster: 'test.jpg',
+      title: 'test-title',
+      aspectRatioClassName: 'aspect-ratio-16-9',
+    }
+    expect(epub.vimeo(data)).toMatchSnapshot()
   })
 })

@@ -49,4 +49,50 @@ describe('templates.Project', () => {
 
     expect(configObj).toEqual(state.config)
   })
+
+  test('javascripts() returns a file descriptor with application.js content', () => {
+    const projectPath = path.join(process.cwd(), '/_project')
+    const [file] = Project.javascripts(projectPath)
+
+    expect(file.relativePath).toContain('_javascripts/application.js')
+    expect(file.absolutePath).toContain('_javascripts/application.js')
+    expect(typeof file.content).toBe('string')
+  })
+
+  test('markdown() returns three starter markdown file descriptors', () => {
+    const projectPath = path.join(process.cwd(), '/_project')
+    const files = Project.markdown(projectPath)
+
+    expect(files).toHaveLength(3)
+    expect(files[0].relativePath).toContain('project-name-title-page.md')
+    expect(files[1].relativePath).toContain('project-name-chapter-01.md')
+    expect(files[2].relativePath).toContain('project-name-colophon.md')
+    files.forEach(f => {
+      expect(typeof f.content).toBe('string')
+      expect(f.absolutePath).toContain('_markdown')
+    })
+  })
+
+  test('readme() returns a file descriptor with the project name substituted', () => {
+    const projectPath = path.join(process.cwd(), '/_project')
+    const file = Project.readme(projectPath)
+
+    expect(file.relativePath).toContain('README.md')
+    expect(file.absolutePath).toContain('README.md')
+    expect(typeof file.content).toBe('string')
+    expect(file.content).not.toContain('%PROJECT_NAME%')
+  })
+
+  test('gitignore() returns a file descriptor with gitignore content', () => {
+    const projectPath = path.join(process.cwd(), '/_project')
+    const file = Project.gitignore(projectPath)
+
+    expect(file.relativePath).toContain('.gitignore')
+    expect(file.absolutePath).toContain('.gitignore')
+    expect(typeof file.content).toBe('string')
+  })
+
+  test('stylesheets() returns an empty array', () => {
+    expect(Project.stylesheets()).toEqual([])
+  })
 })

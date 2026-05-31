@@ -42,4 +42,12 @@ describe('templates.Xhtml', () => {
   it('creates the loi elements', () => {
     expect(Xhtml.loi()).toMatchSnapshot()
   })
+
+  it('creates a JSON-LD script element', () => {
+    const file = Xhtml.jsonLD()
+    const content = file.contents.toString()
+    expect(content).toMatchSnapshot()
+    expect(content).toContain('application/ld+json')
+    expect(content).toContain('{% body %}')
+  })
 })

@@ -4,4 +4,5 @@ module.exports = {
   setupFilesAfterEnv: ['jest-extended'],
   testURL: 'http://localhost/',
   transform: { '^.+\\.jsx?$': './jest-transform-upward.js' },
+  collectCoverageFrom: ['src/**/*.js'],
 }

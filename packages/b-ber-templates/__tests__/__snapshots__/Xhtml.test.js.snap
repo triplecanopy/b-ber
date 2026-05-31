@@ -1,5 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`templates.Xhtml creates a JSON-LD script element 1`] = `"<script type=\\"application/ld+json\\">{% body %}</script>"`;
+
 exports[`templates.Xhtml creates a body element 1`] = `"{% body %}"`;
 
 exports[`templates.Xhtml creates a body element 2`] = `"{% body %}</body></html>"`;

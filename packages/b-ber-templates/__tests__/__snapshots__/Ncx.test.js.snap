@@ -1,0 +1,113 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`templates.Ncx author() renders docAuthor from metadata 1`] = `
+"
+      <docAuthor>
+        <text>Test Author</text>
+      </docAuthor>
+    "
+`;
+
+exports[`templates.Ncx document() returns a Vinyl file with full NCX structure 1`] = `
+"<?xml version=\\"1.0\\" encoding=\\"UTF-8\\"?>
+        <ncx xmlns=\\"http://www.daisy.org/z3986/2005/ncx/\\" version=\\"2005-1\\">
+          
+      <head>
+        <meta name=\\"dtb:uid\\" content=\\"urn:uuid:test-identifier\\"/>
+        <meta name=\\"dtb:depth\\" content=\\"1\\"/>
+        <meta name=\\"dtb:totalPageCount\\" content=\\"1\\"/>
+        <meta name=\\"dtb:maxPageNumber\\" content=\\"1\\"/>
+      </head>
+    
+          
+      <docTitle>
+        <text>Test Book Title</text>
+      </docTitle>
+    
+          
+      <docAuthor>
+        <text>Test Author</text>
+      </docAuthor>
+    
+          <navMap>
+            {% body %}
+          </navMap>
+        </ncx>
+      "
+`;
+
+exports[`templates.Ncx head() renders dtb meta elements with identifier 1`] = `
+"
+      <head>
+        <meta name=\\"dtb:uid\\" content=\\"urn:uuid:test-identifier\\"/>
+        <meta name=\\"dtb:depth\\" content=\\"1\\"/>
+        <meta name=\\"dtb:totalPageCount\\" content=\\"1\\"/>
+        <meta name=\\"dtb:maxPageNumber\\" content=\\"1\\"/>
+      </head>
+    "
+`;
+
+exports[`templates.Ncx navPoint() renders navLabel and content src 1`] = `
+"
+      <navLabel>
+        <text>Chapter One</text>
+      </navLabel>
+      <content src=\\"text/chapter-01.xhtml\\" />
+    "
+`;
+
+exports[`templates.Ncx navPoints() renders a flat list 1`] = `
+"
+          <navPoint id=\\"navPoint-1\\" playOrder=\\"1\\">
+            
+      <navLabel>
+        <text>Chapter 1</text>
+      </navLabel>
+      <content src=\\"text/ch-01.xhtml\\" />
+    
+            
+          </navPoint>
+        
+          <navPoint id=\\"navPoint-2\\" playOrder=\\"2\\">
+            
+      <navLabel>
+        <text>Chapter 2</text>
+      </navLabel>
+      <content src=\\"text/ch-02.xhtml\\" />
+    
+            
+          </navPoint>
+        "
+`;
+
+exports[`templates.Ncx navPoints() renders nested nodes recursively 1`] = `
+"
+          <navPoint id=\\"navPoint-1\\" playOrder=\\"1\\">
+            
+      <navLabel>
+        <text>Chapter 1</text>
+      </navLabel>
+      <content src=\\"text/ch-01.xhtml\\" />
+    
+            
+          <navPoint id=\\"navPoint-2\\" playOrder=\\"2\\">
+            
+      <navLabel>
+        <text>Section 1.1</text>
+      </navLabel>
+      <content src=\\"text/ch-01-section-01.xhtml\\" />
+    
+            
+          </navPoint>
+        
+          </navPoint>
+        "
+`;
+
+exports[`templates.Ncx title() renders docTitle from metadata 1`] = `
+"
+      <docTitle>
+        <text>Test Book Title</text>
+      </docTitle>
+    "
+`;

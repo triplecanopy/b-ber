@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`templates.Opf.Guide item() renders a reference element 1`] = `"<reference type=\\"toc\\" title=\\"Table of Contents\\" href=\\"text/toc.xhtml\\"/>"`;
+
+exports[`templates.Opf.Guide items() renders a list of guide references 1`] = `"<reference type=\\"toc\\" title=\\"Table of Contents\\" href=\\"text/toc.xhtml\\"/><reference type=\\"cover\\" title=\\"Cover\\" href=\\"text/cover.xhtml\\"/>"`;
+
+exports[`templates.Opf.Manifest item() renders an item element for a local file 1`] = `"<item id=\\"_chapter-01_xhtml\\" href=\\"text/chapter-01.xhtml\\" media-type=\\"application/xhtml+xml\\" />"`;
+
+exports[`templates.Opf.Pkg body() returns a Vinyl file with the OPF package wrapper 1`] = `
+"<?xml version=\\"1.0\\" encoding=\\"UTF-8\\"?>
+                <package
+                    version=\\"3.0\\"
+                    xml:lang=\\"en\\"
+                    unique-identifier=\\"uuid\\"
+                    xmlns=\\"http://www.idpf.org/2007/opf\\"
+                    xmlns:dc=\\"http://purl.org/dc/elements/1.1/\\"
+                    xmlns:dcterms=\\"http://purl.org/dc/terms/\\"
+                    prefix=\\"ibooks: http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0/\\"
+                >
+                    {% body %}
+                </package>
+            "
+`;
+
+exports[`templates.Opf.Spine items() renders a list of spine items 1`] = `"<itemref idref=\\"_chapter-01_xhtml\\" linear=\\"yes\\"/><itemref idref=\\"_chapter-02_xhtml\\" linear=\\"yes\\"/>"`;

@@ -533,3 +533,24 @@ exports[`templates.epub creates the markup 21`] = `
     
     "
 `;
+
+exports[`templates.epub vimeo() renders unsupported figure markup using poster image 1`] = `
+"
+    
+      <div class=\\"figure__large figure__inline figure__inline--portrait test\\">
+        <figure id=\\"1\\">
+          <div class=\\"figure__items\\">
+            
+    
+      <img class=\\"portrait\\" alt=\\"Media Fallback Image\\" src=\\"../images/test.jpg\\"/>
+    
+    <div class=\\"figcaption\\">
+      <p class=\\"small\\">Your device does not support embedded media.</p>
+    </div>
+    
+          </div>
+        </figure>
+      </div>
+    
+"
+`;

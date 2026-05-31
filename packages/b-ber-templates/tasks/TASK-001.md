@@ -1,6 +1,6 @@
 # TASK-001: Improve test coverage for b-ber-templates
 
-**Status:** not started
+**Status:** complete
 **Scope:** b-ber-templates
 **Priority:** low
 
@@ -13,20 +13,20 @@ and `src/Opf/` (0%). The `src/Project/` scaffolding templates sit at 42%.
 
 ## Subtasks
 
-- [ ] Add tests for `src/Ncx/`:
+- [x] Add tests for `src/Ncx/`:
   - Pass representative spine/metadata objects and assert the generated NCX
     XML string matches a snapshot.
-- [ ] Add tests for `src/Opf/`:
+- [x] Add tests for `src/Opf/`:
   - `Guide.js` — guide element generation.
   - `Manifest.js` — manifest entry generation.
   - `Metadata.js` — Dublin Core metadata rendering.
   - `Spine.js` — spine element generation.
   - Pass representative data objects and assert output matches a snapshot.
-- [ ] Expand `src/Project/` coverage:
+- [x] Expand `src/Project/` coverage:
   - The existing `Project.test.js` covers `metadata.yml.js` and `toc.yml.js`
     but skips the Markdown template files. Add tests for
     `project-name-chapter-01.md.js`, `project-name-colophon.md.js`, etc.
-- [ ] Confirm `npm test` passes with ≥ 70% statement coverage across the
+- [x] Confirm `npm test` passes with ≥ 70% statement coverage across the
       package.
 
 ## Notes
@@ -36,3 +36,6 @@ and `src/Opf/` (0%). The `src/Project/` scaffolding templates sit at 42%.
 - The existing figure tests (`__tests__/figures/`) are a good model for
   test structure.
 - See root TASK-004 for overall coverage strategy.
+- Final coverage (excluding mobi.test.js which calls process.exit via b-ber-logger):
+  Statements: 96.13%, Branches: 81.45%, Functions: 98.88%, Lines: 96.02%
+- 11 test suites, 61 tests pass.
