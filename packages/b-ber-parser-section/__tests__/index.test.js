@@ -45,4 +45,65 @@ describe('b-ber-parser-section', () => {
     expect(ruleNames).toContain('container_chapter')
     expect(ruleNames).toContain('container_part')
   })
+
+  test('calls validateOpen when rendering content with triple-colon fence', () => {
+    const md = new MarkdownIt()
+    containerPlugin(md, 'chapter', mockOptions)
+    md.render('::: section:intro\nContent here\n')
+    expect(mockOptions.validateOpen).toHaveBeenCalled()
+  })
+
+  test('calls render for open and close tokens when validateOpen returns true', () => {
+    const render = jest.fn(() => '')
+    const md = new MarkdownIt()
+    containerPlugin(md, 'chapter', { ...mockOptions, render })
+    md.render('::: section:intro\nContent here\n')
+    expect(render).toHaveBeenCalled()
+  })
+
+  test('does not call render when validateOpen returns false', () => {
+    const validateOpen = jest.fn(() => false)
+    const render = jest.fn(() => '')
+    const md = new MarkdownIt()
+    containerPlugin(md, 'chapter', { ...mockOptions, validateOpen, render })
+    md.render('::: section:intro\nContent here\n')
+    expect(validateOpen).toHaveBeenCalled()
+    expect(render).not.toHaveBeenCalled()
+  })
+
+  test('passes params string and line number to validateOpen', () => {
+    const validateOpen = jest.fn(() => true)
+    const md = new MarkdownIt()
+    containerPlugin(md, 'chapter', { ...mockOptions, validateOpen })
+    md.render('::: section:intro\nContent here\n')
+    expect(validateOpen).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.any(Number)
+    )
+  })
+
+  test('does not trigger block rule for content with fewer than minMarkers colons', () => {
+    const validateOpen = jest.fn(() => true)
+    const md = new MarkdownIt()
+    containerPlugin(md, 'chapter', { ...mockOptions, validateOpen })
+    md.render(':: section:intro\nContent here\n')
+    expect(validateOpen).not.toHaveBeenCalled()
+  })
+
+  test('does not trigger block rule for non-container content', () => {
+    const validateOpen = jest.fn(() => true)
+    const md = new MarkdownIt()
+    containerPlugin(md, 'chapter', { ...mockOptions, validateOpen })
+    md.render('Normal paragraph text.\n')
+    expect(validateOpen).not.toHaveBeenCalled()
+  })
+
+  test('handles container with inner paragraph content', () => {
+    const md = new MarkdownIt()
+    containerPlugin(md, 'chapter', mockOptions)
+    expect(() =>
+      md.render('::: section:intro\n\nA paragraph inside.\n\n')
+    ).not.toThrow()
+    expect(mockOptions.validateOpen).toHaveBeenCalled()
+  })
 })

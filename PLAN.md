@@ -140,8 +140,8 @@ These are tracked as `TASK-001.open.md` within each package's `tasks/` directory
 | b-ber-cli                  | 24%               | 24%     | ≥ 60%  | not started |
 | b-ber-templates            | mixed             | 96%     | ≥ 60%  | complete    |
 | b-ber-validator            | 69%               | 69%     | ≥ 80%  | not started |
-| b-ber-grammar-\* (14 pkgs) | 0%                | ~40%    | ≥ 60%  | in progress |
-| b-ber-parser-\* (5 pkgs)   | 0%                | ~30%    | ≥ 60%  | in progress |
+| b-ber-grammar-\* (14 pkgs) | 0%                | ~80%    | ≥ 60%  | in progress |
+| b-ber-parser-\* (5 pkgs)   | 0%                | ~90%    | ≥ 60%  | in progress |
 | b-ber-reader-react         | mixed             | mixed   | ≥ 60%  | not started |
 
 Priority order: ~~b-ber-logger~~ ✓ → ~~b-ber-templates~~ ✓ → ~~grammar/parser stubs~~ ✓ → reader-react.
@@ -156,10 +156,9 @@ This is documented in packages/b-ber-tasks/tasks/TASK-001.open.md.
 
 In priority order:
 
-1. **TASK-004 grammar/parser coverage**: test stubs are done (all 19 packages passing).
-   Next: expand tests in higher-risk packages (grammar-section, grammar-vimeo, parser-footnotes)
-   to reach ≥60% statements. Also expand b-ber-lib toward 70% and add basic coverage to
-   b-ber-markdown-renderer and b-ber-cli before starting TASK-008.
+1. **TASK-004 grammar/parser coverage**: all grammar/parser packages now ≥60% statements.
+   Remaining: expand b-ber-lib toward 70% and add basic coverage to b-ber-markdown-renderer
+   and b-ber-cli before starting TASK-008. Grammar/parser target met.
 2. **TASK-016** (circular imports + arch risks): run madge, fix cycles, document structural
    risks (mixed CJS/ESM, implicit deps, process.exit in logger, stale deps). Low blast radius,
    high value before the TS migration.

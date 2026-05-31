@@ -50,4 +50,81 @@ describe('b-ber-parser-footnotes', () => {
     expect(typeof md.renderer.rules.footnote_open).toBe('function')
     expect(typeof md.renderer.rules.footnote_close).toBe('function')
   })
+
+  test('parses reference-style footnote definition', () => {
+    const md = new MarkdownIt()
+    const callback = jest.fn()
+    footnotePlugin(md, callback)
+    expect(() =>
+      md.render(
+        '[^1]: The footnote definition.\n\nText with a reference[^1].\n'
+      )
+    ).not.toThrow()
+  })
+
+  test('invokes callback with collected footnote tokens', () => {
+    const md = new MarkdownIt()
+    const callback = jest.fn()
+    footnotePlugin(md, callback)
+    md.render('[^note]: The definition.\n\nText with [^note].\n')
+    expect(callback).toHaveBeenCalled()
+  })
+
+  test('parses inline footnote syntax ^[...]', () => {
+    const md = new MarkdownIt()
+    const callback = jest.fn()
+    footnotePlugin(md, callback)
+    expect(() =>
+      md.render('Text with an inline footnote^[inline definition].\n')
+    ).not.toThrow()
+    expect(callback).toHaveBeenCalled()
+  })
+
+  test('renders footnote reference as epub:type=noteref anchor', () => {
+    const md = new MarkdownIt()
+    const callback = jest.fn()
+    footnotePlugin(md, callback)
+    const result = md.render('[^1]: definition\n\nText[^1].\n')
+    expect(result).toContain('epub:type="noteref"')
+    expect(result).toContain('footnote-ref')
+  })
+
+  test('renders footnote block open as ordered list', () => {
+    const md = new MarkdownIt()
+    const callback = jest.fn()
+    footnotePlugin(md, callback)
+    const callbackArg = []
+    callback.mockImplementation(tokens => callbackArg.push(...tokens))
+    md.render('[^1]: definition\n\nText[^1].\n')
+    const types = callbackArg.map(t => t.type)
+    expect(types).toContain('footnote_block_open')
+  })
+
+  test('footnote_def block rule returns false for non-footnote content', () => {
+    const md = new MarkdownIt()
+    const callback = jest.fn()
+    footnotePlugin(md, callback)
+    // Ordinary paragraph — footnote_def rule should not fire
+    md.render('Just a regular paragraph.\n')
+    expect(callback).not.toHaveBeenCalled()
+  })
+
+  test('footnote_ref rule returns false when no refs are registered', () => {
+    const md = new MarkdownIt()
+    const callback = jest.fn()
+    footnotePlugin(md, callback)
+    // [^1] reference without a definition — should not trigger footnote_ref
+    md.render('Text with [^unknown] reference only.\n')
+    expect(callback).not.toHaveBeenCalled()
+  })
+
+  test('handles multiple footnote references to the same label', () => {
+    const md = new MarkdownIt()
+    const callback = jest.fn()
+    footnotePlugin(md, callback)
+    expect(() =>
+      md.render('[^a]: definition\n\nFirst[^a] and second[^a] reference.\n')
+    ).not.toThrow()
+    expect(callback).toHaveBeenCalled()
+  })
 })

@@ -42,4 +42,67 @@ describe('b-ber-parser-figure', () => {
     expect(ruleNames).toContain('container_figure')
     expect(ruleNames).toContain('container_spread')
   })
+
+  test('calls validate when rendering content with triple-colon fence', () => {
+    const md = new MarkdownIt()
+    figurePlugin(md, 'figure', mockOptions)
+    md.render('::: figure:my-id source="img.jpg"\n')
+    expect(mockOptions.validate).toHaveBeenCalled()
+  })
+
+  test('calls render when validate returns true', () => {
+    const render = jest.fn(() => '')
+    const md = new MarkdownIt()
+    figurePlugin(md, 'figure', { ...mockOptions, render })
+    md.render('::: figure:my-id source="img.jpg"\n')
+    expect(render).toHaveBeenCalled()
+  })
+
+  test('does not call render when validate returns false', () => {
+    const validate = jest.fn(() => false)
+    const render = jest.fn(() => '')
+    const md = new MarkdownIt()
+    figurePlugin(md, 'figure', { validate, render })
+    md.render('::: figure:my-id source="img.jpg"\n')
+    expect(validate).toHaveBeenCalled()
+    expect(render).not.toHaveBeenCalled()
+  })
+
+  test('does not trigger for non-container content', () => {
+    const validate = jest.fn(() => true)
+    const md = new MarkdownIt()
+    figurePlugin(md, 'figure', { ...mockOptions, validate })
+    md.render('Normal paragraph.\n')
+    expect(validate).not.toHaveBeenCalled()
+  })
+
+  test('does not trigger for content with fewer than minMarkers colons', () => {
+    const validate = jest.fn(() => true)
+    const md = new MarkdownIt()
+    figurePlugin(md, 'figure', { ...mockOptions, validate })
+    md.render(':: figure:my-id\n')
+    expect(validate).not.toHaveBeenCalled()
+  })
+
+  test('handles figure block with caption delimiters', () => {
+    const render = jest.fn(() => '')
+    const md = new MarkdownIt()
+    figurePlugin(md, 'figure', { ...mockOptions, render })
+    // Caption syntax: line starting with :: after the opening fence
+    expect(() =>
+      md.render('::: figure:my-id source="img.jpg"\n:: Caption text\n::\n')
+    ).not.toThrow()
+    expect(render).toHaveBeenCalled()
+  })
+
+  test('passes params string and line number to validate', () => {
+    const validate = jest.fn(() => true)
+    const md = new MarkdownIt()
+    figurePlugin(md, 'figure', { ...mockOptions, validate })
+    md.render('::: figure:my-id source="img.jpg"\n')
+    expect(validate).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.any(Number)
+    )
+  })
 })

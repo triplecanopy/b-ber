@@ -20,6 +20,18 @@ jest.mock('@canopycanopycanopy/b-ber-logger', () => ({
   debug: jest.fn(),
 }))
 
+jest.mock('@canopycanopycanopy/b-ber-grammar-attributes', () => ({
+  attributesString: jest.fn(() => ''),
+  attributesObject: jest.fn(() => ({ source: 'media.mp4' })),
+  htmlId: jest.fn(id => id),
+  toAlias: jest.fn(s => s),
+}))
+
+jest.mock('@canopycanopycanopy/b-ber-lib', () => ({
+  Html: { comment: jest.fn(s => s) },
+  Url: { encodeQueryString: jest.fn(s => s), ensureDecoded: jest.fn(s => s) },
+}))
+
 const instance = { renderInline: jest.fn(str => str) }
 const context = { fileName: 'test' }
 
@@ -56,5 +68,64 @@ describe('b-ber-grammar-audio-video', () => {
   it('validate returns falsy for figure directive', () => {
     const config = audioVideo.renderer({ instance, context })
     expect(config.validate('figure:foo')).toBeFalsy()
+  })
+
+  it('render returns empty string when token info does not match DIRECTIVE_RE', () => {
+    const config = audioVideo.renderer({ instance, context })
+    const tokens = [{ info: 'not-matching', map: [0, 1], children: null }]
+    expect(config.render(tokens, 0)).toBe('')
+  })
+
+  it('render calls prepare and dispatches to createMedia for video type', () => {
+    const config = audioVideo.renderer({ instance, context })
+    const tokens = [
+      { info: 'video:my-id source="media.mp4"', map: [0, 1], children: null },
+    ]
+    const result = config.render(tokens, 0)
+    expect(typeof result).toBe('string')
+    expect(result.length).toBeGreaterThan(0)
+  })
+
+  it('render dispatches to createMedia for audio type', () => {
+    const config = audioVideo.renderer({ instance, context })
+    const tokens = [
+      { info: 'audio:my-id source="sound.mp3"', map: [0, 1], children: null },
+    ]
+    const result = config.render(tokens, 0)
+    expect(typeof result).toBe('string')
+  })
+
+  it('render dispatches to createMediaInline for video-inline type', () => {
+    const config = audioVideo.renderer({ instance, context })
+    const tokens = [
+      {
+        info: 'video-inline:my-id source="media.mp4"',
+        map: [0, 1],
+        children: null,
+      },
+    ]
+    const result = config.render(tokens, 0)
+    expect(typeof result).toBe('string')
+  })
+
+  it('render dispatches to createMediaInline for audio-inline type', () => {
+    const config = audioVideo.renderer({ instance, context })
+    const tokens = [
+      {
+        info: 'audio-inline:my-id source="sound.mp3"',
+        map: [0, 1],
+        children: null,
+      },
+    ]
+    const result = config.render(tokens, 0)
+    expect(typeof result).toBe('string')
+  })
+
+  it('render handles token with null map', () => {
+    const config = audioVideo.renderer({ instance, context })
+    const tokens = [
+      { info: 'video:my-id source="media.mp4"', map: null, children: null },
+    ]
+    expect(() => config.render(tokens, 0)).not.toThrow()
   })
 })
