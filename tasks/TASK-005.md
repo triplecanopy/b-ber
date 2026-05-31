@@ -3,6 +3,7 @@
 **Status:** complete
 **Scope:** monorepo
 **Priority:** low
+**GitHub Issue:** #459 — https://github.com/triplecanopy/b-ber/issues/459
 
 ## Description
 
