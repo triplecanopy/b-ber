@@ -1,4 +1,4 @@
-export default [
+const elements: string[] = [
   'contributor',
   'coverage',
   'creator',
@@ -14,3 +14,5 @@ export default [
   'title',
   'type',
 ]
+
+export default elements

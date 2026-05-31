@@ -1,4 +1,4 @@
-export const build = [
+export const build: string[] = [
   'clean',
   'container',
   'cover',
@@ -12,7 +12,7 @@ export const build = [
   'opf',
 ]
 
-const sequences = {
+const sequences: Record<string, string[]> = {
   epub: [...build, 'epub'],
   mobi: [...build, 'mobiCSS', 'mobi'],
   pdf: [...build, 'pdf'],

@@ -1,4 +1,4 @@
-export default [
+const terms: string[] = [
   'abstract',
   'accessRights',
   'accrualMethod',
@@ -55,3 +55,5 @@ export default [
   'type',
   'valid',
 ]
+
+export default terms
