@@ -43,6 +43,12 @@ export function showSpineItem() {
   const { spine, spreadIndex, currentSpineItemIndex } = this.state
   const { lastSpreadIndex } = this.props.view
 
+  // Guard: if spine has been lost (e.g. a setState functional update that
+  // forgot to spread prev), bail out rather than crashing with a cryptic
+  // TypeError. The navigation state will remain stale until the next render
+  // cycle corrects it, but the reader stays alive.
+  if (!spine) return console.warn('showSpineItem: spine is not in state')
+
   const firstChapter = currentSpineItemIndex === 0
   const lastChapter = currentSpineItemIndex === spine.length - 1
   const firstSpread = spreadIndex === 0
@@ -63,7 +69,7 @@ export function showSpineItem() {
 }
 
 // Makes requests to load book content
-export async function loadSpineItem(spineItem, deferredCallback) {
+export async function loadSpineItem(spineItem, _deferredCallback) {
   const hash = Asset.createHash(this.props.readerSettings.bookURL)
 
   let requestedSpineItem = spineItem

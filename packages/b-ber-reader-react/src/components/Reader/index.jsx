@@ -186,6 +186,7 @@ function Reader(props) {
   const handleSidebarButtonClick = useCallback(
     value => {
       setState(prev => ({
+        ...prev,
         showSidebar: value === prev.showSidebar ? null : value,
       }))
     },

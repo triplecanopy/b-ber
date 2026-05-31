@@ -13,7 +13,7 @@ const withNavigationActions = WrappedComponent => {
     }
 
     goToNextChapter = () => {
-      if (this.props.handleEvents === false) return
+      if (this.props.userInterface.handleEvents === false) return
       this.props.handleChapterNavigation(1)
     }
 
