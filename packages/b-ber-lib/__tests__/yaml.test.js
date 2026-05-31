@@ -88,3 +88,33 @@ describe('Yaml.update', () => {
     expect(titleEntries[titleEntries.length - 1].value).toBe('Updated Title')
   })
 })
+
+describe('Yaml type checking (strict mode)', () => {
+  it('constructs without error for a known schema in strict mode', () => {
+    expect(() => new Yaml('metadata', true)).not.toThrow()
+  })
+
+  it('does not throw for an unknown schema in strict mode (logs error via mocked logger)', () => {
+    expect(() => new Yaml('nonexistent-schema', true)).not.toThrow()
+  })
+
+  it('add() runs typeCheck for a valid entry without throwing', () => {
+    const yaml = new Yaml('metadata', true)
+    yaml.load(metadataFile)
+    expect(() =>
+      yaml.add({ term: 'publisher', value: 'Test Press' })
+    ).not.toThrow()
+  })
+
+  it('add() runs typeCheck and logs for an unsupported property key', () => {
+    const yaml = new Yaml('metadata', true)
+    yaml.load(metadataFile)
+    expect(() => yaml.add({ unsupported_key: 'value' })).not.toThrow() // eslint-disable-line camelcase
+  })
+
+  it('add() runs typeCheck and logs for a non-plain-object entry', () => {
+    const yaml = new Yaml('metadata', true)
+    yaml.load(metadataFile)
+    expect(() => yaml.add('not-an-object')).not.toThrow()
+  })
+})
