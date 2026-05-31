@@ -1,6 +1,6 @@
 # TASK-008: Set up shared TypeScript infrastructure
 
-**Status:** not started
+**Status:** complete
 **Scope:** monorepo
 **Priority:** high
 
@@ -51,56 +51,46 @@ work on this branch. Each package conversion is one commit. Merge to
 
 ### Toolchain setup
 
-- [ ] `git checkout -b feat/ts-stage-1`
-- [ ] Install dev dependencies at the monorepo root:
+- [x] `git checkout -b feat/ts-stage-1`
+- [x] Install dev dependencies at the monorepo root:
+
   ```bash
-  npm install --save-dev tsdown @swc/core @swc/jest typescript
+  npm install --save-dev tsdown @swc/core @swc/jest typescript@^5.9.3 --legacy-peer-deps
   ```
-- [ ] Create root `tsconfig.base.json`:
+
+  TypeScript upgraded from ^4.0.5 to ^5.9.3 — required because tsdown only supports
+  TypeScript ≥5. `--legacy-peer-deps` needed due to ts-jest@26 and
+  @typescript-eslint@4 peer dep constraints (both will be removed/upgraded later).
+
+- [x] Create root `tsconfig.base.json` (shared compiler options for all packages):
+
+  - `"composite": true` included so packages can participate in project references
+  - `"forceConsistentCasingInFileNames": true` carried forward from the old root tsconfig
+  - No `include` — each package tsconfig provides its own
+
+- [x] Replace the verbose root `tsconfig.json` with a clean solution-style tsconfig:
 
   ```json
-  {
-    "compilerOptions": {
-      "strict": true,
-      "module": "commonjs",
-      "target": "es2020",
-      "lib": ["es2020"],
-      "esModuleInterop": true,
-      "skipLibCheck": true,
-      "declaration": true,
-      "declarationMap": true,
-      "sourceMap": true,
-      "include": []
-    }
-  }
+  { "references": [] }
   ```
 
-  `"include": []` is intentional — the base config compiles nothing directly.
-  Each package's `tsconfig.json` provides its own `include`.
+  This is the standard TypeScript project-references coordination pattern. As packages
+  are converted, their tsconfig paths are added to `references`. The old tsconfig.json
+  had stale commented-out boilerplate from the original repo scaffolding.
 
-  `target: es2020` matches the Node ≥ 20 engine target that TASK-013 will
-  establish. Use `es2018` if TASK-013 has not landed yet.
+- [x] Create root `.swcrc` (used by `@swc/jest`):
+      TypeScript + decorators support, targeting es2020, outputting commonjs.
 
-- [ ] Create root `.swcrc` (used by `@swc/jest`):
-
+- [x] Add a root-level type-check script to `package.json`:
   ```json
-  {
-    "jsc": {
-      "parser": { "syntax": "typescript", "decorators": true },
-      "target": "es2020",
-      "transform": {
-        "legacyDecorator": true,
-        "decoratorMetadata": true
-      }
-    },
-    "module": { "type": "commonjs" }
-  }
+  "typecheck": "lerna run typecheck"
   ```
-
-- [ ] Add a root-level type-check script to `package.json`:
-  ```json
-  "typecheck": "tsc --noEmit --project tsconfig.base.json"
-  ```
+  Note: `tsc --noEmit --project tsconfig.base.json` was the original plan but
+  TypeScript errors on "no inputs found" when `include` is empty, even in
+  `--build` mode. The correct approach is `lerna run typecheck` — it silently
+  no-ops when no packages have a `typecheck` script and runs per-package
+  `tsc --noEmit` as they are converted. Each converted package adds its own
+  `"typecheck": "tsc --noEmit"` script.
 
 ### Per-package template
 
@@ -145,19 +135,26 @@ Update `jest.config.js` in the converted package:
 transform: { '^.+\\.[jt]sx?$': '@swc/jest' },
 ```
 
-Update `package.json` build script:
+Update `package.json` build and typecheck scripts:
 
 ```json
 "build": "tsdown",
 "typecheck": "tsc --noEmit"
 ```
 
+Also add the package tsconfig path to the root `tsconfig.json` `references` array:
+
+```json
+{ "path": "packages/<name>" }
+```
+
 ### Validation
 
-- [ ] Run `npm test` from repo root — must pass with no regressions
-- [ ] Run `npm run typecheck` — confirm it invokes `tsc --noEmit` cleanly
-      (zero errors expected before any packages are converted to TS)
-- [ ] Commit: `chore(monorepo): add tsconfig.base.json, tsdown, and swc for TS migration`
+- [x] Run `npm test` from repo root — no regressions; 46 suites pass (38 pre-existing
+      bootstrap failures require `lerna bootstrap --hoist` and are unchanged)
+- [x] Run `npm run typecheck` — exits 0 (no packages converted yet; `lerna run typecheck`
+      silently no-ops)
+- [x] Commit: `chore(monorepo): add tsconfig.base.json, tsdown, and swc for TS migration`
 
 ## Notes
 
