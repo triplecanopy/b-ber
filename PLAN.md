@@ -136,8 +136,8 @@ These are tracked as `TASK-001.open.md` within each package's `tasks/` directory
 | b-ber-lib                  | 17%               | 71%     | ≥ 70%  | complete    |
 | b-ber-tasks                | ~0%               | ~15%    | ~25%\* | in progress |
 | b-ber-logger               | 0%                | 73%     | ≥ 60%  | in progress |
-| b-ber-markdown-renderer    | 0%                | 0%      | ≥ 60%  | not started |
-| b-ber-cli                  | 24%               | 24%     | ≥ 60%  | not started |
+| b-ber-markdown-renderer    | 0%                | 83%     | ≥ 60%  | complete    |
+| b-ber-cli                  | 24%               | 65%     | ≥ 60%  | complete    |
 | b-ber-templates            | mixed             | 96%     | ≥ 60%  | complete    |
 | b-ber-validator            | 69%               | 69%     | ≥ 80%  | not started |
 | b-ber-grammar-\* (14 pkgs) | 0%                | ~80%    | ≥ 60%  | in progress |
@@ -156,9 +156,9 @@ This is documented in packages/b-ber-tasks/tasks/TASK-001.open.md.
 
 In priority order:
 
-1. **TASK-004 core lib coverage**: b-ber-lib now at 71% statements (target ≥70% met).
-   Remaining: add basic coverage to b-ber-markdown-renderer and b-ber-cli before starting
-   TASK-008. Grammar/parser and b-ber-lib targets all met.
+1. **TASK-004 coverage targets met**: All coverage targets are now met —
+   b-ber-lib 71%, grammar/parser packages ~60-97%, b-ber-markdown-renderer 83%,
+   b-ber-cli 65%, b-ber-logger 73%, b-ber-templates 96%. TASK-008 can now start.
 2. **TASK-016** (circular imports + arch risks): run madge, fix cycles, document structural
    risks (mixed CJS/ESM, implicit deps, process.exit in logger, stale deps). Low blast radius,
    high value before the TS migration.
