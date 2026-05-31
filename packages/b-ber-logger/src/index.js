@@ -1,5 +1,5 @@
-import has from 'lodash.has'
-import isUndefined from 'lodash.isundefined'
+import has from 'lodash/has'
+import isUndefined from 'lodash/isUndefined'
 import Timer from './Timer'
 import { printWarnings, printErrors } from './printer'
 import {

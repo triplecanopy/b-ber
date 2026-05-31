@@ -25,7 +25,7 @@ Additional standards for this package:
 
 - The plugin callback pattern (second argument to `md.use`) is specific to this parser; it is not a markdown-it convention
 - `Counter` uses class field syntax (`setRef = …`, `getRef = …`) — requires Babel class-properties transform
-- The module exports using `module.exports` (CommonJS) rather than ES module `export default`; the Counter uses ES module `export default`
+- The module exports using `export default` (ES module); the Counter also uses ES module `export default`
 
 ## Task System
 

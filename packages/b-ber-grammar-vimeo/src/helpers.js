@@ -1,7 +1,7 @@
 import fs from 'fs-extra'
 import log from '@canopycanopycanopy/b-ber-logger'
 import state from '@canopycanopycanopy/b-ber-lib/State'
-import isUndefined from 'lodash.isundefined'
+import isUndefined from 'lodash/isUndefined'
 
 // `bBerAttributes` and the `vimeoAttributesTransformer` below are used to
 // filter when building the query string for Vimeo embeds, and for filtering the

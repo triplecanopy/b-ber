@@ -159,11 +159,10 @@ In priority order:
 1. **TASK-016 complete**: 9 circular deps fixed (0 remain), stale deps catalogued, TS project
    reference topology documented in TASK-016.md. Run `npm run check:circular` to verify at
    any time.
-2. **Pre-TASK-008 cleanup** (do before starting the TS migration):
-   - Remove `tar` from `b-ber-grammar-renderer/package.json` (never imported)
-   - Remove `babel-cli@^6.26.0` from root `package.json` devDependencies (Babel 6 remnant)
-   - Convert `b-ber-parser-footnotes/src/index.js` from `module.exports` to ESM `export default`
-   - Consolidate `lodash.has` / `lodash.isundefined` deps to `lodash` subpath imports across grammar/parser packages
+2. **Pre-TASK-008 cleanup complete**: All four items in TASK-019's pre-migration checklist are done:
+   `tar` removed from grammar-renderer (and all other grammar/parser packages where it was unused),
+   `babel-cli@^6.26.0` removed from root devDependencies, `b-ber-parser-footnotes` converted to ESM,
+   lodash per-method packages replaced with `lodash/x` subpath imports across 12 packages.
 3. **Start TASK-006** (Vite migration): no blockers, medium priority. Branch:
    `feat/vite-migration`. Also picks up TASK-015 (Biome) and TASK-007 (reader).
 4. **Start TASK-008** (TypeScript infra): all blockers clear. Branch: `feat/ts-stage-1`.

@@ -1,7 +1,7 @@
 /* eslint-disable import/prefer-default-export */
 
 import util from 'util'
-import isPlainObject from 'lodash.isplainobject'
+import isPlainObject from 'lodash/isPlainObject'
 
 const INDENTATION = '  '
 

@@ -75,7 +75,6 @@
     "@typescript-eslint/eslint-plugin": "^4.8.1",
     "@typescript-eslint/parser": "^4.8.1",
     "autoprefixer": "^9.6.1",
-    "babel-cli": "^6.26.0",
     "babel-eslint": "^8.2.2",
     "babel-jest": "^24.8.0",
     "babel-loader": "^8.2.3",

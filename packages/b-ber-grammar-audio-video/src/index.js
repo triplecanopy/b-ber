@@ -1,5 +1,5 @@
 import path from 'path'
-import has from 'lodash.has'
+import has from 'lodash/has'
 import { Html } from '@canopycanopycanopy/b-ber-lib'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'

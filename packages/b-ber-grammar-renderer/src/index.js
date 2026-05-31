@@ -1,4 +1,4 @@
-import isUndefined from 'lodash.isundefined'
+import isUndefined from 'lodash/isUndefined'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
 import {
@@ -28,7 +28,7 @@ const renderer = ({ context = {}, render, markerOpen, markerClose }) => ({
       // fileName from `context` which we've stored in back in
       // `md/index.es6`, and passed into our `renderer`
       log.error(
-        `Missing [id] for [${exports.default.name}:start] at ${context.fileName}.md:${line}`
+        `Missing [id] for [${type}:start] at ${context.fileName}.md:${line}`
       )
 
       // Let the parser know that this wasn't a match

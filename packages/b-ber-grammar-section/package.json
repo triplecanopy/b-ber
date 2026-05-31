@@ -31,9 +31,7 @@
     "@canopycanopycanopy/b-ber-logger": "3.1.0",
     "@canopycanopycanopy/b-ber-parser-section": "3.1.0",
     "@canopycanopycanopy/b-ber-shapes-directives": "3.1.0",
-    "lodash": "^4.17.21",
-    "lodash.find": "latest",
-    "tar": "^6.1.11"
+    "lodash": "^4.17.21"
   },
   "files": [
     "dist"

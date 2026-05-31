@@ -1,6 +1,6 @@
 import fs from 'fs-extra'
-import sizeOf from 'image-size'
-import isUndefined from 'lodash.isundefined'
+import sizeOf from 'image-size' // eslint-disable-line import/no-unresolved
+import isUndefined from 'lodash/isUndefined'
 import log from '@canopycanopycanopy/b-ber-logger'
 import { Html } from '@canopycanopycanopy/b-ber-lib'
 import state from '@canopycanopycanopy/b-ber-lib/State'

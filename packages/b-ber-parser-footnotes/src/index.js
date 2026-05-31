@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 /* eslint-disable no-param-reassign,no-plusplus */
 
-import isUndefined from 'lodash.isundefined'
+import isUndefined from 'lodash/isUndefined'
 import bberState from '@canopycanopycanopy/b-ber-lib/State'
 import Counter from './counter'
 
@@ -109,7 +109,7 @@ function renderFootnoteAnchor(/*tokens, idx, options,env, slf */) {
   return ''
 }
 
-module.exports = function footnotePlugin(md, callback) {
+export default function footnotePlugin(md, callback) {
   const { parseLinkLabel } = md.helpers
   const { isSpace } = md.utils
 

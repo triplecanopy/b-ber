@@ -1,4 +1,4 @@
-import isUndefined from 'lodash.isundefined'
+import isUndefined from 'lodash/isUndefined'
 
 /* eslint-disable  no-param-reassign */
 

@@ -1,5 +1,5 @@
-import sizeOf from 'image-size'
-import uniq from 'lodash.uniq'
+import sizeOf from 'image-size' // eslint-disable-line import/no-unresolved
+import uniq from 'lodash/uniq'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import { getImageOrientation } from '@canopycanopycanopy/b-ber-lib/utils'
 

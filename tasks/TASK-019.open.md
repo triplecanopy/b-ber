@@ -23,13 +23,18 @@ toolchain spec, and architecture decisions.
 
 These are blockers identified in TASK-016. All are small, low-risk changes:
 
-- [ ] Remove `tar` from `b-ber-grammar-renderer/package.json` (never imported)
-- [ ] Remove `babel-cli@^6.26.0` from root `package.json` devDependencies
-- [ ] Convert `b-ber-parser-footnotes/src/index.js` from `module.exports` to
+- [x] Remove `tar` from `b-ber-grammar-renderer/package.json` (never imported).
+      Also removed from all other grammar/parser packages where it was unused:
+      grammar-section, grammar-pullquote, grammar-attributes, grammar-vimeo,
+      grammar-image, grammar-audio-video, parser-footnotes, parser-figure, b-ber-logger.
+- [x] Remove `babel-cli@^6.26.0` from root `package.json` devDependencies
+- [x] Convert `b-ber-parser-footnotes/src/index.js` from `module.exports` to
       `export default` — the only first-party CJS entry point; TS project
       references require consistent module format across the dependency graph
-- [ ] Consolidate `lodash.has` / `lodash.isundefined` per-method packages to
-      `import x from 'lodash/x'` subpath imports across grammar/parser packages
+- [x] Consolidate `lodash.has` / `lodash.isundefined` per-method packages to
+      `import x from 'lodash/x'` subpath imports across grammar/parser packages.
+      Also consolidated `lodash.find`, `lodash.uniq`, `lodash.isplainobject`.
+      Removed all per-method devDependencies from affected package.json files.
 
 ### Stage 1 — shapes + core libraries (`feat/ts-stage-1`)
 
