@@ -166,8 +166,10 @@ In priority order:
    `feat/vite-migration`. Also picks up TASK-015 (Biome) and TASK-007 (reader).
 4. **Start TASK-008** (TypeScript infra): gated on overall coverage ≥60%. Branch:
    `feat/ts-stage-1`. Unlocks the entire TS migration chain. Build pipeline approach:
-   add `@babel/preset-typescript` to babel.config.js (Babel strips types at compile time);
-   add root `tsconfig.json` for `tsc --noEmit` type-checking only. Does not replace Babel.
+   replace `babel-jest` with `@swc/jest` (drop-in, Rust-based, 10-20× faster);
+   replace Babel build step with `tsup` (esbuild-based, designed for TS library packages,
+   handles `.d.ts` generation); add root `tsconfig.base.json` for `tsc --noEmit` type
+   checking only. Babel removed entirely after all packages are converted (post-TASK-012).
 5. **Complete TASK-014** (GitHub issues): create retroactive issues for closed
    tasks and open issues for in-progress/upcoming tasks.
 
