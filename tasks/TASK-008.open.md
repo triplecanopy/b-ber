@@ -18,16 +18,19 @@ with a purpose-built TypeScript toolchain:
 
 | Concern                       | Current                          | After this task                                |
 | ----------------------------- | -------------------------------- | ---------------------------------------------- |
-| Transpilation (Node packages) | `babel-jest` + `babel.config.js` | **tsup** (wraps esbuild)                       |
+| Transpilation (Node packages) | `babel-jest` + `babel.config.js` | **tsdown** (wraps rolldown)                    |
 | Test transform                | `babel-jest`                     | **`@swc/jest`** (drop-in replacement)          |
 | Type checking                 | (none)                           | **`tsc --noEmit`** (root `tsconfig.base.json`) |
 | Transpilation (reader-react)  | Babel + webpack                  | Vite/esbuild — handled separately in TASK-006  |
 
-**Why tsup over `tsc` for emit?**
-`tsc` type-checks AND emits — correct but slow. tsup uses esbuild for
-sub-second transpilation and shells out to `tsc --emitDeclarationOnly` only
-for `.d.ts` generation. The build pipeline stays fast; type correctness is
-enforced by the separate `tsc --noEmit` step.
+**Why tsdown over `tsc` for emit?**
+`tsc` type-checks AND emits — correct but slow. tsdown (the rolldown-based
+successor to tsup) provides sub-second transpilation and handles `.d.ts`
+generation via `tsc --emitDeclarationOnly`. The build pipeline stays fast;
+type correctness is enforced by the separate `tsc --noEmit` step.
+
+tsup has been deprecated in favour of rolldown; tsdown is the official
+migration path.
 
 **Why `@swc/jest` over `babel-jest`?**
 SWC is written in Rust — 10–20× faster than Babel for test transforms. It
@@ -51,7 +54,7 @@ work on this branch. Each package conversion is one commit. Merge to
 - [ ] `git checkout -b feat/ts-stage-1`
 - [ ] Install dev dependencies at the monorepo root:
   ```bash
-  npm install --save-dev tsup @swc/core @swc/jest typescript
+  npm install --save-dev tsdown @swc/core @swc/jest typescript
   ```
 - [ ] Create root `tsconfig.base.json`:
 
@@ -116,7 +119,7 @@ When a package is converted (TASK-009+), add these files:
 ```
 
 ```json
-// packages/<name>/tsconfig.build.json (used by tsup — excludes tests)
+// packages/<name>/tsconfig.build.json (used by tsdown — excludes tests)
 {
   "extends": "./tsconfig.json",
   "exclude": ["**/__tests__/**", "**/__mocks__/**"]
@@ -124,8 +127,8 @@ When a package is converted (TASK-009+), add these files:
 ```
 
 ```js
-// packages/<name>/tsup.config.ts (or tsup.config.js)
-import { defineConfig } from 'tsup'
+// packages/<name>/tsdown.config.ts (or tsdown.config.js)
+import { defineConfig } from 'tsdown'
 export default defineConfig({
   entry: ['src/index.ts'],
   format: ['cjs'], // add 'esm' when the package is ready
@@ -145,7 +148,7 @@ transform: { '^.+\\.[jt]sx?$': '@swc/jest' },
 Update `package.json` build script:
 
 ```json
-"build": "tsup",
+"build": "tsdown",
 "typecheck": "tsc --noEmit"
 ```
 
@@ -154,7 +157,7 @@ Update `package.json` build script:
 - [ ] Run `npm test` from repo root — must pass with no regressions
 - [ ] Run `npm run typecheck` — confirm it invokes `tsc --noEmit` cleanly
       (zero errors expected before any packages are converted to TS)
-- [ ] Commit: `chore(monorepo): add tsconfig.base.json, tsup, and swc for TS migration`
+- [ ] Commit: `chore(monorepo): add tsconfig.base.json, tsdown, and swc for TS migration`
 
 ## Notes
 

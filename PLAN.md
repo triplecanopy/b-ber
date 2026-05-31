@@ -167,8 +167,8 @@ In priority order:
 4. **Start TASK-008** (TypeScript infra): gated on overall coverage ≥60%. Branch:
    `feat/ts-stage-1`. Unlocks the entire TS migration chain. Build pipeline approach:
    replace `babel-jest` with `@swc/jest` (drop-in, Rust-based, 10-20× faster);
-   replace Babel build step with `tsup` (esbuild-based, designed for TS library packages,
-   handles `.d.ts` generation); add root `tsconfig.base.json` for `tsc --noEmit` type
+   replace Babel build step with `tsdown` (rolldown-based successor to tsup, tsup is
+   deprecated; handles `.d.ts` generation); add root `tsconfig.base.json` for `tsc --noEmit` type
    checking only. Babel removed entirely after all packages are converted (post-TASK-012).
 5. **Complete TASK-014** (GitHub issues): create retroactive issues for closed
    tasks and open issues for in-progress/upcoming tasks.

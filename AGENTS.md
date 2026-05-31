@@ -302,6 +302,53 @@ Before marking any task complete:
    and "What To Do Next" if the completed task unblocks something new
 5. If the task changes how the monorepo is configured or structured: update this file
 
+**Test propagation rule:** After any change to a shared library, run the test
+suite of every package that imports it — not just the package being changed.
+Many packages mock shared libs (e.g. `b-ber-logger`, `b-ber-lib`) in their own
+tests; a change to the real module may require updating both the module tests
+and the mock-based tests in dependent packages.
+
+---
+
+## GitHub Issues
+
+Project-level tasks are cross-referenced with GitHub issues so that either can
+be found from the other.
+
+### When to create issues
+
+Create GitHub issues for tasks that are **closed** (status: complete) or
+**open and actively in progress**. Do not create issues for speculative or
+not-started tasks that have no work underway.
+
+### Cross-referencing
+
+After creating an issue, add a `**GitHub Issue:**` field to the task PRD header:
+
+```markdown
+**Status:** complete
+**Scope:** monorepo
+**Priority:** medium
+**GitHub Issue:** #42 — https://github.com/canopycanopycanopy/b-ber/issues/42
+```
+
+The GitHub issue body should include:
+
+- The task ID and the **full path** to the task file (e.g. `tasks/TASK-001.md`),
+  since task numbers are not unique across the monorepo (root vs. per-package).
+- A one-paragraph summary of what was done and why.
+
+This bidirectional link means you can navigate from task → issue and from
+issue → task without ambiguity.
+
+### Labels
+
+Use existing labels where they fit. Create new labels if none of the existing
+ones are appropriate — label names should follow the `b-ber/<scope>` convention
+already established in the repo (e.g. `b-ber/testing`, `b-ber/typescript`).
+Research tasks use `maintenance`. Implementation tasks use the scope label
+matching the package(s) affected.
+
 ---
 
 ## Adding AGENTS.md to a New Package
