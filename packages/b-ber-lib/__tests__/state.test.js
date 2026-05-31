@@ -115,6 +115,29 @@ describe('State', () => {
 })
 
 describe('State getters and setters', () => {
+  beforeEach(() => {
+    // When Jest workers run with argv.length < 3, skipInitialization() returns true
+    // and loadBuildSettings returns undefined, leaving builds[type] undefined.
+    // Ensure each build bucket has the required structure for getter/setter tests.
+    const buildTypes = ['sample', 'epub', 'mobi', 'pdf', 'web', 'reader']
+    buildTypes.forEach(type => {
+      if (!state.builds[type]) {
+        state.builds[type] = {
+          dist: `project-${type}`,
+          guide: [],
+          spine: null,
+          toc: [],
+          cursor: [],
+          figures: [],
+          footnotes: [],
+          remoteAssets: [],
+          loi: [],
+          config: {},
+        }
+      }
+    })
+  })
+
   it('spine getter/setter round-trips via builds[build]', () => {
     state.build = 'epub'
     const mockSpine = { flattened: [], nested: [] }
