@@ -323,23 +323,37 @@ not-started tasks that have no work underway.
 
 ### Cross-referencing
 
-After creating an issue, add a `**GitHub Issue:**` field to the task PRD header:
+The link must be navigable in both directions — from the task PRD to the issue,
+and from the issue back to the task PRD file in the repository.
+
+**In the task PRD** — add a `**GitHub Issue:**` field to the header block:
 
 ```markdown
 **Status:** complete
 **Scope:** monorepo
 **Priority:** medium
-**GitHub Issue:** #42 — https://github.com/canopycanopycanopy/b-ber/issues/42
+**GitHub Issue:** #42 — https://github.com/triplecanopy/b-ber/issues/42
 ```
 
-The GitHub issue body should include:
+**In the GitHub issue body** — include both a summary and a direct link to the
+task file. Task numbers are not unique across the monorepo (root tasks and
+package tasks share the same numbering), so the full file path is required:
 
-- The task ID and the **full path** to the task file (e.g. `tasks/TASK-001.md`),
-  since task numbers are not unique across the monorepo (root vs. per-package).
-- A one-paragraph summary of what was done and why.
+```markdown
+**Task file:** [tasks/TASK-001.md](https://github.com/triplecanopy/b-ber/blob/main/tasks/TASK-001.md)
 
-This bidirectional link means you can navigate from task → issue and from
-issue → task without ambiguity.
+<one-paragraph summary of what was done and why>
+```
+
+For package-level tasks the path is `packages/<name>/tasks/TASK-NNN.md`:
+
+```markdown
+**Task file:** [packages/b-ber-reader-react/tasks/TASK-001.md](https://github.com/triplecanopy/b-ber/blob/main/packages/b-ber-reader-react/tasks/TASK-001.md)
+```
+
+The task file link always points to the `main` branch. Do not create the issue
+(or add the task file link) until the branch containing the task file has been
+merged to `main` — the link will 404 until then.
 
 ### Labels
 
