@@ -79,10 +79,11 @@ been created yet; implementation tasks (TASK-006+) have not started.
 
 These tasks have no unmet dependencies:
 
-| Task     | Title                                     | Branch                | Notes                                |
-| -------- | ----------------------------------------- | --------------------- | ------------------------------------ |
-| TASK-006 | Migrate b-ber-reader-react webpack → Vite | `feat/vite-migration` | Independent of test coverage         |
-| TASK-008 | Set up shared TypeScript infrastructure   | `feat/ts-stage-1`     | Independent; prereq for TASK-009–012 |
+| Task     | Title                                            | Branch                | Notes                                 |
+| -------- | ------------------------------------------------ | --------------------- | ------------------------------------- |
+| TASK-006 | Migrate b-ber-reader-react webpack → Vite        | `feat/vite-migration` | Independent of test coverage          |
+| TASK-008 | Set up shared TypeScript infrastructure          | `feat/ts-stage-1`     | Independent; prereq for TASK-009–012  |
+| TASK-016 | Detect and resolve circular imports + arch risks | `feat/upgrades`       | Run before TASK-008; low blast radius |
 
 ### Not started — blocked
 
@@ -156,12 +157,18 @@ In priority order:
 
 1. **TASK-004 grammar/parser coverage**: test stubs are done (all 19 packages passing).
    Next: expand tests in higher-risk packages (grammar-section, grammar-vimeo, parser-footnotes)
-   to reach ≥60% statements.
-2. **Start TASK-006** (Vite migration): no blockers, medium priority. Branch:
+   to reach ≥60% statements. Also expand b-ber-lib toward 70% and add basic coverage to
+   b-ber-markdown-renderer and b-ber-cli before starting TASK-008.
+2. **TASK-016** (circular imports + arch risks): run madge, fix cycles, document structural
+   risks (mixed CJS/ESM, implicit deps, process.exit in logger, stale deps). Low blast radius,
+   high value before the TS migration.
+3. **Start TASK-006** (Vite migration): no blockers, medium priority. Branch:
    `feat/vite-migration`. Also picks up TASK-015 (Biome) and TASK-007 (reader).
-3. **Start TASK-008** (TypeScript infra): no blockers, high priority. Branch:
-   `feat/ts-stage-1`. Unlocks the entire TS migration chain.
-4. **Complete TASK-014** (GitHub issues): create retroactive issues for closed
+4. **Start TASK-008** (TypeScript infra): gated on overall coverage ≥60%. Branch:
+   `feat/ts-stage-1`. Unlocks the entire TS migration chain. Build pipeline approach:
+   add `@babel/preset-typescript` to babel.config.js (Babel strips types at compile time);
+   add root `tsconfig.json` for `tsc --noEmit` type-checking only. Does not replace Babel.
+5. **Complete TASK-014** (GitHub issues): create retroactive issues for closed
    tasks and open issues for in-progress/upcoming tasks.
 
 ---
