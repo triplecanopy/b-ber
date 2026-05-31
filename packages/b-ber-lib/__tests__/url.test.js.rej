@@ -1,0 +1,6 @@
+diff a/packages/b-ber-lib/__tests__/url.test.js b/packages/b-ber-lib/__tests__/url.test.js	(rejected hunks)
+@@ -92,3 +92 @@ describe('Url.encodeQueryString', () => {
+-    const result = Url.encodeQueryString(
+-      'http://example.com/path?key%3Dvalue'
+-    )
++    const result = Url.encodeQueryString('http://example.com/path?key%3Dvalue')

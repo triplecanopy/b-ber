@@ -1,0 +1,6 @@
+diff a/packages/b-ber-lib/__tests__/html-to-xml.test.js b/packages/b-ber-lib/__tests__/html-to-xml.test.js	(rejected hunks)
+@@ -21 +21,3 @@ describe('HtmlToXmlParser', () => {
+-    expect(out).toContain('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>')
++    expect(out).toContain(
++      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
++    )
