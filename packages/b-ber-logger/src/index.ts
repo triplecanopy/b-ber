@@ -1,5 +1,3 @@
-import has from 'lodash/has'
-import isUndefined from 'lodash/isUndefined'
 import Timer from './Timer'
 import { printWarnings, printErrors } from './printer'
 import {
@@ -27,25 +25,83 @@ import { counter, getContext } from './context'
 import { composeMessage } from './compose'
 import { reset } from './reset'
 
+interface LoggerSettings {
+  quiet: boolean
+  verbose: boolean
+  debug: boolean
+  summary: boolean
+  'no-color': boolean
+  'log-level': number
+}
+
+interface LogEntry {
+  stack: string | undefined
+  message: string
+  formatted: string
+}
+
 class Logger extends Timer {
   static defaults = {
     logLevel: 2,
     boringOutput: false,
     summary: false,
-    command: null,
+    command: null as string | null,
     consoleWidth: 70,
-    errors: [],
-    warnings: [],
-
+    errors: [] as LogEntry[],
+    warnings: [] as LogEntry[],
     taskWarnings: 0,
     taskErrors: 0,
-
     whitespace: ' ',
     increment: 0,
     indentLevel: 0,
     taskCounter: -1,
-    context: null,
+    context: null as string | null,
   }
+
+  logLevel!: number
+  boringOutput!: boolean
+  command!: string | null
+  consoleWidth!: number
+  errors!: LogEntry[]
+  warnings!: LogEntry[]
+  taskWarnings!: number
+  taskErrors!: number
+  whitespace!: string
+  increment!: number
+  indentLevel!: number
+  taskCounter!: number
+  context!: string | null
+  summary?: boolean
+  task?: string
+  settings!: LoggerSettings
+
+  printWarnings!: (task?: string) => void
+  printErrors!: (task?: string) => void
+  indent!: () => string
+  incrementIndent!: () => void
+  decrementIndent!: () => void
+  incrementCounter!: () => void
+  decrementCounter!: () => void
+  bind!: () => void
+  notify!: (event: string, data: unknown) => void
+  warn!: (...args: unknown[]) => void
+  info!: (...args: unknown[]) => void
+  error!: (args: unknown) => void
+  debug!: () => void
+  trace!: () => void
+  notice!: (...args: unknown[]) => void
+  inspect!: (args: unknown) => void
+  printSummary!: (data: unknown) => void
+  configure!: () => void
+  printVersion!: (version: string) => void
+  registerSequence!: (state: unknown, command: string, sequence: string[]) => void
+  wrap!: (arr: string[], space: string) => string
+  decorate!: (args: unknown, ...props: string[]) => string
+  floatFormat!: (n: unknown) => string
+  counter!: () => string
+  getContext!: () => string
+  composeMessage!: (args: unknown[]) => string
+  reset!: () => void
 
   constructor() {
     super()
@@ -54,8 +110,8 @@ class Logger extends Timer {
     this.boringOutput = Logger.defaults.boringOutput
     this.command = Logger.defaults.command
     this.consoleWidth = Logger.defaults.consoleWidth
-    this.errors = Logger.defaults.errors
-    this.warnings = Logger.defaults.warnings
+    this.errors = []
+    this.warnings = []
 
     this.taskWarnings = Logger.defaults.taskWarnings
     this.taskErrors = Logger.defaults.taskErrors
@@ -66,7 +122,6 @@ class Logger extends Timer {
     this.taskCounter = Logger.defaults.taskCounter
     this.context = Logger.defaults.context
 
-    // options
     this.settings = {
       quiet: false,
       verbose: false,
@@ -76,7 +131,6 @@ class Logger extends Timer {
       'log-level': Logger.defaults.logLevel,
     }
 
-    // bindings
     this.printWarnings = printWarnings.bind(this)
     this.printErrors = printErrors.bind(this)
 
@@ -112,25 +166,27 @@ class Logger extends Timer {
     this.composeMessage = composeMessage.bind(this)
     this.reset = reset.bind(this)
 
-    // parse args
-    const argv = process.argv.reduce((acc, curr) => {
-      const [k, v] = curr.split('=')
-      // eslint-disable-next-line no-restricted-globals
-      acc[k] = isUndefined(v) ? true : !isNaN(v) ? Number(v) : v
-      return acc
-    }, {})
+    const argv = process.argv.reduce<Record<string, string | number | boolean>>(
+      (acc, curr) => {
+        const [k, v] = curr.split('=')
+        acc[k] = v === undefined ? true : !isNaN(Number(v)) ? Number(v) : v
+        return acc
+      },
+      {}
+    )
 
     Object.keys(this.settings).forEach(a => {
       const opt = `--${a}`
-      if (has(argv, opt)) this.settings[a] = argv[opt]
+      if (Object.prototype.hasOwnProperty.call(argv, opt)) {
+        ;(this.settings as Record<string, unknown>)[a] = argv[opt]
+      }
     })
 
     this.configure()
     this.bind()
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  newLine() {
+  newLine(): void {
     process.stdout.write('\n')
   }
 }

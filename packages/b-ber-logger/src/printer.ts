@@ -1,7 +1,7 @@
 import util from 'util'
 
-function printNotices(type, task = 'b-ber') {
-  const notices = this[type]
+function printNotices(this: any, type: 'warnings' | 'errors', task = 'b-ber'): void {
+  const notices: unknown[] = this[type]
   const leader = type === 'warnings' ? 'WARN' : 'ERR!'
   const color = type === 'warnings' ? 'bgYellowBright' : 'bgRed'
 
@@ -19,10 +19,10 @@ function printNotices(type, task = 'b-ber') {
   if (this.logLevel > 2) process.stdout.write(message)
 }
 
-export function printWarnings(task) {
+export function printWarnings(this: any, task?: string): void {
   printNotices.call(this, 'warnings', task)
 }
 
-export function printErrors(task) {
+export function printErrors(this: any, task?: string): void {
   printNotices.call(this, 'errors', task)
 }

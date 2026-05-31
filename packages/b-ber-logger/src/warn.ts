@@ -1,11 +1,9 @@
-/* eslint-disable import/prefer-default-export */
-
 import util from 'util'
 
-export function warn(...args) {
+export function warn(this: any, ...args: unknown[]): void {
   if (this.logLevel < 2) return
 
-  let message
+  let message: string
   message = this.composeMessage(args)
   message =
     args[0] instanceof Error
@@ -28,18 +26,14 @@ export function warn(...args) {
   const formatted = util.format.apply(util, ['%s %s', prefix, message])
 
   this.taskWarnings += 1
-  this.warnings.push({
-    stack,
-    message,
-    formatted,
-  })
+  this.warnings.push({ stack, message, formatted })
 
   process.stdout.write(formatted)
   this.newLine()
 
   if (this.logLevel > 3) {
     process.stdout.write(
-      util.format.call(util, stack.replace(/^Error\s+/, 'Warning '))
+      util.format.call(util, stack!.replace(/^Error\s+/, 'Warning '))
     )
     this.newLine()
     if (this.logLevel > 4) this.newLine()

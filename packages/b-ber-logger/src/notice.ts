@@ -1,15 +1,5 @@
-/* eslint-disable import/prefer-default-export */
-
-export function registerSequence(state, command, sequence) {
-  if (this.logLevel < 1) return
-
-  const message = this.decorate(
-    this.composeMessage([
-      'Preparing to run',
-      sequence.length,
-      `task${sequence.length > 1 ? 's' : ''}`,
-    ])
-  )
+export function notice(this: any, ...args: unknown[]): void {
+  const message = this.decorate(this.composeMessage(args))
 
   let prefix = ''
 

@@ -1,7 +1,16 @@
 import { EventEmitter } from 'events'
 
+interface TaskTime {
+  taskName: string
+  beginHrtime: [number, number]
+  endHrtime: [number, number]
+  beginMs: string
+  endMs: string
+  totalMs: string
+}
+
 class Timer extends EventEmitter {
-  static dateFormattingOptions = {
+  static dateFormattingOptions: Intl.DateTimeFormatOptions = {
     day: 'numeric',
     month: 'short',
     year: 'numeric',
@@ -10,29 +19,27 @@ class Timer extends EventEmitter {
     second: 'numeric',
   }
 
-  static timeFormat(t) {
+  static timeFormat(t: [number, number]): string {
     const s = t[0] * 1000 + t[1] / 1000000
     return `${String(s).slice(0, -3)}ms`
   }
 
-  static dateFormat() {
+  static dateFormat(): string {
     return new Date(Date.now()).toLocaleString()
   }
 
+  taskBegin: [number, number] | null = null
+  taskEnd: [number, number] | null = null
+  sequenceBegin!: [number, number]
+  formattedStartDate!: string
+  taskTimes!: TaskTime[]
+
   constructor() {
     super()
-
-    this.taskBegin = null
-    this.taskEnd = null
-
-    this.sequenceBegin = null
-    this.formattedStartDate = null
-    this.taskTimes = null
-
     this.prepare()
   }
 
-  prepare() {
+  prepare(): void {
     this.sequenceBegin = process.hrtime()
     this.formattedStartDate = new Date().toLocaleDateString(
       'en-CA',
@@ -40,23 +47,22 @@ class Timer extends EventEmitter {
     )
     this.taskTimes = []
   }
-  start(task) {
+
+  start(task: string): void {
     this.taskBegin = process.hrtime(this.sequenceBegin)
     this.emit('begin', { task, begin: this.taskBegin })
   }
 
-  stop(task) {
+  stop(task: string): void {
     this.taskEnd = process.hrtime(this.sequenceBegin)
 
-    const beginMs = Timer.timeFormat(this.taskBegin)
+    const beginMs = Timer.timeFormat(this.taskBegin!)
     const endMs = Timer.timeFormat(this.taskEnd)
-    const totalMs = `${(
-      parseFloat(endMs, 10) - parseFloat(beginMs, 10)
-    ).toFixed(3)}ms`
+    const totalMs = `${(parseFloat(endMs) - parseFloat(beginMs)).toFixed(3)}ms`
 
-    const taskTime = {
+    const taskTime: TaskTime = {
       taskName: task,
-      beginHrtime: this.taskBegin,
+      beginHrtime: this.taskBegin!,
       endHrtime: this.taskEnd,
       beginMs,
       endMs,
@@ -64,11 +70,10 @@ class Timer extends EventEmitter {
     }
 
     this.taskTimes.push(taskTime)
-
     this.emit('end', { task, taskTime })
   }
 
-  done({ state }) {
+  done({ state }: { state: unknown }): void {
     const { taskTimes, formattedStartDate } = this
     const formattedEndDate = new Date().toLocaleDateString(
       'en-CA',
@@ -86,4 +91,5 @@ class Timer extends EventEmitter {
   }
 }
 
+export type { TaskTime }
 export default Timer

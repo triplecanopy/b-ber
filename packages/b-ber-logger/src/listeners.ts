@@ -1,9 +1,7 @@
-/* eslint-disable import/prefer-default-export */
-
 import util from 'util'
 
-export function bind() {
-  this.on('begin', ({ task }) => {
+export function bind(this: any): void {
+  this.on('begin', ({ task }: { task: string }) => {
     this.task = task
     this.taskWarnings = 0
     this.taskErrors = 0
@@ -13,31 +11,18 @@ export function bind() {
       return
     }
 
-    // const message = util.format.call(
-    //     util,
-    //     '%s%s %s %s %s',
-    //     this.indent(),
-    //     this.decorate('b-ber', 'whiteBright', 'bgBlack'),
-    //     this.decorate('info', 'green'),
-    //     this.decorate(task),
-    //     this.decorate('start'),
-    // )
-
-    // process.stdout.write(message)
-    // this.newLine()
-
     this.incrementIndent()
   })
 
-  this.on('end', ({ task, taskTime }) => {
+  this.on('end', ({ task, taskTime }: { task: string; taskTime: { totalMs: string } }) => {
     this.decrementIndent()
 
     if (this.logLevel < 3) return
 
     const { totalMs } = taskTime
 
-    process.stdout.clearLine()
-    process.stdout.cursorTo(0)
+    ;(process.stdout as NodeJS.WriteStream).clearLine(0)
+    ;(process.stdout as NodeJS.WriteStream).cursorTo(0)
 
     const message = util.format.call(
       util,
@@ -56,13 +41,13 @@ export function bind() {
     if (this.logLevel > 4) {
       const { stack } = new Error()
       process.stdout.write(
-        util.format.call(util, stack.replace(/^Error\s+/, 'Info '))
+        util.format.call(util, stack!.replace(/^Error\s+/, 'Info '))
       )
       this.newLine()
     }
   })
 
-  this.on('done', data => {
+  this.on('done', (data: unknown) => {
     if (this.logLevel < 1) return
 
     const message = util.format.call(

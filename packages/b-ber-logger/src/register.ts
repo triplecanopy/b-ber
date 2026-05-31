@@ -1,8 +1,13 @@
-/* eslint-disable import/prefer-default-export */
+export function registerSequence(this: any, _state: unknown, _command: string, sequence: string[]): void {
+  if (this.logLevel < 1) return
 
-// same as info but always prints to log, i.e., log-level doesn't need to be set.
-export function notice(...args) {
-  const message = this.decorate(this.composeMessage(args))
+  const message = this.decorate(
+    this.composeMessage([
+      'Preparing to run',
+      sequence.length,
+      `task${sequence.length > 1 ? 's' : ''}`,
+    ])
+  )
 
   let prefix = ''
 

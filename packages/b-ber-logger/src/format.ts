@@ -1,9 +1,9 @@
 import util from 'util'
 import chalk from 'chalk'
 
-export function wrap(arr, space) {
+export function wrap(this: any, arr: string[], space: string): string {
   return arr
-    .reduce((acc, curr) => {
+    .reduce((acc: string, curr: string) => {
       const a = acc.split('\n')
       const l = a[a.length - 1].length
       return acc.concat(
@@ -13,8 +13,9 @@ export function wrap(arr, space) {
     .slice(0, -2)
 }
 
-export function floatFormat(n) {
-  const pows = {
+export function floatFormat(_n: unknown): string {
+  const n = Number(_n)
+  const pows: Record<number, { text: string; pow: number }> = {
     1: { text: 'B', pow: 0 },
     2: { text: 'B', pow: 0 },
     3: { text: 'B', pow: 0 },
@@ -35,17 +36,18 @@ export function floatFormat(n) {
   return str
 }
 
-export function decorate(_args, ...props) {
+export function decorate(this: any, _args: unknown, ...props: string[]): string {
   const args = _args && Array.isArray(_args) ? _args : [_args]
 
   let message = util.format.call(util, ...args)
 
   if (this.boringOutput === false) {
     for (let i = props.length - 1; i >= 0; i--) {
-      if (chalk[props[i]]) {
-        message = chalk[props[i]](message)
+      const chalkFn = (chalk as unknown as Record<string, ((s: string) => string) | undefined>)[props[i]]
+      if (chalkFn) {
+        message = chalkFn(message)
       } else {
-        message = chalk(message)
+        message = chalk`${message}`
       }
     }
   }
