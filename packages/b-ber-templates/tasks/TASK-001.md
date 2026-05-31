@@ -3,6 +3,7 @@
 **Status:** complete
 **Scope:** b-ber-templates
 **Priority:** low
+**GitHub Issue:** #460 — https://github.com/triplecanopy/b-ber/issues/460
 
 ## Description
 

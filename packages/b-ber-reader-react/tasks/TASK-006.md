@@ -3,6 +3,7 @@
 **Status:** complete
 **Phase:** Bug Fixes
 **Created:** 2026-04-06
+**GitHub Issue:** #466 — https://github.com/triplecanopy/b-ber/issues/466
 
 ## Description
 

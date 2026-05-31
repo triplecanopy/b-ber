@@ -3,6 +3,7 @@
 **Status:** complete
 **Phase:** Bug Fixes
 **Priority:** high
+**GitHub Issue:** #468 — https://github.com/triplecanopy/b-ber/issues/468
 
 ## Description
 
