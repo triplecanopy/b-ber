@@ -88,6 +88,7 @@ These tasks have no unmet dependencies:
 | TASK-009 | Convert b-ber-shapes-directives to TS          | `feat/ts-stage-1`     | TASK-008 complete                       |
 | TASK-011 | Convert b-ber-logger to TS                     | `feat/ts-stage-1`     | TASK-008 complete                       |
 | TASK-017 | Expand diagrams: tooling versions + cross-refs | `feat/upgrades`       | Living audit surface; TASK-016 complete |
+| TASK-021 | Research Lerna replacement / upgrade options   | `feat/upgrades`       | Low priority; no blockers               |
 
 ### Not started — blocked
 
