@@ -1,20 +1,32 @@
 import path from 'path'
-import has from 'lodash/has'
 import { exec } from 'child_process'
 import exists from 'command-exists'
 import log from '@canopycanopycanopy/b-ber-logger'
 
 const command = 'ebook-convert'
 
-const defaults = {
-  inputPath: null,
-  outputPath: null,
-  fileType: null, // any format supported by `ebook-convert`
-  fileName: new Date().toISOString().replace(/:/g, '-'),
-  flags: [],
+interface ConvertOptions {
+  inputPath: string
+  outputPath: string
+  fileType: string
+  fileName?: string
+  flags?: string[]
+  bookPath?: string
 }
 
-function checkForCalibre() {
+interface ConvertSettings extends ConvertOptions {
+  bookPath: string
+}
+
+const defaults = {
+  inputPath: '',
+  outputPath: '',
+  fileType: '', // any format supported by `ebook-convert`
+  fileName: new Date().toISOString().replace(/:/g, '-'),
+  flags: [] as string[],
+}
+
+function checkForCalibre(): Promise<void> {
   return new Promise((resolve, reject) => {
     exists(command, (err, ok) => {
       if (err || !ok) {
@@ -29,10 +41,10 @@ function checkForCalibre() {
   })
 }
 
-function convertDocument({ inputPath, bookPath, flags }) {
+function convertDocument({ inputPath, bookPath, flags }: ConvertSettings): Promise<void> {
   return new Promise((resolve, reject) => {
     exec(
-      `${command} ${inputPath} ${bookPath} ${flags.join(' ')}`,
+      `${command} ${inputPath} ${bookPath} ${(flags || []).join(' ')}`,
       { cwd: process.cwd() },
       (err, stdout, stderr) => {
         if (err) return reject(err)
@@ -44,19 +56,16 @@ function convertDocument({ inputPath, bookPath, flags }) {
   })
 }
 
-function convert(options) {
-  const props = ['inputPath', 'outputPath', 'fileType']
+function convert(options: ConvertOptions): Promise<unknown> {
+  const props: (keyof ConvertOptions)[] = ['inputPath', 'outputPath', 'fileType']
   props.forEach(prop => {
-    if (!has(options, prop)) {
+    if (!Object.prototype.hasOwnProperty.call(options, prop)) {
       throw new Error(`Missing required option [${prop}]`)
     }
   })
 
-  const settings = { ...defaults, ...options }
-  const bookName = `${settings.fileName}.${settings.fileType.replace(
-    /^\./,
-    ''
-  )}`
+  const settings: ConvertSettings = { ...defaults, ...options, bookPath: '' }
+  const bookName = `${settings.fileName}.${settings.fileType.replace(/^\./, '')}`
 
   settings.bookPath = `"${path.resolve(settings.outputPath, bookName)}"`
 

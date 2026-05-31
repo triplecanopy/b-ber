@@ -3,6 +3,7 @@
     { "path": "packages/b-ber-shapes-directives" },
     { "path": "packages/b-ber-shapes-dublin-core" },
     { "path": "packages/b-ber-shapes-sequences" },
-    { "path": "packages/b-ber-logger" }
+    { "path": "packages/b-ber-logger" },
+    { "path": "packages/b-ber-lib" }
   ]
 }

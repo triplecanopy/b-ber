@@ -3,8 +3,35 @@
 import path from 'path'
 import startCase from 'lodash/startCase'
 
+interface SpineItemOptions {
+  fileName: string
+  in_toc?: boolean
+  linear?: boolean
+  generated?: boolean
+  pageOrder?: number
+  buildType: string
+  nodes?: SpineItem[]
+  ref?: string | null
+  title?: string
+}
+
 class SpineItem {
-  static isNavigationDocument(fileName) {
+  fileName: string
+  pageOrder: number
+  in_toc: boolean
+  linear: boolean
+  generated: boolean
+  nodes: SpineItem[]
+  ref: string | null
+  title: string
+  relativePath: string
+  absolutePath: string
+  extension: string
+  name: string
+  remotePath: string
+  type: string
+
+  static isNavigationDocument(fileName: string): boolean {
     return fileName === 'toc' || fileName === 'nav'
   }
 
@@ -18,7 +45,7 @@ class SpineItem {
     nodes,
     ref,
     title,
-  }) {
+  }: SpineItemOptions) {
     // TODO: rename name baseName
     // TODO: fileName has an extension in some cases, other times not (only seen in inject/index.js so far). this needs to be verified
     // TODO: should contain separate fields for input and output name (i.e., .md and .xhtml)
@@ -49,5 +76,7 @@ class SpineItem {
     this.type = '' // frontmatter, backmatter, ec
   }
 }
+
+export type { SpineItemOptions }
 
 export default SpineItem

@@ -3,8 +3,30 @@
 import defaultsDeep from 'lodash/defaultsDeep'
 import cloneDeep from 'lodash/cloneDeep'
 
+export interface ConfigOptions {
+  env: string
+  src: string
+  dist: string
+  cache: boolean
+  ibooks_specified_fonts: boolean
+  theme: string
+  themes_directory: string
+  base_url: string
+  base_path: string
+  remote_url: string
+  reader_url: string
+  downloads: unknown[]
+  ui_options: Record<string, unknown>
+  private: boolean
+  ignore: unknown[]
+  autoprefixer_options: Record<string, unknown>
+  layout: string
+  group_footnotes: boolean
+  [key: string]: unknown
+}
+
 class Config {
-  defaultOptions = {
+  defaultOptions: ConfigOptions = {
     env: process.env.NODE_ENV || 'development',
     src: '_project',
     dist: 'project',
@@ -41,12 +63,13 @@ class Config {
     group_footnotes: true,
   }
 
-  constructor(options = {}) {
+  constructor(options: Partial<ConfigOptions> = {}) {
     // lodash.defaultsDeep mutates so we deepclone first
     const defaultOptionsClone = cloneDeep(this.defaultOptions)
     const optionsClone = cloneDeep(options)
 
-    return defaultsDeep(optionsClone, defaultOptionsClone)
+    // Config constructor returns a plain object via defaultsDeep rather than a class instance
+    return defaultsDeep(optionsClone, defaultOptionsClone) as unknown as Config // TODO: type this
   }
 }
 

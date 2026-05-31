@@ -1,7 +1,5 @@
 /* eslint-disable no-continue */
 import crypto from 'crypto'
-import isPlainObject from 'lodash/isPlainObject'
-import isArray from 'lodash/isArray'
 import find from 'lodash/find'
 import findIndex from 'lodash/findIndex'
 import set from 'lodash/set'
@@ -12,21 +10,24 @@ import remove from 'lodash/remove'
 import path from 'path'
 import fs from 'fs-extra'
 import mime from 'mime-types'
-import themeSerif from '@canopycanopycanopy/b-ber-theme-serif'
-import themeSans from '@canopycanopycanopy/b-ber-theme-sans'
 import log from '@canopycanopycanopy/b-ber-logger'
 import Yaml from './Yaml'
-import Config from './Config'
+import Config, { ConfigOptions } from './Config'
 import Spine from './Spine'
 
-const themes = {
-  'b-ber-theme-serif': themeSerif,
-  'b-ber-theme-sans': themeSans,
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type ThemeModule = any
+
+const themes: Record<string, ThemeModule> = {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  'b-ber-theme-serif': require('@canopycanopycanopy/b-ber-theme-serif'),
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  'b-ber-theme-sans': require('@canopycanopycanopy/b-ber-theme-sans'),
 }
 
-const randomHash = () => crypto.randomBytes(20).toString('hex')
+const randomHash = (): string => crypto.randomBytes(20).toString('hex')
 
-const skipInitialization = () => {
+const skipInitialization = (): boolean => {
   const { argv } = process
 
   // prettier-ignore
@@ -53,8 +54,12 @@ const DIST_DIR_JAVASCRIPTS = 'javascripts'
 const DIST_DIR_FONTS = 'fonts'
 const DIST_DIR_MEDIA = 'media'
 
+// TODO: type this — build settings are populated dynamically via loadBuildSettings
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type BuildSettings = Record<string, any>
+
 class State {
-  static get defaults() {
+  static get defaults(): { build: string; sequence: unknown[]; hash: string } {
     return {
       build: 'epub',
       sequence: [],
@@ -62,23 +67,24 @@ class State {
     }
   }
 
-  metadata = { json: () => [{}] } // mocks the YAML api
+  metadata: Yaml = { json: () => [{}] } as unknown as Yaml // mocks the YAML api
 
-  theme = {}
+  theme: ThemeModule = {}
 
-  video = []
+  video: string[] = []
 
-  audio = []
+  audio: string[] = []
 
-  media = {}
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  media: any = {}
 
   build = 'epub'
 
-  sequence = []
+  sequence: unknown[] = []
 
-  hash = randomHash()
+  hash: string = randomHash()
 
-  builds = {
+  builds: Record<string, BuildSettings> = {
     sample: {},
     epub: {},
     mobi: {},
@@ -87,129 +93,133 @@ class State {
     reader: {},
   }
 
-  get spine() {
+  config!: ConfigOptions
+
+  version!: string
+
+  get spine(): Spine {
     return this.builds[this.build].spine
   }
 
-  set spine(val) {
+  set spine(val: Spine) {
     this.builds[this.build].spine = val
   }
 
-  get guide() {
+  get guide(): unknown[] {
     return this.builds[this.build].guide
   }
 
-  set guide(val) {
+  set guide(val: unknown[]) {
     this.builds[this.build].guide = val
   }
 
-  get figures() {
+  get figures(): unknown[] {
     return this.builds[this.build].figures
   }
 
-  set figures(val) {
+  set figures(val: unknown[]) {
     this.builds[this.build].figures = val
   }
 
-  get footnotes() {
+  get footnotes(): unknown[] {
     return this.builds[this.build].footnotes
   }
 
-  set footnotes(val) {
+  set footnotes(val: unknown[]) {
     this.builds[this.build].footnotes = val
   }
 
-  get cursor() {
+  get cursor(): unknown[] {
     return this.builds[this.build].cursor
   }
 
-  set cursor(val) {
+  set cursor(val: unknown[]) {
     this.builds[this.build].cursor = val
   }
 
-  get toc() {
+  get toc(): unknown[] {
     return this.builds[this.build].toc
   }
 
-  set toc(val) {
+  set toc(val: unknown[]) {
     this.builds[this.build].toc = val
   }
 
-  get remoteAssets() {
+  get remoteAssets(): unknown[] {
     return this.builds[this.build].remoteAssets
   }
 
-  set remoteAssets(val) {
+  set remoteAssets(val: unknown[]) {
     this.builds[this.build].remoteAssets = val
   }
 
-  get loi() {
+  get loi(): unknown[] {
     return this.builds[this.build].loi
   }
 
-  set loi(val) {
+  set loi(val: unknown[]) {
     this.builds[this.build].loi = val
   }
 
-  get srcDir() {
-    return this.config.src
+  get srcDir(): string {
+    return this.config.src as string
   }
 
-  set srcDir(val) {
+  set srcDir(val: string) {
     this.config.src = val
   }
 
-  get distDir() {
+  get distDir(): string {
     if (this.build && this.builds && this.builds[this.build]) {
-      return this.builds[this.build].dist
+      return this.builds[this.build].dist as string
     }
-    return this.config.dist
+    return this.config.dist as string
   }
 
-  set distDir(val) {
+  set distDir(val: string) {
     this.config.dist = val
   }
 
   // eslint-disable-next-line class-methods-use-this
-  get env() {
+  get env(): string {
     return process.env.NODE_ENV || 'development'
   }
 
-  set env(val) {
+  set env(val: string) {
     this.config.env = val
   }
 
   src = {
-    root: (...args) => path.join(this.srcDir, ...args),
-    images: (...args) => path.join(this.srcDir, SRC_DIR_IMAGES, ...args),
-    markdown: (...args) => path.join(this.srcDir, SRC_DIR_MARKDOWN, ...args),
-    stylesheets: (...args) =>
+    root: (...args: string[]): string => path.join(this.srcDir, ...args),
+    images: (...args: string[]): string => path.join(this.srcDir, SRC_DIR_IMAGES, ...args),
+    markdown: (...args: string[]): string => path.join(this.srcDir, SRC_DIR_MARKDOWN, ...args),
+    stylesheets: (...args: string[]): string =>
       path.join(this.srcDir, SRC_DIR_STYLESHEETS, ...args),
-    javascripts: (...args) =>
+    javascripts: (...args: string[]): string =>
       path.join(this.srcDir, SRC_DIR_JAVASCRIPTS, ...args),
-    fonts: (...args) => path.join(this.srcDir, SRC_DIR_FONTS, ...args),
-    media: (...args) => path.join(this.srcDir, SRC_DIR_MEDIA, ...args),
+    fonts: (...args: string[]): string => path.join(this.srcDir, SRC_DIR_FONTS, ...args),
+    media: (...args: string[]): string => path.join(this.srcDir, SRC_DIR_MEDIA, ...args),
   }
 
   dist = {
-    root: (...args) => path.join(this.distDir, ...args),
-    ops: (...args) => path.join(this.distDir, DIST_DIR_OPS, ...args),
-    text: (...args) =>
+    root: (...args: string[]): string => path.join(this.distDir, ...args),
+    ops: (...args: string[]): string => path.join(this.distDir, DIST_DIR_OPS, ...args),
+    text: (...args: string[]): string =>
       path.join(this.distDir, DIST_DIR_OPS, DIST_DIR_TEXT, ...args),
-    images: (...args) =>
+    images: (...args: string[]): string =>
       path.join(this.distDir, DIST_DIR_OPS, DIST_DIR_IMAGES, ...args),
-    stylesheets: (...args) =>
+    stylesheets: (...args: string[]): string =>
       path.join(this.distDir, DIST_DIR_OPS, DIST_DIR_STYLESHEETS, ...args),
-    javascripts: (...args) =>
+    javascripts: (...args: string[]): string =>
       path.join(this.distDir, DIST_DIR_OPS, DIST_DIR_JAVASCRIPTS, ...args),
-    fonts: (...args) =>
+    fonts: (...args: string[]): string =>
       path.join(this.distDir, DIST_DIR_OPS, DIST_DIR_FONTS, ...args),
-    media: (...args) =>
+    media: (...args: string[]): string =>
       path.join(this.distDir, DIST_DIR_OPS, DIST_DIR_MEDIA, ...args),
   }
 
   constructor() {
-    let version
+    let version: string
 
     // for testing, since our directory structure is different in dist
     try {
@@ -218,7 +228,7 @@ class State {
       ;({ version } = fs.readJSONSync(require.resolve('../package.json')))
     }
 
-    set(this, 'version', version)
+    set(this, 'version', version!)
     set(this, 'config', new Config())
 
     this.reset()
@@ -229,18 +239,18 @@ class State {
     this.loadTheme()
   }
 
-  reset = () => {
+  reset = (): void => {
     Object.entries(State.defaults).forEach(([key, val]) => set(this, key, val))
     this.loadConfig()
   }
 
-  add = (prop, value) => {
+  add = (prop: string, value: unknown): void => {
     const prevValue = get(this, prop)
 
-    if (isArray(prevValue)) {
+    if (Array.isArray(prevValue)) {
       set(this, prop, [...prevValue, value])
-    } else if (isPlainObject(prevValue)) {
-      set(this, prop, { ...prevValue, value })
+    } else if (typeof prevValue === 'object' && prevValue !== null && !Array.isArray(prevValue)) {
+      set(this, prop, { ...(prevValue as Record<string, unknown>), value })
     } else if (typeof prevValue === 'string') {
       set(this, prop, `${prevValue}${value}`)
     } else {
@@ -248,47 +258,50 @@ class State {
     }
   }
 
-  remove = (prop, value) => {
+  remove = (prop: string, value: unknown): void => {
     const prevValue = get(this, prop)
 
-    if (isArray(prevValue)) {
+    if (Array.isArray(prevValue)) {
       const arr = [...prevValue]
-      remove(arr, value)
+      remove(arr, value as Parameters<typeof remove>[1])
       set(this, prop, arr)
-    } else if (isPlainObject(prevValue)) {
-      const { [value]: _, ...rest } = prevValue // eslint-disable-line no-unused-vars
+    } else if (typeof prevValue === 'object' && prevValue !== null && !Array.isArray(prevValue)) {
+      const key = value as string
+      const { [key]: _, ...rest } = prevValue as Record<string, unknown> // eslint-disable-line no-unused-vars
       set(this, prop, rest)
     } else {
       log.error(`Cannot remove [${value}] from [state.${prop}]`)
     }
   }
 
-  merge = (prop, value) => {
+  merge = (prop: string, value: unknown): void => {
     const oldValue = get(this, prop)
     set(this, prop, merge(oldValue, value))
   }
 
-  update = (prop, val) => {
+  update = (prop: string, val: unknown): void => {
     set(this, prop, val)
   }
 
-  has = prop => {
+  has = (prop: string): boolean => {
     return has(this, prop)
   }
 
-  contains = (coll, value) => this.indexOf(coll, value) > -1
+  contains = (coll: string, value: unknown): boolean => this.indexOf(coll, value) > -1
 
-  find = (coll, pred) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  find = (coll: string, pred: any): unknown => {
     const collection = get(this, coll)
     return find(collection, pred)
   }
 
-  indexOf = (coll, pred) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  indexOf = (coll: string, pred: any): number => {
     const collection = get(this, coll)
     return findIndex(collection, pred)
   }
 
-  loadConfig = () => {
+  loadConfig = (): void => {
     if (!fs.existsSync(path.resolve('config.yml'))) return
 
     const config = new Yaml('config')
@@ -296,34 +309,34 @@ class State {
 
     // not necessary right now to pass around a YAWN instance since we'er
     // not writing back to config.yml, but may be necessary at some point
-    set(this, 'config', new Config(config.json()))
+    set(this, 'config', new Config(config.json() as Partial<ConfigOptions>))
   }
 
-  loadMetadata = () => {
-    const fpath = path.resolve(this.config.src, 'metadata.yml')
+  loadMetadata = (): void => {
+    const fpath = path.resolve(this.config.src as string, 'metadata.yml')
     if (!fs.existsSync(fpath)) return
 
     set(this, 'metadata', new Yaml('metadata'))
     this.metadata.load(fpath)
   }
 
-  loadMedia = () => {
-    const fpath = path.resolve(this.config.src, 'media.yml')
+  loadMedia = (): void => {
+    const fpath = path.resolve(this.config.src as string, 'media.yml')
     if (!fs.existsSync(fpath)) return
 
-    let media = new Yaml('media')
-    media.load(fpath)
-    media = media.json()
+    const mediaYaml = new Yaml('media')
+    mediaYaml.load(fpath)
+    const media = mediaYaml.json()
 
     set(this, 'media', media)
   }
 
-  loadTheme = () => {
+  loadTheme = (): void => {
     // Ensure themes dir exists unless running `new` command, as it's the
     // only command that's run outside of a project directory
     if (skipInitialization()) return
 
-    const userThemesPath = path.resolve(this.config.themes_directory)
+    const userThemesPath = path.resolve(this.config.themes_directory as string)
 
     fs.ensureDirSync(userThemesPath)
 
@@ -334,7 +347,7 @@ class State {
     const cwdArr = cwd.split('/')
     const modulePaths = new Set([...module.paths])
 
-    let cwdPath
+    let cwdPath: string
 
     // Add modules paths that reference the current b-ber project
     do {
@@ -344,10 +357,12 @@ class State {
       module.paths.push(cwdPath)
     } while (cwdArr.pop())
 
+    const themeName = this.config.theme as string
+
     // Theme is set, using a built-in theme
-    if (themes[this.config.theme]) {
-      set(this, 'theme', themes[this.config.theme])
-      log.info(`Loaded theme [${this.config.theme}]`)
+    if (themes[themeName]) {
+      set(this, 'theme', themes[themeName])
+      log.info(`Loaded theme [${themeName}]`)
 
       return
     }
@@ -355,36 +370,37 @@ class State {
     // Possibly a user defined theme, or one installed with npm
     try {
       // eslint-disable-next-line global-require, import/no-dynamic-require
-      set(this, 'theme', require(this.config.theme))
-      log.info(`Loaded theme [${this.config.theme}]`)
+      set(this, 'theme', require(themeName))
+      log.info(`Loaded theme [${themeName}]`)
     } catch (err) {
-      log.warn(`There was an error during require [${this.config.theme}]`)
+      log.warn(`There was an error during require [${themeName}]`)
       log.warn('Using default theme [b-ber-theme-serif]')
-      log.warn(err.message)
+      log.warn((err as Error).message)
 
       // Error loading theme, set to default
       set(this, 'theme', themes['b-ber-theme-serif'])
     }
   }
 
-  loadAudioVideo = () => {
+  loadAudioVideo = (): void => {
     if (skipInitialization()) return
 
-    const mediaPath = path.resolve(this.config.src, '_media')
+    const mediaPath = path.resolve(this.config.src as string, '_media')
     fs.ensureDirSync(mediaPath)
 
     const media = fs.readdirSync(mediaPath)
-    const video = media.filter(a => /^video/.test(mime.lookup(a)))
-    const audio = media.filter(a => /^audio/.test(mime.lookup(a)))
+    const video = media.filter(a => /^video/.test(mime.lookup(a) as string))
+    const audio = media.filter(a => /^audio/.test(mime.lookup(a) as string))
 
     set(this, 'video', video)
     set(this, 'audio', audio)
   }
 
-  loadBuildSettings = type => {
-    if (skipInitialization()) return
+  loadBuildSettings = (type: string): BuildSettings | undefined => {
+    if (skipInitialization()) return undefined
 
-    const { src, dist } = this.config
+    const src = this.config.src as string
+    const dist = this.config.dist as string
     const projectDir = path.resolve(src)
 
     if (!fs.existsSync(projectDir))
@@ -402,7 +418,7 @@ class State {
     const spine = new Spine({ src, buildType: type, navigationConfigFile })
 
     // Build-specific config. gets merged into base config during build step
-    const config = this.config[type] ? { ...this.config[type] } : {}
+    const config = this.config[type] ? { ...(this.config[type] as Record<string, unknown>) } : {}
 
     return {
       src,
@@ -419,7 +435,7 @@ class State {
     }
   }
 
-  loadBuilds = () => {
+  loadBuilds = (): void => {
     const builds = ['sample', 'epub', 'mobi', 'pdf', 'web', 'reader', 'xml']
     builds.forEach(build =>
       set(this.builds, build, this.loadBuildSettings(build))
@@ -427,4 +443,5 @@ class State {
   }
 }
 
+export type { State as StateClass }
 export default new State()

@@ -2,14 +2,11 @@
   "name": "@canopycanopycanopy/b-ber-lib",
   "version": "3.1.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "prepare:dist": "BABEL_ENV=production babel --config-file ../../babel.config.js -d ./ src/ --ignore **/__tests__/**",
-    "clean": "rimraf utils && rimraf ApplicationLoader.js GuideItem.js Config.js EbookConvert.js Html.js HtmlToXml.js ManifestItemProperties.js Spine.js SpineItem.js State.js Template.js Theme.js Url.js Yaml.js YamlAdaptor.js index.js",
-    "prepare": "npm run clean && npm run prepare:dist",
-    "build": "npm run prepare",
-    "watch": "BABEL_ENV=production babel --config-file ../../babel.config.js -d ./ src/ --watch src --ignore **/__tests__/**",
-    "start": "babel-node ./src/index.js --presets es2015,stage-0",
+    "build": "tsdown",
+    "typecheck": "tsc --noEmit",
     "test": "jest"
   },
   "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
@@ -18,16 +15,19 @@
     "access": "public"
   },
   "devDependencies": {
-    "@babel/cli": "^7.10.5",
-    "@babel/core": "^7.10.5",
-    "@babel/preset-env": "^7.10.4",
-    "browserslist": "^4.17.4",
+    "@swc/core": "^1.15.40",
+    "@swc/jest": "^0.2.39",
+    "@types/fs-extra": "^11.0.4",
+    "@types/js-yaml": "^3.12.10",
+    "@types/lodash": "^4.17.24",
+    "@types/mime-types": "^3.0.1",
+    "@types/vinyl": "^2.0.12",
     "jest": "^26.6.3",
-    "mock-fs": "^4.4.2",
-    "rimraf": "^2.7.1"
+    "rimraf": "^2.7.1",
+    "tsdown": "^0.22.1",
+    "typescript": "^6.0.3"
   },
   "dependencies": {
-    "@babel/runtime-corejs3": "^7.10.5",
     "@canopycanopycanopy/b-ber-logger": "3.1.0",
     "@canopycanopycanopy/b-ber-shapes-dublin-core": "3.1.0",
     "@canopycanopycanopy/b-ber-shapes-sequences": "3.1.0",
@@ -41,27 +41,12 @@
     "layouts": "^3.0.2",
     "lodash": "^4.17.21",
     "mime-types": "^2.1.24",
-    "tar": "^6.1.11",
     "vinyl": "^2.2.0",
     "yargs": "^13.3.0",
     "yawn-yaml": "1.5.0"
   },
   "files": [
-    "utils",
-    "Config.js",
-    "EbookConvert.js",
-    "GuideItem.js",
-    "Html.js",
-    "HtmlToXml.js",
-    "ManifestItemProperties.js",
-    "Spine.js",
-    "SpineItem.js",
-    "State.js",
-    "Template.js",
-    "Theme.js",
-    "Url.js",
-    "Yaml.js",
-    "YamlAdaptor.js"
+    "dist"
   ],
   "repository": {
     "type": "git",

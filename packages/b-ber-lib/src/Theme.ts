@@ -3,38 +3,44 @@
 
 import path from 'path'
 import fs from 'fs-extra'
-import { uniq } from 'lodash'
-import themeSerif from '@canopycanopycanopy/b-ber-theme-serif'
-import themeSans from '@canopycanopycanopy/b-ber-theme-sans'
+import uniq from 'lodash/uniq'
 import log from '@canopycanopycanopy/b-ber-logger'
 import YamlAdaptor from './YamlAdaptor'
 import state from './State'
 import { safeWrite } from './utils'
 
-const defaultThemes = {
-  'b-ber-theme-serif': themeSerif,
-  'b-ber-theme-sans': themeSans,
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type ThemeModule = any
+
+const defaultThemes: Record<string, ThemeModule> = {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  'b-ber-theme-serif': require('@canopycanopycanopy/b-ber-theme-serif'),
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  'b-ber-theme-sans': require('@canopycanopycanopy/b-ber-theme-sans'),
 }
 
 // get any themes installed via npm.
-const getVendorThemes = () => {
+const getVendorThemes = (): string[] => {
   const packageJSON = path.resolve('package.json')
   if (!fs.existsSync(packageJSON)) return []
 
-  let themes = []
-  let { dependencies, devDependencies } = fs.readJSONSync(packageJSON)
-  dependencies = dependencies ? Object.keys(dependencies) : []
-  devDependencies = devDependencies ? Object.keys(devDependencies) : []
+  let themes: string[] = []
+  let { dependencies, devDependencies } = fs.readJSONSync(packageJSON) as {
+    dependencies?: Record<string, string>
+    devDependencies?: Record<string, string>
+  }
+  const deps = dependencies ? Object.keys(dependencies) : []
+  const devDeps = devDependencies ? Object.keys(devDependencies) : []
 
-  themes = themes.concat(dependencies, devDependencies)
+  themes = themes.concat(deps, devDeps)
   themes = themes.filter(name => /^b-ber-theme/.test(name))
 
   return themes
 }
 
 // gets themes from the project/themes dir
-const getUserThemes = () => {
-  const dir = path.resolve(state.config.themes_directory)
+const getUserThemes = (): string[] => {
+  const dir = path.resolve(state.config.themes_directory as string)
 
   if (!fs.existsSync(dir)) {
     log.warn(`Themes directory [${path.basename(dir)}] does not exist`)
@@ -44,7 +50,7 @@ const getUserThemes = () => {
   return fs
     .readdirSync(dir)
     .reduce(
-      (acc, curr) =>
+      (acc: string[], curr: string) =>
         fs.lstatSync(path.resolve(dir, curr)).isDirectory()
           ? acc.concat(curr)
           : acc,
@@ -52,11 +58,11 @@ const getUserThemes = () => {
     )
 }
 
-const getThemeList = (themes, current = '') => {
+const getThemeList = (themes: string[], current = ''): { text: string; duplicates: string[] } => {
   const themes_ = uniq(themes)
-  const duplicates = []
+  const duplicates: string[] = []
   const text = themes_
-    .reduce((acc, curr) => {
+    .reduce((acc: string, curr: string) => {
       let curr_ = `${current === curr ? '✓' : '○'} ${curr}`
       if (themes.indexOf(curr) !== themes.lastIndexOf(curr)) {
         duplicates.push(curr)
@@ -70,8 +76,8 @@ const getThemeList = (themes, current = '') => {
   return { text, duplicates }
 }
 
-const getThemes = () => {
-  const current = state.config.theme ? state.config.theme : ''
+const getThemes = (): { current: string; themes: string[] } => {
+  const current = state.config.theme ? (state.config.theme as string) : ''
   const userThemes = getUserThemes()
   const vendorThemes = getVendorThemes()
   const themes = [...Object.keys(defaultThemes), ...userThemes, ...vendorThemes]
@@ -79,12 +85,12 @@ const getThemes = () => {
   return { current, themes }
 }
 
-const createProjectThemeDirectory = name =>
+const createProjectThemeDirectory = (name: string): Promise<unknown> =>
   fs
-    .mkdirp(path.resolve(state.config.src, '_stylesheets', name))
+    .mkdirp(path.resolve(state.config.src as string, '_stylesheets', name))
     .catch(log.error)
 
-const copyThemeAssets = theme => {
+const copyThemeAssets = (theme: ThemeModule): Promise<unknown> => {
   const themePath = path.dirname(theme.entry)
   const themeSettings = path.join(themePath, '_settings.scss')
   const settingsPath = path.resolve(
@@ -98,10 +104,10 @@ const copyThemeAssets = theme => {
 
   return fs
     .copy(themeSettings, settingsPath, { overwrite: false })
-    .then(safeWrite(overridesPath, ''))
+    .then(() => safeWrite(overridesPath, ''))
     .then(() => {
       if (!theme.fonts.length) return
-      const promises = theme.fonts.map(font => {
+      const promises = theme.fonts.map((font: string) => {
         const fontPath = path.join(themePath, 'fonts', font)
         return fs.copy(fontPath, path.join(fontsPath, font), {
           overwrite: false,
@@ -111,7 +117,7 @@ const copyThemeAssets = theme => {
     })
     .then(() => {
       if (!theme.images.length) return
-      const promises = theme.images.map(image => {
+      const promises = theme.images.map((image: string) => {
         const imagePath = path.join(themePath, 'images', image)
         return fs.copy(imagePath, path.join(imagesPath, image), {
           overwrite: false,
@@ -121,9 +127,9 @@ const copyThemeAssets = theme => {
     })
 }
 
-const updateConfig = name => {
+const updateConfig = (name: string): Promise<void> => {
   const configPath = path.resolve('config.yml')
-  const config = YamlAdaptor.load(configPath)
+  const config = YamlAdaptor.load(configPath) as Record<string, unknown>
 
   config.theme = name
 
@@ -132,7 +138,7 @@ const updateConfig = name => {
 }
 
 class Theme {
-  static list = () => {
+  static list = (): void => {
     const { current, themes } = getThemes()
     const { text, duplicates } = getThemeList(themes, current)
 
@@ -147,14 +153,14 @@ class Theme {
     }
   }
 
-  static set = (name, force = false) => {
-    let theme
+  static set = (name: string, force = false): Promise<unknown> => {
+    let theme: ThemeModule
 
     const cwd = process.cwd()
     const cwdArr = cwd.split('/')
     const modulePaths = new Set([...module.paths])
 
-    let cwdPath
+    let cwdPath: string
 
     // Add modules paths that reference the current b-ber project
     do {

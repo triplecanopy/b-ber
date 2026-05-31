@@ -1,26 +1,35 @@
 import fs from 'fs-extra'
 import mime from 'mime-types'
-import has from 'lodash/has'
 import { terms, elements } from '@canopycanopycanopy/b-ber-shapes-dublin-core'
+
+interface ManifestFile {
+  absolutePath: string
+  name: string
+}
+
+interface DCMetaEntry {
+  term?: string
+  [key: string]: unknown
+}
 
 // Class to detect XML media-type properties based on the content of XHTML documents
 class ManifestItemProperties {
   static HTMLMimeTypes = ['text/html', 'application/xhtml+xml']
 
   // Detect if a file is an (X)HTML document
-  static isHTML(file) {
+  static isHTML(file: ManifestFile): boolean {
     return ManifestItemProperties.HTMLMimeTypes.includes(
-      mime.lookup(file.absolutePath)
+      mime.lookup(file.absolutePath) as string
     )
   }
 
   // Detect if a file is an ePub navigation document
-  static isNav(file) {
+  static isNav(file: ManifestFile): boolean {
     return ManifestItemProperties.isHTML(file) && /^toc\./.test(file.name)
   }
 
   // Detect if an XHTML file contains JavaScript
-  static isScripted(file) {
+  static isScripted(file: ManifestFile): boolean {
     if (!ManifestItemProperties.isHTML(file)) return false
 
     // TODO: fixme; we need to check if the toc.xhtml is scripted, but it
@@ -35,24 +44,24 @@ class ManifestItemProperties {
   }
 
   // Detect if an XHTML file contains SVG
-  static isSVG(file) {
+  static isSVG(file: ManifestFile): boolean {
     if (!ManifestItemProperties.isHTML(file)) return false
     const contents = fs.readFileSync(file.absolutePath, 'utf8')
     return contents.match(/<svg/) !== null
   }
 
   // Detect if a term is a Dublin Core `element`
-  static isDCElement(data) {
-    return has(data, 'term') && elements.indexOf(data.term) > -1
+  static isDCElement(data: DCMetaEntry): boolean {
+    return Object.prototype.hasOwnProperty.call(data, 'term') && elements.indexOf(data.term as string) > -1
   }
 
   // Detect if a term is a Dublin Core `term`
-  static isDCTerm(data) {
-    return has(data, 'term') && terms.indexOf(data.term) > -1
+  static isDCTerm(data: DCMetaEntry): boolean {
+    return Object.prototype.hasOwnProperty.call(data, 'term') && terms.indexOf(data.term as string) > -1
   }
 
   // Detect if an XHTML file contains remote resources
-  static hasRemoteResources(file) {
+  static hasRemoteResources(file: ManifestFile): boolean {
     if (!ManifestItemProperties.isHTML(file)) return false
 
     const contents = fs.readFileSync(file.absolutePath, 'utf8')
@@ -60,8 +69,8 @@ class ManifestItemProperties {
   }
 
   // Test if an XHTML file is a navigation document, contains JavaScript or SVG
-  static testHTML(file) {
-    const props = []
+  static testHTML(file: ManifestFile): string[] {
+    const props: string[] = []
     if (ManifestItemProperties.isNav(file)) props.push('nav')
     if (ManifestItemProperties.isScripted(file)) props.push('scripted')
     if (ManifestItemProperties.isSVG(file)) props.push('svg')
@@ -73,7 +82,7 @@ class ManifestItemProperties {
   }
 
   // Test if an object contains Dublin Core `term`s or `element`s
-  static testMeta(data) {
+  static testMeta(data: DCMetaEntry): { term: boolean; element: boolean } {
     return {
       term: ManifestItemProperties.isDCTerm(data),
       element: ManifestItemProperties.isDCElement(data),

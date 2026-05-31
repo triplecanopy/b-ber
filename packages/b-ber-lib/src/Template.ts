@@ -2,7 +2,7 @@ import File from 'vinyl'
 import renderLayouts from 'layouts'
 
 class Template {
-  static render = (contents, template) =>
+  static render = (contents: string, template: string): string =>
     renderLayouts(
       new File({
         path: '.Template',
@@ -10,7 +10,7 @@ class Template {
         contents: Buffer.from(contents),
       }),
       { template }
-    ).contents.toString()
+    ).contents!.toString()
 }
 
 export default Template

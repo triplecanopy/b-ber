@@ -4,24 +4,37 @@ import find from 'lodash/find'
 import uniq from 'lodash/uniq'
 import log from '@canopycanopycanopy/b-ber-logger'
 import findIndex from 'lodash/findIndex'
-// import ffprobe from 'ffprobe'
-// import ffprobeStatic from 'ffprobe-static'
 import mime from 'mime-types'
 import Url from '../Url'
 import state from '../State'
 
+interface EnsureOptions {
+  files?: Array<{ absolutePath: string; content: string }>
+  dirs?: string[]
+  prefix?: string
+}
+
+interface UnsupportedInlineOptions {
+  id: string
+  commentStart: string
+  commentEnd: string
+  attrString: string
+  mediaType: string
+  poster: string
+}
+
 // Get a file's relative path to the OPS
-export const opsPath = (fpath, base) =>
+export const opsPath = (fpath: string, base: string): string =>
   fpath.replace(new RegExp(`^${base}${path.sep}OPS${path.sep}?`), '')
 
 // https://www.w3.org/TR/xml-names/#Conformance
-export const fileId = str => `_${str.replace(/[^a-zA-Z0-9_-]/g, '_')}`
+export const fileId = (str: string): string => `_${str.replace(/[^a-zA-Z0-9_-]/g, '_')}`
 
 // Determine an image's orientation
-export const getImageOrientation = (w, h) => {
+export const getImageOrientation = (w: number, h: number): string | null => {
   // assign image class based on w:h ratio
   const widthToHeight = w / h
-  let imageType = null
+  let imageType: string | null = null
 
   if (widthToHeight < 0.61) imageType = 'portrait-high'
   if (widthToHeight >= 0.61 && widthToHeight < 1) imageType = 'portrait'
@@ -30,18 +43,6 @@ export const getImageOrientation = (w, h) => {
   return imageType
 }
 
-// const getAspectRatioClassName = (key = '16:9') =>
-//     ({ '4:3': 'video--4x3', '16:9': 'video--16x9', '21:9': 'video--21x9' }[key])
-
-// export const getVideoAspectRatio = async filePath => {
-//     if (!filePath) return getAspectRatioClassName()
-
-//     const { streams } = await ffprobe(filePath, { path: ffprobeStatic.path })
-//     if (!streams) return getAspectRatioClassName()
-//     const { display_aspect_ratio: aspectRatio } = streams
-//     return getAspectRatioClassName(aspectRatio)
-// }
-
 // TODO: the whole figures/generated pages/user-configurable YAML thing should
 // be worked out better. one reason is below, where we need the title of a
 // generated page, but since metadata is attached in the frontmatter YAML of an
@@ -49,28 +50,30 @@ export const getImageOrientation = (w, h) => {
 // @issue: https://github.com/triplecanopy/b-ber/issues/208
 //
 // this is provisional, will just cause more confusion in the future
-export const getTitle = page => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const getTitle = (page: any): string => {
   if (page.name === 'figures-titlepage') return 'Figures'
-  const meta = state.spine.frontMatter.get(page.name)
-  return meta && meta.title ? meta.title : page.title || page.name
+  const meta = state.spine.frontMatter.get(page.name) as Record<string, unknown> | undefined
+  return meta && meta.title ? (meta.title as string) : page.title || page.name
 }
 
-export const getBookMetadata = term => {
-  const entry = find(state.metadata.json(), { term })
-  if (entry && entry.value) return entry.value
+export const getBookMetadata = (term: string): string => {
+  const entry = find(state.metadata.json() as unknown[], { term }) as Record<string, unknown> | undefined
+  if (entry && entry.value) return entry.value as string
   log.warn(`Could not find metadata value for ${term}`)
   return ''
 }
 
-export const safeWrite = (dest, data) =>
+export const safeWrite = (dest: string, data: string): Promise<void> =>
   fs.existsSync(dest) ? Promise.resolve() : fs.writeFile(dest, data)
 
-export const fail = (_msg, _err, yargs) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const fail = (_msg: unknown, _err: unknown, yargs: any): void => {
   yargs.showHelp()
   process.exit(0)
 }
 
-const ensureDirs = (dirs, prefix) => {
+const ensureDirs = (dirs: string[], prefix: string): Promise<unknown[]> => {
   const cwd = process.cwd()
   const dirs_ = uniq(
     [
@@ -88,7 +91,10 @@ const ensureDirs = (dirs, prefix) => {
   return Promise.all(dirs_)
 }
 
-const ensureFiles = (files, prefix) => {
+const ensureFiles = (
+  files: Array<{ absolutePath: string; content: string }>,
+  prefix: string
+): Promise<unknown[]> => {
   const files_ = [
     {
       absolutePath: path.resolve(prefix, '_project', 'toc.yml'),
@@ -98,7 +104,7 @@ const ensureFiles = (files, prefix) => {
     .filter(({ absolutePath }) => findIndex(files, { absolutePath }) < 0)
     .concat(files)
     .reduce(
-      (acc, curr) =>
+      (acc: Promise<void>[], curr) =>
         fs.existsSync(curr.absolutePath)
           ? acc
           : acc.concat(fs.writeFile(curr.absolutePath, curr.content)),
@@ -108,20 +114,20 @@ const ensureFiles = (files, prefix) => {
 }
 
 // make sure all necessary files and directories exist
-export const ensure = ({ files = [], dirs = [], prefix = '' } = {}) =>
+export const ensure = ({ files = [], dirs = [], prefix = '' }: EnsureOptions = {}): Promise<unknown> =>
   ensureDirs(dirs, prefix)
     .then(() => ensureFiles(files, prefix))
     .catch(log.error)
 
-const trimLeadingSlash = s => s.replace(/^\//, '')
+const trimLeadingSlash = (s: string): string => s.replace(/^\//, '')
 
-export const resolveIntersectingUrl = (u, p) => {
-  let url
+export const resolveIntersectingUrl = (u: string, p: string): string => {
+  let url: URL
 
   try {
     url = new URL(u)
   } catch (err) {
-    log.warn(`${err.message}: "${u}"`)
+    log.warn(`${(err as Error).message}: "${u}"`)
     return u
   }
 
@@ -136,7 +142,7 @@ export const resolveIntersectingUrl = (u, p) => {
   }
 
   // Find indices where to slice arrays
-  let intersectionIndices = []
+  let intersectionIndices: number[] = []
   for (let i = 0; i < urlParts.length; i++) {
     for (let j = 0; j < pathParts.length; j++) {
       if (urlParts[i] === pathParts[j]) {
@@ -158,7 +164,7 @@ export const resolveIntersectingUrl = (u, p) => {
   return url.href
 }
 
-const webpubManifestResource = base => file => {
+const webpubManifestResource = (base: string) => (file: string): { href: string; type: string | false } => {
   const href = resolveIntersectingUrl(base, file)
 
   return {
@@ -167,7 +173,7 @@ const webpubManifestResource = base => file => {
   }
 }
 
-const webpubManifestReadingOrderItem = base => ({ title, file }) => {
+const webpubManifestReadingOrderItem = (base: string) => ({ title, file }: { title: string; file: string }): { href: string; title: string; type: string } => {
   const href = resolveIntersectingUrl(base, file)
 
   return {
@@ -178,18 +184,20 @@ const webpubManifestReadingOrderItem = base => ({ title, file }) => {
 }
 
 // https://github.com/readium/webpub-manifest
-export const generateWebpubManifest = files => {
-  const remoteURL = Url.trimSlashes(state.config.remote_url)
+export const generateWebpubManifest = (files: string[]): Record<string, unknown> => {
+  const remoteURL = Url.trimSlashes(state.config.remote_url as string)
 
   // Build a map to sort the files according to the position in the spine
   const fileMap = new Map(files.map(f => [path.basename(f), f]))
 
   // Create the items for the manifest's reading order
-  const readingOrderItems = state.spine.flattened.reduce((acc, curr) => {
-    const file = fileMap.get(`${curr.fileName}.xhtml`)
-
-    return !file ? acc : acc.concat({ file, title: curr.title })
-  }, [])
+  const readingOrderItems = state.spine.flattened.reduce(
+    (acc: Array<{ file: string; title: string }>, curr) => {
+      const file = fileMap.get(`${(curr as { fileName: string }).fileName}.xhtml`)
+      return !file ? acc : acc.concat({ file, title: (curr as { title: string }).title })
+    },
+    []
+  )
 
   const readingOrder = readingOrderItems.map(
     webpubManifestReadingOrderItem(remoteURL)
@@ -204,11 +212,11 @@ export const generateWebpubManifest = files => {
 
     metadata: {
       '@type': 'http://schema.org/Book',
-      title: getBookMetadata('title', state),
-      author: getBookMetadata('creator', state),
-      identifier: getBookMetadata('identifier', state),
-      language: getBookMetadata('language', state),
-      publisher: getBookMetadata('publisher', state),
+      title: getBookMetadata('title'),
+      author: getBookMetadata('creator'),
+      identifier: getBookMetadata('identifier'),
+      language: getBookMetadata('language'),
+      publisher: getBookMetadata('publisher'),
       modified: new Date().toISOString(),
     },
 
@@ -218,8 +226,6 @@ export const generateWebpubManifest = files => {
         href: `${remoteURL}/${trimLeadingSlash(state.distDir)}/manifest.json`,
         type: 'application/webpub+json',
       },
-      // { rel: 'alternate', href: `${remoteURL}/publication.epub`, type: 'application/epub+zip' },
-      // { rel: 'search', href: `${remoteURL}/search{?query}`, type: 'text/html', templated: true },
     ],
 
     readingOrder,
@@ -230,7 +236,7 @@ export const generateWebpubManifest = files => {
 }
 
 // b-ber-grammar-* utilities
-export const validatePosterImage = (asset, type) => {
+export const validatePosterImage = (asset: string, type: string): string => {
   const assetPath = state.src.images(asset)
 
   if (!fs.existsSync(assetPath)) {
@@ -240,13 +246,13 @@ export const validatePosterImage = (asset, type) => {
   return asset
 }
 
-export const renderPosterImage = poster =>
+export const renderPosterImage = (poster: string): string =>
   poster ? `<img src="${poster}" alt="Poster Image"/>` : ''
 
-export const renderCaption = (caption, mediaType) =>
+export const renderCaption = (caption: string, mediaType: string): string =>
   caption ? `<p class="caption caption__${mediaType}">${caption}</p>` : ''
 
-export const getMediaType = type => {
+export const getMediaType = (type: string): string => {
   const index = type.indexOf('-')
   return index > -1 ? type.substring(0, index) : type
 }
@@ -262,7 +268,7 @@ export function createUnsupportedInline({
   attrString,
   mediaType,
   poster,
-}) {
+}: UnsupportedInlineOptions): string {
   return `
     ${commentStart}
     <section class="${mediaType} figure__large figure__inline">
@@ -278,7 +284,8 @@ export function createUnsupportedInline({
     ${commentEnd}`
 }
 
-export function ensureSource(obj, type, fileName, lineNumber) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function ensureSource(obj: any, type: string, fileName: string, lineNumber: number): void {
   if (!obj.source) {
     log.error(
       `Directive [${type}] requires a [source] attribute at [${fileName}:${lineNumber}]`
@@ -286,7 +293,8 @@ export function ensureSource(obj, type, fileName, lineNumber) {
   }
 }
 
-export function ensurePoster(obj, type) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function ensurePoster(obj: any, type: string): void {
   if (!obj.poster) return
 
   validatePosterImage(obj.poster, type)
@@ -295,7 +303,8 @@ export function ensurePoster(obj, type) {
 }
 
 // Add mediaType to classes
-export function ensureSupportedClassNames(obj, supported) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function ensureSupportedClassNames(obj: any, supported: (build: string) => boolean): void {
   // eslint-disable-next-line no-param-reassign
   obj.classes += ` embed ${supported(state.build) ? '' : 'un'}supported`
 }
