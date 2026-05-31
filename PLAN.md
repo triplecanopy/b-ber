@@ -61,16 +61,18 @@ been created yet; implementation tasks (TASK-006+) have not started.
 
 ### Completed (research)
 
-| Task     | Title                                     | Branch            |
-| -------- | ----------------------------------------- | ----------------- |
-| TASK-001 | Research webpack replacement (chose Vite) | `feat/upgrades`   |
-| TASK-002 | Plan JS→TS migration strategy             | `feat/upgrades`   |
-| TASK-003 | Research type consolidation               | `feat/upgrades`   |
-| TASK-005 | Research Biome migration (chose Option B) | `feat/upgrades`   |
-| TASK-016 | Circular import audit + arch risk catalog | `feat/upgrades`   |
-| TASK-019 | Pre-TS migration cleanup                  | `feat/upgrades`   |
-| TASK-008 | Set up shared TypeScript infrastructure   | `feat/ts-stage-1` |
-| TASK-009 | Convert b-ber-shapes-directives to TS     | `feat/ts-stage-1` |
+| Task     | Title                                              | Branch            |
+| -------- | -------------------------------------------------- | ----------------- |
+| TASK-001 | Research webpack replacement (chose Vite)          | `feat/upgrades`   |
+| TASK-002 | Plan JS→TS migration strategy                      | `feat/upgrades`   |
+| TASK-003 | Research type consolidation                        | `feat/upgrades`   |
+| TASK-005 | Research Biome migration (chose Option B)          | `feat/upgrades`   |
+| TASK-016 | Circular import audit + arch risk catalog          | `feat/upgrades`   |
+| TASK-019 | Pre-TS migration cleanup                           | `feat/upgrades`   |
+| TASK-008 | Set up shared TypeScript infrastructure            | `feat/ts-stage-1` |
+| TASK-009 | Convert b-ber-shapes-directives to TS              | `feat/ts-stage-1` |
+| TASK-010 | Convert b-ber-shapes-dublin-core + sequences to TS | `feat/ts-stage-1` |
+| TASK-011 | Convert b-ber-logger to TS                         | `feat/ts-stage-1` |
 
 ### In progress
 
@@ -83,22 +85,20 @@ been created yet; implementation tasks (TASK-006+) have not started.
 
 These tasks have no unmet dependencies:
 
-| Task     | Title                                              | Branch                | Notes                                   |
-| -------- | -------------------------------------------------- | --------------------- | --------------------------------------- |
-| TASK-006 | Migrate b-ber-reader-react webpack → Vite          | `feat/vite-migration` | Independent of test coverage            |
-| TASK-010 | Convert b-ber-shapes-dublin-core + sequences to TS | `feat/ts-stage-1`     | TASK-009 complete                       |
-| TASK-011 | Convert b-ber-logger to TS                         | `feat/ts-stage-1`     | TASK-008 complete                       |
-| TASK-017 | Expand diagrams: tooling versions + cross-refs     | `feat/upgrades`       | Living audit surface; TASK-016 complete |
-| TASK-021 | Research Lerna replacement / upgrade options       | `feat/upgrades`       | Low priority; no blockers               |
+| Task     | Title                                          | Branch                | Notes                                   |
+| -------- | ---------------------------------------------- | --------------------- | --------------------------------------- |
+| TASK-006 | Migrate b-ber-reader-react webpack → Vite      | `feat/vite-migration` | Independent of test coverage            |
+| TASK-017 | Expand diagrams: tooling versions + cross-refs | `feat/upgrades`       | Living audit surface; TASK-016 complete |
+| TASK-021 | Research Lerna replacement / upgrade options   | `feat/upgrades`       | Low priority; no blockers               |
 
 ### Not started — blocked
 
-| Task     | Title                        | Waiting on                     |
-| -------- | ---------------------------- | ------------------------------ |
-| TASK-007 | Migrate b-ber-reader to Vite | TASK-006                       |
-| TASK-012 | Convert b-ber-lib to TS      | TASK-009, TASK-010, TASK-011   |
-| TASK-013 | Node.js modernization        | TASK-012 (TS stage 1 complete) |
-| TASK-015 | Biome migration              | TASK-006 (same branch)         |
+| Task     | Title                        | Waiting on                                             |
+| -------- | ---------------------------- | ------------------------------------------------------ |
+| TASK-007 | Migrate b-ber-reader to Vite | TASK-006                                               |
+| TASK-012 | Convert b-ber-lib to TS      | TASK-009 ✓, TASK-010 ✓, TASK-011 ✓ — **can begin now** |
+| TASK-013 | Node.js modernization        | TASK-012 (TS stage 1 complete)                         |
+| TASK-015 | Biome migration              | TASK-006 (same branch)                                 |
 
 ---
 
@@ -167,12 +167,12 @@ In priority order:
    lodash per-method packages replaced with `lodash/x` subpath imports across 12 packages.
 3. **Start TASK-006** (Vite migration): no blockers, medium priority. Branch:
    `feat/vite-migration`. Also picks up TASK-015 (Biome) and TASK-007 (reader).
-4. **TASK-009 complete**: `b-ber-shapes-directives` converted to TypeScript. `dist/index.js` +
-   `dist/index.d.ts` emitted by tsdown. Validator ambient stub deleted (replaced by real
-   `.d.ts`). Root `jest.config.js` updated to use `@swc/jest` for all files (`.jt`sx?);
-   `.swcrc` updated with `"tsx": true`. Test baseline: 37 failing (all pre-existing bootstrap
-   failures), 47 passing — 1 net improvement (validator now passes). Start TASK-010
-   (shapes-dublin-core + sequences TS) and TASK-011 (logger TS) — both unblocked.
+4. **TASK-010 + TASK-011 complete**: All three remaining shapes packages and logger
+   converted to TypeScript in parallel. dist/index.js + dist/index.d.ts emitted by
+   tsdown for each. lodash removed from logger (replaced with native equivalents).
+   Root tsconfig.json now references all four TS packages. Root jest.config.js stale
+   coverage exclusion paths cleaned up. Test baseline: 37 failed (pre-existing bootstrap),
+   47 passed — unchanged. **TASK-012 (b-ber-lib TS) is now unblocked.**
 5. **Complete TASK-014** (GitHub issues): create retroactive issues for closed
    tasks and open issues for in-progress/upcoming tasks.
 
