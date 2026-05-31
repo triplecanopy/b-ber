@@ -51,7 +51,6 @@ module.exports = {
   testPathIgnorePatterns: ['__mocks__'],
   testURL: 'http://localhost/',
   transform: {
-    '^.+\\.tsx?$': 'ts-jest',
-    '^.+\\.jsx?$': 'babel-jest',
+    '^.+\\.[jt]sx?$': '@swc/jest',
   },
 }

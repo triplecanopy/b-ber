@@ -1,3 +1,3 @@
 {
-  "references": []
+  "references": [{ "path": "packages/b-ber-shapes-directives" }]
 }

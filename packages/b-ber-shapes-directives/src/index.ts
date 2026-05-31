@@ -20,7 +20,7 @@ export const SECONDARY_INLINE_DIRECTIVE_FENCE_CLOSE = `${INLINE_DIRECTIVE_MARKER
   SECONDARY_INLINE_DIRECTIVE_MARKER_MIN_LENGTH
 )}`
 
-export const FRONTMATTER_DIRECTIVES = new Set([
+export const FRONTMATTER_DIRECTIVES: Set<string> = new Set([
   'frontmatter',
   'halftitlepage',
   'titlepage',
@@ -31,7 +31,7 @@ export const FRONTMATTER_DIRECTIVES = new Set([
   'acknowledgments',
 ])
 
-export const BODYMATTER_DIRECTIVES = new Set([
+export const BODYMATTER_DIRECTIVES: Set<string> = new Set([
   'bodymatter',
   'introduction',
   'prologue',
@@ -47,7 +47,7 @@ export const BODYMATTER_DIRECTIVES = new Set([
   'article',
 ])
 
-export const BACKMATTER_DIRECTIVES = new Set([
+export const BACKMATTER_DIRECTIVES: Set<string> = new Set([
   'backmatter',
   'afterword',
   'loi',
@@ -58,7 +58,7 @@ export const BACKMATTER_DIRECTIVES = new Set([
   'colophon',
 ])
 
-export const INLINE_DIRECTIVES = new Set([
+export const INLINE_DIRECTIVES: Set<string> = new Set([
   'figure',
   'figure-inline',
   'logo',
@@ -74,7 +74,7 @@ export const INLINE_DIRECTIVES = new Set([
   'media-inline',
 ])
 
-export const MISC_DIRECTIVES = new Set([
+export const MISC_DIRECTIVES: Set<string> = new Set([
   'pullquote',
   'blockquote',
   'dialogue',
@@ -84,7 +84,7 @@ export const MISC_DIRECTIVES = new Set([
 ])
 
 // belonging to the epub-vocab, but still in draft. see https://idpf.github.io/epub-vocabs/structure/
-export const DRAFT_DIRECTIVES = new Set([
+export const DRAFT_DIRECTIVES: Set<string> = new Set([
   'abstract',
   'toc-brief',
   'credits',
@@ -118,7 +118,7 @@ export const DRAFT_DIRECTIVES = new Set([
   'credit',
 ])
 
-export const DEPRECATED_DIRECTIVES = new Set([
+export const DEPRECATED_DIRECTIVES: Set<string> = new Set([
   'subchapter',
   'help',
   'marginalia',
@@ -131,20 +131,19 @@ export const DEPRECATED_DIRECTIVES = new Set([
   'annoref',
 ])
 
-
-export const BLOCK_DIRECTIVES = new Set([
+export const BLOCK_DIRECTIVES: Set<string> = new Set([
   ...FRONTMATTER_DIRECTIVES,
   ...BODYMATTER_DIRECTIVES,
   ...BACKMATTER_DIRECTIVES,
 ])
 
-export const ALL_DIRECTIVES = new Set([
+export const ALL_DIRECTIVES: Set<string> = new Set([
   ...BLOCK_DIRECTIVES,
   ...INLINE_DIRECTIVES,
   ...MISC_DIRECTIVES,
 ])
 
-export const htmlAudioVideoAttributes = new Set([
+export const htmlAudioVideoAttributes: Set<string> = new Set([
   'autoplay',
   'loop',
   'controls',
@@ -158,7 +157,7 @@ export const htmlAudioVideoAttributes = new Set([
   'crossorigin',
 ])
 
-export const htmlIframeAttributes = new Set([
+export const htmlIframeAttributes: Set<string> = new Set([
   'title',
   'width',
   'height',
@@ -174,7 +173,7 @@ export const htmlIframeAttributes = new Set([
 
 // Attributes that are used in the vimeo and vimeo-inline directives and passed
 // to vimeo via query string
-export const vimeoEmbedAttributes = new Set([
+export const vimeoEmbedAttributes: Set<string> = new Set([
   'autopause',
   'autoplay',
   'background',
@@ -196,14 +195,14 @@ export const vimeoEmbedAttributes = new Set([
 ])
 
 // b-ber attributes for audio, video and vimeo directives
-export const bBerAudioVideoAttributes = new Set([
+export const bBerAudioVideoAttributes: Set<string> = new Set([
   'classes',
   'source',
   'poster',
   'aspectratio',
 ])
 
-export const SUPPORTED_ATTRIBUTES = {
+export const SUPPORTED_ATTRIBUTES: Record<string, Set<string>> = {
   block: new Set([
     'title',
     'classes',
@@ -213,39 +212,39 @@ export const SUPPORTED_ATTRIBUTES = {
     'alt',
     'caption',
     'classes',
-    'source'
+    'source',
   ]),
 
   'figure-inline': new Set([
     'alt',
     'caption',
     'classes',
-    'source'
+    'source',
   ]),
 
   logo: new Set([
     'alt',
-    'source'
+    'source',
   ]),
 
   video: new Set([
     ...htmlAudioVideoAttributes,
-    ...bBerAudioVideoAttributes
+    ...bBerAudioVideoAttributes,
   ]),
 
   'video-inline': new Set([
     ...htmlAudioVideoAttributes,
-    ...bBerAudioVideoAttributes
+    ...bBerAudioVideoAttributes,
   ]),
 
   audio: new Set([
     ...htmlAudioVideoAttributes,
-    ...bBerAudioVideoAttributes
+    ...bBerAudioVideoAttributes,
   ]),
 
   'audio-inline': new Set([
     ...htmlAudioVideoAttributes,
-    ...bBerAudioVideoAttributes
+    ...bBerAudioVideoAttributes,
   ]),
 
   vimeo: new Set([
@@ -257,7 +256,6 @@ export const SUPPORTED_ATTRIBUTES = {
     ...vimeoEmbedAttributes,
     ...bBerAudioVideoAttributes,
   ]),
-
 
   iframe: new Set([
     ...htmlIframeAttributes,
@@ -302,7 +300,7 @@ export const SUPPORTED_ATTRIBUTES = {
   ]),
 }
 
-export const DIRECTIVES_REQUIRING_ALT_TAG = new Set([
+export const DIRECTIVES_REQUIRING_ALT_TAG: Set<string> = new Set([
   'figure',
   'figure-inline',
   'logo',

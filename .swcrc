@@ -1,6 +1,6 @@
 {
   "jsc": {
-    "parser": { "syntax": "typescript", "decorators": true },
+    "parser": { "syntax": "typescript", "tsx": true, "decorators": true },
     "target": "es2020",
     "transform": {
       "legacyDecorator": true,
