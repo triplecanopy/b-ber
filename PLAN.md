@@ -1,6 +1,6 @@
 # b-ber monorepo — Project Plan
 
-_Last updated: 2026-05-31_
+_Last updated: 2026-05-31 (TASK-012 complete)_
 
 ---
 
@@ -73,6 +73,7 @@ been created yet; implementation tasks (TASK-006+) have not started.
 | TASK-009 | Convert b-ber-shapes-directives to TS              | `feat/ts-stage-1` |
 | TASK-010 | Convert b-ber-shapes-dublin-core + sequences to TS | `feat/ts-stage-1` |
 | TASK-011 | Convert b-ber-logger to TS                         | `feat/ts-stage-1` |
+| TASK-012 | Convert b-ber-lib to TS                            | `feat/ts-stage-1` |
 
 ### In progress
 
@@ -93,12 +94,11 @@ These tasks have no unmet dependencies:
 
 ### Not started — blocked
 
-| Task     | Title                        | Waiting on                                             |
-| -------- | ---------------------------- | ------------------------------------------------------ |
-| TASK-007 | Migrate b-ber-reader to Vite | TASK-006                                               |
-| TASK-012 | Convert b-ber-lib to TS      | TASK-009 ✓, TASK-010 ✓, TASK-011 ✓ — **can begin now** |
-| TASK-013 | Node.js modernization        | TASK-012 (TS stage 1 complete)                         |
-| TASK-015 | Biome migration              | TASK-006 (same branch)                                 |
+| Task     | Title                        | Waiting on                     |
+| -------- | ---------------------------- | ------------------------------ |
+| TASK-007 | Migrate b-ber-reader to Vite | TASK-006                       |
+| TASK-013 | Node.js modernization        | TASK-012 ✓ — **can begin now** |
+| TASK-015 | Biome migration              | TASK-006 (same branch)         |
 
 ---
 
@@ -167,12 +167,12 @@ In priority order:
    lodash per-method packages replaced with `lodash/x` subpath imports across 12 packages.
 3. **Start TASK-006** (Vite migration): no blockers, medium priority. Branch:
    `feat/vite-migration`. Also picks up TASK-015 (Biome) and TASK-007 (reader).
-4. **TASK-010 + TASK-011 complete**: All three remaining shapes packages and logger
-   converted to TypeScript in parallel. dist/index.js + dist/index.d.ts emitted by
-   tsdown for each. lodash removed from logger (replaced with native equivalents).
-   Root tsconfig.json now references all four TS packages. Root jest.config.js stale
-   coverage exclusion paths cleaned up. Test baseline: 37 failed (pre-existing bootstrap),
-   47 passed — unchanged. **TASK-012 (b-ber-lib TS) is now unblocked.**
+4. **TASK-012 complete**: b-ber-lib converted to TypeScript. All 11 src/ files renamed
+   to .ts; ConfigOptions, SpineItemOptions, StateClass types exported; ambient declarations
+   for yawn-yaml/cjs, layouts, command-exists; @babel/runtime-corejs3 and tar removed;
+   @types/js-yaml@3, @types/fs-extra, @types/lodash, @types/mime-types, @types/vinyl added.
+   Root tsconfig.json now references all 5 TS packages. All 187 package tests pass.
+   **TypeScript Stage 1 is complete. TASK-013 (Node.js modernization) is now unblocked.**
 5. **Complete TASK-014** (GitHub issues): create retroactive issues for closed
    tasks and open issues for in-progress/upcoming tasks.
 
