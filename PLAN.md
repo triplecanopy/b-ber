@@ -1,6 +1,6 @@
 # b-ber monorepo — Project Plan
 
-_Last updated: 2026-05-30_
+_Last updated: 2026-05-31_
 
 ---
 
@@ -67,6 +67,7 @@ been created yet; implementation tasks (TASK-006+) have not started.
 | TASK-002 | Plan JS→TS migration strategy             | `feat/upgrades` |
 | TASK-003 | Research type consolidation               | `feat/upgrades` |
 | TASK-005 | Research Biome migration (chose Option B) | `feat/upgrades` |
+| TASK-016 | Circular import audit + arch risk catalog | `feat/upgrades` |
 
 ### In progress
 
@@ -79,12 +80,11 @@ been created yet; implementation tasks (TASK-006+) have not started.
 
 These tasks have no unmet dependencies:
 
-| Task     | Title                                            | Branch                | Notes                                     |
-| -------- | ------------------------------------------------ | --------------------- | ----------------------------------------- |
-| TASK-006 | Migrate b-ber-reader-react webpack → Vite        | `feat/vite-migration` | Independent of test coverage              |
-| TASK-008 | Set up shared TypeScript infrastructure          | `feat/ts-stage-1`     | Independent; prereq for TASK-009–012      |
-| TASK-016 | Detect and resolve circular imports + arch risks | `feat/upgrades`       | Run before TASK-008; low blast radius     |
-| TASK-017 | Expand diagrams: tooling versions + cross-refs   | `feat/upgrades`       | Living audit surface; pairs with TASK-016 |
+| Task     | Title                                          | Branch                | Notes                                   |
+| -------- | ---------------------------------------------- | --------------------- | --------------------------------------- |
+| TASK-006 | Migrate b-ber-reader-react webpack → Vite      | `feat/vite-migration` | Independent of test coverage            |
+| TASK-008 | Set up shared TypeScript infrastructure        | `feat/ts-stage-1`     | Independent; prereq for TASK-009–012    |
+| TASK-017 | Expand diagrams: tooling versions + cross-refs | `feat/upgrades`       | Living audit surface; TASK-016 complete |
 
 ### Not started — blocked
 
@@ -156,20 +156,23 @@ This is documented in packages/b-ber-tasks/tasks/TASK-001.open.md.
 
 In priority order:
 
-1. **TASK-004 coverage targets met**: All coverage targets are now met —
-   b-ber-lib 71%, grammar/parser packages ~60-97%, b-ber-markdown-renderer 83%,
-   b-ber-cli 65%, b-ber-logger 73%, b-ber-templates 96%. TASK-008 can now start.
-2. **TASK-016** (circular imports + arch risks): run madge, fix cycles, document structural
-   risks (mixed CJS/ESM, implicit deps, process.exit in logger, stale deps). Low blast radius,
-   high value before the TS migration.
+1. **TASK-016 complete**: 9 circular deps fixed (0 remain), stale deps catalogued, TS project
+   reference topology documented in TASK-016.md. Run `npm run check:circular` to verify at
+   any time.
+2. **Pre-TASK-008 cleanup** (do before starting the TS migration):
+   - Remove `tar` from `b-ber-grammar-renderer/package.json` (never imported)
+   - Remove `babel-cli@^6.26.0` from root `package.json` devDependencies (Babel 6 remnant)
+   - Convert `b-ber-parser-footnotes/src/index.js` from `module.exports` to ESM `export default`
+   - Consolidate `lodash.has` / `lodash.isundefined` deps to `lodash` subpath imports across grammar/parser packages
 3. **Start TASK-006** (Vite migration): no blockers, medium priority. Branch:
    `feat/vite-migration`. Also picks up TASK-015 (Biome) and TASK-007 (reader).
-4. **Start TASK-008** (TypeScript infra): gated on overall coverage ≥60%. Branch:
-   `feat/ts-stage-1`. Unlocks the entire TS migration chain. Build pipeline approach:
-   replace `babel-jest` with `@swc/jest` (drop-in, Rust-based, 10-20× faster);
-   replace Babel build step with `tsdown` (rolldown-based successor to tsup, tsup is
-   deprecated; handles `.d.ts` generation); add root `tsconfig.base.json` for `tsc --noEmit` type
-   checking only. Babel removed entirely after all packages are converted (post-TASK-012).
+4. **Start TASK-008** (TypeScript infra): all blockers clear. Branch: `feat/ts-stage-1`.
+   Unlocks the entire TS migration chain. Build pipeline approach: replace `babel-jest` with
+   `@swc/jest` (drop-in, Rust-based, 10-20× faster); replace Babel build step with `tsdown`
+   (rolldown-based successor to tsup, tsup is deprecated; handles `.d.ts` generation); add
+   root `tsconfig.base.json` for `tsc --noEmit` type checking only. Babel removed entirely
+   after all packages are converted (post-TASK-012). TS project reference order:
+   shapes → logger → lib → validator/templates → grammars/parsers → markdown-renderer → tasks → cli.
 5. **Complete TASK-014** (GitHub issues): create retroactive issues for closed
    tasks and open issues for in-progress/upcoming tasks.
 

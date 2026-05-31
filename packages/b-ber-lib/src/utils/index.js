@@ -7,7 +7,8 @@ import findIndex from 'lodash/findIndex'
 // import ffprobe from 'ffprobe'
 // import ffprobeStatic from 'ffprobe-static'
 import mime from 'mime-types'
-import { Url, State as state } from '..'
+import Url from '../Url'
+import state from '../State'
 
 // Get a file's relative path to the OPS
 export const opsPath = (fpath, base) =>

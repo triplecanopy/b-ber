@@ -33,7 +33,8 @@
     "deps:dedupe": "lernaupdate --dedupe",
     "reader:shim": "echo \"Adding shim for b-ber-reader...\" && cd packages/b-ber-reader && npm i",
     "browserlist:update": "npx browserslist@latest --update-db",
-    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0"
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
+    "check:circular": "madge --circular --extensions js,jsx packages/"
   },
   "lint-staged": {
     "*.{js,jsx}": [
@@ -119,6 +120,7 @@
     "lerna-update-wizard": "^1.1.2",
     "lint-staged": "^9.2.0",
     "lodash": "^4.17.21",
+    "madge": "^8.0.0",
     "material-icons": "^1.0.0",
     "mini-css-extract-plugin": "^1.6.2",
     "mock-fs": "^4.4.2",

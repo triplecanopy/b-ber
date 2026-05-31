@@ -1,12 +1,13 @@
 // Generates metadata, manifest, guide, and spine XML and writes to to `content.opf`
 
 import fs from 'fs-extra'
-import renderLayouts from 'layouts'
-import File from 'vinyl'
+import renderLayouts from 'layouts' // eslint-disable-line import/no-unresolved
+import File from 'vinyl' // eslint-disable-line import/no-unresolved
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
 import Pkg from '@canopycanopycanopy/b-ber-templates/Opf/Pkg'
-import { ManifestAndMetadata, Navigation } from '.'
+import ManifestAndMetadata from './ManifestAndMetadata'
+import Navigation from './Navigation'
 
 class Opf {
   static createOpf() {
