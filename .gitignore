@@ -3,4 +3,6 @@ node_modules
 npm-debug.log*
 lerna-debug.log
 /coverage
+**/coverage
+**/*.rej
 *.gypi
