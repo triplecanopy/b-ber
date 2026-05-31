@@ -173,6 +173,42 @@ Decisions, blockers, relevant context.
 - Update subtask checkboxes as work progresses — do not batch.
 - When complete: remove `.open` from filename.
 
+### Closed tasks
+
+Do not re-open or edit a task file once its status is set to `complete` and the
+`.open` suffix has been removed. Editing a closed task destroys the linear
+history of what was decided and when — that history is the main value of the
+task system.
+
+If work needs to happen after a task closes:
+
+- Open a **new task** that supersedes or extends the closed one, and reference
+  the original by ID in its Description.
+- Exception: minor factual corrections (wrong issue number, broken link,
+  obvious typo) are acceptable on closed tasks. Note the correction in the
+  task's Notes section so the change is visible.
+
+### Parent tasks
+
+For work that spans multiple tasks, will evolve over time, or has a dependency
+chain (e.g., a multi-stage migration, a large feature), create a **parent task**
+before opening any sub-tasks. The parent task is the single canonical source for
+the overall goal; sub-tasks are the units of execution.
+
+A parent task should:
+
+- Describe the overall goal and the approach at a level that does not require
+  reading the sub-tasks to understand the plan
+- List all sub-tasks with their IDs and one-line descriptions
+- Hold architecture diagrams, dependency topology, and branching strategy
+- Be updated as requirements shift — this is the one task file that grows over
+  time as the work evolves
+- Reference closed research or planning tasks (e.g. prior TASK-NNN) rather than
+  duplicating their content
+
+Sub-tasks reference the parent in their Notes section. When a sub-task
+completes, check it off in the parent task as well as closing the sub-task file.
+
 ---
 
 ## Commits
