@@ -20,6 +20,8 @@ Vite's native parsing — Biome's own parser replaces it cleanly at the same ste
 
 ## Subtasks
 
+### Install and configure Biome
+
 - [ ] Install `@biomejs/biome` at root; add a `biome.json`.
 - [ ] Run `npx @biomejs/biome migrate eslint` and `biome migrate prettier`
       to generate an initial `biome.json` from the current `.eslintrc.js`
@@ -30,20 +32,54 @@ Vite's native parsing — Biome's own parser replaces it cleanly at the same ste
   - `import/extensions: 'never'`: drop the rule — Vite handles this at
     the bundler level.
   - `max-statements-per-line`: drop — no direct Biome equivalent, low value.
+
+### Remove Prettier
+
+Biome handles JS/TS/JSON/CSS formatting. Prettier was also formatting SCSS,
+YAML, and Markdown (via `prettier "**/*.{md,scss,yaml,yml}"`). Biome does not
+support SCSS or YAML. Decision: drop automated CI formatting for those file
+types — let editors handle them. `.editorconfig` stays as the editor hint.
+
+- [ ] Delete `.prettierrc` (settings migrate to `biome.json` via `biome migrate prettier`)
+- [ ] Delete root `.prettierignore` — migrate ignore patterns into `biome.json`
+      `files.ignore` array. Patterns to carry over (not already covered by
+      Biome's defaults): the per-package dist/generated file lists in
+      `.prettierignore` (b-ber-shapes-\*, b-ber-templates, b-ber-lib/utils, etc.)
+- [ ] Delete `packages/b-ber-reader-react/.prettierignore`
+- [ ] Remove `prettier` devDependency from root `package.json`
+      (also removes: `eslint-config-prettier`, `eslint-plugin-prettier`)
+- [ ] Update npm scripts in root `package.json` — current state and replacement:
+
+  | Script         | Current                                   | Replace with                               |
+  | -------------- | ----------------------------------------- | ------------------------------------------ |
+  | `prettier`     | `prettier "**/*.{md,scss,yaml,yml}"`      | delete — Biome covers what matters         |
+  | `check:other`  | `npm run prettier -- --check`             | `biome format --check` (JS/TS/JSON only)   |
+  | `format:other` | `npm run prettier -- --write`             | `biome format --write`                     |
+  | `check:code`   | `eslint --ignore-path ... --fix`          | `biome check`                              |
+  | `format:code`  | same eslint call                          | `biome check --write`                      |
+  | `check`        | `npm-run-all -s check:code check:other`   | `biome check` (single command covers both) |
+  | `format`       | `npm-run-all -p format:code format:other` | `biome check --write`                      |
+
 - [ ] Update `lint-staged` in root `package.json`:
-  - Replace `eslint --ignore-path ... --fix` with `biome check --apply`
-  - Replace `prettier --write` with `biome format --write`
-- [ ] Delete all per-package `.eslintrc.js` files (all are single-line extends,
-      safe to remove once root `biome.json` exists).
-- [ ] Remove ESLint + Prettier devDependencies from root `package.json`:
+  - Replace `eslint --ignore-path .gitignore --ignore-path .prettierignore --fix`
+    with `biome check --apply`
+  - Replace `prettier --write` (on `*.{md,scss,yaml,yml,json}`) with
+    `biome format --write` — Biome will format JSON; SCSS/YAML/MD are no-ops
+    (Biome skips unsupported file types without error)
+
+### Remove ESLint
+
+- [ ] Delete all per-package `.eslintrc.js` files (all are single-line extends of
+      the root config — safe to remove once root `biome.json` is the authority).
+- [ ] Remove ESLint devDependencies from root `package.json`:
       `babel-eslint`, `eslint`, `eslint-config-airbnb`, `eslint-config-airbnb-base`,
       `eslint-config-prettier`, `eslint-plugin-babel`, `eslint-plugin-import`,
-      `eslint-plugin-jsx-a11y`, `eslint-plugin-prettier`, `eslint-plugin-react`,
-      `prettier`
+      `eslint-plugin-jsx-a11y`, `eslint-plugin-prettier`, `eslint-plugin-react`
       Also remove: `@typescript-eslint/eslint-plugin`, `@typescript-eslint/parser`
       (Biome handles TS natively, no plugins needed).
-- [ ] Remove per-package `.eslintignore` and `.prettierignore` files;
-      migrate ignore patterns into `biome.json`'s `files.ignore` array.
+
+### Finish up
+
 - [ ] Update root `AGENTS.md` Quality Gates section to reference `biome check`.
 - [ ] Confirm `npm test` passes and `biome check .` exits 0 from repo root.
 - [ ] Commit: `chore(monorepo): replace ESLint+Prettier with Biome`
