@@ -79,11 +79,12 @@ been created yet; implementation tasks (TASK-006+) have not started.
 
 These tasks have no unmet dependencies:
 
-| Task     | Title                                            | Branch                | Notes                                 |
-| -------- | ------------------------------------------------ | --------------------- | ------------------------------------- |
-| TASK-006 | Migrate b-ber-reader-react webpack → Vite        | `feat/vite-migration` | Independent of test coverage          |
-| TASK-008 | Set up shared TypeScript infrastructure          | `feat/ts-stage-1`     | Independent; prereq for TASK-009–012  |
-| TASK-016 | Detect and resolve circular imports + arch risks | `feat/upgrades`       | Run before TASK-008; low blast radius |
+| Task     | Title                                            | Branch                | Notes                                     |
+| -------- | ------------------------------------------------ | --------------------- | ----------------------------------------- |
+| TASK-006 | Migrate b-ber-reader-react webpack → Vite        | `feat/vite-migration` | Independent of test coverage              |
+| TASK-008 | Set up shared TypeScript infrastructure          | `feat/ts-stage-1`     | Independent; prereq for TASK-009–012      |
+| TASK-016 | Detect and resolve circular imports + arch risks | `feat/upgrades`       | Run before TASK-008; low blast radius     |
+| TASK-017 | Expand diagrams: tooling versions + cross-refs   | `feat/upgrades`       | Living audit surface; pairs with TASK-016 |
 
 ### Not started — blocked
 
