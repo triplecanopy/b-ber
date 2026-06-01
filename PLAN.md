@@ -99,6 +99,7 @@ These tasks have no unmet dependencies:
 | TASK-021 | Audit `--no-package-lock` in lerna bootstrap   | `feat/upgrades`       | Low priority; review alongside `--legacy-peer-deps`                                     |
 | TASK-022 | Automate circular dependency checks            | `feat/upgrades`       | Options: pre-commit hook, CI, or `npm test`; update extensions list once TS work starts |
 | TASK-023 | Research Lerna replacement / upgrade options   | `feat/upgrades`       | Low priority; no blockers                                                               |
+| TASK-033 | Evaluate code coverage tooling                 | `feat/upgrades`       | Istanbul incompatible with @swc/jest; audit V8 provider, Vitest coverage, orphaned pkgs |
 
 ### Not started — blocked
 
