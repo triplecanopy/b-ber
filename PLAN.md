@@ -80,11 +80,12 @@ been created yet; implementation tasks (TASK-006+) have not started.
 
 These tasks have no unmet dependencies:
 
-| Task     | Title                                          | Branch                | Notes                                   |
-| -------- | ---------------------------------------------- | --------------------- | --------------------------------------- |
-| TASK-006 | Migrate b-ber-reader-react webpack → Vite      | `feat/vite-migration` | Independent of test coverage            |
-| TASK-008 | Set up shared TypeScript infrastructure        | `feat/ts-stage-1`     | Independent; prereq for TASK-009–012    |
-| TASK-017 | Expand diagrams: tooling versions + cross-refs | `feat/upgrades`       | Living audit surface; TASK-016 complete |
+| Task     | Title                                          | Branch                | Notes                                               |
+| -------- | ---------------------------------------------- | --------------------- | --------------------------------------------------- |
+| TASK-006 | Migrate b-ber-reader-react webpack → Vite      | `feat/vite-migration` | Independent of test coverage                        |
+| TASK-008 | Set up shared TypeScript infrastructure        | `feat/ts-stage-1`     | Independent; prereq for TASK-009–012                |
+| TASK-017 | Expand diagrams: tooling versions + cross-refs | `feat/upgrades`       | Living audit surface; TASK-016 complete             |
+| TASK-021 | Audit `--no-package-lock` in lerna bootstrap   | `feat/upgrades`       | Low priority; review alongside `--legacy-peer-deps` |
 
 ### Not started — blocked
 

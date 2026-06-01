@@ -119,7 +119,7 @@
     "lerna-update-wizard": "^1.1.2",
     "lint-staged": "^9.2.0",
     "lodash": "^4.17.21",
-    "madge": "^8.0.0",
+    "madge": "^7.0.0",
     "material-icons": "^1.0.0",
     "mini-css-extract-plugin": "^1.6.2",
     "mock-fs": "^4.4.2",
@@ -166,6 +166,5 @@
     "webpack-remove-empty-scripts": "^1.0.1",
     "xml-js": "^1.6.2",
     "xmlhttprequest-ssl": "^2.0.0"
-  },
-  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+  }
 }
