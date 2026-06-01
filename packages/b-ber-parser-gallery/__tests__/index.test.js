@@ -3,12 +3,14 @@ import MarkdownIt from 'markdown-it'
 import { parseAttrs } from '@canopycanopycanopy/b-ber-grammar-attributes'
 import galleryPlugin from '../src'
 
-// Mock b-ber-lib/State — gallery reads _state[attrs.type] for media lookups
-jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
-  config: {},
-  audio: [],
-  video: [],
-  figures: [],
+// Mock b-ber-lib — gallery reads _state[attrs.type] for media lookups
+jest.mock('@canopycanopycanopy/b-ber-lib', () => ({
+  State: {
+    config: {},
+    audio: [],
+    video: [],
+    figures: [],
+  },
 }))
 
 // b-ber-grammar-attributes is symlinked in node_modules; mock the three helpers

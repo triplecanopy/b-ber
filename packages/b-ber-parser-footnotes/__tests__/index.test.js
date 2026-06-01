@@ -1,13 +1,15 @@
 import MarkdownIt from 'markdown-it'
 
-// Mock b-ber-lib/State before importing the plugin
-jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
-  /* eslint-disable camelcase */
-  config: {
-    group_footnotes: false,
+// Mock b-ber-lib before importing the plugin
+jest.mock('@canopycanopycanopy/b-ber-lib', () => ({
+  State: {
+    /* eslint-disable camelcase */
+    config: {
+      group_footnotes: false,
+    },
+    /* eslint-enable camelcase */
+    footnotes: [],
   },
-  /* eslint-enable camelcase */
-  footnotes: [],
 }))
 
 const footnotePlugin = require('../src').default

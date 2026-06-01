@@ -6,7 +6,8 @@ https://github.com//markdown-it/markdown-it-container
 MIT license
 */
 
-const containerPlugin = (md, name, options = {}) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const containerPlugin = (md: any, name: string, options: any = {}): void => {
   const minMarkers = options.minMarkers || 3
   const markerStr = options.marker || ':'
   const markerChar = markerStr.charCodeAt(0)
@@ -14,7 +15,7 @@ const containerPlugin = (md, name, options = {}) => {
   const { validateOpen, render } = options
   // const validateClose = options.validateClose
 
-  function container(state, startLine, endLine, silent) {
+  function container(state: any, startLine: number, endLine: number, silent: boolean): boolean {
     const lineNumber = startLine + 1
 
     let pos
@@ -40,19 +41,11 @@ const containerPlugin = (md, name, options = {}) => {
     const markup = state.src.slice(start, pos)
     const params = state.src.slice(pos, max)
 
-    if (
-      !validateOpen(
-        params,
-        lineNumber
-      ) /* && !validateClose(params, lineNumber)*/
-    ) {
-      return false
-    }
+    if (!validateOpen(params, lineNumber)) return false
     if (silent) return true // for testing validation
 
     nextLine = startLine
 
-    // look for closing block
     for (;;) {
       nextLine += 1
 
@@ -77,7 +70,7 @@ const containerPlugin = (md, name, options = {}) => {
     // this will prevent lazy continuations from ever going past our end marker
     state.lineMax = nextLine
 
-    token = state.push(`container_${name}_open`, 'div', 1)
+    token = state.push(`container_${name}_open`, 'section', 1)
     token.markup = markup
     token.block = true
     token.info = params
@@ -85,51 +78,14 @@ const containerPlugin = (md, name, options = {}) => {
 
     state.md.block.tokenize(state, startLine + 1, nextLine)
 
-    token = state.push(`container_${name}_close`, 'div', -1)
+    token = state.push(`container_${name}_close`, 'section', -1)
     token.markup = state.src.slice(start, pos)
     token.block = true
+    token.info = params
 
     state.parentType = oldParent
     state.lineMax = oldLineMax
     state.line = nextLine + (autoClosed ? 1 : 0)
-
-    // parse child tokens
-    // set a flag so that we don't render other directives' children which may use the same syntax
-    let childOfDialogue = false
-    state.tokens.forEach((t, i) => {
-      if (t.type === 'container_dialogue_open') childOfDialogue = true
-      if (t.type === 'container_dialogue_close') childOfDialogue = false
-
-      if (t.type === 'inline' && childOfDialogue) {
-        const matchedContent = t.content.match(/^(::\s?([^:]+?)\s?::)/)
-        if (matchedContent) {
-          const parent = state.tokens[i - 1]
-          if (parent.type === 'paragraph_open') {
-            parent.attrPush(['class', 'interlocutor-parent'])
-          }
-          t.content = t.content.replace(new RegExp(matchedContent[1]), '')
-          t.children.push(
-            {
-              type: 'inline',
-              attrs: [['class', 'interlocutor']],
-              tag: 'span',
-              nesting: 1,
-              block: false,
-            },
-            {
-              type: 'text',
-              block: false,
-              content: matchedContent[2],
-            },
-            {
-              type: 'inline',
-              tag: 'span',
-              nesting: -1,
-            }
-          )
-        }
-      }
-    })
 
     return true
   }

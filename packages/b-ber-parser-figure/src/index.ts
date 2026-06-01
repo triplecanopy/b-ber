@@ -2,14 +2,15 @@ import isUndefined from 'lodash/isUndefined'
 
 /* eslint-disable  no-param-reassign */
 
-const figurePlugin = (md, name, options = {}) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const figurePlugin = (md: any, name: string, options: any = {}): void => {
   const minMarkers = /*options.minMarkers || */ 3
   const markerStr = /*options.marker || */ ':'
   const markerChar = markerStr.charCodeAt(0)
   const markerLen = markerStr.length
   const { validate, render } = options
 
-  function container(state, startLine, endLine, silent) {
+  function container(state: any, startLine: number, endLine: number, silent: boolean): boolean {
     const start = state.bMarks[startLine] + state.tShift[startLine]
     const max = state.eMarks[startLine]
     let pos
@@ -48,14 +49,14 @@ const figurePlugin = (md, name, options = {}) => {
 
     const _capMarkerLen = minMarkers - 1
 
-    let _capStartPos
-    let _capEndPos
-    let _capEndLine
-    let _fastForward
+    let _capStartPos: number | undefined
+    let _capEndPos: number | undefined
+    let _capEndLine: number | undefined
+    let _fastForward: number | undefined
 
-    let _capBody
+    let _capBody: string | undefined
 
-    let _cursor
+    let _cursor: number
 
     for (;;) {
       // images can either be self-closing (i.e., they close when another

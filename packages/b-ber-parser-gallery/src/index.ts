@@ -7,7 +7,7 @@ MIT license
 */
 
 import path from 'path'
-import _state from '@canopycanopycanopy/b-ber-lib/State'
+import { State as _state } from '@canopycanopycanopy/b-ber-lib'
 import mime from 'mime-types'
 import {
   htmlId,
@@ -15,7 +15,7 @@ import {
   toAlias,
 } from '@canopycanopycanopy/b-ber-grammar-attributes'
 
-const addCaption = (md, t, attrs) => {
+const addCaption = (md: any, t: any, attrs: any): void => {
   if (!attrs.caption) return
 
   t.children.push(
@@ -50,7 +50,7 @@ const addCaption = (md, t, attrs) => {
   )
 }
 
-const createImageElement = (tok, attrs) => {
+const createImageElement = (tok: any, attrs: any): void => {
   tok.content = ''
   tok.children.push({
     type: 'inline',
@@ -64,20 +64,20 @@ const createImageElement = (tok, attrs) => {
   })
 }
 
-const createMediaElement = (tok, attrs) => {
-  const media = [..._state[attrs.type]]
-  const supportedMediaAttrs = {
+const createMediaElement = (tok: any, attrs: any): void => {
+  const media = [...(_state as any)[attrs.type]]
+  const supportedMediaAttrs: Record<string, string[]> = {
     audio: ['controls', 'loop'],
     video: ['controls', 'loop', 'fullscreen'],
   }
 
-  const sources = media.filter(a => toAlias(a) === attrs.source)
-  const mediaAttrs = [[`data-${attrs.type}`, htmlId(attrs.source)]]
+  const sources = media.filter((a: any) => toAlias(a) === attrs.source)
+  const mediaAttrs: [string, string][] = [[`data-${attrs.type}`, htmlId(attrs.source)]]
 
   if (attrs.poster) mediaAttrs.push(['poster', `../images/${attrs.poster}`])
 
   // add boolean attrs
-  supportedMediaAttrs[attrs.type].forEach(a => {
+  supportedMediaAttrs[attrs.type].forEach((a: string) => {
     if (attrs[a]) mediaAttrs.push([a, a])
   })
 
@@ -97,7 +97,7 @@ const createMediaElement = (tok, attrs) => {
     }
   )
 
-  sources.forEach(source => {
+  sources.forEach((source: any) => {
     tok.children.push({
       type: 'inline',
       tag: 'source',
@@ -133,14 +133,15 @@ const createMediaElement = (tok, attrs) => {
   )
 }
 
-const containerPlugin = (md, name, options = {}) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const containerPlugin = (md: any, name: string, options: any = {}): void => {
   const minMarkers = options.minMarkers || 3
   const markerStr = options.marker || ':'
   const markerChar = markerStr.charCodeAt(0)
   const markerLen = markerStr.length
   const { validateOpen, render } = options
 
-  function container(state, startLine, endLine, silent) {
+  function container(state: any, startLine: number, endLine: number, silent: boolean): boolean {
     const lineNumber = startLine + 1
 
     let pos
@@ -215,7 +216,7 @@ const containerPlugin = (md, name, options = {}) => {
     // parse child tokens
     // set a flag so that we don't render other directives' children which may use the same syntax
     let childOfGallery = false
-    state.tokens.forEach((tok, i) => {
+    state.tokens.forEach((tok: any, i: number) => {
       if (tok.type === 'container_gallery_open') childOfGallery = true
       if (tok.type === 'container_gallery_close') childOfGallery = false
 

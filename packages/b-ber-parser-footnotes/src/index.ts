@@ -2,7 +2,7 @@
 /* eslint-disable no-param-reassign,no-plusplus */
 
 import isUndefined from 'lodash/isUndefined'
-import bberState from '@canopycanopycanopy/b-ber-lib/State'
+import { State as bberState } from '@canopycanopycanopy/b-ber-lib'
 import Counter from './counter'
 
 /*
@@ -13,12 +13,12 @@ MIT license
 
 const counter = new Counter()
 
-function renderFootnoteAnchorName(tokens, idx, _options, env, _slf) {
+function renderFootnoteAnchorName(tokens: any, idx: number, _options: any, env: any, _slf: any): string {
   const n = Number(tokens[idx].meta.id + 1).toString()
   return typeof env.docId === 'string' ? `-${env.docId}-${n}` : ''
 }
 
-function renderFootnoteCaption(tokens, idx, _options, _env, _slf) {
+function renderFootnoteCaption(tokens: any, idx: number, _options: any, _env: any, _slf: any): number | string {
   let n
   if (!bberState.config.group_footnotes) {
     n = counter.listItemCounter(
@@ -32,14 +32,14 @@ function renderFootnoteCaption(tokens, idx, _options, _env, _slf) {
   return tokens[idx].meta.subId > 0 ? `${n}:${tokens[idx].meta.subId}` : n
 }
 
-function renderFootnoteRef(tokens, idx, options, env, slf) {
+function renderFootnoteRef(tokens: any, idx: number, options: any, env: any, slf: any): string {
   const caption = slf.rules.footnote_caption(tokens, idx, options, env, slf)
   const ref = counter.getRef()
 
   return `<a epub:type="noteref" class="footnote-ref" href="notes.xhtml#fn${ref}" id="fnref${ref}">${caption}</a>`
 }
 
-function renderFootnoteBlockOpen(/* tokens, idx, options */) {
+function renderFootnoteBlockOpen(/* tokens, idx, options */): string {
   const start = counter.listCounter(
     bberState.config.group_footnotes,
     bberState.footnotes.length
@@ -47,11 +47,11 @@ function renderFootnoteBlockOpen(/* tokens, idx, options */) {
   return `<ol class="footnotes" start="${start}">`
 }
 
-function renderFootnoteBlockClose() {
+function renderFootnoteBlockClose(): string {
   return '</ol>'
 }
 
-function renderFootnoteOpen(tokens, idx, _options, env, _self) {
+function renderFootnoteOpen(tokens: any, idx: number, _options: any, env: any, _self: any): string {
   const ref = counter.setRef(tokens[idx].meta.label)
   const childIndex = idx + 2
 
@@ -81,7 +81,7 @@ function renderFootnoteOpen(tokens, idx, _options, env, _self) {
       {
         type: 'text',
         block: false,
-        content: '\u21B5',
+        content: '↵',
       },
       {
         type: 'inline',
@@ -99,17 +99,17 @@ function renderFootnoteOpen(tokens, idx, _options, env, _self) {
   return `<li class="footnote" epub:type="footnote" id="fn${ref}">`
 }
 
-function renderFootnoteClose() {
+function renderFootnoteClose(): string {
   return '</li>'
 }
 
-function renderFootnoteAnchor(/*tokens, idx, options,env, slf */) {
+function renderFootnoteAnchor(/*tokens, idx, options,env, slf */): string {
   /* ↩ with escape code to prevent display as Apple Emoji on iOS */
-  // return ' <a href="#fnref' + id + '">\u21a9\uFE0E</a>';
+  // return ' <a href="#fnref' + id + '">↩︎</a>';
   return ''
 }
 
-export default function footnotePlugin(md, callback) {
+export default function footnotePlugin(md: any, callback: (tokens: any[]) => void): void {
   const { parseLinkLabel } = md.helpers
   const { isSpace } = md.utils
 
@@ -125,7 +125,7 @@ export default function footnotePlugin(md, callback) {
   md.renderer.rules.footnoteAnchorName = renderFootnoteAnchorName
 
   // Process footnote block definition
-  function footnoteDef(state, startLine, endLine, silent) {
+  function footnoteDef(state: any, startLine: number, endLine: number, silent: boolean): boolean {
     const start = state.bMarks[startLine] + state.tShift[startLine]
     const max = state.eMarks[startLine]
 
@@ -222,13 +222,13 @@ export default function footnotePlugin(md, callback) {
   }
 
   // Process inline footnotes (^[...])
-  function footnoteInline(state, silent) {
+  function footnoteInline(state: any, silent: boolean): boolean {
     const max = state.posMax
     const start = state.pos
 
     let footnoteId
     let token
-    let tokens
+    let tokens: any[]
 
     if (start + 2 >= max) return false
     if (state.src.charCodeAt(start) !== 0x5e /* ^ */) return false
@@ -266,7 +266,7 @@ export default function footnotePlugin(md, callback) {
   }
 
   // Process footnote references ([^...])
-  function footnoteRef(state, silent) {
+  function footnoteRef(state: any, silent: boolean): boolean {
     const max = state.posMax
     const start = state.pos
 
@@ -322,8 +322,8 @@ export default function footnotePlugin(md, callback) {
   }
 
   // Glue footnote tokens to end of token stream
-  function footnoteTail(state) {
-    const refTokens = {}
+  function footnoteTail(state: any): void {
+    const refTokens: Record<string, any[]> = {}
 
     let i
     let l
@@ -332,14 +332,14 @@ export default function footnotePlugin(md, callback) {
     let lastParagraph
     let token
     let tokens
-    let current
-    let currentLabel
+    let current: any[]
+    let currentLabel: string
     let insideRef = false
-    let footnoteTokens = []
+    let footnoteTokens: any[] = []
 
     if (!state.env.footnotes) return
 
-    state.tokens = state.tokens.filter(tok => {
+    state.tokens = state.tokens.filter((tok: any) => {
       if (tok.type === 'footnote_reference_open') {
         insideRef = true
         current = []
@@ -413,7 +413,7 @@ export default function footnotePlugin(md, callback) {
 
     // create return value for callback
     insideRef = false
-    footnoteTokens = [...state.tokens].filter(a => {
+    footnoteTokens = [...state.tokens].filter((a: any) => {
       if (a.type === 'footnote_block_open') {
         insideRef = true
         return true
@@ -428,7 +428,7 @@ export default function footnotePlugin(md, callback) {
 
     // remove footnotes from `state.tokens`
     insideRef = false
-    state.tokens = state.tokens.filter(_ => {
+    state.tokens = state.tokens.filter((_: any) => {
       if (_.type === 'footnote_block_open') {
         insideRef = true
         return false

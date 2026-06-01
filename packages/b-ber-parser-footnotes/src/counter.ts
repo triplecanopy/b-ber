@@ -3,6 +3,11 @@ import crypto from 'crypto'
 // Keep track of footnotes that have been rendered to start new ordered lists at
 // proper count
 class Counter {
+  page: number
+  list: number
+  item: number
+  refs: string[]
+
   constructor() {
     this.page = -1
     this.list = 1
@@ -10,7 +15,7 @@ class Counter {
     this.refs = []
   }
 
-  listCounter(grouped, page) {
+  listCounter(grouped: boolean, page: number): number {
     // Reset all counters if the footnotes list is empty. This occurs when
     // running `bber serve`
     if (page === 0) {
@@ -32,7 +37,7 @@ class Counter {
     return this.list
   }
 
-  listItemCounter(grouped, page) {
+  listItemCounter(grouped: boolean, page: number): number {
     if (!grouped) {
       const n = this.item
       this.item += 1
@@ -49,7 +54,7 @@ class Counter {
     return this.item
   }
 
-  setRef = label => {
+  setRef = (label: string): string => {
     const hash = crypto.randomBytes(8).toString('hex')
     const idRef = `-${label}-${hash}`
 
@@ -58,7 +63,7 @@ class Counter {
     return idRef
   }
 
-  getRef = () => this.refs.shift()
+  getRef = (): string => this.refs.shift() as string
 }
 
 export default Counter
