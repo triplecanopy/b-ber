@@ -47,3 +47,5 @@ Related: `--legacy-peer-deps` was added alongside this flag in TASK-021 context
 (June 2026) to unblock canary publishing while the project is mid-TypeScript
 migration. Both flags affect how `npm install` behaves during bootstrap and
 should be reviewed together.
+
+Related: [[TASK-023]] (Lerna upgrade/replacement research).

@@ -4,10 +4,16 @@ Agent working standards for the `b-ber` monorepo. This document describes the
 repository structure, package inventory, task system, commit conventions, and
 coding standards that apply across all packages.
 
-**Start here:** Read `PLAN.md` at the repo root before starting any task. It
-shows what is in progress, what is blocked, the dependency graph, and which
-branches are pending merge. This file (AGENTS.md) contains the standards and
-conventions; PLAN.md contains the current state.
+**Start here:** Run `git branch --show-current` before doing anything. The
+active branch determines where your commits land. Implementation work belongs
+on the appropriate feature branch (e.g. `feat/ts-stage-1`, `feat/vite-migration`);
+planning and docs belong on the integration branch (`feat/upgrades`). If you are
+not on the right branch, switch before making any changes. PLAN.md shows which
+branch each task belongs on.
+
+Then read `PLAN.md`. It shows what is in progress, what is blocked, the
+dependency graph, and which branches are pending merge. This file (AGENTS.md)
+contains the standards and conventions; PLAN.md contains the current state.
 
 Package-specific AGENTS.md files extend this document with package-local
 details (architecture, dev commands, open tasks). Always read both this file

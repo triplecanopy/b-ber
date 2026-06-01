@@ -15,13 +15,6 @@ module.exports = {
     '!**/*.loaders.js**',
     '!**/b-ber-reader/epub/**/*.js',
     '!**/b-ber-resources/*.js',
-    '!**/b-ber-shapes-dublin-core/elements.js',
-    '!**/b-ber-shapes-dublin-core/terms.js',
-    '!**/b-ber-shapes-dublin-core/index.js',
-    '!**/b-ber-shapes-directives/index.js',
-    '!**/b-ber-shapes-sequences/index.js',
-    '!**/b-ber-shapes-sequences/create-build-sequence.js',
-    '!**/b-ber-shapes-sequences/sequences/index.js',
     '!**/b-ber-templates/*.js',
     '!**/b-ber-templates/Ncx/*.js',
     '!**/b-ber-templates/Opf/*.js',
@@ -51,7 +44,6 @@ module.exports = {
   testPathIgnorePatterns: ['__mocks__'],
   testURL: 'http://localhost/',
   transform: {
-    '^.+\\.tsx?$': 'ts-jest',
-    '^.+\\.jsx?$': 'babel-jest',
+    '^.+\\.[jt]sx?$': '@swc/jest',
   },
 }

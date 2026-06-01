@@ -1,6 +1,6 @@
 # b-ber monorepo — Project Plan
 
-_Last updated: 2026-05-31_
+_Last updated: 2026-05-31 (TASK-012 complete)_
 
 ---
 
@@ -61,13 +61,19 @@ been created yet; implementation tasks (TASK-006+) have not started.
 
 ### Completed (research)
 
-| Task     | Title                                     | Branch          |
-| -------- | ----------------------------------------- | --------------- |
-| TASK-001 | Research webpack replacement (chose Vite) | `feat/upgrades` |
-| TASK-002 | Plan JS→TS migration strategy             | `feat/upgrades` |
-| TASK-003 | Research type consolidation               | `feat/upgrades` |
-| TASK-005 | Research Biome migration (chose Option B) | `feat/upgrades` |
-| TASK-016 | Circular import audit + arch risk catalog | `feat/upgrades` |
+| Task     | Title                                              | Branch            |
+| -------- | -------------------------------------------------- | ----------------- |
+| TASK-001 | Research webpack replacement (chose Vite)          | `feat/upgrades`   |
+| TASK-002 | Plan JS→TS migration strategy                      | `feat/upgrades`   |
+| TASK-003 | Research type consolidation                        | `feat/upgrades`   |
+| TASK-005 | Research Biome migration (chose Option B)          | `feat/upgrades`   |
+| TASK-016 | Circular import audit + arch risk catalog          | `feat/upgrades`   |
+| TASK-019 | Pre-TS migration cleanup                           | `feat/upgrades`   |
+| TASK-008 | Set up shared TypeScript infrastructure            | `feat/ts-stage-1` |
+| TASK-009 | Convert b-ber-shapes-directives to TS              | `feat/ts-stage-1` |
+| TASK-010 | Convert b-ber-shapes-dublin-core + sequences to TS | `feat/ts-stage-1` |
+| TASK-011 | Convert b-ber-logger to TS                         | `feat/ts-stage-1` |
+| TASK-012 | Convert b-ber-lib to TS                            | `feat/ts-stage-1` |
 
 ### In progress
 
@@ -83,22 +89,18 @@ These tasks have no unmet dependencies:
 | Task     | Title                                          | Branch                | Notes                                                                                      |
 | -------- | ---------------------------------------------- | --------------------- | ------------------------------------------------------------------------------------------ |
 | TASK-006 | Migrate b-ber-reader-react webpack → Vite      | `feat/vite-migration` | Independent of test coverage                                                               |
-| TASK-008 | Set up shared TypeScript infrastructure        | `feat/ts-stage-1`     | Independent; prereq for TASK-009–012                                                       |
 | TASK-017 | Expand diagrams: tooling versions + cross-refs | `feat/upgrades`       | Living audit surface; TASK-016 complete                                                    |
 | TASK-021 | Audit `--no-package-lock` in lerna bootstrap   | `feat/upgrades`       | Low priority; review alongside `--legacy-peer-deps`                                        |
 | TASK-022 | Automate circular dependency checks            | `feat/upgrades`       | Options: pre-commit hook, CI, or `npm test`; extensions list needs TS once TASK-008 starts |
+| TASK-023 | Research Lerna replacement / upgrade options   | `feat/upgrades`       | Low priority; no blockers                                                                  |
 
 ### Not started — blocked
 
-| Task     | Title                                              | Waiting on                     |
-| -------- | -------------------------------------------------- | ------------------------------ |
-| TASK-007 | Migrate b-ber-reader to Vite                       | TASK-006                       |
-| TASK-009 | Convert b-ber-shapes-directives to TS              | TASK-008                       |
-| TASK-010 | Convert b-ber-shapes-dublin-core + sequences to TS | TASK-009                       |
-| TASK-011 | Convert b-ber-logger to TS                         | TASK-008                       |
-| TASK-012 | Convert b-ber-lib to TS                            | TASK-009, TASK-010, TASK-011   |
-| TASK-013 | Node.js modernization                              | TASK-012 (TS stage 1 complete) |
-| TASK-015 | Biome migration                                    | TASK-006 (same branch)         |
+| Task     | Title                        | Waiting on                     |
+| -------- | ---------------------------- | ------------------------------ |
+| TASK-007 | Migrate b-ber-reader to Vite | TASK-006                       |
+| TASK-013 | Node.js modernization        | TASK-012 ✓ — **can begin now** |
+| TASK-015 | Biome migration              | TASK-006 (same branch)         |
 
 ---
 
@@ -167,13 +169,12 @@ In priority order:
    lodash per-method packages replaced with `lodash/x` subpath imports across 12 packages.
 3. **Start TASK-006** (Vite migration): no blockers, medium priority. Branch:
    `feat/vite-migration`. Also picks up TASK-015 (Biome) and TASK-007 (reader).
-4. **Start TASK-008** (TypeScript infra): all blockers clear. Branch: `feat/ts-stage-1`.
-   Unlocks the entire TS migration chain. Build pipeline approach: replace `babel-jest` with
-   `@swc/jest` (drop-in, Rust-based, 10-20× faster); replace Babel build step with `tsdown`
-   (rolldown-based successor to tsup, tsup is deprecated; handles `.d.ts` generation); add
-   root `tsconfig.base.json` for `tsc --noEmit` type checking only. Babel removed entirely
-   after all packages are converted (post-TASK-012). TS project reference order:
-   shapes → logger → lib → validator/templates → grammars/parsers → markdown-renderer → tasks → cli.
+4. **TASK-012 complete**: b-ber-lib converted to TypeScript. All 11 src/ files renamed
+   to .ts; ConfigOptions, SpineItemOptions, StateClass types exported; ambient declarations
+   for yawn-yaml/cjs, layouts, command-exists; @babel/runtime-corejs3 and tar removed;
+   @types/js-yaml@3, @types/fs-extra, @types/lodash, @types/mime-types, @types/vinyl added.
+   Root tsconfig.json now references all 5 TS packages. All 187 package tests pass.
+   **TypeScript Stage 1 is complete. TASK-013 (Node.js modernization) is now unblocked.**
 5. **Complete TASK-014** (GitHub issues): create retroactive issues for closed
    tasks and open issues for in-progress/upcoming tasks.
 
