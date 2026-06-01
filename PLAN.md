@@ -1,6 +1,6 @@
 # b-ber monorepo — Project Plan
 
-_Last updated: 2026-05-31 (TASK-012 complete)_
+_Last updated: 2026-06-01 (TASK-024–032 created; Stage 2/3/4 tasked out)_
 
 ---
 
@@ -30,6 +30,8 @@ Biome (TASK-015) is bundled with the Vite migration.
 | `feat/vite-migration`       | TASK-006, TASK-007, TASK-015                                        | `feat/upgrades` |
 | `feat/ts-stage-1`           | TASK-008 through TASK-012                                           | `feat/upgrades` |
 | `feat/node-modernization-*` | TASK-013 per-package slices                                         | `feat/upgrades` |
+| `feat/ts-stage-2`           | TASK-024 through TASK-028 (grammar, parser, templates, md-renderer) | `feat/upgrades` |
+| `feat/ts-stage-3`           | TASK-029 through TASK-031 (tasks, cli)                              | `feat/upgrades` |
 
 **All implementation work happens on feature branches** (or directly on
 `feat/upgrades` for small, self-contained changes). Feature branches merge
@@ -86,48 +88,69 @@ been created yet; implementation tasks (TASK-006+) have not started.
 
 These tasks have no unmet dependencies:
 
-| Task     | Title                                          | Branch                | Notes                                                                                      |
-| -------- | ---------------------------------------------- | --------------------- | ------------------------------------------------------------------------------------------ |
-| TASK-006 | Migrate b-ber-reader-react webpack → Vite      | `feat/vite-migration` | Independent of test coverage                                                               |
-| TASK-017 | Expand diagrams: tooling versions + cross-refs | `feat/upgrades`       | Living audit surface; TASK-016 complete                                                    |
-| TASK-021 | Audit `--no-package-lock` in lerna bootstrap   | `feat/upgrades`       | Low priority; review alongside `--legacy-peer-deps`                                        |
-| TASK-022 | Automate circular dependency checks            | `feat/upgrades`       | Options: pre-commit hook, CI, or `npm test`; extensions list needs TS once TASK-008 starts |
-| TASK-023 | Research Lerna replacement / upgrade options   | `feat/upgrades`       | Low priority; no blockers                                                                  |
+| Task     | Title                                          | Branch                | Notes                                                                                   |
+| -------- | ---------------------------------------------- | --------------------- | --------------------------------------------------------------------------------------- |
+| TASK-006 | Migrate b-ber-reader-react webpack → Vite      | `feat/vite-migration` | Independent of TS work                                                                  |
+| TASK-017 | Expand diagrams: tooling versions + cross-refs | `feat/upgrades`       | Living audit surface; TASK-016 complete                                                 |
+| TASK-021 | Audit `--no-package-lock` in lerna bootstrap   | `feat/upgrades`       | Low priority; review alongside `--legacy-peer-deps`                                     |
+| TASK-022 | Automate circular dependency checks            | `feat/upgrades`       | Options: pre-commit hook, CI, or `npm test`; update extensions list once TS work starts |
+| TASK-023 | Research Lerna replacement / upgrade options   | `feat/upgrades`       | Low priority; no blockers                                                               |
+| TASK-024 | TypeScript Stage 2 parent                      | `feat/ts-stage-2`     | Depends on Stage 1 ✓; includes TASK-025–028                                             |
+| TASK-025 | Convert b-ber-grammar-\* to TypeScript         | `feat/ts-stage-2`     | 16 packages; grammar-attributes first, then grammar-renderer, then remaining 14         |
+| TASK-026 | Convert b-ber-parser-\* to TypeScript          | `feat/ts-stage-2`     | 5 packages; independent of grammars, can run in parallel with TASK-025                  |
+| TASK-027 | Convert b-ber-templates to TypeScript          | `feat/ts-stage-2`     | Independent of grammars/parsers; can run in parallel with TASK-025/026                  |
 
 ### Not started — blocked
 
-| Task     | Title                        | Waiting on                     |
-| -------- | ---------------------------- | ------------------------------ |
-| TASK-007 | Migrate b-ber-reader to Vite | TASK-006                       |
-| TASK-013 | Node.js modernization        | TASK-012 ✓ — **can begin now** |
-| TASK-015 | Biome migration              | TASK-006 (same branch)         |
+| Task     | Title                                              | Waiting on                         |
+| -------- | -------------------------------------------------- | ---------------------------------- |
+| TASK-007 | Migrate b-ber-reader to Vite                       | TASK-006                           |
+| TASK-013 | Node.js modernization                              | TASK-012 ✓ — **can begin now**     |
+| TASK-015 | Biome migration                                    | TASK-006 (same branch)             |
+| TASK-028 | Convert b-ber-markdown-renderer to TypeScript      | TASK-025, TASK-026                 |
+| TASK-029 | TypeScript Stage 3 parent                          | TASK-024 (all Stage 2 complete)    |
+| TASK-030 | Convert b-ber-tasks to TypeScript                  | TASK-029 (Stage 2 complete)        |
+| TASK-031 | Convert b-ber-cli to TypeScript                    | TASK-030                           |
+| TASK-032 | Convert b-ber-reader-react to TypeScript (Stage 4) | TASK-006 (Vite migration complete) |
 
 ---
 
 ## Dependency Graph
 
 ```
-TASK-004 (test coverage) ─────────────────────────────────────────┐
-  per-package subtasks (b-ber-lib ✓, b-ber-tasks, grammars, ...)  │
-                                                                    ▼
-TASK-006 (Vite: reader-react)                            TASK-008 (tsconfig infra)
-  └─ TASK-007 (Vite: reader)                               ├─ TASK-009 (shapes-directives TS)
-  └─ TASK-015 (Biome)          [same branch]               │    └─ TASK-010 (shapes-dc + seq TS)
-       │                                                    ├─ TASK-011 (logger TS)
-       │                                                    └─ TASK-012 (lib TS) ← needs 009+010+011
+TASK-004 (test coverage) ─────────────────────────────────────────────────────────────┐
+  per-package subtasks (b-ber-lib ✓, b-ber-tasks, grammars, ...)                      │
+                                                                                        ▼
+TASK-006 (Vite: reader-react)                            TASK-008 ✓ (tsconfig infra)
+  └─ TASK-007 (Vite: reader)                               ├─ TASK-009 ✓ (shapes-directives TS)
+  └─ TASK-015 (Biome)          [same branch]               │    └─ TASK-010 ✓ (shapes-dc + seq TS)
+       │                                                    ├─ TASK-011 ✓ (logger TS)
+       │                                                    └─ TASK-012 ✓ (lib TS)
+       │                                                         │
+       │                                              TASK-024 (Stage 2 parent)
+       │                                                ├─ TASK-025 (grammar-* TS)  ─┐
+       │                                                ├─ TASK-026 (parser-* TS)    ├─ TASK-028 (markdown-renderer TS)
+       │                                                └─ TASK-027 (templates TS)  ─┘
+       │                                                         │
+       │                                              TASK-029 (Stage 3 parent)
+       │                                                ├─ TASK-030 (tasks TS)
+       │                                                └─ TASK-031 (cli TS)
        │                                                         │
        └─────────────────────────────────────────────────────────┤
                                                                   ▼
-                                                         TASK-013 (Node.js modernization)
+                                                    TASK-032 (reader-react TS, Stage 4)
+                                                    TASK-013 (Node.js modernization)
 ```
 
 Notes:
 
 - TASK-004 is a soft prerequisite for the TS migration: do not start TASK-008+
   until overall coverage is ≥ 60%.
-- TASK-006 and TASK-008 are fully independent and can run in parallel.
-- TASK-010 and TASK-011 are independent of each other (both depend on TASK-008).
+- TASK-006 and Stage 2 TS work are fully independent and can run in parallel.
+- TASK-025, TASK-026, TASK-027 are independent of each other within Stage 2.
+- TASK-028 must come after TASK-025 + TASK-026 (imports all grammar/parser packages).
 - TASK-015 (Biome) is bundled with TASK-006/007 on the same branch.
+- TASK-032 is blocked on TASK-006 (Vite) — do not attempt reader-react TS on webpack.
 
 ---
 
@@ -160,23 +183,20 @@ This is documented in packages/b-ber-tasks/tasks/TASK-001.open.md.
 
 In priority order:
 
-1. **TASK-016 complete**: 9 circular deps fixed (0 remain), stale deps catalogued, TS project
-   reference topology documented in TASK-016.md. Run `npm run check:circular` to verify at
-   any time.
-2. **Pre-TASK-008 cleanup complete**: All four items in TASK-019's pre-migration checklist are done:
-   `tar` removed from grammar-renderer (and all other grammar/parser packages where it was unused),
-   `babel-cli@^6.26.0` removed from root devDependencies, `b-ber-parser-footnotes` converted to ESM,
-   lodash per-method packages replaced with `lodash/x` subpath imports across 12 packages.
-3. **Start TASK-006** (Vite migration): no blockers, medium priority. Branch:
-   `feat/vite-migration`. Also picks up TASK-015 (Biome) and TASK-007 (reader).
-4. **TASK-012 complete**: b-ber-lib converted to TypeScript. All 11 src/ files renamed
-   to .ts; ConfigOptions, SpineItemOptions, StateClass types exported; ambient declarations
-   for yawn-yaml/cjs, layouts, command-exists; @babel/runtime-corejs3 and tar removed;
-   @types/js-yaml@3, @types/fs-extra, @types/lodash, @types/mime-types, @types/vinyl added.
-   Root tsconfig.json now references all 5 TS packages. All 187 package tests pass.
-   **TypeScript Stage 1 is complete. TASK-013 (Node.js modernization) is now unblocked.**
-5. **Complete TASK-014** (GitHub issues): create retroactive issues for closed
+1. **Start TASK-024 / TASK-025** (TypeScript Stage 2 — grammar packages): Stage 1 is
+   complete; all types are in place. Branch: `feat/ts-stage-2`. Convert grammar-attributes
+   first, then grammar-renderer, then the remaining 14 grammar packages. TASK-026 (parsers)
+   and TASK-027 (templates) can run in parallel on the same branch.
+2. **Start TASK-006** (Vite migration): independent of TS work, can run in parallel.
+   Branch: `feat/vite-migration`. Also picks up TASK-015 (Biome) and TASK-007 (reader).
+3. **TASK-013 unblocked**: Node.js modernization can begin now that Stage 1 is complete.
+   Branch: `feat/node-modernization-<package>`. Can run in parallel with Stage 2 TS work.
+4. **Complete TASK-014** (GitHub issues): create retroactive issues for closed
    tasks and open issues for in-progress/upcoming tasks.
+5. **TASK-028** (markdown-renderer): after TASK-025 + TASK-026 are done. Includes
+   replacing the 187 vendored highlight.js files with the `highlight.js@^11` npm package.
+   Research subtask: check GitHub issue #234 to confirm CSS loading was the original
+   blocker (not the JS language files themselves).
 
 ---
 
