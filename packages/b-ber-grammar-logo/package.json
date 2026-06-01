@@ -4,11 +4,8 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "prepare:dist": "BABEL_ENV=production babel --config-file ../../babel.config.js -d dist/ src/ --ignore **/__tests__/**",
-    "clean": "rimraf dist",
-    "prepare": "npm run clean && npm run prepare:dist",
-    "build": "npm run prepare",
-    "watch": "BABEL_ENV=production babel --config-file ../../babel.config.js -d dist/ src/ --watch src",
+    "build": "tsdown",
+    "typecheck": "tsc --noEmit",
     "test": "jest"
   },
   "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
@@ -17,12 +14,12 @@
     "access": "public"
   },
   "devDependencies": {
-    "@babel/cli": "^7.10.5",
-    "@babel/core": "^7.10.5",
-    "@babel/preset-env": "^7.10.4",
-    "browserslist": "^4.17.4",
+    "@swc/core": "^1.15.40",
+    "@swc/jest": "^0.2.39",
     "jest": "^26.6.3",
-    "rimraf": "^2.7.1"
+    "rimraf": "^2.7.1",
+    "tsdown": "^0.22.1",
+    "typescript": "^6.0.3"
   },
   "dependencies": {
     "@canopycanopycanopy/b-ber-grammar-attributes": "3.1.0",
@@ -51,5 +48,6 @@
       "url": "https://maxwellsimmer.com"
     }
   ],
-  "gitHead": "9936fe3f4af76aa7b67ce10c2ed3a32b7de6ce6c"
+  "gitHead": "9936fe3f4af76aa7b67ce10c2ed3a32b7de6ce6c",
+  "types": "dist/index.d.ts"
 }

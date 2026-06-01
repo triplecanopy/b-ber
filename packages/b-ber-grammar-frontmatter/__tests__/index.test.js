@@ -1,10 +1,5 @@
-import state from '@canopycanopycanopy/b-ber-lib/State'
-import { GuideItem } from '@canopycanopycanopy/b-ber-lib'
+import { State as state, GuideItem } from '@canopycanopycanopy/b-ber-lib'
 import markdownItFrontmatterPlugin from '../src'
-
-jest.mock('@canopycanopycanopy/b-ber-lib', () => ({
-  GuideItem: jest.fn().mockImplementation(data => data),
-}))
 
 jest.mock('@canopycanopycanopy/b-ber-lib/YamlAdaptor', () => ({
   parse: jest.fn(() => ({ title: 'Test Title' })),
@@ -18,6 +13,12 @@ jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
       set: jest.fn(),
     },
   },
+}))
+
+jest.mock('@canopycanopycanopy/b-ber-lib', () => ({
+  GuideItem: jest.fn().mockImplementation(data => data),
+  YamlAdaptor: jest.requireMock('@canopycanopycanopy/b-ber-lib/YamlAdaptor'),
+  State: jest.requireMock('@canopycanopycanopy/b-ber-lib/State'),
 }))
 
 afterEach(() => {

@@ -23,6 +23,7 @@ jest.mock('@canopycanopycanopy/b-ber-grammar-attributes', () => ({
 }))
 
 jest.mock('@canopycanopycanopy/b-ber-lib', () => ({
+  State: jest.requireMock('@canopycanopycanopy/b-ber-lib/State'),
   Html: { comment: jest.fn(s => s) },
 }))
 
