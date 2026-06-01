@@ -24,7 +24,7 @@ module.exports = {
     '!**/b-ber-templates/Xhtml/*.js',
     '!**/b-ber-templates/Xml/*.js',
     '!**/b-ber-templates/figures/*.js',
-    '!**/b-ber-markdown-renderer/src/highlightjs/**/*.js',
+    '!**/b-ber-markdown-renderer/src/highlightjs/**',
     '!**/b-ber-reader/index.js',
     '!**/jest-transform-upward.js',
     '!**/webpack.config.*.js',
@@ -105,6 +105,9 @@ module.exports = {
       '<rootDir>/packages/b-ber-templates/src/$1',
     '^@canopycanopycanopy/b-ber-templates$':
       '<rootDir>/packages/b-ber-templates/src/index.ts',
+    // Markdown renderer
+    '^@canopycanopycanopy/b-ber-markdown-renderer$':
+      '<rootDir>/packages/b-ber-markdown-renderer/src/index.ts',
     // Parser packages
     '^@canopycanopycanopy/b-ber-parser-dialogue$':
       '<rootDir>/packages/b-ber-parser-dialogue/src/index.ts',
