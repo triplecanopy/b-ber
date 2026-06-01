@@ -3,6 +3,7 @@
 **Status:** not started
 **Scope:** b-ber-cli
 **Priority:** medium
+**GitHub Issue:** #486 — https://github.com/triplecanopy/b-ber/issues/486
 
 ## Description
 

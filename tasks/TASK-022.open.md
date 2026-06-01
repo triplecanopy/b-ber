@@ -3,6 +3,7 @@
 **Status:** not started
 **Scope:** monorepo
 **Priority:** low
+**GitHub Issue:** #482 — https://github.com/triplecanopy/b-ber/issues/482
 
 ## Description
 

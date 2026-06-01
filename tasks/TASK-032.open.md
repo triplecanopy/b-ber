@@ -3,6 +3,7 @@
 **Status:** not started
 **Scope:** b-ber-reader-react
 **Priority:** low
+**GitHub Issue:** #487 — https://github.com/triplecanopy/b-ber/issues/487
 
 ## Description
 

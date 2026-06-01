@@ -3,6 +3,7 @@
 **Status:** not started
 **Scope:** b-ber-tasks
 **Priority:** medium
+**GitHub Issue:** #485 — https://github.com/triplecanopy/b-ber/issues/485
 
 ## Description
 

@@ -3,6 +3,7 @@
 **Status:** not started
 **Scope:** monorepo
 **Priority:** low
+**GitHub Issue:** #478 — https://github.com/triplecanopy/b-ber/issues/478
 
 ## Description
 

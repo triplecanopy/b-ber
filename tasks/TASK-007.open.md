@@ -3,6 +3,7 @@
 **Status:** not started
 **Scope:** reader, monorepo
 **Priority:** medium
+**GitHub Issue:** #473 — https://github.com/triplecanopy/b-ber/issues/473
 
 ## Description
 

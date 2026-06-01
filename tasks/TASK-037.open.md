@@ -3,6 +3,7 @@
 **Status:** not started
 **Scope:** monorepo
 **Priority:** medium
+**GitHub Issue:** #492 — https://github.com/triplecanopy/b-ber/issues/492
 
 ## Description
 

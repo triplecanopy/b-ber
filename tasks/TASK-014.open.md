@@ -3,6 +3,7 @@
 **Status:** in progress
 **Scope:** monorepo
 **Priority:** medium
+**GitHub Issue:** #475 — https://github.com/triplecanopy/b-ber/issues/475
 
 ## Description
 

@@ -3,6 +3,7 @@
 **Status:** not started
 **Scope:** reader-react
 **Priority:** medium
+**GitHub Issue:** #472 — https://github.com/triplecanopy/b-ber/issues/472
 
 ## Description
 

@@ -3,6 +3,7 @@
 **Status:** in progress
 **Scope:** monorepo
 **Priority:** high
+**GitHub Issue:** #471 — https://github.com/triplecanopy/b-ber/issues/471
 
 ## Description
 
