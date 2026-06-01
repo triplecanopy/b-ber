@@ -1,12 +1,14 @@
 import fs from 'fs-extra'
 import serialize from '../src/serialize'
-import * as tasks from '../'
+import * as tasks from '../src/task-handlers'
 
 jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
   metadata: { json: () => [{}] },
+  src: { root: jest.fn(() => '') },
+  config: {},
 }))
 
-jest.mock('../', () => ({
+jest.mock('../src/task-handlers', () => ({
   foo: jest.fn(() => Promise.resolve(1)),
   bar: jest.fn(() => Promise.resolve(2)),
   baz: jest.fn(() => Promise.resolve(3)),
@@ -63,7 +65,10 @@ describe('task: serialize', () => {
 
     const sequence = ['foo', 'bar', 'baz', 'bat']
 
-    const promise = () => new Promise(() => serialize(sequence))
+    const promise = () =>
+      new Promise(() => {
+        serialize(sequence)
+      })
 
     expect(() => serialize(sequence)).toThrow()
 

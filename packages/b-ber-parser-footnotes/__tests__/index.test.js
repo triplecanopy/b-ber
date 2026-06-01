@@ -10,7 +10,7 @@ jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
   footnotes: [],
 }))
 
-const footnotePlugin = require('../src')
+const footnotePlugin = require('../src').default
 
 describe('b-ber-parser-footnotes', () => {
   test('exports a function', () => {
