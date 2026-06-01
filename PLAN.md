@@ -98,21 +98,24 @@ These tasks have no unmet dependencies:
 | TASK-017 | Expand diagrams: tooling versions + cross-refs | `feat/upgrades`       | Living audit surface; TASK-016 complete                                                 |
 | TASK-021 | Audit `--no-package-lock` in lerna bootstrap   | `feat/upgrades`       | Low priority; review alongside `--legacy-peer-deps`                                     |
 | TASK-022 | Automate circular dependency checks            | `feat/upgrades`       | Options: pre-commit hook, CI, or `npm test`; update extensions list once TS work starts |
-| TASK-023 | Research Lerna replacement / upgrade options   | `feat/upgrades`       | Low priority; no blockers                                                               |
+| TASK-023 | Research Lerna replacement / upgrade options   | `feat/upgrades`       | Superseded by TASK-036; keep for research notes                                         |
 | TASK-033 | Evaluate code coverage tooling                 | `feat/upgrades`       | Istanbul incompatible with @swc/jest; audit V8 provider, Vitest coverage, orphaned pkgs |
+| TASK-034 | Upgrade Jest from v26 to v29                   | `feat/upgrades`       | `testURL` removed; `jest-environment-jsdom` now separate; coordinate with TASK-033      |
+| TASK-035 | Fix and modernize CircleCI pipeline            | `feat/upgrades`       | Stale Docker image, broken bootstrap, only runs on main; blocked on TASK-036            |
+| TASK-036 | Upgrade Lerna and migrate off bootstrap        | `feat/upgrades`       | **High priority** — bootstrap removed in v7+; affects dev, CI, and publish workflow     |
+| TASK-037 | Replace or reconfigure dependency management   | `feat/upgrades`       | Dependabot paused + broken config; evaluate Options A–D; recommend remove + npm audit   |
 
 ### Not started — blocked
 
-| Task     | Title                                              | Waiting on                                                                         |
-| -------- | -------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| TASK-007 | Migrate b-ber-reader to Vite                       | TASK-006                                                                           |
-| TASK-013 | Node.js modernization                              | TASK-012 ✓ — **can begin now**                                                     |
-| TASK-015 | Biome migration                                    | TASK-006 (same branch)                                                             |
-| TASK-024 | TypeScript Stage 2 parent                          | TASK-025 ✓ TASK-026 ✓ TASK-027 ✓ TASK-028 ✓ — **Stage 2 complete; close TASK-024** |
-| TASK-029 | TypeScript Stage 3 parent                          | TASK-024 (all Stage 2 complete)                                                    |
-| TASK-030 | Convert b-ber-tasks to TypeScript                  | TASK-029 (Stage 2 complete)                                                        |
-| TASK-031 | Convert b-ber-cli to TypeScript                    | TASK-030                                                                           |
-| TASK-032 | Convert b-ber-reader-react to TypeScript (Stage 4) | TASK-006 (Vite migration complete)                                                 |
+| Task     | Title                                              | Waiting on                         |
+| -------- | -------------------------------------------------- | ---------------------------------- |
+| TASK-007 | Migrate b-ber-reader to Vite                       | TASK-006                           |
+| TASK-013 | Node.js modernization                              | TASK-012 ✓ — **can begin now**     |
+| TASK-015 | Biome migration                                    | TASK-006 (same branch)             |
+| TASK-029 | TypeScript Stage 3 parent                          | TASK-024 ✓ (Stage 2 complete)      |
+| TASK-030 | Convert b-ber-tasks to TypeScript                  | TASK-029                           |
+| TASK-031 | Convert b-ber-cli to TypeScript                    | TASK-030                           |
+| TASK-032 | Convert b-ber-reader-react to TypeScript (Stage 4) | TASK-006 (Vite migration complete) |
 
 ---
 
@@ -184,16 +187,25 @@ This is documented in packages/b-ber-tasks/tasks/TASK-001.open.md.
 
 In priority order:
 
-1. **Close TASK-024** (Stage 2 parent): all four Stage 2 tasks complete (TASK-025–028).
-   Update TASK-024.open.md status to complete, rename to TASK-024.md.
-2. **Open Stage 3 (TASK-029–031)**: TASK-029 (Stage 3 parent), TASK-030 (b-ber-tasks TS),
-   TASK-031 (b-ber-cli TS) are now unblocked. Branch: `feat/ts-stage-3`.
-3. **Start TASK-006** (Vite migration): independent of TS work, can run in parallel.
-   Branch: `feat/vite-migration`. Also picks up TASK-015 (Biome) and TASK-007 (reader).
-4. **TASK-013 unblocked**: Node.js modernization can begin now that Stage 1 is complete.
-   Branch: `feat/node-modernization-<package>`. Can run in parallel with Stage 3 TS work.
-5. **Complete TASK-014** (GitHub issues): create retroactive issues for closed
-   tasks and open issues for in-progress/upcoming tasks.
+1. **Start TASK-036** (Lerna upgrade): high priority — `lerna bootstrap` is
+   load-bearing for dev and CI; v7+ removes it. Must land before TASK-035 can
+   be finalized. Read current `lerna.json` first.
+2. **Start TASK-035** (Fix CircleCI): pipeline has been broken for a long time.
+   Blocked on TASK-036 for the bootstrap step, but the config rewrite can be
+   drafted in parallel.
+3. **Start TASK-034** (Jest upgrade v26 → v29): high priority — `testURL` is
+   removed in v27, Istanbul coverage is broken with @swc/jest. Coordinate with
+   TASK-033 to land `coverageProvider: 'v8'` in the same pass.
+4. **Start TASK-033** (Coverage tooling): confirms V8 provider recommendation
+   and removes orphaned Istanbul packages.
+5. **Start Stage 3 (TASK-029–031)**: TASK-024 ✓ Stage 2 complete. TASK-029
+   (Stage 3 parent), TASK-030 (b-ber-tasks TS), TASK-031 (b-ber-cli TS) are
+   unblocked. Branch: `feat/ts-stage-3`.
+6. **Start TASK-006** (Vite migration): independent of TS work, can run in
+   parallel. Branch: `feat/vite-migration`. Also picks up TASK-015 (Biome) and
+   TASK-007 (reader).
+7. **TASK-037** (Dependency management): low effort if Option A — remove
+   Dependabot and add `npm audit` to CI. Can be done alongside TASK-035.
 
 ---
 
