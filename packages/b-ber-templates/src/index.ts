@@ -1,5 +1,5 @@
 import Ncx from './Ncx'
-import Opf from './Opf'
+import * as Opf from './Opf'
 import Ops from './Ops'
 import Project from './Project'
 import Toc from './Toc'

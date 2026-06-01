@@ -1,4 +1,4 @@
-module.exports = `// All user defined functions should be wrapped in a 'domReady' call - or by using a third-party lib like jQuery - for compatibility in reader, web, and e-reader versions.
+export default `// All user defined functions should be wrapped in a 'domReady' call - or by using a third-party lib like jQuery - for compatibility in reader, web, and e-reader versions.
 // Use the global \`window.bber.env\` variable to limit scripts to particular envionments. See example below
 //
 // Examples:

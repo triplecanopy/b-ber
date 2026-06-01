@@ -1,6 +1,6 @@
 # b-ber monorepo — Project Plan
 
-_Last updated: 2026-06-01 (TASK-025 + TASK-026 complete; grammar/parser packages converted)_
+_Last updated: 2026-06-01 (TASK-027 complete; b-ber-templates converted to TypeScript)_
 
 ---
 
@@ -78,6 +78,7 @@ been created yet; implementation tasks (TASK-006+) have not started.
 | TASK-012 | Convert b-ber-lib to TS                            | `feat/ts-stage-1` |
 | TASK-025 | Convert b-ber-grammar-\* to TypeScript             | `feat/ts-stage-2` |
 | TASK-026 | Convert b-ber-parser-\* to TypeScript              | `feat/ts-stage-2` |
+| TASK-027 | Convert b-ber-templates to TypeScript              | `feat/ts-stage-2` |
 
 ### In progress
 
@@ -97,21 +98,20 @@ These tasks have no unmet dependencies:
 | TASK-021 | Audit `--no-package-lock` in lerna bootstrap   | `feat/upgrades`       | Low priority; review alongside `--legacy-peer-deps`                                     |
 | TASK-022 | Automate circular dependency checks            | `feat/upgrades`       | Options: pre-commit hook, CI, or `npm test`; update extensions list once TS work starts |
 | TASK-023 | Research Lerna replacement / upgrade options   | `feat/upgrades`       | Low priority; no blockers                                                               |
-| TASK-027 | Convert b-ber-templates to TypeScript          | `feat/ts-stage-2`     | Independent of grammars/parsers; can run in parallel with TASK-028                      |
-| TASK-028 | Convert b-ber-markdown-renderer to TypeScript  | `feat/ts-stage-2`     | TASK-025 ✓ + TASK-026 ✓ done — **can begin now**                                        |
+| TASK-028 | Convert b-ber-markdown-renderer to TypeScript  | `feat/ts-stage-2`     | TASK-025 ✓ + TASK-026 ✓ + TASK-027 ✓ done — **can begin now**                           |
 
 ### Not started — blocked
 
-| Task     | Title                                              | Waiting on                                          |
-| -------- | -------------------------------------------------- | --------------------------------------------------- |
-| TASK-007 | Migrate b-ber-reader to Vite                       | TASK-006                                            |
-| TASK-013 | Node.js modernization                              | TASK-012 ✓ — **can begin now**                      |
-| TASK-015 | Biome migration                                    | TASK-006 (same branch)                              |
-| TASK-024 | TypeScript Stage 2 parent                          | In progress; TASK-025 ✓ TASK-026 ✓; waiting 027/028 |
-| TASK-029 | TypeScript Stage 3 parent                          | TASK-024 (all Stage 2 complete)                     |
-| TASK-030 | Convert b-ber-tasks to TypeScript                  | TASK-029 (Stage 2 complete)                         |
-| TASK-031 | Convert b-ber-cli to TypeScript                    | TASK-030                                            |
-| TASK-032 | Convert b-ber-reader-react to TypeScript (Stage 4) | TASK-006 (Vite migration complete)                  |
+| Task     | Title                                              | Waiting on                                                         |
+| -------- | -------------------------------------------------- | ------------------------------------------------------------------ |
+| TASK-007 | Migrate b-ber-reader to Vite                       | TASK-006                                                           |
+| TASK-013 | Node.js modernization                              | TASK-012 ✓ — **can begin now**                                     |
+| TASK-015 | Biome migration                                    | TASK-006 (same branch)                                             |
+| TASK-024 | TypeScript Stage 2 parent                          | In progress; TASK-025 ✓ TASK-026 ✓ TASK-027 ✓; waiting on TASK-028 |
+| TASK-029 | TypeScript Stage 3 parent                          | TASK-024 (all Stage 2 complete)                                    |
+| TASK-030 | Convert b-ber-tasks to TypeScript                  | TASK-029 (Stage 2 complete)                                        |
+| TASK-031 | Convert b-ber-cli to TypeScript                    | TASK-030                                                           |
+| TASK-032 | Convert b-ber-reader-react to TypeScript (Stage 4) | TASK-006 (Vite migration complete)                                 |
 
 ---
 
@@ -183,18 +183,16 @@ This is documented in packages/b-ber-tasks/tasks/TASK-001.open.md.
 
 In priority order:
 
-1. **Start TASK-027** (Convert b-ber-templates to TypeScript): unblocked; independent
-   of TASK-028. Branch: `feat/ts-stage-2`.
-2. **Start TASK-028** (Convert b-ber-markdown-renderer): TASK-025 and TASK-026 both
-   complete; only TASK-027 is outstanding in Stage 2. Includes replacing the 187
+1. **Start TASK-028** (Convert b-ber-markdown-renderer): TASK-025, TASK-026, and
+   TASK-027 all complete. TASK-028 is the only remaining Stage 2 task. Includes replacing the 187
    vendored highlight.js files with the `highlight.js@^11` npm package. Research note:
    commit `e5fcc901` ("Reduce package size", July 2019) — SCSS comments reference issue
    #234; `src/highlightjs/` contains 187 vendored JS language files. Branch: `feat/ts-stage-2`.
-3. **Start TASK-006** (Vite migration): independent of TS work, can run in parallel.
+2. **Start TASK-006** (Vite migration): independent of TS work, can run in parallel.
    Branch: `feat/vite-migration`. Also picks up TASK-015 (Biome) and TASK-007 (reader).
-4. **TASK-013 unblocked**: Node.js modernization can begin now that Stage 1 is complete.
+3. **TASK-013 unblocked**: Node.js modernization can begin now that Stage 1 is complete.
    Branch: `feat/node-modernization-<package>`. Can run in parallel with Stage 2 TS work.
-5. **Complete TASK-014** (GitHub issues): create retroactive issues for closed
+4. **Complete TASK-014** (GitHub issues): create retroactive issues for closed
    tasks and open issues for in-progress/upcoming tasks.
 
 ---

@@ -1,4 +1,4 @@
-module.exports = `.DS_Store
+export default `.DS_Store
 .tmp
 
 *.map

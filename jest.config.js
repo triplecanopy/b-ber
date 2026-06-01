@@ -100,6 +100,11 @@ module.exports = {
       '<rootDir>/packages/b-ber-grammar-spread/src/index.ts',
     '^@canopycanopycanopy/b-ber-grammar-vimeo$':
       '<rootDir>/packages/b-ber-grammar-vimeo/src/index.ts',
+    // Templates package and its subpath imports (used by b-ber-tasks)
+    '^@canopycanopycanopy/b-ber-templates/(.+)$':
+      '<rootDir>/packages/b-ber-templates/src/$1',
+    '^@canopycanopycanopy/b-ber-templates$':
+      '<rootDir>/packages/b-ber-templates/src/index.ts',
     // Parser packages
     '^@canopycanopycanopy/b-ber-parser-dialogue$':
       '<rootDir>/packages/b-ber-parser-dialogue/src/index.ts',

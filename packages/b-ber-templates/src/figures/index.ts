@@ -1,9 +1,11 @@
-import { getImageOrientation } from '@canopycanopycanopy/b-ber-lib/utils'
+import { utils } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import epub from './epub'
 import mobi from './mobi'
 import reader from './reader'
 import web from './web'
+
+const { getImageOrientation } = utils
 
 const figures = { epub, mobi, reader, web }
 

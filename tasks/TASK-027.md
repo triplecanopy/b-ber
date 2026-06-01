@@ -1,6 +1,6 @@
 # TASK-027: Convert b-ber-templates to TypeScript
 
-**Status:** not started
+**Status:** complete
 **Scope:** b-ber-templates
 **Priority:** medium
 
@@ -19,7 +19,7 @@ Stage 2.
 
 ```
 src/
-  figures/helpers.js    (284 LOC — largest file)
+  figures/helpers.ts    (284 LOC — largest file)
   Ncx/                  NCX table-of-contents templates
   Opf/                  OPF manifest + metadata templates
   Ops/                  EPUB OPS container templates
@@ -27,34 +27,37 @@ src/
   Toc/                  EPUB navigation document templates
   Xhtml/                XHTML page wrapper templates
   Xml/                  XML output templates
-  index.js              Re-exports
+  index.ts              Re-exports
 ```
 
 ## Subtasks
 
-- [ ] Audit `@types/*` needs: `fs-extra`, `lodash`, `mime-types`,
+- [x] Audit `@types/*` needs: `fs-extra`, `lodash`, `mime-types`,
       `image-size`, `vinyl` (most should already be installed from TASK-012)
-- [ ] Rename all `.js` → `.ts` and add type annotations
-- [ ] Type the Handlebars template helpers in `figures/helpers.js` — return
+- [x] Rename all `.js` → `.ts` and add type annotations
+- [x] Type the Handlebars template helpers in `figures/helpers.ts` — return
       types for HTML string builders are straightforward; focus on the helpers
       that interact with `State` (imported from `b-ber-lib`)
-- [ ] Add tsdown build + update `package.json` `main`/`types` fields
-- [ ] Run `npm test` in this package; run `npm test` from root for regressions
-- [ ] Update TASK-024 subtask checklist
+- [x] Add tsdown build + update `package.json` `main`/`types` fields
+- [x] Run `npm test` in this package; run `npm test` from root for regressions
+- [x] Update TASK-024 subtask checklist
 
 ## Notes
 
 Branch: `feat/ts-stage-2`
 
-`b-ber-templates` depends on `b-ber-lib` and `b-ber-logger` (both now typed
-from Stage 1), so `State`, `Config`, and `SpineItem` types are available
-immediately.
+All 27 `.js` source files renamed to `.ts`. All `b-ber-lib` subpath imports
+(`/State`, `/YamlAdaptor`, `/ManifestItemProperties`, `/utils`, `/Html`)
+converted to named imports from the main package. Dynamic `require()` calls in
+`src/Project/index.ts` converted to static `import` statements. Template
+literal files in `src/Project/` converted from `module.exports =` to
+`export default`. `src/Opf/index.ts` uses named re-exports; `src/index.ts`
+uses `import * as Opf` to collect them as a namespace.
 
-The `tar` package was removed from this package as part of TASK-019 cleanup.
-No need to handle it here.
+Root `jest.config.js` updated with `b-ber-templates` and
+`b-ber-templates/(.+)` moduleNameMapper entries so `b-ber-tasks` tests
+(which still use subpath imports) continue to work.
 
-Watch for the `metadata.yml.js` and `config.yml.js` files in `src/Project/` —
-these generate YAML file content as JS template strings. They will type-check
-cleanly but the string output shapes are opaque (no runtime schema validation).
+84/84 test suites pass from root.
 
 Parent: [[TASK-024]]

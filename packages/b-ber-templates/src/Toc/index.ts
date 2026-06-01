@@ -1,6 +1,7 @@
 import File from 'vinyl'
-import { Html } from '@canopycanopycanopy/b-ber-lib'
-import { getTitle } from '@canopycanopycanopy/b-ber-lib/utils'
+import { Html, utils } from '@canopycanopycanopy/b-ber-lib'
+
+const { getTitle } = utils
 
 class Toc {
   static body() {

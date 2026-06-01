@@ -1,4 +1,4 @@
-module.exports = `# Table of Contents
+export default `# Table of Contents
 # "in_toc:false" removes the entry from the built-in navigation of the reader.
 # "linear:false" removes the entry from the project's contents.
 - toc:

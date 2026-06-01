@@ -1,5 +1,5 @@
 import File from 'vinyl'
-import state from '@canopycanopycanopy/b-ber-lib/State'
+import { State as state } from '@canopycanopycanopy/b-ber-lib'
 
 class Xhtml {
   static head() {

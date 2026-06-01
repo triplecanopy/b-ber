@@ -1,4 +1,4 @@
-module.exports = `# ==============================================================================
+export default `# ==============================================================================
 # Project Metadata
 # Please see http://dublincore.org/documents/dcmi-terms/ for information on terms
 # and usage. Additional metadata can be entered and parsed if following the

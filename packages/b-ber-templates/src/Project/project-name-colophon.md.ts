@@ -1,4 +1,4 @@
-module.exports = `---
+export default `---
 title: Project Name Colophon
 type: colophon
 ---

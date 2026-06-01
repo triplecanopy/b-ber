@@ -1,7 +1,8 @@
 import File from 'vinyl'
 import mime from 'mime-types'
-import ManifestItemProperties from '@canopycanopycanopy/b-ber-lib/ManifestItemProperties'
-import { fileId } from '@canopycanopycanopy/b-ber-lib/utils'
+import { ManifestItemProperties, utils } from '@canopycanopycanopy/b-ber-lib'
+
+const { fileId } = utils
 
 const getProps = file => {
   const props = ManifestItemProperties.testHTML(file)

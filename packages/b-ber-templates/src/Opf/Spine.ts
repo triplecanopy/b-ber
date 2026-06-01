@@ -1,8 +1,9 @@
 import path from 'path'
 import File from 'vinyl'
-import state from '@canopycanopycanopy/b-ber-lib/State'
-import { fileId } from '@canopycanopycanopy/b-ber-lib/utils'
+import { State as state, utils } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
+
+const { fileId } = utils
 
 class Spine {
   static body() {

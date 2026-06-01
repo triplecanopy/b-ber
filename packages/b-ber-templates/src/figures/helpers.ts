@@ -1,7 +1,8 @@
 import sizeOf from 'image-size' // eslint-disable-line import/no-unresolved
 import uniq from 'lodash/uniq'
-import state from '@canopycanopycanopy/b-ber-lib/State'
-import { getImageOrientation } from '@canopycanopycanopy/b-ber-lib/utils'
+import { State as state, utils } from '@canopycanopycanopy/b-ber-lib'
+
+const { getImageOrientation } = utils
 
 const FULLBLEED_CLASS_NAME = 'figure__fullbleed'
 

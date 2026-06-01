@@ -1,9 +1,9 @@
 import File from 'vinyl' // eslint-disable-line import/no-unresolved
 import find from 'lodash/find'
 import has from 'lodash/has'
-import { Html } from '@canopycanopycanopy/b-ber-lib'
-import { getTitle } from '@canopycanopycanopy/b-ber-lib/utils'
-import state from '@canopycanopycanopy/b-ber-lib/State'
+import { Html, State as state, utils } from '@canopycanopycanopy/b-ber-lib'
+
+const { getTitle } = utils
 
 class Ncx {
   static head() {

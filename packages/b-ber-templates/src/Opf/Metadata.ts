@@ -1,9 +1,9 @@
 import File from 'vinyl'
 import crypto from 'crypto'
-import { fileId } from '@canopycanopycanopy/b-ber-lib/utils'
-import Html from '@canopycanopycanopy/b-ber-lib/Html'
-import ManifestItemProperties from '@canopycanopycanopy/b-ber-lib/ManifestItemProperties'
+import { Html, ManifestItemProperties, utils } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
+
+const { fileId } = utils
 
 class Metadata {
   static uid() {
