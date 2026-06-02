@@ -1,6 +1,6 @@
 # b-ber monorepo — Project Plan
 
-_Last updated: 2026-06-02 (TASK-034 complete — Jest v29 upgrade; TASK-047 added — watch mode research; coverage target raised to 75%)_
+_Last updated: 2026-06-02 (TASK-034 complete — Jest v29 upgrade; TASK-047 added — watch mode research; TASK-048 complete — b-ber-resources TS conversion; coverage target raised to 75%; Jest `name` → `displayName` fixed)_
 
 ---
 
@@ -72,6 +72,7 @@ been created yet; implementation tasks (TASK-006+) have not started.
 | TASK-016 | Circular import audit + arch risk catalog          | `feat/upgrades`   |
 | TASK-019 | Pre-TS migration cleanup                           | `feat/upgrades`   |
 | TASK-034 | Upgrade Jest from v26 to v29                       | `feat/upgrades`   |
+| TASK-048 | Convert b-ber-resources to TypeScript              | `feat/upgrades`   |
 | TASK-008 | Set up shared TypeScript infrastructure            | `feat/ts-stage-1` |
 | TASK-009 | Convert b-ber-shapes-directives to TS              | `feat/ts-stage-1` |
 | TASK-010 | Convert b-ber-shapes-dublin-core + sequences to TS | `feat/ts-stage-1` |
