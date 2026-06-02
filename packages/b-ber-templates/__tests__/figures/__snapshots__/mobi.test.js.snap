@@ -3,15 +3,15 @@
 exports[`templates.mobi creates the markup 1`] = `
 "
     
-      <div class=\\"figure__large figure__inline figure__inline--portrait test\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
+      <div class="figure__large figure__inline figure__inline--portrait test">
+        <figure id="1">
+          <div class="figure__items">
             
     <span>
-      <img class=\\"portrait\\" alt=\\"test\\" src=\\"../images/test.jpg\\"/>
+      <img class="portrait" alt="test" src="../images/test.jpg"/>
     </span>
-      <div class=\\"figcaption\\">
-        <p class=\\"small\\">
+      <div class="figcaption">
+        <p class="small">
           test
           
           
@@ -29,15 +29,15 @@ exports[`templates.mobi creates the markup 1`] = `
 exports[`templates.mobi creates the markup 2`] = `
 "
     
-      <div class=\\"figure__large figure__inline figure__inline--landscape test\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
+      <div class="figure__large figure__inline figure__inline--landscape test">
+        <figure id="1">
+          <div class="figure__items">
             
     <span>
-      <img class=\\"portrait\\" alt=\\"test\\" src=\\"../images/test.jpg\\"/>
+      <img class="portrait" alt="test" src="../images/test.jpg"/>
     </span>
-      <div class=\\"figcaption\\">
-        <p class=\\"small\\">
+      <div class="figcaption">
+        <p class="small">
           test
           
           
@@ -55,15 +55,15 @@ exports[`templates.mobi creates the markup 2`] = `
 exports[`templates.mobi creates the markup 3`] = `
 "
     
-      <div class=\\"figure__large figure__inline figure__inline--portrait-high test\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
+      <div class="figure__large figure__inline figure__inline--portrait-high test">
+        <figure id="1">
+          <div class="figure__items">
             
     <span>
-      <img class=\\"portrait\\" alt=\\"test\\" src=\\"../images/test.jpg\\"/>
+      <img class="portrait" alt="test" src="../images/test.jpg"/>
     </span>
-      <div class=\\"figcaption\\">
-        <p class=\\"small\\">
+      <div class="figcaption">
+        <p class="small">
           test
           
           
@@ -81,15 +81,15 @@ exports[`templates.mobi creates the markup 3`] = `
 exports[`templates.mobi creates the markup 4`] = `
 "
     
-      <div class=\\"figure__large figure__inline figure__inline--square test\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
+      <div class="figure__large figure__inline figure__inline--square test">
+        <figure id="1">
+          <div class="figure__items">
             
     <span>
-      <img class=\\"portrait\\" alt=\\"test\\" src=\\"../images/test.jpg\\"/>
+      <img class="portrait" alt="test" src="../images/test.jpg"/>
     </span>
-      <div class=\\"figcaption\\">
-        <p class=\\"small\\">
+      <div class="figcaption">
+        <p class="small">
           test
           
           
@@ -107,24 +107,24 @@ exports[`templates.mobi creates the markup 4`] = `
 exports[`templates.mobi creates the markup 5`] = `
 "
     
-      <div class=\\"figure__large figure__large--media figure__inline--square test\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
-            <div class=\\"audio-or-video\\">
-              <audio-or-video id=\\"audio-or-video-1\\" autoplay=\\"false\\">
+      <div class="figure__large figure__large--media figure__inline--square test">
+        <figure id="1">
+          <div class="figure__items">
+            <div class="audio-or-video">
+              <audio-or-video id="audio-or-video-1" autoplay="false">
                 <source />
-                <div class=\\"media__fallback__audio-or-video media__fallback--image\\">
+                <div class="media__fallback__audio-or-video media__fallback--image">
                   <figure>
-                    <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
+                    <img src="test.jpg" alt="Media fallback image"/>
                   </figure>
                 </div>
-                <p class=\\"media__fallback__audio-or-video media__fallback--text\\">Your device does not support the HTML5 audio-or-video API.</p>
+                <p class="media__fallback__audio-or-video media__fallback--text">Your device does not support the HTML5 audio-or-video API.</p>
               </audio-or-video>
             </div>
-            <div class=\\"figcaption\\">
-              <p class=\\"small\\">
+            <div class="figcaption">
+              <p class="small">
                 test<br/>
-                <a href=\\"1.xhtml#ref1\\">Return</a>
+                <a href="1.xhtml#ref1">Return</a>
               </p>
             </div>
           </div>
@@ -137,24 +137,24 @@ exports[`templates.mobi creates the markup 5`] = `
 exports[`templates.mobi creates the markup 6`] = `
 "
     
-      <div class=\\"figure__large figure__large--media figure__inline--square test\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
-            <div class=\\"audio-or-video\\">
-              <audio-or-video id=\\"audio-or-video-1\\" autoplay=\\"false\\">
+      <div class="figure__large figure__large--media figure__inline--square test">
+        <figure id="1">
+          <div class="figure__items">
+            <div class="audio-or-video">
+              <audio-or-video id="audio-or-video-1" autoplay="false">
                 <source />
-                <div class=\\"media__fallback__audio-or-video media__fallback--image\\">
+                <div class="media__fallback__audio-or-video media__fallback--image">
                   <figure>
-                    <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
+                    <img src="test.jpg" alt="Media fallback image"/>
                   </figure>
                 </div>
-                <p class=\\"media__fallback__audio-or-video media__fallback--text\\">Your device does not support the HTML5 audio-or-video API.</p>
+                <p class="media__fallback__audio-or-video media__fallback--text">Your device does not support the HTML5 audio-or-video API.</p>
               </audio-or-video>
             </div>
-            <div class=\\"figcaption\\">
-              <p class=\\"small\\">
+            <div class="figcaption">
+              <p class="small">
                 test<br/>
-                <a href=\\"1.xhtml#ref1\\">Return</a>
+                <a href="1.xhtml#ref1">Return</a>
               </p>
             </div>
           </div>
@@ -167,15 +167,15 @@ exports[`templates.mobi creates the markup 6`] = `
 exports[`templates.mobi creates the markup 7`] = `
 "
     
-      <div class=\\"figure__large figure__inline figure__inline--square test\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
+      <div class="figure__large figure__inline figure__inline--square test">
+        <figure id="1">
+          <div class="figure__items">
             
     
-      <img class=\\"square\\" alt=\\"Media Fallback Image\\" src=\\"../images/test.jpg\\"/>
+      <img class="square" alt="Media Fallback Image" src="../images/test.jpg"/>
     
-    <div class=\\"figcaption\\">
-      <p class=\\"small\\">Your device does not support embedded media.</p>
+    <div class="figcaption">
+      <p class="small">Your device does not support embedded media.</p>
     </div>
     
           </div>
@@ -188,15 +188,15 @@ exports[`templates.mobi creates the markup 7`] = `
 exports[`templates.mobi creates the markup 8`] = `
 "
     
-      <div class=\\"figure__large figure__inline figure__inline--square test\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
+      <div class="figure__large figure__inline figure__inline--square test">
+        <figure id="1">
+          <div class="figure__items">
             
     
-      <img class=\\"square\\" alt=\\"Media Fallback Image\\" src=\\"../images/test.jpg\\"/>
+      <img class="square" alt="Media Fallback Image" src="../images/test.jpg"/>
     
-    <div class=\\"figcaption\\">
-      <p class=\\"small\\">Your device does not support embedded media.</p>
+    <div class="figcaption">
+      <p class="small">Your device does not support embedded media.</p>
     </div>
     
           </div>
@@ -208,19 +208,19 @@ exports[`templates.mobi creates the markup 8`] = `
 
 exports[`templates.mobi creates the markup 9`] = `
 "
-    <section epub:type=\\"loi\\" class=\\"chapter figures\\">
-      <div class=\\"figure__large figure__large--portrait\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
+    <section epub:type="loi" class="chapter figures">
+      <div class="figure__large figure__large--portrait">
+        <figure id="1">
+          <div class="figure__items">
             
     <span>
-      <img class=\\"portrait\\" alt=\\"test\\" src=\\"../images/test.jpg\\"/>
+      <img class="portrait" alt="test" src="../images/test.jpg"/>
     </span>
-      <div class=\\"figcaption\\">
-        <p class=\\"small\\">
+      <div class="figcaption">
+        <p class="small">
           test
           <br/>
-          <a href=\\"1.xhtml#ref1\\">Return</a>
+          <a href="1.xhtml#ref1">Return</a>
         </p>
       </div>
     </div>
@@ -234,19 +234,19 @@ exports[`templates.mobi creates the markup 9`] = `
 
 exports[`templates.mobi creates the markup 10`] = `
 "
-    <section epub:type=\\"loi\\" class=\\"chapter figures\\">
-      <div class=\\"figure__large figure__large--landscape\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
+    <section epub:type="loi" class="chapter figures">
+      <div class="figure__large figure__large--landscape">
+        <figure id="1">
+          <div class="figure__items">
             
     <span>
-      <img class=\\"portrait\\" alt=\\"test\\" src=\\"../images/test.jpg\\"/>
+      <img class="portrait" alt="test" src="../images/test.jpg"/>
     </span>
-      <div class=\\"figcaption\\">
-        <p class=\\"small\\">
+      <div class="figcaption">
+        <p class="small">
           test
           <br/>
-          <a href=\\"1.xhtml#ref1\\">Return</a>
+          <a href="1.xhtml#ref1">Return</a>
         </p>
       </div>
     </div>
@@ -260,19 +260,19 @@ exports[`templates.mobi creates the markup 10`] = `
 
 exports[`templates.mobi creates the markup 11`] = `
 "
-    <section epub:type=\\"loi\\" class=\\"chapter figures\\">
-      <div class=\\"figure__large figure__large--portrait-high\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
+    <section epub:type="loi" class="chapter figures">
+      <div class="figure__large figure__large--portrait-high">
+        <figure id="1">
+          <div class="figure__items">
             
     <span>
-      <img class=\\"portrait\\" alt=\\"test\\" src=\\"../images/test.jpg\\"/>
+      <img class="portrait" alt="test" src="../images/test.jpg"/>
     </span>
-      <div class=\\"figcaption\\">
-        <p class=\\"small\\">
+      <div class="figcaption">
+        <p class="small">
           test
           <br/>
-          <a href=\\"1.xhtml#ref1\\">Return</a>
+          <a href="1.xhtml#ref1">Return</a>
         </p>
       </div>
     </div>
@@ -286,19 +286,19 @@ exports[`templates.mobi creates the markup 11`] = `
 
 exports[`templates.mobi creates the markup 12`] = `
 "
-    <section epub:type=\\"loi\\" class=\\"chapter figures\\">
-      <div class=\\"figure__large figure__large--square\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
+    <section epub:type="loi" class="chapter figures">
+      <div class="figure__large figure__large--square">
+        <figure id="1">
+          <div class="figure__items">
             
     <span>
-      <img class=\\"portrait\\" alt=\\"test\\" src=\\"../images/test.jpg\\"/>
+      <img class="portrait" alt="test" src="../images/test.jpg"/>
     </span>
-      <div class=\\"figcaption\\">
-        <p class=\\"small\\">
+      <div class="figcaption">
+        <p class="small">
           test
           <br/>
-          <a href=\\"1.xhtml#ref1\\">Return</a>
+          <a href="1.xhtml#ref1">Return</a>
         </p>
       </div>
     </div>
@@ -312,25 +312,25 @@ exports[`templates.mobi creates the markup 12`] = `
 
 exports[`templates.mobi creates the markup 13`] = `
 "
-    <section epub:type=\\"loi\\" class=\\"chapter figures\\">
-      <div class=\\"figure__large figure__large--media figure__inline--square test\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
-            <div class=\\"audio-or-video\\">
-              <audio-or-video id=\\"audio-or-video-1\\" autoplay=\\"false\\">
+    <section epub:type="loi" class="chapter figures">
+      <div class="figure__large figure__large--media figure__inline--square test">
+        <figure id="1">
+          <div class="figure__items">
+            <div class="audio-or-video">
+              <audio-or-video id="audio-or-video-1" autoplay="false">
                 <source />
-                <div class=\\"media__fallback__audio-or-video media__fallback--image\\">
+                <div class="media__fallback__audio-or-video media__fallback--image">
                   <figure>
-                    <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
+                    <img src="test.jpg" alt="Media fallback image"/>
                   </figure>
                 </div>
-                <p class=\\"media__fallback__audio-or-video media__fallback--text\\">Your device does not support the HTML5 audio-or-video API.</p>
+                <p class="media__fallback__audio-or-video media__fallback--text">Your device does not support the HTML5 audio-or-video API.</p>
               </audio-or-video>
             </div>
-            <div class=\\"figcaption\\">
-              <p class=\\"small\\">
+            <div class="figcaption">
+              <p class="small">
                 test<br/>
-                <a href=\\"1.xhtml#ref1\\">Return</a>
+                <a href="1.xhtml#ref1">Return</a>
               </p>
             </div>
           </div>
@@ -342,25 +342,25 @@ exports[`templates.mobi creates the markup 13`] = `
 
 exports[`templates.mobi creates the markup 14`] = `
 "
-    <section epub:type=\\"loi\\" class=\\"chapter figures\\">
-      <div class=\\"figure__large figure__large--media figure__inline--square test\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
-            <div class=\\"audio-or-video\\">
-              <audio-or-video id=\\"audio-or-video-1\\" autoplay=\\"false\\">
+    <section epub:type="loi" class="chapter figures">
+      <div class="figure__large figure__large--media figure__inline--square test">
+        <figure id="1">
+          <div class="figure__items">
+            <div class="audio-or-video">
+              <audio-or-video id="audio-or-video-1" autoplay="false">
                 <source />
-                <div class=\\"media__fallback__audio-or-video media__fallback--image\\">
+                <div class="media__fallback__audio-or-video media__fallback--image">
                   <figure>
-                    <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
+                    <img src="test.jpg" alt="Media fallback image"/>
                   </figure>
                 </div>
-                <p class=\\"media__fallback__audio-or-video media__fallback--text\\">Your device does not support the HTML5 audio-or-video API.</p>
+                <p class="media__fallback__audio-or-video media__fallback--text">Your device does not support the HTML5 audio-or-video API.</p>
               </audio-or-video>
             </div>
-            <div class=\\"figcaption\\">
-              <p class=\\"small\\">
+            <div class="figcaption">
+              <p class="small">
                 test<br/>
-                <a href=\\"1.xhtml#ref1\\">Return</a>
+                <a href="1.xhtml#ref1">Return</a>
               </p>
             </div>
           </div>
@@ -372,16 +372,16 @@ exports[`templates.mobi creates the markup 14`] = `
 
 exports[`templates.mobi creates the markup 15`] = `
 "
-    <section epub:type=\\"loi\\" class=\\"chapter figures\\">
-      <div class=\\"figure__large figure__large--square\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
+    <section epub:type="loi" class="chapter figures">
+      <div class="figure__large figure__large--square">
+        <figure id="1">
+          <div class="figure__items">
             
-    <a href=\\"1.xhtml#ref1\\">
-      <img class=\\"square\\" alt=\\"Media Fallback Image\\" src=\\"../images/test.jpg\\"/>
+    <a href="1.xhtml#ref1">
+      <img class="square" alt="Media Fallback Image" src="../images/test.jpg"/>
     </a>
-    <div class=\\"figcaption\\">
-      <p class=\\"small\\">Your device does not support embedded media.</p>
+    <div class="figcaption">
+      <p class="small">Your device does not support embedded media.</p>
     </div>
     
           </div>
@@ -393,16 +393,16 @@ exports[`templates.mobi creates the markup 15`] = `
 
 exports[`templates.mobi creates the markup 16`] = `
 "
-    <section epub:type=\\"loi\\" class=\\"chapter figures\\">
-      <div class=\\"figure__large figure__large--square\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
+    <section epub:type="loi" class="chapter figures">
+      <div class="figure__large figure__large--square">
+        <figure id="1">
+          <div class="figure__items">
             
-    <a href=\\"1.xhtml#ref1\\">
-      <img class=\\"square\\" alt=\\"Media Fallback Image\\" src=\\"../images/test.jpg\\"/>
+    <a href="1.xhtml#ref1">
+      <img class="square" alt="Media Fallback Image" src="../images/test.jpg"/>
     </a>
-    <div class=\\"figcaption\\">
-      <p class=\\"small\\">Your device does not support embedded media.</p>
+    <div class="figcaption">
+      <p class="small">Your device does not support embedded media.</p>
     </div>
     
           </div>
@@ -415,15 +415,15 @@ exports[`templates.mobi creates the markup 16`] = `
 exports[`templates.mobi creates the markup 17`] = `
 "
     
-      <div class=\\"figure__large figure__inline figure__inline--portrait break-before\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
+      <div class="figure__large figure__inline figure__inline--portrait break-before">
+        <figure id="1">
+          <div class="figure__items">
             
     <span>
-      <img class=\\"portrait\\" alt=\\"test\\" src=\\"../images/test.jpg\\"/>
+      <img class="portrait" alt="test" src="../images/test.jpg"/>
     </span>
-      <div class=\\"figcaption\\">
-        <p class=\\"small\\">
+      <div class="figcaption">
+        <p class="small">
           test
           
           
@@ -441,15 +441,15 @@ exports[`templates.mobi creates the markup 17`] = `
 exports[`templates.mobi creates the markup 18`] = `
 "
     
-      <div class=\\"figure__large figure__inline figure__inline--landscape break-before\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
+      <div class="figure__large figure__inline figure__inline--landscape break-before">
+        <figure id="1">
+          <div class="figure__items">
             
     <span>
-      <img class=\\"portrait\\" alt=\\"test\\" src=\\"../images/test.jpg\\"/>
+      <img class="portrait" alt="test" src="../images/test.jpg"/>
     </span>
-      <div class=\\"figcaption\\">
-        <p class=\\"small\\">
+      <div class="figcaption">
+        <p class="small">
           test
           
           
@@ -467,15 +467,15 @@ exports[`templates.mobi creates the markup 18`] = `
 exports[`templates.mobi creates the markup 19`] = `
 "
     
-      <div class=\\"figure__large figure__inline figure__inline--portrait-high break-before\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
+      <div class="figure__large figure__inline figure__inline--portrait-high break-before">
+        <figure id="1">
+          <div class="figure__items">
             
     <span>
-      <img class=\\"portrait\\" alt=\\"test\\" src=\\"../images/test.jpg\\"/>
+      <img class="portrait" alt="test" src="../images/test.jpg"/>
     </span>
-      <div class=\\"figcaption\\">
-        <p class=\\"small\\">
+      <div class="figcaption">
+        <p class="small">
           test
           
           
@@ -493,15 +493,15 @@ exports[`templates.mobi creates the markup 19`] = `
 exports[`templates.mobi creates the markup 20`] = `
 "
     
-      <div class=\\"figure__large figure__inline figure__inline--square break-before\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
+      <div class="figure__large figure__inline figure__inline--square break-before">
+        <figure id="1">
+          <div class="figure__items">
             
     <span>
-      <img class=\\"portrait\\" alt=\\"test\\" src=\\"../images/test.jpg\\"/>
+      <img class="portrait" alt="test" src="../images/test.jpg"/>
     </span>
-      <div class=\\"figcaption\\">
-        <p class=\\"small\\">
+      <div class="figcaption">
+        <p class="small">
           test
           
           
@@ -519,24 +519,24 @@ exports[`templates.mobi creates the markup 20`] = `
 exports[`templates.mobi creates the markup 21`] = `
 "
     
-      <div class=\\"figure__large figure__large--media figure__inline--square break-before\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
-            <div class=\\"audio-or-video\\">
-              <audio-or-video id=\\"audio-or-video-1\\" autoplay=\\"false\\">
+      <div class="figure__large figure__large--media figure__inline--square break-before">
+        <figure id="1">
+          <div class="figure__items">
+            <div class="audio-or-video">
+              <audio-or-video id="audio-or-video-1" autoplay="false">
                 <source />
-                <div class=\\"media__fallback__audio-or-video media__fallback--image\\">
+                <div class="media__fallback__audio-or-video media__fallback--image">
                   <figure>
-                    <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
+                    <img src="test.jpg" alt="Media fallback image"/>
                   </figure>
                 </div>
-                <p class=\\"media__fallback__audio-or-video media__fallback--text\\">Your device does not support the HTML5 audio-or-video API.</p>
+                <p class="media__fallback__audio-or-video media__fallback--text">Your device does not support the HTML5 audio-or-video API.</p>
               </audio-or-video>
             </div>
-            <div class=\\"figcaption\\">
-              <p class=\\"small\\">
+            <div class="figcaption">
+              <p class="small">
                 test<br/>
-                <a href=\\"1.xhtml#ref1\\">Return</a>
+                <a href="1.xhtml#ref1">Return</a>
               </p>
             </div>
           </div>
@@ -549,24 +549,24 @@ exports[`templates.mobi creates the markup 21`] = `
 exports[`templates.mobi creates the markup 22`] = `
 "
     
-      <div class=\\"figure__large figure__large--media figure__inline--square break-before\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
-            <div class=\\"audio-or-video\\">
-              <audio-or-video id=\\"audio-or-video-1\\" autoplay=\\"false\\">
+      <div class="figure__large figure__large--media figure__inline--square break-before">
+        <figure id="1">
+          <div class="figure__items">
+            <div class="audio-or-video">
+              <audio-or-video id="audio-or-video-1" autoplay="false">
                 <source />
-                <div class=\\"media__fallback__audio-or-video media__fallback--image\\">
+                <div class="media__fallback__audio-or-video media__fallback--image">
                   <figure>
-                    <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
+                    <img src="test.jpg" alt="Media fallback image"/>
                   </figure>
                 </div>
-                <p class=\\"media__fallback__audio-or-video media__fallback--text\\">Your device does not support the HTML5 audio-or-video API.</p>
+                <p class="media__fallback__audio-or-video media__fallback--text">Your device does not support the HTML5 audio-or-video API.</p>
               </audio-or-video>
             </div>
-            <div class=\\"figcaption\\">
-              <p class=\\"small\\">
+            <div class="figcaption">
+              <p class="small">
                 test<br/>
-                <a href=\\"1.xhtml#ref1\\">Return</a>
+                <a href="1.xhtml#ref1">Return</a>
               </p>
             </div>
           </div>
@@ -579,15 +579,15 @@ exports[`templates.mobi creates the markup 22`] = `
 exports[`templates.mobi creates the markup 23`] = `
 "
     
-      <div class=\\"figure__large figure__inline figure__inline--square break-before\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
+      <div class="figure__large figure__inline figure__inline--square break-before">
+        <figure id="1">
+          <div class="figure__items">
             
     
-      <img class=\\"square\\" alt=\\"Media Fallback Image\\" src=\\"../images/test.jpg\\"/>
+      <img class="square" alt="Media Fallback Image" src="../images/test.jpg"/>
     
-    <div class=\\"figcaption\\">
-      <p class=\\"small\\">Your device does not support embedded media.</p>
+    <div class="figcaption">
+      <p class="small">Your device does not support embedded media.</p>
     </div>
     
           </div>
@@ -600,15 +600,15 @@ exports[`templates.mobi creates the markup 23`] = `
 exports[`templates.mobi creates the markup 24`] = `
 "
     
-      <div class=\\"figure__large figure__inline figure__inline--square break-before\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
+      <div class="figure__large figure__inline figure__inline--square break-before">
+        <figure id="1">
+          <div class="figure__items">
             
     
-      <img class=\\"square\\" alt=\\"Media Fallback Image\\" src=\\"../images/test.jpg\\"/>
+      <img class="square" alt="Media Fallback Image" src="../images/test.jpg"/>
     
-    <div class=\\"figcaption\\">
-      <p class=\\"small\\">Your device does not support embedded media.</p>
+    <div class="figcaption">
+      <p class="small">Your device does not support embedded media.</p>
     </div>
     
           </div>

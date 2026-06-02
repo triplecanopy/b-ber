@@ -18,7 +18,7 @@
     "@swc/core": "^1.15.40",
     "@swc/jest": "^0.2.39",
     "@types/markdown-it": "^14.1.2",
-    "jest": "^26.6.3",
+    "jest": "^29.7.0",
     "rimraf": "^2.7.1",
     "tsdown": "^0.22.1",
     "typescript": "^6.0.3"

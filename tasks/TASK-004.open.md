@@ -75,7 +75,8 @@ must have at least one test that would catch the breakage.
   - `b-ber-parser-gallery`: packages/b-ber-parser-gallery/tasks/TASK-001.open.md
   - `b-ber-parser-section`: packages/b-ber-parser-section/tasks/TASK-001.open.md
 - [ ] Once per-package tasks are complete, re-run coverage baseline and
-      confirm overall statement coverage ≥ 60% before closing this task.
+      confirm overall statement coverage ≥ 75% before closing this task.
+      (Target raised from 60% to 75% on 2026-06-02.)
 
 ## Notes
 

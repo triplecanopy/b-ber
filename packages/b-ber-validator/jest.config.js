@@ -1,10 +1,9 @@
 module.exports = {
   name: 'b-ber-validator',
   verbose: false,
-  verbose: false,
-  setupFilesAfterEnv: ['jest-extended'],
+  setupFilesAfterEnv: ['jest-extended/all'],
   testPathIgnorePatterns: ['__mocks__'],
-  testURL: 'http://localhost/',
+  testEnvironmentOptions: { url: 'http://localhost/' },
   moduleNameMapper: {
     '@canopycanopycanopy/b-ber-shapes-directives':
       '<rootDir>/../b-ber-shapes-directives',

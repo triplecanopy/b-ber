@@ -1,6 +1,6 @@
 # b-ber monorepo — Project Plan
 
-_Last updated: 2026-06-02 (TASK-045–046 added — changelog refactor, logger refactor)_
+_Last updated: 2026-06-02 (TASK-034 complete — Jest v29 upgrade; TASK-047 added — watch mode research; coverage target raised to 75%)_
 
 ---
 
@@ -9,7 +9,7 @@ _Last updated: 2026-06-02 (TASK-045–046 added — changelog refactor, logger r
 Modernize the b-ber monorepo in three parallel streams before releasing a new
 stable version:
 
-1. **Test coverage** (TASK-004) — raise coverage to ≥ 60% monorepo-wide before
+1. **Test coverage** (TASK-004) — raise coverage to ≥ 75% monorepo-wide before
    any large refactor
 2. **Bundler replacement** (TASK-006/007) — replace webpack with Vite in
    `b-ber-reader-react` and `b-ber-reader`
@@ -71,6 +71,7 @@ been created yet; implementation tasks (TASK-006+) have not started.
 | TASK-005 | Research Biome migration (chose Option B)          | `feat/upgrades`   |
 | TASK-016 | Circular import audit + arch risk catalog          | `feat/upgrades`   |
 | TASK-019 | Pre-TS migration cleanup                           | `feat/upgrades`   |
+| TASK-034 | Upgrade Jest from v26 to v29                       | `feat/upgrades`   |
 | TASK-008 | Set up shared TypeScript infrastructure            | `feat/ts-stage-1` |
 | TASK-009 | Convert b-ber-shapes-directives to TS              | `feat/ts-stage-1` |
 | TASK-010 | Convert b-ber-shapes-dublin-core + sequences to TS | `feat/ts-stage-1` |
@@ -103,7 +104,7 @@ These tasks have no unmet dependencies:
 | TASK-022 | Automate circular dependency checks              | `feat/upgrades`        | Options: pre-commit hook, CI, or `npm test`; update extensions list once TS work starts   |
 | TASK-023 | Research Lerna replacement / upgrade options     | `feat/upgrades`        | Superseded by TASK-036; keep for research notes                                           |
 | TASK-033 | Evaluate code coverage tooling                   | `feat/upgrades`        | Istanbul incompatible with @swc/jest; audit V8 provider, Vitest coverage, orphaned pkgs   |
-| TASK-034 | Upgrade Jest from v26 to v29                     | `feat/upgrades`        | `testURL` removed; `jest-environment-jsdom` now separate; coordinate with TASK-033        |
+| TASK-034 | Upgrade Jest from v26 to v29                     | `feat/upgrades`        | ✓ Complete — 84/84 suites pass; v8 coverage provider, snapshots updated                   |
 | TASK-035 | Fix and modernize CircleCI pipeline              | `feat/upgrades`        | Stale Docker image, broken bootstrap, only runs on main; blocked on TASK-036              |
 | TASK-036 | Upgrade Lerna and migrate off bootstrap          | `feat/upgrades`        | **High priority** — bootstrap removed in v7+; affects dev, CI, and publish workflow       |
 | TASK-037 | Replace or reconfigure dependency management     | `feat/upgrades`        | Dependabot paused + broken config; evaluate Options A–D; recommend remove + npm audit     |
@@ -114,6 +115,7 @@ These tasks have no unmet dependencies:
 | TASK-042 | E2E testing — CLI smoke tests                    | `feat/upgrades`        | `bber new`, `bber build` variants, artifact assertions; blocked on TASK-040 + TASK-041    |
 | TASK-045 | Refactor changelog generation + release workflow | `feat/upgrades`        | Manual, fragile sequencing; evaluate changesets / release-please / AI-assisted drafting   |
 | TASK-046 | Refactor b-ber-logger                            | `feat/logger-refactor` | Bind pattern → class methods; remove process.exit from log.error; remove argv parsing     |
+| TASK-047 | Research watch mode scripts for dev workflow     | `feat/upgrades`        | Most packages lack a `watch` script; define target state per package type                 |
 
 ### Not started — blocked
 
@@ -173,18 +175,22 @@ These are tracked as `TASK-001.open.md` within each package's `tasks/` directory
 
 | Package                    | Starting coverage | Current | Target | Status      |
 | -------------------------- | ----------------- | ------- | ------ | ----------- |
-| b-ber-lib                  | 17%               | 71%     | ≥ 70%  | complete    |
+| b-ber-lib                  | 17%               | 71%     | ≥ 75%  | in progress |
 | b-ber-tasks                | ~0%               | ~15%    | ~25%\* | in progress |
-| b-ber-logger               | 0%                | 73%     | ≥ 60%  | in progress |
-| b-ber-markdown-renderer    | 0%                | 83%     | ≥ 60%  | complete    |
-| b-ber-cli                  | 24%               | 65%     | ≥ 60%  | complete    |
-| b-ber-templates            | mixed             | 96%     | ≥ 60%  | complete    |
+| b-ber-logger               | 0%                | 73%     | ≥ 75%  | in progress |
+| b-ber-markdown-renderer    | 0%                | 83%     | ≥ 75%  | complete    |
+| b-ber-cli                  | 24%               | 65%     | ≥ 75%  | in progress |
+| b-ber-templates            | mixed             | 96%     | ≥ 75%  | complete    |
 | b-ber-validator            | 69%               | 69%     | ≥ 80%  | not started |
-| b-ber-grammar-\* (14 pkgs) | 0%                | ~80%    | ≥ 60%  | in progress |
-| b-ber-parser-\* (5 pkgs)   | 0%                | ~90%    | ≥ 60%  | in progress |
-| b-ber-reader-react         | mixed             | mixed   | ≥ 60%  | not started |
+| b-ber-grammar-\* (14 pkgs) | 0%                | ~80%    | ≥ 75%  | in progress |
+| b-ber-parser-\* (5 pkgs)   | 0%                | ~90%    | ≥ 75%  | in progress |
+| b-ber-reader-react         | mixed             | mixed   | ≥ 75%  | not started |
 
 Priority order: ~~b-ber-logger~~ ✓ → ~~b-ber-templates~~ ✓ → ~~grammar/parser stubs~~ ✓ → reader-react.
+
+_Note: minimum coverage target raised from 60% to 75% on 2026-06-02. Packages previously
+marked complete at ≥ 60% (b-ber-lib at 71%, b-ber-logger at 73%, b-ber-cli at 65%)
+are reopened; they need additional tests to reach 75%._
 
 \*b-ber-tasks: most pipeline steps (web, reader, pdf, sass, epub, etc.) require a full project
 directory + external tools (Calibre, wkhtmltopdf). Realistic ceiling for pure unit tests is ~25%.
@@ -205,9 +211,8 @@ In priority order:
 3. **Start TASK-035** (Fix CircleCI): pipeline has been broken for a long time.
    Blocked on TASK-036 for the bootstrap step, but the config rewrite can be
    drafted in parallel.
-4. **Start TASK-034** (Jest upgrade v26 → v29): high priority — `testURL` is
-   removed in v27, Istanbul coverage is broken with @swc/jest. Coordinate with
-   TASK-033 to land `coverageProvider: 'v8'` in the same pass.
+4. **TASK-034 complete** — Jest upgraded to v29, 84/84 suites passing. TASK-033
+   (coverage tooling) can now be addressed independently.
 5. **Start TASK-033** (Coverage tooling): confirms V8 provider recommendation
    and removes orphaned Istanbul packages.
 6. **Stage 3 complete** (TASK-029–031 ✓): both `b-ber-tasks` and `b-ber-cli`

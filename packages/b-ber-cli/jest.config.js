@@ -2,8 +2,8 @@ module.exports = {
   name: 'b-ber-cli',
   verbose: false,
   setupFiles: ['./jest.setup.js'],
-  setupFilesAfterEnv: ['jest-extended'],
-  testURL: 'http://localhost/',
+  setupFilesAfterEnv: ['jest-extended/all'],
+  testEnvironmentOptions: { url: 'http://localhost/' },
   transform: { '^.+\\.[jt]sx?$': '@swc/jest' },
   moduleNameMapper: {
     '^@canopycanopycanopy/b-ber-lib/State$':

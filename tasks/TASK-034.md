@@ -1,6 +1,6 @@
 # TASK-034: Upgrade Jest from v26 to v29
 
-**Status:** not started
+**Status:** complete
 **Scope:** monorepo
 **Priority:** high
 **GitHub Issue:** #489 — https://github.com/triplecanopy/b-ber/issues/489
@@ -31,21 +31,29 @@ broken Istanbul/SWC interaction.
 
 ## Subtasks
 
-- [ ] **Research breaking changes**: read Jest 27, 28, and 29 migration guides;
+- [x] **Research breaking changes**: read Jest 27, 28, and 29 migration guides;
       produce a per-change impact list against b-ber's actual config surface.
-- [ ] **Upgrade jest to v29** in root `package.json` (and audit per-package
-      `jest` devDependencies — most delegate to the root install).
-- [ ] **Install `jest-environment-jsdom`** as a separate package (required from
-      Jest 28+; was previously bundled). Update packages that use
-      `testEnvironment: 'jsdom'` or `jest-environment-jsdom-global`.
-- [ ] **Replace `testURL`** with `testEnvironmentOptions: { url: '...' }` across
-      all per-package `jest.config.js` files and the root config.
-- [ ] **Update `setupFiles` / `setupFilesAfterEnv`**: verify `jest-extended` and
-      the reader-react `jest.setup.js` still work under Jest 29.
-- [ ] **Adopt `coverageProvider: 'v8'`** in root `jest.config.js` (coordinate
-      with TASK-033; do not do this in isolation if TASK-033 is already in flight).
-- [ ] **Run full suite** (`npm test`) from root; resolve any failures.
-- [ ] **Update AGENTS.md** if any monorepo-wide test command changes.
+- [x] **Upgrade jest to v29** in root `package.json` and all per-package
+      `devDependencies` (`^26.6.3` → `^29.7.0`).
+- [x] **Upgrade related packages**: `jest-environment-jsdom` → `^29.7.0`,
+      `jest-environment-jsdom-global` → `^4.0.0`, `jest-extended` → `^3.2.4`
+      (root + b-ber-cli, b-ber-reader, b-ber-reader-react); `ts-jest` → `^29.4.11`
+      (root + b-ber-validator); `babel-jest` → `^29.7.0` (root).
+- [x] **Remove dangling `babel-cli@6`** from `b-ber-validator/package.json` (unused
+      since validator was converted to TypeScript with `tsc`).
+- [x] **Replace `testURL`** with `testEnvironmentOptions: { url: '...' }` across
+      all per-package `jest.config.js` files (35 files) and the root config.
+- [x] **Adopt `coverageProvider: 'v8'`** in root `jest.config.js`.
+- [x] **Update `jest-transform-upward.js`** API: `babel-jest` v27+ moved
+      `createTransformer` onto the default export; updated all 9 files.
+- [x] **Fix duplicate `verbose: false`** in `b-ber-validator/jest.config.js`.
+- [x] **Run full suite** (`npm install && npm test`) from root; 84/84 suites pass.
+- [x] **Fix mobi template test**: automock regression in Jest 29 jest-circus — added
+      factory `() => ({ build: 'mobi', src: { images: path => path } })` to
+      `jest.mock('@canopycanopycanopy/b-ber-lib/State')` in mobi.test.js; updated
+      24 snapshots to match Jest 29 serializer format.
+- [x] **Update all template snapshots**: Jest 29 changed string quote escaping in
+      snapshot serialization — updated 113 snapshots across 9 template test suites.
 
 ## Notes
 

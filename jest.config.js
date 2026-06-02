@@ -2,8 +2,9 @@ module.exports = {
   name: 'b-ber',
   verbose: false,
   setupFiles: ['./packages/b-ber-reader-react/jest.setup.js'],
-  setupFilesAfterEnv: ['jest-extended'],
+  setupFilesAfterEnv: ['jest-extended/all'],
   collectCoverage: false,
+  coverageProvider: 'v8',
   collectCoverageFrom: [
     '**/*.{js,jsx,ts,tsx}',
     '!**/node_modules/**',
@@ -126,7 +127,7 @@ module.exports = {
     '**/__tests__/index.{js,ts}',
   ],
   testPathIgnorePatterns: ['__mocks__'],
-  testURL: 'http://localhost/',
+  testEnvironmentOptions: { url: 'http://localhost/' },
   transform: {
     '^.+\\.[jt]sx?$': '@swc/jest',
   },
