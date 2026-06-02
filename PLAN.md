@@ -1,6 +1,6 @@
 # b-ber monorepo — Project Plan
 
-_Last updated: 2026-06-02 (TASK-039–042 added — E2E testing umbrella and first subtasks; feat/ts-stage-3 merged)_
+_Last updated: 2026-06-02 (TASK-045–046 added — changelog refactor, logger refactor)_
 
 ---
 
@@ -95,23 +95,25 @@ been created yet; implementation tasks (TASK-006+) have not started.
 
 These tasks have no unmet dependencies:
 
-| Task     | Title                                          | Branch                | Notes                                                                                     |
-| -------- | ---------------------------------------------- | --------------------- | ----------------------------------------------------------------------------------------- |
-| TASK-006 | Migrate b-ber-reader-react webpack → Vite      | `feat/vite-migration` | Independent of TS work                                                                    |
-| TASK-017 | Expand diagrams: tooling versions + cross-refs | `feat/upgrades`       | Living audit surface; TASK-016 complete                                                   |
-| TASK-021 | Audit `--no-package-lock` in lerna bootstrap   | `feat/upgrades`       | Low priority; review alongside `--legacy-peer-deps`                                       |
-| TASK-022 | Automate circular dependency checks            | `feat/upgrades`       | Options: pre-commit hook, CI, or `npm test`; update extensions list once TS work starts   |
-| TASK-023 | Research Lerna replacement / upgrade options   | `feat/upgrades`       | Superseded by TASK-036; keep for research notes                                           |
-| TASK-033 | Evaluate code coverage tooling                 | `feat/upgrades`       | Istanbul incompatible with @swc/jest; audit V8 provider, Vitest coverage, orphaned pkgs   |
-| TASK-034 | Upgrade Jest from v26 to v29                   | `feat/upgrades`       | `testURL` removed; `jest-environment-jsdom` now separate; coordinate with TASK-033        |
-| TASK-035 | Fix and modernize CircleCI pipeline            | `feat/upgrades`       | Stale Docker image, broken bootstrap, only runs on main; blocked on TASK-036              |
-| TASK-036 | Upgrade Lerna and migrate off bootstrap        | `feat/upgrades`       | **High priority** — bootstrap removed in v7+; affects dev, CI, and publish workflow       |
-| TASK-037 | Replace or reconfigure dependency management   | `feat/upgrades`       | Dependabot paused + broken config; evaluate Options A–D; recommend remove + npm audit     |
-| TASK-038 | Audit and clean up package.json scripts        | `feat/upgrades`       | Inconsistent naming, dead scripts, opaque chains; some cleanup now, rest after migrations |
-| TASK-039 | E2E testing umbrella                           | `feat/upgrades`       | CLI smoke + reader browser tests; may become `b-ber-testing` package; **high priority**   |
-| TASK-040 | E2E testing — research: tooling + fixture      | `feat/upgrades`       | Playwright vs alternatives; kitchen-sink fixture design; package boundary decision        |
-| TASK-041 | E2E testing — kitchen-sink fixture project     | `feat/upgrades`       | Covers all directives; blocked on TASK-040 for location decision                          |
-| TASK-042 | E2E testing — CLI smoke tests                  | `feat/upgrades`       | `bber new`, `bber build` variants, artifact assertions; blocked on TASK-040 + TASK-041    |
+| Task     | Title                                            | Branch                 | Notes                                                                                     |
+| -------- | ------------------------------------------------ | ---------------------- | ----------------------------------------------------------------------------------------- |
+| TASK-006 | Migrate b-ber-reader-react webpack → Vite        | `feat/vite-migration`  | Independent of TS work                                                                    |
+| TASK-017 | Expand diagrams: tooling versions + cross-refs   | `feat/upgrades`        | Living audit surface; TASK-016 complete                                                   |
+| TASK-021 | Audit `--no-package-lock` in lerna bootstrap     | `feat/upgrades`        | Low priority; review alongside `--legacy-peer-deps`                                       |
+| TASK-022 | Automate circular dependency checks              | `feat/upgrades`        | Options: pre-commit hook, CI, or `npm test`; update extensions list once TS work starts   |
+| TASK-023 | Research Lerna replacement / upgrade options     | `feat/upgrades`        | Superseded by TASK-036; keep for research notes                                           |
+| TASK-033 | Evaluate code coverage tooling                   | `feat/upgrades`        | Istanbul incompatible with @swc/jest; audit V8 provider, Vitest coverage, orphaned pkgs   |
+| TASK-034 | Upgrade Jest from v26 to v29                     | `feat/upgrades`        | `testURL` removed; `jest-environment-jsdom` now separate; coordinate with TASK-033        |
+| TASK-035 | Fix and modernize CircleCI pipeline              | `feat/upgrades`        | Stale Docker image, broken bootstrap, only runs on main; blocked on TASK-036              |
+| TASK-036 | Upgrade Lerna and migrate off bootstrap          | `feat/upgrades`        | **High priority** — bootstrap removed in v7+; affects dev, CI, and publish workflow       |
+| TASK-037 | Replace or reconfigure dependency management     | `feat/upgrades`        | Dependabot paused + broken config; evaluate Options A–D; recommend remove + npm audit     |
+| TASK-038 | Audit and clean up package.json scripts          | `feat/upgrades`        | Inconsistent naming, dead scripts, opaque chains; some cleanup now, rest after migrations |
+| TASK-039 | E2E testing umbrella                             | `feat/upgrades`        | CLI smoke + reader browser tests; may become `b-ber-testing` package; **high priority**   |
+| TASK-040 | E2E testing — research: tooling + fixture        | `feat/upgrades`        | Playwright vs alternatives; kitchen-sink fixture design; package boundary decision        |
+| TASK-041 | E2E testing — kitchen-sink fixture project       | `feat/upgrades`        | Covers all directives; blocked on TASK-040 for location decision                          |
+| TASK-042 | E2E testing — CLI smoke tests                    | `feat/upgrades`        | `bber new`, `bber build` variants, artifact assertions; blocked on TASK-040 + TASK-041    |
+| TASK-045 | Refactor changelog generation + release workflow | `feat/upgrades`        | Manual, fragile sequencing; evaluate changesets / release-please / AI-assisted drafting   |
+| TASK-046 | Refactor b-ber-logger                            | `feat/logger-refactor` | Bind pattern → class methods; remove process.exit from log.error; remove argv parsing     |
 
 ### Not started — blocked
 
