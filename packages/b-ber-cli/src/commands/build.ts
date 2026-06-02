@@ -1,5 +1,3 @@
-/* eslint-disable no-continue */
-/* eslint-disable no-unused-vars */
 import path from 'path'
 import { serialize } from '@canopycanopycanopy/b-ber-tasks'
 import state from '@canopycanopycanopy/b-ber-lib/State'
@@ -14,23 +12,23 @@ import {
   withConfigOptions,
 } from '../lib/config-options'
 
-// Leading pipe ensures that the `all` command can be run without arguments
 const command = 'build [|epub|mobi|pdf|reader|sample|web]'
 const describe = 'Build a project'
 
 const noop = () => {}
 
-const handler = async argv => {
+const handler = async (argv: any) => {
   process.env.NODE_ENV = process.env.NODE_ENV || 'development'
 
   const { _: desiredSequences, $0, config, ...configOptions } = argv
   const sequence = createBuildSequence(desiredSequences)
-  const subSequence = sequence.reduce((a, c) => a.concat(...sequences[c]), [])
+  const subSequence = sequence.reduce(
+    (a: any[], c: any) => a.concat(...sequences[c]),
+    []
+  )
 
-  // Set up the config object that's going to be passed into the `init` function
-  let projectConfig = {}
+  let projectConfig: Record<string, any> = {}
 
-  // Check if a config files has been specified
   if (config) projectConfig = await parseConfigFile(config)
 
   projectConfig = { ...projectConfig, ...configOptions }
@@ -38,14 +36,12 @@ const handler = async argv => {
   state.update('sequence', subSequence)
   log.registerSequence(state, command, subSequence)
 
-  const run = buildTasks => {
+  const run = (buildTasks: any[]) => {
     const build = buildTasks.shift()
 
-    // Reset any previous changes to state and update the build type
     state.reset()
     state.update('build', build)
 
-    // Apply the config options that may have been passed in via CLI flags
     for (const [key, val] of Object.entries(projectConfig)) {
       if (!state.has(`config.${key}`)) {
         log.warn('Invalid configuration option [%s]', key)
@@ -78,7 +74,7 @@ const handler = async argv => {
     .catch(console.error)
 }
 
-const builder = yargs =>
+const builder = (yargs: any) =>
   withConfigOptions(yargs)
     .command('', 'Build all formats', noop, handler)
     .command('epub', 'Build an Epub', noop, handler)

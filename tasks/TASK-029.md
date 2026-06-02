@@ -1,6 +1,6 @@
 # TASK-029: TypeScript Stage 3 — b-ber-tasks and b-ber-cli
 
-**Status:** not started
+**Status:** complete
 **Scope:** monorepo
 **Priority:** medium
 **GitHub Issue:** #484 — https://github.com/triplecanopy/b-ber/issues/484
@@ -27,8 +27,8 @@ both sub-tasks are complete and `npm test` passes from root.
 
 ## Subtasks
 
-- [ ] TASK-030: Convert `b-ber-tasks`
-- [ ] TASK-031: Convert `b-ber-cli`
+- [x] TASK-030: Convert `b-ber-tasks`
+- [x] TASK-031: Convert `b-ber-cli`
 
 ## Notes
 

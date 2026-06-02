@@ -2,7 +2,7 @@ import { opf } from '@canopycanopycanopy/b-ber-tasks'
 
 const command = 'opf'
 const describe = 'Generate the opf'
-const builder = yargs =>
+const builder = (yargs: any) =>
   yargs
     .help('h')
     .alias('h', 'help')

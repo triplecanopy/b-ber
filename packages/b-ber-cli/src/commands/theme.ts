@@ -4,7 +4,7 @@ import { fail, ensure } from '@canopycanopycanopy/b-ber-lib/utils'
 const _command = 'theme <command> [options]'
 const describe = "Manage a project's theme"
 
-const handler = args =>
+const handler = (args: any) =>
   ensure()
     .then(() => {
       const { command, options } = args
@@ -12,7 +12,7 @@ const handler = args =>
     })
     .catch(console.error)
 
-const builder = yargs =>
+const builder = (yargs: any) =>
   yargs
     .positional('command', {
       describe: 'Theme command to execute',
@@ -26,7 +26,7 @@ const builder = yargs =>
     .help('h')
     .alias('h', 'help')
     .usage(`\nUsage: $0 theme\n\n${describe}`)
-    .fail((msg, err) => fail(msg, err, yargs))
+    .fail((msg: any, err: any) => fail(msg, err, yargs))
 
 export default {
   command: _command,

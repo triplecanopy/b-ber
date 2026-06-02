@@ -5,7 +5,7 @@ import { fail } from '@canopycanopycanopy/b-ber-lib/utils'
 const command = 'serve [build] [opts]'
 const describe = 'Preview a project in the browser using the `reader` build.'
 
-const handler = yargs => {
+const handler = (yargs: any) => {
   const { external, build } = yargs
 
   log.notice(`Serving [b-ber-${build}]`)
@@ -13,7 +13,7 @@ const handler = yargs => {
   return serve({ build, external })
 }
 
-const builder = yargs =>
+const builder = (yargs: any) =>
   yargs
     .positional('build', {
       describe: 'Build to preview',
@@ -28,7 +28,7 @@ const builder = yargs =>
     .help('h')
     .alias('h', 'help')
     .usage(`\nUsage: $0 serve\n\n${describe}`)
-    .fail((msg, err) => fail(msg, err, yargs))
+    .fail((msg: any, err: any) => fail(msg, err, yargs))
 
 export default {
   command,

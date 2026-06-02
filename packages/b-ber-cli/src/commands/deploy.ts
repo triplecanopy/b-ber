@@ -3,7 +3,7 @@ import { fail } from '@canopycanopycanopy/b-ber-lib/utils'
 
 const command = 'deploy [builds...]'
 const describe = 'Upload a b-ber project to Amazon S3'
-const builder = yargs =>
+const builder = (yargs: any) =>
   yargs
     .option('yes', {
       alias: 'y',
@@ -18,9 +18,9 @@ const builder = yargs =>
     .help('h')
     .alias('h', 'help')
     .usage(`\nUsage: $0 deploy\n\n${describe}`)
-    .fail((msg, err) => fail(msg, err, yargs))
+    .fail((msg: any, err: any) => fail(msg, err, yargs))
 
-const handler = deploy
+const handler: any = deploy
 
 export default {
   command,

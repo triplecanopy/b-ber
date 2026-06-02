@@ -3,7 +3,7 @@ import { xml } from '@canopycanopycanopy/b-ber-tasks'
 const command = 'xml'
 const describe = 'Export a project as an XML document'
 
-const builder = yargs =>
+const builder = (yargs: any) =>
   yargs
     .help('h')
     .alias('h', 'help')
