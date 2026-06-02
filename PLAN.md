@@ -1,6 +1,6 @@
 # b-ber monorepo — Project Plan
 
-_Last updated: 2026-06-02 (TASK-038 added — package.json scripts audit and cleanup)_
+_Last updated: 2026-06-02 (TASK-039–042 added — E2E testing umbrella and first subtasks; feat/ts-stage-3 merged)_
 
 ---
 
@@ -108,6 +108,10 @@ These tasks have no unmet dependencies:
 | TASK-036 | Upgrade Lerna and migrate off bootstrap        | `feat/upgrades`       | **High priority** — bootstrap removed in v7+; affects dev, CI, and publish workflow       |
 | TASK-037 | Replace or reconfigure dependency management   | `feat/upgrades`       | Dependabot paused + broken config; evaluate Options A–D; recommend remove + npm audit     |
 | TASK-038 | Audit and clean up package.json scripts        | `feat/upgrades`       | Inconsistent naming, dead scripts, opaque chains; some cleanup now, rest after migrations |
+| TASK-039 | E2E testing umbrella                           | `feat/upgrades`       | CLI smoke + reader browser tests; may become `b-ber-testing` package; **high priority**   |
+| TASK-040 | E2E testing — research: tooling + fixture      | `feat/upgrades`       | Playwright vs alternatives; kitchen-sink fixture design; package boundary decision        |
+| TASK-041 | E2E testing — kitchen-sink fixture project     | `feat/upgrades`       | Covers all directives; blocked on TASK-040 for location decision                          |
+| TASK-042 | E2E testing — CLI smoke tests                  | `feat/upgrades`       | `bber new`, `bber build` variants, artifact assertions; blocked on TASK-040 + TASK-041    |
 
 ### Not started — blocked
 
@@ -117,7 +121,8 @@ These tasks have no unmet dependencies:
 | TASK-013 | Node.js modernization                              | TASK-012 ✓ — **can begin now**     |
 | TASK-015 | Biome migration                                    | TASK-006 (same branch)             |
 | TASK-032 | Convert b-ber-reader-react to TypeScript (Stage 4) | TASK-006 (Vite migration complete) |
-| TASK-032 | Convert b-ber-reader-react to TypeScript (Stage 4) | TASK-006 (Vite migration complete) |
+| TASK-043 | E2E testing — reader browser tests (Playwright)    | TASK-040 (research) + TASK-041     |
+| TASK-044 | E2E testing — CI integration                       | TASK-043 (reader tests stable)     |
 
 ---
 
@@ -189,29 +194,31 @@ This is documented in packages/b-ber-tasks/tasks/TASK-001.open.md.
 
 In priority order:
 
-1. **Start TASK-036** (Lerna upgrade): high priority — `lerna bootstrap` is
+1. **Start TASK-040** (E2E research): high priority — tooling decision
+   unblocks TASK-041/042/043. Should be fast (a day or two of evaluation).
+   Leading candidate: Playwright in a new `b-ber-testing` package.
+2. **Start TASK-036** (Lerna upgrade): high priority — `lerna bootstrap` is
    load-bearing for dev and CI; v7+ removes it. Must land before TASK-035 can
    be finalized. Read current `lerna.json` first.
-2. **Start TASK-035** (Fix CircleCI): pipeline has been broken for a long time.
+3. **Start TASK-035** (Fix CircleCI): pipeline has been broken for a long time.
    Blocked on TASK-036 for the bootstrap step, but the config rewrite can be
    drafted in parallel.
-3. **Start TASK-034** (Jest upgrade v26 → v29): high priority — `testURL` is
+4. **Start TASK-034** (Jest upgrade v26 → v29): high priority — `testURL` is
    removed in v27, Istanbul coverage is broken with @swc/jest. Coordinate with
    TASK-033 to land `coverageProvider: 'v8'` in the same pass.
-4. **Start TASK-033** (Coverage tooling): confirms V8 provider recommendation
+5. **Start TASK-033** (Coverage tooling): confirms V8 provider recommendation
    and removes orphaned Istanbul packages.
-5. **Stage 3 complete** (TASK-029–031): both `b-ber-tasks` and `b-ber-cli`
-   are now TypeScript. Branch `feat/ts-stage-3` is ready to merge into
-   `feat/upgrades`. TASK-032 (reader-react TS, Stage 4) is still blocked on
-   TASK-006 (Vite migration).
-6. **Start TASK-006** (Vite migration): independent of TS work, can run in
+6. **Stage 3 complete** (TASK-029–031 ✓): both `b-ber-tasks` and `b-ber-cli`
+   are now TypeScript. `feat/ts-stage-3` merged into `feat/upgrades`.
+   TASK-032 (reader-react TS, Stage 4) is still blocked on TASK-006 (Vite).
+7. **Start TASK-006** (Vite migration): independent of TS work, can run in
    parallel. Branch: `feat/vite-migration`. Also picks up TASK-015 (Biome) and
    TASK-007 (reader).
-7. **TASK-037** (Dependency management): low effort if Option A — remove
+8. **TASK-037** (Dependency management): low effort if Option A — remove
    Dependabot and add `npm audit` to CI. Can be done alongside TASK-035.
-8. **TASK-038** (package.json script cleanup): some items unblocked now (theme
+9. **TASK-038** (package.json script cleanup): some items unblocked now (theme
    packages, root dead scripts). Remaining cleanup is downstream of TASK-006,
-   TASK-029–031, and TASK-036 — do those pieces as part of those tasks.
+   TASK-029–031 ✓, and TASK-036 — do those pieces as part of those tasks.
 
 ---
 
