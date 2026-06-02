@@ -7,3 +7,5 @@ lerna-debug.log
 **/*.rej
 *.gypi
 *.tsbuildinfo
+.claude/
+packages/**/package-lock.json

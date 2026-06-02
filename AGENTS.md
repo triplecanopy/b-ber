@@ -344,6 +344,12 @@ Before marking any task complete:
    and "What To Do Next" if the completed task unblocks something new
 5. If the task changes how the monorepo is configured or structured: update this file
 
+**Run tests before committing.** Always run `npm test` (or the affected
+package's test suite) before creating a commit. Pre-commit hooks via Husky
+should enforce this automatically, but hooks are not always reliable — treat
+manual verification as the primary gate, not the hook. Do not commit code
+that has not passed its tests.
+
 **Test propagation rule:** After any change to a shared library, run the test
 suite of every package that imports it — not just the package being changed.
 Many packages mock shared libs (e.g. `b-ber-logger`, `b-ber-lib`) in their own
