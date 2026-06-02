@@ -14,28 +14,29 @@ yargs handler: it validates and normalises CLI flags (including an optional
 
 | File                        | Purpose                                                           |
 | --------------------------- | ----------------------------------------------------------------- |
-| `src/index.js`              | Binary entry point; handles `--version` flag, then loads `app.js` |
-| `src/app.js`                | Wires yargs commands and defines the custom help message          |
-| `src/commands/index.js`     | Re-exports all command modules                                    |
-| `src/commands/build.js`     | `bber build` — creates build sequences and runs tasks             |
-| `src/commands/new.js`       | `bber new` — scaffolds a new project via `b-ber-tasks/init`       |
-| `src/commands/generate.js`  | `bber generate` — creates a chapter file                          |
-| `src/commands/serve.js`     | `bber serve` — starts a local preview server                      |
-| `src/commands/check.js`     | `bber check` — validates project Markdown                         |
-| `src/commands/cover.js`     | `bber cover` — generates a cover image                            |
-| `src/commands/theme.js`     | `bber theme` — sets or lists themes                               |
-| `src/commands/deploy.js`    | `bber deploy` — uploads builds to Amazon S3                       |
-| `src/commands/opf.js`       | `bber opf` — generates the OPF package document                   |
-| `src/lib/config-options.js` | Shared yargs option definitions and config-file parser            |
+| `src/index.ts`              | Binary entry point; handles `--version` flag, then loads `app.ts` |
+| `src/app.ts`                | Wires yargs commands and defines the custom help message          |
+| `src/commands/index.ts`     | Re-exports all command modules                                    |
+| `src/commands/build.ts`     | `bber build` — creates build sequences and runs tasks             |
+| `src/commands/new.ts`       | `bber new` — scaffolds a new project via `b-ber-tasks/init`       |
+| `src/commands/generate.ts`  | `bber generate` — creates a chapter file                          |
+| `src/commands/serve.ts`     | `bber serve` — starts a local preview server                      |
+| `src/commands/check.ts`     | `bber check` — validates project Markdown                         |
+| `src/commands/cover.ts`     | `bber cover` — generates a cover image                            |
+| `src/commands/theme.ts`     | `bber theme` — sets or lists themes                               |
+| `src/commands/deploy.ts`    | `bber deploy` — uploads builds to Amazon S3                       |
+| `src/commands/opf.ts`       | `bber opf` — generates the OPF package document                   |
+| `src/lib/config-options.ts` | Shared yargs option definitions and config-file parser            |
+| `src/declarations.d.ts`     | `declare module` stubs for unresolvable subpath imports           |
 | `__tests__/commands/`       | Jest unit tests for each command                                  |
+| `__stubs__/`                | Minimal stub modules for Jest `moduleNameMapper`                  |
 
 ## Dev Commands
 
 ```bash
-npm test        # jest unit tests
-npm run build   # compile src/ → dist/ with Babel (production)
-npm start       # run via babel-node without a compile step
-npm run watch   # watch src/ and recompile on change
+npm test           # jest unit tests
+npm run build      # compile src/ → dist/ with tsdown (CJS)
+npm run typecheck  # tsc --noEmit type check without building
 ```
 
 ## Code Standards

@@ -80,6 +80,9 @@ been created yet; implementation tasks (TASK-006+) have not started.
 | TASK-026 | Convert b-ber-parser-\* to TypeScript              | `feat/ts-stage-2` |
 | TASK-027 | Convert b-ber-templates to TypeScript              | `feat/ts-stage-2` |
 | TASK-028 | Convert b-ber-markdown-renderer to TypeScript      | `feat/ts-stage-2` |
+| TASK-029 | TypeScript Stage 3 parent                          | `feat/ts-stage-3` |
+| TASK-030 | Convert b-ber-tasks to TypeScript                  | `feat/ts-stage-3` |
+| TASK-031 | Convert b-ber-cli to TypeScript                    | `feat/ts-stage-3` |
 
 ### In progress
 
@@ -113,9 +116,7 @@ These tasks have no unmet dependencies:
 | TASK-007 | Migrate b-ber-reader to Vite                       | TASK-006                           |
 | TASK-013 | Node.js modernization                              | TASK-012 ✓ — **can begin now**     |
 | TASK-015 | Biome migration                                    | TASK-006 (same branch)             |
-| TASK-029 | TypeScript Stage 3 parent                          | TASK-024 ✓ (Stage 2 complete)      |
-| TASK-030 | Convert b-ber-tasks to TypeScript                  | TASK-029                           |
-| TASK-031 | Convert b-ber-cli to TypeScript                    | TASK-030                           |
+| TASK-032 | Convert b-ber-reader-react to TypeScript (Stage 4) | TASK-006 (Vite migration complete) |
 | TASK-032 | Convert b-ber-reader-react to TypeScript (Stage 4) | TASK-006 (Vite migration complete) |
 
 ---
@@ -199,9 +200,10 @@ In priority order:
    TASK-033 to land `coverageProvider: 'v8'` in the same pass.
 4. **Start TASK-033** (Coverage tooling): confirms V8 provider recommendation
    and removes orphaned Istanbul packages.
-5. **Start Stage 3 (TASK-029–031)**: TASK-024 ✓ Stage 2 complete. TASK-029
-   (Stage 3 parent), TASK-030 (b-ber-tasks TS), TASK-031 (b-ber-cli TS) are
-   unblocked. Branch: `feat/ts-stage-3`.
+5. **Stage 3 complete** (TASK-029–031): both `b-ber-tasks` and `b-ber-cli`
+   are now TypeScript. Branch `feat/ts-stage-3` is ready to merge into
+   `feat/upgrades`. TASK-032 (reader-react TS, Stage 4) is still blocked on
+   TASK-006 (Vite migration).
 6. **Start TASK-006** (Vite migration): independent of TS work, can run in
    parallel. Branch: `feat/vite-migration`. Also picks up TASK-015 (Biome) and
    TASK-007 (reader).

@@ -344,11 +344,28 @@ Before marking any task complete:
    and "What To Do Next" if the completed task unblocks something new
 5. If the task changes how the monorepo is configured or structured: update this file
 
+**Run tests before committing.** Always run `npm test` (or the affected
+package's test suite) before creating a commit. Pre-commit hooks via Husky
+should enforce this automatically, but hooks are not always reliable — treat
+manual verification as the primary gate, not the hook. Do not commit code
+that has not passed its tests.
+
 **Test propagation rule:** After any change to a shared library, run the test
 suite of every package that imports it — not just the package being changed.
 Many packages mock shared libs (e.g. `b-ber-logger`, `b-ber-lib`) in their own
 tests; a change to the real module may require updating both the module tests
 and the mock-based tests in dependent packages.
+
+**Large task strategy:** Before starting a task that will require editing many
+files (e.g. converting a package with 20+ source files to TypeScript), assess
+the scope and break it into independently-completable chunks. Use parallel
+subagents to work on disjoint file groups simultaneously — for example, split
+a TypeScript conversion into groups of 5–8 files per agent and run them in
+parallel. This avoids context-limit failures mid-task, reduces total elapsed
+time, and produces checkpointable progress. A task is a good candidate for
+parallel subagents when: (1) the files to change are independent of each other,
+(2) each chunk can be verified in isolation, and (3) the total estimated edits
+exceed what comfortably fits in one context window.
 
 ---
 
