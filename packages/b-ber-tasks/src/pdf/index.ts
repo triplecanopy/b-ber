@@ -116,15 +116,15 @@ const settings = new Set([
   'timestamp',
 ])
 
-const toArg = (key, val) => {
+const toArg = (key: string, val?: string | boolean) => {
   if (typeof val === 'undefined') return `--${kebabCase(key)}`
   return `--${kebabCase(key)}=${val}`
 }
 
-const getPDFFlags = options => {
+const getPDFFlags = (options: Record<string, string | boolean>) => {
   if (Object.keys(options).length < 1) return []
 
-  const flags = Object.entries(options).reduce((acc, [key, val]) => {
+  const flags = Object.entries(options).reduce<string[]>((acc, [key, val]) => {
     if (booleans.has(key)) return acc.concat(toArg(key))
     if (settings.has(key)) return acc.concat(toArg(key, val))
 
@@ -138,7 +138,7 @@ const pdf = () => {
   const opsPath = state.dist.ops()
   const inputPath = path.join(opsPath, 'content.opf')
 
-  const pdfOptions = state.config.pdf_options || {}
+  const pdfOptions = (state.config.pdf_options || {}) as Record<string, string | boolean>
   const flags = getPDFFlags(pdfOptions)
 
   // Remove TOC manually since there's no option in
@@ -152,7 +152,7 @@ const pdf = () => {
           inputPath,
           outputPath: process.cwd(),
           fileType: 'pdf',
-          fileName: getBookMetadata('identifier', state),
+          fileName: getBookMetadata('identifier'),
           flags,
         }).catch(log.error)
   )

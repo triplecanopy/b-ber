@@ -9,7 +9,7 @@ const browserSync = create()
 const port = 4000
 const debounceSpeed = 500
 
-const config = build => url => () => {
+const config = (build: string) => (url: string) => () => {
   state.update('build', build)
   state.update('footnotes', [])
   state.update('config.base_url', '/')
@@ -23,7 +23,7 @@ const config = build => url => () => {
 // Declared below once browserSync has been initialized
 let update = async () => {}
 
-const reload = () => update().then(browserSync.reload)
+const reload = () => update().then(() => browserSync.reload())
 
 const browserSyncPlugins = [
   {
@@ -46,7 +46,7 @@ const browserSyncPlugins = [
   },
 ]
 
-const browserSyncMiddleware = (req, res, next) => {
+const browserSyncMiddleware = (req: any, res: any, next: () => void) => {
   // Set headers for XHTML files to allow document.write
   if (/\.xhtml$/.test(req.url)) {
     res.setHeader('Content-Type', 'text/html; charset=UTF-8')
@@ -55,8 +55,8 @@ const browserSyncMiddleware = (req, res, next) => {
   next()
 }
 
-const init = build =>
-  new Promise(resolve => {
+const init = (build: string) =>
+  new Promise<void>(resolve => {
     const options = {
       port,
       open: false, // Opens browser programatically below
@@ -70,10 +70,10 @@ const init = build =>
       plugins: browserSyncPlugins,
     }
 
-    browserSync.init(options, resolve)
+    browserSync.init(options as any, () => resolve())
   })
 
-const serve = async ({ build: buildOption, external }) => {
+const serve = async ({ build: buildOption, external }: { build?: string; external?: boolean }) => {
   const location = external ? 'external' : 'local'
   const build = buildOption || 'reader'
 
@@ -81,18 +81,15 @@ const serve = async ({ build: buildOption, external }) => {
 
   const url = browserSync.getOption('urls').get(location)
 
-  update = config(build)(url)
+  update = config(build)(url) as () => Promise<void>
 
   await update()
 
   // Update the location in the config object so that a call can be made
   // to openBrowser once the project has been built
-  browserSync.instance.setOption('open', location)
-  browserSync.instance.utils.openBrowser(
-    url,
-    browserSync.instance.options,
-    browserSync.instance
-  )
+  const bs = browserSync as any
+  bs.instance.setOption('open', location)
+  bs.instance.utils.openBrowser(url, bs.instance.options, bs.instance)
 }
 
 export default serve

@@ -9,10 +9,8 @@ const cwd = process.cwd()
 
 // Copy directories of assets into the output directory
 const copy = () => {
-  let { ignore } = state.config
-  if (!isArray(ignore)) ignore = []
-
-  ignore = ignore.reduce((acc, curr) => {
+  const rawIgnore: string[] = isArray(state.config.ignore) ? state.config.ignore as string[] : []
+  const ignoreMap = rawIgnore.reduce<Record<string, boolean>>((acc, curr) => {
     acc[path.resolve(cwd, curr)] = true
     return acc
   }, {})
@@ -30,7 +28,7 @@ const copy = () => {
       from: path.resolve(state.src.media()),
       to: path.resolve(state.dist.media()),
     },
-  ].filter(dir => !ignore[dir.from])
+  ].filter(dir => !ignoreMap[dir.from])
 
   const promises = dirs.map(dir =>
     fs
@@ -39,8 +37,8 @@ const copy = () => {
       .then(() =>
         fs.copy(dir.from, dir.to, {
           overwrite: false,
-          filter: file =>
-            path.basename(file).charAt(0) !== '.' && !ignore[file],
+          filter: (file: string) =>
+            path.basename(file).charAt(0) !== '.' && !ignoreMap[file],
         })
       )
       .then(() => fs.readdir(dir.to))

@@ -12,7 +12,7 @@ class Generate {
     this.init = this.init.bind(this)
   }
 
-  createFile({ markdownDir, metadata }) {
+  createFile({ markdownDir, metadata }: { markdownDir: string; metadata: Record<string, string> }) {
     const frontmatter = `---\n${Object.entries(metadata).reduce(
       (acc, [k, v]) => (v ? acc.concat(`${k}: ${v}\n`) : acc),
       ''
@@ -28,9 +28,9 @@ class Generate {
     return fs.writeFile(filePath, frontmatter).then(() => ({ fileName }))
   }
 
-  writePageMeta({ fileName }) {
+  writePageMeta({ fileName }: { fileName: string }) {
     const tocFile = state.src.root('toc.yml')
-    const pageMeta = YamlAdaptor.load(tocFile) || []
+    const pageMeta = (YamlAdaptor.load(tocFile) as string[]) || []
     const index = pageMeta.indexOf(fileName)
     const content = `\n- ${path.basename(fileName, '.md')}`
 
@@ -56,7 +56,7 @@ class Generate {
     return Promise.all(promises).then(() => ({ fileName }))
   }
 
-  init(metadata) {
+  init(metadata: Record<string, string>) {
     // TODO: ensure markdown dir
     const markdownDir = state.src.markdown()
     return fs

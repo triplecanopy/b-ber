@@ -23,7 +23,7 @@ const mobi = () =>
         inputPath: state.dist.ops('content.opf'),
         outputPath: process.cwd(),
         fileType: 'mobi',
-        fileName: getBookMetadata('identifier', state),
+        fileName: getBookMetadata('identifier'),
         flags: [
           '--mobi-file-type=both',
           '--disable-font-rescaling',

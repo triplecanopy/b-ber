@@ -12,6 +12,8 @@ declare -a nodeFiles=(
   "src/cover/freeuniversal-bold-webfont.ttf"
 )
 
+mkdir -p dist/web dist/cover
+
 for file in "${browserFiles[@]}"
 do
   out="${file/src/dist}"

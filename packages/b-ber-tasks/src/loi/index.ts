@@ -21,7 +21,7 @@ const createLOILeader = () => {
   // Check if the figures titlepage has been declared
   const index = state.indexOf(
     'spine.flattened',
-    item => item.fileName === baseName
+    (item: any) => item.fileName === baseName
   )
 
   // If not, add it to state.spine so that it can be referenced
@@ -36,8 +36,8 @@ const createLOILeader = () => {
     }
 
     state.add('spine.entries', baseName)
-    state.add('spine.nested', new SpineItem(item))
-    state.add('spine.flattened', item)
+    state.add('spine.nested', new SpineItem(item as any))
+    state.add('spine.flattened', item as any)
   }
 
   log.info(`loi emit default figures titlepage [${fileName}]`)
@@ -47,10 +47,10 @@ const createLOILeader = () => {
 
 // only called in `reader` build
 const createLOIAsSingleHTMLFile = () => {
-  const classes = item =>
+  const classes = (item: any) =>
     item.classes ? item.classes.replace(/small/g, 'inline') : ''
-  const figuresPage = state.figures.reduce(
-    (acc, curr) =>
+  const figuresPage = (state.figures as any[]).reduce<string>(
+    (acc: string, curr: any) =>
       acc.concat(figure({ ...curr, classes: classes(curr) }, state.build)),
     Xhtml.loi()
   )
@@ -65,7 +65,7 @@ const createLOIAsSingleHTMLFile = () => {
 }
 
 const createLOIAsSeparateHTMLFiles = () => {
-  const promises = state.figures.map(data => {
+  const promises = (state.figures as any[]).map((data: any) => {
     // Create image string based on dimensions of image
     // returns square | landscape | portrait | portraitLong
     const figures = figure(data, state.build)

@@ -23,12 +23,12 @@ import Toc from '@canopycanopycanopy/b-ber-templates/Toc'
 import rrdir from 'recursive-readdir'
 import Template from './Template'
 
-let ASSETS_TO_UNLINK
-let DIST_PATH
-let OPS_PATH
-let OMIT_FROM_SEARCH
-let BASE_URL
-let flow // copy of spine for web task, see `WebFlow` below
+let ASSETS_TO_UNLINK: string[]
+let DIST_PATH: string
+let OPS_PATH: string
+let OMIT_FROM_SEARCH: string[]
+let BASE_URL: string
+let flow: any // copy of spine for web task, see `WebFlow` below
 
 // Class to manage pagination for web layout. when building an epub, figures are
 // handled outside of the spine, mostly so that they can have hashed file names
@@ -36,7 +36,10 @@ let flow // copy of spine for web task, see `WebFlow` below
 // pages are not listed in the YAML files. the `WebFlow` class creates a new
 // spine by merging in the loi
 class WebFlow {
-  constructor({ spine, loi }) {
+  spine: any
+  loi: any[]
+
+  constructor({ spine, loi }: { spine: any; loi: any[] }) {
     this.spine = spine
     this.loi = loi
 
@@ -73,11 +76,11 @@ class WebFlow {
   }
 
   removeNonLinearEntriesFromSpine() {
-    this.spine = this.spine.flattened.filter(a => a.linear)
+    this.spine = this.spine.flattened.filter((a: any) => a.linear)
   }
 
   removeTocFromSpine() {
-    this.spine = this.spine.filter(a => a.fileName !== 'toc')
+    this.spine = this.spine.filter((a: any) => a.fileName !== 'toc')
   }
 }
 
@@ -85,7 +88,7 @@ class WebFlow {
 async function initialize() {
   DIST_PATH = state.distDir
   OPS_PATH = path.join(DIST_PATH, 'OPS')
-  BASE_URL = Url.addTrailingSlash(state.config.base_url)
+  BASE_URL = Url.addTrailingSlash(state.config.base_url as string)
 
   ASSETS_TO_UNLINK = [
     path.join(DIST_PATH, 'mimetype'),
@@ -133,30 +136,30 @@ function unlinkRedundantAssets() {
 
 function getProjectTitle() {
   let title = ''
-  const titleEntry = getBookMetadata('title', state)
+  const titleEntry = getBookMetadata('title')
 
-  if (titleEntry && titleEntry.value) {
-    title = titleEntry.value
+  if (titleEntry) {
+    title = titleEntry
   }
 
   return title
 }
 
-function getChapterTitle(fileName) {
+function getChapterTitle(fileName: string | undefined) {
   if (typeof fileName !== 'string') return getProjectTitle()
 
   const meta = state.spine.frontMatter.get(fileName)
   if (!meta?.title) return getProjectTitle()
 
-  return meta.title
+  return (meta as any).title as string
 }
 
 function getProjectMetadataHTML() {
   return Template.metadata(state.metadata.json())
 }
 
-function getHeaderElement(fileName) {
-  const title = getChapterTitle(fileName)
+function getHeaderElement(fileName?: string) {
+  const title = getChapterTitle(fileName) ?? ''
   return Template.header(title)
 }
 
@@ -164,7 +167,7 @@ function createNavigationElement() {
   const { toc: prevToc } = state
 
   // Filter out toc entry if it exists
-  const toc = prevToc.filter(item => item.fileName !== 'toc')
+  const toc = (prevToc as any[]).filter((item: any) => item.fileName !== 'toc')
   const tocHTML = Toc.items(toc).replace(/a href="/g, `a href="${BASE_URL}`)
   const metadataHTML = getProjectMetadataHTML()
   const title = getProjectTitle()
@@ -175,7 +178,7 @@ function createNavigationElement() {
   return { tocElement, infoElement }
 }
 
-function buttonPrev(filePath) {
+function buttonPrev(filePath: string) {
   const fileName = path.basename(filePath, '.xhtml')
   const index = findIndex(flow.spine, { fileName })
   const prevIndex = index - 1
@@ -190,7 +193,7 @@ function buttonPrev(filePath) {
   return html
 }
 
-function buttonNext(filePath) {
+function buttonNext(filePath: string) {
   const fileName = path.basename(filePath, '.xhtml')
   const index = findIndex(flow.spine, { fileName })
   const nextIndex = index + 1
@@ -205,19 +208,19 @@ function buttonNext(filePath) {
   return html
 }
 
-function paginate(filePath) {
+function paginate(filePath: string) {
   return {
     prev: buttonPrev(filePath),
     next: buttonNext(filePath),
   }
 }
 
-function paginationNavigation(filePath) {
+function paginationNavigation(filePath: string) {
   const { prev, next } = paginate(filePath)
   return Template.pagination(prev, next)
 }
 
-function injectBaseURL(script) {
+function injectBaseURL(script: any) {
   const script_ = typeof script === 'string' ? script : String(script)
   return Buffer.from(script_.replace(/%BASE_URL%/g, BASE_URL))
 }
@@ -247,7 +250,7 @@ function getEventHandlerScript() {
   return Template.scripts(content)
 }
 
-function injectPageElementsIntoFile(filePath) {
+function injectPageElementsIntoFile(filePath: string) {
   const { tocElement, infoElement } = createNavigationElement()
   const pageNavigation = paginationNavigation(filePath)
   const styleBlock = getStyleBlock()
@@ -292,14 +295,14 @@ function injectPageElementsIntoFile(filePath) {
   return fs.writeFile(filePath, contents)
 }
 
-function injectPageElementsIntoFiles(elements) {
+function injectPageElementsIntoFiles(elements: any) {
   const textPath = path.join(DIST_PATH, 'text')
   const files = fs
     .readdirSync(textPath)
     .filter(file => path.extname(file) === '.xhtml')
   const promises = files.map(file => {
     const filePath = path.resolve(textPath, file)
-    return injectPageElementsIntoFile(filePath, elements)
+    return injectPageElementsIntoFile(filePath)
   })
 
   return Promise.all(promises).then(() => elements)
@@ -307,12 +310,12 @@ function injectPageElementsIntoFiles(elements) {
 
 function indexPageContent() {
   const { spine } = flow
-  const records = []
+  const records: any[] = []
 
   let fileIndex = -1
   const promises = spine
-    .filter(a => OMIT_FROM_SEARCH.indexOf(a.fileName) < 0)
-    .map(entry =>
+    .filter((a: any) => OMIT_FROM_SEARCH.indexOf(a.fileName) < 0)
+    .map((entry: any) =>
       fs
         .readFile(path.join(OPS_PATH, `${entry.relativePath}.xhtml`), 'utf8')
         .then(data => {
@@ -332,7 +335,7 @@ function indexPageContent() {
   return Promise.all(promises).then(() => JSON.stringify(records))
 }
 
-function writeJSONPageData(json) {
+function writeJSONPageData(json: string) {
   return fs.writeFile(path.join(DIST_PATH, 'search-index.json'), json)
 }
 

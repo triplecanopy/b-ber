@@ -26,12 +26,12 @@ const blackListedProperties = [
   '-webkit-text-fill-color',
 ]
 
-const write = ({ file, content }) =>
+const write = ({ file, content }: { file: string; content: string }) =>
   fs
     .writeFile(file, content, 'utf8')
     .then(() => log.info(`mobiCSS write [${path.basename(file)}]`))
 
-const process = file =>
+const process = (file: string) =>
   fs.readFile(file, 'utf8').then(data => {
     const ast = css.parse(data)
 

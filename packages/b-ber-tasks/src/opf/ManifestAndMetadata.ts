@@ -15,8 +15,10 @@ import state from '@canopycanopycanopy/b-ber-lib/State'
 import { pathInfoFromFiles } from './helpers'
 
 class ManifestAndMetadata {
+  bookmeta!: any[]
+
   constructor() {
-    this.bookmeta = null
+    this.bookmeta = []
   }
 
   async loadMetadata() {
@@ -30,15 +32,15 @@ class ManifestAndMetadata {
     // TODO: better testing here, make sure we're not including symlinks, for example
     // @issue: https://github.com/triplecanopy/b-ber/issues/228
     files = [
-      ...state.remoteAssets,
-      ...files.filter(file => path.basename(file).charAt(0) !== '.'),
+      ...(state.remoteAssets as string[]),
+      ...files.filter((file: string) => path.basename(file).charAt(0) !== '.'),
     ]
     const fileObjects = pathInfoFromFiles(files, state.distDir)
     return fileObjects
   }
 
-  createManifestAndMetadataFromTemplates(files) {
-    const manifest = files.map(file => Manifest.item(file))
+  createManifestAndMetadataFromTemplates(files: any[]) {
+    const manifest = files.map((file: any) => Manifest.item(file))
 
     const specifiedFonts =
       has(state.config, 'ibooks_specified_fonts') &&
@@ -58,7 +60,7 @@ class ManifestAndMetadata {
     return { manifest, bookmeta }
   }
 
-  createManifestAndMetadataXML(resp) {
+  createManifestAndMetadataXML(resp: any) {
     log.info('opf build [metadata]')
 
     const metadata = renderLayouts(
@@ -68,7 +70,7 @@ class ManifestAndMetadata {
         contents: Buffer.from(resp.bookmeta.join('')),
       }),
       { body: Metadata.body() }
-    ).contents.toString()
+    ).contents?.toString() ?? ''
 
     log.info('opf build [manifest]')
 
@@ -79,7 +81,7 @@ class ManifestAndMetadata {
         contents: Buffer.from(resp.manifest.filter(Boolean).join('')),
       }),
       { body: Manifest.body() }
-    ).contents.toString()
+    ).contents?.toString() ?? ''
 
     return { metadata, manifest }
   }

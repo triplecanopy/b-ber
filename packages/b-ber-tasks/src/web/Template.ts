@@ -1,5 +1,5 @@
 class Template {
-  static header(title) {
+  static header(title: string) {
     return `
       <header class="publication__header" role="navigation">
         <div class="header__item header__item__toggle header__item__toggle--toc">
@@ -23,11 +23,11 @@ class Template {
     `
   }
 
-  static metadata(data) {
+  static metadata(data: any) {
     return `
       <dl>
         ${data.reduce(
-          (acc, curr) =>
+          (acc: string, curr: any) =>
             acc.concat(`
               <dt>${curr.term}</dt>
               <dd>${curr.value}</dd>
@@ -38,7 +38,7 @@ class Template {
     `
   }
 
-  static toc(baseURL, title, content) {
+  static toc(baseURL: string, title: string, content: string) {
     return `
       <nav class="publication__toc" role="navigation">
         <div class="publication__title">
@@ -49,7 +49,7 @@ class Template {
     `
   }
 
-  static info(content) {
+  static info(content: string) {
     return `
       <nav class="publication__info" role="navigation">
         ${content}
@@ -57,7 +57,7 @@ class Template {
     `
   }
 
-  static prev(baseURL, href) {
+  static prev(baseURL: string, href: string) {
     return `
       <div class="publication__nav__prev">
         <a class="publication__nav__link" href="${baseURL}text/${href}">
@@ -67,7 +67,7 @@ class Template {
     `
   }
 
-  static next(baseURL, href) {
+  static next(baseURL: string, href: string) {
     return `
       <div class="publication__nav__next">
         <a class="publication__nav__link" href="${baseURL}text/${href}">
@@ -77,7 +77,7 @@ class Template {
     `
   }
 
-  static pagination(prev, next) {
+  static pagination(prev: string, next: string) {
     return `
       <nav class="publication__nav" role="navigation">
         ${prev}
@@ -95,7 +95,7 @@ class Template {
     `
   }
 
-  static scripts(content) {
+  static scripts(content: any) {
     return `
       <script type="text/javascript">
       // <![CDATA[
@@ -105,7 +105,7 @@ class Template {
     `
   }
 
-  static cover(firstPage, coverImageSrc) {
+  static cover(firstPage: string, coverImageSrc: string) {
     return `
       <a class="cover__image__link" href="${firstPage}">
         <img class="cover__image" src="${coverImageSrc}" alt="Cover" />
@@ -113,13 +113,13 @@ class Template {
     `
   }
 
-  static robots(isPrivate) {
+  static robots(isPrivate: any) {
     return isPrivate
       ? '<meta name="robots" content="noindex,nofollow"/>'
       : '<meta name="robots" content="index,follow"/>'
   }
 
-  static body(styleBlock, headerElement) {
+  static body(styleBlock: string, headerElement: string) {
     return `
       <body style="opacity: 0;">
       ${styleBlock}
@@ -130,12 +130,12 @@ class Template {
   }
 
   static footer(
-    pageNavigation,
-    tocElement,
-    infoElement,
-    navigationToggleScript,
-    webWorkerScript,
-    evenHandlerScript
+    pageNavigation: string,
+    tocElement: string,
+    infoElement: string,
+    navigationToggleScript: string,
+    webWorkerScript: string,
+    evenHandlerScript: string
   ) {
     return `
       </div> <!-- / .publication__contents -->
@@ -151,16 +151,16 @@ class Template {
   }
 
   static index(
-    baseURL,
-    robotsMeta,
-    title,
-    styleBlock,
-    tocElement,
-    infoElement,
-    headerElement,
-    coverImage,
-    navigationToggleScript,
-    webWorkerScript
+    baseURL: string,
+    robotsMeta: string,
+    title: string,
+    styleBlock: string,
+    tocElement: string,
+    infoElement: string,
+    headerElement: string,
+    coverImage: string,
+    navigationToggleScript: string,
+    webWorkerScript: string
   ) {
     return `
       <?xml version="1.0" encoding="UTF-8" standalone="no"?>

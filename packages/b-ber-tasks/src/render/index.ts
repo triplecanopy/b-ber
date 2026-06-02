@@ -6,14 +6,14 @@ import log from '@canopycanopycanopy/b-ber-logger'
 import { Template } from '@canopycanopycanopy/b-ber-lib'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 
-const writeMarkupToFile = (fname, markup) => {
+const writeMarkupToFile = (fname: string, markup: string) => {
   fs.writeFile(state.dist.text(`${fname}.xhtml`), markup).then(() =>
     log.info(`render xhtml [${path.basename(fname)}.xhtml]`)
   )
 }
 
 // Convert Markdown to HTML and wrap with page template
-const createPageLayout = (fileName, data) => {
+const createPageLayout = (fileName: string, data: string) => {
   const textDir = state.dist.text()
   const body = MarkdownRenderer.render(fileName, data)
   const markup = Template.render(body, Xhtml.body())
@@ -24,7 +24,7 @@ const createPageLayout = (fileName, data) => {
     .catch(log.error)
 }
 
-const createXTHMLFile = fpath =>
+const createXTHMLFile = (fpath: string) =>
   fs
     .readFile(fpath, 'utf8')
     .then(data => createPageLayout(path.basename(fpath, '.md'), data))

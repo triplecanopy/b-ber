@@ -82,7 +82,7 @@ const copyThemeAssets = () => {
     try {
       fs.lstatSync(themePath).isDirectory()
     } catch (err) {
-      if (err.code === 'ENOENT') return acc
+      if ((err as NodeJS.ErrnoException).code === 'ENOENT') return acc
       throw new Error(
         `There was a problem copying [${themePath}] to [${srcPath}]`
       )
@@ -97,7 +97,7 @@ const copyThemeAssets = () => {
       }))
 
     return acc.concat(data)
-  }, [])
+  }, [] as { input: string; output: string }[])
 
   const promises = fileData.map(({ input, output }) =>
     fs.copy(input, output, {
@@ -109,7 +109,7 @@ const copyThemeAssets = () => {
   return Promise.all(promises)
 }
 
-function resolveImportedModule(importPath) {
+function resolveImportedModule(importPath: string) {
   // Remove preceeding tilde
   const trimmedImportPath = importPath.slice(1)
 
@@ -123,12 +123,12 @@ function resolveImportedModule(importPath) {
   // used to resolve the import and get the necessary path, the
   // name will be used to construct the final file path
   let moduleScope = ''
-  let moduleName = importTree.shift()
+  let moduleName = importTree.shift()!
 
   // Allow scoped packages
   if (moduleName[0] === '@') {
     moduleScope = moduleName
-    moduleName = importTree.shift()
+    moduleName = importTree.shift()!
   }
 
   // @foo/bar | foo
@@ -151,7 +151,7 @@ function resolveImportedModule(importPath) {
   return importedModule
 }
 
-const renderCSS = scssString =>
+const renderCSS = (scssString: Buffer): Promise<{ css: Buffer }> =>
   new Promise(resolve => {
     dartSass.render(
       {
@@ -172,19 +172,20 @@ const renderCSS = scssString =>
           path.dirname(path.dirname(state.theme.entry)),
         ],
         outputStyle: state.env === 'production' ? 'compressed' : 'expanded',
+        // @ts-ignore — errLogToConsole is a valid dart-sass option not in the TS types
         errLogToConsole: true,
       },
       (err, result) => {
         if (err) throw err
-        resolve(result)
+        resolve(result as { css: Buffer })
       }
     )
   })
 
-const applyPostProcessing = ({ css }) =>
+const applyPostProcessing = ({ css }: { css: Buffer }) =>
   postcss(autoprefixer(autoprefixerOptions)).process(css, { from: undefined })
 
-const writeCSSFile = ({ css }) => {
+const writeCSSFile = ({ css }: { css: string }) => {
   const fileName =
     state.env === 'production' ? `${state.hash}.css` : 'application.css'
 

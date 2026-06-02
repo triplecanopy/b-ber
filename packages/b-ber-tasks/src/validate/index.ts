@@ -4,7 +4,7 @@ import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
 import validator, { report } from '@canopycanopycanopy/b-ber-validator'
 
-const validate = async ({ project }) => {
+const validate = async ({ project }: { project: string }) => {
   const markdownPath = path.resolve(
     process.cwd(),
     project,
@@ -19,7 +19,7 @@ const validate = async ({ project }) => {
     .filter(f => f.slice(-2).toLowerCase() === 'md')
     .map(f => path.join(markdownPath, f))
 
-  const errors = []
+  const errors: Array<{ success: boolean; [key: string]: unknown }> = []
   const check = files.map(async file => {
     const data = await fs.readFile(file, 'utf8')
     const res = validator({ text: data, index: 0 })

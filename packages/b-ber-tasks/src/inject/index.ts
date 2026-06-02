@@ -6,14 +6,14 @@ import state from '@canopycanopycanopy/b-ber-lib/State'
 import { Template } from '@canopycanopycanopy/b-ber-lib'
 import Xhtml from '@canopycanopycanopy/b-ber-templates/Xhtml'
 
-const getRemoteAssets = type =>
+const getRemoteAssets = (type: string) =>
   Promise.resolve(state.config[`remote_${type}`] || [])
 
-const getAssets = type =>
+const getAssets = (type: string) =>
   Promise.all([
     fs.readdir(state.dist.ops(type)),
     getRemoteAssets(type),
-  ]).then(([a, b]) => [...a, ...b])
+  ]).then(([a, b]) => [...a, ...(b as any[])])
 
 const getInlineScripts = () => [
   new File({
@@ -23,12 +23,12 @@ const getInlineScripts = () => [
   }),
 ]
 
-const ensureString = objectOrString =>
+const ensureString = (objectOrString: any) =>
   objectOrString instanceof File
-    ? objectOrString.contents.toString()
+    ? objectOrString.contents?.toString() ?? ''
     : objectOrString
 
-const relative = (from, to) =>
+const relative = (from: string[], to: string[]) =>
   path.relative(path.join(...from), path.join(...to))
 
 const render = ({
@@ -39,6 +39,14 @@ const render = ({
   inlineStylesheets,
   inlineJavascripts,
   metadata,
+}: {
+  file: any
+  basePath: string
+  stylesheets: string[]
+  javascripts: string[]
+  inlineStylesheets: any[]
+  inlineJavascripts: any[]
+  metadata: any[]
 }) => {
   const stylesheets_ = stylesheets
     .map(ensureString)
@@ -81,7 +89,7 @@ const render = ({
   )
   const body =
     file instanceof File
-      ? file.contents.toString()
+      ? file.contents?.toString() ?? ''
       : fs.readFileSync(state.dist.ops(basePath, file), 'utf8')
   const tail = Template.render(
     `${javascripts_}${inlineJavascripts_}${metadata_}`,
@@ -91,24 +99,24 @@ const render = ({
   return `${head}${body}${tail}`
 }
 
-const writeAll = files =>
+const writeAll = (files: { fileName: string; contents: string }[]) =>
   Promise.all(
     files.map(file =>
       fs.writeFile(state.dist.text(file.fileName), file.contents)
     )
   )
 
-export const getFileObjects = async (files, basePath = '') => {
+export const getFileObjects = async (files: { name: string; data: any }[], basePath = '') => {
   const stylesheets = await getAssets('stylesheets')
   const javascripts = await getAssets('javascripts')
-  const inlineStylesheets = []
+  const inlineStylesheets: any[] = []
   const inlineJavascripts = getInlineScripts()
 
   // TODO:
   // @issue: https://github.com/triplecanopy/b-ber/issues/226
-  const metadata = []
+  const metadata: any[] = []
 
-  const files_ = files.map(file => ({
+  const files_ = files.map((file: { name: string; data: any }) => ({
     fileName: file.name,
     contents: render({
       file: file.data,

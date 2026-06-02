@@ -19,7 +19,7 @@ class Opf {
       .catch(log.error)
   }
 
-  static writeOPF(contents) {
+  static writeOPF(contents: string) {
     const opsPath = state.dist.ops('content.opf')
     log.info(`opf emit content.opf [${opsPath}]`)
 
@@ -27,7 +27,7 @@ class Opf {
   }
 
   // Create the root `package` element and inject metadata, manifest, and navigation data
-  static createOpfPackageString([manifestAndMetadataXML, navigationXML]) {
+  static createOpfPackageString([manifestAndMetadataXML, navigationXML]: [any, any]) {
     log.info('opf build [package]')
 
     const { metadata, manifest } = manifestAndMetadataXML
@@ -45,7 +45,7 @@ class Opf {
                 `),
       }),
       { body: Pkg.body() }
-    ).contents.toString()
+    ).contents?.toString() ?? ''
 
     return opfString
   }

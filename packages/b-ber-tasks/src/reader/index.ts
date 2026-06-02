@@ -13,6 +13,14 @@ import rrdir from 'recursive-readdir'
 import has from 'lodash/has'
 
 class Reader {
+  outputDirName!: string
+  outputDir!: string
+  apiDir!: string
+  epubAssets!: string[]
+  readerModuleName!: string
+  readerModuleDistDir!: string
+  readerAppPath!: string | null
+
   constructor() {
     this.outputDirName = 'epub'
     this.outputDir = state.dist.root(this.outputDirName)
@@ -24,6 +32,7 @@ class Reader {
     this.readerAppPath = null
 
     // eslint-disable-next-line no-constructor-return
+    // @ts-expect-error constructor returns a Promise intentionally
     return (
       this.createOutputDirs()
         .then(() => this.ensureReaderModuleExists())
@@ -53,7 +62,7 @@ class Reader {
     return state.config.remote_url || 'http://localhost:4000/'
   }
 
-  createDirname(s) {
+  createDirname(s: string) {
     if (!s || typeof s !== 'string') {
       return crypto.randomBytes(20).toString('hex')
     }
@@ -75,7 +84,7 @@ class Reader {
     }
 
     const { paths } = module
-    let modulePath
+    let modulePath: string | undefined
     for (let i = 0; i < paths.length; i++) {
       const _path = path.resolve(paths[i], this.readerModuleName)
       if (fs.existsSync(_path)) {
@@ -92,10 +101,10 @@ class Reader {
 
     try {
       this.readerAppPath = fs.realpathSync(
-        path.join(modulePath, this.readerModuleDistDir)
+        path.join(modulePath!, this.readerModuleDistDir)
       )
       const pkg = fs.readJsonSync(
-        path.join(modulePath, this.readerModuleDistDir, 'package.json')
+        path.join(modulePath!, this.readerModuleDistDir, 'package.json')
       )
       log.warn(`Loaded ${this.readerModuleName} v${pkg.version}`)
 
@@ -122,7 +131,7 @@ class Reader {
     return Promise.all(promises)
   }
 
-  getBookMetadata(term) {
+  getBookMetadata(term?: any) {
     if (!term) return state.metadata.json()
 
     const entry = find(state.metadata.json(), { term })
@@ -133,7 +142,7 @@ class Reader {
     return ''
   }
 
-  getProjectConfig(term) {
+  getProjectConfig(term?: string) {
     if (!term) return state.config
 
     if (!has(state.config, term)) {
@@ -155,7 +164,7 @@ class Reader {
     const cover = `${url}/OPS/images/${this.getBookMetadata('cover')}`
 
     // Get config required by reader for books.json
-    const { downloads, ui_options, layout } = this.getProjectConfig()
+    const { downloads, ui_options, layout } = this.getProjectConfig() as any
 
     const manifest = [{ title, url, cover, id, downloads, ui_options, layout }]
 
@@ -178,7 +187,7 @@ class Reader {
 
   injectWebpubManifestLink() {
     const indexHTML = state.dist.root('index.html')
-    const readerURL = Url.addTrailingSlash(this.getProjectConfig('reader_url'))
+    const readerURL = Url.addTrailingSlash(this.getProjectConfig('reader_url') as string)
 
     let contents
     contents = fs.readFileSync(indexHTML, 'utf8')
@@ -192,10 +201,10 @@ class Reader {
 
   copyReaderAppToOutputDir() {
     const promises = fs
-      .readdirSync(this.readerAppPath)
+      .readdirSync(this.readerAppPath as string)
       .map(file =>
         fs.copy(
-          path.join(this.readerAppPath, file),
+          path.join(this.readerAppPath as string, file),
           path.resolve(state.dist.root(file))
         )
       )
@@ -205,7 +214,7 @@ class Reader {
 
   injectServerDataIntoTemplate() {
     const indexHTML = state.dist.root('index.html')
-    const readerURL = Url.addTrailingSlash(this.getProjectConfig('reader_url'))
+    const readerURL = Url.addTrailingSlash(this.getProjectConfig('reader_url') as string)
     const identifier = this.getBookMetadata('identifier')
     const bookURL = `${readerURL}epub/${identifier}`
     const serverData = {
@@ -217,9 +226,9 @@ class Reader {
         },
       ],
       bookURL,
-      projectURL: Url.addTrailingSlash(this.getProjectConfig('remote_url')),
+      projectURL: Url.addTrailingSlash(this.getProjectConfig('remote_url') as string),
       downloads: this.getProjectConfig('downloads'),
-      basePath: Url.addTrailingSlash(this.getProjectConfig('base_path')),
+      basePath: Url.addTrailingSlash(this.getProjectConfig('base_path') as string),
       loadRemoteLibrary: false,
       uiOptions: this.getProjectConfig('ui_options'),
       cache: this.getProjectConfig('cache'),
@@ -239,9 +248,9 @@ class Reader {
   // Update URLs in CSS
   updateLinkedResourcesWithAbsolutePaths() {
     const indexContents = fs.readFileSync(state.dist.root('index.html'), 'utf8')
-    const versionHash = indexContents.match(/link href="\/(\w+\.css)"/)[1]
+    const versionHash = indexContents.match(/link href="\/(\w+\.css)"/)?.[1] ?? ''
     const stylesheet = state.dist.root(versionHash)
-    const readerURL = Url.addTrailingSlash(this.getProjectConfig('reader_url'))
+    const readerURL = Url.addTrailingSlash(this.getProjectConfig('reader_url') as string)
 
     let contents
     contents = fs.readFileSync(stylesheet, 'utf8')
@@ -253,7 +262,7 @@ class Reader {
   updateAssetURLsWithAbsolutePaths() {
     const indexHTML = state.dist.root('index.html')
     const readerURL = Url.removeTrailingSlash(
-      this.getProjectConfig('reader_url')
+      this.getProjectConfig('reader_url') as string
     )
 
     let contents

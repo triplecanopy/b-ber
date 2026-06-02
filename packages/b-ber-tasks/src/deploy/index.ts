@@ -70,11 +70,11 @@ async function ensureAwsCli() {
   }
 }
 
-function run(command, callback) {
+function run(command: string, callback?: () => void) {
   const proc = exec(command, { cwd })
 
-  proc.stdout.on('data', data => console.log(String(data)))
-  proc.stderr.on('data', data => console.log(String(data)))
+  proc.stdout?.on('data', (data: string) => console.log(String(data)))
+  proc.stderr?.on('data', (data: string) => console.log(String(data)))
 
   proc.on('error', err => {
     console.log('')
@@ -93,23 +93,26 @@ function run(command, callback) {
   })
 }
 
-function deploy({ bucketURL, awsRegion, builds }) {
+function deploy({ bucketURL, awsRegion, builds }: { bucketURL: string; awsRegion: string; builds: string[] }) {
   console.log('')
   console.log('Uploading project files...')
-  return new Promise(resolve => {
+  return new Promise<void>(resolve => {
     const sourceDir = path.resolve(cwd, './')
-    let command = [
+    const commandParts = [
       `aws s3 cp ${sourceDir} ${bucketURL}`,
       '--recursive',
       '--exclude "*"',
       `--region ${awsRegion}`,
     ]
 
-    builds.forEach(arg => command.push(args.get(arg)))
+    builds.forEach((arg: string) => {
+      const val = args.get(arg)
+      if (val) commandParts.push(val)
+    })
 
-    command = command.join(' ')
+    const command = commandParts.join(' ')
 
-    return run(command, resolve)
+    return run(command, () => resolve())
   })
 }
 
@@ -127,7 +130,7 @@ function ensureEnvVars() {
   }
 
   const configFile = path.resolve(cwd, 'config.yml')
-  const config = YamlAdaptor.load(configFile)
+  const config = YamlAdaptor.load(configFile) as Record<string, string>
   const { bucket_url: bucketURL } = config
 
   if (!bucketURL) {
@@ -137,17 +140,16 @@ function ensureEnvVars() {
   return { bucketURL, awsRegion: BBER_BUCKET_REGION }
 }
 
-function extractVars(config) {
+function extractVars(config: { bucketURL: string; awsRegion: string; builds?: string[] }) {
   const { bucketURL, awsRegion } = config
 
-  let { builds } = config
-  if (!builds || !builds.length) builds = defaultBuilds
-  builds = builds.map(str => str.toLowerCase()).filter(arg => args.has(arg))
+  let builds = config.builds && config.builds.length ? config.builds : defaultBuilds
+  builds = builds.map((str: string) => str.toLowerCase()).filter((arg: string) => args.has(arg))
 
   return { bucketURL, awsRegion, builds }
 }
 
-function deployWithPrompt(config) {
+function deployWithPrompt(config: { bucketURL: string; awsRegion: string; builds: string[] }) {
   return new Promise(resolve => {
     const rl = readline.createInterface(process.stdin, process.stdout)
     const { bucketURL, awsRegion, builds } = config
@@ -173,12 +175,12 @@ function deployWithPrompt(config) {
   })
 }
 
-function deployWithoutPrompt(config) {
+function deployWithoutPrompt(config: { bucketURL: string; awsRegion: string; builds: string[] }) {
   log.notice('Deploy command run with "--yes", skipping confirmation')
   return deploy(config)
 }
 
-function setCachePolicy({ bucketURL, awsRegion }, cacheArgs) {
+function setCachePolicy({ bucketURL, awsRegion }: { bucketURL: string; awsRegion: string }, cacheArgs: string[]) {
   console.log('Setting cache policy...')
   const command = [
     `aws s3 cp ${bucketURL} ${bucketURL}`,
@@ -186,14 +188,14 @@ function setCachePolicy({ bucketURL, awsRegion }, cacheArgs) {
   ]
     .concat(cacheArgs)
     .join(' ')
-  return new Promise(resolve => run(command, resolve))
+  return new Promise<void>(resolve => run(command, () => resolve()))
 }
 
-function main({ builds, yes }) {
-  let config = {}
+function main({ builds, yes }: { builds?: string[]; yes?: boolean }) {
+  let config: { bucketURL: string; awsRegion: string; builds: string[] } = {} as any
   return ensureAwsCli()
     .then(ensureEnvVars)
-    .then(response => {
+    .then((response: any) => {
       config = extractVars({ ...response, builds })
 
       if (yes) return deployWithoutPrompt(config)

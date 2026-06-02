@@ -10,17 +10,17 @@ import { getBookMetadata } from '@canopycanopycanopy/b-ber-lib/utils'
 
 const fileExtension = '.xhtml'
 
-const writeXML = str => {
+const writeXML = (str: string) => {
   const cwd = process.cwd()
-  const uuid = getBookMetadata('identifier', state)
+  const uuid = getBookMetadata('identifier')
   const filePath = path.join(cwd, `${uuid}.xml`)
   return fs.writeFile(filePath, str, 'utf8')
 }
 
-const parseHTMLFiles = files =>
-  new Promise(resolve => {
+const parseHTMLFiles = (files: string[]) =>
+  new Promise<string>(resolve => {
     const content = files
-      .reduce((acc, curr) => {
+      .reduce((acc: string[], curr: string) => {
         const filePath = isPlainObject(curr)
           ? Object.keys(curr)[0]
           : isString(curr)
@@ -39,15 +39,15 @@ const parseHTMLFiles = files =>
   })
 
 const xml = () => {
-  let files = [...state.spine.flattened]
-  const figuresTitlePageIndex = findIndex(files, {
+  const spineFiles: any[] = [...state.spine.flattened]
+  const figuresTitlePageIndex = findIndex(spineFiles, {
     fileName: 'figures-titlepage',
   })
 
-  files = files.map(entry => `${entry.absolutePath}${fileExtension}`)
+  let files: string[] = spineFiles.map((entry: any) => `${entry.absolutePath}${fileExtension}`)
 
   if (figuresTitlePageIndex > -1 && state.loi.length) {
-    const loi = state.loi.map(entry => entry.absolutePath)
+    const loi = state.loi.map((entry: any) => entry.absolutePath)
     files.splice(figuresTitlePageIndex + 1, 0, ...loi)
   }
 

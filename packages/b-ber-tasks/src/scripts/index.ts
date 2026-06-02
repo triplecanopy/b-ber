@@ -13,16 +13,16 @@ const uglifyOptions = state.config.uglify_options || {
   },
 }
 
-const uglify = contents => {
+const uglify = (contents: string) => {
   const result = uglifyJS.minify(contents, uglifyOptions)
   if (result.error) throw result.error
   if (result.warnings) log.warn(result.warnings)
   return result.code
 }
 
-const optimized = files => {
+const optimized = (files: string[]): Promise<void> => {
   const contents = files
-    .map(file =>
+    .map((file: string) =>
       fs.readFileSync(path.resolve(state.src.javascripts(file)), 'utf8')
     )
     .join('')
@@ -40,8 +40,8 @@ const optimized = files => {
     )
 }
 
-const unoptimized = files => {
-  const promises = files.map(file => {
+const unoptimized = (files: string[]): Promise<void[]> => {
+  const promises = files.map((file: string) => {
     const input = state.src.javascripts(file)
     const output = state.dist.javascripts(file)
     return fs
@@ -60,7 +60,7 @@ const unoptimized = files => {
 const write = () =>
   fs.readdir(state.src.javascripts()).then(_files => {
     const files = _files.filter(a => path.extname(a) === '.js')
-    return (state.env === 'production' ? optimized : unoptimized)(files)
+    return (state.env === 'production' ? optimized : unoptimized)(files) as Promise<void>
   })
 
 const ensureDir = () => fs.mkdirp(state.dist.javascripts())

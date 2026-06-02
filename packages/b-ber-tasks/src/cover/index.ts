@@ -10,6 +10,24 @@ import Xhtml from '@canopycanopycanopy/b-ber-templates/Xhtml'
 import { getBookMetadata } from '@canopycanopycanopy/b-ber-lib/utils'
 
 class Cover {
+  metadata!: Record<string, string>
+  metadataYAML!: string
+  coverPrefix!: string
+  coverXHTMLContent!: string
+  coverEntry!: string
+  coverImagePath!: string
+  width!: number
+  height!: number
+  fontSize!: number
+  lineHeight!: number
+  marginLeft!: number
+  marginTop!: number
+  colorBackground!: string
+  colorText!: string
+  fontName!: string
+  fontFile!: string
+  posY!: number
+
   constructor() {
     const defaultMetadata = {
       title: '',
@@ -18,7 +36,7 @@ class Cover {
       identifier: '',
     }
 
-    const fileMetadata = this.YAMLToObject(state.metadata.json())
+    const fileMetadata = this.YAMLToObject()
 
     this.metadata = {
       ...defaultMetadata,
@@ -66,7 +84,7 @@ class Cover {
 
   // eslint-disable-next-line class-methods-use-this
   YAMLToObject() {
-    return state.metadata.json().reduce((acc, curr) => {
+    return (state.metadata.json() as any[]).reduce<Record<string, string>>((acc, curr: any) => {
       if (curr.term && curr.value) {
         acc[curr.term] = curr.value
       }
@@ -93,7 +111,7 @@ class Cover {
     return Promise.all(promises)
   }
 
-  wrapText(ctx, text) {
+  wrapText(ctx: any, text: string) {
     const maxWidth = this.width - this.marginLeft * 2
     const words = text.split(' ')
     let line = ''
@@ -115,7 +133,7 @@ class Cover {
   }
 
   generateDefaultCoverImage() {
-    return new Promise(resolve => {
+    return new Promise<void>(resolve => {
       const img = PureImage.make(this.width, this.height)
       const ctx = img.getContext('2d')
       const font = PureImage.registerFont(
@@ -179,7 +197,7 @@ class Cover {
 
   generateCoverXHTML() {
     // Get the image dimensions and pass them to the coverSVG template
-    const { width, height } = sizeOf(this.coverImagePath)
+    const { width, height } = (sizeOf as any)(this.coverImagePath)
     const href = `images/${encodeURIComponent(this.coverEntry)}`
     const svg = Xhtml.cover({ width, height, href })
 
@@ -199,10 +217,10 @@ class Cover {
     this.coverImagePath = state.src.images(this.coverEntry)
 
     // Load metadata.yml
-    const metadata = YamlAdaptor.load(this.metadataYAML)
+    const metadata = YamlAdaptor.load(this.metadataYAML) as Record<string, string>
 
     // Check if cover if referenced
-    const coverListedInMetadata = getBookMetadata('cover', state)
+    const coverListedInMetadata = getBookMetadata('cover')
 
     if (coverListedInMetadata) {
       // TODO: fixme, for generated covers

@@ -5,6 +5,8 @@ import { SpineItem, Template } from '@canopycanopycanopy/b-ber-lib'
 import Xhtml from '@canopycanopycanopy/b-ber-templates/Xhtml'
 
 class Footnotes {
+  baseName!: string
+
   get file() {
     return {
       name: this.baseName,
@@ -18,8 +20,8 @@ class Footnotes {
   }
 
   async writeFootnotes() {
-    const notes = state.footnotes.reduce(
-      (acc, cur) => acc.concat(cur.notes),
+    const notes = state.footnotes.reduce<string>(
+      (acc: string, cur: any) => acc.concat(cur.notes),
       ''
     )
 

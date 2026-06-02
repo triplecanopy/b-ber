@@ -9,11 +9,18 @@ import Theme from '@canopycanopycanopy/b-ber-lib/Theme'
 import { ensure } from '@canopycanopycanopy/b-ber-lib/utils'
 
 class Initializer {
-  constructor({ name = '', config }) {
+  src!: string
+  dist!: string
+  name!: string
+  config!: Record<string, any>
+  path!: string
+  builds!: string[]
+
+  constructor({ name = '', config }: { name?: string; config?: Record<string, any> } = {}) {
     this.src = '_project'
     this.dist = 'project'
     this.name = name
-    this.config = config
+    this.config = config || {}
     this.path = path.join(name, this.src)
     this.builds = Object.keys(sequences)
 
@@ -28,7 +35,7 @@ class Initializer {
       Project.configYAML(this.path, this.config),
       Project.metadataYAML(this.path),
       ...Project.javascripts(this.path),
-      ...Project.stylesheets(this.path),
+      ...Project.stylesheets(),
       ...Project.markdown(this.path),
       Project.readme(this.path),
       Project.gitignore(this.path),

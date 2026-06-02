@@ -11,7 +11,7 @@ const epub = () =>
           input: state.distDir,
           output: process.cwd(),
           clean: true,
-          fileName: getBookMetadata('identifier', state),
+          fileName: getBookMetadata('identifier'),
         })
         .catch(log.error)
 

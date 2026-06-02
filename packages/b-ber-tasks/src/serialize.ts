@@ -18,7 +18,10 @@ import * as tasks from './task-handlers'
 // output/index.js` directly.
 //
 
-const validate = fn => {
+type TaskFn = (resp?: unknown) => Promise<unknown>
+type TaskEntry = string | TaskFn
+
+function validate(fn: unknown): asserts fn is TaskFn {
   if (typeof fn !== 'function') {
     throw new Error(
       `async#serialize: Invalid parameter [${fn}] is [${typeof fn}], expected [function]`
@@ -26,13 +29,16 @@ const validate = fn => {
   }
 }
 
-const done = resp => {
+const done = (resp: unknown) => {
   log.notify('done', { state })
   return resp
 }
 
-const taskReducer = (acc, curr) => {
-  const fn = tasks[curr] || curr
+const taskReducer = (acc: Promise<unknown>, curr: TaskEntry) => {
+  const fn =
+    (typeof curr === 'string'
+      ? (tasks as Record<string, unknown>)[curr]
+      : curr) ?? curr
   validate(fn)
 
   return acc.then(resp => {
@@ -45,9 +51,9 @@ const taskReducer = (acc, curr) => {
   })
 }
 
-const serialize = sequence =>
+const serialize = (sequence: TaskEntry[]) =>
   sequence
-    .reduce(taskReducer, Promise.resolve())
+    .reduce(taskReducer, Promise.resolve<unknown>(undefined))
     .then(done)
     .catch(log.error)
 

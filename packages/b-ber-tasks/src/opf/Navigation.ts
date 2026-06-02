@@ -36,8 +36,8 @@ class Navigation {
     // Set up our promise chain
     const promises = [Promise.resolve()]
 
-    const missing = []
-    const redundant = []
+    const missing: string[] = []
+    const redundant: string[] = []
 
     // Check if we need to compare agains the global toc.yml, or an
     // overrides (type.yml) file
@@ -49,7 +49,7 @@ class Navigation {
     // contains the correct entries since we load any files that haven't
     // been declared in the TOC when initializing the Spine object, so no
     // need to update anything there
-    const tocEntries = state.spine.flattenYAML(YamlAdaptor.load(tocFile))
+    const tocEntries = state.spine.flattenYAML(YamlAdaptor.load(tocFile) as any)
 
     // Files on the system that are not included in the TOC
     const missingEntries = difference(files, tocEntries)
@@ -58,7 +58,7 @@ class Navigation {
     missingEntries.forEach(name => {
       if (state.contains('loi', { name })) return
 
-      const entry = state.find('spine.flattened', { name })
+      const entry = state.find('spine.flattened', { name }) as any
 
       let yamlString = `\n- ${name}`
 
@@ -68,7 +68,7 @@ class Navigation {
         // Get attributes that may have been dynamically added to the entry and
         // list them in the YAML
         const { linear, in_toc } = entry // eslint-disable-line camelcase
-        const attributes = {}
+        const attributes: Record<string, boolean> = {}
         if (linear === false) attributes.linear = false
         if (in_toc === false) attributes.in_toc = false // eslint-disable-line camelcase
 
@@ -178,7 +178,7 @@ class Navigation {
     return Template.render(spineXML, Spine.body())
   }
 
-  static writeTocXhtmlFile(toc) {
+  static writeTocXhtmlFile(toc: string) {
     const filepath = state.dist.ops('toc.xhtml')
 
     log.info(`opf emit toc.xhtml [${filepath}]`)
@@ -186,7 +186,7 @@ class Navigation {
     return fs.writeFile(filepath, toc)
   }
 
-  static writeTocNcxFile(ncx) {
+  static writeTocNcxFile(ncx: string) {
     const filepath = state.dist.ops('toc.ncx')
 
     log.info(`opf emit toc.ncx [${filepath}]`)
@@ -194,7 +194,7 @@ class Navigation {
     return fs.writeFile(filepath, ncx)
   }
 
-  static async writeFiles([toc, ncx, guide, spine]) {
+  static async writeFiles([toc, ncx, guide, spine]: [string, string, string, any]) {
     await Promise.all([
       Navigation.writeTocXhtmlFile(toc),
       Navigation.writeTocNcxFile(ncx),
@@ -213,7 +213,7 @@ class Navigation {
           Navigation.createSpineStringsFromTemplate(),
         ])
       )
-      .then(resp => Navigation.writeFiles(resp))
+      .then(resp => Navigation.writeFiles(resp as [string, string, string, any]))
       .catch(log.error)
   }
 }
