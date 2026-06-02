@@ -1,6 +1,6 @@
 # b-ber monorepo — Project Plan
 
-_Last updated: 2026-06-01 (TASK-028 complete; b-ber-markdown-renderer converted to TypeScript, vendored highlight.js replaced with npm package)_
+_Last updated: 2026-06-02 (TASK-038 added — package.json scripts audit and cleanup)_
 
 ---
 
@@ -92,18 +92,19 @@ been created yet; implementation tasks (TASK-006+) have not started.
 
 These tasks have no unmet dependencies:
 
-| Task     | Title                                          | Branch                | Notes                                                                                   |
-| -------- | ---------------------------------------------- | --------------------- | --------------------------------------------------------------------------------------- |
-| TASK-006 | Migrate b-ber-reader-react webpack → Vite      | `feat/vite-migration` | Independent of TS work                                                                  |
-| TASK-017 | Expand diagrams: tooling versions + cross-refs | `feat/upgrades`       | Living audit surface; TASK-016 complete                                                 |
-| TASK-021 | Audit `--no-package-lock` in lerna bootstrap   | `feat/upgrades`       | Low priority; review alongside `--legacy-peer-deps`                                     |
-| TASK-022 | Automate circular dependency checks            | `feat/upgrades`       | Options: pre-commit hook, CI, or `npm test`; update extensions list once TS work starts |
-| TASK-023 | Research Lerna replacement / upgrade options   | `feat/upgrades`       | Superseded by TASK-036; keep for research notes                                         |
-| TASK-033 | Evaluate code coverage tooling                 | `feat/upgrades`       | Istanbul incompatible with @swc/jest; audit V8 provider, Vitest coverage, orphaned pkgs |
-| TASK-034 | Upgrade Jest from v26 to v29                   | `feat/upgrades`       | `testURL` removed; `jest-environment-jsdom` now separate; coordinate with TASK-033      |
-| TASK-035 | Fix and modernize CircleCI pipeline            | `feat/upgrades`       | Stale Docker image, broken bootstrap, only runs on main; blocked on TASK-036            |
-| TASK-036 | Upgrade Lerna and migrate off bootstrap        | `feat/upgrades`       | **High priority** — bootstrap removed in v7+; affects dev, CI, and publish workflow     |
-| TASK-037 | Replace or reconfigure dependency management   | `feat/upgrades`       | Dependabot paused + broken config; evaluate Options A–D; recommend remove + npm audit   |
+| Task     | Title                                          | Branch                | Notes                                                                                     |
+| -------- | ---------------------------------------------- | --------------------- | ----------------------------------------------------------------------------------------- |
+| TASK-006 | Migrate b-ber-reader-react webpack → Vite      | `feat/vite-migration` | Independent of TS work                                                                    |
+| TASK-017 | Expand diagrams: tooling versions + cross-refs | `feat/upgrades`       | Living audit surface; TASK-016 complete                                                   |
+| TASK-021 | Audit `--no-package-lock` in lerna bootstrap   | `feat/upgrades`       | Low priority; review alongside `--legacy-peer-deps`                                       |
+| TASK-022 | Automate circular dependency checks            | `feat/upgrades`       | Options: pre-commit hook, CI, or `npm test`; update extensions list once TS work starts   |
+| TASK-023 | Research Lerna replacement / upgrade options   | `feat/upgrades`       | Superseded by TASK-036; keep for research notes                                           |
+| TASK-033 | Evaluate code coverage tooling                 | `feat/upgrades`       | Istanbul incompatible with @swc/jest; audit V8 provider, Vitest coverage, orphaned pkgs   |
+| TASK-034 | Upgrade Jest from v26 to v29                   | `feat/upgrades`       | `testURL` removed; `jest-environment-jsdom` now separate; coordinate with TASK-033        |
+| TASK-035 | Fix and modernize CircleCI pipeline            | `feat/upgrades`       | Stale Docker image, broken bootstrap, only runs on main; blocked on TASK-036              |
+| TASK-036 | Upgrade Lerna and migrate off bootstrap        | `feat/upgrades`       | **High priority** — bootstrap removed in v7+; affects dev, CI, and publish workflow       |
+| TASK-037 | Replace or reconfigure dependency management   | `feat/upgrades`       | Dependabot paused + broken config; evaluate Options A–D; recommend remove + npm audit     |
+| TASK-038 | Audit and clean up package.json scripts        | `feat/upgrades`       | Inconsistent naming, dead scripts, opaque chains; some cleanup now, rest after migrations |
 
 ### Not started — blocked
 
@@ -206,6 +207,9 @@ In priority order:
    TASK-007 (reader).
 7. **TASK-037** (Dependency management): low effort if Option A — remove
    Dependabot and add `npm audit` to CI. Can be done alongside TASK-035.
+8. **TASK-038** (package.json script cleanup): some items unblocked now (theme
+   packages, root dead scripts). Remaining cleanup is downstream of TASK-006,
+   TASK-029–031, and TASK-036 — do those pieces as part of those tasks.
 
 ---
 
