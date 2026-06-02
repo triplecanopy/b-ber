@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'b-ber-grammar-iframe',
+  displayName: 'b-ber-grammar-iframe',
   verbose: false,
   setupFilesAfterEnv: ['jest-extended/all'],
   testEnvironmentOptions: { url: 'http://localhost/' },

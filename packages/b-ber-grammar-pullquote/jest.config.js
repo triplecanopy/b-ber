@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'b-ber-grammar-pullquote',
+  displayName: 'b-ber-grammar-pullquote',
   verbose: false,
   setupFilesAfterEnv: ['jest-extended/all'],
   testEnvironmentOptions: { url: 'http://localhost/' },

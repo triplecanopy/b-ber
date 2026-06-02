@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'b-ber-validator',
+  displayName: 'b-ber-validator',
   verbose: false,
   setupFilesAfterEnv: ['jest-extended/all'],
   testPathIgnorePatterns: ['__mocks__'],

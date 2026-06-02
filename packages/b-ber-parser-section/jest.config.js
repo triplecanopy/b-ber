@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'b-ber-parser-section',
+  displayName: 'b-ber-parser-section',
   verbose: false,
   setupFilesAfterEnv: ['jest-extended/all'],
   testEnvironmentOptions: { url: 'http://localhost/' },

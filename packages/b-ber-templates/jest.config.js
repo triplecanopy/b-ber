@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'b-ber-templates',
+  displayName: 'b-ber-templates',
   verbose: false,
   setupFilesAfterEnv: ['jest-extended/all'],
   testEnvironmentOptions: { url: 'http://localhost/' },

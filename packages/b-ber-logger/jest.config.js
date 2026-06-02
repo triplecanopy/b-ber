@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'b-ber-logger',
+  displayName: 'b-ber-logger',
   verbose: false,
   setupFilesAfterEnv: ['jest-extended/all'],
   testEnvironmentOptions: { url: 'http://localhost/' },

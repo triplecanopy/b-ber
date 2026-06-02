@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'b-ber-grammar-renderer',
+  displayName: 'b-ber-grammar-renderer',
   verbose: false,
   setupFilesAfterEnv: ['jest-extended/all'],
   testEnvironmentOptions: { url: 'http://localhost/' },

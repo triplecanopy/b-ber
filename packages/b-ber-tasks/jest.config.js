@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'b-ber-tasks',
+  displayName: 'b-ber-tasks',
   verbose: false,
   setupFilesAfterEnv: ['jest-extended/all'],
   testEnvironmentOptions: { url: 'http://localhost/' },

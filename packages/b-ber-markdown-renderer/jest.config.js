@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'b-ber-markdown-renderer',
+  displayName: 'b-ber-markdown-renderer',
   verbose: false,
   setupFilesAfterEnv: ['jest-extended/all'],
   testEnvironmentOptions: { url: 'http://localhost/' },

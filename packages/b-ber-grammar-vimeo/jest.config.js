@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'b-ber-grammar-vimeo',
+  displayName: 'b-ber-grammar-vimeo',
   verbose: false,
   setupFilesAfterEnv: ['jest-extended/all'],
   testEnvironmentOptions: { url: 'http://localhost/' },

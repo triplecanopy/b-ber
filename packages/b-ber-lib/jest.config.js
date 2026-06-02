@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'b-ber-lib',
+  displayName: 'b-ber-lib',
   verbose: false,
   setupFilesAfterEnv: ['jest-extended/all'],
   testEnvironmentOptions: { url: 'http://localhost/' },

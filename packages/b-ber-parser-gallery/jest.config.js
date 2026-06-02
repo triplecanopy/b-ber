@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'b-ber-parser-gallery',
+  displayName: 'b-ber-parser-gallery',
   verbose: false,
   setupFilesAfterEnv: ['jest-extended/all'],
   testEnvironmentOptions: { url: 'http://localhost/' },

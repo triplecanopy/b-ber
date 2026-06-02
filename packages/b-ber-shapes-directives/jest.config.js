@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'b-ber-shapes-directives',
+  displayName: 'b-ber-shapes-directives',
   verbose: false,
   setupFilesAfterEnv: ['jest-extended/all'],
   testEnvironmentOptions: { url: 'http://localhost/' },

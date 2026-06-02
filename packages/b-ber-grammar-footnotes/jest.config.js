@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'b-ber-grammar-footnotes',
+  displayName: 'b-ber-grammar-footnotes',
   verbose: false,
   setupFilesAfterEnv: ['jest-extended/all'],
   testEnvironmentOptions: { url: 'http://localhost/' },

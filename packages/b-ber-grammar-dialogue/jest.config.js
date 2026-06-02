@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'b-ber-grammar-dialogue',
+  displayName: 'b-ber-grammar-dialogue',
   verbose: false,
   setupFilesAfterEnv: ['jest-extended/all'],
   testEnvironmentOptions: { url: 'http://localhost/' },

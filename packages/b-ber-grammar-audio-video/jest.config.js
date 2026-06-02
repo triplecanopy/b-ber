@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'b-ber-grammar-audio-video',
+  displayName: 'b-ber-grammar-audio-video',
   verbose: false,
   setupFilesAfterEnv: ['jest-extended/all'],
   testEnvironmentOptions: { url: 'http://localhost/' },

@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'b-ber-parser-dialogue',
+  displayName: 'b-ber-parser-dialogue',
   verbose: false,
   setupFilesAfterEnv: ['jest-extended/all'],
   testEnvironmentOptions: { url: 'http://localhost/' },

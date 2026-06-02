@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'b-ber-cli',
+  displayName: 'b-ber-cli',
   verbose: false,
   setupFiles: ['./jest.setup.js'],
   setupFilesAfterEnv: ['jest-extended/all'],

@@ -1,5 +1,5 @@
 module.exports = {
-  name: 'b-ber-grammar-epigraph',
+  displayName: 'b-ber-grammar-epigraph',
   verbose: false,
   setupFilesAfterEnv: ['jest-extended/all'],
   testEnvironmentOptions: { url: 'http://localhost/' },
