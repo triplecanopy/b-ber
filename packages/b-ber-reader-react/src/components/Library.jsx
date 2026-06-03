@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Library = props => (
+const Library = (props) => (
   <div>
     {props.books.map((book, i) => (
       <button

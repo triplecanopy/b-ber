@@ -1,19 +1,20 @@
 /* eslint-disable camelcase */
-import React, { useContext, useEffect, useState } from 'react'
-import debounce from 'lodash/debounce'
-import { connect } from 'react-redux'
+
 import classNames from 'classnames'
-import transitions from '../lib/transition-styles'
-import Viewport from '../helpers/Viewport'
-import browser from '../lib/browser'
-import withLastSpreadIndex from '../lib/with-last-spread-index'
-import withDimensions from '../lib/with-dimensions'
-import ReaderContext from '../lib/reader-context'
+import debounce from 'lodash/debounce'
+import React, { useContext, useEffect, useState } from 'react'
+import { connect } from 'react-redux'
 import {
   breakpoints,
-  RESIZE_DEBOUNCE_TIMER,
   MEDIA_QUERY_MOBILE,
+  RESIZE_DEBOUNCE_TIMER,
 } from '../constants'
+import Viewport from '../helpers/Viewport'
+import browser from '../lib/browser'
+import ReaderContext from '../lib/reader-context'
+import transitions from '../lib/transition-styles'
+import withDimensions from '../lib/with-dimensions'
+import withLastSpreadIndex from '../lib/with-last-spread-index'
 
 function getLayoutStyles(props, state) {
   const {
@@ -152,19 +153,15 @@ function Layout(props) {
   const height = props.getFrameHeight()
   const { spreadIndex, slug, layout } = props
   const { enableTransitions } = props.userInterface
-  const {
-    transition,
-    transitionSpeed,
-    paddingLeft,
-    paddingRight,
-  } = props.viewerSettings
+  const { transition, transitionSpeed, paddingLeft, paddingRight } =
+    props.viewerSettings
   const translateX = readerContext.getTranslateX()
 
-  const updateTransform = nextSpreadIndex => {
+  const updateTransform = (nextSpreadIndex) => {
     const nextTranslateX = readerContext.getTranslateX(nextSpreadIndex)
     const transform = `translateX(${nextTranslateX}px) translate3d(0, 0, 0)`
 
-    setState(prevState => ({ ...prevState, transform }))
+    setState((prevState) => ({ ...prevState, transform }))
   }
 
   const onResizeDone = () => {

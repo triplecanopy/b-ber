@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
+import * as viewActions from '../actions/view'
 import { isNumeric } from '../helpers/Types'
 import browser from './browser'
-import * as viewActions from '../actions/view'
 
 // Debounce window for content-dimension measurements (ms). After a DOM mutation
 // or resize event fires, we wait this long for any further events before
@@ -51,7 +51,7 @@ const MEASURE_DEBOUNCE_MS = 100
 //   L2 — Spurious dispatch on slug change: skipped when contentDimensions===0
 //   M5 — Removed console.log
 
-const withLastSpreadIndex = WrappedComponent => {
+const withLastSpreadIndex = (WrappedComponent) => {
   function WrapperComponent(props) {
     const node = useRef(null)
     const [contentDimensions, setContentDimensions] = useState(0)
@@ -218,7 +218,7 @@ const withLastSpreadIndex = WrappedComponent => {
 
   return connect(
     () => ({}),
-    dispatch => ({ viewActions: bindActionCreators(viewActions, dispatch) })
+    (dispatch) => ({ viewActions: bindActionCreators(viewActions, dispatch) })
   )(WrapperComponent)
 }
 

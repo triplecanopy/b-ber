@@ -1,5 +1,5 @@
-import React from 'react'
 import classNames from 'classnames'
+import React from 'react'
 import { connect } from 'react-redux'
 
 function Spinner(props) {

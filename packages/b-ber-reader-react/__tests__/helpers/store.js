@@ -1,8 +1,8 @@
-import { createStore, applyMiddleware, compose } from 'redux'
+import { applyMiddleware, compose, createStore } from 'redux'
 import { thunk } from 'redux-thunk'
+import { mergeDeep } from '../../src/helpers/utils'
 import combinedReducers from '../../src/reducers'
 import { initialState as initialReaderSettings } from '../../src/reducers/reader-settings'
-import { mergeDeep } from '../../src/helpers/utils'
 
 /**
  * Create a real Redux store for smoke tests.

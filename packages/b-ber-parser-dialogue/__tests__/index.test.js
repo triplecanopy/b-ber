@@ -26,7 +26,7 @@ describe('b-ber-parser-dialogue', () => {
   test('adds a block rule named container_dialogue', () => {
     const md = new MarkdownIt()
     containerPlugin(md, 'dialogue', mockOptions)
-    const ruleNames = md.block.ruler.__rules__.map(r => r.name)
+    const ruleNames = md.block.ruler.__rules__.map((r) => r.name)
     expect(ruleNames).toContain('container_dialogue')
   })
 
@@ -41,7 +41,7 @@ describe('b-ber-parser-dialogue', () => {
     const md = new MarkdownIt()
     containerPlugin(md, 'dialogue', mockOptions)
     containerPlugin(md, 'monologue', { ...mockOptions })
-    const ruleNames = md.block.ruler.__rules__.map(r => r.name)
+    const ruleNames = md.block.ruler.__rules__.map((r) => r.name)
     expect(ruleNames).toContain('container_dialogue')
     expect(ruleNames).toContain('container_monologue')
   })

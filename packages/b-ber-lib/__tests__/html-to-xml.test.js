@@ -10,7 +10,7 @@ beforeAll(() => fs.mkdirp('_project/_media'))
 afterAll(() => Promise.all([fs.remove('_project'), fs.remove('themes')]))
 
 function parse(content) {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     new HtmlToXmlParser({ content, onEndCallback: resolve }).parse()
   })
 }

@@ -1,20 +1,20 @@
+import markdownItAudioVideo from '@canopycanopycanopy/b-ber-grammar-audio-video'
+import markdownItDialogue from '@canopycanopycanopy/b-ber-grammar-dialogue'
+import markdownItFootnotePlugin from '@canopycanopycanopy/b-ber-grammar-footnotes'
+import markdownItFrontmatterPlugin from '@canopycanopycanopy/b-ber-grammar-frontmatter'
+import markdownItGallery from '@canopycanopycanopy/b-ber-grammar-gallery'
+import markdownItIframe from '@canopycanopycanopy/b-ber-grammar-iframe'
+import markdownItImage from '@canopycanopycanopy/b-ber-grammar-image'
+import markdownItLogo from '@canopycanopycanopy/b-ber-grammar-logo'
+import mediaDirectivePreProcessor from '@canopycanopycanopy/b-ber-grammar-media'
+import markdownItPullquote from '@canopycanopycanopy/b-ber-grammar-pullquote'
+import markdownItSection from '@canopycanopycanopy/b-ber-grammar-section'
+import markdownItSpread from '@canopycanopycanopy/b-ber-grammar-spread'
+import markdownItVimeo from '@canopycanopycanopy/b-ber-grammar-vimeo'
+import markdownItFootnote from '@canopycanopycanopy/b-ber-parser-footnotes'
+import hljs from 'highlight.js'
 import MarkdownIt from 'markdown-it'
 import markdownItFrontmatter from 'markdown-it-front-matter'
-import markdownItFootnote from '@canopycanopycanopy/b-ber-parser-footnotes'
-import markdownItSection from '@canopycanopycanopy/b-ber-grammar-section'
-import markdownItPullquote from '@canopycanopycanopy/b-ber-grammar-pullquote'
-import markdownItLogo from '@canopycanopycanopy/b-ber-grammar-logo'
-import markdownItImage from '@canopycanopycanopy/b-ber-grammar-image'
-import markdownItAudioVideo from '@canopycanopycanopy/b-ber-grammar-audio-video'
-import markdownItVimeo from '@canopycanopycanopy/b-ber-grammar-vimeo'
-import markdownItIframe from '@canopycanopycanopy/b-ber-grammar-iframe'
-import markdownItDialogue from '@canopycanopycanopy/b-ber-grammar-dialogue'
-import markdownItGallery from '@canopycanopycanopy/b-ber-grammar-gallery'
-import markdownItSpread from '@canopycanopycanopy/b-ber-grammar-spread'
-import markdownItFrontmatterPlugin from '@canopycanopycanopy/b-ber-grammar-frontmatter'
-import markdownItFootnotePlugin from '@canopycanopycanopy/b-ber-grammar-footnotes'
-import mediaDirectivePreProcessor from '@canopycanopycanopy/b-ber-grammar-media'
-import hljs from 'highlight.js'
 
 const LINE_BREAK = '\n'
 const SPACE = ' '
@@ -107,7 +107,7 @@ class MarkdownRenderer {
   template(meta: string): string {
     const str = meta
       .split(LINE_BREAK)
-      .map(value => `${SPACE.repeat(2)}${value}`)
+      .map((value) => `${SPACE.repeat(2)}${value}`)
       .join(LINE_BREAK)
 
     return `-${LINE_BREAK}${SPACE.repeat(2)}fileName: ${

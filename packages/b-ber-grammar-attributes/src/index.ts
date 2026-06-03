@@ -1,22 +1,22 @@
 /* eslint-disable no-plusplus, no-continue*/
 
-import path from 'path'
-import has from 'lodash/has'
 import { Url } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import {
+  ALL_DIRECTIVES,
+  BACKMATTER_DIRECTIVES,
   BLOCK_DIRECTIVES,
+  BODYMATTER_DIRECTIVES,
+  DEPRECATED_DIRECTIVES,
+  DIRECTIVES_REQUIRING_ALT_TAG,
+  DRAFT_DIRECTIVES,
+  FRONTMATTER_DIRECTIVES,
   INLINE_DIRECTIVES,
   MISC_DIRECTIVES,
-  FRONTMATTER_DIRECTIVES,
-  BODYMATTER_DIRECTIVES,
-  BACKMATTER_DIRECTIVES,
-  ALL_DIRECTIVES,
-  DIRECTIVES_REQUIRING_ALT_TAG,
   SUPPORTED_ATTRIBUTES,
-  DRAFT_DIRECTIVES,
-  DEPRECATED_DIRECTIVES,
 } from '@canopycanopycanopy/b-ber-shapes-directives'
+import has from 'lodash/has'
+import path from 'path'
 
 //
 // Querying hierarchies gets confusing, so we're using biological taxonomic
@@ -30,20 +30,20 @@ const _lookUpFamily = (genus: string): string =>
   FRONTMATTER_DIRECTIVES.has(genus)
     ? 'frontmatter'
     : BODYMATTER_DIRECTIVES.has(genus)
-    ? 'bodymatter'
-    : BACKMATTER_DIRECTIVES.has(genus)
-    ? 'backmatter'
-    : ''
+      ? 'bodymatter'
+      : BACKMATTER_DIRECTIVES.has(genus)
+        ? 'backmatter'
+        : ''
 
 // Determine the directive's classification and parent's type
 const _directiveOrder = (genus: string): string | null =>
   BLOCK_DIRECTIVES.has(genus)
     ? 'block'
     : INLINE_DIRECTIVES.has(genus)
-    ? 'inline'
-    : MISC_DIRECTIVES.has(genus)
-    ? 'misc'
-    : null
+      ? 'inline'
+      : MISC_DIRECTIVES.has(genus)
+        ? 'misc'
+        : null
 
 const _requiresAltTag = (genus: string): boolean =>
   DIRECTIVES_REQUIRING_ALT_TAG.has(genus)
@@ -60,7 +60,10 @@ const _isUnsupportedAttribute = (genus: string, attr: string): boolean => {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return !(SUPPORTED_ATTRIBUTES as any)[key] || !(SUPPORTED_ATTRIBUTES as any)[key].has(attr)
+  return (
+    !(SUPPORTED_ATTRIBUTES as any)[key] ||
+    !(SUPPORTED_ATTRIBUTES as any)[key].has(attr)
+  )
 }
 
 const _applyTransforms = (k: string, v: string): string => {
@@ -319,8 +322,8 @@ const toAlias = (fpath: string): string =>
 export {
   attributes,
   attributesObject,
-  attributesString,
   attributesQueryString,
+  attributesString,
   htmlId,
   parseAttrs,
   toAlias,

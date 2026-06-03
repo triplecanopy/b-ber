@@ -1,7 +1,7 @@
-import React from 'react'
 import classNames from 'classnames'
-import AudioVideoControls from './AudioVideoControls'
+import React from 'react'
 import { MEDIA_PLAYBACK_RATES } from '../../../constants'
+import AudioVideoControls from './AudioVideoControls'
 
 class MediaControls extends React.Component {
   playbackSlow = () => this.props.updatePlaybackRate(MEDIA_PLAYBACK_RATES.SLOW)

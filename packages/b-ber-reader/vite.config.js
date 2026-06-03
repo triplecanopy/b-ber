@@ -1,7 +1,7 @@
-import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { resolve } from 'path'
 import { fileURLToPath } from 'url'
+import { defineConfig } from 'vite'
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url))
 

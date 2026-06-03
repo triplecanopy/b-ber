@@ -2,8 +2,8 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import withNodePosition from '../lib/with-node-position'
 import * as markerActions from '../actions/markers'
+import withNodePosition from '../lib/with-node-position'
 
 class Marker extends React.Component {
   render() {
@@ -35,5 +35,5 @@ class Marker extends React.Component {
 
 export default connect(
   ({ markers }) => ({ markers }),
-  dispatch => ({ markerActions: bindActionCreators(markerActions, dispatch) })
+  (dispatch) => ({ markerActions: bindActionCreators(markerActions, dispatch) })
 )(withNodePosition(Marker, { isMarker: true }))

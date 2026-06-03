@@ -100,7 +100,7 @@ export interface NavigationHeaderProps {
   uiOptions: UiOptions
   showSidebar: SidebarName | null
   spine: Spine
-  currentSpineItemIndex:number
+  currentSpineItemIndex: number
   metadata: Metadata
 }
 

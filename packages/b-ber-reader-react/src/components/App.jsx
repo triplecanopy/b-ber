@@ -1,11 +1,11 @@
-import React, { Component } from 'react'
-import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
 import find from 'lodash/find'
-import Reader from './Reader'
-import Request from '../helpers/Request'
-import * as readerSettingsActions from '../actions/reader-settings'
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 import * as readerLocationActions from '../actions/reader-location'
+import * as readerSettingsActions from '../actions/reader-settings'
+import Request from '../helpers/Request'
+import Reader from './Reader'
 
 class App extends Component {
   async UNSAFE_componentWillMount() {
@@ -39,13 +39,10 @@ class App extends Component {
         const resp = await Request.getJson(manifestURL)
         const { data } = resp
         const { href: opfURL } = data.resources.find(
-          res => res.type === 'application/oebps-package+xml'
+          (res) => res.type === 'application/oebps-package+xml'
         )
 
-        bookURL = opfURL
-          .split('/')
-          .slice(0, -2)
-          .join('/')
+        bookURL = opfURL.split('/').slice(0, -2).join('/')
 
         // Must be called before state is set
         this.props.readerSettingsActions.updateSettings({ bookURL })
@@ -61,10 +58,7 @@ class App extends Component {
 
     if (bookURL && !projectURL) {
       // Path from which to load api/books.json
-      projectURL = bookURL
-        .split('/')
-        .slice(0, -2)
-        .join('/')
+      projectURL = bookURL.split('/').slice(0, -2).join('/')
     }
 
     try {
@@ -80,10 +74,7 @@ class App extends Component {
     // There should also be a better way of syncing up the ID that exists in the book
     // other than just testing against the directory path, but since b-ber uses the
     // same value for both.
-    const id = bookURL
-      .split('/')
-      .filter(Boolean)
-      .pop()
+    const id = bookURL.split('/').filter(Boolean).pop()
     const book = find(books, { id })
     const projectConfig = {}
 
@@ -130,7 +121,7 @@ const mapStateToProps = ({ readerSettings, readerLocation }) => ({
   readerLocation,
 })
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   readerSettingsActions: bindActionCreators(readerSettingsActions, dispatch),
   readerLocationActions: bindActionCreators(readerLocationActions, dispatch),
 })

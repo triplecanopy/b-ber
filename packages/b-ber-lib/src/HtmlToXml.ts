@@ -1,5 +1,5 @@
-import path from 'path'
 import { Parser } from 'htmlparser2'
+import path from 'path'
 import state from './State'
 
 interface HtmlToXmlParserOptions {
@@ -14,7 +14,10 @@ class HtmlToXmlParser {
   blacklistedTagNames: Record<string, boolean>
   containingTagNames: Record<string, boolean>
   elementAttributeNames: Record<string, Record<string, string>>
-  elementAttributeTransformers: Record<string, Record<string, (value: string) => string>>
+  elementAttributeTransformers: Record<
+    string,
+    Record<string, (value: string) => string>
+  >
   content: string
   onEndCallback: (output: string) => void
   output: string
@@ -133,11 +136,11 @@ class HtmlToXmlParser {
 
     this.elementAttributeTransformers = {
       img: {
-        src: value =>
+        src: (value) =>
           `file://${path.resolve(state.dist.images(path.basename(value)))}`,
       },
       source: {
-        src: value =>
+        src: (value) =>
           `file://${path.resolve(state.dist.media(path.basename(value)))}`,
       },
     }
@@ -167,7 +170,11 @@ class HtmlToXmlParser {
     return this.elementAttributeNames[name][attribute] || attribute
   }
 
-  transformAttributeValue(name: string, attribute: string, value: string): string {
+  transformAttributeValue(
+    name: string,
+    attribute: string,
+    value: string
+  ): string {
     if (
       !this.elementAttributeTransformers[name] ||
       !this.elementAttributeTransformers[name][attribute]

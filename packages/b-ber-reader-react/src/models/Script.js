@@ -1,6 +1,6 @@
 import isUndefined from 'lodash/isUndefined'
-import { rand } from '../helpers/utils'
 import Url from '../helpers/Url'
+import { rand } from '../helpers/utils'
 
 class Script {
   constructor({ node, requestURI }) {

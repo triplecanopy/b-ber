@@ -1,6 +1,6 @@
+import fs from 'fs-extra'
 import os from 'os'
 import path from 'path'
-import fs from 'fs-extra'
 import Yaml from '../src/Yaml'
 
 // Prevent the logger from calling process.exit on typeCheck errors
@@ -83,7 +83,7 @@ describe('Yaml.update', () => {
     const entries = yaml.json()
     // After update: only the updated entry remains (remove retains only the match,
     // then the new merged entry is appended)
-    const titleEntries = entries.filter(e => e.term === 'title')
+    const titleEntries = entries.filter((e) => e.term === 'title')
     expect(titleEntries).toHaveLength(2) // original kept + new appended
     expect(titleEntries[titleEntries.length - 1].value).toBe('Updated Title')
   })

@@ -1,10 +1,10 @@
 import { combineReducers } from 'redux'
-import readerSettings from './reader-settings'
-import viewerSettings from './viewer-settings'
-import readerLocation from './reader-location'
 import markers from './markers'
-import view from './view'
+import readerLocation from './reader-location'
+import readerSettings from './reader-settings'
 import userInterface from './user-interface'
+import view from './view'
+import viewerSettings from './viewer-settings'
 
 const reducers = {
   readerSettings,

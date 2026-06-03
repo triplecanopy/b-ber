@@ -5,7 +5,7 @@ jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
   figures: [],
   add: jest.fn(),
   src: {
-    images: p => p,
+    images: (p) => p,
   },
 }))
 
@@ -20,19 +20,19 @@ jest.mock('fs-extra', () => ({ existsSync: jest.fn(() => true) }))
 jest.mock('@canopycanopycanopy/b-ber-grammar-attributes', () => ({
   attributesString: jest.fn(() => ''),
   attributesObject: jest.fn(() => ({ source: 'https://example.com/embed' })),
-  htmlId: jest.fn(id => id),
+  htmlId: jest.fn((id) => id),
 }))
 
 jest.mock('@canopycanopycanopy/b-ber-lib', () => ({
   State: jest.requireMock('@canopycanopycanopy/b-ber-lib/State'),
-  Html: { comment: jest.fn(s => s) },
-  Url: { ensureDecoded: jest.fn(s => s) },
+  Html: { comment: jest.fn((s) => s) },
+  Url: { ensureDecoded: jest.fn((s) => s) },
   utils: jest.requireMock('@canopycanopycanopy/b-ber-lib/utils'),
 }))
 
 jest.mock('@canopycanopycanopy/b-ber-lib/utils', () => ({
   createUnsupportedInline: jest.fn(() => '<div class="unsupported"></div>'),
-  getMediaType: jest.fn(type => type.replace(/-.*$/, '')),
+  getMediaType: jest.fn((type) => type.replace(/-.*$/, '')),
   renderCaption: jest.fn(() => ''),
   renderPosterImage: jest.fn(() => ''),
   ensureSource: jest.fn(),
@@ -40,7 +40,7 @@ jest.mock('@canopycanopycanopy/b-ber-lib/utils', () => ({
   ensureSupportedClassNames: jest.fn(),
 }))
 
-const instance = { renderInline: jest.fn(str => str) }
+const instance = { renderInline: jest.fn((str) => str) }
 const context = { fileName: 'test' }
 
 describe('b-ber-grammar-iframe', () => {

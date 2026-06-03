@@ -1,14 +1,13 @@
-import find from 'lodash/find'
-import { State as state } from '@canopycanopycanopy/b-ber-lib'
-import { Html } from '@canopycanopycanopy/b-ber-lib'
-import { BLOCK_DIRECTIVES } from '@canopycanopycanopy/b-ber-shapes-directives'
-import log from '@canopycanopycanopy/b-ber-logger'
-import plugin from '@canopycanopycanopy/b-ber-parser-section'
-import createRenderer from '@canopycanopycanopy/b-ber-grammar-renderer'
 import {
   attributes,
   htmlId,
 } from '@canopycanopycanopy/b-ber-grammar-attributes'
+import createRenderer from '@canopycanopycanopy/b-ber-grammar-renderer'
+import { Html, State as state } from '@canopycanopycanopy/b-ber-lib'
+import log from '@canopycanopycanopy/b-ber-logger'
+import plugin from '@canopycanopycanopy/b-ber-parser-section'
+import { BLOCK_DIRECTIVES } from '@canopycanopycanopy/b-ber-shapes-directives'
+import find from 'lodash/find'
 
 // This matches *all* container-type directives, and outputs the appropriate
 // HTML based on user-defined attributes
@@ -113,27 +112,29 @@ function closeElement(marker) {
   return result
 }
 
-const render = ({ context = {} }) => (tokens, index) => {
-  const token = tokens[index]
-  const lineNumber = token.map ? token.map[0] : null
-  const fileName = `_markdown/${context.fileName}.md`
-  const marker = token.info.trim()
+const render =
+  ({ context = {} }) =>
+  (tokens, index) => {
+    const token = tokens[index]
+    const lineNumber = token.map ? token.map[0] : null
+    const fileName = `_markdown/${context.fileName}.md`
+    const marker = token.info.trim()
 
-  if (token.nesting !== 1) return closeElement(marker)
+    if (token.nesting !== 1) return closeElement(marker)
 
-  // token open, we ignore closing tokens and let `exit` handle those
-  const tokenClose = marker.match(MARKER_CLOSE_RE)
-  const tokenOpen = marker.match(MARKER_OPEN_RE)
+    // token open, we ignore closing tokens and let `exit` handle those
+    const tokenClose = marker.match(MARKER_CLOSE_RE)
+    const tokenOpen = marker.match(MARKER_OPEN_RE)
 
-  return tokenClose
-    ? handleExitDirective(tokenClose)
-    : openElement(tokenOpen, fileName, lineNumber)
-}
+    return tokenClose
+      ? handleExitDirective(tokenClose)
+      : openElement(tokenOpen, fileName, lineNumber)
+  }
 
 export default {
   plugin,
   name: 'section',
-  renderer: args =>
+  renderer: (args) =>
     createRenderer({
       ...args,
       markerOpen: MARKER_OPEN_RE,

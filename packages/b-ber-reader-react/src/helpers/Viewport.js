@@ -1,12 +1,12 @@
 import {
-  layouts,
   breakpoints,
+  columns,
+  layouts,
+  MEDIA_QUERY_DESKTOP,
   MEDIA_QUERY_DESKTOP_MD,
   MEDIA_QUERY_MIN_SCROLLING_ASPECT_RATIO,
   MEDIA_QUERY_MOBILE,
   MEDIA_QUERY_TABLET,
-  MEDIA_QUERY_DESKTOP,
-  columns,
 } from '../constants'
 
 class Viewport {
@@ -30,7 +30,7 @@ class Viewport {
     )
   }
 
-  static isVerticalScrollConfigured = layout => layout === layouts.SCROLL
+  static isVerticalScrollConfigured = (layout) => layout === layouts.SCROLL
 
   static isVerticallyScrolling = ({ layout }) =>
     Viewport.isSingleColumn() || Viewport.isVerticalScrollConfigured(layout)
@@ -40,12 +40,12 @@ class Viewport {
     window.navigator.msPointerEnabled /* Win8 */ ||
     'ontouchstart' in document.documentElement
 
-  static isPixelValue = str => (str || '').substring(str.length - 2) === 'px'
+  static isPixelValue = (str) => (str || '').substring(str.length - 2) === 'px'
 
-  static isPercentageValue = str =>
+  static isPercentageValue = (str) =>
     (str || '').substring(str.length - 1) === '%'
 
-  static parseStringWidthValue = str => {
+  static parseStringWidthValue = (str) => {
     let width = 0
 
     if (Viewport.isPixelValue(str)) {
@@ -59,7 +59,7 @@ class Viewport {
     return width
   }
 
-  static parseStringHeightValue = str => {
+  static parseStringHeightValue = (str) => {
     let height = 0
 
     if (Viewport.isPixelValue(str)) {
@@ -73,7 +73,7 @@ class Viewport {
     return height
   }
 
-  static getHorizontalSpacing = maxWidth => {
+  static getHorizontalSpacing = (maxWidth) => {
     if (maxWidth === 'auto') return 0
 
     const width = Viewport.parseStringWidthValue(maxWidth)
@@ -81,7 +81,7 @@ class Viewport {
     return (window.innerWidth - width) / 2
   }
 
-  static getVerticalSpacing = maxHeight => {
+  static getVerticalSpacing = (maxHeight) => {
     if (maxHeight === 'auto') return 0
 
     let height = Viewport.parseStringHeightValue(maxHeight)

@@ -1,10 +1,10 @@
-import isUndefined from 'lodash/isUndefined'
 import { State as state } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import {
   BLOCK_DIRECTIVE_MARKER,
   BLOCK_DIRECTIVE_MARKER_MIN_LENGTH,
 } from '@canopycanopycanopy/b-ber-shapes-directives'
+import isUndefined from 'lodash/isUndefined'
 
 // Assign a default object to the `context` argument, since we'll refer to
 // some of its properties during tests. the properties themselves don't

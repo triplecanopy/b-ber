@@ -1,18 +1,17 @@
-import fs from 'fs-extra'
-import sizeOf from 'image-size' // eslint-disable-line import/no-unresolved
-import isUndefined from 'lodash/isUndefined'
-import log from '@canopycanopycanopy/b-ber-logger'
-import { Html } from '@canopycanopycanopy/b-ber-lib'
-import { State as state } from '@canopycanopycanopy/b-ber-lib'
-import {
-  INLINE_DIRECTIVE_MARKER,
-  INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
-} from '@canopycanopycanopy/b-ber-shapes-directives'
 import {
   attributesObject,
   htmlId,
 } from '@canopycanopycanopy/b-ber-grammar-attributes'
+import { Html, State as state } from '@canopycanopycanopy/b-ber-lib'
+import log from '@canopycanopycanopy/b-ber-logger'
 import figure from '@canopycanopycanopy/b-ber-parser-figure'
+import {
+  INLINE_DIRECTIVE_MARKER,
+  INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
+} from '@canopycanopycanopy/b-ber-shapes-directives'
+import fs from 'fs-extra'
+import sizeOf from 'image-size' // eslint-disable-line import/no-unresolved
+import isUndefined from 'lodash/isUndefined'
 import { createFigure, createFigureInline } from './image'
 
 const MARKER_OPEN_RE = /(figure(?:-inline)?)(?::([^\s]+)(\s?.*)?)?$/
@@ -48,45 +47,49 @@ function prepare({ token, match, instance, context, fileName, lineNumber }) {
   }
 }
 
-const validate = ({ context = { fileName: '' } }) => (params, line) => {
-  const match = params.trim().match(MARKER_OPEN_RE)
-  if (!match) return false
+const validate =
+  ({ context = { fileName: '' } }) =>
+  (params, line) => {
+    const match = params.trim().match(MARKER_OPEN_RE)
+    if (!match) return false
 
-  const [, , id, source] = match
-  if (isUndefined(id) || isUndefined(source)) {
-    // Images require `id` and `source`
-    log.error(
-      `Missing [id] or [source] attribute for [figure] directive${context.fileName}.md:${line}`
-    )
-    return false
+    const [, , id, source] = match
+    if (isUndefined(id) || isUndefined(source)) {
+      // Images require `id` and `source`
+      log.error(
+        `Missing [id] or [source] attribute for [figure] directive${context.fileName}.md:${line}`
+      )
+      return false
+    }
+
+    return true
   }
 
-  return true
-}
+const render =
+  ({ instance, context }) =>
+  (tokens, index) => {
+    const token = tokens[index]
+    if (token.type === 'container_figure_close') return ''
 
-const render = ({ instance, context }) => (tokens, index) => {
-  const token = tokens[index]
-  if (token.type === 'container_figure_close') return ''
+    const fileName = `_markdown/${context.fileName}.md`
+    const lineNumber = token.map ? token.map[0] : null
+    const match = token.info.trim().match(MARKER_OPEN_RE)
+    const type = match[1]
+    const args = prepare({
+      token,
+      match,
+      instance,
+      context,
+      fileName,
+      lineNumber,
+    })
 
-  const fileName = `_markdown/${context.fileName}.md`
-  const lineNumber = token.map ? token.map[0] : null
-  const match = token.info.trim().match(MARKER_OPEN_RE)
-  const type = match[1]
-  const args = prepare({
-    token,
-    match,
-    instance,
-    context,
-    fileName,
-    lineNumber,
-  })
-
-  return type === 'figure'
-    ? createFigure(args)
-    : type === 'figure-inline'
-    ? createFigureInline(args)
-    : ''
-}
+    return type === 'figure'
+      ? createFigure(args)
+      : type === 'figure-inline'
+        ? createFigureInline(args)
+        : ''
+  }
 export default {
   plugin: figure,
   name: 'figure',

@@ -1,6 +1,6 @@
 export { default as BookMetadata } from './BookMetadata'
-export { default as SpineItem } from './SpineItem'
 export { default as GuideItem } from './GuideItem'
-export { default as ViewerSettings } from './ViewerSettings'
 export { default as MediaStyleSheet } from './MediaStyleSheet'
 export { default as Script } from './Script'
+export { default as SpineItem } from './SpineItem'
+export { default as ViewerSettings } from './ViewerSettings'

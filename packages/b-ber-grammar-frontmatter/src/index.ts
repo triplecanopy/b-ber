@@ -1,6 +1,8 @@
-import { State as state } from '@canopycanopycanopy/b-ber-lib'
-import { YamlAdaptor } from '@canopycanopycanopy/b-ber-lib'
-import { GuideItem } from '@canopycanopycanopy/b-ber-lib'
+import {
+  GuideItem,
+  State as state,
+  YamlAdaptor,
+} from '@canopycanopycanopy/b-ber-lib'
 
 export default function markdownItFrontmatterPlugin(self) {
   return function plugin(meta) {

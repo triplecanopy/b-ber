@@ -76,7 +76,7 @@ describe('b-ber-grammar-footnotes', () => {
       fileName: 'chapter-03',
       markdownIt: {
         renderer: {
-          render: jest.fn(tokens => {
+          render: jest.fn((tokens) => {
             capturedTokens = tokens
             return '<p>rendered</p>'
           }),

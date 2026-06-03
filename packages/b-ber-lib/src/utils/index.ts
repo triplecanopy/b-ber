@@ -1,12 +1,12 @@
-import fs from 'fs-extra'
-import path from 'path'
-import find from 'lodash/find'
-import uniq from 'lodash/uniq'
 import log from '@canopycanopycanopy/b-ber-logger'
+import fs from 'fs-extra'
+import find from 'lodash/find'
 import findIndex from 'lodash/findIndex'
+import uniq from 'lodash/uniq'
 import mime from 'mime-types'
-import Url from '../Url'
+import path from 'path'
 import state from '../State'
+import Url from '../Url'
 
 interface EnsureOptions {
   files?: Array<{ absolutePath: string; content: string }>
@@ -28,7 +28,8 @@ export const opsPath = (fpath: string, base: string): string =>
   fpath.replace(new RegExp(`^${base}${path.sep}OPS${path.sep}?`), '')
 
 // https://www.w3.org/TR/xml-names/#Conformance
-export const fileId = (str: string): string => `_${str.replace(/[^a-zA-Z0-9_-]/g, '_')}`
+export const fileId = (str: string): string =>
+  `_${str.replace(/[^a-zA-Z0-9_-]/g, '_')}`
 
 // Determine an image's orientation
 export const getImageOrientation = (w: number, h: number): string | null => {
@@ -53,12 +54,16 @@ export const getImageOrientation = (w: number, h: number): string | null => {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getTitle = (page: any): string => {
   if (page.name === 'figures-titlepage') return 'Figures'
-  const meta = state.spine.frontMatter.get(page.name) as Record<string, unknown> | undefined
+  const meta = state.spine.frontMatter.get(page.name) as
+    | Record<string, unknown>
+    | undefined
   return meta && meta.title ? (meta.title as string) : page.title || page.name
 }
 
 export const getBookMetadata = (term: string): string => {
-  const entry = find(state.metadata.json() as unknown[], { term }) as Record<string, unknown> | undefined
+  const entry = find(state.metadata.json() as unknown[], { term }) as
+    | Record<string, unknown>
+    | undefined
   if (entry && entry.value) return entry.value as string
   log.warn(`Could not find metadata value for ${term}`)
   return ''
@@ -86,7 +91,7 @@ const ensureDirs = (dirs: string[], prefix: string): Promise<unknown[]> => {
       `${prefix}/_project/_stylesheets`,
       `${prefix}/themes`,
     ].concat(dirs)
-  ).map(a => fs.ensureDir(path.join(cwd, a)))
+  ).map((a) => fs.ensureDir(path.join(cwd, a)))
 
   return Promise.all(dirs_)
 }
@@ -114,7 +119,11 @@ const ensureFiles = (
 }
 
 // make sure all necessary files and directories exist
-export const ensure = ({ files = [], dirs = [], prefix = '' }: EnsureOptions = {}): Promise<unknown> =>
+export const ensure = ({
+  files = [],
+  dirs = [],
+  prefix = '',
+}: EnsureOptions = {}): Promise<unknown> =>
   ensureDirs(dirs, prefix)
     .then(() => ensureFiles(files, prefix))
     .catch(log.error)
@@ -164,37 +173,53 @@ export const resolveIntersectingUrl = (u: string, p: string): string => {
   return url.href
 }
 
-const webpubManifestResource = (base: string) => (file: string): { href: string; type: string | false } => {
-  const href = resolveIntersectingUrl(base, file)
+const webpubManifestResource =
+  (base: string) =>
+  (file: string): { href: string; type: string | false } => {
+    const href = resolveIntersectingUrl(base, file)
 
-  return {
-    href,
-    type: mime.lookup(file),
+    return {
+      href,
+      type: mime.lookup(file),
+    }
   }
-}
 
-const webpubManifestReadingOrderItem = (base: string) => ({ title, file }: { title: string; file: string }): { href: string; title: string; type: string } => {
-  const href = resolveIntersectingUrl(base, file)
-
-  return {
-    href,
+const webpubManifestReadingOrderItem =
+  (base: string) =>
+  ({
     title,
-    type: 'text/xhtml',
+    file,
+  }: {
+    title: string
+    file: string
+  }): { href: string; title: string; type: string } => {
+    const href = resolveIntersectingUrl(base, file)
+
+    return {
+      href,
+      title,
+      type: 'text/xhtml',
+    }
   }
-}
 
 // https://github.com/readium/webpub-manifest
-export const generateWebpubManifest = (files: string[]): Record<string, unknown> => {
+export const generateWebpubManifest = (
+  files: string[]
+): Record<string, unknown> => {
   const remoteURL = Url.trimSlashes(state.config.remote_url as string)
 
   // Build a map to sort the files according to the position in the spine
-  const fileMap = new Map(files.map(f => [path.basename(f), f]))
+  const fileMap = new Map(files.map((f) => [path.basename(f), f]))
 
   // Create the items for the manifest's reading order
   const readingOrderItems = state.spine.flattened.reduce(
     (acc: Array<{ file: string; title: string }>, curr) => {
-      const file = fileMap.get(`${(curr as { fileName: string }).fileName}.xhtml`)
-      return !file ? acc : acc.concat({ file, title: (curr as { title: string }).title })
+      const file = fileMap.get(
+        `${(curr as { fileName: string }).fileName}.xhtml`
+      )
+      return !file
+        ? acc
+        : acc.concat({ file, title: (curr as { title: string }).title })
     },
     []
   )
@@ -204,7 +229,7 @@ export const generateWebpubManifest = (files: string[]): Record<string, unknown>
   )
 
   const resources = files
-    .filter(file => path.basename(file).charAt(0) !== '.')
+    .filter((file) => path.basename(file).charAt(0) !== '.')
     .map(webpubManifestResource(remoteURL))
 
   const manifest = {
@@ -285,7 +310,12 @@ export function createUnsupportedInline({
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function ensureSource(obj: any, type: string, fileName: string, lineNumber: number): void {
+export function ensureSource(
+  obj: any,
+  type: string,
+  fileName: string,
+  lineNumber: number
+): void {
   if (!obj.source) {
     log.error(
       `Directive [${type}] requires a [source] attribute at [${fileName}:${lineNumber}]`
@@ -304,7 +334,10 @@ export function ensurePoster(obj: any, type: string): void {
 
 // Add mediaType to classes
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function ensureSupportedClassNames(obj: any, supported: (build: string) => boolean): void {
+export function ensureSupportedClassNames(
+  obj: any,
+  supported: (build: string) => boolean
+): void {
   // eslint-disable-next-line no-param-reassign
   obj.classes += ` embed ${supported(state.build) ? '' : 'un'}supported`
 }

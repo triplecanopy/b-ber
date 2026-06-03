@@ -1,6 +1,6 @@
-import { serve } from '@canopycanopycanopy/b-ber-tasks'
-import log from '@canopycanopycanopy/b-ber-logger'
 import { fail } from '@canopycanopycanopy/b-ber-lib/utils'
+import log from '@canopycanopycanopy/b-ber-logger'
+import { serve } from '@canopycanopycanopy/b-ber-tasks'
 
 const command = 'serve [build] [opts]'
 const describe = 'Preview a project in the browser using the `reader` build.'

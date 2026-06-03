@@ -1,19 +1,20 @@
 /* eslint-disable no-continue */
+
+import log from '@canopycanopycanopy/b-ber-logger'
 import crypto from 'crypto'
+import fs from 'fs-extra'
 import find from 'lodash/find'
 import findIndex from 'lodash/findIndex'
-import set from 'lodash/set'
 import get from 'lodash/get'
 import has from 'lodash/has'
 import merge from 'lodash/merge'
 import remove from 'lodash/remove'
-import path from 'path'
-import fs from 'fs-extra'
+import set from 'lodash/set'
 import mime from 'mime-types'
-import log from '@canopycanopycanopy/b-ber-logger'
-import Yaml from './Yaml'
+import path from 'path'
 import Config, { ConfigOptions } from './Config'
 import Spine from './Spine'
+import Yaml from './Yaml'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ThemeModule = any
@@ -32,10 +33,10 @@ const skipInitialization = (): boolean => {
 
   // prettier-ignore
   return (
-    argv.includes('--help') ||  // if a help flag is set
-    argv.includes('-h') ||      // if a help alias is set
-    argv.length < 3 ||          // if there are insufficient arguments
-    argv.includes('new')        // if it's a new project
+    argv.includes('--help') || // if a help flag is set
+    argv.includes('-h') || // if a help alias is set
+    argv.length < 3 || // if there are insufficient arguments
+    argv.includes('new') // if it's a new project
   )
 }
 
@@ -191,19 +192,24 @@ class State {
 
   src = {
     root: (...args: string[]): string => path.join(this.srcDir, ...args),
-    images: (...args: string[]): string => path.join(this.srcDir, SRC_DIR_IMAGES, ...args),
-    markdown: (...args: string[]): string => path.join(this.srcDir, SRC_DIR_MARKDOWN, ...args),
+    images: (...args: string[]): string =>
+      path.join(this.srcDir, SRC_DIR_IMAGES, ...args),
+    markdown: (...args: string[]): string =>
+      path.join(this.srcDir, SRC_DIR_MARKDOWN, ...args),
     stylesheets: (...args: string[]): string =>
       path.join(this.srcDir, SRC_DIR_STYLESHEETS, ...args),
     javascripts: (...args: string[]): string =>
       path.join(this.srcDir, SRC_DIR_JAVASCRIPTS, ...args),
-    fonts: (...args: string[]): string => path.join(this.srcDir, SRC_DIR_FONTS, ...args),
-    media: (...args: string[]): string => path.join(this.srcDir, SRC_DIR_MEDIA, ...args),
+    fonts: (...args: string[]): string =>
+      path.join(this.srcDir, SRC_DIR_FONTS, ...args),
+    media: (...args: string[]): string =>
+      path.join(this.srcDir, SRC_DIR_MEDIA, ...args),
   }
 
   dist = {
     root: (...args: string[]): string => path.join(this.distDir, ...args),
-    ops: (...args: string[]): string => path.join(this.distDir, DIST_DIR_OPS, ...args),
+    ops: (...args: string[]): string =>
+      path.join(this.distDir, DIST_DIR_OPS, ...args),
     text: (...args: string[]): string =>
       path.join(this.distDir, DIST_DIR_OPS, DIST_DIR_TEXT, ...args),
     images: (...args: string[]): string =>
@@ -249,7 +255,11 @@ class State {
 
     if (Array.isArray(prevValue)) {
       set(this, prop, [...prevValue, value])
-    } else if (typeof prevValue === 'object' && prevValue !== null && !Array.isArray(prevValue)) {
+    } else if (
+      typeof prevValue === 'object' &&
+      prevValue !== null &&
+      !Array.isArray(prevValue)
+    ) {
       set(this, prop, { ...(prevValue as Record<string, unknown>), value })
     } else if (typeof prevValue === 'string') {
       set(this, prop, `${prevValue}${value}`)
@@ -265,7 +275,11 @@ class State {
       const arr = [...prevValue]
       remove(arr, value as Parameters<typeof remove>[1])
       set(this, prop, arr)
-    } else if (typeof prevValue === 'object' && prevValue !== null && !Array.isArray(prevValue)) {
+    } else if (
+      typeof prevValue === 'object' &&
+      prevValue !== null &&
+      !Array.isArray(prevValue)
+    ) {
       const key = value as string
       const { [key]: _, ...rest } = prevValue as Record<string, unknown> // eslint-disable-line no-unused-vars
       set(this, prop, rest)
@@ -287,7 +301,8 @@ class State {
     return has(this, prop)
   }
 
-  contains = (coll: string, value: unknown): boolean => this.indexOf(coll, value) > -1
+  contains = (coll: string, value: unknown): boolean =>
+    this.indexOf(coll, value) > -1
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   find = (coll: string, pred: any): unknown => {
@@ -389,8 +404,8 @@ class State {
     fs.ensureDirSync(mediaPath)
 
     const media = fs.readdirSync(mediaPath)
-    const video = media.filter(a => /^video/.test(mime.lookup(a) as string))
-    const audio = media.filter(a => /^audio/.test(mime.lookup(a) as string))
+    const video = media.filter((a) => /^video/.test(mime.lookup(a) as string))
+    const audio = media.filter((a) => /^audio/.test(mime.lookup(a) as string))
 
     set(this, 'video', video)
     set(this, 'audio', audio)
@@ -418,7 +433,9 @@ class State {
     const spine = new Spine({ src, buildType: type, navigationConfigFile })
 
     // Build-specific config. gets merged into base config during build step
-    const config = this.config[type] ? { ...(this.config[type] as Record<string, unknown>) } : {}
+    const config = this.config[type]
+      ? { ...(this.config[type] as Record<string, unknown>) }
+      : {}
 
     return {
       src,
@@ -437,7 +454,7 @@ class State {
 
   loadBuilds = (): void => {
     const builds = ['sample', 'epub', 'mobi', 'pdf', 'web', 'reader', 'xml']
-    builds.forEach(build =>
+    builds.forEach((build) =>
       set(this.builds, build, this.loadBuildSettings(build))
     )
   }

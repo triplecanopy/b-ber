@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as userInterfaceActions from '../actions/user-interface'
 
-const withNavigationActions = WrappedComponent => {
+const withNavigationActions = (WrappedComponent) => {
   class WrapperComponent extends React.Component {
     goToPrevChapter = () => {
       if (this.props.userInterface.handleEvents === false) return
@@ -44,7 +44,7 @@ const withNavigationActions = WrappedComponent => {
 
   return connect(
     ({ userInterface }) => ({ userInterface }),
-    dispatch => ({
+    (dispatch) => ({
       userInterfaceActions: bindActionCreators(userInterfaceActions, dispatch),
     })
   )(WrapperComponent)

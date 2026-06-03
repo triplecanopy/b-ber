@@ -1,35 +1,35 @@
-import path from 'path'
-import has from 'lodash/has'
-import { Html } from '@canopycanopycanopy/b-ber-lib'
-import { State as state } from '@canopycanopycanopy/b-ber-lib'
+import {
+  attributesObject,
+  attributesString,
+  htmlId,
+  toAlias,
+} from '@canopycanopycanopy/b-ber-grammar-attributes'
+import { Html, State as state } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
+import figure from '@canopycanopycanopy/b-ber-parser-figure'
 import {
   INLINE_DIRECTIVE_MARKER,
   INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
 } from '@canopycanopycanopy/b-ber-shapes-directives'
-import figure from '@canopycanopycanopy/b-ber-parser-figure'
+import has from 'lodash/has'
+import path from 'path'
 import {
-  attributesString,
-  attributesObject,
-  htmlId,
-  toAlias,
-} from '@canopycanopycanopy/b-ber-grammar-attributes'
-import {
-  isHostedRemotely,
-  isHostedBySupportedThirdParty,
-  validatePosterImage,
-  validateLocalMediaSource,
-  createLocalMediaSources,
-  createRemoteMediaSource,
-  getWebOnlyAttributesString,
-  createMedia,
   createIFrame,
+  createLocalMediaSources,
+  createMedia,
   createMediaInline,
+  createRemoteMediaSource,
   getMediaType,
+  getWebOnlyAttributesString,
+  isHostedBySupportedThirdParty,
+  isHostedRemotely,
+  validateLocalMediaSource,
+  validatePosterImage,
 } from './helpers'
 
 const MARKER_RE = /^(video|audio)/
-const DIRECTIVE_RE = /(audio(?:-inline)?|video(?:-inline)?)(?::([^\s]+)(\s+.*)?)?$/
+const DIRECTIVE_RE =
+  /(audio(?:-inline)?|video(?:-inline)?)(?::([^\s]+)(\s+.*)?)?$/
 
 function prepare({ token, marker, context, instance, fileName, lineNumber }) {
   let [, type] = marker
@@ -85,7 +85,7 @@ function prepare({ token, marker, context, instance, fileName, lineNumber }) {
 
     state.add('remoteAssets', source)
   } else if (validateLocalMediaSource(source, mediaType)) {
-    sources = media.filter(a => toAlias(a) === source)
+    sources = media.filter((a) => toAlias(a) === source)
     sourceElements = createLocalMediaSources(sources)
   }
 
@@ -148,44 +148,46 @@ function prepare({ token, marker, context, instance, fileName, lineNumber }) {
   }
 }
 
-const render = ({ instance, context }) => (tokens, index) => {
-  const token = tokens[index]
-  const marker = token.info.trim().match(DIRECTIVE_RE)
-  if (!marker) return ''
+const render =
+  ({ instance, context }) =>
+  (tokens, index) => {
+    const token = tokens[index]
+    const marker = token.info.trim().match(DIRECTIVE_RE)
+    if (!marker) return ''
 
-  const fileName = `_markdown/${context.fileName}.md`
-  const lineNumber = token.map ? token.map[0] : null
-  const type = marker[1]
-  const args = prepare({
-    token,
-    marker,
-    context,
-    instance,
-    fileName,
-    lineNumber,
-  })
+    const fileName = `_markdown/${context.fileName}.md`
+    const lineNumber = token.map ? token.map[0] : null
+    const type = marker[1]
+    const args = prepare({
+      token,
+      marker,
+      context,
+      instance,
+      fileName,
+      lineNumber,
+    })
 
-  switch (type) {
-    case 'iframe':
-    case 'audio':
-    case 'video':
-      // Add it to state so that it's rendered as a `figure`
-      state.add('figures', args)
-      return createMedia(args)
+    switch (type) {
+      case 'iframe':
+      case 'audio':
+      case 'video':
+        // Add it to state so that it's rendered as a `figure`
+        state.add('figures', args)
+        return createMedia(args)
 
-    case 'iframe-inline':
-      return createIFrame(args)
+      case 'iframe-inline':
+        return createIFrame(args)
 
-    case 'audio-inline':
-    case 'video-inline':
-      return createMediaInline(args)
+      case 'audio-inline':
+      case 'video-inline':
+        return createMediaInline(args)
 
-    default:
-      throw new Error(
-        `Something went wrong parsing [${args.source}] in [${context.fileName}]`
-      )
+      default:
+        throw new Error(
+          `Something went wrong parsing [${args.source}] in [${context.fileName}]`
+        )
+    }
   }
-}
 
 export default {
   plugin: figure,
@@ -193,7 +195,7 @@ export default {
   renderer: ({ instance, context }) => ({
     marker: INLINE_DIRECTIVE_MARKER,
     minMarkers: INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
-    validate: params => params.trim().match(MARKER_RE),
+    validate: (params) => params.trim().match(MARKER_RE),
     render: render({ instance, context }),
   }),
 }

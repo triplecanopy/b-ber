@@ -1,9 +1,10 @@
 /* eslint-disable class-methods-use-this */
-import path from 'path'
-import fs from 'fs-extra'
+
+import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
 import Xml from '@canopycanopycanopy/b-ber-templates/Xml'
-import state from '@canopycanopycanopy/b-ber-lib/State'
+import fs from 'fs-extra'
+import path from 'path'
 
 class Container {
   get dirs() {
@@ -23,7 +24,7 @@ class Container {
       { path: 'mimetype', content: Xml.mimetype() },
     ]
 
-    const promises = files.map(file =>
+    const promises = files.map((file) =>
       fs
         .writeFile(state.dist.root(file.path), file.content)
         .then(() => log.info('container emit [%s]', file.path))
@@ -33,7 +34,7 @@ class Container {
   }
 
   makedirs() {
-    const promises = this.dirs.map(dir =>
+    const promises = this.dirs.map((dir) =>
       fs.mkdirs(dir).then(() => log.info('container emit [%s]', dir))
     )
     return Promise.all(promises)

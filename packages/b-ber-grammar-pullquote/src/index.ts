@@ -2,19 +2,19 @@
 // customized closing elements (always outputs `</section>`), so we have to
 // write it long-hand. see comments below
 
-import { State as state } from '@canopycanopycanopy/b-ber-lib'
-import log from '@canopycanopycanopy/b-ber-logger'
-import has from 'lodash/has'
-import isUndefined from 'lodash/isUndefined'
-import {
-  BLOCK_DIRECTIVE_MARKER,
-  BLOCK_DIRECTIVE_MARKER_MIN_LENGTH,
-} from '@canopycanopycanopy/b-ber-shapes-directives'
-import plugin from '@canopycanopycanopy/b-ber-parser-section'
 import {
   attributesObject,
   attributesString,
 } from '@canopycanopycanopy/b-ber-grammar-attributes'
+import { State as state } from '@canopycanopycanopy/b-ber-lib'
+import log from '@canopycanopycanopy/b-ber-logger'
+import plugin from '@canopycanopycanopy/b-ber-parser-section'
+import {
+  BLOCK_DIRECTIVE_MARKER,
+  BLOCK_DIRECTIVE_MARKER_MIN_LENGTH,
+} from '@canopycanopycanopy/b-ber-shapes-directives'
+import has from 'lodash/has'
+import isUndefined from 'lodash/isUndefined'
 
 const MARKER_OPEN_RE = /^(pullquote|blockquote|exit)(?::([^\s]+)(\s.*)?)?$/
 const MARKER_CLOSE_RE = /(exit)(?::([\s]+))?/
@@ -86,42 +86,46 @@ function handleClose(token, instance) {
   return result
 }
 
-const validateOpen = ({ context }) => (params, line) => {
-  const match = params.trim().match(MARKER_OPEN_RE)
-  if (!match || match.length < 3) return false
+const validateOpen =
+  ({ context }) =>
+  (params, line) => {
+    const match = params.trim().match(MARKER_OPEN_RE)
+    if (!match || match.length < 3) return false
 
-  const [, type, id] = match
-  if (isUndefined(id)) {
-    log.error(
-      `Missing [id] for [${type}:start] at ${context.fileName}.md:${line}`
-    )
-    return false
+    const [, type, id] = match
+    if (isUndefined(id)) {
+      log.error(
+        `Missing [id] for [${type}:start] at ${context.fileName}.md:${line}`
+      )
+      return false
+    }
+
+    return true
   }
 
-  return true
-}
+const render =
+  ({ instance, context }) =>
+  (tokens, idx) => {
+    const fileName = `_markdown/${context.fileName}.md`
+    const lineNumber = tokens[idx].map ? tokens[idx].map[0] : null
+    const token = tokens[idx].info.trim()
 
-const render = ({ instance, context }) => (tokens, idx) => {
-  const fileName = `_markdown/${context.fileName}.md`
-  const lineNumber = tokens[idx].map ? tokens[idx].map[0] : null
-  const token = tokens[idx].info.trim()
+    // we handle opening and closing render methods on element open, since
+    // we need to append data (citation blocks) from the directive's opening
+    // attributes to the end of the element
+    if (tokens[idx].nesting !== 1) return ''
 
-  // we handle opening and closing render methods on element open, since
-  // we need to append data (citation blocks) from the directive's opening
-  // attributes to the end of the element
-  if (tokens[idx].nesting !== 1) return ''
+    // either a `pullquote`, `blockquote` or an `exit` directive, we
+    // keep matches for both in `open` and `close` vars below
+    const tokenOpen = token.match(MARKER_OPEN_RE)
+    const tokenClose = token.match(MARKER_CLOSE_RE)
 
-  // either a `pullquote`, `blockquote` or an `exit` directive, we
-  // keep matches for both in `open` and `close` vars below
-  const tokenOpen = token.match(MARKER_OPEN_RE)
-  const tokenClose = token.match(MARKER_CLOSE_RE)
-
-  return tokenClose
-    ? handleClose(token, instance)
-    : tokenOpen
-    ? handleOpen(tokenOpen, context, fileName, lineNumber)
-    : ''
-}
+    return tokenClose
+      ? handleClose(token, instance)
+      : tokenOpen
+        ? handleOpen(tokenOpen, context, fileName, lineNumber)
+        : ''
+  }
 
 export default {
   plugin,

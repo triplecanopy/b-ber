@@ -1,8 +1,8 @@
-import path from 'path'
 import glob from 'glob'
 import difference from 'lodash/difference'
-import YamlAdaptor from './YamlAdaptor'
+import path from 'path'
 import SpineItem from './SpineItem'
+import YamlAdaptor from './YamlAdaptor'
 
 interface SpineOptions {
   src: string
@@ -58,7 +58,9 @@ class Spine {
         }
 
         // curr has attributes
-        const [[fileName, options]] = Object.entries(curr) as [[string, Record<string, unknown>]]
+        const [[fileName, options]] = Object.entries(curr) as [
+          [string, Record<string, unknown>],
+        ]
         // also set frontmatter for easy access later
         this.frontMatter.set(fileName, {})
         node = new SpineItem({ fileName, buildType, ...options })
@@ -101,11 +103,13 @@ class Spine {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   create(): any[] {
     const pattern = path.resolve(this.src, '_markdown', '*.md')
-    const declaredFiles = YamlAdaptor.load(this.navigationConfigFile) as unknown[]
+    const declaredFiles = YamlAdaptor.load(
+      this.navigationConfigFile
+    ) as unknown[]
     const flattenedFiles = this.flattenYAML(declaredFiles as unknown[])
     const systemFileNames = glob
       .sync(pattern)
-      .map(file => path.basename(file, '.md'))
+      .map((file) => path.basename(file, '.md'))
     const missingEntries = difference(systemFileNames, flattenedFiles)
     const entries = (declaredFiles as unknown[]).concat(missingEntries)
 

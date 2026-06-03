@@ -1,7 +1,7 @@
 import find from 'lodash/find'
-import { mediaSliding, mediaScrolling } from './multi-column-styles'
-import { MediaStyleSheet, Script } from '../models'
 import { MEDIA_QUERY_SCROLLING, MEDIA_QUERY_SLIDING } from '../constants'
+import { MediaStyleSheet, Script } from '../models'
+import { mediaScrolling, mediaSliding } from './multi-column-styles'
 
 const state = {
   root: null, // App context, used for styles
@@ -42,7 +42,7 @@ class DocumentPreProcessor {
 
   static appendStyleSheets() {
     state.styleSheets.forEach(
-      sheet =>
+      (sheet) =>
         state.root.querySelector(`#${sheet.id}`) === null &&
         sheet.appendSheet(state.root)
     )
@@ -50,7 +50,7 @@ class DocumentPreProcessor {
 
   static appendScripts() {
     state.scripts.forEach(
-      script =>
+      (script) =>
         /(?:text|application)\/(?:(x-)?java|ecma)script/.test(script.type) &&
         script.appendScript(state.root)
     )
@@ -64,7 +64,9 @@ class DocumentPreProcessor {
 
     if (!scriptElements) return scripts
 
-    state.scripts = scriptElements.map(node => new Script({ node, requestURI }))
+    state.scripts = scriptElements.map(
+      (node) => new Script({ node, requestURI })
+    )
 
     return state.scripts
   }
@@ -114,11 +116,11 @@ class DocumentPreProcessor {
   }
 
   static removeStyleSheet({ id, media }) {
-    const {
-      styleSheetElement,
-    } = DocumentPreProcessor.getStyleSheetByMediaOrId({ id, media })
+    const { styleSheetElement } = DocumentPreProcessor.getStyleSheetByMediaOrId(
+      { id, media }
+    )
     styleSheetElement.parentNode.removeChild(styleSheetElement)
-    state.styleSheets = [...state.styleSheets.filter(a => a.id !== id)]
+    state.styleSheets = [...state.styleSheets.filter((a) => a.id !== id)]
   }
 
   static removeStyleSheets() {
@@ -131,7 +133,7 @@ class DocumentPreProcessor {
   static removeScript({ id }) {
     const script = state.root.querySelector(`#${id}`)
     if (script) script.parentNode.removeChild(script)
-    state.scripts = [...state.scripts.filter(a => a.id !== id)]
+    state.scripts = [...state.scripts.filter((a) => a.id !== id)]
   }
 
   static removeScripts() {

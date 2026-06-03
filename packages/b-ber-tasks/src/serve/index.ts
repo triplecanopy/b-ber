@@ -1,8 +1,8 @@
-import path from 'path'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import sequences from '@canopycanopycanopy/b-ber-shapes-sequences/sequences'
-import debounce from 'lodash/debounce'
 import { create } from 'browser-sync' // eslint-disable-line import/no-unresolved
+import debounce from 'lodash/debounce'
+import path from 'path'
 import serialize from '../serialize'
 
 const browserSync = create()
@@ -56,7 +56,7 @@ const browserSyncMiddleware = (req: any, res: any, next: () => void) => {
 }
 
 const init = (build: string) =>
-  new Promise<void>(resolve => {
+  new Promise<void>((resolve) => {
     const options = {
       port,
       open: false, // Opens browser programatically below
@@ -73,7 +73,13 @@ const init = (build: string) =>
     browserSync.init(options as any, () => resolve())
   })
 
-const serve = async ({ build: buildOption, external }: { build?: string; external?: boolean }) => {
+const serve = async ({
+  build: buildOption,
+  external,
+}: {
+  build?: string
+  external?: boolean
+}) => {
   const location = external ? 'external' : 'local'
   const build = buildOption || 'reader'
 

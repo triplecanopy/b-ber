@@ -12,7 +12,7 @@ class Html {
       '"': '&quot;',
       "'": '&#39;',
     }
-    return str_.replace(/[&<>"']/g, m => map[m])
+    return str_.replace(/[&<>"']/g, (m) => map[m])
   }
 }
 

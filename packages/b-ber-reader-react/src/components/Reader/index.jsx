@@ -1,45 +1,45 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
-import find from 'lodash/find'
 import debounce from 'lodash/debounce'
+import find from 'lodash/find'
 import isInteger from 'lodash/isInteger'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import * as readerLocationActions from '../../actions/reader-location'
+import * as readerSettingsActions from '../../actions/reader-settings'
+import * as userInterfaceActions from '../../actions/user-interface'
+import * as viewActions from '../../actions/view'
+import * as viewerSettingsActions from '../../actions/viewer-settings'
+import Asset from '../../helpers/Asset'
+import Url from '../../helpers/Url'
+import { unlessDefined } from '../../helpers/utils'
+import Viewport from '../../helpers/Viewport'
+import ReaderContext from '../../lib/reader-context'
 import Controls from '../Controls'
 import Frame from '../Frame'
 import Spinner from '../Spinner'
-import Asset from '../../helpers/Asset'
-import Url from '../../helpers/Url'
-import ReaderContext from '../../lib/reader-context'
-import Viewport from '../../helpers/Viewport'
-import { unlessDefined } from '../../helpers/utils'
-import * as viewActions from '../../actions/view'
-import * as viewerSettingsActions from '../../actions/viewer-settings'
-import * as readerSettingsActions from '../../actions/reader-settings'
-import * as readerLocationActions from '../../actions/reader-location'
-import * as userInterfaceActions from '../../actions/user-interface'
 import {
-  handlePageNavigation,
-  handleChapterNavigation,
-  navigateToSpreadByIndex,
-  navigateToElementById,
-  navigateToChapterByURL,
-  updateQueryString,
-  savePosition,
+  book,
+  createStateFromOPF,
+  loadSpineItem,
+  showSpineItem,
+} from './loader'
+import {
   getSpineItemByAbsoluteUrl,
+  handleChapterNavigation,
+  handlePageNavigation,
+  navigateToChapterByURL,
+  navigateToElementById,
+  navigateToSpreadByIndex,
+  savePosition,
+  updateQueryString,
 } from './navigation'
 import {
-  handleResize,
-  handleResizeStart,
-  handleResizeEnd,
   bindResizeHandlers,
+  handleResize,
+  handleResizeEnd,
+  handleResizeStart,
   unbindResizeHandlers,
 } from './resize'
-import {
-  createStateFromOPF,
-  showSpineItem,
-  loadSpineItem,
-  book,
-} from './loader'
 
 // Renders the current chapter's React element tree. Content is written to the
 // module-level `book` object by loader.js and re-rendered when Reader state
@@ -139,12 +139,12 @@ function Reader(props) {
   useEffect(() => {
     if (pendingCallbacksRef.current.length === 0) return
     const cbs = pendingCallbacksRef.current.splice(0)
-    cbs.forEach(cb => cb?.())
+    cbs.forEach((cb) => cb?.())
   })
 
   const setState = useCallback((update, callback) => {
     if (callback) pendingCallbacksRef.current.push(callback)
-    setReactState(prev => {
+    setReactState((prev) => {
       const next =
         typeof update === 'function' ? update(prev) : { ...prev, ...update }
       // Sync stateRef immediately so that code reading `this.state`
@@ -184,8 +184,8 @@ function Reader(props) {
   }, [setState])
 
   const handleSidebarButtonClick = useCallback(
-    value => {
-      setState(prev => ({
+    (value) => {
+      setState((prev) => ({
         ...prev,
         showSidebar: value === prev.showSidebar ? null : value,
       }))
@@ -193,18 +193,14 @@ function Reader(props) {
     [setState]
   )
 
-  const getTranslateX = useCallback(spreadIndex => {
+  const getTranslateX = useCallback((spreadIndex) => {
     const nextSpreadIndex = unlessDefined(
       spreadIndex,
       stateRef.current.spreadIndex
     )
 
-    const {
-      width,
-      paddingLeft,
-      paddingRight,
-      columnGap,
-    } = propsRef.current.viewerSettings
+    const { width, paddingLeft, paddingRight, columnGap } =
+      propsRef.current.viewerSettings
 
     const isScrolling = Viewport.isVerticallyScrolling(
       propsRef.current.readerSettings
@@ -281,8 +277,8 @@ function Reader(props) {
     self.setState = (update, cb) => setState(update, cb)
     self.closeSidebars = () => closeSidebars()
     self.freeze = () => freeze()
-    self.handleSidebarButtonClick = v => handleSidebarButtonClick(v)
-    self.getTranslateX = v => getTranslateX(v)
+    self.handleSidebarButtonClick = (v) => handleSidebarButtonClick(v)
+    self.getTranslateX = (v) => getTranslateX(v)
     self.destroyReaderComponent = () => destroyReaderComponent()
     self.getSlug = () => getSlug()
 
@@ -556,7 +552,7 @@ const mapStateToProps = ({
   userInterface,
 })
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   viewerSettingsActions: bindActionCreators(viewerSettingsActions, dispatch),
   readerSettingsActions: bindActionCreators(readerSettingsActions, dispatch),
   readerLocationActions: bindActionCreators(readerLocationActions, dispatch),

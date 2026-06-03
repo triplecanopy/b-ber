@@ -1,7 +1,7 @@
 import React from 'react'
-import VideoControlsSimple from './VideoControlsSimple'
-import VideoControlsNormal from './VideoControlsNormal'
 import VideoControlsFull from './VideoControlsFull'
+import VideoControlsNormal from './VideoControlsNormal'
+import VideoControlsSimple from './VideoControlsSimple'
 
 const VideoControls = ({ config, ...rest }) => {
   if (config === 'simple') return <VideoControlsSimple {...rest} />

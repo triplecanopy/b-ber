@@ -1,9 +1,9 @@
 import React from 'react'
-import MediaTime from './MediaTime'
 import MediaButtonPlayPause from './MediaButtonPlayPause'
 import MediaRangeSlider from './MediaRangeSlider'
+import MediaTime from './MediaTime'
 
-const AudioControlsSimple = props => (
+const AudioControlsSimple = (props) => (
   <>
     <MediaButtonPlayPause
       paused={props.paused}

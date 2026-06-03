@@ -1,18 +1,18 @@
-import { media, iframe, figure, vimeo } from './helpers'
+import { figure, iframe, media, vimeo } from './helpers'
 
 const reader = {
-  landscape: data =>
+  landscape: (data) =>
     figure({ data, ratioName: 'landscape', applyInlineClasses: true }),
-  portrait: data =>
+  portrait: (data) =>
     figure({ data, ratioName: 'portrait', applyInlineClasses: true }),
-  'portrait-high': data =>
+  'portrait-high': (data) =>
     figure({ data, ratioName: 'portrait-high', applyInlineClasses: true }),
-  square: data =>
+  square: (data) =>
     figure({ data, ratioName: 'square', applyInlineClasses: true }),
-  audio: data => media({ ...data, applyInlineClasses: true }),
-  video: data => media({ ...data, applyInlineClasses: true }),
-  iframe: data => iframe({ ...data, applyInlineClasses: true }),
-  vimeo: data => vimeo({ ...data, applyInlineClasses: true }),
+  audio: (data) => media({ ...data, applyInlineClasses: true }),
+  video: (data) => media({ ...data, applyInlineClasses: true }),
+  iframe: (data) => iframe({ ...data, applyInlineClasses: true }),
+  vimeo: (data) => vimeo({ ...data, applyInlineClasses: true }),
 }
 
 export default reader

@@ -1,7 +1,7 @@
-import path from 'path'
-import File from 'vinyl'
 import { Html } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
+import path from 'path'
+import File from 'vinyl'
 
 class Guide {
   static body() {

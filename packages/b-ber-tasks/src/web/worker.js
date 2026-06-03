@@ -3,7 +3,7 @@
 // This file is written as-is to `project-web` on `bber build --web`.
 // It manages the WebWorker for search.
 
-importScripts('%BASE_URL%' + 'lunr.js') // BASE_URL added dynamically on build
+importScripts('%BASE_URL%lunr.js') // BASE_URL added dynamically on build
 var searchIndex
 var records = []
 var readyState = 0
@@ -18,14 +18,14 @@ function onRequestReadyStateChange(state) {
 // @issue: https://github.com/triplecanopy/b-ber/issues/231
 function onRequestLoad() {
   records = JSON.parse(this.responseText)
-  searchIndex = lunr(function() {
+  searchIndex = lunr(function () {
     this.metadataWhitelist = ['position']
 
     this.field('title')
     this.field('body')
     this.ref('id')
 
-    records.forEach(function(record, i) {
+    records.forEach(function (record, i) {
       this.add(record)
     }, this)
   })
@@ -38,7 +38,7 @@ function getSearchIndex() {
   req.addEventListener('load', onRequestLoad)
   req.addEventListener('open', onRequestReadyStateChange)
   req.addEventListener('send', onRequestReadyStateChange)
-  req.open('GET', '%BASE_URL%' + 'search-index.json')
+  req.open('GET', '%BASE_URL%search-index.json')
   req.send()
 }
 
@@ -57,14 +57,14 @@ function parseSearchResults(results) {
   var textOffset = 100 // number of chars before and after match to append to each result for context
 
   if (!results || !results.length) return output
-  results.forEach(function(result) {
-    Object.keys(result.matchData.metadata).forEach(function(term) {
+  results.forEach(function (result) {
+    Object.keys(result.matchData.metadata).forEach(function (term) {
       var match = result.matchData.metadata[term]
 
       resultsObject = {}
       resultsObject.url = records[result.ref].url
 
-      Object.keys(match).forEach(function(fieldName) {
+      Object.keys(match).forEach(function (fieldName) {
         var position = match[fieldName].position
 
         for (var i = 0; i < position.length; i++) {
@@ -104,7 +104,7 @@ function parseSearchResults(results) {
 }
 
 function doSearch(term) {
-  var results = searchIndex.query(function(q) {
+  var results = searchIndex.query(function (q) {
     q.term(term, {
       fields: ['title', 'body'],
       // boost: 1,
@@ -120,7 +120,7 @@ function doSearch(term) {
 
 getSearchIndex()
 
-onmessage = function(e) {
+onmessage = function (e) {
   if (readyState < 4) return
   var results = doSearch(e.data.term)
   postMessage({ results: results })

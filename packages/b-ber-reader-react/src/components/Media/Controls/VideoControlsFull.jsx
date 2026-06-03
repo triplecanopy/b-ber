@@ -1,8 +1,8 @@
 import React from 'react'
-import VideoControlsNormal from './VideoControlsNormal'
 import MediaButtonPlaybackRate from './MediaButtonPlaybackRate'
+import VideoControlsNormal from './VideoControlsNormal'
 
-const VideoControlsFull = props => (
+const VideoControlsFull = (props) => (
   <>
     <VideoControlsNormal {...props} />
     <MediaButtonPlaybackRate

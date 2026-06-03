@@ -1,6 +1,6 @@
-import fs from 'fs-extra'
-import log from '@canopycanopycanopy/b-ber-logger'
 import { State as state } from '@canopycanopycanopy/b-ber-lib'
+import log from '@canopycanopycanopy/b-ber-logger'
+import fs from 'fs-extra'
 import isUndefined from 'lodash/isUndefined'
 
 // `bBerAttributes` and the `vimeoAttributesTransformer` below are used to
@@ -12,9 +12,9 @@ export const bBerAttributes = {
   aspectratio: true,
 }
 
-const ensureBoolean = val => val === 'yes'
+const ensureBoolean = (val) => val === 'yes'
 
-const ensureMatch = (name, re) => val => {
+const ensureMatch = (name, re) => (val) => {
   if (!re.test(val)) {
     let message = `Invalid Vimeo attribute. [${name}] must match [${re}]`
     message +=
@@ -67,13 +67,13 @@ export const validatePosterImage = (asset, type) => {
   return asset
 }
 
-export const renderPosterImage = poster =>
+export const renderPosterImage = (poster) =>
   poster ? `<img src="${poster}" alt="Poster Image"/>` : ''
 
 export const renderCaption = (caption, mediaType) =>
   caption ? `<p class="caption caption__${mediaType}">${caption}</p>` : ''
 
-export const getMediaType = type => {
+export const getMediaType = (type) => {
   const index = type.indexOf('-')
   return index > -1 ? type.substring(0, index) : type
 }

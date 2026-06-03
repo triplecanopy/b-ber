@@ -1,13 +1,14 @@
 // import React from 'react'
 
 // TODO this will implement/be replaced with Media/Controls components
-const VimeoPlayerControls = (/*
+const VimeoPlayerControls = (
+  /*
   {
     handleUpdatePlaying,
     handleUpdatePosition,
     handleUpdateVolume,
   }
-*/) =>
-  null
+*/
+) => null
 
 export default VimeoPlayerControls

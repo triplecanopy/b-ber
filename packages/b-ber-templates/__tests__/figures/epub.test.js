@@ -5,7 +5,7 @@ import epub from '../../src/figures/epub'
 jest.mock('image-size', () => jest.fn(() => ({ width: 100, height: 150 })))
 jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
   build: 'epub',
-  src: { images: path => path },
+  src: { images: (path) => path },
 }))
 
 afterAll(() => fs.remove('_project'))

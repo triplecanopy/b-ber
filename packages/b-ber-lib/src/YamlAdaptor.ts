@@ -1,6 +1,6 @@
+import log from '@canopycanopycanopy/b-ber-logger'
 import fs from 'fs-extra'
 import yaml from 'js-yaml'
-import log from '@canopycanopycanopy/b-ber-logger'
 
 class YamlAdaptor {
   static toYaml(input: unknown): string {
@@ -27,7 +27,9 @@ class YamlAdaptor {
   }
 
   static dump(str: unknown): string {
-    return yaml.safeDump(str as string | Record<string, unknown> | unknown[], { indent: 2 })
+    return yaml.safeDump(str as string | Record<string, unknown> | unknown[], {
+      indent: 2,
+    })
   }
 
   static parse(str: string): unknown {

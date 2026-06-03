@@ -1,6 +1,7 @@
 /* eslint-disable import/no-unresolved */
-import { defineConfig } from 'vite'
+
 import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite'
 
 export default defineConfig({
   plugins: [react({ include: /\.(jsx?|tsx?)$/ })],
@@ -25,7 +26,7 @@ export default defineConfig({
           react: 'React',
           'react-dom': 'ReactDOM',
         },
-        assetFileNames: assetInfo => {
+        assetFileNames: (assetInfo) => {
           if ((assetInfo.names?.[0] ?? '').endsWith('.css')) return 'styles.css'
           return '[name][extname]'
         },

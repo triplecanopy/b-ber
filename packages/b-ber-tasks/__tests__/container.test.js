@@ -27,19 +27,19 @@ describe('task: container', () => {
     await container()
     const createdDirs = mockFsMkdirs.mock.calls.map(([p]) => p)
     expect(createdDirs).toContain('/builds/epub/ops/')
-    expect(createdDirs.some(p => p.includes('META-INF'))).toBe(true)
+    expect(createdDirs.some((p) => p.includes('META-INF'))).toBe(true)
   })
 
   test('writes container.xml to META-INF/', async () => {
     await container()
     const writtenPaths = mockFsWriteFile.mock.calls.map(([p]) => p)
-    expect(writtenPaths.some(p => p.includes('container.xml'))).toBe(true)
+    expect(writtenPaths.some((p) => p.includes('container.xml'))).toBe(true)
   })
 
   test('writes a mimetype file', async () => {
     await container()
     const writtenPaths = mockFsWriteFile.mock.calls.map(([p]) => p)
-    expect(writtenPaths.some(p => p.includes('mimetype'))).toBe(true)
+    expect(writtenPaths.some((p) => p.includes('mimetype'))).toBe(true)
   })
 
   test('returns a promise', () => {

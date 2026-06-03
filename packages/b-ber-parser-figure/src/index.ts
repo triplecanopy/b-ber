@@ -10,7 +10,12 @@ const figurePlugin = (md: any, name: string, options: any = {}): void => {
   const markerLen = markerStr.length
   const { validate, render } = options
 
-  function container(state: any, startLine: number, endLine: number, silent: boolean): boolean {
+  function container(
+    state: any,
+    startLine: number,
+    endLine: number,
+    silent: boolean
+  ): boolean {
     const start = state.bMarks[startLine] + state.tShift[startLine]
     const max = state.eMarks[startLine]
     let pos

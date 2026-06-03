@@ -9,11 +9,11 @@ const { getImageOrientation } = utils
 
 const figures = { epub, mobi, reader, web }
 
-const isImage = mime => /^image/.test(mime)
-const isAudio = mime => /^audio/.test(mime)
-const isVideo = mime => /^video/.test(mime)
-const isIframe = type => type === 'iframe'
-const isVimeo = type => type === 'vimeo'
+const isImage = (mime) => /^image/.test(mime)
+const isAudio = (mime) => /^audio/.test(mime)
+const isVideo = (mime) => /^video/.test(mime)
+const isIframe = (type) => type === 'iframe'
+const isVimeo = (type) => type === 'vimeo'
 
 const figure = (data, buildType) => {
   const { width, height, mime, type } = data

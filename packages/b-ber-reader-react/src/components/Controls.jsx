@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { NavigationHeader, NavigationFooter } from './Navigation'
-import withNavigationActions from '../lib/with-navigation-actions'
 import * as userInterfaceActions from '../actions/user-interface'
+import withNavigationActions from '../lib/with-navigation-actions'
+import { NavigationFooter, NavigationHeader } from './Navigation'
 
 function Controls(props) {
-  const handleClick = e => {
+  const handleClick = (e) => {
     if (!props.userInterface.handleEvents) return
 
     if (
@@ -18,7 +18,7 @@ function Controls(props) {
     }
   }
 
-  const handleKeyDown = e => {
+  const handleKeyDown = (e) => {
     if (!props.userInterface.handleEvents) return
     if (!e || typeof e.which === 'undefined') return
 
@@ -123,7 +123,7 @@ export default connect(
     viewerSettings,
     userInterface,
   }),
-  dispatch => ({
+  (dispatch) => ({
     userInterfaceActions: bindActionCreators(userInterfaceActions, dispatch),
   })
 )(Controls)

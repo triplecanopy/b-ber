@@ -4,10 +4,10 @@
 // downloads                no JSON support
 // ui_options               no JSON support
 
-import fs from 'fs-extra'
-import path from 'path'
 import YamlAdaptor from '@canopycanopycanopy/b-ber-lib/YamlAdaptor'
 import log from '@canopycanopycanopy/b-ber-logger'
+import fs from 'fs-extra'
+import path from 'path'
 
 export function withConfigOptions(yargs: any): any {
   return yargs

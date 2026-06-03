@@ -1,10 +1,10 @@
-import path from 'path'
-import fs from 'fs-extra'
-import MarkdownRenderer from '@canopycanopycanopy/b-ber-markdown-renderer'
-import Xhtml from '@canopycanopycanopy/b-ber-templates/Xhtml'
-import log from '@canopycanopycanopy/b-ber-logger'
 import { Template } from '@canopycanopycanopy/b-ber-lib'
 import state from '@canopycanopycanopy/b-ber-lib/State'
+import log from '@canopycanopycanopy/b-ber-logger'
+import MarkdownRenderer from '@canopycanopycanopy/b-ber-markdown-renderer'
+import Xhtml from '@canopycanopycanopy/b-ber-templates/Xhtml'
+import fs from 'fs-extra'
+import path from 'path'
 
 const writeMarkupToFile = (fname: string, markup: string) => {
   fs.writeFile(state.dist.text(`${fname}.xhtml`), markup).then(() =>
@@ -27,17 +27,17 @@ const createPageLayout = (fileName: string, data: string) => {
 const createXTHMLFile = (fpath: string) =>
   fs
     .readFile(fpath, 'utf8')
-    .then(data => createPageLayout(path.basename(fpath, '.md'), data))
+    .then((data) => createPageLayout(path.basename(fpath, '.md'), data))
     .catch(log.error)
 
 function render() {
   const markdownDir = state.src.markdown()
 
-  return fs.readdir(markdownDir).then(files => {
+  return fs.readdir(markdownDir).then((files) => {
     // Sort the files in the order that they appear in `type.yml`, so that they
     // and the images they contain are processed in the correct order
     const promises = files
-      .filter(a => a.charAt(0) !== '.')
+      .filter((a) => a.charAt(0) !== '.')
       .sort((a, b) => {
         const fileNameA = path.basename(a, '.md')
         const fileNameB = path.basename(b, '.md')

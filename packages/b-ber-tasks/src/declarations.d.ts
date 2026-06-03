@@ -1,5 +1,6 @@
 declare module 'layouts' {
   import VinylFile from 'vinyl'
+
   function renderLayouts(
     file: VinylFile,
     layouts: Record<string, string>
@@ -62,12 +63,14 @@ declare module 'css' {
   }
   function parse(cssText: string, options?: object): AST
   function stringify(ast: AST, options?: object): string
+
+  export type { AST, Declaration, Rule, Stylesheet }
   export { parse, stringify }
-  export type { AST, Rule, Declaration, Stylesheet }
 }
 
 declare module 'autoprefixer' {
   import { AcceptedPlugin } from 'postcss'
+
   interface AutoprefixerOptions {
     overrideBrowserslist?: string[]
     flexbox?: string | boolean
@@ -103,7 +106,9 @@ declare module '@canopycanopycanopy/b-ber-lib/utils' {
   export const fileId: (str: string) => string
   export const getBookMetadata: (term: string) => string
   export const ensure: (...args: any[]) => any
-  export const generateWebpubManifest: (files: string[]) => Record<string, unknown>
+  export const generateWebpubManifest: (
+    files: string[]
+  ) => Record<string, unknown>
   export const safeWrite: (dest: string, data: string) => Promise<void>
   export const fail: (msg: unknown, err: unknown, yargs: any) => void
   export const resolveIntersectingUrl: (u: string, p: string) => string
@@ -113,9 +118,17 @@ declare module '@canopycanopycanopy/b-ber-lib/utils' {
   export const getMediaType: (type: string) => string
   export const getImageOrientation: (w: number, h: number) => string | null
   export const getTitle: (page: any) => string
-  export const ensureSource: (obj: any, type: string, fileName: string, lineNumber: number) => void
+  export const ensureSource: (
+    obj: any,
+    type: string,
+    fileName: string,
+    lineNumber: number
+  ) => void
   export const ensurePoster: (obj: any, type: string) => void
-  export const ensureSupportedClassNames: (obj: any, supported: (build: string) => boolean) => void
+  export const ensureSupportedClassNames: (
+    obj: any,
+    supported: (build: string) => boolean
+  ) => void
 }
 
 // b-ber-templates subpath stubs — inline declarations so BufferFile return
@@ -125,7 +138,11 @@ declare module '@canopycanopycanopy/b-ber-templates/Xhtml' {
     static head(): any
     static body(): any
     static tail(): any
-    static cover(opts: { width?: number; height?: number; href: string }): string
+    static cover(opts: {
+      width?: number
+      height?: number
+      href: string
+    }): string
     static stylesheet(inline?: boolean): any
     static javascript(inline?: boolean): any
     static jsonLD(): any
@@ -232,6 +249,7 @@ declare module '@canopycanopycanopy/b-ber-validator' {
   }
   function validator(input: ValidatorInput): ValidatorResult
   function report(filename: string, result: ValidatorResult): void
+
   export { report }
   export default validator
 }

@@ -1,10 +1,11 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React from 'react'
-import ResizeObserver from 'resize-observer-polyfill'
+
 import debounce from 'lodash/debounce'
+import React from 'react'
 import { connect } from 'react-redux'
-import DocumentPreProcessor from './DocumentPreProcessor'
+import ResizeObserver from 'resize-observer-polyfill'
 import { unlessDefined } from '../helpers/utils'
+import DocumentPreProcessor from './DocumentPreProcessor'
 import ReaderContext from './reader-context'
 
 const ELEMENT_EDGE_VERSO_MIN = 48
@@ -57,9 +58,8 @@ const withNodePosition = (WrappedComponent, options = {}) => {
     constructor(props) {
       super(props)
 
-      this.calculateNodePositionUsingOffsetLeft = this.calculateNodePositionUsingOffsetLeft.bind(
-        this
-      )
+      this.calculateNodePositionUsingOffsetLeft =
+        this.calculateNodePositionUsingOffsetLeft.bind(this)
 
       this.calculateNodePositionAfterResize = () => {}
 
@@ -136,7 +136,7 @@ const withNodePosition = (WrappedComponent, options = {}) => {
       this.resizeObserver.disconnect()
     }
 
-    elementEdgeIsInAllowableRange = edgePositionVariance => {
+    elementEdgeIsInAllowableRange = (edgePositionVariance) => {
       const withinRange =
         (edgePositionVariance >= ELEMENT_EDGE_VERSO_MIN &&
           edgePositionVariance <= ELEMENT_EDGE_VERSO_MAX) ||

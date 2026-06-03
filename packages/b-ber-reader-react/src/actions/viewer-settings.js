@@ -4,7 +4,7 @@ import Storage from '../helpers/Storage'
 
 // const useLocalStorage = false // TODO
 
-export const load = () => dispatch => {
+export const load = () => (dispatch) => {
   // TODO
   // const storage = Storage.set(LOCALSTORAGE_KEY)
 
@@ -28,11 +28,13 @@ export const save = () => (dispatch, getState) => {
   })
 }
 
-export const update = (settings = {}) => dispatch => {
-  // if (useLocalStorage === false || this.state.cache === false) return
+export const update =
+  (settings = {}) =>
+  (dispatch) => {
+    // if (useLocalStorage === false || this.state.cache === false) return
 
-  return dispatch({
-    type: actionTypes.SETTINGS_UPDATE,
-    payload: settings,
-  })
-}
+    return dispatch({
+      type: actionTypes.SETTINGS_UPDATE,
+      payload: settings,
+    })
+  }

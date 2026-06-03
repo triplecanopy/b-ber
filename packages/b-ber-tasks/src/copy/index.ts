@@ -1,15 +1,17 @@
-import path from 'path'
+import state from '@canopycanopycanopy/b-ber-lib/State'
+import log from '@canopycanopycanopy/b-ber-logger'
 import fs from 'fs-extra'
 import isArray from 'lodash/isArray'
-import log from '@canopycanopycanopy/b-ber-logger'
-import state from '@canopycanopycanopy/b-ber-lib/State'
+import path from 'path'
 
 const FILE_SIZE_WARNING_LIMIT = 1500000 // 1.5Mb
 const cwd = process.cwd()
 
 // Copy directories of assets into the output directory
 const copy = () => {
-  const rawIgnore: string[] = isArray(state.config.ignore) ? state.config.ignore as string[] : []
+  const rawIgnore: string[] = isArray(state.config.ignore)
+    ? (state.config.ignore as string[])
+    : []
   const ignoreMap = rawIgnore.reduce<Record<string, boolean>>((acc, curr) => {
     acc[path.resolve(cwd, curr)] = true
     return acc
@@ -28,9 +30,9 @@ const copy = () => {
       from: path.resolve(state.src.media()),
       to: path.resolve(state.dist.media()),
     },
-  ].filter(dir => !ignoreMap[dir.from])
+  ].filter((dir) => !ignoreMap[dir.from])
 
-  const promises = dirs.map(dir =>
+  const promises = dirs.map((dir) =>
     fs
       .mkdirp(dir.to)
       .then(() => fs.mkdirp(dir.from))
@@ -42,9 +44,9 @@ const copy = () => {
         })
       )
       .then(() => fs.readdir(dir.to))
-      .then(files => {
+      .then((files) => {
         const baseTo = `${path.basename(dir.to)}`
-        files.forEach(file => {
+        files.forEach((file) => {
           const { size } = fs.statSync(path.join(dir.to, file))
 
           log.info('copy [%s - {%d}]', `${baseTo}/${file}`, size)

@@ -1,8 +1,8 @@
 /* eslint-disable camelcase */
 /* eslint-disable no-param-reassign,no-plusplus */
 
-import isUndefined from 'lodash/isUndefined'
 import { State as bberState } from '@canopycanopycanopy/b-ber-lib'
+import isUndefined from 'lodash/isUndefined'
 import Counter from './counter'
 
 /*
@@ -13,12 +13,24 @@ MIT license
 
 const counter = new Counter()
 
-function renderFootnoteAnchorName(tokens: any, idx: number, _options: any, env: any, _slf: any): string {
+function renderFootnoteAnchorName(
+  tokens: any,
+  idx: number,
+  _options: any,
+  env: any,
+  _slf: any
+): string {
   const n = Number(tokens[idx].meta.id + 1).toString()
   return typeof env.docId === 'string' ? `-${env.docId}-${n}` : ''
 }
 
-function renderFootnoteCaption(tokens: any, idx: number, _options: any, _env: any, _slf: any): number | string {
+function renderFootnoteCaption(
+  tokens: any,
+  idx: number,
+  _options: any,
+  _env: any,
+  _slf: any
+): number | string {
   let n
   if (!bberState.config.group_footnotes) {
     n = counter.listItemCounter(
@@ -32,7 +44,13 @@ function renderFootnoteCaption(tokens: any, idx: number, _options: any, _env: an
   return tokens[idx].meta.subId > 0 ? `${n}:${tokens[idx].meta.subId}` : n
 }
 
-function renderFootnoteRef(tokens: any, idx: number, options: any, env: any, slf: any): string {
+function renderFootnoteRef(
+  tokens: any,
+  idx: number,
+  options: any,
+  env: any,
+  slf: any
+): string {
   const caption = slf.rules.footnote_caption(tokens, idx, options, env, slf)
   const ref = counter.getRef()
 
@@ -51,7 +69,13 @@ function renderFootnoteBlockClose(): string {
   return '</ol>'
 }
 
-function renderFootnoteOpen(tokens: any, idx: number, _options: any, env: any, _self: any): string {
+function renderFootnoteOpen(
+  tokens: any,
+  idx: number,
+  _options: any,
+  env: any,
+  _self: any
+): string {
   const ref = counter.setRef(tokens[idx].meta.label)
   const childIndex = idx + 2
 
@@ -109,7 +133,10 @@ function renderFootnoteAnchor(/*tokens, idx, options,env, slf */): string {
   return ''
 }
 
-export default function footnotePlugin(md: any, callback: (tokens: any[]) => void): void {
+export default function footnotePlugin(
+  md: any,
+  callback: (tokens: any[]) => void
+): void {
   const { parseLinkLabel } = md.helpers
   const { isSpace } = md.utils
 
@@ -125,7 +152,12 @@ export default function footnotePlugin(md: any, callback: (tokens: any[]) => voi
   md.renderer.rules.footnoteAnchorName = renderFootnoteAnchorName
 
   // Process footnote block definition
-  function footnoteDef(state: any, startLine: number, endLine: number, silent: boolean): boolean {
+  function footnoteDef(
+    state: any,
+    startLine: number,
+    endLine: number,
+    silent: boolean
+  ): boolean {
     const start = state.bMarks[startLine] + state.tShift[startLine]
     const max = state.eMarks[startLine]
 

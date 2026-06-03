@@ -6,9 +6,9 @@ import React, {
   useState,
 } from 'react'
 import { connect } from 'react-redux'
-import SpreadContext from '../lib/spread-context'
-import browser from '../lib/browser'
 import Viewport from '../helpers/Viewport'
+import browser from '../lib/browser'
+import SpreadContext from '../lib/spread-context'
 
 function Spread(props) {
   const node = useRef(null)
@@ -68,7 +68,8 @@ function Spread(props) {
       // Valid column positions are exact multiples of 0.5 × pageWidth (0 = first
       // verso column, 0.5 = first recto column, 1 = second verso column, …).
       // Rounding to the nearest 0.5 absorbs all sub-pixel noise.
-      const pageWidth = window.innerWidth - paddingLeft - paddingRight + columnGap
+      const pageWidth =
+        window.innerWidth - paddingLeft - paddingRight + columnGap
       const rawOffset = (nextLeft - paddingLeft) / pageWidth
       const nextOffset = Math.round(rawOffset * 2) / 2
 

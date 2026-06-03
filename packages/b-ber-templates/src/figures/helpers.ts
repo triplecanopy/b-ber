@@ -1,6 +1,6 @@
+import { State as state, utils } from '@canopycanopycanopy/b-ber-lib'
 import sizeOf from 'image-size' // eslint-disable-line import/no-unresolved
 import uniq from 'lodash/uniq'
-import { State as state, utils } from '@canopycanopycanopy/b-ber-lib'
 
 const { getImageOrientation } = utils
 
@@ -21,7 +21,7 @@ const getFigureInlineClasses = (data, ratioName) =>
         .join(' ')
     : `figure__large figure__large--${ratioName}`
 
-const getMediaInlineClasses = data =>
+const getMediaInlineClasses = (data) =>
   data.inline || data.applyInlineClasses
     ? uniq(
         [
@@ -43,7 +43,7 @@ const getImageClassName = (data, ratioName) =>
     : ratioName
 
 // For devices that support wrapping images with anchor tags (all but Mobi)
-const linkedImage = data =>
+const linkedImage = (data) =>
   `
     %LINK_OPEN%
       <img class="%IMAGE_CLASS_NAME%" alt="%IMAGE_ALT%" src="../images/%IMAGE_SRC%"/>
@@ -63,7 +63,7 @@ const linkedImage = data =>
     .replace(/%CAPTION_CONTENT%/, data.caption)
 
 // Inverse of above. the image is wrapped in a span and a back link is added
-const unLinkedImage = data =>
+const unLinkedImage = (data) =>
   `
     <span>
       <img class="portrait" alt="%IMAGE_ALT%" src="../images/%IMAGE_SRC%"/>
@@ -89,7 +89,7 @@ const unLinkedImage = data =>
       data.inline ? '' : `<a href="${data.ref}.xhtml#ref${data.id}">Return</a>`
     )
 
-export const figureTemplate = data =>
+export const figureTemplate = (data) =>
   `
     %SECTION_OPEN%
       <div class="%FIGURE_CLASS_NAMES%">
@@ -110,7 +110,7 @@ export const figureTemplate = data =>
     )
     .replace(/%SECTION_CLOSE%/, data.inline ? '' : '</section>')
 
-export const media = data =>
+export const media = (data) =>
   `
     %SECTION_OPEN%
       <div class="%FIGURE_CLASS_NAMES%">
@@ -150,7 +150,7 @@ export const media = data =>
     .replace(/%REF%/g, data.ref)
     .replace(/%SECTION_CLOSE%/, data.inline ? '' : '</section>')
 
-export const iframe = data =>
+export const iframe = (data) =>
   `
     %SECTION_OPEN%
       <div class="figure__large figure__large--iframe">
@@ -192,7 +192,7 @@ export const iframe = data =>
     .replace(/%REF%/g, data.ref)
     .replace(/%SECTION_CLOSE%/g, data.inline ? '' : '</section>')
 
-export const vimeo = data =>
+export const vimeo = (data) =>
   `
     %SECTION_OPEN%
       <div class="figure__large figure__large--vimeo figure__large--%ASPECT_RATIO%">

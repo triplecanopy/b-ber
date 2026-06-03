@@ -1,5 +1,5 @@
 import fs from 'fs-extra'
-import { pathInfoFromFiles, nestedContentToYAML } from '../src/opf/helpers'
+import { nestedContentToYAML, pathInfoFromFiles } from '../src/opf/helpers'
 
 jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({}))
 jest.mock('@canopycanopycanopy/b-ber-lib/utils', () => ({

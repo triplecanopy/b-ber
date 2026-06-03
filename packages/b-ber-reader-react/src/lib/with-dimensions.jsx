@@ -1,14 +1,14 @@
 /* eslint-disable react/jsx-props-no-spreading */
 
 import React from 'react'
-import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import Viewport from '../helpers/Viewport'
-import { isNumeric } from '../helpers/Types'
+import { bindActionCreators } from 'redux'
 import * as viewerSettingsActions from '../actions/viewer-settings'
 import { columns } from '../constants'
+import { isNumeric } from '../helpers/Types'
+import Viewport from '../helpers/Viewport'
 
-const withDimensions = WrappedComponent => {
+const withDimensions = (WrappedComponent) => {
   class WrapperComponent extends React.Component {
     constructor(props) {
       super(props)
@@ -24,7 +24,7 @@ const withDimensions = WrappedComponent => {
       this.updateDimensions()
     }
 
-    getWidth = scrollingLayout => {
+    getWidth = (scrollingLayout) => {
       // Column layout, return the window width
       if (!scrollingLayout) return window.innerWidth
 
@@ -72,12 +72,8 @@ const withDimensions = WrappedComponent => {
     }
 
     getFrameWidth() {
-      const {
-        width,
-        paddingLeft,
-        paddingRight,
-        columnGap,
-      } = this.props.viewerSettings
+      const { width, paddingLeft, paddingRight, columnGap } =
+        this.props.viewerSettings
 
       return width - paddingLeft - paddingRight - columnGap
     }
@@ -102,7 +98,7 @@ const withDimensions = WrappedComponent => {
   // return WrapperComponent
   return connect(
     ({ viewerSettings }) => ({ viewerSettings }),
-    dispatch => ({
+    (dispatch) => ({
       viewerSettingsActions: bindActionCreators(
         viewerSettingsActions,
         dispatch

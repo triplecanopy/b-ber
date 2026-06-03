@@ -1,6 +1,5 @@
-import MarkdownIt from 'markdown-it'
-
 import { parseAttrs } from '@canopycanopycanopy/b-ber-grammar-attributes'
+import MarkdownIt from 'markdown-it'
 import galleryPlugin from '../src'
 
 // Mock b-ber-lib — gallery reads _state[attrs.type] for media lookups
@@ -16,9 +15,9 @@ jest.mock('@canopycanopycanopy/b-ber-lib', () => ({
 // b-ber-grammar-attributes is symlinked in node_modules; mock the three helpers
 // used by the gallery plugin to avoid pulling in its heavy dependency tree
 jest.mock('@canopycanopycanopy/b-ber-grammar-attributes', () => ({
-  htmlId: jest.fn(s => s),
+  htmlId: jest.fn((s) => s),
   parseAttrs: jest.fn(() => ({})),
-  toAlias: jest.fn(s => s),
+  toAlias: jest.fn((s) => s),
 }))
 
 const mockOptions = {
@@ -46,7 +45,7 @@ describe('b-ber-parser-gallery', () => {
   test('adds a block rule named container_gallery', () => {
     const md = new MarkdownIt()
     galleryPlugin(md, 'gallery', mockOptions)
-    const ruleNames = md.block.ruler.__rules__.map(r => r.name)
+    const ruleNames = md.block.ruler.__rules__.map((r) => r.name)
     expect(ruleNames).toContain('container_gallery')
   })
 

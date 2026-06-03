@@ -1,20 +1,19 @@
-import fs from 'fs-extra'
-import path from 'path'
-import mime from 'mime-types'
-import { Url } from '@canopycanopycanopy/b-ber-lib'
-import log from '@canopycanopycanopy/b-ber-logger'
-import { State as state } from '@canopycanopycanopy/b-ber-lib'
 import { toAlias } from '@canopycanopycanopy/b-ber-grammar-attributes'
+import { State as state, Url } from '@canopycanopycanopy/b-ber-lib'
+import log from '@canopycanopycanopy/b-ber-logger'
+import fs from 'fs-extra'
+import mime from 'mime-types'
+import path from 'path'
 // import { getVideoAspectRatio } from '@canopycanopycanopy/b-ber-lib/utils'
 
-export const getMediaType = type => {
+export const getMediaType = (type) => {
   const index = type.indexOf('-')
   return index > -1 ? type.substring(0, index) : type
 }
 
-export const isHostedRemotely = asset => /^http/.test(asset)
+export const isHostedRemotely = (asset) => /^http/.test(asset)
 
-export const isHostedBySupportedThirdParty = asset =>
+export const isHostedBySupportedThirdParty = (asset) =>
   asset.match(/(vimeo|youtube)\.com/)
 
 export const validatePosterImage = (_asset, type) => {
@@ -28,7 +27,7 @@ export const validatePosterImage = (_asset, type) => {
 }
 
 export const validateLocalMediaSource = (asset, mediaType) => {
-  const media = [...state[mediaType]].map(file => toAlias(file))
+  const media = [...state[mediaType]].map((file) => toAlias(file))
   if (!asset.length || media.indexOf(asset) < 0) {
     log.error(
       `Could not find [${mediaType}] matching [${asset}], make sure it's included in the [_media] directory`
@@ -38,7 +37,7 @@ export const validateLocalMediaSource = (asset, mediaType) => {
   return asset
 }
 
-export const createLocalMediaSources = sources =>
+export const createLocalMediaSources = (sources) =>
   sources.reduce(
     (acc, curr) =>
       acc.concat(
@@ -49,7 +48,7 @@ export const createLocalMediaSources = sources =>
     ''
   )
 
-export const createRemoteMediaSource = sources =>
+export const createRemoteMediaSource = (sources) =>
   `<source src="${sources[0]}" type="${mime.lookup(sources[0])}"/>`
 
 export function getWebOnlyAttributesString() {

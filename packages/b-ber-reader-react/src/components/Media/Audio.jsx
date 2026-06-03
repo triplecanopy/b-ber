@@ -1,8 +1,8 @@
 import React from 'react'
-import Media from './Media'
 import AudioElement from './AudioElement'
+import Media from './Media'
 
-const Audio = props => (
+const Audio = (props) => (
   <Media mediaType="audio" MediaComponent={AudioElement} {...props} />
 )
 

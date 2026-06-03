@@ -1,8 +1,8 @@
 import React, { useContext } from 'react'
-import SpreadContext from '../lib/spread-context'
 import ReaderContext from '../lib/reader-context'
+import SpreadContext from '../lib/spread-context'
 
-const SpreadFigure = props => {
+const SpreadFigure = (props) => {
   const readerContext = useContext(ReaderContext)
 
   return (
@@ -19,8 +19,8 @@ const SpreadFigure = props => {
           absTranslateX === left
             ? 0
             : absTranslateX > left
-            ? offset * -1
-            : offset
+              ? offset * -1
+              : offset
 
         return (
           <figure

@@ -1,6 +1,6 @@
+import fs from 'fs-extra'
 import os from 'os'
 import path from 'path'
-import fs from 'fs-extra'
 import ManifestItemProperties from '../src/ManifestItemProperties'
 
 jest.mock('../src/Spine')

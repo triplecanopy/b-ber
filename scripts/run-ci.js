@@ -30,7 +30,7 @@ const options = {
   },
 }
 
-const req = https.request(options, res =>
+const req = https.request(options, (res) =>
   console.log('Status:', res.statusCode)
 )
 

@@ -2,7 +2,7 @@ import React from 'react'
 import MediaButtonPlayPause from './MediaButtonPlayPause'
 import MediaRangeSlider from './MediaRangeSlider'
 
-const VideoControlsSimple = props => (
+const VideoControlsSimple = (props) => (
   <>
     <MediaButtonPlayPause
       paused={props.paused}

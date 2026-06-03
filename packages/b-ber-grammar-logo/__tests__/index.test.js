@@ -1,10 +1,10 @@
-import fs from 'fs-extra'
 import log from '@canopycanopycanopy/b-ber-logger'
+import fs from 'fs-extra'
 import logo from '../src'
 
 jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
   src: {
-    images: jest.fn(p => `/fake/images/${p}`),
+    images: jest.fn((p) => `/fake/images/${p}`),
   },
 }))
 

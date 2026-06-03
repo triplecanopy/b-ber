@@ -6,7 +6,7 @@ import {
   cssHeightDeclarationPropType,
 } from '../../src/lib/custom-prop-types'
 
-test('validates a custom propType', done => {
+test('validates a custom propType', (done) => {
   expect(__cssHeightDeclarationPropType({ height: 10 }, 'height')).toBe(null)
   expect(__cssHeightDeclarationPropType({ height: 10 }, 'random')).toBe(null)
   expect(__cssHeightDeclarationPropType({ height: 'auto' }, 'height')).toBe(
@@ -27,7 +27,7 @@ test('validates a custom propType', done => {
   done()
 })
 
-test.skip('creates a chainable propType', done => {
+test.skip('creates a chainable propType', (done) => {
   const spy = jest.spyOn(console, 'error')
   console.error.mockImplementation(() => {})
 
@@ -43,8 +43,9 @@ test.skip('creates a chainable propType', done => {
   Foo.propTypes = { height: cssHeightDeclarationPropType.isRequired }
   React.createElement(Foo, {}, null)
 
-  expect(spy)
-    .toHaveBeenCalledWith(`Warning: Failed prop type: Required undefined height was not specified in Foo
+  expect(
+    spy
+  ).toHaveBeenCalledWith(`Warning: Failed prop type: Required undefined height was not specified in Foo
     in Foo`)
 
   Foo.propTypes = { height: cssHeightDeclarationPropType.isRequired }

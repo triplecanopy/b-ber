@@ -3,7 +3,11 @@ import util from 'util'
 const INDENTATION = '  '
 
 function isPlainObject(v: unknown): v is Record<string, unknown> {
-  return typeof v === 'object' && v !== null && Object.getPrototypeOf(v) === Object.prototype
+  return (
+    typeof v === 'object' &&
+    v !== null &&
+    Object.getPrototypeOf(v) === Object.prototype
+  )
 }
 
 function write(this: any, msgs: [string, string?][], context: any): void {
@@ -28,7 +32,11 @@ function printNavigation(data: unknown[], context: any, indent = 0): void {
   const indent_ = INDENTATION.repeat(indent)
   function render(_data: unknown[], _context: any): void {
     _data.forEach((item: any) => {
-      write.call(_context, [[`${indent_}${item.title || '[no title]'}: ${item.name}`]], _context)
+      write.call(
+        _context,
+        [[`${indent_}${item.title || '[no title]'}: ${item.name}`]],
+        _context
+      )
       if (item.nodes && item.nodes.length) {
         render(item.nodes, _context)
       }
@@ -40,7 +48,11 @@ function printNavigation(data: unknown[], context: any, indent = 0): void {
 function writeMetadata(data: unknown, context: any): void {
   Object.entries(data as Record<string, unknown>).forEach(([, v]) => {
     if (isPlainObject(v)) {
-      write.call(context, [[`${(v as any).term}: ${(v as any).value}`]], context)
+      write.call(
+        context,
+        [[`${(v as any).term}: ${(v as any).value}`]],
+        context
+      )
     }
   })
 }

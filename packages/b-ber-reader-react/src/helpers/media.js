@@ -2,10 +2,10 @@ import omit from 'lodash/omit'
 import Url from './Url'
 import Viewport from './Viewport'
 
-export const getPlayerPropsFromQueryString = queryString =>
+export const getPlayerPropsFromQueryString = (queryString) =>
   Url.parseQueryString(queryString)
 
-export const getURLAndQueryParamters = url => url.split('?')
+export const getURLAndQueryParamters = (url) => url.split('?')
 
 export const transformSearchParamsToProps = (props, blacklist = []) => {
   // Remove blacklisted props

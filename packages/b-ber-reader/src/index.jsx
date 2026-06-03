@@ -1,6 +1,6 @@
+import Reader from '@canopycanopycanopy/b-ber-reader-react'
 import React from 'react'
 import { createRoot } from 'react-dom/client'
-import Reader from '@canopycanopycanopy/b-ber-reader-react'
 import '@canopycanopycanopy/b-ber-reader-react/dist/styles.css'
 
 const root = createRoot(document.getElementById('root'))

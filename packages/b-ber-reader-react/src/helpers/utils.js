@@ -1,17 +1,17 @@
 /* eslint-disable no-continue */
 /* eslint-disable no-param-reassign */
 
-import isUndefined from 'lodash/isUndefined'
-import isArray from 'lodash/isArray'
-import isPlainObject from 'lodash/isPlainObject'
-import has from 'lodash/has'
 import eq from 'lodash/eq'
 import gt from 'lodash/gt'
 import gte from 'lodash/gte'
+import has from 'lodash/has'
+import isArray from 'lodash/isArray'
+import isPlainObject from 'lodash/isPlainObject'
+import isUndefined from 'lodash/isUndefined'
 import lt from 'lodash/lt'
 import lte from 'lodash/lte'
-import browser from '../lib/browser'
 import { MEDIA_CONTROLS_PRESETS } from '../constants'
+import browser from '../lib/browser'
 
 export const noop = () => {}
 

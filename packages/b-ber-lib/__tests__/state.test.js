@@ -48,9 +48,9 @@ describe('State', () => {
     expect(state.buildTypes).toHaveProperty('bar', 2)
   })
 
-  it('updates a value', done => {
+  it('updates a value', (done) => {
     state.reset()
-    const addFoo = callback => {
+    const addFoo = (callback) => {
       state.add('sequence', 'foo')
       callback()
     }
@@ -120,7 +120,7 @@ describe('State getters and setters', () => {
     // and loadBuildSettings returns undefined, leaving builds[type] undefined.
     // Ensure each build bucket has the required structure for getter/setter tests.
     const buildTypes = ['sample', 'epub', 'mobi', 'pdf', 'web', 'reader']
-    buildTypes.forEach(type => {
+    buildTypes.forEach((type) => {
       if (!state.builds[type]) {
         state.builds[type] = {
           dist: `project-${type}`,

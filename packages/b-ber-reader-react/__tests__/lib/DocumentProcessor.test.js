@@ -8,7 +8,7 @@ const errorHtml = `<!doctype html>
 </body>
 </html>`
 
-test('injects markup', done => {
+test('injects markup', (done) => {
   const processor = new DocumentProcessor()
   const html = `<!doctype html>
     <html>
@@ -34,18 +34,18 @@ test('injects markup', done => {
   })
 })
 
-test('catches errors', done => {
+test('catches errors', (done) => {
   console.assert = jest.fn()
   const processor = new DocumentProcessor()
   const html = errorHtml
 
-  processor.parseXML(html, err => {
+  processor.parseXML(html, (err) => {
     expect(err).toBeInstanceOf(Error)
     done()
   })
 })
 
-test('asserts validity', done => {
+test('asserts validity', (done) => {
   console.assert = jest.fn()
   const processor = new DocumentProcessor()
   const html = errorHtml
@@ -56,7 +56,7 @@ test('asserts validity', done => {
   })
 })
 
-test('validates a document', done => {
+test('validates a document', (done) => {
   const processor = new DocumentProcessor()
   const parser = new window.DOMParser()
   const html = `<!doctype html>

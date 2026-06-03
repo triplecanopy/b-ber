@@ -6,20 +6,20 @@
 // This script can also be modularized in the future as an `ebook-to-static-
 // site` module for external use
 
-import path from 'path'
+import { Url } from '@canopycanopycanopy/b-ber-lib'
+import state from '@canopycanopycanopy/b-ber-lib/State'
+import {
+  generateWebpubManifest,
+  getBookMetadata,
+} from '@canopycanopycanopy/b-ber-lib/utils'
+import log from '@canopycanopycanopy/b-ber-logger'
+import Toc from '@canopycanopycanopy/b-ber-templates/Toc'
+import cheerio from 'cheerio'
 import fs from 'fs-extra'
 import find from 'lodash/find'
 import findIndex from 'lodash/findIndex'
 import has from 'lodash/has'
-import cheerio from 'cheerio'
-import log from '@canopycanopycanopy/b-ber-logger'
-import state from '@canopycanopycanopy/b-ber-lib/State'
-import { Url } from '@canopycanopycanopy/b-ber-lib'
-import {
-  getBookMetadata,
-  generateWebpubManifest,
-} from '@canopycanopycanopy/b-ber-lib/utils'
-import Toc from '@canopycanopycanopy/b-ber-templates/Toc'
+import path from 'path'
 import rrdir from 'recursive-readdir'
 import Template from './Template'
 
@@ -53,7 +53,7 @@ class WebFlow {
   // `fileName` property has a file extension). @issue:
   // https://github.com/triplecanopy/b-ber/issues/208
   prepareLoi() {
-    this.loi = this.loi.map(a => {
+    this.loi = this.loi.map((a) => {
       const b = { ...a }
       b.fileName = b.fileName.replace(/\.xhtml$/, '')
       b.relativePath = b.relativePath.replace(/\.xhtml$/, '')
@@ -107,12 +107,12 @@ async function initialize() {
 async function moveAssetsToRootDirctory() {
   const files = fs.readdirSync(OPS_PATH)
   const dirs = files.filter(
-    file =>
+    (file) =>
       file.charAt(0) !== '.' &&
       fs.statSync(path.join(OPS_PATH, file)).isDirectory()
   )
 
-  const promises = dirs.map(dir => {
+  const promises = dirs.map((dir) => {
     const from = path.join(OPS_PATH, dir)
     const to = path.join(DIST_PATH, dir)
 
@@ -126,7 +126,7 @@ async function moveAssetsToRootDirctory() {
 }
 
 function unlinkRedundantAssets() {
-  const promises = ASSETS_TO_UNLINK.map(file => {
+  const promises = ASSETS_TO_UNLINK.map((file) => {
     log.info('Removing [%s]', path.basename(file))
     return fs.remove(file)
   })
@@ -299,8 +299,8 @@ function injectPageElementsIntoFiles(elements: any) {
   const textPath = path.join(DIST_PATH, 'text')
   const files = fs
     .readdirSync(textPath)
-    .filter(file => path.extname(file) === '.xhtml')
-  const promises = files.map(file => {
+    .filter((file) => path.extname(file) === '.xhtml')
+  const promises = files.map((file) => {
     const filePath = path.resolve(textPath, file)
     return injectPageElementsIntoFile(filePath)
   })
@@ -318,11 +318,9 @@ function indexPageContent() {
     .map((entry: any) =>
       fs
         .readFile(path.join(OPS_PATH, `${entry.relativePath}.xhtml`), 'utf8')
-        .then(data => {
+        .then((data) => {
           const $ = cheerio.load(data)
-          const title = $('h1,h2,h3,h4,h5,h6')
-            .first()
-            .text()
+          const title = $('h1,h2,h3,h4,h5,h6').first().text()
 
           const body = $('body').text()
           const url = `${BASE_URL}text/${entry.fileName}.xhtml`

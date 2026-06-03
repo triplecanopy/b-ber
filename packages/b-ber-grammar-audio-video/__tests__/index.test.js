@@ -8,9 +8,9 @@ jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
   remoteAssets: [],
   add: jest.fn(),
   src: {
-    images: p => p,
-    audio: p => p,
-    video: p => p,
+    images: (p) => p,
+    audio: (p) => p,
+    video: (p) => p,
   },
 }))
 
@@ -23,17 +23,20 @@ jest.mock('@canopycanopycanopy/b-ber-logger', () => ({
 jest.mock('@canopycanopycanopy/b-ber-grammar-attributes', () => ({
   attributesString: jest.fn(() => ''),
   attributesObject: jest.fn(() => ({ source: 'media.mp4' })),
-  htmlId: jest.fn(id => id),
-  toAlias: jest.fn(s => s),
+  htmlId: jest.fn((id) => id),
+  toAlias: jest.fn((s) => s),
 }))
 
 jest.mock('@canopycanopycanopy/b-ber-lib', () => ({
   State: jest.requireMock('@canopycanopycanopy/b-ber-lib/State'),
-  Html: { comment: jest.fn(s => s) },
-  Url: { encodeQueryString: jest.fn(s => s), ensureDecoded: jest.fn(s => s) },
+  Html: { comment: jest.fn((s) => s) },
+  Url: {
+    encodeQueryString: jest.fn((s) => s),
+    ensureDecoded: jest.fn((s) => s),
+  },
 }))
 
-const instance = { renderInline: jest.fn(str => str) }
+const instance = { renderInline: jest.fn((str) => str) }
 const context = { fileName: 'test' }
 
 describe('b-ber-grammar-audio-video', () => {

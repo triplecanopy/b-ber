@@ -1,6 +1,6 @@
+import fs from 'fs-extra'
 import os from 'os'
 import path from 'path'
-import fs from 'fs-extra'
 import YamlAdaptor from '../src/YamlAdaptor'
 
 // Prevent the logger from calling process.exit when testing error paths

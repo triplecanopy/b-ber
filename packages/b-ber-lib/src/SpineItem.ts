@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 
-import path from 'path'
 import startCase from 'lodash/startCase'
+import path from 'path'
 
 interface SpineItemOptions {
   fileName: string

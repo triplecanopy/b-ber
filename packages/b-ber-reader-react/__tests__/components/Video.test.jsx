@@ -1,12 +1,12 @@
 /* eslint-disable react/jsx-props-no-spreading */
 
-import React from 'react'
 import { render } from '@testing-library/react'
+import React from 'react'
 import Video from '../../src/components/Media/Video'
 
 jest.mock(
   '../../src/lib/with-node-position',
-  () => WrappedComponent => props => <WrappedComponent {...props} />
+  () => (WrappedComponent) => (props) => <WrappedComponent {...props} />
 )
 
 describe('Video', () => {

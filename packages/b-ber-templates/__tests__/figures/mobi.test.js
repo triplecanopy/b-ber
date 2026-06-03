@@ -4,7 +4,7 @@ import mobi from '../../src/figures/mobi'
 
 jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
   build: 'mobi',
-  src: { images: path => path },
+  src: { images: (path) => path },
 }))
 jest.mock('image-size', () => jest.fn(() => ({ width: 10, height: 10 })))
 

@@ -1,13 +1,13 @@
 import React from 'react'
+import Viewport from '../../../helpers/Viewport'
+import MediaButtonDownload from './MediaButtonDownload'
 import MediaButtonLoop from './MediaButtonLoop'
 import MediaButtonPlaybackRate from './MediaButtonPlaybackRate'
-import { MediaButtonSeekBack, MediaButtonSeekForward } from './MediaButtonSeek'
 import MediaButtonPlayPause from './MediaButtonPlayPause'
-import MediaTime from './MediaTime'
-import MediaRangeSlider from './MediaRangeSlider'
-import MediaButtonDownload from './MediaButtonDownload'
+import { MediaButtonSeekBack, MediaButtonSeekForward } from './MediaButtonSeek'
 import MediaButtonVolume from './MediaButtonVolume'
-import Viewport from '../../../helpers/Viewport'
+import MediaRangeSlider from './MediaRangeSlider'
+import MediaTime from './MediaTime'
 
 function AudioControlsFullStacked(props) {
   return (

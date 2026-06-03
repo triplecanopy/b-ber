@@ -13,9 +13,7 @@
   "homepage": "https://github.com/triplecanopy/b-ber#readme",
   "license": "GPL-3.0-or-later",
   "main": "dist/index.js",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "publishConfig": {
     "access": "public"
   },
@@ -29,7 +27,7 @@
     "prepare": "npm run build",
     "jest": "jest",
     "build": "npm run clean && npm run test && tsc --project tsconfig.build.json",
-    "lint": "eslint --resolve-plugins-relative-to . 'src/**/*.ts' --fix",
+    "lint": "biome check src/",
     "test": "tsc --project tsconfig.json --noEmit && npm run lint && jest"
   },
   "bugs": {
@@ -38,11 +36,6 @@
   "devDependencies": {
     "@canopycanopycanopy/b-ber-shapes-directives": "3.1.0",
     "@types/node": "^14.14.7",
-    "@typescript-eslint/eslint-plugin": "^4.8.1",
-    "@typescript-eslint/parser": "^4.8.1",
-    "eslint": "^7.32.0",
-    "eslint-config-prettier": "^6.15.0",
-    "eslint-plugin-prettier": "^3.1.4",
     "jest": "^29.7.0",
     "rimraf": "^2.7.1",
     "ts-jest": "^29.4.11",

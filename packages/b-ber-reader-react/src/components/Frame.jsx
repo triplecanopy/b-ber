@@ -1,10 +1,10 @@
-import React, { useEffect, useRef } from 'react'
-import isPlainObject from 'lodash/isPlainObject'
-import { connect } from 'react-redux'
 import classNames from 'classnames'
-import Layout from './Layout'
-import Viewport from '../helpers/Viewport'
+import isPlainObject from 'lodash/isPlainObject'
+import React, { useEffect, useRef } from 'react'
+import { connect } from 'react-redux'
 import Asset from '../helpers/Asset'
+import Viewport from '../helpers/Viewport'
+import Layout from './Layout'
 
 function Frame(props) {
   const node = useRef(null)

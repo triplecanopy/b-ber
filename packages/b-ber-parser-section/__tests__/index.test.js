@@ -26,7 +26,7 @@ describe('b-ber-parser-section', () => {
   test('adds a block rule named container_chapter', () => {
     const md = new MarkdownIt()
     containerPlugin(md, 'chapter', mockOptions)
-    const ruleNames = md.block.ruler.__rules__.map(r => r.name)
+    const ruleNames = md.block.ruler.__rules__.map((r) => r.name)
     expect(ruleNames).toContain('container_chapter')
   })
 
@@ -41,7 +41,7 @@ describe('b-ber-parser-section', () => {
     const md = new MarkdownIt()
     containerPlugin(md, 'chapter', mockOptions)
     containerPlugin(md, 'part', { ...mockOptions })
-    const ruleNames = md.block.ruler.__rules__.map(r => r.name)
+    const ruleNames = md.block.ruler.__rules__.map((r) => r.name)
     expect(ruleNames).toContain('container_chapter')
     expect(ruleNames).toContain('container_part')
   })

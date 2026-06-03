@@ -1,14 +1,14 @@
-import path from 'path'
-import crypto from 'crypto'
 import { State as state, YamlAdaptor } from '@canopycanopycanopy/b-ber-lib'
-import tocYml from './toc.yml'
-import metadataYml from './metadata.yml'
+import crypto from 'crypto'
+import path from 'path'
 import applicationJs from './application.js'
-import titlePageMd from './project-name-title-page.md'
+import gitignoreTxt from './gitignore'
+import metadataYml from './metadata.yml'
 import chapterMd from './project-name-chapter-01.md'
 import colophonMd from './project-name-colophon.md'
+import titlePageMd from './project-name-title-page.md'
 import readmeMd from './README.md'
-import gitignoreTxt from './gitignore'
+import tocYml from './toc.yml'
 
 class Project {
   static directories(src: string): string[] {
@@ -31,7 +31,10 @@ class Project {
     return path.resolve(path.dirname(src), path.basename(src), ...rest)
   }
 
-  static configYAML(src: string, config: Record<string, any> = {}): { relativePath: string; absolutePath: string; content: string } {
+  static configYAML(
+    src: string,
+    config: Record<string, any> = {}
+  ): { relativePath: string; absolutePath: string; content: string } {
     return {
       relativePath: Project.relativePath(src, '..', 'config.yml'),
       absolutePath: Project.absolutePath(src, '..', 'config.yml'),
@@ -39,7 +42,11 @@ class Project {
     }
   }
 
-  static tocYAML(src: string): { relativePath: string; absolutePath: string; content: string } {
+  static tocYAML(src: string): {
+    relativePath: string
+    absolutePath: string
+    content: string
+  } {
     return {
       relativePath: Project.relativePath(src, 'toc.yml'),
       absolutePath: Project.absolutePath(src, 'toc.yml'),
@@ -47,7 +54,11 @@ class Project {
     }
   }
 
-  static metadataYAML(src: string): { relativePath: string; absolutePath: string; content: string } {
+  static metadataYAML(src: string): {
+    relativePath: string
+    absolutePath: string
+    content: string
+  } {
     return {
       relativePath: Project.relativePath(src, 'metadata.yml'),
       absolutePath: Project.absolutePath(src, 'metadata.yml'),
@@ -58,31 +69,67 @@ class Project {
     }
   }
 
-  static javascripts(src: string): Array<{ relativePath: string; absolutePath: string; content: string }> {
+  static javascripts(
+    src: string
+  ): Array<{ relativePath: string; absolutePath: string; content: string }> {
     return [
       {
-        relativePath: Project.relativePath(src, '_javascripts', 'application.js'),
-        absolutePath: Project.absolutePath(src, '_javascripts', 'application.js'),
+        relativePath: Project.relativePath(
+          src,
+          '_javascripts',
+          'application.js'
+        ),
+        absolutePath: Project.absolutePath(
+          src,
+          '_javascripts',
+          'application.js'
+        ),
         content: applicationJs,
       },
     ]
   }
 
-  static markdown(src: string): Array<{ relativePath: string; absolutePath: string; content: string }> {
+  static markdown(
+    src: string
+  ): Array<{ relativePath: string; absolutePath: string; content: string }> {
     return [
       {
-        relativePath: Project.relativePath(src, '_markdown', 'project-name-title-page.md'),
-        absolutePath: Project.absolutePath(src, '_markdown', 'project-name-title-page.md'),
+        relativePath: Project.relativePath(
+          src,
+          '_markdown',
+          'project-name-title-page.md'
+        ),
+        absolutePath: Project.absolutePath(
+          src,
+          '_markdown',
+          'project-name-title-page.md'
+        ),
         content: titlePageMd,
       },
       {
-        relativePath: Project.relativePath(src, '_markdown', 'project-name-chapter-01.md'),
-        absolutePath: Project.absolutePath(src, '_markdown', 'project-name-chapter-01.md'),
+        relativePath: Project.relativePath(
+          src,
+          '_markdown',
+          'project-name-chapter-01.md'
+        ),
+        absolutePath: Project.absolutePath(
+          src,
+          '_markdown',
+          'project-name-chapter-01.md'
+        ),
         content: chapterMd,
       },
       {
-        relativePath: Project.relativePath(src, '_markdown', 'project-name-colophon.md'),
-        absolutePath: Project.absolutePath(src, '_markdown', 'project-name-colophon.md'),
+        relativePath: Project.relativePath(
+          src,
+          '_markdown',
+          'project-name-colophon.md'
+        ),
+        absolutePath: Project.absolutePath(
+          src,
+          '_markdown',
+          'project-name-colophon.md'
+        ),
         content: colophonMd,
       },
     ]
@@ -92,15 +139,26 @@ class Project {
     return []
   }
 
-  static readme(src: string): { relativePath: string; absolutePath: string; content: string } {
+  static readme(src: string): {
+    relativePath: string
+    absolutePath: string
+    content: string
+  } {
     return {
       relativePath: Project.relativePath(src, '..', 'README.md'),
       absolutePath: Project.absolutePath(src, '..', 'README.md'),
-      content: (readmeMd as string).replace(/%PROJECT_NAME%/, path.basename(process.cwd())),
+      content: (readmeMd as string).replace(
+        /%PROJECT_NAME%/,
+        path.basename(process.cwd())
+      ),
     }
   }
 
-  static gitignore(src: string): { relativePath: string; absolutePath: string; content: string } {
+  static gitignore(src: string): {
+    relativePath: string
+    absolutePath: string
+    content: string
+  } {
     return {
       relativePath: Project.relativePath(src, '..', '.gitignore'),
       absolutePath: Project.absolutePath(src, '..', '.gitignore'),

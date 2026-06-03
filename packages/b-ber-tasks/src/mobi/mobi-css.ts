@@ -1,8 +1,8 @@
-import fs from 'fs-extra'
-import css from 'css'
-import path from 'path'
-import log from '@canopycanopycanopy/b-ber-logger'
 import state from '@canopycanopycanopy/b-ber-lib/State'
+import log from '@canopycanopycanopy/b-ber-logger'
+import css from 'css'
+import fs from 'fs-extra'
+import path from 'path'
 
 const blackListedPrefixes = ['epub|']
 const blackListedTypes = ['namespace']
@@ -32,7 +32,7 @@ const write = ({ file, content }: { file: string; content: string }) =>
     .then(() => log.info(`mobiCSS write [${path.basename(file)}]`))
 
 const process = (file: string) =>
-  fs.readFile(file, 'utf8').then(data => {
+  fs.readFile(file, 'utf8').then((data) => {
     const ast = css.parse(data)
 
     let i = ast.stylesheet.rules.length - 1
@@ -84,9 +84,9 @@ const process = (file: string) =>
 
 const mobiCSS = () => {
   const stylesheetsPath = state.dist.stylesheets()
-  return fs.readdir(stylesheetsPath).then(files =>
+  return fs.readdir(stylesheetsPath).then((files) =>
     Promise.all(
-      files.map(stylesheet => {
+      files.map((stylesheet) => {
         const file = state.dist.stylesheets(stylesheet)
         log.info(`mobiCSS process [${path.basename(file)}]`)
         return process(file).then(write)

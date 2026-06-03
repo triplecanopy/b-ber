@@ -3,7 +3,8 @@
 const fs = require('fs-extra')
 const path = require('path')
 
-const tmpl = version => `const version = '${version}'\nexport default version\n`
+const tmpl = (version) =>
+  `const version = '${version}'\nexport default version\n`
 
 async function main() {
   const { npm_package_version: version } = process.env

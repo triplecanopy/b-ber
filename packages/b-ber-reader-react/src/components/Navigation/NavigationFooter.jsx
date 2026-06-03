@@ -13,7 +13,7 @@ function NavigationFooter(props) {
   const show = useMemo(
     () => ({
       chapter: {
-        prev: p => {
+        prev: (p) => {
           // Don't show if on the first page
           if (p.currentSpineItemIndex < 1) return false
 
@@ -25,7 +25,7 @@ function NavigationFooter(props) {
           )
         },
 
-        next: p => {
+        next: (p) => {
           // Don't show if on the last page. Guard against spine being empty
           // or undefined (transitional state during initial load).
           const len = p.spine?.length ?? 0
@@ -40,12 +40,12 @@ function NavigationFooter(props) {
         },
       },
       page: {
-        prev: p =>
+        prev: (p) =>
           !Viewport.isVerticallyScrolling(p) &&
           p.uiOptions.navigation.footer_icons.page &&
           (p.currentSpineItemIndex !== 0 || p.spreadIndex !== 0),
 
-        next: p => {
+        next: (p) => {
           // Guard against spine being empty/undefined
           const len = p.spine?.length ?? 0
           return (

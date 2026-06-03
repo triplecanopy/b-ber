@@ -1,5 +1,5 @@
+import { ensure, fail } from '@canopycanopycanopy/b-ber-lib/utils'
 import { generate } from '@canopycanopycanopy/b-ber-tasks'
-import { fail, ensure } from '@canopycanopycanopy/b-ber-lib/utils'
 
 const command = 'generate <title> [type]'
 const describe = 'Create a new chapter. Accepts arguments for metadata'

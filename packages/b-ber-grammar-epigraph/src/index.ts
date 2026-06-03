@@ -42,8 +42,8 @@ export default {
           log.error(`[${context.fileName}.md] <epigraph> Malformed directive.`)
           result = ''
         } else if (!attrs.image && attrs.caption) {
-          const captions = attrs.caption.split('|').map(_ => _.trim())
-          const citations = attrs.citation.split('|').map(_ => _.trim())
+          const captions = attrs.caption.split('|').map((_) => _.trim())
+          const citations = attrs.citation.split('|').map((_) => _.trim())
           result = [
             '<section epub:type="epigraph" class="epigraph chapter">',
             '<section epub:type="chapter" class="subchapter">',

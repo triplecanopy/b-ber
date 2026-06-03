@@ -1,7 +1,7 @@
-import path from 'path'
+import log from '@canopycanopycanopy/b-ber-logger'
 import { exec } from 'child_process'
 import exists from 'command-exists'
-import log from '@canopycanopycanopy/b-ber-logger'
+import path from 'path'
 
 const command = 'ebook-convert'
 
@@ -41,7 +41,11 @@ function checkForCalibre(): Promise<void> {
   })
 }
 
-function convertDocument({ inputPath, bookPath, flags }: ConvertSettings): Promise<void> {
+function convertDocument({
+  inputPath,
+  bookPath,
+  flags,
+}: ConvertSettings): Promise<void> {
   return new Promise((resolve, reject) => {
     exec(
       `${command} ${inputPath} ${bookPath} ${(flags || []).join(' ')}`,
@@ -57,9 +61,13 @@ function convertDocument({ inputPath, bookPath, flags }: ConvertSettings): Promi
 }
 
 function convert(options: ConvertOptions): Promise<unknown> {
-  const props: (keyof ConvertOptions)[] = ['inputPath', 'outputPath', 'fileType']
-  props.forEach(prop => {
-    if (!Object.prototype.hasOwnProperty.call(options, prop)) {
+  const props: (keyof ConvertOptions)[] = [
+    'inputPath',
+    'outputPath',
+    'fileType',
+  ]
+  props.forEach((prop) => {
+    if (!Object.hasOwn(options, prop)) {
       throw new Error(`Missing required option [${prop}]`)
     }
   })

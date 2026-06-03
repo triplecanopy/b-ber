@@ -1,18 +1,17 @@
-import { State as state } from '@canopycanopycanopy/b-ber-lib'
-import { Html, Url } from '@canopycanopycanopy/b-ber-lib'
 import {
+  attributesObject,
+  attributesString,
+  htmlId,
+} from '@canopycanopycanopy/b-ber-grammar-attributes'
+import { Html, State as state, Url } from '@canopycanopycanopy/b-ber-lib'
+import {
+  ensurePoster,
+  ensureSource,
+  ensureSupportedClassNames,
   getMediaType,
   renderCaption,
   renderPosterImage,
-  ensureSource,
-  ensurePoster,
-  ensureSupportedClassNames,
 } from '@canopycanopycanopy/b-ber-lib/utils'
-import {
-  attributesString,
-  attributesObject,
-  htmlId,
-} from '@canopycanopycanopy/b-ber-grammar-attributes'
 import { htmlIframeAttributes } from '@canopycanopycanopy/b-ber-shapes-directives'
 
 export function supported(build) {

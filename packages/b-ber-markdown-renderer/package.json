@@ -45,9 +45,7 @@
     "markdown-it-front-matter": "^0.1.2",
     "tar": "^6.1.11"
   },
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/triplecanopy/b-ber.git"

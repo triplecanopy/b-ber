@@ -3,8 +3,8 @@ import log from '@canopycanopycanopy/b-ber-logger'
 import {
   attributes,
   attributesObject,
-  attributesString,
   attributesQueryString,
+  attributesString,
   htmlId,
   parseAttrs,
   toAlias,

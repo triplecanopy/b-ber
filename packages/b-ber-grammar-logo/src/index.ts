@@ -1,16 +1,16 @@
-import fs from 'fs-extra'
+import {
+  attributesObject,
+  attributesString,
+  htmlId,
+} from '@canopycanopycanopy/b-ber-grammar-attributes'
 import { State as state } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
+import figure from '@canopycanopycanopy/b-ber-parser-figure'
 import {
   INLINE_DIRECTIVE_MARKER,
   INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
 } from '@canopycanopycanopy/b-ber-shapes-directives'
-import figure from '@canopycanopycanopy/b-ber-parser-figure'
-import {
-  attributesString,
-  attributesObject,
-  htmlId,
-} from '@canopycanopycanopy/b-ber-grammar-attributes'
+import fs from 'fs-extra'
 
 const MARKER_RE = /^logo/
 const DIRECTIVE_RE = /(logo)(?::([^\s]+)(\s?.*)?)?$/

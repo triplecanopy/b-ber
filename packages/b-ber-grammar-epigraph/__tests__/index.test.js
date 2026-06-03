@@ -7,7 +7,7 @@ jest.mock('@canopycanopycanopy/b-ber-logger', () => ({
   debug: jest.fn(),
 }))
 
-const escapeHtml = str => str
+const escapeHtml = (str) => str
 const instance = { escapeHtml: { escapeHtml } }
 const context = { fileName: 'test' }
 

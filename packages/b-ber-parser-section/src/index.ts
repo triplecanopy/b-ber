@@ -15,7 +15,12 @@ const containerPlugin = (md: any, name: string, options: any = {}): void => {
   const { validateOpen, render } = options
   // const validateClose = options.validateClose
 
-  function container(state: any, startLine: number, endLine: number, silent: boolean): boolean {
+  function container(
+    state: any,
+    startLine: number,
+    endLine: number,
+    silent: boolean
+  ): boolean {
     const lineNumber = startLine + 1
 
     let pos

@@ -1,5 +1,5 @@
-import File from 'vinyl'
 import { State as state } from '@canopycanopycanopy/b-ber-lib'
+import File from 'vinyl'
 
 class Xhtml {
   static head() {
@@ -10,7 +10,8 @@ class Xhtml {
     const robots = `<meta name="robots" content="${prefix}index,${prefix}follow"/>`
 
     return new File({
-      contents: Buffer.from(`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+      contents:
+        Buffer.from(`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
         <html xmlns="http://www.w3.org/1999/xhtml"
           xmlns:epub="http://www.idpf.org/2007/ops"
           xmlns:ibooks="http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0"

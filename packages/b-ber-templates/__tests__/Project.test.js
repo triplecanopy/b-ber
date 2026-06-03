@@ -1,7 +1,7 @@
-import fs from 'fs-extra'
-import path from 'path'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import YamlAdaptor from '@canopycanopycanopy/b-ber-lib/YamlAdaptor'
+import fs from 'fs-extra'
+import path from 'path'
 import Project from '../src/Project'
 
 jest.mock('@canopycanopycanopy/b-ber-lib/State', () => {
@@ -67,7 +67,7 @@ describe('templates.Project', () => {
     expect(files[0].relativePath).toContain('project-name-title-page.md')
     expect(files[1].relativePath).toContain('project-name-chapter-01.md')
     expect(files[2].relativePath).toContain('project-name-colophon.md')
-    files.forEach(f => {
+    files.forEach((f) => {
       expect(typeof f.content).toBe('string')
       expect(f.absolutePath).toContain('_markdown')
     })

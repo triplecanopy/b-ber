@@ -1,11 +1,11 @@
 import React from 'react'
-import { MediaButtonSeekForward, MediaButtonSeekBack } from './MediaButtonSeek'
-import MediaButtonVolume from './MediaButtonVolume'
 import MediaButtonPlayPause from './MediaButtonPlayPause'
-import MediaTime from './MediaTime'
+import { MediaButtonSeekBack, MediaButtonSeekForward } from './MediaButtonSeek'
+import MediaButtonVolume from './MediaButtonVolume'
 import MediaRangeSlider from './MediaRangeSlider'
+import MediaTime from './MediaTime'
 
-const AudioControlsNormal = props => (
+const AudioControlsNormal = (props) => (
   <>
     <MediaButtonSeekBack timeBack={props.timeBack} />
     <MediaButtonPlayPause
