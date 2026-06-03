@@ -20,10 +20,10 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 	enumerable: true
 }) : target, mod));
 //#endregion
-let path = require("path");
-path = __toESM(path);
 let fs_extra = require("fs-extra");
 fs_extra = __toESM(fs_extra);
+let path = require("path");
+path = __toESM(path);
 //#region src/index.ts
 const packageRoot = path.default.resolve(__dirname, "..");
 var src_default = () => fs_extra.default.readdir(packageRoot).then((data) => {

@@ -7,7 +7,7 @@ var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __exportAll = (all, no_symbols) => {
-	const target = {};
+	let target = {};
 	for (var name in all) __defProp(target, name, {
 		get: all[name],
 		enumerable: true
@@ -30,21 +30,21 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 	enumerable: true
 }) : target, mod));
 //#endregion
-let vinyl = require("vinyl");
-vinyl = __toESM(vinyl);
+let _canopycanopycanopy_b_ber_lib = require("@canopycanopycanopy/b-ber-lib");
 let lodash_find_js = require("lodash/find.js");
 lodash_find_js = __toESM(lodash_find_js);
 let lodash_has_js = require("lodash/has.js");
 lodash_has_js = __toESM(lodash_has_js);
-const _canopycanopycanopy_b_ber_lib = require("@canopycanopycanopy/b-ber-lib");
-let crypto = require("crypto");
-crypto = __toESM(crypto);
+let vinyl = require("vinyl");
+vinyl = __toESM(vinyl);
 let _canopycanopycanopy_b_ber_logger = require("@canopycanopycanopy/b-ber-logger");
 _canopycanopycanopy_b_ber_logger = __toESM(_canopycanopycanopy_b_ber_logger);
-let mime_types = require("mime-types");
-mime_types = __toESM(mime_types);
 let path = require("path");
 path = __toESM(path);
+let mime_types = require("mime-types");
+mime_types = __toESM(mime_types);
+let crypto = require("crypto");
+crypto = __toESM(crypto);
 //#region src/Ncx/index.ts
 const { getTitle: getTitle$1 } = _canopycanopycanopy_b_ber_lib.utils;
 var Ncx = class Ncx {
@@ -119,30 +119,54 @@ var Ncx = class Ncx {
 	}
 };
 //#endregion
-//#region src/Opf/Pkg.ts
-var Pkg = class {
+//#region src/Opf/Guide.ts
+var Guide = class Guide {
 	static body() {
 		return new vinyl.default({
-			path: "pkg.body.tmpl",
-			contents: Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
-                <package
-                    version="3.0"
-                    xml:lang="en"
-                    unique-identifier="uuid"
-                    xmlns="http://www.idpf.org/2007/opf"
-                    xmlns:dc="http://purl.org/dc/elements/1.1/"
-                    xmlns:dcterms="http://purl.org/dc/terms/"
-                    prefix="ibooks: http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0/"
-                >
-                    {% body %}
-                </package>
-            `)
+			path: "guide.body.tmpl",
+			contents: Buffer.from("<guide>{% body %}</guide>")
 		});
+	}
+	static item({ type, title, href }) {
+		return `<reference type="${type}" title="${title}" href="${href}"/>`;
+	}
+	static items(data) {
+		return data.reduce((acc, curr) => {
+			if (!curr.type) return acc;
+			_canopycanopycanopy_b_ber_logger.default.info(`guide adding landmark [${curr.fileName}] as [${curr.type}]`);
+			const { type } = curr;
+			const title = _canopycanopycanopy_b_ber_lib.Html.escape(curr.title);
+			const href = `text/${encodeURI(path.default.basename(curr.fileName, ".xhtml"))}.xhtml`;
+			return acc.concat(Guide.item({
+				type,
+				title,
+				href
+			}));
+		}, "");
+	}
+};
+//#endregion
+//#region src/Opf/Manifest.ts
+const { fileId: fileId$2 } = _canopycanopycanopy_b_ber_lib.utils;
+const getProps = (file) => {
+	const props = _canopycanopycanopy_b_ber_lib.ManifestItemProperties.testHTML(file);
+	return props && props.length ? `properties="${props.join(" ")}"` : "";
+};
+const getMediaType = ({ remote, absolutePath }) => remote ? "application/octet-stream" : mime_types.default.lookup(absolutePath);
+var Manifest = class {
+	static body() {
+		return new vinyl.default({
+			path: "manifest.body.tmpl",
+			contents: Buffer.from("<manifest>{% body %}</manifest>")
+		});
+	}
+	static item(file) {
+		return `<item id="${fileId$2(file.name)}" href="${encodeURI(file.opsPath)}" media-type="${getMediaType(file)}" ${getProps(file)}/>`;
 	}
 };
 //#endregion
 //#region src/Opf/Metadata.ts
-const { fileId: fileId$2 } = _canopycanopycanopy_b_ber_lib.utils;
+const { fileId: fileId$1 } = _canopycanopycanopy_b_ber_lib.utils;
 var Metadata = class Metadata {
 	static uid() {
 		return `_${crypto.default.randomBytes(8).toString("hex")}`;
@@ -182,27 +206,30 @@ var Metadata = class Metadata {
 			res.push(`<meta refines="#${itemid}" property="${data.term_property}">${_canopycanopycanopy_b_ber_lib.Html.escape(data.term_property_value)}</meta>`);
 		}
 		if (!term && !element) if (data.term !== "cover") res.push(`<meta name="${data.term}" content="${_canopycanopycanopy_b_ber_lib.Html.escape(data.value)}"/>`);
-		else res.push(`<meta name="${data.term}" content="${fileId$2(_canopycanopycanopy_b_ber_lib.Html.escape(data.value))}"/>`);
+		else res.push(`<meta name="${data.term}" content="${fileId$1(_canopycanopycanopy_b_ber_lib.Html.escape(data.value))}"/>`);
 		return res.join("");
 	}
 };
 //#endregion
-//#region src/Opf/Manifest.ts
-const { fileId: fileId$1 } = _canopycanopycanopy_b_ber_lib.utils;
-const getProps = (file) => {
-	const props = _canopycanopycanopy_b_ber_lib.ManifestItemProperties.testHTML(file);
-	return props && props.length ? `properties="${props.join(" ")}"` : "";
-};
-const getMediaType = ({ remote, absolutePath }) => remote ? "application/octet-stream" : mime_types.default.lookup(absolutePath);
-var Manifest = class {
+//#region src/Opf/Pkg.ts
+var Pkg = class {
 	static body() {
 		return new vinyl.default({
-			path: "manifest.body.tmpl",
-			contents: Buffer.from("<manifest>{% body %}</manifest>")
+			path: "pkg.body.tmpl",
+			contents: Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
+                <package
+                    version="3.0"
+                    xml:lang="en"
+                    unique-identifier="uuid"
+                    xmlns="http://www.idpf.org/2007/opf"
+                    xmlns:dc="http://purl.org/dc/elements/1.1/"
+                    xmlns:dcterms="http://purl.org/dc/terms/"
+                    prefix="ibooks: http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0/"
+                >
+                    {% body %}
+                </package>
+            `)
 		});
-	}
-	static item(file) {
-		return `<item id="${fileId$1(file.name)}" href="${encodeURI(file.opsPath)}" media-type="${getMediaType(file)}" ${getProps(file)}/>`;
 	}
 };
 //#endregion
@@ -240,33 +267,6 @@ var Spine = class Spine {
 	}
 };
 //#endregion
-//#region src/Opf/Guide.ts
-var Guide = class Guide {
-	static body() {
-		return new vinyl.default({
-			path: "guide.body.tmpl",
-			contents: Buffer.from("<guide>{% body %}</guide>")
-		});
-	}
-	static item({ type, title, href }) {
-		return `<reference type="${type}" title="${title}" href="${href}"/>`;
-	}
-	static items(data) {
-		return data.reduce((acc, curr) => {
-			if (!curr.type) return acc;
-			_canopycanopycanopy_b_ber_logger.default.info(`guide adding landmark [${curr.fileName}] as [${curr.type}]`);
-			const { type } = curr;
-			const title = _canopycanopycanopy_b_ber_lib.Html.escape(curr.title);
-			const href = `text/${encodeURI(path.default.basename(curr.fileName, ".xhtml"))}.xhtml`;
-			return acc.concat(Guide.item({
-				type,
-				title,
-				href
-			}));
-		}, "");
-	}
-};
-//#endregion
 //#region src/Opf/index.ts
 var Opf_exports = /* @__PURE__ */ __exportAll({
 	Guide: () => Guide,
@@ -283,20 +283,127 @@ var Ops = class {
 	}
 };
 //#endregion
-//#region src/Project/toc.yml.ts
-var toc_yml_default = `# Table of Contents
-# "in_toc:false" removes the entry from the built-in navigation of the reader.
-# "linear:false" removes the entry from the project's contents.
-- toc:
-        in_toc: false
-        linear: false
-# Cover
-- cover:
-        in_toc: false
-# Project Contents
-- project-name-title-page
-- project-name-chapter-01
-- project-name-colophon
+//#region src/Project/application.js.ts
+var application_js_default = `// All user defined functions should be wrapped in a 'domReady' call - or by using a third-party lib like jQuery - for compatibility in reader, web, and e-reader versions.
+// Use the global \`window.bber.env\` variable to limit scripts to particular envionments. See example below
+//
+// Examples:
+//  domReady(fn)
+//  domReady(function() {})
+//  domReady(fn, context)
+//  domReady(function(context) {}, ctx)
+//
+// https://stackoverflow.com/questions/9899372/pure-javascript-equivalent-of-jquerys-ready-how-to-call-a-function-when-t
+;(function(funcName, baseObj) {
+    // The public function name defaults to window.domReady
+    // but you can pass in your own object and own function name and those will be used
+    // if you want to put them in a different namespace
+    funcName = funcName || 'domReady';
+    baseObj = baseObj || window;
+    var readyList = [];
+    var readyFired = false;
+    var readyEventHandlersInstalled = false;
+
+    // call this when the document is ready
+    // this function protects itself against being called more than once
+    function ready() {
+        if (!readyFired) {
+            // this must be set to true before we start calling callbacks
+            readyFired = true;
+            for (var i = 0; i < readyList.length; i++) {
+                // if a callback here happens to add new ready handlers,
+                // the domReady() function will see that it already fired
+                // and will schedule the callback to run right after
+                // this event loop finishes so all handlers will still execute
+                // in order and no new ones will be added to the readyList
+                // while we are processing the list
+                readyList[i].fn.call(window, readyList[i].ctx);
+            }
+            // allow any closures held by these functions to free
+            readyList = [];
+        }
+    }
+
+    function readyStateChange() {
+        if ( document.readyState === 'complete' ) {
+            ready();
+        }
+    }
+
+    // This is the one public interface
+    // domReady(fn, context);
+    // the context argument is optional - if present, it will be passed
+    // as an argument to the callback
+    baseObj[funcName] = function(callback, context) {
+        if (typeof callback !== 'function') {
+            throw new TypeError('callback for domReady(fn) must be a function');
+        }
+        // if ready has already fired, then just schedule the callback
+        // to fire asynchronously, but right away
+        if (readyFired) {
+            setTimeout(function() {callback(context);}, 1);
+            return;
+        } else {
+            // add the function and context to the list
+            readyList.push({fn: callback, ctx: context});
+        }
+        // if document already ready to go, schedule the ready function to run
+        if (document.readyState === 'complete') {
+            setTimeout(ready, 1);
+        } else if (!readyEventHandlersInstalled) {
+            // otherwise if we don't have event handlers installed, install them
+            if (document.addEventListener) {
+                // first choice is DOMContentLoaded event
+                document.addEventListener('DOMContentLoaded', ready, false);
+                // backup is window load event
+                window.addEventListener('load', ready, false);
+            } else {
+                // must be IE
+                document.attachEvent('onreadystatechange', readyStateChange);
+                window.attachEvent('onload', ready);
+            }
+            readyEventHandlersInstalled = true;
+        }
+    }
+})('domReady', window);
+
+function clicked(e) {
+    window.location.href = this.getAttribute('href');
+    return false;
+}
+
+function main() {
+    if (window.bber.env === 'reader') return;
+    // Normalize link behaviour on iBooks, without interfering with footnotes
+    var links = document.getElementsByTagName('a');
+    links = Array.prototype.slice.call(links, 0);
+    links = links.filter(function(l) {
+        return l.classList.contains('footnote-ref') === false;
+    });
+
+    for (var i = 0; i < links.length; i++) {
+        links[i].onclick = clicked;
+    }
+}
+
+domReady(main);
+`;
+//#endregion
+//#region src/Project/gitignore.ts
+var gitignore_default = `.DS_Store
+.tmp
+
+*.map
+*.epub
+*.mobi
+*.pdf
+*.xml
+
+node_modules
+npm-debug.log*
+bber-debug.log*
+
+/project*
 `;
 //#endregion
 //#region src/Project/metadata.yml.ts
@@ -424,125 +531,6 @@ var metadata_yml_default = `# ==================================================
 
 `;
 //#endregion
-//#region src/Project/application.js.ts
-var application_js_default = `// All user defined functions should be wrapped in a 'domReady' call - or by using a third-party lib like jQuery - for compatibility in reader, web, and e-reader versions.
-// Use the global \`window.bber.env\` variable to limit scripts to particular envionments. See example below
-//
-// Examples:
-//  domReady(fn)
-//  domReady(function() {})
-//  domReady(fn, context)
-//  domReady(function(context) {}, ctx)
-//
-// https://stackoverflow.com/questions/9899372/pure-javascript-equivalent-of-jquerys-ready-how-to-call-a-function-when-t
-;(function(funcName, baseObj) {
-    // The public function name defaults to window.domReady
-    // but you can pass in your own object and own function name and those will be used
-    // if you want to put them in a different namespace
-    funcName = funcName || 'domReady';
-    baseObj = baseObj || window;
-    var readyList = [];
-    var readyFired = false;
-    var readyEventHandlersInstalled = false;
-
-    // call this when the document is ready
-    // this function protects itself against being called more than once
-    function ready() {
-        if (!readyFired) {
-            // this must be set to true before we start calling callbacks
-            readyFired = true;
-            for (var i = 0; i < readyList.length; i++) {
-                // if a callback here happens to add new ready handlers,
-                // the domReady() function will see that it already fired
-                // and will schedule the callback to run right after
-                // this event loop finishes so all handlers will still execute
-                // in order and no new ones will be added to the readyList
-                // while we are processing the list
-                readyList[i].fn.call(window, readyList[i].ctx);
-            }
-            // allow any closures held by these functions to free
-            readyList = [];
-        }
-    }
-
-    function readyStateChange() {
-        if ( document.readyState === 'complete' ) {
-            ready();
-        }
-    }
-
-    // This is the one public interface
-    // domReady(fn, context);
-    // the context argument is optional - if present, it will be passed
-    // as an argument to the callback
-    baseObj[funcName] = function(callback, context) {
-        if (typeof callback !== 'function') {
-            throw new TypeError('callback for domReady(fn) must be a function');
-        }
-        // if ready has already fired, then just schedule the callback
-        // to fire asynchronously, but right away
-        if (readyFired) {
-            setTimeout(function() {callback(context);}, 1);
-            return;
-        } else {
-            // add the function and context to the list
-            readyList.push({fn: callback, ctx: context});
-        }
-        // if document already ready to go, schedule the ready function to run
-        if (document.readyState === 'complete') {
-            setTimeout(ready, 1);
-        } else if (!readyEventHandlersInstalled) {
-            // otherwise if we don't have event handlers installed, install them
-            if (document.addEventListener) {
-                // first choice is DOMContentLoaded event
-                document.addEventListener('DOMContentLoaded', ready, false);
-                // backup is window load event
-                window.addEventListener('load', ready, false);
-            } else {
-                // must be IE
-                document.attachEvent('onreadystatechange', readyStateChange);
-                window.attachEvent('onload', ready);
-            }
-            readyEventHandlersInstalled = true;
-        }
-    }
-})('domReady', window);
-
-function clicked(e) {
-    window.location.href = this.getAttribute('href');
-    return false;
-}
-
-function main() {
-    if (window.bber.env === 'reader') return;
-    // Normalize link behaviour on iBooks, without interfering with footnotes
-    var links = document.getElementsByTagName('a');
-    links = Array.prototype.slice.call(links, 0);
-    links = links.filter(function(l) {
-        return l.classList.contains('footnote-ref') === false;
-    });
-
-    for (var i = 0; i < links.length; i++) {
-        links[i].onclick = clicked;
-    }
-}
-
-domReady(main);
-`;
-//#endregion
-//#region src/Project/project-name-title-page.md.ts
-var project_name_title_page_md_default = `---
-title: Project Name Title Page
-type: titlepage
----
-
-::: titlepage:project-name-title-page
-
-# Project Title by Author
-
-::: exit:project-name-title-page
-`;
-//#endregion
 //#region src/Project/project-name-chapter-01.md.ts
 var project_name_chapter_01_md_default = `---
 title: Project Name Chapter One
@@ -590,27 +578,39 @@ Country
 ::: exit:project-name-colophon
 `;
 //#endregion
+//#region src/Project/project-name-title-page.md.ts
+var project_name_title_page_md_default = `---
+title: Project Name Title Page
+type: titlepage
+---
+
+::: titlepage:project-name-title-page
+
+# Project Title by Author
+
+::: exit:project-name-title-page
+`;
+//#endregion
 //#region src/Project/README.md.ts
 var README_md_default = `# %PROJECT_NAME%
 
 Created with [b-ber](https://github.com/triplecanopy/b-ber/)
 `;
 //#endregion
-//#region src/Project/gitignore.ts
-var gitignore_default = `.DS_Store
-.tmp
-
-*.map
-*.epub
-*.mobi
-*.pdf
-*.xml
-
-node_modules
-npm-debug.log*
-bber-debug.log*
-
-/project*
+//#region src/Project/toc.yml.ts
+var toc_yml_default = `# Table of Contents
+# "in_toc:false" removes the entry from the built-in navigation of the reader.
+# "linear:false" removes the entry from the project's contents.
+- toc:
+        in_toc: false
+        linear: false
+# Cover
+- cover:
+        in_toc: false
+# Project Contents
+- project-name-title-page
+- project-name-chapter-01
+- project-name-colophon
 `;
 //#endregion
 //#region src/Project/index.ts

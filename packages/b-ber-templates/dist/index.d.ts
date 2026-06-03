@@ -12,9 +12,25 @@ declare class Ncx {
   static navPoints(data: any): any;
 }
 //#endregion
-//#region src/Opf/Pkg.d.ts
-declare class Pkg {
+//#region src/Opf/Guide.d.ts
+declare class Guide {
   static body(): File.BufferFile;
+  static item({
+    type,
+    title,
+    href
+  }: {
+    type: any;
+    title: any;
+    href: any;
+  }): string;
+  static items(data: any): any;
+}
+//#endregion
+//#region src/Opf/Manifest.d.ts
+declare class Manifest {
+  static body(): File.BufferFile;
+  static item(file: any): string;
 }
 //#endregion
 //#region src/Opf/Metadata.d.ts
@@ -24,10 +40,9 @@ declare class Metadata {
   static meta(data: any): string;
 }
 //#endregion
-//#region src/Opf/Manifest.d.ts
-declare class Manifest {
+//#region src/Opf/Pkg.d.ts
+declare class Pkg {
   static body(): File.BufferFile;
-  static item(file: any): string;
 }
 //#endregion
 //#region src/Opf/Spine.d.ts
@@ -41,21 +56,6 @@ declare class Spine {
     fileName: any;
     extension: any;
     linear: any;
-  }): string;
-  static items(data: any): any;
-}
-//#endregion
-//#region src/Opf/Guide.d.ts
-declare class Guide {
-  static body(): File.BufferFile;
-  static item({
-    type,
-    title,
-    href
-  }: {
-    type: any;
-    title: any;
-    href: any;
   }): string;
   static items(data: any): any;
 }
@@ -143,7 +143,6 @@ declare class Xml {
   static container(): string;
   static mimetype(): string;
 }
-
 //#endregion
-export { index_d_exports as Opf, Ncx, Ops, Project, Toc, Xhtml, Xml };
+export { Ncx, index_d_exports as Opf, Ops, Project, Toc, Xhtml, Xml };
 //# sourceMappingURL=index.d.ts.map
