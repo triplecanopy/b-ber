@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import * as viewActions from '../actions/view'
 import * as userInterfaceActions from '../actions/user-interface'
+import * as viewActions from '../actions/view'
 
 // How long to wait after the last recorded offsetLeft change before declaring
 // the layout stable. The sentinel's offsetLeft is checked once per interval;
@@ -200,7 +200,7 @@ function Ultimate({
 
 export default connect(
   ({ view }) => ({ view }),
-  dispatch => ({
+  (dispatch) => ({
     userInterfaceActions: bindActionCreators(userInterfaceActions, dispatch),
     viewActions: bindActionCreators(viewActions, dispatch),
   })

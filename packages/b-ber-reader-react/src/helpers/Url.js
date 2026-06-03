@@ -1,3 +1,4 @@
+// biome-ignore lint/suspicious/noShadowRestrictedNames: destructuring window's versions of these built-ins
 const { decodeURI, encodeURI, encodeURIComponent, URLSearchParams } = window
 
 class Url {
@@ -155,10 +156,7 @@ class Url {
 
     path_ = Url.ensureDecodedURL(path_)
     path_ = Url.stripQueryAndHash(path_)
-    path_ = path_
-      .split('/')
-      .filter(Boolean)
-      .join('/')
+    path_ = path_.split('/').filter(Boolean).join('/')
     path_ = path_.length ? `/${path_}/` : '/'
     return path_
   }

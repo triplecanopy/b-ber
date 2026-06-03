@@ -12,8 +12,9 @@ export function counter(this: any): string {
 export function getContext(this: any): string {
   const { stack } = new Error()
   const message = stack!.split('\n')
-  const context = message[3].replace(/^\s+at[^/]+(\/[^:]+):.+$/, (_, m: string) =>
-    ctx(m)
+  const context = message[3].replace(
+    /^\s+at[^/]+(\/[^:]+):.+$/,
+    (_, m: string) => ctx(m)
   )
 
   if (context !== this.context) {

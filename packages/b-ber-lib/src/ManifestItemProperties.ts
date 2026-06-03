@@ -1,6 +1,6 @@
+import { elements, terms } from '@canopycanopycanopy/b-ber-shapes-dublin-core'
 import fs from 'fs-extra'
 import mime from 'mime-types'
-import { terms, elements } from '@canopycanopycanopy/b-ber-shapes-dublin-core'
 
 interface ManifestFile {
   absolutePath: string
@@ -52,12 +52,16 @@ class ManifestItemProperties {
 
   // Detect if a term is a Dublin Core `element`
   static isDCElement(data: DCMetaEntry): boolean {
-    return Object.prototype.hasOwnProperty.call(data, 'term') && elements.indexOf(data.term as string) > -1
+    return (
+      Object.hasOwn(data, 'term') && elements.indexOf(data.term as string) > -1
+    )
   }
 
   // Detect if a term is a Dublin Core `term`
   static isDCTerm(data: DCMetaEntry): boolean {
-    return Object.prototype.hasOwnProperty.call(data, 'term') && terms.indexOf(data.term as string) > -1
+    return (
+      Object.hasOwn(data, 'term') && terms.indexOf(data.term as string) > -1
+    )
   }
 
   // Detect if an XHTML file contains remote resources

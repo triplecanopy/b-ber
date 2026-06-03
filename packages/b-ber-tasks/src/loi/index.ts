@@ -1,11 +1,12 @@
 /* eslint-disable camelcase */
-import fs from 'fs-extra'
+
+import { GuideItem, SpineItem, Template } from '@canopycanopycanopy/b-ber-lib'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
-import sortBy from 'lodash/sortBy'
-import { SpineItem, GuideItem, Template } from '@canopycanopycanopy/b-ber-lib'
 import figure from '@canopycanopycanopy/b-ber-templates/figures'
 import Xhtml from '@canopycanopycanopy/b-ber-templates/Xhtml'
+import fs from 'fs-extra'
+import sortBy from 'lodash/sortBy'
 
 const createLOILeader = () => {
   const baseName = 'figures-titlepage'
@@ -108,9 +109,7 @@ const loi = () => {
   }
 
   // create separate files
-  return createLOILeader()
-    .then(createLOIAsSeparateHTMLFiles)
-    .catch(log.error)
+  return createLOILeader().then(createLOIAsSeparateHTMLFiles).catch(log.error)
 }
 
 export default loi

@@ -1,25 +1,25 @@
-import { Parser } from 'b-ber-validator'
 import {
   BLOCK_DIRECTIVES,
+  DEPRECATED_DIRECTIVES,
+  DRAFT_DIRECTIVES,
   INLINE_DIRECTIVES,
   MISC_DIRECTIVES,
-  DRAFT_DIRECTIVES,
-  DEPRECATED_DIRECTIVES,
 } from '@canopycanopycanopy/b-ber-shapes-directives'
-import { string } from './combinators/string'
-import { many } from './combinators/many'
-import { oneOf } from './combinators/oneOf'
-import { regex } from './combinators/regex'
-import { sequence } from './combinators/sequence'
-import { map } from './combinators/map'
-import { optional } from './combinators/optional'
-import { eol } from './combinators/eol'
-import { not } from './combinators/not'
-import { lazy } from './combinators/lazy'
-import { eos } from './combinators/eos'
+import { Parser } from 'b-ber-validator'
 import { close } from './combinators/close'
-import { required } from './combinators/required'
 import { constrained } from './combinators/constrained'
+import { eol } from './combinators/eol'
+import { eos } from './combinators/eos'
+import { lazy } from './combinators/lazy'
+import { many } from './combinators/many'
+import { map } from './combinators/map'
+import { not } from './combinators/not'
+import { oneOf } from './combinators/oneOf'
+import { optional } from './combinators/optional'
+import { regex } from './combinators/regex'
+import { required } from './combinators/required'
+import { sequence } from './combinators/sequence'
+import { string } from './combinators/string'
 import { flat } from './lib/flat'
 
 const space = string(' ', 'Space')
@@ -60,7 +60,7 @@ const attrs = sequence([many(attr()), optional(spaces), eol()])
 // allow `lastIndex` to be used in the `regex` combinator.
 const directiveRegExp = (s: string) => new RegExp(`${s}\\b(?!-)`, 'g')
 
-const inlineNames = Array.from(INLINE_DIRECTIVES).map(s =>
+const inlineNames = Array.from(INLINE_DIRECTIVES).map((s) =>
   regex(directiveRegExp(s), s)
 )
 
@@ -68,7 +68,7 @@ const blockNames = Array.from(BLOCK_DIRECTIVES)
   .concat(Array.from(MISC_DIRECTIVES))
   .concat(Array.from(DRAFT_DIRECTIVES))
   .concat(Array.from(DEPRECATED_DIRECTIVES))
-  .map(s => regex(directiveRegExp(s), s))
+  .map((s) => regex(directiveRegExp(s), s))
 
 const inlineDirectiveName = oneOf(inlineNames)
 const blockDirectiveName = oneOf(blockNames)

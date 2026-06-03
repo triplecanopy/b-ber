@@ -5,9 +5,9 @@ import {
   INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
 } from '@canopycanopycanopy/b-ber-shapes-directives'
 import {
+  createDirectiveString,
   throMissingBuildTypeError,
   throwMissingIDError,
-  createDirectiveString,
 } from './helpers'
 
 const DIRECTIVE_REGEXP = /^media(?:-inline)?$/

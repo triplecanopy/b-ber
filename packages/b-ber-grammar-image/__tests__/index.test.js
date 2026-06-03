@@ -7,7 +7,7 @@ jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
   figures: [],
   add: jest.fn(),
   src: {
-    images: p => p,
+    images: (p) => p,
   },
 }))
 
@@ -23,12 +23,12 @@ jest.mock('image-size', () => jest.fn(() => ({ width: 100, height: 150 })))
 
 jest.mock('@canopycanopycanopy/b-ber-grammar-attributes', () => ({
   attributesObject: jest.fn(() => ({ source: 'test.jpg', alt: 'test image' })),
-  htmlId: jest.fn(id => id),
+  htmlId: jest.fn((id) => id),
 }))
 
 jest.mock('@canopycanopycanopy/b-ber-lib', () => ({
   State: jest.requireMock('@canopycanopycanopy/b-ber-lib/State'),
-  Html: { comment: jest.fn(s => s) },
+  Html: { comment: jest.fn((s) => s) },
   utils: {
     getImageOrientation: jest.fn(() => 'landscape'),
   },
@@ -41,7 +41,7 @@ jest.mock('../src/image', () => ({
   ),
 }))
 
-const instance = { renderInline: jest.fn(str => str) }
+const instance = { renderInline: jest.fn((str) => str) }
 const context = { fileName: 'test' }
 
 describe('b-ber-grammar-image', () => {

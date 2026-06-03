@@ -1,8 +1,8 @@
 import log from '@canopycanopycanopy/b-ber-logger'
 import {
   INLINE_DIRECTIVE_FENCE,
-  SECONDARY_INLINE_DIRECTIVE_FENCE_OPEN,
   SECONDARY_INLINE_DIRECTIVE_FENCE_CLOSE,
+  SECONDARY_INLINE_DIRECTIVE_FENCE_OPEN,
 } from '@canopycanopycanopy/b-ber-shapes-directives'
 
 export const throMissingBuildTypeError = ({ id, build }) => {
@@ -21,7 +21,7 @@ export const throwMissingIDError = ({ id }) => {
   log.error(message)
 }
 
-export const createAttributesString = data =>
+export const createAttributesString = (data) =>
   Object.entries(data)
     .reduce((acc, [key, value]) => acc.concat(`${key}:"${value}" `), '')
     .trim()

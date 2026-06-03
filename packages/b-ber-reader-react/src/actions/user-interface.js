@@ -1,7 +1,7 @@
 import * as actionTypes from '../constants/user-interface'
 
 // Bulk update
-export const update = payload => ({
+export const update = (payload) => ({
   type: actionTypes.UPDATE,
   payload,
 })

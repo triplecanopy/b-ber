@@ -45,9 +45,7 @@
     "yargs": "^13.3.0",
     "yawn-yaml": "1.5.0"
   },
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/triplecanopy/b-ber.git"

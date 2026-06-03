@@ -1,8 +1,8 @@
-import fs from 'fs-extra'
+import { SpineItem, Template } from '@canopycanopycanopy/b-ber-lib'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
-import { SpineItem, Template } from '@canopycanopycanopy/b-ber-lib'
 import Xhtml from '@canopycanopycanopy/b-ber-templates/Xhtml'
+import fs from 'fs-extra'
 
 class Footnotes {
   baseName!: string

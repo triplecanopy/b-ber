@@ -1,10 +1,10 @@
 import React from 'react'
-import VideoControlsSimple from './VideoControlsSimple'
-import MediaTime from './MediaTime'
-import MediaButtonVolume from './MediaButtonVolume'
 import MediaButtonFullScreen from './MediaButtonFullScreen'
+import MediaButtonVolume from './MediaButtonVolume'
+import MediaTime from './MediaTime'
+import VideoControlsSimple from './VideoControlsSimple'
 
-const VideoControlsNormal = props => (
+const VideoControlsNormal = (props) => (
   <>
     <VideoControlsSimple {...props} />
     <MediaTime

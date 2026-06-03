@@ -22,4 +22,4 @@ function MediaButtonSeekBack(props) {
   )
 }
 
-export { MediaButtonSeekForward, MediaButtonSeekBack }
+export { MediaButtonSeekBack, MediaButtonSeekForward }

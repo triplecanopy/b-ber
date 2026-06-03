@@ -1,5 +1,5 @@
 import state from '@canopycanopycanopy/b-ber-lib/State'
-import { Pkg, Metadata, Manifest, Spine, Guide } from '../src/Opf'
+import { Guide, Manifest, Metadata, Pkg, Spine } from '../src/Opf'
 
 jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
   build: 'epub',

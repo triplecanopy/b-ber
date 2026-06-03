@@ -14,7 +14,7 @@ jest.mock('@canopycanopycanopy/b-ber-logger', () => ({
   debug: jest.fn(),
 }))
 
-const instance = { renderInline: jest.fn(str => str) }
+const instance = { renderInline: jest.fn((str) => str) }
 const context = { fileName: 'test' }
 
 describe('b-ber-grammar-pullquote', () => {

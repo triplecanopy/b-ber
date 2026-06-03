@@ -1,5 +1,5 @@
-import { deploy } from '@canopycanopycanopy/b-ber-tasks'
 import { fail } from '@canopycanopycanopy/b-ber-lib/utils'
+import { deploy } from '@canopycanopycanopy/b-ber-tasks'
 
 const command = 'deploy [builds...]'
 const describe = 'Upload a b-ber project to Amazon S3'

@@ -33,7 +33,7 @@ jest.mock('@canopycanopycanopy/b-ber-logger', () => ({
 afterAll(() => Promise.all([fs.remove('_project'), fs.remove('themes')]))
 
 describe('task: serialize', () => {
-  it('runs commands in sequence', done => {
+  it('runs commands in sequence', (done) => {
     expect.assertions(3)
 
     const sequence = ['foo', 'bar', 'baz']
@@ -46,12 +46,12 @@ describe('task: serialize', () => {
     })
   })
 
-  it('passes values to subsequent calls', done => {
+  it('passes values to subsequent calls', (done) => {
     expect.assertions(4)
 
     const sequence = ['foo', 'bar', 'baz']
 
-    serialize(sequence).then(result => {
+    serialize(sequence).then((result) => {
       expect(tasks.foo).toHaveBeenCalled()
       expect(tasks.bar).toHaveBeenCalledWith(1)
       expect(tasks.baz).toHaveBeenCalledWith(2)
@@ -60,7 +60,7 @@ describe('task: serialize', () => {
     })
   })
 
-  it('throws on invalid params', done => {
+  it('throws on invalid params', (done) => {
     expect.assertions(3)
 
     const sequence = ['foo', 'bar', 'baz', 'bat']
@@ -72,7 +72,7 @@ describe('task: serialize', () => {
 
     expect(() => serialize(sequence)).toThrow()
 
-    promise().catch(err => {
+    promise().catch((err) => {
       expect(err.name).toBe('Error')
       expect(err.message).toMatch(/async#serialize: Invalid parameter/)
       done()

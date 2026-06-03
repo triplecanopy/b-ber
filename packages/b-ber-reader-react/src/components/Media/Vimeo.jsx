@@ -1,18 +1,18 @@
 import React from 'react'
 import ReactPlayer from 'react-player/vimeo'
-import VimeoPosterImage from './VimeoPosterImage'
-import VimeoPlayerControls from './VimeoPlayerControls'
-import withNodePosition from '../../lib/with-node-position'
-import withIframePosition from '../../lib/with-iframe-position'
-import ReaderContext from '../../lib/reader-context'
-import Viewport from '../../helpers/Viewport'
 import {
-  getURLAndQueryParamters,
   getPlayerPropsFromQueryString,
-  transformSearchParamsToProps,
   getPlayingStateOnUpdate,
+  getURLAndQueryParamters,
+  transformSearchParamsToProps,
 } from '../../helpers/media'
 import { isBrowser, unlessDefined } from '../../helpers/utils'
+import Viewport from '../../helpers/Viewport'
+import ReaderContext from '../../lib/reader-context'
+import withIframePosition from '../../lib/with-iframe-position'
+import withNodePosition from '../../lib/with-node-position'
+import VimeoPlayerControls from './VimeoPlayerControls'
+import VimeoPosterImage from './VimeoPosterImage'
 
 const iframePositioningEnabled = isBrowser('chrome', 'eq', 81)
 
@@ -58,7 +58,7 @@ class Vimeo extends React.Component {
     // Controls is needed both in state and in playerOptions
     const { controls, muted, loop } = playerOptions
 
-    this.setState(state => ({
+    this.setState((state) => ({
       url,
       loop: unlessDefined(loop, state.loop),
       muted: unlessDefined(muted, state.muted),
@@ -150,7 +150,8 @@ class Vimeo extends React.Component {
 
     return (
       <>
-        {/*
+        {
+          /*
             The iframePlaceholder element is a statically positioned div that
             fills the space that should be occupied by the ReactPlayer iframe.
             The iframe is absolutely positioned and is set to top and left
@@ -160,9 +161,10 @@ class Vimeo extends React.Component {
             The parent container also needs to be styled to properly render the
             layout. Inject inline styles here.
         */
-        iframePositioningEnabled && (
-          <style>{this.props.iframeStyleBlock('vimeo')}</style>
-        )}
+          iframePositioningEnabled && (
+            <style>{this.props.iframeStyleBlock('vimeo')}</style>
+          )
+        }
 
         {iframePositioningEnabled && (
           <div

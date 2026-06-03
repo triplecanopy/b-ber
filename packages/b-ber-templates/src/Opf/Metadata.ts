@@ -1,7 +1,11 @@
-import File from 'vinyl'
-import crypto from 'crypto'
-import { Html, ManifestItemProperties, utils } from '@canopycanopycanopy/b-ber-lib'
+import {
+  Html,
+  ManifestItemProperties,
+  utils,
+} from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
+import crypto from 'crypto'
+import File from 'vinyl'
 
 const { fileId } = utils
 

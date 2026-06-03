@@ -1,7 +1,7 @@
-import path from 'path'
-import fs from 'fs-extra'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
+import fs from 'fs-extra'
+import path from 'path'
 import uglifyJS from 'uglify-js'
 
 const uglifyOptions = state.config.uglify_options || {
@@ -58,16 +58,15 @@ const unoptimized = (files: string[]): Promise<void[]> => {
 }
 
 const write = () =>
-  fs.readdir(state.src.javascripts()).then(_files => {
-    const files = _files.filter(a => path.extname(a) === '.js')
-    return (state.env === 'production' ? optimized : unoptimized)(files) as Promise<void>
+  fs.readdir(state.src.javascripts()).then((_files) => {
+    const files = _files.filter((a) => path.extname(a) === '.js')
+    return (state.env === 'production' ? optimized : unoptimized)(
+      files
+    ) as Promise<void>
   })
 
 const ensureDir = () => fs.mkdirp(state.dist.javascripts())
 
-const scripts = () =>
-  ensureDir()
-    .then(write)
-    .catch(log.error)
+const scripts = () => ensureDir().then(write).catch(log.error)
 
 export default scripts

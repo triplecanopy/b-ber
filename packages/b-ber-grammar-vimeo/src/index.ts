@@ -1,26 +1,25 @@
-import path from 'path'
-import { Html } from '@canopycanopycanopy/b-ber-lib'
-import { State as state } from '@canopycanopycanopy/b-ber-lib'
+import {
+  attributesObject,
+  attributesQueryString,
+  attributesString,
+  htmlId,
+} from '@canopycanopycanopy/b-ber-grammar-attributes'
+import { Html, State as state } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
+import figure from '@canopycanopycanopy/b-ber-parser-figure'
 import {
   INLINE_DIRECTIVE_MARKER,
   INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
 } from '@canopycanopycanopy/b-ber-shapes-directives'
-import figure from '@canopycanopycanopy/b-ber-parser-figure'
+import path from 'path'
 import {
-  attributesQueryString,
-  attributesString,
-  attributesObject,
-  htmlId,
-} from '@canopycanopycanopy/b-ber-grammar-attributes'
-import {
-  validatePosterImage,
+  bBerAttributes,
+  createUnsupportedInline,
   createVimeo,
   createVimeoInline,
-  createUnsupportedInline,
   getMediaType,
-  bBerAttributes,
   transformAttributes,
+  validatePosterImage,
   vimeoAttributesTransformer,
 } from './helpers'
 
@@ -99,43 +98,45 @@ function prepare({ token, marker, context, instance, fileName, lineNumber }) {
   }
 }
 
-const render = ({ instance, context }) => (tokens, index) => {
-  const token = tokens[index]
-  const marker = token.info.trim().match(DIRECTIVE_RE)
-  if (!marker) return ''
+const render =
+  ({ instance, context }) =>
+  (tokens, index) => {
+    const token = tokens[index]
+    const marker = token.info.trim().match(DIRECTIVE_RE)
+    if (!marker) return ''
 
-  const fileName = `_markdown/${context.fileName}.md`
-  const lineNumber = token.map ? token.map[0] : null
-  const type = marker[1]
-  const args = prepare({
-    token,
-    marker,
-    context,
-    instance,
-    fileName,
-    lineNumber,
-  })
+    const fileName = `_markdown/${context.fileName}.md`
+    const lineNumber = token.map ? token.map[0] : null
+    const type = marker[1]
+    const args = prepare({
+      token,
+      marker,
+      context,
+      instance,
+      fileName,
+      lineNumber,
+    })
 
-  switch (type) {
-    // Render the linked image and add the figure to state so that it's rendered
-    // in the LOI
-    case 'vimeo':
-      state.add('figures', args)
-      return createVimeo(args)
+    switch (type) {
+      // Render the linked image and add the figure to state so that it's rendered
+      // in the LOI
+      case 'vimeo':
+        state.add('figures', args)
+        return createVimeo(args)
 
-    // Render an inline Vimeo embed, or an unsupported message if not running a
-    // reader or web build
-    case 'vimeo-inline':
-      return supported(state.build)
-        ? createVimeoInline(args)
-        : createUnsupportedInline(args)
+      // Render an inline Vimeo embed, or an unsupported message if not running a
+      // reader or web build
+      case 'vimeo-inline':
+        return supported(state.build)
+          ? createVimeoInline(args)
+          : createUnsupportedInline(args)
 
-    default:
-      throw new Error(
-        `Something went wrong parsing [${args.source}] in [${context.fileName}]`
-      )
+      default:
+        throw new Error(
+          `Something went wrong parsing [${args.source}] in [${context.fileName}]`
+        )
+    }
   }
-}
 
 export default {
   plugin: figure,
@@ -143,7 +144,7 @@ export default {
   renderer: ({ instance, context }) => ({
     marker: INLINE_DIRECTIVE_MARKER,
     minMarkers: INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
-    validate: params => params.trim().match(MARKER_RE),
+    validate: (params) => params.trim().match(MARKER_RE),
     render: render({ instance, context }),
   }),
 }

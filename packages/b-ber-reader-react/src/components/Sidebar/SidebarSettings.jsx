@@ -1,5 +1,5 @@
-import React from 'react'
 import classNames from 'classnames'
+import React from 'react'
 
 class SidebarSettings extends React.Component {
   constructor(props) {
@@ -22,7 +22,7 @@ class SidebarSettings extends React.Component {
 
   handleFontSizeDecrement = () => this.handleFontSizeChange(-1)
 
-  handleFontSizeChange = increment => {
+  handleFontSizeChange = (increment) => {
     const { fontSizeMin, fontSizeMax, fontSizeStep } = this.state
     let { fontSize } = this.state
     fontSize = parseInt(fontSize, 10)
@@ -36,7 +36,7 @@ class SidebarSettings extends React.Component {
     this.props.save()
   }
 
-  handleOnChange = e => this.setState({ fontSize: e.target.value })
+  handleOnChange = (e) => this.setState({ fontSize: e.target.value })
 
   handleOnBlur = () => {
     const { fontSizeMin, fontSizeMax } = this.state

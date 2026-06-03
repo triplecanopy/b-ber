@@ -23,7 +23,7 @@ describe('b-ber-parser-figure', () => {
   test('adds a block rule named container_figure', () => {
     const md = new MarkdownIt()
     figurePlugin(md, 'figure', mockOptions)
-    const ruleNames = md.block.ruler.__rules__.map(r => r.name)
+    const ruleNames = md.block.ruler.__rules__.map((r) => r.name)
     expect(ruleNames).toContain('container_figure')
   })
 
@@ -38,7 +38,7 @@ describe('b-ber-parser-figure', () => {
     const md = new MarkdownIt()
     figurePlugin(md, 'figure', mockOptions)
     figurePlugin(md, 'spread', { ...mockOptions })
-    const ruleNames = md.block.ruler.__rules__.map(r => r.name)
+    const ruleNames = md.block.ruler.__rules__.map((r) => r.name)
     expect(ruleNames).toContain('container_figure')
     expect(ruleNames).toContain('container_spread')
   })

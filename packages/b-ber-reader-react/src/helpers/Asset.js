@@ -1,8 +1,9 @@
 /* eslint-disable no-bitwise */
-import convert from 'react-attr-converter'
-import quote from 'quote'
+
 import jsStringEscape from 'js-string-escape'
 import camelCase from 'lodash/camelCase'
+import quote from 'quote'
+import convert from 'react-attr-converter'
 import { isNumeric } from './Types'
 
 const quote_ = quote({ quotes: "'" })
@@ -24,9 +25,7 @@ class Asset {
   }
 
   static createId() {
-    return `_${Math.random()
-      .toString(36)
-      .substr(2, 9)}`
+    return `_${Math.random().toString(36).substr(2, 9)}`
   }
 
   static appendBookStyles(css, hash) {
@@ -70,8 +69,8 @@ class Asset {
     const vendorPrefixes = { moz: 'Moz', webkit: 'Webkit', o: 'O' }
     const vendorPrefixRe = /^-(moz|webkit|o)-/
 
-    attrs.style.split(';').map(a => {
-      let [key, val] = a.split(':').map(b => b.trim())
+    attrs.style.split(';').map((a) => {
+      let [key, val] = a.split(':').map((b) => b.trim())
       let match = null
 
       if (!key || !val) return null

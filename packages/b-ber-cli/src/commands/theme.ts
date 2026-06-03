@@ -1,5 +1,5 @@
 import Theme from '@canopycanopycanopy/b-ber-lib/Theme'
-import { fail, ensure } from '@canopycanopycanopy/b-ber-lib/utils'
+import { ensure, fail } from '@canopycanopycanopy/b-ber-lib/utils'
 
 const _command = 'theme <command> [options]'
 const describe = "Manage a project's theme"

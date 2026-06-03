@@ -1,10 +1,10 @@
 /* eslint-disable no-unused-vars,react/no-unused-state */
 
 import React from 'react'
+import { MEDIA_CONTROLS_PRESETS, MEDIA_PLAYBACK_RATES } from '../../constants'
 import ReaderContext from '../../lib/reader-context'
 import withNodePosition from '../../lib/with-node-position'
 import MediaControls from './Controls/MediaControls'
-import { MEDIA_CONTROLS_PRESETS, MEDIA_PLAYBACK_RATES } from '../../constants'
 
 class Media extends React.Component {
   static contextType = ReaderContext
@@ -118,7 +118,7 @@ class Media extends React.Component {
       this.pauseMedia()
     )
 
-  updateTime = step => {
+  updateTime = (step) => {
     const { duration } = this.state
     let { currentTime } = this.state
 
@@ -131,7 +131,7 @@ class Media extends React.Component {
     })
   }
 
-  updateVolume = e => {
+  updateVolume = (e) => {
     const volume = e.currentTarget.value
 
     this.setState(
@@ -148,7 +148,7 @@ class Media extends React.Component {
     )
   }
 
-  updatePlaybackRate = playbackRate =>
+  updatePlaybackRate = (playbackRate) =>
     this.setState(
       { playbackRate },
       () => (this.props.elemRef.current.playbackRate = this.state.playbackRate)
@@ -201,7 +201,7 @@ class Media extends React.Component {
 
   timeBack = () => this.updateTime(Media.skipStep * -1)
 
-  seek = e => {
+  seek = (e) => {
     const progress = Number(e.target.value)
     const currentTime = progress
 

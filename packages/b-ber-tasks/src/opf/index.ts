@@ -1,8 +1,8 @@
-import Opf from './Opf'
 import ManifestAndMetadata from './ManifestAndMetadata'
 import Navigation from './Navigation'
+import Opf from './Opf'
 
 const opf = Opf.createOpf
 export default opf
 
-export { Opf, ManifestAndMetadata, Navigation }
+export { ManifestAndMetadata, Navigation, Opf }

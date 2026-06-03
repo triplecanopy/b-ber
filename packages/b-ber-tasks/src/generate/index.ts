@@ -1,10 +1,11 @@
 /* eslint-disable class-methods-use-this */
-import path from 'path'
-import fs from 'fs-extra'
+
+import state from '@canopycanopycanopy/b-ber-lib/State'
 import YamlAdaptor from '@canopycanopycanopy/b-ber-lib/YamlAdaptor'
 import log from '@canopycanopycanopy/b-ber-logger'
-import state from '@canopycanopycanopy/b-ber-lib/State'
 import sequences from '@canopycanopycanopy/b-ber-shapes-sequences/sequences'
+import fs from 'fs-extra'
+import path from 'path'
 
 // Generate new Markdown documents
 class Generate {
@@ -12,7 +13,13 @@ class Generate {
     this.init = this.init.bind(this)
   }
 
-  createFile({ markdownDir, metadata }: { markdownDir: string; metadata: Record<string, string> }) {
+  createFile({
+    markdownDir,
+    metadata,
+  }: {
+    markdownDir: string
+    metadata: Record<string, string>
+  }) {
     const frontmatter = `---\n${Object.entries(metadata).reduce(
       (acc, [k, v]) => (v ? acc.concat(`${k}: ${v}\n`) : acc),
       ''
@@ -62,7 +69,7 @@ class Generate {
     return fs
       .mkdirp(markdownDir)
       .then(() => this.createFile({ markdownDir, metadata }))
-      .then(resp => this.writePageMeta(resp))
+      .then((resp) => this.writePageMeta(resp))
       .then(({ fileName }) => log.notice(`Generated new page [${fileName}]`))
       .catch(log.error)
   }

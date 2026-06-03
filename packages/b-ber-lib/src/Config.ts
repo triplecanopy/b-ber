@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 
-import defaultsDeep from 'lodash/defaultsDeep'
 import cloneDeep from 'lodash/cloneDeep'
+import defaultsDeep from 'lodash/defaultsDeep'
 
 export interface ConfigOptions {
   env: string

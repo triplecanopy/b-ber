@@ -1,6 +1,7 @@
 /* eslint-disable import/prefer-default-export */
-import path from 'path'
+
 import { opsPath } from '@canopycanopycanopy/b-ber-lib/utils'
+import path from 'path'
 
 const isRemote = (file: string) => /^http/.test(file)
 
@@ -46,4 +47,4 @@ const nestedContentToYAML = (arr: any[]) =>
     return acc
   }, [])
 
-export { pathInfoFromFiles, nestedContentToYAML }
+export { nestedContentToYAML, pathInfoFromFiles }

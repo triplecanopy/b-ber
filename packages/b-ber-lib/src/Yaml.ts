@@ -1,7 +1,8 @@
 /* eslint-disable camelcase */
+
+import log from '@canopycanopycanopy/b-ber-logger'
 import fs from 'fs-extra'
 import find from 'lodash/find'
-import log from '@canopycanopycanopy/b-ber-logger'
 import YAWN from 'yawn-yaml/cjs'
 
 interface SchemaField {
@@ -40,7 +41,10 @@ const interfaces: Record<string, Record<string, SchemaField>> = {
   media: {},
 }
 
-const typeCheck = (schema: string, data: Record<string, unknown> = {}): void => {
+const typeCheck = (
+  schema: string,
+  data: Record<string, unknown> = {}
+): void => {
   const errors: Error[] = []
   if (!interfaces[schema]) errors.push(new Error(`Invalid schema: ${schema}`))
   if (typeof data !== 'object' || data === null || Array.isArray(data)) {
@@ -96,7 +100,11 @@ class Yaml {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  update = (key: string, current: unknown, object: Record<string, any>): void => {
+  update = (
+    key: string,
+    current: unknown,
+    object: Record<string, any>
+  ): void => {
     const entry = find(this.data.json, { [key]: current })
     this.remove(key, current)
     this.data.json = [...this.data.json, { ...entry, ...object }]

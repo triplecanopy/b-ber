@@ -1,8 +1,8 @@
-import path from 'path'
-import readline from 'readline'
-import { exec, execSync } from 'child_process'
 import YamlAdaptor from '@canopycanopycanopy/b-ber-lib/YamlAdaptor'
 import log from '@canopycanopycanopy/b-ber-logger'
+import { exec, execSync } from 'child_process'
+import path from 'path'
+import readline from 'readline'
 
 const cwd = process.cwd()
 const defaultBuilds = ['epub', 'mobi', 'reader']
@@ -76,14 +76,14 @@ function run(command: string, callback?: () => void) {
   proc.stdout?.on('data', (data: string) => console.log(String(data)))
   proc.stderr?.on('data', (data: string) => console.log(String(data)))
 
-  proc.on('error', err => {
+  proc.on('error', (err) => {
     console.log('')
     console.log('ERROR: aws encountered an error')
     console.log(err.message)
     console.log(err.stack)
   })
 
-  proc.on('close', code => {
+  proc.on('close', (code) => {
     if (code !== 0) {
       console.log('')
       console.log(`ERROR: aws exited with code ${code}`)
@@ -93,10 +93,18 @@ function run(command: string, callback?: () => void) {
   })
 }
 
-function deploy({ bucketURL, awsRegion, builds }: { bucketURL: string; awsRegion: string; builds: string[] }) {
+function deploy({
+  bucketURL,
+  awsRegion,
+  builds,
+}: {
+  bucketURL: string
+  awsRegion: string
+  builds: string[]
+}) {
   console.log('')
   console.log('Uploading project files...')
-  return new Promise<void>(resolve => {
+  return new Promise<void>((resolve) => {
     const sourceDir = path.resolve(cwd, './')
     const commandParts = [
       `aws s3 cp ${sourceDir} ${bucketURL}`,
@@ -117,11 +125,8 @@ function deploy({ bucketURL, awsRegion, builds }: { bucketURL: string; awsRegion
 }
 
 function ensureEnvVars() {
-  const {
-    AWS_ACCESS_KEY_ID,
-    AWS_SECRET_ACCESS_KEY,
-    BBER_BUCKET_REGION,
-  } = process.env
+  const { AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, BBER_BUCKET_REGION } =
+    process.env
 
   if (!AWS_ACCESS_KEY_ID || !AWS_SECRET_ACCESS_KEY || !BBER_BUCKET_REGION) {
     log.error(
@@ -140,17 +145,28 @@ function ensureEnvVars() {
   return { bucketURL, awsRegion: BBER_BUCKET_REGION }
 }
 
-function extractVars(config: { bucketURL: string; awsRegion: string; builds?: string[] }) {
+function extractVars(config: {
+  bucketURL: string
+  awsRegion: string
+  builds?: string[]
+}) {
   const { bucketURL, awsRegion } = config
 
-  let builds = config.builds && config.builds.length ? config.builds : defaultBuilds
-  builds = builds.map((str: string) => str.toLowerCase()).filter((arg: string) => args.has(arg))
+  let builds =
+    config.builds && config.builds.length ? config.builds : defaultBuilds
+  builds = builds
+    .map((str: string) => str.toLowerCase())
+    .filter((arg: string) => args.has(arg))
 
   return { bucketURL, awsRegion, builds }
 }
 
-function deployWithPrompt(config: { bucketURL: string; awsRegion: string; builds: string[] }) {
-  return new Promise(resolve => {
+function deployWithPrompt(config: {
+  bucketURL: string
+  awsRegion: string
+  builds: string[]
+}) {
+  return new Promise((resolve) => {
     const rl = readline.createInterface(process.stdin, process.stdout)
     const { bucketURL, awsRegion, builds } = config
 
@@ -165,7 +181,7 @@ function deployWithPrompt(config: { bucketURL: string; awsRegion: string; builds
     rl.setPrompt(' [yN] ')
     rl.prompt()
 
-    rl.on('line', data => {
+    rl.on('line', (data) => {
       if (data === 'y' || data === 'yes') {
         return deploy({ bucketURL, awsRegion, builds }).then(() => rl.close())
       }
@@ -175,12 +191,19 @@ function deployWithPrompt(config: { bucketURL: string; awsRegion: string; builds
   })
 }
 
-function deployWithoutPrompt(config: { bucketURL: string; awsRegion: string; builds: string[] }) {
+function deployWithoutPrompt(config: {
+  bucketURL: string
+  awsRegion: string
+  builds: string[]
+}) {
   log.notice('Deploy command run with "--yes", skipping confirmation')
   return deploy(config)
 }
 
-function setCachePolicy({ bucketURL, awsRegion }: { bucketURL: string; awsRegion: string }, cacheArgs: string[]) {
+function setCachePolicy(
+  { bucketURL, awsRegion }: { bucketURL: string; awsRegion: string },
+  cacheArgs: string[]
+) {
   console.log('Setting cache policy...')
   const command = [
     `aws s3 cp ${bucketURL} ${bucketURL}`,
@@ -188,11 +211,12 @@ function setCachePolicy({ bucketURL, awsRegion }: { bucketURL: string; awsRegion
   ]
     .concat(cacheArgs)
     .join(' ')
-  return new Promise<void>(resolve => run(command, () => resolve()))
+  return new Promise<void>((resolve) => run(command, () => resolve()))
 }
 
 function main({ builds, yes }: { builds?: string[]; yes?: boolean }) {
-  let config: { bucketURL: string; awsRegion: string; builds: string[] } = {} as any
+  let config: { bucketURL: string; awsRegion: string; builds: string[] } =
+    {} as any
   return ensureAwsCli()
     .then(ensureEnvVars)
     .then((response: any) => {

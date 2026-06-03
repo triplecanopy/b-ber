@@ -1,4 +1,4 @@
-export const getUrlParams = stringOrMap =>
+export const getUrlParams = (stringOrMap) =>
   stringOrMap instanceof URLSearchParams
     ? stringOrMap
     : new URLSearchParams(stringOrMap)

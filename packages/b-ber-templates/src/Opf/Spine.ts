@@ -1,7 +1,7 @@
-import path from 'path'
-import File from 'vinyl'
 import { State as state, utils } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
+import path from 'path'
+import File from 'vinyl'
 
 const { fileId } = utils
 

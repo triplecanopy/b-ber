@@ -5,7 +5,7 @@ export default function useMaxHeight() {
   const [maxHeight, setMaxHeight] = useState(defaultHeight)
 
   const ref = useCallback(
-    node => {
+    (node) => {
       if (node === null) {
         setMaxHeight(defaultHeight)
         return

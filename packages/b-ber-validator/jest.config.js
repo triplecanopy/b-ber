@@ -9,7 +9,15 @@ module.exports = {
       '<rootDir>/../b-ber-shapes-directives',
   },
   transform: {
-    '^.+\\.jsx?$': './jest-transform-upward.js',
-    '^.+\\.tsx?$': 'ts-jest',
+    '^.+\\.[jt]sx?$': [
+      '@swc/jest',
+      {
+        jsc: {
+          parser: { syntax: 'typescript', tsx: false, decorators: true },
+          target: 'es2020',
+        },
+        module: { type: 'commonjs' },
+      },
+    ],
   },
 }

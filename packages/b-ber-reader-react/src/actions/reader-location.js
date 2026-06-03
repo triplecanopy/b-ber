@@ -2,13 +2,13 @@
 
 import isPlainObject from 'lodash/isPlainObject'
 import * as actionTypes from '../constants/reader-location'
-import {
-  hasSearchParams,
-  ensureSearchParams,
-  appendExternalParams,
-} from '../helpers/search-params'
 import Asset from '../helpers/Asset'
 import Storage from '../helpers/Storage'
+import {
+  appendExternalParams,
+  ensureSearchParams,
+  hasSearchParams,
+} from '../helpers/search-params'
 import Url from '../helpers/Url'
 import history from '../lib/History'
 
@@ -18,7 +18,7 @@ export const locationStates = {
   LOCAL_STORAGE: 'localStorage',
 }
 
-export const updateLocalStorage = location => (dispatch, getState) => {
+export const updateLocalStorage = (location) => (dispatch, getState) => {
   const prevState = getState()
   const { bookURL } = prevState.readerSettings
 
@@ -36,7 +36,7 @@ export const updateLocalStorage = location => (dispatch, getState) => {
   })
 }
 
-export const updateQueryString = location => (dispatch, getState) => {
+export const updateQueryString = (location) => (dispatch, getState) => {
   const prevState = getState()
   const { searchParamKeys } = prevState.readerSettings
 
@@ -148,7 +148,7 @@ export const setInitialSearchParams = () => (dispatch, getState) => {
   })
 }
 
-export const updateLocation = location => (dispatch, getState) => {
+export const updateLocation = (location) => (dispatch, getState) => {
   const prevState = getState()
   const { locationState } = prevState.readerSettings
 

@@ -1,5 +1,5 @@
-import { validate } from '@canopycanopycanopy/b-ber-tasks'
 import { fail } from '@canopycanopycanopy/b-ber-lib/utils'
+import { validate } from '@canopycanopycanopy/b-ber-tasks'
 
 const command = 'check [project]'
 

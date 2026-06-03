@@ -203,66 +203,36 @@ export const bBerAudioVideoAttributes: Set<string> = new Set([
 ])
 
 export const SUPPORTED_ATTRIBUTES: Record<string, Set<string>> = {
-  block: new Set([
-    'title',
-    'classes',
-  ]),
+  block: new Set(['title', 'classes']),
 
-  figure: new Set([
-    'alt',
-    'caption',
-    'classes',
-    'source',
-  ]),
+  figure: new Set(['alt', 'caption', 'classes', 'source']),
 
-  'figure-inline': new Set([
-    'alt',
-    'caption',
-    'classes',
-    'source',
-  ]),
+  'figure-inline': new Set(['alt', 'caption', 'classes', 'source']),
 
-  logo: new Set([
-    'alt',
-    'source',
-  ]),
+  logo: new Set(['alt', 'source']),
 
-  video: new Set([
-    ...htmlAudioVideoAttributes,
-    ...bBerAudioVideoAttributes,
-  ]),
+  video: new Set([...htmlAudioVideoAttributes, ...bBerAudioVideoAttributes]),
 
   'video-inline': new Set([
     ...htmlAudioVideoAttributes,
     ...bBerAudioVideoAttributes,
   ]),
 
-  audio: new Set([
-    ...htmlAudioVideoAttributes,
-    ...bBerAudioVideoAttributes,
-  ]),
+  audio: new Set([...htmlAudioVideoAttributes, ...bBerAudioVideoAttributes]),
 
   'audio-inline': new Set([
     ...htmlAudioVideoAttributes,
     ...bBerAudioVideoAttributes,
   ]),
 
-  vimeo: new Set([
-    ...vimeoEmbedAttributes,
-    ...bBerAudioVideoAttributes,
-  ]),
+  vimeo: new Set([...vimeoEmbedAttributes, ...bBerAudioVideoAttributes]),
 
   'vimeo-inline': new Set([
     ...vimeoEmbedAttributes,
     ...bBerAudioVideoAttributes,
   ]),
 
-  iframe: new Set([
-    ...htmlIframeAttributes,
-    'source',
-    'classes',
-    'poster',
-  ]),
+  iframe: new Set([...htmlIframeAttributes, 'source', 'classes', 'poster']),
 
   'iframe-inline': new Set([
     ...htmlIframeAttributes,
@@ -271,33 +241,17 @@ export const SUPPORTED_ATTRIBUTES: Record<string, Set<string>> = {
     'poster',
   ]),
 
-  pullquote: new Set([
-    'classes',
-    'citation',
-  ]),
+  pullquote: new Set(['classes', 'citation']),
 
-  blockquote: new Set([
-    'classes',
-    'citation',
-  ]),
+  blockquote: new Set(['classes', 'citation']),
 
-  dialogue: new Set([
-    'classes',
-  ]),
+  dialogue: new Set(['classes']),
 
-  gallery: new Set([
-    'caption',
-    'sources',
-  ]),
+  gallery: new Set(['caption', 'sources']),
 
-  spread: new Set([
-    'classes',
-  ]),
+  spread: new Set(['classes']),
 
-  epigraph: new Set([
-    'alt',
-    'source',
-  ]),
+  epigraph: new Set(['alt', 'source']),
 }
 
 export const DIRECTIVES_REQUIRING_ALT_TAG: Set<string> = new Set([

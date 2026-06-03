@@ -1,7 +1,7 @@
-import isPlainObject from 'lodash/isPlainObject'
 import has from 'lodash/has'
+import isPlainObject from 'lodash/isPlainObject'
+import { columns, themes, transitions } from '../constants'
 import { isNumeric } from '../helpers/Types'
-import { transitions, themes, columns } from '../constants'
 import Viewport from '../helpers/Viewport'
 
 const extendExistingProps = (target, ref, obj, opts = { enumerable: true }) => {
@@ -12,7 +12,8 @@ const extendExistingProps = (target, ref, obj, opts = { enumerable: true }) => {
   return target
 }
 
-const valueOf = maybeFunction =>
+// biome-ignore lint/suspicious/noShadowRestrictedNames: local utility, not shadowing Object.prototype.valueOf in any call site
+const valueOf = (maybeFunction) =>
   typeof maybeFunction === 'function' ? maybeFunction.call() : maybeFunction
 
 class ViewerSettings {

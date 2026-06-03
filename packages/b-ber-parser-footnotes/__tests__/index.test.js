@@ -29,7 +29,7 @@ describe('b-ber-parser-footnotes', () => {
     const md = new MarkdownIt()
     const callback = jest.fn()
     footnotePlugin(md, callback)
-    const ruleNames = md.block.ruler.__rules__.map(r => r.name)
+    const ruleNames = md.block.ruler.__rules__.map((r) => r.name)
     expect(ruleNames).toContain('footnote_def')
   })
 
@@ -37,7 +37,7 @@ describe('b-ber-parser-footnotes', () => {
     const md = new MarkdownIt()
     const callback = jest.fn()
     footnotePlugin(md, callback)
-    const inlineRuleNames = md.inline.ruler.__rules__.map(r => r.name)
+    const inlineRuleNames = md.inline.ruler.__rules__.map((r) => r.name)
     expect(inlineRuleNames).toContain('footnote_inline')
     expect(inlineRuleNames).toContain('footnote_ref')
   })
@@ -96,9 +96,9 @@ describe('b-ber-parser-footnotes', () => {
     const callback = jest.fn()
     footnotePlugin(md, callback)
     const callbackArg = []
-    callback.mockImplementation(tokens => callbackArg.push(...tokens))
+    callback.mockImplementation((tokens) => callbackArg.push(...tokens))
     md.render('[^1]: definition\n\nText[^1].\n')
-    const types = callbackArg.map(t => t.type)
+    const types = callbackArg.map((t) => t.type)
     expect(types).toContain('footnote_block_open')
   })
 

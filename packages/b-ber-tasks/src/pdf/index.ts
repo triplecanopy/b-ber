@@ -1,10 +1,10 @@
-import path from 'path'
+import EbookConvert from '@canopycanopycanopy/b-ber-lib/EbookConvert'
+import state from '@canopycanopycanopy/b-ber-lib/State'
+import { getBookMetadata } from '@canopycanopycanopy/b-ber-lib/utils'
+import log from '@canopycanopycanopy/b-ber-logger'
 import fs from 'fs-extra'
 import kebabCase from 'lodash/kebabCase'
-import log from '@canopycanopycanopy/b-ber-logger'
-import state from '@canopycanopycanopy/b-ber-lib/State'
-import EbookConvert from '@canopycanopycanopy/b-ber-lib/EbookConvert'
-import { getBookMetadata } from '@canopycanopycanopy/b-ber-lib/utils'
+import path from 'path'
 
 const booleans = new Set([
   'pdf_mark_links',
@@ -138,7 +138,10 @@ const pdf = () => {
   const opsPath = state.dist.ops()
   const inputPath = path.join(opsPath, 'content.opf')
 
-  const pdfOptions = (state.config.pdf_options || {}) as Record<string, string | boolean>
+  const pdfOptions = (state.config.pdf_options || {}) as Record<
+    string,
+    string | boolean
+  >
   const flags = getPDFFlags(pdfOptions)
 
   // Remove TOC manually since there's no option in

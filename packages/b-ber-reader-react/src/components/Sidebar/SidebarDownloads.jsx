@@ -1,8 +1,8 @@
 /* eslint-disable react/button-has-type */
 
+import classNames from 'classnames'
 import React from 'react'
 import { connect } from 'react-redux'
-import classNames from 'classnames'
 import useMaxHeight from '../../hooks/use-max-height'
 
 function SidebarDownloadLink({ url, label, description }) {
@@ -42,7 +42,7 @@ function SidebarDownloads(props) {
       )}
     >
       <ul className="bber-ul">
-        {props.downloads.map(download => (
+        {props.downloads.map((download) => (
           <SidebarDownloadLink
             key={download.url}
             url={download.url}

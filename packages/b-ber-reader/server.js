@@ -22,16 +22,16 @@ const app = express()
 
 const bookDirs = fs
   .readdirSync(`./${BASE_DIR}`)
-  .filter(a => /^\./.test(a) === false)
+  .filter((a) => /^\./.test(a) === false)
 
 const id = () => String(Math.random()).slice(2)
 
-const url = dir => `${baseURL}${BASE_DIR}/${dir}`
+const url = (dir) => `${baseURL}${BASE_DIR}/${dir}`
 
-const cover = dir => {
+const cover = (dir) => {
   const image = fs
     .readdirSync(`./${BASE_DIR}/${dir}/OPS/images`)
-    .find(img => /__bber_cover__/.test(img))
+    .find((img) => /__bber_cover__/.test(img))
 
   if (!image)
     return `http://via.placeholder.com/400x600/4D50C1/fff/?text=${dir}`
@@ -39,7 +39,7 @@ const cover = dir => {
   return nodeUrl.resolve(`${baseURL}${BASE_DIR}/${dir}/OPS/images/`, image)
 }
 
-const manifest = bookDirs.map(dir => ({
+const manifest = bookDirs.map((dir) => ({
   id: id(),
   title: dir,
   url: url(dir),

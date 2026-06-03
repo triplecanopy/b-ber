@@ -1,29 +1,29 @@
-import Timer from './Timer'
-import { printWarnings, printErrors } from './printer'
+import { composeMessage } from './compose'
+import { configure } from './configure'
+import { counter, getContext } from './context'
+import { debug } from './debug'
+import { error } from './error'
+import { notify } from './events'
+import { decorate, floatFormat, wrap } from './format'
 import {
-  indent,
-  incrementIndent,
+  decrementCounter,
   decrementIndent,
   incrementCounter,
-  decrementCounter,
+  incrementIndent,
+  indent,
 } from './indenter'
-import { bind } from './listeners'
-import { notify } from './events'
-import { warn } from './warn'
 import { info } from './info'
-import { error } from './error'
-import { debug } from './debug'
-import { trace } from './trace'
-import { notice } from './notice'
 import { inspect } from './inspect'
-import { printSummary } from './summary'
-import { configure } from './configure'
+import { bind } from './listeners'
+import { notice } from './notice'
 import { printVersion } from './print-version'
+import { printErrors, printWarnings } from './printer'
 import { registerSequence } from './register'
-import { wrap, decorate, floatFormat } from './format'
-import { counter, getContext } from './context'
-import { composeMessage } from './compose'
 import { reset } from './reset'
+import { printSummary } from './summary'
+import Timer from './Timer'
+import { trace } from './trace'
+import { warn } from './warn'
 
 interface LoggerSettings {
   quiet: boolean
@@ -94,7 +94,11 @@ class Logger extends Timer {
   printSummary!: (data: unknown) => void
   configure!: () => void
   printVersion!: (version: string) => void
-  registerSequence!: (state: unknown, command: string, sequence: string[]) => void
+  registerSequence!: (
+    state: unknown,
+    command: string,
+    sequence: string[]
+  ) => void
   wrap!: (arr: string[], space: string) => string
   decorate!: (args: unknown, ...props: string[]) => string
   floatFormat!: (n: unknown) => string
@@ -169,15 +173,16 @@ class Logger extends Timer {
     const argv = process.argv.reduce<Record<string, string | number | boolean>>(
       (acc, curr) => {
         const [k, v] = curr.split('=')
-        acc[k] = v === undefined ? true : !isNaN(Number(v)) ? Number(v) : v
+        acc[k] =
+          v === undefined ? true : !Number.isNaN(Number(v)) ? Number(v) : v
         return acc
       },
       {}
     )
 
-    Object.keys(this.settings).forEach(a => {
+    Object.keys(this.settings).forEach((a) => {
       const opt = `--${a}`
-      if (Object.prototype.hasOwnProperty.call(argv, opt)) {
+      if (Object.hasOwn(argv, opt)) {
         ;(this.settings as Record<string, unknown>)[a] = argv[opt]
       }
     })

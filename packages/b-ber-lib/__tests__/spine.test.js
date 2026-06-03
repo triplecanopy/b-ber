@@ -77,7 +77,7 @@ describe('Spine', () => {
     const spine = new Spine(OPTIONS)
     // chapter-01 + nested-01 + nested-02
     expect(spine.flattened).toHaveLength(3)
-    expect(spine.flattened.map(i => i.fileName)).toEqual([
+    expect(spine.flattened.map((i) => i.fileName)).toEqual([
       'chapter-01',
       'nested-01',
       'nested-02',
@@ -137,7 +137,7 @@ describe('Spine', () => {
     YamlAdaptor.load.mockReturnValue(['chapter-01'])
     glob.sync.mockReturnValue(['/fake/_markdown/chapter-01.md'])
     const spine = new Spine(OPTIONS)
-    const chapterCount = spine.entries.filter(e => e === 'chapter-01').length
+    const chapterCount = spine.entries.filter((e) => e === 'chapter-01').length
     expect(chapterCount).toBe(1)
   })
 })

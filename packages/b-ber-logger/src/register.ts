@@ -1,4 +1,9 @@
-export function registerSequence(this: any, _state: unknown, _command: string, sequence: string[]): void {
+export function registerSequence(
+  this: any,
+  _state: unknown,
+  _command: string,
+  sequence: string[]
+): void {
   if (this.logLevel < 1) return
 
   const message = this.decorate(

@@ -9,21 +9,24 @@ async function main() {
   const { devDependencies: baseDeps } = baseJson
 
   const dirs = await fs.readdir(path.resolve(cwd, 'packages'))
-  const deps = await dirs.reduce(async (acc, dir) => {
-    const file = path.resolve(cwd, 'packages', dir, 'package.json')
+  const deps = await dirs.reduce(
+    async (acc, dir) => {
+      const file = path.resolve(cwd, 'packages', dir, 'package.json')
 
-    if (!(await fs.pathExists(file))) {
-      return acc
-    }
+      if (!(await fs.pathExists(file))) {
+        return acc
+      }
 
-    const { devDependencies } = await fs.readJSON(file)
+      const { devDependencies } = await fs.readJSON(file)
 
-    Object.entries(devDependencies).forEach(([key]) => {
-      if (/@canopycanopycanopy/.test(key)) delete devDependencies[key]
-    })
+      Object.entries(devDependencies).forEach(([key]) => {
+        if (/@canopycanopycanopy/.test(key)) delete devDependencies[key]
+      })
 
-    return devDependencies ? (await acc).concat(devDependencies) : acc
-  }, Promise.resolve([baseDeps]))
+      return devDependencies ? (await acc).concat(devDependencies) : acc
+    },
+    Promise.resolve([baseDeps])
+  )
 
   const set = new Set(
     deps.reduce((acc, dep) => {
@@ -35,7 +38,7 @@ async function main() {
 
   const devDependencies = Array.from(set)
     .sort()
-    .map(a => a.split(':'))
+    .map((a) => a.split(':'))
     .reduce((acc, [key, val]) => {
       acc[key] = val
       return acc

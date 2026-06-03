@@ -1,19 +1,19 @@
+import classNames from 'classnames'
 import React from 'react'
 import { connect } from 'react-redux'
-import classNames from 'classnames'
-import Request from '../helpers/Request'
 import Asset from '../helpers/Asset'
+import Request from '../helpers/Request'
 import Url from '../helpers/Url'
 import Viewport from '../helpers/Viewport'
 
 const blacklistedNodeNames = ['SCRIPT', 'STYLE']
 
-const isBlacklistedName = name => blacklistedNodeNames.includes(name)
+const isBlacklistedName = (name) => blacklistedNodeNames.includes(name)
 
-const isBlacklistedNode = node =>
+const isBlacklistedNode = (node) =>
   node.nodeType === window.Node.ELEMENT_NODE && isBlacklistedName(node.nodeName)
 
-const processAnchorNode = node => {
+const processAnchorNode = (node) => {
   if (!node.href || Url.isRelative(node.href)) {
     return node.parentNode.removeChild(node)
   }
@@ -111,14 +111,14 @@ class Footnote extends React.Component {
     this.setState({ content })
   }
 
-  handleOnMouseOver = e => {
+  handleOnMouseOver = (e) => {
     if (e) e.preventDefault()
     if (Viewport.isSingleColumn()) return
     this.toggleFootnote()
   }
 
   // Hide footnote if user hovers over a different note
-  handleOnMouseMove = e => {
+  handleOnMouseMove = (e) => {
     if (Viewport.isSingleColumn()) return
 
     if (
@@ -130,12 +130,12 @@ class Footnote extends React.Component {
     }
   }
 
-  handleDocumentClick = e => {
+  handleDocumentClick = (e) => {
     if (e.target.nodeName === 'A') return
     this.hideFootnote()
   }
 
-  toggleFootnote = e => {
+  toggleFootnote = (e) => {
     if (e) {
       e.preventDefault()
       e.stopPropagation()
@@ -144,7 +144,7 @@ class Footnote extends React.Component {
     return this.state.visible ? this.hideFootnote() : this.showFootnote()
   }
 
-  showFootnote = async e => {
+  showFootnote = async (e) => {
     if (e) e.preventDefault()
 
     await this.getFootnote()
@@ -154,7 +154,7 @@ class Footnote extends React.Component {
     document.addEventListener('mousemove', this.handleOnMouseMove)
   }
 
-  hideFootnote = e => {
+  hideFootnote = (e) => {
     if (e) e.preventDefault()
 
     this.setState({ visible: false })
@@ -200,8 +200,9 @@ class Footnote extends React.Component {
     styles.left = isSingleColumn
       ? (styles.left = styles.left * -1 + paddingLeft)
       : styles.left >= window.innerWidth / 2
-      ? (styles.left = styles.left * -1 + paddingLeft + columnWidth + columnGap)
-      : (styles.left = styles.left * -1 + paddingLeft)
+        ? (styles.left =
+            styles.left * -1 + paddingLeft + columnWidth + columnGap)
+        : (styles.left = styles.left * -1 + paddingLeft)
 
     styles.cursor = 'auto'
 

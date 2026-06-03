@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-;(function() {
+;(function () {
   function handlePlayButtonClick() {
     var id = this.dataset.mediaControls
     var type = this.dataset.mediaType

@@ -1,12 +1,12 @@
-import React from 'react'
 import classNames from 'classnames'
+import React from 'react'
 import { connect } from 'react-redux'
 import useMaxHeight from '../../hooks/use-max-height'
 
 function NestedChapterList(props) {
   const { current, items } = props
   const depth = props.depth || 0
-  const items_ = items.filter(item => item.depth === depth && item.inTOC)
+  const items_ = items.filter((item) => item.depth === depth && item.inTOC)
 
   return (
     <ol className="bber-ol">

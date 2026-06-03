@@ -1,5 +1,5 @@
-import yargs from 'yargs'
 import state from '@canopycanopycanopy/b-ber-lib/State'
+import yargs from 'yargs'
 import * as commands from './commands'
 
 const LINE_LENGTH = 70

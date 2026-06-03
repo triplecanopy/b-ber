@@ -1,12 +1,12 @@
-import fs from 'fs-extra'
-import path from 'path'
-import log from '@canopycanopycanopy/b-ber-logger'
-import sequences from '@canopycanopycanopy/b-ber-shapes-sequences/sequences'
-import getAssets from '@canopycanopycanopy/b-ber-resources'
-import Project from '@canopycanopycanopy/b-ber-templates/Project'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import Theme from '@canopycanopycanopy/b-ber-lib/Theme'
 import { ensure } from '@canopycanopycanopy/b-ber-lib/utils'
+import log from '@canopycanopycanopy/b-ber-logger'
+import getAssets from '@canopycanopycanopy/b-ber-resources'
+import sequences from '@canopycanopycanopy/b-ber-shapes-sequences/sequences'
+import Project from '@canopycanopycanopy/b-ber-templates/Project'
+import fs from 'fs-extra'
+import path from 'path'
 
 class Initializer {
   src!: string
@@ -16,7 +16,10 @@ class Initializer {
   path!: string
   builds!: string[]
 
-  constructor({ name = '', config }: { name?: string; config?: Record<string, any> } = {}) {
+  constructor({
+    name = '',
+    config,
+  }: { name?: string; config?: Record<string, any> } = {}) {
     this.src = '_project'
     this.dist = 'project'
     this.name = name
@@ -47,7 +50,7 @@ class Initializer {
   }
 
   copyImages() {
-    return getAssets().then(assets => {
+    return getAssets().then((assets) => {
       const {
         'b-ber-logo': bberLogo,
         'default-publishers-logo': publishersLogo,
@@ -56,7 +59,7 @@ class Initializer {
 
       log.info('Copying development assets')
 
-      const promises = images.map(a =>
+      const promises = images.map((a) =>
         fs.copy(a, path.join(this.path, '_images', path.basename(a)))
       )
       return Promise.all(promises)

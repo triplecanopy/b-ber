@@ -1,5 +1,5 @@
-import { ViewerSettings } from '../../models'
 import Viewport from '../../helpers/Viewport'
+import { ViewerSettings } from '../../models'
 
 export function handleResize() {
   if (this.state.disableMobileResizeEvents) return

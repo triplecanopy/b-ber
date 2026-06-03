@@ -1,13 +1,13 @@
-import path from 'path'
-import fs from 'fs-extra'
-import crypto from 'crypto'
-import sizeOf from 'image-size'
-import PureImage from 'pureimage'
-import log from '@canopycanopycanopy/b-ber-logger'
+import { Template, YamlAdaptor } from '@canopycanopycanopy/b-ber-lib'
 import state from '@canopycanopycanopy/b-ber-lib/State'
-import { YamlAdaptor, Template } from '@canopycanopycanopy/b-ber-lib'
-import Xhtml from '@canopycanopycanopy/b-ber-templates/Xhtml'
 import { getBookMetadata } from '@canopycanopycanopy/b-ber-lib/utils'
+import log from '@canopycanopycanopy/b-ber-logger'
+import Xhtml from '@canopycanopycanopy/b-ber-templates/Xhtml'
+import crypto from 'crypto'
+import fs from 'fs-extra'
+import sizeOf from 'image-size'
+import path from 'path'
+import PureImage from 'pureimage'
 
 class Cover {
   metadata!: Record<string, string>
@@ -84,25 +84,28 @@ class Cover {
 
   // eslint-disable-next-line class-methods-use-this
   YAMLToObject() {
-    return (state.metadata.json() as any[]).reduce<Record<string, string>>((acc, curr: any) => {
-      if (curr.term && curr.value) {
-        acc[curr.term] = curr.value
-      }
+    return (state.metadata.json() as any[]).reduce<Record<string, string>>(
+      (acc, curr: any) => {
+        if (curr.term && curr.value) {
+          acc[curr.term] = curr.value
+        }
 
-      return acc
-    }, {})
+        return acc
+      },
+      {}
+    )
   }
 
   removeDefaultCovers() {
     const imageDir = state.src.images()
     const files = fs.readdirSync(imageDir)
-    const covers = files.filter(file =>
+    const covers = files.filter((file) =>
       path.basename(file).match(new RegExp(this.coverPrefix))
     )
 
     if (!covers.length) return Promise.resolve()
 
-    const promises = covers.map(file =>
+    const promises = covers.map((file) =>
       fs
         .remove(path.join(imageDir, file))
         .then(() => log.info('cover remove outdated cover image [%s]', file))
@@ -133,7 +136,7 @@ class Cover {
   }
 
   generateDefaultCoverImage() {
-    return new Promise<void>(resolve => {
+    return new Promise<void>((resolve) => {
       const img = PureImage.make(this.width, this.height)
       const ctx = img.getContext('2d')
       const font = PureImage.registerFont(
@@ -217,7 +220,10 @@ class Cover {
     this.coverImagePath = state.src.images(this.coverEntry)
 
     // Load metadata.yml
-    const metadata = YamlAdaptor.load(this.metadataYAML) as Record<string, string>
+    const metadata = YamlAdaptor.load(this.metadataYAML) as Record<
+      string,
+      string
+    >
 
     // Check if cover if referenced
     const coverListedInMetadata = getBookMetadata('cover')

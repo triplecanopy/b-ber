@@ -10,10 +10,8 @@ declare module 'yawn-yaml/cjs' {
 
 declare module 'layouts' {
   import File from 'vinyl'
-  function renderLayouts(
-    file: File,
-    layouts: Record<string, unknown>
-  ): File
+
+  function renderLayouts(file: File, layouts: Record<string, unknown>): File
   export = renderLayouts
 }
 

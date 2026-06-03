@@ -1,7 +1,7 @@
-import path from 'path'
-import fs from 'fs-extra'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
+import fs from 'fs-extra'
+import path from 'path'
 
 // Remove an ebook's output directory and outdated builds
 const clean = () => {
@@ -10,8 +10,8 @@ const clean = () => {
 
   const promises = fs
     .readdirSync(projectRoot)
-    .filter(a => path.extname(a) === fileType)
-    .map(b =>
+    .filter((a) => path.extname(a) === fileType)
+    .map((b) =>
       fs
         .remove(path.join(projectRoot, b))
         .then(() => log.info('clean remove [%s]', b))

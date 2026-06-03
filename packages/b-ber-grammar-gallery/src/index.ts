@@ -1,10 +1,10 @@
-import { State as state } from '@canopycanopycanopy/b-ber-lib'
-import createRenderer from '@canopycanopycanopy/b-ber-grammar-renderer'
 import {
-  htmlId,
   attributesObject,
   attributesString,
+  htmlId,
 } from '@canopycanopycanopy/b-ber-grammar-attributes'
+import createRenderer from '@canopycanopycanopy/b-ber-grammar-renderer'
+import { State as state } from '@canopycanopycanopy/b-ber-lib'
 import plugin from '@canopycanopycanopy/b-ber-parser-gallery'
 
 // define our open and closing markers, used by the `validateOpen` and
@@ -54,7 +54,7 @@ const render = (tokens, idx) => {
 export default {
   plugin,
   name: 'gallery',
-  renderer: args =>
+  renderer: (args) =>
     createRenderer({
       ...args,
       markerOpen: MARKER_OPEN_RE,

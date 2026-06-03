@@ -1,7 +1,7 @@
-import log from '@canopycanopycanopy/b-ber-logger'
-import state from '@canopycanopycanopy/b-ber-lib/State'
 import EbookConvert from '@canopycanopycanopy/b-ber-lib/EbookConvert'
+import state from '@canopycanopycanopy/b-ber-lib/State'
 import { getBookMetadata } from '@canopycanopycanopy/b-ber-lib/utils'
+import log from '@canopycanopycanopy/b-ber-logger'
 
 const pageBreakBeforeXPATH = () =>
   [

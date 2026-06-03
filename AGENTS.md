@@ -345,10 +345,15 @@ Before marking any task complete:
 5. If the task changes how the monorepo is configured or structured: update this file
 
 **Run tests before committing.** Always run `npm test` (or the affected
-package's test suite) before creating a commit. Pre-commit hooks via Husky
-should enforce this automatically, but hooks are not always reliable — treat
-manual verification as the primary gate, not the hook. Do not commit code
-that has not passed its tests.
+package's test suite) before creating a commit. `npm test` runs `biome check .`
+followed by the Jest suite. Pre-commit hooks via Husky should enforce this
+automatically, but hooks are not always reliable — treat manual verification as
+the primary gate, not the hook. Do not commit code that has not passed its tests.
+
+**Linting and formatting.** The monorepo uses [Biome](https://biomejs.dev) for
+linting and formatting (`biome.json` at the repo root). `biome check .` lints and
+checks formatting; `biome check --write .` auto-fixes violations. Biome replaces
+ESLint + Prettier — do not add ESLint or Prettier dependencies or configs.
 
 **Test propagation rule:** After any change to a shared library, run the test
 suite of every package that imports it — not just the package being changed.

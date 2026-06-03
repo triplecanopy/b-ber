@@ -243,7 +243,7 @@ sub-pixel float errors from fractional `paddingLeft` values.
 ## Dev Environment
 
 ```bash
-# Run webpack dev server (serves from dev/)
+# Run Vite dev server (serves from dev/)
 npm start
 
 # Run unit tests
@@ -258,13 +258,13 @@ npm run build
 
 ### First-time setup
 
-`dev/index.js` is gitignored — each developer keeps their own local copy:
+`dev/index.jsx` is gitignored — each developer keeps their own local copy:
 
 ```bash
-cp dev/index.example.js dev/index.js
+cp dev/index.example.jsx dev/index.jsx
 ```
 
-Edit `dev/index.js` and set a `manifestURL` pointing to a b-ber project's
+Edit `dev/index.jsx` and set a `manifestURL` pointing to a b-ber project's
 `manifest.json`. All content (OPF, NCX, HTML spine items, assets) is fetched from
 S3 at runtime — no local content setup is needed.
 

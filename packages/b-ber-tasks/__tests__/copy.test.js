@@ -43,17 +43,17 @@ describe('task: copy', () => {
   test('creates destination directories via mkdirp', async () => {
     await copy()
     const dirs = mockFsMkdirp.mock.calls.map(([p]) => p)
-    expect(dirs.some(p => p.includes('dist/images'))).toBe(true)
-    expect(dirs.some(p => p.includes('dist/fonts'))).toBe(true)
-    expect(dirs.some(p => p.includes('dist/media'))).toBe(true)
+    expect(dirs.some((p) => p.includes('dist/images'))).toBe(true)
+    expect(dirs.some((p) => p.includes('dist/fonts'))).toBe(true)
+    expect(dirs.some((p) => p.includes('dist/media'))).toBe(true)
   })
 
   test('creates source directories via mkdirp to ensure they exist', async () => {
     await copy()
     const dirs = mockFsMkdirp.mock.calls.map(([p]) => p)
-    expect(dirs.some(p => p.includes('src/_images'))).toBe(true)
-    expect(dirs.some(p => p.includes('src/_fonts'))).toBe(true)
-    expect(dirs.some(p => p.includes('src/_media'))).toBe(true)
+    expect(dirs.some((p) => p.includes('src/_images'))).toBe(true)
+    expect(dirs.some((p) => p.includes('src/_fonts'))).toBe(true)
+    expect(dirs.some((p) => p.includes('src/_media'))).toBe(true)
   })
 
   test('copies each asset directory from src to dist', async () => {
@@ -61,13 +61,13 @@ describe('task: copy', () => {
     expect(mockFsCopy).toHaveBeenCalledTimes(3)
     const pairs = mockFsCopy.mock.calls.map(([from, to]) => ({ from, to }))
     expect(
-      pairs.some(p => p.from.includes('_images') && p.to.includes('images'))
+      pairs.some((p) => p.from.includes('_images') && p.to.includes('images'))
     ).toBe(true)
     expect(
-      pairs.some(p => p.from.includes('_fonts') && p.to.includes('fonts'))
+      pairs.some((p) => p.from.includes('_fonts') && p.to.includes('fonts'))
     ).toBe(true)
     expect(
-      pairs.some(p => p.from.includes('_media') && p.to.includes('media'))
+      pairs.some((p) => p.from.includes('_media') && p.to.includes('media'))
     ).toBe(true)
   })
 

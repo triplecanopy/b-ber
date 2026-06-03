@@ -16,7 +16,6 @@
     "access": "public"
   },
   "dependencies": {
-    "@babel/runtime-corejs3": "^7.10.5",
     "@canopycanopycanopy/b-ber-lib": "3.1.0",
     "@canopycanopycanopy/b-ber-logger": "3.1.0",
     "@canopycanopycanopy/b-ber-markdown-renderer": "3.1.0",
@@ -59,9 +58,7 @@
     "tsdown": "^0.22.1",
     "typescript": "^6.0.3"
   },
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/triplecanopy/b-ber.git"

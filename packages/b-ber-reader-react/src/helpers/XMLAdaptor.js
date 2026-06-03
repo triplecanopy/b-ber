@@ -1,23 +1,21 @@
-import xmljs from 'xml-js'
-import has from 'lodash/has'
-import { Parser as HtmlToReactParser } from 'html-to-react'
-import find from 'lodash/find'
-
 // eslint-disable-next-line import/no-unresolved
-import * as utils from 'css-tree/utils'
+import generate from 'css-tree/generator'
 // eslint-disable-next-line import/no-unresolved
 import parse from 'css-tree/parser'
 // eslint-disable-next-line import/no-unresolved
-import walk from 'css-tree/walker'
+import * as utils from 'css-tree/utils'
 // eslint-disable-next-line import/no-unresolved
-import generate from 'css-tree/generator'
-
-import Url from './Url'
-import Request from './Request'
-// import Cache from './Cache'
-import { BookMetadata, SpineItem, GuideItem } from '../models'
-import { processingInstructions, isValidNode } from '../lib/process-nodes'
+import walk from 'css-tree/walker'
+import { Parser as HtmlToReactParser } from 'html-to-react'
+import find from 'lodash/find'
+import has from 'lodash/has'
+import xmljs from 'xml-js'
 import DocumentProcessor from '../lib/DocumentProcessor'
+import { isValidNode, processingInstructions } from '../lib/process-nodes'
+// import Cache from './Cache'
+import { BookMetadata, GuideItem, SpineItem } from '../models'
+import Request from './Request'
+import Url from './Url'
 
 class XMLAdaptor {
   static opfURL(url) {
@@ -42,7 +40,7 @@ class XMLAdaptor {
   }
 
   static parseOPF(xml) {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       const pkg = JSON.parse(xmljs.xml2json(xml.data))
       const { elements } = pkg.elements[0]
       const response = {}
@@ -58,14 +56,14 @@ class XMLAdaptor {
   static parseNCX(rootNode, opsURL) {
     const { __manifest, __spine } = rootNode
     const __ncx = null
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       const { toc } = __spine.attributes
       if (!toc) {
         resolve({ ...rootNode, __ncx })
         return
       }
 
-      const item = find(__manifest.elements, a => a.attributes.id === toc)
+      const item = find(__manifest.elements, (a) => a.attributes.id === toc)
       if (!item) {
         resolve({ ...rootNode, __ncx })
         return
@@ -84,12 +82,12 @@ class XMLAdaptor {
   static createSpineItems(rootNode) {
     const { __manifest, __spine, __ncx, __guide } = rootNode
 
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       let spine
 
-      spine = __spine.elements.map(itemref => {
+      spine = __spine.elements.map((itemref) => {
         const { idref, linear } = itemref.attributes
-        const item = find(__manifest.elements, a => a.attributes.id === idref)
+        const item = find(__manifest.elements, (a) => a.attributes.id === idref)
 
         if (!item || linear !== 'yes') return null // spine item not found in manifest (!) or non-linear
 
@@ -105,7 +103,7 @@ class XMLAdaptor {
         // that are missing from items excluded from the TOC, and therefore not in the NCX
         const guideItem = find(
           __guide.elements,
-          a => a.attributes.href === href
+          (a) => a.attributes.href === href
         )
 
         let title = ''
@@ -136,7 +134,7 @@ class XMLAdaptor {
       if (__ncx) {
         const { elements } = __ncx.elements[0]
         const navMap = find(elements, { name: 'navMap' })
-        navMap.elements.forEach(navPoint =>
+        navMap.elements.forEach((navPoint) =>
           XMLAdaptor.parseNavPoints(spine, __manifest, navPoint)
         )
       }
@@ -147,13 +145,13 @@ class XMLAdaptor {
 
   static createGuideItems(rootNode) {
     const { __guide } = rootNode
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       if (!__guide.elements || !__guide.elements.length) {
         resolve({ ...rootNode, guide: [] })
         return
       }
 
-      const guide = __guide.elements.map(reference => {
+      const guide = __guide.elements.map((reference) => {
         const { type, title, href } = reference.attributes
         return new GuideItem({ type, title, href })
       })
@@ -163,22 +161,22 @@ class XMLAdaptor {
   }
 
   static udpateSpineItemURLs(rootNode, opsURL) {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       const { spine } = rootNode
       spine.map(
         // eslint-disable-next-line no-param-reassign
-        a => (a.absoluteURL = Url.resolveRelativeURL(opsURL, a.href))
+        (a) => (a.absoluteURL = Url.resolveRelativeURL(opsURL, a.href))
       )
       resolve({ ...rootNode, spine })
     })
   }
 
   static udpateGuideItemURLs(rootNode, opsURL) {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       const { guide } = rootNode
       guide.map(
         // eslint-disable-next-line no-param-reassign
-        a => (a.absoluteURL = Url.resolveRelativeURL(opsURL, a.href))
+        (a) => (a.absoluteURL = Url.resolveRelativeURL(opsURL, a.href))
       )
       resolve({ ...rootNode, guide })
     })
@@ -192,7 +190,7 @@ class XMLAdaptor {
     src = Url.ensureDecodedURL(src)
     const item = find(
       manifest.elements,
-      a => Url.ensureDecodedURL(a.attributes.href) === src
+      (a) => Url.ensureDecodedURL(a.attributes.href) === src
     )
     if (!item) return console.error(`Could not find manifest item: ${src}`)
 
@@ -214,7 +212,7 @@ class XMLAdaptor {
     if (parent) parent.addChild(spineItem)
 
     const depth_ = depth + 1
-    navPoint.elements.forEach(child =>
+    navPoint.elements.forEach((child) =>
       XMLAdaptor.parseNavPoints(spine, manifest, child, depth_, spineItem)
     )
   }
@@ -222,10 +220,10 @@ class XMLAdaptor {
   static createBookMetadata(rootNode) {
     const { __metadata } = rootNode
     const _metadata = __metadata.elements
-      .filter(a => /^dc:/.test(a.name))
-      .map(b => ({ [b.name.slice(3)]: b.elements[0].text }))
+      .filter((a) => /^dc:/.test(a.name))
+      .map((b) => ({ [b.name.slice(3)]: b.elements[0].text }))
 
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       const metadata = new BookMetadata({})
       _metadata.forEach((item, i) => {
         const key = Object.keys(_metadata[i])
@@ -354,7 +352,7 @@ class XMLAdaptor {
 
     const promises = styles.map(
       ({ url, base }) =>
-        new Promise(rs => {
+        new Promise((rs) => {
           // const cache = Cache.get(url)
 
           // if (useLocalStorageCache && cache?.data) {
@@ -363,7 +361,7 @@ class XMLAdaptor {
           //   return
           // }
 
-          Request.getText(url).then(rsp => {
+          Request.getText(url).then((rsp) => {
             // if (useLocalStorageCache) {
             //   console.log('No CSS cache - setting cache for %s', url)
             //   Cache.set(url, rsp.data)

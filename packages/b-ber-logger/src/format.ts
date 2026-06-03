@@ -1,5 +1,5 @@
-import util from 'util'
 import chalk from 'chalk'
+import util from 'util'
 
 export function wrap(this: any, arr: string[], space: string): string {
   return arr
@@ -36,14 +36,20 @@ export function floatFormat(_n: unknown): string {
   return str
 }
 
-export function decorate(this: any, _args: unknown, ...props: string[]): string {
+export function decorate(
+  this: any,
+  _args: unknown,
+  ...props: string[]
+): string {
   const args = _args && Array.isArray(_args) ? _args : [_args]
 
   let message = util.format.call(util, ...args)
 
   if (this.boringOutput === false) {
     for (let i = props.length - 1; i >= 0; i--) {
-      const chalkFn = (chalk as unknown as Record<string, ((s: string) => string) | undefined>)[props[i]]
+      const chalkFn = (
+        chalk as unknown as Record<string, ((s: string) => string) | undefined>
+      )[props[i]]
       if (chalkFn) {
         message = chalkFn(message)
       } else {

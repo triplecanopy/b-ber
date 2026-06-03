@@ -1,10 +1,10 @@
-import path from 'path'
-import fs from 'fs-extra'
-import dartSass from 'sass'
-import postcss from 'postcss'
-import autoprefixer from 'autoprefixer'
-import log from '@canopycanopycanopy/b-ber-logger'
 import state from '@canopycanopycanopy/b-ber-lib/State'
+import log from '@canopycanopycanopy/b-ber-logger'
+import autoprefixer from 'autoprefixer'
+import fs from 'fs-extra'
+import path from 'path'
+import postcss from 'postcss'
+import dartSass from 'sass'
 
 // dirnames that may be referenced in the theme. we copy over assets when
 // running the sass task
@@ -73,31 +73,34 @@ const ensureCSSDir = () => fs.mkdirp(state.dist.stylesheets())
 const copyThemeAssets = () => {
   const { theme } = state
 
-  const fileData = ASSET_DIRNAMES.reduce((acc, curr) => {
-    const themePath = path.resolve(path.dirname(theme.entry), curr)
-    const srcPath = state.src.root(`_${curr}`)
+  const fileData = ASSET_DIRNAMES.reduce(
+    (acc, curr) => {
+      const themePath = path.resolve(path.dirname(theme.entry), curr)
+      const srcPath = state.src.root(`_${curr}`)
 
-    fs.mkdirpSync(srcPath)
+      fs.mkdirpSync(srcPath)
 
-    try {
-      fs.lstatSync(themePath).isDirectory()
-    } catch (err) {
-      if ((err as NodeJS.ErrnoException).code === 'ENOENT') return acc
-      throw new Error(
-        `There was a problem copying [${themePath}] to [${srcPath}]`
-      )
-    }
+      try {
+        fs.lstatSync(themePath).isDirectory()
+      } catch (err) {
+        if ((err as NodeJS.ErrnoException).code === 'ENOENT') return acc
+        throw new Error(
+          `There was a problem copying [${themePath}] to [${srcPath}]`
+        )
+      }
 
-    const data = fs
-      .readdirSync(themePath)
-      .filter(a => a.charAt(0) !== '.')
-      .map(fileName => ({
-        input: path.join(themePath, fileName),
-        output: path.join(srcPath, fileName),
-      }))
+      const data = fs
+        .readdirSync(themePath)
+        .filter((a) => a.charAt(0) !== '.')
+        .map((fileName) => ({
+          input: path.join(themePath, fileName),
+          output: path.join(srcPath, fileName),
+        }))
 
-    return acc.concat(data)
-  }, [] as { input: string; output: string }[])
+      return acc.concat(data)
+    },
+    [] as { input: string; output: string }[]
+  )
 
   const promises = fileData.map(({ input, output }) =>
     fs.copy(input, output, {
@@ -152,7 +155,7 @@ function resolveImportedModule(importPath: string) {
 }
 
 const renderCSS = (scssString: Buffer): Promise<{ css: Buffer }> =>
-  new Promise(resolve => {
+  new Promise((resolve) => {
     dartSass.render(
       {
         // Importer allows use of '~' to denote node_modules directory in SCSS files

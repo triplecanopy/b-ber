@@ -2,28 +2,28 @@
 
 ## What This Is
 
-`b-ber-reader` is a webpack-based deployment shell for the React EPUB reader. It
+`b-ber-reader` is a Vite-based deployment shell for the React EPUB reader. It
 contains no reader logic; its only job is to bundle `@canopycanopycanopy/b-ber-reader-react`
 into a self-contained browser application and provide a small Express server for
-local preview. `src/index.js` mounts the `<Reader>` component, passing in any
+local preview. `src/index.jsx` mounts the `<Reader>` component, passing in any
 `window.__SERVER_DATA__` props injected at serve time. The Express server
 (`server.js`) scans an `epub/` directory, auto-generates a JSON manifest of
 available books, and serves the compiled `dist/` bundle as a static site.
 
 ## Key Files
 
-| File                | Purpose                                                              |
-| ------------------- | -------------------------------------------------------------------- |
-| `src/index.js`      | Webpack entry — mounts `<Reader>` from `b-ber-reader-react`          |
-| `src/template.ejs`  | HTML shell template used by HtmlWebpackPlugin                        |
-| `webpack.config.js` | Production webpack config; outputs hashed bundles to `dist/`         |
-| `server.js`         | Express server — scans `epub/`, serves manifest at `/api/books.json` |
-| `index.js`          | Package `main` — empty stub (no programmatic API)                    |
+| File             | Purpose                                                              |
+| ---------------- | -------------------------------------------------------------------- |
+| `src/index.jsx`  | Vite entry — mounts `<Reader>` from `b-ber-reader-react`             |
+| `index.html`     | Vite HTML entry point (replaces webpack HtmlPlugin template)         |
+| `vite.config.js` | Production Vite config; outputs hashed bundles to `dist/`            |
+| `server.js`      | Express server — scans `epub/`, serves manifest at `/api/books.json` |
+| `index.js`       | Package `main` — empty stub (no programmatic API)                    |
 
 ## Dev Commands
 
 ```bash
-npm run build   # webpack production build → dist/
+npm run build   # Vite production build → dist/
 npm run serve   # build then start the Express server via nodemon
 ```
 
@@ -34,11 +34,14 @@ No tests are currently implemented.
 This package follows the monorepo-wide standards in the root AGENTS.md.
 Additional standards for this package:
 
-- `b-ber-reader` is a legacy deployment shell. Do not add reader features here;
+- `b-ber-reader` is a deployment shell. Do not add reader features here;
   implement them in `b-ber-reader-react` instead.
-- The webpack config aliases `react` and `react-dom` to the monorepo root to
+- `vite.config.js` aliases `react` and `react-dom` to the monorepo root to
   prevent duplicate React instances when `b-ber-reader-react` is symlinked via
-  `file:` — preserve this alias if updating the webpack config.
+  `file:` — preserve this alias if updating the Vite config.
+- `commonjsOptions.include` is extended to cover `b-ber-reader-react/dist`
+  because the symlink resolves outside `node_modules/` and Vite's built-in CJS
+  plugin would otherwise skip it.
 - The Express server in `server.js` is for local development only and should
   not be hardened for production use.
 

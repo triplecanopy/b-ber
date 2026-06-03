@@ -143,6 +143,7 @@ declare class Xml {
   static container(): string;
   static mimetype(): string;
 }
+
 //#endregion
-export { Ncx, index_d_exports as Opf, Ops, Project, Toc, Xhtml, Xml };
+export { index_d_exports as Opf, Ncx, Ops, Project, Toc, Xhtml, Xml };
 //# sourceMappingURL=index.d.ts.map

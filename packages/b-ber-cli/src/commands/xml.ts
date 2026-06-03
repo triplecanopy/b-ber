@@ -4,10 +4,7 @@ const command = 'xml'
 const describe = 'Export a project as an XML document'
 
 const builder = (yargs: any) =>
-  yargs
-    .help('h')
-    .alias('h', 'help')
-    .usage(`\nUsage: $0 xml\n\n${describe}`)
+  yargs.help('h').alias('h', 'help').usage(`\nUsage: $0 xml\n\n${describe}`)
 
 const handler = xml
 

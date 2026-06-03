@@ -27,7 +27,7 @@ global.ResizeObserver = class ResizeObserver {
 // return a non-matching stub so isVerticallyScrolling / isMobile always return false.
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: query => ({
+  value: (query) => ({
     matches: false,
     media: query,
     onchange: null,

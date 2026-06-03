@@ -1,9 +1,9 @@
 import React from 'react'
-import withNodePosition from '../../lib/with-node-position'
-import withIframePosition from '../../lib/with-iframe-position'
-import ReaderContext from '../../lib/reader-context'
-import Viewport from '../../helpers/Viewport'
 import { isBrowser } from '../../helpers/utils'
+import Viewport from '../../helpers/Viewport'
+import ReaderContext from '../../lib/reader-context'
+import withIframePosition from '../../lib/with-iframe-position'
+import withNodePosition from '../../lib/with-node-position'
 
 // Enable absolutely positioned iframe layout for specific browsers/versions
 const iframePositioningEnabled = isBrowser('chrome', 'eq', 81)

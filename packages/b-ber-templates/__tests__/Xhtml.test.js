@@ -1,5 +1,5 @@
-import fs from 'fs-extra'
 import state from '@canopycanopycanopy/b-ber-lib/State'
+import fs from 'fs-extra'
 import Xhtml from '../src/Xhtml'
 
 jest.mock('@canopycanopycanopy/b-ber-lib/State', () => {

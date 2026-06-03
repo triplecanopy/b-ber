@@ -10,11 +10,11 @@
  * Also verifies the MAX_WAIT_MS hard timeout fires onStable regardless.
  */
 
+import { act, render } from '@testing-library/react'
 import React from 'react'
 import { Provider } from 'react-redux'
-import { render, act } from '@testing-library/react'
-import Ultimate from '../../src/components/Ultimate'
 import * as viewActions from '../../src/actions/view'
+import Ultimate from '../../src/components/Ultimate'
 import { createTestStore } from '../helpers/store'
 
 const INTERVAL = 100 // must match STABILITY_CHECK_INTERVAL_MS in Ultimate.jsx

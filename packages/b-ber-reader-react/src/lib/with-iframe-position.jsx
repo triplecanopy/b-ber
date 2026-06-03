@@ -104,7 +104,7 @@ const withIframePosition = (WrappedComponent, options = { enabled: false }) =>
           // eslint-disable-next-line react/jsx-props-no-spreading
           {...this.state}
           iframeStyleBlock={this.iframeStyleBlock}
-          innerRef={ref => (this.iframePlaceholder = ref)}
+          innerRef={(ref) => (this.iframePlaceholder = ref)}
         />
       )
     }

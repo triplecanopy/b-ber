@@ -1,6 +1,6 @@
 import React from 'react'
 
-const MediaButtonDownload = props => (
+const MediaButtonDownload = (props) => (
   <a
     className="bber-a material-icons media__button__file_download"
     href={props.currentSrc}

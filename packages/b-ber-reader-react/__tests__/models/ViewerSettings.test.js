@@ -1,11 +1,11 @@
+import { themes, transitions } from '../../src/constants'
 import ViewerSettings from '../../src/models/ViewerSettings'
-import { transitions, themes } from '../../src/constants'
 
 console.error = jest.fn()
 
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: jest.fn().mockImplementation(query => ({
+  value: jest.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,

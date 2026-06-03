@@ -1,5 +1,5 @@
-import log from '@canopycanopycanopy/b-ber-logger'
 import state from '@canopycanopycanopy/b-ber-lib/State'
+import log from '@canopycanopycanopy/b-ber-logger'
 import * as tasks from './task-handlers'
 
 // This is basically the engine of our application. `serialize` is responsible
@@ -41,10 +41,10 @@ const taskReducer = (acc: Promise<unknown>, curr: TaskEntry) => {
       : curr) ?? curr
   validate(fn)
 
-  return acc.then(resp => {
+  return acc.then((resp) => {
     log.notify('start', curr)
 
-    return fn(resp).then(resp2 => {
+    return fn(resp).then((resp2) => {
       log.notify('stop', curr)
       return resp2
     })

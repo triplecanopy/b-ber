@@ -22,16 +22,13 @@
     "typescript": "^6.0.3"
   },
   "dependencies": {
-    "@babel/runtime-corejs3": "^7.10.5",
     "@canopycanopycanopy/b-ber-lib": "3.1.0",
     "@canopycanopycanopy/b-ber-logger": "3.1.0",
     "@canopycanopycanopy/b-ber-shapes-directives": "3.1.0",
     "lodash": "^4.17.21",
     "tar": "^6.1.11"
   },
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/triplecanopy/b-ber.git"

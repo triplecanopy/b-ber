@@ -1,8 +1,8 @@
-import validator from '../src'
 import * as mocks from '../__mocks__'
+import validator from '../src'
 import { flat } from '../src/lib/flat'
 
-const check = text => validator({ text, index: 0 })
+const check = (text) => validator({ text, index: 0 })
 
 describe('b-ber-validator', () => {
   it('parses a block directive', () => {

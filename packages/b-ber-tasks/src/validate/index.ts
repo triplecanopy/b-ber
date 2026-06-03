@@ -1,8 +1,8 @@
-import fs from 'fs-extra'
-import path from 'path'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
 import validator, { report } from '@canopycanopycanopy/b-ber-validator'
+import fs from 'fs-extra'
+import path from 'path'
 
 const validate = async ({ project }: { project: string }) => {
   const markdownPath = path.resolve(
@@ -16,11 +16,11 @@ const validate = async ({ project }: { project: string }) => {
   }
 
   const files = (await fs.readdir(markdownPath))
-    .filter(f => f.slice(-2).toLowerCase() === 'md')
-    .map(f => path.join(markdownPath, f))
+    .filter((f) => f.slice(-2).toLowerCase() === 'md')
+    .map((f) => path.join(markdownPath, f))
 
   const errors: Array<{ success: boolean; [key: string]: unknown }> = []
-  const check = files.map(async file => {
+  const check = files.map(async (file) => {
     const data = await fs.readFile(file, 'utf8')
     const res = validator({ text: data, index: 0 })
 

@@ -3,8 +3,8 @@
 /* eslint-disable class-methods-use-this */
 
 import isUndefined from 'lodash/isUndefined'
-import DocumentPreProcessor from './DocumentPreProcessor'
 import { rand } from '../helpers/utils'
+import DocumentPreProcessor from './DocumentPreProcessor'
 
 class DocumentProcessor {
   static defaults = {
@@ -86,17 +86,17 @@ class DocumentProcessor {
   }
 
   classListContainsAll(node, classNames) {
-    return classNames.some(list =>
-      list.every(name => node.classList.contains(name))
+    return classNames.some((list) =>
+      list.every((name) => node.classList.contains(name))
     )
   }
 
   classListContainsAny = (node, classNames) =>
-    classNames.some(name => node.classList.contains(name))
+    classNames.some((name) => node.classList.contains(name))
 
   classListContainsNone(node, classNames) {
-    return classNames.every(list =>
-      list.every(name => !node.classList.contains(name))
+    return classNames.every((list) =>
+      list.every((name) => !node.classList.contains(name))
     )
   }
 
@@ -216,7 +216,9 @@ class DocumentProcessor {
 
   insertMarkers(doc, callback) {
     // Filter nodes that have been dynamically inserted into the DOM
-    const nodes = Array.from(doc.children).filter(node => !this.isMarker(node))
+    const nodes = Array.from(doc.children).filter(
+      (node) => !this.isMarker(node)
+    )
 
     for (let i = 0; i < nodes.length; i++) {
       const node = nodes[i]
@@ -357,7 +359,7 @@ class DocumentProcessor {
   // preceeding a spread
   removeBreakAfterClasses(doc) {
     const nodes = Array.from(doc.children).filter(
-      node => !this.isMarker(node) && node.nodeType === 1
+      (node) => !this.isMarker(node) && node.nodeType === 1
     )
 
     for (let i = 0; i < nodes.length; i++) {
@@ -426,7 +428,7 @@ class DocumentProcessor {
     DocumentPreProcessor.createScriptElements()
     DocumentPreProcessor.parseXML()
 
-    this.insertMarkers(doc, result => {
+    this.insertMarkers(doc, (result) => {
       if (!this.validateDocument(result)) {
         err = new Error('Invalid markup')
       }

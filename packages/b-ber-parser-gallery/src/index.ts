@@ -6,14 +6,14 @@ https://github.com//markdown-it/markdown-it-container
 MIT license
 */
 
-import path from 'path'
-import { State as _state } from '@canopycanopycanopy/b-ber-lib'
-import mime from 'mime-types'
 import {
   htmlId,
   parseAttrs,
   toAlias,
 } from '@canopycanopycanopy/b-ber-grammar-attributes'
+import { State as _state } from '@canopycanopycanopy/b-ber-lib'
+import mime from 'mime-types'
+import path from 'path'
 
 const addCaption = (md: any, t: any, attrs: any): void => {
   if (!attrs.caption) return
@@ -72,7 +72,9 @@ const createMediaElement = (tok: any, attrs: any): void => {
   }
 
   const sources = media.filter((a: any) => toAlias(a) === attrs.source)
-  const mediaAttrs: [string, string][] = [[`data-${attrs.type}`, htmlId(attrs.source)]]
+  const mediaAttrs: [string, string][] = [
+    [`data-${attrs.type}`, htmlId(attrs.source)],
+  ]
 
   if (attrs.poster) mediaAttrs.push(['poster', `../images/${attrs.poster}`])
 
@@ -141,7 +143,12 @@ const containerPlugin = (md: any, name: string, options: any = {}): void => {
   const markerLen = markerStr.length
   const { validateOpen, render } = options
 
-  function container(state: any, startLine: number, endLine: number, silent: boolean): boolean {
+  function container(
+    state: any,
+    startLine: number,
+    endLine: number,
+    silent: boolean
+  ): boolean {
     const lineNumber = startLine + 1
 
     let pos

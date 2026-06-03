@@ -5,7 +5,7 @@ jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
   figures: [],
   add: jest.fn(),
   src: {
-    images: p => p,
+    images: (p) => p,
   },
 }))
 
@@ -19,15 +19,15 @@ jest.mock('@canopycanopycanopy/b-ber-grammar-attributes', () => ({
   attributesQueryString: jest.fn(() => ''),
   attributesString: jest.fn(() => ''),
   attributesObject: jest.fn(() => ({ source: '12345' })),
-  htmlId: jest.fn(id => id),
+  htmlId: jest.fn((id) => id),
 }))
 
 jest.mock('@canopycanopycanopy/b-ber-lib', () => ({
   State: jest.requireMock('@canopycanopycanopy/b-ber-lib/State'),
-  Html: { comment: jest.fn(s => s) },
+  Html: { comment: jest.fn((s) => s) },
 }))
 
-const instance = { renderInline: jest.fn(str => str) }
+const instance = { renderInline: jest.fn((str) => str) }
 const context = { fileName: 'test' }
 
 describe('b-ber-grammar-vimeo', () => {

@@ -1,17 +1,17 @@
-import path from 'path'
-import fs from 'fs-extra'
-import File from 'vinyl'
-import glob from 'glob'
-import find from 'lodash/find'
-import difference from 'lodash/difference'
-import remove from 'lodash/remove'
+import { Template, YamlAdaptor } from '@canopycanopycanopy/b-ber-lib'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
-import Toc from '@canopycanopycanopy/b-ber-templates/Toc'
 import Ncx from '@canopycanopycanopy/b-ber-templates/Ncx'
 import Guide from '@canopycanopycanopy/b-ber-templates/Opf/Guide'
 import Spine from '@canopycanopycanopy/b-ber-templates/Opf/Spine'
-import { YamlAdaptor, Template } from '@canopycanopycanopy/b-ber-lib'
+import Toc from '@canopycanopycanopy/b-ber-templates/Toc'
+import fs from 'fs-extra'
+import glob from 'glob'
+import difference from 'lodash/difference'
+import find from 'lodash/find'
+import remove from 'lodash/remove'
+import path from 'path'
+import File from 'vinyl'
 import { getFileObjects } from '../inject'
 
 class Navigation {
@@ -21,7 +21,7 @@ class Navigation {
 
     log.info(`opf build navigation documents [${navDocs.join(', ')}]`)
 
-    const promises = navDocs.map(doc => fs.writeFile(state.dist.ops(doc), ''))
+    const promises = navDocs.map((doc) => fs.writeFile(state.dist.ops(doc), ''))
     return Promise.all(promises)
   }
 
@@ -31,7 +31,7 @@ class Navigation {
     // Get the XHTML file names
     const files = glob
       .sync(state.dist.ops('**', '*.xhtml'))
-      .map(file => path.basename(file, '.xhtml'))
+      .map((file) => path.basename(file, '.xhtml'))
 
     // Set up our promise chain
     const promises = [Promise.resolve()]
@@ -55,7 +55,7 @@ class Navigation {
     const missingEntries = difference(files, tocEntries)
 
     // Add the missing entries to the YAML file (either toc.yml or type.yml)
-    missingEntries.forEach(name => {
+    missingEntries.forEach((name) => {
       if (state.contains('loi', { name })) return
 
       const entry = state.find('spine.flattened', { name }) as any
@@ -100,10 +100,10 @@ class Navigation {
     // not present on the system. The user has to resolve these conflicts
     // manually because deeply nested structures can't be reliably
     // processed.
-    redundantEntries.forEach(name => redundant.push(name))
+    redundantEntries.forEach((name) => redundant.push(name))
 
     if (missing.length) {
-      missing.forEach(name =>
+      missing.forEach((name) =>
         log.warn(
           'opf [%s] was not declared in the TOC. Adding [%s] to [%s]',
           name,
@@ -119,7 +119,7 @@ class Navigation {
       message += `\nThe following entries must be removed manually from [${path.basename(
         tocFile
       )}]:`
-      message += `\n${redundant.map(name => `[${name}]`).join('\n')}`
+      message += `\n${redundant.map((name) => `[${name}]`).join('\n')}`
 
       log.error(message)
     }
@@ -165,9 +165,9 @@ class Navigation {
     // We add entries to the spine programatically, but then they're
     // also found on the system, so we dedupe them here
     // TODO: but also, this is super confusing ...
-    const generatedFiles = remove(flattened, file => file.generated === true)
+    const generatedFiles = remove(flattened, (file) => file.generated === true)
 
-    generatedFiles.forEach(file => {
+    generatedFiles.forEach((file) => {
       if (!find(flattened, { fileName: file.fileName })) {
         flattened.push(file)
       }
@@ -194,7 +194,12 @@ class Navigation {
     return fs.writeFile(filepath, ncx)
   }
 
-  static async writeFiles([toc, ncx, guide, spine]: [string, string, string, any]) {
+  static async writeFiles([toc, ncx, guide, spine]: [
+    string,
+    string,
+    string,
+    any,
+  ]) {
     await Promise.all([
       Navigation.writeTocXhtmlFile(toc),
       Navigation.writeTocNcxFile(ncx),
@@ -213,7 +218,9 @@ class Navigation {
           Navigation.createSpineStringsFromTemplate(),
         ])
       )
-      .then(resp => Navigation.writeFiles(resp as [string, string, string, any]))
+      .then((resp) =>
+        Navigation.writeFiles(resp as [string, string, string, any])
+      )
       .catch(log.error)
   }
 }

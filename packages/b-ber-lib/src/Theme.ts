@@ -1,13 +1,13 @@
 /* eslint-disable no-continue */
 /* eslint-disable global-require, import/no-dynamic-require */
 
-import path from 'path'
+import log from '@canopycanopycanopy/b-ber-logger'
 import fs from 'fs-extra'
 import uniq from 'lodash/uniq'
-import log from '@canopycanopycanopy/b-ber-logger'
-import YamlAdaptor from './YamlAdaptor'
+import path from 'path'
 import state from './State'
 import { safeWrite } from './utils'
+import YamlAdaptor from './YamlAdaptor'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ThemeModule = any
@@ -25,7 +25,7 @@ const getVendorThemes = (): string[] => {
   if (!fs.existsSync(packageJSON)) return []
 
   let themes: string[] = []
-  let { dependencies, devDependencies } = fs.readJSONSync(packageJSON) as {
+  const { dependencies, devDependencies } = fs.readJSONSync(packageJSON) as {
     dependencies?: Record<string, string>
     devDependencies?: Record<string, string>
   }
@@ -33,7 +33,7 @@ const getVendorThemes = (): string[] => {
   const devDeps = devDependencies ? Object.keys(devDependencies) : []
 
   themes = themes.concat(deps, devDeps)
-  themes = themes.filter(name => /^b-ber-theme/.test(name))
+  themes = themes.filter((name) => /^b-ber-theme/.test(name))
 
   return themes
 }
@@ -58,7 +58,10 @@ const getUserThemes = (): string[] => {
     )
 }
 
-const getThemeList = (themes: string[], current = ''): { text: string; duplicates: string[] } => {
+const getThemeList = (
+  themes: string[],
+  current = ''
+): { text: string; duplicates: string[] } => {
   const themes_ = uniq(themes)
   const duplicates: string[] = []
   const text = themes_

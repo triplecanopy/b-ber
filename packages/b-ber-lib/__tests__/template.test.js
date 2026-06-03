@@ -1,5 +1,5 @@
-import File from 'vinyl'
 import fs from 'fs-extra'
+import File from 'vinyl'
 import Template from '../src/Template'
 
 jest.mock('../src/Spine')

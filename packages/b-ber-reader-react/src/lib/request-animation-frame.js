@@ -29,7 +29,7 @@ function rAFPolyfill() {
     !window.cancelAnimationFrame
   ) {
     let lastTime = 0
-    window.requestAnimationFrame = callback => {
+    window.requestAnimationFrame = (callback) => {
       const now = dateNow()
       const nextTime = Math.max(lastTime + 16, now)
       return setTimeout(() => {

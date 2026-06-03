@@ -1,11 +1,11 @@
 import state from '@canopycanopycanopy/b-ber-lib/State'
-import { init as Initializer } from '@canopycanopycanopy/b-ber-tasks'
 import { fail } from '@canopycanopycanopy/b-ber-lib/utils'
 import log from '@canopycanopycanopy/b-ber-logger'
+import { init as Initializer } from '@canopycanopycanopy/b-ber-tasks'
 import {
   blacklistedConfigOptions,
-  withConfigOptions,
   parseConfigFile,
+  withConfigOptions,
 } from '../lib/config-options'
 
 const command = 'new <name>'

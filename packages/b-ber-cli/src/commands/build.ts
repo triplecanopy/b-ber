@@ -1,11 +1,11 @@
-import path from 'path'
-import { serialize } from '@canopycanopycanopy/b-ber-tasks'
 import state from '@canopycanopycanopy/b-ber-lib/State'
-import createBuildSequence from '@canopycanopycanopy/b-ber-shapes-sequences/create-build-sequence'
-import sequences from '@canopycanopycanopy/b-ber-shapes-sequences/sequences'
-import Project from '@canopycanopycanopy/b-ber-templates/Project'
 import { ensure } from '@canopycanopycanopy/b-ber-lib/utils'
 import log from '@canopycanopycanopy/b-ber-logger'
+import createBuildSequence from '@canopycanopycanopy/b-ber-shapes-sequences/create-build-sequence'
+import sequences from '@canopycanopycanopy/b-ber-shapes-sequences/sequences'
+import { serialize } from '@canopycanopycanopy/b-ber-tasks'
+import Project from '@canopycanopycanopy/b-ber-templates/Project'
+import path from 'path'
 import {
   blacklistedConfigOptions,
   parseConfigFile,

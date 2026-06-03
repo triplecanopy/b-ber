@@ -1,9 +1,9 @@
-import plugin from '@canopycanopycanopy/b-ber-parser-dialogue'
-import createRenderer from '@canopycanopycanopy/b-ber-grammar-renderer'
 import {
   attributes,
   htmlId,
 } from '@canopycanopycanopy/b-ber-grammar-attributes'
+import createRenderer from '@canopycanopycanopy/b-ber-grammar-renderer'
+import plugin from '@canopycanopycanopy/b-ber-parser-dialogue'
 
 // define our open and closing markers, used by the `validateOpen` and
 // `validateClose` methods in the `createRenderer`
@@ -34,7 +34,7 @@ const render = (tokens, idx) => {
 export default {
   plugin,
   name: 'dialogue',
-  renderer: args =>
+  renderer: (args) =>
     createRenderer({
       ...args,
       markerOpen: MARKER_OPEN_RE,

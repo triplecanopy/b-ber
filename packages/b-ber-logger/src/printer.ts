@@ -1,6 +1,10 @@
 import util from 'util'
 
-function printNotices(this: any, type: 'warnings' | 'errors', task = 'b-ber'): void {
+function printNotices(
+  this: any,
+  type: 'warnings' | 'errors',
+  task = 'b-ber'
+): void {
   const notices: unknown[] = this[type]
   const leader = type === 'warnings' ? 'WARN' : 'ERR!'
   const color = type === 'warnings' ? 'bgYellowBright' : 'bgRed'

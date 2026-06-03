@@ -1,5 +1,5 @@
-import File from 'vinyl'
 import { Html, utils } from '@canopycanopycanopy/b-ber-lib'
+import File from 'vinyl'
 
 const { getTitle } = utils
 

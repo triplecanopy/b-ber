@@ -1,6 +1,6 @@
 # b-ber-reader-react — Project Plan
 
-_Last updated: 2026-05-30_
+_Last updated: 2026-06-03 (TASK-006 complete — webpack → Vite migration; build, tests, and dev server verified)_
 
 ---
 
@@ -48,6 +48,9 @@ transform to simulate page-turning. A secondary scroll layout mode serves mobile
 | TASK-014 | Redux modernization (Redux Toolkit or Context API)          | low      |
 | TASK-015 | Document local dev setup for agents                         | complete |
 | TASK-016 | Expand test project URLs in dev/index.js                    | low      |
+| TASK-017 | Migrate from SCSS to CSS Modules                            | low      |
+| TASK-018 | Improve test coverage                                       | high     |
+| TASK-021 | Fix font-face flash (FOUT) on page load                     | low      |
 
 ---
 
@@ -104,7 +107,7 @@ Context + useReducer. Move `book.content` global into Redux state.
 ## Development
 
 ```bash
-npm start      # webpack dev server
+npm start      # Vite dev server
 npm test       # jest unit tests
 npm run build  # production build
 ```

@@ -1,7 +1,7 @@
-import File from 'vinyl' // eslint-disable-line import/no-unresolved
+import { Html, State as state, utils } from '@canopycanopycanopy/b-ber-lib'
 import find from 'lodash/find'
 import has from 'lodash/has'
-import { Html, State as state, utils } from '@canopycanopycanopy/b-ber-lib'
+import File from 'vinyl' // eslint-disable-line import/no-unresolved
 
 const { getTitle } = utils
 

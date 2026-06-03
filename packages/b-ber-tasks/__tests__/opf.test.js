@@ -1,5 +1,5 @@
 import fs from 'fs-extra'
-import { Opf, ManifestAndMetadata, Navigation } from '../src/opf'
+import { ManifestAndMetadata, Navigation, Opf } from '../src/opf'
 
 jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
   metadata: { json: () => [{}] },
@@ -28,19 +28,19 @@ describe('ManifestAndMetadata', () => {
     Object.defineProperties(manifestAndMetadata, {
       src: {
         get: () => src,
-        set: val => (src = val),
+        set: (val) => (src = val),
         enumerable: true,
         configurable: true,
       },
       dist: {
         get: () => dist,
-        set: val => (dist = val),
+        set: (val) => (dist = val),
         enumerable: true,
         configurable: true,
       },
       version: {
         get: () => version,
-        set: val => (version = val),
+        set: (val) => (version = val),
         enumerable: true,
         configurable: true,
       },

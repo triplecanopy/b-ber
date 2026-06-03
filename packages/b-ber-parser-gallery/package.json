@@ -32,9 +32,7 @@
     "mime-types": "^2.1.24",
     "tar": "^6.1.11"
   },
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/triplecanopy/b-ber.git"

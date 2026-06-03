@@ -1,5 +1,5 @@
-import React from 'react'
 import classNames from 'classnames'
+import React from 'react'
 import MediaRangeSlider from './MediaRangeSlider'
 
 class MediaButtonVolume extends React.Component {
@@ -9,7 +9,7 @@ class MediaButtonVolume extends React.Component {
     this.state = { open: false }
   }
 
-  toggle = () => this.setState(state => ({ open: !state.open }))
+  toggle = () => this.setState((state) => ({ open: !state.open }))
 
   render() {
     const { open } = this.state

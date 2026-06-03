@@ -7,7 +7,7 @@ var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __exportAll = (all, no_symbols) => {
-	let target = {};
+	const target = {};
 	for (var name in all) __defProp(target, name, {
 		get: all[name],
 		enumerable: true
@@ -36,7 +36,7 @@ let lodash_find_js = require("lodash/find.js");
 lodash_find_js = __toESM(lodash_find_js);
 let lodash_has_js = require("lodash/has.js");
 lodash_has_js = __toESM(lodash_has_js);
-let _canopycanopycanopy_b_ber_lib = require("@canopycanopycanopy/b-ber-lib");
+const _canopycanopycanopy_b_ber_lib = require("@canopycanopycanopy/b-ber-lib");
 let crypto = require("crypto");
 crypto = __toESM(crypto);
 let _canopycanopycanopy_b_ber_logger = require("@canopycanopycanopy/b-ber-logger");

@@ -1,16 +1,16 @@
 /* eslint-disable camelcase */
 /* eslint-disable class-methods-use-this */
 
-import fs from 'fs-extra'
-import path from 'path'
-import crypto from 'crypto'
-import state from '@canopycanopycanopy/b-ber-lib/State'
-import find from 'lodash/find'
 import { Url } from '@canopycanopycanopy/b-ber-lib'
+import state from '@canopycanopycanopy/b-ber-lib/State'
 import { generateWebpubManifest } from '@canopycanopycanopy/b-ber-lib/utils'
 import log from '@canopycanopycanopy/b-ber-logger'
-import rrdir from 'recursive-readdir'
+import crypto from 'crypto'
+import fs from 'fs-extra'
+import find from 'lodash/find'
 import has from 'lodash/has'
+import path from 'path'
+import rrdir from 'recursive-readdir'
 
 class Reader {
   outputDirName!: string
@@ -124,7 +124,7 @@ class Reader {
 
   copyEpubToOutputDir() {
     const epubDir = this.createDirname(this.getBookMetadata('identifier'))
-    const promises = this.epubAssets.map(item =>
+    const promises = this.epubAssets.map((item) =>
       fs.move(state.dist.root(item), path.join(this.outputDir, epubDir, item))
     )
 
@@ -179,7 +179,7 @@ class Reader {
       this.getBookMetadata('identifier'),
       'OPS'
     )
-    return rrdir(assetsDir).then(files => {
+    return rrdir(assetsDir).then((files) => {
       const manifest = generateWebpubManifest(files)
       fs.writeJson(state.dist.root('manifest.json'), manifest)
     })
@@ -187,7 +187,9 @@ class Reader {
 
   injectWebpubManifestLink() {
     const indexHTML = state.dist.root('index.html')
-    const readerURL = Url.addTrailingSlash(this.getProjectConfig('reader_url') as string)
+    const readerURL = Url.addTrailingSlash(
+      this.getProjectConfig('reader_url') as string
+    )
 
     let contents
     contents = fs.readFileSync(indexHTML, 'utf8')
@@ -202,7 +204,7 @@ class Reader {
   copyReaderAppToOutputDir() {
     const promises = fs
       .readdirSync(this.readerAppPath as string)
-      .map(file =>
+      .map((file) =>
         fs.copy(
           path.join(this.readerAppPath as string, file),
           path.resolve(state.dist.root(file))
@@ -214,7 +216,9 @@ class Reader {
 
   injectServerDataIntoTemplate() {
     const indexHTML = state.dist.root('index.html')
-    const readerURL = Url.addTrailingSlash(this.getProjectConfig('reader_url') as string)
+    const readerURL = Url.addTrailingSlash(
+      this.getProjectConfig('reader_url') as string
+    )
     const identifier = this.getBookMetadata('identifier')
     const bookURL = `${readerURL}epub/${identifier}`
     const serverData = {
@@ -226,9 +230,13 @@ class Reader {
         },
       ],
       bookURL,
-      projectURL: Url.addTrailingSlash(this.getProjectConfig('remote_url') as string),
+      projectURL: Url.addTrailingSlash(
+        this.getProjectConfig('remote_url') as string
+      ),
       downloads: this.getProjectConfig('downloads'),
-      basePath: Url.addTrailingSlash(this.getProjectConfig('base_path') as string),
+      basePath: Url.addTrailingSlash(
+        this.getProjectConfig('base_path') as string
+      ),
       loadRemoteLibrary: false,
       uiOptions: this.getProjectConfig('ui_options'),
       cache: this.getProjectConfig('cache'),
@@ -248,9 +256,12 @@ class Reader {
   // Update URLs in CSS
   updateLinkedResourcesWithAbsolutePaths() {
     const indexContents = fs.readFileSync(state.dist.root('index.html'), 'utf8')
-    const versionHash = indexContents.match(/link href="\/(\w+\.css)"/)?.[1] ?? ''
+    const versionHash =
+      indexContents.match(/link href="\/(\w+\.css)"/)?.[1] ?? ''
     const stylesheet = state.dist.root(versionHash)
-    const readerURL = Url.addTrailingSlash(this.getProjectConfig('reader_url') as string)
+    const readerURL = Url.addTrailingSlash(
+      this.getProjectConfig('reader_url') as string
+    )
 
     let contents
     contents = fs.readFileSync(stylesheet, 'utf8')

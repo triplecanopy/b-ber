@@ -14,7 +14,7 @@ jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
   build: 'epub',
   dist: {
     ops: (...parts) => `/builds/epub/ops/${parts.join('/')}`,
-    text: file => `/builds/epub/ops/text/${file}`,
+    text: (file) => `/builds/epub/ops/text/${file}`,
   },
 }))
 
@@ -80,8 +80,8 @@ describe('task: inject — getFileObjects', () => {
     ]
     await getFileObjects(files)
     const calledWith = mockFsReaddir.mock.calls.map(([p]) => p)
-    expect(calledWith.some(p => p.includes('stylesheets'))).toBe(true)
-    expect(calledWith.some(p => p.includes('javascripts'))).toBe(true)
+    expect(calledWith.some((p) => p.includes('stylesheets'))).toBe(true)
+    expect(calledWith.some((p) => p.includes('javascripts'))).toBe(true)
   })
 
   test('returns empty array for empty input', async () => {

@@ -1,12 +1,12 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import ReaderContext from '../lib/reader-context'
 import Url from '../helpers/Url'
+import ReaderContext from '../lib/reader-context'
 
 // The Link component accounts for several different possibilities when directing
 // users with relation to the publication and hosting domain
 
-const Link = props => (
+const Link = (props) => (
   <ReaderContext.Consumer>
     {({ getSpineItemByAbsoluteUrl, navigateToChapterByURL }) => {
       const { className, href, readerSettings, style, children } = props
@@ -47,7 +47,7 @@ const Link = props => (
           rel={rel}
           style={nextStyle}
           className={nextClassName}
-          onClick={e => {
+          onClick={(e) => {
             if (internalToPublication) {
               e.preventDefault()
               navigateToChapterByURL(href)

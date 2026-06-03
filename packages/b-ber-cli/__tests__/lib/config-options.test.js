@@ -1,10 +1,10 @@
+import fs from 'fs-extra'
 import os from 'os'
 import path from 'path'
-import fs from 'fs-extra'
 import {
-  withConfigOptions,
   blacklistedConfigOptions,
   parseConfigFile,
+  withConfigOptions,
 } from '../../src/lib/config-options'
 
 jest.mock('@canopycanopycanopy/b-ber-logger', () => ({

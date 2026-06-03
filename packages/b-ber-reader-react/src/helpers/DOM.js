@@ -11,7 +11,7 @@ class DOM {
       .getComputedStyle(elem)
       .transform.replace(/(matrix\(|\))/, '')
       .split(',')
-      .map(a => Number(a.trim()))
+      .map((a) => Number(a.trim()))
 
     return matrix[4]
   }
