@@ -1,6 +1,6 @@
 # b-ber monorepo — Project Plan
 
-_Last updated: 2026-06-02 (TASK-034 complete — Jest v29 upgrade; TASK-047 added — watch mode research; TASK-048 complete — b-ber-resources TS conversion; coverage target raised to 75%; Jest `name` → `displayName` fixed)_
+_Last updated: 2026-06-03 (TASK-033 complete — coverage tooling eval; V8 provider confirmed, orphaned istanbul/coveralls deps removed; TASK-049 added — coverage upload evaluation)_
 
 ---
 
@@ -104,7 +104,7 @@ These tasks have no unmet dependencies:
 | TASK-021 | Audit `--no-package-lock` in lerna bootstrap     | `feat/upgrades`        | Low priority; review alongside `--legacy-peer-deps`                                       |
 | TASK-022 | Automate circular dependency checks              | `feat/upgrades`        | Options: pre-commit hook, CI, or `npm test`; update extensions list once TS work starts   |
 | TASK-023 | Research Lerna replacement / upgrade options     | `feat/upgrades`        | Superseded by TASK-036; keep for research notes                                           |
-| TASK-033 | Evaluate code coverage tooling                   | `feat/upgrades`        | Istanbul incompatible with @swc/jest; audit V8 provider, Vitest coverage, orphaned pkgs   |
+| TASK-033 | Evaluate code coverage tooling                   | `feat/upgrades`        | ✓ Complete — V8 provider confirmed; coveralls/istanbul orphans removed; TASK-049 opened   |
 | TASK-034 | Upgrade Jest from v26 to v29                     | `feat/upgrades`        | ✓ Complete — 84/84 suites pass; v8 coverage provider, snapshots updated                   |
 | TASK-035 | Fix and modernize CircleCI pipeline              | `feat/upgrades`        | Stale Docker image, broken bootstrap, only runs on main; blocked on TASK-036              |
 | TASK-036 | Upgrade Lerna and migrate off bootstrap          | `feat/upgrades`        | **High priority** — bootstrap removed in v7+; affects dev, CI, and publish workflow       |
@@ -117,6 +117,7 @@ These tasks have no unmet dependencies:
 | TASK-045 | Refactor changelog generation + release workflow | `feat/upgrades`        | Manual, fragile sequencing; evaluate changesets / release-please / AI-assisted drafting   |
 | TASK-046 | Refactor b-ber-logger                            | `feat/logger-refactor` | Bind pattern → class methods; remove process.exit from log.error; remove argv parsing     |
 | TASK-047 | Research watch mode scripts for dev workflow     | `feat/upgrades`        | Most packages lack a `watch` script; define target state per package type                 |
+| TASK-049 | Evaluate coverage report upload services         | `feat/upgrades`        | No service currently active; assess Codecov, Coveralls, GitHub Actions summary            |
 
 ### Not started — blocked
 
@@ -136,12 +137,12 @@ These tasks have no unmet dependencies:
 ```
 TASK-004 (test coverage) ─────────────────────────────────────────────────────────────┐
   per-package subtasks (b-ber-lib ✓, b-ber-tasks, grammars, ...)                      │
-                                                                                        ▼
+                                                                                      ▼
 TASK-006 (Vite: reader-react)                            TASK-008 ✓ (tsconfig infra)
   └─ TASK-007 (Vite: reader)                               ├─ TASK-009 ✓ (shapes-directives TS)
   └─ TASK-015 (Biome)          [same branch]               │    └─ TASK-010 ✓ (shapes-dc + seq TS)
-       │                                                    ├─ TASK-011 ✓ (logger TS)
-       │                                                    └─ TASK-012 ✓ (lib TS)
+       │                                                   ├─ TASK-011 ✓ (logger TS)
+       │                                                   └─ TASK-012 ✓ (lib TS)
        │                                                         │
        │                                              TASK-024 (Stage 2 parent)
        │                                                ├─ TASK-025 (grammar-* TS)  ─┐
@@ -153,7 +154,7 @@ TASK-006 (Vite: reader-react)                            TASK-008 ✓ (tsconfig 
        │                                                └─ TASK-031 (cli TS)
        │                                                         │
        └─────────────────────────────────────────────────────────┤
-                                                                  ▼
+                                                                 ▼
                                                     TASK-032 (reader-react TS, Stage 4)
                                                     TASK-013 (Node.js modernization)
 ```
@@ -212,19 +213,18 @@ In priority order:
 3. **Start TASK-035** (Fix CircleCI): pipeline has been broken for a long time.
    Blocked on TASK-036 for the bootstrap step, but the config rewrite can be
    drafted in parallel.
-4. **TASK-034 complete** — Jest upgraded to v29, 84/84 suites passing. TASK-033
-   (coverage tooling) can now be addressed independently.
-5. **Start TASK-033** (Coverage tooling): confirms V8 provider recommendation
-   and removes orphaned Istanbul packages.
-6. **Stage 3 complete** (TASK-029–031 ✓): both `b-ber-tasks` and `b-ber-cli`
+4. **TASK-033 complete** — V8 coverage provider confirmed; `coveralls`,
+   `istanbul`, `istanbul-api`, `istanbul-reports` removed from root
+   `package.json`. TASK-049 opened for coverage upload evaluation (low priority).
+5. **Stage 3 complete** (TASK-029–031 ✓): both `b-ber-tasks` and `b-ber-cli`
    are now TypeScript. `feat/ts-stage-3` merged into `feat/upgrades`.
    TASK-032 (reader-react TS, Stage 4) is still blocked on TASK-006 (Vite).
-7. **Start TASK-006** (Vite migration): independent of TS work, can run in
+6. **Start TASK-006** (Vite migration): independent of TS work, can run in
    parallel. Branch: `feat/vite-migration`. Also picks up TASK-015 (Biome) and
    TASK-007 (reader).
-8. **TASK-037** (Dependency management): low effort if Option A — remove
+7. **TASK-037** (Dependency management): low effort if Option A — remove
    Dependabot and add `npm audit` to CI. Can be done alongside TASK-035.
-9. **TASK-038** (package.json script cleanup): some items unblocked now (theme
+8. **TASK-038** (package.json script cleanup): some items unblocked now (theme
    packages, root dead scripts). Remaining cleanup is downstream of TASK-006,
    TASK-029–031 ✓, and TASK-036 — do those pieces as part of those tasks.
 
