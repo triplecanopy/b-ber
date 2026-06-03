@@ -50,6 +50,7 @@ transform to simulate page-turning. A secondary scroll layout mode serves mobile
 | TASK-016 | Expand test project URLs in dev/index.js                    | low      |
 | TASK-017 | Migrate from SCSS to CSS Modules                            | low      |
 | TASK-018 | Improve test coverage                                       | high     |
+| TASK-021 | Fix font-face flash (FOUT) on page load                     | low      |
 
 ---
 
