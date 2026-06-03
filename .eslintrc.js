@@ -1,13 +1,13 @@
 module.exports = {
   root: true,
-  parser: 'babel-eslint',
+  parser: '@typescript-eslint/parser',
   extends: ['airbnb', 'prettier', 'prettier/react', 'prettier/standard'],
   env: {
     es6: true,
     jest: true,
     node: true,
   },
-  plugins: ['babel', 'import', 'react', 'prettier'],
+  plugins: ['import', 'react', 'prettier'],
   rules: {
     'prettier/prettier': 'error',
     'arrow-parens': 0,
