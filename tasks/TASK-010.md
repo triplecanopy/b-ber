@@ -3,6 +3,7 @@
 **Status:** complete
 **Scope:** shapes-dublin-core, shapes-sequences
 **Priority:** medium
+**GitHub Issue:** #495 — https://github.com/triplecanopy/b-ber/issues/495
 
 ## Description
 

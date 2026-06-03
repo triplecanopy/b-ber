@@ -3,6 +3,7 @@
 **Status:** in progress
 **Scope:** b-ber-tasks
 **Priority:** high
+**GitHub Issue:** #508 — https://github.com/triplecanopy/b-ber/issues/508
 
 ## Description
 

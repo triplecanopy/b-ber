@@ -3,6 +3,7 @@
 **Status:** in progress
 **Scope:** b-ber-logger
 **Priority:** low
+**GitHub Issue:** #507 — https://github.com/triplecanopy/b-ber/issues/507
 
 ## Description
 

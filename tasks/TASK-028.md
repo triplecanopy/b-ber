@@ -3,6 +3,7 @@
 **Status:** complete
 **Scope:** b-ber-markdown-renderer
 **Priority:** medium
+**GitHub Issue:** #503 — https://github.com/triplecanopy/b-ber/issues/503
 
 ## Description
 

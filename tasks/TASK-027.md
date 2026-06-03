@@ -3,6 +3,7 @@
 **Status:** complete
 **Scope:** b-ber-templates
 **Priority:** medium
+**GitHub Issue:** #502 — https://github.com/triplecanopy/b-ber/issues/502
 
 ## Description
 

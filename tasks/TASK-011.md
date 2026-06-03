@@ -3,6 +3,7 @@
 **Status:** complete
 **Scope:** logger
 **Priority:** medium
+**GitHub Issue:** #496 — https://github.com/triplecanopy/b-ber/issues/496
 
 ## Description
 

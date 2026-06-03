@@ -3,6 +3,7 @@
 **Status:** complete
 **Scope:** lib
 **Priority:** high
+**GitHub Issue:** #497 — https://github.com/triplecanopy/b-ber/issues/497
 
 ## Description
 

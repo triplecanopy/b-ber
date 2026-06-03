@@ -3,6 +3,7 @@
 **Status:** complete
 **Scope:** shapes-directives
 **Priority:** high
+**GitHub Issue:** #494 — https://github.com/triplecanopy/b-ber/issues/494
 
 ## Description
 
