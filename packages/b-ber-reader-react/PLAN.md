@@ -1,6 +1,6 @@
 # b-ber-reader-react — Project Plan
 
-_Last updated: 2026-05-30_
+_Last updated: 2026-06-03 (TASK-006 in progress — webpack → Vite migration; build and tests pass)_
 
 ---
 
@@ -48,6 +48,8 @@ transform to simulate page-turning. A secondary scroll layout mode serves mobile
 | TASK-014 | Redux modernization (Redux Toolkit or Context API)          | low      |
 | TASK-015 | Document local dev setup for agents                         | complete |
 | TASK-016 | Expand test project URLs in dev/index.js                    | low      |
+| TASK-017 | Migrate from SCSS to CSS Modules                            | low      |
+| TASK-018 | Improve test coverage                                       | high     |
 
 ---
 

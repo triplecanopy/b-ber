@@ -1,6 +1,6 @@
 # b-ber monorepo — Project Plan
 
-_Last updated: 2026-06-03 (TASK-033 complete — coverage tooling eval; V8 provider confirmed, orphaned istanbul/coveralls deps removed; TASK-049 added — coverage upload evaluation)_
+_Last updated: 2026-06-03 (TASK-006 in progress — webpack → Vite for b-ber-reader-react; build passes, tests pass; dev server browser verification pending)_
 
 ---
 
@@ -99,7 +99,7 @@ These tasks have no unmet dependencies:
 
 | Task     | Title                                            | Branch                 | Notes                                                                                     |
 | -------- | ------------------------------------------------ | ---------------------- | ----------------------------------------------------------------------------------------- |
-| TASK-006 | Migrate b-ber-reader-react webpack → Vite        | `feat/vite-migration`  | Independent of TS work                                                                    |
+| TASK-006 | Migrate b-ber-reader-react webpack → Vite        | `feat/vite-migration`  | **In progress** — build passes, 18/18 tests pass; dev server not yet browser-verified     |
 | TASK-017 | Expand diagrams: tooling versions + cross-refs   | `feat/upgrades`        | Living audit surface; TASK-016 complete                                                   |
 | TASK-021 | Audit `--no-package-lock` in lerna bootstrap     | `feat/upgrades`        | Low priority; review alongside `--legacy-peer-deps`                                       |
 | TASK-022 | Automate circular dependency checks              | `feat/upgrades`        | Options: pre-commit hook, CI, or `npm test`; update extensions list once TS work starts   |
