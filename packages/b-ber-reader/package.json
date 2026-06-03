@@ -4,8 +4,6 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "prepublish": "npm test",
-    "preversion": "npm test",
     "clean": "rimraf dist",
     "test": "echo \"TODO tests\"",
     "serve": "npm run build && nodemon server.js",

@@ -110,6 +110,8 @@ These tasks have no unmet dependencies:
 | TASK-034 | Upgrade Jest from v26 to v29                     | `feat/upgrades`        | ✓ Complete — 84/84 suites pass; v8 coverage provider, snapshots updated                   |
 | TASK-035 | Fix and modernize CircleCI pipeline              | `feat/upgrades`        | Stale Docker image, broken bootstrap, only runs on main; blocked on TASK-036              |
 | TASK-036 | Upgrade Lerna and migrate off bootstrap          | `feat/upgrades`        | **High priority** — bootstrap removed in v7+; affects dev, CI, and publish workflow       |
+| TASK-052 | Research Verdaccio workflow for testing lerna publish | `feat/upgrades`    | No `--dry-run` in lerna publish; Verdaccio = local registry stand-in; research auth + git-tag behaviour |
+| TASK-053 | Replace lerna-update-wizard with syncpack + ncu  | `feat/upgrades`        | `lernaupdate` breaks on Lerna v7+; `syncpack` (dedupe) + `ncu --workspaces` (interactive updates) |
 | TASK-037 | Replace or reconfigure dependency management     | `feat/upgrades`        | Dependabot paused + broken config; evaluate Options A–D; recommend remove + npm audit     |
 | TASK-038 | Audit and clean up package.json scripts          | `feat/upgrades`        | Inconsistent naming, dead scripts, opaque chains; some cleanup now, rest after migrations |
 | TASK-039 | E2E testing umbrella                             | `feat/upgrades`        | CLI smoke + reader browser tests; may become `b-ber-testing` package; **high priority**   |

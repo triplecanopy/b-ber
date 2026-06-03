@@ -4,8 +4,6 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "prepublish": "npm test",
-    "preversion": "npm test",
     "version": "node ./scripts/version.js",
     "clean": "rimraf dist",
     "build": "vite build --config vite.config.lib.js",
