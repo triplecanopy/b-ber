@@ -23,9 +23,6 @@ jobs:
 
           echo Lerna $(./node_modules/.bin/lerna -v)
 
-          # Limit concurrency on CI
-          npm run lerna bootstrap -- --no-ci --concurrency=2
-
           # Build readers separately since they're interdependent and require deps installed at package dir for b-ber-reader
           npm run lerna run build -- --scope=@canopycanopycanopy/b-ber-reader-react
           npm run reader:shim
@@ -42,40 +39,4 @@ jobs:
       - save_cache:
           paths:
             - ~/b-ber/node_modules
-            - ~/b-ber/packages/b-ber-grammar-audio-video/node_modules
-            - ~/b-ber/packages/b-ber-grammar-frontmatter/node_modules
-            - ~/b-ber/packages/b-ber-grammar-logo/node_modules
-            - ~/b-ber/packages/b-ber-parser-section/node_modules
-            - ~/b-ber/packages/b-ber-parser-gallery/node_modules
-            - ~/b-ber/packages/b-ber-tasks/node_modules
-            - ~/b-ber/packages/b-ber-parser-figure/node_modules
-            - ~/b-ber/packages/b-ber-grammar-attributes/node_modules
-            - ~/b-ber/packages/b-ber-shapes-dublin-core/node_modules
-            - ~/b-ber/packages/b-ber-shapes-sequences/node_modules
-            - ~/b-ber/packages/b-ber-grammar-section/node_modules
-            - ~/b-ber/packages/b-ber-markdown-renderer/node_modules
-            - ~/b-ber/packages/b-ber-theme-sans/node_modules
-            - ~/b-ber/packages/b-ber-grammar-vimeo/node_modules
-            - ~/b-ber/packages/b-ber-shapes-directives/node_modules
-            - ~/b-ber/packages/b-ber-reader/node_modules
-            - ~/b-ber/packages/b-ber-reader-react/node_modules
-            - ~/b-ber/packages/b-ber-grammar-dialogue/node_modules
-            - ~/b-ber/packages/b-ber-grammar-image/node_modules
-            - ~/b-ber/packages/b-ber-theme-serif/node_modules
-            - ~/b-ber/packages/b-ber-lib/node_modules
-            - ~/b-ber/packages/b-ber-grammar-epigraph/node_modules
-            - ~/b-ber/packages/b-ber-grammar-spread/node_modules
-            - ~/b-ber/packages/b-ber-logger/node_modules
-            - ~/b-ber/packages/b-ber-grammar-renderer/node_modules
-            - ~/b-ber/packages/b-ber-templates/node_modules
-            - ~/b-ber/packages/b-ber-cli/node_modules
-            - ~/b-ber/packages/b-ber-grammar-footnotes/node_modules
-            - ~/b-ber/packages/b-ber-validator/node_modules
-            - ~/b-ber/packages/b-ber-grammar-iframe/node_modules
-            - ~/b-ber/packages/b-ber-parser-dialogue/node_modules
-            - ~/b-ber/packages/b-ber-resources/node_modules
-            - ~/b-ber/packages/b-ber-parser-footnotes/node_modules
-            - ~/b-ber/packages/b-ber-grammar-gallery/node_modules
-            - ~/b-ber/packages/b-ber-grammar-pullquote/node_modules
-            - ~/b-ber/packages/b-ber-grammar-media/node_modules
           key: npm-packages-v1-{{ .Branch }}-{{ checksum "BBER_CACHE_KEY" }}

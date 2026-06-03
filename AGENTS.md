@@ -443,8 +443,11 @@ When starting work on a package that does not yet have an AGENTS.md:
 ## Monorepo Dev Commands
 
 ```bash
-# Bootstrap all packages (install + link)
-npm run bootstrap
+# Install all packages and link first-party deps (npm workspaces)
+npm install
+
+# Clean all package node_modules and reinstall from scratch
+npm run bootstrap:clean
 
 # Build all packages
 npm run build

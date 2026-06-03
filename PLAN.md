@@ -1,6 +1,6 @@
 # b-ber monorepo — Project Plan
 
-_Last updated: 2026-06-03 (TASK-033 complete — coverage tooling eval; V8 provider confirmed, orphaned istanbul/coveralls deps removed; TASK-049 added — coverage upload evaluation)_
+_Last updated: 2026-06-03 (TASK-036 complete — Lerna v8.2.4, npm workspaces, bootstrap removed from scripts and CI)_
 
 ---
 
@@ -72,6 +72,7 @@ been created yet; implementation tasks (TASK-006+) have not started.
 | TASK-016 | Circular import audit + arch risk catalog          | `feat/upgrades`   |
 | TASK-019 | Pre-TS migration cleanup                           | `feat/upgrades`   |
 | TASK-034 | Upgrade Jest from v26 to v29                       | `feat/upgrades`   |
+| TASK-036 | Upgrade Lerna and migrate off bootstrap            | `feat/upgrades`   |
 | TASK-048 | Convert b-ber-resources to TypeScript              | `feat/upgrades`   |
 | TASK-008 | Set up shared TypeScript infrastructure            | `feat/ts-stage-1` |
 | TASK-009 | Convert b-ber-shapes-directives to TS              | `feat/ts-stage-1` |
@@ -106,8 +107,7 @@ These tasks have no unmet dependencies:
 | TASK-023 | Research Lerna replacement / upgrade options     | `feat/upgrades`        | Superseded by TASK-036; keep for research notes                                           |
 | TASK-033 | Evaluate code coverage tooling                   | `feat/upgrades`        | ✓ Complete — V8 provider confirmed; coveralls/istanbul orphans removed; TASK-049 opened   |
 | TASK-034 | Upgrade Jest from v26 to v29                     | `feat/upgrades`        | ✓ Complete — 84/84 suites pass; v8 coverage provider, snapshots updated                   |
-| TASK-035 | Fix and modernize CircleCI pipeline              | `feat/upgrades`        | Stale Docker image, broken bootstrap, only runs on main; blocked on TASK-036              |
-| TASK-036 | Upgrade Lerna and migrate off bootstrap          | `feat/upgrades`        | **High priority** — bootstrap removed in v7+; affects dev, CI, and publish workflow       |
+| TASK-035 | Fix and modernize CircleCI pipeline              | `feat/upgrades`        | Stale Docker image; bootstrap step removed; only runs on main; unblocked by TASK-036      |
 | TASK-037 | Replace or reconfigure dependency management     | `feat/upgrades`        | Dependabot paused + broken config; evaluate Options A–D; recommend remove + npm audit     |
 | TASK-038 | Audit and clean up package.json scripts          | `feat/upgrades`        | Inconsistent naming, dead scripts, opaque chains; some cleanup now, rest after migrations |
 | TASK-039 | E2E testing umbrella                             | `feat/upgrades`        | CLI smoke + reader browser tests; may become `b-ber-testing` package; **high priority**   |
@@ -207,12 +207,12 @@ In priority order:
 1. **Start TASK-040** (E2E research): high priority — tooling decision
    unblocks TASK-041/042/043. Should be fast (a day or two of evaluation).
    Leading candidate: Playwright in a new `b-ber-testing` package.
-2. **Start TASK-036** (Lerna upgrade): high priority — `lerna bootstrap` is
-   load-bearing for dev and CI; v7+ removes it. Must land before TASK-035 can
-   be finalized. Read current `lerna.json` first.
-3. **Start TASK-035** (Fix CircleCI): pipeline has been broken for a long time.
-   Blocked on TASK-036 for the bootstrap step, but the config rewrite can be
-   drafted in parallel.
+2. **TASK-036 complete** — Lerna upgraded to v8.2.4; npm workspaces added;
+   `lerna bootstrap` replaced with `npm install`; CI bootstrap step removed;
+   `lerna.json` repaired. All 84 test suites pass.
+3. **Start TASK-035** (Fix CircleCI): bootstrap blocker is now resolved.
+   Remaining work: stale Docker image, only runs on main branch, test step
+   config.
 4. **TASK-033 complete** — V8 coverage provider confirmed; `coveralls`,
    `istanbul`, `istanbul-api`, `istanbul-reports` removed from root
    `package.json`. TASK-049 opened for coverage upload evaluation (low priority).

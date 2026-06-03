@@ -7,11 +7,14 @@
     "node": ">= 10.x",
     "npm": ">= 6.x"
   },
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "watch": "lerna run watch --stream",
     "build": "npm run lerna run build -- --scope=@canopycanopycanopy/b-ber-reader-react && npm run reader:shim && npm run lerna run build -- --scope=\"@canopycanopycanopy/{$(echo `ls packages` | sed 's/ /,/g' | sed -E 's/b-ber-reader-react,?//')}\"",
-    "bootstrap": "lerna bootstrap --hoist",
-    "bootstrap:clean": "lerna clean --yes  && npm i && lerna bootstrap --hoist && npm run reader:shim && npm run build",
+    "bootstrap": "npm install",
+    "bootstrap:clean": "lerna clean --yes && npm install && npm run reader:shim && npm run build",
     "check:code": "echo \"todo\" # \"Checking code...\" && eslint --ignore-path .gitignore --ignore-path .prettierignore --ext .js,.jsx .",
     "check:other": "npm run prettier -- --check",
     "check": "npm-run-all -s check:code check:other",
@@ -113,7 +116,7 @@
     "jest-environment-jsdom-global": "^4.0.0",
     "jest-extended": "^3.2.4",
     "js-string-escape": "^1.0.1",
-    "lerna": "^6.5.1",
+    "lerna": "^8",
     "lerna-audit": "^1.2.0",
     "lerna-update-wizard": "^1.1.2",
     "lint-staged": "^9.2.0",

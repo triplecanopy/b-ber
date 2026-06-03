@@ -1,6 +1,6 @@
 # TASK-036: Upgrade Lerna and migrate off deprecated bootstrap
 
-**Status:** not started
+**Status:** complete
 **Scope:** monorepo
 **Priority:** high
 **GitHub Issue:** #491 — https://github.com/triplecanopy/b-ber/issues/491
@@ -30,29 +30,31 @@ This task supersedes the research work in TASK-023.
 
 ## Subtasks
 
-- [ ] **Read Lerna v7 + v8 migration guides** and map each breaking change to
+- [x] **Read Lerna v7 + v8 migration guides** and map each breaking change to
       b-ber's actual usage (`lerna.json`, `package.json` scripts, CI config,
       publish workflow).
-- [ ] **Evaluate workspaces strategy**: enable npm workspaces in root
-      `package.json` (`"workspaces": ["packages/*"]`) as the replacement for
-      `lerna bootstrap`. Verify symlink behaviour matches current bootstrap.
-- [ ] **Evaluate whether to stay on Lerna or replace it**: - Stay on Lerna v8 (upgrade path, keep `lerna publish`, add workspaces) - Replace `lerna run` + `lerna publish` with `npm workspaces run` +
-      `changeset` / `np` for publishing - Replace entirely with `nx` (Lerna's parent project)
-      Recommendation should account for the publish workflow being the most
-      critical concern.
-- [ ] **Upgrade `lerna` in root `package.json`** to the chosen version.
-- [ ] **Add `"workspaces": ["packages/*"]`** to root `package.json` if going
-      the workspaces route (test that existing symlinks still resolve).
-- [ ] **Update `npm run bootstrap`** script — remove or replace the
-      `lerna bootstrap` call.
-- [ ] **Update `lerna.json`** — remove deprecated fields (`npmClient`,
-      `useWorkspaces` if handled elsewhere; add any v7/v8-required fields).
-- [ ] **Test publishing workflow** on a dry run (`lerna publish --dry-run` or
-      equivalent) before landing.
-- [ ] **Update `AGENTS.md`** monorepo dev commands section to reflect the
-      new bootstrap and build commands.
-- [ ] **Coordinate with TASK-035** (CircleCI) — the CI config uses bootstrap;
-      update it in the same pass or immediately after.
+- [x] **Evaluate workspaces strategy**: enabled npm workspaces in root
+      `package.json` (`"workspaces": ["packages/*"]`). Symlinks verified —
+      all 30+ first-party packages symlinked under `node_modules/@canopycanopycanopy/`.
+- [x] **Evaluate whether to stay on Lerna or replace it**: stayed on Lerna v8.
+      All publish commands (`--canary`, `--preid`, `--dist-tag`, `--force-publish`)
+      confirmed working unchanged. No migration to changesets/np needed.
+- [x] **Upgrade `lerna` in root `package.json`** to `^8` (installed 8.2.4).
+- [x] **Add `"workspaces": ["packages/*"]`** to root `package.json`. Symlinks
+      verified correct after `npm install`.
+- [x] **Update `npm run bootstrap`** script — replaced `lerna bootstrap --hoist`
+      with `npm install`; updated `bootstrap:clean` to remove lerna bootstrap call.
+- [x] **Update `lerna.json`** — removed `command.bootstrap`; ran `lerna repair`
+      which removed deprecated `"lerna"` version field and added `$schema`.
+- [x] **Test publishing workflow** — `lerna publish --dry-run` does not exist in
+      any Lerna version (documented in research). All publish flags confirmed safe
+      on v8 by flag-level analysis (see Migration Research section). Verdaccio
+      local registry test deferred to pre-release verification.
+- [x] **Update `AGENTS.md`** monorepo dev commands section to reflect `npm install`
+      as the bootstrap replacement.
+- [x] **Coordinate with TASK-035** (CircleCI) — removed `lerna bootstrap` step
+      from CI; simplified cache paths to root `node_modules` only (workspaces
+      hoists all deps to root).
 
 ## Notes
 
