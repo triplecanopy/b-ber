@@ -1,6 +1,6 @@
 # b-ber-reader-react — Project Plan
 
-_Last updated: 2026-06-03 (TASK-006 in progress — webpack → Vite migration; build and tests pass)_
+_Last updated: 2026-06-03 (TASK-006 complete — webpack → Vite migration; build, tests, and dev server verified)_
 
 ---
 
@@ -107,7 +107,7 @@ Context + useReducer. Move `book.content` global into Redux state.
 ## Development
 
 ```bash
-npm start      # webpack dev server
+npm start      # Vite dev server
 npm test       # jest unit tests
 npm run build  # production build
 ```

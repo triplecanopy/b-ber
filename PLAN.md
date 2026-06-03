@@ -1,6 +1,6 @@
 # b-ber monorepo — Project Plan
 
-_Last updated: 2026-06-03 (TASK-006 in progress — webpack → Vite for b-ber-reader-react; build passes, tests pass; dev server browser verification pending)_
+_Last updated: 2026-06-03 (TASK-006 complete — webpack → Vite for b-ber-reader-react; build, tests, and dev server all verified)_
 
 ---
 
@@ -63,28 +63,29 @@ been created yet; implementation tasks (TASK-006+) have not started.
 
 ### Completed (research)
 
-| Task     | Title                                              | Branch            |
-| -------- | -------------------------------------------------- | ----------------- |
-| TASK-001 | Research webpack replacement (chose Vite)          | `feat/upgrades`   |
-| TASK-002 | Plan JS→TS migration strategy                      | `feat/upgrades`   |
-| TASK-003 | Research type consolidation                        | `feat/upgrades`   |
-| TASK-005 | Research Biome migration (chose Option B)          | `feat/upgrades`   |
-| TASK-016 | Circular import audit + arch risk catalog          | `feat/upgrades`   |
-| TASK-019 | Pre-TS migration cleanup                           | `feat/upgrades`   |
-| TASK-034 | Upgrade Jest from v26 to v29                       | `feat/upgrades`   |
-| TASK-048 | Convert b-ber-resources to TypeScript              | `feat/upgrades`   |
-| TASK-008 | Set up shared TypeScript infrastructure            | `feat/ts-stage-1` |
-| TASK-009 | Convert b-ber-shapes-directives to TS              | `feat/ts-stage-1` |
-| TASK-010 | Convert b-ber-shapes-dublin-core + sequences to TS | `feat/ts-stage-1` |
-| TASK-011 | Convert b-ber-logger to TS                         | `feat/ts-stage-1` |
-| TASK-012 | Convert b-ber-lib to TS                            | `feat/ts-stage-1` |
-| TASK-025 | Convert b-ber-grammar-\* to TypeScript             | `feat/ts-stage-2` |
-| TASK-026 | Convert b-ber-parser-\* to TypeScript              | `feat/ts-stage-2` |
-| TASK-027 | Convert b-ber-templates to TypeScript              | `feat/ts-stage-2` |
-| TASK-028 | Convert b-ber-markdown-renderer to TypeScript      | `feat/ts-stage-2` |
-| TASK-029 | TypeScript Stage 3 parent                          | `feat/ts-stage-3` |
-| TASK-030 | Convert b-ber-tasks to TypeScript                  | `feat/ts-stage-3` |
-| TASK-031 | Convert b-ber-cli to TypeScript                    | `feat/ts-stage-3` |
+| Task     | Title                                              | Branch                |
+| -------- | -------------------------------------------------- | --------------------- |
+| TASK-001 | Research webpack replacement (chose Vite)          | `feat/upgrades`       |
+| TASK-002 | Plan JS→TS migration strategy                      | `feat/upgrades`       |
+| TASK-003 | Research type consolidation                        | `feat/upgrades`       |
+| TASK-005 | Research Biome migration (chose Option B)          | `feat/upgrades`       |
+| TASK-016 | Circular import audit + arch risk catalog          | `feat/upgrades`       |
+| TASK-019 | Pre-TS migration cleanup                           | `feat/upgrades`       |
+| TASK-034 | Upgrade Jest from v26 to v29                       | `feat/upgrades`       |
+| TASK-048 | Convert b-ber-resources to TypeScript              | `feat/upgrades`       |
+| TASK-006 | Migrate b-ber-reader-react webpack → Vite          | `feat/vite-migration` |
+| TASK-008 | Set up shared TypeScript infrastructure            | `feat/ts-stage-1`     |
+| TASK-009 | Convert b-ber-shapes-directives to TS              | `feat/ts-stage-1`     |
+| TASK-010 | Convert b-ber-shapes-dublin-core + sequences to TS | `feat/ts-stage-1`     |
+| TASK-011 | Convert b-ber-logger to TS                         | `feat/ts-stage-1`     |
+| TASK-012 | Convert b-ber-lib to TS                            | `feat/ts-stage-1`     |
+| TASK-025 | Convert b-ber-grammar-\* to TypeScript             | `feat/ts-stage-2`     |
+| TASK-026 | Convert b-ber-parser-\* to TypeScript              | `feat/ts-stage-2`     |
+| TASK-027 | Convert b-ber-templates to TypeScript              | `feat/ts-stage-2`     |
+| TASK-028 | Convert b-ber-markdown-renderer to TypeScript      | `feat/ts-stage-2`     |
+| TASK-029 | TypeScript Stage 3 parent                          | `feat/ts-stage-3`     |
+| TASK-030 | Convert b-ber-tasks to TypeScript                  | `feat/ts-stage-3`     |
+| TASK-031 | Convert b-ber-cli to TypeScript                    | `feat/ts-stage-3`     |
 
 ### In progress
 
@@ -99,7 +100,7 @@ These tasks have no unmet dependencies:
 
 | Task     | Title                                            | Branch                 | Notes                                                                                     |
 | -------- | ------------------------------------------------ | ---------------------- | ----------------------------------------------------------------------------------------- |
-| TASK-006 | Migrate b-ber-reader-react webpack → Vite        | `feat/vite-migration`  | **In progress** — build passes, 18/18 tests pass; dev server not yet browser-verified     |
+| TASK-006 | Migrate b-ber-reader-react webpack → Vite        | `feat/vite-migration`  | ✓ Complete — build, tests, dev server verified; CSS Modules decoupled to TASK-017         |
 | TASK-017 | Expand diagrams: tooling versions + cross-refs   | `feat/upgrades`        | Living audit surface; TASK-016 complete                                                   |
 | TASK-021 | Audit `--no-package-lock` in lerna bootstrap     | `feat/upgrades`        | Low priority; review alongside `--legacy-peer-deps`                                       |
 | TASK-022 | Automate circular dependency checks              | `feat/upgrades`        | Options: pre-commit hook, CI, or `npm test`; update extensions list once TS work starts   |
@@ -121,14 +122,14 @@ These tasks have no unmet dependencies:
 
 ### Not started — blocked
 
-| Task     | Title                                              | Waiting on                         |
-| -------- | -------------------------------------------------- | ---------------------------------- |
-| TASK-007 | Migrate b-ber-reader to Vite                       | TASK-006                           |
-| TASK-013 | Node.js modernization                              | TASK-012 ✓ — **can begin now**     |
-| TASK-015 | Biome migration                                    | TASK-006 (same branch)             |
-| TASK-032 | Convert b-ber-reader-react to TypeScript (Stage 4) | TASK-006 (Vite migration complete) |
-| TASK-043 | E2E testing — reader browser tests (Playwright)    | TASK-040 (research) + TASK-041     |
-| TASK-044 | E2E testing — CI integration                       | TASK-043 (reader tests stable)     |
+| Task     | Title                                              | Waiting on                     |
+| -------- | -------------------------------------------------- | ------------------------------ |
+| TASK-007 | Migrate b-ber-reader to Vite                       | TASK-006 ✓ — **can begin now** |
+| TASK-013 | Node.js modernization                              | TASK-012 ✓ — **can begin now** |
+| TASK-015 | Biome migration                                    | TASK-006 ✓ — **can begin now** |
+| TASK-032 | Convert b-ber-reader-react to TypeScript (Stage 4) | TASK-006 ✓ — **can begin now** |
+| TASK-043 | E2E testing — reader browser tests (Playwright)    | TASK-040 (research) + TASK-041 |
+| TASK-044 | E2E testing — CI integration                       | TASK-043 (reader tests stable) |
 
 ---
 
@@ -219,9 +220,8 @@ In priority order:
 5. **Stage 3 complete** (TASK-029–031 ✓): both `b-ber-tasks` and `b-ber-cli`
    are now TypeScript. `feat/ts-stage-3` merged into `feat/upgrades`.
    TASK-032 (reader-react TS, Stage 4) is still blocked on TASK-006 (Vite).
-6. **Start TASK-006** (Vite migration): independent of TS work, can run in
-   parallel. Branch: `feat/vite-migration`. Also picks up TASK-015 (Biome) and
-   TASK-007 (reader).
+6. **Start TASK-007** (Vite: b-ber-reader): TASK-006 is complete; TASK-007 is
+   now unblocked. Branch: `feat/vite-migration`. Also picks up TASK-015 (Biome).
 7. **TASK-037** (Dependency management): low effort if Option A — remove
    Dependabot and add `npm audit` to CI. Can be done alongside TASK-035.
 8. **TASK-038** (package.json script cleanup): some items unblocked now (theme
