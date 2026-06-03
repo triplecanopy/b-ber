@@ -63,7 +63,6 @@
     "sass": "^1.49.8",
     "setimmediate": "^1.0.5",
     "stream-browserify": "^3.0.0",
-    "sugarss": "^1.0.1",
     "tar": "^6.1.11",
     "vite": "^8.0.16",
     "xmlhttprequest-ssl": "^2.0.0"

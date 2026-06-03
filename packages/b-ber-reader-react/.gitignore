@@ -9,7 +9,7 @@ yarn-debug.log*
 
 dev/*
 !dev/index.ejs
-!dev/index.example.js
+!dev/index.example.jsx
 !dev/index.html
 .env*
 
