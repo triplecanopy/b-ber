@@ -1,6 +1,6 @@
 # b-ber monorepo — Project Plan
 
-_Last updated: 2026-06-03 (TASK-006 complete — webpack → Vite for b-ber-reader-react; build, tests, and dev server all verified)_
+_Last updated: 2026-06-03 (TASK-007 complete — webpack → Vite for b-ber-reader; webpack fully removed from monorepo; 84/84 suites pass)_
 
 ---
 
@@ -74,6 +74,7 @@ been created yet; implementation tasks (TASK-006+) have not started.
 | TASK-034 | Upgrade Jest from v26 to v29                       | `feat/upgrades`       |
 | TASK-048 | Convert b-ber-resources to TypeScript              | `feat/upgrades`       |
 | TASK-006 | Migrate b-ber-reader-react webpack → Vite          | `feat/vite-migration` |
+| TASK-007 | Migrate b-ber-reader to Vite; remove webpack       | `feat/vite-migration` |
 | TASK-008 | Set up shared TypeScript infrastructure            | `feat/ts-stage-1`     |
 | TASK-009 | Convert b-ber-shapes-directives to TS              | `feat/ts-stage-1`     |
 | TASK-010 | Convert b-ber-shapes-dublin-core + sequences to TS | `feat/ts-stage-1`     |
@@ -124,7 +125,6 @@ These tasks have no unmet dependencies:
 
 | Task     | Title                                              | Waiting on                     |
 | -------- | -------------------------------------------------- | ------------------------------ |
-| TASK-007 | Migrate b-ber-reader to Vite                       | TASK-006 ✓ — **can begin now** |
 | TASK-013 | Node.js modernization                              | TASK-012 ✓ — **can begin now** |
 | TASK-015 | Biome migration                                    | TASK-006 ✓ — **can begin now** |
 | TASK-032 | Convert b-ber-reader-react to TypeScript (Stage 4) | TASK-006 ✓ — **can begin now** |
@@ -220,8 +220,8 @@ In priority order:
 5. **Stage 3 complete** (TASK-029–031 ✓): both `b-ber-tasks` and `b-ber-cli`
    are now TypeScript. `feat/ts-stage-3` merged into `feat/upgrades`.
    TASK-032 (reader-react TS, Stage 4) is still blocked on TASK-006 (Vite).
-6. **Start TASK-007** (Vite: b-ber-reader): TASK-006 is complete; TASK-007 is
-   now unblocked. Branch: `feat/vite-migration`. Also picks up TASK-015 (Biome).
+6. **TASK-007 complete** — webpack fully removed from monorepo; `b-ber-reader`
+   now builds with Vite. Next up: TASK-015 (Biome) on the same branch.
 7. **TASK-037** (Dependency management): low effort if Option A — remove
    Dependabot and add `npm audit` to CI. Can be done alongside TASK-035.
 8. **TASK-038** (package.json script cleanup): some items unblocked now (theme

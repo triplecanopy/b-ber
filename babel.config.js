@@ -5,7 +5,6 @@ module.exports = api => {
   const targetNodeTargets =
     env === 'production' ? supportedNodeVersion : 'current'
 
-  // Should match targets in packages/b-ber-reader/webpack.config.<env>.js
   const supportedWebTargets = 'last 2 versions, > 2%'
 
   // Settings for @babel/transform-modules-commonjs
@@ -49,9 +48,6 @@ module.exports = api => {
           useESModules: false,
         },
       ],
-      '@babel/plugin-proposal-class-properties',
-      '@babel/plugin-proposal-object-rest-spread',
-      '@babel/plugin-proposal-optional-chaining',
     ],
 
     // Override options for reader.
@@ -59,7 +55,7 @@ module.exports = api => {
     overrides: [
       {
         test: /b-ber-reader/,
-        presets: [['@babel/env', envOptsReader], '@babel/preset-react'],
+        presets: [['@babel/env', envOptsReader]],
         plugins: [
           // Disabled for web builds
           ['@babel/plugin-transform-runtime', false],
