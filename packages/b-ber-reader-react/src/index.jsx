@@ -9,6 +9,8 @@ import { App } from './components'
 import version from './lib/version'
 
 import './lib/polyfills'
+import 'material-icons/iconfont/filled.css'
+import './index.scss'
 
 const Version = () => (
   <meta name="generator" content={`b-ber-react-reader: ${version}`} />
