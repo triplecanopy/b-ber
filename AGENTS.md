@@ -421,11 +421,29 @@ merged to `main` — the link will 404 until then.
 
 ### Labels
 
+Every issue must have at least one label. Apply labels when creating the issue —
+do not leave issues unlabeled.
+
 Use existing labels where they fit. Create new labels if none of the existing
 ones are appropriate — label names should follow the `b-ber/<scope>` convention
 already established in the repo (e.g. `b-ber/testing`, `b-ber/typescript`).
 Research tasks use `maintenance`. Implementation tasks use the scope label
 matching the package(s) affected.
+
+Common label mappings:
+
+| Task type | Labels |
+| --------- | ------ |
+| TypeScript migration | `b-ber/typescript` |
+| Test coverage | `b-ber/testing` |
+| Circular dep / architecture audit | `b-ber/typescript`, `maintenance` |
+| Linting / toolchain | `maintenance` |
+| Grammar packages | `b-ber/grammar` |
+| Build pipeline | `b-ber/build` |
+| CLI | `b-ber/cli` |
+| Core library | `b-ber/lib` |
+| Tasks package | `b-ber/tasks` |
+| Reader | `b-ber/build/reader` |
 
 ---
 
