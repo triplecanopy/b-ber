@@ -1,6 +1,6 @@
 # b-ber monorepo — Project Plan
 
-_Last updated: 2026-06-03 (TASK-036 complete — Lerna v8.2.4, npm workspaces; TASK-006/007 complete — webpack → Vite, webpack fully removed)_
+_Last updated: 2026-06-04 (TASK-050, TASK-051, TASK-054 added; TS Stages 1–3 and Vite/Biome complete)_
 
 ---
 
@@ -11,13 +11,14 @@ stable version:
 
 1. **Test coverage** (TASK-004) — raise coverage to ≥ 75% monorepo-wide before
    any large refactor
-2. **Bundler replacement** (TASK-006/007) — replace webpack with Vite in
-   `b-ber-reader-react` and `b-ber-reader`
-3. **TypeScript migration** (TASK-008–012) — convert core packages to TypeScript,
-   starting with the shared shapes/logger/lib layer
+2. **Bundler + toolchain** (TASK-006/007/015) — replace webpack with Vite and
+   ESLint + Prettier with Biome ✓ complete
+3. **TypeScript migration** (TASK-008–031) — convert all Node packages to
+   TypeScript ✓ Stages 1–3 complete; Stage 4 (reader-react) pending
 
-A fourth stream (Node.js modernization, TASK-013) follows the TypeScript migration.
-Biome (TASK-015) is bundled with the Vite migration.
+A fourth stream (Node.js modernization, TASK-013) follows the TypeScript
+migration and is now unblocked. Biome (TASK-015) shipped with the Vite
+migration.
 
 ---
 
@@ -27,14 +28,14 @@ Biome (TASK-015) is bundled with the Vite migration.
 | --------------------------- | ------------------------------------------------------------------- | --------------- |
 | `main`                      | stable, production-ready                                            | —               |
 | `feat/upgrades`             | integration branch — planning, docs, and completed feature branches | `main`          |
-| `feat/vite-migration`       | TASK-006, TASK-007, TASK-015                                        | `feat/upgrades` |
-| `feat/ts-stage-1`           | TASK-008 through TASK-012                                           | `feat/upgrades` |
-| `feat/node-modernization-*` | TASK-013 per-package slices                                         | `feat/upgrades` |
-| `feat/ts-stage-2`           | TASK-024 through TASK-028 (grammar, parser, templates, md-renderer) | `feat/upgrades` |
-| `feat/ts-stage-3`           | TASK-029 through TASK-031 (tasks, cli)                              | `feat/upgrades` |
+| `feat/vite-migration`       | TASK-006, TASK-007, TASK-015 — **merged** ✓                        | `feat/upgrades` |
+| `feat/ts-stage-1`           | TASK-008 through TASK-012 — **merged** ✓                           | `feat/upgrades` |
+| `feat/ts-stage-2`           | TASK-024 through TASK-028 — **merged** ✓                           | `feat/upgrades` |
+| `feat/ts-stage-3`           | TASK-029 through TASK-031 — **merged** ✓                           | `feat/upgrades` |
+| `feat/node-modernization-*` | TASK-013 per-package slices — not yet started                       | `feat/upgrades` |
+| `feat/ts-stage-4`           | TASK-032 (reader-react TS) — not yet started                       | `feat/upgrades` |
 
-**All implementation work happens on feature branches** (or directly on
-`feat/upgrades` for small, self-contained changes). Feature branches merge
+**All implementation work happens on feature branches.** Feature branches merge
 into `feat/upgrades` once stable and tested. `feat/upgrades` merges to `main`
 when a coherent set of work is complete and `npm test` passes cleanly from the
 repo root.
@@ -43,133 +44,142 @@ Agents should never commit implementation work directly to `main`.
 
 ### Current branch state
 
-`feat/upgrades` is ahead of `main` by 10 commits. Contents pending merge to main:
-
-| Commit                                  | What it contains                 |
-| --------------------------------------- | -------------------------------- |
-| research tasks (TASK-001–003, TASK-005) | Webpack/TS/types/Biome research  |
-| AGENTS.md + CLAUDE.md additions         | Package docs across all packages |
-| TASK-004 implementation                 | b-ber-lib test suite (17% → 56%) |
-| jest.config.js                          | Coverage exclusion fix           |
-| Branch strategy + TASK-014/015 docs     | This planning layer              |
-
-These commits are documentation and test-only changes — **safe to merge to
-main at any time** once there are no test failures. No feature branches have
-been created yet; implementation tasks (TASK-006+) have not started.
+`feat/upgrades` is the active integration branch. All four implementation
+feature branches (`feat/vite-migration`, `feat/ts-stage-1`, `feat/ts-stage-2`,
+`feat/ts-stage-3`) have been merged into it. The branch contains all planning
+docs, completed migration work, and toolchain upgrades and is pending a merge
+to `main` once the test suite and coverage targets are clean.
 
 ---
 
 ## Task Status
 
-### Completed (research)
+### Completed
 
-| Task     | Title                                              | Branch                |
-| -------- | -------------------------------------------------- | --------------------- |
-| TASK-001 | Research webpack replacement (chose Vite)          | `feat/upgrades`       |
-| TASK-002 | Plan JS→TS migration strategy                      | `feat/upgrades`       |
-| TASK-003 | Research type consolidation                        | `feat/upgrades`       |
-| TASK-005 | Research Biome migration (chose Option B)          | `feat/upgrades`       |
-| TASK-016 | Circular import audit + arch risk catalog          | `feat/upgrades`       |
-| TASK-019 | Pre-TS migration cleanup                           | `feat/upgrades`       |
-| TASK-034 | Upgrade Jest from v26 to v29                       | `feat/upgrades`       |
-| TASK-036 | Upgrade Lerna and migrate off bootstrap            | `feat/upgrades`       |
-| TASK-048 | Convert b-ber-resources to TypeScript              | `feat/upgrades`       |
-| TASK-006 | Migrate b-ber-reader-react webpack → Vite          | `feat/vite-migration` |
-| TASK-007 | Migrate b-ber-reader to Vite; remove webpack       | `feat/vite-migration` |
-| TASK-008 | Set up shared TypeScript infrastructure            | `feat/ts-stage-1`     |
-| TASK-009 | Convert b-ber-shapes-directives to TS              | `feat/ts-stage-1`     |
-| TASK-010 | Convert b-ber-shapes-dublin-core + sequences to TS | `feat/ts-stage-1`     |
-| TASK-011 | Convert b-ber-logger to TS                         | `feat/ts-stage-1`     |
-| TASK-012 | Convert b-ber-lib to TS                            | `feat/ts-stage-1`     |
-| TASK-025 | Convert b-ber-grammar-\* to TypeScript             | `feat/ts-stage-2`     |
-| TASK-026 | Convert b-ber-parser-\* to TypeScript              | `feat/ts-stage-2`     |
-| TASK-027 | Convert b-ber-templates to TypeScript              | `feat/ts-stage-2`     |
-| TASK-028 | Convert b-ber-markdown-renderer to TypeScript      | `feat/ts-stage-2`     |
-| TASK-029 | TypeScript Stage 3 parent                          | `feat/ts-stage-3`     |
-| TASK-030 | Convert b-ber-tasks to TypeScript                  | `feat/ts-stage-3`     |
-| TASK-031 | Convert b-ber-cli to TypeScript                    | `feat/ts-stage-3`     |
+| Task     | Title                                                    | Branch                |
+| -------- | -------------------------------------------------------- | --------------------- |
+| TASK-001 | Research webpack replacement (chose Vite)                | `feat/upgrades`       |
+| TASK-002 | Plan JS→TS migration strategy                            | `feat/upgrades`       |
+| TASK-003 | Research type consolidation                              | `feat/upgrades`       |
+| TASK-005 | Research Biome migration (chose Option B)                | `feat/upgrades`       |
+| TASK-006 | Migrate b-ber-reader-react webpack → Vite                | `feat/vite-migration` |
+| TASK-007 | Migrate b-ber-reader to Vite; remove webpack             | `feat/vite-migration` |
+| TASK-008 | Set up shared TypeScript infrastructure                  | `feat/ts-stage-1`     |
+| TASK-009 | Convert b-ber-shapes-directives to TS                    | `feat/ts-stage-1`     |
+| TASK-010 | Convert b-ber-shapes-dublin-core + sequences to TS       | `feat/ts-stage-1`     |
+| TASK-011 | Convert b-ber-logger to TS                               | `feat/ts-stage-1`     |
+| TASK-012 | Convert b-ber-lib to TS                                  | `feat/ts-stage-1`     |
+| TASK-015 | Migrate from ESLint + Prettier to Biome                  | `feat/vite-migration` |
+| TASK-016 | Circular import audit + arch risk catalog                | `feat/upgrades`       |
+| TASK-024 | TypeScript Stage 2 parent                                | `feat/ts-stage-2`     |
+| TASK-025 | Convert b-ber-grammar-\* to TypeScript                   | `feat/ts-stage-2`     |
+| TASK-026 | Convert b-ber-parser-\* to TypeScript                    | `feat/ts-stage-2`     |
+| TASK-027 | Convert b-ber-templates to TypeScript                    | `feat/ts-stage-2`     |
+| TASK-028 | Convert b-ber-markdown-renderer to TypeScript            | `feat/ts-stage-2`     |
+| TASK-029 | TypeScript Stage 3 parent                                | `feat/ts-stage-3`     |
+| TASK-030 | Convert b-ber-tasks to TypeScript                        | `feat/ts-stage-3`     |
+| TASK-031 | Convert b-ber-cli to TypeScript                          | `feat/ts-stage-3`     |
+| TASK-033 | Evaluate code coverage tooling                           | `feat/upgrades`       |
+| TASK-034 | Upgrade Jest from v26 to v29                             | `feat/upgrades`       |
+| TASK-036 | Upgrade Lerna and migrate off bootstrap                  | `feat/upgrades`       |
+| TASK-014 | GitHub issue tracking setup                              | `feat/upgrades`       |
+| TASK-048 | Convert b-ber-resources to TypeScript                    | `feat/upgrades`       |
 
 ### In progress
 
-| Task     | Title                       | Branch          | Blocker                  |
-| -------- | --------------------------- | --------------- | ------------------------ |
-| TASK-004 | Monorepo-wide test coverage | `feat/upgrades` | Ongoing per-package work |
-| TASK-014 | GitHub issue tracking setup | `feat/upgrades` | Issue creation deferred  |
+| Task     | Title                       | Branch          | Notes                                                                      |
+| -------- | --------------------------- | --------------- | -------------------------------------------------------------------------- |
+| TASK-004 | Monorepo-wide test coverage | `feat/upgrades` | Ongoing per-package work; final baseline needed before closing |
+| TASK-019 | TypeScript migration parent | `feat/upgrades` | Stages 1–3 ✓; Stage 4 (reader-react, TASK-032) is now unblocked |
 
 ### Not started — can begin now
 
-These tasks have no unmet dependencies:
-
-| Task     | Title                                            | Branch                 | Notes                                                                                     |
-| -------- | ------------------------------------------------ | ---------------------- | ----------------------------------------------------------------------------------------- |
-| TASK-017 | Expand diagrams: tooling versions + cross-refs   | `feat/upgrades`        | Living audit surface; TASK-016 complete                                                   |
-| TASK-021 | Audit `--no-package-lock` in lerna bootstrap     | `feat/upgrades`        | Low priority; review alongside `--legacy-peer-deps`                                       |
-| TASK-022 | Automate circular dependency checks              | `feat/upgrades`        | Options: pre-commit hook, CI, or `npm test`; update extensions list once TS work starts   |
-| TASK-023 | Research Lerna replacement / upgrade options     | `feat/upgrades`        | Superseded by TASK-036; keep for research notes                                           |
-| TASK-033 | Evaluate code coverage tooling                   | `feat/upgrades`        | ✓ Complete — V8 provider confirmed; coveralls/istanbul orphans removed; TASK-049 opened   |
-| TASK-034 | Upgrade Jest from v26 to v29                     | `feat/upgrades`        | ✓ Complete — 84/84 suites pass; v8 coverage provider, snapshots updated                   |
-| TASK-035 | Fix and modernize CircleCI pipeline              | `feat/upgrades`        | Stale Docker image; bootstrap step removed; only runs on main; unblocked by TASK-036      |
-| TASK-052 | Research Verdaccio workflow for testing lerna publish | `feat/upgrades`    | No `--dry-run` in lerna publish; Verdaccio = local registry stand-in; research auth + git-tag behaviour |
-| TASK-053 | Replace lerna-update-wizard with syncpack + ncu  | `feat/upgrades`        | `lernaupdate` breaks on Lerna v7+; `syncpack` (dedupe) + `ncu --workspaces` (interactive updates) |
-| TASK-037 | Replace or reconfigure dependency management     | `feat/upgrades`        | Dependabot paused + broken config; evaluate Options A–D; recommend remove + npm audit     |
-| TASK-038 | Audit and clean up package.json scripts          | `feat/upgrades`        | Inconsistent naming, dead scripts, opaque chains; some cleanup now, rest after migrations |
-| TASK-039 | E2E testing umbrella                             | `feat/upgrades`        | CLI smoke + reader browser tests; may become `b-ber-testing` package; **high priority**   |
-| TASK-040 | E2E testing — research: tooling + fixture        | `feat/upgrades`        | Playwright vs alternatives; kitchen-sink fixture design; package boundary decision        |
-| TASK-041 | E2E testing — kitchen-sink fixture project       | `feat/upgrades`        | Covers all directives; blocked on TASK-040 for location decision                          |
-| TASK-042 | E2E testing — CLI smoke tests                    | `feat/upgrades`        | `bber new`, `bber build` variants, artifact assertions; blocked on TASK-040 + TASK-041    |
-| TASK-045 | Refactor changelog generation + release workflow | `feat/upgrades`        | Manual, fragile sequencing; evaluate changesets / release-please / AI-assisted drafting   |
-| TASK-046 | Refactor b-ber-logger                            | `feat/logger-refactor` | Bind pattern → class methods; remove process.exit from log.error; remove argv parsing     |
-| TASK-047 | Research watch mode scripts for dev workflow     | `feat/upgrades`        | Most packages lack a `watch` script; define target state per package type                 |
-| TASK-049 | Evaluate coverage report upload services         | `feat/upgrades`        | No service currently active; assess Codecov, Coveralls, GitHub Actions summary            |
+| Task     | Title                                              | Priority | Branch                 | Notes                                                                             |
+| -------- | -------------------------------------------------- | -------- | ---------------------- | --------------------------------------------------------------------------------- |
+| TASK-039 | E2E testing umbrella (parent)                      | high     | `feat/upgrades`        | CLI smoke + reader browser tests; may become `b-ber-testing` package             |
+| TASK-040 | E2E testing — research: tooling + fixture          | high     | `feat/upgrades`        | Unblocks TASK-041/042/043/044; leading candidate: Playwright in `b-ber-testing`  |
+| TASK-050 | CLI command inventory + handler test coverage      | high     | `feat/upgrades`        | Safety gate for logger refactor (TASK-046); mocks `b-ber-tasks` in handler tests |
+| TASK-013 | Node.js modernization                              | medium   | `feat/node-modern-*`   | Blocker TASK-012 ✓; per-package audits; target Node ≥ 22.x                       |
+| TASK-032 | Convert b-ber-reader-react to TypeScript (Stage 4) | medium   | `feat/ts-stage-4`      | Blocker TASK-006 ✓; largest and most complex package; low urgency                |
+| TASK-035 | Fix and modernize CircleCI pipeline                | medium   | `feat/upgrades`        | Stale Docker image; bootstrap step already removed; unblocked by TASK-036        |
+| TASK-046 | Refactor b-ber-logger                              | medium   | `feat/logger-refactor` | Remove `process.exit` from `log.error`; depends on TASK-050 handler tests first  |
+| TASK-051 | Theme customization docs + SCSS test coverage      | medium   | `feat/upgrades`        | No SCSS compilation tests exist; also documents the sass pipeline architecture   |
+| TASK-053 | Replace lerna-update-wizard with syncpack + ncu    | medium   | `feat/upgrades`        | `lernaupdate` breaks on Lerna v7+; `syncpack` + `ncu --workspaces`               |
+| TASK-054 | Research build dep ordering: reader → reader-react | medium   | `feat/upgrades`        | Two-phase root build script prevents full parallelism; investigate topo sort/Nx  |
+| TASK-037 | Replace or reconfigure dependency management       | low      | `feat/upgrades`        | Dependabot paused + broken; recommend Option A: remove + npm audit in CI         |
+| TASK-038 | Audit and clean up package.json scripts            | low      | `feat/upgrades`        | Inconsistent naming, dead scripts; some cleanup is downstream of migrations      |
+| TASK-045 | Refactor changelog generation + release workflow   | low      | `feat/upgrades`        | Manual, fragile sequencing; evaluate changesets / release-please                 |
+| TASK-047 | Research watch mode scripts for dev workflow       | low      | `feat/upgrades`        | Most packages lack a `watch` script; define target state per package type        |
+| TASK-049 | Evaluate coverage report upload services           | low      | `feat/upgrades`        | No service active; assess Codecov, Coveralls, GitHub Actions summary             |
+| TASK-052 | Research Verdaccio workflow for lerna publish      | low      | `feat/upgrades`        | No `--dry-run` in lerna publish; Verdaccio = local registry stand-in             |
+| TASK-017 | Expand diagrams: tooling versions + cross-refs     | low      | `feat/upgrades`        | Living audit surface; TASK-016 complete                                           |
+| TASK-018 | Add task file links to GitHub issues               | low      | `feat/upgrades`        | Blocked on `feat/upgrades` merge to `main`; links 404 until then                 |
+| TASK-021 | Audit `--no-package-lock` in lerna bootstrap       | low      | `feat/upgrades`        | Review alongside `--legacy-peer-deps`                                             |
+| TASK-022 | Automate circular dependency checks                | low      | `feat/upgrades`        | Options: pre-commit hook, CI, or `npm test`                                       |
+| TASK-023 | Research Lerna replacement / upgrade options       | —        | `feat/upgrades`        | Superseded by TASK-036; retain for research notes only                            |
 
 ### Not started — blocked
 
-| Task     | Title                                              | Waiting on                     |
-| -------- | -------------------------------------------------- | ------------------------------ |
-| TASK-013 | Node.js modernization                              | TASK-012 ✓ — **can begin now** |
-| TASK-015 | Biome migration                                    | TASK-006 ✓ — **can begin now** |
-| TASK-032 | Convert b-ber-reader-react to TypeScript (Stage 4) | TASK-006 ✓ — **can begin now** |
-| TASK-043 | E2E testing — reader browser tests (Playwright)    | TASK-040 (research) + TASK-041 |
-| TASK-044 | E2E testing — CI integration                       | TASK-043 (reader tests stable) |
+| Task     | Title                                              | Waiting on          |
+| -------- | -------------------------------------------------- | ------------------- |
+| TASK-041 | E2E testing — kitchen-sink fixture project         | TASK-040            |
+| TASK-042 | E2E testing — CLI smoke tests                      | TASK-040 + TASK-041 |
+| TASK-043 | E2E testing — reader browser tests (Playwright)    | TASK-040 + TASK-041 |
+| TASK-044 | E2E testing — CI integration                       | TASK-043            |
 
 ---
 
 ## Dependency Graph
 
-```
-TASK-004 (test coverage) ─────────────────────────────────────────────────────────────┐
-  per-package subtasks (b-ber-lib ✓, b-ber-tasks, grammars, ...)                      │
-                                                                                      ▼
-TASK-006 (Vite: reader-react)                            TASK-008 ✓ (tsconfig infra)
-  └─ TASK-007 (Vite: reader)                               ├─ TASK-009 ✓ (shapes-directives TS)
-  └─ TASK-015 (Biome)          [same branch]               │    └─ TASK-010 ✓ (shapes-dc + seq TS)
-       │                                                   ├─ TASK-011 ✓ (logger TS)
-       │                                                   └─ TASK-012 ✓ (lib TS)
-       │                                                         │
-       │                                              TASK-024 (Stage 2 parent)
-       │                                                ├─ TASK-025 (grammar-* TS)  ─┐
-       │                                                ├─ TASK-026 (parser-* TS)    ├─ TASK-028 (markdown-renderer TS)
-       │                                                └─ TASK-027 (templates TS)  ─┘
-       │                                                         │
-       │                                              TASK-029 (Stage 3 parent)
-       │                                                ├─ TASK-030 (tasks TS)
-       │                                                └─ TASK-031 (cli TS)
-       │                                                         │
-       └─────────────────────────────────────────────────────────┤
-                                                                 ▼
-                                                    TASK-032 (reader-react TS, Stage 4)
-                                                    TASK-013 (Node.js modernization)
+```mermaid
+graph LR
+  classDef done fill:#1b3a1b,stroke:#4caf50,color:#ccc
+  classDef active fill:#1b2a3a,stroke:#64b5f6,color:#ccc
+  classDef ready fill:#3a3a1b,stroke:#ffc107,color:#ccc
+  classDef blocked fill:#2a1a1a,stroke:#666,color:#888
+
+  T006["TASK-006 ✓\nVite: reader-react"]:::done
+  T007["TASK-007 ✓\nVite: reader"]:::done
+  T015["TASK-015 ✓\nBiome"]:::done
+
+  T008["TASK-008–012 ✓\nTS Stage 1"]:::done
+  T024["TASK-024–028 ✓\nTS Stage 2"]:::done
+  T029["TASK-029–031 ✓\nTS Stage 3"]:::done
+
+  T013["TASK-013\nNode.js\nmodernization"]:::ready
+  T032["TASK-032\nTS Stage 4\nreader-react"]:::ready
+
+  T004["TASK-004\nTest coverage"]:::active
+
+  T040["TASK-040\nE2E research"]:::ready
+  T041["TASK-041\nE2E fixture"]:::blocked
+  T042["TASK-042\nE2E CLI smoke"]:::blocked
+  T043["TASK-043\nE2E reader tests"]:::blocked
+  T044["TASK-044\nE2E CI"]:::blocked
+
+  T006 --> T007 --> T015
+  T008 --> T024 --> T029 --> T013
+  T006 --> T032
+  T004 -. "soft prereq" .-> T008
+
+  T040 --> T041
+  T040 --> T043
+  T041 --> T042
+  T041 --> T043
+  T040 --> T042
+  T043 --> T044
 ```
 
 Notes:
 
 - TASK-004 is a soft prerequisite for the TS migration: do not start TASK-008+
-  until overall coverage is ≥ 60%.
-- TASK-006 and Stage 2 TS work are fully independent and can run in parallel.
+  until overall coverage is ≥ 60% (already satisfied; migration is now done).
+- TASK-006 and the TS stage work are fully independent and ran in parallel.
 - TASK-025, TASK-026, TASK-027 are independent of each other within Stage 2.
-- TASK-028 must come after TASK-025 + TASK-026 (imports all grammar/parser packages).
-- TASK-015 (Biome) is bundled with TASK-006/007 on the same branch.
-- TASK-032 is blocked on TASK-006 (Vite) — do not attempt reader-react TS on webpack.
+- TASK-028 depends on TASK-025 + TASK-026 (imports all grammar/parser packages).
+- TASK-015 (Biome) shipped on the same branch as TASK-006/007.
+- TASK-032 is unblocked now that TASK-006 (Vite) is complete.
+- TASK-013 is unblocked now that all TS stages (1–3) are complete.
 
 ---
 
@@ -190,7 +200,7 @@ These are tracked as `TASK-001.open.md` within each package's `tasks/` directory
 | b-ber-parser-\* (5 pkgs)   | 0%                | ~90%    | ≥ 75%  | in progress |
 | b-ber-reader-react         | mixed             | mixed   | ≥ 75%  | not started |
 
-Priority order: ~~b-ber-logger~~ ✓ → ~~b-ber-templates~~ ✓ → ~~grammar/parser stubs~~ ✓ → reader-react.
+Priority order: ~~b-ber-logger~~ ✓ → ~~b-ber-templates~~ ✓ → ~~grammar/parser stubs~~ ✓ → b-ber-lib → b-ber-cli → reader-react.
 
 _Note: minimum coverage target raised from 60% to 75% on 2026-06-02. Packages previously
 marked complete at ≥ 60% (b-ber-lib at 71%, b-ber-logger at 73%, b-ber-cli at 65%)
@@ -198,42 +208,29 @@ are reopened; they need additional tests to reach 75%._
 
 \*b-ber-tasks: most pipeline steps (web, reader, pdf, sass, epub, etc.) require a full project
 directory + external tools (Calibre, wkhtmltopdf). Realistic ceiling for pure unit tests is ~25%.
-This is documented in packages/b-ber-tasks/tasks/TASK-001.open.md.
+This is documented in `packages/b-ber-tasks/tasks/TASK-001.open.md`.
 
 ---
 
 ## What To Do Next
 
-In priority order:
-
-1. **Start TASK-040** (E2E research): high priority — tooling decision
-   unblocks TASK-041/042/043. Should be fast (a day or two of evaluation).
-   Leading candidate: Playwright in a new `b-ber-testing` package.
-2. **TASK-036 complete** — Lerna upgraded to v8.2.4; npm workspaces added;
-   `lerna bootstrap` replaced with `npm install`; CI bootstrap step removed;
-   `lerna.json` repaired. All 84 test suites pass.
-3. **Start TASK-035** (Fix CircleCI): bootstrap blocker is now resolved.
-   Remaining work: stale Docker image, only runs on main branch, test step
-   config.
-4. **TASK-033 complete** — V8 coverage provider confirmed; `coveralls`,
-   `istanbul`, `istanbul-api`, `istanbul-reports` removed from root
-   `package.json`. TASK-049 opened for coverage upload evaluation (low priority).
-5. **Stage 3 complete** (TASK-029–031 ✓): both `b-ber-tasks` and `b-ber-cli`
-   are now TypeScript. `feat/ts-stage-3` merged into `feat/upgrades`.
-   TASK-032 (reader-react TS, Stage 4) is still blocked on TASK-006 (Vite).
-6. **TASK-007 complete** — webpack fully removed from monorepo; `b-ber-reader`
-   now builds with Vite. Next up: TASK-015 (Biome) on the same branch.
-7. **TASK-037** (Dependency management): low effort if Option A — remove
-   Dependabot and add `npm audit` to CI. Can be done alongside TASK-035.
-8. **TASK-038** (package.json script cleanup): some items unblocked now (theme
-   packages, root dead scripts). Remaining cleanup is downstream of TASK-006,
-   TASK-029–031 ✓, and TASK-036 — do those pieces as part of those tasks.
+| Priority | Task     | Action                                                                                                                               |
+| -------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| 1        | TASK-040 | Start E2E research: pick Playwright vs. alternatives, design kitchen-sink fixture, decide package boundary. Unblocks TASK-041–044.   |
+| 2        | TASK-050 | Write CLI handler tests for `build`, `deploy`, `check`. Gate for the logger refactor — need `process.exit` assertions in place first. |
+| 3        | TASK-035 | Fix CircleCI: update stale Docker image, add test step, configure to run on non-main branches. Bootstrap blocker resolved by TASK-036. |
+| 4        | TASK-013 | Open per-package Node.js modernization tasks. Priority order: b-ber-tasks → b-ber-lib → b-ber-cli → grammar/parser batch.            |
+| 5        | TASK-004 | Continue per-package coverage work: b-ber-lib (71% → 75%), b-ber-logger (73% → 75%), b-ber-cli (65% → 75%), b-ber-validator (69% → 80%). |
+| 6        | TASK-054 | Research build dep ordering. Low effort; shapes the root `build` script and potentially the CI config.                               |
+| 7        | TASK-046 | Refactor b-ber-logger once TASK-050 handler tests are in place. Remove `process.exit` from `log.error`.                             |
+| 8        | TASK-032 | Plan TS Stage 4 (reader-react). Now unblocked; lowest urgency of the unblocked items given complexity.                               |
 
 ---
 
 ## Merge Checklist (before merging `feat/upgrades` → `main`)
 
-- [ ] `npm test` passes from repo root (all ~74 suites)
+- [ ] `npm test` passes from repo root (all ~84 suites)
 - [ ] No `.open.md` tasks at high priority left untouched
 - [ ] `PLAN.md` is current
 - [ ] Any new feature branches have been either merged or noted as in-progress
+- [ ] TASK-018 complete (task file links added to all GitHub issues)

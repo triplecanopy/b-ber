@@ -1,6 +1,6 @@
 # TASK-014: Research and set up GitHub issue tracking integration
 
-**Status:** in progress
+**Status:** complete
 **Scope:** monorepo
 **Priority:** medium
 **GitHub Issue:** #475 — https://github.com/triplecanopy/b-ber/issues/475
@@ -106,22 +106,17 @@ PRs to issues, querying issue metadata during planning).
 - [x] Authenticate: run `! gh auth login` in the Claude Code session
       (the `!` prefix runs the interactive command in the terminal)
 - [x] Verify: `gh issue list` returns existing open issues (confirmed 2026-05-30)
-- [ ] Retroactively create and close GitHub issues for all completed root tasks:
-  - TASK-001 (webpack replacement research) — closed
-  - TASK-002 (JS→TS migration strategy) — closed
-  - TASK-003 (type consolidation research) — closed
-    Use the task PRD body as the issue description. Add a closing comment
-    linking to the relevant commit SHA.
-- [ ] Create open GitHub issues for all in-progress or not-started root tasks:
-  - TASK-004 (test coverage)
-  - TASK-005 (Biome research)
-  - TASK-006 through TASK-013 (implementation tasks)
-    Label open implementation tasks `enhancement`; label research tasks `research`.
-- [ ] Document the issue workflow in this AGENTS.md (update the Task System
-      section to reference GitHub issues as the external tracker).
-- [ ] Decide: should per-package tasks also get GitHub issues, or only root tasks?
-      (Recommendation: root tasks only for now — per-package tasks are too granular
-      for external visibility and would flood the issue tracker.)
+- [x] Retroactively create and close GitHub issues for all completed root tasks.
+      Issues created (#456–#508 range) and closed for all tasks through TASK-048.
+      12 issues that were left open for completed tasks (#493–#504) closed 2026-06-04.
+- [x] Create open GitHub issues for all in-progress or not-started root tasks.
+      Issues #509–#521 created for TASK-038, TASK-040 through TASK-054.
+      `**GitHub Issue:**` fields added to all 13 task PRD files 2026-06-04.
+- [x] Document the issue workflow in AGENTS.md. Updated the GitHub Issues section
+      to state root-only scope, `gh` CLI as the tool, and the open-for-all-tasks
+      policy. Created `/sync-task-issues` skill at `.claude/skills/sync-task-issues.md`.
+- [x] Decided: root-level tasks only. Package-level tasks are too granular and
+      excluded from the GitHub issue tracker.
 
 ## Notes
 

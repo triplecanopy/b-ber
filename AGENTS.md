@@ -376,14 +376,22 @@ exceed what comfortably fits in one context window.
 
 ## GitHub Issues
 
-Project-level tasks are cross-referenced with GitHub issues so that either can
-be found from the other.
+Root-level tasks (`tasks/TASK-NNN[.open].md`) are cross-referenced with GitHub
+issues so that either can be found from the other. **Package-level tasks
+(`packages/*/tasks/`) are intentionally excluded** — they are too granular for
+the public issue tracker and would create noise without value.
+
+Use the **`gh` CLI** for all issue operations. It is installed and
+authenticated. The `/sync-task-issues` skill (`.claude/skills/sync-task-issues.md`)
+documents the full audit-and-sync workflow; run it whenever completing a task
+or opening new ones.
 
 ### When to create issues
 
-Create GitHub issues for tasks that are **closed** (status: complete) or
-**open and actively in progress**. Do not create issues for speculative or
-not-started tasks that have no work underway.
+Create a GitHub issue for **every root-level task** regardless of status —
+not-started, in-progress, and complete alike. Close the issue immediately when
+the task is marked complete. This keeps the tracker as a live mirror of the
+task system rather than a post-hoc archive.
 
 ### Cross-referencing
 
@@ -415,9 +423,15 @@ For package-level tasks the path is `packages/<name>/tasks/TASK-NNN.md`:
 **Task file:** [packages/b-ber-reader-react/tasks/TASK-001.md](https://github.com/triplecanopy/b-ber/blob/main/packages/b-ber-reader-react/tasks/TASK-001.md)
 ```
 
-The task file link always points to the `main` branch. Do not create the issue
-(or add the task file link) until the branch containing the task file has been
-merged to `main` — the link will 404 until then.
+The task file link always points to the `main` branch. Add it to the issue
+body at creation time — it will start resolving once `feat/upgrades` is merged
+to `main`. Until then the URL is a useful pointer even if it returns 404.
+
+When closing an issue for a completed task, add a brief comment:
+
+```bash
+gh issue close <number> --comment "Completed. Work merged into feat/upgrades."
+```
 
 ### Labels
 

@@ -7,5 +7,7 @@ lerna-debug.log
 **/*.rej
 *.gypi
 *.tsbuildinfo
-.claude/
+.claude/*
+!.claude/skills/
+!.claude/skills/**
 packages/**/package-lock.json

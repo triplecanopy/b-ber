@@ -3,6 +3,7 @@
 **Status:** not started
 **Scope:** monorepo
 **Priority:** medium
+**GitHub Issue:** #518 — https://github.com/triplecanopy/b-ber/issues/518
 
 ## Description
 
