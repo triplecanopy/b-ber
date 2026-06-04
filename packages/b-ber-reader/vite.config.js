@@ -15,6 +15,7 @@ export default defineConfig({
     },
   },
   build: {
+    target: 'es2022',
     outDir: 'dist',
     // b-ber-reader-react is a symlink that resolves outside node_modules,
     // so the default CJS include pattern misses it — add it explicitly.

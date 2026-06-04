@@ -4,6 +4,7 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   plugins: [react({ include: /\.(jsx?|tsx?)$/ })],
   build: {
+    target: 'es2022',
     lib: {
       entry: 'src/index.jsx',
       name: 'BberReader',

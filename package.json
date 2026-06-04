@@ -4,8 +4,8 @@
   "private": true,
   "license": "GPL-3.0-or-later",
   "engines": {
-    "node": ">= 10.x",
-    "npm": ">= 6.x"
+    "node": ">= 22.x",
+    "npm": ">= 10.x"
   },
   "workspaces": ["packages/*"],
   "scripts": {
