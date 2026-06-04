@@ -87,7 +87,10 @@ export function createIframeInline(data) {
     ...rest
   } = data
 
-  const defaults = { allow: 'fullscreen autoplay', frameborder: '0' }
+  // TODO(TASK-056): 'frameborder' is not a valid EPUB 3 attribute and causes
+  // EPUBCheck errors. Remove once the iframe template is EPUB 3 compliant.
+  // const defaults = { allow: 'fullscreen autoplay', frameborder: '0' }
+  const defaults = { allow: 'fullscreen autoplay' }
   const iframeAttrs = Object.entries({ ...defaults, ...rest }).reduce(
     (acc, [key, val]) => {
       if (!htmlIframeAttributes.has(key) || val === '') return acc

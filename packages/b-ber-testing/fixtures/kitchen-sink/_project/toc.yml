@@ -14,5 +14,9 @@
 - kitchen-sink-chapter-01
 - kitchen-sink-chapter-02
 - kitchen-sink-chapter-03
+# Spread edge cases
+- kitchen-sink-spread-single
+- kitchen-sink-spread-consecutive
+- kitchen-sink-spread-edges
 # Back matter
 - kitchen-sink-colophon

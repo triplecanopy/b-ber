@@ -47,4 +47,14 @@ type: bodymatter
 
 ::: exit:ch-02-section-03
 
+::: subchapter:ch-02-section-04
+
+## Iframe
+
+::: iframe:ch-02-iframe-01 source:https://example.com/embed title:"Example embed"
+
+An embedded iframe.
+
+::: exit:ch-02-section-04
+
 ::: exit:kitchen-sink-chapter-02
