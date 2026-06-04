@@ -8,7 +8,7 @@ A markdown-it block-container plugin that parses generic b-ber structural direct
 
 | File                      | Purpose                                                             |
 | ------------------------- | ------------------------------------------------------------------- |
-| `src/index.js`            | Plugin entry point; block rule, token emission with `<section>` tag |
+| `src/index.ts`            | Plugin entry point; block rule, token emission with `<section>` tag |
 | `__tests__/index.test.js` | Test file (placeholder only — contains `test.todo`)                 |
 
 ## Dev Commands

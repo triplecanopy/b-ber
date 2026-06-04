@@ -8,7 +8,7 @@ Transforms the `epigraph` inline directive into EPUB-compliant HTML. Supports tw
 
 | File                      | Purpose                                                                                                                |
 | ------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| `src/index.js`            | Full implementation including regex parsing of `image`, `caption`, and `citation` named attributes and HTML generation |
+| `src/index.ts`            | Full implementation including regex parsing of `image`, `caption`, and `citation` named attributes and HTML generation |
 | `__tests__/index.test.js` | Jest tests                                                                                                             |
 
 ## Dev Commands

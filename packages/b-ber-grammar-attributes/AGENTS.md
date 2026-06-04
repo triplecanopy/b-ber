@@ -8,7 +8,7 @@ Shared attribute parsing and serialization utilities for the b-ber grammar pipel
 
 | File                      | Purpose                                                                                                                       |
 | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| `src/index.js`            | All exports: `parseAttrs`, `attributesObject`, `attributesString`, `attributesQueryString`, `attributes`, `htmlId`, `toAlias` |
+| `src/index.ts`            | All exports: `parseAttrs`, `attributesObject`, `attributesString`, `attributesQueryString`, `attributes`, `htmlId`, `toAlias` |
 | `__tests__/index.test.js` | Jest tests covering all exported functions                                                                                    |
 
 ## Dev Commands
@@ -24,7 +24,7 @@ Additional standards for this package:
 
 - All transforms are synchronous; no async code
 - Attribute parsing uses a hand-written character-level scanner (no regex for the core loop) to handle quoted values with embedded spaces
-- The biological taxonomy comment in `src/index.js` explains the class/order/family/genus hierarchy used for EPUB structural classification — keep it
+- The biological taxonomy comment in `src/index.ts` explains the class/order/family/genus hierarchy used for EPUB structural classification — keep it
 
 ## Task System
 

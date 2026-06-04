@@ -8,9 +8,9 @@ A data package that defines the ordered build task sequences for each b-ber outp
 
 | File                           | Purpose                                                           |
 | ------------------------------ | ----------------------------------------------------------------- |
-| `src/index.js`                 | Re-exports `sequences` and `createBuildSequence`                  |
-| `src/sequences/index.js`       | `build` base array and `sequences` format map                     |
-| `src/create-build-sequence.js` | `createBuildSequence` helper function                             |
+| `src/index.ts`                 | Re-exports `sequences` and `createBuildSequence`                  |
+| `src/sequences/index.ts`       | `build` base array and `sequences` format map                     |
+| `src/create-build-sequence.ts` | `createBuildSequence` helper function                             |
 | `__tests__/index.test.js`      | Tests for `build` array shape and per-format sequence composition |
 
 ## Dev Commands
@@ -25,7 +25,7 @@ This package follows the monorepo-wide standards in the root AGENTS.md.
 Additional standards for this package:
 
 - Task names in `build` and `sequences` must exactly match the task module names registered in the b-ber CLI
-- Adding a new output format requires entries in both `sequences/index.js` and any CLI command that calls `createBuildSequence`
+- Adding a new output format requires entries in both `sequences/index.ts` and any CLI command that calls `createBuildSequence`
 - This package has no runtime side effects; keep it data-only
 
 ## Task System

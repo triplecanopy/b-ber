@@ -8,7 +8,7 @@ Transforms the `logo` inline directive into a `<figure class="logo"><img style="
 
 | File                      | Purpose                                             |
 | ------------------------- | --------------------------------------------------- |
-| `src/index.js`            | Full implementation — single-file directive handler |
+| `src/index.ts`            | Full implementation — single-file directive handler |
 | `__tests__/index.test.js` | Jest tests                                          |
 
 ## Dev Commands

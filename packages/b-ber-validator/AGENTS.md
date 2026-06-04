@@ -19,7 +19,7 @@
 ## Dev Commands
 
 ```bash
-npm test      # tsc type-check + eslint + jest
+npm test      # jest
 npm run build # tsc compile src/ → dist/ (runs tests first)
 ```
 
@@ -28,7 +28,7 @@ npm run build # tsc compile src/ → dist/ (runs tests first)
 This package follows the monorepo-wide standards in the root AGENTS.md.
 Additional standards for this package:
 
-- This is the only TypeScript package in the build pipeline; all source files are `.ts`.
+- All source files are `.ts`.
 - The build step (`npm run build`) runs `npm test` first; a failing test prevents the build from completing.
 - Combinators follow a consistent signature: they accept parser inputs and return a `Parser<T>`. Do not add stateful combinators.
 - Directive names are sourced from `b-ber-shapes-directives` (`BLOCK_DIRECTIVES`, `INLINE_DIRECTIVES`, `MISC_DIRECTIVES`, `DRAFT_DIRECTIVES`, `DEPRECATED_DIRECTIVES`). Adding a new directive type requires updating that shapes package.

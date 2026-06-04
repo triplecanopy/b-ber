@@ -8,7 +8,7 @@ A markdown-it block-container plugin that parses b-ber `dialogue` directives. It
 
 | File                      | Purpose                                                                                    |
 | ------------------------- | ------------------------------------------------------------------------------------------ |
-| `src/index.js`            | Plugin entry point; registers the block rule and renderer, handles interlocutor extraction |
+| `src/index.ts`            | Plugin entry point; registers the block rule and renderer, handles interlocutor extraction |
 | `__tests__/index.test.js` | Test file (placeholder only — contains `test.todo`)                                        |
 
 ## Dev Commands

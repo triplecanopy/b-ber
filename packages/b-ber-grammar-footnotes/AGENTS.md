@@ -8,7 +8,7 @@ A MarkdownIt core rule (not a container directive) that collects footnotes from 
 
 | File                      | Purpose                                                                                            |
 | ------------------------- | -------------------------------------------------------------------------------------------------- |
-| `src/index.js`            | Single exported factory function `markdownItFootnotePlugin(self)` returning a MarkdownIt core rule |
+| `src/index.ts`            | Single exported factory function `markdownItFootnotePlugin(self)` returning a MarkdownIt core rule |
 | `__tests__/index.test.js` | Jest tests                                                                                         |
 
 ## Dev Commands

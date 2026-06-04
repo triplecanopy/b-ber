@@ -8,7 +8,7 @@ A markdown-it block-container plugin that parses b-ber `gallery` directives. It 
 
 | File                      | Purpose                                                                                                                       |
 | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| `src/index.js`            | Plugin entry point; block rule, child-token post-processing, `createImageElement`, `createMediaElement`, `addCaption` helpers |
+| `src/index.ts`            | Plugin entry point; block rule, child-token post-processing, `createImageElement`, `createMediaElement`, `addCaption` helpers |
 | `__tests__/index.test.js` | Test file (placeholder only — contains `test.todo`)                                                                           |
 
 ## Dev Commands

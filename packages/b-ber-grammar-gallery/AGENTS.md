@@ -8,7 +8,7 @@ Transforms the `gallery` / `exit` block directive pair into a build-target-aware
 
 | File                      | Purpose                                                                                   |
 | ------------------------- | ----------------------------------------------------------------------------------------- |
-| `src/index.js`            | Full implementation — `render` function with build-type switch, exported directive object |
+| `src/index.ts`            | Full implementation — `render` function with build-type switch, exported directive object |
 | `__tests__/index.test.js` | Jest tests                                                                                |
 
 ## Dev Commands

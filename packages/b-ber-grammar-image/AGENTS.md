@@ -8,8 +8,8 @@ Transforms `figure` and `figure-inline` directives into image HTML. Reads image 
 
 | File                      | Purpose                                                                        |
 | ------------------------- | ------------------------------------------------------------------------------ |
-| `src/index.js`            | Entry point — `prepare()`, `validate()`, `render()`, exported directive object |
-| `src/image.js`            | HTML builders: `createFigure()` and `createFigureInline()`                     |
+| `src/index.ts`            | Entry point — `prepare()`, `validate()`, `render()`, exported directive object |
+| `src/image.ts`            | HTML builders: `createFigure()` and `createFigureInline()`                     |
 | `__tests__/index.test.js` | Jest tests                                                                     |
 
 ## Dev Commands

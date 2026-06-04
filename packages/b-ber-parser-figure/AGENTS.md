@@ -8,7 +8,7 @@ A markdown-it block-container plugin that parses b-ber `figure` directives. It t
 
 | File                      | Purpose                                                               |
 | ------------------------- | --------------------------------------------------------------------- |
-| `src/index.js`            | Plugin entry point; block rule with caption lookahead, token emission |
+| `src/index.ts`            | Plugin entry point; block rule with caption lookahead, token emission |
 | `__tests__/index.test.js` | Test file (placeholder only — contains `test.todo`)                   |
 
 ## Dev Commands

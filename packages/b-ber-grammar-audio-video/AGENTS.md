@@ -8,8 +8,8 @@ Transforms the `audio`, `audio-inline`, `video`, and `video-inline` b-ber Markdo
 
 | File                      | Purpose                                                                                                                                                         |
 | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/index.js`            | Entry point — `prepare()` function, `render()` dispatcher, exported directive object                                                                            |
-| `src/helpers.js`          | HTML-building utilities: `createMedia`, `createIFrame`, `createMediaInline`, `createLocalMediaSources`, `createRemoteMediaSource`, `getWebOnlyAttributesString` |
+| `src/index.ts`            | Entry point — `prepare()` function, `render()` dispatcher, exported directive object                                                                            |
+| `src/helpers.ts`          | HTML-building utilities: `createMedia`, `createIFrame`, `createMediaInline`, `createLocalMediaSources`, `createRemoteMediaSource`, `getWebOnlyAttributesString` |
 | `__tests__/index.test.js` | Jest tests                                                                                                                                                      |
 
 ## Dev Commands

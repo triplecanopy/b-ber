@@ -8,7 +8,7 @@ The shared MarkdownIt container plugin factory for block-level directives. `crea
 
 | File                      | Purpose                                               |
 | ------------------------- | ----------------------------------------------------- |
-| `src/index.js`            | Single export `createRenderer` — the renderer factory |
+| `src/index.ts`            | Single export `createRenderer` — the renderer factory |
 | `__tests__/index.test.js` | Jest tests                                            |
 
 ## Dev Commands

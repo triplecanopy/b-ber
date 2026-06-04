@@ -8,8 +8,8 @@ A pre-parse text substitution step for `media` and `media-inline` directives. Sc
 
 | File                      | Purpose                                                                       |
 | ------------------------- | ----------------------------------------------------------------------------- |
-| `src/index.js`            | `render(markdownString)` — the substitution pass; exports `{ render }`        |
-| `src/helpers.js`          | `createDirectiveString()`, `createAttributesString()`, error-throwing helpers |
+| `src/index.ts`            | `render(markdownString)` — the substitution pass; exports `{ render }`        |
+| `src/helpers.ts`          | `createDirectiveString()`, `createAttributesString()`, error-throwing helpers |
 | `__tests__/index.test.js` | Jest tests                                                                    |
 
 ## Dev Commands

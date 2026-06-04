@@ -49,7 +49,7 @@ Additional standards for this package:
 - Config overrides passed via `--config` or CLI flags are validated against
   `state.config` keys before being applied; unknown or blacklisted keys are
   warned and discarded — preserve this pattern in new commands.
-- The `blacklistedConfigOptions` set in `src/lib/config-options.js` must be
+- The `blacklistedConfigOptions` set in `src/lib/config-options.ts` must be
   kept in sync with any config keys that cannot be safely overridden at
   runtime.
 

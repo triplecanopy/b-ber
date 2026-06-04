@@ -8,7 +8,7 @@ Handles all block-container directives (chapter, part, subchapter, appendix, pre
 
 | File                      | Purpose                                                                                                                                  |
 | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/index.js`            | Full implementation — `openElement`, `closeElement`, `handleExitDirective`, `isGallery`, `isSpread`, `render`, exported directive object |
+| `src/index.ts`            | Full implementation — `openElement`, `closeElement`, `handleExitDirective`, `isGallery`, `isSpread`, `render`, exported directive object |
 | `__tests__/index.test.js` | Jest tests                                                                                                                               |
 
 ## Dev Commands

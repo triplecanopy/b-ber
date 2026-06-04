@@ -8,7 +8,7 @@ Transforms `pullquote` and `blockquote` block directives (and their `exit` close
 
 | File                      | Purpose                                                                                                        |
 | ------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| `src/index.js`            | Full implementation — `handleOpen`, `handleClose`, `cite`, `validateOpen`, `render`, exported directive object |
+| `src/index.ts`            | Full implementation — `handleOpen`, `handleClose`, `cite`, `validateOpen`, `render`, exported directive object |
 | `__tests__/index.test.js` | Jest tests                                                                                                     |
 
 ## Dev Commands

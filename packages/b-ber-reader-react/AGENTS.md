@@ -53,17 +53,16 @@ Chapter change:
 | `PLAN.md`                            | Living project plan — read this first                   |
 | `tasks/`                             | Task PRDs — open tasks have `.open.md` extension        |
 | `src/index.jsx`                      | Package entry point                                     |
-| `src/App.jsx`                        | Redux Provider + Reader mount                           |
-| `src/components/Reader/index.jsx`    | Main orchestrator (state, navigation, loading)          |
-| `src/components/Layout.jsx`          | CSS columns layout container                            |
-| `src/components/BookContent.jsx`     | Renders `book.content` React tree                       |
-| `src/components/Ultimate.jsx`        | Layout stability sentinel (hides spinner)               |
-| `src/components/Spread.jsx`          | Full-bleed spread image positioning                     |
-| `src/lib/with-dimensions.jsx`        | HOC: measures viewport, dispatches viewerSettings       |
-| `src/lib/with-last-spread-index.jsx` | HOC: measures content width, dispatches lastSpreadIndex |
-| `src/lib/navigation.js`              | Page and chapter navigation logic                       |
-| `src/lib/loader.js`                  | OPF/NCX fetch, spine parsing, book.content population   |
-| `src/lib/resize.js`                  | Window resize handlers                                  |
+| `src/components/App.jsx`                     | Redux Provider + Reader mount                           |
+| `src/components/Reader/index.jsx`            | Main orchestrator (state, navigation, loading)          |
+| `src/components/Layout.jsx`                  | CSS columns layout container                            |
+| `src/components/Ultimate.jsx`                | Layout stability sentinel (hides spinner)               |
+| `src/components/Spread.jsx`                  | Full-bleed spread image positioning                     |
+| `src/lib/with-dimensions.jsx`                | HOC: measures viewport, dispatches viewerSettings       |
+| `src/lib/with-last-spread-index.jsx`         | HOC: measures content width, dispatches lastSpreadIndex |
+| `src/components/Reader/navigation.js`        | Page and chapter navigation logic                       |
+| `src/components/Reader/loader.js`            | OPF/NCX fetch, spine parsing, book.content population   |
+| `src/components/Reader/resize.js`            | Window resize handlers                                  |
 
 ---
 

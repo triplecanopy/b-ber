@@ -2,14 +2,14 @@
 
 ## What This Is
 
-Transforms `iframe` and `iframe-inline` directives into HTML. The `iframe` form registers a figure entry in state and emits a thumbnail linking to the figure page (LOI). The `iframe-inline` form emits a full `<iframe>` element with attributes (`allow`, `frameborder`, `height`, `width`, `title`) for `reader`/`web` builds; other builds receive an unsupported-content block from `b-ber-lib/utils`. Attribute preparation and validation are handled in `src/helpers.js`.
+Transforms `iframe` and `iframe-inline` directives into HTML. The `iframe` form registers a figure entry in state and emits a thumbnail linking to the figure page (LOI). The `iframe-inline` form emits a full `<iframe>` element with attributes (`allow`, `frameborder`, `height`, `width`, `title`) for `reader`/`web` builds; other builds receive an unsupported-content block from `b-ber-lib/utils`. Attribute preparation and validation are handled in `src/helpers.ts`.
 
 ## Key Files
 
 | File                      | Purpose                                                              |
 | ------------------------- | -------------------------------------------------------------------- |
-| `src/index.js`            | Entry point — `render` dispatcher, exported directive object         |
-| `src/helpers.js`          | `prepare()`, `createIframe()`, `createIframeInline()`, `supported()` |
+| `src/index.ts`            | Entry point — `render` dispatcher, exported directive object         |
+| `src/helpers.ts`          | `prepare()`, `createIframe()`, `createIframeInline()`, `supported()` |
 | `__tests__/index.test.js` | Jest tests                                                           |
 
 ## Dev Commands

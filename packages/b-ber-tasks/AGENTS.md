@@ -8,11 +8,11 @@
 
 | File                             | Purpose                                                               |
 | -------------------------------- | --------------------------------------------------------------------- |
-| `src/index.js`                   | Re-exports all task functions                                         |
-| `src/render/index.js`            | Converts Markdown source files to XHTML via `b-ber-markdown-renderer` |
-| `src/opf/Opf.js`                 | Generates the EPUB OPF package document                               |
-| `src/opf/ManifestAndMetadata.js` | Builds OPF manifest and Dublin Core metadata sections                 |
-| `src/opf/Navigation.js`          | Builds NCX / navigation document                                      |
+| `src/index.ts`                   | Re-exports all task functions                                         |
+| `src/render/index.ts`            | Converts Markdown source files to XHTML via `b-ber-markdown-renderer` |
+| `src/opf/Opf.ts`                 | Generates the EPUB OPF package document                               |
+| `src/opf/ManifestAndMetadata.ts` | Builds OPF manifest and Dublin Core metadata sections                 |
+| `src/opf/Navigation.ts`          | Builds NCX / navigation document                                      |
 | `src/container/`                 | Generates `META-INF/container.xml`                                    |
 | `src/epub/`                      | Zips the OPS directory into a `.epub` file                            |
 | `src/sass/`                      | Compiles SCSS to CSS with autoprefixer                                |
@@ -34,13 +34,13 @@
 | `src/serve/`                     | Starts a browser-sync dev server                                      |
 | `src/deploy/`                    | Deploys build output to a remote host                                 |
 | `src/validate/`                  | Validates directive syntax via `b-ber-validator`                      |
-| `src/serialize.js`               | Serialises the spine/TOC data structure                               |
+| `src/serialize.ts`               | Serialises the spine/TOC data structure                               |
 
 ## Dev Commands
 
 ```bash
 npm test      # jest
-npm run build # babel transpile src/ → dist/ (plus copy.sh for non-JS assets)
+npm run build # compile src/ → dist/ with tsdown, then copy.sh for browser-side JS assets
 ```
 
 ## Code Standards
@@ -50,7 +50,7 @@ Additional standards for this package:
 
 - All tasks return Promises. Do not use callbacks.
 - Tasks operate on the shared `state` singleton from `b-ber-lib/State`. Do not pass state as an argument.
-- Some web-build files (`src/web/search.js`, `src/web/worker.js`, etc.) are excluded from Babel transpilation because they run in the browser; do not add ES module imports to those files.
+- Some web-build files (`src/web/search.js`, `src/web/worker.js`, etc.) are excluded from tsdown compilation because they run in the browser; do not add ES module imports to those files.
 - The `copy.sh` script copies non-JS source assets (e.g., web worker scripts) into `dist/` during build. If you add new non-JS files, update `copy.sh`.
 
 ## Task System

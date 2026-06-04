@@ -8,26 +8,26 @@
 
 | File                                                                                                            | Purpose                                                            |
 | --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| `src/index.js`                                                                                                  | Defines `Logger` class and exports the singleton `log` instance    |
-| `src/Timer.js`                                                                                                  | Base class; tracks elapsed time for the current build run          |
-| `src/format.js`                                                                                                 | `wrap`, `decorate`, `floatFormat` — chalk-based message formatting |
-| `src/indenter.js`                                                                                               | Indent level tracking (`incrementIndent`, `decrementIndent`, etc.) |
-| `src/printer.js`                                                                                                | `printWarnings` / `printErrors` — formatted batch output           |
-| `src/summary.js`                                                                                                | `printSummary` — end-of-run summary report                         |
-| `src/configure.js`                                                                                              | Applies runtime settings (logLevel, boringOutput)                  |
-| `src/compose.js`                                                                                                | `composeMessage` — assembles the final string before output        |
-| `src/register.js`                                                                                               | `registerSequence` — sets total task count for progress display    |
-| `src/context.js`                                                                                                | `counter`, `getContext` — task counter and context label helpers   |
-| `src/events.js`                                                                                                 | `notify` — emits internal build events                             |
-| `src/listeners.js`                                                                                              | `bind` — attaches event listeners at startup                       |
-| `src/reset.js`                                                                                                  | `reset` — resets logger state between build runs                   |
-| `src/warn.js`, `src/info.js`, `src/error.js`, `src/debug.js`, `src/trace.js`, `src/notice.js`, `src/inspect.js` | Individual log-level implementations                               |
+| `src/index.ts`                                                                                                  | Defines `Logger` class and exports the singleton `log` instance    |
+| `src/Timer.ts`                                                                                                  | Base class; tracks elapsed time for the current build run          |
+| `src/format.ts`                                                                                                 | `wrap`, `decorate`, `floatFormat` — chalk-based message formatting |
+| `src/indenter.ts`                                                                                               | Indent level tracking (`incrementIndent`, `decrementIndent`, etc.) |
+| `src/printer.ts`                                                                                                | `printWarnings` / `printErrors` — formatted batch output           |
+| `src/summary.ts`                                                                                                | `printSummary` — end-of-run summary report                         |
+| `src/configure.ts`                                                                                              | Applies runtime settings (logLevel, boringOutput)                  |
+| `src/compose.ts`                                                                                                | `composeMessage` — assembles the final string before output        |
+| `src/register.ts`                                                                                               | `registerSequence` — sets total task count for progress display    |
+| `src/context.ts`                                                                                                | `counter`, `getContext` — task counter and context label helpers   |
+| `src/events.ts`                                                                                                 | `notify` — emits internal build events                             |
+| `src/listeners.ts`                                                                                              | `bind` — attaches event listeners at startup                       |
+| `src/reset.ts`                                                                                                  | `reset` — resets logger state between build runs                   |
+| `src/warn.ts`, `src/info.ts`, `src/error.ts`, `src/debug.ts`, `src/trace.ts`, `src/notice.ts`, `src/inspect.ts` | Individual log-level implementations                               |
 
 ## Dev Commands
 
 ```bash
 npm test      # jest
-npm run build # babel transpile src/ → dist/
+npm run build # compile src/ → dist/ with tsdown (CJS)
 ```
 
 ## Code Standards

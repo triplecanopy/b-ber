@@ -8,8 +8,8 @@ Transforms `vimeo` and `vimeo-inline` directives into Vimeo embed HTML. The `vim
 
 | File                      | Purpose                                                                                                                                                     |
 | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/index.js`            | Entry point — `prepare()`, `render()` dispatcher, exported directive object                                                                                 |
-| `src/helpers.js`          | `createVimeo`, `createVimeoInline`, `createUnsupportedInline`, `vimeoAttributesTransformer`, `transformAttributes`, `validatePosterImage`, `bBerAttributes` |
+| `src/index.ts`            | Entry point — `prepare()`, `render()` dispatcher, exported directive object                                                                                 |
+| `src/helpers.ts`          | `createVimeo`, `createVimeoInline`, `createUnsupportedInline`, `vimeoAttributesTransformer`, `transformAttributes`, `validatePosterImage`, `bBerAttributes` |
 | `__tests__/index.test.js` | Jest tests                                                                                                                                                  |
 
 ## Dev Commands

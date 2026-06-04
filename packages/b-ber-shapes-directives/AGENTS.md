@@ -8,7 +8,7 @@ A pure data package exporting constants and `Set` collections that define every 
 
 | File                      | Purpose                                                                                     |
 | ------------------------- | ------------------------------------------------------------------------------------------- |
-| `src/index.js`            | All exports — marker constants, directive Sets, `SUPPORTED_ATTRIBUTES`, HTML attribute sets |
+| `src/index.ts`            | All exports — marker constants, directive Sets, `SUPPORTED_ATTRIBUTES`, HTML attribute sets |
 | `__tests__/index.test.js` | Tests for marker constants, Set types, and merged set correctness                           |
 
 ## Dev Commands

@@ -8,7 +8,7 @@ Transforms the `dialogue` / `exit` block directive pair into a `<section>` wrapp
 
 | File                      | Purpose                                                                                |
 | ------------------------- | -------------------------------------------------------------------------------------- |
-| `src/index.js`            | Full implementation — `handleOpen`, `handleClose`, `render`, exported directive object |
+| `src/index.ts`            | Full implementation — `handleOpen`, `handleClose`, `render`, exported directive object |
 | `__tests__/index.test.js` | Jest tests                                                                             |
 
 ## Dev Commands

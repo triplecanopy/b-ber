@@ -8,8 +8,8 @@ A markdown-it plugin (adapted from markdown-it-footnote 3.0.1) that parses inlin
 
 | File                      | Purpose                                                                                                                                            |
 | ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/index.js`            | Plugin entry point; block rule (`footnote_def`), inline rules (`footnote_inline`, `footnote_ref`), core rule (`footnote_tail`), all renderer rules |
-| `src/counter.js`          | `Counter` class tracking footnote list start values and generating unique hash-based reference IDs                                                 |
+| `src/index.ts`            | Plugin entry point; block rule (`footnote_def`), inline rules (`footnote_inline`, `footnote_ref`), core rule (`footnote_tail`), all renderer rules |
+| `src/counter.ts`          | `Counter` class tracking footnote list start values and generating unique hash-based reference IDs                                                 |
 | `__tests__/index.test.js` | Test file (placeholder only — contains `test.todo`)                                                                                                |
 
 ## Dev Commands
@@ -24,7 +24,7 @@ This package follows the monorepo-wide standards in the root AGENTS.md.
 Additional standards for this package:
 
 - The plugin callback pattern (second argument to `md.use`) is specific to this parser; it is not a markdown-it convention
-- `Counter` uses class field syntax (`setRef = …`, `getRef = …`) — requires Babel class-properties transform
+- `Counter` uses class field syntax (`setRef = …`, `getRef = …`)
 - The module exports using `export default` (ES module); the Counter also uses ES module `export default`
 
 ## Task System

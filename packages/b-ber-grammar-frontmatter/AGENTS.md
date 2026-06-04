@@ -8,7 +8,7 @@ A MarkdownIt front matter plugin callback that extracts YAML metadata from the t
 
 | File                      | Purpose                                                                                         |
 | ------------------------- | ----------------------------------------------------------------------------------------------- |
-| `src/index.js`            | Single exported factory `markdownItFrontmatterPlugin(self)` returning the front matter callback |
+| `src/index.ts`            | Single exported factory `markdownItFrontmatterPlugin(self)` returning the front matter callback |
 | `__tests__/index.test.js` | Jest tests                                                                                      |
 
 ## Dev Commands

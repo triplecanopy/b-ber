@@ -314,8 +314,20 @@ npm run bootstrap:clean
 # Build all packages
 npm run build
 
-# Run all tests
+# Run all tests (biome check, then jest)
 npm test
+
+# Lint and format check only (no tests)
+npm run check
+
+# Auto-fix lint and formatting violations
+npm run format
+
+# TypeScript type-check across all packages
+npm run typecheck
+
+# Check for circular imports
+npm run check:circular
 
 # Run lerna commands
 npm run lerna -- <command>

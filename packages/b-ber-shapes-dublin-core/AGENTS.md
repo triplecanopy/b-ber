@@ -8,9 +8,9 @@ A pure data package exporting two arrays of Dublin Core metadata identifiers. `e
 
 | File                      | Purpose                            |
 | ------------------------- | ---------------------------------- |
-| `src/index.js`            | Re-exports `terms` and `elements`  |
-| `src/elements.js`         | Array of 14 DCMI elements          |
-| `src/terms.js`            | Array of ~55 DCMI Metadata Terms   |
+| `src/index.ts`            | Re-exports `terms` and `elements`  |
+| `src/elements.ts`         | Array of 14 DCMI elements          |
+| `src/terms.ts`            | Array of ~55 DCMI Metadata Terms   |
 | `__tests__/index.test.js` | Tests that both exports are arrays |
 
 ## Dev Commands
