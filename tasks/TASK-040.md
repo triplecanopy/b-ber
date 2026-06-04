@@ -1,6 +1,6 @@
 # TASK-040: E2E testing — research: tooling, fixture design, package boundary
 
-**Status:** not started
+**Status:** complete
 **Scope:** monorepo
 **Priority:** high
 **GitHub Issue:** #510 — https://github.com/triplecanopy/b-ber/issues/510
@@ -59,12 +59,12 @@ a dedicated package with its own `node_modules` rather than hoisting.
 
 ## Subtasks
 
-- [ ] Benchmark Playwright vs Cypress install size and cold-start speed
-- [ ] Confirm Playwright works with the current reader app (React + webpack + redux)
-- [ ] Document the directive inventory (complete list from b-ber-grammar-\* packages)
-- [ ] Draft the kitchen-sink fixture project file list
-- [ ] Decide package boundary and record recommendation with rationale
-- [ ] Open implementation sub-tasks (TASK-041 through TASK-044) once decisions
+- [x] Benchmark Playwright vs Cypress install size and cold-start speed
+- [x] Confirm Playwright works with the current reader app (React + Vite + Redux)
+- [x] Document the directive inventory (complete list from b-ber-grammar-\* packages)
+- [x] Draft the kitchen-sink fixture project file list
+- [x] Decide package boundary and record recommendation with rationale
+- [x] Open implementation sub-tasks (TASK-041 through TASK-044) once decisions
       are made, updating their descriptions to reflect the chosen approach
 
 ## Notes

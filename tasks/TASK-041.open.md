@@ -48,24 +48,24 @@ instance. From the package inventory:
 ### Build targets to verify in CLI tests
 
 - epub (always)
-- web (always)
 - reader (always; required for Area B tests)
+- web (lower priority; add once epub + reader are stable)
 - pdf (skip in CI unless wkhtmltopdf is installed; detect and skip gracefully)
 - mobi (skip in CI unless Calibre is installed; detect and skip gracefully)
 
 ## Subtasks
 
-- [ ] Confirm fixture location with TASK-040 outcome
+- [x] Confirm fixture location: `packages/b-ber-testing/fixtures/kitchen-sink/`
+- [ ] Scaffold `packages/b-ber-testing/` as a private workspace package
 - [ ] Write `toc.yml` and `metadata.yml`
 - [ ] Write chapter Markdown files covering all directives
 - [ ] Add sample image assets (small PNGs — <20 KB each, committed to repo)
 - [ ] Verify `bber build epub` completes without errors against the fixture
-- [ ] Verify `bber build web` completes without errors
 - [ ] Verify `bber build reader` completes without errors
 
 ## Notes
 
-Branch: will use a dedicated feature branch once TASK-040 is resolved.
+Branch: `feat/e2e`
 
 The fixture should use a theme that is always available (b-ber-theme-serif).
 Images should be minimal (solid-colour PNGs generated programmatically if

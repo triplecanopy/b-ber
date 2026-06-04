@@ -55,7 +55,7 @@ short for contributors who only work on the build pipeline.
 
 ## Sub-tasks
 
-- [ ] TASK-040: Research — tooling selection, sample project design, package boundary decision
+- [x] TASK-040: Research — tooling selection, sample project design, package boundary decision
 - [ ] TASK-041: Create kitchen-sink fixture project (covers all directives + all build targets)
 - [ ] TASK-042: CLI smoke tests — project creation and build artifact verification
 - [ ] TASK-043: Reader e2e tests — Playwright (or chosen tool) against live reader app

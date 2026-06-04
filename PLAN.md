@@ -1,6 +1,6 @@
 # b-ber monorepo — Project Plan
 
-_Last updated: 2026-06-04 (TASK-055 added; AGENTS.md trimmed; task-prd and sync-task-issues skills added)_
+_Last updated: 2026-06-04 (TASK-040 complete; TASK-043/044 added; 041–044 unblocked)_
 
 ---
 
@@ -84,6 +84,7 @@ to `main` once the test suite and coverage targets are clean.
 | TASK-036 | Upgrade Lerna and migrate off bootstrap                  | `feat/upgrades`       |
 | TASK-014 | GitHub issue tracking setup                              | `feat/upgrades`       |
 | TASK-048 | Convert b-ber-resources to TypeScript                    | `feat/upgrades`       |
+| TASK-040 | E2E testing — research: tooling, fixture design, package boundary | `feat/upgrades` |
 
 ### In progress
 
@@ -96,8 +97,10 @@ to `main` once the test suite and coverage targets are clean.
 
 | Task     | Title                                              | Priority | Branch                 | Notes                                                                             |
 | -------- | -------------------------------------------------- | -------- | ---------------------- | --------------------------------------------------------------------------------- |
-| TASK-039 | E2E testing umbrella (parent)                      | high     | `feat/upgrades`        | CLI smoke + reader browser tests; may become `b-ber-testing` package             |
-| TASK-040 | E2E testing — research: tooling + fixture          | high     | `feat/upgrades`        | Unblocks TASK-041/042/043/044; leading candidate: Playwright in `b-ber-testing`  |
+| TASK-039 | E2E testing umbrella (parent)                      | high     | `feat/upgrades`        | CLI smoke + reader browser tests; `b-ber-testing` package confirmed              |
+| TASK-041 | E2E testing — kitchen-sink fixture project         | high     | `feat/e2e`             | Location confirmed: `packages/b-ber-testing/fixtures/kitchen-sink/`              |
+| TASK-042 | E2E testing — CLI smoke tests                      | high     | `feat/e2e`             | Playwright test runner; epub + reader targets (web lower priority)               |
+| TASK-043 | E2E testing — reader browser tests (Playwright)    | high     | `feat/e2e`             | Navigation + directive rendering; depends on TASK-041 fixture                    |
 | TASK-050 | CLI command inventory + handler test coverage      | high     | `feat/upgrades`        | Safety gate for logger refactor (TASK-046); mocks `b-ber-tasks` in handler tests |
 | TASK-013 | Node.js modernization                              | medium   | `feat/node-modern-*`   | Blocker TASK-012 ✓; per-package audits; target Node ≥ 22.x                       |
 | TASK-032 | Convert b-ber-reader-react to TypeScript (Stage 4) | medium   | `feat/ts-stage-4`      | Blocker TASK-006 ✓; largest and most complex package; low urgency                |
@@ -122,11 +125,8 @@ to `main` once the test suite and coverage targets are clean.
 
 | Task     | Title                                              | Waiting on          |
 | -------- | -------------------------------------------------- | ------------------- |
-| TASK-041 | E2E testing — kitchen-sink fixture project         | TASK-040            |
-| TASK-042 | E2E testing — CLI smoke tests                      | TASK-040 + TASK-041 |
-| TASK-043 | E2E testing — reader browser tests (Playwright)    | TASK-040 + TASK-041 |
 | TASK-044 | E2E testing — CI integration                       | TASK-043            |
-| TASK-055 | Create testing skill                               | TASK-040            |
+| TASK-055 | Create testing skill                               | TASK-041            |
 
 ---
 
@@ -152,10 +152,10 @@ graph LR
 
   T004["TASK-004\nTest coverage"]:::active
 
-  T040["TASK-040\nE2E research"]:::ready
-  T041["TASK-041\nE2E fixture"]:::blocked
-  T042["TASK-042\nE2E CLI smoke"]:::blocked
-  T043["TASK-043\nE2E reader tests"]:::blocked
+  T040["TASK-040 ✓\nE2E research"]:::done
+  T041["TASK-041\nE2E fixture"]:::ready
+  T042["TASK-042\nE2E CLI smoke"]:::ready
+  T043["TASK-043\nE2E reader tests"]:::ready
   T044["TASK-044\nE2E CI"]:::blocked
 
   T006 --> T007 --> T015
@@ -217,7 +217,7 @@ This is documented in `packages/b-ber-tasks/tasks/TASK-001.open.md`.
 
 | Priority | Task     | Action                                                                                                                               |
 | -------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| 1        | TASK-040 | Start E2E research: pick Playwright vs. alternatives, design kitchen-sink fixture, decide package boundary. Unblocks TASK-041–044.   |
+| 1        | TASK-041 | Create `packages/b-ber-testing/` package + kitchen-sink fixture. Branch: `feat/e2e`. Unblocks 042, 043, 055.                        |
 | 2        | TASK-050 | Write CLI handler tests for `build`, `deploy`, `check`. Gate for the logger refactor — need `process.exit` assertions in place first. |
 | 3        | TASK-035 | Fix CircleCI: update stale Docker image, add test step, configure to run on non-main branches. Bootstrap blocker resolved by TASK-036. |
 | 4        | TASK-013 | Open per-package Node.js modernization tasks. Priority order: b-ber-tasks → b-ber-lib → b-ber-cli → grammar/parser batch.            |
