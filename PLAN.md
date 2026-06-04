@@ -1,6 +1,6 @@
 # b-ber monorepo — Project Plan
 
-_Last updated: 2026-06-04 (TASK-057 complete; root build script simplified to `lerna run build`)_
+_Last updated: 2026-06-04 (TASK-058 complete; polyfills removed, 530K→495K; TASK-059 ready)_
 
 ---
 
@@ -87,6 +87,8 @@ to `main` once the test suite and coverage targets are clean.
 | TASK-040 | E2E testing — research: tooling, fixture design, package boundary | `feat/upgrades` |
 | TASK-054 | Research build dep ordering: reader → reader-react               | `feat/upgrades` |
 | TASK-057 | Simplify root build script: drop shim, use Lerna topo sort       | `feat/e2e`      |
+| TASK-058 | Audit Node.js polyfills in reader-react browser bundle            | `feat/e2e`      |
+| TASK-059 | Bump build targets: Node packages + browser bundles               | (pending)       |
 
 ### In progress
 
