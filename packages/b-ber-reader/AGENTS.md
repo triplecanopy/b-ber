@@ -37,8 +37,8 @@ Additional standards for this package:
 - `b-ber-reader` is a deployment shell. Do not add reader features here;
   implement them in `b-ber-reader-react` instead.
 - `vite.config.js` aliases `react` and `react-dom` to the monorepo root to
-  prevent duplicate React instances when `b-ber-reader-react` is symlinked via
-  `file:` — preserve this alias if updating the Vite config.
+  prevent duplicate React instances when `b-ber-reader-react` is resolved via
+  the workspace symlink — preserve this alias if updating the Vite config.
 - `commonjsOptions.include` is extended to cover `b-ber-reader-react/dist`
   because the symlink resolves outside `node_modules/` and Vite's built-in CJS
   plugin would otherwise skip it.

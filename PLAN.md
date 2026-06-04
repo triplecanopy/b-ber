@@ -1,6 +1,6 @@
 # b-ber monorepo — Project Plan
 
-_Last updated: 2026-06-04 (TASK-054 complete; build dep ordering research done; TASK-057 ready)_
+_Last updated: 2026-06-04 (TASK-057 complete; root build script simplified to `lerna run build`)_
 
 ---
 
@@ -86,6 +86,7 @@ to `main` once the test suite and coverage targets are clean.
 | TASK-048 | Convert b-ber-resources to TypeScript                    | `feat/upgrades`       |
 | TASK-040 | E2E testing — research: tooling, fixture design, package boundary | `feat/upgrades` |
 | TASK-054 | Research build dep ordering: reader → reader-react               | `feat/upgrades` |
+| TASK-057 | Simplify root build script: drop shim, use Lerna topo sort       | `feat/e2e`      |
 
 ### In progress
 
@@ -109,7 +110,6 @@ to `main` once the test suite and coverage targets are clean.
 | TASK-046 | Refactor b-ber-logger                              | medium   | `feat/logger-refactor` | Remove `process.exit` from `log.error`; depends on TASK-050 handler tests first  |
 | TASK-051 | Theme customization docs + SCSS test coverage      | medium   | `feat/upgrades`        | No SCSS compilation tests exist; also documents the sass pipeline architecture   |
 | TASK-053 | Replace lerna-update-wizard with syncpack + ncu    | medium   | `feat/upgrades`        | `lernaupdate` breaks on Lerna v7+; `syncpack` + `ncu --workspaces`               |
-| TASK-057 | Simplify root build script: drop shim, use Lerna topo sort | medium | `feat/upgrades`   | Replaces two-phase script with single `lerna run build`; unblocked by TASK-054   |
 | TASK-037 | Replace or reconfigure dependency management       | low      | `feat/upgrades`        | Dependabot paused + broken; recommend Option A: remove + npm audit in CI         |
 | TASK-038 | Audit and clean up package.json scripts            | low      | `feat/upgrades`        | Inconsistent naming, dead scripts; some cleanup is downstream of migrations      |
 | TASK-045 | Refactor changelog generation + release workflow   | low      | `feat/upgrades`        | Manual, fragile sequencing; evaluate changesets / release-please                 |
