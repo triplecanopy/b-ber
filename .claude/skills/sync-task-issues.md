@@ -1,8 +1,12 @@
-# Skill: sync-task-issues
+---
+name: sync-task-issues
+description: Audit and sync root-level task PRDs in tasks/ against GitHub issues. Use this when completing a task, opening new tasks, when the issue tracker seems out of sync, or when you need to create, close, or label a GitHub issue for a task.
+---
 
-Audit and synchronise the state between task PRD files in `tasks/` and GitHub
-issues in `triplecanopy/b-ber`. Run this skill whenever completing a task,
-opening new tasks, or when the issue tracker appears out of sync.
+# sync-task-issues
+
+Audit and synchronise task PRD files in `tasks/` against GitHub issues in
+`triplecanopy/b-ber`.
 
 **Scope:** root-level tasks only (`tasks/TASK-NNN[.open].md`).
 Package-level tasks (`packages/*/tasks/`) are too granular for GitHub and are
@@ -55,12 +59,17 @@ gh issue create \
   --body "$(cat <<'EOF'
 <one-paragraph summary drawn from the PRD Description>
 
-**Task file:** tasks/TASK-NNN[.open].md
+**Task file:** [tasks/TASK-NNN.md](https://github.com/triplecanopy/b-ber/blob/main/tasks/TASK-NNN.md)
 _(Link becomes navigable after `feat/upgrades` is merged to `main`.)_
 EOF
 )" \
   --label "<label1>" [--label "<label2>"]
 ```
+
+Task numbers are **not** globally unique across root vs. package tasks, so the
+full file path is always required in issue bodies. For open tasks the filename
+includes `.open` locally, but the issue body should use the future completed
+path (without `.open`) since the link points to `main` where it will be closed.
 
 **Label reference** (from AGENTS.md):
 
@@ -127,8 +136,7 @@ gh issue list --state open --json number,title \
 ## Notes
 
 - The task file URL (`blob/main/tasks/TASK-NNN.md`) only resolves after the
-  branch containing the file is merged to `main`. Add the URL to the issue body
-  at creation time anyway; it will start resolving once the branch lands.
-- Task numbers are **not** globally unique (root tasks and package tasks share
-  the numbering). The full path is always required in issue bodies.
-- Do not create issues for TASK-043 or TASK-044 until their PRD files exist.
+  branch is merged to `main`. Add it to the issue body at creation time anyway;
+  it will start resolving once the branch lands.
+- Only create issues for tasks that have an existing PRD file. If a task is
+  listed in PLAN.md but has no file in `tasks/`, skip it until the PRD is written.

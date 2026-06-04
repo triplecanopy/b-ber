@@ -1,6 +1,6 @@
 # b-ber monorepo — Project Plan
 
-_Last updated: 2026-06-04 (TASK-050, TASK-051, TASK-054 added; TS Stages 1–3 and Vite/Biome complete)_
+_Last updated: 2026-06-04 (TASK-055 added; AGENTS.md trimmed; task-prd and sync-task-issues skills added)_
 
 ---
 
@@ -126,6 +126,7 @@ to `main` once the test suite and coverage targets are clean.
 | TASK-042 | E2E testing — CLI smoke tests                      | TASK-040 + TASK-041 |
 | TASK-043 | E2E testing — reader browser tests (Playwright)    | TASK-040 + TASK-041 |
 | TASK-044 | E2E testing — CI integration                       | TASK-043            |
+| TASK-055 | Create testing skill                               | TASK-040            |
 
 ---
 

@@ -132,179 +132,78 @@ b-ber-extended Markdown into the HTML/XML structures required for EPUB output.
 
 ## Task System
 
-Project-wide tasks (those that affect multiple packages or require cross-package
-coordination) are tracked in `tasks/` at the monorepo root, using the same
-conventions as package-level tasks.
+Project-wide tasks are tracked in `tasks/` at the monorepo root. Package-level
+tasks are tracked in `packages/<name>/tasks/`.
 
-Package-level tasks are tracked in `packages/<name>/tasks/` within each package.
+### Task ID and file naming
 
-### Task ID format
-
-`TASK-NNN` where NNN is a zero-padded three-digit integer. IDs are assigned
-sequentially within their scope (root vs. package) and never reused.
-
-### File naming
+`TASK-NNN` — zero-padded three-digit integer, assigned sequentially within
+scope (root vs. package), never reused.
 
 - **Open / in-progress:** `tasks/TASK-NNN.open.md`
-- **Complete:** `tasks/TASK-NNN.md`
+- **Complete:** `tasks/TASK-NNN.md` (remove `.open` suffix)
 
-Remove `.open` when the task is marked complete. Never delete a PRD.
+Never delete a task file.
 
-### PRD structure
+### Status transitions
 
-```markdown
-# TASK-NNN: Short title
-
-**Status:** not started | in progress | complete
-**Scope:** monorepo | <package-name>
-**Priority:** high | medium | low
-
-## Description
-
-What needs to be done and why.
-
-## Subtasks
-
-- [ ] Discrete step
-- [x] Completed step
-
-## Notes
-
-Decisions, blockers, relevant context.
-```
-
-### Updating progress
-
-- Set status to `in progress` when starting; `complete` when done.
-- Update subtask checkboxes as work progresses — do not batch.
-- When complete: remove `.open` from filename.
+Set status to `in progress` when starting; `complete` when done. Update subtask
+checkboxes as work progresses — do not batch.
 
 ### Closed tasks
 
-Do not re-open or edit a task file once its status is set to `complete` and the
-`.open` suffix has been removed. Editing a closed task destroys the linear
-history of what was decided and when — that history is the main value of the
-task system.
+Do not edit a task file once it is `complete` and the `.open` suffix is removed.
+If work needs to continue after a task closes, open a new task referencing the
+original. Exception: minor factual corrections (wrong issue number, broken link,
+obvious typo) — note the correction in the task's Notes section.
 
-If work needs to happen after a task closes:
-
-- Open a **new task** that supersedes or extends the closed one, and reference
-  the original by ID in its Description.
-- Exception: minor factual corrections (wrong issue number, broken link,
-  obvious typo) are acceptable on closed tasks. Note the correction in the
-  task's Notes section so the change is visible.
-
-### Parent tasks
-
-For work that spans multiple tasks, will evolve over time, or has a dependency
-chain (e.g., a multi-stage migration, a large feature), create a **parent task**
-before opening any sub-tasks. The parent task is the single canonical source for
-the overall goal; sub-tasks are the units of execution.
-
-A parent task should:
-
-- Describe the overall goal and the approach at a level that does not require
-  reading the sub-tasks to understand the plan
-- List all sub-tasks with their IDs and one-line descriptions
-- Hold architecture diagrams, dependency topology, and branching strategy
-- Be updated as requirements shift — this is the one task file that grows over
-  time as the work evolves
-- Reference closed research or planning tasks (e.g. prior TASK-NNN) rather than
-  duplicating their content
-
-Sub-tasks reference the parent in their Notes section. When a sub-task
-completes, check it off in the parent task as well as closing the sub-task file.
+For full PRD template, parent task guidance, and sub-task conventions, run
+`/task-prd`.
 
 ---
 
 ## Commits
 
-Follow the conventional commit format:
+Format: `<type>(<scope>): <short imperative description>`
 
-```
-<type>(<scope>): <short imperative description>
-```
-
-The scope token matches the package being changed (see Package Inventory table above).
-For changes that span multiple packages or affect the monorepo root, use `monorepo`.
+Scope token matches the package name (see Package Inventory). Use `monorepo`
+for cross-package or root changes.
 
 **Types:** `fix`, `feat`, `chore`, `refactor`, `test`, `docs`
 
-**Examples:**
-
 ```
 fix(reader-react): removes transition from leaf elements
-feat(grammar-spread): support verso/recto classification
-chore(cli): update lerna to v7
-refactor(lib): extract slug normalization into shared helper
 docs(monorepo): add root AGENTS.md
-test(parser-footnotes): add unit tests for nested footnote refs
 ```
 
-Rules:
-
-- Use imperative mood ("removes", "adds" — not "removed")
-- Keep the subject line under 72 characters
-- One logical change per commit; do not bundle unrelated changes
-- Commit only after `npm test` passes (or the relevant package test suite passes)
+- Imperative mood: "removes", "adds" — not "removed"
+- Subject line under 72 characters
+- One logical change per commit
+- `npm test` passes before committing
 
 ---
 
 ## Branch Strategy
 
-### Integration branch
+**Integration branch** (`feat/<cycle-name>`, e.g. `feat/upgrades`): long-lived
+branch for planning, docs, and completed feature branches. Commit task PRDs,
+AGENTS.md updates, research, and small bug fixes here. Check
+`git branch --show-current` before committing.
 
-There is one long-lived branch above `main` used for planning, documentation,
-and task coordination. Its name follows the pattern `feat/<cycle-name>` (e.g.
-`feat/upgrades`). All research tasks, task PRDs, and cross-cutting docs commits
-land here before being merged to `main`.
+**Feature branches:** Use for implementation work that touches the build system,
+changes package outputs, or spans many files. Keeps the work isolated and
+reversible.
 
-Agents should commit planning and documentation work to whichever integration
-branch is currently active. Check `git branch --show-current` if unsure.
+- Use a feature branch for: build system changes, TypeScript conversions,
+  Node.js modernization, any change where a clean revert matters
+- Commit directly to the integration branch for: task PRDs, docs, research,
+  small self-contained fixes
 
-### Feature branches
+Naming: `feat/<descriptive-slug>` or `feat/<descriptive-slug>-<pkg>` for
+per-package slices.
 
-Implementation tasks that touch the build system, change package outputs, or
-span many files should use a dedicated feature branch off the integration branch.
-This keeps the work isolated and reversible — if something breaks, the branch can
-be abandoned without affecting other work in progress.
-
-**When to use a feature branch:**
-
-- Build system changes (bundler migration, tsconfig infrastructure)
-- TypeScript conversion of one or more packages
-- Node.js modernization work (async/await refactor, fs-extra replacement)
-- Any change where a clean revert is more valuable than a simpler history
-
-**When to commit directly to the integration branch:**
-
-- Task PRD creation or updates
-- AGENTS.md / CLAUDE.md / README updates
-- Research findings
-- Small, self-contained bug fixes with no blast radius
-
-### Naming convention
-
-```
-feat/<descriptive-slug>          # implementation work
-feat/<descriptive-slug>-<pkg>    # per-package slice of a larger migration
-```
-
-**Examples in use:**
-
-```
-feat/upgrades           # current planning integration branch
-feat/vite-migration     # webpack → Vite (TASK-006, TASK-007)
-feat/ts-stage-1         # TypeScript Stage 1 (TASK-008 through TASK-012)
-feat/ts-stage-2         # TypeScript Stage 2 (parsers, grammars)
-feat/node-modernization-tasks   # Node.js modernization for b-ber-tasks
-```
-
-### Merge policy
-
-Feature branches merge into the integration branch (not directly to `main`).
-The integration branch merges to `main` when a coherent set of work is complete
-and `npm test` passes cleanly. Do not force-push to `main`.
+Feature branches merge into the integration branch. The integration branch
+merges to `main` when `npm test` passes cleanly. Do not force-push to `main`.
 
 ---
 
@@ -376,88 +275,14 @@ exceed what comfortably fits in one context window.
 
 ## GitHub Issues
 
-Root-level tasks (`tasks/TASK-NNN[.open].md`) are cross-referenced with GitHub
-issues so that either can be found from the other. **Package-level tasks
-(`packages/*/tasks/`) are intentionally excluded** — they are too granular for
-the public issue tracker and would create noise without value.
+Every root-level task (`tasks/TASK-NNN[.open].md`) has a corresponding GitHub
+issue. **Package-level tasks (`packages/*/tasks/`) are intentionally excluded.**
 
-Use the **`gh` CLI** for all issue operations. It is installed and
-authenticated. The `/sync-task-issues` skill (`.claude/skills/sync-task-issues.md`)
-documents the full audit-and-sync workflow; run it whenever completing a task
-or opening new ones.
+Create an issue for every root task regardless of status. Close the issue when
+the task is marked complete. Cross-reference in both directions: `**GitHub Issue:** #NNN — <url>` in the PRD header; `**Task file:**` link in the issue body.
 
-### When to create issues
-
-Create a GitHub issue for **every root-level task** regardless of status —
-not-started, in-progress, and complete alike. Close the issue immediately when
-the task is marked complete. This keeps the tracker as a live mirror of the
-task system rather than a post-hoc archive.
-
-### Cross-referencing
-
-The link must be navigable in both directions — from the task PRD to the issue,
-and from the issue back to the task PRD file in the repository.
-
-**In the task PRD** — add a `**GitHub Issue:**` field to the header block:
-
-```markdown
-**Status:** complete
-**Scope:** monorepo
-**Priority:** medium
-**GitHub Issue:** #42 — https://github.com/triplecanopy/b-ber/issues/42
-```
-
-**In the GitHub issue body** — include both a summary and a direct link to the
-task file. Task numbers are not unique across the monorepo (root tasks and
-package tasks share the same numbering), so the full file path is required:
-
-```markdown
-**Task file:** [tasks/TASK-001.md](https://github.com/triplecanopy/b-ber/blob/main/tasks/TASK-001.md)
-
-<one-paragraph summary of what was done and why>
-```
-
-For package-level tasks the path is `packages/<name>/tasks/TASK-NNN.md`:
-
-```markdown
-**Task file:** [packages/b-ber-reader-react/tasks/TASK-001.md](https://github.com/triplecanopy/b-ber/blob/main/packages/b-ber-reader-react/tasks/TASK-001.md)
-```
-
-The task file link always points to the `main` branch. Add it to the issue
-body at creation time — it will start resolving once `feat/upgrades` is merged
-to `main`. Until then the URL is a useful pointer even if it returns 404.
-
-When closing an issue for a completed task, add a brief comment:
-
-```bash
-gh issue close <number> --comment "Completed. Work merged into feat/upgrades."
-```
-
-### Labels
-
-Every issue must have at least one label. Apply labels when creating the issue —
-do not leave issues unlabeled.
-
-Use existing labels where they fit. Create new labels if none of the existing
-ones are appropriate — label names should follow the `b-ber/<scope>` convention
-already established in the repo (e.g. `b-ber/testing`, `b-ber/typescript`).
-Research tasks use `maintenance`. Implementation tasks use the scope label
-matching the package(s) affected.
-
-Common label mappings:
-
-| Task type | Labels |
-| --------- | ------ |
-| TypeScript migration | `b-ber/typescript` |
-| Test coverage | `b-ber/testing` |
-| Circular dep / architecture audit | `b-ber/typescript`, `maintenance` |
-| Linting / toolchain | `maintenance` |
-| Grammar packages | `b-ber/grammar` |
-| Build pipeline | `b-ber/build` |
-| CLI | `b-ber/cli` |
-| Core library | `b-ber/lib` |
-| Tasks package | `b-ber/tasks` |
-| Reader | `b-ber/build/reader` |
+Use the **`gh` CLI** for all issue operations. Run `/sync-task-issues` to audit
+and sync both sides — it has the full procedure, label table, and exact commands.
 
 ---
 
