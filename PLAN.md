@@ -1,6 +1,6 @@
 # b-ber monorepo — Project Plan
 
-_Last updated: 2026-06-04 (TASK-040 complete; TASK-043/044 added; 041–044 unblocked)_
+_Last updated: 2026-06-04 (TASK-041 complete; kitchen-sink fixture passes epub + reader builds)_
 
 ---
 
@@ -98,7 +98,7 @@ to `main` once the test suite and coverage targets are clean.
 | Task     | Title                                              | Priority | Branch                 | Notes                                                                             |
 | -------- | -------------------------------------------------- | -------- | ---------------------- | --------------------------------------------------------------------------------- |
 | TASK-039 | E2E testing umbrella (parent)                      | high     | `feat/upgrades`        | CLI smoke + reader browser tests; `b-ber-testing` package confirmed              |
-| TASK-041 | E2E testing — kitchen-sink fixture project         | high     | `feat/e2e`             | Location confirmed: `packages/b-ber-testing/fixtures/kitchen-sink/`              |
+| TASK-041 | ~~E2E testing — kitchen-sink fixture project~~     | ~~high~~ | `feat/e2e`             | **Complete.** epub + reader build clean; EPUBCheck passes.                        |
 | TASK-042 | E2E testing — CLI smoke tests                      | high     | `feat/e2e`             | Playwright test runner; epub + reader targets (web lower priority)               |
 | TASK-043 | E2E testing — reader browser tests (Playwright)    | high     | `feat/e2e`             | Navigation + directive rendering; depends on TASK-041 fixture                    |
 | TASK-050 | CLI command inventory + handler test coverage      | high     | `feat/upgrades`        | Safety gate for logger refactor (TASK-046); mocks `b-ber-tasks` in handler tests |
@@ -126,7 +126,7 @@ to `main` once the test suite and coverage targets are clean.
 | Task     | Title                                              | Waiting on          |
 | -------- | -------------------------------------------------- | ------------------- |
 | TASK-044 | E2E testing — CI integration                       | TASK-043            |
-| TASK-055 | Create testing skill                               | TASK-041            |
+| TASK-055 | Create testing skill                               | ~~TASK-041~~ ✓ — unblocked |
 
 ---
 
@@ -153,7 +153,7 @@ graph LR
   T004["TASK-004\nTest coverage"]:::active
 
   T040["TASK-040 ✓\nE2E research"]:::done
-  T041["TASK-041\nE2E fixture"]:::ready
+  T041["TASK-041 ✓\nE2E fixture"]:::done
   T042["TASK-042\nE2E CLI smoke"]:::ready
   T043["TASK-043\nE2E reader tests"]:::ready
   T044["TASK-044\nE2E CI"]:::blocked
@@ -217,7 +217,7 @@ This is documented in `packages/b-ber-tasks/tasks/TASK-001.open.md`.
 
 | Priority | Task     | Action                                                                                                                               |
 | -------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| 1        | TASK-041 | Create `packages/b-ber-testing/` package + kitchen-sink fixture. Branch: `feat/e2e`. Unblocks 042, 043, 055.                        |
+| 1        | TASK-042 | Write Playwright CLI smoke tests (epub + reader targets). Branch: `feat/e2e`. Now unblocked by TASK-041.                             |
 | 2        | TASK-050 | Write CLI handler tests for `build`, `deploy`, `check`. Gate for the logger refactor — need `process.exit` assertions in place first. |
 | 3        | TASK-035 | Fix CircleCI: update stale Docker image, add test step, configure to run on non-main branches. Bootstrap blocker resolved by TASK-036. |
 | 4        | TASK-013 | Open per-package Node.js modernization tasks. Priority order: b-ber-tasks → b-ber-lib → b-ber-cli → grammar/parser batch.            |

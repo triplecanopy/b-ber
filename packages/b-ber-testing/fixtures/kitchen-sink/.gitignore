@@ -1,0 +1,5 @@
+_builds-*/
+*.epub
+_project/_javascripts/
+_project/_images/__bber_cover__*
+themes/
