@@ -11,8 +11,8 @@ jobs:
           echo $(find . -type f -name package.json -not -path "*/node_modules*" -exec md5sum {} \; | md5sum | cut -d' ' -f1) >> BBER_CACHE_KEY
       - restore_cache:
           keys:
-            - npm-packages-v1-{{ .Branch }}-{{ checksum "BBER_CACHE_KEY" }}
-            - npm-packages-v1-{{ checksum "BBER_CACHE_KEY" }}
+            - npm-packages-v2-{{ .Branch }}-{{ checksum "BBER_CACHE_KEY" }}
+            - npm-packages-v2-{{ checksum "BBER_CACHE_KEY" }}
       - run: |
           echo NodeJS $(node -v)
           echo npm $(npm -v)
@@ -20,6 +20,14 @@ jobs:
           npm ci --ignore-scripts
 
           echo Lerna $(./node_modules/.bin/lerna -v)
+
+          # Build leaf packages first so downstream TypeScript builds find their dist/.
+          # Lerna only topologically sorts on `dependencies`, not `devDependencies`,
+          # so packages whose workspace deps are misclassified can race ahead of them.
+          npm run lerna run build -- --scope=@canopycanopycanopy/b-ber-shapes-directives
+          npm run lerna run build -- --scope=@canopycanopycanopy/b-ber-shapes-dublin-core
+          npm run lerna run build -- --scope=@canopycanopycanopy/b-ber-shapes-sequences
+          npm run lerna run build -- --scope=@canopycanopycanopy/b-ber-logger
 
           # Build readers separately since they're interdependent and require deps installed at package dir for b-ber-reader
           npm run lerna run build -- --scope=@canopycanopycanopy/b-ber-reader-react
@@ -37,7 +45,7 @@ jobs:
       - save_cache:
           paths:
             - ~/b-ber/node_modules
-          key: npm-packages-v1-{{ .Branch }}-{{ checksum "BBER_CACHE_KEY" }}
+          key: npm-packages-v2-{{ .Branch }}-{{ checksum "BBER_CACHE_KEY" }}
 
   e2e:
     # Uses the official Playwright image which ships all system libraries needed
@@ -57,14 +65,21 @@ jobs:
             echo $(find . -type f -name package.json -not -path "*/node_modules*" -exec md5sum {} \; | md5sum | cut -d' ' -f1) >> BBER_CACHE_KEY
       - restore_cache:
           keys:
-            - npm-packages-v1-{{ .Branch }}-{{ checksum "BBER_CACHE_KEY" }}
-            - npm-packages-v1-{{ checksum "BBER_CACHE_KEY" }}
+            - npm-packages-v2-{{ .Branch }}-{{ checksum "BBER_CACHE_KEY" }}
+            - npm-packages-v2-{{ checksum "BBER_CACHE_KEY" }}
       - run:
           name: Install dependencies
           command: |
             echo NodeJS $(node -v)
             echo npm $(npm -v)
             npm ci --ignore-scripts
+      - run:
+          name: Build foundational packages
+          command: |
+            npm run lerna run build -- --scope=@canopycanopycanopy/b-ber-shapes-directives
+            npm run lerna run build -- --scope=@canopycanopycanopy/b-ber-shapes-dublin-core
+            npm run lerna run build -- --scope=@canopycanopycanopy/b-ber-shapes-sequences
+            npm run lerna run build -- --scope=@canopycanopycanopy/b-ber-logger
       - run:
           name: Build packages
           command: |
@@ -82,7 +97,7 @@ jobs:
       - save_cache:
           paths:
             - ~/b-ber/node_modules
-          key: npm-packages-v1-{{ .Branch }}-{{ checksum "BBER_CACHE_KEY" }}
+          key: npm-packages-v2-{{ .Branch }}-{{ checksum "BBER_CACHE_KEY" }}
       - restore_cache:
           keys:
             - playwright-v1-{{ checksum "packages/b-ber-testing/package.json" }}
