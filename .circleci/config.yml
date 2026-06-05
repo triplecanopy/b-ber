@@ -9,6 +9,8 @@ jobs:
     docker:
       - image: cimg/node:24.14
     working_directory: ~/b-ber
+    environment:
+      NX_SKIP_NX_CACHE: "true"
     steps:
       - checkout
       - run:
@@ -45,17 +47,18 @@ jobs:
           command: npm test -- --maxWorkers=2
       - run:
           name: Smoke test CLI
-          # $BBER was set by the old canopycanopycanopy image; use the binary
-          # from node_modules/.bin now that we're on a plain Node image.
+          # Invoke the CLI via `node` directly rather than through the
+          # node_modules/.bin symlink, which requires dist/ to exist before
+          # npm creates it. Capture the absolute path before cd-ing away.
           command: |
-            BBER=$(pwd)/node_modules/.bin/bber
+            BBER="$(pwd)/packages/b-ber-cli/dist/index.js"
             cd ~
-            "$BBER" --version
-            "$BBER" new foo
+            node "$BBER" --version
+            node "$BBER" new foo
             cd foo
-            "$BBER" theme list
-            "$BBER" theme set b-ber-theme-serif
-            "$BBER" build reader web
+            node "$BBER" theme list
+            node "$BBER" theme set b-ber-theme-serif
+            node "$BBER" build reader web
       - save_cache:
           paths:
             - ~/b-ber/node_modules
@@ -73,6 +76,7 @@ jobs:
     environment:
       CI: "true"
       NO_NETWORK: "true"
+      NX_SKIP_NX_CACHE: "true"
     steps:
       - checkout
       - run:
