@@ -104,7 +104,7 @@ to `main` once the test suite and coverage targets are clean.
 | TASK-039 | E2E testing umbrella (parent)                      | high     | `feat/upgrades`        | CLI smoke + reader browser tests; `b-ber-testing` package confirmed              |
 | TASK-041 | ~~E2E testing — kitchen-sink fixture project~~     | ~~high~~ | `feat/e2e`             | **Complete.** epub + reader build clean; EPUBCheck passes.                        |
 | TASK-042 | E2E testing — CLI smoke tests                      | high     | `feat/e2e`             | Playwright test runner; epub + reader targets (web lower priority)               |
-| TASK-043 | E2E testing — reader browser tests (Playwright)    | high     | `feat/e2e`             | Navigation + directive rendering; depends on TASK-041 fixture                    |
+| TASK-043 | ~~E2E testing — reader browser tests (Playwright)~~| ~~high~~ | `feat/e2e`             | **Complete.** 40 passing (1 skipped — CLI tool absent); all nav + directive + edge cases pass. |
 | TASK-050 | CLI command inventory + handler test coverage      | high     | `feat/upgrades`        | Safety gate for logger refactor (TASK-046); mocks `b-ber-tasks` in handler tests |
 | TASK-013 | Node.js modernization                              | medium   | `feat/node-modern-*`   | Blocker TASK-012 ✓; per-package audits; target Node ≥ 22.x                       |
 | TASK-032 | Convert b-ber-reader-react to TypeScript (Stage 4) | medium   | `feat/ts-stage-4`      | Blocker TASK-006 ✓; largest and most complex package; low urgency                |
@@ -128,7 +128,7 @@ to `main` once the test suite and coverage targets are clean.
 
 | Task     | Title                                              | Waiting on          |
 | -------- | -------------------------------------------------- | ------------------- |
-| TASK-044 | E2E testing — CI integration                       | TASK-043            |
+| TASK-044 | E2E testing — CI integration                       | ~~TASK-043~~ ✓ — unblocked |
 | TASK-055 | Create testing skill                               | ~~TASK-041~~ ✓ — unblocked |
 
 ---
