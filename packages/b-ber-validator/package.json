@@ -24,7 +24,6 @@
   "scripts": {
     "ts-node": "ts-node",
     "clean": "rimraf dist",
-    "prepare": "npm run build",
     "jest": "jest",
     "build": "npm run clean && npm run test && tsc --project tsconfig.build.json",
     "lint": "biome check src/",
