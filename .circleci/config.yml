@@ -24,7 +24,7 @@ jobs:
           # Build readers separately since they're interdependent and require deps installed at package dir for b-ber-reader
           npm run lerna run build -- --scope=@canopycanopycanopy/b-ber-reader-react
           npm run reader:shim
-          npm run lerna run build -- --scope="@canopycanopycanopy/{$(ls packages -xm --width=0 | sed 's/ //g' | sed -E 's/b-ber-reader-react,?//')}" --concurrency=2
+          npm run lerna run build -- --scope="@canopycanopycanopy/{$(ls packages -xm --width=0 | sed 's/ //g' | sed -E 's/b-ber-reader-react,?//')}" --concurrency=1
           npm test -- --maxWorkers=2
 
           cd ~
@@ -70,7 +70,7 @@ jobs:
           command: |
             npm run lerna run build -- --scope=@canopycanopycanopy/b-ber-reader-react
             npm run reader:shim
-            npm run lerna run build -- --scope="@canopycanopycanopy/{$(ls packages -xm --width=0 | sed 's/ //g' | sed -E 's/b-ber-reader-react,?//')}" --concurrency=2
+            npm run lerna run build -- --scope="@canopycanopycanopy/{$(ls packages -xm --width=0 | sed 's/ //g' | sed -E 's/b-ber-reader-react,?//')}" --concurrency=1
       - run:
           name: Build kitchen-sink fixture
           # globalSetup.ts skips this if _builds-reader/manifest.json already
