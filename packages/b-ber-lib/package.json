@@ -45,7 +45,17 @@
     "yargs": "^13.3.0",
     "yawn-yaml": "1.5.0"
   },
-  "files": ["dist"],
+  "files": [
+    "dist",
+    "EbookConvert.js",
+    "Html.js",
+    "HtmlToXml.js",
+    "ManifestItemProperties.js",
+    "State.js",
+    "Theme.js",
+    "utils.js",
+    "YamlAdaptor.js"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/triplecanopy/b-ber.git"
