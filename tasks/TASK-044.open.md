@@ -1,6 +1,6 @@
 # TASK-044: E2E testing — CI integration (CircleCI, Playwright cache)
 
-**Status:** not started
+**Status:** in progress
 **Scope:** monorepo
 **Priority:** medium
 **GitHub Issue:** #523 — https://github.com/triplecanopy/b-ber/issues/523
@@ -55,12 +55,12 @@ for manual triggers.
 
 ## Subtasks
 
-- [ ] Verify Playwright headless runs in current Docker image (canopycanopycanopy/b-ber:1.0.1)
-- [ ] Add `e2e` job to `.circleci/config.yml`
-- [ ] Configure Playwright browser binary cache
-- [ ] Set `NO_NETWORK` env var for Vimeo skip
+- [x] Verify Playwright headless runs in current Docker image (canopycanopycanopy/b-ber:1.0.1) — determined it lacks system deps; using mcr.microsoft.com/playwright:v1.49.0-jammy instead (see TASK-035 for canopy image update)
+- [x] Add `e2e` job to `.circleci/config.yml`
+- [x] Configure Playwright browser binary cache
+- [x] Set `NO_NETWORK` env var for Vimeo skip
 - [ ] Confirm e2e job reports correctly in GitHub PR checks
-- [ ] Document the CI setup in `packages/b-ber-testing/AGENTS.md`
+- [x] Document the CI setup in `packages/b-ber-testing/AGENTS.md`
 
 ## Notes
 

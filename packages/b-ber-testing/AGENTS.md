@@ -101,6 +101,61 @@ environments without outbound network access.
 
 ---
 
+## CI Integration (CircleCI)
+
+The e2e suite runs in CircleCI as a separate `e2e` job defined in
+`.circleci/config.yml`. It runs after the `build` job succeeds (`requires:
+[build]`) and is gated to `main` only.
+
+### Docker image
+
+The `e2e` job uses `mcr.microsoft.com/playwright:v1.49.0-jammy` rather than
+the main `canopycanopycanopy/b-ber:1.0.1` image. The canopy image predates
+Playwright and lacks the system libraries Chromium headless requires (libglib,
+libnss, etc.). Once TASK-035 updates the canopy image, this can be consolidated.
+
+### Fixture build
+
+`fixtures/kitchen-sink/_builds-reader/` is gitignored, so the reader fixture
+must be built in CI before tests run. The `e2e` job runs:
+
+```
+../../../../../node_modules/.bin/bber build reader
+```
+
+from the `fixtures/kitchen-sink/` directory. This pre-creates
+`_builds-reader/manifest.json` so that `globalSetup.ts` skips its own build
+step (`globalSetup` calls `bber` via `globalPath()`, which strips
+`node_modules/.bin` from `PATH`; pre-building in CI avoids that limitation).
+
+### Browser cache
+
+Playwright's Chromium binary is cached under `~/.cache/ms-playwright` keyed on
+the checksum of `packages/b-ber-testing/package.json`:
+
+```yaml
+- restore_cache:
+    keys:
+      - playwright-v1-{{ checksum "packages/b-ber-testing/package.json" }}
+- run: npx playwright install chromium
+- save_cache:
+    paths:
+      - ~/.cache/ms-playwright
+    key: playwright-v1-{{ checksum "packages/b-ber-testing/package.json" }}
+```
+
+Bump the `playwright-v1` prefix if you need to force a cache bust (e.g. after
+upgrading `@playwright/test`).
+
+### Environment variables
+
+| Variable     | Value    | Purpose                                           |
+| ------------ | -------- | ------------------------------------------------- |
+| `CI`         | `"true"` | Set by CircleCI; disables `reuseExistingServer`   |
+| `NO_NETWORK` | `"true"` | Skips the Vimeo test (requires outbound internet) |
+
+---
+
 ## Task System
 
 Tasks for this package are tracked in the monorepo root `tasks/` directory

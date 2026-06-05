@@ -1,11 +1,9 @@
-version: 2.0
+version: 2.1
 
 jobs:
   build:
     docker:
       - image: canopycanopycanopy/b-ber:1.0.1
-    branches:
-      only: main
     working_directory: ~/b-ber
     steps:
       - checkout
@@ -40,3 +38,77 @@ jobs:
           paths:
             - ~/b-ber/node_modules
           key: npm-packages-v1-{{ .Branch }}-{{ checksum "BBER_CACHE_KEY" }}
+
+  e2e:
+    # Uses the official Playwright image which ships all system libraries needed
+    # for Chromium headless. Switch to canopycanopycanopy/b-ber once TASK-035
+    # updates that image with the required deps (libglib, libnss, etc.).
+    docker:
+      - image: mcr.microsoft.com/playwright:v1.49.0-jammy
+    working_directory: ~/b-ber
+    environment:
+      CI: "true"
+      NO_NETWORK: "true"
+    steps:
+      - checkout
+      - run:
+          name: Generate npm cache key
+          command: |
+            echo $(find . -type f -name package.json -not -path "*/node_modules*" -exec md5sum {} \; | md5sum | cut -d' ' -f1) >> BBER_CACHE_KEY
+      - restore_cache:
+          keys:
+            - npm-packages-v1-{{ .Branch }}-{{ checksum "BBER_CACHE_KEY" }}
+            - npm-packages-v1-{{ checksum "BBER_CACHE_KEY" }}
+      - run:
+          name: Install dependencies
+          command: |
+            echo NodeJS $(node -v)
+            echo npm $(npm -v)
+            npm ci --ignore-scripts
+      - run:
+          name: Build packages
+          command: |
+            npm run lerna run build -- --scope=@canopycanopycanopy/b-ber-reader-react
+            npm run reader:shim
+            npm run lerna run build -- --scope="@canopycanopycanopy/{$(ls packages -xm --width=0 | sed 's/ //g' | sed -E 's/b-ber-reader-react,?//')}" --concurrency=2
+      - run:
+          name: Build kitchen-sink fixture
+          # globalSetup.ts skips this if _builds-reader/manifest.json already
+          # exists, but _builds-reader/ is gitignored so it must be built here.
+          # Runs bber directly rather than relying on PATH so globalSetup's
+          # globalPath() filter (which strips node_modules/.bin) is bypassed.
+          command: ../../../../../node_modules/.bin/bber build reader
+          working_directory: ~/b-ber/packages/b-ber-testing/fixtures/kitchen-sink
+      - save_cache:
+          paths:
+            - ~/b-ber/node_modules
+          key: npm-packages-v1-{{ .Branch }}-{{ checksum "BBER_CACHE_KEY" }}
+      - restore_cache:
+          keys:
+            - playwright-v1-{{ checksum "packages/b-ber-testing/package.json" }}
+      - run:
+          name: Install Playwright browser
+          command: npx playwright install chromium
+          working_directory: ~/b-ber/packages/b-ber-testing
+      - save_cache:
+          paths:
+            - ~/.cache/ms-playwright
+          key: playwright-v1-{{ checksum "packages/b-ber-testing/package.json" }}
+      - run:
+          name: Run e2e tests
+          command: npm test
+          working_directory: ~/b-ber/packages/b-ber-testing
+
+workflows:
+  build_and_test:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only: main
+      - e2e:
+          requires:
+            - build
+          filters:
+            branches:
+              only: main
