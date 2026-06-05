@@ -105,10 +105,14 @@ workflows:
       - build:
           filters:
             branches:
-              only: main
+              only:
+                - main
+                - feat/e2e-ci
       - e2e:
           requires:
             - build
           filters:
             branches:
-              only: main
+              only:
+                - main
+                - feat/e2e-ci
