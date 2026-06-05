@@ -35,9 +35,7 @@ jobs:
             npm run lerna run build -- --scope=@canopycanopycanopy/b-ber-logger
       - run:
           name: Build reader-react
-          command: |
-            npm run lerna run build -- --scope=@canopycanopycanopy/b-ber-reader-react
-            npm run reader:shim
+          command: npm run lerna run build -- --scope=@canopycanopycanopy/b-ber-reader-react
       - run:
           name: Build remaining packages
           command: |
@@ -102,7 +100,6 @@ jobs:
           name: Build packages
           command: |
             npm run lerna run build -- --scope=@canopycanopycanopy/b-ber-reader-react
-            npm run reader:shim
             npm run lerna run build -- --scope="@canopycanopycanopy/{$(ls packages -xm --width=0 | sed 's/ //g' | sed -E 's/b-ber-reader-react,?//')}" --concurrency=1
       - run:
           name: Build kitchen-sink fixture
