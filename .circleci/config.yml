@@ -101,9 +101,10 @@ jobs:
           name: Build kitchen-sink fixture
           # globalSetup.ts skips this if _builds-reader/manifest.json already
           # exists, but _builds-reader/ is gitignored so it must be built here.
-          # Runs bber directly rather than relying on PATH so globalSetup's
-          # globalPath() filter (which strips node_modules/.bin) is bypassed.
-          command: ../../../../node_modules/.bin/bber build reader
+          # Uses `node` directly rather than the node_modules/.bin/bber symlink
+          # because npm 10 skips creating bin symlinks when the target file does
+          # not exist at install time (dist/ is absent until after build steps).
+          command: node ~/b-ber/packages/b-ber-cli/dist/index.js build reader
           working_directory: ~/b-ber/packages/b-ber-testing/fixtures/kitchen-sink
       - save_cache:
           paths:
