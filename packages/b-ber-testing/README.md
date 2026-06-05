@@ -53,4 +53,21 @@ The kitchen-sink EPUB and reader builds live in `fixtures/kitchen-sink/`. The fi
 
 ## CI
 
-Set `NO_NETWORK=1` to skip the Vimeo test (which requires outbound network access). The `npx playwright install chromium` step must run before `npx playwright test` in CI.
+The suite runs in CircleCI as an `e2e` job that depends on the `build` (unit test) job. It only runs on `main`.
+
+**Fixture build** — `fixtures/kitchen-sink/_builds-reader/` is gitignored, so CI builds it explicitly before Playwright starts:
+
+```bash
+./node_modules/.bin/bber build reader  # run from fixtures/kitchen-sink/
+```
+
+This pre-creates `manifest.json` so `globalSetup.ts` skips its own build (which would fail because it strips `node_modules/.bin` from `PATH`).
+
+**Browser cache** — Chromium is cached in `~/.cache/ms-playwright` keyed on this package's `package.json` checksum. Re-download is only triggered when `@playwright/test` is bumped.
+
+**Environment variables**
+
+| Variable     | Value    | Effect                                          |
+| ------------ | -------- | ----------------------------------------------- |
+| `CI`         | `true`   | Disables `reuseExistingServer` in Playwright     |
+| `NO_NETWORK` | `true`   | Skips the Vimeo test (requires outbound internet)|
