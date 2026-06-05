@@ -103,7 +103,7 @@ jobs:
           # exists, but _builds-reader/ is gitignored so it must be built here.
           # Runs bber directly rather than relying on PATH so globalSetup's
           # globalPath() filter (which strips node_modules/.bin) is bypassed.
-          command: ../../../../../node_modules/.bin/bber build reader
+          command: ../../../../node_modules/.bin/bber build reader
           working_directory: ~/b-ber/packages/b-ber-testing/fixtures/kitchen-sink
       - save_cache:
           paths:
