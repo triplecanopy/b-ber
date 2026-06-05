@@ -3,10 +3,11 @@ version: 2.1
 jobs:
   build:
     # canopycanopycanopy/b-ber:1.0.1 ships Node 16, which is incompatible with
-    # the current monorepo (engines >= 22.x). Switch to cimg/node:22.14 until
-    # TASK-035 produces an updated canopy image.
+    # the current monorepo (engines >= 22.x). Use Node 24 to match the local
+    # dev environment and satisfy tsdown's ^22.18.0 || >=24.0.0 requirement.
+    # Switch back to a canopy image once TASK-035 produces an updated one.
     docker:
-      - image: cimg/node:22.14
+      - image: cimg/node:24.14
     working_directory: ~/b-ber
     steps:
       - checkout
@@ -63,11 +64,13 @@ jobs:
           key: npm-packages-v2-{{ .Branch }}-{{ checksum "BBER_CACHE_KEY" }}
 
   e2e:
-    # Uses the official Playwright image which ships all system libraries needed
-    # for Chromium headless. Switch to canopycanopycanopy/b-ber once TASK-035
-    # updates that image with the required deps (libglib, libnss, etc.).
+    # node:24-bookworm matches the local dev environment (Node 24) and
+    # satisfies tsdown's engine requirement. Playwright system deps are
+    # installed inline via `playwright install-deps` rather than relying on
+    # a pre-built Playwright Docker image, which would need its own Node
+    # version audit. Switch to a canopy image once TASK-035 is resolved.
     docker:
-      - image: mcr.microsoft.com/playwright:v1.49.0-jammy
+      - image: node:24-bookworm
     working_directory: ~/b-ber
     environment:
       CI: "true"
@@ -116,6 +119,10 @@ jobs:
       - restore_cache:
           keys:
             - playwright-v1-{{ checksum "packages/b-ber-testing/package.json" }}
+      - run:
+          name: Install Playwright system dependencies
+          command: npx playwright install-deps chromium
+          working_directory: ~/b-ber/packages/b-ber-testing
       - run:
           name: Install Playwright browser
           command: npx playwright install chromium
