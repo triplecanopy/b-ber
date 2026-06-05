@@ -2,8 +2,11 @@ version: 2.1
 
 jobs:
   build:
+    # canopycanopycanopy/b-ber:1.0.1 ships Node 16, which is incompatible with
+    # the current monorepo (engines >= 22.x). Switch to cimg/node:22.14 until
+    # TASK-035 produces an updated canopy image.
     docker:
-      - image: canopycanopycanopy/b-ber:1.0.1
+      - image: cimg/node:22.14
     working_directory: ~/b-ber
     steps:
       - checkout
@@ -43,14 +46,17 @@ jobs:
           command: npm test -- --maxWorkers=2
       - run:
           name: Smoke test CLI
+          # $BBER was set by the old canopycanopycanopy image; use the binary
+          # from node_modules/.bin now that we're on a plain Node image.
           command: |
-            $BBER --version
-            $BBER new foo
+            BBER=$(pwd)/node_modules/.bin/bber
+            cd ~
+            "$BBER" --version
+            "$BBER" new foo
             cd foo
-            $BBER theme list
-            $BBER theme set b-ber-theme-serif
-            $BBER build reader web
-          working_directory: ~
+            "$BBER" theme list
+            "$BBER" theme set b-ber-theme-serif
+            "$BBER" build reader web
       - save_cache:
           paths:
             - ~/b-ber/node_modules
