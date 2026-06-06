@@ -98,12 +98,19 @@ jobs:
             npm run lerna run build -- --scope=@canopycanopycanopy/b-ber-reader-react
             npm run lerna run build -- --scope="@canopycanopycanopy/{$(ls packages -xm --width=0 | sed 's/ //g' | sed -E 's/b-ber-reader-react,?//')}" --concurrency=1
       - run:
+          name: Link bber to global PATH
+          # npm 10 skips creating node_modules/.bin/bber when dist/index.js
+          # doesn't exist at install time. globalPath() in CLI test helpers
+          # strips node_modules/.bin anyway. npm link puts bber into
+          # /usr/local/bin which survives the strip and is found by spawnSync.
+          command: npm link
+          working_directory: ~/b-ber/packages/b-ber-cli
+      - run:
           name: Build kitchen-sink fixture
           # globalSetup.ts skips this if _builds-reader/manifest.json already
           # exists, but _builds-reader/ is gitignored so it must be built here.
-          # Uses `node` directly rather than the node_modules/.bin/bber symlink
-          # because npm 10 skips creating bin symlinks when the target file does
-          # not exist at install time (dist/ is absent until after build steps).
+          # Uses `node` directly rather than the symlink for the fixture build;
+          # the linked global `bber` (from the step above) is used by CLI tests.
           command: node ~/b-ber/packages/b-ber-cli/dist/index.js build reader
           working_directory: ~/b-ber/packages/b-ber-testing/fixtures/kitchen-sink
       - save_cache:
