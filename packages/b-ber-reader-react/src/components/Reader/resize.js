@@ -22,6 +22,16 @@ export function handleResizeStart() {
   // dimensions recalculated
   this.freeze()
 
+  // Restart the layout-stability watch. Unlike a chapter change (where
+  // BookContent remounts and a fresh <Ultimate> begins watching on mount), a
+  // resize keeps the same Ultimate instance mounted — the only thing that
+  // re-arms its watch is view.loaded flipping true → false. Without this, the
+  // spinner shown by freeze() above would never hide again (Ultimate's
+  // onStable never fires), producing an infinite spinner on resize. freeze()
+  // deliberately omits unload() to avoid restarting the OLD chapter's Ultimate
+  // during navigation; the resize path is the case that genuinely needs it.
+  this.props.viewActions.unload()
+
   const { spreadIndex } = this.state
   const { lastSpreadIndex } = this.props.view
 
@@ -32,12 +42,7 @@ export function handleResizeStart() {
 
   // Save the relative position (float) to calculate next position
   // after resize
-  this.setState({ relativeSpreadPosition }, () => {
-    // this.props.viewActions.unload()
-    // this.props.viewActions.updateLastSpreadIndex(-1)
-    // this.props.userInterfaceActions.disablePageTransitions()
-    // this.props.userInterfaceActions.showSpinner()
-  })
+  this.setState({ relativeSpreadPosition })
 }
 
 export function handleResizeEnd() {

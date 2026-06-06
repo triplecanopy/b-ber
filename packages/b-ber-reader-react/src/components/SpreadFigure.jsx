@@ -13,7 +13,6 @@ const SpreadFigure = (props) => {
         // Account for minute differences in measurement
         const left = Math.floor(origLeft)
 
-        // const opacity = 0.5
         const offset = window.innerWidth / 2
         const marginLeft =
           absTranslateX === left
@@ -27,7 +26,6 @@ const SpreadFigure = (props) => {
             id={props.id}
             style={{
               left,
-              // opacity,
               marginLeft,
             }}
             className={props.className || ''}

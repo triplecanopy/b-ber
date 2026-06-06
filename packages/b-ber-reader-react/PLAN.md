@@ -51,6 +51,20 @@ transform to simulate page-turning. A secondary scroll layout mode serves mobile
 | TASK-017 | Migrate from SCSS to CSS Modules                            | low      |
 | TASK-018 | Improve test coverage                                       | high     |
 | TASK-021 | Fix font-face flash (FOUT) on page load                     | low      |
+| TASK-022 | Fix stale full-bleed spread column position (verso/recto)   | high     |
+| TASK-023 | Harden Ultimate layout-stability detection                 | high     |
+| TASK-024 | Re-measure lastSpreadIndex after the layout settles        | medium   |
+| TASK-025 | Consolidate page-width geometry into Viewport.getPageWidth  | medium   |
+| TASK-026 | Fix infinite spinner on window resize                      | high     |
+| TASK-027 | Reset view.loaded reliably; remove dead unload path        | medium   |
+| TASK-028 | Replace Ultimate offsetLeft polling with event detection   | low      |
+| TASK-029 | Eliminate blank spread pages (recto cols + page over-count) | high     |
+| TASK-030 | Deep-linking to a spreadIndex doesn't navigate to it        | medium   |
+
+> TASK-022 through TASK-026 are implemented and pending in-browser verification
+> + commit (see `READER_BUGS.md`). TASK-027 and TASK-028 are deferred follow-ups.
+> Note: TASK-022 fixes a regression introduced by TASK-010 (the per-`Spread`
+> setInterval → ResizeObserver swap).
 
 ---
 

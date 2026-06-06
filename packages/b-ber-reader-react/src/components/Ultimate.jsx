@@ -4,15 +4,22 @@ import { bindActionCreators } from 'redux'
 import * as userInterfaceActions from '../actions/user-interface'
 import * as viewActions from '../actions/view'
 
-// How long to wait after the last recorded offsetLeft change before declaring
-// the layout stable. The sentinel's offsetLeft is checked once per interval;
-// if it hasn't changed since the previous check, layout is considered stable.
+// How long to wait between offsetLeft samples (ms).
 const STABILITY_CHECK_INTERVAL_MS = 100
+
+// Number of *consecutive* unchanged offsetLeft samples required before declaring
+// the layout stable. A CSS columns reflow commonly plateaus for one interval and
+// then shifts again (e.g. a web font finishes loading, an image decodes), so a
+// single matching pair is not enough confidence — that produced premature
+// onStable() calls that published positions while the layout was still moving.
+// Requiring N consecutive matches means ~N×100ms of genuine quiet.
+const REQUIRED_STABLE_CHECKS = 3
 
 // Maximum time (ms) to wait for layout stability before forcing onStable().
 // Guards against infinite loops when offsetLeft keeps changing (e.g. slow
-// font loads, animated CSS, or external layout interference).
-const MAX_WAIT_MS = 1500
+// font loads, animated CSS, or external layout interference). Sized to allow a
+// late web-font reflow (which resets the stable counter) to re-settle.
+const MAX_WAIT_MS = 2500
 
 // Ultimate — layout-stability sentinel
 //
@@ -67,6 +74,10 @@ function Ultimate({
   // browser at least one full STABILITY_CHECK_INTERVAL_MS to complete layout
   // before we compare values.
   const lastOffsetLeftRef = useRef(null)
+  // Count of consecutive checks where offsetLeft matched the previous reading.
+  // Reset whenever offsetLeft moves; layout is stable once it reaches
+  // REQUIRED_STABLE_CHECKS.
+  const stableCountRef = useRef(0)
   // setTimeout handle for the pending stability check
   const timerRef = useRef(null)
   // Timestamp (Date.now()) recorded when startWatching() begins. Used to
@@ -133,11 +144,18 @@ function Ultimate({
       const currentOffsetLeft = node.offsetLeft
 
       if (currentOffsetLeft === lastOffsetLeftRef.current) {
-        // offsetLeft is stable — declare stable
-        onStable()
+        // offsetLeft matched the previous sample — only declare stable once we
+        // have REQUIRED_STABLE_CHECKS consecutive matches (see constant).
+        stableCountRef.current += 1
+        if (stableCountRef.current >= REQUIRED_STABLE_CHECKS) {
+          onStable()
+        } else {
+          scheduleCheck()
+        }
       } else {
-        // offsetLeft changed — columns are still reflowing, try again
+        // offsetLeft changed — columns are still reflowing, reset and try again
         lastOffsetLeftRef.current = currentOffsetLeft
+        stableCountRef.current = 0
         scheduleCheck()
       }
     }, STABILITY_CHECK_INTERVAL_MS)
@@ -161,7 +179,21 @@ function Ultimate({
     // reschedules, giving the browser at least one full interval to complete
     // any in-progress layout before we test for stability.
     lastOffsetLeftRef.current = null
+    stableCountRef.current = 0
     startTimeRef.current = Date.now()
+
+    // Web fonts are the classic late reflow: text lays out, the font swaps in,
+    // and every offsetLeft shifts — possibly after we have already counted the
+    // pre-swap layout as stable. When fonts resolve, reset the baseline so the
+    // layout must re-confirm stability. Guarded by activeRef so a resolution
+    // after onStable()/unmount is a no-op. document.fonts is absent in jsdom.
+    if (typeof document !== 'undefined' && document.fonts?.ready) {
+      document.fonts.ready.then(() => {
+        if (!activeRef.current) return
+        lastOffsetLeftRef.current = null
+        stableCountRef.current = 0
+      })
+    }
 
     scheduleCheck()
   }

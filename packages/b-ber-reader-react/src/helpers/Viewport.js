@@ -92,6 +92,16 @@ class Viewport {
     return height
   }
 
+  // The width of one "page" in the paginated columns layout — i.e. the distance
+  // the layout container is translated on each page turn. This is the single
+  // source of truth for that geometry; spread positioning (Spread.jsx) and the
+  // page-turn transform (Reader getTranslateX) must agree on it or figures
+  // drift off-screen. Sourced from viewerSettings.width (the value the transform
+  // uses), which equals window.innerWidth in the columns layout. Returns NaN in
+  // a vertical-scroll layout (width === 'auto'); callers guard for that.
+  static getPageWidth = ({ width, paddingLeft, paddingRight, columnGap }) =>
+    width - paddingLeft - paddingRight + columnGap
+
   // Returns CSS to be applied to use to calculate various frame dimensions
   static getCss = () => {
     let mediaQuery = MEDIA_QUERY_DESKTOP_MD
