@@ -56,6 +56,11 @@ const withLastSpreadIndex = (WrappedComponent) => {
     const node = useRef(null)
     const [contentDimensions, setContentDimensions] = useState(0)
 
+    // Always-current pointer to the latest measure function, so the
+    // settle-driven effect below can re-measure without re-creating the
+    // observers.
+    const measureRef = useRef(null)
+
     // Always-current ref for props so observer callbacks never close over a
     // stale copy of viewActions or getFrameHeight
     const propsRef = useRef(props)
@@ -108,6 +113,9 @@ const withLastSpreadIndex = (WrappedComponent) => {
         setContentDimensions(nextContentDimensions)
       }
 
+      // Expose the latest measure fn to the settle-driven effect below.
+      measureRef.current = measureContentDimensions
+
       // Debounce wrapper: coalesces rapid-fire observations (e.g. React
       // committing many DOM nodes in a single chapter load) into one
       // measurement. The timer is stored in a closure variable rather than a
@@ -155,6 +163,16 @@ const withLastSpreadIndex = (WrappedComponent) => {
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
+
+    // Re-measure once the layout has settled. The observers above can miss a
+    // CSS columns reflow that changes scrollHeight (and, in Firefox/Edge, the
+    // sentinel's offsetLeft) without changing #content's border-box size or its
+    // child list. <Ultimate> signals settle via view.loaded /
+    // view.ultimateOffsetLeft once offsetLeft stops moving, so re-measure then
+    // to capture the final, post-reflow content size.
+    useEffect(() => {
+      measureRef.current?.()
+    }, [props.view?.loaded, props.view?.ultimateOffsetLeft])
 
     // Recompute and dispatch lastSpreadIndex whenever content dimensions change.
     useEffect(() => {
