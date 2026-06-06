@@ -199,17 +199,16 @@ function Reader(props) {
       stateRef.current.spreadIndex
     )
 
-    const { width, paddingLeft, paddingRight, columnGap } =
-      propsRef.current.viewerSettings
-
     const isScrolling = Viewport.isVerticallyScrolling(
       propsRef.current.readerSettings
     )
 
     let translateX = 0
     if (!isScrolling) {
-      translateX =
-        (width - paddingLeft - paddingRight + columnGap) * nextSpreadIndex * -1
+      // Single source of truth for page width — must match Spread positioning
+      // (see Viewport.getPageWidth) so figures don't drift off-screen.
+      const pageWidth = Viewport.getPageWidth(propsRef.current.viewerSettings)
+      translateX = pageWidth * nextSpreadIndex * -1
 
       // Avoid -0
       translateX =
