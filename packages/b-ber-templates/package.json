@@ -4,6 +4,20 @@
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./figures": "./dist/figures/index.js",
+    "./Ncx": "./dist/Ncx/index.js",
+    "./Opf/Guide": "./dist/Opf/Guide.js",
+    "./Opf/Manifest": "./dist/Opf/Manifest.js",
+    "./Opf/Metadata": "./dist/Opf/Metadata.js",
+    "./Opf/Pkg": "./dist/Opf/Pkg.js",
+    "./Opf/Spine": "./dist/Opf/Spine.js",
+    "./Project": "./dist/Project/index.js",
+    "./Toc": "./dist/Toc/index.js",
+    "./Xhtml": "./dist/Xhtml/index.js",
+    "./Xml": "./dist/Xml/index.js"
+  },
   "scripts": {
     "build": "tsdown",
     "typecheck": "tsc --noEmit",
