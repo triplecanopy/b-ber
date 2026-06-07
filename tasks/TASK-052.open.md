@@ -16,6 +16,22 @@ The leading candidate is Verdaccio, a lightweight local npm proxy/registry that
 can stand in for npm during local and CI testing. This task is to research and
 document the exact workflow so it can be used by anyone cutting a release.
 
+**Motivation (concrete, 2026-06-07):** a canary publish shipped two bugs that
+were invisible in workspace/dev mode and only surfaced in the *installed,
+published* artifacts:
+
+1. `bber --version` crashed with `ENOENT … _project/toc.yml` — the bundled CLI
+   eagerly loads `State`, which read project files even for a version query.
+2. `bber serve` rendered a blank screen — re-bundling `b-ber-reader-react`'s
+   pre-built dist left React unresolved (`Cannot read properties of undefined
+   (reading 'prototype')`, then `Calling require for "react" in an environment
+   that doesn't expose the require function`).
+
+Both only reproduce after `pack`/`publish` + install, because dev mode bundles
+from source. A registry-backed publish + `bber --version` + `bber serve` smoke
+test would have caught them. Fixes landed on
+`feat/fix-cli-version-reader-interop`.
+
 The canary publish command in question:
 ```sh
 lerna publish --canary --preid <name> --dist-tag <name> --force-publish="*"
@@ -45,6 +61,12 @@ lerna publish --force-publish="*"
       added to the test command.
 - [ ] **Evaluate for CI use** — could a Verdaccio instance be used in CircleCI
       (TASK-035) to gate publish-path changes? What would that step look like?
+- [ ] **Add a published-artifact smoke test** — after publishing to Verdaccio,
+      install `@canopycanopycanopy/b-ber-cli` from the local registry into a
+      throwaway project and assert (a) `bber --version` prints a version from a
+      non-project dir and (b) `bber serve` boots and the reader mounts without
+      console errors. Wire into the `b-ber-testing` Playwright harness so the
+      "only breaks when published" class of bug is caught in CI. See Motivation.
 - [ ] **Document the final workflow** — write the complete command sequence
       into TASK-036's Notes or a `docs/` file so it is repeatable by anyone
       on the team.
@@ -64,4 +86,8 @@ a test run they will need to be deleted before the real publish. Consider
 `--no-git-tag-version --no-push` as standard flags for the test command, and
 document why they are included.
 
-Related: [[TASK-036]] (Lerna upgrade), [[TASK-035]] (CircleCI)
+Related: [[TASK-036]] (Lerna upgrade), [[TASK-035]] (CircleCI),
+[[TASK-039]] (E2E testing umbrella — natural home for the smoke test),
+[[TASK-054]] (reader → reader-react build ordering — the source-bundling fix
+removes the dist build-order dependency), [[TASK-058]] (reader-react polyfill
+audit — the reader shell now replicates those polyfills).
