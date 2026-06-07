@@ -35,6 +35,8 @@ const skipInitialization = (): boolean => {
   return (
     argv.includes('--help') || // if a help flag is set
     argv.includes('-h') || // if a help alias is set
+    argv.includes('--version') || // if printing the version; no project to load
+    argv.includes('-v') || // if the version alias is set
     argv.length < 3 || // if there are insufficient arguments
     argv.includes('new') // if it's a new project
   )
