@@ -19,11 +19,6 @@ export default defineConfig({
         __dirname,
         '../b-ber-reader-react/src/index.jsx'
       ),
-      // Node-builtin shims needed by b-ber-reader-react's dependency graph.
-      // Mirrors b-ber-reader-react/vite.config.js, which we now bypass.
-      stream: 'stream-browserify',
-      buffer: 'buffer/',
-      os: 'os-browserify/browser',
       // Prevent duplicate React instances when b-ber-reader-react is symlinked
       react: resolve(__dirname, '../../node_modules/react'),
       'react-dom': resolve(__dirname, '../../node_modules/react-dom'),

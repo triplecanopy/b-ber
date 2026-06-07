@@ -52,10 +52,10 @@ Additional standards for this package:
   `b-ber-reader-react/dist/styles.css` import to `src/index.jsx`.
 - `vite.config.js` also aliases `react` and `react-dom` to the monorepo root to
   prevent duplicate React instances when `b-ber-reader-react` is resolved via
-  the workspace symlink, and aliases the node-builtin shims (`stream`, `buffer`,
-  `os`) that the reader's dependency graph needs — mirroring
-  `b-ber-reader-react/vite.config.js`. Preserve all of these if updating the
-  Vite config.
+  the workspace symlink — preserve this if updating the Vite config. Node-builtin
+  shims (`stream`/`buffer`/`os`) are intentionally **not** aliased here: TASK-058
+  proved those import paths are dead in the reader's dependency graph, and the
+  source bundle builds cleanly without them.
 - The Express server in `server.js` is for local development only and should
   not be hardened for production use.
 
