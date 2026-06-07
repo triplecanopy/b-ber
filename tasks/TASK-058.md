@@ -54,16 +54,25 @@ from `package.json` devDependencies in a follow-up cleanup if desired (they are
 still installed as transitive deps of other packages, so removal from devDeps is
 safe and reduces explicit dep count).
 
-### Addendum (2026-06-07) — finding corroborated
+### Addendum (2026-06-07) — finding RETRACTED: `stream`/`buffer` are NOT dead
 
-On `feat/fix-cli-version-reader-interop`, `b-ber-reader` switched to bundling
-`b-ber-reader-react` **from source** (the same `src/index.jsx` entry the lib
-build uses) to fix a React-resolution bug — see [[TASK-052]] motivation. The
-node-builtin aliases were initially mirrored into `b-ber-reader/vite.config.js`
-out of caution, then removed after confirming the source bundle builds cleanly
-without them (503 modules, no errors). This independently re-validates this
-task's dead-code finding via a second bundler entry point. `b-ber-reader`'s
-`vite.config.js` still carries no `stream`/`buffer`/`os` aliases, as recorded
-above. Note: reader-react's **dev** config (`vite.config.js`) still lists the
-three aliases — only `vite.config.lib.js` was cleaned here; the dev config is a
-candidate for the same removal.
+The dead-code conclusion was **wrong** and caused a production regression.
+`sax` (pulled in via XML/OPF/NCX parsing) defines `SAXStream` as
+`SAXStream.prototype = Object.create(Stream.prototype, …)` and calls
+`Buffer.isBuffer` at runtime. Without the `stream`/`buffer` browser shims,
+`Stream` is `undefined` and the bundle throws `Cannot read properties of
+undefined (reading 'prototype')` on load — a blank reader. This shipped in
+canary `3.0.8-next.97` and was caught only by loading `bber serve` in a real
+browser.
+
+Why the original verification missed it: "builds cleanly" and "`npm test`
+passes" do not exercise the browser. Jest runs under jsdom, where Node's
+`stream`/`buffer` are present, so `sax` works in tests; the failure only appears
+in a real browser bundle. This is the same publish-only trap documented in
+[[TASK-052]].
+
+Resolution (2026-06-07): the three aliases are **restored** in both
+`b-ber-reader/vite.config.js` (the live serve path, bundled from source) and
+`b-ber-reader-react/vite.config.lib.js`. The −35K bundle-size saving recorded
+above does not apply. Any future attempt to prune these must be verified by
+loading `bber serve` in a browser, not by build/test success alone.

@@ -3,6 +3,18 @@ import { defineConfig } from 'vite'
 
 export default defineConfig({
   plugins: [react({ include: /\.(jsx?|tsx?)$/ })],
+  resolve: {
+    // Node-builtin shims for the browser. `sax` (OPF/NCX parsing) extends
+    // Node's `Stream` and uses `Buffer` at runtime — without these the bundle
+    // throws "Cannot read properties of undefined (reading 'prototype')" on
+    // load. TASK-058 removed these as "dead code", but the analysis missed
+    // sax's runtime path (build success + jsdom tests don't exercise it).
+    alias: {
+      stream: 'stream-browserify',
+      buffer: 'buffer/',
+      os: 'os-browserify/browser',
+    },
+  },
   build: {
     target: 'es2022',
     lib: {

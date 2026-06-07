@@ -52,10 +52,15 @@ Additional standards for this package:
   `b-ber-reader-react/dist/styles.css` import to `src/index.jsx`.
 - `vite.config.js` also aliases `react` and `react-dom` to the monorepo root to
   prevent duplicate React instances when `b-ber-reader-react` is resolved via
-  the workspace symlink — preserve this if updating the Vite config. Node-builtin
-  shims (`stream`/`buffer`/`os`) are intentionally **not** aliased here: TASK-058
-  proved those import paths are dead in the reader's dependency graph, and the
-  source bundle builds cleanly without them.
+  the workspace symlink — preserve this if updating the Vite config.
+- `vite.config.js` aliases the node-builtin shims `stream` → `stream-browserify`,
+  `buffer` → `buffer/`, and `os` → `os-browserify/browser`. **These are
+  required, not optional:** `sax` (used to parse the OPF/NCX) has a `SAXStream`
+  that extends Node's `Stream` and calls `Buffer.isBuffer`, so without the shims
+  the browser bundle throws `Cannot read properties of undefined (reading
+  'prototype')` on load. Build success and jsdom-based tests do **not** catch
+  this (jsdom provides Node's `stream`/`buffer`; the browser does not) — verify
+  any change to these aliases by actually loading `bber serve` in a browser.
 - The Express server in `server.js` is for local development only and should
   not be hardened for production use.
 

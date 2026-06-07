@@ -19,6 +19,15 @@ export default defineConfig({
         __dirname,
         '../b-ber-reader-react/src/index.jsx'
       ),
+      // Node-builtin shims for the browser. These are NOT dead: `sax` (used to
+      // parse the OPF/NCX at runtime) has a SAXStream that extends Node's
+      // `Stream` and calls `Buffer.isBuffer`. Without the shim, `Stream` is
+      // undefined and the bundle throws "Cannot read properties of undefined
+      // (reading 'prototype')" on load. Build-success and jsdom tests do NOT
+      // catch this — jsdom provides Node's stream/buffer; the browser does not.
+      stream: 'stream-browserify',
+      buffer: 'buffer/',
+      os: 'os-browserify/browser',
       // Prevent duplicate React instances when b-ber-reader-react is symlinked
       react: resolve(__dirname, '../../node_modules/react'),
       'react-dom': resolve(__dirname, '../../node_modules/react-dom'),
