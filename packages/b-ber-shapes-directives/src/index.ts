@@ -167,8 +167,11 @@ export const htmlIframeAttributes: Set<string> = new Set([
   'referrerpolicy',
   'sandbox',
   'srcdoc',
-  'scrolling',
-  'frameborder',
+  // TODO(TASK-056): 'scrolling' and 'frameborder' are not valid EPUB 3 XHTML
+  // attributes and cause EPUBCheck errors. Remove them once the iframe template
+  // is updated to be fully EPUB 3 compliant.
+  // 'scrolling',
+  // 'frameborder',
 ])
 
 // Attributes that are used in the vimeo and vimeo-inline directives and passed

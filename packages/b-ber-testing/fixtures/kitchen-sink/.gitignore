@@ -1,0 +1,4 @@
+_builds-*/
+*.epub
+_project/_javascripts/
+themes/

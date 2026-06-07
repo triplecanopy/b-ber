@@ -1,6 +1,6 @@
 # TASK-054: Research build dependency ordering for reader → reader-react
 
-**Status:** not started
+**Status:** complete
 **Scope:** monorepo
 **Priority:** medium
 **GitHub Issue:** #521 — https://github.com/triplecanopy/b-ber/issues/521
@@ -61,6 +61,52 @@ dependency so that every other package builds in parallel, and only
 - A follow-up task (TASK-055 or later) for the implementation, if the
   recommended approach requires non-trivial work.
 
+## Findings
+
+### Lerna v8 topological sort (Option 1) — recommended
+
+Lerna 8.2.4 sorts builds **topologically by default** — the `--no-sort` flag is
+what disables ordering. Lerna's package graph includes `devDependencies` (confirmed
+from source: it iterates `["dependencies", "devDependencies", "optionalDependencies"]`
+when building the graph). The `"file:../b-ber-reader-react"` entry in
+`b-ber-reader`'s devDependencies already gives Lerna the graph edge it needs:
+reader-react builds before reader, every other package builds in parallel.
+
+The `reader:shim` step (`cd packages/b-ber-reader && npm i`) is also unnecessary:
+the root npm workspace already creates a symlink at
+`node_modules/@canopycanopycanopy/b-ber-reader-react → ../../packages/b-ber-reader-react`,
+and Node's module resolution walks up the directory tree so Vite finds it without
+a local copy in `b-ber-reader/node_modules`. Vite's `commonjsOptions.include:
+[/b-ber-reader-react\/dist/]` in `packages/b-ber-reader/vite.config.js` already
+handles the symlink-resolves-outside-node_modules case.
+
+**One risk to verify empirically:** Confirm Lerna respects `devDependencies`
+(not just `dependencies`) when sorting. If reader builds before reader-react,
+move the `file:` dep from devDependencies → dependencies in reader's package.json.
+
+### Why other options are weaker
+
+- **npm workspaces `--workspaces` flag**: No topological ordering guarantee.
+- **Turborepo/Nx**: Correct solution, but adding a full build orchestrator for one
+  dependency edge is disproportionate. Lerna v8 already solves this natively.
+- **Lerna Nx integration**: Nx is not configured (`nx.json` absent, no `useNx` in
+  `lerna.json`). Enabling it for one edge adds config and conceptual overhead.
+- **Pre-built artefact check**: Keeps the two-phase structure and adds complexity.
+  No benefit over the topological approach.
+- **Changing the consumer relationship**: The workspace root symlink already provides
+  the correct resolution path. No vite config changes needed.
+
+## Recommendation
+
+Replace the root `build` script with a single `lerna run build` call (topological
+sort is on by default). Remove `reader:shim` from `bootstrap:clean`. The `file:`
+dep in reader's devDependencies stays — it documents the dependency and drives
+Lerna's sort order.
+
+**Change surface:** 2 lines in root `package.json`.
+
+See TASK-057 for the implementation.
+
 ## Notes
 
 Current root `build` script for reference:
@@ -68,7 +114,7 @@ Current root `build` script for reference:
 ```
 lerna run build --scope=@canopycanopycanopy/b-ber-reader-react
 && npm run reader:shim
-&& lerna run build --scope="@canopycanopycanopy/{all-except-reader-react}"
+&& lerna run build --scope="@canopycanopycanopy/{$(echo `ls packages` | sed 's/ /,/g' | sed -E 's/b-ber-reader-react,?//')}"
 ```
 
 The `reader:shim` step runs `npm install` inside `b-ber-reader` so that the

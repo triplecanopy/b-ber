@@ -1,6 +1,6 @@
 # TASK-041: E2E testing — create kitchen-sink fixture project
 
-**Status:** not started
+**Status:** complete
 **Scope:** monorepo
 **Priority:** medium
 **GitHub Issue:** #511 — https://github.com/triplecanopy/b-ber/issues/511
@@ -56,12 +56,12 @@ instance. From the package inventory:
 ## Subtasks
 
 - [x] Confirm fixture location: `packages/b-ber-testing/fixtures/kitchen-sink/`
-- [ ] Scaffold `packages/b-ber-testing/` as a private workspace package
-- [ ] Write `toc.yml` and `metadata.yml`
-- [ ] Write chapter Markdown files covering all directives
-- [ ] Add sample image assets (small PNGs — <20 KB each, committed to repo)
-- [ ] Verify `bber build epub` completes without errors against the fixture
-- [ ] Verify `bber build reader` completes without errors
+- [x] Scaffold `packages/b-ber-testing/` as a private workspace package
+- [x] Write `toc.yml` and `metadata.yml`
+- [x] Write chapter Markdown files covering all directives
+- [x] Add sample image assets (small PNGs — <20 KB each, committed to repo)
+- [x] Verify `bber build epub` completes without errors against the fixture
+- [x] Verify `bber build reader` completes without errors
 
 ## Notes
 

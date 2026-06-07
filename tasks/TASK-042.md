@@ -1,6 +1,6 @@
 # TASK-042: E2E testing — CLI smoke tests (build artifact verification)
 
-**Status:** not started
+**Status:** complete
 **Scope:** monorepo
 **Priority:** medium
 **GitHub Issue:** #512 — https://github.com/triplecanopy/b-ber/issues/512
@@ -57,14 +57,14 @@ the committed fixture source.
 ## Subtasks
 
 - [x] Confirm test runner (Playwright) and package location (`packages/b-ber-testing/`)
-- [ ] Set up test harness: temp-dir copy of fixture, cleanup hooks
-- [ ] `bber new` smoke test
-- [ ] `bber build epub` + EPUB structural assertions
-- [ ] `bber build reader` + manifest assertions
-- [ ] `bber generate` + TOC mutation test
-- [ ] External tool skip logic (pdf, mobi)
+- [x] Set up test harness: temp-dir copy of fixture, cleanup hooks
+- [x] `bber new` smoke test
+- [x] `bber build epub` + EPUB structural assertions
+- [x] `bber build reader` + manifest assertions
+- [x] `bber generate` + TOC mutation test
+- [x] External tool skip logic (pdf, mobi)
 - [ ] `bber build web` + HTML assertions (lower priority)
-- [ ] Wire up to `npm test` in the testing package
+- [x] Wire up to `npm test` in the testing package
 
 ## Notes
 

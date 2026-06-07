@@ -11,3 +11,4 @@ lerna-debug.log
 !.claude/skills/
 !.claude/skills/**
 packages/**/package-lock.json
+packages/b-ber-testing/test-results/

@@ -11,6 +11,7 @@ dev/*
 !dev/index.ejs
 !dev/index.example.jsx
 !dev/index.html
+!dev/index.e2e.jsx
 .env*
 
 /*.tgz
