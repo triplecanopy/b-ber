@@ -59,7 +59,7 @@ for manual triggers.
 - [x] Add `e2e` job to `.circleci/config.yml`
 - [x] Configure Playwright browser binary cache
 - [x] Set `NO_NETWORK` env var for Vimeo skip
-- [ ] Confirm e2e job reports correctly in GitHub PR checks — in progress; 29/41 tests pass, 11 CLI tests failing (see Notes)
+- [ ] Confirm e2e job reports correctly in GitHub PR checks — in progress; `npm link` fix brought CLI tests from 11 failing to 1 failing (epub zip archive — see Notes)
 - [x] Document the CI setup in `packages/b-ber-testing/AGENTS.md`
 
 ## Notes
@@ -75,16 +75,32 @@ for CI visibility)
 - 29/41 pass: **all 24 Chromium browser reader tests pass** (navigation,
   directives, edge cases)
 
-### What's still failing — 11 CLI tests
+### Previously failing — 11 CLI tests (RESOLVED)
 
-All CLI failures have `result.status === null`, which means the `bber` process
+All CLI failures had `result.status === null`, which means the `bber` process
 was not found (ENOENT from `spawnSync`). Root cause: `globalPath()` in
 `tests/cli/helpers.ts` strips `node_modules/.bin` from PATH so that tests use
 the globally installed `bber`, not the workspace symlink. On CI there is no
-global `bber`. Fix committed: add `npm link` in `packages/b-ber-cli` after
+global `bber`. Fixed by adding `npm link` in `packages/b-ber-cli` after
 building to install `bber` into `/usr/local/bin` (survives `globalPath()`'s
-filter). This fix is in the last commit on `feat/e2e-ci` but not yet verified
-by a CI run.
+filter). Verified by CI run — brought failures from 11 down to 1.
+
+### Now failing — 1 CLI test: "creates epub zip archive"
+
+`bber-build-epub.spec.ts:28` expects `kitchen-sink-b-ber-fixture-001.epub` to
+exist after `bber build epub`, but it's never created — even though the
+sibling test confirms `_builds-epub/` (the unpacked structure) is built
+correctly. Root cause: the `epub` build task
+(`packages/b-ber-tasks/src/epub/index.ts`) delegates to the `epub-zipper` npm
+package, which shells out to the system `zip` CLI (to compile the archive) and
+`java -jar epubcheck.jar` (to validate it via EPUBCheck). Neither `zip` nor a
+JRE is installed in the bare `node:24-bookworm` image used by the `e2e` job —
+so the zip step fails, the build process exits non-zero, and `_builds-epub/`
+is left populated but no `.epub` file is ever written.
+
+Fix applied: added an `apt-get install -y zip default-jre-headless` step to
+the `e2e` job in `.circleci/config.yml` (before the Playwright system-deps
+install step). Not yet verified by a CI run.
 
 ### Fixes applied during CI debugging (all on feat/e2e-ci)
 
