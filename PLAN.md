@@ -1,6 +1,6 @@
 # b-ber monorepo — Project Plan
 
-_Last updated: 2026-06-04 (TASK-059 complete; targets es2020→es2022, engines >= 22.x)_
+_Last updated: 2026-06-07 (canary publish fixes: CLI --version + reader React resolution on `feat/fix-cli-version-reader-interop`)_
 
 ---
 
@@ -34,6 +34,7 @@ migration.
 | `feat/ts-stage-3`           | TASK-029 through TASK-031 — **merged** ✓                           | `feat/upgrades` |
 | `feat/node-modernization-*` | TASK-013 per-package slices — not yet started                       | `feat/upgrades` |
 | `feat/ts-stage-4`           | TASK-032 (reader-react TS) — not yet started                       | `feat/upgrades` |
+| `feat/fix-cli-version-reader-interop` | CLI `--version` + reader React-resolution fixes — pending merge | `feat/upgrades` |
 
 **All implementation work happens on feature branches.** Feature branches merge
 into `feat/upgrades` once stable and tested. `feat/upgrades` merges to `main`
@@ -49,6 +50,13 @@ feature branches (`feat/vite-migration`, `feat/ts-stage-1`, `feat/ts-stage-2`,
 `feat/ts-stage-3`) have been merged into it. The branch contains all planning
 docs, completed migration work, and toolchain upgrades and is pending a merge
 to `main` once the test suite and coverage targets are clean.
+
+`feat/fix-cli-version-reader-interop` is pending merge into `feat/upgrades`. It
+fixes two bugs found in a canary publish: `bber --version` crashing on a
+missing `toc.yml` (eager `State` load), and a blank reader on `bber serve`
+(re-bundling `b-ber-reader-react`'s pre-built dist left React unresolved).
+`b-ber-reader` now bundles `b-ber-reader-react` from source. See [[TASK-052]]
+for the publish-smoke-test follow-up these bugs motivated.
 
 ---
 

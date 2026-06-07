@@ -8,8 +8,18 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url))
 export default defineConfig({
   plugins: [react({ include: /\.(jsx?|tsx?)$/ })],
   resolve: {
-    // Prevent duplicate React instances when b-ber-reader-react is symlinked
     alias: {
+      // Bundle b-ber-reader-react from SOURCE in a single pass rather than
+      // consuming its pre-built dist. The dist is a rolldown lib bundle that
+      // externalizes React; its CJS sub-deps (react-player, react-fast-compare,
+      // …) compile `require('react')` into a baked-in rolldown require shim
+      // that throws in the browser when re-bundled here. Building from source
+      // resolves React exactly once for the whole tree, avoiding the shim.
+      '@canopycanopycanopy/b-ber-reader-react': resolve(
+        __dirname,
+        '../b-ber-reader-react/src/index.jsx'
+      ),
+      // Prevent duplicate React instances when b-ber-reader-react is symlinked
       react: resolve(__dirname, '../../node_modules/react'),
       'react-dom': resolve(__dirname, '../../node_modules/react-dom'),
     },
@@ -17,10 +27,5 @@ export default defineConfig({
   build: {
     target: 'es2022',
     outDir: 'dist',
-    // b-ber-reader-react is a symlink that resolves outside node_modules,
-    // so the default CJS include pattern misses it — add it explicitly.
-    commonjsOptions: {
-      include: [/node_modules/, /b-ber-reader-react\/dist/],
-    },
   },
 })

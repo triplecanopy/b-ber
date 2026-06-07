@@ -8,7 +8,14 @@ export default defineConfig({
     lib: {
       entry: 'src/index.jsx',
       name: 'BberReader',
-      formats: ['umd'],
+      // ES output (not UMD): this lib is re-bundled by b-ber-reader's own Vite
+      // build. UMD's hand-rolled interop binds the external react as a raw
+      // global, so the default-import interop breaks (`React.default` is
+      // undefined) once re-bundled, crashing every class component with
+      // "Cannot read properties of undefined (reading 'prototype')". ESM keeps
+      // `import React from 'react'` intact so the consuming bundler wires up
+      // React with correct interop.
+      formats: ['es'],
       fileName: () => 'index.js',
     },
     rollupOptions: {

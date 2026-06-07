@@ -1,7 +1,8 @@
+// Styles come from b-ber-reader-react's source (its index.scss + material-icons),
+// pulled in via the source bundle aliased in vite.config.js — no separate dist CSS.
 import Reader from '@canopycanopycanopy/b-ber-reader-react'
 import React from 'react'
 import { createRoot } from 'react-dom/client'
-import '@canopycanopycanopy/b-ber-reader-react/dist/styles.css'
 
 const root = createRoot(document.getElementById('root'))
 // eslint-disable-next-line react/jsx-props-no-spreading
