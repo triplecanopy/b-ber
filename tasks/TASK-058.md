@@ -53,3 +53,17 @@ Bundle size delta:
 from `package.json` devDependencies in a follow-up cleanup if desired (they are
 still installed as transitive deps of other packages, so removal from devDeps is
 safe and reduces explicit dep count).
+
+### Addendum (2026-06-07) — finding corroborated
+
+On `feat/fix-cli-version-reader-interop`, `b-ber-reader` switched to bundling
+`b-ber-reader-react` **from source** (the same `src/index.jsx` entry the lib
+build uses) to fix a React-resolution bug — see [[TASK-052]] motivation. The
+node-builtin aliases were initially mirrored into `b-ber-reader/vite.config.js`
+out of caution, then removed after confirming the source bundle builds cleanly
+without them (503 modules, no errors). This independently re-validates this
+task's dead-code finding via a second bundler entry point. `b-ber-reader`'s
+`vite.config.js` still carries no `stream`/`buffer`/`os` aliases, as recorded
+above. Note: reader-react's **dev** config (`vite.config.js`) still lists the
+three aliases — only `vite.config.lib.js` was cleaned here; the dev config is a
+candidate for the same removal.

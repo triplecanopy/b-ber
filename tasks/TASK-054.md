@@ -121,3 +121,18 @@ The `reader:shim` step runs `npm install` inside `b-ber-reader` so that the
 symlink in its `node_modules` resolves to the freshly-built dist. This is the
 step that would disappear if reader-react were resolved via the workspace root
 instead.
+
+### Addendum (2026-06-07) — premise superseded
+
+This task assumed `b-ber-reader` consumes reader-react's compiled `dist/`,
+which is what created the A→B build-order edge. On
+`feat/fix-cli-version-reader-interop`, `b-ber-reader` now bundles reader-react
+**from source** (`vite.config.js` aliases the package to
+`../b-ber-reader-react/src/index.jsx`) to fix a React-resolution bug — see
+[[TASK-052]] motivation. As a result `b-ber-reader` no longer depends on
+reader-react's build output at all, so the build-order dependency this task
+addressed effectively goes away (reader-react's own `build` is now only for the
+published standalone package). The Lerna topological-sort recommendation and
+[[TASK-057]] are still valid for other graph edges, but the reader → reader-react
+edge is no longer a build-ordering concern. The `commonjsOptions.include:
+[/b-ber-reader-react\/dist/]` referenced in the Findings has also been removed.
