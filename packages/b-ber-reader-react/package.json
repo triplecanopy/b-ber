@@ -2,7 +2,16 @@
   "name": "@canopycanopycanopy/b-ber-reader-react",
   "version": "3.1.0",
   "description": "",
-  "main": "dist/index.js",
+  "main": "dist/index.mjs",
+  "module": "dist/index.mjs",
+  "types": "index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./dist/index.mjs"
+    },
+    "./dist/styles.css": "./dist/styles.css"
+  },
   "scripts": {
     "version": "node ./scripts/version.js",
     "clean": "rimraf dist",

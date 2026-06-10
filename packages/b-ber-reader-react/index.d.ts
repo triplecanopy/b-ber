@@ -209,4 +209,6 @@ export type BberReaderProps = RequireOneOf<
 
 declare const BberReader: React.FunctionComponent<BberReaderProps>
 
+export declare const Reader: React.FunctionComponent<BberReaderProps>
+
 export default BberReader

@@ -31,4 +31,8 @@ const ConnectedApp = (props = {}) => {
   )
 }
 
+// Named export is the preferred consumer entry point
+// (`import { Reader } from '...'`). The default export is kept for
+// back-compat with existing consumers on `import Reader from '...'`.
+export { ConnectedApp as Reader }
 export default ConnectedApp

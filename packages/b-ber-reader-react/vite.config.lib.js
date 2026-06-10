@@ -28,7 +28,14 @@ export default defineConfig({
       // `import React from 'react'` intact so the consuming bundler wires up
       // React with correct interop.
       formats: ['es'],
-      fileName: () => 'index.js',
+      // `.mjs` so the bundle is unambiguously ESM regardless of the package's
+      // `"type"`. The package keeps CommonJS config files (jest.config.js,
+      // jest-transform-upward.js, scripts/version.js), so we deliberately do
+      // NOT set `"type": "module"` — `.mjs` carries the ESM signal instead.
+      // Without this, bundlers that trust package metadata over syntax-sniffing
+      // (Vite's esbuild dep optimizer) mis-read the ESM `.js` as CJS and nest
+      // the component under `.default` (consumer needs `<Reader.default />`).
+      fileName: () => 'index.mjs',
     },
     rollupOptions: {
       external: ['react', 'react-dom'],
