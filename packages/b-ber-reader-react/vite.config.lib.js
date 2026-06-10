@@ -33,6 +33,24 @@ export default defineConfig({
     rollupOptions: {
       external: ['react', 'react-dom'],
       output: {
+        // Bundled CJS deps (react-redux's use-sync-external-store, react-player)
+        // call `require('react')`. With react externalized + ESM output,
+        // rolldown leaves those as runtime `require()` shims that throw
+        // "Cannot find module 'react'" in a browser/webpack consumer (no
+        // runtime require). Disable rolldown's throwing polyfill and supply our
+        // own `require` that resolves react/react-dom from the ESM imports the
+        // bundle already declares — works in every consumer (ESM, webpack, the
+        // b-ber-reader re-bundle).
+        polyfillRequire: false,
+        banner: [
+          "import * as __bberReact from 'react'",
+          "import * as __bberReactDOM from 'react-dom'",
+          'function require(id) {',
+          "  if (id === 'react') return __bberReact",
+          "  if (id === 'react-dom') return __bberReactDOM",
+          "  throw new Error('b-ber-reader-react: unexpected require(' + id + ')')",
+          '}',
+        ].join('\n'),
         globals: {
           react: 'React',
           'react-dom': 'ReactDOM',

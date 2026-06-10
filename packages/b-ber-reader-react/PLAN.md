@@ -60,6 +60,8 @@ transform to simulate page-turning. A secondary scroll layout mode serves mobile
 | TASK-028 | Replace Ultimate offsetLeft polling with event detection   | low      |
 | TASK-029 | Eliminate blank spread pages (recto cols + page over-count) | high     |
 | TASK-030 | Deep-linking to a spreadIndex doesn't navigate to it        | medium   |
+| TASK-031 | Declare ESM package type + add exports map                  | medium   |
+| TASK-032 | Upgrade react-player v2 → v3 (ESM)                          | low      |
 
 > TASK-022 through TASK-026 are implemented and pending in-browser verification
 > + commit (see `READER_BUGS.md`). TASK-027 and TASK-028 are deferred follow-ups.
