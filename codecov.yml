@@ -1,0 +1,24 @@
+# Codecov configuration. Coverage is collected by the CircleCI `build` job
+# (npx jest --collectCoverage) and uploaded from coverage/lcov.info.
+coverage:
+  status:
+    project:
+      default:
+        # Monorepo-wide minimum target (see PLAN.md). `informational` keeps the
+        # check from blocking merges — it reports the number without failing.
+        target: 75%
+        threshold: 1%
+        informational: true
+    patch:
+      default:
+        informational: true
+
+# Don't post coverage on docs/config-only PRs.
+comment:
+  require_changes: true
+
+ignore:
+  - "**/__tests__/**"
+  - "**/dist/**"
+  - "**/*.config.{js,ts}"
+  - "packages/b-ber-testing/**"

@@ -4,6 +4,7 @@
 
 [![npm Version](https://img.shields.io/npm/v/@canopycanopycanopy/b-ber-cli.svg)](https://www.npmjs.com/search?q=@canopycanopycanopy)
 [![CircleCI](https://img.shields.io/circleci/build/github/triplecanopy/b-ber/main.svg?label=circle&maxAge=43200)](https://circleci.com/gh/triplecanopy/b-ber)
+[![codecov](https://codecov.io/gh/triplecanopy/b-ber/branch/main/graph/badge.svg)](https://codecov.io/gh/triplecanopy/b-ber)
 [![Maintained with Lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
 
 b-ber is both a method and an application for producing publications in a variety of formats—EPUB 3, Mobi/KF8, static website, PDF, and XML file, which can be imported into InDesign for print layouts—from a single source that consists of plain-text files and other assets. b-ber also functions as a browser-based EPUB reader, which explains the name.
