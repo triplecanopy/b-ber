@@ -58,7 +58,7 @@ Statement coverage as of 2026-06-11. Check the box when a package reaches the
 - [ ] b-ber-cli — 54% (see TASK-050 for handler tests)
 - [ ] b-ber-tasks — 13% (realistic ceiling ~25%: pipeline steps need a full
       project + Calibre/wkhtmltopdf; tracked as an accepted exception)
-- [ ] b-ber-reader-react — 72% (2026-06-11: actions/reducers 0-72% -> 100%,
+- [x] b-ber-reader-react — 80% (2026-06-11: actions/reducers 0-72% -> 100%,
       helpers Cache/DOM/Request/Storage/search-params/media 0-28% -> 100%,
       lib transition-styles/spread-context/version/polyfills/custom-prop-types
       0-65% -> 94-100%, components/Reader/navigation.js + resize.js 0% -> 100%,
@@ -67,18 +67,17 @@ Statement coverage as of 2026-06-11. Check the box when a package reaches the
       Audio,Video,AudioElement,VideoElement} -> 100%, components/Media/Media.jsx
       16% -> 98%, components/Media/Controls/* -> 100%,
       components/Reader/loader.js 0% -> 100%, components/Reader/index.jsx
-      0% -> 83%. NOTE: the previously-recorded "90%" figure was computed with
-      a narrower --collectCoverageFrom than the root jest.config's default
-      ('packages/*/src/**/*.{js,jsx,ts,tsx}'); 72% is the true package-wide
-      figure under that default. Remaining gaps (real, large, currently
-      0-26%): helpers/XMLAdaptor.js (399 lines, 0%), lib/with-node-position.jsx
-      (335 lines, 19%), lib/process-nodes.js (328 lines, 17%),
-      lib/with-iframe-position.jsx (113 lines, 17%),
+      0% -> 83%, helpers/XMLAdaptor.js 0% -> 99%. NOTE: the previously-recorded
+      "90%" figure was computed with a narrower --collectCoverageFrom than the
+      root jest.config's default ('packages/*/src/**/*.{js,jsx,ts,tsx}'); the
+      true package-wide figure under that default went 72% -> 80%, now past
+      the 75% target. Remaining gaps (real, currently 15-26%):
+      lib/with-node-position.jsx (335 lines, 19%), lib/process-nodes.js
+      (328 lines, 17%), lib/with-iframe-position.jsx (113 lines, 17%),
       lib/request-animation-frame.js (43 lines, 26%), models/Script.js
       (44 lines, 15%); also lib/DocumentPreProcessor.js (68%),
       lib/DocumentProcessor.js (81%), helpers/Url.js (74%), helpers/Viewport.js
-      (76%). XMLAdaptor.js is the single biggest opportunity to close the gap
-      to 75%.)
+      (76%).)
 - [ ] b-ber-resources — 0% (mostly static asset paths; assess if worth testing)
 - [ ] b-ber-reader (legacy) — 0% (legacy non-React reader; likely excluded)
 
