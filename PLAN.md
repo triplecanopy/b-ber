@@ -199,24 +199,14 @@ Notes:
 
 These are tracked as `TASK-001.open.md` within each package's `tasks/` directory.
 
-| Package                    | Starting coverage | Current | Target | Status      |
-| -------------------------- | ----------------- | ------- | ------ | ----------- |
-| b-ber-lib                  | 17%               | 71%     | ≥ 75%  | in progress |
-| b-ber-tasks                | ~0%               | ~15%    | ~25%\* | in progress |
-| b-ber-logger               | 0%                | 73%     | ≥ 75%  | in progress |
-| b-ber-markdown-renderer    | 0%                | 83%     | ≥ 75%  | complete    |
-| b-ber-cli                  | 24%               | 65%     | ≥ 75%  | in progress |
-| b-ber-templates            | mixed             | 96%     | ≥ 75%  | complete    |
-| b-ber-validator            | 69%               | 69%     | ≥ 80%  | not started |
-| b-ber-grammar-\* (14 pkgs) | 0%                | ~80%    | ≥ 75%  | in progress |
-| b-ber-parser-\* (5 pkgs)   | 0%                | ~90%    | ≥ 75%  | in progress |
-| b-ber-reader-react         | mixed             | mixed   | ≥ 75%  | not started |
+Per-package percentages are no longer hand-tracked in this file — the snapshots
+drifted out of sync with reality. **Generate the current report with
+`npm run test:coverage` from the repo root** (output written to `./coverage`;
+open `coverage/index.html` for the per-package breakdown).
+
+The monorepo-wide minimum target is **≥ 75%** (raised from 60% on 2026-06-02).
 
 Priority order: ~~b-ber-logger~~ ✓ → ~~b-ber-templates~~ ✓ → ~~grammar/parser stubs~~ ✓ → b-ber-lib → b-ber-cli → reader-react.
-
-_Note: minimum coverage target raised from 60% to 75% on 2026-06-02. Packages previously
-marked complete at ≥ 60% (b-ber-lib at 71%, b-ber-logger at 73%, b-ber-cli at 65%)
-are reopened; they need additional tests to reach 75%._
 
 \*b-ber-tasks: most pipeline steps (web, reader, pdf, sass, epub, etc.) require a full project
 directory + external tools (Calibre, wkhtmltopdf). Realistic ceiling for pure unit tests is ~25%.
