@@ -27,6 +27,39 @@ test('validates a custom propType', (done) => {
   done()
 })
 
+test('chainable propType returns null when prop is absent and not required', () => {
+  expect(cssHeightDeclarationPropType({}, 'height', 'Foo', 'prop')).toBe(null)
+})
+
+test('chainable propType.isRequired returns an Error when prop is absent', () => {
+  const result = cssHeightDeclarationPropType.isRequired(
+    {},
+    'height',
+    'Foo',
+    'prop'
+  )
+
+  expect(result).toBeInstanceOf(Error)
+  expect(result.message).toBe(
+    'Required undefined height was not specified in Foo'
+  )
+})
+
+test('chainable propType delegates to the validator when prop is present', () => {
+  expect(
+    cssHeightDeclarationPropType({ height: 10 }, 'height', 'Foo', 'prop')
+  ).toBe(null)
+
+  expect(
+    cssHeightDeclarationPropType.isRequired(
+      { height: 'foo' },
+      'height',
+      'Foo',
+      'prop'
+    )
+  ).toBeInstanceOf(Error)
+})
+
 test.skip('creates a chainable propType', (done) => {
   const spy = jest.spyOn(console, 'error')
   console.error.mockImplementation(() => {})
