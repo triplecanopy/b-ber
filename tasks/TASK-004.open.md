@@ -58,12 +58,14 @@ Statement coverage as of 2026-06-11. Check the box when a package reaches the
 - [ ] b-ber-cli — 54% (see TASK-050 for handler tests)
 - [ ] b-ber-tasks — 13% (realistic ceiling ~25%: pipeline steps need a full
       project + Calibre/wkhtmltopdf; tracked as an accepted exception)
-- [ ] b-ber-reader-react — 40% (2026-06-11: actions/reducers 0-72% -> 100%,
+- [ ] b-ber-reader-react — 44% (2026-06-11: actions/reducers 0-72% -> 100%,
       helpers Cache/DOM/Request/Storage/search-params/media 0-28% -> 100%,
       lib transition-styles/spread-context/version/polyfills/custom-prop-types
-      0-65% -> 94-100%. Remaining gaps: components (esp. Reader/, Sidebar/,
-      Media/), hooks, lib HOCs (with-dimensions, with-last-spread-index, etc.),
-      and helpers Url/Viewport/XMLAdaptor/process-nodes)
+      0-65% -> 94-100%, components/Reader/navigation.js + resize.js 0% -> 100%.
+      Remaining gaps: components/Reader/index.jsx + loader.js (the core
+      orchestrator, 0%), Sidebar/, Media/, hooks, lib HOCs (with-dimensions,
+      with-last-spread-index, with-navigation-actions, etc.), and helpers
+      Url/Viewport/XMLAdaptor/process-nodes)
 - [ ] b-ber-resources — 0% (mostly static asset paths; assess if worth testing)
 - [ ] b-ber-reader (legacy) — 0% (legacy non-React reader; likely excluded)
 
