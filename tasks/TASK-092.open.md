@@ -4,7 +4,7 @@
 **Feature:** Upgrade tooling
 **Scope:** monorepo
 **Priority:** medium
-**GitHub Issue:** (add after running /sync-task-issues)
+**GitHub Issue:** #525 — https://github.com/triplecanopy/b-ber/issues/525
 
 ## Description
 
