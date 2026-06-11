@@ -1,6 +1,6 @@
 # TASK-035: Fix and modernize the CircleCI pipeline
 
-**Status:** not started
+**Status:** complete
 **Scope:** monorepo
 **Priority:** high
 **GitHub Issue:** #490 — https://github.com/triplecanopy/b-ber/issues/490
@@ -55,8 +55,23 @@ Known issues in the current config:
 
 ## Notes
 
-Branch: `feat/upgrades` (or a dedicated `feat/ci-fix` branch if the changes are
-large enough to warrant isolation)
+**Resolved via TASK-044 + the Codecov/all-branches commit (2026-06-11).** The
+substance of this task shipped while wiring up e2e CI:
+
+- Stale `canopycanopycanopy/b-ber:1.0.1` (Node 16) image replaced with
+  `cimg/node:24.14` (build) and `node:24-bookworm` (e2e).
+- `lerna bootstrap` removed; install is now a single workspace-aware
+  `npm ci --ignore-scripts` (TASK-036 landed the Lerna upgrade).
+- Config moved to 2.1 with `orbs`; manual `save_cache` package list replaced
+  with a hash-keyed `node_modules` cache.
+- PR validation added: the `branches.only` filters were dropped, so `build` +
+  `e2e` run on every push and PR (was `main` only).
+- `reader:shim` step removed (script no longer exists post-Vite).
+
+**Deferred (cosmetic, non-blocking):** building an updated `canopy` Docker
+image to replace the stock CircleCI images. Not required for green CI — open a
+follow-up task if a custom image is wanted. The `$BBER` smoke step also remains
+removed pending a proper `b-ber-lib` `exports` map (tracked in [[TASK-044]]).
 
 This task is **blocked on TASK-036** (Lerna upgrade) for the bootstrap step.
 The config rewrite can be drafted before TASK-036 is complete, but the final

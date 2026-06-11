@@ -1,6 +1,6 @@
 # TASK-044: E2E testing — CI integration (CircleCI, Playwright cache)
 
-**Status:** in progress
+**Status:** complete
 **Scope:** monorepo
 **Priority:** medium
 **GitHub Issue:** #523 — https://github.com/triplecanopy/b-ber/issues/523
@@ -59,7 +59,7 @@ for manual triggers.
 - [x] Add `e2e` job to `.circleci/config.yml`
 - [x] Configure Playwright browser binary cache
 - [x] Set `NO_NETWORK` env var for Vimeo skip
-- [ ] Confirm e2e job reports correctly in GitHub PR checks — in progress; `npm link` fix brought CLI tests from 11 failing to 1 failing (epub zip archive — see Notes)
+- [x] Confirm e2e job reports correctly in GitHub PR checks — verified green: the final run on `feat/e2e-ci` (commit `289b91c7`, the zip + Java epub fix) reported both `ci/circleci: build` and `ci/circleci: e2e` as SUCCESS (CircleCI runs 381/382). The `npm link` fix took CLI tests from 11 failing → 1, and the zip/JRE install closed the last epub-archive failure.
 - [x] Document the CI setup in `packages/b-ber-testing/AGENTS.md`
 
 ## Notes
@@ -129,6 +129,22 @@ install step). Not yet verified by a CI run.
   (old compiled subdirs were gitignored; tsdown only produced `dist/index.js`)
 - Committed `__bber_cover__*.jpg` to `kitchen-sink/_project/_images/` and
   removed it from the fixture `.gitignore`
+
+### Integration status (closed 2026-06-11)
+
+The full e2e + CI work is already present on `feat/upgrades` — it was folded in
+via the squashed commit `128484d5` rather than a branch merge. Verified:
+`.circleci/config.yml` and `packages/b-ber-testing/` are byte-identical between
+`feat/e2e-ci` and `feat/upgrades`, and `feat/upgrades` is in fact ahead in other
+areas (reader-react spread/ESM work). A literal `git merge feat/e2e-ci` was
+therefore **not** performed — it would have conflicted across ~80 files and risked
+reverting newer reader work. PR #524 (against `main`) was closed unmerged; it
+existed only for CI visibility. No further merge action is needed.
+
+Follow-up applied on `feat/upgrades`: dropped the `branches.only` workflow
+filters so `build` + `e2e` now run on every push and PR (previously only `main`
+and the now-defunct `feat/e2e-ci` test branch), and wired Codecov upload into
+the `build` job (see [[TASK-049]]).
 
 ### Remaining pre-existing issue
 

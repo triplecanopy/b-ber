@@ -97,6 +97,8 @@ for the publish-smoke-test follow-up these bugs motivated.
 | TASK-057 | Simplify root build script: drop shim, use Lerna topo sort       | `feat/e2e`      |
 | TASK-058 | Audit Node.js polyfills in reader-react browser bundle            | `feat/e2e`      |
 | TASK-059 | Bump build targets: Node packages + browser bundles               | `feat/e2e`      |
+| TASK-044 | E2E testing — CI integration (build + e2e jobs, verified green)   | `feat/e2e-ci` → `feat/upgrades` |
+| TASK-049 | Coverage upload service — chose Codecov; CI upload + README badge | `feat/upgrades` |
 
 ### In progress
 
@@ -116,7 +118,7 @@ for the publish-smoke-test follow-up these bugs motivated.
 | TASK-050 | CLI command inventory + handler test coverage      | high     | `feat/upgrades`        | Safety gate for logger refactor (TASK-046); mocks `b-ber-tasks` in handler tests |
 | TASK-013 | Node.js modernization                              | medium   | `feat/node-modern-*`   | Blocker TASK-012 ✓; per-package audits; target Node ≥ 22.x                       |
 | TASK-032 | Convert b-ber-reader-react to TypeScript (Stage 4) | medium   | `feat/ts-stage-4`      | Blocker TASK-006 ✓; largest and most complex package; low urgency                |
-| TASK-035 | Fix and modernize CircleCI pipeline                | medium   | `feat/upgrades`        | Stale Docker image; bootstrap step already removed; unblocked by TASK-036        |
+| TASK-035 | ~~Fix and modernize CircleCI pipeline~~            | ~~medium~~ | `feat/upgrades`      | **Substantively complete** via TASK-044: 2.1 config, Node 24, `lerna bootstrap` removed, PR validation now runs on all branches. Only the cosmetic canopy Docker-image swap is deferred — config uses stock `cimg/node` + `node:24-bookworm`. |
 | TASK-046 | Refactor b-ber-logger                              | medium   | `feat/logger-refactor` | Remove `process.exit` from `log.error`; depends on TASK-050 handler tests first  |
 | TASK-051 | Theme customization docs + SCSS test coverage      | medium   | `feat/upgrades`        | No SCSS compilation tests exist; also documents the sass pipeline architecture   |
 | TASK-053 | Replace lerna-update-wizard with syncpack + ncu    | medium   | `feat/upgrades`        | `lernaupdate` breaks on Lerna v7+; `syncpack` + `ncu --workspaces`               |
@@ -124,7 +126,7 @@ for the publish-smoke-test follow-up these bugs motivated.
 | TASK-038 | Audit and clean up package.json scripts            | low      | `feat/upgrades`        | Inconsistent naming, dead scripts; some cleanup is downstream of migrations      |
 | TASK-045 | Refactor changelog generation + release workflow   | low      | `feat/upgrades`        | Manual, fragile sequencing; evaluate changesets / release-please                 |
 | TASK-047 | Research watch mode scripts for dev workflow       | low      | `feat/upgrades`        | Most packages lack a `watch` script; define target state per package type        |
-| TASK-049 | Evaluate coverage report upload services           | low      | `feat/upgrades`        | No service active; assess Codecov, Coveralls, GitHub Actions summary             |
+| TASK-049 | ~~Evaluate coverage report upload services~~       | ~~low~~  | `feat/upgrades`        | **Complete.** Chose Codecov; CI uploads `coverage/lcov.info` via the codecov orb, README badge + `codecov.yml` added. Needs `CODECOV_TOKEN` in CircleCI project settings. |
 | TASK-052 | Research Verdaccio workflow for lerna publish      | low      | `feat/upgrades`        | No `--dry-run` in lerna publish; Verdaccio = local registry stand-in             |
 | TASK-017 | Expand diagrams: tooling versions + cross-refs     | low      | `feat/upgrades`        | Living audit surface; TASK-016 complete                                           |
 | TASK-018 | Add task file links to GitHub issues               | low      | `feat/upgrades`        | Blocked on `feat/upgrades` merge to `main`; links 404 until then                 |
@@ -136,7 +138,6 @@ for the publish-smoke-test follow-up these bugs motivated.
 
 | Task     | Title                                              | Waiting on          |
 | -------- | -------------------------------------------------- | ------------------- |
-| TASK-044 | E2E testing — CI integration                       | ~~TASK-043~~ ✓ — unblocked |
 | TASK-055 | Create testing skill                               | ~~TASK-041~~ ✓ — unblocked |
 
 ---
@@ -167,7 +168,7 @@ graph LR
   T041["TASK-041 ✓\nE2E fixture"]:::done
   T042["TASK-042\nE2E CLI smoke"]:::ready
   T043["TASK-043\nE2E reader tests"]:::ready
-  T044["TASK-044\nE2E CI"]:::blocked
+  T044["TASK-044 ✓\nE2E CI"]:::done
 
   T006 --> T007 --> T015
   T008 --> T024 --> T029 --> T013
@@ -220,7 +221,7 @@ This is documented in `packages/b-ber-tasks/tasks/TASK-001.open.md`.
 | -------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------ |
 | 1        | TASK-042 | Write Playwright CLI smoke tests (epub + reader targets). Branch: `feat/e2e`. Now unblocked by TASK-041.                             |
 | 2        | TASK-050 | Write CLI handler tests for `build`, `deploy`, `check`. Gate for the logger refactor — need `process.exit` assertions in place first. |
-| 3        | TASK-035 | Fix CircleCI: update stale Docker image, add test step, configure to run on non-main branches. Bootstrap blocker resolved by TASK-036. |
+| 3        | TASK-049 | Finish Codecov hookup: set `CODECOV_TOKEN` in CircleCI project env, push `feat/upgrades` to trigger a run, confirm the README badge renders. CI config + badge already landed. |
 | 4        | TASK-013 | Open per-package Node.js modernization tasks. Priority order: b-ber-tasks → b-ber-lib → b-ber-cli → grammar/parser batch.            |
 | 5        | TASK-004 | Continue per-package coverage work: b-ber-lib (71% → 75%), b-ber-logger (73% → 75%), b-ber-cli (65% → 75%), b-ber-validator (69% → 80%). |
 | 6        | TASK-054 | Research build dep ordering. Low effort; shapes the root `build` script and potentially the CI config.                               |
