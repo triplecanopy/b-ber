@@ -48,7 +48,8 @@ Statement coverage as of 2026-06-11. Check the box when a package reaches the
 - [x] b-ber-parser-section — 94%
 - [x] b-ber-shapes-directives — 100%
 - [x] b-ber-shapes-dublin-core — 100%
-- [ ] b-ber-shapes-sequences — 68%
+- [x] b-ber-shapes-sequences — 100% (2026-06-11: added createBuildSequence
+      tests and re-export/xml-sequence coverage in index.test.js)
 - [x] b-ber-markdown-renderer — 92%
 - [x] b-ber-templates — 96%
 - [x] b-ber-validator — 92%
