@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MediaButtonDownload renders a download link with the current source 1`] = `
+<div>
+  <a
+    class="bber-a material-icons media__button__file_download"
+    download=""
+    href="audio.mp3"
+  >
+    file_download
+  </a>
+</div>
+`;
+
+exports[`MediaButtonFullScreen calls toggleFullscreen on click 1`] = `
+<div>
+  <button
+    class="bber-button"
+  >
+    toggleFullscreen
+  </button>
+</div>
+`;
