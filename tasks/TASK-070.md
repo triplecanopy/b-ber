@@ -1,6 +1,7 @@
 # TASK-070: Regression/smoke test infrastructure
 
 **Status:** complete
+**Feature:** React 19 (reader-react)
 **Phase:** Quality
 **Created:** 2026-05-30
 **GitHub Issue:** #469 — https://github.com/triplecanopy/b-ber/issues/469

@@ -1,6 +1,7 @@
 # TASK-063: withLastSpreadIndex — setInterval → ResizeObserver + MutationObserver
 
 **Status:** complete
+**Feature:** React 19 (reader-react)
 **Phase:** Modernization — Phase 2
 **Created:** 2026-04-05
 **GitHub Issue:** #464 — https://github.com/triplecanopy/b-ber/issues/464

@@ -1,6 +1,7 @@
 # TASK-087: Replace Ultimate offsetLeft polling with event-driven settle detection
 
 **Status:** not started
+**Feature:** React 19 (reader-react)
 **Phase:** Modernization
 **Priority:** low
 **Created:** 2026-06-06

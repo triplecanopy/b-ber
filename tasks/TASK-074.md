@@ -1,6 +1,7 @@
 # TASK-074: Document local development setup for agents
 
 **Status:** complete
+**Feature:** React 19 (reader-react)
 **Phase:** Documentation
 **Created:** 2026-05-30
 **GitHub Issue:** #470 — https://github.com/triplecanopy/b-ber/issues/470

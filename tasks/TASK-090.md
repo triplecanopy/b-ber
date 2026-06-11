@@ -1,6 +1,7 @@
 # TASK-090: Declare ESM package format and add an exports map
 
 **Status:** complete
+**Feature:** React 19 (reader-react)
 **Phase:** Packaging
 **Priority:** medium
 **Created:** 2026-06-10

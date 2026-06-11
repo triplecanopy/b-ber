@@ -1,6 +1,7 @@
 # TASK-071: Source code subdirectory documentation
 
 **Status:** not started
+**Feature:** React 19 (reader-react)
 **Phase:** Documentation
 **Priority:** low
 

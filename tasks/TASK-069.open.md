@@ -1,6 +1,7 @@
 # TASK-069: Replace per-Spread setInterval with ResizeObserver
 
 **Status:** not started
+**Feature:** React 19 (reader-react)
 **Phase:** Modernization — Phase 2
 **Priority:** medium
 

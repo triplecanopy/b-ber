@@ -1,6 +1,7 @@
 # TASK-013: Node.js modernization
 
 **Status:** not started
+**Feature:** Node.js modernization
 **Scope:** monorepo
 **Priority:** medium
 **GitHub Issue:** #474 — https://github.com/triplecanopy/b-ber/issues/474

@@ -1,6 +1,7 @@
 # TASK-047: Research watch mode scripts for monorepo development
 
 **Status:** not started
+**Feature:** Upgrade tooling
 **Scope:** monorepo
 **Priority:** medium
 **GitHub Issue:** #515 — https://github.com/triplecanopy/b-ber/issues/515

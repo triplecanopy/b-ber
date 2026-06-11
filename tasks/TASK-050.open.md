@@ -1,6 +1,7 @@
 # TASK-050: CLI command inventory and handler test coverage
 
 **Status:** not started
+**Feature:** Unit test coverage
 **Scope:** monorepo
 **Priority:** high
 **GitHub Issue:** #517 — https://github.com/triplecanopy/b-ber/issues/517

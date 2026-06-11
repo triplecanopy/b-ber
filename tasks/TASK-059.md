@@ -1,6 +1,7 @@
 # TASK-059: Bump build targets for Node packages and browser bundles
 
 **Status:** complete
+**Feature:** Node.js modernization
 **Scope:** monorepo
 **Priority:** medium
 **GitHub Issue:** (add after creating the issue)

@@ -1,6 +1,7 @@
 # TASK-080: Fix font-face flash on page load
 
 **Status:** not started
+**Feature:** React 19 (reader-react)
 **Phase:** Bug Fixes
 **Priority:** low
 

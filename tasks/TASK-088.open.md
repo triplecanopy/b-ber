@@ -1,6 +1,7 @@
 # TASK-088: Eliminate blank spread pages (recto reserved columns + page-count over-count)
 
 **Status:** not started
+**Feature:** React 19 (reader-react)
 **Phase:** Bug Fixes
 **Priority:** high
 **Created:** 2026-06-06

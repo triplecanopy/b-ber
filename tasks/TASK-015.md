@@ -1,6 +1,7 @@
 # TASK-015: Migrate from ESLint + Prettier to Biome
 
 **Status:** complete
+**Feature:** Upgrade tooling
 **Scope:** monorepo
 **Priority:** low
 **GitHub Issue:** #476 — https://github.com/triplecanopy/b-ber/issues/476

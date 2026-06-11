@@ -1,6 +1,7 @@
 # TASK-060: Reader/index.jsx — class to functional component migration
 
 **Status:** complete
+**Feature:** React 19 (reader-react)
 **Phase:** Modernization — Phase 3
 **Created:** 2026-04-04
 **GitHub Issue:** #461 — https://github.com/triplecanopy/b-ber/issues/461

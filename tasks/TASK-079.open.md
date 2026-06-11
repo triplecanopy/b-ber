@@ -1,6 +1,7 @@
 # TASK-079: Loading state for TOC/sidebar buttons during initial load
 
 **Status:** not started
+**Feature:** React 19 (reader-react)
 **Phase:** Bug Fixes
 **Priority:** low
 

@@ -1,6 +1,7 @@
 # TASK-022: Automate circular dependency checks
 
 **Status:** not started
+**Feature:** Upgrade tooling
 **Scope:** monorepo
 **Priority:** low
 **GitHub Issue:** #482 — https://github.com/triplecanopy/b-ber/issues/482

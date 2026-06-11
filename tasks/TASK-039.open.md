@@ -1,6 +1,7 @@
 # TASK-039: E2E Testing — umbrella
 
 **Status:** in progress
+**Feature:** E2E testing
 **Scope:** monorepo
 **Priority:** high
 **GitHub Issue:** #505 — https://github.com/triplecanopy/b-ber/issues/505

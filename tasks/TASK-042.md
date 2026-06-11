@@ -1,6 +1,7 @@
 # TASK-042: E2E testing — CLI smoke tests (build artifact verification)
 
 **Status:** complete
+**Feature:** E2E testing
 **Scope:** monorepo
 **Priority:** medium
 **GitHub Issue:** #512 — https://github.com/triplecanopy/b-ber/issues/512

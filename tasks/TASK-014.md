@@ -1,6 +1,7 @@
 # TASK-014: Research and set up GitHub issue tracking integration
 
 **Status:** complete
+**Feature:** Upgrade tooling
 **Scope:** monorepo
 **Priority:** medium
 **GitHub Issue:** #475 — https://github.com/triplecanopy/b-ber/issues/475

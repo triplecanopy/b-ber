@@ -1,6 +1,7 @@
 # TASK-091: Upgrade react-player from v2 to v3 (ESM)
 
 **Status:** not started
+**Feature:** React 19 (reader-react)
 **Phase:** Dependencies
 **Priority:** low
 **Created:** 2026-06-10

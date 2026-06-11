@@ -1,6 +1,7 @@
 # TASK-086: Reset view.loaded reliably and remove the dead unload path
 
 **Status:** not started
+**Feature:** React 19 (reader-react)
 **Phase:** Bug Fixes
 **Priority:** medium
 **Created:** 2026-06-06

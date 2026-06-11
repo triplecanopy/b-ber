@@ -1,6 +1,7 @@
 # TASK-053: Replace lerna-update-wizard with modern dep tooling
 
 **Status:** not started
+**Feature:** Upgrade tooling
 **Scope:** monorepo
 **Priority:** medium
 **GitHub Issue:** #520 — https://github.com/triplecanopy/b-ber/issues/520

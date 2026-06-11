@@ -1,6 +1,7 @@
 # TASK-016: Detect and resolve circular imports and structural dependency risks
 
 **Status:** complete
+**Feature:** Upgrade tooling
 **Scope:** monorepo
 **Priority:** medium
 **GitHub Issue:** #498 — https://github.com/triplecanopy/b-ber/issues/498

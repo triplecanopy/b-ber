@@ -1,6 +1,7 @@
 # TASK-036: Upgrade Lerna and migrate off deprecated bootstrap
 
 **Status:** complete
+**Feature:** Upgrade tooling
 **Scope:** monorepo
 **Priority:** high
 **GitHub Issue:** #491 — https://github.com/triplecanopy/b-ber/issues/491

@@ -1,6 +1,7 @@
 # TASK-018: Add task file links to GitHub issues
 
 **Status:** not started
+**Feature:** Upgrade tooling
 **Scope:** monorepo
 **Priority:** low
 **GitHub Issue:** #478 — https://github.com/triplecanopy/b-ber/issues/478

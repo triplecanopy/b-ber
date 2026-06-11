@@ -1,6 +1,7 @@
 # TASK-009: Convert b-ber-shapes-directives to TypeScript
 
 **Status:** complete
+**Feature:** Migrate JS→TS
 **Scope:** shapes-directives
 **Priority:** high
 **GitHub Issue:** #494 — https://github.com/triplecanopy/b-ber/issues/494

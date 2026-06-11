@@ -1,6 +1,7 @@
 # TASK-075: Expand test project URLs in dev/index.js
 
 **Status:** not started
+**Feature:** React 19 (reader-react)
 **Phase:** Documentation / Developer Experience
 **Priority:** low
 **Created:** 2026-05-30

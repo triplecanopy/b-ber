@@ -1,6 +1,7 @@
 # TASK-031: Convert b-ber-cli to TypeScript
 
 **Status:** complete
+**Feature:** Migrate JS→TS
 **Scope:** b-ber-cli
 **Priority:** medium
 **GitHub Issue:** #486 — https://github.com/triplecanopy/b-ber/issues/486

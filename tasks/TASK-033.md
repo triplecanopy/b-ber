@@ -1,6 +1,7 @@
 # TASK-033: Evaluate code coverage tooling for the modernized stack
 
 **Status:** complete
+**Feature:** Unit test coverage
 **Scope:** monorepo
 **Priority:** medium
 **GitHub Issue:** #488 — https://github.com/triplecanopy/b-ber/issues/488

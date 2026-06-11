@@ -1,6 +1,7 @@
 # TASK-010: Convert b-ber-shapes-dublin-core and b-ber-shapes-sequences to TypeScript
 
 **Status:** complete
+**Feature:** Migrate JS→TS
 **Scope:** shapes-dublin-core, shapes-sequences
 **Priority:** medium
 **GitHub Issue:** #495 — https://github.com/triplecanopy/b-ber/issues/495

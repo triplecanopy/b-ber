@@ -1,6 +1,7 @@
 # TASK-058: Audit Node.js polyfills in reader-react browser bundle
 
 **Status:** complete
+**Feature:** Upgrade tooling
 **Scope:** reader-react
 **Priority:** medium
 **GitHub Issue:** (add after creating the issue)

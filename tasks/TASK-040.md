@@ -1,6 +1,7 @@
 # TASK-040: E2E testing — research: tooling, fixture design, package boundary
 
 **Status:** complete
+**Feature:** E2E testing
 **Scope:** monorepo
 **Priority:** high
 **GitHub Issue:** #510 — https://github.com/triplecanopy/b-ber/issues/510

@@ -1,6 +1,7 @@
 # TASK-043: E2E testing — reader browser tests (Playwright)
 
 **Status:** complete
+**Feature:** E2E testing
 **Scope:** monorepo
 **Priority:** high
 **GitHub Issue:** #522 — https://github.com/triplecanopy/b-ber/issues/522

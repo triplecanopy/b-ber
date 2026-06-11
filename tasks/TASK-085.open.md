@@ -1,6 +1,7 @@
 # TASK-085: Fix infinite spinner on window resize
 
 **Status:** in progress
+**Feature:** React 19 (reader-react)
 **Phase:** Bug Fixes
 **Priority:** high
 **Created:** 2026-06-06

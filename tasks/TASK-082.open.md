@@ -1,6 +1,7 @@
 # TASK-082: Harden Ultimate layout-stability detection
 
 **Status:** in progress
+**Feature:** React 19 (reader-react)
 **Phase:** Bug Fixes
 **Priority:** high
 **Created:** 2026-06-06

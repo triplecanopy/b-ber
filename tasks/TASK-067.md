@@ -1,6 +1,7 @@
 # TASK-067: Fix remaining open bugs — chapters re-render, keyboard navigation
 
 **Status:** complete
+**Feature:** React 19 (reader-react)
 **Phase:** Bug Fixes
 **Priority:** high
 **GitHub Issue:** #468 — https://github.com/triplecanopy/b-ber/issues/468

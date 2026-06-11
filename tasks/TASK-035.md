@@ -1,6 +1,7 @@
 # TASK-035: Fix and modernize the CircleCI pipeline
 
 **Status:** complete
+**Feature:** Upgrade tooling
 **Scope:** monorepo
 **Priority:** high
 **GitHub Issue:** #490 — https://github.com/triplecanopy/b-ber/issues/490

@@ -1,6 +1,7 @@
 # TASK-028: Convert b-ber-markdown-renderer to TypeScript (+ replace vendored highlight.js)
 
 **Status:** complete
+**Feature:** Migrate JS→TS
 **Scope:** b-ber-markdown-renderer
 **Priority:** medium
 **GitHub Issue:** #503 — https://github.com/triplecanopy/b-ber/issues/503

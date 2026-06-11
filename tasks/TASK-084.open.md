@@ -1,6 +1,7 @@
 # TASK-084: Consolidate page-width geometry into Viewport.getPageWidth
 
 **Status:** in progress
+**Feature:** React 19 (reader-react)
 **Phase:** Bug Fixes
 **Priority:** medium
 **Created:** 2026-06-06

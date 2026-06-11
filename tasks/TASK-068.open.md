@@ -1,6 +1,7 @@
 # TASK-068: Phase 1 housekeeping
 
 **Status:** not started
+**Feature:** React 19 (reader-react)
 **Phase:** Modernization — Phase 1
 **Priority:** medium
 

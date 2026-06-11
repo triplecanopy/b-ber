@@ -1,6 +1,7 @@
 # TASK-003: Research type consolidation strategy across the monorepo
 
 **Status:** complete
+**Feature:** Migrate JS→TS
 **Scope:** monorepo
 **Priority:** medium
 **GitHub Issue:** #458 — https://github.com/triplecanopy/b-ber/issues/458

@@ -1,6 +1,7 @@
 # TASK-038: Audit and clean up package.json scripts across the monorepo
 
 **Status:** not started
+**Feature:** Upgrade tooling
 **Scope:** monorepo
 **Priority:** medium
 **GitHub Issue:** #509 — https://github.com/triplecanopy/b-ber/issues/509

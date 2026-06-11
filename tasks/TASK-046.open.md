@@ -1,6 +1,7 @@
 # TASK-046: Refactor b-ber-logger
 
 **Status:** not started
+**Feature:** Node.js modernization
 **Scope:** b-ber-logger
 **Priority:** medium
 **GitHub Issue:** #514 — https://github.com/triplecanopy/b-ber/issues/514

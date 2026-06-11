@@ -1,6 +1,7 @@
 # TASK-056: Fix iframe template EPUB 3 compliance
 
 **Status:** not started
+**Feature:** E2E testing
 **Scope:** grammar-iframe, shapes-directives
 **Priority:** medium
 **GitHub Issue:** (create on sync)

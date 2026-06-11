@@ -1,6 +1,7 @@
 # TASK-055: Create testing skill once E2E setup is defined
 
 **Status:** not started
+**Feature:** E2E testing
 **Scope:** monorepo
 **Priority:** low
 **GitHub Issue:** (add after creating the issue)

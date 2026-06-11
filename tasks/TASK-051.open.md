@@ -1,6 +1,7 @@
 # TASK-051: Theme customization documentation and SCSS compilation test coverage
 
 **Status:** not started
+**Feature:** Unit test coverage
 **Scope:** monorepo
 **Priority:** medium
 **GitHub Issue:** #518 — https://github.com/triplecanopy/b-ber/issues/518

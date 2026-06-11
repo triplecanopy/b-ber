@@ -1,6 +1,7 @@
 # TASK-045: Refactor changelog generation and release workflow
 
 **Status:** not started
+**Feature:** Upgrade tooling
 **Scope:** monorepo
 **Priority:** medium
 **GitHub Issue:** #513 — https://github.com/triplecanopy/b-ber/issues/513

@@ -1,6 +1,7 @@
 # TASK-054: Research build dependency ordering for reader → reader-react
 
 **Status:** complete
+**Feature:** Upgrade tooling
 **Scope:** monorepo
 **Priority:** medium
 **GitHub Issue:** #521 — https://github.com/triplecanopy/b-ber/issues/521

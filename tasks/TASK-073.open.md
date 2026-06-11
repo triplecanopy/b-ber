@@ -1,6 +1,7 @@
 # TASK-073: Redux modernization — Redux Toolkit or Context API
 
 **Status:** not started
+**Feature:** React 19 (reader-react)
 **Phase:** Modernization — Phase 5
 **Priority:** low
 

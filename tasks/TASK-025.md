@@ -1,6 +1,7 @@
 # TASK-025: Convert b-ber-grammar-\* packages to TypeScript
 
 **Status:** complete
+**Feature:** Migrate JS→TS
 **Scope:** monorepo
 **Priority:** medium
 **GitHub Issue:** #500 — https://github.com/triplecanopy/b-ber/issues/500

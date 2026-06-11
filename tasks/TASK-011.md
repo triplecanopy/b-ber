@@ -1,6 +1,7 @@
 # TASK-011: Convert b-ber-logger to TypeScript
 
 **Status:** complete
+**Feature:** Migrate JS→TS
 **Scope:** logger
 **Priority:** medium
 **GitHub Issue:** #496 — https://github.com/triplecanopy/b-ber/issues/496

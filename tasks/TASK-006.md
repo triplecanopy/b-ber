@@ -1,6 +1,7 @@
 # TASK-006: Migrate b-ber-reader-react from webpack to Vite
 
 **Status:** complete
+**Feature:** Upgrade tooling
 **Scope:** reader-react
 **Priority:** medium
 **GitHub Issue:** #472 — https://github.com/triplecanopy/b-ber/issues/472

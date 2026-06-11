@@ -1,6 +1,7 @@
 # TASK-076: Migrate from SCSS to CSS Modules
 
 **Status:** not started
+**Feature:** React 19 (reader-react)
 **Phase:** Modernization — Phase 6
 **Priority:** low
 

@@ -1,6 +1,7 @@
 # TASK-019: TypeScript migration — full monorepo conversion
 
 **Status:** not started
+**Feature:** Migrate JS→TS
 **Scope:** monorepo
 **Priority:** high
 **GitHub Issue:** #479 — https://github.com/triplecanopy/b-ber/issues/479

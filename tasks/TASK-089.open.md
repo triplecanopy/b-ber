@@ -1,6 +1,7 @@
 # TASK-089: Deep-linking to a spreadIndex does not navigate to that spread
 
 **Status:** not started
+**Feature:** React 19 (reader-react)
 **Phase:** Bug Fixes
 **Priority:** medium
 **Created:** 2026-06-06

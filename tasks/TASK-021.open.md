@@ -1,6 +1,7 @@
 # TASK-021: Audit and document `--no-package-lock` in lerna bootstrap
 
 **Status:** not started
+**Feature:** Upgrade tooling
 **Scope:** monorepo
 **Priority:** low
 **GitHub Issue:** #481 — https://github.com/triplecanopy/b-ber/issues/481

@@ -1,6 +1,7 @@
 # TASK-048: Convert b-ber-resources to TypeScript
 
 **Status:** complete
+**Feature:** Migrate JS→TS
 **Scope:** b-ber-resources
 **Priority:** low
 **GitHub Issue:** #504 — https://github.com/triplecanopy/b-ber/issues/504

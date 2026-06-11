@@ -1,6 +1,7 @@
 # TASK-083: Re-measure lastSpreadIndex after the layout settles
 
 **Status:** in progress
+**Feature:** React 19 (reader-react)
 **Phase:** Bug Fixes
 **Priority:** medium
 **Created:** 2026-06-06
