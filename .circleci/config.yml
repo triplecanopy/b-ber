@@ -3,7 +3,7 @@ version: 2.1
 orbs:
   # Uploads coverage to Codecov. Reads the upload token from the
   # CODECOV_TOKEN env var configured in the CircleCI project settings.
-  codecov: codecov/codecov@4
+  codecov: codecov/codecov@5
 
 jobs:
   build:
@@ -56,7 +56,11 @@ jobs:
             npm run check
             npx jest --collectCoverage=true --maxWorkers=2
       - codecov/upload:
-          file: coverage/lcov.info
+          # v5 renamed `file` -> `files` (plural). Disable the CLI's coverage
+          # auto-search so only the root merged lcov is uploaded, not stale
+          # nested packages/*/coverage reports.
+          files: coverage/lcov.info
+          disable_search: true
       # Smoke test removed: the pre-existing deep import
       # `require('@canopycanopycanopy/b-ber-lib/State')` fails when running
       # the workspace-built CLI directly because b-ber-lib has no `exports`
