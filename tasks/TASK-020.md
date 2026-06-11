@@ -1,10 +1,16 @@
 # TASK-020: Vite + Biome migration — bundler and toolchain replacement
 
-**Status:** not started
+**Status:** complete
 **Feature:** Upgrade tooling
 **Scope:** monorepo
 **Priority:** medium
 **GitHub Issue:** #480 — https://github.com/triplecanopy/b-ber/issues/480
+
+> **Complete (2026-06-11).** This was the tracking umbrella; all three units of
+> execution shipped and merged via `feat/vite-migration`: [[TASK-006]]
+> (reader-react → Vite), [[TASK-007]] (reader → Vite), [[TASK-015]]
+> (ESLint+Prettier → Biome). No webpack or `babel-eslint` references remain;
+> `prettier` is removed. Closing the umbrella.
 
 ## Description
 
@@ -18,16 +24,11 @@ TASK-007, and TASK-015 are the units of execution.
 
 ## Sub-tasks
 
-- [ ] **TASK-006** — Migrate `b-ber-reader-react` from webpack to Vite.
-      Also picks up the CSS Modules migration (reader-react TASK-017) in the
-      same pass.
-- [ ] **TASK-007** — Migrate `b-ber-reader` to Vite and clean up the root
-      `babel.config.js`. **Blocked on TASK-006.**
-- [ ] **TASK-015** — Replace ESLint + Prettier with Biome across the monorepo.
-      Remove `prettier` devDependency; update all npm scripts, lint-staged hook,
-      and per-package `.eslintrc.js` files. **Sequenced after TASK-006** — the
-      natural seam is when `babel-eslint` is dropped in favour of Vite's parser.
-- [ ] Merge `feat/vite-migration` → `feat/upgrades`
+- [x] **TASK-006** — Migrate `b-ber-reader-react` from webpack to Vite.
+- [x] **TASK-007** — Migrate `b-ber-reader` to Vite and clean up the root
+      `babel.config.js`.
+- [x] **TASK-015** — Replace ESLint + Prettier with Biome across the monorepo.
+- [x] Merge `feat/vite-migration` → `feat/upgrades`
 
 ## Branch
 

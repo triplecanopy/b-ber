@@ -30,7 +30,7 @@ Every task belongs to exactly one; every new task must too.
 
 | Feature | Done | Active | Backlog | State |
 | ------- | ---- | ------ | ------- | ----- |
-| 🔧 Upgrade tooling | 13 | 0 | 12 | Core toolchain shipped; remaining is dep/release/docs polish |
+| 🔧 Upgrade tooling | 15 | 0 | 10 | Core toolchain shipped; remaining is dep/release/docs polish |
 | 🔤 Migrate JS→TS | 16 | 0 | 2 | **~95%** — only reader-react (TASK-032) + epic close-out left |
 | ✅ Unit test coverage | 2 | 1 | 2 | Epic in progress; most packages at target, a few laggards |
 | 🧪 E2E testing | 5 | 1 | 2 | Pipeline green in CI; skill + iframe fix remain |
@@ -60,10 +60,10 @@ _"Active" = in progress. "Backlog" = not started (excludes superseded)._
 | TASK-017 | med | Expand architecture diagrams |
 | TASK-021 | low | Audit `--no-package-lock` in lerna bootstrap |
 | TASK-022 | low | Automate circular dependency checks in CI |
-| TASK-020 | med | Vite+Biome umbrella — **children all complete; close this** |
-| TASK-018 | low | Add task links to issues — **largely obsolete under relaxed issue policy; close** |
 
-> TASK-023 (research Lerna options) is **superseded** by TASK-036.
+> TASK-023 (Lerna research) is **superseded** by TASK-036; TASK-020 (Vite+Biome
+> umbrella, complete) and TASK-018 (issue back-links, obsolete) were closed
+> 2026-06-11.
 
 ---
 
@@ -195,8 +195,7 @@ sequencing work:
 | 3 | TASK-004 | Push coverage laggards to 75% | Closes the coverage epic; reader-react is the long pole |
 | 4 | TASK-055 | Create the testing skill | Newly unblocked by the green E2E pipeline |
 | 5 | TASK-052 | Prototype `npm pack` publish-smoke test | Guards against the canary-only bug class |
-| 6 | TASK-020 / TASK-018 / TASK-023 | Close out completed/obsolete/superseded tooling tasks | Housekeeping after the flatten |
-| 7 | TASK-032 | Convert reader-react to TS | After the spread cluster settles → closes the TS epic |
+| 6 | TASK-032 | Convert reader-react to TS | After the spread cluster settles → closes the TS epic |
 
 ---
 

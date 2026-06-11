@@ -1,10 +1,18 @@
 # TASK-018: Add task file links to GitHub issues
 
-**Status:** not started
+**Status:** complete
 **Feature:** Upgrade tooling
 **Scope:** monorepo
 **Priority:** low
 **GitHub Issue:** #478 — https://github.com/triplecanopy/b-ber/issues/478
+
+> **Closed as obsolete (2026-06-11).** Superseded by two changes: (1) the
+> relaxed issue policy — issues now mirror only feature epics + the active set,
+> not every task, so a bulk back-link pass over all historical issues is no
+> longer wanted; and (2) the task-system flatten — the package task paths this
+> lists (`packages/*/tasks/...`, issues #460–470) no longer exist. New issues
+> already include a `**Task file:**` link at creation time per AGENTS.md, which
+> covers the intent going forward.
 
 ## Description
 
