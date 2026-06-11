@@ -36,7 +36,7 @@ Statement coverage as of 2026-06-11. Check the box when a package reaches the
 - [x] b-ber-grammar-image — 98% (2026-06-11: added image.ts createFigure/createFigureInline tests + index.ts branch coverage)
 - [x] b-ber-grammar-logo — 100%
 - [x] b-ber-grammar-media — 96%
-- [ ] b-ber-grammar-pullquote — 71%
+- [x] b-ber-grammar-pullquote — 98% (2026-06-11: covered duplicate-id check, citation/footer handling, and exit-id mismatch in handleClose)
 - [x] b-ber-grammar-renderer — 100%
 - [x] b-ber-grammar-section — 78%
 - [x] b-ber-grammar-spread — 100%
