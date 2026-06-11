@@ -127,7 +127,7 @@ for the publish-smoke-test follow-up these bugs motivated.
 | TASK-045 | Refactor changelog generation + release workflow   | low      | `feat/upgrades`        | Manual, fragile sequencing; evaluate changesets / release-please                 |
 | TASK-047 | Research watch mode scripts for dev workflow       | low      | `feat/upgrades`        | Most packages lack a `watch` script; define target state per package type        |
 | TASK-049 | ~~Evaluate coverage report upload services~~       | ~~low~~  | `feat/upgrades`        | **Complete.** Chose Codecov; CI uploads `coverage/lcov.info` via the codecov orb, README badge + `codecov.yml` added. Needs `CODECOV_TOKEN` in CircleCI project settings. |
-| TASK-052 | Research Verdaccio workflow for lerna publish      | low      | `feat/upgrades`        | No `--dry-run` in lerna publish; Verdaccio = local registry stand-in             |
+| TASK-052 | Test the published artifact without the real registry | low   | `feat/upgrades`        | No `--dry-run` in lerna publish. Prefer home-rolled `npm pack` + install over adding Verdaccio; justify a registry server only on concrete benefit |
 | TASK-017 | Expand diagrams: tooling versions + cross-refs     | low      | `feat/upgrades`        | Living audit surface; TASK-016 complete                                           |
 | TASK-018 | Add task file links to GitHub issues               | low      | `feat/upgrades`        | Blocked on `feat/upgrades` merge to `main`; links 404 until then                 |
 | TASK-021 | Audit `--no-package-lock` in lerna bootstrap       | low      | `feat/upgrades`        | Review alongside `--legacy-peer-deps`                                             |

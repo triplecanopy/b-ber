@@ -1,4 +1,4 @@
-# TASK-052: Research Verdaccio workflow for testing lerna publish
+# TASK-052: Test the published artifact without touching the real registry
 
 **Status:** not started
 **Scope:** monorepo
@@ -8,13 +8,39 @@
 ## Description
 
 `lerna publish --dry-run` does not exist in any version of Lerna. Before
-landing the Lerna v8 upgrade (TASK-036), we need a reliable way to test the
-publish pipeline — especially the canary workflow — without touching the real
-npm registry.
+landing the Lerna v8 upgrade (TASK-036), we need a reliable way to exercise the
+*installed, published* artifacts — especially the CLI — without touching the
+real npm registry.
 
-The leading candidate is Verdaccio, a lightweight local npm proxy/registry that
-can stand in for npm during local and CI testing. This task is to research and
-document the exact workflow so it can be used by anyone cutting a release.
+**Design constraint: prefer the lowest-tooling solution that works.** We do not
+want to take on a new long-lived dependency (a registry server to run, version,
+and maintain in CI) unless it earns its keep with concrete benefits over a
+home-rolled approach. The bar for adding Verdaccio is: *what can it do that a
+plain `npm pack` + install script cannot do reliably?* If nothing concrete, we
+ship the script.
+
+Evaluate two approaches and recommend one:
+
+- **(A) Home-rolled `npm pack` + install (preferred starting point).** Build all
+  packages, `npm pack` each publishable package into a staging dir, then
+  `npm install` the resulting tarball(s) into a throwaway consumer project and
+  run smoke tests against the installed CLI. Can live entirely as an npm script,
+  delegating to a small Node script if the orchestration grows. No server, no
+  new service to maintain. The one hard part to prove out: a packed
+  `@canopycanopycanopy/b-ber-cli` tarball depends on the other first-party
+  scoped packages, so a naive `npm i cli.tgz` will try to resolve those from the
+  real registry. The script must install *all* first-party tarballs together (or
+  rewrite the install to point at the local tarballs) so inter-package deps
+  resolve to the freshly built code, not whatever is on npm.
+
+- **(B) Verdaccio (only if A has a concrete gap).** A local npm proxy/registry
+  that stands in for npm. It resolves the inter-package dependency problem
+  "for free" because `lerna publish --registry <local>` publishes the whole set
+  and a subsequent `npm i` resolves scoped deps locally (proxying everything
+  else to real npm). The cost is a running service to manage in dev and CI.
+  Justify adoption only if it tests something A cannot — e.g. exercising the
+  actual `lerna publish` canary code path (dist-tags, version bumping, the
+  publish lifecycle scripts) rather than just the packed artifact.
 
 **Motivation (concrete, 2026-06-07):** a canary publish shipped two bugs that
 were invisible in workspace/dev mode and only surfaced in the *installed,
@@ -44,29 +70,36 @@ lerna publish --force-publish="*"
 
 ## Subtasks
 
-- [ ] **Confirm Verdaccio works with scoped packages** — b-ber packages are all
-      scoped under `@canopycanopycanopy`. Verify that Verdaccio handles scoped
-      package auth correctly and that the `--registry` flag is sufficient, or
-      whether `.npmrc` scope overrides are needed.
-- [ ] **Determine auth requirements** — `npm adduser` creates a local user.
-      Verify this works without a real npm token, and that `lerna publish` does
-      not attempt to verify access against the real registry when `--registry`
-      is set.
-- [ ] **Map out the full canary test run** — step-by-step from starting
-      Verdaccio through publishing, viewing the published packages, and
-      optionally installing from the local registry.
-- [ ] **Check whether git tagging is skipped or real** — Lerna creates git tags
-      during publish. Determine whether a test run would pollute local git
-      history and whether `--no-git-tag-version` or `--no-push` should be
-      added to the test command.
-- [ ] **Evaluate for CI use** — could a Verdaccio instance be used in CircleCI
-      (TASK-035) to gate publish-path changes? What would that step look like?
-- [ ] **Add a published-artifact smoke test** — after publishing to Verdaccio,
-      install `@canopycanopycanopy/b-ber-cli` from the local registry into a
-      throwaway project and assert (a) `bber --version` prints a version from a
-      non-project dir and (b) `bber serve` boots and the reader mounts without
-      console errors. Wire into the `b-ber-testing` Playwright harness so the
-      "only breaks when published" class of bug is caught in CI. See Motivation.
+- [ ] **Prototype approach A (home-rolled `npm pack`).** Build all packages,
+      `npm pack` each publishable one into a staging dir, and install into a
+      throwaway consumer project. Confirm the install resolves first-party
+      scoped deps to the local tarballs (not the real registry) — this is the
+      make-or-break detail. Capture the exact command sequence (and whether an
+      npm script alone suffices or a small Node orchestration script is needed).
+- [ ] **Identify any concrete gap in A.** Enumerate what, if anything, A cannot
+      test that matters: the `lerna publish` canary path itself (dist-tags,
+      version bumping, lifecycle scripts), multi-package resolution edge cases,
+      or `.npmrc`/auth behaviour. If A covers the real failure modes (see
+      Motivation), recommend A and stop — do not add Verdaccio.
+- [ ] **Only if a gap exists — scope approach B (Verdaccio).** Confirm it works
+      with `@canopycanopycanopy` scoped packages and the `--registry` flag,
+      determine auth requirements (`npm adduser` without a real token), and map
+      the full canary run from server start through publish to install. Weigh
+      the maintenance cost (running/versioning the service in dev + CI) against
+      the specific gap it closes.
+- [ ] **Check git-tag side effects (applies to whichever approach exercises
+      `lerna publish`).** Lerna creates git tags during publish; determine
+      whether a test run pollutes local git history and whether
+      `--no-git-tag-version` / `--no-push` should be standard on the test command.
+- [ ] **Add a published-artifact smoke test.** Using the chosen approach,
+      install `@canopycanopycanopy/b-ber-cli` into a throwaway project and assert
+      (a) `bber --version` prints a version from a non-project dir and (b)
+      `bber serve` boots and the reader mounts without console errors. Wire into
+      the `b-ber-testing` Playwright harness so the "only breaks when published"
+      class of bug is caught in CI. See Motivation.
+- [ ] **Evaluate for CI use.** Whatever is chosen, define the CI step that gates
+      publish-path changes (CircleCI, building on the now-green pipeline from
+      TASK-035/044). Favour a step that needs no persistent service.
 - [ ] **Document the final workflow** — write the complete command sequence
       into TASK-036's Notes or a `docs/` file so it is repeatable by anyone
       on the team.
@@ -75,16 +108,31 @@ lerna publish --force-publish="*"
 
 Branch: `feat/upgrades`
 
-Verdaccio stores published packages in `~/.config/verdaccio/storage` by
-default. Deleting that directory between test runs gives a clean slate.
+**Bias: home-rolled first.** The two bugs in the Motivation (eager `State` load
+on `--version`; React unresolved in the re-bundled reader dist) both reproduce
+from a plain packed-and-installed CLI — neither requires a registry to surface.
+That suggests approach A is sufficient for the failure modes we actually hit, so
+start there and only reach for Verdaccio if a concrete gap appears.
 
-Verdaccio proxies unknown packages to the real npm registry, so it functions
-as a full registry replacement — packages b-ber depends on can still resolve.
+**Approach A sketch (to validate):**
+```sh
+# build everything, then for each publishable package:
+npm pack --workspace <pkg> --pack-destination ./.pack-staging
+# in a throwaway consumer dir, install all first-party tarballs together so
+# inter-package scoped deps resolve locally instead of from the real registry:
+npm i ./.pack-staging/*.tgz
+bber --version          # must print without a project dir
+bber serve              # reader must mount, no console errors
+```
+The crux to prove out is that installing all first-party tarballs at once makes
+the scoped inter-package deps resolve to local code. If npm insists on fetching
+those from the registry, a small Node script can rewrite the tarballs' install
+specifiers (or use `overrides`) — still no server required.
 
-The git-tag question is important: if `lerna publish` creates tags during
-a test run they will need to be deleted before the real publish. Consider
-`--no-git-tag-version --no-push` as standard flags for the test command, and
-document why they are included.
+**If Verdaccio is chosen anyway:** it stores published packages in
+`~/.config/verdaccio/storage` by default (delete to reset), proxies unknown
+packages to real npm, and the `--no-git-tag-version --no-push` flags matter so a
+test publish doesn't pollute git history. Document why they're included.
 
 Related: [[TASK-036]] (Lerna upgrade), [[TASK-035]] (CircleCI),
 [[TASK-039]] (E2E testing umbrella — natural home for the smoke test),
