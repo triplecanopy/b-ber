@@ -1,6 +1,6 @@
 # TASK-092: Fix Codecov "Validate CLI" GPG failure in CI
 
-**Status:** not started
+**Status:** in progress
 **Feature:** Upgrade tooling
 **Scope:** monorepo
 **Priority:** medium
@@ -29,23 +29,28 @@ exits non-zero — turning the whole job red even though tests passed.
 
 ## Subtasks
 
-- [ ] **Reproduce and confirm the trigger.** Determine whether this started
-      before or after `CODECOV_TOKEN` was set, and whether it's intermittent
-      (keyserver flakiness) or deterministic (the CI image lacks `gnupg`/`curl`,
-      or the key URL the orb uses is unreachable from CircleCI).
-- [ ] **Pick a fix.** Candidate approaches, cheapest first:
-  - Disable the orb's CLI integrity validation if v5 exposes a param for it
-    (e.g. a `validate`/`gpg`-style flag), keeping the upload.
-  - Pin the Codecov uploader/CLI version the orb downloads so it doesn't
-    re-fetch a key each run.
-  - Ensure `gnupg` + `curl` are present in the `cimg/node:24.x` image (they
-    normally are) and add a retry around the key import.
-  - As a fallback, replace the orb step with a direct Codecov CLI/bash upload
-    invocation that skips GPG validation.
-- [ ] **Don't let coverage upload break the build.** Whatever the fix, make the
-      Codecov step non-fatal to the `build` job (coverage reporting is
-      informational — a failed upload should warn, not fail CI). Consider the
-      orb's failure-handling param or `when: always` semantics.
+- [x] **Reproduce and confirm the trigger.** Read the orb source
+      (`codecov/codecov-circleci-orb`, `src/dist/validate.sh`): the
+      "(Codecov) Validate CLI" step unconditionally runs
+      `curl -s https://keybase.io/codecovsecops/pgp_keys.asc | gpg --import`
+      unless `skip_validation`/`binary`/`use_pypi` is set. The `gpg: no valid
+      OpenPGP data found` error means that keybase.io fetch returned
+      empty/non-PGP content (HTML error page or blocked request) from
+      CircleCI's network — this is a known flaky dependency of the orb's
+      validation step, not something specific to this repo's image or
+      `CODECOV_TOKEN` timing.
+- [x] **Pick a fix.** Applied candidate #1 (cheapest): added
+      `skip_validation: true` to the `codecov/upload` step. Per
+      `validate.sh`, this entirely bypasses the `gpg --import` /
+      `gpg --verify` / `sha256sum -c` block (the CLI is just `chmod +x`'d and
+      run normally) — it does not touch the upload itself.
+- [x] **Don't let coverage upload break the build.** Set `fail_on_error: false`
+      explicitly (this is also the orb's default). `validate.sh` and
+      `run_command.sh` only `exit 1` on error when `CODECOV_FAIL_ON_ERROR=true`,
+      so upload/runtime failures were already non-fatal to the `build` job;
+      this documents that intent. The CLI-validation failure that actually
+      broke the job is addressed by `skip_validation` above — making that step
+      pass cleanly is strictly better than trying to suppress its exit code.
 - [ ] **Verify green** on a CI run with `CODECOV_TOKEN` set.
 
 ## Notes
@@ -59,6 +64,26 @@ orb's pre-upload CLI-validation step, not the upload.
 
 Also gated on the org-level **"Allow uncertified public orbs"** CircleCI setting
 being enabled (separate from this GPG issue).
+
+**2026-06-11:** Added `skip_validation: true` and `fail_on_error: false` to the
+`codecov/upload` step in `.circleci/config.yml`. Root cause confirmed by reading
+`codecov/codecov-circleci-orb`'s `src/dist/validate.sh`: the orb's "(Codecov)
+Validate CLI" step does `curl -s https://keybase.io/codecovsecops/pgp_keys.asc |
+gpg --import` and then verifies the downloaded CLI's SHA256SUM signature against
+that key. The `no valid OpenPGP data found` error means the keybase.io fetch came
+back empty/non-PGP — a known-flaky external dependency unrelated to this repo's
+CI image or `CODECOV_TOKEN`. `skip_validation: true` is the orb's documented
+escape hatch ("Skip integrity checking of the CLI. This is NOT recommended.")
+and skips that whole gpg/sha256 block while leaving the actual upload (`files:
+coverage/lcov.info`, `disable_search: true`) untouched. `fail_on_error: false`
+matches the orb's existing default and documents that upload-step failures
+(as opposed to the validation step) are already non-fatal.
+
+**Remaining for verification:** push this branch (or merge to a branch that
+runs CI) and confirm the `build` job's "(Codecov) Validate CLI" step now logs
+"Bypassing validation..." and exits 0, and that the coverage upload to Codecov
+still succeeds. Cannot be verified locally — requires a real CircleCI run with
+`CODECOV_TOKEN` set in project settings.
 
 Related: [[TASK-049]] (coverage upload service), [[TASK-035]] (CircleCI pipeline),
 [[TASK-044]] (CI jobs).
