@@ -33,7 +33,7 @@ Statement coverage as of 2026-06-11. Check the box when a package reaches the
 - [x] b-ber-grammar-frontmatter — 100%
 - [x] b-ber-grammar-gallery — 100%
 - [x] b-ber-grammar-iframe — 99%
-- [ ] b-ber-grammar-image — 60%
+- [x] b-ber-grammar-image — 98% (2026-06-11: added image.ts createFigure/createFigureInline tests + index.ts branch coverage)
 - [x] b-ber-grammar-logo — 100%
 - [x] b-ber-grammar-media — 96%
 - [ ] b-ber-grammar-pullquote — 71%

@@ -90,13 +90,13 @@ Epic: **TASK-004** (≥ 75% repo-wide). Per-package status lives in TASK-004 as 
 checklist — regenerate with `npm run test:coverage`. The 26 old per-package
 coverage stubs were consolidated there on 2026-06-11.
 
-**At/above target:** all grammar (except image 60%, pullquote 71%), all parsers,
+**At/above target:** all grammar (except pullquote 71%), all parsers,
 shapes-directives/dublin-core, templates 96%, validator 92%, lib 76%, logger
 77%, markdown-renderer 92%.
 
 | Task | Pri | Outstanding work |
 | ---- | --- | ---------------- |
-| TASK-004 | high | Drive laggards to 75%: cli 54%, b-ber-tasks 13% (~25% ceiling), reader-react 33%, shapes-sequences 68%, grammar-image/pullquote |
+| TASK-004 | high | Drive laggards to 75%: cli 54%, b-ber-tasks 13% (~25% ceiling), reader-react 33%, shapes-sequences 68%, grammar-pullquote 71% (grammar-image done, 98%) |
 | TASK-050 | high | CLI command inventory + handler test coverage (also the gate for TASK-046) |
 | TASK-051 | med | Theme docs + SCSS compilation test coverage |
 

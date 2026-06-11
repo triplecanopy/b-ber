@@ -1,4 +1,5 @@
 import log from '@canopycanopycanopy/b-ber-logger'
+import fs from 'fs-extra'
 import image from '../src'
 import { createFigure, createFigureInline } from '../src/image'
 
@@ -146,5 +147,36 @@ describe('b-ber-grammar-image', () => {
     const result = config.validate('figure', 1)
     expect(result).toBeFalsy()
     expect(log.error).toHaveBeenCalled()
+  })
+
+  it('logs an error when the referenced image is missing', () => {
+    fs.existsSync.mockReturnValueOnce(false)
+    const config = image.renderer({ instance, context })
+    const tokens = [
+      {
+        type: 'container_figure_open',
+        info: 'figure:missing-id source="missing.jpg"',
+        map: [0, 1],
+        children: null,
+      },
+    ]
+    config.render(tokens, 0)
+    expect(log.error).toHaveBeenCalledWith(
+      expect.stringContaining('Image not found')
+    )
+  })
+
+  it('falls back to a null line number when the token has no map', () => {
+    const config = image.renderer({ instance, context })
+    const tokens = [
+      {
+        type: 'container_figure_open',
+        info: 'figure:no-map-id source="test.jpg"',
+        map: null,
+        children: null,
+      },
+    ]
+    expect(() => config.render(tokens, 0)).not.toThrow()
+    expect(createFigure).toHaveBeenCalled()
   })
 })
