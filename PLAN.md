@@ -30,12 +30,12 @@ Every task belongs to exactly one; every new task must too.
 
 | Feature | Done | Active | Backlog | State |
 | ------- | ---- | ------ | ------- | ----- |
-| 🔧 Upgrade tooling | 13 | 0 | 11 | Core toolchain shipped; remaining is dep/release/docs polish |
+| 🔧 Upgrade tooling | 13 | 0 | 12 | Core toolchain shipped; remaining is dep/release/docs polish |
 | 🔤 Migrate JS→TS | 16 | 0 | 2 | **~95%** — only reader-react (TASK-032) + epic close-out left |
 | ✅ Unit test coverage | 2 | 1 | 2 | Epic in progress; most packages at target, a few laggards |
 | 🧪 E2E testing | 5 | 1 | 2 | Pipeline green in CI; skill + iframe fix remain |
 | ⚙️ Node.js modernization | 1 | 0 | 2 | Barely started; epic + logger refactor pending |
-| ⚛️ React 19 (reader-react) | 11 | 5 | 14 | Largest active surface; spread/layout cluster in progress |
+| ⚛️ React 19 (reader-react) | 11 | 5 | 15 | Largest active surface; spread/layout cluster in progress |
 
 _"Active" = in progress. "Backlog" = not started (excludes superseded)._
 
@@ -50,6 +50,7 @@ _"Active" = in progress. "Backlog" = not started (excludes superseded)._
 
 | Task | Pri | Outstanding work |
 | ---- | --- | ---------------- |
+| TASK-092 | med | Fix Codecov "Validate CLI" GPG failure turning the `build` job red |
 | TASK-052 | med | Test the published artifact without the real registry (prefer `npm pack` over Verdaccio) |
 | TASK-053 | med | Replace `lerna-update-wizard` with syncpack + ncu |
 | TASK-037 | med | Replace/reconfigure dependency management (Dependabot is paused + broken) |
@@ -150,7 +151,8 @@ work is the **spread / layout-stability cluster**.
 pages), TASK-089 (deep-link to spreadIndex), TASK-086 (reset `view.loaded`),
 TASK-087 (event-driven settle, supersedes polling), TASK-069 (per-Spread
 ResizeObserver), TASK-073 (Redux Toolkit/Context), TASK-091 (react-player v3),
-TASK-076 (SCSS→CSS Modules), TASK-068/071/075/079/080 (housekeeping/visual).
+TASK-076 (SCSS→CSS Modules), TASK-068/071/075/079/080 (housekeeping/visual),
+TASK-093 (consolidate the reader-react PLAN.md into this file).
 
 ---
 
