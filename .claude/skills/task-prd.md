@@ -27,9 +27,10 @@ Create `tasks/TASK-NNN.open.md` with this template:
 # TASK-NNN: Short title
 
 **Status:** not started
+**Feature:** Upgrade tooling | Migrate JS→TS | Unit test coverage | E2E testing | Node.js modernization | React 19 (reader-react)
 **Scope:** monorepo | <package-name>
 **Priority:** high | medium | low
-**GitHub Issue:** (add after creating the issue)
+**GitHub Issue:** (add only for an epic or active task — see below)
 
 ## Description
 
@@ -45,9 +46,12 @@ Decisions, blockers, relevant context.
 ```
 
 Notes on each field:
-- **Scope** — use `monorepo` for cross-package work; use the package name (e.g. `b-ber-cli`) for single-package tasks
+- **Feature** — every task belongs to exactly one of the six features (epics).
+  If it fits none, reframe the task or raise a new feature; do not leave it blank.
+- **Scope** — use `monorepo` for cross-package work; use the package name (e.g. `b-ber-cli`) for single-package tasks. (Tasks still live in the root `tasks/` dir regardless of scope — there are no per-package task directories.)
 - **Priority** — high = blocks other work or is a safety gate; medium = unblocked and should be done this cycle; low = good to have
-- **GitHub Issue** — fill in after running `/sync-task-issues`
+- **GitHub Issue** — only create one for a feature epic or an in-progress/next-up
+  task; fill in after running `/sync-task-issues`. Backlog stubs don't need issues.
 
 ---
 

@@ -25,7 +25,3 @@ Additional standards for this package:
 - All transforms are synchronous
 - The empty `<div>` appended by `b-ber-grammar-section` exit for reader builds is required by `b-ber-reader-react`'s spread detection logic — do not remove it
 - Opening HTML for reader/web must stay in sync with the closing HTML in `b-ber-grammar-section`'s `isSpread` exit branch
-
-## Task System
-
-Tasks for this package are tracked in tasks/ using the same PRD format as the root AGENTS.md. No tasks are currently open. To add a task, create tasks/TASK-NNN.open.md following the format in the root AGENTS.md.

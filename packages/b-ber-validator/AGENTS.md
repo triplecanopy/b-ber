@@ -32,9 +32,3 @@ Additional standards for this package:
 - The build step (`npm run build`) runs `npm test` first; a failing test prevents the build from completing.
 - Combinators follow a consistent signature: they accept parser inputs and return a `Parser<T>`. Do not add stateful combinators.
 - Directive names are sourced from `b-ber-shapes-directives` (`BLOCK_DIRECTIVES`, `INLINE_DIRECTIVES`, `MISC_DIRECTIVES`, `DRAFT_DIRECTIVES`, `DEPRECATED_DIRECTIVES`). Adding a new directive type requires updating that shapes package.
-
-## Task System
-
-Tasks for this package are tracked in tasks/ using the same PRD format as the
-root AGENTS.md. No tasks are currently open. To add a task, create
-tasks/TASK-NNN.open.md following the format in the root AGENTS.md.

@@ -24,7 +24,3 @@ Additional standards for this package:
 
 - This is a MarkdownIt front matter callback, not a container directive — receives the raw YAML string, not a token stream
 - All side effects go to `state.guide` and `state.spine.frontMatter`; no HTML is produced
-
-## Task System
-
-Tasks for this package are tracked in tasks/ using the same PRD format as the root AGENTS.md. No tasks are currently open. To add a task, create tasks/TASK-NNN.open.md following the format in the root AGENTS.md.

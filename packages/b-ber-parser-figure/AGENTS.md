@@ -25,9 +25,3 @@ Additional standards for this package:
 - The plugin uses a custom lookahead rather than standard nested tokenisation; caption state is stored on the token's `children` field (not the markdown-it child token array)
 - `validate` and `render` callbacks are injected by the calling directive handler
 - No class components; plugin is a plain function export
-
-## Task System
-
-Tasks for this package are tracked in tasks/ using the same PRD format as the
-root AGENTS.md. No tasks are currently open. To add a task, create
-tasks/TASK-NNN.open.md following the format in the root AGENTS.md.

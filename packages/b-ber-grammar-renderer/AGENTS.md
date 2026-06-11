@@ -25,7 +25,3 @@ Additional standards for this package:
 - All logic is synchronous
 - `state.cursor` is the source of truth for open directive tracking; do not duplicate this logic in calling packages
 - The default `context = {}` assignment exists specifically for test environments where context is not available
-
-## Task System
-
-Tasks for this package are tracked in tasks/ using the same PRD format as the root AGENTS.md. No tasks are currently open. To add a task, create tasks/TASK-NNN.open.md following the format in the root AGENTS.md.

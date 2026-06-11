@@ -25,7 +25,3 @@ Additional standards for this package:
 - All transforms are synchronous; no async code
 - Attribute parsing uses a hand-written character-level scanner (no regex for the core loop) to handle quoted values with embedded spaces
 - The biological taxonomy comment in `src/index.ts` explains the class/order/family/genus hierarchy used for EPUB structural classification — keep it
-
-## Task System
-
-Tasks for this package are tracked in tasks/ using the same PRD format as the root AGENTS.md. No tasks are currently open. To add a task, create tasks/TASK-NNN.open.md following the format in the root AGENTS.md.

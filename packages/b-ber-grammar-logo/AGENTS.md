@@ -24,7 +24,3 @@ Additional standards for this package:
 
 - All transforms are synchronous
 - The 120px inline width is intentional and hardcoded; do not remove it without updating dependent theme styles
-
-## Task System
-
-Tasks for this package are tracked in tasks/ using the same PRD format as the root AGENTS.md. No tasks are currently open. To add a task, create tasks/TASK-NNN.open.md following the format in the root AGENTS.md.

@@ -52,9 +52,3 @@ Additional standards for this package:
 - The `blacklistedConfigOptions` set in `src/lib/config-options.ts` must be
   kept in sync with any config keys that cannot be safely overridden at
   runtime.
-
-## Task System
-
-Tasks for this package are tracked in tasks/ using the same PRD format as the
-root AGENTS.md. No tasks are currently open. To add a task, create
-tasks/TASK-NNN.open.md following the format in the root AGENTS.md.

@@ -8,9 +8,11 @@ description: Audit and sync root-level task PRDs in tasks/ against GitHub issues
 Audit and synchronise task PRD files in `tasks/` against GitHub issues in
 `triplecanopy/b-ber`.
 
-**Scope:** root-level tasks only (`tasks/TASK-NNN[.open].md`).
-Package-level tasks (`packages/*/tasks/`) are too granular for GitHub and are
-intentionally excluded.
+**Scope:** all tasks live in `tasks/TASK-NNN[.open].md` (there are no
+package-level task directories). GitHub issues mirror **only the active working
+set**, not every task: the six feature epics and any in-progress / next-up task.
+Do not mass-create issues for backlog stubs or already-completed tasks. When
+auditing, treat a backlog task with no issue as correct, not as a gap to fill.
 
 ---
 
@@ -31,8 +33,11 @@ gh issue list --limit 200 --state all --json number,title,state \
 ```
 
 From the output, build three lists:
-- **A** — task files that need a new issue (no `**GitHub Issue:**` field and no matching issue title)
-- **B** — completed task files (no `.open` extension) whose GitHub issue is still OPEN
+- **A** — **active** task files that warrant an issue but lack one: the six
+  feature epics and any in-progress / next-up task with no `**GitHub Issue:**`
+  field and no matching issue title. Backlog stubs and completed tasks are **not**
+  in list A.
+- **B** — completed/superseded task files (no `.open` extension) whose GitHub issue is still OPEN
 - **C** — open task files whose GitHub issue has been incorrectly CLOSED
 
 ---
@@ -66,10 +71,10 @@ EOF
   --label "<label1>" [--label "<label2>"]
 ```
 
-Task numbers are **not** globally unique across root vs. package tasks, so the
-full file path is always required in issue bodies. For open tasks the filename
-includes `.open` locally, but the issue body should use the future completed
-path (without `.open`) since the link points to `main` where it will be closed.
+Task numbers are globally unique (single root sequence). For open tasks the
+filename includes `.open` locally, but the issue body should use the future
+completed path (without `.open`) since the link points to `main` where it will
+be closed.
 
 **Label reference** (from AGENTS.md):
 

@@ -120,31 +120,6 @@ Rules:
 
 ---
 
-## Task System
-
-Work is tracked as PRD files in the `tasks/` directory.
-
-### Task ID format
-
-`TASK-NNN` where NNN is a zero-padded three-digit integer. IDs are assigned
-sequentially and never reused.
-
-### File naming
-
-- **Open / in-progress:** `tasks/TASK-NNN.open.md`
-- **Complete:** `tasks/TASK-NNN.md`
-
-Remove `.open` when the task is marked complete. Never delete a PRD.
-
-### PRD structure
-
-```markdown
-# TASK-NNN: Short title
-
-**Status:** not started | in progress | complete
-**Phase:** (e.g. Bug Fixes, Modernization — Phase 1, Documentation)
-**Priority:** high | medium | low
-
 ## Description
 
 What needs to be done and why.

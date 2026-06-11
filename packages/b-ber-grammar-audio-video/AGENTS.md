@@ -26,7 +26,3 @@ Additional standards for this package:
 - All transforms are synchronous
 - Build-target branching (`state.build`) is done at render time; do not cache build type
 - `controls` attribute defaults to `controls="controls"` for EPUB validity; only `reader`/`web` builds allow custom values
-
-## Task System
-
-Tasks for this package are tracked in tasks/ using the same PRD format as the root AGENTS.md. No tasks are currently open. To add a task, create tasks/TASK-NNN.open.md following the format in the root AGENTS.md.

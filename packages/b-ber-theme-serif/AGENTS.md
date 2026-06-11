@@ -45,9 +45,3 @@ Additional standards for this package:
 - All variable declarations must use `!default` to remain overridable
 - Build-target conditional logic must use the `$build` variable (`epub`, `reader`, `mobi`, `web`)
 - Do not add compiled CSS files (`application.css`) to version control
-
-## Task System
-
-Tasks for this package are tracked in tasks/ using the same PRD format as the
-root AGENTS.md. No tasks are currently open. To add a task, create
-tasks/TASK-NNN.open.md following the format in the root AGENTS.md.

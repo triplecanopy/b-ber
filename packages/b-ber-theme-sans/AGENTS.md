@@ -28,9 +28,3 @@ Additional standards for this package:
 - All variable declarations must use `!default` to remain overridable by project stylesheets
 - Build-target conditional logic must use the `$build` variable (`epub`, `reader`, `mobi`, `web`)
 - `_overrides.scss` is the correct place for element-level differences from the serif base
-
-## Task System
-
-Tasks for this package are tracked in tasks/ using the same PRD format as the
-root AGENTS.md. No tasks are currently open. To add a task, create
-tasks/TASK-NNN.open.md following the format in the root AGENTS.md.

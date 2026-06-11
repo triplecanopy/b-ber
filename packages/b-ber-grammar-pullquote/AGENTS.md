@@ -25,7 +25,3 @@ Additional standards for this package:
 - All transforms are synchronous
 - `pullquoteIndices` is module-level state; this is intentional but means the module is not re-entrant — do not introduce concurrent rendering
 - Does not use `createRenderer`; validates open/close itself to support the citation-at-close pattern
-
-## Task System
-
-Tasks for this package are tracked in tasks/ using the same PRD format as the root AGENTS.md. No tasks are currently open. To add a task, create tasks/TASK-NNN.open.md following the format in the root AGENTS.md.

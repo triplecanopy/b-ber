@@ -40,9 +40,3 @@ Additional standards for this package:
 - `Config` constructor returns a plain object (via `defaultsDeep`) rather than a class instance; treat the result as a POJO.
 - All file system operations use `fs-extra` rather than the native `fs` module.
 - YAML files are loaded via `YamlAdaptor`, which wraps `js-yaml` and preserves comments on write via `yawn-yaml`.
-
-## Task System
-
-Tasks for this package are tracked in tasks/ using the same PRD format as the
-root AGENTS.md. No tasks are currently open. To add a task, create
-tasks/TASK-NNN.open.md following the format in the root AGENTS.md.

@@ -25,9 +25,3 @@ Additional standards for this package:
 - The plugin follows the markdown-it-container 2.0.0 API pattern (adapted, not a direct dependency)
 - `validateOpen` and `render` callbacks are injected by the calling directive handler; the plugin itself does not define them
 - No class components; plugin is a plain function export
-
-## Task System
-
-Tasks for this package are tracked in tasks/ using the same PRD format as the
-root AGENTS.md. No tasks are currently open. To add a task, create
-tasks/TASK-NNN.open.md following the format in the root AGENTS.md.

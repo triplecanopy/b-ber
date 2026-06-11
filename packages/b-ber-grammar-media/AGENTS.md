@@ -25,7 +25,3 @@ Additional standards for this package:
 
 - The line scanner uses character codes and index arithmetic, not split/join — maintain this for correctness with the delta tracking
 - No HTML is emitted; this package only mutates the Markdown source string
-
-## Task System
-
-Tasks for this package are tracked in tasks/ using the same PRD format as the root AGENTS.md. No tasks are currently open. To add a task, create tasks/TASK-NNN.open.md following the format in the root AGENTS.md.

@@ -39,9 +39,3 @@ Additional standards for this package:
 - All log-level functions are bound to the `Logger` instance in the constructor. They are not standalone exports.
 - `chalk` is used for colour output. The `--no-color` / `boringOutput` flag disables chalk globally for CI environments.
 - CLI flags (`--quiet`, `--verbose`, `--debug`, `--log-level=N`) are read from `process.argv` in the constructor; no separate config step is needed.
-
-## Task System
-
-Tasks for this package are tracked in tasks/ using the same PRD format as the
-root AGENTS.md. No tasks are currently open. To add a task, create
-tasks/TASK-NNN.open.md following the format in the root AGENTS.md.

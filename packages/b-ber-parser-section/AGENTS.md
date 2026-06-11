@@ -25,9 +25,3 @@ Additional standards for this package:
 - This is the simplest parser plugin; it must not accumulate logic that belongs in the calling directive handler
 - `validateOpen` and `render` callbacks are injected by the calling directive handler
 - Token tag is `section` (not `div`); keep this consistent with EPUB structural semantics
-
-## Task System
-
-Tasks for this package are tracked in tasks/ using the same PRD format as the
-root AGENTS.md. No tasks are currently open. To add a task, create
-tasks/TASK-NNN.open.md following the format in the root AGENTS.md.

@@ -27,9 +27,3 @@ Additional standards for this package:
 - This package is data-only — no runtime logic, no side effects
 - Keep `elements` and `terms` in separate files; do not merge them
 - Array entries must match the official DCMI specification identifiers exactly (camelCase for terms, lowercase for elements)
-
-## Task System
-
-Tasks for this package are tracked in tasks/ using the same PRD format as the
-root AGENTS.md. No tasks are currently open. To add a task, create
-tasks/TASK-NNN.open.md following the format in the root AGENTS.md.

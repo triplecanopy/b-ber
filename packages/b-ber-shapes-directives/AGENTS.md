@@ -25,9 +25,3 @@ Additional standards for this package:
 - This package is data-only — no runtime logic, no side effects
 - All directive and attribute additions must be reflected here before being used in parser or renderer packages
 - Use `Set` for all collections; do not switch to arrays or objects
-
-## Task System
-
-Tasks for this package are tracked in tasks/ using the same PRD format as the
-root AGENTS.md. No tasks are currently open. To add a task, create
-tasks/TASK-NNN.open.md following the format in the root AGENTS.md.

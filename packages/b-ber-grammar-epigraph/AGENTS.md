@@ -25,7 +25,3 @@ Additional standards for this package:
 - All transforms are synchronous
 - Does not depend on `b-ber-grammar-renderer`; implements the MarkdownIt renderer callback directly
 - The `attrsRe` regex uses the `g` flag with a `while` loop — maintain this pattern when modifying attribute parsing
-
-## Task System
-
-Tasks for this package are tracked in tasks/ using the same PRD format as the root AGENTS.md. No tasks are currently open. To add a task, create tasks/TASK-NNN.open.md following the format in the root AGENTS.md.

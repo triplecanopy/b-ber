@@ -25,7 +25,3 @@ Additional standards for this package:
 
 - File system reads (`fs.existsSync`, `image-size`) happen synchronously at render time
 - Figure state registration (`state.add('figures', ...)`) must happen before emitting HTML so that page order is correct
-
-## Task System
-
-Tasks for this package are tracked in tasks/ using the same PRD format as the root AGENTS.md. No tasks are currently open. To add a task, create tasks/TASK-NNN.open.md following the format in the root AGENTS.md.

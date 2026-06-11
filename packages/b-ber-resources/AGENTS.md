@@ -31,9 +31,3 @@ Additional standards for this package:
 - `src/index.ts` is the source of truth; `dist/` is generated and must not be edited by hand
 - Only PNG and JPEG files in the package root are exposed by the asset map
 - Any new static assets must be added to the `files` array in `package.json` to be included in the published package
-
-## Task System
-
-Tasks for this package are tracked in tasks/ using the same PRD format as the
-root AGENTS.md. No tasks are currently open. To add a task, create
-tasks/TASK-NNN.open.md following the format in the root AGENTS.md.

@@ -52,9 +52,3 @@ Additional standards for this package:
 - Tasks operate on the shared `state` singleton from `b-ber-lib/State`. Do not pass state as an argument.
 - Some web-build files (`src/web/search.js`, `src/web/worker.js`, etc.) are excluded from tsdown compilation because they run in the browser; do not add ES module imports to those files.
 - The `copy.sh` script copies non-JS source assets (e.g., web worker scripts) into `dist/` during build. If you add new non-JS files, update `copy.sh`.
-
-## Task System
-
-Tasks for this package are tracked in tasks/ using the same PRD format as the
-root AGENTS.md. No tasks are currently open. To add a task, create
-tasks/TASK-NNN.open.md following the format in the root AGENTS.md.

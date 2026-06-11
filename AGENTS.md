@@ -16,8 +16,9 @@ dependency graph, and which branches are pending merge. This file (AGENTS.md)
 contains the standards and conventions; PLAN.md contains the current state.
 
 Package-specific AGENTS.md files extend this document with package-local
-details (architecture, dev commands, open tasks). Always read both this file
-and the relevant package AGENTS.md before starting work.
+details (architecture, dev commands). Always read both this file and the
+relevant package AGENTS.md before starting work. Note: tasks are **not** tracked
+per package — all tasks live in the root `tasks/` directory (see Task System).
 
 ---
 
@@ -132,22 +133,43 @@ b-ber-extended Markdown into the HTML/XML structures required for EPUB output.
 
 ## Task System
 
-Project-wide tasks are tracked in `tasks/` at the monorepo root. Package-level
-tasks are tracked in `packages/<name>/tasks/`.
+**All tasks live in `tasks/` at the monorepo root. There are no package-level
+task directories** — `packages/*/tasks/` was flattened into root on 2026-06-11
+(the nesting added no value and forced a separate, colliding ID sequence).
+
+### Features (epics)
+
+Every task belongs to exactly one **feature** — the larger body of work it
+contributes to. Record it in the task header with a `**Feature:**` field, and
+group tasks by feature in `PLAN.md`. The six features are:
+
+- **Upgrade tooling**
+- **Migrate JS→TS**
+- **Unit test coverage**
+- **E2E testing**
+- **Node.js modernization**
+- **React 19 (reader-react)**
+
+Every task created going forward must fall under one of these. If a task does
+not fit any of them, that is a signal to either reframe the task or raise a new
+feature with the team — do not leave it unclassified.
 
 ### Task ID and file naming
 
-`TASK-NNN` — zero-padded three-digit integer, assigned sequentially within
-scope (root vs. package), never reused.
+`TASK-NNN` — zero-padded three-digit integer in a single root-wide sequence,
+assigned sequentially, never reused. (Before the flatten there were separate
+per-package sequences; those were renumbered into the root sequence.)
 
 - **Open / in-progress:** `tasks/TASK-NNN.open.md`
-- **Complete:** `tasks/TASK-NNN.md` (remove `.open` suffix)
+- **Complete / closed:** `tasks/TASK-NNN.md` (remove `.open` suffix)
 
-Never delete a task file.
+Never delete a task file — except when explicitly consolidating duplicate/stub
+tasks into a single canonical task (record the consolidation in the survivor).
 
 ### Status transitions
 
-Set status to `in progress` when starting; `complete` when done. Update subtask
+Set status to `in progress` when starting; `complete` when done; `superseded`
+when another task absorbs it (add a pointer to the survivor). Update subtask
 checkboxes as work progresses — do not batch.
 
 ### Closed tasks
@@ -275,11 +297,18 @@ exceed what comfortably fits in one context window.
 
 ## GitHub Issues
 
-Every root-level task (`tasks/TASK-NNN[.open].md`) has a corresponding GitHub
-issue. **Package-level tasks (`packages/*/tasks/`) are intentionally excluded.**
+GitHub issues mirror **only the work that benefits from a public, trackable
+thread** — not every task. Create/maintain an issue for:
 
-Create an issue for every root task regardless of status. Close the issue when
-the task is marked complete. Cross-reference in both directions: `**GitHub Issue:** #NNN — <url>` in the PRD header; `**Task file:**` link in the issue body.
+- the **six feature epics**, and
+- any task that is **in progress or next-up** (the active working set).
+
+Do **not** mass-create issues for backlog stubs or already-completed tasks.
+Keep existing issue links where they exist. Close the issue when its task is
+marked complete or superseded.
+
+Cross-reference both directions when an issue exists: `**GitHub Issue:** #NNN — <url>`
+in the task header; a `**Task file:**` link in the issue body.
 
 Use the **`gh` CLI** for all issue operations. Run `/sync-task-issues` to audit
 and sync both sides — it has the full procedure, label table, and exact commands.
@@ -296,7 +325,8 @@ When starting work on a package that does not yet have an AGENTS.md:
    - Dev commands (`npm test`, `npm run build`, etc.)
    - Package-specific code standards (beyond the monorepo standards above)
    - Architecture notes (key files, major abstractions)
-   - A task system section pointing to `tasks/` within the package
+   - Do **not** add a task system section or a `tasks/` directory — all tasks
+     live in the root `tasks/` (see Task System)
 3. Create `CLAUDE.md` containing only `@AGENTS.md`
 4. Do not copy-paste the monorepo-level standards verbatim — reference this file instead
 

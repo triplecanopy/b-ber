@@ -24,7 +24,3 @@ Additional standards for this package:
 
 - All transforms are synchronous
 - Build-target branching is in the `render` function switch statement; closing HTML for reader/web builds is emitted by `b-ber-grammar-section`'s exit handler
-
-## Task System
-
-Tasks for this package are tracked in tasks/ using the same PRD format as the root AGENTS.md. No tasks are currently open. To add a task, create tasks/TASK-NNN.open.md following the format in the root AGENTS.md.

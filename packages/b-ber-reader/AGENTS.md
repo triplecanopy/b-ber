@@ -63,9 +63,3 @@ Additional standards for this package:
   any change to these aliases by actually loading `bber serve` in a browser.
 - The Express server in `server.js` is for local development only and should
   not be hardened for production use.
-
-## Task System
-
-Tasks for this package are tracked in tasks/ using the same PRD format as the
-root AGENTS.md. No tasks are currently open. To add a task, create
-tasks/TASK-NNN.open.md following the format in the root AGENTS.md.

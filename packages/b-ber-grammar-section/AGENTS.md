@@ -25,7 +25,3 @@ Additional standards for this package:
 - All transforms are synchronous
 - Special-case exit handling for `gallery` and `spread` in reader/web builds must stay in sync with the opening HTML emitted by those packages
 - The `containers` variable is built dynamically from `BLOCK_DIRECTIVES` — do not hardcode directive names here
-
-## Task System
-
-Tasks for this package are tracked in tasks/ using the same PRD format as the root AGENTS.md. No tasks are currently open. To add a task, create tasks/TASK-NNN.open.md following the format in the root AGENTS.md.

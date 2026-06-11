@@ -24,7 +24,3 @@ Additional standards for this package:
 
 - This is a MarkdownIt core rule, not a container directive — it receives and mutates the full token array
 - State side-effects (`state.add('footnotes', ...)`) are the intended output; no HTML string is returned from the plugin function itself
-
-## Task System
-
-Tasks for this package are tracked in tasks/ using the same PRD format as the root AGENTS.md. No tasks are currently open. To add a task, create tasks/TASK-NNN.open.md following the format in the root AGENTS.md.

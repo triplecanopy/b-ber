@@ -27,9 +27,3 @@ Additional standards for this package:
 - Task names in `build` and `sequences` must exactly match the task module names registered in the b-ber CLI
 - Adding a new output format requires entries in both `sequences/index.ts` and any CLI command that calls `createBuildSequence`
 - This package has no runtime side effects; keep it data-only
-
-## Task System
-
-Tasks for this package are tracked in tasks/ using the same PRD format as the
-root AGENTS.md. No tasks are currently open. To add a task, create
-tasks/TASK-NNN.open.md following the format in the root AGENTS.md.

@@ -25,9 +25,3 @@ Additional standards for this package:
 - Attribute parsing is delegated to `b-ber-grammar-attributes`; do not duplicate attribute parsing logic here
 - Media source resolution reads from `b-ber-lib/State` — the state object must be populated before the plugin runs
 - `validateOpen` and `render` callbacks are injected by the calling directive handler
-
-## Task System
-
-Tasks for this package are tracked in tasks/ using the same PRD format as the
-root AGENTS.md. No tasks are currently open. To add a task, create
-tasks/TASK-NNN.open.md following the format in the root AGENTS.md.

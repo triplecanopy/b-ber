@@ -26,9 +26,3 @@ Additional standards for this package:
 - The plugin callback pattern (second argument to `md.use`) is specific to this parser; it is not a markdown-it convention
 - `Counter` uses class field syntax (`setRef = …`, `getRef = …`)
 - The module exports using `export default` (ES module); the Counter also uses ES module `export default`
-
-## Task System
-
-Tasks for this package are tracked in tasks/ using the same PRD format as the
-root AGENTS.md. No tasks are currently open. To add a task, create
-tasks/TASK-NNN.open.md following the format in the root AGENTS.md.

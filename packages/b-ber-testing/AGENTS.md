@@ -155,9 +155,3 @@ upgrading `@playwright/test`).
 | `NO_NETWORK` | `"true"` | Skips the Vimeo test (requires outbound internet) |
 
 ---
-
-## Task System
-
-Tasks for this package are tracked in the monorepo root `tasks/` directory
-(not in a package-local `tasks/` folder) because this is a cross-cutting
-concern. See root `AGENTS.md` for the full task system conventions.

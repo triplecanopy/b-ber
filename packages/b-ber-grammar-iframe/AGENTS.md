@@ -26,7 +26,3 @@ Additional standards for this package:
 - All transforms are synchronous
 - `supported(build)` determines whether inline rendering is available; unsupported builds receive a placeholder from `b-ber-lib/utils`
 - Standard iframe HTML attributes are filtered through `htmlIframeAttributes` from `b-ber-shapes-directives`
-
-## Task System
-
-Tasks for this package are tracked in tasks/ using the same PRD format as the root AGENTS.md. No tasks are currently open. To add a task, create tasks/TASK-NNN.open.md following the format in the root AGENTS.md.

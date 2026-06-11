@@ -41,9 +41,3 @@ Additional standards for this package:
 - `{% body %}` is the placeholder convention used by the pipeline; do not change it
 - Snapshot tests must be updated (`jest --updateSnapshot`) whenever template output intentionally changes
 - Figure templates must handle all supported media types: image orientations (portrait, landscape, portrait-high, square), audio, video, iframe, vimeo
-
-## Task System
-
-Tasks for this package are tracked in tasks/ using the same PRD format as the
-root AGENTS.md. No tasks are currently open. To add a task, create
-tasks/TASK-NNN.open.md following the format in the root AGENTS.md.

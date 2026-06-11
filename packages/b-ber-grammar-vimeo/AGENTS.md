@@ -26,7 +26,3 @@ Additional standards for this package:
 - All transforms are synchronous
 - Vimeo player parameters must be validated through `vimeoAttributesTransformer` before being added to the query string; do not bypass this
 - `bBerAttributes` is used to filter b-ber-internal attributes out of the rendered HTML element class/style attributes
-
-## Task System
-
-Tasks for this package are tracked in tasks/ using the same PRD format as the root AGENTS.md. No tasks are currently open. To add a task, create tasks/TASK-NNN.open.md following the format in the root AGENTS.md.
