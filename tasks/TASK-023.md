@@ -1,9 +1,15 @@
 # TASK-023: Research Lerna replacement / upgrade options
 
-**Status:** not started
+**Status:** superseded
+**Feature:** Upgrade tooling
 **Scope:** monorepo
 **Priority:** low
 **GitHub Issue:** #483 — https://github.com/triplecanopy/b-ber/issues/483
+
+> **Superseded by [[TASK-036]]** (Upgrade Lerna and migrate off bootstrap,
+> complete) on 2026-06-11. The decision — keep Lerna, upgrade to v8, drop
+> `bootstrap` for npm workspaces — was made and executed there. Retained for
+> the research notes below.
 
 ## Description
 

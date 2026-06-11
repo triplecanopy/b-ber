@@ -5,78 +5,67 @@
 **Priority:** high
 **GitHub Issue:** #471 — https://github.com/triplecanopy/b-ber/issues/471
 
+**Feature:** Unit test coverage (epic)
+
 ## Description
 
-Test coverage across the monorepo is uneven. Before any large-scale
-refactoring — especially the JS→TS migration (TASK-002) — every package
-needs enough tests that regressions surface immediately. This is a
-high-level tracking task; per-package audit and implementation subtasks
-will be opened as children once the coverage landscape is understood.
+Test coverage across the monorepo is uneven. The goal is **≥ 75% statement
+coverage repo-wide** (raised from 60% on 2026-06-02), measured by
+`npm run test:coverage` (collection scoped to `packages/*/src`). The goal is
+not 100% everywhere — it is behavioral coverage: every meaningful code path
+that could break during a refactor must have a test that catches the breakage.
 
-The goal is not 100% line coverage everywhere. The goal is behavioral
-coverage: every meaningful code path that could break during a refactor
-must have at least one test that would catch the breakage.
+This is the **epic** for all unit-test work. The previously-separate
+per-package coverage tasks (the 26 `packages/*/tasks/TASK-001` stubs and the
+reader-react coverage task) were consolidated into the checklist below on
+2026-06-11; those files were removed.
 
-## Subtasks
+## Per-package status (regenerate with `npm run test:coverage`)
 
-- [x] Run the current test suite across all packages and capture a baseline.
-      Overall: 17.88% statements / 13.96% branches / 18.3% lines (18 May 2026).
-      4 test suites failing (all b-ber-reader-react, `window.matchMedia` mock missing).
-      Root jest config `collectCoverage: false` — run with `--coverage` to get numbers.
+Statement coverage as of 2026-06-11. Check the box when a package reaches the
+75% target. Packages already at target are checked.
 
-  | Package                           | Src stmts | State                                    |
-  | --------------------------------- | --------- | ---------------------------------------- |
-  | b-ber-grammar-attributes          | 95%       | real tests                               |
-  | b-ber-grammar-media               | 90%       | real tests                               |
-  | b-ber-grammar-\* (14 others)      | 0%        | `test.todo` stubs                        |
-  | b-ber-parser-\* (all 5)           | 0%        | `test.todo` stubs                        |
-  | b-ber-lib/src                     | 56%       | 9 new test files (2026-05-30)            |
-  | b-ber-logger/src                  | 73%       | 64 tests added (2026-05-30)              |
-  | b-ber-markdown-renderer/src       | 0%        | `test.todo` stub                         |
-  | b-ber-tasks/src (most modules)    | ~15%      | 5 new test files; pipeline steps blocked |
-  | b-ber-reader-react/src/models     | 81%       | good                                     |
-  | b-ber-reader-react/src/helpers    | 32%       | partial                                  |
-  | b-ber-reader-react/src/components | 2%        | nearly none                              |
-  | b-ber-reader-react/src/hooks      | 0%        | none                                     |
-  | b-ber-reader-react/src/reducers   | 0%        | none                                     |
-  | b-ber-validator/src               | 69%       | combinators 100%; report.ts 7%           |
-  | b-ber-templates/src               | mixed     | Toc/Xml 100%; Ncx/Opf 0%                 |
-  | b-ber-cli/src/commands            | 24%       | shape-only, no handler tests             |
-  | b-ber-reader (legacy)             | 0%        | no tests at all                          |
-  | b-ber-theme-\*                    | n/a       | SCSS only                                |
+- [x] b-ber-grammar-attributes — 99%
+- [x] b-ber-grammar-audio-video — 82%
+- [x] b-ber-grammar-dialogue — 93%
+- [x] b-ber-grammar-epigraph — 96%
+- [x] b-ber-grammar-footnotes — 100%
+- [x] b-ber-grammar-frontmatter — 100%
+- [x] b-ber-grammar-gallery — 100%
+- [x] b-ber-grammar-iframe — 99%
+- [ ] b-ber-grammar-image — 60%
+- [x] b-ber-grammar-logo — 100%
+- [x] b-ber-grammar-media — 96%
+- [ ] b-ber-grammar-pullquote — 71%
+- [x] b-ber-grammar-renderer — 100%
+- [x] b-ber-grammar-section — 78%
+- [x] b-ber-grammar-spread — 100%
+- [x] b-ber-grammar-vimeo — 80%
+- [x] b-ber-parser-dialogue — 96%
+- [x] b-ber-parser-figure — 99%
+- [x] b-ber-parser-footnotes — 77%
+- [x] b-ber-parser-gallery — 82%
+- [x] b-ber-parser-section — 94%
+- [x] b-ber-shapes-directives — 100%
+- [x] b-ber-shapes-dublin-core — 100%
+- [ ] b-ber-shapes-sequences — 68%
+- [x] b-ber-markdown-renderer — 92%
+- [x] b-ber-templates — 96%
+- [x] b-ber-validator — 92%
+- [x] b-ber-lib — 76%
+- [x] b-ber-logger — 77%
+- [ ] b-ber-cli — 54% (see TASK-050 for handler tests)
+- [ ] b-ber-tasks — 13% (realistic ceiling ~25%: pipeline steps need a full
+      project + Calibre/wkhtmltopdf; tracked as an accepted exception)
+- [ ] b-ber-reader-react — 33% (largest gap: components/hooks/reducers)
+- [ ] b-ber-resources — 0% (mostly static asset paths; assess if worth testing)
+- [ ] b-ber-reader (legacy) — 0% (legacy non-React reader; likely excluded)
 
-- [x] Rank packages by refactoring risk × coverage gap — see table above.
-- [x] Open per-package implementation tasks:
-  - `b-ber-lib`: packages/b-ber-lib/tasks/TASK-001.open.md
-  - `b-ber-tasks`: packages/b-ber-tasks/tasks/TASK-001.open.md
-  - `b-ber-reader-react`: packages/b-ber-reader-react/tasks/TASK-018.open.md
-  - `b-ber-logger`: packages/b-ber-logger/tasks/TASK-001.open.md
-  - `b-ber-markdown-renderer`: packages/b-ber-markdown-renderer/tasks/TASK-001.open.md
-  - `b-ber-cli`: packages/b-ber-cli/tasks/TASK-001.open.md
-  - `b-ber-templates`: packages/b-ber-templates/tasks/TASK-001.open.md
-  - `b-ber-validator`: packages/b-ber-validator/tasks/TASK-001.open.md
-  - `b-ber-grammar-audio-video`: packages/b-ber-grammar-audio-video/tasks/TASK-001.open.md
-  - `b-ber-grammar-dialogue`: packages/b-ber-grammar-dialogue/tasks/TASK-001.open.md
-  - `b-ber-grammar-epigraph`: packages/b-ber-grammar-epigraph/tasks/TASK-001.open.md
-  - `b-ber-grammar-footnotes`: packages/b-ber-grammar-footnotes/tasks/TASK-001.open.md
-  - `b-ber-grammar-frontmatter`: packages/b-ber-grammar-frontmatter/tasks/TASK-001.open.md
-  - `b-ber-grammar-gallery`: packages/b-ber-grammar-gallery/tasks/TASK-001.open.md
-  - `b-ber-grammar-iframe`: packages/b-ber-grammar-iframe/tasks/TASK-001.open.md
-  - `b-ber-grammar-image`: packages/b-ber-grammar-image/tasks/TASK-001.open.md
-  - `b-ber-grammar-logo`: packages/b-ber-grammar-logo/tasks/TASK-001.open.md
-  - `b-ber-grammar-pullquote`: packages/b-ber-grammar-pullquote/tasks/TASK-001.open.md
-  - `b-ber-grammar-renderer`: packages/b-ber-grammar-renderer/tasks/TASK-001.open.md
-  - `b-ber-grammar-section`: packages/b-ber-grammar-section/tasks/TASK-001.open.md
-  - `b-ber-grammar-spread`: packages/b-ber-grammar-spread/tasks/TASK-001.open.md
-  - `b-ber-grammar-vimeo`: packages/b-ber-grammar-vimeo/tasks/TASK-001.open.md
-  - `b-ber-parser-dialogue`: packages/b-ber-parser-dialogue/tasks/TASK-001.open.md
-  - `b-ber-parser-figure`: packages/b-ber-parser-figure/tasks/TASK-001.open.md
-  - `b-ber-parser-footnotes`: packages/b-ber-parser-footnotes/tasks/TASK-001.open.md
-  - `b-ber-parser-gallery`: packages/b-ber-parser-gallery/tasks/TASK-001.open.md
-  - `b-ber-parser-section`: packages/b-ber-parser-section/tasks/TASK-001.open.md
-- [ ] Once per-package tasks are complete, re-run coverage baseline and
-      confirm overall statement coverage ≥ 75% before closing this task.
-      (Target raised from 60% to 75% on 2026-06-02.)
+- [ ] Re-run `npm run test:coverage` and confirm overall statement coverage
+      ≥ 75% before closing this epic.
+
+Related leaf tasks: [[TASK-050]] (CLI handler tests), [[TASK-051]] (SCSS/theme
+tests). The former reader-react coverage task was merged into the checklist above.
 
 ## Notes
 

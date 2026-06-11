@@ -1,9 +1,14 @@
 # TASK-032: Convert b-ber-reader-react to TypeScript (Stage 4)
 
 **Status:** not started
+**Feature:** Migrate JS→TS
 **Scope:** b-ber-reader-react
 **Priority:** low
 **GitHub Issue:** #487 — https://github.com/triplecanopy/b-ber/issues/487
+
+> Absorbs the former reader-react TS task ([[TASK-072]], now superseded), which
+> documents a bottom-up migration order (leaf modules → HOCs → orchestrators)
+> worth following here.
 
 ## Description
 
