@@ -25,7 +25,6 @@ module.exports = {
     '!**/*.setup.{ts,js}**',
     '!**/*.d.ts**',
     '!**/jest-transform-upward.js',
-    '!**/b-ber-markdown-renderer/src/highlightjs/**',
     '!**/b-ber-reader-react/dev/**',
   ],
   coveragePathIgnorePatterns: [
