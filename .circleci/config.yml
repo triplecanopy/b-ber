@@ -55,24 +55,33 @@ jobs:
           command: |
             npm run check
             npx jest --collectCoverage=true --maxWorkers=2
+      - run:
+          name: Download Codecov CLI
+          # Pre-download the CLI ourselves and hand it to the orb via the
+          # `binary` param. The orb's "(Codecov) Validate CLI" step imports
+          # Codecov's PGP key from keybase.io to verify the CLI binary's
+          # signature; that fetch has been returning empty/non-PGP data
+          # ("no valid OpenPGP data found"), failing the step and turning the
+          # whole `build` job red even though tests passed.
+          #
+          # `skip_validation: true` (tried first, see git history) does NOT
+          # fix this: CircleCI renders the boolean parameter into
+          # CODECOV_SKIP_VALIDATION=1, but validate.sh only bypasses when the
+          # var is the literal string "true" -- a bug in
+          # codecov/codecov-circleci-orb. The `binary` param's check
+          # (`-n "$CODECOV_BINARY"`) is a plain non-empty-string test and
+          # isn't affected, and also short-circuits the orb's own download
+          # step, so the CLI is never re-fetched/validated. TASK-092.
+          command: |
+            curl -Os --retry 5 --retry-delay 2 https://cli.codecov.io/latest/linux/codecov
+            chmod +x codecov
       - codecov/upload:
           # v5 renamed `file` -> `files` (plural). Disable the CLI's coverage
           # auto-search so only the root merged lcov is uploaded, not stale
           # nested packages/*/coverage reports.
           files: coverage/lcov.info
           disable_search: true
-          # The orb's "(Codecov) Validate CLI" step imports Codecov's PGP key
-          # from keybase.io to verify the CLI binary's signature. That fetch
-          # has been returning empty/non-PGP data ("no valid OpenPGP data
-          # found") from CircleCI's network, failing the step and turning the
-          # whole `build` job red even though tests passed. skip_validation
-          # bypasses the gpg import/verify entirely (the orb still chmods +x
-          # and runs the CLI normally) -- see codecov/codecov-circleci-orb
-          # src/dist/validate.sh. fail_on_error is the orb's default (false),
-          # so a coverage-upload failure (as opposed to the CLI-validation
-          # step) is already non-fatal to this job; set explicitly here for
-          # clarity/documentation. TASK-092.
-          skip_validation: true
+          binary: ./codecov
           fail_on_error: false
       # Smoke test removed: the pre-existing deep import
       # `require('@canopycanopycanopy/b-ber-lib/State')` fails when running
