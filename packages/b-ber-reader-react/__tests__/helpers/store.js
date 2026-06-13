@@ -17,8 +17,11 @@ export function createTestStore(overrides = {}) {
   const { readerSettings: readerSettingsOverride, ...rest } = overrides
 
   const initialState = {
+    // mergeDeep mutates its first argument in place, so clone
+    // initialReaderSettings to avoid leaking overrides from one test's store
+    // into the shared module-level initial state used by other tests.
     readerSettings: mergeDeep(
-      initialReaderSettings,
+      JSON.parse(JSON.stringify(initialReaderSettings)),
       readerSettingsOverride || {}
     ),
     ...rest,
