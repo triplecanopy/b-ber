@@ -71,12 +71,13 @@ No individual tasks exist yet. Open them before starting this stage.
 - [ ] Open tasks for: `b-ber-tasks`, `b-ber-cli`
 - [ ] Merge `feat/ts-stage-3` → `feat/upgrades`
 
-### Stage 4 — browser package (after TASK-020 Vite migration lands)
+### Stage 4 — browser package (`feat/ts-stage-4`)
 
-- [ ] Open task for: `b-ber-reader-react`
-- [ ] **Blocked on TASK-020** (Vite migration). Do not start until Vite is in
-      place — the bundler and TS toolchain are coupled in this package.
-- [ ] Merge to `feat/upgrades`
+- [x] Open task for: `b-ber-reader-react` — **TASK-032** (Vite blocker cleared
+      by TASK-020; toolchain is already TS-ready via `@swc/jest` + Vite). In
+      progress.
+- [ ] Convert `b-ber-reader-react` (TASK-032)
+- [ ] Merge to `feat/upgrades` (this is the last package — close this epic)
 
 ### Not migrated
 
