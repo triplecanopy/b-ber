@@ -10,7 +10,6 @@
     "declaration": false,
     "declarationMap": false,
     "sourceMap": false,
-    "allowJs": true,
     "resolveJsonModule": true
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/types"],

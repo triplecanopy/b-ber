@@ -7,16 +7,23 @@ import { mergeDeep } from './helpers/utils'
 import version from './lib/version'
 import combinedReducers from './reducers'
 import { initialState as initialReaderSettings } from './reducers/reader-settings'
+import type { ReaderSettingsState } from './store/types'
 
 import './lib/polyfills'
 import 'material-icons/iconfont/filled.css'
 import './index.scss'
 
+// Props are merged into the `readerSettings` slice. The authoritative,
+// consumer-facing prop contract (the `bookURL | manifestURL` requirement, UI
+// overrides, etc.) is the hand-written public `index.d.ts`; this internal type
+// stays permissive because props flow straight into `mergeDeep`.
+type ReaderProps = Partial<ReaderSettingsState> & Record<string, unknown>
+
 const Version = () => (
   <meta name="generator" content={`b-ber-react-reader: ${version}`} />
 )
 
-const ConnectedApp = (props = {}) => {
+const ConnectedApp = (props: ReaderProps = {}) => {
   const store = createStore(
     combinedReducers,
     { readerSettings: mergeDeep(initialReaderSettings, props) },

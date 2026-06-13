@@ -64,3 +64,8 @@ declare module 'css-tree/utils' {
 // Side-effect-only polyfills (imported for their global registration).
 declare module 'object-fit-images'
 declare module 'url-search-params-polyfill'
+
+// Style imports are handled by Vite, not tsc; declare them so side-effect
+// imports (`import './index.scss'`) typecheck.
+declare module '*.css'
+declare module '*.scss'
