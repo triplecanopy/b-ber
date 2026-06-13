@@ -139,15 +139,18 @@ TASK-060–091 on 2026-06-11. Functional-component migration, observer rewrites,
 loader/keyboard fixes, regression infra, and ESM packaging are done. The active
 work is the **spread / layout-stability cluster**.
 
-**In progress (the spread cluster — interdependent):**
+**In progress (the spread cluster — interdependent): all code merged & typed,
+unit suite green — only manual browser QA blocks close-out.** Consolidated test
+plan: [`packages/b-ber-reader-react/SPREAD-CLUSTER-QA.md`](./packages/b-ber-reader-react/SPREAD-CLUSTER-QA.md).
+Each task closes when its checklist section passes.
 
-| Task | Pri | Work |
-| ---- | --- | ---- |
-| TASK-084 | med | Consolidate page-width geometry into `Viewport.getPageWidth` (foundation for the others) |
-| TASK-082 | high | Harden Ultimate layout-stability detection |
-| TASK-081 | high | Fix stale full-bleed spread column position (verso/recto) |
-| TASK-083 | med | Re-measure `lastSpreadIndex` after layout settles |
-| TASK-085 | high | Fix infinite spinner on window resize |
+| Task | Pri | Work | Status |
+| ---- | --- | ---- | ------ |
+| TASK-084 | med | Consolidate page-width geometry into `Viewport.getPageWidth` | code done; `with-node-position` adoption folded into HOC→hooks (Step 2); pending QA |
+| TASK-082 | high | Harden Ultimate layout-stability detection | code done; pending QA |
+| TASK-081 | high | Fix stale full-bleed spread column position (verso/recto) | code done; pending QA |
+| TASK-083 | med | Re-measure `lastSpreadIndex` after layout settles | code done; pending QA |
+| TASK-085 | high | Fix infinite spinner on window resize | code done; pending QA |
 
 **Backlog (high-value first):** TASK-078 (leaf flicker), TASK-088 (blank spread
 pages), TASK-089 (deep-link to spreadIndex), TASK-086 (reset `view.loaded`),

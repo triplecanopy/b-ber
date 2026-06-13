@@ -38,16 +38,22 @@ page off → overlap / blank. (Note a fourth variant, `getFrameWidth()`, uses
 
 - `with-node-position.jsx` still uses its own `paddingLeft * 2` variant in two
   places. Migrating it requires confirming padding symmetry assumptions for
-  markers/inline nodes; deferred to avoid a behavioral change to marker
-  positioning without dedicated testing.
+  markers/inline nodes. **Decision (2026-06-13): this migration is folded into
+  the HOC→hooks migration (React 19 Step 2).** `with-node-position` is a class
+  HOC that gets rewritten as a hook there anyway, so the `getPageWidth` adoption
+  happens in that pass with its dedicated marker-positioning QA — avoiding two
+  separate touches to marker positioning. The core consolidation (this task) is
+  complete; it closes on the shared spread-cluster browser QA.
 
 ## Subtasks
 
 - [x] Add `Viewport.getPageWidth`
 - [x] Use it in `Spread.jsx` and `getTranslateX`
 - [x] `npm test` passes
-- [ ] Migrate `with-node-position.jsx` to the helper (verify marker positioning
-      with the `spreads-testing-nov-2024` project and any project with markers)
+- [~] Migrate `with-node-position.jsx` to the helper — **moved to the HOC→hooks
+      migration (React 19 Step 2)**; the file is rewritten as a hook there.
+- [ ] Browser QA (shared spread-cluster checklist: page turns advance by exactly
+      one page; verify where `viewerSettings.width ≠ window.innerWidth`)
 - [ ] Commit and update `PLAN.md`; remove `.open`
 
 ## Notes
