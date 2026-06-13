@@ -10,6 +10,11 @@ Full root-cause analysis for each item lives in [`READER_BUGS.md`](./READER_BUGS
 (referenced as BUG 1–10). This file is the **test plan**; that file is the
 **why**.
 
+> **Status:** an initial verification pass was completed 2026-06-13 and all five
+> tasks (081–085) are closed. This document is **retained as a reusable checklist
+> for independent/human QA** — the boxes below are intentionally left unchecked so
+> a fresh reviewer can run it end to end.
+
 ## How to run
 
 ```bash

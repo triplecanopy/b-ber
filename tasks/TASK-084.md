@@ -1,6 +1,6 @@
 # TASK-084: Consolidate page-width geometry into Viewport.getPageWidth
 
-**Status:** in progress
+**Status:** complete
 **Feature:** React 19 (reader-react)
 **Phase:** Bug Fixes
 **Priority:** medium
@@ -52,9 +52,10 @@ page off → overlap / blank. (Note a fourth variant, `getFrameWidth()`, uses
 - [x] `npm test` passes
 - [~] Migrate `with-node-position.jsx` to the helper — **moved to the HOC→hooks
       migration (React 19 Step 2)**; the file is rewritten as a hook there.
-- [ ] Browser QA (shared spread-cluster checklist: page turns advance by exactly
+- [x] Browser QA (shared spread-cluster checklist: page turns advance by exactly
       one page; verify where `viewerSettings.width ≠ window.innerWidth`)
-- [ ] Commit and update `PLAN.md`; remove `.open`
+      (QA verified by user 2026-06-13; see SPREAD-CLUSTER-QA.md)
+- [x] Commit and update `PLAN.md`; remove `.open`
 
 ## Notes
 

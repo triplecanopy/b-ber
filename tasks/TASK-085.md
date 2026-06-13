@@ -1,6 +1,6 @@
 # TASK-085: Fix infinite spinner on window resize
 
-**Status:** in progress
+**Status:** complete
 **Feature:** React 19 (reader-react)
 **Phase:** Bug Fixes
 **Priority:** high
@@ -43,9 +43,10 @@ now-redundant commented-out scaffolding in the `setState` callback.
 - [x] Re-arm `Ultimate`'s watch on resize via `unload()` in `handleResizeStart`
 - [x] Confirm chapter navigation is unaffected
 - [x] `npm test` passes
-- [ ] Verify in browser: resize repeatedly (and via fullscreen toggle); spinner
+- [x] Verify in browser: resize repeatedly (and via fullscreen toggle); spinner
       hides and the reader returns to the correct spread each time
-- [ ] Commit and update `PLAN.md`; remove `.open`
+      (QA verified by user 2026-06-13; see SPREAD-CLUSTER-QA.md)
+- [x] Commit and update `PLAN.md`; remove `.open`
 
 ## Notes
 

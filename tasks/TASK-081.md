@@ -1,6 +1,6 @@
 # TASK-081: Fix stale full-bleed spread column position (verso/recto)
 
-**Status:** in progress
+**Status:** complete
 **Feature:** React 19 (reader-react)
 **Phase:** Bug Fixes
 **Priority:** high
@@ -68,10 +68,11 @@ columns layout had settled — and the stale reading was never corrected.
 - [x] Derive `verso`/`multiplier` inline; remove redundant state (BUG 7)
 - [x] Use numeric default in `spread-context.js` (BUG 8)
 - [x] `npm test` passes (18 suites)
-- [ ] Verify in browser: `spreads-testing-nov-2024` and a text-heavy project,
+- [x] Verify in browser: `spreads-testing-nov-2024` and a text-heavy project,
       especially at an odd window width (~1425px, fractional `paddingLeft`)
-- [ ] Verify across Chrome, Firefox, Safari
-- [ ] Commit and update `PLAN.md`; remove `.open`
+- [x] Verify across Chrome, Firefox, Safari (QA verified by user 2026-06-13;
+      see SPREAD-CLUSTER-QA.md)
+- [x] Commit and update `PLAN.md`; remove `.open`
 
 ## Notes
 

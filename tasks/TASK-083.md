@@ -1,6 +1,6 @@
 # TASK-083: Re-measure lastSpreadIndex after the layout settles
 
-**Status:** in progress
+**Status:** complete
 **Feature:** React 19 (reader-react)
 **Phase:** Bug Fixes
 **Priority:** medium
@@ -39,10 +39,11 @@ See `READER_BUGS.md` (BUG 3, and BUG 6 for the Firefox/Edge facet).
 - [x] Re-measure content dimensions on the layout-settled signal
 - [x] Confirm the Firefox/Edge path is also re-measured
 - [x] `npm test` passes
-- [ ] Verify in browser: navigate to the last spread of multi-spread chapters
+- [x] Verify in browser: navigate to the last spread of multi-spread chapters
       (no blank trailing page, last spread reachable). Good projects: the
-      `i29-*` / `i30-*` issue projects
-- [ ] Commit and update `PLAN.md`; remove `.open`
+      `i29-*` / `i30-*` issue projects (QA verified by user 2026-06-13;
+      see SPREAD-CLUSTER-QA.md)
+- [x] Commit and update `PLAN.md`; remove `.open`
 
 ## Notes
 

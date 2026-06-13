@@ -1,6 +1,6 @@
 # TASK-082: Harden Ultimate layout-stability detection
 
-**Status:** in progress
+**Status:** complete
 **Feature:** React 19 (reader-react)
 **Phase:** Bug Fixes
 **Priority:** high
@@ -41,8 +41,9 @@ then read while the layout was still moving.
 - [x] Re-arm on `document.fonts.ready`
 - [x] Raise `MAX_WAIT_MS`
 - [x] Update `Ultimate.smoke.test.jsx` for the new criterion; `npm test` passes
-- [ ] Verify in browser that the spinner hides at the right time on chapter load
-- [ ] Commit and update `PLAN.md`; remove `.open`
+- [x] Verify in browser that the spinner hides at the right time on chapter load
+      (QA verified by user 2026-06-13; see SPREAD-CLUSTER-QA.md)
+- [x] Commit and update `PLAN.md`; remove `.open`
 
 ## Notes
 
