@@ -34,7 +34,7 @@ module.exports = {
     '<rootDir>/scripts/',
   ],
   coverageReporters: ['html', 'lcov', 'json'],
-  moduleFileExtensions: ['ts', 'js', 'jsx', 'json'],
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
   moduleNameMapper: {
     // b-ber-lib subpath imports (order matters: specific before catch-all)
     '^@canopycanopycanopy/b-ber-lib/Config$':

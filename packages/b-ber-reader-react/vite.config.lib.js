@@ -18,7 +18,7 @@ export default defineConfig({
   build: {
     target: 'es2022',
     lib: {
-      entry: 'src/index.jsx',
+      entry: 'src/index.tsx',
       name: 'BberReader',
       // ES output (not UMD): this lib is re-bundled by b-ber-reader's own Vite
       // build. UMD's hand-rolled interop binds the external react as a raw

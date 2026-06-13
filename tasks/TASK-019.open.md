@@ -74,10 +74,12 @@ No individual tasks exist yet. Open them before starting this stage.
 ### Stage 4 — browser package (`feat/ts-stage-4`)
 
 - [x] Open task for: `b-ber-reader-react` — **TASK-032** (Vite blocker cleared
-      by TASK-020; toolchain is already TS-ready via `@swc/jest` + Vite). In
-      progress.
-- [ ] Convert `b-ber-reader-react` (TASK-032)
-- [ ] Merge to `feat/upgrades` (this is the last package — close this epic)
+      by TASK-020; toolchain is already TS-ready via `@swc/jest` + Vite).
+- [x] Convert `b-ber-reader-react` (TASK-032) — all `src/` is now strict TS;
+      `tsc --noEmit` clean, Vite build + suite (458 pass) green. On
+      `feat/ts-stage-4`, pending merge.
+- [ ] Merge `feat/ts-stage-4` → `feat/upgrades` (this is the last package —
+      close this epic once merged)
 
 ### Not migrated
 
