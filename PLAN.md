@@ -35,7 +35,7 @@ Every task belongs to exactly one; every new task must too.
 | ✅ Unit test coverage | 2 | 1 | 2 | Epic in progress; most packages at target, a few laggards |
 | 🧪 E2E testing | 5 | 1 | 2 | Pipeline green in CI; skill + iframe fix remain |
 | ⚙️ Node.js modernization | 1 | 0 | 2 | Barely started; epic + logger refactor pending |
-| ⚛️ React 19 (reader-react) | 17 | 1 | 20 | Migration tasks scoped (TASK-094–100); conventions doc in review. **class→functional → HOC→hooks → state migration** |
+| ⚛️ React 19 (reader-react) | 18 | 0 | 19 | TASK-095 (leaf components) complete on `feat/react19-step1-leaves`. **class→functional → HOC→hooks → state migration** |
 
 _"Active" = in progress. "Backlog" = not started (excludes superseded)._
 
@@ -183,7 +183,7 @@ turns every HOC→hook step into a mechanical swap with no half-wired state.
 | Task | Step | Converts | Model |
 | ---- | ---- | -------- | ----- |
 | **TASK-094** | 0 | Conventions doc (foundation) | Opus |
-| TASK-095 | 1 | Leaf components: `Footnote`, `Marker`, `SidebarSettings` | Sonnet |
+| TASK-095 ✅ | 1 | Leaf components: `Footnote`, `Marker`, `SidebarSettings` | Sonnet |
 | TASK-096 | 1 | Media subtree: `Media`, `Vimeo`, `Iframe`, `MediaControls`, `MediaButtonVolume` | Sonnet (Media/Vimeo tricky) |
 | TASK-097 | 1 | `App` (async `UNSAFE_` + `connect`) | Opus |
 | TASK-098 | 2 | Measurement HOCs→hooks: `with-dimensions`, `with-navigation-actions` | Sonnet |
@@ -204,7 +204,8 @@ TASK-076 (SCSS→CSS Modules), plus general organization cleanup.
 
 1. **TASK-094** (conventions — user review pending) + **TASK-068** (housekeeping):
    establish the patterns and clear dead code before refactoring.
-2. **Step 1** components: TASK-095 (leaves) → TASK-096 (Media) → TASK-097 (App).
+2. **Step 1** components: TASK-095 ✅ (leaves, done on `feat/react19-step1-leaves`)
+   → TASK-096 (Media) → TASK-097 (App).
 3. **Step 2** HOCs→hooks: TASK-098 (measurement) → TASK-099 (position) →
    TASK-100 (selfRef removal, highest-risk — do last).
 4. **TASK-073** research decision → **Step 4** state migration.
@@ -278,13 +279,12 @@ sequencing work:
 
 | Priority | Task | Action | Why now |
 | -------- | ---- | ------ | ------- |
-| 1 | TASK-094 | User reviews the migration conventions doc | Gates the whole Step 1+2 wave; every task follows it |
-| 2 | TASK-095 → 100 | Run the class→functional / HOC→hooks waves (per the Model field) | Tasks scoped & ready; conventions + tests guard behavior |
-| 3 | TASK-073 | Run the state-management research (built-in over Redux) | Now unblocked by TS; output gates Step 4 |
-| 4 | TASK-050 | CLI handler tests | Unblocks TASK-046 and lifts cli coverage toward 75% |
-| 5 | TASK-004 | Push coverage laggards to 75% | Closes the coverage epic; cli + b-ber-tasks are the long poles |
-| 6 | TASK-055 | Create the testing skill | Newly unblocked by the green E2E pipeline |
-| 7 | TASK-052 | Prototype `npm pack` publish-smoke test | Guards against the canary-only bug class |
+| 1 | TASK-096 → 100 | Continue the class→functional / HOC→hooks waves (per the Model field) | TASK-095 done; conventions + tests guard behavior |
+| 2 | TASK-073 | Run the state-management research (built-in over Redux) | Now unblocked by TS; output gates Step 4 |
+| 3 | TASK-050 | CLI handler tests | Unblocks TASK-046 and lifts cli coverage toward 75% |
+| 4 | TASK-004 | Push coverage laggards to 75% | Closes the coverage epic; cli + b-ber-tasks are the long poles |
+| 5 | TASK-055 | Create the testing skill | Newly unblocked by the green E2E pipeline |
+| 6 | TASK-052 | Prototype `npm pack` publish-smoke test | Guards against the canary-only bug class |
 
 ---
 
@@ -304,6 +304,7 @@ work happens on feature branches** (e.g. `feat/ts-stage-4`, per-package
 | `feat/ts-stage-1` → `-3` | TASK-008–012, 024–031 | merged ✓ |
 | `feat/e2e`, `feat/e2e-ci` | TASK-039–044 | folded into `feat/upgrades` ✓ |
 | `feat/ts-stage-4` | TASK-032 (reader-react TS) | merged ✓ (`ceb3d636`) |
+| `feat/react19-step1-leaves` | TASK-095 (leaf components) | done, pending merge |
 | `feat/node-modernization-*` | TASK-013 per-package slices | not started |
 
 **Before merging `feat/upgrades` → `main`:** `npm test` green from root; no

@@ -1,6 +1,6 @@
 # TASK-095: Convert leaf class components to functional
 
-**Status:** not started
+**Status:** complete
 **Feature:** React 19 (reader-react)
 **Scope:** b-ber-reader-react
 **Phase:** Modernization — Step 1 (class→functional)
@@ -29,12 +29,12 @@ Targets:
 
 ## Subtasks
 
-- [ ] Convert `Footnote` → functional; `npm test` + snapshots + typecheck green
-- [ ] Convert `Marker` → functional (keep `withNodePosition` wrapper); verify
-- [ ] Convert `SidebarSettings` → functional (`UNSAFE_componentWillReceiveProps`
+- [x] Convert `Footnote` → functional; `npm test` + snapshots + typecheck green
+- [x] Convert `Marker` → functional (keep `withNodePosition` wrapper); verify
+- [x] Convert `SidebarSettings` → functional (`UNSAFE_componentWillReceiveProps`
       → `useEffect`); verify
-- [ ] Confirm 9 snapshots unchanged and 458 tests still pass after each
-- [ ] One commit per component; update `PLAN.md`; remove `.open`
+- [x] Confirm 9 snapshots unchanged and 458 tests still pass after each
+- [x] One commit per component; update `PLAN.md`; remove `.open`
 
 ## Notes
 
@@ -43,3 +43,23 @@ Targets:
 - Marker's position still comes from `withNodePosition` here — do not convert
   that HOC in this task.
 - Related: [[TASK-094]] (conventions), [[TASK-099]] (position HOCs → hooks).
+
+## Completion notes
+
+- `Footnote`: `useState`/`useRef` for content/visible/footnote id and the two
+  DOM refs. `componentWillUnmount`'s `document.removeEventListener('click', ...)`
+  is preserved via a `useEffect` cleanup; a `boundListeners` ref tracks the
+  exact `click`/`mousemove` listener functions bound by `showFootnote` so
+  `hideFootnote`/unmount remove the same references (closures are recreated
+  each render). `connect()` wrapper unchanged.
+- `Marker`: pure mechanical conversion, no state/lifecycle. `withNodePosition`
+  and `connect()` wrappers unchanged (per conventions §3b, deferred to
+  TASK-099).
+- `SidebarSettings`: `fontSizeMin`/`Max`/`Step` were state but never changed —
+  hoisted to module-level consts. `UNSAFE_componentWillReceiveProps` →
+  `useEffect` keyed on `viewerSettings.fontSize`, using a functional
+  `setFontSize` updater (per §3c.2) to avoid a stale-state comparison.
+- All three: 71 suites / 458 tests / 9 snapshots unchanged; `tsc --noEmit`
+  clean. No browser QA needed (pure leaf components per §1.4).
+- Branch: `feat/react19-step1-leaves` (off `feat/upgrades`), one commit per
+  component.
