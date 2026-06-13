@@ -35,7 +35,7 @@ Every task belongs to exactly one; every new task must too.
 | ✅ Unit test coverage | 2 | 1 | 2 | Epic in progress; most packages at target, a few laggards |
 | 🧪 E2E testing | 5 | 1 | 2 | Pipeline green in CI; skill + iframe fix remain |
 | ⚙️ Node.js modernization | 1 | 0 | 2 | Barely started; epic + logger refactor pending |
-| ⚛️ React 19 (reader-react) | 18 | 0 | 19 | TASK-095 (leaf components) complete on `feat/react19-step1-leaves`. **class→functional → HOC→hooks → state migration** |
+| ⚛️ React 19 (reader-react) | 18 | 0 | 19 | TASK-095 (leaf components) merged into `feat/upgrades`. **class→functional → HOC→hooks → state migration** |
 
 _"Active" = in progress. "Backlog" = not started (excludes superseded)._
 
@@ -304,7 +304,7 @@ work happens on feature branches** (e.g. `feat/ts-stage-4`, per-package
 | `feat/ts-stage-1` → `-3` | TASK-008–012, 024–031 | merged ✓ |
 | `feat/e2e`, `feat/e2e-ci` | TASK-039–044 | folded into `feat/upgrades` ✓ |
 | `feat/ts-stage-4` | TASK-032 (reader-react TS) | merged ✓ (`ceb3d636`) |
-| `feat/react19-step1-leaves` | TASK-095 (leaf components) | done, pending merge |
+| `feat/react19-step1-leaves` | TASK-095 (leaf components) | merged ✓ |
 | `feat/node-modernization-*` | TASK-013 per-package slices | not started |
 
 **Before merging `feat/upgrades` → `main`:** `npm test` green from root; no
