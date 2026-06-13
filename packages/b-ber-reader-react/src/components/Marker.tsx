@@ -16,32 +16,30 @@ interface MarkerProps {
   'data-final'?: boolean
 }
 
-class Marker extends React.Component<MarkerProps> {
-  render() {
-    const { verso, recto } = this.props
+function Marker(props: MarkerProps) {
+  const { verso, recto } = props
 
-    let markerStyles = { ...this.props.style }
+  let markerStyles = { ...props.style }
 
-    const debug = false // dev
+  const debug = false // dev
 
-    const debugMarkerStyles = { backgroundColor: verso ? 'violet' : 'red' }
+  const debugMarkerStyles = { backgroundColor: verso ? 'violet' : 'red' }
 
-    if (debug) markerStyles = { ...markerStyles, ...debugMarkerStyles }
+  if (debug) markerStyles = { ...markerStyles, ...debugMarkerStyles }
 
-    return (
-      <span>
-        <span
-          data-verso={verso}
-          data-recto={recto}
-          data-index={this.props['data-index']}
-          data-final={this.props['data-final']}
-          className={this.props.className}
-          ref={this.props.elemRef}
-        />
-        <span className="bber-marker__spacer" />
-      </span>
-    )
-  }
+  return (
+    <span>
+      <span
+        data-verso={verso}
+        data-recto={recto}
+        data-index={props['data-index']}
+        data-final={props['data-final']}
+        className={props.className}
+        ref={props.elemRef}
+      />
+      <span className="bber-marker__spacer" />
+    </span>
+  )
 }
 
 export default connect(
