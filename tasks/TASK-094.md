@@ -1,6 +1,6 @@
 # TASK-094: Establish React 19 migration conventions
 
-**Status:** in progress (pending user review)
+**Status:** complete
 **Feature:** React 19 (reader-react)
 **Scope:** b-ber-reader-react
 **Phase:** Modernization — Step 0 (foundation for Steps 1–2)
@@ -43,7 +43,7 @@ It codifies:
       literal `setState`→setter translation can diverge at runtime); noted
       snapshots don't catch it; flagged TASK-096/100 as the batching-sensitive
       conversions. Confirmed React 19.1 installed; no `flushSync` in use today.
-- [ ] User confirms the §3c wording reads right; then mark complete, remove `.open`
+- [x] User confirms the §3c wording reads right (2026-06-13); marked complete
 
 ## Notes
 
