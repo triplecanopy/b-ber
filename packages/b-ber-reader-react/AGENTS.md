@@ -50,19 +50,19 @@ Chapter change:
 
 | File                                 | Purpose                                                 |
 | ------------------------------------ | ------------------------------------------------------- |
-| `PLAN.md`                            | Living project plan — read this first                   |
-| `tasks/`                             | Task PRDs — open tasks have `.open.md` extension        |
-| `src/index.jsx`                      | Package entry point                                     |
-| `src/components/App.jsx`                     | Redux Provider + Reader mount                           |
-| `src/components/Reader/index.jsx`            | Main orchestrator (state, navigation, loading)          |
-| `src/components/Layout.jsx`                  | CSS columns layout container                            |
-| `src/components/Ultimate.jsx`                | Layout stability sentinel (hides spinner)               |
-| `src/components/Spread.jsx`                  | Full-bleed spread image positioning                     |
-| `src/lib/with-dimensions.jsx`                | HOC: measures viewport, dispatches viewerSettings       |
-| `src/lib/with-last-spread-index.jsx`         | HOC: measures content width, dispatches lastSpreadIndex |
-| `src/components/Reader/navigation.js`        | Page and chapter navigation logic                       |
-| `src/components/Reader/loader.js`            | OPF/NCX fetch, spine parsing, book.content population   |
-| `src/components/Reader/resize.js`            | Window resize handlers                                  |
+| `../../PLAN.md`                      | Living project plan (root, organized by feature) — read first |
+| `../../tasks/`                       | Task PRDs (root) — open tasks have `.open.md` extension  |
+| `src/index.tsx`                      | Package entry point                                     |
+| `src/components/App.tsx`                     | Redux Provider + Reader mount                           |
+| `src/components/Reader/index.tsx`            | Main orchestrator (state, navigation, loading)          |
+| `src/components/Layout.tsx`                  | CSS columns layout container                            |
+| `src/components/Ultimate.tsx`                | Layout stability sentinel (hides spinner)               |
+| `src/components/Spread.tsx`                  | Full-bleed spread image positioning                     |
+| `src/lib/with-dimensions.tsx`                | HOC: measures viewport, dispatches viewerSettings       |
+| `src/lib/with-last-spread-index.tsx`         | HOC: measures content width, dispatches lastSpreadIndex |
+| `src/components/Reader/navigation.ts`        | Page and chapter navigation logic                       |
+| `src/components/Reader/loader.ts`            | OPF/NCX fetch, spine parsing, book.content population   |
+| `src/components/Reader/resize.ts`            | Window resize handlers                                  |
 
 ---
 
@@ -70,12 +70,13 @@ Chapter change:
 
 Before starting any task, read:
 
-1. `PLAN.md` — current project state, phase progress, open task list
-2. `tasks/TASK-NNN.md` (or `tasks/TASK-NNN.open.md`) — the specific task PRD
+1. `../../PLAN.md` — current project state (root plan, organized by feature; the
+   reader-react work lives under the "⚛️ React 19 (reader-react)" section)
+2. `../../tasks/TASK-NNN.md` (or `.open.md`) — the specific task PRD (root `tasks/`)
 3. Any source files named in the task
 
-A model starting a new session should be able to read `AGENTS.md` + `PLAN.md`
-and understand where the project stands without reading all the task PRDs.
+A model starting a new session should be able to read `AGENTS.md` + the root
+`PLAN.md` and understand where the project stands without reading all the PRDs.
 
 ---
 
@@ -138,7 +139,8 @@ Decisions, blockers, relevant context.
 
 - Set status to `in progress` when starting; `complete` when done.
 - Update subtask checkboxes as work progresses — do not batch.
-- When complete: remove `.open` from filename, update `PLAN.md` task table.
+- When complete: remove `.open` from filename, update the root `../../PLAN.md`
+  (React 19 feature section).
 
 ---
 
@@ -146,8 +148,9 @@ Decisions, blockers, relevant context.
 
 Before marking any task complete:
 
-1. `npm test` passes — runs all unit tests AND smoke tests together (18 suites, ~60 tests)
-2. `PLAN.md` is updated (task table, phase checklist)
+1. `npm test` passes — runs all unit tests AND smoke tests together (71 suites,
+   458 tests / 9 snapshots as of the TS conversion); snapshots must not change
+2. Root `../../PLAN.md` is updated (React 19 feature section)
 3. Changes committed with a conventional commit message (see Commits section)
 4. If the task changes how the app is configured, run, or structured: update `README.md`
 
@@ -282,11 +285,11 @@ Do not spawn subagents for single-file changes or targeted bug fixes.
 
 After completing any task that changes how the app is configured, run, or structured:
 
-- **`PLAN.md`** — update the task table and phase checklist
+- **Root `../../PLAN.md`** — update the React 19 feature section
 - **`README.md`** — update if setup steps, CLI commands, or major features changed
-- **Task PRD** — mark complete, remove `.open` from filename
+- **Task PRD** (root `../../tasks/`) — mark complete, remove `.open` from filename
 
-Do not consider a task complete until `PLAN.md` is updated.
+Do not consider a task complete until the root `PLAN.md` is updated.
 
 ---
 
@@ -296,7 +299,8 @@ This package (`b-ber-reader-react`) is one of several packages in the `b-ber`
 monorepo. The agent standards in this file are designed for portability. When
 adapting to another package:
 
-- Keep the task system (tasks/ + PLAN.md) identical
+- Keep the task system identical — all tasks live in the **root** `tasks/` and
+  the **root** `PLAN.md` (per-package `tasks/`/`PLAN.md` were flattened away)
 - Keep the quality gates identical
 - Keep the commit conventions identical (update the scope token, e.g. `reader-react` → `lib-epub`)
 - Update the dev commands section

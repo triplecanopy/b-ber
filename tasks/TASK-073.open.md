@@ -1,23 +1,50 @@
-# TASK-073: Redux modernization — Redux Toolkit or Context API
+# TASK-073: Research — replace Redux with built-in React state management
 
 **Status:** not started
 **Feature:** React 19 (reader-react)
-**Phase:** Modernization — Phase 5
-**Priority:** low
+**Phase:** Modernization — state management (Step 3 of the React 19 plan)
+**Priority:** medium
+
+> **This is a research + decision task, not the migration itself.** Its output is
+> a written recommendation and a concrete migration plan; the actual state-layer
+> migration is a separate execution task (Step 4) opened from the findings here.
+
+## Decision direction (set by user, 2026-06-13)
+
+The strong lean is **away from Redux entirely** toward built-in React state, for
+two reasons the user stated explicitly:
+
+1. This app does not appear to need the overhead of Redux Toolkit — the state is
+   modest and could be managed more efficiently with built-in tools
+   (`useReducer` + `Context`, `useSyncExternalStore`, or a tiny custom store).
+2. Reduce dependency on third-party libraries wherever possible (drops
+   `react-redux`, `redux`, `redux-thunk`).
+
+So **Redux Toolkit is the fallback, not the default.** The research should
+seriously test whether built-in tools cover every current slice and access
+pattern, and only fall back to RTK if a concrete blocker is found.
 
 ## Description
 
-Modernize state management. The current setup uses plain Redux + `redux-thunk` with
-manually written action creators and reducers. Two paths are available:
+The current setup uses plain Redux + `redux-thunk` with manually written action
+creators and reducers, read via `react-redux` `connect()` HOCs. This task
+evaluates how to retire that in favor of built-in React state, and produces the
+migration plan.
 
-**Option A — Redux Toolkit:** Migrate to `createSlice` + `createAsyncThunk`. This is
-a drop-in modernization that preserves the Redux architecture while eliminating
-boilerplate and providing built-in Immer immutability.
+**Candidate approaches to evaluate (in preference order):**
 
-**Option B — Context + useReducer:** Replace Redux entirely for simpler state slices.
-Some state (viewer settings, UI flags) is simple enough to live in React context.
-Complex cross-component state (spine, current chapter, navigation) may still benefit
-from a store.
+- **A — `useReducer` + `Context` (split by concern).** Co-locate each slice's
+  reducer with a context provider; consume via hooks. Most idiomatic, zero deps.
+  Risk: context re-render fan-out for hot slices (`view`, `viewerSettings`).
+- **B — `useSyncExternalStore` over a tiny hand-rolled store.** Keeps a single
+  external store (selector subscriptions, no provider re-render fan-out) without
+  any library. Good if context fan-out proves to be a problem.
+- **C — Redux Toolkit (`createSlice`).** Fallback only — keeps a third-party dep;
+  justify with a concrete blocker if recommended.
+
+**Deliverable:** a recommendation (A/B/C or hybrid), a slice-by-slice migration
+plan, a re-render/perf assessment for the hot slices, and the handling plan for
+the `book.content` global and `redux-thunk` async flows (loader/navigation).
 
 ## Current Redux slices
 
@@ -30,24 +57,44 @@ from a store.
 | `viewerSettings` | Computed layout dimensions (padding, column gap, etc.) |
 | `markers`        | User bookmarks                                         |
 
-## Subtasks
+## Subtasks (research)
 
-- [ ] Decide on Option A vs Option B (discuss with user before starting)
-- [ ] Migrate `userInterface` slice (simplest, pure UI flags)
-- [ ] Migrate `viewerSettings` slice
-- [ ] Migrate `view` slice
-- [ ] Migrate `readerLocation` slice
-- [ ] Migrate `readerSettings` slice
-- [ ] Migrate `markers` slice
-- [ ] Move `spine`, `currentSpineItem`, `currentSpineItemIndex` out of Reader local state and into store (IMPROVEMENT_PLAN Phase 5)
-- [ ] Remove `react-redux` `connect()` HOCs; replace with `useSelector` / `useDispatch`
-- [ ] Run `npm test`
-- [ ] Update `PLAN.md`
+- [ ] Inventory every read/write of each slice (which components, via `connect`
+      vs hooks) and identify the hot slices (`view`, `viewerSettings`) for the
+      re-render assessment
+- [ ] Map each `redux-thunk` async flow (loader fetch, navigation) to its built-in
+      equivalent (effect + reducer dispatch, or async fn writing to the store)
+- [ ] Prototype the riskiest slice (`view` or `viewerSettings`) under approach A
+      and, if context fan-out is a concern, under approach B; measure re-renders
+- [ ] Decide A / B / C (or hybrid) and write the recommendation
+- [ ] Produce the slice-by-slice migration plan + the `book.content` global plan
+- [ ] Open the execution task (Step 4) from the recommendation; link it here
+
+## Migration sequencing (for the execution task, not this one)
+
+Behavior-preserving, one slice at a time, simplest first:
+`userInterface` → `viewerSettings` → `view` → `readerLocation` → `readerSettings`
+→ `markers`; then move `spine`/`currentSpineItem`/`currentSpineItemIndex` out of
+`Reader` local state; then remove the `connect()` HOCs; `npm test` green +
+snapshots unchanged at each step.
+
+## Current Redux slices
+
+| Slice            | Description                                            |
+| ---------------- | ------------------------------------------------------ |
+| `readerSettings` | Book URL, manifest URL, static config                  |
+| `readerLocation` | Current slug, search params, hash                      |
+| `userInterface`  | Spinner, sidebar, marker visibility, handleEvents      |
+| `view`           | Loaded state, lastSpreadIndex, spreadIndex             |
+| `viewerSettings` | Computed layout dimensions (padding, column gap, etc.) |
+| `markers`        | User bookmarks                                         |
 
 ## Notes
 
-- Do not start this task until TASK-072 (TypeScript) is at least partially complete.
-  Typed slices are significantly easier to migrate correctly.
-- The `book.content` module-level global (IMPROVEMENT_PLAN C4) should be moved into
-  Redux state as part of this migration — it is the last major bypass of the React
-  rendering pipeline.
+- **Unblocked:** the TS conversion (TASK-032) is complete, so the slices are
+  already typed — the original "wait for TypeScript" prerequisite is satisfied.
+- The `book.content` module-level global is the last major bypass of the React
+  rendering pipeline; folding it into the new state layer is part of the plan.
+- Best done **after** the class→functional + HOC→hooks waves (Steps 1–2): with
+  components already functional, swapping `connect`/`mapStateToProps` for hooks
+  (or a built-in store) is far smaller and lower-risk.

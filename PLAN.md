@@ -35,7 +35,7 @@ Every task belongs to exactly one; every new task must too.
 | ✅ Unit test coverage | 2 | 1 | 2 | Epic in progress; most packages at target, a few laggards |
 | 🧪 E2E testing | 5 | 1 | 2 | Pipeline green in CI; skill + iframe fix remain |
 | ⚙️ Node.js modernization | 1 | 0 | 2 | Barely started; epic + logger refactor pending |
-| ⚛️ React 19 (reader-react) | 11 | 5 | 15 | Largest active surface; spread/layout cluster in progress |
+| ⚛️ React 19 (reader-react) | 16 | 0 | 15 | Spread/layout cluster done + QA'd; **class→functional / HOC→hooks / state migration** is the next front |
 
 _"Active" = in progress. "Backlog" = not started (excludes superseded)._
 
@@ -135,29 +135,97 @@ reader tests + CLI smoke tests). Shipped: research (040), kitchen-sink fixture
 ## ⚛️ React 19 (reader-react)
 
 The 32 former `b-ber-reader-react/tasks/*` were flattened into root as
-TASK-060–091 on 2026-06-11. Functional-component migration, observer rewrites,
-loader/keyboard fixes, regression infra, and ESM packaging are done. The active
-work is the **spread / layout-stability cluster**.
+TASK-060–091 on 2026-06-11. Prior passes converted the orchestrators
+(`Reader/index`, `Ultimate`) to functional components, rewrote pollers as
+observers, and landed loader/keyboard fixes, regression infra, and ESM
+packaging. The **TS conversion (TASK-032)** and the **spread/layout-stability
+cluster (TASK-081–085)** are now complete (cluster QA verified 2026-06-13;
+reusable checklist retained at
+[`SPREAD-CLUSTER-QA.md`](./packages/b-ber-reader-react/SPREAD-CLUSTER-QA.md)).
 
-**In progress (the spread cluster — interdependent): all code merged & typed,
-unit suite green — only manual browser QA blocks close-out.** Consolidated test
-plan: [`packages/b-ber-reader-react/SPREAD-CLUSTER-QA.md`](./packages/b-ber-reader-react/SPREAD-CLUSTER-QA.md).
-Each task closes when its checklist section passes.
+This unblocks the **modernization migration** — the main remaining surface.
 
-| Task | Pri | Work | Status |
-| ---- | --- | ---- | ------ |
-| TASK-084 | med | Consolidate page-width geometry into `Viewport.getPageWidth` | code done; `with-node-position` adoption folded into HOC→hooks (Step 2); pending QA |
-| TASK-082 | high | Harden Ultimate layout-stability detection | code done; pending QA |
-| TASK-081 | high | Fix stale full-bleed spread column position (verso/recto) | code done; pending QA |
-| TASK-083 | med | Re-measure `lastSpreadIndex` after layout settles | code done; pending QA |
-| TASK-085 | high | Fix infinite spinner on window resize | code done; pending QA |
+### Goals (set by user, 2026-06-13)
 
-**Backlog (high-value first):** TASK-078 (leaf flicker), TASK-088 (blank spread
-pages), TASK-089 (deep-link to spreadIndex), TASK-086 (reset `view.loaded`),
-TASK-087 (event-driven settle, supersedes polling), TASK-069 (per-Spread
-ResizeObserver), TASK-073 (Redux Toolkit/Context), TASK-091 (react-player v3),
-TASK-076 (SCSS→CSS Modules), TASK-068/071/075/079/080 (housekeeping/visual),
-TASK-093 (consolidate the reader-react PLAN.md into this file).
+1. Relieve tech debt; be ready to drop `UNSAFE_*` lifecycles entirely.
+2. Reduce cognitive overhead: today's mix of Context + Redux + hooks + class
+   components + HOCs makes behavior hard to reason about.
+3. Converge on a small set of robust, modern APIs — the current mix causes
+   non-deterministic rendering, especially under React 19 state batching.
+4. **Preserving current behavior is critical** — the app must function exactly
+   as before after each change.
+
+Spread-rendering bugs and sentinel polling are **explicitly deferred** to *after*
+the migration (see Deferred below).
+
+### Remaining surface (verified 2026-06-13)
+
+- **9 class components:** `App`, `SidebarSettings`, `Footnote`, `Marker`,
+  `Media`, `Vimeo`, `Iframe`, `MediaControls`, `MediaButtonVolume`.
+- **4 class HOCs:** `with-dimensions`, `with-node-position`, `with-iframe-position`,
+  `with-navigation-actions` (`with-last-spread-index` is already functional).
+- **`UNSAFE_*` lifecycles** in ~6 of the above + the `selfRef` shim in
+  `Reader/index` (`navigation.js`/`loader.js`/`resize.js` still use `this.*`).
+- **State:** plain Redux + `redux-thunk` + `connect()` **and** two React Contexts
+  (`reader-context`, `spread-context`) **and** hooks — the mix to consolidate.
+
+### Migration plan (maps to the 5-step approach)
+
+**Step 1 (class→functional) + Step 2 (HOC→hooks) — interleaved, bottom-up.** The
+class Media components consume the class position-HOCs, so they convert in one
+wave to avoid double-touching. Proposed waves (final task granularity TBD — see
+"What's next"):
+
+| Wave | Converts | Notes |
+| ---- | -------- | ----- |
+| Leaf components | `Footnote`, `Marker`, `SidebarSettings` | simplest, isolated |
+| Measurement HOCs→hooks | `with-dimensions`→`useDimensions`, `with-navigation-actions` | no position math |
+| Position HOCs→hooks | `with-node-position` + `with-iframe-position` | **absorbs deferred TASK-084 `getPageWidth` adoption**; needs marker QA |
+| Media subtree | `Media`, `Vimeo`, `Iframe`, `MediaControls`, `MediaButtonVolume` | consume the new position hooks |
+| `App` | top-level `connect`'d class w/ `UNSAFE_` | last — most entangled |
+| `selfRef` removal | extract `navigation.js`/`loader.js`/`resize.js` into hooks | the big Phase-3 leftover; `Reader` is already functional |
+
+**Step 3 (evaluate deps) — TASK-073 (research, now unblocked).** Decision lean:
+**away from Redux toward built-in React state** (reduce 3rd-party deps; RTK is
+the fallback, not the default). Also TASK-091 (react-player v3, independent).
+
+**Step 4 (migrate state per findings)** — execution task opened from TASK-073's
+recommendation; best done after Steps 1–2 (functional components make it small).
+
+**Step 5 (reorg / best practices)** — TASK-068 (housekeeping), TASK-071 (docs),
+TASK-076 (SCSS→CSS Modules), plus general organization cleanup.
+
+### Sequencing
+
+1. **TASK-093** (consolidate PLAN — *this section*) + **TASK-068** (housekeeping):
+   refresh the misleading phase plan and clear dead code before refactoring.
+2. **Step 1+2 wave**, bottom-up (leaves → HOCs → Media → App → selfRef).
+3. **TASK-073** research decision → **Step 4** state migration.
+4. **TASK-091** anytime (independent dep upgrade).
+
+### Deferred until *after* the migration (per user)
+
+Spread-rendering / sentinel-polling bug work: **TASK-086** (reset `view.loaded`),
+**TASK-087** (event-driven settle, supersedes polling), **TASK-088** (blank
+spread pages), **TASK-089** (deep-link to spreadIndex), **TASK-069** (per-Spread
+ResizeObserver), **TASK-078** (leaf flicker), **TASK-079/080** (loading-state /
+FOUT visual). **TASK-075** (expand dev project URLs) is housekeeping, anytime.
+
+### Known issues / tech debt (migrated from the deleted reader-react PLAN.md)
+
+These inform the migration but are not yet individually tasked:
+
+- `book.content` module-level mutation bypasses the React render pipeline
+  (forces re-render via the `spineItemURL` key) — fold into the Step 3/4 state
+  work; it is the last major render-pipeline bypass.
+- No explicit loading-state model (idle / loading-manifest / loading-chapter /
+  ready / error) — candidate for the state migration.
+- `withLastSpreadIndex`: `setContentDimensions(0)` on slug change may trigger a
+  spurious dispatch (verify when HOC→hook).
+- `navigateToElementById`: hardcoded DOM selectors + an unexplained `/2`
+  division (needs documentation or a behavior probe).
+- `Layout.jsx`: `debounce` called in the render body creates a new function each
+  render (fix during the class→functional/hooks pass).
 
 ---
 
@@ -168,8 +236,9 @@ sequencing work:
 
 1. **TASK-050 (Coverage) → TASK-046 (Node).** The logger refactor can't safely
    remove `process.exit` until CLI handler tests assert the current behavior.
-2. **React 19 spread cluster (TASK-081–088) → TASK-032 (TS).** Stabilize the
-   reader's layout before converting the package to TypeScript.
+2. ✅ **React 19 spread cluster (TASK-081–085) → TASK-032 (TS).** Resolved —
+   layout stabilized and QA'd (2026-06-13), TS conversion landed. The deferred
+   bug cluster (086–089, 069, 078) now waits on the modernization migration.
 3. **E2E pipeline (TASK-044, ✓) → TASK-055 (testing skill).** Now unblocked.
 4. ✅ **TASK-032 (TS reader-react) → TASK-019 close.** Resolved — both closed
    2026-06-13; the TS epic is complete.
@@ -181,6 +250,10 @@ sequencing work:
 
 ## 🆕 Recently completed (last sessions)
 
+- **TASK-081–085 — spread/layout-stability cluster complete + QA'd** (2026-06-13).
+  Reusable QA checklist retained for human review (`SPREAD-CLUSTER-QA.md`)
+- **TASK-093 — reader-react PLAN.md consolidated into this file and deleted**
+  (eliminates the stale, ID-colliding duplicate)
 - **TASK-032 / TASK-019 — TS migration epic complete.** reader-react converted
   (strict TS, 458 tests + 9 snapshots green) and merged; whole monorepo is now
   TypeScript (legacy `b-ber-reader` excluded by design)
@@ -198,12 +271,12 @@ sequencing work:
 
 | Priority | Task | Action | Why now |
 | -------- | ---- | ------ | ------- |
-| 1 | TASK-050 | CLI handler tests | Unblocks TASK-046 and lifts cli coverage toward 75% |
-| 2 | TASK-081–085 | Continue the reader spread/layout cluster | Already in progress; high-impact reader correctness |
-| 3 | TASK-004 | Push coverage laggards to 75% | Closes the coverage epic; reader-react is the long pole |
-| 4 | TASK-055 | Create the testing skill | Newly unblocked by the green E2E pipeline |
-| 5 | TASK-052 | Prototype `npm pack` publish-smoke test | Guards against the canary-only bug class |
-| 6 | TASK-081–085 | User browser-verify the spread/layout cluster | All fixes merged & typed; only manual reader QA blocks close-out (see below) |
+| 1 | React 19 migration | Create the Step 1+2 wave task files (granularity TBD) + TASK-068 | The next major front; surface and sequencing captured above |
+| 2 | TASK-073 | Run the state-management research (built-in over Redux) | Now unblocked by TS; output gates Step 4 |
+| 3 | TASK-050 | CLI handler tests | Unblocks TASK-046 and lifts cli coverage toward 75% |
+| 4 | TASK-004 | Push coverage laggards to 75% | Closes the coverage epic; cli + b-ber-tasks are the long poles |
+| 5 | TASK-055 | Create the testing skill | Newly unblocked by the green E2E pipeline |
+| 6 | TASK-052 | Prototype `npm pack` publish-smoke test | Guards against the canary-only bug class |
 
 ---
 
