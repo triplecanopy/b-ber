@@ -58,7 +58,13 @@ Statement coverage as of 2026-06-11. Check the box when a package reaches the
 - [ ] b-ber-cli — 54% (see TASK-050 for handler tests)
 - [ ] b-ber-tasks — 13% (realistic ceiling ~25%: pipeline steps need a full
       project + Calibre/wkhtmltopdf; tracked as an accepted exception)
-- [x] b-ber-reader-react — 80% (2026-06-11: actions/reducers 0-72% -> 100%,
+- [x] b-ber-reader-react — 85% (2026-06-13: src/components/ overall 36% -> 96%.
+      App.jsx 0% -> 100%, Controls.jsx 0% -> 98%, Frame.jsx 0% -> 100%,
+      Layout.jsx 0% -> 100% stmts, index.js 0% -> 100%, Footnote.jsx
+      11.5% -> 95%, Link.jsx 25% -> 100%, Marker.jsx 40% -> 93%, Spread.jsx
+      10% -> 99%, SpreadFigure.jsx 38% -> 100%. Remaining components-level gap
+      is Ultimate.jsx (86%, branch coverage on MAX_WAIT_MS edge cases).
+      2026-06-11: actions/reducers 0-72% -> 100%,
       helpers Cache/DOM/Request/Storage/search-params/media 0-28% -> 100%,
       lib transition-styles/spread-context/version/polyfills/custom-prop-types
       0-65% -> 94-100%, components/Reader/navigation.js + resize.js 0% -> 100%,

@@ -96,7 +96,7 @@ shapes-directives/dublin-core, templates 96%, validator 92%, lib 76%, logger
 
 | Task | Pri | Outstanding work |
 | ---- | --- | ---------------- |
-| TASK-004 | high | Drive laggards to 75%: cli 54%, b-ber-tasks 13% (~25% ceiling), reader-react 33%, shapes-sequences 68% (grammar-image and grammar-pullquote done, 98%) |
+| TASK-004 | high | Drive laggards to 75%: cli 54%, b-ber-tasks 13% (~25% ceiling). reader-react now 85%, shapes-sequences 100% — both at target |
 | TASK-050 | high | CLI command inventory + handler test coverage (also the gate for TASK-046) |
 | TASK-051 | med | Theme docs + SCSS compilation test coverage |
 
@@ -168,9 +168,9 @@ sequencing work:
 3. **E2E pipeline (TASK-044, ✓) → TASK-055 (testing skill).** Now unblocked.
 4. **TASK-032 (TS reader-react) → TASK-019 close.** The TS epic finishes when the
    last package converts.
-5. **Coverage epic (TASK-004) ↔ reader-react.** reader-react at 33% is the single
-   biggest drag on the repo-wide 75% target; its coverage rises naturally as the
-   React 19 cluster adds behavioral tests.
+5. **Coverage epic (TASK-004) ↔ reader-react.** reader-react reached 85%
+   (2026-06-13: src/components/ 36% -> 96%) — no longer a drag on the
+   repo-wide 75% target. Remaining laggards are cli (54%) and b-ber-tasks (13%).
 
 ---
 
