@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { connect } from 'react-redux'
 import Asset from '../helpers/Asset'
 import Request from '../helpers/Request'
@@ -60,49 +60,47 @@ interface FootnoteProps {
   viewerSettings: RootState['viewerSettings']
 }
 
-interface FootnoteState {
-  content: string
-  visible: boolean
-  footnote: string
-}
+function Footnote({ id, href, children, viewerSettings }: FootnoteProps) {
+  const [content, setContent] = useState('')
+  const [visible, setVisible] = useState(false)
+  const [footnoteId] = useState(() => Asset.createId())
 
-class Footnote extends React.Component<FootnoteProps, FootnoteState> {
-  footnoteContainer = React.createRef<HTMLSpanElement>()
+  const footnoteContainer = useRef<HTMLSpanElement>(null)
+  const footnoteElement = useRef<HTMLSpanElement>(null)
 
-  footnoteElement = React.createRef<HTMLSpanElement>()
-
-  constructor(props: FootnoteProps) {
-    super(props)
-
-    this.state = {
-      content: '',
-      visible: false,
-      footnote: Asset.createId(),
-    }
-  }
+  // Tracks the listeners currently bound by showFootnote, so hideFootnote and
+  // unmount can remove the exact same function references.
+  const boundListeners = useRef<{
+    click?: (e: MouseEvent) => void
+    mousemove?: (e: MouseEvent) => void
+  }>({})
 
   // Unbind hideFootnote handler in case unmounting while footnote is visible
-  componentWillUnmount() {
-    document.removeEventListener('click', this.handleDocumentClick)
-  }
+  useEffect(
+    () => () => {
+      if (boundListeners.current.click) {
+        document.removeEventListener('click', boundListeners.current.click)
+      }
+    },
+    []
+  )
 
-  getFootnote = async () => {
-    let { content } = this.state
+  const getFootnote = async () => {
     if (content) return
 
-    const { hash } = new window.URL(this.props.href)
-    const id = hash.slice(1)
+    const { hash } = new window.URL(href)
+    const noteId = hash.slice(1)
 
-    const { data } = await Request.getText(this.props.href)
+    const { data } = await Request.getText(href)
     const parser = new window.DOMParser()
     const doc = parser.parseFromString(data, 'text/html')
-    const elem = doc.getElementById(id)
+    const elem = doc.getElementById(noteId)
 
     if (!elem) {
       console.error(
         'Could not retrieve footnote %s; Document URL %s',
         hash,
-        this.props.href
+        href
       )
       return
     }
@@ -126,82 +124,94 @@ class Footnote extends React.Component<FootnoteProps, FootnoteState> {
 
     // Don't need to pass in the list element, so only pass in its children.
     // Also used to inject the `count` element into the footnote body
-    content = processFootnoteResponseElement(elem.firstChild as Element, count)
-
-    this.setState({ content })
+    setContent(
+      processFootnoteResponseElement(elem.firstChild as Element, count)
+    )
   }
 
-  handleOnMouseOver = (e?: React.MouseEvent) => {
+  const hideFootnote = (e?: React.MouseEvent) => {
+    if (e) e.preventDefault()
+
+    setVisible(false)
+
+    if (boundListeners.current.click) {
+      document.removeEventListener('click', boundListeners.current.click)
+    }
+    if (boundListeners.current.mousemove) {
+      document.removeEventListener(
+        'mousemove',
+        boundListeners.current.mousemove
+      )
+    }
+    boundListeners.current = {}
+  }
+
+  const handleOnMouseOver = (e?: React.MouseEvent) => {
     if (e) e.preventDefault()
     if (Viewport.isSingleColumn()) return
-    this.toggleFootnote()
+    toggleFootnote()
   }
 
   // Hide footnote if user hovers over a different note
-  handleOnMouseMove = (e: MouseEvent) => {
+  const handleOnMouseMove = (e: MouseEvent) => {
     if (Viewport.isSingleColumn()) return
 
     const target = e.target as HTMLElement
     if (
       target.nodeName === 'SPAN' &&
       target.classList.contains('footnote__number') &&
-      target.dataset.footnote !== this.state.footnote
+      target.dataset.footnote !== footnoteId
     ) {
-      this.hideFootnote()
+      hideFootnote()
     }
   }
 
-  handleDocumentClick = (e: MouseEvent) => {
+  const handleDocumentClick = (e: MouseEvent) => {
     if ((e.target as HTMLElement).nodeName === 'A') return
-    this.hideFootnote()
+    hideFootnote()
   }
 
-  toggleFootnote = (e?: React.MouseEvent) => {
+  const toggleFootnote = (e?: React.MouseEvent) => {
     if (e) {
       e.preventDefault()
       e.stopPropagation()
     }
 
-    return this.state.visible ? this.hideFootnote() : this.showFootnote()
+    return visible ? hideFootnote() : showFootnote()
   }
 
-  showFootnote = async (e?: React.MouseEvent) => {
+  const showFootnote = async (e?: React.MouseEvent) => {
     if (e) e.preventDefault()
 
-    await this.getFootnote()
-    this.setState({ visible: true })
+    await getFootnote()
+    setVisible(true)
 
-    document.addEventListener('click', this.handleDocumentClick) // Bind hideFootnote handler
-    document.addEventListener('mousemove', this.handleOnMouseMove)
+    document.addEventListener('click', handleDocumentClick) // Bind hideFootnote handler
+    document.addEventListener('mousemove', handleOnMouseMove)
+    boundListeners.current = {
+      click: handleDocumentClick,
+      mousemove: handleOnMouseMove,
+    }
   }
 
-  hideFootnote = (e?: React.MouseEvent) => {
-    if (e) e.preventDefault()
-
-    this.setState({ visible: false })
-
-    document.removeEventListener('click', this.handleDocumentClick) // Unbind hideFootnote handler
-    document.removeEventListener('mousemove', this.handleOnMouseMove)
-  }
-
-  getFootnoteOffset() {
-    if (!this.footnoteContainer?.current || !this.footnoteElement?.current) {
+  const getFootnoteOffset = () => {
+    if (!footnoteContainer.current || !footnoteElement.current) {
       console.warn('Footnote elements are not bound')
       return false
     }
 
-    const { top } = this.footnoteContainer.current.getBoundingClientRect()
-    const { paddingTop, paddingBottom } = this.props.viewerSettings
-    const height = this.footnoteElement.current.offsetHeight
+    const { top } = footnoteContainer.current.getBoundingClientRect()
+    const { paddingTop, paddingBottom } = viewerSettings
+    const height = footnoteElement.current.offsetHeight
     const windowHeight = window.innerHeight
 
     return top + height > windowHeight - (paddingTop + paddingBottom)
   }
 
-  footnoteStyles(): React.CSSProperties {
-    const { columnWidth, columnGap, paddingLeft } = this.props.viewerSettings
+  const footnoteStyles = (): React.CSSProperties => {
+    const { columnWidth, columnGap, paddingLeft } = viewerSettings
     const isSingleColumn = Viewport.isSingleColumn()
-    const aboveElement = this.getFootnoteOffset()
+    const aboveElement = getFootnoteOffset()
     const offsetProp = aboveElement ? 'bottom' : 'top'
     const offset = offsetProp === 'bottom' ? '1rem' : '1.5rem'
     const left = 0
@@ -212,10 +222,10 @@ class Footnote extends React.Component<FootnoteProps, FootnoteState> {
     const styles: React.CSSProperties = { width, left, [offsetProp]: offset }
 
     // Return default styles if no node exists
-    if (!this.footnoteContainer?.current) return styles
+    if (!footnoteContainer.current) return styles
 
     // Set position left for footnote
-    styles.left = this.footnoteContainer.current.getBoundingClientRect().x
+    styles.left = footnoteContainer.current.getBoundingClientRect().x
 
     // Adjust position based on verso or recto position of footnote reference
     styles.left = isSingleColumn
@@ -233,49 +243,46 @@ class Footnote extends React.Component<FootnoteProps, FootnoteState> {
     return styles
   }
 
-  render() {
-    const { content, visible } = this.state
-    const hidden = !content || !visible
-    const footnoteContainerStyles: React.CSSProperties = {
-      display: 'inline',
-      position: 'relative',
-    }
+  const hidden = !content || !visible
+  const footnoteContainerStyles: React.CSSProperties = {
+    display: 'inline',
+    position: 'relative',
+  }
 
-    return (
-      <span id={this.props.id} className="footnote-ref">
+  return (
+    <span id={id} className="footnote-ref">
+      <span
+        ref={footnoteContainer}
+        className="footnote__container"
+        style={footnoteContainerStyles}
+      >
+        {/* biome-ignore lint/a11y/noStaticElementInteractions: footnote toggle is a legacy interaction pattern */}
+        {/* biome-ignore lint/a11y/noNoninteractiveElementInteractions: footnote toggle is a legacy interaction pattern */}
+        {/* biome-ignore lint/a11y/useKeyWithClickEvents: footnote toggle is a legacy interaction pattern */}
+        {/* biome-ignore lint/a11y/useKeyWithMouseEvents: footnote toggle is a legacy interaction pattern */}
         <span
-          ref={this.footnoteContainer}
-          className="footnote__container"
-          style={footnoteContainerStyles}
+          className="footnote__number"
+          data-footnote={footnoteId}
+          onClick={toggleFootnote}
+          onMouseOver={handleOnMouseOver}
         >
-          {/* biome-ignore lint/a11y/noStaticElementInteractions: footnote toggle is a legacy interaction pattern */}
-          {/* biome-ignore lint/a11y/noNoninteractiveElementInteractions: footnote toggle is a legacy interaction pattern */}
-          {/* biome-ignore lint/a11y/useKeyWithClickEvents: footnote toggle is a legacy interaction pattern */}
-          {/* biome-ignore lint/a11y/useKeyWithMouseEvents: footnote toggle is a legacy interaction pattern */}
+          {children}
+        </span>
+        <span
+          ref={footnoteElement}
+          style={footnoteStyles()}
+          className={classNames('footnote__body', {
+            'footnote__body--hidden': hidden,
+          })}
+        >
           <span
-            className="footnote__number"
-            data-footnote={this.state.footnote}
-            onClick={this.toggleFootnote}
-            onMouseOver={this.handleOnMouseOver}
-          >
-            {this.props.children}
-          </span>
-          <span
-            ref={this.footnoteElement}
-            style={this.footnoteStyles()}
-            className={classNames('footnote__body', {
-              'footnote__body--hidden': hidden,
-            })}
-          >
-            <span
-              className="footnote__content"
-              dangerouslySetInnerHTML={{ __html: content }}
-            />
-          </span>
+            className="footnote__content"
+            dangerouslySetInnerHTML={{ __html: content }}
+          />
         </span>
       </span>
-    )
-  }
+    </span>
+  )
 }
 
 export default connect(
