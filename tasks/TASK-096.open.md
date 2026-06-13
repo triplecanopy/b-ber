@@ -49,4 +49,9 @@ Targets:
   `withIframePosition` in this task; do not convert those HOCs here (TASK-099).
 - `helpers/media.ts` is shared logic — convert components to *use* it as-is; do
   not refactor the helper.
+- **Batching (conventions §3c):** `Media`/`Vimeo` have multiple state updates in
+  `UNSAFE_componentWillMount`/`UNSAFE_componentWillReceiveProps` (async/context
+  paths). These coalesce under React 18+ auto-batching but ran synchronously on
+  ≤17 hosts. Don't rely on render count/ordering — prefer one `useReducer` for
+  the cluster and functional updaters; this is the "escalate to Opus" trigger.
 - Related: [[TASK-094]] (conventions), [[TASK-099]] (position HOCs → hooks).

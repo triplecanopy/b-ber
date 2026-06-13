@@ -19,6 +19,12 @@ component is written, never *what* it does. Anything that would change behavior
 (bug fixes, layout tweaks, state-shape changes) is out of scope and belongs to a
 dedicated task.
 
+"Exactly" means **observable app behavior**, which is not always the same as a
+*literal* line-for-line translation. The clearest example is state batching
+(§3c): mechanically faithful `setState`→setter code can still behave differently
+at runtime across React versions. Preserving behavior there takes judgment, not
+just a transcription — when in doubt, flag it for review.
+
 ## 1. Verification gate (every task, every commit)
 
 Run **all** of these before marking any conversion done:
@@ -26,7 +32,9 @@ Run **all** of these before marking any conversion done:
 1. `npm test` — 71 suites / 458 tests pass. Count must not regress.
 2. **9 snapshots unchanged.** A changed snapshot means render output moved =
    a behavior change = a bug in the conversion. **Fix the conversion; never
-   re-record the snapshot** to make it pass.
+   re-record the snapshot** to make it pass. (Snapshots capture *final* output
+   only — they do **not** catch render count, update ordering, or batching
+   differences; see §3c for what they miss.)
 3. `npm run typecheck` (`tsc --noEmit`) clean — strict mode, no new `any` beyond
    what the file already had.
 4. **Targeted browser QA** only where the change can affect layout, positioning,
@@ -77,6 +85,54 @@ for `useSelector`/`useDispatch` in this wave; that is the state-management
 migration (TASK-073 → Step 4). Keeping `connect()` keeps these diffs purely about
 the component body and isolates the state change to one later task.
 
+### 3c. State updates and automatic batching (cross-version)
+
+`b-ber-reader-react` is a **library embedded in host apps**, and its
+`peerDependencies` range is **React 16.2 → 19** (dev/test currently runs React
+19.1). **Automatic batching of state updates changed within that range**, and it
+is the one place a *literal* `this.setState` → `useState`-setter translation can
+be mechanically faithful yet behave differently at runtime:
+
+- **React ≤17:** multiple `setState` calls are batched only inside React event
+  handlers. In promises, `await` continuations, `setTimeout`, native event
+  handlers, and `ResizeObserver`/`MutationObserver` callbacks they run
+  **synchronously** — each triggers its own re-render, and state/DOM is
+  observable *between* them.
+- **React 18+:** updates are **automatically batched everywhere**, including all
+  those async/observer contexts — several updates in one tick coalesce into a
+  single re-render.
+
+The reader has clusters of updates in exactly the contexts that diverge — the
+async loader, navigation, resize handlers, and Media components
+(`Reader/loader.ts`, `navigation.ts`, `resize.ts`, `Media/*`). **A conversion
+must not depend on update timing or render count**; write it so it is correct
+under *both* batched and unbatched behavior:
+
+1. **Treat multiple setters in one function body as one logical transition.**
+   Prefer a single `useReducer` (or one consolidated `useState` object) so the
+   transition is atomic and explicit. This is the idiomatic fix for "several
+   `setState` in one function," reads better, and removes any dependence on
+   whether the runtime batches — make these clusters the preferred target.
+2. **Use functional updaters** `setX(prev => next)` whenever the new value
+   derives from the current one, so batching / stale closures can't read a stale
+   value.
+3. **Never rely on an intermediate render between two updates.** If class code
+   reads the DOM or derived state *between* two `setState` calls expecting the
+   first to have committed, that assumption is already fragile and breaks under
+   18+ — restructure to compute the final state once, then apply it.
+4. **`flushSync` is a deliberate escape hatch, not a default.** If a conversion
+   genuinely needs the DOM committed between two updates (a measure-then-act
+   step), `flushSync` (from `react-dom`) forces it — but it defeats batching and
+   costs performance, so use it rarely and comment *why*. None is used today;
+   introducing one is a signal to **stop and get the conversion reviewed**. Do
+   not reach for it to paper over a deferred spread/layout bug (out of scope — §5).
+
+**Snapshots will not catch batching changes** — they capture final output, not
+render count or intermediate states. The batching-sensitive conversions (the
+async/observer paths above — **TASK-096** and especially **TASK-100**) must be
+reasoned through, **browser-QA'd**, and flagged for review when update ordering
+is non-obvious.
+
 ## 4. HOC → hook
 
 Done **after** all of an HOC's consumers are already functional components (so
@@ -125,8 +181,10 @@ The wave tasks carry a `**Model:**` field. Rule of thumb:
   Small diffs, snapshots catch render drift.
 - **Opus** — high-judgment work: this conventions doc, `App` (async
   pre-render side effect + `connect`), the position hooks (geometry + marker QA +
-  most consumers), and the `selfRef` removal (the most entangled change). Also
-  the state-management research (TASK-073).
+  most consumers), and the `selfRef` removal (the most entangled change, and the
+  densest batching-sensitive site per §3c). Also the state-management research
+  (TASK-073). When a Sonnet task hits non-obvious update ordering / batching
+  (§3c) — e.g. `Media`/`Vimeo` in TASK-096 — escalate that piece to Opus.
 
 ---
 

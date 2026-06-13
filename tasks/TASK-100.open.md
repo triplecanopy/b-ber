@@ -43,6 +43,13 @@ leftover and the last major non-idiomatic pattern in the orchestrator.
 
 - Highest-risk task in the wave. Strongly prefer landing TASK-095–099 first so
   the rest of the tree is stable and idiomatic before touching the orchestrator.
+- **Batching (conventions §3c):** this is the densest batching-sensitive site —
+  `loader.ts` (3), `navigation.ts` (7), `resize.ts` update clusters live in
+  async/observer callbacks that ran synchronously on React ≤17 hosts but
+  auto-batch under 18+. Model each cluster as one atomic transition (`useReducer`
+  / functional updaters); do not depend on intermediate renders. If a step truly
+  needs a committed DOM between updates, `flushSync` is the documented escape
+  hatch — but stop and get it reviewed (none exists today).
 - `book.content` global remains for now — it moves into the state layer in the
   TASK-073 → Step 4 work, not here.
 - Related: [[TASK-094]] (conventions), [[TASK-085]] (resize `unload()` behavior

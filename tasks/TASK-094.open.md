@@ -37,8 +37,13 @@ It codifies:
 - [x] Verify the conversion order against the real consumer graph
       (with-node-position ← Marker/Media/Vimeo/Iframe; with-iframe-position ←
       Vimeo/Iframe; with-dimensions ← Layout; with-navigation-actions ← Controls)
-- [ ] **User review** of the conventions doc (requested)
-- [ ] Incorporate review feedback; mark complete, remove `.open`
+- [x] **User review** of the conventions doc (2026-06-13)
+- [x] Incorporate review feedback round 1: added **§3c — state updates and
+      automatic batching across the React 16.2–19 peer range** (the one place a
+      literal `setState`→setter translation can diverge at runtime); noted
+      snapshots don't catch it; flagged TASK-096/100 as the batching-sensitive
+      conversions. Confirmed React 19.1 installed; no `flushSync` in use today.
+- [ ] User confirms the §3c wording reads right; then mark complete, remove `.open`
 
 ## Notes
 
