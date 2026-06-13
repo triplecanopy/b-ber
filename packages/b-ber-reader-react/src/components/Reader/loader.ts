@@ -1,19 +1,27 @@
+import type { ReactNode } from 'react'
 import Asset from '../../helpers/Asset'
 import Request from '../../helpers/Request'
 import Storage from '../../helpers/Storage'
 import XMLAdaptor from '../../helpers/XMLAdaptor'
+import type SpineItem from '../../models/SpineItem'
+import type { ReaderInstance } from './types'
 
-export const book = { content: null }
+export const book: { content: ReactNode } = { content: null }
 
-export async function createStateFromOPF(callback) {
+export async function createStateFromOPF(
+  this: ReaderInstance,
+  callback?: () => void
+): Promise<void> {
   const { bookURL } = this.props.readerSettings
 
   const opfURL = XMLAdaptor.opfURL(bookURL)
   const opsURL = XMLAdaptor.opsURL(bookURL)
 
-  let data
-  let guideItems
-  let spineItems
+  // `data` is reassigned through a chain of XMLAdaptor transforms whose shapes
+  // differ at each step; typed `any` to mirror the original untyped flow.
+  let data: any
+  let guideItems: any
+  let spineItems: any
 
   data = await Request.getText(opfURL)
   data = await XMLAdaptor.parseOPF(data)
@@ -39,7 +47,7 @@ export async function createStateFromOPF(callback) {
 }
 
 // Shows content and enables UI once book content has been loaded
-export function showSpineItem() {
+export function showSpineItem(this: ReaderInstance): void {
   const { spine, spreadIndex, currentSpineItemIndex } = this.state
   const { lastSpreadIndex } = this.props.view
 
@@ -69,7 +77,11 @@ export function showSpineItem() {
 }
 
 // Makes requests to load book content
-export async function loadSpineItem(spineItem, _deferredCallback) {
+export async function loadSpineItem(
+  this: ReaderInstance,
+  spineItem?: SpineItem,
+  _deferredCallback?: () => void
+): Promise<void> {
   const hash = Asset.createHash(this.props.readerSettings.bookURL)
 
   let requestedSpineItem = spineItem
@@ -133,7 +145,6 @@ export async function loadSpineItem(spineItem, _deferredCallback) {
 
   const { bookContent, scopedCSS } = content
 
-  // eslint-disable-next-line no-param-reassign
   book.content = bookContent
 
   Asset.appendBookStyles(scopedCSS, hash)

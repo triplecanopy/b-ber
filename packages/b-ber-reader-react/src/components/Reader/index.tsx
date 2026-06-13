@@ -14,6 +14,7 @@ import Url from '../../helpers/Url'
 import { unlessDefined } from '../../helpers/utils'
 import Viewport from '../../helpers/Viewport'
 import ReaderContext from '../../lib/reader-context'
+import type { AppDispatch, RootState } from '../../store/types'
 import Controls from '../Controls'
 import Frame from '../Frame'
 import Spinner from '../Spinner'
@@ -40,6 +41,7 @@ import {
   handleResizeStart,
   unbindResizeHandlers,
 } from './resize'
+import type { ReaderInstance, ReaderProps, ReaderState } from './types'
 
 // Renders the current chapter's React element tree. Content is written to the
 // module-level `book` object by loader.js and re-rendered when Reader state
@@ -79,9 +81,9 @@ function BookContent() {
 // architecture) they will be extracted into custom hooks and the selfRef
 // indirection will be removed.
 
-function Reader(props) {
+function Reader(props: ReaderProps) {
   // ─── Local state ───────────────────────────────────────────────────────────
-  const [state, setReactState] = useState({
+  const [state, setReactState] = useState<ReaderState>({
     __metadata: [],
     __spine: [],
     __guide: [],
@@ -132,28 +134,36 @@ function Reader(props) {
   //      see the pending update rather than the previous render's snapshot
   //   3. Queues the callback to fire after the component re-renders with the
   //      new state (approximating class setState's callback timing)
-  const pendingCallbacksRef = useRef([])
+  const pendingCallbacksRef = useRef<Array<() => void>>([])
 
   // Flush any queued setState callbacks after every render. By the time this
   // effect runs, the state update has been committed to the DOM.
   useEffect(() => {
     if (pendingCallbacksRef.current.length === 0) return
     const cbs = pendingCallbacksRef.current.splice(0)
-    cbs.forEach((cb) => cb?.())
+    cbs.forEach((cb) => {
+      cb?.()
+    })
   })
 
-  const setState = useCallback((update, callback) => {
-    if (callback) pendingCallbacksRef.current.push(callback)
-    setReactState((prev) => {
-      const next =
-        typeof update === 'function' ? update(prev) : { ...prev, ...update }
-      // Sync stateRef immediately so that code reading `this.state`
-      // synchronously after calling `this.setState` (within the same tick)
-      // sees the intended next value
-      stateRef.current = next
-      return next
-    })
-  }, [])
+  const setState = useCallback(
+    (
+      update: Partial<ReaderState> | ((prev: ReaderState) => ReaderState),
+      callback?: () => void
+    ) => {
+      if (callback) pendingCallbacksRef.current.push(callback)
+      setReactState((prev) => {
+        const next =
+          typeof update === 'function' ? update(prev) : { ...prev, ...update }
+        // Sync stateRef immediately so that code reading `this.state`
+        // synchronously after calling `this.setState` (within the same tick)
+        // sees the intended next value
+        stateRef.current = next
+        return next
+      })
+    },
+    []
+  )
 
   // ─── Instance methods ──────────────────────────────────────────────────────
   // These were class instance methods. They are defined before selfRef is
@@ -184,7 +194,7 @@ function Reader(props) {
   }, [setState])
 
   const handleSidebarButtonClick = useCallback(
-    (value) => {
+    (value: string | null) => {
       setState((prev) => ({
         ...prev,
         showSidebar: value === prev.showSidebar ? null : value,
@@ -193,7 +203,7 @@ function Reader(props) {
     [setState]
   )
 
-  const getTranslateX = useCallback((spreadIndex) => {
+  const getTranslateX = useCallback((spreadIndex?: number) => {
     const nextSpreadIndex = unlessDefined(
       spreadIndex,
       stateRef.current.spreadIndex
@@ -249,10 +259,14 @@ function Reader(props) {
   // This is an intentional intermediate pattern for the migration. In the v2
   // architecture, the logic in navigation.js, loader.js, and resize.js will
   // move into custom hooks and this indirection will be removed.
-  const selfRef = useRef(null)
-  const resizeEndTimerRef = useRef(null)
+  const selfRef = useRef<ReaderInstance | null>(null)
+  const resizeEndTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   if (!selfRef.current) {
+    // The selfRef shim: a stand-in for the old class `this`. Built incrementally
+    // (getters first, then methods/bound module functions assigned below), so it
+    // is typed as a partial ReaderInstance during construction and finalized via
+    // the assignment to selfRef.current!. See the block comment above.
     const self = {
       get state() {
         return stateRef.current
@@ -264,10 +278,10 @@ function Reader(props) {
       get resizeEndTimer() {
         return resizeEndTimerRef.current
       },
-      set resizeEndTimer(v) {
+      set resizeEndTimer(v: ReturnType<typeof setTimeout> | null) {
         resizeEndTimerRef.current = v
       },
-    }
+    } as ReaderInstance
 
     // Delegate to the stable callbacks defined above. Wrapping in an arrow
     // function (rather than assigning directly) ensures that if any of the
@@ -344,7 +358,7 @@ function Reader(props) {
       handleEvents: false,
     })
 
-    selfRef.current.createStateFromOPF(() => {
+    selfRef.current!.createStateFromOPF(() => {
       const { spine } = stateRef.current
       const { readerSettings, readerLocation } = propsRef.current
 
@@ -357,13 +371,13 @@ function Reader(props) {
 
       if (currentSpineItem) {
         setState({ currentSpineItem, currentSpineItemIndex, spreadIndex }, () =>
-          selfRef.current.loadSpineItem(currentSpineItem)
+          selfRef.current!.loadSpineItem(currentSpineItem)
         )
         return
       }
 
       // Fallback: load the first page of the first chapter
-      selfRef.current.loadSpineItem()
+      selfRef.current!.loadSpineItem()
     })
   }, [])
 
@@ -374,10 +388,10 @@ function Reader(props) {
   // source — see IMPROVEMENT_PLAN.md H4. Behavior is preserved here as-is to
   // avoid a behavioral change in this migration step.
   useEffect(() => {
-    selfRef.current.unbindResizeHandlers() // actually adds listeners (see H4)
+    selfRef.current!.unbindResizeHandlers() // actually adds listeners (see H4)
 
     return () => {
-      selfRef.current.bindResizeHandlers() // actually removes listeners (see H4)
+      selfRef.current!.bindResizeHandlers() // actually removes listeners (see H4)
 
       const hash = Asset.createHash(propsRef.current.readerSettings.bookURL)
       Asset.removeBookStyles(hash)
@@ -439,7 +453,7 @@ function Reader(props) {
       if (!alreadyLoading) {
         // External navigation: find the spine item and load it
         const spineItem = find(stateRef.current.spine, { slug })
-        selfRef.current.loadSpineItem(spineItem)
+        selfRef.current!.loadSpineItem(spineItem)
       }
 
       return
@@ -459,7 +473,7 @@ function Reader(props) {
     if (props.view.loaded && props.view.lastSpreadIndex > -1) {
       if (stateRef.current.chapterDelta < 0) {
         setState({ chapterDelta: 0 }, () =>
-          selfRef.current.navigateToSpreadByIndex(
+          selfRef.current!.navigateToSpreadByIndex(
             propsRef.current.view.lastSpreadIndex
           )
         )
@@ -477,8 +491,8 @@ function Reader(props) {
       lastSpread: state.lastSpread,
       spreadIndex: state.spreadIndex,
       getTranslateX,
-      navigateToChapterByURL: selfRef.current.navigateToChapterByURL,
-      getSpineItemByAbsoluteUrl: selfRef.current.getSpineItemByAbsoluteUrl,
+      navigateToChapterByURL: selfRef.current!.navigateToChapterByURL,
+      getSpineItemByAbsoluteUrl: selfRef.current!.getSpineItemByAbsoluteUrl,
     }),
     [state.lastSpread, state.spreadIndex, getTranslateX]
   )
@@ -508,11 +522,11 @@ function Reader(props) {
       showSidebar={showSidebar}
       spreadIndex={spreadIndex}
       lastSpreadIndex={view.lastSpreadIndex}
-      handlePageNavigation={selfRef.current.handlePageNavigation}
+      handlePageNavigation={selfRef.current!.handlePageNavigation}
       destroyReaderComponent={destroyReaderComponent}
-      handleChapterNavigation={selfRef.current.handleChapterNavigation}
+      handleChapterNavigation={selfRef.current!.handleChapterNavigation}
       handleSidebarButtonClick={handleSidebarButtonClick}
-      navigateToChapterByURL={selfRef.current.navigateToChapterByURL}
+      navigateToChapterByURL={selfRef.current!.navigateToChapterByURL}
       downloads={downloads}
       uiOptions={uiOptions}
       layout={layout}
@@ -543,7 +557,7 @@ const mapStateToProps = ({
   readerLocation,
   view,
   userInterface,
-}) => ({
+}: RootState) => ({
   readerSettings,
   viewerSettings,
   readerLocation,
@@ -551,12 +565,43 @@ const mapStateToProps = ({
   userInterface,
 })
 
-const mapDispatchToProps = (dispatch) => ({
-  viewerSettingsActions: bindActionCreators(viewerSettingsActions, dispatch),
-  readerSettingsActions: bindActionCreators(readerSettingsActions, dispatch),
-  readerLocationActions: bindActionCreators(readerLocationActions, dispatch),
-  viewActions: bindActionCreators(viewActions, dispatch),
-  userInterfaceActions: bindActionCreators(userInterfaceActions, dispatch),
+// Bound action bundles. bindActionCreators yields precise per-creator types
+// that don't line up with the loose bundle props on ReaderProps; cast each to
+// the loose shape so connect's prop inference matches. Behavior unchanged.
+type ReaderDispatchProps = Pick<
+  ReaderProps,
+  | 'viewerSettingsActions'
+  | 'readerSettingsActions'
+  | 'readerLocationActions'
+  | 'viewActions'
+  | 'userInterfaceActions'
+>
+
+const mapDispatchToProps = (dispatch: AppDispatch): ReaderDispatchProps => ({
+  viewerSettingsActions: bindActionCreators(
+    viewerSettingsActions,
+    dispatch
+  ) as unknown as ReaderProps['viewerSettingsActions'],
+  readerSettingsActions: bindActionCreators(
+    readerSettingsActions,
+    dispatch
+  ) as unknown as ReaderProps['readerSettingsActions'],
+  readerLocationActions: bindActionCreators(
+    // The module also exports the non-function `locationStates` const; cast so
+    // bindActionCreators accepts the module.
+    readerLocationActions as unknown as Parameters<
+      typeof bindActionCreators
+    >[0],
+    dispatch
+  ) as unknown as ReaderProps['readerLocationActions'],
+  viewActions: bindActionCreators(
+    viewActions,
+    dispatch
+  ) as unknown as ReaderProps['viewActions'],
+  userInterfaceActions: bindActionCreators(
+    userInterfaceActions,
+    dispatch
+  ) as unknown as ReaderProps['userInterfaceActions'],
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Reader)

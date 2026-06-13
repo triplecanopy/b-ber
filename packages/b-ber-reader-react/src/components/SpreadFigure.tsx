@@ -2,7 +2,13 @@ import React, { useContext } from 'react'
 import ReaderContext from '../lib/reader-context'
 import SpreadContext from '../lib/spread-context'
 
-const SpreadFigure = (props) => {
+interface SpreadFigureProps {
+  id?: string
+  className?: string
+  children?: React.ReactNode
+}
+
+const SpreadFigure = (props: SpreadFigureProps) => {
   const readerContext = useContext(ReaderContext)
 
   return (

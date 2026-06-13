@@ -1,11 +1,22 @@
-/* eslint-disable no-unused-vars */
 import React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as markerActions from '../actions/markers'
 import withNodePosition from '../lib/with-node-position'
 
-class Marker extends React.Component {
+interface MarkerProps {
+  verso?: boolean
+  recto?: boolean
+  style?: React.CSSProperties
+  className?: string
+  // Ref injected by the withNodePosition HOC.
+  // TODO: type this once with-node-position is converted to TS
+  elemRef?: any
+  'data-index'?: number
+  'data-final'?: boolean
+}
+
+class Marker extends React.Component<MarkerProps> {
   render() {
     const { verso, recto } = this.props
 
@@ -34,6 +45,6 @@ class Marker extends React.Component {
 }
 
 export default connect(
-  ({ markers }) => ({ markers }),
+  ({ markers }: { markers: unknown }) => ({ markers }),
   (dispatch) => ({ markerActions: bindActionCreators(markerActions, dispatch) })
 )(withNodePosition(Marker, { isMarker: true }))

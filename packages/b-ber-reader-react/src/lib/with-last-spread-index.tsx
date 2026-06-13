@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as viewActions from '../actions/view'
 import { isNumeric } from '../helpers/Types'
+import type { AppDispatch } from '../store/types'
 import browser from './browser'
 
 // Debounce window for content-dimension measurements (ms). After a DOM mutation
@@ -51,15 +52,17 @@ const MEASURE_DEBOUNCE_MS = 100
 //   L2 — Spurious dispatch on slug change: skipped when contentDimensions===0
 //   M5 — Removed console.log
 
-const withLastSpreadIndex = (WrappedComponent) => {
-  function WrapperComponent(props) {
-    const node = useRef(null)
+const withLastSpreadIndex = (
+  WrappedComponent: React.ComponentType<any>
+): React.ComponentType<any> => {
+  function WrapperComponent(props: any) {
+    const node = useRef<HTMLElement | null>(null)
     const [contentDimensions, setContentDimensions] = useState(0)
 
     // Always-current pointer to the latest measure function, so the
     // settle-driven effect below can re-measure without re-creating the
     // observers.
-    const measureRef = useRef(null)
+    const measureRef = useRef<(() => void) | null>(null)
 
     // Always-current ref for props so observer callbacks never close over a
     // stale copy of viewActions or getFrameHeight
@@ -84,12 +87,16 @@ const withLastSpreadIndex = (WrappedComponent) => {
       const measureContentDimensions = () => {
         if (!node.current) return
 
-        const lastNode = document.querySelector('.bber-ultimate')
+        const lastNode = document.querySelector<HTMLElement>('.bber-ultimate')
+
+        // `browser` is the detect-browser result (a union that may lack `name`
+        // on some members, or be null); read the name pragmatically.
+        const browserName = (browser as { name?: string } | null)?.name
 
         let nextContentDimensions
         if (
-          browser.name === 'firefox' ||
-          (browser.name === 'edge' &&
+          browserName === 'firefox' ||
+          (browserName === 'edge' &&
             /Windows/.test(window.navigator.userAgent) &&
             lastNode)
         ) {
@@ -121,9 +128,9 @@ const withLastSpreadIndex = (WrappedComponent) => {
       // measurement. The timer is stored in a closure variable rather than a
       // ref because it doesn't need to survive re-renders — it only lives for
       // the lifetime of this effect.
-      let debounceTimer = null
+      let debounceTimer: ReturnType<typeof setTimeout> | null = null
       const debouncedMeasure = () => {
-        clearTimeout(debounceTimer)
+        if (debounceTimer) clearTimeout(debounceTimer)
         debounceTimer = setTimeout(
           measureContentDimensions,
           MEASURE_DEBOUNCE_MS
@@ -159,9 +166,8 @@ const withLastSpreadIndex = (WrappedComponent) => {
       return () => {
         mutationObserver.disconnect()
         resizeObserver.disconnect()
-        clearTimeout(debounceTimer)
+        if (debounceTimer) clearTimeout(debounceTimer)
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     // Re-measure once the layout has settled. The observers above can miss a
@@ -236,7 +242,9 @@ const withLastSpreadIndex = (WrappedComponent) => {
 
   return connect(
     () => ({}),
-    (dispatch) => ({ viewActions: bindActionCreators(viewActions, dispatch) })
+    (dispatch: AppDispatch) => ({
+      viewActions: bindActionCreators(viewActions, dispatch),
+    })
   )(WrapperComponent)
 }
 

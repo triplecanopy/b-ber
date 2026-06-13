@@ -2,11 +2,20 @@ import React from 'react'
 import { connect } from 'react-redux'
 import Url from '../helpers/Url'
 import ReaderContext from '../lib/reader-context'
+import type { RootState } from '../store/types'
 
 // The Link component accounts for several different possibilities when directing
 // users with relation to the publication and hosting domain
 
-const Link = (props) => (
+interface LinkProps {
+  className?: string
+  href: string
+  readerSettings: RootState['readerSettings']
+  style?: React.CSSProperties
+  children?: React.ReactNode
+}
+
+const Link = (props: LinkProps) => (
   <ReaderContext.Consumer>
     {({ getSpineItemByAbsoluteUrl, navigateToChapterByURL }) => {
       const { className, href, readerSettings, style, children } = props
@@ -63,6 +72,6 @@ const Link = (props) => (
 
 // export default Link
 export default connect(
-  ({ readerSettings }) => ({ readerSettings }),
+  ({ readerSettings }: RootState) => ({ readerSettings }),
   () => ({})
 )(Link)

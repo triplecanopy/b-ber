@@ -4,10 +4,14 @@ import React, { useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
 import Asset from '../helpers/Asset'
 import Viewport from '../helpers/Viewport'
+import type { RootState } from '../store/types'
 import Layout from './Layout'
 
-function Frame(props) {
-  const node = useRef(null)
+// Frame receives connect()ed readerSettings/viewerSettings plus a passthrough
+// bag of layout props from Reader; typed loosely pending the Reader prop
+// surface being finalized.
+function Frame(props: any) {
+  const node = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (!Viewport.isSingleColumn() || !node?.current) return
@@ -60,6 +64,9 @@ function Frame(props) {
 }
 
 export default connect(
-  ({ readerSettings, viewerSettings }) => ({ readerSettings, viewerSettings }),
+  ({ readerSettings, viewerSettings }: RootState) => ({
+    readerSettings,
+    viewerSettings,
+  }),
   () => ({})
 )(Frame)

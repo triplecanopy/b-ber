@@ -1,8 +1,13 @@
 import classNames from 'classnames'
 import React from 'react'
 import { connect } from 'react-redux'
+import type { RootState } from '../store/types'
 
-function Spinner(props) {
+interface SpinnerProps {
+  userInterface: RootState['userInterface']
+}
+
+function Spinner(props: SpinnerProps) {
   return (
     <div
       className={classNames('bber-spinner', {
@@ -15,6 +20,6 @@ function Spinner(props) {
 }
 
 export default connect(
-  ({ userInterface }) => ({ userInterface }),
+  ({ userInterface }: RootState) => ({ userInterface }),
   () => ({})
 )(Spinner)

@@ -1,5 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading */
-
 import React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
@@ -7,10 +5,30 @@ import * as viewerSettingsActions from '../actions/viewer-settings'
 import { columns } from '../constants'
 import { isNumeric } from '../helpers/Types'
 import Viewport from '../helpers/Viewport'
+import type {
+  AppDispatch,
+  RootState,
+  ViewerSettingsState,
+} from '../store/types'
 
-const withDimensions = (WrappedComponent) => {
-  class WrapperComponent extends React.Component {
-    constructor(props) {
+// Props read off `this.props`. viewerSettings comes from connect()ed state;
+// viewerSettingsActions is the bound dispatch bundle. Own props passed through
+// by the owner are merged loosely (`any`) — the connect/spread plumbing is not
+// expressible precisely here.
+interface InjectedProps {
+  viewerSettings: ViewerSettingsState
+  // `layout` is read by Viewport.isVerticallyScrolling(this.props).
+  layout: string
+  viewerSettingsActions: {
+    update: (payload: Partial<ViewerSettingsState>) => void
+  }
+}
+
+const withDimensions = (
+  WrappedComponent: React.ComponentType<any>
+): React.ComponentType<any> => {
+  class WrapperComponent extends React.Component<InjectedProps> {
+    constructor(props: InjectedProps) {
       super(props)
 
       this.getFrameWidth = this.getFrameWidth.bind(this)
@@ -24,7 +42,7 @@ const withDimensions = (WrappedComponent) => {
       this.updateDimensions()
     }
 
-    getWidth = (scrollingLayout) => {
+    getWidth = (scrollingLayout: boolean): number => {
       // Column layout, return the window width
       if (!scrollingLayout) return window.innerWidth
 
@@ -44,7 +62,11 @@ const withDimensions = (WrappedComponent) => {
     updateDimensions() {
       const scrollingLayout = Viewport.isVerticallyScrolling(this.props)
       const width = this.getWidth(scrollingLayout)
-      const height = scrollingLayout ? 'auto' : window.innerHeight
+      // The scroll layout stores 'auto' for height (consumers branch on
+      // isNumeric); the store types height as number, so cast to preserve it.
+      const height = (scrollingLayout
+        ? 'auto'
+        : window.innerHeight) as unknown as number
       const nextColumns = scrollingLayout ? columns.ONE : columns.TWO
 
       this.props.viewerSettingsActions.update({
@@ -95,10 +117,9 @@ const withDimensions = (WrappedComponent) => {
     }
   }
 
-  // return WrapperComponent
   return connect(
-    ({ viewerSettings }) => ({ viewerSettings }),
-    (dispatch) => ({
+    ({ viewerSettings }: RootState) => ({ viewerSettings }),
+    (dispatch: AppDispatch) => ({
       viewerSettingsActions: bindActionCreators(
         viewerSettingsActions,
         dispatch

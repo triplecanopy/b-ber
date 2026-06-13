@@ -1,7 +1,8 @@
 import Viewport from '../../helpers/Viewport'
 import { ViewerSettings } from '../../models'
+import type { ReaderInstance } from './types'
 
-export function handleResize() {
+export function handleResize(this: ReaderInstance): void {
   if (this.state.disableMobileResizeEvents) return
 
   const viewerSettings = new ViewerSettings()
@@ -10,12 +11,16 @@ export function handleResize() {
   )
 
   viewerSettings.width = window.innerWidth
-  viewerSettings.height = scrollingLayout ? 'auto' : window.innerHeight
+  // The model types height as number, but the scroll layout stores the string
+  // 'auto' here (consumers branch on isNumeric); cast to preserve behavior.
+  viewerSettings.height = (scrollingLayout
+    ? 'auto'
+    : window.innerHeight) as unknown as number
 
   this.props.viewerSettingsActions.update(viewerSettings.get())
 }
 
-export function handleResizeStart() {
+export function handleResizeStart(this: ReaderInstance): void {
   if (this.state.disableMobileResizeEvents) return
 
   // Hide the UI behind the spinnner while the window is being resized and
@@ -45,7 +50,7 @@ export function handleResizeStart() {
   this.setState({ relativeSpreadPosition })
 }
 
-export function handleResizeEnd() {
+export function handleResizeEnd(this: ReaderInstance): void {
   if (this.state.disableMobileResizeEvents) return
 
   // Adjust users position so that they're on/close to the page
@@ -72,7 +77,7 @@ export function handleResizeEnd() {
   // this.props.userInterfaceActions.hideSpinner()
 }
 
-export function bindResizeHandlers() {
+export function bindResizeHandlers(this: ReaderInstance): void {
   window.removeEventListener('resize', this.handleResize)
   window.removeEventListener('resize', this.handleResizeStart)
   window.removeEventListener('resize', this.handleResizeEnd)
@@ -91,7 +96,7 @@ export function bindResizeHandlers() {
   )
 }
 
-export function unbindResizeHandlers() {
+export function unbindResizeHandlers(this: ReaderInstance): void {
   window.addEventListener('resize', this.handleResize)
   window.addEventListener('resize', this.handleResizeStart)
   window.addEventListener('resize', this.handleResizeEnd)

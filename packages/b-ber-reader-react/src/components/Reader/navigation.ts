@@ -1,8 +1,12 @@
 import findIndex from 'lodash/findIndex'
 import Url from '../../helpers/Url'
 import Viewport from '../../helpers/Viewport'
+import type { ReaderInstance } from './types'
 
-export function handlePageNavigation(increment) {
+export function handlePageNavigation(
+  this: ReaderInstance,
+  increment: number
+): void {
   let { spreadIndex } = this.state
 
   const { lastSpreadIndex } = this.props.view
@@ -29,7 +33,10 @@ export function handlePageNavigation(increment) {
   )
 }
 
-export function handleChapterNavigation(increment) {
+export function handleChapterNavigation(
+  this: ReaderInstance,
+  increment: number
+): void {
   let { currentSpineItemIndex } = this.state
 
   const { spine } = this.state
@@ -98,25 +105,31 @@ export function handleChapterNavigation(increment) {
   )
 }
 
-export function navigateToSpreadByIndex(spreadIndex) {
+export function navigateToSpreadByIndex(
+  this: ReaderInstance,
+  spreadIndex: number
+): void {
   this.setState({ spreadIndex }, this.updateQueryString)
 }
 
-export function navigateToElementById(id) {
+export function navigateToElementById(this: ReaderInstance, id: string): void {
   // Get the element to which the page will scroll in the layout
-  const elem = document.querySelector(id)
+  const elem = document.querySelector<HTMLElement>(id)
 
-  if (!elem) return console.warn(`Could not find element ${id}`)
+  if (!elem) {
+    console.warn(`Could not find element ${id}`)
+    return
+  }
 
   // Scroll to vertical position, leave a bit of room for the controls and
   // whitespace around the element
   if (Viewport.isVerticallyScrolling(this.props.readerSettings)) {
     const padding = 25
-    const offset =
-      document.querySelector('.bber-controls__header').offsetHeight + padding
+    const header = document.querySelector<HTMLElement>('.bber-controls__header')
+    const offset = (header?.offsetHeight ?? 0) + padding
     const top = elem.offsetTop - offset
 
-    document.getElementById('frame').scrollTo(0, top) // TODO should be handled in Frame.jsx
+    document.getElementById('frame')?.scrollTo(0, top) // TODO should be handled in Frame.jsx
   }
 
   const { paddingTop, paddingBottom, columnGap } = this.props.viewerSettings
@@ -137,7 +150,10 @@ export function navigateToElementById(id) {
   this.setState({ spreadIndex }, this.updateQueryString)
 }
 
-export function navigateToChapterByURL(absoluteURL) {
+export function navigateToChapterByURL(
+  this: ReaderInstance,
+  absoluteURL: string
+): void {
   const { spine } = this.state
   const url = new window.URL(absoluteURL)
 
@@ -190,7 +206,10 @@ export function navigateToChapterByURL(absoluteURL) {
   )
 }
 
-export function getSpineItemByAbsoluteUrl(absoluteURL) {
+export function getSpineItemByAbsoluteUrl(
+  this: ReaderInstance,
+  absoluteURL: string
+): number {
   const { spine } = this.state
   const url = new window.URL(absoluteURL)
 
@@ -201,7 +220,10 @@ export function getSpineItemByAbsoluteUrl(absoluteURL) {
   return spineItemIndex
 }
 
-export function updateQueryString(callback) {
+export function updateQueryString(
+  this: ReaderInstance,
+  callback?: () => void
+): void {
   const { spreadIndex, currentSpineItem, currentSpineItemIndex } = this.state
 
   if (!currentSpineItem) return
@@ -232,14 +254,19 @@ export function updateQueryString(callback) {
   if (callback) callback()
 }
 
-export function savePosition() {
+export function savePosition(this: ReaderInstance): void {
   const { currentSpineItemIndex, spreadIndex } = this.state
   const { searchParamKeys } = this.props.readerSettings
 
   const params = new URLSearchParams()
 
-  params.set(searchParamKeys.currentSpineItemIndex, currentSpineItemIndex)
-  params.set(searchParamKeys.spreadIndex, spreadIndex)
+  // URLSearchParams.set coerces to string at runtime; coerce explicitly to
+  // satisfy the typed (string, string) signature without changing behavior.
+  params.set(
+    searchParamKeys.currentSpineItemIndex,
+    String(currentSpineItemIndex)
+  )
+  params.set(searchParamKeys.spreadIndex, String(spreadIndex))
 
   const location = { searchParams: params.toString() }
 

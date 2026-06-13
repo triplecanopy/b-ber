@@ -1,12 +1,43 @@
-/* eslint-disable react/jsx-props-no-spreading */
-
 import debounce from 'lodash/debounce'
 import React from 'react'
 import { connect } from 'react-redux'
 import ResizeObserver from 'resize-observer-polyfill'
 import { unlessDefined } from '../helpers/utils'
+import type {
+  ReaderSettingsState,
+  RootState,
+  ViewerSettingsState,
+  ViewState,
+} from '../store/types'
 import DocumentPreProcessor from './DocumentPreProcessor'
 import ReaderContext from './reader-context'
+
+interface NodePositionOptions {
+  useParentDimensions?: boolean
+  useElementOffsetLeft?: boolean
+  useFullscreenElementWidth?: boolean
+  isMarker?: boolean
+}
+
+interface NodePositionState {
+  verso: boolean | null
+  recto: boolean | null
+  spreadIndex: number | null
+  currentSpreadIndex: number | null
+  elementEdgeLeft: number | null
+}
+
+interface NodePositionProps {
+  readerSettings: ReaderSettingsState
+  viewerSettings: ViewerSettingsState
+  view: ViewState
+  useParentDimensions?: boolean
+  useElementOffsetLeft?: boolean
+  useFullscreenElementWidth?: boolean
+  // ultimateOffsetLeft arrives as a top-level prop in the bounding-client-rect
+  // path (see UNSAFE_componentWillReceiveProps).
+  ultimateOffsetLeft?: number
+}
 
 const ELEMENT_EDGE_VERSO_MIN = 48
 const ELEMENT_EDGE_VERSO_MAX = 52
@@ -41,11 +72,18 @@ const ELEMENT_EDGE_RECTO_MAX = 5
 //
 // }
 
-const withNodePosition = (WrappedComponent, options = {}) => {
-  class WrapperComponent extends React.Component {
+const withNodePosition = (
+  WrappedComponent: React.ComponentType<any>,
+  options: NodePositionOptions = {}
+): React.ComponentType<any> => {
+  class WrapperComponent extends React.Component<
+    NodePositionProps,
+    NodePositionState
+  > {
     static contextType = ReaderContext
+    declare context: React.ContextType<typeof ReaderContext>
 
-    state = {
+    state: NodePositionState = {
       verso: null,
       recto: null,
       spreadIndex: null,
@@ -53,9 +91,19 @@ const withNodePosition = (WrappedComponent, options = {}) => {
       elementEdgeLeft: null,
     }
 
-    elemRef = React.createRef()
+    elemRef = React.createRef<HTMLElement>()
 
-    constructor(props) {
+    settings: {
+      useParentDimensions: boolean
+      useElementOffsetLeft: boolean
+      useFullscreenElementWidth: boolean
+      isMarker: boolean
+    }
+
+    calculateNodePositionAfterResize: () => void
+    resizeObserver?: ResizeObserver
+
+    constructor(props: NodePositionProps) {
       super(props)
 
       this.calculateNodePositionUsingOffsetLeft =
@@ -107,7 +155,7 @@ const withNodePosition = (WrappedComponent, options = {}) => {
       this.disconnectObservers()
     }
 
-    UNSAFE_componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps: NodePositionProps) {
       if (this.settings.useElementOffsetLeft) return
 
       const { ultimateOffsetLeft: nextUltimateOffsetLeft } = nextProps
@@ -133,10 +181,10 @@ const withNodePosition = (WrappedComponent, options = {}) => {
     }
 
     disconnectObservers() {
-      this.resizeObserver.disconnect()
+      this.resizeObserver?.disconnect()
     }
 
-    elementEdgeIsInAllowableRange = (edgePositionVariance) => {
+    elementEdgeIsInAllowableRange = (edgePositionVariance: number) => {
       const withinRange =
         (edgePositionVariance >= ELEMENT_EDGE_VERSO_MIN &&
           edgePositionVariance <= ELEMENT_EDGE_VERSO_MAX) ||
@@ -146,10 +194,10 @@ const withNodePosition = (WrappedComponent, options = {}) => {
       return withinRange
     }
 
-    getRef = () => {
+    getRef = (): HTMLElement | null => {
       const { useParentDimensions } = this.settings
 
-      let elem
+      let elem: HTMLElement | null
       if (useParentDimensions) {
         elem = this.elemRef.current?.parentElement
           ? this.elemRef.current.parentElement
@@ -173,12 +221,12 @@ const withNodePosition = (WrappedComponent, options = {}) => {
       const { paddingLeft, columnGap } = this.props.viewerSettings
 
       // Get the offset of the node's (the marker's) parent's (span's) parent (element in
-      // the document that it's been inserted into)
+      // the document that it's been inserted into). The grandparent is assumed
+      // to exist in the live DOM; cast to satisfy getComputedStyle's Element arg.
       const computedParentStyle = window.getComputedStyle(
-        node.parentElement.parentElement
+        node.parentElement?.parentElement as Element
       )
 
-      // eslint-disable-next-line prefer-destructuring
       const marginLeft = computedParentStyle.marginLeft
       const elementPaddingLeft = computedParentStyle.paddingLeft
 
@@ -261,7 +309,10 @@ const withNodePosition = (WrappedComponent, options = {}) => {
       // TODO Marker component specific code needs to be handled better here
       if (isMarker) {
         DocumentPreProcessor.removeStyleSheets()
-        DocumentPreProcessor.createStyleSheets({ paddingLeft, columnGap })
+        // createStyleSheets ignores its argument (the JS call passed
+        // { paddingLeft, columnGap } but the method reads neither); drop it to
+        // match the typed signature without changing runtime behavior.
+        DocumentPreProcessor.createStyleSheets()
         DocumentPreProcessor.appendStyleSheets()
       }
     }
@@ -323,7 +374,7 @@ const withNodePosition = (WrappedComponent, options = {}) => {
   }
 
   return connect(
-    ({ readerSettings, viewerSettings, view }) => ({
+    ({ readerSettings, viewerSettings, view }: RootState) => ({
       readerSettings,
       viewerSettings,
       view,

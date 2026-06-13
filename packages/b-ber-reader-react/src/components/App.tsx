@@ -5,13 +5,30 @@ import { bindActionCreators } from 'redux'
 import * as readerLocationActions from '../actions/reader-location'
 import * as readerSettingsActions from '../actions/reader-settings'
 import Request from '../helpers/Request'
+import type {
+  AppDispatch,
+  ReaderLocationState,
+  ReaderSettingsState,
+  RootState,
+} from '../store/types'
 import Reader from './Reader'
 
-class App extends Component {
+interface AppProps {
+  // manifestURL is supplied by the embedding host but not part of the persisted
+  // ReaderSettingsState, so it is read from the settings bag as an extra field.
+  readerSettings: ReaderSettingsState & { manifestURL?: string }
+  readerLocation: ReaderLocationState
+  // bindActionCreators erases the precise per-creator signatures; the bundles
+  // are kept loose. TODO: tighten once dispatch typing is finalized (TASK-073).
+  readerSettingsActions: Record<string, (...args: any[]) => unknown>
+  readerLocationActions: Record<string, (...args: any[]) => unknown>
+}
+
+class App extends Component<AppProps> {
   async UNSAFE_componentWillMount() {
     const { manifestURL, disableBodyStyles } = this.props.readerSettings
     let { bookURL, projectURL } = this.props.readerSettings
-    let books = []
+    let books: unknown[] = []
 
     if (manifestURL && bookURL) {
       console.error(
@@ -23,8 +40,8 @@ class App extends Component {
       // Add styles to body element in case the reader is running stand-alone
 
       // Prevent font size change on mobile landscape
-      document.body.style['-webkit-text-size-adjust'] = 'none'
-      document.body.style['touch-action'] = 'manipulation'
+      document.body.style.setProperty('-webkit-text-size-adjust', 'none')
+      document.body.style.setProperty('touch-action', 'manipulation')
       document.body.style.margin = '0'
       document.body.style.padding = '0'
     }
@@ -39,7 +56,8 @@ class App extends Component {
         const resp = await Request.getJson(manifestURL)
         const { data } = resp
         const { href: opfURL } = data.resources.find(
-          (res) => res.type === 'application/oebps-package+xml'
+          (res: { type: string; href: string }) =>
+            res.type === 'application/oebps-package+xml'
         )
 
         bookURL = opfURL.split('/').slice(0, -2).join('/')
@@ -75,8 +93,14 @@ class App extends Component {
     // other than just testing against the directory path, but since b-ber uses the
     // same value for both.
     const id = bookURL.split('/').filter(Boolean).pop()
-    const book = find(books, { id })
-    const projectConfig = {}
+    const book = find(books, { id }) as
+      | { layout?: string; downloads?: unknown; ui_options?: unknown }
+      | undefined
+    const projectConfig: {
+      layout?: string
+      downloads?: unknown
+      uiOptions?: unknown
+    } = {}
 
     // Extend projectConfig with data returned from API
     if (book) {
@@ -92,7 +116,7 @@ class App extends Component {
       this.props.readerSettings.layout || projectConfig.layout || 'columns'
 
     this.props.readerSettingsActions.updateSettings({
-      books,
+      books: books as ReaderSettingsState['books'],
       bookURL,
       projectURL,
       ...projectConfig,
@@ -109,21 +133,33 @@ class App extends Component {
 
     const { style, className, ...rest } = this.props.readerSettings
 
-    return (
-      // eslint-disable-next-line react/jsx-props-no-spreading
-      <Reader style={style} className={className} {...rest} />
-    )
+    return <Reader style={style} className={className} {...rest} />
   }
 }
 
-const mapStateToProps = ({ readerSettings, readerLocation }) => ({
+const mapStateToProps = ({ readerSettings, readerLocation }: RootState) => ({
   readerSettings,
   readerLocation,
 })
 
-const mapDispatchToProps = (dispatch) => ({
-  readerSettingsActions: bindActionCreators(readerSettingsActions, dispatch),
-  readerLocationActions: bindActionCreators(readerLocationActions, dispatch),
+// Bound action bundles. bindActionCreators yields precise per-creator types
+// that don't line up with the loose action-bundle props on AppProps; cast each
+// to the loose shape so connect's prop inference matches. Behavior unchanged.
+const mapDispatchToProps = (
+  dispatch: AppDispatch
+): Pick<AppProps, 'readerSettingsActions' | 'readerLocationActions'> => ({
+  readerSettingsActions: bindActionCreators(
+    readerSettingsActions,
+    dispatch
+  ) as unknown as AppProps['readerSettingsActions'],
+  readerLocationActions: bindActionCreators(
+    // The module also exports the non-function `locationStates` const, which is
+    // not an action creator; cast so bindActionCreators accepts the module.
+    readerLocationActions as unknown as Parameters<
+      typeof bindActionCreators
+    >[0],
+    dispatch
+  ) as unknown as AppProps['readerLocationActions'],
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(App)

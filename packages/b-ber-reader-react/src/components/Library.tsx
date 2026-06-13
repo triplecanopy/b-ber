@@ -1,6 +1,19 @@
 import React from 'react'
 
-const Library = (props) => (
+// The component reads `name` and `cover`; callers may pass additional fields
+// (e.g. `title`, `url`) that are forwarded untouched to handleClick.
+interface LibraryBook {
+  name?: string
+  cover?: string
+  [key: string]: unknown
+}
+
+interface LibraryProps {
+  books: LibraryBook[]
+  handleClick: (book: LibraryBook) => void
+}
+
+const Library = (props: LibraryProps) => (
   <div>
     {props.books.map((book, i) => (
       <button

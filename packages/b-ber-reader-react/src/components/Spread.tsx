@@ -3,14 +3,25 @@ import { connect } from 'react-redux'
 import Viewport from '../helpers/Viewport'
 import browser from '../lib/browser'
 import SpreadContext from '../lib/spread-context'
+import type { RootState } from '../store/types'
 
 // Upper bound on the per-frame re-measurement loop (see updatePosition). A spread
 // converges to its final column within a few frames; this caps the loop so a
 // pathological never-settling layout can't spin forever (~0.5s at 60fps).
 const MAX_STABILIZE_FRAMES = 30
 
-function Spread(props) {
-  const node = useRef(null)
+interface SpreadProps {
+  readerSettings: RootState['readerSettings']
+  viewerSettings: RootState['viewerSettings']
+  view: RootState['view']
+  layout?: string
+  className?: string
+  'data-marker-reference'?: string
+  children?: React.ReactNode
+}
+
+function Spread(props: SpreadProps) {
+  const node = useRef<HTMLDivElement>(null)
 
   // The rounded column index of this spread (quantised to multiples of 0.5 in
   // updatePosition). verso/recto and the column-spanning multiplier are derived
@@ -60,9 +71,9 @@ function Spread(props) {
   // change. A bounded frame budget (MAX_STABILIZE_FRAMES) prevents a
   // never-settling layout from looping forever.
   useEffect(() => {
-    let rafId = null
+    let rafId: number | null = null
 
-    const readOffset = () => {
+    const readOffset = (): { nextLeft: number; offset: number } | null => {
       // pageWidth is the distance one page turn translates the layout. In a
       // vertical-scroll layout viewerSettings.width is 'auto', so pageWidth is
       // NaN — bail (scroll layouts don't paginate spreads this way) rather than
@@ -70,6 +81,8 @@ function Spread(props) {
       const viewerSettings = viewerSettingsRef.current
       const pageWidth = Viewport.getPageWidth(viewerSettings)
       if (!Number.isFinite(pageWidth) || pageWidth === 0) return null
+
+      if (!node.current) return null
 
       const nextLeft = node.current.offsetLeft
 
@@ -84,9 +97,9 @@ function Spread(props) {
     }
 
     const stabilize = () => {
-      cancelAnimationFrame(rafId)
+      if (rafId !== null) cancelAnimationFrame(rafId)
       let frames = 0
-      let prevLeft = null
+      let prevLeft: number | null = null
 
       const tick = () => {
         if (!node.current) return
@@ -120,7 +133,7 @@ function Spread(props) {
 
     return () => {
       resizeObserver.disconnect()
-      cancelAnimationFrame(rafId)
+      if (rafId !== null) cancelAnimationFrame(rafId)
     }
   }, [
     props.viewerSettings.paddingLeft,
@@ -166,18 +179,25 @@ function Spread(props) {
 
     return {
       left: nextLeft,
-      layout: props.layout,
+      // layout may be undefined when not supplied by the parent; preserved as-is
+      // to match the pre-TS runtime behavior.
+      layout: props.layout as string,
     }
   }, [offset, verso, props.viewerSettings, props.readerSettings, props.layout])
 
+  // detect-browser types `browser` as a union (BrowserInfo | BotInfo | null);
+  // the runtime only ever reads `.name`. Narrow via optional chaining to keep
+  // the original `!== 'safari'` comparison behavior.
+  const browserName = (browser as { name?: string } | null)?.name
+
   const columnBreakStyles = useMemo(() => {
-    if (browser.name !== 'safari') return {}
+    if (browserName !== 'safari') return {}
     return {
       WebkitColumnBreakBefore: 'always',
       WebkitColumnBreakAfter: 'always',
       WebkitColumnBreakInside: 'avoid',
     }
-  }, [browser.name])
+  }, [browserName])
 
   const {
     height: windowHeight,
@@ -208,7 +228,7 @@ function Spread(props) {
 }
 
 export default connect(
-  ({ readerSettings, viewerSettings, view }) => ({
+  ({ readerSettings, viewerSettings, view }: RootState) => ({
     readerSettings,
     viewerSettings,
     view,

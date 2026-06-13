@@ -3,22 +3,31 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as userInterfaceActions from '../actions/user-interface'
 import withNavigationActions from '../lib/with-navigation-actions'
+import type { AppDispatch, RootState } from '../store/types'
 import { NavigationFooter, NavigationHeader } from './Navigation'
 
-function Controls(props) {
-  const handleClick = (e) => {
+// Controls receives a broad set of props from Reader (navigation callbacks,
+// spine/guide data) plus connect()ed state/dispatch. The owner-supplied
+// callbacks are loosely typed pending the navigation-hooks refactor, so props
+// are `any` here. TODO: tighten once the Reader prop surface is finalized.
+function Controls(props: any) {
+  // Bound to click and touchstart; typed as the common Event and the target is
+  // narrowed to Element to use closest().
+  const handleClick = (e: Event) => {
     if (!props.userInterface.handleEvents) return
 
+    const target = e.target as Element
+
     if (
-      e.target.closest('.bber-controls__sidebar') === null &&
-      e.target.closest('.bber-nav__button') === null &&
+      target.closest('.bber-controls__sidebar') === null &&
+      target.closest('.bber-nav__button') === null &&
       props.showSidebar
     ) {
       props.handleSidebarButtonClick(null)
     }
   }
 
-  const handleKeyDown = (e) => {
+  const handleKeyDown = (e: KeyboardEvent) => {
     if (!props.userInterface.handleEvents) return
     if (!e || typeof e.which === 'undefined') return
 
@@ -118,12 +127,12 @@ function Controls(props) {
 }
 
 export default connect(
-  ({ readerSettings, viewerSettings, userInterface }) => ({
+  ({ readerSettings, viewerSettings, userInterface }: RootState) => ({
     readerSettings,
     viewerSettings,
     userInterface,
   }),
-  (dispatch) => ({
+  (dispatch: AppDispatch) => ({
     userInterfaceActions: bindActionCreators(userInterfaceActions, dispatch),
   })
 )(Controls)

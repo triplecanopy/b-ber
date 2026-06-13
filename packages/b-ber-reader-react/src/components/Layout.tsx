@@ -1,5 +1,3 @@
-/* eslint-disable camelcase */
-
 import classNames from 'classnames'
 import debounce from 'lodash/debounce'
 import React, { useContext, useEffect, useState } from 'react'
@@ -15,8 +13,18 @@ import ReaderContext from '../lib/reader-context'
 import transitions from '../lib/transition-styles'
 import withDimensions from '../lib/with-dimensions'
 import withLastSpreadIndex from '../lib/with-last-spread-index'
+import type { RootState } from '../store/types'
 
-function getLayoutStyles(props, state) {
+// Local layout state (CSS box/transform values managed via useState).
+interface LayoutState {
+  margin: number
+  border: number
+  boxSizing: string
+  transform: string
+  columnFill: string
+}
+
+function getLayoutStyles(props: any, state: LayoutState): React.CSSProperties {
   const {
     width,
     height,
@@ -39,13 +47,17 @@ function getLayoutStyles(props, state) {
   let nextPaddingBottom = paddingBottom
 
   if (Viewport.isVerticalScrollConfigured(layout)) {
-    // Get padding from mobile entry in breakpoint map
-    const breakpoint = breakpoints.get(MEDIA_QUERY_MOBILE)
+    // Get padding from mobile entry in breakpoint map. The mobile breakpoint is
+    // always present in the map, so the lookup is non-null in practice.
+    const breakpoint = breakpoints.get(MEDIA_QUERY_MOBILE)!
 
     nextPaddingTop = breakpoint.paddingTop
     nextPaddingBottom = breakpoint.paddingBottom
   }
 
+  // Values originate from viewerSettings/breakpoints and are wider (string |
+  // number) than the CSSProperties literal unions; cast since they are valid
+  // CSS at runtime.
   return {
     width,
     height,
@@ -61,14 +73,14 @@ function getLayoutStyles(props, state) {
     columnFill,
     transform,
     fontSize,
-  }
+  } as React.CSSProperties
 }
 
 function getLeafStyles(
-  position /* <left|right> */,
-  translateX
+  position: 'left' | 'right',
+  translateX: number
   // transitionSpeed
-) {
+): React.CSSProperties {
   // Overlay styles for hiding content in the 'padding' range. FF animations
   // 'jump' when animating a transform, so we use 'left' and 'right'
   // properties in that case. in either case, need to move the leaves in the
@@ -76,13 +88,13 @@ function getLeafStyles(
 
   // const { transitionSpeed } = this.props.viewerSettings
 
-  let styles = {}
+  let styles: React.CSSProperties = {}
   let nextTranslateX = translateX
   // let positionX = 0
 
   // let translateX = this.context.getTranslateX()
 
-  if (browser.name === 'firefox') {
+  if ((browser as { name?: string } | null)?.name === 'firefox') {
     if (position === 'left') {
       nextTranslateX *= -1
     }
@@ -105,14 +117,24 @@ function getLeafStyles(
   return styles
 }
 
+interface LeavesProps {
+  layout: string
+  paddingLeft: number
+  paddingRight: number
+  enableTransitions: boolean
+  translateX: number
+  // transitionSpeed is currently unused by getLeafStyles (the transition lines
+  // are commented out) but kept in the prop surface to match the call site.
+  transitionSpeed: number
+}
+
 function Leaves({
   layout,
   paddingLeft,
   paddingRight,
   enableTransitions,
   translateX,
-  transitionSpeed,
-}) {
+}: LeavesProps) {
   // Disable transition animation by default. Enabling transition requires
   // user action, e.g. clicking 'next'
   if (Viewport.isVerticallyScrolling({ layout })) return null
@@ -123,7 +145,7 @@ function Leaves({
         className="bber-leaf bber-leaf--left"
         style={{
           width: paddingLeft,
-          ...getLeafStyles('left', translateX, transitionSpeed),
+          ...getLeafStyles('left', translateX),
           ...(enableTransitions ? {} : { transition: 'none' }),
         }}
       />
@@ -131,7 +153,7 @@ function Leaves({
         className="bber-leaf bber-leaf--right"
         style={{
           width: paddingRight,
-          ...getLeafStyles('right', translateX, transitionSpeed),
+          ...getLeafStyles('right', translateX),
           ...(enableTransitions ? {} : { transition: 'none' }),
         }}
       />
@@ -139,10 +161,13 @@ function Leaves({
   )
 }
 
-function Layout(props) {
+// Layout receives connect()ed userInterface plus measurement helpers and
+// viewerSettings threaded through the withDimensions/withLastSpreadIndex HOCs;
+// typed loosely pending those HOCs' injected-prop surfaces being finalized.
+function Layout(props: any) {
   const readerContext = useContext(ReaderContext)
 
-  const [state, setState] = useState({
+  const [state, setState] = useState<LayoutState>({
     margin: 0,
     border: 0,
     boxSizing: 'border-box',
@@ -157,7 +182,7 @@ function Layout(props) {
     props.viewerSettings
   const translateX = readerContext.getTranslateX()
 
-  const updateTransform = (nextSpreadIndex) => {
+  const updateTransform = (nextSpreadIndex?: number) => {
     const nextTranslateX = readerContext.getTranslateX(nextSpreadIndex)
     const transform = `translateX(${nextTranslateX}px) translate3d(0, 0, 0)`
 
@@ -222,6 +247,6 @@ function Layout(props) {
 }
 
 export default connect(
-  ({ userInterface }) => ({ userInterface }),
+  ({ userInterface }: RootState) => ({ userInterface }),
   () => ({})
 )(withDimensions(withLastSpreadIndex(Layout)))

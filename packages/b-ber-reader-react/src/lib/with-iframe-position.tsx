@@ -1,14 +1,39 @@
 import React from 'react'
 import Viewport from '../helpers/Viewport'
 
-const withIframePosition = (WrappedComponent, options = { enabled: false }) =>
-  class WrapperComponent extends React.Component {
-    iframePlaceholder = React.createRef() // Chrome
+interface IframePositionOptions {
+  enabled: boolean
+}
+
+interface IframePositionState {
+  iframePlaceholderTop: number
+  iframePlaceholderWidth: number
+  iframePlaceholderHeight: number
+}
+
+interface IframePositionProps {
+  // Read by Viewport.isVerticallyScrolling(this.props).
+  layout: string
+  [key: string]: unknown
+}
+
+const withIframePosition = (
+  WrappedComponent: React.ComponentType<any>,
+  options: IframePositionOptions = { enabled: false }
+): React.ComponentType<any> =>
+  class WrapperComponent extends React.Component<
+    IframePositionProps,
+    IframePositionState
+  > {
+    // Starts as a ref object, then reassigned to the resolved DOM node by the
+    // `innerRef` callback below. The dual use predates the migration; typed
+    // `any` to preserve it. TODO: use a single RefObject when this is reworked.
+    iframePlaceholder: any = React.createRef() // Chrome
 
     // There's a bug in Chrome 81 that causes iframes on a different domain than
     // the host not to load in multiple column layouts. Following props are used
     // for element positioning in the work-around commened on below.
-    constructor(props) {
+    constructor(props: any) {
       super(props)
 
       this.state = {
@@ -75,7 +100,7 @@ const withIframePosition = (WrappedComponent, options = { enabled: false }) =>
     }
 
     // @param name is the directive type, e.g., iframe, vimeo
-    iframeStyleBlock = (name = 'iframe') => {
+    iframeStyleBlock = (name = 'iframe'): string => {
       if (!options.enabled) return ''
 
       return `
@@ -99,12 +124,12 @@ const withIframePosition = (WrappedComponent, options = { enabled: false }) =>
     render() {
       return (
         <WrappedComponent
-          // eslint-disable-next-line react/jsx-props-no-spreading
           {...this.props}
-          // eslint-disable-next-line react/jsx-props-no-spreading
           {...this.state}
           iframeStyleBlock={this.iframeStyleBlock}
-          innerRef={(ref) => (this.iframePlaceholder = ref)}
+          innerRef={(ref: any) => {
+            this.iframePlaceholder = ref
+          }}
         />
       )
     }

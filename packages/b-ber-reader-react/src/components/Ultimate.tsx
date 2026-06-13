@@ -3,6 +3,17 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as userInterfaceActions from '../actions/user-interface'
 import * as viewActions from '../actions/view'
+import type { RootState } from '../store/types'
+
+type ViewActions = typeof viewActions
+type UserInterfaceActions = typeof userInterfaceActions
+
+interface UltimateProps {
+  view: RootState['view']
+  viewActions: ViewActions
+  userInterfaceActions: UserInterfaceActions
+  children?: React.ReactNode
+}
 
 // How long to wait between offsetLeft samples (ms).
 const STABILITY_CHECK_INTERVAL_MS = 100
@@ -55,8 +66,8 @@ function Ultimate({
   viewActions: va,
   userInterfaceActions: uia,
   children,
-}) {
-  const nodeRef = useRef(null)
+}: UltimateProps) {
+  const nodeRef = useRef<HTMLSpanElement>(null)
 
   // Always-current refs for Redux action props so setTimeout callbacks never
   // close over a stale dispatch function
@@ -73,13 +84,13 @@ function Ultimate({
   // null so that the first check always results in a reschedule, giving the
   // browser at least one full STABILITY_CHECK_INTERVAL_MS to complete layout
   // before we compare values.
-  const lastOffsetLeftRef = useRef(null)
+  const lastOffsetLeftRef = useRef<number | null>(null)
   // Count of consecutive checks where offsetLeft matched the previous reading.
   // Reset whenever offsetLeft moves; layout is stable once it reaches
   // REQUIRED_STABLE_CHECKS.
   const stableCountRef = useRef(0)
   // setTimeout handle for the pending stability check
-  const timerRef = useRef(null)
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   // Timestamp (Date.now()) recorded when startWatching() begins. Used to
   // enforce MAX_WAIT_MS: if layout has not stabilised within that window,
   // onStable() is called unconditionally so the spinner always hides.
@@ -205,7 +216,6 @@ function Ultimate({
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // Restart watching when a new chapter begins loading.
@@ -220,7 +230,6 @@ function Ultimate({
     if (prevLoaded === true && view.loaded === false) {
       startWatching()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [view.loaded])
 
   return (
@@ -231,7 +240,7 @@ function Ultimate({
 }
 
 export default connect(
-  ({ view }) => ({ view }),
+  ({ view }: RootState) => ({ view }),
   (dispatch) => ({
     userInterfaceActions: bindActionCreators(userInterfaceActions, dispatch),
     viewActions: bindActionCreators(viewActions, dispatch),
