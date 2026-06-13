@@ -1,6 +1,6 @@
 # b-ber monorepo — Project Plan
 
-_Last updated: 2026-06-11 (task system flattened into root; PLAN reorganized by feature)._
+_Last updated: 2026-06-13 (TS migration epic closed — TASK-032 reader-react merged, TASK-019 complete)._
 
 This file is the **current state**. Conventions, standards, and the task-file
 format live in [AGENTS.md](./AGENTS.md). All tasks live in `tasks/` at the repo
@@ -31,7 +31,7 @@ Every task belongs to exactly one; every new task must too.
 | Feature | Done | Active | Backlog | State |
 | ------- | ---- | ------ | ------- | ----- |
 | 🔧 Upgrade tooling | 15 | 0 | 10 | Core toolchain shipped; remaining is dep/release/docs polish |
-| 🔤 Migrate JS→TS | 16 | 1 | 1 | reader-react (TASK-032) **converted** on `feat/ts-stage-4` — pending merge + epic close-out |
+| 🔤 Migrate JS→TS | 18 | 0 | 0 | ✅ **Epic complete** — reader-react (TASK-032) merged; every package except legacy `b-ber-reader` is TypeScript |
 | ✅ Unit test coverage | 2 | 1 | 2 | Epic in progress; most packages at target, a few laggards |
 | 🧪 E2E testing | 5 | 1 | 2 | Pipeline green in CI; skill + iframe fix remain |
 | ⚙️ Node.js modernization | 1 | 0 | 2 | Barely started; epic + logger refactor pending |
@@ -69,19 +69,20 @@ _"Active" = in progress. "Backlog" = not started (excludes superseded)._
 
 ## 🔤 Migrate JS→TS
 
+✅ **Epic complete (TASK-019, closed 2026-06-13).** Every monorepo package is
+authored in TypeScript except the intentionally-excluded legacy `b-ber-reader`.
+
 **Shipped:** strategy + infra (TASK-002/003/008), Stage 1 shapes/lib/logger
 (009–012), Stage 2 grammar/parser/templates/markdown (024–028), Stage 3
-tasks/cli (029–031), resources (048).
-
-| Task | Pri | Outstanding work |
-| ---- | --- | ---------------- |
-| TASK-032 | low | **b-ber-reader-react TS conversion complete** on `feat/ts-stage-4` (strict `tsc` clean, Vite build + 458 tests green). Remaining: merge → `feat/upgrades`, then close |
-| TASK-019 | high | TS migration **epic / tracking doc** — close once `feat/ts-stage-4` merges |
+tasks/cli (029–031), resources (048), Stage 4 reader-react (TASK-032 — strict
+`tsc` clean, Vite build + 458 tests green; merged `feat/ts-stage-4` → `feat/upgrades`
+in `ceb3d636`).
 
 > TASK-072 (reader-react TS adoption) is **superseded** by TASK-032.
 > TASK-032 conversion stayed type-only/behavior-preserving (class components
 > kept as classes); the densest pragmatic-`any` clusters dissolve in the React
-> 19 class→functional + Redux modernization passes. See TASK-032 "Type debt".
+> 19 class→functional + Redux modernization passes. See TASK-032 "Type debt" —
+> it is the seeding input for the React 19 epic's typing cleanup.
 
 ---
 
@@ -167,8 +168,8 @@ sequencing work:
 2. **React 19 spread cluster (TASK-081–088) → TASK-032 (TS).** Stabilize the
    reader's layout before converting the package to TypeScript.
 3. **E2E pipeline (TASK-044, ✓) → TASK-055 (testing skill).** Now unblocked.
-4. **TASK-032 (TS reader-react) → TASK-019 close.** The TS epic finishes when the
-   last package converts.
+4. ✅ **TASK-032 (TS reader-react) → TASK-019 close.** Resolved — both closed
+   2026-06-13; the TS epic is complete.
 5. **Coverage epic (TASK-004) ↔ reader-react.** reader-react reached 85%
    (2026-06-13: src/components/ 36% -> 96%) — no longer a drag on the
    repo-wide 75% target. Remaining laggards are cli (54%) and b-ber-tasks (13%).
@@ -177,6 +178,9 @@ sequencing work:
 
 ## 🆕 Recently completed (last sessions)
 
+- **TASK-032 / TASK-019 — TS migration epic complete.** reader-react converted
+  (strict TS, 458 tests + 9 snapshots green) and merged; whole monorepo is now
+  TypeScript (legacy `b-ber-reader` excluded by design)
 - TASK-035 — CircleCI pipeline modernized (2.1, Node 24, PR validation on all branches)
 - TASK-044 — E2E CI integration verified green
 - TASK-049 — Codecov coverage reporting wired (badge + upload)
@@ -196,7 +200,7 @@ sequencing work:
 | 3 | TASK-004 | Push coverage laggards to 75% | Closes the coverage epic; reader-react is the long pole |
 | 4 | TASK-055 | Create the testing skill | Newly unblocked by the green E2E pipeline |
 | 5 | TASK-052 | Prototype `npm pack` publish-smoke test | Guards against the canary-only bug class |
-| 6 | TASK-032 | Convert reader-react to TS | After the spread cluster settles → closes the TS epic |
+| 6 | TASK-081–085 | User browser-verify the spread/layout cluster | All fixes merged & typed; only manual reader QA blocks close-out (see below) |
 
 ---
 
@@ -215,7 +219,7 @@ work happens on feature branches** (e.g. `feat/ts-stage-4`, per-package
 | `feat/vite-migration` | TASK-006/007/015 | merged ✓ |
 | `feat/ts-stage-1` → `-3` | TASK-008–012, 024–031 | merged ✓ |
 | `feat/e2e`, `feat/e2e-ci` | TASK-039–044 | folded into `feat/upgrades` ✓ |
-| `feat/ts-stage-4` | TASK-032 (reader-react TS) | **conversion complete, pending merge** |
+| `feat/ts-stage-4` | TASK-032 (reader-react TS) | merged ✓ (`ceb3d636`) |
 | `feat/node-modernization-*` | TASK-013 per-package slices | not started |
 
 **Before merging `feat/upgrades` → `main`:** `npm test` green from root; no

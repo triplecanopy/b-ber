@@ -1,6 +1,6 @@
 # TASK-019: TypeScript migration — full monorepo conversion
 
-**Status:** not started
+**Status:** complete
 **Feature:** Migrate JS→TS
 **Scope:** monorepo
 **Priority:** high
@@ -40,36 +40,36 @@ These are blockers identified in TASK-016. All are small, low-risk changes:
 
 ### Stage 1 — shapes + core libraries (`feat/ts-stage-1`)
 
-- [ ] **TASK-008** — Set up shared TypeScript infrastructure (tsdown, @swc/jest,
+- [x] **TASK-008** — Set up shared TypeScript infrastructure (tsdown, @swc/jest,
       tsconfig.base.json, root typecheck script). Gate for all subsequent tasks.
-- [ ] **TASK-009** — Convert `b-ber-shapes-directives`. First package because
+- [x] **TASK-009** — Convert `b-ber-shapes-directives`. First package because
       it has 16 consumers; also deletes the hand-written ambient stub in
       `b-ber-validator` once the real `.d.ts` exists.
-- [ ] **TASK-010** — Convert `b-ber-shapes-dublin-core` and
+- [x] **TASK-010** — Convert `b-ber-shapes-dublin-core` and
       `b-ber-shapes-sequences`. Independent of each other; follow TASK-009.
-- [ ] **TASK-011** — Convert `b-ber-logger`. Independent of TASK-010; can run
+- [x] **TASK-011** — Convert `b-ber-logger`. Independent of TASK-010; can run
       in parallel on the same branch.
-- [ ] **TASK-012** — Convert `b-ber-lib`. Depends on TASK-009–011 having
+- [x] **TASK-012** — Convert `b-ber-lib`. Depends on TASK-009–011 having
       emitted `.d.ts` files first. Largest Stage 1 conversion.
-- [ ] Merge `feat/ts-stage-1` → `feat/upgrades`
-- [ ] Cleanup commit: remove `babel.config.js` and all `@babel/*` packages from
+- [x] Merge `feat/ts-stage-1` → `feat/upgrades`
+- [x] Cleanup commit: remove `babel.config.js` and all `@babel/*` packages from
       root now that all Stage 1 packages use tsdown + @swc/jest.
 
 ### Stage 2 — mid-layer packages (`feat/ts-stage-2`)
 
-No individual tasks exist yet. Open them before starting this stage.
+Executed as TASK-024–028 (templates, markdown-renderer, parsers, grammars).
 
-- [ ] Open tasks for: `b-ber-templates`, `b-ber-markdown-renderer`
-- [ ] Open tasks for: all 5 `b-ber-parser-*` packages
-- [ ] Open tasks for: all 16 `b-ber-grammar-*` packages
-- [ ] Pre-work: audit `@types/*` availability for remark/rehype plugin API
+- [x] Open tasks for: `b-ber-templates`, `b-ber-markdown-renderer`
+- [x] Open tasks for: all 5 `b-ber-parser-*` packages
+- [x] Open tasks for: all 16 `b-ber-grammar-*` packages
+- [x] Pre-work: audit `@types/*` availability for remark/rehype plugin API
       (grammar packages depend on it) before starting the grammar wave
-- [ ] Merge `feat/ts-stage-2` → `feat/upgrades`
+- [x] Merge `feat/ts-stage-2` → `feat/upgrades`
 
 ### Stage 3 — pipeline entry points (`feat/ts-stage-3`)
 
-- [ ] Open tasks for: `b-ber-tasks`, `b-ber-cli`
-- [ ] Merge `feat/ts-stage-3` → `feat/upgrades`
+- [x] Open tasks for: `b-ber-tasks`, `b-ber-cli` (TASK-029–031; resources TASK-048)
+- [x] Merge `feat/ts-stage-3` → `feat/upgrades`
 
 ### Stage 4 — browser package (`feat/ts-stage-4`)
 
@@ -78,8 +78,9 @@ No individual tasks exist yet. Open them before starting this stage.
 - [x] Convert `b-ber-reader-react` (TASK-032) — all `src/` is now strict TS;
       `tsc --noEmit` clean, Vite build + suite (458 pass) green. On
       `feat/ts-stage-4`, pending merge.
-- [ ] Merge `feat/ts-stage-4` → `feat/upgrades` (this is the last package —
-      close this epic once merged)
+- [x] Merge `feat/ts-stage-4` → `feat/upgrades` (commit `ceb3d636`) — this was
+      the last package; epic complete. Every monorepo package except the
+      intentionally-excluded legacy `b-ber-reader` is now authored in TypeScript.
 
 ### Not migrated
 

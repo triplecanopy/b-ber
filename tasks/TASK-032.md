@@ -1,6 +1,6 @@
 # TASK-032: Convert b-ber-reader-react to TypeScript (Stage 4)
 
-**Status:** in progress
+**Status:** complete
 **Feature:** Migrate JS→TS
 **Scope:** b-ber-reader-react
 **Priority:** low
@@ -173,9 +173,9 @@ The suite is the regression guard for this conversion (71 suites, 458 passing,
 - [x] `npx tsc --noEmit` passes clean (strict); removed `allowJs`
 - [x] `npm test` passes; suite count (458 pass / 1 skip) and 9 snapshots
       unchanged; `npm run build` (Vite) succeeds
-- [ ] Update [[TASK-019]] Stage 4 checkbox + `PLAN.md`; close TASK-019 if this
-      is the last package
-- [ ] Merge `feat/ts-stage-4` → `feat/upgrades` (then close this task)
+- [x] Update [[TASK-019]] Stage 4 checkbox + `PLAN.md`; close TASK-019 (this was
+      the last package)
+- [x] Merge `feat/ts-stage-4` → `feat/upgrades` (commit `ceb3d636`); task closed
 
 ## Type debt / follow-ups (for the React 19 + Redux modernization tasks)
 
