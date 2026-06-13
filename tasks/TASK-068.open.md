@@ -4,6 +4,8 @@
 **Feature:** React 19 (reader-react)
 **Phase:** Modernization — Phase 1
 **Priority:** medium
+**Model:** Sonnet 4.6 — low-risk, mechanical cleanup (dead code, renames,
+ErrorBoundary) guarded by the test suite.
 
 ## Description
 

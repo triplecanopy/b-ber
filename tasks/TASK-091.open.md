@@ -4,6 +4,8 @@
 **Feature:** React 19 (reader-react)
 **Phase:** Dependencies
 **Priority:** low
+**Model:** Sonnet 4.6 — contained dependency upgrade; verify media playback in
+the browser after.
 **Created:** 2026-06-10
 
 ## Description

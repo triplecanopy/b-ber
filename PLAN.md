@@ -35,7 +35,7 @@ Every task belongs to exactly one; every new task must too.
 | ✅ Unit test coverage | 2 | 1 | 2 | Epic in progress; most packages at target, a few laggards |
 | 🧪 E2E testing | 5 | 1 | 2 | Pipeline green in CI; skill + iframe fix remain |
 | ⚙️ Node.js modernization | 1 | 0 | 2 | Barely started; epic + logger refactor pending |
-| ⚛️ React 19 (reader-react) | 16 | 0 | 15 | Spread/layout cluster done + QA'd; **class→functional / HOC→hooks / state migration** is the next front |
+| ⚛️ React 19 (reader-react) | 17 | 1 | 20 | Migration tasks scoped (TASK-094–100); conventions doc in review. **class→functional → HOC→hooks → state migration** |
 
 _"Active" = in progress. "Backlog" = not started (excludes superseded)._
 
@@ -171,19 +171,24 @@ the migration (see Deferred below).
 
 ### Migration plan (maps to the 5-step approach)
 
-**Step 1 (class→functional) + Step 2 (HOC→hooks) — interleaved, bottom-up.** The
-class Media components consume the class position-HOCs, so they convert in one
-wave to avoid double-touching. Proposed waves (final task granularity TBD — see
-"What's next"):
+Conventions for every wave task live in
+[`MIGRATION-CONVENTIONS.md`](./packages/b-ber-reader-react/MIGRATION-CONVENTIONS.md)
+(**TASK-094**) — read it first. Each task carries a `**Model:**` field (Sonnet
+for mechanical conversions, Opus for the high-judgment ones).
 
-| Wave | Converts | Notes |
-| ---- | -------- | ----- |
-| Leaf components | `Footnote`, `Marker`, `SidebarSettings` | simplest, isolated |
-| Measurement HOCs→hooks | `with-dimensions`→`useDimensions`, `with-navigation-actions` | no position math |
-| Position HOCs→hooks | `with-node-position` + `with-iframe-position` | **absorbs deferred TASK-084 `getPageWidth` adoption**; needs marker QA |
-| Media subtree | `Media`, `Vimeo`, `Iframe`, `MediaControls`, `MediaButtonVolume` | consume the new position hooks |
-| `App` | top-level `connect`'d class w/ `UNSAFE_` | last — most entangled |
-| `selfRef` removal | extract `navigation.js`/`loader.js`/`resize.js` into hooks | the big Phase-3 leftover; `Reader` is already functional |
+**Components convert before HOCs** — an HOC wraps a functional component fine,
+but a hook can only be called from one, so making consumers functional first
+turns every HOC→hook step into a mechanical swap with no half-wired state.
+
+| Task | Step | Converts | Model |
+| ---- | ---- | -------- | ----- |
+| **TASK-094** | 0 | Conventions doc (foundation) | Opus |
+| TASK-095 | 1 | Leaf components: `Footnote`, `Marker`, `SidebarSettings` | Sonnet |
+| TASK-096 | 1 | Media subtree: `Media`, `Vimeo`, `Iframe`, `MediaControls`, `MediaButtonVolume` | Sonnet (Media/Vimeo tricky) |
+| TASK-097 | 1 | `App` (async `UNSAFE_` + `connect`) | Opus |
+| TASK-098 | 2 | Measurement HOCs→hooks: `with-dimensions`, `with-navigation-actions` | Sonnet |
+| TASK-099 | 2 | Position HOCs→hooks: `with-node-position`, `with-iframe-position` (**absorbs deferred TASK-084 `getPageWidth`**) | Opus |
+| TASK-100 | 2 | Remove `selfRef` shim: `navigation`/`loader`/`resize` → hooks | Opus |
 
 **Step 3 (evaluate deps) — TASK-073 (research, now unblocked).** Decision lean:
 **away from Redux toward built-in React state** (reduce 3rd-party deps; RTK is
@@ -197,11 +202,13 @@ TASK-076 (SCSS→CSS Modules), plus general organization cleanup.
 
 ### Sequencing
 
-1. **TASK-093** (consolidate PLAN — *this section*) + **TASK-068** (housekeeping):
-   refresh the misleading phase plan and clear dead code before refactoring.
-2. **Step 1+2 wave**, bottom-up (leaves → HOCs → Media → App → selfRef).
-3. **TASK-073** research decision → **Step 4** state migration.
-4. **TASK-091** anytime (independent dep upgrade).
+1. **TASK-094** (conventions — user review pending) + **TASK-068** (housekeeping):
+   establish the patterns and clear dead code before refactoring.
+2. **Step 1** components: TASK-095 (leaves) → TASK-096 (Media) → TASK-097 (App).
+3. **Step 2** HOCs→hooks: TASK-098 (measurement) → TASK-099 (position) →
+   TASK-100 (selfRef removal, highest-risk — do last).
+4. **TASK-073** research decision → **Step 4** state migration.
+5. **TASK-091** anytime (independent dep upgrade).
 
 ### Deferred until *after* the migration (per user)
 
@@ -271,12 +278,13 @@ sequencing work:
 
 | Priority | Task | Action | Why now |
 | -------- | ---- | ------ | ------- |
-| 1 | React 19 migration | Create the Step 1+2 wave task files (granularity TBD) + TASK-068 | The next major front; surface and sequencing captured above |
-| 2 | TASK-073 | Run the state-management research (built-in over Redux) | Now unblocked by TS; output gates Step 4 |
-| 3 | TASK-050 | CLI handler tests | Unblocks TASK-046 and lifts cli coverage toward 75% |
-| 4 | TASK-004 | Push coverage laggards to 75% | Closes the coverage epic; cli + b-ber-tasks are the long poles |
-| 5 | TASK-055 | Create the testing skill | Newly unblocked by the green E2E pipeline |
-| 6 | TASK-052 | Prototype `npm pack` publish-smoke test | Guards against the canary-only bug class |
+| 1 | TASK-094 | User reviews the migration conventions doc | Gates the whole Step 1+2 wave; every task follows it |
+| 2 | TASK-095 → 100 | Run the class→functional / HOC→hooks waves (per the Model field) | Tasks scoped & ready; conventions + tests guard behavior |
+| 3 | TASK-073 | Run the state-management research (built-in over Redux) | Now unblocked by TS; output gates Step 4 |
+| 4 | TASK-050 | CLI handler tests | Unblocks TASK-046 and lifts cli coverage toward 75% |
+| 5 | TASK-004 | Push coverage laggards to 75% | Closes the coverage epic; cli + b-ber-tasks are the long poles |
+| 6 | TASK-055 | Create the testing skill | Newly unblocked by the green E2E pipeline |
+| 7 | TASK-052 | Prototype `npm pack` publish-smoke test | Guards against the canary-only bug class |
 
 ---
 

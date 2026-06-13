@@ -4,6 +4,8 @@
 **Feature:** React 19 (reader-react)
 **Phase:** Modernization — state management (Step 3 of the React 19 plan)
 **Priority:** medium
+**Model:** Opus — architectural research + decision (the biggest fork in the
+migration); the resulting execution task can be Sonnet, slice by slice.
 
 > **This is a research + decision task, not the migration itself.** Its output is
 > a written recommendation and a concrete migration plan; the actual state-layer
