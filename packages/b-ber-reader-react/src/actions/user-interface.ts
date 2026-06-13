@@ -1,7 +1,8 @@
 import * as actionTypes from '../constants/user-interface'
+import type { UserInterfaceState } from '../store/types'
 
 // Bulk update
-export const update = (payload) => ({
+export const update = (payload: Partial<UserInterfaceState>) => ({
   type: actionTypes.UPDATE,
   payload,
 })

@@ -1,12 +1,16 @@
 import * as actionTypes from '../constants/user-interface'
+import type { ReducerAction, UserInterfaceState } from '../store/types'
 
-const initialState = {
+const initialState: UserInterfaceState = {
   enableTransitions: false,
   handleEvents: false,
   spinnerVisible: true,
 }
 
-const markers = (state = initialState, action = {}) => {
+const userInterface = (
+  state: UserInterfaceState = initialState,
+  action: ReducerAction = { type: '' }
+): UserInterfaceState => {
   switch (action.type) {
     case actionTypes.PAGE_TRANSITIONS_UPDATE:
       return {
@@ -37,4 +41,4 @@ const markers = (state = initialState, action = {}) => {
   }
 }
 
-export default markers
+export default userInterface

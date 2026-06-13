@@ -1,9 +1,8 @@
-/* eslint-disable camelcase */
-
 import { locationStates } from '../actions/reader-location'
 import * as actionTypes from '../constants/reader-settings'
+import type { ReaderSettingsState, ReducerAction } from '../store/types'
 
-export const initialState = {
+export const initialState: ReaderSettingsState = {
   // loadRemoteLibrary: true, // TODO unused
 
   books: [],
@@ -54,7 +53,10 @@ export const initialState = {
   layout: '',
 }
 
-const readerSettings = (state = initialState, action = {}) => {
+const readerSettings = (
+  state: ReaderSettingsState = initialState,
+  action: ReducerAction = { type: '' }
+): ReaderSettingsState => {
   switch (action.type) {
     case actionTypes.SETTINGS_UPDATE:
       return {

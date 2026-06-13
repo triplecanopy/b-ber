@@ -1,10 +1,10 @@
-/* eslint-disable arrow-body-style */
 import * as actionTypes from '../constants/viewer-settings'
 import Storage from '../helpers/Storage'
+import type { AppThunk, ViewerSettingsState } from '../store/types'
 
 // const useLocalStorage = false // TODO
 
-export const load = () => (dispatch) => {
+export const load = (): AppThunk => (dispatch) => {
   // TODO
   // const storage = Storage.set(LOCALSTORAGE_KEY)
 
@@ -14,7 +14,7 @@ export const load = () => (dispatch) => {
   })
 }
 
-export const save = () => (dispatch, getState) => {
+export const save = (): AppThunk => (dispatch, getState) => {
   // if (useLocalStorage === false || this.state.cache === false) return
 
   const { viewerSettings } = getState()
@@ -29,7 +29,7 @@ export const save = () => (dispatch, getState) => {
 }
 
 export const update =
-  (settings = {}) =>
+  (settings: Partial<ViewerSettingsState> = {}): AppThunk =>
   (dispatch) => {
     // if (useLocalStorage === false || this.state.cache === false) return
 

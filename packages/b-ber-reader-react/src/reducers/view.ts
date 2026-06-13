@@ -1,14 +1,17 @@
 import * as actionTypes from '../constants/view'
+import type { ReducerAction, ViewState } from '../store/types'
 
-const initialState = {
+const initialState: ViewState = {
   loaded: false,
   // pendingDeferredCallbacks: true,
   ultimateOffsetLeft: 0,
   lastSpreadIndex: 0,
 }
 
-const view = (state = initialState, action) => {
-  // console.log('view', action)
+const view = (
+  state: ViewState = initialState,
+  action: ReducerAction = { type: '' }
+): ViewState => {
   switch (action.type) {
     case actionTypes.LOAD:
     case actionTypes.UNLOAD:
