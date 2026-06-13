@@ -159,21 +159,53 @@ The suite is the regression guard for this conversion (71 suites, 458 passing,
 
 ## Subtasks
 
-- [ ] Create `feat/ts-stage-4` off `feat/upgrades`
-- [ ] Add `@types/*` devDependencies; add `tsconfig.json`; add `typecheck`
+- [x] Create `feat/ts-stage-4` off `feat/upgrades`
+- [x] Add `@types/*` devDependencies; add `tsconfig.json`; add `typecheck`
       script to `package.json`
-- [ ] Foundation: convert `constants/`, `models/`, `actions/`, `reducers/`;
-      define `RootState`/action/thunk types
-- [ ] Utilities: convert `helpers/`, `lib/`, `hooks/`, `config`
-- [ ] Leaf components: `Media/**`, `Sidebar/**`, `Navigation/**`, simple leaves
-- [ ] HOCs + mid components
-- [ ] Orchestrators: `Reader/**`, `Controls`, `App`
-- [ ] Entry: `index.jsx` → `index.tsx`; reconcile with `index.d.ts`
-- [ ] `npx tsc --noEmit` passes clean (strict); remove `allowJs`
-- [ ] `npm test` passes from root; suite count and snapshots unchanged
+- [x] Foundation: convert `constants/`, `models/`, `actions/`, `reducers/`;
+      define `RootState`/action/thunk types (added `src/store/types.ts`)
+- [x] Utilities: convert `helpers/`, `lib/`, `hooks/`, `config`
+- [x] Leaf components: `Media/**`, `Sidebar/**`, `Navigation/**`, simple leaves
+- [x] HOCs + mid components
+- [x] Orchestrators: `Reader/**`, `Controls`, `App` (selfRef shim preserved;
+      typed via `src/components/Reader/types.ts`)
+- [x] Entry: `index.jsx` → `index.tsx` (Vite lib entry updated)
+- [x] `npx tsc --noEmit` passes clean (strict); removed `allowJs`
+- [x] `npm test` passes; suite count (458 pass / 1 skip) and 9 snapshots
+      unchanged; `npm run build` (Vite) succeeds
 - [ ] Update [[TASK-019]] Stage 4 checkbox + `PLAN.md`; close TASK-019 if this
       is the last package
-- [ ] Merge `feat/ts-stage-4` → `feat/upgrades`
+- [ ] Merge `feat/ts-stage-4` → `feat/upgrades` (then close this task)
+
+## Type debt / follow-ups (for the React 19 + Redux modernization tasks)
+
+Conversion stayed type-only and behavior-preserving; these pragmatic `any`/cast
+points were left with `// TODO` markers and are worth cleaning up in the deeper
+refactor passes:
+
+- **`height: number | 'auto'`** — the scroll layout stores the string `'auto'`
+  in `viewerSettings.height`, but `ViewerSettingsState.height` / the
+  `ViewerSettings` model type it as `number` (consumers branch via `isNumeric`).
+  Two `as unknown as number` casts (with-dimensions, resize) would drop if the
+  type were widened.
+- **Typed `browserName` from `lib/browser.ts`** — `detect-browser`'s union
+  (`BrowserInfo | BotInfo | null`) forces `browser.name` casts in several files.
+- **HOC-injected prop types** — `with-node-position` / `with-iframe-position`
+  inject `view`/`viewerSettings`/`readerSettings` + position fields typed `any`
+  in `Media`/`Iframe`/`Vimeo`/`Marker`. A shared `WithNodePositionProps` would
+  remove them. The whole HOC chain prop plumbing is the densest `any` cluster —
+  it largely dissolves when class→functional + hooks land ([[TASK-060]] etc.).
+- **`connect` dispatch bundles** — `App` and `Reader` cast `bindActionCreators`
+  output `as unknown as` the loose `BoundActions` shape; partly because
+  `actions/reader-location` also exports the non-function `locationStates`
+  const, making the module an invalid `ActionCreatorsMapObject`. Extracting
+  `locationStates` to a constants module would fix that.
+- **Shared shapes** — `SpineItem`/`Spine`, `Metadata`, `Book`, `SidebarName`
+  are duplicated as local interfaces across Sidebar/Navigation and overlap the
+  public `index.d.ts`. Consolidating into `src/store/types.ts` (or a `src/types`
+  module) and reconciling with the published `index.d.ts` is a good cleanup.
+- **`Library` book shape** — reads `name`/`cover` while the store `Book` type
+  uses `title`/`url`/`cover`; a local `LibraryBook` bridges this for now.
 
 ## Orchestration
 

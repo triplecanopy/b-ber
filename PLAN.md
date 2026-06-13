@@ -31,7 +31,7 @@ Every task belongs to exactly one; every new task must too.
 | Feature | Done | Active | Backlog | State |
 | ------- | ---- | ------ | ------- | ----- |
 | 🔧 Upgrade tooling | 15 | 0 | 10 | Core toolchain shipped; remaining is dep/release/docs polish |
-| 🔤 Migrate JS→TS | 16 | 0 | 2 | **~95%** — only reader-react (TASK-032) + epic close-out left |
+| 🔤 Migrate JS→TS | 16 | 1 | 1 | reader-react (TASK-032) **converted** on `feat/ts-stage-4` — pending merge + epic close-out |
 | ✅ Unit test coverage | 2 | 1 | 2 | Epic in progress; most packages at target, a few laggards |
 | 🧪 E2E testing | 5 | 1 | 2 | Pipeline green in CI; skill + iframe fix remain |
 | ⚙️ Node.js modernization | 1 | 0 | 2 | Barely started; epic + logger refactor pending |
@@ -75,12 +75,13 @@ tasks/cli (029–031), resources (048).
 
 | Task | Pri | Outstanding work |
 | ---- | --- | ---------------- |
-| TASK-032 | low | Convert **b-ber-reader-react** to TypeScript (Stage 4) — the last package |
-| TASK-019 | high | TS migration **epic / tracking doc** — close when TASK-032 lands |
+| TASK-032 | low | **b-ber-reader-react TS conversion complete** on `feat/ts-stage-4` (strict `tsc` clean, Vite build + 458 tests green). Remaining: merge → `feat/upgrades`, then close |
+| TASK-019 | high | TS migration **epic / tracking doc** — close once `feat/ts-stage-4` merges |
 
 > TASK-072 (reader-react TS adoption) is **superseded** by TASK-032.
-> ⚠️ TASK-032 is best done *after* the React 19 spread/layout cluster settles —
-> converting reader-react mid-bugfix is painful. See cross-feature blockers.
+> TASK-032 conversion stayed type-only/behavior-preserving (class components
+> kept as classes); the densest pragmatic-`any` clusters dissolve in the React
+> 19 class→functional + Redux modernization passes. See TASK-032 "Type debt".
 
 ---
 
@@ -214,7 +215,7 @@ work happens on feature branches** (e.g. `feat/ts-stage-4`, per-package
 | `feat/vite-migration` | TASK-006/007/015 | merged ✓ |
 | `feat/ts-stage-1` → `-3` | TASK-008–012, 024–031 | merged ✓ |
 | `feat/e2e`, `feat/e2e-ci` | TASK-039–044 | folded into `feat/upgrades` ✓ |
-| `feat/ts-stage-4` | TASK-032 (reader-react TS) | not started |
+| `feat/ts-stage-4` | TASK-032 (reader-react TS) | **conversion complete, pending merge** |
 | `feat/node-modernization-*` | TASK-013 per-package slices | not started |
 
 **Before merging `feat/upgrades` → `main`:** `npm test` green from root; no
