@@ -133,6 +133,72 @@ async/observer paths above — **TASK-096** and especially **TASK-100**) must be
 reasoned through, **browser-QA'd**, and flagged for review when update ordering
 is non-obvious.
 
+### 3d. Effect idempotency & cleanup (and StrictMode as the detector)
+
+A class lifecycle runs on a fixed schedule; an effect does not. `useEffect` can
+run **more than once** — its cleanup fires before every re-run (not just on
+unmount), and under React 18+ **StrictMode in dev it deliberately runs
+mount → cleanup → mount again** to surface effects that aren't safe to repeat.
+So converting `componentDidMount`/`componentWillUnmount` to an effect is *not*
+just syntax: the effect must be **idempotent** and its cleanup must **fully
+reverse** whatever it set up.
+
+Rules:
+
+1. **Every effect that allocates or subscribes returns a cleanup that undoes it
+   exactly.** Observers `disconnect()`, listeners `removeEventListener`, timers
+   `clearTimeout`/`clearInterval`, in-flight work is aborted or its result
+   ignored. `componentWillUnmount` → the cleanup return, but remember the cleanup
+   also runs *between* re-runs.
+2. **Idempotent:** running effect → cleanup → effect again must leave no
+   duplicated side effect (no double fetch, double observer, leaked listener).
+3. The reader's at-risk effects: the async **loader** fetch (guard against
+   double/overlapping loads — abort or ignore stale results on cleanup), the
+   **ResizeObserver/MutationObserver** attach (disconnect on cleanup), window/
+   keyboard **event listeners**, the **`Ultimate`** polling loop (clear the
+   timeout + reset its active flag), and the **`document.fonts.ready`** handler.
+4. **Don't paper over the double-invoke with a "run once" ref** unless the
+   semantics are genuinely one-time (e.g. one-shot analytics). For data loading
+   and subscriptions, make the effect idempotent/abortable — that's the actual
+   fix and it's also what keeps the code correct under concurrent remounts.
+
+**Detector:** temporarily wrap the dev harness (`dev/index.jsx`) in
+`<React.StrictMode>` while doing these conversions. A correct conversion runs
+cleanly under it; a missing/incorrect cleanup shows up immediately as a double
+fetch, doubled observer, or leak. StrictMode is **not** enabled today and need
+not ship — it's a migration-time tool. (`createRoot` is already in use, so
+concurrent behavior is otherwise live regardless.)
+
+### 3e. Render purity / external reads (concurrent rendering)
+
+Concurrent React may call a component's render **multiple times**, bail out, or
+restart it before committing. Render must therefore be **pure**: no side effects,
+no mutation, and **no reads of mutable external sources during render** — those
+can *tear* (observe inconsistent values within one render pass) or be thrown away.
+
+Existing offenders in the tree (do **not** worsen them; fix one only when you're
+already converting that file, otherwise leave it for the dedicated task):
+
+- `window.innerWidth` / `innerHeight` read directly in render/computation paths
+  — `Footnote`, `Spread`, `SpreadFigure`.
+- the **`book.content` module-global rendered straight into JSX** (`BookContent`)
+  — the long-known render-pipeline bypass.
+- `Layout`'s `debounce` created in the render body.
+
+Rules:
+
+1. **Introduce no new in-render reads** of `window`/`document`/module globals or
+   other mutable external state. Move the read into an effect + state, or read it
+   from props/the store.
+2. **`useSyncExternalStore` is the tear-free primitive** for subscribing to a
+   genuinely external store. It's the right tool for window dimensions
+   (`with-dimensions` → hook, **TASK-098**) and for the eventual built-in state
+   store + `book.content` (**TASK-073** → Step 4) — note it there rather than
+   hand-rolling a `useEffect`+`useState` window-size subscription.
+3. When a conversion *forces* you to touch one of the offenders above, fixing it
+   to a pure read is in scope; a broad sweep of all of them is not (that belongs
+   to housekeeping / the state work).
+
 ## 4. HOC → hook
 
 Done **after** all of an HOC's consumers are already functional components (so
@@ -183,8 +249,9 @@ The wave tasks carry a `**Model:**` field. Rule of thumb:
   pre-render side effect + `connect`), the position hooks (geometry + marker QA +
   most consumers), and the `selfRef` removal (the most entangled change, and the
   densest batching-sensitive site per §3c). Also the state-management research
-  (TASK-073). When a Sonnet task hits non-obvious update ordering / batching
-  (§3c) — e.g. `Media`/`Vimeo` in TASK-096 — escalate that piece to Opus.
+  (TASK-073). When a Sonnet task hits non-obvious cross-version behavior —
+  batching (§3c), effect cleanup/idempotency (§3d), or render purity (§3e),
+  e.g. `Media`/`Vimeo` in TASK-096 — escalate that piece to Opus.
 
 ---
 

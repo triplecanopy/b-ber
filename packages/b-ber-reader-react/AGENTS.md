@@ -75,6 +75,14 @@ Before starting any task, read:
 2. `../../tasks/TASK-NNN.md` (or `.open.md`) — the specific task PRD (root `tasks/`)
 3. Any source files named in the task
 
+> **🛑 React 19 migration tasks (TASK-068, 073, 091, 094–100): also read
+> [`MIGRATION-CONVENTIONS.md`](./MIGRATION-CONVENTIONS.md) before writing any
+> code.** It is the binding spec — behavior-preservation rules, the per-commit
+> verification gate, the class→functional / HOC→hook patterns, and the
+> cross-version pitfalls snapshots don't catch (batching §3c, effect
+> cleanup/StrictMode §3d, render purity §3e). The task's `**Model:**` field says
+> which model (Sonnet/Opus) is best suited.
+
 A model starting a new session should be able to read `AGENTS.md` + the root
 `PLAN.md` and understand where the project stands without reading all the PRDs.
 

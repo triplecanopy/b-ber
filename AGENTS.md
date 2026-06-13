@@ -247,6 +247,16 @@ These apply to all JavaScript/TypeScript in the monorepo.
 
 ### React-specific (b-ber-reader-react and any future React packages)
 
+> **🛑 React 19 migration tasks — read the conventions first.** Before writing
+> any code for a **React 19 (reader-react)** task (TASK-068, 073, 091, and
+> TASK-094–100), you **must** read
+> [`packages/b-ber-reader-react/MIGRATION-CONVENTIONS.md`](./packages/b-ber-reader-react/MIGRATION-CONVENTIONS.md).
+> It is the binding spec for those tasks: behavior-preservation rules, the
+> per-commit verification gate, the class→functional and HOC→hook patterns, and
+> the cross-version pitfalls that snapshots do **not** catch — state batching
+> (§3c), effect cleanup/idempotency + StrictMode (§3d), and render purity (§3e).
+> Each task also names the model best suited to it (`**Model:**` field).
+
 - No new class components. All new components must be functional.
 - No deprecated lifecycle methods (`UNSAFE_*`). Use `useEffect` + `useRef`.
 - No `setInterval` / `requestAnimationFrame` loops for DOM measurement.

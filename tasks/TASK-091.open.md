@@ -6,6 +6,9 @@
 **Priority:** low
 **Model:** Sonnet 4.6 — contained dependency upgrade; verify media playback in
 the browser after.
+
+> Read [`MIGRATION-CONVENTIONS.md`](../packages/b-ber-reader-react/MIGRATION-CONVENTIONS.md)
+> first — the verification gate (§1) applies.
 **Created:** 2026-06-10
 
 ## Description

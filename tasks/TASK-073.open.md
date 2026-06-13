@@ -7,6 +7,10 @@
 **Model:** Opus — architectural research + decision (the biggest fork in the
 migration); the resulting execution task can be Sonnet, slice by slice.
 
+> Read [`MIGRATION-CONVENTIONS.md`](../packages/b-ber-reader-react/MIGRATION-CONVENTIONS.md)
+> first — §3e (render purity / `useSyncExternalStore`) directly informs the
+> store design and the `book.content` handling evaluated here.
+
 > **This is a research + decision task, not the migration itself.** Its output is
 > a written recommendation and a concrete migration plan; the actual state-layer
 > migration is a separate execution task (Step 4) opened from the findings here.

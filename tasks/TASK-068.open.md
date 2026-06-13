@@ -7,6 +7,10 @@
 **Model:** Sonnet 4.6 — low-risk, mechanical cleanup (dead code, renames,
 ErrorBoundary) guarded by the test suite.
 
+> Read [`MIGRATION-CONVENTIONS.md`](../packages/b-ber-reader-react/MIGRATION-CONVENTIONS.md)
+> first — the verification gate (§1) and scope discipline (§5) apply.
+> (Dead code to remove includes the unused `src/lib/custom-prop-types.ts`.)
+
 ## Description
 
 Clean up the codebase without changing any behaviour. These are low-risk, high-clarity
