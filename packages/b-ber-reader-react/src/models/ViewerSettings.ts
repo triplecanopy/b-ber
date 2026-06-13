@@ -4,7 +4,32 @@ import { columns, themes, transitions } from '../constants'
 import { isNumeric } from '../helpers/Types'
 import Viewport from '../helpers/Viewport'
 
-const extendExistingProps = (target, ref, obj, opts = { enumerable: true }) => {
+// A setting is either a concrete value or a "lens" — a function resolved
+// lazily via `valueOf` (used for values derived from the live viewport).
+type Lens<T> = T | (() => T)
+
+interface ViewerSettingsValues {
+  width: number
+  height: number
+  theme: string
+  transition: string
+  transitionSpeed: number
+  columns: string
+  fontSize: Lens<number | string>
+  columnGap: Lens<number>
+  columnWidth: Lens<number>
+  paddingLeft: Lens<number>
+  paddingRight: Lens<number>
+  paddingTop: Lens<number>
+  paddingBottom: Lens<number>
+}
+
+const extendExistingProps = (
+  target: Record<string, unknown>,
+  ref: Record<string, unknown>,
+  obj: Record<string, unknown>,
+  opts: PropertyDescriptor = { enumerable: true }
+): Record<string, unknown> => {
   Object.entries(ref).forEach(([key, val]) => {
     const value = has(obj, key) ? obj[key] : val
     Object.defineProperty(target, key, { value, ...opts })
@@ -13,8 +38,10 @@ const extendExistingProps = (target, ref, obj, opts = { enumerable: true }) => {
 }
 
 // biome-ignore lint/suspicious/noShadowRestrictedNames: local utility, not shadowing Object.prototype.valueOf in any call site
-const valueOf = (maybeFunction) =>
-  typeof maybeFunction === 'function' ? maybeFunction.call() : maybeFunction
+const valueOf = <T>(maybeFunction: Lens<T>): T =>
+  typeof maybeFunction === 'function'
+    ? (maybeFunction as () => T)()
+    : maybeFunction
 
 class ViewerSettings {
   static defaults = {
@@ -51,13 +78,22 @@ class ViewerSettings {
     paddingBottom: () => Viewport.styles().paddingBottom,
   }
 
-  constructor(options = {}) {
+  // Assigned via Object.defineProperty in the constructor, so TS cannot see the
+  // initialization; the definite-assignment assertion documents that contract.
+  settings!: ViewerSettingsValues
+
+  constructor(options: Record<string, unknown> = {}) {
     // Create the settings object by extending static default values above
     Object.defineProperty(this, 'settings', {
-      value: extendExistingProps({}, ViewerSettings.defaults, options, {
-        enumerable: true,
-        writable: true,
-      }),
+      value: extendExistingProps(
+        {},
+        ViewerSettings.defaults as Record<string, unknown>,
+        options,
+        {
+          enumerable: true,
+          writable: true,
+        }
+      ),
       enumerable: true,
     })
 
@@ -67,120 +103,121 @@ class ViewerSettings {
       window.innerWidth / 2 - this.columnGap - this.paddingLeft
   }
 
-  get width() {
+  get width(): number {
     return this.settings.width
   }
 
-  set width(val) {
+  set width(val: number) {
     this.settings.width = val
   }
 
-  get height() {
+  get height(): number {
     return this.settings.height
   }
 
-  set height(val) {
+  set height(val: number) {
     this.settings.height = val
   }
 
-  get paddingTop() {
+  get paddingTop(): number {
     return valueOf(this.settings.paddingTop)
   }
 
-  set paddingTop(val) {
+  set paddingTop(val: number) {
     this.settings.paddingTop = val
   }
 
-  get paddingLeft() {
+  get paddingLeft(): number {
     return valueOf(this.settings.paddingLeft)
   }
 
-  set paddingLeft(val) {
+  set paddingLeft(val: number) {
     this.settings.paddingLeft = val
   }
 
-  get paddingRight() {
+  get paddingRight(): number {
     return valueOf(this.settings.paddingRight)
   }
 
-  set paddingRight(val) {
+  set paddingRight(val: number) {
     this.settings.paddingRight = val
   }
 
-  get paddingBottom() {
+  get paddingBottom(): number {
     return valueOf(this.settings.paddingBottom)
   }
 
-  set paddingBottom(val) {
+  set paddingBottom(val: number) {
     this.settings.paddingBottom = val
   }
 
-  get paddingX() {
+  get paddingX(): number {
     return this.paddingLeft + this.paddingRight
   }
 
-  get paddingY() {
+  get paddingY(): number {
     return this.paddingTop + this.paddingBottom
   }
 
-  get columns() {
+  get columns(): string {
     return this.settings.columns
   }
 
-  set columns(val) {
+  set columns(val: string) {
     this.settings.columns = val
   }
 
-  get columnGap() {
+  get columnGap(): number {
     return valueOf(this.settings.columnGap)
   }
 
-  set columnGap(val) {
+  set columnGap(val: number) {
     this.settings.columnGap = val
   }
 
-  get columnWidth() {
+  get columnWidth(): number {
     return valueOf(this.settings.columnWidth)
   }
 
-  set columnWidth(val) {
+  // The constructor assigns a lens function here, so the setter accepts both.
+  set columnWidth(val: Lens<number>) {
     this.settings.columnWidth = val
   }
 
-  get transition() {
+  get transition(): string {
     return this.settings.transition
   }
 
-  set transition(val) {
+  set transition(val: string) {
     this.settings.transition = val
   }
 
-  get theme() {
+  get theme(): string {
     return this.settings.theme
   }
 
-  set theme(val) {
+  set theme(val: string) {
     this.settings.theme = val
   }
 
-  get transitionSpeed() {
+  get transitionSpeed(): number {
     return this.settings.transitionSpeed
   }
 
-  set transitionSpeed(val) {
+  set transitionSpeed(val: number) {
     this.settings.transitionSpeed = val
   }
 
-  get fontSize() {
+  get fontSize(): number | string {
     return valueOf(this.settings.fontSize)
   }
 
-  set fontSize(val) {
+  set fontSize(val: number | string) {
     this.settings.fontSize = val
   }
 
   // expects array of values
-  set padding(values) {
+  set padding(values: number[]) {
     const [top, right, bottom, left] = values
 
     if (isNumeric(top)) this.settings.paddingTop = top
@@ -189,14 +226,14 @@ class ViewerSettings {
     if (isNumeric(left)) this.settings.paddingLeft = left
   }
 
-  get = (key = '') => {
+  get = (key = ''): unknown => {
     if (key) {
       if (!has(this.settings, key)) {
         console.error('Attempting to access undefined key %s', key)
         return
       }
 
-      return this[key]
+      return (this as Record<string, unknown>)[key]
     }
 
     return {
@@ -216,16 +253,19 @@ class ViewerSettings {
     }
   }
 
-  put = (objectOrKey = {}, value = null) => {
+  put = (
+    objectOrKey: Record<string, unknown> | string = {},
+    value: unknown = null
+  ): void => {
     if (isPlainObject(objectOrKey)) {
-      // https://github.com/eslint/eslint/issues/12117
-      // eslint-disable-next-line no-unused-vars
       for (const [key, val] of Object.entries(objectOrKey)) {
-        if (has(this.settings, key)) this[key] = val
+        if (has(this.settings, key)) {
+          ;(this as Record<string, unknown>)[key] = val
+        }
       }
     } else if (typeof objectOrKey === 'string') {
       if (has(this.settings, objectOrKey)) {
-        this[objectOrKey] = value
+        ;(this as Record<string, unknown>)[objectOrKey] = value
       }
     } else {
       console.error(

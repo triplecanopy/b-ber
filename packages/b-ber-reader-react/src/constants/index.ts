@@ -21,20 +21,27 @@ export const layouts = { SCROLL: 'scroll', COLUMNS: 'columns' }
 export const columns = { ONE: 'auto auto', TWO: '2 auto' }
 
 // Enforce a single column scrolling layout on awkward screen sizes
-export const MEDIA_QUERY_MIN_SCROLLING_ASPECT_RATIO = 'only screen and (min-aspect-ratio: 13 / 5)'
+export const MEDIA_QUERY_MIN_SCROLLING_ASPECT_RATIO =
+  'only screen and (min-aspect-ratio: 13 / 5)'
 
 // Media queries for various horizontal screen sizes
-export const MEDIA_QUERY_MOBILE      = 'only screen and (max-width: 768px)'
-export const MEDIA_QUERY_TABLET      = 'only screen and (min-width: 768px) and (max-width: 1140px)'
-export const MEDIA_QUERY_DESKTOP     = 'only screen and (min-width: 1140px)'
-export const MEDIA_QUERY_DESKTOP_SM  = 'only screen and (min-width: 1140px) and (max-width: 1140px)' // Unused
-export const MEDIA_QUERY_DESKTOP_MD  = 'only screen and (min-width: 1140px) and (max-width: 1440px)'
-export const MEDIA_QUERY_DESKTOP_LG  = 'only screen and (min-width: 1440px) and (max-width: 1920px)'
-export const MEDIA_QUERY_DESKTOP_XL  = 'only screen and (min-width: 1920px)'
+export const MEDIA_QUERY_MOBILE = 'only screen and (max-width: 768px)'
+export const MEDIA_QUERY_TABLET =
+  'only screen and (min-width: 768px) and (max-width: 1140px)'
+export const MEDIA_QUERY_DESKTOP = 'only screen and (min-width: 1140px)'
+export const MEDIA_QUERY_DESKTOP_SM =
+  'only screen and (min-width: 1140px) and (max-width: 1140px)' // Unused
+export const MEDIA_QUERY_DESKTOP_MD =
+  'only screen and (min-width: 1140px) and (max-width: 1440px)'
+export const MEDIA_QUERY_DESKTOP_LG =
+  'only screen and (min-width: 1440px) and (max-width: 1920px)'
+export const MEDIA_QUERY_DESKTOP_XL = 'only screen and (min-width: 1920px)'
 
 // Media queries used in DocumentPreProcessor for generated stylesheets
-export const MEDIA_QUERY_SCROLLING = 'only screen and (max-width: 1140px), (min-aspect-ratio: 13 / 5)'
-export const MEDIA_QUERY_SLIDING   = 'only screen and (min-width: 1140px) and (max-aspect-ratio: 13 / 5)'
+export const MEDIA_QUERY_SCROLLING =
+  'only screen and (max-width: 1140px), (min-aspect-ratio: 13 / 5)'
+export const MEDIA_QUERY_SLIDING =
+  'only screen and (min-width: 1140px) and (max-aspect-ratio: 13 / 5)'
 
 /**
  *
@@ -127,4 +134,3 @@ export const breakpoints = new Map([
     },
   ],
 ])
-
