@@ -4,14 +4,15 @@ import Storage from './Storage'
 class Cache {
   static localStorageKey = 'bber_cache'
 
-  static get(url) {
+  // Cached entries are loosely typed — callers narrow. TODO: type this
+  static get(url: string): any {
     const hash = Asset.createHash(url)
     const storage = Storage.get(Cache.localStorageKey)
 
     return storage && storage[hash] ? storage[hash] : null
   }
 
-  static set(url, data) {
+  static set(url: string, data: unknown): void {
     const hash = Asset.createHash(url)
     const storage = Storage.get(Cache.localStorageKey)
 
@@ -21,7 +22,7 @@ class Cache {
     }
   }
 
-  static clear() {
+  static clear(): void {
     Storage.clear(Cache.localStorageKey)
   }
 }

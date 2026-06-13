@@ -1,10 +1,12 @@
 import { useCallback, useState } from 'react'
 
-export default function useMaxHeight() {
+type MaxHeightRef = (node: HTMLElement | null) => void
+
+export default function useMaxHeight(): [MaxHeightRef, number] {
   const defaultHeight = 0
   const [maxHeight, setMaxHeight] = useState(defaultHeight)
 
-  const ref = useCallback(
+  const ref = useCallback<MaxHeightRef>(
     (node) => {
       if (node === null) {
         setMaxHeight(defaultHeight)

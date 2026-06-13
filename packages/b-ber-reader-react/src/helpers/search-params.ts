@@ -1,10 +1,17 @@
-export const getUrlParams = (stringOrMap) =>
+import type { SearchParamKeys } from '../store/types'
+
+type StringOrMap = string | URLSearchParams | Record<string, string>
+
+export const getUrlParams = (stringOrMap: StringOrMap): URLSearchParams =>
   stringOrMap instanceof URLSearchParams
     ? stringOrMap
     : new URLSearchParams(stringOrMap)
 
 // Test if params are valid
-export const hasSearchParams = (stringOrMap, searchParamKeys) => {
+export const hasSearchParams = (
+  stringOrMap: StringOrMap | null | undefined,
+  searchParamKeys: SearchParamKeys
+): boolean => {
   if (!stringOrMap) return false
 
   const params = getUrlParams(stringOrMap)
@@ -24,7 +31,10 @@ export const hasSearchParams = (stringOrMap, searchParamKeys) => {
 }
 
 // Remove all non-bber params
-export const stripSearchParams = (stringOrMap, searchParamKeys) => {
+export const stripSearchParams = (
+  stringOrMap: StringOrMap,
+  searchParamKeys: SearchParamKeys
+): URLSearchParams => {
   const params = getUrlParams(stringOrMap)
 
   const {
@@ -45,7 +55,10 @@ export const stripSearchParams = (stringOrMap, searchParamKeys) => {
 }
 
 // Ensure required values are set
-export const ensureSearchParams = (stringOrMap, searchParamKeys) => {
+export const ensureSearchParams = (
+  stringOrMap: StringOrMap,
+  searchParamKeys: SearchParamKeys
+): URLSearchParams => {
   const params = getUrlParams(stringOrMap)
 
   const {
@@ -54,18 +67,21 @@ export const ensureSearchParams = (stringOrMap, searchParamKeys) => {
   } = searchParamKeys
 
   if (!params.has(currentSpineItemIndexKey)) {
-    params.set(currentSpineItemIndexKey, 0)
+    params.set(currentSpineItemIndexKey, '0')
   }
 
   if (!params.has(spreadIndexKey)) {
-    params.set(spreadIndexKey, 0)
+    params.set(spreadIndexKey, '0')
   }
 
   return params
 }
 
 // Exclude b-ber params
-export const excludeSearchParams = (stringOrMap, searchParamKeys) => {
+export const excludeSearchParams = (
+  stringOrMap: StringOrMap,
+  searchParamKeys: SearchParamKeys
+): URLSearchParams => {
   const params = getUrlParams(stringOrMap)
 
   const {
@@ -81,11 +97,13 @@ export const excludeSearchParams = (stringOrMap, searchParamKeys) => {
   return params
 }
 
-export const appendExternalParams = (stringOrMap, searchParamKeys) => {
+export const appendExternalParams = (
+  stringOrMap: StringOrMap,
+  searchParamKeys: SearchParamKeys
+): URLSearchParams => {
   const params = getUrlParams(stringOrMap)
   const external = excludeSearchParams(window.location.search, searchParamKeys)
 
-  // eslint-disable-next-line no-unused-vars
   for (const [key, val] of external) {
     params.set(key, val)
   }

@@ -7,20 +7,25 @@
 
 // MIT license
 
-function dateNow() {
+function dateNow(): number {
   if (Date.now) return Date.now()
   return new Date().getTime()
 }
 
-function rAFPolyfill() {
+function rAFPolyfill(): void {
   const vendors = ['webkit', 'moz']
+
+  // Vendor-prefixed rAF lookups are not part of the typed Window surface, so
+  // the window is accessed loosely here.
+  // TODO: type this
+  const win = window as any
 
   for (let i = 0; i < vendors.length && !window.requestAnimationFrame; ++i) {
     const vp = vendors[i]
-    window.requestAnimationFrame = window[`${vp}RequestAnimationFrame`]
-    window.cancelAnimationFrame =
-      window[`${vp}CancelAnimationFrame`] ||
-      window[`${vp}CancelRequestAnimationFrame`]
+    win.requestAnimationFrame = win[`${vp}RequestAnimationFrame`]
+    win.cancelAnimationFrame =
+      win[`${vp}CancelAnimationFrame`] ||
+      win[`${vp}CancelRequestAnimationFrame`]
   }
 
   if (
@@ -29,14 +34,15 @@ function rAFPolyfill() {
     !window.cancelAnimationFrame
   ) {
     let lastTime = 0
-    window.requestAnimationFrame = (callback) => {
+    win.requestAnimationFrame = (callback: FrameRequestCallback) => {
       const now = dateNow()
+      // 16ms ≈ one 60fps frame; never schedule tighter than a frame.
       const nextTime = Math.max(lastTime + 16, now)
       return setTimeout(() => {
         callback((lastTime = nextTime))
       }, nextTime - now)
     }
-    window.cancelAnimationFrame = clearTimeout
+    win.cancelAnimationFrame = clearTimeout
   }
 }
 

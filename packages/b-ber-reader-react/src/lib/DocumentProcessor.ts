@@ -1,10 +1,19 @@
-/* eslint-disable lines-between-class-members */
-/* eslint-disable no-param-reassign */
-/* eslint-disable class-methods-use-this */
-
 import isUndefined from 'lodash/isUndefined'
 import { rand } from '../helpers/utils'
 import DocumentPreProcessor from './DocumentPreProcessor'
+
+interface DocumentProcessorOptions {
+  fullbleedClassNames?: string[][]
+  blacklistedClassNames?: string[][]
+  markerClassNames?: string
+  markerElement?: string
+  responseURL?: string
+}
+
+interface ParseResult {
+  xml: string | undefined
+  doc: Document
+}
 
 class DocumentProcessor {
   static defaults = {
@@ -22,7 +31,15 @@ class DocumentProcessor {
     responseURL: window.location.host,
   }
 
-  constructor(options = {}) {
+  settings: Required<DocumentProcessorOptions>
+  fullbleedClassNames: string[][]
+  blacklistedClassNames: string[][]
+  markerClassNames: string
+  markerElement: string
+  markerStyles: Record<string, string | number>
+  blackListedNodes: { names: Set<string> }
+
+  constructor(options: DocumentProcessorOptions = {}) {
     // Initialize
     if (!DocumentPreProcessor.getRootDocument()) {
       DocumentPreProcessor.setRootDocument(document)
@@ -85,22 +102,22 @@ class DocumentProcessor {
     }
   }
 
-  classListContainsAll(node, classNames) {
+  classListContainsAll(node: Element, classNames: string[][]): boolean {
     return classNames.some((list) =>
       list.every((name) => node.classList.contains(name))
     )
   }
 
-  classListContainsAny = (node, classNames) =>
+  classListContainsAny = (node: Element, classNames: string[]): boolean =>
     classNames.some((name) => node.classList.contains(name))
 
-  classListContainsNone(node, classNames) {
+  classListContainsNone(node: Element, classNames: string[][]): boolean {
     return classNames.every((list) =>
       list.every((name) => !node.classList.contains(name))
     )
   }
 
-  shouldParse(node) {
+  shouldParse(node: Element): boolean {
     return (
       node.nodeType === 1 && // Is an element
       this.blackListedNodes.names.has(node.nodeName.toUpperCase()) === false && // Not blacklisted
@@ -109,33 +126,37 @@ class DocumentProcessor {
     )
   }
 
-  isFullbleed(node) {
+  isFullbleed(node: Element): boolean {
     return this.classListContainsAll(node, this.fullbleedClassNames)
   }
 
-  isMarker(node) {
+  isMarker(node: Element): boolean {
     return this.classListContainsAll(node, [[this.markerClassNames]])
   }
 
-  isMarkerReferenceNode(node) {
+  isMarkerReferenceNode(node: Element): boolean {
     return (
       this.classListContainsAny(node, ['spread__content']) ||
       node.nodeName === 'FIGURE'
     )
   }
 
-  hasChildren(node) {
-    return node && node.children && node.children.length
+  hasChildren(node: Element): boolean {
+    return Boolean(node && node.children && node.children.length)
   }
 
-  getLastChild(children) {
+  // DOM-walking helpers below operate on live parsed nodes whose shapes mix
+  // Element/Node and rely on non-standard coercions (e.g. setAttribute with
+  // booleans). Typed loosely to preserve exact runtime behavior.
+  // TODO: type this against a narrowed DOM node model
+  getLastChild(children: any): any {
     let node = null
 
     for (let i = children.length - 1; i >= 0; i--) {
       // Start at bottom
       node = children[i]
       if (!this.shouldParse(node)) {
-        continue // eslint-disable-line no-continue
+        continue
       }
 
       if (this.hasChildren(node)) {
@@ -150,7 +171,7 @@ class DocumentProcessor {
     return children[children.length - 1].parentNode
   }
 
-  getSibling(node) {
+  getSibling(node: any): any {
     if (node === null) return node
 
     const { previousElementSibling } = node
@@ -181,20 +202,21 @@ class DocumentProcessor {
     return lastChild
   }
 
-  setMarkerStyles(elem) {
+  setMarkerStyles(elem: any): void {
     Object.entries(this.markerStyles).forEach(
-      ([key, val]) => (elem.style[key] = val) // eslint-disable-line no-param-reassign
+      ([key, val]) => (elem.style[key] = val)
     )
   }
 
-  createMarker(id) {
+  createMarker(id: string): HTMLElement {
     const text = document.createTextNode('')
     const elem = document.createElement(this.markerElement)
 
     elem.setAttribute('class', this.markerClassNames)
     elem.setAttribute('data-marker', id)
-    elem.setAttribute('data-unbound', false)
-    elem.setAttribute('data-final', false)
+    // Original passes booleans to setAttribute; coerced to strings at runtime.
+    elem.setAttribute('data-unbound', false as unknown as string)
+    elem.setAttribute('data-final', false as unknown as string)
 
     elem.appendChild(text)
     this.setMarkerStyles(elem)
@@ -202,11 +224,11 @@ class DocumentProcessor {
     return elem
   }
 
-  createMarkerId() {
+  createMarkerId(): string {
     return rand()
   }
 
-  addMarkerReferenceToChild(node, markerId) {
+  addMarkerReferenceToChild(node: any, markerId: string): void {
     for (let i = 0; i < node.children.length; i++) {
       if (this.isMarkerReferenceNode(node.children[i])) {
         node.children[i].setAttribute('data-marker-reference-figure', markerId)
@@ -214,9 +236,9 @@ class DocumentProcessor {
     }
   }
 
-  insertMarkers(doc, callback) {
+  insertMarkers(doc: any, callback?: (doc: any) => void): void {
     // Filter nodes that have been dynamically inserted into the DOM
-    const nodes = Array.from(doc.children).filter(
+    const nodes = (Array.from(doc.children) as any[]).filter(
       (node) => !this.isMarker(node)
     )
 
@@ -244,7 +266,7 @@ class DocumentProcessor {
               sibling.lastElementChild &&
               this.isMarker(sibling.lastElementChild)
             ) {
-              marker.setAttribute('data-adjacent', true)
+              marker.setAttribute('data-adjacent', true as unknown as string)
             }
 
             // Inject into tree
@@ -255,7 +277,7 @@ class DocumentProcessor {
           } else {
             const elem = this.createMarker(markerId)
 
-            elem.setAttribute('data-unbound', true)
+            elem.setAttribute('data-unbound', true as unknown as string)
 
             node.parentNode.prepend(elem)
             node.setAttribute('data-marker-reference', markerId)
@@ -276,16 +298,16 @@ class DocumentProcessor {
     }
   }
 
-  isElementNode(node) {
+  isElementNode(node: any): boolean {
     return node.nodeType === window.Node.ELEMENT_NODE
   }
 
-  removeBottomSpacing(node) {
+  removeBottomSpacing(node: any): void {
     node.style.marginBottom = '0'
     node.style.paddingBottom = '0'
   }
 
-  addLastNode(doc) {
+  addLastNode(doc: Document): void {
     const blacklist = new Set([
       'META',
       'TITLE',
@@ -314,8 +336,8 @@ class DocumentProcessor {
     elem.setAttribute('data-ultimate', 'true')
     elem.appendChild(text)
 
-    let child
-    let lastChild
+    let child: any
+    let lastChild: any
 
     for (let i = doc.body.childNodes.length - 1; i >= 0; i--) {
       child = doc.body.childNodes[i]
@@ -345,20 +367,24 @@ class DocumentProcessor {
     console.warn('Could not append ultimate node')
   }
 
-  addIndicesToMarkers(doc) {
+  addIndicesToMarkers(doc: Document): void {
     const markers = doc.querySelectorAll('[data-marker]')
     const len = markers.length
 
     for (let i = 0; i < len; i++) {
-      markers[i].setAttribute('data-index', i)
-      markers[i].setAttribute('data-final', i === len - 1)
+      // Original passes a number / boolean to setAttribute; coerced at runtime.
+      markers[i].setAttribute('data-index', i as unknown as string)
+      markers[i].setAttribute(
+        'data-final',
+        (i === len - 1) as unknown as string
+      )
     }
   }
 
   // The `break-after` class should not exist on elements
   // preceeding a spread
-  removeBreakAfterClasses(doc) {
-    const nodes = Array.from(doc.children).filter(
+  removeBreakAfterClasses(doc: any): void {
+    const nodes = (Array.from(doc.children) as any[]).filter(
       (node) => !this.isMarker(node) && node.nodeType === 1
     )
 
@@ -381,11 +407,11 @@ class DocumentProcessor {
   }
 
   // Check that all references have markers
-  validateDocument(doc) {
+  validateDocument(doc: Document): boolean {
     const markers = doc.querySelectorAll('[data-marker]')
     const refs = doc.querySelectorAll('[data-marker-reference]')
     const refs_ = Array.prototype.slice.call(refs, 0)
-    const refHash = {}
+    const refHash: Record<string, boolean> = {}
 
     let validLength = true
     let validMarkers = true
@@ -399,11 +425,11 @@ class DocumentProcessor {
     }
 
     for (let j = 0; j < markers.length; j++) {
-      const markerId = markers[j].dataset.marker
+      const markerId = (markers[j] as HTMLElement).dataset.marker
       const markerData = !isUndefined(markerId)
       console.assert(markerData, `Marker ${j} does not have a marker attribute`)
 
-      const refExists = refHash[markerId]
+      const refExists = refHash[markerId as string]
       console.assert(
         refExists,
         `Reference for marker ${j} (${markerId}) could not be found`
@@ -416,12 +442,15 @@ class DocumentProcessor {
     return validLength && validMarkers && validRefs
   }
 
-  parseXML(xmlString, callback) {
+  parseXML(
+    xmlString: string,
+    callback?: (err: Error | null, result: ParseResult) => unknown
+  ): unknown {
     const parser = new window.DOMParser()
     const doc = parser.parseFromString(xmlString, 'text/html')
 
-    let xml
-    let err = null
+    let xml: string | undefined
+    let err: Error | null = null
 
     DocumentPreProcessor.setContextDocument(doc)
     DocumentPreProcessor.createStyleSheets()

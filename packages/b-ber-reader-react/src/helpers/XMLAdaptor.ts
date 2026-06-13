@@ -1,10 +1,6 @@
-// eslint-disable-next-line import/no-unresolved
 import generate from 'css-tree/generator'
-// eslint-disable-next-line import/no-unresolved
 import parse from 'css-tree/parser'
-// eslint-disable-next-line import/no-unresolved
 import * as utils from 'css-tree/utils'
-// eslint-disable-next-line import/no-unresolved
 import walk from 'css-tree/walker'
 import { Parser as HtmlToReactParser } from 'html-to-react'
 import find from 'lodash/find'
@@ -17,8 +13,14 @@ import { BookMetadata, GuideItem, SpineItem } from '../models'
 import Request from './Request'
 import Url from './Url'
 
+// The parsed OPF/NCX trees are walked dynamically (xml-js / css-tree output),
+// so the node shapes here are intentionally loose. TODO: type the OPF/NCX
+// structures once a schema exists.
+type AnyNode = any
+type RootNode = any
+
 class XMLAdaptor {
-  static opfURL(url) {
+  static opfURL(url: string): string {
     let url_ = url
 
     url_ = Url.stripTrailingSlash(url_)
@@ -29,7 +31,7 @@ class XMLAdaptor {
     return url_
   }
 
-  static opsURL(url) {
+  static opsURL(url: string): string {
     let url_ = url
 
     url_ = Url.stripTrailingSlash(url_)
@@ -39,11 +41,11 @@ class XMLAdaptor {
     return url_
   }
 
-  static parseOPF(xml) {
+  static parseOPF(xml: { data: string }): Promise<RootNode> {
     return new Promise((resolve) => {
       const pkg = JSON.parse(xmljs.xml2json(xml.data))
       const { elements } = pkg.elements[0]
-      const response = {}
+      const response: Record<string, AnyNode> = {}
 
       for (let i = 0; i < elements.length; i++) {
         response[`__${elements[i].name}`] = elements[i]
@@ -53,7 +55,7 @@ class XMLAdaptor {
     })
   }
 
-  static parseNCX(rootNode, opsURL) {
+  static parseNCX(rootNode: RootNode, opsURL: string): Promise<RootNode> {
     const { __manifest, __spine } = rootNode
     const __ncx = null
     return new Promise((resolve) => {
@@ -63,7 +65,10 @@ class XMLAdaptor {
         return
       }
 
-      const item = find(__manifest.elements, (a) => a.attributes.id === toc)
+      const item = find(
+        __manifest.elements,
+        (a: AnyNode) => a.attributes.id === toc
+      )
       if (!item) {
         resolve({ ...rootNode, __ncx })
         return
@@ -79,15 +84,18 @@ class XMLAdaptor {
     })
   }
 
-  static createSpineItems(rootNode) {
+  static createSpineItems(rootNode: RootNode): Promise<RootNode> {
     const { __manifest, __spine, __ncx, __guide } = rootNode
 
     return new Promise((resolve) => {
       let spine
 
-      spine = __spine.elements.map((itemref) => {
+      spine = __spine.elements.map((itemref: AnyNode) => {
         const { idref, linear } = itemref.attributes
-        const item = find(__manifest.elements, (a) => a.attributes.id === idref)
+        const item = find(
+          __manifest.elements,
+          (a: AnyNode) => a.attributes.id === idref
+        )
 
         if (!item || linear !== 'yes') return null // spine item not found in manifest (!) or non-linear
 
@@ -103,7 +111,7 @@ class XMLAdaptor {
         // that are missing from items excluded from the TOC, and therefore not in the NCX
         const guideItem = find(
           __guide.elements,
-          (a) => a.attributes.href === href
+          (a: AnyNode) => a.attributes.href === href
         )
 
         let title = ''
@@ -134,16 +142,16 @@ class XMLAdaptor {
       if (__ncx) {
         const { elements } = __ncx.elements[0]
         const navMap = find(elements, { name: 'navMap' })
-        navMap.elements.forEach((navPoint) =>
+        navMap.elements.forEach((navPoint: AnyNode) => {
           XMLAdaptor.parseNavPoints(spine, __manifest, navPoint)
-        )
+        })
       }
 
       resolve({ ...rootNode, spine })
     })
   }
 
-  static createGuideItems(rootNode) {
+  static createGuideItems(rootNode: RootNode): Promise<RootNode> {
     const { __guide } = rootNode
     return new Promise((resolve) => {
       if (!__guide.elements || !__guide.elements.length) {
@@ -151,7 +159,7 @@ class XMLAdaptor {
         return
       }
 
-      const guide = __guide.elements.map((reference) => {
+      const guide = __guide.elements.map((reference: AnyNode) => {
         const { type, title, href } = reference.attributes
         return new GuideItem({ type, title, href })
       })
@@ -160,29 +168,41 @@ class XMLAdaptor {
     })
   }
 
-  static udpateSpineItemURLs(rootNode, opsURL) {
+  static udpateSpineItemURLs(
+    rootNode: RootNode,
+    opsURL: string
+  ): Promise<RootNode> {
     return new Promise((resolve) => {
       const { spine } = rootNode
       spine.map(
-        // eslint-disable-next-line no-param-reassign
-        (a) => (a.absoluteURL = Url.resolveRelativeURL(opsURL, a.href))
+        (a: SpineItem) =>
+          (a.absoluteURL = Url.resolveRelativeURL(opsURL, a.href))
       )
       resolve({ ...rootNode, spine })
     })
   }
 
-  static udpateGuideItemURLs(rootNode, opsURL) {
+  static udpateGuideItemURLs(
+    rootNode: RootNode,
+    opsURL: string
+  ): Promise<RootNode> {
     return new Promise((resolve) => {
       const { guide } = rootNode
       guide.map(
-        // eslint-disable-next-line no-param-reassign
-        (a) => (a.absoluteURL = Url.resolveRelativeURL(opsURL, a.href))
+        (a: GuideItem) =>
+          (a.absoluteURL = Url.resolveRelativeURL(opsURL, a.href))
       )
       resolve({ ...rootNode, guide })
     })
   }
 
-  static parseNavPoints(spine, manifest, navPoint, depth = 0, parent = null) {
+  static parseNavPoints(
+    spine: SpineItem[],
+    manifest: AnyNode,
+    navPoint: AnyNode,
+    depth = 0,
+    parent: SpineItem | null = null
+  ): void | undefined {
     const content = find(navPoint.elements, { name: 'content' })
     if (!content) return
 
@@ -190,7 +210,7 @@ class XMLAdaptor {
     src = Url.ensureDecodedURL(src)
     const item = find(
       manifest.elements,
-      (a) => Url.ensureDecodedURL(a.attributes.href) === src
+      (a: AnyNode) => Url.ensureDecodedURL(a.attributes.href) === src
     )
     if (!item) return console.error(`Could not find manifest item: ${src}`)
 
@@ -212,23 +232,27 @@ class XMLAdaptor {
     if (parent) parent.addChild(spineItem)
 
     const depth_ = depth + 1
-    navPoint.elements.forEach((child) =>
+    navPoint.elements.forEach((child: AnyNode) => {
       XMLAdaptor.parseNavPoints(spine, manifest, child, depth_, spineItem)
-    )
+    })
   }
 
-  static createBookMetadata(rootNode) {
+  static createBookMetadata(rootNode: RootNode): Promise<RootNode> {
     const { __metadata } = rootNode
     const _metadata = __metadata.elements
-      .filter((a) => /^dc:/.test(a.name))
-      .map((b) => ({ [b.name.slice(3)]: b.elements[0].text }))
+      .filter((a: AnyNode) => /^dc:/.test(a.name))
+      .map((b: AnyNode) => ({ [b.name.slice(3)]: b.elements[0].text }))
 
     return new Promise((resolve) => {
-      const metadata = new BookMetadata({})
-      _metadata.forEach((item, i) => {
+      // The original seeds an empty BookMetadata and fills it via `set`; the
+      // constructor type expects all Dublin Core fields. TODO: type this.
+      const metadata = new BookMetadata({} as any)
+      _metadata.forEach((item: Record<string, string>, i: number) => {
+        // `key` is the single-entry key array Object.keys returns; lodash `has`
+        // and the original `set` call both accept it as-is.
         const key = Object.keys(_metadata[i])
         if (has(metadata, key)) {
-          metadata.set(key, item[key])
+          metadata.set(key as any, item[key as any])
         }
       })
 
@@ -236,7 +260,11 @@ class XMLAdaptor {
     })
   }
 
-  static createScopedCSS(sheets, scope, opsURL) {
+  static createScopedCSS(
+    sheets: { base: string; data: string }[],
+    scope: string,
+    opsURL: string
+  ): string {
     let scopedCSS = ''
 
     sheets.forEach(({ base, data }) => {
@@ -244,7 +272,7 @@ class XMLAdaptor {
       const tree = parse(data)
 
       walk(tree, {
-        enter: (node, item, list) => {
+        enter: (node: AnyNode, _item: AnyNode, list: AnyNode) => {
           let nodeText
 
           const scopedClassName = utils.List.createItem({
@@ -260,13 +288,13 @@ class XMLAdaptor {
           // these need to be synced with the
           // HTML structure in Layout.jsx
           if (list && node.type === 'TypeSelector' && node.name === 'html') {
-            node.name = scope // eslint-disable-line no-param-reassign
-            node.type = 'ClassSelector' // eslint-disable-line no-param-reassign
+            node.name = scope
+            node.type = 'ClassSelector'
           }
 
           if (list && node.type === 'TypeSelector' && node.name === 'body') {
-            node.name = 'content' // eslint-disable-line no-param-reassign
-            node.type = 'IdSelector' // eslint-disable-line no-param-reassign
+            node.name = 'content'
+            node.type = 'IdSelector'
           }
 
           if (
@@ -287,8 +315,8 @@ class XMLAdaptor {
 
             if (Url.isRelative(nodeText)) {
               nodeText = Url.resolveRelativeURL(styleSheetURL, nodeText)
-              // node.value = `"${nodeText}"` // eslint-disable-line no-param-reassign
-              node.value = nodeText // eslint-disable-line no-param-reassign
+              // node.value = `"${nodeText}"`
+              node.value = nodeText
             }
           }
         },
@@ -300,7 +328,9 @@ class XMLAdaptor {
     return scopedCSS
   }
 
-  static async parseSpineItemResponse(response) {
+  static async parseSpineItemResponse(
+    response: AnyNode
+  ): Promise<{ bookContent: React.ReactNode; scopedCSS: string }> {
     const { url: responseURL } = response.request
 
     const {
@@ -312,21 +342,27 @@ class XMLAdaptor {
     } = response
 
     const htmlToReactParser = new HtmlToReactParser()
+    // paddingLeft/columnGap are extra fields the processor ignores but the
+    // original call passed; DocumentProcessorOptions doesn't list them.
+    // TODO: drop these args or widen DocumentProcessorOptions.
     const documentProcessor = new DocumentProcessor({
       paddingLeft,
       columnGap,
       responseURL,
-    })
+    } as any)
 
-    const { xml, doc } = documentProcessor.parseXML(response.data)
+    const { xml, doc } = documentProcessor.parseXML(response.data) as {
+      xml: string
+      doc: Document
+    }
     const re = /<body[^>]*?>([\s\S]*)<\/body>/
 
     // Create react element that will be appended to our #frame element.
     // we wrap this in a Promise so that we can resolve the content and
     // styles at the same time
     let data_
-    data_ = xml.match(re)
-    data_ = data_[1] // eslint-disable-line prefer-destructuring
+    data_ = xml.match(re) as RegExpMatchArray
+    data_ = data_[1]
     data_ = data_.replace(/>\s*?</g, '><')
 
     const bookContent = htmlToReactParser.parseWithInstructions(
@@ -340,19 +376,22 @@ class XMLAdaptor {
     const links = Array.from(doc.querySelectorAll('link'))
     const inlineStyles = Array.from(doc.querySelectorAll('style'))
 
-    const styles = links.reduce((acc, curr) => {
-      if (curr.rel !== 'stylesheet') return acc
+    const styles = links.reduce(
+      (acc: { url: string; base: string }[], curr) => {
+        if (curr.rel !== 'stylesheet') return acc
 
-      const base = Url.trimFilenameFromResponse(responseURL)
-      const href = Url.trimSlashes(curr.getAttribute('href'))
-      const url = Url.resolveRelativeURL(base, href)
+        const base = Url.trimFilenameFromResponse(responseURL)
+        const href = Url.trimSlashes(curr.getAttribute('href') as string)
+        const url = Url.resolveRelativeURL(base, href)
 
-      return acc.concat({ url, base })
-    }, [])
+        return acc.concat({ url, base })
+      },
+      []
+    )
 
     const promises = styles.map(
       ({ url, base }) =>
-        new Promise((rs) => {
+        new Promise<{ base: string; data: string }>((rs) => {
           // const cache = Cache.get(url)
 
           // if (useLocalStorageCache && cache?.data) {

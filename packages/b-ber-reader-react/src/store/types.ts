@@ -68,7 +68,7 @@ export interface ReaderSettingsState {
   uiOptions: UiOptions
   searchParamKeys: SearchParamKeys
   locationState: string
-  searchParams: string | Record<string, unknown>
+  searchParams: string | Record<string, string>
   style: CSSProperties
   className: string
   cache: boolean

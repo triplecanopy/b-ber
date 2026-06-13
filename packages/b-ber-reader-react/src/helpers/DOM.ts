@@ -1,5 +1,7 @@
 class DOM {
-  static getPostionLeftFromMatrix(elem) {
+  static getPostionLeftFromMatrix(
+    elem: Element | null | undefined
+  ): number | null {
     if (!elem || !elem.nodeType || elem.nodeType < 1) {
       console.warn(
         `DOM#getPostionLeftFromMatrix requires a valid DOM element; ${typeof elem} provided`

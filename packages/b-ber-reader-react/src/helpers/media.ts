@@ -2,12 +2,16 @@ import omit from 'lodash/omit'
 import Url from './Url'
 import Viewport from './Viewport'
 
-export const getPlayerPropsFromQueryString = (queryString) =>
-  Url.parseQueryString(queryString)
+export const getPlayerPropsFromQueryString = (
+  queryString: string
+): Record<string, string> => Url.parseQueryString(queryString)
 
-export const getURLAndQueryParamters = (url) => url.split('?')
+export const getURLAndQueryParamters = (url: string): string[] => url.split('?')
 
-export const transformSearchParamsToProps = (props, blacklist = []) => {
+export const transformSearchParamsToProps = (
+  props: Record<string, any>,
+  blacklist: string[] = []
+): Record<string, any> => {
   // Remove blacklisted props
   let options = props
   if (blacklist.length) options = omit(props, blacklist)
@@ -17,10 +21,13 @@ export const transformSearchParamsToProps = (props, blacklist = []) => {
   const falsey = new Set(['false', '0'])
   const bools = new Set([...truthy, ...falsey])
 
-  const nextOptions = Object.entries(options).reduce((acc, [key, value]) => {
-    acc[key] = bools.has(value) ? truthy.has(value) : value
-    return acc
-  }, {})
+  const nextOptions = Object.entries(options).reduce(
+    (acc: Record<string, any>, [key, value]) => {
+      acc[key] = bools.has(value) ? truthy.has(value) : value
+      return acc
+    },
+    {}
+  )
 
   // Autoplay on mobile
   nextOptions.playsinline = true
@@ -28,12 +35,15 @@ export const transformSearchParamsToProps = (props, blacklist = []) => {
   return nextOptions
 }
 
+// The state/props/context shapes here originate from a legacy React lifecycle
+// (componentWillReceiveProps-style) and are loosely typed. TODO: type this once
+// the consuming media components are converted.
 export const getPlayingStateOnUpdate = (
-  state,
-  props,
-  nextProps,
-  nextContext
-) => {
+  state: any,
+  props: any,
+  nextProps: any,
+  nextContext: any
+): false | { playing: boolean; currentSpreadIndex: number } => {
   // Only elements with an autoplay attribute
   if (!state.autoplay) return false
 

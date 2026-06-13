@@ -40,7 +40,10 @@ class Script {
 
   appendScript(doc: Document): void {
     const base = Url.trimFilenameFromResponse(this.requestURI)
-    const src = !this.inline ? Url.resolveRelativeURL(base, this.src) : null
+    // `inline` is `isUndefined(this.src)`, so `!inline` guarantees `src` is a
+    // string; the extra `this.src` check narrows the type for the compiler.
+    const src =
+      !this.inline && this.src ? Url.resolveRelativeURL(base, this.src) : null
 
     this.elem = doc.createElement('script')
     this.elem.id = this.id

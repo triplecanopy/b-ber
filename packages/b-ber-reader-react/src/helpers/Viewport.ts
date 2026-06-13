@@ -9,20 +9,35 @@ import {
   MEDIA_QUERY_TABLET,
 } from '../constants'
 
+// The breakpoint CSS objects mix string ('15px') and number (0) values for
+// padding fields, so callers coerce via parseInt. TODO: normalize the breakpoint
+// shape in constants and tighten this.
+interface BreakpointCss {
+  maxWidth: string
+  maxHeight: string
+  columnGap: string | number
+  columns: string
+  paddingLeft: string | number
+  paddingRight: string | number
+  paddingTop: string | number
+  paddingBottom: string | number
+  fontSize: string
+}
+
 class Viewport {
-  static isMediaQueryMobile = () =>
+  static isMediaQueryMobile = (): boolean =>
     window.matchMedia(MEDIA_QUERY_MOBILE).matches
 
-  static isMediaQueryTablet = () =>
+  static isMediaQueryTablet = (): boolean =>
     window.matchMedia(MEDIA_QUERY_TABLET).matches
 
-  static isMediaQueryDesktop = () =>
+  static isMediaQueryDesktop = (): boolean =>
     window.matchMedia(MEDIA_QUERY_DESKTOP).matches
 
-  static isMinimumScrollingAspectRatio = () =>
+  static isMinimumScrollingAspectRatio = (): boolean =>
     window.matchMedia(MEDIA_QUERY_MIN_SCROLLING_ASPECT_RATIO).matches
 
-  static isSingleColumn = () => {
+  static isSingleColumn = (): boolean => {
     const { css } = Viewport.getCss()
 
     return (
@@ -30,22 +45,25 @@ class Viewport {
     )
   }
 
-  static isVerticalScrollConfigured = (layout) => layout === layouts.SCROLL
+  static isVerticalScrollConfigured = (layout: string): boolean =>
+    layout === layouts.SCROLL
 
-  static isVerticallyScrolling = ({ layout }) =>
+  static isVerticallyScrolling = ({ layout }: { layout: string }): boolean =>
     Viewport.isSingleColumn() || Viewport.isVerticalScrollConfigured(layout)
 
-  static isTouch = () =>
+  static isTouch = (): boolean =>
     'ontouchstart' in window /* iOS and Android */ ||
-    window.navigator.msPointerEnabled /* Win8 */ ||
+    // msPointerEnabled is a legacy Win8 IE property absent from lib.dom types
+    (window.navigator as any).msPointerEnabled /* Win8 */ ||
     'ontouchstart' in document.documentElement
 
-  static isPixelValue = (str) => (str || '').substring(str.length - 2) === 'px'
+  static isPixelValue = (str: string): boolean =>
+    (str || '').substring(str.length - 2) === 'px'
 
-  static isPercentageValue = (str) =>
+  static isPercentageValue = (str: string): boolean =>
     (str || '').substring(str.length - 1) === '%'
 
-  static parseStringWidthValue = (str) => {
+  static parseStringWidthValue = (str: string): number => {
     let width = 0
 
     if (Viewport.isPixelValue(str)) {
@@ -59,7 +77,7 @@ class Viewport {
     return width
   }
 
-  static parseStringHeightValue = (str) => {
+  static parseStringHeightValue = (str: string): number => {
     let height = 0
 
     if (Viewport.isPixelValue(str)) {
@@ -73,7 +91,7 @@ class Viewport {
     return height
   }
 
-  static getHorizontalSpacing = (maxWidth) => {
+  static getHorizontalSpacing = (maxWidth: string): number => {
     if (maxWidth === 'auto') return 0
 
     const width = Viewport.parseStringWidthValue(maxWidth)
@@ -81,7 +99,7 @@ class Viewport {
     return (window.innerWidth - width) / 2
   }
 
-  static getVerticalSpacing = (maxHeight) => {
+  static getVerticalSpacing = (maxHeight: string): number => {
     if (maxHeight === 'auto') return 0
 
     let height = Viewport.parseStringHeightValue(maxHeight)
@@ -99,15 +117,23 @@ class Viewport {
   // drift off-screen. Sourced from viewerSettings.width (the value the transform
   // uses), which equals window.innerWidth in the columns layout. Returns NaN in
   // a vertical-scroll layout (width === 'auto'); callers guard for that.
-  static getPageWidth = ({ width, paddingLeft, paddingRight, columnGap }) =>
-    width - paddingLeft - paddingRight + columnGap
+  static getPageWidth = ({
+    width,
+    paddingLeft,
+    paddingRight,
+    columnGap,
+  }: {
+    width: number
+    paddingLeft: number
+    paddingRight: number
+    columnGap: number
+  }): number => width - paddingLeft - paddingRight + columnGap
 
   // Returns CSS to be applied to use to calculate various frame dimensions
-  static getCss = () => {
+  static getCss = (): { css: BreakpointCss; mediaQuery: string } => {
     let mediaQuery = MEDIA_QUERY_DESKTOP_MD
     let css = breakpoints.get(mediaQuery)
 
-    // eslint-disable-next-line no-unused-vars
     for (const [query, styles] of breakpoints) {
       if (window.matchMedia(query).matches) {
         css = { ...styles }
@@ -116,7 +142,7 @@ class Viewport {
       }
     }
 
-    return { css, mediaQuery }
+    return { css: css as BreakpointCss, mediaQuery }
   }
 
   static getStyles = () => {
@@ -138,11 +164,11 @@ class Viewport {
     const verticalPadding = Viewport.getVerticalSpacing(maxHeight)
 
     const styles = {
-      paddingLeft: horizontalPadding + parseInt(paddingLeft, 10),
-      paddingRight: horizontalPadding + parseInt(paddingRight, 10),
-      paddingTop: verticalPadding + parseInt(paddingTop, 10),
-      paddingBottom: verticalPadding + parseInt(paddingBottom, 10),
-      columnGap: parseInt(columnGap, 10),
+      paddingLeft: horizontalPadding + parseInt(paddingLeft as string, 10),
+      paddingRight: horizontalPadding + parseInt(paddingRight as string, 10),
+      paddingTop: verticalPadding + parseInt(paddingTop as string, 10),
+      paddingBottom: verticalPadding + parseInt(paddingBottom as string, 10),
+      columnGap: parseInt(columnGap as string, 10),
       fontSize,
       columns: cssColumns,
     }

@@ -7,7 +7,14 @@ declare module 'js-string-escape' {
 }
 
 declare module 'quote' {
-  export default function quote(value: unknown): string
+  interface QuoteOptions {
+    quotes: string
+  }
+  // Called with an options object, `quote` returns a configured quoting
+  // function; called with a value, it quotes that value directly.
+  function quote(options: QuoteOptions): (value: unknown) => string
+  function quote(value: unknown): string
+  export default quote
 }
 
 declare module 'react-attr-converter' {
@@ -33,6 +40,25 @@ declare module 'html-to-react' {
     processDefaultNode(node: any, children: any, index: number): React.ReactNode
   }
   export const IsValidNodeDefinitions: { alwaysValid(): boolean }
+}
+
+// css-tree exposes its parser/generator/walker/utils as subpath entry points
+// with no bundled types. The AST nodes are walked dynamically, so the surface
+// here is `any`. TODO: adopt @types/css-tree if/when it covers these subpaths.
+declare module 'css-tree/parser' {
+  export default function parse(css: string, options?: any): any
+}
+declare module 'css-tree/generator' {
+  export default function generate(node: any, options?: any): string
+}
+declare module 'css-tree/walker' {
+  export default function walk(ast: any, options: any): void
+}
+declare module 'css-tree/utils' {
+  export const List: {
+    createItem(data: any): any
+    [key: string]: any
+  }
 }
 
 // Side-effect-only polyfills (imported for their global registration).

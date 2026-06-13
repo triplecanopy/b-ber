@@ -16,9 +16,30 @@ import Asset from '../helpers/Asset'
 import Url from '../helpers/Url'
 import { getControlsPreset, rand } from '../helpers/utils'
 
+// html-to-react walks arbitrary parsed DOM nodes; node/children shapes are
+// loosely typed by design (see src/types/shims.d.ts).
+// TODO: type this against a narrowed parsed-node model
+type HtmlReactNode = any
+type ProcessingInstruction = {
+  shouldProcessNode(node: HtmlReactNode): boolean
+  processNode(
+    node: HtmlReactNode,
+    children?: HtmlReactNode,
+    index?: number
+  ): React.ReactNode
+}
+
+interface RequestedSpineItem {
+  absoluteURL: string
+}
+
 export const isValidNode = () => true
 export const processNodeDefinitions = new ProcessNodeDefinitions(React)
-export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
+export const processingInstructions = ({
+  requestedSpineItem,
+}: {
+  requestedSpineItem: RequestedSpineItem
+}): ProcessingInstruction[] => [
   {
     shouldProcessNode(node) {
       return node?.attribs?.['epub:type'] === 'noteref'
@@ -280,7 +301,11 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
       return node.type === 'tag' && has(node.attribs, 'data-ultimate')
     },
     processNode(node, children) {
-      return React.createElement(Ultimate, { key: rand() }, children)
+      // `children` is supplied as the third createElement arg; the connected
+      // Ultimate's prop types require it on the props object, so the component
+      // is cast loosely here to preserve the original call shape.
+      // TODO: type this
+      return React.createElement(Ultimate as any, { key: rand() }, children)
     },
   },
   {
@@ -306,7 +331,6 @@ export const processingInstructions = ({ requestedSpineItem /*, opsURL*/ }) => [
       // column after resizing
       // @issue: https://github.com/triplecanopy/b-ber/issues/221
 
-      // eslint-disable-next-line no-param-reassign
       node.parent.attribs = {
         ...node.parent.attribs,
         style: 'padding-bottom: 0; margin-bottom: 0',
