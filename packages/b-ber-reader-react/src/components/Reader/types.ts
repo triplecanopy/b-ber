@@ -69,22 +69,28 @@ export interface ReaderProps {
   userInterfaceActions: BoundActions
 }
 
-// ─── selfRef shim surface ────────────────────────────────────────────────────
-// The intermediate `selfRef` object that navigation.ts, loader.ts, and
-// resize.ts are bound to in place of `this`. It exposes class-instance-style
-// getters (state/props) plus the instance methods those modules call on `this`.
-// This is an intentional migration shim; a later task replaces it with hooks.
-// The bound module functions are attached dynamically on first render, so the
-// method members are declared here to satisfy the `this` references.
-export interface ReaderInstance {
-  readonly state: ReaderState
-  readonly props: ReaderProps
-  resizeEndTimer: ReturnType<typeof setTimeout> | null
+// setState shim signature — the class-style partial-merge + callback setter the
+// Reader exposes and the hooks below call.
+export type SetState = (
+  update: Partial<ReaderState> | ((prev: ReaderState) => ReaderState),
+  callback?: () => void
+) => void
 
-  setState(
-    update: Partial<ReaderState> | ((prev: ReaderState) => ReaderState),
-    callback?: () => void
-  ): void
+// A plain mutable ref ({ current }). Matches what React.useRef returns and lets
+// tests pass a literal `{ current: … }` without constructing a real ref.
+export interface MutableRef<T> {
+  current: T
+}
+
+// ─── Reader API ──────────────────────────────────────────────────────────────
+// The assembled set of orchestrator callbacks (Reader's own methods plus those
+// returned by useLoader / useNavigation / useResize). The hooks resolve
+// cross-cutting calls through a ref to this object instead of the old `this`
+// shim, so the call graph (which is cyclic — navigation ↔ loader) stays wired
+// without ordering constraints. Reader assembles it each render from the stable
+// hook callbacks; consumers read `apiRef.current.<fn>` at call time.
+export interface ReaderApi {
+  setState: SetState
   closeSidebars(): void
   freeze(): void
   handleSidebarButtonClick(value: string | null): void
@@ -92,7 +98,7 @@ export interface ReaderInstance {
   destroyReaderComponent(): void
   getSlug(): string
 
-  // Bound from loader.ts
+  // From useLoader
   createStateFromOPF(callback?: () => void): Promise<void>
   showSpineItem(): void
   loadSpineItem(
@@ -100,7 +106,7 @@ export interface ReaderInstance {
     deferredCallback?: () => void
   ): Promise<void>
 
-  // Bound from navigation.ts
+  // From useNavigation
   updateQueryString(callback?: () => void): void
   savePosition(): void
   handlePageNavigation(increment: number): void
@@ -110,10 +116,20 @@ export interface ReaderInstance {
   navigateToChapterByURL(absoluteURL: string): void
   getSpineItemByAbsoluteUrl(absoluteURL: string): number
 
-  // Bound from resize.ts
+  // From useResize
   handleResize(): void
   handleResizeStart(): void
   handleResizeEnd(): void
   bindResizeHandlers(): void
   unbindResizeHandlers(): void
+}
+
+// Shared dependencies the orchestrator threads into each hook: always-current
+// refs to state/props (read synchronously inside async/observer callbacks), the
+// setState shim, and the ref to the assembled ReaderApi for cross-hook calls.
+export interface ReaderHookDeps {
+  stateRef: MutableRef<ReaderState>
+  propsRef: MutableRef<ReaderProps>
+  setState: SetState
+  api: MutableRef<ReaderApi>
 }

@@ -1,4 +1,3 @@
-import debounce from 'lodash/debounce'
 import find from 'lodash/find'
 import isInteger from 'lodash/isInteger'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -18,30 +17,10 @@ import type { AppDispatch, RootState } from '../../store/types'
 import Controls from '../Controls'
 import Frame from '../Frame'
 import Spinner from '../Spinner'
-import {
-  book,
-  createStateFromOPF,
-  loadSpineItem,
-  showSpineItem,
-} from './loader'
-import {
-  getSpineItemByAbsoluteUrl,
-  handleChapterNavigation,
-  handlePageNavigation,
-  navigateToChapterByURL,
-  navigateToElementById,
-  navigateToSpreadByIndex,
-  savePosition,
-  updateQueryString,
-} from './navigation'
-import {
-  bindResizeHandlers,
-  handleResize,
-  handleResizeEnd,
-  handleResizeStart,
-  unbindResizeHandlers,
-} from './resize'
-import type { ReaderInstance, ReaderProps, ReaderState } from './types'
+import { book, useLoader } from './loader'
+import { useNavigation } from './navigation'
+import { useResize } from './resize'
+import type { ReaderApi, ReaderProps, ReaderState } from './types'
 
 // Renders the current chapter's React element tree. Content is written to the
 // module-level `book` object by loader.js and re-rendered when Reader state
@@ -55,31 +34,22 @@ function BookContent() {
 // Main orchestrator component. Manages spine/chapter loading, page navigation,
 // sidebar visibility, and resize handling.
 //
-// MIGRATION NOTE (Option A, Phase 3): This was previously a class component.
-// It has been converted to a functional component using the following strategy:
+// Local state is managed with useState; a setState shim preserves the
+// class-style partial-merge and callback semantics the navigation/loader/resize
+// logic relies on. That logic lives in three hooks — useLoader, useNavigation,
+// useResize (TASK-100) — which read the live state/props refs and dispatch
+// directly. Cross-cutting calls between them (the navigation ↔ loader cycle, and
+// calls into Reader's own methods like freeze) resolve through `apiRef`, a ref
+// to the assembled ReaderApi, replacing the former `this`-impersonating selfRef
+// shim.
 //
-//   - Local state is managed with useState; a setState shim preserves the
-//     class-style partial-merge and callback semantics that the external
-//     navigation/loader/resize modules rely on.
+// Deprecated lifecycle methods were replaced:
+//   UNSAFE_componentWillMount       → useEffect (empty deps, guarded)
+//   componentDidMount               → useEffect (empty deps)
+//   componentWillUnmount            → useEffect cleanup
+//   UNSAFE_componentWillReceiveProps → two targeted useEffect hooks
 //
-//   - Those external modules (navigation.js, resize.js, loader.js) continue
-//     to use `this.state`, `this.props`, and `this.setState` internally. Rather
-//     than rewriting them in this step, they are bound to a stable `selfRef`
-//     object whose getters always return the latest state and props via refs.
-//     This keeps the diff minimal and the external modules unchanged.
-//
-//   - Deprecated lifecycle methods have been replaced:
-//       UNSAFE_componentWillMount       → useEffect (empty deps, guarded)
-//       componentDidMount               → useEffect (empty deps)
-//       componentWillUnmount            → useEffect cleanup
-//       UNSAFE_componentWillReceiveProps → two targeted useEffect hooks
-//
-//   - ReaderContext.Provider value is now memoized (fixes IMPROVEMENT_PLAN H5).
-//
-// The external modules (navigation.js, resize.js, loader.js) and the selfRef
-// pattern are intermediate steps. In a later phase (Option A, Phase 3 / v2
-// architecture) they will be extracted into custom hooks and the selfRef
-// indirection will be removed.
+// ReaderContext.Provider value is memoized (fixes IMPROVEMENT_PLAN H5).
 
 function Reader(props: ReaderProps) {
   // ─── Local state ───────────────────────────────────────────────────────────
@@ -166,8 +136,8 @@ function Reader(props: ReaderProps) {
   )
 
   // ─── Instance methods ──────────────────────────────────────────────────────
-  // These were class instance methods. They are defined before selfRef is
-  // populated so they can be referenced in the selfRef initializer below.
+  // These were class instance methods. They are defined before the API is
+  // assembled below so they can be included in it.
 
   const closeSidebars = useCallback(() => {
     setState({ showSidebar: null })
@@ -247,88 +217,34 @@ function Reader(props: ReaderProps) {
     return ''
   }, [])
 
-  // ─── selfRef ───────────────────────────────────────────────────────────────
-  // A stable object that the external modules are bound to in place of `this`.
-  // Property getters delegate to the live refs defined above, so the bound
-  // functions always read current state and props regardless of when they run.
-  //
-  // Initialized once on the first render (the `if (!selfRef.current)` guard
-  // prevents re-initialization on subsequent renders). All methods that would
-  // have been `this.method` in the class are attached here.
-  //
-  // This is an intentional intermediate pattern for the migration. In the v2
-  // architecture, the logic in navigation.js, loader.js, and resize.js will
-  // move into custom hooks and this indirection will be removed.
-  const selfRef = useRef<ReaderInstance | null>(null)
-  const resizeEndTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  // ─── ReaderApi ───────────────────────────────────────────────────────────────
+  // The navigation/loader/resize logic lives in the three hooks below. Each
+  // reads the live state/props refs and the setState shim directly, and resolves
+  // cross-cutting calls through `apiRef` — a ref to the assembled ReaderApi.
+  // This replaces the old `selfRef` (a `this` stand-in with state/props getters
+  // and `.bind`). The cycle (navigation ↔ loader) is resolved by reading
+  // `apiRef.current.<fn>` at call time rather than at hook-construction time.
+  const apiRef = useRef<ReaderApi>({} as ReaderApi)
 
-  if (!selfRef.current) {
-    // The selfRef shim: a stand-in for the old class `this`. Built incrementally
-    // (getters first, then methods/bound module functions assigned below), so it
-    // is typed as a partial ReaderInstance during construction and finalized via
-    // the assignment to selfRef.current!. See the block comment above.
-    const self = {
-      get state() {
-        return stateRef.current
-      },
-      get props() {
-        return propsRef.current
-      },
-      // resizeEndTimer is an instance property used across resize handlers
-      get resizeEndTimer() {
-        return resizeEndTimerRef.current
-      },
-      set resizeEndTimer(v: ReturnType<typeof setTimeout> | null) {
-        resizeEndTimerRef.current = v
-      },
-    } as ReaderInstance
+  const deps = { stateRef, propsRef, setState, api: apiRef }
+  const loader = useLoader(deps)
+  const navigation = useNavigation(deps)
+  const resize = useResize(deps)
 
-    // Delegate to the stable callbacks defined above. Wrapping in an arrow
-    // function (rather than assigning directly) ensures that if any of the
-    // useCallback references were to change, selfRef still calls the current
-    // version. In practice all of these are stable due to useCallback.
-    self.setState = (update, cb) => setState(update, cb)
-    self.closeSidebars = () => closeSidebars()
-    self.freeze = () => freeze()
-    self.handleSidebarButtonClick = (v) => handleSidebarButtonClick(v)
-    self.getTranslateX = (v) => getTranslateX(v)
-    self.destroyReaderComponent = () => destroyReaderComponent()
-    self.getSlug = () => getSlug()
-
-    // Bind external module functions. These functions use `this.state`,
-    // `this.props`, `this.setState`, and sibling methods on `this` — all of
-    // which are satisfied by the getters and methods on `self` above.
-    self.createStateFromOPF = createStateFromOPF.bind(self)
-    self.showSpineItem = showSpineItem.bind(self)
-    self.loadSpineItem = loadSpineItem.bind(self)
-
-    self.updateQueryString = updateQueryString.bind(self)
-    self.savePosition = savePosition.bind(self)
-    self.handlePageNavigation = handlePageNavigation.bind(self)
-    self.handleChapterNavigation = handleChapterNavigation.bind(self)
-    self.navigateToSpreadByIndex = navigateToSpreadByIndex.bind(self)
-    self.navigateToElementById = navigateToElementById.bind(self)
-    self.navigateToChapterByURL = navigateToChapterByURL.bind(self)
-    self.getSpineItemByAbsoluteUrl = getSpineItemByAbsoluteUrl.bind(self)
-
-    self.handleResize = handleResize.bind(self)
-    self.handleResizeStart = handleResizeStart.bind(self)
-    self.handleResizeEnd = handleResizeEnd.bind(self)
-    self.bindResizeHandlers = bindResizeHandlers.bind(self)
-    self.unbindResizeHandlers = unbindResizeHandlers.bind(self)
-
-    // Debounce resize start/end (matching the original constructor config)
-    // TODO: 1000ms is a magic number — see IMPROVEMENT_PLAN.md H4
-    self.handleResizeStart = debounce(self.handleResizeStart, 1000, {
-      leading: true,
-      trailing: false,
-    })
-    self.handleResizeEnd = debounce(self.handleResizeEnd, 1000, {
-      leading: false,
-      trailing: true,
-    })
-
-    selfRef.current = self
+  // Assemble the API each render from the (stable) hook callbacks + Reader's own
+  // methods. The function identities don't change between renders, so reads of
+  // apiRef.current are always current.
+  apiRef.current = {
+    setState,
+    closeSidebars,
+    freeze,
+    handleSidebarButtonClick,
+    getTranslateX,
+    destroyReaderComponent,
+    getSlug,
+    ...loader,
+    ...navigation,
+    ...resize,
   }
 
   // ─── Initialization ────────────────────────────────────────────────────────
@@ -358,7 +274,7 @@ function Reader(props: ReaderProps) {
       handleEvents: false,
     })
 
-    selfRef.current!.createStateFromOPF(() => {
+    apiRef.current.createStateFromOPF(() => {
       const { spine } = stateRef.current
       const { readerSettings, readerLocation } = propsRef.current
 
@@ -371,13 +287,13 @@ function Reader(props: ReaderProps) {
 
       if (currentSpineItem) {
         setState({ currentSpineItem, currentSpineItemIndex, spreadIndex }, () =>
-          selfRef.current!.loadSpineItem(currentSpineItem)
+          apiRef.current.loadSpineItem(currentSpineItem)
         )
         return
       }
 
       // Fallback: load the first page of the first chapter
-      selfRef.current!.loadSpineItem()
+      apiRef.current.loadSpineItem()
     })
   }, [])
 
@@ -388,10 +304,10 @@ function Reader(props: ReaderProps) {
   // source — see IMPROVEMENT_PLAN.md H4. Behavior is preserved here as-is to
   // avoid a behavioral change in this migration step.
   useEffect(() => {
-    selfRef.current!.unbindResizeHandlers() // actually adds listeners (see H4)
+    apiRef.current.unbindResizeHandlers() // actually adds listeners (see H4)
 
     return () => {
-      selfRef.current!.bindResizeHandlers() // actually removes listeners (see H4)
+      apiRef.current.bindResizeHandlers() // actually removes listeners (see H4)
 
       const hash = Asset.createHash(propsRef.current.readerSettings.bookURL)
       Asset.removeBookStyles(hash)
@@ -453,7 +369,7 @@ function Reader(props: ReaderProps) {
       if (!alreadyLoading) {
         // External navigation: find the spine item and load it
         const spineItem = find(stateRef.current.spine, { slug })
-        selfRef.current!.loadSpineItem(spineItem)
+        apiRef.current.loadSpineItem(spineItem)
       }
 
       return
@@ -473,7 +389,7 @@ function Reader(props: ReaderProps) {
     if (props.view.loaded && props.view.lastSpreadIndex > -1) {
       if (stateRef.current.chapterDelta < 0) {
         setState({ chapterDelta: 0 }, () =>
-          selfRef.current!.navigateToSpreadByIndex(
+          apiRef.current.navigateToSpreadByIndex(
             propsRef.current.view.lastSpreadIndex
           )
         )
@@ -491,8 +407,8 @@ function Reader(props: ReaderProps) {
       lastSpread: state.lastSpread,
       spreadIndex: state.spreadIndex,
       getTranslateX,
-      navigateToChapterByURL: selfRef.current!.navigateToChapterByURL,
-      getSpineItemByAbsoluteUrl: selfRef.current!.getSpineItemByAbsoluteUrl,
+      navigateToChapterByURL: apiRef.current.navigateToChapterByURL,
+      getSpineItemByAbsoluteUrl: apiRef.current.getSpineItemByAbsoluteUrl,
     }),
     [state.lastSpread, state.spreadIndex, getTranslateX]
   )
@@ -522,11 +438,11 @@ function Reader(props: ReaderProps) {
       showSidebar={showSidebar}
       spreadIndex={spreadIndex}
       lastSpreadIndex={view.lastSpreadIndex}
-      handlePageNavigation={selfRef.current!.handlePageNavigation}
+      handlePageNavigation={apiRef.current.handlePageNavigation}
       destroyReaderComponent={destroyReaderComponent}
-      handleChapterNavigation={selfRef.current!.handleChapterNavigation}
+      handleChapterNavigation={apiRef.current.handleChapterNavigation}
       handleSidebarButtonClick={handleSidebarButtonClick}
-      navigateToChapterByURL={selfRef.current!.navigateToChapterByURL}
+      navigateToChapterByURL={apiRef.current.navigateToChapterByURL}
       downloads={downloads}
       uiOptions={uiOptions}
       layout={layout}

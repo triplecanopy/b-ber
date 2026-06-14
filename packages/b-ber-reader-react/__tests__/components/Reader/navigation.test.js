@@ -1,22 +1,16 @@
-import {
-  getSpineItemByAbsoluteUrl,
-  handleChapterNavigation,
-  handlePageNavigation,
-  navigateToChapterByURL,
-  navigateToElementById,
-  navigateToSpreadByIndex,
-  savePosition,
-  updateQueryString,
-} from '../../../src/components/Reader/navigation'
+import { renderHook } from '@testing-library/react'
+import { useNavigation } from '../../../src/components/Reader/navigation'
 import Viewport from '../../../src/helpers/Viewport'
 
-// Builds a fake `self` (the selfRef shim Reader/index.jsx binds these
-// functions to). `setState` shallow-merges into `self.state` and invokes the
-// callback synchronously, mirroring how the real shim's effect-flushed
-// callbacks ultimately run.
-function createSelf(overrides = {}) {
-  const self = {
-    state: {
+// useNavigation reads live state/props through refs and resolves cross-cutting
+// calls (loadSpineItem, closeSidebars, sibling nav methods) through `api`. This
+// builds those deps: `setState` shallow-merges into stateRef.current and invokes
+// the callback synchronously (mirroring how the real shim's effect-flushed
+// callbacks ultimately run), and `api.current` holds jest.fn stand-ins for the
+// cross-cutting calls so each is independently assertable.
+function createDeps(overrides = {}) {
+  const stateRef = {
+    current: {
       spreadIndex: 0,
       currentSpineItemIndex: 0,
       spine: [
@@ -27,7 +21,10 @@ function createSelf(overrides = {}) {
       currentSpineItem: { slug: 'one' },
       ...overrides.state,
     },
-    props: {
+  }
+
+  const propsRef = {
+    current: {
       view: { lastSpreadIndex: 1 },
       readerSettings: {
         searchParamKeys: {
@@ -47,66 +44,77 @@ function createSelf(overrides = {}) {
       viewerSettings: { paddingTop: 0, paddingBottom: 0, columnGap: 0 },
       ...overrides.props,
     },
-    setState: jest.fn((update, callback) => {
-      const partial = typeof update === 'function' ? update(self.state) : update
-      Object.assign(self.state, partial)
-      if (callback) callback()
-    }),
-    handleChapterNavigation: jest.fn(),
-    updateQueryString: jest.fn(),
-    loadSpineItem: jest.fn(),
-    savePosition: jest.fn(),
-    closeSidebars: jest.fn(),
-    navigateToSpreadByIndex: jest.fn(),
   }
 
-  return self
+  const setState = jest.fn((update, callback) => {
+    const partial =
+      typeof update === 'function' ? update(stateRef.current) : update
+    Object.assign(stateRef.current, partial)
+    if (callback) callback()
+  })
+
+  const api = {
+    current: {
+      handleChapterNavigation: jest.fn(),
+      updateQueryString: jest.fn(),
+      loadSpineItem: jest.fn(),
+      savePosition: jest.fn(),
+      closeSidebars: jest.fn(),
+      navigateToSpreadByIndex: jest.fn(),
+      ...overrides.api,
+    },
+  }
+
+  const deps = { stateRef, propsRef, setState, api }
+  const { result } = renderHook(() => useNavigation(deps))
+
+  return { ...deps, nav: result.current }
 }
 
 describe('handlePageNavigation', () => {
   test('navigates to the next chapter when the next index is past lastSpreadIndex', () => {
-    const self = createSelf({ state: { spreadIndex: 1 } })
+    const { nav, api, setState } = createDeps({ state: { spreadIndex: 1 } })
 
-    handlePageNavigation.call(self, 1)
+    nav.handlePageNavigation(1)
 
-    expect(self.handleChapterNavigation).toHaveBeenCalledWith(1)
-    expect(self.setState).not.toHaveBeenCalled()
+    expect(api.current.handleChapterNavigation).toHaveBeenCalledWith(1)
+    expect(setState).not.toHaveBeenCalled()
   })
 
   test('navigates to the previous chapter when the next index is below 0', () => {
-    const self = createSelf({ state: { spreadIndex: 0 } })
+    const { nav, api, setState } = createDeps({ state: { spreadIndex: 0 } })
 
-    handlePageNavigation.call(self, -1)
+    nav.handlePageNavigation(-1)
 
-    expect(self.handleChapterNavigation).toHaveBeenCalledWith(-1)
-    expect(self.setState).not.toHaveBeenCalled()
+    expect(api.current.handleChapterNavigation).toHaveBeenCalledWith(-1)
+    expect(setState).not.toHaveBeenCalled()
   })
 
   test('moves to the next spread within the chapter and updates the query string', () => {
-    const self = createSelf({ state: { spreadIndex: 0 } })
+    const { nav, api, stateRef } = createDeps({ state: { spreadIndex: 0 } })
 
-    handlePageNavigation.call(self, 1)
+    nav.handlePageNavigation(1)
 
-    expect(self.handleChapterNavigation).not.toHaveBeenCalled()
-    expect(self.state).toMatchObject({
+    expect(api.current.handleChapterNavigation).not.toHaveBeenCalled()
+    expect(stateRef.current).toMatchObject({
       spreadIndex: 1,
       firstSpread: false,
       lastSpread: true,
       spreadDelta: 1,
       showSidebar: null,
     })
-    expect(self.updateQueryString).toHaveBeenCalled()
+    expect(api.current.updateQueryString).toHaveBeenCalled()
   })
 
   test('flags the first spread and a negative spread delta when moving backwards', () => {
-    const self = createSelf({
+    const { nav, stateRef } = createDeps({
       state: { spreadIndex: 1 },
       props: { view: { lastSpreadIndex: 1 } },
     })
 
-    handlePageNavigation.call(self, -1)
+    nav.handlePageNavigation(-1)
 
-    expect(self.state).toMatchObject({
+    expect(stateRef.current).toMatchObject({
       spreadIndex: 0,
       firstSpread: true,
       lastSpread: false,
@@ -117,35 +125,41 @@ describe('handlePageNavigation', () => {
 
 describe('handleChapterNavigation', () => {
   test('flags firstChapter when moving before the first chapter', () => {
-    const self = createSelf({ state: { currentSpineItemIndex: 0 } })
+    const { nav, api, setState } = createDeps({
+      state: { currentSpineItemIndex: 0 },
+    })
 
-    handleChapterNavigation.call(self, -1)
+    nav.handleChapterNavigation(-1)
 
-    expect(self.setState).toHaveBeenCalledWith({
+    expect(setState).toHaveBeenCalledWith({
       firstChapter: true,
       lastChapter: false,
     })
-    expect(self.loadSpineItem).not.toHaveBeenCalled()
+    expect(api.current.loadSpineItem).not.toHaveBeenCalled()
   })
 
   test('flags lastChapter when moving past the last chapter', () => {
-    const self = createSelf({ state: { currentSpineItemIndex: 2 } })
+    const { nav, api, setState } = createDeps({
+      state: { currentSpineItemIndex: 2 },
+    })
 
-    handleChapterNavigation.call(self, 1)
+    nav.handleChapterNavigation(1)
 
-    expect(self.setState).toHaveBeenCalledWith({
+    expect(setState).toHaveBeenCalledWith({
       firstChapter: false,
       lastChapter: true,
     })
-    expect(self.loadSpineItem).not.toHaveBeenCalled()
+    expect(api.current.loadSpineItem).not.toHaveBeenCalled()
   })
 
   test('moves to the next chapter and loads/saves position', () => {
-    const self = createSelf({ state: { currentSpineItemIndex: 0 } })
+    const { nav, api, stateRef } = createDeps({
+      state: { currentSpineItemIndex: 0 },
+    })
 
-    handleChapterNavigation.call(self, 1)
+    nav.handleChapterNavigation(1)
 
-    expect(self.state).toMatchObject({
+    expect(stateRef.current).toMatchObject({
       spreadIndex: 0,
       currentSpineItemIndex: 1,
       currentSpineItem: {
@@ -158,22 +172,25 @@ describe('handleChapterNavigation', () => {
       spreadDelta: 1,
       chapterDelta: 1,
     })
-    expect(self.loadSpineItem).toHaveBeenCalledWith(self.state.currentSpineItem)
-    expect(self.savePosition).toHaveBeenCalled()
+    expect(api.current.loadSpineItem).toHaveBeenCalledWith(
+      stateRef.current.currentSpineItem
+    )
+    expect(api.current.savePosition).toHaveBeenCalled()
   })
 })
 
 describe('navigateToSpreadByIndex', () => {
   test('sets the spread index and updates the query string', () => {
-    const self = createSelf()
+    const { nav, api, stateRef, setState } = createDeps()
 
-    navigateToSpreadByIndex.call(self, 3)
+    nav.navigateToSpreadByIndex(3)
 
-    expect(self.state.spreadIndex).toBe(3)
-    expect(self.setState).toHaveBeenCalledWith(
+    expect(stateRef.current.spreadIndex).toBe(3)
+    expect(setState).toHaveBeenCalledWith(
       { spreadIndex: 3 },
-      self.updateQueryString
+      expect.any(Function)
     )
+    expect(api.current.updateQueryString).toHaveBeenCalled()
   })
 })
 
@@ -191,12 +208,12 @@ describe('navigateToElementById', () => {
 
   test('warns and bails out when the element is not found', () => {
     jest.spyOn(document, 'querySelector').mockReturnValue(null)
-    const self = createSelf()
+    const { nav, setState } = createDeps()
 
-    navigateToElementById.call(self, '#missing')
+    nav.navigateToElementById('#missing')
 
     expect(warnSpy).toHaveBeenCalledWith('Could not find element #missing')
-    expect(self.setState).not.toHaveBeenCalled()
+    expect(setState).not.toHaveBeenCalled()
   })
 
   test('scrolls the frame when the layout is vertically scrolling', () => {
@@ -225,15 +242,16 @@ describe('navigateToElementById', () => {
     jest.spyOn(document, 'getElementById').mockReturnValue(frame)
     jest.spyOn(Viewport, 'isVerticallyScrolling').mockReturnValue(true)
 
-    const self = createSelf()
-    navigateToElementById.call(self, '#target')
+    const { nav, api, setState } = createDeps()
+    nav.navigateToElementById('#target')
 
     // padding (25) + header offsetHeight (50) = 75; top = 500 - 75 = 425
     expect(frame.scrollTo).toHaveBeenCalledWith(0, 425)
-    expect(self.setState).toHaveBeenCalledWith(
+    expect(setState).toHaveBeenCalledWith(
       { spreadIndex: 0 },
-      self.updateQueryString
+      expect.any(Function)
     )
+    expect(api.current.updateQueryString).toHaveBeenCalled()
   })
 
   test('computes the spread index from the element position when not scrolling', () => {
@@ -247,56 +265,62 @@ describe('navigateToElementById', () => {
     jest.spyOn(document, 'querySelector').mockReturnValue(target)
     jest.spyOn(Viewport, 'isVerticallyScrolling').mockReturnValue(false)
 
-    const self = createSelf({
+    const { nav, setState } = createDeps({
       props: {
         viewerSettings: { paddingTop: 0, paddingBottom: 0, columnGap: 0 },
       },
     })
 
     // jsdom's default window.innerHeight is 768
-    navigateToElementById.call(self, '#target')
+    nav.navigateToElementById('#target')
 
     // frameHeight = 768; left = 1536; spreadIndex = floor(1536 / 768 / 2) = 1
-    expect(self.setState).toHaveBeenCalledWith(
+    expect(setState).toHaveBeenCalledWith(
       { spreadIndex: 1 },
-      self.updateQueryString
+      expect.any(Function)
     )
   })
 })
 
 describe('navigateToChapterByURL', () => {
   test('closes sidebars when navigating to the current chapter', () => {
-    const self = createSelf({ state: { currentSpineItemIndex: 0 } })
+    const { nav, api, setState } = createDeps({
+      state: { currentSpineItemIndex: 0 },
+    })
 
-    navigateToChapterByURL.call(self, 'https://example.com/one.xhtml')
+    nav.navigateToChapterByURL('https://example.com/one.xhtml')
 
-    expect(self.closeSidebars).toHaveBeenCalled()
-    expect(self.setState).not.toHaveBeenCalled()
+    expect(api.current.closeSidebars).toHaveBeenCalled()
+    expect(setState).not.toHaveBeenCalled()
   })
 
   test('warns and bails out when no spine item matches the URL', () => {
     const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
-    const self = createSelf({ state: { currentSpineItemIndex: 0 } })
+    const { nav, setState } = createDeps({
+      state: { currentSpineItemIndex: 0 },
+    })
 
-    navigateToChapterByURL.call(self, 'https://example.com/missing.xhtml')
+    nav.navigateToChapterByURL('https://example.com/missing.xhtml')
 
     expect(warnSpy).toHaveBeenCalledWith(
       'No spine item found for https://example.com/missing.xhtml'
     )
-    expect(self.setState).not.toHaveBeenCalled()
+    expect(setState).not.toHaveBeenCalled()
 
     warnSpy.mockRestore()
   })
 
   test('navigates to the matched chapter, disabling page transitions', () => {
-    const self = createSelf({ state: { currentSpineItemIndex: 0 } })
+    const { nav, api, propsRef, stateRef } = createDeps({
+      state: { currentSpineItemIndex: 0 },
+    })
 
-    navigateToChapterByURL.call(self, 'https://example.com/two.xhtml')
+    nav.navigateToChapterByURL('https://example.com/two.xhtml')
 
     expect(
-      self.props.userInterfaceActions.disablePageTransitions
+      propsRef.current.userInterfaceActions.disablePageTransitions
     ).toHaveBeenCalled()
-    expect(self.state).toMatchObject({
+    expect(stateRef.current).toMatchObject({
       currentSpineItem: {
         slug: 'two',
         absoluteURL: 'https://example.com/two.xhtml',
@@ -304,34 +328,35 @@ describe('navigateToChapterByURL', () => {
       currentSpineItemIndex: 1,
       spreadIndex: 0,
     })
-    expect(self.loadSpineItem).toHaveBeenCalledWith(self.state.currentSpineItem)
-    expect(self.savePosition).toHaveBeenCalled()
+    expect(api.current.loadSpineItem).toHaveBeenCalledWith(
+      stateRef.current.currentSpineItem
+    )
+    expect(api.current.savePosition).toHaveBeenCalled()
   })
 })
 
 describe('getSpineItemByAbsoluteUrl', () => {
   test('returns the index of the matching spine item', () => {
-    const self = createSelf()
+    const { nav } = createDeps()
 
-    expect(
-      getSpineItemByAbsoluteUrl.call(self, 'https://example.com/two.xhtml')
-    ).toBe(1)
+    expect(nav.getSpineItemByAbsoluteUrl('https://example.com/two.xhtml')).toBe(
+      1
+    )
   })
 
   test('returns -1 when no spine item matches', () => {
-    const self = createSelf()
+    const { nav } = createDeps()
 
     expect(
-      getSpineItemByAbsoluteUrl.call(self, 'https://example.com/missing.xhtml')
+      nav.getSpineItemByAbsoluteUrl('https://example.com/missing.xhtml')
     ).toBe(-1)
   })
 
   test('ignores hash and query string when matching', () => {
-    const self = createSelf()
+    const { nav } = createDeps()
 
     expect(
-      getSpineItemByAbsoluteUrl.call(
-        self,
+      nav.getSpineItemByAbsoluteUrl(
         'https://example.com/two.xhtml?foo=bar#section'
       )
     ).toBe(1)
@@ -340,17 +365,17 @@ describe('getSpineItemByAbsoluteUrl', () => {
 
 describe('updateQueryString', () => {
   test('does nothing when there is no current spine item', () => {
-    const self = createSelf({ state: { currentSpineItem: null } })
+    const { nav, propsRef } = createDeps({ state: { currentSpineItem: null } })
 
-    updateQueryString.call(self)
+    nav.updateQueryString()
 
     expect(
-      self.props.readerLocationActions.updateLocation
+      propsRef.current.readerLocationActions.updateLocation
     ).not.toHaveBeenCalled()
   })
 
   test('updates the location with the current slug, spine index, and spread index', () => {
-    const self = createSelf({
+    const { nav, propsRef } = createDeps({
       state: {
         spreadIndex: 2,
         currentSpineItemIndex: 1,
@@ -358,22 +383,22 @@ describe('updateQueryString', () => {
       },
     })
 
-    updateQueryString.call(self)
+    nav.updateQueryString()
 
     expect(
-      self.props.readerLocationActions.updateLocation
+      propsRef.current.readerLocationActions.updateLocation
     ).toHaveBeenCalledWith({
       searchParams: 'slug=two&currentSpineItemIndex=1&spreadIndex=2',
     })
   })
 
   test('invokes the callback after updating the location', () => {
-    const self = createSelf({
+    const { nav } = createDeps({
       state: { currentSpineItem: { slug: 'one' } },
     })
     const callback = jest.fn()
 
-    updateQueryString.call(self, callback)
+    nav.updateQueryString(callback)
 
     expect(callback).toHaveBeenCalled()
   })
@@ -381,14 +406,14 @@ describe('updateQueryString', () => {
 
 describe('savePosition', () => {
   test('persists the current chapter and spread index to local storage', () => {
-    const self = createSelf({
+    const { nav, propsRef } = createDeps({
       state: { currentSpineItemIndex: 1, spreadIndex: 2 },
     })
 
-    savePosition.call(self)
+    nav.savePosition()
 
     expect(
-      self.props.readerLocationActions.updateLocalStorage
+      propsRef.current.readerLocationActions.updateLocalStorage
     ).toHaveBeenCalledWith({
       searchParams: 'currentSpineItemIndex=1&spreadIndex=2',
     })

@@ -3,24 +3,21 @@ jest.mock('../../../src/helpers/Request')
 jest.mock('../../../src/helpers/Storage')
 jest.mock('../../../src/helpers/XMLAdaptor')
 
-import {
-  book,
-  createStateFromOPF,
-  loadSpineItem,
-  showSpineItem,
-} from '../../../src/components/Reader/loader'
+import { renderHook } from '@testing-library/react'
+import { book, useLoader } from '../../../src/components/Reader/loader'
 import Asset from '../../../src/helpers/Asset'
 import Request from '../../../src/helpers/Request'
 import Storage from '../../../src/helpers/Storage'
 import XMLAdaptor from '../../../src/helpers/XMLAdaptor'
 
-// Builds a fake `self` (the selfRef shim Reader/index.jsx binds these
-// functions to). `setState` shallow-merges into `self.state` and invokes the
-// callback synchronously, mirroring how the real shim's effect-flushed
-// callbacks ultimately run.
-function createSelf(overrides = {}) {
-  const self = {
-    state: {
+// useLoader reads live state/props through refs and resolves cross-cutting calls
+// (freeze, savePosition, updateQueryString, showSpineItem) through `api`. This
+// builds those deps: `setState` shallow-merges into stateRef.current and invokes
+// the callback synchronously (mirroring how the real shim's effect-flushed
+// callbacks ultimately run), and `api.current` holds jest.fn stand-ins.
+function createDeps(overrides = {}) {
+  const stateRef = {
+    current: {
       spine: [
         { slug: 'one', absoluteURL: 'https://example.com/one.xhtml' },
         { slug: 'two', absoluteURL: 'https://example.com/two.xhtml' },
@@ -32,28 +29,41 @@ function createSelf(overrides = {}) {
       opsURL: 'https://example.com/OPS/',
       ...overrides.state,
     },
-    props: {
+  }
+
+  const propsRef = {
+    current: {
       readerSettings: { bookURL: 'https://example.com/book' },
       view: { lastSpreadIndex: 1 },
       viewerSettings: { paddingLeft: 0, columnGap: 0 },
       userInterfaceActions: { update: jest.fn() },
       ...overrides.props,
     },
-    setState: jest.fn((update, callback) => {
-      const partial = typeof update === 'function' ? update(self.state) : update
-      Object.assign(self.state, partial)
-      if (callback) callback()
-    }),
-    freeze: jest.fn(),
-    savePosition: jest.fn(),
-    updateQueryString: jest.fn((cb) => {
-      if (cb) cb()
-    }),
-    showSpineItem: jest.fn(),
-    ...overrides.self,
   }
 
-  return self
+  const setState = jest.fn((update, callback) => {
+    const partial =
+      typeof update === 'function' ? update(stateRef.current) : update
+    Object.assign(stateRef.current, partial)
+    if (callback) callback()
+  })
+
+  const api = {
+    current: {
+      freeze: jest.fn(),
+      savePosition: jest.fn(),
+      updateQueryString: jest.fn((cb) => {
+        if (cb) cb()
+      }),
+      showSpineItem: jest.fn(),
+      ...overrides.api,
+    },
+  }
+
+  const deps = { stateRef, propsRef, setState, api }
+  const { result } = renderHook(() => useLoader(deps))
+
+  return { ...deps, loader: result.current }
 }
 
 describe('createStateFromOPF', () => {
@@ -83,10 +93,10 @@ describe('createStateFromOPF', () => {
   })
 
   test('fetches and parses the OPF/NCX, then sets state with the merged data and opsURL', async () => {
-    const self = createSelf()
+    const { loader, setState } = createDeps()
     const callback = jest.fn()
 
-    await createStateFromOPF.call(self, callback)
+    await loader.createStateFromOPF(callback)
 
     expect(XMLAdaptor.opfURL).toHaveBeenCalledWith('https://example.com/book')
     expect(XMLAdaptor.opsURL).toHaveBeenCalledWith('https://example.com/book')
@@ -119,7 +129,7 @@ describe('createStateFromOPF', () => {
       spine: ['spine-item-updated'],
     })
 
-    expect(self.setState).toHaveBeenCalledWith(
+    expect(setState).toHaveBeenCalledWith(
       {
         opsURL: 'https://example.com/book/OPS/',
         guide: ['guide-item-updated'],
@@ -145,23 +155,23 @@ describe('showSpineItem', () => {
   })
 
   test('warns and bails out when spine is missing from state', () => {
-    const self = createSelf({ state: { spine: null } })
+    const { loader, setState } = createDeps({ state: { spine: null } })
 
-    showSpineItem.call(self)
+    loader.showSpineItem()
 
     expect(warnSpy).toHaveBeenCalledWith('showSpineItem: spine is not in state')
-    expect(self.setState).not.toHaveBeenCalled()
+    expect(setState).not.toHaveBeenCalled()
   })
 
   test('flags first chapter and first spread at the start of the book', () => {
-    const self = createSelf({
+    const { loader, setState, api } = createDeps({
       state: { currentSpineItemIndex: 0, spreadIndex: 0 },
       props: { view: { lastSpreadIndex: 2 } },
     })
 
-    showSpineItem.call(self)
+    loader.showSpineItem()
 
-    expect(self.setState).toHaveBeenCalledWith(
+    expect(setState).toHaveBeenCalledWith(
       {
         firstChapter: true,
         lastChapter: false,
@@ -170,18 +180,18 @@ describe('showSpineItem', () => {
       },
       expect.any(Function)
     )
-    expect(self.savePosition).toHaveBeenCalled()
+    expect(api.current.savePosition).toHaveBeenCalled()
   })
 
   test('flags last chapter and last spread at the end of the book', () => {
-    const self = createSelf({
+    const { loader, setState, api } = createDeps({
       state: { currentSpineItemIndex: 2, spreadIndex: 2 },
       props: { view: { lastSpreadIndex: 2 } },
     })
 
-    showSpineItem.call(self)
+    loader.showSpineItem()
 
-    expect(self.setState).toHaveBeenCalledWith(
+    expect(setState).toHaveBeenCalledWith(
       {
         firstChapter: false,
         lastChapter: true,
@@ -190,18 +200,18 @@ describe('showSpineItem', () => {
       },
       expect.any(Function)
     )
-    expect(self.savePosition).toHaveBeenCalled()
+    expect(api.current.savePosition).toHaveBeenCalled()
   })
 
   test('flags neither first/last when in the middle of the book', () => {
-    const self = createSelf({
+    const { loader, setState, api } = createDeps({
       state: { currentSpineItemIndex: 1, spreadIndex: 1 },
       props: { view: { lastSpreadIndex: 2 } },
     })
 
-    showSpineItem.call(self)
+    loader.showSpineItem()
 
-    expect(self.setState).toHaveBeenCalledWith(
+    expect(setState).toHaveBeenCalledWith(
       {
         firstChapter: false,
         lastChapter: false,
@@ -210,7 +220,7 @@ describe('showSpineItem', () => {
       },
       expect.any(Function)
     )
-    expect(self.savePosition).toHaveBeenCalled()
+    expect(api.current.savePosition).toHaveBeenCalled()
   })
 })
 
@@ -243,45 +253,45 @@ describe('loadSpineItem', () => {
   })
 
   test('warns and returns early when spine is empty and no spineItem is provided', async () => {
-    const self = createSelf({ state: { spine: [] } })
+    const { loader, api } = createDeps({ state: { spine: [] } })
 
-    await loadSpineItem.call(self, undefined)
+    await loader.loadSpineItem(undefined)
 
     expect(warnSpy).toHaveBeenCalledWith(
       'loadSpineItem: called before spine was populated — skipping'
     )
-    expect(self.freeze).not.toHaveBeenCalled()
+    expect(api.current.freeze).not.toHaveBeenCalled()
     expect(Request.getText).not.toHaveBeenCalled()
   })
 
   test('falls back to the first spine item when no spineItem is provided', async () => {
-    const self = createSelf()
+    const { loader, api, stateRef, propsRef } = createDeps()
 
-    await loadSpineItem.call(self, undefined)
+    await loader.loadSpineItem(undefined)
 
-    expect(self.freeze).toHaveBeenCalled()
+    expect(api.current.freeze).toHaveBeenCalled()
     expect(Request.getText).toHaveBeenCalledWith(
       'https://example.com/one.xhtml'
     )
     expect(XMLAdaptor.parseSpineItemResponse).toHaveBeenCalledWith({
       data: '<html/>',
       hash: 'book-hash',
-      cache: self.state.cache,
-      opsURL: self.state.opsURL,
+      cache: stateRef.current.cache,
+      opsURL: stateRef.current.opsURL,
       request: { status: 200 },
-      requestedSpineItem: self.state.spine[0],
-      paddingLeft: self.props.viewerSettings.paddingLeft,
-      columnGap: self.props.viewerSettings.columnGap,
+      requestedSpineItem: stateRef.current.spine[0],
+      paddingLeft: propsRef.current.viewerSettings.paddingLeft,
+      columnGap: propsRef.current.viewerSettings.columnGap,
     })
   })
 
   test('happy path: loads the requested spine item, sets book.content, appends styles, and chains setState/updateQueryString/showSpineItem', async () => {
-    const self = createSelf()
-    const requestedSpineItem = self.state.spine[1]
+    const { loader, api, stateRef, setState } = createDeps()
+    const requestedSpineItem = stateRef.current.spine[1]
 
-    await loadSpineItem.call(self, requestedSpineItem)
+    await loader.loadSpineItem(requestedSpineItem)
 
-    expect(self.freeze).toHaveBeenCalled()
+    expect(api.current.freeze).toHaveBeenCalled()
     expect(Request.getText).toHaveBeenCalledWith(requestedSpineItem.absoluteURL)
     expect(XMLAdaptor.parseSpineItemResponse).toHaveBeenCalledWith(
       expect.objectContaining({ requestedSpineItem })
@@ -293,19 +303,21 @@ describe('loadSpineItem', () => {
       'book-hash'
     )
 
-    expect(self.setState).toHaveBeenCalledWith(
+    expect(setState).toHaveBeenCalledWith(
       {
         currentSpineItem: requestedSpineItem,
         spineItemURL: requestedSpineItem.absoluteURL,
       },
       expect.any(Function)
     )
-    expect(self.updateQueryString).toHaveBeenCalledWith(expect.any(Function))
-    expect(self.showSpineItem).toHaveBeenCalled()
+    expect(api.current.updateQueryString).toHaveBeenCalledWith(
+      expect.any(Function)
+    )
+    expect(api.current.showSpineItem).toHaveBeenCalled()
   })
 
   test('error path: logs the error, clears storage for the book, re-enables the UI, and skips the success path', async () => {
-    const self = createSelf()
+    const { loader, api, propsRef, setState, stateRef } = createDeps()
     const requestError = new Error('network failure')
     Request.getText.mockRejectedValue(requestError)
     Storage.get.mockReturnValue({
@@ -313,33 +325,33 @@ describe('loadSpineItem', () => {
       other: 'keep-me',
     })
 
-    await loadSpineItem.call(self, self.state.spine[0])
+    await loader.loadSpineItem(stateRef.current.spine[0])
 
     expect(errorSpy).toHaveBeenCalledWith(requestError)
     expect(Storage.set).toHaveBeenCalledWith({ other: 'keep-me' })
-    expect(self.props.userInterfaceActions.update).toHaveBeenCalledWith({
+    expect(propsRef.current.userInterfaceActions.update).toHaveBeenCalledWith({
       handleEvents: true,
       spinnerVisible: false,
     })
 
     expect(book.content).toBeNull()
     expect(Asset.appendBookStyles).not.toHaveBeenCalled()
-    expect(self.setState).not.toHaveBeenCalled()
-    expect(self.updateQueryString).not.toHaveBeenCalled()
-    expect(self.showSpineItem).not.toHaveBeenCalled()
+    expect(setState).not.toHaveBeenCalled()
+    expect(api.current.updateQueryString).not.toHaveBeenCalled()
+    expect(api.current.showSpineItem).not.toHaveBeenCalled()
   })
 
   test('error path: defaults storage to an empty object when Storage.get returns falsy', async () => {
-    const self = createSelf()
+    const { loader, propsRef, stateRef } = createDeps()
     const requestError = new Error('parse failure')
     XMLAdaptor.parseSpineItemResponse.mockRejectedValue(requestError)
     Storage.get.mockReturnValue(null)
 
-    await loadSpineItem.call(self, self.state.spine[0])
+    await loader.loadSpineItem(stateRef.current.spine[0])
 
     expect(errorSpy).toHaveBeenCalledWith(requestError)
     expect(Storage.set).toHaveBeenCalledWith({})
-    expect(self.props.userInterfaceActions.update).toHaveBeenCalledWith({
+    expect(propsRef.current.userInterfaceActions.update).toHaveBeenCalledWith({
       handleEvents: true,
       spinnerVisible: false,
     })

@@ -1,57 +1,68 @@
-import {
-  bindResizeHandlers,
-  handleResize,
-  handleResizeEnd,
-  handleResizeStart,
-  unbindResizeHandlers,
-} from '../../../src/components/Reader/resize'
+import { renderHook } from '@testing-library/react'
+import { useResize } from '../../../src/components/Reader/resize'
 import Viewport from '../../../src/helpers/Viewport'
 
-function createSelf(overrides = {}) {
-  const self = {
-    state: {
+// useResize reads live state/props through refs and resolves cross-cutting calls
+// (freeze, navigateToSpreadByIndex) through `api`. handleResizeStart/End are
+// debounced (start: leading edge → fires synchronously on first call; end:
+// trailing edge → fires after 1000ms, so those tests advance fake timers).
+function createDeps(overrides = {}) {
+  const stateRef = {
+    current: {
       disableMobileResizeEvents: false,
       spreadIndex: 0,
       ...overrides.state,
     },
-    props: {
+  }
+
+  const propsRef = {
+    current: {
       readerSettings: { layout: 'columns' },
       view: { lastSpreadIndex: 4 },
       viewerSettingsActions: { update: jest.fn() },
       viewActions: { unload: jest.fn() },
       ...overrides.props,
     },
-    setState: jest.fn((update) => {
-      Object.assign(self.state, update)
-    }),
-    freeze: jest.fn(),
-    navigateToSpreadByIndex: jest.fn(),
-    handleResize: jest.fn(),
-    handleResizeStart: jest.fn(),
-    handleResizeEnd: jest.fn(),
   }
 
-  return self
+  const setState = jest.fn((update) => {
+    Object.assign(stateRef.current, update)
+  })
+
+  const api = {
+    current: {
+      freeze: jest.fn(),
+      navigateToSpreadByIndex: jest.fn(),
+      ...overrides.api,
+    },
+  }
+
+  const deps = { stateRef, propsRef, setState, api }
+  const { result } = renderHook(() => useResize(deps))
+
+  return { ...deps, resize: result.current }
 }
 
 describe('handleResize', () => {
   afterEach(() => jest.restoreAllMocks())
 
   test('does nothing when mobile resize events are disabled', () => {
-    const self = createSelf({ state: { disableMobileResizeEvents: true } })
+    const { resize, propsRef } = createDeps({
+      state: { disableMobileResizeEvents: true },
+    })
 
-    handleResize.call(self)
+    resize.handleResize()
 
-    expect(self.props.viewerSettingsActions.update).not.toHaveBeenCalled()
+    expect(propsRef.current.viewerSettingsActions.update).not.toHaveBeenCalled()
   })
 
   test('sets height to "auto" when vertically scrolling', () => {
     jest.spyOn(Viewport, 'isVerticallyScrolling').mockReturnValue(true)
-    const self = createSelf()
+    const { resize, propsRef } = createDeps()
 
-    handleResize.call(self)
+    resize.handleResize()
 
-    expect(self.props.viewerSettingsActions.update).toHaveBeenCalledWith(
+    expect(propsRef.current.viewerSettingsActions.update).toHaveBeenCalledWith(
       expect.objectContaining({
         width: window.innerWidth,
         height: 'auto',
@@ -61,11 +72,11 @@ describe('handleResize', () => {
 
   test('sets height to window.innerHeight when paginated', () => {
     jest.spyOn(Viewport, 'isVerticallyScrolling').mockReturnValue(false)
-    const self = createSelf()
+    const { resize, propsRef } = createDeps()
 
-    handleResize.call(self)
+    resize.handleResize()
 
-    expect(self.props.viewerSettingsActions.update).toHaveBeenCalledWith(
+    expect(propsRef.current.viewerSettingsActions.update).toHaveBeenCalledWith(
       expect.objectContaining({
         width: window.innerWidth,
         height: window.innerHeight,
@@ -75,92 +86,105 @@ describe('handleResize', () => {
 })
 
 describe('handleResizeStart', () => {
+  // The leading-edge debounce fires synchronously on the first call.
   test('does nothing when mobile resize events are disabled', () => {
-    const self = createSelf({ state: { disableMobileResizeEvents: true } })
+    const { resize, api, propsRef, setState } = createDeps({
+      state: { disableMobileResizeEvents: true },
+    })
 
-    handleResizeStart.call(self)
+    resize.handleResizeStart()
 
-    expect(self.freeze).not.toHaveBeenCalled()
-    expect(self.props.viewActions.unload).not.toHaveBeenCalled()
-    expect(self.setState).not.toHaveBeenCalled()
+    expect(api.current.freeze).not.toHaveBeenCalled()
+    expect(propsRef.current.viewActions.unload).not.toHaveBeenCalled()
+    expect(setState).not.toHaveBeenCalled()
   })
 
   test('freezes the UI, unloads the view, and stores the relative spread position', () => {
-    const self = createSelf({
+    const { resize, api, propsRef, stateRef } = createDeps({
       state: { spreadIndex: 2 },
       props: { view: { lastSpreadIndex: 4 } },
     })
 
-    handleResizeStart.call(self)
+    resize.handleResizeStart()
 
-    expect(self.freeze).toHaveBeenCalled()
-    expect(self.props.viewActions.unload).toHaveBeenCalled()
-    expect(self.state.relativeSpreadPosition).toBe(0.5)
+    expect(api.current.freeze).toHaveBeenCalled()
+    expect(propsRef.current.viewActions.unload).toHaveBeenCalled()
+    expect(stateRef.current.relativeSpreadPosition).toBe(0.5)
   })
 
   test('uses a relative spread position of 0 when on the first spread', () => {
-    const self = createSelf({
+    const { resize, stateRef } = createDeps({
       state: { spreadIndex: 0 },
       props: { view: { lastSpreadIndex: 4 } },
     })
 
-    handleResizeStart.call(self)
+    resize.handleResizeStart()
 
-    expect(self.state.relativeSpreadPosition).toBe(0)
+    expect(stateRef.current.relativeSpreadPosition).toBe(0)
   })
 
   test('uses a relative spread position of 0 when lastSpreadIndex is 0', () => {
-    const self = createSelf({
+    const { resize, stateRef } = createDeps({
       state: { spreadIndex: 0 },
       props: { view: { lastSpreadIndex: 0 } },
     })
 
-    handleResizeStart.call(self)
+    resize.handleResizeStart()
 
-    expect(self.state.relativeSpreadPosition).toBe(0)
+    expect(stateRef.current.relativeSpreadPosition).toBe(0)
   })
 })
 
 describe('handleResizeEnd', () => {
+  // The trailing-edge debounce fires after the 1000ms quiet period.
+  beforeEach(() => jest.useFakeTimers())
+  afterEach(() => jest.useRealTimers())
+
   test('does nothing when mobile resize events are disabled', () => {
-    const self = createSelf({ state: { disableMobileResizeEvents: true } })
+    const { resize, api } = createDeps({
+      state: { disableMobileResizeEvents: true },
+    })
 
-    handleResizeEnd.call(self)
+    resize.handleResizeEnd()
+    jest.advanceTimersByTime(1000)
 
-    expect(self.navigateToSpreadByIndex).not.toHaveBeenCalled()
+    expect(api.current.navigateToSpreadByIndex).not.toHaveBeenCalled()
   })
 
   test('navigates to the spread closest to the relative position before resize', () => {
-    const self = createSelf({
+    const { resize, api } = createDeps({
       state: { relativeSpreadPosition: 0.5 },
       props: { view: { lastSpreadIndex: 4 } },
     })
 
-    handleResizeEnd.call(self)
+    resize.handleResizeEnd()
+    jest.advanceTimersByTime(1000)
 
-    expect(self.navigateToSpreadByIndex).toHaveBeenCalledWith(2)
+    expect(api.current.navigateToSpreadByIndex).toHaveBeenCalledWith(2)
   })
 
   test('clamps the spread index to 0 when the relative position is negative', () => {
-    const self = createSelf({
+    const { resize, api } = createDeps({
       state: { relativeSpreadPosition: -1 },
       props: { view: { lastSpreadIndex: 4 } },
     })
 
-    handleResizeEnd.call(self)
+    resize.handleResizeEnd()
+    jest.advanceTimersByTime(1000)
 
-    expect(self.navigateToSpreadByIndex).toHaveBeenCalledWith(0)
+    expect(api.current.navigateToSpreadByIndex).toHaveBeenCalledWith(0)
   })
 
   test('clamps the spread index to lastSpreadIndex when the relative position exceeds 1', () => {
-    const self = createSelf({
+    const { resize, api } = createDeps({
       state: { relativeSpreadPosition: 2 },
       props: { view: { lastSpreadIndex: 4 } },
     })
 
-    handleResizeEnd.call(self)
+    resize.handleResizeEnd()
+    jest.advanceTimersByTime(1000)
 
-    expect(self.navigateToSpreadByIndex).toHaveBeenCalledWith(4)
+    expect(api.current.navigateToSpreadByIndex).toHaveBeenCalledWith(4)
   })
 })
 
@@ -171,18 +195,18 @@ describe('bindResizeHandlers / unbindResizeHandlers', () => {
     const docAddSpy = jest.spyOn(document, 'addEventListener')
     const docRemoveSpy = jest.spyOn(document, 'removeEventListener')
 
-    const self = createSelf()
+    const { resize } = createDeps()
 
-    expect(() => bindResizeHandlers.call(self)).not.toThrow()
-    expect(removeSpy).toHaveBeenCalledWith('resize', self.handleResize)
-    expect(removeSpy).toHaveBeenCalledWith('resize', self.handleResizeStart)
-    expect(removeSpy).toHaveBeenCalledWith('resize', self.handleResizeEnd)
+    expect(() => resize.bindResizeHandlers()).not.toThrow()
+    expect(removeSpy).toHaveBeenCalledWith('resize', resize.handleResize)
+    expect(removeSpy).toHaveBeenCalledWith('resize', resize.handleResizeStart)
+    expect(removeSpy).toHaveBeenCalledWith('resize', resize.handleResizeEnd)
     expect(docRemoveSpy).toHaveBeenCalledTimes(3)
 
-    expect(() => unbindResizeHandlers.call(self)).not.toThrow()
-    expect(addSpy).toHaveBeenCalledWith('resize', self.handleResize)
-    expect(addSpy).toHaveBeenCalledWith('resize', self.handleResizeStart)
-    expect(addSpy).toHaveBeenCalledWith('resize', self.handleResizeEnd)
+    expect(() => resize.unbindResizeHandlers()).not.toThrow()
+    expect(addSpy).toHaveBeenCalledWith('resize', resize.handleResize)
+    expect(addSpy).toHaveBeenCalledWith('resize', resize.handleResizeStart)
+    expect(addSpy).toHaveBeenCalledWith('resize', resize.handleResizeEnd)
     expect(docAddSpy).toHaveBeenCalledTimes(2)
 
     addSpy.mockRestore()

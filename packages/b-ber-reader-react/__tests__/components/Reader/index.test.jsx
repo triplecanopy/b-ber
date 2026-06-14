@@ -1,23 +1,20 @@
 /**
  * Tests for Reader/index.jsx — the main orchestrator component.
  *
- * Strategy: Controls, Frame, Spinner, and the loader/navigation/resize
- * modules are mocked so this is a behavioral test of the orchestration
- * logic (the selfRef wiring, effects, and state transitions) rather than
- * a full integration test. navigation.js and resize.js already have
- * dedicated unit test files with full coverage of their internals — here
- * we only verify that Reader invokes them correctly.
+ * Strategy: Controls, Frame, Spinner, and the useLoader/useNavigation/useResize
+ * hooks are mocked so this is a behavioral test of the orchestration logic (the
+ * effects, API assembly, and state transitions) rather than a full integration
+ * test. navigation.js and resize.js have dedicated unit test files with full
+ * coverage of their internals — here we only verify that Reader invokes them
+ * correctly. The loader hook mock captures the deps Reader threads into it
+ * (notably `setState`) so tests can drive Reader's internal state.
  *
  * Deliberately left uncovered (documented per task instructions):
- *   - The debounced handleResizeStart/handleResizeEnd (1000ms lodash
- *     debounce) are bound but never fired here — resize.test.js covers
- *     their internals; firing them would require fake timers + window
- *     resize events with little additional value for THIS file's coverage.
- *   - getTranslateX's branch math (Viewport.getPageWidth /
- *     isVerticallyScrolling) is exercised only at the default value;
- *     deeper viewport-scrolling permutations are covered by other tests.
- *   - The error/catch path inside loadSpineItem (loader.js) — out of scope
- *     for this file, covered (or not) by loader's own tests.
+ *   - The debounced handleResizeStart/handleResizeEnd are owned by useResize
+ *     (resize.test.js covers them); firing them here adds little value.
+ *   - getTranslateX's branch math is exercised only at the default value.
+ *   - The error/catch path inside loadSpineItem (loader.js) — covered by
+ *     loader's own tests.
  */
 
 import { act, render } from '@testing-library/react'
@@ -26,37 +23,56 @@ import { Provider } from 'react-redux'
 import * as readerLocationActions from '../../../src/actions/reader-location'
 import * as viewActions from '../../../src/actions/view'
 import Reader from '../../../src/components/Reader'
-import {
-  book,
-  createStateFromOPF,
-  loadSpineItem,
-} from '../../../src/components/Reader/loader'
-import * as navigationModule from '../../../src/components/Reader/navigation'
-import * as resizeModule from '../../../src/components/Reader/resize'
+import { book } from '../../../src/components/Reader/loader'
 import Asset from '../../../src/helpers/Asset'
 import { makeTwoChapterSpine } from '../../helpers/fixtures'
 import { createTestStore } from '../../helpers/store'
 
-// navigation.js and resize.js export plain functions; ES module exports are
-// non-configurable so jest.spyOn cannot replace them directly. Mocking the
-// modules with jest.requireActual + jest.fn wrappers lets us assert calls
-// while preserving real behavior for the functions Reader binds via selfRef.
-jest.mock('../../../src/components/Reader/navigation', () => {
-  const actual = jest.requireActual('../../../src/components/Reader/navigation')
-  return {
-    ...actual,
-    navigateToSpreadByIndex: jest.fn(actual.navigateToSpreadByIndex),
-  }
-})
+// The orchestrator logic now lives in three hooks. Mock each to return stable
+// jest.fn stand-ins the tests can assert on. useLoader additionally records the
+// deps Reader passes it (refs + setState) so the getSlug test can populate
+// Reader's spine state the way the real createStateFromOPF would.
+const mockLoaderFns = {
+  createStateFromOPF: jest.fn(),
+  loadSpineItem: jest.fn(),
+  showSpineItem: jest.fn(),
+}
+const mockNavFns = {
+  handlePageNavigation: jest.fn(),
+  handleChapterNavigation: jest.fn(),
+  navigateToChapterByURL: jest.fn(),
+  getSpineItemByAbsoluteUrl: jest.fn(),
+  navigateToSpreadByIndex: jest.fn(),
+  navigateToElementById: jest.fn(),
+  updateQueryString: jest.fn(),
+  savePosition: jest.fn(),
+}
+const mockResizeFns = {
+  handleResize: jest.fn(),
+  handleResizeStart: jest.fn(),
+  handleResizeEnd: jest.fn(),
+  bindResizeHandlers: jest.fn(),
+  unbindResizeHandlers: jest.fn(),
+}
 
-jest.mock('../../../src/components/Reader/resize', () => {
-  const actual = jest.requireActual('../../../src/components/Reader/resize')
-  return {
-    ...actual,
-    bindResizeHandlers: jest.fn(actual.bindResizeHandlers),
-    unbindResizeHandlers: jest.fn(actual.unbindResizeHandlers),
-  }
-})
+jest.mock('../../../src/components/Reader/loader', () => ({
+  __esModule: true,
+  book: { content: null },
+  useLoader: (deps) => {
+    mockLoaderFns.deps = deps
+    return mockLoaderFns
+  },
+}))
+
+jest.mock('../../../src/components/Reader/navigation', () => ({
+  __esModule: true,
+  useNavigation: () => mockNavFns,
+}))
+
+jest.mock('../../../src/components/Reader/resize', () => ({
+  __esModule: true,
+  useResize: () => mockResizeFns,
+}))
 
 jest.mock('../../../src/components/Controls', () => {
   return function Controls(props) {
@@ -91,18 +107,12 @@ jest.mock('../../../src/components/Spinner', () => {
   }
 })
 
-jest.mock('../../../src/components/Reader/loader', () => ({
-  book: { content: null },
-  createStateFromOPF: jest.fn(),
-  loadSpineItem: jest.fn(),
-  showSpineItem: jest.fn(),
-}))
-
 const spine = makeTwoChapterSpine()
 
 describe('Reader', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockLoaderFns.createStateFromOPF.mockReset()
     book.content = null
   })
 
@@ -121,34 +131,29 @@ describe('Reader', () => {
 
     expect(store.getState().userInterface.spinnerVisible).toBe(true)
     expect(store.getState().userInterface.handleEvents).toBe(false)
-    expect(createStateFromOPF).toHaveBeenCalledTimes(1)
-    expect(createStateFromOPF).toHaveBeenCalledWith(expect.any(Function))
+    expect(mockLoaderFns.createStateFromOPF).toHaveBeenCalledTimes(1)
+    expect(mockLoaderFns.createStateFromOPF).toHaveBeenCalledWith(
+      expect.any(Function)
+    )
   })
 
-  test('createStateFromOPF callback: matching currentSpineItemIndex loads that spine item', async () => {
+  test('createStateFromOPF callback: empty spine falls back to loadSpineItem with no args', async () => {
     renderReader({
       readerLocation: { searchParams: '?currentSpineItemIndex=1' },
     })
 
-    // Run the createStateFromOPF callback as the loader would: it merges
-    // `spine` into Reader state via setState (the first arg to
-    // createStateFromOPF), simulated here by calling the mock's callback
-    // after setState has been wired.
-    const callback = createStateFromOPF.mock.calls[0][0]
+    // Run the createStateFromOPF callback as the loader would. Since the mock
+    // doesn't populate spine, stateRef still has an empty spine ([]), so
+    // currentSpineItem is undefined and the fallback branch (loadSpineItem with
+    // no args) is exercised.
+    const callback = mockLoaderFns.createStateFromOPF.mock.calls[0][0]
 
-    // Simulate the loader having populated `spine` in state by directly
-    // invoking the effect's logic. Since createStateFromOPF is mocked, we
-    // need to drive state via the real setState — but Reader exposes no
-    // imperative handle, so instead we verify the callback closes over
-    // `stateRef`, which initially has an empty spine ([]).
-    // With an empty spine, currentSpineItem is undefined, so the fallback
-    // branch (loadSpineItem with no args) is exercised here.
     await act(async () => {
       callback()
     })
 
-    expect(loadSpineItem).toHaveBeenCalledTimes(1)
-    expect(loadSpineItem).toHaveBeenCalledWith()
+    expect(mockLoaderFns.loadSpineItem).toHaveBeenCalledTimes(1)
+    expect(mockLoaderFns.loadSpineItem).toHaveBeenCalledWith()
   })
 
   test('resize effect binds on mount and cleans up (calls Asset.removeBookStyles) on unmount', () => {
@@ -161,12 +166,12 @@ describe('Reader', () => {
     // Per the H4-inverted-naming comment: unbindResizeHandlers is called on
     // mount (it actually adds listeners), and bindResizeHandlers is called
     // on unmount (it actually removes listeners).
-    expect(resizeModule.unbindResizeHandlers).toHaveBeenCalledTimes(1)
-    expect(resizeModule.bindResizeHandlers).not.toHaveBeenCalled()
+    expect(mockResizeFns.unbindResizeHandlers).toHaveBeenCalledTimes(1)
+    expect(mockResizeFns.bindResizeHandlers).not.toHaveBeenCalled()
 
     unmount()
 
-    expect(resizeModule.bindResizeHandlers).toHaveBeenCalledTimes(1)
+    expect(mockResizeFns.bindResizeHandlers).toHaveBeenCalledTimes(1)
     expect(removeBookStylesSpy).toHaveBeenCalledWith(
       Asset.createHash('https://example.com/book')
     )
@@ -181,7 +186,7 @@ describe('Reader', () => {
       },
     })
 
-    loadSpineItem.mockClear()
+    mockLoaderFns.loadSpineItem.mockClear()
 
     act(() => {
       store.dispatch(
@@ -191,7 +196,7 @@ describe('Reader', () => {
       )
     })
 
-    expect(loadSpineItem).not.toHaveBeenCalled()
+    expect(mockLoaderFns.loadSpineItem).not.toHaveBeenCalled()
   })
 
   test('searchParams effect: different slug (external nav) loads the matched spine item', () => {
@@ -201,7 +206,7 @@ describe('Reader', () => {
       },
     })
 
-    loadSpineItem.mockClear()
+    mockLoaderFns.loadSpineItem.mockClear()
 
     act(() => {
       store.dispatch(
@@ -211,12 +216,11 @@ describe('Reader', () => {
       )
     })
 
-    // currentSpineItem is null in initial state (never set, since
-    // createStateFromOPF is mocked), so `find(spine, { slug })` against an
-    // empty spine returns undefined — loadSpineItem is still called with
-    // that undefined spineItem (external-navigation branch).
-    expect(loadSpineItem).toHaveBeenCalledTimes(1)
-    expect(loadSpineItem).toHaveBeenCalledWith(undefined)
+    // currentSpineItem is null in initial state (createStateFromOPF is mocked),
+    // so `find(spine, { slug })` against an empty spine returns undefined —
+    // loadSpineItem is still called with that undefined spineItem.
+    expect(mockLoaderFns.loadSpineItem).toHaveBeenCalledTimes(1)
+    expect(mockLoaderFns.loadSpineItem).toHaveBeenCalledWith(undefined)
   })
 
   test('searchParams effect: same searchParams value is a no-op (guard)', () => {
@@ -225,19 +229,17 @@ describe('Reader', () => {
       readerLocation: { searchParams },
     })
 
-    loadSpineItem.mockClear()
+    mockLoaderFns.loadSpineItem.mockClear()
 
     act(() => {
       // Dispatch the exact same searchParams value again
       store.dispatch(readerLocationActions.updateLocation({ searchParams }))
     })
 
-    expect(loadSpineItem).not.toHaveBeenCalled()
+    expect(mockLoaderFns.loadSpineItem).not.toHaveBeenCalled()
   })
 
-  test('view.loaded/lastSpreadIndex effect: navigateToSpreadByIndex is invoked when chapterDelta < 0 (default state)', () => {
-    // chapterDelta defaults to 0 in initial state, so navigateToSpreadByIndex
-    // is NOT called — this documents the guarded branch for the default case.
+  test('view.loaded/lastSpreadIndex effect: navigateToSpreadByIndex is not invoked when chapterDelta is 0 (default state)', () => {
     const { store } = renderReader()
 
     act(() => {
@@ -250,7 +252,7 @@ describe('Reader', () => {
 
     // chapterDelta is 0 by default (not < 0), so navigateToSpreadByIndex is
     // not invoked via this effect.
-    expect(navigationModule.navigateToSpreadByIndex).not.toHaveBeenCalled()
+    expect(mockNavFns.navigateToSpreadByIndex).not.toHaveBeenCalled()
   })
 
   test('renders Controls > ReaderContext.Provider > Frame + Spinner with expected props', () => {
@@ -293,11 +295,11 @@ describe('Reader', () => {
   })
 
   test('getSlug() returns the spine item slug once spine and currentSpineItemIndex resolve', async () => {
-    // Drive Reader into a state where spine[currentSpineItemIndex] resolves,
-    // by having createStateFromOPF's setState populate `spine` and the
-    // searchParams effect set `currentSpineItemIndex`.
-    createStateFromOPF.mockImplementation(function mockCreateStateFromOPF(cb) {
-      this.setState({ spine }, cb)
+    // Drive Reader into a state where spine[currentSpineItemIndex] resolves, by
+    // having createStateFromOPF's mock populate `spine` via the setState Reader
+    // threaded into useLoader, then invoke the init callback.
+    mockLoaderFns.createStateFromOPF.mockImplementation((cb) => {
+      mockLoaderFns.deps.setState({ spine }, cb)
     })
 
     const { getByTestId } = renderReader({
@@ -306,15 +308,11 @@ describe('Reader', () => {
       },
     })
 
-    // After mount, createStateFromOPF's mock sets spine=[...] then invokes
-    // the callback, which (since spine[0] now exists) calls setState with
-    // currentSpineItem/currentSpineItemIndex/spreadIndex and then
-    // selfRef.current.loadSpineItem(currentSpineItem).
     await act(async () => {
       await Promise.resolve()
     })
 
-    expect(loadSpineItem).toHaveBeenCalledWith(spine[0])
+    expect(mockLoaderFns.loadSpineItem).toHaveBeenCalledWith(spine[0])
 
     const frame = getByTestId('frame')
     expect(frame.dataset.slug).toBe('chapter-1')
