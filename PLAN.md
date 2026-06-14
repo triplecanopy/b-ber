@@ -35,7 +35,7 @@ Every task belongs to exactly one; every new task must too.
 | ✅ Unit test coverage | 2 | 1 | 2 | Epic in progress; most packages at target, a few laggards |
 | 🧪 E2E testing | 5 | 1 | 2 | Pipeline green in CI; skill + iframe fix remain |
 | ⚙️ Node.js modernization | 1 | 0 | 2 | Barely started; epic + logger refactor pending |
-| ⚛️ React 19 (reader-react) | 23 | 0 | 14 | TASK-095 merged; TASK-096 (Media) + TASK-097 (App) done on their branches, pending merge + browser QA. **Step 1 (class→functional) complete — no class components left in `src/components`.** TASK-098 (measurement HOCs→hooks) + TASK-099 (position HOCs→hooks; absorbed TASK-084 `getPageWidth`) + TASK-100 (selfRef shim → useLoader/useNavigation/useResize) done, pending merge. **Step 2 (HOC→hooks) complete — no class HOCs, no selfRef shim.** Next: TASK-073 (state-management research → Step 4) |
+| ⚛️ React 19 (reader-react) | 23 | 0 | 14 | **Steps 1 + 2 complete and merged into `feat/upgrades`** (TASK-095–100). Step 1 (class→functional): no class components left in `src/components`. Step 2 (HOC→hooks): no class HOCs, no selfRef shim — `with-*` are hooks; `navigation`/`loader`/`resize` are `useNavigation`/`useLoader`/`useResize`. TASK-099 also absorbed TASK-084 `getPageWidth`. Next: TASK-073 (state-management research → Step 4) |
 
 _"Active" = in progress. "Backlog" = not started (excludes superseded)._
 
@@ -205,14 +205,11 @@ TASK-076 (SCSS→CSS Modules), plus general organization cleanup.
 
 1. **TASK-094** (conventions — user review pending) + **TASK-068** (housekeeping):
    establish the patterns and clear dead code before refactoring.
-2. **Step 1** components ✅ **complete**: TASK-095 (leaves, on
-   `feat/react19-step1-leaves`) → TASK-096 (Media, on `feat/react19-step1-media`)
-   → TASK-097 (App, on `feat/react19-step1-app`). 096/097 pending merge + browser QA.
-3. **Step 2** HOCs→hooks ✅ **complete**: TASK-098 (measurement) on
-   `feat/react19-step2-measurement-hocs` → TASK-099 (position) on
-   `feat/react19-step2-position-hocs` → TASK-100 (selfRef removal) on
-   `feat/react19-step2-selfref-removal`, all pending merge. **All `with-*` are
-   hooks and the selfRef shim is gone.**
+2. **Step 1** components ✅ **complete & merged**: TASK-095 (leaves) → TASK-096
+   (Media) → TASK-097 (App). All merged into `feat/upgrades`.
+3. **Step 2** HOCs→hooks ✅ **complete & merged**: TASK-098 (measurement) →
+   TASK-099 (position) → TASK-100 (selfRef removal). All merged into
+   `feat/upgrades`. **All `with-*` are hooks and the selfRef shim is gone.**
 4. **TASK-073** research decision → **Step 4** state migration.
 5. **TASK-091** anytime (independent dep upgrade).
 
@@ -310,11 +307,11 @@ work happens on feature branches** (e.g. `feat/ts-stage-4`, per-package
 | `feat/e2e`, `feat/e2e-ci` | TASK-039–044 | folded into `feat/upgrades` ✓ |
 | `feat/ts-stage-4` | TASK-032 (reader-react TS) | merged ✓ (`ceb3d636`) |
 | `feat/react19-step1-leaves` | TASK-095 (leaf components) | merged ✓ |
-| `feat/react19-step1-media` | TASK-096 (Media subtree) | pending merge |
-| `feat/react19-step1-app` | TASK-097 (App) | pending merge |
-| `feat/react19-step2-measurement-hocs` | TASK-098 (measurement HOCs→hooks) | pending merge |
-| `feat/react19-step2-position-hocs` | TASK-099 (position HOCs→hooks + TASK-084 getPageWidth) | pending merge |
-| `feat/react19-step2-selfref-removal` | TASK-100 (selfRef shim → useLoader/useNavigation/useResize) | pending merge |
+| `feat/react19-step1-media` | TASK-096 (Media subtree) | merged ✓ |
+| `feat/react19-step1-app` | TASK-097 (App) | merged ✓ |
+| `feat/react19-step2-measurement-hocs` | TASK-098 (measurement HOCs→hooks) | merged ✓ |
+| `feat/react19-step2-position-hocs` | TASK-099 (position HOCs→hooks + TASK-084 getPageWidth) | merged ✓ |
+| `feat/react19-step2-selfref-removal` | TASK-100 (selfRef shim → useLoader/useNavigation/useResize) | merged ✓ |
 | `feat/node-modernization-*` | TASK-013 per-package slices | not started |
 
 **Before merging `feat/upgrades` → `main`:** `npm test` green from root; no
