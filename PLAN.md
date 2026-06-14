@@ -35,7 +35,7 @@ Every task belongs to exactly one; every new task must too.
 | ✅ Unit test coverage | 2 | 1 | 2 | Epic in progress; most packages at target, a few laggards |
 | 🧪 E2E testing | 5 | 1 | 2 | Pipeline green in CI; skill + iframe fix remain |
 | ⚙️ Node.js modernization | 1 | 0 | 2 | Barely started; epic + logger refactor pending |
-| ⚛️ React 19 (reader-react) | 24 | 0 | 19 | **Steps 1 + 2 complete and merged into `feat/upgrades`** (TASK-095–100): no class components/HOCs, no selfRef shim. **Step 3 (TASK-073) done** — recommendation: drop Redux → `useSyncExternalStore` + stable API context (`STATE-MIGRATION-PLAN.md`); executes as TASK-106 (Step 4). Maintainability backlog TASK-101–105. Next: TASK-101 (page-nav race — quick win), then TASK-106 (state migration) |
+| ⚛️ React 19 (reader-react) | 25 | 0 | 18 | **Steps 1 + 2 complete and merged into `feat/upgrades`** (TASK-095–100): no class components/HOCs, no selfRef shim. **Step 3 (TASK-073) done** — recommendation: drop Redux → `useSyncExternalStore` + stable API context (`STATE-MIGRATION-PLAN.md`); executes as TASK-106 (Step 4). **TASK-101 (page-nav race) done.** Maintainability backlog TASK-102–105. Next: TASK-106 (state migration) |
 
 _"Active" = in progress. "Backlog" = not started (excludes superseded)._
 
@@ -212,7 +212,7 @@ existing open tasks (noted in the right column).
 
 | Task | Kind | Summary | Maps to / notes |
 | ---- | ---- | ------- | --------------- |
-| **TASK-101** | bug | Premature page-nav skips to next chapter (load race: `handleEvents` unlocks before `lastSpreadIndex` is measured) | new — low-hanging, high-value |
+| **TASK-101** | bug | Premature page-nav skips to next chapter (load race: `handleEvents` unlocks before `lastSpreadIndex` is measured) | ✅ done |
 | **TASK-102** | housekeeping | Remove Chrome-81 workarounds (deletes `useIframePosition` + placeholder machinery) | new — net deletion |
 | **TASK-103** | housekeeping | Static-only helper classes → modules (`Asset`/`Cache`/`DOM`/`Request`/`Storage`/`Url`/`Viewport`/`XMLAdaptor`) | new — wide/shallow |
 | **TASK-104** | quality | Accessibility baseline (ARIA, focus mgmt, reduced-motion, live region) | new |
@@ -302,11 +302,10 @@ sequencing work:
 
 | Priority | Task | Action | Why now |
 | -------- | ---- | ------ | ------- |
-| 1 | TASK-101 | Fix the page-nav→chapter-skip load race (one guard in `useNavigation`) | Reproducible UX bug; small, isolated quick win |
-| 2 | TASK-106 | Execute the state migration (drop Redux → `useSyncExternalStore` + stable API context), per `STATE-MIGRATION-PLAN.md`, slice by slice | TASK-073 research done; the keystone remaining reader-react work; dissolves `connect()` + TASK-032 type debt |
-| 3 | TASK-050 | CLI handler tests | Unblocks TASK-046 and lifts cli coverage toward 75% |
-| 4 | TASK-004 | Push coverage laggards to 75% | Closes the coverage epic; cli + b-ber-tasks are the long poles |
-| 5 | TASK-055 | Create the testing skill | Newly unblocked by the green E2E pipeline |
+| 1 | TASK-106 | Execute the state migration (drop Redux → `useSyncExternalStore` + stable API context), per `STATE-MIGRATION-PLAN.md`, slice by slice | TASK-073 research done; the keystone remaining reader-react work; dissolves `connect()` + TASK-032 type debt |
+| 2 | TASK-050 | CLI handler tests | Unblocks TASK-046 and lifts cli coverage toward 75% |
+| 3 | TASK-004 | Push coverage laggards to 75% | Closes the coverage epic; cli + b-ber-tasks are the long poles |
+| 4 | TASK-055 | Create the testing skill | Newly unblocked by the green E2E pipeline |
 | 6 | TASK-052 | Prototype `npm pack` publish-smoke test | Guards against the canary-only bug class |
 
 ---

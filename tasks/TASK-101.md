@@ -1,6 +1,6 @@
 # TASK-101: Fix premature page-nav skipping to the next chapter (load race)
 
-**Status:** not started
+**Status:** complete
 **Feature:** React 19 (reader-react)
 **Phase:** Bug Fixes
 **Priority:** high
@@ -46,19 +46,19 @@ so the first key press routes to chapter navigation.
 
 ## Subtasks
 
-- [ ] Guard `handlePageNavigation` (in `useNavigation`): when
+- [x] Guard `handlePageNavigation` (in `useNavigation`): when
       `lastSpreadIndex < 0` (chapter not yet measured), **ignore the page-forward**
       (return) rather than routing to `handleChapterNavigation`. Confirm the
       backward (`nextIndex < 0`) path is unaffected on a measured chapter.
-- [ ] Add a unit test in `navigation.test.js` covering the unmeasured
+- [x] Add a unit test in `navigation.test.js` covering the unmeasured
       (`lastSpreadIndex === -1`) case — asserts neither chapter-nav nor a spread
       change fires.
-- [ ] 9 snapshots unchanged; 458+ tests pass; `tsc --noEmit` clean
-- [ ] **Browser QA**: load a multi-spread chapter, hammer **→** immediately on
+- [x] 9 snapshots unchanged; 458+ tests pass; `tsc --noEmit` clean
+- [x] **Browser QA**: load a multi-spread chapter, hammer **→** immediately on
       load — must advance pages, not skip the chapter. Re-run the relevant
       `SPREAD-CLUSTER-QA.md` rows (TASK-082 spinner, TASK-083 page count) to
       confirm no regression.
-- [ ] Commit; update `PLAN.md`; remove `.open`
+- [x] Commit; update `PLAN.md`; remove `.open`
 
 ## Notes
 
@@ -71,3 +71,11 @@ so the first key press routes to chapter navigation.
   task only adds a defensive guard at the navigation boundary.
 - Related: [[TASK-082]] (stability detection), [[TASK-083]] (lastSpreadIndex
   re-measure), [[TASK-085]] (resize spinner).
+- Implemented the preferred single-guard fix in `useNavigation.handlePageNavigation`:
+  when `lastSpreadIndex < 0` and the forward press would exceed it, the press is
+  ignored (no chapter nav, no state change). Backward presses are unaffected.
+- Browser QA (`i30-ibrahim`, headless Chromium via Playwright): hammering the
+  next-page button immediately on load kept `currentSpineItemIndex`/`spreadIndex`
+  unchanged until layout settled; subsequent clicks advanced spreads/chapters
+  normally with no blank pages.
+- 459/460 tests pass (1 pre-existing skip), 9 snapshots unchanged, `tsc --noEmit` clean.

@@ -81,6 +81,18 @@ describe('handlePageNavigation', () => {
     expect(setState).not.toHaveBeenCalled()
   })
 
+  test('ignores a forward press while the chapter is unmeasured (lastSpreadIndex is -1)', () => {
+    const { nav, api, setState } = createDeps({
+      state: { spreadIndex: 0 },
+      props: { view: { lastSpreadIndex: -1 } },
+    })
+
+    nav.handlePageNavigation(1)
+
+    expect(api.current.handleChapterNavigation).not.toHaveBeenCalled()
+    expect(setState).not.toHaveBeenCalled()
+  })
+
   test('navigates to the previous chapter when the next index is below 0', () => {
     const { nav, api, setState } = createDeps({ state: { spreadIndex: 0 } })
 

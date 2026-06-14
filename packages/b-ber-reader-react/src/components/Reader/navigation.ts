@@ -21,6 +21,14 @@ export const useNavigation = ({
       const { lastSpreadIndex } = propsRef.current.view
       const nextIndex = spreadIndex + increment
 
+      // Chapter content hasn't been measured yet (lastSpreadIndex still at its
+      // freeze() default of -1). Ignore a forward press rather than treating it
+      // as "past the last spread", which would prematurely skip to the next
+      // chapter (TASK-101). A backward press still falls through normally.
+      if (lastSpreadIndex < 0 && nextIndex > lastSpreadIndex) {
+        return
+      }
+
       if (nextIndex > lastSpreadIndex || nextIndex < 0) {
         // Move to next or prev chapter
         const sign = Math.sign(increment)
