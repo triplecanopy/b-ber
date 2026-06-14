@@ -35,7 +35,7 @@ Every task belongs to exactly one; every new task must too.
 | ✅ Unit test coverage | 2 | 1 | 2 | Epic in progress; most packages at target, a few laggards |
 | 🧪 E2E testing | 5 | 1 | 2 | Pipeline green in CI; skill + iframe fix remain |
 | ⚙️ Node.js modernization | 1 | 0 | 2 | Barely started; epic + logger refactor pending |
-| ⚛️ React 19 (reader-react) | 23 | 0 | 14 | **Steps 1 + 2 complete and merged into `feat/upgrades`** (TASK-095–100). Step 1 (class→functional): no class components left in `src/components`. Step 2 (HOC→hooks): no class HOCs, no selfRef shim — `with-*` are hooks; `navigation`/`loader`/`resize` are `useNavigation`/`useLoader`/`useResize`. TASK-099 also absorbed TASK-084 `getPageWidth`. Next: TASK-073 (state-management research → Step 4) |
+| ⚛️ React 19 (reader-react) | 23 | 0 | 19 | **Steps 1 + 2 complete and merged into `feat/upgrades`** (TASK-095–100): no class components/HOCs, no selfRef shim. TASK-099 also absorbed TASK-084 `getPageWidth`. New maintainability backlog raised 2026-06-14 (TASK-101–105). Next: TASK-101 (page-nav race bug — quick win) + TASK-073 (state-management research → Step 4) |
 
 _"Active" = in progress. "Backlog" = not started (excludes superseded)._
 
@@ -201,6 +201,23 @@ recommendation; best done after Steps 1–2 (functional components make it small
 **Step 5 (reorg / best practices)** — TASK-068 (housekeeping), TASK-071 (docs),
 TASK-076 (SCSS→CSS Modules), plus general organization cleanup.
 
+### Maintainability backlog (raised in code review 2026-06-14)
+
+From a post-Steps-1/2 read of the reader. New tasks scaffolded; the rest map to
+existing open tasks (noted in the right column).
+
+| Task | Kind | Summary | Maps to / notes |
+| ---- | ---- | ------- | --------------- |
+| **TASK-101** | bug | Premature page-nav skips to next chapter (load race: `handleEvents` unlocks before `lastSpreadIndex` is measured) | new — low-hanging, high-value |
+| **TASK-102** | housekeeping | Remove Chrome-81 workarounds (deletes `useIframePosition` + placeholder machinery) | new — net deletion |
+| **TASK-103** | housekeeping | Static-only helper classes → modules (`Asset`/`Cache`/`DOM`/`Request`/`Storage`/`Url`/`Viewport`/`XMLAdaptor`) | new — wide/shallow |
+| **TASK-104** | quality | Accessibility baseline (ARIA, focus mgmt, reduced-motion, live region) | new |
+| **TASK-105** | structure | Component colocation + types/CSS-module structure | new — **HOLD** until state migration + helper→module land; colocated-tests deferred pending tooling audit |
+| — | state | Drop Redux → `useSyncExternalStore` + stable API context; folds in `book.content` + cache reads | **TASK-073** (notes added) → Step 4 |
+| — | styles | Inline/conditional styles → CSS Modules | **TASK-076** |
+| — | docs | Per-subdir documentation | **TASK-071** |
+| — | cleanup | Marker `debug` block + dangling `IMPROVEMENT_PLAN.md` comment refs | added to **TASK-068** |
+
 ### Sequencing
 
 1. **TASK-094** (conventions — user review pending) + **TASK-068** (housekeeping):
@@ -281,8 +298,8 @@ sequencing work:
 
 | Priority | Task | Action | Why now |
 | -------- | ---- | ------ | ------- |
-| 1 | TASK-073 | State-management research (built-in over Redux) — its output gates Step 4. Steps 1+2 of the React 19 migration are complete; merge the Step 1/2 branches and run the SPREAD-CLUSTER-QA pass | Step 2 done (functional components, hooks, no selfRef); Step 4 is the remaining reader-react work |
-| 2 | TASK-073 | Run the state-management research (built-in over Redux) | Now unblocked by TS; output gates Step 4 |
+| 1 | TASK-101 | Fix the page-nav→chapter-skip load race (one guard in `useNavigation`) | Reproducible UX bug; small, isolated quick win |
+| 2 | TASK-073 | State-management research (built-in over Redux, leaning `useSyncExternalStore`) — output gates Step 4 | Steps 1+2 done (functional, hooks, no selfRef); the keystone remaining reader-react work |
 | 3 | TASK-050 | CLI handler tests | Unblocks TASK-046 and lifts cli coverage toward 75% |
 | 4 | TASK-004 | Push coverage laggards to 75% | Closes the coverage epic; cli + b-ber-tasks are the long poles |
 | 5 | TASK-055 | Create the testing skill | Newly unblocked by the green E2E pipeline |

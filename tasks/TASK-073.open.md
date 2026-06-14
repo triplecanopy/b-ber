@@ -84,16 +84,44 @@ Behavior-preserving, one slice at a time, simplest first:
 `Reader` local state; then remove the `connect()` HOCs; `npm test` green +
 snapshots unchanged at each step.
 
-## Current Redux slices
+## Findings so far (post Steps 1–2, 2026-06-14)
 
-| Slice            | Description                                            |
-| ---------------- | ------------------------------------------------------ |
-| `readerSettings` | Book URL, manifest URL, static config                  |
-| `readerLocation` | Current slug, search params, hash                      |
-| `userInterface`  | Spinner, sidebar, marker visibility, handleEvents      |
-| `view`           | Loaded state, lastSpreadIndex, spreadIndex             |
-| `viewerSettings` | Computed layout dimensions (padding, column gap, etc.) |
-| `markers`        | User bookmarks                                         |
+After the class→functional + HOC→hook waves, here's the read on the A/B/C
+decision and adjacent questions raised in code review:
+
+- **Redux is not earning its keep.** 6 small slices (mostly UI booleans +
+  measurements + location). Cost is all ceremony: `connect()` on ~10 components,
+  `bindActionCreators`, the loose `BoundActions` typing, and the prop-injection
+  `any` debt ([[TASK-032]]).
+- **Thunks are effectively a non-issue.** The async orchestration already lives
+  in the hooks (`useLoader`/`useNavigation`); they dispatch plain `update(...)`
+  actions — there's no meaningful thunk-middleware logic to port. Confirm by
+  inventorying the action creators, but expect "no real async in Redux."
+- **Plain Context is the wrong replacement for the hot slices.** `viewerSettings`
+  and `spreadIndex` change on every resize/page-turn; Context fans re-renders out
+  to all consumers on any value change → re-render storms. The classic
+  Context-as-store trap; rules out approach **A** for those slices.
+- **Lean: B (`useSyncExternalStore` over a tiny hand-rolled store).** A small
+  external store (plain object + `subscribe`/`getSnapshot`) read via
+  `useSyncExternalStore(subscribe, () => selector(snapshot))` gives selector-level
+  subscriptions, no provider re-render cascade, no third-party dep, and is the
+  §3e tear-free primitive. Likely **hybrid**: B for hot/global state, plain
+  `useState`/local context for genuinely local UI bits.
+- **Split reactive state from the imperative API.** Two contexts:
+  (a) the reactive store (via `useSyncExternalStore` + selectors), and (b) a
+  **stable** `ReaderApi` context (ref-backed; identity never changes) holding the
+  imperative methods (`freeze`, `navigate*`, `loadSpineItem`). (b) replaces the
+  `apiRef`/`deps` threading in `Reader/index` without re-render churn.
+- **`book.content` gets a tear-free home.** Fold `{ spineItemURL, content }` into
+  one atomic store transition so the URL and the rendered tree update together
+  (kills the module-global render bypass and the `key`-prop remount hack).
+- **Caching reads fit the same primitive.** `Storage` (localStorage) and the
+  `Cache`/`XMLAdaptor` cache are external mutable stores read imperatively today;
+  read them through the same `useSyncExternalStore` abstraction so they don't
+  tear. Build one small external-store helper and reuse it for app state + cache.
+
+Net: the research should seriously try to land on **B (+ a stable API context)**
+and only fall back to RTK (C) on a concrete blocker.
 
 ## Notes
 

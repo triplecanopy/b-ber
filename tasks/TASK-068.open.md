@@ -25,6 +25,8 @@ subsequent phases.
 - [ ] Remove `markers` from `Spread`'s Redux `connect` call — it is subscribed but never used, causing unnecessary re-renders on every marker change (IMPROVEMENT_PLAN L4)
 - [ ] Replace random ID generation in `Spread.jsx` with a deterministic approach (IMPROVEMENT_PLAN L3)
 - [ ] Add a comment documenting the verso/recto multiplier rationale in `Spread.jsx` (IMPROVEMENT_PLAN M6)
+- [ ] Remove the dead `debug` block in `src/components/Marker.tsx` (`const debug = false` + `debugMarkerStyles` + `if (debug)`) — ~1/3 of the component is unreachable dev code
+- [ ] Fix the **dangling `IMPROVEMENT_PLAN.md` references** in code comments (~10 across `Ultimate.tsx`, `Reader/index.tsx`, `Reader/loader.ts`, `Reader/resize.ts`, `with-last-spread-index.tsx`): the file was deleted in commit `9ef8fbbc` (consolidated into `PLAN.md`/`AGENTS.md`) and the bug IDs it used (`H4`/`H5`/`C5`/`M2`/`L2`) no longer resolve anywhere. Either repoint to the surviving doc + ID or drop the reference.
 - [ ] Run `npm test` and confirm all existing tests still pass
 - [ ] Update `PLAN.md`
 
@@ -38,3 +40,8 @@ subsequent phases.
 - This task covers Phase 1 only. Phases 2–5 are tracked separately: TASK-069
   (Phase 2 verification), TASK-067/Phase 3 items in PLAN.md, TASK-072 (Phase 4),
   TASK-073 (Phase 5).
+- **Stale subtasks (predate the TS + functional conversion):** the `resize.js`
+  rename subtask now targets `resize.ts`'s `useResize` (the bind/unbind names are
+  still inverted there — the [[TASK-100]] conversion preserved them as-is); the
+  `.jsx` paths are now `.tsx`. Re-confirm each against the current tree before
+  acting.
