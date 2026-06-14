@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext, useState } from 'react'
 import ReactPlayerVimeo from 'react-player/vimeo'
 import {
   getPlayerPropsFromQueryString,
@@ -20,6 +20,9 @@ import VimeoPosterImage from './VimeoPosterImage'
 const ReactPlayer = ReactPlayerVimeo as any
 
 const iframePositioningEnabled = isBrowser('chrome', 'eq', 81)
+
+// Props that are on the vimeo player which must be managed by state
+const blacklistedProps = ['autopause' /* , 'controls' */]
 
 interface VimeoProps {
   src: string
@@ -50,39 +53,20 @@ interface VimeoState {
   aspectRatio: Map<string, number>
 }
 
-class Vimeo extends React.Component<VimeoProps, VimeoState> {
-  static contextType = ReaderContext
+function Vimeo(props: VimeoProps) {
+  const context = useContext(ReaderContext)
 
-  // Props that are on the vimeo player which must be managed by state
-  static blacklistedProps = ['autopause' /* , 'controls' */]
-
-  constructor(props: VimeoProps) {
-    super(props)
-
-    this.state = {
-      url: '',
-      loop: false, // Not sure why this needs to be duplicated on the ReactPlayer
-      muted: false, // Not sure why this needs to be duplicated on the ReactPlayer
-      controls: true,
-      playing: false,
-      autoplay: true,
-      posterImage: null,
-      playerOptions: {},
-      currentSpreadIndex: null,
-      aspectRatio: new Map([
-        ['x', 16],
-        ['y', 9],
-      ]),
-    }
-  }
-
-  UNSAFE_componentWillMount() {
-    const { src, posterImage, aspectRatio } = this.props
+  // UNSAFE_componentWillMount derived initial state from props synchronously
+  // before the first render. Reproduce that ordering in a useState initializer
+  // (which runs before first paint) rather than an effect, which would run
+  // after it and flash a blank player.
+  const [state, setState] = useState<VimeoState>(() => {
+    const { src, posterImage, aspectRatio } = props
     const [url, queryString] = getURLAndQueryParamters(src)
 
     const playerOptions = transformSearchParamsToProps(
       getPlayerPropsFromQueryString(queryString),
-      Vimeo.blacklistedProps
+      blacklistedProps
     )
 
     // Extract autoplay property for use during page change events. Do this
@@ -92,103 +76,117 @@ class Vimeo extends React.Component<VimeoProps, VimeoState> {
     // Controls is needed both in state and in playerOptions
     const { controls, muted, loop } = playerOptions
 
-    this.setState((state) => ({
+    return {
       url,
-      loop: unlessDefined(loop, state.loop),
-      muted: unlessDefined(muted, state.muted),
-      controls: unlessDefined(controls, state.controls),
-      autoplay: unlessDefined(autoplay, state.autoplay),
+      loop: unlessDefined(loop, false),
+      muted: unlessDefined(muted, false),
+      controls: unlessDefined(controls, true),
+      playing: false,
+      autoplay: unlessDefined(autoplay, true),
       // posterImage and aspectRatio come from optional props; the original JS
       // assigned them directly, preserved here.
       posterImage: posterImage as string | null,
-      aspectRatio: aspectRatio as Map<string, number>,
       playerOptions: { ...rest },
-    }))
+      currentSpreadIndex: null,
+      aspectRatio: aspectRatio as Map<string, number>,
+    }
+  })
+
+  // UNSAFE_componentWillReceiveProps recomputed play/pause from the incoming
+  // props/context *before* committing, never on mount and never on an internal
+  // setState (e.g. the poster-click toggle). Reproduce that with a render-phase
+  // update (React's endorsed "adjust state while rendering" pattern), which
+  // applies synchronously like the old lifecycle — an effect would defer it a
+  // frame and flash the wrong play state. Trigger only when the inputs
+  // getPlayingStateOnUpdate keys on change: spread navigation or load
+  // completion.
+  const [prevInputs, setPrevInputs] = useState({
+    spreadIndex: context?.spreadIndex,
+    viewLoaded: props.view?.loaded,
+  })
+
+  if (
+    context?.spreadIndex !== prevInputs.spreadIndex ||
+    props.view?.loaded !== prevInputs.viewLoaded
+  ) {
+    setPrevInputs({
+      spreadIndex: context?.spreadIndex,
+      viewLoaded: props.view?.loaded,
+    })
+
+    const nextState = getPlayingStateOnUpdate(state, props, props, context)
+    if (nextState) setState((prev) => ({ ...prev, ...nextState }))
   }
 
-  UNSAFE_componentWillReceiveProps(nextProps: VimeoProps, nextContext: any) {
-    const nextState = getPlayingStateOnUpdate(
-      this.state,
-      this.props,
-      nextProps,
-      nextContext
-    )
+  const handleUpdatePlaying = () =>
+    setState((prev) => ({ ...prev, playing: !prev.playing }))
 
-    if (!nextState) return
+  const handlePause = () => setState((prev) => ({ ...prev, playing: false }))
 
-    this.setState(nextState)
-  }
+  const handleEnded = () => setState((prev) => ({ ...prev, playing: false }))
 
-  handleUpdatePlaying = () =>
-    this.setState(({ playing }) => ({ playing: !playing }))
+  const handleUpdatePosition = () => {}
 
-  handlePause = () => this.setState({ playing: false })
+  const handleUpdateVolume = () => {}
 
-  handleEnded = () => this.setState({ playing: false })
+  const {
+    url,
+    loop,
+    muted,
+    controls,
+    playing,
+    posterImage,
+    playerOptions,
+    aspectRatio,
+  } = state
 
-  handleUpdatePosition = () => {}
+  const {
+    iframePlaceholderTop: top,
+    iframePlaceholderWidth: width,
+    iframePlaceholderHeight: height,
+  } = props
 
-  handleUpdateVolume = () => {}
+  // Chrome 81
+  let iframeContainerStyles: React.CSSProperties = {}
+  let paddingTop: number | string | undefined
 
-  render() {
-    const {
-      url,
-      loop,
-      muted,
-      controls,
-      playing,
-      posterImage,
-      playerOptions,
-      aspectRatio,
-    } = this.state
+  if (iframePositioningEnabled) {
+    const mobile = Viewport.isSingleColumn()
+    const position = mobile ? 'static' : 'absolute' // Only run re-positioning on desktop
+    // The aspect-ratio Map is always seeded with `x` and `y` in state.
+    const x = aspectRatio.get('x') as number
+    const y = aspectRatio.get('y') as number
 
-    const {
-      iframePlaceholderTop: top,
-      iframePlaceholderWidth: width,
-      iframePlaceholderHeight: height,
-    } = this.props
+    // Styles for inline videos
+    if (!mobile) iframeContainerStyles = { top, width, height, position }
 
-    // Chrome 81
-    let iframeContainerStyles: React.CSSProperties = {}
-    let paddingTop: number | string | undefined
+    // Styles for fullscreen videos
+    if (!mobile && (width as number) > window.innerWidth) {
+      const landscape = window.innerWidth >= window.innerHeight
 
-    if (iframePositioningEnabled) {
-      const mobile = Viewport.isSingleColumn()
-      const position = mobile ? 'static' : 'absolute' // Only run re-positioning on desktop
-      // The aspect-ratio Map is always seeded with `x` and `y` in state.
-      const x = aspectRatio.get('x') as number
-      const y = aspectRatio.get('y') as number
+      iframeContainerStyles.top = '50%'
+      iframeContainerStyles.left = '50%'
+      iframeContainerStyles.transform = 'translateX(-50%) translateY(-50%)'
 
-      // Styles for inline videos
-      if (!mobile) iframeContainerStyles = { top, width, height, position }
-
-      // Styles for fullscreen videos
-      if (!mobile && (width as number) > window.innerWidth) {
-        const landscape = window.innerWidth >= window.innerHeight
-
-        iframeContainerStyles.top = '50%'
-        iframeContainerStyles.left = '50%'
-        iframeContainerStyles.transform = 'translateX(-50%) translateY(-50%)'
-
-        if (landscape) {
-          iframeContainerStyles.width = '100vw'
-          iframeContainerStyles.height = '100vw'
-          iframeContainerStyles.minWidth = `${(x / y) * 100}vh`
-        } else {
-          iframeContainerStyles.width = `${(y / x) * 100}vw`
-          iframeContainerStyles.height = '100vw'
-          iframeContainerStyles.minHeight = '100%'
-        }
+      if (landscape) {
+        iframeContainerStyles.width = '100vw'
+        iframeContainerStyles.height = '100vw'
+        iframeContainerStyles.minWidth = `${(x / y) * 100}vh`
+      } else {
+        iframeContainerStyles.width = `${(y / x) * 100}vw`
+        iframeContainerStyles.height = '100vw'
+        iframeContainerStyles.minHeight = '100%'
       }
-
-      // .iframe-placeholder styles
-      paddingTop = mobile ? 0 : `${(y / x) * 100}%`
     }
 
-    return (
-      <>
-        {
-          /*
+    // .iframe-placeholder styles
+    paddingTop = mobile ? 0 : `${(y / x) * 100}%`
+  }
+
+  return (
+    <>
+      {
+        /*
             The iframePlaceholder element is a statically positioned div that
             fills the space that should be occupied by the ReactPlayer iframe.
             The iframe is absolutely positioned and is set to top and left
@@ -198,50 +196,49 @@ class Vimeo extends React.Component<VimeoProps, VimeoState> {
             The parent container also needs to be styled to properly render the
             layout. Inject inline styles here.
         */
-          iframePositioningEnabled && (
-            <style>{this.props.iframeStyleBlock('vimeo')}</style>
-          )
-        }
+        iframePositioningEnabled && (
+          <style>{props.iframeStyleBlock('vimeo')}</style>
+        )
+      }
 
-        {iframePositioningEnabled && (
-          <div
-            key={`placholder-${url}`}
-            style={{ paddingTop }}
-            className="bber-iframe-placeholder"
-            ref={this.props.innerRef}
-          />
-        )}
+      {iframePositioningEnabled && (
+        <div
+          key={`placholder-${url}`}
+          style={{ paddingTop }}
+          className="bber-iframe-placeholder"
+          ref={props.innerRef}
+        />
+      )}
 
-        {/* Ref is used to calculate spread position in HOC */}
-        <div style={iframeContainerStyles} key={url} ref={this.props.elemRef}>
-          <VimeoPosterImage
-            src={posterImage}
-            playing={playing}
-            controls={controls}
-            handleUpdatePlaying={this.handleUpdatePlaying}
-          />
-          <ReactPlayer
-            url={url}
-            width="100%"
-            height="100%"
-            loop={loop}
-            muted={muted}
-            playing={playing}
-            controls={controls}
-            playsinline={true}
-            config={{ vimeo: { playerOptions } }}
-            onPause={this.handlePause}
-            onEnded={this.handleEnded}
-          />
-          <VimeoPlayerControls
-            handleUpdatePlaying={this.handleUpdatePlaying}
-            handleUpdatePosition={this.handleUpdatePosition}
-            handleUpdateVolume={this.handleUpdateVolume}
-          />
-        </div>
-      </>
-    )
-  }
+      {/* Ref is used to calculate spread position in HOC */}
+      <div style={iframeContainerStyles} key={url} ref={props.elemRef}>
+        <VimeoPosterImage
+          src={posterImage}
+          playing={playing}
+          controls={controls}
+          handleUpdatePlaying={handleUpdatePlaying}
+        />
+        <ReactPlayer
+          url={url}
+          width="100%"
+          height="100%"
+          loop={loop}
+          muted={muted}
+          playing={playing}
+          controls={controls}
+          playsinline={true}
+          config={{ vimeo: { playerOptions } }}
+          onPause={handlePause}
+          onEnded={handleEnded}
+        />
+        <VimeoPlayerControls
+          handleUpdatePlaying={handleUpdatePlaying}
+          handleUpdatePosition={handleUpdatePosition}
+          handleUpdateVolume={handleUpdateVolume}
+        />
+      </div>
+    </>
+  )
 }
 
 export default withNodePosition(

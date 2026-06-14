@@ -4,6 +4,31 @@ import { fireEvent, render } from '@testing-library/react'
 import React from 'react'
 import ReaderContext from '../../../src/lib/reader-context'
 
+// These tests call jest.resetModules() so the component re-evaluates its
+// module-level browser check (iframePositioningEnabled) under different mocks.
+// resetModules() also creates a fresh React copy whose hook dispatcher is null
+// at render time — now that Vimeo is functional, that crashes on the first hook.
+// Pin one React instance (the one RTL renders with) across resets.
+jest.mock('react', () => {
+  if (!globalThis.__reactSingleton) {
+    globalThis.__reactSingleton = jest.requireActual('react')
+  }
+  return globalThis.__reactSingleton
+})
+
+// resetModules() also re-creates the ReaderContext object, so the test's
+// statically imported Provider would no longer match the context the
+// dynamically imported Vimeo reads via useContext. There is only ever one
+// ReaderContext in production — pin it to a single instance here too.
+jest.mock('../../../src/lib/reader-context', () => {
+  if (!globalThis.__readerContextSingleton) {
+    globalThis.__readerContextSingleton = jest.requireActual(
+      '../../../src/lib/reader-context'
+    )
+  }
+  return globalThis.__readerContextSingleton
+})
+
 jest.mock(
   '../../../src/lib/with-node-position',
   () => (WrappedComponent) => (props) => <WrappedComponent {...props} />
