@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as userInterfaceActions from '../actions/user-interface'
-import withNavigationActions from '../lib/with-navigation-actions'
+import useNavigationActions from '../hooks/use-navigation-actions'
 import type { AppDispatch, RootState } from '../store/types'
 import { NavigationFooter, NavigationHeader } from './Navigation'
 
@@ -70,9 +70,7 @@ function Controls(props: any) {
   }, [props.userInterface.handleEvents, props.showSidebar])
 
   const Header = props.readerSettings.NavigationHeader || NavigationHeader
-  const Footer = withNavigationActions(
-    props.readerSettings.NavigationFooter || NavigationFooter
-  )
+  const Footer = props.readerSettings.NavigationFooter || NavigationFooter
 
   const {
     destroyReaderComponent,
@@ -91,8 +89,8 @@ function Controls(props: any) {
     navigateToChapterByURL,
   } = props
 
-  const { enablePageTransitions } = props.userInterfaceActions
-  const { handleEvents } = props.userInterface
+  const { goToPrevChapter, goToNextChapter, goToPrevPage, goToNextPage } =
+    useNavigationActions(handleChapterNavigation, handlePageNavigation)
 
   return (
     <div className="bber-controls">
@@ -117,10 +115,10 @@ function Controls(props: any) {
         layout={layout}
         spreadIndex={spreadIndex}
         lastSpreadIndex={lastSpreadIndex}
-        handleEvents={handleEvents}
-        handleChapterNavigation={handleChapterNavigation}
-        enablePageTransitions={enablePageTransitions}
-        handlePageNavigation={handlePageNavigation}
+        goToPrevChapter={goToPrevChapter}
+        goToNextChapter={goToNextChapter}
+        goToPrevPage={goToPrevPage}
+        goToNextPage={goToNextPage}
       />
     </div>
   )

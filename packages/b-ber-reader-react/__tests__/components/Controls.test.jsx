@@ -4,9 +4,10 @@
  * page navigation (arrow keys), sidebar dismissal (ESC / outside click),
  * and printing (Cmd+P).
  *
- * Strategy: NavigationHeader/NavigationFooter and withNavigationActions are
- * mocked as simple placeholders so this is a test of Controls' event-handling
- * logic, not the full navigation UI.
+ * Strategy: NavigationHeader/NavigationFooter are mocked as simple
+ * placeholders so this is a test of Controls' event-handling logic, not the
+ * full navigation UI. useNavigationActions runs for real against the test
+ * store.
  */
 
 import { fireEvent, render } from '@testing-library/react'
@@ -23,11 +24,6 @@ jest.mock('../../src/components/Navigation', () => ({
     return <div data-testid="nav-footer" />
   },
 }))
-
-jest.mock(
-  '../../src/lib/with-navigation-actions',
-  () => (WrappedComponent) => (props) => <WrappedComponent {...props} />
-)
 
 function renderControls(props = {}, overrides = {}) {
   const store = createTestStore(overrides)
