@@ -20,18 +20,18 @@ jest.mock(
   () => (WrappedComponent) => (props) => <WrappedComponent {...props} />
 )
 
-jest.mock(
-  '../../../src/lib/with-iframe-position',
-  () => (WrappedComponent) => (props) => (
-    <WrappedComponent
-      iframePlaceholderTop={0}
-      iframePlaceholderWidth={0}
-      {...props}
-      iframeStyleBlock={() => '.iframe { color: red; }'}
-      innerRef={() => {}}
-    />
-  )
-)
+// useIframePosition now supplies the placeholder geometry / style block / ref;
+// stub it so these tests stay focused on Iframe's own rendering.
+jest.mock('../../../src/hooks/use-iframe-position', () => ({
+  __esModule: true,
+  default: () => ({
+    iframePlaceholderTop: 0,
+    iframePlaceholderWidth: 0,
+    iframePlaceholderHeight: 0,
+    iframeStyleBlock: () => '.iframe { color: red; }',
+    innerRef: () => {},
+  }),
+}))
 
 describe('Iframe', () => {
   beforeEach(() => {

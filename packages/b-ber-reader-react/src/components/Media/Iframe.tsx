@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { isBrowser } from '../../helpers/utils'
 import Viewport from '../../helpers/Viewport'
-import withIframePosition from '../../lib/with-iframe-position'
+import useIframePosition from '../../hooks/use-iframe-position'
 import withNodePosition from '../../lib/with-node-position'
 
 // Enable absolutely positioned iframe layout for specific browsers/versions
@@ -17,23 +17,24 @@ interface IframeAttrs {
 
 interface IframeProps {
   attrs: IframeAttrs
-  // Redux slice + position props injected by the HOC chain.
+  // Redux slice + ref injected by the withNodePosition HOC.
   viewerSettings?: any
-  iframePlaceholderTop?: number
-  iframePlaceholderWidth?: number
-  iframeStyleBlock: (name?: string) => string
-  innerRef?: (ref: HTMLDivElement | null) => void
   elemRef?: React.Ref<HTMLDivElement>
   [key: string]: any
 }
 
 function Iframe(props: IframeProps) {
+  const { attrs, viewerSettings } = props
+
   const {
-    attrs,
-    viewerSettings,
     iframePlaceholderTop,
     iframePlaceholderWidth,
-  } = props
+    iframeStyleBlock,
+    innerRef,
+  } = useIframePosition({
+    enabled: iframePositioningEnabled,
+    layout: props.layout,
+  })
 
   // Prevent iframe from stealing focus
   useEffect(() => {
@@ -66,9 +67,7 @@ function Iframe(props: IframeProps) {
   return (
     <>
       {/* Styles for iframe layout */}
-      {iframePositioningEnabled && (
-        <style>{props.iframeStyleBlock('iframe')}</style>
-      )}
+      {iframePositioningEnabled && <style>{iframeStyleBlock('iframe')}</style>}
 
       {/* See Vimeo.tsx for details about the iframe-placeholder element */}
       {iframePositioningEnabled && (
@@ -76,7 +75,7 @@ function Iframe(props: IframeProps) {
           key={`placholder-${src}`}
           style={{ paddingTop: height }}
           className="bber-iframe-placeholder"
-          ref={props.innerRef}
+          ref={innerRef}
         />
       )}
 
@@ -87,6 +86,4 @@ function Iframe(props: IframeProps) {
   )
 }
 
-export default withNodePosition(
-  withIframePosition(Iframe, { enabled: iframePositioningEnabled })
-)
+export default withNodePosition(Iframe)

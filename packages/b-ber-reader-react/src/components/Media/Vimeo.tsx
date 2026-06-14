@@ -8,8 +8,8 @@ import {
 } from '../../helpers/media'
 import { isBrowser, unlessDefined } from '../../helpers/utils'
 import Viewport from '../../helpers/Viewport'
+import useIframePosition from '../../hooks/use-iframe-position'
 import ReaderContext from '../../lib/reader-context'
-import withIframePosition from '../../lib/with-iframe-position'
 import withNodePosition from '../../lib/with-node-position'
 import VimeoPlayerControls from './VimeoPlayerControls'
 import VimeoPosterImage from './VimeoPosterImage'
@@ -28,12 +28,7 @@ interface VimeoProps {
   src: string
   posterImage?: string | null
   aspectRatio?: Map<string, number>
-  // Position props injected by the HOC chain.
-  iframePlaceholderTop?: number
-  iframePlaceholderWidth?: number
-  iframePlaceholderHeight?: number
-  iframeStyleBlock: (name?: string) => string
-  innerRef?: (ref: HTMLDivElement | null) => void
+  // Position props injected by the withNodePosition HOC.
   elemRef?: React.Ref<HTMLDivElement>
   view?: any
   readerSettings?: any
@@ -55,6 +50,17 @@ interface VimeoState {
 
 function Vimeo(props: VimeoProps) {
   const context = useContext(ReaderContext)
+
+  const {
+    iframePlaceholderTop: top,
+    iframePlaceholderWidth: width,
+    iframePlaceholderHeight: height,
+    iframeStyleBlock,
+    innerRef,
+  } = useIframePosition({
+    enabled: iframePositioningEnabled,
+    layout: props.layout,
+  })
 
   // UNSAFE_componentWillMount derived initial state from props synchronously
   // before the first render. Reproduce that ordering in a useState initializer
@@ -140,12 +146,6 @@ function Vimeo(props: VimeoProps) {
     aspectRatio,
   } = state
 
-  const {
-    iframePlaceholderTop: top,
-    iframePlaceholderWidth: width,
-    iframePlaceholderHeight: height,
-  } = props
-
   // Chrome 81
   let iframeContainerStyles: React.CSSProperties = {}
   let paddingTop: number | string | undefined
@@ -196,9 +196,7 @@ function Vimeo(props: VimeoProps) {
             The parent container also needs to be styled to properly render the
             layout. Inject inline styles here.
         */
-        iframePositioningEnabled && (
-          <style>{props.iframeStyleBlock('vimeo')}</style>
-        )
+        iframePositioningEnabled && <style>{iframeStyleBlock('vimeo')}</style>
       }
 
       {iframePositioningEnabled && (
@@ -206,7 +204,7 @@ function Vimeo(props: VimeoProps) {
           key={`placholder-${url}`}
           style={{ paddingTop }}
           className="bber-iframe-placeholder"
-          ref={props.innerRef}
+          ref={innerRef}
         />
       )}
 
@@ -241,7 +239,4 @@ function Vimeo(props: VimeoProps) {
   )
 }
 
-export default withNodePosition(
-  withIframePosition(Vimeo, { enabled: iframePositioningEnabled }),
-  { useParentDimensions: true }
-)
+export default withNodePosition(Vimeo, { useParentDimensions: true })

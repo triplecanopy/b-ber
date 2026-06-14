@@ -34,19 +34,18 @@ jest.mock(
   () => (WrappedComponent) => (props) => <WrappedComponent {...props} />
 )
 
-jest.mock(
-  '../../../src/lib/with-iframe-position',
-  () => (WrappedComponent) => (props) => (
-    <WrappedComponent
-      iframePlaceholderTop={0}
-      iframePlaceholderWidth={0}
-      iframePlaceholderHeight={0}
-      {...props}
-      iframeStyleBlock={() => '.vimeo { color: red; }'}
-      innerRef={() => {}}
-    />
-  )
-)
+// useIframePosition now supplies the placeholder geometry / style block / ref;
+// stub it so these tests stay focused on Vimeo's own rendering.
+jest.mock('../../../src/hooks/use-iframe-position', () => ({
+  __esModule: true,
+  default: () => ({
+    iframePlaceholderTop: 0,
+    iframePlaceholderWidth: 0,
+    iframePlaceholderHeight: 0,
+    iframeStyleBlock: () => '.vimeo { color: red; }',
+    innerRef: () => {},
+  }),
+}))
 
 // react-player/vimeo lazily loads the Vimeo Player SDK and is not relevant to
 // the rendering logic under test - mock it with a simple placeholder that
