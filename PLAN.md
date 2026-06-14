@@ -35,7 +35,7 @@ Every task belongs to exactly one; every new task must too.
 | ✅ Unit test coverage | 2 | 1 | 2 | Epic in progress; most packages at target, a few laggards |
 | 🧪 E2E testing | 5 | 1 | 2 | Pipeline green in CI; skill + iframe fix remain |
 | ⚙️ Node.js modernization | 1 | 0 | 2 | Barely started; epic + logger refactor pending |
-| ⚛️ React 19 (reader-react) | 19 | 0 | 18 | TASK-095 merged; TASK-096 (Media subtree) done on `feat/react19-step1-media`, pending merge + browser QA. **class→functional → HOC→hooks → state migration** |
+| ⚛️ React 19 (reader-react) | 20 | 0 | 17 | TASK-095 merged; TASK-096 (Media) + TASK-097 (App) done on their branches, pending merge + browser QA. **Step 1 (class→functional) complete — no class components left in `src/components`.** Next: HOC→hooks → state migration |
 
 _"Active" = in progress. "Backlog" = not started (excludes superseded)._
 
@@ -185,7 +185,7 @@ turns every HOC→hook step into a mechanical swap with no half-wired state.
 | **TASK-094** | 0 | Conventions doc (foundation) | Opus |
 | TASK-095 ✅ | 1 | Leaf components: `Footnote`, `Marker`, `SidebarSettings` | Sonnet |
 | TASK-096 ✅ | 1 | Media subtree: `Media`, `Vimeo`, `Iframe`, `MediaControls`, `MediaButtonVolume` | Opus (Media→`useMediaPlayer` hook; Vimeo render-phase update) |
-| TASK-097 | 1 | `App` (async `UNSAFE_` + `connect`) | Opus |
+| TASK-097 ✅ | 1 | `App` (async `UNSAFE_` + `connect`) | Opus |
 | TASK-098 | 2 | Measurement HOCs→hooks: `with-dimensions`, `with-navigation-actions` | Sonnet |
 | TASK-099 | 2 | Position HOCs→hooks: `with-node-position`, `with-iframe-position` (**absorbs deferred TASK-084 `getPageWidth`**) | Opus |
 | TASK-100 | 2 | Remove `selfRef` shim: `navigation`/`loader`/`resize` → hooks | Opus |
@@ -204,9 +204,9 @@ TASK-076 (SCSS→CSS Modules), plus general organization cleanup.
 
 1. **TASK-094** (conventions — user review pending) + **TASK-068** (housekeeping):
    establish the patterns and clear dead code before refactoring.
-2. **Step 1** components: TASK-095 ✅ (leaves, on `feat/react19-step1-leaves`)
-   → TASK-096 ✅ (Media, on `feat/react19-step1-media`, pending merge + browser QA)
-   → TASK-097 (App).
+2. **Step 1** components ✅ **complete**: TASK-095 (leaves, on
+   `feat/react19-step1-leaves`) → TASK-096 (Media, on `feat/react19-step1-media`)
+   → TASK-097 (App, on `feat/react19-step1-app`). 096/097 pending merge + browser QA.
 3. **Step 2** HOCs→hooks: TASK-098 (measurement) → TASK-099 (position) →
    TASK-100 (selfRef removal, highest-risk — do last).
 4. **TASK-073** research decision → **Step 4** state migration.
@@ -280,7 +280,7 @@ sequencing work:
 
 | Priority | Task | Action | Why now |
 | -------- | ---- | ------ | ------- |
-| 1 | TASK-097 → 100 | Continue the class→functional / HOC→hooks waves (per the Model field); merge `feat/react19-step1-media` + browser-QA TASK-096 | TASK-095/096 done; conventions + tests guard behavior |
+| 1 | TASK-098 → 100 | Start the HOC→hooks wave (Step 2; per the Model field); merge `feat/react19-step1-media` + `-app` and browser-QA TASK-096/097 | Step 1 done; conventions + tests guard behavior |
 | 2 | TASK-073 | Run the state-management research (built-in over Redux) | Now unblocked by TS; output gates Step 4 |
 | 3 | TASK-050 | CLI handler tests | Unblocks TASK-046 and lifts cli coverage toward 75% |
 | 4 | TASK-004 | Push coverage laggards to 75% | Closes the coverage epic; cli + b-ber-tasks are the long poles |
@@ -307,6 +307,7 @@ work happens on feature branches** (e.g. `feat/ts-stage-4`, per-package
 | `feat/ts-stage-4` | TASK-032 (reader-react TS) | merged ✓ (`ceb3d636`) |
 | `feat/react19-step1-leaves` | TASK-095 (leaf components) | merged ✓ |
 | `feat/react19-step1-media` | TASK-096 (Media subtree) | pending merge |
+| `feat/react19-step1-app` | TASK-097 (App) | pending merge |
 | `feat/node-modernization-*` | TASK-013 per-package slices | not started |
 
 **Before merging `feat/upgrades` → `main`:** `npm test` green from root; no
