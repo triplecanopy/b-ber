@@ -1,5 +1,5 @@
 import find from 'lodash/find'
-import React, { Component } from 'react'
+import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as readerLocationActions from '../actions/reader-location'
@@ -24,117 +24,124 @@ interface AppProps {
   readerLocationActions: Record<string, (...args: any[]) => unknown>
 }
 
-class App extends Component<AppProps> {
-  async UNSAFE_componentWillMount() {
-    const { manifestURL, disableBodyStyles } = this.props.readerSettings
-    let { bookURL, projectURL } = this.props.readerSettings
-    let books: unknown[] = []
+function App(props: AppProps) {
+  // The class loaded the manifest in an async UNSAFE_componentWillMount, which
+  // ran before first render. The redux-driven render gate below (`return null`
+  // until searchParams + bookURL are set by this load) already prevents any
+  // flash of un-initialized UI, so moving the work into a mount effect preserves
+  // the visible sequence: the first paint is null either way (§3a). Runs once.
+  useEffect(() => {
+    const loadBook = async () => {
+      const { manifestURL, disableBodyStyles } = props.readerSettings
+      let { bookURL, projectURL } = props.readerSettings
+      let books: unknown[] = []
 
-    if (manifestURL && bookURL) {
-      console.error(
-        'Multiple endpoints. Specify either `manifestURL` or `bookURL`'
-      )
-    }
-
-    if (disableBodyStyles !== true) {
-      // Add styles to body element in case the reader is running stand-alone
-
-      // Prevent font size change on mobile landscape
-      document.body.style.setProperty('-webkit-text-size-adjust', 'none')
-      document.body.style.setProperty('touch-action', 'manipulation')
-      document.body.style.margin = '0'
-      document.body.style.padding = '0'
-    }
-
-    if (manifestURL) {
-      // Find the path to the books root directory. Assuming that the content.opf
-      // is in root/OPS/, we can navigate back from there. Support for loading
-      // books from a webpub manifest should be implemented properly in the future.
-      // Books with a different full-path specified in the container.xml will of
-      // course fail
-      try {
-        const resp = await Request.getJson(manifestURL)
-        const { data } = resp
-        const { href: opfURL } = data.resources.find(
-          (res: { type: string; href: string }) =>
-            res.type === 'application/oebps-package+xml'
+      if (manifestURL && bookURL) {
+        console.error(
+          'Multiple endpoints. Specify either `manifestURL` or `bookURL`'
         )
-
-        bookURL = opfURL.split('/').slice(0, -2).join('/')
-
-        // Must be called before state is set
-        this.props.readerSettingsActions.updateSettings({ bookURL })
-
-        // Set the projectURL if not set to prevent 404 to /api/books.json
-        if (!projectURL) {
-          projectURL = manifestURL.slice(0, manifestURL.lastIndexOf('/'))
-        }
-      } catch (err) {
-        console.error('Error loading Webpub manifest', err)
       }
+
+      if (disableBodyStyles !== true) {
+        // Add styles to body element in case the reader is running stand-alone
+
+        // Prevent font size change on mobile landscape
+        document.body.style.setProperty('-webkit-text-size-adjust', 'none')
+        document.body.style.setProperty('touch-action', 'manipulation')
+        document.body.style.margin = '0'
+        document.body.style.padding = '0'
+      }
+
+      if (manifestURL) {
+        // Find the path to the books root directory. Assuming that the content.opf
+        // is in root/OPS/, we can navigate back from there. Support for loading
+        // books from a webpub manifest should be implemented properly in the future.
+        // Books with a different full-path specified in the container.xml will of
+        // course fail
+        try {
+          const resp = await Request.getJson(manifestURL)
+          const { data } = resp
+          const { href: opfURL } = data.resources.find(
+            (res: { type: string; href: string }) =>
+              res.type === 'application/oebps-package+xml'
+          )
+
+          bookURL = opfURL.split('/').slice(0, -2).join('/')
+
+          // Must be called before state is set
+          props.readerSettingsActions.updateSettings({ bookURL })
+
+          // Set the projectURL if not set to prevent 404 to /api/books.json
+          if (!projectURL) {
+            projectURL = manifestURL.slice(0, manifestURL.lastIndexOf('/'))
+          }
+        } catch (err) {
+          console.error('Error loading Webpub manifest', err)
+        }
+      }
+
+      if (bookURL && !projectURL) {
+        // Path from which to load api/books.json
+        projectURL = bookURL.split('/').slice(0, -2).join('/')
+      }
+
+      try {
+        const resp = await Request.getBooks(projectURL)
+        books = resp.data
+      } catch (err) {
+        console.warn('Could not load books from API', err)
+      }
+
+      // This is a bit confusing since an array of books can be returned, but the
+      // settings for a single book need to be applied. This will need to be addressed
+      // to either remove or re-enable the library functionality
+      // There should also be a better way of syncing up the ID that exists in the book
+      // other than just testing against the directory path, but since b-ber uses the
+      // same value for both.
+      const id = bookURL.split('/').filter(Boolean).pop()
+      const book = find(books, { id }) as
+        | { layout?: string; downloads?: unknown; ui_options?: unknown }
+        | undefined
+      const projectConfig: {
+        layout?: string
+        downloads?: unknown
+        uiOptions?: unknown
+      } = {}
+
+      // Extend projectConfig with data returned from API
+      if (book) {
+        projectConfig.layout = book.layout
+        projectConfig.downloads = book.downloads
+        projectConfig.uiOptions = book.ui_options
+      }
+
+      // projectConfig has layout set manually if it's not defined in
+      // either the API data or the React component as prop. This should
+      // be handled programatically
+      projectConfig.layout =
+        props.readerSettings.layout || projectConfig.layout || 'columns'
+
+      props.readerSettingsActions.updateSettings({
+        books: books as ReaderSettingsState['books'],
+        bookURL,
+        projectURL,
+        ...projectConfig,
+      })
+
+      props.readerLocationActions.setInitialSearchParams()
     }
 
-    if (bookURL && !projectURL) {
-      // Path from which to load api/books.json
-      projectURL = bookURL.split('/').slice(0, -2).join('/')
-    }
+    loadBook()
+  }, [])
 
-    try {
-      const resp = await Request.getBooks(projectURL)
-      books = resp.data
-    } catch (err) {
-      console.warn('Could not load books from API', err)
-    }
+  const { searchParams } = props.readerLocation
+  const { bookURL } = props.readerSettings
 
-    // This is a bit confusing since an array of books can be returned, but the
-    // settings for a single book need to be applied. This will need to be addressed
-    // to either remove or re-enable the library functionality
-    // There should also be a better way of syncing up the ID that exists in the book
-    // other than just testing against the directory path, but since b-ber uses the
-    // same value for both.
-    const id = bookURL.split('/').filter(Boolean).pop()
-    const book = find(books, { id }) as
-      | { layout?: string; downloads?: unknown; ui_options?: unknown }
-      | undefined
-    const projectConfig: {
-      layout?: string
-      downloads?: unknown
-      uiOptions?: unknown
-    } = {}
+  if (!searchParams || !bookURL) return null
 
-    // Extend projectConfig with data returned from API
-    if (book) {
-      projectConfig.layout = book.layout
-      projectConfig.downloads = book.downloads
-      projectConfig.uiOptions = book.ui_options
-    }
+  const { style, className, ...rest } = props.readerSettings
 
-    // projectConfig has layout set manually if it's not defined in
-    // either the API data or the React component as prop. This should
-    // be handled programatically
-    projectConfig.layout =
-      this.props.readerSettings.layout || projectConfig.layout || 'columns'
-
-    this.props.readerSettingsActions.updateSettings({
-      books: books as ReaderSettingsState['books'],
-      bookURL,
-      projectURL,
-      ...projectConfig,
-    })
-
-    this.props.readerLocationActions.setInitialSearchParams()
-  }
-
-  render() {
-    const { searchParams } = this.props.readerLocation
-    const { bookURL } = this.props.readerSettings
-
-    if (!searchParams || !bookURL) return null
-
-    const { style, className, ...rest } = this.props.readerSettings
-
-    return <Reader style={style} className={className} {...rest} />
-  }
+  return <Reader style={style} className={className} {...rest} />
 }
 
 const mapStateToProps = ({ readerSettings, readerLocation }: RootState) => ({
