@@ -3,10 +3,11 @@
  * BookContent and the left/right "leaf" overlays, and reacts to window
  * resize / spreadIndex changes by recomputing the translateX transform.
  *
- * Strategy: withDimensions and withLastSpreadIndex are mocked as pass-through
- * HOCs (same pattern as with-node-position in Media/Vimeo.test.jsx) so props
- * like getFrameHeight/updateDimensions can be supplied directly and asserted
- * on, without needing a real Redux-measured viewport. The `userInterface`
+ * Strategy: withLastSpreadIndex is mocked as a pass-through HOC (same pattern
+ * as with-node-position in Media/Vimeo.test.jsx) so props like
+ * getFrameHeight/updateDimensions can be supplied directly and asserted on,
+ * without needing a real Redux-measured viewport (which useDimensions, called
+ * inside withLastSpreadIndex, would otherwise dispatch). The `userInterface`
  * slice still comes from the real connect()/store since that HOC is not
  * mocked.
  */
@@ -20,11 +21,6 @@ import Viewport from '../../src/helpers/Viewport'
 import browser from '../../src/lib/browser'
 import ReaderContext from '../../src/lib/reader-context'
 import { createTestStore } from '../helpers/store'
-
-jest.mock(
-  '../../src/lib/with-dimensions',
-  () => (WrappedComponent) => (props) => <WrappedComponent {...props} />
-)
 
 jest.mock(
   '../../src/lib/with-last-spread-index',

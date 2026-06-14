@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as viewActions from '../actions/view'
 import { isNumeric } from '../helpers/Types'
+import useDimensions from '../hooks/use-dimensions'
 import type { AppDispatch } from '../store/types'
 import browser from './browser'
 
@@ -56,6 +57,7 @@ const withLastSpreadIndex = (
   WrappedComponent: React.ComponentType<any>
 ): React.ComponentType<any> => {
   function WrapperComponent(props: any) {
+    const dimensions = useDimensions(props.layout)
     const node = useRef<HTMLElement | null>(null)
     const [contentDimensions, setContentDimensions] = useState(0)
 
@@ -68,6 +70,10 @@ const withLastSpreadIndex = (
     // stale copy of viewActions or getFrameHeight
     const propsRef = useRef(props)
     propsRef.current = props
+
+    // Always-current ref for the dimensions hook result, for the same reason
+    const dimensionsRef = useRef(dimensions)
+    dimensionsRef.current = dimensions
 
     // Reset content dimensions when the chapter (slug) changes.
     // The contentDimensions effect skips its dispatch when the value is 0
@@ -187,7 +193,7 @@ const withLastSpreadIndex = (
       // lastSpreadIndex=-1 at the start of each chapter load.
       if (contentDimensions === 0) return
 
-      const frameHeight = propsRef.current.getFrameHeight()
+      const frameHeight = dimensionsRef.current.getFrameHeight()
 
       // H1 fix: getFrameHeight() returns 'auto' in vertical-scroll layout.
       // Division by 0 previously produced Infinity as lastSpreadIndex.
@@ -218,10 +224,10 @@ const withLastSpreadIndex = (
     return (
       <WrappedComponent
         innerRef={node}
-        getFrameHeight={props.getFrameHeight}
-        getFrameWidth={props.getFrameWidth}
-        getSingleColumnWidth={props.getSingleColumnWidth}
-        updateDimensions={props.updateDimensions}
+        getFrameHeight={dimensions.getFrameHeight}
+        getFrameWidth={dimensions.getFrameWidth}
+        getSingleColumnWidth={dimensions.getSingleColumnWidth}
+        updateDimensions={dimensions.updateDimensions}
         BookContent={props.BookContent}
         className={props.className}
         lastSpreadIndex={props.lastSpreadIndex}
@@ -232,9 +238,9 @@ const withLastSpreadIndex = (
         spineItemURL={props.spineItemURL}
         style={props.style}
         view={props.view}
-        viewerSettings={props.viewerSettings}
+        viewerSettings={dimensions.viewerSettings}
         userInterface={props.userInterface}
-        viewerSettingsActions={props.viewerSettingsActions}
+        viewerSettingsActions={dimensions.viewerSettingsActions}
         viewActions={props.viewActions}
       />
     )

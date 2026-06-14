@@ -11,7 +11,6 @@ import Viewport from '../helpers/Viewport'
 import browser from '../lib/browser'
 import ReaderContext from '../lib/reader-context'
 import transitions from '../lib/transition-styles'
-import withDimensions from '../lib/with-dimensions'
 import withLastSpreadIndex from '../lib/with-last-spread-index'
 import type { RootState } from '../store/types'
 
@@ -162,8 +161,9 @@ function Leaves({
 }
 
 // Layout receives connect()ed userInterface plus measurement helpers and
-// viewerSettings threaded through the withDimensions/withLastSpreadIndex HOCs;
-// typed loosely pending those HOCs' injected-prop surfaces being finalized.
+// viewerSettings threaded through the withLastSpreadIndex HOC (which calls
+// useDimensions internally); typed loosely pending that HOC's injected-prop
+// surface being finalized.
 function Layout(props: any) {
   const readerContext = useContext(ReaderContext)
 
@@ -249,4 +249,4 @@ function Layout(props: any) {
 export default connect(
   ({ userInterface }: RootState) => ({ userInterface }),
   () => ({})
-)(withDimensions(withLastSpreadIndex(Layout)))
+)(withLastSpreadIndex(Layout))
