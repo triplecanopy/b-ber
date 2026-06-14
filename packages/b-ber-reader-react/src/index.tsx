@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Provider } from 'react-redux'
 import { applyMiddleware, compose, createStore } from 'redux'
 import { thunk } from 'redux-thunk'
@@ -7,6 +7,9 @@ import { mergeDeep } from './helpers/utils'
 import version from './lib/version'
 import combinedReducers from './reducers'
 import { initialState as initialReaderSettings } from './reducers/reader-settings'
+import { createReaderStore } from './store/createReaderStore'
+import { createInitialState } from './store/initialState'
+import { StoreProvider } from './store/StoreContext'
 import type { ReaderSettingsState } from './store/types'
 
 import './lib/polyfills'
@@ -30,10 +33,19 @@ const ConnectedApp = (props: ReaderProps = {}) => {
     compose(applyMiddleware(thunk))
   )
 
+  // The built-in store runs alongside Redux while slices migrate (TASK-106).
+  // Lazy `useState` gives it a stable identity for the Reader instance's life,
+  // which `useStore`'s subscription depends on. Seeded from the same props.
+  const [readerStore] = useState(() =>
+    createReaderStore(createInitialState(props))
+  )
+
   return (
     <Provider store={store}>
-      <Version />
-      <App />
+      <StoreProvider store={readerStore}>
+        <Version />
+        <App />
+      </StoreProvider>
     </Provider>
   )
 }

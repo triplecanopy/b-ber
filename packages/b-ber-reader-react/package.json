@@ -36,6 +36,7 @@
     "@types/prop-types": "^15.7.15",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
+    "@types/use-sync-external-store": "^0.0.6",
     "@vitejs/plugin-react": "^6.0.2",
     "autoprefixer": "^9.6.1",
     "buffer": "^6.0.3",
@@ -81,6 +82,7 @@
     "redux": "^5.0.0",
     "redux-thunk": "^3.1.0",
     "url-search-params-polyfill": "^4.0.0",
+    "use-sync-external-store": "^1.5.0",
     "xml-js": "^1.6.2"
   },
   "peerDependencies": {
