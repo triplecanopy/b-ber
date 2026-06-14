@@ -35,7 +35,7 @@ Every task belongs to exactly one; every new task must too.
 | ✅ Unit test coverage | 2 | 1 | 2 | Epic in progress; most packages at target, a few laggards |
 | 🧪 E2E testing | 5 | 1 | 2 | Pipeline green in CI; skill + iframe fix remain |
 | ⚙️ Node.js modernization | 1 | 0 | 2 | Barely started; epic + logger refactor pending |
-| ⚛️ React 19 (reader-react) | 22 | 0 | 15 | TASK-095 merged; TASK-096 (Media) + TASK-097 (App) done on their branches, pending merge + browser QA. **Step 1 (class→functional) complete — no class components left in `src/components`.** TASK-098 (measurement HOCs→hooks) + TASK-099 (position HOCs→hooks; absorbed TASK-084 `getPageWidth`) done, pending merge. **No class HOCs remain — all `with-*` are hooks.** Next: TASK-100 (selfRef removal) |
+| ⚛️ React 19 (reader-react) | 23 | 0 | 14 | TASK-095 merged; TASK-096 (Media) + TASK-097 (App) done on their branches, pending merge + browser QA. **Step 1 (class→functional) complete — no class components left in `src/components`.** TASK-098 (measurement HOCs→hooks) + TASK-099 (position HOCs→hooks; absorbed TASK-084 `getPageWidth`) + TASK-100 (selfRef shim → useLoader/useNavigation/useResize) done, pending merge. **Step 2 (HOC→hooks) complete — no class HOCs, no selfRef shim.** Next: TASK-073 (state-management research → Step 4) |
 
 _"Active" = in progress. "Backlog" = not started (excludes superseded)._
 
@@ -158,16 +158,17 @@ This unblocks the **modernization migration** — the main remaining surface.
 Spread-rendering bugs and sentinel polling are **explicitly deferred** to *after*
 the migration (see Deferred below).
 
-### Remaining surface (verified 2026-06-13)
+### Remaining surface (verified 2026-06-13; Steps 1+2 resolved 2026-06-14)
 
-- **9 class components:** `App`, `SidebarSettings`, `Footnote`, `Marker`,
-  `Media`, `Vimeo`, `Iframe`, `MediaControls`, `MediaButtonVolume`.
-- **4 class HOCs:** `with-dimensions`, `with-node-position`, `with-iframe-position`,
-  `with-navigation-actions` (`with-last-spread-index` is already functional).
-- **`UNSAFE_*` lifecycles** in ~6 of the above + the `selfRef` shim in
-  `Reader/index` (`navigation.js`/`loader.js`/`resize.js` still use `this.*`).
+- ~~**9 class components:**~~ ✅ all functional (Step 1: TASK-095/096/097).
+- ~~**4 class HOCs:**~~ ✅ all hooks (Step 2: TASK-098 measurement + TASK-099
+  position; `with-last-spread-index` was already functional).
+- ~~**`UNSAFE_*` lifecycles** + the `selfRef` shim in `Reader/index`~~ ✅ lifecycles
+  replaced by effects across Steps 1–2; selfRef removed in TASK-100
+  (`navigation`/`loader`/`resize` are now `useNavigation`/`useLoader`/`useResize`).
 - **State:** plain Redux + `redux-thunk` + `connect()` **and** two React Contexts
   (`reader-context`, `spread-context`) **and** hooks — the mix to consolidate.
+  Remaining reader-react work; the TASK-073 research → Step 4 migration.
 
 ### Migration plan (maps to the 5-step approach)
 
@@ -188,7 +189,7 @@ turns every HOC→hook step into a mechanical swap with no half-wired state.
 | TASK-097 ✅ | 1 | `App` (async `UNSAFE_` + `connect`) | Opus |
 | TASK-098 ✅ | 2 | Measurement HOCs→hooks: `with-dimensions`, `with-navigation-actions` | Sonnet |
 | TASK-099 ✅ | 2 | Position HOCs→hooks: `with-node-position`, `with-iframe-position` (**absorbs deferred TASK-084 `getPageWidth`**) | Opus |
-| TASK-100 | 2 | Remove `selfRef` shim: `navigation`/`loader`/`resize` → hooks | Opus |
+| TASK-100 ✅ | 2 | Remove `selfRef` shim: `navigation`/`loader`/`resize` → hooks | Opus |
 
 **Step 3 (evaluate deps) — TASK-073 (research, now unblocked).** Decision lean:
 **away from Redux toward built-in React state** (reduce 3rd-party deps; RTK is
@@ -207,10 +208,11 @@ TASK-076 (SCSS→CSS Modules), plus general organization cleanup.
 2. **Step 1** components ✅ **complete**: TASK-095 (leaves, on
    `feat/react19-step1-leaves`) → TASK-096 (Media, on `feat/react19-step1-media`)
    → TASK-097 (App, on `feat/react19-step1-app`). 096/097 pending merge + browser QA.
-3. **Step 2** HOCs→hooks: TASK-098 (measurement) ✅ on
-   `feat/react19-step2-measurement-hocs` → TASK-099 (position) ✅ on
-   `feat/react19-step2-position-hocs`, both pending merge → TASK-100 (selfRef
-   removal, highest-risk — do last). **All `with-*` HOCs are now hooks.**
+3. **Step 2** HOCs→hooks ✅ **complete**: TASK-098 (measurement) on
+   `feat/react19-step2-measurement-hocs` → TASK-099 (position) on
+   `feat/react19-step2-position-hocs` → TASK-100 (selfRef removal) on
+   `feat/react19-step2-selfref-removal`, all pending merge. **All `with-*` are
+   hooks and the selfRef shim is gone.**
 4. **TASK-073** research decision → **Step 4** state migration.
 5. **TASK-091** anytime (independent dep upgrade).
 
@@ -282,7 +284,7 @@ sequencing work:
 
 | Priority | Task | Action | Why now |
 | -------- | ---- | ------ | ------- |
-| 1 | TASK-100 | Finish Step 2: remove the `selfRef` shim (`navigation`/`loader`/`resize` → hooks) — the highest-risk, batching-sensitive change; merge the Step 1/2 branches and browser-QA | TASK-098/099 done; all `with-*` are hooks; conventions + tests guard behavior |
+| 1 | TASK-073 | State-management research (built-in over Redux) — its output gates Step 4. Steps 1+2 of the React 19 migration are complete; merge the Step 1/2 branches and run the SPREAD-CLUSTER-QA pass | Step 2 done (functional components, hooks, no selfRef); Step 4 is the remaining reader-react work |
 | 2 | TASK-073 | Run the state-management research (built-in over Redux) | Now unblocked by TS; output gates Step 4 |
 | 3 | TASK-050 | CLI handler tests | Unblocks TASK-046 and lifts cli coverage toward 75% |
 | 4 | TASK-004 | Push coverage laggards to 75% | Closes the coverage epic; cli + b-ber-tasks are the long poles |
@@ -312,6 +314,7 @@ work happens on feature branches** (e.g. `feat/ts-stage-4`, per-package
 | `feat/react19-step1-app` | TASK-097 (App) | pending merge |
 | `feat/react19-step2-measurement-hocs` | TASK-098 (measurement HOCs→hooks) | pending merge |
 | `feat/react19-step2-position-hocs` | TASK-099 (position HOCs→hooks + TASK-084 getPageWidth) | pending merge |
+| `feat/react19-step2-selfref-removal` | TASK-100 (selfRef shim → useLoader/useNavigation/useResize) | pending merge |
 | `feat/node-modernization-*` | TASK-013 per-package slices | not started |
 
 **Before merging `feat/upgrades` → `main`:** `npm test` green from root; no
