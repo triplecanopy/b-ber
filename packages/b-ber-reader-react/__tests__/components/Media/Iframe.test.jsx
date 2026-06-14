@@ -15,10 +15,21 @@ jest.mock('react', () => {
   return globalThis.__reactSingleton
 })
 
-jest.mock(
-  '../../../src/lib/with-node-position',
-  () => (WrappedComponent) => (props) => <WrappedComponent {...props} />
-)
+// Iframe reads its element ref from useNodePosition; stub it so these tests
+// don't need a Redux store / measured viewport.
+jest.mock('../../../src/hooks/use-node-position', () => ({
+  __esModule: true,
+  default: () => ({
+    elemRef: { current: null },
+    verso: null,
+    recto: null,
+    spreadIndex: null,
+    elementEdgeLeft: null,
+    view: {},
+    viewerSettings: {},
+    readerSettings: {},
+  }),
+}))
 
 // useIframePosition now supplies the placeholder geometry / style block / ref;
 // stub it so these tests stay focused on Iframe's own rendering.

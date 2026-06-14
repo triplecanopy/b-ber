@@ -216,9 +216,12 @@ export const processingInstructions = ({
         nodeParent = nodeParent.parent
       }
 
+      // `src` is present on the parsed node's attrs at runtime but invisible to
+      // TS through the Record<string, any> spread; surface it explicitly so it
+      // satisfies Vimeo's now-typed required `src` prop.
       return React.createElement(
         Vimeo,
-        { ...attrs, key, posterImage, aspectRatio },
+        { ...attrs, src: attrs.src, key, posterImage, aspectRatio },
         children
       )
     },

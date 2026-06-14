@@ -9,8 +9,8 @@ import {
 import { isBrowser, unlessDefined } from '../../helpers/utils'
 import Viewport from '../../helpers/Viewport'
 import useIframePosition from '../../hooks/use-iframe-position'
+import useNodePosition from '../../hooks/use-node-position'
 import ReaderContext from '../../lib/reader-context'
-import withNodePosition from '../../lib/with-node-position'
 import VimeoPlayerControls from './VimeoPlayerControls'
 import VimeoPosterImage from './VimeoPosterImage'
 
@@ -28,10 +28,10 @@ interface VimeoProps {
   src: string
   posterImage?: string | null
   aspectRatio?: Map<string, number>
-  // Position props injected by the withNodePosition HOC.
-  elemRef?: React.Ref<HTMLDivElement>
-  view?: any
-  readerSettings?: any
+  // Per-instance override for the node-position calc (set by process-nodes for
+  // spread-nested embeds); forwarded to useNodePosition.
+  useElementOffsetLeft?: boolean
+  layout?: string
   [key: string]: any
 }
 
@@ -60,6 +60,11 @@ function Vimeo(props: VimeoProps) {
   } = useIframePosition({
     enabled: iframePositioningEnabled,
     layout: props.layout,
+  })
+
+  const node = useNodePosition<HTMLDivElement>({
+    useParentDimensions: true,
+    useElementOffsetLeft: props.useElementOffsetLeft,
   })
 
   // UNSAFE_componentWillMount derived initial state from props synchronously
@@ -108,19 +113,33 @@ function Vimeo(props: VimeoProps) {
   // completion.
   const [prevInputs, setPrevInputs] = useState({
     spreadIndex: context?.spreadIndex,
-    viewLoaded: props.view?.loaded,
+    viewLoaded: node.view?.loaded,
   })
 
   if (
     context?.spreadIndex !== prevInputs.spreadIndex ||
-    props.view?.loaded !== prevInputs.viewLoaded
+    node.view?.loaded !== prevInputs.viewLoaded
   ) {
     setPrevInputs({
       spreadIndex: context?.spreadIndex,
-      viewLoaded: props.view?.loaded,
+      viewLoaded: node.view?.loaded,
     })
 
-    const nextState = getPlayingStateOnUpdate(state, props, props, context)
+    // getPlayingStateOnUpdate reads view.loaded/readerSettings (props arg) and
+    // the element's spreadIndex (nextProps arg) — values the withNodePosition
+    // HOC used to inject, now sourced from useNodePosition.
+    const nodeProps = {
+      view: node.view,
+      readerSettings: node.readerSettings,
+      spreadIndex: node.spreadIndex,
+    }
+
+    const nextState = getPlayingStateOnUpdate(
+      state,
+      nodeProps,
+      nodeProps,
+      context
+    )
     if (nextState) setState((prev) => ({ ...prev, ...nextState }))
   }
 
@@ -208,8 +227,8 @@ function Vimeo(props: VimeoProps) {
         />
       )}
 
-      {/* Ref is used to calculate spread position in HOC */}
-      <div style={iframeContainerStyles} key={url} ref={props.elemRef}>
+      {/* Ref is used to calculate spread position in useNodePosition */}
+      <div style={iframeContainerStyles} key={url} ref={node.elemRef}>
         <VimeoPosterImage
           src={posterImage}
           playing={playing}
@@ -239,4 +258,4 @@ function Vimeo(props: VimeoProps) {
   )
 }
 
-export default withNodePosition(Vimeo, { useParentDimensions: true })
+export default Vimeo

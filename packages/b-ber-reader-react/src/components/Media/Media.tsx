@@ -1,46 +1,35 @@
 import React from 'react'
 import { MEDIA_CONTROLS_PRESETS } from '../../constants'
-import withNodePosition from '../../lib/with-node-position'
+import useNodePosition from '../../hooks/use-node-position'
 import MediaControls from './Controls/MediaControls'
 import { useMediaPlayer } from './useMediaPlayer'
 
 interface MediaProps {
-  // Ref to the underlying <audio>/<video> element, supplied by withNodePosition.
-  elemRef: React.RefObject<HTMLMediaElement>
   MediaComponent: React.ComponentType<any>
   mediaType: string
   autoPlay?: boolean
   controls?: string
-  // Position data injected by withNodePosition.
-  verso?: boolean | null
-  recto?: boolean | null
-  spreadIndex?: number | null
-  elementEdgeLeft?: number | null
-  currentSpreadIndex?: number | null
-  // Redux slices injected by withNodePosition's connect wrapper.
-  view?: any
-  viewerSettings?: any
-  readerSettings?: any
   // Remaining HTML5 media attributes (id, src, data-* etc.) are spread through.
   [key: string]: any
 }
 
 function Media(props: MediaProps) {
-  const player = useMediaPlayer(props)
+  // useNodePosition supplies the media element ref and the spread the element
+  // sits on; the latter drives autoplay-on-page-change in useMediaPlayer.
+  const { elemRef, spreadIndex } = useNodePosition<HTMLMediaElement>({
+    useParentDimensions: true,
+  })
+
+  const player = useMediaPlayer({
+    ...props,
+    elemRef: elemRef as React.RefObject<HTMLMediaElement>,
+    spreadIndex,
+  })
 
   const {
-    elemRef,
-    verso,
-    recto,
-    spreadIndex,
-    elementEdgeLeft,
     MediaComponent,
     mediaType,
     autoPlay,
-    currentSpreadIndex,
-    view,
-    viewerSettings,
-    readerSettings,
     controls: controlsAttribute,
 
     // `rest` includes React.Children, and the HTML5 media attributes except
@@ -143,7 +132,4 @@ function Media(props: MediaProps) {
   )
 }
 
-export default withNodePosition(Media, {
-  useParentDimensions: true,
-  // useFullscreenElementWidth: true,
-})
+export default Media

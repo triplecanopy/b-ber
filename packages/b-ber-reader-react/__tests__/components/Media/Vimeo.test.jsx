@@ -2,7 +2,20 @@
 
 import { fireEvent, render } from '@testing-library/react'
 import React from 'react'
+import useNodePosition from '../../../src/hooks/use-node-position'
 import ReaderContext from '../../../src/lib/reader-context'
+
+const defaultNodePosition = (overrides = {}) => ({
+  elemRef: { current: null },
+  verso: null,
+  recto: null,
+  spreadIndex: null,
+  elementEdgeLeft: null,
+  view: {},
+  viewerSettings: {},
+  readerSettings: {},
+  ...overrides,
+})
 
 // These tests call jest.resetModules() so the component re-evaluates its
 // module-level browser check (iframePositioningEnabled) under different mocks.
@@ -29,10 +42,15 @@ jest.mock('../../../src/lib/reader-context', () => {
   return globalThis.__readerContextSingleton
 })
 
-jest.mock(
-  '../../../src/lib/with-node-position',
-  () => (WrappedComponent) => (props) => <WrappedComponent {...props} />
-)
+// Vimeo reads its element ref + spread position + view/readerSettings from
+// useNodePosition. Pin a single jest.fn across resetModules (like the React /
+// ReaderContext singletons above) so tests can drive its return value.
+jest.mock('../../../src/hooks/use-node-position', () => {
+  if (!globalThis.__useNodePositionMock) {
+    globalThis.__useNodePositionMock = jest.fn()
+  }
+  return { __esModule: true, default: globalThis.__useNodePositionMock }
+})
 
 // useIframePosition now supplies the placeholder geometry / style block / ref;
 // stub it so these tests stay focused on Vimeo's own rendering.
@@ -82,6 +100,7 @@ describe('Vimeo', () => {
   beforeEach(() => {
     console.warn = jest.fn()
     console.error = jest.fn()
+    useNodePosition.mockReturnValue(defaultNodePosition())
   })
 
   afterEach(() => jest.clearAllMocks())
@@ -514,6 +533,15 @@ describe('Vimeo', () => {
         </ReaderContext.Provider>
       )
 
+      // Element sits on spread 0, the view is loaded; autoplay defaults on.
+      useNodePosition.mockReturnValue(
+        defaultNodePosition({
+          spreadIndex: 0,
+          view: { loaded: true },
+          readerSettings: { layout: 'paginated' },
+        })
+      )
+
       const commonProps = {
         src: 'https://vimeo.com/12345',
         posterImage: null,
@@ -521,10 +549,6 @@ describe('Vimeo', () => {
           ['x', 16],
           ['y', 9],
         ]),
-        elemRef: React.createRef(),
-        spreadIndex: 0,
-        view: { loaded: true },
-        readerSettings: { layout: 'paginated' },
       }
 
       const Wrapper = ({ spreadIndex }) =>
@@ -550,6 +574,16 @@ describe('Vimeo', () => {
         '../../../src/components/Media/Vimeo'
       )
 
+      // view.loaded false -> getPlayingStateOnUpdate short-circuits to false ->
+      // the render-phase update never changes playing state.
+      useNodePosition.mockReturnValue(
+        defaultNodePosition({
+          spreadIndex: 0,
+          view: { loaded: false },
+          readerSettings: { layout: 'paginated' },
+        })
+      )
+
       const Wrapper = ({ spreadIndex }) => (
         <ReaderContext.Provider
           value={{
@@ -569,12 +603,6 @@ describe('Vimeo', () => {
                 ['y', 9],
               ])
             }
-            elemRef={React.createRef()}
-            spreadIndex={0}
-            // view.loaded false -> getPlayingStateOnUpdate short-circuits to
-            // false -> UNSAFE_componentWillReceiveProps early-returns
-            view={{ loaded: false }}
-            readerSettings={{ layout: 'paginated' }}
           />
         </ReaderContext.Provider>
       )

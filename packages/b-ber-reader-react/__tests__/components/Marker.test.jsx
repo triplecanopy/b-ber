@@ -2,27 +2,45 @@ import { render } from '@testing-library/react'
 import React from 'react'
 import { Provider } from 'react-redux'
 import Marker from '../../src/components/Marker'
+import useNodePosition from '../../src/hooks/use-node-position'
 import { createTestStore } from '../helpers/store'
 
-jest.mock(
-  '../../src/lib/with-node-position',
-  () => (WrappedComponent) => (props) => <WrappedComponent {...props} />
-)
+// Marker reads its verso/recto/elemRef from useNodePosition; stub the hook so
+// each test can supply that position data directly. The Provider is still
+// needed because Marker itself is connect()ed (markers/markerActions).
+jest.mock('../../src/hooks/use-node-position', () => ({
+  __esModule: true,
+  default: jest.fn(),
+}))
+
+const mockNodePosition = (overrides = {}) =>
+  useNodePosition.mockReturnValue({
+    elemRef: React.createRef(),
+    verso: null,
+    recto: null,
+    spreadIndex: null,
+    elementEdgeLeft: null,
+    view: {},
+    viewerSettings: {},
+    readerSettings: {},
+    ...overrides,
+  })
 
 describe('Marker', () => {
+  afterEach(() => jest.clearAllMocks())
+
   test('renders verso marker with data attributes and spacer', () => {
     const store = createTestStore()
     const elemRef = React.createRef()
 
+    mockNodePosition({ elemRef, verso: true, recto: false })
+
     const { container } = render(
       <Provider store={store}>
         <Marker
-          verso
-          recto={false}
           data-index={3}
           data-final={false}
           className="bber-marker"
-          elemRef={elemRef}
           style={{ color: 'red' }}
         />
       </Provider>
@@ -42,16 +60,11 @@ describe('Marker', () => {
   test('renders recto marker', () => {
     const store = createTestStore()
 
+    mockNodePosition({ verso: false, recto: true })
+
     const { container } = render(
       <Provider store={store}>
-        <Marker
-          verso={false}
-          recto
-          data-index={1}
-          data-final
-          className="bber-marker"
-          elemRef={React.createRef()}
-        />
+        <Marker data-index={1} data-final className="bber-marker" />
       </Provider>
     )
 

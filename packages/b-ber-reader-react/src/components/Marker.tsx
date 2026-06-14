@@ -2,22 +2,19 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as markerActions from '../actions/markers'
-import withNodePosition from '../lib/with-node-position'
+import useNodePosition from '../hooks/use-node-position'
 
 interface MarkerProps {
-  verso?: boolean
-  recto?: boolean
   style?: React.CSSProperties
   className?: string
-  // Ref injected by the withNodePosition HOC.
-  // TODO: type this once with-node-position is converted to TS
-  elemRef?: any
   'data-index'?: number
   'data-final'?: boolean
 }
 
 function Marker(props: MarkerProps) {
-  const { verso, recto } = props
+  const { elemRef, verso, recto } = useNodePosition<HTMLSpanElement>({
+    isMarker: true,
+  })
 
   let markerStyles = { ...props.style }
 
@@ -35,7 +32,7 @@ function Marker(props: MarkerProps) {
         data-index={props['data-index']}
         data-final={props['data-final']}
         className={props.className}
-        ref={props.elemRef}
+        ref={elemRef}
       />
       <span className="bber-marker__spacer" />
     </span>
@@ -45,4 +42,4 @@ function Marker(props: MarkerProps) {
 export default connect(
   ({ markers }: { markers: unknown }) => ({ markers }),
   (dispatch) => ({ markerActions: bindActionCreators(markerActions, dispatch) })
-)(withNodePosition(Marker, { isMarker: true }))
+)(Marker)

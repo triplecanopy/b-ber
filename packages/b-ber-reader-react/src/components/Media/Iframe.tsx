@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { isBrowser } from '../../helpers/utils'
 import Viewport from '../../helpers/Viewport'
 import useIframePosition from '../../hooks/use-iframe-position'
-import withNodePosition from '../../lib/with-node-position'
+import useNodePosition from '../../hooks/use-node-position'
 
 // Enable absolutely positioned iframe layout for specific browsers/versions
 const iframePositioningEnabled = isBrowser('chrome', 'eq', 81)
@@ -17,14 +17,15 @@ interface IframeAttrs {
 
 interface IframeProps {
   attrs: IframeAttrs
-  // Redux slice + ref injected by the withNodePosition HOC.
-  viewerSettings?: any
-  elemRef?: React.Ref<HTMLDivElement>
+  // Per-instance override for the node-position calc (set by process-nodes for
+  // spread-nested embeds); forwarded to useNodePosition.
+  useElementOffsetLeft?: boolean
+  layout?: string
   [key: string]: any
 }
 
 function Iframe(props: IframeProps) {
-  const { attrs, viewerSettings } = props
+  const { attrs } = props
 
   const {
     iframePlaceholderTop,
@@ -34,6 +35,10 @@ function Iframe(props: IframeProps) {
   } = useIframePosition({
     enabled: iframePositioningEnabled,
     layout: props.layout,
+  })
+
+  const node = useNodePosition<HTMLDivElement>({
+    useElementOffsetLeft: props.useElementOffsetLeft,
   })
 
   // Prevent iframe from stealing focus
@@ -51,9 +56,7 @@ function Iframe(props: IframeProps) {
   // Set styles for absolutely positioned desktop elements for browser
   // behaviour
   if (iframePositioningEnabled) {
-    // Viewport.isSingleColumn ignores its argument; the original JS passed
-    // viewerSettings, preserved here via a cast.
-    const mobile = (Viewport.isSingleColumn as any)(viewerSettings)
+    const mobile = Viewport.isSingleColumn()
     const position = mobile ? 'static' : 'absolute' // Only run re-positioning on desktop
 
     iframeContainerStyles = {
@@ -79,11 +82,11 @@ function Iframe(props: IframeProps) {
         />
       )}
 
-      <div style={iframeContainerStyles} key={src} ref={props.elemRef}>
+      <div style={iframeContainerStyles} key={src} ref={node.elemRef}>
         <iframe src={src} title={title} {...attrs} />
       </div>
     </>
   )
 }
 
-export default withNodePosition(Iframe)
+export default Iframe

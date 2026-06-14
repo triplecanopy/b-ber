@@ -6,10 +6,23 @@ import Media from '../../../src/components/Media/Media'
 import { useMediaPlayer } from '../../../src/components/Media/useMediaPlayer'
 import ReaderContext from '../../../src/lib/reader-context'
 
-jest.mock(
-  '../../../src/lib/with-node-position',
-  () => (WrappedComponent) => (props) => <WrappedComponent {...props} />
-)
+// Media now reads its element ref + spread position from useNodePosition rather
+// than HOC-injected props; stub it. The useMediaPlayer-focused tests below call
+// the hook directly (the Probe component) and supply elemRef/spreadIndex as its
+// arguments, so they're unaffected by this mock.
+jest.mock('../../../src/hooks/use-node-position', () => ({
+  __esModule: true,
+  default: () => ({
+    elemRef: { current: null },
+    verso: false,
+    recto: false,
+    spreadIndex: 0,
+    elementEdgeLeft: 0,
+    view: {},
+    viewerSettings: {},
+    readerSettings: {},
+  }),
+}))
 
 const MediaComponentStub = React.forwardRef((props, ref) => (
   // eslint-disable-next-line jsx-a11y/media-has-caption
@@ -20,14 +33,6 @@ const baseProps = (overrides = {}) => ({
   id: 'media-1',
   mediaType: 'audio',
   MediaComponent: MediaComponentStub,
-  view: {},
-  viewerSettings: {},
-  readerSettings: {},
-  currentSpreadIndex: 0,
-  spreadIndex: 0,
-  verso: false,
-  recto: false,
-  elementEdgeLeft: 0,
   ...overrides,
 })
 
@@ -96,8 +101,7 @@ describe('Media', () => {
 
   describe('rendering', () => {
     test('renders without controls when controls attribute is falsy', () => {
-      const elemRef = makeElemRef()
-      const props = baseProps({ elemRef, controls: undefined })
+      const props = baseProps({ controls: undefined })
 
       const tree = renderMedia(props, defaultContext)
 
@@ -105,8 +109,7 @@ describe('Media', () => {
     })
 
     test('renders with config when controls matches a preset', () => {
-      const elemRef = makeElemRef()
-      const props = baseProps({ elemRef, controls: 'simple' })
+      const props = baseProps({ controls: 'simple' })
 
       const tree = renderMedia(props, defaultContext)
 
@@ -116,8 +119,7 @@ describe('Media', () => {
     })
 
     test('renders default browser controls when controls is not a preset', () => {
-      const elemRef = makeElemRef()
-      const props = baseProps({ elemRef, controls: true })
+      const props = baseProps({ controls: true })
 
       const tree = renderMedia(props, defaultContext)
 
