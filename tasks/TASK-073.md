@@ -1,8 +1,10 @@
 # TASK-073: Research — replace Redux with built-in React state management
 
-**Status:** not started
+**Status:** complete
 **Feature:** React 19 (reader-react)
 **Phase:** Modernization — state management (Step 3 of the React 19 plan)
+**Deliverable:** [`STATE-MIGRATION-PLAN.md`](../packages/b-ber-reader-react/STATE-MIGRATION-PLAN.md)
+**Execution:** [[TASK-106]] (Step 4)
 **Priority:** medium
 **Model:** Opus — architectural research + decision (the biggest fork in the
 migration); the resulting execution task can be Sonnet, slice by slice.
@@ -65,16 +67,21 @@ the `book.content` global and `redux-thunk` async flows (loader/navigation).
 
 ## Subtasks (research)
 
-- [ ] Inventory every read/write of each slice (which components, via `connect`
+- [x] Inventory every read/write of each slice (which components, via `connect`
       vs hooks) and identify the hot slices (`view`, `viewerSettings`) for the
-      re-render assessment
-- [ ] Map each `redux-thunk` async flow (loader fetch, navigation) to its built-in
-      equivalent (effect + reducer dispatch, or async fn writing to the store)
-- [ ] Prototype the riskiest slice (`view` or `viewerSettings`) under approach A
-      and, if context fan-out is a concern, under approach B; measure re-renders
-- [ ] Decide A / B / C (or hybrid) and write the recommendation
-- [ ] Produce the slice-by-slice migration plan + the `book.content` global plan
-- [ ] Open the execution task (Step 4) from the recommendation; link it here
+      re-render assessment — see plan §"Current-state inventory"
+- [x] Map each `redux-thunk` async flow to its built-in equivalent — found 2 dead
+      thunks + 1 trivial snapshot-reading thunk; real async already lives in the
+      hooks (plan §Actions)
+- [x] Re-render assessment for the hot slices (why A is rejected, why B preserves
+      `connect`'s bailout) — plan §"Re-render assessment"; the live prototype is a
+      TASK-106 subtask (needs the scaffold to measure against)
+- [x] Decide A / B / C (or hybrid) and write the recommendation — **B +
+      stable API context (hybrid)**; RTK not needed
+- [x] Produce the slice-by-slice migration plan + the `book.content` global plan —
+      plan §"Migration sequence" / §"book.content"
+- [x] Open the execution task (Step 4) from the recommendation; link it here —
+      [[TASK-106]]
 
 ## Migration sequencing (for the execution task, not this one)
 

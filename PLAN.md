@@ -35,7 +35,7 @@ Every task belongs to exactly one; every new task must too.
 | ✅ Unit test coverage | 2 | 1 | 2 | Epic in progress; most packages at target, a few laggards |
 | 🧪 E2E testing | 5 | 1 | 2 | Pipeline green in CI; skill + iframe fix remain |
 | ⚙️ Node.js modernization | 1 | 0 | 2 | Barely started; epic + logger refactor pending |
-| ⚛️ React 19 (reader-react) | 23 | 0 | 19 | **Steps 1 + 2 complete and merged into `feat/upgrades`** (TASK-095–100): no class components/HOCs, no selfRef shim. TASK-099 also absorbed TASK-084 `getPageWidth`. New maintainability backlog raised 2026-06-14 (TASK-101–105). Next: TASK-101 (page-nav race bug — quick win) + TASK-073 (state-management research → Step 4) |
+| ⚛️ React 19 (reader-react) | 24 | 0 | 19 | **Steps 1 + 2 complete and merged into `feat/upgrades`** (TASK-095–100): no class components/HOCs, no selfRef shim. **Step 3 (TASK-073) done** — recommendation: drop Redux → `useSyncExternalStore` + stable API context (`STATE-MIGRATION-PLAN.md`); executes as TASK-106 (Step 4). Maintainability backlog TASK-101–105. Next: TASK-101 (page-nav race — quick win), then TASK-106 (state migration) |
 
 _"Active" = in progress. "Backlog" = not started (excludes superseded)._
 
@@ -191,12 +191,16 @@ turns every HOC→hook step into a mechanical swap with no half-wired state.
 | TASK-099 ✅ | 2 | Position HOCs→hooks: `with-node-position`, `with-iframe-position` (**absorbs deferred TASK-084 `getPageWidth`**) | Opus |
 | TASK-100 ✅ | 2 | Remove `selfRef` shim: `navigation`/`loader`/`resize` → hooks | Opus |
 
-**Step 3 (evaluate deps) — TASK-073 (research, now unblocked).** Decision lean:
-**away from Redux toward built-in React state** (reduce 3rd-party deps; RTK is
-the fallback, not the default). Also TASK-091 (react-player v3, independent).
+**Step 3 (evaluate deps) — TASK-073 ✅ complete.** Recommendation:
+**drop Redux → tiny `useSyncExternalStore` store + stable API context** (hybrid;
+RTK not needed — no blocker; thunks are a non-issue, 2 dead + 1 trivial). Full
+write-up in
+[`STATE-MIGRATION-PLAN.md`](./packages/b-ber-reader-react/STATE-MIGRATION-PLAN.md).
+Also TASK-091 (react-player v3, independent).
 
-**Step 4 (migrate state per findings)** — execution task opened from TASK-073's
-recommendation; best done after Steps 1–2 (functional components make it small).
+**Step 4 (migrate state per findings) — TASK-106 (open).** Executes the plan
+slice by slice (cold → warm → hot → `book.content` → drop `connect()`/deps).
+Best done after Steps 1–2 (complete); sequence [[TASK-105]] (colocation) after it.
 
 **Step 5 (reorg / best practices)** — TASK-068 (housekeeping), TASK-071 (docs),
 TASK-076 (SCSS→CSS Modules), plus general organization cleanup.
@@ -213,7 +217,7 @@ existing open tasks (noted in the right column).
 | **TASK-103** | housekeeping | Static-only helper classes → modules (`Asset`/`Cache`/`DOM`/`Request`/`Storage`/`Url`/`Viewport`/`XMLAdaptor`) | new — wide/shallow |
 | **TASK-104** | quality | Accessibility baseline (ARIA, focus mgmt, reduced-motion, live region) | new |
 | **TASK-105** | structure | Component colocation + types/CSS-module structure | new — **HOLD** until state migration + helper→module land; colocated-tests deferred pending tooling audit |
-| — | state | Drop Redux → `useSyncExternalStore` + stable API context; folds in `book.content` + cache reads | **TASK-073** (notes added) → Step 4 |
+| **TASK-106** | state | Execute the state migration: drop Redux → `useSyncExternalStore` + stable API context; folds in `book.content` | Step 4 — from **TASK-073** ✅ (`STATE-MIGRATION-PLAN.md`) |
 | — | styles | Inline/conditional styles → CSS Modules | **TASK-076** |
 | — | docs | Per-subdir documentation | **TASK-071** |
 | — | cleanup | Marker `debug` block + dangling `IMPROVEMENT_PLAN.md` comment refs | added to **TASK-068** |
@@ -227,7 +231,7 @@ existing open tasks (noted in the right column).
 3. **Step 2** HOCs→hooks ✅ **complete & merged**: TASK-098 (measurement) →
    TASK-099 (position) → TASK-100 (selfRef removal). All merged into
    `feat/upgrades`. **All `with-*` are hooks and the selfRef shim is gone.**
-4. **TASK-073** research decision → **Step 4** state migration.
+4. **TASK-073** ✅ research decision → **TASK-106** (Step 4) state migration.
 5. **TASK-091** anytime (independent dep upgrade).
 
 ### Deferred until *after* the migration (per user)
@@ -299,7 +303,7 @@ sequencing work:
 | Priority | Task | Action | Why now |
 | -------- | ---- | ------ | ------- |
 | 1 | TASK-101 | Fix the page-nav→chapter-skip load race (one guard in `useNavigation`) | Reproducible UX bug; small, isolated quick win |
-| 2 | TASK-073 | State-management research (built-in over Redux, leaning `useSyncExternalStore`) — output gates Step 4 | Steps 1+2 done (functional, hooks, no selfRef); the keystone remaining reader-react work |
+| 2 | TASK-106 | Execute the state migration (drop Redux → `useSyncExternalStore` + stable API context), per `STATE-MIGRATION-PLAN.md`, slice by slice | TASK-073 research done; the keystone remaining reader-react work; dissolves `connect()` + TASK-032 type debt |
 | 3 | TASK-050 | CLI handler tests | Unblocks TASK-046 and lifts cli coverage toward 75% |
 | 4 | TASK-004 | Push coverage laggards to 75% | Closes the coverage epic; cli + b-ber-tasks are the long poles |
 | 5 | TASK-055 | Create the testing skill | Newly unblocked by the green E2E pipeline |
