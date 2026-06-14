@@ -1,7 +1,4 @@
 import React from 'react'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import * as markerActions from '../actions/markers'
 import useNodePosition from '../hooks/use-node-position'
 
 interface MarkerProps {
@@ -39,7 +36,7 @@ function Marker(props: MarkerProps) {
   )
 }
 
-export default connect(
-  ({ markers }: { markers: unknown }) => ({ markers }),
-  (dispatch) => ({ markerActions: bindActionCreators(markerActions, dispatch) })
-)(Marker)
+// Marker reads its position from useNodePosition; the former
+// connect(markers, markerActions) injected props it never used (the bookmark
+// feature is unwired), so the dead subscription was dropped (TASK-106).
+export default Marker
