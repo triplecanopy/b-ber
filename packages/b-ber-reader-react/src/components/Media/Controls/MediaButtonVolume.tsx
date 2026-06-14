@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import React from 'react'
+import React, { useState } from 'react'
 import MediaRangeSlider from './MediaRangeSlider'
 
 interface MediaButtonVolumeProps {
@@ -7,48 +7,31 @@ interface MediaButtonVolumeProps {
   updateVolume: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
-interface MediaButtonVolumeState {
-  open: boolean
-}
+function MediaButtonVolume({ volume, updateVolume }: MediaButtonVolumeProps) {
+  const [open, setOpen] = useState(false)
 
-class MediaButtonVolume extends React.Component<
-  MediaButtonVolumeProps,
-  MediaButtonVolumeState
-> {
-  constructor(props: MediaButtonVolumeProps) {
-    super(props)
+  const toggle = () => setOpen((prev) => !prev)
 
-    this.state = { open: false }
-  }
-
-  toggle = () => this.setState((state) => ({ open: !state.open }))
-
-  render() {
-    const { open } = this.state
-
-    return (
-      <>
-        <div
-          className={classNames('bber-slider__volume', { 'bber-open': open })}
-        >
-          <MediaRangeSlider
-            duration={1} // max vol
-            progress={this.props.volume} // current vol
-            seek={this.props.updateVolume} // change handler
-          />
-        </div>
-        <button
-          className={classNames(
-            'bber-button material-icons bber-media__button__volume_up',
-            { 'bber-hover': open }
-          )}
-          onClick={this.toggle}
-        >
-          volume_up
-        </button>
-      </>
-    )
-  }
+  return (
+    <>
+      <div className={classNames('bber-slider__volume', { 'bber-open': open })}>
+        <MediaRangeSlider
+          duration={1} // max vol
+          progress={volume} // current vol
+          seek={updateVolume} // change handler
+        />
+      </div>
+      <button
+        className={classNames(
+          'bber-button material-icons bber-media__button__volume_up',
+          { 'bber-hover': open }
+        )}
+        onClick={toggle}
+      >
+        volume_up
+      </button>
+    </>
+  )
 }
 
 export default MediaButtonVolume
