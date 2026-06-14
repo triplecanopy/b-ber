@@ -1,7 +1,6 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { isBrowser } from '../../helpers/utils'
 import Viewport from '../../helpers/Viewport'
-import ReaderContext from '../../lib/reader-context'
 import withIframePosition from '../../lib/with-iframe-position'
 import withNodePosition from '../../lib/with-node-position'
 
@@ -28,71 +27,64 @@ interface IframeProps {
   [key: string]: any
 }
 
-class Iframe extends React.Component<IframeProps> {
-  static contextType = ReaderContext
-
-  componentDidMount() {
-    window.addEventListener('blur', this.focusWindow)
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('blur', this.focusWindow)
-  }
+function Iframe(props: IframeProps) {
+  const {
+    attrs,
+    viewerSettings,
+    iframePlaceholderTop,
+    iframePlaceholderWidth,
+  } = props
 
   // Prevent iframe from stealing focus
-  focusWindow = () => setTimeout(() => window.focus(), 60)
+  useEffect(() => {
+    const focusWindow = () => setTimeout(() => window.focus(), 60)
 
-  render() {
-    const {
-      attrs,
-      viewerSettings,
-      iframePlaceholderTop,
-      iframePlaceholderWidth,
-    } = this.props
+    window.addEventListener('blur', focusWindow)
+    return () => window.removeEventListener('blur', focusWindow)
+  }, [])
 
-    const { src, title, width, height } = attrs
+  const { src, title, width, height } = attrs
 
-    let iframeContainerStyles: React.CSSProperties = {}
+  let iframeContainerStyles: React.CSSProperties = {}
 
-    // Set styles for absolutely positioned desktop elements for browser
-    // behaviour
-    if (iframePositioningEnabled) {
-      // Viewport.isSingleColumn ignores its argument; the original JS passed
-      // viewerSettings, preserved here via a cast.
-      const mobile = (Viewport.isSingleColumn as any)(viewerSettings)
-      const position = mobile ? 'static' : 'absolute' // Only run re-positioning on desktop
+  // Set styles for absolutely positioned desktop elements for browser
+  // behaviour
+  if (iframePositioningEnabled) {
+    // Viewport.isSingleColumn ignores its argument; the original JS passed
+    // viewerSettings, preserved here via a cast.
+    const mobile = (Viewport.isSingleColumn as any)(viewerSettings)
+    const position = mobile ? 'static' : 'absolute' // Only run re-positioning on desktop
 
-      iframeContainerStyles = {
-        top: iframePlaceholderTop,
-        width,
-        maxWidth: mobile ? '100%' : iframePlaceholderWidth,
-        position,
-      }
+    iframeContainerStyles = {
+      top: iframePlaceholderTop,
+      width,
+      maxWidth: mobile ? '100%' : iframePlaceholderWidth,
+      position,
     }
-
-    return (
-      <>
-        {/* Styles for iframe layout */}
-        {iframePositioningEnabled && (
-          <style>{this.props.iframeStyleBlock('iframe')}</style>
-        )}
-
-        {/* See Vimeo.tsx for details about the iframe-placeholder element */}
-        {iframePositioningEnabled && (
-          <div
-            key={`placholder-${src}`}
-            style={{ paddingTop: height }}
-            className="bber-iframe-placeholder"
-            ref={this.props.innerRef}
-          />
-        )}
-
-        <div style={iframeContainerStyles} key={src} ref={this.props.elemRef}>
-          <iframe src={src} title={title} {...attrs} />
-        </div>
-      </>
-    )
   }
+
+  return (
+    <>
+      {/* Styles for iframe layout */}
+      {iframePositioningEnabled && (
+        <style>{props.iframeStyleBlock('iframe')}</style>
+      )}
+
+      {/* See Vimeo.tsx for details about the iframe-placeholder element */}
+      {iframePositioningEnabled && (
+        <div
+          key={`placholder-${src}`}
+          style={{ paddingTop: height }}
+          className="bber-iframe-placeholder"
+          ref={props.innerRef}
+        />
+      )}
+
+      <div style={iframeContainerStyles} key={src} ref={props.elemRef}>
+        <iframe src={src} title={title} {...attrs} />
+      </div>
+    </>
+  )
 }
 
 export default withNodePosition(

@@ -3,6 +3,18 @@
 import { render } from '@testing-library/react'
 import React from 'react'
 
+// These tests call jest.resetModules() so the component re-evaluates its
+// module-level browser check (iframePositioningEnabled) under different mocks.
+// resetModules() also creates a fresh React copy whose hook dispatcher is null
+// at render time — now that Iframe is functional, that crashes on useEffect.
+// Pin one React instance (the one RTL renders with) across resets.
+jest.mock('react', () => {
+  if (!globalThis.__reactSingleton) {
+    globalThis.__reactSingleton = jest.requireActual('react')
+  }
+  return globalThis.__reactSingleton
+})
+
 jest.mock(
   '../../../src/lib/with-node-position',
   () => (WrappedComponent) => (props) => <WrappedComponent {...props} />
