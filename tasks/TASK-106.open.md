@@ -33,9 +33,11 @@ imperative methods. Drop `react-redux`, `redux`, `redux-thunk`, and
       subscription removed from `Marker`; `readerSettings` moved to the store
       (App writer + Link/Spread/Controls/Frame/Sidebar×3/Reader/use-node-position
       readers), tests migrated to `renderWithStore`/`renderWithStores`.
-- [ ] Migrate warm slices: `userInterface`, `readerLocation`; port
+- [x] Migrate warm slices: `userInterface`, `readerLocation`; port
       `setInitialSearchParams` to a snapshot-reading function; **delete the dead
-      `viewerSettings.load`/`save` thunks**
+      `viewerSettings.load`/`save` thunks**. Store-backed action bundles in
+      `store/userInterfaceActions.ts` + `store/readerLocationActions.ts`
+      (injected into Reader `propsRef`); App is now connect-free.
 - [ ] Migrate hot slices: `view`, then `viewerSettings` — **with a re-render
       check** proving parity with the `connect` baseline (Profiler/render-counter)
 - [ ] Move `book.content` into the store as `{ spineItemURL, node }` (atomic

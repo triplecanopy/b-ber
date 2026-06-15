@@ -203,11 +203,13 @@ Also TASK-091 (react-player v3, independent).
 warm → hot → `book.content` → drop `connect()`/deps). Best done after Steps 1–2
 (complete); sequence TASK-105 (colocation) after it. **Done so far:** scaffold
 (`createReaderStore`/`StoreContext`/`useStore`/`renderWithStore`), `markers`
-(dead subscription removed), and the cold `readerSettings` slice (App writer +
-all readers on the store). **Remaining:** warm (`userInterface`, `readerLocation`
-+ delete dead `viewerSettings` thunks), hot (`view`, `viewerSettings` — needs
-the re-render check), `book.content` move, `ReaderApiContext`, `connect()` + dep
-removal, and the **browser QA** gate (`SPREAD-CLUSTER-QA.md`).
+(dead subscription removed), cold `readerSettings`, and the warm
+`userInterface` + `readerLocation` slices (store-backed action bundles in
+`store/userInterfaceActions.ts` + `store/readerLocationActions.ts`; dead
+`viewerSettings` thunks deleted; App is now connect-free). **Remaining:** hot
+(`view`, `viewerSettings` — needs the re-render check), `book.content` move,
+`ReaderApiContext`, `connect()` + dep removal, and the **browser QA** gate
+(`SPREAD-CLUSTER-QA.md`). Pending manual QA of the cold+warm work before hot.
 
 **Step 5 (reorg / best practices)** — TASK-068 (housekeeping), TASK-071 (docs),
 TASK-076 (SCSS→CSS Modules), plus general organization cleanup.
