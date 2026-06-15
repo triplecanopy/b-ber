@@ -1,5 +1,5 @@
-import { locationStates } from '../actions/reader-location'
 import * as actionTypes from '../constants/reader-settings'
+import { locationStates } from '../store/readerLocationActions'
 import type { ReaderSettingsState, ReducerAction } from '../store/types'
 
 export const initialState: ReaderSettingsState = {

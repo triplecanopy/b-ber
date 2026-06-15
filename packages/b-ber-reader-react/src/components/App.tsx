@@ -1,34 +1,24 @@
 import find from 'lodash/find'
 import React, { useEffect } from 'react'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import * as readerLocationActions from '../actions/reader-location'
 import Request from '../helpers/Request'
+import { useReaderLocationActions } from '../store/readerLocationActions'
 import { useReaderStore, useStore } from '../store/StoreContext'
-import type {
-  AppDispatch,
-  ReaderLocationState,
-  ReaderSettingsState,
-  RootState,
-} from '../store/types'
+import type { ReaderSettingsState } from '../store/types'
 import Reader from './Reader'
 
-interface AppProps {
-  readerLocation: ReaderLocationState
-  // bindActionCreators erases the precise per-creator signatures; the bundles
-  // are kept loose. TODO: tighten once dispatch typing is finalized (TASK-073).
-  readerLocationActions: Record<string, (...args: any[]) => unknown>
-}
-
-function App(props: AppProps) {
+// readerSettings and readerLocation both live in the built-in store now
+// (TASK-106), so App no longer connects to redux at all.
+function App() {
   const store = useReaderStore()
-  // readerSettings is read from and written to the built-in store (TASK-106);
+  // readerSettings is read from and written to the built-in store;
   // manifestURL is supplied by the host and merged into the slice at seed time.
   const readerSettings = useStore(
     (s) => s.readerSettings
   ) as ReaderSettingsState & {
     manifestURL?: string
   }
+  const searchParams = useStore((s) => s.readerLocation.searchParams)
+  const readerLocationActions = useReaderLocationActions()
 
   const updateSettings = (patch: Partial<ReaderSettingsState>) =>
     store.setState((s) => ({
@@ -144,13 +134,12 @@ function App(props: AppProps) {
         ...projectConfig,
       } as Partial<ReaderSettingsState>)
 
-      props.readerLocationActions.setInitialSearchParams()
+      readerLocationActions.setInitialSearchParams()
     }
 
     loadBook()
   }, [])
 
-  const { searchParams } = props.readerLocation
   const { bookURL } = readerSettings
 
   if (!searchParams || !bookURL) return null
@@ -160,24 +149,4 @@ function App(props: AppProps) {
   return <Reader style={style} className={className} {...rest} />
 }
 
-const mapStateToProps = ({ readerLocation }: RootState) => ({
-  readerLocation,
-})
-
-// Bound action bundles. bindActionCreators yields precise per-creator types
-// that don't line up with the loose action-bundle props on AppProps; cast each
-// to the loose shape so connect's prop inference matches. Behavior unchanged.
-const mapDispatchToProps = (
-  dispatch: AppDispatch
-): Pick<AppProps, 'readerLocationActions'> => ({
-  readerLocationActions: bindActionCreators(
-    // The module also exports the non-function `locationStates` const, which is
-    // not an action creator; cast so bindActionCreators accepts the module.
-    readerLocationActions as unknown as Parameters<
-      typeof bindActionCreators
-    >[0],
-    dispatch
-  ) as unknown as AppProps['readerLocationActions'],
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(App)
+export default App

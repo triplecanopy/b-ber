@@ -3,7 +3,6 @@ import isInteger from 'lodash/isInteger'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import * as readerLocationActions from '../../actions/reader-location'
 import * as viewActions from '../../actions/view'
 import * as viewerSettingsActions from '../../actions/viewer-settings'
 import Asset from '../../helpers/Asset'
@@ -11,6 +10,7 @@ import Url from '../../helpers/Url'
 import { unlessDefined } from '../../helpers/utils'
 import Viewport from '../../helpers/Viewport'
 import ReaderContext from '../../lib/reader-context'
+import { useReaderLocationActions } from '../../store/readerLocationActions'
 import { useReaderStore, useStore } from '../../store/StoreContext'
 import type { AppDispatch, RootState } from '../../store/types'
 import { useUserInterfaceActions } from '../../store/userInterfaceActions'
@@ -90,14 +90,16 @@ function Reader(props: ReaderComponentProps) {
     disableMobileResizeEvents: 'ontouchstart' in document.documentElement,
   })
 
-  // readerSettings and the userInterface action bundle now come from the
-  // built-in store (TASK-106); the remaining slices are still connect()ed onto
-  // props. Both are injected into the props ref below so the external modules
-  // keep reading `propsRef.current.readerSettings` /
-  // `propsRef.current.userInterfaceActions` unchanged.
+  // readerSettings, readerLocation, and the userInterface / readerLocation
+  // action bundles now come from the built-in store (TASK-106); the remaining
+  // slices (view, viewerSettings) are still connect()ed onto props. All are
+  // injected into the props ref below so the external modules keep reading
+  // `propsRef.current.readerLocation` / `.readerLocationActions` etc. unchanged.
   const store = useReaderStore()
   const readerSettings = useStore((s) => s.readerSettings)
+  const readerLocation = useStore((s) => s.readerLocation)
   const userInterfaceActions = useUserInterfaceActions()
+  const readerLocationActions = useReaderLocationActions()
 
   // ─── Live refs ─────────────────────────────────────────────────────────────
   // Keep refs that always hold the latest state and props. The external modules
@@ -110,9 +112,17 @@ function Reader(props: ReaderComponentProps) {
   const propsRef = useRef<ReaderProps>({
     ...props,
     readerSettings,
+    readerLocation,
     userInterfaceActions,
+    readerLocationActions,
   })
-  propsRef.current = { ...props, readerSettings, userInterfaceActions }
+  propsRef.current = {
+    ...props,
+    readerSettings,
+    readerLocation,
+    userInterfaceActions,
+    readerLocationActions,
+  }
 
   // ─── setState shim ─────────────────────────────────────────────────────────
   // The external modules call `this.setState(partialState, callback)`.
@@ -354,11 +364,11 @@ function Reader(props: ReaderComponentProps) {
   //
   // NOTE: The original class component had the same double-load pattern via
   // UNSAFE_componentWillReceiveProps. This fix removes that redundancy.
-  const prevSearchParamsRef = useRef(props.readerLocation.searchParams)
+  const prevSearchParamsRef = useRef(readerLocation.searchParams)
 
   useEffect(() => {
     const prevSearchParams = prevSearchParamsRef.current
-    const nextSearchParams = props.readerLocation.searchParams
+    const nextSearchParams = readerLocation.searchParams
     prevSearchParamsRef.current = nextSearchParams
 
     // Guard against re-running with the same value (e.g. React Strict Mode
@@ -398,7 +408,7 @@ function Reader(props: ReaderComponentProps) {
     // Same chapter, different spread → update navigation state, which will
     // trigger a transform update in Layout
     setState({ slug, currentSpineItemIndex, spreadIndex })
-  }, [props.readerLocation.searchParams])
+  }, [readerLocation.searchParams])
 
   // ─── React to view.loaded / lastSpreadIndex changes ────────────────────────
   // Replaces the view.loaded branch of UNSAFE_componentWillReceiveProps.
@@ -487,13 +497,8 @@ function Reader(props: ReaderComponentProps) {
   )
 }
 
-const mapStateToProps = ({
+const mapStateToProps = ({ viewerSettings, view }: RootState) => ({
   viewerSettings,
-  readerLocation,
-  view,
-}: RootState) => ({
-  viewerSettings,
-  readerLocation,
   view,
 })
 
@@ -502,7 +507,7 @@ const mapStateToProps = ({
 // the loose shape so connect's prop inference matches. Behavior unchanged.
 type ReaderDispatchProps = Pick<
   ReaderProps,
-  'viewerSettingsActions' | 'readerLocationActions' | 'viewActions'
+  'viewerSettingsActions' | 'viewActions'
 >
 
 const mapDispatchToProps = (dispatch: AppDispatch): ReaderDispatchProps => ({
@@ -510,14 +515,6 @@ const mapDispatchToProps = (dispatch: AppDispatch): ReaderDispatchProps => ({
     viewerSettingsActions,
     dispatch
   ) as unknown as ReaderProps['viewerSettingsActions'],
-  readerLocationActions: bindActionCreators(
-    // The module also exports the non-function `locationStates` const; cast so
-    // bindActionCreators accepts the module.
-    readerLocationActions as unknown as Parameters<
-      typeof bindActionCreators
-    >[0],
-    dispatch
-  ) as unknown as ReaderProps['readerLocationActions'],
   viewActions: bindActionCreators(
     viewActions,
     dispatch

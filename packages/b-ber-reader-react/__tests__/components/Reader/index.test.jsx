@@ -19,7 +19,6 @@
 
 import { act } from '@testing-library/react'
 import React from 'react'
-import * as readerLocationActions from '../../../src/actions/reader-location'
 import * as viewActions from '../../../src/actions/view'
 import Reader from '../../../src/components/Reader'
 import { book } from '../../../src/components/Reader/loader'
@@ -178,7 +177,7 @@ describe('Reader', () => {
   })
 
   test('searchParams effect: same chapter, different spread updates spreadIndex without loading', () => {
-    const { store } = renderReader({
+    const { readerStore } = renderReader({
       readerLocation: {
         searchParams: '?slug=chapter-1&currentSpineItemIndex=0&spreadIndex=0',
       },
@@ -187,18 +186,19 @@ describe('Reader', () => {
     mockLoaderFns.loadSpineItem.mockClear()
 
     act(() => {
-      store.dispatch(
-        readerLocationActions.updateLocation({
+      // readerLocation now lives in the built-in store (TASK-106)
+      readerStore.setState({
+        readerLocation: {
           searchParams: '?slug=chapter-1&currentSpineItemIndex=0&spreadIndex=1',
-        })
-      )
+        },
+      })
     })
 
     expect(mockLoaderFns.loadSpineItem).not.toHaveBeenCalled()
   })
 
   test('searchParams effect: different slug (external nav) loads the matched spine item', () => {
-    const { store } = renderReader({
+    const { readerStore } = renderReader({
       readerLocation: {
         searchParams: '?slug=chapter-1&currentSpineItemIndex=0&spreadIndex=0',
       },
@@ -207,11 +207,11 @@ describe('Reader', () => {
     mockLoaderFns.loadSpineItem.mockClear()
 
     act(() => {
-      store.dispatch(
-        readerLocationActions.updateLocation({
+      readerStore.setState({
+        readerLocation: {
           searchParams: '?slug=chapter-2&currentSpineItemIndex=1&spreadIndex=0',
-        })
-      )
+        },
+      })
     })
 
     // currentSpineItem is null in initial state (createStateFromOPF is mocked),
@@ -223,15 +223,15 @@ describe('Reader', () => {
 
   test('searchParams effect: same searchParams value is a no-op (guard)', () => {
     const searchParams = '?slug=chapter-1&currentSpineItemIndex=0&spreadIndex=0'
-    const { store } = renderReader({
+    const { readerStore } = renderReader({
       readerLocation: { searchParams },
     })
 
     mockLoaderFns.loadSpineItem.mockClear()
 
     act(() => {
-      // Dispatch the exact same searchParams value again
-      store.dispatch(readerLocationActions.updateLocation({ searchParams }))
+      // Set the exact same searchParams value again
+      readerStore.setState({ readerLocation: { searchParams } })
     })
 
     expect(mockLoaderFns.loadSpineItem).not.toHaveBeenCalled()

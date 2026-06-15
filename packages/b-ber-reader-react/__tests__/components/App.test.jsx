@@ -47,7 +47,7 @@ describe('App', () => {
   }
 
   test('manifestURL + bookURL both set logs an error but continues', async () => {
-    const { reduxStore, findByTestId } = renderApp({
+    const { readerStore, findByTestId } = renderApp({
       readerSettings: {
         manifestURL: 'https://example.com/manifest.json',
         bookURL: 'https://example.com/book/OPS',
@@ -60,8 +60,9 @@ describe('App', () => {
       'Multiple endpoints. Specify either `manifestURL` or `bookURL`'
     )
 
+    // readerLocation now lives in the built-in store (TASK-106)
     expect(
-      reduxStore.getState().readerLocation.searchParams
+      readerStore.getSnapshot().readerLocation.searchParams
     ).not.toBeUndefined()
   })
 

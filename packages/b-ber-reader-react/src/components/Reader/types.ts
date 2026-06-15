@@ -67,14 +67,18 @@ export interface ReaderProps {
   userInterfaceActions: BoundActions
 }
 
-// Props the Reader *function* receives. readerSettings and userInterfaceActions
+// Props the Reader *function* receives. The store-backed slices/bundles
+// (readerSettings, readerLocation, userInterfaceActions, readerLocationActions)
 // are no longer threaded in (Reader reads them from the built-in store and
 // injects them into propsRef — TASK-106), so they are omitted from the
 // component's own/connected prop surface while remaining on ReaderProps for the
 // modules that read propsRef.
 export type ReaderComponentProps = Omit<
   ReaderProps,
-  'readerSettings' | 'userInterfaceActions'
+  | 'readerSettings'
+  | 'readerLocation'
+  | 'userInterfaceActions'
+  | 'readerLocationActions'
 >
 
 // setState shim signature — the class-style partial-merge + callback setter the
