@@ -198,9 +198,16 @@ write-up in
 [`STATE-MIGRATION-PLAN.md`](./packages/b-ber-reader-react/STATE-MIGRATION-PLAN.md).
 Also TASK-091 (react-player v3, independent).
 
-**Step 4 (migrate state per findings) — TASK-106 (open).** Executes the plan
-slice by slice (cold → warm → hot → `book.content` → drop `connect()`/deps).
-Best done after Steps 1–2 (complete); sequence [[TASK-105]] (colocation) after it.
+**Step 4 (migrate state per findings) — TASK-106 (in progress,
+`feat/reader-react-state-migration`).** Executes the plan slice by slice (cold →
+warm → hot → `book.content` → drop `connect()`/deps). Best done after Steps 1–2
+(complete); sequence TASK-105 (colocation) after it. **Done so far:** scaffold
+(`createReaderStore`/`StoreContext`/`useStore`/`renderWithStore`), `markers`
+(dead subscription removed), and the cold `readerSettings` slice (App writer +
+all readers on the store). **Remaining:** warm (`userInterface`, `readerLocation`
++ delete dead `viewerSettings` thunks), hot (`view`, `viewerSettings` — needs
+the re-render check), `book.content` move, `ReaderApiContext`, `connect()` + dep
+removal, and the **browser QA** gate (`SPREAD-CLUSTER-QA.md`).
 
 **Step 5 (reorg / best practices)** — TASK-068 (housekeeping), TASK-071 (docs),
 TASK-076 (SCSS→CSS Modules), plus general organization cleanup.
