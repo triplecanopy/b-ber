@@ -1,9 +1,13 @@
 /* eslint-disable react/jsx-props-no-spreading */
 
-import { fireEvent } from '@testing-library/react'
+import { fireEvent, render } from '@testing-library/react'
 import React from 'react'
 import SidebarChapters from '../../../src/components/Sidebar/SidebarChapters'
-import { renderWithStore } from '../../helpers/renderWithStore'
+import { StoreProvider } from '../../../src/store/StoreContext'
+import {
+  createTestReaderStore,
+  renderWithStore,
+} from '../../helpers/renderWithStore'
 
 const buildSpine = () => [
   {
@@ -53,6 +57,32 @@ describe('SidebarChapters', () => {
     const { container } = renderWithStore(<SidebarChapters {...props} />)
 
     expect(container.innerHTML).toBe('')
+  })
+
+  test('toggling the same instance closed → open does not crash (stable hook order)', () => {
+    // The sidebar stays mounted with showSidebar as a prop, so opening it
+    // re-renders the same instance. useMaxHeight must run unconditionally or the
+    // hook count changes between renders and React throws, blanking the tree.
+    const store = createTestReaderStore()
+    const props = {
+      spine: buildSpine(),
+      currentSpineItemIndex: 0,
+      navigateToChapterByURL: jest.fn(),
+    }
+
+    const { rerender, container } = render(
+      <StoreProvider store={store}>
+        <SidebarChapters {...props} showSidebar={null} />
+      </StoreProvider>
+    )
+    expect(container.innerHTML).toBe('')
+
+    rerender(
+      <StoreProvider store={store}>
+        <SidebarChapters {...props} showSidebar="chapters" />
+      </StoreProvider>
+    )
+    expect(container.querySelectorAll('button').length).toBeGreaterThan(0)
   })
 
   test('renders nested chapter list, highlights current item, and navigates on click', () => {

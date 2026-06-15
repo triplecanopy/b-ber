@@ -15,7 +15,11 @@ interface SidebarMetadataProps {
 }
 
 function SidebarMetadata(props: SidebarMetadataProps) {
+  // All hooks must run unconditionally and in the same order every render —
+  // useMaxHeight stays above the early returns below (a conditional call would
+  // change the hook count when the sidebar opens/closes and crash the tree).
   const readerSettings = useStore((s) => s.readerSettings)
+  const [ref, maxHeight] = useMaxHeight()
 
   if (readerSettings.SidebarMetadata) {
     // Consumer override is stored as a ComponentType but invoked as a plain
@@ -27,8 +31,6 @@ function SidebarMetadata(props: SidebarMetadataProps) {
   }
 
   if (props.showSidebar !== 'metadata') return null
-
-  const [ref, maxHeight] = useMaxHeight()
 
   return (
     <nav

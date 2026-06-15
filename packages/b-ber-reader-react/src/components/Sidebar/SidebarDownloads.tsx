@@ -38,7 +38,11 @@ interface SidebarDownloadsProps {
 }
 
 function SidebarDownloads(props: SidebarDownloadsProps) {
+  // All hooks must run unconditionally and in the same order every render —
+  // useMaxHeight stays above the early returns below (a conditional call would
+  // change the hook count when the sidebar opens/closes and crash the tree).
   const readerSettings = useStore((s) => s.readerSettings)
+  const [ref, maxHeight] = useMaxHeight()
 
   if (readerSettings.SidebarDownloads) {
     // Consumer override is stored as a ComponentType but invoked as a plain
@@ -50,8 +54,6 @@ function SidebarDownloads(props: SidebarDownloadsProps) {
   }
 
   if (props.showSidebar !== 'downloads') return null
-
-  const [ref, maxHeight] = useMaxHeight()
 
   return (
     <nav
