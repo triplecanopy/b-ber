@@ -37,6 +37,16 @@ export const useResize = ({
   const runResizeStart = useCallback((): void => {
     if (stateRef.current.disableMobileResizeEvents) return
 
+    // Capture the pre-resize position BEFORE freeze() resets
+    // view.lastSpreadIndex to -1. freeze() writes userInterface to the built-in
+    // store, whose synchronous notify can flush the redux lastSpreadIndex=-1
+    // into props before we read it; reading first makes the ratio robust
+    // regardless of that flush timing (MIGRATION-CONVENTIONS §3c). Reading -1
+    // here zeroes relativeSpreadPosition and snaps the view back to the first
+    // spread after every resize.
+    const { spreadIndex } = stateRef.current
+    const { lastSpreadIndex } = propsRef.current.view
+
     // Hide the UI behind the spinnner while the window is being resized and
     // dimensions recalculated
     api.current.freeze()
@@ -50,9 +60,6 @@ export const useResize = ({
     // deliberately omits unload() to avoid restarting the OLD chapter's Ultimate
     // during navigation; the resize path is the case that genuinely needs it.
     propsRef.current.viewActions.unload()
-
-    const { spreadIndex } = stateRef.current
-    const { lastSpreadIndex } = propsRef.current.view
 
     let relativeSpreadPosition = 0
     if (spreadIndex > 0 && lastSpreadIndex > 0) {
