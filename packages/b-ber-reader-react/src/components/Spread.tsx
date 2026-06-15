@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import Viewport from '../helpers/Viewport'
 import browser from '../lib/browser'
 import SpreadContext from '../lib/spread-context'
+import { useStore } from '../store/StoreContext'
 import type { RootState } from '../store/types'
 
 // Upper bound on the per-frame re-measurement loop (see updatePosition). A spread
@@ -11,7 +12,6 @@ import type { RootState } from '../store/types'
 const MAX_STABILIZE_FRAMES = 30
 
 interface SpreadProps {
-  readerSettings: RootState['readerSettings']
   viewerSettings: RootState['viewerSettings']
   view: RootState['view']
   layout?: string
@@ -21,6 +21,9 @@ interface SpreadProps {
 }
 
 function Spread(props: SpreadProps) {
+  // readerSettings is read from the built-in store (TASK-106); viewerSettings
+  // and view are still connect()ed.
+  const readerSettings = useStore((s) => s.readerSettings)
   const node = useRef<HTMLDivElement>(null)
 
   // The rounded column index of this spread (quantised to multiples of 0.5 in
@@ -153,7 +156,7 @@ function Spread(props: SpreadProps) {
   const multiplier = verso ? 2 : 3
 
   const spreadContextValue = useMemo(() => {
-    const isScrolling = Viewport.isVerticallyScrolling(props.readerSettings)
+    const isScrolling = Viewport.isVerticallyScrolling(readerSettings)
 
     let nextLeft = 0
 
@@ -183,7 +186,7 @@ function Spread(props: SpreadProps) {
       // to match the pre-TS runtime behavior.
       layout: props.layout as string,
     }
-  }, [offset, verso, props.viewerSettings, props.readerSettings, props.layout])
+  }, [offset, verso, props.viewerSettings, readerSettings, props.layout])
 
   // detect-browser types `browser` as a union (BrowserInfo | BotInfo | null);
   // the runtime only ever reads `.name`. Narrow via optional chaining to keep
@@ -228,8 +231,7 @@ function Spread(props: SpreadProps) {
 }
 
 export default connect(
-  ({ readerSettings, viewerSettings, view }: RootState) => ({
-    readerSettings,
+  ({ viewerSettings, view }: RootState) => ({
     viewerSettings,
     view,
   }),

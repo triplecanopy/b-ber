@@ -1,30 +1,22 @@
 /* eslint-disable react/jsx-props-no-spreading */
 
-import { render } from '@testing-library/react'
 import React from 'react'
-import { Provider } from 'react-redux'
 import SidebarMetadata from '../../../src/components/Sidebar/SidebarMetadata'
-import { createTestStore } from '../../helpers/store'
+import { renderWithStore } from '../../helpers/renderWithStore'
 
 describe('SidebarMetadata', () => {
   test('renders null when showSidebar is not "metadata"', () => {
-    const store = createTestStore()
     const props = {
       showSidebar: 'chapters',
       metadata: { Title: 'My Book' },
     }
 
-    const { container } = render(
-      <Provider store={store}>
-        <SidebarMetadata {...props} />
-      </Provider>
-    )
+    const { container } = renderWithStore(<SidebarMetadata {...props} />)
 
     expect(container.innerHTML).toBe('')
   })
 
   test('renders dl/dt/dd entries and skips falsy keys/values', () => {
-    const store = createTestStore()
     const props = {
       showSidebar: 'metadata',
       metadata: {
@@ -35,10 +27,8 @@ describe('SidebarMetadata', () => {
       },
     }
 
-    const { container, getByText } = render(
-      <Provider store={store}>
-        <SidebarMetadata {...props} />
-      </Provider>
+    const { container, getByText } = renderWithStore(
+      <SidebarMetadata {...props} />
     )
 
     const dl = container.querySelector('dl.bber-dl')
@@ -59,20 +49,16 @@ describe('SidebarMetadata', () => {
       <div data-testid="custom-metadata">{props.showSidebar}</div>
     ))
 
-    const store = createTestStore({
-      readerSettings: { SidebarMetadata: SidebarMetadataOverride },
-    })
-
     const props = {
       showSidebar: 'metadata',
       metadata: {},
     }
 
-    const { getByTestId } = render(
-      <Provider store={store}>
-        <SidebarMetadata {...props} />
-      </Provider>
-    )
+    const { getByTestId } = renderWithStore(<SidebarMetadata {...props} />, {
+      overrides: {
+        readerSettings: { SidebarMetadata: SidebarMetadataOverride },
+      },
+    })
 
     expect(getByTestId('custom-metadata').textContent).toBe('metadata')
     expect(SidebarMetadataOverride).toHaveBeenCalled()

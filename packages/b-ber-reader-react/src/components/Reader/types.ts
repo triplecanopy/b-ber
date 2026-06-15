@@ -63,11 +63,16 @@ export interface ReaderProps {
   className: string
 
   viewerSettingsActions: BoundActions
-  readerSettingsActions: BoundActions
   readerLocationActions: BoundActions
   viewActions: BoundActions
   userInterfaceActions: BoundActions
 }
+
+// Props the Reader *function* receives. readerSettings is no longer threaded in
+// (Reader reads it from the built-in store and injects it into propsRef —
+// TASK-106), so it is omitted from the component's own/connected prop surface
+// while remaining on ReaderProps for the modules that read propsRef.
+export type ReaderComponentProps = Omit<ReaderProps, 'readerSettings'>
 
 // setState shim signature — the class-style partial-merge + callback setter the
 // Reader exposes and the hooks below call.

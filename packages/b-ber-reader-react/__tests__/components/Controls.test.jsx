@@ -14,6 +14,8 @@ import { fireEvent, render } from '@testing-library/react'
 import React from 'react'
 import { Provider } from 'react-redux'
 import Controls from '../../src/components/Controls'
+import { StoreProvider } from '../../src/store/StoreContext'
+import { createTestReaderStore } from '../helpers/renderWithStore'
 import { createTestStore } from '../helpers/store'
 
 jest.mock('../../src/components/Navigation', () => ({
@@ -26,7 +28,10 @@ jest.mock('../../src/components/Navigation', () => ({
 }))
 
 function renderControls(props = {}, overrides = {}) {
+  // Controls reads readerSettings from the built-in store and
+  // userInterface/viewerSettings from redux; seed both (TASK-106).
   const store = createTestStore(overrides)
+  const readerStore = createTestReaderStore(overrides)
   const handlePageNavigation = jest.fn()
   const handleSidebarButtonClick = jest.fn()
   const handleChapterNavigation = jest.fn()
@@ -53,7 +58,9 @@ function renderControls(props = {}, overrides = {}) {
 
   const utils = render(
     <Provider store={store}>
-      <Controls {...defaultProps} />
+      <StoreProvider store={readerStore}>
+        <Controls {...defaultProps} />
+      </StoreProvider>
     </Provider>
   )
 

@@ -1,30 +1,22 @@
 /* eslint-disable react/jsx-props-no-spreading */
 
-import { render } from '@testing-library/react'
 import React from 'react'
-import { Provider } from 'react-redux'
 import SidebarDownloads from '../../../src/components/Sidebar/SidebarDownloads'
-import { createTestStore } from '../../helpers/store'
+import { renderWithStore } from '../../helpers/renderWithStore'
 
 describe('SidebarDownloads', () => {
   test('renders null when showSidebar is not "downloads"', () => {
-    const store = createTestStore()
     const props = {
       showSidebar: 'chapters',
       downloads: [{ url: '/a.epub', label: 'EPUB' }],
     }
 
-    const { container } = render(
-      <Provider store={store}>
-        <SidebarDownloads {...props} />
-      </Provider>
-    )
+    const { container } = renderWithStore(<SidebarDownloads {...props} />)
 
     expect(container.innerHTML).toBe('')
   })
 
   test('renders a list of download links, with and without description', () => {
-    const store = createTestStore()
     const props = {
       showSidebar: 'downloads',
       downloads: [
@@ -33,10 +25,8 @@ describe('SidebarDownloads', () => {
       ],
     }
 
-    const { container, getByText } = render(
-      <Provider store={store}>
-        <SidebarDownloads {...props} />
-      </Provider>
+    const { container, getByText } = renderWithStore(
+      <SidebarDownloads {...props} />
     )
 
     const links = container.querySelectorAll('a.bber-a')
@@ -57,20 +47,16 @@ describe('SidebarDownloads', () => {
       <div data-testid="custom-downloads">{props.showSidebar}</div>
     ))
 
-    const store = createTestStore({
-      readerSettings: { SidebarDownloads: SidebarDownloadsOverride },
-    })
-
     const props = {
       showSidebar: 'downloads',
       downloads: [],
     }
 
-    const { getByTestId } = render(
-      <Provider store={store}>
-        <SidebarDownloads {...props} />
-      </Provider>
-    )
+    const { getByTestId } = renderWithStore(<SidebarDownloads {...props} />, {
+      overrides: {
+        readerSettings: { SidebarDownloads: SidebarDownloadsOverride },
+      },
+    })
 
     expect(getByTestId('custom-downloads').textContent).toBe('downloads')
     expect(SidebarDownloadsOverride).toHaveBeenCalled()

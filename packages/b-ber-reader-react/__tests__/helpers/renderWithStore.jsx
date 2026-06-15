@@ -1,8 +1,10 @@
 import { render } from '@testing-library/react'
 import React from 'react'
+import { Provider } from 'react-redux'
 import { createReaderStore } from '../../src/store/createReaderStore'
 import { createInitialState } from '../../src/store/initialState'
 import { StoreProvider } from '../../src/store/StoreContext'
+import { createTestStore } from './store'
 
 /**
  * Create a built-in reader store for tests, seeded like the real reader.
@@ -44,4 +46,23 @@ export function renderWithStore(ui, { overrides, store, ...options } = {}) {
     options
   )
   return { ...result, store: readerStore }
+}
+
+/**
+ * Render `ui` wrapped in BOTH the redux `Provider` and the built-in
+ * `StoreProvider`, each seeded from the same `overrides`. Used during the
+ * slice-by-slice migration (TASK-106) for components that still read some
+ * slices from redux while others have moved to the built-in store. Drops to
+ * `renderWithStore` once a component is fully off redux.
+ */
+export function renderWithStores(ui, { overrides = {}, ...options } = {}) {
+  const reduxStore = createTestStore(overrides)
+  const readerStore = createTestReaderStore(overrides)
+  const result = render(
+    <Provider store={reduxStore}>
+      <StoreProvider store={readerStore}>{ui}</StoreProvider>
+    </Provider>,
+    options
+  )
+  return { ...result, reduxStore, readerStore }
 }

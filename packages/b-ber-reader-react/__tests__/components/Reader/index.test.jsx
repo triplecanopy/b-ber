@@ -17,16 +17,15 @@
  *     loader's own tests.
  */
 
-import { act, render } from '@testing-library/react'
+import { act } from '@testing-library/react'
 import React from 'react'
-import { Provider } from 'react-redux'
 import * as readerLocationActions from '../../../src/actions/reader-location'
 import * as viewActions from '../../../src/actions/view'
 import Reader from '../../../src/components/Reader'
 import { book } from '../../../src/components/Reader/loader'
 import Asset from '../../../src/helpers/Asset'
 import { makeTwoChapterSpine } from '../../helpers/fixtures'
-import { createTestStore } from '../../helpers/store'
+import { renderWithStores } from '../../helpers/renderWithStore'
 
 // The orchestrator logic now lives in three hooks. Mock each to return stable
 // jest.fn stand-ins the tests can assert on. useLoader additionally records the
@@ -117,13 +116,11 @@ describe('Reader', () => {
   })
 
   function renderReader(overrides = {}) {
-    const store = createTestStore(overrides)
-    const utils = render(
-      <Provider store={store}>
-        <Reader />
-      </Provider>
-    )
-    return { store, ...utils }
+    // readerSettings is read from the built-in store; view/userInterface/
+    // readerLocation are still redux. `store` aliases the redux store for the
+    // existing getState/dispatch assertions (TASK-106).
+    const utils = renderWithStores(<Reader />, { overrides })
+    return { store: utils.reduxStore, ...utils }
   }
 
   test('on mount, shows the spinner and calls createStateFromOPF', () => {

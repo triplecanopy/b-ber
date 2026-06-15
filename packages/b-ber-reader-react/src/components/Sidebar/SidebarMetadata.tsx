@@ -1,8 +1,7 @@
 import classNames from 'classnames'
 import React from 'react'
-import { connect } from 'react-redux'
 import useMaxHeight from '../../hooks/use-max-height'
-import type { ReaderSettingsState, RootState } from '../../store/types'
+import { useStore } from '../../store/StoreContext'
 
 type SidebarName = 'chapters' | 'downloads' | 'metadata' | 'settings'
 
@@ -13,15 +12,15 @@ type Metadata = Record<string, string>
 interface SidebarMetadataProps {
   showSidebar: SidebarName | null
   metadata: Metadata
-  // Injected by connect; also the consumer-override slot read below.
-  readerSettings: ReaderSettingsState
 }
 
 function SidebarMetadata(props: SidebarMetadataProps) {
-  if (props.readerSettings.SidebarMetadata) {
+  const readerSettings = useStore((s) => s.readerSettings)
+
+  if (readerSettings.SidebarMetadata) {
     // Consumer override is stored as a ComponentType but invoked as a plain
     // render function (its original JS contract); cast to match that call.
-    const Override = props.readerSettings.SidebarMetadata as (
+    const Override = readerSettings.SidebarMetadata as (
       p: SidebarMetadataProps
     ) => React.ReactElement
     return Override(props)
@@ -58,6 +57,4 @@ function SidebarMetadata(props: SidebarMetadataProps) {
   )
 }
 
-export default connect(({ readerSettings }: RootState) => ({ readerSettings }))(
-  SidebarMetadata
-)
+export default SidebarMetadata

@@ -4,7 +4,6 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as readerLocationActions from '../../actions/reader-location'
-import * as readerSettingsActions from '../../actions/reader-settings'
 import * as userInterfaceActions from '../../actions/user-interface'
 import * as viewActions from '../../actions/view'
 import * as viewerSettingsActions from '../../actions/viewer-settings'
@@ -13,6 +12,7 @@ import Url from '../../helpers/Url'
 import { unlessDefined } from '../../helpers/utils'
 import Viewport from '../../helpers/Viewport'
 import ReaderContext from '../../lib/reader-context'
+import { useReaderStore, useStore } from '../../store/StoreContext'
 import type { AppDispatch, RootState } from '../../store/types'
 import Controls from '../Controls'
 import Frame from '../Frame'
@@ -20,7 +20,12 @@ import Spinner from '../Spinner'
 import { book, useLoader } from './loader'
 import { useNavigation } from './navigation'
 import { useResize } from './resize'
-import type { ReaderApi, ReaderProps, ReaderState } from './types'
+import type {
+  ReaderApi,
+  ReaderComponentProps,
+  ReaderProps,
+  ReaderState,
+} from './types'
 
 // Renders the current chapter's React element tree. Content is written to the
 // module-level `book` object by loader.js and re-rendered when Reader state
@@ -51,7 +56,7 @@ function BookContent() {
 //
 // ReaderContext.Provider value is memoized (fixes IMPROVEMENT_PLAN H5).
 
-function Reader(props: ReaderProps) {
+function Reader(props: ReaderComponentProps) {
   // ─── Local state ───────────────────────────────────────────────────────────
   const [state, setReactState] = useState<ReaderState>({
     __metadata: [],
@@ -85,6 +90,12 @@ function Reader(props: ReaderProps) {
     disableMobileResizeEvents: 'ontouchstart' in document.documentElement,
   })
 
+  // readerSettings now lives in the built-in store (TASK-106); the rest of the
+  // slices are still connect()ed onto props. Inject it into the props ref below
+  // so the external modules keep reading `propsRef.current.readerSettings`.
+  const store = useReaderStore()
+  const readerSettings = useStore((s) => s.readerSettings)
+
   // ─── Live refs ─────────────────────────────────────────────────────────────
   // Keep refs that always hold the latest state and props. The external modules
   // (navigation.js, loader.js, resize.js) read `this.state` and `this.props`
@@ -93,8 +104,8 @@ function Reader(props: ReaderProps) {
   const stateRef = useRef(state)
   stateRef.current = state
 
-  const propsRef = useRef(props)
-  propsRef.current = props
+  const propsRef = useRef<ReaderProps>({ ...props, readerSettings })
+  propsRef.current = { ...props, readerSettings }
 
   // ─── setState shim ─────────────────────────────────────────────────────────
   // The external modules call `this.setState(partialState, callback)`.
@@ -201,8 +212,10 @@ function Reader(props: ReaderProps) {
   const destroyReaderComponent = useCallback(() => {
     // TODO: the location.state.bookURL prop is how we signal to the reader that
     // there is a book loaded but the pathname is '/'. Would be good to standardize
-    propsRef.current.readerSettingsActions.updateSettings({ bookURL: '' })
-  }, [])
+    store.setState((s) => ({
+      readerSettings: { ...s.readerSettings, bookURL: '' },
+    }))
+  }, [store])
 
   const getSlug = useCallback(() => {
     const { spine, currentSpineItemIndex } = stateRef.current
@@ -468,13 +481,11 @@ function Reader(props: ReaderProps) {
 }
 
 const mapStateToProps = ({
-  readerSettings,
   viewerSettings,
   readerLocation,
   view,
   userInterface,
 }: RootState) => ({
-  readerSettings,
   viewerSettings,
   readerLocation,
   view,
@@ -487,7 +498,6 @@ const mapStateToProps = ({
 type ReaderDispatchProps = Pick<
   ReaderProps,
   | 'viewerSettingsActions'
-  | 'readerSettingsActions'
   | 'readerLocationActions'
   | 'viewActions'
   | 'userInterfaceActions'
@@ -498,10 +508,6 @@ const mapDispatchToProps = (dispatch: AppDispatch): ReaderDispatchProps => ({
     viewerSettingsActions,
     dispatch
   ) as unknown as ReaderProps['viewerSettingsActions'],
-  readerSettingsActions: bindActionCreators(
-    readerSettingsActions,
-    dispatch
-  ) as unknown as ReaderProps['readerSettingsActions'],
   readerLocationActions: bindActionCreators(
     // The module also exports the non-function `locationStates` const; cast so
     // bindActionCreators accepts the module.

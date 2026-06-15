@@ -4,13 +4,15 @@ import React, { useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
 import Asset from '../helpers/Asset'
 import Viewport from '../helpers/Viewport'
+import { useStore } from '../store/StoreContext'
 import type { RootState } from '../store/types'
 import Layout from './Layout'
 
-// Frame receives connect()ed readerSettings/viewerSettings plus a passthrough
-// bag of layout props from Reader; typed loosely pending the Reader prop
-// surface being finalized.
+// Frame receives connect()ed viewerSettings plus a passthrough bag of layout
+// props from Reader; readerSettings is read from the built-in store (TASK-106).
+// Typed loosely pending the Reader prop surface being finalized.
 function Frame(props: any) {
+  const readerSettings = useStore((s) => s.readerSettings)
   const node = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -24,7 +26,7 @@ function Frame(props: any) {
       id="frame"
       ref={node}
       className={classNames(
-        `_${Asset.createHash(props.readerSettings.bookURL)}`,
+        `_${Asset.createHash(readerSettings.bookURL)}`,
         props.className || ''
       )}
       style={{
@@ -51,7 +53,7 @@ function Frame(props: any) {
         className={props.className}
         lastSpreadIndex={props.lastSpreadIndex}
         layout={props.layout}
-        readerSettings={props.readerSettings}
+        readerSettings={readerSettings}
         slug={props.slug}
         spreadIndex={props.spreadIndex}
         spineItemURL={props.spineItemURL}
@@ -64,8 +66,7 @@ function Frame(props: any) {
 }
 
 export default connect(
-  ({ readerSettings, viewerSettings }: RootState) => ({
-    readerSettings,
+  ({ viewerSettings }: RootState) => ({
     viewerSettings,
   }),
   () => ({})

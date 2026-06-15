@@ -1,6 +1,6 @@
 # TASK-106: Migrate state off Redux → useSyncExternalStore (Step 4 execution)
 
-**Status:** not started
+**Status:** in progress
 **Feature:** React 19 (reader-react)
 **Phase:** Modernization — Step 4 (state migration)
 **Priority:** medium
@@ -25,11 +25,14 @@ imperative methods. Drop `react-redux`, `redux`, `redux-thunk`, and
 
 ## Subtasks
 
-- [ ] Scaffold `createReaderStore` + `StoreContext`/`StoreProvider` + `useStore`
+- [x] Scaffold `createReaderStore` + `StoreContext`/`StoreProvider` + `useStore`
       (via `useSyncExternalStoreWithSelector`) + a `renderWithStore` test helper;
       seed from merged `readerSettings` props; run **alongside** Redux initially
-- [ ] Migrate cold slices: `readerSettings` → `markers` (also drop the unused
-      `markers` subscription in `Spread`, [[TASK-068]] L4)
+- [x] Migrate cold slices: `readerSettings` → `markers` (also drop the unused
+      `markers` subscription in `Spread`, [[TASK-068]] L4). `markers` dead
+      subscription removed from `Marker`; `readerSettings` moved to the store
+      (App writer + Link/Spread/Controls/Frame/Sidebar×3/Reader/use-node-position
+      readers), tests migrated to `renderWithStore`/`renderWithStores`.
 - [ ] Migrate warm slices: `userInterface`, `readerLocation`; port
       `setInitialSearchParams` to a snapshot-reading function; **delete the dead
       `viewerSettings.load`/`save` thunks**

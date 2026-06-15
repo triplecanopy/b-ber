@@ -13,6 +13,7 @@ import { unlessDefined } from '../helpers/utils'
 import Viewport from '../helpers/Viewport'
 import DocumentPreProcessor from '../lib/DocumentPreProcessor'
 import ReaderContext from '../lib/reader-context'
+import { useStore } from '../store/StoreContext'
 import type {
   ReaderSettingsState,
   RootState,
@@ -75,7 +76,7 @@ const useNodePosition = <T extends HTMLElement = HTMLElement>(
   const context = useContext(ReaderContext)
   const viewerSettings = useSelector((state: RootState) => state.viewerSettings)
   const view = useSelector((state: RootState) => state.view)
-  const readerSettings = useSelector((state: RootState) => state.readerSettings)
+  const readerSettings = useStore((s) => s.readerSettings)
 
   const elemRef = useRef<T>(null)
 
