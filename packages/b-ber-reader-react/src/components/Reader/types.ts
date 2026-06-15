@@ -54,7 +54,6 @@ export interface ReaderProps {
   viewerSettings: ViewerSettingsState
   readerLocation: ReaderLocationState
   view: ViewState
-  userInterface: { handleEvents: boolean }
   cache: boolean
   downloads: unknown[]
   uiOptions: unknown
@@ -68,11 +67,15 @@ export interface ReaderProps {
   userInterfaceActions: BoundActions
 }
 
-// Props the Reader *function* receives. readerSettings is no longer threaded in
-// (Reader reads it from the built-in store and injects it into propsRef —
-// TASK-106), so it is omitted from the component's own/connected prop surface
-// while remaining on ReaderProps for the modules that read propsRef.
-export type ReaderComponentProps = Omit<ReaderProps, 'readerSettings'>
+// Props the Reader *function* receives. readerSettings and userInterfaceActions
+// are no longer threaded in (Reader reads them from the built-in store and
+// injects them into propsRef — TASK-106), so they are omitted from the
+// component's own/connected prop surface while remaining on ReaderProps for the
+// modules that read propsRef.
+export type ReaderComponentProps = Omit<
+  ReaderProps,
+  'readerSettings' | 'userInterfaceActions'
+>
 
 // setState shim signature — the class-style partial-merge + callback setter the
 // Reader exposes and the hooks below call.

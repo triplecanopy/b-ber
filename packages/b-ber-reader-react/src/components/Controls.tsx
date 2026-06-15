@@ -1,24 +1,25 @@
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import * as userInterfaceActions from '../actions/user-interface'
 import useNavigationActions from '../hooks/use-navigation-actions'
 import { useStore } from '../store/StoreContext'
-import type { AppDispatch, RootState } from '../store/types'
+import type { RootState } from '../store/types'
+import { useUserInterfaceActions } from '../store/userInterfaceActions'
 import { NavigationFooter, NavigationHeader } from './Navigation'
 
 // Controls receives a broad set of props from Reader (navigation callbacks,
-// spine/guide data) plus connect()ed state/dispatch. readerSettings is read
-// from the built-in store (TASK-106). The owner-supplied callbacks are loosely
-// typed pending the navigation-hooks refactor, so props are `any` here.
-// TODO: tighten once the Reader prop surface is finalized.
+// spine/guide data) plus connect()ed viewerSettings. readerSettings and
+// userInterface are read from the built-in store (TASK-106). The owner-supplied
+// callbacks are loosely typed pending the navigation-hooks refactor, so props
+// are `any` here. TODO: tighten once the Reader prop surface is finalized.
 function Controls(props: any) {
   const readerSettings = useStore((s) => s.readerSettings)
+  const userInterface = useStore((s) => s.userInterface)
+  const uiActions = useUserInterfaceActions()
 
   // Bound to click and touchstart; typed as the common Event and the target is
   // narrowed to Element to use closest().
   const handleClick = (e: Event) => {
-    if (!props.userInterface.handleEvents) return
+    if (!userInterface.handleEvents) return
 
     const target = e.target as Element
 
@@ -32,17 +33,17 @@ function Controls(props: any) {
   }
 
   const handleKeyDown = (e: KeyboardEvent) => {
-    if (!props.userInterface.handleEvents) return
+    if (!userInterface.handleEvents) return
     if (!e || typeof e.which === 'undefined') return
 
     switch (e.which) {
       case 37 /* arrow left */:
-        props.userInterfaceActions.enablePageTransitions()
+        uiActions.enablePageTransitions()
         props.handlePageNavigation(-1)
         props.handleSidebarButtonClick(null)
         break
       case 39 /* arrow right */:
-        props.userInterfaceActions.enablePageTransitions()
+        uiActions.enablePageTransitions()
         props.handlePageNavigation(1)
         props.handleSidebarButtonClick(null)
         break
@@ -71,7 +72,7 @@ function Controls(props: any) {
       document.removeEventListener('click', handleClick)
       document.removeEventListener('touchstart', handleClick)
     }
-  }, [props.userInterface.handleEvents, props.showSidebar])
+  }, [userInterface.handleEvents, props.showSidebar])
 
   const Header = readerSettings.NavigationHeader || NavigationHeader
   const Footer = readerSettings.NavigationFooter || NavigationFooter
@@ -128,12 +129,6 @@ function Controls(props: any) {
   )
 }
 
-export default connect(
-  ({ viewerSettings, userInterface }: RootState) => ({
-    viewerSettings,
-    userInterface,
-  }),
-  (dispatch: AppDispatch) => ({
-    userInterfaceActions: bindActionCreators(userInterfaceActions, dispatch),
-  })
-)(Controls)
+export default connect(({ viewerSettings }: RootState) => ({
+  viewerSettings,
+}))(Controls)

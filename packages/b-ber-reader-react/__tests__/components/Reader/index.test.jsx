@@ -124,10 +124,11 @@ describe('Reader', () => {
   }
 
   test('on mount, shows the spinner and calls createStateFromOPF', () => {
-    const { store } = renderReader()
+    const { readerStore } = renderReader()
 
-    expect(store.getState().userInterface.spinnerVisible).toBe(true)
-    expect(store.getState().userInterface.handleEvents).toBe(false)
+    // userInterface now lives in the built-in store (TASK-106)
+    expect(readerStore.getSnapshot().userInterface.spinnerVisible).toBe(true)
+    expect(readerStore.getSnapshot().userInterface.handleEvents).toBe(false)
     expect(mockLoaderFns.createStateFromOPF).toHaveBeenCalledTimes(1)
     expect(mockLoaderFns.createStateFromOPF).toHaveBeenCalledWith(
       expect.any(Function)

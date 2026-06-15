@@ -1,17 +1,15 @@
 import React, { useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import * as userInterfaceActions from '../actions/user-interface'
 import * as viewActions from '../actions/view'
 import type { RootState } from '../store/types'
+import { useUserInterfaceActions } from '../store/userInterfaceActions'
 
 type ViewActions = typeof viewActions
-type UserInterfaceActions = typeof userInterfaceActions
 
 interface UltimateProps {
   view: RootState['view']
   viewActions: ViewActions
-  userInterfaceActions: UserInterfaceActions
   children?: React.ReactNode
 }
 
@@ -61,16 +59,14 @@ const MAX_WAIT_MS = 2500
 // UNSAFE_componentWillReceiveProps (restart on chapter change) is replaced by a
 // useEffect that tracks the previous value of view.loaded via a ref.
 
-function Ultimate({
-  view,
-  viewActions: va,
-  userInterfaceActions: uia,
-  children,
-}: UltimateProps) {
+function Ultimate({ view, viewActions: va, children }: UltimateProps) {
   const nodeRef = useRef<HTMLSpanElement>(null)
+  // userInterface writes now go through the built-in store (TASK-106); view
+  // stays on redux for now.
+  const uia = useUserInterfaceActions()
 
-  // Always-current refs for Redux action props so setTimeout callbacks never
-  // close over a stale dispatch function
+  // Always-current refs for the action bundles so setTimeout callbacks never
+  // close over a stale reference
   const vaRef = useRef(va)
   vaRef.current = va
   const uiaRef = useRef(uia)
@@ -242,7 +238,6 @@ function Ultimate({
 export default connect(
   ({ view }: RootState) => ({ view }),
   (dispatch) => ({
-    userInterfaceActions: bindActionCreators(userInterfaceActions, dispatch),
     viewActions: bindActionCreators(viewActions, dispatch),
   })
 )(Ultimate)

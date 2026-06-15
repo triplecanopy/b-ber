@@ -1,7 +1,6 @@
 import classNames from 'classnames'
 import debounce from 'lodash/debounce'
 import React, { useContext, useEffect, useState } from 'react'
-import { connect } from 'react-redux'
 import {
   breakpoints,
   MEDIA_QUERY_MOBILE,
@@ -12,7 +11,7 @@ import browser from '../lib/browser'
 import ReaderContext from '../lib/reader-context'
 import transitions from '../lib/transition-styles'
 import withLastSpreadIndex from '../lib/with-last-spread-index'
-import type { RootState } from '../store/types'
+import { useStore } from '../store/StoreContext'
 
 // Local layout state (CSS box/transform values managed via useState).
 interface LayoutState {
@@ -177,7 +176,7 @@ function Layout(props: any) {
 
   const height = props.getFrameHeight()
   const { spreadIndex, slug, layout } = props
-  const { enableTransitions } = props.userInterface
+  const { enableTransitions } = useStore((s) => s.userInterface)
   const { transition, transitionSpeed, paddingLeft, paddingRight } =
     props.viewerSettings
   const translateX = readerContext.getTranslateX()
@@ -246,7 +245,7 @@ function Layout(props: any) {
   )
 }
 
-export default connect(
-  ({ userInterface }: RootState) => ({ userInterface }),
-  () => ({})
-)(withLastSpreadIndex(Layout))
+// userInterface is read from the built-in store inside Layout (TASK-106), so
+// the former userInterface connect wrapper is gone; withLastSpreadIndex keeps
+// its own connect for viewActions.
+export default withLastSpreadIndex(Layout)

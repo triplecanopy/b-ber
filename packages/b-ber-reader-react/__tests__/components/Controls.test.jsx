@@ -66,6 +66,7 @@ function renderControls(props = {}, overrides = {}) {
 
   return {
     store,
+    readerStore,
     handlePageNavigation,
     handleSidebarButtonClick,
     handleChapterNavigation,
@@ -98,21 +99,27 @@ describe('Controls', () => {
     }
 
     test('ArrowLeft navigates to the previous page and closes the sidebar', () => {
-      const { handlePageNavigation, handleSidebarButtonClick, store } = setup()
+      const { handlePageNavigation, handleSidebarButtonClick, readerStore } =
+        setup()
 
       fireEvent.keyDown(document, { which: 37 })
 
-      expect(store.getState().userInterface.enableTransitions).toBe(true)
+      expect(readerStore.getSnapshot().userInterface.enableTransitions).toBe(
+        true
+      )
       expect(handlePageNavigation).toHaveBeenCalledWith(-1)
       expect(handleSidebarButtonClick).toHaveBeenCalledWith(null)
     })
 
     test('ArrowRight navigates to the next page and closes the sidebar', () => {
-      const { handlePageNavigation, handleSidebarButtonClick, store } = setup()
+      const { handlePageNavigation, handleSidebarButtonClick, readerStore } =
+        setup()
 
       fireEvent.keyDown(document, { which: 39 })
 
-      expect(store.getState().userInterface.enableTransitions).toBe(true)
+      expect(readerStore.getSnapshot().userInterface.enableTransitions).toBe(
+        true
+      )
       expect(handlePageNavigation).toHaveBeenCalledWith(1)
       expect(handleSidebarButtonClick).toHaveBeenCalledWith(null)
     })
@@ -163,12 +170,14 @@ describe('Controls', () => {
 
   describe('keydown handling when handleEvents is false', () => {
     test('ArrowLeft does not navigate', () => {
-      const { handlePageNavigation, handleSidebarButtonClick, store } =
+      const { handlePageNavigation, handleSidebarButtonClick, readerStore } =
         renderControls({}, { userInterface: { handleEvents: false } })
 
       fireEvent.keyDown(document, { which: 37 })
 
-      expect(store.getState().userInterface.enableTransitions).not.toBe(true)
+      expect(
+        readerStore.getSnapshot().userInterface.enableTransitions
+      ).not.toBe(true)
       expect(handlePageNavigation).not.toHaveBeenCalled()
       expect(handleSidebarButtonClick).not.toHaveBeenCalled()
     })

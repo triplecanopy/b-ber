@@ -4,7 +4,6 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as readerLocationActions from '../../actions/reader-location'
-import * as userInterfaceActions from '../../actions/user-interface'
 import * as viewActions from '../../actions/view'
 import * as viewerSettingsActions from '../../actions/viewer-settings'
 import Asset from '../../helpers/Asset'
@@ -14,6 +13,7 @@ import Viewport from '../../helpers/Viewport'
 import ReaderContext from '../../lib/reader-context'
 import { useReaderStore, useStore } from '../../store/StoreContext'
 import type { AppDispatch, RootState } from '../../store/types'
+import { useUserInterfaceActions } from '../../store/userInterfaceActions'
 import Controls from '../Controls'
 import Frame from '../Frame'
 import Spinner from '../Spinner'
@@ -90,11 +90,14 @@ function Reader(props: ReaderComponentProps) {
     disableMobileResizeEvents: 'ontouchstart' in document.documentElement,
   })
 
-  // readerSettings now lives in the built-in store (TASK-106); the rest of the
-  // slices are still connect()ed onto props. Inject it into the props ref below
-  // so the external modules keep reading `propsRef.current.readerSettings`.
+  // readerSettings and the userInterface action bundle now come from the
+  // built-in store (TASK-106); the remaining slices are still connect()ed onto
+  // props. Both are injected into the props ref below so the external modules
+  // keep reading `propsRef.current.readerSettings` /
+  // `propsRef.current.userInterfaceActions` unchanged.
   const store = useReaderStore()
   const readerSettings = useStore((s) => s.readerSettings)
+  const userInterfaceActions = useUserInterfaceActions()
 
   // ─── Live refs ─────────────────────────────────────────────────────────────
   // Keep refs that always hold the latest state and props. The external modules
@@ -104,8 +107,12 @@ function Reader(props: ReaderComponentProps) {
   const stateRef = useRef(state)
   stateRef.current = state
 
-  const propsRef = useRef<ReaderProps>({ ...props, readerSettings })
-  propsRef.current = { ...props, readerSettings }
+  const propsRef = useRef<ReaderProps>({
+    ...props,
+    readerSettings,
+    userInterfaceActions,
+  })
+  propsRef.current = { ...props, readerSettings, userInterfaceActions }
 
   // ─── setState shim ─────────────────────────────────────────────────────────
   // The external modules call `this.setState(partialState, callback)`.
@@ -484,12 +491,10 @@ const mapStateToProps = ({
   viewerSettings,
   readerLocation,
   view,
-  userInterface,
 }: RootState) => ({
   viewerSettings,
   readerLocation,
   view,
-  userInterface,
 })
 
 // Bound action bundles. bindActionCreators yields precise per-creator types
@@ -497,10 +502,7 @@ const mapStateToProps = ({
 // the loose shape so connect's prop inference matches. Behavior unchanged.
 type ReaderDispatchProps = Pick<
   ReaderProps,
-  | 'viewerSettingsActions'
-  | 'readerLocationActions'
-  | 'viewActions'
-  | 'userInterfaceActions'
+  'viewerSettingsActions' | 'readerLocationActions' | 'viewActions'
 >
 
 const mapDispatchToProps = (dispatch: AppDispatch): ReaderDispatchProps => ({
@@ -520,10 +522,6 @@ const mapDispatchToProps = (dispatch: AppDispatch): ReaderDispatchProps => ({
     viewActions,
     dispatch
   ) as unknown as ReaderProps['viewActions'],
-  userInterfaceActions: bindActionCreators(
-    userInterfaceActions,
-    dispatch
-  ) as unknown as ReaderProps['userInterfaceActions'],
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Reader)

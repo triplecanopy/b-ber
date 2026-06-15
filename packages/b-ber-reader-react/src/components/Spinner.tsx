@@ -1,17 +1,14 @@
 import classNames from 'classnames'
 import React from 'react'
-import { connect } from 'react-redux'
-import type { RootState } from '../store/types'
+import { useStore } from '../store/StoreContext'
 
-interface SpinnerProps {
-  userInterface: RootState['userInterface']
-}
+function Spinner() {
+  const spinnerVisible = useStore((s) => s.userInterface.spinnerVisible)
 
-function Spinner(props: SpinnerProps) {
   return (
     <div
       className={classNames('bber-spinner', {
-        'bber-spinner--visible': props.userInterface.spinnerVisible,
+        'bber-spinner--visible': spinnerVisible,
       })}
     >
       <div className="bber-spinner__detail" />
@@ -19,7 +16,4 @@ function Spinner(props: SpinnerProps) {
   )
 }
 
-export default connect(
-  ({ userInterface }: RootState) => ({ userInterface }),
-  () => ({})
-)(Spinner)
+export default Spinner
