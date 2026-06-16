@@ -1,15 +1,9 @@
 import React, { useEffect, useRef } from 'react'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import * as viewActions from '../actions/view'
-import type { RootState } from '../store/types'
+import { useStore } from '../store/StoreContext'
 import { useUserInterfaceActions } from '../store/userInterfaceActions'
-
-type ViewActions = typeof viewActions
+import { useViewActions } from '../store/viewActions'
 
 interface UltimateProps {
-  view: RootState['view']
-  viewActions: ViewActions
   children?: React.ReactNode
 }
 
@@ -59,10 +53,11 @@ const MAX_WAIT_MS = 2500
 // UNSAFE_componentWillReceiveProps (restart on chapter change) is replaced by a
 // useEffect that tracks the previous value of view.loaded via a ref.
 
-function Ultimate({ view, viewActions: va, children }: UltimateProps) {
+function Ultimate({ children }: UltimateProps) {
   const nodeRef = useRef<HTMLSpanElement>(null)
-  // userInterface writes now go through the built-in store (TASK-106); view
-  // stays on redux for now.
+  // view and userInterface both live in the built-in store now (TASK-106).
+  const view = useStore((s) => s.view)
+  const va = useViewActions()
   const uia = useUserInterfaceActions()
 
   // Always-current refs for the action bundles so setTimeout callbacks never
@@ -92,10 +87,10 @@ function Ultimate({ view, viewActions: va, children }: UltimateProps) {
   // onStable() is called unconditionally so the spinner always hides.
   const startTimeRef = useRef(0)
 
-  // Declare layout stable: dispatch Redux actions that unhide the spinner and
+  // Declare layout stable: write the store updates that unhide the spinner and
   // re-enable event handling.
   //
-  // NOTE: always dispatch regardless of whether nodeRef.current is available.
+  // NOTE: always write regardless of whether nodeRef.current is available.
   // If the node is absent (e.g. the sentinel unmounted between startWatching
   // and onStable firing), we still must hide the spinner — using 0 as a
   // fallback for ultimateOffsetLeft. Failing silently here leaves the UI
@@ -107,8 +102,10 @@ function Ultimate({ view, viewActions: va, children }: UltimateProps) {
     const node = nodeRef.current
     const ultimateOffsetLeft = node ? node.offsetLeft : 0
 
-    vaRef.current.load()
-    vaRef.current.updateUltimateNodePosition({ ultimateOffsetLeft })
+    // One atomic view write (loaded + ultimateOffsetLeft) so settle is a single
+    // store notify / re-render — the former load() + updateUltimateNodePosition()
+    // pair was two redux dispatches batched into one render (§3c).
+    vaRef.current.update({ loaded: true, ultimateOffsetLeft })
     uiaRef.current.update({ handleEvents: true, spinnerVisible: false })
   }
 
@@ -235,9 +232,4 @@ function Ultimate({ view, viewActions: va, children }: UltimateProps) {
   )
 }
 
-export default connect(
-  ({ view }: RootState) => ({ view }),
-  (dispatch) => ({
-    viewActions: bindActionCreators(viewActions, dispatch),
-  })
-)(Ultimate)
+export default Ultimate

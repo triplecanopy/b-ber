@@ -19,7 +19,6 @@
 
 import { act } from '@testing-library/react'
 import React from 'react'
-import * as viewActions from '../../../src/actions/view'
 import Reader from '../../../src/components/Reader'
 import { book } from '../../../src/components/Reader/loader'
 import Asset from '../../../src/helpers/Asset'
@@ -238,14 +237,14 @@ describe('Reader', () => {
   })
 
   test('view.loaded/lastSpreadIndex effect: navigateToSpreadByIndex is not invoked when chapterDelta is 0 (default state)', () => {
-    const { store } = renderReader()
+    const { readerStore } = renderReader()
 
+    // view now lives in the built-in store (TASK-106); drive it to fire the
+    // settle effect.
     act(() => {
-      store.dispatch(viewActions.updateLastSpreadIndex(2))
-    })
-
-    act(() => {
-      store.dispatch(viewActions.load(true))
+      readerStore.setState((s) => ({
+        view: { ...s.view, lastSpreadIndex: 2, loaded: true },
+      }))
     })
 
     // chapterDelta is 0 by default (not < 0), so navigateToSpreadByIndex is

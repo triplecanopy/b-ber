@@ -13,7 +13,6 @@ const MAX_STABILIZE_FRAMES = 30
 
 interface SpreadProps {
   viewerSettings: RootState['viewerSettings']
-  view: RootState['view']
   layout?: string
   className?: string
   'data-marker-reference'?: string
@@ -21,9 +20,10 @@ interface SpreadProps {
 }
 
 function Spread(props: SpreadProps) {
-  // readerSettings is read from the built-in store (TASK-106); viewerSettings
-  // and view are still connect()ed.
+  // readerSettings and view are read from the built-in store (TASK-106);
+  // viewerSettings is still connect()ed.
   const readerSettings = useStore((s) => s.readerSettings)
+  const view = useStore((s) => s.view)
   const node = useRef<HTMLDivElement>(null)
 
   // The rounded column index of this spread (quantised to multiples of 0.5 in
@@ -143,8 +143,8 @@ function Spread(props: SpreadProps) {
     props.viewerSettings.paddingRight,
     props.viewerSettings.columnGap,
     // Restart convergence once the columns layout has settled (see comment above)
-    props.view.loaded,
-    props.view.ultimateOffsetLeft,
+    view.loaded,
+    view.ultimateOffsetLeft,
   ])
 
   // verso/recto and the column-spanning multiplier are pure functions of the
@@ -231,9 +231,8 @@ function Spread(props: SpreadProps) {
 }
 
 export default connect(
-  ({ viewerSettings, view }: RootState) => ({
+  ({ viewerSettings }: RootState) => ({
     viewerSettings,
-    view,
   }),
   () => ({})
 )(Spread)

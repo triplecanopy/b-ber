@@ -75,7 +75,7 @@ const useNodePosition = <T extends HTMLElement = HTMLElement>(
 ): UseNodePositionResult<T> => {
   const context = useContext(ReaderContext)
   const viewerSettings = useSelector((state: RootState) => state.viewerSettings)
-  const view = useSelector((state: RootState) => state.view)
+  const view = useStore((s) => s.view)
   const readerSettings = useStore((s) => s.readerSettings)
 
   const elemRef = useRef<T>(null)

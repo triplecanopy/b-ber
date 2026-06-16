@@ -3,7 +3,6 @@ import isInteger from 'lodash/isInteger'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import * as viewActions from '../../actions/view'
 import * as viewerSettingsActions from '../../actions/viewer-settings'
 import Asset from '../../helpers/Asset'
 import Url from '../../helpers/Url'
@@ -14,6 +13,7 @@ import { useReaderLocationActions } from '../../store/readerLocationActions'
 import { useReaderStore, useStore } from '../../store/StoreContext'
 import type { AppDispatch, RootState } from '../../store/types'
 import { useUserInterfaceActions } from '../../store/userInterfaceActions'
+import { useViewActions } from '../../store/viewActions'
 import Controls from '../Controls'
 import Frame from '../Frame'
 import Spinner from '../Spinner'
@@ -90,16 +90,18 @@ function Reader(props: ReaderComponentProps) {
     disableMobileResizeEvents: 'ontouchstart' in document.documentElement,
   })
 
-  // readerSettings, readerLocation, and the userInterface / readerLocation
-  // action bundles now come from the built-in store (TASK-106); the remaining
-  // slices (view, viewerSettings) are still connect()ed onto props. All are
-  // injected into the props ref below so the external modules keep reading
-  // `propsRef.current.readerLocation` / `.readerLocationActions` etc. unchanged.
+  // readerSettings, readerLocation, view, and the userInterface / readerLocation
+  // / view action bundles now come from the built-in store (TASK-106); only
+  // viewerSettings is still connect()ed onto props. All are injected into the
+  // props ref below so the external modules keep reading
+  // `propsRef.current.view` / `.viewActions` etc. unchanged.
   const store = useReaderStore()
   const readerSettings = useStore((s) => s.readerSettings)
   const readerLocation = useStore((s) => s.readerLocation)
+  const view = useStore((s) => s.view)
   const userInterfaceActions = useUserInterfaceActions()
   const readerLocationActions = useReaderLocationActions()
+  const viewActions = useViewActions()
 
   // ─── Live refs ─────────────────────────────────────────────────────────────
   // Keep refs that always hold the latest state and props. The external modules
@@ -113,15 +115,19 @@ function Reader(props: ReaderComponentProps) {
     ...props,
     readerSettings,
     readerLocation,
+    view,
     userInterfaceActions,
     readerLocationActions,
+    viewActions,
   })
   propsRef.current = {
     ...props,
     readerSettings,
     readerLocation,
+    view,
     userInterfaceActions,
     readerLocationActions,
+    viewActions,
   }
 
   // ─── setState shim ─────────────────────────────────────────────────────────
@@ -416,7 +422,7 @@ function Reader(props: ReaderComponentProps) {
   // Ultimate dispatching view.load()), navigate to the last spread if we
   // arrived here via backwards chapter navigation.
   useEffect(() => {
-    if (props.view.loaded && props.view.lastSpreadIndex > -1) {
+    if (view.loaded && view.lastSpreadIndex > -1) {
       if (stateRef.current.chapterDelta < 0) {
         setState({ chapterDelta: 0 }, () =>
           apiRef.current.navigateToSpreadByIndex(
@@ -425,7 +431,7 @@ function Reader(props: ReaderComponentProps) {
         )
       }
     }
-  }, [props.view.loaded, props.view.lastSpreadIndex])
+  }, [view.loaded, view.lastSpreadIndex])
 
   // ─── Context value ─────────────────────────────────────────────────────────
   // Previously an object literal in JSX (recreated on every render, causing all
@@ -444,7 +450,7 @@ function Reader(props: ReaderComponentProps) {
   )
 
   // ─── Render ────────────────────────────────────────────────────────────────
-  const { downloads, uiOptions, view, layout, style, className } = props
+  const { downloads, uiOptions, layout, style, className } = props
 
   const {
     metadata,
@@ -497,28 +503,20 @@ function Reader(props: ReaderComponentProps) {
   )
 }
 
-const mapStateToProps = ({ viewerSettings, view }: RootState) => ({
+const mapStateToProps = ({ viewerSettings }: RootState) => ({
   viewerSettings,
-  view,
 })
 
 // Bound action bundles. bindActionCreators yields precise per-creator types
 // that don't line up with the loose bundle props on ReaderProps; cast each to
 // the loose shape so connect's prop inference matches. Behavior unchanged.
-type ReaderDispatchProps = Pick<
-  ReaderProps,
-  'viewerSettingsActions' | 'viewActions'
->
+type ReaderDispatchProps = Pick<ReaderProps, 'viewerSettingsActions'>
 
 const mapDispatchToProps = (dispatch: AppDispatch): ReaderDispatchProps => ({
   viewerSettingsActions: bindActionCreators(
     viewerSettingsActions,
     dispatch
   ) as unknown as ReaderProps['viewerSettingsActions'],
-  viewActions: bindActionCreators(
-    viewActions,
-    dispatch
-  ) as unknown as ReaderProps['viewActions'],
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Reader)
