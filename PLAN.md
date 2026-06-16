@@ -206,10 +206,14 @@ warm → hot → `book.content` → drop `connect()`/deps). Best done after Step
 (dead subscription removed), cold `readerSettings`, and the warm
 `userInterface` + `readerLocation` slices (store-backed action bundles in
 `store/userInterfaceActions.ts` + `store/readerLocationActions.ts`; dead
-`viewerSettings` thunks deleted; App is now connect-free). **Remaining:** hot
-(`view`, `viewerSettings` — needs the re-render check), `book.content` move,
-`ReaderApiContext`, `connect()` + dep removal, and the **browser QA** gate
-(`SPREAD-CLUSTER-QA.md`). Pending manual QA of the cold+warm work before hot.
+`viewerSettings` thunks deleted; App is now connect-free) and the hot `view` +
+`viewerSettings` slices (`store/viewActions.ts` + `store/viewerSettingsActions.ts`;
+render-count parity test proves selector-level bailout; Ultimate settle
+consolidated per §3c). **No component uses connect/redux anymore** — only
+`index.tsx`'s Provider + the reducers remain. Cold+warm QA'd (resize/sidebar/
+nav bugs found and fixed: see fix commits + TASK-107/108). **Remaining:** hot-
+slice **browser QA** (`SPREAD-CLUSTER-QA.md`), then `book.content` move,
+`ReaderApiContext`, and removing `connect()`/redux deps + reducers.
 
 **Step 5 (reorg / best practices)** — TASK-068 (housekeeping), TASK-071 (docs),
 TASK-076 (SCSS→CSS Modules), plus general organization cleanup.

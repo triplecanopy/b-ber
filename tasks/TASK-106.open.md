@@ -38,8 +38,13 @@ imperative methods. Drop `react-redux`, `redux`, `redux-thunk`, and
       `viewerSettings.load`/`save` thunks**. Store-backed action bundles in
       `store/userInterfaceActions.ts` + `store/readerLocationActions.ts`
       (injected into Reader `propsRef`); App is now connect-free.
-- [ ] Migrate hot slices: `view`, then `viewerSettings` — **with a re-render
-      check** proving parity with the `connect` baseline (Profiler/render-counter)
+- [x] Migrate hot slices: `view`, then `viewerSettings` — **with a re-render
+      check** proving parity with the `connect` baseline (Profiler/render-counter).
+      Store bundles in `store/viewActions.ts` + `store/viewerSettingsActions.ts`;
+      Ultimate's settle consolidated to one atomic `view` write (§3c). Render-
+      count parity test in `__tests__/store/useStore.parity.test.jsx` proves
+      selector-level bailout. After this, no component uses connect/redux.
+      **Browser QA still pending.**
 - [ ] Move `book.content` into the store as `{ spineItemURL, node }` (atomic
       write); remove the `key`-prop remount hack; `BookContent` becomes a pure
       `useStore` read
