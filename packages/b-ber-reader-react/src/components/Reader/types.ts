@@ -132,6 +132,7 @@ export interface ReaderApi {
   handleResize(): void
   handleResizeStart(): void
   handleResizeEnd(): void
+  cancelResizeReposition(): void
   bindResizeHandlers(): void
   unbindResizeHandlers(): void
 }

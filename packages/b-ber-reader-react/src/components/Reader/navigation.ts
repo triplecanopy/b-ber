@@ -16,6 +16,10 @@ export const useNavigation = ({
 }: ReaderHookDeps) => {
   const handlePageNavigation = useCallback(
     (increment: number): void => {
+      // A manual page turn supersedes any pending end-of-resize reposition
+      // (which would otherwise yank the reader back to the pre-resize spread).
+      api.current.cancelResizeReposition()
+
       let { spreadIndex } = stateRef.current
 
       const { lastSpreadIndex } = propsRef.current.view
@@ -60,6 +64,9 @@ export const useNavigation = ({
 
   const handleChapterNavigation = useCallback(
     (increment: number): void => {
+      // A manual chapter change supersedes any pending end-of-resize reposition.
+      api.current.cancelResizeReposition()
+
       let { currentSpineItemIndex } = stateRef.current
 
       const { spine } = stateRef.current
@@ -150,6 +157,9 @@ export const useNavigation = ({
 
   const navigateToChapterByURL = useCallback(
     (absoluteURL: string): void => {
+      // A manual chapter jump supersedes any pending end-of-resize reposition.
+      api.current.cancelResizeReposition()
+
       const { spine } = stateRef.current
       const url = new window.URL(absoluteURL)
 

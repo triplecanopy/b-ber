@@ -61,6 +61,7 @@ function createDeps(overrides = {}) {
       savePosition: jest.fn(),
       closeSidebars: jest.fn(),
       navigateToSpreadByIndex: jest.fn(),
+      cancelResizeReposition: jest.fn(),
       ...overrides.api,
     },
   }
@@ -79,6 +80,14 @@ describe('handlePageNavigation', () => {
 
     expect(api.current.handleChapterNavigation).toHaveBeenCalledWith(1)
     expect(setState).not.toHaveBeenCalled()
+  })
+
+  test('cancels a pending end-of-resize reposition so it cannot override the manual turn', () => {
+    const { nav, api } = createDeps({ state: { spreadIndex: 0 } })
+
+    nav.handlePageNavigation(1)
+
+    expect(api.current.cancelResizeReposition).toHaveBeenCalledTimes(1)
   })
 
   test('ignores a forward press while the chapter is unmeasured (lastSpreadIndex is -1)', () => {

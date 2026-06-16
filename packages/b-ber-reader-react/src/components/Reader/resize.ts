@@ -99,6 +99,15 @@ export const useResize = ({
     [runResizeEnd]
   )
 
+  // Cancel a pending end-of-resize reposition. runResizeEnd fires on a 1000ms
+  // trailing debounce and navigates to the spread the user was on when the
+  // resize *started* (via the saved relativeSpreadPosition). If the user
+  // manually navigates inside that window, that stale reposition would yank
+  // them back — so a user navigation cancels it.
+  const cancelResizeReposition = useCallback((): void => {
+    handleResizeEnd.cancel()
+  }, [handleResizeEnd])
+
   // NOTE: bindResizeHandlers / unbindResizeHandlers names are inverted in the
   // source — see IMPROVEMENT_PLAN.md H4. Behavior is preserved here as-is.
   const bindResizeHandlers = useCallback((): void => {
@@ -143,6 +152,7 @@ export const useResize = ({
     handleResize,
     handleResizeStart,
     handleResizeEnd,
+    cancelResizeReposition,
     bindResizeHandlers,
     unbindResizeHandlers,
   }
