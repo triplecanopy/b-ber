@@ -1,10 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { connect } from 'react-redux'
 import Viewport from '../helpers/Viewport'
 import browser from '../lib/browser'
 import SpreadContext from '../lib/spread-context'
 import { useStore } from '../store/StoreContext'
-import type { RootState } from '../store/types'
 
 // Upper bound on the per-frame re-measurement loop (see updatePosition). A spread
 // converges to its final column within a few frames; this caps the loop so a
@@ -12,7 +10,6 @@ import type { RootState } from '../store/types'
 const MAX_STABILIZE_FRAMES = 30
 
 interface SpreadProps {
-  viewerSettings: RootState['viewerSettings']
   layout?: string
   className?: string
   'data-marker-reference'?: string
@@ -20,10 +17,11 @@ interface SpreadProps {
 }
 
 function Spread(props: SpreadProps) {
-  // readerSettings and view are read from the built-in store (TASK-106);
-  // viewerSettings is still connect()ed.
+  // readerSettings, view, and viewerSettings are all read from the built-in
+  // store (TASK-106).
   const readerSettings = useStore((s) => s.readerSettings)
   const view = useStore((s) => s.view)
+  const viewerSettings = useStore((s) => s.viewerSettings)
   const node = useRef<HTMLDivElement>(null)
 
   // The rounded column index of this spread (quantised to multiples of 0.5 in
@@ -44,14 +42,14 @@ function Spread(props: SpreadProps) {
   //   2. React commits the DOM: Spread.height changes because paddingTop/Bottom
   //      changed → frameHeight changed.
   //   3. The OLD ResizeObserver callback fires before React has run the old
-  //      effect's cleanup. If updatePosition read `props.viewerSettings` from
+  //      effect's cleanup. If updatePosition read `viewerSettings` from
   //      the closure, it would see the OLD paddingLeft (stale) while
   //      `node.current.offsetLeft` already reflects the NEW layout, yielding a
   //      misclassified spread.
   //
   // Reading through `viewerSettingsRef.current` eliminates that race.
-  const viewerSettingsRef = useRef(props.viewerSettings)
-  viewerSettingsRef.current = props.viewerSettings
+  const viewerSettingsRef = useRef(viewerSettings)
+  viewerSettingsRef.current = viewerSettings
 
   // Re-measure the spread's column position until it stops moving.
   //
@@ -139,9 +137,9 @@ function Spread(props: SpreadProps) {
       if (rafId !== null) cancelAnimationFrame(rafId)
     }
   }, [
-    props.viewerSettings.paddingLeft,
-    props.viewerSettings.paddingRight,
-    props.viewerSettings.columnGap,
+    viewerSettings.paddingLeft,
+    viewerSettings.paddingRight,
+    viewerSettings.columnGap,
     // Restart convergence once the columns layout has settled (see comment above)
     view.loaded,
     view.ultimateOffsetLeft,
@@ -172,7 +170,7 @@ function Spread(props: SpreadProps) {
       //   column 3 (2nd recto):  offset=1.5 → left = 2 × pageWidth
       // i.e. verso → Math.round(offset) × pageWidth
       //      recto → (Math.floor(offset) + 1) × pageWidth
-      const pageWidth = Viewport.getPageWidth(props.viewerSettings)
+      const pageWidth = Viewport.getPageWidth(viewerSettings)
       if (Number.isFinite(pageWidth)) {
         nextLeft = verso
           ? Math.round(offset) * pageWidth
@@ -186,7 +184,7 @@ function Spread(props: SpreadProps) {
       // to match the pre-TS runtime behavior.
       layout: props.layout as string,
     }
-  }, [offset, verso, props.viewerSettings, readerSettings, props.layout])
+  }, [offset, verso, viewerSettings, readerSettings, props.layout])
 
   // detect-browser types `browser` as a union (BrowserInfo | BotInfo | null);
   // the runtime only ever reads `.name`. Narrow via optional chaining to keep
@@ -202,11 +200,7 @@ function Spread(props: SpreadProps) {
     }
   }, [browserName])
 
-  const {
-    height: windowHeight,
-    paddingTop,
-    paddingBottom,
-  } = props.viewerSettings
+  const { height: windowHeight, paddingTop, paddingBottom } = viewerSettings
 
   const height = (windowHeight - paddingTop - paddingBottom) * multiplier
 
@@ -230,9 +224,4 @@ function Spread(props: SpreadProps) {
   )
 }
 
-export default connect(
-  ({ viewerSettings }: RootState) => ({
-    viewerSettings,
-  }),
-  () => ({})
-)(Spread)
+export default Spread

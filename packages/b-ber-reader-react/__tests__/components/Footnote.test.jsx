@@ -1,22 +1,17 @@
-import { act, fireEvent, render } from '@testing-library/react'
+import { act, fireEvent } from '@testing-library/react'
 import React from 'react'
-import { Provider } from 'react-redux'
 import Footnote from '../../src/components/Footnote'
 import Request from '../../src/helpers/Request'
 import Viewport from '../../src/helpers/Viewport'
-import { createTestStore } from '../helpers/store'
+import { renderWithStore } from '../helpers/renderWithStore'
 
-const renderFootnote = ({ href, viewerSettings = {} } = {}) => {
-  const store = createTestStore({ viewerSettings })
-
-  return render(
-    <Provider store={store}>
-      <Footnote id="fnref1" href={href}>
-        1
-      </Footnote>
-    </Provider>
+const renderFootnote = ({ href, viewerSettings = {} } = {}) =>
+  renderWithStore(
+    <Footnote id="fnref1" href={href}>
+      1
+    </Footnote>,
+    { overrides: { viewerSettings } }
   )
-}
 
 describe('Footnote', () => {
   let consoleError

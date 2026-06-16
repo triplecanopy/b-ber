@@ -67,20 +67,22 @@ export interface ReaderProps {
   userInterfaceActions: BoundActions
 }
 
-// Props the Reader *function* receives. The store-backed slices/bundles
-// (readerSettings, readerLocation, view, and the userInterface / readerLocation
-// / view action bundles) are no longer threaded in (Reader reads them from the
-// built-in store and injects them into propsRef — TASK-106), so they are
-// omitted from the component's own/connected prop surface while remaining on
-// ReaderProps for the modules that read propsRef.
+// Props the Reader *function* receives. Every slice and action bundle is now
+// store-backed (Reader reads them from the built-in store and injects them into
+// propsRef — TASK-106), so they are all omitted from the component's own prop
+// surface (it's no longer connect()ed) while remaining on ReaderProps for the
+// modules that read propsRef. What's left is what App passes: the spread
+// readerSettings layout fields + style/className.
 export type ReaderComponentProps = Omit<
   ReaderProps,
   | 'readerSettings'
   | 'readerLocation'
   | 'view'
+  | 'viewerSettings'
   | 'userInterfaceActions'
   | 'readerLocationActions'
   | 'viewActions'
+  | 'viewerSettingsActions'
 >
 
 // setState shim signature — the class-style partial-merge + callback setter the

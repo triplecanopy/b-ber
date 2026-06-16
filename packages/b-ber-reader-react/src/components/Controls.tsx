@@ -1,16 +1,14 @@
 import React, { useEffect } from 'react'
-import { connect } from 'react-redux'
 import useNavigationActions from '../hooks/use-navigation-actions'
 import { useStore } from '../store/StoreContext'
-import type { RootState } from '../store/types'
 import { useUserInterfaceActions } from '../store/userInterfaceActions'
 import { NavigationFooter, NavigationHeader } from './Navigation'
 
 // Controls receives a broad set of props from Reader (navigation callbacks,
-// spine/guide data) plus connect()ed viewerSettings. readerSettings and
-// userInterface are read from the built-in store (TASK-106). The owner-supplied
-// callbacks are loosely typed pending the navigation-hooks refactor, so props
-// are `any` here. TODO: tighten once the Reader prop surface is finalized.
+// spine/guide data); readerSettings and userInterface are read from the
+// built-in store (TASK-106). The owner-supplied callbacks are loosely typed
+// pending the navigation-hooks refactor, so props are `any` here.
+// TODO: tighten once the Reader prop surface is finalized.
 function Controls(props: any) {
   const readerSettings = useStore((s) => s.readerSettings)
   const userInterface = useStore((s) => s.userInterface)
@@ -129,6 +127,4 @@ function Controls(props: any) {
   )
 }
 
-export default connect(({ viewerSettings }: RootState) => ({
-  viewerSettings,
-}))(Controls)
+export default Controls

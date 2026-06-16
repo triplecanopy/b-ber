@@ -1,9 +1,6 @@
 import find from 'lodash/find'
 import isInteger from 'lodash/isInteger'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import * as viewerSettingsActions from '../../actions/viewer-settings'
 import Asset from '../../helpers/Asset'
 import Url from '../../helpers/Url'
 import { unlessDefined } from '../../helpers/utils'
@@ -11,9 +8,9 @@ import Viewport from '../../helpers/Viewport'
 import ReaderContext from '../../lib/reader-context'
 import { useReaderLocationActions } from '../../store/readerLocationActions'
 import { useReaderStore, useStore } from '../../store/StoreContext'
-import type { AppDispatch, RootState } from '../../store/types'
 import { useUserInterfaceActions } from '../../store/userInterfaceActions'
 import { useViewActions } from '../../store/viewActions'
+import { useViewerSettingsActions } from '../../store/viewerSettingsActions'
 import Controls from '../Controls'
 import Frame from '../Frame'
 import Spinner from '../Spinner'
@@ -90,18 +87,19 @@ function Reader(props: ReaderComponentProps) {
     disableMobileResizeEvents: 'ontouchstart' in document.documentElement,
   })
 
-  // readerSettings, readerLocation, view, and the userInterface / readerLocation
-  // / view action bundles now come from the built-in store (TASK-106); only
-  // viewerSettings is still connect()ed onto props. All are injected into the
-  // props ref below so the external modules keep reading
-  // `propsRef.current.view` / `.viewActions` etc. unchanged.
+  // Every slice (readerSettings, readerLocation, view, viewerSettings) and every
+  // action bundle now comes from the built-in store (TASK-106). All are injected
+  // into the props ref below so the external modules keep reading
+  // `propsRef.current.viewerSettings` / `.viewActions` etc. unchanged.
   const store = useReaderStore()
   const readerSettings = useStore((s) => s.readerSettings)
   const readerLocation = useStore((s) => s.readerLocation)
   const view = useStore((s) => s.view)
+  const viewerSettings = useStore((s) => s.viewerSettings)
   const userInterfaceActions = useUserInterfaceActions()
   const readerLocationActions = useReaderLocationActions()
   const viewActions = useViewActions()
+  const viewerSettingsActions = useViewerSettingsActions()
 
   // ─── Live refs ─────────────────────────────────────────────────────────────
   // Keep refs that always hold the latest state and props. The external modules
@@ -116,18 +114,22 @@ function Reader(props: ReaderComponentProps) {
     readerSettings,
     readerLocation,
     view,
+    viewerSettings,
     userInterfaceActions,
     readerLocationActions,
     viewActions,
+    viewerSettingsActions,
   })
   propsRef.current = {
     ...props,
     readerSettings,
     readerLocation,
     view,
+    viewerSettings,
     userInterfaceActions,
     readerLocationActions,
     viewActions,
+    viewerSettingsActions,
   }
 
   // ─── setState shim ─────────────────────────────────────────────────────────
@@ -503,20 +505,6 @@ function Reader(props: ReaderComponentProps) {
   )
 }
 
-const mapStateToProps = ({ viewerSettings }: RootState) => ({
-  viewerSettings,
-})
-
-// Bound action bundles. bindActionCreators yields precise per-creator types
-// that don't line up with the loose bundle props on ReaderProps; cast each to
-// the loose shape so connect's prop inference matches. Behavior unchanged.
-type ReaderDispatchProps = Pick<ReaderProps, 'viewerSettingsActions'>
-
-const mapDispatchToProps = (dispatch: AppDispatch): ReaderDispatchProps => ({
-  viewerSettingsActions: bindActionCreators(
-    viewerSettingsActions,
-    dispatch
-  ) as unknown as ReaderProps['viewerSettingsActions'],
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(Reader)
+// All slices and action bundles now come from the built-in store (TASK-106),
+// so Reader is a plain functional component with no connect().
+export default Reader

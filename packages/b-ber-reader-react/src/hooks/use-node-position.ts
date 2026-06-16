@@ -7,7 +7,6 @@ import {
   useRef,
   useState,
 } from 'react'
-import { useSelector } from 'react-redux'
 import ResizeObserver from 'resize-observer-polyfill'
 import { unlessDefined } from '../helpers/utils'
 import Viewport from '../helpers/Viewport'
@@ -74,7 +73,7 @@ const useNodePosition = <T extends HTMLElement = HTMLElement>(
   options: UseNodePositionOptions = {}
 ): UseNodePositionResult<T> => {
   const context = useContext(ReaderContext)
-  const viewerSettings = useSelector((state: RootState) => state.viewerSettings)
+  const viewerSettings = useStore((s) => s.viewerSettings)
   const view = useStore((s) => s.view)
   const readerSettings = useStore((s) => s.readerSettings)
 

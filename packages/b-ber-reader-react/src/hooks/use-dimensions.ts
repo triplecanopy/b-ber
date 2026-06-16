@@ -1,15 +1,10 @@
-import { useCallback, useLayoutEffect, useMemo } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import * as viewerSettingsActions from '../actions/viewer-settings'
+import { useCallback, useLayoutEffect } from 'react'
 import { columns } from '../constants'
 import { isNumeric } from '../helpers/Types'
 import Viewport from '../helpers/Viewport'
-import type {
-  AppDispatch,
-  RootState,
-  ViewerSettingsState,
-} from '../store/types'
+import { useStore } from '../store/StoreContext'
+import type { ViewerSettingsState } from '../store/types'
+import { useViewerSettingsActions } from '../store/viewerSettingsActions'
 
 const getWidth = (scrollingLayout: boolean): number => {
   // Column layout, return the window width
@@ -43,12 +38,8 @@ interface UseDimensionsResult {
 // viewerSettings (width/height/columns), and exposes frame-measurement
 // helpers derived from the current viewerSettings.
 const useDimensions = (layout: string): UseDimensionsResult => {
-  const dispatch = useDispatch<AppDispatch>()
-
-  const viewerSettingsActionsBundle = useMemo(
-    () => bindActionCreators(viewerSettingsActions, dispatch),
-    [dispatch]
-  )
+  // viewerSettings now lives in the built-in store (TASK-106).
+  const viewerSettingsActionsBundle = useViewerSettingsActions()
 
   const updateDimensions = useCallback(() => {
     const scrollingLayout = Viewport.isVerticallyScrolling({ layout })
@@ -76,13 +67,12 @@ const useDimensions = (layout: string): UseDimensionsResult => {
   // runs synchronously after the first commit but before the browser paints,
   // so the resulting re-render with real dimensions replaces the default
   // values before anything is shown.
+  // Mirror UNSAFE_componentWillMount — run the initial measurement once.
   useLayoutEffect(() => {
     updateDimensions()
-    // biome-ignore lint/correctness/useExhaustiveDependencies: mirror
-    // UNSAFE_componentWillMount — run the initial measurement once.
   }, [])
 
-  const viewerSettings = useSelector((state: RootState) => state.viewerSettings)
+  const viewerSettings = useStore((s) => s.viewerSettings)
 
   const getFrameHeight = useCallback((): number | 'auto' => {
     if (Viewport.isVerticallyScrolling({ layout })) return 'auto'
