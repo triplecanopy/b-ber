@@ -186,7 +186,17 @@ const withLastSpreadIndex = (
       measureRef.current?.()
     }, [props.view?.loaded, props.view?.ultimateOffsetLeft])
 
-    // Recompute and dispatch lastSpreadIndex whenever content dimensions change.
+    // Recompute and dispatch lastSpreadIndex whenever content dimensions change
+    // OR the layout settles (view.loaded / ultimateOffsetLeft). The settle
+    // signal is essential for resize: a window resize changes frameHeight (and
+    // re-arms <Ultimate> via freeze()→unload()), but the content's scrollHeight
+    // — and therefore `contentDimensions` — often does NOT change, so keying on
+    // contentDimensions alone left lastSpreadIndex stuck at freeze()'s -1 after
+    // a resize, which made handlePageNavigation ignore every forward press.
+    // Recomputing on settle recovers it with the new frameHeight.
+    // dimensionsRef/propsRef are stable refs read at call time; the trigger set
+    // is contentDimensions + the settle signal (view.loaded / ultimateOffsetLeft).
+    const { loaded: viewLoaded, ultimateOffsetLeft } = props.view ?? {}
     useEffect(() => {
       // L2 fix: skip dispatch while dimensions are 0 (chapter not yet loaded or
       // just reset on slug change). freeze() already dispatches
@@ -219,7 +229,7 @@ const withLastSpreadIndex = (
       if (nextLastSpreadIndex < 0) nextLastSpreadIndex = 0
 
       propsRef.current.viewActions.updateLastSpreadIndex(nextLastSpreadIndex)
-    }, [contentDimensions])
+    }, [contentDimensions, viewLoaded, ultimateOffsetLeft])
 
     return (
       <WrappedComponent
