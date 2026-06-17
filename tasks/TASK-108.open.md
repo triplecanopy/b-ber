@@ -1,6 +1,6 @@
 # TASK-108: Nav header buttons don't open when the SVG icon is clicked
 
-**Status:** not started
+**Status:** in progress (fix applied; browser QA pending)
 **Feature:** React 19 (reader-react)
 **Phase:** Bug Fixes
 **Priority:** medium
@@ -14,27 +14,36 @@ sidebars when the **button** is clicked, but **not** when the click lands on the
 (2026-06-15). Almost certainly **pre-existing**, not a state-migration
 regression.
 
-## Likely cause
+## Root cause (confirmed by analysis)
 
-`Controls`'s document-level outside-click handler decides whether to dismiss an
-open sidebar via `target.closest('.bber-controls__sidebar')` /
-`target.closest('.bber-nav__button')`. When the click target is the inner
-`<svg>`/`<path>`, the toggle and the outside-click handler can race (the button's
-`onClick` opens it, then the document handler immediately closes it), or the icon
-intercepts the event. The standard fix is `pointer-events: none` on the icon
-(`Navigation/Icon.tsx` SVGs) so the click always registers on the button, or
-reconciling the toggle vs. outside-click handling so the opening click isn't
-treated as an outside click.
+A **detached event target**, not a timing race. When the click lands on the
+icon, `event.target` is the `<svg>`/`<path>`. The button's `onClick` toggles the
+sidebar open, which swaps the button's child icon (`<Menu/>` → `<Close/>`); React
+flushes that re-render synchronously for the discrete click, **unmounting the
+exact node that was clicked**. The native document-level outside-click handler in
+`Controls` then runs (the event keeps bubbling up to `document`) with `event.target`
+now detached from the tree, so `target.closest('.bber-nav__button')` resolves to
+`null` and the handler treats the opening click as an outside click. Clicking the
+button padding works because the `<button>` itself never detaches.
+
+## Fix
+
+`pointer-events: none` on `.bber-nav__button svg` (`src/styles/_controls.scss`),
+so the click target is always the `<button>` (which never detaches) regardless of
+where inside it the user clicks. Scoped to the header nav icons only — media
+controls keep their pointer events.
 
 ## Subtasks
 
-- [ ] Reproduce: click precisely on the icon glyph vs. the button padding
-- [ ] Confirm root cause (icon `pointer-events` vs. toggle/outside-click race)
-- [ ] Apply the minimal fix (prefer `pointer-events: none` on the nav icons if
-      that resolves it)
+- [x] Reproduce: click precisely on the icon glyph vs. the button padding
+      (surfaced in QA; mechanism traced)
+- [x] Confirm root cause — **detached target on icon swap**, refining the
+      original race/`pointer-events` hypothesis
+- [x] Apply the minimal fix (`pointer-events: none` on the nav icons)
 - [ ] Verify open/close still works for both the button and the icon, and
-      outside-click dismissal is unaffected
-- [ ] `npm test` green + 9 snapshots unchanged
+      outside-click dismissal is unaffected (browser QA, port 3000)
+- [x] `npm test` green + 9 snapshots unchanged (CSS-only; component snapshots
+      unaffected)
 
 ## Notes
 

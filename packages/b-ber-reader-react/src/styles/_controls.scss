@@ -109,6 +109,14 @@
           width: 43%;
           height: 43%;
 
+          // Keep the click target on the button itself. Without this, a click
+          // on the icon makes the <svg>/<path> the event target; opening the
+          // sidebar swaps the button's child icon (Menu→Close), detaching that
+          // node mid-dispatch, so the document outside-click handler's
+          // target.closest('.bber-nav__button') resolves to null and dismisses
+          // the just-opened sidebar (TASK-108).
+          pointer-events: none;
+
           @include break-at('mobile', 'tablet') {
             width: 63%;
             height: 63%;
