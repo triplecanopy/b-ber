@@ -213,10 +213,16 @@ consolidated per §3c). **Redux is fully removed** — deps, Provider, reducers,
 actions, and constants deleted; every component is plain functional reading the
 built-in store. `book.content` moved into the store as `{ spineItemURL, node }`
 (BookContent self-keys; the chapter-change remount that re-arms Ultimate is
-preserved). Cold+warm QA'd (resize/sidebar/nav bugs found and fixed: see fix
-commits + TASK-107/108). **Remaining:** browser QA of the hot slices +
-book.content remount (`SPREAD-CLUSTER-QA.md`); then `ReaderApiContext` (collapse
-`reader-context`) — the last subtask.
+preserved). `ReaderApiContext` introduced and `reader-context` collapsed: the
+stable ref-backed API context (`getTranslateX`/`navigateToChapterByURL`/
+`getSpineItemByAbsoluteUrl`) stops Link/SpreadFigure/Layout/`useNodePosition`
+re-rendering on spread changes; `reader-context` slims to reactive
+`{ spreadIndex, lastSpread }` (Vimeo/`useMediaPlayer` only). `spreadIndex`/
+`lastSpread` stay `Reader`-local (atomic navigation writes; deviation recorded in
+`STATE-MIGRATION-PLAN.md §3`). **All code subtasks done.** Cold+warm QA'd
+(resize/sidebar/nav bugs found and fixed: see fix commits + TASK-107/108).
+**Remaining:** browser QA of the hot slices + book.content remount + the
+ReaderApiContext consumers (`SPREAD-CLUSTER-QA.md`) — then close the task.
 
 **Step 5 (reorg / best practices)** — TASK-068 (housekeeping), TASK-071 (docs),
 TASK-076 (SCSS→CSS Modules), plus general organization cleanup.

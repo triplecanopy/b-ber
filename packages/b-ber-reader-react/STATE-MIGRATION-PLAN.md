@@ -163,12 +163,32 @@ store.getSnapshot, store.getSnapshot, selector, isEqual)`.
 
 - **`StoreContext`** — the reactive store object (stable identity). Read via
   `useStore(selector)`.
-- **`ReaderApiContext`** — the **stable, ref-backed** imperative API (`freeze`,
-  `navigate*`, `loadSpineItem`, …). Identity never changes → no re-render churn.
-  This replaces the `apiRef`/`deps` threading in `Reader/index`. Fold
-  `reader-context`'s stable methods (`getTranslateX`, `navigateToChapterByURL`,
-  `getSpineItemByAbsoluteUrl`) in here; move its reactive bits
-  (`spreadIndex`/`lastSpread`) into the store.
+- **`ReaderApiContext`** — the **stable, ref-backed** imperative API. Identity
+  never changes → no re-render churn.
+
+  **As built (TASK-106, deviations from the original sketch above):**
+  - The context carries only the methods that deep descendants actually consume
+    through context: `getTranslateX`, `navigateToChapterByURL`,
+    `getSpineItemByAbsoluteUrl` (consumed by Link, SpreadFigure, Layout,
+    `useNodePosition`). `freeze`/`navigate*`/`loadSpineItem` are **not** put on
+    the context — they are called internally via `apiRef` or passed to `Controls`
+    as props, so exposing them through context would be dead surface. The
+    `apiRef`/`deps` threading in `Reader/index` therefore stays (it is what the
+    context value delegates to).
+  - The reactive bits (`spreadIndex`/`lastSpread`) were **kept as `Reader` local
+    state**, exposed through a slimmed reactive `ReaderContext` (`{ spreadIndex,
+    lastSpread }`), rather than moved into the store. Reason: they are written
+    **atomically** alongside the rest of `Reader`'s navigation local-state
+    (`currentSpineItem`, `slug`, `firstChapter`, …) in single `setState` calls,
+    and read synchronously via `stateRef` in `updateQueryString`/`savePosition`.
+    Fragmenting just those two fields into the store would split each atomic
+    navigation write across two update systems (store + React state) and
+    complicate the after-commit callback ordering (`updateQueryString`,
+    `loadSpineItem`) — for **zero** consumer benefit, since the only reactive
+    consumers (`Vimeo`, `useMediaPlayer`) are equally served by the slim context.
+    This also resolves the "decide `Reader` local-state placement" sub-point: all
+    of `Reader`'s orchestration state stays local; the store holds only the
+    cross-cutting slices.
 
 ### 4. `book.content`
 

@@ -49,10 +49,20 @@ imperative methods. Drop `react-redux`, `redux`, `redux-thunk`, and
       write via `store/contentActions.ts`); `BookContent` self-keys on
       `spineItemURL` (a legitimate chapter-change remount that re-arms Ultimate),
       dropping the prop-threaded `key` hack; pure `useStore` read.
-- [ ] Introduce `ReaderApiContext` (stable, ref-backed) for `freeze`/`navigate*`/
-      `loadSpineItem`; collapse `reader-context` (stable methods → API context,
-      reactive `spreadIndex`/`lastSpread` → store); decide `Reader` local-state
-      (`spine`/`currentSpineItem*`) placement
+- [x] Introduce `ReaderApiContext` (stable, ref-backed) and collapse
+      `reader-context`. **As built** (deviations recorded in
+      `STATE-MIGRATION-PLAN.md §3`): `ReaderApiContext` carries the methods deep
+      descendants actually consume (`getTranslateX`, `navigateToChapterByURL`,
+      `getSpineItemByAbsoluteUrl`) with a never-changing identity, so Link/
+      SpreadFigure/Layout/`useNodePosition` stop re-rendering on spread changes;
+      `freeze`/`navigate*`/`loadSpineItem` stay internal (`apiRef`/Controls
+      props). `reader-context` slims to the reactive `{ spreadIndex, lastSpread }`
+      consumed only by Vimeo/`useMediaPlayer`. `spreadIndex`/`lastSpread` were
+      **kept as `Reader` local state** (not moved to the store) because they are
+      written atomically with the rest of `Reader`'s navigation state in single
+      `setState` calls — resolving the `Reader` local-state placement decision:
+      all orchestration state stays local, the store holds only cross-cutting
+      slices.
 - [x] Remove `connect()` from all components (no component uses
       connect/useSelector/useDispatch anymore; Reader is plain functional).
 - [x] Delete `react-redux`/`redux`/`redux-thunk`/`redux-mock-store`, the
