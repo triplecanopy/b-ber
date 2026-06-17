@@ -18,8 +18,22 @@ React ecosystem.
 ## Subtasks
 
 - [ ] Audit current SCSS structure — identify global resets/variables that must stay global vs. component-scoped styles
+- [ ] **Migrate `@import` → `@use`/`@forward`** (Sass module system). `src/index.scss`
+      `@import`s its 10 partials with the legacy `@import` rule, which Dart Sass
+      deprecates (removed in Dart Sass 3.0) and warns about on every `npm start`.
+      Partials are cleanly layered (`_variables` → `_mixins` → the rest;
+      `_mixins.scss` already uses `@use 'sass:list'`), so this is ~8 files of
+      one-line `@use '…' as *` additions. **Verify the compiled CSS is
+      byte-identical** (`npx sass src/index.scss` before/after). If the CSS
+      Modules pass lands first and rewrites these files anyway, do it there; if
+      not, this is worth doing on its own to clear the warnings. (Surfaced
+      2026-06-17 via dev-server deprecation warnings — they are our own SCSS, not
+      a third-party lib; `sass` is already current.)
 - [ ] Evaluate whether to keep SCSS syntax (`*.module.scss`) or migrate to plain CSS (`*.module.css`) in the same pass
-- [ ] Update webpack config (`webpack.config.js`) to enable CSS Modules (`modules: true` on css-loader)
+- [ ] Enable CSS Modules in the build config (**Vite** — `vite.config.js` /
+      `vite.config.lib.js`; the package migrated off webpack). With Vite, CSS
+      Modules work out of the box for `*.module.{css,scss}` files; tune
+      `css.modules.generateScopedName` to keep readable class names in dev/test.
 - [ ] Migrate leaf components first (Spinner, NavigationFooter button styles) as a proof-of-concept
 - [ ] Migrate remaining components (Layout, Controls, Frame, Spread, BookContent, Ultimate)
 - [ ] Migrate HOCs (withDimensions, withLastSpreadIndex)
@@ -35,9 +49,12 @@ React ecosystem.
   (custom properties, font-face declarations, resets) should remain in a single
   `src/styles/global.css` imported once at the app entry point.
 - Class names in tests (`container.querySelector('.bber-controls__footer')`) will break
-  if CSS Modules generates hashed names. Use `composes` or configure `localIdentName`
-  to preserve readable names in test/dev, or update tests to use `data-testid` attributes.
+  if CSS Modules generates hashed names. Use `composes` or configure Vite's
+  `css.modules.generateScopedName` to preserve readable names in test/dev, or update
+  tests to use `data-testid` attributes.
 - Do not proceed until TASK-067 (active bugs) is resolved — migrating styles on top of
   a broken navigation path makes regression detection harder.
-- Consider doing this in the same pass as the webpack → rsbuild migration (root TASK-060)
-  if build-tool changes alter how CSS is processed anyway.
+- **Build tool is Vite now** (`vite.config.js` for dev, `vite.config.lib.js` for the
+  library build) — the earlier webpack/rsbuild references in this task are stale. Vite
+  handles CSS Modules natively, so no loader config is needed; this lowers the cost of
+  the migration.
