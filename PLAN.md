@@ -209,11 +209,14 @@ warm → hot → `book.content` → drop `connect()`/deps). Best done after Step
 `viewerSettings` thunks deleted; App is now connect-free) and the hot `view` +
 `viewerSettings` slices (`store/viewActions.ts` + `store/viewerSettingsActions.ts`;
 render-count parity test proves selector-level bailout; Ultimate settle
-consolidated per §3c). **No component uses connect/redux anymore** — only
-`index.tsx`'s Provider + the reducers remain. Cold+warm QA'd (resize/sidebar/
-nav bugs found and fixed: see fix commits + TASK-107/108). **Remaining:** hot-
-slice **browser QA** (`SPREAD-CLUSTER-QA.md`), then `book.content` move,
-`ReaderApiContext`, and removing `connect()`/redux deps + reducers.
+consolidated per §3c). **Redux is fully removed** — deps, Provider, reducers,
+actions, and constants deleted; every component is plain functional reading the
+built-in store. `book.content` moved into the store as `{ spineItemURL, node }`
+(BookContent self-keys; the chapter-change remount that re-arms Ultimate is
+preserved). Cold+warm QA'd (resize/sidebar/nav bugs found and fixed: see fix
+commits + TASK-107/108). **Remaining:** browser QA of the hot slices +
+book.content remount (`SPREAD-CLUSTER-QA.md`); then `ReaderApiContext` (collapse
+`reader-context`) — the last subtask.
 
 **Step 5 (reorg / best practices)** — TASK-068 (housekeeping), TASK-071 (docs),
 TASK-076 (SCSS→CSS Modules), plus general organization cleanup.

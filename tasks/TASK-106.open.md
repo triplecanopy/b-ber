@@ -45,21 +45,24 @@ imperative methods. Drop `react-redux`, `redux`, `redux-thunk`, and
       count parity test in `__tests__/store/useStore.parity.test.jsx` proves
       selector-level bailout. After this, no component uses connect/redux.
       **Browser QA still pending.**
-- [ ] Move `book.content` into the store as `{ spineItemURL, node }` (atomic
-      write); remove the `key`-prop remount hack; `BookContent` becomes a pure
-      `useStore` read
+- [x] Move `book.content` into the store as `{ spineItemURL, node }` (atomic
+      write via `store/contentActions.ts`); `BookContent` self-keys on
+      `spineItemURL` (a legitimate chapter-change remount that re-arms Ultimate),
+      dropping the prop-threaded `key` hack; pure `useStore` read.
 - [ ] Introduce `ReaderApiContext` (stable, ref-backed) for `freeze`/`navigate*`/
       `loadSpineItem`; collapse `reader-context` (stable methods → API context,
       reactive `spreadIndex`/`lastSpread` → store); decide `Reader` local-state
       (`spine`/`currentSpineItem*`) placement
-- [ ] Remove `connect()` from all 14 + 3 components as their slices migrate;
-      tighten the [[TASK-032]] injected-`any`/`BoundActions` types as they go
-- [ ] Delete `react-redux`/`redux`/`redux-thunk`/`redux-mock-store`, the
-      `Provider`, reducers, and thunk plumbing once unreferenced
-- [ ] 9 snapshots unchanged; tests pass (rewrite redux-`Provider` tests to
-      `renderWithStore`); `tsc --noEmit` clean — **at every commit**
+- [x] Remove `connect()` from all components (no component uses
+      connect/useSelector/useDispatch anymore; Reader is plain functional).
+- [x] Delete `react-redux`/`redux`/`redux-thunk`/`redux-mock-store`, the
+      `Provider`, reducers, actions, action-type constants, and thunk plumbing.
+- [x] 9 snapshots unchanged; tests pass (redux `Provider` tests rewritten to
+      `renderWithStore`; reducer/action tests deleted with their code);
+      `tsc --noEmit` clean — at every commit.
 - [ ] **Browser QA**: full `SPREAD-CLUSTER-QA.md` flow (load/spinner, page turns,
-      chapter nav, resize recovery) — state migration must not regress timing
+      chapter nav, resize recovery) — covers hot slices + book.content remount.
+      Cold/warm QA'd (bugs fixed). Hot + book.content **still pending**.
 - [ ] One slice per commit; update `PLAN.md`; remove `.open`
 
 ## Notes
