@@ -1,30 +1,30 @@
 import find from 'lodash/find'
 import React, { useEffect } from 'react'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import * as readerLocationActions from '../actions/reader-location'
-import * as readerSettingsActions from '../actions/reader-settings'
 import Request from '../helpers/Request'
-import type {
-  AppDispatch,
-  ReaderLocationState,
-  ReaderSettingsState,
-  RootState,
-} from '../store/types'
+import { useReaderLocationActions } from '../store/readerLocationActions'
+import { useReaderStore, useStore } from '../store/StoreContext'
+import type { ReaderSettingsState } from '../store/types'
 import Reader from './Reader'
 
-interface AppProps {
-  // manifestURL is supplied by the embedding host but not part of the persisted
-  // ReaderSettingsState, so it is read from the settings bag as an extra field.
-  readerSettings: ReaderSettingsState & { manifestURL?: string }
-  readerLocation: ReaderLocationState
-  // bindActionCreators erases the precise per-creator signatures; the bundles
-  // are kept loose. TODO: tighten once dispatch typing is finalized (TASK-073).
-  readerSettingsActions: Record<string, (...args: any[]) => unknown>
-  readerLocationActions: Record<string, (...args: any[]) => unknown>
-}
+// readerSettings and readerLocation both live in the built-in store now
+// (TASK-106), so App no longer connects to redux at all.
+function App() {
+  const store = useReaderStore()
+  // readerSettings is read from and written to the built-in store;
+  // manifestURL is supplied by the host and merged into the slice at seed time.
+  const readerSettings = useStore(
+    (s) => s.readerSettings
+  ) as ReaderSettingsState & {
+    manifestURL?: string
+  }
+  const searchParams = useStore((s) => s.readerLocation.searchParams)
+  const readerLocationActions = useReaderLocationActions()
 
-function App(props: AppProps) {
+  const updateSettings = (patch: Partial<ReaderSettingsState>) =>
+    store.setState((s) => ({
+      readerSettings: { ...s.readerSettings, ...patch },
+    }))
+
   // The class loaded the manifest in an async UNSAFE_componentWillMount, which
   // ran before first render. The redux-driven render gate below (`return null`
   // until searchParams + bookURL are set by this load) already prevents any
@@ -32,8 +32,12 @@ function App(props: AppProps) {
   // the visible sequence: the first paint is null either way (§3a). Runs once.
   useEffect(() => {
     const loadBook = async () => {
-      const { manifestURL, disableBodyStyles } = props.readerSettings
-      let { bookURL, projectURL } = props.readerSettings
+      // Read the mount-time settings from the store snapshot (the seed merged
+      // from props). The effect runs once; the store is stable.
+      const initialSettings = store.getSnapshot()
+        .readerSettings as ReaderSettingsState & { manifestURL?: string }
+      const { manifestURL, disableBodyStyles } = initialSettings
+      let { bookURL, projectURL } = initialSettings
       let books: unknown[] = []
 
       if (manifestURL && bookURL) {
@@ -69,7 +73,7 @@ function App(props: AppProps) {
           bookURL = opfURL.split('/').slice(0, -2).join('/')
 
           // Must be called before state is set
-          props.readerSettingsActions.updateSettings({ bookURL })
+          updateSettings({ bookURL })
 
           // Set the projectURL if not set to prevent 404 to /api/books.json
           if (!projectURL) {
@@ -119,54 +123,30 @@ function App(props: AppProps) {
       // either the API data or the React component as prop. This should
       // be handled programatically
       projectConfig.layout =
-        props.readerSettings.layout || projectConfig.layout || 'columns'
+        initialSettings.layout || projectConfig.layout || 'columns'
 
-      props.readerSettingsActions.updateSettings({
+      updateSettings({
         books: books as ReaderSettingsState['books'],
         bookURL,
         projectURL,
+        // projectConfig carries API-shaped `unknown` fields (downloads/uiOptions);
+        // the slice setter accepts the merged patch as the old action bundle did.
         ...projectConfig,
-      })
+      } as Partial<ReaderSettingsState>)
 
-      props.readerLocationActions.setInitialSearchParams()
+      readerLocationActions.setInitialSearchParams()
     }
 
     loadBook()
   }, [])
 
-  const { searchParams } = props.readerLocation
-  const { bookURL } = props.readerSettings
+  const { bookURL } = readerSettings
 
   if (!searchParams || !bookURL) return null
 
-  const { style, className, ...rest } = props.readerSettings
+  const { style, className, ...rest } = readerSettings
 
   return <Reader style={style} className={className} {...rest} />
 }
 
-const mapStateToProps = ({ readerSettings, readerLocation }: RootState) => ({
-  readerSettings,
-  readerLocation,
-})
-
-// Bound action bundles. bindActionCreators yields precise per-creator types
-// that don't line up with the loose action-bundle props on AppProps; cast each
-// to the loose shape so connect's prop inference matches. Behavior unchanged.
-const mapDispatchToProps = (
-  dispatch: AppDispatch
-): Pick<AppProps, 'readerSettingsActions' | 'readerLocationActions'> => ({
-  readerSettingsActions: bindActionCreators(
-    readerSettingsActions,
-    dispatch
-  ) as unknown as AppProps['readerSettingsActions'],
-  readerLocationActions: bindActionCreators(
-    // The module also exports the non-function `locationStates` const, which is
-    // not an action creator; cast so bindActionCreators accepts the module.
-    readerLocationActions as unknown as Parameters<
-      typeof bindActionCreators
-    >[0],
-    dispatch
-  ) as unknown as AppProps['readerLocationActions'],
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(App)
+export default App

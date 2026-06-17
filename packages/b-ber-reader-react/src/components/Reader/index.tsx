@@ -1,32 +1,39 @@
 import find from 'lodash/find'
 import isInteger from 'lodash/isInteger'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import * as readerLocationActions from '../../actions/reader-location'
-import * as readerSettingsActions from '../../actions/reader-settings'
-import * as userInterfaceActions from '../../actions/user-interface'
-import * as viewActions from '../../actions/view'
-import * as viewerSettingsActions from '../../actions/viewer-settings'
 import Asset from '../../helpers/Asset'
 import Url from '../../helpers/Url'
 import { unlessDefined } from '../../helpers/utils'
 import Viewport from '../../helpers/Viewport'
+import ReaderApiContext from '../../lib/reader-api-context'
 import ReaderContext from '../../lib/reader-context'
-import type { AppDispatch, RootState } from '../../store/types'
+import { useContentActions } from '../../store/contentActions'
+import { useReaderLocationActions } from '../../store/readerLocationActions'
+import { useReaderStore, useStore } from '../../store/StoreContext'
+import { useUserInterfaceActions } from '../../store/userInterfaceActions'
+import { useViewActions } from '../../store/viewActions'
+import { useViewerSettingsActions } from '../../store/viewerSettingsActions'
 import Controls from '../Controls'
 import Frame from '../Frame'
 import Spinner from '../Spinner'
-import { book, useLoader } from './loader'
+import { useLoader } from './loader'
 import { useNavigation } from './navigation'
 import { useResize } from './resize'
-import type { ReaderApi, ReaderProps, ReaderState } from './types'
+import type {
+  ReaderApi,
+  ReaderComponentProps,
+  ReaderProps,
+  ReaderState,
+} from './types'
 
-// Renders the current chapter's React element tree. Content is written to the
-// module-level `book` object by loader.js and re-rendered when Reader state
-// changes. See IMPROVEMENT_PLAN.md C4 for the known issue with this approach.
+// Renders the current chapter's React element tree from the store (TASK-106).
+// Keying on spineItemURL remounts this on a chapter change — and with it the
+// Ultimate sentinel inside the parsed content — restarting the layout-stability
+// watch (freeze() deliberately doesn't unload(), so the remount is what
+// re-arms Ultimate on navigation).
 function BookContent() {
-  return <div key="book-content">{book.content}</div>
+  const { spineItemURL, node } = useStore((s) => s.content)
+  return <div key={spineItemURL}>{node}</div>
 }
 
 // ─── Reader ──────────────────────────────────────────────────────────────────
@@ -49,9 +56,13 @@ function BookContent() {
 //   componentWillUnmount            → useEffect cleanup
 //   UNSAFE_componentWillReceiveProps → two targeted useEffect hooks
 //
-// ReaderContext.Provider value is memoized (fixes IMPROVEMENT_PLAN H5).
+// The imperative API is provided through ReaderApiContext as a ref-backed value
+// whose identity never changes, so method-only consumers don't re-render on
+// spread changes; the reactive ReaderContext value (spreadIndex/lastSpread) is
+// memoized so its consumers re-render only when those change (TASK-106; the
+// former combined value fixed IMPROVEMENT_PLAN H5).
 
-function Reader(props: ReaderProps) {
+function Reader(props: ReaderComponentProps) {
   // ─── Local state ───────────────────────────────────────────────────────────
   const [state, setReactState] = useState<ReaderState>({
     __metadata: [],
@@ -62,7 +73,6 @@ function Reader(props: ReaderProps) {
     spine: [],
     guide: [],
     metadata: [],
-    spineItemURL: '',
     currentSpineItem: null,
     currentSpineItemIndex: 0,
     cache: props.cache,
@@ -85,6 +95,21 @@ function Reader(props: ReaderProps) {
     disableMobileResizeEvents: 'ontouchstart' in document.documentElement,
   })
 
+  // Every slice (readerSettings, readerLocation, view, viewerSettings) and every
+  // action bundle now comes from the built-in store (TASK-106). All are injected
+  // into the props ref below so the external modules keep reading
+  // `propsRef.current.viewerSettings` / `.viewActions` etc. unchanged.
+  const store = useReaderStore()
+  const readerSettings = useStore((s) => s.readerSettings)
+  const readerLocation = useStore((s) => s.readerLocation)
+  const view = useStore((s) => s.view)
+  const viewerSettings = useStore((s) => s.viewerSettings)
+  const userInterfaceActions = useUserInterfaceActions()
+  const readerLocationActions = useReaderLocationActions()
+  const viewActions = useViewActions()
+  const viewerSettingsActions = useViewerSettingsActions()
+  const contentActions = useContentActions()
+
   // ─── Live refs ─────────────────────────────────────────────────────────────
   // Keep refs that always hold the latest state and props. The external modules
   // (navigation.js, loader.js, resize.js) read `this.state` and `this.props`
@@ -93,8 +118,30 @@ function Reader(props: ReaderProps) {
   const stateRef = useRef(state)
   stateRef.current = state
 
-  const propsRef = useRef(props)
-  propsRef.current = props
+  const propsRef = useRef<ReaderProps>({
+    ...props,
+    readerSettings,
+    readerLocation,
+    view,
+    viewerSettings,
+    userInterfaceActions,
+    readerLocationActions,
+    viewActions,
+    viewerSettingsActions,
+    contentActions,
+  })
+  propsRef.current = {
+    ...props,
+    readerSettings,
+    readerLocation,
+    view,
+    viewerSettings,
+    userInterfaceActions,
+    readerLocationActions,
+    viewActions,
+    viewerSettingsActions,
+    contentActions,
+  }
 
   // ─── setState shim ─────────────────────────────────────────────────────────
   // The external modules call `this.setState(partialState, callback)`.
@@ -201,8 +248,10 @@ function Reader(props: ReaderProps) {
   const destroyReaderComponent = useCallback(() => {
     // TODO: the location.state.bookURL prop is how we signal to the reader that
     // there is a book loaded but the pathname is '/'. Would be good to standardize
-    propsRef.current.readerSettingsActions.updateSettings({ bookURL: '' })
-  }, [])
+    store.setState((s) => ({
+      readerSettings: { ...s.readerSettings, bookURL: '' },
+    }))
+  }, [store])
 
   const getSlug = useCallback(() => {
     const { spine, currentSpineItemIndex } = stateRef.current
@@ -334,11 +383,11 @@ function Reader(props: ReaderProps) {
   //
   // NOTE: The original class component had the same double-load pattern via
   // UNSAFE_componentWillReceiveProps. This fix removes that redundancy.
-  const prevSearchParamsRef = useRef(props.readerLocation.searchParams)
+  const prevSearchParamsRef = useRef(readerLocation.searchParams)
 
   useEffect(() => {
     const prevSearchParams = prevSearchParamsRef.current
-    const nextSearchParams = props.readerLocation.searchParams
+    const nextSearchParams = readerLocation.searchParams
     prevSearchParamsRef.current = nextSearchParams
 
     // Guard against re-running with the same value (e.g. React Strict Mode
@@ -378,7 +427,7 @@ function Reader(props: ReaderProps) {
     // Same chapter, different spread → update navigation state, which will
     // trigger a transform update in Layout
     setState({ slug, currentSpineItemIndex, spreadIndex })
-  }, [props.readerLocation.searchParams])
+  }, [readerLocation.searchParams])
 
   // ─── React to view.loaded / lastSpreadIndex changes ────────────────────────
   // Replaces the view.loaded branch of UNSAFE_componentWillReceiveProps.
@@ -386,7 +435,7 @@ function Reader(props: ReaderProps) {
   // Ultimate dispatching view.load()), navigate to the last spread if we
   // arrived here via backwards chapter navigation.
   useEffect(() => {
-    if (props.view.loaded && props.view.lastSpreadIndex > -1) {
+    if (view.loaded && view.lastSpreadIndex > -1) {
       if (stateRef.current.chapterDelta < 0) {
         setState({ chapterDelta: 0 }, () =>
           apiRef.current.navigateToSpreadByIndex(
@@ -395,26 +444,37 @@ function Reader(props: ReaderProps) {
         )
       }
     }
-  }, [props.view.loaded, props.view.lastSpreadIndex])
+  }, [view.loaded, view.lastSpreadIndex])
 
-  // ─── Context value ─────────────────────────────────────────────────────────
-  // Previously an object literal in JSX (recreated on every render, causing all
-  // context consumers to re-render unnecessarily). Now memoized so consumers
-  // only re-render when spreadIndex, lastSpread, or the stable callbacks change.
-  // Fixes IMPROVEMENT_PLAN.md H5.
+  // ─── Context values ────────────────────────────────────────────────────────
+  // The imperative API is provided once with a stable identity (empty deps):
+  // each method delegates to the live apiRef, so consumers (Link, SpreadFigure,
+  // Layout, use-node-position) get current behavior without ever re-rendering
+  // from a context change. The reactive value carries only spreadIndex/lastSpread
+  // and is memoized so its consumers (Vimeo, useMediaPlayer) re-render only when
+  // those change (was one combined literal recreated every render — H5).
+  const apiContextValue = useMemo(
+    () => ({
+      getTranslateX: (spreadIndex?: number) =>
+        apiRef.current.getTranslateX(spreadIndex),
+      navigateToChapterByURL: (absoluteURL: string) =>
+        apiRef.current.navigateToChapterByURL(absoluteURL),
+      getSpineItemByAbsoluteUrl: (absoluteURL: string) =>
+        apiRef.current.getSpineItemByAbsoluteUrl(absoluteURL),
+    }),
+    []
+  )
+
   const readerContextValue = useMemo(
     () => ({
       lastSpread: state.lastSpread,
       spreadIndex: state.spreadIndex,
-      getTranslateX,
-      navigateToChapterByURL: apiRef.current.navigateToChapterByURL,
-      getSpineItemByAbsoluteUrl: apiRef.current.getSpineItemByAbsoluteUrl,
     }),
-    [state.lastSpread, state.spreadIndex, getTranslateX]
+    [state.lastSpread, state.spreadIndex]
   )
 
   // ─── Render ────────────────────────────────────────────────────────────────
-  const { downloads, uiOptions, view, layout, style, className } = props
+  const { downloads, uiOptions, layout, style, className } = props
 
   const {
     metadata,
@@ -424,7 +484,6 @@ function Reader(props: ReaderProps) {
     showSidebar,
     // lastSpread,
     spreadIndex,
-    spineItemURL,
   } = state
 
   const slug = getSlug()
@@ -447,77 +506,27 @@ function Reader(props: ReaderProps) {
       uiOptions={uiOptions}
       layout={layout}
     >
-      <ReaderContext.Provider value={readerContextValue}>
-        <Frame
-          slug={slug}
-          spreadIndex={spreadIndex}
-          lastSpreadIndex={view.lastSpreadIndex}
-          BookContent={BookContent}
-          layout={layout}
-          // Can't wrap Layout or the withLastSpreadIndex HOC in a way that
-          // preserves refs, so pass `view` down as props
-          view={view}
-          style={style}
-          className={className}
-          spineItemURL={spineItemURL}
-        />
-        <Spinner />
-      </ReaderContext.Provider>
+      <ReaderApiContext.Provider value={apiContextValue}>
+        <ReaderContext.Provider value={readerContextValue}>
+          <Frame
+            slug={slug}
+            spreadIndex={spreadIndex}
+            lastSpreadIndex={view.lastSpreadIndex}
+            BookContent={BookContent}
+            layout={layout}
+            // Can't wrap Layout or the withLastSpreadIndex HOC in a way that
+            // preserves refs, so pass `view` down as props
+            view={view}
+            style={style}
+            className={className}
+          />
+          <Spinner />
+        </ReaderContext.Provider>
+      </ReaderApiContext.Provider>
     </Controls>
   )
 }
 
-const mapStateToProps = ({
-  readerSettings,
-  viewerSettings,
-  readerLocation,
-  view,
-  userInterface,
-}: RootState) => ({
-  readerSettings,
-  viewerSettings,
-  readerLocation,
-  view,
-  userInterface,
-})
-
-// Bound action bundles. bindActionCreators yields precise per-creator types
-// that don't line up with the loose bundle props on ReaderProps; cast each to
-// the loose shape so connect's prop inference matches. Behavior unchanged.
-type ReaderDispatchProps = Pick<
-  ReaderProps,
-  | 'viewerSettingsActions'
-  | 'readerSettingsActions'
-  | 'readerLocationActions'
-  | 'viewActions'
-  | 'userInterfaceActions'
->
-
-const mapDispatchToProps = (dispatch: AppDispatch): ReaderDispatchProps => ({
-  viewerSettingsActions: bindActionCreators(
-    viewerSettingsActions,
-    dispatch
-  ) as unknown as ReaderProps['viewerSettingsActions'],
-  readerSettingsActions: bindActionCreators(
-    readerSettingsActions,
-    dispatch
-  ) as unknown as ReaderProps['readerSettingsActions'],
-  readerLocationActions: bindActionCreators(
-    // The module also exports the non-function `locationStates` const; cast so
-    // bindActionCreators accepts the module.
-    readerLocationActions as unknown as Parameters<
-      typeof bindActionCreators
-    >[0],
-    dispatch
-  ) as unknown as ReaderProps['readerLocationActions'],
-  viewActions: bindActionCreators(
-    viewActions,
-    dispatch
-  ) as unknown as ReaderProps['viewActions'],
-  userInterfaceActions: bindActionCreators(
-    userInterfaceActions,
-    dispatch
-  ) as unknown as ReaderProps['userInterfaceActions'],
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(Reader)
+// All slices and action bundles now come from the built-in store (TASK-106),
+// so Reader is a plain functional component with no connect().
+export default Reader

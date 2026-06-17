@@ -1,10 +1,9 @@
-import { act, render } from '@testing-library/react'
+import { act } from '@testing-library/react'
 import React from 'react'
-import { Provider } from 'react-redux'
 import Spread from '../../src/components/Spread'
 import browserMock from '../../src/lib/browser'
 import SpreadContext from '../../src/lib/spread-context'
-import { createTestStore } from '../helpers/store'
+import { renderWithStore } from '../helpers/renderWithStore'
 
 // detect-browser returns null in jsdom; Spread.jsx reads browserMock.name, which
 // crashes on a null browser object. Replace with a mutable stub so tests can
@@ -25,21 +24,18 @@ const viewerSettings = {
 }
 
 const renderSpread = ({ storeOverrides = {}, props = {}, children } = {}) => {
-  const store = createTestStore({
+  const overrides = {
     viewerSettings,
     view: { loaded: true, ultimateOffsetLeft: 0, lastSpreadIndex: 0 },
     ...storeOverrides,
-  })
+  }
 
-  const tree = render(
-    <Provider store={store}>
-      <Spread data-marker-reference="ref-1" className="custom" {...props}>
-        {children || <div data-testid="spread-child">content</div>}
-      </Spread>
-    </Provider>
+  return renderWithStore(
+    <Spread data-marker-reference="ref-1" className="custom" {...props}>
+      {children || <div data-testid="spread-child">content</div>}
+    </Spread>,
+    { overrides }
   )
-
-  return { ...tree, store }
 }
 
 describe('Spread', () => {
@@ -219,18 +215,17 @@ describe('Spread', () => {
   test('readOffset bails when pageWidth is not finite (vertical scroll layout, width=auto)', () => {
     const scrollViewerSettings = { ...viewerSettings, width: 'auto' }
 
-    const store = createTestStore({
+    const overrides = {
       viewerSettings: scrollViewerSettings,
       view: { loaded: true, ultimateOffsetLeft: 0, lastSpreadIndex: 0 },
       readerSettings: { layout: 'scroll' },
-    })
+    }
 
-    const { container } = render(
-      <Provider store={store}>
-        <Spread data-marker-reference="ref-1" className="custom">
-          <div data-testid="spread-child">content</div>
-        </Spread>
-      </Provider>
+    const { container } = renderWithStore(
+      <Spread data-marker-reference="ref-1" className="custom">
+        <div data-testid="spread-child">content</div>
+      </Spread>,
+      { overrides }
     )
 
     act(() => {

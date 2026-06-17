@@ -1,9 +1,8 @@
-import { fireEvent, render } from '@testing-library/react'
+import { fireEvent } from '@testing-library/react'
 import React from 'react'
-import { Provider } from 'react-redux'
 import Link from '../../src/components/Link'
-import ReaderContext from '../../src/lib/reader-context'
-import { createTestStore } from '../helpers/store'
+import ReaderApiContext from '../../src/lib/reader-api-context'
+import { renderWithStore } from '../helpers/renderWithStore'
 
 const renderLink = ({
   href,
@@ -12,22 +11,17 @@ const renderLink = ({
   navigateToChapterByURL = jest.fn(),
   readerSettingsOverride = {},
 } = {}) => {
-  const store = createTestStore({ readerSettings: readerSettingsOverride })
-
-  const contextValue = {
-    lastSpread: false,
-    spreadIndex: 0,
+  const apiValue = {
     getTranslateX: () => 0,
     getSpineItemByAbsoluteUrl,
     navigateToChapterByURL,
   }
 
-  const tree = render(
-    <Provider store={store}>
-      <ReaderContext.Provider value={contextValue}>
-        <Link href={href}>{children}</Link>
-      </ReaderContext.Provider>
-    </Provider>
+  const tree = renderWithStore(
+    <ReaderApiContext.Provider value={apiValue}>
+      <Link href={href}>{children}</Link>
+    </ReaderApiContext.Provider>,
+    { overrides: { readerSettings: readerSettingsOverride } }
   )
 
   return { ...tree, navigateToChapterByURL }

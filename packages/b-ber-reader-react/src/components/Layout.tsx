@@ -1,7 +1,6 @@
 import classNames from 'classnames'
 import debounce from 'lodash/debounce'
 import React, { useContext, useEffect, useState } from 'react'
-import { connect } from 'react-redux'
 import {
   breakpoints,
   MEDIA_QUERY_MOBILE,
@@ -9,10 +8,10 @@ import {
 } from '../constants'
 import Viewport from '../helpers/Viewport'
 import browser from '../lib/browser'
-import ReaderContext from '../lib/reader-context'
+import ReaderApiContext from '../lib/reader-api-context'
 import transitions from '../lib/transition-styles'
 import withLastSpreadIndex from '../lib/with-last-spread-index'
-import type { RootState } from '../store/types'
+import { useStore } from '../store/StoreContext'
 
 // Local layout state (CSS box/transform values managed via useState).
 interface LayoutState {
@@ -165,7 +164,7 @@ function Leaves({
 // useDimensions internally); typed loosely pending that HOC's injected-prop
 // surface being finalized.
 function Layout(props: any) {
-  const readerContext = useContext(ReaderContext)
+  const readerApi = useContext(ReaderApiContext)
 
   const [state, setState] = useState<LayoutState>({
     margin: 0,
@@ -177,13 +176,13 @@ function Layout(props: any) {
 
   const height = props.getFrameHeight()
   const { spreadIndex, slug, layout } = props
-  const { enableTransitions } = props.userInterface
+  const { enableTransitions } = useStore((s) => s.userInterface)
   const { transition, transitionSpeed, paddingLeft, paddingRight } =
     props.viewerSettings
-  const translateX = readerContext.getTranslateX()
+  const translateX = readerApi.getTranslateX()
 
   const updateTransform = (nextSpreadIndex?: number) => {
-    const nextTranslateX = readerContext.getTranslateX(nextSpreadIndex)
+    const nextTranslateX = readerApi.getTranslateX(nextSpreadIndex)
     const transform = `translateX(${nextTranslateX}px) translate3d(0, 0, 0)`
 
     setState((prevState) => ({ ...prevState, transform }))
@@ -231,7 +230,8 @@ function Layout(props: any) {
           minHeight: height,
         }}
       >
-        <props.BookContent key={props.spineItemURL} />
+        {/* BookContent self-keys on spineItemURL from the store (TASK-106). */}
+        <props.BookContent />
       </div>
 
       <Leaves
@@ -246,7 +246,7 @@ function Layout(props: any) {
   )
 }
 
-export default connect(
-  ({ userInterface }: RootState) => ({ userInterface }),
-  () => ({})
-)(withLastSpreadIndex(Layout))
+// userInterface is read from the built-in store inside Layout (TASK-106), so
+// the former userInterface connect wrapper is gone; withLastSpreadIndex keeps
+// its own connect for viewActions.
+export default withLastSpreadIndex(Layout)

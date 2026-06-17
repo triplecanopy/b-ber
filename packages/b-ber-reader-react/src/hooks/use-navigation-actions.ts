@@ -1,8 +1,6 @@
-import { useCallback, useMemo } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import * as userInterfaceActions from '../actions/user-interface'
-import type { AppDispatch, RootState } from '../store/types'
+import { useCallback } from 'react'
+import { useStore } from '../store/StoreContext'
+import { useUserInterfaceActions } from '../store/userInterfaceActions'
 
 interface UseNavigationActionsResult {
   goToPrevChapter: () => void
@@ -14,18 +12,13 @@ interface UseNavigationActionsResult {
 // Replaces with-navigation-actions: wires the navigation footer's button
 // handlers to the owner-supplied chapter/page navigation callbacks, gated on
 // userInterface.handleEvents and (for page navigation) enabling transitions.
+// userInterface now lives in the built-in store (TASK-106).
 const useNavigationActions = (
   handleChapterNavigation: (increment: number) => void,
   handlePageNavigation: (increment: number) => void
 ): UseNavigationActionsResult => {
-  const dispatch = useDispatch<AppDispatch>()
-  const handleEvents = useSelector(
-    (state: RootState) => state.userInterface.handleEvents
-  )
-  const { enablePageTransitions } = useMemo(
-    () => bindActionCreators(userInterfaceActions, dispatch),
-    [dispatch]
-  )
+  const handleEvents = useStore((s) => s.userInterface.handleEvents)
+  const { enablePageTransitions } = useUserInterfaceActions()
 
   const goToPrevChapter = useCallback(() => {
     if (!handleEvents) return

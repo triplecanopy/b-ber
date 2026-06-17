@@ -17,16 +17,12 @@
  *     loader's own tests.
  */
 
-import { act, render } from '@testing-library/react'
+import { act } from '@testing-library/react'
 import React from 'react'
-import { Provider } from 'react-redux'
-import * as readerLocationActions from '../../../src/actions/reader-location'
-import * as viewActions from '../../../src/actions/view'
 import Reader from '../../../src/components/Reader'
-import { book } from '../../../src/components/Reader/loader'
 import Asset from '../../../src/helpers/Asset'
 import { makeTwoChapterSpine } from '../../helpers/fixtures'
-import { createTestStore } from '../../helpers/store'
+import { renderWithStore } from '../../helpers/renderWithStore'
 
 // The orchestrator logic now lives in three hooks. Mock each to return stable
 // jest.fn stand-ins the tests can assert on. useLoader additionally records the
@@ -57,7 +53,6 @@ const mockResizeFns = {
 
 jest.mock('../../../src/components/Reader/loader', () => ({
   __esModule: true,
-  book: { content: null },
   useLoader: (deps) => {
     mockLoaderFns.deps = deps
     return mockLoaderFns
@@ -94,7 +89,6 @@ jest.mock('../../../src/components/Frame', () => {
         data-testid="frame"
         data-slug={props.slug}
         data-spread-index={props.spreadIndex}
-        data-spine-item-url={props.spineItemURL}
         data-loaded={String(props.view?.loaded)}
       />
     )
@@ -113,24 +107,20 @@ describe('Reader', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockLoaderFns.createStateFromOPF.mockReset()
-    book.content = null
   })
 
   function renderReader(overrides = {}) {
-    const store = createTestStore(overrides)
-    const utils = render(
-      <Provider store={store}>
-        <Reader />
-      </Provider>
-    )
-    return { store, ...utils }
+    // Every slice lives in the built-in store now (TASK-106); drive it via
+    // `store.setState(...)` and read it via `store.getSnapshot()`.
+    return renderWithStore(<Reader />, { overrides })
   }
 
   test('on mount, shows the spinner and calls createStateFromOPF', () => {
     const { store } = renderReader()
 
-    expect(store.getState().userInterface.spinnerVisible).toBe(true)
-    expect(store.getState().userInterface.handleEvents).toBe(false)
+    // userInterface now lives in the built-in store (TASK-106)
+    expect(store.getSnapshot().userInterface.spinnerVisible).toBe(true)
+    expect(store.getSnapshot().userInterface.handleEvents).toBe(false)
     expect(mockLoaderFns.createStateFromOPF).toHaveBeenCalledTimes(1)
     expect(mockLoaderFns.createStateFromOPF).toHaveBeenCalledWith(
       expect.any(Function)
@@ -189,11 +179,12 @@ describe('Reader', () => {
     mockLoaderFns.loadSpineItem.mockClear()
 
     act(() => {
-      store.dispatch(
-        readerLocationActions.updateLocation({
+      // readerLocation now lives in the built-in store (TASK-106)
+      store.setState({
+        readerLocation: {
           searchParams: '?slug=chapter-1&currentSpineItemIndex=0&spreadIndex=1',
-        })
-      )
+        },
+      })
     })
 
     expect(mockLoaderFns.loadSpineItem).not.toHaveBeenCalled()
@@ -209,11 +200,11 @@ describe('Reader', () => {
     mockLoaderFns.loadSpineItem.mockClear()
 
     act(() => {
-      store.dispatch(
-        readerLocationActions.updateLocation({
+      store.setState({
+        readerLocation: {
           searchParams: '?slug=chapter-2&currentSpineItemIndex=1&spreadIndex=0',
-        })
-      )
+        },
+      })
     })
 
     // currentSpineItem is null in initial state (createStateFromOPF is mocked),
@@ -232,8 +223,8 @@ describe('Reader', () => {
     mockLoaderFns.loadSpineItem.mockClear()
 
     act(() => {
-      // Dispatch the exact same searchParams value again
-      store.dispatch(readerLocationActions.updateLocation({ searchParams }))
+      // Set the exact same searchParams value again
+      store.setState({ readerLocation: { searchParams } })
     })
 
     expect(mockLoaderFns.loadSpineItem).not.toHaveBeenCalled()
@@ -242,12 +233,12 @@ describe('Reader', () => {
   test('view.loaded/lastSpreadIndex effect: navigateToSpreadByIndex is not invoked when chapterDelta is 0 (default state)', () => {
     const { store } = renderReader()
 
+    // view now lives in the built-in store (TASK-106); drive it to fire the
+    // settle effect.
     act(() => {
-      store.dispatch(viewActions.updateLastSpreadIndex(2))
-    })
-
-    act(() => {
-      store.dispatch(viewActions.load(true))
+      store.setState((s) => ({
+        view: { ...s.view, lastSpreadIndex: 2, loaded: true },
+      }))
     })
 
     // chapterDelta is 0 by default (not < 0), so navigateToSpreadByIndex is
@@ -269,7 +260,6 @@ describe('Reader', () => {
     // does not resolve to a spine entry in the initial state.
     expect(frame.dataset.slug).toBe('')
     expect(frame.dataset.spreadIndex).toBe('0')
-    expect(frame.dataset.spineItemUrl).toBe('')
 
     const controlsProps = JSON.parse(controls.dataset.props)
     expect(controlsProps).toEqual(

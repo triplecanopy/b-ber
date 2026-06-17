@@ -1,10 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import * as viewActions from '../actions/view'
 import { isNumeric } from '../helpers/Types'
 import useDimensions from '../hooks/use-dimensions'
-import type { AppDispatch } from '../store/types'
+import { useViewActions } from '../store/viewActions'
 import browser from './browser'
 
 // Debounce window for content-dimension measurements (ms). After a DOM mutation
@@ -58,6 +55,9 @@ const withLastSpreadIndex = (
 ): React.ComponentType<any> => {
   function WrapperComponent(props: any) {
     const dimensions = useDimensions(props.layout)
+    // viewActions now comes from the built-in store (TASK-106); the bundle is
+    // stable (useMemo on the store) so the dispatch effect can read it directly.
+    const viewActions = useViewActions()
     const node = useRef<HTMLElement | null>(null)
     const [contentDimensions, setContentDimensions] = useState(0)
 
@@ -186,7 +186,17 @@ const withLastSpreadIndex = (
       measureRef.current?.()
     }, [props.view?.loaded, props.view?.ultimateOffsetLeft])
 
-    // Recompute and dispatch lastSpreadIndex whenever content dimensions change.
+    // Recompute and dispatch lastSpreadIndex whenever content dimensions change
+    // OR the layout settles (view.loaded / ultimateOffsetLeft). The settle
+    // signal is essential for resize: a window resize changes frameHeight (and
+    // re-arms <Ultimate> via freeze()→unload()), but the content's scrollHeight
+    // — and therefore `contentDimensions` — often does NOT change, so keying on
+    // contentDimensions alone left lastSpreadIndex stuck at freeze()'s -1 after
+    // a resize, which made handlePageNavigation ignore every forward press.
+    // Recomputing on settle recovers it with the new frameHeight.
+    // dimensionsRef/propsRef are stable refs read at call time; the trigger set
+    // is contentDimensions + the settle signal (view.loaded / ultimateOffsetLeft).
+    const { loaded: viewLoaded, ultimateOffsetLeft } = props.view ?? {}
     useEffect(() => {
       // L2 fix: skip dispatch while dimensions are 0 (chapter not yet loaded or
       // just reset on slug change). freeze() already dispatches
@@ -199,7 +209,7 @@ const withLastSpreadIndex = (
       // Division by 0 previously produced Infinity as lastSpreadIndex.
       // In scroll mode there is only one logical "spread", so use 0.
       if (!isNumeric(frameHeight) || frameHeight === 0) {
-        propsRef.current.viewActions.updateLastSpreadIndex(0)
+        viewActions.updateLastSpreadIndex(0)
         return
       }
 
@@ -218,8 +228,8 @@ const withLastSpreadIndex = (
       // Never less than 0
       if (nextLastSpreadIndex < 0) nextLastSpreadIndex = 0
 
-      propsRef.current.viewActions.updateLastSpreadIndex(nextLastSpreadIndex)
-    }, [contentDimensions])
+      viewActions.updateLastSpreadIndex(nextLastSpreadIndex)
+    }, [contentDimensions, viewLoaded, ultimateOffsetLeft])
 
     return (
       <WrappedComponent
@@ -241,17 +251,13 @@ const withLastSpreadIndex = (
         viewerSettings={dimensions.viewerSettings}
         userInterface={props.userInterface}
         viewerSettingsActions={dimensions.viewerSettingsActions}
-        viewActions={props.viewActions}
       />
     )
   }
 
-  return connect(
-    () => ({}),
-    (dispatch: AppDispatch) => ({
-      viewActions: bindActionCreators(viewActions, dispatch),
-    })
-  )(WrapperComponent)
+  // No connect: viewActions comes from the built-in store (TASK-106) and the
+  // only state withLastSpreadIndex reads (view) arrives as a prop from Frame.
+  return WrapperComponent
 }
 
 export default withLastSpreadIndex

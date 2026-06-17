@@ -1,8 +1,7 @@
 import classNames from 'classnames'
 import React from 'react'
-import { connect } from 'react-redux'
 import useMaxHeight from '../../hooks/use-max-height'
-import type { ReaderSettingsState, RootState } from '../../store/types'
+import { useStore } from '../../store/StoreContext'
 
 // Local equivalents of the package's public prop contracts (documented in the
 // root index.d.ts). Defined locally rather than imported from the .d.ts.
@@ -63,23 +62,25 @@ interface SidebarChaptersProps {
   spine: Spine
   currentSpineItemIndex: number
   navigateToChapterByURL: (url: string) => void
-  // Injected by connect; also the consumer-override slot read below.
-  readerSettings: ReaderSettingsState
 }
 
 function SidebarChapters(props: SidebarChaptersProps) {
-  if (props.readerSettings.SidebarChapters) {
+  // All hooks must run unconditionally and in the same order every render —
+  // useMaxHeight stays above the early returns below (a conditional call would
+  // change the hook count when the sidebar opens/closes and crash the tree).
+  const readerSettings = useStore((s) => s.readerSettings)
+  const [ref, maxHeight] = useMaxHeight()
+
+  if (readerSettings.SidebarChapters) {
     // Consumer override is stored as a ComponentType but invoked as a plain
     // render function (its original JS contract); cast to match that call.
-    const Override = props.readerSettings.SidebarChapters as (
+    const Override = readerSettings.SidebarChapters as (
       p: SidebarChaptersProps
     ) => React.ReactElement
     return Override(props)
   }
 
   if (props.showSidebar !== 'chapters') return null
-
-  const [ref, maxHeight] = useMaxHeight()
 
   return (
     <nav
@@ -101,6 +102,4 @@ function SidebarChapters(props: SidebarChaptersProps) {
   )
 }
 
-export default connect(({ readerSettings }: RootState) => ({ readerSettings }))(
-  SidebarChapters
-)
+export default SidebarChapters

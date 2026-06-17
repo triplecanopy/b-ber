@@ -1,12 +1,8 @@
 import classNames from 'classnames'
 import React from 'react'
-import { connect } from 'react-redux'
 import useMaxHeight from '../../hooks/use-max-height'
-import type {
-  Download,
-  ReaderSettingsState,
-  RootState,
-} from '../../store/types'
+import { useStore } from '../../store/StoreContext'
+import type { Download } from '../../store/types'
 
 type SidebarName = 'chapters' | 'downloads' | 'metadata' | 'settings'
 
@@ -39,23 +35,25 @@ function SidebarDownloadLink({
 interface SidebarDownloadsProps {
   showSidebar: SidebarName | null
   downloads: Download[]
-  // Injected by connect; also the consumer-override slot read below.
-  readerSettings: ReaderSettingsState
 }
 
 function SidebarDownloads(props: SidebarDownloadsProps) {
-  if (props.readerSettings.SidebarDownloads) {
+  // All hooks must run unconditionally and in the same order every render —
+  // useMaxHeight stays above the early returns below (a conditional call would
+  // change the hook count when the sidebar opens/closes and crash the tree).
+  const readerSettings = useStore((s) => s.readerSettings)
+  const [ref, maxHeight] = useMaxHeight()
+
+  if (readerSettings.SidebarDownloads) {
     // Consumer override is stored as a ComponentType but invoked as a plain
     // render function (its original JS contract); cast to match that call.
-    const Override = props.readerSettings.SidebarDownloads as (
+    const Override = readerSettings.SidebarDownloads as (
       p: SidebarDownloadsProps
     ) => React.ReactElement
     return Override(props)
   }
 
   if (props.showSidebar !== 'downloads') return null
-
-  const [ref, maxHeight] = useMaxHeight()
 
   return (
     <nav
@@ -82,6 +80,4 @@ function SidebarDownloads(props: SidebarDownloadsProps) {
   )
 }
 
-export default connect(({ readerSettings }: RootState) => ({ readerSettings }))(
-  SidebarDownloads
-)
+export default SidebarDownloads

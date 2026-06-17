@@ -1,11 +1,10 @@
 import classNames from 'classnames'
 import React, { useEffect, useRef, useState } from 'react'
-import { connect } from 'react-redux'
 import Asset from '../helpers/Asset'
 import Request from '../helpers/Request'
 import Url from '../helpers/Url'
 import Viewport from '../helpers/Viewport'
-import type { RootState } from '../store/types'
+import { useStore } from '../store/StoreContext'
 
 const blacklistedNodeNames = ['SCRIPT', 'STYLE']
 
@@ -57,10 +56,11 @@ interface FootnoteProps {
   id?: string
   href: string
   children?: React.ReactNode
-  viewerSettings: RootState['viewerSettings']
 }
 
-function Footnote({ id, href, children, viewerSettings }: FootnoteProps) {
+function Footnote({ id, href, children }: FootnoteProps) {
+  // viewerSettings is read from the built-in store (TASK-106).
+  const viewerSettings = useStore((s) => s.viewerSettings)
   const [content, setContent] = useState('')
   const [visible, setVisible] = useState(false)
   const [footnoteId] = useState(() => Asset.createId())
@@ -285,7 +285,4 @@ function Footnote({ id, href, children, viewerSettings }: FootnoteProps) {
   )
 }
 
-export default connect(
-  ({ viewerSettings }: RootState) => ({ viewerSettings }),
-  () => ({})
-)(Footnote)
+export default Footnote

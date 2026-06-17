@@ -10,11 +10,10 @@
  * store.
  */
 
-import { fireEvent, render } from '@testing-library/react'
+import { fireEvent } from '@testing-library/react'
 import React from 'react'
-import { Provider } from 'react-redux'
 import Controls from '../../src/components/Controls'
-import { createTestStore } from '../helpers/store'
+import { renderWithStore } from '../helpers/renderWithStore'
 
 jest.mock('../../src/components/Navigation', () => ({
   NavigationHeader: function NavigationHeader() {
@@ -26,7 +25,6 @@ jest.mock('../../src/components/Navigation', () => ({
 }))
 
 function renderControls(props = {}, overrides = {}) {
-  const store = createTestStore(overrides)
   const handlePageNavigation = jest.fn()
   const handleSidebarButtonClick = jest.fn()
   const handleChapterNavigation = jest.fn()
@@ -51,14 +49,9 @@ function renderControls(props = {}, overrides = {}) {
     ...props,
   }
 
-  const utils = render(
-    <Provider store={store}>
-      <Controls {...defaultProps} />
-    </Provider>
-  )
+  const utils = renderWithStore(<Controls {...defaultProps} />, { overrides })
 
   return {
-    store,
     handlePageNavigation,
     handleSidebarButtonClick,
     handleChapterNavigation,
@@ -95,7 +88,7 @@ describe('Controls', () => {
 
       fireEvent.keyDown(document, { which: 37 })
 
-      expect(store.getState().userInterface.enableTransitions).toBe(true)
+      expect(store.getSnapshot().userInterface.enableTransitions).toBe(true)
       expect(handlePageNavigation).toHaveBeenCalledWith(-1)
       expect(handleSidebarButtonClick).toHaveBeenCalledWith(null)
     })
@@ -105,7 +98,7 @@ describe('Controls', () => {
 
       fireEvent.keyDown(document, { which: 39 })
 
-      expect(store.getState().userInterface.enableTransitions).toBe(true)
+      expect(store.getSnapshot().userInterface.enableTransitions).toBe(true)
       expect(handlePageNavigation).toHaveBeenCalledWith(1)
       expect(handleSidebarButtonClick).toHaveBeenCalledWith(null)
     })
@@ -161,7 +154,7 @@ describe('Controls', () => {
 
       fireEvent.keyDown(document, { which: 37 })
 
-      expect(store.getState().userInterface.enableTransitions).not.toBe(true)
+      expect(store.getSnapshot().userInterface.enableTransitions).not.toBe(true)
       expect(handlePageNavigation).not.toHaveBeenCalled()
       expect(handleSidebarButtonClick).not.toHaveBeenCalled()
     })

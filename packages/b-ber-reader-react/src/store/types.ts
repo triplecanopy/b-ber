@@ -1,16 +1,4 @@
-import type { ComponentType, CSSProperties } from 'react'
-import type { Action } from 'redux'
-import type { ThunkAction, ThunkDispatch } from 'redux-thunk'
-
-// Loose action shape used by the slice reducers. Redux v5 dropped `AnyAction`;
-// reducers receive every dispatched action and narrow on `type`, so `payload`
-// is intentionally permissive here.
-// TODO: tighten per-slice action unions when the Redux store is modernized
-// (TASK-073).
-export interface ReducerAction {
-  type: string
-  payload?: any
-}
+import type { ComponentType, CSSProperties, ReactNode } from 'react'
 
 export interface Book {
   title: string
@@ -111,6 +99,15 @@ export interface UserInterfaceState {
   spinnerVisible: boolean
 }
 
+// The current chapter's rendered React tree, kept in the store rather than a
+// module global so it flows through the render pipeline tear-free (TASK-106).
+// `spineItemURL` keys BookContent so a chapter change remounts it (and the
+// Ultimate sentinel inside), restarting the layout-stability watch.
+export interface ContentState {
+  spineItemURL: string
+  node: ReactNode
+}
+
 export interface RootState {
   readerSettings: ReaderSettingsState
   viewerSettings: ViewerSettingsState
@@ -118,10 +115,5 @@ export interface RootState {
   markers: MarkersState
   view: ViewState
   userInterface: UserInterfaceState
+  content: ContentState
 }
-
-// Thunk helpers. Thunks return `dispatch(...)` results that callers ignore, so
-// the default return type is void (void-returning functions may still return a
-// value in TS).
-export type AppThunk<R = void> = ThunkAction<R, RootState, unknown, Action>
-export type AppDispatch = ThunkDispatch<RootState, unknown, Action>

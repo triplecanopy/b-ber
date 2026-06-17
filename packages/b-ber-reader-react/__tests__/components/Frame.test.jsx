@@ -8,11 +8,11 @@
 
 import { render } from '@testing-library/react'
 import React from 'react'
-import { Provider } from 'react-redux'
 import Frame from '../../src/components/Frame'
 import Asset from '../../src/helpers/Asset'
 import Viewport from '../../src/helpers/Viewport'
-import { createTestStore } from '../helpers/store'
+import { StoreProvider } from '../../src/store/StoreContext'
+import { createTestReaderStore } from '../helpers/renderWithStore'
 
 jest.mock('../../src/components/Layout', () => {
   return function Layout() {
@@ -20,9 +20,15 @@ jest.mock('../../src/components/Layout', () => {
   }
 })
 
-function renderFrame(props = {}, overrides = {}) {
-  const store = createTestStore(overrides)
+// Frame reads readerSettings + viewerSettings from the built-in store
+// (TASK-106).
+function withProviders(ui, overrides = {}) {
+  return (
+    <StoreProvider store={createTestReaderStore(overrides)}>{ui}</StoreProvider>
+  )
+}
 
+function renderFrame(props = {}, overrides = {}) {
   const defaultProps = {
     slug: 'chapter-1',
     layout: 'columns',
@@ -33,11 +39,7 @@ function renderFrame(props = {}, overrides = {}) {
     ...props,
   }
 
-  return render(
-    <Provider store={store}>
-      <Frame {...defaultProps} />
-    </Provider>
-  )
+  return render(withProviders(<Frame {...defaultProps} />, overrides))
 }
 
 describe('Frame', () => {
@@ -112,7 +114,7 @@ describe('Frame', () => {
       Element.prototype.scrollTo = scrollToSpy
 
       const { rerender } = render(
-        <Provider store={createTestStore()}>
+        withProviders(
           <Frame
             slug="chapter-1"
             layout="columns"
@@ -121,11 +123,11 @@ describe('Frame', () => {
             view={{ loaded: true }}
             BookContent={() => null}
           />
-        </Provider>
+        )
       )
 
       rerender(
-        <Provider store={createTestStore()}>
+        withProviders(
           <Frame
             slug="chapter-2"
             layout="columns"
@@ -134,7 +136,7 @@ describe('Frame', () => {
             view={{ loaded: true }}
             BookContent={() => null}
           />
-        </Provider>
+        )
       )
 
       expect(scrollToSpy).toHaveBeenCalledWith(0, 0)
@@ -149,7 +151,7 @@ describe('Frame', () => {
       Element.prototype.scrollTo = scrollToSpy
 
       const { rerender } = render(
-        <Provider store={createTestStore()}>
+        withProviders(
           <Frame
             slug="chapter-1"
             layout="columns"
@@ -158,11 +160,11 @@ describe('Frame', () => {
             view={{ loaded: true }}
             BookContent={() => null}
           />
-        </Provider>
+        )
       )
 
       rerender(
-        <Provider store={createTestStore()}>
+        withProviders(
           <Frame
             slug="chapter-2"
             layout="columns"
@@ -171,7 +173,7 @@ describe('Frame', () => {
             view={{ loaded: true }}
             BookContent={() => null}
           />
-        </Provider>
+        )
       )
 
       expect(scrollToSpy).not.toHaveBeenCalled()

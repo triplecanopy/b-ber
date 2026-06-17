@@ -227,8 +227,14 @@ sub-pixel float errors from fractional `paddingLeft` values.
 
 ## Dev Environment
 
+> **⚠️ Use port 3000.** The S3 content bucket's CORS policy whitelists
+> `http://localhost:3000` specifically — the dev server (and any Playwright/
+> headless repro) **must** run on port 3000 or every manifest/OPF/spine fetch
+> fails with a CORS error and no book loads. If 3000 is taken, free it rather
+> than letting Vite fall back to 3001.
+
 ```bash
-# Run Vite dev server (serves from dev/)
+# Run Vite dev server (serves from dev/) — must be on port 3000 (see above)
 npm start
 
 # Run unit tests

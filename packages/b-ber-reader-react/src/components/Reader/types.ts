@@ -1,17 +1,14 @@
 import type SpineItem from '../../models/SpineItem'
 import type {
-  AppDispatch,
   ReaderLocationState,
   ReaderSettingsState,
   ViewerSettingsState,
   ViewState,
 } from '../../store/types'
 
-// Action-creator bundles as produced by `bindActionCreators(...)`. The action
-// modules are typed TS, but binding them erases the precise per-creator
-// signatures into dispatch-returning functions, so the bundles are kept loose
-// here. TODO: derive these from the action modules once the dispatch typing is
-// tightened (TASK-073).
+// The store-backed action bundles injected into propsRef (useViewActions,
+// useUserInterfaceActions, …). Kept loose here; the modules that read them via
+// propsRef don't need the precise per-creator signatures.
 export type BoundActions = Record<string, (...args: any[]) => unknown>
 
 // Reader state as managed by the Reader functional component's useState. Only
@@ -26,7 +23,6 @@ export interface ReaderState {
   spine: SpineItem[]
   guide: unknown[]
   metadata: unknown[]
-  spineItemURL: string
   currentSpineItem: SpineItem | null
   currentSpineItemIndex: number
   cache: boolean
@@ -54,7 +50,6 @@ export interface ReaderProps {
   viewerSettings: ViewerSettingsState
   readerLocation: ReaderLocationState
   view: ViewState
-  userInterface: { handleEvents: boolean }
   cache: boolean
   downloads: unknown[]
   uiOptions: unknown
@@ -63,11 +58,30 @@ export interface ReaderProps {
   className: string
 
   viewerSettingsActions: BoundActions
-  readerSettingsActions: BoundActions
   readerLocationActions: BoundActions
   viewActions: BoundActions
   userInterfaceActions: BoundActions
+  contentActions: BoundActions
 }
+
+// Props the Reader *function* receives. Every slice and action bundle is now
+// store-backed (Reader reads them from the built-in store and injects them into
+// propsRef — TASK-106), so they are all omitted from the component's own prop
+// surface (it's no longer connect()ed) while remaining on ReaderProps for the
+// modules that read propsRef. What's left is what App passes: the spread
+// readerSettings layout fields + style/className.
+export type ReaderComponentProps = Omit<
+  ReaderProps,
+  | 'readerSettings'
+  | 'readerLocation'
+  | 'view'
+  | 'viewerSettings'
+  | 'userInterfaceActions'
+  | 'readerLocationActions'
+  | 'viewActions'
+  | 'viewerSettingsActions'
+  | 'contentActions'
+>
 
 // setState shim signature — the class-style partial-merge + callback setter the
 // Reader exposes and the hooks below call.
@@ -120,6 +134,7 @@ export interface ReaderApi {
   handleResize(): void
   handleResizeStart(): void
   handleResizeEnd(): void
+  cancelResizeReposition(): void
   bindResizeHandlers(): void
   unbindResizeHandlers(): void
 }

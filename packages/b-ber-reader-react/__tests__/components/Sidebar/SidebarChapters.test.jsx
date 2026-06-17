@@ -2,9 +2,12 @@
 
 import { fireEvent, render } from '@testing-library/react'
 import React from 'react'
-import { Provider } from 'react-redux'
 import SidebarChapters from '../../../src/components/Sidebar/SidebarChapters'
-import { createTestStore } from '../../helpers/store'
+import { StoreProvider } from '../../../src/store/StoreContext'
+import {
+  createTestReaderStore,
+  renderWithStore,
+} from '../../helpers/renderWithStore'
 
 const buildSpine = () => [
   {
@@ -44,7 +47,6 @@ const buildSpine = () => [
 
 describe('SidebarChapters', () => {
   test('renders null when showSidebar is not "chapters"', () => {
-    const store = createTestStore()
     const props = {
       showSidebar: 'metadata',
       spine: buildSpine(),
@@ -52,17 +54,38 @@ describe('SidebarChapters', () => {
       navigateToChapterByURL: jest.fn(),
     }
 
-    const { container } = render(
-      <Provider store={store}>
-        <SidebarChapters {...props} />
-      </Provider>
-    )
+    const { container } = renderWithStore(<SidebarChapters {...props} />)
 
     expect(container.innerHTML).toBe('')
   })
 
+  test('toggling the same instance closed → open does not crash (stable hook order)', () => {
+    // The sidebar stays mounted with showSidebar as a prop, so opening it
+    // re-renders the same instance. useMaxHeight must run unconditionally or the
+    // hook count changes between renders and React throws, blanking the tree.
+    const store = createTestReaderStore()
+    const props = {
+      spine: buildSpine(),
+      currentSpineItemIndex: 0,
+      navigateToChapterByURL: jest.fn(),
+    }
+
+    const { rerender, container } = render(
+      <StoreProvider store={store}>
+        <SidebarChapters {...props} showSidebar={null} />
+      </StoreProvider>
+    )
+    expect(container.innerHTML).toBe('')
+
+    rerender(
+      <StoreProvider store={store}>
+        <SidebarChapters {...props} showSidebar="chapters" />
+      </StoreProvider>
+    )
+    expect(container.querySelectorAll('button').length).toBeGreaterThan(0)
+  })
+
   test('renders nested chapter list, highlights current item, and navigates on click', () => {
-    const store = createTestStore()
     const navigateToChapterByURL = jest.fn()
     const spine = buildSpine()
 
@@ -73,11 +96,7 @@ describe('SidebarChapters', () => {
       navigateToChapterByURL,
     }
 
-    const { container } = render(
-      <Provider store={store}>
-        <SidebarChapters {...props} />
-      </Provider>
-    )
+    const { container } = renderWithStore(<SidebarChapters {...props} />)
 
     // Top-level items: ch1 (with children) and ch2 (inTOC, no title -> fallback label)
     const buttons = container.querySelectorAll('button')
@@ -106,7 +125,6 @@ describe('SidebarChapters', () => {
   })
 
   test('defaults currentSpineItemIndex to 0 when not provided', () => {
-    const store = createTestStore()
     const spine = buildSpine()
 
     const props = {
@@ -115,11 +133,7 @@ describe('SidebarChapters', () => {
       navigateToChapterByURL: jest.fn(),
     }
 
-    const { container } = render(
-      <Provider store={store}>
-        <SidebarChapters {...props} />
-      </Provider>
-    )
+    const { container } = renderWithStore(<SidebarChapters {...props} />)
 
     const ch1Button = Array.from(container.querySelectorAll('button')).find(
       (b) => b.textContent === 'Chapter One'
@@ -133,10 +147,6 @@ describe('SidebarChapters', () => {
       <div data-testid="custom-chapters">{props.showSidebar}</div>
     ))
 
-    const store = createTestStore({
-      readerSettings: { SidebarChapters: SidebarChaptersOverride },
-    })
-
     const props = {
       showSidebar: 'chapters',
       spine: buildSpine(),
@@ -144,11 +154,11 @@ describe('SidebarChapters', () => {
       navigateToChapterByURL: jest.fn(),
     }
 
-    const { getByTestId } = render(
-      <Provider store={store}>
-        <SidebarChapters {...props} />
-      </Provider>
-    )
+    const { getByTestId } = renderWithStore(<SidebarChapters {...props} />, {
+      overrides: {
+        readerSettings: { SidebarChapters: SidebarChaptersOverride },
+      },
+    })
 
     expect(getByTestId('custom-chapters').textContent).toBe('chapters')
     expect(SidebarChaptersOverride).toHaveBeenCalled()
