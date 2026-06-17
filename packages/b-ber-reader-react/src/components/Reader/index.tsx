@@ -6,6 +6,7 @@ import Url from '../../helpers/Url'
 import { unlessDefined } from '../../helpers/utils'
 import Viewport from '../../helpers/Viewport'
 import ReaderContext from '../../lib/reader-context'
+import { useContentActions } from '../../store/contentActions'
 import { useReaderLocationActions } from '../../store/readerLocationActions'
 import { useReaderStore, useStore } from '../../store/StoreContext'
 import { useUserInterfaceActions } from '../../store/userInterfaceActions'
@@ -14,7 +15,7 @@ import { useViewerSettingsActions } from '../../store/viewerSettingsActions'
 import Controls from '../Controls'
 import Frame from '../Frame'
 import Spinner from '../Spinner'
-import { book, useLoader } from './loader'
+import { useLoader } from './loader'
 import { useNavigation } from './navigation'
 import { useResize } from './resize'
 import type {
@@ -24,11 +25,14 @@ import type {
   ReaderState,
 } from './types'
 
-// Renders the current chapter's React element tree. Content is written to the
-// module-level `book` object by loader.js and re-rendered when Reader state
-// changes. See IMPROVEMENT_PLAN.md C4 for the known issue with this approach.
+// Renders the current chapter's React element tree from the store (TASK-106).
+// Keying on spineItemURL remounts this on a chapter change — and with it the
+// Ultimate sentinel inside the parsed content — restarting the layout-stability
+// watch (freeze() deliberately doesn't unload(), so the remount is what
+// re-arms Ultimate on navigation).
 function BookContent() {
-  return <div key="book-content">{book.content}</div>
+  const { spineItemURL, node } = useStore((s) => s.content)
+  return <div key={spineItemURL}>{node}</div>
 }
 
 // ─── Reader ──────────────────────────────────────────────────────────────────
@@ -64,7 +68,6 @@ function Reader(props: ReaderComponentProps) {
     spine: [],
     guide: [],
     metadata: [],
-    spineItemURL: '',
     currentSpineItem: null,
     currentSpineItemIndex: 0,
     cache: props.cache,
@@ -100,6 +103,7 @@ function Reader(props: ReaderComponentProps) {
   const readerLocationActions = useReaderLocationActions()
   const viewActions = useViewActions()
   const viewerSettingsActions = useViewerSettingsActions()
+  const contentActions = useContentActions()
 
   // ─── Live refs ─────────────────────────────────────────────────────────────
   // Keep refs that always hold the latest state and props. The external modules
@@ -119,6 +123,7 @@ function Reader(props: ReaderComponentProps) {
     readerLocationActions,
     viewActions,
     viewerSettingsActions,
+    contentActions,
   })
   propsRef.current = {
     ...props,
@@ -130,6 +135,7 @@ function Reader(props: ReaderComponentProps) {
     readerLocationActions,
     viewActions,
     viewerSettingsActions,
+    contentActions,
   }
 
   // ─── setState shim ─────────────────────────────────────────────────────────
@@ -462,7 +468,6 @@ function Reader(props: ReaderComponentProps) {
     showSidebar,
     // lastSpread,
     spreadIndex,
-    spineItemURL,
   } = state
 
   const slug = getSlug()
@@ -497,7 +502,6 @@ function Reader(props: ReaderComponentProps) {
           view={view}
           style={style}
           className={className}
-          spineItemURL={spineItemURL}
         />
         <Spinner />
       </ReaderContext.Provider>

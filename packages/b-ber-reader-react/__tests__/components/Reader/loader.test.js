@@ -4,7 +4,7 @@ jest.mock('../../../src/helpers/Storage')
 jest.mock('../../../src/helpers/XMLAdaptor')
 
 import { renderHook } from '@testing-library/react'
-import { book, useLoader } from '../../../src/components/Reader/loader'
+import { useLoader } from '../../../src/components/Reader/loader'
 import Asset from '../../../src/helpers/Asset'
 import Request from '../../../src/helpers/Request'
 import Storage from '../../../src/helpers/Storage'
@@ -37,6 +37,7 @@ function createDeps(overrides = {}) {
       view: { lastSpreadIndex: 1 },
       viewerSettings: { paddingLeft: 0, columnGap: 0 },
       userInterfaceActions: { update: jest.fn() },
+      contentActions: { setContent: jest.fn() },
       ...overrides.props,
     },
   }
@@ -230,7 +231,6 @@ describe('loadSpineItem', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
-    book.content = null
 
     errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
     warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
@@ -285,8 +285,8 @@ describe('loadSpineItem', () => {
     })
   })
 
-  test('happy path: loads the requested spine item, sets book.content, appends styles, and chains setState/updateQueryString/showSpineItem', async () => {
-    const { loader, api, stateRef, setState } = createDeps()
+  test('happy path: loads the requested spine item, writes content, appends styles, and chains setState/updateQueryString/showSpineItem', async () => {
+    const { loader, api, stateRef, setState, propsRef } = createDeps()
     const requestedSpineItem = stateRef.current.spine[1]
 
     await loader.loadSpineItem(requestedSpineItem)
@@ -297,7 +297,11 @@ describe('loadSpineItem', () => {
       expect.objectContaining({ requestedSpineItem })
     )
 
-    expect(book.content).toBe('<div>chapter</div>')
+    // content (node + spineItemURL) is written atomically to the store
+    expect(propsRef.current.contentActions.setContent).toHaveBeenCalledWith({
+      spineItemURL: requestedSpineItem.absoluteURL,
+      node: '<div>chapter</div>',
+    })
     expect(Asset.appendBookStyles).toHaveBeenCalledWith(
       '.scoped {}',
       'book-hash'
@@ -306,7 +310,6 @@ describe('loadSpineItem', () => {
     expect(setState).toHaveBeenCalledWith(
       {
         currentSpineItem: requestedSpineItem,
-        spineItemURL: requestedSpineItem.absoluteURL,
       },
       expect.any(Function)
     )
@@ -334,7 +337,7 @@ describe('loadSpineItem', () => {
       spinnerVisible: false,
     })
 
-    expect(book.content).toBeNull()
+    expect(propsRef.current.contentActions.setContent).not.toHaveBeenCalled()
     expect(Asset.appendBookStyles).not.toHaveBeenCalled()
     expect(setState).not.toHaveBeenCalled()
     expect(api.current.updateQueryString).not.toHaveBeenCalled()

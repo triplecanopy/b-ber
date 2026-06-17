@@ -230,7 +230,8 @@ function Layout(props: any) {
           minHeight: height,
         }}
       >
-        <props.BookContent key={props.spineItemURL} />
+        {/* BookContent self-keys on spineItemURL from the store (TASK-106). */}
+        <props.BookContent />
       </div>
 
       <Leaves

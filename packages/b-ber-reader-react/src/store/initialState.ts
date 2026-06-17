@@ -64,6 +64,11 @@ export const initialReaderLocation: RootState['readerLocation'] = {
 
 export const initialMarkers: RootState['markers'] = {}
 
+export const initialContent: RootState['content'] = {
+  spineItemURL: '',
+  node: null,
+}
+
 // Props supplied to the Reader component are merged into the `readerSettings`
 // slice. The clone protects the module-level `initialReaderSettings` from
 // `mergeDeep`'s in-place mutation.
@@ -80,5 +85,6 @@ export function createInitialState(
     markers: { ...initialMarkers },
     view: { ...initialView },
     userInterface: { ...initialUserInterface },
+    content: { ...initialContent },
   }
 }

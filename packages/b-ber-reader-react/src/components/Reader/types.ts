@@ -23,7 +23,6 @@ export interface ReaderState {
   spine: SpineItem[]
   guide: unknown[]
   metadata: unknown[]
-  spineItemURL: string
   currentSpineItem: SpineItem | null
   currentSpineItemIndex: number
   cache: boolean
@@ -62,6 +61,7 @@ export interface ReaderProps {
   readerLocationActions: BoundActions
   viewActions: BoundActions
   userInterfaceActions: BoundActions
+  contentActions: BoundActions
 }
 
 // Props the Reader *function* receives. Every slice and action bundle is now
@@ -80,6 +80,7 @@ export type ReaderComponentProps = Omit<
   | 'readerLocationActions'
   | 'viewActions'
   | 'viewerSettingsActions'
+  | 'contentActions'
 >
 
 // setState shim signature — the class-style partial-merge + callback setter the

@@ -20,7 +20,6 @@
 import { act } from '@testing-library/react'
 import React from 'react'
 import Reader from '../../../src/components/Reader'
-import { book } from '../../../src/components/Reader/loader'
 import Asset from '../../../src/helpers/Asset'
 import { makeTwoChapterSpine } from '../../helpers/fixtures'
 import { renderWithStore } from '../../helpers/renderWithStore'
@@ -54,7 +53,6 @@ const mockResizeFns = {
 
 jest.mock('../../../src/components/Reader/loader', () => ({
   __esModule: true,
-  book: { content: null },
   useLoader: (deps) => {
     mockLoaderFns.deps = deps
     return mockLoaderFns
@@ -91,7 +89,6 @@ jest.mock('../../../src/components/Frame', () => {
         data-testid="frame"
         data-slug={props.slug}
         data-spread-index={props.spreadIndex}
-        data-spine-item-url={props.spineItemURL}
         data-loaded={String(props.view?.loaded)}
       />
     )
@@ -110,7 +107,6 @@ describe('Reader', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockLoaderFns.createStateFromOPF.mockReset()
-    book.content = null
   })
 
   function renderReader(overrides = {}) {
@@ -264,7 +260,6 @@ describe('Reader', () => {
     // does not resolve to a spine entry in the initial state.
     expect(frame.dataset.slug).toBe('')
     expect(frame.dataset.spreadIndex).toBe('0')
-    expect(frame.dataset.spineItemUrl).toBe('')
 
     const controlsProps = JSON.parse(controls.dataset.props)
     expect(controlsProps).toEqual(

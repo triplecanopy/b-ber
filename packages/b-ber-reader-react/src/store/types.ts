@@ -1,4 +1,4 @@
-import type { ComponentType, CSSProperties } from 'react'
+import type { ComponentType, CSSProperties, ReactNode } from 'react'
 
 export interface Book {
   title: string
@@ -99,6 +99,15 @@ export interface UserInterfaceState {
   spinnerVisible: boolean
 }
 
+// The current chapter's rendered React tree, kept in the store rather than a
+// module global so it flows through the render pipeline tear-free (TASK-106).
+// `spineItemURL` keys BookContent so a chapter change remounts it (and the
+// Ultimate sentinel inside), restarting the layout-stability watch.
+export interface ContentState {
+  spineItemURL: string
+  node: ReactNode
+}
+
 export interface RootState {
   readerSettings: ReaderSettingsState
   viewerSettings: ViewerSettingsState
@@ -106,4 +115,5 @@ export interface RootState {
   markers: MarkersState
   view: ViewState
   userInterface: UserInterfaceState
+  content: ContentState
 }

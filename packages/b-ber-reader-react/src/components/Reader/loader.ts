@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react'
 import { useCallback } from 'react'
 import Asset from '../../helpers/Asset'
 import Request from '../../helpers/Request'
@@ -7,9 +6,7 @@ import XMLAdaptor from '../../helpers/XMLAdaptor'
 import type SpineItem from '../../models/SpineItem'
 import type { ReaderHookDeps } from './types'
 
-export const book: { content: ReactNode } = { content: null }
-
-// OPF/NCX fetch, spine parse, and book.content population. Extracted from the
+// OPF/NCX fetch, spine parse, and content population. Extracted from the
 // class component's instance methods; reads live state/props through refs and
 // resolves cross-cutting calls (freeze, updateQueryString, showSpineItem,
 // savePosition) through the assembled ReaderApi rather than `this`.
@@ -146,14 +143,18 @@ export const useLoader = ({
 
       const { bookContent, scopedCSS } = content
 
-      book.content = bookContent
+      // Atomic store write: the rendered tree and its key (spineItemURL) update
+      // together so BookContent remounts once with the new chapter (TASK-106).
+      propsRef.current.contentActions.setContent({
+        spineItemURL: requestedSpineItem.absoluteURL,
+        node: bookContent,
+      })
 
       Asset.appendBookStyles(scopedCSS, hash)
 
       setState(
         {
           currentSpineItem: requestedSpineItem,
-          spineItemURL: requestedSpineItem.absoluteURL,
         },
         () => {
           // Update the query string to trigger a page transition, then show
