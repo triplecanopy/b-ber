@@ -5,6 +5,7 @@ import Asset from '../../helpers/Asset'
 import Url from '../../helpers/Url'
 import { unlessDefined } from '../../helpers/utils'
 import Viewport from '../../helpers/Viewport'
+import ReaderApiContext from '../../lib/reader-api-context'
 import ReaderContext from '../../lib/reader-context'
 import { useContentActions } from '../../store/contentActions'
 import { useReaderLocationActions } from '../../store/readerLocationActions'
@@ -55,7 +56,11 @@ function BookContent() {
 //   componentWillUnmount            → useEffect cleanup
 //   UNSAFE_componentWillReceiveProps → two targeted useEffect hooks
 //
-// ReaderContext.Provider value is memoized (fixes IMPROVEMENT_PLAN H5).
+// The imperative API is provided through ReaderApiContext as a ref-backed value
+// whose identity never changes, so method-only consumers don't re-render on
+// spread changes; the reactive ReaderContext value (spreadIndex/lastSpread) is
+// memoized so its consumers re-render only when those change (TASK-106; the
+// former combined value fixed IMPROVEMENT_PLAN H5).
 
 function Reader(props: ReaderComponentProps) {
   // ─── Local state ───────────────────────────────────────────────────────────
@@ -441,20 +446,31 @@ function Reader(props: ReaderComponentProps) {
     }
   }, [view.loaded, view.lastSpreadIndex])
 
-  // ─── Context value ─────────────────────────────────────────────────────────
-  // Previously an object literal in JSX (recreated on every render, causing all
-  // context consumers to re-render unnecessarily). Now memoized so consumers
-  // only re-render when spreadIndex, lastSpread, or the stable callbacks change.
-  // Fixes IMPROVEMENT_PLAN.md H5.
+  // ─── Context values ────────────────────────────────────────────────────────
+  // The imperative API is provided once with a stable identity (empty deps):
+  // each method delegates to the live apiRef, so consumers (Link, SpreadFigure,
+  // Layout, use-node-position) get current behavior without ever re-rendering
+  // from a context change. The reactive value carries only spreadIndex/lastSpread
+  // and is memoized so its consumers (Vimeo, useMediaPlayer) re-render only when
+  // those change (was one combined literal recreated every render — H5).
+  const apiContextValue = useMemo(
+    () => ({
+      getTranslateX: (spreadIndex?: number) =>
+        apiRef.current.getTranslateX(spreadIndex),
+      navigateToChapterByURL: (absoluteURL: string) =>
+        apiRef.current.navigateToChapterByURL(absoluteURL),
+      getSpineItemByAbsoluteUrl: (absoluteURL: string) =>
+        apiRef.current.getSpineItemByAbsoluteUrl(absoluteURL),
+    }),
+    []
+  )
+
   const readerContextValue = useMemo(
     () => ({
       lastSpread: state.lastSpread,
       spreadIndex: state.spreadIndex,
-      getTranslateX,
-      navigateToChapterByURL: apiRef.current.navigateToChapterByURL,
-      getSpineItemByAbsoluteUrl: apiRef.current.getSpineItemByAbsoluteUrl,
     }),
-    [state.lastSpread, state.spreadIndex, getTranslateX]
+    [state.lastSpread, state.spreadIndex]
   )
 
   // ─── Render ────────────────────────────────────────────────────────────────
@@ -490,21 +506,23 @@ function Reader(props: ReaderComponentProps) {
       uiOptions={uiOptions}
       layout={layout}
     >
-      <ReaderContext.Provider value={readerContextValue}>
-        <Frame
-          slug={slug}
-          spreadIndex={spreadIndex}
-          lastSpreadIndex={view.lastSpreadIndex}
-          BookContent={BookContent}
-          layout={layout}
-          // Can't wrap Layout or the withLastSpreadIndex HOC in a way that
-          // preserves refs, so pass `view` down as props
-          view={view}
-          style={style}
-          className={className}
-        />
-        <Spinner />
-      </ReaderContext.Provider>
+      <ReaderApiContext.Provider value={apiContextValue}>
+        <ReaderContext.Provider value={readerContextValue}>
+          <Frame
+            slug={slug}
+            spreadIndex={spreadIndex}
+            lastSpreadIndex={view.lastSpreadIndex}
+            BookContent={BookContent}
+            layout={layout}
+            // Can't wrap Layout or the withLastSpreadIndex HOC in a way that
+            // preserves refs, so pass `view` down as props
+            view={view}
+            style={style}
+            className={className}
+          />
+          <Spinner />
+        </ReaderContext.Provider>
+      </ReaderApiContext.Provider>
     </Controls>
   )
 }

@@ -1,22 +1,19 @@
 import React from 'react'
-import { noop } from '../helpers/utils'
 
+// Reactive view-position context. Carries only the values whose changes deep
+// consumers must re-render on: the current spread and whether it is the last
+// one. The imperative methods that used to live here moved to the stable
+// ReaderApiContext (TASK-106) so method-only consumers stop re-rendering on
+// spread changes. Only Vimeo / useMediaPlayer subscribe here (to pause/resume
+// playback as their spread scrolls in and out of view).
 export interface ReaderContextValue {
   lastSpread: boolean
   spreadIndex: number
-  getTranslateX: (spreadIndex?: number) => number
-  // Provided by Reader/index.jsx; signatures vary across call sites, so kept loose.
-  // TODO: type this once Reader navigation is converted to TS
-  navigateToChapterByURL: (...args: any[]) => any
-  getSpineItemByAbsoluteUrl: (...args: any[]) => any
 }
 
 const defaultContext: ReaderContextValue = {
   lastSpread: false,
   spreadIndex: 0,
-  getTranslateX: () => 0,
-  navigateToChapterByURL: noop,
-  getSpineItemByAbsoluteUrl: noop,
 }
 
 const ReaderContext = React.createContext<ReaderContextValue>(defaultContext)

@@ -1,26 +1,24 @@
 import { render } from '@testing-library/react'
 import React from 'react'
 import SpreadFigure from '../../src/components/SpreadFigure'
-import ReaderContext from '../../src/lib/reader-context'
+import ReaderApiContext from '../../src/lib/reader-api-context'
 import SpreadContext from '../../src/lib/spread-context'
 
 const renderSpreadFigure = ({ getTranslateX, left, ...props } = {}) => {
-  const readerContextValue = {
-    lastSpread: false,
-    spreadIndex: 0,
+  const readerApiValue = {
     getTranslateX,
     navigateToChapterByURL: () => {},
     getSpineItemByAbsoluteUrl: () => -1,
   }
 
   return render(
-    <ReaderContext.Provider value={readerContextValue}>
+    <ReaderApiContext.Provider value={readerApiValue}>
       <SpreadContext.Provider value={{ left, layout: 'columns' }}>
         <SpreadFigure id="fig-1" className="bber-figure" {...props}>
           <img alt="" src="x.png" />
         </SpreadFigure>
       </SpreadContext.Provider>
-    </ReaderContext.Provider>
+    </ReaderApiContext.Provider>
   )
 }
 

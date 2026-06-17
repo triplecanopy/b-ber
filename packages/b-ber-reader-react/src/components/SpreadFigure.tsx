@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import ReaderContext from '../lib/reader-context'
+import ReaderApiContext from '../lib/reader-api-context'
 import SpreadContext from '../lib/spread-context'
 
 interface SpreadFigureProps {
@@ -9,12 +9,12 @@ interface SpreadFigureProps {
 }
 
 const SpreadFigure = (props: SpreadFigureProps) => {
-  const readerContext = useContext(ReaderContext)
+  const readerApi = useContext(ReaderApiContext)
 
   return (
     <SpreadContext.Consumer>
       {({ left: origLeft }) => {
-        const absTranslateX = Math.abs(readerContext.getTranslateX())
+        const absTranslateX = Math.abs(readerApi.getTranslateX())
 
         // Account for minute differences in measurement
         const left = Math.floor(origLeft)

@@ -18,7 +18,7 @@ import Layout from '../../src/components/Layout'
 import { RESIZE_DEBOUNCE_TIMER } from '../../src/constants'
 import Viewport from '../../src/helpers/Viewport'
 import browser from '../../src/lib/browser'
-import ReaderContext from '../../src/lib/reader-context'
+import ReaderApiContext from '../../src/lib/reader-api-context'
 import { StoreProvider } from '../../src/store/StoreContext'
 import { createTestReaderStore } from '../helpers/renderWithStore'
 
@@ -69,8 +69,6 @@ function renderLayout(props = {}, overrides = {}, contextOverrides = {}) {
   }
 
   const context = {
-    lastSpread: false,
-    spreadIndex: 0,
     getTranslateX: jest.fn(() => 0),
     navigateToChapterByURL: jest.fn(),
     getSpineItemByAbsoluteUrl: jest.fn(),
@@ -79,9 +77,9 @@ function renderLayout(props = {}, overrides = {}, contextOverrides = {}) {
 
   const utils = render(
     <StoreProvider store={store}>
-      <ReaderContext.Provider value={context}>
+      <ReaderApiContext.Provider value={context}>
         <Layout {...defaultProps} />
-      </ReaderContext.Provider>
+      </ReaderApiContext.Provider>
     </StoreProvider>
   )
 
@@ -255,10 +253,8 @@ describe('Layout', () => {
 
       rerender(
         <StoreProvider store={store}>
-          <ReaderContext.Provider
+          <ReaderApiContext.Provider
             value={{
-              lastSpread: false,
-              spreadIndex: 1,
               getTranslateX,
               navigateToChapterByURL: jest.fn(),
               getSpineItemByAbsoluteUrl: jest.fn(),
@@ -276,7 +272,7 @@ describe('Layout', () => {
               BookContent={BookContent}
               innerRef={{ current: null }}
             />
-          </ReaderContext.Provider>
+          </ReaderApiContext.Provider>
         </StoreProvider>
       )
 

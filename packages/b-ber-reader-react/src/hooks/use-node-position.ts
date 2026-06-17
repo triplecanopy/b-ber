@@ -11,7 +11,7 @@ import ResizeObserver from 'resize-observer-polyfill'
 import { unlessDefined } from '../helpers/utils'
 import Viewport from '../helpers/Viewport'
 import DocumentPreProcessor from '../lib/DocumentPreProcessor'
-import ReaderContext from '../lib/reader-context'
+import ReaderApiContext from '../lib/reader-api-context'
 import { useStore } from '../store/StoreContext'
 import type {
   ReaderSettingsState,
@@ -72,7 +72,7 @@ const elementEdgeIsInAllowableRange = (edgePositionVariance: number): boolean =>
 const useNodePosition = <T extends HTMLElement = HTMLElement>(
   options: UseNodePositionOptions = {}
 ): UseNodePositionResult<T> => {
-  const context = useContext(ReaderContext)
+  const readerApi = useContext(ReaderApiContext)
   const viewerSettings = useStore((s) => s.viewerSettings)
   const view = useStore((s) => s.view)
   const readerSettings = useStore((s) => s.readerSettings)
@@ -114,8 +114,8 @@ const useNodePosition = <T extends HTMLElement = HTMLElement>(
   viewerSettingsRef.current = viewerSettings
   const viewRef = useRef(view)
   viewRef.current = view
-  const getTranslateXRef = useRef(context.getTranslateX)
-  getTranslateXRef.current = context.getTranslateX
+  const getTranslateXRef = useRef(readerApi.getTranslateX)
+  getTranslateXRef.current = readerApi.getTranslateX
 
   const getRef = useCallback((): HTMLElement | null => {
     if (settingsRef.current.useParentDimensions) {

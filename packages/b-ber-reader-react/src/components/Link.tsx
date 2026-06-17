@@ -1,6 +1,6 @@
 import React from 'react'
 import Url from '../helpers/Url'
-import ReaderContext from '../lib/reader-context'
+import ReaderApiContext from '../lib/reader-api-context'
 import { useStore } from '../store/StoreContext'
 
 // The Link component accounts for several different possibilities when directing
@@ -17,7 +17,7 @@ const Link = (props: LinkProps) => {
   const readerSettings = useStore((s) => s.readerSettings)
 
   return (
-    <ReaderContext.Consumer>
+    <ReaderApiContext.Consumer>
       {({ getSpineItemByAbsoluteUrl, navigateToChapterByURL }) => {
         const { className, href, style, children } = props
 
@@ -68,7 +68,7 @@ const Link = (props: LinkProps) => {
           </a>
         )
       }}
-    </ReaderContext.Consumer>
+    </ReaderApiContext.Consumer>
   )
 }
 

@@ -1,7 +1,7 @@
 import { fireEvent } from '@testing-library/react'
 import React from 'react'
 import Link from '../../src/components/Link'
-import ReaderContext from '../../src/lib/reader-context'
+import ReaderApiContext from '../../src/lib/reader-api-context'
 import { renderWithStore } from '../helpers/renderWithStore'
 
 const renderLink = ({
@@ -11,18 +11,16 @@ const renderLink = ({
   navigateToChapterByURL = jest.fn(),
   readerSettingsOverride = {},
 } = {}) => {
-  const contextValue = {
-    lastSpread: false,
-    spreadIndex: 0,
+  const apiValue = {
     getTranslateX: () => 0,
     getSpineItemByAbsoluteUrl,
     navigateToChapterByURL,
   }
 
   const tree = renderWithStore(
-    <ReaderContext.Provider value={contextValue}>
+    <ReaderApiContext.Provider value={apiValue}>
       <Link href={href}>{children}</Link>
-    </ReaderContext.Provider>,
+    </ReaderApiContext.Provider>,
     { overrides: { readerSettings: readerSettingsOverride } }
   )
 
