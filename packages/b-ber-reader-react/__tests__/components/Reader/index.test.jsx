@@ -23,7 +23,7 @@ import Reader from '../../../src/components/Reader'
 import { book } from '../../../src/components/Reader/loader'
 import Asset from '../../../src/helpers/Asset'
 import { makeTwoChapterSpine } from '../../helpers/fixtures'
-import { renderWithStores } from '../../helpers/renderWithStore'
+import { renderWithStore } from '../../helpers/renderWithStore'
 
 // The orchestrator logic now lives in three hooks. Mock each to return stable
 // jest.fn stand-ins the tests can assert on. useLoader additionally records the
@@ -114,19 +114,17 @@ describe('Reader', () => {
   })
 
   function renderReader(overrides = {}) {
-    // readerSettings is read from the built-in store; view/userInterface/
-    // readerLocation are still redux. `store` aliases the redux store for the
-    // existing getState/dispatch assertions (TASK-106).
-    const utils = renderWithStores(<Reader />, { overrides })
-    return { store: utils.reduxStore, ...utils }
+    // Every slice lives in the built-in store now (TASK-106); drive it via
+    // `store.setState(...)` and read it via `store.getSnapshot()`.
+    return renderWithStore(<Reader />, { overrides })
   }
 
   test('on mount, shows the spinner and calls createStateFromOPF', () => {
-    const { readerStore } = renderReader()
+    const { store } = renderReader()
 
     // userInterface now lives in the built-in store (TASK-106)
-    expect(readerStore.getSnapshot().userInterface.spinnerVisible).toBe(true)
-    expect(readerStore.getSnapshot().userInterface.handleEvents).toBe(false)
+    expect(store.getSnapshot().userInterface.spinnerVisible).toBe(true)
+    expect(store.getSnapshot().userInterface.handleEvents).toBe(false)
     expect(mockLoaderFns.createStateFromOPF).toHaveBeenCalledTimes(1)
     expect(mockLoaderFns.createStateFromOPF).toHaveBeenCalledWith(
       expect.any(Function)
@@ -176,7 +174,7 @@ describe('Reader', () => {
   })
 
   test('searchParams effect: same chapter, different spread updates spreadIndex without loading', () => {
-    const { readerStore } = renderReader({
+    const { store } = renderReader({
       readerLocation: {
         searchParams: '?slug=chapter-1&currentSpineItemIndex=0&spreadIndex=0',
       },
@@ -186,7 +184,7 @@ describe('Reader', () => {
 
     act(() => {
       // readerLocation now lives in the built-in store (TASK-106)
-      readerStore.setState({
+      store.setState({
         readerLocation: {
           searchParams: '?slug=chapter-1&currentSpineItemIndex=0&spreadIndex=1',
         },
@@ -197,7 +195,7 @@ describe('Reader', () => {
   })
 
   test('searchParams effect: different slug (external nav) loads the matched spine item', () => {
-    const { readerStore } = renderReader({
+    const { store } = renderReader({
       readerLocation: {
         searchParams: '?slug=chapter-1&currentSpineItemIndex=0&spreadIndex=0',
       },
@@ -206,7 +204,7 @@ describe('Reader', () => {
     mockLoaderFns.loadSpineItem.mockClear()
 
     act(() => {
-      readerStore.setState({
+      store.setState({
         readerLocation: {
           searchParams: '?slug=chapter-2&currentSpineItemIndex=1&spreadIndex=0',
         },
@@ -222,7 +220,7 @@ describe('Reader', () => {
 
   test('searchParams effect: same searchParams value is a no-op (guard)', () => {
     const searchParams = '?slug=chapter-1&currentSpineItemIndex=0&spreadIndex=0'
-    const { readerStore } = renderReader({
+    const { store } = renderReader({
       readerLocation: { searchParams },
     })
 
@@ -230,19 +228,19 @@ describe('Reader', () => {
 
     act(() => {
       // Set the exact same searchParams value again
-      readerStore.setState({ readerLocation: { searchParams } })
+      store.setState({ readerLocation: { searchParams } })
     })
 
     expect(mockLoaderFns.loadSpineItem).not.toHaveBeenCalled()
   })
 
   test('view.loaded/lastSpreadIndex effect: navigateToSpreadByIndex is not invoked when chapterDelta is 0 (default state)', () => {
-    const { readerStore } = renderReader()
+    const { store } = renderReader()
 
     // view now lives in the built-in store (TASK-106); drive it to fire the
     // settle effect.
     act(() => {
-      readerStore.setState((s) => ({
+      store.setState((s) => ({
         view: { ...s.view, lastSpreadIndex: 2, loaded: true },
       }))
     })

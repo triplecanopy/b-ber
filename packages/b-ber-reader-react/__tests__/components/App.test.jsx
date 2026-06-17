@@ -8,15 +8,14 @@
  * mocked as a simple placeholder so this is a test of App's orchestration
  * logic (mount load branches + render guard), not the full Reader tree.
  *
- * readerSettings now lives in the built-in store (TASK-106) while readerLocation
- * is still redux, so App is rendered with both providers and assertions read
- * readerSettings from `readerStore` and readerLocation from `reduxStore`.
+ * readerSettings and readerLocation both live in the built-in store (TASK-106),
+ * so assertions read them from `store`.
  */
 
 import React from 'react'
 import App from '../../src/components/App'
 import Request from '../../src/helpers/Request'
-import { renderWithStores } from '../helpers/renderWithStore'
+import { renderWithStore } from '../helpers/renderWithStore'
 
 jest.mock('../../src/helpers/Request')
 
@@ -43,11 +42,11 @@ describe('App', () => {
   })
 
   function renderApp(overrides = {}) {
-    return renderWithStores(<App />, { overrides })
+    return renderWithStore(<App />, { overrides })
   }
 
   test('manifestURL + bookURL both set logs an error but continues', async () => {
-    const { readerStore, findByTestId } = renderApp({
+    const { store, findByTestId } = renderApp({
       readerSettings: {
         manifestURL: 'https://example.com/manifest.json',
         bookURL: 'https://example.com/book/OPS',
@@ -61,9 +60,7 @@ describe('App', () => {
     )
 
     // readerLocation now lives in the built-in store (TASK-106)
-    expect(
-      readerStore.getSnapshot().readerLocation.searchParams
-    ).not.toBeUndefined()
+    expect(store.getSnapshot().readerLocation.searchParams).not.toBeUndefined()
   })
 
   test('manifestURL fetch success derives bookURL/projectURL and writes updateSettings', async () => {
@@ -78,7 +75,7 @@ describe('App', () => {
       },
     })
 
-    const { readerStore, findByTestId } = renderApp({
+    const { store, findByTestId } = renderApp({
       readerSettings: {
         manifestURL: 'https://example.com/book-slug/manifest.json',
       },
@@ -92,23 +89,23 @@ describe('App', () => {
 
     // bookURL derived from opfURL by stripping the last two path segments
     // (OPS/content.opf)
-    expect(readerStore.getSnapshot().readerSettings.bookURL).toBe(
+    expect(store.getSnapshot().readerSettings.bookURL).toBe(
       'https://example.com/book-slug'
     )
     expect(reader.dataset.bookUrl).toBe('https://example.com/book-slug')
 
     // projectURL falls back to the manifestURL's directory
-    expect(readerStore.getSnapshot().readerSettings.projectURL).toBe(
+    expect(store.getSnapshot().readerSettings.projectURL).toBe(
       'https://example.com/book-slug'
     )
 
-    expect(readerStore.getSnapshot().readerSettings.layout).toBe('columns')
+    expect(store.getSnapshot().readerSettings.layout).toBe('columns')
   })
 
   test('manifestURL fetch failure logs and continues with empty bookURL', async () => {
     Request.getJson.mockRejectedValue(new Error('network error'))
 
-    const { readerStore } = renderApp({
+    const { store } = renderApp({
       readerSettings: {
         manifestURL: 'https://example.com/manifest.json',
       },
@@ -125,7 +122,7 @@ describe('App', () => {
     )
 
     // bookURL was never set, so render() returns null (no `reader` testid)
-    expect(readerStore.getSnapshot().readerSettings.bookURL).toBe('')
+    expect(store.getSnapshot().readerSettings.bookURL).toBe('')
   })
 
   test('Request.getBooks success applies matching book config and renders Reader', async () => {
@@ -141,7 +138,7 @@ describe('App', () => {
       ],
     })
 
-    const { readerStore, findByTestId } = renderApp({
+    const { store, findByTestId } = renderApp({
       readerSettings: {
         bookURL: 'https://example.com/book-slug/OPS',
       },
@@ -149,7 +146,7 @@ describe('App', () => {
 
     await findByTestId('reader')
 
-    const { readerSettings } = readerStore.getSnapshot()
+    const { readerSettings } = store.getSnapshot()
     expect(readerSettings.layout).toBe('scroll')
     expect(readerSettings.downloads).toEqual(['a.epub'])
     expect(readerSettings.uiOptions).toEqual({
@@ -161,7 +158,7 @@ describe('App', () => {
   test('Request.getBooks failure logs a warning and continues with empty books', async () => {
     Request.getBooks.mockRejectedValue(new Error('api down'))
 
-    const { readerStore, findByTestId } = renderApp({
+    const { store, findByTestId } = renderApp({
       readerSettings: {
         bookURL: 'https://example.com/book-slug/OPS',
       },
@@ -173,10 +170,10 @@ describe('App', () => {
       'Could not load books from API',
       expect.any(Error)
     )
-    expect(readerStore.getSnapshot().readerSettings.books).toEqual([])
+    expect(store.getSnapshot().readerSettings.books).toEqual([])
 
     // No matching book + no readerSettings.layout -> defaults to 'columns'
-    expect(readerStore.getSnapshot().readerSettings.layout).toBe('columns')
+    expect(store.getSnapshot().readerSettings.layout).toBe('columns')
   })
 
   test('readerSettings.layout overrides the API/default layout when set', async () => {
@@ -184,7 +181,7 @@ describe('App', () => {
       data: [{ id: 'book-slug', layout: 'scroll' }],
     })
 
-    const { readerStore, findByTestId } = renderApp({
+    const { store, findByTestId } = renderApp({
       readerSettings: {
         bookURL: 'https://example.com/book-slug/OPS',
         layout: 'columns',
@@ -193,7 +190,7 @@ describe('App', () => {
 
     await findByTestId('reader')
 
-    expect(readerStore.getSnapshot().readerSettings.layout).toBe('columns')
+    expect(store.getSnapshot().readerSettings.layout).toBe('columns')
   })
 
   test('render returns null when bookURL is not set (no manifestURL/bookURL provided)', async () => {

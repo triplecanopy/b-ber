@@ -10,13 +10,10 @@
  * store.
  */
 
-import { fireEvent, render } from '@testing-library/react'
+import { fireEvent } from '@testing-library/react'
 import React from 'react'
-import { Provider } from 'react-redux'
 import Controls from '../../src/components/Controls'
-import { StoreProvider } from '../../src/store/StoreContext'
-import { createTestReaderStore } from '../helpers/renderWithStore'
-import { createTestStore } from '../helpers/store'
+import { renderWithStore } from '../helpers/renderWithStore'
 
 jest.mock('../../src/components/Navigation', () => ({
   NavigationHeader: function NavigationHeader() {
@@ -28,10 +25,6 @@ jest.mock('../../src/components/Navigation', () => ({
 }))
 
 function renderControls(props = {}, overrides = {}) {
-  // Controls reads readerSettings from the built-in store and
-  // userInterface/viewerSettings from redux; seed both (TASK-106).
-  const store = createTestStore(overrides)
-  const readerStore = createTestReaderStore(overrides)
   const handlePageNavigation = jest.fn()
   const handleSidebarButtonClick = jest.fn()
   const handleChapterNavigation = jest.fn()
@@ -56,17 +49,9 @@ function renderControls(props = {}, overrides = {}) {
     ...props,
   }
 
-  const utils = render(
-    <Provider store={store}>
-      <StoreProvider store={readerStore}>
-        <Controls {...defaultProps} />
-      </StoreProvider>
-    </Provider>
-  )
+  const utils = renderWithStore(<Controls {...defaultProps} />, { overrides })
 
   return {
-    store,
-    readerStore,
     handlePageNavigation,
     handleSidebarButtonClick,
     handleChapterNavigation,
@@ -99,27 +84,21 @@ describe('Controls', () => {
     }
 
     test('ArrowLeft navigates to the previous page and closes the sidebar', () => {
-      const { handlePageNavigation, handleSidebarButtonClick, readerStore } =
-        setup()
+      const { handlePageNavigation, handleSidebarButtonClick, store } = setup()
 
       fireEvent.keyDown(document, { which: 37 })
 
-      expect(readerStore.getSnapshot().userInterface.enableTransitions).toBe(
-        true
-      )
+      expect(store.getSnapshot().userInterface.enableTransitions).toBe(true)
       expect(handlePageNavigation).toHaveBeenCalledWith(-1)
       expect(handleSidebarButtonClick).toHaveBeenCalledWith(null)
     })
 
     test('ArrowRight navigates to the next page and closes the sidebar', () => {
-      const { handlePageNavigation, handleSidebarButtonClick, readerStore } =
-        setup()
+      const { handlePageNavigation, handleSidebarButtonClick, store } = setup()
 
       fireEvent.keyDown(document, { which: 39 })
 
-      expect(readerStore.getSnapshot().userInterface.enableTransitions).toBe(
-        true
-      )
+      expect(store.getSnapshot().userInterface.enableTransitions).toBe(true)
       expect(handlePageNavigation).toHaveBeenCalledWith(1)
       expect(handleSidebarButtonClick).toHaveBeenCalledWith(null)
     })
@@ -170,14 +149,12 @@ describe('Controls', () => {
 
   describe('keydown handling when handleEvents is false', () => {
     test('ArrowLeft does not navigate', () => {
-      const { handlePageNavigation, handleSidebarButtonClick, readerStore } =
+      const { handlePageNavigation, handleSidebarButtonClick, store } =
         renderControls({}, { userInterface: { handleEvents: false } })
 
       fireEvent.keyDown(document, { which: 37 })
 
-      expect(
-        readerStore.getSnapshot().userInterface.enableTransitions
-      ).not.toBe(true)
+      expect(store.getSnapshot().userInterface.enableTransitions).not.toBe(true)
       expect(handlePageNavigation).not.toHaveBeenCalled()
       expect(handleSidebarButtonClick).not.toHaveBeenCalled()
     })

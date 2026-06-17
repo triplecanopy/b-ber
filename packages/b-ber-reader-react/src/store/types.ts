@@ -1,16 +1,4 @@
 import type { ComponentType, CSSProperties } from 'react'
-import type { Action } from 'redux'
-import type { ThunkAction, ThunkDispatch } from 'redux-thunk'
-
-// Loose action shape used by the slice reducers. Redux v5 dropped `AnyAction`;
-// reducers receive every dispatched action and narrow on `type`, so `payload`
-// is intentionally permissive here.
-// TODO: tighten per-slice action unions when the Redux store is modernized
-// (TASK-073).
-export interface ReducerAction {
-  type: string
-  payload?: any
-}
 
 export interface Book {
   title: string
@@ -119,9 +107,3 @@ export interface RootState {
   view: ViewState
   userInterface: UserInterfaceState
 }
-
-// Thunk helpers. Thunks return `dispatch(...)` results that callers ignore, so
-// the default return type is void (void-returning functions may still return a
-// value in TS).
-export type AppThunk<R = void> = ThunkAction<R, RootState, unknown, Action>
-export type AppDispatch = ThunkDispatch<RootState, unknown, Action>

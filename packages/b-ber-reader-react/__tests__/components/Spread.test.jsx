@@ -1,12 +1,9 @@
-import { act, render } from '@testing-library/react'
+import { act } from '@testing-library/react'
 import React from 'react'
-import { Provider } from 'react-redux'
 import Spread from '../../src/components/Spread'
 import browserMock from '../../src/lib/browser'
 import SpreadContext from '../../src/lib/spread-context'
-import { StoreProvider } from '../../src/store/StoreContext'
-import { createTestReaderStore } from '../helpers/renderWithStore'
-import { createTestStore } from '../helpers/store'
+import { renderWithStore } from '../helpers/renderWithStore'
 
 // detect-browser returns null in jsdom; Spread.jsx reads browserMock.name, which
 // crashes on a null browser object. Replace with a mutable stub so tests can
@@ -27,26 +24,18 @@ const viewerSettings = {
 }
 
 const renderSpread = ({ storeOverrides = {}, props = {}, children } = {}) => {
-  // Spread reads readerSettings from the built-in store and viewerSettings/view
-  // from redux; seed both from the same overrides (TASK-106).
   const overrides = {
     viewerSettings,
     view: { loaded: true, ultimateOffsetLeft: 0, lastSpreadIndex: 0 },
     ...storeOverrides,
   }
-  const store = createTestStore(overrides)
 
-  const tree = render(
-    <Provider store={store}>
-      <StoreProvider store={createTestReaderStore(overrides)}>
-        <Spread data-marker-reference="ref-1" className="custom" {...props}>
-          {children || <div data-testid="spread-child">content</div>}
-        </Spread>
-      </StoreProvider>
-    </Provider>
+  return renderWithStore(
+    <Spread data-marker-reference="ref-1" className="custom" {...props}>
+      {children || <div data-testid="spread-child">content</div>}
+    </Spread>,
+    { overrides }
   )
-
-  return { ...tree, store }
 }
 
 describe('Spread', () => {
@@ -232,14 +221,11 @@ describe('Spread', () => {
       readerSettings: { layout: 'scroll' },
     }
 
-    const { container } = render(
-      <Provider store={createTestStore(overrides)}>
-        <StoreProvider store={createTestReaderStore(overrides)}>
-          <Spread data-marker-reference="ref-1" className="custom">
-            <div data-testid="spread-child">content</div>
-          </Spread>
-        </StoreProvider>
-      </Provider>
+    const { container } = renderWithStore(
+      <Spread data-marker-reference="ref-1" className="custom">
+        <div data-testid="spread-child">content</div>
+      </Spread>,
+      { overrides }
     )
 
     act(() => {

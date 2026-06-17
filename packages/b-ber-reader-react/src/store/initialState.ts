@@ -1,12 +1,51 @@
 import { mergeDeep } from '../helpers/utils'
 import { ViewerSettings } from '../models'
-import { initialState as initialReaderSettings } from '../reducers/reader-settings'
-import type { RootState } from './types'
+import { locationStates } from './readerLocationActions'
+import type { ReaderSettingsState, RootState } from './types'
 
-// The default slice values are the seed for `createReaderStore`. They mirror the
-// per-reducer defaults exactly so the built-in store and the (still-present)
-// Redux store start identical while slices migrate one at a time (TASK-106).
-// When Redux is deleted these become the sole source of truth.
+// Default values for every slice — the seed for `createReaderStore` and the
+// sole source of truth now that Redux is gone (TASK-106).
+export const initialReaderSettings: ReaderSettingsState = {
+  books: [],
+  bookURL: '',
+  downloads: [],
+  projectURL: '',
+  disableBodyStyles: false,
+
+  // Components for rendering the reader's UI
+  NavigationHeader: null,
+  NavigationFooter: null,
+  SidebarChapters: null,
+  SidebarDownloads: null,
+  SidebarMetadata: null,
+  SidebarSettings: null,
+
+  uiOptions: {
+    navigation: {
+      header_icons: { home: true, toc: true, downloads: true, info: true },
+      footer_icons: { chapter: true, page: true },
+    },
+  },
+
+  // Query param customization
+  searchParamKeys: {
+    slug: 'slug',
+    currentSpineItemIndex: 'currentSpineItemIndex',
+    spreadIndex: 'spreadIndex',
+  },
+
+  // Query param behaviour
+  locationState: locationStates.QUERY_PARAMS,
+  searchParams: '',
+
+  // Layout component style/class
+  style: {},
+  className: '',
+
+  cache: true, // TODO handled based on build?
+  layout: '',
+}
+
 export const initialUserInterface: RootState['userInterface'] = {
   enableTransitions: false,
   handleEvents: false,
@@ -26,8 +65,8 @@ export const initialReaderLocation: RootState['readerLocation'] = {
 export const initialMarkers: RootState['markers'] = {}
 
 // Props supplied to the Reader component are merged into the `readerSettings`
-// slice, exactly as `index.tsx` seeds the Redux store. The clone protects the
-// module-level `initialReaderSettings` from `mergeDeep`'s in-place mutation.
+// slice. The clone protects the module-level `initialReaderSettings` from
+// `mergeDeep`'s in-place mutation.
 export function createInitialState(
   props: Record<string, unknown> = {}
 ): RootState {

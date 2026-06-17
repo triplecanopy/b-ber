@@ -1,17 +1,14 @@
 import type SpineItem from '../../models/SpineItem'
 import type {
-  AppDispatch,
   ReaderLocationState,
   ReaderSettingsState,
   ViewerSettingsState,
   ViewState,
 } from '../../store/types'
 
-// Action-creator bundles as produced by `bindActionCreators(...)`. The action
-// modules are typed TS, but binding them erases the precise per-creator
-// signatures into dispatch-returning functions, so the bundles are kept loose
-// here. TODO: derive these from the action modules once the dispatch typing is
-// tightened (TASK-073).
+// The store-backed action bundles injected into propsRef (useViewActions,
+// useUserInterfaceActions, …). Kept loose here; the modules that read them via
+// propsRef don't need the precise per-creator signatures.
 export type BoundActions = Record<string, (...args: any[]) => unknown>
 
 // Reader state as managed by the Reader functional component's useState. Only

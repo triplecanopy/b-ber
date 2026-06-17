@@ -8,13 +8,11 @@
 
 import { render } from '@testing-library/react'
 import React from 'react'
-import { Provider } from 'react-redux'
 import Frame from '../../src/components/Frame'
 import Asset from '../../src/helpers/Asset'
 import Viewport from '../../src/helpers/Viewport'
 import { StoreProvider } from '../../src/store/StoreContext'
 import { createTestReaderStore } from '../helpers/renderWithStore'
-import { createTestStore } from '../helpers/store'
 
 jest.mock('../../src/components/Layout', () => {
   return function Layout() {
@@ -22,16 +20,11 @@ jest.mock('../../src/components/Layout', () => {
   }
 })
 
-// Frame reads readerSettings from the built-in store and viewerSettings from
-// redux, so tests wrap in both providers, seeded from the same overrides
+// Frame reads readerSettings + viewerSettings from the built-in store
 // (TASK-106).
 function withProviders(ui, overrides = {}) {
   return (
-    <Provider store={createTestStore(overrides)}>
-      <StoreProvider store={createTestReaderStore(overrides)}>
-        {ui}
-      </StoreProvider>
-    </Provider>
+    <StoreProvider store={createTestReaderStore(overrides)}>{ui}</StoreProvider>
   )
 }
 

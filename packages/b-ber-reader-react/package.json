@@ -56,7 +56,6 @@
     "postcss-import": "^11.1.0",
     "prop-types": "^15.6.1",
     "react-test-renderer": ">=16.4 <=19",
-    "redux-mock-store": "^1.5.4",
     "resize-observer-polyfill": "^1.5.0",
     "rimraf": "^2.7.1",
     "sass": "^1.70.0",
@@ -78,9 +77,6 @@
     "quote": "^0.4.0",
     "react-attr-converter": "^0.3.1",
     "react-player": "^2.10.1",
-    "react-redux": "^9.2.0",
-    "redux": "^5.0.0",
-    "redux-thunk": "^3.1.0",
     "url-search-params-polyfill": "^4.0.0",
     "use-sync-external-store": "^1.5.0",
     "xml-js": "^1.6.2"
