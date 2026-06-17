@@ -1,6 +1,6 @@
 # TASK-107: Restore spreadIndex from the URL on initial load (refresh)
 
-**Status:** not started
+**Status:** in progress (fix + unit tests done; browser QA pending)
 **Feature:** React 19 (reader-react)
 **Phase:** Bug Fixes
 **Priority:** low
@@ -36,13 +36,24 @@ backward-chapter `lastSpreadIndex` effect.
 
 ## Subtasks
 
-- [ ] Read the target `spreadIndex` from the location params in the init
-      callback (instead of hardcoding 0)
-- [ ] Defer navigating to that spread until the chapter has loaded/settled so it
-      doesn't fire against an unmeasured layout (reuse the `view.loaded` effect
-      pattern); clamp to `[0, lastSpreadIndex]`
-- [ ] Confirm the URL is not rewritten to `spreadIndex=0` on load
-- [ ] `npm test` green + 9 snapshots unchanged; `tsc --noEmit` clean
+- [x] Read the target `spreadIndex` from the location params in the init
+      callback (instead of hardcoding 0). Stashed in `initialSpreadIndexRef`
+      (only when `> 0` and finite); the chapter still loads at spread 0.
+- [x] Defer navigating to that spread until the chapter has loaded/settled so it
+      doesn't fire against an unmeasured layout. New effect keyed on
+      `[view.loaded, view.lastSpreadIndex]` (mirrors the backward-chapter
+      restore, mutually exclusive with it since `chapterDelta` is 0 at init);
+      clamps to `[0, lastSpreadIndex]`; runs once (ref cleared on consume).
+- [x] Confirm the URL is not rewritten to `spreadIndex=0` on load. **Note:** the
+      load still writes a transient `spreadIndex=0` to the URL during the initial
+      `loadSpineItem` → `updateQueryString`; the restore then writes the correct
+      spread on settle, so the **final** URL preserves the spread. Eliminating
+      the transient would require navigating before measurement (the TASK-101
+      footgun), so the deferred approach is deliberate — verify the end state in
+      browser QA.
+- [x] `npm test` green + 9 snapshots unchanged; `tsc --noEmit` clean. Added 3
+      unit tests (restore, clamp-to-range, no-op at spread 0) in
+      `__tests__/components/Reader/index.test.jsx`.
 - [ ] Browser QA: deep-link + refresh on a multi-spread chapter restores the
       exact spread; verso/recto and page-turn timing unaffected
       (`SPREAD-CLUSTER-QA.md`)

@@ -246,6 +246,85 @@ describe('Reader', () => {
     expect(mockNavFns.navigateToSpreadByIndex).not.toHaveBeenCalled()
   })
 
+  // TASK-107: on a deep link / refresh the chapter loads at spread 0; once it
+  // has measured, the reader must restore the spread the URL asked for.
+  test('initial-spread restore: navigates to the URL spreadIndex once the chapter settles', async () => {
+    // createStateFromOPF populates spine and runs the init callback, which reads
+    // spreadIndex=2 from the URL and stashes it for the restore effect.
+    mockLoaderFns.createStateFromOPF.mockImplementation((cb) => {
+      mockLoaderFns.deps.setState({ spine }, cb)
+    })
+
+    const { store } = renderReader({
+      readerLocation: {
+        searchParams: '?slug=chapter-1&currentSpineItemIndex=0&spreadIndex=2',
+      },
+    })
+
+    await act(async () => {
+      await Promise.resolve()
+    })
+
+    // Chapter measured (loaded + a real lastSpreadIndex wider than the target).
+    act(() => {
+      store.setState((s) => ({
+        view: { ...s.view, lastSpreadIndex: 5, loaded: true },
+      }))
+    })
+
+    expect(mockNavFns.navigateToSpreadByIndex).toHaveBeenCalledTimes(1)
+    expect(mockNavFns.navigateToSpreadByIndex).toHaveBeenCalledWith(2)
+  })
+
+  test('initial-spread restore: clamps the URL spreadIndex to the measured lastSpreadIndex', async () => {
+    mockLoaderFns.createStateFromOPF.mockImplementation((cb) => {
+      mockLoaderFns.deps.setState({ spine }, cb)
+    })
+
+    const { store } = renderReader({
+      readerLocation: {
+        searchParams: '?slug=chapter-1&currentSpineItemIndex=0&spreadIndex=9',
+      },
+    })
+
+    await act(async () => {
+      await Promise.resolve()
+    })
+
+    // The chapter reflowed to fewer spreads than the URL recorded.
+    act(() => {
+      store.setState((s) => ({
+        view: { ...s.view, lastSpreadIndex: 3, loaded: true },
+      }))
+    })
+
+    expect(mockNavFns.navigateToSpreadByIndex).toHaveBeenCalledWith(3)
+  })
+
+  test('initial-spread restore: does nothing when the URL spreadIndex is 0', async () => {
+    mockLoaderFns.createStateFromOPF.mockImplementation((cb) => {
+      mockLoaderFns.deps.setState({ spine }, cb)
+    })
+
+    const { store } = renderReader({
+      readerLocation: {
+        searchParams: '?slug=chapter-1&currentSpineItemIndex=0&spreadIndex=0',
+      },
+    })
+
+    await act(async () => {
+      await Promise.resolve()
+    })
+
+    act(() => {
+      store.setState((s) => ({
+        view: { ...s.view, lastSpreadIndex: 5, loaded: true },
+      }))
+    })
+
+    expect(mockNavFns.navigateToSpreadByIndex).not.toHaveBeenCalled()
+  })
+
   test('renders Controls > ReaderContext.Provider > Frame + Spinner with expected props', () => {
     const { getByTestId } = renderReader()
 

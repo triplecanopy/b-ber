@@ -310,6 +310,11 @@ function Reader(props: ReaderComponentProps) {
   // Strict Mode, which mounts components twice in development.
   const hasInitializedRef = useRef(false)
 
+  // A spread to restore from the URL on initial load (deep link / refresh).
+  // The chapter still loads at spread 0; once it has measured, the restore
+  // effect below jumps to this spread. null once consumed or absent. (TASK-107)
+  const initialSpreadIndexRef = useRef<number | null>(null)
+
   useEffect(() => {
     if (hasInitializedRef.current) return
     hasInitializedRef.current = true
@@ -332,6 +337,19 @@ function Reader(props: ReaderComponentProps) {
         params.get(readerSettings.searchParamKeys.currentSpineItemIndex)
       )
       const currentSpineItem = spine[currentSpineItemIndex]
+
+      // Load at spread 0 but remember a saved non-zero spread from the URL so
+      // the restore effect can navigate to it once the chapter has measured
+      // (the spreads aren't measured yet here, so a non-zero jump now would
+      // fire against an unmeasured layout — the TASK-101 footgun). (TASK-107)
+      const savedSpreadIndex = Number(
+        params.get(readerSettings.searchParamKeys.spreadIndex)
+      )
+      initialSpreadIndexRef.current =
+        Number.isFinite(savedSpreadIndex) && savedSpreadIndex > 0
+          ? savedSpreadIndex
+          : null
+
       const spreadIndex = 0
 
       if (currentSpineItem) {
@@ -444,6 +462,23 @@ function Reader(props: ReaderComponentProps) {
         )
       }
     }
+  }, [view.loaded, view.lastSpreadIndex])
+
+  // ─── Restore the saved spread on initial load ──────────────────────────────
+  // On a deep link / refresh the chapter loads at spread 0 (see the init
+  // effect); once it has measured (view.loaded + a real lastSpreadIndex), jump
+  // to the spread the URL asked for, clamped to the measured range in case the
+  // content reflowed to fewer spreads. Runs once — the ref is cleared on the
+  // first qualifying settle. Mirrors the backward-chapter restore above and is
+  // mutually exclusive with it (chapterDelta is 0 on initial load). (TASK-107)
+  useEffect(() => {
+    const target = initialSpreadIndexRef.current
+    if (target == null) return
+    if (!view.loaded || view.lastSpreadIndex < 0) return
+
+    initialSpreadIndexRef.current = null
+    const clamped = Math.min(target, view.lastSpreadIndex)
+    apiRef.current.navigateToSpreadByIndex(clamped)
   }, [view.loaded, view.lastSpreadIndex])
 
   // ─── Context values ────────────────────────────────────────────────────────
