@@ -42,6 +42,13 @@ variants where it improves clarity. Shared store types stay central in
 - [ ] Replace inline/conditional styles with CSS-module classes (coordinate with
       [[TASK-076]]).
 - [ ] Extract shared/large component types into `types.ts`.
+- [ ] Modernize the remaining render-prop context consumer to a hook:
+      `SpreadFigure` reads `SpreadContext` via `<SpreadContext.Consumer>`
+      (pre-hooks API) while already using `useContext` for the reader contexts —
+      switch it to `const { left } = useContext(SpreadContext)`. Behavior-
+      identical, purely idiomatic. (`SpreadContext.Provider` in `Spread` stays —
+      it passes per-spread positional data down a subtree, correctly a context,
+      not store state. Left from the TASK-106 ReaderApiContext split.)
 - [ ] 9 snapshots unchanged; tests pass; `tsc --noEmit` clean; build output
       unchanged (compare `dist`); circular-import check clean.
 - [ ] Commit (per-area, reviewable); update `PLAN.md`; remove `.open`
