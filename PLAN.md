@@ -35,7 +35,7 @@ Every task belongs to exactly one; every new task must too.
 | ✅ Unit test coverage | 2 | 1 | 2 | Epic in progress; most packages at target, a few laggards |
 | 🧪 E2E testing | 5 | 1 | 2 | Pipeline green in CI; skill + iframe fix remain |
 | ⚙️ Node.js modernization | 1 | 0 | 2 | Barely started; epic + logger refactor pending |
-| ⚛️ React 19 (reader-react) | 25 | 0 | 18 | **Steps 1 + 2 complete and merged into `feat/upgrades`** (TASK-095–100): no class components/HOCs, no selfRef shim. **Step 3 (TASK-073) done** — recommendation: drop Redux → `useSyncExternalStore` + stable API context (`STATE-MIGRATION-PLAN.md`); executes as TASK-106 (Step 4). **TASK-101 (page-nav race) done.** Maintainability backlog TASK-102–105. Next: TASK-106 (state migration) |
+| ⚛️ React 19 (reader-react) | 26 | 0 | 17 | **Steps 1 + 2 complete and merged into `feat/upgrades`** (TASK-095–100): no class components/HOCs, no selfRef shim. **Step 3 (TASK-073) done** — recommendation: drop Redux → `useSyncExternalStore` + stable API context (`STATE-MIGRATION-PLAN.md`). **Step 4 (TASK-106) ✅ done** — Redux removed, built-in store + ReaderApiContext shipped, browser QA passed. **TASK-101 (page-nav race) done.** Maintainability backlog TASK-102–105. Next: TASK-105 (colocation, now unblocked), TASK-107/108 (QA bugs) |
 
 _"Active" = in progress. "Backlog" = not started (excludes superseded)._
 
@@ -198,10 +198,10 @@ write-up in
 [`STATE-MIGRATION-PLAN.md`](./packages/b-ber-reader-react/STATE-MIGRATION-PLAN.md).
 Also TASK-091 (react-player v3, independent).
 
-**Step 4 (migrate state per findings) — TASK-106 (in progress,
-`feat/reader-react-state-migration`).** Executes the plan slice by slice (cold →
-warm → hot → `book.content` → drop `connect()`/deps). Best done after Steps 1–2
-(complete); sequence TASK-105 (colocation) after it. **Done so far:** scaffold
+**Step 4 (migrate state per findings) — TASK-106 ✅ complete
+(`feat/reader-react-state-migration`).** Executed the plan slice by slice (cold →
+warm → hot → `book.content` → drop `connect()`/deps). Sequence TASK-105
+(colocation) after it. **What landed:** scaffold
 (`createReaderStore`/`StoreContext`/`useStore`/`renderWithStore`), `markers`
 (dead subscription removed), cold `readerSettings`, and the warm
 `userInterface` + `readerLocation` slices (store-backed action bundles in
@@ -219,10 +219,11 @@ stable ref-backed API context (`getTranslateX`/`navigateToChapterByURL`/
 re-rendering on spread changes; `reader-context` slims to reactive
 `{ spreadIndex, lastSpread }` (Vimeo/`useMediaPlayer` only). `spreadIndex`/
 `lastSpread` stay `Reader`-local (atomic navigation writes; deviation recorded in
-`STATE-MIGRATION-PLAN.md §3`). **All code subtasks done.** Cold+warm QA'd
-(resize/sidebar/nav bugs found and fixed: see fix commits + TASK-107/108).
-**Remaining:** browser QA of the hot slices + book.content remount + the
-ReaderApiContext consumers (`SPREAD-CLUSTER-QA.md`) — then close the task.
+`STATE-MIGRATION-PLAN.md §3`). **Browser QA passed** (`SPREAD-CLUSTER-QA.md` —
+load/spinner, page turns, chapter nav, resize); bugs found and fixed along the
+way: resize/sidebar/nav (cold+warm) and a spread-figure re-center regression from
+the ReaderApiContext split (SpreadFigure now subscribes to reactive `spreadIndex`;
+fix `d3d5e3f3`). Pre-existing bugs split out as TASK-107/108. **Done.**
 
 **Step 5 (reorg / best practices)** — TASK-068 (housekeeping), TASK-071 (docs),
 TASK-076 (SCSS→CSS Modules), plus general organization cleanup.
@@ -238,8 +239,8 @@ existing open tasks (noted in the right column).
 | **TASK-102** | housekeeping | Remove Chrome-81 workarounds (deletes `useIframePosition` + placeholder machinery) | new — net deletion |
 | **TASK-103** | housekeeping | Static-only helper classes → modules (`Asset`/`Cache`/`DOM`/`Request`/`Storage`/`Url`/`Viewport`/`XMLAdaptor`) | new — wide/shallow |
 | **TASK-104** | quality | Accessibility baseline (ARIA, focus mgmt, reduced-motion, live region) | new |
-| **TASK-105** | structure | Component colocation + types/CSS-module structure | new — **HOLD** until state migration + helper→module land; colocated-tests deferred pending tooling audit |
-| **TASK-106** | state | Execute the state migration: drop Redux → `useSyncExternalStore` + stable API context; folds in `book.content` | Step 4 — from **TASK-073** ✅ (`STATE-MIGRATION-PLAN.md`) |
+| **TASK-105** | structure | Component colocation + types/CSS-module structure | new — state migration now landed (unblocked); still gated on helper→module (TASK-103); colocated-tests deferred pending tooling audit |
+| **TASK-106** | state | Execute the state migration: drop Redux → `useSyncExternalStore` + stable API context; folds in `book.content` | ✅ done — Step 4 from **TASK-073** (`STATE-MIGRATION-PLAN.md`) |
 | — | styles | Inline/conditional styles → CSS Modules | **TASK-076** |
 | — | docs | Per-subdir documentation | **TASK-071** |
 | — | cleanup | Marker `debug` block + dangling `IMPROVEMENT_PLAN.md` comment refs | added to **TASK-068** |
@@ -324,7 +325,7 @@ sequencing work:
 
 | Priority | Task | Action | Why now |
 | -------- | ---- | ------ | ------- |
-| 1 | TASK-106 | Execute the state migration (drop Redux → `useSyncExternalStore` + stable API context), per `STATE-MIGRATION-PLAN.md`, slice by slice | TASK-073 research done; the keystone remaining reader-react work; dissolves `connect()` + TASK-032 type debt |
+| 1 | TASK-106 | ✅ **Done** — state migration shipped (Redux removed, built-in store + ReaderApiContext, browser QA passed). Dissolved `connect()` + TASK-032 type debt. | — |
 | 2 | TASK-050 | CLI handler tests | Unblocks TASK-046 and lifts cli coverage toward 75% |
 | 3 | TASK-004 | Push coverage laggards to 75% | Closes the coverage epic; cli + b-ber-tasks are the long poles |
 | 4 | TASK-055 | Create the testing skill | Newly unblocked by the green E2E pipeline |

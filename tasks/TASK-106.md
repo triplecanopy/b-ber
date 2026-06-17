@@ -1,6 +1,6 @@
 # TASK-106: Migrate state off Redux → useSyncExternalStore (Step 4 execution)
 
-**Status:** in progress
+**Status:** complete
 **Feature:** React 19 (reader-react)
 **Phase:** Modernization — Step 4 (state migration)
 **Priority:** medium
@@ -70,10 +70,13 @@ imperative methods. Drop `react-redux`, `redux`, `redux-thunk`, and
 - [x] 9 snapshots unchanged; tests pass (redux `Provider` tests rewritten to
       `renderWithStore`; reducer/action tests deleted with their code);
       `tsc --noEmit` clean — at every commit.
-- [ ] **Browser QA**: full `SPREAD-CLUSTER-QA.md` flow (load/spinner, page turns,
-      chapter nav, resize recovery) — covers hot slices + book.content remount.
-      Cold/warm QA'd (bugs fixed). Hot + book.content **still pending**.
-- [ ] One slice per commit; update `PLAN.md`; remove `.open`
+- [x] **Browser QA**: full `SPREAD-CLUSTER-QA.md` flow (load/spinner, page turns,
+      chapter nav, resize recovery) — hot slices + book.content remount +
+      ReaderApiContext consumers all QA'd. One regression surfaced and fixed: the
+      ReaderApiContext split stopped SpreadFigure re-rendering on page turn, so
+      spread figures stuck mid-screen instead of binding left (fix `d3d5e3f3` —
+      SpreadFigure subscribes to reactive `spreadIndex`; regression test added).
+- [x] One slice per commit; update `PLAN.md`; remove `.open`
 
 ## Notes
 
