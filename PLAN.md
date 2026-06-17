@@ -35,7 +35,7 @@ Every task belongs to exactly one; every new task must too.
 | ✅ Unit test coverage | 2 | 1 | 2 | Epic in progress; most packages at target, a few laggards |
 | 🧪 E2E testing | 5 | 1 | 2 | Pipeline green in CI; skill + iframe fix remain |
 | ⚙️ Node.js modernization | 1 | 0 | 2 | Barely started; epic + logger refactor pending |
-| ⚛️ React 19 (reader-react) | 26 | 0 | 17 | **Steps 1 + 2 complete and merged into `feat/upgrades`** (TASK-095–100): no class components/HOCs, no selfRef shim. **Step 3 (TASK-073) done** — recommendation: drop Redux → `useSyncExternalStore` + stable API context (`STATE-MIGRATION-PLAN.md`). **Step 4 (TASK-106) ✅ done** — Redux removed, built-in store + ReaderApiContext shipped, browser QA passed. **TASK-101 (page-nav race) done.** Maintainability backlog TASK-102–105. Next: TASK-105 (colocation, now unblocked), TASK-107/108 (QA bugs) |
+| ⚛️ React 19 (reader-react) | 26 | 2 | 15 | **Steps 1 + 2 complete and merged into `feat/upgrades`** (TASK-095–100): no class components/HOCs, no selfRef shim. **Step 3 (TASK-073) done** — recommendation: drop Redux → `useSyncExternalStore` + stable API context (`STATE-MIGRATION-PLAN.md`). **Step 4 (TASK-106) ✅ done & merged** — Redux removed, built-in store + ReaderApiContext shipped, browser QA passed. **TASK-101 (page-nav race) done.** **TASK-107 (restore spread on refresh) + TASK-108 (nav icon click) — fixes + tests landed on `feat/upgrades`, browser QA pending.** Maintainability backlog TASK-102–105. Next: browser-QA 107/108, then TASK-105 (colocation, now unblocked) |
 
 _"Active" = in progress. "Backlog" = not started (excludes superseded)._
 
