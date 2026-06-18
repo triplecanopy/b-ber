@@ -35,7 +35,7 @@ Every task belongs to exactly one; every new task must too.
 | ✅ Unit test coverage | 2 | 1 | 2 | Epic in progress; most packages at target, a few laggards |
 | 🧪 E2E testing | 5 | 1 | 2 | Pipeline green in CI; skill + iframe fix remain |
 | ⚙️ Node.js modernization | 1 | 0 | 2 | Barely started; epic + logger refactor pending |
-| ⚛️ React 19 (reader-react) | 28 | 0 | 15 | **Steps 1 + 2 complete and merged into `feat/upgrades`** (TASK-095–100): no class components/HOCs, no selfRef shim. **Step 3 (TASK-073) done** — recommendation: drop Redux → `useSyncExternalStore` + stable API context (`STATE-MIGRATION-PLAN.md`). **Step 4 (TASK-106) ✅ done & merged** — Redux removed, built-in store + ReaderApiContext shipped, browser QA passed. **TASK-101 (page-nav race) done.** **TASK-107 (restore spread on refresh) + TASK-108 (nav icon click) ✅ done & QA'd.** Maintainability backlog TASK-102–105. Next: TASK-105 (colocation, now unblocked) |
+| ⚛️ React 19 (reader-react) | 29 | 1 | 13 | **Steps 1 + 2 complete and merged into `feat/upgrades`** (TASK-095–100): no class components/HOCs, no selfRef shim. **Step 3 (TASK-073) done** — recommendation: drop Redux → `useSyncExternalStore` + stable API context (`STATE-MIGRATION-PLAN.md`). **Step 4 (TASK-106) ✅ done & merged** — Redux removed, built-in store + ReaderApiContext shipped, browser QA passed. **TASK-101 (page-nav race) done.** **TASK-107/108 ✅ done & QA'd.** **Housekeeping: TASK-103 (helper classes → modules) ✅ done; TASK-102 (Chrome-81 removal) code done, media-embed QA pending** — both on `feat/reader-react-housekeeping`. Next: TASK-105 (colocation, now unblocked). |
 
 _"Active" = in progress. "Backlog" = not started (excludes superseded)._
 
@@ -237,10 +237,10 @@ existing open tasks (noted in the right column).
 | Task | Kind | Summary | Maps to / notes |
 | ---- | ---- | ------- | --------------- |
 | **TASK-101** | bug | Premature page-nav skips to next chapter (load race: `handleEvents` unlocks before `lastSpreadIndex` is measured) | ✅ done |
-| **TASK-102** | housekeeping | Remove Chrome-81 workarounds (deletes `useIframePosition` + placeholder machinery) | new — net deletion |
-| **TASK-103** | housekeeping | Static-only helper classes → modules (`Asset`/`Cache`/`DOM`/`Request`/`Storage`/`Url`/`Viewport`/`XMLAdaptor`) | new — wide/shallow |
+| **TASK-102** | housekeeping | Remove Chrome-81 workarounds (deletes `useIframePosition` + placeholder machinery) | code done — media-embed browser QA pending |
+| **TASK-103** | housekeeping | Static-only helper classes → modules (`Asset`/`Cache`/`DOM`/`Request`/`Storage`/`Url`/`Viewport`/`XMLAdaptor`) | ✅ done (Viewport kept as default object — spied via jest.spyOn) |
 | **TASK-104** | quality | Accessibility baseline (ARIA, focus mgmt, reduced-motion, live region) | new |
-| **TASK-105** | structure | Component colocation + types/CSS-module structure | new — state migration now landed (unblocked); still gated on helper→module (TASK-103); colocated-tests deferred pending tooling audit |
+| **TASK-105** | structure | Component colocation + types/CSS-module structure | unblocked — state migration (TASK-106) + helper→module (TASK-103) both landed; colocated-tests deferred pending tooling audit |
 | **TASK-106** | state | Execute the state migration: drop Redux → `useSyncExternalStore` + stable API context; folds in `book.content` | ✅ done — Step 4 from **TASK-073** (`STATE-MIGRATION-PLAN.md`) |
 | — | styles | Inline/conditional styles → CSS Modules | **TASK-076** |
 | — | docs | Per-subdir documentation | **TASK-071** |

@@ -1,13 +1,13 @@
 import isPlainObject from 'lodash/isPlainObject'
 import { useMemo } from 'react'
-import Asset from '../helpers/Asset'
-import Storage from '../helpers/Storage'
+import * as Asset from '../helpers/Asset'
+import * as Storage from '../helpers/Storage'
 import {
   appendExternalParams,
   ensureSearchParams,
   hasSearchParams,
 } from '../helpers/search-params'
-import Url from '../helpers/Url'
+import * as Url from '../helpers/Url'
 import history from '../lib/History'
 import type { ReaderStore } from './createReaderStore'
 import { useReaderStore } from './StoreContext'

@@ -1,4 +1,4 @@
-import Storage from '../../src/helpers/Storage'
+import * as Storage from '../../src/helpers/Storage'
 
 const localStorageProto = Object.getPrototypeOf(window.localStorage)
 

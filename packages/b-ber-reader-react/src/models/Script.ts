@@ -1,5 +1,5 @@
 import isUndefined from 'lodash/isUndefined'
-import Url from '../helpers/Url'
+import * as Url from '../helpers/Url'
 import { rand } from '../helpers/utils'
 
 export interface ScriptOptions {

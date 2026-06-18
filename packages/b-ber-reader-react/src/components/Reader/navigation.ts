@@ -1,6 +1,6 @@
 import findIndex from 'lodash/findIndex'
 import { useCallback } from 'react'
-import Url from '../../helpers/Url'
+import * as Url from '../../helpers/Url'
 import Viewport from '../../helpers/Viewport'
 import type { ReaderHookDeps } from './types'
 

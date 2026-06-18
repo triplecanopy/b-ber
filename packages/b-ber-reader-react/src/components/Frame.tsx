@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import isPlainObject from 'lodash/isPlainObject'
 import React, { useEffect, useRef } from 'react'
-import Asset from '../helpers/Asset'
+import * as Asset from '../helpers/Asset'
 import Viewport from '../helpers/Viewport'
 import { useStore } from '../store/StoreContext'
 import Layout from './Layout'

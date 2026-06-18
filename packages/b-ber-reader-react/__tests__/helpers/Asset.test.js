@@ -1,4 +1,4 @@
-import Asset from '../../src/helpers/Asset'
+import * as Asset from '../../src/helpers/Asset'
 
 describe('Asset', () => {
   test('creates a hash', () => {

@@ -14,7 +14,7 @@
 
 import React from 'react'
 import App from '../../src/components/App'
-import Request from '../../src/helpers/Request'
+import * as Request from '../../src/helpers/Request'
 import { renderWithStore } from '../helpers/renderWithStore'
 
 jest.mock('../../src/helpers/Request')

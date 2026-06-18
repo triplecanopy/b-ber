@@ -5,10 +5,10 @@ jest.mock('../../../src/helpers/XMLAdaptor')
 
 import { renderHook } from '@testing-library/react'
 import { useLoader } from '../../../src/components/Reader/loader'
-import Asset from '../../../src/helpers/Asset'
-import Request from '../../../src/helpers/Request'
-import Storage from '../../../src/helpers/Storage'
-import XMLAdaptor from '../../../src/helpers/XMLAdaptor'
+import * as Asset from '../../../src/helpers/Asset'
+import * as Request from '../../../src/helpers/Request'
+import * as Storage from '../../../src/helpers/Storage'
+import * as XMLAdaptor from '../../../src/helpers/XMLAdaptor'
 
 // useLoader reads live state/props through refs and resolves cross-cutting calls
 // (freeze, savePosition, updateQueryString, showSpineItem) through `api`. This

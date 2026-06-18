@@ -1,4 +1,4 @@
-import Url from '../../src/helpers/Url'
+import * as Url from '../../src/helpers/Url'
 
 describe('Url', () => {
   test('creates a slug', () => {

@@ -1,5 +1,5 @@
 import omit from 'lodash/omit'
-import Url from './Url'
+import * as Url from './Url'
 import Viewport from './Viewport'
 
 export const getPlayerPropsFromQueryString = (

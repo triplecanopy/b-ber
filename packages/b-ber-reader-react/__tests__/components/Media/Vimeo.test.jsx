@@ -2,6 +2,7 @@
 
 import { fireEvent, render } from '@testing-library/react'
 import React from 'react'
+import Vimeo from '../../../src/components/Media/Vimeo'
 import useNodePosition from '../../../src/hooks/use-node-position'
 import ReaderContext from '../../../src/lib/reader-context'
 
@@ -17,52 +18,12 @@ const defaultNodePosition = (overrides = {}) => ({
   ...overrides,
 })
 
-// These tests call jest.resetModules() so the component re-evaluates its
-// module-level browser check (iframePositioningEnabled) under different mocks.
-// resetModules() also creates a fresh React copy whose hook dispatcher is null
-// at render time — now that Vimeo is functional, that crashes on the first hook.
-// Pin one React instance (the one RTL renders with) across resets.
-jest.mock('react', () => {
-  if (!globalThis.__reactSingleton) {
-    globalThis.__reactSingleton = jest.requireActual('react')
-  }
-  return globalThis.__reactSingleton
-})
-
-// resetModules() also re-creates the ReaderContext object, so the test's
-// statically imported Provider would no longer match the context the
-// dynamically imported Vimeo reads via useContext. There is only ever one
-// ReaderContext in production — pin it to a single instance here too.
-jest.mock('../../../src/lib/reader-context', () => {
-  if (!globalThis.__readerContextSingleton) {
-    globalThis.__readerContextSingleton = jest.requireActual(
-      '../../../src/lib/reader-context'
-    )
-  }
-  return globalThis.__readerContextSingleton
-})
-
-// Vimeo reads its element ref + spread position + view/readerSettings from
-// useNodePosition. Pin a single jest.fn across resetModules (like the React /
-// ReaderContext singletons above) so tests can drive its return value.
-jest.mock('../../../src/hooks/use-node-position', () => {
-  if (!globalThis.__useNodePositionMock) {
-    globalThis.__useNodePositionMock = jest.fn()
-  }
-  return { __esModule: true, default: globalThis.__useNodePositionMock }
-})
-
-// useIframePosition now supplies the placeholder geometry / style block / ref;
-// stub it so these tests stay focused on Vimeo's own rendering.
-jest.mock('../../../src/hooks/use-iframe-position', () => ({
+// useNodePosition supplies Vimeo's element ref + spread position +
+// view/readerSettings; mock it so these tests don't need a store or a measured
+// viewport. Tests drive its return value via useNodePosition.mockReturnValue.
+jest.mock('../../../src/hooks/use-node-position', () => ({
   __esModule: true,
-  default: () => ({
-    iframePlaceholderTop: 0,
-    iframePlaceholderWidth: 0,
-    iframePlaceholderHeight: 0,
-    iframeStyleBlock: () => '.vimeo { color: red; }',
-    innerRef: () => {},
-  }),
+  default: jest.fn(),
 }))
 
 // react-player/vimeo lazily loads the Vimeo Player SDK and is not relevant to
@@ -105,12 +66,8 @@ describe('Vimeo', () => {
 
   afterEach(() => jest.clearAllMocks())
 
-  describe('with iframe positioning disabled (default browser detection)', () => {
+  describe('rendering', () => {
     test('renders the player with parsed url and default options', async () => {
-      const { default: Vimeo } = await import(
-        '../../../src/components/Media/Vimeo'
-      )
-
       const tree = render(
         <Vimeo
           src="https://vimeo.com/12345"
@@ -139,10 +96,6 @@ describe('Vimeo', () => {
     })
 
     test('parses query string options into player props', async () => {
-      const { default: Vimeo } = await import(
-        '../../../src/components/Media/Vimeo'
-      )
-
       const tree = render(
         <Vimeo
           src="https://vimeo.com/12345?autoplay=1&loop=1&muted=1&controls=0"
@@ -174,10 +127,6 @@ describe('Vimeo', () => {
     })
 
     test('renders the poster image when provided', async () => {
-      const { default: Vimeo } = await import(
-        '../../../src/components/Media/Vimeo'
-      )
-
       const tree = render(
         <Vimeo
           src="https://vimeo.com/12345"
@@ -199,10 +148,6 @@ describe('Vimeo', () => {
     })
 
     test('does not render a poster image when none is provided', async () => {
-      const { default: Vimeo } = await import(
-        '../../../src/components/Media/Vimeo'
-      )
-
       const tree = render(
         <Vimeo
           src="https://vimeo.com/12345"
@@ -221,10 +166,6 @@ describe('Vimeo', () => {
     })
 
     test('clicking the poster image toggles playing state and hides the poster', async () => {
-      const { default: Vimeo } = await import(
-        '../../../src/components/Media/Vimeo'
-      )
-
       const tree = render(
         <Vimeo
           src="https://vimeo.com/12345"
@@ -255,209 +196,8 @@ describe('Vimeo', () => {
     })
   })
 
-  describe('with iframe positioning enabled', () => {
-    beforeEach(() => {
-      jest.resetModules()
-      jest.doMock('../../../src/helpers/utils', () => {
-        const actual = jest.requireActual('../../../src/helpers/utils')
-        return { ...actual, isBrowser: () => true }
-      })
-    })
-
-    afterEach(() => {
-      jest.dontMock('../../../src/helpers/utils')
-      jest.dontMock('../../../src/helpers/Viewport')
-      jest.resetModules()
-    })
-
-    test('renders style block and placeholder, mobile layout', async () => {
-      jest.doMock('../../../src/helpers/Viewport', () => ({
-        __esModule: true,
-        default: { isSingleColumn: () => true },
-      }))
-
-      const { default: Vimeo } = await import(
-        '../../../src/components/Media/Vimeo'
-      )
-
-      const tree = render(
-        <Vimeo
-          src="https://vimeo.com/12345"
-          posterImage={null}
-          aspectRatio={
-            new Map([
-              ['x', 16],
-              ['y', 9],
-            ])
-          }
-          elemRef={React.createRef()}
-          iframePlaceholderTop={0}
-          iframePlaceholderWidth={0}
-          iframePlaceholderHeight={0}
-        />
-      )
-
-      expect(tree.container.querySelector('style')).not.toBeNull()
-
-      const placeholder = tree.container.querySelector(
-        '.bber-iframe-placeholder'
-      )
-      expect(placeholder).not.toBeNull()
-      // Mobile -> paddingTop is 0
-      expect(placeholder.style.paddingTop).toBe('0px')
-    })
-
-    test('renders style block and placeholder, desktop layout with inline sizing', async () => {
-      jest.doMock('../../../src/helpers/Viewport', () => ({
-        __esModule: true,
-        default: { isSingleColumn: () => false },
-      }))
-
-      const { default: Vimeo } = await import(
-        '../../../src/components/Media/Vimeo'
-      )
-
-      const tree = render(
-        <Vimeo
-          src="https://vimeo.com/12345"
-          posterImage={null}
-          aspectRatio={
-            new Map([
-              ['x', 16],
-              ['y', 9],
-            ])
-          }
-          elemRef={React.createRef()}
-          iframePlaceholderTop={50}
-          iframePlaceholderWidth={300}
-          iframePlaceholderHeight={200}
-        />
-      )
-
-      expect(tree.container.querySelector('style')).not.toBeNull()
-
-      const placeholder = tree.container.querySelector(
-        '.bber-iframe-placeholder'
-      )
-      expect(placeholder).not.toBeNull()
-      // Desktop -> paddingTop is (y/x) * 100 = (9/16)*100 = 56.25%
-      expect(placeholder.style.paddingTop).toBe('56.25%')
-
-      const player = tree.getByTestId('react-player')
-      expect(player).not.toBeNull()
-    })
-
-    test('applies fullscreen styles when placeholder width exceeds window width (landscape)', async () => {
-      jest.doMock('../../../src/helpers/Viewport', () => ({
-        __esModule: true,
-        default: { isSingleColumn: () => false },
-      }))
-
-      const originalInnerWidth = window.innerWidth
-      const originalInnerHeight = window.innerHeight
-
-      Object.defineProperty(window, 'innerWidth', {
-        configurable: true,
-        value: 100,
-      })
-      Object.defineProperty(window, 'innerHeight', {
-        configurable: true,
-        value: 50,
-      })
-
-      const { default: Vimeo } = await import(
-        '../../../src/components/Media/Vimeo'
-      )
-
-      const tree = render(
-        <Vimeo
-          src="https://vimeo.com/12345"
-          posterImage={null}
-          aspectRatio={
-            new Map([
-              ['x', 16],
-              ['y', 9],
-            ])
-          }
-          elemRef={React.createRef()}
-          iframePlaceholderTop={50}
-          iframePlaceholderWidth={300}
-          iframePlaceholderHeight={200}
-        />
-      )
-
-      const player = tree.getByTestId('react-player')
-      expect(player).not.toBeNull()
-
-      Object.defineProperty(window, 'innerWidth', {
-        configurable: true,
-        value: originalInnerWidth,
-      })
-      Object.defineProperty(window, 'innerHeight', {
-        configurable: true,
-        value: originalInnerHeight,
-      })
-    })
-
-    test('applies fullscreen styles in portrait orientation', async () => {
-      jest.doMock('../../../src/helpers/Viewport', () => ({
-        __esModule: true,
-        default: { isSingleColumn: () => false },
-      }))
-
-      const originalInnerWidth = window.innerWidth
-      const originalInnerHeight = window.innerHeight
-
-      Object.defineProperty(window, 'innerWidth', {
-        configurable: true,
-        value: 50,
-      })
-      Object.defineProperty(window, 'innerHeight', {
-        configurable: true,
-        value: 100,
-      })
-
-      const { default: Vimeo } = await import(
-        '../../../src/components/Media/Vimeo'
-      )
-
-      const tree = render(
-        <Vimeo
-          src="https://vimeo.com/12345"
-          posterImage={null}
-          aspectRatio={
-            new Map([
-              ['x', 16],
-              ['y', 9],
-            ])
-          }
-          elemRef={React.createRef()}
-          iframePlaceholderTop={50}
-          iframePlaceholderWidth={300}
-          iframePlaceholderHeight={200}
-        />
-      )
-
-      const player = tree.getByTestId('react-player')
-      expect(player).not.toBeNull()
-
-      Object.defineProperty(window, 'innerWidth', {
-        configurable: true,
-        value: originalInnerWidth,
-      })
-      Object.defineProperty(window, 'innerHeight', {
-        configurable: true,
-        value: originalInnerHeight,
-      })
-    })
-  })
-
   describe('player event handlers', () => {
     test('onPause sets playing to false', async () => {
-      const { default: Vimeo } = await import(
-        '../../../src/components/Media/Vimeo'
-      )
-
       // Render with playing already true via poster click, then trigger pause
       const tree = render(
         <Vimeo
@@ -484,10 +224,6 @@ describe('Vimeo', () => {
     })
 
     test('onEnded sets playing to false', async () => {
-      const { default: Vimeo } = await import(
-        '../../../src/components/Media/Vimeo'
-      )
-
       const tree = render(
         <Vimeo
           src="https://vimeo.com/12345"
@@ -515,10 +251,6 @@ describe('Vimeo', () => {
 
   describe('UNSAFE_componentWillReceiveProps', () => {
     test('updates playing state when context spreadIndex changes and view is loaded with autoplay', async () => {
-      const { default: Vimeo } = await import(
-        '../../../src/components/Media/Vimeo'
-      )
-
       const wrapper = ({ children, spreadIndex }) => (
         <ReaderContext.Provider
           value={{
@@ -570,10 +302,6 @@ describe('Vimeo', () => {
     })
 
     test('does not update state when getPlayingStateOnUpdate returns false (view not loaded)', async () => {
-      const { default: Vimeo } = await import(
-        '../../../src/components/Media/Vimeo'
-      )
-
       // view.loaded false -> getPlayingStateOnUpdate short-circuits to false ->
       // the render-phase update never changes playing state.
       useNodePosition.mockReturnValue(

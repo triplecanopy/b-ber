@@ -1,9 +1,13 @@
 import { act, fireEvent } from '@testing-library/react'
 import React from 'react'
 import Footnote from '../../src/components/Footnote'
-import Request from '../../src/helpers/Request'
+import * as Request from '../../src/helpers/Request'
 import Viewport from '../../src/helpers/Viewport'
 import { renderWithStore } from '../helpers/renderWithStore'
+
+// Request is a module of named exports (TASK-103); auto-mock it rather than
+// jest.spyOn, since ES-module namespace bindings are non-configurable.
+jest.mock('../../src/helpers/Request')
 
 const renderFootnote = ({ href, viewerSettings = {} } = {}) =>
   renderWithStore(
@@ -18,6 +22,7 @@ describe('Footnote', () => {
   let consoleWarn
 
   beforeEach(() => {
+    jest.clearAllMocks()
     consoleError = jest.spyOn(console, 'error').mockImplementation(() => {})
     consoleWarn = jest.spyOn(console, 'warn').mockImplementation(() => {})
   })
@@ -29,7 +34,7 @@ describe('Footnote', () => {
   })
 
   test('showFootnote fetches and displays footnote content', async () => {
-    jest.spyOn(Request, 'getText').mockResolvedValue({
+    Request.getText.mockResolvedValue({
       data: '<html><body><ol id="notes"><li id="fn1"><p>Note text</p></li></ol></body></html>',
     })
 
@@ -60,7 +65,7 @@ describe('Footnote', () => {
   })
 
   test('toggleFootnote shows then hides the footnote', async () => {
-    jest.spyOn(Request, 'getText').mockResolvedValue({
+    Request.getText.mockResolvedValue({
       data: '<html><body><ul id="notes"><li id="fn1"><span>Toggle note</span></li></ul></body></html>',
     })
 
@@ -86,7 +91,7 @@ describe('Footnote', () => {
   })
 
   test('logs an error and leaves content empty when the target id is not found', async () => {
-    jest.spyOn(Request, 'getText').mockResolvedValue({
+    Request.getText.mockResolvedValue({
       data: '<html><body><ul id="notes"><li id="fn-other">Other</li></ul></body></html>',
     })
 
@@ -108,7 +113,7 @@ describe('Footnote', () => {
   })
 
   test('clicking outside the footnote (handleDocumentClick) hides it', async () => {
-    jest.spyOn(Request, 'getText').mockResolvedValue({
+    Request.getText.mockResolvedValue({
       data: '<html><body><ul id="notes"><li id="fn1"><span>Note</span></li></ul></body></html>',
     })
 
@@ -141,7 +146,7 @@ describe('Footnote', () => {
   })
 
   test('clicking an anchor element does not hide the footnote', async () => {
-    jest.spyOn(Request, 'getText').mockResolvedValue({
+    Request.getText.mockResolvedValue({
       data: '<html><body><ul id="notes"><li id="fn1"><span>Note</span></li></ul></body></html>',
     })
 
@@ -174,7 +179,7 @@ describe('Footnote', () => {
 
   describe('handleOnMouseOver', () => {
     test('toggles footnote when not in single column mode', async () => {
-      jest.spyOn(Request, 'getText').mockResolvedValue({
+      Request.getText.mockResolvedValue({
         data: '<html><body><ul id="notes"><li id="fn1"><span>Note</span></li></ul></body></html>',
       })
       jest.spyOn(Viewport, 'isSingleColumn').mockReturnValue(false)
@@ -197,7 +202,7 @@ describe('Footnote', () => {
     })
 
     test('does nothing when in single column mode', async () => {
-      jest.spyOn(Request, 'getText').mockResolvedValue({
+      Request.getText.mockResolvedValue({
         data: '<html><body><ul id="notes"><li id="fn1"><span>Note</span></li></ul></body></html>',
       })
       jest.spyOn(Viewport, 'isSingleColumn').mockReturnValue(true)
@@ -223,7 +228,7 @@ describe('Footnote', () => {
 
   describe('handleOnMouseMove', () => {
     test('hides footnote when mouse moves over a different footnote number span', async () => {
-      jest.spyOn(Request, 'getText').mockResolvedValue({
+      Request.getText.mockResolvedValue({
         data: '<html><body><ul id="notes"><li id="fn1"><span>Note</span></li></ul></body></html>',
       })
       jest.spyOn(Viewport, 'isSingleColumn').mockReturnValue(false)
@@ -264,7 +269,7 @@ describe('Footnote', () => {
     })
 
     test('does nothing in single column mode', async () => {
-      jest.spyOn(Request, 'getText').mockResolvedValue({
+      Request.getText.mockResolvedValue({
         data: '<html><body><ul id="notes"><li id="fn1"><span>Note</span></li></ul></body></html>',
       })
       jest.spyOn(Viewport, 'isSingleColumn').mockReturnValue(true)
@@ -291,7 +296,7 @@ describe('Footnote', () => {
 
   describe('footnoteStyles', () => {
     test('single column: width based on window width, left negated and offset by paddingLeft', async () => {
-      jest.spyOn(Request, 'getText').mockResolvedValue({
+      Request.getText.mockResolvedValue({
         data: '<html><body><ul id="notes"><li id="fn1"><span>Note</span></li></ul></body></html>',
       })
       jest.spyOn(Viewport, 'isSingleColumn').mockReturnValue(true)
@@ -322,7 +327,7 @@ describe('Footnote', () => {
     })
 
     test('multi column, verso position (left < window center): width is columnWidth + columnGap', async () => {
-      jest.spyOn(Request, 'getText').mockResolvedValue({
+      Request.getText.mockResolvedValue({
         data: '<html><body><ul id="notes"><li id="fn1"><span>Note</span></li></ul></body></html>',
       })
       jest.spyOn(Viewport, 'isSingleColumn').mockReturnValue(false)
@@ -352,7 +357,7 @@ describe('Footnote', () => {
     })
 
     test('top offset positioning when footnote does not overflow viewport', async () => {
-      jest.spyOn(Request, 'getText').mockResolvedValue({
+      Request.getText.mockResolvedValue({
         data: '<html><body><ul id="notes"><li id="fn1"><span>Note</span></li></ul></body></html>',
       })
       jest.spyOn(Viewport, 'isSingleColumn').mockReturnValue(false)
@@ -383,7 +388,7 @@ describe('Footnote', () => {
   })
 
   test('processAnchorNode removes relative/internal links and marks external links target=_blank', async () => {
-    jest.spyOn(Request, 'getText').mockResolvedValue({
+    Request.getText.mockResolvedValue({
       data: `<html><body><ul id="notes"><li id="fn1"><div>
         Note text
         <a href="/relative-link">relative</a>
@@ -417,7 +422,7 @@ describe('Footnote', () => {
   })
 
   test('componentWillUnmount removes the document click listener', async () => {
-    jest.spyOn(Request, 'getText').mockResolvedValue({
+    Request.getText.mockResolvedValue({
       data: '<html><body><ul id="notes"><li id="fn1"><span>Note</span></li></ul></body></html>',
     })
 

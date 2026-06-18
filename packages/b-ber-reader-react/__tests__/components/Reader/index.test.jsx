@@ -20,7 +20,7 @@
 import { act } from '@testing-library/react'
 import React from 'react'
 import Reader from '../../../src/components/Reader'
-import Asset from '../../../src/helpers/Asset'
+import * as Asset from '../../../src/helpers/Asset'
 import { makeTwoChapterSpine } from '../../helpers/fixtures'
 import { renderWithStore } from '../../helpers/renderWithStore'
 
@@ -101,6 +101,15 @@ jest.mock('../../../src/components/Spinner', () => {
   }
 })
 
+// Asset is a module of named exports (TASK-103). Partial-mock it: keep the real
+// createHash but make removeBookStyles a jest.fn so the unmount-cleanup test can
+// assert on it (ES-module namespace bindings can't be jest.spyOn'd).
+jest.mock('../../../src/helpers/Asset', () => ({
+  __esModule: true,
+  ...jest.requireActual('../../../src/helpers/Asset'),
+  removeBookStyles: jest.fn(),
+}))
+
 const spine = makeTwoChapterSpine()
 
 describe('Reader', () => {
@@ -147,8 +156,6 @@ describe('Reader', () => {
   })
 
   test('resize effect binds on mount and cleans up (calls Asset.removeBookStyles) on unmount', () => {
-    const removeBookStylesSpy = jest.spyOn(Asset, 'removeBookStyles')
-
     const { unmount } = renderReader({
       readerSettings: { bookURL: 'https://example.com/book' },
     })
@@ -162,11 +169,9 @@ describe('Reader', () => {
     unmount()
 
     expect(mockResizeFns.bindResizeHandlers).toHaveBeenCalledTimes(1)
-    expect(removeBookStylesSpy).toHaveBeenCalledWith(
+    expect(Asset.removeBookStyles).toHaveBeenCalledWith(
       Asset.createHash('https://example.com/book')
     )
-
-    removeBookStylesSpy.mockRestore()
   })
 
   test('searchParams effect: same chapter, different spread updates spreadIndex without loading', () => {

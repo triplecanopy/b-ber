@@ -1,8 +1,8 @@
 import { useCallback } from 'react'
-import Asset from '../../helpers/Asset'
-import Request from '../../helpers/Request'
-import Storage from '../../helpers/Storage'
-import XMLAdaptor from '../../helpers/XMLAdaptor'
+import * as Asset from '../../helpers/Asset'
+import * as Request from '../../helpers/Request'
+import * as Storage from '../../helpers/Storage'
+import * as XMLAdaptor from '../../helpers/XMLAdaptor'
 import type SpineItem from '../../models/SpineItem'
 import type { ReaderHookDeps } from './types'
 

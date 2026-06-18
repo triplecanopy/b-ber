@@ -9,7 +9,7 @@
 import { render } from '@testing-library/react'
 import React from 'react'
 import Frame from '../../src/components/Frame'
-import Asset from '../../src/helpers/Asset'
+import * as Asset from '../../src/helpers/Asset'
 import Viewport from '../../src/helpers/Viewport'
 import { StoreProvider } from '../../src/store/StoreContext'
 import { createTestReaderStore } from '../helpers/renderWithStore'

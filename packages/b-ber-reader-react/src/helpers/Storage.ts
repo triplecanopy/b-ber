@@ -2,41 +2,37 @@
 // `viewerSettings` entry). Values are loosely typed — callers narrow.
 export type StorageData = Record<string, any>
 
-class Storage {
-  static localStorageKey = 'bber_reader'
+export const localStorageKey = 'bber_reader'
 
-  static get(key: string = Storage.localStorageKey): StorageData {
-    let raw = '{}'
+export function get(key: string = localStorageKey): StorageData {
+  let raw = '{}'
 
-    try {
-      raw = window.localStorage.getItem(key) || raw
-    } catch (_) {
-      console.warn('window.localStorage is unavailable.')
-    }
-
-    return JSON.parse(raw)
+  try {
+    raw = window.localStorage.getItem(key) || raw
+  } catch (_) {
+    console.warn('window.localStorage is unavailable.')
   }
 
-  static set(val: unknown, key: string = Storage.localStorageKey): void {
-    const value = typeof val === 'string' ? val : JSON.stringify(val)
+  return JSON.parse(raw)
+}
 
-    try {
-      window.localStorage.setItem(key, value)
-    } catch (_) {
-      console.warn('window.localStorage is unavailable')
-    }
-  }
+export function set(val: unknown, key: string = localStorageKey): void {
+  const value = typeof val === 'string' ? val : JSON.stringify(val)
 
-  static clear(key: string = Storage.localStorageKey): void {
-    const key_ = String(key)
-    if (!key_) return
-
-    try {
-      window.localStorage.removeItem(key)
-    } catch (_) {
-      console.warn('window.localStorage is unavailable')
-    }
+  try {
+    window.localStorage.setItem(key, value)
+  } catch (_) {
+    console.warn('window.localStorage is unavailable')
   }
 }
 
-export default Storage
+export function clear(key: string = localStorageKey): void {
+  const key_ = String(key)
+  if (!key_) return
+
+  try {
+    window.localStorage.removeItem(key)
+  } catch (_) {
+    console.warn('window.localStorage is unavailable')
+  }
+}
