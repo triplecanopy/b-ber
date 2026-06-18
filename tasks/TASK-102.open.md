@@ -1,6 +1,6 @@
 # TASK-102: Remove legacy-browser (Chrome 81) workarounds
 
-**Status:** not started
+**Status:** in progress (code + tests done; media-embed browser QA pending)
 **Feature:** React 19 (reader-react)
 **Phase:** Modernization — housekeeping
 **Priority:** medium
@@ -28,21 +28,35 @@ geometry. Chrome 81 is five years out of support; the workaround should go.
 
 ## Subtasks
 
-- [ ] Delete `useIframePosition` and its consumers' usage; remove the
-      `iframePlaceholder*` / `iframeStyleBlock` / `innerRef` props and the
-      `iframePositioningEnabled` branches from `Vimeo` and `Iframe` (the embeds
-      render inline in the normal column flow, the non-Chrome-81 path).
-- [ ] Remove the `isBrowser('chrome', 'eq', 81)` call sites; if `isBrowser` is
-      then unused, remove it too (verify with grep + Biome `noUnusedExports`).
-- [ ] Update `Vimeo.test.jsx` / `Iframe.test.jsx` — drop the
+- [x] Delete `useIframePosition` (`src/hooks/use-iframe-position.ts` removed) and
+      its consumers' usage; removed the `iframePlaceholder*` / `iframeStyleBlock`
+      / `innerRef` props and the `iframePositioningEnabled` branches from `Vimeo`
+      and `Iframe` — both now render the embed inline in the normal column flow.
+- [x] Remove the `isBrowser('chrome', 'eq', 81)` call sites. `isBrowser` was the
+      sole consumer of `browser`, the `comparison` IIFE, and the lodash
+      comparators (`eq/gt/gte/lt/lte`) in `utils.ts`, so all of those were
+      removed too. (`lib/browser` / `detect-browser` stays — still used by the
+      Safari checks in `Spread`/`Layout`/`with-last-spread-index`.)
+- [x] Update `Vimeo.test.jsx` / `Iframe.test.jsx` — dropped the
       `use-iframe-position` mock and the "positioning enabled" describe blocks.
-- [ ] Audit for any other `eq`-versioned legacy-browser branches and a stale
-      `browser` (`detect-browser`) usage that only existed for this.
-- [ ] 9 snapshots unchanged (or re-justify if a Vimeo/Iframe snapshot legitimately
-      simplifies); tests pass; `tsc --noEmit` clean
+      Also removed the now-vestigial `resetModules`/React/ReaderContext/
+      useNodePosition singleton scaffolding + dynamic `await import()`s (they
+      existed only to toggle the module-level browser check) → plain static
+      imports + a simple `useNodePosition` mock.
+- [x] Audit for other `eq`-versioned legacy-browser branches / stale
+      `detect-browser` usage — none remain (grep clean for `isBrowser`,
+      `use-iframe-position`, `iframePositioning*`, `bber-iframe-placeholder`).
+- [x] 9 snapshots unchanged; tests pass (62 suites / 407); `tsc --noEmit` clean.
 - [ ] **Browser QA**: Vimeo + iframe embeds load and play, inline and full-bleed,
       in a current browser.
-- [ ] Commit; update `PLAN.md`; remove `.open`
+- [x] Commit; update `PLAN.md`; remove `.open` (PLAN/`.open` on close after QA)
+
+## Notes (implementation)
+
+- Kept the `aspectRatio` prop/state on `Vimeo` even though only the removed
+  Chrome-81 math read it — it's a legitimate media-element property, not
+  workaround machinery, and removing the prop is a separate concern. It is
+  currently write-only in state; a later genuinely-unused-prop pass can drop it.
 
 ## Notes
 

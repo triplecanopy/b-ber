@@ -6,9 +6,7 @@ import {
   getURLAndQueryParamters,
   transformSearchParamsToProps,
 } from '../../helpers/media'
-import { isBrowser, unlessDefined } from '../../helpers/utils'
-import Viewport from '../../helpers/Viewport'
-import useIframePosition from '../../hooks/use-iframe-position'
+import { unlessDefined } from '../../helpers/utils'
 import useNodePosition from '../../hooks/use-node-position'
 import ReaderContext from '../../lib/reader-context'
 import VimeoPlayerControls from './VimeoPlayerControls'
@@ -18,8 +16,6 @@ import VimeoPosterImage from './VimeoPosterImage'
 // `playsinline` or the vimeo-specific `config.vimeo.playerOptions` shape used
 // here. TODO: type these against react-player's config types.
 const ReactPlayer = ReactPlayerVimeo as any
-
-const iframePositioningEnabled = isBrowser('chrome', 'eq', 81)
 
 // Props that are on the vimeo player which must be managed by state
 const blacklistedProps = ['autopause' /* , 'controls' */]
@@ -50,17 +46,6 @@ interface VimeoState {
 
 function Vimeo(props: VimeoProps) {
   const context = useContext(ReaderContext)
-
-  const {
-    iframePlaceholderTop: top,
-    iframePlaceholderWidth: width,
-    iframePlaceholderHeight: height,
-    iframeStyleBlock,
-    innerRef,
-  } = useIframePosition({
-    enabled: iframePositioningEnabled,
-    layout: props.layout,
-  })
 
   const node = useNodePosition<HTMLDivElement>({
     useParentDimensions: true,
@@ -154,107 +139,37 @@ function Vimeo(props: VimeoProps) {
 
   const handleUpdateVolume = () => {}
 
-  const {
-    url,
-    loop,
-    muted,
-    controls,
-    playing,
-    posterImage,
-    playerOptions,
-    aspectRatio,
-  } = state
-
-  // Chrome 81
-  let iframeContainerStyles: React.CSSProperties = {}
-  let paddingTop: number | string | undefined
-
-  if (iframePositioningEnabled) {
-    const mobile = Viewport.isSingleColumn()
-    const position = mobile ? 'static' : 'absolute' // Only run re-positioning on desktop
-    // The aspect-ratio Map is always seeded with `x` and `y` in state.
-    const x = aspectRatio.get('x') as number
-    const y = aspectRatio.get('y') as number
-
-    // Styles for inline videos
-    if (!mobile) iframeContainerStyles = { top, width, height, position }
-
-    // Styles for fullscreen videos
-    if (!mobile && (width as number) > window.innerWidth) {
-      const landscape = window.innerWidth >= window.innerHeight
-
-      iframeContainerStyles.top = '50%'
-      iframeContainerStyles.left = '50%'
-      iframeContainerStyles.transform = 'translateX(-50%) translateY(-50%)'
-
-      if (landscape) {
-        iframeContainerStyles.width = '100vw'
-        iframeContainerStyles.height = '100vw'
-        iframeContainerStyles.minWidth = `${(x / y) * 100}vh`
-      } else {
-        iframeContainerStyles.width = `${(y / x) * 100}vw`
-        iframeContainerStyles.height = '100vw'
-        iframeContainerStyles.minHeight = '100%'
-      }
-    }
-
-    // .iframe-placeholder styles
-    paddingTop = mobile ? 0 : `${(y / x) * 100}%`
-  }
+  const { url, loop, muted, controls, playing, posterImage, playerOptions } =
+    state
 
   return (
-    <>
-      {
-        /*
-            The iframePlaceholder element is a statically positioned div that
-            fills the space that should be occupied by the ReactPlayer iframe.
-            The iframe is absolutely positioned and is set to top and left
-            positions of the placeholder. This is to address a bug in Chrome 81
-            that prevents iframes from loading in multiple column layouts.
-
-            The parent container also needs to be styled to properly render the
-            layout. Inject inline styles here.
-        */
-        iframePositioningEnabled && <style>{iframeStyleBlock('vimeo')}</style>
-      }
-
-      {iframePositioningEnabled && (
-        <div
-          key={`placholder-${url}`}
-          style={{ paddingTop }}
-          className="bber-iframe-placeholder"
-          ref={innerRef}
-        />
-      )}
-
-      {/* Ref is used to calculate spread position in useNodePosition */}
-      <div style={iframeContainerStyles} key={url} ref={node.elemRef}>
-        <VimeoPosterImage
-          src={posterImage}
-          playing={playing}
-          controls={controls}
-          handleUpdatePlaying={handleUpdatePlaying}
-        />
-        <ReactPlayer
-          url={url}
-          width="100%"
-          height="100%"
-          loop={loop}
-          muted={muted}
-          playing={playing}
-          controls={controls}
-          playsinline={true}
-          config={{ vimeo: { playerOptions } }}
-          onPause={handlePause}
-          onEnded={handleEnded}
-        />
-        <VimeoPlayerControls
-          handleUpdatePlaying={handleUpdatePlaying}
-          handleUpdatePosition={handleUpdatePosition}
-          handleUpdateVolume={handleUpdateVolume}
-        />
-      </div>
-    </>
+    // Ref is used to calculate spread position in useNodePosition
+    <div key={url} ref={node.elemRef}>
+      <VimeoPosterImage
+        src={posterImage}
+        playing={playing}
+        controls={controls}
+        handleUpdatePlaying={handleUpdatePlaying}
+      />
+      <ReactPlayer
+        url={url}
+        width="100%"
+        height="100%"
+        loop={loop}
+        muted={muted}
+        playing={playing}
+        controls={controls}
+        playsinline={true}
+        config={{ vimeo: { playerOptions } }}
+        onPause={handlePause}
+        onEnded={handleEnded}
+      />
+      <VimeoPlayerControls
+        handleUpdatePlaying={handleUpdatePlaying}
+        handleUpdatePosition={handleUpdatePosition}
+        handleUpdateVolume={handleUpdateVolume}
+      />
+    </div>
   )
 }
 
