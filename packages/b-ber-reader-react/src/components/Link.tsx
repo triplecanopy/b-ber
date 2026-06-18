@@ -1,5 +1,5 @@
 import React from 'react'
-import Url from '../helpers/Url'
+import * as Url from '../helpers/Url'
 import ReaderApiContext from '../lib/reader-api-context'
 import { useStore } from '../store/StoreContext'
 

@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import React, { useEffect, useRef, useState } from 'react'
 import * as Asset from '../helpers/Asset'
 import * as Request from '../helpers/Request'
-import Url from '../helpers/Url'
+import * as Url from '../helpers/Url'
 import Viewport from '../helpers/Viewport'
 import { useStore } from '../store/StoreContext'
 

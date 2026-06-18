@@ -11,7 +11,7 @@ import { isValidNode, processingInstructions } from '../lib/process-nodes'
 // import Cache from './Cache'
 import { BookMetadata, GuideItem, SpineItem } from '../models'
 import * as Request from './Request'
-import Url from './Url'
+import * as Url from './Url'
 
 // The parsed OPF/NCX trees are walked dynamically (xml-js / css-tree output),
 // so the node shapes here are intentionally loose. TODO: type the OPF/NCX

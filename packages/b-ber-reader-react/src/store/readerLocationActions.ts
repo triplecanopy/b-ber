@@ -7,7 +7,7 @@ import {
   ensureSearchParams,
   hasSearchParams,
 } from '../helpers/search-params'
-import Url from '../helpers/Url'
+import * as Url from '../helpers/Url'
 import history from '../lib/History'
 import type { ReaderStore } from './createReaderStore'
 import { useReaderStore } from './StoreContext'

@@ -13,7 +13,7 @@ import Spread from '../components/Spread'
 import SpreadFigure from '../components/SpreadFigure'
 import Ultimate from '../components/Ultimate'
 import * as Asset from '../helpers/Asset'
-import Url from '../helpers/Url'
+import * as Url from '../helpers/Url'
 import { getControlsPreset, rand } from '../helpers/utils'
 
 // html-to-react walks arbitrary parsed DOM nodes; node/children shapes are

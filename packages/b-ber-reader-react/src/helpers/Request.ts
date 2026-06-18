@@ -1,4 +1,4 @@
-import Url from './Url'
+import * as Url from './Url'
 
 interface RequestResult {
   // Response body — JSON parses to arbitrary shapes, text to string.

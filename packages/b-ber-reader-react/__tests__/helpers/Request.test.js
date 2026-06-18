@@ -1,5 +1,5 @@
 import * as Request from '../../src/helpers/Request'
-import Url from '../../src/helpers/Url'
+import * as Url from '../../src/helpers/Url'
 
 describe('Request', () => {
   afterEach(() => {
