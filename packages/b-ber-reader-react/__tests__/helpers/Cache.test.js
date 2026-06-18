@@ -1,5 +1,5 @@
 import Asset from '../../src/helpers/Asset'
-import Cache from '../../src/helpers/Cache'
+import * as Cache from '../../src/helpers/Cache'
 import Storage from '../../src/helpers/Storage'
 
 jest.mock('../../src/helpers/Storage')
