@@ -24,46 +24,50 @@ interface BreakpointCss {
   fontSize: string
 }
 
-class Viewport {
-  static isMediaQueryMobile = (): boolean =>
-    window.matchMedia(MEDIA_QUERY_MOBILE).matches
+// A namespace of viewport helpers. Kept as a default-exported object (rather
+// than loose named exports like the other helpers in TASK-103) so the wide test
+// surface can keep `jest.spyOn(Viewport, 'isSingleColumn')` etc. — ES-module
+// namespace bindings are non-configurable and can't be spied.
+const Viewport = {
+  isMediaQueryMobile: (): boolean =>
+    window.matchMedia(MEDIA_QUERY_MOBILE).matches,
 
-  static isMediaQueryTablet = (): boolean =>
-    window.matchMedia(MEDIA_QUERY_TABLET).matches
+  isMediaQueryTablet: (): boolean =>
+    window.matchMedia(MEDIA_QUERY_TABLET).matches,
 
-  static isMediaQueryDesktop = (): boolean =>
-    window.matchMedia(MEDIA_QUERY_DESKTOP).matches
+  isMediaQueryDesktop: (): boolean =>
+    window.matchMedia(MEDIA_QUERY_DESKTOP).matches,
 
-  static isMinimumScrollingAspectRatio = (): boolean =>
-    window.matchMedia(MEDIA_QUERY_MIN_SCROLLING_ASPECT_RATIO).matches
+  isMinimumScrollingAspectRatio: (): boolean =>
+    window.matchMedia(MEDIA_QUERY_MIN_SCROLLING_ASPECT_RATIO).matches,
 
-  static isSingleColumn = (): boolean => {
+  isSingleColumn: (): boolean => {
     const { css } = Viewport.getCss()
 
     return (
       css.columns === columns.ONE || Viewport.isMinimumScrollingAspectRatio()
     )
-  }
+  },
 
-  static isVerticalScrollConfigured = (layout: string): boolean =>
-    layout === layouts.SCROLL
+  isVerticalScrollConfigured: (layout: string): boolean =>
+    layout === layouts.SCROLL,
 
-  static isVerticallyScrolling = ({ layout }: { layout: string }): boolean =>
-    Viewport.isSingleColumn() || Viewport.isVerticalScrollConfigured(layout)
+  isVerticallyScrolling: ({ layout }: { layout: string }): boolean =>
+    Viewport.isSingleColumn() || Viewport.isVerticalScrollConfigured(layout),
 
-  static isTouch = (): boolean =>
+  isTouch: (): boolean =>
     'ontouchstart' in window /* iOS and Android */ ||
     // msPointerEnabled is a legacy Win8 IE property absent from lib.dom types
     (window.navigator as any).msPointerEnabled /* Win8 */ ||
-    'ontouchstart' in document.documentElement
+    'ontouchstart' in document.documentElement,
 
-  static isPixelValue = (str: string): boolean =>
-    (str || '').substring(str.length - 2) === 'px'
+  isPixelValue: (str: string): boolean =>
+    (str || '').substring(str.length - 2) === 'px',
 
-  static isPercentageValue = (str: string): boolean =>
-    (str || '').substring(str.length - 1) === '%'
+  isPercentageValue: (str: string): boolean =>
+    (str || '').substring(str.length - 1) === '%',
 
-  static parseStringWidthValue = (str: string): number => {
+  parseStringWidthValue: (str: string): number => {
     let width = 0
 
     if (Viewport.isPixelValue(str)) {
@@ -75,9 +79,9 @@ class Viewport {
     }
 
     return width
-  }
+  },
 
-  static parseStringHeightValue = (str: string): number => {
+  parseStringHeightValue: (str: string): number => {
     let height = 0
 
     if (Viewport.isPixelValue(str)) {
@@ -89,17 +93,17 @@ class Viewport {
     }
 
     return height
-  }
+  },
 
-  static getHorizontalSpacing = (maxWidth: string): number => {
+  getHorizontalSpacing: (maxWidth: string): number => {
     if (maxWidth === 'auto') return 0
 
     const width = Viewport.parseStringWidthValue(maxWidth)
 
     return (window.innerWidth - width) / 2
-  }
+  },
 
-  static getVerticalSpacing = (maxHeight: string): number => {
+  getVerticalSpacing: (maxHeight: string): number => {
     if (maxHeight === 'auto') return 0
 
     let height = Viewport.parseStringHeightValue(maxHeight)
@@ -108,7 +112,7 @@ class Viewport {
     height = Math.max(0, height)
 
     return height
-  }
+  },
 
   // The width of one "page" in the paginated columns layout — i.e. the distance
   // the layout container is translated on each page turn. This is the single
@@ -117,7 +121,7 @@ class Viewport {
   // drift off-screen. Sourced from viewerSettings.width (the value the transform
   // uses), which equals window.innerWidth in the columns layout. Returns NaN in
   // a vertical-scroll layout (width === 'auto'); callers guard for that.
-  static getPageWidth = ({
+  getPageWidth: ({
     width,
     paddingLeft,
     paddingRight,
@@ -127,10 +131,10 @@ class Viewport {
     paddingLeft: number
     paddingRight: number
     columnGap: number
-  }): number => width - paddingLeft - paddingRight + columnGap
+  }): number => width - paddingLeft - paddingRight + columnGap,
 
   // Returns CSS to be applied to use to calculate various frame dimensions
-  static getCss = (): { css: BreakpointCss; mediaQuery: string } => {
+  getCss: (): { css: BreakpointCss; mediaQuery: string } => {
     let mediaQuery = MEDIA_QUERY_DESKTOP_MD
     let css = breakpoints.get(mediaQuery)
 
@@ -143,9 +147,9 @@ class Viewport {
     }
 
     return { css: css as BreakpointCss, mediaQuery }
-  }
+  },
 
-  static getStyles = () => {
+  getStyles: () => {
     const { css } = Viewport.getCss()
 
     const {
@@ -174,9 +178,9 @@ class Viewport {
     }
 
     return styles
-  }
+  },
 
-  static styles = () => Viewport.getStyles()
+  styles: () => Viewport.getStyles(),
 }
 
 export default Viewport
