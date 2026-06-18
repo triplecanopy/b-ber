@@ -12,7 +12,7 @@ import Vimeo from '../components/Media/Vimeo'
 import Spread from '../components/Spread'
 import SpreadFigure from '../components/SpreadFigure'
 import Ultimate from '../components/Ultimate'
-import Asset from '../helpers/Asset'
+import * as Asset from '../helpers/Asset'
 import Url from '../helpers/Url'
 import { getControlsPreset, rand } from '../helpers/utils'
 

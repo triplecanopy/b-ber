@@ -1,4 +1,4 @@
-import Asset from './Asset'
+import * as Asset from './Asset'
 import * as Storage from './Storage'
 
 export const localStorageKey = 'bber_cache'

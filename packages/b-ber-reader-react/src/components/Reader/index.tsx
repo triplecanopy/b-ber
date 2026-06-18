@@ -1,7 +1,7 @@
 import find from 'lodash/find'
 import isInteger from 'lodash/isInteger'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import Asset from '../../helpers/Asset'
+import * as Asset from '../../helpers/Asset'
 import Url from '../../helpers/Url'
 import { unlessDefined } from '../../helpers/utils'
 import Viewport from '../../helpers/Viewport'

@@ -1,4 +1,4 @@
-import Asset from '../../src/helpers/Asset'
+import * as Asset from '../../src/helpers/Asset'
 import * as Cache from '../../src/helpers/Cache'
 import * as Storage from '../../src/helpers/Storage'
 

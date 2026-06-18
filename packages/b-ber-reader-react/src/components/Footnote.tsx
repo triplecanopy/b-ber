@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import React, { useEffect, useRef, useState } from 'react'
-import Asset from '../helpers/Asset'
+import * as Asset from '../helpers/Asset'
 import * as Request from '../helpers/Request'
 import Url from '../helpers/Url'
 import Viewport from '../helpers/Viewport'

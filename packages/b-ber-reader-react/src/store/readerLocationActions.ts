@@ -1,6 +1,6 @@
 import isPlainObject from 'lodash/isPlainObject'
 import { useMemo } from 'react'
-import Asset from '../helpers/Asset'
+import * as Asset from '../helpers/Asset'
 import * as Storage from '../helpers/Storage'
 import {
   appendExternalParams,
