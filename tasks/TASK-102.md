@@ -1,6 +1,6 @@
 # TASK-102: Remove legacy-browser (Chrome 81) workarounds
 
-**Status:** in progress (code + tests done; media-embed browser QA pending)
+**Status:** complete
 **Feature:** React 19 (reader-react)
 **Phase:** Modernization — housekeeping
 **Priority:** medium
@@ -47,8 +47,8 @@ geometry. Chrome 81 is five years out of support; the workaround should go.
       `detect-browser` usage — none remain (grep clean for `isBrowser`,
       `use-iframe-position`, `iframePositioning*`, `bber-iframe-placeholder`).
 - [x] 9 snapshots unchanged; tests pass (62 suites / 407); `tsc --noEmit` clean.
-- [ ] **Browser QA**: Vimeo + iframe embeds load and play, inline and full-bleed,
-      in a current browser.
+- [x] **Browser QA**: Vimeo + iframe embeds load and play, inline and full-bleed,
+      in a current browser (passed 2026-06-18).
 - [x] Commit; update `PLAN.md`; remove `.open` (PLAN/`.open` on close after QA)
 
 ## Notes (implementation)
