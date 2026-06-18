@@ -1,7 +1,7 @@
 import React from 'react'
 import * as Request from '../../src/helpers/Request'
 import * as Url from '../../src/helpers/Url'
-import XMLAdaptor from '../../src/helpers/XMLAdaptor'
+import * as XMLAdaptor from '../../src/helpers/XMLAdaptor'
 
 jest.mock('../../src/helpers/Request')
 

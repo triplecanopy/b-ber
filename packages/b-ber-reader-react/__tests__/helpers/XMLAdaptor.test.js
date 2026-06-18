@@ -1,5 +1,5 @@
 import * as Request from '../../src/helpers/Request'
-import XMLAdaptor from '../../src/helpers/XMLAdaptor'
+import * as XMLAdaptor from '../../src/helpers/XMLAdaptor'
 import { BookMetadata, GuideItem, SpineItem } from '../../src/models'
 
 jest.mock('../../src/helpers/Request')
