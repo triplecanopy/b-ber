@@ -1,6 +1,6 @@
 # TASK-108: Nav header buttons don't open when the SVG icon is clicked
 
-**Status:** in progress (fix applied; browser QA pending)
+**Status:** complete
 **Feature:** React 19 (reader-react)
 **Phase:** Bug Fixes
 **Priority:** medium
@@ -40,8 +40,9 @@ controls keep their pointer events.
 - [x] Confirm root cause — **detached target on icon swap**, refining the
       original race/`pointer-events` hypothesis
 - [x] Apply the minimal fix (`pointer-events: none` on the nav icons)
-- [ ] Verify open/close still works for both the button and the icon, and
-      outside-click dismissal is unaffected (browser QA, port 3000)
+- [x] Verify open/close still works for both the button and the icon, and
+      outside-click dismissal is unaffected (browser QA, port 3000 — passed
+      2026-06-18)
 - [x] `npm test` green + 9 snapshots unchanged (CSS-only; component snapshots
       unaffected)
 

@@ -1,6 +1,6 @@
 # TASK-107: Restore spreadIndex from the URL on initial load (refresh)
 
-**Status:** in progress (fix + unit tests done; browser QA pending)
+**Status:** complete
 **Feature:** React 19 (reader-react)
 **Phase:** Bug Fixes
 **Priority:** low
@@ -54,9 +54,9 @@ backward-chapter `lastSpreadIndex` effect.
 - [x] `npm test` green + 9 snapshots unchanged; `tsc --noEmit` clean. Added 3
       unit tests (restore, clamp-to-range, no-op at spread 0) in
       `__tests__/components/Reader/index.test.jsx`.
-- [ ] Browser QA: deep-link + refresh on a multi-spread chapter restores the
+- [x] Browser QA: deep-link + refresh on a multi-spread chapter restores the
       exact spread; verso/recto and page-turn timing unaffected
-      (`SPREAD-CLUSTER-QA.md`)
+      (`SPREAD-CLUSTER-QA.md` — passed 2026-06-18)
 
 ## Notes
 
