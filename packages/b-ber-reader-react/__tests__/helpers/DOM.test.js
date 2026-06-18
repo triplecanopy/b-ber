@@ -1,4 +1,4 @@
-import DOM from '../../src/helpers/DOM'
+import * as DOM from '../../src/helpers/DOM'
 
 describe('DOM', () => {
   let warnSpy
