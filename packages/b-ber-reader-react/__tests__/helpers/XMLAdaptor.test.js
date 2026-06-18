@@ -1,4 +1,4 @@
-import Request from '../../src/helpers/Request'
+import * as Request from '../../src/helpers/Request'
 import XMLAdaptor from '../../src/helpers/XMLAdaptor'
 import { BookMetadata, GuideItem, SpineItem } from '../../src/models'
 

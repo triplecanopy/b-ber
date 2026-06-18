@@ -10,7 +10,7 @@ import DocumentProcessor from '../lib/DocumentProcessor'
 import { isValidNode, processingInstructions } from '../lib/process-nodes'
 // import Cache from './Cache'
 import { BookMetadata, GuideItem, SpineItem } from '../models'
-import Request from './Request'
+import * as Request from './Request'
 import Url from './Url'
 
 // The parsed OPF/NCX trees are walked dynamically (xml-js / css-tree output),

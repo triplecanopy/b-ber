@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import Asset from '../../helpers/Asset'
-import Request from '../../helpers/Request'
+import * as Request from '../../helpers/Request'
 import * as Storage from '../../helpers/Storage'
 import XMLAdaptor from '../../helpers/XMLAdaptor'
 import type SpineItem from '../../models/SpineItem'

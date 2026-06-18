@@ -1,4 +1,4 @@
-import Request from '../../src/helpers/Request'
+import * as Request from '../../src/helpers/Request'
 import Url from '../../src/helpers/Url'
 
 describe('Request', () => {
