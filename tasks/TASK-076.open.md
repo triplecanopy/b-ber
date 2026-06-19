@@ -1,6 +1,10 @@
 # TASK-076: Migrate from SCSS to CSS Modules
 
-**Status:** in progress
+**Status:** in progress — realized scope complete on `feat/reader-react-css-modules`
+(@use cleanup + Spinner CSS-Module POC + debug-label removal + audit); chrome
+scoping intentionally **deferred to [`TASK-110`](./TASK-110.open.md)**. Remaining:
+dev QA + merge the branch, then close. The original goal ("migrate *all* reader
+styles to CSS Modules") is **narrowed** — see the 2026-06-19 decision below.
 **Feature:** React 19 (reader-react)
 **Phase:** Modernization — Phase 6
 **Priority:** low
@@ -62,22 +66,28 @@ React ecosystem.
       colocated; `_spinner.scss` + its `@use` removed; snapshot updated to scoped names;
       62 suites pass; lib build + global-CSS checks green. (NavigationFooter button
       styles deferred to the chrome pass below.)
-- [ ] **REASSESS before continuing (per user, 2026-06-19).** POC proved the pattern end
-      to end. Remaining migratable surface is **pure chrome only** (per the audit):
-      `_controls.scss` → Controls/Sidebar/Navigation, and the `.bber-leaf`/`#layout`
-      bits of `_layout.scss`. `_footnote.scss`, `_media.scss`, `_print.scss`,
-      `_fonts.scss`, `_variables` (→ `global.css` custom properties), and the
-      `body::before` debug label / `.bber-spread` block **stay global** (theme/content
-      contract). The chrome pass needs **data-testid** updates to Controls/Sidebar/Nav
-      tests (they query `.bber-controls__*` classes). Decide whether to proceed now or
-      park here — the deprecation warnings (the original pain point) are already gone.
-- [ ] *(chrome pass, pending reassess)* Migrate Controls / Sidebar / Navigation + Layout
-      chrome to CSS Modules; extract `global.css` (tokens, fonts, footnote, media, print).
-- [ ] Migrate HOCs (withDimensions, withLastSpreadIndex)
-- [ ] Remove global `src/index.scss` import from `src/index.jsx` once all styles are migrated
-- [ ] Run `npm test` — confirm all smoke tests still pass
-- [ ] Manually verify in dev environment (columns layout, scroll layout, spreads, mobile)
-- [ ] Update `PLAN.md`
+- [x] **REASSESS — decided 2026-06-19: keep chrome global (Option 1).** Verifying the
+      consumer override API (`NavigationHeader`/`NavigationFooter`/`Sidebar*` props in
+      `index.d.ts`) showed the chrome `.bber-*` classes are a **shared, partly user-facing
+      vocabulary**, not component-private styles: `Controls` slots consumer-supplied
+      components inside `<div className="bber-controls">`, whose universal `.bber-controls *`
+      reset applies to them, and a consumer could reuse `.bber-nav__button` etc. to match
+      the default look. Naively scoping the chrome would risk those overrides. **Decision:
+      treat the chrome as a public override vocabulary and keep it global** (like the
+      footnote/media theme contract). Real chrome scoping + a documented theming surface is
+      deferred to **[`TASK-110`](./TASK-110.open.md)** (needs versioning + 3rd-party
+      coordination; out of scope here).
+- [x] **Remove the dev `body::before` viewport label** from the shipped CSS (commit
+      `4fe26837`) — Findings Risk 1; the one global-stylesheet cleanup in scope.
+- [~] ~~Migrate Controls / Sidebar / Navigation + Layout chrome to CSS Modules~~
+      **Deferred to [`TASK-110`](./TASK-110.open.md)** (chrome stays global by decision above).
+- [~] ~~Migrate HOCs (withDimensions, withLastSpreadIndex)~~ — N/A (measurement HOCs carry no styles).
+- [~] ~~Remove global `src/index.scss` import~~ — **not done by design**: the global stylesheet
+      stays (it holds the chrome vocabulary + footnote/media/print/font contracts + tokens).
+- [x] Run `npm test` — 62 suites / 9 snapshots green after each commit.
+- [ ] Manually verify in dev environment (columns/scroll/spreads/mobile) once
+      `feat/reader-react-css-modules` is reviewed — Spinner render + chrome unchanged.
+- [x] Update `PLAN.md`.
 
 ## Audit: global vs. scopable (TASK-076-findings + 2026-06-19 deep audit)
 

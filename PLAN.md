@@ -243,7 +243,8 @@ existing open tasks (noted in the right column).
 | **TASK-104** | quality | Accessibility baseline (ARIA, focus mgmt, reduced-motion, live region) | new |
 | **TASK-105** | structure | Component colocation + types/CSS-module structure | unblocked — state migration (TASK-106) + helper→module (TASK-103) both landed; colocated-tests deferred pending tooling audit |
 | **TASK-106** | state | Execute the state migration: drop Redux → `useSyncExternalStore` + stable API context; folds in `book.content` | ✅ done — Step 4 from **TASK-073** (`STATE-MIGRATION-PLAN.md`) |
-| — | styles | Inline/conditional styles → CSS Modules | **TASK-076** — audit + `@import`→`@use` cleanup done; **Spinner CSS-Module POC landed** on `feat/reader-react-css-modules`; paused for reassess. Audit split: only pure chrome (Controls/Sidebar/Nav/Layout) is scopable — footnote/media/print/tokens stay global (theme contract). Project/theme SCSS toolchain split out to **TASK-109**. |
+| — | styles | Inline/conditional styles → CSS Modules | **TASK-076** — realized scope done on `feat/reader-react-css-modules`: `@import`→`@use` cleanup, **Spinner CSS-Module POC**, dev viewport-label removed, audit. **Decision 2026-06-19: keep chrome global** — the `.bber-*` chrome classes are a shared, partly user-facing vocabulary (consumer override API), so chrome scoping + a documented theming surface is deferred to **TASK-110**. Project/theme SCSS toolchain → **TASK-109**. Awaiting dev QA + branch merge. |
+| — | theming | Reader chrome theming API (scope chrome + CSS custom props) | **TASK-110** — Option 2 from the TASK-076 chrome review; design-gated, needs versioning + 3rd-party coordination, out of scope for now |
 | — | docs | Per-subdir documentation | **TASK-071** |
 | — | cleanup | Marker `debug` block + dangling `IMPROVEMENT_PLAN.md` comment refs | added to **TASK-068** |
 
