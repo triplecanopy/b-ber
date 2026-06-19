@@ -50,6 +50,7 @@ _"Active" = in progress. "Backlog" = not started (excludes superseded)._
 
 | Task | Pri | Outstanding work |
 | ---- | --- | ---------------- |
+| TASK-109 | med | Modernize project/theme SCSS compile path — drop the custom `~` importer, move off the legacy dart-sass `render` API, `@import`→`@use`/`@forward`, refresh autoprefixer/PostCSS (from TASK-076 findings) |
 | TASK-092 | med | Fix Codecov "Validate CLI" GPG failure turning the `build` job red |
 | TASK-052 | med | Test the published artifact without the real registry (prefer `npm pack` over Verdaccio) |
 | TASK-053 | med | Replace `lerna-update-wizard` with syncpack + ncu |
