@@ -29,7 +29,7 @@
     "deps:dedupe": "lernaupdate --dedupe",
     "browserlist:update": "npx browserslist@latest --update-db",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
-    "check:circular": "madge --circular --extensions js,jsx packages/",
+    "check:circular": "madge --circular --extensions ts,tsx,jsx packages/*/src",
     "typecheck": "lerna run typecheck"
   },
   "lint-staged": {
