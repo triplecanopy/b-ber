@@ -137,3 +137,13 @@ read from and write to it during rendering:
 | parser-footnotes  | `State.config.group_footnotes`   | `State.footnotes`                |
 | grammar-renderer  | `State.cursor`                   | `State.cursor` (add/remove)      |
 | All grammar-\*    | `State.build` (epub/web/pdf)     | —                                |
+
+## See also
+
+- [Architecture overview](01-architecture-overview.md) — data flow from source to output
+- [Package dependency graph](02-package-dependencies.md) — full internal dep map
+- [Build pipeline](03-build-pipeline.md) — step ordering and State flow
+- [Reader React](05-reader-react.md) — browser reader component tree
+- [Tooling matrix](06-tooling-matrix.md) — versions and build tooling per package
+- [External dependencies](07-external-dependencies.md) — version audit and staleness flags
+- [Diagram index](README.md)

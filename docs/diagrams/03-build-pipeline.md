@@ -69,3 +69,13 @@ flowchart TD
 | pdf  | `wkhtmltopdf`                | PDF output      |
 | sass | (none — uses `sass` npm pkg) | —               |
 | epub | `epub-zipper` npm pkg        | EPUB packaging  |
+
+## See also
+
+- [Architecture overview](01-architecture-overview.md) — data flow from source to output
+- [Package dependency graph](02-package-dependencies.md) — full internal dep map
+- [Markdown rendering layer](04-markdown-rendering-layer.md) — grammar/parser detail
+- [Reader React](05-reader-react.md) — browser reader component tree
+- [Tooling matrix](06-tooling-matrix.md) — versions and build tooling per package
+- [External dependencies](07-external-dependencies.md) — version audit and staleness flags
+- [Diagram index](README.md)

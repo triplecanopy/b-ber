@@ -96,3 +96,13 @@ sequenceDiagram
 | Dev server | webpack-dev-server            | Vite dev server (HMR)         |
 | CSS        | SCSS via sass-loader          | SCSS via vite-plugin-sass     |
 | Linting    | ESLint + Prettier             | Biome (TASK-015)              |
+
+## See also
+
+- [Architecture overview](01-architecture-overview.md) — data flow from source to output
+- [Package dependency graph](02-package-dependencies.md) — full internal dep map
+- [Build pipeline](03-build-pipeline.md) — step ordering and State flow
+- [Markdown rendering layer](04-markdown-rendering-layer.md) — grammar/parser detail
+- [Tooling matrix](06-tooling-matrix.md) — versions and build tooling per package
+- [External dependencies](07-external-dependencies.md) — version audit and staleness flags
+- [Diagram index](README.md)

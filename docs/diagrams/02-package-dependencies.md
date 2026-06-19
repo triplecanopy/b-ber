@@ -122,3 +122,13 @@ graph LR
 | 5 — rendering          | b-ber-markdown-renderer (→ all grammar-\*, parser-footnotes, parser-gallery)                                                         |
 | 6 — pipeline           | b-ber-tasks (→ markdown-renderer, lib, logger, templates, validator, resources, reader, shapes-sequences)                            |
 | 7 — entry              | b-ber-cli (→ tasks, lib, logger, templates, shapes-sequences)                                                                        |
+
+## See also
+
+- [Architecture overview](01-architecture-overview.md) — data flow from source to output
+- [Build pipeline](03-build-pipeline.md) — step ordering and State flow
+- [Markdown rendering layer](04-markdown-rendering-layer.md) — grammar/parser detail
+- [Reader React](05-reader-react.md) — browser reader component tree
+- [Tooling matrix](06-tooling-matrix.md) — versions and build tooling per package
+- [External dependencies](07-external-dependencies.md) — version audit and staleness flags
+- [Diagram index](README.md)
