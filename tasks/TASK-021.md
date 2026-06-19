@@ -1,6 +1,6 @@
 # TASK-021: Audit and document `--no-package-lock` in lerna bootstrap
 
-**Status:** not started
+**Status:** superseded
 **Feature:** Upgrade tooling
 **Scope:** monorepo
 **Priority:** low
@@ -41,13 +41,13 @@ why it is there.
 
 ## Notes
 
-The `--no-package-lock` flag sits in `lerna.json` under
-`command.bootstrap.npmClientArgs`. It was present before this task was opened;
-origin commit unknown until the git-log subtask runs.
+**Superseded by TASK-036 (Lerna v8 + drop bootstrap).** The `lerna bootstrap --hoist`
+command was removed entirely; the repo now uses npm workspaces with a single
+authoritative root `package-lock.json`. The `--no-package-lock` flag no longer
+exists and there is nothing to audit. No replacement task needed.
 
-Related: `--legacy-peer-deps` was added alongside this flag in TASK-021 context
-(June 2026) to unblock canary publishing while the project is mid-TypeScript
-migration. Both flags affect how `npm install` behaves during bootstrap and
-should be reviewed together.
+(Historical context: the flag sat in `lerna.json` under
+`command.bootstrap.npmClientArgs`, intended to suppress per-package lockfiles
+in favor of hoisted root lock; but the infrastructure is now gone.)
 
-Related: [[TASK-023]] (Lerna upgrade/replacement research).
+Related: [[TASK-036]] (Lerna v8 upgrade, where bootstrap was removed).

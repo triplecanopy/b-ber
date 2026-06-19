@@ -1,6 +1,6 @@
 # TASK-092: Fix Codecov "Validate CLI" GPG failure in CI
 
-**Status:** in progress
+**Status:** complete
 **Feature:** Upgrade tooling
 **Scope:** monorepo
 **Priority:** medium
@@ -103,11 +103,10 @@ orb's own re-download and bypasses the gpg/sha256 validation block entirely.
 Removed `skip_validation: true` (dead/misleading now); kept
 `fail_on_error: false`.
 
-**Remaining for verification:** push this branch and confirm the `build` job's
-"(Codecov) Validate CLI" step now logs "Bypassing validation..." and exits 0,
-and that the coverage upload to Codecov still succeeds. Cannot be verified
-locally — requires a real CircleCI run with `CODECOV_TOKEN` set in project
-settings.
+**Verification complete:** The `binary:` workaround landed in `.circleci/config.yml`;
+the user confirmed the CircleCI `build` job's "(Codecov) Validate CLI" step
+now passes (verified 2026-06-19). The step logs "Bypassing validation..." and
+exits 0; coverage upload to Codecov succeeds. **Status changed to complete.**
 
 Related: [[TASK-049]] (coverage upload service), [[TASK-035]] (CircleCI pipeline),
 [[TASK-044]] (CI jobs).

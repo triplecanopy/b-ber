@@ -30,7 +30,7 @@ Every task belongs to exactly one; every new task must too.
 
 | Feature | Done | Active | Backlog | State |
 | ------- | ---- | ------ | ------- | ----- |
-| 🔧 Upgrade tooling | 15 | 0 | 10 | Core toolchain shipped; remaining is dep/release/docs polish |
+| 🔧 Upgrade tooling | 16 | 0 | 9 | Core toolchain shipped; remaining is dep/release/docs polish |
 | 🔤 Migrate JS→TS | 18 | 0 | 0 | ✅ **Epic complete** — reader-react (TASK-032) merged; every package except legacy `b-ber-reader` is TypeScript |
 | ✅ Unit test coverage | 2 | 1 | 2 | Epic in progress; most packages at target, a few laggards |
 | 🧪 E2E testing | 5 | 1 | 2 | Pipeline green in CI; skill + iframe fix remain |
@@ -45,26 +45,28 @@ _"Active" = in progress. "Backlog" = not started (excludes superseded)._
 
 **Shipped:** Vite (TASK-006/007), Biome (TASK-015), Jest 29 (TASK-034), Lerna v8
 + drop bootstrap (TASK-036), CircleCI modernization (TASK-035), Codecov
-(TASK-049), build-script simplification (TASK-054/057/058), circular-import audit
+(TASK-049, CLI validation fix TASK-092), build-script simplification (TASK-054/057/058), circular-import audit
 (TASK-016), GitHub issue setup (TASK-014).
 
 | Task | Pri | Outstanding work |
 | ---- | --- | ---------------- |
 | TASK-109 | med | Modernize project/theme SCSS compile path — drop the custom `~` importer, move off the legacy dart-sass `render` API, `@import`→`@use`/`@forward`, refresh autoprefixer/PostCSS (from TASK-076 findings) |
-| TASK-092 | med | Fix Codecov "Validate CLI" GPG failure turning the `build` job red |
 | TASK-052 | med | Test the published artifact without the real registry (prefer `npm pack` over Verdaccio) |
-| TASK-053 | med | Replace `lerna-update-wizard` with syncpack + ncu |
+| TASK-053 | med | Replace `lerna-update-wizard` with syncpack + ncu — **broken** (calls `lerna update`, which depends on removed `lerna bootstrap`); `lerna-update-wizard` still in devDeps |
 | TASK-037 | med | Replace/reconfigure dependency management (Dependabot is paused + broken) |
 | TASK-038 | med | Audit and clean up `package.json` scripts |
 | TASK-045 | med | Refactor changelog generation + release workflow |
 | TASK-047 | med | Research watch-mode scripts for dev |
 | TASK-017 | med | Expand architecture diagrams |
-| TASK-021 | low | Audit `--no-package-lock` in lerna bootstrap |
-| TASK-022 | low | Automate circular dependency checks in CI |
+| TASK-022 | low | Automate circular dependency checks in CI — **silently scans nothing** (uses `madge --extensions js,jsx` but source is TypeScript; fix extensions to `ts,tsx,jsx`) |
 
 > TASK-023 (Lerna research) is **superseded** by TASK-036; TASK-020 (Vite+Biome
 > umbrella, complete) and TASK-018 (issue back-links, obsolete) were closed
-> 2026-06-11.
+> 2026-06-11. **TASK-092 closed** (Codecov CLI validation fixed via the `binary:`
+> workaround in `.circleci/config.yml`; build job green, verified 2026-06-19).
+> **TASK-021 superseded** (obsolete — `lerna bootstrap` removed in TASK-036;
+> repo uses npm workspaces with single root lockfile, so `--no-package-lock`
+> no longer exists) on 2026-06-19.
 
 ---
 
