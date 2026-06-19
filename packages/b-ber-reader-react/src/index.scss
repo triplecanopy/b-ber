@@ -1,13 +1,12 @@
-@import 'styles/variables';
-@import 'styles/mixins';
-@import 'styles/fonts';
-@import 'styles/icons';
-@import 'styles/controls';
-@import 'styles/spinner';
-@import 'styles/print';
-@import 'styles/media';
-@import 'styles/footnote';
-@import 'styles/layout';
+@use 'styles/variables' as *;
+@use 'styles/mixins' as *;
+@use 'styles/fonts';
+@use 'styles/icons';
+@use 'styles/controls';
+@use 'styles/print';
+@use 'styles/media';
+@use 'styles/footnote';
+@use 'styles/layout';
 
 .bber-spread {
   break-inside: avoid;
@@ -24,50 +23,4 @@
       z-index: 100001;
     }
   }
-}
-
-body {
-  &::before {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 99999;
-    background-color: white;
-    color: black;
-    font-size: 24px;
-    font-family: Arial, Helvetica, sans-serif;
-  }
-
-  @include break-at('mobile') {
-    &::before {
-      content: 'mobile';
-    }
-  }
-  @include break-at('tablet') {
-    &::before {
-      content: 'tablet';
-    }
-  }
-  @include break-at('desktop-sm') {
-    &::before {
-      content: 'desktop-sm';
-    }
-  }
-  @include break-at('desktop-md') {
-    &::before {
-      content: 'desktop-md';
-    }
-  }
-  @include break-at('desktop-lg') {
-    &::before {
-      content: 'desktop-lg';
-    }
-  }
-  @include break-at('desktop-xl') {
-    &::before {
-      content: 'desktop-xl';
-    }
-  }
-  // @include break-at('reader-scroll') { &::before { content: 'reader-scroll' } }
-  // @include break-at('reader-slide') { &::before { content: 'reader-slide' } }
 }

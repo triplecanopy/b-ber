@@ -1,3 +1,6 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
 // Vimeo directive
 // TODO Wrapper element has inline `overflow` style
 [data-vimeo-initialized] {
