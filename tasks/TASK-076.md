@@ -1,10 +1,13 @@
 # TASK-076: Migrate from SCSS to CSS Modules
 
-**Status:** in progress — realized scope complete on `feat/reader-react-css-modules`
-(@use cleanup + Spinner CSS-Module POC + debug-label removal + audit); chrome
-scoping intentionally **deferred to [`TASK-110`](./TASK-110.open.md)**. Remaining:
-dev QA + merge the branch, then close. The original goal ("migrate *all* reader
-styles to CSS Modules") is **narrowed** — see the 2026-06-19 decision below.
+**Status:** complete (2026-06-19) — merged to `feat/upgrades` (merge `b03d6399`);
+dev QA passed. Realized scope: `@import`→`@use` cleanup, Spinner CSS-Module POC
+(+ Jest/TS wiring), dev viewport-label removal, and the monorepo styling audit.
+Chrome scoping was intentionally **narrowed out** and deferred to
+[`TASK-110`](./TASK-110.open.md) — the chrome `.bber-*` classes are a shared,
+partly user-facing vocabulary (consumer override API), so they stay global. The
+original goal ("migrate *all* reader styles to CSS Modules") is **superseded** by
+this narrower outcome — see the 2026-06-19 decision below.
 **Feature:** React 19 (reader-react)
 **Phase:** Modernization — Phase 6
 **Priority:** low
@@ -85,8 +88,9 @@ React ecosystem.
 - [~] ~~Remove global `src/index.scss` import~~ — **not done by design**: the global stylesheet
       stays (it holds the chrome vocabulary + footnote/media/print/font contracts + tokens).
 - [x] Run `npm test` — 62 suites / 9 snapshots green after each commit.
-- [ ] Manually verify in dev environment (columns/scroll/spreads/mobile) once
-      `feat/reader-react-css-modules` is reviewed — Spinner render + chrome unchanged.
+- [x] Manually verify in dev environment (columns/scroll/spreads/mobile) — **QA passed
+      2026-06-19**: Spinner renders/hides correctly via the CSS Module; chrome unchanged;
+      no deprecation warnings; dev viewport-label gone.
 - [x] Update `PLAN.md`.
 
 ## Audit: global vs. scopable (TASK-076-findings + 2026-06-19 deep audit)
