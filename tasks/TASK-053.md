@@ -76,14 +76,17 @@ Related: [[TASK-036]] (Lerna upgrade + workspaces migration)
 ## Outcome (complete — 2026-06-19)
 
 `lerna-update-wizard` removed from devDependencies; the broken `lernaupdate`
-scripts replaced. Tools run via `npx` (no new devDeps — operator maintenance
-utilities, consistent with the fewer-deps preference):
+scripts replaced. The replacement tools are **pinned as devDependencies**
+(`npm-check-updates ^22.2.3`, `syncpack ^15.3.2`) and the scripts call the local
+binaries — chosen over `npx` for **deterministic, version-locked, offline**
+behavior (user preference, 2026-06-19). The "fewer deps" principle yields here:
+these are actively-invoked maintenance tools and pinning earns its keep.
 
-- `deps:update` → `npx --yes npm-check-updates -i --workspaces --root` —
+- `deps:update` → `npm-check-updates -i --workspaces --root` —
   interactive upgrades across all workspace packages (uses the `workspaces` field
   that TASK-036 added to the root `package.json`).
-- `deps:dedupe` → `npx --yes syncpack lint` — read-only mismatch check (safe anywhere).
-- `deps:dedupe:fix` → `npx --yes syncpack fix` — new companion that writes fixes.
+- `deps:dedupe` → `syncpack lint` — read-only mismatch check (safe anywhere).
+- `deps:dedupe:fix` → `syncpack fix` — new companion that writes fixes.
 
 No `syncpack` config needed (defaults handle b-ber's fixed-version policy).
 `syncpack lint` surfaces three **pre-existing** (not new) mismatch classes:
