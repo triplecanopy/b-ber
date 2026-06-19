@@ -1,13 +1,13 @@
-@import 'styles/variables';
-@import 'styles/mixins';
-@import 'styles/fonts';
-@import 'styles/icons';
-@import 'styles/controls';
-@import 'styles/spinner';
-@import 'styles/print';
-@import 'styles/media';
-@import 'styles/footnote';
-@import 'styles/layout';
+@use 'styles/variables' as *;
+@use 'styles/mixins' as *;
+@use 'styles/fonts';
+@use 'styles/icons';
+@use 'styles/controls';
+@use 'styles/spinner';
+@use 'styles/print';
+@use 'styles/media';
+@use 'styles/footnote';
+@use 'styles/layout';
 
 .bber-spread {
   break-inside: avoid;

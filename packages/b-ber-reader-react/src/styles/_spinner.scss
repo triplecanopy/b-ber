@@ -1,4 +1,5 @@
 @use 'sass:math';
+@use 'variables' as *;
 
 // https://github.com/tobiasahlin/SpinKit/blob/master/examples/5-pulse.html
 @keyframes pulse {
