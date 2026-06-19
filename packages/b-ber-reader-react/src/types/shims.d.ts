@@ -69,3 +69,13 @@ declare module 'url-search-params-polyfill'
 // imports (`import './index.scss'`) typecheck.
 declare module '*.css'
 declare module '*.scss'
+
+// CSS Modules resolve to a map of local class name → scoped class string.
+declare module '*.module.css' {
+  const classes: { readonly [key: string]: string }
+  export default classes
+}
+declare module '*.module.scss' {
+  const classes: { readonly [key: string]: string }
+  export default classes
+}
