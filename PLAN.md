@@ -30,7 +30,7 @@ Every task belongs to exactly one; every new task must too.
 
 | Feature | Done | Active | Backlog | State |
 | ------- | ---- | ------ | ------- | ----- |
-| 🔧 Upgrade tooling | 19 | 0 | 6 | Core toolchain shipped; dependabot/diagrams/circular-CI done; remaining is dep tooling + release/scripts polish |
+| 🔧 Upgrade tooling | 22 | 0 | 3 | Core toolchain shipped; dependabot/diagrams/circular-CI + dep-tooling/watch/publish-test research done. Remaining: TASK-038 (scripts), TASK-045 (release), TASK-109 (SCSS toolchain) |
 | 🔤 Migrate JS→TS | 18 | 0 | 0 | ✅ **Epic complete** — reader-react (TASK-032) merged; every package except legacy `b-ber-reader` is TypeScript |
 | ✅ Unit test coverage | 2 | 1 | 2 | Epic in progress; most packages at target, a few laggards |
 | 🧪 E2E testing | 5 | 1 | 2 | Pipeline green in CI; skill + iframe fix remain |
@@ -52,11 +52,8 @@ dependabot reconfigured (TASK-037), architecture diagrams expanded (TASK-017).
 | Task | Pri | Outstanding work |
 | ---- | --- | ---------------- |
 | TASK-109 | med | Modernize project/theme SCSS compile path — drop the custom `~` importer, move off the legacy dart-sass `render` API, `@import`→`@use`/`@forward`, refresh autoprefixer/PostCSS (from TASK-076 findings) |
-| TASK-052 | med | Test the published artifact without the real registry (prefer `npm pack` over Verdaccio) |
-| TASK-053 | med | Replace `lerna-update-wizard` with syncpack + ncu — **broken** (calls `lerna update`, which depends on removed `lerna bootstrap`); `lerna-update-wizard` still in devDeps |
-| TASK-038 | med | Audit and clean up `package.json` scripts |
+| TASK-038 | med | Audit and clean up `package.json` scripts — **now has its inputs**: apply the TASK-047 watch scripts and reflect the TASK-053 `deps:*` rewrite |
 | TASK-045 | med | Refactor changelog generation + release workflow |
-| TASK-047 | med | Research watch-mode scripts for dev |
 
 > TASK-023 (Lerna research) is **superseded** by TASK-036; TASK-020 (Vite+Biome
 > umbrella, complete) and TASK-018 (issue back-links, obsolete) were closed
@@ -71,6 +68,11 @@ dependabot reconfigured (TASK-037), architecture diagrams expanded (TASK-017).
 > check fixed for TS source and wired into CI as an **enforcing** gate (the
 > reader-react `import type` cycles were removed by extracting shared media-control
 > prop types to a `types.ts`).
+> **TASK-053 / TASK-047 / TASK-052 done** 2026-06-19 (parallel Sonnet subagents,
+> reconciled by parent onto `feat/upgrades`): `lerna-update-wizard` replaced with
+> npx `syncpack`/`npm-check-updates`; watch-mode scripts researched (apply in
+> TASK-038); publish-artifact testing settled on home-rolled `npm pack` +
+> install-all-tarballs (prototype `scripts/test-pack.sh`, Verdaccio rejected).
 
 ---
 
