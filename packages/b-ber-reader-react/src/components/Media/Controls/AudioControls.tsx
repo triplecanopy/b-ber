@@ -2,7 +2,7 @@ import React from 'react'
 import AudioControlsFull from './AudioControlsFull'
 import AudioControlsNormal from './AudioControlsNormal'
 import AudioControlsSimple from './AudioControlsSimple'
-import type { MediaControlsChildProps } from './MediaControls'
+import type { MediaControlsChildProps } from './types'
 
 type AudioControlsProps = Omit<MediaControlsChildProps, 'mediaType'>
 

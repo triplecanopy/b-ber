@@ -1,6 +1,6 @@
 import React from 'react'
 import MediaButtonPlaybackRate from './MediaButtonPlaybackRate'
-import type { MediaControlsChildProps } from './MediaControls'
+import type { MediaControlsChildProps } from './types'
 import VideoControlsNormal from './VideoControlsNormal'
 
 type VideoControlsFullProps = Omit<

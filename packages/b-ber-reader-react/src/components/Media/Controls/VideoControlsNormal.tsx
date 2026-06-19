@@ -1,8 +1,8 @@
 import React from 'react'
 import MediaButtonFullScreen from './MediaButtonFullScreen'
 import MediaButtonVolume from './MediaButtonVolume'
-import type { MediaControlsChildProps } from './MediaControls'
 import MediaTime from './MediaTime'
+import type { MediaControlsChildProps } from './types'
 import VideoControlsSimple from './VideoControlsSimple'
 
 type VideoControlsNormalProps = Omit<

@@ -1,6 +1,6 @@
 import React from 'react'
 import AudioControls from './AudioControls'
-import type { MediaControlsChildProps } from './MediaControls'
+import type { MediaControlsChildProps } from './types'
 import VideoControls from './VideoControls'
 
 const AudioVideoControls = ({

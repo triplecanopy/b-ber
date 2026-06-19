@@ -1,7 +1,7 @@
 import React from 'react'
 import MediaButtonPlayPause from './MediaButtonPlayPause'
-import type { MediaControlsChildProps } from './MediaControls'
 import MediaRangeSlider from './MediaRangeSlider'
+import type { MediaControlsChildProps } from './types'
 
 type VideoControlsSimpleProps = Omit<
   MediaControlsChildProps,

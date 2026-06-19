@@ -57,14 +57,10 @@ jobs:
             npx jest --collectCoverage=true --maxWorkers=2
       - run:
           name: Check for circular dependencies
-          # Non-failing: existing type-only import cycles in b-ber-reader-react
-          # Media/Controls components (all `import type` back-references to
-          # MediaControls.tsx) cause madge to report 10 false-positive cycles.
-          # These are not runtime circular dependencies — TypeScript erases
-          # `import type` at compile time. Re-enable the exit-code gate once
-          # those imports are restructured (move shared prop types to a
-          # dedicated types file). TASK-022.
-          command: npm run check:circular || true
+          # Enforcing gate: fails the build on any circular import. The former
+          # type-only cycles in b-ber-reader-react Media/Controls were removed by
+          # extracting shared prop types into a dedicated `types.ts` (TASK-022).
+          command: npm run check:circular
       - run:
           name: Download Codecov CLI
           # Pre-download the CLI ourselves and hand it to the orb via the

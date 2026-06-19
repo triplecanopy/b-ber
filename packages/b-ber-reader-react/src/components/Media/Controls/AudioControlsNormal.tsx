@@ -2,9 +2,9 @@ import React from 'react'
 import MediaButtonPlayPause from './MediaButtonPlayPause'
 import { MediaButtonSeekBack, MediaButtonSeekForward } from './MediaButtonSeek'
 import MediaButtonVolume from './MediaButtonVolume'
-import type { MediaControlsChildProps } from './MediaControls'
 import MediaRangeSlider from './MediaRangeSlider'
 import MediaTime from './MediaTime'
+import type { MediaControlsChildProps } from './types'
 
 type AudioControlsNormalProps = Omit<
   MediaControlsChildProps,

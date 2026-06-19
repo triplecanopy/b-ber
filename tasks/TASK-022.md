@@ -110,13 +110,24 @@ Root cause: the shared prop type `MediaControlsChildProps` lives in
 dedicated `types.ts` file would eliminate all reported cycles. This is a
 follow-up cleanup, not a blocker for the CI gate.
 
-### Decision: Option C (CI only, non-failing for now)
+### Decision: Option C (CI only) — **now an enforcing gate**
 
 The check is wired into `.circleci/config.yml` as a step in the `build` job,
-placed after lint/unit tests and before the Codecov upload. The step uses
-`|| true` to prevent it from failing CI while the existing `import type`
-cycles are present. Once `MediaControlsChildProps` is extracted to a separate
-types file, remove the `|| true` to make the gate hard.
+placed after lint/unit tests and before the Codecov upload.
+
+**Update (2026-06-19, parent follow-up):** the gate is now **hard** (no
+`|| true`). The 9 `import type` cycles were removed by extracting the shared
+prop types (`MediaControlsProps` / `MediaControlsChildProps`) out of
+`MediaControls.tsx` into a leaf module
+`packages/b-ber-reader-react/src/components/Media/Controls/types.ts`; all child
+controls now import the type from `./types`, so there is no back-edge to the
+parent. The 10th madge entry was a lone `_print.scss` artifact (a `.tsx`
+imports SCSS) — handled with `--exclude '\.(s?css)$'` rather than letting a
+stylesheet count as a code cycle. `npm run check:circular` now processes 352
+files and reports **No circular dependency found** (exit 0); reader-react's 62
+suites / 9 snapshots still pass (the type move is behavior-preserving).
+
+Final script: `madge --circular --extensions ts,tsx,jsx --exclude '\.(s?css)$' packages/*/src`.
 
 Pre-commit hook (Options A/B) was not added: the hook infrastructure (husky
 v1) is already stretched and the CI layer is the right place for a
