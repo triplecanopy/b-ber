@@ -227,6 +227,43 @@ per-package slices.
 Feature branches merge into the integration branch. The integration branch
 merges to `main` when `npm test` passes cleanly. Do not force-push to `main`.
 
+### 🛑 Dispatching subagents in isolated worktrees — read before spawning
+
+**Worktree isolation bases the new worktree off the repository's DEFAULT branch
+(`main`), NOT the branch you are currently on.** `main` tracks the last release
+and is usually far behind the active integration branch (`feat/upgrades`). A
+subagent cannot detect this from `git branch --show-current` (it sees its own
+fresh `worktree-agent-*` branch) and AGENTS.md alone will not save it. This bit
+us on 2026-06-19: three worktree subagents branched off `main` (the `3.1.0`
+commit), edited stale task files and an old `package.json`, and their branches
+could not be merged without clobbering newer work — the orchestrator had to
+reconcile by hand.
+
+**The orchestrator (the spawning agent) MUST, in every worktree subagent's
+prompt:**
+
+1. **Pin the base trunk as the first step:** instruct the subagent to run
+   `git reset --hard <trunk>` (e.g. `git reset --hard feat/upgrades`) before
+   doing anything else. This re-points the fresh worktree branch (and its working
+   tree) at the correct trunk; it is safe even though that trunk is checked out
+   in the main tree (reset moves the *current* branch pointer, it does not check
+   out the trunk branch).
+2. **Install deps:** then run `npm install` — a fresh worktree shares git history
+   but **not** `node_modules` (gitignored), so `jest`, `madge`, build/watch tools
+   are absent until installed. A source-touching agent that cannot run the test
+   suite cannot verify its own change.
+3. **Leave bookkeeping to the parent:** the subagent should edit task-file
+   *content* only (status, findings) and NOT rename `*.open.md → *.md` or edit
+   `PLAN.md` — the parent does those after merge, to avoid add/add merge
+   conflicts.
+
+After the subagents finish, **verify each branch's base before merging**
+(`git merge-base <trunk> <branch>` should be at/near `<trunk>` HEAD, not an old
+release). If you skipped step 1, do not merge — lift the artifacts file-by-file
+and reconcile onto the trunk by hand. For branch-sensitive work that also needs
+`node_modules`, prefer running the subagent **non-isolated in the main checkout**
+(sequentially, to avoid concurrent-commit index races) over worktree isolation.
+
 ---
 
 ## Code Standards
