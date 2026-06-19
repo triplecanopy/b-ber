@@ -45,13 +45,34 @@ React ecosystem.
       not, this is worth doing on its own to clear the warnings. (Surfaced
       2026-06-17 via dev-server deprecation warnings — they are our own SCSS, not
       a third-party lib; `sass` is already current.)
-- [ ] Evaluate whether to keep SCSS syntax (`*.module.scss`) or migrate to plain CSS (`*.module.css`) in the same pass
-- [ ] Enable CSS Modules in the build config (**Vite** — `vite.config.js` /
-      `vite.config.lib.js`; the package migrated off webpack). With Vite, CSS
-      Modules work out of the box for `*.module.{css,scss}` files; tune
-      `css.modules.generateScopedName` to keep readable class names in dev/test.
-- [ ] Migrate leaf components first (Spinner, NavigationFooter button styles) as a proof-of-concept
-- [ ] Migrate remaining components (Layout, Controls, Frame, Spread, BookContent, Ultimate)
+- [x] Evaluate whether to keep SCSS syntax (`*.module.scss`) or migrate to plain CSS
+      (`*.module.css`). **Decided: plain `*.module.css`** — the Spinner needed no Sass
+      features once the few token values were inlined; aligns with the findings (tokens
+      → global custom properties) and the fewer-deps preference. Revisit per-component
+      if a chrome partial leans on Sass math/mixins that don't port cleanly.
+- [x] Enable CSS Modules in the build config (**Vite**). **Done — no Vite config needed**
+      (native for `*.module.css`). Jest required wiring: `moduleNameMapper` resolves
+      `*.module.{css,scss}` via a local identity proxy (`__tests__/helpers/cssModuleProxy.js`,
+      no new dep) and side-effect stylesheets via an empty stub; typed `*.module.*`
+      shims added. Lib build verified to scope the class (`_spinner_<hash>`) into
+      `dist/styles.css`. (Readable names kept in tests via the proxy; chose **data-testid**
+      for future chrome tests that query classes — see reassessment.)
+- [x] Migrate leaf components first (Spinner) as a proof-of-concept. **Done**
+      (commit `904c3988`, branch `feat/reader-react-css-modules`). `Spinner.module.css`
+      colocated; `_spinner.scss` + its `@use` removed; snapshot updated to scoped names;
+      62 suites pass; lib build + global-CSS checks green. (NavigationFooter button
+      styles deferred to the chrome pass below.)
+- [ ] **REASSESS before continuing (per user, 2026-06-19).** POC proved the pattern end
+      to end. Remaining migratable surface is **pure chrome only** (per the audit):
+      `_controls.scss` → Controls/Sidebar/Navigation, and the `.bber-leaf`/`#layout`
+      bits of `_layout.scss`. `_footnote.scss`, `_media.scss`, `_print.scss`,
+      `_fonts.scss`, `_variables` (→ `global.css` custom properties), and the
+      `body::before` debug label / `.bber-spread` block **stay global** (theme/content
+      contract). The chrome pass needs **data-testid** updates to Controls/Sidebar/Nav
+      tests (they query `.bber-controls__*` classes). Decide whether to proceed now or
+      park here — the deprecation warnings (the original pain point) are already gone.
+- [ ] *(chrome pass, pending reassess)* Migrate Controls / Sidebar / Navigation + Layout
+      chrome to CSS Modules; extract `global.css` (tokens, fonts, footnote, media, print).
 - [ ] Migrate HOCs (withDimensions, withLastSpreadIndex)
 - [ ] Remove global `src/index.scss` import from `src/index.jsx` once all styles are migrated
 - [ ] Run `npm test` — confirm all smoke tests still pass
