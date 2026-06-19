@@ -1,6 +1,6 @@
 # TASK-053: Replace lerna-update-wizard with modern dep tooling
 
-**Status:** not started
+**Status:** complete
 **Feature:** Upgrade tooling
 **Scope:** monorepo
 **Priority:** medium
@@ -72,3 +72,25 @@ Verify this behaviour is correct for a fixed-mode monorepo before running
 `--write`.
 
 Related: [[TASK-036]] (Lerna upgrade + workspaces migration)
+
+## Outcome (complete — 2026-06-19)
+
+`lerna-update-wizard` removed from devDependencies; the broken `lernaupdate`
+scripts replaced. Tools run via `npx` (no new devDeps — operator maintenance
+utilities, consistent with the fewer-deps preference):
+
+- `deps:update` → `npx --yes npm-check-updates -i --workspaces --root` —
+  interactive upgrades across all workspace packages (uses the `workspaces` field
+  that TASK-036 added to the root `package.json`).
+- `deps:dedupe` → `npx --yes syncpack lint` — read-only mismatch check (safe anywhere).
+- `deps:dedupe:fix` → `npx --yes syncpack fix` — new companion that writes fixes.
+
+No `syncpack` config needed (defaults handle b-ber's fixed-version policy).
+`syncpack lint` surfaces three **pre-existing** (not new) mismatch classes:
+`js-yaml` 3↔4, `lodash.*` pinned to `latest`, and the reader-react
+react/react-dom peerDep range vs devDep — left as-is (intentional / separate
+cleanup). `npm install` is clean after removing the old dep; lockfile regenerated.
+
+(Research + first implementation by a Sonnet subagent; the worktree was based on
+an old tag, so the parent re-applied the change onto current `feat/upgrades` and
+used the proper `--workspaces` ncu form since the field now exists.)
