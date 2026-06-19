@@ -1,6 +1,6 @@
 # TASK-052: Test the published artifact without touching the real registry
 
-**Status:** not started
+**Status:** complete
 **Feature:** Upgrade tooling
 **Scope:** monorepo
 **Priority:** medium
@@ -140,3 +140,25 @@ Related: [[TASK-036]] (Lerna upgrade), [[TASK-035]] (CircleCI),
 [[TASK-054]] (reader → reader-react build ordering — the source-bundling fix
 removes the dist build-order dependency), [[TASK-058]] (reader-react polyfill
 audit — the reader shell now replicates those polyfills).
+
+## Findings (research complete — 2026-06-19, Sonnet subagent)
+
+**Recommendation: home-rolled `npm pack` + temp-dir install. Verdaccio is NOT
+needed.** Prototype: `scripts/test-pack.sh`.
+
+Verified hands-on: build all packages → `npm pack --workspaces` (37 tarballs) →
+install **all** tarballs together into a throwaway project. With every first-party
+tarball present as a sibling in one `npm install`, all `@canopycanopycanopy/*`
+deps resolve to `file:` refs (no registry traffic); `bber --version` → 3.1.0 (no
+ENOENT crash) and `bber --help` exits 0. Installing the CLI tarball **alone**
+falls back to the real registry for transitive first-party deps — so
+installing-all-together is the load-bearing trick, and it removes any need for a
+local registry server.
+
+Pitfalls: run `npm pack --workspaces` with `cd` to repo root (npm 11 errors
+"No workspaces found!" under `--prefix`); `b-ber-theme-mixins` is the one
+first-party dep only on the real registry (legacy, expected).
+
+**Follow-ups (not in this research task):** `scripts/test-pack.sh` was exercised
+on an older base — validate it against `feat/upgrades`, then wire it into CI
+(belongs with TASK-035/044); a headless `bber serve` smoke test fits TASK-039.

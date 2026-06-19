@@ -1,6 +1,6 @@
 # TASK-047: Research watch mode scripts for monorepo development
 
-**Status:** not started
+**Status:** complete
 **Feature:** Upgrade tooling
 **Scope:** monorepo
 **Priority:** medium
@@ -78,3 +78,27 @@ here are compatible with Lerna v7+.
 
 Related: [[TASK-038]] (script cleanup), [[TASK-034]] (jest upgrade — `jest --watch`),
 [[TASK-036]] (Lerna upgrade — `lerna run watch` behaviour)
+
+## Findings (research complete — 2026-06-19, Sonnet subagent)
+
+Watch strategy per package type, verified against installed tool versions where
+noted. These are recommendations to **apply in TASK-038** (this task delivers the
+recommendation only).
+
+- **tsdown packages** (all grammar/parser/shapes, lib, logger, markdown-renderer,
+  templates, cli, tasks, resources — ~28 pkgs): `"watch": "tsdown --watch"`.
+  Verified: `tsdown --watch` runs and stays alive (tsdown 0.22.1, ~13ms rebuild).
+- **b-ber-reader-react** (Vite lib build):
+  `"watch": "vite build --watch --config vite.config.lib.js"`. `test:watch`
+  (`jest --watch`) already exists and stays.
+- **b-ber-reader** (Vite app): `"watch": "vite build --watch"` (vite 8 supports `-w`).
+- **b-ber-theme-serif** (SCSS): `"watch": "sass --watch application.scss application.css"`
+  — the package already has a `watch:sass`; normalize the name.
+  **b-ber-theme-sans**: no build step → no watch script.
+- **b-ber-validator** (tsc): `"watch": "tsc --noEmit --watch"` (live type errors, no emit).
+- Root `watch` (`lerna run watch --stream`) stays; Lerna exits 0 cleanly when a
+  package lacks `watch`. Per-package `test:watch` (`jest --watch`) is the right DX;
+  no root `test:watch` and no Jest 29 config change needed.
+
+Assumed (not stress-tested): tsdown watch-mode error reporting (errors to stdout,
+watcher continues — standard rolldown behaviour).
