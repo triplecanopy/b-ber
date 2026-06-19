@@ -5,12 +5,63 @@ updates:
     directory: '/'
     schedule:
       interval: 'weekly'
-    target-branch: 'develop'
-
-    # Only require security updates, disable version updates
-    open-pull-requests-limit: 0
-
+    # Target the default branch (main); 'develop' no longer exists.
+    # Remove target-branch so Dependabot uses the repo default.
+    open-pull-requests-limit: 10
     labels:
       - 'security'
     assignees:
       - 'msimmer'
+    # Group related bumps so a 30-package monorepo doesn't produce PR spam.
+    groups:
+      babel:
+        patterns:
+          - '@babel/*'
+      types:
+        patterns:
+          - '@types/*'
+      testing:
+        patterns:
+          - 'jest*'
+          - '@jest/*'
+          - 'jest-*'
+      linting:
+        patterns:
+          - 'biome'
+          - '@biomejs/*'
+          - 'eslint*'
+          - '@eslint/*'
+      build-tools:
+        patterns:
+          - 'webpack*'
+          - 'vite*'
+          - '@vitejs/*'
+          - 'rollup*'
+          - 'tsdown*'
+      react:
+        patterns:
+          - 'react'
+          - 'react-*'
+          - '@react-*'
+          - 'react-dom'
+          - 'react-redux'
+          - '@reduxjs/*'
+      minor-patch:
+        # Catch-all group for everything else — batch minor/patch bumps.
+        update-types:
+          - 'minor'
+          - 'patch'
+
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+    open-pull-requests-limit: 5
+    labels:
+      - 'security'
+    assignees:
+      - 'msimmer'
+    groups:
+      github-actions:
+        patterns:
+          - '*'
