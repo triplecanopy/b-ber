@@ -6,6 +6,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsdown && npm run copy",
+    "watch": "tsdown --watch",
     "copy": "./copy.sh",
     "typecheck": "tsc --noEmit",
     "test": "jest"

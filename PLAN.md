@@ -30,7 +30,7 @@ Every task belongs to exactly one; every new task must too.
 
 | Feature | Done | Active | Backlog | State |
 | ------- | ---- | ------ | ------- | ----- |
-| 🔧 Upgrade tooling | 22 | 0 | 3 | Core toolchain shipped; dependabot/diagrams/circular-CI + dep-tooling/watch/publish-test research done. Remaining: TASK-038 (scripts), TASK-045 (release), TASK-109 (SCSS toolchain) |
+| 🔧 Upgrade tooling | 23 | 0 | 2 | Core toolchain shipped; scripts cleaned + watch scripts applied (TASK-038). Remaining: TASK-045 (release/changelog), TASK-109 (SCSS toolchain) |
 | 🔤 Migrate JS→TS | 18 | 0 | 0 | ✅ **Epic complete** — reader-react (TASK-032) merged; every package except legacy `b-ber-reader` is TypeScript |
 | ✅ Unit test coverage | 2 | 1 | 2 | Epic in progress; most packages at target, a few laggards |
 | 🧪 E2E testing | 5 | 1 | 2 | Pipeline green in CI; skill + iframe fix remain |
@@ -52,8 +52,7 @@ dependabot reconfigured (TASK-037), architecture diagrams expanded (TASK-017).
 | Task | Pri | Outstanding work |
 | ---- | --- | ---------------- |
 | TASK-109 | med | Modernize project/theme SCSS compile path — drop the custom `~` importer, move off the legacy dart-sass `render` API, `@import`→`@use`/`@forward`, refresh autoprefixer/PostCSS (from TASK-076 findings) |
-| TASK-038 | med | Audit and clean up `package.json` scripts — **now has its inputs**: apply the TASK-047 watch scripts and reflect the TASK-053 `deps:*` rewrite |
-| TASK-045 | med | Refactor changelog generation + release workflow |
+| TASK-045 | med | Refactor changelog generation + release workflow (incl. `postpublish`/`run-ci.js` + `publish:*` scripts deferred from TASK-038) |
 
 > TASK-023 (Lerna research) is **superseded** by TASK-036; TASK-020 (Vite+Biome
 > umbrella, complete) and TASK-018 (issue back-links, obsolete) were closed
@@ -70,9 +69,15 @@ dependabot reconfigured (TASK-037), architecture diagrams expanded (TASK-017).
 > prop types to a `types.ts`).
 > **TASK-053 / TASK-047 / TASK-052 done** 2026-06-19 (parallel Sonnet subagents,
 > reconciled by parent onto `feat/upgrades`): `lerna-update-wizard` replaced with
-> npx `syncpack`/`npm-check-updates`; watch-mode scripts researched (apply in
-> TASK-038); publish-artifact testing settled on home-rolled `npm pack` +
-> install-all-tarballs (prototype `scripts/test-pack.sh`, Verdaccio rejected).
+> pinned-devDep `syncpack`/`npm-check-updates`; watch-mode scripts researched
+> (applied in TASK-038); publish-artifact testing settled on home-rolled `npm
+> pack` + install-all-tarballs (prototype `scripts/test-pack.sh`, Verdaccio rejected).
+> **TASK-038 done** 2026-06-20: applied the TASK-047 `watch` scripts across all
+> build-producing packages, removed failing theme `test`/no-op `clean` + the
+> reader TODO-test placeholder, fixed the broken `browserslist:update`, and fixed
+> a latent root-jest CSS-module gap (TASK-076) that had `npm test` red. Release
+> scripts (`postpublish`/`publish:*`/`changelog`) and theme SCSS scripts deferred
+> to TASK-045 / TASK-109.
 
 ---
 

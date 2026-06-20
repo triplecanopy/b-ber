@@ -10,6 +10,7 @@
   "scripts": {
     "clean": "rimraf dist",
     "build": "tsdown",
+    "watch": "tsdown --watch",
     "typecheck": "tsc --noEmit",
     "test": "jest"
   },

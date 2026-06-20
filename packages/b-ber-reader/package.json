@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "clean": "rimraf dist",
-    "test": "echo \"TODO tests\"",
     "serve": "npm run build && nodemon server.js",
-    "build": "npm run clean && vite build"
+    "build": "npm run clean && vite build",
+    "watch": "vite build --watch"
   },
   "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
   "license": "GPL-3.0-or-later",

@@ -1,9 +1,15 @@
 # TASK-038: Audit and clean up package.json scripts across the monorepo
 
-**Status:** not started
+**Status:** complete (2026-06-20)
 **Feature:** Upgrade tooling
 **Scope:** monorepo
 **Priority:** medium
+
+> **Note (2026-06-20):** Most of this PRD's "Current problems" predate the
+> migrations it was waiting on — TS Stage 3 (TASK-029–031), Vite (TASK-006), and
+> Lerna v8 (TASK-036) have all **landed**, so the Babel `prepare:dist→prepare→build`
+> chains, the webpack scripts, `check:code`, and `reader:shim` are already gone.
+> The work was re-scoped against the **current** `package.json` files; see Outcome.
 **GitHub Issue:** #509 — https://github.com/triplecanopy/b-ber/issues/509
 
 ## Description
@@ -148,3 +154,61 @@ migration tasks. This task exists to ensure the cleanup is deliberate and
 complete rather than left as residue after each migration.
 
 Relates to: TASK-006 (Vite), TASK-029–031 (TS Stage 3), TASK-036 (Lerna upgrade)
+
+---
+
+## Outcome (2026-06-20) — audited against current state
+
+**Applied (TASK-047 watch scripts):** added a `watch` script to every
+build-producing package — `tsdown --watch` for the 28 tsdown packages,
+`vite build --watch --config vite.config.lib.js` (reader-react),
+`vite build --watch` (reader), `tsc --noEmit --watch` (validator). The root
+`watch` (`lerna run watch --stream`) now actually does something. Smoke-tested
+`tsdown --watch` (builds + watches).
+
+**Removed dead/failing scripts:**
+- `b-ber-theme-serif` / `b-ber-theme-sans`: dropped the actively-**failing**
+  `test` (`echo "Error: no test specified" && exit 1`) and the no-op
+  `clean: echo OK`.
+- `b-ber-reader` (legacy): dropped the `test: echo "TODO tests"` placeholder.
+
+**Fixed broken root scripts:**
+- `browserlist:update` → `browserslist:update` (key typo) and the deprecated
+  `npx browserslist@latest --update-db` → `npx update-browserslist-db@latest`.
+
+**Fixed a latent test-gate regression (surfaced by running root `npm test`):** the
+root `jest.config.js` lacked the `*.module.{css,scss}` `moduleNameMapper` that
+TASK-076 added only to reader-react's config, so the root run failed on the
+Spinner CSS-module import. Added the mappers → root `npm test` green again (130
+suites, 1022 tests).
+
+**Verified already-clean (PRD stale):** root `build` (`lerna run build`),
+`bootstrap`/`bootstrap:clean` (`lerna clean` still exists in v8), `check:circular`
+(fixed in TASK-022), `madge` present, the Babel chains and webpack scripts (gone
+via TS/Vite). `outdated` left as-is (works).
+
+**Deliberately deferred (other tasks own them):**
+- `postpublish` (`scripts/run-ci.js` — remote CI trigger), `publish:*`, and
+  `changelog` → **TASK-045** (release/changelog workflow). Not touched here to
+  avoid overlap.
+- Theme `build:sass`/`watch:sass` normalization → **TASK-109** (the theme SCSS
+  compile path / `~` importer). The theme `application.scss` files use `~` imports
+  that don't resolve under a plain `sass` invocation, so promoting those scripts
+  is unsafe until TASK-109 lands. Theme cleanup here was limited to removing the
+  dead `test`/`clean` only.
+
+### Subtask disposition
+
+- [x] Audit root `package.json` — done (most prior problems already resolved).
+- [x] Remove/replace dead root scripts — `browserlist:update` fixed; `check:code`
+      / `reader:shim` already gone; `publish:lts-2`/`postpublish` deferred to TASK-045.
+- [x] Fix theme packages: removed failing `test` + no-op `clean`. (build/watch → TASK-109.)
+- [x] Clean up b-ber-reader: removed TODO `test` placeholder; redundant lifecycle hooks already gone.
+- [x] b-ber-reader-react redundant lifecycle hooks — already gone (Vite migration); added `watch`.
+- [x] ~~TASK-029 b-ber-tasks chain removal~~ — already `build: tsdown && npm run copy`.
+- [x] ~~TASK-031 b-ber-cli chain removal~~ — already `build: tsdown`.
+- [x] b-ber-resources — already `build: tsdown`; added `watch`.
+- [x] After TASK-036 — `bootstrap`/`bootstrap:clean`/`outdated`/`build` verified fine.
+- [x] After TASK-006 — webpack scripts already removed.
+- [x] `madge` in devDeps + `check:circular` — confirmed + already wired (TASK-022).
+- [x] **(new) Applied TASK-047 watch scripts** across all build-producing packages.

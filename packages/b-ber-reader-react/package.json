@@ -16,6 +16,7 @@
     "version": "node ./scripts/version.js",
     "clean": "rimraf dist",
     "build": "vite build --config vite.config.lib.js",
+    "watch": "vite build --watch --config vite.config.lib.js",
     "start": "vite --config vite.config.js",
     "test:watch": "jest --watch",
     "test": "jest",

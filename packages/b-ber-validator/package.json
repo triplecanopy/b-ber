@@ -26,6 +26,7 @@
     "clean": "rimraf dist",
     "jest": "jest",
     "build": "npm run clean && npm run test && tsc --project tsconfig.build.json",
+    "watch": "tsc --noEmit --watch",
     "lint": "biome check src/",
     "test": "tsc --project tsconfig.json --noEmit && npm run lint && jest"
   },

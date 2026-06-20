@@ -16,8 +16,6 @@
     "access": "public"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "clean": "echo OK",
     "sass": "sass",
     "watch:sass": "sass --watch application.scss application.css",
     "build:sass": "sass application.scss application.css"
