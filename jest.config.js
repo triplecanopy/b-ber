@@ -36,6 +36,14 @@ module.exports = {
   coverageReporters: ['html', 'lcov', 'json'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
   moduleNameMapper: {
+    // Style imports (must precede the package patterns): CSS Modules resolve to
+    // a class-name proxy, side-effect stylesheets to an empty stub. Mirrors
+    // b-ber-reader-react/jest.config.js — without these the root run chokes on
+    // `import styles from './Spinner.module.css'`. The `.module.` rule first.
+    '\\.module\\.(css|scss)$':
+      '<rootDir>/packages/b-ber-reader-react/__tests__/helpers/cssModuleProxy.js',
+    '\\.(css|scss)$':
+      '<rootDir>/packages/b-ber-reader-react/__tests__/helpers/styleStub.js',
     // b-ber-lib subpath imports (order matters: specific before catch-all)
     '^@canopycanopycanopy/b-ber-lib/Config$':
       '<rootDir>/packages/b-ber-lib/src/Config.ts',
