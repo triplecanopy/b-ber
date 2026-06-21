@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useId, useMemo, useRef, useState } from 'react'
 import Viewport from '../helpers/Viewport'
 import browser from '../lib/browser'
 import SpreadContext from '../lib/spread-context'
@@ -29,7 +29,11 @@ function Spread(props: SpreadProps) {
   // from it during render — see below.
   const [offset, setOffset] = useState(0)
 
-  const id = useMemo(() => (Math.random() + 1).toString(36).substring(7), [])
+  // A unique, deterministic id for the root element (no other code looks it
+  // up — the attribute just gives each Spread instance a distinct DOM id).
+  // useId guarantees uniqueness across the tree (and SSR/client consistency)
+  // without the small but real collision risk of a random string.
+  const id = useId()
 
   // Always-current ref for the values used inside updatePosition.
   //

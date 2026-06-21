@@ -11,6 +11,7 @@ describe('components/index', () => {
     const expectedExports = [
       'App',
       'Controls',
+      'ErrorBoundary',
       'Footnote',
       'Frame',
       'Layout',

@@ -16,7 +16,7 @@ const MEASURE_DEBOUNCE_MS = 100
 // — the index of the last spread in the current chapter. This value is used by
 // the navigation controls to know when the reader is on the final page.
 //
-// Previous implementation (H2 bug, IMPROVEMENT_PLAN.md):
+// Previous implementation (H2 bug, see PLAN.md history):
 //   A setInterval fired every 1000ms indefinitely (even between chapter loads),
 //   logging to the console on every tick and polling scrollHeight regardless of
 //   whether content had changed.

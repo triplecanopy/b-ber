@@ -4,6 +4,7 @@ import React, { useEffect, useRef } from 'react'
 import * as Asset from '../helpers/Asset'
 import Viewport from '../helpers/Viewport'
 import { useStore } from '../store/StoreContext'
+import ErrorBoundary from './ErrorBoundary'
 import Layout from './Layout'
 
 // Frame reads readerSettings + viewerSettings from the built-in store
@@ -47,18 +48,24 @@ function Frame(props: any) {
         ...(isPlainObject(props.style) ? props.style : {}),
       }}
     >
-      <Layout
-        BookContent={props.BookContent}
-        className={props.className}
-        lastSpreadIndex={props.lastSpreadIndex}
-        layout={props.layout}
-        readerSettings={readerSettings}
-        slug={props.slug}
-        spreadIndex={props.spreadIndex}
-        style={props.style}
-        view={props.view}
-        viewerSettings={viewerSettings}
-      />
+      {/* Layout renders BookContent (the book's own HTML/JS), which is outside
+          this app's control — an ErrorBoundary here keeps a crash in book
+          content (or anywhere else in the Layout tree) from blanking the
+          entire reader. */}
+      <ErrorBoundary>
+        <Layout
+          BookContent={props.BookContent}
+          className={props.className}
+          lastSpreadIndex={props.lastSpreadIndex}
+          layout={props.layout}
+          readerSettings={readerSettings}
+          slug={props.slug}
+          spreadIndex={props.spreadIndex}
+          style={props.style}
+          view={props.view}
+          viewerSettings={viewerSettings}
+        />
+      </ErrorBoundary>
     </div>
   )
 }

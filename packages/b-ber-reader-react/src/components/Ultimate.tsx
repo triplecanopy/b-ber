@@ -31,7 +31,7 @@ const MAX_WAIT_MS = 2500
 // once its `offsetLeft` stops changing (i.e., the CSS columns layout has
 // finished reflowing), it signals that the chapter is ready to display.
 //
-// Previous implementation (C1 bug, IMPROVEMENT_PLAN.md):
+// Previous implementation (C1 bug, see PLAN.md history):
 //   A requestAnimationFrame loop called setState on every frame and waited for
 //   100 consecutive stable readings (~1.67s minimum). This caused ~100
 //   synchronous setState calls per chapter load and an arbitrary fixed delay.

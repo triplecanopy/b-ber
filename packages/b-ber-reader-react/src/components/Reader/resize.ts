@@ -89,7 +89,8 @@ export const useResize = ({
 
   // Debounce resize start/end (matching the original constructor config). These
   // are the references the listeners are bound to, so they must be stable.
-  // TODO: 1000ms is a magic number — see IMPROVEMENT_PLAN.md H4
+  // TODO: 1000ms is an inherited magic number with no recorded rationale —
+  // revisit if resize feels sluggish or premature.
   const handleResizeStart = useMemo(
     () => debounce(runResizeStart, 1000, { leading: true, trailing: false }),
     [runResizeStart]
@@ -108,9 +109,10 @@ export const useResize = ({
     handleResizeEnd.cancel()
   }, [handleResizeEnd])
 
-  // NOTE: bindResizeHandlers / unbindResizeHandlers names are inverted in the
-  // source — see IMPROVEMENT_PLAN.md H4. Behavior is preserved here as-is.
-  const bindResizeHandlers = useCallback((): void => {
+  // Named for what they actually do (the bind/unbind names were inverted —
+  // see PLAN.md history, bug H4 — this rename fixes the maintenance trap
+  // without changing the call sites' behavior).
+  const removeResizeHandlers = useCallback((): void => {
     window.removeEventListener('resize', handleResize)
     window.removeEventListener('resize', handleResizeStart)
     window.removeEventListener('resize', handleResizeEnd)
@@ -129,15 +131,11 @@ export const useResize = ({
     )
   }, [handleResize, handleResizeStart, handleResizeEnd])
 
-  const unbindResizeHandlers = useCallback((): void => {
+  const addResizeHandlers = useCallback((): void => {
     window.addEventListener('resize', handleResize)
     window.addEventListener('resize', handleResizeStart)
     window.addEventListener('resize', handleResizeEnd)
 
-    // docusment.addEventListener(
-    //   'webkitfullscreenchange mozfullscreenchange fullscreenchange',
-    //   handleResize
-    // )
     document.addEventListener(
       'webkitfullscreenchange mozfullscreenchange fullscreenchange',
       handleResizeStart
@@ -153,7 +151,7 @@ export const useResize = ({
     handleResizeStart,
     handleResizeEnd,
     cancelResizeReposition,
-    bindResizeHandlers,
-    unbindResizeHandlers,
+    removeResizeHandlers,
+    addResizeHandlers,
   }
 }

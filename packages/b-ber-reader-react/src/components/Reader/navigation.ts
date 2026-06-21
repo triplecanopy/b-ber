@@ -122,7 +122,15 @@ export const useNavigation = ({
       }
 
       // Scroll to vertical position, leave a bit of room for the controls and
-      // whitespace around the element
+      // whitespace around the element.
+      //
+      // '.bber-controls__header' and '#frame' are hardcoded rather than threaded
+      // through as refs/props because this module has no component instance of
+      // its own — it's a plain function called via the assembled ReaderApi, not
+      // a hook with access to Controls'/Frame's refs. Both ids/classes are
+      // structural (set once in Controls.tsx / Frame.tsx), so the lookup is
+      // stable, but it does mean a rename in either component silently breaks
+      // this scroll-into-view path with no type error.
       if (Viewport.isVerticallyScrolling(propsRef.current.readerSettings)) {
         const padding = 25
         const header = document.querySelector<HTMLElement>(
@@ -143,9 +151,14 @@ export const useNavigation = ({
       const height = window.innerHeight
       const frameHeight = Math.round(height - paddingTop - paddingBottom)
 
-      // Find the index of the spread that our element appears on by getting
-      // it's left-most value (accounting for the gutter), and dividing it by
-      // the height of a single column
+      // Find the index of the spread that our element appears on. offsetLeft is
+      // a column position; frameHeight here is (despite the name) a single
+      // column's width. Every breakpoint except mobile lays out 2 columns per
+      // spread (see constants/index.ts — columns.TWO), so dividing by frameHeight
+      // converts to a column index, and the second /2 converts that column
+      // index to a spread index (column 0,1 → spread 0; column 2,3 → spread 1;
+      // etc). This assumes a fixed 2-column spread width; it does not special-
+      // case the mobile single-column breakpoint.
       const left = elem.offsetLeft - columnGap
       const spreadIndex = Math.floor(left / frameHeight / 2)
 

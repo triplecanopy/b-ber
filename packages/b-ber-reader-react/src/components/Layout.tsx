@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import debounce from 'lodash/debounce'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import {
   breakpoints,
   MEDIA_QUERY_MOBILE,
@@ -77,20 +77,14 @@ function getLayoutStyles(props: any, state: LayoutState): React.CSSProperties {
 function getLeafStyles(
   position: 'left' | 'right',
   translateX: number
-  // transitionSpeed
 ): React.CSSProperties {
   // Overlay styles for hiding content in the 'padding' range. FF animations
   // 'jump' when animating a transform, so we use 'left' and 'right'
   // properties in that case. in either case, need to move the leaves in the
   // opposite direction as the containing element
 
-  // const { transitionSpeed } = this.props.viewerSettings
-
   let styles: React.CSSProperties = {}
   let nextTranslateX = translateX
-  // let positionX = 0
-
-  // let translateX = this.context.getTranslateX()
 
   if ((browser as { name?: string } | null)?.name === 'firefox') {
     if (position === 'left') {
@@ -99,7 +93,6 @@ function getLeafStyles(
 
     styles = {
       [position]: `${nextTranslateX}px`,
-      // transition: `${position} ${transitionSpeed}ms ease 0s`,
     }
   } else {
     nextTranslateX *= -1
@@ -108,7 +101,6 @@ function getLeafStyles(
 
     styles = {
       transform,
-      // transition: `transform ${transitionSpeed}ms ease 0s`,
     }
   }
 
@@ -121,8 +113,8 @@ interface LeavesProps {
   paddingRight: number
   enableTransitions: boolean
   translateX: number
-  // transitionSpeed is currently unused by getLeafStyles (the transition lines
-  // are commented out) but kept in the prop surface to match the call site.
+  // transitionSpeed is unused by Leaves/getLeafStyles but kept in the prop
+  // surface to match the call site (Layout passes it through unconditionally).
   transitionSpeed: number
 }
 
@@ -193,7 +185,19 @@ function Layout(props: any) {
     updateTransform()
   }
 
-  const handleResize = debounce(onResizeDone, RESIZE_DEBOUNCE_TIMER, {})
+  // The mount-only effect below (deps: []) adds/removes a single listener
+  // reference, so handleResize must be stable across renders or the listener
+  // added on mount would go stale while a new, never-attached debounce
+  // wrapper is allocated on every render. onResizeDoneRef keeps the debounced
+  // function reading the latest closure (current props/state) without
+  // needing to recreate the debounce itself.
+  const onResizeDoneRef = useRef(onResizeDone)
+  onResizeDoneRef.current = onResizeDone
+
+  const handleResize = useMemo(
+    () => debounce(() => onResizeDoneRef.current(), RESIZE_DEBOUNCE_TIMER, {}),
+    []
+  )
 
   useEffect(() => {
     props.updateDimensions()
