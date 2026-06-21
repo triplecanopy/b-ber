@@ -27,6 +27,9 @@ subsequent phases.
 - [ ] Add a comment documenting the verso/recto multiplier rationale in `Spread.jsx` (IMPROVEMENT_PLAN M6)
 - [ ] Remove the dead `debug` block in `src/components/Marker.tsx` (`const debug = false` + `debugMarkerStyles` + `if (debug)`) — ~1/3 of the component is unreachable dev code
 - [ ] Fix the **dangling `IMPROVEMENT_PLAN.md` references** in code comments (~10 across `Ultimate.tsx`, `Reader/index.tsx`, `Reader/loader.ts`, `Reader/resize.ts`, `with-last-spread-index.tsx`): the file was deleted in commit `9ef8fbbc` (consolidated into `PLAN.md`/`AGENTS.md`) and the bug IDs it used (`H4`/`H5`/`C5`/`M2`/`L2`) no longer resolve anywhere. Either repoint to the surviving doc + ID or drop the reference.
+- [ ] Modernize the last render-prop context consumer: `SpreadFigure.tsx` reads `SpreadContext` via `<SpreadContext.Consumer>` (`SpreadFigure.tsx:21`) while already using `useContext` for the reader contexts — switch it to `const { left } = useContext(SpreadContext)`. Behavior-identical, purely idiomatic. (`SpreadContext.Provider` in `Spread.tsx` stays — it passes per-spread positional data down a subtree, correctly a context.) **Lifted from the superseded TASK-105.**
+- [ ] Wrap `Layout.tsx`'s render-body `debounce(onResizeDone, …)` (~line 196) in `useMemo`/`useCallback` so it isn't reallocated every render (latent footgun; harmless today because the resize effect has `[]` deps). **From the known-issues audit, 2026-06-21.**
+- [ ] `navigateToElementById` (`Reader/navigation.ts`): the hardcoded selectors (`.bber-controls__header`, `#frame`) + the `/2` spread divisor are thinly documented — either improve the comment or leave a behavior probe. **From the known-issues audit, 2026-06-21.**
 - [ ] Run `npm test` and confirm all existing tests still pass
 - [ ] Update `PLAN.md`
 

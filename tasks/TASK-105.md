@@ -1,11 +1,26 @@
-# TASK-105: Component colocation + structure pass (HOLD)
+# TASK-105: Component colocation + structure pass (SUPERSEDED)
 
-**Status:** blocked — do not start until the codebase stabilizes (see Notes)
+**Status:** superseded — closed 2026-06-21 (see Supersession note)
 **Feature:** React 19 (reader-react)
 **Phase:** Modernization — structure
 **Priority:** low
 **Model:** Sonnet 4.6 — mechanical file moves + import rewrites, guarded by the
 test suite. High churn, low logic risk.
+
+> ## Supersession (2026-06-21)
+>
+> **Dropped as net-negative value.** Re-evaluated after TASK-106 (state
+> migration) landed. The colocation reorg is high churn (relocates 12
+> components, rewrites every import, merge-conflict risk) for marginal benefit:
+> the package is only ~12 top-level components, the biggest payoff (tests next
+> to code) was *already deferred* inside this task pending a tooling audit, and
+> TASK-076 decided to keep the `.bber-*` chrome classes global so style
+> colocation is only partial. Not worth it.
+>
+> The one genuinely useful sub-item — modernizing `SpreadFigure`'s
+> `<SpreadContext.Consumer>` render-prop to `useContext` — was **lifted into
+> [[TASK-068]]** (housekeeping). Everything else here is dropped. If a colocation
+> need resurfaces later, open a fresh task with a concrete payoff.
 
 > Read [`MIGRATION-CONVENTIONS.md`](../packages/b-ber-reader-react/MIGRATION-CONVENTIONS.md)
 > §5 (no reorganization beyond what a conversion requires — this *is* the

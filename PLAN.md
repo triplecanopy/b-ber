@@ -1,6 +1,7 @@
 # b-ber monorepo — Project Plan
 
-_Last updated: 2026-06-13 (TS migration epic closed — TASK-032 reader-react merged, TASK-019 complete)._
+_Last updated: 2026-06-21 (React 19 audit: TASK-094 marked done, known-issues
+re-audited, TASK-105 superseded, TASK-111 icon-font removal filed)._
 
 This file is the **current state**. Conventions, standards, and the task-file
 format live in [AGENTS.md](./AGENTS.md). All tasks live in `tasks/` at the repo
@@ -35,7 +36,7 @@ Every task belongs to exactly one; every new task must too.
 | ✅ Unit test coverage | 2 | 1 | 2 | Epic in progress; most packages at target, a few laggards |
 | 🧪 E2E testing | 5 | 1 | 2 | Pipeline green in CI; skill + iframe fix remain |
 | ⚙️ Node.js modernization | 1 | 0 | 2 | Barely started; epic + logger refactor pending |
-| ⚛️ React 19 (reader-react) | 31 | 0 | 13 | **Steps 1 + 2 complete and merged into `feat/upgrades`** (TASK-095–100): no class components/HOCs, no selfRef shim. **Step 3 (TASK-073) done** — recommendation: drop Redux → `useSyncExternalStore` + stable API context (`STATE-MIGRATION-PLAN.md`). **Step 4 (TASK-106) ✅ done & merged** — Redux removed, built-in store + ReaderApiContext shipped, browser QA passed. **TASK-101 (page-nav race) done.** **TASK-107/108 ✅ done & QA'd.** **Housekeeping TASK-102 (Chrome-81 removal) + TASK-103 (helper classes → modules) ✅ done, QA'd & merged.** Next: TASK-105 (colocation, now unblocked). |
+| ⚛️ React 19 (reader-react) | 31 | 0 | 13 | **Steps 1 + 2 complete and merged into `feat/upgrades`** (TASK-095–100): no class components/HOCs, no selfRef shim. **Step 3 (TASK-073) done** — recommendation: drop Redux → `useSyncExternalStore` + stable API context (`STATE-MIGRATION-PLAN.md`). **Step 4 (TASK-106) ✅ done & merged** — Redux removed, built-in store + ReaderApiContext shipped, browser QA passed. **TASK-101 (page-nav race) done.** **TASK-107/108 ✅ done & QA'd.** **Housekeeping TASK-102 (Chrome-81 removal) + TASK-103 (helper classes → modules) ✅ done, QA'd & merged.** Next: TASK-068 (housekeeping) or TASK-091 (react-player v3) — independent leaves. TASK-105 (colocation) **superseded/dropped** 2026-06-21. |
 
 _"Active" = in progress. "Backlog" = not started (excludes superseded)._
 
@@ -197,7 +198,7 @@ turns every HOC→hook step into a mechanical swap with no half-wired state.
 
 | Task | Step | Converts | Model |
 | ---- | ---- | -------- | ----- |
-| **TASK-094** | 0 | Conventions doc (foundation) | Opus |
+| **TASK-094** ✅ | 0 | Conventions doc (foundation) | Opus |
 | TASK-095 ✅ | 1 | Leaf components: `Footnote`, `Marker`, `SidebarSettings` | Sonnet |
 | TASK-096 ✅ | 1 | Media subtree: `Media`, `Vimeo`, `Iframe`, `MediaControls`, `MediaButtonVolume` | Opus (Media→`useMediaPlayer` hook; Vimeo render-phase update) |
 | TASK-097 ✅ | 1 | `App` (async `UNSAFE_` + `connect`) | Opus |
@@ -214,8 +215,7 @@ Also TASK-091 (react-player v3, independent).
 
 **Step 4 (migrate state per findings) — TASK-106 ✅ complete
 (`feat/reader-react-state-migration`).** Executed the plan slice by slice (cold →
-warm → hot → `book.content` → drop `connect()`/deps). Sequence TASK-105
-(colocation) after it. **What landed:** scaffold
+warm → hot → `book.content` → drop `connect()`/deps). **What landed:** scaffold
 (`createReaderStore`/`StoreContext`/`useStore`/`renderWithStore`), `markers`
 (dead subscription removed), cold `readerSettings`, and the warm
 `userInterface` + `readerLocation` slices (store-backed action bundles in
@@ -238,7 +238,9 @@ load/spinner, page turns, chapter nav, resize); bugs found and fixed along the
 way: resize/sidebar/nav (cold+warm) and a spread-figure re-center regression from
 the ReaderApiContext split (SpreadFigure now subscribes to reactive `spreadIndex`;
 fix `d3d5e3f3`). Pre-existing bugs split out as TASK-107/108 (both now fixed &
-QA'd). **Done.**
+QA'd). **Done.** (TASK-105 colocation, originally sequenced after this, was
+**superseded/dropped** 2026-06-21 — net-negative churn; its one useful item moved
+to TASK-068.)
 
 **Step 5 (reorg / best practices)** — TASK-068 (housekeeping), TASK-071 (docs),
 TASK-076 (SCSS→CSS Modules), plus general organization cleanup.
@@ -254,7 +256,8 @@ existing open tasks (noted in the right column).
 | **TASK-102** | housekeeping | Remove Chrome-81 workarounds (deletes `useIframePosition` + placeholder machinery) | ✅ done & QA'd |
 | **TASK-103** | housekeeping | Static-only helper classes → modules (`Asset`/`Cache`/`DOM`/`Request`/`Storage`/`Url`/`Viewport`/`XMLAdaptor`) | ✅ done (Viewport kept as default object — spied via jest.spyOn) |
 | **TASK-104** | quality | Accessibility baseline (ARIA, focus mgmt, reduced-motion, live region) | new |
-| **TASK-105** | structure | Component colocation + types/CSS-module structure | unblocked — state migration (TASK-106) + helper→module (TASK-103) both landed; colocated-tests deferred pending tooling audit |
+| **TASK-111** | assets | Replace the Material Icons webfont with inline SVGs (reuse `Navigation/Icon.tsx` pattern); drops the `material-icons` dep — spans reader-react Media controls + `b-ber-tasks` web chrome | new 2026-06-21 |
+| ~~TASK-105~~ | structure | ~~Component colocation + types/CSS-module structure~~ | **superseded/dropped 2026-06-21** — net-negative churn for a 12-component package; the one useful item (`SpreadFigure` `Consumer`→`useContext`) moved to TASK-068 |
 | **TASK-106** | state | Execute the state migration: drop Redux → `useSyncExternalStore` + stable API context; folds in `book.content` | ✅ done — Step 4 from **TASK-073** (`STATE-MIGRATION-PLAN.md`) |
 | — | styles | Inline/conditional styles → CSS Modules | **TASK-076 ✅ done & merged** (merge `b03d6399`, dev QA passed): `@import`→`@use` cleanup, **Spinner CSS-Module POC** + Jest/TS wiring, dev viewport-label removed, monorepo styling audit. **Decision: keep chrome global** — the `.bber-*` chrome classes are a shared, partly user-facing vocabulary (consumer override API); chrome scoping + a documented theming surface deferred to **TASK-110**. Project/theme SCSS toolchain → **TASK-109**. |
 | — | theming | Reader chrome theming API (scope chrome + CSS custom props) | **TASK-110** — Option 2 from the TASK-076 chrome review; design-gated, needs versioning + 3rd-party coordination, out of scope for now |
@@ -263,7 +266,7 @@ existing open tasks (noted in the right column).
 
 ### Sequencing
 
-1. **TASK-094** (conventions — user review pending) + **TASK-068** (housekeeping):
+1. **TASK-094** ✅ (conventions doc — complete) + **TASK-068** (housekeeping):
    establish the patterns and clear dead code before refactoring.
 2. **Step 1** components ✅ **complete & merged**: TASK-095 (leaves) → TASK-096
    (Media) → TASK-097 (App). All merged into `feat/upgrades`.
@@ -283,19 +286,34 @@ FOUT visual). **TASK-075** (expand dev project URLs) is housekeeping, anytime.
 
 ### Known issues / tech debt (migrated from the deleted reader-react PLAN.md)
 
-These inform the migration but are not yet individually tasked:
+These inform the migration but are not yet individually tasked. Re-audited
+2026-06-21 against the post-TASK-106 tree — two of the original five are now
+resolved (struck through):
 
-- `book.content` module-level mutation bypasses the React render pipeline
-  (forces re-render via the `spineItemURL` key) — fold into the Step 3/4 state
-  work; it is the last major render-pipeline bypass.
+- ~~`book.content` module-level mutation bypasses the React render pipeline~~
+  ✅ **resolved by TASK-106** — `book.content` is gone; chapter content lives in
+  the store as `{ spineItemURL, node }` (`store/contentActions.ts`). The
+  `spineItemURL` key-remount is now a deliberate, store-driven behavior, not a
+  render-pipeline bypass. (Note: `b-ber-reader-react/AGENTS.md` "Architecture
+  Notes" still describes the old `book.content` global and `selfRef` shim — both
+  removed; that doc needs a refresh, fold into [[TASK-071]].)
 - No explicit loading-state model (idle / loading-manifest / loading-chapter /
-  ready / error) — candidate for the state migration.
-- `withLastSpreadIndex`: `setContentDimensions(0)` on slug change may trigger a
-  spurious dispatch (verify when HOC→hook).
-- `navigateToElementById`: hardcoded DOM selectors + an unexplained `/2`
-  division (needs documentation or a behavior probe).
-- `Layout.jsx`: `debounce` called in the render body creates a new function each
-  render (fix during the class→functional/hooks pass).
+  ready / error) — **still valid**; the store carries only `view.loaded:
+  boolean`. Candidate for a follow-up; not yet tasked.
+- ~~`withLastSpreadIndex`: `setContentDimensions(0)` on slug change may trigger a
+  spurious dispatch~~ ✅ **resolved** — now a hook
+  (`lib/with-last-spread-index.tsx`); the contentDimensions effect skips its
+  dispatch when the value is `0` (the "L2 fix", documented in-file at the
+  `useEffect([props.slug])`), so the reset only clears the stale reading.
+- `navigateToElementById` (`components/Reader/navigation.ts`): **partly valid** —
+  the `/2` now carries a comment (verso/recto spread = 2 columns), but the
+  rationale is still thin and the DOM selectors (`.bber-controls__header`,
+  `#frame`) remain hardcoded with a `TODO should be handled in Frame`. Minor;
+  fold into [[TASK-068]].
+- `Layout.tsx`: **still valid** — `debounce(onResizeDone, …)` is called in the
+  render body (line ~196), allocating a new debounced fn every render. Harmless
+  today (the resize effect has `[]` deps so only the first instance is wired up),
+  but a latent footgun. Wrap in `useMemo`/`useCallback`; fold into [[TASK-068]].
 
 ---
 
