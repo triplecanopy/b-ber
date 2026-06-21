@@ -16,37 +16,28 @@ const SpreadFigure = (props: SpreadFigureProps) => {
   // stable ReaderApiContext (no re-render), so subscribe to the reactive
   // spreadIndex here and pass it explicitly to keep the dependency visible.
   const { spreadIndex } = useContext(ReaderContext)
+  const { left: origLeft } = useContext(SpreadContext)
+
+  const absTranslateX = Math.abs(getTranslateX(spreadIndex))
+
+  // Account for minute differences in measurement
+  const left = Math.floor(origLeft)
+
+  const offset = window.innerWidth / 2
+  const marginLeft =
+    absTranslateX === left ? 0 : absTranslateX > left ? offset * -1 : offset
 
   return (
-    <SpreadContext.Consumer>
-      {({ left: origLeft }) => {
-        const absTranslateX = Math.abs(getTranslateX(spreadIndex))
-
-        // Account for minute differences in measurement
-        const left = Math.floor(origLeft)
-
-        const offset = window.innerWidth / 2
-        const marginLeft =
-          absTranslateX === left
-            ? 0
-            : absTranslateX > left
-              ? offset * -1
-              : offset
-
-        return (
-          <figure
-            id={props.id}
-            style={{
-              left,
-              marginLeft,
-            }}
-            className={props.className || ''}
-          >
-            {props.children}
-          </figure>
-        )
+    <figure
+      id={props.id}
+      style={{
+        left,
+        marginLeft,
       }}
-    </SpreadContext.Consumer>
+      className={props.className || ''}
+    >
+      {props.children}
+    </figure>
   )
 }
 
