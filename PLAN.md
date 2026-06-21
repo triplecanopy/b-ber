@@ -1,7 +1,7 @@
 # b-ber monorepo — Project Plan
 
-_Last updated: 2026-06-21 (React 19 audit: TASK-094 marked done, known-issues
-re-audited, TASK-105 superseded, TASK-111 icon-font removal filed)._
+_Last updated: 2026-06-21 (React 19 audit + TASK-068 housekeeping & TASK-111
+icon-font removal done & merged; TASK-094 marked done, TASK-105 superseded)._
 
 This file is the **current state**. Conventions, standards, and the task-file
 format live in [AGENTS.md](./AGENTS.md). All tasks live in `tasks/` at the repo
@@ -36,7 +36,7 @@ Every task belongs to exactly one; every new task must too.
 | ✅ Unit test coverage | 2 | 1 | 2 | Epic in progress; most packages at target, a few laggards |
 | 🧪 E2E testing | 5 | 1 | 2 | Pipeline green in CI; skill + iframe fix remain |
 | ⚙️ Node.js modernization | 1 | 0 | 2 | Barely started; epic + logger refactor pending |
-| ⚛️ React 19 (reader-react) | 31 | 0 | 13 | **Steps 1 + 2 complete and merged into `feat/upgrades`** (TASK-095–100): no class components/HOCs, no selfRef shim. **Step 3 (TASK-073) done** — recommendation: drop Redux → `useSyncExternalStore` + stable API context (`STATE-MIGRATION-PLAN.md`). **Step 4 (TASK-106) ✅ done & merged** — Redux removed, built-in store + ReaderApiContext shipped, browser QA passed. **TASK-101 (page-nav race) done.** **TASK-107/108 ✅ done & QA'd.** **Housekeeping TASK-102 (Chrome-81 removal) + TASK-103 (helper classes → modules) ✅ done, QA'd & merged.** Next: TASK-068 (housekeeping) or TASK-091 (react-player v3) — independent leaves. TASK-105 (colocation) **superseded/dropped** 2026-06-21. |
+| ⚛️ React 19 (reader-react) | 33 | 0 | 11 | **Steps 1 + 2 complete and merged into `feat/upgrades`** (TASK-095–100): no class components/HOCs, no selfRef shim. **Step 3 (TASK-073) done** — recommendation: drop Redux → `useSyncExternalStore` + stable API context (`STATE-MIGRATION-PLAN.md`). **Step 4 (TASK-106) ✅ done & merged** — Redux removed, built-in store + ReaderApiContext shipped, browser QA passed. **TASK-101 (page-nav race) done.** **TASK-107/108 ✅ done & QA'd.** **Housekeeping TASK-102/103 + TASK-068 (phase-1 cleanup: dead code, ErrorBoundary, SpreadFigure→useContext, Layout debounce fix) ✅ done & merged.** **TASK-111 (material-icons font → inline SVGs, dep removed) ✅ done & merged.** Next: TASK-091 (react-player v3) or TASK-104 (a11y) — independent leaves. TASK-105 (colocation) **superseded/dropped** 2026-06-21. |
 
 _"Active" = in progress. "Backlog" = not started (excludes superseded)._
 
@@ -242,8 +242,9 @@ QA'd). **Done.** (TASK-105 colocation, originally sequenced after this, was
 **superseded/dropped** 2026-06-21 — net-negative churn; its one useful item moved
 to TASK-068.)
 
-**Step 5 (reorg / best practices)** — TASK-068 (housekeeping), TASK-071 (docs),
-TASK-076 (SCSS→CSS Modules), plus general organization cleanup.
+**Step 5 (reorg / best practices)** — TASK-068 (housekeeping) ✅ **done & merged
+2026-06-21**, TASK-071 (docs), TASK-076 (SCSS→CSS Modules) ✅ done, plus general
+organization cleanup.
 
 ### Maintainability backlog (raised in code review 2026-06-14)
 
@@ -256,18 +257,18 @@ existing open tasks (noted in the right column).
 | **TASK-102** | housekeeping | Remove Chrome-81 workarounds (deletes `useIframePosition` + placeholder machinery) | ✅ done & QA'd |
 | **TASK-103** | housekeeping | Static-only helper classes → modules (`Asset`/`Cache`/`DOM`/`Request`/`Storage`/`Url`/`Viewport`/`XMLAdaptor`) | ✅ done (Viewport kept as default object — spied via jest.spyOn) |
 | **TASK-104** | quality | Accessibility baseline (ARIA, focus mgmt, reduced-motion, live region) | new |
-| **TASK-111** | assets | Replace the Material Icons webfont with inline SVGs (reuse `Navigation/Icon.tsx` pattern); drops the `material-icons` dep — spans reader-react Media controls + `b-ber-tasks` web chrome | new 2026-06-21 |
+| ~~TASK-111~~ | assets | ~~Replace the Material Icons webfont with inline SVGs~~ | ✅ **done & merged 2026-06-21** — new per-file `Icons/` dir (7 components), `b-ber-tasks` web chrome inlined, `material-icons` dep removed; full suite green |
 | ~~TASK-105~~ | structure | ~~Component colocation + types/CSS-module structure~~ | **superseded/dropped 2026-06-21** — net-negative churn for a 12-component package; the one useful item (`SpreadFigure` `Consumer`→`useContext`) moved to TASK-068 |
 | **TASK-106** | state | Execute the state migration: drop Redux → `useSyncExternalStore` + stable API context; folds in `book.content` | ✅ done — Step 4 from **TASK-073** (`STATE-MIGRATION-PLAN.md`) |
 | — | styles | Inline/conditional styles → CSS Modules | **TASK-076 ✅ done & merged** (merge `b03d6399`, dev QA passed): `@import`→`@use` cleanup, **Spinner CSS-Module POC** + Jest/TS wiring, dev viewport-label removed, monorepo styling audit. **Decision: keep chrome global** — the `.bber-*` chrome classes are a shared, partly user-facing vocabulary (consumer override API); chrome scoping + a documented theming surface deferred to **TASK-110**. Project/theme SCSS toolchain → **TASK-109**. |
 | — | theming | Reader chrome theming API (scope chrome + CSS custom props) | **TASK-110** — Option 2 from the TASK-076 chrome review; design-gated, needs versioning + 3rd-party coordination, out of scope for now |
 | — | docs | Per-subdir documentation | **TASK-071** |
-| — | cleanup | Marker `debug` block + dangling `IMPROVEMENT_PLAN.md` comment refs | added to **TASK-068** |
+| — | cleanup | Marker `debug` block + dangling `IMPROVEMENT_PLAN.md` comment refs | ✅ **done in TASK-068** (2026-06-21) |
 
 ### Sequencing
 
-1. **TASK-094** ✅ (conventions doc — complete) + **TASK-068** (housekeeping):
-   establish the patterns and clear dead code before refactoring.
+1. **TASK-094** ✅ (conventions doc — complete) + **TASK-068** ✅ (housekeeping —
+   done & merged 2026-06-21): established the patterns and cleared dead code.
 2. **Step 1** components ✅ **complete & merged**: TASK-095 (leaves) → TASK-096
    (Media) → TASK-097 (App). All merged into `feat/upgrades`.
 3. **Step 2** HOCs→hooks ✅ **complete & merged**: TASK-098 (measurement) →
@@ -305,15 +306,15 @@ resolved (struck through):
   (`lib/with-last-spread-index.tsx`); the contentDimensions effect skips its
   dispatch when the value is `0` (the "L2 fix", documented in-file at the
   `useEffect([props.slug])`), so the reset only clears the stale reading.
-- `navigateToElementById` (`components/Reader/navigation.ts`): **partly valid** —
-  the `/2` now carries a comment (verso/recto spread = 2 columns), but the
-  rationale is still thin and the DOM selectors (`.bber-controls__header`,
-  `#frame`) remain hardcoded with a `TODO should be handled in Frame`. Minor;
-  fold into [[TASK-068]].
-- `Layout.tsx`: **still valid** — `debounce(onResizeDone, …)` is called in the
-  render body (line ~196), allocating a new debounced fn every render. Harmless
-  today (the resize effect has `[]` deps so only the first instance is wired up),
-  but a latent footgun. Wrap in `useMemo`/`useCallback`; fold into [[TASK-068]].
+- ~~`navigateToElementById` (`components/Reader/navigation.ts`): hardcoded
+  selectors + thin `/2` rationale~~ ✅ **documented in TASK-068** (2026-06-21) —
+  explained why the selectors are hardcoded (no component ref) and what the `/2`
+  represents (column index → spread index for the 2-column layout); behavior
+  unchanged.
+- ~~`Layout.tsx`: `debounce` called in the render body allocates a new fn every
+  render~~ ✅ **fixed in TASK-068** (2026-06-21) — wrapped in `useMemo` (deps
+  `[]`) routed through a ref so the stable debounced fn still calls the latest
+  closure; resize effect deps/cleanup unchanged.
 
 ---
 
@@ -338,6 +339,15 @@ sequencing work:
 
 ## 🆕 Recently completed (last sessions)
 
+- **TASK-068 — reader-react phase-1 housekeeping** (2026-06-21): dead code +
+  dangling plan refs removed, resize-handler names un-inverted, `ErrorBoundary`
+  added around `Frame`'s `Layout`/`BookContent`, Marker `debug` block + unused
+  `custom-prop-types` deleted, `SpreadFigure` `Consumer`→`useContext`, `Spread`
+  id via `useId`, `Layout` debounce stabilized, `navigateToElementById`
+  documented. Full suite green.
+- **TASK-111 — material-icons webfont → inline SVGs** (2026-06-21): new per-file
+  `src/components/Icons/` dir (7 components), `b-ber-tasks` web chrome inlined,
+  `material-icons` dependency removed from root + reader-react. Full suite green.
 - **TASK-081–085 — spread/layout-stability cluster complete + QA'd** (2026-06-13).
   Reusable QA checklist retained for human review (`SPREAD-CLUSTER-QA.md`)
 - **TASK-093 — reader-react PLAN.md consolidated into this file and deleted**
