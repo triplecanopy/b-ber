@@ -62,6 +62,16 @@ $thumb-c: #272727;
   .bber-button {
     @include transition(color $transition-speed-normal $transition-easing);
     text-decoration: none !important;
+
+    // Default icon size matches the inherited $font-size-sans the
+    // material-icons ligature text used to render at (e.g. the loop button,
+    // which has no size-specific class below). Buttons with a specific class
+    // override this with their own svg width/height.
+    svg {
+      width: 1em;
+      height: 1em;
+      fill: currentColor;
+    }
   }
 
   .bber-a.bber-hover,
@@ -226,14 +236,23 @@ $thumb-c: #272727;
 }
 
 // Buttons
+// Icons are inline SVGs (see src/components/Icons/); sizing that used to come
+// from `font-size` on the material-icons ligature text now targets the `svg`
+// child directly, at the same pixel sizes the webfont rendered.
 .bber-media__button__play,
 .bber-media__button__pause {
-  font-size: 24px;
+  svg {
+    width: 24px;
+    height: 24px;
+  }
 }
 
 .bber-media__button__volume_up,
 .bber-media__button__file_download {
-  font-size: 17px;
+  svg {
+    width: 17px;
+    height: 17px;
+  }
 }
 
 .bber-media__button__file_download {
@@ -243,7 +262,10 @@ $thumb-c: #272727;
 
 .bber-media__button__forward_30,
 .bber-media__button__replay_30 {
-  font-size: 18px;
+  svg {
+    width: 18px;
+    height: 18px;
+  }
 }
 
 // FF for range slider

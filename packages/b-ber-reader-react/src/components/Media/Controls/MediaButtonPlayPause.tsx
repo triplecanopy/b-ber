@@ -1,4 +1,6 @@
 import React from 'react'
+import Pause from '../../Icons/Pause'
+import PlayArrow from '../../Icons/PlayArrow'
 
 interface MediaButtonPlayPauseProps {
   paused: boolean
@@ -9,17 +11,17 @@ interface MediaButtonPlayPauseProps {
 function MediaButtonPlayPause(props: MediaButtonPlayPauseProps) {
   return props.paused ? (
     <button
-      className="bber-button material-icons bber-media__button__play"
+      className="bber-button bber-media__button__play"
       onClick={props.play}
     >
-      play_arrow
+      <PlayArrow />
     </button>
   ) : (
     <button
-      className="bber-button material-icons bber-media__button__pause"
+      className="bber-button bber-media__button__pause"
       onClick={props.pause}
     >
-      pause
+      <Pause />
     </button>
   )
 }

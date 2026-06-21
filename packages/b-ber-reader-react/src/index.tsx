@@ -7,7 +7,6 @@ import { StoreProvider } from './store/StoreContext'
 import type { ReaderSettingsState } from './store/types'
 
 import './lib/polyfills'
-import 'material-icons/iconfont/filled.css'
 import './index.scss'
 
 // Props are merged into the `readerSettings` slice. The authoritative,

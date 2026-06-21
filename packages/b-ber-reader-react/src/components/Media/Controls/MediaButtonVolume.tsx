@@ -1,5 +1,6 @@
 import classNames from 'classnames'
 import React, { useState } from 'react'
+import VolumeUp from '../../Icons/VolumeUp'
 import MediaRangeSlider from './MediaRangeSlider'
 
 interface MediaButtonVolumeProps {
@@ -22,13 +23,12 @@ function MediaButtonVolume({ volume, updateVolume }: MediaButtonVolumeProps) {
         />
       </div>
       <button
-        className={classNames(
-          'bber-button material-icons bber-media__button__volume_up',
-          { 'bber-hover': open }
-        )}
+        className={classNames('bber-button bber-media__button__volume_up', {
+          'bber-hover': open,
+        })}
         onClick={toggle}
       >
-        volume_up
+        <VolumeUp />
       </button>
     </>
   )
