@@ -86,7 +86,6 @@
     "lint-staged": "^9.2.0",
     "lodash": "^4.17.21",
     "madge": "^7.0.0",
-    "material-icons": "^1.0.0",
     "mock-fs": "^4.4.2",
     "nodemon": "^2.0.15",
     "npm-check-updates": "^22.2.3",
