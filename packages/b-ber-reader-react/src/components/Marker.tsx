@@ -13,14 +13,6 @@ function Marker(props: MarkerProps) {
     isMarker: true,
   })
 
-  let markerStyles = { ...props.style }
-
-  const debug = false // dev
-
-  const debugMarkerStyles = { backgroundColor: verso ? 'violet' : 'red' }
-
-  if (debug) markerStyles = { ...markerStyles, ...debugMarkerStyles }
-
   return (
     <span>
       <span
