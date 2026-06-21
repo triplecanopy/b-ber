@@ -120,7 +120,6 @@ export const useLoader = ({
       } catch (err) {
         // Something went wrong loading the book. Clear storage for this book
         // and re-enable the UI so the reader is not left in a frozen state.
-        // Addresses IMPROVEMENT_PLAN.md M2.
         //
         // TODO retry? try to navigate to home?
         // @issue: https://github.com/triplecanopy/b-ber/issues/214

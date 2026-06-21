@@ -77,20 +77,14 @@ function getLayoutStyles(props: any, state: LayoutState): React.CSSProperties {
 function getLeafStyles(
   position: 'left' | 'right',
   translateX: number
-  // transitionSpeed
 ): React.CSSProperties {
   // Overlay styles for hiding content in the 'padding' range. FF animations
   // 'jump' when animating a transform, so we use 'left' and 'right'
   // properties in that case. in either case, need to move the leaves in the
   // opposite direction as the containing element
 
-  // const { transitionSpeed } = this.props.viewerSettings
-
   let styles: React.CSSProperties = {}
   let nextTranslateX = translateX
-  // let positionX = 0
-
-  // let translateX = this.context.getTranslateX()
 
   if ((browser as { name?: string } | null)?.name === 'firefox') {
     if (position === 'left') {
@@ -99,7 +93,6 @@ function getLeafStyles(
 
     styles = {
       [position]: `${nextTranslateX}px`,
-      // transition: `${position} ${transitionSpeed}ms ease 0s`,
     }
   } else {
     nextTranslateX *= -1
@@ -108,7 +101,6 @@ function getLeafStyles(
 
     styles = {
       transform,
-      // transition: `transform ${transitionSpeed}ms ease 0s`,
     }
   }
 
@@ -121,8 +113,8 @@ interface LeavesProps {
   paddingRight: number
   enableTransitions: boolean
   translateX: number
-  // transitionSpeed is currently unused by getLeafStyles (the transition lines
-  // are commented out) but kept in the prop surface to match the call site.
+  // transitionSpeed is unused by Leaves/getLeafStyles but kept in the prop
+  // surface to match the call site (Layout passes it through unconditionally).
   transitionSpeed: number
 }
 
