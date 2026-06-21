@@ -135,8 +135,8 @@ export interface ReaderApi {
   handleResizeStart(): void
   handleResizeEnd(): void
   cancelResizeReposition(): void
-  bindResizeHandlers(): void
-  unbindResizeHandlers(): void
+  removeResizeHandlers(): void
+  addResizeHandlers(): void
 }
 
 // Shared dependencies the orchestrator threads into each hook: always-current

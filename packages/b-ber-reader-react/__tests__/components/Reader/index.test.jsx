@@ -47,8 +47,8 @@ const mockResizeFns = {
   handleResize: jest.fn(),
   handleResizeStart: jest.fn(),
   handleResizeEnd: jest.fn(),
-  bindResizeHandlers: jest.fn(),
-  unbindResizeHandlers: jest.fn(),
+  removeResizeHandlers: jest.fn(),
+  addResizeHandlers: jest.fn(),
 }
 
 jest.mock('../../../src/components/Reader/loader', () => ({
@@ -155,20 +155,19 @@ describe('Reader', () => {
     expect(mockLoaderFns.loadSpineItem).toHaveBeenCalledWith()
   })
 
-  test('resize effect binds on mount and cleans up (calls Asset.removeBookStyles) on unmount', () => {
+  test('resize effect adds handlers on mount and cleans up (calls Asset.removeBookStyles) on unmount', () => {
     const { unmount } = renderReader({
       readerSettings: { bookURL: 'https://example.com/book' },
     })
 
-    // Per the H4-inverted-naming comment: unbindResizeHandlers is called on
-    // mount (it actually adds listeners), and bindResizeHandlers is called
-    // on unmount (it actually removes listeners).
-    expect(mockResizeFns.unbindResizeHandlers).toHaveBeenCalledTimes(1)
-    expect(mockResizeFns.bindResizeHandlers).not.toHaveBeenCalled()
+    // addResizeHandlers is called on mount; removeResizeHandlers on unmount
+    // (names now match what each function does — see resize.ts).
+    expect(mockResizeFns.addResizeHandlers).toHaveBeenCalledTimes(1)
+    expect(mockResizeFns.removeResizeHandlers).not.toHaveBeenCalled()
 
     unmount()
 
-    expect(mockResizeFns.bindResizeHandlers).toHaveBeenCalledTimes(1)
+    expect(mockResizeFns.removeResizeHandlers).toHaveBeenCalledTimes(1)
     expect(Asset.removeBookStyles).toHaveBeenCalledWith(
       Asset.createHash('https://example.com/book')
     )

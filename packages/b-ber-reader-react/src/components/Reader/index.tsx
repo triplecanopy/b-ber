@@ -60,7 +60,7 @@ function BookContent() {
 // whose identity never changes, so method-only consumers don't re-render on
 // spread changes; the reactive ReaderContext value (spreadIndex/lastSpread) is
 // memoized so its consumers re-render only when those change (TASK-106; the
-// former combined value fixed IMPROVEMENT_PLAN H5).
+// former combined value fixed bug H5, see PLAN.md history).
 
 function Reader(props: ReaderComponentProps) {
   // ─── Local state ───────────────────────────────────────────────────────────
@@ -304,7 +304,7 @@ function Reader(props: ReaderComponentProps) {
   // render), useEffect runs after the first render. To prevent the user from
   // interacting with an uninitialised reader during the OPF network fetch, we
   // show the spinner immediately at the start of this effect. This addresses
-  // IMPROVEMENT_PLAN.md bug C5.
+  // bug C5 (see PLAN.md history).
   //
   // The hasInitializedRef guard prevents double-invocation in React 18
   // Strict Mode, which mounts components twice in development.
@@ -365,16 +365,14 @@ function Reader(props: ReaderComponentProps) {
   }, [])
 
   // ─── Resize handlers ───────────────────────────────────────────────────────
-  // Replaces componentDidMount (bind) and componentWillUnmount (unbind).
-  //
-  // NOTE: bindResizeHandlers / unbindResizeHandlers names are inverted in the
-  // source — see IMPROVEMENT_PLAN.md H4. Behavior is preserved here as-is to
-  // avoid a behavioral change in this migration step.
+  // Replaces componentDidMount (add) and componentWillUnmount (remove). The
+  // hook functions are named for what they do (see resize.ts — the names were
+  // previously inverted, a fixed maintenance trap, PLAN.md history bug H4).
   useEffect(() => {
-    apiRef.current.unbindResizeHandlers() // actually adds listeners (see H4)
+    apiRef.current.addResizeHandlers()
 
     return () => {
-      apiRef.current.bindResizeHandlers() // actually removes listeners (see H4)
+      apiRef.current.removeResizeHandlers()
 
       const hash = Asset.createHash(propsRef.current.readerSettings.bookURL)
       Asset.removeBookStyles(hash)
@@ -517,7 +515,6 @@ function Reader(props: ReaderComponentProps) {
     spine,
     currentSpineItemIndex,
     showSidebar,
-    // lastSpread,
     spreadIndex,
   } = state
 

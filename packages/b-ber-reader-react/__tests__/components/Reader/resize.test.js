@@ -188,7 +188,7 @@ describe('handleResizeEnd', () => {
   })
 })
 
-describe('bindResizeHandlers / unbindResizeHandlers', () => {
+describe('removeResizeHandlers / addResizeHandlers', () => {
   test('removes and (re)adds resize and fullscreenchange listeners without throwing', () => {
     const addSpy = jest.spyOn(window, 'addEventListener')
     const removeSpy = jest.spyOn(window, 'removeEventListener')
@@ -197,13 +197,13 @@ describe('bindResizeHandlers / unbindResizeHandlers', () => {
 
     const { resize } = createDeps()
 
-    expect(() => resize.bindResizeHandlers()).not.toThrow()
+    expect(() => resize.removeResizeHandlers()).not.toThrow()
     expect(removeSpy).toHaveBeenCalledWith('resize', resize.handleResize)
     expect(removeSpy).toHaveBeenCalledWith('resize', resize.handleResizeStart)
     expect(removeSpy).toHaveBeenCalledWith('resize', resize.handleResizeEnd)
     expect(docRemoveSpy).toHaveBeenCalledTimes(3)
 
-    expect(() => resize.unbindResizeHandlers()).not.toThrow()
+    expect(() => resize.addResizeHandlers()).not.toThrow()
     expect(addSpy).toHaveBeenCalledWith('resize', resize.handleResize)
     expect(addSpy).toHaveBeenCalledWith('resize', resize.handleResizeStart)
     expect(addSpy).toHaveBeenCalledWith('resize', resize.handleResizeEnd)
