@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import debounce from 'lodash/debounce'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import {
   breakpoints,
   MEDIA_QUERY_MOBILE,
@@ -185,7 +185,19 @@ function Layout(props: any) {
     updateTransform()
   }
 
-  const handleResize = debounce(onResizeDone, RESIZE_DEBOUNCE_TIMER, {})
+  // The mount-only effect below (deps: []) adds/removes a single listener
+  // reference, so handleResize must be stable across renders or the listener
+  // added on mount would go stale while a new, never-attached debounce
+  // wrapper is allocated on every render. onResizeDoneRef keeps the debounced
+  // function reading the latest closure (current props/state) without
+  // needing to recreate the debounce itself.
+  const onResizeDoneRef = useRef(onResizeDone)
+  onResizeDoneRef.current = onResizeDone
+
+  const handleResize = useMemo(
+    () => debounce(() => onResizeDoneRef.current(), RESIZE_DEBOUNCE_TIMER, {}),
+    []
+  )
 
   useEffect(() => {
     props.updateDimensions()
