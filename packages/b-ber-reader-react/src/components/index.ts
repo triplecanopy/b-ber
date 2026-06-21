@@ -1,5 +1,6 @@
 export { default as App } from './App'
 export { default as Controls } from './Controls'
+export { default as ErrorBoundary } from './ErrorBoundary'
 export { default as Footnote } from './Footnote'
 export { default as Frame } from './Frame'
 export { default as Layout } from './Layout'
