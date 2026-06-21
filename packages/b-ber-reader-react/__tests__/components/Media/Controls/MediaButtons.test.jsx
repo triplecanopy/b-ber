@@ -146,7 +146,7 @@ describe('MediaButtonPlayPause', () => {
     const button = tree.container.querySelector('button')
 
     expect(button.classList.contains('bber-media__button__play')).toBe(true)
-    expect(button.textContent).toBe('play_arrow')
+    expect(button.querySelector('svg')).not.toBeNull()
 
     fireEvent.click(button)
     expect(play).toHaveBeenCalledTimes(1)
@@ -163,7 +163,7 @@ describe('MediaButtonPlayPause', () => {
     const button = tree.container.querySelector('button')
 
     expect(button.classList.contains('bber-media__button__pause')).toBe(true)
-    expect(button.textContent).toBe('pause')
+    expect(button.querySelector('svg')).not.toBeNull()
 
     fireEvent.click(button)
     expect(pause).toHaveBeenCalledTimes(1)

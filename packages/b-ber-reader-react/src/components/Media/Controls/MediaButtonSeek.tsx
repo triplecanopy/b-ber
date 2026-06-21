@@ -1,4 +1,6 @@
 import React from 'react'
+import Forward30 from '../../Icons/Forward30'
+import Replay30 from '../../Icons/Replay30'
 
 interface MediaButtonSeekForwardProps {
   timeForward: () => void
@@ -11,10 +13,10 @@ interface MediaButtonSeekBackProps {
 function MediaButtonSeekForward(props: MediaButtonSeekForwardProps) {
   return (
     <button
-      className="bber-button material-icons bber-media__button__forward_30"
+      className="bber-button bber-media__button__forward_30"
       onClick={props.timeForward}
     >
-      forward_30
+      <Forward30 />
     </button>
   )
 }
@@ -22,10 +24,10 @@ function MediaButtonSeekForward(props: MediaButtonSeekForwardProps) {
 function MediaButtonSeekBack(props: MediaButtonSeekBackProps) {
   return (
     <button
-      className="bber-button material-icons bber-media__button__replay_30"
+      className="bber-button bber-media__button__replay_30"
       onClick={props.timeBack}
     >
-      replay_30
+      <Replay30 />
     </button>
   )
 }

@@ -1,4 +1,5 @@
 import React from 'react'
+import FileDownload from '../../Icons/FileDownload'
 
 interface MediaButtonDownloadProps {
   currentSrc: string
@@ -6,11 +7,11 @@ interface MediaButtonDownloadProps {
 
 const MediaButtonDownload = (props: MediaButtonDownloadProps) => (
   <a
-    className="bber-a material-icons media__button__file_download"
+    className="bber-a media__button__file_download"
     href={props.currentSrc}
     download={true}
   >
-    file_download
+    <FileDownload />
   </a>
 )
 

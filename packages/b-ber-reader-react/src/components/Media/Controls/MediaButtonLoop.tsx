@@ -1,5 +1,6 @@
 import classNames from 'classnames'
 import React from 'react'
+import Repeat from '../../Icons/Repeat'
 
 interface MediaButtonLoopProps {
   loop: boolean
@@ -9,12 +10,12 @@ interface MediaButtonLoopProps {
 function MediaButtonLoop(props: MediaButtonLoopProps) {
   return (
     <button
-      className={classNames('bber-button material-icons', {
+      className={classNames('bber-button', {
         'bber-hover': props.loop,
       })}
       onClick={props.updateLoop}
     >
-      repeat
+      <Repeat />
     </button>
   )
 }
