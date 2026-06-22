@@ -1,8 +1,7 @@
 import React from 'react'
 
-// Path data lifted from Navigation/Icon.tsx's `Download` (same Material
-// Icons "file_download" glyph) — copied, not imported, per the Icons/
-// one-component-per-file convention (see TASK-111).
+// Material Icons "file_download" glyph. The single download icon — used by the
+// media download button and the navigation header's downloads toggle.
 const FileDownload = () => (
   <svg viewBox="0 0 18 22" xmlns="http://www.w3.org/2000/svg">
     <g stroke="none" strokeWidth="0" fill="none" fillRule="evenodd">

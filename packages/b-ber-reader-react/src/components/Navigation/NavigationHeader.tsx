@@ -1,8 +1,8 @@
 import classNames from 'classnames'
 import React from 'react'
 import type { Download } from '../../store/types'
+import { Close, FileDownload as DownloadIcon, Home, Info, Menu } from '../Icons'
 import { SidebarChapters, SidebarDownloads, SidebarMetadata } from '../Sidebar'
-import { Close, Download as DownloadIcon, Home, Info, Menu } from './Icon'
 
 type SidebarName = 'chapters' | 'downloads' | 'metadata' | 'settings'
 
