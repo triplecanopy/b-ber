@@ -41,7 +41,7 @@
     "js-yaml": "^3.12.0",
     "layouts": "^3.0.2",
     "lodash": "^4.17.21",
-    "mime-types": "^2.1.24",
+    "mime-types": "^3.0.2",
     "vinyl": "^2.2.0",
     "yargs": "^13.3.0",
     "yawn-yaml": "1.5.0"
