@@ -1,6 +1,6 @@
 {
   "name": "@canopycanopycanopy/b-ber-validator",
-  "version": "3.1.0",
+  "version": "4.0.0",
   "description": "A b-ber syntax validator",
   "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
   "contributors": [
@@ -41,7 +41,7 @@
     "typescript": "^6.0.3"
   },
   "dependencies": {
-    "@canopycanopycanopy/b-ber-shapes-directives": "3.1.0",
+    "@canopycanopycanopy/b-ber-shapes-directives": "4.0.0",
     "lodash": "^4.17.21",
     "tar": "^6.1.11"
   }
