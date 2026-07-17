@@ -16,20 +16,22 @@
   },
   "devDependencies": {
     "@canopycanopycanopy/b-ber-reader-react": "*",
-    "@vitejs/plugin-react": "^6.0.2",
+    "@vitejs/plugin-react": "^6.0.3",
     "express": "^4.17.3",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "jest-environment-jsdom-global": "^4.0.0",
     "nodemon": "^2.0.15",
     "rimraf": "^2.7.1",
-    "vite": "^8.0.16"
+    "vite": "^8.1.5"
   },
   "dependencies": {
     "react": "^19",
     "react-dom": "^19"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/triplecanopy/b-ber.git"
