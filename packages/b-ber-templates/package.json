@@ -41,7 +41,7 @@
     "@canopycanopycanopy/b-ber-lib": "4.0.0",
     "@canopycanopycanopy/b-ber-logger": "4.0.0",
     "fs-extra": "^8.1.0",
-    "image-size": "^0.8.3",
+    "image-size": "^2.0.2",
     "lodash": "^4.17.21",
     "mime-types": "^2.1.24",
     "tar": "^6.1.11",
