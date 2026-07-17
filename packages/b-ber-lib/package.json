@@ -1,6 +1,6 @@
 {
   "name": "@canopycanopycanopy/b-ber-lib",
-  "version": "3.1.0",
+  "version": "4.0.0",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -29,11 +29,11 @@
     "typescript": "^6.0.3"
   },
   "dependencies": {
-    "@canopycanopycanopy/b-ber-logger": "3.1.0",
-    "@canopycanopycanopy/b-ber-shapes-dublin-core": "3.1.0",
-    "@canopycanopycanopy/b-ber-shapes-sequences": "3.1.0",
-    "@canopycanopycanopy/b-ber-theme-sans": "3.1.0",
-    "@canopycanopycanopy/b-ber-theme-serif": "3.1.0",
+    "@canopycanopycanopy/b-ber-logger": "4.0.0",
+    "@canopycanopycanopy/b-ber-shapes-dublin-core": "4.0.0",
+    "@canopycanopycanopy/b-ber-shapes-sequences": "4.0.0",
+    "@canopycanopycanopy/b-ber-theme-sans": "4.0.0",
+    "@canopycanopycanopy/b-ber-theme-serif": "4.0.0",
     "command-exists": "^1.2.2",
     "fs-extra": "^8.1.0",
     "glob": "^7.1.4",

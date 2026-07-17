@@ -1,6 +1,6 @@
 {
   "name": "@canopycanopycanopy/b-ber-cli",
-  "version": "3.1.0",
+  "version": "4.0.0",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -20,11 +20,11 @@
     "access": "public"
   },
   "dependencies": {
-    "@canopycanopycanopy/b-ber-lib": "3.1.0",
-    "@canopycanopycanopy/b-ber-logger": "3.1.0",
-    "@canopycanopycanopy/b-ber-shapes-sequences": "3.1.0",
-    "@canopycanopycanopy/b-ber-tasks": "3.1.0",
-    "@canopycanopycanopy/b-ber-templates": "3.1.0",
+    "@canopycanopycanopy/b-ber-lib": "4.0.0",
+    "@canopycanopycanopy/b-ber-logger": "4.0.0",
+    "@canopycanopycanopy/b-ber-shapes-sequences": "4.0.0",
+    "@canopycanopycanopy/b-ber-tasks": "4.0.0",
+    "@canopycanopycanopy/b-ber-templates": "4.0.0",
     "fs-extra": "^8.1.0",
     "lodash": "^4.17.21",
     "lodash.has": "latest",
