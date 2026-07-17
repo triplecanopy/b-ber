@@ -67,7 +67,7 @@
   },
   "dependencies": {
     "classnames": "^2.2.5",
-    "css-tree": "^2.1.0",
+    "css-tree": "^3.2.1",
     "detect-browser": "^2.1.0",
     "history": "^4.7.2",
     "html-to-react": "^1.4.3",
