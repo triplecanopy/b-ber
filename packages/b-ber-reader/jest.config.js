@@ -1,8 +1,20 @@
 module.exports = {
-  name: 'b-ber-reader',
+  displayName: 'b-ber-reader',
   verbose: false,
-  setupFilesAfterEnv: ['jest-extended'],
+  setupFilesAfterEnv: ['jest-extended/all'],
   testEnvironment: 'jest-environment-jsdom-global',
-  testURL: 'http://localhost/',
-  transform: { '^.+\\.jsx?$': './jest-transform-upward.js' },
+  testEnvironmentOptions: { url: 'http://localhost/' },
+  transform: {
+    '^.+\\.[jt]sx?$': [
+      '@swc/jest',
+      {
+        jsc: {
+          parser: { syntax: 'typescript', tsx: true, decorators: true },
+          target: 'es2020',
+          transform: { legacyDecorator: true, decoratorMetadata: true },
+        },
+        module: { type: 'commonjs' },
+      },
+    ],
+  },
 }

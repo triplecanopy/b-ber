@@ -100,7 +100,7 @@ export interface NavigationHeaderProps {
   uiOptions: UiOptions
   showSidebar: SidebarName | null
   spine: Spine
-  currentSpineItemIndex:number
+  currentSpineItemIndex: number
   metadata: Metadata
 }
 
@@ -208,5 +208,7 @@ export type BberReaderProps = RequireOneOf<
   React.HTMLAttributes<HTMLDivElement>
 
 declare const BberReader: React.FunctionComponent<BberReaderProps>
+
+export declare const Reader: React.FunctionComponent<BberReaderProps>
 
 export default BberReader

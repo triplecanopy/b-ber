@@ -1,0 +1,4 @@
+export default `# %PROJECT_NAME%
+
+Created with [b-ber](https://github.com/triplecanopy/b-ber/)
+`

@@ -1,0 +1,42 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MediaButtonDownload renders a download link with the current source 1`] = `
+<div>
+  <a
+    class="bber-a media__button__file_download"
+    download=""
+    href="audio.mp3"
+  >
+    <svg
+      viewBox="0 0 18 22"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <g
+        fill="none"
+        fill-rule="evenodd"
+        stroke="none"
+        stroke-width="0"
+      >
+        <g
+          fill="#000000"
+          transform="translate(-6.000000, -3.000000)"
+        >
+          <path
+            d="M23.75,11.25 L18.75,11.25 L18.75,3.75 L11.25,3.75 L11.25,11.25 L6.25,11.25 L15,20 L23.75,11.25 L23.75,11.25 Z M6.25,22.5 L6.25,25 L23.75,25 L23.75,22.5 L6.25,22.5 L6.25,22.5 Z"
+          />
+        </g>
+      </g>
+    </svg>
+  </a>
+</div>
+`;
+
+exports[`MediaButtonFullScreen calls toggleFullscreen on click 1`] = `
+<div>
+  <button
+    class="bber-button"
+  >
+    toggleFullscreen
+  </button>
+</div>
+`;

@@ -1,7 +1,7 @@
 module.exports = {
-  name: 'b-ber-resources',
+  displayName: 'b-ber-resources',
   verbose: false,
-  setupFilesAfterEnv: ['jest-extended'],
-  testURL: 'http://localhost/',
-  transform: { '^.+\\.jsx?$': './jest-transform-upward.js' },
+  setupFilesAfterEnv: ['jest-extended/all'],
+  testEnvironmentOptions: { url: 'http://localhost/' },
+  transform: { '^.+\\.[jt]sx?$': '@swc/jest' },
 }

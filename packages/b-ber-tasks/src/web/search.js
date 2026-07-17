@@ -5,7 +5,7 @@
 // It initializes the WebWorker and manages search results.
 //
 
-;(function() {
+;(function () {
   var searchInput = null
   var searchButton = null
   var searchButtonOpen = null
@@ -65,7 +65,7 @@
     // keyboard events
     document.addEventListener(
       'keyup',
-      function(e) {
+      function (e) {
         if (e && e.which && e.which === 27 /* ESC */) {
           closeSearchBar()
         }
@@ -75,7 +75,7 @@
   }
 
   function initializeWebWorker() {
-    var worker = new Worker('%BASE_URL%' + 'worker.js') // BASE_URL added dynamically on build
+    var worker = new Worker('%BASE_URL%worker.js') // BASE_URL added dynamically on build
     var timer
     var debounceSpeed = 200
 
@@ -84,12 +84,23 @@
     // prettier-ignore
     function parseSearchResults(results) {
       return (
-        results.reduce(function(acc, curr) {
-          return acc.concat(' \
+        results.reduce(function (acc, curr) {
+          return acc.concat(
+            ' \
             <div class="search__result"> \
-              <a class="search__result__link" href="' + curr.url + '"> \
-                ' + (curr.title ? '<h1 class="search__result__title">' + curr.title + '</h1>' : '') + ' \
-                ' + (curr.body ? '<div class="search__result__body">' + curr.body + '</div>' : '') + ' \
+              <a class="search__result__link" href="' +
+              curr.url +
+              '"> \
+                ' +
+              (curr.title
+                ? '<h1 class="search__result__title">' + curr.title + '</h1>'
+                : '') +
+              ' \
+                ' +
+              (curr.body
+                ? '<div class="search__result__body">' + curr.body + '</div>'
+                : '') +
+              ' \
               </a> \
             </div>'
           )
@@ -103,7 +114,7 @@
 
     function debounceSearch() {
       clearTimeout(timer)
-      timer = setTimeout(function() {
+      timer = setTimeout(function () {
         var term = searchInput.value.trim()
         if (!term) {
           resetContents()
@@ -116,7 +127,7 @@
       }, debounceSpeed)
     }
 
-    worker.addEventListener('message', function(e) {
+    worker.addEventListener('message', function (e) {
       if (!e.data) return
       if (e.data.readyState && e.data.readyState > 3) {
         searchInput.removeAttribute('disabled')

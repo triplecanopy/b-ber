@@ -79,6 +79,20 @@
     }
   }
 
+  // The header/footer chrome icons are inline SVGs emitted directly by
+  // b-ber-tasks' web Template (see TASK-111) rather than a webfont ligature.
+  // `fill: currentColor` keeps the `button:hover { color: $success; }` /
+  // `.publication__nav__link:hover { color: $success; }` rules above working
+  // the same way they did when the icon was glyph text. 24px matches the
+  // Material Icons default ligature size these SVGs replace.
+  .header__item__toggle svg,
+  .publication__search__button svg,
+  .publication__nav__link svg {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+  }
+
   // Variables for spacing, sizing, and transitions.
   //
   // Show/hide the navigation panels (TOC and info sidebar).

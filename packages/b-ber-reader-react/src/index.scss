@@ -1,10 +1,25 @@
-@import 'styles/variables';
-@import 'styles/mixins';
-@import 'styles/fonts';
-@import 'styles/icons';
-@import 'styles/controls';
-@import 'styles/spinner';
-@import 'styles/print';
-@import 'styles/media';
-@import 'styles/footnote';
-@import 'styles/layout';
+@use 'styles/variables' as *;
+@use 'styles/mixins' as *;
+@use 'styles/fonts';
+@use 'styles/controls';
+@use 'styles/print';
+@use 'styles/media';
+@use 'styles/footnote';
+@use 'styles/layout';
+
+.bber-spread {
+  break-inside: avoid;
+  // background-color: pink;
+
+  @include break-at('desktop-md') {
+    > figure {
+      @include transition(margin-left, opacity);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 100001;
+    }
+  }
+}

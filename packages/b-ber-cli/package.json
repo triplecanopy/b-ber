@@ -3,16 +3,15 @@
   "version": "3.1.0",
   "description": "",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "bin": {
     "bber": "dist/index.js"
   },
   "scripts": {
-    "prepare:dist": "BABEL_ENV=production babel --config-file ../../babel.config.js -d dist/ src/ --ignore **/__tests__/**",
     "clean": "rimraf dist",
-    "prepare": "npm run clean && npm run prepare:dist",
-    "build": "npm run prepare",
-    "watch": "BABEL_ENV=production babel --config-file ../../babel.config.js -d dist/ src/ --watch src",
-    "start": "babel-node --config-file ../../babel.config.js --trace-warnings ./src/index.js",
+    "build": "tsdown",
+    "watch": "tsdown --watch",
+    "typecheck": "tsc --noEmit",
     "test": "jest"
   },
   "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
@@ -21,7 +20,6 @@
     "access": "public"
   },
   "dependencies": {
-    "@babel/runtime-corejs3": "^7.10.5",
     "@canopycanopycanopy/b-ber-lib": "3.1.0",
     "@canopycanopycanopy/b-ber-logger": "3.1.0",
     "@canopycanopycanopy/b-ber-shapes-sequences": "3.1.0",
@@ -34,17 +32,15 @@
     "yargs": "^13.3.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.10.5",
-    "@babel/core": "^7.10.5",
-    "@babel/node": "^7.8.7",
-    "@babel/preset-env": "^7.10.4",
-    "browserslist": "^4.17.4",
-    "jest": "^26.6.3",
-    "rimraf": "^2.7.1"
+    "@swc/core": "^1.15.40",
+    "@swc/jest": "^0.2.39",
+    "jest": "^29.7.0",
+    "jest-extended": "^3.2.4",
+    "rimraf": "^2.7.1",
+    "tsdown": "^0.22.1",
+    "typescript": "^6.0.3"
   },
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/triplecanopy/b-ber.git"

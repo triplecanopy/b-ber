@@ -2,13 +2,12 @@
   "name": "@canopycanopycanopy/b-ber-shapes-directives",
   "version": "3.1.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "prepare:dist": "BABEL_ENV=production babel --config-file ../../babel.config.js -d ./ src/ --ignore **/__tests__/**",
-    "prepare": "npm run clean && npm run prepare:dist",
-    "clean": "rimraf index.js",
-    "build": "npm run prepare",
-    "watch": "BABEL_ENV=production babel --config-file ../../babel.config.js -d ./ src/ --watch src",
+    "build": "tsdown",
+    "watch": "tsdown --watch",
+    "typecheck": "tsc --noEmit",
     "test": "jest"
   },
   "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
@@ -16,22 +15,11 @@
   "publishConfig": {
     "access": "public"
   },
-  "dependencies": {
-    "@babel/runtime-corejs3": "^7.10.5",
-    "lodash": "^4.17.21",
-    "tar": "^6.1.11"
-  },
   "devDependencies": {
-    "@babel/cli": "^7.10.5",
-    "@babel/core": "^7.10.5",
-    "@babel/preset-env": "^7.10.4",
-    "browserslist": "^4.17.4",
-    "jest": "^26.6.3",
+    "jest": "^29.7.0",
     "rimraf": "^2.7.1"
   },
-  "files": [
-    "index.js"
-  ],
+  "files": ["dist"],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/triplecanopy/b-ber.git"

@@ -9,6 +9,15 @@ jest.mock('@canopycanopycanopy/b-ber-lib/utils', () => ({
   ensure: jest.fn(),
 }))
 
+const mockYargs = () => ({
+  positional: jest.fn().mockReturnThis(),
+  option: jest.fn().mockReturnThis(),
+  fail: jest.fn().mockReturnThis(),
+  help: jest.fn().mockReturnThis(),
+  alias: jest.fn().mockReturnThis(),
+  usage: jest.fn().mockReturnThis(),
+})
+
 describe('xml', () => {
   it('exports a yargs command object', () => {
     expect(xml).toEqual(
@@ -19,5 +28,12 @@ describe('xml', () => {
         handler: expect.any(Function),
       })
     )
+  })
+
+  it('builder configures help and usage', () => {
+    const yargs = mockYargs()
+    const result = xml.builder(yargs)
+    expect(result).toBeDefined()
+    expect(yargs.help).toHaveBeenCalledWith('h')
   })
 })

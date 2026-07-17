@@ -1,0 +1,5 @@
+export { default as Guide } from './Guide'
+export { default as Manifest } from './Manifest'
+export { default as Metadata } from './Metadata'
+export { default as Pkg } from './Pkg'
+export { default as Spine } from './Spine'

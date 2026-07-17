@@ -24,10 +24,8 @@ describe('templates.web', () => {
       height: 'test-height',
     }
 
-    const dataFiguresPage = Object.assign({}, data, { inline: false })
-    const dataPagebreakBefore = Object.assign({}, data, {
-      classes: 'break-before',
-    })
+    const dataFiguresPage = { ...data, inline: false }
+    const dataPagebreakBefore = { ...data, classes: 'break-before' }
 
     expect(web.portrait(data)).toMatchSnapshot()
     expect(web.landscape(data)).toMatchSnapshot()

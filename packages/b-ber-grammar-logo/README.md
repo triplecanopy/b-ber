@@ -1,9 +1,20 @@
-# `@canopycanopycanopy/b-ber-grammar-logo`
+# b-ber-grammar-logo
 
-The `b-ber-grammar-logo` package renders b-ber's custom `logo` Markdown extension (directive) into HTML. More information about b-ber directives can be found in the [All directives](https://github.com/triplecanopy/b-ber/wiki/all-directives) page in the b-ber [Wiki](https://github.com/triplecanopy/b-ber/wiki).
+Handles the `logo` inline directive. Emits a `<figure class="logo">` containing an `<img>` element with a fixed inline width of 120px. Requires a `source` attribute pointing to an image file in the project's `_images` directory; warns (but does not abort) if the file does not exist. The source path is converted to a relative `../images/` URL in the output HTML. Uses `b-ber-parser-figure` as the MarkdownIt plugin.
 
-## Install
+## Usage
+
+Registered as a MarkdownIt plugin by the rendering engine:
+
+```js
+import logo from '@canopycanopycanopy/b-ber-grammar-logo'
+// { plugin, name: 'logo', renderer }
+```
+
+## Dev
 
 ```
-$ npm i -g @canopycanopycanopy/b-ber-grammar-logo
+npm test
 ```
+
+Tests are in `__tests__/index.test.js`.

@@ -1,0 +1,22 @@
+# Table of Contents
+# "in_toc:false" removes the entry from the built-in navigation of the reader.
+# "linear:false" removes the entry from the project's contents.
+- toc:
+        in_toc: false
+        linear: false
+# Cover
+- cover:
+        in_toc: false
+# Front matter
+- kitchen-sink-title-page
+- kitchen-sink-copyright
+# Body
+- kitchen-sink-chapter-01
+- kitchen-sink-chapter-02
+- kitchen-sink-chapter-03
+# Spread edge cases
+- kitchen-sink-spread-single
+- kitchen-sink-spread-consecutive
+- kitchen-sink-spread-edges
+# Back matter
+- kitchen-sink-colophon

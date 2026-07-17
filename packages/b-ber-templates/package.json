@@ -2,22 +2,26 @@
   "name": "@canopycanopycanopy/b-ber-templates",
   "version": "3.1.0",
   "description": "",
-  "main": "index.js",
-  "directories": {
-    "Ncx": "Ncx",
-    "Opf": "Opf",
-    "Ops": "Ops",
-    "Project": "Project",
-    "Toc": "Toc",
-    "Xhtml": "Xhtml",
-    "Xml": "Xml"
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./figures": "./dist/figures/index.js",
+    "./Ncx": "./dist/Ncx/index.js",
+    "./Opf/Guide": "./dist/Opf/Guide.js",
+    "./Opf/Manifest": "./dist/Opf/Manifest.js",
+    "./Opf/Metadata": "./dist/Opf/Metadata.js",
+    "./Opf/Pkg": "./dist/Opf/Pkg.js",
+    "./Opf/Spine": "./dist/Opf/Spine.js",
+    "./Project": "./dist/Project/index.js",
+    "./Toc": "./dist/Toc/index.js",
+    "./Xhtml": "./dist/Xhtml/index.js",
+    "./Xml": "./dist/Xml/index.js"
   },
   "scripts": {
-    "prepare:dist": "BABEL_ENV=production babel --config-file ../../babel.config.js -d ./ src/ --ignore **/__tests__/**",
-    "prepare": "npm run clean && npm run prepare:dist",
-    "clean": "rimraf ./index.js && rimraf Ncx && rimraf Opf && rimraf Ops && rimraf Project && rimraf Toc && rimraf Xhtml && rimraf Xml && rimraf figures",
-    "build": "npm run prepare",
-    "watch": "BABEL_ENV=production babel --config-file ../../babel.config.js -d ./ src/ --watch src",
+    "build": "tsdown",
+    "watch": "tsdown --watch",
+    "typecheck": "tsc --noEmit",
     "test": "jest"
   },
   "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
@@ -26,37 +30,24 @@
     "access": "public"
   },
   "devDependencies": {
-    "@babel/cli": "^7.10.5",
-    "@babel/core": "^7.10.5",
-    "@babel/preset-env": "^7.10.4",
-    "browserslist": "^4.17.4",
-    "jest": "^26.6.3",
-    "rimraf": "^2.7.1"
+    "@swc/core": "^1.15.40",
+    "@swc/jest": "^0.2.39",
+    "jest": "^29.7.0",
+    "rimraf": "^2.7.1",
+    "tsdown": "^0.22.1",
+    "typescript": "^6.0.3"
   },
   "dependencies": {
-    "@babel/runtime-corejs3": "^7.10.5",
     "@canopycanopycanopy/b-ber-lib": "3.1.0",
     "@canopycanopycanopy/b-ber-logger": "3.1.0",
     "fs-extra": "^8.1.0",
     "image-size": "^0.8.3",
     "lodash": "^4.17.21",
-    "lodash.find": "latest",
-    "lodash.has": "latest",
-    "lodash.uniq": "latest",
     "mime-types": "^2.1.24",
     "tar": "^6.1.11",
     "vinyl": "^2.2.0"
   },
-  "files": [
-    "figures",
-    "Ncx",
-    "Opf",
-    "Ops",
-    "Project",
-    "Toc",
-    "Xhtml",
-    "Xml"
-  ],
+  "files": ["dist"],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/triplecanopy/b-ber.git"

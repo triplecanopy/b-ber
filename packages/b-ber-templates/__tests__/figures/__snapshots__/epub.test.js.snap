@@ -3,15 +3,15 @@
 exports[`templates.epub creates the markup 1`] = `
 "
     
-      <div class=\\"figure__large figure__inline figure__inline--portrait test\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
+      <div class="figure__large figure__inline figure__inline--portrait test">
+        <figure id="1">
+          <div class="figure__items">
             
     
-      <img class=\\"portrait\\" alt=\\"test\\" src=\\"../images/test\\"/>
+      <img class="portrait" alt="test" src="../images/test"/>
     
-    <div class=\\"figcaption\\">
-      <p class=\\"small\\">test</p>
+    <div class="figcaption">
+      <p class="small">test</p>
     </div>
     
           </div>
@@ -24,15 +24,15 @@ exports[`templates.epub creates the markup 1`] = `
 exports[`templates.epub creates the markup 2`] = `
 "
     
-      <div class=\\"figure__large figure__inline figure__inline--landscape test\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
+      <div class="figure__large figure__inline figure__inline--landscape test">
+        <figure id="1">
+          <div class="figure__items">
             
     
-      <img class=\\"landscape\\" alt=\\"test\\" src=\\"../images/test\\"/>
+      <img class="landscape" alt="test" src="../images/test"/>
     
-    <div class=\\"figcaption\\">
-      <p class=\\"small\\">test</p>
+    <div class="figcaption">
+      <p class="small">test</p>
     </div>
     
           </div>
@@ -45,15 +45,15 @@ exports[`templates.epub creates the markup 2`] = `
 exports[`templates.epub creates the markup 3`] = `
 "
     
-      <div class=\\"figure__large figure__inline figure__inline--portrait-high test\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
+      <div class="figure__large figure__inline figure__inline--portrait-high test">
+        <figure id="1">
+          <div class="figure__items">
             
     
-      <img class=\\"portrait-high\\" alt=\\"test\\" src=\\"../images/test\\"/>
+      <img class="portrait-high" alt="test" src="../images/test"/>
     
-    <div class=\\"figcaption\\">
-      <p class=\\"small\\">test</p>
+    <div class="figcaption">
+      <p class="small">test</p>
     </div>
     
           </div>
@@ -66,15 +66,15 @@ exports[`templates.epub creates the markup 3`] = `
 exports[`templates.epub creates the markup 4`] = `
 "
     
-      <div class=\\"figure__large figure__inline figure__inline--square test\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
+      <div class="figure__large figure__inline figure__inline--square test">
+        <figure id="1">
+          <div class="figure__items">
             
     
-      <img class=\\"square\\" alt=\\"test\\" src=\\"../images/test\\"/>
+      <img class="square" alt="test" src="../images/test"/>
     
-    <div class=\\"figcaption\\">
-      <p class=\\"small\\">test</p>
+    <div class="figcaption">
+      <p class="small">test</p>
     </div>
     
           </div>
@@ -87,24 +87,24 @@ exports[`templates.epub creates the markup 4`] = `
 exports[`templates.epub creates the markup 5`] = `
 "
     
-      <div class=\\"figure__large figure__large--media figure__inline--square test\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
-            <div class=\\"audio-or-video\\">
-              <audio-or-video id=\\"audio-or-video-1\\" autoplay=\\"false\\">
+      <div class="figure__large figure__large--media figure__inline--square test">
+        <figure id="1">
+          <div class="figure__items">
+            <div class="audio-or-video">
+              <audio-or-video id="audio-or-video-1" autoplay="false">
                 <source />
-                <div class=\\"media__fallback__audio-or-video media__fallback--image\\">
+                <div class="media__fallback__audio-or-video media__fallback--image">
                   <figure>
-                    <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
+                    <img src="test.jpg" alt="Media fallback image"/>
                   </figure>
                 </div>
-                <p class=\\"media__fallback__audio-or-video media__fallback--text\\">Your device does not support the HTML5 audio-or-video API.</p>
+                <p class="media__fallback__audio-or-video media__fallback--text">Your device does not support the HTML5 audio-or-video API.</p>
               </audio-or-video>
             </div>
-            <div class=\\"figcaption\\">
-              <p class=\\"small\\">
+            <div class="figcaption">
+              <p class="small">
                 test<br/>
-                <a href=\\"1.xhtml#ref1\\">Return</a>
+                <a href="1.xhtml#ref1">Return</a>
               </p>
             </div>
           </div>
@@ -117,24 +117,24 @@ exports[`templates.epub creates the markup 5`] = `
 exports[`templates.epub creates the markup 6`] = `
 "
     
-      <div class=\\"figure__large figure__large--media figure__inline--square test\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
-            <div class=\\"audio-or-video\\">
-              <audio-or-video id=\\"audio-or-video-1\\" autoplay=\\"false\\">
+      <div class="figure__large figure__large--media figure__inline--square test">
+        <figure id="1">
+          <div class="figure__items">
+            <div class="audio-or-video">
+              <audio-or-video id="audio-or-video-1" autoplay="false">
                 <source />
-                <div class=\\"media__fallback__audio-or-video media__fallback--image\\">
+                <div class="media__fallback__audio-or-video media__fallback--image">
                   <figure>
-                    <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
+                    <img src="test.jpg" alt="Media fallback image"/>
                   </figure>
                 </div>
-                <p class=\\"media__fallback__audio-or-video media__fallback--text\\">Your device does not support the HTML5 audio-or-video API.</p>
+                <p class="media__fallback__audio-or-video media__fallback--text">Your device does not support the HTML5 audio-or-video API.</p>
               </audio-or-video>
             </div>
-            <div class=\\"figcaption\\">
-              <p class=\\"small\\">
+            <div class="figcaption">
+              <p class="small">
                 test<br/>
-                <a href=\\"1.xhtml#ref1\\">Return</a>
+                <a href="1.xhtml#ref1">Return</a>
               </p>
             </div>
           </div>
@@ -147,28 +147,28 @@ exports[`templates.epub creates the markup 6`] = `
 exports[`templates.epub creates the markup 7`] = `
 "
     
-      <div class=\\"figure__large figure__large--iframe\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
-            <div class=\\"iframe\\">
+      <div class="figure__large figure__large--iframe">
+        <figure id="1">
+          <div class="figure__items">
+            <div class="iframe">
               <iframe
-                src=\\"test\\"
-                title=\\"test-title\\"
-                width=\\"test-width\\"
-                height=\\"test-height\\"
-                webkitallowfullscreen=\\"webkitallowfullscreen\\"
-                mozallowfullscreen=\\"mozallowfullscreen\\"
-                allowfullscreen=\\"allowfullscreen\\"
-                allow=\\"autoplay\\"
-                frameborder=\\"0\\"
-                scrolling=\\"no\\"
+                src="test"
+                title="test-title"
+                width="test-width"
+                height="test-height"
+                webkitallowfullscreen="webkitallowfullscreen"
+                mozallowfullscreen="mozallowfullscreen"
+                allowfullscreen="allowfullscreen"
+                allow="autoplay"
+                frameborder="0"
+                scrolling="no"
               />
             </div>
 
-            <div class=\\"figcaption\\">
-                <p class=\\"small\\">
+            <div class="figcaption">
+                <p class="small">
                   test<br/>
-                  <a href=\\"1.xhtml#ref1\\">Return</a>
+                  <a href="1.xhtml#ref1">Return</a>
               </p>
             </div>
           </div>
@@ -180,16 +180,16 @@ exports[`templates.epub creates the markup 7`] = `
 
 exports[`templates.epub creates the markup 8`] = `
 "
-    <section epub:type=\\"loi\\" class=\\"chapter figures\\">
-      <div class=\\"figure__large figure__large--portrait\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
+    <section epub:type="loi" class="chapter figures">
+      <div class="figure__large figure__large--portrait">
+        <figure id="1">
+          <div class="figure__items">
             
-    <a href=\\"1.xhtml#ref1\\">
-      <img class=\\"portrait\\" alt=\\"test\\" src=\\"../images/test\\"/>
+    <a href="1.xhtml#ref1">
+      <img class="portrait" alt="test" src="../images/test"/>
     </a>
-    <div class=\\"figcaption\\">
-      <p class=\\"small\\">test</p>
+    <div class="figcaption">
+      <p class="small">test</p>
     </div>
     
           </div>
@@ -201,16 +201,16 @@ exports[`templates.epub creates the markup 8`] = `
 
 exports[`templates.epub creates the markup 9`] = `
 "
-    <section epub:type=\\"loi\\" class=\\"chapter figures\\">
-      <div class=\\"figure__large figure__large--landscape\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
+    <section epub:type="loi" class="chapter figures">
+      <div class="figure__large figure__large--landscape">
+        <figure id="1">
+          <div class="figure__items">
             
-    <a href=\\"1.xhtml#ref1\\">
-      <img class=\\"landscape\\" alt=\\"test\\" src=\\"../images/test\\"/>
+    <a href="1.xhtml#ref1">
+      <img class="landscape" alt="test" src="../images/test"/>
     </a>
-    <div class=\\"figcaption\\">
-      <p class=\\"small\\">test</p>
+    <div class="figcaption">
+      <p class="small">test</p>
     </div>
     
           </div>
@@ -222,16 +222,16 @@ exports[`templates.epub creates the markup 9`] = `
 
 exports[`templates.epub creates the markup 10`] = `
 "
-    <section epub:type=\\"loi\\" class=\\"chapter figures\\">
-      <div class=\\"figure__large figure__large--portrait-high\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
+    <section epub:type="loi" class="chapter figures">
+      <div class="figure__large figure__large--portrait-high">
+        <figure id="1">
+          <div class="figure__items">
             
-    <a href=\\"1.xhtml#ref1\\">
-      <img class=\\"portrait-high\\" alt=\\"test\\" src=\\"../images/test\\"/>
+    <a href="1.xhtml#ref1">
+      <img class="portrait-high" alt="test" src="../images/test"/>
     </a>
-    <div class=\\"figcaption\\">
-      <p class=\\"small\\">test</p>
+    <div class="figcaption">
+      <p class="small">test</p>
     </div>
     
           </div>
@@ -243,16 +243,16 @@ exports[`templates.epub creates the markup 10`] = `
 
 exports[`templates.epub creates the markup 11`] = `
 "
-    <section epub:type=\\"loi\\" class=\\"chapter figures\\">
-      <div class=\\"figure__large figure__large--square\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
+    <section epub:type="loi" class="chapter figures">
+      <div class="figure__large figure__large--square">
+        <figure id="1">
+          <div class="figure__items">
             
-    <a href=\\"1.xhtml#ref1\\">
-      <img class=\\"square\\" alt=\\"test\\" src=\\"../images/test\\"/>
+    <a href="1.xhtml#ref1">
+      <img class="square" alt="test" src="../images/test"/>
     </a>
-    <div class=\\"figcaption\\">
-      <p class=\\"small\\">test</p>
+    <div class="figcaption">
+      <p class="small">test</p>
     </div>
     
           </div>
@@ -264,25 +264,25 @@ exports[`templates.epub creates the markup 11`] = `
 
 exports[`templates.epub creates the markup 12`] = `
 "
-    <section epub:type=\\"loi\\" class=\\"chapter figures\\">
-      <div class=\\"figure__large figure__large--media figure__inline--square test\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
-            <div class=\\"audio-or-video\\">
-              <audio-or-video id=\\"audio-or-video-1\\" autoplay=\\"false\\">
+    <section epub:type="loi" class="chapter figures">
+      <div class="figure__large figure__large--media figure__inline--square test">
+        <figure id="1">
+          <div class="figure__items">
+            <div class="audio-or-video">
+              <audio-or-video id="audio-or-video-1" autoplay="false">
                 <source />
-                <div class=\\"media__fallback__audio-or-video media__fallback--image\\">
+                <div class="media__fallback__audio-or-video media__fallback--image">
                   <figure>
-                    <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
+                    <img src="test.jpg" alt="Media fallback image"/>
                   </figure>
                 </div>
-                <p class=\\"media__fallback__audio-or-video media__fallback--text\\">Your device does not support the HTML5 audio-or-video API.</p>
+                <p class="media__fallback__audio-or-video media__fallback--text">Your device does not support the HTML5 audio-or-video API.</p>
               </audio-or-video>
             </div>
-            <div class=\\"figcaption\\">
-              <p class=\\"small\\">
+            <div class="figcaption">
+              <p class="small">
                 test<br/>
-                <a href=\\"1.xhtml#ref1\\">Return</a>
+                <a href="1.xhtml#ref1">Return</a>
               </p>
             </div>
           </div>
@@ -294,25 +294,25 @@ exports[`templates.epub creates the markup 12`] = `
 
 exports[`templates.epub creates the markup 13`] = `
 "
-    <section epub:type=\\"loi\\" class=\\"chapter figures\\">
-      <div class=\\"figure__large figure__large--media figure__inline--square test\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
-            <div class=\\"audio-or-video\\">
-              <audio-or-video id=\\"audio-or-video-1\\" autoplay=\\"false\\">
+    <section epub:type="loi" class="chapter figures">
+      <div class="figure__large figure__large--media figure__inline--square test">
+        <figure id="1">
+          <div class="figure__items">
+            <div class="audio-or-video">
+              <audio-or-video id="audio-or-video-1" autoplay="false">
                 <source />
-                <div class=\\"media__fallback__audio-or-video media__fallback--image\\">
+                <div class="media__fallback__audio-or-video media__fallback--image">
                   <figure>
-                    <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
+                    <img src="test.jpg" alt="Media fallback image"/>
                   </figure>
                 </div>
-                <p class=\\"media__fallback__audio-or-video media__fallback--text\\">Your device does not support the HTML5 audio-or-video API.</p>
+                <p class="media__fallback__audio-or-video media__fallback--text">Your device does not support the HTML5 audio-or-video API.</p>
               </audio-or-video>
             </div>
-            <div class=\\"figcaption\\">
-              <p class=\\"small\\">
+            <div class="figcaption">
+              <p class="small">
                 test<br/>
-                <a href=\\"1.xhtml#ref1\\">Return</a>
+                <a href="1.xhtml#ref1">Return</a>
               </p>
             </div>
           </div>
@@ -324,29 +324,29 @@ exports[`templates.epub creates the markup 13`] = `
 
 exports[`templates.epub creates the markup 14`] = `
 "
-    <section epub:type=\\"loi\\" class=\\"chapter figures\\">
-      <div class=\\"figure__large figure__large--iframe\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
-            <div class=\\"iframe\\">
+    <section epub:type="loi" class="chapter figures">
+      <div class="figure__large figure__large--iframe">
+        <figure id="1">
+          <div class="figure__items">
+            <div class="iframe">
               <iframe
-                src=\\"test\\"
-                title=\\"test-title\\"
-                width=\\"test-width\\"
-                height=\\"test-height\\"
-                webkitallowfullscreen=\\"webkitallowfullscreen\\"
-                mozallowfullscreen=\\"mozallowfullscreen\\"
-                allowfullscreen=\\"allowfullscreen\\"
-                allow=\\"autoplay\\"
-                frameborder=\\"0\\"
-                scrolling=\\"no\\"
+                src="test"
+                title="test-title"
+                width="test-width"
+                height="test-height"
+                webkitallowfullscreen="webkitallowfullscreen"
+                mozallowfullscreen="mozallowfullscreen"
+                allowfullscreen="allowfullscreen"
+                allow="autoplay"
+                frameborder="0"
+                scrolling="no"
               />
             </div>
 
-            <div class=\\"figcaption\\">
-                <p class=\\"small\\">
+            <div class="figcaption">
+                <p class="small">
                   test<br/>
-                  <a href=\\"1.xhtml#ref1\\">Return</a>
+                  <a href="1.xhtml#ref1">Return</a>
               </p>
             </div>
           </div>
@@ -359,15 +359,15 @@ exports[`templates.epub creates the markup 14`] = `
 exports[`templates.epub creates the markup 15`] = `
 "
     
-      <div class=\\"figure__large figure__inline figure__inline--portrait break-before\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
+      <div class="figure__large figure__inline figure__inline--portrait break-before">
+        <figure id="1">
+          <div class="figure__items">
             
     
-      <img class=\\"portrait\\" alt=\\"test\\" src=\\"../images/test\\"/>
+      <img class="portrait" alt="test" src="../images/test"/>
     
-    <div class=\\"figcaption\\">
-      <p class=\\"small\\">test</p>
+    <div class="figcaption">
+      <p class="small">test</p>
     </div>
     
           </div>
@@ -380,15 +380,15 @@ exports[`templates.epub creates the markup 15`] = `
 exports[`templates.epub creates the markup 16`] = `
 "
     
-      <div class=\\"figure__large figure__inline figure__inline--landscape break-before\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
+      <div class="figure__large figure__inline figure__inline--landscape break-before">
+        <figure id="1">
+          <div class="figure__items">
             
     
-      <img class=\\"landscape\\" alt=\\"test\\" src=\\"../images/test\\"/>
+      <img class="landscape" alt="test" src="../images/test"/>
     
-    <div class=\\"figcaption\\">
-      <p class=\\"small\\">test</p>
+    <div class="figcaption">
+      <p class="small">test</p>
     </div>
     
           </div>
@@ -401,15 +401,15 @@ exports[`templates.epub creates the markup 16`] = `
 exports[`templates.epub creates the markup 17`] = `
 "
     
-      <div class=\\"figure__large figure__inline figure__inline--portrait-high break-before\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
+      <div class="figure__large figure__inline figure__inline--portrait-high break-before">
+        <figure id="1">
+          <div class="figure__items">
             
     
-      <img class=\\"portrait-high\\" alt=\\"test\\" src=\\"../images/test\\"/>
+      <img class="portrait-high" alt="test" src="../images/test"/>
     
-    <div class=\\"figcaption\\">
-      <p class=\\"small\\">test</p>
+    <div class="figcaption">
+      <p class="small">test</p>
     </div>
     
           </div>
@@ -422,15 +422,15 @@ exports[`templates.epub creates the markup 17`] = `
 exports[`templates.epub creates the markup 18`] = `
 "
     
-      <div class=\\"figure__large figure__inline figure__inline--square break-before\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
+      <div class="figure__large figure__inline figure__inline--square break-before">
+        <figure id="1">
+          <div class="figure__items">
             
     
-      <img class=\\"square\\" alt=\\"test\\" src=\\"../images/test\\"/>
+      <img class="square" alt="test" src="../images/test"/>
     
-    <div class=\\"figcaption\\">
-      <p class=\\"small\\">test</p>
+    <div class="figcaption">
+      <p class="small">test</p>
     </div>
     
           </div>
@@ -443,24 +443,24 @@ exports[`templates.epub creates the markup 18`] = `
 exports[`templates.epub creates the markup 19`] = `
 "
     
-      <div class=\\"figure__large figure__large--media figure__inline--square break-before\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
-            <div class=\\"audio-or-video\\">
-              <audio-or-video id=\\"audio-or-video-1\\" autoplay=\\"false\\">
+      <div class="figure__large figure__large--media figure__inline--square break-before">
+        <figure id="1">
+          <div class="figure__items">
+            <div class="audio-or-video">
+              <audio-or-video id="audio-or-video-1" autoplay="false">
                 <source />
-                <div class=\\"media__fallback__audio-or-video media__fallback--image\\">
+                <div class="media__fallback__audio-or-video media__fallback--image">
                   <figure>
-                    <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
+                    <img src="test.jpg" alt="Media fallback image"/>
                   </figure>
                 </div>
-                <p class=\\"media__fallback__audio-or-video media__fallback--text\\">Your device does not support the HTML5 audio-or-video API.</p>
+                <p class="media__fallback__audio-or-video media__fallback--text">Your device does not support the HTML5 audio-or-video API.</p>
               </audio-or-video>
             </div>
-            <div class=\\"figcaption\\">
-              <p class=\\"small\\">
+            <div class="figcaption">
+              <p class="small">
                 test<br/>
-                <a href=\\"1.xhtml#ref1\\">Return</a>
+                <a href="1.xhtml#ref1">Return</a>
               </p>
             </div>
           </div>
@@ -473,24 +473,24 @@ exports[`templates.epub creates the markup 19`] = `
 exports[`templates.epub creates the markup 20`] = `
 "
     
-      <div class=\\"figure__large figure__large--media figure__inline--square break-before\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
-            <div class=\\"audio-or-video\\">
-              <audio-or-video id=\\"audio-or-video-1\\" autoplay=\\"false\\">
+      <div class="figure__large figure__large--media figure__inline--square break-before">
+        <figure id="1">
+          <div class="figure__items">
+            <div class="audio-or-video">
+              <audio-or-video id="audio-or-video-1" autoplay="false">
                 <source />
-                <div class=\\"media__fallback__audio-or-video media__fallback--image\\">
+                <div class="media__fallback__audio-or-video media__fallback--image">
                   <figure>
-                    <img src=\\"test.jpg\\" alt=\\"Media fallback image\\"/>
+                    <img src="test.jpg" alt="Media fallback image"/>
                   </figure>
                 </div>
-                <p class=\\"media__fallback__audio-or-video media__fallback--text\\">Your device does not support the HTML5 audio-or-video API.</p>
+                <p class="media__fallback__audio-or-video media__fallback--text">Your device does not support the HTML5 audio-or-video API.</p>
               </audio-or-video>
             </div>
-            <div class=\\"figcaption\\">
-              <p class=\\"small\\">
+            <div class="figcaption">
+              <p class="small">
                 test<br/>
-                <a href=\\"1.xhtml#ref1\\">Return</a>
+                <a href="1.xhtml#ref1">Return</a>
               </p>
             </div>
           </div>
@@ -503,28 +503,28 @@ exports[`templates.epub creates the markup 20`] = `
 exports[`templates.epub creates the markup 21`] = `
 "
     
-      <div class=\\"figure__large figure__large--iframe\\">
-        <figure id=\\"1\\">
-          <div class=\\"figure__items\\">
-            <div class=\\"iframe\\">
+      <div class="figure__large figure__large--iframe">
+        <figure id="1">
+          <div class="figure__items">
+            <div class="iframe">
               <iframe
-                src=\\"test\\"
-                title=\\"test-title\\"
-                width=\\"test-width\\"
-                height=\\"test-height\\"
-                webkitallowfullscreen=\\"webkitallowfullscreen\\"
-                mozallowfullscreen=\\"mozallowfullscreen\\"
-                allowfullscreen=\\"allowfullscreen\\"
-                allow=\\"autoplay\\"
-                frameborder=\\"0\\"
-                scrolling=\\"no\\"
+                src="test"
+                title="test-title"
+                width="test-width"
+                height="test-height"
+                webkitallowfullscreen="webkitallowfullscreen"
+                mozallowfullscreen="mozallowfullscreen"
+                allowfullscreen="allowfullscreen"
+                allow="autoplay"
+                frameborder="0"
+                scrolling="no"
               />
             </div>
 
-            <div class=\\"figcaption\\">
-                <p class=\\"small\\">
+            <div class="figcaption">
+                <p class="small">
                   test<br/>
-                  <a href=\\"1.xhtml#ref1\\">Return</a>
+                  <a href="1.xhtml#ref1">Return</a>
               </p>
             </div>
           </div>
@@ -532,4 +532,25 @@ exports[`templates.epub creates the markup 21`] = `
       </div>
     
     "
+`;
+
+exports[`templates.epub vimeo() renders unsupported figure markup using poster image 1`] = `
+"
+    
+      <div class="figure__large figure__inline figure__inline--portrait test">
+        <figure id="1">
+          <div class="figure__items">
+            
+    
+      <img class="portrait" alt="Media Fallback Image" src="../images/test.jpg"/>
+    
+    <div class="figcaption">
+      <p class="small">Your device does not support embedded media.</p>
+    </div>
+    
+          </div>
+        </figure>
+      </div>
+    
+"
 `;

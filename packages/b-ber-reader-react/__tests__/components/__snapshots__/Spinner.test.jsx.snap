@@ -3,10 +3,10 @@
 exports[`Spinner renders the component 1`] = `
 <div>
   <div
-    class="bber-spinner bber-spinner--visible"
+    class="spinner visible"
   >
     <div
-      class="bber-spinner__detail"
+      class="detail"
     />
   </div>
 </div>
@@ -15,10 +15,10 @@ exports[`Spinner renders the component 1`] = `
 exports[`Spinner renders the component 2`] = `
 <div>
   <div
-    class="bber-spinner"
+    class="spinner"
   >
     <div
-      class="bber-spinner__detail"
+      class="detail"
     />
   </div>
 </div>

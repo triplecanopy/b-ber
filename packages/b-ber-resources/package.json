@@ -2,13 +2,13 @@
   "name": "@canopycanopycanopy/b-ber-resources",
   "version": "3.1.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "test": "jest",
-    "prepare:dist": "BABEL_ENV=production babel --config-file ../../babel.config.js -d ./ src/ --ignore **/__tests__/**",
-    "clean": "rimraf index.js",
-    "prepare": "npm run clean && npm run prepare:dist",
-    "build": "npm run prepare"
+    "build": "tsdown",
+    "watch": "tsdown --watch",
+    "typecheck": "tsc --noEmit"
   },
   "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
   "license": "GPL-3.0-or-later",
@@ -16,11 +16,7 @@
     "access": "public"
   },
   "devDependencies": {
-    "@babel/cli": "^7.10.5",
-    "@babel/core": "^7.10.5",
-    "@babel/preset-env": "^7.10.4",
-    "browserslist": "^4.17.4",
-    "jest": "^26.6.3",
+    "jest": "^29.7.0",
     "rimraf": "^2.7.1"
   },
   "dependencies": {
@@ -28,10 +24,7 @@
     "lodash": "^4.17.21",
     "tar": "^6.1.11"
   },
-  "files": [
-    "b-ber-logo.png",
-    "default-publishers-logo.png"
-  ],
+  "files": ["dist", "b-ber-logo.png", "default-publishers-logo.png"],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/triplecanopy/b-ber.git"

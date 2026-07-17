@@ -2,7 +2,10 @@ import fs from 'fs-extra'
 import 'image-size'
 import mobi from '../../src/figures/mobi'
 
-jest.mock('@canopycanopycanopy/b-ber-lib/State')
+jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
+  build: 'mobi',
+  src: { images: (path) => path },
+}))
 jest.mock('image-size', () => jest.fn(() => ({ width: 10, height: 10 })))
 
 afterAll(() => fs.remove('_project'))
@@ -23,10 +26,8 @@ describe('templates.mobi', () => {
       poster: 'test.jpg',
     }
 
-    const dataFiguresPage = Object.assign({}, data, { inline: false })
-    const dataPagebreakBefore = Object.assign({}, data, {
-      classes: 'break-before',
-    })
+    const dataFiguresPage = { ...data, inline: false }
+    const dataPagebreakBefore = { ...data, classes: 'break-before' }
 
     expect(mobi.portrait(data)).toMatchSnapshot()
     expect(mobi.landscape(data)).toMatchSnapshot()

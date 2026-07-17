@@ -1,5 +1,5 @@
-import fs from 'fs-extra'
 import state from '@canopycanopycanopy/b-ber-lib/State'
+import fs from 'fs-extra'
 import Xhtml from '../src/Xhtml'
 
 jest.mock('@canopycanopycanopy/b-ber-lib/State', () => {
@@ -41,5 +41,13 @@ describe('templates.Xhtml', () => {
 
   it('creates the loi elements', () => {
     expect(Xhtml.loi()).toMatchSnapshot()
+  })
+
+  it('creates a JSON-LD script element', () => {
+    const file = Xhtml.jsonLD()
+    const content = file.contents.toString()
+    expect(content).toMatchSnapshot()
+    expect(content).toContain('application/ld+json')
+    expect(content).toContain('{% body %}')
   })
 })

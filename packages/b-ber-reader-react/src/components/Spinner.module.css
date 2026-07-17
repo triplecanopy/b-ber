@@ -1,0 +1,44 @@
+/*
+ * Migrated from src/styles/_spinner.scss (TASK-076 — CSS Modules POC).
+ * Class names are scoped by the bundler; the component references them via the
+ * imported `styles` object. Values are inlined from the former Sass tokens
+ * ($white → rgba(255,255,255,1), $black → #333, $spinner-size → 40px). The
+ * shared design tokens move to a single global stylesheet (custom properties)
+ * in the full chrome pass — see TASK-076 audit.
+ */
+@keyframes pulse {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+.spinner {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: none;
+  background: rgba(255, 255, 255, 1);
+}
+
+.visible {
+  display: block;
+}
+
+.detail {
+  position: absolute;
+  top: calc(50% - 20px);
+  left: calc(50% - 20px);
+  width: 40px;
+  height: 40px;
+  margin: 0;
+  padding: 0;
+  background-color: #333333;
+  border-radius: 100%;
+  animation: pulse 1s infinite ease-in-out;
+}

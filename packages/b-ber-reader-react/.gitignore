@@ -6,17 +6,12 @@ node_modules
 npm-debug.log*
 yarn-debug.log*
 
-webpack/*
-!webpack/common.js
-!webpack/loaders.js
-!webpack/plugins.js
-!webpack/config.development.js
-!webpack/config.production.js
-!webpack/config.custom-example.js
 
 dev/*
 !dev/index.ejs
-!dev/index.example.js
+!dev/index.example.jsx
+!dev/index.html
+!dev/index.e2e.jsx
 .env*
 
 /*.tgz

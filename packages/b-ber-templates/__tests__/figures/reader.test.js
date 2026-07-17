@@ -24,10 +24,8 @@ describe('templates.reader', () => {
       height: 'test-height',
     }
 
-    const dataFiguresPage = Object.assign({}, data, { inline: false })
-    const dataPagebreakBefore = Object.assign({}, data, {
-      classes: 'break-before',
-    })
+    const dataFiguresPage = { ...data, inline: false }
+    const dataPagebreakBefore = { ...data, classes: 'break-before' }
 
     expect(reader.portrait(data)).toMatchSnapshot()
     expect(reader.landscape(data)).toMatchSnapshot()

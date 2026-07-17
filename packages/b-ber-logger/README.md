@@ -1,58 +1,31 @@
 # `@canopycanopycanopy/b-ber-logger`
 
-`b-ber-logger` is b-ber's console logger.
+`b-ber-logger` is the logging utility for the b-ber build pipeline. It exports a single `Logger` singleton (`log`) that all other packages import instead of using `console.log` directly. The logger supports levelled output (`info`, `warn`, `error`, `debug`, `trace`, `notice`, `inspect`), chalk-coloured formatting, indentation tracking across nested task steps, a build-run timer, end-of-run summary of collected warnings and errors, and quiet/verbose/debug modes driven by CLI flags (`--quiet`, `--verbose`, `--debug`, `--log-level=N`).
 
-## Install
+## Key exports
 
-```
-$ npm i -g @canopycanopycanopy/b-ber-logger
-```
+| Export          | Purpose                                                       |
+| --------------- | ------------------------------------------------------------- |
+| `log` (default) | Singleton `Logger` instance; import and call methods directly |
 
-## Usage
+### Logger methods
 
-Output from `bber` commands can be logged to the console with different levels of verbosity.
+| Method                    | Purpose                                            |
+| ------------------------- | -------------------------------------------------- |
+| `log.info(msg)`           | Standard informational output                      |
+| `log.warn(msg)`           | Warning, collected for end-of-run summary          |
+| `log.error(msg)`          | Error output, collected for end-of-run summary     |
+| `log.debug(msg)`          | Debug output; enabled by `--debug` flag            |
+| `log.trace(msg)`          | Trace-level output                                 |
+| `log.notice(msg)`         | Notice-level output                                |
+| `log.inspect(val)`        | Pretty-prints objects                              |
+| `log.printSummary()`      | Prints collected warnings/errors at end of a build |
+| `log.configure(opts)`     | Applies settings (logLevel, boringOutput, etc.)    |
+| `log.registerSequence(n)` | Sets total task count for progress display         |
 
-### Arguments
+## Dev
 
-#### `--quiet`
-
-The `--quiet` flag will emit nothing to the console and is an alias of `loglevel=0`.
-
-```
-$ bber build --quiet
-$ bber build --log-level=0
-```
-
-#### `--warn`
-
-The `---warn` flag will emit warnings and single-line error messages to the console and is an alias of `loglevel=1`.
-
-```
-$ bber build --warn
-$ bber build --log-level=1
-```
-
-#### `--error`
-
-The `--error` flag will emit warnings and stack traces for errors to the console and is an alias of `loglevel=2`.
-
-```
-$ bber build --error
-$ bber build --log-level=2
-```
-
-#### `--verbose`
-
-The `--verbose` flat will emit messages, warnings, errors and stack traces to the console.
-
-```
-$ bber build --verbose
-```
-
-#### `--debug`
-
-The `--debug` flag will emit stack traces for everything, as well as warnings and errors to the console.
-
-```
-$ bber build --debug
+```bash
+npm test      # jest
+npm run build
 ```

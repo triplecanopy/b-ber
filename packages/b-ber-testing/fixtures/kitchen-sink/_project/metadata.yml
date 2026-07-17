@@ -1,0 +1,42 @@
+# ==============================================================================
+# Project Metadata
+# Dublin Core terms: http://dublincore.org/documents/dcmi-terms/
+# ==============================================================================
+
+- term: title
+  value: Kitchen Sink
+  term_property: title-type
+  term_property_value: main
+
+- term: description
+  value: A b-ber test fixture that exercises every built-in directive.
+
+- term: creator
+  value: Triple Canopy
+  term_property: role
+  term_property_value: aut
+
+- term: contributor
+  value: b-ber
+  term_property: role
+  term_property_value: mrk
+
+- term: language
+  value: en-US
+
+- term: rights
+  value: © 2026 Triple Canopy
+
+- term: format
+  value: epub+zip
+
+- term: date
+  value: 2026-01-01T00:00:00.000Z
+
+- term: publisher
+  value: Triple Canopy
+
+- term: identifier
+  value: kitchen-sink-b-ber-fixture-001
+- term: cover
+  value: __bber_cover__d0dc481a9caadda380523127fc70bc147cd84696.jpg

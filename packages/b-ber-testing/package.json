@@ -1,0 +1,21 @@
+{
+  "name": "@canopycanopycanopy/b-ber-testing",
+  "version": "3.1.0",
+  "description": "E2E test fixtures and test runner for b-ber",
+  "private": true,
+  "scripts": {
+    "test": "playwright test",
+    "test:install": "playwright install chromium"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.0",
+    "@types/js-yaml": "^4.0.9",
+    "js-yaml": "^4.1.0"
+  },
+  "author": "Triple Canopy <b-ber@canopycanopycanopy.com> (https://triplecanopy.github.io/)",
+  "license": "GPL-3.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/triplecanopy/b-ber.git"
+  }
+}

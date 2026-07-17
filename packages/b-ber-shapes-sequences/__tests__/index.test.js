@@ -1,3 +1,4 @@
+import * as index from '../src/index'
 import sequences, { build } from '../src/sequences'
 
 describe('sequences', () => {
@@ -11,5 +12,13 @@ describe('sequences', () => {
     expect(sequences.web).toEqual([...build, 'web'])
     expect(sequences.sample).toEqual([...build, 'sample'])
     expect(sequences.reader).toEqual([...build, 'reader'])
+    expect(sequences.xml).toEqual([...build, 'xml'])
+  })
+})
+
+describe('index', () => {
+  it('re-exports sequences and createBuildSequence', () => {
+    expect(index.sequences).toBe(sequences)
+    expect(index.createBuildSequence).toBeFunction()
   })
 })
