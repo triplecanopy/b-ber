@@ -43,6 +43,6 @@
   "dependencies": {
     "@canopycanopycanopy/b-ber-shapes-directives": "4.0.0",
     "lodash": "^4.17.21",
-    "tar": "^6.1.11"
+    "tar": "^7.5.19"
   }
 }
