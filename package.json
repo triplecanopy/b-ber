@@ -81,7 +81,7 @@
     "jest-environment-jsdom-global": "^4.0.0",
     "jest-extended": "^3.2.4",
     "js-string-escape": "^1.0.1",
-    "lerna": "^8",
+    "lerna": "^9",
     "lerna-audit": "^1.2.0",
     "lint-staged": "^9.2.0",
     "lodash": "^4.17.21",
