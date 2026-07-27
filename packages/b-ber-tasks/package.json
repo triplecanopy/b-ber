@@ -38,7 +38,7 @@
     "lodash": "^4.17.21",
     "lunr": "^2.1.6",
     "postcss": "^7.0.14",
-    "pureimage": "^0.1.6",
+    "pureimage": "^0.4.20",
     "recursive-readdir": "^2.2.2",
     "sass": "^1.49.8",
     "system": "^2.0.1",
