@@ -55,7 +55,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.16",
-    "@commitlint/cli": "^16.2.3",
+    "@commitlint/cli": "^21.2.1",
     "@commitlint/config-conventional": "^16.2.1",
     "@swc/core": "^1.15.40",
     "@swc/jest": "^0.2.39",
