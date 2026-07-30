@@ -37,8 +37,8 @@
     "@types/prop-types": "^15.7.15",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
-    "@types/use-sync-external-store": "^0.0.6",
-    "@vitejs/plugin-react": "^6.0.2",
+    "@types/use-sync-external-store": "^1.5.0",
+    "@vitejs/plugin-react": "^6.0.4",
     "autoprefixer": "^9.6.1",
     "buffer": "^6.0.3",
     "concurrently": "^3.5.1",
@@ -55,14 +55,14 @@
     "postcss-cssnext": "^3.1.0",
     "postcss-import": "^11.1.0",
     "prop-types": "^15.6.1",
-    "react-test-renderer": ">=16.4 <=19",
+    "react-test-renderer": ">=16.4 <=20",
     "resize-observer-polyfill": "^1.5.0",
     "rimraf": "^2.7.1",
     "sass": "^1.70.0",
     "setimmediate": "^1.0.5",
     "stream-browserify": "^3.0.0",
     "tar": "^6.1.11",
-    "vite": "^8.0.16",
+    "vite": "^8.1.5",
     "xmlhttprequest-ssl": "^2.0.0"
   },
   "dependencies": {
@@ -85,7 +85,10 @@
     "react": ">=16.2.0 <=19",
     "react-dom": ">=16.2.0 <=19"
   },
-  "files": ["dist", "index.d.ts"],
+  "files": [
+    "dist",
+    "index.d.ts"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/triplecanopy/b-ber.git"
