@@ -51,7 +51,7 @@
     "jest-environment-jsdom-global": "^4.0.0",
     "nodemon": "^2.0.15",
     "os-browserify": "^0.3.0",
-    "postcss": "^7.0.14",
+    "postcss": "^8.5.23",
     "postcss-cssnext": "^3.1.0",
     "postcss-import": "^11.1.0",
     "prop-types": "^15.6.1",
