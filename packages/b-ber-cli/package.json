@@ -37,7 +37,7 @@
     "jest": "^29.7.0",
     "jest-extended": "^3.2.4",
     "rimraf": "^2.7.1",
-    "tsdown": "^0.22.1",
+    "tsdown": "^0.23.0",
     "typescript": "^6.0.3"
   },
   "files": ["dist"],

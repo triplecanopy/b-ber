@@ -21,7 +21,7 @@
     "@types/markdown-it": "^14.1.2",
     "jest": "^29.7.0",
     "rimraf": "^2.7.1",
-    "tsdown": "^0.22.1",
+    "tsdown": "^0.23.0",
     "typescript": "^6.0.3"
   },
   "dependencies": {
@@ -40,13 +40,15 @@
     "@canopycanopycanopy/b-ber-grammar-vimeo": "4.0.0",
     "@canopycanopycanopy/b-ber-parser-footnotes": "4.0.0",
     "@canopycanopycanopy/b-ber-parser-gallery": "4.0.0",
-    "highlight.js": "^11.11.1",
+    "highlight.js": "^11.12.0",
     "lodash": "^4.17.21",
     "markdown-it": "^8.4.1",
-    "markdown-it-front-matter": "^0.1.2",
+    "markdown-it-front-matter": "^0.2.4",
     "tar": "^6.1.11"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/triplecanopy/b-ber.git"
