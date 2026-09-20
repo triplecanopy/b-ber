@@ -1,0 +1,86 @@
+# Phase 2 of 2. Publishes whatever release-prepare.yml's PR merged.
+#
+# `lerna publish from-package` performs NO git operations — it publishes every
+# workspace package whose package.json version is not yet on the registry. That
+# is what lets this run against protected `main` without a bypass, and it also
+# makes the job idempotent: on an ordinary push, every version is already
+# published and there is nothing to do. See AGENTS.md § Releases.
+name: Release · publish
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          registry-url: https://registry.npmjs.org
+
+      - name: Is this version already on the registry?
+        id: check
+        run: |
+          VERSION=$(node -p 'require("./lerna.json").version')
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+          # b-ber-cli stands in for the whole workspace: lerna.json is in fixed
+          # mode, so every package moves to the same version together.
+          if npm view "@canopycanopycanopy/b-ber-cli@$VERSION" version >/dev/null 2>&1
+          then
+            echo "Version $VERSION is already published — nothing to do."
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Version $VERSION is not on the registry — releasing."
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Install
+        if: steps.check.outputs.publish == 'true'
+        run: npm ci --ignore-scripts
+
+      # REQUIRED, and the whole reason this job exists rather than a bare
+      # `lerna publish`: no package defines prepublishOnly/prepare/prepack, and
+      # the root's prepublishOnly never fires because the root is private. So
+      # nothing builds these packages as part of publishing — `lerna publish`
+      # ships whatever happens to be sitting in each dist/. 4.0.2 shipped correct
+      # artifacts only because the tree happened to be freshly built by hand.
+      - name: Build
+        if: steps.check.outputs.publish == 'true'
+        run: npm run build
+
+      - name: Lint and test
+        if: steps.check.outputs.publish == 'true'
+        run: npm test
+
+      - name: Publish to npm
+        if: steps.check.outputs.publish == 'true'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npx lerna publish from-package --yes
+
+      # Tagged only now, so a tag can never point at a version npm rejected.
+      # Created on `main` after the merge, so the merge method is irrelevant.
+      - name: Tag the release
+        if: steps.check.outputs.publish == 'true'
+        run: |
+          VERSION='${{ steps.check.outputs.version }}'
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git tag "v$VERSION"
+          git push origin "v$VERSION"
