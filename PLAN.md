@@ -1,7 +1,8 @@
 # b-ber monorepo — Project Plan
 
-_Last updated: 2026-06-21 (React 19 audit + TASK-068 housekeeping & TASK-111
-icon-font removal done & merged; TASK-094 marked done, TASK-105 superseded)._
+_Last updated: 2026-09-20 (TASK-112 — 4.0.0 build-breaking asset-path
+regression fixed, patch release pending; TASK-113 opened for the watch-mode
+gap; branch strategy switched to `main`-as-trunk + `TASK-NNN-<slug>` branches)._
 
 This file is the **current state**. Conventions, standards, and the task-file
 format live in [AGENTS.md](./AGENTS.md). All tasks live in `tasks/` at the repo
@@ -31,7 +32,7 @@ Every task belongs to exactly one; every new task must too.
 
 | Feature | Done | Active | Backlog | State |
 | ------- | ---- | ------ | ------- | ----- |
-| 🔧 Upgrade tooling | 23 | 0 | 2 | Core toolchain shipped; scripts cleaned + watch scripts applied (TASK-038). Remaining: TASK-045 (release/changelog), TASK-109 (SCSS toolchain) |
+| 🔧 Upgrade tooling | 23 | 1 | 3 | Core toolchain shipped; scripts cleaned + watch scripts applied (TASK-038). **TASK-112 active — 4.0.0 shipped unbuildable** (tsdown's flat bundle broke `__dirname` asset reads); fix verified, needs `4.0.1`. Remaining: TASK-113 (watch-mode asset gap, from TASK-112), TASK-045 (release/changelog), TASK-109 (SCSS toolchain) |
 | 🔤 Migrate JS→TS | 18 | 0 | 0 | ✅ **Epic complete** — reader-react (TASK-032) merged; every package except legacy `b-ber-reader` is TypeScript |
 | ✅ Unit test coverage | 2 | 1 | 2 | Epic in progress; most packages at target, a few laggards |
 | 🧪 E2E testing | 5 | 1 | 2 | Pipeline green in CI; skill + iframe fix remain |
@@ -52,6 +53,8 @@ dependabot reconfigured (TASK-037), architecture diagrams expanded (TASK-017).
 
 | Task | Pri | Outstanding work |
 | ---- | --- | ---------------- |
+| TASK-112 | **high** | ⏳ **In progress** — fix verified, awaiting `4.0.1`. `4.0.0` cannot build a default project: tsdown bundles `src/` to a single `dist/index.js`, so `__dirname` is `dist/`, but `copy.sh` still mirrored `src/` into `dist/cover/` + `dist/web/`. Broke the cover font (every format, for projects with no `cover` in metadata.yml) and all four `web` browser scripts. Fallout from TASK-030. Also fixed a cheerio default-import interop break from the same bundling change |
+| TASK-113 | med | Discovery — `b-ber-tasks`'s `watch` runs `tsdown --watch` but not `copy.sh`, and `clean: true` wipes `dist/`, so watch-mode `dist/` is missing the assets TASK-112 just fixed. Survey build/watch asymmetry across packages; evaluate tsdown `hooks['build:done']` / built-in `copy` to retire `copy.sh` |
 | TASK-109 | med | Modernize project/theme SCSS compile path — drop the custom `~` importer, move off the legacy dart-sass `render` API, `@import`→`@use`/`@forward`, refresh autoprefixer/PostCSS (from TASK-076 findings) |
 | TASK-045 | med | Refactor changelog generation + release workflow (incl. `postpublish`/`run-ci.js` + `publish:*` scripts deferred from TASK-038) |
 
@@ -369,6 +372,8 @@ sequencing work:
 
 | Priority | Task | Action | Why now |
 | -------- | ---- | ------ | ------- |
+| 0 | TASK-112 | **Ship `4.0.1`** — fix committed on `TASK-112-dirname-asset-paths`, verified against a fresh `bber new` project | `4.0.0` cannot build a default project; a consumer is blocked on it right now |
+| 1 | TASK-113 | Investigate the watch-mode asset gap | Same copy-step design weakness as TASK-112, from the other end; cheap discovery |
 | 1 | TASK-106 | ✅ **Done** — state migration shipped (Redux removed, built-in store + ReaderApiContext, browser QA passed). Dissolved `connect()` + TASK-032 type debt. | — |
 | 2 | TASK-050 | CLI handler tests | Unblocks TASK-046 and lifts cli coverage toward 75% |
 | 3 | TASK-004 | Push coverage laggards to 75% | Closes the coverage epic; cli + b-ber-tasks are the long poles |
@@ -379,16 +384,17 @@ sequencing work:
 
 ## 🌿 Project overview / branch strategy
 
-`feat/upgrades` is the long-lived **integration branch**: planning, docs, and
-merged feature branches land here; it merges to `main` when a coherent set of
-work is complete and `npm test` passes from the repo root. **Implementation
-work happens on feature branches** (e.g. `feat/ts-stage-4`, per-package
-`feat/node-modernization-*`); never commit implementation directly to `main`.
+**`main` is now the trunk.** `feat/upgrades` merged into `main` and shipped as
+`4.0.0` (2026-07-16); there is no long-lived integration branch any more. Work
+happens on **task branches named `TASK-NNN-<short-descriptive-title>`**, cut from
+`main` and merged back to `main` once `npm test` passes from the repo root. See
+[AGENTS.md § Branch Strategy](./AGENTS.md#branch-strategy) for the full workflow.
 
 | Branch | Role | Status |
 | ------ | ---- | ------ |
-| `main` | stable, production-ready | — |
-| `feat/upgrades` | integration branch | active |
+| `main` | trunk — stable, production-ready | active |
+| `TASK-112-dirname-asset-paths` | TASK-112 (asset-path regression fix) | pending merge |
+| `feat/upgrades` | former integration branch | merged ✓ (`84ca5785`, shipped `4.0.0`) |
 | `feat/vite-migration` | TASK-006/007/015 | merged ✓ |
 | `feat/ts-stage-1` → `-3` | TASK-008–012, 024–031 | merged ✓ |
 | `feat/e2e`, `feat/e2e-ci` | TASK-039–044 | folded into `feat/upgrades` ✓ |
@@ -401,6 +407,6 @@ work happens on feature branches** (e.g. `feat/ts-stage-4`, per-package
 | `feat/react19-step2-selfref-removal` | TASK-100 (selfRef shim → useLoader/useNavigation/useResize) | merged ✓ |
 | `feat/node-modernization-*` | TASK-013 per-package slices | not started |
 
-**Before merging `feat/upgrades` → `main`:** `npm test` green from root; no
-high-priority `.open` tasks left untouched; this file current; feature branches
-merged or noted as in-progress.
+**Before merging a task branch → `main`:** `npm test` green from root; the task
+PRD's subtasks checked and status set; this file current; the GitHub issue closed
+once the work lands.
