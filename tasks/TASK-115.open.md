@@ -104,7 +104,10 @@ natively; doing it in CircleCI would mean managing a GitHub PAT as a secret.
       right *before* merging anything
 - [ ] Delete the orphan `v4.0.1` tag:
       `git push origin :refs/tags/v4.0.1 && git tag -d v4.0.1`
-- [ ] Merge; close the issue; remove `.open`
+- [x] Merge (PR #592)
+- [ ] Close the issue and remove `.open` once the three items above are done
+      (#591 auto-closed on merge via a `Closes` line and was reopened — the
+      code landing is not the task finishing)
 
 ## Verification
 
