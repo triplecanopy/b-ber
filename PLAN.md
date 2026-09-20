@@ -32,7 +32,7 @@ Every task belongs to exactly one; every new task must too.
 
 | Feature | Done | Active | Backlog | State |
 | ------- | ---- | ------ | ------- | ----- |
-| 🔧 Upgrade tooling | 23 | 1 | 3 | Core toolchain shipped; scripts cleaned + watch scripts applied (TASK-038). **TASK-112 active — 4.0.0 shipped unbuildable** (tsdown's flat bundle broke `__dirname` asset reads); fix verified, needs `4.0.1`. Remaining: TASK-113 (watch-mode asset gap, from TASK-112), TASK-045 (release/changelog), TASK-109 (SCSS toolchain) |
+| 🔧 Upgrade tooling | 23 | 1 | 4 | Core toolchain shipped; scripts cleaned + watch scripts applied (TASK-038). **TASK-112 active — 4.0.0 shipped unbuildable** (tsdown's flat bundle broke `__dirname` asset reads); fix verified, needs `4.0.1`. Remaining: TASK-113 (watch-mode asset gap, from TASK-112), TASK-114 (reader-react version injection), TASK-045 (release/changelog), TASK-109 (SCSS toolchain) |
 | 🔤 Migrate JS→TS | 18 | 0 | 0 | ✅ **Epic complete** — reader-react (TASK-032) merged; every package except legacy `b-ber-reader` is TypeScript |
 | ✅ Unit test coverage | 2 | 1 | 2 | Epic in progress; most packages at target, a few laggards |
 | 🧪 E2E testing | 5 | 1 | 2 | Pipeline green in CI; skill + iframe fix remain |
@@ -55,6 +55,7 @@ dependabot reconfigured (TASK-037), architecture diagrams expanded (TASK-017).
 | ---- | --- | ---------------- |
 | TASK-112 | **high** | ⏳ **In progress** ([#587](https://github.com/triplecanopy/b-ber/issues/587)) — fix verified, awaiting `4.0.1`. `4.0.0` cannot build a default project: tsdown bundles `src/` to a single `dist/index.js`, so `__dirname` is `dist/`, but `copy.sh` still mirrored `src/` into `dist/cover/` + `dist/web/`. Broke the cover font (every format, for projects with no `cover` in metadata.yml) and all four `web` browser scripts. Fallout from TASK-030. Also fixed a cheerio default-import interop break from the same bundling change |
 | TASK-113 | med | Discovery ([#588](https://github.com/triplecanopy/b-ber/issues/588)) — `b-ber-tasks`'s `watch` runs `tsdown --watch` but not `copy.sh`, and `clean: true` wipes `dist/`, so watch-mode `dist/` is missing the assets TASK-112 just fixed. Survey build/watch asymmetry across packages; evaluate tsdown `hooks['build:done']` / built-in `copy` to retire `copy.sh` |
+| TASK-114 | med | ([#589](https://github.com/triplecanopy/b-ber/issues/589)) Inject reader-react's version from `package.json` via Vite `define`, retiring the generated `src/lib/version.js`. Today a tracked `version.ts` (frozen at `3.0.7` since 2023) is shadowed by an untracked file the `version` lifecycle regenerates, so only the publish path reports correctly — every clean/CI/from-source build says `3.0.7` |
 | TASK-109 | med | Modernize project/theme SCSS compile path — drop the custom `~` importer, move off the legacy dart-sass `render` API, `@import`→`@use`/`@forward`, refresh autoprefixer/PostCSS (from TASK-076 findings) |
 | TASK-045 | med | Refactor changelog generation + release workflow (incl. `postpublish`/`run-ci.js` + `publish:*` scripts deferred from TASK-038) |
 
@@ -374,6 +375,7 @@ sequencing work:
 | -------- | ---- | ------ | ------- |
 | 0 | TASK-112 | **Ship `4.0.1`** — fix committed on `TASK-112-dirname-asset-paths`, verified against a fresh `bber new` project | `4.0.0` cannot build a default project; a consumer is blocked on it right now |
 | 1 | TASK-113 | Investigate the watch-mode asset gap | Same copy-step design weakness as TASK-112, from the other end; cheap discovery |
+| 1 | TASK-114 | Inject reader-react's version from `package.json` | Only the publish path reports the right version; not urgent for `4.0.1`, but it is why the tree is dirty after every release |
 | 1 | TASK-106 | ✅ **Done** — state migration shipped (Redux removed, built-in store + ReaderApiContext, browser QA passed). Dissolved `connect()` + TASK-032 type debt. | — |
 | 2 | TASK-050 | CLI handler tests | Unblocks TASK-046 and lifts cli coverage toward 75% |
 | 3 | TASK-004 | Push coverage laggards to 75% | Closes the coverage epic; cli + b-ber-tasks are the long poles |
