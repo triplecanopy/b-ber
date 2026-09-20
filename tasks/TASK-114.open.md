@@ -1,6 +1,6 @@
 # TASK-114: Inject reader-react's version from package.json instead of generating a source module
 
-**Status:** not started
+**Status:** complete (pending merge)
 **Feature:** Upgrade tooling
 **Scope:** b-ber-reader-react
 **Priority:** medium
@@ -9,26 +9,26 @@
 ## Description
 
 `b-ber-reader-react` renders its own version into a `<meta name="generator">`
-tag (`src/index.tsx:19`), reading it from `src/lib/version.ts`. That module is
-currently wrong, and the mechanism that keeps it up to date has never worked
-across more than one release.
+tag (`src/index.tsx:19`), reading it from `src/lib/version.ts`. That module was
+wrong, and the mechanism meant to keep it up to date had never worked across more
+than one release.
 
-### Current state
+### The defect, as found
 
-- `src/lib/version.ts` — **tracked**, says `3.0.7`
+- `src/lib/version.ts` — **tracked**, said `3.0.7`
 - `src/lib/version.js` — **untracked**, regenerated on every publish by
-  `scripts/version.js` (wired to npm's `version` lifecycle), says the real version
+  `scripts/version.js` (wired to npm's `version` lifecycle), held the real version
 - `src/index.tsx:3` imports `./lib/version` extensionless, and both Vite and Jest
-  resolve `.js` before `.ts`, so the untracked file **shadows** the tracked one
+  resolve `.js` before `.ts`, so the untracked file **shadowed** the tracked one
 
-The publish path is accidentally correct — `lerna publish` runs the `version`
+The publish path was accidentally correct — `lerna publish` runs the `version`
 lifecycle before `prepublishOnly` builds, so the generated file exists by the
 time the bundle is built. Verified: the published 4.0.0 tarball contains
-`var cv = "4.0.0"`. **Every other build path is wrong.** Moving the untracked
-file aside and rebuilding produces `var cv = "3.0.7"` — that is what a fresh
-clone, CI, a `git clean -fdx`, or any consumer building from source gets.
+`var cv = "4.0.0"`. **Every other build path was wrong.** Moving the untracked
+file aside and rebuilding produced `var cv = "3.0.7"` — what a fresh clone, CI, a
+`git clean -fdx`, or any consumer building from source got.
 
-It is also why the working tree is dirty after every release.
+It was also why the working tree went dirty after every release.
 
 ### Why it was set up this way (investigated 2026-09-20)
 
@@ -74,77 +74,95 @@ only changed how it presents in `git status`, from ` M` (modified tracked file) 
 
 ### Chosen fix
 
-Drop the generated source file entirely and inject the version at build time from
-`package.json` via Vite `define`. This removes the thing that drifts rather than
-relocating it: there is no generated file to forget to commit, no lifecycle script
-to keep in sync with a filename, and no `.js`/`.ts` shadowing.
+Read the version straight from `package.json` in a one-line `src/lib/version.ts`:
 
-**Every config that compiles this source needs the define** — this is the real
-cost of the approach, and missing one yields `undefined` in that build:
+```ts
+import { version } from '../../package.json'
+export default version
+```
 
-| Config | What it builds |
-| ------ | -------------- |
-| `b-ber-reader-react/vite.config.lib.js` | the **published** library |
-| `b-ber-reader-react/vite.config.js` | dev server (`dev/index.jsx` → `../src`) |
-| `b-ber-reader-react/vite.config.e2e.js` | e2e build (`dev/index.e2e.jsx` → `../src`) |
-| `b-ber-reader/vite.config.js` | re-bundles reader-react **from source** via alias |
-| `b-ber-reader-react/jest.config.js` | tests — Jest does not run Vite, so it needs the value supplied separately (`globals`, or `jest.setup.js`) |
+`resolveJsonModule` is already enabled in reader-react's tsconfig, so this needs
+**no build configuration at all** — every bundler that compiles this source
+inlines the named import at build time, and there is exactly one source of truth.
+Nothing is generated, so nothing can go stale or be left uncommitted.
 
-To keep that list from becoming its own drift risk, define the replacement once
-in a shared helper (e.g. a tiny module exporting the `define` object, read from
-`package.json`) and import it into each config rather than repeating the literal.
+A Vite `define` was considered first and dropped. It would have worked, but it
+needs the value registered in **five** places that compile this source —
+`vite.config.lib.js` (the published lib), `vite.config.js` (dev server),
+`vite.config.e2e.js` (e2e), `b-ber-reader/vite.config.js` (re-bundles reader-react
+from source via alias), and Jest, which does not run Vite at all. Missing any one
+yields `undefined` in that build, so it trades a generated file that drifts for
+five registration points that drift.
 
-Considered and rejected: `import { version } from '../../package.json'` in a
-one-line `version.ts`. `resolveJsonModule` is already enabled in reader-react's
-tsconfig, so this works today with **zero** config changes and one source of
-truth — but it risks bundling more of `package.json` than the one field into a
-public browser bundle if tree-shaking does not narrow the JSON import. `define`
-guarantees a bare string literal. Noted here because it is the cheaper option if
-the five registration points prove annoying in practice.
+The one objection to the JSON import was that it might pull more of
+`package.json` than the single field into a public browser bundle. **Measured, and
+it does not.** The built `dist/index.mjs` differs from the published 4.0.0
+artifact by exactly **one byte** — the region comment `src/lib/version.js` became
+`src/lib/version.ts`. The emitted code is `var cv = "4.0.0"` either way, and the
+bundle contains none of `maxwellsimmer`, `b-ber@canopycanopycanopy.com`,
+`vite.config.lib.js`, `GPL-3.0`, `devDependencies`, `triplecanopy/b-ber.git` or
+`rimraf`. Rolldown narrows the JSON import to the accessed field.
 
 ## Subtasks
 
-- [ ] Add the version `define` to all four Vite configs, sourced from
-      `package.json` through one shared helper (not four copies of the literal)
-- [ ] Supply the same value to Jest (`globals` or `jest.setup.js`)
-- [ ] Declare the injected identifier for TypeScript (ambient `declare const` in
-      a `.d.ts`)
-- [ ] Replace `src/lib/version.ts`'s contents with a read of the injected value,
-      or delete the module and reference the injected identifier directly in
-      `src/index.tsx`
-- [ ] Delete `scripts/version.js` and the `"version"` script from
+- [x] Replace `src/lib/version.ts` with a named import of `package.json`'s
+      `version` (no build config needed — `resolveJsonModule` is already on)
+- [x] Confirm `tsc --noEmit` accepts the JSON import from outside `include`
+- [x] **Verify the bundle inlines a bare string literal**, not an inlined
+      `package.json` object — the one real risk of this approach
+- [x] Delete `scripts/version.js` and the `"version"` script from
       `packages/b-ber-reader-react/package.json`
-- [ ] Delete the stray untracked `src/lib/version.js` — **last**, since removing
-      it before the fix silently drops local builds to `3.0.7`
-- [ ] **Strengthen the test** to assert the rendered version equals
-      `package.json`'s `version`, not merely that it is semver-shaped. The
-      current assertion is why this went unnoticed
-- [ ] Verify each build path independently embeds the right version: lib build,
-      dev server, e2e build, `b-ber-reader` build, Jest
-- [ ] Verify from a clean checkout (`git stash -u` or a scratch clone) that a
-      build with no prior `npm version` run embeds the correct version — this is
-      the specific regression being fixed
-- [ ] Confirm the published bundle contains a bare string literal, not an
-      inlined `package.json` object
+- [x] Delete the stray untracked `src/lib/version.js`
+- [x] **Strengthen the test** to assert equality with `package.json`'s `version`
+      rather than a semver shape, and confirm it actually fails when a stale
+      shadow module is reintroduced
+- [x] Fix `b-ber-reader/vite.config.js`'s alias: `src/index.jsx` → `src/index.tsx`
+- [x] Verify each build path independently embeds the right version: lib build,
+      dev-server config, e2e build, `b-ber-reader` build, Jest
+- [x] Confirm `b-ber-reader` still bundles reader-react from **source** after the
+      alias fix (no `dist` require-shim in its output)
+- [x] Update the now-stale `scripts/version.js` reference in
+      `vite.config.lib.js`'s `"type": "module"` comment
+- [x] Quality gates: `typecheck`, `biome check`, root `jest`
+- [ ] Merge to `main`; close #589; remove `.open`
+
+## Verification
+
+| Path | Config | Version embedded |
+| ---- | ------ | ---------------- |
+| Published library | `vite.config.lib.js` | `var cv = "4.0.0"` |
+| Dev server | `vite.config.js` | `` J_=`4.0.0` `` |
+| E2E build | `vite.config.e2e.js` | `` J_=`4.0.0` `` |
+| `b-ber-reader` (from source) | `b-ber-reader/vite.config.js` | `` V_=`4.0.0` `` |
+| Tests | `jest.config.js` | 2 passed |
+
+The lib bundle is byte-identical to the published 4.0.0 artifact apart from one
+character in a region comment. The strengthened test was confirmed to fail
+(`Expected: "4.0.0" / Received: "3.0.7"`) when a stale shadow `version.js` is
+reintroduced, so it guards the exact regression that hid for three years.
+
+Gates: `tsc --noEmit` clean; `biome check .` 0 errors; root `jest` 130/130 suites,
+1022 passed, 128 snapshots.
+
+Because nothing is generated any more, the clean-checkout case is correct by
+construction: the only inputs are the tracked `src/lib/version.ts` and
+`package.json`. The builds above were run with no stray `version.js` present,
+which *is* the clean-checkout condition.
 
 ## Notes
-
-- **Do not delete the untracked `src/lib/version.js` before the fix lands.**
-  Local and `b-ber-reader` builds currently depend on it; removing it downgrades
-  them to `3.0.7`.
 
 - Not urgent for the pending `4.0.1`: `lerna publish` will regenerate the stray
   file as `4.0.1` and the release will report correctly, exactly as 4.0.0 did.
   This task removes the fragility, it does not unblock the release.
 
-- **Stale alias worth cleaning up while in here** (out of scope unless trivial):
-  `b-ber-reader/vite.config.js` aliases reader-react to
+- **Stale alias fixed as part of this task** (user's call):
+  `b-ber-reader/vite.config.js` aliased reader-react to
   `../b-ber-reader-react/src/index.jsx`, a path that **no longer exists** — the
-  file is `index.tsx`. The build works anyway because Vite applies its
-  TypeScript-compatibility resolution (`.jsx` → `.tsx`), and I verified the
-  bundle really is built from source, not from `dist` (no `__bberReact` require
-  shim present, `b-ber-react-reader: ${version}` inlined). It resolves by
-  fallback rather than by intent, so it should be corrected to `.tsx`.
+  file is `index.tsx`. The build worked anyway because Vite applies its
+  TypeScript-compatibility resolution (`.jsx` → `.tsx`) — it resolved by fallback
+  rather than by intent. Now points at `.tsx`; re-verified that `b-ber-reader`
+  still bundles from source and not from `dist` (no `__bberReact` require shim in
+  its output).
 
 - Same class of defect as TASK-112: a build-shape assumption that quietly stopped
   holding. There, Babel's per-file output → tsdown's flat bundle broke

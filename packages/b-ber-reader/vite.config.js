@@ -17,7 +17,7 @@ export default defineConfig({
       // resolves React exactly once for the whole tree, avoiding the shim.
       '@canopycanopycanopy/b-ber-reader-react': resolve(
         __dirname,
-        '../b-ber-reader-react/src/index.jsx'
+        '../b-ber-reader-react/src/index.tsx'
       ),
       // Node-builtin shims for the browser. These are NOT dead: `sax` (used to
       // parse the OPF/NCX at runtime) has a SAXStream that extends Node's

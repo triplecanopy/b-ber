@@ -13,7 +13,6 @@
     "./dist/styles.css": "./dist/styles.css"
   },
   "scripts": {
-    "version": "node ./scripts/version.js",
     "clean": "rimraf dist",
     "build": "vite build --config vite.config.lib.js",
     "watch": "vite build --watch --config vite.config.lib.js",
