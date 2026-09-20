@@ -157,6 +157,14 @@ been shipping `b-ber-tasks` without its browser scripts, and nothing caught it
 because no test exercises the `web` task and the published artifacts came from local
 builds. TASK-112's `set -euo pipefail` is what turned it loud.
 
+The re-run (35540909420, against the fix branch) passed every step — Build, Lint and
+test, Bump versions, Commit and open the release PR — confirming the fix and the
+`@v7` action bumps in the real CI environment. It also surfaced a footgun now
+documented in AGENTS.md § Releases: because it ran against a feature branch, the
+"4.0.3" PR it opened (#595) carries that branch's two unmerged commits alongside the
+version bump. `release-prepare.yml` must be run from `main` for a bump-only release
+PR.
+
 Also bumped `actions/checkout` and `actions/setup-node` from `@v4` to `@v7`; the run
 warned that v4 targets the deprecated Node 20. Checked that setup-node v7 still
 supports `registry-url` + `NODE_AUTH_TOKEN` — it does, but it removed the dummy
