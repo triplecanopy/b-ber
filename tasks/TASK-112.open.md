@@ -4,7 +4,7 @@
 **Feature:** Upgrade tooling
 **Scope:** b-ber-tasks
 **Priority:** high
-**GitHub Issue:** (pending)
+**GitHub Issue:** #587 — https://github.com/triplecanopy/b-ber/issues/587
 
 ## Description
 
@@ -86,7 +86,9 @@ alone unblocks the reporting consumer.
 - [x] Verify end-to-end: `build web`, `build reader`, `build epub` on a fresh
       project; cover JPEG valid; search index populated
 - [x] Quality gates: `typecheck`, `biome check`, root `jest`
-- [ ] Commit; update `PLAN.md`; open the GitHub issue; remove `.open`
+- [x] Commit on `TASK-112-dirname-asset-paths`; update `PLAN.md`; open the
+      GitHub issue
+- [ ] Ship `4.0.1`; merge to `main`; close the issue and remove `.open`
 
 ## Resolution
 
