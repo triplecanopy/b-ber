@@ -14,7 +14,7 @@ import {
 } from '@canopycanopycanopy/b-ber-lib/utils'
 import log from '@canopycanopycanopy/b-ber-logger'
 import Toc from '@canopycanopycanopy/b-ber-templates/Toc'
-import cheerio from 'cheerio'
+import { load as loadHtml } from 'cheerio'
 import fs from 'fs-extra'
 import find from 'lodash/find'
 import findIndex from 'lodash/findIndex'
@@ -319,7 +319,7 @@ function indexPageContent() {
       fs
         .readFile(path.join(OPS_PATH, `${entry.relativePath}.xhtml`), 'utf8')
         .then((data) => {
-          const $ = cheerio.load(data)
+          const $ = loadHtml(data)
           const title = $('h1,h2,h3,h4,h5,h6').first().text()
 
           const body = $('body').text()
