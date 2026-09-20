@@ -19,9 +19,20 @@ declare -a nodeFiles=(
 # mirroring the src/ tree.
 mkdir -p dist
 
+# Bare name, not node_modules/.bin/uglifyjs: npm puts every ancestor
+# node_modules/.bin on PATH for run-scripts, so this resolves whether uglify-js
+# is hoisted to the workspace root (what `npm ci` does in CI) or installed
+# package-locally (what a dev machine often ends up with). The hardcoded path
+# only ever worked by accident locally, and broke the release workflow's first
+# run with exit 127.
+if ! command -v uglifyjs > /dev/null 2>&1; then
+  echo "copy.sh: uglifyjs is not on PATH — run this via 'npm run copy'" >&2
+  exit 1
+fi
+
 for file in "${browserFiles[@]}"
 do
-  node_modules/.bin/uglifyjs "$file" -o "dist/$(basename "$file")"
+  uglifyjs "$file" -o "dist/$(basename "$file")"
 done
 
 for file in "${nodeFiles[@]}"
