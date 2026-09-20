@@ -207,9 +207,21 @@ docs(monorepo): add root AGENTS.md
 
 ## Branch Strategy
 
-**`main` is the trunk.** The `feat/upgrades` integration cycle merged into
-`main` and shipped as `4.0.0`; there is no long-lived integration branch any
-more. Branch from `main`, merge back to `main`. Do not force-push to `main`.
+**`main` is the trunk, and it is protected.** The `feat/upgrades` integration
+cycle merged into `main` and shipped as `4.0.0`; there is no long-lived
+integration branch any more.
+
+> ### 🛑 Never push or merge directly to `main`
+>
+> `main` requires a pull request. Push your task branch to `origin` and open a
+> PR — do not `git checkout main && git merge <branch>`, even when the merge is a
+> clean fast-forward and the gates are green. This bit us on 2026-09-20: TASK-112
+> and TASK-114 were merged locally into `main`, which forced the branch
+> protection rule to be disabled to get them pushed. Local gates passing is not
+> the thing the rule is protecting.
+>
+> This applies to **every** change, including a one-line docs fix. There is no
+> "too small for a PR" exception; a protected branch has no size threshold.
 
 **Task branches — one branch per task, named for it:**
 
@@ -230,14 +242,15 @@ The workflow:
 2. `git checkout -b TASK-NNN-<slug>` from an up-to-date `main`.
 3. Do the work, committing with conventional messages scoped to the package.
 4. Run the Quality Gates below, then open the issue (`/sync-task-issues`).
-5. Merge to `main` once `npm test` passes cleanly.
-
-**Exception — trivial, self-contained commits** (a typo, a stale comment, a
-docs-only correction with no task behind it) may go straight to `main`. If it
-warrants a task file, it warrants a branch.
+5. `git push -u origin TASK-NNN-<slug>` and open a PR against `main`:
+   ```bash
+   gh pr create --base main --title "TASK-NNN: <title>" --body "Closes #NNN …"
+   ```
+6. Merge the PR once `npm test` passes cleanly. Then close the issue, drop the
+   task file's `.open` suffix, and update `PLAN.md`.
 
 A task that splits into genuinely parallel slices may use
-`TASK-NNN-<slug>-<pkg>` per slice, merging each into `main` separately.
+`TASK-NNN-<slug>-<pkg>` per slice, each with its own PR.
 
 ### 🛑 Dispatching subagents in isolated worktrees — read before spawning
 
@@ -313,6 +326,68 @@ These apply to all JavaScript/TypeScript in the monorepo.
 - No deprecated lifecycle methods (`UNSAFE_*`). Use `useEffect` + `useRef`.
 - No `setInterval` / `requestAnimationFrame` loops for DOM measurement.
   Use `ResizeObserver` or `MutationObserver`.
+
+---
+
+## Releases
+
+`lerna publish` does **two** things: it runs `lerna version` (bump, commit, tag,
+**push**) and then publishes to npm. That push goes straight at `main`, which is
+protected — so `lerna publish` cannot work on this repo as-is. On 2026-09-20 it
+failed exactly there: it created a `4.0.1` commit and a `v4.0.1` tag, the push was
+rejected, and it never reached npm. The rule had to be disabled to recover, and
+the retry shipped as `4.0.2`, leaving an orphan `v4.0.1` tag pointing at a version
+that does not exist on the registry.
+
+**The fix is to split versioning from publishing.** `lerna version` is the part
+that touches git; `lerna publish from-package` is the part that touches npm and
+performs **no git operations at all** — it publishes every workspace package whose
+`package.json` version is not yet on the registry. Protection is never involved.
+
+### Release procedure
+
+```bash
+# 1. Version on a branch — --no-push keeps lerna away from the protected branch
+git checkout main && git pull
+git checkout -b release/4.0.3
+npx lerna version patch --no-push        # bumps package.json + lerna.json, commits, tags locally
+git push -u origin release/4.0.3
+gh pr create --base main --title "4.0.3"
+
+# 2. Merge the PR — use a MERGE COMMIT, never squash (see below)
+
+# 3. Publish from main. No git writes, so no protection conflict.
+git checkout main && git pull
+npm run build                            # REQUIRED — see below
+npx lerna publish from-package
+
+# 4. Push the tag that `lerna version` made locally
+git push origin v4.0.3
+```
+
+Two things that will bite if skipped:
+
+- **`npm run build` is not part of the publish pipeline.** No package defines
+  `prepublishOnly`/`prepare`/`prepack`, and the root's `prepublishOnly` never
+  fires because the root is `private: true` and is never published. So
+  `lerna publish` ships whatever is sitting in each `dist/` at that moment.
+  `4.0.2` shipped correct artifacts only because the tree happened to be freshly
+  built. Always build immediately before publishing, and prefer a clean
+  `npm run bootstrap:clean` for a real release.
+- **Merge release PRs with a merge commit, not a squash.** `lerna version
+  --no-push` tags the commit on the release branch. A merge commit keeps that
+  commit in `main`'s history so the tag stays meaningful; a squash rewrites it and
+  the tag ends up pointing at a commit that is not in `main`.
+
+If a release ever fails partway again: check `npm view <pkg> versions` before
+retrying. A version already on the registry cannot be republished, so the retry
+has to move to the next patch — which is how `4.0.1` was skipped.
+
+Alternatives considered, if the two-step flow proves annoying: grant the releasing
+account a branch-protection bypass ("Allow specified actors to bypass required
+pull requests"), or move releases into CI with a token that holds that bypass.
+Both keep `lerna publish` working as one command at the cost of a standing hole in
+the rule. Refining this is TASK-045's remit.
 
 ---
 

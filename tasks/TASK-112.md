@@ -1,6 +1,6 @@
 # TASK-112: Fix `__dirname`-relative asset resolution broken by the tsdown flat bundle
 
-**Status:** in progress
+**Status:** complete
 **Feature:** Upgrade tooling
 **Scope:** b-ber-tasks
 **Priority:** high
@@ -88,7 +88,7 @@ alone unblocks the reporting consumer.
 - [x] Quality gates: `typecheck`, `biome check`, root `jest`
 - [x] Commit on `TASK-112-dirname-asset-paths`; update `PLAN.md`; open the
       GitHub issue
-- [ ] Ship `4.0.1`; merge to `main`; close the issue and remove `.open`
+- [x] Released in **4.0.2**; merged to `main`; issue closed
 
 ## Resolution
 
@@ -139,8 +139,14 @@ warnings, none in touched files); root `npx jest` 130/130 suites, 1021 passed.
   intercepts. See TASK-113 for the related watch-mode gap in the same
   copy-step design.
 
-- **Needs a patch release.** The fix only reaches the consumer's Docker image
-  via a published `4.0.1`.
+- **Released in 4.0.2** (2026-09-20), not `4.0.1`: the first publish attempt was
+  rejected pushing lerna's version commit at protected `main`, so it never reached
+  npm and the retry moved to the next patch. An orphan `v4.0.1` tag is pushed with
+  no corresponding registry release. Verified against the published artifacts:
+  `b-ber-tasks@4.0.2`'s tarball carries the font and all four browser scripts at
+  `dist/` root, and a fresh `npm install @canopycanopycanopy/b-ber-cli@4.0.2`
+  builds `reader`, `web` and `epub` successfully — the reporting consumer is
+  unblocked. The release-process problem is written up in AGENTS.md § Releases.
 
 - **The consumer's follow-up error is not ours.** After hand-placing a font
   they hit `Unsupported OpenType version`, which means the file they supplied
