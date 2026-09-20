@@ -1,6 +1,6 @@
 # TASK-114: Inject reader-react's version from package.json instead of generating a source module
 
-**Status:** complete (pending merge)
+**Status:** complete
 **Feature:** Upgrade tooling
 **Scope:** b-ber-reader-react
 **Priority:** medium
@@ -124,7 +124,7 @@ bundle contains none of `maxwellsimmer`, `b-ber@canopycanopycanopy.com`,
 - [x] Update the now-stale `scripts/version.js` reference in
       `vite.config.lib.js`'s `"type": "module"` comment
 - [x] Quality gates: `typecheck`, `biome check`, root `jest`
-- [ ] Merge to `main`; close #589; remove `.open`
+- [x] Released in **4.0.2**; merged to `main`; issue closed
 
 ## Verification
 
@@ -151,9 +151,11 @@ which *is* the clean-checkout condition.
 
 ## Notes
 
-- Not urgent for the pending `4.0.1`: `lerna publish` will regenerate the stray
-  file as `4.0.1` and the release will report correctly, exactly as 4.0.0 did.
-  This task removes the fragility, it does not unblock the release.
+- **Confirmed in the wild:** the published `b-ber-reader-react@4.0.2` bundle
+  contains `var cv = "4.0.2"`, with none of the author, license or dependency
+  strings from `package.json`. This is the first release whose version is right
+  *by construction* rather than because the lifecycle script happened to run in
+  the publisher's tree first.
 
 - **Stale alias fixed as part of this task** (user's call):
   `b-ber-reader/vite.config.js` aliased reader-react to

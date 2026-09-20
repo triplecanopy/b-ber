@@ -1,8 +1,10 @@
 # b-ber monorepo — Project Plan
 
-_Last updated: 2026-09-20 (TASK-112 — 4.0.0 build-breaking asset-path
-regression fixed, patch release pending; TASK-113 opened for the watch-mode
-gap; branch strategy switched to `main`-as-trunk + `TASK-NNN-<slug>` branches)._
+_Last updated: 2026-09-20 (TASK-112 + TASK-114 done and **released in 4.0.2**;
+TASK-113 opened for the watch-mode gap; branch strategy switched to
+`main`-as-trunk + `TASK-NNN-<slug>` branches **via PRs** — `main` is protected,
+and AGENTS.md § Releases now documents the two-step `lerna version` /
+`lerna publish from-package` flow that works with it)._
 
 This file is the **current state**. Conventions, standards, and the task-file
 format live in [AGENTS.md](./AGENTS.md). All tasks live in `tasks/` at the repo
@@ -32,7 +34,7 @@ Every task belongs to exactly one; every new task must too.
 
 | Feature | Done | Active | Backlog | State |
 | ------- | ---- | ------ | ------- | ----- |
-| 🔧 Upgrade tooling | 23 | 2 | 3 | Core toolchain shipped; scripts cleaned + watch scripts applied (TASK-038). **TASK-112 active — 4.0.0 shipped unbuildable** (tsdown's flat bundle broke `__dirname` asset reads); fix verified, needs `4.0.1`. **TASK-114 done** — reader-react's version now reads straight from `package.json`; the generated module is gone. Remaining: TASK-113 (watch-mode asset gap, from TASK-112), TASK-045 (release/changelog), TASK-109 (SCSS toolchain) |
+| 🔧 Upgrade tooling | 25 | 0 | 3 | Core toolchain shipped; scripts cleaned + watch scripts applied (TASK-038). **TASK-112 + TASK-114 ✅ done & released in 4.0.2** — 4.0.0 shipped unbuildable (tsdown's flat bundle broke `__dirname` asset reads) and reader-react misreported its version; both fixed and verified against the published artifacts. Remaining: TASK-113 (watch-mode asset gap, from TASK-112), TASK-045 (release/changelog — now also owns the protected-`main` release flow), TASK-109 (SCSS toolchain) |
 | 🔤 Migrate JS→TS | 18 | 0 | 0 | ✅ **Epic complete** — reader-react (TASK-032) merged; every package except legacy `b-ber-reader` is TypeScript |
 | ✅ Unit test coverage | 2 | 1 | 2 | Epic in progress; most packages at target, a few laggards |
 | 🧪 E2E testing | 5 | 1 | 2 | Pipeline green in CI; skill + iframe fix remain |
@@ -53,9 +55,9 @@ dependabot reconfigured (TASK-037), architecture diagrams expanded (TASK-017).
 
 | Task | Pri | Outstanding work |
 | ---- | --- | ---------------- |
-| TASK-112 | **high** | ⏳ **In progress** ([#587](https://github.com/triplecanopy/b-ber/issues/587)) — fix verified, awaiting `4.0.1`. `4.0.0` cannot build a default project: tsdown bundles `src/` to a single `dist/index.js`, so `__dirname` is `dist/`, but `copy.sh` still mirrored `src/` into `dist/cover/` + `dist/web/`. Broke the cover font (every format, for projects with no `cover` in metadata.yml) and all four `web` browser scripts. Fallout from TASK-030. Also fixed a cheerio default-import interop break from the same bundling change |
+| TASK-112 | **high** | ✅ **Done, released in 4.0.2** ([#587](https://github.com/triplecanopy/b-ber/issues/587)). `4.0.0` cannot build a default project: tsdown bundles `src/` to a single `dist/index.js`, so `__dirname` is `dist/`, but `copy.sh` still mirrored `src/` into `dist/cover/` + `dist/web/`. Broke the cover font (every format, for projects with no `cover` in metadata.yml) and all four `web` browser scripts. Fallout from TASK-030. Also fixed a cheerio default-import interop break from the same bundling change |
 | TASK-113 | med | Discovery ([#588](https://github.com/triplecanopy/b-ber/issues/588)) — `b-ber-tasks`'s `watch` runs `tsdown --watch` but not `copy.sh`, and `clean: true` wipes `dist/`, so watch-mode `dist/` is missing the assets TASK-112 just fixed. Survey build/watch asymmetry across packages; evaluate tsdown `hooks['build:done']` / built-in `copy` to retire `copy.sh` |
-| TASK-114 | med | ✅ **Done, pending merge** ([#589](https://github.com/triplecanopy/b-ber/issues/589)) — `src/lib/version.ts` now does `import { version } from '../../package.json'`; `scripts/version.js` + the `version` lifecycle hook are gone. Chosen over a Vite `define` (which would have needed the value registered in five separate compile paths); the leakage worry was measured away — the lib bundle is byte-identical to published 4.0.0 bar one comment character. Test strengthened to assert equality with `package.json`. Also fixed `b-ber-reader`'s stale `src/index.jsx` alias |
+| TASK-114 | med | ✅ **Done, released in 4.0.2** ([#589](https://github.com/triplecanopy/b-ber/issues/589)) — `src/lib/version.ts` now does `import { version } from '../../package.json'`; `scripts/version.js` + the `version` lifecycle hook are gone. Chosen over a Vite `define` (which would have needed the value registered in five separate compile paths); the leakage worry was measured away — the lib bundle is byte-identical to published 4.0.0 bar one comment character. Test strengthened to assert equality with `package.json`. Also fixed `b-ber-reader`'s stale `src/index.jsx` alias |
 | TASK-109 | med | Modernize project/theme SCSS compile path — drop the custom `~` importer, move off the legacy dart-sass `render` API, `@import`→`@use`/`@forward`, refresh autoprefixer/PostCSS (from TASK-076 findings) |
 | TASK-045 | med | Refactor changelog generation + release workflow (incl. `postpublish`/`run-ci.js` + `publish:*` scripts deferred from TASK-038) |
 
@@ -343,6 +345,19 @@ sequencing work:
 
 ## 🆕 Recently completed (last sessions)
 
+- **TASK-112 — `__dirname` asset resolution + cheerio interop** (2026-09-20,
+  released in `4.0.2`): `4.0.0` could not build a default project. tsdown bundles
+  `b-ber-tasks` to a single `dist/index.js`, so `__dirname` is `dist/`, but
+  `copy.sh` still mirrored `src/` into `dist/cover/` and `dist/web/` — breaking the
+  cover font for every build format and all four `web` browser scripts. Fallout
+  from TASK-030. Also fixed a cheerio default-import break from the same bundling
+  change. Verified a fresh `npm install` of the published CLI builds
+  reader/web/epub.
+- **TASK-114 — reader-react version from `package.json`** (2026-09-20, released in
+  `4.0.2`): the version module sat at its 2023 seed `3.0.7` because `lerna publish`
+  never commits what lifecycle scripts write, so only the publish path reported
+  correctly. Now a one-line JSON import — no generated file, no build config.
+  Published `4.0.2` confirms `var cv = "4.0.2"`.
 - **TASK-068 — reader-react phase-1 housekeeping** (2026-06-21): dead code +
   dangling plan refs removed, resize-handler names un-inverted, `ErrorBoundary`
   added around `Frame`'s `Layout`/`BookContent`, Marker `debug` block + unused
@@ -373,7 +388,7 @@ sequencing work:
 
 | Priority | Task | Action | Why now |
 | -------- | ---- | ------ | ------- |
-| 0 | TASK-112 | **Ship `4.0.1`** — fix committed on `TASK-112-dirname-asset-paths`, verified against a fresh `bber new` project | `4.0.0` cannot build a default project; a consumer is blocked on it right now |
+| 0 | TASK-112 | ✅ **Done** — released in 4.0.2; verified a fresh `npm install` of the published CLI builds reader/web/epub | — |
 | 1 | TASK-113 | Investigate the watch-mode asset gap | Same copy-step design weakness as TASK-112, from the other end; cheap discovery |
 | 1 | TASK-114 | ✅ **Done** — version reads from `package.json`; generated module retired, `b-ber-reader` alias fixed | — |
 | 1 | TASK-106 | ✅ **Done** — state migration shipped (Redux removed, built-in store + ReaderApiContext, browser QA passed). Dissolved `connect()` + TASK-032 type debt. | — |
@@ -386,17 +401,20 @@ sequencing work:
 
 ## 🌿 Project overview / branch strategy
 
-**`main` is now the trunk.** `feat/upgrades` merged into `main` and shipped as
-`4.0.0` (2026-07-16); there is no long-lived integration branch any more. Work
-happens on **task branches named `TASK-NNN-<short-descriptive-title>`**, cut from
-`main` and merged back to `main` once `npm test` passes from the repo root. See
-[AGENTS.md § Branch Strategy](./AGENTS.md#branch-strategy) for the full workflow.
+**`main` is now the trunk, and it is protected.** `feat/upgrades` merged into
+`main` and shipped as `4.0.0` (2026-07-16); there is no long-lived integration
+branch any more. Work happens on **task branches named
+`TASK-NNN-<short-descriptive-title>`**, cut from `main`, pushed to `origin` and
+merged **via pull request** — never by a local merge into `main`. See
+[AGENTS.md § Branch Strategy](./AGENTS.md#branch-strategy) for the workflow and
+[§ Releases](./AGENTS.md#releases) for the two-step publish flow that works with
+branch protection.
 
 | Branch | Role | Status |
 | ------ | ---- | ------ |
 | `main` | trunk — stable, production-ready | active |
-| `TASK-112-dirname-asset-paths` | TASK-112 (asset-path regression fix) | pending merge |
-| `TASK-114-version-from-package-json` | TASK-114 (version injection; branched off TASK-112's) | pending merge — merge **after** TASK-112 |
+| `TASK-112-dirname-asset-paths` | TASK-112 (asset-path regression fix) | merged ✓ (`66b64301`, shipped `4.0.2`) |
+| `TASK-114-version-from-package-json` | TASK-114 (version injection) | merged ✓ (`66b64301`, shipped `4.0.2`) |
 | `feat/upgrades` | former integration branch | merged ✓ (`84ca5785`, shipped `4.0.0`) |
 | `feat/vite-migration` | TASK-006/007/015 | merged ✓ |
 | `feat/ts-stage-1` → `-3` | TASK-008–012, 024–031 | merged ✓ |
@@ -410,6 +428,6 @@ happens on **task branches named `TASK-NNN-<short-descriptive-title>`**, cut fro
 | `feat/react19-step2-selfref-removal` | TASK-100 (selfRef shim → useLoader/useNavigation/useResize) | merged ✓ |
 | `feat/node-modernization-*` | TASK-013 per-package slices | not started |
 
-**Before merging a task branch → `main`:** `npm test` green from root; the task
-PRD's subtasks checked and status set; this file current; the GitHub issue closed
-once the work lands.
+**Before opening a task branch's PR → `main`:** `npm test` green from root; the
+task PRD's subtasks checked and status set; this file current. Close the GitHub
+issue and drop the PRD's `.open` suffix once the PR merges.
