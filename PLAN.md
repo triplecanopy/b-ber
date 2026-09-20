@@ -1,6 +1,8 @@
 # b-ber monorepo — Project Plan
 
-_Last updated: 2026-09-20 (TASK-112 + TASK-114 done and **released in 4.0.2**;
+_Last updated: 2026-09-20 (TASK-115 release automation merged as PR #592, awaiting
+an `NPM_TOKEN` secret + dry run; TASK-116 opened to move off tokens to OIDC before
+npm's January 2027 deadline; TASK-112 + TASK-114 done and **released in 4.0.2**;
 TASK-113 opened for the watch-mode gap; branch strategy switched to
 `main`-as-trunk + `TASK-NNN-<slug>` branches **via PRs** — `main` is protected,
 and AGENTS.md § Releases now documents the two-step `lerna version` /
@@ -34,7 +36,7 @@ Every task belongs to exactly one; every new task must too.
 
 | Feature | Done | Active | Backlog | State |
 | ------- | ---- | ------ | ------- | ----- |
-| 🔧 Upgrade tooling | 25 | 1 | 3 | Core toolchain shipped; scripts cleaned + watch scripts applied (TASK-038). **TASK-112 + TASK-114 ✅ done & released in 4.0.2** — 4.0.0 shipped unbuildable (tsdown's flat bundle broke `__dirname` asset reads) and reader-react misreported its version; both fixed and verified against the published artifacts. **TASK-115 active** — releases automated via two GitHub Actions workflows so they work against protected `main`, and the publish-time build regression from TASK-030 fixed. Remaining: TASK-113 (watch-mode asset gap, from TASK-112), TASK-045 (release/changelog refinements), TASK-109 (SCSS toolchain) |
+| 🔧 Upgrade tooling | 25 | 1 | 4 | Core toolchain shipped; scripts cleaned + watch scripts applied (TASK-038). **TASK-112 + TASK-114 ✅ done & released in 4.0.2** — 4.0.0 shipped unbuildable (tsdown's flat bundle broke `__dirname` asset reads) and reader-react misreported its version; both fixed and verified against the published artifacts. **TASK-115 active** — releases automated via two GitHub Actions workflows so they work against protected `main`, and the publish-time build regression from TASK-030 fixed. Remaining: **TASK-116 (high — OIDC trusted publishing; npm kills the token path Jan 2027)**, TASK-113 (watch-mode asset gap, from TASK-112), TASK-045 (release/changelog refinements), TASK-109 (SCSS toolchain) |
 | 🔤 Migrate JS→TS | 18 | 0 | 0 | ✅ **Epic complete** — reader-react (TASK-032) merged; every package except legacy `b-ber-reader` is TypeScript |
 | ✅ Unit test coverage | 2 | 1 | 2 | Epic in progress; most packages at target, a few laggards |
 | 🧪 E2E testing | 5 | 1 | 2 | Pipeline green in CI; skill + iframe fix remain |
@@ -57,7 +59,8 @@ dependabot reconfigured (TASK-037), architecture diagrams expanded (TASK-017).
 | ---- | --- | ---------------- |
 | TASK-112 | **high** | ✅ **Done, released in 4.0.2** ([#587](https://github.com/triplecanopy/b-ber/issues/587)). `4.0.0` cannot build a default project: tsdown bundles `src/` to a single `dist/index.js`, so `__dirname` is `dist/`, but `copy.sh` still mirrored `src/` into `dist/cover/` + `dist/web/`. Broke the cover font (every format, for projects with no `cover` in metadata.yml) and all four `web` browser scripts. Fallout from TASK-030. Also fixed a cheerio default-import interop break from the same bundling change |
 | TASK-113 | med | Discovery ([#588](https://github.com/triplecanopy/b-ber/issues/588)) — `b-ber-tasks`'s `watch` runs `tsdown --watch` but not `copy.sh`, and `clean: true` wipes `dist/`, so watch-mode `dist/` is missing the assets TASK-112 just fixed. Survey build/watch asymmetry across packages; evaluate tsdown `hooks['build:done']` / built-in `copy` to retire `copy.sh` |
-| TASK-115 | **high** | ⏳ **Done, pending merge** ([#591](https://github.com/triplecanopy/b-ber/issues/591)) — `lerna publish` cannot run against protected `main` (it pushes its own version commit; this is what burnt `4.0.1`), and nothing built the packages at publish time since TASK-030 dropped `b-ber-tasks`'s `prepare` script. Split into `release-prepare.yml` (bump → PR) + `release-publish.yml` (build → `lerna publish from-package` → tag). Needs an `NPM_TOKEN` secret and a dry run |
+| TASK-115 | **high** | ⏳ **Merged (PR #592), not finished** ([#591](https://github.com/triplecanopy/b-ber/issues/591)) — `lerna publish` cannot run against protected `main` (it pushes its own version commit; this is what burnt `4.0.1`), and nothing built the packages at publish time since TASK-030 dropped `b-ber-tasks`'s `prepare` script. Split into `release-prepare.yml` (bump → PR) + `release-publish.yml` (build → `lerna publish from-package` → tag). Needs an `NPM_TOKEN` secret (granular, **Bypass 2FA**, 90-day expiry), a dry run, and the orphan `v4.0.1` tag deleted |
+| TASK-116 | **high** | ([#593](https://github.com/triplecanopy/b-ber/issues/593)) Move releases to OIDC trusted publishing, dropping `NPM_TOKEN`. Blocked on upgrading lerna 8.2.4 → 9+ (OIDC landed in lerna v9). Deadline is external: write-scoped granular tokens expire every 90 days, and npm removes direct publishing with Bypass-2FA tokens in **January 2027** |
 | TASK-114 | med | ✅ **Done, released in 4.0.2** ([#589](https://github.com/triplecanopy/b-ber/issues/589)) — `src/lib/version.ts` now does `import { version } from '../../package.json'`; `scripts/version.js` + the `version` lifecycle hook are gone. Chosen over a Vite `define` (which would have needed the value registered in five separate compile paths); the leakage worry was measured away — the lib bundle is byte-identical to published 4.0.0 bar one comment character. Test strengthened to assert equality with `package.json`. Also fixed `b-ber-reader`'s stale `src/index.jsx` alias |
 | TASK-109 | med | Modernize project/theme SCSS compile path — drop the custom `~` importer, move off the legacy dart-sass `render` API, `@import`→`@use`/`@forward`, refresh autoprefixer/PostCSS (from TASK-076 findings) |
 | TASK-045 | med | Refactor changelog generation + release workflow (incl. `postpublish`/`run-ci.js` + `publish:*` scripts deferred from TASK-038) |
@@ -390,7 +393,8 @@ sequencing work:
 | Priority | Task | Action | Why now |
 | -------- | ---- | ------ | ------- |
 | 0 | TASK-112 | ✅ **Done** — released in 4.0.2; verified a fresh `npm install` of the published CLI builds reader/web/epub | — |
-| 0 | TASK-115 | **Add the `NPM_TOKEN` secret and dry-run `release-prepare.yml`** | Releasing currently requires disabling branch protection; this is what stops that |
+| 0 | TASK-115 | **Add the `NPM_TOKEN` secret and dry-run `release-prepare.yml`** | Workflows are merged but unusable until the secret exists; this is what stops releases needing protection disabled |
+| 1 | TASK-116 | Upgrade lerna to 9+/10 and switch to OIDC trusted publishing | Token path has a hard external deadline (Jan 2027) and a 90-day rotation until then; better done before it bites |
 | 1 | TASK-113 | Investigate the watch-mode asset gap | Same copy-step design weakness as TASK-112, from the other end; cheap discovery |
 | 1 | TASK-114 | ✅ **Done** — version reads from `package.json`; generated module retired, `b-ber-reader` alias fixed | — |
 | 1 | TASK-106 | ✅ **Done** — state migration shipped (Redux removed, built-in store + ReaderApiContext, browser QA passed). Dissolved `connect()` + TASK-032 type debt. | — |
@@ -415,7 +419,8 @@ branch protection.
 | Branch | Role | Status |
 | ------ | ---- | ------ |
 | `main` | trunk — stable, production-ready | active |
-| `TASK-115-release-workflow` | TASK-115 (release automation) | pending merge |
+| `TASK-116-oidc-trusted-publishing` | TASK-116 (OIDC trusted publishing) | pending merge |
+| `TASK-115-release-workflow` | TASK-115 (release automation) | merged ✓ (PR #592, `b4a43b6b`) |
 | `TASK-112-114-closeout` | TASK-112/114 closeout + PR policy + release docs | merged ✓ (PR #590, `f2a399ea`) |
 | `TASK-112-dirname-asset-paths` | TASK-112 (asset-path regression fix) | merged ✓ (`66b64301`, shipped `4.0.2`) |
 | `TASK-114-version-from-package-json` | TASK-114 (version injection) | merged ✓ (`66b64301`, shipped `4.0.2`) |

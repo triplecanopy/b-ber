@@ -100,11 +100,15 @@ natively; doing it in CircleCI would mean managing a GitHub PAT as a secret.
 - [x] Rewrite AGENTS.md § Releases around the workflows, with the manual fallback
 - [ ] **Add the `NPM_TOKEN` secret** (npm automation token, publish rights to
       `@canopycanopycanopy`) — the publish workflow cannot work without it
-- [ ] Dry-run: trigger `release-prepare.yml` and confirm the PR it opens looks
-      right *before* merging anything
+- [x] Dry-run: triggered `release-prepare.yml` (run 35540625846). **It failed at
+      Build, which is exactly what the dry run was for** — see below. Re-run needed
+      after the fix
 - [ ] Delete the orphan `v4.0.1` tag:
       `git push origin :refs/tags/v4.0.1 && git tag -d v4.0.1`
-- [ ] Merge; close the issue; remove `.open`
+- [x] Merge (PR #592)
+- [ ] Close the issue and remove `.open` once the three items above are done
+      (#591 auto-closed on merge via a `Closes` line and was reopened — the
+      code landing is not the task finishing)
 
 ## Verification
 
@@ -123,6 +127,49 @@ What could be checked without a GitHub runner:
 **Not yet verified, and cannot be locally:** the workflows have never run. The
 first `release-prepare.yml` run is the real test, which is why the dry-run subtask
 is explicit and sits before any merge.
+
+## Dry-run findings (2026-09-20)
+
+The first `release-prepare.yml` run failed at the Build step:
+
+```
+./copy.sh: line 24: node_modules/.bin/uglifyjs: No such file or directory
+npm error code 127
+```
+
+**`copy.sh` hardcoded `node_modules/.bin/uglifyjs`, a package-local path.** A fresh
+`npm ci` under npm workspaces hoists `uglify-js` to the *workspace root*
+`node_modules/.bin`, so the package-local path does not exist in CI. It resolves on
+a dev machine only because an incremental install happens to leave a package-local
+bin link behind — `uglifyjs` exists in both places locally, which is why this never
+surfaced.
+
+Fixed by calling `uglifyjs` bare and letting npm's run-script PATH resolve it (npm
+prepends every ancestor `node_modules/.bin`), plus a `command -v` check that fails
+with a clear message instead of exit 127. Verified by hiding the package-local bin
+and rebuilding: all four minified web scripts still produced.
+
+**This was silently broken before TASK-112, not introduced by it.** The pre-TASK-112
+`copy.sh` had no `set -e`, so a missing `uglifyjs` printed two errors, skipped every
+file, and then **exited 0** because `cp` was the last command. Reproduced: exit code
+0, zero web JS files produced. So any hoisted install — i.e. every CI build — has
+been shipping `b-ber-tasks` without its browser scripts, and nothing caught it
+because no test exercises the `web` task and the published artifacts came from local
+builds. TASK-112's `set -euo pipefail` is what turned it loud.
+
+The re-run (35540909420, against the fix branch) passed every step — Build, Lint and
+test, Bump versions, Commit and open the release PR — confirming the fix and the
+`@v7` action bumps in the real CI environment. It also surfaced a footgun now
+documented in AGENTS.md § Releases: because it ran against a feature branch, the
+"4.0.3" PR it opened (#595) carries that branch's two unmerged commits alongside the
+version bump. `release-prepare.yml` must be run from `main` for a bump-only release
+PR.
+
+Also bumped `actions/checkout` and `actions/setup-node` from `@v4` to `@v7`; the run
+warned that v4 targets the deprecated Node 20. Checked that setup-node v7 still
+supports `registry-url` + `NODE_AUTH_TOKEN` — it does, but it removed the dummy
+token fallback, so the token must be set explicitly, which `release-publish.yml`
+already does.
 
 ## Notes
 

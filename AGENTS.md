@@ -351,8 +351,18 @@ Two workflows split the halves so neither needs a protection bypass:
 ### To cut a release
 
 1. Actions → **Release · prepare version PR** → Run workflow → choose the bump.
+   **Leave the branch selector on `main`.**
 2. Review the PR it opens. Merging it **is** the release.
 3. `release-publish.yml` publishes and tags. Nothing else to do.
+
+> ⚠️ **Run it from `main`, not a feature branch.** `release-prepare.yml` cuts the
+> release branch from whatever ref it runs on, so running it against a feature
+> branch produces a release PR containing that branch's **unmerged** commits — the
+> version bump plus whatever else is sitting there. Verified on 2026-09-20: a run
+> against `TASK-115-uglifyjs-path` opened a "4.0.3" PR carrying two unmerged
+> commits alongside the bump. Harmless if you notice, a surprise release if you do
+> not. Running against a branch is only useful for *testing* the workflow itself,
+> and the release PR it produces should be closed rather than merged.
 
 Merge that PR by whatever method you like — the tag is created afterwards from
 `main`, so a squash cannot orphan it.
