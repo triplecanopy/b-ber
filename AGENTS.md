@@ -5,11 +5,11 @@ repository structure, package inventory, task system, commit conventions, and
 coding standards that apply across all packages.
 
 **Start here:** Run `git branch --show-current` before doing anything. The
-active branch determines where your commits land. Implementation work belongs
-on the appropriate feature branch (e.g. `feat/ts-stage-1`, `feat/vite-migration`);
-planning and docs belong on the integration branch (`feat/upgrades`). If you are
-not on the right branch, switch before making any changes. PLAN.md shows which
-branch each task belongs on.
+active branch determines where your commits land. `main` is the trunk — the
+`feat/upgrades` integration cycle merged into it at `4.0.0`, so there is no
+long-lived integration branch any more. Implementation work belongs on a task
+branch named `TASK-NNN-<short-descriptive-title>`, cut from `main`. If you are
+on `main` with changes to make, create the task branch before making them.
 
 Then read `PLAN.md`. It shows what is in progress, what is blocked, the
 dependency graph, and which branches are pending merge. This file (AGENTS.md)
@@ -207,45 +207,60 @@ docs(monorepo): add root AGENTS.md
 
 ## Branch Strategy
 
-**Integration branch** (`feat/<cycle-name>`, e.g. `feat/upgrades`): long-lived
-branch for planning, docs, and completed feature branches. Commit task PRDs,
-AGENTS.md updates, research, and small bug fixes here. Check
-`git branch --show-current` before committing.
+**`main` is the trunk.** The `feat/upgrades` integration cycle merged into
+`main` and shipped as `4.0.0`; there is no long-lived integration branch any
+more. Branch from `main`, merge back to `main`. Do not force-push to `main`.
 
-**Feature branches:** Use for implementation work that touches the build system,
-changes package outputs, or spans many files. Keeps the work isolated and
-reversible.
+**Task branches — one branch per task, named for it:**
 
-- Use a feature branch for: build system changes, TypeScript conversions,
-  Node.js modernization, any change where a clean revert matters
-- Commit directly to the integration branch for: task PRDs, docs, research,
-  small self-contained fixes
+```
+TASK-NNN-<short-descriptive-title>
+```
 
-Naming: `feat/<descriptive-slug>` or `feat/<descriptive-slug>-<pkg>` for
-per-package slices.
+e.g. `TASK-112-dirname-asset-paths`, `TASK-109-scss-toolchain`. The task number
+comes first so the branch, the PRD in `tasks/`, and the GitHub issue all carry
+the same identifier and sort together. Keep the slug short and descriptive —
+kebab-case, a few words, no package prefix (the PRD's `**Scope:**` field records
+the package).
 
-Feature branches merge into the integration branch. The integration branch
-merges to `main` when `npm test` passes cleanly. Do not force-push to `main`.
+The workflow:
+
+1. Open the task PRD first (`/task-prd`) so the number exists — it names the
+   branch.
+2. `git checkout -b TASK-NNN-<slug>` from an up-to-date `main`.
+3. Do the work, committing with conventional messages scoped to the package.
+4. Run the Quality Gates below, then open the issue (`/sync-task-issues`).
+5. Merge to `main` once `npm test` passes cleanly.
+
+**Exception — trivial, self-contained commits** (a typo, a stale comment, a
+docs-only correction with no task behind it) may go straight to `main`. If it
+warrants a task file, it warrants a branch.
+
+A task that splits into genuinely parallel slices may use
+`TASK-NNN-<slug>-<pkg>` per slice, merging each into `main` separately.
 
 ### 🛑 Dispatching subagents in isolated worktrees — read before spawning
 
 **Worktree isolation bases the new worktree off the repository's DEFAULT branch
-(`main`), NOT the branch you are currently on.** `main` tracks the last release
-and is usually far behind the active integration branch (`feat/upgrades`). A
-subagent cannot detect this from `git branch --show-current` (it sees its own
-fresh `worktree-agent-*` branch) and AGENTS.md alone will not save it. This bit
-us on 2026-06-19: three worktree subagents branched off `main` (the `3.1.0`
-commit), edited stale task files and an old `package.json`, and their branches
-could not be merged without clobbering newer work — the orchestrator had to
-reconcile by hand.
+(`main`), NOT the branch you are currently on.** Since `main` became the trunk
+this is usually what you want — but it is still wrong whenever you are working
+on a task branch that the subagent needs to build on. A subagent cannot detect
+this from `git branch --show-current` (it sees its own fresh `worktree-agent-*`
+branch) and AGENTS.md alone will not save it. This bit us on 2026-06-19, back
+when `main` trailed the integration branch: three worktree subagents branched
+off the `3.1.0` commit, edited stale task files and an old `package.json`, and
+their branches could not be merged without clobbering newer work — the
+orchestrator had to reconcile by hand. The `npm install` step below still
+applies unconditionally.
 
 **The orchestrator (the spawning agent) MUST, in every worktree subagent's
 prompt:**
 
 1. **Pin the base trunk as the first step:** instruct the subagent to run
-   `git reset --hard <trunk>` (e.g. `git reset --hard feat/upgrades`) before
-   doing anything else. This re-points the fresh worktree branch (and its working
-   tree) at the correct trunk; it is safe even though that trunk is checked out
+   `git reset --hard <trunk>` (e.g. `git reset --hard main`, or your task
+   branch when the subagent must build on it) before doing anything else. This
+   re-points the fresh worktree branch (and its working tree) at the correct
+   trunk; it is safe even though that trunk is checked out
    in the main tree (reset moves the *current* branch pointer, it does not check
    out the trunk branch).
 2. **Install deps:** then run `npm install` — a fresh worktree shares git history
