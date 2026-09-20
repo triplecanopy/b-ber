@@ -1,0 +1,105 @@
+# Phase 1 of 2. Bumps versions and opens a PR; publishing happens in
+# release-publish.yml once that PR merges.
+#
+# `main` is protected and requires a pull request, so `lerna publish` cannot be
+# used here — it pushes its own version commit straight at `main` and fails.
+# See AGENTS.md § Releases.
+name: Release · prepare version PR
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: Version bump
+        required: true
+        default: patch
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+permissions:
+  contents: write
+  pull-requests: write
+
+# Never let two releases interleave.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # lerna reads tags and history to decide what changed.
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci --ignore-scripts
+
+      # Gate here rather than at publish time: this is the last point where a
+      # human can still decide not to release. Build precedes test because
+      # several packages' tests import a sibling's built dist.
+      - name: Build
+        run: npm run build
+
+      - name: Lint and test
+        run: npm test
+
+      - name: Bump versions
+        id: bump
+        run: |
+          # --no-git-tag-version leaves the bump UNCOMMITTED (lerna's flag means
+          #   "do not commit or tag"), which is what we want: we commit it
+          #   ourselves below, and the tag is created on `main` by
+          #   release-publish.yml only after npm actually accepts the release.
+          #   That way a tag can never point at a version that failed to publish,
+          #   nor at a commit a squash-merge rewrote away.
+          # --force-publish because lerna.json is in fixed mode and this
+          #   workspace has always moved in lockstep (every package was 4.0.2);
+          #   bump them together instead of letting change detection split it.
+          npx lerna version "${{ inputs.bump }}" \
+            --no-git-tag-version \
+            --force-publish \
+            --yes
+          echo "version=$(node -p 'require("./lerna.json").version')" >> "$GITHUB_OUTPUT"
+
+      - name: Commit and open the release PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION='${{ steps.bump.outputs.version }}'
+          BRANCH="release/$VERSION"
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+
+          git checkout -b "$BRANCH"
+          # --all is sufficient: lerna's bump only touches tracked files
+          # (package.json, lerna.json, package-lock.json). The subject matches
+          # what lerna itself used for past version commits.
+          git commit --all --message "$VERSION"
+          git push --set-upstream origin "$BRANCH"
+
+          # Body via a file rather than a nested heredoc, which cannot terminate
+          # inside an indented YAML block scalar.
+          {
+            printf 'Release **%s**, prepared by `release-prepare.yml`.\n\n' "$VERSION"
+            printf 'Version bump (`%s`) across the workspace plus the refreshed\n' '${{ inputs.bump }}'
+            printf 'lockfile. `npm run build` and `npm test` passed before this PR was opened.\n\n'
+            printf '**Merging this PR publishes %s to npm.** `release-publish.yml` runs on\n' "$VERSION"
+            printf 'push to `main`, rebuilds, publishes every package whose version is not\n'
+            printf 'yet on the registry, then tags `v%s`.\n\n' "$VERSION"
+            printf 'Merge by any method — the tag is created afterwards from `main`, so a\n'
+            printf 'squash cannot orphan it.\n'
+          } > /tmp/release-pr-body.md
+
+          gh pr create --base main --head "$BRANCH" \
+            --title "$VERSION" --body-file /tmp/release-pr-body.md

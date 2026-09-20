@@ -331,63 +331,102 @@ These apply to all JavaScript/TypeScript in the monorepo.
 
 ## Releases
 
-`lerna publish` does **two** things: it runs `lerna version` (bump, commit, tag,
-**push**) and then publishes to npm. That push goes straight at `main`, which is
-protected — so `lerna publish` cannot work on this repo as-is. On 2026-09-20 it
-failed exactly there: it created a `4.0.1` commit and a `v4.0.1` tag, the push was
-rejected, and it never reached npm. The rule had to be disabled to recover, and
-the retry shipped as `4.0.2`, leaving an orphan `v4.0.1` tag pointing at a version
-that does not exist on the registry.
+**Releases are automated. Do not run `lerna publish`.**
 
-**The fix is to split versioning from publishing.** `lerna version` is the part
-that touches git; `lerna publish from-package` is the part that touches npm and
-performs **no git operations at all** — it publishes every workspace package whose
-`package.json` version is not yet on the registry. Protection is never involved.
+`lerna publish` bundles two jobs: `lerna version` (bump, commit, tag, **push**)
+and the npm publish. That push targets `main`, which is protected — so it cannot
+work here, and it fails *after* creating the commit and tag. That is exactly how
+it failed on 2026-09-20: it produced a `4.0.1` commit and a `v4.0.1` tag, the push
+was rejected, npm was never reached, and the retry had to move to `4.0.2` because
+a rejected version still burns the number. The root `publish:latest` script that
+invoked it has been removed.
 
-### Release procedure
+Two workflows split the halves so neither needs a protection bypass:
+
+| Workflow | Trigger | Does |
+| -------- | ------- | ---- |
+| [`release-prepare.yml`](.github/workflows/release-prepare.yml) | manual (`workflow_dispatch`, pick `patch`/`minor`/`major`) | builds, tests, bumps versions, pushes `release/x.y.z`, opens a PR |
+| [`release-publish.yml`](.github/workflows/release-publish.yml) | push to `main` | rebuilds, tests, `lerna publish from-package`, tags `vx.y.z` |
+
+### To cut a release
+
+1. Actions → **Release · prepare version PR** → Run workflow → choose the bump.
+2. Review the PR it opens. Merging it **is** the release.
+3. `release-publish.yml` publishes and tags. Nothing else to do.
+
+Merge that PR by whatever method you like — the tag is created afterwards from
+`main`, so a squash cannot orphan it.
+
+### Why it is built this way
+
+- **`lerna publish from-package` performs no git operations.** It publishes every
+  workspace package whose `package.json` version is not yet on the registry. No
+  commit, no tag, no push — so protected `main` is never in its way. It is also
+  what makes `release-publish.yml` safe to run on *every* push to `main`: when
+  there is nothing new, every version is already published and the job no-ops.
+  It guards on that explicitly before doing any work.
+- **The tag is created last, on `main`, only after npm accepts the release.** So a
+  tag can never point at a version that failed to publish, nor at a commit a
+  squash-merge rewrote away. `lerna version` runs with `--no-git-tag-version`,
+  which in lerna means "do not commit *or* tag" — the workflow commits the bump
+  itself.
+- **`--force-publish`** because `lerna.json` is in fixed mode and this workspace
+  has always moved in lockstep (at `4.0.2`, even untouched packages like
+  `b-ber-theme-sans` were published). Bump together rather than letting change
+  detection split the workspace.
+- **Both workflows build before publishing, and that is not belt-and-braces.** No
+  package defines `prepublishOnly`, `prepare` or `prepack`, and the root's
+  `prepublishOnly` never fires because the root is `private: true` and is never
+  published. So **nothing builds these packages as part of publishing** —
+  `lerna publish` ships whatever is sitting in each `dist/`. `b-ber-tasks` had a
+  `prepare` script that did this correctly until `c12c5aaf` (TASK-030) replaced it
+  with a plain `build`; `4.0.2` shipped correct artifacts only because the tree
+  happened to be freshly built by hand. Build precedes test because several
+  packages' tests import a sibling's built `dist`.
+
+### Required secrets
+
+`NPM_TOKEN` — an npm automation token with publish rights to the
+`@canopycanopycanopy` scope. Everything else uses the default `GITHUB_TOKEN`.
+
+### Manual fallback
+
+If the workflows are unavailable, the same two steps by hand — note that the
+version PR still has to go through `main`'s protection:
 
 ```bash
-# 1. Version on a branch — --no-push keeps lerna away from the protected branch
+npm run release:version          # bump only; leaves the change uncommitted
+git checkout -b release/x.y.z && git commit -am "x.y.z" && git push -u origin release/x.y.z
+gh pr create --base main --title "x.y.z"      # then merge
+
 git checkout main && git pull
-git checkout -b release/4.0.3
-npx lerna version patch --no-push        # bumps package.json + lerna.json, commits, tags locally
-git push -u origin release/4.0.3
-gh pr create --base main --title "4.0.3"
-
-# 2. Merge the PR — use a MERGE COMMIT, never squash (see below)
-
-# 3. Publish from main. No git writes, so no protection conflict.
-git checkout main && git pull
-npm run build                            # REQUIRED — see below
-npx lerna publish from-package
-
-# 4. Push the tag that `lerna version` made locally
-git push origin v4.0.3
+npm run release:publish          # build + test + lerna publish from-package
+git tag vx.y.z && git push origin vx.y.z
 ```
 
-Two things that will bite if skipped:
+Both `release:*` scripts exist so a hand publish cannot skip the build.
 
-- **`npm run build` is not part of the publish pipeline.** No package defines
-  `prepublishOnly`/`prepare`/`prepack`, and the root's `prepublishOnly` never
-  fires because the root is `private: true` and is never published. So
-  `lerna publish` ships whatever is sitting in each `dist/` at that moment.
-  `4.0.2` shipped correct artifacts only because the tree happened to be freshly
-  built. Always build immediately before publishing, and prefer a clean
-  `npm run bootstrap:clean` for a real release.
-- **Merge release PRs with a merge commit, not a squash.** `lerna version
-  --no-push` tags the commit on the release branch. A merge commit keeps that
-  commit in `main`'s history so the tag stays meaningful; a squash rewrites it and
-  the tag ends up pointing at a commit that is not in `main`.
+### If a release fails partway
 
-If a release ever fails partway again: check `npm view <pkg> versions` before
-retrying. A version already on the registry cannot be republished, so the retry
-has to move to the next patch — which is how `4.0.1` was skipped.
+Check `npm view <pkg> versions` before retrying. A version already on the
+registry cannot be republished, so the retry has to move to the next number —
+which is why `4.0.1` is a pushed tag with no release behind it. `from-package`
+makes a partial failure recoverable: rerun it and it publishes only the packages
+that did not make it.
 
-Alternatives considered, if the two-step flow proves annoying: grant the releasing
-account a branch-protection bypass ("Allow specified actors to bypass required
-pull requests"), or move releases into CI with a token that holds that bypass.
-Both keep `lerna publish` working as one command at the cost of a standing hole in
-the rule. Refining this is TASK-045's remit.
+### Known gaps
+
+- The root `postpublish` hook (`scripts/run-ci.js`, which triggers a remote
+  CircleCI pipeline) never fires either, for the same `private: true` reason. It
+  has been inert since the root became private.
+- `publish:canary` and `publish:lts-2` still call `lerna publish` directly. The
+  canary path creates no version commit so it is unaffected; `publish:lts-2`
+  targets the `lts-2` branch and only works while that branch is unprotected.
+- CircleCI still owns build/test on PRs, and builds in staged `--concurrency=1`
+  steps rather than the plain `npm run build` these workflows use. Consolidating
+  the two definitions is follow-up work.
+
+Refining all of this further is TASK-045's remit.
 
 ---
 
