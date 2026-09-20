@@ -1,6 +1,6 @@
 {
   "name": "@canopycanopycanopy/b-ber-parser-dialogue",
-  "version": "4.0.2",
+  "version": "4.0.3",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -24,14 +24,16 @@
     "typescript": "^6.0.3"
   },
   "dependencies": {
-    "@canopycanopycanopy/b-ber-lib": "4.0.2",
-    "@canopycanopycanopy/b-ber-logger": "4.0.2",
-    "@canopycanopycanopy/b-ber-shapes-directives": "4.0.2",
-    "@canopycanopycanopy/b-ber-templates": "4.0.2",
+    "@canopycanopycanopy/b-ber-lib": "4.0.3",
+    "@canopycanopycanopy/b-ber-logger": "4.0.3",
+    "@canopycanopycanopy/b-ber-shapes-directives": "4.0.3",
+    "@canopycanopycanopy/b-ber-templates": "4.0.3",
     "lodash": "^4.17.21",
     "tar": "^6.1.11"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/triplecanopy/b-ber.git"

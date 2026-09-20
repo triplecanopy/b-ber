@@ -1,6 +1,6 @@
 {
   "name": "@canopycanopycanopy/b-ber-reader-react",
-  "version": "4.0.2",
+  "version": "4.0.3",
   "description": "",
   "main": "dist/index.mjs",
   "module": "dist/index.mjs",
@@ -84,7 +84,10 @@
     "react": ">=16.2.0 <=19",
     "react-dom": ">=16.2.0 <=19"
   },
-  "files": ["dist", "index.d.ts"],
+  "files": [
+    "dist",
+    "index.d.ts"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/triplecanopy/b-ber.git"

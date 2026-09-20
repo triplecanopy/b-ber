@@ -1,6 +1,6 @@
 {
   "name": "@canopycanopycanopy/b-ber-grammar-footnotes",
-  "version": "4.0.2",
+  "version": "4.0.3",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -23,12 +23,14 @@
     "typescript": "^6.0.3"
   },
   "dependencies": {
-    "@canopycanopycanopy/b-ber-lib": "4.0.2",
+    "@canopycanopycanopy/b-ber-lib": "4.0.3",
     "lodash": "^4.17.21",
     "lodash.find": "latest",
     "tar": "^6.1.11"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/triplecanopy/b-ber.git"
