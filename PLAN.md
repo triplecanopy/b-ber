@@ -415,8 +415,8 @@ branch protection.
 | Branch | Role | Status |
 | ------ | ---- | ------ |
 | `main` | trunk — stable, production-ready | active |
-| `TASK-112-114-closeout` | TASK-112/114 closeout + PR policy + release docs | pending merge |
-| `TASK-115-release-workflow` | TASK-115 (release automation; branched off the closeout) | pending merge — merge **after** the closeout |
+| `TASK-115-release-workflow` | TASK-115 (release automation) | pending merge |
+| `TASK-112-114-closeout` | TASK-112/114 closeout + PR policy + release docs | merged ✓ (PR #590, `f2a399ea`) |
 | `TASK-112-dirname-asset-paths` | TASK-112 (asset-path regression fix) | merged ✓ (`66b64301`, shipped `4.0.2`) |
 | `TASK-114-version-from-package-json` | TASK-114 (version injection) | merged ✓ (`66b64301`, shipped `4.0.2`) |
 | `feat/upgrades` | former integration branch | merged ✓ (`84ca5785`, shipped `4.0.0`) |

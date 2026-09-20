@@ -142,5 +142,7 @@ is explicit and sits before any merge.
     many; consolidating is follow-up.
 - Related: TASK-045 (release/changelog workflow refactor) owns further
   refinement — this task is the minimum to make releasing possible without
-  disabling branch protection. TASK-112 and TASK-114 share the `c12c5aaf` root
+  disabling branch protection. Branched off `main` at `f2a399ea` (the TASK-112/114
+  closeout, merged as PR #590 — the first change here to land via a PR rather than
+  a local merge). TASK-112 and TASK-114 share the `c12c5aaf` root
   cause.
