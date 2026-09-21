@@ -71,22 +71,41 @@ jobs:
             --yes
           echo "version=$(node -p 'require("./lerna.json").version')" >> "$GITHUB_OUTPUT"
 
-      - name: Commit and open the release PR
+      - name: Create the release branch with a GitHub-signed commit
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           VERSION='${{ steps.bump.outputs.version }}'
           BRANCH="release/$VERSION"
+          # lerna left the bump uncommitted, so HEAD is still the base commit.
+          BASE_SHA="$(git rev-parse HEAD)"
 
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          # The branch has to exist before createCommitOnBranch can commit onto
+          # it. Creating a ref is not a commit, so nothing is signed yet.
+          gh api "repos/$GITHUB_REPOSITORY/git/refs" \
+            -f ref="refs/heads/$BRANCH" -f sha="$BASE_SHA" > /dev/null
 
-          git checkout -b "$BRANCH"
-          # --all is sufficient: lerna's bump only touches tracked files
-          # (package.json, lerna.json, package-lock.json). The subject matches
-          # what lerna itself used for past version commits.
-          git commit --all --message "$VERSION"
-          git push --set-upstream origin "$BRANCH"
+          node .github/scripts/build-release-commit.js \
+            "$VERSION" "$BRANCH" "$BASE_SHA" "$GITHUB_REPOSITORY" payload.json
+
+          # GitHub signs commits authored through this mutation, which is what
+          # satisfies the required_signatures rule on main. A `git commit` here
+          # would be unsigned and the release PR would be unmergeable.
+          gh api graphql --input payload.json > result.json
+          cat result.json
+
+          # Fail loudly rather than opening a PR that cannot be merged.
+          if [ "$(node -p "require('./result.json').data.createCommitOnBranch.commit.signature.isValid")" != "true" ]; then
+            echo "commit is not validly signed — refusing to open the release PR" >&2
+            exit 1
+          fi
+
+      - name: Open the release PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION='${{ steps.bump.outputs.version }}'
+          BRANCH="release/$VERSION"
 
           # Body via a file rather than a nested heredoc, which cannot terminate
           # inside an indented YAML block scalar.
@@ -99,7 +118,7 @@ jobs:
             printf 'yet on the registry, then tags `v%s`.\n\n' "$VERSION"
             printf 'Merge by any method — the tag is created afterwards from `main`, so a\n'
             printf 'squash cannot orphan it.\n'
-          } > /tmp/release-pr-body.md
+          } > release-pr-body.md
 
           gh pr create --base main --head "$BRANCH" \
-            --title "$VERSION" --body-file /tmp/release-pr-body.md
+            --title "$VERSION" --body-file release-pr-body.md

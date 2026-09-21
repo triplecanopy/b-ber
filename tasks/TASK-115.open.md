@@ -165,6 +165,37 @@ documented in AGENTS.md § Releases: because it ran against a feature branch, th
 version bump. `release-prepare.yml` must be run from `main` for a bump-only release
 PR.
 
+### Signed commits (the second dry-run failure)
+
+With the uglifyjs fix merged, a `prepare` run from `main` produced PR #596 — and it
+could not be merged: `main`'s ruleset includes `required_signatures`, and the
+workflow's `git commit` as `github-actions[bot]` is unsigned
+(`verified: false, reason: unsigned`). Every commit authored locally is
+`verified: true / valid`, so the rule was working; the workflow was the gap.
+
+The ruleset has **no bypass actors** (`bypass_actors: []`), so `--admin` was not a
+reliable escape either. Removing the requirement was rejected — it is doing its job.
+
+Fixed by authoring the version commit through GitHub's `createCommitOnBranch`
+GraphQL mutation, which GitHub signs itself. Verified empirically before building
+on it, since the size limits are undocumented:
+
+| Probe | Result |
+| ----- | ------ |
+| 2.54 MB payload (lockfile + lerna.json) | accepted, `isValid: true`, signer "GitHub Web Flow" |
+| 3.12 MB payload (the real 40-file bump) | accepted, `isValid: true` |
+| REST view of a probe commit | `verified: true, reason: valid` |
+
+Both probes ran against throwaway branches that were deleted afterwards. The
+payload builder was also tested against a real local `lerna version` run — 40
+files, base64 round-tripping to the bumped contents — and it correctly **refused**
+when an unrelated file was dirty, which it caught in my own working tree during
+testing.
+
+Abandoned the 4.0.3 bump rather than merging it with a bypass: nothing had been
+published, so the version number was never burnt and the fixed pipeline produces
+4.0.3 again. Also deleted the orphan `v4.0.1` tag.
+
 Also bumped `actions/checkout` and `actions/setup-node` from `@v4` to `@v7`; the run
 warned that v4 targets the deprecated Node 20. Checked that setup-node v7 still
 supports `registry-url` + `NODE_AUTH_TOKEN` — it does, but it removed the dummy

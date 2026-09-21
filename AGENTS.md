@@ -384,6 +384,17 @@ Merge that PR by whatever method you like — the tag is created afterwards from
   has always moved in lockstep (at `4.0.2`, even untouched packages like
   `b-ber-theme-sans` were published). Bump together rather than letting change
   detection split the workspace.
+- **The version commit is authored through GitHub's `createCommitOnBranch`
+  GraphQL mutation, not `git commit`.** `main`'s ruleset requires verified
+  signatures, and a runner has no signing key — a plain commit by
+  `github-actions[bot]` comes back `verified: false, reason: unsigned` and the
+  release PR is unmergeable. Commits made through that mutation are signed by
+  GitHub itself ("GitHub Web Flow"), which satisfies the rule **without** putting
+  a private key in secrets. `.github/scripts/build-release-commit.js` builds the
+  payload from the bump `lerna version` leaves in the working tree, and refuses to
+  run if anything other than `package.json`/`package-lock.json`/`lerna.json` is
+  dirty — so an unrelated stray edit cannot ride out inside a commit titled
+  "4.0.3". The workflow then asserts `signature.isValid` before opening the PR.
 - **Both workflows build before publishing, and that is not belt-and-braces.** No
   package defines `prepublishOnly`, `prepare` or `prepack`, and the root's
   `prepublishOnly` never fires because the root is `private: true` and is never
