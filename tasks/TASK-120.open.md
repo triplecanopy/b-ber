@@ -4,7 +4,7 @@
 **Feature:** Upgrade tooling
 **Scope:** monorepo
 **Priority:** high
-**GitHub Issue:** (pending)
+**GitHub Issue:** #608 — https://github.com/triplecanopy/b-ber/issues/608
 
 ## Description
 
