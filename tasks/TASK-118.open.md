@@ -4,7 +4,7 @@
 **Feature:** Upgrade tooling
 **Scope:** monorepo
 **Priority:** medium
-**GitHub Issue:** (pending)
+**GitHub Issue:** #604 — https://github.com/triplecanopy/b-ber/issues/604
 
 ## Description
 
