@@ -4,7 +4,7 @@
 **Feature:** Migrate JS→TS
 **Scope:** monorepo
 **Priority:** medium
-**GitHub Issue:** (pending)
+**GitHub Issue:** #606 — https://github.com/triplecanopy/b-ber/issues/606
 
 ## Description
 
