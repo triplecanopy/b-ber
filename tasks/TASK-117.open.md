@@ -70,9 +70,10 @@ AGENTS.md § Releases → "Requiring the CI gate").
       cannot be merged
 - [ ] Decide CircleCI's future: fix its GitHub reporting, narrow it to the e2e job
       only, or retire it (its `build` job now duplicates this workflow)
-- [ ] Consider adding `npm run typecheck` and `npm run check:circular` to the gate.
-      TASK-022 made the circular-dependency check an "enforcing CI gate", which is
-      only true if something enforces it
+- [x] Added `npm run check:circular` to the gate — TASK-022 called it an
+      "enforcing CI gate", which was only true while CircleCI ran it
+- [ ] Consider adding `npm run typecheck` too (deferred: slower, and no failure
+      has been traced to it)
 
 ## Notes
 

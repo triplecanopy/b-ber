@@ -46,3 +46,9 @@ jobs:
       # on main after the 4.0.3 bump merged.
       - name: Lint and test
         run: npm test
+
+      # TASK-022 made this an "enforcing" gate, which was only true while
+      # CircleCI ran it — and CircleCI reports nothing to GitHub. Cheap to run,
+      # so it belongs in the gate that actually blocks merges.
+      - name: Check for circular dependencies
+        run: npm run check:circular
