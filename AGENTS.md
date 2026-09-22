@@ -405,6 +405,33 @@ Merge that PR by whatever method you like — the tag is created afterwards from
   happened to be freshly built by hand. Build precedes test because several
   packages' tests import a sibling's built `dist`.
 
+### Requiring the CI gate
+
+`.github/workflows/ci.yml` runs build + test on every pull request, but a workflow
+alone blocks nothing — it has to be a **required status check** on `main`. Until it
+is, a red PR can still be merged, which is how the 4.0.3 bump reached `main`
+unpublishable.
+
+GitHub only offers a check in the ruleset UI after it has reported at least once,
+so the order matters:
+
+1. Merge `ci.yml`, then open or push any PR so the `build-and-test` check runs once.
+2. Repository **Settings → Rules → Rulesets → "Base Rules"**.
+3. Under **Branch rules**, tick **Require status checks to pass**.
+4. Click **Add checks**, search `build-and-test`, and select it. If it does not
+   appear, the check has not reported yet — go back to step 1.
+5. Optionally tick **Require branches to be up to date before merging**. It is
+   safer (the check runs against `main` merged in) at the cost of re-running CI
+   when `main` moves.
+6. Leave **Do not require status checks on creation** unticked.
+7. **Save changes** at the bottom.
+
+Verify it worked by opening a throwaway PR with a deliberate lint error: the merge
+button should be blocked, not just red.
+
+`required_status_checks` is what the ruleset calls this rule; confirm it with
+`gh api repos/triplecanopy/b-ber/rulesets/<id> --jq '[.rules[].type]'`.
+
 ### Required secrets
 
 `NPM_TOKEN` — an npm automation token with publish rights to the

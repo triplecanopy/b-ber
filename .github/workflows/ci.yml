@@ -1,0 +1,48 @@
+# Gates pull requests on the same build and test that `release-publish.yml` runs.
+#
+# Why this exists: nothing gated PRs before. `.circleci/config.yml` claims to
+# build every push and pull request, but CircleCI reports no statuses or check
+# runs to GitHub, and the branch ruleset has no `required_status_checks` rule —
+# so a PR could merge with a broken build. That is how the 4.0.3 release PR
+# merged a version bump that could not publish: `release-prepare.yml` runs the
+# gates *before* the bump, so a failure the bump itself causes only shows up
+# after the merge, on main.
+#
+# Make the `build-and-test` check required on main (Settings → Rules) for this
+# to actually block anything.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+# A superseded run tells us nothing, so let a new push cancel it — except on
+# main, where each commit's result is worth keeping.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci --ignore-scripts
+
+      # Build precedes test because several packages' tests import a sibling's
+      # built dist. Same order as release-publish.yml and CircleCI.
+      - name: Build
+        run: npm run build
+
+      # `npm test` is `biome check .` then jest — the exact command that failed
+      # on main after the 4.0.3 bump merged.
+      - name: Lint and test
+        run: npm test
