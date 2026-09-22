@@ -1,7 +1,7 @@
 # TASK-125: Decide and document the transitive-vulnerability strategy
 
 **Status:** not started
-**Feature:** Upgrade tooling
+**Feature:** Dependency health
 **Scope:** monorepo
 **Priority:** medium
 **GitHub Issue:** (pending)
@@ -47,6 +47,13 @@ that is recorded.
 - [ ] Write the decision order into AGENTS.md as a short runbook
 - [ ] Define the comment + removal-condition convention for any override added
 - [ ] Decide whether `overrides` entries get a periodic review, and where it lives
+
+## References
+
+- [Unlocking security updates for transitive dependencies with npm](https://github.blog/security/supply-chain-security/unlocking-security-updates-for-transitive-dependencies-with-npm/)
+  — the parent-bump behaviour this task depends on
+- [Dependabot errors](https://docs.github.com/en/code-security/reference/supply-chain-security/troubleshoot-dependabot/dependabot-errors)
+  — manifest-count timeouts, relevant with 37 workspaces
 
 ## Notes
 

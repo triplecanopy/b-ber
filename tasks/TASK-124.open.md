@@ -1,7 +1,7 @@
 # TASK-124: Automate merging and clear the backlog
 
 **Status:** not started
-**Feature:** Upgrade tooling
+**Feature:** Dependency health
 **Scope:** monorepo
 **Priority:** high
 **GitHub Issue:** (pending)
@@ -51,6 +51,13 @@ before closing. Two are known:
 - [ ] Evaluate the merge queue; if adopted, document the ruleset steps in AGENTS.md
       alongside the existing "Requiring the CI gate" runbook
 - [ ] Re-measure the alert count and record it in TASK-120
+
+## References
+
+- [Using GitHub merge queue to ease Dependabot churn](https://fredrikaverpil.github.io/blog/2023/03/29/using-github-merge-queue-to-ease-the-dependabot-churn/)
+  — the mechanism for the `strict: true` rebase problem
+- [Let Dependabot merge its own PRs](https://www.nickyt.co/blog/let-dependabot-merge-its-own-prs/)
+  — `dependabot/fetch-metadata` + `gh pr merge --auto`, scoped by update type
 
 ## Notes
 

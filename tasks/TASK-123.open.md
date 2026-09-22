@@ -1,7 +1,7 @@
 # TASK-123: Rewrite the Dependabot rules
 
 **Status:** not started
-**Feature:** Upgrade tooling
+**Feature:** Dependency health
 **Scope:** monorepo
 **Priority:** high
 **GitHub Issue:** (pending)
@@ -45,6 +45,15 @@ Make Dependabot surface only what is worth a human's attention. The existing con
 - [ ] Check Dependabot run logs for timeouts or manifest errors
 - [ ] Decide on `open-pull-requests-limit` and record the reasoning
 - [ ] Split `security` / `dependencies` labels and confirm both exist
+
+## References
+
+- [Optimizing PR creation for version updates](https://docs.github.com/en/code-security/tutorials/secure-your-dependencies/optimizing-pr-creation-version-updates)
+  — grouping, limits, and scheduling
+- [Customizing Dependabot security PRs](https://docs.github.com/en/code-security/dependabot/dependabot-security-updates/customizing-dependabot-security-prs)
+  — which `dependabot.yml` keys leak into the security path
+- [Ignoring a dependency without blocking security updates](https://pydevtools.com/handbook/how-to/how-to-ignore-a-dependency-in-dependabot-without-blocking-security-updates/)
+  — the scoping trap this task must verify
 
 ## Notes
 

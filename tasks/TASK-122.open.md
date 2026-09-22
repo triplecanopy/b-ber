@@ -1,7 +1,7 @@
 # TASK-122: Pin and dedupe every dependency specifier
 
 **Status:** not started
-**Feature:** Upgrade tooling
+**Feature:** Dependency health
 **Scope:** monorepo
 **Priority:** high
 **GitHub Issue:** (pending)

@@ -1,7 +1,7 @@
 # TASK-120: Clear the dependency vulnerability backlog
 
 **Status:** in progress
-**Feature:** Upgrade tooling
+**Feature:** Dependency health
 **Scope:** monorepo
 **Priority:** high
 **GitHub Issue:** #608 — https://github.com/triplecanopy/b-ber/issues/608

@@ -1,7 +1,7 @@
 # TASK-121: Put Dependabot on a working footing (parent)
 
 **Status:** in progress
-**Feature:** Upgrade tooling
+**Feature:** Dependency health
 **Scope:** monorepo
 **Priority:** high
 **GitHub Issue:** #610 — https://github.com/triplecanopy/b-ber/issues/610
@@ -87,6 +87,15 @@ Worth knowing: monorepos with many manifests can hit **Dependabot timeouts**. Wi
 37 workspace manifests this repo is in that territory, and it may explain gaps in
 coverage. TASK-123 should check for `dependabot` run errors in the repo's
 Dependabot logs.
+
+## References
+
+- [Dependabot security updates](https://docs.github.com/en/code-security/concepts/supply-chain-security/dependabot-security-updates)
+  — security vs version updates, and why `open-pull-requests-limit` does not bound the backlog
+- [Ignoring a dependency without blocking security updates](https://pydevtools.com/handbook/how-to/how-to-ignore-a-dependency-in-dependabot-without-blocking-security-updates/)
+  — the `>= 0` expansion that makes a naive major-ignore suppress security fixes
+- [Dependabot unlocks transitive dependencies for npm](https://github.blog/changelog/2022-09-07-dependabot-unlocks-transitive-dependencies-for-npm-projects/)
+  — why `overrides` is the fallback rather than the strategy
 
 ## Notes
 
