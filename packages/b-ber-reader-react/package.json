@@ -84,10 +84,7 @@
     "react": ">=16.2.0 <=19",
     "react-dom": ">=16.2.0 <=19"
   },
-  "files": [
-    "dist",
-    "index.d.ts"
-  ],
+  "files": ["dist", "index.d.ts"],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/triplecanopy/b-ber.git"
