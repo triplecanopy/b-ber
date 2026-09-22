@@ -71,6 +71,33 @@ jobs:
             --yes
           echo "version=$(node -p 'require("./lerna.json").version')" >> "$GITHUB_OUTPUT"
 
+      - name: Format the bump
+        run: |
+          # lerna writes package.json with its own JSON formatter, which
+          # disagrees with biome — it expands `"files": ["dist"]` across three
+          # lines, and `biome check` treats that as an error. Locally this never
+          # showed, because husky's lint-staged silently reformatted the staged
+          # files as part of the version commit. The API commit below bypasses
+          # git hooks entirely, so do it explicitly: otherwise the bump lands on
+          # main unformatted and release-publish.yml's `npm test` fails there —
+          # after the release PR has already merged. That happened on 4.0.3.
+          #
+          # Scoped to manifests, deliberately: lock files are biome-clean as npm
+          # writes them and are best left alone.
+          MANIFESTS="$(git diff --name-only | grep -E '(^|/)(package\.json|lerna\.json)$')"
+
+          if [ -z "$MANIFESTS" ]; then
+            echo "no manifests changed — did the bump run?" >&2
+            exit 1
+          fi
+
+          printf '%s\n' "$MANIFESTS"
+          # Piped into xargs rather than passed as an unquoted expansion: this
+          # step runs under bash on the runner, which word-splits, but zsh does
+          # not — so the unquoted form works in CI and silently passes one giant
+          # argument when the same line is tested locally.
+          printf '%s\n' "$MANIFESTS" | xargs npx biome check --write
+
       - name: Create the release branch with a GitHub-signed commit
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
