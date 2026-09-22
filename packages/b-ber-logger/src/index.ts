@@ -91,7 +91,12 @@ class Logger extends Timer {
   trace!: () => void
   notice!: (...args: unknown[]) => void
   inspect!: (args: unknown) => void
-  printSummary!: (data: unknown) => void
+  printSummary!: (data: {
+    state: any
+    formattedStartDate: string
+    formattedEndDate: string
+    sequenceEnd: string
+  }) => void
   configure!: () => void
   printVersion!: (version: string) => void
   registerSequence!: (
@@ -183,7 +188,7 @@ class Logger extends Timer {
     Object.keys(this.settings).forEach((a) => {
       const opt = `--${a}`
       if (Object.hasOwn(argv, opt)) {
-        ;(this.settings as Record<string, unknown>)[a] = argv[opt]
+        ;(this.settings as unknown as Record<string, unknown>)[a] = argv[opt]
       }
     })
 
