@@ -1,6 +1,6 @@
 {
   "name": "@canopycanopycanopy/b-ber-resources",
-  "version": "4.0.2",
+  "version": "4.0.3",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -24,7 +24,11 @@
     "lodash": "^4.17.21",
     "tar": "^6.1.11"
   },
-  "files": ["dist", "b-ber-logo.png", "default-publishers-logo.png"],
+  "files": [
+    "dist",
+    "b-ber-logo.png",
+    "default-publishers-logo.png"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/triplecanopy/b-ber.git"

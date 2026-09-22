@@ -1,6 +1,6 @@
 {
   "name": "@canopycanopycanopy/b-ber-templates",
-  "version": "4.0.2",
+  "version": "4.0.3",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -38,8 +38,8 @@
     "typescript": "^6.0.3"
   },
   "dependencies": {
-    "@canopycanopycanopy/b-ber-lib": "4.0.2",
-    "@canopycanopycanopy/b-ber-logger": "4.0.2",
+    "@canopycanopycanopy/b-ber-lib": "4.0.3",
+    "@canopycanopycanopy/b-ber-logger": "4.0.3",
     "fs-extra": "^8.1.0",
     "image-size": "^0.8.3",
     "lodash": "^4.17.21",
@@ -47,7 +47,9 @@
     "tar": "^6.1.11",
     "vinyl": "^2.2.0"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/triplecanopy/b-ber.git"
