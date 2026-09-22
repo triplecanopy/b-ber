@@ -85,9 +85,18 @@ jobs:
           # Scoped to manifests, deliberately: lock files are biome-clean as npm
           # writes them and are best left alone.
           MANIFESTS="$(git diff --name-only | grep -E '(^|/)(package\.json|lerna\.json)$')"
-          echo "$MANIFESTS"
-          # shellcheck disable=SC2086
-          npx biome check --write $MANIFESTS
+
+          if [ -z "$MANIFESTS" ]; then
+            echo "no manifests changed — did the bump run?" >&2
+            exit 1
+          fi
+
+          printf '%s\n' "$MANIFESTS"
+          # Piped into xargs rather than passed as an unquoted expansion: this
+          # step runs under bash on the runner, which word-splits, but zsh does
+          # not — so the unquoted form works in CI and silently passes one giant
+          # argument when the same line is tested locally.
+          printf '%s\n' "$MANIFESTS" | xargs npx biome check --write
 
       - name: Create the release branch with a GitHub-signed commit
         env:
