@@ -42,7 +42,6 @@
   },
   "dependencies": {
     "@canopycanopycanopy/b-ber-shapes-directives": "4.0.3",
-    "lodash": "^4.17.21",
-    "tar": "^6.1.11"
+    "lodash": "^4.17.21"
   }
 }
