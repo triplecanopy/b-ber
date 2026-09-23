@@ -6,6 +6,27 @@
 **Priority:** medium
 **GitHub Issue:** #612 — https://github.com/triplecanopy/b-ber/issues/612
 
+## Decision (2026-09-23)
+
+**Option A is chosen: GitHub sub-issues + issue types for the hierarchy, task PRD
+files for the content.** Migration is deliberately deferred — this is the recorded
+direction, not work in progress. Do not propose alternatives in a future session; if
+GitHub's hierarchy turns out not to fit in practice, option B (a generated in-repo
+registry) is the documented fallback.
+
+**The `epic` vs `feature` terminology and the inconsistencies it creates are the
+user's to resolve.** They are working out that plan separately. Do not redefine the
+hierarchy unilaterally — the migration cannot start until those definitions land,
+because they determine what the seven current "features" become.
+
+What that leaves as prerequisites, in order:
+
+1. User settles `epic ← feature ← task` definitions (**owned by the user**)
+2. Create an `Epic` issue type on the `triplecanopy` org
+3. Change `AGENTS.md`'s "issues mirror only the active working set" policy — a
+   complete hierarchy needs an issue per task, or the tree has holes
+4. Extract the live sequencing out of `PLAN.md` before retiring it
+
 ## Description
 
 `PLAN.md` has outgrown its purpose. It was written to drag a stale repo back into a
@@ -68,7 +89,7 @@ strict tree anyway.
 
 ## Options
 
-**A. GitHub sub-issues + issue types for hierarchy; files for content.** *(recommended)*
+**A. GitHub sub-issues + issue types for hierarchy; files for content.** ✅ **CHOSEN 2026-09-23**
 Task PRDs stay in `tasks/` — versioned with the code, reviewable in a PR, readable
 offline. GitHub holds the *relationships* and provides the registry view, and
 maintains them itself. Retires `PLAN.md` without replacing it with something that
@@ -87,15 +108,17 @@ Cost: a script to maintain, and it needs a CI check or it silently goes stale li
 Simple and needs no tooling, but reproduces `PLAN.md`'s actual defect — a
 hand-maintained index of data that lives elsewhere.
 
-**A and B are complementary**, and the likely answer is both: GitHub for the live
-hierarchy, a generated file for the offline view. C is the fallback if GitHub's
-hierarchy turns out not to fit.
+**A is the decision.** B remains the documented fallback if GitHub's hierarchy does
+not fit in practice, and the two are complementary — a generated offline view could
+be added later without undoing A. C is rejected: it reproduces the defect above.
 
 ## Subtasks
 
-- [ ] Settle the `epic ← feature ← task` definitions and write them into `AGENTS.md`,
-      replacing the current interchangeable use of "feature (epic)"
-- [ ] Decide between options A / B / C (or A+B)
+- [ ] **(user)** Settle the `epic ← feature ← task` definitions and the existing
+      inconsistencies, replacing `AGENTS.md`'s interchangeable use of "feature
+      (epic)". **Blocks everything below** — the definitions determine what the seven
+      current features become
+- [x] Decide between options A / B / C — **A chosen 2026-09-23**
 - [ ] Create an `Epic` issue type on the org if going with A
 - [ ] Decide whether every task gets an issue — the current "active working set only"
       policy in `AGENTS.md` is incompatible with a complete GitHub hierarchy
