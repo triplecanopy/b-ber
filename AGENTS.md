@@ -141,7 +141,7 @@ task directories** — `packages/*/tasks/` was flattened into root on 2026-06-11
 
 Every task belongs to exactly one **feature** — the larger body of work it
 contributes to. Record it in the task header with a `**Feature:**` field, and
-group tasks by feature in `PLAN.md`. The six features are:
+group tasks by feature in `PLAN.md`. The features are:
 
 - **Upgrade tooling**
 - **Migrate JS→TS**
@@ -149,8 +149,15 @@ group tasks by feature in `PLAN.md`. The six features are:
 - **E2E testing**
 - **Node.js modernization**
 - **React 19 (reader-react)**
+- **Dependency health** — added 2026-09-22
 
-Every task created going forward must fall under one of these. If a task does
+Every task created going forward must fall under one of these.
+
+**Dependency health** is unlike the other six: they are bounded (there is a state
+in which the migration is finished), whereas keeping dependencies current and
+vulnerability-free is continuous. It does not "complete" — it reaches a working
+footing and then needs maintaining. Treat a quiet Dependabot queue as the
+definition of done for any given task under it, not for the feature. If a task does
 not fit any of them, that is a signal to either reframe the task or raise a new
 feature with the team — do not leave it unclassified.
 
@@ -524,7 +531,7 @@ exceed what comfortably fits in one context window.
 GitHub issues mirror **only the work that benefits from a public, trackable
 thread** — not every task. Create/maintain an issue for:
 
-- the **six feature epics**, and
+- the **feature epics**, and
 - any task that is **in progress or next-up** (the active working set).
 
 Do **not** mass-create issues for backlog stubs or already-completed tasks.
