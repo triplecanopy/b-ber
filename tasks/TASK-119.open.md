@@ -82,10 +82,15 @@ Both are type-level only. Verified: `npm test` 130/130 suites / 1022 tests, biom
 
 - **Expect the error count to grow before it shrinks.** 19 packages have not run
   yet. Do not treat 123 as the total.
-- Worth checking whether the missing-`@types/node` pattern found in `b-ber-logger`
-  explains failures elsewhere — it inflated one package's count 20-fold, and other
-  packages with few or no `@types/*` deps may be in the same position. Cheap to
-  check first, and it may collapse a lot of the 123.
+- **The missing-`@types/node` pattern does *not* explain the rest — checked
+  2026-09-22.** It was a promising lead (it inflated `b-ber-logger`'s count 20-fold),
+  but `b-ber-templates`, the largest at 90 errors, is **85× TS7006/TS7031
+  implicit-`any`** — missing annotations, not wrong node types. That package needs
+  real annotation work, not a config fix. Still worth a quick check on the smaller
+  packages, but do not expect it to collapse the 123.
+- Separately: the root `@types/node` is pinned at **14.18.12 while the repo runs Node
+  24** — ten majors stale, worth fixing on its own merits. Tracked under the
+  Dependency health epic (TASK-120 / TASK-124, Dependabot #531), not here.
 - A good candidate for parallel subagents per AGENTS.md's large-task strategy: the
   packages are independent and each verifies in isolation with `npx tsc --noEmit`.
   Do `b-ber-templates` alone though — 90 errors in one package is not a chunk to

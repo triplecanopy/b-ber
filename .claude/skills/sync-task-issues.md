@@ -10,7 +10,7 @@ Audit and synchronise task PRD files in `tasks/` against GitHub issues in
 
 **Scope:** all tasks live in `tasks/TASK-NNN[.open].md` (there are no
 package-level task directories). GitHub issues mirror **only the active working
-set**, not every task: the six feature epics and any in-progress / next-up task.
+set**, not every task: the feature epics and any in-progress / next-up task.
 Do not mass-create issues for backlog stubs or already-completed tasks. When
 auditing, treat a backlog task with no issue as correct, not as a gap to fill.
 
@@ -33,7 +33,7 @@ gh issue list --limit 200 --state all --json number,title,state \
 ```
 
 From the output, build three lists:
-- **A** — **active** task files that warrant an issue but lack one: the six
+- **A** — **active** task files that warrant an issue but lack one: the
   feature epics and any in-progress / next-up task with no `**GitHub Issue:**`
   field and no matching issue title. Backlog stubs and completed tasks are **not**
   in list A.

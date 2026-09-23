@@ -17,9 +17,10 @@ root (one flat `TASK-NNN` sequence). Regenerate coverage numbers any time with
 
 ## 🎯 Goal
 
-Modernize the b-ber monorepo to a stable, maintainable baseline, then merge
-`feat/upgrades` → `main`. All work is organized under **six features (epics)**.
-Every task belongs to exactly one; every new task must too.
+Modernize the b-ber monorepo to a stable, maintainable baseline. All work is
+organized under **seven features (epics)**. Every task belongs to exactly one;
+every new task must too. **Dependency health** was added 2026-09-22 and is the only
+one that is continuous rather than bounded.
 
 | Feature | What "done" means |
 | ------- | ----------------- |
@@ -29,6 +30,7 @@ Every task belongs to exactly one; every new task must too.
 | 🧪 **E2E testing** | CLI + reader browser tests running in CI against a real fixture build |
 | ⚙️ **Node.js modernization** | Current Node standards (no deprecated APIs, modern engines, no `process.exit` in libs) |
 | ⚛️ **React 19 (reader-react)** | Reader on modern React: functional components, observers (no polling), correct spreads, ESM, TS |
+| 🔒 **Dependency health** | Dependencies pinned and deduped, Dependabot producing signal not noise, a quiet alert queue. **Continuous — reaches a working footing rather than completing** |
 
 ---
 
@@ -36,11 +38,12 @@ Every task belongs to exactly one; every new task must too.
 
 | Feature | Done | Active | Backlog | State |
 | ------- | ---- | ------ | ------- | ----- |
-| 🔧 Upgrade tooling | 25 | 3 | 5 | Core toolchain shipped; scripts cleaned + watch scripts applied (TASK-038). **TASK-112 + TASK-114 ✅ done & released in 4.0.2** — 4.0.0 shipped unbuildable (tsdown's flat bundle broke `__dirname` asset reads) and reader-react misreported its version; both fixed and verified against the published artifacts. **TASK-115 active** — releases automated via two GitHub Actions workflows so they work against protected `main`, and the publish-time build regression from TASK-030 fixed. **TASK-120 active — 422 Dependabot alerts, 59% of them one vestigial `tar` dependency (removed).** TASK-117 done (PR gate merged + required). Previously: **no PR in the repo was gated on CI** (CircleCI reports nothing to GitHub and the ruleset has no `required_status_checks`); that is how the 4.0.3 bump merged unpublishable. Remaining: **TASK-116 (high — OIDC trusted publishing; npm kills the token path Jan 2027)**, TASK-113 (watch-mode asset gap, from TASK-112), TASK-118 (retire CircleCI — port coverage + e2e to Actions first), TASK-045 (release/changelog refinements), TASK-109 (SCSS toolchain) |
+| 🔧 Upgrade tooling | 25 | 2 | 5 | Core toolchain shipped; scripts cleaned + watch scripts applied (TASK-038). **TASK-112 + TASK-114 ✅ done & released in 4.0.2** — 4.0.0 shipped unbuildable (tsdown's flat bundle broke `__dirname` asset reads) and reader-react misreported its version; both fixed and verified against the published artifacts. **TASK-115 active** — releases automated via two GitHub Actions workflows so they work against protected `main`, and the publish-time build regression from TASK-030 fixed. TASK-117 done (PR gate merged + required). Dependency work moved to its own **Dependency health** epic. Previously: **no PR in the repo was gated on CI** (CircleCI reports nothing to GitHub and the ruleset has no `required_status_checks`); that is how the 4.0.3 bump merged unpublishable. Remaining: **TASK-116 (high — OIDC trusted publishing; npm kills the token path Jan 2027)**, TASK-113 (watch-mode asset gap, from TASK-112), TASK-118 (retire CircleCI — port coverage + e2e to Actions first), TASK-045 (release/changelog refinements), TASK-109 (SCSS toolchain) |
 | 🔤 Migrate JS→TS | 18 | 0 | 0 | ✅ **Epic complete** — reader-react (TASK-032) merged; every package except legacy `b-ber-reader` is TypeScript |
 | ✅ Unit test coverage | 2 | 1 | 2 | Epic in progress; most packages at target, a few laggards |
 | 🧪 E2E testing | 5 | 1 | 2 | Pipeline green in CI; skill + iframe fix remain |
 | ⚙️ Node.js modernization | 1 | 0 | 2 | Barely started; epic + logger refactor pending |
+| 🔒 Dependency health | 0 | 2 | 4 | **Just started.** 422 alerts / 38 stale PRs. TASK-120 removed `tar` (59% of alerts, imported nowhere). TASK-121 is the parent for putting Dependabot on a working footing: TASK-122 → 123 → 124 in order, TASK-125 in parallel |
 | ⚛️ React 19 (reader-react) | 33 | 0 | 11 | **Steps 1 + 2 complete and merged into `feat/upgrades`** (TASK-095–100): no class components/HOCs, no selfRef shim. **Step 3 (TASK-073) done** — recommendation: drop Redux → `useSyncExternalStore` + stable API context (`STATE-MIGRATION-PLAN.md`). **Step 4 (TASK-106) ✅ done & merged** — Redux removed, built-in store + ReaderApiContext shipped, browser QA passed. **TASK-101 (page-nav race) done.** **TASK-107/108 ✅ done & QA'd.** **Housekeeping TASK-102/103 + TASK-068 (phase-1 cleanup: dead code, ErrorBoundary, SpreadFigure→useContext, Layout debounce fix) ✅ done & merged.** **TASK-111 (material-icons font → inline SVGs, dep removed) ✅ done & merged.** Next: TASK-091 (react-player v3) or TASK-104 (a11y) — independent leaves. TASK-105 (colocation) **superseded/dropped** 2026-06-21. |
 
 _"Active" = in progress. "Backlog" = not started (excludes superseded)._
@@ -61,7 +64,6 @@ dependabot reconfigured (TASK-037), architecture diagrams expanded (TASK-017).
 | TASK-113 | med | Discovery ([#588](https://github.com/triplecanopy/b-ber/issues/588)) — `b-ber-tasks`'s `watch` runs `tsdown --watch` but not `copy.sh`, and `clean: true` wipes `dist/`, so watch-mode `dist/` is missing the assets TASK-112 just fixed. Survey build/watch asymmetry across packages; evaluate tsdown `hooks['build:done']` / built-in `copy` to retire `copy.sh` |
 | TASK-115 | **high** | ⏳ **Merged (PR #592), not finished** ([#591](https://github.com/triplecanopy/b-ber/issues/591)) — `lerna publish` cannot run against protected `main` (it pushes its own version commit; this is what burnt `4.0.1`), and nothing built the packages at publish time since TASK-030 dropped `b-ber-tasks`'s `prepare` script. Split into `release-prepare.yml` (bump → PR) + `release-publish.yml` (build → `lerna publish from-package` → tag). Needs an `NPM_TOKEN` secret (granular, **Bypass 2FA**, 90-day expiry), a dry run, and the orphan `v4.0.1` tag deleted |
 | TASK-117 | **high** | ⏳ **In progress** ([#600](https://github.com/triplecanopy/b-ber/issues/600)) — add `ci.yml` (build + test on every PR) and make `build-and-test` a required status check on `main`. Nothing gates PRs today: CircleCI posts no statuses or check runs, and the ruleset has no `required_status_checks`. `release-prepare.yml` runs its gates *before* the bump, so a bump-induced failure can only be caught on the release PR |
-| TASK-120 | **high** | ⏳ **In progress** ([#608](https://github.com/triplecanopy/b-ber/issues/608)) — 422 open Dependabot alerts (23 critical / 255 high) and 38 stale PRs. Not spread thin: `tar` alone was 248 of them, declared as a runtime dep by 19 packages and imported by none — removed, so consumers stop installing it entirely. Next: lerna 8→9 (kills the last `tar` path *and* unblocks TASK-116), then `axios`/`xmldom`/`postcss`/`js-yaml`/`undici` |
 | TASK-118 | med | ([#604](https://github.com/triplecanopy/b-ber/issues/604)) Retire CircleCI — it reports nothing to GitHub and gates nothing. **Not a straight deletion:** its `build` job is covered by TASK-117's `ci.yml`, but coverage→Codecov (TASK-049/092) and the Playwright e2e suite (TASK-039–044) are not. Port both to Actions, then delete `.circleci/` plus the now-dead `scripts/run-ci.js` + `postpublish` hook |
 | TASK-116 | **high** | ([#593](https://github.com/triplecanopy/b-ber/issues/593)) Move releases to OIDC trusted publishing, dropping `NPM_TOKEN`. Blocked on upgrading lerna 8.2.4 → 9+ (OIDC landed in lerna v9). Deadline is external: write-scoped granular tokens expire every 90 days, and npm removes direct publishing with Bypass-2FA tokens in **January 2027** |
 | TASK-114 | med | ✅ **Done, released in 4.0.2** ([#589](https://github.com/triplecanopy/b-ber/issues/589)) — `src/lib/version.ts` now does `import { version } from '../../package.json'`; `scripts/version.js` + the `version` lifecycle hook are gone. Chosen over a Vite `define` (which would have needed the value registered in five separate compile paths); the leakage worry was measured away — the lib bundle is byte-identical to published 4.0.0 bar one comment character. Test strengthened to assert equality with `package.json`. Also fixed `b-ber-reader`'s stale `src/index.jsx` alias |
@@ -157,6 +159,122 @@ reader tests + CLI smoke tests). Shipped: research (040), kitchen-sink fixture
 
 > ⚠️ TASK-046 is **blocked by TASK-050** (need CLI handler tests asserting
 > `process.exit` behavior before changing it). Cross-feature dependency.
+
+---
+
+## 🔒 Dependency health
+
+**Continuous epic, started 2026-09-22.** Unlike the other six, this one does not
+complete — it reaches a working footing and then needs maintaining. "Done" applies
+to individual tasks, not the feature.
+
+### Where it stands
+
+| | Measured 2026-09-22 |
+| --- | --- |
+| Open Dependabot alerts | **422** — 23 critical, 255 high, 131 medium, 13 low |
+| Open Dependabot PRs | **38**, oldest 2026-07-17 |
+| Specifier styles | **388 `^`**, 3 other, 1 exact |
+| Deps whose specs conflict across packages | **3** (`js-yaml`, `@types/js-yaml`, `sass`) |
+| `overrides` in root `package.json` | none |
+| Workspace manifests | 37 — inside Dependabot's timeout-risk territory |
+
+Alerts are concentrated, not spread thin — which is what makes this tractable:
+
+| Package | Alerts | Share |
+| ------- | ------ | ----- |
+| `tar` | 248 | 59% — **removed, TASK-120** |
+| `axios` | 28 | 7% |
+| `xmldom` | 16 | deprecated; may want replacing, not upgrading |
+| `postcss` | 15 | |
+| `js-yaml` | 14 | |
+| `undici` | 12 | |
+
+### Order of work
+
+```
+TASK-120  vulnerability remediation  ──────────────────┐  (independent, in progress)
+                                                       │
+TASK-122 ──► TASK-123 ──► TASK-124                     │
+ pin+dedupe   rules        automate + clear backlog     │
+                                                       │
+TASK-125  transitive strategy  ────────────────────────┘  (parallel, any time)
+```
+
+**122 → 123 → 124 is a hard order:**
+
+- **122 before 123** — `versioning-strategy: increase` is meaningless against `^`
+  ranges, so the rules cannot be written until specifiers are exact.
+- **123 before 124** — the backlog should be *regenerated under the new rules*, not
+  cleared under the old ones. Clearing first wastes the work.
+
+TASK-125 touches nothing the others touch. TASK-120 is the content (actual
+vulnerabilities) while 121–125 are the process; they inform each other but neither
+blocks the other.
+
+| Task | Pri | State | What |
+| ---- | --- | ----- | ---- |
+| [TASK-121](tasks/TASK-121.open.md) | **high** | ⏳ parent ([#610](https://github.com/triplecanopy/b-ber/issues/610)) | Umbrella + the findings that shape the rest |
+| [TASK-120](tasks/TASK-120.open.md) | **high** | ⏳ in progress ([#608](https://github.com/triplecanopy/b-ber/issues/608)) | Remediate actual vulnerabilities. `tar` removed (59%). Next: lerna 8→9, then `axios`/`xmldom`/`postcss`/`js-yaml`/`undici` |
+| [TASK-122](tasks/TASK-122.open.md) | **high** | next up | Pin all 388 `^` specifiers exactly; resolve the 3 conflicts via `syncpack` |
+| [TASK-123](tasks/TASK-123.open.md) | **high** | blocked on 122 | Rewrite `dependabot.yml`: scoped major-ignore, `versioning-strategy`, `rebase-strategy`, commit-message, labels |
+| [TASK-124](tasks/TASK-124.open.md) | **high** | blocked on 123 | Auto-merge patch/minor; regenerate the backlog instead of grinding it |
+| [TASK-125](tasks/TASK-125.open.md) | med | ready | Transitive strategy: parent-bump → `overrides` → removal |
+
+### Findings that shape the plan
+
+Established by measurement and research on 2026-09-22. Recorded here so later
+sessions do not re-derive them.
+
+1. **`open-pull-requests-limit` does not apply to security updates.** The limit is
+   10 and there are 38 PRs; that is the entire explanation. The limit cannot be used
+   to control backlog size. Setting it to `0` disables *version* updates while
+   leaving security PRs flowing — a real lever, but it lets versions rot.
+
+2. **⚠️ An `ignore` entry naming only a dependency expands to `>= 0` and applies to
+   the security path as well as the version path.** So a naive "no major bumps" rule
+   silently suppresses that package's security fixes. It must be scoped as
+   `update-types: ["version-update:semver-major"]`, and TASK-123 has to verify in
+   practice that a major *security* fix still arrives.
+
+3. **Dependabot already unlocks npm transitive dependencies** (since 2022-09): when
+   a parent constrains a child to a vulnerable range it bumps *the parent*. So
+   `overrides` is the fallback, not the strategy. Order: parent bump → `overrides`
+   when no parent fix exists → remove the dependency. `npm audit fix` is not on the
+   list — it cannot fix anything needing a major.
+
+4. **The highest-value action is one Dependabot cannot suggest: deletion.** `tar`
+   was 59% of all alerts, declared a runtime dependency by 19 packages, and imported
+   nowhere. Always ask "is this even used?" before bumping. An audit of every runtime
+   dep declared by 3+ packages found `tar` was the only vestigial one, so this is
+   bounded.
+
+5. **Pinning is smaller than it sounds.** Only 3 of ~100 deps disagree across
+   packages. `js-yaml` 3 → 4 is the one real decision (v4 dropped
+   `safeLoad`/`safeDump`).
+
+6. **Do not grind the 38 PRs.** With TASK-117's gate required and `strict: true`,
+   each needs to be up to date and individually green — and every merge invalidates
+   the other 37. Reconfigure, then regenerate. Cherry-pick only what is
+   independently valuable: **#530 lerna 8→9** (removes the last `tar@6` path *and*
+   unblocks TASK-116's OIDC work) and **#531 `@types/node` 14→26** (the repo runs
+   Node 24 against Node 14 types).
+
+7. **`@types/node` staleness is not the typecheck problem.** Tempting lead, checked
+   and false: 85 of `b-ber-templates`' 90 errors are TS7006/TS7031 implicit-`any`,
+   i.e. missing annotations. See TASK-119.
+
+8. **37 manifests is timeout territory.** Monorepos with many manifests can time out
+   during Dependabot's assessment, which would show up as packages that never get
+   PRs. Check the Dependabot run logs before concluding the config works.
+
+### References
+
+- [Dependabot security updates](https://docs.github.com/en/code-security/concepts/supply-chain-security/dependabot-security-updates) — security vs version updates
+- [Ignoring a dependency without blocking security updates](https://pydevtools.com/handbook/how-to/how-to-ignore-a-dependency-in-dependabot-without-blocking-security-updates/) — finding 2
+- [Dependabot unlocks transitive dependencies for npm](https://github.blog/changelog/2022-09-07-dependabot-unlocks-transitive-dependencies-for-npm-projects/) — finding 3
+- [Optimizing PR creation for version updates](https://docs.github.com/en/code-security/tutorials/secure-your-dependencies/optimizing-pr-creation-version-updates) — grouping and limits
+- [Using GitHub merge queue to ease Dependabot churn](https://fredrikaverpil.github.io/blog/2023/03/29/using-github-merge-queue-to-ease-the-dependabot-churn/) — TASK-124
 
 ---
 
@@ -398,6 +516,7 @@ sequencing work:
 | 0 | TASK-112 | ✅ **Done** — released in 4.0.2; verified a fresh `npm install` of the published CLI builds reader/web/epub | — |
 | 0 | TASK-115 | **Add the `NPM_TOKEN` secret and dry-run `release-prepare.yml`** | Workflows are merged but unusable until the secret exists; this is what stops releases needing protection disabled |
 | 1 | TASK-116 | Upgrade lerna to 9+/10 and switch to OIDC trusted publishing | Token path has a hard external deadline (Jan 2027) and a 90-day rotation until then; better done before it bites |
+| 0 | TASK-121 | Work TASK-122 → 123 → 124 in order; TASK-125 in parallel | Dependabot is currently noise; the order matters because each step changes what the next one should do |
 | 1 | TASK-113 | Investigate the watch-mode asset gap | Same copy-step design weakness as TASK-112, from the other end; cheap discovery |
 | 1 | TASK-114 | ✅ **Done** — version reads from `package.json`; generated module retired, `b-ber-reader` alias fixed | — |
 | 1 | TASK-106 | ✅ **Done** — state migration shipped (Redux removed, built-in store + ReaderApiContext, browser QA passed). Dissolved `connect()` + TASK-032 type debt. | — |
