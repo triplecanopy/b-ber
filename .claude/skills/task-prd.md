@@ -5,32 +5,37 @@ description: Open a new task PRD, create a parent task, or look up the PRD templ
 
 # Task PRD
 
-Creates and structures task files in `tasks/` at the monorepo root.
+Creates and structures task files in `tasks/` at the monorepo root, and the
+matching GitHub issue under the right epic.
+
+**The model:** the file holds the PRD; GitHub holds state and relationships.
+Nothing about a task's status, priority, or progress belongs in the file — see
+"Where each fact lives" in `AGENTS.md`. Creating a task means writing one file
+and opening one issue, in that order.
 
 ---
 
 ## Step 1 — Get the next task number
 
 ```bash
-ls tasks/*.md tasks/*.open.md 2>/dev/null | grep -oP 'TASK-\K\d+' | sort -n | tail -1
+ls tasks/TASK-*.md | grep -oE 'TASK-[0-9]{3}' | sort -u | tail -1
 ```
 
-Increment by 1 for the new TASK-NNN.
+Increment by 1. Numbers are a single root-wide sequence and are never reused.
 
 ---
 
-## Step 2 — Create the PRD file
+## Step 2 — Write the PRD
 
-Create `tasks/TASK-NNN.open.md` with this template:
+Create `tasks/TASK-NNN.md` — no `.open` suffix, open and closed tasks are named
+alike:
 
 ```markdown
 # TASK-NNN: Short title
 
-**Status:** not started
-**Feature:** Upgrade tooling | Migrate JS→TS | Unit test coverage | E2E testing | Node.js modernization | React 19 (reader-react) | Dependency health
+**Epic:** Upgrade tooling
+**GitHub Issue:** (fill in after step 3)
 **Scope:** monorepo | <package-name>
-**Priority:** high | medium | low
-**GitHub Issue:** (add only for an epic or active task — see below)
 
 ## Description
 
@@ -45,59 +50,100 @@ What needs to be done and why.
 Decisions, blockers, relevant context.
 ```
 
-Notes on each field:
-- **Feature** — every task belongs to exactly one of the features (epics).
-  If it fits none, reframe the task or raise a new feature; do not leave it blank.
-- **Scope** — use `monorepo` for cross-package work; use the package name (e.g. `b-ber-cli`) for single-package tasks. (Tasks still live in the root `tasks/` dir regardless of scope — there are no per-package task directories.)
-- **Priority** — high = blocks other work or is a safety gate; medium = unblocked and should be done this cycle; low = good to have
-- **GitHub Issue** — only create one for a feature epic or an in-progress/next-up
-  task; fill in after running `/sync-task-issues`. Backlog stubs don't need issues.
+Only three header fields, and each is there for a reason:
+
+- **Epic** — exactly one, and it must be a key in
+  [`tasks/EPICS.json`](../../tasks/EPICS.json). `npm run check:tasks` fails the
+  build on anything else, which is what stops invented values. If the task fits no
+  epic, reframe it or raise a new epic — do not leave it blank.
+- **GitHub Issue** — `#NNN — <url>`. Every open task has one now; the old
+  "active working set only" policy is gone.
+- **Scope** — `monorepo` for cross-package work, otherwise the package name
+  (`b-ber-cli`). Tasks live in the root `tasks/` regardless — there are no
+  per-package task directories.
+
+> **Do not add `**Status:**`, `**Priority:**`, or a `.open` suffix.** Status is
+> the issue being open or closed; priority is a field on the Project board. Both
+> lived in the file once and drifted within a day — that is what TASK-126 removed.
 
 ---
 
-## Step 3 — Create the GitHub issue
+## Step 3 — Open the issue, parented to its epic
 
-After writing the PRD, create the matching issue. See `/sync-task-issues` Step 3
-for the exact `gh issue create` command and label table.
+One command does both:
 
-Add the resulting `#NNN — <url>` to the PRD's `**GitHub Issue:**` field.
+```bash
+gh issue create \
+  --title "TASK-NNN: <exact title from the PRD>" \
+  --type Task \
+  --parent <epic issue number> \
+  --label "<scope label>" \
+  --body "$(cat <<'EOF'
+<one-paragraph summary drawn from the PRD Description>
+
+**Task file:** [tasks/TASK-NNN.md](https://github.com/triplecanopy/b-ber/blob/main/tasks/TASK-NNN.md)
+EOF
+)"
+```
+
+Epic issue numbers are in `tasks/EPICS.json`. Labels are in `/sync-task-issues`.
+
+**The title must match the PRD heading exactly** — `check:tasks --remote`
+compares them.
+
+Then write the issue back into the header and verify:
+
+```bash
+npm run check:tasks
+```
 
 ---
 
 ## Parent tasks
 
-When the work spans multiple sub-tasks, has a dependency chain, or will evolve
-over time (e.g. a multi-stage migration, a large feature), create a parent task
-first. The parent is the single canonical source for the overall goal.
+When work spans several sub-tasks with a real dependency chain, create a parent
+task first. It is a normal task with normal sub-issues — GitHub's tree is not
+limited to two levels, so a parent task's children hang off the *task*, not the
+epic:
+
+```
+Epic: Dependency health (#618)
+└── TASK-121  parent (#610)
+    ├── TASK-122 (#636)
+    └── TASK-123 (#637)
+```
+
+Create the children with `--parent <the parent task's issue>`. Their `**Epic:**`
+field still names the epic — the check walks the parent chain upward, so a
+grandchild resolves correctly.
+
+Use this only where the nesting is real. Do not invent a middle layer to make the
+tree look uniform; most tasks hang directly off their epic.
 
 A parent task should:
-- Describe the goal at a level that doesn't require reading sub-tasks to understand
-- List all sub-tasks with their IDs and one-line descriptions
-- Hold architecture diagrams, dependency topology, and branching strategy
-- Be updated as requirements shift — this is the one task file that grows over time
-- Reference prior closed research tasks rather than duplicating their content
 
-Sub-tasks reference the parent in their Notes section. When a sub-task completes,
-check it off in the parent task as well as closing the sub-task file.
+- Describe the goal without requiring the sub-tasks to be read
+- List all sub-tasks with IDs and one-line descriptions
+- Hold the dependency order **and the reasons for it**
+- Be updated as requirements shift — it is the one task file that grows
+- Reference prior closed research tasks rather than restating them
 
-Parent tasks use the same PRD template. Add a `## Sub-tasks` section:
-
-```markdown
-## Sub-tasks
-
-- [ ] TASK-NNN+1: First sub-task title
-- [ ] TASK-NNN+2: Second sub-task title
-```
+If the ordering matters to anyone outside the parent's own sub-tree, it belongs in
+the **epic body** instead, which is where sequencing lives.
 
 ---
 
-## Updating and closing tasks
+## Updating and closing
 
-- Set status to `in progress` when starting; `complete` when done.
-- Update subtask checkboxes as work progresses — do not batch.
-- When complete: rename the file to remove `.open` (e.g. `TASK-NNN.open.md` → `TASK-NNN.md`) and close the GitHub issue.
+- Tick subtask checkboxes as work progresses — do not batch them at the end.
+- **To close: nothing.** The PR that does the work says `Closes #NNN` in its body;
+  merging closes the issue and the board moves the card to Done. There is no status
+  field to set, no file to rename, no index to update.
 
-Do not edit a task file once it is `complete` and the `.open` suffix is removed.
-If work needs to continue after a task closes, open a new task referencing the original by ID.
-Exception: minor factual corrections (wrong issue number, broken link, typo) — note
-the correction in the Notes section.
+> 🛑 **Only the PR that does the work may say `Closes`.** A PR that merely *files*
+> a PRD must use `Refs #NNN`. PR #605 said `Closes #604` while adding the TASK-118
+> PRD and silently closed a task nobody had started.
+
+Do not edit a task file once its issue is closed. If work needs to continue, open a
+new task referencing the original by ID. Exception: minor factual corrections
+(wrong issue number, broken link, typo) — note the correction in the Notes section.

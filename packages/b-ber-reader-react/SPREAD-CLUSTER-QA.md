@@ -97,6 +97,6 @@ transform; correctness shows up in the TASK-081 spread tests above plus:
 ## Sign-off
 
 When a task's boxes all pass, tell the agent and it will: check the remaining
-subtasks in the task file, mark it `complete`, drop `.open`, update `PLAN.md`,
+subtasks in the task file, then let the PR's `Closes #NNN` close the issue,
 and close any GitHub issue. Report any failures with the project + window width
 + browser so the fix can be reopened.

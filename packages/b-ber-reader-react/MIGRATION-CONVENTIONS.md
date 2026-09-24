@@ -48,7 +48,7 @@ Run **all** of these before marking any conversion done:
 - Conventional commits, `reader-react` scope. Use `refactor` for behavior-
   preserving conversions: `refactor(reader-react): convert Footnote to functional`.
 - Update the task PRD checkboxes as you go (don't batch); update the root
-  `PLAN.md` React section when a task closes.
+  React 19 epic (#617) when a task closes — that is where sequencing lives.
 
 ## 3. Class → functional component
 

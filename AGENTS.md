@@ -11,9 +11,19 @@ long-lived integration branch any more. Implementation work belongs on a task
 branch named `TASK-NNN-<short-descriptive-title>`, cut from `main`. If you are
 on `main` with changes to make, create the task branch before making them.
 
-Then read `PLAN.md`. It shows what is in progress, what is blocked, the
-dependency graph, and which branches are pending merge. This file (AGENTS.md)
-contains the standards and conventions; PLAN.md contains the current state.
+Then read the epics on GitHub — that is where current state lives:
+
+```bash
+gh issue list --search 'type:Epic' --state open      # the eight epics
+gh issue view <epic> --comments                      # an epic's sequencing and reasoning
+gh api repos/triplecanopy/b-ber/issues/<epic>/sub_issues --jq '.[] | "#\(.number) \(.title)"'
+```
+
+This file (AGENTS.md) holds the standards and conventions. The **epic issues**
+hold the live state: what is in progress, what is blocked, and the order work
+has to happen in. `PLAN.md` used to do that and was deleted on 2026-09-23 — it
+was hand-maintained derived data and drifted from the moment it was written
+(TASK-126).
 
 Package-specific AGENTS.md files extend this document with package-local
 details (architecture, dev commands). Always read both this file and the
@@ -137,54 +147,103 @@ b-ber-extended Markdown into the HTML/XML structures required for EPUB output.
 task directories** — `packages/*/tasks/` was flattened into root on 2026-06-11
 (the nesting added no value and forced a separate, colliding ID sequence).
 
-### Features (epics)
+### Where each fact lives
 
-Every task belongs to exactly one **feature** — the larger body of work it
-contributes to. Record it in the task header with a `**Feature:**` field, and
-group tasks by feature in `PLAN.md`. The features are:
+The hierarchy is `epic ← task`, held as GitHub **issue types** and **sub-issues**.
+A third level exists only where a task genuinely has children (TASK-122–125 hang
+off TASK-121); it is not applied uniformly.
 
-- **Upgrade tooling**
-- **Migrate JS→TS**
-- **Unit test coverage**
-- **E2E testing**
-- **Node.js modernization**
-- **React 19 (reader-react)**
-- **Dependency health** — added 2026-09-22
+Each fact has exactly **one** home. This is the whole design — the previous system
+stored a task's status in three places and they disagreed within a day.
 
-Every task created going forward must fall under one of these.
+| Fact | Lives in | Changed by |
+| ---- | -------- | ---------- |
+| The PRD — problem, subtasks, findings | `tasks/TASK-NNN.md` | editing the file, in a PR |
+| Which epic it belongs to | `**Epic:**` in the file → the issue's parent | editing the file, then `gh issue edit <n> --parent <epic>` |
+| Open / closed | the GitHub issue | `Closes #NNN` in a PR body — automatic on merge |
+| Todo / In Progress / Done | the Project board's `Status` field | dragging a card, or `gh` |
+| Priority | the Project board's `Priority` field | the board |
+| Sequencing, ordering, "why this before that" | the **epic issue body** | editing the epic |
+| Discussion, decisions in flight | issue comments | commenting |
 
-**Dependency health** is unlike the other six: they are bounded (there is a state
+The epic assignment is the one fact stored twice, by design — the file names it so
+the PRD is readable offline, GitHub holds it as the parent link so the tree works.
+`npm run check:tasks` reconciles them; see Quality Gates.
+
+**Do not reintroduce a `**Status:**` or `**Priority:**` field, a `.open` filename
+suffix, or a hand-maintained index file.** Each of those is a second copy of
+something above, and each one drifted.
+
+### The epics
+
+Every task belongs to exactly one, recorded as `**Epic:**` in the task header. The
+declared list lives in [`tasks/EPICS.json`](./tasks/EPICS.json) with each epic's
+issue number, and that file is what the check validates against:
+
+| Epic | Issue |
+| ---- | ----- |
+| Upgrade tooling | [#615](https://github.com/triplecanopy/b-ber/issues/615) |
+| Migrate JS→TS | [#616](https://github.com/triplecanopy/b-ber/issues/616) |
+| Unit test coverage | [#471](https://github.com/triplecanopy/b-ber/issues/471) |
+| E2E testing | [#505](https://github.com/triplecanopy/b-ber/issues/505) |
+| Node.js modernization | [#474](https://github.com/triplecanopy/b-ber/issues/474) |
+| React 19 (reader-react) | [#617](https://github.com/triplecanopy/b-ber/issues/617) |
+| Dependency health | [#618](https://github.com/triplecanopy/b-ber/issues/618) |
+| EPUB spec compliance | [#619](https://github.com/triplecanopy/b-ber/issues/619) |
+
+**Dependency health** is unlike the other seven: they are bounded (there is a state
 in which the migration is finished), whereas keeping dependencies current and
 vulnerability-free is continuous. It does not "complete" — it reaches a working
 footing and then needs maintaining. Treat a quiet Dependabot queue as the
-definition of done for any given task under it, not for the feature. If a task does
-not fit any of them, that is a signal to either reframe the task or raise a new
-feature with the team — do not leave it unclassified.
+definition of done for any given task under it, never for the epic.
+
+Adding an epic means a line in `tasks/EPICS.json`, an issue of type `Epic`, and a
+row in the table above. If a task fits none of them, that is a signal to reframe
+the task or raise a new epic — do not leave it unclassified.
 
 ### Task ID and file naming
 
 `TASK-NNN` — zero-padded three-digit integer in a single root-wide sequence,
-assigned sequentially, never reused. (Before the flatten there were separate
-per-package sequences; those were renumbered into the root sequence.)
-
-- **Open / in-progress:** `tasks/TASK-NNN.open.md`
-- **Complete / closed:** `tasks/TASK-NNN.md` (remove `.open` suffix)
+assigned sequentially, never reused. One file per task: `tasks/TASK-NNN.md`, open
+or closed alike. Ask GitHub which are open (`gh issue list`); the filename does not
+say, deliberately.
 
 Never delete a task file — except when explicitly consolidating duplicate/stub
 tasks into a single canonical task (record the consolidation in the survivor).
 
-### Status transitions
+### Creating a task
 
-Set status to `in progress` when starting; `complete` when done; `superseded`
-when another task absorbs it (add a pointer to the survivor). Update subtask
-checkboxes as work progresses — do not batch.
+1. Take the next `TASK-NNN` in sequence and write `tasks/TASK-NNN.md` — run
+   `/task-prd` for the template.
+2. Open the issue and attach it to its epic in one step:
+   ```bash
+   gh issue create --title "TASK-NNN: <title>" --type Task \
+     --parent <epic issue> --label <scope label> --body "<summary + file link>"
+   ```
+3. Write the resulting `**GitHub Issue:** #NNN — <url>` line into the task header.
+4. `npm run check:tasks` to confirm the two agree.
+
+`/sync-task-issues` does all of this and audits both sides.
+
+### Closing a task
+
+The PR that does the work says `Closes #NNN` in its body. Merging closes the issue,
+and the board moves the card to Done. **There is nothing else to update** — no
+status field, no rename, no index.
+
+> ### 🛑 Only the PR that does the work may say `Closes`
+>
+> A PR that merely *files* a task's PRD must not. This bit us on 2026-09-22: PR
+> #605 added the TASK-118 PRD, said `Closes #604`, and silently closed a task that
+> had not been started. Nobody noticed until the migration audit a day later.
+> Reference such a PR with `Refs #NNN` instead.
 
 ### Closed tasks
 
-Do not edit a task file once it is `complete` and the `.open` suffix is removed.
-If work needs to continue after a task closes, open a new task referencing the
-original. Exception: minor factual corrections (wrong issue number, broken link,
-obvious typo) — note the correction in the task's Notes section.
+Do not edit a task file once its issue is closed. If work needs to continue, open a
+new task referencing the original. Exception: minor factual corrections (wrong
+issue number, broken link, obvious typo) — note the correction in the task's Notes
+section.
 
 For full PRD template, parent task guidance, and sub-task conventions, run
 `/task-prd`.
@@ -253,8 +312,8 @@ The workflow:
    ```bash
    gh pr create --base main --title "TASK-NNN: <title>" --body "Closes #NNN …"
    ```
-6. Merge the PR once `npm test` passes cleanly. Then close the issue, drop the
-   task file's `.open` suffix, and update `PLAN.md`.
+6. Merge the PR once `npm test` passes cleanly. `Closes #NNN` closes the issue
+   and the board moves the card to Done — there is nothing else to update.
 
 A task that splits into genuinely parallel slices may use
 `TASK-NNN-<slug>-<pkg>` per slice, each with its own PR.
@@ -288,9 +347,10 @@ prompt:**
    are absent until installed. A source-touching agent that cannot run the test
    suite cannot verify its own change.
 3. **Leave bookkeeping to the parent:** the subagent should edit task-file
-   *content* only (status, findings) and NOT rename `*.open.md → *.md` or edit
-   `PLAN.md` — the parent does those after merge, to avoid add/add merge
-   conflicts.
+   *content* only (subtasks, findings) and touch nothing on GitHub — no closing
+   issues, no re-parenting. The parent does that after merge. Two subagents
+   editing the same issue body clobber each other silently; two editing the same
+   file at least conflict loudly.
 
 After the subagents finish, **verify each branch's base before merging**
 (`git merge-base <trunk> <branch>` should be at/near `<trunk>` HEAD, not an old
@@ -489,16 +549,23 @@ Refining all of this further is TASK-045's remit.
 
 Before marking any task complete:
 
-1. `npm test` passes in the affected package(s)
-2. The task PRD is updated (subtasks checked, status set to `complete`)
+1. `npm test` passes in the affected package(s). This includes
+   `npm run check:tasks`, which validates every task file's `**Epic:**` against
+   `tasks/EPICS.json` — the check that catches a stray or invented epic value.
+2. The task PRD is updated (subtasks checked, findings recorded)
 3. Changes committed with a conventional commit message
-4. `PLAN.md` is updated: task status table, coverage table if applicable,
-   and "What To Do Next" if the completed task unblocks something new
-5. If the task changes how the monorepo is configured or structured: update this file
+4. The PR body says `Closes #NNN`, which closes the issue on merge
+5. If the completed task unblocks or re-orders something, update the **epic
+   issue body** — that is where sequencing lives
+6. If the task changes how the monorepo is configured or structured: update this file
+
+`npm run check:tasks:remote` additionally reconciles each open task's title and
+parent against GitHub. It needs a token, so it is not part of `npm test`; it runs
+daily via `.github/workflows/task-hierarchy.yml` and can be run by hand any time.
 
 **Run tests before committing.** Always run `npm test` (or the affected
-package's test suite) before creating a commit. `npm test` runs `biome check .`
-followed by the Jest suite. Pre-commit hooks via Husky should enforce this
+package's test suite) before creating a commit. `npm test` runs `biome check .`,
+then `check:tasks`, then the Jest suite. Pre-commit hooks via Husky should enforce this
 automatically, but hooks are not always reliable — treat manual verification as
 the primary gate, not the hook. Do not commit code that has not passed its tests.
 
@@ -528,21 +595,27 @@ exceed what comfortably fits in one context window.
 
 ## GitHub Issues
 
-GitHub issues mirror **only the work that benefits from a public, trackable
-thread** — not every task. Create/maintain an issue for:
+**Every open task has an issue.** This replaced the old "active working set only"
+policy on 2026-09-23 (TASK-126): the hierarchy *is* the sub-issue tree, so a task
+without an issue is a hole in it. A backlog stub with no issue is now a gap to
+fill, not a correct state.
 
-- the **feature epics**, and
-- any task that is **in progress or next-up** (the active working set).
+- **Epics** are issues of type `Epic`, one per entry in `tasks/EPICS.json`.
+- **Tasks** are issues of type `Task`, each a sub-issue of its epic — or of a
+  parent task, where one genuinely exists.
+- **Closed tasks are not backfilled.** The 90 pre-migration ones stay as files;
+  their issues, where they exist, were never parented and that is fine. The
+  reconcile check skips anything closed.
 
-Do **not** mass-create issues for backlog stubs or already-completed tasks.
-Keep existing issue links where they exist. Close the issue when its task is
-marked complete or superseded.
+Cross-reference both directions: `**GitHub Issue:** #NNN — <url>` in the task
+header, a `**Task file:**` link in the issue body.
 
-Cross-reference both directions when an issue exists: `**GitHub Issue:** #NNN — <url>`
-in the task header; a `**Task file:**` link in the issue body.
+Issues that are not tasks — bug reports, feature requests from outside the task
+system — are welcome and do not need a PRD. Put them under the epic they belong to
+if one fits; leaving them unparented is acceptable for genuinely unsorted work.
 
-Use the **`gh` CLI** for all issue operations. Run `/sync-task-issues` to audit
-and sync both sides — it has the full procedure, label table, and exact commands.
+Use the **`gh` CLI** for all issue operations. Run `/sync-task-issues` to audit and
+sync both sides — it has the full procedure, label table, and exact commands.
 
 ---
 
@@ -575,8 +648,14 @@ npm run bootstrap:clean
 # Build all packages
 npm run build
 
-# Run all tests (biome check, then jest)
+# Run all tests (biome check, task-hierarchy check, then jest)
 npm test
+
+# Validate task files against the declared epics (offline, part of npm test)
+npm run check:tasks
+
+# Also reconcile open tasks' titles and parents against GitHub (needs gh auth)
+npm run check:tasks:remote
 
 # Lint and format check only (no tests)
 npm run check
