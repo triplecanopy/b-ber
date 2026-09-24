@@ -22,27 +22,51 @@ Make Dependabot surface only what is worth a human's attention. The existing con
 | `schedule: {interval: weekly, day: monday}` | Batch arrivals into one predictable window |
 | `groups` | Keep the existing groups; **verify the `minor-patch` catch-all works** — it declares `update-types` with no `patterns`, which needs confirming |
 
-### Open questions to settle
+### Settled 2026-09-23
 
-- **Does a security fix requiring a major still arrive** once majors are ignored for
-  version updates? Test it rather than assume; this is the one rule that could
-  silently reduce security coverage.
-- **Should `open-pull-requests-limit` go to 0?** That disables version updates
-  entirely while keeping security PRs — attractive if the team only wants to act on
-  vulnerabilities, but it stops routine maintenance and lets versions rot. Decide
-  explicitly rather than by default.
-- **Are there Dependabot run errors?** Monorepos with many manifests can time out,
-  and this repo has 37. Check the Dependabot logs for failures — coverage gaps would
-  explain why some packages never get PRs.
+- **`versioning-strategy: increase` is not in this config.** It bumps a range's
+  lower bound, which means nothing against the `^` specifiers still in the tree. It
+  lands with TASK-122 when specifiers are pinned exact. Dropping it is what
+  un-blocks this task from TASK-122 — see Notes.
+- **`open-pull-requests-limit` stays at 10.** Setting it to 0 would disable version
+  updates entirely while keeping security PRs, which is tempting but lets everything
+  rot. With majors ignored and the groups in place, 10 is not a constraint that will
+  bind.
+- **The `minor-patch` catch-all works.** PR #586 is a single grouped PR carrying 30
+  updates, which is the catch-all doing its job. `patterns: ['*']` is now explicit
+  rather than implied.
+- **Dependabot is not erroring.** Its recent jobs all report `success`, and PRs
+  already arrive scoped to `/packages/*` — it resolves the workspace manifests from
+  the root lockfile on its own, so no per-directory entries are needed. The 37
+  manifests are not causing timeouts.
+- **GitHub Actions keeps its majors.** The major-ignore is scoped to the npm
+  ecosystem only. Actions version their whole runtime in the major
+  (`actions/checkout` v4 → v5 is the normal upgrade path) and Dependabot's advisory
+  coverage for the ecosystem is thin, so ignoring majors there would freeze them on
+  an old runtime with nothing to unfreeze them.
+- **Group hygiene.** Dropped `eslint*`/`@eslint/*` (Biome replaced ESLint in
+  TASK-015), `webpack*` (Vite, TASK-006/007) and `@reduxjs/*` (Redux removed in
+  TASK-106) — none are declared anywhere any more. Added `@swc/*` (27 manifests)
+  and `@testing-library/*` (1).
+
+### Still to verify
+
+**Does a security fix requiring a major still arrive?** This is the one rule that
+could quietly reduce security coverage, and the sources disagree: GitHub's options
+reference says `ignore` does not suppress security updates at all, while the
+community write-up in the References warns that a bare `dependency-name` with no
+`update-types` expands to `>= 0` and does suppress them. This config always carries
+`update-types`, which should be the safe form — but it is worth confirming against a
+real advisory rather than trusting either source.
 
 ## Subtasks
 
-- [ ] Add the rules above to `.github/dependabot.yml`
-- [ ] Verify the `minor-patch` catch-all group actually catches everything
+- [x] Add the rules above to `.github/dependabot.yml`
+- [x] Verify the `minor-patch` catch-all group actually catches everything
 - [ ] Test that a major-version *security* fix is not suppressed by the major ignore
-- [ ] Check Dependabot run logs for timeouts or manifest errors
-- [ ] Decide on `open-pull-requests-limit` and record the reasoning
-- [ ] Split `security` / `dependencies` labels and confirm both exist
+- [x] Check Dependabot run logs for timeouts or manifest errors — clean
+- [x] Decide on `open-pull-requests-limit` and record the reasoning — stays at 10
+- [x] Split `security` / `dependencies` labels and confirm both exist
 
 ## References
 
@@ -55,7 +79,10 @@ Make Dependabot surface only what is worth a human's attention. The existing con
 
 ## Notes
 
-- Requires TASK-122 first: `versioning-strategy: increase` is meaningless against
-  caret ranges.
+- **Re-sequenced 2026-09-23: this no longer waits on TASK-122.** The only rule that
+  needed exact pins was `versioning-strategy: increase`, and it has been deferred to
+  TASK-122 itself. The major-ignore works against caret ranges perfectly well — it
+  concerns the update Dependabot proposes, not how the specifier is written. So the
+  policy ships now and pinning is decided separately, on its own merits.
 - Parent: TASK-121. Feeds TASK-124 — the backlog should be regenerated under these
   rules, not the old ones.
