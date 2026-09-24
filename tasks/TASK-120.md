@@ -93,6 +93,10 @@ or more packages was checked for source references. All 14 are genuinely importe
       script, config or source file since 2019; abandoned upstream (already marked
       DEPRECATED in `docs/diagrams/07-external-dependencies.md`). 6 alerts, and it
       dragged in `ajv`, `merge`, `minimist` and `shelljs`
+- [x] Remove `redux`, `react-redux` and `redux-thunk` from the root
+      devDependencies — TASK-106 removed Redux from `b-ber-reader-react` but left
+      the root declarations. No import anywhere; the only source mentions are two
+      comments describing what the built-in store replaced
 - [ ] lerna 8 → 9 (coordinate with TASK-116, which needs it anyway)
 - [ ] `axios`, `xmldom`, `postcss`, `js-yaml`, `undici` — vestigial check, then bump
 - [ ] Triage and close/merge the 38 open PRs
@@ -101,10 +105,15 @@ or more packages was checked for source references. All 14 are genuinely importe
 
 ## Notes
 
-- **Check "is it even used?" before bumping.** The two highest-value actions here
-  were deletions, not upgrades, and Dependabot cannot suggest either. Its proposal
-  for `tar` was a risky major bump of dead weight; it had nothing at all to say
-  about `sass-lint`, which no version could have fixed.
+- **Check "is it even used?" before bumping.** Every high-value action here so far
+  has been a deletion, not an upgrade, and Dependabot cannot suggest one. Its
+  proposal for `tar` was a risky major bump of dead weight; it had nothing to say
+  about `sass-lint` or the Redux trio, which no version could have fixed.
+- **A dependency removal is not finished until the root manifest is checked.**
+  TASK-106 removed Redux from `b-ber-reader-react` and the root kept declaring
+  `redux`, `react-redux` and `redux-thunk` for three months. Worth a sweep of the
+  root devDependencies against actual imports as a follow-up — these three were
+  found incidentally while auditing Dependabot group patterns, not by looking.
 
 ### Re-measured 2026-09-23 (after the `tar` removal)
 
