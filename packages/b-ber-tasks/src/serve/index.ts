@@ -25,24 +25,23 @@ let update = async () => {}
 
 const reload = () => update().then(() => browserSync.reload())
 
-const browserSyncPlugins = [
+// Browsersync's own `files` option takes exactly this {match, fn} shape, so the
+// watch does not need a plugin. It used to be nested inside bs-html-injector's
+// options; that worked, but the plugin was only ever carrying the config — its
+// actual job, diffing and injecting HTML, was redundant against the full reload
+// `fn` already performs. Removing it drops the abandoned `request` and `xmldom`
+// packages, whose advisories can never be patched.
+const watchFiles = [
   {
-    module: 'bs-html-injector',
-    options: {
-      files: [
-        {
-          match: [
-            path.resolve('_project', '**', '*.scss'),
-            path.resolve('_project', '**', '*.js'),
-            path.resolve('_project', '**', '*.md'),
-          ],
-          fn: debounce(() => reload(), debounceSpeed, {
-            leading: false,
-            trailing: true,
-          }),
-        },
-      ],
-    },
+    match: [
+      path.resolve('_project', '**', '*.scss'),
+      path.resolve('_project', '**', '*.js'),
+      path.resolve('_project', '**', '*.md'),
+    ],
+    fn: debounce(() => reload(), debounceSpeed, {
+      leading: false,
+      trailing: true,
+    }),
   },
 ]
 
@@ -67,7 +66,7 @@ const init = (build: string) =>
         baseDir: path.resolve(`project-${build}`),
         middleware: browserSyncMiddleware,
       },
-      plugins: browserSyncPlugins,
+      files: watchFiles,
     }
 
     browserSync.init(options as any, () => resolve())
