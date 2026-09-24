@@ -72,6 +72,10 @@ jobs:
         if: steps.check.outputs.publish == 'true'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        # Since lerna 10 this throws EBEHIND if the checkout is behind the
+        # remote. Default (`error`) is kept: from-package is idempotent, so a
+        # failed run is recovered by the next push to main, whereas `skip` would
+        # exit 0 having published nothing.
         run: npx lerna publish from-package --yes
 
       # Tagged only now, so a tag can never point at a version npm rejected.

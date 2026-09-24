@@ -102,7 +102,10 @@ or more packages was checked for source references. All 14 are genuinely importe
       `{match, fn}` shape (`@types/browser-sync` `FileCallback`). Verified both
       forms fire before switching. Kills `request` and `xmldom`, whose 16 advisories
       (including a critical) have **no patch** — the packages are abandoned
-- [ ] lerna 8 → 9 (coordinate with TASK-116, which needs it anyway)
+- [x] lerna 8 → **10** (coordinate with TASK-116, which needs it anyway) — went
+      to 10, not 9: 10.0.1 is `latest` and both carry the OIDC support TASK-116
+      needs, so stopping at 9 would only mean doing this twice. Dependabot's #530
+      (8 → 9) is stale and can be closed
 - [ ] `axios`, `xmldom`, `postcss`, `js-yaml`, `undici` — vestigial check, then bump
 - [ ] Triage and close/merge the 38 open PRs
 - [ ] `@types/node` 14 → current
@@ -119,6 +122,43 @@ or more packages was checked for source references. All 14 are genuinely importe
   `redux`, `react-redux` and `redux-thunk` for three months. Worth a sweep of the
   root devDependencies against actual imports as a follow-up — these three were
   found incidentally while auditing Dependabot group patterns, not by looking.
+
+### lerna 8.2.4 → 10.0.1 (2026-09-23)
+
+Verified against the published package and the v9/v10 release notes, then
+exercised rather than assumed.
+
+**Nothing in our usage changed.** The full surface — `lerna run --stream/--scope/
+--concurrency`, `lerna exec --no-bail`, `lerna clean`, `lerna changed`,
+`lerna version --no-git-tag-version --force-publish`, `lerna publish from-package`,
+`--canary`, `--dist-tag` — is intact. `lerna repair` ran all 34 migrations and
+reported the workspace already up to date, leaving `command.publish.message`
+where it is.
+
+Checked because they were the plausible breakages:
+
+| Concern | Finding |
+| ------- | ------- |
+| `--force-publish` removed? | No. Still overloaded to boolean/string/array, so **`--force-publish="*"` works** — exercised, bumped all 37 in lockstep |
+| `--no-git-tag-version` semantics | Unchanged: "Do not commit or tag version changes." Run logged `Skipping git tag/commit`, `Skipping git push`, `Skipping releases`, and left the bump uncommitted — which is exactly what `build-release-commit.js` consumes |
+| `lerna clean` dropped with `@lerna/legacy-package-management`? | **No.** Only `add`, `bootstrap` and `link` were removed; `clean` is still a first-class command. `bootstrap:clean` is safe |
+| lerna.json schema | `packages`, `npmClient`, `version`, `command.version.exact` all still valid. `command.publish.message` is undocumented in the v10 schema but still honoured — `lerna repair` declined to move it |
+| conventional-changelog rewrite (v10) | No impact. Our `changelog` script calls `conventional-changelog-cli` directly and `command.version.conventionalCommits` is unset, so lerna never generates a changelog here |
+
+**The one real behaviour change: `EBEHIND` (v10).** `lerna version` and
+`lerna publish` now throw in CI when the checkout is behind the remote; previously
+that only happened outside CI. Left at the default `error` in both workflows, on
+purpose — the opt-out `--ci-behind-behavior=skip` exits 0 *without doing the work*,
+so a release would appear to succeed and publish nothing. Documented inline in both
+files.
+
+Also: Node floor raised to 22.13.0 (lerna 10 is ESM-only), so the root `engines`
+moved from `>= 22.x` to `>= 22.13.0` to match. CI already runs 24.
+
+**Alert payoff:** `tar` goes 6.x → **7.5.22**, clearing the last critical (it wanted
+7.5.19), and nx's `axios` goes to **1.18.1**, clearing that cluster. The only
+remaining `axios` is `browser-sync` → `localtunnel` → `0.21.4`, which is the
+browser-sync 3 decision.
 
 ### Re-measured 2026-09-23 (after the `tar` removal)
 

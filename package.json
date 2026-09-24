@@ -4,7 +4,7 @@
   "private": true,
   "license": "GPL-3.0-or-later",
   "engines": {
-    "node": ">= 22.x",
+    "node": ">= 22.13.0",
     "npm": ">= 10.x"
   },
   "workspaces": ["packages/*"],
@@ -84,7 +84,7 @@
     "jest-environment-jsdom-global": "^4.0.0",
     "jest-extended": "^3.2.4",
     "js-string-escape": "^1.0.1",
-    "lerna": "^8",
+    "lerna": "^10",
     "lerna-audit": "^1.2.0",
     "lint-staged": "^9.2.0",
     "lodash": "^4.17.21",
