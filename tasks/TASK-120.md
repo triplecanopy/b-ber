@@ -89,6 +89,19 @@ or more packages was checked for source references. All 14 are genuinely importe
 - [x] Remove vestigial `tar` from 19 packages; verify build, tests, circular deps
       and a real EPUB/reader build
 - [x] Audit every runtime dep declared by 3+ packages for the same pattern
+- [x] Remove `sass-lint` — declared in root devDependencies, referenced by no
+      script, config or source file since 2019; abandoned upstream (already marked
+      DEPRECATED in `docs/diagrams/07-external-dependencies.md`). 6 alerts, and it
+      dragged in `ajv`, `merge`, `minimist` and `shelljs`
+- [x] Remove `redux`, `react-redux` and `redux-thunk` from the root
+      devDependencies — TASK-106 removed Redux from `b-ber-reader-react` but left
+      the root declarations. No import anywhere; the only source mentions are two
+      comments describing what the built-in store replaced
+- [x] Remove `bs-html-injector` — it was carrying the browser-sync file-watch
+      config and nothing else; Browsersync's own `files` option takes the identical
+      `{match, fn}` shape (`@types/browser-sync` `FileCallback`). Verified both
+      forms fire before switching. Kills `request` and `xmldom`, whose 16 advisories
+      (including a critical) have **no patch** — the packages are abandoned
 - [ ] lerna 8 → 9 (coordinate with TASK-116, which needs it anyway)
 - [ ] `axios`, `xmldom`, `postcss`, `js-yaml`, `undici` — vestigial check, then bump
 - [ ] Triage and close/merge the 38 open PRs
@@ -97,9 +110,50 @@ or more packages was checked for source references. All 14 are genuinely importe
 
 ## Notes
 
-- **Check "is it even used?" before bumping.** The single highest-value action here
-  was a deletion, not an upgrade, and Dependabot cannot suggest that. Its proposal
-  for `tar` was a risky major bump of dead weight.
+- **Check "is it even used?" before bumping.** Every high-value action here so far
+  has been a deletion, not an upgrade, and Dependabot cannot suggest one. Its
+  proposal for `tar` was a risky major bump of dead weight; it had nothing to say
+  about `sass-lint` or the Redux trio, which no version could have fixed.
+- **A dependency removal is not finished until the root manifest is checked.**
+  TASK-106 removed Redux from `b-ber-reader-react` and the root kept declaring
+  `redux`, `react-redux` and `redux-thunk` for three months. Worth a sweep of the
+  root devDependencies against actual imports as a follow-up — these three were
+  found incidentally while auditing Dependabot group patterns, not by looking.
+
+### Re-measured 2026-09-23 (after the `tar` removal)
+
+**194 open alerts**, down from 422. Critical 23 → 4.
+
+The remaining backlog is mostly *not* ours to pin or bump:
+
+| | Alerts |
+| --- | ------ |
+| On a dependency we declare | 72 |
+| **Purely transitive** | **122 (62%)** |
+
+And the transitive half concentrates into four roots:
+
+| Root | Alerts | Pulls in |
+| ---- | ------ | -------- |
+| `browser-sync` | 37 | axios, cookie, immutable, send, serve-static, ws, socket.io-parser |
+| `lerna` | 25 | brace-expansion, minimatch, nx, sigstore, tmp, postcss-selector-parser |
+| `bs-html-injector` | 21 | request, xmldom, form-data |
+| `cheerio` | 12 | undici |
+
+`browser-sync` + `bs-html-injector` is 58 alerts — 30% of the total — from one
+dev-server stack behind a single file, `packages/b-ber-tasks/src/serve/index.ts`.
+`bs-html-injector` last shipped in 2022 and is what drags in the deprecated
+`request` and `xmldom`. **Removed** — see the subtask above. `lerna`'s 25 go with
+the 8 → 9 upgrade already on this list.
+
+**`browser-sync` 2.29.3 → 3.0.4 is a separate decision**, not yet made. The case is
+strong: v3 drops `localtunnel` entirely, which is the sole source of `axios@0.21.4`
+and roughly 23 of those 37 alerts, and it pins `send: ^0.19.0`, `serve-static:
+^1.16.2` and `immutable: ^3` (→ 3.8.4) — all the patched versions the advisories
+ask for. The costs are that `@types/browser-sync` is stuck at 2.29.1 with no v3
+types, and `serve/index.ts` reaches into `bs.instance.utils.openBrowser` and
+`bs.instance.setOption`, which are not public API and are exactly what a major
+moves. Dev-only, so the blast radius is `bber serve`.
 - With TASK-117's gate now required on `main`, each Dependabot PR must pass
   `build-and-test` and be up to date — so they can no longer be merged blind, but
   stale ones will need refreshing.
