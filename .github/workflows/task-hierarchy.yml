@@ -1,0 +1,37 @@
+# Reconciles tasks/ against the GitHub epic hierarchy.
+#
+# Why this is scheduled rather than a PR gate: the offline half of the check
+# (every **Epic:** is a declared epic) already runs inside `npm test`, so a PR
+# cannot introduce a bad epic value. The remote half catches the *other*
+# direction — an issue re-parented in the GitHub UI, or retitled, with no
+# commit anywhere. No PR causes that drift, so no PR can be gated on it.
+#
+# The epic assignment is the one fact this repo deliberately stores twice: as
+# **Epic:** in the task file and as the issue's parent on GitHub. This job is
+# what keeps the two honest.
+name: Task hierarchy
+
+on:
+  schedule:
+    # 13:00 UTC daily — after European morning, before US standup.
+    - cron: '0 13 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: read
+
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Reconcile task files against GitHub
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: npm run check:tasks:remote
