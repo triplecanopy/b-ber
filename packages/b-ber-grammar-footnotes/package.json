@@ -23,9 +23,7 @@
     "typescript": "^6.0.3"
   },
   "dependencies": {
-    "@canopycanopycanopy/b-ber-lib": "4.0.3",
-    "lodash": "^4.17.21",
-    "lodash.find": "latest"
+    "@canopycanopycanopy/b-ber-lib": "4.0.3"
   },
   "files": ["dist"],
   "repository": {

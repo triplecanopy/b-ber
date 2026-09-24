@@ -27,8 +27,7 @@
     "@canopycanopycanopy/b-ber-grammar-renderer": "4.0.3",
     "@canopycanopycanopy/b-ber-lib": "4.0.3",
     "@canopycanopycanopy/b-ber-logger": "4.0.3",
-    "@canopycanopycanopy/b-ber-parser-dialogue": "4.0.3",
-    "lodash": "^4.17.21"
+    "@canopycanopycanopy/b-ber-parser-dialogue": "4.0.3"
   },
   "files": ["dist"],
   "repository": {
