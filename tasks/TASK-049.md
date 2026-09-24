@@ -1,10 +1,8 @@
 # TASK-049: Evaluate coverage report upload services
 
-**Status:** complete
-**Feature:** Unit test coverage
-**Scope:** monorepo
-**Priority:** low
+**Epic:** Unit test coverage
 **GitHub Issue:** #516 — https://github.com/triplecanopy/b-ber/issues/516
+**Scope:** monorepo
 
 ## Description
 

@@ -1,9 +1,7 @@
 # TASK-103: Convert static-only helper classes to modules
 
-**Status:** complete
-**Feature:** React 19 (reader-react)
+**Epic:** React 19 (reader-react)
 **Phase:** Modernization — housekeeping
-**Priority:** low
 **Model:** Sonnet 4.6 — mechanical, wide-but-shallow; the test suite is the
 guardrail. Best done when the full reader-react suite can run as a gate.
 

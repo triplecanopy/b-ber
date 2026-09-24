@@ -1,10 +1,8 @@
 # TASK-114: Inject reader-react's version from package.json instead of generating a source module
 
-**Status:** complete
-**Feature:** Upgrade tooling
-**Scope:** b-ber-reader-react
-**Priority:** medium
+**Epic:** Upgrade tooling
 **GitHub Issue:** #589 — https://github.com/triplecanopy/b-ber/issues/589
+**Scope:** b-ber-reader-react
 
 ## Description
 

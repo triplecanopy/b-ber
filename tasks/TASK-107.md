@@ -1,9 +1,7 @@
 # TASK-107: Restore spreadIndex from the URL on initial load (refresh)
 
-**Status:** complete
-**Feature:** React 19 (reader-react)
+**Epic:** React 19 (reader-react)
 **Phase:** Bug Fixes
-**Priority:** low
 **Model:** Sonnet 4.6 — small, localized change, but it touches the
 load/measurement sequence, so verify against `SPREAD-CLUSTER-QA.md`.
 

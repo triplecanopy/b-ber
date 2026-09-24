@@ -1,10 +1,8 @@
 # TASK-100: Remove the selfRef shim — extract navigation/loader/resize into hooks
 
-**Status:** complete
-**Feature:** React 19 (reader-react)
+**Epic:** React 19 (reader-react)
 **Scope:** b-ber-reader-react
 **Phase:** Modernization — Step 2 (HOC→hooks / finalize functional Reader)
-**Priority:** high
 **Model:** Opus — the most entangled change in the migration. `navigation.ts`,
 `loader.ts`, and `resize.ts` still use `this.state`/`this.props`/`this.setState`
 through a `selfRef` shim; untangling that into hooks while preserving the exact

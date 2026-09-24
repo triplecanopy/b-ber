@@ -1,10 +1,8 @@
 # TASK-044: E2E testing — CI integration (CircleCI, Playwright cache)
 
-**Status:** complete
-**Feature:** E2E testing
-**Scope:** monorepo
-**Priority:** medium
+**Epic:** E2E testing
 **GitHub Issue:** #523 — https://github.com/triplecanopy/b-ber/issues/523
+**Scope:** monorepo
 
 ## Description
 

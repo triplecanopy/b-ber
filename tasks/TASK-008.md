@@ -1,10 +1,8 @@
 # TASK-008: Set up shared TypeScript infrastructure
 
-**Status:** complete
-**Feature:** Migrate JS→TS
-**Scope:** monorepo
-**Priority:** high
+**Epic:** Migrate JS→TS
 **GitHub Issue:** #493 — https://github.com/triplecanopy/b-ber/issues/493
+**Scope:** monorepo
 
 ## Description
 

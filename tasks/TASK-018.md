@@ -1,9 +1,7 @@
 # TASK-018: Add task file links to GitHub issues
 
-**Status:** complete
-**Feature:** Upgrade tooling
+**Epic:** Upgrade tooling
 **Scope:** monorepo
-**Priority:** low
 **GitHub Issue:** #478 — https://github.com/triplecanopy/b-ber/issues/478
 
 > **Closed as obsolete (2026-06-11).** Superseded by two changes: (1) the

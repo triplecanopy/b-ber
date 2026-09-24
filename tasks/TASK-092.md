@@ -1,10 +1,8 @@
 # TASK-092: Fix Codecov "Validate CLI" GPG failure in CI
 
-**Status:** complete
-**Feature:** Upgrade tooling
-**Scope:** monorepo
-**Priority:** medium
+**Epic:** Upgrade tooling
 **GitHub Issue:** #525 — https://github.com/triplecanopy/b-ber/issues/525
+**Scope:** monorepo
 
 ## Description
 

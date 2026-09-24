@@ -1,10 +1,8 @@
 # TASK-027: Convert b-ber-templates to TypeScript
 
-**Status:** complete
-**Feature:** Migrate JS→TS
-**Scope:** b-ber-templates
-**Priority:** medium
+**Epic:** Migrate JS→TS
 **GitHub Issue:** #502 — https://github.com/triplecanopy/b-ber/issues/502
+**Scope:** b-ber-templates
 
 ## Description
 

@@ -1,0 +1,14 @@
+{
+  "$comment": "The declared epics and the GitHub issue that tracks each one. This is the single source for the epic vocabulary: scripts/check-tasks.js validates every task file's **Epic:** field against these keys, and reconciles each task issue's parent against these numbers. Adding an epic means adding a line here and opening the issue — nothing else.",
+  "repo": "triplecanopy/b-ber",
+  "epics": {
+    "Upgrade tooling": 615,
+    "Migrate JS→TS": 616,
+    "Unit test coverage": 471,
+    "E2E testing": 505,
+    "Node.js modernization": 474,
+    "React 19 (reader-react)": 617,
+    "Dependency health": 618,
+    "EPUB spec compliance": 619
+  }
+}

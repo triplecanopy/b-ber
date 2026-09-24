@@ -1,10 +1,8 @@
 # TASK-098: Convert measurement HOCs to hooks
 
-**Status:** complete
-**Feature:** React 19 (reader-react)
+**Epic:** React 19 (reader-react)
 **Scope:** b-ber-reader-react
 **Phase:** Modernization — Step 2 (HOC→hooks)
-**Priority:** medium
 **Model:** Sonnet 4.6 — single-consumer HOCs with a clear hook pattern (§4).
 **Depends on:** TASK-095/096/097 (each HOC's consumers must be functional first).
 

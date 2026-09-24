@@ -1,10 +1,8 @@
 # TASK-052: Test the published artifact without touching the real registry
 
-**Status:** complete
-**Feature:** Upgrade tooling
-**Scope:** monorepo
-**Priority:** medium
+**Epic:** Upgrade tooling
 **GitHub Issue:** #519 — https://github.com/triplecanopy/b-ber/issues/519
+**Scope:** monorepo
 
 ## Description
 

@@ -1,10 +1,8 @@
 # TASK-026: Convert b-ber-parser-\* packages to TypeScript
 
-**Status:** complete
-**Feature:** Migrate JS→TS
-**Scope:** monorepo
-**Priority:** medium
+**Epic:** Migrate JS→TS
 **GitHub Issue:** #501 — https://github.com/triplecanopy/b-ber/issues/501
+**Scope:** monorepo
 
 ## Description
 

@@ -1,10 +1,8 @@
 # TASK-047: Research watch mode scripts for monorepo development
 
-**Status:** complete
-**Feature:** Upgrade tooling
-**Scope:** monorepo
-**Priority:** medium
+**Epic:** Upgrade tooling
 **GitHub Issue:** #515 — https://github.com/triplecanopy/b-ber/issues/515
+**Scope:** monorepo
 
 ## Description
 

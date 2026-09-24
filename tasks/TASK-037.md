@@ -1,10 +1,8 @@
 # TASK-037: Replace or reconfigure automated dependency management
 
-**Status:** complete
-**Feature:** Upgrade tooling
-**Scope:** monorepo
-**Priority:** medium
+**Epic:** Upgrade tooling
 **GitHub Issue:** #492 — https://github.com/triplecanopy/b-ber/issues/492
+**Scope:** monorepo
 
 ## Description
 

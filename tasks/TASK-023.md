@@ -1,9 +1,7 @@
 # TASK-023: Research Lerna replacement / upgrade options
 
-**Status:** superseded
-**Feature:** Upgrade tooling
+**Epic:** Upgrade tooling
 **Scope:** monorepo
-**Priority:** low
 **GitHub Issue:** #483 — https://github.com/triplecanopy/b-ber/issues/483
 
 > **Superseded by [[TASK-036]]** (Upgrade Lerna and migrate off bootstrap,

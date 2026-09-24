@@ -1,9 +1,7 @@
 # TASK-032: Convert b-ber-reader-react to TypeScript (Stage 4)
 
-**Status:** complete
-**Feature:** Migrate JS→TS
+**Epic:** Migrate JS→TS
 **Scope:** b-ber-reader-react
-**Priority:** low
 **GitHub Issue:** #487 — https://github.com/triplecanopy/b-ber/issues/487
 **Branch:** `feat/ts-stage-4` (off `feat/upgrades`)
 

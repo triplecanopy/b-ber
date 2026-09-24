@@ -1,9 +1,7 @@
 # TASK-081: Fix stale full-bleed spread column position (verso/recto)
 
-**Status:** complete
-**Feature:** React 19 (reader-react)
+**Epic:** React 19 (reader-react)
 **Phase:** Bug Fixes
-**Priority:** high
 **Created:** 2026-06-06
 
 ## Description

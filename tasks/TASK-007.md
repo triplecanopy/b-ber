@@ -1,10 +1,8 @@
 # TASK-007: Migrate b-ber-reader to Vite and clean up babel.config.js
 
-**Status:** complete
-**Feature:** Upgrade tooling
-**Scope:** reader, monorepo
-**Priority:** medium
+**Epic:** Upgrade tooling
 **GitHub Issue:** #473 — https://github.com/triplecanopy/b-ber/issues/473
+**Scope:** reader, monorepo
 
 ## Description
 

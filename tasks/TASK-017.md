@@ -1,10 +1,8 @@
 # TASK-017: Expand architecture diagrams with tooling, dependency versions, and cross-references
 
-**Status:** complete
-**Feature:** Upgrade tooling
-**Scope:** monorepo
-**Priority:** medium
+**Epic:** Upgrade tooling
 **GitHub Issue:** #477 — https://github.com/triplecanopy/b-ber/issues/477
+**Scope:** monorepo
 
 ## Description
 

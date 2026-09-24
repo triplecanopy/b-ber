@@ -1,10 +1,8 @@
 # TASK-005: Research replacing ESLint + Prettier with Biome
 
-**Status:** complete
-**Feature:** Upgrade tooling
-**Scope:** monorepo
-**Priority:** low
+**Epic:** Upgrade tooling
 **GitHub Issue:** #459 — https://github.com/triplecanopy/b-ber/issues/459
+**Scope:** monorepo
 
 ## Description
 

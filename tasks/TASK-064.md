@@ -1,10 +1,9 @@
 # TASK-064: Pass 5 — resize fix, stability timeout, console.log cleanup
 
-**Status:** complete
-**Feature:** React 19 (reader-react)
+**Epic:** React 19 (reader-react)
+**GitHub Issue:** #465 — https://github.com/triplecanopy/b-ber/issues/465
 **Phase:** Bug Fixes
 **Created:** 2026-04-05
-**GitHub Issue:** #465 — https://github.com/triplecanopy/b-ber/issues/465
 
 ## Description
 

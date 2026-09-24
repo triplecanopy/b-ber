@@ -1,9 +1,7 @@
 # TASK-108: Nav header buttons don't open when the SVG icon is clicked
 
-**Status:** complete
-**Feature:** React 19 (reader-react)
+**Epic:** React 19 (reader-react)
 **Phase:** Bug Fixes
-**Priority:** medium
 **Model:** Sonnet 4.6 — likely a one-line CSS/markup fix.
 
 ## Description

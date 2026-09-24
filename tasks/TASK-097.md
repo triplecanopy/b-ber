@@ -1,11 +1,9 @@
 # TASK-097: Convert App to a functional component
 
-**Status:** complete (browser QA outstanding — see Notes)
-**Feature:** React 19 (reader-react)
+**Epic:** React 19 (reader-react)
 **Branch:** `feat/react19-step1-app` (pending merge into `feat/upgrades`)
 **Scope:** b-ber-reader-react
 **Phase:** Modernization — Step 1 (class→functional)
-**Priority:** medium
 **Model:** Opus — `App` has an **async `UNSAFE_componentWillMount`** (manifest
 load that runs before first render) plus `connect()`. Getting the load/spinner
 ordering right without reintroducing a premature-render is high-judgment.

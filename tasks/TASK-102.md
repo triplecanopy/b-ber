@@ -1,9 +1,7 @@
 # TASK-102: Remove legacy-browser (Chrome 81) workarounds
 
-**Status:** complete
-**Feature:** React 19 (reader-react)
+**Epic:** React 19 (reader-react)
 **Phase:** Modernization — housekeeping
-**Priority:** medium
 **Model:** Sonnet 4.6 — largely net deletion + simplification, guarded by the
 test suite and a media-playback browser QA pass.
 

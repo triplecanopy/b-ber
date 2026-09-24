@@ -1,10 +1,8 @@
 # TASK-112: Fix `__dirname`-relative asset resolution broken by the tsdown flat bundle
 
-**Status:** complete
-**Feature:** Upgrade tooling
-**Scope:** b-ber-tasks
-**Priority:** high
+**Epic:** Upgrade tooling
 **GitHub Issue:** #587 — https://github.com/triplecanopy/b-ber/issues/587
+**Scope:** b-ber-tasks
 
 ## Description
 

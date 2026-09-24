@@ -1,11 +1,9 @@
 # TASK-073: Research — replace Redux with built-in React state management
 
-**Status:** complete
-**Feature:** React 19 (reader-react)
+**Epic:** React 19 (reader-react)
 **Phase:** Modernization — state management (Step 3 of the React 19 plan)
 **Deliverable:** [`STATE-MIGRATION-PLAN.md`](../packages/b-ber-reader-react/STATE-MIGRATION-PLAN.md)
 **Execution:** [[TASK-106]] (Step 4)
-**Priority:** medium
 **Model:** Opus — architectural research + decision (the biggest fork in the
 migration); the resulting execution task can be Sonnet, slice by slice.
 

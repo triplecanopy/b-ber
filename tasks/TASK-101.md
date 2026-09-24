@@ -1,9 +1,7 @@
 # TASK-101: Fix premature page-nav skipping to the next chapter (load race)
 
-**Status:** complete
-**Feature:** React 19 (reader-react)
+**Epic:** React 19 (reader-react)
 **Phase:** Bug Fixes
-**Priority:** high
 **Model:** Sonnet 4.6 — the fix is a small guard, but it touches the
 spinner/measurement timing, so verify against `SPREAD-CLUSTER-QA.md`. Escalate to
 Opus only if the minimal guard proves insufficient.

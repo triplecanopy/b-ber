@@ -1,10 +1,8 @@
 # TASK-094: Establish React 19 migration conventions
 
-**Status:** complete
-**Feature:** React 19 (reader-react)
+**Epic:** React 19 (reader-react)
 **Scope:** b-ber-reader-react
 **Phase:** Modernization — Step 0 (foundation for Steps 1–2)
-**Priority:** high
 **Model:** Opus — sets the patterns every other wave task follows; high-judgment.
 
 ## Description

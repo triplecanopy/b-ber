@@ -1,10 +1,9 @@
 # TASK-066: Bug fix — full-bleed spreads out of sync (Bug 2)
 
-**Status:** complete
-**Feature:** React 19 (reader-react)
+**Epic:** React 19 (reader-react)
+**GitHub Issue:** #467 — https://github.com/triplecanopy/b-ber/issues/467
 **Phase:** Bug Fixes
 **Created:** 2026-04-06
-**GitHub Issue:** #467 — https://github.com/triplecanopy/b-ber/issues/467
 
 ## Description
 

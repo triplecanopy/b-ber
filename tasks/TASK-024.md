@@ -1,10 +1,8 @@
 # TASK-024: TypeScript Stage 2 — grammar, parser, templates, markdown-renderer
 
-**Status:** complete
-**Feature:** Migrate JS→TS
-**Scope:** monorepo
-**Priority:** medium
+**Epic:** Migrate JS→TS
 **GitHub Issue:** #499 — https://github.com/triplecanopy/b-ber/issues/499
+**Scope:** monorepo
 
 ## Description
 

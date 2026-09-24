@@ -1,9 +1,7 @@
 # TASK-020: Vite + Biome migration — bundler and toolchain replacement
 
-**Status:** complete
-**Feature:** Upgrade tooling
+**Epic:** Upgrade tooling
 **Scope:** monorepo
-**Priority:** medium
 **GitHub Issue:** #480 — https://github.com/triplecanopy/b-ber/issues/480
 
 > **Complete (2026-06-11).** This was the tracking umbrella; all three units of

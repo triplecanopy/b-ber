@@ -1,10 +1,8 @@
 # TASK-041: E2E testing — create kitchen-sink fixture project
 
-**Status:** complete
-**Feature:** E2E testing
-**Scope:** monorepo
-**Priority:** medium
+**Epic:** E2E testing
 **GitHub Issue:** #511 — https://github.com/triplecanopy/b-ber/issues/511
+**Scope:** monorepo
 
 ## Description
 

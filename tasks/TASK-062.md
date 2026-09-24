@@ -1,10 +1,9 @@
 # TASK-062: Ultimate.jsx modernization
 
-**Status:** complete
-**Feature:** React 19 (reader-react)
+**Epic:** React 19 (reader-react)
+**GitHub Issue:** #463 — https://github.com/triplecanopy/b-ber/issues/463
 **Phase:** Modernization — Phase 2
 **Created:** 2026-04-04
-**GitHub Issue:** #463 — https://github.com/triplecanopy/b-ber/issues/463
 
 ## Description
 
