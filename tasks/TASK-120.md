@@ -89,6 +89,10 @@ or more packages was checked for source references. All 14 are genuinely importe
 - [x] Remove vestigial `tar` from 19 packages; verify build, tests, circular deps
       and a real EPUB/reader build
 - [x] Audit every runtime dep declared by 3+ packages for the same pattern
+- [x] Remove `sass-lint` — declared in root devDependencies, referenced by no
+      script, config or source file since 2019; abandoned upstream (already marked
+      DEPRECATED in `docs/diagrams/07-external-dependencies.md`). 6 alerts, and it
+      dragged in `ajv`, `merge`, `minimist` and `shelljs`
 - [ ] lerna 8 → 9 (coordinate with TASK-116, which needs it anyway)
 - [ ] `axios`, `xmldom`, `postcss`, `js-yaml`, `undici` — vestigial check, then bump
 - [ ] Triage and close/merge the 38 open PRs
@@ -97,9 +101,36 @@ or more packages was checked for source references. All 14 are genuinely importe
 
 ## Notes
 
-- **Check "is it even used?" before bumping.** The single highest-value action here
-  was a deletion, not an upgrade, and Dependabot cannot suggest that. Its proposal
-  for `tar` was a risky major bump of dead weight.
+- **Check "is it even used?" before bumping.** The two highest-value actions here
+  were deletions, not upgrades, and Dependabot cannot suggest either. Its proposal
+  for `tar` was a risky major bump of dead weight; it had nothing at all to say
+  about `sass-lint`, which no version could have fixed.
+
+### Re-measured 2026-09-23 (after the `tar` removal)
+
+**194 open alerts**, down from 422. Critical 23 → 4.
+
+The remaining backlog is mostly *not* ours to pin or bump:
+
+| | Alerts |
+| --- | ------ |
+| On a dependency we declare | 72 |
+| **Purely transitive** | **122 (62%)** |
+
+And the transitive half concentrates into four roots:
+
+| Root | Alerts | Pulls in |
+| ---- | ------ | -------- |
+| `browser-sync` | 37 | axios, cookie, immutable, send, serve-static, ws, socket.io-parser |
+| `lerna` | 25 | brace-expansion, minimatch, nx, sigstore, tmp, postcss-selector-parser |
+| `bs-html-injector` | 21 | request, xmldom, form-data |
+| `cheerio` | 12 | undici |
+
+`browser-sync` + `bs-html-injector` is 58 alerts — 30% of the total — from one
+dev-server stack behind a single file, `packages/b-ber-tasks/src/serve/index.ts`.
+`bs-html-injector` last shipped in 2022 and is what drags in the deprecated
+`request` and `xmldom`. That decision is scoped separately; it is not a config
+change. `lerna`'s 25 go with the 8 → 9 upgrade already on this list.
 - With TASK-117's gate now required on `main`, each Dependabot PR must pass
   `build-and-test` and be up to date — so they can no longer be merged blind, but
   stale ones will need refreshing.
