@@ -41,7 +41,6 @@
     "typescript": "^6.0.3"
   },
   "dependencies": {
-    "@canopycanopycanopy/b-ber-shapes-directives": "4.0.3",
-    "lodash": "^4.17.21"
+    "@canopycanopycanopy/b-ber-shapes-directives": "4.0.3"
   }
 }

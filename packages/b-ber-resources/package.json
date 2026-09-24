@@ -20,8 +20,7 @@
     "rimraf": "^2.7.1"
   },
   "dependencies": {
-    "fs-extra": "^8.1.0",
-    "lodash": "^4.17.21"
+    "fs-extra": "^8.1.0"
   },
   "files": ["dist", "b-ber-logo.png", "default-publishers-logo.png"],
   "repository": {

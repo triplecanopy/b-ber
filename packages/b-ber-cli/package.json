@@ -26,8 +26,6 @@
     "@canopycanopycanopy/b-ber-tasks": "4.0.3",
     "@canopycanopycanopy/b-ber-templates": "4.0.3",
     "fs-extra": "^8.1.0",
-    "lodash": "^4.17.21",
-    "lodash.has": "latest",
     "yargs": "^13.3.0"
   },
   "devDependencies": {
