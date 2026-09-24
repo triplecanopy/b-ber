@@ -27,7 +27,6 @@
     "@canopycanopycanopy/b-ber-validator": "4.0.3",
     "autoprefixer": "^9.6.1",
     "browser-sync": "^2.27.7",
-    "bs-html-injector": "^3.0.3",
     "cheerio": "^1.0.0-rc.2",
     "css": "^2.2.1",
     "epub-zipper": "^1.4.0",

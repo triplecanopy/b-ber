@@ -97,6 +97,11 @@ or more packages was checked for source references. All 14 are genuinely importe
       devDependencies — TASK-106 removed Redux from `b-ber-reader-react` but left
       the root declarations. No import anywhere; the only source mentions are two
       comments describing what the built-in store replaced
+- [x] Remove `bs-html-injector` — it was carrying the browser-sync file-watch
+      config and nothing else; Browsersync's own `files` option takes the identical
+      `{match, fn}` shape (`@types/browser-sync` `FileCallback`). Verified both
+      forms fire before switching. Kills `request` and `xmldom`, whose 16 advisories
+      (including a critical) have **no patch** — the packages are abandoned
 - [ ] lerna 8 → 9 (coordinate with TASK-116, which needs it anyway)
 - [ ] `axios`, `xmldom`, `postcss`, `js-yaml`, `undici` — vestigial check, then bump
 - [ ] Triage and close/merge the 38 open PRs
@@ -138,8 +143,17 @@ And the transitive half concentrates into four roots:
 `browser-sync` + `bs-html-injector` is 58 alerts — 30% of the total — from one
 dev-server stack behind a single file, `packages/b-ber-tasks/src/serve/index.ts`.
 `bs-html-injector` last shipped in 2022 and is what drags in the deprecated
-`request` and `xmldom`. That decision is scoped separately; it is not a config
-change. `lerna`'s 25 go with the 8 → 9 upgrade already on this list.
+`request` and `xmldom`. **Removed** — see the subtask above. `lerna`'s 25 go with
+the 8 → 9 upgrade already on this list.
+
+**`browser-sync` 2.29.3 → 3.0.4 is a separate decision**, not yet made. The case is
+strong: v3 drops `localtunnel` entirely, which is the sole source of `axios@0.21.4`
+and roughly 23 of those 37 alerts, and it pins `send: ^0.19.0`, `serve-static:
+^1.16.2` and `immutable: ^3` (→ 3.8.4) — all the patched versions the advisories
+ask for. The costs are that `@types/browser-sync` is stuck at 2.29.1 with no v3
+types, and `serve/index.ts` reaches into `bs.instance.utils.openBrowser` and
+`bs.instance.setOption`, which are not public API and are exactly what a major
+moves. Dev-only, so the blast radius is `bber serve`.
 - With TASK-117's gate now required on `main`, each Dependabot PR must pass
   `build-and-test` and be up to date — so they can no longer be merged blind, but
   stale ones will need refreshing.
