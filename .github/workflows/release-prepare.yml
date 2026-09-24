@@ -65,6 +65,15 @@ jobs:
           # --force-publish because lerna.json is in fixed mode and this
           #   workspace has always moved in lockstep (every package was 4.0.2);
           #   bump them together instead of letting change detection split it.
+          #   `--force-publish="*"` is the equivalent explicit form if the bare
+          #   flag ever needs disambiguating; lerna still overloads the option to
+          #   take a boolean, a string or an array.
+          # Since lerna 10, `lerna version` throws EBEHIND in CI when the
+          #   checkout is behind the remote — previously that only happened
+          #   outside CI. Left at the default (`error`) deliberately: the
+          #   alternative, `--ci-behind-behavior=skip`, exits 0 without doing the
+          #   work, so a release would look successful and publish nothing.
+          #   A failure here means re-run the workflow against current main.
           npx lerna version "${{ inputs.bump }}" \
             --no-git-tag-version \
             --force-publish \
