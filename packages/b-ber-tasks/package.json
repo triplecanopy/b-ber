@@ -32,15 +32,15 @@
     "epub-zipper": "^1.4.0",
     "fs-extra": "^8.1.0",
     "glob": "^7.1.4",
-    "image-size": "^0.8.3",
+    "image-size": "^0.9.7",
     "layouts": "^3.0.2",
     "lodash": "^4.17.21",
     "lunr": "^2.1.6",
     "postcss": "^7.0.14",
-    "pureimage": "^0.1.6",
+    "pureimage": "^0.4.20",
     "recursive-readdir": "^2.2.2",
     "sass": "^1.49.8",
-    "uglify-js": "^3.10.0",
+    "uglify-js": "^3.19.3",
     "vinyl": "^2.2.0"
   },
   "devDependencies": {
@@ -54,7 +54,9 @@
     "tsdown": "^0.22.1",
     "typescript": "^6.0.3"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/triplecanopy/b-ber.git"
