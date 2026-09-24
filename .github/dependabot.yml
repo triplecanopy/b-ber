@@ -31,6 +31,13 @@ updates:
       - dependency-name: '*'
         update-types:
           - 'version-update:semver-major'
+      # Scoped packages, explicitly. PR #643 was opened under this config and
+      # still carried `@types/use-sync-external-store` 0.0.6 -> 1.7.0, a major.
+      # GitHub does not document whether `*` crosses the `/` in a scoped name,
+      # so this covers it either way rather than leaving it to inference.
+      - dependency-name: '@*/*'
+        update-types:
+          - 'version-update:semver-major'
 
     # Dependabot rebases every open PR when main moves. With build-and-test
     # required and "up to date" enforced, that is a CI storm on every merge, and
@@ -39,9 +46,14 @@ updates:
 
     # commitlint enforces conventional commits on this repo, so make Dependabot
     # comply by construction rather than fixing its messages by hand.
+    #
+    # `include: scope` makes Dependabot append the scope itself — `deps` for
+    # runtime deps, `deps-dev` for dev ones — so `prefix` must NOT already
+    # contain it. Getting this wrong produced `chore(deps)(deps): bump …`.
+    # `prefix-development` is only needed to change the *type* word (e.g. to
+    # `maint`); the deps-dev scope comes from `include` on its own.
     commit-message:
-      prefix: 'chore(deps)'
-      prefix-development: 'chore(deps-dev)'
+      prefix: 'chore'
       include: 'scope'
 
     # `security` is reserved for actual advisories, so it stays usable for triage.
@@ -104,9 +116,10 @@ updates:
     # Dependabot's security advisories barely cover the ecosystem — so ignoring
     # majors would freeze these on an old runtime with nothing to unfreeze them.
     rebase-strategy: 'disabled'
+    # No `include: scope` here: it would yield `chore(deps)`, indistinguishable
+    # from an npm bump. A prefix ending in `)` gets the colon added for us.
     commit-message:
       prefix: 'chore(actions)'
-      include: 'scope'
     labels:
       - 'dependencies'
     assignees:
