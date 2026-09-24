@@ -44,6 +44,8 @@ acceptable *because* Dependabot exists and TASK-123/124 make that volume cheap.
 - [ ] Full gate: build, `npm test`, `check:circular`, and a real `bber` epub +
       reader build
 - [ ] Add `npm run deps:dedupe` to the CI gate so drift cannot reappear silently
+- [ ] Add `versioning-strategy: increase` to `.github/dependabot.yml` — deferred
+      from TASK-123 because it is meaningless until specifiers are exact
 
 ## Notes
 
@@ -51,4 +53,13 @@ acceptable *because* Dependabot exists and TASK-123/124 make that volume cheap.
   — lerna manages those, and `lerna.json` already sets `command.version.exact`.
 - Pinning changes nothing about what is currently installed if done from the
   existing lockfile; verify that by diffing installed versions before and after.
-- Parent: TASK-121. Blocks TASK-123 (rules depend on specifiers being exact).
+- **Re-sequenced 2026-09-23: this no longer blocks TASK-123.** Only
+  `versioning-strategy: increase` needed exact pins, and it moved here — adding it
+  to `.github/dependabot.yml` is now a subtask of *this* task, to land with the
+  pins. Everything else in the policy (the major-ignore in particular) works against
+  caret ranges, so the rules shipped first.
+- That makes this task discretionary rather than blocking. Its case stands on its
+  own: manifests that state what was actually tested against, and closing the
+  `npm install` drift class that produced TASK-115. The cost is a ~388-line diff and
+  more PR volume, against a lockfile that already makes `npm ci` reproducible.
+- Parent: TASK-121.

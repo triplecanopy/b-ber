@@ -1,18 +1,60 @@
+# Dependency update policy (TASK-123).
+#
+# The rule in one line: **pin-worthy minor and patch updates arrive automatically;
+# majors do not, unless a security advisory requires one.**
+#
+# How that is expressed: `ignore` with `update-types: version-update:semver-major`.
+# The `version-update:` prefix is load-bearing — it scopes the rule to *version*
+# updates and leaves the security path alone, so a vulnerability that can only be
+# fixed by a major still produces a PR. An `ignore` entry naming a dependency with
+# no `update-types` does NOT behave this way; it expands to `>= 0` and can suppress
+# that package's security updates too. Never write one.
+#
+# Not here yet: `versioning-strategy: increase`. It bumps the lower bound of a
+# range, which is meaningless against the `^` specifiers this repo still uses. It
+# lands with TASK-122, when specifiers are pinned exact.
 version: 2
 
 updates:
   - package-ecosystem: 'npm'
     directory: '/'
+    # Dependabot picks up the workspace manifests from the root lockfile on its
+    # own — PRs already arrive scoped to /packages/*, so no per-directory entries.
     schedule:
       interval: 'weekly'
-    # Target the default branch (main); 'develop' no longer exists.
-    # Remove target-branch so Dependabot uses the repo default.
+      day: 'monday'
     open-pull-requests-limit: 10
+
+    ignore:
+      # No major version bumps as routine maintenance. Security updates are
+      # unaffected — see the header.
+      - dependency-name: '*'
+        update-types:
+          - 'version-update:semver-major'
+
+    # Dependabot rebases every open PR when main moves. With build-and-test
+    # required and "up to date" enforced, that is a CI storm on every merge, and
+    # the backlog is 38 PRs deep. Rebase deliberately instead.
+    rebase-strategy: 'disabled'
+
+    # commitlint enforces conventional commits on this repo, so make Dependabot
+    # comply by construction rather than fixing its messages by hand.
+    commit-message:
+      prefix: 'chore(deps)'
+      prefix-development: 'chore(deps-dev)'
+      include: 'scope'
+
+    # `security` is reserved for actual advisories, so it stays usable for triage.
+    # Routine version bumps were being labelled `security` too, which is how 38 of
+    # them became indistinguishable from real alerts.
     labels:
-      - 'security'
+      - 'dependencies'
     assignees:
       - 'msimmer'
-    # Group related bumps so a 30-package monorepo doesn't produce PR spam.
+
+    # Groups apply to version updates only (that is the default for `applies-to`).
+    # Security updates deliberately stay ungrouped — each one should be reviewable
+    # and mergeable on its own.
     groups:
       babel:
         patterns:
@@ -25,29 +67,28 @@ updates:
           - 'jest*'
           - '@jest/*'
           - 'jest-*'
+          - '@testing-library/*'
       linting:
         patterns:
           - 'biome'
           - '@biomejs/*'
-          - 'eslint*'
-          - '@eslint/*'
       build-tools:
         patterns:
-          - 'webpack*'
           - 'vite*'
           - '@vitejs/*'
           - 'rollup*'
           - 'tsdown*'
+          - '@swc/*'
       react:
         patterns:
           - 'react'
           - 'react-*'
           - '@react-*'
-          - 'react-dom'
-          - 'react-redux'
-          - '@reduxjs/*'
       minor-patch:
-        # Catch-all group for everything else — batch minor/patch bumps.
+        # Catch-all for everything the groups above do not claim. With majors
+        # ignored, this is every remaining update.
+        patterns:
+          - '*'
         update-types:
           - 'minor'
           - 'patch'
@@ -56,9 +97,18 @@ updates:
     directory: '/'
     schedule:
       interval: 'weekly'
+      day: 'monday'
     open-pull-requests-limit: 5
+    # Deliberately NOT ignoring majors here. Actions version their whole runtime
+    # in the major (actions/checkout v4 → v5 is the normal upgrade path), and
+    # Dependabot's security advisories barely cover the ecosystem — so ignoring
+    # majors would freeze these on an old runtime with nothing to unfreeze them.
+    rebase-strategy: 'disabled'
+    commit-message:
+      prefix: 'chore(actions)'
+      include: 'scope'
     labels:
-      - 'security'
+      - 'dependencies'
     assignees:
       - 'msimmer'
     groups:
