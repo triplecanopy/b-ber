@@ -1,10 +1,8 @@
 # TASK-002: Plan JS → TS migration strategy
 
-**Status:** complete
-**Feature:** Migrate JS→TS
-**Scope:** monorepo
-**Priority:** medium
+**Epic:** Migrate JS→TS
 **GitHub Issue:** #457 — https://github.com/triplecanopy/b-ber/issues/457
+**Scope:** monorepo
 
 ## Description
 

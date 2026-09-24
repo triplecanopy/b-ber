@@ -1,11 +1,9 @@
 # TASK-096: Convert the Media subtree to functional components
 
-**Status:** complete (browser QA outstanding — see Notes)
-**Feature:** React 19 (reader-react)
+**Epic:** React 19 (reader-react)
 **Branch:** `feat/react19-step1-media` (pending merge into `feat/upgrades`)
 **Scope:** b-ber-reader-react
 **Phase:** Modernization — Step 1 (class→functional)
-**Priority:** medium
 **Model:** Sonnet 4.6 for the wave — but `Media` and `Vimeo` are the tricky
 members (`UNSAFE_componentWillMount` + `this.context` + media helper); if their
 load/playback ordering proves subtle, escalate those two to Opus. The Controls

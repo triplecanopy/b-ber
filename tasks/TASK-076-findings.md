@@ -1,7 +1,7 @@
 # TASK-076 — Findings: Styling architecture audit
 
 **Type:** Research / audit (no code changes)
-**Feature:** React 19 (reader-react) — but scope widened to the whole styling pipeline
+**Epic:** React 19 (reader-react)
 **Companion task:** `tasks/TASK-076.open.md`
 **Date:** 2026-06-18
 **Branch:** `feat/upgrades` (research/docs)

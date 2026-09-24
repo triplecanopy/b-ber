@@ -1,10 +1,8 @@
 # TASK-099: Convert position HOCs to hooks
 
-**Status:** complete
-**Feature:** React 19 (reader-react)
+**Epic:** React 19 (reader-react)
 **Scope:** b-ber-reader-react
 **Phase:** Modernization — Step 2 (HOC→hooks)
-**Priority:** medium
 **Model:** Opus — position geometry, the densest injected-prop `any` cluster
 (TASK-032), multiple consumers, marker QA, **and** it absorbs the deferred
 TASK-084 `getPageWidth` adoption. High-judgment.

@@ -50,8 +50,8 @@ Chapter change:
 
 | File                                 | Purpose                                                 |
 | ------------------------------------ | ------------------------------------------------------- |
-| `../../PLAN.md`                      | Living project plan (root, organized by feature) — read first |
-| `../../tasks/`                       | Task PRDs (root) — open tasks have `.open.md` extension  |
+| [Epic #617](https://github.com/triplecanopy/b-ber/issues/617)                     | React 19 epic — live state, sequencing, the deferred bug cluster |
+| `../../tasks/`                       | Task PRDs (root). One file per task, open or closed alike |
 | `src/index.tsx`                      | Package entry point                                     |
 | `src/components/App.tsx`                     | Redux Provider + Reader mount                           |
 | `src/components/Reader/index.tsx`            | Main orchestrator (state, navigation, loading)          |
@@ -70,9 +70,10 @@ Chapter change:
 
 Before starting any task, read:
 
-1. `../../PLAN.md` — current project state (root plan, organized by feature; the
-   reader-react work lives under the "⚛️ React 19 (reader-react)" section)
-2. `../../tasks/TASK-NNN.md` (or `.open.md`) — the specific task PRD (root `tasks/`)
+1. [Epic #617 — React 19 (reader-react)](https://github.com/triplecanopy/b-ber/issues/617) — current state and the order
+   work has to happen in. `gh issue view 617` and
+   `gh api repos/triplecanopy/b-ber/issues/617/sub_issues` for the open tasks
+2. `../../tasks/TASK-NNN.md` — the specific task PRD (root `tasks/`)
 3. Any source files named in the task
 
 > **🛑 React 19 migration tasks (TASK-068, 073, 091, 094–100): also read
@@ -83,8 +84,8 @@ Before starting any task, read:
 > cleanup/StrictMode §3d, render purity §3e). The task's `**Model:**` field says
 > which model (Sonnet/Opus) is best suited.
 
-A model starting a new session should be able to read `AGENTS.md` + the root
-`PLAN.md` and understand where the project stands without reading all the PRDs.
+A model starting a new session should be able to read `AGENTS.md` + [epic
+ #617](https://github.com/triplecanopy/b-ber/issues/617) and understand where the project stands without reading all the PRDs.
 
 ---
 
@@ -145,10 +146,11 @@ Decisions, blockers, relevant context.
 
 ### Updating progress
 
-- Set status to `in progress` when starting; `complete` when done.
 - Update subtask checkboxes as work progresses — do not batch.
-- When complete: remove `.open` from filename, update the root `../../PLAN.md`
-  (React 19 feature section).
+- There is no status field and no rename. The PR that does the work says
+  `Closes #NNN`; merging closes the issue and the board marks it Done.
+- If the task re-orders or unblocks something, update **epic #617's body** —
+  sequencing lives there, not in a file.
 
 ---
 
@@ -158,9 +160,10 @@ Before marking any task complete:
 
 1. `npm test` passes — runs all unit tests AND smoke tests together (71 suites,
    458 tests / 9 snapshots as of the TS conversion); snapshots must not change
-2. Root `../../PLAN.md` is updated (React 19 feature section)
+2. `npm run check:tasks` passes from the repo root (part of the root `npm test`)
 3. Changes committed with a conventional commit message (see Commits section)
-4. If the task changes how the app is configured, run, or structured: update `README.md`
+4. The PR body says `Closes #NNN`
+5. If the task changes how the app is configured, run, or structured: update `README.md`
 
 The smoke tests live in `__tests__/components/*.smoke.test.jsx`. They use real Redux
 stores (via `__tests__/helpers/store.js`) and fixture data (via `__tests__/helpers/fixtures.js`).
@@ -299,11 +302,10 @@ Do not spawn subagents for single-file changes or targeted bug fixes.
 
 After completing any task that changes how the app is configured, run, or structured:
 
-- **Root `../../PLAN.md`** — update the React 19 feature section
+- **[Epic #617](https://github.com/triplecanopy/b-ber/issues/617)** — update the
+  body if the remaining surface or its ordering changed
 - **`README.md`** — update if setup steps, CLI commands, or major features changed
-- **Task PRD** (root `../../tasks/`) — mark complete, remove `.open` from filename
-
-Do not consider a task complete until the root `PLAN.md` is updated.
+- **Task PRD** (root `../../tasks/`) — tick the subtasks, record findings
 
 ---
 
@@ -313,8 +315,9 @@ This package (`b-ber-reader-react`) is one of several packages in the `b-ber`
 monorepo. The agent standards in this file are designed for portability. When
 adapting to another package:
 
-- Keep the task system identical — all tasks live in the **root** `tasks/` and
-  the **root** `PLAN.md` (per-package `tasks/`/`PLAN.md` were flattened away)
+- Keep the task system identical — all tasks live in the **root** `tasks/`, and
+  the hierarchy lives in GitHub epics (per-package `tasks/`/`PLAN.md` were
+  flattened away; the root `PLAN.md` was retired by TASK-126)
 - Keep the quality gates identical
 - Keep the commit conventions identical (update the scope token, e.g. `reader-react` → `lib-epub`)
 - Update the dev commands section

@@ -1,10 +1,8 @@
 # TASK-095: Convert leaf class components to functional
 
-**Status:** complete
-**Feature:** React 19 (reader-react)
+**Epic:** React 19 (reader-react)
 **Scope:** b-ber-reader-react
 **Phase:** Modernization — Step 1 (class→functional)
-**Priority:** medium
 **Model:** Sonnet 4.6 — mechanical conversions with a clear pattern and strong
 test/snapshot coverage. Small, isolated diffs.
 

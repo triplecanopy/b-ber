@@ -1,9 +1,7 @@
 # TASK-072: TypeScript adoption (reader-react)
 
-**Status:** superseded
-**Feature:** Migrate JS→TS
+**Epic:** Migrate JS→TS
 **Phase:** Modernization — Phase 4
-**Priority:** low
 
 > **Superseded by [[TASK-032]]** (Convert b-ber-reader-react to TypeScript,
 > Stage 4) on 2026-06-11. TASK-032 is the canonical task and carries the GitHub

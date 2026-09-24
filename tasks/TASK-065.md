@@ -1,10 +1,9 @@
 # TASK-065: Bug fix — loader never hides (Bug 1)
 
-**Status:** complete
-**Feature:** React 19 (reader-react)
+**Epic:** React 19 (reader-react)
+**GitHub Issue:** #466 — https://github.com/triplecanopy/b-ber/issues/466
 **Phase:** Bug Fixes
 **Created:** 2026-04-06
-**GitHub Issue:** #466 — https://github.com/triplecanopy/b-ber/issues/466
 
 ## Description
 

@@ -18,7 +18,7 @@
     "lerna": "lerna",
     "jest": "jest",
     "test:coverage": "rimraf ./coverage && jest --collectCoverage=true",
-    "test": "npm run check && jest",
+    "test": "npm run check && npm run check:tasks && jest",
     "prepublishOnly": "npm run build",
     "postpublish": "node scripts/run-ci.js",
     "publish:canary": "lerna publish --canary",
@@ -32,7 +32,9 @@
     "browserslist:update": "npx --yes update-browserslist-db@latest",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
     "check:circular": "madge --circular --extensions ts,tsx,jsx --exclude '\\.(s?css)$' packages/*/src",
-    "typecheck": "lerna run typecheck"
+    "typecheck": "lerna run typecheck",
+    "check:tasks": "node scripts/check-tasks.js",
+    "check:tasks:remote": "node scripts/check-tasks.js --remote"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,json}": [

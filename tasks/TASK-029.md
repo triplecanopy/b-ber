@@ -1,10 +1,8 @@
 # TASK-029: TypeScript Stage 3 — b-ber-tasks and b-ber-cli
 
-**Status:** complete
-**Feature:** Migrate JS→TS
-**Scope:** monorepo
-**Priority:** medium
+**Epic:** Migrate JS→TS
 **GitHub Issue:** #484 — https://github.com/triplecanopy/b-ber/issues/484
+**Scope:** monorepo
 
 ## Description
 

@@ -1,10 +1,8 @@
 # TASK-093: Consolidate the reader-react PLAN.md into the root PLAN.md
 
-**Status:** complete
-**Feature:** React 19 (reader-react)
-**Scope:** b-ber-reader-react
-**Priority:** medium
+**Epic:** React 19 (reader-react)
 **GitHub Issue:** (none)
+**Scope:** b-ber-reader-react
 
 ## Description
 

@@ -1,9 +1,7 @@
 # TASK-111: Replace the Material Icons font with inline SVGs
 
-**Status:** complete
-**Feature:** React 19 (reader-react)
+**Epic:** React 19 (reader-react)
 **Phase:** Modernization — assets / dependency removal
-**Priority:** medium
 **Model:** Sonnet 4.6 — mechanical icon swaps guarded by the test/snapshot
 suite; the only judgment call is sourcing/matching the SVG paths.
 

@@ -1,9 +1,7 @@
 # TASK-106: Migrate state off Redux → useSyncExternalStore (Step 4 execution)
 
-**Status:** complete
-**Feature:** React 19 (reader-react)
+**Epic:** React 19 (reader-react)
 **Phase:** Modernization — Step 4 (state migration)
-**Priority:** medium
 **Model:** Sonnet 4.6 per slice (mechanical, snapshot-guarded); escalate the two
 hot slices (`view`, `viewerSettings`) and the `book.content` move to Opus
 (re-render assessment + render-purity judgment, §3c/§3e).

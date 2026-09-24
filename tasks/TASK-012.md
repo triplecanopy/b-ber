@@ -1,10 +1,8 @@
 # TASK-012: Convert b-ber-lib to TypeScript
 
-**Status:** complete
-**Feature:** Migrate JS→TS
-**Scope:** lib
-**Priority:** high
+**Epic:** Migrate JS→TS
 **GitHub Issue:** #497 — https://github.com/triplecanopy/b-ber/issues/497
+**Scope:** lib
 
 ## Description
 

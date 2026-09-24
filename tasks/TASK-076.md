@@ -1,6 +1,5 @@
 # TASK-076: Migrate from SCSS to CSS Modules
 
-**Status:** complete (2026-06-19) — merged to `feat/upgrades` (merge `b03d6399`);
 dev QA passed. Realized scope: `@import`→`@use` cleanup, Spinner CSS-Module POC
 (+ Jest/TS wiring), dev viewport-label removal, and the monorepo styling audit.
 Chrome scoping was intentionally **narrowed out** and deferred to
@@ -8,9 +7,8 @@ Chrome scoping was intentionally **narrowed out** and deferred to
 partly user-facing vocabulary (consumer override API), so they stay global. The
 original goal ("migrate *all* reader styles to CSS Modules") is **superseded** by
 this narrower outcome — see the 2026-06-19 decision below.
-**Feature:** React 19 (reader-react)
+**Epic:** React 19 (reader-react)
 **Phase:** Modernization — Phase 6
-**Priority:** low
 **Findings:** [`TASK-076-findings.md`](./TASK-076-findings.md) — monorepo-wide
 styling audit (reader chrome vs. project content vs. themes), system diagrams,
 and recommendations for the reader migration, the project/theme SCSS toolchain,

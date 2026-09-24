@@ -1,9 +1,7 @@
 # TASK-038: Audit and clean up package.json scripts across the monorepo
 
-**Status:** complete (2026-06-20)
-**Feature:** Upgrade tooling
+**Epic:** Upgrade tooling
 **Scope:** monorepo
-**Priority:** medium
 
 > **Note (2026-06-20):** Most of this PRD's "Current problems" predate the
 > migrations it was waiting on — TS Stage 3 (TASK-029–031), Vite (TASK-006), and

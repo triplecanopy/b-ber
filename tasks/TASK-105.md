@@ -1,9 +1,7 @@
 # TASK-105: Component colocation + structure pass (SUPERSEDED)
 
-**Status:** superseded — closed 2026-06-21 (see Supersession note)
-**Feature:** React 19 (reader-react)
+**Epic:** React 19 (reader-react)
 **Phase:** Modernization — structure
-**Priority:** low
 **Model:** Sonnet 4.6 — mechanical file moves + import rewrites, guarded by the
 test suite. High churn, low logic risk.
 

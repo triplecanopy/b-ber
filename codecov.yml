@@ -4,7 +4,7 @@ coverage:
   status:
     project:
       default:
-        # Monorepo-wide minimum target (see PLAN.md). `informational` keeps the
+        # Monorepo-wide minimum target (see epic #471). `informational` keeps the
         # check from blocking merges — it reports the number without failing.
         target: 75%
         threshold: 1%

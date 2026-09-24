@@ -1,10 +1,8 @@
 # TASK-034: Upgrade Jest from v26 to v29
 
-**Status:** complete
-**Feature:** Upgrade tooling
-**Scope:** monorepo
-**Priority:** high
+**Epic:** Upgrade tooling
 **GitHub Issue:** #489 — https://github.com/triplecanopy/b-ber/issues/489
+**Scope:** monorepo
 
 ## Description
 

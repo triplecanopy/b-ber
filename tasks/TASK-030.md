@@ -1,10 +1,8 @@
 # TASK-030: Convert b-ber-tasks to TypeScript
 
-**Status:** complete
-**Feature:** Migrate JS→TS
-**Scope:** b-ber-tasks
-**Priority:** medium
+**Epic:** Migrate JS→TS
 **GitHub Issue:** #485 — https://github.com/triplecanopy/b-ber/issues/485
+**Scope:** b-ber-tasks
 
 ## Description
 

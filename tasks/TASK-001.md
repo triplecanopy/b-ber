@@ -1,10 +1,8 @@
 # TASK-001: Research and recommend a webpack replacement
 
-**Status:** complete
-**Feature:** Upgrade tooling
-**Scope:** monorepo
-**Priority:** medium
+**Epic:** Upgrade tooling
 **GitHub Issue:** #456 — https://github.com/triplecanopy/b-ber/issues/456
+**Scope:** monorepo
 
 ## Description
 

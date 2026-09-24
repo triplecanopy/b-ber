@@ -1,10 +1,8 @@
 # TASK-057: Simplify root build script using Lerna topological sort
 
-**Status:** complete
-**Feature:** Upgrade tooling
-**Scope:** monorepo
-**Priority:** medium
+**Epic:** Upgrade tooling
 **GitHub Issue:** (add after creating the issue)
+**Scope:** monorepo
 
 ## Description
 
