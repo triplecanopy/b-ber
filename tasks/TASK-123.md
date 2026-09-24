@@ -49,6 +49,49 @@ Make Dependabot surface only what is worth a human's attention. The existing con
   TASK-106) — none are declared anywhere any more. Added `@swc/*` (27 manifests)
   and `@testing-library/*` (1).
 
+### Evidence from the first PR under these rules (#643, 2026-09-24)
+
+The config merged at 04:09 UTC; Dependabot opened #643 at 04:22, so it is the
+first real test. Three things came out of it.
+
+**1. `chore(deps)(deps):` — the prefix was wrong.** `include: 'scope'` makes
+Dependabot append `deps`/`deps-dev` *itself*, so `prefix` must not already carry
+it. Fixed to `prefix: 'chore'` + `include: 'scope'`. `prefix-development` is only
+needed to change the *type* word (e.g. `maint`) and has been dropped. The
+`github-actions` block had the same bug and now uses `prefix: 'chore(actions)'`
+with no `include`, since scoping it would produce `chore(deps)` and be
+indistinguishable from an npm bump.
+
+**2. A major got through the ignore.** #643 carried
+`@types/use-sync-external-store` `^0.0.6 → ^1.7.0`, which is `0 → 1` and major by
+any reading. GitHub's reference documents `dependency-name` as "optionally using
+`*` to match zero or more characters" but says nothing about whether `*` crosses
+the `/` in a scoped name, and there are no scoped examples. Rather than infer,
+the config now carries a second rule for `@*/*`. **This needs confirming against
+the next grouped PR** — if a scoped major still appears, the cause is something
+other than the wildcard and the whole approach needs rethinking.
+
+**3. "No majors" does not mean "no breaking changes."** Dependabot classifies
+`0.x` bumps as minor, so the ignore correctly let these through:
+
+| Package | Bump | Why it matters |
+| ------- | ---- | -------------- |
+| `pureimage` | `^0.1.6 → ^0.4.20` | generates the default cover (`cover/index.ts`) |
+| `image-size` | `^0.8.3 → ^0.9.7` | three packages; 0.9 changed the export shape |
+| `markdown-it-front-matter` | `^0.1.2 → ^0.2.4` | |
+
+Under the 0.x convention each of these is breaking. The policy as written does not
+protect against them, and that is worth an explicit decision rather than a
+surprise — either accept it, or add `0.x` minors to the ignore and upgrade those
+deliberately.
+
+**Also in #643: a js-yaml downgrade.** `packages/b-ber-testing` would go
+`^4.1.0 → ^3.15.2` while its specs call `yaml.load()`, the v4 API — in v3 that
+name is the *unsafe* loader, and `@types/js-yaml@^4` would no longer match what is
+installed. This is the `js-yaml` 3-vs-4 split TASK-122 flagged, and Dependabot
+resolving it downward. Do not let a grouped PR settle that conflict; TASK-122
+should.
+
 ### Still to verify
 
 **Does a security fix requiring a major still arrive?** This is the one rule that
@@ -64,6 +107,9 @@ real advisory rather than trusting either source.
 - [x] Add the rules above to `.github/dependabot.yml`
 - [x] Verify the `minor-patch` catch-all group actually catches everything
 - [ ] Test that a major-version *security* fix is not suppressed by the major ignore
+- [x] Fix the doubled `chore(deps)(deps)` prefix
+- [ ] Confirm the `@*/*` rule actually stops scoped majors — check the next
+      grouped PR
 - [x] Check Dependabot run logs for timeouts or manifest errors — clean
 - [x] Decide on `open-pull-requests-limit` and record the reasoning — stays at 10
 - [x] Split `security` / `dependencies` labels and confirm both exist
