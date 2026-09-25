@@ -92,6 +92,47 @@ installed. This is the `js-yaml` 3-vs-4 split TASK-122 flagged, and Dependabot
 resolving it downward. Do not let a grouped PR settle that conflict; TASK-122
 should.
 
+### Resolved 2026-09-25: the major-ignore does not suppress security updates
+
+**#649 is the proof.** `image-size` `0.8.3 -> 2.0.4` — a major, under a config that
+ignores majors — arrived as a security fix, because the four open `image-size`
+advisories are first patched in 2.0.3. That was the one rule that could quietly
+reduce coverage, and it behaves as documented: **no majors as routine
+maintenance, majors when an advisory requires one.** Exactly the stated policy.
+
+### The scoped-major hole was the groups, not the ignore
+
+`@*/*` alone did **not** work. #648 was built on the very commit that added it and
+still carried `@types/use-sync-external-store` `0.0.6 -> 1.7.0`.
+
+The cause is grouping: a group with no `update-types` accepts every update type,
+and `types` matched `@types/*` with no such filter. Every group now declares
+`update-types: ['minor', 'patch']` via a YAML anchor, so a major cannot join one
+regardless of how `ignore` and grouping interact. The `@*/*` rule is kept as belt
+and braces with a note recording that it was not sufficient on its own.
+
+### 0.x minors are now held back, by enumeration
+
+Semver treats a minor bump below 1.0.0 as breaking; Dependabot classifies it
+`semver-minor`, so the major rule never covered it. #643 would have taken
+`pureimage` 0.1 -> 0.4 — the library that renders the default cover — as routine
+maintenance.
+
+There is no general switch for this, so the nine 0.x dependencies are enumerated
+with `version-update:semver-minor` ignores. An enumerated list of something that
+changes is exactly the shape that drifts, so
+**`scripts/check-zero-major-deps.js`** fails the build when the list and the
+manifests disagree — in either direction, including an entry left behind after a
+package reaches 1.0.0. It runs inside `npm test`.
+
+### js-yaml is held until TASK-122
+
+Both #643 and #648 proposed `b-ber-testing`'s `^4.1.0 -> ^3.15.2` — a downgrade,
+because a grouped update resolves the repo's 3-vs-4 split downward. Its specs call
+`yaml.load()`, the v4 API, which in v3 is the *unsafe* loader. Ignored outright
+until TASK-122 settles the conflict deliberately; the entry carries its own
+removal condition.
+
 ### Still to verify
 
 **Does a security fix requiring a major still arrive?** This is the one rule that
@@ -106,10 +147,13 @@ real advisory rather than trusting either source.
 
 - [x] Add the rules above to `.github/dependabot.yml`
 - [x] Verify the `minor-patch` catch-all group actually catches everything
-- [ ] Test that a major-version *security* fix is not suppressed by the major ignore
+- [x] Test that a major-version *security* fix is not suppressed by the major
+      ignore — **confirmed by #649** (`image-size` 0.8.3 -> 2.0.4, advisory
+      patched in 2.0.3)
 - [x] Fix the doubled `chore(deps)(deps)` prefix
-- [ ] Confirm the `@*/*` rule actually stops scoped majors — check the next
-      grouped PR
+- [x] Confirm the `@*/*` rule actually stops scoped majors — **it does not**;
+      closed instead by putting `update-types` on every group
+- [x] Hold back 0.x minor bumps, with a check so the list cannot drift
 - [x] Check Dependabot run logs for timeouts or manifest errors — clean
 - [x] Decide on `open-pull-requests-limit` and record the reasoning — stays at 10
 - [x] Split `security` / `dependencies` labels and confirm both exist
