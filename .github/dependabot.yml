@@ -31,13 +31,49 @@ updates:
       - dependency-name: '*'
         update-types:
           - 'version-update:semver-major'
-      # Scoped packages, explicitly. PR #643 was opened under this config and
-      # still carried `@types/use-sync-external-store` 0.0.6 -> 1.7.0, a major.
-      # GitHub does not document whether `*` crosses the `/` in a scoped name,
-      # so this covers it either way rather than leaving it to inference.
+      # Scoped packages, explicitly. GitHub does not document whether `*`
+      # crosses the `/` in a scoped name, so cover it either way.
+      # NOTE: this alone did not work — #648 was built on the commit that added
+      # it and still carried `@types/use-sync-external-store` 0.0.6 -> 1.7.0.
+      # The group `update-types` below is what actually closes that hole.
       - dependency-name: '@*/*'
         update-types:
           - 'version-update:semver-major'
+
+      # `0.x` releases: semver treats a minor bump below 1.0.0 as breaking, but
+      # Dependabot classifies it as `semver-minor`, so the major rule above does
+      # not cover it. #643 would have taken `pureimage` 0.1 -> 0.4 — the library
+      # that renders the default cover — as routine maintenance.
+      #
+      # There is no general switch for this, so it is enumerated. Nine packages
+      # today. Remove an entry when its package reaches 1.0.0, and add one when a
+      # new 0.x dependency appears; `node scripts/check-zero-major-deps.js`
+      # fails if this list and the manifests disagree.
+      - dependency-name: '@swc/jest'
+        update-types: ['version-update:semver-minor']
+      - dependency-name: '@types/use-sync-external-store'
+        update-types: ['version-update:semver-minor']
+      - dependency-name: 'image-size'
+        update-types: ['version-update:semver-minor']
+      - dependency-name: 'markdown-it-front-matter'
+        update-types: ['version-update:semver-minor']
+      - dependency-name: 'os-browserify'
+        update-types: ['version-update:semver-minor']
+      - dependency-name: 'pureimage'
+        update-types: ['version-update:semver-minor']
+      - dependency-name: 'quote'
+        update-types: ['version-update:semver-minor']
+      - dependency-name: 'react-attr-converter'
+        update-types: ['version-update:semver-minor']
+      - dependency-name: 'tsdown'
+        update-types: ['version-update:semver-minor']
+
+      # js-yaml is declared as `^3` in some packages and `^4` in others, and a
+      # grouped update resolves that downward — #643 and #648 both proposed
+      # b-ber-testing's `^4.1.0 -> ^3.15.2`, while its specs call `yaml.load()`,
+      # the v4 API. Hold it until TASK-122 settles the conflict deliberately,
+      # then delete this entry.
+      - dependency-name: 'js-yaml'
 
     # Dependabot rebases every open PR when main moves. With build-and-test
     # required and "up to date" enforced, that is a CI storm on every merge, and
@@ -71,19 +107,25 @@ updates:
       babel:
         patterns:
           - '@babel/*'
+        update-types: &group-update-types
+          - 'minor'
+          - 'patch'
       types:
         patterns:
           - '@types/*'
+        update-types: *group-update-types
       testing:
         patterns:
           - 'jest*'
           - '@jest/*'
           - 'jest-*'
           - '@testing-library/*'
+        update-types: *group-update-types
       linting:
         patterns:
           - 'biome'
           - '@biomejs/*'
+        update-types: *group-update-types
       build-tools:
         patterns:
           - 'vite*'
@@ -91,11 +133,13 @@ updates:
           - 'rollup*'
           - 'tsdown*'
           - '@swc/*'
+        update-types: *group-update-types
       react:
         patterns:
           - 'react'
           - 'react-*'
           - '@react-*'
+        update-types: *group-update-types
       minor-patch:
         # Catch-all for everything the groups above do not claim. With majors
         # ignored, this is every remaining update.

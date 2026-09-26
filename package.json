@@ -18,7 +18,7 @@
     "lerna": "lerna",
     "jest": "jest",
     "test:coverage": "rimraf ./coverage && jest --collectCoverage=true",
-    "test": "npm run check && npm run check:tasks && jest",
+    "test": "npm run check && npm run check:tasks && npm run check:deps && jest",
     "prepublishOnly": "npm run build",
     "postpublish": "node scripts/run-ci.js",
     "publish:canary": "lerna publish --canary",
@@ -34,7 +34,8 @@
     "check:circular": "madge --circular --extensions ts,tsx,jsx --exclude '\\.(s?css)$' packages/*/src",
     "typecheck": "lerna run typecheck",
     "check:tasks": "node scripts/check-tasks.js",
-    "check:tasks:remote": "node scripts/check-tasks.js --remote"
+    "check:tasks:remote": "node scripts/check-tasks.js --remote",
+    "check:deps": "node scripts/check-zero-major-deps.js"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,json}": [
