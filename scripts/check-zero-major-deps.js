@@ -8,6 +8,11 @@
 // and an enumerated list of something that changes is exactly the shape that
 // drifts. This fails the build when it does.
 //
+// It also rejects YAML anchors and aliases. They are valid YAML, so every
+// generic linter passes them, but Dependabot's parser refuses the whole file
+// ("YAML aliases are not supported") and silently stops opening PRs — which is
+// what #650 did to main.
+//
 //   node scripts/check-zero-major-deps.js
 
 const { readFileSync, readdirSync, existsSync } = require('node:fs')
@@ -57,6 +62,23 @@ function ignoredForMinor() {
     if (/version-update:semver-minor/.test(rest)) names.add(name[1])
   }
   return names
+}
+
+// Line scan for the same reason as above. Comment lines are skipped because the
+// prose uses `*emphasis*`; quoted scalars like `'*'` never match `[&*]\w`.
+function anchorsAndAliases() {
+  return readFileSync(CONFIG, 'utf8')
+    .split('\n')
+    .map((line, i) => ({ line, n: i + 1 }))
+    .filter(({ line }) => /^[^#]*(?::|-)\s+[&*][\w-]/.test(line))
+}
+
+const aliases = anchorsAndAliases()
+if (aliases.length > 0) {
+  console.error('\n.github/dependabot.yml uses YAML anchors/aliases:\n')
+  for (const { line, n } of aliases) console.error(`  line ${n}: ${line.trim()}`)
+  console.error('\n  Dependabot cannot parse these; write each value out in full.\n')
+  process.exit(1)
 }
 
 const declared = declaredZeroMajor()
