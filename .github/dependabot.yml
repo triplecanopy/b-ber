@@ -107,25 +107,31 @@ updates:
       babel:
         patterns:
           - '@babel/*'
-        update-types: &group-update-types
+        update-types:
           - 'minor'
           - 'patch'
       types:
         patterns:
           - '@types/*'
-        update-types: *group-update-types
+        update-types:
+          - 'minor'
+          - 'patch'
       testing:
         patterns:
           - 'jest*'
           - '@jest/*'
           - 'jest-*'
           - '@testing-library/*'
-        update-types: *group-update-types
+        update-types:
+          - 'minor'
+          - 'patch'
       linting:
         patterns:
           - 'biome'
           - '@biomejs/*'
-        update-types: *group-update-types
+        update-types:
+          - 'minor'
+          - 'patch'
       build-tools:
         patterns:
           - 'vite*'
@@ -133,13 +139,17 @@ updates:
           - 'rollup*'
           - 'tsdown*'
           - '@swc/*'
-        update-types: *group-update-types
+        update-types:
+          - 'minor'
+          - 'patch'
       react:
         patterns:
           - 'react'
           - 'react-*'
           - '@react-*'
-        update-types: *group-update-types
+        update-types:
+          - 'minor'
+          - 'patch'
       minor-patch:
         # Catch-all for everything the groups above do not claim. With majors
         # ignored, this is every remaining update.
