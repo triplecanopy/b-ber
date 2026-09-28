@@ -108,7 +108,12 @@ or more packages was checked for source references. All 14 are genuinely importe
       (8 → 9) is stale and can be closed
 - [ ] `axios`, `xmldom`, `postcss`, `js-yaml`, `undici` — vestigial check, then bump
 - [ ] Triage and close/merge the 38 open PRs
-- [ ] `@types/node` 14 → current
+- [x] `@types/node` 14 → **^24** (not 26: `@types/node`'s major should track the
+      runtime, and we run Node 24). Introduces no new type errors — the six
+      packages that fail `typecheck` fail identically without it, and are
+      TASK-119's remit. **Dependabot closed #531 itself on 2026-09-24** once the
+      major-ignore landed, so it will never propose this again; majors are now
+      ours to do deliberately, which is the policy working rather than failing
 - [ ] Re-measure alerts and record the new distribution
 
 ## Notes
