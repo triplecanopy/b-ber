@@ -41,7 +41,7 @@
     "@canopycanopycanopy/b-ber-parser-footnotes": "4.0.3",
     "@canopycanopycanopy/b-ber-parser-gallery": "4.0.3",
     "highlight.js": "^11.11.1",
-    "markdown-it": "^8.4.1",
+    "markdown-it": "^15.0.2",
     "markdown-it-front-matter": "^0.1.2"
   },
   "files": ["dist"],
