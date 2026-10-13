@@ -40,7 +40,7 @@
     "pureimage": "^0.1.6",
     "recursive-readdir": "^2.2.2",
     "sass": "^1.49.8",
-    "uglify-js": "^3.10.0",
+    "uglify-js": "^3.19.3",
     "vinyl": "^2.2.0"
   },
   "devDependencies": {
@@ -54,7 +54,9 @@
     "tsdown": "^0.22.1",
     "typescript": "^6.0.3"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/triplecanopy/b-ber.git"
