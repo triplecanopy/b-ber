@@ -51,7 +51,7 @@
     "sass": "^1.70.0",
     "setimmediate": "^1.0.5",
     "stream-browserify": "^3.0.0",
-    "vite": "^8.0.16"
+    "vite": "^8.1.6"
   },
   "dependencies": {
     "classnames": "^2.2.5",
@@ -73,7 +73,10 @@
     "react": ">=16.2.0 <=19",
     "react-dom": ">=16.2.0 <=19"
   },
-  "files": ["dist", "index.d.ts"],
+  "files": [
+    "dist",
+    "index.d.ts"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/triplecanopy/b-ber.git"
