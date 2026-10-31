@@ -21,6 +21,15 @@ TASK-120, which continues independently.
 - [ ] TASK-123: Rewrite the Dependabot rules
 - [ ] TASK-124: Automate merging and clear the backlog
 - [ ] TASK-125: Decide and document the transitive-vulnerability strategy
+- [ ] TASK-129: Replace Dependabot with Renovate
+
+> **Re-scoped 2026-10-31 (TASK-129).** The tool changed: Renovate replaces
+> Dependabot for version and security updates alike. The goal stands (signal, not
+> noise), but "Dependabot is worth keeping" no longer holds. TASK-123's rules are
+> retired with `.github/dependabot.yml`. TASK-124's auto-merge moves to Renovate's
+> `automerge`. TASK-125's answer starts from weekly `lockFileMaintenance`, because
+> Renovate has no targeted transitive remediation. See TASK-129 for the spike that
+> settled this.
 
 **Order matters.** 122 → 123 → 124. Pinning first, because the rules' behaviour
 depends on specifiers (`versioning-strategy` is meaningless against `^` ranges).

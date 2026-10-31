@@ -1,0 +1,162 @@
+// Dependency update policy (TASK-129, replacing TASK-123's Dependabot config).
+//
+// The rule in one line: **minor and patch updates arrive automatically, in
+// groups; majors and 0.x minors wait on the Dependency Dashboard; security fixes
+// always arrive, majors included.**
+//
+// Transitive dependencies: Renovate has no targeted transitive remediation
+// (`transitiveRemediation` was dropped in v38). `vulnerabilityAlerts` only fixes
+// packages declared in a package.json. The weekly `lockFileMaintenance` PR is the
+// transitive path: it regenerates package-lock.json, pulling every transitive
+// dep to the newest version its parents allow. The TASK-129 spike measured this
+// clearing 31 of 46 vulnerable packages, so review that PR every week.
+{
+  $schema: 'https://docs.renovatebot.com/renovate-schema.json',
+  extends: ['config:recommended'],
+  // config:recommended's monorepo groups (react-monorepo, swc-monorepo, …)
+  // outrank the groups below, which split them back out into a PR each. Our
+  // groups already keep monorepo siblings together.
+  //
+  // :semanticPrefixFixDepsChoreOthers would title runtime-dep PRs `fix(deps)`.
+  // Nothing here generates release notes from commit types, so keep every
+  // update `chore(deps)`, matching the history Dependabot left.
+  ignorePresets: ['group:monorepos', ':semanticPrefixFixDepsChoreOthers'],
+
+  // One predictable weekly window, as Dependabot had. Security PRs ignore the
+  // schedule.
+  schedule: ['before 6am on monday'],
+  lockFileMaintenance: { enabled: true },
+
+  // Five routine PRs open at once, plus up to five security PRs on a separate
+  // budget (`vulnerabilityAlerts.prConcurrentLimit`). Anything over the limit
+  // waits on the dashboard rather than vanishing.
+  prConcurrentLimit: 5,
+
+  // A release has to survive three days on the registry before we take it.
+  // This defends against compromised publishes like the 2026-07 worm.
+  // Security fixes are exempt (Renovate's vulnerabilityAlerts default).
+  minimumReleaseAge: '3 days',
+
+  // `build-and-test` is required with "up to date" enforced, so rebasing every
+  // open PR on each merge to main is a CI storm. Rebase only on conflict, and
+  // update the rest deliberately.
+  rebaseWhen: 'conflicted',
+
+  // commitlint (config-conventional) enforces conventional commits; this yields
+  // `chore(deps): update …`.
+  semanticCommits: 'enabled',
+  semanticCommitType: 'chore',
+  semanticCommitScope: 'deps',
+
+  labels: ['dependencies'],
+  assignees: ['msimmer'],
+
+  dependencyDashboard: true,
+
+  vulnerabilityAlerts: {
+    // `security` is reserved for real advisories so it stays usable for triage.
+    addLabels: ['security'],
+    prConcurrentLimit: 5,
+    // Take the newest release, not the earliest fix. When a package carries
+    // several advisories fixed on different lines, `lowest` clears only some
+    // of them and needs a further round for each of the rest.
+    vulnerabilityFixStrategy: 'highest',
+  },
+
+  // Later rules override earlier ones, so the order is: catch-all group, then
+  // specific groups, then the approval gates, then non-npm managers.
+  packageRules: [
+    {
+      description: 'Catch-all: every minor/patch the groups below do not claim',
+      matchPackageNames: ['*'],
+      matchUpdateTypes: ['minor', 'patch'],
+      groupName: 'minor-patch',
+    },
+    {
+      groupName: 'babel',
+      matchPackageNames: ['@babel/**'],
+      matchUpdateTypes: ['minor', 'patch'],
+    },
+    {
+      groupName: 'types',
+      matchPackageNames: ['@types/**'],
+      matchUpdateTypes: ['minor', 'patch'],
+    },
+    {
+      groupName: 'testing',
+      matchPackageNames: ['jest', 'jest-*', '@jest/**', '@testing-library/**', 'ts-jest'],
+      matchUpdateTypes: ['minor', 'patch'],
+    },
+    {
+      groupName: 'linting',
+      matchPackageNames: ['@biomejs/**'],
+      matchUpdateTypes: ['minor', 'patch'],
+    },
+    {
+      groupName: 'build-tools',
+      matchPackageNames: ['vite', 'vite-*', '@vitejs/**', 'rollup', 'rollup-*', 'tsdown', '@swc/**'],
+      matchUpdateTypes: ['minor', 'patch'],
+    },
+    {
+      groupName: 'react',
+      matchPackageNames: ['react', 'react-*', '@react-*/**'],
+      matchUpdateTypes: ['minor', 'patch'],
+    },
+
+    {
+      description: 'No majors as routine maintenance: list them on the dashboard, open on approval',
+      matchUpdateTypes: ['major'],
+      dependencyDashboardApproval: true,
+    },
+    {
+      // Semver treats a minor below 1.0.0 as breaking. pureimage 0.1 -> 0.4
+      // renders the default cover. Pulled out of its group (groupName: null),
+      // otherwise holding one package holds every update grouped with it.
+      description: '0.x minors are breaking under semver: treat them like majors',
+      matchCurrentVersion: '<1.0.0',
+      matchUpdateTypes: ['minor'],
+      dependencyDashboardApproval: true,
+      groupName: null,
+    },
+
+    {
+      // Renovate puts both of a package's update buckets in the security
+      // branch when both match an advisory, and the lower bucket wins the
+      // collision. image-size 0.8.3 offers 0.9.7 (minor) and 2.0.4 (major);
+      // every version <= 2.0.2 is affected by GHSA-w3rx-r6r6-pgpr, so the PR it
+      // opens would be labelled `security` and fix nothing.
+      // Remove once every manifest is on image-size >= 2.0.3.
+      description: 'image-size: only versions that fix GHSA-w3rx-r6r6-pgpr',
+      matchPackageNames: ['image-size'],
+      allowedVersions: '>=2.0.3',
+    },
+
+    {
+      // Actions version their whole runtime in the major (checkout v4 -> v5 is
+      // the normal upgrade path), so majors come through here. Limited to
+      // `uses:` refs: `node-version` in the same files is a Node.js
+      // modernization decision and stays behind the major gate.
+      description: 'GitHub Actions: one grouped PR, majors included',
+      matchManagers: ['github-actions'],
+      matchDepTypes: ['action'],
+      groupName: 'github-actions',
+      semanticCommitScope: 'actions',
+      separateMajorMinor: false,
+      dependencyDashboardApproval: false,
+    },
+    {
+      description: 'CircleCI images and orbs: grouped on their own, majors still gated',
+      matchManagers: ['circleci'],
+      groupName: 'circleci',
+      semanticCommitScope: 'circleci',
+    },
+    {
+      // Pinning is TASK-122's decision, made deliberately for npm, not a bot's.
+      // Without this, CircleCI's image tags get digest-pinned and its orbs
+      // (`codecov/codecov@5`) pinned to exact versions.
+      description: 'No pin or digest-pin PRs',
+      matchUpdateTypes: ['pin', 'pinDigest'],
+      enabled: false,
+    },
+  ],
+}

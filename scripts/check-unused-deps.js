@@ -2,7 +2,7 @@
 
 // Finds dependencies a manifest declares that nothing appears to use.
 //
-// This exists because Dependabot can only propose a version, never a deletion,
+// This exists because an update bot can only propose a version, never a deletion,
 // so a package nothing imports is invisible to it — and four of those have been
 // found here by accident: tar (248 alerts), sass-lint (6), the Redux trio, and
 // bs-html-injector (21, of which 16 had no patched version at all).
