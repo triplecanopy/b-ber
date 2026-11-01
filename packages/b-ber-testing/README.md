@@ -59,7 +59,7 @@ Always this checkout's own CLI build, `packages/b-ber-cli/dist/index.js`, run wi
 
 ## CI
 
-The suite runs in GitHub Actions as the `e2e` job in `.github/workflows/ci.yml`, on every pull request and on pushes to `main`. It is not yet a required check. CircleCI also has an `e2e` job; consolidating the two is TASK-045.
+The suite runs in GitHub Actions as the `e2e` job in `.github/workflows/ci.yml`, on every pull request and on pushes to `main`. It is not yet a required check. CircleCI also has an `e2e` job; retiring CircleCI is TASK-118.
 
 **Browser cache** — Chromium is cached in `~/.cache/ms-playwright` keyed on this package's `package.json` checksum. Re-download is only triggered when `@playwright/test` is bumped.
 

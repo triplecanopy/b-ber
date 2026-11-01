@@ -79,7 +79,7 @@ catch it.
 
 - CircleCI's `e2e` job keeps working unchanged: its `npm link` step is now
   redundant, since the tests no longer look at `PATH`. Consolidating CircleCI and
-  Actions is TASK-045.
+  Actions is TASK-118 (retire CircleCI).
 - The suite runs on every PR, not only dependency PRs. At about 22s plus the
   Chromium install, the cost is small, and a suite that only runs sometimes rots.
   TASK-132 (the dependency impact workflow) builds on this job rather than

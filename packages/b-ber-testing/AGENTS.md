@@ -121,7 +121,7 @@ root AGENTS.md "Requiring the CI gate" once it has proven reliable.
 
 **CircleCI** — also runs an `e2e` job, defined in `.circleci/config.yml`. Its
 `npm link` and pre-build steps predate TASK-130 and are now redundant but
-harmless. Consolidating CircleCI and Actions is TASK-045.
+harmless. Retiring CircleCI in favour of Actions is TASK-118.
 
 ### Browser cache (CircleCI)
 
