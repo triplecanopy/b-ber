@@ -582,6 +582,20 @@ LOG_LEVEL=debug LOG_FORMAT=json npx renovate@<pinned version> triplecanopy/b-ber
 It reads the live repo and alerts but pushes nothing. The plan is the last log
 line carrying `branchesInformation`. The CLI needs Node `^24.11.0`.
 
+**Node.js itself is not covered.** Renovate's security PRs come from GitHub's
+npm advisories. A vulnerability in the Node runtime, or in something it bundles
+(OpenSSL, Brotli, undici), produces no `[security]` PR. Renovate's routine
+bumps of `node-version` and CI images also wait out the 3-day release age and
+the Monday schedule. So check [Node's security releases](https://nodejs.org/en/blog/vulnerability)
+by hand. When one affects a line we run, update all of these in one PR:
+
+- the CircleCI images in `.circleci/config.yml` (until TASK-118 retires it);
+- the root `engines.node` range, which names the minimum patched version on each
+  supported line.
+
+The `setup-node` steps already take the newest 24.x (`check-latest: true`), so
+they need no change. TASK-135 (CVE-2026-111497) is the worked example.
+
 ---
 
 ## Quality Gates
