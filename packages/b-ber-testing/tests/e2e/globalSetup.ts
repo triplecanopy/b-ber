@@ -1,26 +1,19 @@
-import { spawnSync } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
+import { assertBberBuilt, runBber } from '../cli/helpers'
 
 const FIXTURE_DIR = path.join(__dirname, '../../fixtures/kitchen-sink')
-const MANIFEST_PATH = path.join(FIXTURE_DIR, '_builds-reader/manifest.json')
+const READER_BUILD = path.join(FIXTURE_DIR, '_builds-reader')
 
-function globalPath(): string {
-  return (process.env.PATH ?? '')
-    .split(':')
-    .filter((p) => !p.endsWith('node_modules/.bin'))
-    .join(':')
-}
-
+// Rebuild the reader fixture on every run. A leftover build from an earlier
+// checkout would have the browser tests exercising old output: after a
+// dependency upgrade, the build is exactly what changed. It takes under a
+// second.
 export default async function globalSetup() {
-  if (fs.existsSync(MANIFEST_PATH)) return
+  assertBberBuilt()
+  fs.rmSync(READER_BUILD, { recursive: true, force: true })
 
-  const result = spawnSync('bber', ['build', 'reader'], {
-    cwd: FIXTURE_DIR,
-    encoding: 'utf8',
-    timeout: 120_000,
-    env: { ...process.env, PATH: globalPath() },
-  })
+  const result = runBber(['build', 'reader'], FIXTURE_DIR, 120_000)
 
   if (result.status !== 0) {
     throw new Error(

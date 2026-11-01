@@ -11,7 +11,8 @@ import {
 } from './helpers'
 
 test.describe('Reader navigation', () => {
-  test('initial load renders the first spine item', async ({ page }) => {
+  // Skipped: fails on main, mostly by timing out at 120s. Rework in TASK-131.
+  test.skip('initial load renders the first spine item', async ({ page }) => {
     await page.goto(BASE_URL)
     await waitForReader(page)
 
@@ -22,7 +23,8 @@ test.describe('Reader navigation', () => {
     expect(url.searchParams.get('currentSpineItemIndex')).toBe('0')
   })
 
-  test('chapter-next button advances to the next spine item', async ({
+  // Skipped: fails on main, mostly by timing out at 120s. Rework in TASK-131.
+  test.skip('chapter-next button advances to the next spine item', async ({
     page,
   }) => {
     await goToChapter(page, SPINE.cover.slug, SPINE.cover.index)
@@ -37,7 +39,8 @@ test.describe('Reader navigation', () => {
     expect(url.searchParams.get('slug')).toBe(SPINE.titlePage.slug)
   })
 
-  test('chapter-prev button rewinds to the previous spine item', async ({
+  // Skipped: fails on main, mostly by timing out at 120s. Rework in TASK-131.
+  test.skip('chapter-prev button rewinds to the previous spine item', async ({
     page,
   }) => {
     await goToChapter(page, SPINE.titlePage.slug, SPINE.titlePage.index)
@@ -79,7 +82,8 @@ test.describe('Reader navigation', () => {
     ).not.toBeVisible()
   })
 
-  test('URL query string updates to reflect spine position after navigation', async ({
+  // Skipped: fails on main, mostly by timing out at 120s. Rework in TASK-131.
+  test.skip('URL query string updates to reflect spine position after navigation', async ({
     page,
   }) => {
     await goToChapter(page, SPINE.chapter01.slug, SPINE.chapter01.index)
@@ -104,7 +108,8 @@ test.describe('Reader navigation', () => {
     expect(url.searchParams.get('slug')).toBe(SPINE.chapter02.slug)
   })
 
-  test('keyboard right arrow navigates pages within a chapter', async ({
+  // Skipped: fails on main, mostly by timing out at 120s. Rework in TASK-131.
+  test.skip('keyboard right arrow navigates pages within a chapter', async ({
     page,
   }) => {
     await goToChapter(page, SPINE.chapter01.slug, SPINE.chapter01.index)

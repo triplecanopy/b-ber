@@ -49,19 +49,17 @@ The servers start automatically before tests run and are torn down when they fin
 
 ## Fixture
 
-The kitchen-sink EPUB and reader builds live in `fixtures/kitchen-sink/`. The fixture is pre-built and checked in — it exercises every b-ber directive (section, footnotes, figure, gallery, spread, audio, video, iframe, dialogue, pullquote, logo, frontmatter, vimeo). To rebuild it, see TASK-041.
+`fixtures/kitchen-sink/` is a b-ber source project that exercises every directive (section, footnotes, figure, gallery, spread, audio, video, iframe, dialogue, pullquote, logo, frontmatter, vimeo). Only the source is checked in. Builds are generated and gitignored.
+
+## Which `bber` is tested
+
+Always this checkout's own CLI build, `packages/b-ber-cli/dist/index.js`, run with `node`. Never a global `bber` on `PATH`, which would be whatever version was last installed (TASK-130). Run `npm run build` at the repo root first; the suite fails fast if the CLI is not built. Set `BBER_BIN` to a CLI entry script to test a different build.
+
+`globalSetup.ts` rebuilds the reader fixture on every run (under a second), so the browser tests never see output from an earlier checkout.
 
 ## CI
 
-The suite runs in CircleCI as an `e2e` job that depends on the `build` (unit test) job. It only runs on `main`.
-
-**Fixture build** — `fixtures/kitchen-sink/_builds-reader/` is gitignored, so CI builds it explicitly before Playwright starts:
-
-```bash
-./node_modules/.bin/bber build reader  # run from fixtures/kitchen-sink/
-```
-
-This pre-creates `manifest.json` so `globalSetup.ts` skips its own build (which would fail because it strips `node_modules/.bin` from `PATH`).
+The suite runs in GitHub Actions as the `e2e` job in `.github/workflows/ci.yml`, on every pull request and on pushes to `main`. It is not yet a required check. CircleCI also has an `e2e` job; retiring CircleCI is TASK-118.
 
 **Browser cache** — Chromium is cached in `~/.cache/ms-playwright` keyed on this package's `package.json` checksum. Re-download is only triggered when `@playwright/test` is bumped.
 
