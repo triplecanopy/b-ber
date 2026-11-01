@@ -46,3 +46,64 @@ jobs:
       # on main after the 4.0.3 bump merged.
       - name: Lint and test
         run: npm test
+
+  # Playwright CLI smoke tests and reader browser tests against this checkout's
+  # own build (TASK-130). Jest mocks heavily: image-size, for one, is mocked in
+  # the main tests of both packages that use it, so a breaking upgrade passes
+  # Jest. This job is what runs the real build end to end.
+  #
+  # A separate job, and not yet a required check, so a red e2e run is visible
+  # without blocking merges while the suite proves itself. Make it required
+  # (see AGENTS.md "Requiring the CI gate") once it has been reliable.
+  e2e:
+    runs-on: ubuntu-latest
+    env:
+      # Skips the Vimeo test, which needs outbound network access.
+      NO_NETWORK: 'true'
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci --ignore-scripts
+
+      - name: Build
+        run: npm run build
+
+      # Keyed on the installed Playwright version: a new version needs a
+      # matching browser build.
+      - name: Read Playwright version
+        id: playwright
+        run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/cache@v6
+        id: browsers
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
+
+      - name: Install Chromium
+        if: steps.browsers.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+        working-directory: packages/b-ber-testing
+
+      # The browser binary is cached; its system libraries are not.
+      - name: Install Chromium system dependencies
+        if: steps.browsers.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
+        working-directory: packages/b-ber-testing
+
+      - name: CLI smoke and reader e2e
+        run: npx playwright test
+        working-directory: packages/b-ber-testing
+
+      - name: Upload Playwright results
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-results
+          path: packages/b-ber-testing/test-results/
+          retention-days: 14
