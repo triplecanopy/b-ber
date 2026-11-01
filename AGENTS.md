@@ -194,7 +194,7 @@ issue number, and that file is what the check validates against:
 **Dependency health** is unlike the other seven: they are bounded (there is a state
 in which the migration is finished), whereas keeping dependencies current and
 vulnerability-free is continuous. It does not "complete" — it reaches a working
-footing and then needs maintaining. Treat a quiet Dependabot queue as the
+footing and then needs maintaining. Treat a quiet Renovate queue as the
 definition of done for any given task under it, never for the epic.
 
 Adding an epic means a line in `tasks/EPICS.json`, an issue of type `Epic`, and a
@@ -542,6 +542,45 @@ that did not make it.
   the two definitions is follow-up work.
 
 Refining all of this further is TASK-045's remit.
+
+---
+
+## Dependency Updates
+
+[Renovate](https://docs.renovatebot.com) handles both version updates and
+security updates. Its config is [`renovate.json5`](./renovate.json5), and the
+comments there explain each rule. It replaced Dependabot in TASK-129. **Do not
+re-add `.github/dependabot.yml`.** Two bots mean duplicate PRs for the same
+advisory.
+
+**Start at the Dependency Dashboard issue.** It is the one place that lists
+everything pending, and Renovate keeps it current:
+
+| What you see | What it means | What to do |
+| ------------ | ------------- | ---------- |
+| PR labelled `security` | a GitHub advisory, opened immediately, possibly a major | review it on its own merits |
+| `minor-patch`, `react`, `types`, … PRs | routine in-range updates, Mondays, at most 5 open | merge when green |
+| `lock file maintenance` PR | the **transitive** path: the lockfile regenerated weekly | review weekly; this is what clears transitive advisories |
+| Dashboard "Pending Approval" | majors and 0.x minors, held on purpose | tick the box to open one when you are ready to do the migration |
+| Dashboard "Rate-Limited" | over the 5-PR limit, queued | nothing; they open as others merge |
+
+**Transitive vulnerabilities.** Renovate cannot target a transitive dependency.
+It only fixes packages declared in a `package.json`. The weekly lockfile PR pulls
+every transitive dependency up within its parents' ranges. In the TASK-129
+measurement that cleared 31 of 46 vulnerable packages. What remains needs a major
+on a direct dep. That is a task, not a bot PR. Only if no parent update exists
+does an `overrides` entry come into it (TASK-125).
+
+**Testing a config change before merging it:**
+
+```bash
+RENOVATE_TOKEN=$(gh auth token) RENOVATE_PLATFORM=github RENOVATE_ONBOARDING=false \
+RENOVATE_REQUIRE_CONFIG=ignored RENOVATE_DRY_RUN=full RENOVATE_CONFIG_FILE=$PWD/renovate.json5 \
+LOG_LEVEL=debug LOG_FORMAT=json npx renovate@<pinned version> triplecanopy/b-ber > dryrun.ndjson
+```
+
+It reads the live repo and alerts but pushes nothing. The plan is the last log
+line carrying `branchesInformation`. The CLI needs Node `^24.11.0`.
 
 ---
 
