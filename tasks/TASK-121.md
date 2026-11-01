@@ -21,7 +21,8 @@ TASK-120, which continues independently.
 - [ ] TASK-123: Rewrite the Dependabot rules
 - [ ] TASK-124: Automate merging and clear the backlog
 - [ ] TASK-125: Decide and document the transitive-vulnerability strategy
-- [ ] TASK-129: Replace Dependabot with Renovate
+- [x] TASK-129: Replace Dependabot with Renovate
+- [ ] TASK-132: Dependency update testing policy and impact analysis
 
 > **Re-scoped 2026-10-31 (TASK-129).** The tool changed: Renovate replaces
 > Dependabot for version and security updates alike. The goal stands (signal, not
