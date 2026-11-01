@@ -553,6 +553,12 @@ comments there explain each rule. It replaced Dependabot in TASK-129. **Do not
 re-add `.github/dependabot.yml`.** Two bots mean duplicate PRs for the same
 advisory.
 
+**How each PR is tested, and who does what, is in
+[`docs/dependency-update-policy.md`](./docs/dependency-update-policy.md).** Read
+it before reviewing a major or a `[security]` PR that crosses a major. Jest
+passing is not enough for those: several dependencies are mocked in exactly the
+tests that would catch a break.
+
 **Start at the Dependency Dashboard issue.** It is the one place that lists
 everything pending, and Renovate keeps it current:
 
