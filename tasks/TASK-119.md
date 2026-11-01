@@ -73,7 +73,9 @@ pass 2 is underway.
 
 **Pass 2: real types.** Find each marker and replace the `any` with the real type,
 package by package. This is where defects surface, as `b-ber-logger`'s did. Each
-marker resolved is one less unchecked spot.
+marker resolved is one less unchecked spot. **Pass 2 is tracked in TASK-134**,
+alongside the bigger gap it found: internal `declare module` stubs that type our
+own packages as `any` to each other.
 
 ### The marker: decide before starting
 
