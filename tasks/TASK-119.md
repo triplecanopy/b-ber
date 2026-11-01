@@ -91,6 +91,18 @@ nothing, and Biome reports suppressions that have no effect. Two options:
 A is closer to the original intent and puts `any` under lint for good. B is
 less disruptive.
 
+**Decided 2026-11-01: option A.** The first commit of pass 1 sets
+`"noExplicitAny": "warn"` under `linter.rules.suspicious` in `biome.json`.
+Measured that day, the rule reports **378 warnings** on code already in the repo.
+That is the existing `any` debt becoming visible; it is not new. Warnings do not
+fail `biome check`, so `npm test` stays green. Pass-1 `any`s carry
+`// biome-ignore lint/suspicious/noExplicitAny: TASK-119 pass 1` so they are
+suppressed individually and `git grep "TASK-119 pass 1"` lists them for pass 2.
+
+Related, from the same measurement: Biome's recommended set also includes
+`noImplicitAnyLet` (45 hits, error level), which overlaps this task's TS7006
+errors. It belongs to the Biome-recommended adoption task, not here.
+
 ## Subtasks
 
 - [x] Establish that typecheck has never been green, and that the graph was
@@ -103,7 +115,8 @@ less disruptive.
 - [ ] `b-ber-grammar-frontmatter` (4)
 - [ ] `b-ber-grammar-footnotes` (3)
 - [ ] `b-ber-grammar-attributes` (1)
-- [ ] Decide the pass-1 marker (option A or B above)
+- [x] Decide the pass-1 marker: option A (enable `noExplicitAny` at warn)
+- [ ] Pass 1, first commit: enable `noExplicitAny: "warn"` in `biome.json`
 - [ ] Re-run after each layer clears and fix whatever the next reveals
 - [ ] Once green, add `npm run typecheck` to `.github/workflows/ci.yml` and make it
       part of the required check (TASK-117)
