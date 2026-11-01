@@ -66,6 +66,9 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: 24
+          # Newest 24.x, not whichever copy the runner image happens to have.
+          # See TASK-135.
+          check-latest: true
           cache: npm
 
       - run: npm ci --ignore-scripts
