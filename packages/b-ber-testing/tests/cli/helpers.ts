@@ -21,22 +21,36 @@ function copyDirSync(src: string, dst: string): void {
   }
 }
 
-// Strip workspace node_modules/.bin from PATH so that spawnSync('bber', ...)
-// resolves to the globally installed binary, not the workspace symlink (which
-// requires a full monorepo dev-build to work).
-function globalPath(): string {
-  return (process.env.PATH ?? '')
-    .split(':')
-    .filter((p) => !p.endsWith('node_modules/.bin'))
-    .join(':')
+// The CLI under test is this checkout's own build, run with `node`, never
+// whatever `bber` is on PATH. A global install is whichever version someone
+// last installed, so a pass against it says nothing about the code in the
+// branch. That made the suite useless for verifying a dependency upgrade
+// (TASK-130). It also replaces the old workaround of stripping
+// node_modules/.bin, which existed because npm does not create the workspace
+// `bber` link when dist/ is missing at install time.
+//
+// Set BBER_BIN to a CLI entry script to test a different build.
+export const BBER_BIN =
+  process.env.BBER_BIN ??
+  path.resolve(__dirname, '../../../b-ber-cli/dist/index.js')
+
+export function assertBberBuilt(): void {
+  if (!fs.existsSync(BBER_BIN)) {
+    throw new Error(
+      `No b-ber CLI build at ${BBER_BIN}. Run \`npm run build\` at the repo root first, or set BBER_BIN.`
+    )
+  }
 }
 
-export function runBber(args: string[], cwd: string): SpawnSyncReturns<string> {
-  return spawnSync('bber', args, {
+export function runBber(
+  args: string[],
+  cwd: string,
+  timeout = 90_000
+): SpawnSyncReturns<string> {
+  return spawnSync(process.execPath, [BBER_BIN, ...args], {
     cwd,
     encoding: 'utf8',
-    timeout: 90_000,
-    env: { ...process.env, PATH: globalPath() },
+    timeout,
   })
 }
 
