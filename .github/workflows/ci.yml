@@ -33,6 +33,9 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: 24
+          # Newest 24.x, not whichever copy the runner image happens to have:
+          # a stale one can carry a fixed CVE (CVE-2026-111497, TASK-135).
+          check-latest: true
           cache: npm
 
       - run: npm ci --ignore-scripts

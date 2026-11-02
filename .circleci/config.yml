@@ -12,7 +12,9 @@ jobs:
     # dev environment and satisfy tsdown's ^22.18.0 || >=24.0.0 requirement.
     # Switch back to a canopy image once TASK-035 produces an updated one.
     docker:
-      - image: cimg/node:24.14
+      # 24.22 or later: earlier 24.x ships the Brotli decoder flaw
+      # CVE-2026-111497 (TASK-135).
+      - image: cimg/node:24.22
     working_directory: ~/b-ber
     environment:
       NX_SKIP_NX_CACHE: "true"
