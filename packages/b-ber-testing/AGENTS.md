@@ -15,7 +15,7 @@ monorepo. It uses [Playwright](https://playwright.dev) to run two projects:
 ### How the E2E suite works
 
 ```
-globalSetup.ts builds the kitchen-sink fixture (if not already built)
+globalSetup.ts rebuilds the kitchen-sink reader fixture with this checkout's CLI
   → playwright.config.ts starts two webServers:
       scripts/content-server.js  (port 4000) serves the reader fixture files
       b-ber-reader-react + vite.config.e2e.js  (port 3000) serves the reader app
@@ -31,13 +31,13 @@ globalSetup.ts builds the kitchen-sink fixture (if not already built)
 | -------------------------------------- | --------------------------------------------------------- |
 | `playwright.config.ts`                 | Playwright config: webServer, projects, timeout           |
 | `scripts/content-server.js`            | Static HTTP server for the kitchen-sink reader build      |
-| `tests/e2e/globalSetup.ts`             | Pre-suite setup (fixture build check)                     |
+| `tests/e2e/globalSetup.ts`             | Pre-suite setup: rebuilds the reader fixture              |
 | `tests/e2e/reader/helpers.ts`          | Shared locators, SPINE constants, `waitForReader`, `goToChapter` |
 | `tests/e2e/reader/navigation.spec.ts`  | Navigation journey tests                                  |
 | `tests/e2e/reader/directives.spec.ts`  | One assertion per b-ber directive                         |
 | `tests/e2e/reader/edge-cases.spec.ts`  | First/last chapter buttons, deep links                    |
 | `tests/cli/`                           | CLI smoke tests                                           |
-| `fixtures/kitchen-sink/`               | Pre-built EPUB + reader fixture (checked in)              |
+| `fixtures/kitchen-sink/`               | Source project; builds are generated and gitignored       |
 
 ---
 
@@ -72,6 +72,16 @@ npx playwright test --project=chromium --headed
 
 These describe the current state of the suite.
 
+**Which `bber` is tested** — always `packages/b-ber-cli/dist/index.js` from
+this checkout, run with `node` (`BBER_BIN` in `tests/cli/helpers.ts`). Never a
+global `bber` on `PATH`: that is whichever version was last installed, so a pass
+would say nothing about the branch (TASK-130). Requires `npm run build` first;
+`globalSetup` fails fast without it. Override with `BBER_BIN=<entry script>`.
+
+**Skipped reader tests** — six navigation/edge-case tests are `test.skip`ped
+because they fail on `main`, mostly by timing out at 120s. Reworking them is
+TASK-131. Do not un-skip one without fixing it.
+
 **SPINE slugs** — Reader slugs come from `Url.slug(navLabel.text)` applied to
 the NCX `<navLabel>` title. They are **not** the XHTML filenames. Example:
 `kitchen-sink-chapter-02.xhtml` → NCX title "Chapter Two" → slug `chapter-two`.
@@ -101,34 +111,19 @@ environments without outbound network access.
 
 ---
 
-## CI Integration (CircleCI)
+## CI Integration
 
-The e2e suite runs in CircleCI as a separate `e2e` job defined in
-`.circleci/config.yml`. It runs after the `build` job succeeds (`requires:
-[build]`) and is gated to `main` only.
+**GitHub Actions** — the `e2e` job in `.github/workflows/ci.yml` runs on every
+pull request and push to `main`: `npm ci`, `npm run build`, Chromium (cached by
+Playwright version), then `npx playwright test`. On failure it uploads
+`test-results/` (traces, screenshots). It is not yet a required check; see the
+root AGENTS.md "Requiring the CI gate" once it has proven reliable.
 
-### Docker image
+**CircleCI** — also runs an `e2e` job, defined in `.circleci/config.yml`. Its
+`npm link` and pre-build steps predate TASK-130 and are now redundant but
+harmless. Retiring CircleCI in favour of Actions is TASK-118.
 
-The `e2e` job uses `mcr.microsoft.com/playwright:v1.49.0-jammy` rather than
-the main `canopycanopycanopy/b-ber:1.0.1` image. The canopy image predates
-Playwright and lacks the system libraries Chromium headless requires (libglib,
-libnss, etc.). Once TASK-035 updates the canopy image, this can be consolidated.
-
-### Fixture build
-
-`fixtures/kitchen-sink/_builds-reader/` is gitignored, so the reader fixture
-must be built in CI before tests run. The `e2e` job runs:
-
-```
-../../../../../node_modules/.bin/bber build reader
-```
-
-from the `fixtures/kitchen-sink/` directory. This pre-creates
-`_builds-reader/manifest.json` so that `globalSetup.ts` skips its own build
-step (`globalSetup` calls `bber` via `globalPath()`, which strips
-`node_modules/.bin` from `PATH`; pre-building in CI avoids that limitation).
-
-### Browser cache
+### Browser cache (CircleCI)
 
 Playwright's Chromium binary is cached under `~/.cache/ms-playwright` keyed on
 the checksum of `packages/b-ber-testing/package.json`:
