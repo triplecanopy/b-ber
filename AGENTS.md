@@ -237,6 +237,22 @@ status field, no rename, no index.
 > #605 added the TASK-118 PRD, said `Closes #604`, and silently closed a task that
 > had not been started. Nobody noticed until the migration audit a day later.
 > Reference such a PR with `Refs #NNN` instead.
+>
+> **Never write a closing keyword followed by an issue reference in a commit
+> message or PR body unless you mean to close that issue, even when quoting or
+> explaining one.** GitHub acts on `close`/`closes`/`closed`, `fix`/`fixes`/`fixed`
+> and `resolve`/`resolves`/`resolved` followed by `#N` or an issue URL. In a PR
+> body it acts when the PR merges; in a commit message, when the commit reaches
+> `main`. Backticks and code spans do not stop it. This is how #604 was closed a
+> **second** time, on 2026-09-24: commit `0a27b365` (TASK-126) explained the
+> first incident by quoting the keyword and the number. The same commit closed
+> TASK-115's issue in passing, which happened to be finished already. When you need to describe
+> one, say "the closing keyword" and keep the number out of the same phrase.
+> Issue comments and files in the repo (like this one) are safe.
+>
+> Before pushing, check:
+> `git log --format=%B origin/main..HEAD | grep -inE '\b(close[sd]?|fix(e[sd])?|resolve[sd]?)\b:?[[:space:]]*(#|https://github\.com/[^ ]+/issues/)[0-9]+'`.
+> Every match should be an issue the branch is meant to close.
 
 ### Closed tasks
 
