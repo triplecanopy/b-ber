@@ -499,6 +499,24 @@ button should be blocked, not just red.
 `required_status_checks` is what the ruleset calls this rule; confirm it with
 `gh api repos/triplecanopy/b-ber/rulesets/<id> --jq '[.rules[].type]'`.
 
+**Which jobs a PR runs depends on what it changes** (TASK-137). A `changes` job
+sorts the PR's files with [`scripts/ci-changes.js`](./scripts/ci-changes.js):
+
+- **inert** (docs, task PRDs, templates): only `task-files` runs;
+- **unit** (Jest tests, scripts, other workflows): `build-and-test` runs too;
+- **full** (package source, manifests, `ci.yml`, the e2e suite): `e2e` runs as
+  well.
+
+Its verdict is in the `changes` job summary. Two rules for anyone changing this:
+
+- **Never filter with workflow-level `paths:`/`paths-ignore:`.** A required check
+  whose workflow never starts leaves the PR stuck on "Expected". A job skipped by
+  `if:` reports success, which is why the filtering is per job.
+- **Files no rule matches are `full`.** Add a rule to `ci-changes.js`, with a
+  test in `scripts/__tests__/`, to move a new kind of file down a tier. Never
+  add a catch-all that does the reverse. Markdown under `_project/` or
+  `fixtures/` is build input and stays `full`.
+
 ### Required secrets
 
 `NPM_TOKEN` — an npm automation token with publish rights to the
