@@ -37,9 +37,14 @@
   // Security fixes are exempt (Renovate's vulnerabilityAlerts default).
   minimumReleaseAge: '3 days',
 
-  // `build-and-test` is required with "up to date" enforced, so rebasing every
-  // open PR on each merge to main is a CI storm. Rebase only on conflict, and
-  // update the rest deliberately.
+  // PRs merge through the merge queue (TASK-138), which tests each one against
+  // the `main` it will land on. A PR being behind blocks nothing, so rebasing
+  // every open PR on each merge to main would only re-run CI for no gain.
+  // Rebase on conflict, or when someone ticks the PR's rebase checkbox.
+  //
+  // A rebase is a force-push. The "Block force-push — all branches" ruleset
+  // excludes `renovate/**`, and a ruleset of its own lets only the Renovate app
+  // force-push there. Without that, the checkbox silently does nothing.
   rebaseWhen: 'conflicted',
 
   // commitlint (config-conventional) enforces conventional commits; this yields
