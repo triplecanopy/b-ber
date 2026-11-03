@@ -24,8 +24,50 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
+# Which jobs run depends on what the PR changes (TASK-137). The rules are in
+# scripts/ci-changes.js, and each run's verdict is in the `changes` job summary.
+#
+# This filters per job with `if:`, NOT with workflow-level `paths:`. Because
+# `build-and-test` is a required check, a workflow that never starts leaves the
+# PR stuck on "Expected — waiting for status". A job skipped by `if:` reports
+# success, so the required check passes.
+#
+# Both heavy jobs also run if `changes` fails: a broken classifier must cost a
+# CI run, never skip one. Pushes to main always run everything.
 jobs:
-  build-and-test:
+  changes:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      code: ${{ steps.classify.outputs.code }}
+      e2e: ${{ steps.classify.outputs.e2e }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - id: classify
+        name: Classify changed files
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          if [ "${{ github.event_name }}" != "pull_request" ]; then
+            printf 'code=true\ne2e=true\n' >> "$GITHUB_OUTPUT"
+            echo "Push to ${{ github.ref_name }}: running everything." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          # The PR's files against its merge base, renames counted under both
+          # names. bash runs with pipefail, so a failed lookup fails this job
+          # (and the jobs below run anyway).
+          gh api --paginate "repos/${{ github.repository }}/pulls/$PR/files" \
+            --jq '.[] | .filename, (.previous_filename // empty)' \
+            | node scripts/ci-changes.js
+        shell: bash
+
+  # Task PRDs are validated on every PR, including docs-only ones, which are most
+  # of the PRs that change them. Built-ins only, so no `npm ci`.
+  task-files:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -33,6 +75,23 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: 24
+          check-latest: true
+
+      - run: node scripts/check-tasks.js
+
+  build-and-test:
+    needs: changes
+    if: ${{ !cancelled() && (needs.changes.result != 'success' || needs.changes.outputs.code == 'true') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          # Newest 24.x, not whichever copy the runner image happens to have:
+          # a stale one can carry a fixed CVE (CVE-2026-111497, TASK-135).
+          check-latest: true
           cache: npm
 
       - run: npm ci --ignore-scripts
@@ -46,3 +105,69 @@ jobs:
       # on main after the 4.0.3 bump merged.
       - name: Lint and test
         run: npm test
+
+  # Playwright CLI smoke tests and reader browser tests against this checkout's
+  # own build (TASK-130). Jest mocks heavily: image-size, for one, is mocked in
+  # the main tests of both packages that use it, so a breaking upgrade passes
+  # Jest. This job is what runs the real build end to end.
+  #
+  # A separate job, and not yet a required check, so a red e2e run is visible
+  # without blocking merges while the suite proves itself. Make it required
+  # (see AGENTS.md "Requiring the CI gate") once it has been reliable.
+  e2e:
+    needs: changes
+    if: ${{ !cancelled() && (needs.changes.result != 'success' || needs.changes.outputs.e2e == 'true') }}
+    runs-on: ubuntu-latest
+    env:
+      # Skips the Vimeo test, which needs outbound network access.
+      NO_NETWORK: 'true'
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          # Newest 24.x, not whichever copy the runner image happens to have.
+          # See TASK-135.
+          check-latest: true
+          cache: npm
+
+      - run: npm ci --ignore-scripts
+
+      - name: Build
+        run: npm run build
+
+      # Keyed on the installed Playwright version: a new version needs a
+      # matching browser build.
+      - name: Read Playwright version
+        id: playwright
+        run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/cache@v6
+        id: browsers
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
+
+      - name: Install Chromium
+        if: steps.browsers.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+        working-directory: packages/b-ber-testing
+
+      # The browser binary is cached; its system libraries are not.
+      - name: Install Chromium system dependencies
+        if: steps.browsers.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
+        working-directory: packages/b-ber-testing
+
+      - name: CLI smoke and reader e2e
+        run: npx playwright test
+        working-directory: packages/b-ber-testing
+
+      - name: Upload Playwright results
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-results
+          path: packages/b-ber-testing/test-results/
+          retention-days: 14

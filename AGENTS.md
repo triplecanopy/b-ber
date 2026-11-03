@@ -237,6 +237,22 @@ status field, no rename, no index.
 > #605 added the TASK-118 PRD, said `Closes #604`, and silently closed a task that
 > had not been started. Nobody noticed until the migration audit a day later.
 > Reference such a PR with `Refs #NNN` instead.
+>
+> **Never write a closing keyword followed by an issue reference in a commit
+> message or PR body unless you mean to close that issue, even when quoting or
+> explaining one.** GitHub acts on `close`/`closes`/`closed`, `fix`/`fixes`/`fixed`
+> and `resolve`/`resolves`/`resolved` followed by `#N` or an issue URL. In a PR
+> body it acts when the PR merges; in a commit message, when the commit reaches
+> `main`. Backticks and code spans do not stop it. This is how #604 was closed a
+> **second** time, on 2026-09-24: commit `0a27b365` (TASK-126) explained the
+> first incident by quoting the keyword and the number. The same commit closed
+> TASK-115's issue in passing, which happened to be finished already. When you need to describe
+> one, say "the closing keyword" and keep the number out of the same phrase.
+> Issue comments and files in the repo (like this one) are safe.
+>
+> Before pushing, check:
+> `git log --format=%B origin/main..HEAD | grep -inE '\b(close[sd]?|fix(e[sd])?|resolve[sd]?)\b:?[[:space:]]*(#|https://github\.com/[^ ]+/issues/)[0-9]+'`.
+> Every match should be an issue the branch is meant to close.
 
 ### Closed tasks
 
@@ -499,6 +515,24 @@ button should be blocked, not just red.
 `required_status_checks` is what the ruleset calls this rule; confirm it with
 `gh api repos/triplecanopy/b-ber/rulesets/<id> --jq '[.rules[].type]'`.
 
+**Which jobs a PR runs depends on what it changes** (TASK-137). A `changes` job
+sorts the PR's files with [`scripts/ci-changes.js`](./scripts/ci-changes.js):
+
+- **inert** (docs, task PRDs, templates): only `task-files` runs;
+- **unit** (Jest tests, scripts, other workflows): `build-and-test` runs too;
+- **full** (package source, manifests, `ci.yml`, the e2e suite): `e2e` runs as
+  well.
+
+Its verdict is in the `changes` job summary. Two rules for anyone changing this:
+
+- **Never filter with workflow-level `paths:`/`paths-ignore:`.** A required check
+  whose workflow never starts leaves the PR stuck on "Expected". A job skipped by
+  `if:` reports success, which is why the filtering is per job.
+- **Files no rule matches are `full`.** Add a rule to `ci-changes.js`, with a
+  test in `scripts/__tests__/`, to move a new kind of file down a tier. Never
+  add a catch-all that does the reverse. Markdown under `_project/` or
+  `fixtures/` is build input and stays `full`.
+
 ### Required secrets
 
 `NPM_TOKEN` — an npm automation token with publish rights to the
@@ -553,6 +587,12 @@ comments there explain each rule. It replaced Dependabot in TASK-129. **Do not
 re-add `.github/dependabot.yml`.** Two bots mean duplicate PRs for the same
 advisory.
 
+**How each PR is tested, and who does what, is in
+[`docs/dependency-update-policy.md`](./docs/dependency-update-policy.md).** Read
+it before reviewing a major or a `[security]` PR that crosses a major. Jest
+passing is not enough for those: several dependencies are mocked in exactly the
+tests that would catch a break.
+
 **Start at the Dependency Dashboard issue.** It is the one place that lists
 everything pending, and Renovate keeps it current:
 
@@ -581,6 +621,20 @@ LOG_LEVEL=debug LOG_FORMAT=json npx renovate@<pinned version> triplecanopy/b-ber
 
 It reads the live repo and alerts but pushes nothing. The plan is the last log
 line carrying `branchesInformation`. The CLI needs Node `^24.11.0`.
+
+**Node.js itself is not covered.** Renovate's security PRs come from GitHub's
+npm advisories. A vulnerability in the Node runtime, or in something it bundles
+(OpenSSL, Brotli, undici), produces no `[security]` PR. Renovate's routine
+bumps of `node-version` and CI images also wait out the 3-day release age and
+the Monday schedule. So check [Node's security releases](https://nodejs.org/en/blog/vulnerability)
+by hand. When one affects a line we run, update all of these in one PR:
+
+- the CircleCI images in `.circleci/config.yml` (until TASK-118 retires it);
+- the root `engines.node` range, which names the minimum patched version on each
+  supported line.
+
+The `setup-node` steps already take the newest 24.x (`check-latest: true`), so
+they need no change. TASK-135 (CVE-2026-111497) is the worked example.
 
 ---
 
