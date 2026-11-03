@@ -23,10 +23,16 @@
 //
 //   git diff --name-only main... | node scripts/ci-changes.js
 //   node scripts/ci-changes.js --explain < files.txt   per-file reasons
+//   node scripts/ci-changes.js --diff <base> <head>    files from git instead
+//
+// `--diff` is for merge-queue runs (TASK-138), which have no PR to ask the API
+// about. Both commits must be present locally; a shallow fetch of each is
+// enough, because a diff compares trees and needs no history.
 //
 // In GitHub Actions it appends `code=` and `e2e=` to $GITHUB_OUTPUT, and a
 // summary table to $GITHUB_STEP_SUMMARY.
 
+const { execFileSync } = require('node:child_process')
 const { appendFileSync } = require('node:fs')
 
 // Earlier rules win. Each is [tier, test, reason].
@@ -87,10 +93,35 @@ function summary(result) {
   return `${lines.join('\n')}\n`
 }
 
-async function main() {
+// The files that differ between two commits. `--no-renames` reports a rename as
+// a deletion plus an addition, so it counts under both names, the same as the
+// PR path's `previous_filename`. A git failure throws, which fails the CI job,
+// and the heavy jobs run anyway.
+function changedFilesBetween(base, head, cwd) {
+  const out = execFileSync('git', ['diff', '--name-only', '--no-renames', '-z', base, head], {
+    cwd,
+    encoding: 'utf8',
+  })
+  return out.split('\0').filter(Boolean)
+}
+
+async function readStdinLines() {
   const chunks = []
   for await (const chunk of process.stdin) chunks.push(chunk)
-  const result = classify(Buffer.concat(chunks).toString('utf8').split('\n'))
+  return Buffer.concat(chunks).toString('utf8').split('\n')
+}
+
+async function main() {
+  const diffAt = process.argv.indexOf('--diff')
+  let paths
+  if (diffAt === -1) {
+    paths = await readStdinLines()
+  } else {
+    const [base, head] = process.argv.slice(diffAt + 1, diffAt + 3)
+    if (!base || !head) throw new Error('usage: ci-changes.js --diff <base> <head>')
+    paths = changedFilesBetween(base, head)
+  }
+  const result = classify(paths)
 
   if (process.argv.includes('--explain')) {
     for (const f of result.files) console.log(`${f.tier.padEnd(5)}  ${f.path}  (${f.reason})`)
@@ -106,7 +137,10 @@ async function main() {
 }
 
 if (require.main === module) {
-  main()
+  main().catch((err) => {
+    console.error(err.message)
+    process.exitCode = 1
+  })
 }
 
-module.exports = { classify, classifyPath }
+module.exports = { classify, classifyPath, changedFilesBetween }

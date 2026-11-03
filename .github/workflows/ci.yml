@@ -14,12 +14,17 @@ name: CI
 
 on:
   pull_request:
+  # The merge queue (TASK-138) waits for `build-and-test` to report on each
+  # queued group. Without this trigger it never does, and every queued PR
+  # times out.
+  merge_group:
   push:
     branches:
       - main
 
 # A superseded run tells us nothing, so let a new push cancel it — except on
-# main, where each commit's result is worth keeping.
+# main, where each commit's result is worth keeping, and in the merge queue,
+# where each group's ref is unique and a cancelled run would eject the group.
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
@@ -33,7 +38,9 @@ concurrency:
 # success, so the required check passes.
 #
 # Both heavy jobs also run if `changes` fails: a broken classifier must cost a
-# CI run, never skip one. Pushes to main always run everything.
+# CI run, never skip one. Pushes to main always run everything. Merge-queue
+# groups are classified by their diff against the base they will land on, so a
+# docs-only PR stays cheap in the queue too.
 jobs:
   changes:
     runs-on: ubuntu-latest
@@ -50,19 +57,32 @@ jobs:
         name: Classify changed files
         env:
           GH_TOKEN: ${{ github.token }}
+          EVENT: ${{ github.event_name }}
           PR: ${{ github.event.pull_request.number }}
+          QUEUE_BASE: ${{ github.event.merge_group.base_sha }}
+          QUEUE_HEAD: ${{ github.event.merge_group.head_sha }}
         run: |
-          if [ "${{ github.event_name }}" != "pull_request" ]; then
-            printf 'code=true\ne2e=true\n' >> "$GITHUB_OUTPUT"
-            echo "Push to ${{ github.ref_name }}: running everything." >> "$GITHUB_STEP_SUMMARY"
-            exit 0
-          fi
-          # The PR's files against its merge base, renames counted under both
-          # names. bash runs with pipefail, so a failed lookup fails this job
-          # (and the jobs below run anyway).
-          gh api --paginate "repos/${{ github.repository }}/pulls/$PR/files" \
-            --jq '.[] | .filename, (.previous_filename // empty)' \
-            | node scripts/ci-changes.js
+          case "$EVENT" in
+            pull_request)
+              # The PR's files against its merge base, renames counted under
+              # both names. bash runs with pipefail, so a failed lookup fails
+              # this job (and the jobs below run anyway).
+              gh api --paginate "repos/${{ github.repository }}/pulls/$PR/files" \
+                --jq '.[] | .filename, (.previous_filename // empty)' \
+                | node scripts/ci-changes.js
+              ;;
+            merge_group)
+              # A group has no PR to ask about. The checkout is the group's
+              # head; fetch its base and diff the two. A failed fetch fails
+              # this job, and the jobs below run anyway.
+              git fetch --no-tags --depth=1 origin "$QUEUE_BASE"
+              node scripts/ci-changes.js --diff "$QUEUE_BASE" "$QUEUE_HEAD"
+              ;;
+            *)
+              printf 'code=true\ne2e=true\n' >> "$GITHUB_OUTPUT"
+              echo "$EVENT on ${{ github.ref_name }}: running everything." >> "$GITHUB_STEP_SUMMARY"
+              ;;
+          esac
         shell: bash
 
   # Task PRDs are validated on every PR, including docs-only ones, which are most
