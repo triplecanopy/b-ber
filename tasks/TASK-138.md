@@ -80,7 +80,7 @@ be a separate policy decision.
 - [x] `renovate.json5`: rewrite the `rebaseWhen` comment
 - [x] AGENTS.md: merge queue workflow, ruleset steps, and the `renovate/**`
       force-push ruleset
-- [ ] After merge: switch the ruleset (merge queue on, strict off)
+- [x] After merge: switch the ruleset (merge queue on, strict off)
 - [ ] After the switch: queue a docs-only PR and a `full` PR and confirm each
       lands with the expected jobs
 
@@ -93,6 +93,12 @@ be a separate policy decision.
   force-push), so the checkbox did nothing. That ruleset now excludes
   `refs/heads/renovate/**`, and a second ruleset blocks force-pushes there
   with only the Renovate app (ID 2740) allowed to bypass.
+- Ruleset switched 2026-11-03, after #702 merged (`330d5c64`). On "Base
+  Rules" (18907410), `strict_required_status_checks_policy` went from `true` to
+  `false`, and a `merge_queue` rule was added: `SQUASH`, `ALLGREEN`, build and
+  merge up to 5 entries, minimum 1 with no wait, 60-minute check timeout.
+  `build-and-test` stays the required check. To roll back, remove the
+  `merge_queue` rule and set strict back to `true`, in that order.
 - Each PR now runs CI twice, on the PR and in the queue. At about 2½ minutes on
   a public repo's free runners, that is cheap.
 - Related: TASK-117 (made `build-and-test` required), TASK-137 (per-job
