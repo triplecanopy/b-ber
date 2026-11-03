@@ -328,8 +328,10 @@ The workflow:
    ```bash
    gh pr create --base main --title "TASK-NNN: <title>" --body "Closes #NNN …"
    ```
-6. Merge the PR once `npm test` passes cleanly. `Closes #NNN` closes the issue
-   and the board moves the card to Done — there is nothing else to update.
+6. Once CI is green, click **Merge when ready** to add the PR to the merge queue
+   (see "The merge queue" below). There is no need to bring the branch up to
+   date first. `Closes #NNN` closes the issue and the board moves the card to
+   Done — there is nothing else to update.
 
 A task that splits into genuinely parallel slices may use
 `TASK-NNN-<slug>-<pkg>` per slice, each with its own PR.
@@ -503,9 +505,8 @@ so the order matters:
 3. Under **Branch rules**, tick **Require status checks to pass**.
 4. Click **Add checks**, search `build-and-test`, and select it. If it does not
    appear, the check has not reported yet — go back to step 1.
-5. Optionally tick **Require branches to be up to date before merging**. It is
-   safer (the check runs against `main` merged in) at the cost of re-running CI
-   when `main` moves.
+5. Leave **Require branches to be up to date before merging** unticked. The
+   merge queue gives the same guarantee without the manual loop (see below).
 6. Leave **Do not require status checks on creation** unticked.
 7. **Save changes** at the bottom.
 
@@ -532,6 +533,39 @@ Its verdict is in the `changes` job summary. Two rules for anyone changing this:
   test in `scripts/__tests__/`, to move a new kind of file down a tier. Never
   add a catch-all that does the reverse. Markdown under `_project/` or
   `fixtures/` is build input and stays `full`.
+
+### The merge queue
+
+PRs merge through GitHub's merge queue (TASK-138), configured as the
+`merge_queue` rule on "Base Rules". **Merge when ready** adds a PR to the queue.
+GitHub builds it on top of `main` plus everything queued ahead of it, runs the
+required checks on that, and squash-merges in order. Queue every PR that is
+ready at once; nobody brings a branch up to date by hand.
+
+It replaced "require branches to be up to date", which made merging serial: merge
+one, update the next, wait for CI, merge, repeat. Each PR now runs CI twice, once
+on the PR and once in the queue.
+
+- **`ci.yml` must keep its `merge_group:` trigger.** The queue waits for
+  `build-and-test` to report on each group. Remove the trigger and every queued
+  PR times out.
+- **Queue runs are scoped like PR runs.** A group has no PR file list, so
+  `changes` diffs the group's head against its base
+  (`ci-changes.js --diff <base> <head>`) and applies the same tiers.
+
+### Force-push rulesets
+
+Two rulesets block force-pushes, and they split the branches between them:
+
+- **"Block force-push — all branches"** covers `~ALL` except `renovate/**`.
+  It was added during the 2026-07-13 recovery, after a compromised account
+  force-pushed a worm to 18 branches. It has no bypass.
+- **"Block force-push — renovate/\*\* (Renovate app may bypass)"** covers only
+  `renovate/**`, with the Renovate app (ID 2740) as its sole bypass.
+
+Renovate rebases its branches by force-pushing them. Under a single
+all-branches rule, ticking a PR's rebase checkbox does nothing: Renovate unticks
+the box and the push is rejected. **Do not merge these back into one ruleset.**
 
 ### Required secrets
 
