@@ -87,7 +87,7 @@
     "npm-check-updates": "^22.2.3",
     "object-fit-images": "^3.2.3",
     "os-browserify": "^0.3.0",
-    "postcss": "^7.0.14",
+    "postcss": "^8.0.0",
     "prop-types": "^15.6.1",
     "quote": "^0.4.0",
     "react": "^19",
