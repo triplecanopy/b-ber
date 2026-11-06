@@ -73,18 +73,18 @@ gate.
 - [x] Write `docs/dependency-update-policy.md`: roles, the four PR kinds, how the
       report maps to reviewer actions, manual runbook, current-state table
 - [x] Link it from AGENTS.md "Dependency Updates"
-- [ ] `scripts/dep-impact.js`: manifest diff → majors/0.x minors → import sites
+- [ ] → TASK-143: `scripts/dep-impact.js`: manifest diff → majors/0.x minors → import sites
       with symbols and call sites → related tests (+ mock flag) → surfaces → Markdown
-- [ ] Unit tests for the detection rules (major, 0.x minor, range forms like
+- [ ] → TASK-143: Unit tests for the detection rules (major, 0.x minor, range forms like
       `^`/`~`/exact, added and removed deps)
-- [ ] `dependency-impact.yml`: run the script, post or update a sticky comment,
+- [ ] → TASK-143: `dependency-impact.yml`: run the script, post or update a sticky comment,
       write the job summary
-- [ ] Typecheck diff (base vs head, new errors only) as a job in the same
+- [ ] → TASK-143: Typecheck diff (base vs head, new errors only) as a job in the same
       workflow
-- [ ] Try it on the open security majors (`image-size` #679, `js-yaml` #680, and
+- [ ] → TASK-143: Try it on the open security majors (`image-size` #679, `js-yaml` #680, and
       `markdown-it`/`postcss` when Renovate opens them) and refine the output
       against what a reviewer actually needed
-- [ ] Update the policy's "What exists today" table as pieces land
+- [ ] → TASK-143: Update the policy's "What exists today" table as pieces land
 
 ## Notes
 
@@ -102,3 +102,12 @@ gate.
   TASK-131 (the reader navigation gap the policy works around), TASK-119
   (typecheck on `main`), TASK-124 (auto-merge; must exclude anything this
   workflow flags).
+
+## Closed 2026-11-06 — split
+
+The policy half shipped in #689: `docs/dependency-update-policy.md`, linked from
+AGENTS.md. The automation half (the subtasks marked → TASK-143) never started.
+It moved to **TASK-143** so that this task can close on what it delivered rather
+than stay open on what it did not. TASK-143 carries the design above, plus
+lessons from running the checklist by hand in TASK-139, TASK-140 and TASK-141.
+The policy document now points at TASK-143 for the parts not yet built.
