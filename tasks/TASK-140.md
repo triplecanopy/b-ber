@@ -1,7 +1,7 @@
 # TASK-140: Upgrade js-yaml 3 → 5 (CVE-2025-64718 and four others)
 
 **Epic:** Dependency health
-**GitHub Issue:** _to be created_
+**GitHub Issue:** #707 — https://github.com/triplecanopy/b-ber/issues/707
 **Scope:** lib, testing
 
 ## Description
@@ -198,6 +198,10 @@ install` resyncs it every time, and the resync is again left out of this PR.
 
 ## Notes
 
+- **Scope is the security fix only.** The plan is to standardize b-ber's YAML
+  I/O later, replacing or removing both `YamlAdaptor` and yawn-yaml's `Yaml.ts`.
+  The compatibility layer is there to keep today's behaviour until then, not
+  as a design to build on.
 - Renovate PR: #680. Related: TASK-139 (the same kind-3 path for image-size),
   TASK-122 (the js-yaml 3-vs-4 split, now resolved to 5 everywhere except
   yawn-yaml's own copy), TASK-125 (overrides), TASK-132 (impact report).
