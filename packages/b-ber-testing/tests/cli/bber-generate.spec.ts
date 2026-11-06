@@ -1,10 +1,10 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import yaml from 'js-yaml'
+import { load } from 'js-yaml'
 import { expect, runBber, test } from './helpers'
 
 function parseTocEntryNames(tocPath: string): string[] {
-  const raw = yaml.load(fs.readFileSync(tocPath, 'utf8')) as Array<
+  const raw = load(fs.readFileSync(tocPath, 'utf8')) as Array<
     string | Record<string, unknown>
   >
   return raw.map((entry) =>

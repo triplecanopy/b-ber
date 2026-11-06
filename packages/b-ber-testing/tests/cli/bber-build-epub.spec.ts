@@ -1,6 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import yaml from 'js-yaml'
+import { load } from 'js-yaml'
 import { EPUB_FILENAME, expect, runBber, test } from './helpers'
 
 // toc.yml entry → OPF spine idref, e.g. "kitchen-sink-ch-01" → "_kitchen-sink-ch-01_xhtml"
@@ -9,7 +9,7 @@ function tocEntryToIdref(entry: string): string {
 }
 
 function parseTocNames(tocPath: string): string[] {
-  const raw = yaml.load(fs.readFileSync(tocPath, 'utf8')) as Array<
+  const raw = load(fs.readFileSync(tocPath, 'utf8')) as Array<
     string | Record<string, unknown>
   >
   return raw.map((entry) =>
