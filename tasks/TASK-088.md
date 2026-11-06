@@ -1,6 +1,6 @@
 # TASK-088: Eliminate blank spread pages (recto reserved columns + page-count over-count)
 
-**Epic:** React 19 (reader-react)
+**Epic:** Reader quality (reader-react)
 **GitHub Issue:** #630 — https://github.com/triplecanopy/b-ber/issues/630
 **Phase:** Bug Fixes
 **Created:** 2026-06-06

@@ -39,16 +39,22 @@ before closing. Two are known:
 
 ## Subtasks
 
-- [ ] Take #530 (lerna 9) on its own, with TASK-116 in mind
-- [ ] Take #531 (`@types/node`) on its own
-- [ ] Review the remaining backlog for anything else independently valuable
-- [ ] Close the rest with a comment explaining the regeneration, so the history
-      shows a decision rather than neglect
-- [ ] Confirm Dependabot reopens a small set of grouped PRs under TASK-123's rules
-- [ ] Add an auto-merge workflow scoped to patch/minor via `fetch-metadata`
-- [ ] Evaluate the merge queue; if adopted, document the ruleset steps in AGENTS.md
-      alongside the existing "Requiring the CI gate" runbook
-- [ ] Re-measure the alert count and record it in TASK-120
+- [x] Take #530 (lerna 9) on its own, with TASK-116 in mind — went to lerna
+      10 instead (#645, TASK-120)
+- [x] Take #531 (`@types/node`) on its own — `^24`, in #651
+- [x] Review the remaining backlog for anything else independently valuable —
+      TASK-129
+- [x] Close the rest with a comment explaining the regeneration, so the history
+      shows a decision rather than neglect — TASK-129
+- [x] Confirm Dependabot reopens a small set of grouped PRs under TASK-123's
+      rules — superseded: Renovate regenerated them under `renovate.json5`
+- [ ] ~~Add an auto-merge workflow scoped to patch/minor via `fetch-metadata`~~ —
+      not done; see the closing note
+- [x] Evaluate the merge queue; if adopted, document the ruleset steps in
+      AGENTS.md alongside the existing "Requiring the CI gate" runbook — adopted
+      in TASK-138
+- [x] Re-measure the alert count and record it in TASK-120 — 125, in
+      TASK-120's closing note
 
 ## References
 
@@ -63,3 +69,19 @@ before closing. Two are known:
   because TASK-117 made the gate required — do not enable it if that changes.
 - Requires TASK-123 first, or the regenerated PRs arrive under the old rules.
 - Parent: TASK-121.
+
+## Closed 2026-11-06
+
+Everything here except auto-merge was done by other tasks:
+
+- lerna 10 (#645) and `@types/node` 24 (#651);
+- the backlog closed and regenerated when Renovate replaced Dependabot
+  (TASK-129);
+- the merge queue (TASK-138).
+
+**Auto-merge is not adopted.** `fetch-metadata` is a Dependabot action, so that
+plan no longer applies. The Renovate equivalent (`automerge` or
+`platformAutomerge` for patch and minor) is a separate decision. The merge queue
+already removes the rebase churn that motivated it, and the last three
+`[security]` PRs showed that even in-range updates deserve a look. File a new
+task if auto-merge is wanted later.

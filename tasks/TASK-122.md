@@ -126,4 +126,4 @@ The Dependabot subtasks (`versioning-strategy: increase` in
   own: manifests that state what was actually tested against, and closing the
   `npm install` drift class that produced TASK-115. The cost is a ~388-line diff and
   more PR volume, against a lockfile that already makes `npm ci` reproducible.
-- Parent: TASK-121.
+- Parent: TASK-121 until it closed on 2026-11-06; now directly under the Dependency health epic.

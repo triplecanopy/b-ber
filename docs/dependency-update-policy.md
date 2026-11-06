@@ -9,8 +9,9 @@ Automation never merges a major. A person never has to work out by hand where an
 update lands.
 
 Config: [`renovate.json5`](../renovate.json5). Background: TASK-129 (why
-Renovate), TASK-130 (end-to-end tests in CI), TASK-132 (the impact analysis, and
-this document).
+Renovate), TASK-130 (end-to-end tests in CI), TASK-132 (this document), TASK-143 (the
+impact report). TASK-139, TASK-140 and TASK-141 are worked examples of a
+breaking security update done by hand.
 
 ---
 
@@ -20,7 +21,7 @@ this document).
 | ---- | ---------- | --------------- | ------------------- |
 | **Proposer** | Renovate | Opening PRs per the config: grouped minor/patch on Mondays, `[security]` PRs immediately, a weekly lockfile PR. Holding majors and 0.x minors on the Dependency Dashboard. Release notes in each PR body. | Judging whether an update is safe. It only knows version numbers. |
 | **Gate** | CI: `build-and-test` and `e2e` in [`ci.yml`](../.github/workflows/ci.yml) | Build, Biome, Jest, and the Playwright CLI smoke + reader browser suites against the PR's own build. | Anything a test mocks, anything no test covers, anything that only shows when a person looks at it. |
-| **Analyst** | The dependency impact report (**TASK-132, not built yet**) | For an update that can break: finding every place the repo uses the dependency, which tests really exercise those places, and turning that into a checklist on the PR. | Running anything a person needs to judge. |
+| **Analyst** | The dependency impact report (**TASK-143, not built yet**) | For an update that can break: finding every place the repo uses the dependency, which tests really exercise those places, and turning that into a checklist on the PR. | Running anything a person needs to judge. |
 | **Reviewer** | A person | Reading the changelog against the call sites the analyst found, manual testing where the gate is blind, and the merge decision. | Re-deriving where a dependency is used, or re-running what CI already ran. |
 
 ---
@@ -63,7 +64,7 @@ These are the PRs that can break things. They arrive two ways:
 
 | Automation | Person |
 | ---------- | ------ |
-| CI `build-and-test` + `e2e`. **The impact report** (TASK-132). **Typecheck diff** against `main`: new errors only (TASK-132). | Work through the impact report's checklist (below). Push any code fixes onto the Renovate branch; Renovate stops rebasing a branch once someone else commits to it. Merge, or convert to a task. |
+| CI `build-and-test` + `e2e`. **The impact report** (TASK-143). **Typecheck diff** against `main`: new errors only (TASK-143). | Work through the impact report's checklist (below). Push any code fixes onto the Renovate branch; Renovate stops rebasing a branch once someone else commits to it. Merge, or convert to a task. |
 
 ### 4. Security fixes within range
 
@@ -102,7 +103,7 @@ flowchart LR
 | **Typecheck diff** | 0 new errors | New errors near an import site mean the API's shape changed. No new errors is weak evidence where the dependency's types come from a separately versioned `@types/*` package. |
 | **Gate results** | `e2e` green | Green e2e covers what the kitchen-sink fixture exercises. It does not cover reader navigation while TASK-131's tests are skipped. |
 
-### Until TASK-132 lands
+### Until TASK-143 lands
 
 The report doesn't exist yet. Produce its first section by hand:
 
@@ -178,5 +179,5 @@ skipped.
 | CI `build-and-test` (required) | Live |
 | CI `e2e`: Playwright against the PR's own build | TASK-130. Not yet a required check |
 | Reader navigation e2e coverage | **Missing.** 6 tests skipped (TASK-131) |
-| Impact report on the PR | **Not built** (TASK-132) |
-| Typecheck diff vs `main` | **Not built** (TASK-132). Plain typecheck fails on `main` (TASK-119) |
+| Impact report on the PR | **Not built** (TASK-143) |
+| Typecheck diff vs `main` | **Not built** (TASK-143). Plain typecheck fails on `main` (TASK-119) |

@@ -1,6 +1,6 @@
 # TASK-087: Replace Ultimate offsetLeft polling with event-driven settle detection
 
-**Epic:** React 19 (reader-react)
+**Epic:** Reader quality (reader-react)
 **GitHub Issue:** #629 — https://github.com/triplecanopy/b-ber/issues/629
 **Phase:** Modernization
 **Created:** 2026-06-06

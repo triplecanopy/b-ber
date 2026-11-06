@@ -1,6 +1,6 @@
 # TASK-071: Source code subdirectory documentation
 
-**Epic:** React 19 (reader-react)
+**Epic:** Reader quality (reader-react)
 **GitHub Issue:** #623 — https://github.com/triplecanopy/b-ber/issues/623
 **Phase:** Documentation
 

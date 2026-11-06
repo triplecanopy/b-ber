@@ -1,6 +1,6 @@
 # TASK-080: Fix font-face flash on page load
 
-**Epic:** React 19 (reader-react)
+**Epic:** Reader quality (reader-react)
 **GitHub Issue:** #627 — https://github.com/triplecanopy/b-ber/issues/627
 **Phase:** Bug Fixes
 

@@ -106,15 +106,20 @@ or more packages was checked for source references. All 14 are genuinely importe
       to 10, not 9: 10.0.1 is `latest` and both carry the OIDC support TASK-116
       needs, so stopping at 9 would only mean doing this twice. Dependabot's #530
       (8 → 9) is stale and can be closed
-- [ ] `axios`, `xmldom`, `postcss`, `js-yaml`, `undici` — vestigial check, then bump
-- [ ] Triage and close/merge the 38 open PRs
+- [x] `axios`, `xmldom`, `postcss`, `js-yaml`, `undici` — vestigial check, then bump.
+      `xmldom` went with `bs-html-injector` (above); `postcss` and `js-yaml` were
+      upgraded in TASK-141 and TASK-140; `axios` and `undici` are no longer
+      declared by any package, so they are transitive and belong to the weekly
+      lockfile PR (see the closing note)
+- [x] Triage and close/merge the 38 open PRs — done by TASK-129, which closed
+      the Dependabot backlog when Renovate replaced it
 - [x] `@types/node` 14 → **^24** (not 26: `@types/node`'s major should track the
       runtime, and we run Node 24). Introduces no new type errors — the six
       packages that fail `typecheck` fail identically without it, and are
       TASK-119's remit. **Dependabot closed #531 itself on 2026-09-24** once the
       major-ignore landed, so it will never propose this again; majors are now
       ours to do deliberately, which is the policy working rather than failing
-- [ ] Re-measure alerts and record the new distribution
+- [x] Re-measure alerts and record the new distribution (closing note below)
 
 ## Notes
 
@@ -209,3 +214,21 @@ moves. Dev-only, so the blast radius is `bber serve`.
   (configured Dependabot grouping/target branch), TASK-119 (typecheck — the
   `@types/node` staleness is adjacent but not its cause), TASK-117 (the gate these
   PRs now have to satisfy).
+
+## Closed 2026-11-06
+
+Re-measured from GitHub's open alerts: **125, down from 422** (3 critical, 56
+high, 52 medium, 14 low). 120 are transitive and 5 direct. The largest
+remaining groups:
+
+| Package | Alerts | Relationship |
+| ------- | ------ | ------------ |
+| `undici` | 33 | transitive |
+| `axios` | 32 | transitive |
+| `markdown-it` | 10 | direct (Renovate #699) |
+| `brace-expansion` | 9 | transitive |
+
+What is left is no longer this task's shape (find what is vestigial, remove it,
+bump the rest). It is the continuous work of the Dependency health epic: the
+weekly lockfile PR for transitive fixes within range, a major on the parent
+where there is none, and a task per `[security]` major, as for TASK-139–141.

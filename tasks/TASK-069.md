@@ -1,6 +1,6 @@
 # TASK-069: Replace per-Spread setInterval with ResizeObserver
 
-**Epic:** React 19 (reader-react)
+**Epic:** Reader quality (reader-react)
 **GitHub Issue:** #622 — https://github.com/triplecanopy/b-ber/issues/622
 **Phase:** Modernization — Phase 2
 

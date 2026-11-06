@@ -1,6 +1,6 @@
 # TASK-086: Reset view.loaded reliably and remove the dead unload path
 
-**Epic:** React 19 (reader-react)
+**Epic:** Reader quality (reader-react)
 **GitHub Issue:** #628 — https://github.com/triplecanopy/b-ber/issues/628
 **Phase:** Bug Fixes
 **Created:** 2026-06-06

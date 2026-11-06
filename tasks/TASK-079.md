@@ -1,6 +1,6 @@
 # TASK-079: Loading state for TOC/sidebar buttons during initial load
 
-**Epic:** React 19 (reader-react)
+**Epic:** Reader quality (reader-react)
 **GitHub Issue:** #626 — https://github.com/triplecanopy/b-ber/issues/626
 **Phase:** Bug Fixes
 

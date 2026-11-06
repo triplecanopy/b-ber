@@ -1,6 +1,6 @@
 # TASK-075: Expand test project URLs in dev/index.js
 
-**Epic:** React 19 (reader-react)
+**Epic:** Reader quality (reader-react)
 **GitHub Issue:** #624 — https://github.com/triplecanopy/b-ber/issues/624
 **Phase:** Documentation / Developer Experience
 **Created:** 2026-05-30

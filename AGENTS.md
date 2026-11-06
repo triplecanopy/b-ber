@@ -187,11 +187,12 @@ issue number, and that file is what the check validates against:
 | Unit test coverage | [#471](https://github.com/triplecanopy/b-ber/issues/471) |
 | E2E testing | [#505](https://github.com/triplecanopy/b-ber/issues/505) |
 | Node.js modernization | [#474](https://github.com/triplecanopy/b-ber/issues/474) |
-| React 19 (reader-react) | [#617](https://github.com/triplecanopy/b-ber/issues/617) |
+| React 19 (reader-react) — **closed** 2026-11-06, migration complete | [#617](https://github.com/triplecanopy/b-ber/issues/617) |
+| Reader quality (reader-react) | [#713](https://github.com/triplecanopy/b-ber/issues/713) |
 | Dependency health | [#618](https://github.com/triplecanopy/b-ber/issues/618) |
 | EPUB spec compliance | [#619](https://github.com/triplecanopy/b-ber/issues/619) |
 
-**Dependency health** is unlike the other seven: they are bounded (there is a state
+**Dependency health** is unlike the others: they are bounded (there is a state
 in which the migration is finished), whereas keeping dependencies current and
 vulnerability-free is continuous. It does not "complete" — it reaches a working
 footing and then needs maintaining. Treat a quiet Renovate queue as the
@@ -397,9 +398,9 @@ These apply to all JavaScript/TypeScript in the monorepo.
 
 ### React-specific (b-ber-reader-react and any future React packages)
 
-> **🛑 React 19 migration tasks — read the conventions first.** Before writing
-> any code for a **React 19 (reader-react)** task (TASK-068, 073, 091, and
-> TASK-094–100), you **must** read
+> **🛑 Reader tasks — read the conventions first.** Before writing any code for
+> a **Reader quality (reader-react)** task, or the closed React 19 migration's
+> (TASK-068, 073 and TASK-094–100), you **must** read
 > [`packages/b-ber-reader-react/MIGRATION-CONVENTIONS.md`](./packages/b-ber-reader-react/MIGRATION-CONVENTIONS.md).
 > It is the binding spec for those tasks: behavior-preservation rules, the
 > per-commit verification gate, the class→functional and HOC→hook patterns, and
@@ -655,11 +656,40 @@ everything pending, and Renovate keeps it current:
 | Dashboard "Rate-Limited" | over the 5-PR limit, queued | nothing; they open as others merge |
 
 **Transitive vulnerabilities.** Renovate cannot target a transitive dependency.
-It only fixes packages declared in a `package.json`. The weekly lockfile PR pulls
-every transitive dependency up within its parents' ranges. In the TASK-129
-measurement that cleared 31 of 46 vulnerable packages. What remains needs a major
-on a direct dep. That is a task, not a bot PR. Only if no parent update exists
-does an `overrides` entry come into it (TASK-125).
+It only fixes packages declared in a `package.json`. Work through these in order
+(TASK-125):
+
+1. **Is the parent even used?** Removing a vestigial dependency fixes everything
+   under it. `tar` was 59% of the alerts and imported nowhere (TASK-120).
+2. **The weekly lockfile PR.** It pulls every transitive dependency up within
+   its parents' ranges. In the TASK-129 measurement that cleared 31 of 46
+   vulnerable packages. To take a patched version sooner, run `npm update <pkg>`
+   in a task PR (TASK-140, TASK-141).
+3. **A major on the direct dependency that brings it in.** That is a task, not
+   a bot PR.
+4. **`overrides` in the root `package.json`**, only when no parent release
+   accepts the fix.
+
+Never use `npm audit fix --force`: it makes unreviewed major changes.
+
+An `overrides` entry pins a version across the whole tree, including for
+consumers of the published packages. It is invisible tech debt, so every entry
+needs:
+
+- an entry in a `//overrides` object next to it, keyed by the same package,
+  naming the advisory and the parent that blocks the real fix (JSON has no
+  comments);
+- a removal condition, e.g. "drop when lerna allows js-yaml ≥ 4.3.2";
+- a check that it does not contradict a parent's `peerDependencies`.
+
+Review the entries in two places, with no separate schedule:
+
+- when reviewing the weekly lockfile PR, delete any entry whose removal
+  condition is now met;
+- when changing the parent an entry works around.
+
+There are none today. lerna pins `js-yaml` exactly at 4.3.0 (TASK-140), and that
+is left alone because the copy is dev-only.
 
 **Testing a config change before merging it:**
 

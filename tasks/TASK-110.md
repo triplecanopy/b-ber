@@ -1,6 +1,6 @@
 # TASK-110: Reader chrome theming API (scope chrome CSS + custom-property surface)
 
-**Epic:** React 19 (reader-react)
+**Epic:** Reader quality (reader-react)
 **GitHub Issue:** #635 — https://github.com/triplecanopy/b-ber/issues/635
 **Phase:** Modernization — Phase 6 (follow-on to TASK-076)
 **Origin:** TASK-076 audit + the 2026-06-19 chrome-conflict review. This is
