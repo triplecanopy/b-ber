@@ -125,3 +125,36 @@ describe('b-ber-markdown-renderer output', () => {
     expect(stableIds(entry.notes)).toMatchSnapshot()
   })
 })
+
+// CommonMark corrections between markdown-it 8 and 15 that an author could
+// plausibly hit. None occur in the kitchen-sink or demo projects (TASK-144).
+describe('b-ber-markdown-renderer: changes from markdown-it 8', () => {
+  const render = (md) => markdownRenderer.render('test.md', md)
+
+  it('keeps runs of spaces inside code spans (8 collapsed them)', () => {
+    expect(render('Use `a  b` here.')).toBe(
+      '<p>Use <code>a  b</code> here.</p>\n'
+    )
+  })
+
+  it('allows emphasis inside a word with *** (8 left it literal)', () => {
+    expect(render('foo***bar***baz')).toBe(
+      '<p>foo<em><strong>bar</strong></em>baz</p>\n'
+    )
+  })
+
+  it('passes an inline comment containing -- through raw (8 escaped it)', () => {
+    // Block-level comments were already passed through raw by 8
+    expect(render('note <!-- a -- b --> end')).toBe(
+      '<p>note <!-- a -- b --> end</p>\n'
+    )
+  })
+
+  it('accepts a link destination in angle brackets with a space', () => {
+    expect(render('[x](</a b>)')).toBe('<p><a href="/a%20b">x</a></p>\n')
+  })
+
+  it('leaves an out-of-range numeric entity as text (8 emitted U+FFFD)', () => {
+    expect(render('x &#98765432; y')).toBe('<p>x &amp;#98765432; y</p>\n')
+  })
+})
