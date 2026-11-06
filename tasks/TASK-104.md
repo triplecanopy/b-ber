@@ -1,6 +1,6 @@
 # TASK-104: Accessibility (a11y) baseline
 
-**Epic:** React 19 (reader-react)
+**Epic:** Reader quality (reader-react)
 **GitHub Issue:** #633 — https://github.com/triplecanopy/b-ber/issues/633
 **Phase:** Modernization — quality
 **Model:** Sonnet 4.6 for the mechanical ARIA/labels/semantics; escalate focus

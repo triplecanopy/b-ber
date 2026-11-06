@@ -187,11 +187,12 @@ issue number, and that file is what the check validates against:
 | Unit test coverage | [#471](https://github.com/triplecanopy/b-ber/issues/471) |
 | E2E testing | [#505](https://github.com/triplecanopy/b-ber/issues/505) |
 | Node.js modernization | [#474](https://github.com/triplecanopy/b-ber/issues/474) |
-| React 19 (reader-react) | [#617](https://github.com/triplecanopy/b-ber/issues/617) |
+| React 19 (reader-react) — **closed** 2026-11-06, migration complete | [#617](https://github.com/triplecanopy/b-ber/issues/617) |
+| Reader quality (reader-react) | [#713](https://github.com/triplecanopy/b-ber/issues/713) |
 | Dependency health | [#618](https://github.com/triplecanopy/b-ber/issues/618) |
 | EPUB spec compliance | [#619](https://github.com/triplecanopy/b-ber/issues/619) |
 
-**Dependency health** is unlike the other seven: they are bounded (there is a state
+**Dependency health** is unlike the others: they are bounded (there is a state
 in which the migration is finished), whereas keeping dependencies current and
 vulnerability-free is continuous. It does not "complete" — it reaches a working
 footing and then needs maintaining. Treat a quiet Renovate queue as the
@@ -397,9 +398,9 @@ These apply to all JavaScript/TypeScript in the monorepo.
 
 ### React-specific (b-ber-reader-react and any future React packages)
 
-> **🛑 React 19 migration tasks — read the conventions first.** Before writing
-> any code for a **React 19 (reader-react)** task (TASK-068, 073, 091, and
-> TASK-094–100), you **must** read
+> **🛑 Reader tasks — read the conventions first.** Before writing any code for
+> a **Reader quality (reader-react)** task, or the closed React 19 migration's
+> (TASK-068, 073 and TASK-094–100), you **must** read
 > [`packages/b-ber-reader-react/MIGRATION-CONVENTIONS.md`](./packages/b-ber-reader-react/MIGRATION-CONVENTIONS.md).
 > It is the binding spec for those tasks: behavior-preservation rules, the
 > per-commit verification gate, the class→functional and HOC→hook patterns, and

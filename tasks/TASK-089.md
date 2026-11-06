@@ -1,6 +1,6 @@
 # TASK-089: Deep-linking to a spreadIndex does not navigate to that spread
 
-**Epic:** React 19 (reader-react)
+**Epic:** Reader quality (reader-react)
 **GitHub Issue:** #631 — https://github.com/triplecanopy/b-ber/issues/631
 **Phase:** Bug Fixes
 **Created:** 2026-06-06

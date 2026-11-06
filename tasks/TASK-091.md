@@ -1,6 +1,6 @@
 # TASK-091: Upgrade react-player from v2 to v3 (ESM)
 
-**Epic:** React 19 (reader-react)
+**Epic:** Reader quality (reader-react)
 **GitHub Issue:** #632 — https://github.com/triplecanopy/b-ber/issues/632
 **Phase:** Dependencies
 **Model:** Sonnet 4.6 — contained dependency upgrade; verify media playback in

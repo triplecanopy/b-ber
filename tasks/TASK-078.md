@@ -1,6 +1,6 @@
 # TASK-078: Fix leaf element flickering
 
-**Epic:** React 19 (reader-react)
+**Epic:** Reader quality (reader-react)
 **GitHub Issue:** #625 — https://github.com/triplecanopy/b-ber/issues/625
 **Phase:** Bug Fixes
 
