@@ -1,7 +1,7 @@
 # TASK-141: Upgrade postcss 7 → 8 and autoprefixer 9 → 10 (CVE-2023-44270 and four others)
 
 **Epic:** Dependency health
-**GitHub Issue:** _to be created_
+**GitHub Issue:** #709 — https://github.com/triplecanopy/b-ber/issues/709
 **Scope:** tasks, reader-react, monorepo
 
 ## Description
