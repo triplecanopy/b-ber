@@ -1,4 +1,5 @@
 import fs from 'fs-extra'
+import path from 'path'
 
 // State singleton initialises in its constructor and checks for the media dir.
 // Create the required directories before any module is imported.
@@ -82,5 +83,45 @@ describe('b-ber-markdown-renderer', () => {
   it('render() handles empty string input', () => {
     const result = markdownRenderer.render('test.md', '')
     expect(typeof result).toBe('string')
+  })
+})
+
+// Footnote refs carry a random 16-hex-digit suffix (parser-footnotes Counter)
+const stableIds = (html) => html.replace(/-[0-9a-f]{16}\b/g, '-<ID>')
+
+// Locks the exact XHTML that the whole plugin stack produces. The snapshot was
+// recorded on markdown-it 15 and checked byte-for-byte against markdown-it 8
+// (TASK-144), so a change here is a change in what authors' books contain.
+describe('b-ber-markdown-renderer output', () => {
+  const source = fs.readFileSync(
+    path.join(__dirname, 'fixtures/document.md'),
+    'utf8'
+  )
+  let state
+
+  beforeAll(() => {
+    // A real build fills this in from the project (State#loadBuilds). The
+    // fixture needs only what front matter, sections and footnotes write to.
+    state = require('@canopycanopycanopy/b-ber-lib').State
+    state.update('builds.epub', {
+      guide: [],
+      spine: { frontMatter: new Map(), flattened: [] },
+      cursor: [],
+      figures: [],
+      footnotes: [],
+    })
+  })
+
+  it('renders the fixture document', () => {
+    const html = markdownRenderer.render('rendering-fixture', source)
+    expect(stableIds(html)).toMatchSnapshot()
+  })
+
+  it('collects the fixture document footnotes', () => {
+    markdownRenderer.render('rendering-fixture', source)
+    const entry = state.footnotes.findLast(
+      (f) => f.fileName === 'rendering-fixture'
+    )
+    expect(stableIds(entry.notes)).toMatchSnapshot()
   })
 })
