@@ -156,12 +156,35 @@
       semanticCommitScope: 'circleci',
     },
     {
-      // Pinning is TASK-122's decision, made deliberately for npm, not a bot's.
+      // npm specifiers were pinned by hand in TASK-122 (exact for dev and
+      // private, `^<tested>` for published runtime deps), and `bump` below
+      // keeps them that way. Renovate's own pin PRs would only fight that.
       // Without this, CircleCI's image tags get digest-pinned and its orbs
       // (`codecov/codecov@5`) pinned to exact versions.
       description: 'No pin or digest-pin PRs',
       matchUpdateTypes: ['pin', 'pinDigest'],
       enabled: false,
+    },
+    {
+      // The default (`auto`) updates only the lockfile when the new version
+      // already satisfies the range. The manifest's floor then falls behind
+      // what is actually installed and tested. 85 specifiers had drifted that
+      // way by TASK-122, `express ^4.17.3` among them, below its security fix.
+      // `bump` rewrites the specifier with the lockfile, keeping its style: an
+      // exact pin stays exact and `^x` becomes `^y`. syncpack (`npm run
+      // deps:dedupe`, part of `npm test`) enforces which style each one has.
+      description: 'Update specifiers along with the lockfile',
+      matchManagers: ['npm'],
+      rangeStrategy: 'bump',
+    },
+    {
+      // A library's peer range is deliberately wider than what we install
+      // (reader-react accepts React >=16.2.0 <=19). Bumping it would narrow
+      // what consumers may bring.
+      description: 'Peer ranges widen, never bump',
+      matchManagers: ['npm'],
+      matchDepTypes: ['peerDependencies'],
+      rangeStrategy: 'widen',
     },
   ],
 }

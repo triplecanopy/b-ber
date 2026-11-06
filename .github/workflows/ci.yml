@@ -121,8 +121,9 @@ jobs:
       - name: Build
         run: npm run build
 
-      # `npm test` is `biome check .` then jest — the exact command that failed
-      # on main after the 4.0.3 bump merged.
+      # `npm test` is `biome check .`, the task-file and specifier checks, then
+      # jest. biome then jest is the exact pair that failed on main after the
+      # 4.0.3 bump merged.
       - name: Lint and test
         run: npm test
 

@@ -34,11 +34,11 @@
     "url": "https://github.com/triplecanopy/b-ber/issues"
   },
   "devDependencies": {
-    "@types/node": "^24",
-    "jest": "^29.7.0",
-    "rimraf": "^2.7.1",
-    "ts-jest": "^29.4.11",
-    "typescript": "^6.0.3"
+    "@types/node": "24.19.2",
+    "jest": "29.7.0",
+    "rimraf": "2.7.1",
+    "ts-jest": "29.4.15",
+    "typescript": "6.0.3"
   },
   "dependencies": {
     "@canopycanopycanopy/b-ber-shapes-directives": "4.0.3"
