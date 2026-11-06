@@ -1,3 +1,4 @@
+import { utils } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import fs from 'fs-extra'
 import image from '../src'
@@ -20,8 +21,6 @@ jest.mock('@canopycanopycanopy/b-ber-logger', () => ({
 
 jest.mock('fs-extra', () => ({ existsSync: jest.fn(() => true) }))
 
-jest.mock('image-size', () => jest.fn(() => ({ width: 100, height: 150 })))
-
 jest.mock('@canopycanopycanopy/b-ber-grammar-attributes', () => ({
   attributesObject: jest.fn(() => ({ source: 'test.jpg', alt: 'test image' })),
   htmlId: jest.fn((id) => id),
@@ -31,6 +30,7 @@ jest.mock('@canopycanopycanopy/b-ber-lib', () => ({
   State: jest.requireMock('@canopycanopycanopy/b-ber-lib/State'),
   Html: { comment: jest.fn((s) => s) },
   utils: {
+    getImageDimensions: jest.fn(() => ({ width: 100, height: 150 })),
     getImageOrientation: jest.fn(() => 'landscape'),
   },
 }))
@@ -110,6 +110,25 @@ describe('b-ber-grammar-image', () => {
     const result = config.render(tokens, 0)
     expect(createFigure).toHaveBeenCalled()
     expect(result).toBe('<div class="figure">test figure</div>')
+  })
+
+  it('passes the image dimensions from b-ber-lib to the figure', () => {
+    createFigure.mockClear()
+    const config = image.renderer({ instance, context })
+    const tokens = [
+      {
+        type: 'container_figure_open',
+        info: 'figure:dims-id source="test.jpg"',
+        map: [0, 1],
+        children: null,
+      },
+    ]
+    config.render(tokens, 0)
+    // attributesObject is mocked to resolve every source to test.jpg
+    expect(utils.getImageDimensions).toHaveBeenCalledWith('test.jpg')
+    expect(createFigure).toHaveBeenCalledWith(
+      expect.objectContaining({ width: 100, height: 150 })
+    )
   })
 
   it('render calls createFigureInline for figure-inline type token', () => {

@@ -2,7 +2,7 @@ import {
   attributesObject,
   htmlId,
 } from '@canopycanopycanopy/b-ber-grammar-attributes'
-import { Html, State as state } from '@canopycanopycanopy/b-ber-lib'
+import { Html, State as state, utils } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import figure from '@canopycanopycanopy/b-ber-parser-figure'
 import {
@@ -10,7 +10,6 @@ import {
   INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
 } from '@canopycanopycanopy/b-ber-shapes-directives'
 import fs from 'fs-extra'
-import sizeOf from 'image-size' // eslint-disable-line import/no-unresolved
 import isUndefined from 'lodash/isUndefined'
 import { createFigure, createFigureInline } from './image'
 
@@ -32,7 +31,7 @@ function prepare({ token, match, instance, context, fileName, lineNumber }) {
   if (!fs.existsSync(asset)) log.error(`Image not found [${asset}]`)
 
   // Get the image dimensions
-  const { width, height } = sizeOf(asset)
+  const { width, height } = utils.getImageDimensions(asset)
 
   return {
     width,

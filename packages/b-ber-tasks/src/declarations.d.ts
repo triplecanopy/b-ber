@@ -116,6 +116,10 @@ declare module '@canopycanopycanopy/b-ber-lib/utils' {
   export const renderPosterImage: (poster: string) => string
   export const renderCaption: (caption: string, mediaType: string) => string
   export const getMediaType: (type: string) => string
+  export const getImageDimensions: (filePath: string) => {
+    width: number
+    height: number
+  }
   export const getImageOrientation: (w: number, h: number) => string | null
   export const getTitle: (page: any) => string
   export const ensureSource: (

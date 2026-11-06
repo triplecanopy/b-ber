@@ -1,12 +1,14 @@
 import fs from 'fs-extra'
-import 'image-size'
 import mobi from '../../src/figures/mobi'
 
 jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
   build: 'mobi',
-  src: { images: (path) => path },
+  // The poster's dimensions are read from a real 10x10 image
+  src: {
+    images: (file) =>
+      require('path').join(__dirname, '../fixtures/images/square', file),
+  },
 }))
-jest.mock('image-size', () => jest.fn(() => ({ width: 10, height: 10 })))
 
 afterAll(() => fs.remove('_project'))
 

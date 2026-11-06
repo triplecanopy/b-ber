@@ -1,5 +1,6 @@
 import log from '@canopycanopycanopy/b-ber-logger'
 import fs from 'fs-extra'
+import { imageSize } from 'image-size'
 import find from 'lodash/find'
 import findIndex from 'lodash/findIndex'
 import uniq from 'lodash/uniq'
@@ -30,6 +31,23 @@ export const opsPath = (fpath: string, base: string): string =>
 // https://www.w3.org/TR/xml-names/#Conformance
 export const fileId = (str: string): string =>
   `_${str.replace(/[^a-zA-Z0-9_-]/g, '_')}`
+
+// Read an image's pixel dimensions. The whole file is read, rather than the
+// fixed 512KB prefix image-size's own file readers take, so a JPEG whose
+// metadata pushes its frame header past that point still measures. image-size's
+// errors do not name the file, so it is added here: a bad image in a book is
+// otherwise impossible to find.
+export const getImageDimensions = (
+  filePath: string
+): { width: number; height: number } => {
+  try {
+    const { width, height } = imageSize(fs.readFileSync(filePath))
+    return { width, height }
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err)
+    throw new Error(`Could not read image dimensions [${filePath}]: ${message}`)
+  }
+}
 
 // Determine an image's orientation
 export const getImageOrientation = (w: number, h: number): string | null => {
