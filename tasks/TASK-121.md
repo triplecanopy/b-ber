@@ -17,12 +17,16 @@ TASK-120, which continues independently.
 
 ## Sub-tasks
 
-- [ ] TASK-122: Pin and dedupe every dependency specifier
-- [ ] TASK-123: Rewrite the Dependabot rules
-- [ ] TASK-124: Automate merging and clear the backlog
-- [ ] TASK-125: Decide and document the transitive-vulnerability strategy
+- [ ] TASK-122: Pin and dedupe every dependency specifier — still open; moved
+      to sit directly under the Dependency health epic when this parent closed
+- [x] TASK-123: Rewrite the Dependabot rules — done (#641), then retired by
+      TASK-129
+- [x] TASK-124: Automate merging and clear the backlog — done by other tasks;
+      see its closing note
+- [x] TASK-125: Decide and document the transitive-vulnerability strategy
 - [x] TASK-129: Replace Dependabot with Renovate
-- [ ] TASK-132: Dependency update testing policy and impact analysis
+- [x] TASK-132: Dependency update testing policy and impact analysis — the
+      policy; its automation half is TASK-143
 
 > **Re-scoped 2026-10-31 (TASK-129).** The tool changed: Renovate replaces
 > Dependabot for version and security updates alike. The goal stands (signal, not
@@ -120,3 +124,17 @@ Dependabot logs.
   (configured the current grouping), TASK-117 (the gate these PRs must now pass),
   TASK-116 (needs lerna 9, which is also in the backlog), TASK-053 (added
   `syncpack`).
+
+## Closed 2026-11-06
+
+The goal was "Dependabot producing signal rather than noise". TASK-129 replaced
+Dependabot with Renovate, which met that goal by a different route, so there is
+nothing left for a Dependabot parent to coordinate. Its children were settled as
+follows:
+
+- **TASK-123** shipped, then Renovate retired its rules.
+- **TASK-124** was done piecemeal elsewhere.
+- **TASK-125** became a runbook in AGENTS.md.
+- **TASK-132**'s policy shipped; its automation moved to TASK-143.
+- **TASK-122** (pinning) is still worth deciding on its own merits. It now sits
+  directly under the Dependency health epic rather than under this parent.

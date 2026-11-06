@@ -639,11 +639,40 @@ everything pending, and Renovate keeps it current:
 | Dashboard "Rate-Limited" | over the 5-PR limit, queued | nothing; they open as others merge |
 
 **Transitive vulnerabilities.** Renovate cannot target a transitive dependency.
-It only fixes packages declared in a `package.json`. The weekly lockfile PR pulls
-every transitive dependency up within its parents' ranges. In the TASK-129
-measurement that cleared 31 of 46 vulnerable packages. What remains needs a major
-on a direct dep. That is a task, not a bot PR. Only if no parent update exists
-does an `overrides` entry come into it (TASK-125).
+It only fixes packages declared in a `package.json`. Work through these in order
+(TASK-125):
+
+1. **Is the parent even used?** Removing a vestigial dependency fixes everything
+   under it. `tar` was 59% of the alerts and imported nowhere (TASK-120).
+2. **The weekly lockfile PR.** It pulls every transitive dependency up within
+   its parents' ranges. In the TASK-129 measurement that cleared 31 of 46
+   vulnerable packages. To take a patched version sooner, run `npm update <pkg>`
+   in a task PR (TASK-140, TASK-141).
+3. **A major on the direct dependency that brings it in.** That is a task, not
+   a bot PR.
+4. **`overrides` in the root `package.json`**, only when no parent release
+   accepts the fix.
+
+Never use `npm audit fix --force`: it makes unreviewed major changes.
+
+An `overrides` entry pins a version across the whole tree, including for
+consumers of the published packages. It is invisible tech debt, so every entry
+needs:
+
+- an entry in a `//overrides` object next to it, keyed by the same package,
+  naming the advisory and the parent that blocks the real fix (JSON has no
+  comments);
+- a removal condition, e.g. "drop when lerna allows js-yaml ≥ 4.3.2";
+- a check that it does not contradict a parent's `peerDependencies`.
+
+Review the entries in two places, with no separate schedule:
+
+- when reviewing the weekly lockfile PR, delete any entry whose removal
+  condition is now met;
+- when changing the parent an entry works around.
+
+There are none today. lerna pins `js-yaml` exactly at 4.3.0 (TASK-140), and that
+is left alone because the copy is dev-only.
 
 **Testing a config change before merging it:**
 

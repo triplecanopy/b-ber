@@ -176,3 +176,12 @@ real advisory rather than trusting either source.
   policy ships now and pinning is decided separately, on its own merits.
 - Parent: TASK-121. Feeds TASK-124 — the backlog should be regenerated under these
   rules, not the old ones.
+
+## Closed 2026-11-06
+
+All subtasks shipped in #641. #641 used `Refs` rather than a closing keyword
+because #647, #650 and #652 followed it up, and the issue was never closed
+afterwards. TASK-129 then replaced Dependabot with Renovate and deleted
+`.github/dependabot.yml`, so these rules no longer exist. What carried over (no
+majors by default, `chore(deps)` commit messages, separate `security` and
+`dependencies` labels, held 0.x minors) lives in `renovate.json5`.

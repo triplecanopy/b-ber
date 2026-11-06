@@ -39,12 +39,14 @@ that is recorded.
 
 ## Subtasks
 
-- [ ] Confirm the parent-bump behaviour on a real alert in this repo
-- [ ] Establish which current alerts have **no** parent fix available — those are
+- [x] Confirm the parent-bump behaviour on a real alert in this repo — moot:
+      Renovate has no transitive remediation (TASK-129), so this behaviour
+      left with Dependabot
+- [x] Establish which current alerts have **no** parent fix available — those are
       the only genuine `overrides` candidates
-- [ ] Write the decision order into AGENTS.md as a short runbook
-- [ ] Define the comment + removal-condition convention for any override added
-- [ ] Decide whether `overrides` entries get a periodic review, and where it lives
+- [x] Write the decision order into AGENTS.md as a short runbook
+- [x] Define the comment + removal-condition convention for any override added
+- [x] Decide whether `overrides` entries get a periodic review, and where it lives
 
 ## References
 
@@ -60,3 +62,29 @@ that is recorded.
   Dependabot run logs before reaching for `overrides` — the feature may simply not
   have run.
 - Parent: TASK-121. Independent of 122/123/124 and can proceed in parallel.
+
+## Closed 2026-11-06
+
+The answer changed with the tool. This task assumed Dependabot, which bumps a
+parent so that a fixed child can be used. Renovate, which replaced it in
+TASK-129, cannot target a transitive dependency at all. The decision order is
+now in AGENTS.md under "Transitive vulnerabilities":
+
+1. remove the parent if it is vestigial;
+2. the weekly lockfile PR, or `npm update <pkg>` in a task PR;
+3. a major on the direct dependency, as a task;
+4. `overrides` as the last resort.
+
+The same section defines the `overrides` convention: a `//overrides` note naming
+the advisory and the blocking parent, a removal condition, and a check against
+the parent's peer dependencies. It also says where entries get reviewed: in the
+weekly lockfile PR, and whenever their parent changes, with no separate
+schedule.
+
+**No alert needs an override today.** Of the 74 packages npm audit flags, 52
+have a fix within their parents' ranges, which the lockfile PR covers. The
+other 22 need a major on a direct dependency: `axios` via `browser-sync`, the
+`commitlint`, `conventional-changelog-cli` and `pureimage` trees, and
+`markdown-it` (#699). None has no fix path. The one place no parent release
+accepts the fix is lerna's exact `js-yaml@4.3.0` pin. It is a dev-only copy that
+parses our own config, so it was left alone rather than overridden (TASK-140).
