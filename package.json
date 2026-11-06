@@ -44,10 +44,6 @@
     "*.{md,scss,yaml,yml}": [
       "biome format --write --no-errors-on-unmatched",
       "git add"
-    ],
-    "*.svg": [
-      "svgo --pretty --indent=2 --config=svgo.yml --multipass",
-      "git add"
     ]
   },
   "husky": {
