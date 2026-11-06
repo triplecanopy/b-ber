@@ -1,7 +1,10 @@
 module.exports = {
   displayName: 'b-ber',
   verbose: false,
-  setupFiles: ['./packages/b-ber-reader-react/jest.setup.js'],
+  setupFiles: [
+    './jest.setup.js',
+    './packages/b-ber-reader-react/jest.setup.js',
+  ],
   setupFilesAfterEnv: ['jest-extended/all'],
   collectCoverage: false,
   coverageProvider: 'v8',

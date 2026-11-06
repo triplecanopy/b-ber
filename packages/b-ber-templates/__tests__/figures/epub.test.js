@@ -1,11 +1,13 @@
 import fs from 'fs-extra'
-import 'image-size'
 import epub from '../../src/figures/epub'
 
-jest.mock('image-size', () => jest.fn(() => ({ width: 100, height: 150 })))
 jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
   build: 'epub',
-  src: { images: (path) => path },
+  // The poster's dimensions are read from a real 100x150 image
+  src: {
+    images: (file) =>
+      require('path').join(__dirname, '../fixtures/images/portrait', file),
+  },
 }))
 
 afterAll(() => fs.remove('_project'))

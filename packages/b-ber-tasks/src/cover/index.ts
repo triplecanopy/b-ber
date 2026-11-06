@@ -1,11 +1,13 @@
 import { Template, YamlAdaptor } from '@canopycanopycanopy/b-ber-lib'
 import state from '@canopycanopycanopy/b-ber-lib/State'
-import { getBookMetadata } from '@canopycanopycanopy/b-ber-lib/utils'
+import {
+  getBookMetadata,
+  getImageDimensions,
+} from '@canopycanopycanopy/b-ber-lib/utils'
 import log from '@canopycanopycanopy/b-ber-logger'
 import Xhtml from '@canopycanopycanopy/b-ber-templates/Xhtml'
 import crypto from 'crypto'
 import fs from 'fs-extra'
-import sizeOf from 'image-size'
 import path from 'path'
 import PureImage from 'pureimage'
 
@@ -200,7 +202,7 @@ class Cover {
 
   generateCoverXHTML() {
     // Get the image dimensions and pass them to the coverSVG template
-    const { width, height } = (sizeOf as any)(this.coverImagePath)
+    const { width, height } = getImageDimensions(this.coverImagePath)
     const href = `images/${encodeURIComponent(this.coverEntry)}`
     const svg = Xhtml.cover({ width, height, href })
 

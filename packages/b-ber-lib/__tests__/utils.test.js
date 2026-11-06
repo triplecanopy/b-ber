@@ -1,10 +1,13 @@
 import fs from 'fs-extra'
+import os from 'os'
+import path from 'path'
 
 jest.mock('../src/Spine')
 jest.mock('../src/SpineItem')
 
 let opsPath
 let fileId
+let getImageDimensions
 let getImageOrientation
 let resolveIntersectingUrl
 let renderPosterImage
@@ -18,6 +21,7 @@ beforeAll(async () => {
   ;({
     opsPath,
     fileId,
+    getImageDimensions,
     getImageOrientation,
     resolveIntersectingUrl,
     renderPosterImage,
@@ -149,5 +153,72 @@ describe('createUnsupportedInline', () => {
     expect(result).toContain('media__fallback__video')
     expect(result).toContain('<!-- start -->')
     expect(result).toContain('<!-- end -->')
+  })
+})
+
+describe('getImageDimensions', () => {
+  const fixtures = path.join(__dirname, 'fixtures', 'images')
+
+  // Real files, not a mocked image-size: the point is to catch a dependency
+  // update that changes what the library returns.
+  it.each([
+    ['image.jpg', 3, 2],
+    ['image.png', 3, 2],
+    ['image.gif', 3, 2],
+    ['image.webp', 3, 2],
+    ['image.svg', 3, 2],
+    ['viewbox.svg', 30, 20],
+  ])('reads the dimensions of %s', (file, width, height) => {
+    expect(getImageDimensions(path.join(fixtures, file))).toEqual({
+      width,
+      height,
+    })
+  })
+
+  describe('with a JPEG whose frame header is past the first 512KB', () => {
+    let tmpDir
+    let bigHeaderJpeg
+
+    beforeAll(async () => {
+      tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'b-ber-lib-image-'))
+      bigHeaderJpeg = path.join(tmpDir, 'big-header.jpg')
+
+      // Insert comment (COM, 0xFFFE) segments between the SOI marker and the
+      // rest of the image. Large EXIF/XMP/ICC blocks do the same thing in real
+      // photographs. A segment length is 16 bits, so it takes several to pass
+      // the 512KB that image-size reads when it is handed a path.
+      const jpeg = await fs.readFile(path.join(fixtures, 'image.jpg'))
+      const segmentLength = 0xffff
+      const segment = Buffer.alloc(segmentLength + 2, 0x20)
+      segment.writeUInt16BE(0xfffe, 0)
+      segment.writeUInt16BE(segmentLength, 2)
+      const segments = Array.from({ length: 9 }, () => segment)
+
+      await fs.writeFile(
+        bigHeaderJpeg,
+        Buffer.concat([jpeg.subarray(0, 2), ...segments, jpeg.subarray(2)])
+      )
+    })
+
+    afterAll(() => fs.remove(tmpDir))
+
+    it('still reads the dimensions', () => {
+      expect(fs.statSync(bigHeaderJpeg).size).toBeGreaterThan(512 * 1024)
+      expect(getImageDimensions(bigHeaderJpeg)).toEqual({ width: 3, height: 2 })
+    })
+  })
+
+  it('names the file when it is not an image', () => {
+    const file = path.join(__dirname, 'utils.test.js')
+    expect(() => getImageDimensions(file)).toThrow(
+      `Could not read image dimensions [${file}]`
+    )
+  })
+
+  it('names the file when it does not exist', () => {
+    const file = path.join(fixtures, 'missing.png')
+    expect(() => getImageDimensions(file)).toThrow(
+      `Could not read image dimensions [${file}]`
+    )
   })
 })

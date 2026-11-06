@@ -1,8 +1,7 @@
 import { State as state, utils } from '@canopycanopycanopy/b-ber-lib'
-import sizeOf from 'image-size' // eslint-disable-line import/no-unresolved
 import uniq from 'lodash/uniq'
 
-const { getImageOrientation } = utils
+const { getImageDimensions, getImageOrientation } = utils
 
 const FULLBLEED_CLASS_NAME = 'figure__fullbleed'
 
@@ -269,7 +268,7 @@ export const unsupported = ({
   linkImages = true,
 }) => {
   const source = data.poster.slice(data.poster.lastIndexOf('/') + 1)
-  const { width, height } = sizeOf(state.src.images(source))
+  const { width, height } = getImageDimensions(state.src.images(source))
   const ratioName = getImageOrientation(width, height)
 
   return figureTemplate({
