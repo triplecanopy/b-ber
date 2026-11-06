@@ -81,7 +81,7 @@ be a separate policy decision.
 - [x] AGENTS.md: merge queue workflow, ruleset steps, and the `renovate/**`
       force-push ruleset
 - [x] After merge: switch the ruleset (merge queue on, strict off)
-- [ ] After the switch: queue a docs-only PR and a `full` PR and confirm each
+- [x] After the switch: queue a docs-only PR and a `full` PR and confirm each
       lands with the expected jobs
 
 ## Notes
@@ -99,6 +99,17 @@ be a separate policy decision.
   merge up to 5 entries, minimum 1 with no wait, 60-minute check timeout.
   `build-and-test` stays the required check. To roll back, remove the
   `merge_queue` rule and set strict back to `true`, in that order.
+- Verified through the queue after the switch:
+  - #703 (docs only): merge-group run 41586626072 classified `inert`;
+    `build-and-test` and `e2e` skipped, and the PR merged.
+  - #696 (Renovate `@types` update, `full`): merge-group run 42177515155
+    classified `full`; `build-and-test` (68s) and `e2e` (108s) ran and passed,
+    and the PR merged. It was six or more commits behind `main` when queued,
+    and nobody had to update it first.
+- `gh pr merge` cannot queue a PR here: it calls `enablePullRequestAutoMerge`,
+  and the repo has auto-merge off. Use **Merge when ready**, or the
+  `enqueuePullRequest` GraphQL mutation. Turning on "Allow auto-merge" would
+  make `gh pr merge --auto` work; it automerges nothing by itself.
 - Each PR now runs CI twice, on the PR and in the queue. At about 2½ minutes on
   a public repo's free runners, that is cheap.
 - Related: TASK-117 (made `build-and-test` required), TASK-137 (per-job
