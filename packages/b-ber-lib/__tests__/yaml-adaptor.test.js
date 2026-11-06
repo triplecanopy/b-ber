@@ -182,6 +182,67 @@ describe('YamlAdaptor.parse', () => {
   })
 })
 
+// Where js-yaml 5 deliberately departs from 3. Each was either a security fix
+// or 3 accepting input it should not have.
+describe('YamlAdaptor.parse, differences from js-yaml 3', () => {
+  it('keeps __proto__ as an own key instead of setting the prototype', () => {
+    const result = YamlAdaptor.parse('__proto__: {polluted: 1}\na: 1\n')
+
+    expect(Object.getOwnPropertyNames(result)).toEqual(['__proto__', 'a'])
+    expect(Object.getPrototypeOf(result)).toBe(Object.prototype)
+    expect({}.polluted).toBeUndefined()
+  })
+
+  // CVE-2026-84375, CVE-2026-59869 and CVE-2026-53550: merge keys that made
+  // js-yaml 3 spend quadratic CPU time. js-yaml 5 caps merge work and throws.
+  it('rejects merge-key documents built to exhaust the CPU', () => {
+    const emptyMerges = [
+      `arr: &arr [${new Array(20000).fill('{}').join(',')}]`,
+      'targets:',
+      ...new Array(20000).fill('  - <<: *arr'),
+    ].join('\n')
+    const chain = [
+      'a0: &a0 { k0: 0 }',
+      ...Array.from(
+        { length: 4000 },
+        (_, i) => `a${i + 1}: &a${i + 1} { <<: *a${i}, k${i + 1}: ${i + 1} }`
+      ),
+      'b: *a4000',
+    ].join('\n')
+    const keys = Array.from({ length: 4000 }, (_, i) => `k${i}: 0`).join(', ')
+    const repeated = `a: &a {${keys}}\nb: {<<: [${new Array(4000).fill('*a').join(', ')}]}\n`
+
+    expect(() => YamlAdaptor.parse(emptyMerges)).toThrow(/merge/)
+    expect(() => YamlAdaptor.parse(chain)).toThrow(/maxTotalMergeKeys/)
+    expect(() => YamlAdaptor.parse(repeated)).toThrow(/merge/)
+  })
+
+  it('rejects tab indentation, which js-yaml 3 misread', () => {
+    // js-yaml 3 returned { a: null, b: 1 }
+    expect(() => YamlAdaptor.parse('a:\n\tb: 1\n')).toThrow(/tab/)
+  })
+
+  it('rejects an empty flow sequence entry', () => {
+    // js-yaml 3 returned { a: ['x', null, 'y'] }
+    expect(() => YamlAdaptor.parse('a: [x,,y]\n')).toThrow()
+  })
+
+  it('leaves an impossible date as a string', () => {
+    // js-yaml 3 rolled 2020-02-30 over to 2020-03-01
+    expect(YamlAdaptor.parse('a: 2020-02-30\n')).toEqual({ a: '2020-02-30' })
+  })
+
+  it('reads years before 100 as written', () => {
+    // js-yaml 3 read 0099-01-01 as 1999-01-01
+    expect(YamlAdaptor.parse('a: 0099-01-01\n').a.getUTCFullYear()).toBe(99)
+  })
+
+  it('rejects the !!binary and !!set tags', () => {
+    expect(() => YamlAdaptor.parse('a: !!binary aGVsbG8=\n')).toThrow(/unknown/)
+    expect(() => YamlAdaptor.parse('a: !!set {x}\n')).toThrow(/unknown/)
+  })
+})
+
 describe('YamlAdaptor.dump', () => {
   it('writes the same text js-yaml 3 wrote', () => {
     const value = {

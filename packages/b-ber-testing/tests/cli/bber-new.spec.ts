@@ -1,6 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import yaml from 'js-yaml'
+import { load } from 'js-yaml'
 import { expect, runBber, test } from './helpers'
 
 test.describe('bber new', () => {
@@ -26,7 +26,7 @@ test.describe('bber new', () => {
 
     let parsed: unknown
     expect(() => {
-      parsed = yaml.load(fs.readFileSync(tocPath, 'utf8'))
+      parsed = load(fs.readFileSync(tocPath, 'utf8'))
     }).not.toThrow()
     expect(Array.isArray(parsed)).toBe(true)
   })
