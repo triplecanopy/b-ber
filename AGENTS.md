@@ -627,6 +627,22 @@ it before reviewing a major or a `[security]` PR that crosses a major. Jest
 passing is not enough for those: several dependencies are mocked in exactly the
 tests that would catch a break.
 
+**How specifiers are written** (TASK-122, enforced by `.syncpackrc` through
+`npm run deps:dedupe`, which `npm test` runs):
+
+| Where | Style | Why |
+| ----- | ----- | --- |
+| `devDependencies`, and anything in the private root or `b-ber-testing` manifests | exact, `1.2.3` | never published, so the manifest states exactly what was tested |
+| `dependencies` of published packages | `^` floored at the tested version, `^1.2.3` | users install these without our lockfile; a caret lets their npm dedupe and take patches, and the floor keeps them off anything older than we tested |
+| `peerDependencies` | a deliberate range | left alone; Renovate widens these and never bumps them |
+| `@canopycanopycanopy/*` | exact, set by lerna | not hand-edited |
+
+Every package must agree on one version of each dependency. Renovate's
+`rangeStrategy: 'bump'` keeps the specifier and the lockfile moving together.
+When adding a dependency by hand, `npm install --save-exact` for a dev
+dependency, or `npm install <pkg>@^<version>` for a runtime one, then
+`npm run deps:dedupe`.
+
 **Start at the Dependency Dashboard issue.** It is the one place that lists
 everything pending, and Renovate keeps it current:
 
@@ -692,7 +708,7 @@ daily via `.github/workflows/task-hierarchy.yml` and can be run by hand any time
 
 **Run tests before committing.** Always run `npm test` (or the affected
 package's test suite) before creating a commit. `npm test` runs `biome check .`,
-then `check:tasks`, then the Jest suite. Pre-commit hooks via Husky should enforce this
+then `check:tasks`, then `deps:dedupe` (syncpack), then the Jest suite. Pre-commit hooks via Husky should enforce this
 automatically, but hooks are not always reliable — treat manual verification as
 the primary gate, not the hook. Do not commit code that has not passed its tests.
 
@@ -775,7 +791,7 @@ npm run bootstrap:clean
 # Build all packages
 npm run build
 
-# Run all tests (biome check, task-hierarchy check, then jest)
+# Run all tests (biome check, task-hierarchy check, specifier check, then jest)
 npm test
 
 # Validate task files against the declared epics (offline, part of npm test)
@@ -783,6 +799,10 @@ npm run check:tasks
 
 # Also reconcile open tasks' titles and parents against GitHub (needs gh auth)
 npm run check:tasks:remote
+
+# Check every specifier against .syncpackrc: one version per dependency, exact
+# for dev deps, ^ for published runtime deps (part of npm test)
+npm run deps:dedupe
 
 # Lint and format check only (no tests)
 npm run check
