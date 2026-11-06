@@ -22,10 +22,10 @@
   },
   "dependencies": {
     "@canopycanopycanopy/b-ber-theme-mixins": "^3",
-    "modularscale-sass": "^3.0.8"
+    "modularscale-sass": "^3.0.10"
   },
   "devDependencies": {
-    "sass": "^1.49.8"
+    "sass": "1.100.0"
   },
   "gitHead": "9936fe3f4af76aa7b67ce10c2ed3a32b7de6ce6c"
 }

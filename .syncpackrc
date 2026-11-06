@@ -1,0 +1,42 @@
+{
+  "$schema": "./node_modules/syncpack/schema.json",
+  "versionGroups": [
+    {
+      "label": "First-party packages: lerna sets these (lerna.json command.version.exact)",
+      "dependencies": ["@canopycanopycanopy/**"],
+      "isIgnored": true
+    },
+    {
+      "label": "Peer ranges are deliberately wider than the installed version",
+      "dependencyTypes": ["peer"],
+      "isIgnored": true
+    }
+  ],
+  "semverGroups": [
+    {
+      "label": "First-party packages: lerna sets these",
+      "dependencies": ["@canopycanopycanopy/**"],
+      "isIgnored": true
+    },
+    {
+      "label": "Peer ranges are deliberately wider than the installed version",
+      "dependencyTypes": ["peer"],
+      "isIgnored": true
+    },
+    {
+      "label": "Private manifests are never published: pin exactly",
+      "packages": ["@canopycanopycanopy/b-ber", "@canopycanopycanopy/b-ber-testing"],
+      "range": ""
+    },
+    {
+      "label": "Runtime dependencies of published packages: caret, floor at the tested version, so consumers can dedupe and take patches",
+      "dependencyTypes": ["prod"],
+      "range": "^"
+    },
+    {
+      "label": "devDependencies never reach consumers: pin exactly",
+      "dependencyTypes": ["dev"],
+      "range": ""
+    }
+  ]
+}
