@@ -50,6 +50,51 @@ describe('templates.Project', () => {
     expect(configObj).toEqual(state.config)
   })
 
+  // The exact text js-yaml 3 wrote for a new project. `bber new` users get
+  // this file, so a YAML library upgrade must not change it (TASK-140).
+  test('it writes the default config file text', () => {
+    const projectPath = path.join(process.cwd(), '/_project')
+
+    expect(Project.configYAML(projectPath).content).toBe(
+      [
+        `env: ${process.env.NODE_ENV}`,
+        'src: _project',
+        'dist: project',
+        'cache: true',
+        'ibooks_specified_fonts: false',
+        'theme: b-ber-theme-serif',
+        'themes_directory: ./themes',
+        "base_url: 'http://localhost:4000/project-web'",
+        'base_path: /',
+        "remote_url: 'http://localhost:4000/'",
+        "reader_url: 'http://localhost:4000/project-reader'",
+        'downloads: []',
+        'ui_options:',
+        '  navigation:',
+        '    header_icons:',
+        '      info: true',
+        '      home: true',
+        '      downloads: true',
+        '      toc: true',
+        '    footer_icons:',
+        '      chapter: true',
+        '      page: true',
+        'private: false',
+        'ignore: []',
+        'autoprefixer_options:',
+        '  overrideBrowserslist:',
+        '    - defaults',
+        "    - '> 1%'",
+        '    - not dead',
+        '    - not IE 11',
+        '  flexbox: no-2009',
+        'layout: columns',
+        'group_footnotes: true',
+        '',
+      ].join('\n')
+    )
+  })
+
   test('javascripts() returns a file descriptor with application.js content', () => {
     const projectPath = path.join(process.cwd(), '/_project')
     const [file] = Project.javascripts(projectPath)
