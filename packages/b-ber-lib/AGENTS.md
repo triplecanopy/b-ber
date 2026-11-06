@@ -12,7 +12,8 @@
 | `src/Config.ts`                 | Constructs project config by deep-merging `config.yml` over defaults                           |
 | `src/Spine.ts`                  | Reads `toc.yml`; builds nested + flattened page-flow for each build type                       |
 | `src/SpineItem.ts`              | Data model for a single spine entry                                                            |
-| `src/YamlAdaptor.ts`            | Loads and queries YAML files; comment-preserving write-back via yawn-yaml                      |
+| `src/YamlAdaptor.ts`            | Reads and writes YAML with js-yaml 5, configured to match js-yaml 3's results (see below)      |
+| `src/Yaml.ts`                   | Reads `config.yml`, `metadata.yml`, `media.yml` with yawn-yaml, which preserves comments       |
 | `src/Theme.ts`                  | Resolves and loads built-in or user-defined SCSS themes                                        |
 | `src/Template.ts`               | Wraps rendered body content in the XHTML page template                                         |
 | `src/Html.ts`                   | HTML serialisation helpers                                                                     |
@@ -39,4 +40,10 @@ Additional standards for this package:
 - `State` is a singleton exported as `export default new State()`. Do not instantiate it elsewhere; import the instance.
 - `Config` constructor returns a plain object (via `defaultsDeep`) rather than a class instance; treat the result as a POJO.
 - All file system operations use `fs-extra` rather than the native `fs` module.
-- YAML files are loaded via `YamlAdaptor`, which wraps `js-yaml` and preserves comments on write via `yawn-yaml`.
+- Read and write YAML through `YamlAdaptor`, never `js-yaml` directly. Its
+  schema and quoting rule keep js-yaml 3's results (dates, YAML 1.1 numbers,
+  `<<` merges, the exact text of a rewritten `config.yml`), and
+  `__tests__/yaml-adaptor.test.js` pins them. A js-yaml upgrade must pass that
+  file unchanged (TASK-140).
+- `Yaml.ts` uses `yawn-yaml@1.5.0`, which brings its own js-yaml 3 and calls its
+  full-schema `load`. It is a separate dependency path from `YamlAdaptor`.
