@@ -1,9 +1,16 @@
-import { State as state, utils } from '@canopycanopycanopy/b-ber-lib'
+import {
+  type SpineItem,
+  State as state,
+  utils,
+} from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import path from 'path'
 import File from 'vinyl'
 
 const { fileId } = utils
+
+// A spine entry, from `state.spine.flattened` or `state.loi`
+type SpineEntry = Pick<SpineItem, 'fileName' | 'extension' | 'linear'>
 
 class Spine {
   static body() {
@@ -13,12 +20,12 @@ class Spine {
     })
   }
 
-  static item({ fileName, extension, linear }) {
+  static item({ fileName, extension, linear }: SpineEntry) {
     const idref = fileId(path.basename(fileName, extension))
     return `<itemref idref="${idref}_xhtml" linear="${linear ? 'yes' : 'no'}"/>`
   }
 
-  static items(data) {
+  static items(data: SpineEntry[]) {
     return data.reduce((acc, curr) => {
       const { fileName } = curr
 
@@ -40,7 +47,8 @@ class Spine {
 
         if (state.loi.length) {
           return acc.concat(
-            state.loi.reduce(
+            // b-ber-tasks' `loi` task fills `state.loi` with SpineItems
+            (state.loi as SpineItem[]).reduce(
               (acc2, curr2) =>
                 acc2.concat(Spine.item({ ...curr2, linear: true })),
               Spine.item(curr)

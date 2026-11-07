@@ -1,4 +1,4 @@
-import { Html } from '@canopycanopycanopy/b-ber-lib'
+import { type GuideItem, Html } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import path from 'path'
 import File from 'vinyl'
@@ -11,11 +11,19 @@ class Guide {
     })
   }
 
-  static item({ type, title, href }) {
+  static item({
+    type,
+    title,
+    href,
+  }: {
+    type: string
+    title: string
+    href: string
+  }) {
     return `<reference type="${type}" title="${title}" href="${href}"/>`
   }
 
-  static items(data) {
+  static items(data: GuideItem[]) {
     return data.reduce((acc, curr) => {
       if (!curr.type) return acc
       log.info(`guide adding landmark [${curr.fileName}] as [${curr.type}]`)

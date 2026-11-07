@@ -1,6 +1,7 @@
 import { figure, iframe, media, unsupported } from './helpers'
+import type { FigureTemplates } from './types'
 
-const epub = {
+const epub: FigureTemplates = {
   portrait: (data) => figure({ data, ratioName: 'portrait' }),
   landscape: (data) => figure({ data, ratioName: 'landscape' }),
   'portrait-high': (data) => figure({ data, ratioName: 'portrait-high' }),

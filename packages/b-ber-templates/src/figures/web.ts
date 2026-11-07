@@ -1,6 +1,7 @@
 import { figure, iframe, media, vimeo } from './helpers'
+import type { FigureTemplates } from './types'
 
-const web = {
+const web: FigureTemplates = {
   portrait: (data) => figure({ data, ratioName: 'portrait' }),
   landscape: (data) => figure({ data, ratioName: 'landscape' }),
   'portrait-high': (data) => figure({ data, ratioName: 'portrait-high' }),

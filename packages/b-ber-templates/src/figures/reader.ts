@@ -1,6 +1,7 @@
 import { figure, iframe, media, vimeo } from './helpers'
+import type { FigureTemplates } from './types'
 
-const reader = {
+const reader: FigureTemplates = {
   landscape: (data) =>
     figure({ data, ratioName: 'landscape', applyInlineClasses: true }),
   portrait: (data) =>
