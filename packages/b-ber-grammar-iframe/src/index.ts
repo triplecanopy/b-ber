@@ -4,7 +4,14 @@ import {
   INLINE_DIRECTIVE_MARKER,
   INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
 } from '@canopycanopycanopy/b-ber-shapes-directives'
-import { createIframe, createIframeInline, prepare, supported } from './helpers'
+import {
+  createIframe,
+  createIframeInline,
+  type FigureToken,
+  prepare,
+  type RendererReference,
+  supported,
+} from './helpers'
 
 const { createUnsupportedInline } = utils
 
@@ -12,8 +19,8 @@ const MARKER_RE = /^(iframe)/
 const DIRECTIVE_RE = /(iframe(?:-inline)?)(?::([^\s]+)(\s+.*)?)?$/
 
 const render =
-  ({ instance, context }) =>
-  (tokens, index) => {
+  ({ instance, context }: RendererReference) =>
+  (tokens: FigureToken[], index: number): string => {
     const token = tokens[index]
     const marker = token.info.trim().match(DIRECTIVE_RE)
     if (!marker) return ''
@@ -54,10 +61,10 @@ const render =
 export default {
   plugin: figure,
   name: 'iframe',
-  renderer: ({ instance, context }) => ({
+  renderer: ({ instance, context }: RendererReference) => ({
     marker: INLINE_DIRECTIVE_MARKER,
     minMarkers: INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
-    validate: (params) => params.trim().match(MARKER_RE),
+    validate: (params: string) => params.trim().match(MARKER_RE),
     render: render({ instance, context }),
   }),
 }

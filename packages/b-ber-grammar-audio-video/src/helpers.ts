@@ -6,17 +6,21 @@ import mime from 'mime-types'
 import path from 'path'
 // import { getVideoAspectRatio } from '@canopycanopycanopy/b-ber-lib/utils'
 
-export const getMediaType = (type) => {
+// The media collections on `State`, which DIRECTIVE_RE limits `mediaType` to
+export type MediaType = 'audio' | 'video'
+
+export const getMediaType = (type: string): string => {
   const index = type.indexOf('-')
   return index > -1 ? type.substring(0, index) : type
 }
 
-export const isHostedRemotely = (asset) => /^http/.test(asset)
+export const isHostedRemotely = (asset: string): boolean => /^http/.test(asset)
 
-export const isHostedBySupportedThirdParty = (asset) =>
-  asset.match(/(vimeo|youtube)\.com/)
+export const isHostedBySupportedThirdParty = (
+  asset: string
+): RegExpMatchArray | null => asset.match(/(vimeo|youtube)\.com/)
 
-export const validatePosterImage = (_asset, type) => {
+export const validatePosterImage = (_asset: string, type: string): string => {
   const asset = state.src.images(_asset)
 
   if (!fs.existsSync(asset)) {
@@ -26,7 +30,10 @@ export const validatePosterImage = (_asset, type) => {
   return asset
 }
 
-export const validateLocalMediaSource = (asset, mediaType) => {
+export const validateLocalMediaSource = (
+  asset: string,
+  mediaType: MediaType
+): string => {
   const media = [...state[mediaType]].map((file) => toAlias(file))
   if (!asset.length || media.indexOf(asset) < 0) {
     log.error(
@@ -37,7 +44,7 @@ export const validateLocalMediaSource = (asset, mediaType) => {
   return asset
 }
 
-export const createLocalMediaSources = (sources) =>
+export const createLocalMediaSources = (sources: string[]): string =>
   sources.reduce(
     (acc, curr) =>
       acc.concat(
@@ -48,16 +55,22 @@ export const createLocalMediaSources = (sources) =>
     ''
   )
 
-export const createRemoteMediaSource = (sources) =>
+export const createRemoteMediaSource = (sources: string[]): string =>
   `<source src="${sources[0]}" type="${mime.lookup(sources[0])}"/>`
 
-export function getWebOnlyAttributesString() {
+export function getWebOnlyAttributesString(): string {
   return state.build === 'web' || state.build === 'reader'
     ? ' webkit-playsinline="webkit-playsinline" playsinline="playsinline"'
     : ''
 }
 
-export function createMedia({ id, href, poster }) {
+export interface MediaFigureArgs {
+  id: string
+  href: string
+  poster: string
+}
+
+export function createMedia({ id, href, poster }: MediaFigureArgs): string {
   return `
     <div class="figure__small figure__small--landscape">
       <figure id="ref${id}">
@@ -68,6 +81,15 @@ export function createMedia({ id, href, poster }) {
     </div>`
 }
 
+export interface IFrameArgs {
+  commentStart: string
+  commentEnd: string
+  id: string
+  source: string
+  caption: string
+  mediaType: string
+}
+
 export function createIFrame({
   commentStart,
   commentEnd,
@@ -75,7 +97,7 @@ export function createIFrame({
   source,
   caption,
   mediaType,
-}) {
+}: IFrameArgs): string {
   return `
     ${commentStart}
       <section id="${id}">
@@ -87,6 +109,20 @@ export function createIFrame({
           }
       </section>
     ${commentEnd}`
+}
+
+export interface MediaInlineArgs {
+  commentStart: string
+  commentEnd: string
+  mediaType: string
+  aspectRatioClassName: string
+  id: string
+  attrString: string
+  webOnlyAttrString: string
+  sourceElements: string
+  poster: string
+  caption: string
+  controls: string
 }
 
 export function createMediaInline({
@@ -101,7 +137,7 @@ export function createMediaInline({
   poster,
   caption,
   controls,
-}) {
+}: MediaInlineArgs): string {
   return `
     ${commentStart}
       <section class="${mediaType} ${aspectRatioClassName} figure__large figure__large__controls--${controls} figure__inline">
