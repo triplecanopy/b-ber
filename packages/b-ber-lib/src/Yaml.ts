@@ -69,12 +69,16 @@ const typeCheck = (
   if (errors.length) log.error(errors)
 }
 
-// One entry of metadata.yml, per the `metadata` schema above. YAML parses an
-// unquoted date or number in `value` to a Date or number; the schema, and every
-// reader, treat it as a string
-export interface MetadataEntry {
+// One entry of metadata.yml. YAML parses an unquoted date or number in `value`
+// to a Date or number; the `metadata` schema above, and every reader, treat it
+// as a string. A type alias rather than an interface so that it satisfies
+// `ManifestItemProperties.testMeta`'s index signature
+export type MetadataEntry = {
   term: string
   value: string
+  // Each object maps a property name to its value, e.g. `role: aut`
+  refines?: Record<string, string>[]
+  // @deprecated, superseded by `refines`
   term_property?: string
   term_property_value?: string
 }
