@@ -175,9 +175,3 @@ declare module '@canopycanopycanopy/b-ber-templates/figures' {
   function figure(data: Record<string, any>, build: string): string
   export default figure
 }
-
-// Untyped internal packages
-declare module '@canopycanopycanopy/b-ber-resources' {
-  function getAssets(): Promise<Record<string, string>>
-  export default getAssets
-}
