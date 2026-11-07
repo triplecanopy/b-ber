@@ -4,12 +4,25 @@ import File from 'vinyl'
 
 const { fileId } = utils
 
-const getProps = (file) => {
+// A file to list in the manifest, as b-ber-tasks' opf `pathInfoFromFile`
+// describes it
+interface ManifestEntry {
+  absolutePath: string
+  // Path relative to the OPS directory, or the URL of a remote asset
+  opsPath: string
+  name: string
+  remote: boolean
+}
+
+const getProps = (file: ManifestEntry) => {
   const props = ManifestItemProperties.testHTML(file)
   return props && props.length ? `properties="${props.join(' ')}"` : ''
 }
 
-const getMediaType = ({ remote, absolutePath }) =>
+const getMediaType = ({
+  remote,
+  absolutePath,
+}: Pick<ManifestEntry, 'remote' | 'absolutePath'>) =>
   remote ? 'application/octet-stream' : mime.lookup(absolutePath)
 
 class Manifest {
@@ -20,7 +33,7 @@ class Manifest {
     })
   }
 
-  static item(file) {
+  static item(file: ManifestEntry) {
     const id = fileId(file.name)
     const href = encodeURI(file.opsPath)
     const mediaType = getMediaType(file)

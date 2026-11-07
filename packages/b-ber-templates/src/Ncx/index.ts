@@ -2,6 +2,7 @@ import { Html, State as state, utils } from '@canopycanopycanopy/b-ber-lib'
 import find from 'lodash/find'
 import has from 'lodash/has'
 import File from 'vinyl' // eslint-disable-line import/no-unresolved
+import type { TocEntry } from '../types'
 
 const { getTitle } = utils
 
@@ -55,7 +56,7 @@ class Ncx {
     })
   }
 
-  static navPoint(data) {
+  static navPoint(data: TocEntry) {
     return `
       <navLabel>
         <text>${Html.escape(getTitle(data))}</text>
@@ -64,10 +65,10 @@ class Ncx {
     `
   }
 
-  static navPoints(data) {
+  static navPoints(data: TocEntry[]) {
     let index = 0
 
-    function render(nodes) {
+    function render(nodes: TocEntry[] | undefined): string {
       if (!nodes || !nodes.length) return ''
       return nodes.reduce((acc, curr) => {
         if (curr.in_toc === false) return acc
