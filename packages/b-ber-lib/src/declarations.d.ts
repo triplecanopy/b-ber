@@ -2,8 +2,8 @@ declare module 'yawn-yaml/cjs' {
   class YAWN {
     constructor(yaml: string)
     yaml: string
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    json: any
+    // The parsed document. Assigning to it rewrites `yaml`, keeping comments
+    json: unknown
   }
   export = YAWN
 }

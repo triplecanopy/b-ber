@@ -5,12 +5,9 @@ import log from '@canopycanopycanopy/b-ber-logger'
 import fs from 'fs-extra'
 import uniq from 'lodash/uniq'
 import path from 'path'
-import state from './State'
+import state, { type ThemeModule } from './State'
 import { safeWrite } from './utils'
 import YamlAdaptor from './YamlAdaptor'
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type ThemeModule = any
 
 const defaultThemes: Record<string, ThemeModule> = {
   // eslint-disable-next-line @typescript-eslint/no-var-requires

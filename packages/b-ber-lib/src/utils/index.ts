@@ -69,8 +69,7 @@ export const getImageOrientation = (w: number, h: number): string | null => {
 // @issue: https://github.com/triplecanopy/b-ber/issues/208
 //
 // this is provisional, will just cause more confusion in the future
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const getTitle = (page: any): string => {
+export const getTitle = (page: { name: string; title?: string }): string => {
   if (page.name === 'figures-titlepage') return 'Figures'
   const meta = state.spine.frontMatter.get(page.name) as
     | Record<string, unknown>
@@ -90,8 +89,12 @@ export const getBookMetadata = (term: string): string => {
 export const safeWrite = (dest: string, data: string): Promise<void> =>
   fs.existsSync(dest) ? Promise.resolve() : fs.writeFile(dest, data)
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const fail = (_msg: unknown, _err: unknown, yargs: any): void => {
+// `yargs` is the yargs instance whose `fail` handler this is
+export const fail = (
+  _msg: unknown,
+  _err: unknown,
+  yargs: { showHelp(): unknown }
+): void => {
   yargs.showHelp()
   process.exit(0)
 }
@@ -327,12 +330,13 @@ export function createUnsupportedInline({
     ${commentEnd}`
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// `lineNumber` is only interpolated into the message, and is null when
+// markdown-it gives the token no source map
 export function ensureSource(
-  obj: any,
+  obj: { source?: string },
   type: string,
   fileName: string,
-  lineNumber: number
+  lineNumber: number | null
 ): void {
   if (!obj.source) {
     log.error(
@@ -341,8 +345,7 @@ export function ensureSource(
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function ensurePoster(obj: any, type: string): void {
+export function ensurePoster(obj: { poster?: string }, type: string): void {
   if (!obj.poster) return
 
   validatePosterImage(obj.poster, type)
@@ -351,9 +354,8 @@ export function ensurePoster(obj: any, type: string): void {
 }
 
 // Add mediaType to classes
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function ensureSupportedClassNames(
-  obj: any,
+  obj: { classes?: string },
   supported: (build: string) => boolean
 ): void {
   // eslint-disable-next-line no-param-reassign

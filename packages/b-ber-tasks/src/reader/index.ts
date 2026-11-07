@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 /* eslint-disable class-methods-use-this */
 
-import { Url } from '@canopycanopycanopy/b-ber-lib'
+import { type MetadataEntry, Url } from '@canopycanopycanopy/b-ber-lib'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import { generateWebpubManifest } from '@canopycanopycanopy/b-ber-lib/utils'
 import log from '@canopycanopycanopy/b-ber-logger'
@@ -131,7 +131,10 @@ class Reader {
     return Promise.all(promises)
   }
 
-  getBookMetadata(term?: any) {
+  // All of metadata.yml, or the value of one term
+  getBookMetadata(): MetadataEntry[]
+  getBookMetadata(term: string): string
+  getBookMetadata(term?: string): MetadataEntry[] | string {
     if (!term) return state.metadata.json()
 
     const entry = find(state.metadata.json(), { term })

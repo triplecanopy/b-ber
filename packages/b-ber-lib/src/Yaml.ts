@@ -69,9 +69,26 @@ const typeCheck = (
   if (errors.length) log.error(errors)
 }
 
-class Yaml {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  data: InstanceType<typeof YAWN> = { yaml: '', json: () => ({}) } as any
+// One entry of metadata.yml, per the `metadata` schema above. YAML parses an
+// unquoted date or number in `value` to a Date or number; the schema, and every
+// reader, treat it as a string
+export interface MetadataEntry {
+  term: string
+  value: string
+  term_property?: string
+  term_property_value?: string
+}
+
+// `T` is the parsed document's shape, which depends on the schema: an array of
+// MetadataEntry for `metadata`, an object for `config` and `media`.
+// `add`, `remove` and `update` treat the document as an array, so only apply
+// to `metadata`
+class Yaml<T = unknown> {
+  // Stands in for a YAWN instance until `load` replaces it
+  data: InstanceType<typeof YAWN> = {
+    yaml: '',
+    json: () => ({}),
+  } as unknown as InstanceType<typeof YAWN>
   schema = ''
   strict = true
 
@@ -86,33 +103,31 @@ class Yaml {
     this.data = new YAWN(data)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  add = (entry: any): void => {
+  add = (entry: Record<string, unknown>): void => {
     if (this.strict) typeCheck(this.schema, entry)
-    this.data.json = [...this.data.json, entry]
+    this.data.json = [...(this.data.json as unknown[]), entry]
   }
 
   remove = (key: string, value: unknown): void => {
-    this.data.json = this.data.json.filter(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (a: any) => a[key] === value
+    this.data.json = (this.data.json as Record<string, unknown>[]).filter(
+      (a) => a[key] === value
     )
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   update = (
     key: string,
     current: unknown,
-    object: Record<string, any>
+    object: Record<string, unknown>
   ): void => {
-    const entry = find(this.data.json, { [key]: current })
+    const entry = find(this.data.json as Record<string, unknown>[], {
+      [key]: current,
+    })
     this.remove(key, current)
-    this.data.json = [...this.data.json, { ...entry, ...object }]
+    this.data.json = [...(this.data.json as unknown[]), { ...entry, ...object }]
   }
 
   yaml = (): string => this.data.yaml
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  json = (): any => this.data.json
+  json = (): T => this.data.json as T
 }
 
 export default Yaml
