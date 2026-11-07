@@ -231,11 +231,6 @@ declare module '@canopycanopycanopy/b-ber-templates/figures' {
   export default figure
 }
 
-// b-ber-shapes-sequences subpath stub
-declare module '@canopycanopycanopy/b-ber-shapes-sequences/sequences' {
-  export { sequences as default } from '@canopycanopycanopy/b-ber-shapes-sequences'
-}
-
 // Untyped internal packages
 declare module '@canopycanopycanopy/b-ber-resources' {
   function getAssets(): Promise<Record<string, string>>

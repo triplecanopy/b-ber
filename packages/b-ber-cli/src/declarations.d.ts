@@ -18,16 +18,6 @@ declare module '@canopycanopycanopy/b-ber-lib/Theme' {
   export default Theme
 }
 
-declare module '@canopycanopycanopy/b-ber-shapes-sequences/create-build-sequence' {
-  const createBuildSequence: (...args: any[]) => any
-  export default createBuildSequence
-}
-
-declare module '@canopycanopycanopy/b-ber-shapes-sequences/sequences' {
-  const sequences: Record<string, any[]>
-  export default sequences
-}
-
 declare module '@canopycanopycanopy/b-ber-templates/Project' {
   const Project: any
   export default Project
