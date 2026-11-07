@@ -1,6 +1,7 @@
 import util from 'util'
+import type { Logger } from './logger'
 
-export function info(this: any, ...args: unknown[]): void {
+export function info(this: Logger, ...args: unknown[]): void {
   if (this.logLevel < 4) return
 
   const message = this.decorate(this.composeMessage(args))

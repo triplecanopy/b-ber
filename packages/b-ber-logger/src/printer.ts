@@ -1,7 +1,8 @@
 import util from 'util'
+import type { Logger } from './logger'
 
 function printNotices(
-  this: any,
+  this: Logger,
   type: 'warnings' | 'errors',
   task = 'b-ber'
 ): void {
@@ -23,10 +24,10 @@ function printNotices(
   if (this.logLevel > 2) process.stdout.write(message)
 }
 
-export function printWarnings(this: any, task?: string): void {
+export function printWarnings(this: Logger, task?: string): void {
   printNotices.call(this, 'warnings', task)
 }
 
-export function printErrors(this: any, task?: string): void {
+export function printErrors(this: Logger, task?: string): void {
   printNotices.call(this, 'errors', task)
 }

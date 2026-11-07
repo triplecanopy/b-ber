@@ -1,6 +1,8 @@
 import util from 'util'
+import type { Logger } from './logger'
+import type { SummaryData } from './summary'
 
-export function bind(this: any): void {
+export function bind(this: Logger): void {
   this.on('begin', ({ task }: { task: string }) => {
     this.task = task
     this.taskWarnings = 0
@@ -50,7 +52,7 @@ export function bind(this: any): void {
     }
   )
 
-  this.on('done', (data: unknown) => {
+  this.on('done', (data: SummaryData) => {
     if (this.logLevel < 1) return
 
     const message = util.format.call(
