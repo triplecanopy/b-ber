@@ -27,7 +27,6 @@ yargs handler: it validates and normalises CLI flags (including an optional
 | `src/commands/deploy.ts`    | `bber deploy` — uploads builds to Amazon S3                       |
 | `src/commands/opf.ts`       | `bber opf` — generates the OPF package document                   |
 | `src/lib/config-options.ts` | Shared yargs option definitions and config-file parser            |
-| `src/declarations.d.ts`     | `declare module` stubs for unresolvable subpath imports           |
 | `__tests__/commands/`       | Jest unit tests for each command                                  |
 | `__stubs__/`                | Minimal stub modules for Jest `moduleNameMapper`                  |
 

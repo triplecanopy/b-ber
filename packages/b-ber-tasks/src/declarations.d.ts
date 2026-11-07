@@ -3,7 +3,7 @@ declare module 'layouts' {
 
   function renderLayouts(
     file: VinylFile,
-    layouts: Record<string, string>
+    layouts: Record<string, VinylFile>
   ): VinylFile
   export = renderLayouts
 }
@@ -78,100 +78,4 @@ declare module 'autoprefixer' {
   }
   function autoprefixer(options?: AutoprefixerOptions): AcceptedPlugin
   export = autoprefixer
-}
-
-// b-ber-templates subpath stubs — inline declarations so BufferFile return
-// types don't conflict with Template.render(string, string) call sites
-declare module '@canopycanopycanopy/b-ber-templates/Xhtml' {
-  class Xhtml {
-    static head(): any
-    static body(): any
-    static tail(): any
-    static cover(opts: {
-      width?: number
-      height?: number
-      href: string
-    }): string
-    static stylesheet(inline?: boolean): any
-    static javascript(inline?: boolean): any
-    static jsonLD(): any
-    static loi(): string
-  }
-  export default Xhtml
-}
-
-declare module '@canopycanopycanopy/b-ber-templates/Toc' {
-  class Toc {
-    static body(): any
-    static item(data: any): string
-    static items(data: any): string
-  }
-  export default Toc
-}
-
-declare module '@canopycanopycanopy/b-ber-templates/Ncx' {
-  class Ncx {
-    static head(): string
-    static title(): string
-    static author(): string
-    static document(): any
-    static navPoint(data: any): string
-    static navPoints(data: any): any
-  }
-  export default Ncx
-}
-
-declare module '@canopycanopycanopy/b-ber-templates/Xml' {
-  export { Xml as default } from '@canopycanopycanopy/b-ber-templates'
-}
-
-declare module '@canopycanopycanopy/b-ber-templates/Project' {
-  export { Project as default } from '@canopycanopycanopy/b-ber-templates'
-}
-
-declare module '@canopycanopycanopy/b-ber-templates/Opf/Metadata' {
-  class Metadata {
-    static uid(): string
-    static body(): any
-    static meta(data: any): string
-  }
-  export default Metadata
-}
-
-declare module '@canopycanopycanopy/b-ber-templates/Opf/Manifest' {
-  class Manifest {
-    static body(): any
-    static item(file: any): string
-  }
-  export default Manifest
-}
-
-declare module '@canopycanopycanopy/b-ber-templates/Opf/Pkg' {
-  class Pkg {
-    static body(): any
-  }
-  export default Pkg
-}
-
-declare module '@canopycanopycanopy/b-ber-templates/Opf/Spine' {
-  class Spine {
-    static body(): any
-    static item(data: any): string
-    static items(data: any): any
-  }
-  export default Spine
-}
-
-declare module '@canopycanopycanopy/b-ber-templates/Opf/Guide' {
-  class Guide {
-    static body(): any
-    static item(data: any): string
-    static items(data: any): any
-  }
-  export default Guide
-}
-
-declare module '@canopycanopycanopy/b-ber-templates/figures' {
-  function figure(data: Record<string, any>, build: string): string
-  export default figure
 }
