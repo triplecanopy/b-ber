@@ -32,7 +32,8 @@ class Reader {
     this.readerAppPath = null
 
     // eslint-disable-next-line no-constructor-return
-    // @ts-expect-error constructor returns a Promise intentionally
+    // @ts-expect-error The constructor returns the task's Promise, so `new
+    // Reader()` is not a Reader. `main` below types it as what it is
     return (
       this.createOutputDirs()
         .then(() => this.ensureReaderModuleExists())
@@ -290,6 +291,7 @@ class Reader {
   }
 }
 
-const main = () => new Reader()
+// The constructor returns the task's Promise (see above)
+const main = (): Promise<void> => new Reader() as unknown as Promise<void>
 
 export default main
