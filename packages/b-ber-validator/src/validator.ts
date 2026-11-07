@@ -5,7 +5,6 @@ import {
   INLINE_DIRECTIVES,
   MISC_DIRECTIVES,
 } from '@canopycanopycanopy/b-ber-shapes-directives'
-import { Parser } from 'b-ber-validator'
 import { close } from './combinators/close'
 import { constrained } from './combinators/constrained'
 import { eol } from './combinators/eol'
@@ -21,6 +20,7 @@ import { required } from './combinators/required'
 import { sequence } from './combinators/sequence'
 import { string } from './combinators/string'
 import { flat } from './lib/flat'
+import type { Parser } from './types'
 
 const space = string(' ', 'Space')
 const spaces = many(space)

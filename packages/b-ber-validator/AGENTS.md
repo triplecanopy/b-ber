@@ -14,7 +14,7 @@
 | `src/colors.ts`    | ANSI colour constants used by `report`                                                                                                                           |
 | `src/combinators/` | Parser-combinator primitives: `string`, `regex`, `sequence`, `oneOf`, `many`, `optional`, `required`, `map`, `not`, `lazy`, `close`, `constrained`, `eol`, `eos` |
 | `src/lib/flat.ts`  | Utility to flatten nested parser result arrays                                                                                                                   |
-| `src/typings/`     | TypeScript type declarations                                                                                                                                     |
+| `src/types.ts`     | Parser types (`Parser`, `Context`, `Result`, …), re-exported from `src/index.ts`                                                                                 |
 
 ## Dev Commands
 

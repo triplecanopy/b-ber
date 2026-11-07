@@ -1,5 +1,5 @@
-import { Context, Parser, Success } from 'b-ber-validator'
 import { success } from '../lib/success'
+import type { Context, Parser, Success } from '../types'
 
 // Convenience method that will map a Success to callback, to let us do
 // common things like build AST nodes from input strings.

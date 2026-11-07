@@ -1,5 +1,5 @@
-import { Failure } from 'b-ber-validator'
 import colors from './colors'
+import type { Failure } from './types'
 
 export default function report(name: string, res: Failure) {
   console.log(colors.reset, '')

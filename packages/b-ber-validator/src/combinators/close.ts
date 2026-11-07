@@ -1,6 +1,6 @@
-import { Context, Parser, Success } from 'b-ber-validator'
 import { failure } from '../lib/failure'
 import { success } from '../lib/success'
+import type { Context, Parser, Success } from '../types'
 
 export const close =
   (parser: Parser<any>, matchIndex: number) => (ctx: Context) => {

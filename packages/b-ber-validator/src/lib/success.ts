@@ -1,5 +1,5 @@
-import { Context } from 'b-ber-validator'
+import type { Context, Success } from '../types'
 
-export function success(ctx: Context, value: any) {
+export function success(ctx: Context, value: any): Success<any> {
   return { success: true, value, ctx }
 }

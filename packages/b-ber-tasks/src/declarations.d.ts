@@ -181,19 +181,3 @@ declare module '@canopycanopycanopy/b-ber-resources' {
   function getAssets(): Promise<Record<string, string>>
   export default getAssets
 }
-
-declare module '@canopycanopycanopy/b-ber-validator' {
-  interface ValidatorInput {
-    text: string
-    index: number
-  }
-  interface ValidatorResult {
-    success: boolean
-    [key: string]: unknown
-  }
-  function validator(input: ValidatorInput): ValidatorResult
-  function report(filename: string, result: ValidatorResult): void
-
-  export { report }
-  export default validator
-}

@@ -1,5 +1,9 @@
-import { Context } from 'b-ber-validator'
+import type { Context, Failure } from '../types'
 
-export function failure(ctx: Context, expected: string, fatal = false) {
+export function failure(
+  ctx: Context,
+  expected: string,
+  fatal = false
+): Failure {
   return { success: false, expected, ctx, fatal }
 }
