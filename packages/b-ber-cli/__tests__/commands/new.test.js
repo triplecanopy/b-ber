@@ -4,6 +4,11 @@ jest.mock('@canopycanopycanopy/b-ber-tasks', () => ({
   _new: jest.fn(),
 }))
 
+// Without this the real State loads, and whether it initialises a project in
+// the working directory (calling process.exit when it finds none) depends on
+// process.argv: it skips in a Jest worker but not under --runInBand.
+jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({}))
+
 jest.mock('@canopycanopycanopy/b-ber-lib/utils', () => ({
   fail: jest.fn(),
   ensure: jest.fn(),

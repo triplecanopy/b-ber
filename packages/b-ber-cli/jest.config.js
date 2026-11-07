@@ -3,6 +3,8 @@ module.exports = {
   verbose: false,
   setupFiles: ['./jest.setup.js'],
   setupFilesAfterEnv: ['jest-extended/all'],
+  // Matches the root config, so __tests__/helpers/ is not run as a suite.
+  testMatch: ['**/__tests__/**/*.test.{js,ts}'],
   testEnvironmentOptions: { url: 'http://localhost/' },
   transform: { '^.+\\.[jt]sx?$': '@swc/jest' },
   moduleNameMapper: {
