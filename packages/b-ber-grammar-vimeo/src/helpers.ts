@@ -12,18 +12,20 @@ export const bBerAttributes = {
   aspectratio: true,
 }
 
-const ensureBoolean = (val) => val === 'yes'
+const ensureBoolean = (val: string): boolean => val === 'yes'
 
-const ensureMatch = (name, re) => (val) => {
-  if (!re.test(val)) {
-    let message = `Invalid Vimeo attribute. [${name}] must match [${re}]`
-    message +=
-      'See the Vimeo Player Parameters documentation for more information https://vimeo.zendesk.com/hc/en-us/articles/360001494447-Using-Player-Parameters'
-    log.error(message)
+const ensureMatch =
+  (name: string, re: RegExp) =>
+  (val: string): string => {
+    if (!re.test(val)) {
+      let message = `Invalid Vimeo attribute. [${name}] must match [${re}]`
+      message +=
+        'See the Vimeo Player Parameters documentation for more information https://vimeo.zendesk.com/hc/en-us/articles/360001494447-Using-Player-Parameters'
+      log.error(message)
+    }
+
+    return val
   }
-
-  return val
-}
 
 export const vimeoAttributesTransformer = {
   autopause: ensureBoolean,
@@ -46,18 +48,26 @@ export const vimeoAttributesTransformer = {
   transparent: ensureBoolean,
 }
 
-export const transformAttributes = (obj, transformer) => {
-  const nextObj = Object.entries(obj).reduce((acc, [key, val]) => {
-    if (isUndefined(transformer[key])) return acc
+type AttributeTransformer = (val: string) => string | boolean
 
-    acc[key] = transformer[key](val)
-    return acc
-  }, {})
+export const transformAttributes = (
+  obj: Record<string, string>,
+  transformer: Record<string, AttributeTransformer>
+): Record<string, string | boolean> => {
+  const nextObj = Object.entries(obj).reduce<Record<string, string | boolean>>(
+    (acc, [key, val]) => {
+      if (isUndefined(transformer[key])) return acc
+
+      acc[key] = transformer[key](val)
+      return acc
+    },
+    {}
+  )
 
   return nextObj
 }
 
-export const validatePosterImage = (asset, type) => {
+export const validatePosterImage = (asset: string, type: string): string => {
   const assetPath = state.src.images(asset)
 
   if (!fs.existsSync(assetPath)) {
@@ -67,18 +77,24 @@ export const validatePosterImage = (asset, type) => {
   return asset
 }
 
-export const renderPosterImage = (poster) =>
+export const renderPosterImage = (poster: string): string =>
   poster ? `<img src="${poster}" alt="Poster Image"/>` : ''
 
-export const renderCaption = (caption, mediaType) =>
+export const renderCaption = (caption: string, mediaType: string): string =>
   caption ? `<p class="caption caption__${mediaType}">${caption}</p>` : ''
 
-export const getMediaType = (type) => {
+export const getMediaType = (type: string): string => {
   const index = type.indexOf('-')
   return index > -1 ? type.substring(0, index) : type
 }
 
-export function createVimeo({ id, href, poster }) {
+export interface VimeoFigureArgs {
+  id: string
+  href: string
+  poster: string
+}
+
+export function createVimeo({ id, href, poster }: VimeoFigureArgs): string {
   return `
     <div class="figure__small figure__small--landscape">
       <figure id="ref${id}">
@@ -87,6 +103,20 @@ export function createVimeo({ id, href, poster }) {
         </a>
       </figure>
     </div>`
+}
+
+export interface VimeoInlineArgs {
+  id: string
+  commentStart: string
+  commentEnd: string
+  mediaType: string
+  attrString: string
+  attrQuery: string
+  aspectRatio: string
+  aspectRatioClassName: string
+  source: string
+  poster: string
+  caption: string
 }
 
 export function createVimeoInline({
@@ -101,7 +131,7 @@ export function createVimeoInline({
   source,
   poster,
   caption,
-}) {
+}: VimeoInlineArgs): string {
   return `
     ${commentStart}
       <section class="${mediaType} ${aspectRatioClassName} figure__large figure__inline">
@@ -123,6 +153,15 @@ export function createVimeoInline({
     ${commentEnd}`
 }
 
+export interface UnsupportedInlineArgs {
+  id: string
+  commentStart: string
+  commentEnd: string
+  attrString: string
+  mediaType: string
+  poster: string
+}
+
 // Only render unsupported HTML for inline embeds since the unsupported figure
 // in the LOI is handled by b-ber-templates. Not great UI to have to click to
 // the LOI to see that something is unsupported, but vimeo directives should
@@ -134,7 +173,7 @@ export function createUnsupportedInline({
   attrString,
   mediaType,
   poster,
-}) {
+}: UnsupportedInlineArgs): string {
   return `
     ${commentStart}
       <section class="${mediaType} figure__large figure__inline">
