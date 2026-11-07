@@ -1,13 +1,33 @@
 import { State as state, utils } from '@canopycanopycanopy/b-ber-lib'
 import uniq from 'lodash/uniq'
+import type {
+  FigureTemplateData,
+  IframeFigureData,
+  ImageFigureData,
+  MediaFigureData,
+  RatioName,
+  UnsupportedFigureData,
+  VimeoFigureData,
+} from './types'
 
 const { getImageDimensions, getImageOrientation } = utils
 
 const FULLBLEED_CLASS_NAME = 'figure__fullbleed'
 
-const getClassNamesArray = ({ classes = '' }) => classes.split(' ')
+// What deciding a figure's wrapper class names reads
+interface ClassNameData {
+  inline?: boolean
+  applyInlineClasses?: boolean
+  classes?: string
+}
 
-const getFigureInlineClasses = (data, ratioName) =>
+const getClassNamesArray = ({ classes = '' }: { classes?: string }) =>
+  classes.split(' ')
+
+const getFigureInlineClasses = (
+  data: ClassNameData,
+  ratioName: string | null
+) =>
   data.inline || data.applyInlineClasses
     ? uniq(
         [
@@ -20,7 +40,7 @@ const getFigureInlineClasses = (data, ratioName) =>
         .join(' ')
     : `figure__large figure__large--${ratioName}`
 
-const getMediaInlineClasses = (data) =>
+const getMediaInlineClasses = (data: ClassNameData) =>
   data.inline || data.applyInlineClasses
     ? uniq(
         [
@@ -33,16 +53,19 @@ const getMediaInlineClasses = (data) =>
         .join(' ')
     : 'figure__large figure__large--media figure__large--square'
 
-const getSectionOpen = ({ inline }) =>
+const getSectionOpen = ({ inline }: { inline?: boolean }) =>
   inline ? '' : '<section epub:type="loi" class="chapter figures">'
 
-const getImageClassName = (data, ratioName) =>
+const getImageClassName = <R extends string | null>(
+  data: { classes?: string },
+  ratioName: R
+): 'fullbleed' | R =>
   getClassNamesArray(data).includes(FULLBLEED_CLASS_NAME)
     ? 'fullbleed'
     : ratioName
 
 // For devices that support wrapping images with anchor tags (all but Mobi)
-const linkedImage = (data) =>
+const linkedImage = (data: FigureTemplateData) =>
   `
     %LINK_OPEN%
       <img class="%IMAGE_CLASS_NAME%" alt="%IMAGE_ALT%" src="../images/%IMAGE_SRC%"/>
@@ -56,13 +79,16 @@ const linkedImage = (data) =>
       data.inline ? '' : `<a href="${data.ref}.xhtml#ref${data.id}">`
     )
     .replace(/%LINK_CLOSE%/, data.inline ? '' : '</a>')
-    .replace(/%IMAGE_CLASS_NAME%/, data.imageClassName)
+    // An unsupported embed's poster that has no orientation (see
+    // `FigureTemplateData`) renders `class="null"`
+    // biome-ignore lint/suspicious/noExplicitAny: TASK-119 pass 1
+    .replace(/%IMAGE_CLASS_NAME%/, data.imageClassName as any)
     .replace(/%IMAGE_ALT%/, data.alt)
     .replace(/%IMAGE_SRC%/, data.source)
     .replace(/%CAPTION_CONTENT%/, data.caption)
 
 // Inverse of above. the image is wrapped in a span and a back link is added
-const unLinkedImage = (data) =>
+const unLinkedImage = (data: FigureTemplateData) =>
   `
     <span>
       <img class="portrait" alt="%IMAGE_ALT%" src="../images/%IMAGE_SRC%"/>
@@ -88,7 +114,7 @@ const unLinkedImage = (data) =>
       data.inline ? '' : `<a href="${data.ref}.xhtml#ref${data.id}">Return</a>`
     )
 
-export const figureTemplate = (data) =>
+export const figureTemplate = (data: FigureTemplateData) =>
   `
     %SECTION_OPEN%
       <div class="%FIGURE_CLASS_NAMES%">
@@ -109,7 +135,7 @@ export const figureTemplate = (data) =>
     )
     .replace(/%SECTION_CLOSE%/, data.inline ? '' : '</section>')
 
-export const media = (data) =>
+export const media = (data: MediaFigureData) =>
   `
     %SECTION_OPEN%
       <div class="%FIGURE_CLASS_NAMES%">
@@ -149,7 +175,7 @@ export const media = (data) =>
     .replace(/%REF%/g, data.ref)
     .replace(/%SECTION_CLOSE%/, data.inline ? '' : '</section>')
 
-export const iframe = (data) =>
+export const iframe = (data: IframeFigureData) =>
   `
     %SECTION_OPEN%
       <div class="figure__large figure__large--iframe">
@@ -185,13 +211,17 @@ export const iframe = (data) =>
     .replace(/%ID%/g, data.id)
     .replace(/%SRC%/g, data.source)
     .replace(/%TITLE%/g, data.title)
-    .replace(/%WIDTH%/g, data.width)
-    .replace(/%HEIGHT%/g, data.height)
+    // `replace` converts a numeric width or height to a string, but its
+    // typings only accept a string
+    // biome-ignore lint/suspicious/noExplicitAny: TASK-119 pass 1
+    .replace(/%WIDTH%/g, data.width as any)
+    // biome-ignore lint/suspicious/noExplicitAny: TASK-119 pass 1
+    .replace(/%HEIGHT%/g, data.height as any)
     .replace(/%CAPTION%/g, data.caption ? `${data.caption}<br/>` : '')
     .replace(/%REF%/g, data.ref)
     .replace(/%SECTION_CLOSE%/g, data.inline ? '' : '</section>')
 
-export const vimeo = (data) =>
+export const vimeo = (data: VimeoFigureData) =>
   `
     %SECTION_OPEN%
       <div class="figure__large figure__large--vimeo figure__large--%ASPECT_RATIO%">
@@ -253,6 +283,11 @@ export const figure = ({
   ratioName,
   applyInlineClasses = false,
   linkImages = true,
+}: {
+  data: ImageFigureData
+  ratioName: RatioName
+  applyInlineClasses?: boolean
+  linkImages?: boolean
 }) =>
   figureTemplate({
     ...data,
@@ -266,6 +301,10 @@ export const unsupported = ({
   data,
   applyInlineClasses = false,
   linkImages = true,
+}: {
+  data: UnsupportedFigureData
+  applyInlineClasses?: boolean
+  linkImages?: boolean
 }) => {
   const source = data.poster.slice(data.poster.lastIndexOf('/') + 1)
   const { width, height } = getImageDimensions(state.src.images(source))
