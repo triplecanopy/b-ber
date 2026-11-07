@@ -20,11 +20,20 @@ const MARKER_OPEN_RE = new RegExp(
 
 const MARKER_CLOSE_RE = /(exit)(?::([^\s]+))?/
 
+// What `createRenderer` stores in `state.cursor` for each open directive
+type CursorEntry = { id: string; type: string }
+type Context = { fileName?: string }
+
+// The fields of markdown-it's `Token` this renderer reads. Declared locally
+// because this package does not depend on markdown-it, and importing its types
+// makes tsdown inline all of them into the published .d.ts
+type Token = { info: string; nesting: number; map: [number, number] | null }
+
 // `context` must be available in this `render` method and is passed
 // into `createRenderer` below. Default for `context` is set for use
 // during tests
 
-function isGallery(directive) {
+function isGallery(directive: CursorEntry | undefined) {
   return (
     directive &&
     directive.type === 'gallery' &&
@@ -32,7 +41,7 @@ function isGallery(directive) {
   )
 }
 
-function isSpread(directive) {
+function isSpread(directive: CursorEntry | undefined) {
   return (
     directive &&
     directive.type === 'spread' &&
@@ -40,13 +49,15 @@ function isSpread(directive) {
   )
 }
 
-function handleExitDirective(token) {
+function handleExitDirective(token: RegExpMatchArray) {
   const [, type, id] = token
 
-  log.debug(`exit directive [${id}]`)
+  // b-ber-logger types `debug` as nullary, but every caller passes a message
+  // biome-ignore lint/suspicious/noExplicitAny: TASK-119 pass 1
+  ;(log.debug as any)(`exit directive [${id}]`)
 
   const comment = Html.comment(`END: section:${type}#${htmlId(id)}`)
-  const directive = find(state.cursor, { id })
+  const directive = find(state.cursor, { id }) as CursorEntry | undefined
 
   state.remove('cursor', { id })
 
@@ -75,12 +86,17 @@ function handleExitDirective(token) {
   return `</section>${comment}`
 }
 
-function openElement(token, fileName, lineNumber) {
+function openElement(
+  token: RegExpMatchArray,
+  fileName: string,
+  lineNumber: number | null
+) {
   // Destructure the attributes from matches, omitting `matches[0]` since
   // we're only interested in the captures
   const [, type, id, attr] = token
 
-  log.debug(`open directive [${id}]`)
+  // biome-ignore lint/suspicious/noExplicitAny: TASK-119 pass 1
+  ;(log.debug as any)(`open directive [${id}]`)
 
   const comment = Html.comment(
     `START: section:${type}#${htmlId(id)}; ${fileName}:${lineNumber}`
@@ -90,7 +106,7 @@ function openElement(token, fileName, lineNumber) {
   return `${comment}<section id="${htmlId(id)}"${attrs}>`
 }
 
-function closeElement(marker) {
+function closeElement(marker: string) {
   // tokens `nesting` prop is -1. we should be closing the html element
   // here, but probably have done so above since we're treating `exit`
   // directives as openers. check to see if the element has in fact been
@@ -113,8 +129,8 @@ function closeElement(marker) {
 }
 
 const render =
-  ({ context = {} }) =>
-  (tokens, index) => {
+  ({ context = {} }: { context?: Context }) =>
+  (tokens: Token[], index: number) => {
     const token = tokens[index]
     const lineNumber = token.map ? token.map[0] : null
     const fileName = `_markdown/${context.fileName}.md`
@@ -128,13 +144,15 @@ const render =
 
     return tokenClose
       ? handleExitDirective(tokenClose)
-      : openElement(tokenOpen, fileName, lineNumber)
+      : // `validateOpen` has already matched this marker against
+        // MARKER_OPEN_RE, so a non-exit token always matches here
+        openElement(tokenOpen!, fileName, lineNumber)
   }
 
 export default {
   plugin,
   name: 'section',
-  renderer: (args) =>
+  renderer: (args: { context?: Context }) =>
     createRenderer({
       ...args,
       markerOpen: MARKER_OPEN_RE,
