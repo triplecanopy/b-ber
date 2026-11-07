@@ -12,11 +12,18 @@ import plugin from '@canopycanopycanopy/b-ber-parser-gallery'
 const MARKER_OPEN_RE = /^(spread)(?::([^\s]+)(\s.*)?)?$/
 const MARKER_CLOSE_RE = /^(exit)(?::([^\s]+))?/
 
+type Context = { fileName?: string }
+
+// The fields of markdown-it's `Token` this renderer reads. Declared locally
+// because this package does not depend on markdown-it, and importing its types
+// makes tsdown inline all of them into the published .d.ts
+type Token = { info: string; nesting: number; map: [number, number] | null }
+
 // The `render` function that gets passed into our `createRenderer` is
 // responsible for the HTML output.
 const render =
-  ({ context = {} }) =>
-  (tokens, index) => {
+  ({ context = {} }: { context?: Context }) =>
+  (tokens: Token[], index: number) => {
     const token = tokens[index]
     const info = token.info.trim().match(MARKER_OPEN_RE)
 
@@ -59,7 +66,7 @@ const render =
 export default {
   plugin,
   name: 'spread',
-  renderer: (args) =>
+  renderer: (args: { context?: Context }) =>
     createRenderer({
       ...args,
       markerOpen: MARKER_OPEN_RE,
