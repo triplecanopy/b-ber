@@ -1,6 +1,7 @@
 # TASK-144: Upgrade markdown-it 8 → 15 (CVE-2022-21670 and four others)
 
 **Epic:** Dependency health
+**GitHub Issue:** #718 — https://github.com/triplecanopy/b-ber/issues/718
 **Scope:** markdown-renderer
 
 ## Description
@@ -150,7 +151,7 @@ It was built as `epub`, `web`, `reader`, `xml`, `sample`, `mobi` and `pdf`, and
 
 - **All 273 output files are identical** once per-build randomness is
   normalized. That includes the EPUBCheck report: the same 7 errors on both,
-  6 from the fixture's iframe and 1 from the inline-footnote id below.
+  6 from the fixture's iframe and 1 from the footnote links below.
 - Two 8.4.2 runs were compared first to set the noise floor. The only
   run-to-run differences are the `xml` build log (it names the work directory)
   and the reader's `manifest.json` (see Findings). Both vary the same way
@@ -189,16 +190,20 @@ fail on 8.4.2, as they should.
 
 None of these come from the upgrade; each reproduces on 8.4.2.
 
-- **The `epigraph` directive is never registered.**
+- **The standalone `epigraph` directive is never registered** (TASK-145).
   `b-ber-grammar-epigraph` exists, but `b-ber-markdown-renderer` does not
-  `use` it, so `::: epigraph …` renders as a literal paragraph. The kitchen
-  sink's epigraph comes out as `<p>::: epigraph caption &quot;…</p>`. The
-  plugin would also throw if registered: it destructures
-  `instance.escapeHtml`, which no markdown-it version has (it is
-  `md.utils.escapeHtml`).
-- **Inline footnotes get the id `fn-undefined-<hash>`.** `^[…]` notes have no
-  label, and `Counter#setRef` interpolates it anyway. EPUBCheck reports the
-  resulting broken fragment (RSC-012) when a chapter has an inline note.
+  `use` it, so `::: epigraph caption "…"` renders as a literal paragraph. The
+  kitchen sink's epigraph comes out as `<p>::: epigraph caption &quot;…</p>`.
+  The plugin would also throw if registered: it destructures
+  `instance.escapeHtml`, which no markdown-it version has. Its tests mock that
+  shape, which hides the bug. The block form `::: epigraph:id … ::: exit:id`
+  goes through `grammar-section` and is not affected.
+- **A footnote referenced twice breaks every later footnote link in the
+  chapter** (TASK-146). `parser-footnotes` pairs refs with notes by queue order,
+  one ref per note. A second `[^label]` takes the next note's id, every later
+  ref shifts by one, and the last links to `notes.xhtml#fnundefined`. That
+  link is the RSC-012 error in the EPUBCheck report. Inline `^[…]` notes also
+  get `undefined` in their ids, since they have no label.
 - **The kitchen sink's `mobi` build fails in render:** "Could not read image
   dimensions _project/_images: EISDIR". An image path resolves to the images
   directory itself, apparently a media directive's `mobi` fallback with no
