@@ -1,6 +1,6 @@
-import { Context } from 'b-ber-validator'
 import { failure } from '../lib/failure'
 import { success } from '../lib/success'
+import type { Context } from '../types'
 
 // eol function doesn't advance index
 

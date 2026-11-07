@@ -1,4 +1,4 @@
-import { Context, Parser } from 'b-ber-validator'
+import type { Context, Parser } from '../types'
 
 // Returns fatal error to halt parser in case of failure
 export const required = (parser: Parser<any>) => {

@@ -86,7 +86,7 @@ Measured with the same commands as above:
 
 | Measure | Now | Done |
 | ------- | --- | ---- |
-| Internal `declare module '@canopycanopycanopy/…'` stubs | 27 | **0** |
+| Internal `declare module '@canopycanopycanopy/…'` stubs | 27 → **0** (2026-11-07) | **0** |
 | `TASK-119 pass 1` markers | (pass 1 not started) | **0** |
 | Explicit `any` in exported signatures | not yet measured | **0**, or each one justified in a comment |
 | Explicit `any` overall | 359 | tracked down; target agreed once 1–3 are done |
@@ -96,17 +96,78 @@ Measured with the same commands as above:
 
 - [ ] Measure explicit `any` in **exported** signatures specifically (the baseline
       for the definition of done)
-- [ ] `b-ber-shapes-sequences`: declarations for its public subpaths; delete its
+- [x] `b-ber-shapes-sequences`: declarations for its public subpaths; delete its
       3 stubs
-- [ ] `b-ber-lib`: declarations for its public subpaths (`State` first); delete its
+- [x] `b-ber-lib`: declarations for its public subpaths (`State` first); delete its
       stubs; fix the call sites the compiler reports
-- [ ] `b-ber-templates`: same; delete its 12 stubs
-- [ ] Confirm `b-ber-tasks/src/declarations.d.ts` and
-      `b-ber-cli/src/declarations.d.ts` contain no internal stubs
-- [ ] TASK-119 pass 2: resolve every `TASK-119 pass 1` marker
+- [x] `b-ber-templates`: same; delete its 12 stubs
+- [x] Confirm `b-ber-tasks/src/declarations.d.ts` and
+      `b-ber-cli/src/declarations.d.ts` contain no internal stubs (cli's file is
+      gone; it held nothing else)
+- [ ] TASK-119 pass 2: resolve every `TASK-119 pass 1` marker (19 left, down from
+      the ~320 a pure-`any` pass would have left; see TASK-119's Result)
 - [ ] Explicit `any` reduction, exported signatures first, by package
 - [ ] Third-party stubs → `@types/*` or minimal declarations
 - [ ] Re-measure and record against the definition-of-done table
+
+## Step 1 result (2026-11-07): internal stubs 27 → 0
+
+`b-ber-tasks` and `b-ber-cli` now compile against the real types of `b-ber-lib`,
+`b-ber-shapes-sequences`, `b-ber-templates`, `b-ber-resources` and
+`b-ber-validator`. A probe of deliberate misuse (`state.nope()`, a bogus `ensure`
+argument, `sequences` assigned to `number`) fails to compile where it used to pass.
+No `any` was needed to get there.
+
+### Convention: a `.d.ts` beside the JS each public subpath resolves to
+
+TypeScript 6 resolves with **`Bundler`** here (no `moduleResolution` is set), so
+`exports` maps are honoured, and TypeScript finds a `.d.ts` next to whatever `.js`
+a subpath resolves to.
+
+- **b-ber-lib, b-ber-shapes-sequences:** a hand-written `X.d.ts` beside each root
+  CJS shim `X.js` (`import { X } from './dist/index.js'; export = X`), listed in
+  `files`. `export =` models the shim's `module.exports =`, so
+  `import state from '…/State'` is typed as what it really is.
+- **b-ber-templates:** no change needed. Its `exports` map already points at
+  `dist/<subpath>.js`, and tsdown emits a `.d.ts` beside each.
+- **Not an `exports` map for lib and shapes-sequences**, deliberately. Adding one
+  would close off deep imports for outside users of the published packages, which
+  is a breaking change and belongs to TASK-090. If TASK-090 adds one, the `.d.ts`
+  files still sit beside its targets, so nothing here needs redoing. tsdown does
+  not bundle our own packages into tasks or cli (they stay `require()` calls), so
+  runtime resolution is untouched.
+
+### Provider changes
+
+- **b-ber-validator** built with `tsc` but emitted no declarations, and its types
+  lived in an ambient `declare module` that emitted `.d.ts` could not reference.
+  They moved to `src/types.ts`. `Result` is now a real union (`success: true` |
+  `success: false`), as its comments already said.
+- **`Template.render`'s `template` is a vinyl `File`, not a `string`.** 17 call sites
+  passed a `BufferFile`, and `layouts` throws without a buffer `.contents`, so the
+  annotation was wrong and the call sites right. The old stubs existed to paper
+  over exactly this.
+- **`State.toc` is `SpineItem[]` and `State.guide` is `GuideItem[]`** (were
+  `unknown[]`). Needed once TASK-119's typed Toc/Ncx/Guide templates meet the real
+  `State`.
+- cli: `theme` narrows `command` to the builder's choices and awaits the handler,
+  `config-options` casts `YamlAdaptor.parse`'s `unknown`, and `build.ts` stops
+  passing an argument `Project.stylesheets()` never took.
+- tasks: the third-party `layouts` stub's value type corrected to `VinylFile`.
+
+### Verified
+
+With TASK-119 merged in: `npm run typecheck` green in all 33 packages, `npm test`
+131 suites / 1149 tests, and Biome's explicit-`any` warnings 394 → 351. A real
+`bber new` → `build epub` (EPUBCheck clean) → `build web` succeeds from the built
+CLI, as do `bber check` (validator report at runtime) and the kitchen-sink
+fixture's web and reader builds.
+
+### Defect surfaced (not fixed)
+
+- `packages/b-ber-tasks/src/validate/index.ts:14`:
+  `if (!fs.pathExists(markdownPath))` tests a Promise, so it is always false and
+  the "project path does not exist" check never fires. It needs `await`.
 
 ## Notes
 

@@ -1,5 +1,5 @@
-import { Context, Parser, Success } from 'b-ber-validator'
 import { success } from '../lib/success'
+import type { Context, Parser, Success } from '../types'
 
 // Look for an exact sequence of parsers, or fail
 

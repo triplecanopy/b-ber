@@ -1,4 +1,4 @@
-import { Context, Parser } from 'b-ber-validator'
+import type { Context, Parser } from '../types'
 
 // Value *must* match first parser, and can match second
 export const constrained = (

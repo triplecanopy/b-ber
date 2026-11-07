@@ -64,10 +64,7 @@ const handler = async (argv: any) => {
   }
 
   const projectPath = path.resolve(state.srcDir)
-  const files = [
-    ...Project.javascripts(projectPath),
-    ...Project.stylesheets(projectPath),
-  ]
+  const files = [...Project.javascripts(projectPath), ...Project.stylesheets()]
 
   ensure({ files })
     .then(() => run(sequence))

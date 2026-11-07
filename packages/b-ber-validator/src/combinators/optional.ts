@@ -1,5 +1,5 @@
-import { Context, Parser } from 'b-ber-validator'
 import { success } from '../lib/success'
+import type { Context, Parser } from '../types'
 import { oneOf } from './oneOf'
 
 // Match a parser, or succeed with null

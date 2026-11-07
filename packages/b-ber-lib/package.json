@@ -48,13 +48,21 @@
   },
   "files": [
     "dist",
+    "EbookConvert.d.ts",
     "EbookConvert.js",
+    "Html.d.ts",
     "Html.js",
+    "HtmlToXml.d.ts",
     "HtmlToXml.js",
+    "ManifestItemProperties.d.ts",
     "ManifestItemProperties.js",
+    "State.d.ts",
     "State.js",
+    "Theme.d.ts",
     "Theme.js",
+    "utils.d.ts",
     "utils.js",
+    "YamlAdaptor.d.ts",
     "YamlAdaptor.js"
   ],
   "repository": {

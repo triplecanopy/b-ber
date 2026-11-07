@@ -13,7 +13,9 @@ import set from 'lodash/set'
 import mime from 'mime-types'
 import path from 'path'
 import Config, { ConfigOptions } from './Config'
+import type GuideItem from './GuideItem'
 import Spine from './Spine'
+import type SpineItem from './SpineItem'
 import Yaml from './Yaml'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -108,11 +110,11 @@ class State {
     this.builds[this.build].spine = val
   }
 
-  get guide(): unknown[] {
+  get guide(): GuideItem[] {
     return this.builds[this.build].guide
   }
 
-  set guide(val: unknown[]) {
+  set guide(val: GuideItem[]) {
     this.builds[this.build].guide = val
   }
 
@@ -140,11 +142,12 @@ class State {
     this.builds[this.build].cursor = val
   }
 
-  get toc(): unknown[] {
+  // The nested navigation, `spine.nested`
+  get toc(): SpineItem[] {
     return this.builds[this.build].toc
   }
 
-  set toc(val: unknown[]) {
+  set toc(val: SpineItem[]) {
     this.builds[this.build].toc = val
   }
 

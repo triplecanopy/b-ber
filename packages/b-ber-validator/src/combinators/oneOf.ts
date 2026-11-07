@@ -1,4 +1,4 @@
-import { Context, Failure, Parser, Result } from 'b-ber-validator'
+import type { Context, Failure, Parser, Result } from '../types'
 
 // Try each matcher in order, starting from the same point in the input.
 // Return the first one that succeeds, or return the failure that got furthest

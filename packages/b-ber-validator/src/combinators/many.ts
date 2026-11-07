@@ -1,5 +1,5 @@
-import { Context, Failure, Parser, Success } from 'b-ber-validator'
 import { success } from '../lib/success'
+import type { Context, Failure, Parser, Success } from '../types'
 
 // Look for 0 or more of something, until we can't parse any more.
 // Note that this function never fails, it will instead succeed
