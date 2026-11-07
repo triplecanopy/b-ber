@@ -1,19 +1,21 @@
-export function indent(this: any): string {
+import type { Logger } from './logger'
+
+export function indent(this: Logger): string {
   return this.whitespace.repeat(this.indentLevel)
 }
 
-export function incrementIndent(this: any): void {
+export function incrementIndent(this: Logger): void {
   this.indentLevel += this.increment
 }
 
-export function decrementIndent(this: any): void {
+export function decrementIndent(this: Logger): void {
   this.indentLevel -= this.increment
 }
 
-export function incrementCounter(this: any): void {
+export function incrementCounter(this: Logger): void {
   this.taskCounter += 1
 }
 
-export function decrementCounter(this: any): void {
+export function decrementCounter(this: Logger): void {
   this.taskCounter -= 1
 }

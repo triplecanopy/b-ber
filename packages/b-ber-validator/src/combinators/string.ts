@@ -1,8 +1,8 @@
 import { failure } from '../lib/failure'
 import { success } from '../lib/success'
-import type { Context } from '../types'
+import type { Context, Parser } from '../types'
 
-export function string(match: string, expected = '') {
+export function string(match: string, expected = ''): Parser<string> {
   return (ctx: Context) => {
     const endIdx = ctx.index + match.length
 

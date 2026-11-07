@@ -4,6 +4,13 @@ import path from 'path'
 import SpineItem from './SpineItem'
 import YamlAdaptor from './YamlAdaptor'
 
+// One entry of toc.yml as YAML parses it: a file name, a file name mapped to
+// its attributes, or a `section` of nested entries
+export type NavigationEntry =
+  | string
+  | { section: NavigationEntry[] }
+  | { [fileName: string]: Record<string, unknown> }
+
 interface SpineOptions {
   src: string
   buildType: string
@@ -15,8 +22,7 @@ class Spine {
   buildType: string
   frontMatter: Map<string, Record<string, unknown>>
   navigationConfigFile: string
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  entries: any[]
+  entries: NavigationEntry[]
   nested: SpineItem[]
   flattened: Omit<SpineItem, 'nodes'>[]
 
@@ -31,11 +37,9 @@ class Spine {
     this.flattened = this.flattenNodes(this.nested) // one-dimensional page flow
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  build(entries: any[] = []): SpineItem[] {
+  build(entries: NavigationEntry[] = []): SpineItem[] {
     const { buildType } = this
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return entries.reduce((acc: SpineItem[], curr: any, index: number) => {
+    return entries.reduce((acc: SpineItem[], curr, index: number) => {
       // create new spine item
       let node: SpineItem
       // check if it either has nested entries or attributes that have
@@ -43,7 +47,7 @@ class Spine {
       if (typeof curr === 'object' && curr !== null && !Array.isArray(curr)) {
         // we know that nested navigation is wrapped in a `section`
         // object so we check against that
-        const { section } = curr
+        const { section } = curr as { section?: NavigationEntry[] }
         if (section) {
           // curr has nested navigation. attach the nodes to the
           // previous entry in the tree by querying the last index
@@ -86,13 +90,13 @@ class Spine {
     }, [])
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  flattenYAML(data: any[] = []): string[] {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return data.reduce((acc: string[], curr: any) => {
+  flattenYAML(data: NavigationEntry[] = []): string[] {
+    return data.reduce((acc: string[], curr) => {
       if (typeof curr === 'object' && curr !== null && !Array.isArray(curr)) {
         if (Object.keys(curr)[0] === 'section') {
-          return acc.concat(this.flattenYAML(curr.section))
+          return acc.concat(
+            this.flattenYAML((curr as { section: NavigationEntry[] }).section)
+          )
         }
         return acc.concat(Object.keys(curr)[0])
       }
@@ -100,18 +104,18 @@ class Spine {
     }, [])
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  create(): any[] {
+  create(): NavigationEntry[] {
     const pattern = path.resolve(this.src, '_markdown', '*.md')
+    // toc.yml is author input and is not validated
     const declaredFiles = YamlAdaptor.load(
       this.navigationConfigFile
-    ) as unknown[]
-    const flattenedFiles = this.flattenYAML(declaredFiles as unknown[])
+    ) as NavigationEntry[]
+    const flattenedFiles = this.flattenYAML(declaredFiles)
     const systemFileNames = glob
       .sync(pattern)
       .map((file) => path.basename(file, '.md'))
     const missingEntries = difference(systemFileNames, flattenedFiles)
-    const entries = (declaredFiles as unknown[]).concat(missingEntries)
+    const entries = declaredFiles.concat(missingEntries)
 
     return entries
   }

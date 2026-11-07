@@ -5,12 +5,17 @@ import { State as state } from '@canopycanopycanopy/b-ber-lib'
 // imported here without a dependency cycle
 export default function markdownItFootnotePlugin(self: {
   fileName: string
-  // `render` below passes `0` where markdown-it's Renderer#render expects its
-  // options object, so footnotes render without the instance's options (e.g.
-  // `xhtmlOut`). markdown-it's type would reject it. Reported under TASK-119,
-  // not fixed in pass 1
-  // biome-ignore lint/suspicious/noExplicitAny: TASK-119 pass 1
-  markdownIt: any
+  // The parts of markdown-it's Renderer this plugin calls
+  markdownIt: {
+    renderer: {
+      render(
+        // markdown-it's Token, and the token-shaped objects built below
+        tokens: object[],
+        options: object,
+        env: { reference: string }
+      ): string
+    }
+  }
 }) {
   // Token-shaped objects: some from markdown-it, some built below
   return function plugin(tokens: Record<string, unknown>[]) {
@@ -38,9 +43,16 @@ export default function markdownItFootnotePlugin(self: {
     // add closing section tag
     tokens.push({ type: 'block', tag: 'section', nesting: -1 })
 
-    const notes = self.markdownIt.renderer.render(tokens, 0, {
-      reference: `${fileName}.xhtml`,
-    })
+    // Defect, see #728: `0` is passed where Renderer#render expects the
+    // instance's options, so footnotes render without them (e.g. `xhtmlOut`).
+    // The cast keeps the call as it is until then
+    const notes = self.markdownIt.renderer.render(
+      tokens,
+      0 as unknown as object,
+      {
+        reference: `${fileName}.xhtml`,
+      }
+    )
 
     state.add('footnotes', { fileName, title, notes })
   }

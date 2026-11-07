@@ -1,10 +1,10 @@
 import { failure } from '../lib/failure'
 import { success } from '../lib/success'
-import type { Context } from '../types'
+import type { Context, Parser } from '../types'
 
 // Match a regexp or fail
 
-export function regex(re: RegExp, expected: string) {
+export function regex(re: RegExp, expected: string): Parser<string> {
   return (ctx: Context) => {
     re.lastIndex = ctx.index
     const res = re.exec(ctx.text)

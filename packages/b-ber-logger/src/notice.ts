@@ -1,4 +1,6 @@
-export function notice(this: any, ...args: unknown[]): void {
+import type { Logger } from './logger'
+
+export function notice(this: Logger, ...args: unknown[]): void {
   const message = this.decorate(this.composeMessage(args))
 
   let prefix = ''

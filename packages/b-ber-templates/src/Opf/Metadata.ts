@@ -1,6 +1,7 @@
 import {
   Html,
   ManifestItemProperties,
+  type MetadataEntry,
   utils,
 } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
@@ -8,18 +9,6 @@ import crypto from 'crypto'
 import File from 'vinyl'
 
 const { fileId } = utils
-
-// An entry in `metadata.yml`. A type alias rather than an interface so that it
-// satisfies `ManifestItemProperties.testMeta`'s index signature.
-type MetadataEntry = {
-  term: string
-  value: string
-  // Each object maps a property name to its value, e.g. `role: aut`
-  refines?: Record<string, string>[]
-  // @deprecated, superseded by `refines`
-  term_property?: string
-  term_property_value?: string
-}
 
 class Metadata {
   static uid() {

@@ -11,7 +11,11 @@ import {
   parseAttrs,
   toAlias,
 } from '@canopycanopycanopy/b-ber-grammar-attributes'
-import { State as _state } from '@canopycanopycanopy/b-ber-lib'
+import {
+  State as _state,
+  type ContainerPluginOptions,
+  type MarkdownItHost,
+} from '@canopycanopycanopy/b-ber-lib'
 import mime from 'mime-types'
 import path from 'path'
 
@@ -135,8 +139,12 @@ const createMediaElement = (tok: any, attrs: any): void => {
   )
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const containerPlugin = (md: any, name: string, options: any = {}): void => {
+// Every caller passes `options`; the empty default predates these types
+const containerPlugin = (
+  md: MarkdownItHost,
+  name: string,
+  options: ContainerPluginOptions = {} as ContainerPluginOptions
+): void => {
   const minMarkers = options.minMarkers || 3
   const markerStr = options.marker || ':'
   const markerChar = markerStr.charCodeAt(0)

@@ -59,14 +59,22 @@ const _isUnsupportedAttribute = (genus: string, attr: string): boolean => {
     key = genus
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return (
-    !(SUPPORTED_ATTRIBUTES as any)[key] ||
-    !(SUPPORTED_ATTRIBUTES as any)[key].has(attr)
-  )
+  return !SUPPORTED_ATTRIBUTES[key] || !SUPPORTED_ATTRIBUTES[key].has(attr)
 }
 
-const _applyTransforms = (k: string, v: string): string => {
+// Attribute values as the grammars build them: parsed from a directive they
+// are strings, but defaults and transforms add numbers and booleans. Each is
+// interpolated into the output, which converts it to a string
+export type AttributeValue = string | number | boolean
+
+// Where a directive is, for log messages. `lineNumber` is null when
+// markdown-it gives the token no source map
+export interface AttributesContext {
+  fileName?: string
+  lineNumber?: number | null
+}
+
+const _applyTransforms = (k: string, v: AttributeValue): string => {
   switch (k) {
     case 'classes':
       return ` class="${v}"`
@@ -155,9 +163,8 @@ const parseAttrs = (s: string): Record<string, string> => {
 // -> prop="val"
 // Pass reference object in to only add keys/values that exist on reference
 const _buildAttrString = (
-  obj: Record<string, string>,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  reference?: Record<string, any>
+  obj: Record<string, AttributeValue>,
+  reference?: Record<string, unknown>
 ): string =>
   Object.entries(obj).reduce(
     (acc, [key, val]) =>
@@ -170,13 +177,14 @@ const _buildAttrString = (
 // -> ?foo=bar&baz=bat
 // Pass reference object in to only add keys/values that exist on reference
 const _buildAttrQueryString = (
-  obj: Record<string, string>,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  reference?: Record<string, any>
+  obj: Record<string, AttributeValue>,
+  reference?: Record<string, unknown>
 ): string =>
   Object.entries(obj).reduce((acc: string, [key, val]) => {
     const prefix = acc.length ? '&amp;' : '?'
-    const encodedVal = encodeURIComponent(Url.ensureDecoded(val))
+    // `String` is what `ensureDecoded`'s `decodeURIComponent` already did to a
+    // number or boolean, so the result is unchanged
+    const encodedVal = encodeURIComponent(Url.ensureDecoded(String(val)))
     return !reference || has(reference, key)
       ? acc.concat(`${prefix}${key}=${encodedVal}`)
       : acc
@@ -232,8 +240,7 @@ const _extendWithDefaults = (
 const attributesObject = (
   attrs: string | null | undefined,
   origGenus: string,
-  // `lineNumber` is null when markdown-it gives the token no source map
-  context: { fileName?: string; lineNumber?: number | null } = {}
+  context: AttributesContext = {}
 ): Record<string, string> => {
   const { fileName, lineNumber } = context
   const attrsObject: Record<string, string> = {}
@@ -295,24 +302,21 @@ const attributesObject = (
 
 // Create a string of attributes for an XHTML element
 const attributesString = (
-  obj: Record<string, string>,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  reference?: Record<string, any>
+  obj: Record<string, AttributeValue>,
+  reference?: Record<string, unknown>
 ): string => _buildAttrString(obj, reference)
 
 // Create a query string of attributes for an iframe src
 const attributesQueryString = (
-  obj: Record<string, string>,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  reference?: Record<string, any>
+  obj: Record<string, AttributeValue>,
+  reference?: Record<string, unknown>
 ): string => _buildAttrQueryString(obj, reference)
 
 // Convenience wrapper for creating attributes: String -> Object -> String
 const attributes = (
   str: string,
   type: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  context?: any
+  context?: AttributesContext
 ): string => _buildAttrString(attributesObject(str, type, context))
 
 const htmlId = (s: string): string => s.replace(/[^0-9a-zA-Z_-]/g, '-')

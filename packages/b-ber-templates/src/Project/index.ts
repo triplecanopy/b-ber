@@ -33,12 +33,12 @@ class Project {
 
   static configYAML(
     src: string,
-    config: Record<string, any> = {}
+    config: Record<string, unknown> = {}
   ): { relativePath: string; absolutePath: string; content: string } {
     return {
       relativePath: Project.relativePath(src, '..', 'config.yml'),
       absolutePath: Project.absolutePath(src, '..', 'config.yml'),
-      content: YamlAdaptor.dump({ ...(state as any).config, ...config }),
+      content: YamlAdaptor.dump({ ...state.config, ...config }),
     }
   }
 

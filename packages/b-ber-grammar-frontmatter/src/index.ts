@@ -11,12 +11,17 @@ export default function markdownItFrontmatterPlugin(self: {
 }) {
   return function plugin(meta: string) {
     const { fileName } = self
-    // Front matter is unvalidated author YAML, but GuideItem requires `title`
-    // and `type`. Typing it needs a schema for front matter
-    // biome-ignore lint/suspicious/noExplicitAny: TASK-119 pass 1
-    const YAMLMeta = YamlAdaptor.parse(meta) as any
+    // Unvalidated author YAML
+    const YAMLMeta = YamlAdaptor.parse(meta) as Record<string, unknown>
 
-    state.add('guide', new GuideItem({ fileName, ...YAMLMeta }))
+    // Defect, see #735: GuideItem requires `title` and `type`, which nothing
+    // checks the front matter has. The cast keeps the call as it is until then
+    state.add(
+      'guide',
+      new GuideItem({ fileName, ...YAMLMeta } as ConstructorParameters<
+        typeof GuideItem
+      >[0])
+    )
 
     // merge the found entry in the state and spine so that we
     // can access the metadata later

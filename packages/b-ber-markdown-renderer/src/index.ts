@@ -60,8 +60,8 @@ class MarkdownRenderer {
         markdownItPullquote.name,
         markdownItPullquote.renderer(reference)
       )
-      .use(markdownItFrontmatter as any, markdownItFrontmatterPlugin(this))
-      .use(markdownItFootnote as any, markdownItFootnotePlugin(this))
+      .use(markdownItFrontmatter, markdownItFrontmatterPlugin(this))
+      .use(markdownItFootnote, markdownItFootnotePlugin(this))
       .use(
         markdownItDialogue.plugin,
         markdownItDialogue.name,

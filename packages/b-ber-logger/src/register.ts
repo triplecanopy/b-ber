@@ -1,5 +1,7 @@
+import type { Logger } from './logger'
+
 export function registerSequence(
-  this: any,
+  this: Logger,
   _state: unknown,
   _command: string,
   sequence: string[]

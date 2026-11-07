@@ -80,9 +80,9 @@ const linkedImage = (data: FigureTemplateData) =>
     )
     .replace(/%LINK_CLOSE%/, data.inline ? '' : '</a>')
     // An unsupported embed's poster that has no orientation (see
-    // `FigureTemplateData`) renders `class="null"`
-    // biome-ignore lint/suspicious/noExplicitAny: TASK-119 pass 1
-    .replace(/%IMAGE_CLASS_NAME%/, data.imageClassName as any)
+    // `FigureTemplateData`) renders `class="null"`, see #734. `replace`
+    // converts a non-function replacement with ToString, which is `String`
+    .replace(/%IMAGE_CLASS_NAME%/, String(data.imageClassName))
     .replace(/%IMAGE_ALT%/, data.alt)
     .replace(/%IMAGE_SRC%/, data.source)
     .replace(/%CAPTION_CONTENT%/, data.caption)
@@ -211,12 +211,10 @@ export const iframe = (data: IframeFigureData) =>
     .replace(/%ID%/g, data.id)
     .replace(/%SRC%/g, data.source)
     .replace(/%TITLE%/g, data.title)
-    // `replace` converts a numeric width or height to a string, but its
-    // typings only accept a string
-    // biome-ignore lint/suspicious/noExplicitAny: TASK-119 pass 1
-    .replace(/%WIDTH%/g, data.width as any)
-    // biome-ignore lint/suspicious/noExplicitAny: TASK-119 pass 1
-    .replace(/%HEIGHT%/g, data.height as any)
+    // `replace` converts a non-function replacement with ToString, which is
+    // what `String` does to a numeric width or height
+    .replace(/%WIDTH%/g, String(data.width))
+    .replace(/%HEIGHT%/g, String(data.height))
     .replace(/%CAPTION%/g, data.caption ? `${data.caption}<br/>` : '')
     .replace(/%REF%/g, data.ref)
     .replace(/%SECTION_CLOSE%/g, data.inline ? '' : '</section>')

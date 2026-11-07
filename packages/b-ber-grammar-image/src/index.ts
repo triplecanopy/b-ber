@@ -2,7 +2,14 @@ import {
   attributesObject,
   htmlId,
 } from '@canopycanopycanopy/b-ber-grammar-attributes'
-import { Html, State as state, utils } from '@canopycanopycanopy/b-ber-lib'
+import {
+  type FigureToken,
+  Html,
+  type RendererContext,
+  type RendererInstance,
+  State as state,
+  utils,
+} from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import figure from '@canopycanopycanopy/b-ber-parser-figure'
 import {
@@ -15,20 +22,8 @@ import { createFigure, createFigureInline } from './image'
 
 const MARKER_OPEN_RE = /(figure(?:-inline)?)(?::([^\s]+)(\s?.*)?)?$/
 
-type Context = { fileName?: string }
-
-// The fields of markdown-it's `Token` and `MarkdownIt` this renderer uses.
-// Declared locally because this package does not depend on markdown-it, and
-// importing its types makes tsdown inline all of them into the published .d.ts.
-// `children` is a string, not markdown-it's `Token[]`: b-ber-parser-figure
-// stores the raw caption source there for `renderInline` to parse
-type Token = {
-  type: string
-  info: string
-  map: [number, number] | null
-  children: string | null
-}
-type Instance = { renderInline(src: string): string }
+// Optional so the tests can render without a file
+type Context = Partial<RendererContext>
 
 function prepare({
   token,
@@ -38,9 +33,9 @@ function prepare({
   fileName,
   lineNumber,
 }: {
-  token: Token
+  token: FigureToken
   match: RegExpMatchArray
-  instance: Instance
+  instance: RendererInstance
   context: Context
   fileName: string
   lineNumber: number | null
@@ -94,8 +89,8 @@ const validate =
   }
 
 const render =
-  ({ instance, context }: { instance: Instance; context: Context }) =>
-  (tokens: Token[], index: number) => {
+  ({ instance, context }: { instance: RendererInstance; context: Context }) =>
+  (tokens: FigureToken[], index: number) => {
     const token = tokens[index]
     if (token.type === 'container_figure_close') return ''
 
@@ -126,7 +121,7 @@ export default {
     instance,
     context = { fileName: '' },
   }: {
-    instance: Instance
+    instance: RendererInstance
     context?: Context
   }) => ({
     marker: INLINE_DIRECTIVE_MARKER,
