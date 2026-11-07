@@ -10,7 +10,12 @@ import plugin from '@canopycanopycanopy/b-ber-parser-dialogue'
 const MARKER_OPEN_RE = /^(dialogue)(?::([^\s]+)(\s.*)?)?$/
 const MARKER_CLOSE_RE = /^(exit)(?::([^\s]+))?/
 
-function handleOpen(token) {
+// The fields of markdown-it's `Token` this renderer reads. Declared locally
+// because this package does not depend on markdown-it, and importing its types
+// makes tsdown inline all of them into the published .d.ts
+type Token = { info: string; nesting: number }
+
+function handleOpen(token: RegExpMatchArray) {
   const [, type, id, attrs] = token
   const attrsString = attributes(attrs, type)
   return `<section id="${htmlId(id)}" ${attrsString}>`
@@ -22,7 +27,7 @@ function handleClose() {
 
 // a simple `render` function that gets passed into our `createRenderer` is
 // responsible for the HTML output.
-const render = (tokens, idx) => {
+const render = (tokens: Token[], idx: number) => {
   if (tokens[idx].nesting !== 1) return ''
 
   const marker = tokens[idx].info.trim()
@@ -34,7 +39,7 @@ const render = (tokens, idx) => {
 export default {
   plugin,
   name: 'dialogue',
-  renderer: (args) =>
+  renderer: (args: { context?: { fileName?: string } }) =>
     createRenderer({
       ...args,
       markerOpen: MARKER_OPEN_RE,
