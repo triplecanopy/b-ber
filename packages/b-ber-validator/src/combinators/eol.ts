@@ -1,12 +1,12 @@
 import { failure } from '../lib/failure'
 import { success } from '../lib/success'
-import type { Context } from '../types'
+import type { Context, Parser } from '../types'
 
 // eol function doesn't advance index
 
 class EOL {}
 
-export function eol() {
+export function eol(): Parser<EOL> {
   return (ctx: Context) => {
     const match = '\n'
     const endIdx = ctx.index + match.length

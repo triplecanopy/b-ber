@@ -1,15 +1,18 @@
 import { failure } from '../lib/failure'
 import { success } from '../lib/success'
-import type { Context, Parser, Success } from '../types'
+import type { Context, Parser } from '../types'
 
 export const close =
-  (parser: Parser<any>, matchIndex: number) => (ctx: Context) => {
+  (parser: Parser<unknown[]>, matchIndex: number): Parser<unknown[]> =>
+  (ctx: Context) => {
     const res = parser(ctx)
     if (!res.success) return res
 
-    const { ctx: nextCtx, value } = res as Success<any>
+    const { ctx: nextCtx, value } = res
 
-    const openingIdent = value[matchIndex]
+    // The value at `matchIndex` is the opening identifier, which a `regex` or
+    // `string` parser matched
+    const openingIdent = value[matchIndex] as string
     const nextValue = value.concat(openingIdent)
     const endIdx = nextCtx.index + openingIdent.length
 
