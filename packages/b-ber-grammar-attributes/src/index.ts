@@ -232,7 +232,8 @@ const _extendWithDefaults = (
 const attributesObject = (
   attrs: string | null | undefined,
   origGenus: string,
-  context: { fileName?: string; lineNumber?: number } = {}
+  // `lineNumber` is null when markdown-it gives the token no source map
+  context: { fileName?: string; lineNumber?: number | null } = {}
 ): Record<string, string> => {
   const { fileName, lineNumber } = context
   const attrsObject: Record<string, string> = {}
