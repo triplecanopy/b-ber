@@ -9,6 +9,18 @@ import File from 'vinyl'
 
 const { fileId } = utils
 
+// An entry in `metadata.yml`. A type alias rather than an interface so that it
+// satisfies `ManifestItemProperties.testMeta`'s index signature.
+type MetadataEntry = {
+  term: string
+  value: string
+  // Each object maps a property name to its value, e.g. `role: aut`
+  refines?: Record<string, string>[]
+  // @deprecated, superseded by `refines`
+  term_property?: string
+  term_property_value?: string
+}
+
 class Metadata {
   static uid() {
     return `_${crypto.randomBytes(8).toString('hex')}`
@@ -21,7 +33,7 @@ class Metadata {
     })
   }
 
-  static meta(data) {
+  static meta(data: MetadataEntry) {
     const { term, element } = ManifestItemProperties.testMeta(data)
     const itemid =
       element && data.term === 'identifier' ? 'uuid' : Metadata.uid()
@@ -46,7 +58,7 @@ class Metadata {
 
     // Create up `refines` meta elements. Support for legacy below
     if (data.refines) {
-      const refines = data.refines.reduce(
+      const refines = data.refines.reduce<string[]>(
         (acc, curr) =>
           acc.concat(
             Object.entries(curr).map(

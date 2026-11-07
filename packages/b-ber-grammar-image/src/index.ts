@@ -15,7 +15,36 @@ import { createFigure, createFigureInline } from './image'
 
 const MARKER_OPEN_RE = /(figure(?:-inline)?)(?::([^\s]+)(\s?.*)?)?$/
 
-function prepare({ token, match, instance, context, fileName, lineNumber }) {
+type Context = { fileName?: string }
+
+// The fields of markdown-it's `Token` and `MarkdownIt` this renderer uses.
+// Declared locally because this package does not depend on markdown-it, and
+// importing its types makes tsdown inline all of them into the published .d.ts.
+// `children` is a string, not markdown-it's `Token[]`: b-ber-parser-figure
+// stores the raw caption source there for `renderInline` to parse
+type Token = {
+  type: string
+  info: string
+  map: [number, number] | null
+  children: string | null
+}
+type Instance = { renderInline(src: string): string }
+
+function prepare({
+  token,
+  match,
+  instance,
+  context,
+  fileName,
+  lineNumber,
+}: {
+  token: Token
+  match: RegExpMatchArray
+  instance: Instance
+  context: Context
+  fileName: string
+  lineNumber: number | null
+}) {
   const [, type, id, attrs] = match
   const figureId = htmlId(id)
   const caption = token.children ? instance.renderInline(token.children) : ''
@@ -47,8 +76,8 @@ function prepare({ token, match, instance, context, fileName, lineNumber }) {
 }
 
 const validate =
-  ({ context = { fileName: '' } }) =>
-  (params, line) => {
+  ({ context = { fileName: '' } }: { context?: Context }) =>
+  (params: string, line: number) => {
     const match = params.trim().match(MARKER_OPEN_RE)
     if (!match) return false
 
@@ -65,14 +94,15 @@ const validate =
   }
 
 const render =
-  ({ instance, context }) =>
-  (tokens, index) => {
+  ({ instance, context }: { instance: Instance; context: Context }) =>
+  (tokens: Token[], index: number) => {
     const token = tokens[index]
     if (token.type === 'container_figure_close') return ''
 
     const fileName = `_markdown/${context.fileName}.md`
     const lineNumber = token.map ? token.map[0] : null
-    const match = token.info.trim().match(MARKER_OPEN_RE)
+    // `validate` has already matched this marker against MARKER_OPEN_RE
+    const match = token.info.trim().match(MARKER_OPEN_RE)!
     const type = match[1]
     const args = prepare({
       token,
@@ -92,7 +122,13 @@ const render =
 export default {
   plugin: figure,
   name: 'figure',
-  renderer: ({ instance, context = { fileName: '' } }) => ({
+  renderer: ({
+    instance,
+    context = { fileName: '' },
+  }: {
+    instance: Instance
+    context?: Context
+  }) => ({
     marker: INLINE_DIRECTIVE_MARKER,
     minMarkers: INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
     markerOpen: MARKER_OPEN_RE,

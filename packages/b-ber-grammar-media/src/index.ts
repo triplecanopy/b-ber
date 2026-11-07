@@ -13,7 +13,21 @@ import {
 const DIRECTIVE_REGEXP = /^media(?:-inline)?$/
 
 // Render replacement Markdown string
-function replace({ type, id, build, str, begin, end }) {
+function replace({
+  type,
+  id,
+  build,
+  str,
+  begin,
+  end,
+}: {
+  type: string
+  id: string
+  build: string
+  str: string
+  begin: number
+  end: number
+}) {
   const { type: nextType, caption, ...rest } = state.media[id][build]
 
   // Check if the replacement directive will be an inline directive based on
@@ -41,7 +55,7 @@ function replace({ type, id, build, str, begin, end }) {
 
 // Parse the Markdown. Inject directives to replace the `media`/`media-inline`
 // directives. Returns an updated Markdown string
-function render(data) {
+function render(data: string) {
   let str = data
 
   const { build } = state

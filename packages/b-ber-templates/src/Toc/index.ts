@@ -1,5 +1,6 @@
 import { Html, utils } from '@canopycanopycanopy/b-ber-lib'
 import File from 'vinyl'
+import type { TocEntry } from '../types'
 
 const { getTitle } = utils
 
@@ -12,12 +13,12 @@ class Toc {
     })
   }
 
-  static item(data) {
+  static item(data: TocEntry) {
     const url = `${data.relativePath}.xhtml`
     return `<a href="${url}">${Html.escape(getTitle(data))}</a>`
   }
 
-  static items(data) {
+  static items(data: TocEntry[]): string {
     return `
       <ol>
         ${data.reduce((acc, curr) => {

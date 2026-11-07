@@ -1,6 +1,7 @@
 import { figure, media, unsupported } from './helpers'
+import type { FigureTemplates } from './types'
 
-const mobi = {
+const mobi: FigureTemplates = {
   portrait: (data) =>
     figure({ data, ratioName: 'portrait', linkImages: false }),
   landscape: (data) =>

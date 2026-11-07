@@ -4,10 +4,17 @@ import {
   YamlAdaptor,
 } from '@canopycanopycanopy/b-ber-lib'
 
-export default function markdownItFrontmatterPlugin(self) {
-  return function plugin(meta) {
+// `self` is b-ber-markdown-renderer's MarkdownRenderer, which cannot be
+// imported here without a dependency cycle
+export default function markdownItFrontmatterPlugin(self: {
+  fileName: string
+}) {
+  return function plugin(meta: string) {
     const { fileName } = self
-    const YAMLMeta = YamlAdaptor.parse(meta)
+    // Front matter is unvalidated author YAML, but GuideItem requires `title`
+    // and `type`. Typing it needs a schema for front matter
+    // biome-ignore lint/suspicious/noExplicitAny: TASK-119 pass 1
+    const YAMLMeta = YamlAdaptor.parse(meta) as any
 
     state.add('guide', new GuideItem({ fileName, ...YAMLMeta }))
 

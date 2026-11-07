@@ -4,6 +4,18 @@ import mimeTypes from 'mime-types'
 
 const { getImageOrientation } = utils
 
+// What `prepare` in ./index builds for each figure
+export type FigureArgs = {
+  context: { fileName?: string }
+  width: number
+  height: number
+  comment: string
+  id: string
+  attrsObject: Record<string, string>
+  caption: string
+  mediaType: string
+}
+
 export function createFigure({
   context,
   width,
@@ -13,7 +25,7 @@ export function createFigure({
   attrsObject,
   caption,
   mediaType,
-}) {
+}: FigureArgs) {
   const classNames = `figure__small figure__small--${getImageOrientation(
     width,
     height
@@ -62,7 +74,7 @@ export function createFigureInline({
   width,
   height,
   caption,
-}) {
+}: Pick<FigureArgs, 'attrsObject' | 'id' | 'width' | 'height' | 'caption'>) {
   const { classes, ...rest } = attrsObject
   const mime = mimeTypes.lookup(attrsObject.source)
   const inline = true
@@ -70,6 +82,11 @@ export function createFigureInline({
   return figureTemplate(
     {
       ...rest,
+      // Already in `rest`; named so the template's required fields are
+      // checked. `prepare` rejects a figure without a source, and
+      // b-ber-grammar-attributes defaults `alt` to the source.
+      source: attrsObject.source,
+      alt: attrsObject.alt,
       classes: classes || '',
       id,
       width,

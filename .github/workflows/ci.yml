@@ -121,6 +121,12 @@ jobs:
       - name: Build
         run: npm run build
 
+      # After the build: packages typecheck against their siblings' built
+      # dist/*.d.ts. --no-bail (in the script) reports every failing package
+      # instead of stopping at the first, which hid most of TASK-119's errors.
+      - name: Typecheck
+        run: npm run typecheck
+
       # `npm test` is `biome check .`, the task-file and specifier checks, then
       # jest. biome then jest is the exact pair that failed on main after the
       # 4.0.3 bump merged.

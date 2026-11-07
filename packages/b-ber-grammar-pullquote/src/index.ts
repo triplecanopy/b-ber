@@ -19,10 +19,23 @@ import isUndefined from 'lodash/isUndefined'
 const MARKER_OPEN_RE = /^(pullquote|blockquote|exit)(?::([^\s]+)(\s.*)?)?$/
 const MARKER_CLOSE_RE = /(exit)(?::([\s]+))?/
 
-let citation = ''
-const pullquoteIndices = [] // track these separately
+type Context = { fileName?: string }
 
-function handleOpen(token, context, fileName, lineNumber) {
+// The fields of markdown-it's `Token` and `MarkdownIt` this renderer uses.
+// Declared locally because this package does not depend on markdown-it, and
+// importing its types makes tsdown inline all of them into the published .d.ts
+type Token = { info: string; nesting: number; map: [number, number] | null }
+type Instance = { renderInline(src: string): string }
+
+let citation = ''
+const pullquoteIndices: { id: string; type: string }[] = [] // track these separately
+
+function handleOpen(
+  token: RegExpMatchArray,
+  context: Context,
+  fileName: string,
+  lineNumber: number | null
+) {
   // the pullquote opens
   const [, type, id, attrs] = token
 
@@ -42,7 +55,8 @@ function handleOpen(token, context, fileName, lineNumber) {
   // get citation which we'll use below
   if (has(attrsObject, 'citation')) {
     ;({ citation } = attrsObject)
-    delete attrsObject.citation
+    // `has` narrows `citation` to a required key, which `delete` rejects
+    delete (attrsObject as Record<string, string>).citation
   }
 
   const attrsString = attributesString(attrsObject)
@@ -52,11 +66,11 @@ function handleOpen(token, context, fileName, lineNumber) {
   return `${comment}<${elementName}${attrsString}>`
 }
 
-function cite(text) {
+function cite(text: string) {
   return `<footer><cite>&#8212;&#160;${text}</cite></footer>`
 }
 
-function handleClose(token, instance) {
+function handleClose(token: string, instance: Instance) {
   // it's an exit to a pullquote. grab the id from the list of
   // indices
 
@@ -87,8 +101,8 @@ function handleClose(token, instance) {
 }
 
 const validateOpen =
-  ({ context }) =>
-  (params, line) => {
+  ({ context }: { context: Context }) =>
+  (params: string, line: number) => {
     const match = params.trim().match(MARKER_OPEN_RE)
     if (!match || match.length < 3) return false
 
@@ -104,8 +118,8 @@ const validateOpen =
   }
 
 const render =
-  ({ instance, context }) =>
-  (tokens, idx) => {
+  ({ instance, context }: { instance: Instance; context: Context }) =>
+  (tokens: Token[], idx: number) => {
     const fileName = `_markdown/${context.fileName}.md`
     const lineNumber = tokens[idx].map ? tokens[idx].map[0] : null
     const token = tokens[idx].info.trim()
@@ -130,7 +144,13 @@ const render =
 export default {
   plugin,
   name: 'pullQuote',
-  renderer: ({ instance, context }) => ({
+  renderer: ({
+    instance,
+    context,
+  }: {
+    instance: Instance
+    context: Context
+  }) => ({
     marker: BLOCK_DIRECTIVE_MARKER,
     minMarkers: BLOCK_DIRECTIVE_MARKER_MIN_LENGTH,
     markerOpen: MARKER_OPEN_RE,

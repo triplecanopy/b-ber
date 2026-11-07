@@ -17,16 +17,31 @@ import figure from '@canopycanopycanopy/b-ber-parser-figure'
 const markerRe = /^epigraph/
 const attrsRe = /(?:(image|caption|citation)\s["]([^"]+)["])/g
 
+// The fields of markdown-it's `Token` this renderer reads. Declared locally
+// because this package does not depend on markdown-it, and importing its types
+// makes tsdown inline all of them into the published .d.ts
+type Token = { info: string; nesting: number }
+
 export default {
   plugin: figure,
   name: 'epigraph',
-  renderer: ({ instance, context = { fileName: '' } }) => ({
+  renderer: ({
+    instance,
+    context = { fileName: '' },
+  }: {
+    // Typed loosely on purpose: `render` reads `instance.escapeHtml`, which
+    // markdown-it does not have (it is `instance.utils.escapeHtml`), so a real
+    // type here would reject it. Reported under TASK-119, not fixed in pass 1
+    // biome-ignore lint/suspicious/noExplicitAny: TASK-119 pass 1
+    instance: any
+    context?: { fileName: string }
+  }) => ({
     marker: ':',
     minMarkers: 3,
-    validate(params) {
+    validate(params: string) {
       return params.trim().match(markerRe)
     },
-    render(tokens, idx) {
+    render(tokens: Token[], idx: number) {
       const { escapeHtml } = instance.escapeHtml
       const attrs = { image: '', caption: '', citation: '' }
       let result = ''
@@ -35,7 +50,8 @@ export default {
         let matches
         while ((matches = attrsRe.exec(tokens[idx].info.trim())) !== null) {
           // eslint-disable-next-line prefer-destructuring
-          attrs[matches[1]] = matches[2]
+          // attrsRe only captures `image`, `caption` or `citation` here
+          attrs[matches[1] as keyof typeof attrs] = matches[2]
         }
 
         if (!attrs.image && !attrs.caption) {

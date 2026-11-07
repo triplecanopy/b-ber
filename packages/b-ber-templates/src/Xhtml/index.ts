@@ -35,7 +35,16 @@ class Xhtml {
     return new File({ contents: Buffer.from('{% body %}</body></html>') })
   }
 
-  static cover({ width, height, href }) {
+  static cover({
+    width,
+    height,
+    href,
+  }: {
+    // Pixel dimensions of the cover image
+    width: number
+    height: number
+    href: string
+  }) {
     return `
       <section class="cover" style="text-align: center; padding: 0; margin: 0;">
         <svg xmlns="http://www.w3.org/2000/svg" height="100%" preserveAspectRatio="xMidYMid meet" version="1.1" viewBox="0 0 ${width} ${height}" width="100%" xmlns:xlink="http://www.w3.org/1999/xlink">
