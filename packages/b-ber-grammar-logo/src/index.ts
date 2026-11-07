@@ -15,16 +15,21 @@ import fs from 'fs-extra'
 const MARKER_RE = /^logo/
 const DIRECTIVE_RE = /(logo)(?::([^\s]+)(\s?.*)?)?$/
 
+// The fields of markdown-it's `Token` this renderer reads. Declared locally
+// because this package does not depend on markdown-it, and importing its types
+// makes tsdown inline all of them into the published .d.ts
+type Token = { info: string; map: [number, number] | null }
+
 export default {
   plugin: figure,
   name: 'logo',
-  renderer: ({ context }) => ({
+  renderer: ({ context }: { context: { fileName?: string } }) => ({
     marker: INLINE_DIRECTIVE_MARKER,
     minMarkers: INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
-    validate(params) {
+    validate(params: string) {
       return params.trim().match(MARKER_RE)
     },
-    render(tokens, index) {
+    render(tokens: Token[], index: number) {
       const match = tokens[index].info.trim().match(DIRECTIVE_RE)
       if (!match) return ''
 
@@ -45,7 +50,11 @@ export default {
         log.warn(`Image [${attrsObj.source}] does not exist`)
 
       delete attrsObj.source // since we need the path relative to `images`
-      const attrString = attributesString(attrsObj, type)
+      // `type` is passed where attributesString expects a reference object, so
+      // `has(type, key)` is false for every key and every attribute is
+      // dropped. Reported under TASK-119, not fixed in pass 1
+      // biome-ignore lint/suspicious/noExplicitAny: TASK-119 pass 1
+      const attrString = attributesString(attrsObj, type as any)
 
       return `<figure id="${htmlId(id)}" class="logo">
                     <img style="width:120px;" src="${outputImagePath}" ${attrString}/>
