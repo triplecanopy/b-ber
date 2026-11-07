@@ -1,4 +1,5 @@
 import fs from 'fs-extra'
+import path from 'path'
 
 // State singleton initialises in its constructor and checks for the media dir.
 // Create the required directories before any module is imported.
@@ -82,5 +83,78 @@ describe('b-ber-markdown-renderer', () => {
   it('render() handles empty string input', () => {
     const result = markdownRenderer.render('test.md', '')
     expect(typeof result).toBe('string')
+  })
+})
+
+// Footnote refs carry a random 16-hex-digit suffix (parser-footnotes Counter)
+const stableIds = (html) => html.replace(/-[0-9a-f]{16}\b/g, '-<ID>')
+
+// Locks the exact XHTML that the whole plugin stack produces. The snapshot was
+// recorded on markdown-it 15 and checked byte-for-byte against markdown-it 8
+// (TASK-144), so a change here is a change in what authors' books contain.
+describe('b-ber-markdown-renderer output', () => {
+  const source = fs.readFileSync(
+    path.join(__dirname, 'fixtures/document.md'),
+    'utf8'
+  )
+  let state
+
+  beforeAll(() => {
+    // A real build fills this in from the project (State#loadBuilds). The
+    // fixture needs only what front matter, sections and footnotes write to.
+    state = require('@canopycanopycanopy/b-ber-lib').State
+    state.update('builds.epub', {
+      guide: [],
+      spine: { frontMatter: new Map(), flattened: [] },
+      cursor: [],
+      figures: [],
+      footnotes: [],
+    })
+  })
+
+  it('renders the fixture document', () => {
+    const html = markdownRenderer.render('rendering-fixture', source)
+    expect(stableIds(html)).toMatchSnapshot()
+  })
+
+  it('collects the fixture document footnotes', () => {
+    markdownRenderer.render('rendering-fixture', source)
+    const entry = state.footnotes.findLast(
+      (f) => f.fileName === 'rendering-fixture'
+    )
+    expect(stableIds(entry.notes)).toMatchSnapshot()
+  })
+})
+
+// CommonMark corrections between markdown-it 8 and 15 that an author could
+// plausibly hit. None occur in the kitchen-sink or demo projects (TASK-144).
+describe('b-ber-markdown-renderer: changes from markdown-it 8', () => {
+  const render = (md) => markdownRenderer.render('test.md', md)
+
+  it('keeps runs of spaces inside code spans (8 collapsed them)', () => {
+    expect(render('Use `a  b` here.')).toBe(
+      '<p>Use <code>a  b</code> here.</p>\n'
+    )
+  })
+
+  it('allows emphasis inside a word with *** (8 left it literal)', () => {
+    expect(render('foo***bar***baz')).toBe(
+      '<p>foo<em><strong>bar</strong></em>baz</p>\n'
+    )
+  })
+
+  it('passes an inline comment containing -- through raw (8 escaped it)', () => {
+    // Block-level comments were already passed through raw by 8
+    expect(render('note <!-- a -- b --> end')).toBe(
+      '<p>note <!-- a -- b --> end</p>\n'
+    )
+  })
+
+  it('accepts a link destination in angle brackets with a space', () => {
+    expect(render('[x](</a b>)')).toBe('<p><a href="/a%20b">x</a></p>\n')
+  })
+
+  it('leaves an out-of-range numeric entity as text (8 emitted U+FFFD)', () => {
+    expect(render('x &#98765432; y')).toBe('<p>x &amp;#98765432; y</p>\n')
   })
 })

@@ -21,7 +21,7 @@ const SPACE = ' '
 
 class MarkdownRenderer {
   fileName: string
-  markdownIt: MarkdownIt
+  markdownIt: MarkdownIt.MarkdownIt
 
   constructor() {
     this.fileName = ''

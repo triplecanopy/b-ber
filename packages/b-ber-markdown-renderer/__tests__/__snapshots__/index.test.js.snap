@@ -1,0 +1,117 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`b-ber-markdown-renderer output collects the fixture document footnotes 1`] = `
+"<section class="footnotes break-after">
+<h1>
+rendering-fixture</h1><ol class="footnotes" start="1"><li class="footnote" epub:type="footnote" id="fn-ref-<ID>"><p>The reference note, with <code>code</code> and <strong>strong</strong>.<span hidden="hidden" class="hidden-backlink"><a href="rendering-fixture.xhtml#fnref-ref-<ID>">↵</a></span></p>
+</li><li class="footnote" epub:type="footnote" id="fn-two-<ID>"><p>A multi-paragraph note.<span hidden="hidden" class="hidden-backlink"><a href="rendering-fixture.xhtml#fnref-two-<ID>">↵</a></span></p>
+<p>Its second paragraph, indented.</p>
+</li><li class="footnote" epub:type="footnote" id="fn-undefined-<ID>"><p>Inline note with <em>emphasis</em> and a <a href="https://example.com">link</a>.<span hidden="hidden" class="hidden-backlink"><a href="rendering-fixture.xhtml#fnref-undefined-<ID>">↵</a></span></p>
+</li></ol></section>"
+`;
+
+exports[`b-ber-markdown-renderer output renders the fixture document 1`] = `
+"
+<!-- START: section:chapter#rendering-fixture; _markdown/rendering-fixture.md:5 -->
+<section id="rendering-fixture" epub:type="bodymatter chapter" class="bodymatter chapter"><h1>Rendering Fixture</h1>
+<p>Prose with <em>emphasis</em>, <strong>strong</strong>, <em><strong>both</strong></em>, <em>underscores</em>, <code>code</code>, a <a href="https://example.com" title="Title">link</a>, a <a href="https://example.com/ref" title="Reference">reference link</a>, an autolink <a href="https://example.com">https://example.com</a>, and a hard break<br />
+after two spaces, then a backslash hard break<br />
+here.</p>
+<p>Entities and punctuation: © &amp; © —   &quot;straight&quot; 'quotes' -- dashes... (c) (tm) 1 &lt; 2 &gt; 0.</p>
+<p>Inline HTML: <span class="smallcaps">small caps</span>, <em>em</em>, <br/> and a comment <!-- inline comment --> in a line.</p>
+<div class="html-block">
+<p>Markdown <em>inside</em> an HTML block.</p>
+</div>
+<!-- a block comment -->
+<h2>Footnotes</h2>
+<p>A reference footnote.<a epub:type="noteref" class="footnote-ref" href="notes.xhtml#fn-ref-<ID>" id="fnref-ref-<ID>">1</a> The same note again.<a epub:type="noteref" class="footnote-ref" href="notes.xhtml#fn-two-<ID>" id="fnref-two-<ID>">1:1</a> Another one.<a epub:type="noteref" class="footnote-ref" href="notes.xhtml#fn-undefined-<ID>" id="fnref-undefined-<ID>">2</a> An inline note.<a epub:type="noteref" class="footnote-ref" href="notes.xhtml#fnundefined" id="fnrefundefined">3</a></p>
+<h2>Sections and quotes</h2>
+
+<!-- START: section:subchapter#fixture-outer; _markdown/rendering-fixture.md:39 -->
+<section id="fixture-outer" class="subchapter bodymatter chapter" epub:type="bodymatter chapter"><p>Outer section.</p>
+
+<!-- START: section:subchapter#fixture-inner; _markdown/rendering-fixture.md:43 -->
+<section id="fixture-inner" class="one two subchapter  chapter" epub:type=" chapter"><p>Inner section.</p>
+</section>
+<!-- END: section:exit#fixture-inner -->
+</section>
+<!-- END: section:exit#fixture-outer -->
+<!-- START: section:pullquote#fixture-pullquote --><section class="pullquote  chapter" epub:type=" chapter"><p>A pull quote.</p>
+
+        
+        </section><!-- END: section:pullquote#fixture-pullquote -->
+    <!-- START: section:blockquote#fixture-blockquote --><blockquote class=" blockquote"><p>Quoted text with <em>emphasis</em>.</p>
+
+        <footer><cite>&#8212;&#160;A. Citation</cite></footer>
+        </blockquote><!-- END: section:blockquote#fixture-blockquote -->
+    <blockquote>
+<p>A plain blockquote
+spanning lines.</p>
+<blockquote>
+<p>Nested.</p>
+</blockquote>
+</blockquote>
+<h2>Dialogue</h2>
+<section id="fixture-dialogue"  class=" dialogue"><p class="interlocutor-parent"><span class="interlocutor">Alice</span> Hello there.</p>
+<p class="interlocutor-parent"><span class="interlocutor">Bob</span> Hi, <em>Alice</em>.</p>
+<p>A line without a speaker.</p>
+</section>
+<!-- END: section:exit#fixture-dialogue -->
+<h2>Lists</h2>
+<ul>
+<li>one</li>
+<li>two
+<ul>
+<li>nested</li>
+<li>nested <em>emphasis</em></li>
+</ul>
+</li>
+<li>three</li>
+</ul>
+<ol>
+<li>first</li>
+<li>second</li>
+</ol>
+<ol start="3">
+<li>paren list</li>
+</ol>
+<ul>
+<li>
+<p>loose item</p>
+</li>
+<li>
+<p>loose item</p>
+</li>
+</ul>
+<h2>Code</h2>
+<pre><code class="language-js"><span class="hljs-keyword">const</span> x = <span class="hljs-number">1</span> <span class="hljs-comment">// highlighted</span>
+</code></pre>
+<pre><code>plain fence &lt;tag&gt; &amp; amp
+</code></pre>
+<pre><code>indented code &lt;tag&gt;
+</code></pre>
+<h2>Tables and rules</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">left</th>
+<th style="text-align:center">center</th>
+<th style="text-align:right">right</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">a</td>
+<td style="text-align:center"><code>b</code></td>
+<td style="text-align:right"><strong>c</strong></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Setext heading</h2>
+<p><img src="../images/example.png" alt="An image" title="Image title" /></p>
+<p>Escapes: *not emphasis* # [not a link]</p>
+</section>
+<!-- END: section:exit#rendering-fixture -->
+"
+`;
