@@ -370,6 +370,16 @@ prompt:**
    issues, no re-parenting. The parent does that after merge. Two subagents
    editing the same issue body clobber each other silently; two editing the same
    file at least conflict loudly.
+4. **Pin the build to the worktree:** every lerna command (`npm run build`,
+   `npm run typecheck`, `npm test`) must run as
+   `NX_WORKSPACE_ROOT_PATH=$(git rev-parse --show-toplevel) NX_DAEMON=false npm run …`.
+   lerna runs through Nx, which takes the *topmost* directory containing
+   `node_modules/nx` as its workspace root, and this repo has no `nx.json` to stop
+   it. A worktree under `.claude/worktrees/` therefore builds, and `clean`s, the
+   **main checkout's** packages, and its own `dist/` stays empty, so its `tsc`
+   results are wrong. Through the Nx daemon it can even build another worktree.
+   This bit us on 2026-11-07 (TASK-119/134): three of four subagents built the
+   main checkout before noticing.
 
 After the subagents finish, **verify each branch's base before merging**
 (`git merge-base <trunk> <branch>` should be at/near `<trunk>` HEAD, not an old
@@ -725,6 +735,9 @@ Before marking any task complete:
 1. `npm test` passes in the affected package(s). This includes
    `npm run check:tasks`, which validates every task file's `**Epic:**` against
    `tasks/EPICS.json` — the check that catches a stray or invented epic value.
+   `npm run typecheck` must also be green: CI runs it in the required
+   `build-and-test` job, after the build (TASK-119). New code takes real types;
+   an explicit `any` warns under Biome's `noExplicitAny`.
 2. The task PRD is updated (subtasks checked, findings recorded)
 3. Changes committed with a conventional commit message
 4. The PR body says `Closes #NNN`, which closes the issue on merge
@@ -840,7 +853,8 @@ npm run check
 # Auto-fix lint and formatting violations
 npm run format
 
-# TypeScript type-check across all packages
+# TypeScript type-check across all packages (needs a build first; reports
+# every failing package, not just the first)
 npm run typecheck
 
 # Check for circular imports
