@@ -4,6 +4,15 @@ export { default as GuideItem } from './GuideItem'
 export { default as Html } from './Html'
 export { default as HtmlToXml } from './HtmlToXml'
 export { default as ManifestItemProperties } from './ManifestItemProperties'
+export type {
+  BlockRule,
+  DirectiveToken,
+  FigureToken,
+  MarkdownItHost,
+  RendererContext,
+  RendererInstance,
+  RendererReference,
+} from './markdown'
 export type { NavigationEntry } from './Spine'
 export { default as Spine } from './Spine'
 export { default as SpineItem } from './SpineItem'
