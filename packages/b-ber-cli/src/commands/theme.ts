@@ -6,9 +6,15 @@ const describe = "Manage a project's theme"
 
 const handler = (args: any) =>
   ensure()
-    .then(() => {
-      const { command, options } = args
-      return Theme[command](options)
+    .then(async () => {
+      // `choices` in the builder restricts `command` to these two.
+      const { command, options } = args as {
+        command: 'set' | 'list'
+        options: string
+      }
+      // Awaited rather than returned: yargs wants the handler to resolve to
+      // void, and discards the value either way.
+      await Theme[command](options)
     })
     .catch(console.error)
 

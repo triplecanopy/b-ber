@@ -80,61 +80,6 @@ declare module 'autoprefixer' {
   export = autoprefixer
 }
 
-// b-ber-lib subpath stubs — re-export from the bundled main index
-declare module '@canopycanopycanopy/b-ber-lib/State' {
-  export { State as default } from '@canopycanopycanopy/b-ber-lib'
-}
-
-declare module '@canopycanopycanopy/b-ber-lib/Theme' {
-  export { Theme as default } from '@canopycanopycanopy/b-ber-lib'
-}
-
-declare module '@canopycanopycanopy/b-ber-lib/YamlAdaptor' {
-  export { YamlAdaptor as default } from '@canopycanopycanopy/b-ber-lib'
-}
-
-declare module '@canopycanopycanopy/b-ber-lib/EbookConvert' {
-  export { EbookConvert as default } from '@canopycanopycanopy/b-ber-lib'
-}
-
-declare module '@canopycanopycanopy/b-ber-lib/HtmlToXml' {
-  export { HtmlToXml as default } from '@canopycanopycanopy/b-ber-lib'
-}
-
-declare module '@canopycanopycanopy/b-ber-lib/utils' {
-  export const opsPath: (fpath: string, base: string) => string
-  export const fileId: (str: string) => string
-  export const getBookMetadata: (term: string) => string
-  export const ensure: (...args: any[]) => any
-  export const generateWebpubManifest: (
-    files: string[]
-  ) => Record<string, unknown>
-  export const safeWrite: (dest: string, data: string) => Promise<void>
-  export const fail: (msg: unknown, err: unknown, yargs: any) => void
-  export const resolveIntersectingUrl: (u: string, p: string) => string
-  export const validatePosterImage: (asset: string, type: string) => string
-  export const renderPosterImage: (poster: string) => string
-  export const renderCaption: (caption: string, mediaType: string) => string
-  export const getMediaType: (type: string) => string
-  export const getImageDimensions: (filePath: string) => {
-    width: number
-    height: number
-  }
-  export const getImageOrientation: (w: number, h: number) => string | null
-  export const getTitle: (page: any) => string
-  export const ensureSource: (
-    obj: any,
-    type: string,
-    fileName: string,
-    lineNumber: number
-  ) => void
-  export const ensurePoster: (obj: any, type: string) => void
-  export const ensureSupportedClassNames: (
-    obj: any,
-    supported: (build: string) => boolean
-  ) => void
-}
-
 // b-ber-templates subpath stubs — inline declarations so BufferFile return
 // types don't conflict with Template.render(string, string) call sites
 declare module '@canopycanopycanopy/b-ber-templates/Xhtml' {

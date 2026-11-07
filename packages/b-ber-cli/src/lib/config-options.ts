@@ -104,7 +104,8 @@ export const parseConfigFile = async (
 
   const contents = (await fs.readFile(configPath)).toString()
 
-  if (/^\.ya?ml/i.test(ext)) return YamlAdaptor.parse(contents)
+  if (/^\.ya?ml/i.test(ext))
+    return YamlAdaptor.parse(contents) as Record<string, any>
 
   return JSON.parse(contents)
 }
