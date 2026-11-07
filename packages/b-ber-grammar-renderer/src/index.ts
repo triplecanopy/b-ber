@@ -9,14 +9,26 @@ import isUndefined from 'lodash/isUndefined'
 // Assign a default object to the `context` argument, since we'll refer to
 // some of its properties during tests. the properties themselves don't
 // need to be defined, though
-const renderer = ({ context = {}, render, markerOpen, markerClose }) => ({
+// `render` is generic so the caller's markdown-it render rule keeps its own
+// type through `createRenderer` without this package depending on markdown-it
+const renderer = <R>({
+  context = {},
+  render,
+  markerOpen,
+  markerClose,
+}: {
+  context?: { fileName?: string }
+  render: R
+  markerOpen: RegExp
+  markerClose: RegExp
+}) => ({
   render,
   marker: BLOCK_DIRECTIVE_MARKER,
   minMarkers: BLOCK_DIRECTIVE_MARKER_MIN_LENGTH,
   markerOpen,
   markerClose,
 
-  validateOpen(params, line) {
+  validateOpen(params: string, line: number) {
     // Check to see if we've hit an opening/exit token, i.e., `::: <name>:<id>`
     const match = params.trim().match(markerOpen)
     if (!match || !match.length) return false
@@ -42,7 +54,9 @@ const renderer = ({ context = {}, render, markerOpen, markerClose }) => ({
     const isClosing = type && type === 'exit'
     const inStore = index > -1
 
-    log.debug(
+    // b-ber-logger types `debug` as nullary, but every caller passes a message
+    // biome-ignore lint/suspicious/noExplicitAny: TASK-119 pass 1
+    ;(log.debug as any)(
       `id: ${id}; isOpening: ${isOpening}; isClosing: ${isClosing}; type: ${type}, inStore: ${inStore}`
     )
 
