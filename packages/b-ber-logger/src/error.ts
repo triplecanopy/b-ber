@@ -1,6 +1,7 @@
 import util from 'util'
+import type { Logger } from './logger'
 
-export function error(this: any, _args: unknown): void {
+export function error(this: Logger, _args: unknown): void {
   const args: unknown[] = Array.isArray(_args) ? _args : [_args]
 
   if (this.logLevel < 1) return

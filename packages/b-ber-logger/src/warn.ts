@@ -1,6 +1,7 @@
 import util from 'util'
+import type { Logger } from './logger'
 
-export function warn(this: any, ...args: unknown[]): void {
+export function warn(this: Logger, ...args: unknown[]): void {
   if (this.logLevel < 2) return
 
   let message: string

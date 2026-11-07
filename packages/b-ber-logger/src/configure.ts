@@ -1,4 +1,6 @@
-export function configure(this: any): void {
+import type { Logger } from './logger'
+
+export function configure(this: Logger): void {
   /*
     0 quiet    show nothing
     1 error    show only errors

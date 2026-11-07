@@ -3,7 +3,7 @@ import { getBookMetadata } from '@canopycanopycanopy/b-ber-lib/utils'
 import log from '@canopycanopycanopy/b-ber-logger'
 import zipper from 'epub-zipper'
 
-const epub = () =>
+const epub = (): Promise<void> =>
   process.argv.includes('--no-compile')
     ? Promise.resolve()
     : zipper

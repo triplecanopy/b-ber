@@ -1,6 +1,7 @@
 import util from 'util'
+import type { Logger } from './logger'
 
-export function printVersion(this: any, version: string): void {
+export function printVersion(this: Logger, version: string): void {
   const message = util.format.call(
     util,
     '%s%s %s %s',

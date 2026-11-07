@@ -20,7 +20,7 @@ import { printVersion } from './print-version'
 import { printErrors, printWarnings } from './printer'
 import { registerSequence } from './register'
 import { reset } from './reset'
-import { printSummary } from './summary'
+import { printSummary, type SummaryData } from './summary'
 import Timer from './Timer'
 import { trace } from './trace'
 import { warn } from './warn'
@@ -87,16 +87,12 @@ class Logger extends Timer {
   warn!: (...args: unknown[]) => void
   info!: (...args: unknown[]) => void
   error!: (args: unknown) => void
-  debug!: () => void
-  trace!: () => void
+  // Both are no-ops, but callers pass the message they would log
+  debug!: (...args: unknown[]) => void
+  trace!: (...args: unknown[]) => void
   notice!: (...args: unknown[]) => void
   inspect!: (args: unknown) => void
-  printSummary!: (data: {
-    state: any
-    formattedStartDate: string
-    formattedEndDate: string
-    sequenceEnd: string
-  }) => void
+  printSummary!: (data: SummaryData) => void
   configure!: () => void
   printVersion!: (version: string) => void
   registerSequence!: (

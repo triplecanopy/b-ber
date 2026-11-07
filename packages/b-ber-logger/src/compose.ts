@@ -1,6 +1,7 @@
 import util from 'util'
+import type { Logger } from './logger'
 
-export function composeMessage(this: any, args: unknown[]): string {
+export function composeMessage(this: Logger, args: unknown[]): string {
   const message = util.format
     .call(util, ...args)
     .split('\n')

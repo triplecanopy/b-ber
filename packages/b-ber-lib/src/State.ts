@@ -16,10 +16,41 @@ import Config, { ConfigOptions } from './Config'
 import type GuideItem from './GuideItem'
 import Spine from './Spine'
 import type SpineItem from './SpineItem'
-import Yaml from './Yaml'
+import Yaml, { type MetadataEntry } from './Yaml'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type ThemeModule = any
+// What a theme package exports, whether built in or a user's theme loaded with
+// `require`
+export interface ThemeModule {
+  name: string
+  // Path of the theme's SCSS entry point
+  entry: string
+  // File names in the theme's `fonts` and `images` directories
+  fonts: string[]
+  images: string[]
+  npmPackage?: unknown
+}
+
+// One entry of media.yml, which maps a media ID to a directive for each build
+export interface MediaEntry {
+  // The directive the `media` directive is replaced with, e.g. `vimeo`
+  type: string
+  caption?: string
+  // The replacement directive's attributes
+  [attribute: string]: unknown
+}
+
+// What b-ber-grammar-renderer records for each open block directive
+export interface CursorEntry {
+  id: string
+  type: string
+}
+
+// The rendered footnotes of one file, from b-ber-grammar-footnotes
+export interface FootnotesEntry {
+  fileName: string
+  title: string
+  notes: string
+}
 
 const themes: Record<string, ThemeModule> = {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -59,9 +90,27 @@ const DIST_DIR_JAVASCRIPTS = 'javascripts'
 const DIST_DIR_FONTS = 'fonts'
 const DIST_DIR_MEDIA = 'media'
 
-// TODO: type this — build settings are populated dynamically via loadBuildSettings
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type BuildSettings = Record<string, any>
+// One build's settings and the collections its tasks fill, from
+// `loadBuildSettings`. The getters below read and write the current build's.
+export interface BuildSettings {
+  src: string
+  dist: string
+  // The build's section of config.yml, merged over the base config later
+  config: Record<string, unknown>
+  guide: GuideItem[]
+  spine: Spine
+  // The nested navigation, `spine.nested`
+  toc: SpineItem[]
+  cursor: CursorEntry[]
+  // b-ber-templates' FigureData. Not typed here because b-ber-templates
+  // depends on this package
+  figures: unknown[]
+  footnotes: FootnotesEntry[]
+  // URLs of media the project embeds from elsewhere
+  remoteAssets: string[]
+  // The pages b-ber-tasks' `loi` task generates for each figure
+  loi: SpineItem[]
+}
 
 class State {
   static get defaults(): { build: string; sequence: unknown[]; hash: string } {
@@ -72,16 +121,20 @@ class State {
     }
   }
 
-  metadata: Yaml = { json: () => [{}] } as unknown as Yaml // mocks the YAML api
+  metadata: Yaml<MetadataEntry[]> = { json: () => [{}] } as unknown as Yaml<
+    MetadataEntry[]
+  > // mocks the YAML api
 
-  theme: ThemeModule = {}
+  // Empty until `loadTheme` runs, which it does not for `new`, `--help` and
+  // `--version`
+  theme: ThemeModule = {} as ThemeModule
 
   video: string[] = []
 
   audio: string[] = []
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  media: any = {}
+  // media.yml: media ID -> build type -> replacement directive
+  media: Record<string, Record<string, MediaEntry>> = {}
 
   build = 'epub'
 
@@ -89,6 +142,10 @@ class State {
 
   hash: string = randomHash()
 
+  // Empty placeholders until `loadBuilds` replaces each with
+  // `loadBuildSettings`' result. Typed as complete because every build task
+  // runs after `loadBuilds`; only `new`, `--help` and `--version`, which skip
+  // initialization and read no build settings, see anything else
   builds: Record<string, BuildSettings> = {
     sample: {},
     epub: {},
@@ -96,7 +153,7 @@ class State {
     pdf: {},
     web: {},
     reader: {},
-  }
+  } as unknown as Record<string, BuildSettings>
 
   config!: ConfigOptions
 
@@ -126,19 +183,19 @@ class State {
     this.builds[this.build].figures = val
   }
 
-  get footnotes(): unknown[] {
+  get footnotes(): FootnotesEntry[] {
     return this.builds[this.build].footnotes
   }
 
-  set footnotes(val: unknown[]) {
+  set footnotes(val: FootnotesEntry[]) {
     this.builds[this.build].footnotes = val
   }
 
-  get cursor(): unknown[] {
+  get cursor(): CursorEntry[] {
     return this.builds[this.build].cursor
   }
 
-  set cursor(val: unknown[]) {
+  set cursor(val: CursorEntry[]) {
     this.builds[this.build].cursor = val
   }
 
@@ -151,19 +208,19 @@ class State {
     this.builds[this.build].toc = val
   }
 
-  get remoteAssets(): unknown[] {
+  get remoteAssets(): string[] {
     return this.builds[this.build].remoteAssets
   }
 
-  set remoteAssets(val: unknown[]) {
+  set remoteAssets(val: string[]) {
     this.builds[this.build].remoteAssets = val
   }
 
-  get loi(): unknown[] {
+  get loi(): SpineItem[] {
     return this.builds[this.build].loi
   }
 
-  set loi(val: unknown[]) {
+  set loi(val: SpineItem[]) {
     this.builds[this.build].loi = val
   }
 
@@ -177,7 +234,7 @@ class State {
 
   get distDir(): string {
     if (this.build && this.builds && this.builds[this.build]) {
-      return this.builds[this.build].dist as string
+      return this.builds[this.build].dist
     }
     return this.config.dist as string
   }
@@ -306,17 +363,16 @@ class State {
     return has(this, prop)
   }
 
-  contains = (coll: string, value: unknown): boolean =>
+  // `value` and `pred` are lodash `matches` shorthands, e.g. `{ id }`
+  contains = (coll: string, value: object): boolean =>
     this.indexOf(coll, value) > -1
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  find = (coll: string, pred: any): unknown => {
+  find = (coll: string, pred: object): unknown => {
     const collection = get(this, coll)
     return find(collection, pred)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  indexOf = (coll: string, pred: any): number => {
+  indexOf = (coll: string, pred: object): number => {
     const collection = get(this, coll)
     return findIndex(collection, pred)
   }
@@ -324,19 +380,19 @@ class State {
   loadConfig = (): void => {
     if (!fs.existsSync(path.resolve('config.yml'))) return
 
-    const config = new Yaml('config')
+    const config = new Yaml<Partial<ConfigOptions>>('config')
     config.load(path.resolve('config.yml'))
 
     // not necessary right now to pass around a YAWN instance since we'er
     // not writing back to config.yml, but may be necessary at some point
-    set(this, 'config', new Config(config.json() as Partial<ConfigOptions>))
+    set(this, 'config', new Config(config.json()))
   }
 
   loadMetadata = (): void => {
     const fpath = path.resolve(this.config.src as string, 'metadata.yml')
     if (!fs.existsSync(fpath)) return
 
-    set(this, 'metadata', new Yaml('metadata'))
+    set(this, 'metadata', new Yaml<MetadataEntry[]>('metadata'))
     this.metadata.load(fpath)
   }
 
@@ -344,7 +400,7 @@ class State {
     const fpath = path.resolve(this.config.src as string, 'media.yml')
     if (!fs.existsSync(fpath)) return
 
-    const mediaYaml = new Yaml('media')
+    const mediaYaml = new Yaml<State['media']>('media')
     mediaYaml.load(fpath)
     const media = mediaYaml.json()
 

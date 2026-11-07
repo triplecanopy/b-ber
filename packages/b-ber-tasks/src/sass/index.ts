@@ -175,7 +175,8 @@ const renderCSS = (scssString: Buffer): Promise<{ css: Buffer }> =>
           path.dirname(path.dirname(state.theme.entry)),
         ],
         outputStyle: state.env === 'production' ? 'compressed' : 'expanded',
-        // @ts-ignore — errLogToConsole is a valid dart-sass option not in the TS types
+        // @ts-expect-error `errLogToConsole` is a node-sass option, which
+        // dart-sass ignores. Kept so this change is types-only; it can go
         errLogToConsole: true,
       },
       (err, result) => {

@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 /* eslint-disable class-methods-use-this */
 
-import { Url } from '@canopycanopycanopy/b-ber-lib'
+import { type MetadataEntry, Url } from '@canopycanopycanopy/b-ber-lib'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import { generateWebpubManifest } from '@canopycanopycanopy/b-ber-lib/utils'
 import log from '@canopycanopycanopy/b-ber-logger'
@@ -32,7 +32,8 @@ class Reader {
     this.readerAppPath = null
 
     // eslint-disable-next-line no-constructor-return
-    // @ts-expect-error constructor returns a Promise intentionally
+    // @ts-expect-error The constructor returns the task's Promise, so `new
+    // Reader()` is not a Reader. `main` below types it as what it is
     return (
       this.createOutputDirs()
         .then(() => this.ensureReaderModuleExists())
@@ -131,7 +132,10 @@ class Reader {
     return Promise.all(promises)
   }
 
-  getBookMetadata(term?: any) {
+  // All of metadata.yml, or the value of one term
+  getBookMetadata(): MetadataEntry[]
+  getBookMetadata(term: string): string
+  getBookMetadata(term?: string): MetadataEntry[] | string {
     if (!term) return state.metadata.json()
 
     const entry = find(state.metadata.json(), { term })
@@ -287,6 +291,7 @@ class Reader {
   }
 }
 
-const main = () => new Reader()
+// The constructor returns the task's Promise (see above)
+const main = (): Promise<void> => new Reader() as unknown as Promise<void>
 
 export default main

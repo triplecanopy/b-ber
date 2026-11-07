@@ -1,7 +1,8 @@
 import chalk from 'chalk'
 import util from 'util'
+import type { Logger } from './logger'
 
-export function wrap(this: any, arr: string[], space: string): string {
+export function wrap(this: Logger, arr: string[], space: string): string {
   return arr
     .reduce((acc: string, curr: string) => {
       const a = acc.split('\n')
@@ -37,7 +38,7 @@ export function floatFormat(_n: unknown): string {
 }
 
 export function decorate(
-  this: any,
+  this: Logger,
   _args: unknown,
   ...props: string[]
 ): string {

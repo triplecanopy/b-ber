@@ -1,9 +1,17 @@
+import type {
+  FigurePluginOptions,
+  MarkdownItHost,
+} from '@canopycanopycanopy/b-ber-lib'
 import isUndefined from 'lodash/isUndefined'
 
 /* eslint-disable  no-param-reassign */
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const figurePlugin = (md: any, name: string, options: any = {}): void => {
+// Every caller passes `options`; the empty default predates these types
+const figurePlugin = (
+  md: MarkdownItHost,
+  name: string,
+  options: FigurePluginOptions = {} as FigurePluginOptions
+): void => {
   const minMarkers = /*options.minMarkers || */ 3
   const markerStr = /*options.marker || */ ':'
   const markerChar = markerStr.charCodeAt(0)

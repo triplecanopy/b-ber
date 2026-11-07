@@ -1,6 +1,29 @@
 import util from 'util'
+import type { Logger } from './logger'
 
 const INDENTATION = '  '
+
+// The parts of b-ber-lib's State the summary reads. Structural, because
+// b-ber-lib depends on this package and cannot be imported here
+interface NavigationEntry {
+  title?: string
+  name?: string
+  nodes?: NavigationEntry[]
+}
+
+export interface SummaryState {
+  config: unknown
+  metadata: { json(): unknown }
+  toc: NavigationEntry[]
+}
+
+// What Timer#done emits on `done`, and the listener hands to printSummary
+export interface SummaryData {
+  state: SummaryState
+  formattedStartDate: string
+  formattedEndDate: string
+  sequenceEnd: string
+}
 
 function isPlainObject(v: unknown): v is Record<string, unknown> {
   return (
@@ -10,7 +33,7 @@ function isPlainObject(v: unknown): v is Record<string, unknown> {
   )
 }
 
-function write(this: any, msgs: [string, string?][], context: any): void {
+function write(this: Logger, msgs: [string, string?][], context: Logger): void {
   const len = msgs.length - 1
   const esses = ' %s'.repeat(len)
   const msgs_ = msgs.map(([text, color]) =>
@@ -28,10 +51,14 @@ function write(this: any, msgs: [string, string?][], context: any): void {
   context.newLine()
 }
 
-function printNavigation(data: unknown[], context: any, indent = 0): void {
+function printNavigation(
+  data: NavigationEntry[],
+  context: Logger,
+  indent = 0
+): void {
   const indent_ = INDENTATION.repeat(indent)
-  function render(_data: unknown[], _context: any): void {
-    _data.forEach((item: any) => {
+  function render(_data: NavigationEntry[], _context: Logger): void {
+    _data.forEach((item) => {
       write.call(
         _context,
         [[`${indent_}${item.title || '[no title]'}: ${item.name}`]],
@@ -45,19 +72,15 @@ function printNavigation(data: unknown[], context: any, indent = 0): void {
   render(data, context)
 }
 
-function writeMetadata(data: unknown, context: any): void {
+function writeMetadata(data: unknown, context: Logger): void {
   Object.entries(data as Record<string, unknown>).forEach(([, v]) => {
     if (isPlainObject(v)) {
-      write.call(
-        context,
-        [[`${(v as any).term}: ${(v as any).value}`]],
-        context
-      )
+      write.call(context, [[`${v.term}: ${v.value}`]], context)
     }
   })
 }
 
-function writeConfig(data: unknown, context: any, indent = 0): void {
+function writeConfig(data: unknown, context: Logger, indent = 0): void {
   const indent_ = INDENTATION.repeat(indent)
   Object.entries(data as Record<string, unknown>).forEach(([k, v]) => {
     if (typeof v === 'string') {
@@ -71,18 +94,8 @@ function writeConfig(data: unknown, context: any, indent = 0): void {
 }
 
 export function printSummary(
-  this: any,
-  {
-    state,
-    formattedStartDate,
-    formattedEndDate,
-    sequenceEnd,
-  }: {
-    state: any
-    formattedStartDate: string
-    formattedEndDate: string
-    sequenceEnd: string
-  }
+  this: Logger,
+  { state, formattedStartDate, formattedEndDate, sequenceEnd }: SummaryData
 ): void {
   this.newLine()
   write.call(this, [['Stats', 'blueBright']], this)

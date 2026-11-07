@@ -12,14 +12,11 @@ const figures: Record<string, FigureTemplates> = { epub, mobi, reader, web }
 
 type Mime = FigureData['mime']
 
-// `test` converts `false`, null and undefined to strings, none of which match,
-// but its typings only accept a string
-// biome-ignore lint/suspicious/noExplicitAny: TASK-119 pass 1
-const isImage = (mime: Mime) => /^image/.test(mime as any)
-// biome-ignore lint/suspicious/noExplicitAny: TASK-119 pass 1
-const isAudio = (mime: Mime) => /^audio/.test(mime as any)
-// biome-ignore lint/suspicious/noExplicitAny: TASK-119 pass 1
-const isVideo = (mime: Mime) => /^video/.test(mime as any)
+// `test` converts its argument with ToString, which is what `String` does, so
+// `false`, null and undefined become strings that do not match, as before
+const isImage = (mime: Mime) => /^image/.test(String(mime))
+const isAudio = (mime: Mime) => /^audio/.test(String(mime))
+const isVideo = (mime: Mime) => /^video/.test(String(mime))
 const isIframe = (type: string | undefined) => type === 'iframe'
 const isVimeo = (type: string | undefined) => type === 'vimeo'
 

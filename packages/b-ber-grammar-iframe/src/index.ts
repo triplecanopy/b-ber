@@ -1,17 +1,15 @@
-import { State as state, utils } from '@canopycanopycanopy/b-ber-lib'
+import {
+  type FigureToken,
+  type RendererReference,
+  State as state,
+  utils,
+} from '@canopycanopycanopy/b-ber-lib'
 import figure from '@canopycanopycanopy/b-ber-parser-figure'
 import {
   INLINE_DIRECTIVE_MARKER,
   INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
 } from '@canopycanopycanopy/b-ber-shapes-directives'
-import {
-  createIframe,
-  createIframeInline,
-  type FigureToken,
-  prepare,
-  type RendererReference,
-  supported,
-} from './helpers'
+import { createIframe, createIframeInline, prepare, supported } from './helpers'
 
 const { createUnsupportedInline } = utils
 

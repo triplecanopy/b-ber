@@ -1,9 +1,11 @@
 import { success } from '../lib/success'
 import type { Context, Parser } from '../types'
 
-export function not(parser: Parser<any>) {
+// Succeeds with null once `parser` matches, or with an empty array at the end
+// of the input
+export function not(parser: Parser<unknown>): Parser<unknown[] | null> {
   return (ctx: Context) => {
-    const values: any[] = []
+    const values: unknown[] = []
     const nextCtx = { ...ctx }
 
     while (nextCtx.index < nextCtx.text.length) {

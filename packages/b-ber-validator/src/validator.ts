@@ -106,7 +106,7 @@ function speaker() {
   ])
 }
 
-function block(): Parser<any> {
+function block(): Parser<unknown[]> {
   const identIndex = 3
   return close(
     map(

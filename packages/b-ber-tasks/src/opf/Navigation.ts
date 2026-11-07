@@ -198,7 +198,7 @@ class Navigation {
     string,
     string,
     string,
-    any,
+    string,
   ]) {
     await Promise.all([
       Navigation.writeTocXhtmlFile(toc),
@@ -219,7 +219,7 @@ class Navigation {
         ])
       )
       .then((resp) =>
-        Navigation.writeFiles(resp as [string, string, string, any])
+        Navigation.writeFiles(resp as [string, string, string, string])
       )
       .catch(log.error)
   }
