@@ -5,7 +5,13 @@ import {
   SECONDARY_INLINE_DIRECTIVE_FENCE_OPEN,
 } from '@canopycanopycanopy/b-ber-shapes-directives'
 
-export const throMissingBuildTypeError = ({ id, build }) => {
+export const throMissingBuildTypeError = ({
+  id,
+  build,
+}: {
+  id: string
+  build: string
+}) => {
   let message = `Missing build type [${build}] in media.yml for the ID [${id}].`
   message += ' '
   message +=
@@ -13,7 +19,8 @@ export const throMissingBuildTypeError = ({ id, build }) => {
   log.error(message)
 }
 
-export const throwMissingIDError = ({ id }) => {
+// `build` is accepted because the caller passes it, though it is unused
+export const throwMissingIDError = ({ id }: { id: string; build?: string }) => {
   let message = `Missing ID [${id}] in media.yml.`
   message += ' '
   message +=
@@ -21,7 +28,7 @@ export const throwMissingIDError = ({ id }) => {
   log.error(message)
 }
 
-export const createAttributesString = (data) =>
+export const createAttributesString = (data: Record<string, unknown>) =>
   Object.entries(data)
     .reduce((acc, [key, value]) => acc.concat(`${key}:"${value}" `), '')
     .trim()
@@ -32,6 +39,12 @@ export const createDirectiveString = ({
   id,
   caption,
   rest,
+}: {
+  type: string
+  modifier: string
+  id: string
+  caption?: string
+  rest: Record<string, unknown>
 }) => {
   const attributes = createAttributesString(rest)
   let directive = `${INLINE_DIRECTIVE_FENCE}${type}${modifier}:${id} ${attributes}`
