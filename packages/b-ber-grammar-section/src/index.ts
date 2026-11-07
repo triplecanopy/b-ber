@@ -3,7 +3,13 @@ import {
   htmlId,
 } from '@canopycanopycanopy/b-ber-grammar-attributes'
 import createRenderer from '@canopycanopycanopy/b-ber-grammar-renderer'
-import { Html, State as state } from '@canopycanopycanopy/b-ber-lib'
+import {
+  type CursorEntry,
+  type DirectiveToken,
+  Html,
+  type RendererContext,
+  State as state,
+} from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import plugin from '@canopycanopycanopy/b-ber-parser-section'
 import { BLOCK_DIRECTIVES } from '@canopycanopycanopy/b-ber-shapes-directives'
@@ -20,14 +26,8 @@ const MARKER_OPEN_RE = new RegExp(
 
 const MARKER_CLOSE_RE = /(exit)(?::([^\s]+))?/
 
-// What `createRenderer` stores in `state.cursor` for each open directive
-type CursorEntry = { id: string; type: string }
-type Context = { fileName?: string }
-
-// The fields of markdown-it's `Token` this renderer reads. Declared locally
-// because this package does not depend on markdown-it, and importing its types
-// makes tsdown inline all of them into the published .d.ts
-type Token = { info: string; nesting: number; map: [number, number] | null }
+// Optional so the tests can render without a file
+type Context = Partial<RendererContext>
 
 // `context` must be available in this `render` method and is passed
 // into `createRenderer` below. Default for `context` is set for use
@@ -52,12 +52,10 @@ function isSpread(directive: CursorEntry | undefined) {
 function handleExitDirective(token: RegExpMatchArray) {
   const [, type, id] = token
 
-  // b-ber-logger types `debug` as nullary, but every caller passes a message
-  // biome-ignore lint/suspicious/noExplicitAny: TASK-119 pass 1
-  ;(log.debug as any)(`exit directive [${id}]`)
+  log.debug(`exit directive [${id}]`)
 
   const comment = Html.comment(`END: section:${type}#${htmlId(id)}`)
-  const directive = find(state.cursor, { id }) as CursorEntry | undefined
+  const directive = find(state.cursor, { id })
 
   state.remove('cursor', { id })
 
@@ -95,8 +93,7 @@ function openElement(
   // we're only interested in the captures
   const [, type, id, attr] = token
 
-  // biome-ignore lint/suspicious/noExplicitAny: TASK-119 pass 1
-  ;(log.debug as any)(`open directive [${id}]`)
+  log.debug(`open directive [${id}]`)
 
   const comment = Html.comment(
     `START: section:${type}#${htmlId(id)}; ${fileName}:${lineNumber}`
@@ -130,7 +127,7 @@ function closeElement(marker: string) {
 
 const render =
   ({ context = {} }: { context?: Context }) =>
-  (tokens: Token[], index: number) => {
+  (tokens: DirectiveToken[], index: number) => {
     const token = tokens[index]
     const lineNumber = token.map ? token.map[0] : null
     const fileName = `_markdown/${context.fileName}.md`

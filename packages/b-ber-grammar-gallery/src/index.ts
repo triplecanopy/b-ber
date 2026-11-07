@@ -4,7 +4,10 @@ import {
   htmlId,
 } from '@canopycanopycanopy/b-ber-grammar-attributes'
 import createRenderer from '@canopycanopycanopy/b-ber-grammar-renderer'
-import { State as state } from '@canopycanopycanopy/b-ber-lib'
+import {
+  type DirectiveToken,
+  State as state,
+} from '@canopycanopycanopy/b-ber-lib'
 import plugin from '@canopycanopycanopy/b-ber-parser-gallery'
 
 // define our open and closing markers, used by the `validateOpen` and
@@ -12,14 +15,9 @@ import plugin from '@canopycanopycanopy/b-ber-parser-gallery'
 const MARKER_OPEN_RE = /^(gallery)(?::([^\s]+)(\s.*)?)?$/
 const MARKER_CLOSE_RE = /^(exit)(?::([^\s]+))?/
 
-// The fields of markdown-it's `Token` this renderer reads. Declared locally
-// because this package does not depend on markdown-it, and importing its types
-// makes tsdown inline all of them into the published .d.ts
-type Token = { info: string; nesting: number }
-
 // a simple `render` function that gets passed into our `createRenderer` is
 // responsible for the HTML output.
-const render = (tokens: Token[], idx: number) => {
+const render = (tokens: DirectiveToken[], idx: number) => {
   const token = tokens[idx].info.trim().match(MARKER_OPEN_RE)
 
   if (tokens[idx].nesting !== 1 || !token) return ''

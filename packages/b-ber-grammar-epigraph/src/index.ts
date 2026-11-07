@@ -29,11 +29,11 @@ export default {
     instance,
     context = { fileName: '' },
   }: {
-    // Typed loosely on purpose: `render` reads `instance.escapeHtml`, which
-    // markdown-it does not have (it is `instance.utils.escapeHtml`), so a real
-    // type here would reject it. Reported under TASK-119, not fixed in pass 1
-    // biome-ignore lint/suspicious/noExplicitAny: TASK-119 pass 1
-    instance: any
+    // The shape `render` reads, which is not markdown-it's: it has
+    // `instance.utils.escapeHtml`, not `instance.escapeHtml.escapeHtml`. A
+    // defect, see #720; the type will reject a real MarkdownIt instance if
+    // epigraph is registered before that is fixed
+    instance: { escapeHtml: { escapeHtml(str: string): string } }
     context?: { fileName: string }
   }) => ({
     marker: ':',

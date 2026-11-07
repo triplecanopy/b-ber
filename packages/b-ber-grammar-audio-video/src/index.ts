@@ -4,7 +4,12 @@ import {
   htmlId,
   toAlias,
 } from '@canopycanopycanopy/b-ber-grammar-attributes'
-import { Html, State as state } from '@canopycanopycanopy/b-ber-lib'
+import {
+  type FigureToken,
+  Html,
+  type RendererReference,
+  State as state,
+} from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import figure from '@canopycanopycanopy/b-ber-parser-figure'
 import {
@@ -32,23 +37,6 @@ const MARKER_RE = /^(video|audio)/
 const DIRECTIVE_RE =
   /(audio(?:-inline)?|video(?:-inline)?)(?::([^\s]+)(\s+.*)?)?$/
 
-// The parts of markdown-it's `Token` and `MarkdownIt` that this renderer uses.
-// Typed structurally rather than imported from markdown-it: it is not a
-// dependency of this package, so tsdown would inline all of its types into
-// dist/index.d.ts.
-interface FigureToken {
-  info: string
-  map: [number, number] | null
-  // b-ber-parser-figure stores the raw caption source here, not child tokens
-  children?: string | null
-}
-
-// `context` is the b-ber-markdown-renderer instance
-interface RendererReference {
-  instance: { renderInline: (src: string) => string }
-  context: { fileName: string }
-}
-
 interface PrepareArgs extends RendererReference {
   token: FigureToken
   marker: RegExpMatchArray
@@ -69,13 +57,7 @@ function prepare({
   // DIRECTIVE_RE only matches audio(-inline) and video(-inline)
   const mediaType = getMediaType(type) as MediaType
 
-  const attrsObject = attributesObject(attrs, type, {
-    fileName,
-    // attributesObject only interpolates lineNumber into log messages, but
-    // types it `number | undefined`; it should accept `token.map`'s null
-    // biome-ignore lint/suspicious/noExplicitAny: TASK-119 pass 1
-    lineNumber: lineNumber as any,
-  })
+  const attrsObject = attributesObject(attrs, type, { fileName, lineNumber })
   const media = [...state[mediaType]]
   const caption = token.children ? instance.renderInline(token.children) : ''
 

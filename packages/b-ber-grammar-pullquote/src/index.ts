@@ -6,7 +6,12 @@ import {
   attributesObject,
   attributesString,
 } from '@canopycanopycanopy/b-ber-grammar-attributes'
-import { State as state } from '@canopycanopycanopy/b-ber-lib'
+import {
+  type DirectiveToken,
+  type RendererContext,
+  type RendererInstance,
+  State as state,
+} from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import plugin from '@canopycanopycanopy/b-ber-parser-section'
 import {
@@ -19,13 +24,8 @@ import isUndefined from 'lodash/isUndefined'
 const MARKER_OPEN_RE = /^(pullquote|blockquote|exit)(?::([^\s]+)(\s.*)?)?$/
 const MARKER_CLOSE_RE = /(exit)(?::([\s]+))?/
 
-type Context = { fileName?: string }
-
-// The fields of markdown-it's `Token` and `MarkdownIt` this renderer uses.
-// Declared locally because this package does not depend on markdown-it, and
-// importing its types makes tsdown inline all of them into the published .d.ts
-type Token = { info: string; nesting: number; map: [number, number] | null }
-type Instance = { renderInline(src: string): string }
+// Optional so the tests can render without a file
+type Context = Partial<RendererContext>
 
 let citation = ''
 const pullquoteIndices: { id: string; type: string }[] = [] // track these separately
@@ -70,7 +70,7 @@ function cite(text: string) {
   return `<footer><cite>&#8212;&#160;${text}</cite></footer>`
 }
 
-function handleClose(token: string, instance: Instance) {
+function handleClose(token: string, instance: RendererInstance) {
   // it's an exit to a pullquote. grab the id from the list of
   // indices
 
@@ -118,8 +118,8 @@ const validateOpen =
   }
 
 const render =
-  ({ instance, context }: { instance: Instance; context: Context }) =>
-  (tokens: Token[], idx: number) => {
+  ({ instance, context }: { instance: RendererInstance; context: Context }) =>
+  (tokens: DirectiveToken[], idx: number) => {
     const fileName = `_markdown/${context.fileName}.md`
     const lineNumber = tokens[idx].map ? tokens[idx].map[0] : null
     const token = tokens[idx].info.trim()
@@ -148,7 +148,7 @@ export default {
     instance,
     context,
   }: {
-    instance: Instance
+    instance: RendererInstance
     context: Context
   }) => ({
     marker: BLOCK_DIRECTIVE_MARKER,

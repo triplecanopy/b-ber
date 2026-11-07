@@ -3,7 +3,14 @@ import {
   attributesString,
   htmlId,
 } from '@canopycanopycanopy/b-ber-grammar-attributes'
-import { Html, State as state, Url, utils } from '@canopycanopycanopy/b-ber-lib'
+import {
+  type FigureToken,
+  Html,
+  type RendererReference,
+  State as state,
+  Url,
+  utils,
+} from '@canopycanopycanopy/b-ber-lib'
 import { htmlIframeAttributes } from '@canopycanopycanopy/b-ber-shapes-directives'
 
 // Read from the package root rather than the `b-ber-lib/utils` subpath: that
@@ -17,23 +24,6 @@ const {
   renderCaption,
   renderPosterImage,
 } = utils
-
-// The parts of markdown-it's `Token` and `MarkdownIt` that this renderer uses.
-// Typed structurally rather than imported from markdown-it: it is not a
-// dependency of this package, so tsdown would inline all of its types into
-// dist/index.d.ts.
-export interface FigureToken {
-  info: string
-  map: [number, number] | null
-  // b-ber-parser-figure stores the raw caption source here, not child tokens
-  children?: string | null
-}
-
-// `context` is the b-ber-markdown-renderer instance
-export interface RendererReference {
-  instance: { renderInline: (src: string) => string }
-  context: { fileName: string }
-}
 
 interface PrepareArgs extends RendererReference {
   token: FigureToken
@@ -66,29 +56,17 @@ export function prepare({
     title: '',
     classes: '',
     poster: '',
-    ...attributesObject(attrs, type, {
-      fileName,
-      // attributesObject only interpolates lineNumber into log messages, but
-      // types it `number | undefined`; it should accept `token.map`'s null
-      // biome-ignore lint/suspicious/noExplicitAny: TASK-119 pass 1
-      lineNumber: lineNumber as any,
-    }),
+    ...attributesObject(attrs, type, { fileName, lineNumber }),
   }
 
-  // ensureSource only interpolates lineNumber into a log message, but types it
-  // `number`; it should accept `token.map`'s null
-  // biome-ignore lint/suspicious/noExplicitAny: TASK-119 pass 1
-  ensureSource(attrsObject, type, fileName, lineNumber as any)
+  ensureSource(attrsObject, type, fileName, lineNumber)
   ensurePoster(attrsObject, type)
   ensureSupportedClassNames(attrsObject, supported)
 
   return {
     ...attrsObject,
     id: figureId,
-    // attributesString types its input `Record<string, string>`, but the
-    // defaults include a numeric `height` (filtered out by the reference here)
-    // biome-ignore lint/suspicious/noExplicitAny: TASK-119 pass 1
-    attrString: attributesString(attrsObject as any, { classes: true }),
+    attrString: attributesString(attrsObject, { classes: true }),
     commentStart: Html.comment(`START: ${mediaType}:${type}#${figureId};`),
     commentEnd: Html.comment(`END: ${mediaType}:${type}#${figureId};`),
     href: state.build === 'reader' ? 'figures-titlepage.xhtml' : page,

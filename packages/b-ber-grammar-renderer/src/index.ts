@@ -1,4 +1,7 @@
-import { State as state } from '@canopycanopycanopy/b-ber-lib'
+import {
+  type RendererContext,
+  State as state,
+} from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import {
   BLOCK_DIRECTIVE_MARKER,
@@ -17,7 +20,8 @@ const renderer = <R>({
   markerOpen,
   markerClose,
 }: {
-  context?: { fileName?: string }
+  // Optional so the tests can render without a file
+  context?: Partial<RendererContext>
   render: R
   markerOpen: RegExp
   markerClose: RegExp
@@ -54,9 +58,7 @@ const renderer = <R>({
     const isClosing = type && type === 'exit'
     const inStore = index > -1
 
-    // b-ber-logger types `debug` as nullary, but every caller passes a message
-    // biome-ignore lint/suspicious/noExplicitAny: TASK-119 pass 1
-    ;(log.debug as any)(
+    log.debug(
       `id: ${id}; isOpening: ${isOpening}; isClosing: ${isClosing}; type: ${type}, inStore: ${inStore}`
     )
 
