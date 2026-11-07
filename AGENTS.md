@@ -183,7 +183,7 @@ issue number, and that file is what the check validates against:
 | Epic | Issue |
 | ---- | ----- |
 | Upgrade tooling | [#615](https://github.com/triplecanopy/b-ber/issues/615) |
-| Migrate JS→TS | [#616](https://github.com/triplecanopy/b-ber/issues/616) |
+| Migrate JS→TS — **closed** 2026-11-07 by TASK-134, every package typed at its boundaries | [#616](https://github.com/triplecanopy/b-ber/issues/616) |
 | Unit test coverage | [#471](https://github.com/triplecanopy/b-ber/issues/471) |
 | E2E testing | [#505](https://github.com/triplecanopy/b-ber/issues/505) |
 | Node.js modernization | [#474](https://github.com/triplecanopy/b-ber/issues/474) |

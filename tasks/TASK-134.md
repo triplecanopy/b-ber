@@ -90,7 +90,7 @@ result below. "Before" is `main` @ `496392aa` (TASK-119 and step 1 merged).
 | Internal `declare module '@canopycanopycanopy/…'` stubs | 27 | **0** (step 1) | **0** |
 | `TASK-119 pass 1` markers in `packages/` | 19 | **0** | **0** |
 | `any` in published declarations (exported signatures) | 96 | **0** | **0**, or each one justified in a comment |
-| Explicit `any` overall (Biome `noExplicitAny`) | 334 | **224** | target proposed below: **0 outside `b-ber-reader-react`** |
+| Explicit `any` overall (Biome `noExplicitAny`) | 334 | **224** | target agreed 2026-11-07: exported `any` 0 (met); interior to TASK-148, reader-react to #713 |
 | Biome warnings, all rules | 351 | 241 | n/a |
 | `@ts-ignore` / `@ts-expect-error` | 1 / 1 | 0 / 2, both justified | n/a |
 | Third-party `declare module` stubs | 23 | 22, each annotated | `@types/*` or minimal |
@@ -113,7 +113,7 @@ result below. "Before" is `main` @ `496392aa` (TASK-119 and step 1 merged).
 - [x] Explicit `any` reduction, exported signatures first, by package
 - [x] Third-party stubs → `@types/*` or minimal declarations
 - [x] Re-measure and record against the definition-of-done table
-- [ ] Agree the overall-`any` target (proposed below)
+- [x] Agree the overall-`any` target: agreed 2026-11-07, see below
 
 ## Step 1 result (2026-11-07): internal stubs 27 → 0
 
@@ -318,7 +318,14 @@ from the built CLI, outside the repository.
   this file, so a repository-wide `git grep` is not empty; the measure is scoped
   to `packages/`.
 
-### Proposed target for overall explicit `any`
+### Target for overall explicit `any`: agreed 2026-11-07
+
+**Decision:** TASK-134 closes on what it set out to do. No type that crosses a
+package boundary is `any` (published `.d.ts`: 96 → 0), and the 224 that remain
+are interior. The interior target below, **0 outside `b-ber-reader-react`**, is
+carried by **TASK-148 (#739)** under Upgrade tooling. reader-react's 100 go to
+Reader quality (#713). The proposal as written:
+
 
 **0 outside `b-ber-reader-react`, with any exception justified in a comment at
 the site.** That is 224 → about 100 (the reader's). Reasoning, by what is left:
