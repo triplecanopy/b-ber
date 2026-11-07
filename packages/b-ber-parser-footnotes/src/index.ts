@@ -1,7 +1,10 @@
 /* eslint-disable camelcase */
 /* eslint-disable no-param-reassign,no-plusplus */
 
-import { State as bberState } from '@canopycanopycanopy/b-ber-lib'
+import {
+  State as bberState,
+  type MarkdownItHost,
+} from '@canopycanopycanopy/b-ber-lib'
 import isUndefined from 'lodash/isUndefined'
 import Counter from './counter'
 
@@ -133,9 +136,43 @@ function renderFootnoteAnchor(/*tokens, idx, options,env, slf */): string {
   return ''
 }
 
+// The parts of a MarkdownIt instance this plugin uses, beyond the ones the
+// container parsers share. Rule state arguments are markdown-it's StateBlock,
+// StateInline and StateCore, which the rules below read dynamically
+interface FootnotesHost extends MarkdownItHost {
+  helpers: {
+    parseLinkLabel(
+      state: unknown,
+      start: number,
+      disableNested?: boolean
+    ): number
+  }
+  utils: { isSpace(code: number): boolean }
+  inline: {
+    ruler: {
+      after(
+        afterName: string,
+        ruleName: string,
+        rule: (state: unknown, silent: boolean) => boolean
+      ): void
+    }
+  }
+  core: {
+    ruler: {
+      after(
+        afterName: string,
+        ruleName: string,
+        rule: (state: unknown) => void
+      ): void
+    }
+  }
+}
+
+// `callback` receives the footnote tokens, which b-ber-grammar-footnotes
+// renders into the notes page
 export default function footnotePlugin(
-  md: any,
-  callback: (tokens: any[]) => void
+  md: FootnotesHost,
+  callback: (tokens: Record<string, unknown>[]) => void
 ): void {
   const { parseLinkLabel } = md.helpers
   const { isSpace } = md.utils

@@ -6,7 +6,9 @@ export { default as HtmlToXml } from './HtmlToXml'
 export { default as ManifestItemProperties } from './ManifestItemProperties'
 export type {
   BlockRule,
+  ContainerPluginOptions,
   DirectiveToken,
+  FigurePluginOptions,
   FigureToken,
   MarkdownItHost,
   RendererContext,

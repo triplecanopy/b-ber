@@ -10,6 +10,8 @@
 
 // A token as the grammars' render rules read it
 export interface DirectiveToken {
+  // e.g. `container_figure_open`
+  type: string
   info: string
   nesting: number
   map: [number, number] | null
@@ -63,4 +65,26 @@ export interface MarkdownItHost {
   }
   // Render rules are stored here and called by markdown-it, never read back
   renderer: { rules: Record<string, unknown> }
+}
+
+// What a grammar's `renderer` passes to b-ber-parser-section,
+// b-ber-parser-dialogue or b-ber-parser-gallery as the plugin's options
+export interface ContainerPluginOptions {
+  marker?: string
+  minMarkers?: number
+  // Called with the text after the marker and its line number; a falsy
+  // result means the line does not open this container
+  validateOpen(params: string, line: number): unknown
+  // The markdown-it render rule for the container's open and close tokens
+  render: unknown
+}
+
+// What a grammar's `renderer` passes to b-ber-parser-figure as the plugin's
+// options
+export interface FigurePluginOptions {
+  // Called with the text after the marker and its line number; a falsy
+  // result means the line is not this directive
+  validate(params: string, line: number): unknown
+  // The markdown-it render rule for the figure's open and close tokens
+  render: unknown
 }

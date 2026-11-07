@@ -6,8 +6,17 @@ https://github.com//markdown-it/markdown-it-container
 MIT license
 */
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const containerPlugin = (md: any, name: string, options: any = {}): void => {
+import type {
+  ContainerPluginOptions,
+  MarkdownItHost,
+} from '@canopycanopycanopy/b-ber-lib'
+
+// Every caller passes `options`; the empty default predates these types
+const containerPlugin = (
+  md: MarkdownItHost,
+  name: string,
+  options: ContainerPluginOptions = {} as ContainerPluginOptions
+): void => {
   const minMarkers = options.minMarkers || 3
   const markerStr = options.marker || ':'
   const markerChar = markerStr.charCodeAt(0)
