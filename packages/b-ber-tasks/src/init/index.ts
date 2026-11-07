@@ -12,14 +12,15 @@ class Initializer {
   src!: string
   dist!: string
   name!: string
-  config!: Record<string, any>
+  // Overrides for the new project's config.yml
+  config!: Record<string, unknown>
   path!: string
   builds!: string[]
 
   constructor({
     name = '',
     config,
-  }: { name?: string; config?: Record<string, any> } = {}) {
+  }: { name?: string; config?: Record<string, unknown> } = {}) {
     this.src = '_project'
     this.dist = 'project'
     this.name = name
