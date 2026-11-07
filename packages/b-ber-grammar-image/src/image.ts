@@ -82,6 +82,11 @@ export function createFigureInline({
   return figureTemplate(
     {
       ...rest,
+      // Already in `rest`; named so the template's required fields are
+      // checked. `prepare` rejects a figure without a source, and
+      // b-ber-grammar-attributes defaults `alt` to the source.
+      source: attrsObject.source,
+      alt: attrsObject.alt,
       classes: classes || '',
       id,
       width,
