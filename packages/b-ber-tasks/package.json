@@ -43,7 +43,7 @@
     "vinyl": "^2.2.1"
   },
   "devDependencies": {
-    "@swc/core": "1.15.40",
+    "@swc/core": "1.16.22",
     "@swc/jest": "0.2.39",
     "@types/browser-sync": "2.29.1",
     "@types/recursive-readdir": "2.2.4",

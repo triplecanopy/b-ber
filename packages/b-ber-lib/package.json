@@ -16,7 +16,7 @@
     "access": "public"
   },
   "devDependencies": {
-    "@swc/core": "1.15.40",
+    "@swc/core": "1.16.22",
     "@swc/jest": "0.2.39",
     "@types/fs-extra": "11.0.4",
     "@types/lodash": "4.17.27",

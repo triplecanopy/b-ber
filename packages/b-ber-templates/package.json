@@ -30,7 +30,7 @@
     "access": "public"
   },
   "devDependencies": {
-    "@swc/core": "1.15.40",
+    "@swc/core": "1.16.22",
     "@swc/jest": "0.2.39",
     "jest": "29.7.0",
     "rimraf": "2.7.1",
