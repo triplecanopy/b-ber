@@ -7,6 +7,7 @@ MIT license
 */
 
 import type {
+  BlockState,
   ContainerPluginOptions,
   MarkdownItHost,
 } from '@canopycanopycanopy/b-ber-lib'
@@ -25,7 +26,7 @@ const containerPlugin = (
   // const validateClose = options.validateClose
 
   function container(
-    state: any,
+    state: BlockState,
     startLine: number,
     endLine: number,
     silent: boolean

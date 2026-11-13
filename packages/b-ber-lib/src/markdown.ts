@@ -40,15 +40,109 @@ export interface RendererReference {
   context: RendererContext
 }
 
-// A markdown-it block rule. Its first argument is markdown-it's StateBlock,
-// which the parsers read dynamically, so the parsers type it rather than this
-// declaration
-export type BlockRule = (
-  state: unknown,
-  startLine: number,
-  endLine: number,
-  silent: boolean
-) => boolean
+// A markdown-it token, as the parsers create and change it
+export interface MarkdownToken {
+  type: string
+  tag: string
+  // markdown-it allows a number as an attribute's value
+  attrs: [string, string | number][] | null
+  map: [number, number] | null
+  nesting: number
+  level: number
+  // The parsers push literal tokens here carrying only the fields markdown-it's
+  // renderer reads, so a child is not guaranteed to be a whole token
+  children: Partial<MarkdownToken>[] | null
+  content: string
+  markup: string
+  info: string
+  // Whatever the rule that pushed the token stored, e.g. a footnote's id
+  meta: unknown
+  block: boolean
+  hidden: boolean
+  attrSet(name: string, value: string): void
+  attrPush(attr: [string, string]): void
+}
+
+// The fields every markdown-it rule state shares. `Env` is the shape of the
+// render's `env`, which plugins use to pass data between rules
+interface RuleState<Env> {
+  src: string
+  env: Env
+  tokens: MarkdownToken[]
+  level: number
+  Token: new (type: string, tag: string, nesting: number) => MarkdownToken
+}
+
+// markdown-it's StateBlock, as the block rules read it
+export interface BlockState<Env = Record<string, unknown>>
+  extends RuleState<Env> {
+  bMarks: number[]
+  eMarks: number[]
+  tShift: number[]
+  sCount: number[]
+  blkIndent: number
+  line: number
+  lineMax: number
+  parentType: string
+  md: {
+    block: {
+      tokenize(
+        state: BlockState<Env>,
+        startLine: number,
+        endLine: number,
+        silent?: boolean
+      ): void
+    }
+  }
+  push(type: string, tag: string, nesting: number): MarkdownToken
+}
+
+// markdown-it's StateInline, as the inline rules read it
+export interface InlineState<Env = Record<string, unknown>>
+  extends RuleState<Env> {
+  pos: number
+  posMax: number
+  md: {
+    inline: {
+      parse(
+        src: string,
+        md: unknown,
+        env: Env,
+        outTokens: MarkdownToken[]
+      ): void
+    }
+  }
+  push(type: string, tag: string, nesting: number): MarkdownToken
+}
+
+// markdown-it's StateCore, as the core rules read it
+export type CoreState<Env = Record<string, unknown>> = RuleState<Env>
+
+// The rule types below are what a plugin hands markdown-it, so they have to
+// accept markdown-it's own StateBlock, StateInline and StateCore. The state
+// interfaces above are only the parts the parsers read, and this file cannot
+// check them against markdown-it's types (see the top of the file). So a
+// rule's `state` is `unknown` here, and each type is written as a method,
+// whose parameters TypeScript checks bivariantly, so that a parser's rule can
+// declare the state interface it reads instead.
+
+// A markdown-it block rule
+export type BlockRule = {
+  method(
+    state: unknown,
+    startLine: number,
+    endLine: number,
+    silent: boolean
+  ): boolean
+}['method']
+
+// A markdown-it inline rule
+export type InlineRule = {
+  method(state: unknown, silent: boolean): boolean
+}['method']
+
+// A markdown-it core rule
+export type CoreRule = { method(state: unknown): void }['method']
 
 // The parts of a MarkdownIt instance that the container parsers register
 // themselves on

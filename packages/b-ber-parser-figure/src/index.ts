@@ -1,5 +1,7 @@
 import type {
+  BlockState,
   FigurePluginOptions,
+  FigureToken,
   MarkdownItHost,
 } from '@canopycanopycanopy/b-ber-lib'
 import isUndefined from 'lodash/isUndefined'
@@ -19,7 +21,7 @@ const figurePlugin = (
   const { validate, render } = options
 
   function container(
-    state: any,
+    state: BlockState,
     startLine: number,
     endLine: number,
     silent: boolean
@@ -121,7 +123,8 @@ const figurePlugin = (
       // we have both a beginning and end marker for the caption, so we can
       // advance the cursor for further parsing
       _capBody = state.src.slice(_capStartPos, _capEndPos)
-      _fastForward = state.bMarks.indexOf(_capEndLine) + 1
+      // Set in the same step as `_capEndPos`
+      _fastForward = state.bMarks.indexOf(_capEndLine as number) + 1
     } else {
       // there's no caption, but we've advanced the cursor, so we just rewind
       // it to where it initially matched our image directive
@@ -134,7 +137,8 @@ const figurePlugin = (
     token.markup = markup
     token.block = true
     token.info = params
-    token.children = _capBody
+    // The caption's source, not child tokens: see FigureToken
+    ;(token as FigureToken).children = _capBody
     token.map = [startLine, nextLine]
 
     // add ending token since we're using a `container` plugin as an inline

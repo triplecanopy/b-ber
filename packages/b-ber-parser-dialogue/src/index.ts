@@ -7,8 +7,10 @@ MIT license
 */
 
 import type {
+  BlockState,
   ContainerPluginOptions,
   MarkdownItHost,
+  MarkdownToken,
 } from '@canopycanopycanopy/b-ber-lib'
 
 // Every caller passes `options`; the empty default predates these types
@@ -25,7 +27,7 @@ const containerPlugin = (
   // const validateClose = options.validateClose
 
   function container(
-    state: any,
+    state: BlockState,
     startLine: number,
     endLine: number,
     silent: boolean
@@ -111,7 +113,7 @@ const containerPlugin = (
     // parse child tokens
     // set a flag so that we don't render other directives' children which may use the same syntax
     let childOfDialogue = false
-    state.tokens.forEach((t: any, i: number) => {
+    state.tokens.forEach((t, i) => {
       if (t.type === 'container_dialogue_open') childOfDialogue = true
       if (t.type === 'container_dialogue_close') childOfDialogue = false
 
@@ -123,7 +125,8 @@ const containerPlugin = (
             parent.attrPush(['class', 'interlocutor-parent'])
           }
           t.content = t.content.replace(new RegExp(matchedContent[1]), '')
-          t.children.push(
+          // markdown-it gives every inline token a children array
+          ;(t.children as Partial<MarkdownToken>[]).push(
             {
               type: 'inline',
               attrs: [['class', 'interlocutor']],

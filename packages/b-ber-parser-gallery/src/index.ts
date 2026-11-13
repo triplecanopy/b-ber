@@ -13,16 +13,35 @@ import {
 } from '@canopycanopycanopy/b-ber-grammar-attributes'
 import {
   State as _state,
+  type BlockState,
   type ContainerPluginOptions,
   type MarkdownItHost,
+  type MarkdownToken,
 } from '@canopycanopycanopy/b-ber-lib'
 import mime from 'mime-types'
 import path from 'path'
 
-const addCaption = (md: any, t: any, attrs: any): void => {
+// The parts of a MarkdownIt instance this plugin uses, beyond the ones the
+// container parsers share
+export interface GalleryHost extends MarkdownItHost {
+  parseInline(src: string, env: object): MarkdownToken[]
+}
+
+// A gallery item's `:: … ::` attributes, from b-ber-grammar-attributes
+type ItemAttrs = Record<string, string>
+
+// markdown-it gives every inline token a children array
+const childrenOf = (tok: MarkdownToken) =>
+  tok.children as Partial<MarkdownToken>[]
+
+const addCaption = (
+  md: GalleryHost,
+  t: MarkdownToken,
+  attrs: ItemAttrs
+): void => {
   if (!attrs.caption) return
 
-  t.children.push(
+  childrenOf(t).push(
     {
       type: 'block',
       tag: 'div',
@@ -39,7 +58,7 @@ const addCaption = (md: any, t: any, attrs: any): void => {
       nesting: 1,
     },
 
-    ...md.parseInline(attrs.caption, {})[0].children,
+    ...childrenOf(md.parseInline(attrs.caption, {})[0]),
 
     {
       type: 'block',
@@ -54,9 +73,9 @@ const addCaption = (md: any, t: any, attrs: any): void => {
   )
 }
 
-const createImageElement = (tok: any, attrs: any): void => {
+const createImageElement = (tok: MarkdownToken, attrs: ItemAttrs): void => {
   tok.content = ''
-  tok.children.push({
+  childrenOf(tok).push({
     type: 'inline',
     tag: 'img',
     attrs: [
@@ -68,14 +87,15 @@ const createImageElement = (tok: any, attrs: any): void => {
   })
 }
 
-const createMediaElement = (tok: any, attrs: any): void => {
-  const media = [...(_state as any)[attrs.type]]
+const createMediaElement = (tok: MarkdownToken, attrs: ItemAttrs): void => {
+  // Only called for `video` and `audio` items
+  const media = [..._state[attrs.type as 'video' | 'audio']]
   const supportedMediaAttrs: Record<string, string[]> = {
     audio: ['controls', 'loop'],
     video: ['controls', 'loop', 'fullscreen'],
   }
 
-  const sources = media.filter((a: any) => toAlias(a) === attrs.source)
+  const sources = media.filter((a) => toAlias(a) === attrs.source)
   const mediaAttrs: [string, string][] = [
     [`data-${attrs.type}`, htmlId(attrs.source)],
   ]
@@ -88,7 +108,7 @@ const createMediaElement = (tok: any, attrs: any): void => {
   })
 
   tok.content = ''
-  tok.children.push(
+  childrenOf(tok).push(
     {
       type: 'block',
       tag: 'section',
@@ -103,19 +123,21 @@ const createMediaElement = (tok: any, attrs: any): void => {
     }
   )
 
-  sources.forEach((source: any) => {
-    tok.children.push({
+  sources.forEach((source) => {
+    childrenOf(tok).push({
       type: 'inline',
       tag: 'source',
       attrs: [
         ['src', `../media/${path.basename(source)}`],
-        ['type', mime.lookup(source)],
+        // `false` for an unknown extension, which renders type="false", as in
+        // #734. Recorded in TASK-148; this task changes types only
+        ['type', mime.lookup(source) as string],
       ],
       nesting: 0,
     })
   })
 
-  tok.children.push(
+  childrenOf(tok).push(
     {
       type: 'block',
       tag: attrs.type,
@@ -141,7 +163,7 @@ const createMediaElement = (tok: any, attrs: any): void => {
 
 // Every caller passes `options`; the empty default predates these types
 const containerPlugin = (
-  md: MarkdownItHost,
+  md: GalleryHost,
   name: string,
   options: ContainerPluginOptions = {} as ContainerPluginOptions
 ): void => {
@@ -152,7 +174,7 @@ const containerPlugin = (
   const { validateOpen, render } = options
 
   function container(
-    state: any,
+    state: BlockState,
     startLine: number,
     endLine: number,
     silent: boolean
@@ -231,7 +253,7 @@ const containerPlugin = (
     // parse child tokens
     // set a flag so that we don't render other directives' children which may use the same syntax
     let childOfGallery = false
-    state.tokens.forEach((tok: any, i: number) => {
+    state.tokens.forEach((tok, i) => {
       if (tok.type === 'container_gallery_open') childOfGallery = true
       if (tok.type === 'container_gallery_close') childOfGallery = false
 

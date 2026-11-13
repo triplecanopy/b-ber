@@ -2,8 +2,14 @@
 /* eslint-disable no-param-reassign,no-plusplus */
 
 import {
+  type BlockState,
   State as bberState,
+  type CoreRule,
+  type CoreState,
+  type InlineRule,
+  type InlineState,
   type MarkdownItHost,
+  type MarkdownToken,
 } from '@canopycanopycanopy/b-ber-lib'
 import isUndefined from 'lodash/isUndefined'
 import Counter from './counter'
@@ -16,23 +22,53 @@ MIT license
 
 const counter = new Counter()
 
+// One note in `env.footnotes.list`: an inline note (`^[…]`) carries its parsed
+// tokens, a reference (`[^label]`) its label and how often it is cited
+interface FootnoteListItem {
+  tokens?: MarkdownToken[]
+  label?: string
+  count?: number
+}
+
+// What these rules keep in markdown-it's `env` while rendering one file, plus
+// what b-ber passes in
+type FootnoteEnv = {
+  footnotes?: {
+    // Prefixed with `:` to avoid Object.prototype's members; -1 until cited
+    refs?: Record<string, number>
+    list?: FootnoteListItem[]
+  }
+  docId?: string
+  reference?: string
+}
+
+// The `meta` the rules below store on footnote tokens
+interface FootnoteToken extends MarkdownToken {
+  meta: { id: number; subId?: number; label?: string }
+}
+
+// The renderer rules that one rule calls on another through `slf`
+interface FootnoteRenderer {
+  rules: { footnote_caption: typeof renderFootnoteCaption }
+}
+
 function renderFootnoteAnchorName(
-  tokens: any,
+  tokens: FootnoteToken[],
   idx: number,
-  _options: any,
-  env: any,
-  _slf: any
+  _options: unknown,
+  env: FootnoteEnv,
+  _slf: unknown
 ): string {
   const n = Number(tokens[idx].meta.id + 1).toString()
   return typeof env.docId === 'string' ? `-${env.docId}-${n}` : ''
 }
 
 function renderFootnoteCaption(
-  tokens: any,
+  tokens: FootnoteToken[],
   idx: number,
-  _options: any,
-  _env: any,
-  _slf: any
+  _options: unknown,
+  _env: unknown,
+  _slf: unknown
 ): number | string {
   let n
   if (!bberState.config.group_footnotes) {
@@ -44,15 +80,16 @@ function renderFootnoteCaption(
     n = Number(tokens[idx].meta.id + 1)
   }
 
-  return tokens[idx].meta.subId > 0 ? `${n}:${tokens[idx].meta.subId}` : n
+  const { subId } = tokens[idx].meta
+  return subId !== undefined && subId > 0 ? `${n}:${subId}` : n
 }
 
 function renderFootnoteRef(
-  tokens: any,
+  tokens: FootnoteToken[],
   idx: number,
-  options: any,
-  env: any,
-  slf: any
+  options: unknown,
+  env: FootnoteEnv,
+  slf: FootnoteRenderer
 ): string {
   const caption = slf.rules.footnote_caption(tokens, idx, options, env, slf)
   const ref = counter.getRef()
@@ -73,22 +110,22 @@ function renderFootnoteBlockClose(): string {
 }
 
 function renderFootnoteOpen(
-  tokens: any,
+  tokens: FootnoteToken[],
   idx: number,
-  _options: any,
-  env: any,
-  _self: any
+  _options: unknown,
+  env: FootnoteEnv,
+  _self: unknown
 ): string {
   const ref = counter.setRef(tokens[idx].meta.label)
-  const childIndex = idx + 2
+  const child = tokens[idx + 2]
 
   // push the backlink into the parent paragraph
-  if (tokens[childIndex]) {
-    if (!Array.isArray(tokens[childIndex].children)) {
-      tokens[childIndex].children = []
+  if (child) {
+    if (!Array.isArray(child.children)) {
+      child.children = []
     }
 
-    tokens[childIndex].children.push(
+    child.children.push(
       {
         type: 'inline',
         attrs: [
@@ -150,20 +187,12 @@ interface FootnotesHost extends MarkdownItHost {
   utils: { isSpace(code: number): boolean }
   inline: {
     ruler: {
-      after(
-        afterName: string,
-        ruleName: string,
-        rule: (state: unknown, silent: boolean) => boolean
-      ): void
+      after(afterName: string, ruleName: string, rule: InlineRule): void
     }
   }
   core: {
     ruler: {
-      after(
-        afterName: string,
-        ruleName: string,
-        rule: (state: unknown) => void
-      ): void
+      after(afterName: string, ruleName: string, rule: CoreRule): void
     }
   }
 }
@@ -172,7 +201,7 @@ interface FootnotesHost extends MarkdownItHost {
 // renders into the notes page
 export default function footnotePlugin(
   md: FootnotesHost,
-  callback: (tokens: Record<string, unknown>[]) => void
+  callback: (tokens: MarkdownToken[]) => void
 ): void {
   const { parseLinkLabel } = md.helpers
   const { isSpace } = md.utils
@@ -190,7 +219,7 @@ export default function footnotePlugin(
 
   // Process footnote block definition
   function footnoteDef(
-    state: any,
+    state: BlockState<FootnoteEnv>,
     startLine: number,
     endLine: number,
     silent: boolean
@@ -291,13 +320,16 @@ export default function footnotePlugin(
   }
 
   // Process inline footnotes (^[...])
-  function footnoteInline(state: any, silent: boolean): boolean {
+  function footnoteInline(
+    state: InlineState<FootnoteEnv>,
+    silent: boolean
+  ): boolean {
     const max = state.posMax
     const start = state.pos
 
     let footnoteId
     let token
-    let tokens: any[]
+    let tokens: MarkdownToken[]
 
     if (start + 2 >= max) return false
     if (state.src.charCodeAt(start) !== 0x5e /* ^ */) return false
@@ -335,7 +367,10 @@ export default function footnotePlugin(
   }
 
   // Process footnote references ([^...])
-  function footnoteRef(state: any, silent: boolean): boolean {
+  function footnoteRef(
+    state: InlineState<FootnoteEnv>,
+    silent: boolean
+  ): boolean {
     const max = state.posMax
     const start = state.pos
 
@@ -378,8 +413,10 @@ export default function footnotePlugin(
         footnoteId = state.env.footnotes.refs[`:${label}`]
       }
 
-      footnoteSubId = state.env.footnotes.list[footnoteId].count
-      state.env.footnotes.list[footnoteId].count++
+      // A reference, which was given a count when first cited
+      const cited = state.env.footnotes.list[footnoteId] as { count: number }
+      footnoteSubId = cited.count
+      cited.count++
 
       token = state.push('footnote_ref', '', 0)
       token.meta = { id: footnoteId, subId: footnoteSubId, label }
@@ -391,8 +428,8 @@ export default function footnotePlugin(
   }
 
   // Glue footnote tokens to end of token stream
-  function footnoteTail(state: any): void {
-    const refTokens: Record<string, any[]> = {}
+  function footnoteTail(state: CoreState<FootnoteEnv>): void {
+    const refTokens: Record<string, MarkdownToken[]> = {}
 
     let i
     let l
@@ -401,18 +438,18 @@ export default function footnotePlugin(
     let lastParagraph
     let token
     let tokens
-    let current: any[]
-    let currentLabel: string
+    let current: MarkdownToken[]
+    let currentLabel: string | undefined
     let insideRef = false
-    let footnoteTokens: any[] = []
+    let footnoteTokens: MarkdownToken[] = []
 
     if (!state.env.footnotes) return
 
-    state.tokens = state.tokens.filter((tok: any) => {
+    state.tokens = state.tokens.filter((tok) => {
       if (tok.type === 'footnote_reference_open') {
         insideRef = true
         current = []
-        currentLabel = tok.meta.label
+        currentLabel = (tok as FootnoteToken).meta.label
         return false
       }
       if (tok.type === 'footnote_reference_close') {
@@ -432,11 +469,12 @@ export default function footnotePlugin(
     state.tokens.push(token)
 
     for (i = 0, l = list.length; i < l; i++) {
+      const item = list[i]
       token = new state.Token('footnote_open', '', 1)
-      token.meta = { id: i, label: list[i].label }
+      token.meta = { id: i, label: item.label }
       state.tokens.push(token)
 
-      if (list[i].tokens) {
+      if (item.tokens) {
         tokens = []
 
         token = new state.Token('paragraph_open', 'p', 1)
@@ -444,28 +482,30 @@ export default function footnotePlugin(
         tokens.push(token)
 
         token = new state.Token('inline', '', 0)
-        token.children = list[i].tokens
+        token.children = item.tokens
         token.content = ''
         tokens.push(token)
 
         token = new state.Token('paragraph_close', 'p', -1)
         token.block = true
         tokens.push(token)
-      } else if (list[i].label) {
-        tokens = refTokens[`:${list[i].label}`]
+      } else if (item.label) {
+        tokens = refTokens[`:${item.label}`]
       }
 
-      state.tokens = state.tokens.concat(tokens)
+      // Every item is either an inline note or a reference, so one branch
+      // above has set `tokens`
+      state.tokens = state.tokens.concat(tokens as MarkdownToken[])
       if (state.tokens[state.tokens.length - 1].type === 'paragraph_close') {
         lastParagraph = state.tokens.pop()
       } else {
         lastParagraph = null
       }
 
-      t = list[i].count > 0 ? list[i].count : 1
+      t = item.count && item.count > 0 ? item.count : 1
       for (j = 0; j < t; j++) {
         token = new state.Token('footnote_anchor', '', 0)
-        token.meta = { id: i, subId: j, label: list[i].label }
+        token.meta = { id: i, subId: j, label: item.label }
         state.tokens.push(token)
       }
 
@@ -482,7 +522,7 @@ export default function footnotePlugin(
 
     // create return value for callback
     insideRef = false
-    footnoteTokens = [...state.tokens].filter((a: any) => {
+    footnoteTokens = [...state.tokens].filter((a) => {
       if (a.type === 'footnote_block_open') {
         insideRef = true
         return true
@@ -497,7 +537,7 @@ export default function footnotePlugin(
 
     // remove footnotes from `state.tokens`
     insideRef = false
-    state.tokens = state.tokens.filter((_: any) => {
+    state.tokens = state.tokens.filter((_) => {
       if (_.type === 'footnote_block_open') {
         insideRef = true
         return false

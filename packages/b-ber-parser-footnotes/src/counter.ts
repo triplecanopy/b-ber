@@ -54,7 +54,8 @@ class Counter {
     return this.item
   }
 
-  setRef = (label: string): string => {
+  // Inline notes (`^[…]`) have no label
+  setRef = (label: string | undefined): string => {
     const hash = crypto.randomBytes(8).toString('hex')
     const idRef = `-${label}-${hash}`
 
