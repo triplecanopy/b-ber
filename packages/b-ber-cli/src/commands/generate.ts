@@ -1,10 +1,11 @@
 import { ensure, fail } from '@canopycanopycanopy/b-ber-lib/utils'
 import { generate } from '@canopycanopycanopy/b-ber-tasks'
+import type { Arguments, Argv } from 'yargs'
 
 const command = 'generate <title> [type]'
 const describe = 'Create a new chapter. Accepts arguments for metadata'
 
-const builder = (yargs: any) =>
+const builder = (yargs: Argv) =>
   yargs
     .positional('title', {
       describe: 'Page title',
@@ -18,11 +19,13 @@ const builder = (yargs: any) =>
     .help('h')
     .alias('h', 'help')
     .usage(`\nUsage: $0 generate\n\n${describe}`)
-    .fail((msg: any, err: any) => fail(msg, err, yargs))
+    .fail((msg, err) => fail(msg, err, yargs))
 
-const handler = (argv: any) =>
+// `<title>` in the command string is required, so yargs never calls the
+// handler without it
+const handler = (argv: Arguments<{ title?: string; type?: string }>) =>
   ensure()
-    .then(() => generate({ title: argv.title, type: argv.type }))
+    .then(() => generate({ title: argv.title as string, type: argv.type }))
     .catch(console.error)
 
 export default {
