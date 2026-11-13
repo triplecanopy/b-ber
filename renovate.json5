@@ -25,7 +25,17 @@
   // One predictable weekly window, as Dependabot had. Security PRs ignore the
   // schedule.
   schedule: ['before 6am on monday'],
-  lockFileMaintenance: { enabled: true },
+
+  // The lockfile PR's own default window is "before 4am on monday", and
+  // config:recommended allows two new PRs an hour. Routine PRs took both slots
+  // in the one run inside that window, so the lockfile PR never opened (first
+  // seen 2026-11-13, TASK-149). Give it the same window as everything else and
+  // let it go first; prConcurrentLimit below still caps how many are open.
+  lockFileMaintenance: {
+    enabled: true,
+    schedule: ['before 6am on monday'],
+  },
+  prHourlyLimit: 0,
 
   // Five routine PRs open at once, plus up to five security PRs on a separate
   // budget (`vulnerabilityAlerts.prConcurrentLimit`). Anything over the limit
@@ -71,6 +81,11 @@
   // Later rules override earlier ones, so the order is: catch-all group, then
   // specific groups, then the approval gates, then non-npm managers.
   packageRules: [
+    {
+      description: 'The lockfile PR goes first: it is the transitive-vulnerability path',
+      matchUpdateTypes: ['lockFileMaintenance'],
+      prPriority: 10,
+    },
     {
       description: 'Catch-all: every minor/patch the groups below do not claim',
       matchPackageNames: ['*'],
