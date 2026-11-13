@@ -43,8 +43,8 @@ const createLOILeader = () => {
     }
 
     state.add('spine.entries', baseName)
-    // No `buildType`, so this item's `absolutePath` reads `project-undefined`.
-    // Recorded in TASK-148; left as is because this task changes types only
+    // Defect, see #757: no `buildType`, so this item's `absolutePath` reads
+    // `project-undefined`. The cast keeps it as it is until then
     state.add(
       'spine.nested',
       new SpineItem(item as ConstructorParameters<typeof SpineItem>[0])

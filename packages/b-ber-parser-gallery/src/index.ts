@@ -129,8 +129,8 @@ const createMediaElement = (tok: MarkdownToken, attrs: ItemAttrs): void => {
       tag: 'source',
       attrs: [
         ['src', `../media/${path.basename(source)}`],
-        // `false` for an unknown extension, which renders type="false", as in
-        // #734. Recorded in TASK-148; this task changes types only
+        // Defect, see #758: `false` for an unknown extension, which renders
+        // type="false". The cast keeps it as it is until then
         ['type', mime.lookup(source) as string],
       ],
       nesting: 0,
