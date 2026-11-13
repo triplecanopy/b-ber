@@ -39,17 +39,17 @@ const parseHTMLFiles = (files: string[]) =>
   })
 
 const xml = () => {
-  const spineFiles: any[] = [...state.spine.flattened]
+  const spineFiles = [...state.spine.flattened]
   const figuresTitlePageIndex = findIndex(spineFiles, {
     fileName: 'figures-titlepage',
   })
 
   const files: string[] = spineFiles.map(
-    (entry: any) => `${entry.absolutePath}${fileExtension}`
+    (entry) => `${entry.absolutePath}${fileExtension}`
   )
 
   if (figuresTitlePageIndex > -1 && state.loi.length) {
-    const loi = state.loi.map((entry: any) => entry.absolutePath)
+    const loi = state.loi.map((entry) => entry.absolutePath)
     files.splice(figuresTitlePageIndex + 1, 0, ...loi)
   }
 

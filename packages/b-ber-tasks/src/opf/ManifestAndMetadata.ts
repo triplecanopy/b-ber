@@ -3,6 +3,7 @@
 // Scans directory contents and reads YAML files to create the `manifest` and
 // `metadata` elements in the `content.opf`
 
+import type { MetadataEntry } from '@canopycanopycanopy/b-ber-lib'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
 import Manifest from '@canopycanopycanopy/b-ber-templates/Opf/Manifest'
@@ -15,7 +16,7 @@ import File from 'vinyl'
 import { pathInfoFromFiles } from './helpers'
 
 class ManifestAndMetadata {
-  bookmeta!: any[]
+  bookmeta: MetadataEntry[]
 
   constructor() {
     this.bookmeta = []
@@ -39,8 +40,10 @@ class ManifestAndMetadata {
     return fileObjects
   }
 
-  createManifestAndMetadataFromTemplates(files: any[]) {
-    const manifest = files.map((file: any) => Manifest.item(file))
+  createManifestAndMetadataFromTemplates(
+    files: ReturnType<typeof pathInfoFromFiles>
+  ) {
+    const manifest = files.map((file) => Manifest.item(file))
 
     const specifiedFonts =
       has(state.config, 'ibooks_specified_fonts') &&
@@ -60,7 +63,10 @@ class ManifestAndMetadata {
     return { manifest, bookmeta }
   }
 
-  createManifestAndMetadataXML(resp: any) {
+  createManifestAndMetadataXML(resp: {
+    manifest: string[]
+    bookmeta: string[]
+  }) {
     log.info('opf build [metadata]')
 
     const metadata =

@@ -142,7 +142,8 @@ function ensureEnvVars() {
     log.error('[bucketURL] must be set in config.yml to deploy the project')
   }
 
-  return { bucketURL, awsRegion: BBER_BUCKET_REGION }
+  // log.error exits the process, so the region is set by this point
+  return { bucketURL, awsRegion: BBER_BUCKET_REGION as string }
 }
 
 function extractVars(config: {
@@ -215,11 +216,11 @@ function setCachePolicy(
 }
 
 function main({ builds, yes }: { builds?: string[]; yes?: boolean }) {
-  let config: { bucketURL: string; awsRegion: string; builds: string[] } =
-    {} as any
+  // Assigned in the first `then`, before any later step reads it
+  let config!: { bucketURL: string; awsRegion: string; builds: string[] }
   return ensureAwsCli()
     .then(ensureEnvVars)
-    .then((response: any) => {
+    .then((response) => {
       config = extractVars({ ...response, builds })
 
       if (yes) return deployWithoutPrompt(config)

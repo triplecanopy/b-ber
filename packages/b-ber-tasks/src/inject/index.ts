@@ -6,12 +6,16 @@ import fs from 'fs-extra'
 import path from 'path'
 import File from 'vinyl'
 
+// A file to link or inline: a vinyl file whose contents are the text, or a
+// file name or URL
+type Asset = File | string
+
 const getRemoteAssets = (type: string) =>
   Promise.resolve(state.config[`remote_${type}`] || [])
 
 const getAssets = (type: string) =>
   Promise.all([fs.readdir(state.dist.ops(type)), getRemoteAssets(type)]).then(
-    ([a, b]) => [...a, ...(b as any[])]
+    ([a, b]) => [...a, ...(b as string[])]
   )
 
 const getInlineScripts = () => [
@@ -22,7 +26,7 @@ const getInlineScripts = () => [
   }),
 ]
 
-const ensureString = (objectOrString: any) =>
+const ensureString = (objectOrString: Asset): string =>
   objectOrString instanceof File
     ? (objectOrString.contents?.toString() ?? '')
     : objectOrString
@@ -39,13 +43,13 @@ const render = ({
   inlineJavascripts,
   metadata,
 }: {
-  file: any
+  file: Asset
   basePath: string
   stylesheets: string[]
   javascripts: string[]
-  inlineStylesheets: any[]
-  inlineJavascripts: any[]
-  metadata: any[]
+  inlineStylesheets: Asset[]
+  inlineJavascripts: Asset[]
+  metadata: Asset[]
 }) => {
   const stylesheets_ = stylesheets
     .map(ensureString)
@@ -106,19 +110,19 @@ const writeAll = (files: { fileName: string; contents: string }[]) =>
   )
 
 export const getFileObjects = async (
-  files: { name: string; data: any }[],
+  files: { name: string; data: Asset }[],
   basePath = ''
 ) => {
   const stylesheets = await getAssets('stylesheets')
   const javascripts = await getAssets('javascripts')
-  const inlineStylesheets: any[] = []
+  const inlineStylesheets: Asset[] = []
   const inlineJavascripts = getInlineScripts()
 
   // TODO:
   // @issue: https://github.com/triplecanopy/b-ber/issues/226
-  const metadata: any[] = []
+  const metadata: Asset[] = []
 
-  const files_ = files.map((file: { name: string; data: any }) => ({
+  const files_ = files.map((file) => ({
     fileName: file.name,
     contents: render({
       file: file.data,

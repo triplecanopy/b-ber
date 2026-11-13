@@ -3,10 +3,16 @@
 import { GuideItem, SpineItem, Template } from '@canopycanopycanopy/b-ber-lib'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
-import figure from '@canopycanopycanopy/b-ber-templates/figures'
+import figure, {
+  type FigureData,
+} from '@canopycanopycanopy/b-ber-templates/figures'
 import Xhtml from '@canopycanopycanopy/b-ber-templates/Xhtml'
 import fs from 'fs-extra'
 import sortBy from 'lodash/sortBy'
+
+// A figure as the grammar directives add it to `state.figures`: the template's
+// data, plus the page it is listed on and its position in the list
+type ListedFigure = FigureData & { page: string; pageOrder: number }
 
 const createLOILeader = () => {
   const baseName = 'figures-titlepage'
@@ -22,7 +28,7 @@ const createLOILeader = () => {
   // Check if the figures titlepage has been declared
   const index = state.indexOf(
     'spine.flattened',
-    (item: any) => item.fileName === baseName
+    (item: { fileName: string }) => item.fileName === baseName
   )
 
   // If not, add it to state.spine so that it can be referenced
@@ -37,8 +43,13 @@ const createLOILeader = () => {
     }
 
     state.add('spine.entries', baseName)
-    state.add('spine.nested', new SpineItem(item as any))
-    state.add('spine.flattened', item as any)
+    // No `buildType`, so this item's `absolutePath` reads `project-undefined`.
+    // Recorded in TASK-148; left as is because this task changes types only
+    state.add(
+      'spine.nested',
+      new SpineItem(item as ConstructorParameters<typeof SpineItem>[0])
+    )
+    state.add('spine.flattened', item)
   }
 
   log.info(`loi emit default figures titlepage [${fileName}]`)
@@ -48,10 +59,10 @@ const createLOILeader = () => {
 
 // only called in `reader` build
 const createLOIAsSingleHTMLFile = () => {
-  const classes = (item: any) =>
+  const classes = (item: ListedFigure) =>
     item.classes ? item.classes.replace(/small/g, 'inline') : ''
-  const figuresPage = (state.figures as any[]).reduce<string>(
-    (acc: string, curr: any) =>
+  const figuresPage = (state.figures as ListedFigure[]).reduce<string>(
+    (acc, curr) =>
       acc.concat(figure({ ...curr, classes: classes(curr) }, state.build)),
     Xhtml.loi()
   )
@@ -66,7 +77,7 @@ const createLOIAsSingleHTMLFile = () => {
 }
 
 const createLOIAsSeparateHTMLFiles = () => {
-  const promises = (state.figures as any[]).map((data: any) => {
+  const promises = (state.figures as ListedFigure[]).map((data) => {
     // Create image string based on dimensions of image
     // returns square | landscape | portrait | portraitLong
     const figures = figure(data, state.build)

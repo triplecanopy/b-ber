@@ -53,4 +53,5 @@ const figure = (data: FigureData, buildType?: string): string => {
   )(data)
 }
 
+export type { FigureData }
 export default figure
