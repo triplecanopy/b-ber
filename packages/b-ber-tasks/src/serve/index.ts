@@ -1,6 +1,7 @@
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import sequences from '@canopycanopycanopy/b-ber-shapes-sequences/sequences'
 import { create } from 'browser-sync' // eslint-disable-line import/no-unresolved
+import type { IncomingMessage, ServerResponse } from 'http'
 import debounce from 'lodash/debounce'
 import path from 'path'
 import serialize from '../serialize'
@@ -45,9 +46,13 @@ const watchFiles = [
   },
 ]
 
-const browserSyncMiddleware = (req: any, res: any, next: () => void) => {
+const browserSyncMiddleware = (
+  req: IncomingMessage,
+  res: ServerResponse,
+  next: () => void
+) => {
   // Set headers for XHTML files to allow document.write
-  if (/\.xhtml$/.test(req.url)) {
+  if (/\.xhtml$/.test(req.url ?? '')) {
     res.setHeader('Content-Type', 'text/html; charset=UTF-8')
   }
 
@@ -64,13 +69,25 @@ const init = (build: string) =>
       // reloadThrottle: 2000
       server: {
         baseDir: path.resolve(`project-${build}`),
-        middleware: browserSyncMiddleware,
+        middleware: [browserSyncMiddleware],
       },
       files: watchFiles,
     }
 
-    browserSync.init(options as any, () => resolve())
+    browserSync.init(options, () => resolve())
   })
+
+// Browsersync's public API cannot change `open` after init, or open a browser
+// on demand. These internals can; its types do not describe them
+interface BrowserSyncInternals {
+  instance: {
+    options: unknown
+    setOption(name: string, value: unknown): void
+    utils: {
+      openBrowser(url: string, options: unknown, instance: unknown): void
+    }
+  }
+}
 
 const serve = async ({
   build: buildOption,
@@ -92,7 +109,7 @@ const serve = async ({
 
   // Update the location in the config object so that a call can be made
   // to openBrowser once the project has been built
-  const bs = browserSync as any
+  const bs = browserSync as unknown as BrowserSyncInternals
   bs.instance.setOption('open', location)
   bs.instance.utils.openBrowser(url, bs.instance.options, bs.instance)
 }

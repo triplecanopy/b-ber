@@ -8,8 +8,9 @@ import YamlAdaptor from '@canopycanopycanopy/b-ber-lib/YamlAdaptor'
 import log from '@canopycanopycanopy/b-ber-logger'
 import fs from 'fs-extra'
 import path from 'path'
+import type { Argv } from 'yargs'
 
-export function withConfigOptions(yargs: any): any {
+export function withConfigOptions<T>(yargs: Argv<T>) {
   return yargs
     .option('env', {
       describe: 'The default build environment',
@@ -90,7 +91,7 @@ export const blacklistedConfigOptions = new Set([
 
 export const parseConfigFile = async (
   configFile: string
-): Promise<Record<string, any>> => {
+): Promise<Record<string, unknown>> => {
   const ext = path.extname(configFile)
   const configPath = path.resolve(process.cwd(), configFile)
 
@@ -105,7 +106,7 @@ export const parseConfigFile = async (
   const contents = (await fs.readFile(configPath)).toString()
 
   if (/^\.ya?ml/i.test(ext))
-    return YamlAdaptor.parse(contents) as Record<string, any>
+    return YamlAdaptor.parse(contents) as Record<string, unknown>
 
   return JSON.parse(contents)
 }

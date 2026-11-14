@@ -1,5 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 
+import type { NavigationEntry, SpineItem } from '@canopycanopycanopy/b-ber-lib'
 import { opsPath } from '@canopycanopycanopy/b-ber-lib/utils'
 import path from 'path'
 
@@ -28,8 +29,8 @@ const pathInfoFromFiles = (arr: string[], dest: string) =>
   arr.map((file: string) => pathInfoFromFile(file, dest))
 
 // TODO: move into Spine class? although it's called against the toc
-const nestedContentToYAML = (arr: any[]) =>
-  arr.reduce((acc: any[], curr: any) => {
+const nestedContentToYAML = (arr: SpineItem[]): NavigationEntry[] =>
+  arr.reduce<NavigationEntry[]>((acc, curr) => {
     const model: Record<string, boolean> = {}
 
     if (curr.linear === false || curr.in_toc === false) {

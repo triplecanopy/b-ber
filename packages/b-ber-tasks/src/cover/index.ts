@@ -11,6 +11,14 @@ import fs from 'fs-extra'
 import path from 'path'
 import PureImage from 'pureimage'
 
+// The part of pureimage's 2D context that `wrapText` uses. Written out rather
+// than imported because pureimage's types are an ambient stub, which tsdown's
+// declaration build does not see
+interface TextContext {
+  measureText(text: string): { width: number }
+  fillText(text: string, x: number, y: number): void
+}
+
 class Cover {
   metadata!: Record<string, string>
   metadataYAML!: string
@@ -86,16 +94,13 @@ class Cover {
 
   // eslint-disable-next-line class-methods-use-this
   YAMLToObject() {
-    return (state.metadata.json() as any[]).reduce<Record<string, string>>(
-      (acc, curr: any) => {
-        if (curr.term && curr.value) {
-          acc[curr.term] = curr.value
-        }
+    return state.metadata.json().reduce<Record<string, string>>((acc, curr) => {
+      if (curr.term && curr.value) {
+        acc[curr.term] = curr.value
+      }
 
-        return acc
-      },
-      {}
-    )
+      return acc
+    }, {})
   }
 
   removeDefaultCovers() {
@@ -116,7 +121,7 @@ class Cover {
     return Promise.all(promises)
   }
 
-  wrapText(ctx: any, text: string) {
+  wrapText(ctx: TextContext, text: string) {
     const maxWidth = this.width - this.marginLeft * 2
     const words = text.split(' ')
     let line = ''

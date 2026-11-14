@@ -1,4 +1,4 @@
-import type { SpineItem } from '@canopycanopycanopy/b-ber-lib'
+import type { MarkdownToken, SpineItem } from '@canopycanopycanopy/b-ber-lib'
 import { State as state } from '@canopycanopycanopy/b-ber-lib'
 
 // `self` is b-ber-markdown-renderer's MarkdownRenderer, which cannot be
@@ -17,8 +17,9 @@ export default function markdownItFootnotePlugin(self: {
     }
   }
 }) {
-  // Token-shaped objects: some from markdown-it, some built below
-  return function plugin(tokens: Record<string, unknown>[]) {
+  // Some whole markdown-it tokens, some built below with only the fields the
+  // renderer reads
+  return function plugin(tokens: Partial<MarkdownToken>[]) {
     const { fileName } = self
     const entry = state.find('spine.flattened', { fileName }) as
       | Omit<SpineItem, 'nodes'>

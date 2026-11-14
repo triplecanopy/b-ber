@@ -1,19 +1,20 @@
 import { fail } from '@canopycanopycanopy/b-ber-lib/utils'
 import log from '@canopycanopycanopy/b-ber-logger'
 import { serve } from '@canopycanopycanopy/b-ber-tasks'
+import type { Arguments, Argv } from 'yargs'
 
 const command = 'serve [build] [opts]'
 const describe = 'Preview a project in the browser using the `reader` build.'
 
-const handler = (yargs: any) => {
-  const { external, build } = yargs
+const handler = (argv: Arguments<{ build?: string; external?: boolean }>) => {
+  const { external, build } = argv
 
   log.notice(`Serving [b-ber-${build}]`)
 
   return serve({ build, external })
 }
 
-const builder = (yargs: any) =>
+const builder = (yargs: Argv) =>
   yargs
     .positional('build', {
       describe: 'Build to preview',
@@ -28,7 +29,7 @@ const builder = (yargs: any) =>
     .help('h')
     .alias('h', 'help')
     .usage(`\nUsage: $0 serve\n\n${describe}`)
-    .fail((msg: any, err: any) => fail(msg, err, yargs))
+    .fail((msg, err) => fail(msg, err, yargs))
 
 export default {
   command,

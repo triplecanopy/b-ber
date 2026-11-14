@@ -8,6 +8,10 @@ import fs from 'fs-extra'
 import path from 'path'
 
 // Generate new Markdown documents
+// Front matter for the new page. Empty values are left out of it, so only
+// the title, which names the file, is required
+type PageMetadata = { title: string } & Record<string, string | undefined>
+
 class Generate {
   constructor() {
     this.init = this.init.bind(this)
@@ -18,7 +22,7 @@ class Generate {
     metadata,
   }: {
     markdownDir: string
-    metadata: Record<string, string>
+    metadata: PageMetadata
   }) {
     const frontmatter = `---\n${Object.entries(metadata).reduce(
       (acc, [k, v]) => (v ? acc.concat(`${k}: ${v}\n`) : acc),
@@ -63,7 +67,7 @@ class Generate {
     return Promise.all(promises).then(() => ({ fileName }))
   }
 
-  init(metadata: Record<string, string>) {
+  init(metadata: PageMetadata) {
     // TODO: ensure markdown dir
     const markdownDir = state.src.markdown()
     return fs

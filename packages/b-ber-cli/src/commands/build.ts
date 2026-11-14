@@ -6,6 +6,7 @@ import sequences from '@canopycanopycanopy/b-ber-shapes-sequences/sequences'
 import { serialize } from '@canopycanopycanopy/b-ber-tasks'
 import Project from '@canopycanopycanopy/b-ber-templates/Project'
 import path from 'path'
+import type { Arguments, Argv } from 'yargs'
 import {
   blacklistedConfigOptions,
   parseConfigFile,
@@ -17,27 +18,27 @@ const describe = 'Build a project'
 
 const noop = () => {}
 
-const handler = async (argv: any) => {
+const handler = async (argv: Arguments) => {
   process.env.NODE_ENV = process.env.NODE_ENV || 'development'
 
   const { _: desiredSequences, $0, config, ...configOptions } = argv
   const sequence = createBuildSequence(desiredSequences)
   const subSequence = sequence.reduce(
-    (a: any[], c: any) => a.concat(...sequences[c]),
-    []
+    (a: string[], c) => a.concat(...sequences[c]),
+    [] as string[]
   )
 
-  let projectConfig: Record<string, any> = {}
+  let projectConfig: Record<string, unknown> = {}
 
-  if (config) projectConfig = await parseConfigFile(config)
+  if (typeof config === 'string') projectConfig = await parseConfigFile(config)
 
   projectConfig = { ...projectConfig, ...configOptions }
 
   state.update('sequence', subSequence)
   log.registerSequence(state, command, subSequence)
 
-  const run = (buildTasks: any[]) => {
-    const build = buildTasks.shift()
+  const run = (buildTasks: string[]): Promise<void> => {
+    const build = buildTasks.shift() as string
 
     state.reset()
     state.update('build', build)
@@ -71,7 +72,7 @@ const handler = async (argv: any) => {
     .catch(console.error)
 }
 
-const builder = (yargs: any) =>
+const builder = (yargs: Argv) =>
   withConfigOptions(yargs)
     .command('', 'Build all formats', noop, handler)
     .command('epub', 'Build an Epub', noop, handler)

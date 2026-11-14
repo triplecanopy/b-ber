@@ -1,7 +1,11 @@
 /* eslint-disable camelcase */
 /* eslint-disable class-methods-use-this */
 
-import { type MetadataEntry, Url } from '@canopycanopycanopy/b-ber-lib'
+import {
+  type ConfigOptions,
+  type MetadataEntry,
+  Url,
+} from '@canopycanopycanopy/b-ber-lib'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import { generateWebpubManifest } from '@canopycanopycanopy/b-ber-lib/utils'
 import log from '@canopycanopycanopy/b-ber-logger'
@@ -168,7 +172,8 @@ class Reader {
     const cover = `${url}/OPS/images/${this.getBookMetadata('cover')}`
 
     // Get config required by reader for books.json
-    const { downloads, ui_options, layout } = this.getProjectConfig() as any
+    const { downloads, ui_options, layout } =
+      this.getProjectConfig() as ConfigOptions
 
     const manifest = [{ title, url, cover, id, downloads, ui_options, layout }]
 

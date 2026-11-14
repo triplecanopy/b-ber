@@ -21,7 +21,7 @@ class Footnotes {
 
   async writeFootnotes() {
     const notes = state.footnotes.reduce<string>(
-      (acc: string, cur: any) => acc.concat(cur.notes),
+      (acc, cur) => acc.concat(cur.notes),
       ''
     )
 

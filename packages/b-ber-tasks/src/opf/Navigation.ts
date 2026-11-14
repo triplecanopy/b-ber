@@ -1,3 +1,4 @@
+import type { NavigationEntry, SpineItem } from '@canopycanopycanopy/b-ber-lib'
 import { Template, YamlAdaptor } from '@canopycanopycanopy/b-ber-lib'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
@@ -49,7 +50,9 @@ class Navigation {
     // contains the correct entries since we load any files that haven't
     // been declared in the TOC when initializing the Spine object, so no
     // need to update anything there
-    const tocEntries = state.spine.flattenYAML(YamlAdaptor.load(tocFile) as any)
+    const tocEntries = state.spine.flattenYAML(
+      YamlAdaptor.load(tocFile) as NavigationEntry[]
+    )
 
     // Files on the system that are not included in the TOC
     const missingEntries = difference(files, tocEntries)
@@ -58,7 +61,9 @@ class Navigation {
     missingEntries.forEach((name) => {
       if (state.contains('loi', { name })) return
 
-      const entry = state.find('spine.flattened', { name }) as any
+      const entry = state.find('spine.flattened', { name }) as
+        | Omit<SpineItem, 'nodes'>
+        | undefined
 
       let yamlString = `\n- ${name}`
 
