@@ -39,7 +39,7 @@
     "@canopycanopycanopy/b-ber-grammar-vimeo": "4.0.3",
     "@canopycanopycanopy/b-ber-parser-footnotes": "4.0.3",
     "@canopycanopycanopy/b-ber-parser-gallery": "4.0.3",
-    "highlight.js": "^11.11.1",
+    "highlight.js": "^11.12.0",
     "markdown-it": "^15.0.3",
     "markdown-it-front-matter": "^0.1.2"
   },

@@ -25,7 +25,7 @@
     "modularscale-sass": "^3.0.10"
   },
   "devDependencies": {
-    "sass": "1.100.0"
+    "sass": "1.108.2"
   },
   "gitHead": "9936fe3f4af76aa7b67ce10c2ed3a32b7de6ce6c"
 }
