@@ -47,11 +47,13 @@ export default {
       let result = ''
       if (tokens[idx].nesting === 1) {
         // opening tag
-        let matches
-        while ((matches = attrsRe.exec(tokens[idx].info.trim())) !== null) {
+        const info = tokens[idx].info.trim()
+        let matches = attrsRe.exec(info)
+        while (matches !== null) {
           // eslint-disable-next-line prefer-destructuring
           // attrsRe only captures `image`, `caption` or `citation` here
           attrs[matches[1] as keyof typeof attrs] = matches[2]
+          matches = attrsRe.exec(info)
         }
 
         if (!attrs.image && !attrs.caption) {

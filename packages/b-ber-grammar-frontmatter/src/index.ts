@@ -25,8 +25,8 @@ export default function markdownItFrontmatterPlugin(self: {
 
     // merge the found entry in the state and spine so that we
     // can access the metadata later
-    let data
-    if ((data = state.spine.frontMatter.get(fileName))) {
+    const data = state.spine.frontMatter.get(fileName)
+    if (data) {
       state.spine.frontMatter.set(fileName, { ...data, ...YAMLMeta })
     }
   }

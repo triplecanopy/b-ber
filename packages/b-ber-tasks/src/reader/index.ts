@@ -200,7 +200,7 @@ class Reader {
       this.getProjectConfig('reader_url') as string
     )
 
-    let contents
+    let contents: string
     contents = fs.readFileSync(indexHTML, 'utf8')
     contents = contents.replace(
       /<\/head>/,
@@ -252,7 +252,7 @@ class Reader {
       layout: this.getProjectConfig('layout'),
     }
 
-    let contents
+    let contents: string
     contents = fs.readFileSync(indexHTML, 'utf8')
     contents = contents.replace(
       /__SERVER_DATA__ = {}/,
@@ -272,7 +272,7 @@ class Reader {
       this.getProjectConfig('reader_url') as string
     )
 
-    let contents
+    let contents: string
     contents = fs.readFileSync(stylesheet, 'utf8')
     contents = contents.replace(/url\(\//g, `url(${readerURL}`)
 
@@ -285,7 +285,7 @@ class Reader {
       this.getProjectConfig('reader_url') as string
     )
 
-    let contents
+    let contents: string
     contents = fs.readFileSync(indexHTML, 'utf8')
     contents = contents.replace(
       /(src|href)="(\/[^"]+?)"/g,

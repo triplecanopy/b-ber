@@ -392,6 +392,7 @@ describe('build handler', () => {
       serialize.mockResolvedValueOnce().mockImplementationOnce(() => {
         const promise = Promise.reject(error)
         const then = promise.then.bind(promise)
+        // biome-ignore lint/suspicious/noThenProperty: wraps the promise's own `then` to observe what run() chains onto it
         promise.then = (...args) => {
           const derived = then(...args)
           derived.catch((e) => escaped.push(e))

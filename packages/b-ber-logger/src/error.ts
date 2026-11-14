@@ -12,7 +12,7 @@ export function error(this: Logger, _args: unknown): void {
   let err: unknown
   let formatted: string
 
-  while ((err = args.shift())) {
+  for (err = args.shift(); err; err = args.shift()) {
     if (err instanceof Error) {
       message = this.composeMessage([err.message])
       stack = err.stack

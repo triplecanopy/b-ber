@@ -34,9 +34,9 @@ const containerPlugin = (
   ): boolean {
     const lineNumber = startLine + 1
 
-    let pos
-    let nextLine
-    let token
+    let pos: number
+    let nextLine: number
+    let token: MarkdownToken
     let autoClosed = false
     let start = state.bMarks[startLine] + state.tShift[startLine]
     let max = state.eMarks[startLine]

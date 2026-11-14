@@ -75,7 +75,6 @@
         "noRedundantAlt": "error",
         "noRedundantRoles": "error",
         "noStaticElementInteractions": "warn",
-        "noSvgWithoutTitle": "warn",
         "useAltText": "error",
         "useAnchorContent": "error",
         "useAriaActivedescendantWithTabindex": "error",
@@ -151,8 +150,6 @@
         "noUnusedPrivateClassMembers": "off",
         "noUnusedVariables": "warn",
         "noVoidElementsWithChildren": "error",
-        "noVoidTypeReturn": "warn",
-        "useExhaustiveDependencies": "warn",
         "useIsNan": "error",
         "useJsxKeyInIterable": "off",
         "useParseIntRadix": "error",
@@ -207,7 +204,6 @@
       "suspicious": {
         "noAlert": "warn",
         "noArrayIndexKey": "off",
-        "noAssignInExpressions": "warn",
         "noAsyncPromiseExecutor": "error",
         "noBitwiseOperators": "warn",
         "noCatchAssign": "error",
@@ -229,7 +225,6 @@
         "noFallthroughSwitchClause": "error",
         "noFunctionAssign": "error",
         "noGlobalAssign": "error",
-        "noImplicitAnyLet": "warn",
         "noImportAssign": "error",
         "noImportCycles": "error",
         "noIrregularWhitespace": "error",
@@ -242,7 +237,6 @@
         "noShadowRestrictedNames": "error",
         "noSparseArray": "error",
         "noTemplateCurlyInString": "error",
-        "noThenProperty": "warn",
         "noUnsafeNegation": "error",
         "noUnusedExpressions": "error",
         "noUselessRegexBackrefs": "error",
@@ -302,8 +296,17 @@
       "includes": ["packages/b-ber-reader-react/**"],
       "linter": {
         "rules": {
+          "a11y": {
+            "noSvgWithoutTitle": "warn"
+          },
+          "correctness": {
+            "noVoidTypeReturn": "warn",
+            "useExhaustiveDependencies": "warn"
+          },
           "suspicious": {
-            "noExplicitAny": "warn"
+            "noAssignInExpressions": "warn",
+            "noExplicitAny": "warn",
+            "noImplicitAnyLet": "warn"
           }
         }
       }
