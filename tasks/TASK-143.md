@@ -77,3 +77,12 @@ policy's checklist by hand. Three findings change the design:
 - Split from TASK-132 on 2026-11-06. Related: TASK-139, TASK-140 and TASK-141
   (manual runs), TASK-119 (typecheck on `main`; retire the diff once it is
   green), TASK-130 (the e2e job this links to).
+- **Cancelled 2026-11-13, not built.** The workflow, script, tests and sticky
+  comment cost more to build and keep working than they save. Majors arrive a
+  few times a year, and four manual runs (TASK-139, 140, 141, 144) took minutes
+  each with the checklist. The typecheck diff was moot anyway: TASK-119 made
+  `npm run typecheck` green on `main` and a step of the required
+  `build-and-test` job, so a plain typecheck already fails on new errors. What
+  these runs learned went into the manual checklist in
+  `docs/dependency-update-policy.md`: list every installed copy of the
+  dependency, and compare build output before and after.
