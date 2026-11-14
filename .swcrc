@@ -4,7 +4,8 @@
     "target": "es2020",
     "transform": {
       "legacyDecorator": true,
-      "decoratorMetadata": true
+      "decoratorMetadata": true,
+      "react": { "runtime": "automatic" }
     }
   },
   "module": { "type": "commonjs" }

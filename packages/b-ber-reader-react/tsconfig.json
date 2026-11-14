@@ -4,7 +4,7 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "lib": ["es2022", "dom", "dom.iterable"],
-    "jsx": "react",
+    "jsx": "react-jsx",
     "noEmit": true,
     "composite": false,
     "declaration": false,

@@ -19,7 +19,13 @@ module.exports = {
         jsc: {
           parser: { syntax: 'typescript', tsx: true, decorators: true },
           target: 'es2020',
-          transform: { legacyDecorator: true, decoratorMetadata: true },
+          transform: {
+            legacyDecorator: true,
+            decoratorMetadata: true,
+            // The automatic runtime, as @vitejs/plugin-react builds with, so
+            // JSX needs no React import here either
+            react: { runtime: 'automatic' },
+          },
         },
         module: { type: 'commonjs' },
       },
