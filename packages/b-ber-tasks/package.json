@@ -31,15 +31,15 @@
     "css": "^2.2.4",
     "epub-zipper": "^1.4.3",
     "fs-extra": "^8.1.0",
-    "glob": "^7.1.6",
+    "glob": "^7.2.3",
     "layouts": "^3.0.2",
     "lodash": "^4.18.1",
     "lunr": "^2.3.9",
     "postcss": "^8.5.32",
     "pureimage": "^0.1.6",
     "recursive-readdir": "^2.2.3",
-    "sass": "^1.100.0",
-    "uglify-js": "^3.15.1",
+    "sass": "^1.108.2",
+    "uglify-js": "^3.19.3",
     "vinyl": "^2.2.1"
   },
   "devDependencies": {
