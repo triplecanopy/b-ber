@@ -45,5 +45,9 @@ Additional standards for this package:
   `<<` merges, the exact text of a rewritten `config.yml`), and
   `__tests__/yaml-adaptor.test.js` pins them. A js-yaml upgrade must pass that
   file unchanged (TASK-140).
-- `Yaml.ts` uses `yawn-yaml@1.5.0`, which brings its own js-yaml 3 and calls its
-  full-schema `load`. It is a separate dependency path from `YamlAdaptor`.
+- `Yaml.ts` uses `yawn-yaml` 1.8, which brings its own js-yaml 4 and calls its
+  default `load`. It is a separate dependency path from `YamlAdaptor`, and the
+  two disagree on YAML 1.1 numbers: yawn-yaml reads an unquoted `0123` as 123,
+  `1_000` and `1:23` as strings, where `YamlAdaptor` keeps js-yaml 3's 83, 1000
+  and 83 (TASK-149). Import it as `yawn-yaml`: 1.8 removed the `yawn-yaml/cjs`
+  path that 1.5 had.

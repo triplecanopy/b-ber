@@ -3,7 +3,7 @@
 import log from '@canopycanopycanopy/b-ber-logger'
 import fs from 'fs-extra'
 import find from 'lodash/find'
-import YAWN from 'yawn-yaml/cjs'
+import YAWN from 'yawn-yaml'
 
 interface SchemaField {
   type: string
