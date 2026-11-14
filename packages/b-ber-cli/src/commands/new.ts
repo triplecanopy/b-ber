@@ -42,7 +42,6 @@ const handler = async (argv: Arguments<{ name?: string }>) => {
     if (blacklistedConfigOptions.has(key)) {
       log.warn('Disallowed configuration option [%s]', key)
       delete projectConfig[key]
-      continue
     }
   }
 

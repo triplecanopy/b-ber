@@ -54,10 +54,6 @@ const render =
         return `
         <div ${attrsString}>
           <div id="${htmlId(id)}" class="spread__content">`
-      case 'epub':
-      case 'mobi':
-      case 'pdf':
-      case 'sample':
       default:
         return `<section id="${htmlId(id)}" ${attrsString}>`
     }
