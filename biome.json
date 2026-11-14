@@ -106,6 +106,7 @@
         "noCommaOperator": "warn",
         "noExtraBooleanCast": "error",
         "noImplicitCoercions": "off",
+        "noStaticOnlyClass": "off",
         "noUselessCatch": "error",
         "noUselessConstructor": "error",
         "noUselessEscapeInRegex": "error",
