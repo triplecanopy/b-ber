@@ -10,6 +10,7 @@ import type {
   BlockState,
   ContainerPluginOptions,
   MarkdownItHost,
+  MarkdownToken,
 } from '@canopycanopycanopy/b-ber-lib'
 
 // Every caller passes `options`; the empty default predates these types
@@ -33,9 +34,9 @@ const containerPlugin = (
   ): boolean {
     const lineNumber = startLine + 1
 
-    let pos
-    let nextLine
-    let token
+    let pos: number
+    let nextLine: number
+    let token: MarkdownToken
     let autoClosed = false
     let start = state.bMarks[startLine] + state.tShift[startLine]
     let max = state.eMarks[startLine]

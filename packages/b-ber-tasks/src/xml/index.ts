@@ -1,3 +1,4 @@
+import path from 'node:path'
 import HtmlToXmlParser from '@canopycanopycanopy/b-ber-lib/HtmlToXml'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import { getBookMetadata } from '@canopycanopycanopy/b-ber-lib/utils'
@@ -6,7 +7,6 @@ import fs from 'fs-extra'
 import findIndex from 'lodash/findIndex'
 import isPlainObject from 'lodash/isPlainObject'
 import isString from 'lodash/isString'
-import path from 'path'
 
 const fileExtension = '.xhtml'
 

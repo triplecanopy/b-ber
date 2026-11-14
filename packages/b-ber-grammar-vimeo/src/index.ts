@@ -1,3 +1,4 @@
+import path from 'node:path'
 import {
   attributesObject,
   attributesQueryString,
@@ -16,7 +17,6 @@ import {
   INLINE_DIRECTIVE_MARKER,
   INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
 } from '@canopycanopycanopy/b-ber-shapes-directives'
-import path from 'path'
 import {
   bBerAttributes,
   createUnsupportedInline,

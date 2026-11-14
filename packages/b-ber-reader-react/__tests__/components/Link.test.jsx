@@ -1,5 +1,4 @@
 import { fireEvent } from '@testing-library/react'
-import React from 'react'
 import Link from '../../src/components/Link'
 import ReaderApiContext from '../../src/lib/reader-api-context'
 import { renderWithStore } from '../helpers/renderWithStore'

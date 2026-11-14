@@ -1,5 +1,6 @@
 import classNames from 'classnames'
-import React, { useState } from 'react'
+import type React from 'react'
+import { useState } from 'react'
 import VolumeUp from '../../Icons/VolumeUp'
 import MediaRangeSlider from './MediaRangeSlider'
 

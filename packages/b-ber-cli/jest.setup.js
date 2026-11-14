@@ -3,7 +3,7 @@
 // loaded (setupFiles), so the filesystem is ready when command modules
 // import State on the first require().
 const fs = require('fs-extra')
-const path = require('path')
+const path = require('node:path')
 
 const projectDir = path.resolve('_project')
 const mediaDir = path.join(projectDir, '_media')

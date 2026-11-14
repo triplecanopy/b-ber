@@ -1,5 +1,3 @@
-import React from 'react'
-
 const Info = () => (
   <svg
     style={{ top: 1 }}

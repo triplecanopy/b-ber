@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import Viewport from '../../helpers/Viewport'
 import { ChapterNext, ChapterPrevious, PageNext, PagePrevious } from '../Icons'
 

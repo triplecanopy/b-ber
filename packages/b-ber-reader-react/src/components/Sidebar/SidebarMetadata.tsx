@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import React from 'react'
+import type React from 'react'
 import useMaxHeight from '../../hooks/use-max-height'
 import { useStore } from '../../store/StoreContext'
 

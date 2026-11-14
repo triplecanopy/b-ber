@@ -1,5 +1,3 @@
-import React from 'react'
-
 const PageNext = () => (
   <svg
     width="24px"

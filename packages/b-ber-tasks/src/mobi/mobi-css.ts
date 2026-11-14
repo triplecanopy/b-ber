@@ -1,8 +1,8 @@
+import path from 'node:path'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
 import css from 'css'
 import fs from 'fs-extra'
-import path from 'path'
 
 const blackListedPrefixes = ['epub|']
 const blackListedTypes = ['namespace']

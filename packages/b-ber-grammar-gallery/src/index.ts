@@ -45,10 +45,6 @@ const render = (tokens: DirectiveToken[], idx: number) => {
                 <div class="figure__large figure__inline figure__fullbleed figure__gallery">
                 <figure>
                 <div class="figure__items">`
-    case 'epub':
-    case 'mobi':
-    case 'pdf':
-    case 'sample':
     default:
       return `<section id="${htmlId(id)}" ${attrsString}>`
   }

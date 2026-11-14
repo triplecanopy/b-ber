@@ -1,4 +1,4 @@
-import util from 'util'
+import util from 'node:util'
 import type { Logger } from './logger'
 
 export function printVersion(this: Logger, version: string): void {

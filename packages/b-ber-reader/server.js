@@ -7,9 +7,9 @@ dir at http://localhost:4000 or at the provided hostname and port
 
 */
 
-const fs = require('fs')
-const nodeUrl = require('url')
-const path = require('path')
+const fs = require('node:fs')
+const nodeUrl = require('node:url')
+const path = require('node:path')
 const express = require('express')
 
 const HOST = process.env.BBER_HOST || 'localhost'

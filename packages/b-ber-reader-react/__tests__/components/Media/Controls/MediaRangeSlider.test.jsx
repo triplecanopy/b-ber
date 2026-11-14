@@ -1,5 +1,4 @@
 import { fireEvent, render } from '@testing-library/react'
-import React from 'react'
 import MediaRangeSlider from '../../../../src/components/Media/Controls/MediaRangeSlider'
 
 describe('MediaRangeSlider', () => {

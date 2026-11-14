@@ -1,5 +1,6 @@
 import classNames from 'classnames'
-import React, { useEffect, useState } from 'react'
+import type React from 'react'
+import { useEffect, useState } from 'react'
 import type { ViewerSettingsState } from '../../store/types'
 
 type SidebarName = 'chapters' | 'downloads' | 'metadata' | 'settings'

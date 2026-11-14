@@ -1,19 +1,23 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.4.16/schema.json",
-  "vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
   "files": {
     "ignoreUnknown": false,
     "includes": [
       "**",
       "!**/*.min.js",
-      "!**/node_modules/**",
-      "!**/dist/**",
-      "!**/demo/**",
-      "!**/demos/**",
-      "!coverage/**",
+      "!**/node_modules",
+      "!**/dist",
+      "!**/demo",
+      "!**/demos",
+      "!coverage",
       "!packages/b-ber-lib/*.js",
-      "!packages/b-ber-reader/epub/**",
-      "!packages/b-ber-reader/public/**",
+      "!packages/b-ber-reader/epub",
+      "!packages/b-ber-reader/public",
       "!packages/b-ber-resources/index.js",
       "!packages/b-ber-shapes-dublin-core/elements.js",
       "!packages/b-ber-shapes-dublin-core/terms.js",
@@ -33,10 +37,10 @@
       "!packages/b-ber-templates/Xml/*.js",
       "!packages/b-ber-templates/figures/*.js",
       "!packages/b-ber-lib/utils/*.js",
-      "!packages/b-ber-markdown-renderer/src/highlightjs/**",
+      "!packages/b-ber-markdown-renderer/src/highlightjs",
       "!packages/b-ber-reader-react/src/constants/index.js",
-      "!packages/b-ber-tasks/src/web/**",
-      "!scripts/**"
+      "!packages/b-ber-tasks/src/web",
+      "!scripts"
     ]
   },
   "formatter": {
@@ -55,7 +59,7 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": false,
+      "recommended": true,
       "a11y": {
         "noAccessKey": "error",
         "noAriaUnsupportedElements": "error",
@@ -88,7 +92,9 @@
         "useValidAriaProps": "error",
         "useValidAriaRole": {
           "level": "error",
-          "options": { "ignoreNonDom": false }
+          "options": {
+            "ignoreNonDom": false
+          }
         },
         "useValidAriaValues": "error",
         "useValidAutocomplete": "off",
@@ -100,6 +106,7 @@
         "noCommaOperator": "warn",
         "noExtraBooleanCast": "error",
         "noImplicitCoercions": "off",
+        "noStaticOnlyClass": "off",
         "noUselessCatch": "error",
         "noUselessConstructor": "error",
         "noUselessEscapeInRegex": "error",
@@ -151,7 +158,9 @@
         "useValidTypeof": "error",
         "useYield": "error"
       },
-      "performance": { "noAwaitInLoops": "error" },
+      "performance": {
+        "noAwaitInLoops": "error"
+      },
       "security": {
         "noDangerouslySetInnerHtml": "off",
         "noDangerouslySetInnerHtmlWithChildren": "error",
@@ -213,7 +222,7 @@
         "noDuplicateObjectKeys": "error",
         "noDuplicateParameters": "error",
         "noEmptyBlockStatements": "off",
-        "noExplicitAny": "warn",
+        "noExplicitAny": "error",
         "noFallthroughSwitchClause": "error",
         "noFunctionAssign": "error",
         "noGlobalAssign": "error",
@@ -277,6 +286,31 @@
   },
   "assist": {
     "enabled": true,
-    "actions": { "source": { "organizeImports": "on" } }
-  }
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
+  "overrides": [
+    {
+      "includes": ["packages/b-ber-reader-react/**"],
+      "linter": {
+        "rules": {
+          "a11y": {
+            "noSvgWithoutTitle": "warn"
+          },
+          "correctness": {
+            "noVoidTypeReturn": "warn",
+            "useExhaustiveDependencies": "warn"
+          },
+          "suspicious": {
+            "noAssignInExpressions": "warn",
+            "noExplicitAny": "warn",
+            "noImplicitAnyLet": "warn"
+          }
+        }
+      }
+    }
+  ]
 }

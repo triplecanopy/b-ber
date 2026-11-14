@@ -1,5 +1,3 @@
-import React from 'react'
-
 const Close = () => (
   <svg viewBox="0 0 12 13" version="1.1" xmlns="http://www.w3.org/2000/svg">
     <g stroke="none" strokeWidth="0" fill="none" fillRule="evenodd">

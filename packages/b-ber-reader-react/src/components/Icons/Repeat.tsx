@@ -1,5 +1,3 @@
-import React from 'react'
-
 // Material Symbols "repeat" (filled), Apache-2.0.
 const Repeat = () => (
   <svg

@@ -3,7 +3,6 @@
 /* eslint-disable prefer-destructuring */
 
 import { fireEvent, render } from '@testing-library/react'
-import React from 'react'
 import Library from '../../src/components/Library'
 import history from '../../src/lib/History'
 

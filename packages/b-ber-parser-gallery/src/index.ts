@@ -6,6 +6,7 @@ https://github.com//markdown-it/markdown-it-container
 MIT license
 */
 
+import path from 'node:path'
 import {
   htmlId,
   parseAttrs,
@@ -19,7 +20,6 @@ import {
   type MarkdownToken,
 } from '@canopycanopycanopy/b-ber-lib'
 import mime from 'mime-types'
-import path from 'path'
 
 // The parts of a MarkdownIt instance this plugin uses, beyond the ones the
 // container parsers share
@@ -181,9 +181,9 @@ const containerPlugin = (
   ): boolean {
     const lineNumber = startLine + 1
 
-    let pos
-    let nextLine
-    let token
+    let pos: number
+    let nextLine: number
+    let token: MarkdownToken
     let autoClosed = false
     let start = state.bMarks[startLine] + state.tShift[startLine]
     let max = state.eMarks[startLine]

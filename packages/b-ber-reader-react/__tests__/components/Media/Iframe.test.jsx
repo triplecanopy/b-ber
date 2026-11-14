@@ -1,7 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 
 import { render } from '@testing-library/react'
-import React from 'react'
 import Iframe from '../../../src/components/Media/Iframe'
 
 // Iframe reads its element ref from useNodePosition; stub it so these tests

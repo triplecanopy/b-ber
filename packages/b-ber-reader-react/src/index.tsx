@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { App } from './components'
 import version from './lib/version'
 import { createReaderStore } from './store/createReaderStore'

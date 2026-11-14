@@ -1,5 +1,4 @@
 import { render } from '@testing-library/react'
-import React from 'react'
 import AudioControls from '../../../../src/components/Media/Controls/AudioControls'
 import AudioControlsFull from '../../../../src/components/Media/Controls/AudioControlsFull'
 import AudioControlsNormal from '../../../../src/components/Media/Controls/AudioControlsNormal'

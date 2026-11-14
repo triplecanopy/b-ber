@@ -70,7 +70,7 @@ function renderFootnoteCaption(
   _env: unknown,
   _slf: unknown
 ): number | string {
-  let n
+  let n: number | string
   if (!bberState.config.group_footnotes) {
     n = counter.listItemCounter(
       bberState.config.group_footnotes,
@@ -227,10 +227,10 @@ export default function footnotePlugin(
     const start = state.bMarks[startLine] + state.tShift[startLine]
     const max = state.eMarks[startLine]
 
-    let pos
-    let token
-    let offset
-    let ch
+    let pos: number
+    let token: MarkdownToken
+    let offset: number
+    let ch: number
 
     // line should be at least 5 chars - "[^x]:"
     if (start + 4 > max) return false
@@ -271,11 +271,11 @@ export default function footnotePlugin(
     const oldParentType = state.parentType
     const posAfterColon = pos
 
-    // eslint-disable-next-line no-multi-assign
-    const initial = (offset =
+    offset =
       state.sCount[startLine] +
       pos -
-      (state.bMarks[startLine] + state.tShift[startLine]))
+      (state.bMarks[startLine] + state.tShift[startLine])
+    const initial = offset
 
     while (pos < max) {
       ch = state.src.charCodeAt(pos)
@@ -327,8 +327,8 @@ export default function footnotePlugin(
     const max = state.posMax
     const start = state.pos
 
-    let footnoteId
-    let token
+    let footnoteId: number
+    let token: MarkdownToken
     let tokens: MarkdownToken[]
 
     if (start + 2 >= max) return false
@@ -348,11 +348,12 @@ export default function footnotePlugin(
       if (!state.env.footnotes.list) state.env.footnotes.list = []
       footnoteId = state.env.footnotes.list.length
 
+      tokens = []
       state.md.inline.parse(
         state.src.slice(labelStart, labelEnd),
         state.md,
         state.env,
-        (tokens = [])
+        tokens
       )
 
       token = state.push('footnote_ref', '', 0)
@@ -374,10 +375,10 @@ export default function footnotePlugin(
     const max = state.posMax
     const start = state.pos
 
-    let pos
-    let footnoteId
-    let footnoteSubId
-    let token
+    let pos: number
+    let footnoteId: number
+    let footnoteSubId: number
+    let token: MarkdownToken
 
     // should be at least 4 chars - "[^x]"
     if (start + 3 > max) return false
@@ -431,13 +432,13 @@ export default function footnotePlugin(
   function footnoteTail(state: CoreState<FootnoteEnv>): void {
     const refTokens: Record<string, MarkdownToken[]> = {}
 
-    let i
-    let l
-    let j
-    let t
-    let lastParagraph
-    let token
-    let tokens
+    let i: number
+    let l: number
+    let j: number
+    let t: number
+    let lastParagraph: MarkdownToken | null | undefined
+    let token: MarkdownToken
+    let tokens: MarkdownToken[] | undefined
     let current: MarkdownToken[]
     let currentLabel: string | undefined
     let insideRef = false

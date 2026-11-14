@@ -1,4 +1,3 @@
-import React from 'react'
 import MediaButtonPlayPause from './MediaButtonPlayPause'
 import { MediaButtonSeekBack, MediaButtonSeekForward } from './MediaButtonSeek'
 import MediaButtonVolume from './MediaButtonVolume'

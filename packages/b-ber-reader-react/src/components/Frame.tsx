@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import isPlainObject from 'lodash/isPlainObject'
-import React, { useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import * as Asset from '../helpers/Asset'
 import Viewport from '../helpers/Viewport'
 import { useStore } from '../store/StoreContext'

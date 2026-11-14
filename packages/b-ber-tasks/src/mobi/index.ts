@@ -6,13 +6,13 @@ import log from '@canopycanopycanopy/b-ber-logger'
 const pageBreakBeforeXPATH = () =>
   [
     // eslint-disable-next-line no-useless-escape
-    '//h:*\[@class="figure__large figure__inline"\]', // prettier-ignore
+    '//h:*[@class="figure__large figure__inline"]', // prettier-ignore
     // eslint-disable-next-line no-useless-escape
-    '//h:*\[@class="figure__large figure__inline"\]/following::h:p[1]', // prettier-ignore
+    '//h:*[@class="figure__large figure__inline"]/following::h:p[1]', // prettier-ignore
     // eslint-disable-next-line no-useless-escape
-    '//h:*\[contains(@class, "break-before")\]', // prettier-ignore
+    '//h:*[contains(@class, "break-before")]', // prettier-ignore
     // eslint-disable-next-line no-useless-escape
-    '//h:*\[@data-gallery-item\]', // prettier-ignore
+    '//h:*[@data-gallery-item]', // prettier-ignore
   ].join('|')
 
 const mobi = () =>

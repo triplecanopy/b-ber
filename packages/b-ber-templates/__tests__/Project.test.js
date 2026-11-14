@@ -1,7 +1,7 @@
+import path from 'node:path'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import YamlAdaptor from '@canopycanopycanopy/b-ber-lib/YamlAdaptor'
 import fs from 'fs-extra'
-import path from 'path'
 import Project from '../src/Project'
 
 jest.mock('@canopycanopycanopy/b-ber-lib/State', () => {

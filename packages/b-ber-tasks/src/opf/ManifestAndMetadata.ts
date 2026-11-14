@@ -3,6 +3,7 @@
 // Scans directory contents and reads YAML files to create the `manifest` and
 // `metadata` elements in the `content.opf`
 
+import path from 'node:path'
 import type { MetadataEntry } from '@canopycanopycanopy/b-ber-lib'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
@@ -10,7 +11,6 @@ import Manifest from '@canopycanopycanopy/b-ber-templates/Opf/Manifest'
 import Metadata from '@canopycanopycanopy/b-ber-templates/Opf/Metadata'
 import renderLayouts from 'layouts'
 import has from 'lodash/has'
-import path from 'path'
 import rrdir from 'recursive-readdir'
 import File from 'vinyl'
 import { pathInfoFromFiles } from './helpers'

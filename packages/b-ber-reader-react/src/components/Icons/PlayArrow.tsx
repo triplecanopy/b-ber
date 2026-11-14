@@ -1,5 +1,3 @@
-import React from 'react'
-
 // Material Symbols "play_arrow" (filled), Apache-2.0.
 const PlayArrow = () => (
   <svg

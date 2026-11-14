@@ -1,3 +1,4 @@
+import crypto from 'node:crypto'
 import {
   Html,
   ManifestItemProperties,
@@ -5,7 +6,6 @@ import {
   utils,
 } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
-import crypto from 'crypto'
 import File from 'vinyl'
 
 const { fileId } = utils

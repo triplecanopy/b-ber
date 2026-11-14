@@ -1,9 +1,9 @@
+import type { IncomingMessage, ServerResponse } from 'node:http'
+import path from 'node:path'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import sequences from '@canopycanopycanopy/b-ber-shapes-sequences/sequences'
 import { create } from 'browser-sync' // eslint-disable-line import/no-unresolved
-import type { IncomingMessage, ServerResponse } from 'http'
 import debounce from 'lodash/debounce'
-import path from 'path'
 import serialize from '../serialize'
 
 const browserSync = create()

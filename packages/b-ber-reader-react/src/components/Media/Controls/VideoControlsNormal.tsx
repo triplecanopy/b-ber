@@ -1,4 +1,3 @@
-import React from 'react'
 import MediaButtonFullScreen from './MediaButtonFullScreen'
 import MediaButtonVolume from './MediaButtonVolume'
 import MediaTime from './MediaTime'

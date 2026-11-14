@@ -1,4 +1,3 @@
-import React from 'react'
 import Forward30 from '../../Icons/Forward30'
 import Replay30 from '../../Icons/Replay30'
 

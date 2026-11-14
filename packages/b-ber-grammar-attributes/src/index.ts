@@ -1,5 +1,6 @@
 /* eslint-disable no-plusplus, no-continue*/
 
+import path from 'node:path'
 import { Url } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
 import {
@@ -16,7 +17,6 @@ import {
   SUPPORTED_ATTRIBUTES,
 } from '@canopycanopycanopy/b-ber-shapes-directives'
 import has from 'lodash/has'
-import path from 'path'
 
 //
 // Querying hierarchies gets confusing, so we're using biological taxonomic

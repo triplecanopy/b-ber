@@ -1,5 +1,4 @@
 import { fireEvent, render } from '@testing-library/react'
-import React from 'react'
 import MediaControls from '../../../../src/components/Media/Controls/MediaControls'
 import { MEDIA_PLAYBACK_RATES } from '../../../../src/constants'
 import Viewport from '../../../../src/helpers/Viewport'

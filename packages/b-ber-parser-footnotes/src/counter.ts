@@ -1,4 +1,4 @@
-import crypto from 'crypto'
+import crypto from 'node:crypto'
 
 // Keep track of footnotes that have been rendered to start new ordered lists at
 // proper count

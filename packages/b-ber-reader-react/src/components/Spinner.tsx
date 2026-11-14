@@ -1,5 +1,4 @@
 import classNames from 'classnames'
-import React from 'react'
 import { useStore } from '../store/StoreContext'
 import styles from './Spinner.module.css'
 

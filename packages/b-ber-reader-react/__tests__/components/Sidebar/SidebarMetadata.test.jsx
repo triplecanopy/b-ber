@@ -1,6 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
 
-import React from 'react'
 import SidebarMetadata from '../../../src/components/Sidebar/SidebarMetadata'
 import { renderWithStore } from '../../helpers/renderWithStore'
 

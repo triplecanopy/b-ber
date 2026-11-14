@@ -1,5 +1,4 @@
 import { render } from '@testing-library/react'
-import React from 'react'
 import AudioVideoControls from '../../../../src/components/Media/Controls/AudioVideoControls'
 import { MEDIA_PLAYBACK_RATES } from '../../../../src/constants'
 import Viewport from '../../../../src/helpers/Viewport'

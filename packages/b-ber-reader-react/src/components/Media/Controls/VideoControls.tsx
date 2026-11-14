@@ -1,4 +1,3 @@
-import React from 'react'
 import type { MediaControlsChildProps } from './types'
 import VideoControlsFull from './VideoControlsFull'
 import VideoControlsNormal from './VideoControlsNormal'

@@ -1,4 +1,3 @@
-import React from 'react'
 import { MEDIA_PLAYBACK_RATES } from '../../../constants'
 
 interface MediaButtonPlaybackRateProps {

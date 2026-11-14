@@ -3,6 +3,7 @@ import type {
   FigurePluginOptions,
   FigureToken,
   MarkdownItHost,
+  MarkdownToken,
 } from '@canopycanopycanopy/b-ber-lib'
 import isUndefined from 'lodash/isUndefined'
 
@@ -28,9 +29,9 @@ const figurePlugin = (
   ): boolean {
     const start = state.bMarks[startLine] + state.tShift[startLine]
     const max = state.eMarks[startLine]
-    let pos
-    let nextLine
-    let token
+    let pos: number
+    let nextLine: number
+    let token: MarkdownToken
 
     // Check out the first character quickly,
     // this should filter out most of non-containers

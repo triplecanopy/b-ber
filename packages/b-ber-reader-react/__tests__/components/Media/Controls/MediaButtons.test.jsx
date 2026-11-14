@@ -1,5 +1,4 @@
 import { fireEvent, render } from '@testing-library/react'
-import React from 'react'
 import MediaButtonDownload from '../../../../src/components/Media/Controls/MediaButtonDownload'
 import MediaButtonFullScreen from '../../../../src/components/Media/Controls/MediaButtonFullScreen'
 import MediaButtonLoop from '../../../../src/components/Media/Controls/MediaButtonLoop'

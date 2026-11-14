@@ -1,5 +1,3 @@
-import React from 'react'
-
 // Material Icons "file_download" glyph. The single download icon — used by the
 // media download button and the navigation header's downloads toggle.
 const FileDownload = () => (

@@ -1,4 +1,5 @@
-import React, { useEffect, useId, useMemo, useRef, useState } from 'react'
+import type React from 'react'
+import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import Viewport from '../helpers/Viewport'
 import browser from '../lib/browser'
 import SpreadContext from '../lib/spread-context'

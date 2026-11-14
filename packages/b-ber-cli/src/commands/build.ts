@@ -1,3 +1,4 @@
+import path from 'node:path'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import { ensure } from '@canopycanopycanopy/b-ber-lib/utils'
 import log from '@canopycanopycanopy/b-ber-logger'
@@ -5,7 +6,6 @@ import createBuildSequence from '@canopycanopycanopy/b-ber-shapes-sequences/crea
 import sequences from '@canopycanopycanopy/b-ber-shapes-sequences/sequences'
 import { serialize } from '@canopycanopycanopy/b-ber-tasks'
 import Project from '@canopycanopycanopy/b-ber-templates/Project'
-import path from 'path'
 import type { Arguments, Argv } from 'yargs'
 import {
   blacklistedConfigOptions,

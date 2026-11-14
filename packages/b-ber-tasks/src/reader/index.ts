@@ -1,6 +1,8 @@
 /* eslint-disable camelcase */
 /* eslint-disable class-methods-use-this */
 
+import crypto from 'node:crypto'
+import path from 'node:path'
 import {
   type ConfigOptions,
   type MetadataEntry,
@@ -9,11 +11,9 @@ import {
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import { generateWebpubManifest } from '@canopycanopycanopy/b-ber-lib/utils'
 import log from '@canopycanopycanopy/b-ber-logger'
-import crypto from 'crypto'
 import fs from 'fs-extra'
 import find from 'lodash/find'
 import has from 'lodash/has'
-import path from 'path'
 import rrdir from 'recursive-readdir'
 
 class Reader {
@@ -200,7 +200,7 @@ class Reader {
       this.getProjectConfig('reader_url') as string
     )
 
-    let contents
+    let contents: string
     contents = fs.readFileSync(indexHTML, 'utf8')
     contents = contents.replace(
       /<\/head>/,
@@ -252,7 +252,7 @@ class Reader {
       layout: this.getProjectConfig('layout'),
     }
 
-    let contents
+    let contents: string
     contents = fs.readFileSync(indexHTML, 'utf8')
     contents = contents.replace(
       /__SERVER_DATA__ = {}/,
@@ -272,7 +272,7 @@ class Reader {
       this.getProjectConfig('reader_url') as string
     )
 
-    let contents
+    let contents: string
     contents = fs.readFileSync(stylesheet, 'utf8')
     contents = contents.replace(/url\(\//g, `url(${readerURL}`)
 
@@ -285,7 +285,7 @@ class Reader {
       this.getProjectConfig('reader_url') as string
     )
 
-    let contents
+    let contents: string
     contents = fs.readFileSync(indexHTML, 'utf8')
     contents = contents.replace(
       /(src|href)="(\/[^"]+?)"/g,

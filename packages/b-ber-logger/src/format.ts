@@ -1,5 +1,5 @@
+import util from 'node:util'
 import chalk from 'chalk'
-import util from 'util'
 import type { Logger } from './logger'
 
 export function wrap(this: Logger, arr: string[], space: string): string {

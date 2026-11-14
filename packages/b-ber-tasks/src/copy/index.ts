@@ -1,8 +1,8 @@
+import path from 'node:path'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
 import fs from 'fs-extra'
 import isArray from 'lodash/isArray'
-import path from 'path'
 
 const FILE_SIZE_WARNING_LIMIT = 1500000 // 1.5Mb
 const cwd = process.cwd()

@@ -1,4 +1,3 @@
-import React from 'react'
 import Pause from '../../Icons/Pause'
 import PlayArrow from '../../Icons/PlayArrow'
 

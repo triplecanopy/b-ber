@@ -1,4 +1,4 @@
-import React from 'react'
+import type React from 'react'
 import * as Url from '../helpers/Url'
 import ReaderApiContext from '../lib/reader-api-context'
 import { useStore } from '../store/StoreContext'

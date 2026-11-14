@@ -1,4 +1,4 @@
-import React from 'react'
+import type React from 'react'
 
 interface AudioElementProps {
   elementKey?: React.Key

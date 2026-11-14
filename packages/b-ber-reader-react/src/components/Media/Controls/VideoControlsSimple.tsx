@@ -1,4 +1,3 @@
-import React from 'react'
 import MediaButtonPlayPause from './MediaButtonPlayPause'
 import MediaRangeSlider from './MediaRangeSlider'
 import type { MediaControlsChildProps } from './types'

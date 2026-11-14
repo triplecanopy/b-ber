@@ -1,8 +1,8 @@
+import path from 'node:path'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
 import validator, { report } from '@canopycanopycanopy/b-ber-validator'
 import fs from 'fs-extra'
-import path from 'path'
 
 const validate = async ({ project }: { project: string }) => {
   const markdownPath = path.resolve(

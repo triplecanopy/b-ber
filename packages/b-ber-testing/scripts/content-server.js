@@ -2,9 +2,9 @@
 // Needed because the reader manifest embeds absolute localhost:4000 URLs
 // that include full filesystem paths (e.g. /Users/.../manifest.json).
 // Must send CORS headers since the reader app runs on localhost:3000.
-const http = require('http')
-const fs = require('fs')
-const path = require('path')
+const http = require('node:http')
+const fs = require('node:fs')
+const path = require('node:path')
 
 const MIME = {
   '.html': 'text/html',

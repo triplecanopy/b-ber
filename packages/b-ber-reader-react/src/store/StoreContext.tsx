@@ -1,4 +1,4 @@
-import React, { createContext, type ReactNode, useContext } from 'react'
+import { createContext, type ReactNode, useContext } from 'react'
 import { useSyncExternalStoreWithSelector } from 'use-sync-external-store/with-selector'
 import type { ReaderStore } from './createReaderStore'
 import type { RootState } from './types'

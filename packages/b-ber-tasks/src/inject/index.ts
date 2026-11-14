@@ -1,9 +1,9 @@
+import path from 'node:path'
 import { Template } from '@canopycanopycanopy/b-ber-lib'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
 import Xhtml from '@canopycanopycanopy/b-ber-templates/Xhtml'
 import fs from 'fs-extra'
-import path from 'path'
 import File from 'vinyl'
 
 // A file to link or inline: a vinyl file whose contents are the text, or a
