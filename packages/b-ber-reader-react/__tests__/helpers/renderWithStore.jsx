@@ -1,5 +1,4 @@
 import { render } from '@testing-library/react'
-import React from 'react'
 import { createReaderStore } from '../../src/store/createReaderStore'
 import { createInitialState } from '../../src/store/initialState'
 import { StoreProvider } from '../../src/store/StoreContext'

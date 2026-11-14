@@ -1,11 +1,11 @@
 /* eslint-disable class-methods-use-this */
 
+import path from 'node:path'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import YamlAdaptor from '@canopycanopycanopy/b-ber-lib/YamlAdaptor'
 import log from '@canopycanopycanopy/b-ber-logger'
 import sequences from '@canopycanopycanopy/b-ber-shapes-sequences/sequences'
 import fs from 'fs-extra'
-import path from 'path'
 
 // Generate new Markdown documents
 // Front matter for the new page. Empty values are left out of it, so only

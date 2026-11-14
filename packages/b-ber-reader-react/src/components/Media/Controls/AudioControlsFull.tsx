@@ -1,4 +1,3 @@
-import React from 'react'
 import Viewport from '../../../helpers/Viewport'
 import MediaButtonDownload from './MediaButtonDownload'
 import MediaButtonLoop from './MediaButtonLoop'

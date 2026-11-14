@@ -1,6 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
 
-import React from 'react'
 import SidebarDownloads from '../../../src/components/Sidebar/SidebarDownloads'
 import { renderWithStore } from '../../helpers/renderWithStore'
 

@@ -1,4 +1,4 @@
-import path from 'path'
+import path from 'node:path'
 import SpineItem from '../src/SpineItem'
 
 const defaults = { fileName: 'chapter-01', buildType: 'epub' }

@@ -14,7 +14,6 @@
  */
 
 import { act } from '@testing-library/react'
-import React from 'react'
 import Ultimate from '../../src/components/Ultimate'
 import { renderWithStore } from '../helpers/renderWithStore'
 

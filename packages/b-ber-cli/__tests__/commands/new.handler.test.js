@@ -1,8 +1,8 @@
+import os from 'node:os'
+import path from 'node:path'
 import log from '@canopycanopycanopy/b-ber-logger'
 import { init as Initializer } from '@canopycanopycanopy/b-ber-tasks'
 import fs from 'fs-extra'
-import os from 'os'
-import path from 'path'
 import _new from '../../src/commands/new'
 import { mockProcessExit, runCli, spyOnLogger } from '../helpers/cli'
 

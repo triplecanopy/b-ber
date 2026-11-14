@@ -1,10 +1,10 @@
+import path from 'node:path'
 import { Template } from '@canopycanopycanopy/b-ber-lib'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
 import MarkdownRenderer from '@canopycanopycanopy/b-ber-markdown-renderer'
 import Xhtml from '@canopycanopycanopy/b-ber-templates/Xhtml'
 import fs from 'fs-extra'
-import path from 'path'
 
 const writeMarkupToFile = (fname: string, markup: string) => {
   fs.writeFile(state.dist.text(`${fname}.xhtml`), markup).then(() =>

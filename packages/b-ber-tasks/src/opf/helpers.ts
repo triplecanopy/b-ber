@@ -1,8 +1,8 @@
 /* eslint-disable import/prefer-default-export */
 
+import path from 'node:path'
 import type { NavigationEntry, SpineItem } from '@canopycanopycanopy/b-ber-lib'
 import { opsPath } from '@canopycanopycanopy/b-ber-lib/utils'
-import path from 'path'
 
 const isRemote = (file: string) => /^http/.test(file)
 

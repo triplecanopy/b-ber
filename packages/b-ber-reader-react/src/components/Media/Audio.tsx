@@ -1,4 +1,3 @@
-import React from 'react'
 import AudioElement from './AudioElement'
 import Media from './Media'
 

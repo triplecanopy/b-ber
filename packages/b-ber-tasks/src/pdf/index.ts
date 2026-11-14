@@ -1,10 +1,10 @@
+import path from 'node:path'
 import EbookConvert from '@canopycanopycanopy/b-ber-lib/EbookConvert'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import { getBookMetadata } from '@canopycanopycanopy/b-ber-lib/utils'
 import log from '@canopycanopycanopy/b-ber-logger'
 import fs from 'fs-extra'
 import kebabCase from 'lodash/kebabCase'
-import path from 'path'
 
 const booleans = new Set([
   'pdf_mark_links',

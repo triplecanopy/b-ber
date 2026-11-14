@@ -1,6 +1,6 @@
+import path from 'node:path'
 import { type GuideItem, Html } from '@canopycanopycanopy/b-ber-lib'
 import log from '@canopycanopycanopy/b-ber-logger'
-import path from 'path'
 import File from 'vinyl'
 
 class Guide {

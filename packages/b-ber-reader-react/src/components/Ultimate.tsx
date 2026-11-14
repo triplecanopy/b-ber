@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from 'react'
+import type React from 'react'
+import { useEffect, useRef } from 'react'
 import { useStore } from '../store/StoreContext'
 import { useUserInterfaceActions } from '../store/userInterfaceActions'
 import { useViewActions } from '../store/viewActions'

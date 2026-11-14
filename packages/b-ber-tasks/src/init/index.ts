@@ -1,3 +1,4 @@
+import path from 'node:path'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import Theme from '@canopycanopycanopy/b-ber-lib/Theme'
 import { ensure } from '@canopycanopycanopy/b-ber-lib/utils'
@@ -6,7 +7,6 @@ import getAssets from '@canopycanopycanopy/b-ber-resources'
 import sequences from '@canopycanopycanopy/b-ber-shapes-sequences/sequences'
 import Project from '@canopycanopycanopy/b-ber-templates/Project'
 import fs from 'fs-extra'
-import path from 'path'
 
 class Initializer {
   src!: string

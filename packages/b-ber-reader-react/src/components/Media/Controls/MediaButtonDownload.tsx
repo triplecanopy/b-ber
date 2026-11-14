@@ -1,4 +1,3 @@
-import React from 'react'
 import FileDownload from '../../Icons/FileDownload'
 
 interface MediaButtonDownloadProps {

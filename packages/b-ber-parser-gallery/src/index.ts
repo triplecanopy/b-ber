@@ -6,6 +6,7 @@ https://github.com//markdown-it/markdown-it-container
 MIT license
 */
 
+import path from 'node:path'
 import {
   htmlId,
   parseAttrs,
@@ -19,7 +20,6 @@ import {
   type MarkdownToken,
 } from '@canopycanopycanopy/b-ber-lib'
 import mime from 'mime-types'
-import path from 'path'
 
 // The parts of a MarkdownIt instance this plugin uses, beyond the ones the
 // container parsers share

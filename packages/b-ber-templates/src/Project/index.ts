@@ -1,6 +1,6 @@
+import crypto from 'node:crypto'
+import path from 'node:path'
 import { State as state, YamlAdaptor } from '@canopycanopycanopy/b-ber-lib'
-import crypto from 'crypto'
-import path from 'path'
 import applicationJs from './application.js'
 import gitignoreTxt from './gitignore'
 import metadataYml from './metadata.yml'

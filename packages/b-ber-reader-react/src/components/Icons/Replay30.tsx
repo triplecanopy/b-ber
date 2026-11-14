@@ -1,5 +1,3 @@
-import React from 'react'
-
 // Material Symbols "replay_30" (filled), Apache-2.0.
 const Replay30 = () => (
   <svg

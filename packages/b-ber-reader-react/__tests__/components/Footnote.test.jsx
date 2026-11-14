@@ -1,5 +1,4 @@
 import { act, fireEvent } from '@testing-library/react'
-import React from 'react'
 import Footnote from '../../src/components/Footnote'
 import * as Request from '../../src/helpers/Request'
 import Viewport from '../../src/helpers/Viewport'

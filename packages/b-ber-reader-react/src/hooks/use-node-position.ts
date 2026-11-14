@@ -15,7 +15,6 @@ import ReaderApiContext from '../lib/reader-api-context'
 import { useStore } from '../store/StoreContext'
 import type {
   ReaderSettingsState,
-  RootState,
   ViewerSettingsState,
   ViewState,
 } from '../store/types'

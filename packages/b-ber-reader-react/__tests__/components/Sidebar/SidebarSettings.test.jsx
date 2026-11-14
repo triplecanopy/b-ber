@@ -1,7 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 
 import { fireEvent, render } from '@testing-library/react'
-import React from 'react'
 import SidebarSettings from '../../../src/components/Sidebar/SidebarSettings'
 
 const buildProps = (overrides = {}) => ({

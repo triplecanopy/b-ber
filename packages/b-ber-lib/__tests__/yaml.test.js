@@ -1,6 +1,6 @@
+import os from 'node:os'
+import path from 'node:path'
 import fs from 'fs-extra'
-import os from 'os'
-import path from 'path'
 import Yaml from '../src/Yaml'
 
 // Prevent the logger from calling process.exit on typeCheck errors

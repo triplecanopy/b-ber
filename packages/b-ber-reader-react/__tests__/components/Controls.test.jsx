@@ -11,7 +11,6 @@
  */
 
 import { fireEvent } from '@testing-library/react'
-import React from 'react'
 import Controls from '../../src/components/Controls'
 import { renderWithStore } from '../helpers/renderWithStore'
 

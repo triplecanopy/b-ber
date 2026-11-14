@@ -1,5 +1,4 @@
 import { render } from '@testing-library/react'
-import React from 'react'
 import SpreadFigure from '../../src/components/SpreadFigure'
 import ReaderApiContext from '../../src/lib/reader-api-context'
 import ReaderContext from '../../src/lib/reader-context'

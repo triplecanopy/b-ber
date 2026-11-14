@@ -1,4 +1,3 @@
-import React from 'react'
 import MediaButtonPlayPause from './MediaButtonPlayPause'
 import MediaRangeSlider from './MediaRangeSlider'
 import MediaTime from './MediaTime'

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import useNavigationActions from '../hooks/use-navigation-actions'
 import { useStore } from '../store/StoreContext'
 import { useUserInterfaceActions } from '../store/userInterfaceActions'

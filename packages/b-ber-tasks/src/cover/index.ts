@@ -1,3 +1,5 @@
+import crypto from 'node:crypto'
+import path from 'node:path'
 import { Template, YamlAdaptor } from '@canopycanopycanopy/b-ber-lib'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import {
@@ -6,9 +8,7 @@ import {
 } from '@canopycanopycanopy/b-ber-lib/utils'
 import log from '@canopycanopycanopy/b-ber-logger'
 import Xhtml from '@canopycanopycanopy/b-ber-templates/Xhtml'
-import crypto from 'crypto'
 import fs from 'fs-extra'
-import path from 'path'
 import PureImage from 'pureimage'
 
 // The part of pureimage's 2D context that `wrapText` uses. Written out rather

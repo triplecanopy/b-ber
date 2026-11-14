@@ -1,5 +1,3 @@
-import React from 'react'
-
 const ChapterPrevious = () => (
   <svg
     style={{ transform: 'scale(-1)' }}

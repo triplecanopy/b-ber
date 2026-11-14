@@ -1,5 +1,4 @@
 import classNames from 'classnames'
-import React from 'react'
 
 interface VimeoPosterImageProps {
   src?: string | null

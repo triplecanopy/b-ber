@@ -1,4 +1,5 @@
-import React, { useContext } from 'react'
+import type React from 'react'
+import { useContext } from 'react'
 import ReaderApiContext from '../lib/reader-api-context'
 import ReaderContext from '../lib/reader-context'
 import SpreadContext from '../lib/spread-context'

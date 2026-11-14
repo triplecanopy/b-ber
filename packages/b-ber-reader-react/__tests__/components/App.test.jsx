@@ -12,7 +12,6 @@
  * so assertions read them from `store`.
  */
 
-import React from 'react'
 import App from '../../src/components/App'
 import * as Request from '../../src/helpers/Request'
 import { renderWithStore } from '../helpers/renderWithStore'

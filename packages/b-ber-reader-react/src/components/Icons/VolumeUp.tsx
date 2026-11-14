@@ -1,5 +1,3 @@
-import React from 'react'
-
 // Material Symbols "volume_up" (filled), Apache-2.0.
 const VolumeUp = () => (
   <svg

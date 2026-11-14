@@ -1,5 +1,4 @@
 import { act } from '@testing-library/react'
-import React from 'react'
 import Spread from '../../src/components/Spread'
 import browserMock from '../../src/lib/browser'
 import SpreadContext from '../../src/lib/spread-context'

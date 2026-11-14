@@ -1,10 +1,10 @@
 /* eslint-disable no-continue */
 /* eslint-disable global-require, import/no-dynamic-require */
 
+import path from 'node:path'
 import log from '@canopycanopycanopy/b-ber-logger'
 import fs from 'fs-extra'
 import uniq from 'lodash/uniq'
-import path from 'path'
 import state, { type ThemeModule } from './State'
 import { safeWrite } from './utils'
 import YamlAdaptor from './YamlAdaptor'

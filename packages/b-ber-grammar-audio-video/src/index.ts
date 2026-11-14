@@ -1,3 +1,4 @@
+import path from 'node:path'
 import {
   attributesObject,
   attributesString,
@@ -17,7 +18,6 @@ import {
   INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
 } from '@canopycanopycanopy/b-ber-shapes-directives'
 import has from 'lodash/has'
-import path from 'path'
 import {
   createIFrame,
   createLocalMediaSources,

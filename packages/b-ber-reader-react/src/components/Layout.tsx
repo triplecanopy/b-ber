@@ -1,6 +1,7 @@
 import classNames from 'classnames'
 import debounce from 'lodash/debounce'
-import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
+import type React from 'react'
+import { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import {
   breakpoints,
   MEDIA_QUERY_MOBILE,

@@ -1,5 +1,5 @@
+import path from 'node:path'
 import fs from 'fs-extra'
-import path from 'path'
 
 // State singleton initialises in its constructor and checks for the media dir.
 // Create the required directories before any module is imported.

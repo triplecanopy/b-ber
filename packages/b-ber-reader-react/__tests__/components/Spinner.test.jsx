@@ -1,4 +1,3 @@
-import React from 'react'
 import Spinner from '../../src/components/Spinner'
 import { renderWithStore } from '../helpers/renderWithStore'
 

@@ -1,3 +1,4 @@
+import path from 'node:path'
 import type { NavigationEntry, SpineItem } from '@canopycanopycanopy/b-ber-lib'
 import { Template, YamlAdaptor } from '@canopycanopycanopy/b-ber-lib'
 import state from '@canopycanopycanopy/b-ber-lib/State'
@@ -11,7 +12,6 @@ import glob from 'glob'
 import difference from 'lodash/difference'
 import find from 'lodash/find'
 import remove from 'lodash/remove'
-import path from 'path'
 import File from 'vinyl'
 import { getFileObjects } from '../inject'
 

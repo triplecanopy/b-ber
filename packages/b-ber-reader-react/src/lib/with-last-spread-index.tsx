@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react'
+import type React from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { isNumeric } from '../helpers/Types'
 import useDimensions from '../hooks/use-dimensions'
 import { useViewActions } from '../store/viewActions'

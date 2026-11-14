@@ -1,7 +1,6 @@
 import { test } from '@playwright/test'
 import {
   chapterNextBtn,
-  chapterPrevBtn,
   chapterURL,
   expect,
   goToChapter,

@@ -6,7 +6,7 @@ jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
   // The poster's dimensions are read from a real 10x10 image
   src: {
     images: (file) =>
-      require('path').join(__dirname, '../fixtures/images/square', file),
+      require('node:path').join(__dirname, '../fixtures/images/square', file),
   },
 }))
 

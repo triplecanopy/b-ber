@@ -1,5 +1,3 @@
-import React from 'react'
-
 const ChapterNext = () => (
   <svg
     width="16px"

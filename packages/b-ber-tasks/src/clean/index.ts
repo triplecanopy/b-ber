@@ -1,7 +1,7 @@
+import path from 'node:path'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
 import fs from 'fs-extra'
-import path from 'path'
 
 // Remove an ebook's output directory and outdated builds
 const clean = () => {

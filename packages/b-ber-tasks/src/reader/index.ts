@@ -1,6 +1,8 @@
 /* eslint-disable camelcase */
 /* eslint-disable class-methods-use-this */
 
+import crypto from 'node:crypto'
+import path from 'node:path'
 import {
   type ConfigOptions,
   type MetadataEntry,
@@ -9,11 +11,9 @@ import {
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import { generateWebpubManifest } from '@canopycanopycanopy/b-ber-lib/utils'
 import log from '@canopycanopycanopy/b-ber-logger'
-import crypto from 'crypto'
 import fs from 'fs-extra'
 import find from 'lodash/find'
 import has from 'lodash/has'
-import path from 'path'
 import rrdir from 'recursive-readdir'
 
 class Reader {

@@ -1,5 +1,5 @@
+import path from 'node:path'
 import { Parser } from 'htmlparser2'
-import path from 'path'
 import state from './State'
 
 interface HtmlToXmlParserOptions {

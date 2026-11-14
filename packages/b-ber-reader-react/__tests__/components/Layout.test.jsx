@@ -13,7 +13,6 @@
  */
 
 import { act, render } from '@testing-library/react'
-import React from 'react'
 import Layout from '../../src/components/Layout'
 import { RESIZE_DEBOUNCE_TIMER } from '../../src/constants'
 import Viewport from '../../src/helpers/Viewport'

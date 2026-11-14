@@ -1,4 +1,3 @@
-import React from 'react'
 import AudioControlsFull from './AudioControlsFull'
 import AudioControlsNormal from './AudioControlsNormal'
 import AudioControlsSimple from './AudioControlsSimple'

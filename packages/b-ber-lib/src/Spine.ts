@@ -1,6 +1,6 @@
+import path from 'node:path'
 import glob from 'glob'
 import difference from 'lodash/difference'
-import path from 'path'
 import SpineItem from './SpineItem'
 import YamlAdaptor from './YamlAdaptor'
 

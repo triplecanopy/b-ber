@@ -1,5 +1,3 @@
-import React from 'react'
-
 // The component reads `name` and `cover`; callers may pass additional fields
 // (e.g. `title`, `url`) that are forwarded untouched to handleClick.
 interface LibraryBook {

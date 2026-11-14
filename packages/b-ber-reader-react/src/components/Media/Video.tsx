@@ -1,4 +1,3 @@
-import React from 'react'
 import Media from './Media'
 import VideoElement from './VideoElement'
 

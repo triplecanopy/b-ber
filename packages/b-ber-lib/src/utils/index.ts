@@ -1,3 +1,4 @@
+import path from 'node:path'
 import log from '@canopycanopycanopy/b-ber-logger'
 import fs from 'fs-extra'
 import { imageSize } from 'image-size'
@@ -5,7 +6,6 @@ import find from 'lodash/find'
 import findIndex from 'lodash/findIndex'
 import uniq from 'lodash/uniq'
 import mime from 'mime-types'
-import path from 'path'
 import state from '../State'
 import Url from '../Url'
 

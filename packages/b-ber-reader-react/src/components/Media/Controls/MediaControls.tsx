@@ -1,5 +1,4 @@
 import classNames from 'classnames'
-import React from 'react'
 import { MEDIA_PLAYBACK_RATES } from '../../../constants'
 import AudioVideoControls from './AudioVideoControls'
 import type { MediaControlsProps } from './types'

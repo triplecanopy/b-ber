@@ -1,5 +1,5 @@
 import find from 'lodash/find'
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import * as Request from '../helpers/Request'
 import { useReaderLocationActions } from '../store/readerLocationActions'
 import { useReaderStore, useStore } from '../store/StoreContext'

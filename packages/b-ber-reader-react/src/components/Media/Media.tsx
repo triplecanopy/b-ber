@@ -1,4 +1,4 @@
-import React from 'react'
+import type React from 'react'
 import { MEDIA_CONTROLS_PRESETS } from '../../constants'
 import useNodePosition from '../../hooks/use-node-position'
 import MediaControls from './Controls/MediaControls'

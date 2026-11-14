@@ -18,7 +18,6 @@
  */
 
 import { act } from '@testing-library/react'
-import React from 'react'
 import Reader from '../../../src/components/Reader'
 import * as Asset from '../../../src/helpers/Asset'
 import { makeTwoChapterSpine } from '../../helpers/fixtures'

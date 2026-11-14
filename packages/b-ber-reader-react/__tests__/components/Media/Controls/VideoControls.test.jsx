@@ -1,5 +1,4 @@
 import { render } from '@testing-library/react'
-import React from 'react'
 import VideoControls from '../../../../src/components/Media/Controls/VideoControls'
 import VideoControlsFull from '../../../../src/components/Media/Controls/VideoControlsFull'
 import VideoControlsNormal from '../../../../src/components/Media/Controls/VideoControlsNormal'
