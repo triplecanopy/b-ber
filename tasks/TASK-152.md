@@ -53,6 +53,13 @@ Each rule is in `tests/cli/golden/normalize.ts` and pinned by
 | OPF one element per line | readability only: the OPF is one 4,800-character line |
 | Binaries and text over 64 KB compared by SHA-256 | images, media, fonts, vendored `lunr.js` |
 
+The builds also run with `TZ=UTC` and an `en_US` locale. That is not a
+normalization: metadata dates are written with `Date#toString()`, in the local
+timezone and named in the local language (#543), so the output differs by
+machine. The first Linux CI run failed on exactly that. Pinning the
+environment keeps the bug in the snapshot, where fixing #543 will show as a
+diff.
+
 The three ordering rules mean b-ber's builds are not byte-reproducible today.
 Sorting at the source would make those rules unnecessary; that is a behaviour
 change and left for later.
@@ -71,6 +78,7 @@ change and left for later.
 - [x] Fails when output changes: a one-word edit to the footnote parser's
       output failed all four formats, naming the one changed file in each
 - [ ] Runs in CI's `e2e` job, on Linux, against the snapshot made on macOS
+      (first run: failed on the timezone above, now pinned)
 
 ## Notes
 

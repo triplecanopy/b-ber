@@ -39,7 +39,15 @@ const listFiles = (dir: string, prefix = ''): string[] =>
 
 for (const format of FORMATS) {
   test(`bber build ${format} matches the golden output`, ({ fixtureCopy }) => {
-    const result = runBber(['build', format], fixtureCopy)
+    // One timezone and locale everywhere: metadata dates are written with
+    // Date#toString(), which gives the machine's local zone and names it in
+    // the machine's language (#543). Pinning both records that output as it
+    // is, on macOS and on the Linux runner alike
+    const result = runBber(['build', format], fixtureCopy, undefined, {
+      TZ: 'UTC',
+      LANG: 'en_US.UTF-8',
+      LC_ALL: 'en_US.UTF-8',
+    })
 
     // The epub build writes all of its output, then EPUBCheck rejects the
     // iframe figure and the process exits 1 (TASK-056). Compare the output

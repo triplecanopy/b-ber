@@ -100,6 +100,10 @@ const formatOpf = (xml: string): string =>
         `${open}${items.split('\n').sort().join('\n')}${close}`
     )
 
+// Not localeCompare, whose order depends on the machine's locale
+const byCodePoint = (a: string, b: string): number =>
+  a < b ? -1 : a > b ? 1 : 0
+
 interface SearchEntry {
   id: number | string
   url: string
@@ -120,14 +124,14 @@ const sortUnordered = (relPath: string, data: unknown): unknown => {
   if (name === 'search-index.json' && Array.isArray(data)) {
     return (data as SearchEntry[])
       .map((entry) => ({ ...entry, id: '{id}' }))
-      .sort((a, b) => a.url.localeCompare(b.url))
+      .sort((a, b) => byCodePoint(a.url, b.url))
   }
 
   if (name === 'manifest.json' && data && typeof data === 'object') {
     const manifest = data as WebpubManifest
     if (Array.isArray(manifest.resources)) {
       manifest.resources = [...manifest.resources].sort((a, b) =>
-        a.href.localeCompare(b.href)
+        byCodePoint(a.href, b.href)
       )
     }
   }
