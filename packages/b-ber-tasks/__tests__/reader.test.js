@@ -239,9 +239,9 @@ describe('task: reader', () => {
   })
 
   // DEFECT: the book directory is named `createDirname(identifier)`
-  // (src/reader/index.ts:132), but `writeWebpubManifest` (line 187) reads
+  // (src/reader/index.ts:131), but `writeWebpubManifest` (line 188) reads
   // `<outputDir>/<identifier>/OPS` with the raw identifier, and
-  // `injectServerDataIntoTemplate` (line 225) builds `bookURL` from it too.
+  // `injectServerDataIntoTemplate` (line 232) builds `bookURL` from it too.
   // An identifier with any character outside [0-9a-zA-Z-], such as a
   // `urn:uuid:` one, makes the manifest scan fail with ENOENT, which ends the
   // task before the reader app is copied.
