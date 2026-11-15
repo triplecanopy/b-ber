@@ -142,7 +142,7 @@ function ensureEnvVars() {
     log.error('[bucketURL] must be set in config.yml to deploy the project')
   }
 
-  // log.error exits the process, so the region is set by this point
+  // log.error throws, so the region is set by this point
   return { bucketURL, awsRegion: BBER_BUCKET_REGION as string }
 }
 
