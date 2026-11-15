@@ -30,32 +30,47 @@ TASK-143's notes proposed it as a job.
 
 | Format | In | Why |
 | ------ | -- | --- |
-| `epub` | yes | compare the unzipped OPS tree, not the `.epub` (zip timestamps) |
-| `web`, `reader`, `xml`, `sample` | yes | |
+| `epub` | yes | the unzipped `_builds-epub/` tree, not the `.epub` (zip timestamps). The build exits 1 after writing everything, when EPUBCheck rejects the iframe figure (TASK-056), so its exit code is not asserted |
+| `web`, `reader`, `sample` | yes | |
+| `xml` | no | broken on `main`: it reads `project-xml/`, but output is in `_builds-xml/` (#766) |
 | `mobi`, `pdf` | no | need Calibre and wkhtmltopdf, which CI does not have |
 
-### Known nondeterminism to normalize
+### What the snapshot ignores
 
-Found while reading the code for TASK-148/149; the first run will find more.
+Each rule is in `tests/cli/golden/normalize.ts` and pinned by
+`tests/cli/normalize.spec.ts`. Everything else is compared exactly.
 
-- `dcterms:modified` in the OPF (build time) and the `generator` version
-- footnote reference ids: `Counter.setRef` appends `crypto.randomBytes(8)`
-- the reader build's directory name, derived from the book identifier
-- anything carrying an absolute path of the temp fixture copy
+| Rule | Why |
+| ---- | --- |
+| The fixture copy's absolute path → `{fixture}` | a temp directory; the reader manifest embeds it |
+| ISO date-times → `{timestamp}` | `dcterms:modified`, the manifests' `modified` |
+| `b-ber@x.y.z` → `b-ber@{version}` | the OPF's generator meta |
+| Random 16-hex ids → `{id:N}`, numbered across the build | OPF metadata ids and their `refines`; footnote ids (`Counter.setRef`) and their links. Consistent numbering keeps every link checkable |
+| Vite's content hash in `assets/` names → `{hash}`; those files are listed, not compared | b-ber-reader-react's own bundle, which changes with every reader change and has the reader e2e suite |
+| OPF `<manifest>` items sorted | written in async directory-walk order, which varies between runs |
+| `manifest.json` `resources` sorted (`readingOrder` untouched) | the same walk |
+| `search-index.json` sorted by URL, `id` dropped | written and numbered in chapter completion order |
+| OPF one element per line | readability only: the OPF is one 4,800-character line |
+| Binaries and text over 64 KB compared by SHA-256 | images, media, fonts, vendored `lunr.js` |
 
-Normalize these in one place, and keep the list in this file, so a
-reviewer can see exactly what the snapshot ignores.
+The three ordering rules mean b-ber's builds are not byte-reproducible today.
+Sorting at the source would make those rules unnecessary; that is a behaviour
+change and left for later.
 
 ## Subtasks
 
-- [ ] Build each in-scope format from a fresh fixture copy with the built CLI
+- [x] Build each in-scope format from a fresh fixture copy with the built CLI
       (`tests/cli/helpers.ts` already does the copy and the run)
-- [ ] Normalizer for the cases above, with a unit test of its own
-- [ ] Snapshot layout: one text file per output file, so a diff names the file
-- [ ] `UPDATE_GOLDEN=1` to rewrite the snapshot; document it in
-      b-ber-testing's AGENTS.md and the root AGENTS.md
-- [ ] Run twice in a row and confirm no diff (catches missed nondeterminism)
-- [ ] Runs in CI's `e2e` job
+- [x] Normalizer for the cases above, with a unit test of its own
+- [x] Snapshot layout: one text file per output file, so a diff names the file,
+      plus `FILES.txt` per format listing every file (hashes for binaries)
+- [x] Regenerating: Playwright's own `--update-snapshots`, rather than an
+      `UPDATE_GOLDEN` variable; documented in b-ber-testing's AGENTS.md and the
+      root AGENTS.md
+- [x] Run repeatedly and confirm no diff (catches missed nondeterminism)
+- [x] Fails when output changes: a one-word edit to the footnote parser's
+      output failed all four formats, naming the one changed file in each
+- [ ] Runs in CI's `e2e` job, on Linux, against the snapshot made on macOS
 
 ## Notes
 
