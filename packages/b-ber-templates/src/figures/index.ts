@@ -39,7 +39,7 @@ const figure = (data: FigureData, buildType?: string): string => {
   }
 
   if (!format) {
-    log.error(
+    throw log.error(
       `bber-templates: [${data.source}] is of unsupported media type [${mime}]`
     )
   }

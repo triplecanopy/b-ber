@@ -38,7 +38,7 @@ export default {
       const attrsObj = attributesObject(attrs, type, { fileName, lineNumber })
 
       if (!attrsObj.source)
-        log.error(
+        throw log.error(
           '[source] attribute is required by [logo] directive, aborting'
         )
 

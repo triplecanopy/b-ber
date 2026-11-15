@@ -57,8 +57,9 @@ export default {
         }
 
         if (!attrs.image && !attrs.caption) {
-          log.error(`[${context.fileName}.md] <epigraph> Malformed directive.`)
-          result = ''
+          throw log.error(
+            `[${context.fileName}.md] <epigraph> Malformed directive.`
+          )
         } else if (!attrs.image && attrs.caption) {
           const captions = attrs.caption.split('|').map((_) => _.trim())
           const citations = attrs.citation.split('|').map((_) => _.trim())

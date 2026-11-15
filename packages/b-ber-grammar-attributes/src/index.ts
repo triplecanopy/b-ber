@@ -248,11 +248,13 @@ const attributesObject = (
   let genus = origGenus
 
   if (!genus || typeof genus !== 'string') {
-    log.error(`No directive provided: ${fileName}:${lineNumber}`)
+    throw log.error(`No directive provided: ${fileName}:${lineNumber}`)
   }
 
   if (!ALL_DIRECTIVES.has(genus)) {
-    log.error(`Invalid directive: [${genus}] at ${fileName}:${lineNumber}`)
+    throw log.error(
+      `Invalid directive: [${genus}] at ${fileName}:${lineNumber}`
+    )
   }
 
   if (DRAFT_DIRECTIVES.has(genus)) {

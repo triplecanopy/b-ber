@@ -3,7 +3,11 @@ import log from '@canopycanopycanopy/b-ber-logger'
 import media from '../src'
 
 jest.mock('@canopycanopycanopy/b-ber-logger', () => ({
-  error: jest.fn(),
+  // Returns an Error, as the real log.error does, so that a site's
+  // `throw log.error(...)` throws one rather than undefined
+  error: jest.fn((err) =>
+    err instanceof Error ? err : new Error(String(err))
+  ),
 }))
 
 jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({

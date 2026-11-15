@@ -14,7 +14,11 @@ jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
 }))
 
 jest.mock('@canopycanopycanopy/b-ber-logger', () => ({
-  error: jest.fn(),
+  // Returns an Error, as the real log.error does, so that a site's
+  // `throw log.error(...)` throws one rather than undefined
+  error: jest.fn((err) =>
+    err instanceof Error ? err : new Error(String(err))
+  ),
   warn: jest.fn(),
   debug: jest.fn(),
 }))
@@ -68,15 +72,21 @@ describe('b-ber-grammar-image', () => {
     ).toBeTruthy()
   })
 
-  it('validate returns falsy for figure directive missing id', () => {
+  it('validate throws for a directive whose name ends in figure, without a source', () => {
+    // MARKER_OPEN_RE is not anchored at the start, so this matches as
+    // `figure:foo`, with no source
     const config = image.renderer({ instance, context })
-    expect(config.validate('notafigure:foo', 1)).toBeFalsy()
+    expect(() => config.validate('notafigure:foo', 1)).toThrow(
+      'Missing [id] or [source]'
+    )
   })
 
-  it('validate returns falsy when id or source are missing', () => {
+  it('validate throws when id or source are missing', () => {
     const config = image.renderer({ instance, context })
     // Only type, no id or source
-    expect(config.validate('figure', 1)).toBeFalsy()
+    expect(() => config.validate('figure', 1)).toThrow(
+      'Missing [id] or [source]'
+    )
   })
 
   it('render returns empty string for close token', () => {
@@ -160,11 +170,10 @@ describe('b-ber-grammar-image', () => {
     expect(instance.renderInline).toHaveBeenCalledWith('caption text')
   })
 
-  it('validate logs error and returns false when id is undefined', () => {
+  it('validate throws what log.error reports when id is undefined', () => {
     const config = image.renderer({ instance, context })
     // 'figure' with no id — id is undefined
-    const result = config.validate('figure', 1)
-    expect(result).toBeFalsy()
+    expect(() => config.validate('figure', 1)).toThrow()
     expect(log.error).toHaveBeenCalled()
   })
 
@@ -179,7 +188,7 @@ describe('b-ber-grammar-image', () => {
         children: null,
       },
     ]
-    config.render(tokens, 0)
+    expect(() => config.render(tokens, 0)).toThrow('Image not found')
     expect(log.error).toHaveBeenCalledWith(
       expect.stringContaining('Image not found')
     )

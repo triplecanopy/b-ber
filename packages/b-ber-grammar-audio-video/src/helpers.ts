@@ -24,7 +24,9 @@ export const validatePosterImage = (_asset: string, type: string): string => {
   const asset = state.src.images(_asset)
 
   if (!fs.existsSync(asset)) {
-    log.error(`bber-directives: Poster image for [${type}] does not exist`)
+    throw log.error(
+      `bber-directives: Poster image for [${type}] does not exist`
+    )
   }
 
   return asset
@@ -36,7 +38,7 @@ export const validateLocalMediaSource = (
 ): string => {
   const media = [...state[mediaType]].map((file) => toAlias(file))
   if (!asset.length || media.indexOf(asset) < 0) {
-    log.error(
+    throw log.error(
       `Could not find [${mediaType}] matching [${asset}], make sure it's included in the [_media] directory`
     )
   }

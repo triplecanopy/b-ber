@@ -43,7 +43,7 @@ function handleOpen(
   // good to keep consistent with the normal handling
   const index = state.indexOf('cursor', { id })
   if (index > -1)
-    log.error(
+    throw log.error(
       `Duplicate [id] [${id}]. [id] must be unique at [${context.fileName}.md:${lineNumber}]`
     )
 
@@ -108,10 +108,9 @@ const validateOpen =
 
     const [, type, id] = match
     if (isUndefined(id)) {
-      log.error(
+      throw log.error(
         `Missing [id] for [${type}:start] at ${context.fileName}.md:${line}`
       )
-      return false
     }
 
     return true
