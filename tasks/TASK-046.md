@@ -402,9 +402,10 @@ id, that `new Yaml('nonexistent-schema', true)` did not throw, that
 `YamlAdaptor.load` of a missing file returned `[]`. In a real build each of
 those stopped the process. The mocks now return an Error, as the real
 `log.error` does, and the tests expect the throw. Two such paths, found on
-the way and left alone: b-ber-grammar-attributes fails a draft directive such
-as `abstract` as "Invalid directive" before the substitution with `chapter`
-below it can run, since `ALL_DIRECTIVES` leaves the draft ones out; and
+the way and left alone: b-ber-grammar-attributes fails a draft directive that
+is not also in `ALL_DIRECTIVES`, such as `abstract`, as "Invalid directive"
+before the substitution with `chapter` below it can run (`pullquote`, which
+is in both, is substituted); and
 b-ber-grammar-image's `MARKER_OPEN_RE` is not anchored at the start, so any
 directive name ending in `figure` (`notafigure:foo`) is validated as a figure
 and fails for want of a source.
