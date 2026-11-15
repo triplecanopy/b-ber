@@ -29,15 +29,22 @@ const runBin = (args) => {
 }
 
 let on
+let savedExitCode
 
 beforeEach(() => {
   app.mockClear()
+  savedExitCode = process.exitCode
   jest.spyOn(console, 'log').mockImplementation(() => undefined)
   // The binary installs process-wide handlers; keep them off the test runner
   on = jest.spyOn(process, 'on').mockImplementation(() => process)
 })
 
-afterEach(() => jest.restoreAllMocks())
+afterEach(() => {
+  jest.restoreAllMocks()
+  // The binary sets exit status 1 when the logger reports an error, which
+  // would otherwise become the test run's
+  process.exitCode = savedExitCode
+})
 
 describe('bber binary', () => {
   it.each([
@@ -89,5 +96,17 @@ describe('bber binary', () => {
 
     expect(log.errors.map((e) => e.message)).toEqual(['crashed'])
     expect(exit).toHaveBeenCalledWith(1)
+  })
+
+  it('sets exit status 1 on any error the logger reports, without exiting', () => {
+    const exit = jest.spyOn(process, 'exit').mockImplementation(() => undefined)
+    jest.spyOn(process.stdout, 'write').mockImplementation(() => true)
+    const { log } = runBin(['build'])
+
+    // A site that reports and then fails to stop
+    log.error('reported, not thrown')
+
+    expect(process.exitCode).toBe(1)
+    expect(exit).not.toHaveBeenCalled()
   })
 })

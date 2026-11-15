@@ -1,5 +1,6 @@
 import log from '@canopycanopycanopy/b-ber-logger'
 import {
+  exitCodeOnFailure,
   exitOnFailure,
   exitOnUncaughtFailure,
   exitWithFailure,
@@ -82,6 +83,44 @@ describe('exitOnUncaughtFailure', () => {
     exitOnUncaughtFailure()
     expect(on).toHaveBeenCalledWith('uncaughtException', exitWithFailure)
     expect(on).toHaveBeenCalledWith('unhandledRejection', exitWithFailure)
+  })
+})
+
+describe('exitCodeOnFailure', () => {
+  let saved
+
+  beforeEach(() => {
+    saved = process.exitCode
+    process.exitCode = undefined
+  })
+
+  afterEach(() => {
+    process.exitCode = saved
+    log.removeAllListeners('failure')
+  })
+
+  it('sets exit status 1 when the logger reports an error, and does not exit', () => {
+    exitCodeOnFailure()
+    log.error('reported, and the site carried on')
+
+    expect(process.exitCode).toBe(1)
+    expect(exit).not.toHaveBeenCalled()
+  })
+
+  it('sets it at log level 0 too', () => {
+    log.configure({ logLevel: 0 })
+    exitCodeOnFailure()
+    log.error('quiet')
+
+    expect(output).toEqual([])
+    expect(process.exitCode).toBe(1)
+  })
+
+  it('leaves the exit status alone while nothing is reported', () => {
+    exitCodeOnFailure()
+    log.warn('only a warning')
+
+    expect(process.exitCode).toBeUndefined()
   })
 })
 

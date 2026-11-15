@@ -35,8 +35,10 @@ yargs handler: it validates and normalises CLI flags (including an optional
 ## Errors and exit status
 
 The CLI decides when the process exits; nothing below it does.
-`b-ber-logger`'s `log.error` reports an error and throws it, and the tasks and
-grammars rely on that to stop. What they throw ends up in `src/lib/exit.ts`:
+`b-ber-logger`'s `log.error` reports an error and returns it, without throwing
+or exiting. Every call site in the tasks, grammars and libraries stops itself
+by throwing what it returns (`throw log.error(...)`), or rethrowing it from a
+promise chain's catch. What they throw ends up in `src/lib/exit.ts`:
 
 - **`exitOnFailure(handler)`** wraps every command's handler. A rejection or
   throw from the handler exits 1. A handler must therefore **return or await
@@ -47,10 +49,18 @@ grammars rely on that to stop. What they throw ends up in `src/lib/exit.ts`:
   callback the chain does not see (a stream, a timer) ends up.
 - **`fail`** is every command's yargs fail handler. A usage error shows the
   command's help and the error, and exits 1.
-- All three go through **`exitWithFailure(err)`**: it prints `err` unless the
-  logger already has (`log.isReported`), prints the closing
-  `b-ber ERR! exited with code 1` line, and calls `process.exit(1)` at once,
-  so that nothing queued behind the failure keeps running.
+- All three go through **`exitWithFailure(err)`**: it reports `err` through
+  `log.error`, which prints nothing for an error the logger has already
+  reported, prints the closing `b-ber ERR! exited with code 1` line, and calls
+  `process.exit(1)` at once, so that nothing queued behind the failure keeps
+  running.
+- **`exitCodeOnFailure()`**, also installed by `index.ts`, listens for the
+  logger's `failure` event and sets `process.exitCode = 1`. It is a backstop
+  for a call site that reports an error and fails to stop: the run then goes
+  on, but still ends non-zero. It deliberately does **not** call
+  `process.exit`. If it did, the sites would stop only when the CLI is
+  listening, and a site that forgot its `throw` would look correct here and
+  carry on anywhere else. Do not rely on it to stop anything.
 
 `bber` with no command prints the usage text and exits 0. An unknown command
 still does nothing and exits 0 (issue 741: yargs 13 has no strict mode for
@@ -83,7 +93,9 @@ Additional standards for this package:
   into `b-ber-tasks`. Avoid adding build logic directly in a command file.
 - Wrap every handler in `exitOnFailure`, and register `fail` from
   `src/lib/exit.ts` in every builder. Never call `process.exit` from a command
-  or catch an error to print it: let it reach the wrapper.
+  or catch an error to print it: let it reach the wrapper. A failure the CLI
+  finds itself (`parseConfigFile`) is `throw log.error(...)`, as everywhere
+  else.
 - Config overrides passed via `--config` or CLI flags are validated against
   `state.config` keys before being applied; unknown or blacklisted keys are
   warned and discarded — preserve this pattern in new commands.

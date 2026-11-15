@@ -43,6 +43,16 @@ export function exitOnUncaughtFailure(): void {
   process.on('unhandledRejection', exitWithFailure)
 }
 
+// A backstop: any error the logger reports makes the run's exit status 1,
+// even if the code that reported it failed to stop and the run goes on to
+// finish. It does not exit: if it did, call sites would stop only when the
+// CLI is listening, and not in a test, a script or any other caller
+export function exitCodeOnFailure(): void {
+  log.on('failure', () => {
+    process.exitCode = FAILURE
+  })
+}
+
 // The yargs fail handler for every command, which yargs calls with a message
 // for a usage error (a missing positional, a value that is not one of the
 // choices) and with an error when a builder throws. A usage error shows the
