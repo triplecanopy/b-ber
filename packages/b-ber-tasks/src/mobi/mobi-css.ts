@@ -91,7 +91,9 @@ const mobiCSS = () => {
         log.info(`mobiCSS process [${path.basename(file)}]`)
         return process(file).then(write)
       })
-    ).catch(log.error)
+    ).catch((err) => {
+      throw log.error(err)
+    })
   )
 }
 

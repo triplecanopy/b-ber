@@ -9,8 +9,9 @@ import File from 'vinyl' // eslint-disable-line import/no-unresolved
 import ManifestAndMetadata from './ManifestAndMetadata'
 import Navigation from './Navigation'
 
-// What the `init`s below resolve to. Each ends in `.catch(log.error)`, which
-// throws, so a failure rejects rather than resolving to anything. Spelled out
+// What the `init`s below resolve to. Each ends in a catch that reports the
+// error and rethrows it, so a failure rejects rather than resolving to
+// anything. Spelled out
 // rather than derived from the `init`s: their types come through the
 // `layouts` stub, which tsdown's declaration build does not see, so derived
 // types are `any` in dist/index.d.ts. `createOpf` passes the `init`s' results
@@ -31,7 +32,9 @@ class Opf {
     return Promise.all([manifestAndMetadata.init(), Navigation.init()])
       .then(Opf.createOpfPackageString)
       .then(Opf.writeOPF)
-      .catch(log.error)
+      .catch((err) => {
+        throw log.error(err)
+      })
   }
 
   static writeOPF(contents: string) {

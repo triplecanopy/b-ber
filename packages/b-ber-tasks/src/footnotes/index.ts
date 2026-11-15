@@ -49,7 +49,9 @@ class Footnotes {
 
     log.info('footnotes generating links')
 
-    return this.writeFootnotes().catch(log.error)
+    return this.writeFootnotes().catch((err) => {
+      throw log.error(err)
+    })
   }
 }
 

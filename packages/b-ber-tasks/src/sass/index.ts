@@ -52,7 +52,7 @@ const createSCSSString = () => {
     chunks.push(styleOverrides)
   }
 
-  if (chunks.length < 1) log.error('No readable stylesheets were found')
+  if (chunks.length < 1) throw log.error('No readable stylesheets were found')
 
   return Buffer.concat(chunks)
 }
@@ -203,6 +203,8 @@ const sass = () =>
     .then(renderCSS)
     .then(applyPostProcessing)
     .then(writeCSSFile)
-    .catch(log.error)
+    .catch((err) => {
+      throw log.error(err)
+    })
 
 export default sass

@@ -108,7 +108,9 @@ class ManifestAndMetadata {
         // create the manifest and metadata from templating strings.manifest and
         // strings.metadata
         .then((resp) => this.createManifestAndMetadataXML(resp))
-        .catch(log.error)
+        .catch((err) => {
+          throw log.error(err)
+        })
     )
   }
 }

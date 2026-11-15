@@ -67,6 +67,11 @@ const write = () =>
 
 const ensureDir = () => fs.mkdirp(state.dist.javascripts())
 
-const scripts = () => ensureDir().then(write).catch(log.error)
+const scripts = () =>
+  ensureDir()
+    .then(write)
+    .catch((err) => {
+      throw log.error(err)
+    })
 
 export default scripts

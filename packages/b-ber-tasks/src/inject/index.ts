@@ -145,7 +145,9 @@ const inject = async () => {
     .map((file) => ({ name: file, data: file }))
   const fileObjects = await getFileObjects(files, basePath)
 
-  return writeAll(fileObjects).catch(log.error)
+  return writeAll(fileObjects).catch((err) => {
+    throw log.error(err)
+  })
 }
 
 export default inject

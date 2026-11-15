@@ -21,14 +21,18 @@ const createPageLayout = (fileName: string, data: string) => {
   return fs
     .mkdirp(textDir)
     .then(() => writeMarkupToFile(fileName, markup))
-    .catch(log.error)
+    .catch((err) => {
+      throw log.error(err)
+    })
 }
 
 const createXTHMLFile = (fpath: string) =>
   fs
     .readFile(fpath, 'utf8')
     .then((data) => createPageLayout(path.basename(fpath, '.md'), data))
-    .catch(log.error)
+    .catch((err) => {
+      throw log.error(err)
+    })
 
 function render() {
   const markdownDir = state.src.markdown()
@@ -56,7 +60,9 @@ function render() {
         Promise.resolve()
       )
 
-    return promises.catch(log.error)
+    return promises.catch((err) => {
+      throw log.error(err)
+    })
   })
 }
 

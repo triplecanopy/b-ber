@@ -34,7 +34,9 @@ class Generate {
     const filePath = path.join(markdownDir, fileName)
 
     if (fs.existsSync(filePath))
-      log.error(`_markdown${path.sep}${fileName} already exists, aborting`)
+      throw log.error(
+        `_markdown${path.sep}${fileName} already exists, aborting`
+      )
 
     return fs.writeFile(filePath, frontmatter).then(() => ({ fileName }))
   }
@@ -75,7 +77,9 @@ class Generate {
       .then(() => this.createFile({ markdownDir, metadata }))
       .then((resp) => this.writePageMeta(resp))
       .then(({ fileName }) => log.notice(`Generated new page [${fileName}]`))
-      .catch(log.error)
+      .catch((err) => {
+        throw log.error(err)
+      })
   }
 }
 

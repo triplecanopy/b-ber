@@ -49,7 +49,9 @@ class Reader {
         // .then(() => this.updateLinkedResourcesWithAbsolutePaths())
         .then(() => this.updateAssetURLsWithAbsolutePaths())
         .then(() => this.injectWebpubManifestLink())
-        .catch(log.error)
+        .catch((err) => {
+          throw log.error(err)
+        })
     )
   }
 
@@ -99,7 +101,7 @@ class Reader {
     }
 
     if (!modulePath) {
-      log.error(
+      throw log.error(
         `Cannot find module ${this.readerModuleName}. Try running npm i -S ${this.readerModuleName}`
       )
     }
@@ -115,7 +117,7 @@ class Reader {
 
       return
     } catch (err) {
-      log.error(`
+      throw log.error(`
                 A symlinked version of ${this.readerModuleName} was found but is inaccessible.
                 Try running npm i -S ${this.readerModuleName}, or rebuilding the reader package if running this command in a development environment
             `)

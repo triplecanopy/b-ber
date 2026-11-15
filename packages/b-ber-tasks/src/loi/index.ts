@@ -116,11 +116,17 @@ const loi = () => {
   // This branch concatentates all the figures, as well as the loi-leader
   // (the 'Figures' header text) into a single document
   if (state.build === 'reader') {
-    return createLOIAsSingleHTMLFile().catch(log.error)
+    return createLOIAsSingleHTMLFile().catch((err) => {
+      throw log.error(err)
+    })
   }
 
   // create separate files
-  return createLOILeader().then(createLOIAsSeparateHTMLFiles).catch(log.error)
+  return createLOILeader()
+    .then(createLOIAsSeparateHTMLFiles)
+    .catch((err) => {
+      throw log.error(err)
+    })
 }
 
 export default loi

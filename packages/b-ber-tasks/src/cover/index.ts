@@ -186,7 +186,9 @@ class Cover {
             log.info('cover generated image [%s]', this.coverImagePath)
             resolve()
           })
-          .catch(log.error)
+          .catch((err) => {
+            throw log.error(err)
+          })
       })
     })
   }
@@ -249,7 +251,7 @@ class Cover {
       this.coverImagePath = state.src.images(this.coverEntry)
 
       if (!fs.existsSync(this.coverImagePath)) {
-        log.error('Cover image listed in metadata.yml cannot be found')
+        throw log.error('Cover image listed in metadata.yml cannot be found')
       }
 
       return this.generateCoverXHTML()
@@ -269,14 +271,18 @@ class Cover {
       .then(() => this.generateDefaultCoverImage())
       .then(() => this.generateCoverXHTML())
       .then(() => this.addCoverToMetadata())
-      .catch(log.error)
+      .catch((err) => {
+        throw log.error(err)
+      })
   }
 
   init = () =>
     this.loadInitialState()
       .then(() => this.createCoverImage())
       .then(() => this.writeCoverXHTML())
-      .catch(log.error)
+      .catch((err) => {
+        throw log.error(err)
+      })
 }
 
 const cover = new Cover()

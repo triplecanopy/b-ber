@@ -157,7 +157,9 @@ const pdf = () => {
           fileType: 'pdf',
           fileName: getBookMetadata('identifier'),
           flags,
-        }).catch(log.error)
+        }).catch((err) => {
+          throw log.error(err)
+        })
   )
 }
 

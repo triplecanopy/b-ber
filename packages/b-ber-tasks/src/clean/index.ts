@@ -24,4 +24,7 @@ const clean = () => {
   )
 }
 
-export default () => clean().catch(log.error)
+export default () =>
+  clean().catch((err) => {
+    throw log.error(err)
+  })

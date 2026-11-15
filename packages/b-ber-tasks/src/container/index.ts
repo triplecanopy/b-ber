@@ -43,7 +43,9 @@ class Container {
   init() {
     return this.makedirs()
       .then(() => this.write())
-      .catch(log.error)
+      .catch((err) => {
+        throw log.error(err)
+      })
   }
 }
 

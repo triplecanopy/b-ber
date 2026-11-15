@@ -435,6 +435,6 @@ const web = () =>
     .then(writeWebpubManifest)
     .then(writeWebWorker)
 
-    .catch(log.error)
+    .catch((err) => { throw log.error(err) })
 
 export default web
