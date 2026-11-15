@@ -5,6 +5,11 @@
 //
 // Every field changed on State is recorded and put back by `cleanup`, so a
 // test file does not leak a project into the next.
+//
+// With `chdir: true` the process moves into the temp directory and State is
+// given relative `src` and `dist`, as a real `b-ber build` run from the
+// project root has. Some tasks join process.cwd() onto State's paths and
+// only work that way.
 
 import os from 'node:os'
 import path from 'node:path'
@@ -30,13 +35,21 @@ export async function createProject({
   markdown = {},
   metadata = [],
   config = {},
+  chdir = false,
 } = {}) {
   const saved = {}
   for (const field of STATE_FIELDS) saved[field] = state[field]
+  const cwd = process.cwd()
 
-  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'b-ber-tasks-'))
-  const src = path.join(root, '_project')
-  const distBase = path.join(root, 'project')
+  // realpath: on macOS os.tmpdir() is behind a symlink, and process.cwd()
+  // reports the resolved path
+  const root = await fs.realpath(
+    await fs.mkdtemp(path.join(os.tmpdir(), 'b-ber-tasks-'))
+  )
+  if (chdir) process.chdir(root)
+  const base = chdir ? '' : root
+  const src = path.join(base, '_project')
+  const distBase = path.join(base, 'project')
   const dist = `${distBase}-${build}`
 
   await fs.ensureDir(path.join(src, '_markdown'))
@@ -76,6 +89,7 @@ export async function createProject({
 
   const cleanup = async () => {
     for (const field of STATE_FIELDS) state[field] = saved[field]
+    process.chdir(cwd)
     await fs.remove(root)
   }
 
