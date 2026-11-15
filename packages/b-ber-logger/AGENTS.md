@@ -8,7 +8,7 @@ one `Logger` instance (`log`) that every other package imports instead of using
 errors it reports, and times the build's tasks through its
 `begin`/`end`/`done` events, printing a line per finished task and, with
 `summary`, the build's stats, configuration, metadata and navigation when it
-succeeds.
+succeeds. Each error it reports is also emitted as a `failure` event.
 
 It does not exit the process and does not read the command line. Both belong to
 `b-ber-cli` (see "Errors and exiting" and "Configuration" below).
@@ -27,28 +27,50 @@ on. Types and helpers stay in `Logger.ts`.
 
 ## Errors and exiting
 
-`log.error(...)` reports an error and then **throws** it. The code after the
-call does not run, and in a promise chain `.catch(log.error)` passes the
-rejection on, so the chain stays rejected. It is typed `never`.
+`log.error(...)` reports an error and **returns** it, typed `Error`. It does
+not throw and does not exit: a logger logs. Reporting means recording it in
+`log.errors`, printing it if the log level shows errors, and emitting it as a
+`failure` event.
 
-- An `Error` argument is thrown as it is. Anything else becomes a
+**Every call site stops itself**, because nothing else will:
+
+```ts
+if (!fs.existsSync(asset)) throw log.error('Image not found [%s]', asset)
+
+try { … } catch (err) { throw log.error('Could not load theme [%s]', name) }
+
+promise.catch((err) => {
+  throw log.error(err)
+})
+```
+
+A bare `.catch(log.error)` is a bug: it resolves the chain with `undefined`,
+and whatever comes next (the next task, the next format) runs. A guard throws
+rather than returns by default: many run inside markdown-it render callbacks,
+and a throw is the only way out of those that reaches the build.
+
+- An `Error` argument is returned as it is. Anything else becomes a
   `ReportedError` with the formatted message. One array argument reports each
-  element as its own error.
-- An error that has been reported already is rethrown without printing it again,
-  so `.catch(log.error)` at every level of a chain prints the error once.
-- `log.report(...)` does the reporting without the throw and returns the error;
-  `log.isReported(value)` tells whether the logger has printed an error.
+  element as its own error and returns one error with all their messages.
+- An error that has been reported already is returned without being printed,
+  recorded or emitted again, so an error rethrown up several chains, each
+  reporting it, prints once. `log.isReported(value)` tells whether the logger
+  has reported an error.
 - The log level decides only whether an error is **printed**. It is recorded
-  and thrown at every level, `--quiet` included (issue 744).
+  and emitted at every level, `--quiet` included (issue 744).
+- The event is `failure`, with the Error, never `error`: an EventEmitter throws
+  an `error` event that nothing listens for.
 
 Who exits: `b-ber-cli`. Its `src/lib/exit.ts` wraps every command handler, and
 listens for uncaught exceptions and unhandled rejections; whatever reaches it is
 printed if the logger has not printed it, followed by `log.printFailure(1)`, and
-the process exits 1. Anything else that drives the build (a test, a script) gets
-an exception or a rejection, and decides for itself.
+the process exits 1. It also listens for `failure` and sets `process.exitCode`
+to 1, as a backstop for a site that reports and fails to stop; it does not exit
+there. Anything else that drives the build (a test, a script) gets an exception
+or a rejection from the site that threw, and decides for itself.
 
-Do not catch what `log.error` throws to carry on. If a failure should not stop
-the build, it is a warning: use `log.warn`.
+Do not catch what a site throws to carry on. If a failure should not stop the
+build, it is a warning: use `log.warn`.
 
 ## Configuration
 
@@ -95,8 +117,11 @@ Additional standards for this package:
 
 - The singleton is intentional: `log` is one shared instance across the whole
   build. Packages import it; only tests construct a `Logger`.
-- The logging methods (`error`, `report`, `warn`, `notice`, `info`, …) are
-  arrow-function properties, because callers pass them unbound
-  (`.catch(log.error)`). Everything else is an ordinary method.
+- The logging methods (`error`, `warn`, `notice`, `info`, …) are
+  arrow-function properties, so that callers can pass them unbound
+  (`.then(log.notice)`). Everything else is an ordinary method.
+- `log.error` never throws or exits. Do not add a "log and throw" variant: the
+  `throw` belongs at the call site, where it is visible and TypeScript can see
+  the code path end.
 - `write` in `Logger.ts` is the only place the logger writes to stdout.
 - No external logging library: the format and the events are the point.

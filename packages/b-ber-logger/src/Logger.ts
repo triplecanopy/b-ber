@@ -81,10 +81,13 @@ interface LoggerEvents {
   begin: [{ task: unknown }]
   end: [{ task: unknown; taskTime: TaskTime }]
   done: [DoneEvent]
+  // Each error `log.error` reports, once. Not `error`: an EventEmitter throws
+  // an `error` event that nothing listens for
+  failure: [Error]
 }
 
-// What `log.error` throws when it is given something other than an Error, so
-// that the build stops there. Errors it is given are thrown as they are
+// What `log.error` returns when it is given something other than an Error.
+// Errors it is given are returned as they are
 class ReportedError extends Error {
   name = 'ReportedError'
 }
@@ -108,13 +111,14 @@ export function floatFormat(value: unknown): string {
 // and errors, and times the build's tasks through the `begin`/`end`/`done`
 // events.
 //
-// `log.error` reports an error and then throws, so that whatever called it
-// stops. It never exits the process: that is the caller's decision, and
-// b-ber-cli makes it (see its lib/exit.ts).
+// `log.error` reports an error, emits it as `failure`, and returns it. It
+// neither throws nor exits: the code that calls it stops itself
+// (`throw log.error(...)`), and whether the process exits is b-ber-cli's
+// decision (see its lib/exit.ts).
 //
 // The logging methods are arrow-function properties rather than prototype
-// methods because callers pass them around unbound, as in
-// `promise.catch(log.error)`.
+// methods so that callers can pass them around unbound, as in
+// `promise.then(log.notice)`.
 class Logger extends EventEmitter<LoggerEvents> {
   logLevel: number = LEVEL.warn
   boringOutput = false
@@ -131,9 +135,8 @@ class Logger extends EventEmitter<LoggerEvents> {
 
   private timer = new Timer()
 
-  // The errors `report` has printed, so that one which is reported again on
-  // its way up a promise chain (`.catch(log.error)` at every level) prints
-  // once
+  // The errors `log.error` has reported, so that one which is rethrown and
+  // reported again by an outer handler on its way up prints once
   private reported = new WeakSet<object>()
 
   constructor(options: LoggerOptions = {}) {
@@ -161,28 +164,22 @@ class Logger extends EventEmitter<LoggerEvents> {
 
   // Logging
 
-  // Reports an error and throws it, so that the code after the call does not
-  // run. In a promise chain, `.catch(log.error)` reports the rejection and
-  // passes it on: the chain stays rejected.
+  // Reports an error and returns it. It does not throw and does not exit:
+  // stopping is the caller's job, so every call site ends its own code path,
+  // with `throw log.error(...)` (or a `return`), and a promise chain keeps its
+  // rejection with `.catch((err) => { throw log.error(err) })`.
   //
-  // The log level decides only whether the error is printed. It is recorded,
-  // and thrown, at every level.
+  // Each error it reports is recorded, printed if the log level shows errors,
+  // and emitted as `failure`. The log level decides only the printing.
   //
-  // Typed with an explicit annotation, which is what lets TypeScript treat a
-  // call as the end of the code path
-  readonly error: (...args: unknown[]) => never = (...args) => {
-    throw this.report(...args)
-  }
-
-  // Reports an error without throwing, and returns what `log.error` would
-  // throw. For code that has already stopped and only needs the error shown,
-  // such as the CLI's last-resort handler.
-  //
-  // One argument that is an array reports each element as its own error.
-  // Anything else is one error: an Error, or a message with util.format
-  // placeholders and its values. An error that has been reported already is
-  // returned as it is, and not printed again
-  report = (...args: unknown[]): Error => {
+  // One argument that is an array reports each element as its own error, and
+  // returns one error with all their messages. Anything else is one error: an
+  // Error, which is returned as it is, or a message with util.format
+  // placeholders and its values, which becomes a ReportedError. An error that
+  // has been reported already is returned without being printed, recorded or
+  // emitted again, so that one which is rethrown and reported again on its
+  // way up prints once
+  error = (...args: unknown[]): Error => {
     const [first] = args
     if (args.length === 1 && this.isReported(first)) return first
 
@@ -192,15 +189,17 @@ class Logger extends EventEmitter<LoggerEvents> {
         : [args]
     const errors = groups.map((group) => this.reportOne(group))
 
-    if (errors.length === 1) return errors[0]
+    let error = errors[0]
+    if (errors.length !== 1) {
+      error = new ReportedError(errors.map((e) => e.message).join('\n'))
+      this.reported.add(error)
+    }
 
-    const error = new ReportedError(errors.map((e) => e.message).join('\n'))
-    this.reported.add(error)
+    this.emit('failure', error)
     return error
   }
 
-  // Whether `value` is an error that `report` (or `log.error`) has already
-  // printed
+  // Whether `value` is an error that `log.error` has already reported
   isReported = (value: unknown): value is Error =>
     typeof value === 'object' && value !== null && this.reported.has(value)
 

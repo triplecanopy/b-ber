@@ -61,7 +61,7 @@ describe('configuration', () => {
 describe('log.reset()', () => {
   test('clears the recorded errors and warnings', () => {
     log.warn('a warning')
-    log.report('an error')
+    log.error('an error')
     log.reset()
     expect(log.errors).toHaveLength(0)
     expect(log.warnings).toHaveLength(0)
@@ -70,7 +70,7 @@ describe('log.reset()', () => {
 
 describe('line format', () => {
   test.each([
-    ['error', () => log.report('broken'), 'b-ber ERR! broken\n'],
+    ['error', () => log.error('broken'), 'b-ber ERR! broken\n'],
     ['warn', () => log.warn('careful'), 'b-ber WARN careful\n'],
     ['notice', () => log.notice('hello'), 'b-ber info hello\n'],
   ])('%s has its own fixed-width label', (_level, fn, line) => {
@@ -88,7 +88,7 @@ describe('line format', () => {
     log.configure({ logLevel: 3 })
     log.notice('n')
     log.warn('w')
-    log.report('e')
+    log.error('e')
     const lines = printed().trim().split('\n')
     expect(lines).toHaveLength(3)
     for (const line of lines) {
@@ -121,7 +121,7 @@ describe('line format', () => {
   })
 
   test('writes no ANSI codes with boringOutput', () => {
-    log.report('e')
+    log.error('e')
     log.warn('w')
     // biome-ignore lint/suspicious/noControlCharactersInRegex: matches an ANSI escape
     expect(printed()).not.toMatch(/\u001b\[/)
@@ -129,59 +129,66 @@ describe('line format', () => {
 })
 
 describe('log.error()', () => {
-  test('throws, so the code after it does not run', () => {
-    let after = false
+  test('returns the error and does not throw', () => {
+    let err
     expect(() => {
-      log.error('something failed')
-      after = true
-    }).toThrow('something failed')
-    expect(after).toBe(false)
+      err = log.error('something failed')
+    }).not.toThrow()
+    expect(err).toBeInstanceOf(Error)
+    expect(err.message).toBe('something failed')
+    expect(printed()).toBe('b-ber ERR! something failed\n')
   })
 
   test('never exits the process', () => {
     const exit = jest.spyOn(process, 'exit').mockImplementation(() => {})
-    expect(() => log.error('something failed')).toThrow()
+    log.error('something failed')
     expect(exit).not.toHaveBeenCalled()
     exit.mockRestore()
   })
 
-  test('throws an Error it is given as it is', () => {
+  test('returns an Error it is given as it is', () => {
     const err = new Error('real error')
-    expect(() => log.error(err)).toThrow(err)
+    expect(log.error(err)).toBe(err)
     expect(log.errors[0].message).toBe('real error')
   })
 
   test('formats a message with placeholders, as the other levels do', () => {
-    expect(() => log.error('Image not found [%s]', 'a.jpg')).toThrow(
+    expect(log.error('Image not found [%s]', 'a.jpg').message).toBe(
       'Image not found [a.jpg]'
     )
     expect(printed()).toBe('b-ber ERR! Image not found [a.jpg]\n')
   })
 
-  test('the thrown message is plain text, whatever the colour setting', () => {
+  test('the returned message is plain text, whatever the colour setting', () => {
     log.configure({ boringOutput: false })
-    expect(() => log.error('missing [x]')).toThrow(/^missing \[x\]$/)
+    expect(log.error('missing [x]').message).toBe('missing [x]')
   })
 
-  test('rejects the chain when used as a promise catch handler', async () => {
+  test('keeps a chain rejected when the catch handler rethrows it', async () => {
     const err = new Error('task failed')
-    await expect(Promise.reject(err).catch(log.error)).rejects.toBe(err)
+    const chain = Promise.reject(err).catch((e) => {
+      throw log.error(e)
+    })
+    await expect(chain).rejects.toBe(err)
     expect(log.errors).toHaveLength(1)
   })
 
-  test('prints an error once, however many catch handlers it passes', async () => {
+  test('prints an error once, however many handlers report it', async () => {
     const err = new Error('task failed')
+    const rethrow = (e) => {
+      throw log.error(e)
+    }
     const chain = Promise.reject(err)
-      .catch(log.error)
-      .catch(log.error)
-      .catch(log.error)
+      .catch(rethrow)
+      .catch(rethrow)
+      .catch(rethrow)
     await expect(chain).rejects.toBe(err)
     expect(log.errors).toHaveLength(1)
     expect(printed()).toBe('b-ber ERR! task failed\n')
   })
 
   test('records a structured entry and counts it for the task', () => {
-    expect(() => log.error('something failed')).toThrow()
+    log.error('something failed')
     expect(log.taskErrors).toBe(1)
     expect(log.errors[0]).toEqual({
       message: 'something failed',
@@ -191,44 +198,75 @@ describe('log.error()', () => {
   })
 
   test('reports each element of an array as its own error', () => {
-    expect(() => log.error([new Error('first'), 'second'])).toThrow(
+    expect(log.error([new Error('first'), 'second']).message).toBe(
       'first\nsecond'
     )
     expect(log.taskErrors).toBe(2)
     expect(printed()).toBe('b-ber ERR! first\nb-ber ERR! second\n')
   })
 
-  test.each([0, 1])('still throws at log level %d', (logLevel) => {
+  test.each([0, 1])('still records and emits at log level %d', (logLevel) => {
     // Issue 744: the log level controls printing, never whether the error
-    // stops the build
+    // counts as a failure
+    const failure = jest.fn()
+    log.on('failure', failure)
     log.configure({ logLevel })
-    expect(() => log.error('silent')).toThrow('silent')
+    const err = log.error('silent')
     expect(log.taskErrors).toBe(1)
+    expect(failure).toHaveBeenCalledWith(err)
+    log.off('failure', failure)
   })
 
   test('prints nothing at log level 0', () => {
     log.configure({ logLevel: 0 })
-    expect(() => log.error('silent')).toThrow()
+    log.error('silent')
     expect(printed()).toBe('')
   })
 
   test('prints the stack trace from log level 4', () => {
     log.configure({ logLevel: 4 })
-    expect(() => log.error(new Error('with stack'))).toThrow()
+    log.error(new Error('with stack'))
     expect(printed()).toMatch(/ERR! with stack\n\s+at /)
   })
 })
 
-describe('log.report() / log.isReported()', () => {
-  test('report prints and returns the error without throwing', () => {
-    const err = log.report('not thrown')
-    expect(err).toBeInstanceOf(Error)
-    expect(err.message).toBe('not thrown')
-    expect(printed()).toBe('b-ber ERR! not thrown\n')
+describe('the failure event', () => {
+  let failure
+
+  beforeEach(() => {
+    failure = jest.fn()
+    log.on('failure', failure)
   })
 
-  test('isReported tells reported errors from others', () => {
-    const reported = log.report(new Error('a'))
+  afterEach(() => log.off('failure', failure))
+
+  test('emits each error it reports, with the error it returns', () => {
+    const err = log.error('broken')
+    expect(failure).toHaveBeenCalledTimes(1)
+    expect(failure).toHaveBeenCalledWith(err)
+  })
+
+  test('emits an array of errors once, with the combined error', () => {
+    const err = log.error(['first', 'second'])
+    expect(failure).toHaveBeenCalledTimes(1)
+    expect(failure).toHaveBeenCalledWith(err)
+  })
+
+  test('does not emit an error that has been reported already', () => {
+    const err = log.error('once')
+    log.error(err)
+    expect(failure).toHaveBeenCalledTimes(1)
+  })
+
+  test('is not an EventEmitter error event, so no listener is needed', () => {
+    const logger = new Logger({ logLevel: 0 })
+    expect(() => logger.error('nobody listens')).not.toThrow()
+  })
+})
+
+describe('log.isReported()', () => {
+  test('tells reported errors from others', () => {
+    const reported = log.error(new Error('a'))
     expect(log.isReported(reported)).toBe(true)
     expect(log.isReported(new Error('b'))).toBe(false)
     expect(log.isReported('a string')).toBe(false)
@@ -236,17 +274,10 @@ describe('log.report() / log.isReported()', () => {
   })
 
   test('reporting an error again returns it without printing it again', () => {
-    const err = log.report('once')
-    expect(log.report(err)).toBe(err)
+    const err = log.error('once')
+    expect(log.error(err)).toBe(err)
     expect(log.errors).toHaveLength(1)
-  })
-
-  test('what log.error throws is reported', () => {
-    try {
-      log.error('thrown')
-    } catch (err) {
-      expect(log.isReported(err)).toBe(true)
-    }
+    expect(printed()).toBe('b-ber ERR! once\n')
   })
 })
 

@@ -2,8 +2,8 @@
 //
 // The handler tests call each command's yargs handler directly, with
 // b-ber-tasks and b-ber-lib's State mocked, and the real b-ber-logger. The
-// logger is deliberately real: `log.error` reports and throws, and the
-// handler's wrapper (src/lib/exit.ts) turns what it throws into
+// logger is deliberately real: a failing site throws what `log.error` returns,
+// and the handler's wrapper (src/lib/exit.ts) turns that into
 // `process.exit(1)`. Every assertion on that is
 // `expect(exit).toHaveBeenCalledWith(1)` against the spy from
 // `mockProcessExit`.
@@ -42,7 +42,7 @@ const mockProcessExit = () => {
 }
 
 // Silences the logger's chatty levels so they can be asserted on. `error` is
-// spied on but passes through, so that it still throws and records the error
+// spied on but passes through, so that it still returns and records the error
 // in `log.errors`, which this empties first.
 const spyOnLogger = (log) => {
   log.reset()

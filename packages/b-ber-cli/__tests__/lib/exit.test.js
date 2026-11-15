@@ -25,7 +25,7 @@ afterEach(() => jest.restoreAllMocks())
 
 describe('exitWithFailure', () => {
   it('exits 1 after the closing line, without printing a reported error again', () => {
-    const err = log.report('already printed')
+    const err = log.error('already printed')
     output = []
 
     exitWithFailure(err)
@@ -66,7 +66,11 @@ describe('exitOnFailure', () => {
   })
 
   it('exits 1 when the handler rejects through log.error', async () => {
-    await exitOnFailure(() => Promise.reject(new Error('x')).catch(log.error))()
+    await exitOnFailure(() =>
+      Promise.reject(new Error('x')).catch((err) => {
+        throw log.error(err)
+      })
+    )()
     expect(log.errors).toHaveLength(1)
     expect(exit).toHaveBeenCalledWith(1)
   })

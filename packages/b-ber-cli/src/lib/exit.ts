@@ -6,18 +6,19 @@ const FAILURE = 1
 
 // The one place a failed `bber` command becomes an exit status.
 //
-// b-ber-logger's `log.error` reports an error and throws it, and never exits:
-// whatever it throws travels up to a command handler, or out of a callback as
-// an uncaught exception or unhandled rejection, and ends here. An error the
-// logger has not seen yet (a bug, or a library's rejection that nothing
-// caught) is printed first.
+// b-ber-logger's `log.error` reports an error and returns it; it neither
+// throws nor exits. Each call site stops itself, by throwing what it returns
+// (`throw log.error(...)`) or rethrowing it from a promise chain's catch, and
+// that travels up to a command handler, or out of a callback as an uncaught
+// exception or unhandled rejection, and ends here. An error the logger has
+// not seen yet (a bug, or a library's rejection that nothing caught) is
+// printed first; `log.error` does not print one it has reported already.
 //
-// Exits at once rather than setting process.exitCode, as log.error did before
-// it stopped exiting: a failed build can leave other work queued (sibling
-// promises, a server, a file watcher) that would otherwise run on, or keep
-// the process alive.
+// Exits at once rather than setting process.exitCode: a failed build can
+// leave other work queued (sibling promises, a server, a file watcher) that
+// would otherwise run on, or keep the process alive.
 export function exitWithFailure(err: unknown): never {
-  if (!log.isReported(err)) log.report(err)
+  log.error(err)
   log.printFailure(FAILURE)
   return process.exit(FAILURE)
 }
