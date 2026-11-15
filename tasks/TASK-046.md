@@ -162,6 +162,148 @@ the exit did. What had to change was around them:
 as unreachable and narrows on it, and `.catch(log.error)` keeps the chain's
 resolved type instead of adding `void`.
 
+### Every call site
+
+The 73 calls on this branch (TASK-046-logger), generated 2026-11-15. Line numbers can differ by a few from `main`, where the same calls exist. Form is what stops after the call once `log.error` stops ending the process: **guard** — the rest of the function runs with the bad value; **catch** — the code after the `try` runs; **chain** — `.catch(log.error)` resolves the chain with `undefined`, so every later `.then` (the next task, format or step) runs. Guards 37, catch 3, chain 33.
+
+**b-ber-cli** (2)
+
+| Site | Form | Call |
+| ---- | ---- | ---- |
+| `b-ber-cli/src/lib/config-options.ts:99` | guard | `log.error('Could not find config at [${configPath}]')` |
+| `b-ber-cli/src/lib/config-options.ts:103` | guard | `log.error('Config file must have a .json or .yaml/.yml file extension')` |
+
+**b-ber-grammar-attributes** (2)
+
+| Site | Form | Call |
+| ---- | ---- | ---- |
+| `b-ber-grammar-attributes/src/index.ts:251` | guard | `log.error('No directive provided: ${fileName}:${lineNumber}')` |
+| `b-ber-grammar-attributes/src/index.ts:255` | guard | `log.error('Invalid directive: [${genus}] at ${fileName}:${lineNumber}')` |
+
+**b-ber-grammar-audio-video** (4)
+
+| Site | Form | Call |
+| ---- | ---- | ---- |
+| `b-ber-grammar-audio-video/src/helpers.ts:27` | guard | `log.error('bber-directives: Poster image for [${type}] does not exist')` |
+| `b-ber-grammar-audio-video/src/helpers.ts:39` | guard | `log.error(` |
+| `b-ber-grammar-audio-video/src/index.ts:80` | guard | `log.error(` |
+| `b-ber-grammar-audio-video/src/index.ts:117` | guard | `log.error(err)` |
+
+**b-ber-grammar-epigraph** (1)
+
+| Site | Form | Call |
+| ---- | ---- | ---- |
+| `b-ber-grammar-epigraph/src/index.ts:60` | guard | `log.error('[${context.fileName}.md] <epigraph> Malformed directive.')` |
+
+**b-ber-grammar-image** (2)
+
+| Site | Form | Call |
+| ---- | ---- | ---- |
+| `b-ber-grammar-image/src/index.ts:55` | guard | `if (!fs.existsSync(asset)) log.error('Image not found [${asset}]')` |
+| `b-ber-grammar-image/src/index.ts:82` | guard | `log.error(` |
+
+**b-ber-grammar-logo** (1)
+
+| Site | Form | Call |
+| ---- | ---- | ---- |
+| `b-ber-grammar-logo/src/index.ts:41` | guard | `log.error(` |
+
+**b-ber-grammar-media** (2)
+
+| Site | Form | Call |
+| ---- | ---- | ---- |
+| `b-ber-grammar-media/src/helpers.ts:19` | guard | `log.error(message)` |
+| `b-ber-grammar-media/src/helpers.ts:28` | guard | `log.error(message)` |
+
+**b-ber-grammar-pullquote** (2)
+
+| Site | Form | Call |
+| ---- | ---- | ---- |
+| `b-ber-grammar-pullquote/src/index.ts:46` | guard | `log.error(` |
+| `b-ber-grammar-pullquote/src/index.ts:111` | guard | `log.error(` |
+
+**b-ber-grammar-renderer** (2)
+
+| Site | Form | Call |
+| ---- | ---- | ---- |
+| `b-ber-grammar-renderer/src/index.ts:46` | guard | `log.error(` |
+| `b-ber-grammar-renderer/src/index.ts:68` | guard | `log.error('Duplicate [id] [${id}]. [id] must be unique at [${location}]')` |
+
+**b-ber-grammar-vimeo** (3)
+
+| Site | Form | Call |
+| ---- | ---- | ---- |
+| `b-ber-grammar-vimeo/src/helpers.ts:24` | guard | `log.error(message)` |
+| `b-ber-grammar-vimeo/src/helpers.ts:74` | guard | `log.error('bber-directives: Poster image for [${type}] does not exist')` |
+| `b-ber-grammar-vimeo/src/index.ts:59` | guard | `log.error(` |
+
+**b-ber-lib** (12)
+
+| Site | Form | Call |
+| ---- | ---- | ---- |
+| `b-ber-lib/src/EbookConvert.ts:82` | chain | `.catch(log.error)` |
+| `b-ber-lib/src/State.ts:329` | guard | `log.error('Cannot add [${value}] to [state.${prop}]')` |
+| `b-ber-lib/src/State.ts:349` | guard | `log.error('Cannot remove [${value}] from [state.${prop}]')` |
+| `b-ber-lib/src/State.ts:483` | guard | `log.error('Project directory [${projectDir}] does not exist')` |
+| `b-ber-lib/src/Theme.ts:91` | chain | `.catch(log.error)` |
+| `b-ber-lib/src/Theme.ts:179` | catch | `log.error('Could not load theme [${name}]')` |
+| `b-ber-lib/src/Theme.ts:187` | chain | `.catch(log.error)` |
+| `b-ber-lib/src/Yaml.ts:69` | guard | `if (errors.length) log.error(errors)` |
+| `b-ber-lib/src/YamlAdaptor.ts:135` | catch | `log.error(err)` |
+| `b-ber-lib/src/utils/index.ts:155` | chain | `.catch(log.error)` |
+| `b-ber-lib/src/utils/index.ts:294` | guard | `log.error('bber-directives: Poster image for [${type}] does not exist')` |
+| `b-ber-lib/src/utils/index.ts:347` | guard | `log.error(` |
+
+**b-ber-tasks** (39)
+
+| Site | Form | Call |
+| ---- | ---- | ---- |
+| `b-ber-tasks/src/clean/index.ts:27` | chain | `export default () => clean().catch(log.error)` |
+| `b-ber-tasks/src/container/index.ts:46` | chain | `.catch(log.error)` |
+| `b-ber-tasks/src/copy/index.ts:65` | chain | `return Promise.all(promises).catch(log.error)` |
+| `b-ber-tasks/src/cover/index.ts:189` | chain | `.catch(log.error)` |
+| `b-ber-tasks/src/cover/index.ts:252` | guard | `log.error('Cover image listed in metadata.yml cannot be found')` |
+| `b-ber-tasks/src/cover/index.ts:272` | chain | `.catch(log.error)` |
+| `b-ber-tasks/src/cover/index.ts:279` | chain | `.catch(log.error)` |
+| `b-ber-tasks/src/deploy/index.ts:132` | guard | `log.error(` |
+| `b-ber-tasks/src/deploy/index.ts:142` | guard | `log.error('[bucketURL] must be set in config.yml to deploy the project')` |
+| `b-ber-tasks/src/deploy/index.ts:232` | chain | `.catch(log.error)` |
+| `b-ber-tasks/src/epub/index.ts:16` | chain | `.catch(log.error)` |
+| `b-ber-tasks/src/footnotes/index.ts:52` | chain | `return this.writeFootnotes().catch(log.error)` |
+| `b-ber-tasks/src/generate/index.ts:37` | guard | `log.error('_markdown${path.sep}${fileName} already exists, aborting')` |
+| `b-ber-tasks/src/generate/index.ts:78` | chain | `.catch(log.error)` |
+| `b-ber-tasks/src/init/index.ts:32` | guard | `log.error('Project [${name}] already exits, aborting')` |
+| `b-ber-tasks/src/init/index.ts:83` | chain | `.catch(log.error)` |
+| `b-ber-tasks/src/inject/index.ts:148` | chain | `return writeAll(fileObjects).catch(log.error)` |
+| `b-ber-tasks/src/loi/index.ts:119` | chain | `return createLOIAsSingleHTMLFile().catch(log.error)` |
+| `b-ber-tasks/src/loi/index.ts:123` | chain | `return createLOILeader().then(createLOIAsSeparateHTMLFiles).catch(log.error)` |
+| `b-ber-tasks/src/mobi/index.ts:36` | chain | `}).catch(log.error)` |
+| `b-ber-tasks/src/mobi/mobi-css.ts:94` | chain | `).catch(log.error)` |
+| `b-ber-tasks/src/opf/ManifestAndMetadata.ts:111` | chain | `.catch(log.error)` |
+| `b-ber-tasks/src/opf/Navigation.ts:129` | guard | `log.error(message)` |
+| `b-ber-tasks/src/opf/Navigation.ts:229` | chain | `.catch(log.error)` |
+| `b-ber-tasks/src/opf/Opf.ts:34` | chain | `.catch(log.error)` |
+| `b-ber-tasks/src/pdf/index.ts:160` | chain | `}).catch(log.error)` |
+| `b-ber-tasks/src/reader/index.ts:52` | chain | `.catch(log.error)` |
+| `b-ber-tasks/src/reader/index.ts:102` | guard | `log.error(` |
+| `b-ber-tasks/src/reader/index.ts:118` | catch | `log.error('` |
+| `b-ber-tasks/src/render/index.ts:24` | chain | `.catch(log.error)` |
+| `b-ber-tasks/src/render/index.ts:31` | chain | `.catch(log.error)` |
+| `b-ber-tasks/src/render/index.ts:59` | chain | `return promises.catch(log.error)` |
+| `b-ber-tasks/src/sass/index.ts:55` | guard | `if (chunks.length < 1) log.error('No readable stylesheets were found')` |
+| `b-ber-tasks/src/sass/index.ts:206` | chain | `.catch(log.error)` |
+| `b-ber-tasks/src/scripts/index.ts:70` | chain | `const scripts = () => ensureDir().then(write).catch(log.error)` |
+| `b-ber-tasks/src/serialize.ts:58` | chain | `.catch(log.error)` |
+| `b-ber-tasks/src/validate/index.ts:15` | guard | `log.error('Project path does not exist, aborting')` |
+| `b-ber-tasks/src/web/index.ts:438` | chain | `.catch(log.error)` |
+| `b-ber-tasks/src/xml/index.ts:56` | chain | `return parseHTMLFiles(files).then(writeXML).catch(log.error)` |
+
+**b-ber-templates** (1)
+
+| Site | Form | Call |
+| ---- | ---- | ---- |
+| `b-ber-templates/src/figures/index.ts:42` | guard | `log.error(` |
+
 ## Findings
 
 **Why a throw, not an `error` event.** An event that the CLI answers with
