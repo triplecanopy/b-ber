@@ -164,22 +164,22 @@ reader file list was stale. Corrected in place above.
 
 ### Defects found (not fixed)
 
-1. **Compile errors bypass the logger and hang the task.**
+1. **Compile errors bypass the logger and hang the task** (#773).
    `packages/b-ber-tasks/src/sass/index.ts:183` does `if (err) throw err`
    inside dart-sass's asynchronous callback. The throw escapes the Promise, so
    `.catch(log.error)` at line 206 never sees it, the task never settles, and
    with no `uncaughtException` handler anywhere in b-ber the CLI dies with
    Node's raw stack trace. An unresolvable `~` import fails the same way.
 2. **The importer cuts the package path at the first occurrence of the
-   package name.** `src/sass/index.ts:150` uses
+   package name** (#774). `src/sass/index.ts:150` uses
    `modulePath.indexOf(moduleName)`. A directory above `node_modules` whose
    name contains the package name (a project in `fixture-mixins-project/`
    importing `~fixture-mixins/space`) resolves outside the package.
-3. **A theme `fonts` or `images` that is a file stops the build.**
+3. **A theme `fonts` or `images` that is a file stops the build** (#774).
    `src/sass/index.ts:84` calls `lstatSync(themePath).isDirectory()` and
    discards the result, so the non-directory is not skipped and `readdirSync`
    at line 93 fails with ENOTDIR.
-4. **`build:sass` and `watch:sass` in b-ber-theme-serif cannot work.**
+4. **`build:sass` and `watch:sass` in b-ber-theme-serif cannot work** (#775).
    `packages/b-ber-theme-serif/package.json:20-21` run the plain `sass` CLI,
    which has no importer for the `~modularscale-sass/…` and
    `~@canopycanopycanopy/b-ber-theme-mixins/…` imports in `application.scss`:

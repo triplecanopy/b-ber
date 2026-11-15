@@ -139,9 +139,9 @@ theme, because it is compiled first.
 - A compile error, including an import that cannot be resolved, is thrown
   from inside dart-sass's callback (`if (err) throw err`). It never reaches
   `.catch(log.error)`: the task's Promise never settles, and the CLI dies with
-  an uncaught exception and Node's raw stack trace.
+  an uncaught exception and Node's raw stack trace (#773).
 - The importer finds the package directory with the *first* occurrence of the
   package name in the resolved path. If a directory above `node_modules`
   contains that name, for example a project in `~/b-ber-theme-mixins-demo/`,
-  the import resolves to the wrong place.
+  the import resolves to the wrong place (#774).
 - `errLogToConsole` is a node-sass option that dart-sass ignores (#746).

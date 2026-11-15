@@ -420,7 +420,7 @@ describe('task: sass', () => {
     })
 
     test('builds a wrong path when the package name also appears earlier in the path', async () => {
-      // DEFECT: `resolveImportedModule` finds the package directory with
+      // DEFECT (#774): `resolveImportedModule` finds the package directory with
       // `modulePath.indexOf(moduleName)`, the *first* occurrence of the name in
       // the resolved path. When a directory above `node_modules` contains the
       // name, the path is cut short there. Here the project lives in
@@ -669,7 +669,7 @@ describe('task: sass', () => {
     }
 
     test('passes a failed asset copy to the logger', async () => {
-      // DEFECT: `copyThemeAssets` calls `lstatSync(themePath).isDirectory()`
+      // DEFECT (#774): `copyThemeAssets` calls `lstatSync(themePath).isDirectory()`
       // and discards the result, so a theme `fonts` or `images` that is a file
       // is not skipped. `readdirSync` then fails with ENOTDIR and the build
       // stops (the real `log.error` exits)
@@ -706,7 +706,7 @@ describe('task: sass', () => {
     )
 
     test('a compile error is thrown from the render callback and never reaches the logger', async () => {
-      // DEFECT: `renderCSS` does `if (err) throw err` inside dart-sass's
+      // DEFECT (#773): `renderCSS` does `if (err) throw err` inside dart-sass's
       // asynchronous callback. The throw escapes the Promise it is wrapped in,
       // so it becomes an uncaught exception, the task's Promise never settles,
       // and `.catch(log.error)` never sees it. Nothing in b-ber handles
