@@ -25,16 +25,23 @@ global.ResizeObserver = class ResizeObserver {
 
 // matchMedia is not implemented in jsdom. Viewport helpers call window.matchMedia;
 // return a non-matching stub so isVerticallyScrolling / isMobile always return false.
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: (query) => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: () => {},
-    removeListener: () => {},
-    addEventListener: () => {},
-    removeEventListener: () => {},
-    dispatchEvent: () => {},
-  }),
-})
+//
+// The root Jest config runs this file for every package, and a test file in
+// another package may opt into `@jest-environment node`, where there is no
+// `window` (b-ber-tasks' sass test does: dart-sass cannot read the file system
+// from inside jsdom's realm).
+if (typeof window !== 'undefined') {
+  Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    value: (query) => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: () => {},
+      removeListener: () => {},
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      dispatchEvent: () => {},
+    }),
+  })
+}
