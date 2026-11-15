@@ -47,6 +47,17 @@ describe('check builder', () => {
     expect(yargs.positional).toHaveBeenCalledWith('project', expect.any(Object))
     expect(yargs.fail).toHaveBeenCalledWith(expect.any(Function))
   })
+
+  it('whose fail handler shows this command’s help and exits 1', () => {
+    const yargs = { ...mockYargs(), showHelp: jest.fn() }
+    check.builder(yargs)
+
+    const [handler] = yargs.fail.mock.calls[0]
+    handler('Unknown argument: x', undefined)
+
+    expect(yargs.showHelp).toHaveBeenCalled()
+    expect(exit).toHaveBeenCalledWith(1)
+  })
 })
 
 describe('check handler', () => {

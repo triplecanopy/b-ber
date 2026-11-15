@@ -97,7 +97,7 @@ describe('fail', () => {
 
   it('reports an error without the help', () => {
     const y = yargs()
-    fail(null, new Error('builder threw'), y)
+    fail('', new Error('builder threw'), y)
 
     expect(y.showHelp).not.toHaveBeenCalled()
     expect(log.errors.map((e) => e.message)).toEqual(['builder threw'])

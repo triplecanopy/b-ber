@@ -5,13 +5,15 @@ import { exitWithFailure } from './lib/exit'
 
 const LINE_LENGTH = 70
 
-export default function bber() {
-  // A usage error at the top level (no command at all) shows b-ber's own
-  // usage text, and is not a failure. An error is: yargs passes one when a
-  // command's builder throws
-  const showCustomHelp = (_msg: string, err: Error | null) => {
-    if (err) exitWithFailure(err)
-    console.log(`
+// The top-level yargs fail handler. A usage error there (no command at all)
+// shows b-ber's own usage text, and is not a failure. An error is: yargs
+// passes one when a builder throws
+export const showCustomHelp = (_msg: string, err: Error | null): void => {
+  if (err) {
+    exitWithFailure(err)
+    return
+  }
+  console.log(`
     Usage: bber <command> [options]
 
     bber new        Start a new project
@@ -24,8 +26,9 @@ export default function bber() {
 
     bber version ${state.version}
 `)
-  }
+}
 
+export default function bber() {
   return yargs
     .command(commands.build)
     .command(commands.generate)

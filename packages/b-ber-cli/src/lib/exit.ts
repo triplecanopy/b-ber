@@ -50,11 +50,11 @@ export function exitOnUncaughtFailure(): void {
 // `yargs` is the command's own yargs instance, so that the help shown is the
 // command's.
 export function fail(
-  msg: string | null | undefined,
+  msg: string,
   err: Error | null | undefined,
   yargs: { showHelp(): unknown }
 ): never {
   if (err) return exitWithFailure(err)
   yargs.showHelp()
-  return exitWithFailure(new Error(msg ?? 'Invalid command'))
+  return exitWithFailure(new Error(msg))
 }
