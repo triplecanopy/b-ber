@@ -1,0 +1,24 @@
+[
+  {
+    "title": "Kitchen Sink",
+    "url": "http://localhost:4000/epub/kitchen-sink-b-ber-fixture-001",
+    "cover": "http://localhost:4000/epub/kitchen-sink-b-ber-fixture-001/OPS/images/__bber_cover__d0dc481a9caadda380523127fc70bc147cd84696.jpg",
+    "id": "kitchen-sink-b-ber-fixture-001",
+    "downloads": [],
+    "ui_options": {
+      "navigation": {
+        "header_icons": {
+          "info": true,
+          "home": true,
+          "downloads": true,
+          "toc": true
+        },
+        "footer_icons": {
+          "chapter": true,
+          "page": true
+        }
+      }
+    },
+    "layout": "columns"
+  }
+]

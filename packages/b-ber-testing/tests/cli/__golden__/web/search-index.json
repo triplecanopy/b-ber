@@ -1,0 +1,140 @@
+[
+  {
+    "id": "{id}",
+    "title": "",
+    "body": "\n      \n      \n        \n          \n        \n      \n    window.bber = window.bber || {}; window.bber.env = 'web';",
+    "url": "/text/cover.xhtml"
+  },
+  {
+    "id": "{id}",
+    "title": "",
+    "body": "\n      \n    \n      \n        \n          \n            \n              \n            </div>\n\n            <div class=\"figcaption\">\n                <p class=\"small\">\n                  \n                  <a href=\"kitchen-sink-chapter-02.xhtml#refch-02-iframe-01\">Return</a>\n              </p>\n            </div>\n          </div>\n        </figure>\n      </div>\n    </section>\n    <script type=\"application/javascript\" src=\"../javascripts/application.js\"></script><script type=\"application/javascript\">window.bber = window.bber || {}; window.bber.env = 'web';</script></body></html>",
+    "url": "/text/figure-ch-02-iframe-01.xhtml"
+  },
+  {
+    "id": "{id}",
+    "title": "",
+    "body": "\n      \n    \n      \n        \n          \n            \n              \n                \n                \n                  \n                    \n                  \n                \n                Your device does not support the HTML5 audio API.\n              \n            \n            \n              \n                \n                Return\n              \n            \n          \n        \n      \n    \n    window.bber = window.bber || {}; window.bber.env = 'web';",
+    "url": "/text/figure-ch-03-audio-01.xhtml"
+  },
+  {
+    "id": "{id}",
+    "title": "",
+    "body": "\n      \n    \n      \n        \n          \n            \n              \n                \n                \n                  \n                    \n                  \n                \n                Your device does not support the HTML5 video API.\n              \n            \n            \n              \n                \n                Return\n              \n            \n          \n        \n      \n    \n    window.bber = window.bber || {}; window.bber.env = 'web';",
+    "url": "/text/figure-ch-03-video-01.xhtml"
+  },
+  {
+    "id": "{id}",
+    "title": "",
+    "body": "\n      \n    \n      \n        \n          \n            \n              \n                \n                \n              </div>\n            </div>\n\n            <div class=\"figcaption\">\n              <p class=\"small\">\n                \n                <a href=\"kitchen-sink-chapter-03.xhtml#refch-03-vimeo-01\">Return</a>\n              </p>\n            </div>\n          </div>\n        </figure>\n      </div>\n    </section>\n    <script type=\"application/javascript\" src=\"../javascripts/application.js\"></script><script type=\"application/javascript\">window.bber = window.bber || {}; window.bber.env = 'web';</script></body></html>",
+    "url": "/text/figure-ch-03-vimeo-01.xhtml"
+  },
+  {
+    "id": "{id}",
+    "title": "",
+    "body": "\n      \n    \n      \n        \n          \n            \n    \n      \n    \n    \n      \n    \n    \n          \n        \n      \n    \nwindow.bber = window.bber || {}; window.bber.env = 'web';",
+    "url": "/text/figurech-01-figure-01.xhtml"
+  },
+  {
+    "id": "{id}",
+    "title": "",
+    "body": "\n      \n    \n      \n        \n          \n            \n    \n      \n    \n    \n      : figure:ch-02-gallery-figure-02 source:placeholder-square-02.png alt:\"Gallery image two\"\n\n    \n    \n          \n        \n      \n    \nwindow.bber = window.bber || {}; window.bber.env = 'web';",
+    "url": "/text/figurech-02-gallery-figure-01.xhtml"
+  },
+  {
+    "id": "{id}",
+    "title": "",
+    "body": "\n      \n    \n      \n        \n          \n            \n    \n      \n    \n    \n      \n    \n    \n          \n        \n      \n    \nwindow.bber = window.bber || {}; window.bber.env = 'web';",
+    "url": "/text/figurech-02-spread-figure-01.xhtml"
+  },
+  {
+    "id": "{id}",
+    "title": "",
+    "body": "\n      \n    \n      \n        \n          \n            \n    \n      \n    \n    \n      \n    \n    \n          \n        \n      \n    \nwindow.bber = window.bber || {}; window.bber.env = 'web';",
+    "url": "/text/figurespread-consec-f1.xhtml"
+  },
+  {
+    "id": "{id}",
+    "title": "",
+    "body": "\n      \n    \n      \n        \n          \n            \n    \n      \n    \n    \n      \n    \n    \n          \n        \n      \n    \nwindow.bber = window.bber || {}; window.bber.env = 'web';",
+    "url": "/text/figurespread-consec-f2.xhtml"
+  },
+  {
+    "id": "{id}",
+    "title": "",
+    "body": "\n      \n    \n      \n        \n          \n            \n    \n      \n    \n    \n      \n    \n    \n          \n        \n      \n    \nwindow.bber = window.bber || {}; window.bber.env = 'web';",
+    "url": "/text/figurespread-consec-f3.xhtml"
+  },
+  {
+    "id": "{id}",
+    "title": "",
+    "body": "\n      \n    \n      \n        \n          \n            \n    \n      \n    \n    \n      \n    \n    \n          \n        \n      \n    \nwindow.bber = window.bber || {}; window.bber.env = 'web';",
+    "url": "/text/figurespread-edges-f1.xhtml"
+  },
+  {
+    "id": "{id}",
+    "title": "",
+    "body": "\n      \n    \n      \n        \n          \n            \n    \n      \n    \n    \n      \n    \n    \n          \n        \n      \n    \nwindow.bber = window.bber || {}; window.bber.env = 'web';",
+    "url": "/text/figurespread-edges-f2.xhtml"
+  },
+  {
+    "id": "{id}",
+    "title": "",
+    "body": "\n      \n    \n      \n        \n          \n            \n    \n      \n    \n    \n      \n    \n    \n          \n        \n      \n    \nwindow.bber = window.bber || {}; window.bber.env = 'web';",
+    "url": "/text/figurespread-single-f1.xhtml"
+  },
+  {
+    "id": "{id}",
+    "title": "Chapter One",
+    "body": "\n      \n\nChapter One\n::: epigraph caption \"The beginning is the most important part of the work.\" citation \"Plato\"\n\n\nSection One\nThis is the body text of section one.1 It demonstrates basic prose content\nalongside directive markup.\nA second paragraph follows with bold and italic text, plus a\nlink.\nThe quick brown fox jumps over the lazy dog.\n\n        \n        \n    \n        \n\n\n        \n        \n        \n        \n        \n        \n        Figure one caption text.\n\n\n\n\nSection Two — Attributes\nThis paragraph uses an inline attribute block to inject a class name.{.callout}\n\n\n\n\nwindow.bber = window.bber || {}; window.bber.env = 'web';",
+    "url": "/text/kitchen-sink-chapter-01.xhtml"
+  },
+  {
+    "id": "{id}",
+    "title": "Chapter Two",
+    "body": "\n      \n\nChapter Two\n\n\nDialogue\nSpeaker A: Hello, world.\nSpeaker B: Hello back.\n\n\n\n\n\n\nGallery\n\n                \n                \n                \n                \n        \n\n\n        \n        \n        \n        \n        \n        \n        \n            \n            \n            \n\n\n\n\n\nSpread\n\n        \n          \n        \n\n\n        \n        \n        \n        \n        \n        \n        \n            \n\n            \n\n            \n\n\n\n\n\nIframe\n\n    \n      \n        \n          \n        \n      \n    An embedded iframe.\n\n\n\n\nwindow.bber = window.bber || {}; window.bber.env = 'web';",
+    "url": "/text/kitchen-sink-chapter-02.xhtml"
+  },
+  {
+    "id": "{id}",
+    "title": "Chapter Three",
+    "body": "\n      \n\nChapter Three\n\n\nAudio\n\n    \n      \n        \n          \n        \n      \n    Sample audio track.\n\n\n\n\nVideo\n\n    \n      \n        \n          \n        \n      \n    Sample video clip.\n\n\n\n\nVimeo\n\n    \n      \n        \n          \n        \n      \n    A Vimeo embed.\n\n\n\n\nwindow.bber = window.bber || {}; window.bber.env = 'web';",
+    "url": "/text/kitchen-sink-chapter-03.xhtml"
+  },
+  {
+    "id": "{id}",
+    "title": "",
+    "body": "\n      \n\nKitchen Sink by Triple Canopy\nPublished by Triple Canopy, 2026\n\n\n© 2026 Kitchen Sink, by Triple Canopy.\n\n\n\n                    \n                    Triple Canopy\n\n\nwindow.bber = window.bber || {}; window.bber.env = 'web';",
+    "url": "/text/kitchen-sink-colophon.xhtml"
+  },
+  {
+    "id": "{id}",
+    "title": "",
+    "body": "\n      \n\nKitchen Sink is a b-ber test fixture.\n© 2026 Triple Canopy\nPublished by Triple Canopy\n\n\nwindow.bber = window.bber || {}; window.bber.env = 'web';",
+    "url": "/text/kitchen-sink-copyright.xhtml"
+  },
+  {
+    "id": "{id}",
+    "title": "Consecutive Spreads Chapter",
+    "body": "\n      \n\nConsecutive Spreads Chapter\n\n        \n          \n        \n\n\n        \n        \n        \n        \n        \n        \n        \n            \n\n            \n\n            \n\n\n        \n          \n        \n\n\n        \n        \n        \n        \n        \n        \n        \n            \n\n            \n\n            \n\n\n        \n          \n        \n\n\n        \n        \n        \n        \n        \n        \n        \n            \n\n            \n\n            \n\n\n\nwindow.bber = window.bber || {}; window.bber.env = 'web';",
+    "url": "/text/kitchen-sink-spread-consecutive.xhtml"
+  },
+  {
+    "id": "{id}",
+    "title": "Spread at Chapter Edges",
+    "body": "\n      \n\nSpread at Chapter Edges\n\n        \n          \n        \n\n\n        \n        \n        \n        \n        \n        \n        \n            \n\n            \n\n            \n\n\n\nBody Between Spreads\nLorem ipsum dolor sit amet.\n\n\n\n        \n          \n        \n\n\n        \n        \n        \n        \n        \n        \n        \n            \n\n            \n\n            \n\n\n\nwindow.bber = window.bber || {}; window.bber.env = 'web';",
+    "url": "/text/kitchen-sink-spread-edges.xhtml"
+  },
+  {
+    "id": "{id}",
+    "title": "Single-Spread Chapter",
+    "body": "\n      \n\nSingle-Spread Chapter\n\n        \n          \n        \n\n\n        \n        \n        \n        \n        \n        \n        \n            \n\n            \n\n            \n\n\n\nwindow.bber = window.bber || {}; window.bber.env = 'web';",
+    "url": "/text/kitchen-sink-spread-single.xhtml"
+  },
+  {
+    "id": "{id}",
+    "title": "Kitchen Sink",
+    "body": "\n      \n\nKitchen Sink\nby Triple Canopy\n\n\nwindow.bber = window.bber || {}; window.bber.env = 'web';",
+    "url": "/text/kitchen-sink-title-page.xhtml"
+  }
+]
