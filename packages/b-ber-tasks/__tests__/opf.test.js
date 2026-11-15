@@ -506,7 +506,7 @@ describe('Opf.createOpf', () => {
     expect(contents).toContain('<guide></guide>')
   })
 
-  // DEFECT: createOpf (src/opf/Opf.ts:31) runs ManifestAndMetadata.init and
+  // DEFECT (#768): createOpf (src/opf/Opf.ts:31) runs ManifestAndMetadata.init and
   // Navigation.init concurrently. The manifest is a directory scan of OPS,
   // and toc.ncx and toc.xhtml are first created by Navigation's
   // createEmptyNavDocuments, so nothing guarantees they exist when the scan

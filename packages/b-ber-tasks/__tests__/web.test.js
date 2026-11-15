@@ -120,7 +120,7 @@ describe('task: web', () => {
     await web()
 
     const records = JSON.parse(await read('search-index.json'))
-    // DEFECT: `indexPageContent` (src/web/index.ts:311) numbers and pushes
+    // DEFECT (#771): `indexPageContent` (src/web/index.ts:311) numbers and pushes
     // each record as its file finishes reading, so the ids and the order of
     // search-index.json follow I/O completion, not the spine, and can differ
     // between two builds of the same book. Compare without them

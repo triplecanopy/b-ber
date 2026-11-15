@@ -238,7 +238,7 @@ describe('task: reader', () => {
     expect(await fs.readdir(path.join(project.dist, 'epub'))).toEqual(['a-b-c'])
   })
 
-  // DEFECT: the book directory is named `createDirname(identifier)`
+  // DEFECT (#769): the book directory is named `createDirname(identifier)`
   // (src/reader/index.ts:131), but `writeWebpubManifest` (line 188) reads
   // `<outputDir>/<identifier>/OPS` with the raw identifier, and
   // `injectServerDataIntoTemplate` (line 232) builds `bookURL` from it too.
@@ -263,7 +263,7 @@ describe('task: reader', () => {
     expect(fs.existsSync(path.join(project.dist, 'index.html'))).toBe(false)
   })
 
-  // DEFECT: `writeWebpubManifest` (src/reader/index.ts:193) does not return
+  // DEFECT (#770): `writeWebpubManifest` (src/reader/index.ts:193) does not return
   // its fs.writeJson, so the task can resolve before manifest.json is
   // written, and a failed write is an unhandled rejection
   test('does not wait for manifest.json to be written (defect)', async () => {

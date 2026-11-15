@@ -135,7 +135,11 @@ module.exports = {
     '**/__tests__/**/*.test.{js,jsx,ts,tsx}',
     '**/__tests__/index.{js,ts}',
   ],
-  testPathIgnorePatterns: ['__mocks__'],
+  // Agent worktrees (.claude/worktrees/, see AGENTS.md) are whole copies of
+  // the repo. Without these, a run in the main checkout also runs their tests,
+  // and every package name resolves to several files in Jest's module map
+  testPathIgnorePatterns: ['__mocks__', '<rootDir>/.claude/'],
+  modulePathIgnorePatterns: ['<rootDir>/.claude/'],
   testEnvironmentOptions: { url: 'http://localhost/' },
   transform: {
     '^.+\\.[jt]sx?$': '@swc/jest',

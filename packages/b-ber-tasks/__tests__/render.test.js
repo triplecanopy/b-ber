@@ -130,7 +130,7 @@ describe('task: render', () => {
     ).toBe(true)
   })
 
-  // DEFECT: `writeMarkupToFile` (src/render/index.ts:9) neither returns nor
+  // DEFECT (#770): `writeMarkupToFile` (src/render/index.ts:9) neither returns nor
   // awaits its fs.writeFile, so `render()` resolves before the XHTML is on
   // disk and a write failure is unhandled. The next task in the sequence can
   // read a file that is not there yet.
