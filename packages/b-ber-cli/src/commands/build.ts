@@ -13,6 +13,7 @@ import {
   withConfigOptions,
 } from '../lib/config-options'
 import { exitOnFailure, fail } from '../lib/exit'
+import { loggerArgvKeys } from '../lib/logger-options'
 
 const command = 'build [|epub|mobi|pdf|reader|sample|web]'
 const describe = 'Build a project'
@@ -34,6 +35,8 @@ const handler = exitOnFailure(async (argv: Arguments) => {
   if (typeof config === 'string') projectConfig = await parseConfigFile(config)
 
   projectConfig = { ...projectConfig, ...configOptions }
+  // The logger's flags, which index.ts has applied already
+  for (const key of loggerArgvKeys) delete projectConfig[key]
 
   state.update('sequence', subSequence)
   log.registerSequence(state, command, subSequence)

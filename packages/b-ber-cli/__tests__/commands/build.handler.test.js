@@ -280,6 +280,25 @@ describe('build handler', () => {
       expect(updatesTo(`config.${key}`)).toEqual([])
     })
 
+    it('skips the logger’s flags, which are not config options', async () => {
+      // --verbose, --log-level=3 and --no-color used to warn "Invalid
+      // configuration option" for each key yargs makes of them
+      await build.handler({
+        _: ['build', 'epub'],
+        $0: 'bber',
+        verbose: true,
+        'log-level': 3,
+        logLevel: 3,
+        color: false,
+        quiet: true,
+        debug: true,
+        summary: true,
+      })
+      await flushPromises()
+
+      expect(logger.warn).not.toHaveBeenCalled()
+    })
+
     it('re-applies the options to every format after State is reset', async () => {
       await build.handler({ _: ['build'], $0: 'bber', env: 'prod' })
       await flushPromises()

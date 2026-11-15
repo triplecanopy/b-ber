@@ -8,6 +8,7 @@ import {
   withConfigOptions,
 } from '../lib/config-options'
 import { exitOnFailure, fail } from '../lib/exit'
+import { loggerArgvKeys } from '../lib/logger-options'
 
 const command = 'new <name>'
 const describe = 'Create a new project'
@@ -31,6 +32,8 @@ const handler = exitOnFailure(async (argv: Arguments<{ name?: string }>) => {
   if (typeof config === 'string') projectConfig = await parseConfigFile(config)
 
   projectConfig = { ...projectConfig, ...configOptions }
+  // The logger's flags, which index.ts has applied already
+  for (const key of loggerArgvKeys) delete projectConfig[key]
 
   for (const [key] of Object.entries(projectConfig)) {
     if (!state.has(`config.${key}`)) {
