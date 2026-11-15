@@ -187,17 +187,18 @@ describe('new handler', () => {
     })
 
     it('requires a name', () => {
-      const { tasks, utils, stoppedByFail } = runCli(['new'], ({ log }) =>
+      const { tasks, log, stoppedByExit } = runCli(['new'], ({ log }) =>
         spyOnLogger(log)
       )
 
-      expect(stoppedByFail).toBe(true)
+      expect(stoppedByExit).toBe(true)
       expect(tasks.init).not.toHaveBeenCalled()
-      expect(utils.fail).toHaveBeenCalledWith(
+      // Issue 740: a usage error used to exit 0, without printing the
+      // error
+      expect(exit).toHaveBeenCalledWith(1)
+      expect(log.errors.map((e) => e.message)).toEqual([
         expect.stringMatching(/Not enough non-option arguments/),
-        undefined,
-        expect.anything()
-      )
+      ])
     })
   })
 })

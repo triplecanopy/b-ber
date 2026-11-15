@@ -1,5 +1,4 @@
 import state from '@canopycanopycanopy/b-ber-lib/State'
-import { fail } from '@canopycanopycanopy/b-ber-lib/utils'
 import log from '@canopycanopycanopy/b-ber-logger'
 import { init as Initializer } from '@canopycanopycanopy/b-ber-tasks'
 import type { Arguments, Argv } from 'yargs'
@@ -8,7 +7,7 @@ import {
   parseConfigFile,
   withConfigOptions,
 } from '../lib/config-options'
-import { exitOnFailure } from '../lib/exit'
+import { exitOnFailure, fail } from '../lib/exit'
 
 const command = 'new <name>'
 const describe = 'Create a new project'

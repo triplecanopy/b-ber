@@ -1,7 +1,6 @@
-import { fail } from '@canopycanopycanopy/b-ber-lib/utils'
 import { cover } from '@canopycanopycanopy/b-ber-tasks'
 import type { Argv } from 'yargs'
-import { exitOnFailure } from '../lib/exit'
+import { exitOnFailure, fail } from '../lib/exit'
 
 const command = 'cover'
 const describe = 'Generate a project cover'

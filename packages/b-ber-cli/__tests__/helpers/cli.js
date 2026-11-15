@@ -59,26 +59,28 @@ const spyOnLogger = (log) => {
 
 const interopDefault = (mod) => (mod?.__esModule ? mod.default : mod)
 
-// b-ber-lib's `fail`, which most commands register as their yargs fail
-// handler, ends the process with process.exit(0). With process.exit stubbed
-// nothing would stop yargs from going on to run the handler, so during the
-// parse the mocked `fail` throws this instead.
-class StoppedByFail extends Error {}
+// The commands' yargs fail handler (src/lib/exit.ts) ends the process with
+// process.exit(1). With process.exit stubbed nothing would stop yargs from
+// going on to run the handler, so during the parse the exit throws this
+// instead.
+class StoppedByExit extends Error {}
 
 // Runs `bber <args>` in-process through the real yargs wiring in src/app.ts.
 // yargs reads process.argv when it is first required, so each run gets a
 // fresh module registry. The modules the run used are returned so the test
 // can assert on the same mock instances; `setup` gets them before the parse,
-// to set mock behaviour and spies. `stoppedByFail` says whether a fail
-// handler ended the run during the parse (a validation error). After the
-// parse `fail` only records its calls: a rejected handler promise reaches it
-// later, from a promise callback, where a throw would be unhandled.
+// to set mock behaviour and spies. `stoppedByExit` says whether the process
+// would have exited during the parse (a validation error). After the parse
+// the exit goes back to being a no-op: a rejected handler reaches it later,
+// from a promise callback, where a throw would be unhandled.
 //
-// The calling test file must jest.mock b-ber-tasks, b-ber-lib's State, utils
-// and Theme, and b-ber-templates' Project.
+// The calling test file must mockProcessExit first, and jest.mock
+// b-ber-tasks, b-ber-lib's State, utils and Theme, and b-ber-templates'
+// Project. yargs prints a command's help on stderr, which this silences.
 const runCli = (args, setup = () => {}) => {
   const savedArgv = process.argv
-  const modules = { stoppedByFail: false }
+  const modules = { stoppedByExit: false }
+  const exit = process.exit
 
   process.argv = ['node', 'bber', ...args]
 
@@ -89,17 +91,19 @@ const runCli = (args, setup = () => {}) => {
       modules.utils = require('@canopycanopycanopy/b-ber-lib/utils')
       modules.Theme = require('@canopycanopycanopy/b-ber-lib/Theme')
       modules.log = interopDefault(require('@canopycanopycanopy/b-ber-logger'))
-      modules.utils.fail.mockImplementation((msg) => {
-        throw new StoppedByFail(msg)
-      })
       setup(modules)
+      const error = jest.spyOn(console, 'error').mockImplementation(() => {})
+      exit.mockImplementation((code) => {
+        throw new StoppedByExit(String(code))
+      })
       try {
         modules.argv = interopDefault(require('../../src/app'))()
       } catch (err) {
-        if (!(err instanceof StoppedByFail)) throw err
-        modules.stoppedByFail = true
+        if (!(err instanceof StoppedByExit)) throw err
+        modules.stoppedByExit = true
       } finally {
-        modules.utils.fail.mockImplementation(() => undefined)
+        exit.mockImplementation(() => undefined)
+        error.mockRestore()
       }
     })
   } finally {

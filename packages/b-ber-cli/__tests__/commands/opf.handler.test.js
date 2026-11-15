@@ -63,7 +63,7 @@ describe('opf handler', () => {
       expect(exit).toHaveBeenCalledWith(1)
     })
 
-    it('exits 1 on any other rejection, printing it, without reaching yargs', async () => {
+    it('exits 1 on any other rejection, printing it', async () => {
       // Issue 740: the rejection used to fall through to app.ts's
       // `.fail(showCustomHelp)`, which printed the usage text instead of the
       // error, and the process ended with status 0.

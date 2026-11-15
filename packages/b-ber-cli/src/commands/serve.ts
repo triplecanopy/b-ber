@@ -1,8 +1,7 @@
-import { fail } from '@canopycanopycanopy/b-ber-lib/utils'
 import log from '@canopycanopycanopy/b-ber-logger'
 import { serve } from '@canopycanopycanopy/b-ber-tasks'
 import type { Arguments, Argv } from 'yargs'
-import { exitOnFailure } from '../lib/exit'
+import { exitOnFailure, fail } from '../lib/exit'
 
 const command = 'serve [build] [opts]'
 const describe = 'Preview a project in the browser using the `reader` build.'

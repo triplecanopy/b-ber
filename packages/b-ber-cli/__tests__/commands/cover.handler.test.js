@@ -65,22 +65,18 @@ describe('cover handler', () => {
       expect(exit).toHaveBeenCalledWith(1)
     })
 
-    it('exits 1 on any other rejection, printing it, without reaching yargs', async () => {
+    it('exits 1 on any other rejection, printing it', async () => {
       // Issue 740: the rejection used to reach the command's fail handler,
       // b-ber-lib's `fail`, which showed help and exited 0.
       const error = new Error('cover failed')
-      const { utils, log: isolatedLog } = runCli(
-        ['cover'],
-        ({ tasks, log }) => {
-          tasks.cover.mockRejectedValue(error)
-          spyOnLogger(log)
-        }
-      )
+      const { log: isolatedLog } = runCli(['cover'], ({ tasks, log }) => {
+        tasks.cover.mockRejectedValue(error)
+        spyOnLogger(log)
+      })
       await flushPromises()
 
       expect(isolatedLog.errors.map((e) => e.message)).toEqual(['cover failed'])
       expect(exit).toHaveBeenCalledWith(1)
-      expect(utils.fail).not.toHaveBeenCalled()
     })
   })
 })

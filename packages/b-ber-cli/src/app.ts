@@ -1,11 +1,16 @@
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import yargs from 'yargs'
 import * as commands from './commands'
+import { exitWithFailure } from './lib/exit'
 
 const LINE_LENGTH = 70
 
 export default function bber() {
-  const showCustomHelp = () =>
+  // A usage error at the top level (no command at all) shows b-ber's own
+  // usage text, and is not a failure. An error is: yargs passes one when a
+  // command's builder throws
+  const showCustomHelp = (_msg: string, err: Error | null) => {
+    if (err) exitWithFailure(err)
     console.log(`
     Usage: bber <command> [options]
 
@@ -19,6 +24,7 @@ export default function bber() {
 
     bber version ${state.version}
 `)
+  }
 
   return yargs
     .command(commands.build)

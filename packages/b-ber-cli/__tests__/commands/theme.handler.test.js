@@ -94,17 +94,18 @@ describe('theme handler', () => {
     it('rejects a command that is not set or list', () => {
       const {
         Theme: isolatedTheme,
-        utils,
-        stoppedByFail,
+        log,
+        stoppedByExit,
       } = runCli(['theme', 'delete'], ({ log }) => spyOnLogger(log))
 
-      expect(stoppedByFail).toBe(true)
+      expect(stoppedByExit).toBe(true)
       expect(isolatedTheme.set).not.toHaveBeenCalled()
-      expect(utils.fail).toHaveBeenCalledWith(
+      // Issue 740: a usage error used to exit 0, without printing the
+      // error
+      expect(exit).toHaveBeenCalledWith(1)
+      expect(log.errors.map((e) => e.message)).toEqual([
         expect.stringMatching(/Invalid values/),
-        undefined,
-        expect.anything()
-      )
+      ])
     })
   })
 

@@ -83,18 +83,19 @@ describe('deploy handler', () => {
     })
 
     it('rejects a build that is not one of the choices', () => {
-      const { tasks, utils, stoppedByFail } = runCli(
+      const { tasks, log, stoppedByExit } = runCli(
         ['deploy', '-y', 'docx'],
         ({ log }) => spyOnLogger(log)
       )
 
-      expect(stoppedByFail).toBe(true)
+      expect(stoppedByExit).toBe(true)
       expect(tasks.deploy).not.toHaveBeenCalled()
-      expect(utils.fail).toHaveBeenCalledWith(
+      // Issue 740: a usage error used to exit 0, without printing the
+      // error
+      expect(exit).toHaveBeenCalledWith(1)
+      expect(log.errors.map((e) => e.message)).toEqual([
         expect.stringMatching(/Invalid values/),
-        undefined,
-        expect.anything()
-      )
+      ])
     })
   })
 
@@ -112,11 +113,11 @@ describe('deploy handler', () => {
       expect(exit).toHaveBeenCalledWith(1)
     })
 
-    it('exits 1 on any other rejection, printing it, without reaching yargs', async () => {
+    it('exits 1 on any other rejection, printing it', async () => {
       // Issue 740: the rejection used to reach the command's fail handler,
       // b-ber-lib's `fail`, which showed help and exited 0.
       const error = new Error('aws s3 sync failed')
-      const { utils, log: isolatedLog } = runCli(
+      const { log: isolatedLog } = runCli(
         ['deploy', '-y'],
         ({ tasks, log }) => {
           tasks.deploy.mockRejectedValue(error)
@@ -129,7 +130,6 @@ describe('deploy handler', () => {
         'aws s3 sync failed',
       ])
       expect(exit).toHaveBeenCalledWith(1)
-      expect(utils.fail).not.toHaveBeenCalled()
     })
   })
 })

@@ -1,7 +1,7 @@
 import Theme from '@canopycanopycanopy/b-ber-lib/Theme'
-import { ensure, fail } from '@canopycanopycanopy/b-ber-lib/utils'
+import { ensure } from '@canopycanopycanopy/b-ber-lib/utils'
 import type { Arguments, Argv } from 'yargs'
-import { exitOnFailure } from '../lib/exit'
+import { exitOnFailure, fail } from '../lib/exit'
 
 const _command = 'theme <command> [options]'
 const describe = "Manage a project's theme"

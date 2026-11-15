@@ -36,4 +36,11 @@ describe('opf', () => {
     expect(result).toBeDefined()
     expect(yargs.help).toHaveBeenCalledWith('h')
   })
+
+  it('registers a fail handler, so a usage error is reported and exits 1', () => {
+    // Issue 741: opf used to register none
+    const yargs = mockYargs()
+    opf.builder(yargs)
+    expect(yargs.fail).toHaveBeenCalledWith(expect.any(Function))
+  })
 })

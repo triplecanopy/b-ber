@@ -1,7 +1,7 @@
-import { ensure, fail } from '@canopycanopycanopy/b-ber-lib/utils'
+import { ensure } from '@canopycanopycanopy/b-ber-lib/utils'
 import { generate } from '@canopycanopycanopy/b-ber-tasks'
 import type { Arguments, Argv } from 'yargs'
-import { exitOnFailure } from '../lib/exit'
+import { exitOnFailure, fail } from '../lib/exit'
 
 const command = 'generate <title> [type]'
 const describe = 'Create a new chapter. Accepts arguments for metadata'

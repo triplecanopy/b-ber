@@ -36,6 +36,7 @@ const mockYargs = () => ({
   command: jest.fn().mockReturnThis(),
   help: jest.fn().mockReturnThis(),
   alias: jest.fn().mockReturnThis(),
+  fail: jest.fn().mockReturnThis(),
 })
 
 const updatesTo = (key) =>
@@ -72,6 +73,14 @@ describe('build builder', () => {
     const yargs = mockYargs()
     build.builder(yargs)
     expect(yargs.option).toHaveBeenCalledWith('config', expect.any(Object))
+  })
+
+  it('registers a fail handler, so a usage error is reported and exits 1', () => {
+    // Issue 741: build used to register none, so a usage error printed
+    // app.ts's generic usage text and never the error
+    const yargs = mockYargs()
+    build.builder(yargs)
+    expect(yargs.fail).toHaveBeenCalledWith(expect.any(Function))
   })
 
   it('omits xml from the command string although it registers an xml sub-command', () => {

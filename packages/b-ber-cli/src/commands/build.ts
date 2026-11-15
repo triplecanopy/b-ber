@@ -12,7 +12,7 @@ import {
   parseConfigFile,
   withConfigOptions,
 } from '../lib/config-options'
-import { exitOnFailure } from '../lib/exit'
+import { exitOnFailure, fail } from '../lib/exit'
 
 const command = 'build [|epub|mobi|pdf|reader|sample|web]'
 const describe = 'Build a project'
@@ -84,6 +84,7 @@ const builder = (yargs: Argv) =>
     .command('xml', 'Build for XML', noop, handler)
     .help('h')
     .alias('h', 'help')
+    .fail((msg, err) => fail(msg, err, yargs))
 
 export default {
   command,

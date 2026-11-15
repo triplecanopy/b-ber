@@ -41,3 +41,20 @@ export function exitOnUncaughtFailure(): void {
   process.on('uncaughtException', exitWithFailure)
   process.on('unhandledRejection', exitWithFailure)
 }
+
+// The yargs fail handler for every command, which yargs calls with a message
+// for a usage error (a missing positional, a value that is not one of the
+// choices) and with an error when a builder throws. A usage error shows the
+// command's help, then the error. Either way the command exits 1.
+//
+// `yargs` is the command's own yargs instance, so that the help shown is the
+// command's.
+export function fail(
+  msg: string | null | undefined,
+  err: Error | null | undefined,
+  yargs: { showHelp(): unknown }
+): never {
+  if (err) return exitWithFailure(err)
+  yargs.showHelp()
+  return exitWithFailure(new Error(msg ?? 'Invalid command'))
+}

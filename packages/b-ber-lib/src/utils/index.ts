@@ -90,6 +90,11 @@ export const safeWrite = (dest: string, data: string): Promise<void> =>
   fs.existsSync(dest) ? Promise.resolve() : fs.writeFile(dest, data)
 
 // `yargs` is the yargs instance whose `fail` handler this is
+/**
+ * @deprecated b-ber-cli no longer uses this: it exits 0, which hides a usage
+ * error from a script. The CLI's own handler is `fail` in b-ber-cli's
+ * src/lib/exit.ts.
+ */
 export const fail = (
   _msg: unknown,
   _err: unknown,
