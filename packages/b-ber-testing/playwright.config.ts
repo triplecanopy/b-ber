@@ -29,6 +29,10 @@ export default defineConfig({
     {
       name: 'cli',
       testDir: './tests/cli',
+      // The golden-output snapshot (TASK-152): one file per output file, at
+      // its own path, with no platform suffix, so the same snapshot serves
+      // macOS and the Linux CI runner
+      snapshotPathTemplate: '{testDir}/__golden__/{arg}{ext}',
     },
     {
       name: 'chromium',

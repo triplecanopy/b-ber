@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+                <package
+                    version="3.0"
+                    xml:lang="en"
+                    unique-identifier="uuid"
+                    xmlns="http://www.idpf.org/2007/opf"
+                    xmlns:dc="http://purl.org/dc/elements/1.1/"
+                    xmlns:dcterms="http://purl.org/dc/terms/"
+                    prefix="ibooks: http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0/"
+                >
+                    
+                        <metadata>
+<meta property="dcterms:title">Kitchen Sink</meta>
+<dc:title id="_{id:1}">Kitchen Sink</dc:title>
+<meta refines="#_{id:1}" property="title-type">main</meta>
+<meta property="dcterms:description">A b-ber test fixture that exercises every built-in directive.</meta>
+<dc:description id="_{id:2}">A b-ber test fixture that exercises every built-in directive.</dc:description>
+<meta property="dcterms:creator">Triple Canopy</meta>
+<dc:creator id="_{id:3}">Triple Canopy</dc:creator>
+<meta refines="#_{id:3}" property="role">aut</meta>
+<meta property="dcterms:contributor">b-ber</meta>
+<dc:contributor id="_{id:4}">b-ber</dc:contributor>
+<meta refines="#_{id:4}" property="role">mrk</meta>
+<meta property="dcterms:language">en-US</meta>
+<dc:language id="_{id:5}">en-US</dc:language>
+<meta property="dcterms:rights">© 2026 Triple Canopy</meta>
+<dc:rights id="_{id:6}">© 2026 Triple Canopy</dc:rights>
+<meta property="dcterms:format">epub+zip</meta>
+<dc:format id="_{id:7}">epub+zip</dc:format>
+<meta property="dcterms:date">Thu Jan 01 2026 00:00:00 GMT+0000 (Coordinated Universal Time)</meta>
+<meta property="dcterms:publisher">Triple Canopy</meta>
+<dc:publisher id="_{id:8}">Triple Canopy</dc:publisher>
+<meta property="dcterms:identifier">kitchen-sink-b-ber-fixture-001</meta>
+<dc:identifier id="uuid">kitchen-sink-b-ber-fixture-001</dc:identifier>
+<meta name="cover" content="___bber_cover__d0dc481a9caadda380523127fc70bc147cd84696_jpg"/>
+<meta property="ibooks:specified-fonts">false</meta>
+<meta property="dcterms:modified">{timestamp}</meta>
+<meta name="generator" content="b-ber@{version}" />
+</metadata>
+                        <manifest>
+<item id="___bber_cover__d0dc481a9caadda380523127fc70bc147cd84696_jpg" href="images/__bber_cover__d0dc481a9caadda380523127fc70bc147cd84696.jpg" media-type="image/jpeg" />
+<item id="_application_css" href="stylesheets/application.css" media-type="text/css" />
+<item id="_application_js" href="javascripts/application.js" media-type="application/javascript" />
+<item id="_cover_xhtml" href="text/cover.xhtml" media-type="application/xhtml+xml" properties="scripted svg"/>
+<item id="_figures-titlepage_xhtml" href="text/figures-titlepage.xhtml" media-type="application/xhtml+xml" properties="scripted remote-resources"/>
+<item id="_kitchen-sink-chapter-01_xhtml" href="text/kitchen-sink-chapter-01.xhtml" media-type="application/xhtml+xml" properties="scripted"/>
+<item id="_kitchen-sink-chapter-02_xhtml" href="text/kitchen-sink-chapter-02.xhtml" media-type="application/xhtml+xml" properties="scripted"/>
+<item id="_kitchen-sink-chapter-03_xhtml" href="text/kitchen-sink-chapter-03.xhtml" media-type="application/xhtml+xml" properties="scripted"/>
+<item id="_kitchen-sink-colophon_xhtml" href="text/kitchen-sink-colophon.xhtml" media-type="application/xhtml+xml" properties="scripted"/>
+<item id="_kitchen-sink-copyright_xhtml" href="text/kitchen-sink-copyright.xhtml" media-type="application/xhtml+xml" properties="scripted"/>
+<item id="_kitchen-sink-spread-consecutive_xhtml" href="text/kitchen-sink-spread-consecutive.xhtml" media-type="application/xhtml+xml" properties="scripted"/>
+<item id="_kitchen-sink-spread-edges_xhtml" href="text/kitchen-sink-spread-edges.xhtml" media-type="application/xhtml+xml" properties="scripted"/>
+<item id="_kitchen-sink-spread-single_xhtml" href="text/kitchen-sink-spread-single.xhtml" media-type="application/xhtml+xml" properties="scripted"/>
+<item id="_kitchen-sink-title-page_xhtml" href="text/kitchen-sink-title-page.xhtml" media-type="application/xhtml+xml" properties="scripted"/>
+<item id="_notes_xhtml" href="text/notes.xhtml" media-type="application/xhtml+xml" properties="scripted"/>
+<item id="_placeholder-landscape_png" href="images/placeholder-landscape.png" media-type="image/png" />
+<item id="_placeholder-logo_png" href="images/placeholder-logo.png" media-type="image/png" />
+<item id="_placeholder-spread_png" href="images/placeholder-spread.png" media-type="image/png" />
+<item id="_placeholder-square-01_png" href="images/placeholder-square-01.png" media-type="image/png" />
+<item id="_placeholder-square-02_png" href="images/placeholder-square-02.png" media-type="image/png" />
+<item id="_placeholder-square-03_png" href="images/placeholder-square-03.png" media-type="image/png" />
+<item id="_sample_mp3" href="media/sample.mp3" media-type="audio/mpeg" />
+<item id="_sample_mp4" href="media/sample.mp4" media-type="video/mp4" />
+<item id="_toc_ncx" href="toc.ncx" media-type="application/x-dtbncx+xml" />
+<item id="_toc_xhtml" href="toc.xhtml" media-type="application/xhtml+xml" properties="nav scripted"/>
+</manifest>
+                        <spine toc="_toc_ncx">
+<itemref idref="_toc_xhtml" linear="no"/>
+<itemref idref="_cover_xhtml" linear="yes"/>
+<itemref idref="_kitchen-sink-title-page_xhtml" linear="yes"/>
+<itemref idref="_kitchen-sink-copyright_xhtml" linear="yes"/>
+<itemref idref="_kitchen-sink-chapter-01_xhtml" linear="yes"/>
+<itemref idref="_kitchen-sink-chapter-02_xhtml" linear="yes"/>
+<itemref idref="_kitchen-sink-chapter-03_xhtml" linear="yes"/>
+<itemref idref="_kitchen-sink-spread-single_xhtml" linear="yes"/>
+<itemref idref="_kitchen-sink-spread-consecutive_xhtml" linear="yes"/>
+<itemref idref="_kitchen-sink-spread-edges_xhtml" linear="yes"/>
+<itemref idref="_kitchen-sink-colophon_xhtml" linear="yes"/>
+<itemref idref="_figures-titlepage_xhtml" linear="yes"/>
+<itemref idref="_notes_xhtml" linear="no"/>
+</spine>
+                        <guide>
+<reference type="titlepage" title="Kitchen Sink" href="text/kitchen-sink-title-page.xhtml"/>
+<reference type="acknowledgments" title="Copyright" href="text/kitchen-sink-copyright.xhtml"/>
+<reference type="bodymatter" title="Chapter One" href="text/kitchen-sink-chapter-01.xhtml"/>
+<reference type="bodymatter" title="Chapter Two" href="text/kitchen-sink-chapter-02.xhtml"/>
+<reference type="bodymatter" title="Chapter Three" href="text/kitchen-sink-chapter-03.xhtml"/>
+<reference type="bodymatter" title="Spread — Single" href="text/kitchen-sink-spread-single.xhtml"/>
+<reference type="bodymatter" title="Spread — Consecutive" href="text/kitchen-sink-spread-consecutive.xhtml"/>
+<reference type="bodymatter" title="Spread — Edges" href="text/kitchen-sink-spread-edges.xhtml"/>
+<reference type="colophon" title="Colophon" href="text/kitchen-sink-colophon.xhtml"/>
+<reference type="loi" title="Figures" href="text/figures-titlepage.xhtml"/>
+</guide>
+                
+                </package>
+            

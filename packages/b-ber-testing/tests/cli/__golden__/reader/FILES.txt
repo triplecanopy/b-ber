@@ -1,0 +1,35 @@
+api/books.json  text
+assets/CrimsonPro-Regular-{hash}.ttf  reader app
+assets/CrimsonPro-SemiBold-{hash}.ttf  reader app
+assets/index-{hash}.css  reader app
+assets/index-{hash}.js  reader app
+epub/kitchen-sink-b-ber-fixture-001/META-INF/container.xml  text
+epub/kitchen-sink-b-ber-fixture-001/OPS/content.opf  text
+epub/kitchen-sink-b-ber-fixture-001/OPS/images/__bber_cover__d0dc481a9caadda380523127fc70bc147cd84696.jpg  sha256:a417c9f3e069446d518410edac4faf971418a3cfcb3bffc97df0a7b6244c3ebe
+epub/kitchen-sink-b-ber-fixture-001/OPS/images/placeholder-landscape.png  sha256:f68baf3d39e904e1c56130a386fb682735789d51b7734fbf784a93e63d931a93
+epub/kitchen-sink-b-ber-fixture-001/OPS/images/placeholder-logo.png  sha256:f85e1234e310b6e7cef69432358965e2345404d2f94b8eeae699e7dbd30b8b02
+epub/kitchen-sink-b-ber-fixture-001/OPS/images/placeholder-spread.png  sha256:7b859103ab2be5f67f04053df4e7ec3c82b3501fe43b02d27f3d16fbeef31946
+epub/kitchen-sink-b-ber-fixture-001/OPS/images/placeholder-square-01.png  sha256:121afcb8bf92a4b3660f59b3a41cb8f243745a5074fb8d6c582a99d7d57e29f8
+epub/kitchen-sink-b-ber-fixture-001/OPS/images/placeholder-square-02.png  sha256:885a78646981a153e18dc35cafe30ca19813869eb4f9ad039bc38fce0d4fd02b
+epub/kitchen-sink-b-ber-fixture-001/OPS/images/placeholder-square-03.png  sha256:af24264c00fb9e1667e075de8f3ee8dc2cd51aad9d5a3bcccabcefc684194715
+epub/kitchen-sink-b-ber-fixture-001/OPS/javascripts/application.js  text
+epub/kitchen-sink-b-ber-fixture-001/OPS/media/sample.mp3  sha256:52a7d3771292f1da37139ab5819a1c4d6a6e89eb2ac19d3301a7da5c56b12e5c
+epub/kitchen-sink-b-ber-fixture-001/OPS/media/sample.mp4  sha256:3bee83cd93579b8504f6102a3ea57af43d230bdfefd60acc239c198aebb2136d
+epub/kitchen-sink-b-ber-fixture-001/OPS/stylesheets/application.css  text
+epub/kitchen-sink-b-ber-fixture-001/OPS/text/cover.xhtml  text
+epub/kitchen-sink-b-ber-fixture-001/OPS/text/figures-titlepage.xhtml  text
+epub/kitchen-sink-b-ber-fixture-001/OPS/text/kitchen-sink-chapter-01.xhtml  text
+epub/kitchen-sink-b-ber-fixture-001/OPS/text/kitchen-sink-chapter-02.xhtml  text
+epub/kitchen-sink-b-ber-fixture-001/OPS/text/kitchen-sink-chapter-03.xhtml  text
+epub/kitchen-sink-b-ber-fixture-001/OPS/text/kitchen-sink-colophon.xhtml  text
+epub/kitchen-sink-b-ber-fixture-001/OPS/text/kitchen-sink-copyright.xhtml  text
+epub/kitchen-sink-b-ber-fixture-001/OPS/text/kitchen-sink-spread-consecutive.xhtml  text
+epub/kitchen-sink-b-ber-fixture-001/OPS/text/kitchen-sink-spread-edges.xhtml  text
+epub/kitchen-sink-b-ber-fixture-001/OPS/text/kitchen-sink-spread-single.xhtml  text
+epub/kitchen-sink-b-ber-fixture-001/OPS/text/kitchen-sink-title-page.xhtml  text
+epub/kitchen-sink-b-ber-fixture-001/OPS/text/notes.xhtml  text
+epub/kitchen-sink-b-ber-fixture-001/OPS/toc.ncx  text
+epub/kitchen-sink-b-ber-fixture-001/OPS/toc.xhtml  text
+epub/kitchen-sink-b-ber-fixture-001/mimetype  text
+index.html  text
+manifest.json  text

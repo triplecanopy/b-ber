@@ -40,7 +40,8 @@
       "!packages/b-ber-markdown-renderer/src/highlightjs",
       "!packages/b-ber-reader-react/src/constants/index.js",
       "!packages/b-ber-tasks/src/web",
-      "!scripts"
+      "!scripts",
+      "!packages/b-ber-testing/tests/cli/__golden__"
     ]
   },
   "formatter": {

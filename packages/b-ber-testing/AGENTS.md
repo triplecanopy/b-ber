@@ -37,6 +37,9 @@ globalSetup.ts rebuilds the kitchen-sink reader fixture with this checkout's CLI
 | `tests/e2e/reader/directives.spec.ts`  | One assertion per b-ber directive                         |
 | `tests/e2e/reader/edge-cases.spec.ts`  | First/last chapter buttons, deep links                    |
 | `tests/cli/`                           | CLI smoke tests                                           |
+| `tests/cli/golden.spec.ts`             | Golden-output test: every deterministic build vs. a snapshot |
+| `tests/cli/golden/normalize.ts`        | What the golden snapshot ignores (timestamps, random ids, …) |
+| `tests/cli/__golden__/`                | The committed snapshot, one file per output file          |
 | `fixtures/kitchen-sink/`               | Source project; builds are generated and gitignored       |
 
 ---
@@ -77,6 +80,23 @@ this checkout, run with `node` (`BBER_BIN` in `tests/cli/helpers.ts`). Never a
 global `bber` on `PATH`: that is whichever version was last installed, so a pass
 would say nothing about the branch (TASK-130). Requires `npm run build` first;
 `globalSetup` fails fast without it. Override with `BBER_BIN=<entry script>`.
+
+**Golden output** (TASK-152) — `golden.spec.ts` builds the kitchen-sink
+fixture as epub, web, reader and sample, normalizes the output, and compares
+every file with `tests/cli/__golden__/<format>/`. `FILES.txt` in each lists
+every output file, with a hash for binaries, so an added or removed file fails
+too. When a change is *meant* to alter output, regenerate and commit the
+snapshot, and review its diff like code:
+
+```bash
+npx playwright test --project=cli golden --update-snapshots
+```
+
+Playwright does not delete the snapshot of a file a build stops writing;
+delete `tests/cli/__golden__/<format>/` first to drop stale copies. Every rule
+in `golden/normalize.ts` hides something from the comparison, so each is
+pinned by `normalize.spec.ts` and listed in `tasks/TASK-152.md`. mobi and pdf
+are left out (Calibre and wkhtmltopdf are not on CI), and xml until #766.
 
 **Skipped reader tests** — six navigation/edge-case tests are `test.skip`ped
 because they fail on `main`, mostly by timing out at 120s. Reworking them is

@@ -749,6 +749,12 @@ Before marking any task complete:
 parent against GitHub. It needs a token, so it is not part of `npm test`; it runs
 daily via `.github/workflows/task-hierarchy.yml` and can be run by hand any time.
 
+**Changing build output.** The e2e suite's golden-output test (TASK-152)
+compares every file of the kitchen-sink fixture's epub, web, reader and sample
+builds with a committed snapshot. A change that alters output fails it. If the
+change is intended, regenerate the snapshot (see b-ber-testing's AGENTS.md)
+and commit it with the change, so the PR shows the output diff.
+
 **Run tests before committing.** Always run `npm test` (or the affected
 package's test suite) before creating a commit. `npm test` runs `biome check .`,
 then `check:tasks`, then `deps:dedupe` (syncpack), then the Jest suite. Pre-commit hooks via Husky should enforce this

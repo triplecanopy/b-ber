@@ -45,12 +45,14 @@ export function assertBberBuilt(): void {
 export function runBber(
   args: string[],
   cwd: string,
-  timeout = 90_000
+  timeout = 90_000,
+  env: NodeJS.ProcessEnv = {}
 ): SpawnSyncReturns<string> {
   return spawnSync(process.execPath, [BBER_BIN, ...args], {
     cwd,
     encoding: 'utf8',
     timeout,
+    env: { ...process.env, ...env },
   })
 }
 

@@ -1,0 +1,192 @@
+{
+  "@context": "https://readium.org/webpub-manifest/context.jsonld",
+  "metadata": {
+    "@type": "http://schema.org/Book",
+    "title": "Kitchen Sink",
+    "author": "Triple Canopy",
+    "identifier": "kitchen-sink-b-ber-fixture-001",
+    "language": "en-US",
+    "publisher": "Triple Canopy",
+    "modified": "{timestamp}"
+  },
+  "links": [
+    {
+      "rel": "self",
+      "href": "http://localhost:4000/_builds-reader/manifest.json",
+      "type": "application/webpub+json"
+    }
+  ],
+  "readingOrder": [
+    {
+      "href": "http://localhost:4000{fixture}/_builds-reader/epub/kitchen-sink-b-ber-fixture-001/OPS/toc.xhtml",
+      "title": "Toc",
+      "type": "text/xhtml"
+    },
+    {
+      "href": "http://localhost:4000{fixture}/_builds-reader/epub/kitchen-sink-b-ber-fixture-001/OPS/text/cover.xhtml",
+      "title": "Cover",
+      "type": "text/xhtml"
+    },
+    {
+      "href": "http://localhost:4000{fixture}/_builds-reader/epub/kitchen-sink-b-ber-fixture-001/OPS/text/kitchen-sink-title-page.xhtml",
+      "title": "Kitchen Sink Title Page",
+      "type": "text/xhtml"
+    },
+    {
+      "href": "http://localhost:4000{fixture}/_builds-reader/epub/kitchen-sink-b-ber-fixture-001/OPS/text/kitchen-sink-copyright.xhtml",
+      "title": "Kitchen Sink Copyright",
+      "type": "text/xhtml"
+    },
+    {
+      "href": "http://localhost:4000{fixture}/_builds-reader/epub/kitchen-sink-b-ber-fixture-001/OPS/text/kitchen-sink-chapter-01.xhtml",
+      "title": "Kitchen Sink Chapter 01",
+      "type": "text/xhtml"
+    },
+    {
+      "href": "http://localhost:4000{fixture}/_builds-reader/epub/kitchen-sink-b-ber-fixture-001/OPS/text/kitchen-sink-chapter-02.xhtml",
+      "title": "Kitchen Sink Chapter 02",
+      "type": "text/xhtml"
+    },
+    {
+      "href": "http://localhost:4000{fixture}/_builds-reader/epub/kitchen-sink-b-ber-fixture-001/OPS/text/kitchen-sink-chapter-03.xhtml",
+      "title": "Kitchen Sink Chapter 03",
+      "type": "text/xhtml"
+    },
+    {
+      "href": "http://localhost:4000{fixture}/_builds-reader/epub/kitchen-sink-b-ber-fixture-001/OPS/text/kitchen-sink-spread-single.xhtml",
+      "title": "Kitchen Sink Spread Single",
+      "type": "text/xhtml"
+    },
+    {
+      "href": "http://localhost:4000{fixture}/_builds-reader/epub/kitchen-sink-b-ber-fixture-001/OPS/text/kitchen-sink-spread-consecutive.xhtml",
+      "title": "Kitchen Sink Spread Consecutive",
+      "type": "text/xhtml"
+    },
+    {
+      "href": "http://localhost:4000{fixture}/_builds-reader/epub/kitchen-sink-b-ber-fixture-001/OPS/text/kitchen-sink-spread-edges.xhtml",
+      "title": "Kitchen Sink Spread Edges",
+      "type": "text/xhtml"
+    },
+    {
+      "href": "http://localhost:4000{fixture}/_builds-reader/epub/kitchen-sink-b-ber-fixture-001/OPS/text/kitchen-sink-colophon.xhtml",
+      "title": "Kitchen Sink Colophon",
+      "type": "text/xhtml"
+    },
+    {
+      "href": "http://localhost:4000{fixture}/_builds-reader/epub/kitchen-sink-b-ber-fixture-001/OPS/text/figures-titlepage.xhtml",
+      "title": "Figures Titlepage",
+      "type": "text/xhtml"
+    },
+    {
+      "href": "http://localhost:4000{fixture}/_builds-reader/epub/kitchen-sink-b-ber-fixture-001/OPS/text/notes.xhtml",
+      "title": "Notes",
+      "type": "text/xhtml"
+    }
+  ],
+  "resources": [
+    {
+      "href": "http://localhost:4000{fixture}/_builds-reader/epub/kitchen-sink-b-ber-fixture-001/OPS/content.opf",
+      "type": "application/oebps-package+xml"
+    },
+    {
+      "href": "http://localhost:4000{fixture}/_builds-reader/epub/kitchen-sink-b-ber-fixture-001/OPS/images/__bber_cover__d0dc481a9caadda380523127fc70bc147cd84696.jpg",
+      "type": "image/jpeg"
+    },
+    {
+      "href": "http://localhost:4000{fixture}/_builds-reader/epub/kitchen-sink-b-ber-fixture-001/OPS/images/placeholder-landscape.png",
+      "type": "image/png"
+    },
+    {
+      "href": "http://localhost:4000{fixture}/_builds-reader/epub/kitchen-sink-b-ber-fixture-001/OPS/images/placeholder-logo.png",
+      "type": "image/png"
+    },
+    {
+      "href": "http://localhost:4000{fixture}/_builds-reader/epub/kitchen-sink-b-ber-fixture-001/OPS/images/placeholder-spread.png",
+      "type": "image/png"
+    },
+    {
+      "href": "http://localhost:4000{fixture}/_builds-reader/epub/kitchen-sink-b-ber-fixture-001/OPS/images/placeholder-square-01.png",
+      "type": "image/png"
+    },
+    {
+      "href": "http://localhost:4000{fixture}/_builds-reader/epub/kitchen-sink-b-ber-fixture-001/OPS/images/placeholder-square-02.png",
+      "type": "image/png"
+    },
+    {
+      "href": "http://localhost:4000{fixture}/_builds-reader/epub/kitchen-sink-b-ber-fixture-001/OPS/images/placeholder-square-03.png",
+      "type": "image/png"
+    },
+    {
+      "href": "http://localhost:4000{fixture}/_builds-reader/epub/kitchen-sink-b-ber-fixture-001/OPS/javascripts/application.js",
+      "type": "application/javascript"
+    },
+    {
+      "href": "http://localhost:4000{fixture}/_builds-reader/epub/kitchen-sink-b-ber-fixture-001/OPS/media/sample.mp3",
+      "type": "audio/mpeg"
+    },
+    {
+      "href": "http://localhost:4000{fixture}/_builds-reader/epub/kitchen-sink-b-ber-fixture-001/OPS/media/sample.mp4",
+      "type": "video/mp4"
+    },
+    {
+      "href": "http://localhost:4000{fixture}/_builds-reader/epub/kitchen-sink-b-ber-fixture-001/OPS/stylesheets/application.css",
+      "type": "text/css"
+    },
+    {
+      "href": "http://localhost:4000{fixture}/_builds-reader/epub/kitchen-sink-b-ber-fixture-001/OPS/text/cover.xhtml",
+      "type": "application/xhtml+xml"
+    },
+    {
+      "href": "http://localhost:4000{fixture}/_builds-reader/epub/kitchen-sink-b-ber-fixture-001/OPS/text/figures-titlepage.xhtml",
+      "type": "application/xhtml+xml"
+    },
+    {
+      "href": "http://localhost:4000{fixture}/_builds-reader/epub/kitchen-sink-b-ber-fixture-001/OPS/text/kitchen-sink-chapter-01.xhtml",
+      "type": "application/xhtml+xml"
+    },
+    {
+      "href": "http://localhost:4000{fixture}/_builds-reader/epub/kitchen-sink-b-ber-fixture-001/OPS/text/kitchen-sink-chapter-02.xhtml",
+      "type": "application/xhtml+xml"
+    },
+    {
+      "href": "http://localhost:4000{fixture}/_builds-reader/epub/kitchen-sink-b-ber-fixture-001/OPS/text/kitchen-sink-chapter-03.xhtml",
+      "type": "application/xhtml+xml"
+    },
+    {
+      "href": "http://localhost:4000{fixture}/_builds-reader/epub/kitchen-sink-b-ber-fixture-001/OPS/text/kitchen-sink-colophon.xhtml",
+      "type": "application/xhtml+xml"
+    },
+    {
+      "href": "http://localhost:4000{fixture}/_builds-reader/epub/kitchen-sink-b-ber-fixture-001/OPS/text/kitchen-sink-copyright.xhtml",
+      "type": "application/xhtml+xml"
+    },
+    {
+      "href": "http://localhost:4000{fixture}/_builds-reader/epub/kitchen-sink-b-ber-fixture-001/OPS/text/kitchen-sink-spread-consecutive.xhtml",
+      "type": "application/xhtml+xml"
+    },
+    {
+      "href": "http://localhost:4000{fixture}/_builds-reader/epub/kitchen-sink-b-ber-fixture-001/OPS/text/kitchen-sink-spread-edges.xhtml",
+      "type": "application/xhtml+xml"
+    },
+    {
+      "href": "http://localhost:4000{fixture}/_builds-reader/epub/kitchen-sink-b-ber-fixture-001/OPS/text/kitchen-sink-spread-single.xhtml",
+      "type": "application/xhtml+xml"
+    },
+    {
+      "href": "http://localhost:4000{fixture}/_builds-reader/epub/kitchen-sink-b-ber-fixture-001/OPS/text/kitchen-sink-title-page.xhtml",
+      "type": "application/xhtml+xml"
+    },
+    {
+      "href": "http://localhost:4000{fixture}/_builds-reader/epub/kitchen-sink-b-ber-fixture-001/OPS/text/notes.xhtml",
+      "type": "application/xhtml+xml"
+    },
+    {
+      "href": "http://localhost:4000{fixture}/_builds-reader/epub/kitchen-sink-b-ber-fixture-001/OPS/toc.ncx",
+      "type": "application/x-dtbncx+xml"
+    },
+    {
+      "href": "http://localhost:4000{fixture}/_builds-reader/epub/kitchen-sink-b-ber-fixture-001/OPS/toc.xhtml",
+      "type": "application/xhtml+xml"
+    }
+  ]
+}
