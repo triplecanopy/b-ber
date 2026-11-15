@@ -73,7 +73,7 @@ describe('generate handler', () => {
 
   describe('when the task fails', () => {
     it('exits 1 when the failure reaches log.error', async () => {
-      // TASK-046: e.g. "already exists, aborting" in the generate task.
+      // e.g. "already exists, aborting" in the generate task.
       generateTask.mockImplementationOnce(async () => {
         log.error('_markdown/chapter-one.md already exists, aborting')
       })
@@ -84,28 +84,28 @@ describe('generate handler', () => {
       expect(exit).toHaveBeenCalledWith(1)
     })
 
-    it('swallows a rejection into console.error and does not exit', async () => {
-      // Defect: `.catch(console.error)` ends the process with status 0.
+    it('exits 1 on any other rejection, printing it through the logger', async () => {
+      // Issue 740: `.catch(console.error)` used to end the process with
+      // status 0.
       const error = new Error('generate rejected')
       generateTask.mockRejectedValueOnce(error)
 
-      await expect(
-        generate.handler({ title: 'Chapter One' })
-      ).resolves.toBeUndefined()
+      await generate.handler({ title: 'Chapter One' })
 
-      expect(console.error).toHaveBeenCalledWith(error)
-      expect(exit).not.toHaveBeenCalled()
+      expect(log.errors.map((e) => e.message)).toEqual(['generate rejected'])
+      expect(console.error).not.toHaveBeenCalled()
+      expect(exit).toHaveBeenCalledWith(1)
     })
 
-    it('swallows an ensure rejection the same way, without generating', async () => {
+    it('exits 1 on an ensure rejection the same way, without generating', async () => {
       const error = new Error('ensure rejected')
       ensure.mockRejectedValueOnce(error)
 
       await generate.handler({ title: 'Chapter One' })
 
-      expect(console.error).toHaveBeenCalledWith(error)
+      expect(log.errors.map((e) => e.message)).toEqual(['ensure rejected'])
       expect(generateTask).not.toHaveBeenCalled()
-      expect(exit).not.toHaveBeenCalled()
+      expect(exit).toHaveBeenCalledWith(1)
     })
   })
 })

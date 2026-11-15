@@ -69,35 +69,30 @@ describe('check handler', () => {
 
   describe('when the task fails', () => {
     it('exits 1 when the failure reaches log.error', async () => {
-      // TASK-046: validate reports through log.error and relies on it to
-      // stop the process. Note that its missing-project check never fires
-      // today (#736), so a missing project fails differently; see below.
+      // validate reports through log.error, which throws. Note that its
+      // missing-project check never fires today (#736), so a missing project
+      // fails differently; see below.
       validate.mockImplementationOnce(async () => {
         log.error('Project path does not exist, aborting')
       })
 
-      check.handler({ project: 'missing' })
-      await validate.mock.results[0].value
+      await check.handler({ project: 'missing' })
 
       expect(logger.error).toHaveBeenCalled()
       expect(exit).toHaveBeenCalledWith(1)
     })
 
-    it('drops the task’s promise, so a rejection is unhandled', () => {
-      // Defect: the handler neither returns nor catches validate's promise.
-      // A rejection (e.g. readdir ENOENT on a missing project, which is how
-      // a missing project actually fails because of #736) becomes an
-      // unhandled rejection: Node crashes with a stack trace, not through
-      // the logger, and yargs never sees it.
-      const rejection = Promise.reject(new Error('ENOENT'))
-      validate.mockReturnValueOnce(rejection)
+    it('exits 1 on any other rejection, printing it through the logger', async () => {
+      // Issue 740: the handler used to drop validate's promise, so a
+      // rejection (e.g. readdir ENOENT on a missing project, which is how a
+      // missing project actually fails because of #736) was unhandled: Node
+      // crashed with a stack trace, not through the logger.
+      validate.mockRejectedValueOnce(new Error('ENOENT'))
 
-      const result = check.handler({ project: 'missing' })
-      // Handle it here so Jest does not fail on the unhandled rejection.
-      rejection.catch(() => undefined)
+      await check.handler({ project: 'missing' })
 
-      expect(result).toBeUndefined()
-      expect(exit).not.toHaveBeenCalled()
+      expect(log.errors.map((e) => e.message)).toEqual(['ENOENT'])
+      expect(exit).toHaveBeenCalledWith(1)
     })
   })
 })

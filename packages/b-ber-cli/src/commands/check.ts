@@ -1,6 +1,7 @@
 import { fail } from '@canopycanopycanopy/b-ber-lib/utils'
 import { validate } from '@canopycanopycanopy/b-ber-tasks'
 import type { Arguments, Argv } from 'yargs'
+import { exitOnFailure } from '../lib/exit'
 
 const command = 'check [project]'
 
@@ -17,10 +18,9 @@ const builder = (yargs: Argv) =>
     .fail((msg, err) => fail(msg, err, yargs))
     .usage(`\nUsage: $0 check\n\n${describe}`)
 
-const handler = (argv: Arguments<{ project?: string }>) => {
-  const project = argv.project || process.cwd()
-  validate({ project })
-}
+const handler = exitOnFailure((argv: Arguments<{ project?: string }>) =>
+  validate({ project: argv.project || process.cwd() })
+)
 
 export default {
   command,

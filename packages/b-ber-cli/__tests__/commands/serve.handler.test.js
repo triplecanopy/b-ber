@@ -108,17 +108,22 @@ describe('serve handler', () => {
       expect(exit).toHaveBeenCalledWith(1)
     })
 
-    it('hands a rejection to yargs, which reports it through the command’s fail handler', async () => {
-      // Defect: that handler is b-ber-lib's `fail`, which shows help and
-      // calls process.exit(0).
+    it('exits 1 on any other rejection, printing it, without reaching yargs', async () => {
+      // Issue 740: the rejection used to reach the command's fail handler,
+      // b-ber-lib's `fail`, which showed help and exited 0.
       const error = new Error('port in use')
-      const { utils } = runCli(['serve', 'reader'], ({ tasks, log }) => {
-        tasks.serve.mockRejectedValue(error)
-        spyOnLogger(log)
-      })
+      const { utils, log: isolatedLog } = runCli(
+        ['serve', 'reader'],
+        ({ tasks, log }) => {
+          tasks.serve.mockRejectedValue(error)
+          spyOnLogger(log)
+        }
+      )
       await flushPromises()
 
-      expect(utils.fail).toHaveBeenCalledWith(null, error, expect.anything())
+      expect(isolatedLog.errors.map((e) => e.message)).toEqual(['port in use'])
+      expect(exit).toHaveBeenCalledWith(1)
+      expect(utils.fail).not.toHaveBeenCalled()
     })
   })
 })

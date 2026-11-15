@@ -3,7 +3,8 @@ import path from 'node:path'
 import fs from 'fs-extra'
 import Yaml from '../src/Yaml'
 
-// Prevent the logger from calling process.exit on typeCheck errors
+// A mocked logger, so that log.error records typeCheck errors instead of
+// throwing
 jest.mock('@canopycanopycanopy/b-ber-logger')
 
 let tmpDir

@@ -3,7 +3,8 @@ import path from 'node:path'
 import fs from 'fs-extra'
 import YamlAdaptor from '../src/YamlAdaptor'
 
-// Prevent the logger from calling process.exit when testing error paths
+// A mocked logger, so that log.error records the error paths these tests take
+// instead of throwing
 jest.mock('@canopycanopycanopy/b-ber-logger')
 
 // Every expected value in this file is what js-yaml 3's safeLoad/safeDump

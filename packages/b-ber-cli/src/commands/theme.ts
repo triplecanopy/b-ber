@@ -1,21 +1,22 @@
 import Theme from '@canopycanopycanopy/b-ber-lib/Theme'
 import { ensure, fail } from '@canopycanopycanopy/b-ber-lib/utils'
 import type { Arguments, Argv } from 'yargs'
+import { exitOnFailure } from '../lib/exit'
 
 const _command = 'theme <command> [options]'
 const describe = "Manage a project's theme"
 
-const handler = (args: Arguments<{ command?: string; options?: string }>) =>
-  ensure()
-    .then(async () => {
-      // `choices` in the builder restricts `command` to these two.
-      const command = args.command as 'set' | 'list'
-      const options = args.options as string
-      // Awaited rather than returned: yargs wants the handler to resolve to
-      // void, and discards the value either way.
-      await Theme[command](options)
-    })
-    .catch(console.error)
+const handler = exitOnFailure(
+  async (args: Arguments<{ command?: string; options?: string }>) => {
+    await ensure()
+    // `choices` in the builder restricts `command` to these two.
+    const command = args.command as 'set' | 'list'
+    const options = args.options as string
+    // Awaited rather than returned: yargs wants the handler to resolve to
+    // void, and discards the value either way.
+    await Theme[command](options)
+  }
+)
 
 const builder = (yargs: Argv) =>
   yargs

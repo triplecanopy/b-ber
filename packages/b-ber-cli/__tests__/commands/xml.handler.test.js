@@ -33,8 +33,9 @@ beforeEach(() => {
 afterEach(() => jest.restoreAllMocks())
 
 describe('xml handler', () => {
-  it('is the xml task itself', () => {
-    expect(xml.handler).toBe(xmlTask)
+  it('runs the xml task, without passing it argv', async () => {
+    await xml.handler({})
+    expect(xmlTask).toHaveBeenCalledWith()
   })
 
   it('is not exported from the commands index, so `bber xml` does not exist', () => {
@@ -44,7 +45,6 @@ describe('xml handler', () => {
   })
 
   it('exits 1 when the task’s failure reaches log.error', async () => {
-    // TASK-046
     xmlTask.mockImplementationOnce(async () => {
       log.error('xml failed')
     })

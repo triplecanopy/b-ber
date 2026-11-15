@@ -39,8 +39,10 @@ beforeEach(() => {
 afterEach(() => jest.restoreAllMocks())
 
 describe('deploy handler', () => {
-  it('is the deploy task itself, so it receives the parsed argv untouched', () => {
-    expect(deploy.handler).toBe(deployTask)
+  it('hands the deploy task the parsed argv untouched', async () => {
+    const argv = { yes: true, builds: ['epub'] }
+    await deploy.handler(argv)
+    expect(deployTask).toHaveBeenCalledWith(argv)
   })
 
   it('returns the task’s promise to yargs', async () => {
@@ -99,8 +101,7 @@ describe('deploy handler', () => {
   describe('when the task fails', () => {
     it('exits 1 when the failure reaches log.error, as the task’s own checks do', async () => {
       // e.g. missing AWS credentials or bucket_url: the deploy task calls
-      // log.error and relies on it to stop the process. TASK-046: once
-      // log.error stops exiting, the CLI has to supply this exit itself.
+      // log.error, which throws, and the handler turns that into the exit.
       deployTask.mockImplementationOnce(async () => {
         log.error('[bucketURL] must be set in config.yml to deploy the project')
       })
@@ -111,17 +112,24 @@ describe('deploy handler', () => {
       expect(exit).toHaveBeenCalledWith(1)
     })
 
-    it('hands a rejection to yargs, which reports it through the command’s fail handler', async () => {
-      // Defect: the fail handler is b-ber-lib's `fail`, which shows help and
-      // calls process.exit(0), so a failed deploy exits with status 0.
+    it('exits 1 on any other rejection, printing it, without reaching yargs', async () => {
+      // Issue 740: the rejection used to reach the command's fail handler,
+      // b-ber-lib's `fail`, which showed help and exited 0.
       const error = new Error('aws s3 sync failed')
-      const { utils } = runCli(['deploy', '-y'], ({ tasks, log }) => {
-        tasks.deploy.mockRejectedValue(error)
-        spyOnLogger(log)
-      })
+      const { utils, log: isolatedLog } = runCli(
+        ['deploy', '-y'],
+        ({ tasks, log }) => {
+          tasks.deploy.mockRejectedValue(error)
+          spyOnLogger(log)
+        }
+      )
       await flushPromises()
 
-      expect(utils.fail).toHaveBeenCalledWith(null, error, expect.anything())
+      expect(isolatedLog.errors.map((e) => e.message)).toEqual([
+        'aws s3 sync failed',
+      ])
+      expect(exit).toHaveBeenCalledWith(1)
+      expect(utils.fail).not.toHaveBeenCalled()
     })
   })
 })

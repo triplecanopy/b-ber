@@ -8,6 +8,7 @@ import {
   parseConfigFile,
   withConfigOptions,
 } from '../lib/config-options'
+import { exitOnFailure } from '../lib/exit'
 
 const command = 'new <name>'
 const describe = 'Create a new project'
@@ -23,7 +24,7 @@ const builder = (yargs: Argv) =>
     .alias('h', 'help')
     .usage(`\nUsage: $0 new "My Project"\n\n${describe}`)
 
-const handler = async (argv: Arguments<{ name?: string }>) => {
+const handler = exitOnFailure(async (argv: Arguments<{ name?: string }>) => {
   const { _, $0, name, config, ...configOptions } = argv
 
   let projectConfig: Record<string, unknown> = {}
@@ -51,8 +52,8 @@ const handler = async (argv: Arguments<{ name?: string }>) => {
     name: name as string,
     config: projectConfig,
   })
-  initializer.start()
-}
+  await initializer.start()
+})
 
 export default {
   command,

@@ -38,8 +38,9 @@ beforeEach(() => {
 afterEach(() => jest.restoreAllMocks())
 
 describe('opf handler', () => {
-  it('is the opf task itself', () => {
-    expect(opf.handler).toBe(opfTask)
+  it('runs the opf task, without passing it argv', async () => {
+    await opf.handler({ _: ['opf'] })
+    expect(opfTask).toHaveBeenCalledWith()
   })
 
   it('is reached through yargs', () => {
@@ -52,7 +53,6 @@ describe('opf handler', () => {
 
   describe('when the task fails', () => {
     it('exits 1 when the failure reaches log.error', async () => {
-      // TASK-046
       opfTask.mockImplementationOnce(async () => {
         log.error('opf failed')
       })
@@ -63,23 +63,20 @@ describe('opf handler', () => {
       expect(exit).toHaveBeenCalledWith(1)
     })
 
-    it('hands a rejection to yargs, which prints the usage text and does not exit', async () => {
-      // Defect: opf's builder registers no fail handler, so the rejection
-      // falls through to app.ts's `.fail(showCustomHelp)`, which prints the
-      // usage text. The error itself is never printed, and the process ends
-      // with status 0.
+    it('exits 1 on any other rejection, printing it, without reaching yargs', async () => {
+      // Issue 740: the rejection used to fall through to app.ts's
+      // `.fail(showCustomHelp)`, which printed the usage text instead of the
+      // error, and the process ended with status 0.
       const error = new Error('opf failed')
-      const { utils } = runCli(['opf'], ({ tasks, log }) => {
+      const { log: isolatedLog } = runCli(['opf'], ({ tasks, log }) => {
         tasks.opf.mockRejectedValue(error)
         spyOnLogger(log)
       })
       await flushPromises()
 
-      expect(utils.fail).not.toHaveBeenCalled()
-      expect(console.log).toHaveBeenCalledWith(
-        expect.stringContaining('Usage: bber <command> [options]')
-      )
-      expect(exit).not.toHaveBeenCalled()
+      expect(isolatedLog.errors.map((e) => e.message)).toEqual(['opf failed'])
+      expect(console.log).not.toHaveBeenCalled()
+      expect(exit).toHaveBeenCalledWith(1)
     })
   })
 })

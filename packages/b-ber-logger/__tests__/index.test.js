@@ -1,462 +1,481 @@
 import log from '../src'
+import Logger, { floatFormat } from '../src/Logger'
 import Timer from '../src/Timer'
 
-const exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => {})
+// Everything the logger prints, one entry per write, ANSI codes and all
+let output
+const printed = () => output.join('')
+
 const writeSpy = jest
   .spyOn(process.stdout, 'write')
-  .mockImplementation(() => {})
-
-// TTY methods used in the 'end' event listener — may not exist in test env
-if (!process.stdout.clearLine) process.stdout.clearLine = () => {}
-if (!process.stdout.cursorTo) process.stdout.cursorTo = () => {}
-
-const clearLineSpy = jest
-  .spyOn(process.stdout, 'clearLine')
-  .mockImplementation(() => {})
-const cursorToSpy = jest
-  .spyOn(process.stdout, 'cursorTo')
-  .mockImplementation(() => {})
+  .mockImplementation((chunk) => {
+    output.push(String(chunk))
+    return true
+  })
 
 beforeEach(() => {
+  output = []
   log.reset()
-  log.logLevel = 2
+  log.configure({ logLevel: 2, boringOutput: true, summary: false })
   log.taskWarnings = 0
   log.taskErrors = 0
-  log.indentLevel = 0
-  log.increment = 0
-  log.boringOutput = true // suppress chalk codes in string assertions
-  exitSpy.mockClear()
-  writeSpy.mockClear()
-  clearLineSpy.mockClear()
-  cursorToSpy.mockClear()
 })
 
-afterAll(() => {
-  exitSpy.mockRestore()
-  writeSpy.mockRestore()
-  clearLineSpy.mockRestore()
-  cursorToSpy.mockRestore()
+afterAll(() => writeSpy.mockRestore())
+
+describe('configuration', () => {
+  test('defaults to log level 2, colour on, no summary', () => {
+    const logger = new Logger()
+    expect(logger.logLevel).toBe(2)
+    expect(logger.boringOutput).toBe(false)
+    expect(logger.summary).toBe(false)
+  })
+
+  test('takes its options in the constructor', () => {
+    const logger = new Logger({ logLevel: 4, boringOutput: true })
+    expect(logger.logLevel).toBe(4)
+    expect(logger.boringOutput).toBe(true)
+  })
+
+  test('configure applies only the options that are set', () => {
+    const logger = new Logger({ logLevel: 3, boringOutput: true })
+    logger.configure({ summary: true })
+    expect(logger.logLevel).toBe(3)
+    expect(logger.boringOutput).toBe(true)
+    expect(logger.summary).toBe(true)
+  })
+
+  test('does not read process.argv', () => {
+    const saved = process.argv
+    process.argv = ['node', 'bber', '--quiet', '--no-color', '--log-level=5']
+    try {
+      const logger = new Logger()
+      expect(logger.logLevel).toBe(2)
+      expect(logger.boringOutput).toBe(false)
+    } finally {
+      process.argv = saved
+    }
+  })
 })
 
 describe('log.reset()', () => {
-  test('clears the errors array', () => {
-    log.errors.push({ message: 'err', formatted: '', stack: '' })
+  test('clears the recorded errors and warnings', () => {
+    log.warn('a warning')
+    log.report('an error')
     log.reset()
     expect(log.errors).toHaveLength(0)
-  })
-
-  test('clears the warnings array', () => {
-    log.warnings.push({ message: 'warn', formatted: '', stack: '' })
-    log.reset()
     expect(log.warnings).toHaveLength(0)
   })
 })
 
-describe('log.configure()', () => {
-  beforeEach(() => {
-    log.settings = {
-      quiet: false,
-      verbose: false,
-      debug: false,
-      summary: false,
-      'no-color': false,
-      'log-level': 2,
+describe('line format', () => {
+  test.each([
+    ['error', () => log.report('broken'), 'b-ber ERR! broken\n'],
+    ['warn', () => log.warn('careful'), 'b-ber WARN careful\n'],
+    ['notice', () => log.notice('hello'), 'b-ber info hello\n'],
+  ])('%s has its own fixed-width label', (_level, fn, line) => {
+    fn()
+    expect(printed()).toBe(line)
+  })
+
+  test('info uses the info label, at --verbose', () => {
+    log.configure({ logLevel: 4 })
+    log.info('detail')
+    expect(printed()).toMatch(/^\[[^\]]+\] b-ber info detail\n$/)
+  })
+
+  test('every line carries a timestamp from log level 3', () => {
+    log.configure({ logLevel: 3 })
+    log.notice('n')
+    log.warn('w')
+    log.report('e')
+    const lines = printed().trim().split('\n')
+    expect(lines).toHaveLength(3)
+    for (const line of lines) {
+      expect(line).toMatch(
+        /^\[\d{4}-\d\d-\d\dT[^\]]+Z\] b-ber (info|WARN|ERR!) /
+      )
     }
   })
 
-  test('sets logLevel from settings["log-level"]', () => {
-    log.settings['log-level'] = 3
-    log.configure()
-    expect(log.logLevel).toBe(3)
+  test('without colour, [highlighted] text keeps its brackets', () => {
+    log.notice('Applying configuration option [%s]:[%s]', 'env', 'prod')
+    expect(printed()).toBe(
+      'b-ber info Applying configuration option [env]:[prod]\n'
+    )
   })
 
-  test('quiet overrides logLevel to 0', () => {
-    log.settings.quiet = true
-    log.configure()
-    expect(log.logLevel).toBe(0)
+  test('{N} is formatted as a byte count', () => {
+    log.notice('copy [%s - {%d}]', 'a.jpg', 20480)
+    expect(printed()).toBe('b-ber info copy [a.jpg - 20.48 Kb]\n')
   })
 
-  test('verbose sets logLevel to 4', () => {
-    log.settings.verbose = true
-    log.configure()
-    expect(log.logLevel).toBe(4)
+  test('supports util.format placeholders', () => {
+    log.notice('%s and %d', 'one', 2)
+    expect(printed()).toBe('b-ber info one and 2\n')
   })
 
-  test('debug sets logLevel to 5', () => {
-    log.settings.debug = true
-    log.configure()
-    expect(log.logLevel).toBe(5)
+  test('trims and indents the continuation lines of a message', () => {
+    log.notice('first\n   second')
+    expect(printed()).toBe('b-ber info first\n      second\n')
   })
 
-  test('no-color sets boringOutput', () => {
-    log.boringOutput = false
-    log.settings['no-color'] = true
-    log.configure()
-    expect(log.boringOutput).toBe(true)
-  })
-})
-
-describe('log.warn()', () => {
-  test('increments taskWarnings', () => {
-    log.warn('test warning')
-    expect(log.taskWarnings).toBe(1)
-  })
-
-  test('pushes a structured entry to warnings array', () => {
-    log.warn('test warning')
-    expect(log.warnings).toHaveLength(1)
-    expect(log.warnings[0]).toHaveProperty('message')
-    expect(log.warnings[0]).toHaveProperty('stack')
-    expect(log.warnings[0]).toHaveProperty('formatted')
-  })
-
-  test('writes output to stdout', () => {
-    log.warn('test warning')
-    expect(writeSpy).toHaveBeenCalled()
-  })
-
-  test('does nothing when logLevel < 2', () => {
-    log.logLevel = 1
-    log.warn('silent warning')
-    expect(log.taskWarnings).toBe(0)
-    expect(writeSpy).not.toHaveBeenCalled()
-  })
-
-  test('handles Error instances', () => {
-    log.warn(new Error('err message'))
-    expect(log.taskWarnings).toBe(1)
+  test('writes no ANSI codes with boringOutput', () => {
+    log.report('e')
+    log.warn('w')
+    // biome-ignore lint/suspicious/noControlCharactersInRegex: matches an ANSI escape
+    expect(printed()).not.toMatch(/\u001b\[/)
   })
 })
 
 describe('log.error()', () => {
-  test('calls process.exit(1)', () => {
-    log.error('something failed')
-    expect(exitSpy).toHaveBeenCalledWith(1)
+  test('throws, so the code after it does not run', () => {
+    let after = false
+    expect(() => {
+      log.error('something failed')
+      after = true
+    }).toThrow('something failed')
+    expect(after).toBe(false)
   })
 
-  test('increments taskErrors', () => {
-    log.error('something failed')
+  test('never exits the process', () => {
+    const exit = jest.spyOn(process, 'exit').mockImplementation(() => {})
+    expect(() => log.error('something failed')).toThrow()
+    expect(exit).not.toHaveBeenCalled()
+    exit.mockRestore()
+  })
+
+  test('throws an Error it is given as it is', () => {
+    const err = new Error('real error')
+    expect(() => log.error(err)).toThrow(err)
+    expect(log.errors[0].message).toBe('real error')
+  })
+
+  test('formats a message with placeholders, as the other levels do', () => {
+    expect(() => log.error('Image not found [%s]', 'a.jpg')).toThrow(
+      'Image not found [a.jpg]'
+    )
+    expect(printed()).toBe('b-ber ERR! Image not found [a.jpg]\n')
+  })
+
+  test('the thrown message is plain text, whatever the colour setting', () => {
+    log.configure({ boringOutput: false })
+    expect(() => log.error('missing [x]')).toThrow(/^missing \[x\]$/)
+  })
+
+  test('rejects the chain when used as a promise catch handler', async () => {
+    const err = new Error('task failed')
+    await expect(Promise.reject(err).catch(log.error)).rejects.toBe(err)
+    expect(log.errors).toHaveLength(1)
+  })
+
+  test('prints an error once, however many catch handlers it passes', async () => {
+    const err = new Error('task failed')
+    const chain = Promise.reject(err)
+      .catch(log.error)
+      .catch(log.error)
+      .catch(log.error)
+    await expect(chain).rejects.toBe(err)
+    expect(log.errors).toHaveLength(1)
+    expect(printed()).toBe('b-ber ERR! task failed\n')
+  })
+
+  test('records a structured entry and counts it for the task', () => {
+    expect(() => log.error('something failed')).toThrow()
+    expect(log.taskErrors).toBe(1)
+    expect(log.errors[0]).toEqual({
+      message: 'something failed',
+      stack: expect.any(String),
+      formatted: 'b-ber ERR! something failed',
+    })
+  })
+
+  test('reports each element of an array as its own error', () => {
+    expect(() => log.error([new Error('first'), 'second'])).toThrow(
+      'first\nsecond'
+    )
+    expect(log.taskErrors).toBe(2)
+    expect(printed()).toBe('b-ber ERR! first\nb-ber ERR! second\n')
+  })
+
+  test.each([0, 1])('still throws at log level %d', (logLevel) => {
+    // Issue 744: the log level controls printing, never whether the error
+    // stops the build
+    log.configure({ logLevel })
+    expect(() => log.error('silent')).toThrow('silent')
     expect(log.taskErrors).toBe(1)
   })
 
-  test('pushes a structured entry to errors array', () => {
-    log.error('something failed')
+  test('prints nothing at log level 0', () => {
+    log.configure({ logLevel: 0 })
+    expect(() => log.error('silent')).toThrow()
+    expect(printed()).toBe('')
+  })
+
+  test('prints the stack trace from log level 4', () => {
+    log.configure({ logLevel: 4 })
+    expect(() => log.error(new Error('with stack'))).toThrow()
+    expect(printed()).toMatch(/ERR! with stack\n\s+at /)
+  })
+})
+
+describe('log.report() / log.isReported()', () => {
+  test('report prints and returns the error without throwing', () => {
+    const err = log.report('not thrown')
+    expect(err).toBeInstanceOf(Error)
+    expect(err.message).toBe('not thrown')
+    expect(printed()).toBe('b-ber ERR! not thrown\n')
+  })
+
+  test('isReported tells reported errors from others', () => {
+    const reported = log.report(new Error('a'))
+    expect(log.isReported(reported)).toBe(true)
+    expect(log.isReported(new Error('b'))).toBe(false)
+    expect(log.isReported('a string')).toBe(false)
+    expect(log.isReported(undefined)).toBe(false)
+  })
+
+  test('reporting an error again returns it without printing it again', () => {
+    const err = log.report('once')
+    expect(log.report(err)).toBe(err)
     expect(log.errors).toHaveLength(1)
-    expect(log.errors[0]).toHaveProperty('message')
-    expect(log.errors[0]).toHaveProperty('stack')
-    expect(log.errors[0]).toHaveProperty('formatted')
   })
 
-  test('captures Error instance message', () => {
-    log.error(new Error('real error'))
-    expect(log.errors[0].message).toContain('real error')
+  test('what log.error throws is reported', () => {
+    try {
+      log.error('thrown')
+    } catch (err) {
+      expect(log.isReported(err)).toBe(true)
+    }
+  })
+})
+
+describe('log.warn()', () => {
+  test('records a structured entry and counts it for the task', () => {
+    log.warn('test warning')
+    expect(log.taskWarnings).toBe(1)
+    expect(log.warnings[0]).toEqual({
+      message: 'test warning',
+      stack: expect.any(String),
+      formatted: 'b-ber WARN test warning',
+    })
   })
 
-  test('captures plain string message', () => {
-    log.error('string error')
-    expect(log.errors[0].message).toBeTruthy()
+  test('does nothing below log level 2', () => {
+    log.configure({ logLevel: 1 })
+    log.warn('silent warning')
+    expect(log.taskWarnings).toBe(0)
+    expect(printed()).toBe('')
   })
 
-  test('processes an array of messages', () => {
-    log.error(['first', 'second'])
-    expect(log.taskErrors).toBe(2)
+  test('uses the message of an Error', () => {
+    log.warn(new Error('err message'))
+    expect(log.warnings[0].message).toBe('err message')
   })
 
-  test('writes to stdout', () => {
-    log.error('something failed')
-    expect(writeSpy).toHaveBeenCalled()
-  })
-
-  test('does nothing when logLevel < 1', () => {
-    log.logLevel = 0
-    log.error('silent')
-    expect(exitSpy).not.toHaveBeenCalled()
-    expect(log.taskErrors).toBe(0)
+  test('prints the stack trace from log level 4', () => {
+    log.configure({ logLevel: 4 })
+    log.warn('w')
+    expect(printed()).toMatch(/WARN w\n\s+at /)
   })
 })
 
 describe('log.notice()', () => {
-  test('writes to stdout regardless of logLevel', () => {
-    log.logLevel = 0
-    log.notice('always prints')
-    expect(writeSpy).toHaveBeenCalled()
+  test('prints at log level 1', () => {
+    log.configure({ logLevel: 1 })
+    log.notice('shown')
+    expect(printed()).toBe('b-ber info shown\n')
   })
 
-  test('writes at high logLevel too', () => {
-    log.logLevel = 5
-    log.notice('high verbosity')
-    expect(writeSpy).toHaveBeenCalled()
-  })
-})
-
-describe('log.notify()', () => {
-  test('dispatches to the named method with data', () => {
-    const orig = log.warn
-    log.warn = jest.fn()
-    log.notify('warn', 'dispatched data')
-    expect(log.warn).toHaveBeenCalledWith('dispatched data')
-    log.warn = orig
-  })
-})
-
-describe('log.floatFormat()', () => {
-  test('formats 1-digit numbers as B', () => {
-    expect(log.floatFormat(1)).toContain('B')
-  })
-
-  test('formats 3-digit numbers as B', () => {
-    expect(log.floatFormat(100)).toContain('B')
-  })
-
-  test('formats 4-digit numbers as Kb', () => {
-    expect(log.floatFormat(1024)).toContain('Kb')
-  })
-
-  test('formats 7-digit numbers as Mb', () => {
-    expect(log.floatFormat(1500000)).toContain('Mb')
-  })
-
-  test('formats 10-digit numbers as Gb', () => {
-    expect(log.floatFormat(1000000000)).toContain('Gb')
-  })
-})
-
-describe('log.indent() / indentLevel', () => {
-  test('returns empty string at default level', () => {
-    expect(log.indent()).toBe('')
-  })
-
-  test('incrementIndent raises indentLevel by increment', () => {
-    log.increment = 2
-    log.incrementIndent()
-    expect(log.indentLevel).toBe(2)
-  })
-
-  test('decrementIndent lowers indentLevel by increment', () => {
-    log.increment = 2
-    log.indentLevel = 4
-    log.decrementIndent()
-    expect(log.indentLevel).toBe(2)
-  })
-})
-
-describe('log.incrementCounter() / decrementCounter()', () => {
-  test('incrementCounter raises taskCounter', () => {
-    const before = log.taskCounter
-    log.incrementCounter()
-    expect(log.taskCounter).toBe(before + 1)
-  })
-
-  test('decrementCounter lowers taskCounter', () => {
-    const before = log.taskCounter
-    log.decrementCounter()
-    expect(log.taskCounter).toBe(before - 1)
-  })
-})
-
-describe('log.counter()', () => {
-  test('increments taskCounter and returns a string', () => {
-    const before = log.taskCounter
-    const result = log.counter()
-    expect(log.taskCounter).toBe(before + 1)
-    expect(typeof result).toBe('string')
-  })
-})
-
-describe('log.composeMessage()', () => {
-  test('formats a plain string', () => {
-    expect(log.composeMessage(['hello world'])).toContain('hello world')
-  })
-
-  test('formats via util.format patterns', () => {
-    expect(log.composeMessage(['%s %s', 'foo', 'bar'])).toContain('foo bar')
-  })
-
-  test('replaces {N} with a floatFormat value', () => {
-    expect(log.composeMessage(['{1024}'])).toContain('Kb')
-  })
-
-  test('trims each line', () => {
-    expect(log.composeMessage(['  padded  '])).toBe('padded')
-  })
-})
-
-describe('log.decorate()', () => {
-  test('returns a string', () => {
-    expect(typeof log.decorate('hello')).toBe('string')
-  })
-
-  test('passes through value without chalk when boringOutput is true', () => {
-    expect(log.decorate('plain')).toBe('plain')
-  })
-
-  test('handles array input', () => {
-    expect(typeof log.decorate(['a', 'b'])).toBe('string')
-  })
-
-  test('handles undefined without throwing', () => {
-    expect(() => log.decorate(undefined)).not.toThrow()
-  })
-})
-
-describe('log.newLine()', () => {
-  test('writes a newline to stdout', () => {
-    log.newLine()
-    expect(writeSpy).toHaveBeenCalledWith('\n')
-  })
-})
-
-describe('log.debug()', () => {
-  test('is callable without error', () => {
-    expect(() => log.debug('anything')).not.toThrow()
-  })
-})
-
-describe('log.printWarnings() / printErrors()', () => {
-  test('printWarnings does not throw', () => {
-    expect(() => log.printWarnings('test-task')).not.toThrow()
-  })
-
-  test('printErrors does not throw', () => {
-    expect(() => log.printErrors('test-task')).not.toThrow()
+  test('prints nothing at log level 0', () => {
+    log.configure({ logLevel: 0 })
+    log.notice('quiet')
+    expect(printed()).toBe('')
   })
 })
 
 describe('log.info()', () => {
-  test('does not write when logLevel < 4', () => {
-    log.logLevel = 2
+  test('prints nothing below log level 4', () => {
+    log.configure({ logLevel: 3 })
     log.info('silent info')
-    expect(writeSpy).not.toHaveBeenCalled()
+    expect(printed()).toBe('')
   })
 
-  test('writes to stdout when logLevel >= 4', () => {
-    log.logLevel = 4
-    log.info('verbose info')
-    expect(writeSpy).toHaveBeenCalled()
-  })
-})
-
-describe('log.inspect()', () => {
-  test('calls console.log', () => {
-    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {})
-    log.inspect({ foo: 'bar' })
-    expect(consoleSpy).toHaveBeenCalled()
-    consoleSpy.mockRestore()
+  test('prints its stack trace at log level 5', () => {
+    log.configure({ logLevel: 5 })
+    log.info('traced')
+    expect(printed()).toMatch(/info traced\n\s+at /)
   })
 })
 
-describe('log.trace()', () => {
-  test('is callable without error', () => {
-    expect(() => log.trace()).not.toThrow()
+describe('the other methods', () => {
+  test('debug and trace are no-ops', () => {
+    log.configure({ logLevel: 5 })
+    log.debug('anything')
+    log.trace('anything')
+    expect(printed()).toBe('')
+  })
+
+  test('inspect prints the value in full', () => {
+    log.inspect({ foo: { bar: { baz: 1 } } })
+    expect(printed()).toContain('baz: 1')
+  })
+
+  test('printFailure prints the exit code as an error line', () => {
+    log.printFailure(1)
+    expect(printed()).toBe('b-ber ERR! exited with code 1\n')
+  })
+
+  test('printFailure is silent at log level 0', () => {
+    log.configure({ logLevel: 0 })
+    log.printFailure(1)
+    expect(printed()).toBe('')
+  })
+
+  test('printVersion prints a notice', () => {
+    log.printVersion('1.2.3')
+    expect(printed()).toBe('b-ber info version 1.2.3\n')
+  })
+
+  test.each([
+    [['a', 'b'], 'b-ber info Preparing to run 2 tasks\n'],
+    [['a'], 'b-ber info Preparing to run 1 task\n'],
+  ])('registerSequence announces %j', (sequence, line) => {
+    log.registerSequence({}, 'build', sequence)
+    expect(printed()).toBe(line)
+  })
+
+  test('registerSequence prints nothing at log level 0', () => {
+    log.configure({ logLevel: 0 })
+    log.registerSequence({}, 'build', ['a'])
+    expect(printed()).toBe('')
   })
 })
 
-describe('log.registerSequence()', () => {
-  test('writes to stdout when logLevel >= 1', () => {
-    log.logLevel = 2
-    log.registerSequence({}, 'build', ['task1', 'task2'])
-    expect(writeSpy).toHaveBeenCalled()
-  })
+describe('build progress events', () => {
+  const state = {
+    config: { theme: 'serif', nested: { env: 'dev' } },
+    metadata: { json: () => [{ term: 'title', value: 'A Book' }] },
+    toc: [{ title: 'One', name: 'one', nodes: [{ name: 'two' }] }],
+  }
 
-  test('does nothing when logLevel < 1', () => {
-    log.logLevel = 0
-    log.registerSequence({}, 'build', ['task1'])
-    expect(writeSpy).not.toHaveBeenCalled()
-  })
-})
-
-describe('log.wrap()', () => {
-  test('joins an array of strings', () => {
-    const result = log.wrap(['foo', 'bar', 'baz'], '')
-    expect(result).toContain('foo')
-    expect(result).toContain('bar')
-  })
-
-  test('returns a string', () => {
-    expect(typeof log.wrap(['a', 'b'], '')).toBe('string')
-  })
-})
-
-describe('Timer events (begin / end / done)', () => {
-  test('begin event resets taskWarnings and taskErrors', () => {
+  test('start emits begin, which resets the task counts', () => {
+    const begin = jest.fn()
+    log.on('begin', begin)
     log.taskWarnings = 5
     log.taskErrors = 3
-    log.emit('begin', { task: 'test-task' })
+
+    log.notify('start', 'render')
+
+    expect(begin).toHaveBeenCalledWith({ task: 'render' })
+    expect(log.task).toBe('render')
     expect(log.taskWarnings).toBe(0)
     expect(log.taskErrors).toBe(0)
+    log.off('begin', begin)
   })
 
-  test('done event writes to stdout when logLevel >= 1', () => {
-    log.emit('done', { taskTimes: [], formattedStartDate: '', sequenceEnd: '' })
-    expect(writeSpy).toHaveBeenCalled()
+  test('stop emits end with the task time', () => {
+    const end = jest.fn()
+    log.on('end', end)
+    log.notify('start', 'render')
+    log.notify('stop', 'render')
+
+    expect(end).toHaveBeenCalledWith({
+      task: 'render',
+      taskTime: expect.objectContaining({
+        taskName: 'render',
+        totalMs: expect.stringMatching(/^\d+\.\d{3}ms$/),
+      }),
+    })
+    log.off('end', end)
   })
 
-  test('done event does nothing when logLevel < 1', () => {
-    log.logLevel = 0
-    log.emit('done', { taskTimes: [] })
-    expect(writeSpy).not.toHaveBeenCalled()
+  test('a finished task prints a line from log level 3', () => {
+    log.configure({ logLevel: 3 })
+    log.notify('start', 'render')
+    log.notify('stop', 'render')
+    expect(printed()).toMatch(/b-ber info render done \(\d+\.\d{3}ms\)\n$/)
   })
 
-  test('end event decrements indentLevel', () => {
-    log.increment = 2
-    log.indentLevel = 4
-    log.emit('end', { task: 'test', taskTime: { totalMs: '100ms' } })
-    expect(log.indentLevel).toBe(2)
+  test('a finished task prints nothing below log level 3', () => {
+    log.notify('start', 'render')
+    log.notify('stop', 'render')
+    expect(printed()).toBe('')
   })
-})
 
-describe('log.warn() at logLevel > 2', () => {
-  test('includes timestamp prefix at logLevel 3', () => {
-    log.logLevel = 3
-    log.warn('verbose warning')
-    expect(log.taskWarnings).toBe(1)
-    expect(writeSpy).toHaveBeenCalled()
-  })
-})
+  test('done emits done with the state and run time, and prints success', () => {
+    const done = jest.fn()
+    log.on('done', done)
+    log.notify('done', { state })
 
-describe('log.decorate() with chalk enabled', () => {
-  test('applies chalk styling when boringOutput is false', () => {
-    log.boringOutput = false
-    const result = log.decorate('styled', 'green')
-    // With chalk enabled, the output is wrapped in ANSI codes
-    expect(typeof result).toBe('string')
-    expect(result).toContain('styled')
-  })
-})
-
-describe('Timer instance methods', () => {
-  test('start() sets taskBegin and emits begin event', () => {
-    log.emit = jest.fn()
-    log.start('my-task')
-    expect(log.taskBegin).toBeTruthy()
-    expect(log.emit).toHaveBeenCalledWith(
-      'begin',
-      expect.objectContaining({ task: 'my-task' })
+    expect(done).toHaveBeenCalledWith(
+      expect.objectContaining({
+        state,
+        taskTimes: expect.any(Array),
+        sequenceEnd: expect.stringMatching(/ms$/),
+      })
     )
-    log.emit = log.constructor.prototype.emit.bind(log)
+    expect(printed()).toBe('b-ber info Build succeeded\n')
+    log.off('done', done)
   })
 
-  test('stop() records task time and emits end event', () => {
-    log.emit = jest.fn()
-    log.taskBegin = process.hrtime()
-    log.stop('my-task')
-    expect(log.taskTimes).toHaveLength(1)
-    expect(log.emit).toHaveBeenCalledWith(
-      'end',
-      expect.objectContaining({ task: 'my-task' })
-    )
-    log.emit = log.constructor.prototype.emit.bind(log)
+  test('done prints nothing at log level 0', () => {
+    log.configure({ logLevel: 0 })
+    log.notify('done', { state })
+    expect(printed()).toBe('')
+  })
+
+  test('done prints the summary when it is enabled', () => {
+    log.configure({ summary: true })
+    log.notify('done', { state })
+    const text = printed()
+    for (const heading of [
+      'Stats',
+      'Configuration',
+      'Metadata',
+      'Navigation',
+    ]) {
+      expect(text).toContain(`b-ber info ${heading}\n`)
+    }
+    expect(text).toContain('b-ber info theme: serif\n')
+    expect(text).toContain('b-ber info   env: dev\n')
+    expect(text).toContain('b-ber info title: A Book\n')
+    expect(text).toContain('b-ber info One: one\n')
+    expect(text).toContain('b-ber info   [no title]: two\n')
   })
 })
 
-describe('Timer static methods', () => {
-  test('timeFormat returns a string with ms', () => {
-    expect(Timer.timeFormat([1, 500000])).toContain('ms')
+describe('floatFormat', () => {
+  test.each([
+    [1, '1.00 B'],
+    [100, '100.00 B'],
+    [1024, '1.02 Kb'],
+    [1500000, '1.50 Mb'],
+    [1000000000, '1.00 Gb'],
+    [5000000000000, '5000.00 Gb'],
+  ])('formats %d as %s', (n, text) => {
+    expect(floatFormat(n)).toBe(text)
+  })
+})
+
+describe('Timer', () => {
+  test('times each task from start to stop', () => {
+    const timer = new Timer()
+    timer.start()
+    const time = timer.stop('t')
+    expect(time.taskName).toBe('t')
+    expect(time.totalMs).toMatch(/^\d+\.\d{3}ms$/)
   })
 
-  test('dateFormat returns a non-empty string', () => {
-    const result = Timer.dateFormat()
-    expect(typeof result).toBe('string')
-    expect(result.length).toBeGreaterThan(0)
+  test('done lists every task timed', () => {
+    const timer = new Timer()
+    timer.start()
+    timer.stop('a')
+    timer.start()
+    timer.stop('b')
+    const run = timer.done()
+    expect(run.taskTimes.map((t) => t.taskName)).toEqual(['a', 'b'])
+    expect(run.formattedStartDate).toEqual(expect.any(String))
+    expect(run.formattedEndDate).toEqual(expect.any(String))
   })
 })

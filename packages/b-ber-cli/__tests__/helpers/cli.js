@@ -2,14 +2,14 @@
 //
 // The handler tests call each command's yargs handler directly, with
 // b-ber-tasks and b-ber-lib's State mocked, and the real b-ber-logger. The
-// logger is deliberately real: `log.error` ends in `process.exit(1)`
-// (b-ber-logger/src/error.ts), which is the behaviour TASK-046 removes, and
-// these tests are the gate for that change. Every assertion on it is
+// logger is deliberately real: `log.error` reports and throws, and the
+// handler's wrapper (src/lib/exit.ts) turns what it throws into
+// `process.exit(1)`. Every assertion on that is
 // `expect(exit).toHaveBeenCalledWith(1)` against the spy from
-// `mockProcessExit`, so the TASK-046 diff to these tests is a search for that.
+// `mockProcessExit`.
 
-// Resolves once every promise callback queued so far has run. The handlers do
-// not return their promise chains, so a test has to wait them out.
+// Resolves once every promise callback queued so far has run, for the runs
+// through yargs, which does not hand back the handler's promise.
 const flushPromises = () => new Promise((resolve) => setTimeout(resolve, 0))
 
 // A stand-in for b-ber-lib's State singleton. `config` is the real
@@ -33,26 +33,29 @@ const createMockState = () => {
   return state
 }
 
-// Replaces process.exit with a no-op, so code after `log.error` keeps
-// running. That is also what it will do once TASK-046 makes `log.error`
-// return, so the only assertion that changes is the one on this spy.
+// Replaces process.exit with a no-op, so that a test can assert on the exit
+// and carry on.
 const mockProcessExit = () => {
-  // log.error writes its report to stdout before it exits.
+  // The logger writes its report to stdout before the exit.
   jest.spyOn(process.stdout, 'write').mockImplementation(() => true)
   return jest.spyOn(process, 'exit').mockImplementation(() => undefined)
 }
 
 // Silences the logger's chatty levels so they can be asserted on. `error` is
-// spied on but passes through, so that it still reaches process.exit.
-const spyOnLogger = (log) => ({
-  warn: jest.spyOn(log, 'warn').mockImplementation(() => undefined),
-  notice: jest.spyOn(log, 'notice').mockImplementation(() => undefined),
-  info: jest.spyOn(log, 'info').mockImplementation(() => undefined),
-  registerSequence: jest
-    .spyOn(log, 'registerSequence')
-    .mockImplementation(() => undefined),
-  error: jest.spyOn(log, 'error'),
-})
+// spied on but passes through, so that it still throws and records the error
+// in `log.errors`, which this empties first.
+const spyOnLogger = (log) => {
+  log.reset()
+  return {
+    warn: jest.spyOn(log, 'warn').mockImplementation(() => undefined),
+    notice: jest.spyOn(log, 'notice').mockImplementation(() => undefined),
+    info: jest.spyOn(log, 'info').mockImplementation(() => undefined),
+    registerSequence: jest
+      .spyOn(log, 'registerSequence')
+      .mockImplementation(() => undefined),
+    error: jest.spyOn(log, 'error'),
+  }
+}
 
 const interopDefault = (mod) => (mod?.__esModule ? mod.default : mod)
 

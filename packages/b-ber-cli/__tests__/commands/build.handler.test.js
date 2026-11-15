@@ -133,12 +133,12 @@ describe('build handler', () => {
         () => new Promise((resolve) => (finishEpub = resolve))
       )
 
-      await build.handler({ _: ['build'], $0: 'bber' })
+      const handled = build.handler({ _: ['build'], $0: 'bber' })
       await flushPromises()
       expect(serialize).toHaveBeenCalledTimes(1)
 
       finishEpub()
-      await flushPromises()
+      await handled
       expect(serialize).toHaveBeenCalledTimes(FORMATS.length)
     })
   })
@@ -156,22 +156,24 @@ describe('build handler', () => {
     )
   })
 
-  it('resolves before the build has run', async () => {
-    // Defect: the handler does not return or await the ensure/serialize
-    // chain, so its promise says nothing about whether the build finished or
-    // failed. yargs therefore never sees a build failure.
+  it('resolves once the build has run', async () => {
+    // Issue 740: the handler used to resolve before the ensure/serialize
+    // chain had run, so nothing could see a build failure
     let finishEnsure
     ensure.mockReturnValueOnce(
       new Promise((resolve) => (finishEnsure = resolve))
     )
 
-    await expect(
-      build.handler({ _: ['build', 'epub'], $0: 'bber' })
-    ).resolves.toBeUndefined()
+    let resolved = false
+    const handled = build
+      .handler({ _: ['build', 'epub'], $0: 'bber' })
+      .then(() => (resolved = true))
+    await flushPromises()
+    expect(resolved).toBe(false)
     expect(serialize).not.toHaveBeenCalled()
 
     finishEnsure()
-    await flushPromises()
+    await handled
     expect(serialize).toHaveBeenCalledTimes(1)
   })
 
@@ -302,17 +304,17 @@ describe('build handler', () => {
       it('exits 1 through log.error when the file does not exist', async () => {
         const config = path.join(tmpDir, 'missing.json')
 
-        // With process.exit stubbed, parseConfigFile runs on past log.error
-        // and the read fails. TASK-046: today the exit happens first; after
-        // it, only this rejection is left.
-        await expect(
-          build.handler({ _: ['build', 'epub'], $0: 'bber', config })
-        ).rejects.toThrow(/ENOENT/)
-        await flushPromises()
+        // log.error throws, so parseConfigFile stops there: the file is
+        // never read
+        await build.handler({ _: ['build', 'epub'], $0: 'bber', config })
 
         expect(logger.error).toHaveBeenCalledWith(
           `Could not find config at [${config}]`
         )
+        expect(log.errors.map((e) => e.message)).toEqual([
+          `Could not find config at [${config}]`,
+        ])
+        expect(exit).toHaveBeenCalledTimes(1)
         expect(exit).toHaveBeenCalledWith(1)
         expect(serialize).not.toHaveBeenCalled()
       })
@@ -327,16 +329,16 @@ describe('build handler', () => {
           'Config file must have a .json or .yaml/.yml file extension'
         )
         expect(exit).toHaveBeenCalledWith(1)
+        expect(serialize).not.toHaveBeenCalled()
       })
     })
   })
 
   describe('when a task fails', () => {
     it('exits 1 when the failure reaches log.error, as every real task failure does', async () => {
-      // b-ber-tasks' serialize ends in `.catch(log.error)`, so a failing
-      // build task never rejects back to the CLI: the exit comes from the
-      // logger. TASK-046: once log.error stops exiting, nothing in the CLI
-      // turns this failure into a non-zero exit, and this test fails.
+      // b-ber-tasks' serialize ends in `.catch(log.error)`, which prints the
+      // failure and rethrows it: the handler turns it into the exit, without
+      // printing it again.
       const error = new Error('render failed')
       serialize.mockImplementationOnce(() =>
         Promise.reject(error).catch(log.error)
@@ -346,68 +348,49 @@ describe('build handler', () => {
       await flushPromises()
 
       expect(logger.error).toHaveBeenCalledWith(error)
+      expect(log.errors).toHaveLength(1)
       expect(exit).toHaveBeenCalledWith(1)
       expect(exit).toHaveBeenCalledTimes(1)
     })
 
-    it('swallows a rejection into console.error and does not exit', async () => {
-      // Defect: a rejection that reaches the handler (from ensure or
-      // serialize) is caught by `.catch(console.error)`, so the process
-      // ends with status 0. This becomes the main failure path if TASK-046
-      // makes log.error re-throw.
+    it('exits 1 on a rejection the logger has not reported, printing it', async () => {
+      // Issue 740: `.catch(console.error)` used to catch a rejection that
+      // reached the handler (from ensure or serialize), so the process ended
+      // with status 0.
       const error = new Error('serialize rejected')
       serialize.mockRejectedValueOnce(error)
 
       await build.handler({ _: ['build', 'epub'], $0: 'bber' })
-      await flushPromises()
 
-      expect(console.error).toHaveBeenCalledWith(error)
-      expect(exit).not.toHaveBeenCalled()
+      expect(log.errors.map((e) => e.message)).toEqual(['serialize rejected'])
+      expect(console.error).not.toHaveBeenCalled()
+      expect(exit).toHaveBeenCalledWith(1)
     })
 
-    it('swallows an ensure rejection the same way, without building', async () => {
+    it('exits 1 on an ensure rejection the same way, without building', async () => {
       const error = new Error('ensure rejected')
       ensure.mockRejectedValueOnce(error)
 
       await build.handler({ _: ['build', 'epub'], $0: 'bber' })
-      await flushPromises()
 
-      expect(console.error).toHaveBeenCalledWith(error)
+      expect(log.errors.map((e) => e.message)).toEqual(['ensure rejected'])
       expect(serialize).not.toHaveBeenCalled()
-      expect(exit).not.toHaveBeenCalled()
+      expect(exit).toHaveBeenCalledWith(1)
     })
 
-    it('loses a rejection from any format after the first', async () => {
-      // Defect: run() starts the next format inside `.then` without
-      // returning it, so a rejection from the second format onward never
-      // reaches `.catch(console.error)`. In Node it is an unhandled
-      // rejection, which crashes the process with a stack trace.
-      //
-      // To record it here rather than fail Jest with an unhandled
-      // rejection, the second serialize's promise catches whatever run()
-      // chains onto it.
+    it('exits 1 when a format after the first fails, building no more', async () => {
+      // Issue 740: run() used to start the next format inside `.then`
+      // without returning it, so a rejection from the second format onward
+      // was unhandled: Node crashed with a stack trace, not through the
+      // logger.
       const error = new Error('mobi failed')
-      const escaped = []
-
-      serialize.mockResolvedValueOnce().mockImplementationOnce(() => {
-        const promise = Promise.reject(error)
-        const then = promise.then.bind(promise)
-        // biome-ignore lint/suspicious/noThenProperty: wraps the promise's own `then` to observe what run() chains onto it
-        promise.then = (...args) => {
-          const derived = then(...args)
-          derived.catch((e) => escaped.push(e))
-          return derived
-        }
-        return promise
-      })
+      serialize.mockResolvedValueOnce().mockRejectedValueOnce(error)
 
       await build.handler({ _: ['build'], $0: 'bber' })
-      await flushPromises()
 
       expect(serialize).toHaveBeenCalledTimes(2)
-      expect(escaped).toEqual([error])
-      expect(console.error).not.toHaveBeenCalled()
-      expect(exit).not.toHaveBeenCalled()
+      expect(log.errors.map((e) => e.message)).toEqual(['mobi failed'])
+      expect(exit).toHaveBeenCalledWith(1)
     })
   })
 })

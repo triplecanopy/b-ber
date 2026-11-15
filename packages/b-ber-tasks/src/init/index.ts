@@ -76,7 +76,7 @@ class Initializer {
 
   // Write default directories and files to the source directory
   start() {
-    this.createAssets()
+    return this.createAssets()
       .then(() => this.copyImages())
       .then(() => this.setTheme())
       .then(() => log.notice(`Created new project [${this.name}]`))
