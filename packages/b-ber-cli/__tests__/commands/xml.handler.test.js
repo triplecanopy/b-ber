@@ -46,7 +46,7 @@ describe('xml handler', () => {
 
   it('exits 1 when the task’s failure reaches log.error', async () => {
     xmlTask.mockImplementationOnce(async () => {
-      log.error('xml failed')
+      throw log.error('xml failed')
     })
 
     await xml.handler({})

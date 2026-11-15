@@ -103,7 +103,9 @@ describe('bber', () => {
     runCli(['build', 'epub'], ({ tasks, log }) => {
       logger = spyOnLogger(log)
       tasks.serialize.mockImplementation(() =>
-        Promise.reject(new Error('render failed')).catch(log.error)
+        Promise.reject(new Error('render failed')).catch((err) => {
+          throw log.error(err)
+        })
       )
     })
     await flushPromises()

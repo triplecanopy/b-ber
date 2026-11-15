@@ -124,9 +124,9 @@ describe('new handler', () => {
   })
 
   it('exits 1 when creating the project fails through log.error', async () => {
-    // Initializer#start ends in `.catch(log.error)`, which throws.
+    // Initializer#start ends in a catch that reports and rethrows.
     start.mockImplementationOnce(() => {
-      log.error(new Error('EEXIST: my-book'))
+      throw log.error(new Error('EEXIST: my-book'))
     })
 
     await _new.handler({ _: ['new'], $0: 'bber', name: 'my-book' })
@@ -172,7 +172,7 @@ describe('new handler', () => {
     it('exits 1 through log.error when the file does not exist', async () => {
       const config = path.join(tmpDir, 'missing.json')
 
-      // log.error throws, so the file is never read
+      // parseConfigFile throws what log.error returns, so the file is never read
       await _new.handler({ _: ['new'], $0: 'bber', name: 'b', config })
 
       expect(logger.error).toHaveBeenCalledWith(

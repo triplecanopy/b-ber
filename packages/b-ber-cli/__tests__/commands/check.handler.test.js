@@ -80,11 +80,11 @@ describe('check handler', () => {
 
   describe('when the task fails', () => {
     it('exits 1 when the failure reaches log.error', async () => {
-      // validate reports through log.error, which throws. Note that its
+      // validate reports through log.error and throws. Note that its
       // missing-project check never fires today (#736), so a missing project
       // fails differently; see below.
       validate.mockImplementationOnce(async () => {
-        log.error('Project path does not exist, aborting')
+        throw log.error('Project path does not exist, aborting')
       })
 
       await check.handler({ project: 'missing' })

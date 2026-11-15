@@ -102,9 +102,11 @@ describe('deploy handler', () => {
   describe('when the task fails', () => {
     it('exits 1 when the failure reaches log.error, as the task’s own checks do', async () => {
       // e.g. missing AWS credentials or bucket_url: the deploy task calls
-      // log.error, which throws, and the handler turns that into the exit.
+      // log.error and throws, and the handler turns that into the exit.
       deployTask.mockImplementationOnce(async () => {
-        log.error('[bucketURL] must be set in config.yml to deploy the project')
+        throw log.error(
+          '[bucketURL] must be set in config.yml to deploy the project'
+        )
       })
 
       await deploy.handler({ yes: true })

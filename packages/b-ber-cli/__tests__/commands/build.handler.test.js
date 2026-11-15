@@ -349,7 +349,7 @@ describe('build handler', () => {
       it('exits 1 through log.error when the file does not exist', async () => {
         const config = path.join(tmpDir, 'missing.json')
 
-        // log.error throws, so parseConfigFile stops there: the file is
+        // parseConfigFile throws what log.error returns, so it stops there: the file is
         // never read
         await build.handler({ _: ['build', 'epub'], $0: 'bber', config })
 
@@ -381,12 +381,14 @@ describe('build handler', () => {
 
   describe('when a task fails', () => {
     it('exits 1 when the failure reaches log.error, as every real task failure does', async () => {
-      // b-ber-tasks' serialize ends in `.catch(log.error)`, which prints the
+      // b-ber-tasks' serialize ends in a catch that prints the
       // failure and rethrows it: the handler turns it into the exit, without
       // printing it again.
       const error = new Error('render failed')
       serialize.mockImplementationOnce(() =>
-        Promise.reject(error).catch(log.error)
+        Promise.reject(error).catch((err) => {
+          throw log.error(err)
+        })
       )
 
       await build.handler({ _: ['build', 'epub'], $0: 'bber' })

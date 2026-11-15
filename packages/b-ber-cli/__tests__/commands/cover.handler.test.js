@@ -54,9 +54,9 @@ describe('cover handler', () => {
 
   describe('when the task fails', () => {
     it('exits 1 when the failure reaches log.error', async () => {
-      // The cover task catches its own errors with log.error, which throws.
+      // The cover task reports its own errors with log.error and rethrows them.
       coverTask.mockImplementationOnce(async () => {
-        log.error('Cover image listed in metadata.yml cannot be found')
+        throw log.error('Cover image listed in metadata.yml cannot be found')
       })
 
       await cover.handler()

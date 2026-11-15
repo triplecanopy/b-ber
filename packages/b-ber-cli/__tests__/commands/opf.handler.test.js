@@ -54,7 +54,7 @@ describe('opf handler', () => {
   describe('when the task fails', () => {
     it('exits 1 when the failure reaches log.error', async () => {
       opfTask.mockImplementationOnce(async () => {
-        log.error('opf failed')
+        throw log.error('opf failed')
       })
 
       await opf.handler({})

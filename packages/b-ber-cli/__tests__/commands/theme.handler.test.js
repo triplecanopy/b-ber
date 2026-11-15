@@ -112,7 +112,7 @@ describe('theme handler', () => {
   describe('when the operation fails', () => {
     it('exits 1 when the failure reaches log.error', async () => {
       Theme.set.mockImplementationOnce(async () => {
-        log.error('Theme [missing] does not exist')
+        throw log.error('Theme [missing] does not exist')
       })
 
       await theme.handler({ command: 'set', options: 'missing' })

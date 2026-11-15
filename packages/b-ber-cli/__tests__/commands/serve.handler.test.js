@@ -100,7 +100,7 @@ describe('serve handler', () => {
     it('exits 1 when the failure reaches log.error', async () => {
       // TASK-046
       serveTask.mockImplementationOnce(async () => {
-        log.error('serve failed')
+        throw log.error('serve failed')
       })
 
       await serve.handler({ build: 'reader' })

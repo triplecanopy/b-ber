@@ -75,7 +75,7 @@ describe('generate handler', () => {
     it('exits 1 when the failure reaches log.error', async () => {
       // e.g. "already exists, aborting" in the generate task.
       generateTask.mockImplementationOnce(async () => {
-        log.error('_markdown/chapter-one.md already exists, aborting')
+        throw log.error('_markdown/chapter-one.md already exists, aborting')
       })
 
       await generate.handler({ title: 'Chapter One' })
