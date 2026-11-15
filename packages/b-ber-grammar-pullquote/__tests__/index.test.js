@@ -93,6 +93,9 @@ describe('b-ber-grammar-pullquote', () => {
     expect(() =>
       config.render([{ nesting: 1, info: 'pullquote:dup-id', map: [0, 1] }], 0)
     ).toThrow('Duplicate [id] [dup-id]')
+    expect(log.error).toHaveBeenCalledWith(
+      expect.stringContaining('Duplicate [id] [dup-id]')
+    )
   })
 
   it('emits a citation footer on exit and resets the citation afterwards', () => {
