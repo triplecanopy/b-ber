@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.4.16/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.6.7/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -41,7 +41,12 @@
       "!packages/b-ber-reader-react/src/constants/index.js",
       "!packages/b-ber-tasks/src/web",
       "!scripts",
-      "!packages/b-ber-testing/tests/cli/__golden__"
+      "!packages/b-ber-testing/tests/cli/__golden__",
+      "!**/*.md",
+      "!**/*.scss",
+      "!**/*.yml",
+      "!**/*.yaml",
+      "!**/*.svg"
     ]
   },
   "formatter": {
@@ -60,7 +65,7 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
+      "preset": "recommended",
       "a11y": {
         "noAccessKey": "error",
         "noAriaUnsupportedElements": "error",
@@ -309,6 +314,16 @@
             "noAssignInExpressions": "warn",
             "noExplicitAny": "warn",
             "noImplicitAnyLet": "warn"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["**/__tests__/**"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noComponentHookFactories": "off"
           }
         }
       }
