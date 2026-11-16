@@ -62,7 +62,7 @@
     "object-fit-images": "^3.2.4",
     "quote": "^0.4.0",
     "react-attr-converter": "^0.3.1",
-    "react-player": "^2.11.0",
+    "react-player": "^2.16.1",
     "url-search-params-polyfill": "^4.0.1",
     "use-sync-external-store": "^1.7.0",
     "xml-js": "^1.6.11"
