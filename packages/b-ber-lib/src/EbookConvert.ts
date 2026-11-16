@@ -52,8 +52,9 @@ function convertDocument({
       { cwd: process.cwd() },
       (err, stdout, stderr) => {
         if (err) return reject(err)
-        if (stderr !== '') process.stdout.write(stderr)
-        if (stdout !== '') process.stdout.write(stdout)
+        // Calibre's progress output, detail for --verbose. A failure rejects
+        if (stderr !== '') log.info('ebook-convert %s', stderr)
+        if (stdout !== '') log.info('ebook-convert %s', stdout)
         resolve()
       }
     )
