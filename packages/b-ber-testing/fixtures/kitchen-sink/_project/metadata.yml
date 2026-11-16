@@ -5,21 +5,21 @@
 
 - term: title
   value: Kitchen Sink
-  term_property: title-type
-  term_property_value: main
+  refines:
+    - title-type: main
 
 - term: description
   value: A b-ber test fixture that exercises every built-in directive.
 
 - term: creator
   value: Triple Canopy
-  term_property: role
-  term_property_value: aut
+  refines:
+    - role: aut
 
 - term: contributor
   value: b-ber
-  term_property: role
-  term_property_value: mrk
+  refines:
+    - role: mrk
 
 - term: language
   value: en-US
