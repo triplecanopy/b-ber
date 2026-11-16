@@ -766,6 +766,14 @@ linting and formatting (`biome.json` at the repo root). `biome check .` lints an
 checks formatting; `biome check --write .` auto-fixes violations. Biome replaces
 ESLint + Prettier — do not add ESLint or Prettier dependencies or configs.
 
+Biome checks JavaScript, TypeScript, JSON, and the few CSS and HTML files.
+**Markdown, SCSS, YAML and SVG are excluded on purpose** (`files.includes` in
+`biome.json`, TASK-156). Biome 2.6 started formatting and linting them by
+default: it would realign every Markdown table in `tasks/`, reformat the
+themes and workflows, and flag Sass functions as unknown CSS. Taking any of
+them on is a decision of its own, made in a task, not a side effect of a
+version bump.
+
 **Test propagation rule:** After any change to a shared library, run the test
 suite of every package that imports it — not just the package being changed.
 Many packages mock shared libs (e.g. `b-ber-logger`, `b-ber-lib`) in their own
