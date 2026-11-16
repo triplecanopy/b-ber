@@ -31,16 +31,14 @@ describe('exitWithFailure', () => {
 
     exitWithFailure(err)
 
-    expect(output.join('')).toBe('b-ber ERR! exited with code 1\n')
+    expect(output.join('')).toBe('error exited with code 1\n')
     expect(exit).toHaveBeenCalledWith(1)
   })
 
   it('prints an error the logger has not seen', () => {
     exitWithFailure(new TypeError('a bug'))
 
-    expect(output.join('')).toBe(
-      'b-ber ERR! a bug\nb-ber ERR! exited with code 1\n'
-    )
+    expect(output.join('')).toBe('error a bug\nerror exited with code 1\n')
     expect(exit).toHaveBeenCalledWith(1)
   })
 
@@ -133,7 +131,7 @@ describe('fail', () => {
 
     expect(y.showHelp).toHaveBeenCalled()
     expect(output.join('')).toBe(
-      'b-ber ERR! Missing required argument: name\nb-ber ERR! exited with code 1\n'
+      'error Missing required argument: name\nerror exited with code 1\n'
     )
     expect(exit).toHaveBeenCalledWith(1)
   })

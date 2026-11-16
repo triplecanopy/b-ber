@@ -51,8 +51,9 @@ promise chain's catch. What they throw ends up in `src/lib/exit.ts`:
   command's help and the error, and exits 1.
 - All three go through **`exitWithFailure(err)`**: it reports `err` through
   `log.error`, which prints nothing for an error the logger has already
-  reported, prints the closing `b-ber ERR! exited with code 1` line, and calls
-  `process.exit(1)` at once, so that nothing queued behind the failure keeps
+  reported, has the reporter end its output (`log.printFailure(1)`: the
+  `✗ Build failed …` line during a build, `error exited with code 1`
+  otherwise), and calls `process.exit(1)` at once, so that nothing queued behind the failure keeps
   running.
 - **`exitCodeOnFailure()`**, also installed by `index.ts`, listens for the
   logger's `failure` event and sets `process.exitCode = 1`. It is a backstop
@@ -72,7 +73,16 @@ commands alone).
 `--log-level N`), `--no-color` and `--summary` with `loggerOptions` and calls
 `log.configure` **before** it imports `app.ts`. The import is dynamic for that
 reason: the commands import b-ber-lib's `State`, which reads the project, and
-can log or fail, while it loads. These flags are not declared to yargs, so
+can log or fail, while it loads.
+
+`loggerOptions` also chooses the reporter (b-ber-logger's AGENTS.md describes
+each): `progress` when stdout is a terminal and the level is the default or
+lower, `plain` when it is not (or `TERM=dumb`), and `lines` from
+`--log-level=3` up and at `--quiet`. `build` calls `log.registerSequence` with
+each format it runs and that format's tasks, which is what the progress line
+counts.
+
+These flags are not declared to yargs, so
 `build` and `new` skip the keys yargs makes of them (`loggerArgvKeys`) when they
 turn argv into config options.
 

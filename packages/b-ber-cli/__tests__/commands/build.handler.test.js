@@ -126,11 +126,9 @@ describe('build handler', () => {
     })
 
     it('registers the sequence with the logger', () => {
-      expect(logger.registerSequence).toHaveBeenCalledWith(
-        state,
-        build.command,
-        sequences[format]
-      )
+      expect(logger.registerSequence).toHaveBeenCalledWith([
+        { name: format, tasks: sequences[format] },
+      ])
     })
 
     it('does not exit', () => {
@@ -151,6 +149,16 @@ describe('build handler', () => {
       expect(updatesTo('sequence')).toEqual([
         FORMATS.flatMap((f) => sequences[f]),
       ])
+    })
+
+    it('registers each format and its tasks with the logger, in order', async () => {
+      await build.handler({ _: ['build'], $0: 'bber' })
+      await flushPromises()
+
+      expect(logger.registerSequence).toHaveBeenCalledTimes(1)
+      expect(logger.registerSequence).toHaveBeenCalledWith(
+        FORMATS.map((name) => ({ name, tasks: sequences[name] }))
+      )
     })
 
     it('waits for each format to finish before starting the next', async () => {

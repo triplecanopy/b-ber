@@ -16,7 +16,12 @@ const writeSpy = jest
 beforeEach(() => {
   output = []
   log.reset()
-  log.configure({ logLevel: 2, boringOutput: true, summary: false })
+  log.configure({
+    logLevel: 2,
+    boringOutput: true,
+    summary: false,
+    reporter: 'lines',
+  })
   log.taskWarnings = 0
   log.taskErrors = 0
 })
@@ -70,9 +75,9 @@ describe('log.reset()', () => {
 
 describe('line format', () => {
   test.each([
-    ['error', () => log.error('broken'), 'b-ber ERR! broken\n'],
-    ['warn', () => log.warn('careful'), 'b-ber WARN careful\n'],
-    ['notice', () => log.notice('hello'), 'b-ber info hello\n'],
+    ['error', () => log.error('broken'), 'error broken\n'],
+    ['warn', () => log.warn('careful'), 'warn  careful\n'],
+    ['notice', () => log.notice('hello'), 'info  hello\n'],
   ])('%s has its own fixed-width label', (_level, fn, line) => {
     fn()
     expect(printed()).toBe(line)
@@ -81,7 +86,7 @@ describe('line format', () => {
   test('info uses the info label, at --verbose', () => {
     log.configure({ logLevel: 4 })
     log.info('detail')
-    expect(printed()).toMatch(/^\[[^\]]+\] b-ber info detail\n$/)
+    expect(printed()).toMatch(/^\[[^\]]+\] info {2}detail\n$/)
   })
 
   test('every line carries a timestamp from log level 3', () => {
@@ -92,32 +97,28 @@ describe('line format', () => {
     const lines = printed().trim().split('\n')
     expect(lines).toHaveLength(3)
     for (const line of lines) {
-      expect(line).toMatch(
-        /^\[\d{4}-\d\d-\d\dT[^\]]+Z\] b-ber (info|WARN|ERR!) /
-      )
+      expect(line).toMatch(/^\[\d{4}-\d\d-\d\dT[^\]]+Z\] (info |warn |error) /)
     }
   })
 
   test('without colour, [highlighted] text keeps its brackets', () => {
     log.notice('Applying configuration option [%s]:[%s]', 'env', 'prod')
-    expect(printed()).toBe(
-      'b-ber info Applying configuration option [env]:[prod]\n'
-    )
+    expect(printed()).toBe('info  Applying configuration option [env]:[prod]\n')
   })
 
   test('{N} is formatted as a byte count', () => {
     log.notice('copy [%s - {%d}]', 'a.jpg', 20480)
-    expect(printed()).toBe('b-ber info copy [a.jpg - 20.48 Kb]\n')
+    expect(printed()).toBe('info  copy [a.jpg - 20.48 Kb]\n')
   })
 
   test('supports util.format placeholders', () => {
     log.notice('%s and %d', 'one', 2)
-    expect(printed()).toBe('b-ber info one and 2\n')
+    expect(printed()).toBe('info  one and 2\n')
   })
 
   test('trims and indents the continuation lines of a message', () => {
     log.notice('first\n   second')
-    expect(printed()).toBe('b-ber info first\n      second\n')
+    expect(printed()).toBe('info  first\n      second\n')
   })
 
   test('writes no ANSI codes with boringOutput', () => {
@@ -136,7 +137,7 @@ describe('log.error()', () => {
     }).not.toThrow()
     expect(err).toBeInstanceOf(Error)
     expect(err.message).toBe('something failed')
-    expect(printed()).toBe('b-ber ERR! something failed\n')
+    expect(printed()).toBe('error something failed\n')
   })
 
   test('never exits the process', () => {
@@ -156,7 +157,7 @@ describe('log.error()', () => {
     expect(log.error('Image not found [%s]', 'a.jpg').message).toBe(
       'Image not found [a.jpg]'
     )
-    expect(printed()).toBe('b-ber ERR! Image not found [a.jpg]\n')
+    expect(printed()).toBe('error Image not found [a.jpg]\n')
   })
 
   test('the returned message is plain text, whatever the colour setting', () => {
@@ -184,7 +185,7 @@ describe('log.error()', () => {
       .catch(rethrow)
     await expect(chain).rejects.toBe(err)
     expect(log.errors).toHaveLength(1)
-    expect(printed()).toBe('b-ber ERR! task failed\n')
+    expect(printed()).toBe('error task failed\n')
   })
 
   test('records a structured entry and counts it for the task', () => {
@@ -193,7 +194,6 @@ describe('log.error()', () => {
     expect(log.errors[0]).toEqual({
       message: 'something failed',
       stack: expect.any(String),
-      formatted: 'b-ber ERR! something failed',
     })
   })
 
@@ -202,7 +202,7 @@ describe('log.error()', () => {
       'first\nsecond'
     )
     expect(log.taskErrors).toBe(2)
-    expect(printed()).toBe('b-ber ERR! first\nb-ber ERR! second\n')
+    expect(printed()).toBe('error first\nerror second\n')
   })
 
   test.each([0, 1])('still records and emits at log level %d', (logLevel) => {
@@ -226,7 +226,7 @@ describe('log.error()', () => {
   test('prints the stack trace from log level 4', () => {
     log.configure({ logLevel: 4 })
     log.error(new Error('with stack'))
-    expect(printed()).toMatch(/ERR! with stack\n\s+at /)
+    expect(printed()).toMatch(/error with stack\n\s+at /)
   })
 })
 
@@ -277,7 +277,7 @@ describe('log.isReported()', () => {
     const err = log.error('once')
     expect(log.error(err)).toBe(err)
     expect(log.errors).toHaveLength(1)
-    expect(printed()).toBe('b-ber ERR! once\n')
+    expect(printed()).toBe('error once\n')
   })
 })
 
@@ -288,14 +288,14 @@ describe('log.warn()', () => {
     expect(log.warnings[0]).toEqual({
       message: 'test warning',
       stack: expect.any(String),
-      formatted: 'b-ber WARN test warning',
     })
   })
 
-  test('does nothing below log level 2', () => {
+  test('records at every level, and prints nothing below log level 2', () => {
     log.configure({ logLevel: 1 })
     log.warn('silent warning')
-    expect(log.taskWarnings).toBe(0)
+    expect(log.taskWarnings).toBe(1)
+    expect(log.warnings).toHaveLength(1)
     expect(printed()).toBe('')
   })
 
@@ -307,7 +307,7 @@ describe('log.warn()', () => {
   test('prints the stack trace from log level 4', () => {
     log.configure({ logLevel: 4 })
     log.warn('w')
-    expect(printed()).toMatch(/WARN w\n\s+at /)
+    expect(printed()).toMatch(/warn {2}w\n\s+at /)
   })
 })
 
@@ -315,7 +315,7 @@ describe('log.notice()', () => {
   test('prints at log level 1', () => {
     log.configure({ logLevel: 1 })
     log.notice('shown')
-    expect(printed()).toBe('b-ber info shown\n')
+    expect(printed()).toBe('info  shown\n')
   })
 
   test('prints nothing at log level 0', () => {
@@ -335,7 +335,7 @@ describe('log.info()', () => {
   test('prints its stack trace at log level 5', () => {
     log.configure({ logLevel: 5 })
     log.info('traced')
-    expect(printed()).toMatch(/info traced\n\s+at /)
+    expect(printed()).toMatch(/info {2}traced\n\s+at /)
   })
 })
 
@@ -354,7 +354,7 @@ describe('the other methods', () => {
 
   test('printFailure prints the exit code as an error line', () => {
     log.printFailure(1)
-    expect(printed()).toBe('b-ber ERR! exited with code 1\n')
+    expect(printed()).toBe('error exited with code 1\n')
   })
 
   test('printFailure is silent at log level 0', () => {
@@ -365,20 +365,36 @@ describe('the other methods', () => {
 
   test('printVersion prints a notice', () => {
     log.printVersion('1.2.3')
-    expect(printed()).toBe('b-ber info version 1.2.3\n')
+    expect(printed()).toBe('info  version 1.2.3\n')
   })
 
   test.each([
-    [['a', 'b'], 'b-ber info Preparing to run 2 tasks\n'],
-    [['a'], 'b-ber info Preparing to run 1 task\n'],
-  ])('registerSequence announces %j', (sequence, line) => {
-    log.registerSequence({}, 'build', sequence)
-    expect(printed()).toBe(line)
+    [
+      [
+        { name: 'epub', tasks: ['a'] },
+        { name: 'web', tasks: ['b'] },
+      ],
+      2,
+    ],
+    [[{ name: 'epub', tasks: ['a'] }], 1],
+  ])('registerSequence announces the tasks of %j', (plan, count) => {
+    log.registerSequence(plan)
+    const noun = count > 1 ? 'tasks' : 'task'
+    expect(printed()).toBe(`info  Preparing to run ${count} ${noun}\n`)
+  })
+
+  test('registerSequence emits the plan as sequence', () => {
+    const listener = jest.fn()
+    log.on('sequence', listener)
+    const plan = [{ name: 'epub', tasks: ['a'] }]
+    log.registerSequence(plan)
+    log.off('sequence', listener)
+    expect(listener).toHaveBeenCalledWith(plan)
   })
 
   test('registerSequence prints nothing at log level 0', () => {
     log.configure({ logLevel: 0 })
-    log.registerSequence({}, 'build', ['a'])
+    log.registerSequence([{ name: 'epub', tasks: ['a'] }])
     expect(printed()).toBe('')
   })
 })
@@ -425,7 +441,7 @@ describe('build progress events', () => {
     log.configure({ logLevel: 3 })
     log.notify('start', 'render')
     log.notify('stop', 'render')
-    expect(printed()).toMatch(/b-ber info render done \(\d+\.\d{3}ms\)\n$/)
+    expect(printed()).toMatch(/info {2}render done \(\d+\.\d{3}ms\)\n$/)
   })
 
   test('a finished task prints nothing below log level 3', () => {
@@ -446,7 +462,7 @@ describe('build progress events', () => {
         sequenceEnd: expect.stringMatching(/ms$/),
       })
     )
-    expect(printed()).toBe('b-ber info Build succeeded\n')
+    expect(printed()).toBe('info  Build succeeded\n')
     log.off('done', done)
   })
 
@@ -466,13 +482,13 @@ describe('build progress events', () => {
       'Metadata',
       'Navigation',
     ]) {
-      expect(text).toContain(`b-ber info ${heading}\n`)
+      expect(text).toContain(`info  ${heading}\n`)
     }
-    expect(text).toContain('b-ber info theme: serif\n')
-    expect(text).toContain('b-ber info   env: dev\n')
-    expect(text).toContain('b-ber info title: A Book\n')
-    expect(text).toContain('b-ber info One: one\n')
-    expect(text).toContain('b-ber info   [no title]: two\n')
+    expect(text).toContain('info  theme: serif\n')
+    expect(text).toContain('info    env: dev\n')
+    expect(text).toContain('info  title: A Book\n')
+    expect(text).toContain('info  One: one\n')
+    expect(text).toContain('info    [no title]: two\n')
   })
 })
 
