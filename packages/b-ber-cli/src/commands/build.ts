@@ -39,7 +39,9 @@ const handler = exitOnFailure(async (argv: Arguments) => {
   for (const key of loggerArgvKeys) delete projectConfig[key]
 
   state.update('sequence', subSequence)
-  log.registerSequence(state, command, subSequence)
+  log.registerSequence(
+    sequence.map((name) => ({ name, tasks: sequences[name] }))
+  )
 
   const run = (buildTasks: string[]): Promise<void> => {
     const build = buildTasks.shift() as string

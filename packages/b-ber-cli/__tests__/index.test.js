@@ -67,7 +67,11 @@ describe('bber binary', () => {
 
   it('configures the logger from the command line before loading the app', async () => {
     const { app, configure } = runBin(['build', '--quiet', '--no-color'])
-    expect(configure).toHaveBeenCalledWith({ logLevel: 0, boringOutput: true })
+    expect(configure).toHaveBeenCalledWith({
+      logLevel: 0,
+      boringOutput: true,
+      reporter: 'lines',
+    })
     expect(app).not.toHaveBeenCalled()
     await flushPromises()
     expect(configure.mock.invocationCallOrder[0]).toBeLessThan(

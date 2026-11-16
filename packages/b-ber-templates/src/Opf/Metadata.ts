@@ -65,25 +65,24 @@ class Metadata {
 
     // @deprecated
     if (term && element && data.term_property && data.term_property_value) {
-      let message = '\n'
-      message +=
+      let message =
         "You're using an outdated syntax in `metadata.yml` which will be removed in future versions."
       message +=
         '\nUpdate the entries in the `metadata.yml` file to use the new `refines` syntax:'
 
       message += `
 
-                  -   - term: ${data.term}
-                  -     value: ${data.value}
-                  -     term_property: ${data.term_property}
-                  -     term_property_value: ${data.term_property_value}
-                  +    - term: ${data.term}
-                  +      value: ${data.value}
-                  +      - refines:
-                  +        - ${data.term_property}: ${data.term_property_value}
+                  - - term: ${data.term}
+                  -   value: ${data.value}
+                  -   term_property: ${data.term_property}
+                  -   term_property_value: ${data.term_property_value}
+                  + - term: ${data.term}
+                  +   value: ${data.value}
+                  +   refines:
+                  +     - ${data.term_property}: ${data.term_property_value}
                   `
 
-      log.notice(message)
+      log.warn(message)
 
       res.push(
         `<meta refines="#${itemid}" property="${

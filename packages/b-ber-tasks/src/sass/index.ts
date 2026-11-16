@@ -6,6 +6,26 @@ import fs from 'fs-extra'
 import postcss from 'postcss'
 import dartSass from 'sass'
 
+// dart-sass writes its warnings straight to stderr, where they bury the
+// build's own output: a build of either bundled theme prints dozens of
+// deprecation warnings that only b-ber can act on. Deprecations, and the
+// count of those dart-sass leaves out, go to the verbose output; a `@warn` in
+// a stylesheet is a warning
+const OMITTED_DEPRECATIONS = /repetitive deprecation warnings omitted/
+
+const sassLogger = {
+  warn(message: string, { deprecation }: { deprecation: boolean }) {
+    if (deprecation || OMITTED_DEPRECATIONS.test(message)) {
+      log.info('sass deprecation: %s', message)
+    } else {
+      log.warn('sass %s', message)
+    }
+  },
+  debug(message: string) {
+    log.info('sass %s', message)
+  },
+}
+
 // dirnames that may be referenced in the theme. we copy over assets when
 // running the sass task
 const ASSET_DIRNAMES = ['fonts', 'images']
@@ -175,6 +195,7 @@ const renderCSS = (scssString: Buffer): Promise<{ css: Buffer }> =>
           path.dirname(path.dirname(state.theme.entry)),
         ],
         outputStyle: state.env === 'production' ? 'compressed' : 'expanded',
+        logger: sassLogger,
         // @ts-expect-error `errLogToConsole` is a node-sass option, which
         // dart-sass ignores. Kept so this change is types-only; it can go
         errLogToConsole: true,
