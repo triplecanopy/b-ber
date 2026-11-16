@@ -93,21 +93,10 @@ const runImporter = (options, url) => {
   return result
 }
 
-// dart-sass prints deprecation warnings straight to stderr: for the legacy JS
-// API this task calls, and for the built-in themes' `@import`s and global
-// functions. They are expected here and would bury the test output
-const writeStderr = process.stderr.write.bind(process.stderr)
-const isSassDeprecation = (chunk) =>
-  /DEPRECATION WARNING|^WARNING: (Deprecated|\d+ repetitive deprecation)/.test(
-    String(chunk)
-  )
-
 beforeEach(async () => {
-  jest
-    .spyOn(process.stderr, 'write')
-    .mockImplementation((chunk, ...rest) =>
-      isSassDeprecation(chunk) ? true : writeStderr(chunk, ...rest)
-    )
+  // Watched, not silenced: the task gives dart-sass a logger, so nothing it
+  // compiles should reach stderr (see "dart-sass warnings")
+  jest.spyOn(process.stderr, 'write')
 
   // realpath because macOS's tmpdir is a symlink, and `require.resolve`
   // returns real paths
@@ -602,6 +591,31 @@ describe('task: sass', () => {
       expect(fs.existsSync(mockState.dist.stylesheets('application.css'))).toBe(
         false
       )
+    })
+  })
+
+  describe('dart-sass warnings', () => {
+    test("pass a stylesheet's @warn to log.warn", async () => {
+      await writeTheme({
+        'application.scss': '@warn "check this";\n.a { color: red; }\n',
+      })
+
+      await sass()
+
+      expect(log.warn).toHaveBeenCalledWith('sass %s', 'check this')
+    })
+
+    test('send deprecations to the verbose output instead of stderr', async () => {
+      await writeTheme({ 'application.scss': '.a { width: (4px / 2); }\n' })
+
+      await sass()
+
+      expect(log.info).toHaveBeenCalledWith(
+        'sass deprecation: %s',
+        expect.stringContaining('math.div')
+      )
+      expect(log.warn).not.toHaveBeenCalled()
+      expect(process.stderr.write).not.toHaveBeenCalled()
     })
   })
 

@@ -89,6 +89,11 @@ Project paths below are relative to the source directory (`config.src`,
    imported.
 6. Writes `application.css`, or `<state.hash>.css` in production.
 
+dart-sass is given a `logger`, so nothing it prints reaches stderr directly. A
+`@warn` in a stylesheet goes to `log.warn`; deprecation warnings, which come
+from the bundled themes and which a project cannot act on, go to `log.info`
+and show at `--verbose`.
+
 ### What that means for a theme or a project
 
 - **Order sets precedence.** The user's settings come first, so they beat the
