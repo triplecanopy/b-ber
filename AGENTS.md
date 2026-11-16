@@ -527,6 +527,15 @@ button should be blocked, not just red.
 `required_status_checks` is what the ruleset calls this rule; confirm it with
 `gh api repos/triplecanopy/b-ber/rulesets/<id> --jq '[.rules[].type]'`.
 
+**The required checks are `build-and-test` and `e2e`.** `e2e` was added on
+2026-11-16 (TASK-155), after Renovate's React update (#783) merged with it red
+and broke the golden-output test on `main`, and so on every PR. List them with
+`gh api repos/triplecanopy/b-ber/rulesets/18907410 --jq '.rules[] |
+select(.type=="required_status_checks") | .parameters.required_status_checks'`.
+A job added to that list must report in the merge queue (`merge_group:`) and
+must be skipped with `if:`, never filtered out, or queued PRs wait on it
+forever.
+
 **Which jobs a PR runs depends on what it changes** (TASK-137). A `changes` job
 sorts the PR's files with [`scripts/ci-changes.js`](./scripts/ci-changes.js):
 

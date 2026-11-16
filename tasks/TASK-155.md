@@ -25,9 +25,10 @@ of date.
 - [x] Confirm the new file comes from the dependency update, not a defect
 - [x] Regenerate `tests/cli/__golden__/reader/FILES.txt`
 - [x] The golden-output test passes for epub, web, reader and sample
+- [x] Make `e2e` a required check, and say so in the AGENTS.md files
 
 ## Notes
 
-- Making `e2e` a required check, so a Renovate PR cannot merge with it red,
-  is a repository setting; the root AGENTS.md ("Requiring the CI gate")
-  describes how.
+- `e2e` was made a required check on `main` on 2026-11-16, alongside
+  `build-and-test`, in the "Base Rules" ruleset, so a Renovate PR cannot
+  merge with it red again. The root AGENTS.md records it.

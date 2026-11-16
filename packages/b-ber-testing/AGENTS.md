@@ -136,8 +136,9 @@ environments without outbound network access.
 **GitHub Actions** — the `e2e` job in `.github/workflows/ci.yml` runs on every
 pull request and push to `main`: `npm ci`, `npm run build`, Chromium (cached by
 Playwright version), then `npx playwright test`. On failure it uploads
-`test-results/` (traces, screenshots). It is not yet a required check; see the
-root AGENTS.md "Requiring the CI gate" once it has proven reliable.
+`test-results/` (traces, screenshots). It is a required check on `main`
+(TASK-155; see the root AGENTS.md "Requiring the CI gate"): a PR, Renovate's
+included, cannot merge while it is red.
 
 **CircleCI** — also runs an `e2e` job, defined in `.circleci/config.yml`. Its
 `npm link` and pre-build steps predate TASK-130 and are now redundant but
