@@ -1,6 +1,7 @@
 api/books.json  text
 assets/CrimsonPro-Regular-{hash}.ttf  reader app
 assets/CrimsonPro-SemiBold-{hash}.ttf  reader app
+assets/Preview-{hash}.js  reader app
 assets/index-{hash}.css  reader app
 assets/index-{hash}.js  reader app
 epub/kitchen-sink-b-ber-fixture-001/META-INF/container.xml  text
