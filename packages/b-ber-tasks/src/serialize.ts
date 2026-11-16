@@ -55,6 +55,8 @@ const serialize = (sequence: TaskEntry[]) =>
   sequence
     .reduce(taskReducer, Promise.resolve<unknown>(undefined))
     .then(done)
-    .catch(log.error)
+    .catch((err) => {
+      throw log.error(err)
+    })
 
 export default serialize

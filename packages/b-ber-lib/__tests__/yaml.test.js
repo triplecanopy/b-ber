@@ -1,10 +1,17 @@
 import os from 'node:os'
 import path from 'node:path'
+import log from '@canopycanopycanopy/b-ber-logger'
 import fs from 'fs-extra'
 import Yaml from '../src/Yaml'
 
-// Prevent the logger from calling process.exit on typeCheck errors
+// A mocked logger, so that log.error records typeCheck errors without
+// printing them. It returns an Error, as the real one does, for the
+// `throw log.error(...)` that stops typeCheck
 jest.mock('@canopycanopycanopy/b-ber-logger')
+
+beforeEach(() => {
+  log.error.mockImplementation(() => new Error('reported'))
+})
 
 let tmpDir
 let metadataFile
@@ -94,8 +101,11 @@ describe('Yaml type checking (strict mode)', () => {
     expect(() => new Yaml('metadata', true)).not.toThrow()
   })
 
-  it('does not throw for an unknown schema in strict mode (logs error via mocked logger)', () => {
-    expect(() => new Yaml('nonexistent-schema', true)).not.toThrow()
+  it('throws what log.error reports for an unknown schema in strict mode', () => {
+    expect(() => new Yaml('nonexistent-schema', true)).toThrow('reported')
+    expect(log.error).toHaveBeenCalledWith([
+      new Error('Invalid schema: nonexistent-schema'),
+    ])
   })
 
   it('add() runs typeCheck for a valid entry without throwing', () => {
@@ -106,15 +116,15 @@ describe('Yaml type checking (strict mode)', () => {
     ).not.toThrow()
   })
 
-  it('add() runs typeCheck and logs for an unsupported property key', () => {
+  it('add() runs typeCheck and throws for an unsupported property key', () => {
     const yaml = new Yaml('metadata', true)
     yaml.load(metadataFile)
-    expect(() => yaml.add({ unsupported_key: 'value' })).not.toThrow() // eslint-disable-line camelcase
+    expect(() => yaml.add({ unsupported_key: 'value' })).toThrow('reported') // eslint-disable-line camelcase
   })
 
-  it('add() runs typeCheck and logs for a non-plain-object entry', () => {
+  it('add() runs typeCheck and throws for a non-plain-object entry', () => {
     const yaml = new Yaml('metadata', true)
     yaml.load(metadataFile)
-    expect(() => yaml.add('not-an-object')).not.toThrow()
+    expect(() => yaml.add('not-an-object')).toThrow('reported')
   })
 })

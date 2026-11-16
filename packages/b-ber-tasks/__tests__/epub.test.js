@@ -2,12 +2,15 @@ import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
 import zipper from 'epub-zipper'
 import epub from '../src/epub'
+import { returnReportedErrors } from './helpers/log'
 import { createProject } from './helpers/project'
 
 // epub-zipper writes the archive into process.cwd(), which is the repo root
 // under Jest, so it is replaced. What the task decides is what it asks for.
 jest.mock('epub-zipper', () => ({ create: jest.fn() }))
 jest.mock('@canopycanopycanopy/b-ber-logger')
+
+beforeEach(() => returnReportedErrors(log))
 
 let project
 const { argv } = process
@@ -45,11 +48,11 @@ describe('task: epub', () => {
     expect(zipper.create).not.toHaveBeenCalled()
   })
 
-  test('passes a zipper failure to log.error', async () => {
+  test('passes a zipper failure to log.error and rejects with it', async () => {
     const err = new Error('zip failed')
     zipper.create.mockRejectedValue(err)
 
-    await epub()
+    await expect(epub()).rejects.toBe(err)
 
     expect(log.error).toHaveBeenCalledWith(err)
   })

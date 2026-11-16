@@ -2,7 +2,11 @@ import log from '@canopycanopycanopy/b-ber-logger'
 import epigraph from '../src'
 
 jest.mock('@canopycanopycanopy/b-ber-logger', () => ({
-  error: jest.fn(),
+  // Returns an Error, as the real log.error does, so that a site's
+  // `throw log.error(...)` throws one rather than undefined
+  error: jest.fn((err) =>
+    err instanceof Error ? err : new Error(String(err))
+  ),
   warn: jest.fn(),
   debug: jest.fn(),
 }))
@@ -58,12 +62,11 @@ describe('b-ber-grammar-epigraph', () => {
     expect(result).toContain('photo.jpg')
   })
 
-  it('render calls log.error and returns empty string when neither image nor caption', () => {
+  it('render throws what log.error reports when neither image nor caption', () => {
     log.error.mockClear()
     const { render } = epigraph.renderer({ instance, context })
     const tokens = [{ nesting: 1, info: 'epigraph', map: [0, 1] }]
-    const result = render(tokens, 0)
-    expect(result).toBe('')
+    expect(() => render(tokens, 0)).toThrow('Malformed directive')
     expect(log.error).toHaveBeenCalled()
   })
 

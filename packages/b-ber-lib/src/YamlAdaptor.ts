@@ -132,7 +132,7 @@ class YamlAdaptor {
     try {
       data = fs.readFileSync(file, 'utf-8')
     } catch (err) {
-      log.error(err)
+      throw log.error(err)
     }
 
     return data ? YamlAdaptor.parse(data) : []

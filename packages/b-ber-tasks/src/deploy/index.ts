@@ -129,7 +129,7 @@ function ensureEnvVars() {
     process.env
 
   if (!AWS_ACCESS_KEY_ID || !AWS_SECRET_ACCESS_KEY || !BBER_BUCKET_REGION) {
-    log.error(
+    throw log.error(
       '[AWS_ACCESS_KEY_ID], [AWS_SECRET_ACCESS_KEY] and [BBER_BUCKET_REGION] must be set to deploy the project'
     )
   }
@@ -139,11 +139,12 @@ function ensureEnvVars() {
   const { bucket_url: bucketURL } = config
 
   if (!bucketURL) {
-    log.error('[bucketURL] must be set in config.yml to deploy the project')
+    throw log.error(
+      '[bucketURL] must be set in config.yml to deploy the project'
+    )
   }
 
-  // log.error exits the process, so the region is set by this point
-  return { bucketURL, awsRegion: BBER_BUCKET_REGION as string }
+  return { bucketURL, awsRegion: BBER_BUCKET_REGION }
 }
 
 function extractVars(config: {
@@ -229,7 +230,9 @@ function main({ builds, yes }: { builds?: string[]; yes?: boolean }) {
     .then(() => setCachePolicy(config, cacheArgsBucket))
     .then(() => setCachePolicy(config, cacheArgsFiles))
     .then(() => setCachePolicy(config, cacheArgsHTML))
-    .catch(log.error)
+    .catch((err) => {
+      throw log.error(err)
+    })
 }
 
 export default main

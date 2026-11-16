@@ -90,6 +90,11 @@ export const safeWrite = (dest: string, data: string): Promise<void> =>
   fs.existsSync(dest) ? Promise.resolve() : fs.writeFile(dest, data)
 
 // `yargs` is the yargs instance whose `fail` handler this is
+/**
+ * @deprecated b-ber-cli no longer uses this: it exits 0, which hides a usage
+ * error from a script. The CLI's own handler is `fail` in b-ber-cli's
+ * src/lib/exit.ts.
+ */
 export const fail = (
   _msg: unknown,
   _err: unknown,
@@ -147,7 +152,9 @@ export const ensure = ({
 }: EnsureOptions = {}): Promise<unknown> =>
   ensureDirs(dirs, prefix)
     .then(() => ensureFiles(files, prefix))
-    .catch(log.error)
+    .catch((err) => {
+      throw log.error(err)
+    })
 
 const trimLeadingSlash = (s: string): string => s.replace(/^\//, '')
 
@@ -286,7 +293,9 @@ export const validatePosterImage = (asset: string, type: string): string => {
   const assetPath = state.src.images(asset)
 
   if (!fs.existsSync(assetPath)) {
-    log.error(`bber-directives: Poster image for [${type}] does not exist`)
+    throw log.error(
+      `bber-directives: Poster image for [${type}] does not exist`
+    )
   }
 
   return asset
@@ -339,7 +348,7 @@ export function ensureSource(
   lineNumber: number | null
 ): void {
   if (!obj.source) {
-    log.error(
+    throw log.error(
       `Directive [${type}] requires a [source] attribute at [${fileName}:${lineNumber}]`
     )
   }

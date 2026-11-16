@@ -1,10 +1,17 @@
 import os from 'node:os'
 import path from 'node:path'
+import log from '@canopycanopycanopy/b-ber-logger'
 import fs from 'fs-extra'
 import YamlAdaptor from '../src/YamlAdaptor'
 
-// Prevent the logger from calling process.exit when testing error paths
+// A mocked logger, so that log.error records the error paths these tests take
+// without printing them. It returns what it is given, as the real one does
+// with an Error, for the `throw log.error(...)` at each
 jest.mock('@canopycanopycanopy/b-ber-logger')
+
+beforeEach(() => {
+  log.error.mockImplementation((err) => err)
+})
 
 // Every expected value in this file is what js-yaml 3's safeLoad/safeDump
 // produced. They are the contract YamlAdaptor keeps across js-yaml upgrades:
@@ -383,9 +390,11 @@ describe('YamlAdaptor.load', () => {
     expect(result).toEqual({ title: 'Hello', author: 'World' })
   })
 
-  it('returns an empty array when the file does not exist', () => {
-    const result = YamlAdaptor.load(path.join(tmpDir, 'nonexistent.yml'))
-    expect(result).toEqual([])
+  it('throws what log.error reports when the file does not exist', () => {
+    expect(() =>
+      YamlAdaptor.load(path.join(tmpDir, 'nonexistent.yml'))
+    ).toThrow('ENOENT')
+    expect(log.error).toHaveBeenCalledTimes(1)
   })
 
   it('returns an empty array for an empty file', async () => {

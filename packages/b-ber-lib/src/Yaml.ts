@@ -66,7 +66,7 @@ const typeCheck = (
     }
   })
 
-  if (errors.length) log.error(errors)
+  if (errors.length) throw log.error(errors)
 }
 
 // One entry of metadata.yml. YAML parses an unquoted date or number in `value`

@@ -19,6 +19,23 @@ const mockYargs = () => ({
 })
 
 describe('opf', () => {
+  it('registers a fail handler that shows this command’s help and exits 1', () => {
+    const exit = jest.spyOn(process, 'exit').mockImplementation(() => undefined)
+    const write = jest
+      .spyOn(process.stdout, 'write')
+      .mockImplementation(() => true)
+    const yargs = { ...mockYargs(), showHelp: jest.fn() }
+    opf.builder(yargs)
+
+    const [handler] = yargs.fail.mock.calls[0]
+    handler('Unknown argument: x', undefined)
+
+    expect(yargs.showHelp).toHaveBeenCalled()
+    expect(exit).toHaveBeenCalledWith(1)
+    exit.mockRestore()
+    write.mockRestore()
+  })
+
   it('exports a yargs command object', () => {
     expect(opf).toEqual(
       expect.objectContaining({
@@ -35,5 +52,12 @@ describe('opf', () => {
     const result = opf.builder(yargs)
     expect(result).toBeDefined()
     expect(yargs.help).toHaveBeenCalledWith('h')
+  })
+
+  it('registers a fail handler, so a usage error is reported and exits 1', () => {
+    // Issue 741: opf used to register none
+    const yargs = mockYargs()
+    opf.builder(yargs)
+    expect(yargs.fail).toHaveBeenCalledWith(expect.any(Function))
   })
 })

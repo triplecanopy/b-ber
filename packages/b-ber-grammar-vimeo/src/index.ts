@@ -56,7 +56,7 @@ function prepare({
   const caption = token.children ? instance.renderInline(token.children) : ''
 
   if (!attrsObject.source)
-    log.error(
+    throw log.error(
       `Directive [${type}] requires a [source] attribute at [${fileName}:${lineNumber}]`
     )
 

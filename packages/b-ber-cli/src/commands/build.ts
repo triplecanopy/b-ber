@@ -12,13 +12,15 @@ import {
   parseConfigFile,
   withConfigOptions,
 } from '../lib/config-options'
+import { exitOnFailure, fail } from '../lib/exit'
+import { loggerArgvKeys } from '../lib/logger-options'
 
 const command = 'build [|epub|mobi|pdf|reader|sample|web]'
 const describe = 'Build a project'
 
 const noop = () => {}
 
-const handler = async (argv: Arguments) => {
+const handler = exitOnFailure(async (argv: Arguments) => {
   process.env.NODE_ENV = process.env.NODE_ENV || 'development'
 
   const { _: desiredSequences, $0, config, ...configOptions } = argv
@@ -33,6 +35,8 @@ const handler = async (argv: Arguments) => {
   if (typeof config === 'string') projectConfig = await parseConfigFile(config)
 
   projectConfig = { ...projectConfig, ...configOptions }
+  // The logger's flags, which index.ts has applied already
+  for (const key of loggerArgvKeys) delete projectConfig[key]
 
   state.update('sequence', subSequence)
   log.registerSequence(state, command, subSequence)
@@ -59,18 +63,17 @@ const handler = async (argv: Arguments) => {
       state.update(`config.${key}`, val)
     }
 
-    return serialize(sequences[build]).then(() => {
-      if (buildTasks.length) run(buildTasks)
-    })
+    return serialize(sequences[build]).then(() =>
+      buildTasks.length ? run(buildTasks) : undefined
+    )
   }
 
   const projectPath = path.resolve(state.srcDir)
   const files = [...Project.javascripts(projectPath), ...Project.stylesheets()]
 
-  ensure({ files })
-    .then(() => run(sequence))
-    .catch(console.error)
-}
+  await ensure({ files })
+  await run(sequence)
+})
 
 const builder = (yargs: Argv) =>
   withConfigOptions(yargs)
@@ -84,6 +87,7 @@ const builder = (yargs: Argv) =>
     .command('xml', 'Build for XML', noop, handler)
     .help('h')
     .alias('h', 'help')
+    .fail((msg, err) => fail(msg, err, yargs))
 
 export default {
   command,

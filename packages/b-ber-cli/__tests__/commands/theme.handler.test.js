@@ -94,25 +94,25 @@ describe('theme handler', () => {
     it('rejects a command that is not set or list', () => {
       const {
         Theme: isolatedTheme,
-        utils,
-        stoppedByFail,
+        log,
+        stoppedByExit,
       } = runCli(['theme', 'delete'], ({ log }) => spyOnLogger(log))
 
-      expect(stoppedByFail).toBe(true)
+      expect(stoppedByExit).toBe(true)
       expect(isolatedTheme.set).not.toHaveBeenCalled()
-      expect(utils.fail).toHaveBeenCalledWith(
+      // Issue 740: a usage error used to exit 0, without printing the
+      // error
+      expect(exit).toHaveBeenCalledWith(1)
+      expect(log.errors.map((e) => e.message)).toEqual([
         expect.stringMatching(/Invalid values/),
-        undefined,
-        expect.anything()
-      )
+      ])
     })
   })
 
   describe('when the operation fails', () => {
     it('exits 1 when the failure reaches log.error', async () => {
-      // TASK-046
       Theme.set.mockImplementationOnce(async () => {
-        log.error('Theme [missing] does not exist')
+        throw log.error('Theme [missing] does not exist')
       })
 
       await theme.handler({ command: 'set', options: 'missing' })
@@ -121,17 +121,17 @@ describe('theme handler', () => {
       expect(exit).toHaveBeenCalledWith(1)
     })
 
-    it('swallows a rejection into console.error and does not exit', async () => {
-      // Defect: `.catch(console.error)` ends the process with status 0.
+    it('exits 1 on any other rejection, printing it through the logger', async () => {
+      // Issue 740: `.catch(console.error)` used to end the process with
+      // status 0.
       const error = new Error('set rejected')
       Theme.set.mockRejectedValueOnce(error)
 
-      await expect(
-        theme.handler({ command: 'set', options: 'x' })
-      ).resolves.toBeUndefined()
+      await theme.handler({ command: 'set', options: 'x' })
 
-      expect(console.error).toHaveBeenCalledWith(error)
-      expect(exit).not.toHaveBeenCalled()
+      expect(log.errors.map((e) => e.message)).toEqual(['set rejected'])
+      expect(console.error).not.toHaveBeenCalled()
+      expect(exit).toHaveBeenCalledWith(1)
     })
   })
 })

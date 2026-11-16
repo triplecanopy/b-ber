@@ -11,7 +11,11 @@ import {
 } from '../src'
 
 jest.mock('@canopycanopycanopy/b-ber-logger', () => ({
-  error: jest.fn(),
+  // Returns an Error, as the real log.error does, so that a site's
+  // `throw log.error(...)` throws one rather than undefined
+  error: jest.fn((err) =>
+    err instanceof Error ? err : new Error(String(err))
+  ),
   warn: jest.fn(),
   info: jest.fn(),
 }))
@@ -62,10 +66,11 @@ describe('b-ber-grammar-attributes', () => {
   })
 
   it('validates an attributes object', () => {
-    expect(attributesObject('classes:foo', 'abstract')).toEqual({
-      classes: 'foo abstract  chapter',
-      epubTypes: ' chapter',
-    })
+    // A draft directive is not one of ALL_DIRECTIVES, so it fails before the
+    // draft substitution below it is reached
+    expect(() => attributesObject('classes:foo', 'abstract')).toThrow(
+      'Invalid directive: [abstract]'
+    )
 
     expect(attributesObject('classes:foo', 'subchapter')).toEqual({
       classes: 'foo subchapter  chapter',
@@ -87,13 +92,16 @@ describe('b-ber-grammar-attributes', () => {
     const spyError = jest.spyOn(log, 'error')
     const spyWarn = jest.spyOn(log, 'warn')
 
-    // This logs 2 errors since the test suite doesn't bail after it encounters
-    // the first error
-    expect(() => attributesObject('classes:foo', null)).toThrow()
-    expect(() => attributesObject('classes:foo', 'bogus')).toThrow()
+    // Each stops at its first error
+    expect(() => attributesObject('classes:foo', null)).toThrow(
+      'No directive provided'
+    )
+    expect(() => attributesObject('classes:foo', 'bogus')).toThrow(
+      'Invalid directive: [bogus]'
+    )
 
-    expect(spyError).toHaveBeenCalledTimes(3)
-    expect(spyWarn).toHaveBeenCalledTimes(2)
+    expect(spyError).toHaveBeenCalledTimes(2)
+    expect(spyWarn).not.toHaveBeenCalled()
   })
 
   it('converts an object literal to HTML attribtues', () => {

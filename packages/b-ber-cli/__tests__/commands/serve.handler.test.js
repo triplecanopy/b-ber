@@ -81,17 +81,18 @@ describe('serve handler', () => {
     })
 
     it('rejects a build that is not one of the choices', () => {
-      const { tasks, utils, stoppedByFail } = runCli(
+      const { tasks, log, stoppedByExit } = runCli(
         ['serve', 'epub'],
         ({ log }) => spyOnLogger(log)
       )
-      expect(stoppedByFail).toBe(true)
+      expect(stoppedByExit).toBe(true)
       expect(tasks.serve).not.toHaveBeenCalled()
-      expect(utils.fail).toHaveBeenCalledWith(
+      // Issue 740: a usage error used to exit 0, without printing the
+      // error
+      expect(exit).toHaveBeenCalledWith(1)
+      expect(log.errors.map((e) => e.message)).toEqual([
         expect.stringMatching(/Invalid values/),
-        undefined,
-        expect.anything()
-      )
+      ])
     })
   })
 
@@ -99,7 +100,7 @@ describe('serve handler', () => {
     it('exits 1 when the failure reaches log.error', async () => {
       // TASK-046
       serveTask.mockImplementationOnce(async () => {
-        log.error('serve failed')
+        throw log.error('serve failed')
       })
 
       await serve.handler({ build: 'reader' })
@@ -108,17 +109,21 @@ describe('serve handler', () => {
       expect(exit).toHaveBeenCalledWith(1)
     })
 
-    it('hands a rejection to yargs, which reports it through the command’s fail handler', async () => {
-      // Defect: that handler is b-ber-lib's `fail`, which shows help and
-      // calls process.exit(0).
+    it('exits 1 on any other rejection, printing it', async () => {
+      // Issue 740: the rejection used to reach the command's fail handler,
+      // b-ber-lib's `fail`, which showed help and exited 0.
       const error = new Error('port in use')
-      const { utils } = runCli(['serve', 'reader'], ({ tasks, log }) => {
-        tasks.serve.mockRejectedValue(error)
-        spyOnLogger(log)
-      })
+      const { log: isolatedLog } = runCli(
+        ['serve', 'reader'],
+        ({ tasks, log }) => {
+          tasks.serve.mockRejectedValue(error)
+          spyOnLogger(log)
+        }
+      )
       await flushPromises()
 
-      expect(utils.fail).toHaveBeenCalledWith(null, error, expect.anything())
+      expect(isolatedLog.errors.map((e) => e.message)).toEqual(['port in use'])
+      expect(exit).toHaveBeenCalledWith(1)
     })
   })
 })

@@ -10,7 +10,11 @@ jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
 }))
 
 jest.mock('@canopycanopycanopy/b-ber-logger', () => ({
-  error: jest.fn(),
+  // Returns an Error, as the real log.error does, so that a site's
+  // `throw log.error(...)` throws one rather than undefined
+  error: jest.fn((err) =>
+    err instanceof Error ? err : new Error(String(err))
+  ),
   warn: jest.fn(),
   debug: jest.fn(),
 }))

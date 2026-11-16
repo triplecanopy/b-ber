@@ -3,9 +3,12 @@ import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
 import fs from 'fs-extra'
 import reader from '../src/reader'
+import { returnReportedErrors } from './helpers/log'
 import { createProject } from './helpers/project'
 
 jest.mock('@canopycanopycanopy/b-ber-logger')
+
+beforeEach(() => returnReportedErrors(log))
 
 // The task copies the built reader app out of
 // @canopycanopycanopy/b-ber-reader's dist/, so these tests need the
@@ -217,7 +220,8 @@ describe('task: reader', () => {
 
   test('names the book directory with a random hash when there is no identifier', async () => {
     await setup({ metadata: [{ term: 'title', value: 'A Book' }] })
-    await reader()
+    // The directory is created, then the task fails on the defect below (#769)
+    await expect(reader()).rejects.toMatchObject({ code: 'ENOENT' })
 
     expect(log.warn).toHaveBeenCalledWith(
       'Could not find metadata value for identifier'
@@ -233,7 +237,8 @@ describe('task: reader', () => {
         { term: 'identifier', value: 'a.b c' },
       ],
     })
-    await reader()
+    // The directory is created, then the task fails on the defect below (#769)
+    await expect(reader()).rejects.toMatchObject({ code: 'ENOENT' })
 
     expect(await fs.readdir(path.join(project.dist, 'epub'))).toEqual(['a-b-c'])
   })
@@ -252,7 +257,7 @@ describe('task: reader', () => {
         { term: 'identifier', value: 'urn:uuid:1234' },
       ],
     })
-    await reader()
+    await expect(reader()).rejects.toMatchObject({ code: 'ENOENT' })
 
     expect(await fs.readdir(path.join(project.dist, 'epub'))).toEqual([
       'urn-uuid-1234',
@@ -297,7 +302,7 @@ describe('task: reader', () => {
     await setup({ config: { remote_url: '' } })
     process.env.NODE_ENV = 'production'
 
-    await reader()
+    await expect(reader()).rejects.toThrow('requires a remote_url')
 
     expect(log.error).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -320,11 +325,11 @@ describe('task: reader', () => {
     expect(book.url).toBe('http://localhost:4000/epub/book-id')
   })
 
-  test('passes a failure to log.error', async () => {
+  test('passes a failure to log.error and rejects with it', async () => {
     await setup()
     await fs.remove(path.join(project.dist, 'mimetype'))
 
-    await expect(reader()).resolves.toBeUndefined()
+    await expect(reader()).rejects.toMatchObject({ code: 'ENOENT' })
     expect(log.error).toHaveBeenCalledWith(
       expect.objectContaining({ code: 'ENOENT' })
     )

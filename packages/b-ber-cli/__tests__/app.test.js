@@ -97,17 +97,32 @@ describe('bber', () => {
   })
 
   it('passes a build failure that reaches log.error through as exit status 1', async () => {
-    // TASK-046: the whole path, from the command line to the exit.
+    // The whole path, from the command line to the exit: log.error throws,
+    // and the command's handler turns that into the exit.
     let logger
     runCli(['build', 'epub'], ({ tasks, log }) => {
       logger = spyOnLogger(log)
       tasks.serialize.mockImplementation(() =>
-        Promise.reject(new Error('render failed')).catch(log.error)
+        Promise.reject(new Error('render failed')).catch((err) => {
+          throw log.error(err)
+        })
       )
     })
     await flushPromises()
 
     expect(logger.error).toHaveBeenCalled()
+    expect(exit).toHaveBeenCalledWith(1)
+  })
+
+  it('exits 1 when yargs hands its top-level fail handler an error', () => {
+    // yargs does that when a builder throws. A usage error with no error,
+    // such as no command at all, prints the usage text and exits 0 (above)
+    jest.spyOn(process.stdout, 'write').mockImplementation(() => true)
+    const { showCustomHelp } = require('../src/app')
+
+    showCustomHelp(null, new Error('builder threw'))
+
+    expect(console.log).not.toHaveBeenCalled()
     expect(exit).toHaveBeenCalledWith(1)
   })
 })

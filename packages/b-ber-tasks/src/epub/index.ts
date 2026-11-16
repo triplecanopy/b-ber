@@ -13,6 +13,8 @@ const epub = (): Promise<void> =>
           clean: true,
           fileName: getBookMetadata('identifier'),
         })
-        .catch(log.error)
+        .catch((err) => {
+          throw log.error(err)
+        })
 
 export default epub

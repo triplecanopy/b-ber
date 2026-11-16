@@ -54,9 +54,9 @@ describe('cover handler', () => {
 
   describe('when the task fails', () => {
     it('exits 1 when the failure reaches log.error', async () => {
-      // TASK-046: the cover task catches its own errors with log.error.
+      // The cover task reports its own errors with log.error and rethrows them.
       coverTask.mockImplementationOnce(async () => {
-        log.error('Cover image listed in metadata.yml cannot be found')
+        throw log.error('Cover image listed in metadata.yml cannot be found')
       })
 
       await cover.handler()
@@ -65,17 +65,18 @@ describe('cover handler', () => {
       expect(exit).toHaveBeenCalledWith(1)
     })
 
-    it('hands a rejection to yargs, which reports it through the command’s fail handler', async () => {
-      // Defect: that handler is b-ber-lib's `fail`, which shows help and
-      // calls process.exit(0).
+    it('exits 1 on any other rejection, printing it', async () => {
+      // Issue 740: the rejection used to reach the command's fail handler,
+      // b-ber-lib's `fail`, which showed help and exited 0.
       const error = new Error('cover failed')
-      const { utils } = runCli(['cover'], ({ tasks, log }) => {
+      const { log: isolatedLog } = runCli(['cover'], ({ tasks, log }) => {
         tasks.cover.mockRejectedValue(error)
         spyOnLogger(log)
       })
       await flushPromises()
 
-      expect(utils.fail).toHaveBeenCalledWith(null, error, expect.anything())
+      expect(isolatedLog.errors.map((e) => e.message)).toEqual(['cover failed'])
+      expect(exit).toHaveBeenCalledWith(1)
     })
   })
 })

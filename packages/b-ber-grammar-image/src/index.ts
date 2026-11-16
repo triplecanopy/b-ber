@@ -52,7 +52,7 @@ function prepare({
     (type.indexOf('-') && type.substring(0, type.indexOf('-'))) || type
 
   // Make sure image exists
-  if (!fs.existsSync(asset)) log.error(`Image not found [${asset}]`)
+  if (!fs.existsSync(asset)) throw log.error(`Image not found [${asset}]`)
 
   // Get the image dimensions
   const { width, height } = utils.getImageDimensions(asset)
@@ -79,10 +79,9 @@ const validate =
     const [, , id, source] = match
     if (isUndefined(id) || isUndefined(source)) {
       // Images require `id` and `source`
-      log.error(
+      throw log.error(
         `Missing [id] or [source] attribute for [figure] directive${context.fileName}.md:${line}`
       )
-      return false
     }
 
     return true

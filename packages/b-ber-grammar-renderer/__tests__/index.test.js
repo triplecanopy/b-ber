@@ -11,7 +11,11 @@ jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
 }))
 
 jest.mock('@canopycanopycanopy/b-ber-logger', () => ({
-  error: jest.fn(),
+  // Returns an Error, as the real log.error does, so that a site's
+  // `throw log.error(...)` throws one rather than undefined
+  error: jest.fn((err) =>
+    err instanceof Error ? err : new Error(String(err))
+  ),
   warn: jest.fn(),
   debug: jest.fn(),
 }))
@@ -55,7 +59,7 @@ describe('b-ber-grammar-renderer', () => {
     expect(config.validateOpen('pullquote:pq-01', 1)).toBe(false)
   })
 
-  it('validateOpen returns false when id is missing', () => {
+  it('validateOpen throws what log.error reports when id is missing', () => {
     const noIdMarker = /^(chapter)(?::)?/
     const configNoId = renderer({
       context,
@@ -63,8 +67,7 @@ describe('b-ber-grammar-renderer', () => {
       markerOpen: noIdMarker,
       markerClose,
     })
-    const result = configNoId.validateOpen('chapter', 1)
-    expect(result).toBe(false)
+    expect(() => configNoId.validateOpen('chapter', 1)).toThrow('Missing [id]')
     expect(log.error).toHaveBeenCalled()
   })
 
@@ -84,7 +87,7 @@ describe('b-ber-grammar-renderer', () => {
     })
   })
 
-  it('validateOpen returns falsy and logs error when id is already in state (duplicate)', () => {
+  it('validateOpen throws what log.error reports when id is already in state (duplicate)', () => {
     state.indexOf.mockReturnValue(0)
     const config = renderer({
       context,
@@ -92,8 +95,9 @@ describe('b-ber-grammar-renderer', () => {
       markerOpen,
       markerClose,
     })
-    const result = config.validateOpen('chapter:ch-duplicate', 5)
-    expect(result).toBeFalsy()
+    expect(() => config.validateOpen('chapter:ch-duplicate', 5)).toThrow(
+      'Duplicate [id] [ch-duplicate]'
+    )
     expect(log.error).toHaveBeenCalled()
   })
 

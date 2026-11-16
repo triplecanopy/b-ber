@@ -1,18 +1,20 @@
-import { fail } from '@canopycanopycanopy/b-ber-lib/utils'
 import log from '@canopycanopycanopy/b-ber-logger'
 import { serve } from '@canopycanopycanopy/b-ber-tasks'
 import type { Arguments, Argv } from 'yargs'
+import { exitOnFailure, fail } from '../lib/exit'
 
 const command = 'serve [build] [opts]'
 const describe = 'Preview a project in the browser using the `reader` build.'
 
-const handler = (argv: Arguments<{ build?: string; external?: boolean }>) => {
-  const { external, build } = argv
+const handler = exitOnFailure(
+  (argv: Arguments<{ build?: string; external?: boolean }>) => {
+    const { external, build } = argv
 
-  log.notice(`Serving [b-ber-${build}]`)
+    log.notice(`Serving [b-ber-${build}]`)
 
-  return serve({ build, external })
-}
+    return serve({ build, external })
+  }
+)
 
 const builder = (yargs: Argv) =>
   yargs

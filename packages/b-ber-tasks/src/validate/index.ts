@@ -12,7 +12,7 @@ const validate = async ({ project }: { project: string }) => {
   )
 
   if (!fs.pathExists(markdownPath)) {
-    log.error('Project path does not exist, aborting')
+    throw log.error('Project path does not exist, aborting')
   }
 
   const files = (await fs.readdir(markdownPath))

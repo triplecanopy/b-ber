@@ -43,12 +43,9 @@ const renderer = <R>({
       // The directive's missing an `id` attribute, so we extract the
       // fileName from `context` which we've stored in back in
       // `md/index.es6`, and passed into our `renderer`
-      log.error(
+      throw log.error(
         `Missing [id] for [${type}:start] at ${context.fileName}.md:${line}`
       )
-
-      // Let the parser know that this wasn't a match
-      return false
     }
 
     // Add the `id` to the global state so that we can verify that the
@@ -65,7 +62,9 @@ const renderer = <R>({
     const location = `${context.fileName}.md:${line}`
     if (isOpening && inStore) {
       // It's a duplicate `id`
-      log.error(`Duplicate [id] [${id}]. [id] must be unique at [${location}]`)
+      throw log.error(
+        `Duplicate [id] [${id}]. [id] must be unique at [${location}]`
+      )
     } else if (isClosing && !inStore) {
       // Trying to close an un-opened directive, but it might belong to a
       // different directive type

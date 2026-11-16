@@ -4,7 +4,12 @@ import log from '@canopycanopycanopy/b-ber-logger'
 import { init as Initializer } from '@canopycanopycanopy/b-ber-tasks'
 import fs from 'fs-extra'
 import _new from '../../src/commands/new'
-import { mockProcessExit, runCli, spyOnLogger } from '../helpers/cli'
+import {
+  flushPromises,
+  mockProcessExit,
+  runCli,
+  spyOnLogger,
+} from '../helpers/cli'
 
 jest.mock('@canopycanopycanopy/b-ber-tasks', () => {
   const init = jest.fn()
@@ -71,6 +76,21 @@ describe('new handler', () => {
     expect(Initializer).toHaveBeenCalledWith({ name: 'b', config: {} })
   })
 
+  it('skips the logger’s flags, which are not config options', async () => {
+    await _new.handler({
+      _: ['new'],
+      $0: 'bber',
+      name: 'b',
+      verbose: true,
+      'log-level': 3,
+      logLevel: 3,
+      color: false,
+    })
+
+    expect(logger.warn).not.toHaveBeenCalled()
+    expect(Initializer).toHaveBeenCalledWith({ name: 'b', config: {} })
+  })
+
   it.each([
     'ibooks_specified_fonts',
     'autoprefixer_options',
@@ -86,20 +106,27 @@ describe('new handler', () => {
     expect(Initializer).toHaveBeenCalledWith({ name: 'b', config: {} })
   })
 
-  it('resolves without waiting for the project to be created', async () => {
-    // Defect: start() is neither awaited nor returned (and returns nothing:
-    // the Initializer catches its own errors with log.error), so the handler
-    // cannot report a failure to yargs.
-    start.mockReturnValueOnce(new Promise(() => {}))
-    await expect(
-      _new.handler({ _: ['new'], $0: 'bber', name: 'b' })
-    ).resolves.toBeUndefined()
+  it('waits for the project to be created', async () => {
+    // Issue 740: start() used to be neither awaited nor returned, so the
+    // handler could not see a failure
+    let created
+    start.mockReturnValueOnce(new Promise((resolve) => (created = resolve)))
+    let resolved = false
+    const handled = _new
+      .handler({ _: ['new'], $0: 'bber', name: 'b' })
+      .then(() => (resolved = true))
+
+    await flushPromises()
+    expect(resolved).toBe(false)
+    created()
+    await handled
+    expect(resolved).toBe(true)
   })
 
   it('exits 1 when creating the project fails through log.error', async () => {
-    // TASK-046: Initializer#start ends in `.catch(log.error)`.
+    // Initializer#start ends in a catch that reports and rethrows.
     start.mockImplementationOnce(() => {
-      log.error(new Error('EEXIST: my-book'))
+      throw log.error(new Error('EEXIST: my-book'))
     })
 
     await _new.handler({ _: ['new'], $0: 'bber', name: 'my-book' })
@@ -145,15 +172,16 @@ describe('new handler', () => {
     it('exits 1 through log.error when the file does not exist', async () => {
       const config = path.join(tmpDir, 'missing.json')
 
-      // TASK-046: today the exit happens first; after it, only the read's
-      // rejection is left.
-      await expect(
-        _new.handler({ _: ['new'], $0: 'bber', name: 'b', config })
-      ).rejects.toThrow(/ENOENT/)
+      // parseConfigFile throws what log.error returns, so the file is never read
+      await _new.handler({ _: ['new'], $0: 'bber', name: 'b', config })
 
       expect(logger.error).toHaveBeenCalledWith(
         `Could not find config at [${config}]`
       )
+      expect(log.errors.map((e) => e.message)).toEqual([
+        `Could not find config at [${config}]`,
+      ])
+      expect(exit).toHaveBeenCalledTimes(1)
       expect(exit).toHaveBeenCalledWith(1)
       expect(Initializer).not.toHaveBeenCalled()
     })
@@ -174,17 +202,18 @@ describe('new handler', () => {
     })
 
     it('requires a name', () => {
-      const { tasks, utils, stoppedByFail } = runCli(['new'], ({ log }) =>
+      const { tasks, log, stoppedByExit } = runCli(['new'], ({ log }) =>
         spyOnLogger(log)
       )
 
-      expect(stoppedByFail).toBe(true)
+      expect(stoppedByExit).toBe(true)
       expect(tasks.init).not.toHaveBeenCalled()
-      expect(utils.fail).toHaveBeenCalledWith(
+      // Issue 740: a usage error used to exit 0, without printing the
+      // error
+      expect(exit).toHaveBeenCalledWith(1)
+      expect(log.errors.map((e) => e.message)).toEqual([
         expect.stringMatching(/Not enough non-option arguments/),
-        undefined,
-        expect.anything()
-      )
+      ])
     })
   })
 })

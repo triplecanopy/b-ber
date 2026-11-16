@@ -53,7 +53,11 @@ const xml = () => {
     files.splice(figuresTitlePageIndex + 1, 0, ...loi)
   }
 
-  return parseHTMLFiles(files).then(writeXML).catch(log.error)
+  return parseHTMLFiles(files)
+    .then(writeXML)
+    .catch((err) => {
+      throw log.error(err)
+    })
 }
 
 export default xml

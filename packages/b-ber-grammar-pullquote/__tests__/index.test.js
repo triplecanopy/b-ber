@@ -10,7 +10,11 @@ jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
 }))
 
 jest.mock('@canopycanopycanopy/b-ber-logger', () => ({
-  error: jest.fn(),
+  // Returns an Error, as the real log.error does, so that a site's
+  // `throw log.error(...)` throws one rather than undefined
+  error: jest.fn((err) =>
+    err instanceof Error ? err : new Error(String(err))
+  ),
   warn: jest.fn(),
   debug: jest.fn(),
 }))
@@ -48,9 +52,9 @@ describe('b-ber-grammar-pullquote', () => {
     expect(config.render).toBeFunction()
   })
 
-  it('validateOpen returns false when id is missing', () => {
+  it('validateOpen throws what log.error reports when id is missing', () => {
     const config = pullquote.renderer({ instance, context })
-    expect(config.validateOpen('pullquote', 1)).toBe(false)
+    expect(() => config.validateOpen('pullquote', 1)).toThrow('Missing [id]')
   })
 
   it('render returns empty string for closing token (nesting -1)', () => {
@@ -80,18 +84,18 @@ describe('b-ber-grammar-pullquote', () => {
     expect(config.validateOpen('pullquote:pq-02', 1)).toBe(true)
   })
 
-  it('handleOpen logs an error when the [id] is a duplicate', () => {
+  it('handleOpen throws what log.error reports when the [id] is a duplicate', () => {
     indexOf.mockReturnValueOnce(0)
     const config = pullquote.renderer({ instance, context })
 
-    config.render([{ nesting: 1, info: 'pullquote:dup-id', map: [0, 1] }], 0)
-
+    // It throws before the id joins the module-level index stack, so there
+    // is nothing to close
+    expect(() =>
+      config.render([{ nesting: 1, info: 'pullquote:dup-id', map: [0, 1] }], 0)
+    ).toThrow('Duplicate [id] [dup-id]')
     expect(log.error).toHaveBeenCalledWith(
       expect.stringContaining('Duplicate [id] [dup-id]')
     )
-
-    // close it again so the module-level index stack stays balanced
-    config.render([{ nesting: 1, info: 'exit:dup-id', map: [2, 3] }], 0)
   })
 
   it('emits a citation footer on exit and resets the citation afterwards', () => {

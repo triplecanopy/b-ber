@@ -16,7 +16,7 @@ export const throMissingBuildTypeError = ({
   message += ' '
   message +=
     'Ensure that the media.yml file exists and contains the properties for each build type.'
-  log.error(message)
+  throw log.error(message)
 }
 
 // `build` is accepted because the caller passes it, though it is unused
@@ -25,7 +25,7 @@ export const throwMissingIDError = ({ id }: { id: string; build?: string }) => {
   message += ' '
   message +=
     'Ensure that the media.yml file exists and contains the correct IDs.'
-  log.error(message)
+  throw log.error(message)
 }
 
 export const createAttributesString = (data: Record<string, unknown>) =>

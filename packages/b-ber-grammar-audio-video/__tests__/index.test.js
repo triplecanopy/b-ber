@@ -2,8 +2,9 @@ import audioVideo from '../src'
 
 jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
   build: 'epub',
-  audio: [],
-  video: [],
+  // The attributes mock gives every directive this source, which must exist
+  audio: ['media.mp4'],
+  video: ['media.mp4'],
   figures: [],
   remoteAssets: [],
   add: jest.fn(),
@@ -15,7 +16,11 @@ jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
 }))
 
 jest.mock('@canopycanopycanopy/b-ber-logger', () => ({
-  error: jest.fn(),
+  // Returns an Error, as the real log.error does, so that a site's
+  // `throw log.error(...)` throws one rather than undefined
+  error: jest.fn((err) =>
+    err instanceof Error ? err : new Error(String(err))
+  ),
   warn: jest.fn(),
   debug: jest.fn(),
 }))
@@ -131,5 +136,22 @@ describe('b-ber-grammar-audio-video', () => {
       { info: 'video:my-id source="media.mp4"', map: null, children: null },
     ]
     expect(() => config.render(tokens, 0)).not.toThrow()
+  })
+
+  it('render throws what log.error reports when the media does not exist', () => {
+    const state = jest.requireMock('@canopycanopycanopy/b-ber-lib/State')
+    const saved = state.video
+    state.video = []
+    try {
+      const config = audioVideo.renderer({ instance, context })
+      const tokens = [
+        { info: 'video:my-id source="media.mp4"', map: [0, 1], children: null },
+      ]
+      expect(() => config.render(tokens, 0)).toThrow(
+        'Could not find [video] matching [media.mp4]'
+      )
+    } finally {
+      state.video = saved
+    }
   })
 })

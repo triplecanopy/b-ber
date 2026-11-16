@@ -33,6 +33,8 @@ const mobi = () =>
           '--disable-remove-fake-margins',
           `--page-breaks-before='${pageBreakBeforeXPATH()}'`,
         ],
-      }).catch(log.error)
+      }).catch((err) => {
+        throw log.error(err)
+      })
 
 export default mobi

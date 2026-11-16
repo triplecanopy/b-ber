@@ -77,7 +77,7 @@ function prepare({
 
   const { source } = attrsObject
   if (!source)
-    log.error(
+    throw log.error(
       `Directive [${type}] requires a [source] attribute at [${fileName}:${lineNumber}]`
     )
 
@@ -114,7 +114,7 @@ function prepare({
     err = new Error(
       `bber-directives: Could not find matching [${mediaType}] with the basename [${source}]`
     )
-    log.error(err)
+    throw log.error(err)
   }
 
   delete attrsObject.source // otherwise we get a `src` tag on our video element

@@ -126,7 +126,7 @@ class Navigation {
       )}]:`
       message += `\n${redundant.map((name) => `[${name}]`).join('\n')}`
 
-      log.error(message)
+      throw log.error(message)
     }
 
     return Promise.all(promises)
@@ -226,7 +226,9 @@ class Navigation {
       .then((resp) =>
         Navigation.writeFiles(resp as [string, string, string, string])
       )
-      .catch(log.error)
+      .catch((err) => {
+        throw log.error(err)
+      })
   }
 }
 

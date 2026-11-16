@@ -5,9 +5,12 @@ import log from '@canopycanopycanopy/b-ber-logger'
 import fs from 'fs-extra'
 import web from '../src/web'
 import Template from '../src/web/Template'
+import { returnReportedErrors } from './helpers/log'
 import { createProject } from './helpers/project'
 
 jest.mock('@canopycanopycanopy/b-ber-logger')
+
+beforeEach(() => returnReportedErrors(log))
 
 // The root config runs under jsdom, whose export conditions resolve cheerio
 // to its browser ESM build, which Jest cannot load. Its Node build imports
@@ -309,11 +312,11 @@ describe('task: web', () => {
     expect(records.map((r) => r.title).sort()).toEqual(['One', 'Two'])
   })
 
-  test('passes a failure to log.error', async () => {
+  test('passes a failure to log.error and rejects with it', async () => {
     await setup()
     await fs.remove(dist('OPS', 'text', 'two.xhtml'))
 
-    await expect(web()).resolves.toBeUndefined()
+    await expect(web()).rejects.toMatchObject({ code: 'ENOENT' })
     expect(log.error).toHaveBeenCalledWith(
       expect.objectContaining({ code: 'ENOENT' })
     )

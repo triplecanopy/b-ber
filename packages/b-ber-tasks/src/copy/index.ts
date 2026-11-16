@@ -62,7 +62,9 @@ const copy = () => {
       })
   )
 
-  return Promise.all(promises).catch(log.error)
+  return Promise.all(promises).catch((err) => {
+    throw log.error(err)
+  })
 }
 
 export default copy

@@ -29,7 +29,7 @@ class Initializer {
     this.builds = Object.keys(sequences)
 
     if (fs.existsSync(this.path)) {
-      log.error(`Project [${name}] already exits, aborting`)
+      throw log.error(`Project [${name}] already exits, aborting`)
     }
   }
 
@@ -76,11 +76,13 @@ class Initializer {
 
   // Write default directories and files to the source directory
   start() {
-    this.createAssets()
+    return this.createAssets()
       .then(() => this.copyImages())
       .then(() => this.setTheme())
       .then(() => log.notice(`Created new project [${this.name}]`))
-      .catch(log.error)
+      .catch((err) => {
+        throw log.error(err)
+      })
   }
 }
 

@@ -88,7 +88,9 @@ const getThemes = (): { current: string; themes: string[] } => {
 const createProjectThemeDirectory = (name: string): Promise<unknown> =>
   fs
     .mkdirp(path.resolve(state.config.src as string, '_stylesheets', name))
-    .catch(log.error)
+    .catch((err) => {
+      throw log.error(err)
+    })
 
 const copyThemeAssets = (theme: ThemeModule): Promise<unknown> => {
   const themePath = path.dirname(theme.entry)
@@ -176,7 +178,7 @@ class Theme {
       try {
         theme = require(name)
       } catch (err) {
-        log.error(`Could not load theme [${name}]`)
+        throw log.error(`Could not load theme [${name}]`)
       }
     }
 
@@ -184,7 +186,9 @@ class Theme {
       .then(() => copyThemeAssets(theme))
       .then(() => updateConfig(name))
       .then(() => !force && log.notice(`Updated theme [${name}]`))
-      .catch(log.error)
+      .catch((err) => {
+        throw log.error(err)
+      })
   }
 }
 

@@ -326,7 +326,7 @@ class State {
     } else if (typeof prevValue === 'string') {
       set(this, prop, `${prevValue}${value}`)
     } else {
-      log.error(`Cannot add [${value}] to [state.${prop}]`)
+      throw log.error(`Cannot add [${value}] to [state.${prop}]`)
     }
   }
 
@@ -346,7 +346,7 @@ class State {
       const { [key]: _, ...rest } = prevValue as Record<string, unknown> // eslint-disable-line no-unused-vars
       set(this, prop, rest)
     } else {
-      log.error(`Cannot remove [${value}] from [state.${prop}]`)
+      throw log.error(`Cannot remove [${value}] from [state.${prop}]`)
     }
   }
 
@@ -480,7 +480,7 @@ class State {
     const projectDir = path.resolve(src)
 
     if (!fs.existsSync(projectDir))
-      log.error(`Project directory [${projectDir}] does not exist`)
+      throw log.error(`Project directory [${projectDir}] does not exist`)
 
     // One TOC to rule them all (toc.yml). A user can override the TOC for a
     // specific build by including a <type>.yml file, which will be loaded

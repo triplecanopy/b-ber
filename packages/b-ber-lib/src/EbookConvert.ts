@@ -79,7 +79,9 @@ function convert(options: ConvertOptions): Promise<unknown> {
 
   return checkForCalibre()
     .then(() => convertDocument(settings))
-    .catch(log.error)
+    .catch((err) => {
+      throw log.error(err)
+    })
 }
 
 export default { convert }

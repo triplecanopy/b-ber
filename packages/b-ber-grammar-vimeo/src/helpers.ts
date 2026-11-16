@@ -21,7 +21,7 @@ const ensureMatch =
       let message = `Invalid Vimeo attribute. [${name}] must match [${re}]`
       message +=
         'See the Vimeo Player Parameters documentation for more information https://vimeo.zendesk.com/hc/en-us/articles/360001494447-Using-Player-Parameters'
-      log.error(message)
+      throw log.error(message)
     }
 
     return val
@@ -71,7 +71,9 @@ export const validatePosterImage = (asset: string, type: string): string => {
   const assetPath = state.src.images(asset)
 
   if (!fs.existsSync(assetPath)) {
-    log.error(`bber-directives: Poster image for [${type}] does not exist`)
+    throw log.error(
+      `bber-directives: Poster image for [${type}] does not exist`
+    )
   }
 
   return asset

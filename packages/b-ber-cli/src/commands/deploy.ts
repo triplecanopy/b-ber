@@ -1,6 +1,6 @@
-import { fail } from '@canopycanopycanopy/b-ber-lib/utils'
 import { deploy } from '@canopycanopycanopy/b-ber-tasks'
 import type { Argv } from 'yargs'
+import { exitOnFailure, fail } from '../lib/exit'
 
 const command = 'deploy [builds...]'
 const describe = 'Upload a b-ber project to Amazon S3'
@@ -24,7 +24,7 @@ const builder = (yargs: Argv) =>
     .usage(`\nUsage: $0 deploy\n\n${describe}`)
     .fail((msg, err) => fail(msg, err, yargs))
 
-const handler = deploy
+const handler = exitOnFailure(deploy)
 
 export default {
   command,

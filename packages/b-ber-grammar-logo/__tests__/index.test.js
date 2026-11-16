@@ -9,7 +9,11 @@ jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
 }))
 
 jest.mock('@canopycanopycanopy/b-ber-logger', () => ({
-  error: jest.fn(),
+  // Returns an Error, as the real log.error does, so that a site's
+  // `throw log.error(...)` throws one rather than undefined
+  error: jest.fn((err) =>
+    err instanceof Error ? err : new Error(String(err))
+  ),
   warn: jest.fn(),
   debug: jest.fn(),
 }))
@@ -61,10 +65,12 @@ describe('b-ber-grammar-logo', () => {
     expect(result).toContain('logo.png')
   })
 
-  it('render logs error when source attribute is missing', () => {
+  it('render throws what log.error reports when source attribute is missing', () => {
     const config = logo.renderer({ context })
     const tokens = [{ info: 'logo:my-logo', map: [0, 1] }]
-    config.render(tokens, 0)
+    expect(() => config.render(tokens, 0)).toThrow(
+      '[source] attribute is required'
+    )
     expect(log.error).toHaveBeenCalled()
   })
 

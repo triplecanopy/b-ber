@@ -96,11 +96,13 @@ export const parseConfigFile = async (
   const configPath = path.resolve(process.cwd(), configFile)
 
   if (!(await fs.pathExists(configPath))) {
-    log.error(`Could not find config at [${configPath}]`)
+    throw log.error(`Could not find config at [${configPath}]`)
   }
 
   if (/^\.(?:ya?ml|json)/i.test(ext) === false) {
-    log.error('Config file must have a .json or .yaml/.yml file extension')
+    throw log.error(
+      'Config file must have a .json or .yaml/.yml file extension'
+    )
   }
 
   const contents = (await fs.readFile(configPath)).toString()

@@ -1,5 +1,4 @@
 import state from '@canopycanopycanopy/b-ber-lib/State'
-import { fail } from '@canopycanopycanopy/b-ber-lib/utils'
 import log from '@canopycanopycanopy/b-ber-logger'
 import { init as Initializer } from '@canopycanopycanopy/b-ber-tasks'
 import type { Arguments, Argv } from 'yargs'
@@ -8,6 +7,8 @@ import {
   parseConfigFile,
   withConfigOptions,
 } from '../lib/config-options'
+import { exitOnFailure, fail } from '../lib/exit'
+import { loggerArgvKeys } from '../lib/logger-options'
 
 const command = 'new <name>'
 const describe = 'Create a new project'
@@ -23,7 +24,7 @@ const builder = (yargs: Argv) =>
     .alias('h', 'help')
     .usage(`\nUsage: $0 new "My Project"\n\n${describe}`)
 
-const handler = async (argv: Arguments<{ name?: string }>) => {
+const handler = exitOnFailure(async (argv: Arguments<{ name?: string }>) => {
   const { _, $0, name, config, ...configOptions } = argv
 
   let projectConfig: Record<string, unknown> = {}
@@ -31,6 +32,8 @@ const handler = async (argv: Arguments<{ name?: string }>) => {
   if (typeof config === 'string') projectConfig = await parseConfigFile(config)
 
   projectConfig = { ...projectConfig, ...configOptions }
+  // The logger's flags, which index.ts has applied already
+  for (const key of loggerArgvKeys) delete projectConfig[key]
 
   for (const [key] of Object.entries(projectConfig)) {
     if (!state.has(`config.${key}`)) {
@@ -51,8 +54,8 @@ const handler = async (argv: Arguments<{ name?: string }>) => {
     name: name as string,
     config: projectConfig,
   })
-  initializer.start()
-}
+  await initializer.start()
+})
 
 export default {
   command,
