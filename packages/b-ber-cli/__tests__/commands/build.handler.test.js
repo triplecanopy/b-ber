@@ -262,23 +262,22 @@ describe('build handler', () => {
       expect(updatesTo(`config.${key}`)).toEqual([])
     })
 
-    it.each([
-      'bucket_url',
-      'remote_javascripts',
-      'remote_stylesheets',
-    ])('drops the advertised --%s flag unless config.yml already sets it', async (key) => {
-      // Defect: withConfigOptions offers these flags, but they are not keys
-      // of b-ber-lib's default Config, so `state.has` rejects them as
-      // invalid for any project whose config.yml does not define them.
-      await build.handler({ _: ['build', 'epub'], $0: 'bber', [key]: 'x' })
-      await flushPromises()
+    it.each(['bucket_url', 'remote_javascripts', 'remote_stylesheets'])(
+      'drops the advertised --%s flag unless config.yml already sets it',
+      async (key) => {
+        // Defect: withConfigOptions offers these flags, but they are not keys
+        // of b-ber-lib's default Config, so `state.has` rejects them as
+        // invalid for any project whose config.yml does not define them.
+        await build.handler({ _: ['build', 'epub'], $0: 'bber', [key]: 'x' })
+        await flushPromises()
 
-      expect(logger.warn).toHaveBeenCalledWith(
-        'Invalid configuration option [%s]',
-        key
-      )
-      expect(updatesTo(`config.${key}`)).toEqual([])
-    })
+        expect(logger.warn).toHaveBeenCalledWith(
+          'Invalid configuration option [%s]',
+          key
+        )
+        expect(updatesTo(`config.${key}`)).toEqual([])
+      }
+    )
 
     it('skips the logger’s flags, which are not config options', async () => {
       // --verbose, --log-level=3 and --no-color used to warn "Invalid

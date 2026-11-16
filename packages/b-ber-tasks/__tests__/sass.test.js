@@ -271,26 +271,21 @@ describe('task: sass', () => {
   describe('$build', () => {
     // The build names `b-ber-shapes-sequences` defines; `b-ber-cli` sets
     // `state.build` to each in turn, and every sequence runs `sass`
-    test.each([
-      'epub',
-      'mobi',
-      'pdf',
-      'web',
-      'sample',
-      'reader',
-      'xml',
-    ])('declares `$build: "%s"` for the %s build', async (build) => {
-      mockState.build = build
-      await writeTheme({
-        'application.scss': '.build::after { content: "#{$build}"; }\n',
-      })
+    test.each(['epub', 'mobi', 'pdf', 'web', 'sample', 'reader', 'xml'])(
+      'declares `$build: "%s"` for the %s build',
+      async (build) => {
+        mockState.build = build
+        await writeTheme({
+          'application.scss': '.build::after { content: "#{$build}"; }\n',
+        })
 
-      await sass()
+        await sass()
 
-      expect(squash(await readCSS())).toContain(
-        `.build::after{content:"${build}";}`
-      )
-    })
+        expect(squash(await readCSS())).toContain(
+          `.build::after{content:"${build}";}`
+        )
+      }
+    )
 
     test('overrides the theme’s own `$build: … !default`', async () => {
       mockState.build = 'reader'

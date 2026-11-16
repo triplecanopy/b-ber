@@ -47,16 +47,16 @@ afterEach(() => {
 })
 
 describe('bber binary', () => {
-  it.each([
-    '--version',
-    '-v',
-  ])('prints the package version for %s', async (flag) => {
-    const { app, configure } = runBin([flag])
-    await flushPromises()
-    expect(console.log).toHaveBeenCalledWith(pkg.version)
-    expect(app).not.toHaveBeenCalled()
-    expect(configure).not.toHaveBeenCalled()
-  })
+  it.each(['--version', '-v'])(
+    'prints the package version for %s',
+    async (flag) => {
+      const { app, configure } = runBin([flag])
+      await flushPromises()
+      expect(console.log).toHaveBeenCalledWith(pkg.version)
+      expect(app).not.toHaveBeenCalled()
+      expect(configure).not.toHaveBeenCalled()
+    }
+  )
 
   it('hands every other invocation to the yargs app', async () => {
     const { app } = runBin(['build', 'epub'])
