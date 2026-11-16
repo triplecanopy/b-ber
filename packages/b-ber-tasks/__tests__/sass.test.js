@@ -11,14 +11,17 @@
 // Tests for the `sass` task. These compile real SCSS with the real dart-sass
 // and run the real autoprefixer, against fixture themes and projects written
 // to temp directories. Only `State` (a config-loading singleton) and the
-// logger (which exits the process on `log.error`) are replaced.
+// logger are replaced.
 
 import os from 'node:os'
 import path from 'node:path'
 import log from '@canopycanopycanopy/b-ber-logger'
 import fs from 'fs-extra'
+import { returnReportedErrors } from './helpers/log'
 
 jest.mock('@canopycanopycanopy/b-ber-logger')
+
+beforeEach(() => returnReportedErrors(log))
 
 // The parts of `State` the task reads. Paths are rebuilt per test in
 // `beforeEach`, everything else is reset there.
@@ -254,15 +257,14 @@ describe('task: sass', () => {
     })
 
     test('reports an error when there is nothing to compile', async () => {
-      await sass()
+      await expect(sass()).rejects.toThrow('No readable stylesheets were found')
 
       expect(log.error).toHaveBeenCalledWith(
         'No readable stylesheets were found'
       )
-
-      // The real logger exits here. With it mocked, the task carries on and
-      // writes an empty stylesheet
-      expect(squash(await readCSS())).toBe('')
+      expect(fs.existsSync(mockState.dist.stylesheets('application.css'))).toBe(
+        false
+      )
     })
   })
 
@@ -672,10 +674,10 @@ describe('task: sass', () => {
       // DEFECT (#774): `copyThemeAssets` calls `lstatSync(themePath).isDirectory()`
       // and discards the result, so a theme `fonts` or `images` that is a file
       // is not skipped. `readdirSync` then fails with ENOTDIR and the build
-      // stops (the real `log.error` exits)
+      // stops
       await writeTheme({ 'application.scss': '', fonts: 'not a directory' })
 
-      await sass()
+      await expect(sass()).rejects.toMatchObject({ code: 'ENOTDIR' })
 
       expect(log.error).toHaveBeenCalledWith(
         expect.objectContaining({ code: 'ENOTDIR' })
@@ -692,7 +694,7 @@ describe('task: sass', () => {
         await fs.chmod(themeDir, 0o000)
 
         try {
-          await sass()
+          await expect(sass()).rejects.toThrow('There was a problem copying')
         } finally {
           await fs.chmod(themeDir, 0o755)
         }
@@ -709,10 +711,10 @@ describe('task: sass', () => {
       // DEFECT (#773): `renderCSS` does `if (err) throw err` inside dart-sass's
       // asynchronous callback. The throw escapes the Promise it is wrapped in,
       // so it becomes an uncaught exception, the task's Promise never settles,
-      // and `.catch(log.error)` never sees it. Nothing in b-ber handles
-      // uncaught exceptions, so the CLI dies with Node's raw stack trace rather
-      // than a logged error. The trap observes the throw without crashing the
-      // test process
+      // and the task's `.catch` never sees it. Under the CLI, its
+      // uncaught-exception handler prints it and exits; any other caller is
+      // left waiting on a Promise that never settles. The trap observes the
+      // throw without crashing the test process
       const trap = trapRenderCallback()
 
       await writeTheme({ 'application.scss': '.a { color: $undefined; }\n' })

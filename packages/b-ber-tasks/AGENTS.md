@@ -78,7 +78,8 @@ Project paths below are relative to the source directory (`config.src`,
    2. `state.theme.entry`, the theme's `application.scss`;
    3. `_stylesheets/<theme name>/_overrides.scss`, the user's rules.
 
-   If none of the three exists it calls `log.error`, which exits.
+   If none of the three exists it reports that with `log.error` and throws,
+   which rejects the task.
 4. Prefixes `$build: "<state.build>";` and compiles the string with dart-sass's
    legacy `render()` API. The output is `compressed` when
    `NODE_ENV=production`, `expanded` otherwise.
@@ -138,8 +139,9 @@ theme, because it is compiled first.
 
 - A compile error, including an import that cannot be resolved, is thrown
   from inside dart-sass's callback (`if (err) throw err`). It never reaches
-  `.catch(log.error)`: the task's Promise never settles, and the CLI dies with
-  an uncaught exception and Node's raw stack trace (#773).
+  the task's `.catch`: the task's Promise never settles. The CLI's
+  uncaught-exception handler prints it and exits 1; any other caller waits
+  forever (#773).
 - The importer finds the package directory with the *first* occurrence of the
   package name in the resolved path. If a directory above `node_modules`
   contains that name, for example a project in `~/b-ber-theme-mixins-demo/`,

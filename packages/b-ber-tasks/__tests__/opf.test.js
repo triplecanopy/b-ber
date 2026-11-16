@@ -4,9 +4,12 @@ import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
 import fs from 'fs-extra'
 import opf, { ManifestAndMetadata, Navigation, Opf } from '../src/opf'
+import { returnReportedErrors } from './helpers/log'
 import { createProject } from './helpers/project'
 
 jest.mock('@canopycanopycanopy/b-ber-logger')
+
+beforeEach(() => returnReportedErrors(log))
 
 let manifestAndMetadata
 
@@ -229,9 +232,11 @@ describe('ManifestAndMetadata, against a project', () => {
     )
   })
 
-  test('init passes a failure to log.error and resolves to undefined', async () => {
+  test('init passes a failure to log.error and rejects with it', async () => {
     // No OPS directory: recursive-readdir fails
-    await expect(new ManifestAndMetadata().init()).resolves.toBeUndefined()
+    await expect(new ManifestAndMetadata().init()).rejects.toMatchObject({
+      code: 'ENOENT',
+    })
     expect(log.error).toHaveBeenCalledWith(
       expect.objectContaining({ code: 'ENOENT' })
     )
@@ -325,7 +330,8 @@ describe('Navigation', () => {
       project = await createProject({ toc: ['one', 'gone'] })
       await writeOps({ 'text/one.xhtml': '' })
 
-      await Navigation.compareXhtmlWithYaml()
+      // It throws before it returns its Promise
+      expect(() => Navigation.compareXhtmlWithYaml()).toThrow('[gone]')
 
       expect(log.error).toHaveBeenCalledTimes(1)
       const [message] = log.error.mock.calls[0]
@@ -362,7 +368,7 @@ describe('Navigation', () => {
       project = await createProject({ toc: ['cover', 'one'] })
       await writeOps({ 'text/one.xhtml': '' })
 
-      await Navigation.compareXhtmlWithYaml()
+      expect(() => Navigation.compareXhtmlWithYaml()).toThrow('[cover]')
 
       expect(log.error).toHaveBeenCalledWith(expect.stringContaining('[cover]'))
     })
@@ -469,11 +475,11 @@ describe('Navigation', () => {
     )
   })
 
-  test('init passes a failure to log.error and resolves to undefined', async () => {
+  test('init passes a failure to log.error and rejects with it', async () => {
     project = await createProject({ toc: ['one'] })
     // No OPS directory: the nav documents cannot be written
 
-    await expect(Navigation.init()).resolves.toBeUndefined()
+    await expect(Navigation.init()).rejects.toMatchObject({ code: 'ENOENT' })
     expect(log.error).toHaveBeenCalledWith(
       expect.objectContaining({ code: 'ENOENT' })
     )
@@ -563,10 +569,10 @@ describe('Opf.createOpf', () => {
     )
   })
 
-  test('passes a failure to log.error', async () => {
+  test('passes a failure to log.error and rejects with it', async () => {
     project = await createProject({ toc: ['one'] })
 
-    await opf()
+    await expect(opf()).rejects.toThrow()
 
     expect(log.error).toHaveBeenCalled()
     expect(fs.existsSync(state.dist.ops('content.opf'))).toBe(false)

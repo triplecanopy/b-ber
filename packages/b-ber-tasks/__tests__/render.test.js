@@ -2,9 +2,12 @@ import path from 'node:path'
 import log from '@canopycanopycanopy/b-ber-logger'
 import fs from 'fs-extra'
 import render from '../src/render'
+import { returnReportedErrors } from './helpers/log'
 import { createProject } from './helpers/project'
 
 jest.mock('@canopycanopycanopy/b-ber-logger')
+
+beforeEach(() => returnReportedErrors(log))
 
 // `render` does not wait for its own writes (see the defect test below), so
 // the tests collect the promises fs.writeFile returns and await them. The
@@ -114,12 +117,13 @@ describe('task: render', () => {
     await expect(render()).rejects.toMatchObject({ code: 'ENOENT' })
   })
 
-  test('passes a per-file failure to log.error and carries on', async () => {
+  test('passes a per-file failure to log.error and stops there', async () => {
     project = await createProject({ toc: ['one'], markdown: { one: 'x' } })
-    // A directory with a .md name: readFile fails with EISDIR
+    // A directory with a .md name: readFile fails with EISDIR. It is not in
+    // the TOC, so it sorts first and the files after it are never rendered
     await fs.ensureDir(path.join(project.src, '_markdown', 'broken.md'))
 
-    await render()
+    await expect(render()).rejects.toMatchObject({ code: 'EISDIR' })
     await settle()
 
     expect(log.error).toHaveBeenCalledWith(
@@ -127,7 +131,7 @@ describe('task: render', () => {
     )
     expect(
       fs.existsSync(path.join(project.dist, 'OPS', 'text', 'one.xhtml'))
-    ).toBe(true)
+    ).toBe(false)
   })
 
   // DEFECT (#770): `writeMarkupToFile` (src/render/index.ts:9) neither returns nor
