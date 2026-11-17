@@ -2,6 +2,7 @@ import state from '@canopycanopycanopy/b-ber-lib/State'
 import log from '@canopycanopycanopy/b-ber-logger'
 import { init as Initializer } from '@canopycanopycanopy/b-ber-tasks'
 import type { Arguments, Argv } from 'yargs'
+import { noExtraArguments } from '../lib/arguments'
 import {
   blacklistedConfigOptions,
   parseConfigFile,
@@ -19,6 +20,7 @@ const builder = (yargs: Argv) =>
       type: 'string',
     })
   )
+    .check(noExtraArguments)
     .fail((msg, err) => fail(msg, err, yargs))
     .help('h')
     .alias('h', 'help')

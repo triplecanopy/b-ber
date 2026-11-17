@@ -1,18 +1,17 @@
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import yargs from 'yargs'
 import * as commands from './commands'
-import { exitWithFailure } from './lib/exit'
+import { knownCommand } from './lib/arguments'
+import { fail } from './lib/exit'
 
 const LINE_LENGTH = 70
 
-// The top-level yargs fail handler. A usage error there (no command at all)
-// shows b-ber's own usage text, and is not a failure. An error is: yargs
-// passes one when a builder throws
-export const showCustomHelp = (_msg: string, err: Error | null): void => {
-  if (err) {
-    exitWithFailure(err)
-    return
-  }
+// The first word of each command string, which is the word that selects it
+const COMMAND_NAMES = Object.values(commands).map(
+  ({ command }) => command.split(' ')[0]
+)
+
+const printUsage = (): void => {
   console.log(`
     Usage: bber <command> [options]
 
@@ -28,21 +27,45 @@ export const showCustomHelp = (_msg: string, err: Error | null): void => {
 `)
 }
 
+// The top-level yargs fail handler. Without an error, yargs is reporting that
+// there is no command at all: `bber` alone, or `bber --help`, which reaches
+// here the same way because help is off at this level. The usage text is
+// what was asked for, so that is not a failure, and the exit status stays 0.
+//
+// With one, it is a failure. yargs passes an Error when a builder throws, and
+// knownCommand's message for a word that names no command, which shows the
+// usage text first.
+export const showCustomHelp = (
+  msg: string,
+  err: Error | string | null | undefined
+): void => {
+  if (!err) {
+    printUsage()
+    return
+  }
+  fail(msg, err, { showHelp: printUsage })
+}
+
 export default function bber() {
-  return yargs
-    .command(commands.build)
-    .command(commands.generate)
-    .command(commands.opf)
-    .command(commands.theme)
-    .command(commands.serve)
-    .command(commands.new)
-    .command(commands.cover)
-    .command(commands.deploy)
-    .command(commands.check)
+  return (
+    yargs
+      .command(commands.build)
+      .command(commands.generate)
+      .command(commands.opf)
+      .command(commands.theme)
+      .command(commands.serve)
+      .command(commands.new)
+      .command(commands.cover)
+      .command(commands.deploy)
+      .command(commands.check)
 
-    .help(false)
-    .fail(showCustomHelp)
+      .help(false)
+      .fail(showCustomHelp)
 
-    .demandCommand()
-    .wrap(LINE_LENGTH).argv
+      .demandCommand()
+      // Not global, so it runs only when no command matched. Each command
+      // checks its own words.
+      .check(knownCommand(COMMAND_NAMES), false)
+      .wrap(LINE_LENGTH).argv
+  )
 }

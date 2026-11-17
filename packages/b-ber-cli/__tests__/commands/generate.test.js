@@ -10,6 +10,7 @@ jest.mock('@canopycanopycanopy/b-ber-lib/utils', () => ({
 }))
 
 const mockYargs = () => ({
+  check: jest.fn().mockReturnThis(),
   positional: jest.fn().mockReturnThis(),
   option: jest.fn().mockReturnThis(),
   fail: jest.fn().mockReturnThis(),

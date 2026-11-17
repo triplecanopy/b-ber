@@ -13,6 +13,8 @@ jest.mock('@canopycanopycanopy/b-ber-tasks', () => ({
   serialize: jest.fn(() => Promise.resolve()),
   validate: jest.fn(),
   xml: jest.fn(),
+  opf: jest.fn(),
+  init: jest.fn(),
 }))
 
 jest.mock('@canopycanopycanopy/b-ber-lib/State', () =>
@@ -58,25 +60,82 @@ describe('bber', () => {
     expect(exit).not.toHaveBeenCalled()
   })
 
-  it.each([
-    ['an unknown command', 'frobnicate'],
-    ['the unregistered xml command', 'xml'],
-  ])('does nothing for %s', (_label, command) => {
-    // Defect: yargs is not in strict mode, so an unknown command matches
-    // nothing, satisfies demandCommand (there is a word in `_`), runs no
-    // handler and prints nothing. The process ends with status 0.
-    const { tasks } = quietly([command])
+  it('treats `bber --help` as `bber`: the usage text, without exiting', () => {
+    // Help is off at the top level, so --help is just a flag, and there is
+    // no command
+    quietly(['--help'])
 
-    expect(tasks.xml).not.toHaveBeenCalled()
-    expect(console.log).not.toHaveBeenCalled()
+    expect(console.log).toHaveBeenCalledWith(expect.stringContaining(USAGE))
     expect(exit).not.toHaveBeenCalled()
   })
 
-  it('runs bber build xml, which the build command string leaves out', async () => {
+  it.each([
+    ['an unknown command', 'frobnicate'],
+    ['the unregistered xml command', 'xml'],
+  ])('rejects %s: the usage text, the error naming it, exit 1', (_l, word) => {
+    // Issue 741: yargs 13 matched nothing, ran nothing, printed nothing and
+    // exited 0
+    let logger
+    const { tasks, stoppedByExit } = runCli([word], ({ log }) => {
+      logger = spyOnLogger(log)
+    })
+
+    expect(console.log).toHaveBeenCalledWith(expect.stringContaining(USAGE))
+    expect(logger.error).toHaveBeenCalledWith(
+      expect.objectContaining({ message: `Unknown command: ${word}` })
+    )
+    expect(stoppedByExit).toBe(true)
+    expect(exit).toHaveBeenCalledWith(1)
+    expect(tasks.xml).not.toHaveBeenCalled()
+  })
+
+  it('runs bber build xml', async () => {
     const { tasks } = quietly(['build', 'xml'])
     await flushPromises()
 
     expect(tasks.serialize).toHaveBeenCalledWith(sequences.xml)
+  })
+
+  it('runs several formats given together, one after another', async () => {
+    const { tasks, stoppedByExit } = quietly(['build', 'epub', 'web'])
+    await flushPromises()
+
+    expect(stoppedByExit).toBe(false)
+    expect(tasks.serialize.mock.calls).toEqual([
+      [sequences.epub],
+      [sequences.web],
+    ])
+  })
+
+  it.each([
+    ['in place of a format', ['build', 'ebup'], 'Unknown format: ebup'],
+    // The positional the command string used to have took this word, and
+    // the handler then built every format
+    ['after a format', ['build', 'epub', 'ebup'], 'Unknown format: ebup'],
+    [
+      'after a command that takes none',
+      ['opf', 'extra'],
+      'Unknown argument: extra',
+    ],
+    [
+      'after the positionals a command takes',
+      ['new', 'My', 'Project'],
+      'Unknown argument: Project',
+    ],
+  ])('rejects a word %s, running nothing', async (_label, args, message) => {
+    let logger
+    const { tasks, stoppedByExit } = runCli(args, ({ log }) => {
+      logger = spyOnLogger(log)
+    })
+    await flushPromises()
+
+    expect(logger.error).toHaveBeenCalledWith(
+      expect.objectContaining({ message })
+    )
+    expect(stoppedByExit).toBe(true)
+    for (const task of Object.values(tasks)) {
+      expect(task).not.toHaveBeenCalled()
+    }
   })
 
   it('hands build the argv yargs produces, with nothing the config loop rejects', async () => {

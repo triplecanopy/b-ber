@@ -1,6 +1,7 @@
 import log from '@canopycanopycanopy/b-ber-logger'
 import { serve } from '@canopycanopycanopy/b-ber-tasks'
 import type { Arguments, Argv } from 'yargs'
+import { noExtraArguments } from '../lib/arguments'
 import { exitOnFailure, fail } from '../lib/exit'
 
 const command = 'serve [build] [opts]'
@@ -31,6 +32,7 @@ const builder = (yargs: Argv) =>
     .help('h')
     .alias('h', 'help')
     .usage(`\nUsage: $0 serve\n\n${describe}`)
+    .check(noExtraArguments)
     .fail((msg, err) => fail(msg, err, yargs))
 
 export default {

@@ -32,10 +32,12 @@ jest.mock('@canopycanopycanopy/b-ber-templates/Project', () => ({
 const FORMATS = ['epub', 'mobi', 'pdf', 'web', 'sample', 'reader', 'xml']
 
 const mockYargs = () => ({
+  check: jest.fn().mockReturnThis(),
   option: jest.fn().mockReturnThis(),
   command: jest.fn().mockReturnThis(),
   help: jest.fn().mockReturnThis(),
   alias: jest.fn().mockReturnThis(),
+  usage: jest.fn().mockReturnThis(),
   fail: jest.fn().mockReturnThis(),
 })
 
@@ -100,10 +102,31 @@ describe('build builder', () => {
     expect(yargs.fail).toHaveBeenCalledWith(expect.any(Function))
   })
 
-  it('omits xml from the command string although it registers an xml sub-command', () => {
-    // Defect: `bber build --help` does not list xml. The sub-command works
-    // (see app.test.js), the usage string is just out of date.
-    expect(build.command).not.toMatch(/xml/)
+  it('lists every format in its usage line, xml included', () => {
+    // Issue 741: the hand-written command string left out xml. The line is
+    // built from the sequences now, so it lists whatever `bber build` builds.
+    const yargs = mockYargs()
+    build.builder(yargs)
+
+    const [[usage]] = yargs.usage.mock.calls
+    expect(usage).toContain(`build [${Object.keys(sequences).join('|')}]`)
+    expect(Object.keys(sequences)).toEqual(FORMATS)
+  })
+
+  it('takes no positional, which would hide an unknown format from the check', () => {
+    expect(build.command).toBe('build')
+  })
+
+  it('registers a global check that rejects an unknown format', () => {
+    const yargs = mockYargs()
+    build.builder(yargs)
+
+    // Global (no second argument), so it also runs inside the format
+    // sub-command that matched
+    const [[check, global]] = yargs.check.mock.calls
+    expect(global).toBeUndefined()
+    expect(check({ _: ['build', 'epub', 'web'] })).toBe(true)
+    expect(check({ _: ['build', 'ebup'] })).toBe('Unknown format: ebup')
   })
 })
 

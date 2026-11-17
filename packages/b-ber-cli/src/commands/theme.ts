@@ -1,6 +1,7 @@
 import Theme from '@canopycanopycanopy/b-ber-lib/Theme'
 import { ensure } from '@canopycanopycanopy/b-ber-lib/utils'
 import type { Arguments, Argv } from 'yargs'
+import { noExtraArguments } from '../lib/arguments'
 import { exitOnFailure, fail } from '../lib/exit'
 
 const _command = 'theme <command> [options]'
@@ -32,6 +33,7 @@ const builder = (yargs: Argv) =>
     .help('h')
     .alias('h', 'help')
     .usage(`\nUsage: $0 theme\n\n${describe}`)
+    .check(noExtraArguments)
     .fail((msg, err) => fail(msg, err, yargs))
 
 export default {

@@ -55,17 +55,19 @@ export function exitCodeOnFailure(): void {
 
 // The yargs fail handler for every command, which yargs calls with a message
 // for a usage error (a missing positional, a value that is not one of the
-// choices) and with an error when a builder throws. A usage error shows the
-// command's help, then the error. Either way the command exits 1.
+// choices) and with an error when a builder throws. A `.check` that returns
+// a message (lib/arguments.ts) is a usage error too, and yargs passes that
+// message as both arguments. A usage error shows the command's help, then the
+// error. Either way the command exits 1.
 //
 // `yargs` is the command's own yargs instance, so that the help shown is the
 // command's.
 export function fail(
   msg: string,
-  err: Error | null | undefined,
+  err: Error | string | null | undefined,
   yargs: { showHelp(): unknown }
 ): never {
-  if (err) return exitWithFailure(err)
+  if (err instanceof Error) return exitWithFailure(err)
   yargs.showHelp()
   return exitWithFailure(new Error(msg))
 }
