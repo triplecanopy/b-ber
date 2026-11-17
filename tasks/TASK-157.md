@@ -1,6 +1,6 @@
 # TASK-157: Reject unknown CLI commands and list every build format
 
-**Epic:** Unit test coverage
+**Epic:** Build pipeline & directive redesign
 **GitHub Issue:** #741 — https://github.com/triplecanopy/b-ber/issues/741
 **Scope:** cli
 

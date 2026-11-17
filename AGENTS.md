@@ -191,6 +191,7 @@ issue number, and that file is what the check validates against:
 | Reader quality (reader-react) | [#713](https://github.com/triplecanopy/b-ber/issues/713) |
 | Dependency health | [#618](https://github.com/triplecanopy/b-ber/issues/618) |
 | EPUB spec compliance | [#619](https://github.com/triplecanopy/b-ber/issues/619) |
+| Build pipeline & directive redesign | [#792](https://github.com/triplecanopy/b-ber/issues/792) |
 
 **Dependency health** is unlike the others: they are bounded (there is a state
 in which the migration is finished), whereas keeping dependencies current and

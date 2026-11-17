@@ -10,6 +10,7 @@
     "React 19 (reader-react)": 617,
     "Reader quality (reader-react)": 713,
     "Dependency health": 618,
-    "EPUB spec compliance": 619
+    "EPUB spec compliance": 619,
+    "Build pipeline & directive redesign": 792
   }
 }
