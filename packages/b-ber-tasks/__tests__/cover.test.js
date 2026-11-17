@@ -25,6 +25,10 @@ const METADATA = [
   { term: 'identifier', value: 'book-id' },
 ]
 
+// Long enough that the generated cover wraps it over several lines. Kept out
+// of metadata.yml: see the YAML defect test below
+const LONG_DESCRIPTION = 'About the book. '.repeat(20).trim()
+
 // The task reads State's metadata, and works out the path of metadata.yml,
 // once, when it is imported (see the defect tests below). The CLI imports it
 // after State has loaded the project, so it is imported here the same way.
@@ -34,7 +38,14 @@ let cover
 
 beforeAll(() => {
   const { metadata } = state
-  state.metadata = { json: () => METADATA }
+  state.metadata = {
+    json: () =>
+      METADATA.map((entry) =>
+        entry.term === 'description'
+          ? { ...entry, value: LONG_DESCRIPTION }
+          : entry
+      ),
+  }
   cover = require('../src/cover').default
   state.metadata = metadata
 })
@@ -155,6 +166,29 @@ describe('task: cover', () => {
       )
       expect(fs.existsSync(coverXhtml())).toBe(false)
     })
+  })
+
+  // Defect: the task adds the cover to metadata.yml through b-ber-lib's Yaml,
+  // which uses yawn-yaml to keep the file's formatting. yawn-yaml rewrites a
+  // folded (`>-`) value that has an entry after it onto one line and drops
+  // the line break before that entry, so the file no longer parses. b-ber's
+  // own YamlAdaptor.dump folds any value too long for one line.
+  test('corrupts metadata.yml that has a folded value (defect)', async () => {
+    const folded = METADATA.map((entry) =>
+      entry.term === 'description'
+        ? { ...entry, value: LONG_DESCRIPTION }
+        : entry
+    )
+    await setup({ metadata: folded })
+    const file = path.join(project.src, 'metadata.yml')
+    expect(await fs.readFile(file, 'utf8')).toContain('value: >-')
+
+    await cover()
+
+    expect(await fs.readFile(file, 'utf8')).toContain(
+      'About the book.- term: identifier'
+    )
+    expect(() => YamlAdaptor.load(file)).toThrow('duplicated mapping key')
   })
 
   // The PDF build leaves the cover page to the project's own config
