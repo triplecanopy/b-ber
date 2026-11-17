@@ -13,6 +13,7 @@ let project
 beforeEach(() => returnReportedErrors(log))
 
 afterEach(async () => {
+  jest.restoreAllMocks()
   jest.clearAllMocks()
   if (project) await project.cleanup()
   project = undefined
@@ -54,11 +55,50 @@ describe('task: generate', () => {
   test("appends it to each build's own TOC too, where one exists", async () => {
     project = await createProject({ toc: ['intro'] })
     await fs.writeFile(path.join(project.src, 'web.yml'), '- intro')
+    // The task does not wait for these appends: see the defect test below
+    const appends = []
+    const appendFile = fs.appendFile
+    jest.spyOn(fs, 'appendFile').mockImplementation((...args) => {
+      const p = appendFile(...args)
+      appends.push(p)
+      return p
+    })
 
     await generate({ title: 'one' })
+    await Promise.all(appends)
 
     expect(yml('web.yml')).toEqual(['intro', 'one'])
     expect(fs.existsSync(path.join(project.src, 'epub.yml'))).toBe(false)
+  })
+
+  // Defect: the appends to the builds' own TOC files are collected with
+  // `reduce` and `concat`, which returns a new array, and the original array,
+  // holding only the toc.yml append, is what is awaited
+  // (src/generate/index.ts:61). The task resolves before web.yml and the
+  // like are written, and a failure writing them is unhandled. The same
+  // family as #770.
+  test("resolves before the builds' own TOCs are written (defect)", async () => {
+    project = await createProject({ toc: ['intro'] })
+    const webYml = path.join(project.src, 'web.yml')
+    await fs.writeFile(webYml, '- intro')
+    let release
+    const gate = new Promise((resolve) => {
+      release = resolve
+    })
+    const appendFile = fs.appendFile
+    let webWritten
+    jest.spyOn(fs, 'appendFile').mockImplementation((file, ...rest) => {
+      if (file !== webYml) return appendFile(file, ...rest)
+      webWritten = gate.then(() => appendFile(file, ...rest))
+      return webWritten
+    })
+
+    await generate({ title: 'one' })
+
+    expect(yml('web.yml')).toEqual(['intro'])
+    release()
+    await webWritten
+    expect(yml('web.yml')).toEqual(['intro', 'one'])
   })
 
   test('rejects, through log.error, when the file already exists', async () => {
