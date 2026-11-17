@@ -110,6 +110,17 @@ describe('task: inject', () => {
     await expect(inject()).rejects.toMatchObject({ code: 'ENOENT' })
   })
 
+  test('rejects, through log.error, when a page cannot be written', async () => {
+    await setup({ text: { 'one.xhtml': '' } })
+    // Readable, so it can be wrapped, but not writable
+    await fs.chmod(ops('text', 'one.xhtml'), 0o444)
+
+    await expect(inject()).rejects.toMatchObject({ code: 'EACCES' })
+    expect(log.error).toHaveBeenCalledWith(
+      expect.objectContaining({ code: 'EACCES' })
+    )
+  })
+
   // Defect: `remote_stylesheets` and `remote_javascripts` are joined onto the
   // local directory like file names (src/inject/index.ts:58, 73), so a URL
   // comes out as a broken relative path: `path.join` collapses its `//`.

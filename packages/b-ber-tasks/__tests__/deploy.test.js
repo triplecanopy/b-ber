@@ -151,6 +151,22 @@ describe('task: deploy', () => {
     expect(commands).toHaveLength(4)
   })
 
+  test('exits, uploading nothing, on any other answer', async () => {
+    const rl = new EventEmitter()
+    rl.setPrompt = jest.fn()
+    rl.prompt = jest.fn(() => setImmediate(() => rl.emit('line', 'n')))
+    mockCreateInterface.mockReturnValue(rl)
+    const exited = new Promise((resolve) => {
+      process.exit.mockImplementation(resolve)
+    })
+    const { deploy } = load()
+
+    deploy({ builds: ['epub'] })
+
+    expect(await exited).toBe(0)
+    expect(commands).toEqual([])
+  })
+
   test('rejects, through log.error, without the AWS environment', async () => {
     delete process.env.BBER_BUCKET_REGION
     const { deploy, log } = load()

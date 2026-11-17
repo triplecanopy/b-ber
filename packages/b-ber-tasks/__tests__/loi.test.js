@@ -136,4 +136,17 @@ describe('task: loi', () => {
       expect.objectContaining({ code: 'ENOENT' })
     )
   })
+
+  test('rejects the same way in the reader build', async () => {
+    await expect(
+      build({
+        build: 'reader',
+        images: { 'a.png': [400, 300] },
+        before: () => fs.remove(text()),
+      })
+    ).rejects.toMatchObject({ code: 'ENOENT' })
+    expect(log.error).toHaveBeenCalledWith(
+      expect.objectContaining({ code: 'ENOENT' })
+    )
+  })
 })
