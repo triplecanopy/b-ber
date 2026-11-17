@@ -109,4 +109,19 @@ describe('task: init', () => {
       'Project [book] already exits, aborting'
     )
   })
+
+  test('rejects, through log.error, when the directory is not writable', async () => {
+    await fs.chmod(root, 0o555)
+
+    try {
+      await expect(
+        new Initializer({ name: 'book' }).start()
+      ).rejects.toMatchObject({ code: 'EACCES' })
+      expect(log.error).toHaveBeenCalledWith(
+        expect.objectContaining({ code: 'EACCES' })
+      )
+    } finally {
+      await fs.chmod(root, 0o755)
+    }
+  })
 })
