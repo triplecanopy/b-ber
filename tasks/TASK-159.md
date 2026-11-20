@@ -1,4 +1,4 @@
-# TASK-157: Reject unknown CLI commands and list every build format
+# TASK-159: Reject unknown CLI commands and list every build format
 
 **Epic:** Build pipeline & directive redesign
 **GitHub Issue:** #741 — https://github.com/triplecanopy/b-ber/issues/741
@@ -176,3 +176,9 @@ reasonable target, and the async-parse change is most of the work.
   never reads, so `bber serve reader anything` is accepted. Unchanged.
 - Building the monorepo rewrites `packages/b-ber-resources/dist/`, which is
   tracked. Reverted here, not investigated.
+
+## Notes on numbering
+
+Filed first as TASK-157, which collided with the TASK-157 PRD merged in #791
+("Build a new project without warnings", #790). Renumbered to TASK-159 before
+merge. Issue #741 keeps its number.

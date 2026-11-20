@@ -75,7 +75,7 @@ overrides, which are not declared to yargs; and yargs 13 has no strict mode
 for words alone (`strictCommands` arrived in 15.2, and would also reject
 `bber build epub web`, calling `web` an unknown command). So each level
 registers a `.check`
-from `src/lib/arguments.ts` (issue 741, TASK-157):
+from `src/lib/arguments.ts` (issue 741, TASK-159):
 
 - **`app.ts`: `knownCommand`**, not global, so it runs only when no command
   matched: `bber frobnicate` shows the usage text, `Unknown command:

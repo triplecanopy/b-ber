@@ -20,7 +20,7 @@ argv: { _: ['build'], quiet: 'epub' }     # yargs 13.3.2, the CLI's version
 ```
 
 `epub` never reaches `argv._`, so `createBuildSequence` gets no formats and
-builds **every** format. TASK-157's `knownFormats` check can't catch it,
+builds **every** format. TASK-159's `knownFormats` check can't catch it,
 because the word is already gone. The logger itself still reads `--quiet`
 correctly from the raw argv, so the build is quiet and also builds far more
 than was asked. The same happens to any positional that follows one of these
@@ -32,7 +32,7 @@ flags, e.g. `bber generate --verbose "Title"`.
 Putting the flag after the positionals avoids it (`bber build epub --quiet`),
 which is presumably why it has gone unnoticed.
 
-Found by TASK-157 (#741) and recorded in its Findings as a follow-up.
+Found by TASK-159 (#741) and recorded in its Findings as a follow-up.
 
 ## Subtasks
 
@@ -62,11 +62,11 @@ Two approaches:
 
 Option 2 fits the redesign epic's direction (a thin CLI where each concern
 has one owner), but option 1 is the smaller diff. Either way, check
-interaction with TASK-157's `noExtraArguments` and `knownFormats` checks.
+interaction with TASK-159's `noExtraArguments` and `knownFormats` checks.
 Those checks are what turn a swallowed or leftover word into a visible error
 once this is fixed.
 
-This depends on TASK-157 (#741), which touches the same files. Start after it
+This depends on TASK-159 (#741), which touches the same files. Start after it
 merges.
 
 ## Findings
