@@ -10,6 +10,9 @@
 // given relative `src` and `dist`, as a real `b-ber build` run from the
 // project root has. Some tasks join process.cwd() onto State's paths and
 // only work that way.
+//
+// `dist` is config.yml's `dist`, the stem of each build's directory
+// (`<dist>-<build>`).
 
 import os from 'node:os'
 import path from 'node:path'
@@ -36,6 +39,7 @@ export async function createProject({
   metadata = [],
   config = {},
   chdir = false,
+  dist: distName = 'project',
 } = {}) {
   const saved = {}
   for (const field of STATE_FIELDS) saved[field] = state[field]
@@ -49,7 +53,7 @@ export async function createProject({
   if (chdir) process.chdir(root)
   const base = chdir ? '' : root
   const src = path.join(base, '_project')
-  const distBase = path.join(base, 'project')
+  const distBase = path.join(base, distName)
   const dist = `${distBase}-${build}`
 
   await fs.ensureDir(path.join(src, '_markdown'))
