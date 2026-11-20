@@ -3,6 +3,7 @@ import yargs from 'yargs'
 import * as commands from './commands'
 import { knownCommand } from './lib/arguments'
 import { fail } from './lib/exit'
+import { withoutLoggerFlags } from './lib/logger-options'
 
 const LINE_LENGTH = 70
 
@@ -22,6 +23,9 @@ const printUsage = (): void => {
     bber check      Validate a project's markdown
 
     For more information on a command, enter bber <command> --help
+
+    Output, with any command: --quiet, --verbose, --debug,
+    --log-level=<0-5>, --summary, --no-color
 
     bber version ${state.version}
 `)
@@ -46,7 +50,12 @@ export const showCustomHelp = (
   fail(msg, err, { showHelp: printUsage })
 }
 
-export default function bber() {
+// `args` defaults to the process's command line. The logger's flags are taken
+// out first: index.ts has applied them, and yargs would take the word after
+// one as its value (lib/logger-options.ts)
+export default function bber(
+  args: string[] = withoutLoggerFlags(process.argv.slice(2))
+) {
   return (
     yargs
       .command(commands.build)
@@ -66,6 +75,7 @@ export default function bber() {
       // Not global, so it runs only when no command matched. Each command
       // checks its own words.
       .check(knownCommand(COMMAND_NAMES), false)
-      .wrap(LINE_LENGTH).argv
+      .wrap(LINE_LENGTH)
+      .parse(args)
   )
 }

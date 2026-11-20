@@ -36,15 +36,15 @@ Found by TASK-159 (#741) and recorded in its Findings as a follow-up.
 
 ## Subtasks
 
-- [ ] Choose between the two approaches below and record why
-- [ ] Fix it, and add a test per flag showing that the following positional
-      survives (`build --quiet epub` builds only epub; `generate --verbose
-      Title` gets its title)
-- [ ] Keep `loggerOptions` reading the flags before yargs. The early
+- [x] Choose between the two approaches below and record why (option 2)
+- [x] Fix it, and add a test per flag showing that the following positional
+      survives (`build --quiet epub` builds only epub; `check --verbose book`
+      gets its project)
+- [x] Keep `loggerOptions` reading the flags before yargs. The early
       configuration is still required
-- [ ] `--help` output: decide whether the logger flags are listed, and make it
+- [x] `--help` output: decide whether the logger flags are listed, and make it
       consistent across commands
-- [ ] Update `packages/b-ber-cli/README.md` / `AGENTS.md` if behaviour or help
+- [x] Update `packages/b-ber-cli/README.md` / `AGENTS.md` if behaviour or help
       text changes
 
 ## Notes
@@ -70,3 +70,40 @@ This depends on TASK-159 (#741), which touches the same files. Start after it
 merges.
 
 ## Findings
+
+### Option 2: the flags never reach yargs (2026-11-20)
+
+`src/lib/logger-options.ts` has one scan, `splitLoggerFlags`, that splits the
+command line into the logger's flags and the rest. `loggerOptions` reads only
+the flags. `app.ts` hands yargs only the rest, as `bber(args)` with
+`.parse(args)` in place of `.argv`. In yargs 13, `.parse` with no callback runs
+`_parseArgs` exactly as the `argv` getter does.
+
+Chosen over declaring the flags to yargs because:
+- each flag then has one owner, so the two parsers cannot disagree;
+- `loggerArgvKeys`, and the loops in `build` and `new` that deleted those keys
+  from the config overrides, are gone;
+- `.strict()` would no longer have the logger's flags to reject, only the
+  config overrides. That narrows what a later strict mode has to deal with.
+
+Edge cases, each tested:
+- `--log-level` takes the next word only when it is a whole number.
+  `build --log-level epub` builds epub at the default level. Before, yargs
+  swallowed the word.
+- Nothing after `--` is treated as a flag.
+- A flag that merely starts like one of these (`--quiet-ish`) is left alone.
+
+Help: the top-level usage text (bare `bber`, `bber --help`) gains one line
+listing the flags. A command's own `--help` does not list them, as before.
+Listing them there would mean declaring them to every command's yargs instance
+again, which this change exists to avoid. README.md did not mention them;
+AGENTS.md is updated.
+
+Replaced tests: the `loggerArgvKeys` test and the two handler tests "skips the
+logger's flags" in build and new tested the removed workaround. App-level tests
+in `app.test.js` cover the same ground through real yargs: the logger's flags
+produce no "Invalid configuration option" warning. `b-ber-cli` stays at 100%.
+
+Smoke test on a copy of the kitchen-sink fixture: `bber build --quiet web`
+exits 0 and writes only `_builds-web/`.
+

@@ -185,3 +185,70 @@ describe('bber', () => {
     expect(exit).toHaveBeenCalledWith(1)
   })
 })
+
+describe('the logger’s flags', () => {
+  // index.ts applies these before yargs runs, and app.ts takes them out of
+  // what yargs parses. They used to reach yargs undeclared, and it read the
+  // word after one as the flag's value: `bber build --quiet epub` was
+  // `quiet: 'epub'` and built every format.
+  it.each(['--quiet', '--verbose', '--debug', '--summary', '--no-color'])(
+    'leave the format after %s to build',
+    async (flag) => {
+      const { tasks, stoppedByExit } = quietly(['build', flag, 'epub'])
+      await flushPromises()
+
+      expect(stoppedByExit).toBe(false)
+      expect(tasks.serialize.mock.calls).toEqual([[sequences.epub]])
+    }
+  )
+
+  it.each([
+    ['takes its level', ['build', '--log-level', '3', 'epub']],
+    ['takes its level after =', ['build', '--log-level=3', 'epub']],
+    // A level is a number; a format after the flag is still a format
+    ['leaves a word that is not a level', ['build', '--log-level', 'epub']],
+  ])('--log-level %s', async (_label, args) => {
+    const { tasks, stoppedByExit } = quietly(args)
+    await flushPromises()
+
+    expect(stoppedByExit).toBe(false)
+    expect(tasks.serialize.mock.calls).toEqual([[sequences.epub]])
+  })
+
+  it('leave the positional of a command that takes one', async () => {
+    const { tasks } = quietly(['check', '--verbose', 'book'])
+    await flushPromises()
+
+    expect(tasks.validate).toHaveBeenCalledWith({ project: 'book' })
+  })
+
+  it('are not passed to build as configuration options', async () => {
+    let logger
+    runCli(
+      [
+        'build',
+        '--verbose',
+        '--no-color',
+        '--log-level=3',
+        '--summary',
+        'epub',
+      ],
+      ({ log }) => {
+        logger = spyOnLogger(log)
+      }
+    )
+    await flushPromises()
+
+    expect(logger.warn).not.toHaveBeenCalled()
+  })
+
+  it('leave everything after -- alone', async () => {
+    const { tasks, stoppedByExit } = quietly(['build', 'epub', '--', '--quiet'])
+    await flushPromises()
+
+    // yargs puts words after `--` in `argv._`, where build's format check
+    // finds one that is not a format
+    expect(stoppedByExit).toBe(true)
+    expect(tasks.serialize).not.toHaveBeenCalled()
+  })
+})
