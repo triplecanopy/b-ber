@@ -1,4 +1,8 @@
-import { loggerArgvKeys, loggerOptions } from '../../src/lib/logger-options'
+import {
+  loggerOptions,
+  splitLoggerFlags,
+  withoutLoggerFlags,
+} from '../../src/lib/logger-options'
 
 // Where the output goes: a terminal, or a pipe or file
 const tty = { isTTY: true }
@@ -68,18 +72,45 @@ describe('loggerOptions', () => {
   })
 })
 
-describe('loggerArgvKeys', () => {
-  it('names every key yargs makes of the logger flags', () => {
-    expect([...loggerArgvKeys].sort()).toEqual(
-      [
-        'color',
-        'debug',
-        'log-level',
-        'logLevel',
-        'quiet',
-        'summary',
-        'verbose',
-      ].sort()
-    )
+describe('splitLoggerFlags', () => {
+  it('separates the logger’s flags from the rest, keeping each side’s order', () => {
+    expect(
+      splitLoggerFlags([
+        'build',
+        '--quiet',
+        'epub',
+        '--no-color',
+        '--summary',
+        '--verbose',
+        '--debug',
+        'web',
+      ])
+    ).toEqual({
+      flags: ['--quiet', '--no-color', '--summary', '--verbose', '--debug'],
+      rest: ['build', 'epub', 'web'],
+    })
+  })
+
+  it.each([
+    [['--log-level', '3', 'epub'], ['--log-level', '3'], ['epub']],
+    [['--log-level=3', 'epub'], ['--log-level=3'], ['epub']],
+    // Not a level, so the word is not the flag's
+    [['--log-level', 'epub'], ['--log-level'], ['epub']],
+    [['epub', '--log-level'], ['--log-level'], ['epub']],
+  ])('splits %j', (args, flags, rest) => {
+    expect(splitLoggerFlags(args)).toEqual({ flags, rest })
+  })
+
+  it('takes nothing after --', () => {
+    expect(splitLoggerFlags(['build', '--', '--quiet'])).toEqual({
+      flags: [],
+      rest: ['build', '--', '--quiet'],
+    })
+  })
+
+  it('leaves flags that are not the logger’s, and their values', () => {
+    expect(
+      withoutLoggerFlags(['build', '--config', 'c.yml', '--quiet-ish', 'epub'])
+    ).toEqual(['build', '--config', 'c.yml', '--quiet-ish', 'epub'])
   })
 })

@@ -76,21 +76,6 @@ describe('new handler', () => {
     expect(Initializer).toHaveBeenCalledWith({ name: 'b', config: {} })
   })
 
-  it('skips the logger’s flags, which are not config options', async () => {
-    await _new.handler({
-      _: ['new'],
-      $0: 'bber',
-      name: 'b',
-      verbose: true,
-      'log-level': 3,
-      logLevel: 3,
-      color: false,
-    })
-
-    expect(logger.warn).not.toHaveBeenCalled()
-    expect(Initializer).toHaveBeenCalledWith({ name: 'b', config: {} })
-  })
-
   it.each([
     'ibooks_specified_fonts',
     'autoprefixer_options',

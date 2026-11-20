@@ -8,12 +8,72 @@ const WARN = 2
 const VERBOSE = 4
 const DEBUG = 5
 
-// The value of `--name=value` or `--name value`
-const flagValue = (args: readonly string[], name: string) => {
-  const index = args.findIndex((a) => a === name || a.startsWith(`${name}=`))
+// The logger's flags that take no value
+const SWITCHES = new Set([
+  '--quiet',
+  '--verbose',
+  '--debug',
+  '--summary',
+  '--no-color',
+])
+
+const LOG_LEVEL = '--log-level'
+const isLevel = (word: string | undefined): word is string =>
+  word !== undefined && /^\d+$/.test(word)
+
+// Splits a command line into the logger's flags and everything else. The
+// logger's flags are its alone: yargs is given only the rest. Declared to
+// yargs or not, they would otherwise be parsed twice, and undeclared, yargs
+// reads `--quiet epub` as `quiet: 'epub'` and the word is lost.
+//
+// `--log-level` takes the next word only when it is a level, so in
+// `--log-level epub` the format is still a format. Nothing after `--` is a
+// flag.
+export function splitLoggerFlags(args: readonly string[]): {
+  flags: string[]
+  rest: string[]
+} {
+  const flags: string[] = []
+  const rest: string[] = []
+
+  for (let i = 0; i < args.length; i += 1) {
+    const arg = args[i]
+
+    if (arg === '--') {
+      rest.push(...args.slice(i))
+      break
+    }
+
+    if (SWITCHES.has(arg) || arg.startsWith(`${LOG_LEVEL}=`)) {
+      flags.push(arg)
+    } else if (arg === LOG_LEVEL) {
+      flags.push(arg)
+      if (isLevel(args[i + 1])) {
+        flags.push(args[i + 1])
+        i += 1
+      }
+    } else {
+      rest.push(arg)
+    }
+  }
+
+  return { flags, rest }
+}
+
+// The command line without the logger's flags: what yargs parses
+export const withoutLoggerFlags = (args: readonly string[]): string[] =>
+  splitLoggerFlags(args).rest
+
+// The value of `--log-level=value` or `--log-level value`
+const logLevel = (flags: readonly string[]) => {
+  const index = flags.findIndex(
+    (a) => a === LOG_LEVEL || a.startsWith(`${LOG_LEVEL}=`)
+  )
   if (index < 0) return undefined
-  const arg = args[index]
-  return arg === name ? args[index + 1] : arg.slice(name.length + 1)
+  const flag = flags[index]
+  return flag === LOG_LEVEL
+    ? flags[index + 1]
+    : flag.slice(LOG_LEVEL.length + 1)
 }
 
 // The logger's options, from the command line. They are read here, before
@@ -32,19 +92,18 @@ export function loggerOptions(
   args: readonly string[],
   stdout: Pick<NodeJS.WriteStream, 'isTTY'> = process.stdout
 ): LoggerOptions {
+  const { flags } = splitLoggerFlags(args)
   const options: LoggerOptions = {}
 
-  const level = flagValue(args, '--log-level')
-  if (level !== undefined && /^\d+$/.test(level)) {
-    options.logLevel = Number(level)
-  }
+  const level = logLevel(flags)
+  if (isLevel(level)) options.logLevel = Number(level)
 
-  if (args.includes('--quiet')) options.logLevel = QUIET
-  if (args.includes('--verbose')) options.logLevel = VERBOSE
-  if (args.includes('--debug')) options.logLevel = DEBUG
+  if (flags.includes('--quiet')) options.logLevel = QUIET
+  if (flags.includes('--verbose')) options.logLevel = VERBOSE
+  if (flags.includes('--debug')) options.logLevel = DEBUG
 
-  if (args.includes('--no-color')) options.boringOutput = true
-  if (args.includes('--summary')) options.summary = true
+  if (flags.includes('--no-color')) options.boringOutput = true
+  if (flags.includes('--summary')) options.summary = true
 
   options.reporter = reporterFor(options.logLevel ?? WARN, stdout)
 
@@ -60,16 +119,3 @@ function reporterFor(
   const dumb = process.env.TERM === 'dumb'
   return stdout.isTTY && !dumb ? 'progress' : 'plain'
 }
-
-// The keys those flags add to yargs' argv (`--no-color` parses as
-// `color: false`, `--log-level` as both spellings). Commands that turn argv
-// into config options skip them: they are not project configuration
-export const loggerArgvKeys = new Set([
-  'quiet',
-  'verbose',
-  'debug',
-  'summary',
-  'color',
-  'log-level',
-  'logLevel',
-])
