@@ -77,39 +77,48 @@ const coverXhtml = () => path.join(project.dist, 'OPS', 'text', 'cover.xhtml')
 const metadataYml = () =>
   YamlAdaptor.load(path.join(project.src, 'metadata.yml'))
 
+// The tests that generate a cover image: pureimage draws and PNG-encodes a
+// full-size cover in plain JavaScript, about 2.3s each on a laptop. On a CI
+// runner, alongside the rest of the suite, that passed Jest's 5s default
+const GENERATES_A_COVER = 30_000
+
 describe('task: cover', () => {
   // Generating the image takes a couple of seconds, so one test checks
   // everything a generated cover produces
-  test('with no cover in metadata.yml, generates one and lists it', async () => {
-    await setup()
-    // Left by an earlier run: replaced, not kept
-    await fs.writeFile(
-      path.join(project.src, '_images', '__bber_cover__old.jpg'),
-      ''
-    )
+  test(
+    'with no cover in metadata.yml, generates one and lists it',
+    async () => {
+      await setup()
+      // Left by an earlier run: replaced, not kept
+      await fs.writeFile(
+        path.join(project.src, '_images', '__bber_cover__old.jpg'),
+        ''
+      )
 
-    await cover()
+      await cover()
 
-    // A JPEG in _images
-    const files = await images()
-    expect(files).toEqual([expect.stringMatching(/^__bber_cover__\w+\.jpg$/)])
-    const [image] = files
-    expect(files[0]).not.toBe('__bber_cover__old.jpg')
-    expect(
-      getImageDimensions(path.join(project.src, '_images', image))
-    ).toEqual({ width: 1600, height: 2400 })
+      // A JPEG in _images
+      const files = await images()
+      expect(files).toEqual([expect.stringMatching(/^__bber_cover__\w+\.jpg$/)])
+      const [image] = files
+      expect(files[0]).not.toBe('__bber_cover__old.jpg')
+      expect(
+        getImageDimensions(path.join(project.src, '_images', image))
+      ).toEqual({ width: 1600, height: 2400 })
 
-    // Added to metadata.yml
-    expect(metadataYml()).toEqual([
-      ...METADATA,
-      { term: 'cover', value: image },
-    ])
+      // Added to metadata.yml
+      expect(metadataYml()).toEqual([
+        ...METADATA,
+        { term: 'cover', value: image },
+      ])
 
-    // And shown, at its size, in cover.xhtml
-    const xhtml = await fs.readFile(coverXhtml(), 'utf8')
-    expect(xhtml).toContain(`images/${image}`)
-    expect(xhtml).toContain('viewBox="0 0 1600 2400"')
-  })
+      // And shown, at its size, in cover.xhtml
+      const xhtml = await fs.readFile(coverXhtml(), 'utf8')
+      expect(xhtml).toContain(`images/${image}`)
+      expect(xhtml).toContain('viewBox="0 0 1600 2400"')
+    },
+    GENERATES_A_COVER
+  )
 
   describe('with a cover in metadata.yml', () => {
     const withCover = (value) => [...METADATA, { term: 'cover', value }]
@@ -173,33 +182,41 @@ describe('task: cover', () => {
   // folded (`>-`) value that has an entry after it onto one line and drops
   // the line break before that entry, so the file no longer parses. b-ber's
   // own YamlAdaptor.dump folds any value too long for one line.
-  test('corrupts metadata.yml that has a folded value (defect)', async () => {
-    const folded = METADATA.map((entry) =>
-      entry.term === 'description'
-        ? { ...entry, value: LONG_DESCRIPTION }
-        : entry
-    )
-    await setup({ metadata: folded })
-    const file = path.join(project.src, 'metadata.yml')
-    expect(await fs.readFile(file, 'utf8')).toContain('value: >-')
+  test(
+    'corrupts metadata.yml that has a folded value (defect)',
+    async () => {
+      const folded = METADATA.map((entry) =>
+        entry.term === 'description'
+          ? { ...entry, value: LONG_DESCRIPTION }
+          : entry
+      )
+      await setup({ metadata: folded })
+      const file = path.join(project.src, 'metadata.yml')
+      expect(await fs.readFile(file, 'utf8')).toContain('value: >-')
 
-    await cover()
+      await cover()
 
-    expect(await fs.readFile(file, 'utf8')).toContain(
-      'About the book.- term: identifier'
-    )
-    expect(() => YamlAdaptor.load(file)).toThrow('duplicated mapping key')
-  })
+      expect(await fs.readFile(file, 'utf8')).toContain(
+        'About the book.- term: identifier'
+      )
+      expect(() => YamlAdaptor.load(file)).toThrow('duplicated mapping key')
+    },
+    GENERATES_A_COVER
+  )
 
   // The PDF build leaves the cover page to the project's own config
-  test('writes no cover.xhtml for the pdf build', async () => {
-    await setup({ build: 'pdf' })
+  test(
+    'writes no cover.xhtml for the pdf build',
+    async () => {
+      await setup({ build: 'pdf' })
 
-    await cover()
+      await cover()
 
-    expect(await images()).toHaveLength(1)
-    expect(fs.existsSync(coverXhtml())).toBe(false)
-  })
+      expect(await images()).toHaveLength(1)
+      expect(fs.existsSync(coverXhtml())).toBe(false)
+    },
+    GENERATES_A_COVER
+  )
 
   test('rejects, through log.error, when _images does not exist', async () => {
     await setup()
@@ -235,48 +252,54 @@ describe('task: cover', () => {
   // there, so the task never settles; the CLI's uncaught-exception handler
   // exits. The task is imported afresh here, against a State that has loaded
   // such a project, and the callback is wrapped so the test sees the error.
-  test('never settles when metadata.yml has no publisher (defect)', async () => {
-    const metadata = METADATA.filter(({ term }) => term !== 'publisher')
-    await setup({ metadata })
+  test(
+    'never settles when metadata.yml has no publisher (defect)',
+    async () => {
+      const metadata = METADATA.filter(({ term }) => term !== 'publisher')
+      await setup({ metadata })
 
-    let reportThrown
-    const thrown = new Promise((resolve) => {
-      reportThrown = resolve
-    })
-    let isolatedCover
-    jest.isolateModules(() => {
-      const isolatedState =
-        require('@canopycanopycanopy/b-ber-lib/State').default
-      isolatedState.update('build', 'epub')
-      isolatedState.update('builds.epub', { dist: project.dist })
-      isolatedState.loadMetadata()
+      let reportThrown
+      const thrown = new Promise((resolve) => {
+        reportThrown = resolve
+      })
+      let isolatedCover
+      jest.isolateModules(() => {
+        const isolatedState =
+          require('@canopycanopycanopy/b-ber-lib/State').default
+        isolatedState.update('build', 'epub')
+        isolatedState.update('builds.epub', { dist: project.dist })
+        isolatedState.loadMetadata()
 
-      const PureImage = require('pureimage')
-      const registerFont = PureImage.registerFont
-      jest.spyOn(PureImage, 'registerFont').mockImplementation((...args) => {
-        const font = registerFont(...args)
-        const load = font.load.bind(font)
-        font.load = (cb) =>
-          load(() => {
-            try {
-              cb()
-            } catch (err) {
-              reportThrown(err)
-            }
-          })
-        return font
+        const PureImage = require('pureimage')
+        const registerFont = PureImage.registerFont
+        jest.spyOn(PureImage, 'registerFont').mockImplementation((...args) => {
+          const font = registerFont(...args)
+          const load = font.load.bind(font)
+          font.load = (cb) =>
+            load(() => {
+              try {
+                cb()
+              } catch (err) {
+                reportThrown(err)
+              }
+            })
+          return font
+        })
+
+        isolatedCover = require('../src/cover').default
       })
 
-      isolatedCover = require('../src/cover').default
-    })
+      const result = isolatedCover().then(
+        () => 'settled',
+        () => 'settled'
+      )
 
-    const result = isolatedCover().then(
-      () => 'settled',
-      () => 'settled'
-    )
-
-    await expect(thrown).resolves.toBeInstanceOf(TypeError)
-    const pending = new Promise((resolve) => setTimeout(resolve, 50, 'pending'))
-    expect(await Promise.race([result, pending])).toBe('pending')
-  })
+      await expect(thrown).resolves.toBeInstanceOf(TypeError)
+      const pending = new Promise((resolve) =>
+        setTimeout(resolve, 50, 'pending')
+      )
+      expect(await Promise.race([result, pending])).toBe('pending')
+    },
+    GENERATES_A_COVER
+  )
 })
