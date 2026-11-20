@@ -29,7 +29,7 @@ yargs handler: it validates and normalises CLI flags (including an optional
 | `src/lib/arguments.ts`      | yargs checks that reject words no command, format or positional takes |
 | `src/lib/config-options.ts` | Shared yargs option definitions and config-file parser            |
 | `src/lib/exit.ts`           | The one place a failure becomes exit status 1; the yargs `fail` handler |
-| `src/lib/logger-options.ts` | Reads the logger's flags from the command line                    |
+| `src/lib/logger-options.ts` | Reads the logger's flags, and takes them out of what yargs parses |
 | `__tests__/commands/`       | Jest unit tests for each command                                  |
 | `__stubs__/`                | Minimal stub modules for Jest `moduleNameMapper`                  |
 
@@ -70,8 +70,8 @@ promise chain's catch. What they throw ends up in `src/lib/exit.ts`:
 ## Unknown words
 
 yargs 13 ignores a word on the command line that nothing takes. `.strict()`
-would report it, but would also reject the logger's flags and the config
-overrides, which are not declared to yargs; and yargs 13 has no strict mode
+would report it, but would also reject the config overrides, which are not
+declared to yargs; and yargs 13 has no strict mode
 for words alone (`strictCommands` arrived in 15.2, and would also reject
 `bber build epub web`, calling `web` an unknown command). So each level
 registers a `.check`
@@ -111,9 +111,14 @@ lower, `plain` when it is not (or `TERM=dumb`), and `lines` from
 each format it runs and that format's tasks, which is what the progress line
 counts.
 
-These flags are not declared to yargs, so
-`build` and `new` skip the keys yargs makes of them (`loggerArgvKeys`) when they
-turn argv into config options.
+yargs never sees these flags. `splitLoggerFlags` separates them from the
+rest of the command line, `loggerOptions` reads the first part, and `app.ts`
+gives yargs only the second (`withoutLoggerFlags`). Undeclared, they used to
+reach yargs, which took the word after one as its value: `bber build --quiet
+epub` parsed as `quiet: 'epub'` and built every format (TASK-158).
+`--log-level` takes the next word only when it is a number, and nothing after
+`--` is a flag. The top-level usage text lists them; a command's own `--help`
+does not.
 
 ## Dev Commands
 
