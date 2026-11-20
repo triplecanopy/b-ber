@@ -26,6 +26,7 @@ yargs handler: it validates and normalises CLI flags (including an optional
 | `src/commands/theme.ts`     | `bber theme` — sets or lists themes                               |
 | `src/commands/deploy.ts`    | `bber deploy` — uploads builds to Amazon S3                       |
 | `src/commands/opf.ts`       | `bber opf` — generates the OPF package document                   |
+| `src/lib/arguments.ts`      | yargs checks that reject words no command, format or positional takes |
 | `src/lib/config-options.ts` | Shared yargs option definitions and config-file parser            |
 | `src/lib/exit.ts`           | The one place a failure becomes exit status 1; the yargs `fail` handler |
 | `src/lib/logger-options.ts` | Reads the logger's flags from the command line                    |
@@ -63,9 +64,37 @@ promise chain's catch. What they throw ends up in `src/lib/exit.ts`:
   listening, and a site that forgot its `throw` would look correct here and
   carry on anywhere else. Do not rely on it to stop anything.
 
-`bber` with no command prints the usage text and exits 0. An unknown command
-still does nothing and exits 0 (issue 741: yargs 13 has no strict mode for
-commands alone).
+`bber` with no command prints the usage text and exits 0, as does
+`bber --help`, which is the same thing because help is off at the top level.
+
+## Unknown words
+
+yargs 13 ignores a word on the command line that nothing takes. `.strict()`
+would report it, but would also reject the logger's flags and the config
+overrides, which are not declared to yargs; and yargs 13 has no strict mode
+for words alone (`strictCommands` arrived in 15.2, and would also reject
+`bber build epub web`, calling `web` an unknown command). So each level
+registers a `.check`
+from `src/lib/arguments.ts` (issue 741, TASK-159):
+
+- **`app.ts`: `knownCommand`**, not global, so it runs only when no command
+  matched: `bber frobnicate` shows the usage text, `Unknown command:
+  frobnicate`, and exits 1.
+- **Every command but build: `noExtraArguments`.** Checks run after yargs has
+  moved the words the command's positionals took out of `argv._`, so anything
+  after the command's name is left over: `bber new My Project` is `Unknown
+  argument: Project`.
+- **`build`: `knownFormats`**, global, so that it also runs in the format
+  sub-command that matched (`bber build epub ebup`). Several known formats
+  are allowed and build in turn. `build`'s command string has **no
+  positional** for this reason: a positional would take the first unknown
+  word out of `argv._`, and the handler would build every format. Its usage
+  line lists the formats from `b-ber-shapes-sequences` instead.
+
+A check that returns a message is a usage error. yargs passes that message to
+the fail handler as the error too, so `fail` treats only an `Error` as a
+failure in code. A new command registers `noExtraArguments` in its builder;
+`__tests__/commands/index.test.js` holds every command to that.
 
 ## Logger configuration
 

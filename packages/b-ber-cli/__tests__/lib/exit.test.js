@@ -136,6 +136,17 @@ describe('fail', () => {
     expect(exit).toHaveBeenCalledWith(1)
   })
 
+  it('treats a check’s message, which yargs also passes as the error, as a usage error', () => {
+    const y = yargs()
+    fail('Unknown argument: extra', 'Unknown argument: extra', y)
+
+    expect(y.showHelp).toHaveBeenCalled()
+    expect(output.join('')).toBe(
+      'error Unknown argument: extra\nerror exited with code 1\n'
+    )
+    expect(exit).toHaveBeenCalledWith(1)
+  })
+
   it('reports an error without the help', () => {
     const y = yargs()
     fail('', new Error('builder threw'), y)

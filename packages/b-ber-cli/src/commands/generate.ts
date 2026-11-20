@@ -1,6 +1,7 @@
 import { ensure } from '@canopycanopycanopy/b-ber-lib/utils'
 import { generate } from '@canopycanopycanopy/b-ber-tasks'
 import type { Arguments, Argv } from 'yargs'
+import { noExtraArguments } from '../lib/arguments'
 import { exitOnFailure, fail } from '../lib/exit'
 
 const command = 'generate <title> [type]'
@@ -20,6 +21,7 @@ const builder = (yargs: Argv) =>
     .help('h')
     .alias('h', 'help')
     .usage(`\nUsage: $0 generate\n\n${describe}`)
+    .check(noExtraArguments)
     .fail((msg, err) => fail(msg, err, yargs))
 
 // `<title>` in the command string is required, so yargs never calls the

@@ -1,5 +1,6 @@
 import { validate } from '@canopycanopycanopy/b-ber-tasks'
 import type { Arguments, Argv } from 'yargs'
+import { noExtraArguments } from '../lib/arguments'
 import { exitOnFailure, fail } from '../lib/exit'
 
 const command = 'check [project]'
@@ -14,6 +15,7 @@ const builder = (yargs: Argv) =>
     })
     .help('h')
     .alias('h', 'help')
+    .check(noExtraArguments)
     .fail((msg, err) => fail(msg, err, yargs))
     .usage(`\nUsage: $0 check\n\n${describe}`)
 

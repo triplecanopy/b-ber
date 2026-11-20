@@ -1,5 +1,6 @@
 import { deploy } from '@canopycanopycanopy/b-ber-tasks'
 import type { Argv } from 'yargs'
+import { noExtraArguments } from '../lib/arguments'
 import { exitOnFailure, fail } from '../lib/exit'
 
 const command = 'deploy [builds...]'
@@ -22,6 +23,7 @@ const builder = (yargs: Argv) =>
     .help('h')
     .alias('h', 'help')
     .usage(`\nUsage: $0 deploy\n\n${describe}`)
+    .check(noExtraArguments)
     .fail((msg, err) => fail(msg, err, yargs))
 
 const handler = exitOnFailure(deploy)

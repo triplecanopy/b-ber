@@ -7,6 +7,7 @@ import sequences from '@canopycanopycanopy/b-ber-shapes-sequences/sequences'
 import { serialize } from '@canopycanopycanopy/b-ber-tasks'
 import Project from '@canopycanopycanopy/b-ber-templates/Project'
 import type { Arguments, Argv } from 'yargs'
+import { knownFormats } from '../lib/arguments'
 import {
   blacklistedConfigOptions,
   parseConfigFile,
@@ -15,7 +16,14 @@ import {
 import { exitOnFailure, fail } from '../lib/exit'
 import { loggerArgvKeys } from '../lib/logger-options'
 
-const command = 'build [|epub|mobi|pdf|reader|sample|web]'
+// Every format `bber build` knows, in the order `bber build` alone runs them
+const FORMATS = Object.keys(sequences)
+
+// No positional: one would take the first word that is not a format
+// sub-command (`bber build ebup`) out of `argv._`, where knownFormats could
+// not see it, and the handler would build every format. The formats are in
+// the usage line instead, from the sequences, so that it cannot leave one out.
+const command = 'build'
 const describe = 'Build a project'
 
 const noop = () => {}
@@ -87,8 +95,12 @@ const builder = (yargs: Argv) =>
     .command('sample', 'Build a sample Epub', noop, handler)
     .command('web', 'Build for web', noop, handler)
     .command('xml', 'Build for XML', noop, handler)
+    // Global, the default, so that it also runs in the format sub-command
+    // that matched, which leaves any later words in `argv._`
+    .check(knownFormats(FORMATS))
     .help('h')
     .alias('h', 'help')
+    .usage(`\nUsage: $0 build [${FORMATS.join('|')}]\n\n${describe}`)
     .fail((msg, err) => fail(msg, err, yargs))
 
 export default {

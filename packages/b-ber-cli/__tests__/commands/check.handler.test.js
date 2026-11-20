@@ -21,6 +21,7 @@ jest.mock('@canopycanopycanopy/b-ber-lib/Theme', () => ({}))
 jest.mock('@canopycanopycanopy/b-ber-templates/Project', () => ({}))
 
 const mockYargs = () => ({
+  check: jest.fn().mockReturnThis(),
   positional: jest.fn().mockReturnThis(),
   help: jest.fn().mockReturnThis(),
   alias: jest.fn().mockReturnThis(),
