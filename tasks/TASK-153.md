@@ -152,60 +152,60 @@ below). deploy's tests import a fresh copy per test, for its import-time
 `process.cwd()`.
 
 Defects found, each pinned by a test whose comment starts "Defect" and
-asserts current behaviour. None is fixed here, and none filed yet:
+asserts current behaviour. None is fixed here. Filed 2026-11-20 as below; the redesign-related ones are tracked on epic #792:
 
-- **Per-build config sections are ignored.** See below.
-- **cover: `--src` is ignored for metadata.yml.** The path is computed when the
+- (#792) **Per-build config sections are ignored.** See below.
+- (#792) **cover: `--src` is ignored for metadata.yml.** The path is computed when the
   module is imported (`src/cover/index.ts:56`), before the CLI applies
   `--src`; `bber build --src book` fails at cover with ENOENT for
   `_project/metadata.yml`.
-- **cover hangs without `publisher` or `description`.** A project whose
+- (#800) **cover hangs without `publisher` or `description`.** A project whose
   metadata.yml lacks either, and lists no cover, throws a TypeError inside
   pureimage's font callback (`src/cover/index.ts:171`, `175`); the task never
   settles and the CLI's uncaught-exception handler exits.
-- **cover corrupts metadata.yml.** Adding the generated cover through
+- (#799) **cover corrupts metadata.yml.** Adding the generated cover through
   yawn-yaml rewrites a folded (`>-`) value that has an entry after it onto one
   line and drops the line break before that entry: `About the book.- term:
   identifier`, which no longer parses. `YamlAdaptor.dump` folds any long value,
   so b-ber writes such files itself.
-- **xml fails for figures unless the TOC names `figures-titlepage`.** loi adds
+- (#804) **xml fails for figures unless the TOC names `figures-titlepage`.** loi adds
   the title page to `spine.flattened` as a plain object with no
   `absolutePath` (`src/loi/index.ts:52`); xml reads `undefined.xhtml`.
   Related to #757.
-- **SpineItem ignores `dist`.** `absolutePath` is `project-<build>/OPS/...`
+- (#792) **SpineItem ignores `dist`.** `absolutePath` is `project-<build>/OPS/...`
   resolved against the working directory (`b-ber-lib/src/SpineItem.ts:68`). With
   `dist: _builds`, as the kitchen-sink fixture has, render writes to
   `_builds-xml/` and xml reads from `project-xml/`.
-- **serve ignores `src` and `dist`.** It serves `project-<build>` and watches
+- (#792) **serve ignores `src` and `dist`.** It serves `project-<build>` and watches
   `_project/**` (`src/serve/index.ts:38`, `71`), the watch paths fixed at
   import.
-- **generate never detects a page already in the TOC.** It compares TOC
+- (#805) **generate never detects a page already in the TOC.** It compares TOC
   entries with the file name including `.md` (`src/generate/index.ts:47`), so
   a listed page whose file is missing is listed twice.
-- **generate does not wait for the build TOC writes.** The appends to
+- (#805) **generate does not wait for the build TOC writes.** The appends to
   `<build>.yml` are collected with `reduce`/`concat` into a new array and the
   original is awaited (`src/generate/index.ts:61`). Same family as #770, not
   part of it.
-- **inject mangles remote assets.** `remote_stylesheets` and
+- (#803) **inject mangles remote assets.** `remote_stylesheets` and
   `remote_javascripts` URLs are joined onto the local directory
   (`src/inject/index.ts:58`, `73`): `../stylesheets/https:/example.com/a.css`.
-- **mobiCSS leaves a selector-less rule.** A rule whose only selectors are
+- (#806) **mobiCSS leaves a selector-less rule.** A rule whose only selectors are
   `epub|` ones is kept with no selector (`src/mobi/mobi-css.ts:52`).
-- **EbookConvert does not quote the input path** (`b-ber-lib/src/EbookConvert.ts:51`):
+- (#802) **EbookConvert does not quote the input path** (`b-ber-lib/src/EbookConvert.ts:51`):
   mobi and pdf break for a project under a directory with a space in its name.
-- **pdf: a switch set to `false` is turned on** (`src/pdf/index.ts:128`);
+- (#801) **pdf: a switch set to `false` is turned on** (`src/pdf/index.ts:128`);
   **`embed_all_fonts` and `insert_metadata` are never passed**, listed with a
   trailing space (lines 19, 39); **option values are not shell-quoted**.
-- **validate resolves when files are invalid** (`src/validate/index.ts:41`):
+- (#796) **validate resolves when files are invalid** (`src/validate/index.ts:41`):
   `bber check` exits 0 on a project with errors. Its missing-project check is
   #736.
-- **b-ber-validator misreads a directive on a file's first line**: a
+- (#797) **b-ber-validator misreads a directive on a file's first line**: a
   correctly closed one fails, an unclosed one passes. Files that begin with
   front matter are not affected.
-- **deploy exits 0 when the aws CLI is missing** (`src/deploy/index.ts:69`),
+- (#798) **deploy exits 0 when the aws CLI is missing** (`src/deploy/index.ts:69`),
   from inside the task, and **resolves when an aws command fails** (line 86):
   a failed upload is a successful deploy.
-- **Directives straight after a paragraph line report a duplicate id**
+- (#792) **Directives straight after a paragraph line report a duplicate id**
   (b-ber-grammar-section's test pins it): markdown-it calls block rules in
   silent mode to see whether they can interrupt a paragraph, and the parser
   calls `validateOpen` before checking `silent`, so b-ber-grammar-renderer's
