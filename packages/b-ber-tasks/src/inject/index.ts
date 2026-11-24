@@ -34,6 +34,11 @@ const ensureString = (objectOrString: Asset): string =>
 const relative = (from: string[], to: string[]) =>
   path.relative(path.join(...from), path.join(...to))
 
+const remote = (f: string) => /^([a-zA-Z][a-zA-Z0-9+.-]*:|\/\/)/.test(f)
+
+const link = (basePath: string, dir: string, f: string) =>
+  remote(f) ? f : relative([basePath], [dir, f])
+
 const render = ({
   file,
   basePath,
@@ -54,10 +59,7 @@ const render = ({
   const stylesheets_ = stylesheets
     .map(ensureString)
     .map((f) =>
-      Template.render(
-        relative([basePath], ['stylesheets', f]),
-        Xhtml.stylesheet()
-      )
+      Template.render(link(basePath, 'stylesheets', f), Xhtml.stylesheet())
     )
     .join('')
 
@@ -69,10 +71,7 @@ const render = ({
   const javascripts_ = javascripts
     .map(ensureString)
     .map((f) =>
-      Template.render(
-        relative([basePath], ['javascripts', f]),
-        Xhtml.javascript()
-      )
+      Template.render(link(basePath, 'javascripts', f), Xhtml.javascript())
     )
     .join('')
 

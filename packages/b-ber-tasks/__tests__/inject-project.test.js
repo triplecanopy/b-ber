@@ -121,10 +121,7 @@ describe('task: inject', () => {
     )
   })
 
-  // Defect: `remote_stylesheets` and `remote_javascripts` are joined onto the
-  // local directory like file names (src/inject/index.ts:58, 73), so a URL
-  // comes out as a broken relative path: `path.join` collapses its `//`.
-  test('links a remote stylesheet as a local path (defect)', async () => {
+  test('links remote stylesheets and javascripts by URL', async () => {
     await setup({
       text: { 'one.xhtml': '' },
       config: {
@@ -136,8 +133,8 @@ describe('task: inject', () => {
     await inject()
 
     const page = await read('one.xhtml')
-    expect(page).toContain('href="../stylesheets/https:/example.com/a.css"')
-    expect(page).toContain('src="../javascripts/https:/example.com/a.js"')
-    expect(page).not.toContain('https://example.com')
+    expect(page).toContain('href="https://example.com/a.css"')
+    expect(page).toContain('src="https://example.com/a.js"')
+    expect(page).not.toContain('https:/example.com')
   })
 })
