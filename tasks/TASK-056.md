@@ -1,6 +1,6 @@
 # TASK-056: Fix iframe template EPUB 3 compliance
 
-**Epic:** E2E testing
+**Epic:** EPUB spec compliance
 **GitHub Issue:** #621 — https://github.com/triplecanopy/b-ber/issues/621
 **Scope:** templates, grammar-iframe, shapes-directives
 
