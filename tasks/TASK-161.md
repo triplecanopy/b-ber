@@ -217,6 +217,368 @@ TASK-160's prepare phase. Each target renders from the shared, read-only
 tree. Transforms that do depend on the target (`media` substitution) run per
 target, on a cheap copy of the affected nodes.
 
+### Directive syntax
+
+This is the specification the one directive rule implements. It was written
+from the three sources that define the syntax today: the name lists in
+`b-ber-shapes-directives`, the validator's grammar and the renderer's parsers.
+They disagree in 36 places (see the 2026-11-24 Findings). Where they
+disagree, the rule below is a **proposal** and says which source it follows;
+the maintainer decides. Rules where all three agree are stated plainly.
+
+Two principles decide most of the proposals:
+
+- **The renderer is the baseline.** It is what builds books, and the golden
+  output (TASK-152) pins it. The validator rejects three of the nine
+  kitchen-sink files that build fine, so where the two differ the renderer's
+  acceptance wins, unless the renderer's behaviour is itself a defect.
+- **Severity follows today's consequence.** A condition is an **error** when
+  today's build throws on it, or when its output today is malformed XHTML or
+  silently loses content. Otherwise it is a **warning**, and the output stays
+  as it is today, unless the change is listed under "Intended output
+  differences" below. So a project whose output is correct today keeps
+  building.
+
+#### Lines and fences
+
+A **directive line** is a line that markdown-it would let start a block (not
+inside fenced or indented code), and that consists of:
+
+| Part | Rule | Today |
+| ---- | ---- | ----- |
+| indentation | 0–3 spaces, relative to the enclosing Markdown container (list item, blockquote). 4 or more is indented code | renderer: same (markdown-it's `code` rule runs first). Validator: column 0 only; an indented directive is silently treated as text |
+| fence | 3 or more `:` | renderer: ≥3. Validator: exactly 3. `grammar-media`: exactly `::: ` |
+| after the fence | zero or more spaces or tabs | renderer: any. Validator: exactly one space |
+| body | an exit or an opener, below | |
+| end | trailing whitespace is ignored. Line endings are normalized to `\n` first, as markdown-it does | validator: CRLF fails |
+
+- The fence length of an `exit` need not match its opener's. Blocks are
+  matched by id, not by fence.
+- A directive line **may interrupt a paragraph**: `text\n::: figure:f …` is a
+  paragraph followed by a directive. Renderer and validator agree.
+- A directive line **may be the first line of the file**, or the first line
+  after front matter. Front matter is a `---` line on line 1 through the next
+  `---` line (markdown-it-front-matter); nothing inside it is a directive. The
+  validator gets the first line wrong today (#797).
+- A directive line inside a list item or blockquote is a directive (the
+  renderer's behaviour; the validator ignores such lines). A block opened there
+  must be closed in the same container; at the container's end it is unclosed.
+
+#### Grammar
+
+```
+directive-line = indent fence ws* (exit | opener) ws* EOL
+fence          = ":::" ":"*
+ws             = " " | "\t"
+exit           = "exit" ":" id [ws+ text]               ; text: warning, ignored
+opener         = name [":" id] { ws+ (attribute | word) }
+name           = [a-z] [a-z0-9-]*                       ; must be registered
+id             = idchar+                                ; idchar: not ws
+attribute      = key ":" value                          ; key:value form
+               | key ws+ quoted                         ; key "value" form
+key            = keychar+                               ; keychar: not ws, ':', '"', "'"
+value          = quoted | bare
+quoted         = '"' [^"\n]* '"' | "'" [^'\n]* "'"
+bare           = [^ \t\n"'] [^ \t\n]*                   ; may contain ':' (URLs)
+word           = keychar+                               ; a lone word: warning, ignored
+caption        = "::" ws* text EOL "::" ws* EOL         ; only directly after an inline opener
+```
+
+The **name is the first token** after the fence. `::: junk figure:f …`
+is an unknown directive `junk`, not a figure (today `grammar-image`'s
+unanchored regex renders a figure).
+
+#### Names and kinds
+
+Names are lowercase and case-sensitive. 82 names are recognized: the 45 in
+`ALL_DIRECTIVES`, plus 28 draft-only and 9 deprecated-only names.
+
+| Kind | Names | Written as |
+| ---- | ----- | ---------- |
+| block, structural | frontmatter (8, including `epigraph`), bodymatter (11, including `subchapter`, `section`, `article`) and backmatter (8) sets | `::: name:id [attrs]`, content, `::: exit:id` |
+| block, misc | `pullquote`, `blockquote`, `dialogue`, `gallery`, `spread` | as above |
+| inline (single-line) | `figure`, `logo`, `audio`, `video`, `vimeo`, `iframe`, `media`, and the `-inline` variant of each except `logo` | one line, optionally followed by a caption. No exit |
+| draft | 31 names in `DRAFT_DIRECTIVES`. `credits` and `seriespage` are also backmatter, `pullquote` also misc | as a structural block |
+| deprecated | 10 names in `DEPRECATED_DIRECTIVES`. `subchapter` is also bodymatter | as a structural block |
+| reserved | `exit` | only to close a block |
+
+- `epigraph` is in both the frontmatter and misc sets. It is a **structural
+  block** (`::: epigraph:id` … `::: exit:id`), which is how the renderer
+  treats it today. The single-line form documented in `grammar-epigraph` is
+  an open decision (below).
+- **Draft and deprecated names render as `chapter`**, with the original name
+  added as a class, and a warning: today's
+  `render [epub:subchapter] is [deprecated]. substituting with [chapter]`.
+  This applies to every draft and deprecated name. Today it is reachable only
+  for the four that are also in another set. The other 37 render as literal
+  paragraph text, although the validator accepts them as blocks.
+  **Proposed:** substitute all of them, as the attributes code intends; see
+  open decisions.
+- **`pullquote` is not draft-substituted.** It is a misc block with its own
+  `citation`. Today its membership of the draft set turns it into a chapter
+  and drops `citation` as unsupported. **Proposed**, an intended output
+  difference.
+- **An unknown name** is a warning, and the line renders as text, as today.
+  The validator makes it an error; the renderer says nothing.
+
+#### Ids
+
+- **Every directive needs an id**: `name:id`. An `exit` needs the id of the
+  block it closes. A missing or empty id (`::: chapter`, `::: chapter:`) is an
+  error. Today the renderer throws for a block with no id and for a bare
+  `::: figure`. It renders `::: figure source:x` and `::: chapter:` as literal
+  text, and silently drops `::: video source:x`. The validator rejects all of
+  them.
+- **Characters.** The canonical id is `[A-Za-z0-9_-]+`, which the output uses
+  unchanged. Any other non-whitespace character is accepted with a warning,
+  because the renderer accepts it today and writes it as `-` (`htmlId`):
+  `a.b` → `a-b`, `é` → `-`. **Proposed** (the validator rejects them). An id
+  that maps to the same output id as another in the file is an error.
+- **Uniqueness.** Ids are compared as written.
+  - Every directive id is unique **within its file**: they all become `id`
+    attributes in one XHTML document.
+  - The ids of `figure`, `audio`, `video`, `vimeo`, `iframe` (and their
+    `-inline` variants, and `media`) are unique **within the book**: each
+    becomes a figure page, `figure<id>.xhtml` or `figure-<id>.xhtml`, in one
+    directory.
+  - Block ids may repeat across files.
+  - A duplicate is an error at the second occurrence, with a note at the
+    first.
+
+  Today the renderer enforces per-file uniqueness of block ids by accident
+  (see Findings), plus a false positive (TASK-153), and never checks
+  `pullquote`, `blockquote` or figure ids. The validator checks nothing.
+  **Proposed.** It turns a duplicate pullquote id, or a figure id reused across
+  files, from a silent collision into an error: open decision.
+
+#### Attributes
+
+| Rule | Spec | Today |
+| ---- | ---- | ----- |
+| forms | `key:value` and `key "value"` (quoted only; `key value` is a key-less word) | renderer: `key:value` only; `key "value"` is silently ignored on a block, and a line in that form with no id renders as literal text. Only the unregistered `grammar-epigraph` parses it. Validator: `key:value` only |
+| quoting | `"…"` or `'…'`; the other quote may appear inside; no escapes; no newlines | renderer: same, except an unclosed quote runs to end of line. Validator: the other quote is rejected; a quoted value may span lines |
+| unquoted value | runs to the next space or tab; may contain `:` | renderer: same. Validator: rejects `:`, so every URL `source` fails |
+| unclosed quote | warning; the value runs to end of line | |
+| whitespace | one or more spaces or tabs between attributes | validator: exactly one space |
+| empty value | `key:""`. `key:` alone is a warning, attribute dropped | renderer drops silently; validator rejects |
+| lone word | warning, ignored; the attributes after it parse normally | renderer drops it silently **and** merges it into the next key: `title:foo bar classes:x` loses `classes` |
+| boolean | `key:yes` is on, any other value is off (`controls`, `autoplay`, `muted`, `autobuffer`, `loop`) | renderer: same |
+| unknown key | warning, dropped. Allowlists are `SUPPORTED_ATTRIBUTES`, with `block` shared by all structural blocks | renderer: same message. Validator accepts anything |
+| repeated key | warning at the second; the last value wins | renderer: last wins silently |
+| required | `source` on every inline directive except `media`. Missing is an error | renderer throws |
+| `media` | takes no attributes; error | renderer: the attributes become part of the id, then `Missing ID [m classes] in media.yml` |
+| output | values are text and are escaped in the output | renderer writes them raw: `title:"<b>&"` gives malformed XHTML |
+
+#### Blocks, nesting and `exit`
+
+- A block's content is Markdown, including other directives. **Any directive
+  may nest in any block**; the sources impose no other restriction, and the
+  spec adds none.
+- Two line forms mean something only inside one block:
+  - `:: Speaker :: text`, a speaker line, only directly inside `dialogue`;
+  - `:: key:value … ::`, a gallery item, only directly inside `gallery`.
+
+  Elsewhere they are ordinary text. Today the renderer goes on applying both
+  after the block's `exit`, to the end of the file. The validator accepts
+  speaker lines anywhere and rejects gallery items everywhere.
+- **`::: exit:<id>` closes the innermost open block, and `<id>` must be that
+  block's id.** This follows the validator. The renderer closes whichever
+  open block has the id, which misnests the output.
+
+| `exit:<id>` where `<id>` … | Result |
+| -------------------------- | ------ |
+| is the innermost open block's | closes it |
+| is an outer open block's | error at the exit, with a note at the inner block's opener. Recovery: the inner blocks close at this line, then the named one |
+| matches no open block (a typo, a block already closed, an inline directive's id) | error at the exit. The note names the innermost open block and its line, or says none is open, or says the id belongs to a single-line directive. Today: a `TypeError` crash in `grammar-pullquote` |
+| is missing | error at `exit` |
+
+- **An unclosed block** is a warning at its opener. It closes at the end of
+  its Markdown container (end of file at the top level). That is today's
+  behaviour for structural blocks, made uniform: today an unclosed
+  `pullquote` is left open in the output.
+
+#### Inline directives and captions
+
+An inline directive occupies one line. A caption, if any, is exactly the
+next two lines, at column 0:
+
+```
+::: figure:fig-01 source:image.png alt:"An image"
+:: The caption, inline Markdown, one line
+::
+```
+
+- The caption line starts with exactly two colons. A `:::` line is never a
+  caption. Today `parser-figure` treats any following line starting with `::`
+  as a caption marker, so **consecutive figure lines swallow each other**: the
+  kitchen-sink gallery's three figures render as one (Findings).
+- No space is needed after `::` (renderer; the validator requires one).
+- A caption line with no closing `::` line is a warning. Both lines render as
+  text, as today.
+
+#### `media`
+
+`media` and `media-inline` are parsed like any other inline directive, into a
+node:
+
+```
+{ type: 'directive', name: 'media', inline: false, id: 'm', attrs: {}, position }
+```
+
+It takes no attributes and no caption of its own. It is **resolved per target
+at render time**, on a copy of the node (TASK-160's parse once):
+
+1. Look up `media.yml[id][target.name]`. The target name is the frozen
+   public name (`epub`, `mobi`, `pdf`, `web`, `reader`, `sample`, `xml`); it
+   is the only key used.
+2. The entry is `{ type, caption?, ...attrs }`. The node becomes the directive
+   `type` (with `-inline` if the node is `media-inline`), with the **same id**,
+   `attrs` (values converted to strings), and `caption` parsed as inline
+   Markdown.
+3. `type` must be an inline name other than `media`. The resolved directive is
+   then checked like a written one: required and unknown attributes.
+
+What resolution needs: the node's id and inline flag, the target name, the
+parsed `media.yml` (`Project.media`), and the directive registry. Its
+diagnostics are anchored at the `media` line, with a note naming the
+`media.yml` key path (`m.web.type`). `bber check` resolves for every target in
+`builds`, so a missing key is reported before a build reaches it. A `media` id
+shares the figure id space (unique within the book), since it renders as one.
+
+This replaces the string pass, which differs today in these ways:
+- it recognizes only exactly `::: ` at column 0;
+- it misses a `media` line that is the last line of a file without a trailing
+  newline (unless it is the only line);
+- it rewrites inside fenced code;
+- it never validates `type`;
+- it writes values unescaped into `key:"value"`.
+
+#### Diagnostics
+
+Every problem is a diagnostic pushed to `env.diagnostics`; nothing is thrown
+mid-parse. One run reports every problem in a file.
+
+```ts
+interface Diagnostic {
+  code: string                         // the kebab-case codes below
+  severity: 'error' | 'warning'
+  message: string                      // states the problem, not the parser's expectation
+  file: string
+  span: { start: number; end: number } // offsets into the normalized source, end exclusive
+  notes?: { message: string; file?: string; span?: { start: number; end: number } }[]
+}
+```
+
+- **Line and column** are derived from `span.start`, 1-based, with columns
+  in UTF-16 code units, as tsc and ESLint count them. Normalizing `\r\n`
+  changes no line or column.
+- **The reporter** prints `file:line:col - severity code: message`, then the
+  source line with the span underlined (`^^^^`), then each note the same way.
+  An editor highlights the same span.
+
+  ```
+  _markdown/ch-01.md:3:5 - warning unknown-name: Unknown directive `chaptr`. Did you mean `chapter`?
+    3 | ::: chaptr:ch-01
+      |     ^^^^^^
+  ```
+- **Every diagnostic is anchored to the construct it is about.** Never to a
+  document boundary, a line's newline, or where a parser backtracked to. A
+  span never starts at offset 0 or at the end of the text unless its construct
+  does. It is never empty, and never only whitespace.
+
+| Code | Severity | Span | Message (example) and notes |
+| ---- | -------- | ---- | --------------------------- |
+| `unknown-name` | warning | the name | Unknown directive `chaptr`. Did you mean `chapter`? Note: the line is rendered as text |
+| `draft-name` | warning | the name | `abstract` is a draft EPUB structural semantic and is rendered as `chapter` |
+| `deprecated-name` | warning | the name | `subchapter` is deprecated and is rendered as `chapter` |
+| `missing-id` | error | the name, plus `:` if present | `chapter` needs an id: write `chapter:<id>` |
+| `id-characters` | warning | the id | The id `a.b` is written to the output as `a-b` |
+| `duplicate-id` | error | the second id | The id `a` is already used. Note at the first (may be in another file, for figure ids) |
+| `id-collision` | error | the second id | `a.b` and `a:b` are both written as `a-b`. Note at the first |
+| `unknown-attribute` | warning | the attribute, key through value | `figure` has no attribute `bogus`; it is ignored |
+| `duplicate-attribute` | warning | the second attribute | `classes` is given twice; the last value is used. Note at the first |
+| `missing-value` | warning | the key and colon | `classes` has no value; write `classes:""` (for a boolean: `autoplay:yes`) |
+| `unterminated-quote` | warning | the opening quote to end of line | The value of `title` opens a quote that is not closed on this line |
+| `stray-word` | warning | the word | `extra` is not an attribute; attributes are written `key:value` |
+| `missing-attribute` | error | the name and id | `figure:f` needs a `source` attribute |
+| `missing-asset` | error | the `source` value | No image `x.png` in `_images/` |
+| `unclosed-block` | warning | the opener line, fence to end | `chapter:a` is never closed; it ends at the end of the file (or: of the list item at line N). Note: add `::: exit:a` |
+| `unmatched-exit` | error | the exit line, fence to end | `exit:zzz` matches no open block. Note at the innermost open block's opener ("`chapter:a` is open here"), or "no block is open", or "`figure:zzz` is a single-line directive and has no exit" |
+| `crossed-exit` | error | the exit line | `exit:a` closes `chapter:a`, but `section:b`, opened inside it, is still open. Note at `section:b`'s opener |
+| `exit-missing-id` | error | `exit` | `exit` needs the id of the block it closes |
+| `exit-trailing-text` | warning | the trailing text | Text after `exit:a` is ignored |
+| `unclosed-caption` | warning | the caption line | The caption is not closed; add a line containing only `::` |
+| `media-attributes` | error | the attributes | `media` takes no attributes; set them in `media.yml` under `m.<target>` |
+| `media-unknown-id` | error | the id | `media.yml` has no entry `m` |
+| `media-missing-target` | error | the id | `media.yml` entry `m` has no `pdf` key. Note: the `media.yml` path |
+| `media-bad-type` | error | the id | `media.yml` `m.web.type` is `chapter`; it must be an inline directive |
+
+**Tests the implementation must have:**
+
+1. One test per code. It asserts the code, severity, message, and the exact
+   start and end `line:col` of the span and of each note.
+2. **Shift invariance.** Every case is run again with 5 lines of plain text
+   prepended and nested 2 blocks deep. Every span moves by exactly the
+   inserted lines, and its column is unchanged. This is the test that
+   catches anchoring to a backtrack point.
+3. **First line.** Every case is run with its construct on line 1 and right
+   after front matter; the diagnostics are the same, shifted (#797).
+4. **No boundary carets.** Over every case and fixture, no span starts at
+   offset 0 or at the text's length unless the construct starts there. No
+   span is empty, and `text.slice(start, end)` starts with the token the
+   message names.
+5. **All problems reported.** One file with one instance of every code yields
+   all of them, in source order.
+6. **CRLF.** The same input with `\r\n` gives identical `line:col`s.
+7. **Agreement.** For every case and fixture, `bber check` and the build
+   produce the same diagnostics (#797's class of defect).
+8. **Kitchen-sink.** No errors, and an explicit list of the warnings it is
+   expected to produce (today: `deprecated-name` for each `subchapter`).
+
+#### Intended output differences
+
+Each lands in its own commit, with the golden snapshot regenerated (see
+Output compatibility):
+
+- consecutive inline directives no longer swallow each other (kitchen-sink
+  gallery: figures 02 and 03 appear, and figure 01 loses its bogus caption);
+- `pullquote` keeps its `citation` and is no longer a `chapter`;
+- `epub:type` keeps its family when `classes` is given
+  (`epub:type="bodymatter chapter"`, not `" chapter"`);
+- attribute values are escaped;
+- a lone word no longer swallows the next attribute;
+- speaker lines and gallery items after their block's `exit` are plain text;
+- crossed exits and unclosed pullquotes produce balanced output;
+- `key "value"` attributes take effect, and draft-only and deprecated-only
+  names render as `chapter` (if adopted).
+
+#### Open decisions
+
+1. **`key "value"`.** Accept it everywhere, as above, or drop it with a
+   diagnostic? Today it has no effect anywhere, and the PRD's "both are in use"
+   holds only for `key:value`. Proposed: accept it, since the PRD and the
+   fixture both assume it.
+2. **The single-line `epigraph`** (`::: epigraph caption "…" citation "…"`, no
+   id, no exit), as documented in `grammar-epigraph` and used in the
+   kitchen-sink. Today it renders as literal text in every build. Proposed:
+   implement it as an inline variant of `epigraph`, chosen when there is no
+   `:id`. That makes `epigraph`'s kind depend on the line. The alternative is
+   a warning, with the fixture rewritten to the block form.
+3. **The 37 draft-only and deprecated-only names**: substitute `chapter` with a
+   warning (proposed, and what the validator and attributes code intend), or
+   `unknown-name`, which keeps today's literal-text output.
+4. **Duplicate ids where today is silent** (pullquote and blockquote ids,
+   figure ids across files): error (proposed) or warning.
+5. **Ids with characters outside `[A-Za-z0-9_-]`**: a warning (proposed) or
+   an error. Also: should an id that is not an XML name (leading digit or
+   `-`) warn, since EPUBCheck may reject it? Verify against EPUBCheck first.
+6. **`media.yml` with no key for a target**: an error (today's behaviour,
+   proposed), or fall back to `epub` for `pdf`, `sample` and `xml`, as their
+   figure templates do (TASK-160).
+7. **Severity of unknown names and unclosed blocks**: warning (proposed, by
+   the severity rule) versus the validator's error today. `bber check
+   --strict` could fail on warnings.
+
 ### `bber check` uses the same grammar
 
 `b-ber-validator`'s separate grammar is replaced by the parse plus
@@ -276,10 +638,11 @@ own commit, with the regenerated snapshot showing the diff.
 ## Subtasks
 
 - [ ] Review this design; record decisions and changes below
-- [ ] Specify the directive syntax precisely (names, id rules, both attribute
+- [x] Specify the directive syntax precisely (names, id rules, both attribute
       forms, nesting, what `exit` may close), from the shapes, the
       validator's combinators and the current parsers. Today it exists only
-      as the union of those three
+      as the union of those three. Done in "Directive syntax"; its open
+      decisions belong to the review subtask
 - [ ] Decide which differences from today's output are intended, and list
       them
 - [ ] Decide the validator question
@@ -296,3 +659,196 @@ own commit, with the regenerated snapshot showing the diff.
   per-builder node visitors), Pandoc fenced divs and filters.
 
 ## Findings
+
+### 2026-11-24: directive syntax, three sources compared
+
+**Method.** Read at `72066c35`:
+- `b-ber-shapes-directives/src/index.ts`;
+- `b-ber-validator/src/validator.ts` and `combinators/`;
+- every `grammar-*` and `parser-*` package registered by
+  `b-ber-markdown-renderer/src/index.ts`, plus `grammar-epigraph`, which is
+  not registered.
+
+Then ran each rule against the built packages:
+- about 80 inputs through the validator;
+- the same inputs through the real renderer, in a copy of the kitchen-sink
+  fixture with `process.argv` faked, for the `epub` and `web` builds;
+- `grammar-media`'s pre-pass for `epub`, `web` and `pdf`, with a stub
+  `media.yml`;
+- the validator over the nine kitchen-sink files;
+- the golden output (TASK-152), checked for what the build produces today.
+
+Line numbers below are at that commit.
+
+The block rule order, which decides who claims a line: `front_matter > table
+> code > container_section > container_pullQuote > container_dialogue >
+container_gallery > container_spread > container_figure >
+container_audio-video > container_vimeo > container_iframe > container_logo >
+fence > …`. The first container rule whose `validate(Open)` accepts the line
+wins. A line none accepts falls through to `paragraph`. That is why an unknown
+or malformed directive renders as literal text rather than failing.
+
+**The validator rejects the kitchen-sink.** `bber check` fails 3 of its 9
+files, all of which build:
+- `chapter-01.md` at 10:13, on the `key "value"` epigraph;
+- `chapter-02.md` at 54:40 and `chapter-03.md` at 34:38, on
+  `source:https://…`: its value pattern excludes `:`.
+
+**Discrepancies.** V = validator, R = renderer, S = shapes. "lit." means the
+line is rendered as a literal paragraph, with no message.
+
+| # | Rule | Minimal input | V | R | Proposed (reason) |
+| - | ---- | ------------- | - | - | ----------------- |
+| 1 | indentation | `   ::: chapter:a` | not a directive; passes vacuously | directive | R: markdown-it's own rule |
+| 2 | fence length | `:::: chapter:a` | rejects | directive; `grammar-media` needs exactly `::: ` | ≥3: R |
+| 3 | after the fence | `:::chapter:a`, `:::  chapter:a` | rejects ("Space") | directive | any whitespace: R |
+| 4 | first line | `::: chapter:a\n\n::: exit:a\n` | fails; the unclosed `::: chapter:a\n` passes (#797) | directive | directive (R) |
+| 5 | CRLF | `\r\n` endings | fails at the id ("End of line") | normalized | normalize (R) |
+| 6 | inside code | ` ``` ` around `::: chapter:a` | a directive (unclosed: fails) | code; `grammar-media` still rewrites it | code (R) |
+| 7 | id characters | `chapter:a.b`, `chapter:é` | rejects | accepts, writes `a-b`, `-` | accept, warn (R; compatibility) |
+| 8 | missing id, inline | `::: figure source:x` | rejects | lit.; `::: video source:x` dropped | error (content is lost) |
+| 9 | empty id | `::: chapter:` | rejects | lit. | error |
+| 10 | `:` in a value | `source:https://vimeo.com/1` | rejects | accepts | accept (R; the fixture uses it) |
+| 11 | `key "value"` | `title "x"`; `::: epigraph caption "…"` | rejects | ignored on a block; lit. without an id; only the unregistered `grammar-epigraph` parses it | accept (open decision 1, 2) |
+| 12 | other quote inside | `title:"it's"` | rejects | accepts | accept (R) |
+| 13 | unclosed quote | `classes:"foo bar` | scans to the next `"`, across lines, or reports past the end of the text | value to end of line | value to end of line, warn |
+| 14 | multi-line value | `title:"a\nb"` | accepts | not possible: attributes are one line | one line (R) |
+| 15 | empty value | `classes:` | rejects | dropped silently | warn, dropped |
+| 16 | lone word | `controls`; `title:foo bar classes:x` | rejects | dropped; `bar classes` becomes one key and `classes` is lost | warn; parse the rest |
+| 17 | spacing | two spaces or a tab between attributes | rejects | accepts | accept (R) |
+| 18 | unknown key | `bogus:x` | accepts | warns, drops | warn (R) |
+| 19 | repeated key | `classes:x classes:y` | accepts | last wins, silently | last wins, warn |
+| 20 | unknown name | `::: chaptr:a` | error at the name (correct anchor) | lit. | warn, lit. (compatibility) |
+| 21 | draft- or deprecated-only name | `::: abstract:a`, `::: note:a` | accepts as a block | lit.; the substitution code is unreachable | substitute `chapter` (open decision 3) |
+| 22 | `pullquote` in the draft set (S) | `::: pullquote:p citation:"X"` | accepts | rendered as `chapter`, `citation` dropped | misc block with citation |
+| 23 | `epigraph` in two sets (S) | `::: epigraph:e` | block | block (via section); `SUPPORTED_ATTRIBUTES.epigraph` (`alt`, `source`) is never consulted | structural block |
+| 24 | `media` attributes | `::: media:m classes:x` | accepts | `Missing ID [m classes]` | error |
+| 25 | duplicate ids | `chapter:a` … `exit:a`, then `chapter:a` again | accepts | throws, even after the exit; pullquote and figure ids never checked | per file, figures per book (open decision 4) |
+| 26 | crossed exits | `a`, `b`, `exit:a`, `exit:b` | error at the second id | closes by id: misnested; with `spread` on web, `</section>` before `</div></div>` | error with recovery |
+| 27 | stray exit | `::: exit:zzz` | "End of string" on the line before | `TypeError` crash | error at the exit |
+| 28 | text after exit | `::: exit:a foo` | accepts | ignored | warn |
+| 29 | unclosed block | `::: chapter:a\n\nBody\n` | error on the line before | closed at end of file silently; `pullquote` left open | warn, close at container end |
+| 30 | caption spacing | `::A caption` | rejects | accepts | accept (R) |
+| 31 | `:::` after an inline | three adjacent `::: figure` lines | accepts | the 2nd becomes the 1st's caption, the 3rd is lost | never a caption (V) |
+| 32 | speaker line | `:: Bob :: hi` after `exit:d` | accepts anywhere | applied to the end of the file | only inside `dialogue` |
+| 33 | gallery item | `:: type:image source:a.png ::` | rejects (its TODO.md) | applied to the end of the file | only inside `gallery` |
+| 34 | `::` in text | `::not a caption` inside a block | rejects ("Space") | text | text (R) |
+| 35 | in a list or blockquote | `- item\n\n  ::: chapter:a` … | ignored, passes | directive | directive (R) |
+| 36 | name not first | `::: junk figure:f source:x`; `::: audiobook:x` | rejects | renders a figure; drops the line | name is the first token |
+
+**Bugs found** (recorded, not fixed):
+
+1. `validator/src/combinators/oneOf.ts:21` keeps the **nearest** failure,
+   though its comment says furthest. Flipping the comparison in a copy of the
+   built package moved **none** of the misplaced carets, though. The real
+   cause:
+   - `many.ts:15-17` ends a repetition on any non-fatal failure and discards
+     it;
+   - the top-level `eos()` (`validator.ts:142`) then reports "End of string"
+     where `many` stopped;
+   - the fences (`validator.ts:35-36`) begin with `\n`, so that offset is the
+     newline at the end of the previous line.
+
+   An unclosed block on line 3 is reported at 2:1, and a stray exit on line 5
+   at 4:1.
+2. `validator.ts:35-36`: a fence must follow a `\n`, so a directive on line 1
+   is body text. That inverts the result (#797).
+3. `validator.ts:28`: `ascii` excludes `:`, so URL values fail.
+   `validator.ts:29`: `words` is `[^'"]+`, which crosses newlines. On an
+   unclosed quote, `close.ts:17,28-29` reports an index past the end of the text
+   (offset 60 of 59).
+4. `parser-section/src/index.ts:74` (the same line in `parser-gallery` and
+   `parser-dialogue`) compares the **opener's** `pos` with each later line's
+   `start`. That is always negative, so no closing fence is ever found and
+   every container runs to the end of the document. This is the mechanism
+   behind "The root problem" above.
+5. `grammar-renderer/src/index.ts:74` adds ids to `state.cursor` during
+   parsing, including silent mode, and only render removes them. So any block
+   id used twice in a file throws `Duplicate [id]`, even after its `exit`.
+   That is the per-file uniqueness noted above, and the TASK-153 false
+   positive (`grammar-section/__tests__/index.test.js:102`).
+6. `grammar-pullquote/src/index.ts:24` matches `exit`, and `validateOpen`
+   (103-117) accepts every exit that `section` declined. `handleClose` (77)
+   then destructures `undefined` when no pullquote is open. Any stray exit,
+   an exit for a figure, or the exit of a misspelled opener crashes with
+   `Cannot destructure property 'id' of 'pullquoteIndices[…]'`. Also,
+   `MARKER_CLOSE_RE` (25) has `[\s]+` where `[^\s]+` was meant.
+7. `shapes-directives/src/index.ts:94` puts `pullquote` in the draft set, and
+   `grammar-attributes/src/index.ts:260` substitutes draft names first. Every
+   pullquote renders as `class="pullquote  chapter" epub:type=" chapter"`
+   (golden `epub/OPS/text/kitchen-sink-chapter-01.xhtml:24`), and its
+   `citation` is dropped as unsupported.
+8. `grammar-attributes/src/index.ts:214` looks up the family of
+   `result.classes` instead of the directive. With `classes`, `epub:type`
+   loses its family: golden `kitchen-sink-chapter-01.xhtml:43`,
+   `epub:type=" chapter"`.
+9. `grammar-attributes/src/index.ts:97`: attribute values are written
+   unescaped. `title:"<b>&"` gives `title="<b>&"`. The same is true of
+   `grammar-media/src/helpers.ts:33`.
+10. `grammar-attributes/src/index.ts:123-158` (`parseAttrs`): a lone word is
+    merged into the next key (`bar classes`), so that attribute is lost.
+11. `parser-figure/src/index.ts:92-116` takes any following line that starts
+    with `::`, including `:::`, as a caption marker. In the kitchen-sink
+    gallery (`chapter-02.md:30-32`) the golden epub has only figure 01. Figure
+    02's directive is figure 01's caption
+    (`figurech-02-gallery-figure-01.xhtml:23`), and figure 03 is gone. The
+    golden snapshot pins this.
+12. `grammar-image/src/index.ts:23` is unanchored, so `::: junk figure:f …`
+    renders a figure. At :79 the "missing source" check tests the attribute
+    string, not `source`.
+13. `grammar-audio-video/src/index.ts:36` validates with `^(video|audio)` and
+    renders `''` when the full pattern fails (177). So `::: audiobook:x` and
+    `::: video source:x` vanish without a message. `vimeo` (31, 125) and
+    `iframe` (16, 24) have the same shape.
+14. `b-ber-markdown-renderer/src/index.ts:52-104` never registers
+    `grammar-epigraph`. The single-line epigraph renders as literal text:
+    golden `kitchen-sink-chapter-01.xhtml:16`.
+15. `grammar-media/src/index.ts`:
+    - 74-85: a last line with no trailing newline is never scanned;
+    - 100: only exactly `::: ` is matched;
+    - 103: `split(':')` puts attributes into the id;
+    - the scan is line-based, so it rewrites inside fenced code;
+    - `type` is never validated.
+16. `parser-dialogue/src/index.ts:116-118` and
+    `parser-gallery/src/index.ts:255-258` reset their "inside" flag only at
+    the container's close token, which is at the end of the document. Speaker
+    and gallery-item syntax applies after the `exit`.
+17. `grammar-section/src/index.ts:52-85` closes by id wherever the block is
+    in the stack. Crossed exits misnest, and with `spread` or `gallery` on
+    web and reader the output is malformed.
+18. `grammar-section/src/index.ts:132` writes 0-based line numbers into the
+    `START` comments, while the errors use 1-based numbers
+    (`parser-section/src/index.ts:35`). For example,
+    `kitchen-sink-chapter-01.md:11` in the golden output is line 12.
+
+**Evidence: the validator's anchors.** Re-run against the built package:
+
+| Input | Construct at | Reported at |
+| ----- | ------------ | ----------- |
+| `# Title\n\n::: chapter:a\n\nBody\n\nMore\n` (unclosed) | 3:1 | 2:1, "End of string" |
+| `# Title\n\nText\n\n::: exit:zzz\n` (stray exit) | 5:1 | 4:1, "End of string" |
+| `::: chapter:a\n\n::: exit:a\n` (first line, valid) | (none) | 2:1, "End of string" |
+| `x\n\n::: chapter:ab\n\n::: exit:a\n` (wrong exit) | 5:1 | 6:1, at the end of the text |
+| `# T\n\nx\n\n::: figure:f source:a.png bogus\n` | 5:27 | 5:27, "End of line" (right place, wrong message) |
+| `# T\n\n::: chaptr:a\n\n::: exit:a\n` | 3:5 | 3:5, "Valid directive name" |
+
+The same table with `oneOf` patched to keep the furthest failure gives
+identical positions (bug 1).
+
+**Evidence: the renderer.** Selected results:
+- `::: exit:zzz` with nothing open: `TypeError` (bug 6).
+- `::: chapter:a` … `exit:a` … `::: chapter:a` … `exit:a`:
+  `Duplicate [id] [a] … probe.md:9` (bug 5).
+- `::: chapter:a classes:foo`: `epub:type=" chapter"` (bug 8).
+- `::: chapter:a title:"<b>&"`: `title="<b>&"` (bug 9).
+- `::: pullquote:p` unclosed: `<section …>` with no close.
+- `::: abstract:a`: `<p>::: abstract:a</p>` (row 21).
+- `::: credits:a`: `class="credits backmatter chapter"`, with the draft
+  warning.
+- `media` for `pdf` with no `pdf` key: `Missing build type [pdf] in media.yml
+  for the ID [m]`.
+
+**`media.yml` shape**, from `State.ts:33-40,136-137` and
+`grammar-media/src/index.ts:31`: `{ [id]: { [target]: { type, caption?,
+...attrs } } }`. The pre-pass emits `::: <type>[-inline]:<id> key:"value" …`,
+then `:: <caption>` and `::` when there is a caption.
