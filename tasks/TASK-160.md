@@ -222,16 +222,26 @@ everything goes under one `dist`:
 
 ### A build never writes to the source tree
 
-Only `bber new` and the commands that exist to edit a project (`bber theme
-set`, and so on) write to the source directory. Today, `bber build` writes to
+Only `bber new` and the commands that exist to edit a project (`bber
+generate`, `bber cover`, `bber theme set`, and the new `bber toc` below)
+write to the source directory. Today, `bber build` writes to
 it in four places:
 
 | Where | What it writes | After |
 | ----- | -------------- | ----- |
-| `cover` | generates a cover image into `_images/`, prunes old ones, and rewrites `metadata.yml` to point at it | generated in prepare into `.work/`, and used for that run only. `metadata.yml` is read, never written |
-| `opf/Navigation.ts:91` | appends Markdown files missing from `toc.yml` (or `<target>.yml`) to that file | warns, listing the missing files, as it already does for redundant ones. Writing them back becomes an explicit command, if one is wanted |
+| `cover` | generates a cover image into `_images/`, prunes old ones, and rewrites `metadata.yml` to point at it | generated in prepare into `.work/`, and used for that run only. `metadata.yml` is read, never written. `bber cover` already exists for keeping a generated cover in the project |
+| `opf/Navigation.ts:91` | appends Markdown files missing from `toc.yml` (or `<target>.yml`) to that file | warns, listing the missing files, as it already does for redundant ones, and points at `bber toc` |
 | `sass` | copies the theme's `fonts/` and `images/` into `_fonts/` and `_images/` | copied straight into the target's build. `bber theme set` still copies them into the project, because that is its job |
 | `State` at import time | creates `_media/` and the themes directory | a missing optional directory reads as empty |
+
+**`bber toc`** is the explicit replacement for the automatic append, which
+was error-prone. It adds Markdown files missing from the project's navigation
+files and reports entries with no file. It doesn't delete them, because nested
+structures can't be rewritten safely (the reason `Navigation.ts` gives today).
+`--dry-run` lists the changes without writing them. `bber generate` already
+appends to `toc.yml` and the overrides this way, so the two share the writer.
+Once `<target>.yml` folds into `config.yml`, it writes to whichever navigation
+files the config names.
 
 **`media.yml` does not write files.** `grammar-media` rewrites the Markdown
 **text in memory** before parsing. Its fix is part of parse-once: TASK-161's
@@ -336,7 +346,9 @@ TASK-153 pinned the current defects (#798).
 6. **The 5.0 breaking changes**, merged only once 5.0 is the next release:
    - the output layout under `<dist>/<target>/`, with `deploy` and `serve`
      following it;
-   - builds stop writing to the source tree;
+   - builds stop writing to the source tree, and `bber toc` replaces the
+     automatic append to `toc.yml` (the command can land earlier, in a minor
+     release, since adding it breaks nothing);
    - `<target>.yml` folds into `config.yml`.
 7. **Delete `State`** when nothing imports it.
 
@@ -560,3 +572,5 @@ For each target, it compared the rendered HTML, `figures`, `frontMatter` and
   doing so; it doesn't (it rewrites in memory), but cover, Navigation, sass
   and State's import do.
 - **Embeds:** the epub iframe inconsistency gets fixed, in a separate task.
+- **`bber toc`:** a command updates the navigation files. The build only
+  warns. The automatic append was always error-prone.
