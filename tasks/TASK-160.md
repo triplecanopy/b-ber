@@ -101,9 +101,20 @@ function loadProject(root: string, overrides?: Partial<ProjectConfig>): Promise<
 // Replaces the `state.build === 'x'` branches
 interface Target {
   name: 'epub' | 'mobi' | 'pdf' | 'web' | 'reader' | 'sample' | 'xml'
-  features: TargetFeatures         // e.g. interactiveMedia, figuresOn: 'page' | 'titlepage'
-  outputs(ctx: BuildContext): string[]   // paths it will write: checked for overlap
+  features: TargetFeatures
+  figureTemplates: FigureTemplates // its own table; pdf, sample and xml name epub's explicitly
   build(ctx: BuildContext, shared: SharedArtifacts): Promise<BuildResult>
+}
+
+// What rendering branches on. Internal: fixed per target, not settable from
+// config.yml (see "What a target exposes to a project")
+interface TargetFeatures {
+  liveEmbeds: boolean              // web, reader: inline iframe/Vimeo render, custom media controls
+  fullbleedContainers: boolean     // web, reader: gallery/spread as positioned containers
+  figuresOn: 'page' | 'titlepage'  // reader: 'titlepage'
+  readerRuntime: boolean           // reader: markup b-ber-reader-react hydrates (posters, spread markers)
+  nonLinearSpine: boolean          // false for mobi
+  coverPage: boolean               // false for pdf
 }
 
 // One per target per run. Passed down; never global
@@ -137,25 +148,94 @@ stop events, tagged with the target, and nothing else. **There is no task
 runner dependency.** `serialize` already is one, and plain functions are
 easier to read and debug.
 
+### What a target exposes to a project
+
+The aim is for a project to see as little of the machinery as possible.
+**Rendering code branches on `ctx.target.features`, never on
+`ctx.target.name`.** Step 2 adds a check that fails on a `target.name`
+comparison in grammar, parser or template code. The features are internal:
+`config.yml` can't set them.
+
+A target's name reaches a project in exactly four places. Each is the
+project's own way to say "only for this target":
+
+| Where | Why it stays |
+| ----- | ------------ |
+| the `<target>:` section of `config.yml` | the config layering above |
+| the keys in `media.yml` | which directive a `media` entry becomes for each target |
+| SCSS `$build` | the themes branch on it about 20 times |
+| `window.bber.env` | the counterpart for scripts: the `application.js` that `bber new` scaffolds documents it and branches on it |
+
+All of these are public, so **target names are frozen**.
+
+The other uses go away:
+- **The dist directory, `project-<target>` and `clean`'s `*.<target>`** become
+  internal under the output layout below.
+- **The `<target>.yml` navigation override** folds into the `<target>:` section
+  of `config.yml`: the section names its navigation file, and the default is
+  `toc.yml`. That removes a lookup by filename convention. `bber new` only ever
+  scaffolded `toc.yml`. The key name is TASK-162's.
+
 ### Running a build: plan, prepare, fan out
 
-1. **Plan.** Resolve the requested targets and each `BuildContext`. Collect
-   every target's `outputs` and **fail before doing any work if any two
-   overlap**. Each target's dist is already `${dist}-${target}`, so in
-   practice this check guards against mistakes.
+1. **Plan.** Resolve the requested targets and each `BuildContext`.
 2. **Prepare, once and serially:**
-   - everything that writes to the **source** tree: `ensure` (project
-     scaffolding), and cover generation, which today rewrites `metadata.yml`
-     and prunes `_images/` from inside the cover task. Cover generation
-     becomes a prepare step that runs once, not once per target;
+   - shared generated assets, such as the generated cover (see "A build never
+     writes to the source tree" below). These run once, not once per target;
    - **parsing**: Markdown → directive tree for every document (TASK-161).
      This is target-independent, so it happens once, and the trees are
      shared read-only.
 3. **Fan out.** Run the targets' `build` functions under a concurrency limit
-   (`--concurrency`, default: number of CPUs, capped). Each writes to
-   `<dist>-<target>.tmp-<hash>/` and is renamed to `<dist>-<target>/` only if
-   it succeeds. `--concurrency=1` gives today's one-at-a-time behaviour for
-   debugging.
+   (`--concurrency`, default: number of CPUs, capped). `--concurrency=1`
+   gives today's one-at-a-time behaviour for debugging.
+
+### Output layout: every target owns one directory under `dist`
+
+Today each target writes `<dist>-<target>/` as a *sibling* of `dist`, and the
+packaged files (`<identifier>.epub`/`.mobi`/`.pdf`, `<uuid>.xml`) land in the
+project root, where `clean` deletes `*.<target>`. After this design,
+everything goes under one `dist`:
+
+```
+<dist>/
+  epub/<identifier>.epub
+  mobi/<identifier>.mobi
+  pdf/<identifier>.pdf
+  sample/…
+  xml/<uuid>.xml
+  web/…            the site
+  reader/…         the reader's tree and manifest
+  .work/<target>-<hash>/   intermediates: the unpacked OPS tree, staging
+```
+
+- **A target owns exactly `<dist>/<target>/`.** It builds in
+  `.work/<target>-<hash>/`, and on success its deliverable is renamed into
+  place. A failed build leaves the previous output untouched. `clean` is
+  "remove `<dist>/<target>/`", and nothing outside `dist` is touched.
+- **No overlap check is needed.** Every target owns one directory by
+  construction, so `Target.outputs()` is gone from the interface.
+- **For epub, mobi and pdf the unpacked tree is an intermediate.** It's
+  removed on success unless it is asked for, as `--no-compile` asks today.
+  For web and reader the tree *is* the deliverable.
+- **This is a breaking change** for anything that reads the old paths, such
+  as `deploy`, `serve`, and users' own scripts. It ships in 5.0 (see Plan).
+
+### A build never writes to the source tree
+
+Only `bber new` and the commands that exist to edit a project (`bber theme
+set`, and so on) write to the source directory. Today, `bber build` writes to
+it in four places:
+
+| Where | What it writes | After |
+| ----- | -------------- | ----- |
+| `cover` | generates a cover image into `_images/`, prunes old ones, and rewrites `metadata.yml` to point at it | generated in prepare into `.work/`, and used for that run only. `metadata.yml` is read, never written |
+| `opf/Navigation.ts:91` | appends Markdown files missing from `toc.yml` (or `<target>.yml`) to that file | warns, listing the missing files, as it already does for redundant ones. Writing them back becomes an explicit command, if one is wanted |
+| `sass` | copies the theme's `fonts/` and `images/` into `_fonts/` and `_images/` | copied straight into the target's build. `bber theme set` still copies them into the project, because that is its job |
+| `State` at import time | creates `_media/` and the themes directory | a missing optional directory reads as empty |
+
+**`media.yml` does not write files.** `grammar-media` rewrites the Markdown
+**text in memory** before parsing. Its fix is part of parse-once: TASK-161's
+tree represents `media` as a node that is resolved per target at render time.
 
 What runs in parallel in practice: markdown-it and rendering are
 synchronous, so in one process concurrency overlaps I/O and child processes
@@ -231,26 +311,53 @@ TASK-153 pinned the current defects (#798).
 
 1. **`loadProject` + `BuildContext` + the `State` shim.** No behaviour
    change, except per-build config, which starts being applied. Flip
-   `build-config.test.js`'s defect test.
-2. **`Target` definitions with feature flags.** Replace the
-   `state.build === 'x'` branches. Fix the hardcoded `project-<build>` path
-   and serve's `src`/`dist` (flip those defect tests).
+   `build-config.test.js`'s defect test. The shim scopes `build`, `config` and
+   `hash`, makes `reset()` per-context, and keeps the per-target collections
+   on the context (see the spike in Findings).
+2. **`Target` definitions with feature flags.** Replace the 28 behaviour
+   branches with `TargetFeatures` and `figureTemplates`. Add the check that
+   fails on a `target.name` comparison in render code. Fix the hardcoded
+   `project-<build>` path and serve's `src`/`dist` (flip those defect tests).
 3. **Migrate tasks to `(ctx, inputs) → outputs`**, one commit each, in data-
    flow order: render → loi → footnotes → opf → the packagers. Remove
    `serialize`.
-4. **Plan/prepare/fan-out with staging and rename.** Cover moves to prepare.
-   Logger events carry the target.
-5. **Parse once** (needs TASK-161's tree).
-6. **Delete `State`** when nothing imports it.
+4. **Prepare/fan-out with staging and rename**, on today's paths. Before it
+   lands:
+   - the footnote `Counter` moves onto the context;
+   - the fixture gets footnotes in several documents under
+     `group_footnotes: false`;
+   - a concurrency test, modelled on the spike, renders every target at once
+     and compares each with its serial output.
 
-Steps 1–3 can ship in minor releases behind the shim. Step 6, together with
-TASK-161's package consolidation, is the 5.0 major.
+   Fan-out runs only targets whose tasks have all migrated. Cover generation
+   moves to prepare. Logger events carry the target.
+5. **Parse once** (needs TASK-161's tree, including `media` as a node
+   resolved per target).
+6. **The 5.0 breaking changes**, merged only once 5.0 is the next release:
+   - the output layout under `<dist>/<target>/`, with `deploy` and `serve`
+     following it;
+   - builds stop writing to the source tree;
+   - `<target>.yml` folds into `config.yml`.
+7. **Delete `State`** when nothing imports it.
+
+Steps 1–4 can ship in minor releases behind the shim. Steps 6 and 7, together
+with TASK-161's package consolidation, are the 5.0 major. Each step changes
+no output except where it says so, and TASK-152's golden snapshot is
+regenerated in the same PR when it does.
+
+**Separate task, not part of this sequence:** make embeds consistent. An epub
+figure page renders a live iframe, but an epub `iframe-inline` renders the
+unsupported message. It changes output, so it needs its own PR and its own
+decision about which way to go. It fits EPUB spec compliance (#619).
 
 ## Subtasks
 
 - [ ] Review this design; record decisions and changes below
-- [ ] Decide `TargetFeatures`: list every `state.build` branch (~30) and
-      group them into named features
+- [x] Decide `TargetFeatures`: list every `state.build` branch (~30) and
+      group them into named features. 37 branches, six flags plus a figure
+      template table per target. See Design and Findings
+- [x] Decide what a target's name exposes to a project, the output layout,
+      and that a build never writes to the source tree (2026-11-24)
 - [ ] Decide the default concurrency and the progress reporter's multi-target
       layout
 - [x] Confirm the `AsyncLocalStorage` shim against the call sites inside
@@ -437,3 +544,19 @@ For each target, it compared the rendered HTML, `figures`, `frontMatter` and
   concurrently and compare each with its serial output, normalising the random
   footnote ids. Include the no-shim negative control, so the test is known to
   be able to fail.
+
+### 2026-11-24: decisions
+
+- **Features:** two flags for live embeds and full-bleed containers, though
+  both are `web`+`reader` today; one `readerRuntime` flag; and a figure
+  template table per target instead of more flags.
+- **Exposure:** render code branches on features, never on the name. The name
+  reaches a project only through the `config.yml` section, `media.yml` keys,
+  `$build` and `window.bber.env`. `window.bber.env` was nearly cut, but the
+  `application.js` that `bber new` scaffolds documents it and branches on it.
+- **Output layout:** everything under `<dist>/<target>/`. This supersedes the
+  entry above about `outputs()` listing root-level files: `outputs()` is gone.
+- **Source tree:** a build never writes to it. `media.yml` was suspected of
+  doing so; it doesn't (it rewrites in memory), but cover, Navigation, sass
+  and State's import do.
+- **Embeds:** the epub iframe inconsistency gets fixed, in a separate task.
