@@ -186,8 +186,71 @@ The other uses go away:
      This is target-independent, so it happens once, and the trees are
      shared read-only.
 3. **Fan out.** Run the targets' `build` functions under a concurrency limit
-   (`--concurrency`, default: number of CPUs, capped). `--concurrency=1`
-   gives today's one-at-a-time behaviour for debugging.
+   (see "Concurrency, failures and the logger" below).
+
+### Concurrency, failures and the logger
+
+**Default: every requested target at once.** That is
+`min(targets.length, os.availableParallelism())`. `--concurrency=N`
+overrides it, and `--concurrency=1` runs one at a time, as today, for
+debugging. It is a CLI flag only, not a `config.yml` key, which keeps the
+config small. There are at most seven targets, and only three of them start a
+heavy child process: EPUBCheck (a JVM) for epub, and Calibre for mobi and
+pdf. So "all at once" stays bounded in memory without a separate cap.
+
+**What actually runs in parallel.** markdown-it, rendering and sass (the
+pure-JS `sass` package, which compiles in-process) are synchronous. In one
+process, concurrency therefore overlaps only I/O and child processes:
+EPUBCheck, Calibre's `ebook-convert`, and `zip`. That is where the time goes.
+In kitchen-sink's epub build, zip plus EPUBCheck take about 1.9s of 2.4s (see
+Findings). Parsing once removes repeated *render* work, which grows with the
+length of the book. On a small book sass is the larger repeated cost (about
+15× render on kitchen-sink), and it has to run once per target, because
+`$build` differs. `worker_threads`, or a sass that compiles in a child
+process (`sass-embedded`), are possible later steps, not part of this design.
+
+**A failing target doesn't stop the others.** Every started target runs to
+the end, each result is reported, and the exit code is 1 if any target failed.
+Staging means a failed target leaves its previous output in place. One run
+reports everything that is broken, not just the first thing, which is the
+same principle as TASK-161's diagnostics.
+
+**The logger.** Today its events carry no target, it has one `Timer`, and
+`CompactReporter` tracks a single `currentBuild`. After this design:
+- **Events carry the target.** The pipeline gives the logger a way to look up
+  the current target: `ctx.log` once tasks take `ctx`, and during the shim, a
+  provider that reads the `AsyncLocalStorage` store. The logger keeps no
+  dependency on b-ber-lib. Messages from prepare carry no target.
+- **One timer per target.**
+- **`progress` (a terminal)** draws one redrawing line per target, replacing
+  today's single line:
+
+  ```
+  error epub    Image not found [cover.jpg]
+  ⠹ epub    [12/12] epub
+  ⠼ mobi    [7/13]  render
+  ✓ web     1.2s
+  ✓ reader  1.3s
+  ```
+
+  When the build ends, it prints the held warnings, then the result:
+
+  ```
+  warn  [epub:subchapter] is deprecated. substituting with [chapter]  ×48 (epub, mobi, web, reader)
+  ✗ epub    failed at epub (12/12) after 2.3s
+  ✗ 1 of 4 formats failed: epub
+  ```
+
+  Errors and notices print above the block as they happen, tagged with their
+  target. **Warnings are de-duplicated across targets:** a warning that
+  several targets raise prints once, with its count and the targets that
+  raised it. Today a four-format build prints each one four times. With one
+  target, the output is exactly today's.
+- **`plain` (pipes, CI)** prints the same result lines as each target
+  finishes, and never redraws.
+- **`lines` (`--verbose`, `--log-level` ≥ 3)** gains a target column after the
+  label (`info  epub    sass done (177ms)`), but only when more than one
+  target is building. Prepare's lines leave the column blank.
 
 ### Output layout: every target owns one directory under `dist`
 
@@ -246,21 +309,6 @@ files the config names.
 **`media.yml` does not write files.** `grammar-media` rewrites the Markdown
 **text in memory** before parsing. Its fix is part of parse-once: TASK-161's
 tree represents `media` as a node that is resolved per target at render time.
-
-What runs in parallel in practice: markdown-it and rendering are
-synchronous, so in one process concurrency overlaps I/O and child processes
-(dart-sass, Calibre's ebook-convert, EPUBCheck, zip). Parsing once removes
-the largest repeated CPU cost. `worker_threads` is a possible later step,
-not part of this design.
-
-**The logger.** Its events carry no build id, it has one `Timer`, and
-`CompactReporter` tracks a single `currentBuild`. It needs:
-- events tagged with the target;
-- a timer per target;
-- in the progress reporter, one line per running target (as Turborepo and
-  lerna prefix output by package).
-
-The `lines` reporter prefixes each line with the target.
 
 ### Config resolution
 
@@ -357,10 +405,12 @@ with TASK-161's package consolidation, are the 5.0 major. Each step changes
 no output except where it says so, and TASK-152's golden snapshot is
 regenerated in the same PR when it does.
 
-**Separate task, not part of this sequence:** make embeds consistent. An epub
-figure page renders a live iframe, but an epub `iframe-inline` renders the
-unsupported message. It changes output, so it needs its own PR and its own
-decision about which way to go. It fits EPUB spec compliance (#619).
+**Separate task, not part of this sequence: TASK-056 (#621).** That task
+makes embeds consistent: an epub figure page renders a live iframe, but an
+epub `iframe-inline` renders the unsupported message. TASK-056's option 3(a),
+a placeholder figure page in epub, is that fix. It is also what makes
+kitchen-sink's epub pass EPUBCheck, which it currently fails. It changes
+output, so it needs its own PR.
 
 ## Subtasks
 
@@ -370,8 +420,9 @@ decision about which way to go. It fits EPUB spec compliance (#619).
       template table per target. See Design and Findings
 - [x] Decide what a target's name exposes to a project, the output layout,
       and that a build never writes to the source tree (2026-11-24)
-- [ ] Decide the default concurrency and the progress reporter's multi-target
-      layout
+- [x] Decide the default concurrency and the progress reporter's multi-target
+      layout: all targets at once, failures don't stop the others, and one
+      line per target (2026-11-24)
 - [x] Confirm the `AsyncLocalStorage` shim against the call sites inside
       markdown-it render rules (synchronous, so the context propagates).
       Confirmed, with one exception: module-level state. See Findings
@@ -574,3 +625,29 @@ For each target, it compared the rendered HTML, `figures`, `frontMatter` and
 - **Embeds:** the epub iframe inconsistency gets fixed, in a separate task.
 - **`bber toc`:** a command updates the navigation files. The build only
   warns. The automatic append was always error-prone.
+- **Concurrency:** every requested target at once by default, set by a CLI
+  flag only. A failing target doesn't stop the others. The terminal shows one
+  line per target, warnings are de-duplicated across targets, and the target
+  column in `lines` appears only when several targets build. See "Concurrency,
+  failures and the logger".
+
+### 2026-11-24: where a build's time goes
+
+Each target built on its own from kitchen-sink with `--log-level=3`, on a
+14-core machine. mobi and pdf were not measured: Calibre isn't installed.
+
+| Target | Wall | sass | render | Packaging |
+| ------ | ---- | ---- | ------ | --------- |
+| epub | 2.4s | 177ms | 12ms | about 1.9s: zip, then EPUBCheck (a JVM) |
+| web | 0.56s | 169ms | 11ms | 19ms |
+| reader | 0.55s | 169ms | 12ms | 6ms |
+| sample | 0.52s | 158ms | 10ms | none |
+| xml | 0.53s | 156ms | 10ms | fails (#766) |
+
+- **The child processes dominate**, and they are what concurrency can
+  overlap.
+- **sass, not render, is the largest repeated in-process cost on a small
+  book.** It runs per target because `$build` differs.
+- **Both failures are tracked already.** xml is #766, fixed by plan step 2.
+  epub fails EPUBCheck with RSC-005 on the iframe figure page: TASK-056,
+  above.
