@@ -77,7 +77,7 @@ or corrects every row; the corrections are listed there.
 - [x] **Audit.** For every key: where it is read, what it does, whether
       anything uses it, and whether the reader (reader-react) reads it from
       the manifest. Record the result in Findings.
-- [ ] **Propose the new key set** as a table: old key → new key (or
+- [x] **Propose the new key set** as a table: old key → new key (or
       removed, with why), camelCase. Group related settings, e.g. reader-only
       settings under `reader:`, the URLs under something like `urls:` or
       `publish:`, tool options under their tool. Decide which keys belong in
@@ -302,10 +302,12 @@ Declared: **C** `lib/src/Config.ts`, **Y** the `lib/src/Yaml.ts` schema,
 
 ### Proposed key set
 
-**Proposed** (2026-11-24); the maintainer decides. It sits under Findings
-because it follows from the audit; once decided it belongs in a Design
-section. The bias is toward removal: 24 keys become 12, plus the `<target>:`
-sections TASK-160 restores.
+**Decided** (2026-11-25), after checking every "no project uses it" against
+the 262 b-ber projects in the GitLab group (see "2026-11-25: checked against
+the GitLab projects" below). It sits under Findings because it follows from
+the audit, and moves to a Design section when the schema subtask starts. The
+bias is toward removal: 24 keys become 12, plus the `<target>:` sections
+TASK-160 restores.
 
 **Shape.** Three kinds of key:
 
@@ -324,7 +326,7 @@ theme: b-ber-theme-serif
 url: https://example.com/my-book/   # where dist/ is published
 noindex: false
 navigation: toc.yml
-ibooksSpecifiedFonts: false
+footnotes: { numbering: document }   # or book: one sequence across the book
 
 reader:
   layout: columns
@@ -353,10 +355,10 @@ overriding the URLs with the server's own, as it does today.
 | Old key | New key | Why |
 | ------- | ------- | --- |
 | **Paths and theme** | | |
-| `src` | `src` | unchanged; every project uses `_project` (open decision 6) |
-| `dist` | `dist`, default **`dist`** | it becomes the parent of `<target>/` (TASK-160), not a prefix, and `project/epub/…` reads badly. `dist` matches the JS toolchain. The migration warns that output has moved |
+| `src` | `src` | unchanged and still configurable. All 263 GitLab projects use `_project` |
+| `dist` | `dist`, default **`dist`** | it becomes the parent of `<target>/` (TASK-160), not a prefix, and `project/epub/…` reads badly. `dist` matches the JS toolchain. The migration warns that output has moved. All 263 GitLab projects set `dist: project` explicitly, so the new default changes none of them |
 | `theme` | `theme` | unchanged |
-| `themes_directory` | **removed**; fixed at `themes/` | every project uses `./themes`, and `--themes_directory` never worked (bug 1). Open decision 3 |
+| `themes_directory` | **removed**; fixed at `themes/` | `--themes_directory` never worked (bug 1). One GitLab project sets the key and depends on it: `tc-bber-theme` (`./my-themes`, which holds its theme). It renames that directory to `themes/`; the migration's warning says so |
 | **Publishing** | | |
 | (new) | `url` | the root that the target URLs derive from |
 | `base_url` | `web.url` (derived from `url`) | one URL per target, under one root |
@@ -370,23 +372,23 @@ overriding the URLs with the server's own, as it does today.
 | `ui_options` | `reader.controls: { home, toc, info, chapter, page }` | flat booleans: the header/footer nesting is the reader's layout, not the author's concern. `header_icons.downloads` goes, because the button already hides when `downloads` is empty. The manifest writer maps back to reader-react's `uiOptions.navigation.*_icons` prop, which is reader-react's own public API (`index.d.ts`) and is not changed here |
 | `cache` | **removed** | dead in the reader (`XMLAdaptor.ts:341`) |
 | **EPUB** | | |
-| `ibooks_specified_fonts` | `ibooksSpecifiedFonts` | shared rather than `epub:`-only, because `sample` also packages an OPF. It keeps the vendor property's name so it can be looked up. Open decision 4 |
+| `ibooks_specified_fonts` | **removed**; the OPF always writes `ibooks:specified-fonts` `true` | 212 of the 263 GitLab projects set `true`, including every project active since 2024. The 51 `false` values are tests and books from 2022 or earlier. The bundled themes embed fonts, which Apple Books otherwise replaces. The migration warns a project that sets `false` |
 | **Tool options** | | |
 | `pdf_options` | `pdf.calibre` | Calibre's option names in camelCase (`paperSize`); `kebabCase` already produces the flag. The whitelist needs re-keying |
-| `autoprefixer_options` | **removed** | honour the project's browserslist config (`.browserslistrc` or `package.json`, the standard place), keeping b-ber's default list when there is none; `flexbox: no-2009` stays internal. This also removes bug 3's merge trap. Open decision 5 |
+| `autoprefixer_options` | **removed** | honour the project's browserslist config (`.browserslistrc` or `package.json`, the standard place), keeping b-ber's default list when there is none; `flexbox: no-2009` stays internal. This also removes bug 3's merge trap. No GitLab project has a custom list: 169 set `browsers` (which current Autoprefixer ignores) and 21 `overrideBrowserslist`, all to the same scaffolded value |
 | `uglify_options` | **removed** | an internal tool's settings; no project sets it, and the minifier is an implementation detail |
 | **Rendering** | | |
-| `group_footnotes` | **removed**: notes always number per document | per-document numbering is the default and no project sets `false`. Removing the option removes the `Counter` that leaks between concurrent targets (TASK-160 Findings). Open decision 1 |
-| `ignore` | **removed** | it only filters the three asset directories, its description overstates it, and no project uses it. Open decision 2 |
+| `group_footnotes` | `footnotes.numbering: document \| book` (default `document`; `book` is today's `false`) | **kept**: 5 published books set `false` (i28 and i29), and 4 of them have notes in several documents, so they rely on one sequence across the book. The `Counter` that holds that sequence moves onto the build context before targets run concurrently (TASK-160 Plan step 4) |
+| `ignore` | **removed** | it only filters the three asset directories, and its description overstates it. One GitLab project sets it (`a-heavy-nonpresence`: `./transcriptions/`), and it has no effect there: no such directory exists |
 | **Navigation** | | |
-| `<target>.yml` files | `navigation` (shared, default `toc.yml`) | TASK-160's fold, set per target as `epub: { navigation: epub.yml }`. Migration: a `<target>.yml` with no `navigation` key is mapped, with a warning |
+| `<target>.yml` files | `navigation` (shared, default `toc.yml`) | TASK-160's fold, set per target as `epub: { navigation: epub.yml }`. Migration: a `<target>.yml` with no `navigation` key is mapped, with a warning. 128 GitLab projects have such files. Most are copies of `toc.yml` that an older `bber new` scaffolded, but 62 `reader.yml`, 17 `mobi.yml` and 12 `epub.yml` really differ, so the mapping matters |
 | **Deploy** | | |
 | `bucket_url` | `deploy.bucket` | read from the resolved config, not the raw file. The region stays in `BBER_BUCKET_REGION`, beside the credentials |
-| `builds` | **removed** | dead; `bber deploy <targets…>` already chooses |
+| `builds` | **removed** | dead; `bber deploy <targets…>` already chooses. 59 GitLab projects set it, mostly to an old download-list format from 2018–19 |
 | **Removed outright** | | |
 | `env` | **removed** | dead; `NODE_ENV` is what every task reads |
-| `remote_javascripts`, `remote_stylesheets` | **removed** | broken today (#803), so no working project uses them, and removing them settles #803. Open decision 7 |
-| `epub:`, `web:`, … | kept, and now applied | TASK-160 |
+| `remote_javascripts`, `remote_stylesheets` | **removed** | broken today (#803), and no GitLab project sets them. Removing them settles #803 |
+| `epub:`, `web:`, … | kept, and now applied | TASK-160. No GitLab project has one, so applying them changes no existing output |
 
 Not keys: `--concurrency` (CLI only, TASK-160), `TargetFeatures` (internal),
 and `--config` (a flag that names a layer).
@@ -406,29 +408,51 @@ and `--config` (a flag that names a layer).
 - Validation should reject a target-only key at the top level, or in the
   wrong target's section, with a message naming where it belongs.
 
-**Open decisions for the maintainer.**
+**Decisions** (2026-11-25):
 
-1. `group_footnotes`: remove it, so notes always number per document? Or keep
-   it as `footnotes: { numbering: document | book }` and move the counter onto
-   the build context (TASK-160 step 4)?
-2. `ignore`: remove it, or keep it as `excludeAssets`, which would make sense
-   per target (e.g. leaving video out of `mobi`)?
-3. `themes_directory`: fix it at `themes/`, or keep it as `themesDirectory`?
-4. `ibooksSpecifiedFonts`: keep the `false` default, flip it to `true` (the
-   bundled themes embed fonts, which Apple Books otherwise replaces), or remove
-   the key and always write `true`?
-5. Autoprefixer: rely on the browserslist config, or keep a `browsers` list in
-   `config.yml`?
-6. `src`: keep it configurable (recommended: it is cheap, and projects outside
-   this repo may have renamed it), or fix it at `_project`?
-7. Remote scripts and stylesheets: remove them, or keep them as
-   `remoteScripts`/`remoteStylesheets` and fix #803 in the same change?
-8. The `dist` default: `dist`, `build`, or keep `project`?
-9. The `url` default: `/` (root-relative, which suits `serve` and the web
-   build), or an absolute placeholder? The reader requires an absolute `http`
-   URL in production (`reader/index.ts:58-70`).
-10. `deploy.targets`: add it as the default for a bare `bber deploy` (today
-    `epub`, `mobi`, `reader`), or leave that to the CLI as now?
-11. Should the reader keep both `books.json` and `__SERVER_DATA__`? For a
-    b-ber build `books.json` is redundant (bug 5). It serves only hosts that
-    embed reader-react with a `bookURL` and no settings.
+1. `group_footnotes`: **kept**, as `footnotes.numbering: document | book`.
+   Five published books use `false`.
+2. `ignore`: **removed**. Its one use has no effect.
+3. `themes_directory`: **removed**, fixed at `themes/`. `tc-bber-theme`
+   renames `my-themes/`.
+4. `ibooks_specified_fonts`: **removed**; always `true`.
+5. Autoprefixer: **the project's browserslist config**, falling back to
+   b-ber's list.
+6. `src`: **kept** configurable.
+7. Remote scripts and stylesheets: **removed**, which settles #803.
+8. The `dist` default: **`dist`**.
+9. The `url` default: **`/`**. The reader's check for an absolute `http` URL
+   in production stays.
+10. `deploy.targets`: **not added**. `bber deploy` keeps taking targets from
+    the command line.
+11. `books.json` and `__SERVER_DATA__`: **out of scope** here. It is a
+    reader-react question, for a task under Reader quality (#713).
+
+### 2026-11-25: checked against the GitLab projects
+
+The audit's "no project uses it" covered only the projects in this repo: the
+`bber new` template, `demos/` and the test fixtures. So each was rechecked
+against shallow clones of all 290 non-empty repos in the canopycanopycanopy
+GitLab group (`gitlab-projects/` beside the b-ber checkout). 263 have a
+`config.yml`, and 262 are b-ber projects. The survey is read-only
+(`gitlab-projects/_survey/survey.js`, results in `survey.json`). It compares
+each value with `Config.ts`'s default, so the defaults that `bber new` writes
+into every project don't count as uses.
+
+| Key | Set to a non-default value | Verdict |
+| --- | -------------------------- | ------- |
+| `group_footnotes` | `false` in 5: `i28-goldin-senneby-essay`, `i29-jeremy-toussaint-baptiste`, `i29-malm`, `i29-pires`, `the-great-equalizer` | used; kept |
+| `ignore` | 1: `a-heavy-nonpresence`, `["./transcriptions/"]`, which matches nothing | inert; removed |
+| `themes_directory` | 1: `tc-bber-theme`, `./my-themes`, which holds its theme | used; removed, with that repo renaming the directory |
+| `ibooks_specified_fonts` | `true` in 212 (the default is `false`) | the real default; removed, always `true` |
+| `src` | none | |
+| `remote_javascripts`, `remote_stylesheets` | none | |
+| `autoprefixer_options` | none custom (two scaffolded values) | |
+| `<target>:` sections | none | |
+| `<target>.yml` files | 128 projects; 62 `reader.yml` differ from `toc.yml` | migration needed |
+
+Keys no declaration knows: `baseurl` and `web_url`, once each, presumably
+typos. Validation of unknown keys (the schema subtask) will name them.
+
+A `config.yml` in `b-ber-template-new` does not parse (bad indentation at
+line 8).
