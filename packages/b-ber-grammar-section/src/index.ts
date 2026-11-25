@@ -72,7 +72,7 @@ function handleExitDirective(token: RegExpMatchArray) {
             </div>
 
             ${
-              state.build === 'reader'
+              state.target.features.readerRuntime
                 ? `<!-- Empty node required for spread markers -->
                    <div></div>`
                 : ''

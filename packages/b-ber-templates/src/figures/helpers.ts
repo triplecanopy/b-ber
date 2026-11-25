@@ -251,11 +251,11 @@ export const vimeo = (data: VimeoFigureData) =>
     .replace(/%ID%/g, data.id)
     .replace(/%ASPECT_RATIO%/g, data.aspectRatio)
 
-    // Poster image for b-ber-reader is pulled from the `data-vimeo-poster`
+    // b-ber-reader-react takes the poster image from the `data-vimeo-poster`
     // attribute
     .replace(
       /%POSTER_IMAGE_ELEMENT%/,
-      data.poster && state.build !== 'reader'
+      data.poster && !state.target.features.readerRuntime
         ? `<img src="${data.poster}" alt="Poster Image" />`
         : ''
     )

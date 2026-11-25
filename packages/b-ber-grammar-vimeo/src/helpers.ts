@@ -138,7 +138,7 @@ export function createVimeoInline({
     ${commentStart}
       <section class="${mediaType} ${aspectRatioClassName} figure__large figure__inline">
         <div id="${id}"${attrString}>
-          ${state.build !== 'reader' ? renderPosterImage(poster) : ''}
+          ${state.target.features.readerRuntime ? '' : renderPosterImage(poster)}
           <iframe
             data-vimeo="true"
             data-vimeo-poster="${poster}"
