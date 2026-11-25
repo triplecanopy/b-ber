@@ -61,7 +61,7 @@ export const createRemoteMediaSource = (sources: string[]): string =>
   `<source src="${sources[0]}" type="${mime.lookup(sources[0])}"/>`
 
 export function getWebOnlyAttributesString(): string {
-  return state.build === 'web' || state.build === 'reader'
+  return state.target.features.liveEmbeds
     ? ' webkit-playsinline="webkit-playsinline" playsinline="playsinline"'
     : ''
 }

@@ -32,10 +32,6 @@ interface PrepareArgs extends RendererReference {
   lineNumber: number | null
 }
 
-export function supported(build: string): boolean {
-  return build === 'reader' || build === 'web'
-}
-
 export function prepare({
   token,
   marker,
@@ -61,7 +57,7 @@ export function prepare({
 
   ensureSource(attrsObject, type, fileName, lineNumber)
   ensurePoster(attrsObject, type)
-  ensureSupportedClassNames(attrsObject, supported)
+  ensureSupportedClassNames(attrsObject)
 
   return {
     ...attrsObject,

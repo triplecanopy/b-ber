@@ -1,7 +1,16 @@
 import fs from 'fs-extra'
 import reader from '../../src/figures/reader'
 
-jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({}))
+// epub, State's default. These rendered with no build before, which acted as epub
+jest.mock('@canopycanopycanopy/b-ber-lib/State', () => ({
+  build: 'epub',
+  // The real target of `build`, as State gives it
+  get target() {
+    return jest
+      .requireActual('../../../b-ber-lib/src/Target')
+      .getTarget(this.build)
+  },
+}))
 
 afterAll(() => fs.remove('_project'))
 

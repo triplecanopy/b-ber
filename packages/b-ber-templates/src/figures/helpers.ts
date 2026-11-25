@@ -263,9 +263,7 @@ export const vimeo = (data: VimeoFigureData) =>
 
     .replace(
       /%SUPPORT_CLASS_NAME%/,
-      state.build === 'reader' || state.build === 'web'
-        ? 'supported'
-        : 'unsupported'
+      state.target.features.liveEmbeds ? 'supported' : 'unsupported'
     )
     .replace(/%ASPECT_RATIO_CLASS_NAME%/, data.aspectRatioClassName)
     .replace(

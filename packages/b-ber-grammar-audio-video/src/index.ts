@@ -86,10 +86,10 @@ function prepare({
     attrsObject.controls = 'controls'
   }
 
-  // Allow for custom controls for reader and web builds where the value is a
-  // string, all other builds set to `controls=controls` for epub validation.
+  // Allow for custom controls where the target has live embeds and the value
+  // is a string. Everything else gets `controls=controls` for epub validation.
   // The value `controls=no` gets stripped out in b-ber-grammar-attributes.
-  if (state.build !== 'reader' && state.build !== 'web') {
+  if (!state.target.features.liveEmbeds) {
     attrsObject.controls =
       attrsObject.controls === 'no' ? attrsObject.controls : 'controls'
   }

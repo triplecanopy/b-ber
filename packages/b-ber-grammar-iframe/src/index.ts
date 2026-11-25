@@ -9,7 +9,7 @@ import {
   INLINE_DIRECTIVE_MARKER,
   INLINE_DIRECTIVE_MARKER_MIN_LENGTH,
 } from '@canopycanopycanopy/b-ber-shapes-directives'
-import { createIframe, createIframeInline, prepare, supported } from './helpers'
+import { createIframe, createIframeInline, prepare } from './helpers'
 
 const { createUnsupportedInline } = utils
 
@@ -42,10 +42,10 @@ const render =
         state.add('figures', args)
         return createIframe(args)
 
-      // Render an inline iframe embed, or an unsupported message if not
-      // running a reader or web build
+      // Render an inline iframe embed, or an unsupported message where the
+      // target has no live embeds
       case 'iframe-inline':
-        return supported(state.build)
+        return state.target.features.liveEmbeds
           ? createIframeInline(args)
           : createUnsupportedInline(args)
 
