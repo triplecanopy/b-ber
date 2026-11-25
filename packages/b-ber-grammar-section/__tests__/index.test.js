@@ -92,16 +92,11 @@ describe('b-ber-grammar-section, rendered', () => {
     expect(html).toContain('<p>body</p>')
   })
 
-  // Defect: markdown-it asks each block rule whether it can interrupt a
-  // paragraph by calling it in silent mode (the rule is registered with
-  // `alt: ['paragraph', ...]`). b-ber-parser-section calls `validateOpen`
-  // before it checks `silent` (src/index.ts:60), and b-ber-grammar-renderer's
-  // `validateOpen` records the id in `state.cursor` as it checks it. So a
-  // directive on the line straight after a paragraph is recorded twice, and
-  // the real pass reports its own id as a duplicate.
-  it('reports a duplicate id for a directive straight after a paragraph (defect)', () => {
-    expect(() => render('para\n::: section:b\n\nbody\n\n::: exit:b\n')).toThrow(
-      'Duplicate [id] [b]'
-    )
-  })
+  // TASK-153 pinned a defect here: a directive straight after a paragraph
+  // line threw a false `Duplicate [id]`, because `validateOpen` records the
+  // id during markdown-it's silent-mode lookahead. The build no longer parses
+  // these blocks with `plugin`: b-ber-markdown-renderer's directive rule does
+  // (TASK-174), and its test "renders a section straight after a paragraph
+  // line" asserts the fix. `plugin` and `validateOpen` still have the defect,
+  // as dialogue, gallery and spread do until TASK-175.
 })

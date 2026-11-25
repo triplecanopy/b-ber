@@ -140,6 +140,58 @@ describe('b-ber-markdown-renderer output', () => {
   })
 })
 
+// The structural blocks go through the directive rule (TASK-174), which keeps
+// today's ids in `state.cursor` and today's errors for the old plugins
+describe('b-ber-markdown-renderer: structural blocks', () => {
+  let state
+
+  beforeEach(() => {
+    state = require('@canopycanopycanopy/b-ber-lib').State
+    state.cursor = []
+  })
+
+  // TASK-153 pinned the opposite: markdown-it asks a block rule in silent
+  // mode whether it can interrupt a paragraph, and b-ber-parser-section
+  // recorded the id then, so the real pass found its own id a duplicate.
+  // The directive rule records nothing in silent mode
+  it('renders a section straight after a paragraph line', () => {
+    const html = markdownRenderer.render(
+      'test',
+      'para\n::: section:b\n\nbody\n\n::: exit:b\n'
+    )
+    expect(html).toContain('<p>para</p>')
+    expect(html).toContain('<section id="b"')
+    expect(html).toContain('<p>body</p>')
+  })
+
+  it('still throws on a real duplicate id', () => {
+    expect(() =>
+      markdownRenderer.render(
+        'test',
+        '::: chapter:a\n\n::: exit:a\n\n::: section:a\n\n::: exit:a\n'
+      )
+    ).toThrow('Duplicate [id] [a]. [id] must be unique at [test.md:5]')
+  })
+
+  it('still throws on a block with no id', () => {
+    expect(() =>
+      markdownRenderer.render('test', 'para\n::: chapter\n')
+    ).toThrow('Missing [id] for [chapter:start] at test.md:2')
+  })
+
+  it('reports diagnostics to env, with the file', () => {
+    const env = { diagnostics: [] }
+    markdownRenderer.render(
+      'test',
+      '::: chapter:a\n\n::: section:b\n\n::: exit:a\n',
+      env
+    )
+    expect(env.diagnostics).toMatchObject([
+      { code: 'crossed-exit', file: '_markdown/test.md' },
+    ])
+  })
+})
+
 // CommonMark corrections between markdown-it 8 and 15 that an author could
 // plausibly hit. None occur in the kitchen-sink or demo projects (TASK-144).
 describe('b-ber-markdown-renderer: changes from markdown-it 8', () => {
