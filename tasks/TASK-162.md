@@ -83,6 +83,7 @@ Each is an issue under #792. Together with TASK-160's tasks:
 | TASK-182 (#846) | one `url`, per-target URLs derived from it; bugs 5, 6 | 5.0, with TASK-169 |
 | TASK-183 (#847) | remove the dropped keys and their code; settles #803 | with TASK-181 |
 | TASK-184 (#848) | a minimal `bber new` config; its `--src`/`--theme` (bug 2); docs and fixture | after TASK-180 |
+| TASK-185 (#850) | camelCase keys in `metadata.yml` and the navigation files (decision 12) | with TASK-181 |
 
 Audit bug 1 (path flags applied too late) is TASK-163's, and bug 7 (`deploy`
 ignores `dist`) is TASK-169's. The `<target>.yml` fold, with its migration,
@@ -101,9 +102,10 @@ is TASK-172.
 - [x] File the implementation tasks (2026-11-25; see "Plan"): the schema,
       the read-time migration, the URL key, removing the dropped keys, and
       `bber new`, the docs and the fixture
-- [ ] Decide whether `metadata.yml`'s `term_property` / `term_property_value`
+- [x] Decide whether `metadata.yml`'s `term_property` / `term_property_value`
       follow the same camelCase rule (it is a different file, with Dublin
-      Core terms), and record the decision
+      Core terms), and record the decision. Decided 2026-11-25: yes, and so
+      does the navigation files' `in_toc` (decision 12); TASK-185
 
 ## Notes
 
@@ -438,7 +440,15 @@ and `--config` (a flag that names a layer).
 10. `deploy.targets`: **not added**. `bber deploy` keeps taking targets from
     the command line.
 11. `books.json` and `__SERVER_DATA__`: **out of scope** here. It is a
-    reader-react question, for a task under Reader quality (#713).
+    reader-react question, filed as TASK-186 (#851) under Reader quality
+    (#713).
+12. **Every key a project writes is camelCase: one format.** Where something
+    downstream needs another form, the app converts it. Besides `config.yml`
+    this covers `metadata.yml` (`term_property`, `term_property_value`: 106
+    GitLab projects) and the navigation files (`in_toc`: 250 projects). The
+    `term` values are Dublin Core terms, not keys, and don't change. Both
+    forms are read for at least one major release, with one warning per file.
+    Filed as TASK-185 (#850).
 
 ### 2026-11-25: checked against the GitLab projects
 
