@@ -200,9 +200,9 @@ class Cover {
   }
 
   writeCoverXHTML = async () => {
-    // Omit cover.xhtml from the PDF build to allow users to define special
-    // treatment for the cover in config.yml
-    if (state.build === 'pdf') return
+    // Omit cover.xhtml where the target has no cover page (pdf), so that
+    // users can define special treatment for the cover in config.yml
+    if (!state.target.features.coverPage) return
 
     const textDir = state.dist.text()
     const coverFilePath = state.dist.text('cover.xhtml')

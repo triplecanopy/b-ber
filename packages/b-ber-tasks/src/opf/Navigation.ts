@@ -94,9 +94,9 @@ class Navigation {
     // Files in the TOC that don't exist in the project directory
     const redundantEntries = difference(tocEntries, files)
 
-    // Strip out `cover` entry during PDF build since it's handled separately
-    // in the project's config.yml
-    if (state.build === 'pdf') {
+    // Strip out the `cover` entry where the target has no cover page (pdf),
+    // since the project's config.yml handles it
+    if (!state.target.features.coverPage) {
       const coverIndex = redundantEntries.indexOf('cover')
       if (coverIndex > -1) redundantEntries.splice(coverIndex, 1)
     }
