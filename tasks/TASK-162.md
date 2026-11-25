@@ -72,6 +72,22 @@ config being resolved in layers (defaults ← file ← `<target>:` section ←
 Kept as the historical record. The audit in Findings (2026-11-24) confirms
 or corrects every row; the corrections are listed there.
 
+## Plan (filed 2026-11-25)
+
+Each is an issue under #792. Together with TASK-160's tasks:
+
+| Task | | Lands |
+| ---- | - | ----- |
+| TASK-180 (#844) | one schema; typed, resolved config; the renamed keys' consumers; audit bugs 3, 4, 8, 9 | with TASK-181. Needs TASK-163 |
+| TASK-181 (#845) | read-time migration from the old keys | with TASK-180 |
+| TASK-182 (#846) | one `url`, per-target URLs derived from it; bugs 5, 6 | 5.0, with TASK-169 |
+| TASK-183 (#847) | remove the dropped keys and their code; settles #803 | with TASK-181 |
+| TASK-184 (#848) | a minimal `bber new` config; its `--src`/`--theme` (bug 2); docs and fixture | after TASK-180 |
+
+Audit bug 1 (path flags applied too late) is TASK-163's, and bug 7 (`deploy`
+ignores `dist`) is TASK-169's. The `<target>.yml` fold, with its migration,
+is TASK-172.
+
 ## Subtasks
 
 - [x] **Audit.** For every key: where it is read, what it does, whether
@@ -82,13 +98,9 @@ or corrects every row; the corrections are listed there.
       settings under `reader:`, the URLs under something like `urls:` or
       `publish:`, tool options under their tool. Decide which keys belong in
       a target's section rather than at the top level.
-- [ ] **One schema** that produces the TypeScript type, the defaults,
-      validation with clear messages (unknown key, wrong type), and the CLI
-      flags. Delete the other three declarations.
-- [ ] **Read-time migration** from old keys, with a warning per key naming
-      the replacement. Tests for every mapping.
-- [ ] Update the `bber new` template, the docs, and the kitchen-sink fixture
-      (with the golden-output snapshot, if anything changes)
+- [x] File the implementation tasks (2026-11-25; see "Plan"): the schema,
+      the read-time migration, the URL key, removing the dropped keys, and
+      `bber new`, the docs and the fixture
 - [ ] Decide whether `metadata.yml`'s `term_property` / `term_property_value`
       follow the same camelCase rule (it is a different file, with Dublin
       Core terms), and record the decision

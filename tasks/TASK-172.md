@@ -27,4 +27,4 @@ with a warning naming the line to add.
 
 - Design: [TASK-160](./TASK-160.md), "What a target exposes to a project"; key and migration
   rules in [TASK-162](./TASK-162.md).
-- Depends on TASK-163 and [TASK-162](./TASK-162.md)'s schema.
+- Depends on TASK-163 and TASK-180, [TASK-162](./TASK-162.md)'s schema.
