@@ -34,6 +34,8 @@ an intermediate, kept only when `--no-compile` asks for it.
 ## Notes
 
 - Design: [TASK-160](./TASK-160.md), "Output layout".
-- The `dist` default becomes `dist` ([TASK-162](./TASK-162.md)). Every GitLab project sets
-  `dist: project` explicitly, so their output moves to `project/<target>/`.
+- The `dist` default becomes `dist` ([TASK-162](./TASK-162.md); the schema
+  is TASK-180). Every GitLab project sets `dist: project` explicitly, so
+  their output moves to `project/<target>/`.
+- TASK-182 derives the targets' public URLs from this layout.
 - Depends on TASK-166. Merge only once 5.0 is the next release.

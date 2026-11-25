@@ -43,5 +43,5 @@ TASK-152's golden output is otherwise unchanged.
 
 - Design: [TASK-160](./TASK-160.md), "The pieces", "Config resolution", "Migrating without a
   big bang: the State shim", and Findings, "spike".
-- Do alongside [TASK-162](./TASK-162.md)'s schema, so every config read changes once.
+- Do alongside TASK-180, [TASK-162](./TASK-162.md)'s schema, so every config read changes once.
 - Unblocks TASK-164, TASK-165 and TASK-177.
