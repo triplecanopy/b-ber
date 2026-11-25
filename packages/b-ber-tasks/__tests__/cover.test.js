@@ -228,21 +228,25 @@ describe('task: cover', () => {
     )
   })
 
-  // Defect: the cover task works out the path of metadata.yml once, when it
-  // is imported (the Cover constructor, src/cover/index.ts:56), from the
-  // `config.src` of that moment. The CLI applies `--src` afterwards, so
-  // `bber build --src book` reads, and would write, `_project/metadata.yml`
-  // while every other task uses `book/`. Without a `_project/`, the build
-  // fails at the cover step.
-  test('reads metadata.yml from the source directory set at import (defect)', async () => {
-    await setup()
+  // The path of metadata.yml is worked out when the task runs, from the source
+  // directory of the build that is running. It was worked out once, when the
+  // module was imported, until TASK-163 (pinned by TASK-153): `bber build
+  // --src book` read `_project/metadata.yml`, and failed without one.
+  test('reads metadata.yml from the source directory of the build that runs', async () => {
+    await setup({
+      metadata: [...METADATA, { term: 'cover', value: 'mine.png' }],
+    })
+    await fs.writeFile(
+      path.join(project.src, '_images', 'mine.png'),
+      png(600, 900)
+    )
     await fs.move(path.join(project.root, '_project'), 'book')
     state.config.src = 'book'
 
-    await expect(cover()).rejects.toMatchObject({
-      code: 'ENOENT',
-      path: path.join('_project', 'metadata.yml'),
-    })
+    await cover()
+
+    expect(await fs.readFile(coverXhtml(), 'utf8')).toContain('images/mine.png')
+    expect(fs.existsSync(path.join(project.root, '_project'))).toBe(false)
   })
 
   // Defect: the generated cover draws `publisher` and `description` from the
