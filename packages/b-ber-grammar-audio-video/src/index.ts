@@ -144,7 +144,10 @@ function prepare({
   const commentStart = Html.comment(`START: ${mediaType}:${type}#${figureId};`)
   const commentEnd = Html.comment(`END: ${mediaType}:${type}#${figureId};`)
   const page = `figure-${figureId}.xhtml`
-  const href = state.build === 'reader' ? 'figures-titlepage.xhtml' : page
+  const href =
+    state.target.features.figuresOn === 'titlepage'
+      ? 'figures-titlepage.xhtml'
+      : page
 
   return {
     id: figureId,

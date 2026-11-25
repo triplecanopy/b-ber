@@ -65,7 +65,10 @@ export function prepare({
     attrString: attributesString(attrsObject, { classes: true }),
     commentStart: Html.comment(`START: ${mediaType}:${type}#${figureId};`),
     commentEnd: Html.comment(`END: ${mediaType}:${type}#${figureId};`),
-    href: state.build === 'reader' ? 'figures-titlepage.xhtml' : page,
+    href:
+      state.target.features.figuresOn === 'titlepage'
+        ? 'figures-titlepage.xhtml'
+        : page,
     ref: context.fileName,
     caption: token.children ? instance.renderInline(token.children) : '',
     page,

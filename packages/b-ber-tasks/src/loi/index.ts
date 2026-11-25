@@ -57,7 +57,7 @@ const createLOILeader = () => {
   return fs.writeFile(state.dist.text(fileName), markup, 'utf8')
 }
 
-// only called in `reader` build
+// Only for a target whose figures live on one titlepage
 const createLOIAsSingleHTMLFile = () => {
   const classes = (item: ListedFigure) =>
     item.classes ? item.classes.replace(/small/g, 'inline') : ''
@@ -107,15 +107,10 @@ const createLOIAsSeparateHTMLFiles = () => {
 const loi = () => {
   if (!state.figures.length) return Promise.resolve()
 
-  // For certain builds it may be preferable to have all figures on a
-  // single page (e.g., during the web or reader builds). We could set
-  // a flag for this, but current functionality is to always default
-  // to split the figures into separate files *unless* we're building
-  // for the reader.
-
-  // This branch concatentates all the figures, as well as the loi-leader
-  // (the 'Figures' header text) into a single document
-  if (state.build === 'reader') {
+  // A target whose figures live on one titlepage gets every figure, and the
+  // loi-leader (the 'Figures' header text), in a single document. The others
+  // get one page per figure
+  if (state.target.features.figuresOn === 'titlepage') {
     return createLOIAsSingleHTMLFile().catch((err) => {
       throw log.error(err)
     })
