@@ -167,7 +167,7 @@ ourselves (MyST's architecture).**
   `directive_open` / `directive_close` pair, so `exit` is no longer a token.
 - **Silent mode answers "yes" or "no" and does nothing else.**
 - Problems (missing id, unclosed block, duplicate id, unknown name) are
-  pushed to `env.diagnostics` with file and line, not thrown halfway through
+  pushed to `env.diagnostics` with file, line and column, not thrown halfway through
   a parse. The build decides what is fatal. That way one run reports every
   problem in a file.
 - Attributes are parsed in one place (today's `grammar-attributes`, moved
@@ -617,8 +617,30 @@ projects on GitLab (Findings):
 
 `b-ber-validator`'s separate grammar is replaced by the parse plus
 `env.diagnostics`. One grammar decides what is valid, so #797-style
-disagreements cannot happen. **Open decision:** fold `b-ber-validator` into
-the consolidated package, or keep it as a thin wrapper.
+disagreements cannot happen.
+
+**`b-ber-validator` stays a separate package: a thin layer over the shared
+parse** (decided 2026-11-24). It doesn't go into the consolidation.
+- **What goes:** its parser-combinator grammar, meaning `src/validator.ts` and
+  `src/combinators/`, along with its own list of the directive names.
+- **What stays:** `report.ts` (line number, caret-pointed excerpt, colours),
+  plus a `check(source, fileName)` that runs the shared parse and returns
+  `env.diagnostics` for `report` to format. `b-ber-tasks`' `validate` task
+  calls `check`.
+- **Why separate:** checking and reporting is a different job from rendering.
+  The validator can serve `bber check`, a CI lint, or an editor without the
+  render half.
+
+That puts two requirements on the consolidated package:
+- **Parsing is importable without rendering.** The package exports a parse
+  entry point that loads no templates, no target features and no `State`,
+  for example a `b-ber-markdown/parse` subpath. The validator depends on that
+  entry point only.
+- **Diagnostics are as precise as the validator's today:** a line *and*
+  column, or a span, for each problem, so `report` can still point a caret at
+  it. A diagnostic with only a line would make `bber check` worse than it is
+  now. The specification subtask should state what positions each kind of
+  diagnostic carries.
 
 ### Package consolidation
 
@@ -631,7 +653,7 @@ These become one package (working name `b-ber-markdown`):
 
 That is about 23 packages into 1.
 - The only consumers outside that set are `b-ber-tasks` (the renderer) and
-  `b-ber-validator` (the shapes).
+  `b-ber-validator` (today the shapes; afterwards the parse entry point).
 - The old packages get a final release that `npm deprecate`s them, pointing
   at the new package.
 - It ships with TASK-160's `State` removal as **5.0**.
@@ -666,7 +688,9 @@ own commit, with the regenerated snapshot showing the diff.
 3. **Tree-built XHTML output** with the element builder and serializer.
 4. **`env`-only state.** The grammar stops importing `State` (needs
    TASK-160's step 1).
-5. **`bber check` on the shared grammar**; decide the validator's fate.
+5. **`bber check` on the shared grammar.** `b-ber-validator` becomes the
+   thin layer described above. Its grammar and combinators are deleted, and
+   its tests move to the parse's diagnostics. #797 can then be closed as fixed.
 6. **Consolidate the packages** and deprecate the old ones (5.0).
 
 ## Subtasks
@@ -676,10 +700,11 @@ own commit, with the regenerated snapshot showing the diff.
       forms, nesting, what `exit` may close), from the shapes, the
       validator's combinators and the current parsers. Today it exists only
       as the union of those three. Done in "Directive syntax"; its open
-      decisions belong to the review subtask
+      decisions were settled on 2026-11-25 ("Decisions")
 - [x] Decide which differences from today's output are intended, and list
       them: "Intended output differences", decided 2026-11-25
-- [ ] Decide the validator question
+- [x] Decide the validator question: a separate, thin package over the
+      shared parse (2026-11-24)
 - [ ] File the implementation tasks in the Plan under #792 and update its
       sequencing
 
