@@ -117,6 +117,20 @@ describe('b-ber-markdown-renderer output', () => {
     expect(stableIds(html)).toMatchSnapshot()
   })
 
+  // `epigraph` is a structural block, handled by grammar-section. The
+  // standalone `::: epigraph caption "…"` form was retired with
+  // b-ber-grammar-epigraph (TASK-145): it was never registered and rendered
+  // as literal text, which no snapshot caught
+  it('renders a block epigraph as an EPUB epigraph section', () => {
+    const html = markdownRenderer.render(
+      'epigraph-fixture',
+      '::: epigraph:e1\n\nThe beginning.\n\nPlato\n\n::: exit:e1\n'
+    )
+    expect(html).toContain('epub:type="frontmatter epigraph"')
+    expect(html).toContain('<p>The beginning.</p>')
+    expect(html).not.toContain(':::')
+  })
+
   it('collects the fixture document footnotes', () => {
     markdownRenderer.render('rendering-fixture', source)
     const entry = state.footnotes.findLast(

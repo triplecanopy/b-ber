@@ -7,7 +7,13 @@ type: bodymatter
 
 # Chapter One
 
-::: epigraph caption "The beginning is the most important part of the work." citation "Plato"
+::: epigraph:ch-01-epigraph
+
+The beginning is the most important part of the work.
+
+Plato
+
+::: exit:ch-01-epigraph
 
 ::: subchapter:ch-01-section-01
 

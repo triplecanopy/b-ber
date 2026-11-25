@@ -86,7 +86,7 @@
   {
     "id": "{id}",
     "title": "Chapter One",
-    "body": "\n      \n\nChapter One\n::: epigraph caption \"The beginning is the most important part of the work.\" citation \"Plato\"\n\n\nSection One\nThis is the body text of section one.1 It demonstrates basic prose content\nalongside directive markup.\nA second paragraph follows with bold and italic text, plus a\nlink.\nThe quick brown fox jumps over the lazy dog.\n\n        \n        \n    \n        \n\n\n        \n        \n        \n        \n        \n        \n        Figure one caption text.\n\n\n\n\nSection Two — Attributes\nThis paragraph uses an inline attribute block to inject a class name.{.callout}\n\n\n\n\nwindow.bber = window.bber || {}; window.bber.env = 'web';",
+    "body": "\n      \n\nChapter One\n\n\nThe beginning is the most important part of the work.\nPlato\n\n\n\n\nSection One\nThis is the body text of section one.1 It demonstrates basic prose content\nalongside directive markup.\nA second paragraph follows with bold and italic text, plus a\nlink.\nThe quick brown fox jumps over the lazy dog.\n\n        \n        \n    \n        \n\n\n        \n        \n        \n        \n        \n        \n        Figure one caption text.\n\n\n\n\nSection Two — Attributes\nThis paragraph uses an inline attribute block to inject a class name.{.callout}\n\n\n\n\nwindow.bber = window.bber || {}; window.bber.env = 'web';",
     "url": "/text/kitchen-sink-chapter-01.xhtml"
   },
   {

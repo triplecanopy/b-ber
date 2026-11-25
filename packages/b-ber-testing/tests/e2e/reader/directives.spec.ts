@@ -32,6 +32,16 @@ test.describe('Reader directive rendering', () => {
     await expect(page.locator('section.pullquote')).toBeAttached()
   })
 
+  test('epigraph: epigraph section is present in chapter 01', async ({
+    page,
+  }) => {
+    await goToChapter(page, SPINE.chapter01.slug, SPINE.chapter01.index)
+    await expect(page.locator('section.epigraph')).toBeAttached()
+    await expect(page.locator('section.epigraph')).toContainText(
+      'The beginning is the most important part of the work.'
+    )
+  })
+
   test('dialogue: dialogue section is present in chapter 02', async ({
     page,
   }) => {
