@@ -15,6 +15,8 @@ import markdownItFootnote from '@canopycanopycanopy/b-ber-parser-footnotes'
 import hljs from 'highlight.js'
 import MarkdownIt from 'markdown-it'
 import markdownItFrontmatter from 'markdown-it-front-matter'
+import { type DirectiveEnv, directives } from './directives'
+import { legacyHost } from './legacy-host'
 
 const LINE_BREAK = '\n'
 const SPACE = ' '
@@ -49,12 +51,14 @@ class MarkdownRenderer {
 
     const reference = { instance: this.markdownIt, context: this }
 
+    // The directive rule takes the structural blocks over from
+    // b-ber-parser-section, at the same place in the rule order, and renders
+    // them with b-ber-grammar-section as before (TASK-174)
     this.markdownIt
-      .use(
-        markdownItSection.plugin,
-        markdownItSection.name,
-        markdownItSection.renderer(reference)
-      )
+      .use(directives, {
+        host: legacyHost(this),
+        legacyRender: markdownItSection.renderer(reference).render,
+      })
       .use(
         markdownItPullquote.plugin,
         markdownItPullquote.name,
@@ -120,11 +124,17 @@ class MarkdownRenderer {
     return mediaDirectivePreProcessor.render(data)
   }
 
-  // Transforms a markdown file to XHTML
-  render(fileName: string, data: string): string {
+  // Transforms a markdown file to XHTML. Problems with the directives are
+  // added to `env.diagnostics`; what the build throws and prints is unchanged
+  render(
+    fileName: string,
+    data: string,
+    env: DirectiveEnv = { diagnostics: [] }
+  ): string {
     this.fileName = fileName
+    env.file ??= `_markdown/${fileName}.md`
     const transformedData = this.prepare(data)
-    return this.markdownIt.render(transformedData)
+    return this.markdownIt.render(transformedData, env)
   }
 }
 
