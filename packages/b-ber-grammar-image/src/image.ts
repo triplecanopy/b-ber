@@ -98,6 +98,6 @@ export function createFigureInline({
       inline,
       mime,
     },
-    state.build
+    state.target
   )
 }

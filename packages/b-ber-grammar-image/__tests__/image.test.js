@@ -155,7 +155,7 @@ describe('b-ber-grammar-image / image', () => {
           inline: true,
           mime: 'image/jpeg',
         }),
-        state.build
+        state.target
       )
       expect(result).toBe('<figure class="inline">inline figure</figure>')
     })
@@ -175,7 +175,7 @@ describe('b-ber-grammar-image / image', () => {
 
       expect(figureTemplate).toHaveBeenCalledWith(
         expect.objectContaining({ classes: 'custom-class' }),
-        state.build
+        state.target
       )
     })
 

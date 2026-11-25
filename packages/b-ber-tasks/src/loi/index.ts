@@ -63,7 +63,7 @@ const createLOIAsSingleHTMLFile = () => {
     item.classes ? item.classes.replace(/small/g, 'inline') : ''
   const figuresPage = (state.figures as ListedFigure[]).reduce<string>(
     (acc, curr) =>
-      acc.concat(figure({ ...curr, classes: classes(curr) }, state.build)),
+      acc.concat(figure({ ...curr, classes: classes(curr) }, state.target)),
     Xhtml.loi()
   )
 
@@ -80,7 +80,7 @@ const createLOIAsSeparateHTMLFiles = () => {
   const promises = (state.figures as ListedFigure[]).map((data) => {
     // Create image string based on dimensions of image
     // returns square | landscape | portrait | portraitLong
-    const figures = figure(data, state.build)
+    const figures = figure(data, state.target)
     const markup = Template.render(figures, Xhtml.body())
     const { page: fileName, ref, pageOrder } = data
     const in_toc = false //eslint-disable-line camelcase
