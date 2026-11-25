@@ -1,3 +1,10 @@
+export type { BuildContext } from './BuildContext'
+export {
+  createBuildContext,
+  currentBuildContext,
+  runBuild,
+  runInBuildContext,
+} from './BuildContext'
 export type { ConfigOptions } from './Config'
 export { default as EbookConvert } from './EbookConvert'
 export { default as GuideItem } from './GuideItem'
@@ -21,6 +28,13 @@ export type {
   RendererInstance,
   RendererReference,
 } from './markdown'
+export type { MediaMap, Metadata, Project } from './Project'
+export {
+  loadProject,
+  mergeConfig,
+  readConfig,
+  resolveConfig,
+} from './Project'
 export type { NavigationEntry } from './Spine'
 export { default as Spine } from './Spine'
 export { default as SpineItem } from './SpineItem'

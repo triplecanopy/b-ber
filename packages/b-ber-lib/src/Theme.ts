@@ -6,15 +6,9 @@ import log from '@canopycanopycanopy/b-ber-logger'
 import fs from 'fs-extra'
 import uniq from 'lodash/uniq'
 import state, { type ThemeModule } from './State'
+import { builtInThemes } from './themes'
 import { safeWrite } from './utils'
 import YamlAdaptor from './YamlAdaptor'
-
-const defaultThemes: Record<string, ThemeModule> = {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  'b-ber-theme-serif': require('@canopycanopycanopy/b-ber-theme-serif'),
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  'b-ber-theme-sans': require('@canopycanopycanopy/b-ber-theme-sans'),
-}
 
 // get any themes installed via npm.
 const getVendorThemes = (): string[] => {
@@ -80,7 +74,11 @@ const getThemes = (): { current: string; themes: string[] } => {
   const current = state.config.theme ? (state.config.theme as string) : ''
   const userThemes = getUserThemes()
   const vendorThemes = getVendorThemes()
-  const themes = [...Object.keys(defaultThemes), ...userThemes, ...vendorThemes]
+  const themes = [
+    ...Object.keys(builtInThemes()),
+    ...userThemes,
+    ...vendorThemes,
+  ]
 
   return { current, themes }
 }
@@ -172,8 +170,8 @@ class Theme {
       module.paths.push(cwdPath)
     } while (cwdArr.pop())
 
-    if (defaultThemes[name]) {
-      theme = defaultThemes[name]
+    if (builtInThemes()[name]) {
+      theme = builtInThemes()[name]
     } else {
       try {
         theme = require(name)
