@@ -1,4 +1,10 @@
 import path from 'node:path'
+import {
+  loadProject,
+  mergeConfig,
+  readConfig,
+  runBuild,
+} from '@canopycanopycanopy/b-ber-lib'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import { ensure } from '@canopycanopycanopy/b-ber-lib/utils'
 import log from '@canopycanopycanopy/b-ber-logger'
@@ -27,6 +33,32 @@ const describe = 'Build a project'
 
 const noop = () => {}
 
+// The options from the --config file and the command line that config.yml
+// knows and the CLI allows, each one warned about or announced once
+const configOverrides = (
+  options: Record<string, unknown>,
+  config: Record<string, unknown>
+): Record<string, unknown> => {
+  const overrides: Record<string, unknown> = {}
+
+  for (const [key, val] of Object.entries(options)) {
+    if (!Object.hasOwn(config, key)) {
+      log.warn('Invalid configuration option [%s]', key)
+      continue
+    }
+
+    if (blacklistedConfigOptions.has(key)) {
+      log.warn('Disallowed configuration option [%s]', key)
+      continue
+    }
+
+    log.notice('Applying configuration option [%s]:[%s]', key, val)
+    overrides[key] = val
+  }
+
+  return overrides
+}
+
 const handler = exitOnFailure(async (argv: Arguments) => {
   process.env.NODE_ENV = process.env.NODE_ENV || 'development'
 
@@ -43,43 +75,26 @@ const handler = exitOnFailure(async (argv: Arguments) => {
 
   projectConfig = { ...projectConfig, ...configOptions }
 
+  // The overrides apply before the project is read, so that a flag naming the
+  // source or output directory, or the theme, takes effect (TASK-163). Each
+  // target then resolves its own config: config.yml, its section, the
+  // overrides
+  const overrides = configOverrides(projectConfig, readConfig())
+  const project = loadProject(process.cwd(), overrides)
+
   state.update('sequence', subSequence)
   log.registerSequence(
     sequence.map((name) => ({ name, tasks: sequences[name] }))
   )
 
-  const run = (buildTasks: string[]): Promise<void> => {
-    const build = buildTasks.shift() as string
-
-    state.reset()
-    state.update('build', build)
-
-    for (const [key, val] of Object.entries(projectConfig)) {
-      if (!state.has(`config.${key}`)) {
-        log.warn('Invalid configuration option [%s]', key)
-        continue
-      }
-
-      if (blacklistedConfigOptions.has(key)) {
-        log.warn('Disallowed configuration option [%s]', key)
-        continue
-      }
-
-      log.notice('Applying configuration option [%s]:[%s]', key, val)
-
-      state.update(`config.${key}`, val)
-    }
-
-    return serialize(sequences[build]).then(() =>
-      buildTasks.length ? run(buildTasks) : undefined
-    )
-  }
-
-  const projectPath = path.resolve(state.srcDir)
+  const { src } = mergeConfig(project.config, overrides)
+  const projectPath = path.resolve(src as string)
   const files = [...Project.javascripts(projectPath), ...Project.stylesheets()]
 
-  await ensure({ files })
-  await run(sequence)
+  await ensure({ files, src: src as string })
+  await runBuild(project, sequence, ({ target }) =>
+    serialize(sequences[target])
+  )
 })
 
 const builder = (yargs: Argv) =>

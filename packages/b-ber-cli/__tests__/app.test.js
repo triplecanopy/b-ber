@@ -21,6 +21,10 @@ jest.mock('@canopycanopycanopy/b-ber-lib/State', () =>
   require('./helpers/cli').createMockState()
 )
 
+jest.mock('@canopycanopycanopy/b-ber-lib', () =>
+  require('./helpers/cli').createMockBuildApi()
+)
+
 jest.mock('@canopycanopycanopy/b-ber-lib/utils', () => ({
   ensure: jest.fn(() => Promise.resolve()),
   fail: jest.fn(),
@@ -143,7 +147,7 @@ describe('bber', () => {
     // handler) and nothing else for a plain flag, so no spurious "Invalid
     // configuration option" warnings.
     let logger
-    const { state } = runCli(
+    const { lib } = runCli(
       ['build', 'epub', '--env', 'production'],
       ({ log }) => {
         logger = spyOnLogger(log)
@@ -152,7 +156,10 @@ describe('bber', () => {
     await flushPromises()
 
     expect(logger.warn).not.toHaveBeenCalled()
-    expect(state.update).toHaveBeenCalledWith('config.env', 'production')
+    // The project is read with the flag applied (TASK-163)
+    expect(lib.loadProject).toHaveBeenCalledWith(process.cwd(), {
+      env: 'production',
+    })
   })
 
   it('passes a build failure that reaches log.error through as exit status 1', async () => {

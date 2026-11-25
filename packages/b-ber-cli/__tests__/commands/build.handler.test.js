@@ -1,5 +1,6 @@
 import os from 'node:os'
 import path from 'node:path'
+import { loadProject, runBuild } from '@canopycanopycanopy/b-ber-lib'
 import state from '@canopycanopycanopy/b-ber-lib/State'
 import { ensure } from '@canopycanopycanopy/b-ber-lib/utils'
 import log from '@canopycanopycanopy/b-ber-logger'
@@ -16,6 +17,10 @@ jest.mock('@canopycanopycanopy/b-ber-tasks', () => ({
 
 jest.mock('@canopycanopycanopy/b-ber-lib/State', () =>
   require('../helpers/cli').createMockState()
+)
+
+jest.mock('@canopycanopycanopy/b-ber-lib', () =>
+  require('../helpers/cli').createMockBuildApi()
 )
 
 jest.mock('@canopycanopycanopy/b-ber-lib/utils', () => ({
@@ -43,6 +48,9 @@ const mockYargs = () => ({
 
 const updatesTo = (key) =>
   state.update.mock.calls.filter(([k]) => k === key).map(([, v]) => v)
+
+// The overrides the handler read the project with
+const overrides = () => loadProject.mock.calls.map(([, o]) => o)
 
 let exit
 let logger
@@ -142,10 +150,18 @@ describe('build handler', () => {
       expect(serialize).toHaveBeenCalledWith(sequences[format])
     })
 
-    it('records the sequence and the build in State', () => {
+    it('records the sequence, and builds the format in its own context', () => {
       expect(updatesTo('sequence')).toEqual([sequences[format]])
-      expect(updatesTo('build')).toEqual([format])
-      expect(state.reset).toHaveBeenCalledTimes(1)
+      expect(runBuild).toHaveBeenCalledTimes(1)
+      expect(runBuild.mock.calls[0][1]).toEqual([format])
+      // State is no longer reset and switched between builds (TASK-163)
+      expect(updatesTo('build')).toEqual([])
+      expect(state.reset).not.toHaveBeenCalled()
+    })
+
+    it('reads the project once, from the working directory', () => {
+      expect(loadProject).toHaveBeenCalledTimes(1)
+      expect(loadProject).toHaveBeenCalledWith(process.cwd(), {})
     })
 
     it('registers the sequence with the logger', () => {
@@ -160,15 +176,15 @@ describe('build handler', () => {
   })
 
   describe('bber build (no format)', () => {
-    it('builds every format, one after another, resetting State between', async () => {
+    it('builds every format, one after another, each in its own context', async () => {
       await build.handler({ _: ['build'], $0: 'bber' })
       await flushPromises()
 
       expect(serialize.mock.calls.map(([seq]) => seq)).toEqual(
         FORMATS.map((f) => sequences[f])
       )
-      expect(updatesTo('build')).toEqual(FORMATS)
-      expect(state.reset).toHaveBeenCalledTimes(FORMATS.length)
+      expect(runBuild.mock.calls[0][1]).toEqual(FORMATS)
+      expect(state.reset).not.toHaveBeenCalled()
       expect(updatesTo('sequence')).toEqual([
         FORMATS.flatMap((f) => sequences[f]),
       ])
@@ -207,6 +223,7 @@ describe('build handler', () => {
     expect(Project.javascripts).toHaveBeenCalledWith(path.resolve('_project'))
     expect(ensure).toHaveBeenCalledWith({
       files: [{ absolutePath: 'application.js' }],
+      src: '_project',
     })
     expect(ensure.mock.invocationCallOrder[0]).toBeLessThan(
       serialize.mock.invocationCallOrder[0]
@@ -253,12 +270,26 @@ describe('build handler', () => {
     })
   })
 
+  it('applies a --src flag before the project is read', async () => {
+    // TASK-162, audit bug 1: the flag used to arrive after State had read the
+    // project from config.yml's src, and `ensure` scaffolded the wrong one
+    await build.handler({ _: ['build', 'epub'], $0: 'bber', src: 'content' })
+    await flushPromises()
+
+    expect(overrides()).toEqual([{ src: 'content' }])
+    expect(Project.javascripts).toHaveBeenCalledWith(path.resolve('content'))
+    // and scaffolds that directory, not `_project`
+    expect(ensure).toHaveBeenCalledWith(
+      expect.objectContaining({ src: 'content' })
+    )
+  })
+
   describe('config options', () => {
-    it('applies a known option to State', async () => {
+    it('reads the project with a known option', async () => {
       await build.handler({ _: ['build', 'epub'], $0: 'bber', env: 'prod' })
       await flushPromises()
 
-      expect(updatesTo('config.env')).toEqual(['prod'])
+      expect(overrides()).toEqual([{ env: 'prod' }])
       expect(logger.notice).toHaveBeenCalledWith(
         'Applying configuration option [%s]:[%s]',
         'env',
@@ -274,7 +305,7 @@ describe('build handler', () => {
         'Invalid configuration option [%s]',
         'bogus'
       )
-      expect(updatesTo('config.bogus')).toEqual([])
+      expect(overrides()).toEqual([{}])
     })
 
     it.each([
@@ -290,7 +321,7 @@ describe('build handler', () => {
         'Disallowed configuration option [%s]',
         key
       )
-      expect(updatesTo(`config.${key}`)).toEqual([])
+      expect(overrides()).toEqual([{}])
     })
 
     it.each(['bucket_url', 'remote_javascripts', 'remote_stylesheets'])(
@@ -306,15 +337,21 @@ describe('build handler', () => {
           'Invalid configuration option [%s]',
           key
         )
-        expect(updatesTo(`config.${key}`)).toEqual([])
+        expect(overrides()).toEqual([{}])
       }
     )
 
-    it('re-applies the options to every format after State is reset', async () => {
+    it('applies the options to every format, announcing each once', async () => {
       await build.handler({ _: ['build'], $0: 'bber', env: 'prod' })
       await flushPromises()
 
-      expect(updatesTo('config.env')).toEqual(FORMATS.map(() => 'prod'))
+      // One project for every format; each format's context resolves the
+      // overrides over config.yml and its own section
+      expect(overrides()).toEqual([{ env: 'prod' }])
+      expect(runBuild.mock.calls[0][0].overrides).toEqual({ env: 'prod' })
+      expect(
+        logger.notice.mock.calls.filter(([, key]) => key === 'env')
+      ).toHaveLength(1)
     })
 
     describe('--config file', () => {
@@ -338,9 +375,10 @@ describe('build handler', () => {
         })
         await flushPromises()
 
-        expect(updatesTo('config.theme')).toEqual(['b-ber-theme-sans'])
-        expect(updatesTo('config.env')).toEqual(['flag'])
-        expect(updatesTo('config.config')).toEqual([])
+        // `config` names the file; it is not an option itself
+        expect(overrides()).toEqual([
+          { theme: 'b-ber-theme-sans', env: 'flag' },
+        ])
       })
 
       it('drops blacklisted keys that come from the file', async () => {
@@ -354,7 +392,7 @@ describe('build handler', () => {
           'Disallowed configuration option [%s]',
           'downloads'
         )
-        expect(updatesTo('config.downloads')).toEqual([])
+        expect(overrides()).toEqual([{}])
       })
 
       it('exits 1 through log.error when the file does not exist', async () => {
